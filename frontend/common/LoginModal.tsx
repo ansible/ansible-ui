@@ -4,17 +4,13 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import {
-  PageForm,
-  PageFormSelectOption,
-  PageFormSubmitHandler,
-  usePageDialog,
-} from '../../framework';
+import { PageForm, PageFormSelect, PageFormSubmitHandler, usePageDialog } from '../../framework';
 import { PageFormTextInput } from '../../framework/PageForm/Inputs/PageFormTextInput';
 import { RouteObj } from '../Routes';
 import { useAutomationServers } from '../automation-servers/contexts/AutomationServerProvider';
 import { AutomationServer } from '../automation-servers/interfaces/AutomationServer';
 import { AutomationServerType } from '../automation-servers/interfaces/AutomationServerType';
+import { hubAPI } from '../hub/api';
 import { setCookie } from './crud/cookie';
 import { useInvalidateCacheOnUnmount } from './useInvalidateCache';
 
@@ -43,6 +39,8 @@ export function LoginModal(props: { server?: string; onLogin?: () => void }) {
         </Stack>
       }
       isOpen
+      title={t('Login')}
+      aria-label={t('Login')}
       onClose={onClose}
       showClose={process.env.EDA !== 'true'}
       variant={ModalVariant.small}
@@ -104,7 +102,7 @@ function LoginForm(props: { defaultServer?: string; onLogin?: () => void }) {
             loginPageUrl = '/api/login/';
             break;
           case AutomationServerType.HUB:
-            loginPageUrl = '/api/automation-hub/_ui/v1/auth/login/';
+            loginPageUrl = hubAPI`/_ui/v1/auth/login/`;
             break;
           case AutomationServerType.EDA:
             loginPageUrl = '/api/eda/v1/auth/session/login/';
@@ -200,7 +198,7 @@ function LoginForm(props: { defaultServer?: string; onLogin?: () => void }) {
       disableScrolling
     >
       {process.env.AWX !== 'true' && process.env.HUB !== 'true' && process.env.EDA !== 'true' && (
-        <PageFormSelectOption
+        <PageFormSelect
           name="server"
           label={t('Automation server')}
           placeholderText={t('Select automation server')}

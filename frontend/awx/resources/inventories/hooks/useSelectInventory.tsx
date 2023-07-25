@@ -1,36 +1,39 @@
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelectDialog } from '../../../../../framework';
-import { Inventory } from '../../../interfaces/Inventory';
+import { SelectSingleDialog } from '../../../../../framework/PageDialogs/SelectSingleDialog';
 import { useAwxView } from '../../../useAwxView';
 import { useInventoriesColumns } from './useInventoriesColumns';
 import { useInventoriesFilters } from './useInventoriesFilters';
+import { Inventory } from '../../../interfaces/Inventory';
+import { usePageDialog } from '../../../../../framework';
+import { useCallback } from 'react';
 
-export function useSelectInventory(isLookup: boolean) {
-  const { t } = useTranslation();
+function SelectInventory(props: { title: string; onSelect: (inventory: Inventory) => void }) {
   const toolbarFilters = useInventoriesFilters();
   const tableColumns = useInventoriesColumns({ disableLinks: true });
-
-  const columns = useMemo(
-    () => (isLookup ? tableColumns.filter((item) => ['Name'].includes(item.header)) : tableColumns),
-    [isLookup, tableColumns]
-  );
   const view = useAwxView<Inventory>({
     url: '/api/v2/inventories/',
     toolbarFilters,
-    tableColumns: columns,
+    tableColumns,
     disableQueryString: true,
   });
+  return (
+    <SelectSingleDialog<Inventory>
+      {...props}
+      toolbarFilters={toolbarFilters}
+      tableColumns={tableColumns}
+      view={view}
+    />
+  );
+}
 
-  return {
-    useSelectDialog: useSelectDialog<Inventory>({
-      toolbarFilters,
-      tableColumns: columns,
-      view,
-      confirm: t('Confirm'),
-      cancel: t('Cancel'),
-      selected: t('Selected'),
-    }),
-    view,
-  };
+export function useSelectInventory() {
+  const [_, setDialog] = usePageDialog();
+  const { t } = useTranslation();
+  const openSelectInventory = useCallback(
+    (onSelect: (inventory: Inventory) => void) => {
+      setDialog(<SelectInventory title={t('Select inventory')} onSelect={onSelect} />);
+    },
+    [setDialog, t]
+  );
+  return openSelectInventory;
 }

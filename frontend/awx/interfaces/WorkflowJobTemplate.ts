@@ -2,16 +2,21 @@ import { WorkflowJobTemplate as SwaggerWorkflowJobTemplate } from './generated-f
 import { SummaryFieldsByUser } from './summary-fields/summary-fields';
 
 export interface WorkflowJobTemplate
-  extends Omit<SwaggerWorkflowJobTemplate, 'id' | 'name' | 'summary_fields' | 'job_type'> {
+  extends Omit<
+    SwaggerWorkflowJobTemplate,
+    'id' | 'name' | 'summary_fields' | 'job_type' | 'type' | 'related'
+  > {
   id: number;
   job_type: 'workflow_job_template';
   name: string;
   inventory?: number;
+  type: 'workflow_job_template';
   created: string;
   allow_simultaneous: boolean;
   modified: string;
   webhook_service: 'github' | 'gitlab' | null;
   webhook_credential: number;
+  related: { schedules: string };
   summary_fields: {
     webhook_credential: {
       id: number;

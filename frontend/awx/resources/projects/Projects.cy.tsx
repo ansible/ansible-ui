@@ -1,3 +1,4 @@
+import { ToolbarFilterType } from '../../../../framework';
 import * as useOptions from '../../../common/crud/useOptions';
 import { Projects } from './Projects';
 
@@ -24,16 +25,17 @@ describe('projects.cy.ts', () => {
         }
       ).as('projectsList');
     });
+
     it('Projects list renders', () => {
       cy.mount(<Projects />);
       cy.hasTitle(/^Projects$/);
       cy.get('tbody').find('tr').should('have.length', 11);
     });
+
     it('Projects list has filters for Name, Description, Type, Created By, and Modified By', () => {
       cy.mount(<Projects />);
       cy.hasTitle(/^Projects$/);
-      cy.contains('button.pf-c-select__toggle', /^Name$/).click();
-      cy.get('ul.pf-c-select__menu').within(() => {
+      cy.openToolbarFilterTypeSelect().within(() => {
         cy.contains(/^Name$/).should('be.visible');
         cy.contains(/^Description$/).should('be.visible');
         cy.contains(/^Type$/).should('be.visible');
@@ -41,167 +43,93 @@ describe('projects.cy.ts', () => {
         cy.contains(/^Modified by$/).should('be.visible');
       });
     });
+
     it('Filter projects by name', () => {
       cy.mount(<Projects />);
       cy.intercept('api/v2/projects/?name__icontains=foo*').as('nameFilterRequest');
-      cy.hasTitle(/^Projects$/);
-      cy.contains('button.pf-c-select__toggle', /^Name$/).click();
-      cy.filterTableByText('foo');
-      // A network request is made based on the filter selected on the UI
+      cy.filterTableByTypeAndText(/^Name$/, 'foo');
       cy.wait('@nameFilterRequest');
-      // Clear filter
-      cy.get('tbody').click();
       cy.clickButton(/^Clear all filters$/);
     });
+
     it('Filter projects by description', () => {
       cy.mount(<Projects />);
       cy.intercept('api/v2/projects/?description__icontains=bar*').as('descriptionFilterRequest');
-      cy.hasTitle(/^Projects$/);
-      cy.contains('button.pf-c-select__toggle', /^Name$/).click();
-      cy.get('ul.pf-c-select__menu').within(() => {
-        cy.contains('button', /^Description$/).click();
-      });
-      cy.filterTableByText('bar');
-      // A network request is made based on the filter selected on the UI
+      cy.filterTableByTypeAndText(/^Description$/, 'bar');
       cy.wait('@descriptionFilterRequest');
-      // Clear filter
-      cy.get('tbody').click();
       cy.clickButton(/^Clear all filters$/);
     });
+
     it('Filter projects by created by', () => {
       cy.mount(<Projects />);
       cy.intercept('api/v2/projects/?created_by__username__icontains=baz*').as(
         'createdByFilterRequest'
       );
-      cy.hasTitle(/^Projects$/);
-      cy.contains('button.pf-c-select__toggle', /^Name$/).click();
-      cy.get('ul.pf-c-select__menu').within(() => {
-        cy.contains('button', /^Created by$/).click();
-      });
-      cy.filterTableByText('baz');
-      // A network request is made based on the filter selected on the UI
+      cy.filterTableByTypeAndText(/^Created by$/, 'baz');
       cy.wait('@createdByFilterRequest');
-      // Clear filter
-      cy.get('tbody').click();
       cy.clickButton(/^Clear all filters$/);
     });
+
     it('Filter projects by modified by', () => {
       cy.mount(<Projects />);
       cy.intercept('api/v2/projects/?modified_by__username__icontains=qux*').as(
         'modifiedByFilterRequest'
       );
-      cy.hasTitle(/^Projects$/);
-      cy.contains('button.pf-c-select__toggle', /^Name$/).click();
-      cy.get('ul.pf-c-select__menu').within(() => {
-        cy.contains('button', /^Modified by$/).click();
-      });
-      cy.filterTableByText('qux');
-      // A network request is made based on the filter selected on the UI
+      cy.filterTableByTypeAndText(/^Modified by$/, 'qux');
       cy.wait('@modifiedByFilterRequest');
-      // Clear filter
-      cy.get('tbody').click();
       cy.clickButton(/^Clear all filters$/);
     });
-    it('Filter projects by Type > Git', () => {
+
+    it('Filter projects by Type = Git', () => {
       cy.mount(<Projects />);
       cy.intercept('api/v2/projects/?scm_type=git&order_by=name&page=1&page_size=10').as(
         'scmGitTypeFilterRequest'
       );
-      cy.hasTitle(/^Projects$/);
-      cy.contains('button.pf-c-select__toggle', /^Name$/).click();
-      cy.get('ul.pf-c-select__menu').within(() => {
-        cy.contains('button', /^Type$/).click();
-      });
-      cy.contains('button.pf-c-select__toggle', /^Select types$/).click();
-      cy.get('ul.pf-c-select__menu').within(() => {
-        cy.contains('label', /^Git$/).click();
-      });
-      // A network request is made based on the filter selected on the UI
+      cy.filterByMultiSelection(/^Type$/, /^Git$/);
       cy.wait('@scmGitTypeFilterRequest');
-      // Clear filter
-      cy.get('tbody').click();
       cy.clickButton(/^Clear all filters$/);
     });
-    it('Filter projects by Type > Subversion', () => {
+
+    it('Filter projects by Type = Subversion', () => {
       cy.mount(<Projects />);
       cy.intercept('api/v2/projects/?scm_type=svn&order_by=name&page=1&page_size=10').as(
         'scmSvnTypeFilterRequest'
       );
-      cy.hasTitle(/^Projects$/);
-      cy.contains('button.pf-c-select__toggle', /^Name$/).click();
-      cy.get('ul.pf-c-select__menu').within(() => {
-        cy.contains('button', /^Type$/).click();
-      });
-      cy.contains('button.pf-c-select__toggle', /^Select types$/).click();
-      cy.get('ul.pf-c-select__menu').within(() => {
-        cy.contains('label', /^Subversion$/).click();
-      });
-      // A network request is made based on the filter selected on the UI
+      cy.filterByMultiSelection(/Type$/, /^Subversion$/);
       cy.wait('@scmSvnTypeFilterRequest');
-      // Clear filter
-      cy.get('tbody').click();
       cy.clickButton(/^Clear all filters$/);
     });
-    it('Filter projects by Type > Insights', () => {
+
+    it('Filter projects by Type = Insights', () => {
       cy.mount(<Projects />);
       cy.intercept('api/v2/projects/?scm_type=insights&order_by=name&page=1&page_size=10').as(
         'scmInsightsTypeFilterRequest'
       );
-      cy.hasTitle(/^Projects$/);
-      cy.contains('button.pf-c-select__toggle', /^Name$/).click();
-      cy.get('ul.pf-c-select__menu').within(() => {
-        cy.contains('button', /^Type$/).click();
-      });
-      cy.contains('button.pf-c-select__toggle', /^Select types$/).click();
-      cy.get('ul.pf-c-select__menu').within(() => {
-        cy.contains('label', /^Red Hat insights$/).click();
-      });
-      // A network request is made based on the filter selected on the UI
+      cy.filterByMultiSelection(/Type$/, /^Red Hat insights$/);
       cy.wait('@scmInsightsTypeFilterRequest');
-      // Clear filter
-      cy.get('tbody').click();
       cy.clickButton(/^Clear all filters$/);
     });
-    it('Filter projects by Type > Manual', () => {
+
+    it('Filter projects by Type = Manual', () => {
       cy.mount(<Projects />);
       cy.intercept('api/v2/projects/?scm_type=&order_by=name&page=1&page_size=10').as(
         'scmManualTypeFilterRequest'
       );
-      cy.hasTitle(/^Projects$/);
-      cy.contains('button.pf-c-select__toggle', /^Name$/).click();
-      cy.get('ul.pf-c-select__menu').within(() => {
-        cy.contains('button', /^Type$/).click();
-      });
-      cy.contains('button.pf-c-select__toggle', /^Select types$/).click();
-      cy.get('ul.pf-c-select__menu').within(() => {
-        cy.contains('label', /^Manual$/).click();
-      });
-      // A network request is made based on the filter selected on the UI
+      cy.filterByMultiSelection(/Type$/, /^Manual$/);
       cy.wait('@scmManualTypeFilterRequest');
-      // Clear filter
-      cy.get('tbody').click();
       cy.clickButton(/^Clear all filters$/);
     });
-    it('Filter projects by Type > Remote Archive', () => {
+
+    it('Filter projects by Type = Remote Archive', () => {
       cy.mount(<Projects />);
       cy.intercept('api/v2/projects/?scm_type=archive&order_by=name&page=1&page_size=10').as(
         'scmArchiveTypeFilterRequest'
       );
-      cy.hasTitle(/^Projects$/);
-      cy.contains('button.pf-c-select__toggle', /^Name$/).click();
-      cy.get('ul.pf-c-select__menu').within(() => {
-        cy.contains('button', /^Type$/).click();
-      });
-      cy.contains('button.pf-c-select__toggle', /^Select types$/).click();
-      cy.get('ul.pf-c-select__menu').within(() => {
-        cy.contains('label', /^Remote archive$/).click();
-      });
-      // A network request is made based on the filter selected on the UI
+      cy.filterByMultiSelection(/Type$/, /^Remote archive$/);
       cy.wait('@scmArchiveTypeFilterRequest');
-      // Clear filter
-      cy.get('tbody').click();
       cy.clickButton(/^Clear all filters$/);
     });
+
     it('Sync project calls API /update endpoint', () => {
       cy.mount(<Projects />);
       cy.intercept('api/v2/projects/6/update/').as('projectUpdateRequest');
@@ -213,10 +141,12 @@ describe('projects.cy.ts', () => {
       // A network request is made to /update based on project id selected on the UI
       cy.wait('@projectUpdateRequest');
     });
+
     it('Create Project button is disabled if the user does not have permission to create projects', () => {
       cy.mount(<Projects />);
       cy.contains('a', /^Create project$/).should('have.attr', 'aria-disabled', 'true');
     });
+
     it('Cancel project sync toolbar button shows error dialog if project sync is not running', () => {
       cy.mount(<Projects />);
       cy.selectTableRow(' Project 1 Org 0');
@@ -240,6 +170,7 @@ describe('projects.cy.ts', () => {
       });
       cy.clickButton(/^Clear all filters$/);
     });
+
     it('Cancel project sync toolbar button shows error dialog if user has insufficient permissions', () => {
       cy.mount(<Projects />);
       cy.selectTableRow(' Project 2 Org 0');
@@ -263,6 +194,7 @@ describe('projects.cy.ts', () => {
       });
       cy.clickButton(/^Clear all filters$/);
     });
+
     it('Sync, Copy, Edit, Delete Project button is disabled if the user does not have permission(s)', () => {
       cy.mount(<Projects />);
       cy.contains('td', ' Project 1 Org 0')
@@ -280,6 +212,7 @@ describe('projects.cy.ts', () => {
             .should('have.attr', 'aria-disabled', 'true');
         });
     });
+
     it('Sync project kebab button is disabled for project with active sync status', () => {
       cy.mount(<Projects />);
       cy.contains('td', ' Project 3 Org 0')
@@ -292,6 +225,7 @@ describe('projects.cy.ts', () => {
         .contains(/^The project cannot be synced because a sync job is currently running$/)
         .should('be.visible');
     });
+
     it('Cancel project sync kebab button is visible for project with active sync status and is hidden for project with non active sync status', () => {
       cy.mount(<Projects />);
       // select project with active sync status
@@ -307,6 +241,7 @@ describe('projects.cy.ts', () => {
           cy.get('#cancel-project-sync').should('not.exist');
         });
     });
+
     it('Cancel project sync row button is disabled for user with insufficient permissions', () => {
       cy.mount(<Projects />);
       // select project with active sync status
@@ -320,13 +255,14 @@ describe('projects.cy.ts', () => {
         .contains(/^The project sync cannot be canceled due to insufficient permission$/)
         .should('be.visible');
     });
+
     it('Create Project button is enabled if the user has permission to create projects', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({
         data: {
           actions: {
             POST: {
               name: {
-                type: 'string',
+                type: ToolbarFilterType.Text,
                 required: true,
                 label: 'Name',
                 max_length: 512,
@@ -340,6 +276,7 @@ describe('projects.cy.ts', () => {
       cy.mount(<Projects />);
       cy.contains('a', /^Create project$/).should('have.attr', 'aria-disabled', 'false');
     });
+
     it('Displays error if projects are not successfully loaded', () => {
       cy.intercept(
         {
@@ -354,6 +291,7 @@ describe('projects.cy.ts', () => {
       cy.contains('Error loading projects');
     });
   });
+
   describe('Empty list', () => {
     beforeEach(() => {
       cy.intercept(
@@ -372,7 +310,7 @@ describe('projects.cy.ts', () => {
           actions: {
             POST: {
               name: {
-                type: 'string',
+                type: ToolbarFilterType.Text,
                 required: true,
                 label: 'Name',
                 max_length: 512,

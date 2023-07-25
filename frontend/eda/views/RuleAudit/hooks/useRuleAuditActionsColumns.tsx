@@ -17,9 +17,8 @@ export function useRuleAuditActionsColumns() {
             <TextCell
               text={ruleAuditAction?.name}
               icon={<ExternalLinkAltIcon />}
-              onClick={() => {
-                open(ruleAuditAction?.url, '_blank');
-              }}
+              iconAlign={'right'}
+              to={ruleAuditAction?.url}
             />
           ) : (
             <TextCell text={ruleAuditAction?.name} />
@@ -30,8 +29,6 @@ export function useRuleAuditActionsColumns() {
       {
         header: t('Status'),
         cell: (ruleAuditAction) => <StatusCell status={ruleAuditAction?.status} />,
-        card: 'name',
-        list: 'name',
       },
       {
         header: t('Last fired date'),
@@ -42,6 +39,8 @@ export function useRuleAuditActionsColumns() {
             }
           />
         ),
+        card: 'hidden',
+        list: 'secondary',
       },
     ],
     [t]

@@ -13,11 +13,11 @@ export function useSelectExecutionEnvironments(organizationId?: string) {
   const tableColumns = useExecutionEnvironmentsColumns({ disableLinks: true });
   const defaultParams: {
     order_by: string;
-    or__organization__isnull: string;
+    // or__organization__isnull: string;
     [key: string]: string;
   } = {
     order_by: 'name',
-    or__organization__isnull: 'True',
+    // or__organization__isnull: 'True',
   };
   if (organizationId) {
     defaultParams.or__organization__id = organizationId;

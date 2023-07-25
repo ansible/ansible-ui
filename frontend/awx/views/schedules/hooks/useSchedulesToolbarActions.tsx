@@ -2,17 +2,22 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { PlusIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { RouteObj } from '../../../../Routes';
 import { useOptions } from '../../../../common/crud/useOptions';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { useDeleteSchedules } from './useDeleteSchedules';
 
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
 import { Schedule } from '../../../interfaces/Schedule';
+import { useGetSchedulCreateUrl } from './scheduleHelpers';
 
-export function useScheduleToolbarActions(onComplete: (schedules: Schedule[]) => void) {
+export function useScheduleToolbarActions(
+  onComplete: (schedules: Schedule[]) => void,
+  sublistEndPoint = '/api/v2/schedules/'
+) {
+  const createUrl = useGetSchedulCreateUrl(sublistEndPoint);
+
   const { t } = useTranslation();
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/v2/schedules/');
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(sublistEndPoint);
   const canCreateSchedule = Boolean(data && data.actions && data.actions['POST']);
 
   const deleteSchedules = useDeleteSchedules(onComplete);
@@ -31,7 +36,7 @@ export function useScheduleToolbarActions(onComplete: (schedules: Schedule[]) =>
           : t(
               'You do not have permission to create a schedule. Please contact your organization administrator if there is an issue with your access.'
             ),
-        href: RouteObj.CreateSchedule,
+        href: createUrl,
       },
 
       { type: PageActionType.Seperator },
@@ -44,7 +49,7 @@ export function useScheduleToolbarActions(onComplete: (schedules: Schedule[]) =>
         isDanger: true,
       },
     ],
-    [canCreateSchedule, deleteSchedules, t]
+    [canCreateSchedule, createUrl, deleteSchedules, t]
   );
 
   return ScheduleToolbarActions;

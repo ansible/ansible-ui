@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IToolbarFilter } from '../../../../../framework';
+import { IToolbarFilter, ToolbarFilterType } from '../../../../../framework';
 
 export function useHostMetricsFilters() {
   const { t } = useTranslation();
@@ -9,7 +9,7 @@ export function useHostMetricsFilters() {
       {
         key: 'hostname__icontains',
         label: t('Hostname'),
-        type: 'string',
+        type: ToolbarFilterType.Text,
         query: 'hostname__icontains',
         comparison: 'contains',
       },

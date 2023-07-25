@@ -7,10 +7,13 @@ import { useOptions } from '../../../../common/crud/useOptions';
 import { cannotDeleteResource, cannotEditResource } from '../../../../common/utils/RBAChelpers';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { Schedule } from '../../../interfaces/Schedule';
-import { getScheduleResourceUrl } from './getScheduleResourceUrl';
+import { useGetSchedulCreateUrl } from './scheduleHelpers';
 import { useDeleteSchedules } from './useDeleteSchedules';
 
-export function useSchedulesActions(options: { onScheduleToggleorDeleteCompleted: () => void }) {
+export function useSchedulesActions(options: {
+  onScheduleToggleorDeleteCompleted: () => void;
+  sublistEndpoint?: string;
+}) {
   const { t } = useTranslation();
   const deleteSchedule = useDeleteSchedules(options?.onScheduleToggleorDeleteCompleted);
   const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/v2/schedules/');
@@ -22,8 +25,18 @@ export function useSchedulesActions(options: { onScheduleToggleorDeleteCompleted
     },
     [options]
   );
+  const editUrl = useGetSchedulCreateUrl(options.sublistEndpoint);
   const rowActions = useMemo<IPageAction<Schedule>[]>(
     () => [
+      {
+        type: PageActionType.Link,
+        selection: PageActionSelection.Single,
+        icon: EditIcon,
+        label: t(`Edit schedule`),
+        isDisabled: (schedule) => cannotEditResource(schedule, t, canCreateSchedule),
+        href: () => editUrl,
+        isPinned: true,
+      },
       {
         isPinned: true,
         ariaLabel: (isEnabled) =>
@@ -36,15 +49,6 @@ export function useSchedulesActions(options: { onScheduleToggleorDeleteCompleted
         onToggle: (schedule, enabled) => handleToggleSchedule(schedule, enabled),
         isSwitchOn: (schedule) => schedule.enabled,
       },
-      {
-        type: PageActionType.Link,
-        selection: PageActionSelection.Single,
-        icon: EditIcon,
-        isPinned: true,
-        label: t(`Edit schedule`),
-        isDisabled: (schedule) => cannotEditResource(schedule, t, canCreateSchedule),
-        href: (schedule) => getScheduleResourceUrl(schedule),
-      },
       { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
@@ -56,7 +60,7 @@ export function useSchedulesActions(options: { onScheduleToggleorDeleteCompleted
         isDanger: true,
       },
     ],
-    [deleteSchedule, handleToggleSchedule, canCreateSchedule, t]
+    [deleteSchedule, handleToggleSchedule, canCreateSchedule, editUrl, t]
   );
   return rowActions;
 }

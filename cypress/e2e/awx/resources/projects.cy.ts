@@ -2,9 +2,9 @@
 /// <reference types="cypress" />
 
 import { randomString } from '../../../../framework/utils/random-string';
+import { AwxItemsResponse } from '../../../../frontend/awx/common/AwxItemsResponse';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
-import { ItemsResponse } from '../../../../frontend/common/crud/Data';
 
 describe('projects', () => {
   let organization: Organization;
@@ -29,11 +29,11 @@ describe('projects', () => {
        * This also cleans up projects that were syncing and could not be deleted by other runs,
        * making a self cleaning E2E system for the live server.
        */
-      cy.requestGet<ItemsResponse<Project>>(
+      cy.requestGet<AwxItemsResponse<Project>>(
         `/api/v2/projects/?page_size=100&organization=null`
       ).then((itemsResponse) => {
         for (const project of itemsResponse.results) {
-          cy.requestDelete(`/api/v2/projects/${project.id}/`, true);
+          cy.requestDelete(`/api/v2/projects/${project.id}/`, { failOnStatusCode: false });
         }
       });
     });
@@ -124,7 +124,7 @@ describe('projects', () => {
       cy.hasTitle(testProject.name);
       cy.clickPageAction(/^Copy project$/);
       cy.hasAlert(`${testProject.name} copied`).should('be.visible');
-      cy.requestDelete(`/api/v2/projects/${testProject.id}/`, true);
+      cy.requestDelete(`/api/v2/projects/${testProject.id}/`, { failOnStatusCode: false });
     });
   });
   it('can delete project from project details page', () => {
@@ -150,7 +150,7 @@ describe('projects', () => {
       cy.intercept(`api/v2/projects/${project.id}/update/`).as('projectUpdateRequest');
       cy.clickButton(/^Sync project$/);
       cy.wait('@projectUpdateRequest');
-      cy.requestDelete(`/api/v2/projects/${project.id}/`, true);
+      cy.requestDelete(`/api/v2/projects/${project.id}/`, { failOnStatusCode: false });
     });
   });
   it('can sync project from projects list table row kebab menu', () => {
@@ -163,7 +163,7 @@ describe('projects', () => {
           cy.get('#sync-project').click();
         });
       cy.hasAlert(`Syncing ${project.name}`).should('be.visible');
-      cy.requestDelete(`/api/v2/projects/${project.id}/`, true);
+      cy.requestDelete(`/api/v2/projects/${project.id}/`, { failOnStatusCode: false });
     });
   });
 
@@ -189,7 +189,7 @@ describe('projects', () => {
   //     cy.filterTableByText(testProject.name);
   //     cy.get('td[data-label="Status"]').should('contain', 'Canceled');
   //     cy.clickButton(/^Clear all filters$/);
-  //     cy.requestDelete(`/api/v2/projects/${testProject.id}/`, true);
+  //     cy.requestDelete(`/api/v2/projects/${testProject.id}/`, { failOnStatusCode: false });
   //   });
   // });
 
@@ -203,7 +203,7 @@ describe('projects', () => {
       cy.navigateTo(/^Projects$/);
       cy.clickTableRowKebabAction(testProject.name, /^Copy project$/);
       cy.getTableRowByText(`${testProject.name} @`).should('be.visible');
-      cy.requestDelete(`/api/v2/projects/${testProject.id}/`, true);
+      cy.requestDelete(`/api/v2/projects/${testProject.id}/`, { failOnStatusCode: false });
     });
   });
 

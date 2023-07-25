@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { randomString } from '../../../../framework/utils/random-string';
+import { InstanceGroup } from '../../../../frontend/awx/interfaces/InstanceGroup';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Label } from '../../../../frontend/awx/interfaces/Label';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
-import { InstanceGroup } from '../../../../frontend/awx/interfaces/InstanceGroup';
 
 describe('inventories', () => {
   let organization: Organization;
@@ -16,7 +16,7 @@ describe('inventories', () => {
 
     cy.createAwxOrganization().then((org) => {
       organization = org;
-      cy.createAwxLabel(organization).then((lbl) => {
+      cy.createAwxLabel({ organization: organization.id }).then((lbl) => {
         label = lbl;
       });
     });
@@ -98,7 +98,9 @@ describe('inventories', () => {
       cy.get('#confirm').click();
       cy.clickButton(/^Delete inventory/);
       cy.hasTitle(/^Inventories$/);
-      cy.requestDelete(`/api/v2/organizations/${testInventory.organization}/`, true);
+      cy.requestDelete(`/api/v2/organizations/${testInventory.organization}/`, {
+        failOnStatusCode: false,
+      });
     });
   });
 
@@ -123,7 +125,9 @@ describe('inventories', () => {
       cy.navigateTo(/^Inventories$/);
       cy.clickTableRowKebabAction(testInventory.name, /^Copy inventory$/, true);
       cy.hasAlert(`${testInventory.name.toString()} copied`);
-      cy.requestDelete(`/api/v2/inventories/${testInventory.id.toString()}/`, true);
+      cy.requestDelete(`/api/v2/inventories/${testInventory.id.toString()}/`, {
+        failOnStatusCode: false,
+      });
     });
   });
 

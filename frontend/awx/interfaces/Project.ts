@@ -14,6 +14,7 @@ export interface Project
   name: string;
   base_dir: string;
   scm_type: SCMType;
+  type: 'project';
   summary_fields: {
     created_by: SummaryFieldsByUser;
     modified_by: SummaryFieldsByUser;

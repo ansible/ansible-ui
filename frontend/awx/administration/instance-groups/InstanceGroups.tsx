@@ -14,6 +14,7 @@ import {
   PageLayout,
   PageTable,
   TextCell,
+  ToolbarFilterType,
 } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
 import { useCreatedColumn, useModifiedColumn } from '../../../common/columns';
@@ -129,7 +130,7 @@ export function useInstanceGroupsFilters() {
       {
         key: 'name',
         label: t('Name'),
-        type: 'string',
+        type: ToolbarFilterType.Text,
         query: 'name__icontains',
         comparison: 'contains',
       },

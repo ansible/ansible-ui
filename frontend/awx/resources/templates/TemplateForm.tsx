@@ -3,22 +3,23 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
 import { PageForm, PageFormSubmitHandler, PageHeader, PageLayout } from '../../../../framework';
-import { ItemsResponse, postRequest, requestGet, requestPatch } from '../../../common/crud/Data';
+import { LoadingPage } from '../../../../framework/components/LoadingPage';
+import { RouteObj } from '../../../Routes';
+import { postRequest, requestGet, requestPatch } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
+import { AwxError } from '../../common/AwxError';
+import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { getAddedAndRemoved } from '../../common/util/getAddedAndRemoved';
-import { RouteObj } from '../../../Routes';
 import { Credential } from '../../interfaces/Credential';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { JobTemplate } from '../../interfaces/JobTemplate';
 import { JobTemplateForm } from '../../interfaces/JobTemplateForm';
 import { Label } from '../../interfaces/Label';
+import { Organization } from '../../interfaces/Organization';
 import { getAwxError } from '../../useAwxView';
 import { getJobTemplateDefaultValues } from './JobTemplateFormHelpers';
 import JobTemplateInputs from './JobTemplateInputs';
-import { AwxError } from '../../common/AwxError';
-import { LoadingPage } from '../../../../framework/components/LoadingPage';
-import { Organization } from '../../interfaces/Organization';
 
 const stringifyTags: (tags: { value: string }[]) => string = (tags) => {
   const stringifiedTags = tags.filter((tag) => {
@@ -42,7 +43,7 @@ export function EditJobTemplate() {
     error: instanceGroupsError,
     isLoading: isInstanceGroupsLoading,
     refresh: instanceGroupRefresh,
-  } = useGet<ItemsResponse<InstanceGroup>>(
+  } = useGet<AwxItemsResponse<InstanceGroup>>(
     `/api/v2/job_templates/${id.toString()}/instance_groups/`
   );
 
@@ -70,6 +71,7 @@ export function EditJobTemplate() {
       arrayedSkipTags,
       summary_fields: { credentials, labels },
     } = values;
+    values.project = values.summary_fields.project?.id;
     let jobTags = '';
     let skipTags = '';
     if (arrayedJobTags?.length) {
@@ -145,7 +147,7 @@ export function CreateJobTemplate() {
       arrayedSkipTags,
       summary_fields: { credentials = [], labels, webhook_credential },
     } = values;
-
+    values.project = values?.summary_fields?.project?.id;
     let jobTags = '';
     let skipTags = '';
     if (values?.arrayedJobTags?.length) {
@@ -237,7 +239,7 @@ async function submitLabels(template: JobTemplate, labels: Label[]) {
   if (!template.summary_fields?.organization?.id) {
     // eslint-disable-next-line no-useless-catch
     try {
-      const data = await requestGet<ItemsResponse<Organization>>('/api/v2/organizations/');
+      const data = await requestGet<AwxItemsResponse<Organization>>('/api/v2/organizations/');
       orgId = data.results[0].id;
     } catch (err) {
       throw err;
@@ -260,7 +262,7 @@ async function submitLabels(template: JobTemplate, labels: Label[]) {
   return results;
 }
 async function submitInstanceGroups(templateId: number, newInstanceGroups: InstanceGroup[]) {
-  const originalInstanceGroups = await requestGet<ItemsResponse<InstanceGroup>>(
+  const originalInstanceGroups = await requestGet<AwxItemsResponse<InstanceGroup>>(
     `/api/v2/job_templates/${templateId.toString()}/instance_groups/`
   );
   if (!isEqual(newInstanceGroups, originalInstanceGroups.results)) {

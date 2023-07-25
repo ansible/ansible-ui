@@ -41,7 +41,6 @@ module.exports = function (env, argv) {
           test: /\.(ts|tsx|js|jsx)$/,
           exclude: /node_modules/,
           use: [
-            isDevelopment && 'coverage-istanbul-loader',
             {
               loader: 'babel-loader',
               options: {
@@ -80,6 +79,9 @@ module.exports = function (env, argv) {
         'process.env.EDA_ROUTE_PREFIX': env.eda_route_prefix
           ? JSON.stringify(env.eda_route_prefix)
           : JSON.stringify('/eda'),
+        'process.env.HUB_API_BASE_PATH': JSON.stringify(
+          env.hub_api_base_path || '/api/automation-hub'
+        ),
       }),
       isDevelopment && new ReactRefreshWebpackPlugin(),
       ...['en', 'es', 'fr', 'ja', 'ko', 'nl', 'zh', 'zu'].map((locale) => {
@@ -160,6 +162,10 @@ module.exports = function (env, argv) {
       },
     },
     devtool: isProduction ? 'source-map' : 'eval-source-map',
+    watchOptions: {
+      // ignore editor files when watching
+      ignored: ['**/.*.sw[po]'],
+    },
   };
   return config;
 };

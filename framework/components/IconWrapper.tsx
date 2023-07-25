@@ -6,6 +6,7 @@ export function IconWrapper(props: {
   color?: PFColor;
   size?: 'sm' | 'md' | 'lg' | 'xl';
   padRight?: boolean;
+  padLeft?: boolean;
 }) {
   const newProps: {
     color?: string;
@@ -39,6 +40,23 @@ export function IconWrapper(props: {
     }
   }
 
+  let paddingLeft = 0;
+  if (props.padLeft) {
+    switch (props.size) {
+      case 'sm':
+        paddingLeft = 6;
+        break;
+      case 'md':
+        paddingLeft = 6;
+        break;
+      case 'lg':
+        paddingLeft = 8;
+        break;
+      case 'xl':
+        paddingLeft = 12;
+        break;
+    }
+  }
   const newChildren = Children.toArray(props.children).map((child) => {
     if (isValidElement(child)) {
       return cloneElement(child, newProps);
@@ -47,5 +65,5 @@ export function IconWrapper(props: {
     }
   });
 
-  return <div style={{ paddingRight }}>{newChildren}</div>;
+  return <div style={{ paddingRight, paddingLeft }}>{newChildren}</div>;
 }

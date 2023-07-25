@@ -5,3 +5,8 @@
 .pf-c-options-menu__menu {
   z-index: 400;
 }
+
+/* This is a workaround to handle when the content of the toolbar wraps */
+.pf-c-toolbar__content-section {
+  justify-content: start !important;
+}

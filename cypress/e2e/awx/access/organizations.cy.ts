@@ -2,8 +2,8 @@
 /// <reference types="cypress" />
 
 import { randomString } from '../../../../framework/utils/random-string';
+import { AwxItemsResponse } from '../../../../frontend/awx/common/AwxItemsResponse';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
-import { ItemsResponse } from '../../../../frontend/common/crud/Data';
 
 describe('organizations', () => {
   let organization: Organization;
@@ -20,13 +20,15 @@ describe('organizations', () => {
     cy.deleteAwxOrganization(organization);
     // Sometimes if tests are stopped in the middle, we get left over organizations
     // Cleanup E2E organizations older than 20 minutes
-    cy.requestGet<ItemsResponse<Organization>>(
+    cy.requestGet<AwxItemsResponse<Organization>>(
       `/api/v2/organizations/?page_size=100&created__lt=${new Date(
         Date.now() - 20 * 60 * 1000
       ).toISOString()}&name__startswith=E2E`
     ).then((itemsResponse) => {
       for (const organization of itemsResponse.results) {
-        cy.requestDelete(`/api/v2/organizations/${organization.id}/`, true);
+        cy.requestDelete(`/api/v2/organizations/${organization.id}/`, {
+          failOnStatusCode: false,
+        });
       }
     });
   });

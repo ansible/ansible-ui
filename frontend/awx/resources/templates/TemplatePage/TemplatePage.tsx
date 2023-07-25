@@ -12,6 +12,7 @@ import { AwxError } from '../../../common/AwxError';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { useTemplateActions } from '../hooks/useTemplateActions';
 import { TemplateDetails } from './TemplateDetails';
+import { Schedules } from '../../../views/schedules/Schedules';
 
 export function TemplatePage() {
   const { t } = useTranslation();
@@ -58,7 +59,7 @@ export function TemplatePage() {
           <PageNotImplemented />
         </RoutedTab>
         <RoutedTab label={t('Schedules')} url={RouteObj.JobTemplateSchedules}>
-          <PageNotImplemented />
+          <Schedules sublistEndpoint={`/api/v2/job_templates/${template.id}/schedules/`} />
         </RoutedTab>
         <RoutedTab label={t('Jobs')} url={RouteObj.JobTemplateJobs}>
           <PageNotImplemented />

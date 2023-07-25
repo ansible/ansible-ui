@@ -8,6 +8,7 @@ import { AwxError } from '../../awx/common/AwxError';
 import { StatusCell } from '../../common/Status';
 import { useGet } from '../../common/crud/useGet';
 import { Task } from './Task';
+import { pulpAPI } from '../api';
 
 export function TaskDetails() {
   const { t } = useTranslation();
@@ -16,7 +17,7 @@ export function TaskDetails() {
     data: task,
     error,
     refresh,
-  } = useGet<Task>(params.id ? `/api/automation-hub/pulp/api/v3/tasks/${params.id}` : '');
+  } = useGet<Task>(params.id ? pulpAPI`/tasks/${params.id}` : '');
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!task) return <LoadingPage breadcrumbs tabs />;

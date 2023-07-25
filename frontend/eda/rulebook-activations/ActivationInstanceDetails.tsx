@@ -1,4 +1,4 @@
-import { CodeBlock, CodeBlockCode, PageSection, Skeleton, Stack } from '@patternfly/react-core';
+import { PageSection, Skeleton, Stack } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
@@ -10,9 +10,10 @@ import {
   PageTabs,
   Scrollable,
 } from '../../../framework';
+import { PageDetailCodeEditor } from '../../../framework/PageDetails/PageDetailCodeEditor';
 import { formatDateString } from '../../../framework/utils/formatDateString';
 import { RouteObj } from '../../Routes';
-import { ItemsResponse } from '../../common/crud/Data';
+import { AwxItemsResponse } from '../../awx/common/AwxItemsResponse';
 import { useGet } from '../../common/crud/useGet';
 import { PageDetailsSection } from '../common/PageDetailsSection';
 import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../constants';
@@ -29,13 +30,13 @@ export function ActivationInstanceDetails() {
     SWR_REFRESH_INTERVAL
   );
 
-  const { data: activationInstanceLogInfo } = useGet<ItemsResponse<EdaActivationInstanceLog>>(
+  const { data: activationInstanceLogInfo } = useGet<AwxItemsResponse<EdaActivationInstanceLog>>(
     `${API_PREFIX}/activation-instances/${params.id ?? ''}/logs/?page_size=1`,
     undefined,
     SWR_REFRESH_INTERVAL
   );
 
-  const { data: activationInstanceLog } = useGet<ItemsResponse<EdaActivationInstanceLog>>(
+  const { data: activationInstanceLog } = useGet<AwxItemsResponse<EdaActivationInstanceLog>>(
     `${API_PREFIX}/activation-instances/${params.id ?? ''}/logs/?page_size=${
       activationInstanceLogInfo?.count || 10
     }`,
@@ -58,7 +59,7 @@ export function ActivationInstanceDetails() {
           <PageDetail label={t('Name')}>
             {`${activationInstance?.id || ''} - ${activationInstance?.name || ''}`}
           </PageDetail>
-          <PageDetail label={t('Activation status')}>{activationInstance?.status || ''}</PageDetail>
+          <PageDetail label={t('Status')}>{activationInstance?.status || ''}</PageDetail>
           <PageDetail label={t('Start date')}>
             {activationInstance?.started_at ? formatDateString(activationInstance?.started_at) : ''}
           </PageDetail>
@@ -68,18 +69,11 @@ export function ActivationInstanceDetails() {
         </PageDetails>
         <PageDetailsSection>
           {activationInstanceLog?.results?.length ? (
-            <PageDetail label={t('Output')}>
-              <CodeBlock>
-                <CodeBlockCode
-                  style={{
-                    minHeight: '150px',
-                  }}
-                  id="code-content"
-                >
-                  {activationInstanceLog?.results?.map((item) => item.log).join('\r\n')}
-                </CodeBlockCode>
-              </CodeBlock>
-            </PageDetail>
+            <PageDetailCodeEditor
+              label={t('Output')}
+              value={activationInstanceLog?.results?.map((item) => item.log).join('\r\n')}
+              showCopyToClipboard={true}
+            />
           ) : null}
         </PageDetailsSection>
       </Scrollable>

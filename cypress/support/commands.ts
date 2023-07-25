@@ -4,16 +4,18 @@
 import '@cypress/code-coverage/support';
 import { SetOptional, SetRequired } from 'type-fest';
 import { AwxToken } from '../../frontend/awx/interfaces/AwxToken';
+import { Credential } from '../../frontend/awx/interfaces/Credential';
+import { ExecutionEnvironment } from '../../frontend/awx/interfaces/ExecutionEnvironment';
+import { InstanceGroup } from '../../frontend/awx/interfaces/InstanceGroup';
 import { Inventory } from '../../frontend/awx/interfaces/Inventory';
+import { JobTemplate } from '../../frontend/awx/interfaces/JobTemplate';
 import { Label } from '../../frontend/awx/interfaces/Label';
 import { Organization } from '../../frontend/awx/interfaces/Organization';
 import { Project } from '../../frontend/awx/interfaces/Project';
+import { Schedule } from '../../frontend/awx/interfaces/Schedule';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
-import { ExecutionEnvironment } from '../../frontend/awx/interfaces/ExecutionEnvironment';
-import { Credential } from '../../frontend/awx/interfaces/Credential';
-import { InstanceGroup } from '../../frontend/awx/interfaces/InstanceGroup';
-import { Group, Host, JobTemplate } from '../../frontend/awx/interfaces/generated-from-swagger/api';
+import { Group, Host } from '../../frontend/awx/interfaces/generated-from-swagger/api';
 import { EdaControllerToken } from '../../frontend/eda/interfaces/EdaControllerToken';
 import { EdaCredential } from '../../frontend/eda/interfaces/EdaCredential';
 import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisionEnvironment';
@@ -29,9 +31,9 @@ import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaU
 import './auth';
 import './awx-commands';
 import { IAwxResources } from './awx-commands';
+import './common-commands';
 import './eda-commands';
 import './rest-commands';
-import { Schedule } from '../../frontend/awx/interfaces/Schedule';
 
 declare global {
   namespace Cypress {
@@ -81,6 +83,30 @@ declare global {
       selectToolbarFilterType(filterLabel: string | RegExp): Chainable<void>;
 
       setTablePageSize(text: '10' | '20' | '50' | '100'): Chainable<void>;
+
+      getFiltersToolbarItem(): Chainable<JQuery<HTMLElement>>;
+
+      /**
+       * Find the toolbar filter select, click it and returns the opened menu element.
+       *
+       * @example
+       * ```
+       * cy.openToolbarFilterTypeSelect().within(() => {
+       *   cy.contains(/^Name$/).should('be.visible');
+       * });
+       * ```
+       */
+      openToolbarFilterTypeSelect(): Chainable<JQuery<HTMLElement>>;
+
+      filterBySingleSelection(
+        filterType: RegExp | string,
+        selectLabel: RegExp | string
+      ): Chainable<void>;
+
+      filterByMultiSelection(
+        filterType: RegExp | string,
+        selectLabel: RegExp | string
+      ): Chainable<void>;
 
       /** Filter the table using it's current filter by entering text. */
       filterTableByText(text: string): Chainable<void>;
@@ -208,7 +234,13 @@ declare global {
       requestGet<T>(url: string): Chainable<T>;
 
       /** Sends a request to the API to delete a particular resource. */
-      requestDelete(url: string, ignoreError?: boolean): Chainable;
+      requestDelete(
+        url: string,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
+      ): Chainable;
 
       // --- AWX COMMANDS ---
 
@@ -222,7 +254,9 @@ declare global {
       awxRequest<ResponseT = unknown>(
         method: string,
         url: string,
-        body?: Cypress.RequestBody
+        body?: Cypress.RequestBody,
+        /** Whether to fail on response codes other than 2xx and 3xx */
+        failOnStatusCode?: boolean
       ): Chainable<Cypress.Response<ResponseT>>;
 
       /**
@@ -245,7 +279,13 @@ declare global {
        * This command only works for deleting a resource in AWX.
        * @param url
        */
-      awxRequestDelete(url: string): Chainable<void>;
+      awxRequestDelete(
+        url: string,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
+      ): Chainable<void>;
 
       createAwxOrganization(): Chainable<Organization>;
 
@@ -255,17 +295,21 @@ declare global {
        * @returns {Chainable<Project>}
        */
       createAwxProject(
-        project?: SetRequired<Partial<Omit<Project, 'id'>>, 'organization'>
+        project?: SetRequired<Partial<Omit<Project, 'id'>>, 'organization'>,
+        skipSync?: boolean
       ): Chainable<Project>;
 
       /** Create an execution environment in AWX */
-      createAwxExecutionEnvironment(): Chainable<ExecutionEnvironment>;
+      createAwxExecutionEnvironment(
+        executionEnvironment: Partial<Omit<ExecutionEnvironment, 'id'>>
+      ): Chainable<ExecutionEnvironment>;
 
       /** Creates a credential in AWX */
       createAWXCredential(
-        kind: string,
-        organization: number,
-        credential_type?: number
+        credential: SetRequired<
+          Partial<Omit<Credential, 'id'>>,
+          'organization' | 'kind' | 'credential_type'
+        >
       ): Chainable<Credential>;
       /**
        * Creates a project in AWX that is specific to being utilized in an EDA test.
@@ -274,9 +318,7 @@ declare global {
         project?: Partial<Omit<Project, 'id'>>;
       }): Chainable<Project>;
 
-      createAwxInventory(options?: {
-        inventory?: Partial<Omit<Inventory, 'id'>>;
-      }): Chainable<Inventory>;
+      createAwxInventory(inventory?: Partial<Omit<Inventory, 'id'>>): Chainable<Inventory>;
 
       /**
        * Creates an organization, project, inventory, and job template that are all linked to each other in AWX.
@@ -293,7 +335,13 @@ declare global {
       }>;
       createAWXSchedule(): Chainable<Schedule>;
 
-      createAwxJobTemplate(): Chainable<JobTemplate>;
+      createAwxJobTemplate(
+        jobTemplate: SetRequired<
+          Partial<Omit<JobTemplate, 'id'>>,
+          'organization' | 'project' | 'inventory'
+        >
+      ): Chainable<JobTemplate>;
+
       /**
        * This command creates a job template with specific variables that will work in conjunction with
        * an EDA project and rulebook activation.
@@ -309,17 +357,75 @@ declare global {
       getAwxJobTemplateByName(awxJobTemplateName: string): Chainable<JobTemplate>;
       createAwxTeam(organization: Organization): Chainable<Team>;
       createAwxUser(organization: Organization): Chainable<User>;
-      createAwxInstanceGroup(): Chainable<InstanceGroup>;
-      createAwxLabel(organization: Organization): Chainable<Label>;
-      deleteAwxOrganization(organization: Organization): Chainable<void>;
-      deleteAwxProject(project: Project): Chainable<void>;
-      deleteAwxInventory(inventory: Inventory): Chainable<void>;
-      deleteAwxJobTemplate(jobTemplate: JobTemplate): Chainable<void>;
-      deleteAWXSchedule(schedule: Schedule): Chainable<void>;
-      deleteAwxTeam(team: Team): Chainable<void>;
-      deleteAwxUser(user: User): Chainable<void>;
-      deleteAwxInstanceGroup(instanceGroup: InstanceGroup): Chainable<void>;
-      deleteAwxLabel(label: Label): Chainable<void>;
+      createAwxInstanceGroup(
+        instanceGroup?: Partial<Omit<InstanceGroup, 'id'>>
+      ): Chainable<InstanceGroup>;
+
+      createAwxLabel(label: Partial<Omit<Label, 'id'>>): Chainable<Label>;
+
+      deleteAwxOrganization(
+        organization: Organization,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
+      ): Chainable<void>;
+      deleteAwxProject(
+        project: Project,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
+      ): Chainable<void>;
+      deleteAwxInventory(
+        inventory: Inventory,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
+      ): Chainable<void>;
+      deleteAwxJobTemplate(
+        jobTemplate: JobTemplate,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
+      ): Chainable<void>;
+      deleteAWXSchedule(
+        schedule: Schedule,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
+      ): Chainable<void>;
+      deleteAwxTeam(
+        team: Team,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
+      ): Chainable<void>;
+      deleteAwxUser(
+        user: User,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
+      ): Chainable<void>;
+      deleteAwxInstanceGroup(
+        instanceGroup: InstanceGroup,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
+      ): Chainable<void>;
+      deleteAwxLabel(
+        label?: Label,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
+      ): Chainable<void>;
 
       /**
        * This creates a user token in AWX that can be exported as a string and used in EDA.
@@ -331,13 +437,25 @@ declare global {
        * This first searches AWX for an existing user token, and if one is not found, this command creates a new one.
        */
       getGlobalAwxToken(): Chainable<AwxToken>;
-      deleteAwxToken(awxToken: AwxToken): Chainable<void>;
+      deleteAwxToken(
+        awxToken: AwxToken,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
+      ): Chainable<void>;
 
       /**
        * Command for deleting resources created for testing
        * @param resources
        */
-      deleteAwxResources(resources?: IAwxResources): Chainable<void>;
+      deleteAwxResources(
+        resources?: IAwxResources,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
+      ): Chainable<void>;
 
       createInventoryHostGroup(
         organization: Organization
@@ -416,6 +534,10 @@ declare global {
 
       /**Identify a particular EDA project and make it available for use in testing. */
       getEdaProjectByName(edaProjectName: string): Chainable<EdaProject | undefined>;
+
+      waitForRulebookActionStatus(
+        edaRulebookActivation: EdaRulebookActivation
+      ): Chainable<EdaRulebookActivation>;
 
       /**Identify a particular EDA credential and make it available for use in testing. */
       getEdaCredentialByName(edaCredentialName: string): Chainable<EdaCredential | undefined>;

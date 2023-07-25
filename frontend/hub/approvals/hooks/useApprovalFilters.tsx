@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IToolbarFilter } from '../../../../framework';
+import { IToolbarFilter, ToolbarFilterType } from '../../../../framework';
 
 export function useApprovalFilters() {
   const { t } = useTranslation();
@@ -9,26 +9,26 @@ export function useApprovalFilters() {
       {
         key: 'collection',
         label: t('Collection'),
-        type: 'string',
+        type: ToolbarFilterType.Text,
         query: 'name',
-        comparison: 'contains',
+        comparison: 'equals',
       },
       {
         key: 'namespace',
         label: t('Namespace'),
-        type: 'string',
+        type: ToolbarFilterType.Text,
         query: 'namespace',
-        comparison: 'contains',
+        comparison: 'equals',
       },
       {
         key: 'status',
         label: t('Status'),
-        type: 'select',
-        query: 'repository',
+        type: ToolbarFilterType.MultiSelect,
+        query: 'repository_label',
         options: [
-          { label: t('Needs review'), value: 'staging' },
-          { label: t('Approved'), value: 'published' },
-          { label: t('Rejected'), value: 'rejected' },
+          { label: t('Needs review'), value: `pipeline=staging` },
+          { label: t('Approved'), value: `pipeline=approved` },
+          { label: t('Rejected'), value: `pipeline=rejected` },
         ],
         placeholder: t('Select statuses'),
       },

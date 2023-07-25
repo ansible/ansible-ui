@@ -45,10 +45,13 @@ export function getJobTemplateDefaultValues(
           name: template?.summary_fields?.inventory?.name,
           id: template?.summary_fields?.inventory?.id,
         } || null,
-      project: {
-        name: template?.summary_fields?.project?.name || '',
-        id: template?.summary_fields?.project?.id,
-      },
+      project: !template?.summary_fields?.project
+        ? null
+        : {
+            name: template?.summary_fields?.project?.name,
+            id: template?.summary_fields?.project?.id,
+            organization: template?.summary_fields?.project?.organization,
+          },
       execution_environment: {
         name: template?.summary_fields?.execution_environment?.name || '',
         id: template?.summary_fields?.execution_environment?.id,
@@ -56,6 +59,7 @@ export function getJobTemplateDefaultValues(
       webhook_credential: template?.summary_fields?.webhook_credential || undefined,
     },
     description: template?.description || '',
+    organization: template?.organization || undefined,
     diff_mode: template?.diff_mode || false,
     extra_vars: template?.extra_vars || '---\n',
     forks: template?.forks || 0,
@@ -70,7 +74,7 @@ export function getJobTemplateDefaultValues(
     name: template?.name || '',
     playbook: template?.playbook || '',
     prevent_instance_group_fallback: template?.prevent_instance_group_fallback || false,
-    project: template?.project || null,
+    project: template?.project || undefined,
     scm_branch: template?.scm_branch,
     arrayedSkipTags: template?.arrayedSkipTags ?? [{ value: '', label: '' }],
     skip_tags: '',

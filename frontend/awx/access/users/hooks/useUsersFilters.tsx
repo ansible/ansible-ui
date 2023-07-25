@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IToolbarFilter } from '../../../../../framework';
+import { IToolbarFilter, ToolbarFilterType } from '../../../../../framework';
 import {
   useFirstNameToolbarFilter,
   useLastNameToolbarFilter,
@@ -20,7 +20,7 @@ export function useUsersFilters() {
       {
         key: 'email',
         label: t('Email'),
-        type: 'string',
+        type: ToolbarFilterType.Text,
         query: 'email__icontains',
         comparison: 'contains',
       },

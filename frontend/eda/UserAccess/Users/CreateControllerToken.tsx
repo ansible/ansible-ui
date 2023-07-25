@@ -8,10 +8,10 @@ import {
   PageLayout,
 } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
-import { EdaUserInfo } from '../../../common/Masthead';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { API_PREFIX } from '../../constants';
 import { EdaControllerToken, EdaControllerTokenCreate } from '../../interfaces/EdaControllerToken';
+import { useEdaActiveUser } from '../../../common/useActiveUser';
 
 function ControllerTokenInputs() {
   const { t } = useTranslation();
@@ -46,31 +46,35 @@ export function CreateControllerToken() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const postRequest = usePostRequest<EdaControllerTokenCreate, EdaControllerToken>();
-  const user = EdaUserInfo();
+  const user = useEdaActiveUser();
 
   const onSubmit: PageFormSubmitHandler<EdaControllerTokenCreate> = async (token) => {
     await postRequest(`${API_PREFIX}/users/me/awx-tokens/`, token);
-    navigate(RouteObj.EdaUserDetailsTokens.replace(':id', `${user?.id || ''}`));
+    navigate(RouteObj.EdaMyTokens);
   };
   const onCancel = () => navigate(-1);
 
+  const canViewUsers = user?.roles.some((role) => role.name === 'Admin' || role.name === 'Auditor');
+  const breadcrumbs = [
+    ...(canViewUsers ? [{ label: t('Users'), to: RouteObj.EdaUsers }] : []),
+    {
+      label: user?.username ?? '',
+      to: canViewUsers
+        ? RouteObj.EdaUserDetails.replace(':id', `${user?.id || ''}`)
+        : RouteObj.EdaMyDetails,
+    },
+    {
+      label: t('Controller tokens'),
+      to: canViewUsers
+        ? RouteObj.EdaUserDetailsTokens.replace(':id', `${user?.id || ''}`)
+        : RouteObj.EdaMyTokens,
+    },
+    { label: user?.username ?? '' },
+  ];
+
   return (
     <PageLayout>
-      <PageHeader
-        title={t('Create Controller Token')}
-        breadcrumbs={[
-          { label: t('Users'), to: RouteObj.EdaUsers },
-          {
-            label: user?.username ?? '',
-            to: RouteObj.EdaUserDetails.replace(':id', `${user?.id || ''}`),
-          },
-          {
-            label: t('Controller tokens'),
-            to: RouteObj.EdaUserDetailsTokens.replace(':id', `${user?.id || ''}`),
-          },
-          { label: user?.username ?? '' },
-        ]}
-      />
+      <PageHeader title={t('Create Controller Token')} breadcrumbs={breadcrumbs} />
       <PageForm
         submitText={t('Create controller token')}
         onSubmit={onSubmit}

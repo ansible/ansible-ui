@@ -52,7 +52,7 @@ export function AwxRecentProjectsCard() {
         emptyStateTitle={t('There are currently no projects')}
         emptyStateDescription={t('Create a project by clicking the button below.')}
         emptyStateButtonText={t('Create project')}
-        emptyStateButtonClick={() => navigate(RouteObj.CreateProjectTemplate)}
+        emptyStateButtonClick={() => navigate(RouteObj.CreateProject)}
         {...view}
         compact
         itemCount={view.itemCount !== undefined ? Math.min(view.itemCount, 7) : undefined}

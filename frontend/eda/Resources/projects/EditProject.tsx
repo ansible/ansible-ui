@@ -1,9 +1,9 @@
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
 import {
   PageForm,
-  PageFormSelectOption,
+  PageFormSelect,
   PageFormSubmitHandler,
   PageFormTextInput,
   PageHeader,
@@ -16,7 +16,7 @@ import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { useIsValidUrl } from '../../../common/validation/useIsValidUrl';
 import { API_PREFIX } from '../../constants';
 import { EdaCredential } from '../../interfaces/EdaCredential';
-import { EdaProject, EdaProjectCreate } from '../../interfaces/EdaProject';
+import { EdaProject, EdaProjectCreate, EdaProjectRead } from '../../interfaces/EdaProject';
 import { EdaResult } from '../../interfaces/EdaResult';
 
 function ProjectCreateInputs() {
@@ -41,7 +41,8 @@ function ProjectCreateInputs() {
       />
       <PageFormTextInput
         name="type"
-        isReadOnly={true}
+        aria-disabled={true}
+        isDisabled={true}
         label={t('SCM type')}
         placeholder={t('Git')}
         labelHelpTitle={t('SCM type')}
@@ -54,11 +55,9 @@ function ProjectCreateInputs() {
         placeholder={t('Enter SCM URL')}
         validate={isValidUrl}
         labelHelpTitle={t('SCM URL')}
-        labelHelp={t(
-          'A URL to a remote archive, such as a Github Release or a build artifact stored in Artifactory and unpacks it into the project path for use.'
-        )}
+        labelHelp={t('HTTP[S] protocol address of a repository, such as GitHub or GitLab.')}
       />
-      <PageFormSelectOption
+      <PageFormSelect
         name={'credential_id'}
         label={t('Credential')}
         placeholderText={t('Select credential')}
@@ -70,6 +69,7 @@ function ProjectCreateInputs() {
               }))
             : []
         }
+        footer={<Link to={RouteObj.CreateEdaCredential}>{t('Create credential')}</Link>}
         labelHelpTitle={t('Credential')}
         labelHelp={t('The token needed to utilize the SCM URL.')}
       />
@@ -98,11 +98,12 @@ function ProjectEditInputs() {
       />
       <PageFormTextInput
         name="type"
-        isReadOnly={true}
+        aria-disabled={true}
+        isDisabled={true}
         label={t('SCM type')}
         placeholder={t('Git')}
       />
-      <PageFormSelectOption
+      <PageFormSelect
         name={'credential_id'}
         label={t('Credential')}
         placeholderText={t('Select credential')}
@@ -114,6 +115,7 @@ function ProjectEditInputs() {
               }))
             : []
         }
+        footer={<Link to={RouteObj.CreateEdaCredential}>{t('Create credential')}</Link>}
       />
     </>
   );
@@ -158,7 +160,7 @@ export function EditProject() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const { data: project } = useGet<EdaProject>(`${API_PREFIX}/projects/${id.toString()}/`);
+  const { data: project } = useGet<EdaProjectRead>(`${API_PREFIX}/projects/${id.toString()}/`);
 
   const { cache } = useSWRConfig();
   const patchRequest = usePatchRequest<EdaProjectCreate, EdaProjectCreate>();
@@ -196,7 +198,7 @@ export function EditProject() {
           onSubmit={onSubmit}
           cancelText={t('Cancel')}
           onCancel={onCancel}
-          defaultValue={{ ...project, credential_id: project?.credential_id }}
+          defaultValue={{ ...project, credential_id: project?.credential?.id }}
         >
           <ProjectEditInputs />
         </PageForm>

@@ -3,7 +3,6 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import {
-  DateTimeCell,
   PageTable,
   useColumnsWithoutExpandedRow,
   useColumnsWithoutSort,
@@ -21,17 +20,7 @@ export function EdaRulebookActivationsCard(props: { view: IEdaView<EdaRulebookAc
   const navigate = useNavigate();
   const tableColumns = useRulebookActivationColumns();
   let columns = useVisibleModalColumns(tableColumns);
-  columns = useMemo(
-    () => [
-      ...columns,
-      {
-        header: t('Modified'),
-        cell: (project) =>
-          project.modified_at && <DateTimeCell format="date-time" value={project.modified_at} />,
-      },
-    ],
-    [columns, t]
-  );
+  columns = useMemo(() => columns, [columns]);
   columns = useColumnsWithoutSort(columns);
   columns = useColumnsWithoutExpandedRow(columns);
   return (

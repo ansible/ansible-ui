@@ -1,9 +1,9 @@
 import { Trans, useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
 import {
   PageForm,
-  PageFormSelectOption,
+  PageFormSelect,
   PageFormSubmitHandler,
   PageFormTextInput,
   PageHeader,
@@ -15,7 +15,10 @@ import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { API_PREFIX } from '../../constants';
 import { EdaCredential } from '../../interfaces/EdaCredential';
-import { EdaDecisionEnvironment } from '../../interfaces/EdaDecisionEnvironment';
+import {
+  EdaDecisionEnvironment,
+  EdaDecisionEnvironmentRead,
+} from '../../interfaces/EdaDecisionEnvironment';
 import { EdaResult } from '../../interfaces/EdaResult';
 
 function DecisionEnvironmentInputs() {
@@ -60,7 +63,7 @@ function DecisionEnvironmentInputs() {
         labelHelp={imageHelpBlock}
         labelHelpTitle={t('Image')}
       />
-      <PageFormSelectOption
+      <PageFormSelect
         name={'credential_id'}
         label={t('Credential')}
         placeholderText={t('Select credential')}
@@ -72,6 +75,7 @@ function DecisionEnvironmentInputs() {
               }))
             : []
         }
+        footer={<Link to={RouteObj.CreateEdaCredential}>Create credential</Link>}
         labelHelp={t('The token needed to utilize the Decision environment image.')}
         labelHelpTitle={t('Credential')}
       />
@@ -122,7 +126,7 @@ export function EditDecisionEnvironment() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const { data: decisionEnvironment } = useGet<EdaDecisionEnvironment>(
+  const { data: decisionEnvironment } = useGet<EdaDecisionEnvironmentRead>(
     `${API_PREFIX}/decision-environments/${id.toString()}/`
   );
   const { cache } = useSWRConfig();
@@ -163,7 +167,7 @@ export function EditDecisionEnvironment() {
           onCancel={onCancel}
           defaultValue={{
             ...decisionEnvironment,
-            credential_id: decisionEnvironment?.credential_id || undefined,
+            credential_id: decisionEnvironment?.credential?.id || undefined,
           }}
         >
           <DecisionEnvironmentInputs />

@@ -10,26 +10,7 @@ import {
   useView,
 } from '../../framework';
 import { useFetcher } from '../common/crud/Data';
-
-export function hubKeyFn(item: { pulp_id: string }) {
-  return item.pulp_id;
-}
-
-export function pulpHRefKeyFn(item: { pulp_href: string }) {
-  return item.pulp_href;
-}
-
-export function nameKeyFn(item: { name: string }) {
-  return item.name;
-}
-
-export function idKeyFn(item: { id: number | string }) {
-  return item.id;
-}
-
-export function pkKeyFn(item: { pk: number | string }) {
-  return item.pk;
-}
+import { QueryParams, getQueryString, serverlessURL } from './api';
 
 export interface HubItemsResponse<T extends object> {
   meta: {
@@ -49,22 +30,37 @@ export type IHubView<T extends object> = IView &
     unselectItemsAndRefresh: (items: T[]) => void;
   };
 
-export function useHubView<T extends object>(
-  url: string,
-  keyFn: (item: T) => string | number,
-  toolbarFilters?: IToolbarFilter[],
-  tableColumns?: ITableColumn<T>[],
-  disableQueryString?: boolean
-): IHubView<T> {
-  const view = useView(
-    { sort: tableColumns && tableColumns.length ? tableColumns[0].sort : undefined },
-    disableQueryString
-  );
+export function useHubView<T extends object>({
+  url,
+  keyFn,
+  toolbarFilters,
+  tableColumns,
+  disableQueryString,
+  queryParams,
+  sortKey,
+  defaultFilters,
+}: {
+  url: string;
+  keyFn: (item: T) => string | number;
+  toolbarFilters?: IToolbarFilter[];
+  tableColumns?: ITableColumn<T>[];
+  disableQueryString?: boolean;
+  queryParams?: QueryParams;
+  sortKey?: string;
+  defaultFilters?: Record<string, string[]>;
+}): IHubView<T> {
+  const view = useView({
+    defaultValues: {
+      sort: tableColumns && tableColumns.length ? tableColumns[0].sort : undefined,
+      filters: defaultFilters,
+    },
+    disableQueryString,
+  });
   const itemCountRef = useRef<{ itemCount: number | undefined }>({ itemCount: undefined });
 
   const { page, perPage, sort, sortDirection, filters } = view;
 
-  let queryString = '';
+  let queryString = queryParams ? `?${getQueryString(queryParams)}` : '';
 
   if (filters) {
     for (const key in filters) {
@@ -84,11 +80,14 @@ export function useHubView<T extends object>(
   }
 
   if (sort) {
+    if (!sortKey) {
+      sortKey = 'sort';
+    }
     queryString ? (queryString += '&') : (queryString += '?');
     if (sortDirection === 'desc') {
-      queryString += `sort=-${sort}`;
+      queryString += `${sortKey}=-${sort}`;
     } else {
-      queryString += `sort=${sort}`;
+      queryString += `${sortKey}=${sort}`;
     }
   }
 
@@ -107,7 +106,8 @@ export function useHubView<T extends object>(
   const { data, mutate } = response;
   const refresh = useCallback(() => mutate(), [mutate]);
 
-  useSWR<HubItemsResponse<T>>(data?.links?.next, fetcher, {
+  const nextPage = serverlessURL(data?.links?.next);
+  useSWR<HubItemsResponse<T>>(nextPage, fetcher, {
     dedupingInterval: 0,
   });
 

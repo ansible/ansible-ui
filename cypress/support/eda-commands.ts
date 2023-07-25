@@ -127,13 +127,35 @@ Cypress.Commands.add('getEdaRulebookActivation', (edaRulebookActivationName: str
 });
 
 Cypress.Commands.add('deleteEdaRulebookActivation', (edaRulebookActivation) => {
-  cy.requestDelete(`/api/eda/v1/activations/${edaRulebookActivation.id}/`, true).then(() => {
+  cy.waitForRulebookActionStatus(edaRulebookActivation);
+  cy.requestDelete(`/api/eda/v1/activations/${edaRulebookActivation.id}/`, {
+    failOnStatusCode: false,
+  }).then(() => {
     Cypress.log({
       displayName: 'EDA RULEBOOK ACTIVATION DELETION :',
       message: [`Deleted 👉  ${edaRulebookActivation.name}`],
     });
   });
 });
+
+Cypress.Commands.add(
+  'waitForRulebookActionStatus',
+  (edaRulebookActivation: EdaRulebookActivation) => {
+    cy.requestGet<EdaRulebookActivation>(
+      `/api/eda/v1/activations/${edaRulebookActivation.id}`
+    ).then((rba) => {
+      switch (rba.status) {
+        case 'failed':
+        case 'completed':
+          cy.wrap(rba);
+          break;
+        default:
+          cy.wait(100).then(() => cy.waitForRulebookActionStatus(edaRulebookActivation));
+          break;
+      }
+    });
+  }
+);
 
 Cypress.Commands.add('waitEdaProjectSync', (edaProject) => {
   cy.requestGet<EdaResult<EdaProject>>(`/api/eda/v1/projects/?name=${edaProject.name}`).then(
@@ -192,7 +214,9 @@ Cypress.Commands.add('getEdaProjectByName', (edaProjectName: string) => {
 
 Cypress.Commands.add('deleteEdaProject', (project: EdaProject) => {
   cy.waitEdaProjectSync(project);
-  cy.requestDelete(`/api/eda/v1/projects/${project.id}/`, true).then(() => {
+  cy.requestDelete(`/api/eda/v1/projects/${project.id}/`, {
+    failOnStatusCode: false,
+  }).then(() => {
     Cypress.log({
       displayName: 'EDA PROJECT DELETION :',
       message: [`Deleted 👉  ${project.name}`],
@@ -228,7 +252,9 @@ Cypress.Commands.add('createEdaCredential', () => {
 });
 
 Cypress.Commands.add('deleteEdaCredential', (credential: EdaCredential) => {
-  cy.requestDelete(`/api/eda/v1/credentials/${credential.id}/`, true).then(() => {
+  cy.requestDelete(`/api/eda/v1/credentials/${credential.id}/`, {
+    failOnStatusCode: false,
+  }).then(() => {
     Cypress.log({
       displayName: 'EDA CREDENTIAL DELETION :',
       message: [`Deleted 👉  ${credential.name}`],
@@ -311,7 +337,9 @@ Cypress.Commands.add('deleteEdaUser', (user: EdaUser) => {
   cy.wrap(user).should('not.be.undefined');
   cy.wrap(user.id).should('not.equal', 1);
   if (user.id === 1) return; // DO NOT DELETE ADMIN USER
-  cy.requestDelete(`/api/eda/v1/users/${user.id}/`, true).then(() => {
+  cy.requestDelete(`/api/eda/v1/users/${user.id}/`, {
+    failOnStatusCode: false,
+  }).then(() => {
     Cypress.log({
       displayName: 'EDA USER DELETION :',
       message: [`Deleted 👉  ${user.username}`],
@@ -365,7 +393,9 @@ Cypress.Commands.add('addEdaCurrentUserAwxToken', (awxToken: string) => {
 });
 
 Cypress.Commands.add('deleteEdaCurrentUserAwxToken', (awxToken: EdaControllerToken) => {
-  cy.requestDelete(`/api/eda/v1/users/me/awx-tokens/${awxToken.id}/`, true).then(() => {
+  cy.requestDelete(`/api/eda/v1/users/me/awx-tokens/${awxToken.id}/`, {
+    failOnStatusCode: false,
+  }).then(() => {
     Cypress.log({
       displayName: 'EDA CONTROLLER TOKEN DELETION :',
       message: [awxToken.name],
@@ -427,14 +457,14 @@ Cypress.Commands.add(
   'deleteEdaDecisionEnvironment',
   (decisionEnvironment: EdaDecisionEnvironment) => {
     //cy.waitEdaDESync(decisionEnvironment);
-    cy.requestDelete(`/api/eda/v1/decision-environments/${decisionEnvironment.id}/`, true).then(
-      () => {
-        Cypress.log({
-          displayName: 'EDA DECISION ENVIRONMENT DELETION :',
-          message: [`Deleted 👉  ${decisionEnvironment.name}`],
-        });
-      }
-    );
+    cy.requestDelete(`/api/eda/v1/decision-environments/${decisionEnvironment.id}/`, {
+      failOnStatusCode: false,
+    }).then(() => {
+      Cypress.log({
+        displayName: 'EDA DECISION ENVIRONMENT DELETION :',
+        message: [`Deleted 👉  ${decisionEnvironment.name}`],
+      });
+    });
   }
 );
 

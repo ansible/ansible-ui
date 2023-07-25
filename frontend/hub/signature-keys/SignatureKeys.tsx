@@ -14,9 +14,10 @@ import {
   PageLayout,
   PageTable,
   TextCell,
+  ToolbarFilterType,
 } from '../../../framework';
 import { downloadTextFile } from '../../../framework/utils/download-file';
-import { pulpHRefKeyFn } from '../useHubView';
+import { pulpAPI, pulpHrefKeyFn } from '../api';
 import { usePulpView } from '../usePulpView';
 import { SignatureKey } from './SignatureKey';
 
@@ -24,12 +25,12 @@ export function SignatureKeys() {
   const { t } = useTranslation();
   const toolbarFilters = useSignatureKeyFilters();
   const tableColumns = useSignatureKeysColumns();
-  const view = usePulpView<SignatureKey>(
-    '/api/automation-hub/pulp/api/v3/signing-services/',
-    pulpHRefKeyFn,
+  const view = usePulpView<SignatureKey>({
+    url: pulpAPI`/signing-services/`,
+    keyFn: pulpHrefKeyFn,
     toolbarFilters,
-    tableColumns
-  );
+    tableColumns,
+  });
   const rowActions = useMemo<IPageAction<SignatureKey>[]>(
     () => [
       {
@@ -104,7 +105,7 @@ export function useSignatureKeyFilters() {
       {
         key: 'name',
         label: t('Name'),
-        type: 'string',
+        type: ToolbarFilterType.Text,
         query: 'name',
         comparison: 'equals',
       },
