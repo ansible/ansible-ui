@@ -8,14 +8,17 @@ import {
 } from '@patternfly/react-core';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLoginModal } from '../../common/LoginModal';
-import { useAutomationServers } from '../contexts/AutomationServerProvider';
-import { AutomationServerType } from '../interfaces/AutomationServerType';
+import { useLoginModal } from '../common/LoginModal';
+import { useActiveAutomationServer, useAutomationServers } from './AutomationServersProvider';
+import { useAutomationServerTypes } from './hooks/useAutomationServerTypes';
 
 export function AutomationServerSwitcher() {
   const { t } = useTranslation();
-  const { automationServer, automationServers } = useAutomationServers();
+  const automationServers = useAutomationServers();
+  const automationServer = useActiveAutomationServer();
+  const automationServerTypes = useAutomationServerTypes();
   const [open, setOpen] = useState(false);
+  // const automationServerTypes = useAutomationServerTypes();
   const openLoginModal = useLoginModal();
   return (
     <PageSection
@@ -32,15 +35,11 @@ export function AutomationServerSwitcher() {
             alignItems={{ default: 'alignItemsFlexStart' }}
           >
             <Title headingLevel="h2">{automationServer?.name}</Title>
-            <Text component="small" style={{ opacity: 0.7 }}>
-              {automationServer?.type === AutomationServerType.AWX
-                ? t('AWX Ansible server')
-                : automationServer?.type === AutomationServerType.HUB
-                ? t('Galaxy Ansible server')
-                : automationServer?.type === AutomationServerType.EDA
-                ? t('EDA server')
-                : t('Unknown')}
-            </Text>
+            {automationServer && (
+              <Text component="small" style={{ opacity: 0.7 }}>
+                {automationServerTypes[automationServer.type]?.name ?? ''}
+              </Text>
+            )}
           </Flex>
         }
         isOpen={open}
@@ -48,12 +47,12 @@ export function AutomationServerSwitcher() {
         isPlain
         className="ansible-context-selector"
       >
-        {automationServers.map((automationServer, index) => (
+        {automationServers?.map((automationServer, index) => (
           <ContextSelectorItem
             key={index}
             onClick={() => {
               setOpen(false);
-              openLoginModal(automationServer.url);
+              openLoginModal(automationServer.id);
             }}
           >
             <Flex
@@ -62,15 +61,11 @@ export function AutomationServerSwitcher() {
               alignItems={{ default: 'alignItemsFlexStart' }}
             >
               <Title headingLevel="h6">{automationServer?.name}</Title>
-              <Text component="small" style={{ opacity: 0.7 }}>
-                {automationServer?.type === AutomationServerType.AWX
-                  ? t('AWX Ansible server')
-                  : automationServer?.type === AutomationServerType.HUB
-                  ? t('Galaxy Ansible server')
-                  : automationServer?.type === AutomationServerType.EDA
-                  ? t('EDA server')
-                  : t('Unknown')}
-              </Text>
+              {automationServer && (
+                <Text component="small" style={{ opacity: 0.7 }}>
+                  {automationServerTypes[automationServer.type]?.name ?? ''}
+                </Text>
+              )}
             </Flex>
           </ContextSelectorItem>
         ))}

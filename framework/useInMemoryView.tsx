@@ -62,13 +62,16 @@ export function useInMemoryView<T extends object>(options: {
           if (toolbarFilter) {
             const value = getValue(item, toolbarFilter.query) as unknown;
             if (typeof value === 'string') {
-              for (const filterValue of filters[key]) {
-                if (value.toLowerCase().includes(filterValue.toLowerCase())) return true;
+              const filterValues = filters[key];
+              if (filterValues.length !== 0) {
+                if (!filterValues.includes(value)) {
+                  return false;
+                }
               }
             }
           }
         }
-        return false;
+        return true;
       });
     }
   }, [filters, setFilterFn, toolbarFilters]);
