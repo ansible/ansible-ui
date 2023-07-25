@@ -39,6 +39,7 @@ export function AddAutomationServerDialog() {
   return (
     <Modal
       title={t('Add automation server')}
+      aria-label={t('Add automation server')}
       isOpen
       onClose={onClose}
       variant={ModalVariant.small}

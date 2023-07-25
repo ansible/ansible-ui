@@ -20,6 +20,7 @@ export function EventPayloadDialog(props: EventPayloadModalProps) {
   return (
     <Modal
       title={t('Event details')}
+      aria-label={t('Event details')}
       isOpen
       hasNoBodyWrapper
       onClose={onClose}

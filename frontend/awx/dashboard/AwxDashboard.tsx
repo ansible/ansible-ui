@@ -28,7 +28,7 @@ export function AwxDashboard() {
   const product: string = process.env.PRODUCT ?? t('AWX');
   const config = useAwxConfig();
   const [_, setDialog] = usePageDialog();
-  const welcomeMessageSetting = sessionStorage.getItem(HIDE_WELCOME_MESSAGE);
+  const welcomeMessageSetting = localStorage.getItem(HIDE_WELCOME_MESSAGE);
   const hideWelcomeMessage = welcomeMessageSetting ? welcomeMessageSetting === 'true' : false;
 
   useEffect(() => {

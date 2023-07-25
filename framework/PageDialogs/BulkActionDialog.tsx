@@ -162,6 +162,7 @@ function BulkActionDialog<T extends object>(props: BulkActionDialogProps<T>) {
     <Modal
       titleIconVariant={isDanger ? 'warning' : undefined}
       title={title}
+      aria-label={title}
       variant={ModalVariant.medium}
       isOpen
       onClose={() => {
