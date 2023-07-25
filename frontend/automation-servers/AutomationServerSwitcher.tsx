@@ -7,13 +7,11 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useLoginModal } from '../common/LoginModal';
 import { useActiveAutomationServer, useAutomationServers } from './AutomationServersProvider';
 import { useAutomationServerTypes } from './hooks/useAutomationServerTypes';
 
 export function AutomationServerSwitcher() {
-  const { t } = useTranslation();
   const automationServers = useAutomationServers();
   const automationServer = useActiveAutomationServer();
   const automationServerTypes = useAutomationServerTypes();
