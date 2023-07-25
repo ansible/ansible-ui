@@ -24,23 +24,11 @@ export function JobOutput(props: { job: Job; reloadJob: () => void }) {
   const isRunning = isJobRunning(job.status);
   const [isFollowModeEnabled, setIsFollowModeEnabled] = useState(isRunning);
 
-  useEffect(() => {
-    if (!isRunning && isFollowModeEnabled) {
-      setIsFollowModeEnabled(false);
-    }
-  }, [isRunning, isFollowModeEnabled]);
   // useEffect(() => {
   //   if (!isRunning && isFollowModeEnabled) {
-  //     console.log('useEffect not isRunning', job);
-  //     setTimeout(() => {
-  //       console.log('A turning off follow mode');
-  //       setTimeout(() => {
-  //         console.log('B turning off follow mode');
-  //         setIsFollowModeEnabled(false);
-  //       }, 500);
-  //     }, 500);
+  //     setIsFollowModeEnabled(false);
   //   }
-  // }, [isRunning]);
+  // }, [isRunning, isFollowModeEnabled]);
 
   if (!job) {
     return <Skeleton />;

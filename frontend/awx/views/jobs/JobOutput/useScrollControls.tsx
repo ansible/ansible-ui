@@ -1,32 +1,60 @@
-import { RefObject, useCallback, useEffect, useState } from 'react';
+import { RefObject, useCallback, useEffect, useState, useRef } from 'react';
 
 export function useScrollControls(
   containerRef: RefObject<HTMLElement>,
   isFollowModeEnabled: boolean,
   setIsFollowModeEnabled: (value: boolean) => void,
-  numRows: number
+  numRows: number,
+  isJobRunning: boolean
 ) {
-  const [isScrolledToEnd, setIsScrolledToEnd] = useState(isFollowModeEnabled);
+  // const [forceSecondScrollToEnd, setForceSecondScroll] = useState(false);
+  const [wasJobRunning, setWasJobRunning] = useState(isJobRunning);
+  const lastScrollTop = useRef(0);
 
   useEffect(() => {
     if (!containerRef.current) {
       return;
     }
-    console.log({ isFollowModeEnabled, numRows, isScrolledToEnd });
-    if (isFollowModeEnabled || isScrolledToEnd) {
-      // outputEndRef.current?.scrollIntoView();
+    // console.log({ isFollowModeEnabled, numRows, forceSecondScrollToEnd });
+    if (isFollowModeEnabled /*|| forceSecondScrollToEnd*/) {
+      // console.log({
+      //   scrollTop,
+      //   scrollHeight,
+      //   isHigher: scrollHeight < scrollTop,
+      // });
       containerRef.current.scrollTo({ top: containerRef.current.scrollHeight });
-      setIsScrolledToEnd(true);
+      /*
+        After scrolling to the bottom, the height of the element is more accurately
+        calculated when the events at the bottom render. This can cause the total
+        height to increase slightly, so we will need to scroll to the bottom a
+        second time on the successive render.
+      */
+      // setForceSecondScroll(true);
     }
-    if (!isFollowModeEnabled) {
-      setIsScrolledToEnd(false);
+    // if (!isFollowModeEnabled) {
+    //   setForceSecondScroll(false);
+    // }
+  }, [isFollowModeEnabled, numRows, containerRef]);
+
+  useEffect(() => {
+    if (wasJobRunning && !isJobRunning) {
+      setTimeout(() => {
+        setWasJobRunning(false);
+      }, 1500);
     }
-  }, [isFollowModeEnabled, isScrolledToEnd, numRows, containerRef]);
+  }, [isJobRunning, wasJobRunning]);
 
   const onScroll = useCallback(() => {
+    // console.log('onScroll');
     if (!containerRef.current) return;
-    console.log('X onScroll');
-  }, [containerRef]);
+    const { clientHeight, scrollHeight, scrollTop } = containerRef.current;
+    const isAtBottom = scrollTop + clientHeight >= scrollHeight;
+    if (!isAtBottom && !wasJobRunning) {
+      // console.log('disabling follow mode');
+      setIsFollowModeEnabled(false);
+    }
+    lastScrollTop.current = scrollTop;
+  }, [containerRef, setIsFollowModeEnabled, wasJobRunning]);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -40,17 +68,15 @@ export function useScrollControls(
 
   const scrollToTop = () => {
     containerRef.current?.scrollTo({ top: 0 });
-    setIsScrolledToEnd(false);
+    setIsFollowModeEnabled(false);
   };
 
   const scrollToBottom = () => {
     if (!containerRef.current) {
       return;
     }
-    // outputEndRef.current?.scrollIntoView();
     containerRef.current.scrollTo({ top: containerRef.current.scrollHeight });
     setIsFollowModeEnabled(true);
-    // setIsScrolledToEnd(true);
   };
 
   const scrollPageDown = () => {
@@ -67,6 +93,7 @@ export function useScrollControls(
     }
     const { height } = containerRef.current.getBoundingClientRect();
     containerRef.current?.scrollBy({ top: (height - 48) * -1 });
+    setIsFollowModeEnabled(false);
   };
 
   return {

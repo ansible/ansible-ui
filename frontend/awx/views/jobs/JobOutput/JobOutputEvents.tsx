@@ -107,7 +107,8 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
     containerRef,
     isFollowModeEnabled,
     setIsFollowModeEnabled,
-    jobOutputRows.length
+    jobOutputRows.length,
+    isJobRunning(job.status)
   );
 
   return (
