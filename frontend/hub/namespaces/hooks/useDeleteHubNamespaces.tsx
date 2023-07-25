@@ -3,7 +3,7 @@ import { compareStrings, useBulkConfirmation } from '../../../../framework';
 import { requestDelete } from '../../../common/crud/Data';
 import { HubNamespace } from '../HubNamespace';
 import { useHubNamespacesColumns } from './useHubNamespacesColumns';
-import { hubAPI } from '../../api/utils';
+import { pulpAPI } from '../../api/utils';
 import { nameKeyFn } from '../../../common/utils/nameKeyFn';
 
 export function useDeleteHubNamespaces(onComplete: (namespaces: HubNamespace[]) => void) {
@@ -26,7 +26,7 @@ export function useDeleteHubNamespaces(onComplete: (namespaces: HubNamespace[]) 
       onComplete,
       alertPrompts: [t('Deleting a namespace will delete all collections in the namespace.')],
       actionFn: (namespace: HubNamespace) =>
-        requestDelete(hubAPI`/_ui/v1/namespaces/${namespace.name}/`),
+        requestDelete(pulpAPI`/pulp_ansible/namespaces/${namespace.name}`),
     });
   };
   return deleteHubNamespaces;
