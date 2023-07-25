@@ -9,7 +9,7 @@ export function useHubNamespaceFilters() {
       {
         key: 'name__icontains',
         label: t('Name'),
-        type: 'string',
+        type: ToolbarFilterType.Text,
         query: 'name__icontains',
         comparison: 'contains',
       },
