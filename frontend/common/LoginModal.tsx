@@ -90,8 +90,6 @@ function LoginForm(props: { defaultServerId?: string | number; onLogin?: () => v
         );
         if (!automationServer) return;
 
-        console.log(automationServer);
-
         setActiveAutomationServer?.(automationServer);
         setCookie('server', automationServer.url);
 
