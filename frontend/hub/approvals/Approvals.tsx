@@ -1,10 +1,10 @@
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable } from '../../../framework';
+import { collectionKeyFn, hubAPI } from '../api';
 import { useHubView } from '../useHubView';
 import { CollectionVersionSearch } from './Approval';
 import { useApprovalFilters } from './hooks/useApprovalFilters';
 import { useApprovalsColumns } from './hooks/useApprovalsColumns';
-import { hubAPI, collectionKeyFn } from '../api';
 
 export function Approvals() {
   const { t } = useTranslation();

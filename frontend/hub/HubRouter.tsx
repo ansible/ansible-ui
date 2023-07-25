@@ -11,12 +11,12 @@ import { NamespaceDetails } from './namespaces/HubNamespaceDetails';
 import { CreateHubNamespace, EditHubNamespace } from './namespaces/HubNamespaceForm';
 import { Namespaces } from './namespaces/HubNamespaces';
 import { RemoteRegistries } from './remote-registries/RemoteRegistries';
+import { Remotes } from './remotes/Remotes';
 import { Repositories } from './repositories/Repositories';
 import { SignatureKeys } from './signature-keys/SignatureKeys';
 import { TaskDetails } from './tasks/TaskDetails';
 import { Tasks } from './tasks/Tasks';
 import { Token } from './token/Token';
-import { Remotes } from './remotes/Remotes';
 
 export function HubRouter() {
   const RouteObjWithoutPrefix = useRoutesWithoutPrefix(RouteObj.Hub);

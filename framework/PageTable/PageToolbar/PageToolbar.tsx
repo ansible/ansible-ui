@@ -156,6 +156,14 @@ export function PageTableToolbar<T extends object>(props: PageTableToolbarProps<
         paddingTop: sm ? undefined : 8,
         borderBottom: bottomBorder ? 'thin solid var(--pf-global--BorderColor--100)' : undefined,
       }}
+      inset={{
+        default: 'insetMd',
+        sm: 'insetMd',
+        md: 'insetMd',
+        lg: 'insetMd',
+        xl: 'insetLg',
+        '2xl': 'insetLg',
+      }}
     >
       <ToolbarContent>
         {/* Selection */}

@@ -1,3 +1,5 @@
+import { randomString } from '../../framework/utils/random-string';
+
 Cypress.Commands.add(
   'login',
   (server: string, username: string, password: string, serverType: string) => {
@@ -35,13 +37,15 @@ Cypress.Commands.add(
     });
 
     cy.clickButton(/^Add automation server$/);
-    cy.typeInputByLabel(/^Name$/, 'E2E');
-    cy.typeInputByLabel(/^Url$/, server);
-    cy.get('.pf-c-select__toggle').click();
-    cy.clickButton(serverType);
-    cy.get('button[type=submit]').click();
+    const automationServerName = 'E2E ' + randomString(4);
+    cy.getDialog().within(() => {
+      cy.typeInputByLabel(/^Name$/, automationServerName);
+      cy.typeInputByLabel(/^Url$/, server);
+      cy.selectDropdownOptionByLabel(/^Automation type$/, serverType);
+      cy.get('button[type=submit]').click();
+    });
 
-    cy.contains('a', /^E2E$/).click();
+    cy.contains('a', automationServerName).click();
     cy.typeInputByLabel(/^Username$/, username);
     cy.typeInputByLabel(/^Password$/, password);
     cy.get('button[type=submit]').click();
@@ -65,7 +69,7 @@ Cypress.Commands.add('awxLogin', () => {
         Cypress.env('AWX_SERVER') as string,
         Cypress.env('AWX_USERNAME') as string,
         Cypress.env('AWX_PASSWORD') as string,
-        'AWX Ansible server'
+        'AWX Ansible Server'
       );
       cy.hasTitle('Welcome to');
     },
@@ -87,7 +91,7 @@ Cypress.Commands.add('edaLogin', () => {
         Cypress.env('EDA_SERVER') as string,
         Cypress.env('EDA_USERNAME') as string,
         Cypress.env('EDA_PASSWORD') as string,
-        'EDA server'
+        'Event Driven Automation Server'
       );
       cy.hasTitle('Welcome to');
     },
