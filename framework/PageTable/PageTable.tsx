@@ -208,7 +208,8 @@ export type PageTableProps<T extends object> = {
  * ```
  */
 export function PageTable<T extends object>(props: PageTableProps<T>) {
-  const { toolbarActions, filters, error, itemCount, disableBodyPadding, pagination } = props;
+  const { toolbarActions, filters, error, itemCount, disableBodyPadding, pagination, keyFn } =
+    props;
 
   const { openColumnModal, columnModal, managedColumns } = useColumnModal(props.tableColumns);
   const tableColumns = useVisibleTableColumns(managedColumns);
@@ -224,7 +225,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
           expandedRowFunctions.push((item) => {
             const value = descriptionColumn.value?.(item);
             if (value) {
-              return <div>{value}</div>;
+              return <div key={descriptionColumn.id ?? descriptionColumn.header}>{value}</div>;
             }
           });
         } else {
@@ -236,6 +237,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
     if (expandedRowColumns.length) {
       expandedRowFunctions.push((item) => (
         <PageDetailsFromColumns
+          key={keyFn(item)}
           item={item}
           columns={expandedRowColumns}
           disablePadding
@@ -258,7 +260,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
     );
 
     return newExpandedRow;
-  }, [descriptionColumns, expandedRowColumns, props.expandedRow]);
+  }, [descriptionColumns, expandedRowColumns, keyFn, props.expandedRow]);
 
   const showSelect =
     props.showSelect ||

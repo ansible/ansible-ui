@@ -1,9 +1,9 @@
 import { Button, Modal, ModalVariant } from '@patternfly/react-core';
-import { useTranslation } from 'react-i18next';
-import { usePageDialog } from '../../../framework';
 import { useCallback, useState } from 'react';
-import { ReorderItems } from '../../../framework/components/ReorderItems';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import { usePageDialog } from '../../../framework';
+import { ReorderItems } from '../../../framework/components/ReorderItems';
 
 const ContainerDiv = styled.div`
   margin-top: 16px;
@@ -69,6 +69,7 @@ export function ManageView() {
   return (
     <Modal
       title={t('Manage View')}
+      aria-label={t('Manage View')}
       description={t(
         'Hide or show the panels you want to see on the overview page by selecting or unselecting, respectively. The panels are ordered from top to bottom on the list. Use the draggable icon :: to re-order your view.'
       )}

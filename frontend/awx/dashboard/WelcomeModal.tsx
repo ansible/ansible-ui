@@ -20,7 +20,7 @@ export function WelcomeModal() {
 
   const handleChange = (checked: boolean) => {
     setIsChecked(checked);
-    sessionStorage.setItem(HIDE_WELCOME_MESSAGE, JSON.stringify(checked));
+    localStorage.setItem(HIDE_WELCOME_MESSAGE, JSON.stringify(checked));
   };
 
   return (

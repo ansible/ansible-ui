@@ -28,6 +28,7 @@ export function SelectSingleDialog<T extends object>(props: SelectSingleDialogPr
   return (
     <Modal
       title={title}
+      aria-label={title}
       isOpen
       onClose={onClose}
       variant={ModalVariant.medium}

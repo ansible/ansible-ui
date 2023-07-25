@@ -1,10 +1,10 @@
 /* eslint-disable i18next/no-literal-string */
 import { Button, Form, Modal, ModalVariant, SelectOption } from '@patternfly/react-core';
 import { ReactNode, createContext, useCallback, useContext, useEffect, useState } from 'react';
+import styled from 'styled-components';
 import { usePageDialog } from './PageDialogs/PageDialog';
 import { FormGroupSelect } from './PageForm/Inputs/FormGroupSelect';
 import { useFrameworkTranslations } from './useFrameworkTranslations';
-import styled from 'styled-components';
 
 const FormDiv = styled.div`
   padding: var(--pf-global--spacer--lg);
@@ -133,6 +133,7 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
   return (
     <Modal
       title="Settings"
+      aria-label="Settings"
       isOpen={props.open}
       onClose={onClose}
       variant={ModalVariant.medium}
