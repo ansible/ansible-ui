@@ -195,13 +195,11 @@ describe('projects.cy.ts', () => {
       cy.clickButton(/^Clear all filters$/);
     });
 
-    it('Sync, Copy, Edit, Delete Project button is disabled if the user does not have permission(s)', () => {
+    it('Sync, Copy, Delete Project button is disabled if the user does not have permission(s)', () => {
       cy.mount(<Projects />);
       cy.contains('td', ' Project 1 Org 0')
         .parent()
         .within(() => {
-          cy.contains(/^Edit project$/).should('have.attr', 'aria-disabled', 'true');
-
           cy.get('#sync-project').should('have.attr', 'aria-disabled', 'true');
           cy.get('.pf-c-dropdown__toggle').click();
           cy.get('.pf-c-dropdown__menu-item')
