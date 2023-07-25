@@ -16,7 +16,6 @@ export function AutomationServerSwitcher() {
   const automationServer = useActiveAutomationServer();
   const automationServerTypes = useAutomationServerTypes();
   const [open, setOpen] = useState(false);
-  // const automationServerTypes = useAutomationServerTypes();
   const openLoginModal = useLoginModal();
   return (
     <PageSection

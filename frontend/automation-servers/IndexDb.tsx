@@ -144,7 +144,6 @@ export function useIndexedDbItems<Name extends StoreNames<MyDBSchema>>(
       );
       if (abortSignal.aborted) return;
       if (newItems && newItems.length > 0) {
-        // console.log(storeName, newItems)
         for (const item of newItems) {
           if (item.deleted) {
             itemMap.delete(item.id);

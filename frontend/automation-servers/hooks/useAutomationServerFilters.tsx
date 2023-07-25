@@ -24,13 +24,6 @@ export function useAutomationServerFilters() {
         placeholder: t('Filter by server type'),
         options: options,
       },
-      // {
-      //   key: 'labels',
-      //   type: ToolbarFilterType.Text,
-      //   query: 'labels',
-      //   label: t('Label'),
-      //   comparison: 'contains',
-      // },
     ],
     [options, t]
   );
