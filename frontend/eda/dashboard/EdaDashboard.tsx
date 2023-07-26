@@ -8,7 +8,7 @@ import { RouteObj } from '../../Routes';
 import { API_PREFIX } from '../constants';
 import { EdaDecisionEnvironment } from '../interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../interfaces/EdaProject';
-import { EdaRuleAudit } from '../interfaces/EdaRuleAudit';
+import { EdaRuleAuditItem } from '../interfaces/EdaRuleAudit';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
 import { useEdaView } from '../useEventDrivenView';
 import { EdaDecisionEnvironmentsCard } from './cards/EdaDecisionEnvironmentsCard';
@@ -39,7 +39,7 @@ export function EdaDashboard() {
     queryParams: { page: '1', page_size: '10' },
     disableQueryString: true,
   });
-  const edaRuleAuditView = useEdaView<EdaRuleAudit>({
+  const edaRuleAuditView = useEdaView<EdaRuleAuditItem>({
     url: `${API_PREFIX}/audit-rules/`,
     queryParams: { page: '1', page_size: '10' },
     disableQueryString: true,

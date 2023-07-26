@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
-import { EdaRuleAudit } from '../../interfaces/EdaRuleAudit';
+import { EdaRuleAuditItem } from '../../interfaces/EdaRuleAudit';
 import { useRuleAuditColumns } from './hooks/useRuleAuditColumns';
 import { API_PREFIX } from '../../constants';
 import { useEdaView } from '../../useEventDrivenView';
@@ -11,7 +11,7 @@ const ruleAuditEndpoint = `${API_PREFIX}/audit-rules/`;
 export function RuleAudit() {
   const { t } = useTranslation();
   const tableColumns = useRuleAuditColumns();
-  const view = useEdaView<EdaRuleAudit>({
+  const view = useEdaView<EdaRuleAuditItem>({
     url: ruleAuditEndpoint,
     tableColumns,
   });

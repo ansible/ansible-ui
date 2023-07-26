@@ -7,12 +7,12 @@ import { RouteObj } from '../../../Routes';
 import { useGet } from '../../../common/crud/useGet';
 import { API_PREFIX } from '../../constants';
 import { EdaResult } from '../../interfaces/EdaResult';
-import { EdaRuleAudit } from '../../interfaces/EdaRuleAudit';
+import { EdaRuleAuditItem } from '../../interfaces/EdaRuleAudit';
 
 const RuleAuditChart = () => {
   const { t } = useTranslation();
 
-  const { data } = useGet<EdaResult<EdaRuleAudit>>(`${API_PREFIX}/audit-rules/`);
+  const { data } = useGet<EdaResult<EdaRuleAuditItem>>(`${API_PREFIX}/audit-rules/`);
 
   // Chart Test Code
   // const generateRandomEdaRuleAudits = useCallback(
