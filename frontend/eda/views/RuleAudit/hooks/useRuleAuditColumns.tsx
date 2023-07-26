@@ -4,11 +4,11 @@ import { ColumnModalOption, ITableColumn, TextCell } from '../../../../../framew
 import { formatDateString } from '../../../../../framework/utils/formatDateString';
 import { RouteObj } from '../../../../Routes';
 import { StatusCell } from '../../../../common/Status';
-import { EdaRuleAudit } from '../../../interfaces/EdaRuleAudit';
+import { EdaRuleAuditItem } from '../../../interfaces/EdaRuleAudit';
 
 export function useRuleAuditColumns() {
   const { t } = useTranslation();
-  return useMemo<ITableColumn<EdaRuleAudit>[]>(
+  return useMemo<ITableColumn<EdaRuleAuditItem>[]>(
     () => [
       {
         header: t('Name'),
