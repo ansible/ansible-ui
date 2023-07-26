@@ -88,31 +88,47 @@ function LoginForm(props: { defaultServerId?: string | number; onLogin?: () => v
         const automationServer = automationServers?.find(
           (automationServer) => automationServer.id === data.serverId
         );
-        if (!automationServer) return;
+        let loginPageUrl = '';
+        let searchString = 'name="csrfmiddlewaretoken" value="';
+        if (automationServer) {
+          setActiveAutomationServer?.(automationServer);
+          setCookie('server', automationServer.url);
 
-        setActiveAutomationServer?.(automationServer);
-        setCookie('server', automationServer.url);
-
-        let loginPageUrl: string;
-        switch (automationServer.type) {
-          case AutomationServerType.AWX:
-            loginPageUrl = '/api/login/';
-            break;
-          case AutomationServerType.EDA:
-            loginPageUrl = '/api/eda/v1/auth/session/login/';
-            break;
-          case AutomationServerType.Galaxy:
-            loginPageUrl = `/api/galaxy/_ui/v1/auth/login/`;
-            break;
-          case AutomationServerType.HUB:
-            loginPageUrl = `/api/automation-hub/_ui/v1/auth/login/`;
-            break;
+          switch (automationServer.type) {
+            case AutomationServerType.AWX:
+              loginPageUrl = '/api/login/';
+              break;
+            case AutomationServerType.EDA:
+              loginPageUrl = '/api/eda/v1/auth/session/login/';
+              searchString = 'csrfToken: "';
+              break;
+            case AutomationServerType.Galaxy:
+              loginPageUrl = `/api/galaxy/_ui/v1/auth/login/`;
+              break;
+            case AutomationServerType.HUB:
+              loginPageUrl = `/api/automation-hub/_ui/v1/auth/login/`;
+              break;
+          }
+        } else {
+          switch (process.env.UI_MODE) {
+            case 'AWX':
+              loginPageUrl = '/api/login/';
+              break;
+            case 'EDA':
+              loginPageUrl = '/api/eda/v1/auth/session/login/';
+              searchString = 'csrfToken: "';
+              break;
+            case 'GALAXY':
+              loginPageUrl = `/api/galaxy/_ui/v1/auth/login/`;
+              break;
+            case 'HUB':
+              loginPageUrl = `/api/automation-hub/_ui/v1/auth/login/`;
+              break;
+          }
         }
         if (!loginPageUrl) return;
 
         const loginPage = await ky.get(loginPageUrl, { credentials: 'include' }).text();
-        let searchString = 'name="csrfmiddlewaretoken" value="';
-        if (automationServer.type === AutomationServerType.EDA) searchString = 'csrfToken: "';
         const searchStringIndex = loginPage.indexOf(searchString);
         let csrfmiddlewaretoken: string | undefined;
         if (searchStringIndex !== -1) {
@@ -150,17 +166,32 @@ function LoginForm(props: { defaultServerId?: string | number; onLogin?: () => v
           }
         }
 
-        switch (automationServer.type) {
-          case AutomationServerType.AWX:
-            navigate(RouteObj.Dashboard);
-            break;
-          case AutomationServerType.EDA:
-            navigate(RouteObj.EdaDashboard);
-            break;
-          case AutomationServerType.HUB:
-          case AutomationServerType.Galaxy:
-            navigate(RouteObj.HubDashboard);
-            break;
+        if (automationServer) {
+          switch (automationServer.type) {
+            case AutomationServerType.AWX:
+              navigate(RouteObj.Dashboard);
+              break;
+            case AutomationServerType.EDA:
+              navigate(RouteObj.EdaDashboard);
+              break;
+            case AutomationServerType.HUB:
+            case AutomationServerType.Galaxy:
+              navigate(RouteObj.HubDashboard);
+              break;
+          }
+        } else {
+          switch (process.env.UI_MODE) {
+            case 'AWX':
+              navigate(RouteObj.Dashboard);
+              break;
+            case 'EDA':
+              navigate(RouteObj.EdaDashboard);
+              break;
+            case 'HUB':
+            case 'GALAXY':
+              navigate(RouteObj.HubDashboard);
+              break;
+          }
         }
 
         props.onLogin?.();
