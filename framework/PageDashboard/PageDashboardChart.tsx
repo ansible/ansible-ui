@@ -57,14 +57,15 @@ export function PageDashboardChart(props: {
         <Chart
           padding={{ bottom: 60, left: 60, right: 40, top: 16 }}
           colorScale={groups.map((group) => group.color)}
-          width={settings && settings.legendData ? size.width * 0.9 : size.width}
-          height={size.height}
+          height={settings && settings.legendData ? size.height * 0.9 : size.height}
+          width={size.width}
           minDomain={settings && settings.minDomain}
+          legendPosition={'bottom'}
           legendComponent={
             settings &&
             settings.legendData && (
               <ChartLegend
-                width={size.width * 0.1}
+                width={size.height * 0.1}
                 data={settings.legendData}
                 orientation={'vertical'}
               />
@@ -84,8 +85,14 @@ export function PageDashboardChart(props: {
             // tickFormat={(date: string) => `${new Date(date).toLocaleDateString()}`}
             //  tickFormat={(n) => `${Math.round(n)}`}
             label={settings && settings.xLabel}
+            style={{ axisLabel: { fontSize: 17 } }}
           />
-          <ChartAxis dependentAxis showGrid label={settings && settings.yLabel} />
+          <ChartAxis
+            dependentAxis
+            showGrid
+            label={settings && settings.yLabel}
+            style={{ axisLabel: { fontSize: 17 } }}
+          />
           <ChartStack>
             {groups.map((group, index) =>
               settings && settings.useLines ? (
