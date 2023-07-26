@@ -1,30 +1,37 @@
-import { MenuToggle, MenuToggleElement } from '@patternfly/react-core';
+import { MenuToggle, MenuToggleElement, Stack } from '@patternfly/react-core';
 import { Select, SelectList, SelectOption } from '@patternfly/react-core/next';
-import { Children, ReactNode, isValidElement, useState } from 'react';
+import { ReactNode, useState } from 'react';
 
-/**
- * Single select for the page framework.
- *
- * Uses the PF5 version of the select component
- */
-export function PageSingleSelect(props: {
+export interface PageSelectOption<T> {
+  label: string;
+  description?: string;
+  value: T;
+}
+
+export enum PageSelectVariant {
+  Single = 'Single',
+  Typeahead = 'Typeahead',
+}
+
+type PageSelectVariants = keyof typeof PageSelectVariant;
+
+/** Single select for the page framework. */
+export function PageSingleSelect<T>(props: {
   id?: string;
-  children: ReactNode;
-  value: string;
-  onChange: (value: string) => void;
+  value: T;
+  onChange: (value: T) => void;
+  options: PageSelectOption<T>[];
   placeholder?: string;
   icon?: ReactNode;
+  variant?: PageSelectVariants;
 }) {
-  const { value, onChange, placeholder } = props;
+  const { value, onChange, options, placeholder } = props;
   const [isOpen, setIsOpen] = useState(false);
 
-  const children = Children.toArray(props.children);
-  let selectedText: ReactNode = children.length.toString();
-  for (const child of children) {
-    if (!isValidElement(child)) continue;
-    if (child.type !== SelectOption) continue;
-    if ((child.props as { itemId: string }).itemId === value) {
-      selectedText = (child.props as { children: ReactNode }).children;
+  let selectedOption: PageSelectOption<T> | undefined = undefined;
+  for (const option of options) {
+    if (value === option.value) {
+      selectedOption = option;
       break;
     }
   }
@@ -38,16 +45,26 @@ export function PageSingleSelect(props: {
       style={{ width: 200 }}
     >
       {props.icon && <span style={{ paddingLeft: 4, paddingRight: 12 }}>{props.icon}</span>}
-      {selectedText ?? placeholder}
+      {selectedOption ? (
+        <Stack>
+          <span>{selectedOption.label}</span>
+          {selectedOption.description && <span>{selectedOption.description}</span>}
+        </Stack>
+      ) : (
+        <span>{placeholder}</span> // TODO use pf class for placeholder - make placeholder light grey
+      )}
     </MenuToggle>
   );
 
   return (
     <Select
       selected={value}
-      onSelect={(_, value: string | number | undefined) => {
-        onChange(value as string);
-        setIsOpen(false);
+      onSelect={(_, itemId: string | number | undefined) => {
+        const newSelectedOption = options.find((option) => option.label === itemId);
+        if (newSelectedOption) {
+          onChange(newSelectedOption.value);
+          setIsOpen(false);
+        }
       }}
       isOpen={isOpen}
       onOpenChange={setIsOpen}
@@ -55,7 +72,16 @@ export function PageSingleSelect(props: {
       // shouldFocusToggleOnSelect PF5??
       style={{ zIndex: isOpen ? 9999 : undefined }}
     >
-      <SelectList>{props.children}</SelectList>
+      <SelectList>
+        {options.map((option) => (
+          <SelectOption key={option.label} itemId={option.label}>
+            <Stack>
+              <span>{option.label}</span>
+              {option.description && <span>{option.description}</span>}
+            </Stack>
+          </SelectOption>
+        ))}
+      </SelectList>
     </Select>
   );
 }
