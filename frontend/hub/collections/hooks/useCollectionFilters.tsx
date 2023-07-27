@@ -1,24 +1,9 @@
-import { SelectVariant } from '@patternfly/react-core';
-import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IToolbarFilter, ToolbarFilterType } from '../../../../framework';
-import { useGet } from '../../../common/crud/useGet';
-import { pulpAPI } from '../../api';
+import { useMemo } from 'react';
 
 export function useCollectionFilters() {
   const { t } = useTranslation();
-  const [searchText, setSearchText] = useState('');
-  const [repositories, setRepositories] = useState<Repository[]>([]);
-
-  const { data, isLoading } = useGet<{ results: Repository[] }>(
-    pulpAPI`/repositories/ansible/ansible/?limit=10&name__startswith=${searchText}`
-  );
-
-  useEffect(() => {
-    if (!isLoading) {
-      setRepositories(data?.results || []);
-    }
-  }, [data?.results, isLoading]);
 
   return useMemo<IToolbarFilter[]>(
     () => [
@@ -35,22 +20,6 @@ export function useCollectionFilters() {
         type: ToolbarFilterType.Text,
         query: 'namespace',
         comparison: 'equals',
-      },
-      {
-        key: 'repository',
-        label: t('Repository'),
-        type: ToolbarFilterType.SingleSelect,
-        query: 'repository',
-        variant: SelectVariant.single,
-        options:
-          repositories?.map((repo: Repository) => {
-            return { value: repo.name, label: repo.name };
-          }) || [],
-        placeholder: t('Select repositories'),
-        hasSearch: true,
-        onSearchTextChange: (text) => {
-          setSearchText(text);
-        },
       },
       {
         key: 'tags',
@@ -82,10 +51,6 @@ export function useCollectionFilters() {
         placeholder: t('Select signatures'),
       },
     ],
-    [t, repositories]
+    [t]
   );
-}
-
-interface Repository {
-  name: string;
 }

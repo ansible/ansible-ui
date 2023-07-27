@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { ToolbarFilterType } from '../PageToolbarFilter';
 import { ToolbarFilterCommon } from './ToolbarFilterCommon';
 import './ToolbarSelectFilter.css';
+import { ReactNode } from 'react';
 
 /** A filter that allows the user to select a single option from a list of options. */
 export interface IToolbarSingleSelectFilter extends ToolbarFilterCommon {
@@ -25,14 +26,34 @@ export interface IToolbarMultiSelectFilter extends ToolbarFilterCommon {
 export interface IToolbarAsyncSelectFilter extends ToolbarFilterCommon {
   // shows the dialog automaticaly after number of items in dropdown has been reached
   limit: number;
+
+  // @ts-ignore
+  selectionToString: (value: any) => string;
+
+  // @ts-ignore
+  selectionToDescription?: (value: any) => ReactNode;
 }
 
 export interface IToolbarAsyncMultiSelectFilter extends IToolbarAsyncSelectFilter {
   type: ToolbarFilterType.AsyncMultiSelect;
+
+  // @ts-ignore
+  openSelectDialog: (onSelect: (value: any[]) => void, defaultSelection?: any[]) => void;
+
+  // not supported yet
+  // @ts-ignore
+  defaultSelection?: any[];
 }
 
 export interface IToolbarAsyncSingleSelectFilter extends IToolbarAsyncSelectFilter {
   type: ToolbarFilterType.AsyncSingleSelect;
+
+  // @ts-ignore
+  openSelectDialog: (onSelect: (value: any) => void, defaultSelection?: any) => void;
+
+  // not supported yet
+  // @ts-ignore
+  defaultSelection?: any;
 }
 
 export interface IToolbarFilterOption {

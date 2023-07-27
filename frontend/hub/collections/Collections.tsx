@@ -35,6 +35,7 @@ import { useCollectionColumns } from './hooks/useCollectionColumns';
 import { useCollectionFilters } from './hooks/useCollectionFilters';
 import { useCollectionsActions } from './hooks/useCollectionsActions';
 
+
 export function Collections() {
   const { t } = useTranslation();
   const navigate = useNavigate();

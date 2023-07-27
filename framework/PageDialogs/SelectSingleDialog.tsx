@@ -25,6 +25,7 @@ export function SelectSingleDialog<T extends object>(props: SelectSingleDialogPr
   const [_, setDialog] = usePageDialog();
   const onClose = useCallback(() => setDialog(undefined), [setDialog]);
   const [translations] = useFrameworkTranslations();
+
   return (
     <Modal
       title={title}

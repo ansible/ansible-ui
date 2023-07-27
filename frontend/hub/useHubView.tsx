@@ -30,7 +30,7 @@ export type IHubView<T extends object> = IView &
     unselectItemsAndRefresh: (items: T[]) => void;
   };
 
-export function useHubView<T extends object>({
+export function useHubView<T extends object, SelectType = undefined>({
   url,
   keyFn,
   toolbarFilters,

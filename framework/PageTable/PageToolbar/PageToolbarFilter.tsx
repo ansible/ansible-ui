@@ -4,6 +4,7 @@ import {
   ToolbarGroup,
   ToolbarItem,
   ToolbarToggleGroup,
+  Button,
 } from '@patternfly/react-core';
 
 import { FilterIcon } from '@patternfly/react-icons';
@@ -285,6 +286,25 @@ function ToolbarFilterComponent(props: {
         />
       );
 
+    case ToolbarFilterType.AsyncSingleSelect:
+      return (
+        <Button
+          onClick={() => {
+            filter.openSelectDialog((value) => {
+              // remove existing values, it is single selection
+              for (const val of values) {
+                removeFilter(val);
+              }
+
+              const key = filter.selectionToString(value);
+              addFilter(key);
+            }, filter.defaultSelection);
+          }}
+        >
+          Open Dialog
+        </Button>
+      );
+
     case ToolbarFilterType.SingleSelect:
       return (
         <ToolbarSelectFilter
@@ -333,4 +353,6 @@ function ToolbarFilterComponent(props: {
         />
       );
   }
+
+  return <></>;
 }
