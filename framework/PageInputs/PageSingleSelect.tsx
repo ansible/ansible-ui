@@ -1,6 +1,11 @@
 import { MenuToggle, MenuToggleElement, Stack } from '@patternfly/react-core';
 import { Select, SelectList, SelectOption } from '@patternfly/react-core/next';
 import { ReactNode, useState } from 'react';
+import styled from 'styled-components';
+
+const PlacedholderWrapper = styled.span`
+  color: var(--pf-global--Color--dark-200);
+`;
 
 export interface PageSelectOption<T> {
   label: string;
@@ -15,8 +20,7 @@ export enum PageSelectVariant {
 
 type PageSelectVariants = keyof typeof PageSelectVariant;
 
-/** Single select for the page framework. */
-export function PageSingleSelect<T>(props: {
+interface IPageSingleSelect<T> {
   id?: string;
   value: T;
   onChange: (value: T) => void;
@@ -24,7 +28,10 @@ export function PageSingleSelect<T>(props: {
   placeholder?: string;
   icon?: ReactNode;
   variant?: PageSelectVariants;
-}) {
+}
+
+/** Single select for the page framework. */
+export function PageSingleSelect<T>(props: IPageSingleSelect<T>) {
   const { value, onChange, options, placeholder } = props;
   const [isOpen, setIsOpen] = useState(false);
 
@@ -46,12 +53,9 @@ export function PageSingleSelect<T>(props: {
     >
       {props.icon && <span style={{ paddingLeft: 4, paddingRight: 12 }}>{props.icon}</span>}
       {selectedOption ? (
-        <Stack>
-          <span>{selectedOption.label}</span>
-          {selectedOption.description && <span>{selectedOption.description}</span>}
-        </Stack>
+        <span>{selectedOption.label}</span>
       ) : (
-        <span>{placeholder}</span> // TODO use pf class for placeholder - make placeholder light grey
+        <PlacedholderWrapper>{placeholder}</PlacedholderWrapper>
       )}
     </MenuToggle>
   );
@@ -69,12 +73,11 @@ export function PageSingleSelect<T>(props: {
       isOpen={isOpen}
       onOpenChange={setIsOpen}
       toggle={Toggle}
-      // shouldFocusToggleOnSelect PF5??
       style={{ zIndex: isOpen ? 9999 : undefined }}
     >
       <SelectList>
         {options.map((option) => (
-          <SelectOption key={option.label} itemId={option.label}>
+          <SelectOption key={option.label} itemId={option.value}>
             <Stack>
               <span>{option.label}</span>
               {option.description && <span>{option.description}</span>}
