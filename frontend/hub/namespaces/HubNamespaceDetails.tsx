@@ -10,14 +10,14 @@ import {
   PageTab,
   PageTabs,
 } from '../../../framework';
-import { PageDetailsFromColumns } from '../../../framework';
 import { RouteObj } from '../../Routes';
 import { useGet } from '../../common/crud/useGet';
 import { hubAPI } from '../api/utils';
 import { HubNamespace } from './HubNamespace';
 import { useHubView } from '../useHubView';
 import { useHubNamespaceActions } from './hooks/useHubNamespaceActions';
-import { useHubNamespacesColumns } from './hooks/useHubNamespacesColumns';
+import { HubNamespaceMetadataType } from './HubNamespaceMetadataType';
+import { useHubNamespaceMetadataColumns } from './hooks/useHubNamespaceMetadataColumns';
 import { useCollectionFilters } from '../collections/hooks/useCollectionFilters';
 import { useCollectionVersionColumns } from '../collections/hooks/useCollectionVersionColumns';
 import { CollectionVersionSearch } from '../collections/CollectionVersionSearch';
@@ -54,7 +54,7 @@ export function NamespaceDetails() {
           <CollectionsTab namespace={namespace} />
         </PageTab>
         <PageTab label={t('Namespace Details')}>
-          <NamespaceDetailsTab />
+          <NamespaceDetailsTab namespace={namespace} />
         </PageTab>
       </PageTabs>
     </PageLayout>
@@ -62,10 +62,27 @@ export function NamespaceDetails() {
 }
 
 function NamespaceDetailsTab(props: { namespace?: HubNamespace }) {
-  const { namespace } = props;
-  // eslint-disable-next-line no-console
-  const tableColumns = useHubNamespacesColumns();
-  return <PageDetailsFromColumns item={namespace} columns={tableColumns} />;
+  const { t } = useTranslation();
+  const tableColumns = useHubNamespaceMetadataColumns();
+  const view = useHubView<HubNamespaceMetadataType>({
+    url: hubAPI`/v3/plugin/ansible/search/namespace-metadata/`,
+    keyFn: (item) => item.metadata.pulp_href + ':' + item.repository.name,
+    tableColumns,
+    sortKey: 'order_by',
+    queryParams: { name: props?.namespace?.name },
+  });
+  return (
+    <PageLayout>
+      <PageTable<HubNamespaceMetadataType>
+        tableColumns={tableColumns}
+        errorStateTitle={t('Error loading collections')}
+        emptyStateTitle={t('No collections yet')}
+        {...view}
+        defaultTableView="list"
+        defaultSubtitle={t('Namespace details')}
+      />
+    </PageLayout>
+  );
 }
 
 function CollectionsTab(props: { namespace?: HubNamespace }) {
