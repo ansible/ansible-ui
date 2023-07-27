@@ -1,12 +1,6 @@
 /* eslint-disable i18next/no-literal-string */
-import {
-  ButtonVariant,
-  Card,
-  CardBody,
-  DescriptionList,
-  DropdownPosition,
-} from '@patternfly/react-core';
-import { AnsibleTowerIcon, CogIcon } from '@patternfly/react-icons';
+import { ButtonVariant, Card, CardBody, DropdownPosition } from '@patternfly/react-core';
+import { CogIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import {
   PageActionSelection,

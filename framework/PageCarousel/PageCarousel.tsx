@@ -1,7 +1,17 @@
 import { PageCarouselCardPage } from './PageCarouselCardPage';
 import { PageCarouselNav } from './PageCarouselNav';
 import useResizeObserver from '@react-hook/resize-observer';
-import { ReactNode, useLayoutEffect, useRef, useState, Children, useMemo, useEffect } from 'react';
+import {
+  ReactNode,
+  useLayoutEffect,
+  useRef,
+  useState,
+  Children,
+  useMemo,
+  useEffect,
+  useContext,
+  createContext,
+} from 'react';
 import styled from 'styled-components';
 
 export const CardSpan = (1662 - 59) / 4;
@@ -19,28 +29,32 @@ const SlideContainer = styled.div`
   }
 `;
 
+const CarouselContext = createContext<{ width: number; visibleCards: number }>({});
+
+export function useCarouselContext() {
+  return useContext(CarouselContext);
+}
+
 /**
  * A carousel component that displays children (eg. page cards) within it and switches
  * between pages of cards using smooth animation.
  */
-export function PageCarousel(props: {
-  children: ReactNode;
-  carouselId: string;
-  cardWidth?: number;
-}) {
+export function PageCarousel(props: { children: ReactNode; carouselId: string }) {
   const slideContainerRef = useRef<HTMLDivElement>(null);
   const [pageIndex, setPageIndex] = useState(0);
-  const cardSpan = props.cardWidth ?? CardSpan;
   const [visibleCardsPerPage, setVisibleCardsPerPage] = useState(1);
+  const [carouselWidth, setCarouselWidth] = useState(0);
 
   useLayoutEffect(() => {
+    setCarouselWidth(Math.floor(slideContainerRef.current?.clientWidth ?? 0));
     setVisibleCardsPerPage(
-      Math.max(1, Math.floor((slideContainerRef.current?.clientWidth ?? 0) / cardSpan))
+      Math.max(1, Math.floor((slideContainerRef.current?.clientWidth ?? 0) / CardSpan))
     );
-  }, [cardSpan]);
+  }, []);
 
   useResizeObserver(slideContainerRef, (entry) => {
-    setVisibleCardsPerPage(Math.max(1, Math.floor((entry.contentRect.width ?? 0) / cardSpan)));
+    setCarouselWidth(Math.floor(entry.contentRect.width ?? 0));
+    setVisibleCardsPerPage(Math.max(1, Math.floor((entry.contentRect.width ?? 0) / CardSpan)));
   });
 
   const pagesOfCards = useMemo(() => {
@@ -57,33 +71,35 @@ export function PageCarousel(props: {
       `page-carousel-cards-${props.carouselId}-${pageIndex}`
     );
     if (cardPage) {
-      cardPage.scrollIntoView();
+      cardPage.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
     }
   }, [pageIndex, props.carouselId]);
 
   return (
     <>
-      <SlideContainer ref={slideContainerRef}>
-        {pagesOfCards.map((pageOfCards, index) => {
-          return (
-            <PageCarouselCardPage
-              pageIndex={index}
-              key={index}
-              visibleCardsPerPage={visibleCardsPerPage}
-              carouselId={props.carouselId}
-            >
-              {pageOfCards}
-            </PageCarouselCardPage>
-          );
-        })}
-      </SlideContainer>
-      {pagesOfCards.length > 1 ? (
-        <PageCarouselNav
-          setPage={setPageIndex}
-          currentPage={pageIndex}
-          totalPages={pagesOfCards.length}
-        />
-      ) : null}
+      <CarouselContext.Provider value={{ width: carouselWidth, visibleCards: visibleCardsPerPage }}>
+        <SlideContainer ref={slideContainerRef} id={`slide-container-${props.carouselId}`}>
+          {pagesOfCards.map((pageOfCards, index) => {
+            return (
+              <PageCarouselCardPage
+                pageIndex={index}
+                key={index}
+                visibleCardsPerPage={visibleCardsPerPage}
+                carouselId={props.carouselId}
+              >
+                {pageOfCards}
+              </PageCarouselCardPage>
+            );
+          })}
+        </SlideContainer>
+        {pagesOfCards.length > 1 ? (
+          <PageCarouselNav
+            setPage={setPageIndex}
+            currentPage={pageIndex}
+            totalPages={pagesOfCards.length}
+          />
+        ) : null}
+      </CarouselContext.Provider>
     </>
   );
 }
