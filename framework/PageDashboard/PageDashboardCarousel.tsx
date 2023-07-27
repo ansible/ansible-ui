@@ -9,6 +9,7 @@ export function PageDashboardCarousel(props: {
   to?: string;
   width?: PageDashboardCardWidth;
   children: ReactNode;
+  childCardWidth?: number;
 }) {
   return (
     <PageDashboardCard
@@ -18,7 +19,10 @@ export function PageDashboardCarousel(props: {
       width={props.width}
     >
       <CardBody>
-        <PageCarousel carouselId={props.title.replace(/\s+/g, '-').toLowerCase()}>
+        <PageCarousel
+          carouselId={props.title.replace(/\s+/g, '-').toLowerCase()}
+          cardWidth={props.childCardWidth}
+        >
           {props.children}
         </PageCarousel>
       </CardBody>

@@ -25,7 +25,8 @@ export function useCategorizeCollections(
     if (results) {
       results.forEach((result, index) => {
         const categoryAssociatedWithResult = collectionCategories[index];
-        categoryAssociatedWithResult.showInDashoard = result.status === 'fulfilled' ? true : false;
+        categoryAssociatedWithResult.showInDashboard =
+          result.status === 'fulfilled' && result.value.data.length ? true : false;
         collectionsInCategories[categoryAssociatedWithResult.id] =
           result.status === 'fulfilled' ? result.value.data : [];
       });

@@ -4,7 +4,7 @@ import useResizeObserver from '@react-hook/resize-observer';
 import { ReactNode, useLayoutEffect, useRef, useState, Children, useMemo, useEffect } from 'react';
 import styled from 'styled-components';
 
-const CardSpan = (1662 - 59) / 4;
+export const CardSpan = (1662 - 59) / 4;
 
 const SlideContainer = styled.div`
   display: flex;
@@ -23,20 +23,24 @@ const SlideContainer = styled.div`
  * A carousel component that displays children (eg. page cards) within it and switches
  * between pages of cards using smooth animation.
  */
-export function PageCarousel(props: { children: ReactNode; carouselId: string }) {
+export function PageCarousel(props: {
+  children: ReactNode;
+  carouselId: string;
+  cardWidth?: number;
+}) {
   const slideContainerRef = useRef<HTMLDivElement>(null);
   const [pageIndex, setPageIndex] = useState(0);
-
+  const cardSpan = props.cardWidth ?? CardSpan;
   const [visibleCardsPerPage, setVisibleCardsPerPage] = useState(1);
 
   useLayoutEffect(() => {
     setVisibleCardsPerPage(
-      Math.max(1, Math.floor((slideContainerRef.current?.clientWidth ?? 0) / CardSpan))
+      Math.max(1, Math.floor((slideContainerRef.current?.clientWidth ?? 0) / cardSpan))
     );
-  }, []);
+  }, [cardSpan]);
 
   useResizeObserver(slideContainerRef, (entry) => {
-    setVisibleCardsPerPage(Math.max(1, Math.floor((entry.contentRect.width ?? 0) / CardSpan)));
+    setVisibleCardsPerPage(Math.max(1, Math.floor((entry.contentRect.width ?? 0) / cardSpan)));
   });
 
   const pagesOfCards = useMemo(() => {
