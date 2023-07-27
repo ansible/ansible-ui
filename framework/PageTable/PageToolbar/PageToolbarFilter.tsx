@@ -18,6 +18,8 @@ import {
 import {
   IToolbarMultiSelectFilter,
   IToolbarSingleSelectFilter,
+  IToolbarAsyncMultiSelectFilter,
+  IToolbarAsyncSingleSelectFilter,
   ToolbarSelectFilter,
 } from './PageToolbarFilterTypes/ToolbarSelectFilter';
 import { IToolbarTextFilter, ToolbarTextFilter } from './PageToolbarFilterTypes/ToolbarTextFilter';
@@ -28,6 +30,8 @@ export enum ToolbarFilterType {
   SingleSelect = 'singleselect',
   MultiSelect = 'multiselect',
   DateRange = 'daterange',
+  AsyncSingleSelect = 'asyncsingleselect',
+  AsyncMultiSelect = 'asyncmultiselect',
 }
 
 /** An IToolbarFilter represents a filter that can be used in the toolbar */
@@ -35,7 +39,9 @@ export type IToolbarFilter =
   | IToolbarTextFilter
   | IToolbarSingleSelectFilter
   | IToolbarMultiSelectFilter
-  | IToolbarDateRangeFilter;
+  | IToolbarDateRangeFilter
+  | IToolbarAsyncMultiSelectFilter
+  | IToolbarAsyncSingleSelectFilter;
 
 /** Represents the state of the toolbar filters. i.e. What is currently selected for filters. */
 export type IFilterState = Record<string, string[] | undefined>;

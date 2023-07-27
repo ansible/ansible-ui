@@ -22,6 +22,19 @@ export interface IToolbarMultiSelectFilter extends ToolbarFilterCommon {
   onSearchTextChange?: (searchText: string) => void;
 }
 
+export interface IToolbarAsyncSelectFilter extends ToolbarFilterCommon {
+  // shows the dialog automaticaly after number of items in dropdown has been reached
+  limit: number;
+}
+
+export interface IToolbarAsyncMultiSelectFilter extends IToolbarAsyncSelectFilter {
+  type: ToolbarFilterType.AsyncMultiSelect;
+}
+
+export interface IToolbarAsyncSingleSelectFilter extends IToolbarAsyncSelectFilter {
+  type: ToolbarFilterType.AsyncSingleSelect;
+}
+
 export interface IToolbarFilterOption {
   /** The label to show for the option. */
   label: string;
