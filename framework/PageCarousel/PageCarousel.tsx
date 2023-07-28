@@ -29,8 +29,15 @@ const SlideContainer = styled.div`
   }
 `;
 
-const CarouselContext = createContext<{ width: number; visibleCards: number }>({});
+const CarouselContext = createContext<{ width: number; visibleCards: number }>({
+  width: 0,
+  visibleCards: 0,
+});
 
+/** This hook provides real time context of the carousel's width and the number
+ * of visible cards. The information may be needed for adjusting the widths of cards
+ * that show up inside the carousel.
+ */
 export function useCarouselContext() {
   return useContext(CarouselContext);
 }
