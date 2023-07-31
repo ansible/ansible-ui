@@ -89,11 +89,6 @@ export function useManageColumns<T extends object>(
             }}
             options={[
               {
-                value: '',
-                label: t('Left side'),
-                description: t('Show the column on the left side of the list.'),
-              },
-              {
                 value: 'name',
                 label: t('Name'),
                 description: t('Show the column as the name of the list item.'),
@@ -107,6 +102,11 @@ export function useManageColumns<T extends object>(
                 value: 'description',
                 label: t('Description'),
                 description: t('Show the column as the list item description.'),
+              },
+              {
+                value: '',
+                label: t('Left side'),
+                description: t('Show the column on the left side of the list.'),
               },
               {
                 value: 'primary',
@@ -152,11 +152,6 @@ export function useManageColumns<T extends object>(
             placeholder={t('Detail')}
             options={[
               {
-                value: '',
-                label: t('Detail'),
-                description: t('Show the column one of the details on the card.'),
-              },
-              {
                 value: 'name',
                 label: t('Name'),
                 description: t('Show the column as the name on the card.'),
@@ -170,6 +165,11 @@ export function useManageColumns<T extends object>(
                 value: 'description',
                 label: t('Description'),
                 description: t('Show the column as the card description.'),
+              },
+              {
+                value: '',
+                label: t('Detail'),
+                description: t('Show the column one of the details on the card.'),
               },
               {
                 value: 'hidden',

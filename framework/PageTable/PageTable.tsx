@@ -213,55 +213,6 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
     props.disableListView,
     props.disableCardView
   );
-  const tableColumns = useVisibleTableColumns(managedColumns);
-
-  const descriptionColumns = useDescriptionColumns(managedColumns);
-  const expandedRowColumns = useExpandedColumns(managedColumns);
-  const expandedRow = useMemo(() => {
-    const expandedRowFunctions: ((item: T) => ReactNode)[] = [];
-
-    if (descriptionColumns.length) {
-      for (const descriptionColumn of descriptionColumns) {
-        if ('value' in descriptionColumn) {
-          expandedRowFunctions.push((item) => {
-            const value = descriptionColumn.value?.(item);
-            if (value) {
-              return <div key={descriptionColumn.id ?? descriptionColumn.header}>{value}</div>;
-            }
-          });
-        } else {
-          expandedRowFunctions.push((item) => descriptionColumn.cell(item));
-        }
-      }
-    }
-
-    if (expandedRowColumns.length) {
-      expandedRowFunctions.push((item) => (
-        <PageDetailsFromColumns
-          key={keyFn(item)}
-          item={item}
-          columns={expandedRowColumns}
-          disablePadding
-          numberOfColumns="multiple"
-        />
-      ));
-    }
-
-    if (props.expandedRow) {
-      expandedRowFunctions.push(props.expandedRow);
-    }
-
-    if (expandedRowFunctions.length === 0) return undefined;
-    if (expandedRowFunctions.length === 1) return expandedRowFunctions[0];
-
-    const newExpandedRow = (item: T) => (
-      <Stack hasGutter style={{ gap: 12 }}>
-        {expandedRowFunctions.map((fn) => fn(item))}
-      </Stack>
-    );
-
-    return newExpandedRow;
-  }, [descriptionColumns, expandedRowColumns, keyFn, props.expandedRow]);
 
   const showSelect =
     props.showSelect ||
@@ -346,12 +297,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
       />
       {viewType === PageTableViewTypeE.Table && (
         <PageBody disablePadding={disableBodyPadding}>
-          <PageTableView
-            {...props}
-            {...pagination}
-            tableColumns={tableColumns}
-            expandedRow={expandedRow}
-          />
+          <PageTableView {...props} {...pagination} tableColumns={managedColumns} />
         </PageBody>
       )}
       {viewType === PageTableViewTypeE.List && (
@@ -367,14 +313,14 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
                   : undefined,
               }}
             >
-              <PageTableList {...props} showSelect={showSelect} />
+              <PageTableList {...props} showSelect={showSelect} tableColumns={managedColumns} />
             </div>
           </PageSection>
         </Scrollable>
       )}
       {viewType === PageTableViewTypeE.Cards && (
         <Scrollable>
-          <PageTableCards {...props} showSelect={showSelect} />
+          <PageTableCards {...props} showSelect={showSelect} tableColumns={managedColumns} />
         </Scrollable>
       )}
       {needsPagination &&
@@ -388,7 +334,6 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
 
 function PageTableView<T extends object>(props: PageTableProps<T>) {
   const {
-    tableColumns,
     pageItems,
     selectItem,
     unselectItem,
@@ -401,8 +346,58 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
     clearAllFilters,
     onSelect,
     unselectAll,
-    expandedRow,
   } = props;
+
+  const tableColumns = useVisibleTableColumns(props.tableColumns);
+
+  const descriptionColumns = useDescriptionColumns(props.tableColumns);
+  const expandedRowColumns = useExpandedColumns(props.tableColumns);
+  const expandedRow = useMemo(() => {
+    const expandedRowFunctions: ((item: T) => ReactNode)[] = [];
+
+    if (descriptionColumns.length) {
+      for (const descriptionColumn of descriptionColumns) {
+        if ('value' in descriptionColumn) {
+          expandedRowFunctions.push((item) => {
+            const value = descriptionColumn.value?.(item);
+            if (value) {
+              return <div key={descriptionColumn.id ?? descriptionColumn.header}>{value}</div>;
+            }
+          });
+        } else {
+          expandedRowFunctions.push((item) => descriptionColumn.cell(item));
+        }
+      }
+    }
+
+    if (expandedRowColumns.length) {
+      expandedRowFunctions.push((item) => (
+        <PageDetailsFromColumns
+          key={keyFn(item)}
+          item={item}
+          columns={expandedRowColumns}
+          disablePadding
+          numberOfColumns="multiple"
+        />
+      ));
+    }
+
+    if (props.expandedRow) {
+      expandedRowFunctions.push(props.expandedRow);
+    }
+
+    if (expandedRowFunctions.length === 0) return undefined;
+    if (expandedRowFunctions.length === 1) return expandedRowFunctions[0];
+
+    const newExpandedRow = (item: T) => (
+      <Stack hasGutter style={{ gap: 12 }}>
+        {expandedRowFunctions.map((fn) => fn(item))}
+      </Stack>
+    );
+
+    return newExpandedRow;
+  }, [descriptionColumns, expandedRowColumns, keyFn, props.expandedRow]);
+
   const [translations] = useFrameworkTranslations();
   const showSelect =
     props.showSelect ||
@@ -466,6 +461,7 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
             scrollRight={scroll.right > 1}
             tableColumns={tableColumns}
             onSelect={onSelect}
+            expandedRow={expandedRow}
           />
         )}
         <Tbody>

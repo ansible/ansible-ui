@@ -245,6 +245,7 @@ export function useColumnsToTableCardFn<T extends object>(
     const cardColumns: ITableColumn<T>[] = [];
 
     for (const column of columns) {
+      if (column.card === 'hidden') continue;
       switch (column.type) {
         case 'description':
           if (!descriptionColumn) descriptionColumn = column;
