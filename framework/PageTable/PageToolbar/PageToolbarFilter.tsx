@@ -6,7 +6,6 @@ import {
   ToolbarToggleGroup,
 } from '@patternfly/react-core';
 
-import { SelectOption } from '@patternfly/react-core/next';
 import { FilterIcon } from '@patternfly/react-icons';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { PageSingleSelect } from '../../PageInputs/PageSingleSelect';
@@ -115,13 +114,12 @@ function FiltersToolbarItem(props: PageToolbarFiltersProps) {
             value={selectedFilterKey}
             onChange={setSeletedFilterKey}
             icon={<FilterIcon />}
-          >
-            {toolbarFilters.map((filter) => (
-              <SelectOption key={filter.key} itemId={filter.key}>
-                {filter.label}
-              </SelectOption>
-            ))}
-          </PageSingleSelect>
+            options={toolbarFilters.map((filter) => ({
+              label: filter.label,
+              // description: filter.description,
+              value: filter.key,
+            }))}
+          />
           <ToolbarFilterComponent
             id="filter-input"
             filter={selectedFilter}
