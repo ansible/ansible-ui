@@ -19,7 +19,7 @@ export function PageSingleSelect(props: {
   const [isOpen, setIsOpen] = useState(false);
 
   const children = Children.toArray(props.children);
-  let selectedText: ReactNode = children.length.toString();
+  let selectedText: ReactNode = undefined;
   for (const child of children) {
     if (!isValidElement(child)) continue;
     if (child.type !== SelectOption) continue;
@@ -35,7 +35,7 @@ export function PageSingleSelect(props: {
       ref={toggleRef}
       onClick={() => setIsOpen((open) => !open)}
       isExpanded={isOpen}
-      style={{ width: 200 }}
+      style={{ width: '100%', minWidth: 100 }}
     >
       {props.icon && <span style={{ paddingLeft: 4, paddingRight: 12 }}>{props.icon}</span>}
       {selectedText ?? placeholder}

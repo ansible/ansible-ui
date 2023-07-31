@@ -198,7 +198,6 @@ export function SelectDialog<
             onSelect={() => null}
             disableCardView
             disableListView
-            disableColumnManagement
             compact
             disableBodyPadding
           />

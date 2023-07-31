@@ -52,6 +52,7 @@ export function Teams() {
         navigation={<AccessNav active="teams" />}
       />
       <PageTable<Team>
+        id="awx-teams"
         toolbarFilters={toolbarFilters}
         toolbarActions={toolbarActions}
         tableColumns={tableColumns}
