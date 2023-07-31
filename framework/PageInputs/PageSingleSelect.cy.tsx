@@ -1,87 +1,72 @@
+/* eslint-disable i18next/no-literal-string */
 import { useState } from 'react';
 import { PageSelectOption, PageSingleSelect } from './PageSingleSelect';
 
-const PageSelectOptions: PageSelectOption<string>[] = [
-  {
-    label: 'Option1',
-    value: 'Option1',
-  },
-  {
-    label: 'Option2',
-    value: 'Option2',
-  },
-];
-
-interface IPageSingleSeletTest {
-  placeholder?: string;
-  overrideValue?: boolean;
+interface ITestObject {
+  name: string;
+  description?: string;
 }
 
-const placedholder = 'Select a Value';
+const testObjects: ITestObject[] = [
+  { name: 'Option 1', description: 'Description 1' },
+  { name: 'Option 2', description: 'Description 2' },
+];
 
-function PageSingleSelectTest(props: IPageSingleSeletTest) {
-  const [value, setValue] = useState(PageSelectOptions[0].value);
-  const { placeholder, overrideValue = false } = props;
+const options: PageSelectOption<ITestObject>[] = testObjects.map((testObject) => ({
+  label: testObject.name,
+  value: testObject,
+  description: testObject.description,
+}));
 
+const placeholderText = 'Placeholder';
+
+function PageSingleSelectTest<T>(props: {
+  placeholder?: string;
+  defaultValue?: T;
+  options: PageSelectOption<T>[];
+}) {
+  const { placeholder, defaultValue, options } = props;
+  const [value, setValue] = useState(() => defaultValue);
   return (
-    <>
-      <PageSingleSelect
-        value={value}
-        placeholder={placeholder}
-        options={PageSelectOptions}
-        onChange={(value) => {
-          if (overrideValue) {
-            setValue('non-existent');
-          } else {
-            setValue(value);
-          }
-        }}
-      />
-    </>
+    <PageSingleSelect
+      id="test-single-select"
+      value={value}
+      placeholder={placeholder}
+      options={options}
+      onChange={setValue}
+    />
   );
 }
 
 describe('PageSingleSelect', () => {
-  describe('no placeholder was not provided', () => {
-    beforeEach(() => {
-      cy.mount(<PageSingleSelectTest />);
-    });
-
-    it('should select an option when clicking on it', () => {
-      cy.get('.pf-c-menu-toggle').click();
-      cy.get('.pf-c-menu__list-item')
-        .eq(1)
-        .click()
-        .then(() => {
-          cy.get('.pf-c-menu-toggle').should('contain.text', PageSelectOptions[1].value);
-        });
-    });
-
-    it('should display the initial value', () => {
-      cy.get('.pf-c-menu-toggle').should('contain.text', PageSelectOptions[0].value);
-    });
-
-    it('should show options when clicking on the dropdown toggle', () => {
-      cy.get('.pf-c-menu-toggle').click();
-      cy.get('.pf-c-menu__list-item').should('have.length', 2);
-      cy.get('.pf-c-menu__list-item').eq(0).should('contain', PageSelectOptions[0].value);
-      cy.get('.pf-c-menu__list-item').eq(1).should('contain', PageSelectOptions[1].value);
-    });
+  it('should display placedholder', () => {
+    cy.mount(<PageSingleSelectTest placeholder="Placeholder" options={options} />);
+    cy.singleSelectShouldHaveSelectedOption('#test-single-select', placeholderText);
   });
 
-  describe('placeholder was provided', () => {
-    beforeEach(() => {
-      cy.mount(<PageSingleSelectTest overrideValue placeholder={placedholder} />);
-    });
+  it('should display the initial value', () => {
+    cy.mount(
+      <PageSingleSelectTest
+        placeholder="Placeholder"
+        options={options}
+        defaultValue={options[0].value}
+      />
+    );
+    cy.singleSelectShouldHaveSelectedOption('#test-single-select', options[0].label);
+  });
 
-    it('should display placedholder when a non valid value is available', () => {
-      cy.get('.pf-c-menu-toggle').click();
-      cy.get('.pf-c-menu__list-item')
-        .eq(1)
-        .click()
-        .then(() => {
-          cy.get('.pf-c-menu-toggle').should('contain.text', placedholder);
-        });
-    });
+  it('should show options when clicking on the dropdown toggle', () => {
+    cy.mount(<PageSingleSelectTest placeholder="Placeholder" options={options} />);
+    cy.singleSelectShouldContainOption('#test-single-select', options[0].label);
+    cy.singleSelectShouldContainOption('#test-single-select', options[1].label);
+  });
+
+  it('should select an option when clicking on it', () => {
+    cy.mount(<PageSingleSelectTest placeholder="Placeholder" options={options} />);
+    cy.singleSelectShouldHaveSelectedOption('#test-single-select', placeholderText);
+    cy.selectSingleSelectOption('#test-single-select', options[0].label);
+    cy.singleSelectShouldHaveSelectedOption('#test-single-select', options[0].label);
+    cy.selectSingleSelectOption('#test-single-select', options[1].label);
+    cy.singleSelectShouldHaveSelectedOption('#test-single-select', options[1].label);
   });
 });

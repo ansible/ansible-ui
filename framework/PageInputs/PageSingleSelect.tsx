@@ -1,4 +1,4 @@
-import { MenuToggle, MenuToggleElement, Stack } from '@patternfly/react-core';
+import { MenuToggle, MenuToggleElement } from '@patternfly/react-core';
 import { Select, SelectList, SelectOption } from '@patternfly/react-core/next';
 import { ReactNode, useState } from 'react';
 import styled from 'styled-components';
@@ -20,7 +20,7 @@ export enum PageSelectVariant {
 
 type PageSelectVariants = keyof typeof PageSelectVariant;
 
-interface IPageSingleSelect<T> {
+interface PageSingleSelectProps<T> {
   id?: string;
   value: T;
   onChange: (value: T) => void;
@@ -31,7 +31,7 @@ interface IPageSingleSelect<T> {
 }
 
 /** Single select for the page framework. */
-export function PageSingleSelect<T>(props: IPageSingleSelect<T>) {
+export function PageSingleSelect<T>(props: PageSingleSelectProps<T>) {
   const { value, onChange, options, placeholder } = props;
   const [isOpen, setIsOpen] = useState(false);
 
@@ -53,7 +53,7 @@ export function PageSingleSelect<T>(props: IPageSingleSelect<T>) {
     >
       {props.icon && <span style={{ paddingLeft: 4, paddingRight: 12 }}>{props.icon}</span>}
       {selectedOption ? (
-        <span>{selectedOption.label}</span>
+        selectedOption.label
       ) : (
         <PlacedholderWrapper>{placeholder}</PlacedholderWrapper>
       )}
@@ -77,11 +77,8 @@ export function PageSingleSelect<T>(props: IPageSingleSelect<T>) {
     >
       <SelectList>
         {options.map((option) => (
-          <SelectOption key={option.label} itemId={option.value}>
-            <Stack>
-              <span>{option.label}</span>
-              {option.description && <span>{option.description}</span>}
-            </Stack>
+          <SelectOption key={option.label} itemId={option.label} description={option.description}>
+            {option.label}
           </SelectOption>
         ))}
       </SelectList>
