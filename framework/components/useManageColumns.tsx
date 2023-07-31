@@ -203,6 +203,17 @@ export function useManageColumns<T extends object>(
         }
       }
     }
+    columns.sort((a, b) => {
+      if (a.id && b.id) {
+        const valueAIndex = values.findIndex((value) => value.id === a.id);
+        const valueBIndex = values.findIndex((value) => value.id === b.id);
+        return valueAIndex - valueBIndex;
+      } else {
+        const valueAIndex = values.findIndex((value) => value.header === a.header);
+        const valueBIndex = values.findIndex((value) => value.header === b.header);
+        return valueAIndex - valueBIndex;
+      }
+    });
   }, []);
 
   const saveColumns = useCallback(
