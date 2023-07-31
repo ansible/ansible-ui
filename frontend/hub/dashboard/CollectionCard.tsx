@@ -3,6 +3,7 @@ import {
   ColumnsDiv,
   PageDetailDiv,
   PageTableCard,
+  Small,
 } from '../../../framework/PageTable/PageTableCard';
 import { CollectionVersionSearch } from '../collections/CollectionVersionSearch';
 import { PageDetail, TextCell } from '../../../framework';
@@ -55,7 +56,7 @@ export function CollectionCard(props: { collection: CollectionVersionSearch }) {
                           .length
                       }
                     </>
-                    <small style={{ opacity: 0.7 }}>{t('Modules')}</small>
+                    <Small>{t('Modules')}</Small>
                   </ColumnsDiv>
                   <ColumnsDiv>
                     <>
@@ -64,7 +65,7 @@ export function CollectionCard(props: { collection: CollectionVersionSearch }) {
                           .length
                       }
                     </>
-                    <small style={{ opacity: 0.7 }}>{t('Roles')}</small>
+                    <Small>{t('Roles')}</Small>
                   </ColumnsDiv>
                   <ColumnsDiv>
                     <>
@@ -74,11 +75,11 @@ export function CollectionCard(props: { collection: CollectionVersionSearch }) {
                         ).length
                       }
                     </>
-                    <small style={{ opacity: 0.7 }}>{t('Plugins')}</small>
+                    <Small>{t('Plugins')}</Small>
                   </ColumnsDiv>
                   <ColumnsDiv>
                     <>{Object.keys(item.collection_version.dependencies).length}</>
-                    <small style={{ opacity: 0.7 }}>{t('Dependencies')}</small>
+                    <Small>{t('Dependencies')}</Small>
                   </ColumnsDiv>
                 </PageDetailDiv>
               </PageDetail>

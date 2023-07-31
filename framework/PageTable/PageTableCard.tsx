@@ -32,6 +32,9 @@ import {
   TableColumnCell,
 } from './PageTableColumn';
 
+export const Small = styled.small`
+  opacity: 0.7;
+`;
 export interface IPageTableCard {
   id: string | number;
   icon?: ReactNode;
@@ -338,7 +341,7 @@ export function useColumnsToTableCardFn<T extends object>(
                     {countColumns.map((column, i) => (
                       <ColumnsDiv key={i}>
                         <TableColumnCell column={column} item={item} />
-                        <small style={{ opacity: 0.7 }}>{column.header}</small>
+                        <Small>{column.header}</Small>
                       </ColumnsDiv>
                     ))}
                   </PageDetailDiv>
