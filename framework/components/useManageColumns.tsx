@@ -1,4 +1,3 @@
-import { SelectOption } from '@patternfly/react-core/next';
 import { ReactNode, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageSingleSelect } from '../PageInputs/PageSingleSelect';
@@ -38,35 +37,38 @@ export function useManageColumns<T extends object>(
               }
             }}
             placeholder={t('Column')}
-          >
-            <SelectOption itemId="" description={t('Show the column in the table.')}>
-              {t('Column')}
-            </SelectOption>
-            <SelectOption
-              itemId={ColumnTableOption.Description}
-              description={t(
-                'Show the column when the item is expanded as a full width description.'
-              )}
-            >
-              {t('Description')}
-            </SelectOption>
-            <SelectOption
-              itemId={ColumnTableOption.Expanded}
-              description={t('Show the column when the item is expandedas a detail.')}
-            >
-              {t('Expanded')}
-            </SelectOption>
-            <SelectOption itemId={ColumnTableOption.Hidden} description={t('Hide the column.')}>
-              {t('Hidden')}
-            </SelectOption>
-          </PageSingleSelect>
+            options={[
+              {
+                value: '',
+                label: t('Column'),
+                description: t('Show the column in the table.'),
+              },
+              {
+                value: ColumnTableOption.Description,
+                label: t('Description'),
+                description: t(
+                  'Show the column when the item is expanded as a full width description.'
+                ),
+              },
+              {
+                value: ColumnTableOption.Expanded,
+                label: t('Expanded'),
+                description: t('Show the column when the item is expandedas a detail.'),
+              },
+              {
+                value: ColumnTableOption.Hidden,
+                label: t('Hidden'),
+                description: t('Hide the column.'),
+              },
+            ]}
+          />
         ),
       });
     }
 
     if (!disableListView) {
       columns.push({
-        header: 'List View',
+        header: t('List View'),
         cell: (column: ITableColumn<T>, setColumn: (column: ITableColumn<T>) => void) => (
           <PageSingleSelect
             value={column.list ?? ''}
@@ -85,55 +87,52 @@ export function useManageColumns<T extends object>(
                   break;
               }
             }}
+            options={[
+              {
+                value: '',
+                label: t('Left side'),
+                description: t('Show the column on the left side of the list.'),
+              },
+              {
+                value: 'name',
+                label: t('Name'),
+                description: t('Show the column as the name of the list item.'),
+              },
+              {
+                value: 'subtitle',
+                label: t('Subtitle'),
+                description: t('Show the column as the subtitle under the name on the list.'),
+              },
+              {
+                value: 'description',
+                label: t('Description'),
+                description: t('Show the column as the list item description.'),
+              },
+              {
+                value: 'primary',
+                label: t('Left side'),
+                description: t('Show the column on the left side of the list.'),
+              },
+              {
+                value: 'secondary',
+                label: t('Right side'),
+                description: t('Show the column on the right side of the list.'),
+              },
+              {
+                value: 'hidden',
+                label: t('Hidden'),
+                description: t('Hide the column on the list.'),
+              },
+            ]}
             placeholder={t('Left side')}
-          >
-            <SelectOption
-              itemId=""
-              description={t('Show the column on the left side of the list.')}
-            >
-              {t('Left side')}
-            </SelectOption>
-            <SelectOption
-              itemId="name"
-              description={t('Show the column as the name of the list item.')}
-            >
-              {t('Name')}
-            </SelectOption>
-            <SelectOption
-              itemId="subtitle"
-              description={t('Show the column as the subtitle under the name on the list.')}
-            >
-              {t('Subtitle')}
-            </SelectOption>
-            <SelectOption
-              itemId="description"
-              description={t('Show the column as the list item description.')}
-            >
-              {t('Description')}
-            </SelectOption>
-            <SelectOption
-              itemId="primary"
-              description={t('Show the column on the left side of the list.')}
-            >
-              {t('Left side')}
-            </SelectOption>
-            <SelectOption
-              itemId="secondary"
-              description={t('Show the column on the right side of the list.')}
-            >
-              {t('Right side')}
-            </SelectOption>
-            <SelectOption itemId="hidden" description={t('Hide the column on the list.')}>
-              {t('Hidden')}
-            </SelectOption>
-          </PageSingleSelect>
+          />
         ),
       });
     }
 
     if (!disableCardView) {
       columns.push({
-        header: 'Card View',
+        header: t('Card View'),
         cell: (column: ITableColumn<T>, setColumn: (column: ITableColumn<T>) => void) => (
           <PageSingleSelect
             value={column.card ?? ''}
@@ -151,32 +150,34 @@ export function useManageColumns<T extends object>(
               }
             }}
             placeholder={t('Detail')}
-          >
-            <SelectOption
-              itemId=""
-              description={t('Show the column one of the details on the card.')}
-            >
-              {t('Detail')}
-            </SelectOption>
-            <SelectOption itemId="name" description={t('Show the column as the name on the card.')}>
-              {t('Name')}
-            </SelectOption>
-            <SelectOption
-              itemId="subtitle"
-              description={t('Show the column as the subtitle under the name on the card.')}
-            >
-              {t('Subtitle')}
-            </SelectOption>
-            <SelectOption
-              itemId="description"
-              description={t('Show the column as the card description.')}
-            >
-              {t('Description')}
-            </SelectOption>
-            <SelectOption itemId="hidden" description={t('Hide the column on the card.')}>
-              {t('Hidden')}
-            </SelectOption>
-          </PageSingleSelect>
+            options={[
+              {
+                value: '',
+                label: t('Detail'),
+                description: t('Show the column one of the details on the card.'),
+              },
+              {
+                value: 'name',
+                label: t('Name'),
+                description: t('Show the column as the name on the card.'),
+              },
+              {
+                value: 'subtitle',
+                label: t('Subtitle'),
+                description: t('Show the column as the subtitle under the name on the card.'),
+              },
+              {
+                value: 'description',
+                label: t('Description'),
+                description: t('Show the column as the card description.'),
+              },
+              {
+                value: 'hidden',
+                label: t('Hidden'),
+                description: t('Hide the column on the card.'),
+              },
+            ]}
+          />
         ),
       });
     }
@@ -229,8 +230,8 @@ export function useManageColumns<T extends object>(
     ITableColumn<T>
   >({
     id: id,
-    title: 'Manage Columns',
-    description: 'Manage the order, placement, and format of columns.',
+    title: t('Manage Columns'),
+    description: t('Manage the order, placement, and format of columns.'),
     items: tableColumns,
     keyFn: (tableColumn) => tableColumn.id ?? tableColumn.header,
     columns,
