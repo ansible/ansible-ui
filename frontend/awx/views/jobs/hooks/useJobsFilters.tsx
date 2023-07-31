@@ -26,7 +26,7 @@ export function useJobsFilters() {
       {
         key: 'type',
         label: t('Job type'),
-        type: ToolbarFilterType.SingleSelect,
+        type: ToolbarFilterType.MultiSelect,
         query: 'type',
         options: [
           { label: t('Source control update'), value: 'project_update' },
