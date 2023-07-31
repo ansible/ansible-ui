@@ -203,8 +203,7 @@ export type PageTableProps<T extends object> = {
  * ```
  */
 export function PageTable<T extends object>(props: PageTableProps<T>) {
-  const { id, toolbarActions, filters, error, itemCount, disableBodyPadding, pagination, keyFn } =
-    props;
+  const { id, toolbarActions, filters, error, itemCount, disableBodyPadding, pagination } = props;
 
   const { openColumnManagement, managedColumns } = useManageColumns<T>(
     (id ?? '') + '-columns',
