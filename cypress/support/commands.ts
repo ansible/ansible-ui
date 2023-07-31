@@ -77,6 +77,13 @@ declare global {
         multiselect?: boolean
       ): Chainable<void>;
 
+      singleSelectShouldHaveSelectedOption(
+        selector: string,
+        label: string | RegExp
+      ): Chainable<void>;
+      singleSelectShouldContainOption(selector: string, label: string | RegExp): Chainable<void>;
+      selectSingleSelectOption(selector: string, label: string | RegExp): Chainable<void>;
+
       // --- TABLE COMMANDS ---
 
       /** Change the current filter type in the table toolbar. */
