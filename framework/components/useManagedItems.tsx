@@ -61,7 +61,7 @@ export interface ManageItemsProps<ItemT extends object> {
  * - Display type
  */
 export function useManageItems<ItemT extends object>(options: ManageItemsProps<ItemT>) {
-  const { saveFn, loadFn } = options;
+  const { saveFn, loadFn, isSelected, setSelected } = options;
   const [_, setDialog] = usePageDialog();
   const [keyFn] = useState(() => options.keyFn);
 
@@ -90,23 +90,16 @@ export function useManageItems<ItemT extends object>(options: ManageItemsProps<I
     setItemsState(items);
   }, []);
 
-  const { selectedItems, selectItems, isSelected, selectItem, unselectItem } = useSelected(
-    items,
-    keyFn,
-    items.filter((item) => options.isSelected?.(item) ?? false)
-  );
-
   const onApplyChanges = useCallback(
-    (items: ItemT[], selectedItems: ItemT[]) => {
+    (items: ItemT[]) => {
       setItems(items);
-      selectItems(selectedItems);
       if (saveFn) {
         localStorage.setItem(options.id, JSON.stringify(saveFn(items)));
       } else {
         localStorage.setItem(options.id, JSON.stringify(items));
       }
     },
-    [options.id, saveFn, selectItems, setItems]
+    [options.id, saveFn, setItems]
   );
 
   const openModal = () =>
@@ -115,17 +108,33 @@ export function useManageItems<ItemT extends object>(options: ManageItemsProps<I
         {...options}
         keyFn={keyFn}
         items={items}
-        defaultSelectedItems={selectedItems}
+        defaultSelectedItems={items.filter((item) => isSelected?.(item))}
         onApplyChanges={onApplyChanges}
       />
     );
 
-  const visibleItems = items.filter((item) => isSelected(item));
+  const visibleItems = items.filter((item) => (isSelected ? isSelected(item) : true));
+
+  const selectItem = useCallback(() => {
+    return setSelected
+      ? (item: ItemT) => setSelected(item, true)
+      : () => {
+          alert('No setSelected callback provided');
+        };
+  }, [setSelected]);
+
+  const unselectItem = useCallback(() => {
+    return setSelected
+      ? (item: ItemT) => setSelected(item, false)
+      : () => {
+          alert('No setSelected callback provided');
+        };
+  }, [setSelected]);
 
   return {
     openModal,
     items: visibleItems,
-    isSelected,
+    isSelected: isSelected ? isSelected : () => false,
     selectItem,
     unselectItem,
   };
