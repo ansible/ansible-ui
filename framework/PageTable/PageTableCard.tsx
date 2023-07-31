@@ -267,8 +267,6 @@ export function useColumnsToTableCardFn<T extends object>(
             case 'description':
               descriptionColumn = column;
               break;
-            case 'hidden':
-              break;
             default:
               cardColumns.push(column);
               break;

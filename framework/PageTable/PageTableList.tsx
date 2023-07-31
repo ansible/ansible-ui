@@ -103,8 +103,6 @@ export function useColumnsToDataList<T extends object>(
             case 'description':
               descriptionColumn = column;
               break;
-            case 'hidden':
-              break;
             case 'secondary':
               secondaryColumns.push(column);
               break;
