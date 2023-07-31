@@ -3,6 +3,7 @@ interface IPageSelectOption<ValueT> {
   value: ValueT;
   label: string;
   description?: string;
+  isDisabled?: boolean;
 }
 
 /**

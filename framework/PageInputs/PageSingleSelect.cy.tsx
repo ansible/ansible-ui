@@ -7,6 +7,7 @@ import { PageSingleSelect } from './PageSingleSelect';
 interface ITestObject {
   name: string;
   description?: string;
+  label?: string;
 }
 
 const testObjects: ITestObject[] = new Array(20).fill(0).map((_, index) => ({
