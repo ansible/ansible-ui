@@ -85,7 +85,7 @@ export function FormGroupTypeAheadMultiSelect(props: FormGroupTypeAheadMultiSele
         chipGroupComponent={chipGroupComponent()}
         variant={SelectVariant.typeaheadMulti}
         isCreatable
-        placeholderText={!value?.length && placeholderText}
+        placeholderText={!value?.length && placeholderText ? placeholderText : undefined}
         isOpen={isOpen}
         isCreateOptionOnTop
         onClear={() => onHandleClear()}
@@ -101,7 +101,7 @@ export function FormGroupTypeAheadMultiSelect(props: FormGroupTypeAheadMultiSele
         isDisabled={isReadOnly || isSubmitting}
       >
         {options.map((option) => (
-          <SelectOption key={option.label} value={option.value}>
+          <SelectOption key={`${option.label}-${props.name}`} value={option.value}>
             {option.label}
           </SelectOption>
         ))}

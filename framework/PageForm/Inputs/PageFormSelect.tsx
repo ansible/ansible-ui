@@ -86,6 +86,7 @@ export type PageFormSelectProps<
    * Note: The required attribute works with the following input types: text, search, url, tel, email, password, date pickers, number, checkbox, radio, and file.
    */
   isRequired?: boolean;
+  fieldNameToResetOnFieldChange?: TFieldName;
 
   validate?:
     | Validate<FieldPathValue<TFieldValues, TFieldName>, TFieldValues>
@@ -111,6 +112,7 @@ export function PageFormSelect<
     isReadOnly,
     isRequired,
     validate,
+    fieldNameToResetOnFieldChange,
   } = props;
 
   const id = props.id ?? name.split('.').join('-');
@@ -118,6 +120,7 @@ export function PageFormSelect<
   const {
     control,
     formState: { isSubmitting, isValidating },
+    resetField,
   } = useFormContext<TFieldValues>();
 
   const [open, setOpen] = useState(false);
@@ -141,6 +144,7 @@ export function PageFormSelect<
           label: string | SelectOptionObject
         ) => {
           onChange(options.find((option) => option.label === label.toString())?.value);
+          fieldNameToResetOnFieldChange ? resetField(fieldNameToResetOnFieldChange) : undefined;
           setOpen(false);
         };
 

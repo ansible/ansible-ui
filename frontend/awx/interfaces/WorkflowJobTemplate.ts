@@ -15,8 +15,9 @@ export interface WorkflowJobTemplate
   allow_simultaneous: boolean;
   modified: string;
   webhook_service: 'github' | 'gitlab' | null;
+  ask_instance_groups_on_launch: boolean;
   webhook_credential: number;
-  related: { schedules: string };
+  related: { schedules: string; instance_groups: string };
   summary_fields: {
     webhook_credential: {
       id: number;
