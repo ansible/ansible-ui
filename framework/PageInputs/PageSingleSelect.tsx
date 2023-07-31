@@ -3,10 +3,6 @@ import { Select, SelectList, SelectOption } from '@patternfly/react-core/next';
 import { ReactNode, useState } from 'react';
 import styled from 'styled-components';
 
-const PlacedholderWrapper = styled.span`
-  color: var(--pf-global--Color--dark-200);
-`;
-
 export interface PageSelectOption<T> {
   label: string;
   description?: string;
@@ -49,14 +45,10 @@ export function PageSingleSelect<T>(props: PageSingleSelectProps<T>) {
       ref={toggleRef}
       onClick={() => setIsOpen((open) => !open)}
       isExpanded={isOpen}
-      style={{ width: 200 }}
+      style={{ width: '100%', minWidth: 100 }}
     >
       {props.icon && <span style={{ paddingLeft: 4, paddingRight: 12 }}>{props.icon}</span>}
-      {selectedOption ? (
-        selectedOption.label
-      ) : (
-        <PlacedholderWrapper>{placeholder}</PlacedholderWrapper>
-      )}
+      {selectedOption ? selectedOption.label : <PlacedholderSpan>{placeholder}</PlacedholderSpan>}
     </MenuToggle>
   );
 
@@ -85,3 +77,7 @@ export function PageSingleSelect<T>(props: PageSingleSelectProps<T>) {
     </Select>
   );
 }
+
+const PlacedholderSpan = styled.span`
+  color: var(--pf-global--Color--dark-200);
+`;
