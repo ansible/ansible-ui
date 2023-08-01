@@ -4,17 +4,16 @@ import { Divider, PageSection, Stack, Title, TitleSizes } from '@patternfly/reac
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePersistentFilters } from '../../../common/PersistentFilters';
+import { useAwxConfig } from '../../common/useAwxConfig';
 import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
+import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
 import { JobsChart } from '../../dashboard/charts/JobsChart';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
 import { useAwxView } from '../../useAwxView';
-import { JobExpanded } from './JobExpanded';
 import { useJobRowActions } from './hooks/useJobRowActions';
 import { useJobToolbarActions } from './hooks/useJobToolbarActions';
 import { useJobsColumns } from './hooks/useJobsColumns';
 import { useJobsFilters } from './hooks/useJobsFilters';
-import { useAwxConfig } from '../../common/useAwxConfig';
-import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
 
 export default function Jobs() {
   const { t } = useTranslation();
@@ -101,6 +100,7 @@ export default function Jobs() {
         </>
       )}
       <PageTable
+        id="awx-jobs"
         toolbarFilters={toolbarFilters}
         tableColumns={tableColumns}
         toolbarActions={toolbarActions}
@@ -108,7 +108,6 @@ export default function Jobs() {
         errorStateTitle={t('Error loading jobs')}
         emptyStateTitle={t('No jobs yet')}
         emptyStateDescription={t('Please run a job to populate this list.')}
-        expandedRow={JobExpanded}
         {...view}
         defaultSubtitle={t('Job')}
       />
