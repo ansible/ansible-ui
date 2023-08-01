@@ -1,5 +1,5 @@
 import { Button, Modal, ModalVariant } from '@patternfly/react-core';
-import { ReactNode, useCallback, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePageDialog } from '../PageDialogs/PageDialog';
 import { useSelected } from '../PageTable/useTableItems';
@@ -65,7 +65,7 @@ export function useManageItems<ItemT extends object>(options: ManageItemsProps<I
   const [_, setDialog] = usePageDialog();
   const [keyFn] = useState(() => options.keyFn);
 
-  const [items, setItemsState] = useState<ItemT[]>(() => {
+  const [items, setItems] = useState<ItemT[]>(() => {
     try {
       const value = localStorage.getItem(options.id);
       if (typeof value === 'string') {
@@ -86,9 +86,21 @@ export function useManageItems<ItemT extends object>(options: ManageItemsProps<I
     }
   });
 
-  const setItems = useCallback((items: ItemT[]) => {
-    setItemsState(items);
-  }, []);
+  useEffect(() => {
+    setItems((items) => {
+      const newItems = [...items];
+      for (const newItem of options.items) {
+        const key = keyFn(newItem);
+        const existingItem = items.find((item) => keyFn(item) === key);
+        if (existingItem) {
+          Object.assign(existingItem, newItem);
+        } else {
+          newItems.push(newItem);
+        }
+      }
+      return newItems;
+    });
+  }, [keyFn, loadFn, options.items, saveFn]);
 
   const onApplyChanges = useCallback(
     (items: ItemT[]) => {

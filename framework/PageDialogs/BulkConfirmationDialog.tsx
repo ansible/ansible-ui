@@ -12,7 +12,7 @@ import { ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { PageTable } from '../PageTable/PageTable';
-import { ITableColumn } from '../PageTable/PageTableColumn';
+import { ITableColumn, useVisibleModalColumns } from '../PageTable/PageTableColumn';
 import { usePaged } from '../PageTable/useTableItems';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { compareStrings } from '../utils/compare';
@@ -141,6 +141,8 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
     return items;
   }, [isItemNonActionable, items]);
 
+  const modalColumns = useVisibleModalColumns(columnsForConfirmation);
+
   return (
     <Modal
       titleIconVariant={isDanger ? 'warning' : undefined}
@@ -180,7 +182,7 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
               key="items"
               pageItems={pagination.paged}
               itemCount={items.length}
-              tableColumns={columnsForConfirmation}
+              tableColumns={modalColumns}
               keyFn={keyFn}
               pagination={pagination}
               compact

@@ -20,6 +20,7 @@ export function useIdColumn<T extends { name: string; id: number }>() {
       table: ColumnTableOption.Hidden,
       card: 'hidden',
       list: 'hidden',
+      modal: ColumnModalOption.Hidden,
     }),
     [t]
   );
