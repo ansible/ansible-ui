@@ -70,6 +70,7 @@ export interface JobTemplate
   ask_forks_on_launch: boolean;
   ask_instance_groups_on_launch: boolean;
   ask_execution_environment_on_launch: boolean;
+  organization?: number;
   ask_inventory_on_launch: boolean;
   type: 'job_template';
   job_type: 'run' | 'check';
