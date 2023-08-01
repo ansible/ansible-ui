@@ -1,16 +1,18 @@
-import { FileUpload } from '@patternfly/react-core';
 import React, { useCallback, useState } from 'react';
+import { FileUpload, FileUploadProps } from '@patternfly/react-core';
 import { Controller, useFormContext } from 'react-hook-form';
 import { PageFormGroup, PageFormGroupProps } from './PageFormGroup';
+import { useTranslation } from 'react-i18next';
 
 export type PageFormFileUploadProps = {
   name: string;
-  isReadOnly?: boolean;
   placeholder?: string;
-} & PageFormGroupProps;
+} & PageFormGroupProps &
+  Omit<FileUploadProps, 'id'>;
 
 /** PatternFly Select wrapper for use with react-hook-form */
 export function PageFormFileUpload(props: PageFormFileUploadProps) {
+  const { t } = useTranslation();
   const {
     control,
     formState: { isSubmitting },
@@ -21,6 +23,7 @@ export function PageFormFileUpload(props: PageFormFileUploadProps) {
   const handleFileReadStarted = (_fileHandle: File) => {
     setIsLoading(true);
   };
+
   return (
     <Controller
       name={props.name}
@@ -35,28 +38,31 @@ export function PageFormFileUpload(props: PageFormFileUploadProps) {
           setIsLoading(false);
           onChange(_fileHandle);
         };
-        // const handleTextOrDataChange = (value: string) => {
-        //   onChange(value)
-        // }
+        const handleTextOrDataChange = (value: string) => {
+          if (props.type === 'text') {
+            onChange(value);
+          }
+        };
         return (
           <PageFormGroup
             {...props}
             helperTextInvalid={
               error?.type === 'required'
                 ? typeof props.label === 'string'
-                  ? `${props.label} is required`
-                  : 'Required'
+                  ? t(`${props.label} is required`)
+                  : t('Required')
                 : error?.message
             }
           >
             <FileUpload
-              id="file-upload"
-              type="dataURL"
+              id={`file-upload-${props.name}`}
+              type={props.type || 'dataURL'}
               value={value as string}
-              filename={isLoading ? 'loading...' : filename}
+              hideDefaultPreview={props.hideDefaultPreview}
+              filename={isLoading ? t('loading...') : filename}
               filenamePlaceholder={props.placeholder}
               onFileInputChange={handleFileInputChange}
-              // onDataChange={handleTextOrDataChange}
+              onDataChange={handleTextOrDataChange}
               // onTextChange={handleTextOrDataChange}
               onReadStarted={handleFileReadStarted}
               onReadFinished={handleFileReadFinished}
