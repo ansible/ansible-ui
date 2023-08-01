@@ -6,18 +6,19 @@ import { useRemoteActions } from './hooks/useRemoteActions';
 import { useRemoteColumns } from './hooks/useRemoteColumns';
 import { useRemoteFilters } from './hooks/useRemoteFilters';
 
-export interface Remotes {
+export interface IRemotes {
   pulp_href: string;
   pulp_created: string;
   name: string;
   url: string;
   ca_cert: string;
   client_cert: string;
+  client_key: string;
   tls_validation: boolean;
   proxy_url: string;
   pulp_labels: unknown;
   pulp_last_updated: string;
-  download_concurrency: string;
+  download_concurrency: number;
   max_retries: number;
   policy: 'immediate';
   total_timeout: number;
@@ -41,7 +42,7 @@ export function Remotes() {
   const toolbarFilters = useRemoteFilters();
   const tableColumns = useRemoteColumns();
   const toolbarActions = useRemoteActions();
-  const view = usePulpView<Remotes>({
+  const view = usePulpView<IRemotes>({
     url: pulpAPI`/remotes/`,
     keyFn: pulpHrefKeyFn,
     toolbarFilters,
@@ -51,7 +52,7 @@ export function Remotes() {
   return (
     <PageLayout>
       <PageHeader title={t('Remotes')} description={t('Remotes')} />
-      <PageTable<Remotes>
+      <PageTable<IRemotes>
         toolbarFilters={toolbarFilters}
         tableColumns={tableColumns}
         toolbarActions={toolbarActions}

@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ITableColumn, TextCell } from '../../../../framework';
-import { Remotes } from '../Remotes';
+import { IRemotes } from '../Remotes';
 
 export function useRemoteColumns() {
   const { t } = useTranslation();
-  const tableColumns = useMemo<ITableColumn<Remotes>[]>(
+  const tableColumns = useMemo<ITableColumn<IRemotes>[]>(
     () => [
       {
         header: t('Remote name'),

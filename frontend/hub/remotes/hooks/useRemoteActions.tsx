@@ -3,26 +3,26 @@ import { useTranslation } from 'react-i18next';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../framework';
 import { PlusIcon } from '@patternfly/react-icons';
 import { ButtonVariant } from '@patternfly/react-core';
-import { Remotes } from '../Remotes';
+import { IRemotes } from '../Remotes';
+import { RouteObj } from '../../../Routes';
+import { useNavigate } from 'react-router-dom';
 
 export function useRemoteActions() {
   const { t } = useTranslation();
-  const actions = useMemo<IPageAction<Remotes>[]>(
+  const navigate = useNavigate();
+  const actions = useMemo<IPageAction<IRemotes>[]>(
     () => [
       {
+        icon: PlusIcon,
+        isPinned: true,
+        label: t('Create remote'),
+        onClick: () => navigate(RouteObj.CreateRemotes),
+        selection: PageActionSelection.None,
         type: PageActionType.Button,
         variant: ButtonVariant.primary,
-        selection: PageActionSelection.None,
-        label: t('Create remote'),
-        icon: PlusIcon,
-        onClick: () => {
-          // eslint-disable-next-line no-console
-          console.log('create remote');
-        },
-        isPinned: true,
       },
     ],
-    [t]
+    [t, navigate]
   );
 
   return actions;

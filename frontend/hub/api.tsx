@@ -3,7 +3,7 @@ import { activeAutomationServer } from '../automation-servers/AutomationServersP
 
 function apiTag(strings: TemplateStringsArray, ...values: string[]) {
   if (strings[0]?.[0] !== '/') {
-    throw 'Invalid URL';
+    throw new Error('Invalid URL');
   }
 
   let url = '';
@@ -96,4 +96,8 @@ export function collectionKeyFn(item: {
   repository: { name: string };
 }) {
   return item.collection_version.pulp_href + '_' + item.repository.name;
+}
+
+export function appendTrailingSlash(url: string) {
+  return url.endsWith('/') ? url : url + '/';
 }
