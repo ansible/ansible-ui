@@ -16,7 +16,6 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
         sort: 'id',
         card: 'hidden',
         list: 'hidden',
-        isIdColumn: true,
         minWidth: 0,
       },
       {

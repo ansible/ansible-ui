@@ -14,7 +14,6 @@ export type PageToolbarViewProps = {
   disableTableView?: boolean;
   disableCardView?: boolean;
   disableListView?: boolean;
-  disableColumnManagement?: boolean;
   openColumnModal?: () => void;
   viewType: PageTableViewType;
   setViewType: (viewType: PageTableViewType) => void;
@@ -32,7 +31,7 @@ export function PageToolbarView(props: PageToolbarViewProps) {
 
   return (
     <ToolbarGroup variant="button-group" style={{ justifyContent: 'end', marginRight: 0 }}>
-      {!props.disableColumnManagement && openColumnModal && viewType === 'table' && (
+      {openColumnModal && (
         <ToolbarItem>
           <Tooltip content={translations.manageColumns}>
             <Button variant="plain" icon={<ColumnsIcon />} onClick={openColumnModal} />

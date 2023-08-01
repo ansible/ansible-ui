@@ -36,6 +36,8 @@ const ToolbarContent = styled(PFToolbarContent)`
 `;
 
 export type PageTableToolbarProps<T extends object> = {
+  localStorageKey?: string;
+
   openColumnModal?: () => void;
   keyFn: (item: T) => string | number;
 
@@ -73,7 +75,6 @@ export type PageTableToolbarProps<T extends object> = {
   disableTableView?: boolean;
   disableListView?: boolean;
   disableCardView?: boolean;
-  disableColumnManagement?: boolean;
   disablePagination?: boolean;
   bottomBorder?: boolean;
   sortOptions?: PageTableSortOption[];
@@ -210,7 +211,6 @@ export function PageTableToolbar<T extends object>(props: PageTableToolbarProps<
               disableTableView={props.disableTableView}
               disableListView={props.disableListView}
               disableCardView={props.disableCardView}
-              disableColumnManagement={props.disableColumnManagement}
               viewType={viewType}
               setViewType={setViewType}
               openColumnModal={openColumnModal}

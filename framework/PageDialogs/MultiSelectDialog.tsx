@@ -69,7 +69,6 @@ export function MultiSelectDialog<T extends object>(props: MultiSelectDialogProp
           showSelect
           disableCardView
           disableListView
-          disableColumnManagement
           compact
           disableBodyPadding
         />

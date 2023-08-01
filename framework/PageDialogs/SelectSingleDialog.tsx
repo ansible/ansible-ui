@@ -70,7 +70,6 @@ export function SelectSingleDialog<T extends object>(props: SelectSingleDialogPr
           errorStateTitle={props.errorStateTitle ?? translations.errorText}
           disableCardView
           disableListView
-          disableColumnManagement
           compact
           disableBodyPadding
           onSelect={(item) => {

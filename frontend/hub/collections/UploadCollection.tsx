@@ -142,7 +142,6 @@ export function UploadCollectionByFile() {
           onSelect={(repo) => {
             setSelectedRepo({ name: repo.name, pulp_href: repo.pulp_href });
           }}
-          disableColumnManagement={true}
           disableListView={true}
           disableCardView={true}
           tableColumns={tableColumns}

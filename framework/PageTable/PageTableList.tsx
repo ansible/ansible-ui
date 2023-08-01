@@ -81,6 +81,7 @@ export function useColumnsToDataList<T extends object>(
     const secondaryColumns: ITableColumn<T>[] = [];
 
     for (const column of tableColumns) {
+      if (column.list === 'hidden') continue;
       switch (column.type) {
         case 'description':
           if (!descriptionColumn) descriptionColumn = column;
@@ -101,8 +102,6 @@ export function useColumnsToDataList<T extends object>(
               break;
             case 'description':
               descriptionColumn = column;
-              break;
-            case 'hidden':
               break;
             case 'secondary':
               secondaryColumns.push(column);
