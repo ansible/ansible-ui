@@ -11,7 +11,7 @@ import { CheckCircleIcon, ExclamationCircleIcon, PendingIcon } from '@patternfly
 import pLimit from 'p-limit';
 import { useCallback, useEffect, useState } from 'react';
 import { PageTable } from '../PageTable/PageTable';
-import { ITableColumn } from '../PageTable/PageTableColumn';
+import { ITableColumn, useVisibleModalColumns } from '../PageTable/PageTableColumn';
 import { usePaged } from '../PageTable/useTableItems';
 import { pfDanger, pfInfo, pfSuccess } from '../components/pfcolors';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
@@ -158,6 +158,8 @@ function BulkActionDialog<T extends object>(props: BulkActionDialogProps<T>) {
 
   const pagination = usePaged(items);
 
+  const modalColumns = useVisibleModalColumns(actionColumns);
+
   return (
     <Modal
       titleIconVariant={isDanger ? 'warning' : undefined}
@@ -199,7 +201,7 @@ function BulkActionDialog<T extends object>(props: BulkActionDialogProps<T>) {
             pageItems={[...pagination.paged]}
             itemCount={items.length}
             tableColumns={[
-              ...actionColumns,
+              ...modalColumns,
               {
                 header: 'Status',
                 cell: (item) => {

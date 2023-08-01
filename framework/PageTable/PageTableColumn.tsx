@@ -6,11 +6,6 @@ import { PageTableViewTypeE } from './PageToolbar/PageTableViewType';
 
 /** Column options for controlling how the column displays in a table. */
 export enum ColumnTableOption {
-  /** Key indicates the column is the key for the item and should not be allowed to be hidden by the user. */
-  // TODO - reevaluate this option as a column cant be 'id' and 'key' because it is the same option.
-  // Maybe make it it's own prop of the column `isKey: true`?
-  Key = 'key',
-
   /** Description uses the column in an expendable row with full width. */
   Description = 'description',
 
@@ -19,10 +14,6 @@ export enum ColumnTableOption {
 
   /** Hidden hides the column in the table. */
   Hidden = 'hidden',
-
-  /** Id shows the row as an ID with a collapsed width so the ID shows by the name. */
-  // TODO - reevaluate - is this needed as column type:'id' could auto set column minWidth:0
-  Id = 'id',
 }
 
 /** Column options for controlling how the column displays in a list. */

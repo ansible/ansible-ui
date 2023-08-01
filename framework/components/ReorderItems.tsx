@@ -1,42 +1,42 @@
+import styles from '@patternfly/react-styles/css/components/Table/table';
 import {
   TableComposable,
-  Thead,
   Tbody,
-  Tr,
-  Th,
-  Td,
   TbodyProps,
+  Td,
+  Th,
+  Thead,
+  Tr,
   TrProps,
 } from '@patternfly/react-table';
-import styles from '@patternfly/react-styles/css/components/Table/table';
-import React, { ReactNode, useEffect, useRef, useState } from 'react';
+import React, { ReactNode, useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type ReorderItemsProps<T extends object> = {
   /** Array of columns */
   columns: {
     header: string;
-    cell: (item: T) => ReactNode | string;
+    cell: (item: T, setItem: (item: T) => void) => ReactNode | string;
   }[];
-  /** Array of items that can be reordered */
+
   items: T[];
+  setItems: (items: T[]) => void;
+
+  isSelected: (items: T) => boolean;
+  selectItem: (items: T) => void;
+  unselectItem: (items: T) => void;
+  allSelected: boolean;
+  selectAll: () => void;
+  unselectAll: () => void;
+
   /** A function that gets a unique key for each item */
   keyFn: (item: T) => string | number;
-  /** Callback function to retrieve items with the updated order, selected items */
-  onChange: (items: T[], selectedItems: T[]) => void;
-  /** Setting to show the table with the `compact` variant and without borders for rows */
-  isCompactBorderless?: boolean;
+
   /** Setting to hide column headers */
   hideColumnHeaders?: boolean;
+
   /** Setting to include a column of checkboxes to enable selection of rows */
   isSelectableWithCheckbox?: boolean;
-  /** Initial selection of rows */
-  defaultSelection?: T[];
-};
-
-export type ReorderItemsRef<T extends object> = {
-  // Get the current state of reordered and selected items
-  getReorderedAndSelectedItems: () => { reorderedItems: T[]; selectedItems: T[] };
 };
 
 /**
@@ -44,28 +44,26 @@ export type ReorderItemsRef<T extends object> = {
  * [Optionally allows selecting items from the list using checkboxes.]
  */
 export function ReorderItems<T extends object>(props: ReorderItemsProps<T>) {
+  const { t } = useTranslation();
+
   const {
     columns,
-    items,
-    isCompactBorderless,
-    hideColumnHeaders,
     keyFn,
-    onChange,
+    items,
+    setItems,
+    isSelected,
+    selectItem,
+    unselectItem,
+    allSelected,
+    selectAll,
+    unselectAll,
+    hideColumnHeaders,
     isSelectableWithCheckbox,
-    defaultSelection,
   } = props;
-  const [listItems, setListItems] = useState([...items]);
-  const [selectedItems, setSelectedItems] = useState([
-    ...(defaultSelection ? defaultSelection : []),
-  ]);
+
   const [itemStartIndex, setStartItemIndex] = useState<number | null>(null);
   const [draggedItemId, setDraggedItemId] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const { t } = useTranslation();
-
-  useEffect(() => {
-    onChange(listItems, selectedItems);
-  }, [listItems, onChange, selectedItems]);
 
   const bodyRef = useRef<HTMLTableSectionElement>(null);
 
@@ -116,15 +114,8 @@ export function ReorderItems<T extends object>(props: ReorderItemsProps<T>) {
         (item) => item.id === dragId
       );
       if (newDraggedItemIndex !== itemStartIndex && draggedItemId) {
-        const tempItemOrder = moveItem([...listItems], draggedItemId, newDraggedItemIndex);
-        setListItems(tempItemOrder);
-
-        setSelectedItems((prevSelected) => {
-          prevSelected.sort(function (a, b) {
-            return tempItemOrder.indexOf(a) - tempItemOrder.indexOf(b);
-          });
-          return [...prevSelected];
-        });
+        const tempItemOrder = moveItem([...items], draggedItemId, newDraggedItemIndex);
+        setItems(tempItemOrder);
       }
     }
     return null;
@@ -171,46 +162,36 @@ export function ReorderItems<T extends object>(props: ReorderItemsProps<T>) {
     }
   };
 
-  const onSelectItem = (isSelected: boolean, listItem: T) => {
-    setSelectedItems((prevSelected) => {
-      const otherSelectedItems = prevSelected.filter((item) => item !== listItem);
-      const selectedItems = isSelected ? [...otherSelectedItems, listItem] : otherSelectedItems;
-      selectedItems.sort(function (a, b) {
-        return listItems.indexOf(a) - listItems.indexOf(b);
-      });
-      return [...selectedItems];
-    });
-  };
-
-  const onSelectAllItems = (isSelected: boolean) => {
-    setSelectedItems(isSelected ? listItems : []);
-  };
-
-  const isItemSelected = (item: T) => {
-    return selectedItems.includes(item);
-  };
-
-  const areAllItemsSelected = selectedItems.length === listItems.length;
+  const updateItem = useCallback(
+    (item: T) => {
+      const index = items.findIndex((i) => keyFn(i) === keyFn(item));
+      const newItems = [...items];
+      newItems[index] = item;
+      setItems(newItems);
+    },
+    [items, setItems, keyFn]
+  );
 
   return (
     <TableComposable
       aria-label={t(`Table with draggable rows`)}
       className={isDragging ? styles.modifiers.dragOver : ''}
-      variant={isCompactBorderless ? 'compact' : undefined}
-      borders={!isCompactBorderless}
+      variant={'compact'}
     >
-      {hideColumnHeaders ? null : (
+      {!hideColumnHeaders && (
         <Thead>
           <Tr>
             <Th />
-            {isSelectableWithCheckbox && !hideColumnHeaders ? (
+            {isSelectableWithCheckbox && (
               <Th
                 select={{
-                  onSelect: (_event, isSelected) => onSelectAllItems(isSelected),
-                  isSelected: areAllItemsSelected,
+                  onSelect: (_event, isSelected) => {
+                    isSelected ? selectAll() : unselectAll();
+                  },
+                  isSelected: allSelected,
                 }}
               />
-            ) : null}
+            )}
             {columns.map((column, columnIndex) => (
               <Th key={columnIndex}>{column.header}</Th>
             ))}
@@ -218,37 +199,36 @@ export function ReorderItems<T extends object>(props: ReorderItemsProps<T>) {
         </Thead>
       )}
       <Tbody ref={bodyRef} onDragOver={onDragOver} onDragLeave={onDragLeave}>
-        {listItems.map((listItem, rowIndex) => (
-          <Tr
-            key={keyFn(listItem)}
-            id={keyFn(listItem) as string}
-            draggable
-            onDrop={onDrop}
-            onDragEnd={onDragEnd}
-            onDragStart={onDragStart}
-          >
-            <Td
-              draggableRow={{
-                id: `draggable-row-${keyFn(listItem) as string}`,
-              }}
-            />
-            <Td
-              select={
-                isSelectableWithCheckbox
-                  ? {
-                      rowIndex,
-                      variant: 'checkbox',
-                      onSelect: (_event, isSelected) => onSelectItem(isSelected, listItem),
-                      isSelected: isItemSelected(listItem),
-                    }
-                  : undefined
-              }
-            />
-            {columns.map((column, columnIndex) => (
-              <Td key={`${keyFn(listItem) as string}_${columnIndex}`}>{column.cell(listItem)}</Td>
-            ))}
-          </Tr>
-        ))}
+        {items.map((item, rowIndex) => {
+          const key = keyFn(item);
+          return (
+            <Tr
+              key={key}
+              id={key.toString()}
+              draggable
+              onDrop={onDrop}
+              onDragEnd={onDragEnd}
+              onDragStart={onDragStart}
+            >
+              <Td draggableRow={{ id: `draggable-row-${key.toString()}` }} />
+              {isSelectableWithCheckbox && (
+                <Td
+                  select={{
+                    rowIndex,
+                    variant: 'checkbox',
+                    onSelect: (_event, select) => {
+                      select ? selectItem(item) : unselectItem(item);
+                    },
+                    isSelected: isSelected(item),
+                  }}
+                />
+              )}
+              {columns.map((column) => (
+                <Td key={column.header}>{column.cell(item, updateItem)}</Td>
+              ))}
+            </Tr>
+          );
+        })}
       </Tbody>
     </TableComposable>
   );
