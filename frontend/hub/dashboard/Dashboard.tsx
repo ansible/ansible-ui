@@ -10,7 +10,6 @@ import {
   PageHeader,
   PageLayout,
 } from '../../../framework';
-import { PageDashboardCarousel } from '../../../framework/PageDashboard/PageDashboardCarousel';
 import { PageDashboardCountBar } from '../../../framework/PageDashboard/PageDashboardCountBar';
 import { LoadingPage } from '../../../framework/components/LoadingPage';
 import { RouteObj } from '../../Routes';
@@ -20,8 +19,9 @@ import { useHubNamespaces } from '../namespaces/hooks/useHubNamespaces';
 import { HubGettingStartedCard } from './HubGettingStarted';
 import { useManageHubDashboard } from './useManageHubDashboard';
 import { useState } from 'react';
-import { CategorizedCollections, CollectionCategory } from './CollectionCategory';
+import { CategorizedCollections } from './CollectionCategory';
 import { useCategorizeCollections } from './hooks/useCategorizeCollections';
+import { CollectionCategories } from './CollectionCategories';
 
 export function HubDashboard() {
   const { t } = useTranslation();
@@ -30,12 +30,12 @@ export function HubDashboard() {
   const environments = useExecutionEnvironments();
 
   const { openManageDashboard, managedCategories } = useManageHubDashboard();
+
   /** Data for collection category carousels */
-  const [collectionCategories, setCollectionCategories] = useState<CollectionCategory[]>([]);
   const [categorizedCollections, setCategorizedCollections] = useState<CategorizedCollections>({});
 
   /** Retrieve and set categories of collections and map categories to collections */
-  useCategorizeCollections(setCollectionCategories, setCategorizedCollections);
+  useCategorizeCollections(managedCategories, setCategorizedCollections);
 
   if (!namespaces) {
     return <LoadingPage />;
@@ -90,20 +90,12 @@ export function HubDashboard() {
             },
           ]}
         />
-        {managedCategories.map((category) => (
-          <PageDashboardCarousel
-            key={category.id}
-            title={category.name}
-            linkText="Go to Collections"
-            width="xxl"
-          >
-            {new Array(12).fill(0).map((_, i) => (
-              <Card isRounded isFlat key={i}>
-                <CardBody>Card {i + 1}</CardBody>
-              </Card>
-            ))}
-          </PageDashboardCarousel>
-        ))}
+        {managedCategories.length ? (
+          <CollectionCategories
+            categories={managedCategories}
+            categorizedCollections={categorizedCollections}
+          />
+        ) : null}
       </PageDashboard>
     </PageLayout>
   );

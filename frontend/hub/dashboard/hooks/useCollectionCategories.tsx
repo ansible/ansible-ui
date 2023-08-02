@@ -9,10 +9,10 @@ import { useMemo } from 'react';
  */
 export function useCollectionCategories() {
   // NOTE: The following is mock data used for developing this feature while the API endpoint is under development
-  const t = useMemo(
-    () => ({
+  const categories = useMemo(() => {
+    const mockApiResponse = {
       meta: {
-        count: 2,
+        count: 3,
       },
       data: [
         {
@@ -28,12 +28,6 @@ export function useCollectionCategories() {
           searchValue: 'storage',
         },
         {
-          id: 'system',
-          name: 'System collections',
-          searchKey: 'tags',
-          searchValue: 'linux',
-        },
-        {
           id: 'eda',
           name: 'Event-Driven Ansible content',
           searchKey: 'tags',
@@ -43,11 +37,15 @@ export function useCollectionCategories() {
       links: {
         next: null,
       },
-    }),
-    []
-  );
+    };
+    const collectionCategories = mockApiResponse.data.map((category) => ({
+      selected: true,
+      ...category,
+    }));
+    return collectionCategories;
+  }, []);
 
-  return t.data;
+  return categories;
 
   // TODO: The mock data above needs to be replaced with the actual API requests when the API becomes available
   // const t = useGet<HubItemsResponse<CollectionCategory>>(
