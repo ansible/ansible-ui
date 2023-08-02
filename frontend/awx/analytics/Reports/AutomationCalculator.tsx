@@ -94,7 +94,7 @@ export function AutomationCalculator(props: { schema: ChartSchemaElement[] }) {
       { key: 'org_id', searchParam: 'orgs' },
       { key: 'template_id', searchParam: 'templates' },
       { key: 'inventory_id', searchParam: 'inventories' },
-      { key: 'quick_date_range', searchParam: 'date' },
+      { key: 'quick_date_range', searchParam: 'dates' },
     ];
     for (const filterKey of filterKeys) {
       const value = searchParams.get(filterKey.searchParam);
@@ -165,7 +165,7 @@ export function AutomationCalculator(props: { schema: ChartSchemaElement[] }) {
           key: 'quick_date_range',
           query: 'quick_date_range',
           type: ToolbarFilterType.DateRange,
-          label: t('Date'),
+          label: t('Dates'),
           options: options.quick_date_range.map((option) => ({
             label: option.value.toString(),
             value: option.key.toString(),
@@ -300,7 +300,7 @@ export function AutomationCalculatorInternal(props: {
         params.set('inventories', filterState.inventory_id.join(','));
       }
       if (filterState.quick_date_range) {
-        params.set('date', filterState.quick_date_range.join(','));
+        params.set('dates', filterState.quick_date_range.join(','));
       }
     }
     setSearchParams(params);
