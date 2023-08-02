@@ -32,13 +32,21 @@ import {
   TableColumnCell,
 } from './PageTableColumn';
 
+export const Small = styled.small`
+  opacity: 0.7;
+`;
 export interface IPageTableCard {
   id: string | number;
   icon?: ReactNode;
   title: ReactNode;
   subtitle?: ReactNode;
   cardBody: ReactNode;
-  labels?: { label: string; color?: LabelColor }[]; // TODO - disable/enable auto generated filters
+  labels?: {
+    label: string;
+    color?: LabelColor;
+    icon?: ReactNode;
+    variant?: 'outline' | 'filled' | undefined;
+  }[]; // TODO - disable/enable auto generated filters
   badge?: string;
   badgeColor?: LabelColor;
   badgeTooltip?: string;
@@ -77,14 +85,14 @@ const CardFooterLabelsDiv = styled.div`
   flex-grow: 1;
 `;
 
-const PageDetailDiv = styled.div`
+export const PageDetailDiv = styled.div`
   display: flex;
   gap: 16px;
   margin-top: 8px;
   flex-wrap: wrap;
 `;
 
-const ColumnsDiv = styled.div`
+export const ColumnsDiv = styled.div`
   display: flex;
   gap: 6px;
   align-items: baseline;
@@ -213,7 +221,12 @@ export function PageTableCard<T extends object>(props: {
               {card.labels && (
                 <LabelGroup numLabels={999}>
                   {card.labels.map((item) => (
-                    <Label key={item.label} color={item.color}>
+                    <Label
+                      key={item.label}
+                      color={item.color}
+                      icon={item.icon}
+                      variant={item.variant}
+                    >
                       <Truncate content={item.label} style={{ minWidth: 0 }} />
                     </Label>
                   ))}
@@ -328,7 +341,7 @@ export function useColumnsToTableCardFn<T extends object>(
                     {countColumns.map((column, i) => (
                       <ColumnsDiv key={i}>
                         <TableColumnCell column={column} item={item} />
-                        <small style={{ opacity: 0.7 }}>{column.header}</small>
+                        <Small>{column.header}</Small>
                       </ColumnsDiv>
                     ))}
                   </PageDetailDiv>
