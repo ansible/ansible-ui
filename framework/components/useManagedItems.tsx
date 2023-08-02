@@ -1,5 +1,5 @@
 import { Button, Modal, ModalVariant } from '@patternfly/react-core';
-import { ReactNode, useCallback, useEffect, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePageDialog } from '../PageDialogs/PageDialog';
 import { useSelected } from '../PageTable/useTableItems';
@@ -61,9 +61,12 @@ export interface ManageItemsProps<ItemT extends object> {
  * - Display type
  */
 export function useManageItems<ItemT extends object>(options: ManageItemsProps<ItemT>) {
-  const { saveFn, loadFn, isSelected, setSelected } = options;
   const [_, setDialog] = usePageDialog();
   const [keyFn] = useState(() => options.keyFn);
+  const [isSelected] = useState(() => options.isSelected);
+  const [setSelected] = useState(() => options.setSelected);
+  const [saveFn] = useState(() => options.saveFn);
+  const [loadFn] = useState(() => options.loadFn);
 
   const [items, setItems] = useState<ItemT[]>(() => {
     try {
@@ -125,11 +128,17 @@ export function useManageItems<ItemT extends object>(options: ManageItemsProps<I
       />
     );
 
-  const visibleItems = items.filter((item) => (isSelected ? isSelected(item) : true));
+  const visibleItems = useMemo(
+    () => items.filter((item) => (isSelected ? isSelected(item) : true)),
+    [isSelected, items]
+  );
 
   const selectItem = useCallback(() => {
     return setSelected
-      ? (item: ItemT) => setSelected(item, true)
+      ? (item: ItemT) => {
+          setSelected(item, true);
+          setItems((items) => [...items]);
+        }
       : () => {
           alert('No setSelected callback provided');
         };
@@ -137,7 +146,10 @@ export function useManageItems<ItemT extends object>(options: ManageItemsProps<I
 
   const unselectItem = useCallback(() => {
     return setSelected
-      ? (item: ItemT) => setSelected(item, false)
+      ? (item: ItemT) => {
+          setSelected(item, false);
+          setItems((items) => [...items]);
+        }
       : () => {
           alert('No setSelected callback provided');
         };
