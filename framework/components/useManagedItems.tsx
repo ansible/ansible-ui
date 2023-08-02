@@ -1,4 +1,4 @@
-import { Button, Modal, ModalVariant } from '@patternfly/react-core';
+import { Button, Divider, Modal, ModalBoxBody, ModalVariant } from '@patternfly/react-core';
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePageDialog } from '../PageDialogs/PageDialog';
@@ -212,20 +212,26 @@ export function ManageItemsModal<ItemT extends object>(
       ]}
       hasNoBodyWrapper
     >
-      <ReorderItems<ItemT>
-        keyFn={keyFn}
-        items={items}
-        setItems={setItems}
-        columns={columns}
-        isSelected={isSelected}
-        selectItem={selectItem}
-        unselectItem={unselectItem}
-        allSelected={allSelected}
-        selectAll={selectAll}
-        unselectAll={unselectAll}
-        hideColumnHeaders={props.hideColumnHeaders}
-        isSelectableWithCheckbox={props.isSelected !== undefined && props.setSelected !== undefined}
-      />
+      <Divider />
+      <ModalBoxBody style={{ padding: 0 }}>
+        <ReorderItems<ItemT>
+          keyFn={keyFn}
+          items={items}
+          setItems={setItems}
+          columns={columns}
+          isSelected={isSelected}
+          selectItem={selectItem}
+          unselectItem={unselectItem}
+          allSelected={allSelected}
+          selectAll={selectAll}
+          unselectAll={unselectAll}
+          hideColumnHeaders={props.hideColumnHeaders}
+          isSelectableWithCheckbox={
+            props.isSelected !== undefined && props.setSelected !== undefined
+          }
+        />
+      </ModalBoxBody>
+      <Divider />
     </Modal>
   );
 }
