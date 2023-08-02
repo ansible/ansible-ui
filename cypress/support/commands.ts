@@ -3,6 +3,7 @@
 /// <reference types="cypress" />
 import '@cypress/code-coverage/support';
 import { SetOptional, SetRequired } from 'type-fest';
+import { AutomationServerType } from '../../frontend/automation-servers/AutomationServer';
 import { AwxToken } from '../../frontend/awx/interfaces/AwxToken';
 import { Credential } from '../../frontend/awx/interfaces/Credential';
 import { ExecutionEnvironment } from '../../frontend/awx/interfaces/ExecutionEnvironment';
@@ -42,7 +43,7 @@ declare global {
         server: string,
         username: string,
         password: string,
-        serverType: string
+        serverType: AutomationServerType
       ): Chainable<void>;
       edaLogout(): Chainable<EdaUser | undefined>;
       awxLogin(): Chainable<void>;
