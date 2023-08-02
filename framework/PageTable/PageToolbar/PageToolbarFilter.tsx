@@ -78,12 +78,12 @@ function FiltersToolbarItem(props: PageToolbarFiltersProps) {
     <>
       {toolbarFilters.length === 1 ? (
         <>
-          {showLabel && (
-            <ToolbarItem variant="label" style={{ marginRight: -8 }}>
-              {toolbarFilters[0].label}
-            </ToolbarItem>
-          )}
           <ToolbarItem>
+            {showLabel && (
+              <div style={{ marginTop: 6, marginRight: 6, whiteSpace: 'nowrap' }}>
+                {toolbarFilters[0].label}
+              </div>
+            )}
             <ToolbarFilterComponent
               id="filter-input"
               filter={selectedFilter}

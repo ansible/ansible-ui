@@ -28,8 +28,12 @@ export function JobOutput(props: { job: Job }) {
     <Section variant="light" className="dark-1">
       <JobStatusBar job={job} />
       <HostStatusBar counts={job.host_status_counts || {}} />
-      <JobOutputToolbar toolbarFilters={toolbarFilters} filters={filters} setFilters={setFilters} />
-      <JobOutputEvents job={job} toolbarFilters={toolbarFilters} filters={filters} />
+      <JobOutputToolbar
+        toolbarFilters={toolbarFilters}
+        filterState={filters}
+        setFilterState={setFilters}
+      />
+      <JobOutputEvents job={job} toolbarFilters={toolbarFilters} filterState={filters} />
     </Section>
   );
 }

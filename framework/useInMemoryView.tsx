@@ -32,7 +32,7 @@ export function useInMemoryView<T extends object>(options: {
     defaultValues: { sort: tableColumns && tableColumns.length ? tableColumns[0].sort : undefined },
     disableQueryString,
   });
-  const { page, perPage, sort, sortDirection, filters } = view;
+  const { page, perPage, sort, sortDirection, filterState: filters } = view;
 
   const sorted = useSorted(items);
   const { setSort } = sorted;

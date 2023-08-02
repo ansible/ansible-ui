@@ -46,8 +46,8 @@ export type PageTableToolbarProps<T extends object> = {
   toolbarActions?: IPageAction<T>[];
 
   toolbarFilters?: IToolbarFilter[];
-  filters?: Record<string, string[]>;
-  setFilters?: Dispatch<SetStateAction<Record<string, string[]>>>;
+  filterState?: Record<string, string[]>;
+  setFilterState?: Dispatch<SetStateAction<Record<string, string[]>>>;
   clearAllFilters?: () => void;
 
   page?: number;
@@ -89,9 +89,8 @@ export function PageTableToolbar<T extends object>(props: PageTableToolbarProps<
     setPerPage,
     toolbarFilters,
     selectedItems,
-    filters,
-    setFilters,
-    clearAllFilters,
+    filterState: filters,
+    setFilterState: setFilters,
     openColumnModal,
     bottomBorder,
     sort,
@@ -99,7 +98,16 @@ export function PageTableToolbar<T extends object>(props: PageTableToolbarProps<
     sortDirection,
     setSortDirection,
     sortOptions,
+    clearAllFilters: clearAllFiltersProp,
   } = props;
+
+  const clearAllFilters = useCallback(() => {
+    if (clearAllFiltersProp) {
+      clearAllFiltersProp();
+    } else if (setFilters) {
+      setFilters({});
+    }
+  }, [setFilters, clearAllFiltersProp]);
 
   const sm = useBreakpoint('md');
 

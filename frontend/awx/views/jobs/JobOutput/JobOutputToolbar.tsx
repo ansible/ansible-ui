@@ -5,12 +5,12 @@ import { PageToolbarFilters } from '../../../../../framework/PageTable/PageToolb
 
 interface IJobOutputToolbarProps {
   toolbarFilters: IToolbarFilter[];
-  filters: Record<string, string[]>;
-  setFilters: Dispatch<SetStateAction<Record<string, string[]>>>;
+  filterState: Record<string, string[]>;
+  setFilterState: Dispatch<SetStateAction<Record<string, string[]>>>;
 }
 
 export function JobOutputToolbar(props: IJobOutputToolbarProps) {
-  const { toolbarFilters, filters, setFilters } = props;
+  const { toolbarFilters, filterState: filters, setFilterState: setFilters } = props;
 
   return (
     <Toolbar clearAllFilters={() => setFilters({})}>

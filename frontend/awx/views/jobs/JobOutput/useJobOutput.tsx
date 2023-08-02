@@ -19,7 +19,7 @@ const runningJobTypes: string[] = ['new', 'pending', 'waiting', 'running'];
 export function useJobOutput(
   job: Job,
   toolbarFilters: IToolbarFilter[],
-  filters: Record<string, string[]>,
+  filterState: Record<string, string[]>,
   pageSize: number
 ) {
   const isQuerying = useRef({ querying: false });
@@ -30,7 +30,7 @@ export function useJobOutput(
 
   const getJobOutputEvent = useCallback((counter: number) => jobEvents[counter + 1], [jobEvents]);
 
-  const isFiltered = Object.keys(filters).length > 0;
+  const isFiltered = Object.keys(filterState).length > 0;
   const isJobRunning = !job.status || runningJobTypes.includes(job.status);
 
   const fetchEvents = useCallback(
@@ -92,7 +92,7 @@ export function useJobOutput(
       }
 
       const page = Math.floor((counter + 1) / pageSize) + 1;
-      const filterString = getFiltersQueryString(toolbarFilters, filters);
+      const filterString = getFiltersQueryString(toolbarFilters, filterState);
       const qsParts = ['order_by=counter', `page=${page}`, `page_size=${pageSize}`];
       if (filterString) {
         qsParts.push(filterString);
@@ -100,7 +100,7 @@ export function useJobOutput(
       fetchEvents(qsParts);
       return jobEvent;
     },
-    [jobEvents, pageSize, filters, toolbarFilters, isJobRunning, fetchEvents]
+    [jobEvents, pageSize, filterState, toolbarFilters, isJobRunning, fetchEvents]
   );
 
   const batchedEvents = useRef([] as JobEvent[]);
@@ -151,23 +151,23 @@ export function useJobOutput(
   useEffect(() => {
     setJobEventCount(1);
     setJobEvents({});
-  }, [filters]);
+  }, [filterState]);
 
   return { jobEventCount, getJobOutputEvent, queryJobOutputEvent };
 }
 
 function getFiltersQueryString(
   toolbarFilters: IToolbarFilter[],
-  filters: Record<string, string[]>
+  filterState: Record<string, string[]>
 ) {
-  if (!filters) {
+  if (!filterState) {
     return '';
   }
   const parts = [];
-  for (const key in filters) {
+  for (const key in filterState) {
     const toolbarFilter = toolbarFilters?.find((filter) => filter.key === key);
     if (toolbarFilter) {
-      const values = filters[key];
+      const values = filterState[key];
       if (values.length > 0) {
         if (values.length > 1) {
           parts.push(values.map((value) => `or__${toolbarFilter.query}=${value}`).join('&'));

@@ -67,7 +67,7 @@ export function useAwxView<T extends { id: number }>(options: {
   });
   const itemCountRef = useRef<{ itemCount: number | undefined }>({ itemCount: undefined });
 
-  const { page, perPage, sort, sortDirection, filters } = view;
+  const { page, perPage, sort, sortDirection, filterState: filters } = view;
 
   let queryString = options?.queryParams ? `?${getQueryString(options.queryParams)}` : '';
 

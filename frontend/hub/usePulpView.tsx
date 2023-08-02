@@ -46,7 +46,7 @@ export function usePulpView<T extends object>({
   });
   const itemCountRef = useRef<{ itemCount: number | undefined }>({ itemCount: undefined });
 
-  const { page, perPage, sort, sortDirection, filters } = view;
+  const { page, perPage, sort, sortDirection, filterState: filters } = view;
 
   let queryString = queryParams ? `?${getQueryString(queryParams)}` : '';
 

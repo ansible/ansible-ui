@@ -52,13 +52,13 @@ export function useHubView<T extends object>({
   const view = useView({
     defaultValues: {
       sort: tableColumns && tableColumns.length ? tableColumns[0].sort : undefined,
-      filters: defaultFilters,
+      filterState: defaultFilters,
     },
     disableQueryString,
   });
   const itemCountRef = useRef<{ itemCount: number | undefined }>({ itemCount: undefined });
 
-  const { page, perPage, sort, sortDirection, filters } = view;
+  const { page, perPage, sort, sortDirection, filterState: filters } = view;
 
   let queryString = queryParams ? `?${getQueryString(queryParams)}` : '';
 

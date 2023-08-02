@@ -20,8 +20,8 @@ function ToolbarFiltersTest(props: Omit<PageToolbarFiltersProps, 'filterState'>)
         itemCount={1}
         page={1}
         perPage={10}
-        filters={filters}
-        setFilters={setFilters}
+        filterState={filters}
+        setFilterState={setFilters}
         {...props}
         disablePagination
         clearAllFilters={clearAllFilters}
