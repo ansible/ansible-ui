@@ -42,7 +42,16 @@ Cypress.Commands.add(
     cy.getDialog().within(() => {
       cy.typeInputByLabel(/^Name$/, automationServerName);
       cy.typeInputByLabel(/^Url$/, server);
-      cy.selectDropdownOptionByLabel(/^Automation type$/, serverType);
+      switch (serverType) {
+        case AutomationServerType.AWX:
+          cy.selectDropdownOptionByLabel(/^Automation type$/, 'AWX Ansible Server');
+          break;
+        case AutomationServerType.EDA:
+          cy.selectDropdownOptionByLabel(/^Automation type$/, 'Event Driven Automation Server');
+          break;
+        default:
+          cy.selectDropdownOptionByLabel(/^Automation type$/, 'AWX Ansible Server');
+      }
       cy.get('button[type=submit]').click();
     });
 
