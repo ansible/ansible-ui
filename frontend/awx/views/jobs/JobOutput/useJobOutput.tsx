@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { IToolbarFilter } from '../../../../../framework';
+import type { IFilterState, IToolbarFilter } from '../../../../../framework';
 import { requestGet } from '../../../../common/crud/Data';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { useAwxWebSocketSubscription } from '../../../common/useAwxWebSocket';
@@ -19,7 +19,7 @@ const runningJobTypes: string[] = ['new', 'pending', 'waiting', 'running'];
 export function useJobOutput(
   job: Job,
   toolbarFilters: IToolbarFilter[],
-  filterState: Record<string, string[]>,
+  filterState: IFilterState,
   pageSize: number
 ) {
   const isQuerying = useRef({ querying: false });
@@ -156,10 +156,7 @@ export function useJobOutput(
   return { jobEventCount, getJobOutputEvent, queryJobOutputEvent };
 }
 
-function getFiltersQueryString(
-  toolbarFilters: IToolbarFilter[],
-  filterState: Record<string, string[]>
-) {
+function getFiltersQueryString(toolbarFilters: IToolbarFilter[], filterState: IFilterState) {
   if (!filterState) {
     return '';
   }
@@ -168,7 +165,7 @@ function getFiltersQueryString(
     const toolbarFilter = toolbarFilters?.find((filter) => filter.key === key);
     if (toolbarFilter) {
       const values = filterState[key];
-      if (values.length > 0) {
+      if (values && values.length > 0) {
         if (values.length > 1) {
           parts.push(values.map((value) => `or__${toolbarFilter.query}=${value}`).join('&'));
         } else {

@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
-import type { IToolbarFilter } from '../../../../../framework';
+import type { IFilterState, IToolbarFilter } from '../../../../../framework';
 import { Job } from '../../../interfaces/Job';
 import './JobOutput.css';
 import { JobOutputLoadingRow } from './JobOutputLoadingRow';
@@ -28,14 +28,14 @@ const ScrollContainer = styled.div`
 interface IJobOutputEventsProps {
   job: Job;
   toolbarFilters: IToolbarFilter[];
-  filterState: Record<string, string[]>;
+  filterState: IFilterState;
 }
 
 export function JobOutputEvents(props: IJobOutputEventsProps) {
-  const { job, toolbarFilters, filterState: filters } = props;
+  const { job, toolbarFilters, filterState } = props;
   // TODO set job status on ws event change
   const isJobRunning = !job.status || runningJobTypes.includes(job.status);
-  const isFiltered = Object.keys(filters).length > 0;
+  const isFiltered = Object.keys(filterState).length > 0;
 
   const { childrenSummary, isFlatMode } = useJobOutputChildrenSummary(
     job,
@@ -44,7 +44,7 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
   const { jobEventCount, getJobOutputEvent, queryJobOutputEvent } = useJobOutput(
     job,
     toolbarFilters,
-    filters,
+    filterState,
     50
   );
 

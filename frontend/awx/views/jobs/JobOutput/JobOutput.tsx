@@ -2,7 +2,7 @@ import { PageSection, Skeleton } from '@patternfly/react-core';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { ToolbarFilterType, type IToolbarFilter } from '../../../../../framework';
+import { IFilterState, ToolbarFilterType, type IToolbarFilter } from '../../../../../framework';
 import { Job } from '../../../interfaces/Job';
 import { HostStatusBar } from './HostStatusBar';
 import './JobOutput.css';
@@ -19,7 +19,7 @@ const Section = styled(PageSection)`
 export function JobOutput(props: { job: Job }) {
   const { job } = props;
   const toolbarFilters = useOutputFilters();
-  const [filters, setFilters] = useState<Record<string, string[]>>({});
+  const [filterState, setFilterState] = useState<IFilterState>({});
 
   if (!job) {
     return <Skeleton />;
@@ -30,10 +30,10 @@ export function JobOutput(props: { job: Job }) {
       <HostStatusBar counts={job.host_status_counts || {}} />
       <JobOutputToolbar
         toolbarFilters={toolbarFilters}
-        filterState={filters}
-        setFilterState={setFilters}
+        filterState={filterState}
+        setFilterState={setFilterState}
       />
-      <JobOutputEvents job={job} toolbarFilters={toolbarFilters} filterState={filters} />
+      <JobOutputEvents job={job} toolbarFilters={toolbarFilters} filterState={filterState} />
     </Section>
   );
 }

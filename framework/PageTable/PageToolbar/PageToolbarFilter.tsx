@@ -38,13 +38,13 @@ export type IToolbarFilter =
   | IToolbarDateRangeFilter;
 
 /** Represents the state of the toolbar filters. i.e. What is currently selected for filters. */
-export type IFilterState = Record<string, string[]>;
+export type IFilterState = Record<string, string[] | undefined>;
 
 /** The props for the PageToolbarFilters component */
 export type PageToolbarFiltersProps = {
   toolbarFilters?: IToolbarFilter[];
   filterState: IFilterState;
-  setFilterState?: Dispatch<SetStateAction<IFilterState>>;
+  setFilterState: Dispatch<SetStateAction<IFilterState>>;
 };
 
 /** A ToolbarItem that renders the toolbar filters passed in as props */
@@ -62,17 +62,19 @@ function FiltersToolbarItem(props: PageToolbarFiltersProps) {
   if (toolbarFilters.length === 0) return <></>;
 
   let showLabel = toolbarFilters.length === 1;
-  if (toolbarFilters[0].type === ToolbarFilterType.MultiSelect && toolbarFilters[0].isPinned) {
-    // Do not show the label if the pinned filter is a multiselect
-    showLabel = false;
-  } else if (
-    toolbarFilters[0].type === ToolbarFilterType.SingleSelect &&
-    toolbarFilters[0].isPinned &&
-    (filterState[toolbarFilters[0].key] == undefined ||
-      filterState[toolbarFilters[0].key].length === 0)
-  ) {
-    // Do not show the label if the pinned filter does not have a value
-    showLabel = false;
+  if (toolbarFilters.length >= 1) {
+    if (toolbarFilters[0].type === ToolbarFilterType.MultiSelect && toolbarFilters[0].isPinned) {
+      // Do not show the label if the pinned filter is a multiselect
+      showLabel = false;
+    } else if (
+      toolbarFilters[0].type === ToolbarFilterType.SingleSelect &&
+      toolbarFilters[0].isPinned &&
+      (filterState[toolbarFilters[0].key] == undefined ||
+        filterState[toolbarFilters[0].key]?.length === 0)
+    ) {
+      // Do not show the label if the pinned filter does not have a value
+      showLabel = false;
+    }
   }
 
   return (
@@ -141,6 +143,7 @@ function FiltersToolbarItem(props: PageToolbarFiltersProps) {
                 return { ...filters, [selectedFilterKey]: values };
               });
             }}
+            setFilterState={setFilterState}
             values={filterState?.[selectedFilterKey] ?? []}
           />
         </ToolbarItem>
@@ -151,7 +154,7 @@ function FiltersToolbarItem(props: PageToolbarFiltersProps) {
 
 /** A ToolbarToggleGroup that renders the toolbar filters passed in as props */
 export function PageToolbarFilters(props: PageToolbarFiltersProps) {
-  const { toolbarFilters, setFilterState: setFilters, filterState: filterState } = props;
+  const { toolbarFilters, setFilterState, filterState } = props;
 
   const [translations] = useFrameworkTranslations();
 
@@ -177,14 +180,14 @@ export function PageToolbarFilters(props: PageToolbarFiltersProps) {
         {showFilterLabel && <ToolbarItem variant="label">{translations.filter}</ToolbarItem>}
         <FiltersToolbarItem
           toolbarFilters={groupedFilters}
-          setFilterState={setFilters}
+          setFilterState={setFilterState}
           filterState={filterState}
         />
         {pinnedFilters?.map((filter) => (
           <FiltersToolbarItem
             key={filter.key}
             toolbarFilters={[filter]}
-            setFilterState={setFilters}
+            setFilterState={setFilterState}
             filterState={filterState}
           />
         ))}
@@ -208,7 +211,7 @@ export function PageToolbarFilters(props: PageToolbarFiltersProps) {
                   : value;
               })}
               deleteChip={(_group, value) => {
-                setFilters?.((filters) => {
+                setFilterState?.((filters) => {
                   const newState = { ...filters };
                   value = typeof value === 'string' ? value : value.key;
                   if ('options' in filter) {
@@ -227,7 +230,7 @@ export function PageToolbarFilters(props: PageToolbarFiltersProps) {
                 });
               }}
               deleteChipGroup={() => {
-                setFilters?.((filters) => {
+                setFilterState?.((filters) => {
                   const newState = { ...filters };
                   delete newState[filter.key];
                   return newState;

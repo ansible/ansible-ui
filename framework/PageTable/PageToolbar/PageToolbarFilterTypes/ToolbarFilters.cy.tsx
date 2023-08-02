@@ -3,14 +3,21 @@ import { PageSection } from '@patternfly/react-core';
 import { useState } from 'react';
 import { idKeyFn } from '../../../../frontend/hub/api';
 import { PageTableToolbar } from '../PageToolbar';
-import { IToolbarFilter, PageToolbarFiltersProps, ToolbarFilterType } from '../PageToolbarFilter';
+import {
+  IFilterState,
+  IToolbarFilter,
+  PageToolbarFiltersProps,
+  ToolbarFilterType,
+} from '../PageToolbarFilter';
 import { IToolbarDateRangeFilter } from './ToolbarDateRangeFilter';
 import { IToolbarMultiSelectFilter, IToolbarSingleSelectFilter } from './ToolbarSelectFilter';
 
-function ToolbarFiltersTest(props: Omit<PageToolbarFiltersProps, 'filterState'>) {
-  const [filters, setFilters] = useState<Record<string, string[]>>({});
+function ToolbarFiltersTest(
+  props: Omit<PageToolbarFiltersProps, 'filterState' | 'setFilterState'>
+) {
+  const [filterState, setFilterState] = useState<IFilterState>({});
   const clearAllFilters = () =>
-    setFilters((_filters) => ({
+    setFilterState((_filters) => ({
       // date: filters.date
     }));
   return (
@@ -20,15 +27,15 @@ function ToolbarFiltersTest(props: Omit<PageToolbarFiltersProps, 'filterState'>)
         itemCount={1}
         page={1}
         perPage={10}
-        filterState={filters}
-        setFilterState={setFilters}
         {...props}
+        filterState={filterState}
+        setFilterState={setFilterState}
         disablePagination
         clearAllFilters={clearAllFilters}
       />
       <PageSection>
         Filter State:
-        <pre>{JSON.stringify(filters, undefined, '  ')}</pre>
+        <pre>{JSON.stringify(filterState, undefined, '  ')}</pre>
       </PageSection>
     </>
   );

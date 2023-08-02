@@ -141,8 +141,8 @@ export function useView(options: {
     return defaultValues?.sortDirection ?? 'asc';
   });
 
-  const [filterState, setFilterState] = useState<Record<string, string[]>>(() => {
-    const filters: Record<string, string[]> = defaultValues?.filterState ?? {};
+  const [filterState, setFilterState] = useState<IFilterState>(() => {
+    const filters: IFilterState = defaultValues?.filterState ?? {};
     for (const key of searchParams.keys()) {
       if (defaultIgnoreQueryStringKeys.includes(key)) continue;
       const value = searchParams.get(key);
@@ -180,7 +180,8 @@ export function useView(options: {
 
     // For each filter with value, add it to the query string
     for (const filter in filterState) {
-      newSearchParams.set(filter, filterState[filter].join(','));
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      newSearchParams.set(filter, filterState[filter]!.join(','));
     }
 
     setSearchParams(newSearchParams);
