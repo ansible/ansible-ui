@@ -88,7 +88,21 @@ export function AutomationCalculator(props: { schema: ChartSchemaElement[] }) {
   }, []);
 
   const [filterState, setFilterState] = useState<IFilterState>(() => {
-    return {};
+    const filterState: IFilterState = {};
+    const filterKeys = [
+      { key: 'cluster_id', searchParam: 'clusters' },
+      { key: 'org_id', searchParam: 'orgs' },
+      { key: 'template_id', searchParam: 'templates' },
+      { key: 'inventory_id', searchParam: 'inventories' },
+      { key: 'quick_date_range', searchParam: 'date' },
+    ];
+    for (const filterKey of filterKeys) {
+      const value = searchParams.get(filterKey.searchParam);
+      if (value) {
+        filterState[filterKey.key] = value.split(',');
+      }
+    }
+    return filterState;
   });
 
   const toolbarFilters = useMemo(() => {
@@ -225,6 +239,7 @@ export function AutomationCalculator(props: { schema: ChartSchemaElement[] }) {
       <AutomationCalculatorInternal
         schema={schema}
         filterState={filterState}
+        setFilterState={setFilterState}
         sortOption={sortOption}
         sortDirection={sortDirection}
         setSortDirection={setSortDirection}
@@ -236,6 +251,7 @@ export function AutomationCalculator(props: { schema: ChartSchemaElement[] }) {
 export function AutomationCalculatorInternal(props: {
   schema: ChartSchemaElement[];
   filterState: IFilterState;
+  setFilterState: Dispatch<SetStateAction<IFilterState>>;
   sortOption: SortOption;
   sortDirection: 'asc' | 'desc';
   setSortDirection: Dispatch<SetStateAction<'asc' | 'desc'>>;
@@ -244,6 +260,7 @@ export function AutomationCalculatorInternal(props: {
   const {
     schema,
     filterState,
+    setFilterState,
     sortOption,
     sortDirection: sortOrder,
     setSortDirection: setSortOrder,
@@ -271,27 +288,38 @@ export function AutomationCalculatorInternal(props: {
     params.set('per_page', perPage.toString());
     if (filterState) {
       if (filterState.org_id) {
-        params.set('org_id', filterState.org_id.join(','));
+        params.set('orgs', filterState.org_id.join(','));
       }
       if (filterState.cluster_id) {
-        params.set('cluster_id', filterState.cluster_id.join(','));
+        params.set('clusters', filterState.cluster_id.join(','));
       }
       if (filterState.template_id) {
-        params.set('template_id', filterState.template_id.join(','));
+        params.set('templates', filterState.template_id.join(','));
       }
       if (filterState.inventory_id) {
-        params.set('inventory_id', filterState.inventory_id.join(','));
+        params.set('inventories', filterState.inventory_id.join(','));
       }
-      // if (filterState.quick_date_range) {
-      //   params.set('quick_date_range', filterState.quick_date_range.join(','));
-      // }
+      if (filterState.quick_date_range) {
+        params.set('date', filterState.quick_date_range.join(','));
+      }
     }
     setSearchParams(params);
   }, [filterState, page, perPage, setSearchParams, sortOption, sortOrder]);
 
-  const requestBody = useMemo(
-    () => ({
-      status: ['successful'],
+  const requestBody = useMemo(() => {
+    const dateRange = filterState.quick_date_range;
+    let start_date: string | undefined = undefined;
+    let end_date: string | undefined = undefined;
+    if (dateRange) {
+      if (dateRange.length >= 2) {
+        start_date = dateRange[1];
+      }
+      if (dateRange.length >= 3) {
+        end_date = dateRange[2];
+      }
+    }
+    return {
+      status: [],
       org_id: filterState.org_id ?? [],
       cluster_id: filterState.cluster_id ?? [],
       template_id: filterState.template_id ?? [],
@@ -300,11 +328,11 @@ export function AutomationCalculatorInternal(props: {
         filterState.quick_date_range && filterState.quick_date_range.length
           ? filterState.quick_date_range[0]
           : 'roi_last_year',
-      job_type: ['job'],
+      job_type: [],
       sort_options: sortOption.value,
       sort_order: sortOrder,
-      start_date: undefined, // TODO
-      end_date: undefined, // TODO
+      start_date,
+      end_date,
       limit: perPage.toString(),
       offset: ((page - 1) * perPage).toString(),
       only_root_workflows_and_standalone_jobs: true,
@@ -320,9 +348,8 @@ export function AutomationCalculatorInternal(props: {
       ],
       group_by: 'template',
       group_by_time: false,
-    }),
-    [filterState, page, perPage, sortOption.value, sortOrder]
-  );
+    };
+  }, [filterState, page, perPage, sortOption.value, sortOrder]);
 
   const [data, setData] = useState<ReportDataResponse>();
   const [error, setError] = useState<Error>();
@@ -350,7 +377,7 @@ export function AutomationCalculatorInternal(props: {
         setData(undefined);
       });
     return () => abortController.abort();
-  }, [page, perPage, sortOption.value, sortOrder, requestBody]);
+  }, [page, perPage, sortOption?.value, sortOrder, requestBody]);
 
   const formattedValue = (key: string, value: number) => {
     let val;
@@ -372,17 +399,10 @@ export function AutomationCalculatorInternal(props: {
     return val;
   };
 
-  const chartParams = {
-    y: sortOption.value,
-    tooltip: 'Savings for',
-    field: sortOption.value,
-    label: sortOption.label || 'Label Y',
-  };
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const customTooltipFormatting = ({ datum }: { datum: Record<string, any> }) => {
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    const tooltip = `${chartParams.label.toString() || ''} for ${datum.name || ''}: ${
+    const tooltip = `${sortOption.label} for ${datum.name || ''}: ${
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       formattedValue('successful_hosts_savings', datum.y) || ''
     }`;
@@ -395,10 +415,17 @@ export function AutomationCalculatorInternal(props: {
         <CardTitle>{t('Automation savings')}</CardTitle>
       </CardHeader>
       {!data || data?.meta?.legend.length === 0 ? (
-        <EmptyStateFilter clearAllFilters={() => null /* TODO*/} />
+        <EmptyStateFilter
+          clearAllFilters={() => setFilterState(() => ({ quick_date_range: ['roi_last_year'] }))}
+        />
       ) : (
         <Chart
-          schema={hydrateSchema(schema)(chartParams)}
+          schema={hydrateSchema(schema)({
+            y: sortOption.value,
+            tooltip: 'Savings for',
+            field: sortOption.value,
+            label: sortOption.label,
+          })}
           data={{ items: data?.meta?.legend }}
           specificFunctions={{ labelFormat: { customTooltipFormatting } }}
         />
@@ -432,16 +459,24 @@ export function AutomationCalculatorInternal(props: {
   );
 
   if (isLoading) {
-    return <LoadingState />;
+    return (
+      <Scrollable borderTop borderBottom>
+        <PageSection>
+          <Card style={{ height: '100%' }} isFlat isRounded>
+            <LoadingState />
+          </Card>
+        </PageSection>
+      </Scrollable>
+    );
   } else if (error) {
     return <AnalyticsErrorState error={error.message} />;
   }
 
   return (
     <>
-      <Scrollable>
+      <Scrollable borderTop borderBottom>
         <PageSection>
-          <Card isRounded>
+          <Card isFlat isRounded>
             <CardBody>
               <Grid hasGutter>
                 <GridItem span={9}>{!isLoading && renderLeft()}</GridItem>
@@ -450,10 +485,7 @@ export function AutomationCalculatorInternal(props: {
             </CardBody>
             <TemplatesTable
               data={data?.meta.legend || []}
-              variableRow={{
-                key: sortOption.value,
-                ...sortOption,
-              }}
+              variableRow={{ key: sortOption.value, value: sortOption.label }}
               readOnly={true}
               getSortParams={{
                 sort: {

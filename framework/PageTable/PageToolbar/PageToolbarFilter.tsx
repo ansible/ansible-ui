@@ -7,7 +7,7 @@ import {
 } from '@patternfly/react-core';
 
 import { FilterIcon } from '@patternfly/react-icons';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction, useCallback, useState } from 'react';
 import { PageSingleSelect } from '../../PageInputs/PageSingleSelect';
 import { useBreakpoint } from '../../components/useBreakPoint';
 import { useFrameworkTranslations } from '../../useFrameworkTranslations';
@@ -49,7 +49,7 @@ export type PageToolbarFiltersProps = {
 
 /** A ToolbarItem that renders the toolbar filters passed in as props */
 function FiltersToolbarItem(props: PageToolbarFiltersProps) {
-  const { toolbarFilters, filterState: filters, setFilterState: setFilters } = props;
+  const { toolbarFilters, filterState, setFilterState } = props;
 
   const [selectedFilterKey, setSeletedFilterKey] = useState(() =>
     toolbarFilters ? (toolbarFilters?.length > 0 ? toolbarFilters[0].key : '') : ''
@@ -68,7 +68,8 @@ function FiltersToolbarItem(props: PageToolbarFiltersProps) {
   } else if (
     toolbarFilters[0].type === ToolbarFilterType.SingleSelect &&
     toolbarFilters[0].isPinned &&
-    (filters[toolbarFilters[0].key] == undefined || filters[toolbarFilters[0].key].length === 0)
+    (filterState[toolbarFilters[0].key] == undefined ||
+      filterState[toolbarFilters[0].key].length === 0)
   ) {
     // Do not show the label if the pinned filter does not have a value
     showLabel = false;
@@ -88,7 +89,7 @@ function FiltersToolbarItem(props: PageToolbarFiltersProps) {
               id="filter-input"
               filter={selectedFilter}
               addFilter={(value: string) => {
-                setFilters?.((filters) => {
+                setFilterState?.((filters) => {
                   let values = filters?.[selectedFilterKey];
                   if (!values) values = [];
                   if (!values.includes(value)) values.push(value);
@@ -96,14 +97,15 @@ function FiltersToolbarItem(props: PageToolbarFiltersProps) {
                 });
               }}
               removeFilter={(value: string) => {
-                setFilters?.((filters) => {
+                setFilterState?.((filters) => {
                   let values = filters?.[selectedFilterKey];
                   if (!values) values = [];
                   values = values.filter((v) => v !== value);
                   return { ...filters, [selectedFilterKey]: values };
                 });
               }}
-              values={filters?.[selectedFilterKey] ?? []}
+              setFilterState={setFilterState}
+              values={filterState?.[selectedFilterKey] ?? []}
             />
           </ToolbarItem>
         </>
@@ -124,7 +126,7 @@ function FiltersToolbarItem(props: PageToolbarFiltersProps) {
             id="filter-input"
             filter={selectedFilter}
             addFilter={(value: string) => {
-              setFilters?.((filters) => {
+              setFilterState?.((filters) => {
                 let values = filters?.[selectedFilterKey];
                 if (!values) values = [];
                 if (!values.includes(value)) values.push(value);
@@ -132,14 +134,14 @@ function FiltersToolbarItem(props: PageToolbarFiltersProps) {
               });
             }}
             removeFilter={(value: string) => {
-              setFilters?.((filters) => {
+              setFilterState?.((filters) => {
                 let values = filters?.[selectedFilterKey];
                 if (!values) values = [];
                 values = values.filter((v) => v !== value);
                 return { ...filters, [selectedFilterKey]: values };
               });
             }}
-            values={filters?.[selectedFilterKey] ?? []}
+            values={filterState?.[selectedFilterKey] ?? []}
           />
         </ToolbarItem>
       )}
@@ -250,8 +252,18 @@ function ToolbarFilterComponent(props: {
   values: string[];
   addFilter: (value: string) => void;
   removeFilter: (value: string) => void;
+  setFilterState: Dispatch<SetStateAction<IFilterState>>;
 }): JSX.Element {
-  const { filter, values, addFilter, removeFilter } = props;
+  const { filter, values, addFilter, removeFilter, setFilterState } = props;
+  const setValues = useCallback(
+    (values: string[]) => {
+      setFilterState((filters) => {
+        return { ...filters, [filter.key]: values };
+      });
+    },
+    [filter.key, setFilterState]
+  );
+
   switch (filter.type) {
     case ToolbarFilterType.Text:
       return (
@@ -304,14 +316,7 @@ function ToolbarFilterComponent(props: {
           label={filter.label}
           placeholder={filter.placeholder}
           values={values}
-          setValues={(newValues) => {
-            for (const value of values) {
-              removeFilter(value);
-            }
-            for (const value of newValues) {
-              addFilter(value);
-            }
-          }}
+          setValues={setValues}
           options={filter.options}
           isRequired={filter.isRequired}
           defaultValue={filter.defaultValue}

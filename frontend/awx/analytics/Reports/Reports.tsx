@@ -84,7 +84,7 @@ export default function Reports() {
           description={data?.report?.description || ''}
           controls={data ? reportTags : undefined}
         />
-        {!activeUser?.is_superuser ? <AnalyticsErrorState /> : <ReportsInternal />}
+        {activeUser && !activeUser?.is_superuser ? <AnalyticsErrorState /> : <ReportsInternal />}
       </PageLayout>
     </Page>
   );

@@ -29,3 +29,9 @@
 .pf-c-truncate__start {
   min-width: unset;
 }
+
+// This allows really long toolbar chip filters to wrap to the next line
+.pf-c-toolbar .pf-c-toolbar__content {
+  flex-wrap: wrap;
+  row-gap: 8px;
+}
