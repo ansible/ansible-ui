@@ -1,13 +1,14 @@
 import { randomString } from '../../framework/utils/random-string';
+import { AutomationServerType } from '../../frontend/automation-servers/AutomationServer';
 
 Cypress.Commands.add(
   'login',
-  (server: string, username: string, password: string, serverType: string) => {
+  (server: string, username: string, password: string, serverType: AutomationServerType) => {
     window.localStorage.setItem('theme', 'light');
     window.localStorage.setItem('disclaimer', 'true');
 
     if (Cypress.env('TEST_STANDALONE') === true) {
-      if (serverType === 'EDA server') {
+      if (serverType === AutomationServerType.EDA) {
         // Standalone EDA login
         cy.visit(`/login`, {
           retryOnStatusCodeFailure: true,
@@ -17,7 +18,7 @@ Cypress.Commands.add(
         cy.typeInputByLabel(/^Password$/, password);
         cy.get('button[type=submit]').click();
         return;
-      } else if (serverType === 'AWX Ansible server') {
+      } else if (serverType === AutomationServerType.AWX) {
         // Standalone AWX login
         cy.visit(`/ui_next`, {
           retryOnStatusCodeFailure: true,
@@ -69,7 +70,7 @@ Cypress.Commands.add('awxLogin', () => {
         Cypress.env('AWX_SERVER') as string,
         Cypress.env('AWX_USERNAME') as string,
         Cypress.env('AWX_PASSWORD') as string,
-        'AWX Ansible Server'
+        AutomationServerType.AWX
       );
       cy.hasTitle('Welcome to');
     },
@@ -91,7 +92,7 @@ Cypress.Commands.add('edaLogin', () => {
         Cypress.env('EDA_SERVER') as string,
         Cypress.env('EDA_USERNAME') as string,
         Cypress.env('EDA_PASSWORD') as string,
-        'Event Driven Automation Server'
+        AutomationServerType.EDA
       );
       cy.hasTitle('Welcome to');
     },
