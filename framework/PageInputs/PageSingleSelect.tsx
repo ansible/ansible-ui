@@ -2,33 +2,29 @@ import { MenuToggle, MenuToggleElement } from '@patternfly/react-core';
 import { Select, SelectList, SelectOption } from '@patternfly/react-core/next';
 import { ReactNode, useState } from 'react';
 import styled from 'styled-components';
+import { PageSelectOption } from './PageSelectOption';
 
-export interface PageSelectOption<T> {
-  label: string;
-  description?: string;
-  value: T;
-}
-
-export enum PageSelectVariant {
-  Single = 'Single',
-  Typeahead = 'Typeahead',
-}
-
-type PageSelectVariants = keyof typeof PageSelectVariant;
-
-interface PageSingleSelectProps<T> {
+/** Single-select component */
+export function PageSingleSelect<T>(props: {
+  /** The ID of the select. */
   id?: string;
-  value: T;
-  onChange: (value: T) => void;
-  options: PageSelectOption<T>[];
-  placeholder?: string;
-  icon?: ReactNode;
-  variant?: PageSelectVariants;
-}
 
-/** Single select for the page framework. */
-export function PageSingleSelect<T>(props: PageSingleSelectProps<T>) {
-  const { value, onChange, options, placeholder } = props;
+  /** The icon to show in the select. */
+  icon?: ReactNode;
+
+  /** The placeholder to show when no value is selected. */
+  placeholder?: string;
+
+  /** The selected value. */
+  value: T;
+
+  /** The function to set the selected value. */
+  onSelect: (value: T) => void;
+
+  /** The options to select from. */
+  options: PageSelectOption<T>[];
+}) {
+  const { id, icon, value, onSelect: onChange, options, placeholder } = props;
   const [isOpen, setIsOpen] = useState(false);
 
   let selectedOption: PageSelectOption<T> | undefined = undefined;
@@ -41,20 +37,20 @@ export function PageSingleSelect<T>(props: PageSingleSelectProps<T>) {
 
   const Toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
     <MenuToggle
-      id={props.id}
+      id={id}
       ref={toggleRef}
       onClick={() => setIsOpen((open) => !open)}
       isExpanded={isOpen}
       style={{ width: '100%', minWidth: 100 }}
     >
-      {props.icon && <span style={{ paddingLeft: 4, paddingRight: 12 }}>{props.icon}</span>}
-      {selectedOption ? selectedOption.label : <PlacedholderSpan>{placeholder}</PlacedholderSpan>}
+      {icon && <span style={{ paddingLeft: 4, paddingRight: 12 }}>{icon}</span>}
+      {selectedOption ? selectedOption.label : <Placedholder>{placeholder}</Placedholder>}
     </MenuToggle>
   );
 
   return (
     <Select
-      selected={value}
+      selected={selectedOption?.label}
       onSelect={(_, itemId: string | number | undefined) => {
         const newSelectedOption = options.find((option) => option.label === itemId);
         if (newSelectedOption) {
@@ -78,6 +74,6 @@ export function PageSingleSelect<T>(props: PageSingleSelectProps<T>) {
   );
 }
 
-const PlacedholderSpan = styled.span`
-  color: var(--pf-global--Color--dark-200);
+const Placedholder = styled.span`
+  opacity: 0.7;
 `;

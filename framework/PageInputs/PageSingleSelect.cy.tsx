@@ -1,6 +1,7 @@
 /* eslint-disable i18next/no-literal-string */
 import { useState } from 'react';
-import { PageSelectOption, PageSingleSelect } from './PageSingleSelect';
+import { PageSelectOption } from './PageSelectOption';
+import { PageSingleSelect } from './PageSingleSelect';
 
 interface ITestObject {
   name: string;
@@ -33,7 +34,7 @@ function PageSingleSelectTest<T>(props: {
       value={value}
       placeholder={placeholder}
       options={options}
-      onChange={setValue}
+      onSelect={setValue}
     />
   );
 }

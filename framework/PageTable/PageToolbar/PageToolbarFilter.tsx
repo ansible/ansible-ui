@@ -112,7 +112,7 @@ function FiltersToolbarItem(props: PageToolbarFiltersProps) {
           <PageSingleSelect
             id="filter"
             value={selectedFilterKey}
-            onChange={setSeletedFilterKey}
+            onSelect={setSeletedFilterKey}
             icon={<FilterIcon />}
             options={toolbarFilters.map((filter) => ({
               label: filter.label,
