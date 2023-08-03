@@ -15,6 +15,7 @@ import { useGet } from '../../common/crud/useGet';
 import { hubAPI } from '../api/utils';
 import { HubNamespace } from './HubNamespace';
 import { useHubView } from '../useHubView';
+import { usePulpSearchView } from '../usePulpSearchView';
 import { useHubNamespaceActions } from './hooks/useHubNamespaceActions';
 import { HubNamespaceMetadataType } from './HubNamespaceMetadataType';
 import { useHubNamespaceMetadataColumns } from './hooks/useHubNamespaceMetadataColumns';
@@ -64,7 +65,7 @@ export function NamespaceDetails() {
 function NamespaceDetailsTab(props: { namespace?: HubNamespace }) {
   const { t } = useTranslation();
   const tableColumns = useHubNamespaceMetadataColumns();
-  const view = useHubView<HubNamespaceMetadataType>({
+  const view = usePulpSearchView<HubNamespaceMetadataType>({
     url: hubAPI`/v3/plugin/ansible/search/namespace-metadata/`,
     keyFn: (item) => item.metadata.pulp_href + ':' + item.repository.name,
     tableColumns,
@@ -73,13 +74,13 @@ function NamespaceDetailsTab(props: { namespace?: HubNamespace }) {
   });
   return (
     <PageLayout>
-      <PageTable<HubNamespaceMetadataType>
+      <PageTable
         tableColumns={tableColumns}
-        errorStateTitle={t('Error loading collections')}
-        emptyStateTitle={t('No collections yet')}
+        errorStateTitle={t('Error loading namespaces')}
+        emptyStateTitle={t('No namespaces yet')}
         {...view}
         defaultTableView="list"
-        defaultSubtitle={t('Namespace details')}
+        defaultSubtitle={t('Namespace')}
       />
     </PageLayout>
   );

@@ -1,9 +1,9 @@
 import { useGet } from '../../../common/crud/useGet';
-import { hubAPI } from '../../api/utils';
 import { HubItemsResponse } from '../../useHubView';
 import { HubNamespace } from '../HubNamespace';
+import { pulpAPI } from '../../api/utils';
 
 export function useHubNamespaces() {
-  const t = useGet<HubItemsResponse<HubNamespace>>(hubAPI`/_ui/v1/namespaces/`);
-  return t.data?.data;
+  const t = useGet<HubItemsResponse<HubNamespace>>(pulpAPI`/pulp_ansible/namespaces/`);
+  return t.data?.results;
 }

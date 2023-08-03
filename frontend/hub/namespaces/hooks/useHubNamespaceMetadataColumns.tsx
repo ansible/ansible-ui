@@ -28,12 +28,6 @@ export function useHubNamespaceMetadataColumns(_options?: {
         icon: () => <RedhatIcon />,
       },
       {
-        header: t('Repository'),
-        type: 'text',
-        value: (namespace) => namespace.repository.name ?? undefined,
-        list: 'secondary',
-      },
-      {
         header: t('Description'),
         type: 'description',
         value: (namespace) => namespace.metadata.description ?? undefined,
@@ -41,10 +35,14 @@ export function useHubNamespaceMetadataColumns(_options?: {
         list: 'description',
       },
       {
+        header: t('Repository'),
+        type: 'text',
+        value: (namespace) => namespace.repository.name ?? undefined,
+      },
+      {
         header: t('Links'),
         type: 'text',
         value: (namespace) => namespace.metadata.links ?? undefined,
-        list: 'secondary',
       },
     ],
     [t]
