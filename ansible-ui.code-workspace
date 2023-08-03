@@ -1,0 +1,28 @@
+{
+  "folders": [
+    {
+      "name": "Ansible UI",
+      "path": "."
+    },
+    {
+      "name": "AWX",
+      "path": "frontend/awx"
+    },
+    {
+      "name": "HUB",
+      "path": "frontend/hub"
+    },
+    {
+      "name": "EDA",
+      "path": "frontend/eda"
+    },
+    {
+      "name": "Shared",
+      "path": "frontend/common"
+    },
+    {
+      "name": "Framework",
+      "path": "framework"
+    }
+  ]
+}
