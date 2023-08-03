@@ -1,8 +1,6 @@
 # Ansible UI
 
-The UI for [Ansible](https://www.ansible.com).
-
-A live instance of the latest development version is running at [AnsibleDev.com](https://ansibledev.com).
+The UI projects for [Ansible](https://www.ansible.com).
 
 ## Getting Started
 
@@ -25,15 +23,37 @@ A live instance of the latest development version is running at [AnsibleDev.com]
    npm ci
    ```
 
-4. Start Project
+4. Start the Projects
 
-   ```
-   npm start
-   ```
+   - AWX - Ansible Controller
 
-   This will start the frontend and the proxy in parallel.
+      | Environment | Description                   |
+      | ----------: | ----------------------------- |
+      | AWX_SERVER  | The AWX server to connect to. |
 
-   The UI will open and load after a few seconds.
+      ```
+      npm run awx
+      ```
+
+   - HUB - Automation Hub
+
+      | Environment | Description                   |
+      | ----------: | ----------------------------- |
+      | HUB_SERVER  | The HUB server to connect to. |
+
+      ```
+      npm run hub
+      ```
+
+   - EDA - Event Driven Automation
+
+      | Environment | Description                   |
+      | ----------: | ----------------------------- |
+      | EDA_SERVER  | The EDA server to connect to. |
+
+      ```
+      npm run eda
+      ```
 
 5. View the development documentation
 
