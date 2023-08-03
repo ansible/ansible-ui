@@ -76,7 +76,7 @@ export function ToolbarDateRangeFilter(props: IToolbarDateRangeFilterProps) {
     <ToolbarItem>
       <PageSingleSelect
         value={selectedOption?.value ?? ''}
-        onChange={onSelectChange}
+        onSelect={onSelectChange}
         options={props.options}
         placeholder={placeholder}
       />
