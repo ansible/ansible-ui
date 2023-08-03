@@ -27,33 +27,33 @@ The UI projects for [Ansible](https://www.ansible.com).
 
    - AWX - Ansible Controller
 
-      | Environment | Description                   |
-      | ----------: | ----------------------------- |
-      | AWX_SERVER  | The AWX server to connect to. |
+     | Environment | Description                   |
+     | ----------: | ----------------------------- |
+     |  AWX_SERVER | The AWX server to connect to. |
 
-      ```
-      npm run awx
-      ```
+     ```
+     npm run awx
+     ```
 
    - HUB - Automation Hub
 
-      | Environment | Description                   |
-      | ----------: | ----------------------------- |
-      | HUB_SERVER  | The HUB server to connect to. |
+     | Environment | Description                   |
+     | ----------: | ----------------------------- |
+     |  HUB_SERVER | The HUB server to connect to. |
 
-      ```
-      npm run hub
-      ```
+     ```
+     npm run hub
+     ```
 
    - EDA - Event Driven Automation
 
-      | Environment | Description                   |
-      | ----------: | ----------------------------- |
-      | EDA_SERVER  | The EDA server to connect to. |
+     | Environment | Description                   |
+     | ----------: | ----------------------------- |
+     |  EDA_SERVER | The EDA server to connect to. |
 
-      ```
-      npm run eda
-      ```
+     ```
+     npm run eda
+     ```
 
 5. View the development documentation
 
