@@ -18,6 +18,7 @@ Examples:
 - Detail page tab - Title Case
   - `Execution Environments`
 - Card title - Title Case
+
   - `Execution Environments`
 
 - Page action - Sentence case
