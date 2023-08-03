@@ -1,36 +1,42 @@
 /* eslint-disable i18next/no-literal-string */
-import { Banner, Bullseye, PageSection, Spinner } from '@patternfly/react-core';
-import { InfoCircleIcon } from '@patternfly/react-icons';
+import { Banner, Bullseye, Button, PageSection, Spinner } from '@patternfly/react-core';
+import { CogIcon, InfoCircleIcon } from '@patternfly/react-icons';
 import { useEffect } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import useSWR from 'swr';
 import { PageHeader, PageLayout, usePageDialog } from '../../../framework';
 import { PageDashboard } from '../../../framework/PageDashboard/PageDashboard';
-import { useGet } from '../../common/crud/useGet';
-import { AwxItemsResponse } from '../common/AwxItemsResponse';
 import { useAwxConfig } from '../common/useAwxConfig';
-import { ExecutionEnvironment } from '../interfaces/ExecutionEnvironment';
 import { Job } from '../interfaces/Job';
 import { useAwxView } from '../useAwxView';
 import { WelcomeModal } from './WelcomeModal';
-import { AwxGettingStartedCard } from './cards/AwxGettingStartedCard';
-import { AwxHostsCard } from './cards/AwxHostsCard';
-import { AwxInventoriesCard } from './cards/AwxInventoriesCard';
 import { AwxJobActivityCard } from './cards/AwxJobActivityCard';
-import { AwxProjectsCard } from './cards/AwxProjectsCard';
 import { AwxRecentJobsCard } from './cards/AwxRecentJobsCard';
 import { AwxRecentProjectsCard } from './cards/AwxRecentProjectsCard';
+import { AwxProjectsCard } from './cards/AwxProjectsCard';
+import { AwxHostsCard } from './cards/AwxHostsCard';
+import { AwxInventoriesCard } from './cards/AwxInventoriesCard';
+import { AwxRecentInventoriesCard } from './cards/AwxRecentInventoriesCard';
+import { useManagedAwxDashboard } from './hooks/useManagedAwxDashboard';
 
 const HIDE_WELCOME_MESSAGE = 'hide-welcome-message';
+type Resource = { id: string; name: string; selected: boolean };
 
 export function AwxDashboard() {
   const { t } = useTranslation();
+  const { openManageDashboard, managedResources } = useManagedAwxDashboard();
   const product: string = process.env.PRODUCT ?? t('AWX');
   const config = useAwxConfig();
   const [_, setDialog] = usePageDialog();
   const welcomeMessageSetting = localStorage.getItem(HIDE_WELCOME_MESSAGE);
   const hideWelcomeMessage = welcomeMessageSetting ? welcomeMessageSetting === 'true' : false;
-
+  function renderCustomizeControls() {
+    return (
+      <Button icon={<CogIcon />} variant="link" onClick={openManageDashboard}>
+        Manage view
+      </Button>
+    );
+  }
   useEffect(() => {
     if (config?.ui_next && !hideWelcomeMessage) {
       setDialog(<WelcomeModal />);
@@ -53,26 +59,24 @@ export function AwxDashboard() {
       <PageHeader
         title={t(`Welcome to {{product}}`, { product })}
         description={t('Define, operate, scale, and delegate automation across your enterprise.')}
+        controls={renderCustomizeControls()}
       />
-      <DashboardInternal />
+      <DashboardInternal managedResources={managedResources} />
     </PageLayout>
   );
 }
 
-function DashboardInternal() {
-  const executionEnvironments = useExecutionEnvironments();
-
+function DashboardInternal(props: { managedResources: Resource[] }) {
+  const { managedResources } = props;
   const recentJobsView = useAwxView<Job>({
     url: '/api/v2/unified_jobs/',
     disableQueryString: true,
     defaultSort: 'finished',
     defaultSortDirection: 'desc',
   });
-
   const { data, isLoading } = useSWR<IDashboardData>(`/api/v2/dashboard/`, (url: string) =>
     fetch(url).then((r) => r.json())
   );
-
   if (!data || isLoading) {
     return (
       <PageSection isFilled>
@@ -83,26 +87,36 @@ function DashboardInternal() {
     );
   }
 
-  const hasInventory = data.inventories.total !== 0;
-  const hasExecutionEnvironment = executionEnvironments.count !== 0;
-  const hasJobTemplate = data.job_templates.total !== 0;
-
   return (
     <PageDashboard>
-      <AwxGettingStartedCard
-        hasInventory={hasInventory}
-        hasExecutionEnvironment={hasExecutionEnvironment}
-        hasJobTemplate={hasJobTemplate}
-      />
-      <AwxInventoriesCard
-        total={data.inventories.total}
-        failed={data.inventories.inventory_failed}
-      />
-      <AwxHostsCard total={data.hosts.total} failed={data.hosts.failed} />
-      <AwxProjectsCard total={data.projects.total} failed={data.projects.failed} />
-      {recentJobsView.itemCount !== 0 && <AwxJobActivityCard />}
-      <AwxRecentJobsCard view={recentJobsView} />
-      <AwxRecentProjectsCard />
+      {managedResources.map((r: Resource) => {
+        if (!r.selected) {
+          return <></>;
+        }
+        switch (true) {
+          case r.id === 'recent_job_activity':
+            return <AwxJobActivityCard />;
+          case r.id === 'project':
+            return <AwxProjectsCard total={data.projects.total} failed={data.projects.failed} />;
+          case r.id === 'host':
+            return <AwxHostsCard total={data.hosts.total} failed={data.hosts.failed} />;
+          case r.id === 'inventory':
+            return (
+              <AwxInventoriesCard
+                total={data.inventories.total}
+                failed={data.inventories.inventory_failed}
+              />
+            );
+          case r.id === 'recent_jobs':
+            return <AwxRecentJobsCard view={recentJobsView} />;
+          case r.id === 'recent_projects':
+            return <AwxRecentProjectsCard />;
+          case r.id === 'recent_inventories':
+            return <AwxRecentInventoriesCard />;
+          default:
+            return <></>;
+        }
+      })}
     </PageDashboard>
   );
 }
@@ -183,25 +197,5 @@ interface IDashboardData {
   job_templates: {
     url: string;
     total: number;
-  };
-}
-
-function useExecutionEnvironments(query?: Record<string, string | number | boolean>) {
-  return useAwxItemsResponse<ExecutionEnvironment>({
-    url: '/api/v2/execution_environments/',
-    query,
-  });
-}
-
-function useAwxItemsResponse<T>(options: {
-  url: string;
-  query?: Record<string, string | number | boolean>;
-}) {
-  const { url, query } = options;
-  const response = useGet<AwxItemsResponse<T>>(url, query);
-  return {
-    ...response.data,
-    loading: !response.data && !response.error,
-    refresh: response.refresh,
   };
 }

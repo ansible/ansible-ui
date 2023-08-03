@@ -1,39 +1,46 @@
-import { ChartDonut, ChartDonutProps } from '@patternfly/react-charts';
+import { ChartDonut, ChartDonutProps, ChartDonutUtilization } from '@patternfly/react-charts';
 import { CardBody, Flex, FlexItem, Skeleton, Split, SplitItem } from '@patternfly/react-core';
-import { Fragment } from 'react';
 import { PageChartContainer } from './PageChartContainer';
 import { PageDashboardCard } from './PageDashboardCard';
 import styled from 'styled-components';
+import { pfDisabled } from '../components/pfcolors';
+import { useTranslation } from 'react-i18next';
 
 const FlexItemDiv = styled.div`
   width: 12px;
   height: 12px;
 `;
 
-const DonutChartDiv = styled.div`
-  width: 100px;
-  height: 100px;
-`;
-
-export function PageDonutChart(props: Omit<ChartDonutProps, 'width' | 'height'>) {
-  return (
-    <PageChartContainer>
-      {(size) => (
-        <ChartDonut
-          //   ariaDesc="Average number of pets"
-          //   ariaTitle="Donut chart example"
-          //   constrainToVisibleArea
-          //   data={items.map((item) => ({ x: item.label, y: item.count }))}
-          //   title={total.toString()}
-          //   colorScale={items.map((item) => item.color)}
-          //   padding={{ top: 0, left: 0, right: 0, bottom: 0 }}
-          {...props}
-          width={size.width}
-          height={size.height}
-        />
-      )}
-    </PageChartContainer>
-  );
+export function PageDonutChart(
+  props: Omit<ChartDonutProps, 'width' | 'height'> & { total: number }
+) {
+  const { t } = useTranslation();
+  const { total } = props;
+  if (total !== 0) {
+    return (
+      <PageChartContainer>
+        {(size) => <ChartDonut {...props} width={size.width} height={size.height} />}
+      </PageChartContainer>
+    );
+  } else {
+    return (
+      <PageChartContainer>
+        {(size) => (
+          <ChartDonutUtilization
+            constrainToVisibleArea
+            width={size.width}
+            height={size.height}
+            data={{ x: t('Resource'), y: total }}
+            legendData={[{ name: t(`Total: ${total}`) }]}
+            legendOrientation="vertical"
+            colorScale={[pfDisabled]}
+            title={total.toString()}
+            padding={{ top: 0, left: 0, right: 0, bottom: 0 }}
+          />
+        )}
+      </PageChartContainer>
+    );
+  }
 }
 
 export function PageDashboardDonutCard(props: {
@@ -43,6 +50,7 @@ export function PageDashboardDonutCard(props: {
   items: { count: number; label: string; color: string }[];
   loading?: boolean;
 }) {
+  const { t } = useTranslation();
   const { title, items, loading } = props;
   const total = items.reduce((total, item) => total + item.count, 0);
   return (
@@ -73,99 +81,21 @@ export function PageDashboardDonutCard(props: {
             </SplitItem>
           </Split>
         ) : (
-          <Split hasGutter>
-            <SplitItem>
-              <DonutChartDiv>
-                <PageDonutChart
-                  ariaDesc="Average number of pets"
-                  ariaTitle="Donut chart example"
-                  constrainToVisibleArea
-                  data={items.map((item) => ({ x: item.label, y: item.count }))}
-                  title={total.toString()}
-                  colorScale={items.map((item) => item.color)}
-                  padding={{ top: 0, left: 0, right: 0, bottom: 0 }}
-                />
-              </DonutChartDiv>
-            </SplitItem>
-            <SplitItem style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              <Flex direction={{ default: 'column' }} spaceItems={{ default: 'spaceItemsSm' }}>
-                {items.map((item) => {
-                  if (item.count === 0) return <Fragment key={item.label}></Fragment>;
-                  return (
-                    <FlexItem key={item.label}>
-                      <Flex spaceItems={{ default: 'spaceItemsSm' }}>
-                        <FlexItem>
-                          <div
-                            style={{
-                              width: 12,
-                              height: 12,
-                              backgroundColor: item.color,
-                              borderRadius: 2,
-                            }}
-                          />
-                        </FlexItem>
-                        <FlexItem
-                          style={{
-                            paddingLeft: 4,
-                            paddingRight: 2,
-                            textAlign: 'right',
-                            minWidth: 16,
-                          }}
-                        >
-                          {item.count}
-                        </FlexItem>
-                        <FlexItem>{item.label}</FlexItem>
-                      </Flex>
-                    </FlexItem>
-                  );
-                })}
-              </Flex>
-            </SplitItem>
-          </Split>
+          <PageDonutChart
+            ariaDesc={t('Dashboard resource count')}
+            ariaTitle={t('Dashboard resource count')}
+            constrainToVisibleArea
+            data={items.map((item) => ({ x: item.label, y: item.count }))}
+            title={total.toString()}
+            colorScale={items.map((item) => item.color)}
+            padding={{ top: 0, left: 0, right: 0, bottom: 0 }}
+            legendData={items.map((item) => ({ name: `${item.label}: ${item.count}` }))}
+            legendOrientation="vertical"
+            legendPosition="right"
+            total={total}
+          />
         )}
       </CardBody>
     </PageDashboardCard>
   );
 }
-
-// export function SkeletonDonutCard(props: { title: string; count: number; to: string }) {
-//   const { title, count, to } = props;
-//   return (
-//     <Card
-//       isFlat
-//       isSelectable
-//       isRounded
-//       style={{ transition: 'box-shadow 0.25s' }}
-//       onClick={() => history(to)}
-//     >
-//       <CardHeader>
-//         <CardTitle>{title}</CardTitle>
-//       </CardHeader>
-//       <CardBody>
-//         <Split hasGutter>
-//           <SplitItem>
-//             <Skeleton shape="circle" width="100px" />
-//           </SplitItem>
-//           <SplitItem style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-//             <Flex direction={{ default: 'column' }} spaceItems={{ default: 'spaceItemsMd' }}>
-//               {new Array(count).fill(0).map((_, index) => (
-//                 <FlexItem key={index}>
-//                   <Flex spaceItems={{ default: 'spaceItemsSm' }}>
-//                     <FlexItem>
-//                       <div style={{ width: 12, height: 12 }}>
-//                         <Skeleton shape="square" width="12" height="12" />
-//                       </div>
-//                     </FlexItem>
-//                     <FlexItem grow={{ default: 'grow' }}>
-//                       <Skeleton shape="square" width="70px" height="14px" />
-//                     </FlexItem>
-//                   </Flex>
-//                 </FlexItem>
-//               ))}
-//             </Flex>
-//           </SplitItem>
-//         </Split>
-//       </CardBody>
-//     </Card>
-//   );
-// }

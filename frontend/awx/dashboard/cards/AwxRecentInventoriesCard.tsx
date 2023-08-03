@@ -11,48 +11,48 @@ import {
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
 import { RouteObj } from '../../../Routes';
 import { useModifiedColumn } from '../../../common/columns';
-import { Project } from '../../interfaces/Project';
-import { useProjectsColumns } from '../../resources/projects/hooks/useProjectsColumns';
+import { Inventory } from '../../interfaces/Inventory';
+import { useInventoriesColumns } from '../../resources/inventories/hooks/useInventoriesColumns';
 import { useAwxView } from '../../useAwxView';
 
-export function AwxRecentProjectsCard() {
+export function AwxRecentInventoriesCard() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const modifiedColumn = useModifiedColumn();
 
-  let columns = useProjectsColumns();
+  let columns = useInventoriesColumns();
   columns = useVisibleModalColumns(columns);
   columns = useMemo(() => [...columns, modifiedColumn], [columns, modifiedColumn]);
   columns = useColumnsWithoutSort(columns);
   columns = useColumnsWithoutExpandedRow(columns);
 
-  const view = useAwxView<Project>({
-    url: '/api/v2/projects/',
+  const view = useAwxView<Inventory>({
+    url: '/api/v2/inventories/',
     disableQueryString: true,
     defaultSort: 'modified',
     defaultSortDirection: 'desc',
   });
   return (
     <PageDashboardCard
-      title={t('Recent Projects')}
-      subtitle={t('Recently updated projects')}
+      title={t('Recent Inventories')}
+      subtitle={t('Recently updated inventories')}
       width="lg"
       height="md"
-      linkText={t('Go to Projects')}
-      to={RouteObj.Projects}
+      linkText={t('Go to Inventories')}
+      to={RouteObj.Inventories}
     >
       <PageTable
         disableBodyPadding={true}
         tableColumns={columns}
         autoHidePagination={true}
-        errorStateTitle={t('Error loading projects')}
+        errorStateTitle={t('Error loading inventories')}
         emptyStateIcon={PlusCircleIcon}
         emptyStateButtonIcon={<PlusCircleIcon />}
         emptyStateVariant={'light'}
-        emptyStateTitle={t('There are currently no projects')}
-        emptyStateDescription={t('Create a project by clicking the button below.')}
-        emptyStateButtonText={t('Create project')}
-        emptyStateButtonClick={() => navigate(RouteObj.CreateProject)}
+        emptyStateTitle={t('There are currently no inventories')}
+        emptyStateDescription={t('Create a inventory by clicking the button below.')}
+        emptyStateButtonText={t('Create inventory')}
+        emptyStateButtonClick={() => navigate(RouteObj.CreateInventory)}
         {...view}
         compact
         itemCount={view.itemCount !== undefined ? Math.min(view.itemCount, 7) : undefined}

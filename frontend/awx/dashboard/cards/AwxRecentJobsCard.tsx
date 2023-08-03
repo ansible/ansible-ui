@@ -38,7 +38,7 @@ export function AwxRecentJobsCard(props: { view: IAwxView<Job> }) {
 
   return (
     <PageDashboardCard
-      title={t('Jobs')}
+      title={t('Recent Jobs')}
       subtitle={t('Recently finished jobs')}
       width="lg"
       height="md"
