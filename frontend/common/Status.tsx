@@ -8,6 +8,7 @@ import {
   HourglassStartIcon,
   InfoCircleIcon,
   MinusCircleIcon,
+  StopCircleIcon,
 } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { RunningIcon, TextCell } from '../../framework';
@@ -70,10 +71,12 @@ function useLabel(status: string, t: (str: string) => string) {
     running: t('Running'),
     skipped: t('Skipped'),
     starting: t('Starting'),
+    stopped: t('Stopped'),
     success: t('Success'),
     successful: t('Successful'),
     timedOut: t('Timed out'),
     unavailable: t('Unavailable'),
+    unknown: t('Unknown'),
     unreachable: t('Unreachable'),
     waiting: t('Waiting'),
   };
@@ -161,6 +164,8 @@ function getIcon(status: string) {
       return MinusCircleIcon;
     case 'starting':
       return HourglassStartIcon;
+    case 'stopped':
+      return StopCircleIcon;
     default:
       return null;
   }
