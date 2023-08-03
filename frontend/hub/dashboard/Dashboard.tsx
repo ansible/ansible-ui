@@ -10,13 +10,8 @@ import {
   PageHeader,
   PageLayout,
 } from '../../../framework';
-// import { PageDashboardCountBar } from '../../../framework/PageDashboard/PageDashboardCountBar';
 import { LoadingPage } from '../../../framework/components/LoadingPage';
-// import { RouteObj } from '../../Routes';
-// import { useCollections } from '../collections/hooks/useCollections';
-// import { useExecutionEnvironments } from '../execution-environments/hooks/useExecutionEnvironments';
 import { useHubNamespaces } from '../namespaces/hooks/useHubNamespaces';
-// import { HubGettingStartedCard } from './HubGettingStarted';
 import { useManageHubDashboard } from './useManageHubDashboard';
 import { useState } from 'react';
 import { CategorizedCollections } from './CollectionCategory';
@@ -26,8 +21,6 @@ import { CollectionCategories } from './CollectionCategories';
 export function HubDashboard() {
   const { t } = useTranslation();
   const namespaces = useHubNamespaces();
-  // const collections = useCollections();
-  // const environments = useExecutionEnvironments();
 
   const { openManageDashboard, managedCategories } = useManageHubDashboard();
 
@@ -40,10 +33,6 @@ export function HubDashboard() {
   if (!namespaces) {
     return <LoadingPage />;
   }
-
-  // const hasCollection = (collections?.length ?? 0) > 0;
-  // const hasExecutionEnvironment = (environments?.length ?? 0) > 0;
-  // const hasNamespace = (namespaces?.length ?? 0) > 0;
 
   return (
     <PageLayout>
@@ -77,22 +66,6 @@ export function HubDashboard() {
         }
       />
       <PageDashboard>
-        {/* <HubGettingStartedCard
-          hasCollection={hasCollection}
-          hasExecutionEnvironment={hasExecutionEnvironment}
-          hasNamespace={hasNamespace}
-        />
-        <PageDashboardCountBar
-          counts={[
-            { title: t('Collections'), count: collections?.length ?? 0, to: RouteObj.Collections },
-            { title: t('Namespaces'), count: namespaces?.length ?? 0, to: RouteObj.Namespaces },
-            {
-              title: t('Environments'),
-              count: environments?.length ?? 0,
-              to: RouteObj.HubExecutionEnvironments,
-            },
-          ]}
-        /> */}
         {managedCategories.length ? (
           <CollectionCategories
             categories={managedCategories}

@@ -34,7 +34,12 @@ export function CollectionCard(props: { collection: CollectionVersionSearch }) {
         itemToCardFn={(item: CollectionVersionSearch) => ({
           id: item.collection_version.name,
           icon: <AnsibleTowerIcon />, // TODO: Update logo to use avatar_url if it exists
-          title: <TextCell text={item.collection_version.name} />,
+          title: (
+            <TextCell
+              text={item.collection_version.name}
+              to={RouteObj.CollectionDetails.replace(':id', item.collection_version.name)}
+            />
+          ),
           iconAboveTitle: true,
           subtitle: (
             <TextCell
@@ -46,7 +51,11 @@ export function CollectionCard(props: { collection: CollectionVersionSearch }) {
           cardBody: (
             <CardBody>
               <TextCell text={item.collection_version.version} />
-              <TextCell text={item.collection_version.description} />
+              {item.collection_version.description && (
+                <PageDetail>
+                  <div>{item.collection_version.description}</div>
+                </PageDetail>
+              )}
               <PageDetail>
                 <PageDetailDiv>
                   <ColumnsDiv>
