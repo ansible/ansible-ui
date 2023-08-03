@@ -35,6 +35,7 @@ export function CollectionCard(props: { collection: CollectionVersionSearch }) {
           id: item.collection_version.name,
           icon: <AnsibleTowerIcon />, // TODO: Update logo to use avatar_url if it exists
           title: <TextCell text={item.collection_version.name} />,
+          iconAboveTitle: true,
           subtitle: (
             <TextCell
               text={t('Provided by {{provider}}', {

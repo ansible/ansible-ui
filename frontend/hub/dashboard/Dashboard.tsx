@@ -1,6 +1,6 @@
 /* eslint-disable i18next/no-literal-string */
 import { ButtonVariant, DropdownPosition } from '@patternfly/react-core';
-import { CogIcon } from '@patternfly/react-icons';
+import { CogIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import {
   PageActionSelection,
@@ -10,13 +10,13 @@ import {
   PageHeader,
   PageLayout,
 } from '../../../framework';
-import { PageDashboardCountBar } from '../../../framework/PageDashboard/PageDashboardCountBar';
+// import { PageDashboardCountBar } from '../../../framework/PageDashboard/PageDashboardCountBar';
 import { LoadingPage } from '../../../framework/components/LoadingPage';
-import { RouteObj } from '../../Routes';
-import { useCollections } from '../collections/hooks/useCollections';
-import { useExecutionEnvironments } from '../execution-environments/hooks/useExecutionEnvironments';
+// import { RouteObj } from '../../Routes';
+// import { useCollections } from '../collections/hooks/useCollections';
+// import { useExecutionEnvironments } from '../execution-environments/hooks/useExecutionEnvironments';
 import { useHubNamespaces } from '../namespaces/hooks/useHubNamespaces';
-import { HubGettingStartedCard } from './HubGettingStarted';
+// import { HubGettingStartedCard } from './HubGettingStarted';
 import { useManageHubDashboard } from './useManageHubDashboard';
 import { useState } from 'react';
 import { CategorizedCollections } from './CollectionCategory';
@@ -26,8 +26,8 @@ import { CollectionCategories } from './CollectionCategories';
 export function HubDashboard() {
   const { t } = useTranslation();
   const namespaces = useHubNamespaces();
-  const collections = useCollections();
-  const environments = useExecutionEnvironments();
+  // const collections = useCollections();
+  // const environments = useExecutionEnvironments();
 
   const { openManageDashboard, managedCategories } = useManageHubDashboard();
 
@@ -41,20 +41,23 @@ export function HubDashboard() {
     return <LoadingPage />;
   }
 
-  const hasCollection = (collections?.length ?? 0) > 0;
-  const hasExecutionEnvironment = (environments?.length ?? 0) > 0;
-  const hasNamespace = (namespaces?.length ?? 0) > 0;
+  // const hasCollection = (collections?.length ?? 0) > 0;
+  // const hasExecutionEnvironment = (environments?.length ?? 0) > 0;
+  // const hasNamespace = (namespaces?.length ?? 0) > 0;
 
   return (
     <PageLayout>
       <PageHeader
-        title={t('Welcome to Galaxy')}
-        description={t('Discover, publish, and manage your Ansible collections.')}
+        title={t('Welcome to Automation Hub')}
+        description={t(
+          'Find and use content that is supported by Red Hat and our partners to deliver reassurance for the most demanding environments. Get started by exploring the options below.'
+        )}
         headerActions={
           <PageActions
             actions={[
               {
                 label: 'Build Environment',
+                icon: PlusCircleIcon,
                 type: PageActionType.Button,
                 variant: ButtonVariant.primary,
                 selection: PageActionSelection.None,
@@ -74,7 +77,7 @@ export function HubDashboard() {
         }
       />
       <PageDashboard>
-        <HubGettingStartedCard
+        {/* <HubGettingStartedCard
           hasCollection={hasCollection}
           hasExecutionEnvironment={hasExecutionEnvironment}
           hasNamespace={hasNamespace}
@@ -89,7 +92,7 @@ export function HubDashboard() {
               to: RouteObj.HubExecutionEnvironments,
             },
           ]}
-        />
+        /> */}
         {managedCategories.length ? (
           <CollectionCategories
             categories={managedCategories}
