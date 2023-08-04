@@ -9,9 +9,10 @@ import {
   PageDashboard,
   PageHeader,
   PageLayout,
+  useSelected,
 } from '../../../framework';
 import { useManageHubDashboard } from './useManageHubDashboard';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CategorizedCollections } from './CollectionCategory';
 import { useCategorizeCollections } from './hooks/useCategorizeCollections';
 import { CollectionCategoryCarousel } from './CollectionCategories';
@@ -23,9 +24,29 @@ export function HubDashboard() {
 
   /** Data for collection category carousels */
   const [categorizedCollections, setCategorizedCollections] = useState<CategorizedCollections>({});
+  const [allDashboardCollections, setAllDashboardCollections] = useState<CollectionVersionSearch[]>(
+    []
+  );
 
   /** Retrieve and set categories of collections and map categories to collections */
-  useCategorizeCollections(managedCategories, setCategorizedCollections);
+  useCategorizeCollections(
+    managedCategories,
+    setCategorizedCollections,
+    setAllDashboardCollections
+  );
+
+  const { selectedItems, isSelected, selectItem, unselectItem } = useSelected(
+    allDashboardCollections,
+    (item: CollectionVersionSearch) => item.collection_version?.name
+  );
+
+  useEffect(() => {
+    console.log('🚀 ~ file: Dashboard.tsx:43 ~ HubDashboard ~ selectedItems:', selectedItems);
+    // console.log(
+    //   '🚀 ~ file: Dashboard.tsx:39 ~ useEffect ~ allDashboardCollections:',
+    //   allDashboardCollections
+    // );
+  }, [selectedItems]);
 
   return (
     <PageLayout>
