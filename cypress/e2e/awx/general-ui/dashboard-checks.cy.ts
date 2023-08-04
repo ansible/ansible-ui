@@ -52,9 +52,25 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
     cy.get('[aria-label="Close"]').click();
     cy.contains('.pf-c-card__header', 'Projects').should('be.visible');
   });
-  // Manage Dashboard modal table does not currently support keyboard input to reorder items
-  // it.only('within the Manage Dashboard modal, dragging a resource should reorder the resource', () => {
-  // });
+  // Manage Dashboard modal table does not currently support keyboard input to reorder items, use drag & drop
+  it('within the Manage Dashboard modal, dragging a resource should reorder the resource', () => {
+    let initialArray: string[];
+    let editedArray: string[];
+    cy.visit(`/ui_next/dashboard`);
+
+    cy.get('.pf-c-card__header').then((headers) => {
+      initialArray = Array.from(headers, (title) => title.innerText.split('\n')[0]);
+      cy.clickButton('Manage view');
+      cy.get('.pf-c-modal-box__title-text').should('contain', 'Manage Dashboard');
+      cy.get('#draggable-row-project').drag('#draggable-row-recent_job_activity');
+      cy.clickModalButton('Apply');
+    });
+    cy.get('.pf-c-card__header').then((headers) => {
+      editedArray = Array.from(headers, (title) => title.innerText.split('\n')[0]);
+      expect(initialArray).to.not.eql(editedArray);
+    });
+  });
+
   it('checks inventories count', () => {
     cy.intercept('GET', 'api/v2/dashboard/').as('getInventories');
     cy.visit(`/ui_next/dashboard`);

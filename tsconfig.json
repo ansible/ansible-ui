@@ -4,7 +4,7 @@
     "module": "ES2020",
     "jsx": "react-jsx",
     "lib": ["ES2020", "DOM"],
-    "types": ["cypress", "cypress-react-selector"],
+    "types": ["cypress", "cypress-react-selector", "@4tw/cypress-drag-drop"],
     "allowSyntheticDefaultImports": true,
     "allowJs": true,
     "sourceMap": true,
