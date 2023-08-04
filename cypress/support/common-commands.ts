@@ -61,6 +61,24 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add(
+  'multiSelectShouldHaveSelectedOption',
+  (selector: string, label: string | RegExp) => {
+    cy.get(selector).within(() => {
+      cy.contains('.pf-c-chip__text', label).should('have.text', label);
+    });
+  }
+);
+
+Cypress.Commands.add(
+  'multiSelectShouldNotHaveSelectedOption',
+  (selector: string, label: string | RegExp) => {
+    cy.get(selector).within(() => {
+      cy.contains('.pf-c-chip__text', label).should('not.exist');
+    });
+  }
+);
+
+Cypress.Commands.add(
   'singleSelectShouldContainOption',
   (selector: string, label: string | RegExp) => {
     cy.get(selector).click();
@@ -81,5 +99,18 @@ Cypress.Commands.add('selectSingleSelectOption', (selector: string, label: strin
     .get('.pf-c-menu__content')
     .within(() => {
       cy.contains('.pf-c-menu__item-text', label).parent().click();
+    });
+});
+
+Cypress.Commands.add('selectMultiSelectOption', (selector: string, label: string | RegExp) => {
+  cy.get(selector)
+    .parent()
+    .get('.pf-c-menu__content')
+    .within(() => {
+      cy.contains('.pf-c-menu__item-text', label)
+        .parent()
+        .within(() => {
+          cy.get('input').click();
+        });
     });
 });

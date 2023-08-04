@@ -24,7 +24,7 @@ interface IToolbarDateFilterOption {
 export interface IToolbarDateRangeFilterProps {
   id?: string;
   label?: string;
-  placeholder?: string;
+  placeholder: string;
   values: string[];
   setValues: (values: string[]) => void;
   options: IToolbarDateFilterOption[];
