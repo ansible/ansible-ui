@@ -3,10 +3,8 @@ import { EdaDecisionEnvironment } from '../../../../frontend/eda/interfaces/EdaD
 import { EdaProject } from '../../../../frontend/eda/interfaces/EdaProject';
 import { EdaRulebook } from '../../../../frontend/eda/interfaces/EdaRulebook';
 import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRulebookActivation';
-import { IAwxResources } from '../../../support/awx-commands';
 
 describe('EDA rulebook activations- Create, Edit, Delete', () => {
-  let awxResources: IAwxResources;
   let edaProject: EdaProject;
   let edaDecisionEnvironment: EdaDecisionEnvironment;
   let edaRBA: EdaRulebookActivation;
@@ -18,6 +16,7 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
 
     cy.createEdaProject().then((project) => {
       edaProject = project;
+      cy.waitEdaProjectSync(project);
       cy.getEdaRulebooks(edaProject, 'hello_echo.yml').then((edaRuleBooks) => {
         edaRuleBook = edaRuleBooks[0];
         cy.createEdaDecisionEnvironment().then((decisionEnvironment) => {
@@ -34,7 +33,6 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
   });
 
   after(() => {
-    cy.deleteAwxResources(awxResources);
     cy.deleteEdaDecisionEnvironment(edaDecisionEnvironment);
     cy.deleteEdaProject(edaProject);
     cy.deleteAllEdaCurrentUserTokens();
