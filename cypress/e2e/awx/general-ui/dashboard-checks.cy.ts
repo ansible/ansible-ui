@@ -204,4 +204,31 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
         }
       });
   });
+
+  it('admin users see default empty state with Create {resource} button', () => {
+    cy.visit(`/ui_next/dashboard`);
+    cy.intercept({ method: 'GET', url: '/api/v2/projects/*' }, { fixture: 'emptyList.json' });
+    cy.intercept({ method: 'GET', url: '/api/v2/inventories/*' }, { fixture: 'emptyList.json' });
+    cy.intercept({ method: 'GET', url: '/api/v2/unified_jobs/*' }, { fixture: 'emptyList.json' });
+    cy.hasTitle('There are currently no jobs').should('exist');
+    cy.hasTitle('There are currently no projects').should('exist');
+    cy.hasTitle('There are currently no inventories').should('exist');
+    cy.contains('button', 'Create job').should('exist');
+    cy.contains('button', 'Create project').should('exist');
+    cy.contains('button', 'Create inventory').should('exist');
+  });
+
+  it('non-admin users see default empty state without Create {resource} button', () => {
+    cy.visit(`/ui_next/dashboard`);
+    cy.intercept({ method: 'GET', url: '/api/v2/projects/*' }, { fixture: 'emptyList.json' });
+    cy.intercept({ method: 'GET', url: '/api/v2/inventories/*' }, { fixture: 'emptyList.json' });
+    cy.intercept({ method: 'GET', url: '/api/v2/unified_jobs/*' }, { fixture: 'emptyList.json' });
+    cy.intercept({ method: 'GET', url: '/api/v2/me' }, { fixture: 'normalUser.json' });
+    cy.hasTitle('There are currently no jobs').should('exist');
+    cy.hasTitle('There are currently no projects').should('exist');
+    cy.hasTitle('There are currently no inventories').should('exist');
+    cy.contains('button', 'Create job').should('not.exist');
+    cy.contains('button', 'Create project').should('not.exist');
+    cy.contains('button', 'Create inventory').should('not.exist');
+  });
 });

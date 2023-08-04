@@ -18,6 +18,9 @@ import { AwxHostsCard } from './cards/AwxHostsCard';
 import { AwxInventoriesCard } from './cards/AwxInventoriesCard';
 import { AwxRecentInventoriesCard } from './cards/AwxRecentInventoriesCard';
 import { useManagedAwxDashboard } from './hooks/useManagedAwxDashboard';
+import { Project } from '../interfaces/Project';
+import { Inventory } from '../interfaces/Inventory';
+import { useActiveUser } from '../../common/useActiveUser';
 
 const HIDE_WELCOME_MESSAGE = 'hide-welcome-message';
 type Resource = { id: string; name: string; selected: boolean };
@@ -68,10 +71,25 @@ export function AwxDashboard() {
 
 function DashboardInternal(props: { managedResources: Resource[] }) {
   const { managedResources } = props;
+  const activeUser = useActiveUser();
+  const canEdit = activeUser?.is_superuser || activeUser?.is_system_auditor;
+
   const recentJobsView = useAwxView<Job>({
     url: '/api/v2/unified_jobs/',
     disableQueryString: true,
     defaultSort: 'finished',
+    defaultSortDirection: 'desc',
+  });
+  const recentProjectsView = useAwxView<Project>({
+    url: '/api/v2/projects/',
+    disableQueryString: true,
+    defaultSort: 'modified',
+    defaultSortDirection: 'desc',
+  });
+  const recentInventoriesView = useAwxView<Inventory>({
+    url: '/api/v2/inventories/',
+    disableQueryString: true,
+    defaultSort: 'modified',
     defaultSortDirection: 'desc',
   });
   const { data, isLoading } = useSWR<IDashboardData>(`/api/v2/dashboard/`, (url: string) =>
@@ -108,11 +126,26 @@ function DashboardInternal(props: { managedResources: Resource[] }) {
               />
             );
           case r.id === 'recent_jobs':
-            return <AwxRecentJobsCard view={recentJobsView} />;
+            return (
+              <AwxRecentJobsCard
+                view={recentJobsView}
+                showEmptyStateNonAdmin={!canEdit && recentJobsView.itemCount === 0}
+              />
+            );
           case r.id === 'recent_projects':
-            return <AwxRecentProjectsCard />;
+            return (
+              <AwxRecentProjectsCard
+                view={recentProjectsView}
+                showEmptyStateNonAdmin={!canEdit && recentProjectsView.itemCount === 0}
+              />
+            );
           case r.id === 'recent_inventories':
-            return <AwxRecentInventoriesCard />;
+            return (
+              <AwxRecentInventoriesCard
+                view={recentInventoriesView}
+                showEmptyStateNonAdmin={!canEdit && recentInventoriesView.itemCount === 0}
+              />
+            );
           default:
             return <></>;
         }

@@ -13,9 +13,13 @@ import { RouteObj } from '../../../Routes';
 import { useModifiedColumn } from '../../../common/columns';
 import { Inventory } from '../../interfaces/Inventory';
 import { useInventoriesColumns } from '../../resources/inventories/hooks/useInventoriesColumns';
-import { useAwxView } from '../../useAwxView';
+import { IAwxView } from '../../useAwxView';
 
-export function AwxRecentInventoriesCard() {
+export function AwxRecentInventoriesCard(props: {
+  view: IAwxView<Inventory>;
+  showEmptyStateNonAdmin: boolean;
+}) {
+  const { view, showEmptyStateNonAdmin } = props;
   const { t } = useTranslation();
   const navigate = useNavigate();
   const modifiedColumn = useModifiedColumn();
@@ -26,12 +30,6 @@ export function AwxRecentInventoriesCard() {
   columns = useColumnsWithoutSort(columns);
   columns = useColumnsWithoutExpandedRow(columns);
 
-  const view = useAwxView<Inventory>({
-    url: '/api/v2/inventories/',
-    disableQueryString: true,
-    defaultSort: 'modified',
-    defaultSortDirection: 'desc',
-  });
   return (
     <PageDashboardCard
       title={t('Recent Inventories')}
@@ -41,24 +39,40 @@ export function AwxRecentInventoriesCard() {
       linkText={t('Go to Inventories')}
       to={RouteObj.Inventories}
     >
-      <PageTable
-        disableBodyPadding={true}
-        tableColumns={columns}
-        autoHidePagination={true}
-        errorStateTitle={t('Error loading inventories')}
-        emptyStateIcon={PlusCircleIcon}
-        emptyStateButtonIcon={<PlusCircleIcon />}
-        emptyStateVariant={'light'}
-        emptyStateTitle={t('There are currently no inventories')}
-        emptyStateDescription={t('Create a inventory by clicking the button below.')}
-        emptyStateButtonText={t('Create inventory')}
-        emptyStateButtonClick={() => navigate(RouteObj.CreateInventory)}
-        {...view}
-        compact
-        itemCount={view.itemCount !== undefined ? Math.min(view.itemCount, 7) : undefined}
-        pageItems={view.pageItems ? view.pageItems.slice(0, 7) : []}
-        disableLastRowBorder
-      />
+      {showEmptyStateNonAdmin ? (
+        <PageTable
+          disableBodyPadding={true}
+          tableColumns={columns}
+          autoHidePagination={true}
+          errorStateTitle={t('Error loading inventories')}
+          emptyStateVariant={'light'}
+          emptyStateTitle={t('There are currently no inventories')}
+          {...view}
+          compact
+          itemCount={view.itemCount !== undefined ? Math.min(view.itemCount, 7) : undefined}
+          pageItems={view.pageItems ? view.pageItems.slice(0, 7) : []}
+          disableLastRowBorder
+        />
+      ) : (
+        <PageTable
+          disableBodyPadding={true}
+          tableColumns={columns}
+          autoHidePagination={true}
+          errorStateTitle={t('Error loading inventories')}
+          emptyStateIcon={PlusCircleIcon}
+          emptyStateButtonIcon={<PlusCircleIcon />}
+          emptyStateVariant={'light'}
+          emptyStateTitle={t('There are currently no inventories')}
+          emptyStateDescription={t('Create a inventory by clicking the button below.')}
+          emptyStateButtonText={t('Create inventory')}
+          emptyStateButtonClick={() => navigate(RouteObj.CreateInventory)}
+          {...view}
+          compact
+          itemCount={view.itemCount !== undefined ? Math.min(view.itemCount, 7) : undefined}
+          pageItems={view.pageItems ? view.pageItems.slice(0, 7) : []}
+          disableLastRowBorder
+        />
+      )}
     </PageDashboardCard>
   );
 }
