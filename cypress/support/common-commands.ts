@@ -1,7 +1,7 @@
 import '@cypress/code-coverage/support';
 
 Cypress.Commands.add('getFiltersToolbarItem', () => {
-  cy.get('#filter').parent().parent().parent();
+  cy.get('#filter').parent().parent().parent().parent();
 });
 
 Cypress.Commands.add('openToolbarFilterTypeSelect', () => {
