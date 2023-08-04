@@ -1,4 +1,5 @@
 /* eslint-disable i18next/no-literal-string */
+import { PageSection } from '@patternfly/react-core';
 import { useState } from 'react';
 import { PageSelectOption } from './PageSelectOption';
 import { PageSingleSelect } from './PageSingleSelect';
@@ -8,7 +9,7 @@ interface ITestObject {
   description?: string;
 }
 
-const testObjects: ITestObject[] = new Array(2).fill(0).map((_, index) => ({
+const testObjects: ITestObject[] = new Array(20).fill(0).map((_, index) => ({
   name: `Option ${index}`,
   description: `Description ${index}`,
 }));
@@ -29,13 +30,15 @@ function PageSingleSelectTest<T>(props: {
   const { placeholder, defaultValue, options } = props;
   const [value, setValue] = useState(() => defaultValue);
   return (
-    <PageSingleSelect
-      id="test"
-      value={value}
-      placeholder={placeholder}
-      options={options}
-      onSelect={setValue}
-    />
+    <PageSection>
+      <PageSingleSelect
+        id="test"
+        value={value}
+        placeholder={placeholder}
+        options={options}
+        onSelect={setValue}
+      />
+    </PageSection>
   );
 }
 
@@ -85,5 +88,14 @@ describe('PageSingleSelect', () => {
       <PageSingleSelectTest placeholder="Placeholder" options={options} defaultValue={options[0]} />
     );
     cy.singleSelectShouldHaveSelectedOption('#test', options[0].toString());
+  });
+
+  it('should support filtering options when more than 10 items', () => {
+    cy.mount(<PageSingleSelectTest placeholder="Placeholder" options={options} />);
+    cy.get('#test').click();
+    cy.get('#test-search').type('Option 1');
+    cy.get('#test-search').parent().parent().should('contain', 'Option 1');
+    cy.get('#test-search').parent().parent().should('contain', 'Option 10');
+    cy.get('#test-search').parent().parent().should('not.contain', 'Option 2');
   });
 });
