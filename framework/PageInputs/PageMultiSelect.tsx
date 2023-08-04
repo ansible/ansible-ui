@@ -99,6 +99,7 @@ export function PageMultiSelect<ValueT>(props: {
       onOpenChange={setIsOpen}
       toggle={Toggle}
       style={{ zIndex: isOpen ? 9999 : undefined }}
+      isScrollable
     >
       <SelectList>
         {options.map((option) => (

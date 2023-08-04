@@ -8,10 +8,10 @@ interface ITestObject {
   description?: string;
 }
 
-const testObjects: ITestObject[] = [
-  { name: 'Option 1', description: 'Description 1' },
-  { name: 'Option 2', description: 'Description 2' },
-];
+const testObjects: ITestObject[] = new Array(2).fill(0).map((_, index) => ({
+  name: `Option ${index}`,
+  description: `Description ${index}`,
+}));
 
 const options: PageSelectOption<ITestObject>[] = testObjects.map((testObject) => ({
   value: testObject,
