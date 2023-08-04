@@ -22,7 +22,7 @@ const options: PageSelectOption<ITestObject>[] = testObjects.map((testObject) =>
 const placeholderText = 'Placeholder';
 
 function PageSingleSelectTest<T>(props: {
-  placeholder?: string;
+  placeholder: string;
   defaultValue?: T;
   options: PageSelectOption<T>[];
 }) {
