@@ -1,4 +1,5 @@
 /* eslint-disable i18next/no-literal-string */
+import { PageSection } from '@patternfly/react-core';
 import { useState } from 'react';
 import { PageMultiSelect } from './PageMultiSelect';
 import { PageSelectOption } from './PageSelectOption';
@@ -29,13 +30,15 @@ function PageMultiSelectTest<T>(props: {
   const { placeholder, defaultValues: defaultValue, options } = props;
   const [values, setValues] = useState<T[] | undefined>(() => defaultValue);
   return (
-    <PageMultiSelect
-      id="test"
-      values={values}
-      placeholder={placeholder}
-      options={options}
-      onSelect={setValues}
-    />
+    <PageSection>
+      <PageMultiSelect
+        id="test"
+        values={values}
+        placeholder={placeholder}
+        options={options}
+        onSelect={setValues}
+      />
+    </PageSection>
   );
 }
 

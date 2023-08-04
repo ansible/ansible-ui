@@ -1,4 +1,5 @@
 /* eslint-disable i18next/no-literal-string */
+import { PageSection } from '@patternfly/react-core';
 import { useState } from 'react';
 import { PageSelectOption } from './PageSelectOption';
 import { PageSingleSelect } from './PageSingleSelect';
@@ -29,13 +30,15 @@ function PageSingleSelectTest<T>(props: {
   const { placeholder, defaultValue, options } = props;
   const [value, setValue] = useState(() => defaultValue);
   return (
-    <PageSingleSelect
-      id="test"
-      value={value}
-      placeholder={placeholder}
-      options={options}
-      onSelect={setValue}
-    />
+    <PageSection>
+      <PageSingleSelect
+        id="test"
+        value={value}
+        placeholder={placeholder}
+        options={options}
+        onSelect={setValue}
+      />
+    </PageSection>
   );
 }
 
