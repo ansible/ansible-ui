@@ -8,7 +8,7 @@ interface ITestObject {
   description?: string;
 }
 
-const testObjects: ITestObject[] = new Array(2).fill(0).map((_, index) => ({
+const testObjects: ITestObject[] = new Array(12).fill(0).map((_, index) => ({
   name: `Option ${index}`,
   description: `Description ${index}`,
 }));
@@ -103,5 +103,14 @@ describe('PageMultiSelect', () => {
     );
     cy.multiSelectShouldHaveSelectedOption('#test', options[0].toString());
     cy.multiSelectShouldHaveSelectedOption('#test', options[1].toString());
+  });
+
+  it('should support filtering options when more than 10 items', () => {
+    cy.mount(<PageMultiSelectTest placeholder="Placeholder" options={options} />);
+    cy.get('#test').click();
+    cy.get('#test-search').type('Option 1');
+    cy.get('#test-search').parent().parent().should('contain', 'Option 1');
+    cy.get('#test-search').parent().parent().should('contain', 'Option 10');
+    cy.get('#test-search').parent().parent().should('not.contain', 'Option 2');
   });
 });

@@ -8,7 +8,7 @@ interface ITestObject {
   description?: string;
 }
 
-const testObjects: ITestObject[] = new Array(2).fill(0).map((_, index) => ({
+const testObjects: ITestObject[] = new Array(20).fill(0).map((_, index) => ({
   name: `Option ${index}`,
   description: `Description ${index}`,
 }));
@@ -85,5 +85,14 @@ describe('PageSingleSelect', () => {
       <PageSingleSelectTest placeholder="Placeholder" options={options} defaultValue={options[0]} />
     );
     cy.singleSelectShouldHaveSelectedOption('#test', options[0].toString());
+  });
+
+  it('should support filtering options when more than 10 items', () => {
+    cy.mount(<PageSingleSelectTest placeholder="Placeholder" options={options} />);
+    cy.get('#test').click();
+    cy.get('#test-search').type('Option 1');
+    cy.get('#test-search').parent().parent().should('contain', 'Option 1');
+    cy.get('#test-search').parent().parent().should('contain', 'Option 10');
+    cy.get('#test-search').parent().parent().should('not.contain', 'Option 2');
   });
 });

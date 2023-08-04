@@ -1,8 +1,16 @@
-import { Chip, ChipGroup, MenuToggle, MenuToggleElement } from '@patternfly/react-core';
+import {
+  Chip,
+  ChipGroup,
+  Divider,
+  MenuToggle,
+  MenuToggleElement,
+  SearchInput,
+} from '@patternfly/react-core';
 import { Select, SelectList, SelectOption } from '@patternfly/react-core/next';
-import { ReactNode, useCallback, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { PageSelectOption, getPageSelectOptions } from './PageSelectOption';
+import './PageMultiSelect.css';
 
 /** Multi-select component */
 export function PageMultiSelect<ValueT>(props: {
@@ -91,30 +99,66 @@ export function PageMultiSelect<ValueT>(props: {
     [onSelect, options]
   );
 
+  const [searchValue, setSearchValue] = useState('');
+  const searchRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    setSearchValue('');
+    if (isOpen && searchRef.current) {
+      searchRef.current.focus();
+    }
+  }, [isOpen]);
+
+  const visibleOptions = useMemo(
+    () =>
+      options.filter((option) => {
+        if (searchValue === '') return true;
+        else return option.label.toLowerCase().includes(searchValue.toLowerCase());
+      }),
+    [options, searchValue]
+  );
+
   return (
-    <Select
-      selected={selected}
-      onSelect={onSelectHandler}
-      isOpen={isOpen}
-      onOpenChange={setIsOpen}
-      toggle={Toggle}
-      style={{ zIndex: isOpen ? 9999 : undefined }}
-      isScrollable
-    >
-      <SelectList>
-        {options.map((option) => (
-          <SelectOption
-            key={option.key}
-            itemId={option.key}
-            description={option.description}
-            hasCheck
-            isSelected={selectedOptions.includes(option)}
-          >
-            {option.label}
-          </SelectOption>
-        ))}
-      </SelectList>
-    </Select>
+    <div className="page-multi-select">
+      <Select
+        selected={selected}
+        onSelect={onSelectHandler}
+        isOpen={isOpen}
+        onOpenChange={setIsOpen}
+        toggle={Toggle}
+        style={{ zIndex: isOpen ? 9999 : undefined, display: 'inline-block' }}
+      >
+        {options.length > 10 && (
+          <>
+            <div style={{ marginLeft: 16, marginRight: 16, marginTop: 12, marginBottom: 12 }}>
+              <SearchInput
+                id={id ? `${id}-search` : undefined}
+                ref={searchRef}
+                value={searchValue}
+                onChange={(_, value: string) => setSearchValue(value)}
+                onClear={(event) => {
+                  event.stopPropagation();
+                  setSearchValue('');
+                }}
+              />
+            </div>
+            <Divider />
+          </>
+        )}
+        <SelectList style={{ overflow: 'auto', maxHeight: '45vh' }}>
+          {visibleOptions.map((option) => (
+            <SelectOption
+              key={option.key}
+              itemId={option.key}
+              description={option.description}
+              hasCheck
+              isSelected={selectedOptions.includes(option)}
+            >
+              {option.label}
+            </SelectOption>
+          ))}
+        </SelectList>
+      </Select>
+    </div>
   );
 }
 
