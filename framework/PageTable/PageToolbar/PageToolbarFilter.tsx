@@ -119,6 +119,7 @@ function FiltersToolbarItem(props: PageToolbarFiltersProps) {
               // description: filter.description,
               value: filter.key,
             }))}
+            placeholder=""
           />
           <ToolbarFilterComponent
             id="filter-input"
@@ -302,7 +303,7 @@ function ToolbarFilterComponent(props: {
         <ToolbarDateRangeFilter
           id={props.id ?? filter.key}
           label={filter.label}
-          placeholder={filter.placeholder}
+          placeholder={filter.placeholder ?? ''}
           values={values}
           setValues={(newValues) => {
             for (const value of values) {

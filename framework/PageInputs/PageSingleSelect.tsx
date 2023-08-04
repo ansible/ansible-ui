@@ -1,11 +1,11 @@
 import { MenuToggle, MenuToggleElement } from '@patternfly/react-core';
 import { Select, SelectList, SelectOption } from '@patternfly/react-core/next';
-import { ReactNode, useState } from 'react';
+import { ReactNode, useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { PageSelectOption } from './PageSelectOption';
+import { PageSelectOption, getPageSelectOptions } from './PageSelectOption';
 
 /** Single-select component */
-export function PageSingleSelect<T>(props: {
+export function PageSingleSelect<ValueT>(props: {
   /** The ID of the select. */
   id?: string;
 
@@ -13,27 +13,26 @@ export function PageSingleSelect<T>(props: {
   icon?: ReactNode;
 
   /** The placeholder to show when no value is selected. */
-  placeholder?: string;
+  placeholder: string;
 
   /** The selected value. */
-  value: T;
+  value: ValueT;
 
   /** The function to set the selected value. */
-  onSelect: (value: T) => void;
+  onSelect: (value: ValueT) => void;
 
   /** The options to select from. */
-  options: PageSelectOption<T>[];
+  options: PageSelectOption<ValueT>[];
 }) {
-  const { id, icon, value, onSelect: onChange, options, placeholder } = props;
+  const { id, icon, value, onSelect, placeholder } = props;
   const [isOpen, setIsOpen] = useState(false);
 
-  let selectedOption: PageSelectOption<T> | undefined = undefined;
-  for (const option of options) {
-    if (value === option.value) {
-      selectedOption = option;
-      break;
-    }
-  }
+  const options = getPageSelectOptions<ValueT>(props.options);
+
+  const selectedOption = useMemo(
+    () => options.find((option) => value === option.value),
+    [options, value]
+  );
 
   const Toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
     <MenuToggle
@@ -41,31 +40,43 @@ export function PageSingleSelect<T>(props: {
       ref={toggleRef}
       onClick={() => setIsOpen((open) => !open)}
       isExpanded={isOpen}
-      style={{ width: '100%', minWidth: 100 }}
     >
       {icon && <span style={{ paddingLeft: 4, paddingRight: 12 }}>{icon}</span>}
       {selectedOption ? selectedOption.label : <Placedholder>{placeholder}</Placedholder>}
     </MenuToggle>
   );
 
+  const onSelectHandler = useCallback(
+    (_: unknown, itemId: string | number | undefined) => {
+      const newSelectedOption = options.find((option) => {
+        if (option.key !== undefined) return option.key === itemId;
+        else return option.label === itemId;
+      });
+      if (newSelectedOption) {
+        onSelect(newSelectedOption.value);
+        setIsOpen(false);
+      }
+    },
+    [onSelect, options]
+  );
+
   return (
     <Select
       selected={selectedOption?.label}
-      onSelect={(_, itemId: string | number | undefined) => {
-        const newSelectedOption = options.find((option) => option.label === itemId);
-        if (newSelectedOption) {
-          onChange(newSelectedOption.value);
-          setIsOpen(false);
-        }
-      }}
+      onSelect={onSelectHandler}
       isOpen={isOpen}
       onOpenChange={setIsOpen}
       toggle={Toggle}
       style={{ zIndex: isOpen ? 9999 : undefined }}
+      isScrollable
     >
       <SelectList>
         {options.map((option) => (
-          <SelectOption key={option.label} itemId={option.label} description={option.description}>
+          <SelectOption
+            key={option.key}
+            itemId={option.key !== undefined ? option.key : option.label}
+            description={option.description}
+          >
             {option.label}
           </SelectOption>
         ))}
