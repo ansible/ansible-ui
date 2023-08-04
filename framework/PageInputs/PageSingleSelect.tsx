@@ -87,7 +87,7 @@ export function PageSingleSelect<ValueT>(props: {
         isOpen={isOpen}
         onOpenChange={setIsOpen}
         toggle={Toggle}
-        style={{ zIndex: isOpen ? 9999 : undefined, minWidth: 250 }}
+        style={{ zIndex: isOpen ? 9999 : undefined }}
       >
         {options.length > 10 && (
           <>

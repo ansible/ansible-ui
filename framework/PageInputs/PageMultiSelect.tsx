@@ -125,7 +125,7 @@ export function PageMultiSelect<ValueT>(props: {
         isOpen={isOpen}
         onOpenChange={setIsOpen}
         toggle={Toggle}
-        style={{ zIndex: isOpen ? 9999 : undefined, display: 'inline-block' }}
+        style={{ zIndex: isOpen ? 9999 : undefined }}
       >
         {options.length > 10 && (
           <>
