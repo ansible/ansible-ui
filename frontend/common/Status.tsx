@@ -114,6 +114,8 @@ function getColor(status: string) {
     case 'changed':
     case 'unknown':
       return 'orange';
+    case 'stopped':
+      return undefined;
     case 'deprovisioning':
     case 'disabled':
     case 'provisioning':
