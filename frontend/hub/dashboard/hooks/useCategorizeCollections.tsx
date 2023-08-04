@@ -10,7 +10,8 @@ export const MAX_NUMBER_OF_COLLECTIONS = 12;
 
 export function useCategorizeCollections(
   managedCategories: CollectionCategory[],
-  setCategorizedCollections: (value: SetStateAction<CategorizedCollections>) => void
+  setCategorizedCollections: (value: SetStateAction<CategorizedCollections>) => void,
+  setAllDashboardCollections: (value: SetStateAction<CollectionVersionSearch[]>) => void
 ) {
   const alertToaster = usePageAlertToaster();
 
@@ -31,10 +32,12 @@ export function useCategorizeCollections(
         const categoryAssociatedWithResult = managedCategories[index];
         collectionsInCategories[categoryAssociatedWithResult.id] =
           result.status === 'fulfilled' ? result.value.data : [];
+        allDashboardCollections.push(...(result.status === 'fulfilled' ? result.value.data : []));
       });
       setCategorizedCollections(collectionsInCategories);
+      setAllDashboardCollections(allDashboardCollections);
     }
-  }, [managedCategories, setCategorizedCollections]);
+  }, [managedCategories, setAllDashboardCollections, setCategorizedCollections]);
 
   useEffect(() => {
     fetchCollectionsForEachCategory().catch((err) => {

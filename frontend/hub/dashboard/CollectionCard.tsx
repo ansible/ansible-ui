@@ -15,9 +15,14 @@ export const ColumnsDiv = styled.div`
   align-items: baseline;
 `;
 
-export function CollectionCard(props: { collection: CollectionVersionSearch }) {
+export function CollectionCard(props: {
+  collection: CollectionVersionSearch;
+  isSelected: (item: CollectionVersionSearch) => boolean;
+  selectItem: (item: CollectionVersionSearch) => void;
+  unselectItem: (item: CollectionVersionSearch) => void;
+}) {
   const { t } = useTranslation();
-  const { collection } = props;
+  const { collection, isSelected, selectItem, unselectItem } = props;
   const { width: parentCarouselWidth, visibleCards } = useCarouselContext();
 
   const divMaxWidth: CSSProperties = useMemo(() => {
@@ -116,6 +121,10 @@ export function CollectionCard(props: { collection: CollectionVersionSearch }) {
               ]
             : undefined,
         })}
+        showSelect
+        isSelected={isSelected}
+        selectItem={selectItem}
+        unselectItem={unselectItem}
       ></PageTableCard>
     </div>
   );
