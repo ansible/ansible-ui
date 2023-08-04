@@ -9,14 +9,16 @@ import {
   PageDashboard,
   PageHeader,
   PageLayout,
+  useSelected,
 } from '../../../framework';
 import { LoadingPage } from '../../../framework/components/LoadingPage';
 import { useHubNamespaces } from '../namespaces/hooks/useHubNamespaces';
 import { useManageHubDashboard } from './useManageHubDashboard';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CategorizedCollections } from './CollectionCategory';
 import { useCategorizeCollections } from './hooks/useCategorizeCollections';
-import { CollectionCategories } from './CollectionCategories';
+import { CollectionCategoryCarousel } from './CollectionCategories';
+import { CollectionVersionSearch } from '../approvals/Approval';
 
 export function HubDashboard() {
   const { t } = useTranslation();
@@ -26,9 +28,29 @@ export function HubDashboard() {
 
   /** Data for collection category carousels */
   const [categorizedCollections, setCategorizedCollections] = useState<CategorizedCollections>({});
+  const [allDashboardCollections, setAllDashboardCollections] = useState<CollectionVersionSearch[]>(
+    []
+  );
 
   /** Retrieve and set categories of collections and map categories to collections */
-  useCategorizeCollections(managedCategories, setCategorizedCollections);
+  useCategorizeCollections(
+    managedCategories,
+    setCategorizedCollections,
+    setAllDashboardCollections
+  );
+
+  const { selectedItems, isSelected, selectItem, unselectItem } = useSelected(
+    allDashboardCollections,
+    (item: CollectionVersionSearch) => item.collection_version?.name
+  );
+
+  useEffect(() => {
+    console.log('🚀 ~ file: Dashboard.tsx:43 ~ HubDashboard ~ selectedItems:', selectedItems);
+    // console.log(
+    //   '🚀 ~ file: Dashboard.tsx:39 ~ useEffect ~ allDashboardCollections:',
+    //   allDashboardCollections
+    // );
+  }, [selectedItems]);
 
   if (!namespaces) {
     return <LoadingPage />;
@@ -66,12 +88,18 @@ export function HubDashboard() {
         }
       />
       <PageDashboard>
-        {managedCategories.length ? (
-          <CollectionCategories
-            categories={managedCategories}
-            categorizedCollections={categorizedCollections}
-          />
-        ) : null}
+        {managedCategories.map((category) =>
+          categorizedCollections[category.id] ? (
+            <CollectionCategoryCarousel
+              key={category.id}
+              category={category.id}
+              collections={categorizedCollections[category.id]}
+              isSelected={isSelected}
+              selectItem={selectItem}
+              unselectItem={unselectItem}
+            />
+          ) : null
+        )}
       </PageDashboard>
     </PageLayout>
   );

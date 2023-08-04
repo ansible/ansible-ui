@@ -8,12 +8,15 @@ import { errorToAlertProps, usePageAlertToaster } from '../../../../framework';
 
 export function useCategorizeCollections(
   managedCategories: CollectionCategory[],
-  setCategorizedCollections: (value: SetStateAction<CategorizedCollections>) => void
+  setCategorizedCollections: (value: SetStateAction<CategorizedCollections>) => void,
+  setAllDashboardCollections: (value: SetStateAction<CollectionVersionSearch[]>) => void
 ) {
   const alertToaster = usePageAlertToaster();
 
   const fetchCollectionsForEachCategory = useCallback(async () => {
     const collectionsInCategories: CategorizedCollections = {};
+    const allDashboardCollections: CollectionVersionSearch[] = [];
+
     // Maximum of 12 collections displayed per category ordered by time of creation (newest collections appearing first)
     const searchAPIPromises = managedCategories.map((collectionCategory: CollectionCategory) =>
       requestGet<HubItemsResponse<CollectionVersionSearch>>(
@@ -26,10 +29,12 @@ export function useCategorizeCollections(
         const categoryAssociatedWithResult = managedCategories[index];
         collectionsInCategories[categoryAssociatedWithResult.id] =
           result.status === 'fulfilled' ? result.value.data : [];
+        allDashboardCollections.push(...(result.status === 'fulfilled' ? result.value.data : []));
       });
       setCategorizedCollections(collectionsInCategories);
+      setAllDashboardCollections(allDashboardCollections);
     }
-  }, [managedCategories, setCategorizedCollections]);
+  }, [managedCategories, setAllDashboardCollections, setCategorizedCollections]);
 
   useEffect(() => {
     fetchCollectionsForEachCategory().catch((err) => {
