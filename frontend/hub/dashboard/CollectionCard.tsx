@@ -12,14 +12,9 @@ import {
 } from '../../../framework/PageTable/PageTableCard';
 import { CollectionVersionSearch } from '../collections/CollectionVersionSearch';
 
-export function CollectionCard(props: {
-  collection: CollectionVersionSearch;
-  isSelected: (item: CollectionVersionSearch) => boolean;
-  selectItem: (item: CollectionVersionSearch) => void;
-  unselectItem: (item: CollectionVersionSearch) => void;
-}) {
+export function CollectionCard(props: { collection: CollectionVersionSearch }) {
   const { t } = useTranslation();
-  const { collection, isSelected, selectItem, unselectItem } = props;
+  const { collection } = props;
   const { width: parentCarouselWidth, visibleCards } = useCarouselContext();
 
   const divMaxWidth: CSSProperties = useMemo(() => {
@@ -110,10 +105,6 @@ export function CollectionCard(props: {
               ]
             : undefined,
         })}
-        showSelect
-        isSelected={isSelected}
-        selectItem={selectItem}
-        unselectItem={unselectItem}
       ></PageTableCard>
     </div>
   );
