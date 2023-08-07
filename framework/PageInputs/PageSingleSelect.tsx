@@ -1,4 +1,4 @@
-import { Divider, MenuToggle, MenuToggleElement, SearchInput } from '@patternfly/react-core';
+import { MenuToggle, MenuToggleElement, SearchInput } from '@patternfly/react-core';
 import { Select, SelectList, SelectOption } from '@patternfly/react-core/next';
 import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
@@ -24,6 +24,8 @@ export function PageSingleSelect<ValueT>(props: {
 
   /** The options to select from. */
   options: PageSelectOption<ValueT>[];
+
+  footer?: ReactNode;
 }) {
   const { id, icon, value, onSelect, placeholder } = props;
   const [isOpen, setIsOpen] = useState(false);
@@ -89,23 +91,23 @@ export function PageSingleSelect<ValueT>(props: {
         toggle={Toggle}
         style={{ zIndex: isOpen ? 9999 : undefined }}
       >
-        {options.length > 10 && (
-          <>
-            <div style={{ marginLeft: 16, marginRight: 16, marginTop: 12, marginBottom: 12 }}>
-              <SearchInput
-                id={id ? `${id}-search` : undefined}
-                ref={searchRef}
-                value={searchValue}
-                onChange={(_, value: string) => setSearchValue(value)}
-                onClear={(event) => {
-                  event.stopPropagation();
-                  setSearchValue('');
-                }}
-              />
-            </div>
-            <Divider />
-          </>
-        )}
+        <div
+          style={{
+            margin: '12px 16px 12px 16px',
+            borderBottom: 'thin solid var(--pf-global--BorderColor--100)',
+          }}
+        >
+          <SearchInput
+            id={id ? `${id}-search` : undefined}
+            ref={searchRef}
+            value={searchValue}
+            onChange={(_, value: string) => setSearchValue(value)}
+            onClear={(event) => {
+              event.stopPropagation();
+              setSearchValue('');
+            }}
+          />
+        </div>
         <SelectList style={{ overflow: 'auto', maxHeight: '45vh' }}>
           {visibleOptions.map((option) => (
             <SelectOption
@@ -117,6 +119,16 @@ export function PageSingleSelect<ValueT>(props: {
             </SelectOption>
           ))}
         </SelectList>
+        {props.footer && (
+          <div
+            style={{
+              margin: '12px 16px 12px 16px',
+              borderTop: 'thin solid var(--pf-global--BorderColor--100)',
+            }}
+          >
+            {props.footer}
+          </div>
+        )}
       </Select>
     </div>
   );

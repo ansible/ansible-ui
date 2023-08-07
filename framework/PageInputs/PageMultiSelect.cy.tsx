@@ -1,6 +1,6 @@
 /* eslint-disable i18next/no-literal-string */
 import { PageSection } from '@patternfly/react-core';
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 import { PageMultiSelect } from './PageMultiSelect';
 import { PageSelectOption } from './PageSelectOption';
 
@@ -26,8 +26,9 @@ function PageMultiSelectTest<T>(props: {
   placeholder?: string;
   defaultValues?: T[];
   options: PageSelectOption<T>[];
+  footer?: ReactNode;
 }) {
-  const { placeholder, defaultValues: defaultValue, options } = props;
+  const { placeholder, defaultValues: defaultValue, options, footer } = props;
   const [values, setValues] = useState<T[] | undefined>(() => defaultValue);
   return (
     <PageSection>
@@ -37,6 +38,7 @@ function PageMultiSelectTest<T>(props: {
         placeholder={placeholder}
         options={options}
         onSelect={setValues}
+        footer={footer}
       />
     </PageSection>
   );
@@ -123,5 +125,13 @@ describe('PageMultiSelect', () => {
     cy.get('#test-search').parent().parent().should('contain', 'Option 1');
     cy.get('#test-search').parent().parent().should('contain', 'Option 10');
     cy.get('#test-search').parent().parent().should('not.contain', 'Option 2');
+  });
+
+  it('should show footer', () => {
+    cy.mount(
+      <PageMultiSelectTest placeholder={placeholderText} options={options} footer="Footer" />
+    );
+    cy.get('#test').click();
+    cy.contains('Footer');
   });
 });

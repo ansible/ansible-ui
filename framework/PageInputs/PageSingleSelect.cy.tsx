@@ -1,6 +1,6 @@
 /* eslint-disable i18next/no-literal-string */
 import { PageSection } from '@patternfly/react-core';
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 import { PageSelectOption } from './PageSelectOption';
 import { PageSingleSelect } from './PageSingleSelect';
 
@@ -26,6 +26,7 @@ function PageSingleSelectTest<T>(props: {
   placeholder: string;
   defaultValue?: T;
   options: PageSelectOption<T>[];
+  footer?: ReactNode;
 }) {
   const { placeholder, defaultValue, options } = props;
   const [value, setValue] = useState(() => defaultValue);
@@ -37,6 +38,7 @@ function PageSingleSelectTest<T>(props: {
         placeholder={placeholder}
         options={options}
         onSelect={setValue}
+        footer={props.footer}
       />
     </PageSection>
   );
@@ -105,5 +107,14 @@ describe('PageSingleSelect', () => {
     cy.get('#test-search').parent().parent().should('contain', 'Option 1');
     cy.get('#test-search').parent().parent().should('contain', 'Option 10');
     cy.get('#test-search').parent().parent().should('not.contain', 'Option 2');
+  });
+
+  it('should show footer', () => {
+    const options = ['abc', 'def'];
+    cy.mount(
+      <PageSingleSelectTest placeholder={placeholderText} options={options} footer="Footer" />
+    );
+    cy.get('#test').click();
+    cy.contains('Footer');
   });
 });

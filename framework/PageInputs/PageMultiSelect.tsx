@@ -1,7 +1,6 @@
 import {
   Chip,
   ChipGroup,
-  Divider,
   MenuToggle,
   MenuToggleElement,
   SearchInput,
@@ -33,6 +32,8 @@ export interface PageMultiSelectProps<ValueT> {
 
   /** The variant of the select. */
   variant?: 'chips' | 'count';
+
+  footer?: ReactNode;
 }
 
 /** Multi-select component */
@@ -129,23 +130,23 @@ export function PageMultiSelect<ValueT>(props: PageMultiSelectProps<ValueT>) {
         toggle={Toggle}
         style={{ zIndex: isOpen ? 9999 : undefined }}
       >
-        {options.length > 10 && (
-          <>
-            <div style={{ marginLeft: 16, marginRight: 16, marginTop: 12, marginBottom: 12 }}>
-              <SearchInput
-                id={id ? `${id}-search` : undefined}
-                ref={searchRef}
-                value={searchValue}
-                onChange={(_, value: string) => setSearchValue(value)}
-                onClear={(event) => {
-                  event.stopPropagation();
-                  setSearchValue('');
-                }}
-              />
-            </div>
-            <Divider />
-          </>
-        )}
+        <div
+          style={{
+            padding: '12px 16px 12px 16px',
+            borderBottom: 'thin solid var(--pf-global--BorderColor--100)',
+          }}
+        >
+          <SearchInput
+            id={id ? `${id}-search` : undefined}
+            ref={searchRef}
+            value={searchValue}
+            onChange={(_, value: string) => setSearchValue(value)}
+            onClear={(event) => {
+              event.stopPropagation();
+              setSearchValue('');
+            }}
+          />
+        </div>
         <SelectList style={{ overflow: 'auto', maxHeight: '45vh' }}>
           {visibleOptions.map((option) => (
             <SelectOption
@@ -159,6 +160,16 @@ export function PageMultiSelect<ValueT>(props: PageMultiSelectProps<ValueT>) {
             </SelectOption>
           ))}
         </SelectList>
+        {props.footer && (
+          <div
+            style={{
+              padding: '12px 16px 12px 16px',
+              borderTop: 'thin solid var(--pf-global--BorderColor--100)',
+            }}
+          >
+            {props.footer}
+          </div>
+        )}
       </Select>
     </div>
   );
