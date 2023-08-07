@@ -60,8 +60,9 @@ describe('PageAsyncMultiSelect', () => {
         queryOptions={async () => await optionPromise}
       />
     );
-    cy.get('#test').should('have.text', 'Loading options...');
-    optionsResolve([]);
+    cy.get('#test')
+      .should('have.text', 'Loading options...')
+      .then(() => optionsResolve(options));
   });
 
   it('should show queried options', () => {
