@@ -1,0 +1,18 @@
+name: Merge upstream-sync to main
+on:
+  push:
+    branches:
+      - 'upstream-sync'
+jobs:
+  merge-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+
+      - name: Merge upstream-sync -> main
+        uses: devmasx/merge-branch@master
+        with:
+          type: now
+          target_branch: main
+          message: Merge upstream changes
+          github_token: ${{ secrets.GITHUB_TOKEN }}
