@@ -11,9 +11,9 @@ import { RouteObj } from '../../Routes';
 import { useGet } from '../../common/crud/useGet';
 import { usePatchRequest } from '../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../common/crud/usePostRequest';
-import { hubAPI } from '../api/utils';
 import { HubNamespace } from './HubNamespace';
-import { hubAPI, pulpAPI } from '../api/utils';
+import { pulpAPI } from '../api/utils';
+import { ItemsResponse } from '../../common/crud/Data';
 
 export function CreateHubNamespace() {
   const { t } = useTranslation();
@@ -40,7 +40,7 @@ export function CreateHubNamespace() {
           latest_metadata: { groups: [] },
         }}
       >
-        <HubNamespaceInputs />
+        <HubNamespaceInputs isReadOnly={false} />
       </PageForm>
     </PageLayout>
   );
@@ -51,19 +51,22 @@ export function EditHubNamespace() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const name = params.id;
-  const { data: namespace } = useGet<HubNamespace>(hubAPI`/_ui/v1/namespaces/${name ?? ''}/`);
+  const { data: namespacesResponse } = useGet<ItemsResponse<HubNamespace>>(
+    pulpAPI`/pulp_ansible/namespaces/?name=${name ?? ''}`
+  );
   const patchRequest = usePatchRequest<HubNamespace, HubNamespace>();
   const onSubmit: PageFormSubmitHandler<HubNamespace> = async (namespace) => {
-    await patchRequest(hubAPI`/_ui/v1/namespaces/`, namespace);
+    await patchRequest(pulpAPI`/pulp_ansible/namespaces/`, namespace);
     navigate(-1);
   };
-  if (!namespace) {
+  if (!namespacesResponse || namespacesResponse.results.length === 0) {
     return (
       <PageLayout>
         <PageHeader
           breadcrumbs={[
             { label: t('Namespaces'), to: RouteObj.Namespaces },
             { label: t('Edit Namespace') },
+            { label: params.id },
           ]}
         />
       </PageLayout>
@@ -76,6 +79,7 @@ export function EditHubNamespace() {
         breadcrumbs={[
           { label: t('Namespaces'), to: RouteObj.Namespaces },
           { label: t('Edit Namespace') },
+          { label: params.id },
         ]}
       />
 
@@ -83,16 +87,17 @@ export function EditHubNamespace() {
         submitText={t('Save namespace')}
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
-        defaultValue={namespace}
+        defaultValue={namespacesResponse.results[0]}
       >
-        <HubNamespaceInputs />
+        <HubNamespaceInputs isReadOnly={true} />
       </PageForm>
     </PageLayout>
   );
 }
 
-function HubNamespaceInputs() {
+function HubNamespaceInputs(props: { isReadOnly?: boolean }) {
   const { t } = useTranslation();
+  const { isReadOnly } = props;
   return (
     <>
       <PageFormTextInput<HubNamespace>
@@ -100,6 +105,7 @@ function HubNamespaceInputs() {
         label={t('Name')}
         placeholder={t('Enter name')}
         isRequired
+        isReadOnly={isReadOnly}
       />
       <PageFormTextInput<HubNamespace>
         name="latest_metadata.description"
