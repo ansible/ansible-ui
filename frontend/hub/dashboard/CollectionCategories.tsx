@@ -10,11 +10,8 @@ import { CollectionVersionSearch } from '../collections/CollectionVersionSearch'
 export function CollectionCategoryCarousel(props: {
   category: string;
   collections: CollectionVersionSearch[];
-  isSelected: (item: CollectionVersionSearch) => boolean;
-  selectItem: (item: CollectionVersionSearch) => void;
-  unselectItem: (item: CollectionVersionSearch) => void;
 }) {
-  const { category, collections, isSelected, selectItem, unselectItem } = props;
+  const { category, collections } = props;
   const { t } = useTranslation();
   const categoryName = useCategoryName(category, t);
 
@@ -24,9 +21,6 @@ export function CollectionCategoryCarousel(props: {
         <CollectionCard
           key={collection.collection_version.name}
           collection={collection}
-          isSelected={isSelected}
-          selectItem={selectItem}
-          unselectItem={unselectItem}
         ></CollectionCard>
       ))}
     </PageDashboardCarousel>
