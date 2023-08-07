@@ -121,19 +121,29 @@ export function PageAsyncMultiSelect<ValueT, AsyncOptionT>(
     );
   }
 
-  if (!options) {
-    return <div>TODO - show select that when clicked opens...</div>;
+  if (props.openSelectDialog !== undefined && !options) {
+    // TODO props.openSelectDialog
   }
+
+  const footer = (
+    <>
+      {props.footer}
+      <Button variant="link" isInline>
+        View more
+      </Button>
+    </>
+  );
 
   return (
     <PageMultiSelect
       id={props.id}
       icon={props.icon}
       placeholder={props.placeholder}
-      options={options}
+      options={options ?? []}
       values={props.values}
       onSelect={props.onSelect}
       variant={props.variant}
+      footer={footer}
     />
   );
 }

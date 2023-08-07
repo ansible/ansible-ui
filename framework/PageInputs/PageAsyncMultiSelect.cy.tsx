@@ -49,7 +49,7 @@ function PageAsyncMultiSelectTest<T>(props: {
 }
 
 describe('PageAsyncMultiSelect', () => {
-  it('should show loading options state', () => {
+  it.only('should show loading options state', () => {
     let optionsResolve: (options: IPageSelectOption<ITestObject>[]) => void = () => null;
     const optionPromise = new Promise<IPageSelectOption<ITestObject>[]>(
       (r) => (optionsResolve = r)

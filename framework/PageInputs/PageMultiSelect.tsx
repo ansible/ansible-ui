@@ -1,4 +1,5 @@
 import {
+  Button,
   Chip,
   ChipGroup,
   MenuToggle,
@@ -6,6 +7,7 @@ import {
   SearchInput,
 } from '@patternfly/react-core';
 import { Select, SelectList, SelectOption } from '@patternfly/react-core/next';
+import { TimesIcon } from '@patternfly/react-icons';
 import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -35,12 +37,14 @@ export interface PageMultiSelectProps<ValueT> {
   variant?: 'chips' | 'count';
 
   footer?: ReactNode;
+
+  disableClearSelection?: boolean;
 }
 
 /** Multi-select component */
 export function PageMultiSelect<ValueT>(props: PageMultiSelectProps<ValueT>) {
   const { t } = useTranslation();
-  const { id, icon, placeholder, values, onSelect, variant } = props;
+  const { id, icon, placeholder, values, onSelect, variant, disableClearSelection } = props;
   const [isOpen, setIsOpen] = useState(false);
 
   const options = getPageSelectOptions<ValueT>(props.options);
@@ -67,15 +71,26 @@ export function PageMultiSelect<ValueT>(props: PageMultiSelectProps<ValueT>) {
       {selectedOptions.length > 0 ? (
         <>
           {variant === 'count' ? (
-            <Chip isReadOnly>{selectedOptions.length}</Chip>
+            <Chip isReadOnly={disableClearSelection} onClick={() => onSelect(() => [])}>
+              {selectedOptions.length}
+            </Chip>
           ) : (
-            <ChipGroup>
-              {selectedOptions.map((option) => (
-                <Chip key={option.label} isReadOnly>
-                  {option.label}
-                </Chip>
-              ))}
-            </ChipGroup>
+            <>
+              <ChipGroup>
+                {selectedOptions.map((option) => (
+                  <Chip key={option.label} isReadOnly>
+                    {option.label}
+                  </Chip>
+                ))}
+              </ChipGroup>
+              {!disableClearSelection && (
+                <Button
+                  icon={<TimesIcon aria-hidden />}
+                  variant="plain"
+                  onClick={() => onSelect(() => [])}
+                />
+              )}
+            </>
           )}
         </>
       ) : (
