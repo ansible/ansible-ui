@@ -24,7 +24,7 @@ interface IToolbarDateFilterOption {
 export interface IToolbarDateRangeFilterProps {
   id?: string;
   label?: string;
-  placeholder?: string;
+  placeholder: string;
   values: string[];
   setValues: (values: string[]) => void;
   options: IToolbarDateFilterOption[];
@@ -76,7 +76,7 @@ export function ToolbarDateRangeFilter(props: IToolbarDateRangeFilterProps) {
     <ToolbarItem>
       <PageSingleSelect
         value={selectedOption?.value ?? ''}
-        onChange={onSelectChange}
+        onSelect={onSelectChange}
         options={props.options}
         placeholder={placeholder}
       />

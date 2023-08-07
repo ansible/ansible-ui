@@ -24,7 +24,7 @@ export function useManageColumns<T extends object>(
         cell: (column: ITableColumn<T>, setColumn: (column: ITableColumn<T>) => void) => (
           <PageSingleSelect
             value={column.table ?? ''}
-            onChange={(value) => {
+            onSelect={(value) => {
               switch (value) {
                 case '':
                   setColumn({ ...column, table: undefined });
@@ -72,7 +72,7 @@ export function useManageColumns<T extends object>(
         cell: (column: ITableColumn<T>, setColumn: (column: ITableColumn<T>) => void) => (
           <PageSingleSelect
             value={column.list ?? ''}
-            onChange={(value) => {
+            onSelect={(value) => {
               switch (value) {
                 case '':
                   setColumn({ ...column, list: undefined });
@@ -136,7 +136,7 @@ export function useManageColumns<T extends object>(
         cell: (column: ITableColumn<T>, setColumn: (column: ITableColumn<T>) => void) => (
           <PageSingleSelect
             value={column.card ?? ''}
-            onChange={(value) => {
+            onSelect={(value) => {
               switch (value) {
                 case '':
                   setColumn({ ...column, card: undefined });

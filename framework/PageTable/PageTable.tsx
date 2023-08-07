@@ -224,14 +224,33 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
   const hasListViewType = !props.disableListView;
   // const hasCardViewType = !props.disableCardView;
 
-  const [viewType, setViewType] = useState<PageTableViewType>(
-    () =>
+  const [viewType, setViewTypeState] = useState<PageTableViewType>(() => {
+    const value = props.id ? localStorage.getItem(props.id + '-view') : undefined;
+    switch (value) {
+      case 'table':
+        return PageTableViewTypeE.Table;
+      case 'list':
+        return PageTableViewTypeE.List;
+      case 'cards':
+        return PageTableViewTypeE.Cards;
+    }
+    return (
       props.defaultTableView ??
       (hasTableViewType
         ? PageTableViewTypeE.Table
         : hasListViewType
         ? PageTableViewTypeE.List
         : PageTableViewTypeE.Cards)
+    );
+  });
+  const setViewType = useCallback(
+    (viewType: PageTableViewType) => {
+      setViewTypeState(viewType);
+      if (props.id) {
+        localStorage.setItem(props.id + '-view', viewType);
+      }
+    },
+    [props.id]
   );
 
   const usePadding = useBreakpoint('md') && disableBodyPadding !== true;

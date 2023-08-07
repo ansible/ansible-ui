@@ -1,38 +1,54 @@
-import { Divider, MenuToggle, MenuToggleElement, SearchInput } from '@patternfly/react-core';
+import {
+  Chip,
+  ChipGroup,
+  Divider,
+  MenuToggle,
+  MenuToggleElement,
+  SearchInput,
+} from '@patternfly/react-core';
 import { Select, SelectList, SelectOption } from '@patternfly/react-core/next';
 import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { PageSelectOption, getPageSelectOptions } from './PageSelectOption';
-import './PageSingleSelect.css';
+import './PageMultiSelect.css';
 
-/** Single-select component */
-export function PageSingleSelect<ValueT>(props: {
+/** Multi-select component */
+export function PageMultiSelect<ValueT>(props: {
   /** The ID of the select. */
   id?: string;
 
   /** The icon to show in the select. */
   icon?: ReactNode;
 
-  /** The placeholder to show when no value is selected. */
-  placeholder: string;
+  /** The placeholder to show when no values are selected. */
+  placeholder: ReactNode;
 
-  /** The selected value. */
-  value: ValueT;
+  /** The selected values. */
+  values: ValueT[] | undefined | null;
 
-  /** The function to set the selected value. */
-  onSelect: (value: ValueT) => void;
+  /** The function to set the selected values. */
+  onSelect: (setter: (currentValues: ValueT[] | undefined) => ValueT[] | undefined) => void;
 
   /** The options to select from. */
   options: PageSelectOption<ValueT>[];
+
+  /** The variant of the select. */
+  variant?: 'chips' | 'count';
 }) {
-  const { id, icon, value, onSelect, placeholder } = props;
+  const { id, icon, placeholder, values, onSelect, variant } = props;
   const [isOpen, setIsOpen] = useState(false);
 
   const options = getPageSelectOptions<ValueT>(props.options);
 
-  const selectedOption = useMemo(
-    () => options.find((option) => value === option.value),
-    [options, value]
+  const selectedOptions = useMemo(
+    () =>
+      options.filter((option) => {
+        if (values === undefined || values === null) {
+          return false;
+        }
+        return values.includes(option.value);
+      }),
+    [options, values]
   );
 
   const Toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
@@ -43,20 +59,42 @@ export function PageSingleSelect<ValueT>(props: {
       isExpanded={isOpen}
     >
       {icon && <span style={{ paddingLeft: 4, paddingRight: 12 }}>{icon}</span>}
-      {selectedOption ? selectedOption.label : <Placedholder>{placeholder}</Placedholder>}
+      {selectedOptions.length > 0 ? (
+        <>
+          {variant === 'count' ? (
+            <Chip isReadOnly>{selectedOptions.length}</Chip>
+          ) : (
+            <ChipGroup>
+              {selectedOptions.map((option) => (
+                <Chip key={option.label} isReadOnly>
+                  {option.label}
+                </Chip>
+              ))}
+            </ChipGroup>
+          )}
+        </>
+      ) : (
+        <Placedholder>{placeholder}</Placedholder>
+      )}
     </MenuToggle>
   );
 
+  const selected = useMemo(() => selectedOptions.map((option) => option.label), [selectedOptions]);
+
   const onSelectHandler = useCallback(
     (_: unknown, itemId: string | number | undefined) => {
-      const newSelectedOption = options.find((option) => {
-        if (option.key !== undefined) return option.key === itemId;
-        else return option.label === itemId;
+      onSelect((previousValues: ValueT[] | undefined) => {
+        const newSelectedOption = options.find((option) => option.key === itemId);
+        if (newSelectedOption) {
+          if (previousValues?.find((value) => value === newSelectedOption.value)) {
+            previousValues = previousValues.filter((value) => value !== newSelectedOption.value);
+          } else {
+            previousValues = previousValues ? [...previousValues] : [];
+            previousValues.push(newSelectedOption.value);
+          }
+        }
+        return previousValues;
       });
-      if (newSelectedOption) {
-        onSelect(newSelectedOption.value);
-        setIsOpen(false);
-      }
     },
     [onSelect, options]
   );
@@ -80,9 +118,9 @@ export function PageSingleSelect<ValueT>(props: {
   );
 
   return (
-    <div className="page-single-select">
+    <div className="page-multi-select">
       <Select
-        selected={selectedOption?.label}
+        selected={selected}
         onSelect={onSelectHandler}
         isOpen={isOpen}
         onOpenChange={setIsOpen}
@@ -110,8 +148,10 @@ export function PageSingleSelect<ValueT>(props: {
           {visibleOptions.map((option) => (
             <SelectOption
               key={option.key}
-              itemId={option.key !== undefined ? option.key : option.label}
+              itemId={option.key}
               description={option.description}
+              hasCheck
+              isSelected={selectedOptions.includes(option)}
             >
               {option.label}
             </SelectOption>

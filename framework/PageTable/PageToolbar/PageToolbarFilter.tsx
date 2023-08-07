@@ -116,13 +116,14 @@ function FiltersToolbarItem(props: PageToolbarFiltersProps) {
           <PageSingleSelect
             id="filter"
             value={selectedFilterKey}
-            onChange={setSeletedFilterKey}
+            onSelect={setSeletedFilterKey}
             icon={<FilterIcon />}
             options={toolbarFilters.map((filter) => ({
               label: filter.label,
               // description: filter.description,
               value: filter.key,
             }))}
+            placeholder=""
           />
           <ToolbarFilterComponent
             id="filter-input"
@@ -317,7 +318,7 @@ function ToolbarFilterComponent(props: {
         <ToolbarDateRangeFilter
           id={props.id ?? filter.key}
           label={filter.label}
-          placeholder={filter.placeholder}
+          placeholder={filter.placeholder ?? ''}
           values={values}
           setValues={setValues}
           options={filter.options}

@@ -1,7 +1,7 @@
 {
   "name": "@ansible/ansible-ui",
   "description": "Ansible UI",
-  "version": "2.4.283",
+  "version": "2.4.291",
   "author": "Red Hat",
   "license": "Apache-2.0",
   "repository": {
@@ -13,9 +13,9 @@
   "scripts": {
     "start": "concurrently npm:frontend npm:proxy --prefix-colors cyan,green",
     "frontend": "webpack serve --mode development --env awx_route_prefix='/ui_next' --env hub_route_prefix='/hub' --env eda_route_prefix='/eda'",
-    "awx": "PRODUCT='AWX' webpack serve --config ./webpack.awx.cjs --mode development --env UI_MODE=AWX --env awx_route_prefix='/ui_next'",
-    "hub": "PRODUCT='Automation Hub' webpack serve --config ./webpack.hub.cjs --mode development --env UI_MODE=HUB --env hub_route_prefix='/hub'",
-    "eda": "PRODUCT='Event Driven Automation' webpack serve --config ./webpack.eda.cjs --mode development --env UI_MODE=EDA --env eda_route_prefix='/eda'",
+    "awx": "PRODUCT='AWX' webpack serve --port 4001 --open --config ./webpack.awx.cjs --mode development --env UI_MODE=AWX",
+    "hub": "PRODUCT='Automation Hub' webpack serve --port 4002 --open --config ./webpack.hub.cjs --mode development --env UI_MODE=HUB",
+    "eda": "PRODUCT='Event Driven Automation' webpack serve --port 4003 --open --config ./webpack.eda.cjs --mode development --env UI_MODE=EDA",
     "galaxy": "PRODUCT='Galaxy' webpack serve --config ./webpack.hub.cjs --mode development --env UI_MODE=GALAXY --env hub_route_prefix='/hub'",
     "proxy": "NODE_ENV=development PORT=3001 nodemon --watch './proxy/**/*.ts' --exec 'node --experimental-specifier-resolution=node --loader ts-node/esm/transpile-only' proxy/main.ts | pino-zen",
     "build": "npm run clean && concurrently --kill-others-on-fail npm:build:frontend npm:build:proxy --prefix-colors cyan,green,blue,magenta,gray",
@@ -31,7 +31,7 @@
     "eslint:fix": "eslint --fix frontend proxy framework cypress",
     "eslint:changed": "eslint --max-warnings=0 $(git diff --name-only --diff-filter=M origin/main -- '*.ts' '*.tsx' '*.jsx' '*.js'| xargs)",
     "prettier": "prettier --check !**/*.scss frontend proxy framework cypress",
-    "prettier:fix": "prettier --write frontend proxy framework cypress locales",
+    "prettier:fix": "prettier --write frontend proxy framework cypress locales docs README.md",
     "prettier:changed": "prettier --check $(git diff --name-only --diff-filter=M origin/main | xargs)",
     "prettier:changed:fix": "prettier --write $(git diff --name-only --diff-filter=M origin/main | xargs)",
     "checks": "concurrently --kill-others-on-fail npm:tsc npm:eslint npm:prettier --prefix-colors cyan,green,blue,magenta,gray",
