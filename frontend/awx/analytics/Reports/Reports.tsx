@@ -1,6 +1,7 @@
 import { Label, LabelGroup, Page, Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { useEffect, useState } from 'react';
 import { ChartSchemaElement } from 'react-json-chart-builder';
+import styled from 'styled-components';
 import useSWR from 'swr';
 import { PageHeader, PageLayout } from '../../../../framework';
 import { requestGet } from '../../../common/crud/Data';
@@ -56,7 +57,7 @@ export default function Reports() {
   }
 
   const reportTags = (
-    <LabelGroup numLabels={6} style={{ flexWrap: 'nowrap' }}>
+    <ReportTagsLabelGroup numLabels={6}>
       {!!data &&
         data.report.layoutProps.tags.map((tagKey, idx) => {
           const tag = TAGS.find((t) => t.key === tagKey);
@@ -74,7 +75,7 @@ export default function Reports() {
             );
           }
         })}
-    </LabelGroup>
+    </ReportTagsLabelGroup>
   );
   return (
     <Page>
@@ -89,3 +90,7 @@ export default function Reports() {
     </Page>
   );
 }
+
+const ReportTagsLabelGroup = styled(LabelGroup)`
+  flex-wrap: nowrap;
+`;
