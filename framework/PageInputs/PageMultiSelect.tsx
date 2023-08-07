@@ -9,11 +9,10 @@ import {
 import { Select, SelectList, SelectOption } from '@patternfly/react-core/next';
 import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { PageSelectOption, getPageSelectOptions } from './PageSelectOption';
 import './PageMultiSelect.css';
+import { PageSelectOption, getPageSelectOptions } from './PageSelectOption';
 
-/** Multi-select component */
-export function PageMultiSelect<ValueT>(props: {
+export interface PageMultiSelectProps<ValueT> {
   /** The ID of the select. */
   id?: string;
 
@@ -34,7 +33,10 @@ export function PageMultiSelect<ValueT>(props: {
 
   /** The variant of the select. */
   variant?: 'chips' | 'count';
-}) {
+}
+
+/** Multi-select component */
+export function PageMultiSelect<ValueT>(props: PageMultiSelectProps<ValueT>) {
   const { id, icon, placeholder, values, onSelect, variant } = props;
   const [isOpen, setIsOpen] = useState(false);
 
