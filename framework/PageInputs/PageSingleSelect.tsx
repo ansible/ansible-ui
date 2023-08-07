@@ -6,8 +6,7 @@ import styled from 'styled-components';
 import { PageSelectOption, getPageSelectOptions } from './PageSelectOption';
 import './PageSingleSelect.css';
 
-/** Single-select component */
-export function PageSingleSelect<ValueT>(props: {
+export interface PageSingleSelectProps<ValueT> {
   /** The ID of the select. */
   id?: string;
 
@@ -27,7 +26,10 @@ export function PageSingleSelect<ValueT>(props: {
   options: PageSelectOption<ValueT>[];
 
   footer?: ReactNode;
-}) {
+}
+
+/** Single-select component */
+export function PageSingleSelect<ValueT>(props: PageSingleSelectProps<ValueT>) {
   const { t } = useTranslation();
   const { id, icon, value, onSelect, placeholder } = props;
   const [isOpen, setIsOpen] = useState(false);
