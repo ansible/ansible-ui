@@ -146,7 +146,7 @@ describe('TeamAccess', () => {
       // Confirmation modal is displayed with a warning
       cy.get('div[data-ouia-component-type="PF4/ModalContent"]').within(() => {
         cy.hasAlert(
-          '{{count}} of the selected users cannot be deleted due to insufficient permissions.'
+          '1 of the selected users cannot be deleted due to insufficient permissions.'
         ).should('exist');
         cy.contains('td', 'admin')
           .parent()
