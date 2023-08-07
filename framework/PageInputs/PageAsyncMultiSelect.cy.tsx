@@ -1,28 +1,22 @@
 /* eslint-disable i18next/no-literal-string */
 import { PageSection } from '@patternfly/react-core';
 import { useState } from 'react';
-import { PageAsyncMultiSelect } from './PageAsyncMultiSelect';
-import { IPageSelectOption } from './PageSelectOption';
+import { PageAsyncMultiSelect, PageAsyncMultiSelectQueryResult } from './PageAsyncMultiSelect';
 
-interface ITestObject {
-  name: string;
-  description?: string;
-}
-
-const testObjects: ITestObject[] = new Array(2).fill(0).map((_, index) => ({
-  name: `Option ${index}`,
-  description: `Description ${index}`,
-}));
-
-const options: IPageSelectOption<ITestObject>[] = testObjects.map((testObject) => ({
-  label: testObject.name,
-  value: testObject,
-  description: testObject.description,
-}));
-
-const queryOptions = async (_signal: AbortSignal) => {
-  await new Promise((resolve) => setTimeout(resolve, 1));
-  return options;
+const queryOptions = async (page: number, _signal: AbortSignal) => {
+  const pageSize = 10;
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+  return {
+    total: 100,
+    options: new Array(pageSize).fill(0).map((_, index) => {
+      const value = index + (page - 1) * pageSize + 1;
+      return {
+        value: value,
+        label: `Option ${value}`,
+        description: `Description ${value}`,
+      };
+    }),
+  };
 };
 
 const placeholderText = 'Placeholder';
@@ -30,7 +24,7 @@ const placeholderText = 'Placeholder';
 function PageAsyncMultiSelectTest<T>(props: {
   placeholder?: string;
   defaultValues?: T[];
-  queryOptions: (signal: AbortSignal) => Promise<IPageSelectOption<T>[]>;
+  queryOptions: (page: number, signal: AbortSignal) => Promise<PageAsyncMultiSelectQueryResult<T>>;
 }) {
   const { placeholder, defaultValues, queryOptions } = props;
   const [values, setValues] = useState<T[] | undefined>(() => defaultValues);
@@ -42,16 +36,15 @@ function PageAsyncMultiSelectTest<T>(props: {
         placeholder={placeholder}
         onSelect={setValues}
         queryOptions={queryOptions}
-        openSelectDialog={() => alert('openSelectDialog')}
       />
     </PageSection>
   );
 }
 
 describe('PageAsyncMultiSelect', () => {
-  it.only('should show loading options state', () => {
-    let optionsResolve: (options: IPageSelectOption<ITestObject>[]) => void = () => null;
-    const optionPromise = new Promise<IPageSelectOption<ITestObject>[]>(
+  it('should show loading options state', () => {
+    let optionsResolve: (result: PageAsyncMultiSelectQueryResult<number>) => void = () => null;
+    const optionPromise = new Promise<PageAsyncMultiSelectQueryResult<number>>(
       (r) => (optionsResolve = r)
     );
     cy.mount(
@@ -62,15 +55,15 @@ describe('PageAsyncMultiSelect', () => {
     );
     cy.get('#test')
       .should('have.text', 'Loading options...')
-      .then(() => optionsResolve(options));
+      .then(() => optionsResolve({ total: 0, options: [] }));
   });
 
   it('should show queried options', () => {
     cy.mount(
       <PageAsyncMultiSelectTest placeholder={placeholderText} queryOptions={queryOptions} />
     );
-    cy.singleSelectShouldContainOption('#test', testObjects[0].name);
-    cy.singleSelectShouldContainOption('#test', testObjects[1].name);
+    cy.singleSelectShouldContainOption('#test', 'Option 1');
+    cy.singleSelectShouldContainOption('#test', 'Option 2');
   });
 
   it('should show query error', () => {
@@ -81,7 +74,6 @@ describe('PageAsyncMultiSelect', () => {
           await new Promise((resolve) => setTimeout(resolve, 1));
           throw new Error();
         }}
-        defaultValues={testObjects}
       />
     );
     cy.get('#test').should('have.text', 'Error loading options');
@@ -92,10 +84,10 @@ describe('PageAsyncMultiSelect', () => {
       <PageAsyncMultiSelectTest
         placeholder={placeholderText}
         queryOptions={queryOptions}
-        defaultValues={testObjects}
+        defaultValues={[1, 2]}
       />
     );
-    cy.multiSelectShouldHaveSelectedOption('#test', testObjects[0].name);
-    cy.multiSelectShouldHaveSelectedOption('#test', testObjects[1].name);
+    cy.multiSelectShouldHaveSelectedOption('#test', 'Option 1');
+    cy.multiSelectShouldHaveSelectedOption('#test', 'Option 2');
   });
 });
