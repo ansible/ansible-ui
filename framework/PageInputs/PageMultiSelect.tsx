@@ -181,7 +181,7 @@ export function PageMultiSelect<ValueT>(props: PageMultiSelectProps<ValueT>) {
           <div style={{ margin: 16 }}>{t('No results found')}</div>
         ) : (
           <SelectList style={{ overflow: 'auto', maxHeight: '45vh' }}>
-            {visibleOptions.map((option, index) => (
+            {visibleOptions.map((option) => (
               <SelectOption
                 key={option.key}
                 itemId={option.key}

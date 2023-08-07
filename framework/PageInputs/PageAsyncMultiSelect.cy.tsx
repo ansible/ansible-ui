@@ -5,7 +5,7 @@ import { PageAsyncMultiSelect, PageAsyncMultiSelectQueryResult } from './PageAsy
 
 const queryOptions = async (page: number, _signal: AbortSignal) => {
   const pageSize = 10;
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+  await new Promise((resolve) => setTimeout(resolve, 0));
   return {
     total: 100,
     options: new Array(pageSize).fill(0).map((_, index) => {
@@ -62,6 +62,7 @@ describe('PageAsyncMultiSelect', () => {
     cy.mount(
       <PageAsyncMultiSelectTest placeholder={placeholderText} queryOptions={queryOptions} />
     );
+    cy.get('#test').should('not.have.text', 'Loading options...');
     cy.singleSelectShouldContainOption('#test', 'Option 1');
     cy.singleSelectShouldContainOption('#test', 'Option 2');
   });
