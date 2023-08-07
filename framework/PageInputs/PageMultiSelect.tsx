@@ -8,9 +8,10 @@ import {
 } from '@patternfly/react-core';
 import { Select, SelectList, SelectOption } from '@patternfly/react-core/next';
 import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { PageSelectOption, getPageSelectOptions } from './PageSelectOption';
 import './PageMultiSelect.css';
+import { PageSelectOption, getPageSelectOptions } from './PageSelectOption';
 
 /** Multi-select component */
 export function PageMultiSelect<ValueT>(props: {
@@ -35,6 +36,7 @@ export function PageMultiSelect<ValueT>(props: {
   /** The variant of the select. */
   variant?: 'chips' | 'count';
 }) {
+  const { t } = useTranslation();
   const { id, icon, placeholder, values, onSelect, variant } = props;
   const [isOpen, setIsOpen] = useState(false);
 
@@ -144,19 +146,23 @@ export function PageMultiSelect<ValueT>(props: {
             <Divider />
           </>
         )}
-        <SelectList style={{ overflow: 'auto', maxHeight: '45vh' }}>
-          {visibleOptions.map((option) => (
-            <SelectOption
-              key={option.key}
-              itemId={option.key}
-              description={option.description}
-              hasCheck
-              isSelected={selectedOptions.includes(option)}
-            >
-              {option.label}
-            </SelectOption>
-          ))}
-        </SelectList>
+        {visibleOptions.length === 0 ? (
+          <div style={{ margin: 16 }}>{t('No results found')}</div>
+        ) : (
+          <SelectList style={{ overflow: 'auto', maxHeight: '45vh' }}>
+            {visibleOptions.map((option) => (
+              <SelectOption
+                key={option.key}
+                itemId={option.key}
+                description={option.description}
+                hasCheck
+                isSelected={selectedOptions.includes(option)}
+              >
+                {option.label}
+              </SelectOption>
+            ))}
+          </SelectList>
+        )}
       </Select>
     </div>
   );

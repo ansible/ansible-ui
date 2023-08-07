@@ -1,6 +1,7 @@
 import { Divider, MenuToggle, MenuToggleElement, SearchInput } from '@patternfly/react-core';
 import { Select, SelectList, SelectOption } from '@patternfly/react-core/next';
 import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { PageSelectOption, getPageSelectOptions } from './PageSelectOption';
 import './PageSingleSelect.css';
@@ -25,6 +26,7 @@ export function PageSingleSelect<ValueT>(props: {
   /** The options to select from. */
   options: PageSelectOption<ValueT>[];
 }) {
+  const { t } = useTranslation();
   const { id, icon, value, onSelect, placeholder } = props;
   const [isOpen, setIsOpen] = useState(false);
 
@@ -106,17 +108,21 @@ export function PageSingleSelect<ValueT>(props: {
             <Divider />
           </>
         )}
-        <SelectList style={{ overflow: 'auto', maxHeight: '45vh' }}>
-          {visibleOptions.map((option) => (
-            <SelectOption
-              key={option.key}
-              itemId={option.key !== undefined ? option.key : option.label}
-              description={option.description}
-            >
-              {option.label}
-            </SelectOption>
-          ))}
-        </SelectList>
+        {visibleOptions.length === 0 ? (
+          <div style={{ margin: 16 }}>{t('No results found')}</div>
+        ) : (
+          <SelectList style={{ overflow: 'auto', maxHeight: '45vh' }}>
+            {visibleOptions.map((option) => (
+              <SelectOption
+                key={option.key}
+                itemId={option.key !== undefined ? option.key : option.label}
+                description={option.description}
+              >
+                {option.label}
+              </SelectOption>
+            ))}
+          </SelectList>
+        )}
       </Select>
     </div>
   );
