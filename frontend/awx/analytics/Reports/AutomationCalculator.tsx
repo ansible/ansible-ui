@@ -458,6 +458,14 @@ export function AutomationCalculatorInternal(props: {
     </Stack>
   );
 
+  // If page out of range, set to first page
+  useEffect(() => {
+    const pageCount = Math.ceil((data?.meta.legend.length ?? 0) / perPage) + 1;
+    if (page > pageCount || page < 1) {
+      setPage(1);
+    }
+  }, [data?.meta.legend.length, page, perPage]);
+
   if (isLoading) {
     return (
       <Scrollable borderTop borderBottom>
