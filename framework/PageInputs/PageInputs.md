@@ -30,6 +30,7 @@ const [organization, setOrganization] = useState<Organization>()
 const organizations = [] // Pass in array of organizations to use as options
 
 <PageSingleSelect
+  placeholder="Select organization"
   values={organization}
   setValues={setOrganization}
   options={organizations.map(organization=>({
