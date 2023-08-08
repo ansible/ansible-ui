@@ -65,7 +65,7 @@ import {
 import { PageTableList } from './PageTableList';
 import { PageTableViewType, PageTableViewTypeE } from './PageToolbar/PageTableViewType';
 import { PageTableToolbar } from './PageToolbar/PageToolbar';
-import { IToolbarFilter } from './PageToolbar/PageToolbarFilter';
+import { IFilterState, IToolbarFilter } from './PageToolbar/PageToolbarFilter';
 import { usePageToolbarSortOptionsFromColumns } from './PageToolbar/PageToolbarSort';
 
 const ScrollDiv = styled.div`
@@ -107,8 +107,8 @@ export type PageTableProps<T extends object> = {
   rowActions?: IPageAction<T>[];
 
   toolbarFilters?: IToolbarFilter[];
-  filters?: Record<string, string[]>;
-  setFilters?: Dispatch<SetStateAction<Record<string, string[]>>>;
+  filterState?: IFilterState;
+  setFilterState?: Dispatch<SetStateAction<IFilterState>>;
   clearAllFilters?: () => void;
   pagination?: IPaginationRelatedProps;
   sort?: string;
@@ -203,7 +203,8 @@ export type PageTableProps<T extends object> = {
  * ```
  */
 export function PageTable<T extends object>(props: PageTableProps<T>) {
-  const { id, toolbarActions, filters, error, itemCount, disableBodyPadding, pagination } = props;
+  const { id, toolbarActions, filterState, error, itemCount, disableBodyPadding, pagination } =
+    props;
 
   const { openColumnManagement, managedColumns } = useManageColumns<T>(
     (id ?? '') + '-columns',
@@ -264,7 +265,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
     );
   }
 
-  if (itemCount === 0 && Object.keys(filters ?? {}).length === 0) {
+  if (itemCount === 0 && Object.keys(filterState ?? {}).length === 0) {
     return (
       <PageSection style={{ backgroundColor: 'transparent' }}>
         <EmptyStateNoData

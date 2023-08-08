@@ -14,7 +14,7 @@ import {
   SortAlphaUpIcon,
   SortAmountDownIcon,
   SortAmountUpIcon,
-  SortNumericDownIcon,
+  SortNumericDownAltIcon,
   SortNumericUpIcon,
 } from '@patternfly/react-icons';
 import { useCallback, useMemo, useState } from 'react';
@@ -59,7 +59,7 @@ export function PageToolbarSort(props: PageToolbarSortProps) {
           case 'asc':
             return <SortNumericUpIcon />;
           case 'desc':
-            return <SortNumericDownIcon />;
+            return <SortNumericDownAltIcon />;
         }
         break;
       default:
