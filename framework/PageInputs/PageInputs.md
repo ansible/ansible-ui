@@ -23,6 +23,24 @@ The form components are wrappers of the base and async components with a goal of
 - `PageFormAsyncSingleSelect` uses `PageAsyncSingleSelect`
 - `PageFormAsyncMultiSelect` uses `PageAsyncMultiSelect`
 
+#### Example
+
+```tsx
+const [organization, setOrganization] = useState<Organization>()
+const organizations = [] // Pass in array of organizations to use as options
+
+<PageSingleSelect
+  values={organization}
+  setValues={setOrganization}
+  options={organizations.map(organization=>({
+    key: organization.id,
+    value: organization
+    label: organization.name,
+    description: organization.description
+  }))}
+/>
+```
+
 ### Toolbar Select Filters
 
 The toolbar filters define interfaces for filtering. When those interfaces are rendered on a toolbar the components will use common components.
