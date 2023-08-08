@@ -26,27 +26,3 @@ export function CollectionCategoryCarousel(props: {
     </PageDashboardCarousel>
   );
 }
-
-// /**
-//  * Component to display multiple categories of collections
-//  * with each category of collections represented in a carousel
-//  */
-// export function CollectionCategories(props: {
-//   categories: CollectionCategory[];
-//   categorizedCollections: CategorizedCollections;
-// }) {
-//   const { categories, categorizedCollections } = props;
-//   return (
-//     <>
-//       {categories.map((category) =>
-//         categorizedCollections[category.id] ? (
-//           <CollectionCategoryCarousel
-//             key={category.id}
-//             category={category.id}
-//             collections={categorizedCollections[category.id]}
-//           />
-//         ) : null
-//       )}
-//     </>
-//   );
-// }
