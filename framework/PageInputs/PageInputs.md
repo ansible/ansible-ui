@@ -7,6 +7,42 @@ The base components are wrappers over the PatternFly components with a goal to m
 - [`PageSingleSelect`](./PageSingleSelect.tsx): A select dropdown component that supports single selection of options.
 - [`PageMultiSelect`](./PageMultiSelect.tsx): A select dropdown component that supports multiple selection of options.
 
+#### Examples
+
+```tsx
+const [selectedOrganization, setSelectedOrganization] = useState<Organization>()
+const organizations = [] // Pass in array of organizations to use as options
+
+<PageSingleSelect
+  placeholder="Select organization"
+  value={selectedOrganization}
+  setValue={setSelectedOrganization}
+  options={organizations.map(organization=>({
+    key: organization.id,
+    value: organization
+    label: organization.name,
+    description: organization.description
+  }))}
+/>
+```
+
+```tsx
+const [selectedOrganizations, setSelectedOrganization] = useState<Organization[]>()
+const organizations = [] // Pass in array of organizations to use as options
+
+<PageMultiSelect
+  placeholder="Select organizations"
+  values={selectedOrganizations}
+  setValues={setSelectedOrganization}
+  options={organizations.map(organization=>({
+    key: organization.id,
+    value: organization
+    label: organization.name,
+    description: organization.description
+  }))}
+/>
+```
+
 ### Async Select Components
 
 The async components are wrappers over the base select components with a goal of loading options asynchronously from APIs and supporting pagination of results.
@@ -22,25 +58,6 @@ The form components are wrappers of the base and async components with a goal of
 - `PageFormMultiSelect` uses `PageMultiSelect`
 - `PageFormAsyncSingleSelect` uses `PageAsyncSingleSelect`
 - `PageFormAsyncMultiSelect` uses `PageAsyncMultiSelect`
-
-#### Example
-
-```tsx
-const [organization, setOrganization] = useState<Organization>()
-const organizations = [] // Pass in array of organizations to use as options
-
-<PageSingleSelect
-  placeholder="Select organization"
-  value={organization}
-  setValue={setOrganization}
-  options={organizations.map(organization=>({
-    key: organization.id,
-    value: organization
-    label: organization.name,
-    description: organization.description
-  }))}
-/>
-```
 
 ### Toolbar Select Filters
 
