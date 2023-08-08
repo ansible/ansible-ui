@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { PageFormSelect, PageFormTextInput } from '../../../../../framework';
 import { RRule } from 'rrule';
 import { useGetMonthOptions, useGetWeekdayOptions } from '../hooks/ruleHelpers';
-import { Banner, Divider } from '@patternfly/react-core';
+import { Banner } from '@patternfly/react-core';
 import { PageFormDateTimePicker } from '../../../../../framework/PageForm/Inputs/PageFormDateTimePicker';
 import { RuleFormFields } from '../RuleForm';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
