@@ -22,6 +22,7 @@ import {
   IToolbarAsyncMultiSelectFilter,
   IToolbarAsyncSingleSelectFilter,
   ToolbarSelectFilter,
+  ToolbarAsyncSelectFilter,
 } from './PageToolbarFilterTypes/ToolbarSelectFilter';
 import { IToolbarTextFilter, ToolbarTextFilter } from './PageToolbarFilterTypes/ToolbarTextFilter';
 
@@ -307,7 +308,7 @@ function ToolbarFilterComponent(props: {
 
     case ToolbarFilterType.AsyncMultiSelect:
       return (
-        <ToolbarSelectFilter
+        <ToolbarAsyncSelectFilter
           id={props.id ?? filter.key}
           values={values}
           addFilter={addFilter}
@@ -317,6 +318,19 @@ function ToolbarFilterComponent(props: {
           variant={SelectVariant.checkbox}
           hasSearch={filter.hasSearch}
           label={filter.isPinned ? filter.label : undefined} // when a multi select filter is pinned, we want to show the label in the select
+          openAsyncSelector={() => {
+            filter.openSelectDialog((selections) => {
+              // remove existing values
+              for (const val of values) {
+                removeFilter(val);
+              }
+
+              for (const selection of selections) {
+                const key = filter.selectionToString(selection);
+                addFilter(key);
+              }
+            }, filter.defaultSelection);
+          }}
         />
       );
     /*return (

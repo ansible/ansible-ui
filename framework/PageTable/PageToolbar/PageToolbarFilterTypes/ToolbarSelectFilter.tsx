@@ -1,4 +1,10 @@
-import { Select, SelectOption, SelectOptionObject, SelectVariant } from '@patternfly/react-core';
+import {
+  Select,
+  SelectOption,
+  SelectOptionObject,
+  SelectVariant,
+  Button,
+} from '@patternfly/react-core';
 import { useEffect, useState } from 'react';
 import { ToolbarFilterType } from '../PageToolbarFilter';
 import { ToolbarFilterCommon } from './ToolbarFilterCommon';
@@ -70,7 +76,7 @@ export interface IToolbarFilterOption {
   value: string;
 }
 
-export function ToolbarSelectFilter(props: {
+export interface IToolbarSelectFilterProps {
   id?: string;
   addFilter: (value: string) => void;
   removeFilter: (value: string) => void;
@@ -84,8 +90,33 @@ export function ToolbarSelectFilter(props: {
   hasClear?: boolean;
   isRequired?: boolean;
   defaultValue?: string;
-}) {
-  const { addFilter, removeFilter, options, values, variant } = props;
+  footer?: ReactNode;
+}
+
+interface IToolbarAsyncSelectFilterProps extends IToolbarSelectFilterProps {
+  openAsyncSelector: () => void;
+}
+
+export function ToolbarAsyncSelectFilter(props: IToolbarAsyncSelectFilterProps) {
+  return (
+    <ToolbarSelectFilter
+      {...props}
+      footer={
+        <Button
+          variant="link"
+          onClick={() => {
+            props.openAsyncSelector();
+          }}
+        >
+          Browse
+        </Button>
+      }
+    ></ToolbarSelectFilter>
+  );
+}
+
+export function ToolbarSelectFilter(props: IToolbarSelectFilterProps) {
+  const { addFilter, removeFilter, options, values, variant, footer } = props;
   const [open, setOpen] = useState(false);
 
   const onSelect = (_: unknown, value: string | SelectOptionObject) => {
@@ -176,6 +207,7 @@ export function ToolbarSelectFilter(props: {
       onFilter={onFilter}
       style={{ zIndex: open ? 400 : 0, minWidth: 200 }} // ZIndex 400 is needed for PF table stick headers
       onClear={onClear}
+      footer={props.footer}
     >
       {renderOptions(options)}
     </Select>
