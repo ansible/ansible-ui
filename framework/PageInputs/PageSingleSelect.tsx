@@ -73,7 +73,7 @@ export interface PageSingleSelectProps<ValueT> {
  */
 export function PageSingleSelect<
   /** The type of the value of the select and of the options values. */
-  ValueT,
+  ValueT
 >(props: PageSingleSelectProps<ValueT>) {
   const { t } = useTranslation();
   const { id, icon, value, onSelect, options, placeholder } = props;
@@ -109,7 +109,7 @@ export function PageSingleSelect<
 
   const onSelectHandler = useCallback(
     (_: unknown, itemId: string | number | undefined) => {
-      const newSelectedOption = options.find((option) => {
+      const newSelectedOption: PageSelectOption<ValueT> | undefined = options.find((option) => {
         if (option.key !== undefined) return option.key === itemId;
         else return option.label === itemId;
       });

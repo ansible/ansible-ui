@@ -9,6 +9,9 @@ export type PageFormDateTimePickerProps<
   datePlaceHolder?: string;
   timePlaceHolder?: string;
   label: string;
+  labelHelp?: string;
+  labelHelpTitle?: string;
+  isDisabled?: boolean;
 };
 export function PageFormDateTimePicker<
   TFieldValues extends FieldValues = FieldValues,

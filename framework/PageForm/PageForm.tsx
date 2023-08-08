@@ -24,11 +24,14 @@ import { useBreakpoint } from '../components/useBreakPoint';
 import { PageBody } from '../PageBody';
 import { SettingsContext } from '../Settings';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
+import { useTranslation } from 'react-i18next';
 
 export function PageForm<T extends object>(props: {
   schema?: JSONSchema6;
   children?: ReactNode;
   submitText: string;
+  additionalActionText?: string;
+  onClickAdditionalAction?: () => void;
   onSubmit: PageFormSubmitHandler<T>;
   cancelText?: string;
   onCancel?: () => void;
@@ -135,6 +138,11 @@ export function PageForm<T extends object>(props: {
           <div className="dark-2 border-top" style={{ padding: disablePadding ? undefined : 24 }}>
             <ActionGroup style={{ marginTop: 0 }}>
               <PageFormSubmitButton>{props.submitText}</PageFormSubmitButton>
+              {props.additionalActionText ? (
+                <Button onClick={props.onClickAdditionalAction} type="button" variant="secondary">
+                  {props.additionalActionText}
+                </Button>
+              ) : null}
               {props.onCancel && (
                 <PageFormCancelButton onCancel={props.onCancel}>
                   {props.cancelText ?? frameworkTranslations.cancelText}
@@ -188,9 +196,10 @@ export type PageFormSubmitHandler<T extends FieldValues> = (
 
 export function PageFormSubmitButton(props: { children: ReactNode; style?: CSSProperties }) {
   const { isSubmitting, errors } = useFormState();
+  const { t } = useTranslation();
   const hasErrors = errors && Object.keys(errors).length > 0;
   return (
-    <Tooltip content="Please fix errors" trigger={hasErrors ? undefined : 'manual'}>
+    <Tooltip content={t('Please fix errors')} trigger={hasErrors ? undefined : 'manual'}>
       <Button
         type="submit"
         isDisabled={isSubmitting}

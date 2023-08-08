@@ -47,8 +47,18 @@ export function FormGroupDateTimePicker(props: FormGroupDateTimePickerProps) {
   return (
     <PageFormGroup {...props}>
       <InputGroup>
-        <DatePicker placeholder={datePlaceHolder} value={dateValue} onChange={handleDateChange} />
-        <TimePicker placeholder={timePlaceHolder} time={timeValue} onChange={onTimeChange} />
+        <DatePicker
+          isDisabled={props.isDisabled}
+          placeholder={datePlaceHolder}
+          value={dateValue}
+          onChange={handleDateChange}
+        />
+        <TimePicker
+          isDisabled={props.isDisabled}
+          placeholder={timePlaceHolder}
+          time={timeValue}
+          onChange={onTimeChange}
+        />
       </InputGroup>
     </PageFormGroup>
   );

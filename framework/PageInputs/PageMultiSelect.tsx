@@ -23,6 +23,8 @@ export interface PageMultiSelectProps<ValueT> {
   /** The placeholder to show when no values are selected. */
   placeholder: ReactNode;
 
+  /** Disables the toggle to open and close the menu */
+  isDisabled?: boolean;
   /** The selected values. */
   values: ValueT[] | undefined | null;
 
@@ -78,7 +80,7 @@ export interface PageMultiSelectProps<ValueT> {
  */
 export function PageMultiSelect<
   /** The type of the value of the select and of the options values. */
-  ValueT,
+  ValueT
 >(props: PageMultiSelectProps<ValueT>) {
   const { t } = useTranslation();
   const { id, icon, placeholder, values, onSelect, options, variant, disableClearSelection } =
@@ -87,7 +89,7 @@ export function PageMultiSelect<
 
   const selectedOptions = useMemo(
     () =>
-      options.filter((option) => {
+      options.filter((option: PageSelectOption<ValueT>) => {
         if (values === undefined || values === null) {
           return false;
         }
