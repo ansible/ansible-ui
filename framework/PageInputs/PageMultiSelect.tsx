@@ -40,8 +40,10 @@ export interface PageMultiSelectProps<ValueT> {
   /** The variant of the select. */
   variant?: 'chips' | 'count';
 
+  /** The footer to show at the bottom of the dropdown. */
   footer?: ReactNode;
 
+  /** Whether to disable the clear selection button. */
   disableClearSelection?: boolean;
 }
 
