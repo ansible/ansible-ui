@@ -55,7 +55,12 @@ export function PageDashboardChart(props: {
     <PageChartContainer className="page-chart">
       {(size) => (
         <Chart
-          padding={{ bottom: 60, left: 60, right: 40, top: 16 }}
+          padding={{
+            bottom: settings?.xLabel ? 70 : 60,
+            left: settings?.yLabel ? 70 : 60,
+            right: 40,
+            top: 16,
+          }}
           colorScale={groups.map((group) => group.color)}
           height={settings && settings.legendData ? size.height * 0.9 : size.height}
           width={size.width}
