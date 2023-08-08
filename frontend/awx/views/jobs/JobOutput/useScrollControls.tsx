@@ -38,31 +38,17 @@ export function useScrollControls(
       return;
     }
     const interval = setInterval(() => {
-      console.log(numTicksAtBottom);
       if (!containerRef.current) {
-        console.log('no ref');
         return;
       }
       if (numTicksAtBottom >= 3) {
-        console.log('turning follow mode off');
         setIsFollowModeEnabled(false);
         return;
       }
 
       if (isAtBottom(containerRef.current)) {
-        console.log('incementing');
         setNumTicksAtBottom((prev) => prev + 1);
       } else {
-        console.log('not at bottom');
-        const { clientHeight, scrollHeight, scrollTop } = containerRef.current;
-        const scrollTopMax = scrollHeight - clientHeight;
-        console.log({
-          clientHeight,
-          scrollHeight,
-          scrollTop,
-          scrollTopMax,
-          isAtBottom: scrollTop >= scrollTopMax,
-        });
         setNumTicksAtBottom(0);
       }
     }, 200);
