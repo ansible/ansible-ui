@@ -42,6 +42,7 @@ export function PageActionSwitch<T extends object>(props: {
             label={label}
             labelOff={labelOff}
             isChecked={isChecked}
+            hasCheckIcon={true}
             isDisabled={isDisabled ? true : false}
             onChange={() => {
               switch (action.selection) {
