@@ -67,8 +67,24 @@ export interface PageMultiSelectProps<ValueT> {
  * - `PageFormAsyncMultiSelect` via PageAsyncMultiSelect
  * - `IFilterMultiSelect`
  * - `IFilterAsyncMultiSelect` via PageAsyncMultiSelect
+ *
+ * @example
+ * return (
+ *   <PageMultiSelect
+ *     placeholder="Select options"
+ *     values={values}
+ *     onSelect={setValues}
+ *     options={[
+ *       { label: 'Option 1', value: 1 },
+ *       { label: 'Option 2', value: 2 }
+ *     ]}
+ *   />
+ * )
  */
-export function PageMultiSelect<ValueT>(props: PageMultiSelectProps<ValueT>) {
+export function PageMultiSelect<
+  /** The type of the value of the select and of the options values. */
+  ValueT
+>(props: PageMultiSelectProps<ValueT>) {
   const { t } = useTranslation();
   const { id, icon, placeholder, values, onSelect, variant, disableClearSelection } = props;
   const [isOpen, setIsOpen] = useState(false);

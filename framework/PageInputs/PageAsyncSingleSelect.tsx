@@ -26,14 +26,16 @@ export interface PageAsyncSingleSelectProps<ValueT>
 }
 
 /**
- * `PageAsyncSingleSelect` wraps the `PageSingleSelect` component to support asynchronously loading options from and async source such as an API.
+ * `PageAsyncSingleSelect` wraps the `PageSingleSelect` component to support asynchronously loading options from an async source such as an API.
+ *
+ * @param props The props for the component. See `PageSingleSelectProps` for details.
  *
  * @example
  * return (
  *   <PageAsyncSingleSelect
- *     placeholder="Select options"
- *     values={values}
- *     onSelect={setValues}
+ *     placeholder="Select option"
+ *     value={value}
+ *     onSelect={setValue}
  *     queryOptions={async (page:number) => ({
  *       total: 1,
  *       options: [{ label: 'Option 1', value: 1 }]
@@ -41,7 +43,10 @@ export interface PageAsyncSingleSelectProps<ValueT>
  *   />
  * )
  */
-export function PageAsyncSingleSelect<ValueT>(props: PageAsyncSingleSelectProps<ValueT>) {
+export function PageAsyncSingleSelect<
+  /** The type of the value of the select and of the options values. */
+  ValueT
+>(props: PageAsyncSingleSelectProps<ValueT>) {
   const { t } = useTranslation();
 
   const [loading, setLoading] = useState(false);

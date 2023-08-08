@@ -49,8 +49,24 @@ export interface PageSingleSelectProps<ValueT> {
  * - `PageFormAsyncSingleSelect` via PageAsyncSingleSelect
  * - `IFilterSingleSelect`
  * - `IFilterAsyncSingleSelect` via PageAsyncSingleSelect
+ *
+ * @example
+ * return (
+ *   <PageSingleSelect
+ *     placeholder="Select option"
+ *     value={value}
+ *     onSelect={setValue}
+ *     options={[
+ *       { label: 'Option 1', value: 1 },
+ *       { label: 'Option 2', value: 2 }
+ *     ]}
+ *   />
+ * )
  */
-export function PageSingleSelect<ValueT>(props: PageSingleSelectProps<ValueT>) {
+export function PageSingleSelect<
+  /** The type of the value of the select and of the options values. */
+  ValueT
+>(props: PageSingleSelectProps<ValueT>) {
   const { t } = useTranslation();
   const { id, icon, value, onSelect, placeholder } = props;
   const [isOpen, setIsOpen] = useState(false);

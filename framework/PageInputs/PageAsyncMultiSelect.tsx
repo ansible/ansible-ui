@@ -26,7 +26,9 @@ export interface PageAsyncMultiSelectProps<ValueT>
 }
 
 /**
- * `PageAsyncMultiSelect` wraps the `PageMultiSelect` component to support asynchronously loading options from and async source such as an API.
+ * `PageAsyncMultiSelect` wraps the `PageMultiSelect` component to support asynchronously loading options from an async source such as an API.
+ *
+ * @param props The props for the component. See `PageMultiSelectProps` for details.
  *
  * @example
  * return (
@@ -41,7 +43,10 @@ export interface PageAsyncMultiSelectProps<ValueT>
  *   />
  * )
  */
-export function PageAsyncMultiSelect<ValueT>(props: PageAsyncMultiSelectProps<ValueT>) {
+export function PageAsyncMultiSelect<
+  /** The type of the value of the select and of the options values. */
+  ValueT
+>(props: PageAsyncMultiSelectProps<ValueT>) {
   const { t } = useTranslation();
 
   const [loading, setLoading] = useState(false);
