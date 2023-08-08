@@ -52,9 +52,13 @@ export function useScrollControls(
         setNumTicksAtBottom(0);
       }
     }, 200);
+    const failSafe = setTimeout(() => {
+      setIsFollowModeEnabled(false);
+    }, 1200);
 
     return () => {
       clearInterval(interval);
+      clearTimeout(failSafe);
     };
   }, [isFollowModeEnabled, isJobRunning, containerRef, numTicksAtBottom, setIsFollowModeEnabled]);
 
