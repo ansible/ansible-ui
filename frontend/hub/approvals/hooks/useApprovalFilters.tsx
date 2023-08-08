@@ -46,6 +46,7 @@ export function useApprovalFilters() {
         key: 'repository_name',
         label: t('Repository'),
         type: ToolbarFilterType.AsyncMultiSelect,
+        options: [],
         query: 'repository_name',
         limit: 100,
         openSelectDialog: repoSelectorMulti,

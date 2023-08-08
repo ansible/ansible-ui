@@ -307,6 +307,19 @@ function ToolbarFilterComponent(props: {
 
     case ToolbarFilterType.AsyncMultiSelect:
       return (
+        <ToolbarSelectFilter
+          id={props.id ?? filter.key}
+          values={values}
+          addFilter={addFilter}
+          removeFilter={removeFilter}
+          options={filter.options}
+          placeholder={filter.placeholder}
+          variant={SelectVariant.checkbox}
+          hasSearch={filter.hasSearch}
+          label={filter.isPinned ? filter.label : undefined} // when a multi select filter is pinned, we want to show the label in the select
+        />
+      );
+    /*return (
         <Button
           onClick={() => {
             filter.openSelectDialog((selections) => {
@@ -324,7 +337,7 @@ function ToolbarFilterComponent(props: {
         >
           Open Dialog
         </Button>
-      );
+      );*/
 
     case ToolbarFilterType.SingleSelect:
       return (
@@ -374,6 +387,4 @@ function ToolbarFilterComponent(props: {
         />
       );
   }
-
-  return <></>;
 }

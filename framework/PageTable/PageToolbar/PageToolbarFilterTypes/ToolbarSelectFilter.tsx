@@ -32,6 +32,9 @@ export interface IToolbarAsyncSelectFilter extends ToolbarFilterCommon {
 
   // @ts-ignore
   selectionToDescription?: (value: any) => ReactNode;
+
+  options: IToolbarFilterOption[];
+  hasSearch?: boolean;
 }
 
 export interface IToolbarAsyncMultiSelectFilter extends IToolbarAsyncSelectFilter {
