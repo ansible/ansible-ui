@@ -7,7 +7,7 @@ The base components are wrappers over the PatternFly components with a goal to m
 - [`PageSingleSelect`](./PageSingleSelect.tsx): A select dropdown component that supports single selection of options.
 - [`PageMultiSelect`](./PageMultiSelect.tsx): A select dropdown component that supports multiple selection of options.
 
-#### Examples
+### Examples
 
 ```tsx
 const [selectedOrganization, setSelectedOrganization] = useState<Organization>()
