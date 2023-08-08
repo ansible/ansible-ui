@@ -460,11 +460,12 @@ export function AutomationCalculatorInternal(props: {
 
   // If page out of range, set to first page
   useEffect(() => {
-    const pageCount = Math.ceil((data?.meta.legend.length ?? 0) / perPage) + 1;
+    const totalCount = data?.meta.count ?? 0;
+    const pageCount = Math.min(1, Math.ceil(totalCount / perPage));
     if (page > pageCount || page < 1) {
       setPage(1);
     }
-  }, [data?.meta.legend.length, page, perPage]);
+  }, [data?.meta.count, page, perPage]);
 
   if (isLoading) {
     return (
