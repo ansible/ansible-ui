@@ -31,8 +31,8 @@ const organizations = [] // Pass in array of organizations to use as options
 
 <PageSingleSelect
   placeholder="Select organization"
-  values={organization}
-  setValues={setOrganization}
+  value={organization}
+  setValue={setOrganization}
   options={organizations.map(organization=>({
     key: organization.id,
     value: organization
