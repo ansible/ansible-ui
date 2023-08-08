@@ -59,36 +59,44 @@ export function CollectionCard(props: { collection: CollectionVersionSearch }) {
               <PageDetail>
                 <PageDetailDiv>
                   <ColumnsDiv>
-                    <>
+                    <dd>
                       {
                         item.collection_version.contents.filter((c) => c.content_type === 'module')
                           .length
                       }
-                    </>
-                    <Small>{t('Modules')}</Small>
+                    </dd>
+                    <Small>
+                      <dt>{t('Modules')}</dt>
+                    </Small>
                   </ColumnsDiv>
                   <ColumnsDiv>
-                    <>
+                    <dd>
                       {
                         item.collection_version.contents.filter((c) => c.content_type === 'role')
                           .length
                       }
-                    </>
-                    <Small>{t('Roles')}</Small>
+                    </dd>
+                    <Small>
+                      <dt>{t('Roles')}</dt>
+                    </Small>
                   </ColumnsDiv>
                   <ColumnsDiv>
-                    <>
+                    <dd>
                       {
                         item.collection_version.contents.filter(
                           (c) => c.content_type !== 'module' && c.content_type !== 'role'
                         ).length
                       }
-                    </>
-                    <Small>{t('Plugins')}</Small>
+                    </dd>
+                    <Small>
+                      <dt>{t('Plugins')}</dt>
+                    </Small>
                   </ColumnsDiv>
                   <ColumnsDiv>
-                    <>{Object.keys(item.collection_version.dependencies).length}</>
-                    <Small>{t('Dependencies')}</Small>
+                    <dd>{Object.keys(item.collection_version.dependencies).length}</dd>
+                    <Small>
+                      <dt>{t('Dependencies')}</dt>
+                    </Small>
                   </ColumnsDiv>
                 </PageDetailDiv>
               </PageDetail>

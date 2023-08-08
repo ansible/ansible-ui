@@ -10,8 +10,6 @@ import {
   PageHeader,
   PageLayout,
 } from '../../../framework';
-import { LoadingPage } from '../../../framework/components/LoadingPage';
-import { useHubNamespaces } from '../namespaces/hooks/useHubNamespaces';
 import { useManageHubDashboard } from './useManageHubDashboard';
 import { useState } from 'react';
 import { CategorizedCollections } from './CollectionCategory';
@@ -20,7 +18,6 @@ import { CollectionCategoryCarousel } from './CollectionCategories';
 
 export function HubDashboard() {
   const { t } = useTranslation();
-  const namespaces = useHubNamespaces();
 
   const { openManageDashboard, managedCategories } = useManageHubDashboard();
 
@@ -29,10 +26,6 @@ export function HubDashboard() {
 
   /** Retrieve and set categories of collections and map categories to collections */
   useCategorizeCollections(managedCategories, setCategorizedCollections);
-
-  if (!namespaces) {
-    return <LoadingPage />;
-  }
 
   return (
     <PageLayout>
