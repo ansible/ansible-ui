@@ -32,7 +32,7 @@ export function useInMemoryView<T extends object>(options: {
     defaultValues: { sort: tableColumns && tableColumns.length ? tableColumns[0].sort : undefined },
     disableQueryString,
   });
-  const { page, perPage, sort, sortDirection, filters } = view;
+  const { page, perPage, sort, sortDirection, filterState } = view;
 
   const sorted = useSorted(items);
   const { setSort } = sorted;
@@ -53,17 +53,17 @@ export function useInMemoryView<T extends object>(options: {
   const filtered = useFiltered(sorted.sorted, keyFn);
   const { setFilterFn } = filtered;
   useEffect(() => {
-    if (Object.keys(filters).length === 0) {
+    if (Object.keys(filterState).length === 0) {
       setFilterFn(undefined);
     } else {
       setFilterFn((item: T) => {
-        for (const key in filters) {
+        for (const key in filterState) {
           const toolbarFilter = toolbarFilters?.find((filter) => filter.key === key);
           if (toolbarFilter) {
             const value = getValue(item, toolbarFilter.query) as unknown;
             if (typeof value === 'string') {
-              const filterValues = filters[key];
-              if (filterValues.length !== 0) {
+              const filterValues = filterState[key];
+              if (filterValues && filterValues.length !== 0) {
                 if (!filterValues.includes(value)) {
                   return false;
                 }
@@ -74,7 +74,7 @@ export function useInMemoryView<T extends object>(options: {
         return true;
       });
     }
-  }, [filters, setFilterFn, toolbarFilters]);
+  }, [filterState, setFilterFn, toolbarFilters]);
 
   const paged = usePaged(filtered.filtered);
   const { setPage, setPerPage } = paged;

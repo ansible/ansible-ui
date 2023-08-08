@@ -17,7 +17,7 @@ import { BulkSelector } from '../../components/BulkSelector';
 import { useBreakpoint } from '../../components/useBreakPoint';
 import { PageTableViewType } from './PageTableViewType';
 import './PageToolbar.css';
-import { IToolbarFilter, PageToolbarFilters } from './PageToolbarFilter';
+import { IFilterState, IToolbarFilter, PageToolbarFilters } from './PageToolbarFilter';
 import { PageTableSortOption, PageToolbarSort } from './PageToolbarSort';
 import { PageToolbarView } from './PageToolbarView';
 
@@ -46,8 +46,8 @@ export type PageTableToolbarProps<T extends object> = {
   toolbarActions?: IPageAction<T>[];
 
   toolbarFilters?: IToolbarFilter[];
-  filters?: Record<string, string[]>;
-  setFilters?: Dispatch<SetStateAction<Record<string, string[]>>>;
+  filterState?: IFilterState;
+  setFilterState?: Dispatch<SetStateAction<IFilterState>>;
   clearAllFilters?: () => void;
 
   page?: number;
@@ -89,9 +89,8 @@ export function PageTableToolbar<T extends object>(props: PageTableToolbarProps<
     setPerPage,
     toolbarFilters,
     selectedItems,
-    filters,
-    setFilters,
-    clearAllFilters,
+    filterState,
+    setFilterState,
     openColumnModal,
     bottomBorder,
     sort,
@@ -99,7 +98,16 @@ export function PageTableToolbar<T extends object>(props: PageTableToolbarProps<
     sortDirection,
     setSortDirection,
     sortOptions,
+    clearAllFilters: clearAllFiltersProp,
   } = props;
+
+  const clearAllFilters = useCallback(() => {
+    if (clearAllFiltersProp) {
+      clearAllFiltersProp();
+    } else if (setFilterState) {
+      setFilterState({});
+    }
+  }, [setFilterState, clearAllFiltersProp]);
 
   const sm = useBreakpoint('md');
 
@@ -177,11 +185,11 @@ export function PageTableToolbar<T extends object>(props: PageTableToolbarProps<
         )}
 
         {/* Filters */}
-        {filters && (
+        {filterState && setFilterState && (
           <PageToolbarFilters
             toolbarFilters={toolbarFilters}
-            filterState={filters}
-            setFilterState={setFilters}
+            filterState={filterState}
+            setFilterState={setFilterState}
           />
         )}
 
