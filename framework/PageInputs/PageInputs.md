@@ -9,7 +9,7 @@ The base components are wrappers over the PatternFly components with a goal to m
 
 ### Async Select Components
 
-The async components are wrappers over the base seelcts components with a goal of loading options asynchrously from APIs and supporting pagination of results.
+The async components are wrappers over the base select components with a goal of loading options asynchronously from APIs and supporting pagination of results.
 
 - `PageAsyncSingleSelect` uses `PageSingleSelect`
 - `PageAsyncMultiSelect` uses `PageMultiSelect`

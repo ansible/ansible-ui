@@ -135,8 +135,6 @@ export function PageMultiSelect<ValueT>(props: PageMultiSelectProps<ValueT>) {
     setSearchValue('');
     if (isOpen && searchRef.current) {
       searchRef.current.focus();
-    } else {
-      // selectRef.current?.focus();
     }
   }, [isOpen]);
 
