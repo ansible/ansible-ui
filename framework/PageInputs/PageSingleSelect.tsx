@@ -7,7 +7,7 @@ import { PageSelectOption, getPageSelectOptions } from './PageSelectOption';
 import './PageSingleSelect.css';
 
 export interface PageSingleSelectProps<ValueT> {
-  /** The ID of the select. */
+  /** The ID of the select component. */
   id?: string;
 
   /** The icon to show in the select. */
@@ -25,10 +25,31 @@ export interface PageSingleSelectProps<ValueT> {
   /** The options to select from. */
   options: PageSelectOption<ValueT>[];
 
+  /** The footer to show at the bottom of the dropdown. */
   footer?: ReactNode;
 }
 
-/** Single-select component */
+/**
+ * Select dropdown component for single selection of options.
+ *
+ * @param props The props of the component. See `PageSingleSelectProps`.
+ *
+ * This is a wrapper over PatternFly's `Select` component,
+ * simplifying the API and adding some features:
+ * - `value`, `onSelect`, and `options` are typed.
+ * - `options` can be an array of strings, numbers or objects with `label` and `value` properties.
+ *
+ * This component also adds a search input and footer to the dropdown.
+ *
+ * Typeahead is supported by the component opening and searching when the user types.
+ *
+ * Used by:
+ * - `PageAsyncSingleSelect`
+ * - `PageFormSingleSelect`
+ * - `PageFormAsyncSingleSelect` via PageAsyncSingleSelect
+ * - `IFilterSingleSelect`
+ * - `IFilterAsyncSingleSelect` via PageAsyncSingleSelect
+ */
 export function PageSingleSelect<ValueT>(props: PageSingleSelectProps<ValueT>) {
   const { t } = useTranslation();
   const { id, icon, value, onSelect, placeholder } = props;
@@ -56,7 +77,11 @@ export function PageSingleSelect<ValueT>(props: PageSingleSelectProps<ValueT>) {
       }}
     >
       {icon && <span style={{ paddingLeft: 4, paddingRight: 12 }}>{icon}</span>}
-      {selectedOption ? selectedOption.label : <Placedholder>{placeholder}</Placedholder>}
+      {selectedOption ? (
+        selectedOption.label
+      ) : (
+        <SelectPlacedholder>{placeholder}</SelectPlacedholder>
+      )}
     </MenuToggle>
   );
 
@@ -102,12 +127,7 @@ export function PageSingleSelect<ValueT>(props: PageSingleSelectProps<ValueT>) {
         toggle={Toggle}
         style={{ zIndex: isOpen ? 9999 : undefined }}
       >
-        <div
-          style={{
-            margin: '12px 16px 12px 16px',
-            borderBottom: 'thin solid var(--pf-global--BorderColor--100)',
-          }}
-        >
+        <SelectHeader>
           <SearchInput
             id={id ? `${id}-search` : undefined}
             ref={searchRef}
@@ -118,11 +138,11 @@ export function PageSingleSelect<ValueT>(props: PageSingleSelectProps<ValueT>) {
               setSearchValue('');
             }}
           />
-        </div>
+        </SelectHeader>
         {visibleOptions.length === 0 ? (
           <div style={{ margin: 16 }}>{t('No results found')}</div>
         ) : (
-          <SelectList style={{ overflow: 'auto', maxHeight: '45vh' }}>
+          <SelectListStyled>
             {visibleOptions.map((option) => (
               <SelectOption
                 key={option.key}
@@ -132,23 +152,29 @@ export function PageSingleSelect<ValueT>(props: PageSingleSelectProps<ValueT>) {
                 {option.label}
               </SelectOption>
             ))}
-          </SelectList>
+          </SelectListStyled>
         )}
-        {props.footer && (
-          <div
-            style={{
-              margin: '12px 16px 12px 16px',
-              borderTop: 'thin solid var(--pf-global--BorderColor--100)',
-            }}
-          >
-            {props.footer}
-          </div>
-        )}
+        {props.footer && <SelectFooter>{props.footer}</SelectFooter>}
       </Select>
     </div>
   );
 }
 
-const Placedholder = styled.span`
+export const SelectPlacedholder = styled.span`
   opacity: 0.7;
+`;
+
+export const SelectHeader = styled.div`
+  margin: 12px 16px 12px 16px;
+  border-bottom: thin solid var(--pf-global--BorderColor--100);
+`;
+
+export const SelectFooter = styled.div`
+  margin: 12px 16px 12px 16px;
+  border-top: thin solid var(--pf-global--BorderColor--100);
+`;
+
+export const SelectListStyled = styled(SelectList)`
+  overflow: auto;
+  max-height: 45vh;
 `;

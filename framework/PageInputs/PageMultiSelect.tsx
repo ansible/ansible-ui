@@ -5,13 +5,18 @@ import {
   MenuToggleElement,
   SearchInput,
 } from '@patternfly/react-core';
-import { Select, SelectList, SelectOption } from '@patternfly/react-core/next';
+import { Select, SelectOption } from '@patternfly/react-core/next';
 import { TimesIcon } from '@patternfly/react-icons';
 import { ReactNode, Ref, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
 import './PageMultiSelect.css';
 import { PageSelectOption, getPageSelectOptions } from './PageSelectOption';
+import {
+  SelectFooter,
+  SelectHeader,
+  SelectListStyled,
+  SelectPlacedholder,
+} from './PageSingleSelect';
 
 export interface PageMultiSelectProps<ValueT> {
   /** The ID of the select. */
@@ -40,7 +45,27 @@ export interface PageMultiSelectProps<ValueT> {
   disableClearSelection?: boolean;
 }
 
-/** Multi-select component */
+/**
+ * Select dropdown component for multiple selection of options.
+ *
+ * @param props The props of the component. See `PageMultiSelectProps`.
+ *
+ * This is a wrapper over PatternFly's `Select` component,
+ * simplifying the API and adding some features:
+ * - `values`, `onSelect`, and `options` are typed.
+ * - `options` can be an array of strings, numbers or objects with `label` and `value` properties.
+ *
+ * This component also adds a search input and footer to the dropdown.
+ *
+ * Typeahead is supported by the component opening and searching when the user types.
+ *
+ * Used by:
+ * - `PageAsyncMultiSelect`
+ * - `PageFormMultiSelect`
+ * - `PageFormAsyncMultiSelect` via PageAsyncMultiSelect
+ * - `IFilterMultiSelect`
+ * - `IFilterAsyncMultiSelect` via PageAsyncMultiSelect
+ */
 export function PageMultiSelect<ValueT>(props: PageMultiSelectProps<ValueT>) {
   const { t } = useTranslation();
   const { id, icon, placeholder, values, onSelect, variant, disableClearSelection } = props;
@@ -103,7 +128,7 @@ export function PageMultiSelect<ValueT>(props: PageMultiSelectProps<ValueT>) {
             )}
           </>
         ) : (
-          <Placedholder>{placeholder}</Placedholder>
+          <SelectPlacedholder>{placeholder}</SelectPlacedholder>
         )}
       </MenuToggle>
     );
@@ -157,13 +182,7 @@ export function PageMultiSelect<ValueT>(props: PageMultiSelectProps<ValueT>) {
         toggle={Toggle}
         style={{ zIndex: isOpen ? 9999 : undefined }}
       >
-        <div
-          style={{
-            padding: '12px 16px 12px 16px',
-            borderBottom: 'thin solid var(--pf-global--BorderColor--100)',
-            backgroundImage: 'linear-gradient(to bottom, #fff1, #fff1)',
-          }}
-        >
+        <SelectHeader>
           <SearchInput
             id={id ? `${id}-search` : undefined}
             ref={searchRef}
@@ -174,11 +193,11 @@ export function PageMultiSelect<ValueT>(props: PageMultiSelectProps<ValueT>) {
               setSearchValue('');
             }}
           />
-        </div>
+        </SelectHeader>
         {visibleOptions.length === 0 ? (
           <div style={{ margin: 16 }}>{t('No results found')}</div>
         ) : (
-          <SelectList style={{ overflow: 'auto', maxHeight: '45vh' }}>
+          <SelectListStyled>
             {visibleOptions.map((option) => (
               <SelectOption
                 key={option.key}
@@ -194,24 +213,10 @@ export function PageMultiSelect<ValueT>(props: PageMultiSelectProps<ValueT>) {
                 {option.label}
               </SelectOption>
             ))}
-          </SelectList>
+          </SelectListStyled>
         )}
-        {props.footer && (
-          <div
-            style={{
-              padding: '12px 16px 12px 16px',
-              borderTop: 'thin solid var(--pf-global--BorderColor--100)',
-              backgroundImage: 'linear-gradient(to bottom, #fff1, #fff1)',
-            }}
-          >
-            {props.footer}
-          </div>
-        )}
+        {props.footer && <SelectFooter>{props.footer}</SelectFooter>}
       </Select>
     </div>
   );
 }
-
-const Placedholder = styled.span`
-  opacity: 0.7;
-`;

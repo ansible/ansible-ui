@@ -4,15 +4,15 @@
 
 The base components are wrappers over the PatternFly components with a goal to make the component interface simpler.
 
-- `PageSingleSelect`: A select dropdown component that supports single selection of options.
-- `PageMultiSelect`: A select dropdown component that supports multiple selection of options.
+- [`PageSingleSelect`](./PageSingleSelect.tsx): A select dropdown component that supports single selection of options.
+- [`PageMultiSelect`](./PageMultiSelect.tsx): A select dropdown component that supports multiple selection of options.
 
 ### Async Select Components
 
 The async components are wrappers over the base select components with a goal of loading options asynchronously from APIs and supporting pagination of results.
 
-- `PageAsyncSingleSelect` uses `PageSingleSelect`
-- `PageAsyncMultiSelect` uses `PageMultiSelect`
+- [`PageAsyncSingleSelect`](./PageAsyncSingleSelect.tsx) uses `PageSingleSelect`
+- [`PageAsyncMultiSelect`](./PageAsyncMultiSelect.tsx) uses `PageMultiSelect`
 
 ### Form Select Components
 
