@@ -289,21 +289,27 @@ function ToolbarFilterComponent(props: {
 
     case ToolbarFilterType.AsyncSingleSelect:
       return (
-        <Button
-          onClick={() => {
-            filter.openSelectDialog((value) => {
+        <ToolbarAsyncSelectFilter
+          id={props.id ?? filter.key}
+          values={values}
+          addFilter={addFilter}
+          removeFilter={removeFilter}
+          options={filter.options}
+          placeholder={filter.placeholder}
+          variant={SelectVariant.typeahead}
+          hasSearch={filter.hasSearch}
+          label={filter.isPinned ? filter.label : undefined} // when a multi select filter is pinned, we want to show the label in the select
+          openAsyncSelector={() => {
+            filter.openSelectDialog((selection) => {
               // remove existing values
               for (const val of values) {
                 removeFilter(val);
               }
-
-              const key = filter.selectionToString(value);
+              const key = filter.selectionToString(selection);
               addFilter(key);
             }, filter.defaultSelection);
           }}
-        >
-          Open Dialog
-        </Button>
+        />
       );
 
     case ToolbarFilterType.AsyncMultiSelect:
@@ -315,7 +321,7 @@ function ToolbarFilterComponent(props: {
           removeFilter={removeFilter}
           options={filter.options}
           placeholder={filter.placeholder}
-          variant={SelectVariant.checkbox}
+          variant={SelectVariant.typeaheadMulti}
           hasSearch={filter.hasSearch}
           label={filter.isPinned ? filter.label : undefined} // when a multi select filter is pinned, we want to show the label in the select
           openAsyncSelector={() => {
@@ -333,25 +339,6 @@ function ToolbarFilterComponent(props: {
           }}
         />
       );
-    /*return (
-        <Button
-          onClick={() => {
-            filter.openSelectDialog((selections) => {
-              // remove existing values
-              for (const val of values) {
-                removeFilter(val);
-              }
-
-              for (const selection of selections) {
-                const key = filter.selectionToString(selection);
-                addFilter(key);
-              }
-            }, filter.defaultSelection);
-          }}
-        >
-          Open Dialog
-        </Button>
-      );*/
 
     case ToolbarFilterType.SingleSelect:
       return (

@@ -45,11 +45,11 @@ export function useApprovalFilters() {
       {
         key: 'repository_name',
         label: t('Repository'),
-        type: ToolbarFilterType.AsyncMultiSelect,
+        type: ToolbarFilterType.AsyncSingleSelect,
         options: [],
         query: 'repository_name',
         limit: 100,
-        openSelectDialog: repoSelectorMulti,
+        openSelectDialog: repoSelectorSingle,
         selectionToString: (value: Repository) => value.name,
       },
     ],
