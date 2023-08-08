@@ -27,13 +27,13 @@ const organizations = [] // Pass in array of organizations to use as options
 ```
 
 ```tsx
-const [selectedOrganizations, setSelectedOrganization] = useState<Organization[]>()
+const [selectedOrganizations, setSelectedOrganizations] = useState<Organization[]>()
 const organizations = [] // Pass in array of organizations to use as options
 
 <PageMultiSelect
   placeholder="Select organizations"
   values={selectedOrganizations}
-  setValues={setSelectedOrganization}
+  setValues={setSelectedOrganizations}
   options={organizations.map(organization=>({
     key: organization.id,
     value: organization
