@@ -67,7 +67,7 @@ export function PageDashboardChart(props: {
               <ChartLegend
                 width={size.height * 0.1}
                 data={settings.legendData}
-                orientation={'vertical'}
+                orientation={'horizontal'}
               />
             )
           }
@@ -85,19 +85,19 @@ export function PageDashboardChart(props: {
             // tickFormat={(date: string) => `${new Date(date).toLocaleDateString()}`}
             //  tickFormat={(n) => `${Math.round(n)}`}
             label={settings && settings.xLabel}
-            style={{ axisLabel: { fontSize: 17 } }}
+            style={{ axisLabel: { fontSize: 16 } }}
           />
           <ChartAxis
             dependentAxis
             showGrid
             label={settings && settings.yLabel}
-            style={{ axisLabel: { fontSize: 17 } }}
+            style={{ axisLabel: { fontSize: 16 } }}
           />
           <ChartStack>
             {groups.map((group, index) =>
               settings && settings.useLines ? (
                 <ChartLine
-                  style={{ data: { strokeWidth: 4.5 } }}
+                  style={{ data: { strokeWidth: 3 } }}
                   key={index}
                   data={group.values.map((value) => ({ x: value.label, y: value.value }))}
                   interpolation="monotoneX"
