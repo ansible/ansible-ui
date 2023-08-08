@@ -47,6 +47,13 @@ export function PageSingleSelect<ValueT>(props: PageSingleSelectProps<ValueT>) {
       ref={toggleRef}
       onClick={() => setIsOpen((open) => !open)}
       isExpanded={isOpen}
+      onKeyDown={(event) => {
+        switch (event.key) {
+          default:
+            setIsOpen(true);
+            break;
+        }
+      }}
     >
       {icon && <span style={{ paddingLeft: 4, paddingRight: 12 }}>{icon}</span>}
       {selectedOption ? selectedOption.label : <Placedholder>{placeholder}</Placedholder>}
