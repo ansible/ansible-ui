@@ -1,6 +1,6 @@
 /* eslint-disable i18next/no-literal-string */
 import { PageSection } from '@patternfly/react-core';
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 import { PageSelectOption } from './PageSelectOption';
 import { PageSingleSelect } from './PageSingleSelect';
 
@@ -26,6 +26,7 @@ function PageSingleSelectTest<T>(props: {
   placeholder: string;
   defaultValue?: T;
   options: PageSelectOption<T>[];
+  footer?: ReactNode;
 }) {
   const { placeholder, defaultValue, options } = props;
   const [value, setValue] = useState(() => defaultValue);
@@ -37,6 +38,7 @@ function PageSingleSelectTest<T>(props: {
         placeholder={placeholder}
         options={options}
         onSelect={setValue}
+        footer={props.footer}
       />
     </PageSection>
   );
@@ -44,14 +46,14 @@ function PageSingleSelectTest<T>(props: {
 
 describe('PageSingleSelect', () => {
   it('should display placedholder', () => {
-    cy.mount(<PageSingleSelectTest placeholder="Placeholder" options={options} />);
+    cy.mount(<PageSingleSelectTest placeholder={placeholderText} options={options} />);
     cy.singleSelectShouldHaveSelectedOption('#test', placeholderText);
   });
 
   it('should display the initial value', () => {
     cy.mount(
       <PageSingleSelectTest
-        placeholder="Placeholder"
+        placeholder={placeholderText}
         options={options}
         defaultValue={testObjects[0]}
       />
@@ -60,13 +62,13 @@ describe('PageSingleSelect', () => {
   });
 
   it('should show options when clicking on the dropdown toggle', () => {
-    cy.mount(<PageSingleSelectTest placeholder="Placeholder" options={options} />);
+    cy.mount(<PageSingleSelectTest placeholder={placeholderText} options={options} />);
     cy.singleSelectShouldContainOption('#test', testObjects[0].name);
     cy.singleSelectShouldContainOption('#test', testObjects[1].name);
   });
 
   it('should select an option when clicking on it', () => {
-    cy.mount(<PageSingleSelectTest placeholder="Placeholder" options={options} />);
+    cy.mount(<PageSingleSelectTest placeholder={placeholderText} options={options} />);
     cy.singleSelectShouldHaveSelectedOption('#test', placeholderText);
     cy.selectSingleSelectOption('#test', testObjects[0].name);
     cy.singleSelectShouldHaveSelectedOption('#test', testObjects[0].name);
@@ -77,7 +79,11 @@ describe('PageSingleSelect', () => {
   it('should support string options', () => {
     const options = ['abc', 'def'];
     cy.mount(
-      <PageSingleSelectTest placeholder="Placeholder" options={options} defaultValue={options[0]} />
+      <PageSingleSelectTest
+        placeholder={placeholderText}
+        options={options}
+        defaultValue={options[0]}
+      />
     );
     cy.singleSelectShouldHaveSelectedOption('#test', options[0]);
   });
@@ -85,17 +91,30 @@ describe('PageSingleSelect', () => {
   it('should support number options', () => {
     const options = [1, 2];
     cy.mount(
-      <PageSingleSelectTest placeholder="Placeholder" options={options} defaultValue={options[0]} />
+      <PageSingleSelectTest
+        placeholder={placeholderText}
+        options={options}
+        defaultValue={options[0]}
+      />
     );
     cy.singleSelectShouldHaveSelectedOption('#test', options[0].toString());
   });
 
   it('should support filtering options when more than 10 items', () => {
-    cy.mount(<PageSingleSelectTest placeholder="Placeholder" options={options} />);
+    cy.mount(<PageSingleSelectTest placeholder={placeholderText} options={options} />);
     cy.get('#test').click();
     cy.get('#test-search').type('Option 1');
     cy.get('#test-search').parent().parent().should('contain', 'Option 1');
     cy.get('#test-search').parent().parent().should('contain', 'Option 10');
     cy.get('#test-search').parent().parent().should('not.contain', 'Option 2');
+  });
+
+  it('should show footer', () => {
+    const options = ['abc', 'def'];
+    cy.mount(
+      <PageSingleSelectTest placeholder={placeholderText} options={options} footer="Footer" />
+    );
+    cy.get('#test').click();
+    cy.contains('Footer');
   });
 });

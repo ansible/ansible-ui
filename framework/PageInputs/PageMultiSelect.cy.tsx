@@ -1,6 +1,6 @@
 /* eslint-disable i18next/no-literal-string */
 import { PageSection } from '@patternfly/react-core';
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 import { PageMultiSelect } from './PageMultiSelect';
 import { PageSelectOption } from './PageSelectOption';
 
@@ -26,8 +26,9 @@ function PageMultiSelectTest<T>(props: {
   placeholder?: string;
   defaultValues?: T[];
   options: PageSelectOption<T>[];
+  footer?: ReactNode;
 }) {
-  const { placeholder, defaultValues: defaultValue, options } = props;
+  const { placeholder, defaultValues: defaultValue, options, footer } = props;
   const [values, setValues] = useState<T[] | undefined>(() => defaultValue);
   return (
     <PageSection>
@@ -37,6 +38,7 @@ function PageMultiSelectTest<T>(props: {
         placeholder={placeholder}
         options={options}
         onSelect={setValues}
+        footer={footer}
       />
     </PageSection>
   );
@@ -44,14 +46,14 @@ function PageMultiSelectTest<T>(props: {
 
 describe('PageMultiSelect', () => {
   it('should show placeholder', () => {
-    cy.mount(<PageMultiSelectTest placeholder="Placeholder" options={options} />);
+    cy.mount(<PageMultiSelectTest placeholder={placeholderText} options={options} />);
     cy.get('#test').should('have.text', placeholderText);
   });
 
   it('should show initial value', () => {
     cy.mount(
       <PageMultiSelectTest
-        placeholder="Placeholder"
+        placeholder={placeholderText}
         options={options}
         defaultValues={testObjects}
       />
@@ -61,7 +63,7 @@ describe('PageMultiSelect', () => {
   });
 
   it('select and unselect options', () => {
-    cy.mount(<PageMultiSelectTest placeholder="Placeholder" options={options} />);
+    cy.mount(<PageMultiSelectTest placeholder={placeholderText} options={options} />);
     cy.get('#test').should('have.text', placeholderText);
 
     cy.multiSelectShouldNotHaveSelectedOption('#test', testObjects[0].name);
@@ -93,7 +95,11 @@ describe('PageMultiSelect', () => {
   it('should support string options', () => {
     const options = ['abc', 'def'];
     cy.mount(
-      <PageMultiSelectTest placeholder="Placeholder" options={options} defaultValues={options} />
+      <PageMultiSelectTest
+        placeholder={placeholderText}
+        options={options}
+        defaultValues={options}
+      />
     );
     cy.multiSelectShouldHaveSelectedOption('#test', options[0]);
     cy.multiSelectShouldHaveSelectedOption('#test', options[1]);
@@ -102,18 +108,30 @@ describe('PageMultiSelect', () => {
   it('should support number options', () => {
     const options = [1, 2];
     cy.mount(
-      <PageMultiSelectTest placeholder="Placeholder" options={options} defaultValues={options} />
+      <PageMultiSelectTest
+        placeholder={placeholderText}
+        options={options}
+        defaultValues={options}
+      />
     );
     cy.multiSelectShouldHaveSelectedOption('#test', options[0].toString());
     cy.multiSelectShouldHaveSelectedOption('#test', options[1].toString());
   });
 
   it('should support filtering options when more than 10 items', () => {
-    cy.mount(<PageMultiSelectTest placeholder="Placeholder" options={options} />);
+    cy.mount(<PageMultiSelectTest placeholder={placeholderText} options={options} />);
     cy.get('#test').click();
     cy.get('#test-search').type('Option 1');
     cy.get('#test-search').parent().parent().should('contain', 'Option 1');
     cy.get('#test-search').parent().parent().should('contain', 'Option 10');
     cy.get('#test-search').parent().parent().should('not.contain', 'Option 2');
+  });
+
+  it('should show footer', () => {
+    cy.mount(
+      <PageMultiSelectTest placeholder={placeholderText} options={options} footer="Footer" />
+    );
+    cy.get('#test').click();
+    cy.contains('Footer');
   });
 });

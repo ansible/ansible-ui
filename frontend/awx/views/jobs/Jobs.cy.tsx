@@ -79,7 +79,7 @@ describe('Jobs.cy.ts', () => {
         cy.selectTableRow(job.id.toString(), false);
         cy.clickToolbarKebabAction(/^Delete selected jobs$/);
         cy.contains(
-          '{{count}} of the selected jobs cannot be deleted due to insufficient permissions.'
+          '1 of the selected jobs cannot be deleted due to insufficient permissions.'
         ).should('be.visible');
       });
   });
@@ -149,7 +149,7 @@ describe('Jobs.cy.ts', () => {
         cy.selectTableRow(job.id.toString(), false);
         cy.clickToolbarKebabAction(/^Cancel selected jobs$/);
         cy.contains(
-          '{{count}} of the selected jobs cannot be canceled because they are not running.'
+          '1 of the selected jobs cannot be canceled because they are not running.'
         ).should('be.visible');
       });
   });

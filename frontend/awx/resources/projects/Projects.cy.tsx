@@ -159,7 +159,7 @@ describe('projects.cy.ts', () => {
       });
       cy.get('div[data-ouia-component-type="PF4/ModalContent"]').within(() => {
         cy.hasAlert(
-          '{{count}} of the selected project sync jobs cannot be canceled because they are not running.'
+          '1 of the selected project sync jobs cannot be canceled because they are not running.'
         ).should('exist');
         cy.contains('td', ' Project 1 Org 0')
           .parent()
@@ -183,7 +183,7 @@ describe('projects.cy.ts', () => {
       });
       cy.get('div[data-ouia-component-type="PF4/ModalContent"]').within(() => {
         cy.hasAlert(
-          '{{count}} of the selected project sync jobs cannot be cancelled due to insufficient permissions.'
+          '1 of the selected project sync jobs cannot be cancelled due to insufficient permissions.'
         ).should('exist');
         cy.contains('td', ' Project 2 Org 0')
           .parent()
