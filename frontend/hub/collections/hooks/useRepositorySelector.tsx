@@ -94,7 +94,7 @@ export function useSelectRepositoryMulti() {
         <SelectRepository
           title={t('Select organization')}
           defaultRepository={defaultSelection}
-          multiSelection={false}
+          multiSelection={true}
           onMultiselect={onSelect}
         />
       );

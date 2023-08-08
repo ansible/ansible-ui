@@ -291,13 +291,34 @@ function ToolbarFilterComponent(props: {
         <Button
           onClick={() => {
             filter.openSelectDialog((value) => {
-              // remove existing values, it is single selection
+              // remove existing values
               for (const val of values) {
                 removeFilter(val);
               }
 
               const key = filter.selectionToString(value);
               addFilter(key);
+            }, filter.defaultSelection);
+          }}
+        >
+          Open Dialog
+        </Button>
+      );
+
+    case ToolbarFilterType.AsyncMultiSelect:
+      return (
+        <Button
+          onClick={() => {
+            filter.openSelectDialog((selections) => {
+              // remove existing values
+              for (const val of values) {
+                removeFilter(val);
+              }
+
+              for (const selection of selections) {
+                const key = filter.selectionToString(selection);
+                addFilter(key);
+              }
             }, filter.defaultSelection);
           }}
         >

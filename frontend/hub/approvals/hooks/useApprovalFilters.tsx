@@ -52,7 +52,7 @@ export function useApprovalFilters() {
         selectionToString: (value: Repository) => value.name,
       },
       {
-        key: 'repository_name',
+        key: 'repository_name2',
         label: t('Repository multi'),
         type: ToolbarFilterType.AsyncMultiSelect,
         query: 'repository_name',
