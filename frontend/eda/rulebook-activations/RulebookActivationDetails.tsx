@@ -113,8 +113,7 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
         icon: RedoIcon,
         label: t('Restart rulebook activation'),
         isDanger: false,
-        isHidden: (activation: EdaRulebookActivation) =>
-          !activation.is_enabled || activation.restart_policy !== 'always',
+        isHidden: (activation: EdaRulebookActivation) => !activation.is_enabled,
         onClick: (activation: EdaRulebookActivation) => restartRulebookActivation([activation]),
       },
       {
