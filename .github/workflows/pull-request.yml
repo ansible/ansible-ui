@@ -60,13 +60,14 @@ jobs:
     needs: packages
     timeout-minutes: 10
     steps:
+      - name: Check for changes
+        id: check
+        run: echo "skip=${{ needs.packages.outputs.awx != 'true' }}" >> "$GITHUB_OUTPUT"
       - uses: actions/checkout@v3
         with:
           fetch-depth: 1
-
       - name: PreCache
         run: npm version 0.0.0 --no-git-tag-version
-
       - name: Cache dependencies
         id: cache
         uses: actions/cache@v3
@@ -75,20 +76,15 @@ jobs:
             ./node_modules
             /home/runner/.cache/Cypress
           key: modules-${{ hashFiles('package-lock.json') }}
-
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
-
       - name: NPM Build
-        run: npm run build
-
+        run: npm run build:awx
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-
       - name: Build Image
         uses: docker/build-push-action@v4
         with:
@@ -96,10 +92,8 @@ jobs:
           target: awx-ui
           tags: awx-ui
           load: true
-
       - name: Save Image
         run: docker save awx-ui > awx-ui.tar
-
       - name: Upload Image
         uses: actions/upload-artifact@v3
         with:
@@ -409,8 +403,8 @@ jobs:
         uses: cypress-io/github-action@v5
         with:
           install: false
-          start: npm run docker:awx
-          wait-on: 'http://localhost:4201'
+          start: npm run docker:run:awx
+          wait-on: 'http://localhost:4101'
           record: true
           parallel: true
           config: specPattern=cypress/e2e/awx/**/*.cy.{js,jsx,ts,tsx}

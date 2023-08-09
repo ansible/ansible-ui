@@ -19,7 +19,6 @@ export default defineConfig({
       codeCoverage(on, config);
       return config;
     },
-    baseUrl: 'https://localhost:3002/',
     retries: { runMode: 2, openMode: 0 },
   },
   component: {

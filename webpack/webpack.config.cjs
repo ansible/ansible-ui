@@ -168,25 +168,11 @@ module.exports = function (env, argv) {
     },
     devServer: {
       static: 'ansible',
-      port: 3002,
       historyApiFallback: true,
       compress: true,
       hot: true,
       server: 'https',
-      proxy: {
-        '/api': {
-          target: 'https://localhost:3001',
-          secure: false,
-        },
-        '/websocket/': {
-          target: 'https://localhost:3001',
-          secure: false,
-          ws: true,
-        },
-      },
-      devMiddleware: {
-        writeToDisk: true,
-      },
+      devMiddleware: { writeToDisk: true },
     },
     devtool: isProduction ? 'source-map' : 'eval-source-map',
     watchOptions: {
