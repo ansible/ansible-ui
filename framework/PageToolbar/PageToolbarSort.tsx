@@ -1,9 +1,5 @@
 import {
   Button,
-  Select,
-  SelectOption,
-  SelectOptionObject,
-  SelectVariant,
   Split,
   ToolbarGroup,
   ToolbarItem,
@@ -17,7 +13,8 @@ import {
   SortNumericDownAltIcon,
   SortNumericUpIcon,
 } from '@patternfly/react-icons';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
+import { PageSingleSelect } from '../PageInputs/PageSingleSelect';
 import { ITableColumn } from '../PageTable/PageTableColumn';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 
@@ -109,36 +106,29 @@ function ToolbarSortSelect(props: {
   setSortDirection?: (sortDirection: 'asc' | 'desc') => void;
   sortOptions: PageTableSortOption[];
 }) {
-  const { sortOptions: options, sort, setSort, setSortDirection } = props;
-  const [open, setOpen] = useState(false);
+  const { sortOptions, sort, setSort, setSortDirection } = props;
   const onSelect = useCallback(
-    (e: unknown, value: string | SelectOptionObject) => {
-      const sortOption = options.find((option) => option.value === value.toString());
-      if (sortOption && sort !== value.toString() && sortOption.defaultDirection) {
-        setSortDirection?.(sortOption.defaultDirection);
+    (value: string | undefined) => {
+      if (value) {
+        const sortOption = sortOptions.find((option) => option.value === value);
+        if (sortOption && sort !== value && sortOption.defaultDirection) {
+          setSortDirection?.(sortOption.defaultDirection);
+        }
+        setSort?.(value);
       }
-      setSort?.(value.toString());
-      setOpen(false);
     },
-    [options, setSort, setSortDirection, sort]
+    [sortOptions, setSort, setSortDirection, sort]
   );
   return (
-    <Select
-      variant={SelectVariant.single}
-      isOpen={open}
-      onToggle={setOpen}
-      selections={sort}
+    <PageSingleSelect
+      placeholder=""
+      value={sort}
       onSelect={onSelect}
-      // ZIndex 400 is needed for PF table sticky headers
-      style={{ zIndex: open ? 400 : 0 }}
-      hasPlaceholderStyle
-    >
-      {options.map((option) => (
-        <SelectOption id={option.value} key={option.value} value={option.value}>
-          {option.label}
-        </SelectOption>
-      ))}
-    </Select>
+      options={sortOptions.map((option) => ({
+        label: option.label,
+        value: option.value,
+      }))}
+    />
   );
 }
 
