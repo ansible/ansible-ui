@@ -1,11 +1,11 @@
 import { PageMultiSelect } from '../../PageInputs/PageMultiSelect';
-import { IPageSelectOption } from '../../PageInputs/PageSelectOption';
+import { PageSelectOption } from '../../PageInputs/PageSelectOption';
 import { ToolbarFilterType } from '../PageToolbarFilter';
 import { ToolbarFilterCommon } from './ToolbarFilterCommon';
 
 export interface IToolbarMultiSelectFilter extends ToolbarFilterCommon {
   type: ToolbarFilterType.MultiSelect;
-  options: IPageSelectOption<string>[];
+  options: PageSelectOption<string>[];
 }
 
 export function ToolbarMultiSelectFilter(props: {
@@ -13,7 +13,7 @@ export function ToolbarMultiSelectFilter(props: {
   placeholder: string;
   filterValues: string[] | undefined;
   setFilterValues: (setter: (prevValues: string[] | undefined) => string[] | undefined) => void;
-  options: IPageSelectOption<string>[];
+  options: PageSelectOption<string>[];
 }) {
   return (
     <PageMultiSelect<string>

@@ -33,7 +33,7 @@ Cypress.Commands.add(
   (filterType: RegExp | string, selectLabel: RegExp | string) => {
     cy.selectToolbarFilterType(filterType);
     cy.getFiltersToolbarItem().within(() => {
-      cy.get('.pf-c-select').click();
+      cy.get('.pf-c-menu-toggle').eq(1).click();
       cy.contains(selectLabel).click();
     });
   }
@@ -44,7 +44,7 @@ Cypress.Commands.add(
   (filterType: RegExp | string, selectLabel: RegExp | string) => {
     cy.selectToolbarFilterType(filterType);
     cy.getFiltersToolbarItem().within(() => {
-      cy.get('.pf-c-select').click();
+      cy.get('.pf-c-menu-toggle').eq(1).click();
       cy.contains(selectLabel).click();
     });
     cy.get('tbody').click();

@@ -3,7 +3,7 @@ import { Select, SelectList, SelectOption } from '@patternfly/react-core/next';
 import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import './PageSelect.css';
-import { PageSelectOption, getPageSelectOptions } from './PageSelectOption';
+import { PageSelectOption } from './PageSelectOption';
 import './PageSingleSelect.css';
 
 export interface PageSingleSelectProps<ValueT> {
@@ -76,10 +76,8 @@ export function PageSingleSelect<
   ValueT
 >(props: PageSingleSelectProps<ValueT>) {
   const { t } = useTranslation();
-  const { id, icon, value, onSelect, placeholder } = props;
+  const { id, icon, value, onSelect, options, placeholder } = props;
   const [isOpen, setIsOpen] = useState(false);
-
-  const options = getPageSelectOptions<ValueT>(props.options);
 
   const selectedOption = useMemo(
     () => options.find((option) => value === option.value),
@@ -182,7 +180,7 @@ export function PageSingleSelect<
           <SelectList className="page-select-list">
             {visibleOptions.map((option) => (
               <SelectOption
-                key={option.key}
+                key={option.key !== undefined ? option.key : option.label}
                 itemId={option.key !== undefined ? option.key : option.label}
                 description={option.description}
               >

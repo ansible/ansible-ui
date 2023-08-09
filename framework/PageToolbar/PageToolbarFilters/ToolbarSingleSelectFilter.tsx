@@ -1,11 +1,11 @@
-import { IPageSelectOption } from '../../PageInputs/PageSelectOption';
+import { PageSelectOption } from '../../PageInputs/PageSelectOption';
 import { PageSingleSelect } from '../../PageInputs/PageSingleSelect';
 import { ToolbarFilterType } from '../PageToolbarFilter';
 import { ToolbarFilterCommon } from './ToolbarFilterCommon';
 
 export interface IToolbarSingleSelectFilter extends ToolbarFilterCommon {
   type: ToolbarFilterType.SingleSelect;
-  options: IPageSelectOption<string>[];
+  options: PageSelectOption<string>[];
   isRequired?: boolean;
 }
 
@@ -14,7 +14,7 @@ export function ToolbarSingleSelectFilter(props: {
   placeholder: string;
   filterValues: string[] | undefined;
   setFilterValues: (setter: (prevValues: string[] | undefined) => string[] | undefined) => void;
-  options: IPageSelectOption<string>[];
+  options: PageSelectOption<string>[];
   isRequired?: boolean;
 }) {
   const value = props.filterValues?.length === 1 ? props.filterValues[0] : '';
