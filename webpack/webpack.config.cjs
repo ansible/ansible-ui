@@ -167,11 +167,9 @@ module.exports = function (env, argv) {
       ],
     },
     devServer: {
-      static: 'ansible',
       historyApiFallback: true,
       compress: true,
       hot: true,
-      server: 'https',
       devMiddleware: { writeToDisk: true },
     },
     devtool: isProduction ? 'source-map' : 'eval-source-map',

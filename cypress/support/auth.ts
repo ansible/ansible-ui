@@ -8,28 +8,14 @@ Cypress.Commands.add(
     window.localStorage.setItem('disclaimer', 'true');
 
     if (Cypress.env('TEST_STANDALONE') === true) {
-      if (serverType === AutomationServerType.EDA) {
-        // Standalone EDA login
-        cy.visit(`/login`, {
-          retryOnStatusCodeFailure: true,
-          retryOnNetworkFailure: true,
-        });
-        cy.typeInputByLabel(/^Username$/, username);
-        cy.typeInputByLabel(/^Password$/, password);
-        cy.get('button[type=submit]').click();
-        return;
-      } else if (serverType === AutomationServerType.AWX) {
-        // Standalone AWX login
-        cy.visit(`/ui_next`, {
-          retryOnStatusCodeFailure: true,
-          retryOnNetworkFailure: true,
-        });
-        cy.typeInputByLabel(/^Username$/, username);
-        cy.typeInputByLabel(/^Password$/, password);
-        cy.get('button[type=submit]').click();
-        cy.contains('a', 'Return to dashboard').click();
-        return;
-      }
+      cy.visit(`/login`, {
+        retryOnStatusCodeFailure: true,
+        retryOnNetworkFailure: true,
+      });
+      cy.typeInputByLabel(/^Username$/, username);
+      cy.typeInputByLabel(/^Password$/, password);
+      cy.get('button[type=submit]').click();
+      return;
     }
 
     cy.visit(`/automation-servers`, {
