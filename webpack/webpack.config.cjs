@@ -2,12 +2,42 @@ const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'
 const CssMinimizerWebpackPlugin = require('css-minimizer-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const path = require('path');
 const webpack = require('webpack');
 const { GenerateSW } = require('workbox-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const MergeJsonWebpackPlugin = require('merge-jsons-webpack-plugin');
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
+const CompressionPlugin = require('compression-webpack-plugin');
+
+switch (process.env.UI_MODE) {
+  case 'AWX':
+  case 'HUB':
+  case 'EDA':
+    break;
+  case '':
+  case undefined:
+    console.error('UI_MODE is not set');
+    exit(1);
+    break;
+  default:
+    console.error('UI_MODE is not valid');
+    exit(1);
+    break;
+}
+
+if (!process.env.PRODUCT) {
+  switch (process.env.UI_MODE) {
+    case 'AWX':
+      process.env.PRODUCT = 'Automation Controller';
+      break;
+    case 'HUB':
+      process.env.PRODUCT = 'Automation Hub';
+      break;
+    case 'EDA':
+      process.env.PRODUCT = 'Event Driven Automation';
+      break;
+  }
+}
 
 module.exports = function (env, argv) {
   var isProduction = argv.mode === 'production' || argv.mode === undefined;
@@ -67,9 +97,7 @@ module.exports = function (env, argv) {
           ? JSON.stringify('')
           : JSON.stringify(process.env.DELAY ?? ''),
         'process.env.PWA': env.pwa ? JSON.stringify('true') : JSON.stringify(''),
-
-        'process.env.UI_MODE': env.UI_MODE ? JSON.stringify(env.UI_MODE) : undefined,
-
+        'process.env.UI_MODE': JSON.stringify(process.env.UI_MODE),
         'process.env.AWX_ROUTE_PREFIX': env.awx_route_prefix
           ? JSON.stringify(env.awx_route_prefix)
           : JSON.stringify('/ui_next'),
@@ -93,7 +121,7 @@ module.exports = function (env, argv) {
         });
       }),
       new HtmlWebpackPlugin({
-        title: process.env.PRODUCT ? process.env.PRODUCT : 'AnsibleDev',
+        title: process.env.PRODUCT,
         template: 'frontend/index.html',
       }),
       new MiniCssExtractPlugin({
@@ -121,12 +149,12 @@ module.exports = function (env, argv) {
           },
         ],
       }),
+      new CompressionPlugin(),
     ].filter(Boolean),
     output: {
       clean: true,
       filename: isProduction ? '[contenthash].js' : undefined,
-      path: path.resolve(__dirname, 'build/public'),
-      publicPath: isProduction && env.awx ? '/static/awx/' : '/',
+      publicPath: '/',
     },
     optimization: {
       minimizer: [
