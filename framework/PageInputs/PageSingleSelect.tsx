@@ -27,6 +27,14 @@ export interface PageSingleSelectProps<ValueT> {
 
   /** The footer to show at the bottom of the dropdown. */
   footer?: ReactNode;
+
+  /**
+   * Whether the select required an option to be selected.
+   *
+   * If true, the select will autoselect the first option,
+   * else the select will contain a clear button.
+   */
+  isRequired?: boolean;
 }
 
 /**

@@ -121,14 +121,18 @@ export function PageMultiSelect<
         {selectedOptions.length > 0 ? (
           <>
             {variant === 'count' ? (
-              <Chip isReadOnly={disableClearSelection} onClick={() => onSelect(() => [])}>
+              <Chip
+                isReadOnly={disableClearSelection}
+                onClick={() => onSelect(() => [])}
+                style={{ marginTop: -2, marginBottom: -2 }}
+              >
                 {selectedOptions.length}
               </Chip>
             ) : (
               <>
                 <ChipGroup>
                   {selectedOptions.map((option) => (
-                    <Chip key={option.label} isReadOnly>
+                    <Chip key={option.label} isReadOnly style={{ marginTop: -2, marginBottom: -2 }}>
                       {option.label}
                     </Chip>
                   ))}

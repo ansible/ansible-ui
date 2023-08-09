@@ -1,12 +1,11 @@
-import React from 'react';
 import {
-  ToolbarGroup,
   SelectOptionObject,
-  ToolbarGroupVariant,
   SelectVariant,
+  ToolbarGroup,
+  ToolbarGroupVariant,
 } from '@patternfly/react-core';
-import { ToolbarFilterCommon } from './ToolbarFilterCommon';
-import { ToolbarSelectFilter } from './ToolbarSelectFilter';
+import { ToolbarFilterCommon } from '../../../../../framework/PageToolbar/PageToolbarFilters/ToolbarFilterCommon';
+import { ToolbarSelectFilterDeprecated } from './ToolbarSelectFilterDeprecated';
 import { ToolbarDateFilter } from './ToolbarDateFilter';
 
 export interface IToolbarDateFilter extends ToolbarFilterCommon {
@@ -38,7 +37,7 @@ export function ToolbarDateFilterWithOptions(props: {
   return (
     <ToolbarGroup variant={ToolbarGroupVariant['filter-group']}>
       {props.values.granularity && (
-        <ToolbarSelectFilter
+        <ToolbarSelectFilterDeprecated
           values={[props.filters.granularity.toString()]}
           options={props.values.quick_date_range}
           addFilter={(value) => props.setFilters('granularity', value)}
@@ -46,7 +45,7 @@ export function ToolbarDateFilterWithOptions(props: {
           variant={SelectVariant.single}
         />
       )}
-      <ToolbarSelectFilter
+      <ToolbarSelectFilterDeprecated
         values={[props.filters.quick_date_range.toString()]}
         options={props.values.quick_date_range}
         addFilter={(value) => props.setFilters('quick_date_range', value)}

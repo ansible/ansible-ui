@@ -1,39 +1,10 @@
 import { Select, SelectOption, SelectOptionObject, SelectVariant } from '@patternfly/react-core';
 import { useEffect, useState } from 'react';
-import { ToolbarFilterType } from '../PageToolbarFilter';
-import { ToolbarFilterCommon } from './ToolbarFilterCommon';
-import './ToolbarSelectFilter.css';
 
-/** A filter that allows the user to select a single option from a list of options. */
-export interface IToolbarSingleSelectFilter extends ToolbarFilterCommon {
-  type: ToolbarFilterType.SingleSelect;
-  options: IToolbarFilterOption[];
-  isRequired?: boolean; // Some pinned filters can be required such as a date range
-  defaultValue?: string; // For required filters, the default value to use, otherwise, the first option is used
-  hasSearch?: boolean;
-  onSearchTextChange?: (searchText: string) => void;
-}
-
-/** A filter that allows the user to select multiple options from a list of options. */
-export interface IToolbarMultiSelectFilter extends ToolbarFilterCommon {
-  type: ToolbarFilterType.MultiSelect;
-  options: IToolbarFilterOption[];
-  hasSearch?: boolean;
-  onSearchTextChange?: (searchText: string) => void;
-}
-
-export interface IToolbarFilterOption {
-  /** The label to show for the option. */
-  label: string;
-
-  /** The description to show for the option. */
-  description?: string;
-
-  /** The value to use for the option. */
-  value: string;
-}
-
-export function ToolbarSelectFilter(props: {
+/**
+ * @deprecated
+ */
+export function ToolbarSelectFilterDeprecated(props: {
   id?: string;
   addFilter: (value: string) => void;
   removeFilter: (value: string) => void;
@@ -68,7 +39,13 @@ export function ToolbarSelectFilter(props: {
   };
 
   // render options is user for rendering both the options in the select and the select filter
-  const renderOptions = (options: IToolbarFilterOption[]) =>
+  const renderOptions = (
+    options: {
+      label: string;
+      description?: string;
+      value: string;
+    }[]
+  ) =>
     options.map((option) => (
       <SelectOption
         id={option.value}

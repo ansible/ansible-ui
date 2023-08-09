@@ -1,11 +1,11 @@
-import React, { FunctionComponent } from 'react';
 import { ToolbarToggleGroup } from '@patternfly/react-core';
 import { FilterIcon } from '@patternfly/react-icons';
+import { FunctionComponent } from 'react';
 
-import { optionsForCategories } from './constants';
 import { FilterCategoriesGroup, SortByGroup } from './Groups';
+import { ToolbarDateFilterWithOptions } from './ToolbarDateFilterWithOptions';
+import { optionsForCategories } from './constants';
 import { ApiOptionsType, AttributeType, SetValues } from './types';
-import { ToolbarDateFilterWithOptions } from '../../../../../framework/PageTable/PageToolbar/PageToolbarFilterTypes/ToolbarDateFilterWithOptions';
 
 interface Props {
   categories: ApiOptionsType;

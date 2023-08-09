@@ -45,6 +45,10 @@ import { IPageAction, PageActionSelection } from '../PageActions/PageAction';
 import { PageActions } from '../PageActions/PageActions';
 import { PageBody } from '../PageBody';
 import { PageDetailsFromColumns } from '../PageDetails/PageDetailsFromColumns';
+import { PageTableViewType, PageTableViewTypeE } from '../PageToolbar/PageTableViewType';
+import { PageToolbar } from '../PageToolbar/PageToolbar';
+import { IFilterState, IToolbarFilter } from '../PageToolbar/PageToolbarFilter';
+import { usePageToolbarSortOptionsFromColumns } from '../PageToolbar/PageToolbarSort';
 import { useSettings } from '../Settings';
 import { EmptyStateError } from '../components/EmptyStateError';
 import { EmptyStateNoData } from '../components/EmptyStateNoData';
@@ -63,10 +67,6 @@ import {
   useVisibleTableColumns,
 } from './PageTableColumn';
 import { PageTableList } from './PageTableList';
-import { PageTableViewType, PageTableViewTypeE } from './PageToolbar/PageTableViewType';
-import { PageTableToolbar } from './PageToolbar/PageToolbar';
-import { IFilterState, IToolbarFilter } from './PageToolbar/PageToolbarFilter';
-import { usePageToolbarSortOptionsFromColumns } from './PageToolbar/PageToolbarSort';
 
 const ScrollDiv = styled.div`
   height: 100%;
@@ -305,7 +305,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
 
   return (
     <>
-      <PageTableToolbar
+      <PageToolbar
         {...props}
         openColumnModal={props.id ? openColumnManagement : undefined}
         showSelect={showSelect}

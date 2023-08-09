@@ -2,7 +2,7 @@ import { Button, DatePicker, ToolbarItem, isValidDate } from '@patternfly/react-
 import { TimesCircleIcon } from '@patternfly/react-icons';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageSingleSelect } from '../../../PageInputs/PageSingleSelect';
+import { PageSingleSelect } from '../../PageInputs/PageSingleSelect';
 import { ToolbarFilterType } from '../PageToolbarFilter';
 import { ToolbarFilterCommon } from './ToolbarFilterCommon';
 

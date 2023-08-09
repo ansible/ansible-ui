@@ -1,7 +1,6 @@
 import getValue from 'get-value';
 import { useEffect, useMemo } from 'react';
 import { ITableColumn } from './PageTable/PageTableColumn';
-import { IToolbarFilter } from './PageTable/PageToolbar/PageToolbarFilter';
 import {
   ISelected,
   useFiltered,
@@ -9,6 +8,7 @@ import {
   useSelectedInMemory,
   useSorted,
 } from './PageTable/useTableItems';
+import { IToolbarFilter } from './PageToolbar/PageToolbarFilter';
 import { IView, useView } from './useView';
 import { compareUnknowns } from './utils/compare';
 
