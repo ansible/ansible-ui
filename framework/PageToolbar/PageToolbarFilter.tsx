@@ -91,16 +91,8 @@ function FiltersToolbarItem(props: PageToolbarFiltersProps) {
             <ToolbarFilterComponent
               id="filter-input"
               filter={selectedFilter}
-              addFilter={(value: string) => {
-                setFilterState?.((filters) => {
-                  let values = filters?.[selectedFilterKey];
-                  if (!values) values = [];
-                  if (!values.includes(value)) values.push(value);
-                  return { ...filters, [selectedFilterKey]: values };
-                });
-              }}
+              filterState={filterState}
               setFilterState={setFilterState}
-              values={filterState?.[selectedFilterKey] ?? []}
             />
           </ToolbarItem>
         </>
@@ -113,7 +105,6 @@ function FiltersToolbarItem(props: PageToolbarFiltersProps) {
             icon={<FilterIcon />}
             options={toolbarFilters.map((filter) => ({
               label: filter.label,
-              // description: filter.description,
               value: filter.key,
             }))}
             placeholder=""
@@ -121,16 +112,8 @@ function FiltersToolbarItem(props: PageToolbarFiltersProps) {
           <ToolbarFilterComponent
             id="filter-input"
             filter={selectedFilter}
-            addFilter={(value: string) => {
-              setFilterState?.((filters) => {
-                let values = filters?.[selectedFilterKey];
-                if (!values) values = [];
-                if (!values.includes(value)) values.push(value);
-                return { ...filters, [selectedFilterKey]: values };
-              });
-            }}
+            filterState={filterState}
             setFilterState={setFilterState}
-            values={filterState?.[selectedFilterKey] ?? []}
           />
         </ToolbarItem>
       )}
@@ -245,19 +228,12 @@ export function PageToolbarFilters(props: PageToolbarFiltersProps) {
 function ToolbarFilterComponent(props: {
   id?: string;
   filter: IToolbarFilter;
-  values: string[];
-  addFilter: (value: string) => void;
+  filterState: IFilterState;
   setFilterState: Dispatch<SetStateAction<IFilterState>>;
 }): JSX.Element {
-  const { filter, values, addFilter, setFilterState } = props;
-  const setValues = useCallback(
-    (values: string[]) => {
-      setFilterState((filters) => {
-        return { ...filters, [filter.key]: values };
-      });
-    },
-    [filter.key, setFilterState]
-  );
+  const { filter, filterState, setFilterState } = props;
+
+  const filterValues = filterState?.[filter.key];
 
   const setFilterValues = useCallback(
     (setter: (prevValues: string[] | undefined) => string[] | undefined) => {
@@ -265,6 +241,18 @@ function ToolbarFilterComponent(props: {
         const newFilters = { ...filters };
         const filterValues = newFilters[filter.key] ?? [];
         newFilters[filter.key] = setter(filterValues);
+        return newFilters;
+      });
+    },
+    [filter.key, setFilterState]
+  );
+
+  const addFilter = useCallback(
+    (value: string) => {
+      setFilterState((filters) => {
+        const newFilters = { ...filters };
+        const filterValues = newFilters[filter.key] ?? [];
+        newFilters[filter.key] = [...filterValues, value];
         return newFilters;
       });
     },
@@ -287,7 +275,7 @@ function ToolbarFilterComponent(props: {
         <ToolbarSingleSelectFilter
           id={props.id ?? filter.key}
           placeholder={filter.placeholder ?? 'TODO'}
-          filterValues={values}
+          filterValues={filterValues}
           setFilterValues={setFilterValues}
           options={filter.options}
           isRequired={filter.isRequired}
@@ -299,7 +287,7 @@ function ToolbarFilterComponent(props: {
         <ToolbarMultiSelectFilter
           id={props.id ?? filter.key}
           placeholder={filter.placeholder ?? 'TODO'}
-          filterValues={values}
+          filterValues={filterValues}
           setFilterValues={setFilterValues}
           options={filter.options}
         />
@@ -311,8 +299,8 @@ function ToolbarFilterComponent(props: {
           id={props.id ?? filter.key}
           label={filter.label}
           placeholder={filter.placeholder ?? ''}
-          values={values}
-          setValues={setValues}
+          filterValues={filterValues}
+          setFilterValues={setFilterValues}
           options={filter.options}
           isRequired={filter.isRequired}
           defaultValue={filter.defaultValue}
