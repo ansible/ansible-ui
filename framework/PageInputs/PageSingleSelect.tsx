@@ -2,7 +2,7 @@ import { MenuToggle, MenuToggleElement, SearchInput } from '@patternfly/react-co
 import { Select, SelectList, SelectOption } from '@patternfly/react-core/next';
 import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import './PageSelect.css';
 import { PageSelectOption, getPageSelectOptions } from './PageSelectOption';
 import './PageSingleSelect.css';
 
@@ -96,7 +96,7 @@ export function PageSingleSelect<
       {selectedOption ? (
         selectedOption.label
       ) : (
-        <SelectPlacedholder>{placeholder}</SelectPlacedholder>
+        <span className="page-select-placeholder">{placeholder}</span>
       )}
     </MenuToggle>
   );
@@ -143,7 +143,7 @@ export function PageSingleSelect<
         toggle={Toggle}
         style={{ zIndex: isOpen ? 9999 : undefined }}
       >
-        <SelectHeader>
+        <div className="page-select-header">
           <SearchInput
             id={id ? `${id}-search` : undefined}
             ref={searchRef}
@@ -154,11 +154,11 @@ export function PageSingleSelect<
               setSearchValue('');
             }}
           />
-        </SelectHeader>
+        </div>
         {visibleOptions.length === 0 ? (
           <div style={{ margin: 16 }}>{t('No results found')}</div>
         ) : (
-          <SelectListStyled>
+          <SelectList className="page-select-list">
             {visibleOptions.map((option) => (
               <SelectOption
                 key={option.key}
@@ -168,29 +168,10 @@ export function PageSingleSelect<
                 {option.label}
               </SelectOption>
             ))}
-          </SelectListStyled>
+          </SelectList>
         )}
-        {props.footer && <SelectFooter>{props.footer}</SelectFooter>}
+        {props.footer && <div className="page-select-footer">{props.footer}</div>}
       </Select>
     </div>
   );
 }
-
-export const SelectPlacedholder = styled.span`
-  opacity: 0.7;
-`;
-
-export const SelectHeader = styled.div`
-  margin: 12px 16px 12px 16px;
-  border-bottom: thin solid var(--pf-global--BorderColor--100);
-`;
-
-export const SelectFooter = styled.div`
-  margin: 12px 16px 12px 16px;
-  border-top: thin solid var(--pf-global--BorderColor--100);
-`;
-
-export const SelectListStyled = styled(SelectList)`
-  overflow: auto;
-  max-height: 45vh;
-`;

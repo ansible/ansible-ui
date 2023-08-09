@@ -1,0 +1,20 @@
+.page-select-header {
+  padding: 12px 16px 12px 16px;
+  border-bottom: thin solid var(--pf-global--BorderColor--100);
+  background-image: linear-gradient(to bottom, #fff1, #fff1);
+}
+
+.page-select-footer {
+  padding: 12px 16px 12px 16px;
+  border-top: thin solid var(--pf-global--BorderColor--100);
+  background-image: linear-gradient(to bottom, #fff1, #fff1);
+}
+
+.page-select-list {
+  overflow: auto;
+  max-height: 45vh;
+}
+
+.page-select-placeholder {
+  opacity: 0.7;
+}

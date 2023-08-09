@@ -5,18 +5,13 @@ import {
   MenuToggleElement,
   SearchInput,
 } from '@patternfly/react-core';
-import { Select, SelectOption } from '@patternfly/react-core/next';
+import { Select, SelectList, SelectOption } from '@patternfly/react-core/next';
 import { TimesIcon } from '@patternfly/react-icons';
 import { ReactNode, Ref, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import './PageMultiSelect.css';
+import './PageSelect.css';
 import { PageSelectOption, getPageSelectOptions } from './PageSelectOption';
-import {
-  SelectFooter,
-  SelectHeader,
-  SelectListStyled,
-  SelectPlacedholder,
-} from './PageSingleSelect';
 
 export interface PageMultiSelectProps<ValueT> {
   /** The ID of the select. */
@@ -146,7 +141,7 @@ export function PageMultiSelect<
             )}
           </>
         ) : (
-          <SelectPlacedholder>{placeholder}</SelectPlacedholder>
+          <span className="page-select-placeholder">{placeholder}</span>
         )}
       </MenuToggle>
     );
@@ -200,7 +195,7 @@ export function PageMultiSelect<
         toggle={Toggle}
         style={{ zIndex: isOpen ? 9999 : undefined }}
       >
-        <SelectHeader>
+        <div className="page-select-header">
           <SearchInput
             id={id ? `${id}-search` : undefined}
             ref={searchRef}
@@ -211,11 +206,11 @@ export function PageMultiSelect<
               setSearchValue('');
             }}
           />
-        </SelectHeader>
+        </div>
         {visibleOptions.length === 0 ? (
           <div style={{ margin: 16 }}>{t('No results found')}</div>
         ) : (
-          <SelectListStyled>
+          <SelectList className="page-select-list">
             {visibleOptions.map((option) => (
               <SelectOption
                 key={option.key}
@@ -231,9 +226,9 @@ export function PageMultiSelect<
                 {option.label}
               </SelectOption>
             ))}
-          </SelectListStyled>
+          </SelectList>
         )}
-        {props.footer && <SelectFooter>{props.footer}</SelectFooter>}
+        {props.footer && <div className="page-select-footer">{props.footer}</div>}
       </Select>
     </div>
   );
