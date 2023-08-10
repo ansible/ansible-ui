@@ -7,6 +7,7 @@ export interface IToolbarSingleSelectFilter extends ToolbarFilterCommon {
   type: ToolbarFilterType.SingleSelect;
   options: PageSelectOption<string>[];
   isRequired?: boolean;
+  placeholder: string;
 }
 
 export function ToolbarSingleSelectFilter(props: {

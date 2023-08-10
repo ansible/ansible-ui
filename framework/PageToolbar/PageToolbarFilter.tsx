@@ -274,7 +274,7 @@ function ToolbarFilterComponent(props: {
       return (
         <ToolbarSingleSelectFilter
           id={props.id ?? filter.key}
-          placeholder={filter.placeholder ?? 'TODO'}
+          placeholder={filter.placeholder}
           filterValues={filterValues}
           setFilterValues={setFilterValues}
           options={filter.options}
@@ -286,7 +286,7 @@ function ToolbarFilterComponent(props: {
       return (
         <ToolbarMultiSelectFilter
           id={props.id ?? filter.key}
-          placeholder={filter.placeholder ?? 'TODO'}
+          placeholder={filter.placeholder}
           filterValues={filterValues}
           setFilterValues={setFilterValues}
           options={filter.options}
