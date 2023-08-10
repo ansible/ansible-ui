@@ -89,7 +89,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        containers: [1]
+        containers: [1, 2]
     steps:
       - name: Check for changes
         id: check
@@ -621,7 +621,7 @@ jobs:
         with:
           install: false
           start: npm run docker:run:eda
-          wait-on: 'https://localhost:4103'
+          wait-on: 'http://localhost:4103'
           record: true
           parallel: true
           config-file: cypress.eda.config.ts
