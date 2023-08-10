@@ -11,7 +11,7 @@ import {
   PageLayout,
 } from '../../../framework';
 import { PageFormGroup } from '../../../framework/PageForm/Inputs/PageFormGroup';
-import { appendTrailingSlash, pulpAPI } from '../api';
+import { appendTrailingSlash, pulpAPI } from '../api/utils';
 import { RouteObj } from '../../Routes';
 import { PageFormExpandableSection } from '../../../framework/PageForm/PageFormExpandableSection';
 import { PageFormFileUpload } from '../../../framework/PageForm/Inputs/PageFormFileUpload';

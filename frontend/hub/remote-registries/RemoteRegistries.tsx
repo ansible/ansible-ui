@@ -6,7 +6,7 @@ import { useRemoteRegistriesActions } from './hooks/useRemoteRegistriesActions';
 import { useRemoteRegistriesColumns } from './hooks/useRemoteRegistriesColumns';
 import { useRemoteRegistryActions } from './hooks/useRemoteRegistryActions';
 import { useRemoteRegistryFilters } from './hooks/useRemoteRegistryFilters';
-import { hubAPI, pulpHrefKeyFn } from '../api';
+import { hubAPI, pulpHrefKeyFn } from '../api/utils';
 
 export function RemoteRegistries() {
   const { t } = useTranslation();
