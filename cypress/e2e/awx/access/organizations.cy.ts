@@ -85,7 +85,7 @@ describe('organizations', () => {
 
   it('navigates to the edit form from the organizations list row item', () => {
     cy.navigateTo(/^Organizations$/);
-    cy.clickTableRowActionIcon(organization.name, /^Edit organization$/);
+    cy.clickTableRowActionIcon(organization.name, 'Edit organization');
     cy.hasTitle(/^Edit Organization$/);
   });
 
