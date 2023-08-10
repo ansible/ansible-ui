@@ -85,7 +85,7 @@ UI projects for [Ansible](https://www.ansible.com).
 
   ```
   HUB_PROTOCOL=http
-  HUB_SERVER=localhost:8043
+  HUB_SERVER=localhost:5001
   ```
 
   ```
@@ -129,7 +129,7 @@ UI projects for [Ansible](https://www.ansible.com).
 
   ```
   EDA_PROTOCOL=http
-  EDA_SERVER=localhost:8043
+  EDA_SERVER=localhost:8000
   ```
 
   ```
