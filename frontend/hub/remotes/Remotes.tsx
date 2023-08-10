@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable } from '../../../framework';
 import { usePulpView } from '../usePulpView';
-import { pulpAPI, pulpHrefKeyFn } from '../api';
+import { pulpAPI, pulpHrefKeyFn } from '../api/utils';
 import { useRemoteActions } from './hooks/useRemoteActions';
 import { useRemoteColumns } from './hooks/useRemoteColumns';
 import { useRemoteFilters } from './hooks/useRemoteFilters';

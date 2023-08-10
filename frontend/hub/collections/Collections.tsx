@@ -27,7 +27,7 @@ import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../framework';
 import { RouteObj } from '../../Routes';
-import { hubAPI, idKeyFn } from '../api';
+import { hubAPI, idKeyFn } from '../api/utils';
 import { useHubView } from '../useHubView';
 import { Collection } from './Collection';
 import { useCollectionActions } from './hooks/useCollectionActions';

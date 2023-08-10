@@ -1,7 +1,7 @@
 /* eslint-disable i18next/no-literal-string */
 import { PageSection } from '@patternfly/react-core';
 import { useState } from 'react';
-import { idKeyFn } from '../../../frontend/hub/api';
+import { idKeyFn } from '../../../frontend/hub/api/utils';
 import { PageToolbar } from '../PageToolbar';
 import {
   IFilterState,

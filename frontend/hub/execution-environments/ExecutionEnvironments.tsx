@@ -6,7 +6,7 @@ import { useExecutionEnvironmentActions } from './hooks/useExecutionEnvironmentA
 import { useExecutionEnvironmentFilters } from './hooks/useExecutionEnvironmentFilters';
 import { useExecutionEnvironmentsActions } from './hooks/useExecutionEnvironmentsActions';
 import { useExecutionEnvironmentsColumns } from './hooks/useExecutionEnvironmentsColumns';
-import { idKeyFn, hubAPI } from '../api';
+import { idKeyFn, hubAPI } from '../api/utils';
 
 export function ExecutionEnvironments() {
   const { t } = useTranslation();

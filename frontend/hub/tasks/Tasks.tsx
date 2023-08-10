@@ -15,7 +15,7 @@ import {
 } from '../../../framework';
 import { RouteObj } from '../../Routes';
 import { StatusCell } from '../../common/Status';
-import { parsePulpIDFromURL, pulpAPI, pulpHrefKeyFn } from '../api';
+import { parsePulpIDFromURL, pulpAPI, pulpHrefKeyFn } from '../api/utils';
 import { usePulpView } from '../usePulpView';
 import { Task } from './Task';
 

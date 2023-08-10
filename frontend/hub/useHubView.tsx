@@ -10,7 +10,7 @@ import {
   useView,
 } from '../../framework';
 import { useFetcher } from '../common/crud/Data';
-import { QueryParams, getQueryString, serverlessURL } from './api';
+import { QueryParams, getQueryString, serverlessURL } from './api/utils';
 
 export interface HubItemsResponse<T extends object> {
   meta: {

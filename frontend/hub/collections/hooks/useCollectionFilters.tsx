@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IToolbarFilter, ToolbarFilterType } from '../../../../framework';
 import { useGet } from '../../../common/crud/useGet';
-import { pulpAPI } from '../../api';
+import { pulpAPI } from '../../api/utils';
 
 export function useCollectionFilters() {
   const { t } = useTranslation();
