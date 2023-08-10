@@ -66,7 +66,7 @@ describe('projects', () => {
     cy.navigateTo(/^Projects$/);
     cy.clickTableRow(project.name);
     cy.hasTitle(project.name);
-    cy.clickPageAction(/^Edit project$/);
+    cy.clickButton(/^Edit project$/);
     cy.hasTitle(/^Edit Project$/);
     cy.typeInputByLabel(/^Name$/, `${project.name} - edited`);
     cy.typeInputByLabel(/^Source Control Branch\/Tag\/Commit$/, 'foobar');
@@ -76,7 +76,7 @@ describe('projects', () => {
   });
   it('can edit a project from the project list row action', () => {
     cy.navigateTo(/^Projects$/);
-    cy.clickTableRowKebabAction(project.name, /^Edit project$/);
+    cy.clickTableRowActionIcon(project.name, 'Edit project');
     cy.hasTitle(/^Edit Project$/);
     cy.clickButton(/^Cancel$/);
     cy.hasTitle(/^Projects$/);

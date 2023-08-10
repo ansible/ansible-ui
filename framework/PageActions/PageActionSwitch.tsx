@@ -15,7 +15,19 @@ export function PageActionSwitch<T extends object>(props: {
   const isDisabled = isPageActionDisabled(action, selectedItem);
 
   const Wrapper = wrapper ?? Fragment;
-  const tooltip = isDisabled ? isDisabled : action.tooltip ? action.tooltip : undefined;
+
+  const isChecked = selectedItem ? action.isSwitchOn(selectedItem) : false;
+
+  const tooltip = isDisabled
+    ? isDisabled
+    : action.tooltip
+    ? action.tooltip
+    : iconOnly
+    ? isChecked
+      ? action.label
+      : action.labelOff ?? action.label
+    : undefined;
+
   const id = useId();
 
   let label: string | undefined = action.label;
@@ -27,8 +39,6 @@ export function PageActionSwitch<T extends object>(props: {
   if (iconOnly && action.showPinnedLabel !== true) {
     labelOff = undefined;
   }
-
-  const isChecked = selectedItem ? action.isSwitchOn(selectedItem) : false;
 
   return (
     <Wrapper>
