@@ -140,11 +140,11 @@ UI projects for [Ansible](https://www.ansible.com).
 
 - Run EDA E2E Tests
 
-  |          Environment | Description                                |
-  | -------------------: | ------------------------------------------ |
+  |          Environment | Description              |
+  | -------------------: | ------------------------ |
   |   CYPRESS_EDA_SERVER | The EDA server.          |
-  | CYPRESS_EDA_USERNAME | The EDA server username.                   |
-  | CYPRESS_EDA_PASSWORD | The EDA server password.                   |
+  | CYPRESS_EDA_USERNAME | The EDA server username. |
+  | CYPRESS_EDA_PASSWORD | The EDA server password. |
 
   ```
   CYPRESS_EDA_SERVER=$EDA_PROTOCOL://$EDA_HOST
