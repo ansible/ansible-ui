@@ -20,6 +20,7 @@ import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../constants';
 import { EdaActivationInstance } from '../interfaces/EdaActivationInstance';
 import { EdaActivationInstanceLog } from '../interfaces/EdaActivationInstanceLog';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
+import { StatusCell } from '../../common/Status';
 
 export function ActivationInstanceDetails() {
   const { t } = useTranslation();
@@ -59,7 +60,9 @@ export function ActivationInstanceDetails() {
           <PageDetail label={t('Name')}>
             {`${activationInstance?.id || ''} - ${activationInstance?.name || ''}`}
           </PageDetail>
-          <PageDetail label={t('Status')}>{activationInstance?.status || ''}</PageDetail>
+          <PageDetail label={t('Status')}>
+            {<StatusCell status={activationInstance?.status || 'unknown'} />}
+          </PageDetail>
           <PageDetail label={t('Start date')}>
             {activationInstance?.started_at ? formatDateString(activationInstance?.started_at) : ''}
           </PageDetail>
