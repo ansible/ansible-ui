@@ -8,3 +8,5 @@
 .DS_Store
 /storybook-static
 .vscode
+/cypress/.nyc_output
+/cypress/coverage

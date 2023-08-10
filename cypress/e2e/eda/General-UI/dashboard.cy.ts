@@ -38,7 +38,7 @@ describe('EDA Dashboard', () => {
   it('checks Ansible header title', () => {
     cy.visit('/eda/dashboard/');
     if (Cypress.env('TEST_STANDALONE') === true) {
-      cy.hasTitle('Welcome to Ansible Automation Platform').should('be.visible');
+      cy.hasTitle('Welcome to Event Driven Automation').should('be.visible');
     } else {
       cy.hasTitle('Welcome to EDA Server').should('be.visible');
     }
@@ -147,7 +147,7 @@ describe('dashboard checks when resources before any resources are created', () 
 
   it('checks the dashboard landing page titles ', () => {
     if (Cypress.env('TEST_STANDALONE') === true) {
-      cy.hasTitle('Welcome to Ansible Automation Platform').should('be.visible');
+      cy.hasTitle('Welcome to Event Driven Automation').should('be.visible');
     } else {
       cy.hasTitle('Welcome to EDA Server').should('be.visible');
     }

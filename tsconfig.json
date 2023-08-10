@@ -31,8 +31,7 @@
     "framework",
     "cypress",
     "proxy",
-    "cypress.config.ts",
-    "cypress.eda.ts",
+    "*.config.ts",
     "cypress.d.ts",
     "i18next-parser.config.cjs"
   ]

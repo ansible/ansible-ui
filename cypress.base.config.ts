@@ -1,10 +1,8 @@
 import codeCoverage from '@cypress/code-coverage/task';
-import { defineConfig } from 'cypress';
 import pkg from 'webpack';
-
 const { DefinePlugin } = pkg;
 
-export default defineConfig({
+export const baseConfig: Cypress.ConfigOptions = {
   viewportWidth: 1600,
   viewportHeight: 1120,
   pageLoadTimeout: 120000,
@@ -76,4 +74,4 @@ export default defineConfig({
     specPattern: ['frontend/**/*.cy.tsx', 'framework/**/*.cy.tsx'],
     supportFile: 'cypress/support/component.tsx',
   },
-});
+};
