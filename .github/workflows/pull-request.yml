@@ -627,8 +627,8 @@ jobs:
           config-file: cypress.eda.config.ts
         env:
           TEST_STANDALONE: true
-          HUB_HOST: ${{ secrets.EDA_HOST }}
-          HUB_PROTOCOL: ${{ secrets.EDA_PROTOCOL }}
+          EDA_HOST: ${{ secrets.EDA_HOST }}
+          EDA_PROTOCOL: ${{ secrets.EDA_PROTOCOL }}
           CYPRESS_AWX_SERVER: ${{ secrets.CYPRESS_AWX_SERVER }}
           CYPRESS_AWX_USERNAME: ${{ secrets.CYPRESS_AWX_USERNAME }}
           CYPRESS_AWX_PASSWORD: ${{ secrets.CYPRESS_AWX_PASSWORD }}

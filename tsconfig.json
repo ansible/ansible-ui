@@ -30,7 +30,6 @@
     "frontend",
     "framework",
     "cypress",
-    "proxy",
     "*.config.ts",
     "cypress.d.ts",
     "i18next-parser.config.cjs"

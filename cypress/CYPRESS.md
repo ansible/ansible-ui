@@ -16,19 +16,12 @@ Cypress is being used for both end-to-end tests and component tests.
 
 The Cypress E2E tests run against a live backend API.
 
-```mermaid
-graph LR;
-    cypress --> frontend
-    frontend --> proxy
-    proxy --> api
-```
-
 ### E2E Getting started
 
 1. Setup Environment Variables
    <br>The E2E tests need a live API to test against. The following environment variables can be used to setup the E2E test server.
 
-   ##### AWX
+##### AWX
 
    | Environment Variable   | Description                                                                         |
    | ---------------------- | ----------------------------------------------------------------------------------- |
@@ -38,7 +31,7 @@ graph LR;
 
    > NOTE: Running AWX API locally defaults to <https://localhost:8043> which easily allows running E2E test against it.
 
-   ##### EDA
+##### EDA
 
    | Environment Variable      | Description                                                                                                                      |
    | ------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
@@ -47,13 +40,13 @@ graph LR;
    | `CYPRESS_EDA_PASSWORD`    | password for logging into the EDA server. `Default: testpass`                                                                    |
    | `CYPRESS_TEST_STANDALONE` | flag to indicate if UI should be tested standalone. (Login via route `/login` instead of `/automation-servers`) `Default: false` |
 
-2. Run the Ansible-UI frontend and proxy
+1. Run the Ansible-UI frontend
 
    ```
    npm start
    ```
 
-3. Run Cypress
+2. Run Cypress
 
    Run Cypress E2E tests headless
 
