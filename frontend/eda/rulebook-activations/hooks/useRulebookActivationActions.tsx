@@ -43,8 +43,7 @@ export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivatio
         selection: PageActionSelection.Single,
         icon: RedoIcon,
         label: t('Restart rulebook activation'),
-        isHidden: (activation: EdaRulebookActivation) =>
-          !activation.is_enabled || activation.restart_policy !== 'always',
+        isHidden: (activation: EdaRulebookActivation) => !activation.is_enabled,
         onClick: (activation: EdaRulebookActivation) => restartActivations([activation]),
       },
       {
