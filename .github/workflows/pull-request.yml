@@ -54,6 +54,241 @@ jobs:
         with:
           paths: framework
 
+  # checks:
+  #   name: ESLint - Prettier - TSC
+  #   runs-on: ubuntu-latest
+  #   timeout-minutes: 10
+  #   needs: packages
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #       with:
+  #         fetch-depth: 1
+  #     - uses: actions/setup-node@v3
+  #       with:
+  #         node-version: 18
+  #     - name: PreCache
+  #       run: npm version 0.0.0 --no-git-tag-version
+  #     - name: Cache dependencies
+  #       id: cache
+  #       uses: actions/cache@v3
+  #       with:
+  #         path: |
+  #           ./node_modules
+  #           /home/runner/.cache/Cypress
+  #         key: modules-${{ hashFiles('package-lock.json') }}
+  #     - name: Install dependencies
+  #       if: steps.cache.outputs.cache-hit != 'true'
+  #       run: npm ci
+  #     - run: npm run checks
+
+  # awx-cct:
+  #   name: AWX CCT
+  #   runs-on: ubuntu-latest
+  #   timeout-minutes: 14
+  #   needs: packages
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       containers: [1]
+  #   steps:
+  #     - name: Check for changes
+  #       id: check
+  #       run: echo "skip=${{ needs.packages.outputs.awx != 'true' }}" >> "$GITHUB_OUTPUT"
+  #     - name: Checkout
+  #       if: steps.check.outputs.skip != 'true'
+  #       uses: actions/checkout@v3
+  #       with:
+  #         fetch-depth: 1
+  #     - name: Setup Node
+  #       if: steps.check.outputs.skip != 'true'
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: 18
+  #     - name: PreCache
+  #       if: steps.check.outputs.skip != 'true'
+  #       run: npm version 0.0.0 --no-git-tag-version
+  #     - name: Cache dependencies
+  #       if: steps.check.outputs.skip != 'true'
+  #       id: cache
+  #       uses: actions/cache@v3
+  #       with:
+  #         path: |
+  #           ./node_modules
+  #           /home/runner/.cache/Cypress
+  #         key: modules-${{ hashFiles('package-lock.json') }}
+  #     - name: Install dependencies
+  #       if: steps.cache.outputs.cache-hit != 'true' && steps.check.outputs.skip != 'true'
+  #       run: npm ci
+  #     - name: Cypress
+  #       if: steps.check.outputs.skip != 'true'
+  #       uses: cypress-io/github-action@v5
+  #       with:
+  #         component: true
+  #         install: false
+  #         record: true
+  #         parallel: true
+  #         spec: frontend/awx/**/*.cy.{js,jsx,ts,tsx}
+  #       env:
+  #         CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_AWX_CCT_PROJECT_ID }}
+  #         CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_AWX_CCT_RECORD_KEY }}
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # eda-cct:
+  #   name: EDA CCT
+  #   runs-on: ubuntu-latest
+  #   timeout-minutes: 14
+  #   needs: packages
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       containers: [1]
+  #   steps:
+  #     - name: Check for changes
+  #       id: check
+  #       run: echo "skip=${{ needs.packages.outputs.eda != 'true' }}" >> "$GITHUB_OUTPUT"
+  #     - name: Checkout
+  #       if: steps.check.outputs.skip != 'true'
+  #       uses: actions/checkout@v3
+  #       with:
+  #         fetch-depth: 1
+  #     - name: Setup Node
+  #       if: steps.check.outputs.skip != 'true'
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: 18
+  #     - name: PreCache
+  #       if: steps.check.outputs.skip != 'true'
+  #       run: npm version 0.0.0 --no-git-tag-version
+  #     - name: Cache dependencies
+  #       if: steps.check.outputs.skip != 'true'
+  #       id: cache
+  #       uses: actions/cache@v3
+  #       with:
+  #         path: |
+  #           ./node_modules
+  #           /home/runner/.cache/Cypress
+  #         key: modules-${{ hashFiles('package-lock.json') }}
+  #     - name: Install dependencies
+  #       if: steps.cache.outputs.cache-hit != 'true' && steps.check.outputs.skip != 'true'
+  #       run: npm ci
+  #     - name: Cypress
+  #       if: steps.check.outputs.skip != 'true'
+  #       uses: cypress-io/github-action@v5
+  #       with:
+  #         component: true
+  #         install: false
+  #         record: true
+  #         parallel: true
+  #         spec: frontend/eda/**/*.cy.{js,jsx,ts,tsx}
+  #       env:
+  #         CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_EDA_CCT_PROJECT_ID }}
+  #         CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_EDA_CCT_RECORD_KEY }}
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # hub-cct:
+  #   name: HUB CCT
+  #   runs-on: ubuntu-latest
+  #   timeout-minutes: 14
+  #   needs: packages
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       containers: [1]
+  #   steps:
+  #     - name: Check for changes
+  #       id: check
+  #       run: echo "skip=${{ needs.packages.outputs.hub != 'true' }}" >> "$GITHUB_OUTPUT"
+  #     - name: Checkout
+  #       if: steps.check.outputs.skip != 'true'
+  #       uses: actions/checkout@v3
+  #       with:
+  #         fetch-depth: 1
+  #     - name: Setup node
+  #       if: steps.check.outputs.skip != 'true'
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: 18
+  #     - name: PreCache
+  #       if: steps.check.outputs.skip != 'true'
+  #       run: npm version 0.0.0 --no-git-tag-version
+  #     - name: Cache dependencies
+  #       if: steps.check.outputs.skip != 'true'
+  #       id: cache
+  #       uses: actions/cache@v3
+  #       with:
+  #         path: |
+  #           ./node_modules
+  #           /home/runner/.cache/Cypress
+  #         key: modules-${{ hashFiles('package-lock.json') }}
+  #     - name: Install dependencies
+  #       if: steps.cache.outputs.cache-hit != 'true' && steps.check.outputs.skip != 'true'
+  #       run: npm ci
+  #     - name: Cypress
+  #       if: steps.check.outputs.skip != 'true'
+  #       uses: cypress-io/github-action@v5
+  #       with:
+  #         component: true
+  #         install: false
+  #         record: true
+  #         parallel: true
+  #         spec: frontend/hub/**/*.cy.{js,jsx,ts,tsx}
+  #       env:
+  #         CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_HUB_CCT_PROJECT_ID }}
+  #         CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_HUB_CCT_RECORD_KEY }}
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # afw-cct:
+  #   name: AFW CCT
+  #   runs-on: ubuntu-latest
+  #   timeout-minutes: 14
+  #   needs: packages
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       containers: [1]
+  #   steps:
+  #     - name: Check for changes
+  #       id: check
+  #       run: echo "skip=${{ needs.packages.outputs.afw != 'true' }}" >> "$GITHUB_OUTPUT"
+  #     - name: Checkout
+  #       if: steps.check.outputs.skip != 'true'
+  #       uses: actions/checkout@v3
+  #       with:
+  #         fetch-depth: 1
+  #     - name: Setup Node
+  #       if: steps.check.outputs.skip != 'true'
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: 18
+  #     - name: PreCache
+  #       if: steps.check.outputs.skip != 'true'
+  #       run: npm version 0.0.0 --no-git-tag-version
+  #     - name: Cache dependencies
+  #       if: steps.check.outputs.skip != 'true'
+  #       id: cache
+  #       uses: actions/cache@v3
+  #       with:
+  #         path: |
+  #           ./node_modules
+  #           /home/runner/.cache/Cypress
+  #         key: modules-${{ hashFiles('package-lock.json') }}
+  #     - name: Install dependencies
+  #       if: steps.check.outputs.skip != 'true' && steps.cache.outputs.cache-hit != 'true'
+  #       run: npm ci
+  #     - name: Cypress
+  #       if: steps.check.outputs.skip != 'true'
+  #       uses: cypress-io/github-action@v5
+  #       with:
+  #         component: true
+  #         install: false
+  #         record: true
+  #         parallel: true
+  #         spec: framework/**/*.cy.{js,jsx,ts,tsx}
+  #       env:
+  #         CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_AFW_CCT_PROJECT_ID }}
+  #         CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_AFW_CCT_RECORD_KEY }}
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   awx-ui-image:
     name: AWX UI Image
     runs-on: ubuntu-latest
@@ -64,11 +299,14 @@ jobs:
         id: check
         run: echo "skip=${{ needs.packages.outputs.awx != 'true' }}" >> "$GITHUB_OUTPUT"
       - uses: actions/checkout@v3
+        if: steps.check.outputs.skip != 'true'
         with:
           fetch-depth: 1
       - name: PreCache
+        if: steps.check.outputs.skip != 'true'
         run: npm version 0.0.0 --no-git-tag-version
       - name: Cache dependencies
+        if: steps.check.outputs.skip != 'true' && steps.cache.outputs.cache-hit != 'true'
         id: cache
         uses: actions/cache@v3
         with:
@@ -80,272 +318,20 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
       - name: NPM Build
+        if: steps.check.outputs.skip != 'true'
         run: npm run build:awx
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
       - name: Build Image
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          target: awx-ui
-          tags: awx-ui
-          load: true
+        if: steps.check.outputs.skip != 'true'
+        run: npm run docker:build:awx
       - name: Save Image
+        if: steps.check.outputs.skip != 'true'
         run: docker save awx-ui > awx-ui.tar
       - name: Upload Image
+        if: steps.check.outputs.skip != 'true'
         uses: actions/upload-artifact@v3
         with:
           name: awx-ui.tar
           path: awx-ui.tar
-
-  checks:
-    name: ESLint - Prettier - TSC
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    needs: packages
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 1
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
-      - name: PreCache
-        run: npm version 0.0.0 --no-git-tag-version
-      - name: Cache dependencies
-        id: cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            ./node_modules
-            /home/runner/.cache/Cypress
-          key: modules-${{ hashFiles('package-lock.json') }}
-      - name: Install dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: npm ci
-      - run: npm run checks
-
-  awx-cct:
-    name: AWX CCT
-    runs-on: ubuntu-latest
-    timeout-minutes: 14
-    needs: packages
-    strategy:
-      fail-fast: false
-      matrix:
-        containers: [1]
-    steps:
-      - name: Check for changes
-        id: check
-        run: echo "skip=${{ needs.packages.outputs.awx != 'true' }}" >> "$GITHUB_OUTPUT"
-      - name: Skip job
-        if: steps.check.outputs.skip == 'true'
-        run: echo "No build required"
-      - name: Checkout
-        if: steps.check.outputs.skip != 'true'
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 1
-      - name: Setup Node
-        if: steps.check.outputs.skip != 'true'
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-      - name: PreCache
-        if: steps.check.outputs.skip != 'true'
-        run: npm version 0.0.0 --no-git-tag-version
-      - name: Cache dependencies
-        if: steps.check.outputs.skip != 'true'
-        id: cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            ./node_modules
-            /home/runner/.cache/Cypress
-          key: modules-${{ hashFiles('package-lock.json') }}
-      - name: Install dependencies
-        if: steps.cache.outputs.cache-hit != 'true' && steps.check.outputs.skip != 'true'
-        run: npm ci
-      - name: Cypress
-        if: steps.check.outputs.skip != 'true'
-        uses: cypress-io/github-action@v5
-        with:
-          component: true
-          install: false
-          record: true
-          parallel: true
-          spec: frontend/awx/**/*.cy.{js,jsx,ts,tsx}
-        env:
-          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_AWX_CCT_PROJECT_ID }}
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_AWX_CCT_RECORD_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  eda-cct:
-    name: EDA CCT
-    runs-on: ubuntu-latest
-    timeout-minutes: 14
-    needs: packages
-    strategy:
-      fail-fast: false
-      matrix:
-        containers: [1]
-    steps:
-      - name: Check for changes
-        id: check
-        run: echo "skip=${{ needs.packages.outputs.eda != 'true' }}" >> "$GITHUB_OUTPUT"
-      - name: Skip job
-        if: steps.check.outputs.skip == 'true'
-        run: echo "No build required"
-      - name: Checkout
-        if: steps.check.outputs.skip != 'true'
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 1
-      - name: Setup Node
-        if: steps.check.outputs.skip != 'true'
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-      - name: PreCache
-        if: steps.check.outputs.skip != 'true'
-        run: npm version 0.0.0 --no-git-tag-version
-      - name: Cache dependencies
-        if: steps.check.outputs.skip != 'true'
-        id: cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            ./node_modules
-            /home/runner/.cache/Cypress
-          key: modules-${{ hashFiles('package-lock.json') }}
-      - name: Install dependencies
-        if: steps.cache.outputs.cache-hit != 'true' && steps.check.outputs.skip != 'true'
-        run: npm ci
-      - name: Cypress
-        if: steps.check.outputs.skip != 'true'
-        uses: cypress-io/github-action@v5
-        with:
-          component: true
-          install: false
-          record: true
-          parallel: true
-          spec: frontend/eda/**/*.cy.{js,jsx,ts,tsx}
-        env:
-          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_EDA_CCT_PROJECT_ID }}
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_EDA_CCT_RECORD_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  hub-cct:
-    name: HUB CCT
-    runs-on: ubuntu-latest
-    timeout-minutes: 14
-    needs: packages
-    strategy:
-      fail-fast: false
-      matrix:
-        containers: [1]
-    steps:
-      - name: Check for changes
-        id: check
-        run: echo "skip=${{ needs.packages.outputs.hub != 'true' }}" >> "$GITHUB_OUTPUT"
-      - name: Skip job
-        if: steps.check.outputs.skip == 'true'
-        run: echo "No build required"
-      - name: Checkout
-        if: steps.check.outputs.skip != 'true'
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 1
-      - name: Setup node
-        if: steps.check.outputs.skip != 'true'
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-      - name: PreCache
-        if: steps.check.outputs.skip != 'true'
-        run: npm version 0.0.0 --no-git-tag-version
-      - name: Cache dependencies
-        if: steps.check.outputs.skip != 'true'
-        id: cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            ./node_modules
-            /home/runner/.cache/Cypress
-          key: modules-${{ hashFiles('package-lock.json') }}
-      - name: Install dependencies
-        if: steps.cache.outputs.cache-hit != 'true' && steps.check.outputs.skip != 'true'
-        run: npm ci
-      - name: Cypress
-        if: steps.check.outputs.skip != 'true'
-        uses: cypress-io/github-action@v5
-        with:
-          component: true
-          install: false
-          record: true
-          parallel: true
-          spec: frontend/hub/**/*.cy.{js,jsx,ts,tsx}
-        env:
-          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_HUB_CCT_PROJECT_ID }}
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_HUB_CCT_RECORD_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  afw-cct:
-    name: AFW CCT
-    runs-on: ubuntu-latest
-    timeout-minutes: 14
-    needs: packages
-    strategy:
-      fail-fast: false
-      matrix:
-        containers: [1]
-    steps:
-      - name: Check for changes
-        id: check
-        run: echo "skip=${{ needs.packages.outputs.afw != 'true' }}" >> "$GITHUB_OUTPUT"
-      - name: Skip job
-        if: steps.check.outputs.skip == 'true'
-        run: echo "No build required"
-      - name: Checkout
-        if: steps.check.outputs.skip != 'true'
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 1
-      - name: Setup Node
-        if: steps.check.outputs.skip != 'true'
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-      - name: PreCache
-        if: steps.check.outputs.skip != 'true'
-        run: npm version 0.0.0 --no-git-tag-version
-      - name: Cache dependencies
-        if: steps.check.outputs.skip != 'true'
-        id: cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            ./node_modules
-            /home/runner/.cache/Cypress
-          key: modules-${{ hashFiles('package-lock.json') }}
-      - name: Install dependencies
-        if: steps.check.outputs.skip != 'true' && steps.cache.outputs.cache-hit != 'true'
-        run: npm ci
-      - name: Cypress
-        if: steps.check.outputs.skip != 'true'
-        uses: cypress-io/github-action@v5
-        with:
-          component: true
-          install: false
-          record: true
-          parallel: true
-          spec: framework/**/*.cy.{js,jsx,ts,tsx}
-        env:
-          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_AFW_CCT_PROJECT_ID }}
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_AFW_CCT_RECORD_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   awx-e2e:
     name: AWX E2E
@@ -362,9 +348,6 @@ jobs:
       - name: Check for changes
         id: check
         run: echo "skip=${{ needs.packages.outputs.awx != 'true' }}" >> "$GITHUB_OUTPUT"
-      - name: Skip job
-        if: steps.check.outputs.skip == 'true'
-        run: echo "No build required"
       - name: Download container image
         if: steps.check.outputs.skip != 'true'
         uses: actions/download-artifact@v3
