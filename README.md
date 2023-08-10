@@ -56,16 +56,14 @@ UI projects for [Ansible](https://www.ansible.com).
 
 - Run AWX E2E Tests
 
-  |          Environment | Description                                |
-  | -------------------: | ------------------------------------------ |
-  | CYPRESS_AWX_PROTOCOL | The AWX server protocol (http) or (https). |
-  |     CYPRESS_AWX_HOST | The AWX server address with port.          |
-  | CYPRESS_AWX_USERNAME | The AWX server username.                   |
-  | CYPRESS_AWX_PASSWORD | The AWX server password.                   |
+  |          Environment | Description              |
+  | -------------------: | ------------------------ |
+  |   CYPRESS_AWX_SERVER | The AWX server.          |
+  | CYPRESS_AWX_USERNAME | The AWX server username. |
+  | CYPRESS_AWX_PASSWORD | The AWX server password. |
 
   ```
-  CYPRESS_AWX_PROTOCOL=$AWX_PROTOCOL
-  CYPRESS_AWX_HOST=$AWX_HOST
+  CYPRESS_AWX_SERVER=$AWX_PROTOCOL://$AWX_HOST
   CYPRESS_AWX_USERNAME='my-user'
   CYPRESS_AWX_PASSWORD='my-password'
   ```
@@ -100,16 +98,14 @@ UI projects for [Ansible](https://www.ansible.com).
 
 - Run HUB E2E Tests
 
-  |          Environment | Description                                |
-  | -------------------: | ------------------------------------------ |
-  | CYPRESS_HUB_PROTOCOL | The HUB server protocol (http) or (https). |
-  |     CYPRESS_HUB_HOST | The HUB server address with port.          |
-  | CYPRESS_HUB_USERNAME | The HUB server username.                   |
-  | CYPRESS_HUB_PASSWORD | The HUB server password.                   |
+  |          Environment | Description              |
+  | -------------------: | ------------------------ |
+  |   CYPRESS_HUB_SERVER | The HUB server.          |
+  | CYPRESS_HUB_USERNAME | The HUB server username. |
+  | CYPRESS_HUB_PASSWORD | The HUB server password. |
 
   ```
-  CYPRESS_HUB_PROTOCOL=$HUB_PROTOCOL
-  CYPRESS_HUB_HOST=$HUB_HOST
+  CYPRESS_HUB_SERVER=$HUB_PROTOCOL://$HUB_HOST
   CYPRESS_HUB_USERNAME='my-user'
   CYPRESS_HUB_PASSWORD='my-password'
   ```
@@ -146,14 +142,12 @@ UI projects for [Ansible](https://www.ansible.com).
 
   |          Environment | Description                                |
   | -------------------: | ------------------------------------------ |
-  | CYPRESS_EDA_PROTOCOL | The EDA server protocol (http) or (https). |
-  |     CYPRESS_EDA_HOST | The EDA server address with port.          |
+  |   CYPRESS_EDA_SERVER | The EDA server.          |
   | CYPRESS_EDA_USERNAME | The EDA server username.                   |
   | CYPRESS_EDA_PASSWORD | The EDA server password.                   |
 
   ```
-  CYPRESS_EDA_PROTOCOL=$EDA_PROTOCOL
-  CYPRESS_EDA_HOST=$EDA_HOST
+  CYPRESS_EDA_SERVER=$EDA_PROTOCOL://$EDA_HOST
   CYPRESS_EDA_USERNAME='my-user'
   CYPRESS_EDA_PASSWORD='my-password'
   ```

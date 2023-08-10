@@ -412,7 +412,7 @@ jobs:
           TEST_STANDALONE: true
           AWX_HOST: ${{ secrets.AWX_HOST }}
           AWX_PROTOCOL: ${{ secrets.AWX_PROTOCOL }}
-          CYPRESS_AWX_HOST: ${{ secrets.CYPRESS_AWX_HOST }}
+          CYPRESS_AWX_SERVER: ${{ secrets.CYPRESS_AWX_SERVER }}
           CYPRESS_AWX_USERNAME: ${{ secrets.CYPRESS_AWX_USERNAME }}
           CYPRESS_AWX_PASSWORD: ${{ secrets.CYPRESS_AWX_PASSWORD }}
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_AWX_E2E_PROJECT_ID }}
