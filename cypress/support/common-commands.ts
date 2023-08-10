@@ -1,7 +1,7 @@
 import '@cypress/code-coverage/support';
 
 Cypress.Commands.add('getFiltersToolbarItem', () => {
-  cy.get('#filter').parent().parent().parent();
+  cy.get('#filter').parent().parent().parent().parent();
 });
 
 Cypress.Commands.add('openToolbarFilterTypeSelect', () => {
@@ -50,3 +50,67 @@ Cypress.Commands.add(
     cy.get('tbody').click();
   }
 );
+
+Cypress.Commands.add(
+  'singleSelectShouldHaveSelectedOption',
+  (selector: string, label: string | RegExp) => {
+    cy.get(selector).within(() => {
+      cy.get('.pf-c-menu-toggle__text').should('have.text', label);
+    });
+  }
+);
+
+Cypress.Commands.add(
+  'multiSelectShouldHaveSelectedOption',
+  (selector: string, label: string | RegExp) => {
+    cy.get(selector).within(() => {
+      cy.contains('.pf-c-chip__text', label).should('have.text', label);
+    });
+  }
+);
+
+Cypress.Commands.add(
+  'multiSelectShouldNotHaveSelectedOption',
+  (selector: string, label: string | RegExp) => {
+    cy.get(selector).within(() => {
+      cy.contains('.pf-c-chip__text', label).should('not.exist');
+    });
+  }
+);
+
+Cypress.Commands.add(
+  'singleSelectShouldContainOption',
+  (selector: string, label: string | RegExp) => {
+    cy.get(selector).click();
+    cy.get(selector)
+      .parent()
+      .get('.pf-c-menu__content')
+      .within(() => {
+        cy.contains('.pf-c-menu__item-text', label).should('contain.text', label);
+      });
+    cy.get(selector).click();
+  }
+);
+
+Cypress.Commands.add('selectSingleSelectOption', (selector: string, label: string | RegExp) => {
+  cy.get(selector).click();
+  cy.get(selector)
+    .parent()
+    .get('.pf-c-menu__content')
+    .within(() => {
+      cy.contains('.pf-c-menu__item-text', label).parent().click();
+    });
+});
+
+Cypress.Commands.add('selectMultiSelectOption', (selector: string, label: string | RegExp) => {
+  cy.get(selector)
+    .parent()
+    .get('.pf-c-menu__content')
+    .within(() => {
+      cy.contains('.pf-c-menu__item-text', label)
+        .parent()
+        .within(() => {
+          cy.get('input').click();
+        });
+    });
+});

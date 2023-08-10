@@ -1,6 +1,9 @@
+import { AutomationServerType } from '../automation-servers/AutomationServer';
+import { activeAutomationServer } from '../automation-servers/AutomationServersProvider';
+
 function apiTag(strings: TemplateStringsArray, ...values: string[]) {
   if (strings[0]?.[0] !== '/') {
-    throw 'Invalid URL';
+    throw new Error('Invalid URL');
   }
 
   let url = '';
@@ -15,11 +18,27 @@ function apiTag(strings: TemplateStringsArray, ...values: string[]) {
 }
 
 export function hubAPI(strings: TemplateStringsArray, ...values: string[]) {
-  return process.env.HUB_API_BASE_PATH + apiTag(strings, ...values);
+  let base = process.env.HUB_API_BASE_PATH;
+  if (!base) {
+    if (activeAutomationServer?.type === AutomationServerType.Galaxy) {
+      base = '/api/galaxy';
+    } else {
+      base = '/api/automation-hub';
+    }
+  }
+  return base + apiTag(strings, ...values);
 }
 
 export function pulpAPI(strings: TemplateStringsArray, ...values: string[]) {
-  return process.env.HUB_API_BASE_PATH + '/pulp/api/v3' + apiTag(strings, ...values);
+  let base = process.env.HUB_API_BASE_PATH;
+  if (!base) {
+    if (activeAutomationServer?.type === AutomationServerType.Galaxy) {
+      base = '/api/galaxy';
+    } else {
+      base = '/api/automation-hub';
+    }
+  }
+  return base + '/pulp/api/v3' + apiTag(strings, ...values);
 }
 
 export type QueryParams = {
@@ -77,4 +96,8 @@ export function collectionKeyFn(item: {
   repository: { name: string };
 }) {
   return item.collection_version.pulp_href + '_' + item.repository.name;
+}
+
+export function appendTrailingSlash(url: string) {
+  return url.endsWith('/') ? url : url + '/';
 }

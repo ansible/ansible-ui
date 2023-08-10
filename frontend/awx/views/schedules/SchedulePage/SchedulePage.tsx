@@ -11,13 +11,17 @@ import { Schedule } from '../../../interfaces/Schedule';
 import { useSchedulesActions } from '../hooks/useSchedulesActions';
 import { ScheduleDetails } from './ScheduleDetails';
 import { ScheduleRules } from './ScheduleRules';
-import { scheduleDetailRoutes, scheduleResourceTypeOptions } from '../hooks/scheduleHelpers';
+import {
+  resourceSchedulePageRoutes,
+  scheduleDetailRoutes,
+  scheduleResourceTypeOptions,
+} from '../hooks/scheduleHelpers';
 
 const rulesListRoutes: { [key: string]: string } = {
   inventory: RouteObj.InventorySourceScheduleRules,
   job_template: RouteObj.JobTemplateScheduleRules,
   workflow_job_template: RouteObj.WorkflowJobTemplateScheduleRules,
-  project: RouteObj.ProjectScheduleRules,
+  projects: RouteObj.ProjectScheduleRules,
 };
 
 export function SchedulePage() {
@@ -26,7 +30,7 @@ export function SchedulePage() {
   const params = useParams<{ id: string; source_id?: string; schedule_id: string }>();
   const {
     error,
-    data: Schedule,
+    data: schedule,
     refresh,
   } = useGetItem<Schedule>('/api/v2/schedules', params.schedule_id);
   const navigate = useNavigate();
@@ -40,39 +44,42 @@ export function SchedulePage() {
   });
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
-  if (!Schedule) return <LoadingPage breadcrumbs tabs />;
-
+  if (!schedule) return <LoadingPage breadcrumbs tabs />;
   return (
     <PageLayout>
       <PageHeader
-        title={Schedule?.name}
-        breadcrumbs={[{ label: t('Schedules'), to: RouteObj.Templates }, { label: Schedule?.name }]}
+        title={schedule?.name}
+        breadcrumbs={[{ label: t('Schedules'), to: RouteObj.Templates }, { label: schedule?.name }]}
         headerActions={
           <PageActions<Schedule>
             actions={itemActions}
             position={DropdownPosition.right}
-            selectedItem={Schedule}
+            selectedItem={schedule}
           />
         }
       />
-      <RoutedTabs isLoading={!Schedule} baseUrl={RouteObj.JobTemplateSchedulePage}>
+      <RoutedTabs
+        isLoading={!schedule}
+        baseUrl={
+          resource_type ? resourceSchedulePageRoutes[resource_type] : RouteObj.ScheduleDetails
+        }
+      >
         <PageBackTab
           label={t('Back to Schedules')}
-          url={RouteObj.JobTemplateSchedules.replace(':id', params.id as string)}
+          url={RouteObj.ProjectSchedules.replace(':id', params.id as string)}
           persistentFilterKey={resource_type ? `${resource_type}-schedules` : 'schedules'}
         />
-
         <RoutedTab
           label={t('Details')}
           url={resource_type ? scheduleDetailRoutes[resource_type] : RouteObj.Schedules}
         >
-          <ScheduleDetails schedule={Schedule} />
+          <ScheduleDetails schedule={schedule} />
         </RoutedTab>
         <RoutedTab
           label={t(`Rules`)}
           url={resource_type ? rulesListRoutes[resource_type] : RouteObj.Schedules}
         >
-          <ScheduleRules rrule={Schedule.rrule} />
+          <ScheduleRules rrule={schedule.rrule} />
         </RoutedTab>
       </RoutedTabs>
     </PageLayout>

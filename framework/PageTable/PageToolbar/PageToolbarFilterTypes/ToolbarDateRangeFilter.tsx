@@ -1,5 +1,4 @@
 import { Button, DatePicker, ToolbarItem, isValidDate } from '@patternfly/react-core';
-import { SelectOption } from '@patternfly/react-core/next';
 import { TimesCircleIcon } from '@patternfly/react-icons';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -25,7 +24,7 @@ interface IToolbarDateFilterOption {
 export interface IToolbarDateRangeFilterProps {
   id?: string;
   label?: string;
-  placeholder?: string;
+  placeholder: string;
   values: string[];
   setValues: (values: string[]) => void;
   options: IToolbarDateFilterOption[];
@@ -77,15 +76,10 @@ export function ToolbarDateRangeFilter(props: IToolbarDateRangeFilterProps) {
     <ToolbarItem>
       <PageSingleSelect
         value={selectedOption?.value ?? ''}
-        onChange={onSelectChange}
+        onSelect={onSelectChange}
+        options={props.options}
         placeholder={placeholder}
-      >
-        {props.options.map((option) => (
-          <SelectOption key={option.label} itemId={option.value} description={option.description}>
-            {option.label}
-          </SelectOption>
-        ))}
-      </PageSingleSelect>
+      />
       {selectedOption && selectedOption.isCustom && (
         <DateRange to={to} setTo={setTo} from={from} setFrom={setFrom} />
       )}

@@ -1,3 +1,3 @@
 import { AuditRule, AuditRuleOut } from './generated/eda-api';
-export type EdaRuleAudit = AuditRuleOut;
-export type EdaRuleAuditCreate = AuditRule;
+export type EdaRuleAuditItem = AuditRuleOut;
+export type EdaRuleAudit = AuditRule;

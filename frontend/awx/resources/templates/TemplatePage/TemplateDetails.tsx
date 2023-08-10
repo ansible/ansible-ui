@@ -63,14 +63,16 @@ export function TemplateDetails(props: { template: JobTemplate }) {
         </Link>
       </PageDetail>
       <PageDetail label={t('Inventory')} isEmpty={!summaryFields.inventory}>
-        <Link
-          to={RouteObj.InventoryDetails.replace(
-            ':inventory_type',
-            inventoryUrlPaths[summaryFields.inventory.kind]
-          ).replace(':id', summaryFields.inventory?.id.toString() ?? '')}
-        >
-          {summaryFields.inventory?.name}
-        </Link>
+        {summaryFields.inventory ? (
+          <Link
+            to={RouteObj.InventoryDetails.replace(
+              ':inventory_type',
+              inventoryUrlPaths[summaryFields.inventory.kind]
+            ).replace(':id', summaryFields.inventory?.id.toString() ?? '')}
+          >
+            {summaryFields.inventory?.name}
+          </Link>
+        ) : null}
       </PageDetail>
       <PageDetail label={t`Project`} isEmpty={!summaryFields.project}>
         <Link

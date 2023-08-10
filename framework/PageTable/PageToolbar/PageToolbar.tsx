@@ -17,7 +17,7 @@ import { BulkSelector } from '../../components/BulkSelector';
 import { useBreakpoint } from '../../components/useBreakPoint';
 import { PageTableViewType } from './PageTableViewType';
 import './PageToolbar.css';
-import { IToolbarFilter, PageToolbarFilters } from './PageToolbarFilter';
+import { IFilterState, IToolbarFilter, PageToolbarFilters } from './PageToolbarFilter';
 import { PageTableSortOption, PageToolbarSort } from './PageToolbarSort';
 import { PageToolbarView } from './PageToolbarView';
 
@@ -36,6 +36,8 @@ const ToolbarContent = styled(PFToolbarContent)`
 `;
 
 export type PageTableToolbarProps<T extends object> = {
+  localStorageKey?: string;
+
   openColumnModal?: () => void;
   keyFn: (item: T) => string | number;
 
@@ -44,8 +46,8 @@ export type PageTableToolbarProps<T extends object> = {
   toolbarActions?: IPageAction<T>[];
 
   toolbarFilters?: IToolbarFilter[];
-  filters?: Record<string, string[]>;
-  setFilters?: Dispatch<SetStateAction<Record<string, string[]>>>;
+  filterState?: IFilterState;
+  setFilterState?: Dispatch<SetStateAction<IFilterState>>;
   clearAllFilters?: () => void;
 
   page?: number;
@@ -73,7 +75,6 @@ export type PageTableToolbarProps<T extends object> = {
   disableTableView?: boolean;
   disableListView?: boolean;
   disableCardView?: boolean;
-  disableColumnManagement?: boolean;
   disablePagination?: boolean;
   bottomBorder?: boolean;
   sortOptions?: PageTableSortOption[];
@@ -88,9 +89,8 @@ export function PageTableToolbar<T extends object>(props: PageTableToolbarProps<
     setPerPage,
     toolbarFilters,
     selectedItems,
-    filters,
-    setFilters,
-    clearAllFilters,
+    filterState,
+    setFilterState,
     openColumnModal,
     bottomBorder,
     sort,
@@ -98,7 +98,16 @@ export function PageTableToolbar<T extends object>(props: PageTableToolbarProps<
     sortDirection,
     setSortDirection,
     sortOptions,
+    clearAllFilters: clearAllFiltersProp,
   } = props;
+
+  const clearAllFilters = useCallback(() => {
+    if (clearAllFiltersProp) {
+      clearAllFiltersProp();
+    } else if (setFilterState) {
+      setFilterState({});
+    }
+  }, [setFilterState, clearAllFiltersProp]);
 
   const sm = useBreakpoint('md');
 
@@ -156,6 +165,14 @@ export function PageTableToolbar<T extends object>(props: PageTableToolbarProps<
         paddingTop: sm ? undefined : 8,
         borderBottom: bottomBorder ? 'thin solid var(--pf-global--BorderColor--100)' : undefined,
       }}
+      inset={{
+        default: 'insetMd',
+        sm: 'insetMd',
+        md: 'insetMd',
+        lg: 'insetMd',
+        xl: 'insetLg',
+        '2xl': 'insetLg',
+      }}
     >
       <ToolbarContent>
         {/* Selection */}
@@ -168,11 +185,11 @@ export function PageTableToolbar<T extends object>(props: PageTableToolbarProps<
         )}
 
         {/* Filters */}
-        {filters && (
+        {filterState && setFilterState && (
           <PageToolbarFilters
             toolbarFilters={toolbarFilters}
-            filterState={filters}
-            setFilterState={setFilters}
+            filterState={filterState}
+            setFilterState={setFilterState}
           />
         )}
 
@@ -202,7 +219,6 @@ export function PageTableToolbar<T extends object>(props: PageTableToolbarProps<
               disableTableView={props.disableTableView}
               disableListView={props.disableListView}
               disableCardView={props.disableCardView}
-              disableColumnManagement={props.disableColumnManagement}
               viewType={viewType}
               setViewType={setViewType}
               openColumnModal={openColumnModal}

@@ -46,16 +46,16 @@ export function usePulpView<T extends object>({
   });
   const itemCountRef = useRef<{ itemCount: number | undefined }>({ itemCount: undefined });
 
-  const { page, perPage, sort, sortDirection, filters } = view;
+  const { page, perPage, sort, sortDirection, filterState } = view;
 
   let queryString = queryParams ? `?${getQueryString(queryParams)}` : '';
 
-  if (filters) {
-    for (const key in filters) {
+  if (filterState) {
+    for (const key in filterState) {
       const toolbarFilter = toolbarFilters?.find((filter) => filter.key === key);
       if (toolbarFilter) {
-        const values = filters[key];
-        if (values.length > 0) {
+        const values = filterState[key];
+        if (values && values.length > 0) {
           queryString ? (queryString += '&') : (queryString += '?');
           if (values.length > 1) {
             queryString += values.map((value) => `or__${toolbarFilter.query}=${value}`).join('&');

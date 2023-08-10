@@ -61,6 +61,7 @@ export function RuleAuditDetails() {
               ruleAudit?.activation_instance?.name || ''
             )}
           </PageDetail>
+          <PageDetail label={t('Rule set')}>{ruleAudit?.ruleset_name || ''}</PageDetail>
           <PageDetail label={t('Created')}>
             {ruleAudit?.created_at ? formatDateString(ruleAudit?.created_at) : ''}
           </PageDetail>

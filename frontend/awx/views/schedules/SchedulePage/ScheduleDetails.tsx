@@ -7,7 +7,6 @@ import { formatDateString } from '../../../../../framework/utils/formatDateStrin
 export function ScheduleDetails(props: { schedule: Schedule }) {
   const { t } = useTranslation();
   const { schedule } = props;
-
   return (
     <PageDetails>
       <PageDetail label={t('Name')}>{schedule?.name}</PageDetail>

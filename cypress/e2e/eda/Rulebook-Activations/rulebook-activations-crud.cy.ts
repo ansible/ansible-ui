@@ -6,10 +6,8 @@ import { EdaProject } from '../../../../frontend/eda/interfaces/EdaProject';
 import { EdaRulebook } from '../../../../frontend/eda/interfaces/EdaRulebook';
 import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRulebookActivation';
 import { ActivationRead } from '../../../../frontend/eda/interfaces/generated/eda-api';
-import { IAwxResources } from '../../../support/awx-commands';
 
 describe('EDA rulebook activations- Create', () => {
-  let awxResources: IAwxResources;
   let edaProject: EdaProject;
   let edaDecisionEnvironment: EdaDecisionEnvironment;
   let edaRuleBook: EdaRulebook;
@@ -17,10 +15,10 @@ describe('EDA rulebook activations- Create', () => {
   before(() => {
     cy.edaLogin();
     cy.ensureEdaCurrentUserAwxToken();
-
     cy.createEdaProject().then((project) => {
       edaProject = project;
-      cy.getEdaRulebooks(edaProject, 'hello_echo.yml').then((edaRuleBooks) => {
+      cy.waitEdaProjectSync(project);
+      cy.getEdaRulebooks(edaProject, 'basic_short.yml').then((edaRuleBooks) => {
         edaRuleBook = edaRuleBooks[0];
         cy.createEdaDecisionEnvironment().then((decisionEnvironment) => {
           edaDecisionEnvironment = decisionEnvironment;
@@ -30,7 +28,6 @@ describe('EDA rulebook activations- Create', () => {
   });
 
   after(() => {
-    cy.deleteAwxResources(awxResources);
     cy.deleteEdaDecisionEnvironment(edaDecisionEnvironment);
     cy.deleteEdaProject(edaProject);
     cy.deleteAllEdaCurrentUserTokens();
@@ -99,7 +96,6 @@ describe('EDA rulebook activations- Create', () => {
 });
 
 describe('EDA rulebook activations- Edit, Delete', () => {
-  let awxResources: IAwxResources;
   let edaProject: EdaProject;
   let edaDecisionEnvironment: EdaDecisionEnvironment;
   let edaRBA: EdaRulebookActivation;
@@ -112,19 +108,20 @@ describe('EDA rulebook activations- Edit, Delete', () => {
 
     cy.createEdaProject().then((project) => {
       edaProject = project;
-      cy.getEdaRulebooks(edaProject, 'hello_echo.yml').then((edaRuleBooks) => {
+      cy.waitEdaProjectSync(project);
+      cy.getEdaRulebooks(edaProject, 'basic_short.yml').then((edaRuleBooks) => {
         edaRuleBook = edaRuleBooks[0];
         cy.createEdaDecisionEnvironment().then((decisionEnvironment) => {
           edaDecisionEnvironment = decisionEnvironment;
           cy.createEdaRulebookActivation({
             rulebook_id: edaRuleBook.id,
-            decision_environment_id: decisionEnvironment.id,
+            decision_environment_id: edaDecisionEnvironment.id,
           }).then((edaRulebookActivation) => {
             edaRBA = edaRulebookActivation;
           });
           cy.createEdaRulebookActivation({
             rulebook_id: edaRuleBook.id,
-            decision_environment_id: decisionEnvironment.id,
+            decision_environment_id: edaDecisionEnvironment.id,
             is_enabled: false,
           }).then((edaRulebookActivation) => {
             edaDisabledRBA = edaRulebookActivation;
@@ -135,7 +132,6 @@ describe('EDA rulebook activations- Edit, Delete', () => {
   });
 
   after(() => {
-    cy.deleteAwxResources(awxResources);
     cy.deleteEdaDecisionEnvironment(edaDecisionEnvironment);
     cy.deleteEdaProject(edaProject);
     cy.deleteEdaRulebookActivation(edaDisabledRBA);

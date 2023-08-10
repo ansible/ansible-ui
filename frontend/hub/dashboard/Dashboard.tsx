@@ -1,5 +1,5 @@
 /* eslint-disable i18next/no-literal-string */
-import { ButtonVariant, Card, CardBody, DropdownPosition } from '@patternfly/react-core';
+import { ButtonVariant, DropdownPosition } from '@patternfly/react-core';
 import { CogIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import {
@@ -9,7 +9,6 @@ import {
   PageDashboard,
   PageHeader,
   PageLayout,
-  usePageDialog,
 } from '../../../framework';
 import { PageDashboardCountBar } from '../../../framework/PageDashboard/PageDashboardCountBar';
 import { LoadingPage } from '../../../framework/components/LoadingPage';
@@ -18,15 +17,25 @@ import { useCollections } from '../collections/hooks/useCollections';
 import { useExecutionEnvironments } from '../execution-environments/hooks/useExecutionEnvironments';
 import { useHubNamespaces } from '../namespaces/hooks/useHubNamespaces';
 import { HubGettingStartedCard } from './HubGettingStarted';
-import { PageDashboardCarousel } from '../../../framework/PageDashboard/PageDashboardCarousel';
-import { ManageView } from './ManageView';
+import { useManageHubDashboard } from './useManageHubDashboard';
+import { useState } from 'react';
+import { CategorizedCollections } from './CollectionCategory';
+import { useCategorizeCollections } from './hooks/useCategorizeCollections';
+import { CollectionCategories } from './CollectionCategories';
 
 export function HubDashboard() {
   const { t } = useTranslation();
   const namespaces = useHubNamespaces();
   const collections = useCollections();
   const environments = useExecutionEnvironments();
-  const [_, setDialog] = usePageDialog();
+
+  const { openManageDashboard, managedCategories } = useManageHubDashboard();
+
+  /** Data for collection category carousels */
+  const [categorizedCollections, setCategorizedCollections] = useState<CategorizedCollections>({});
+
+  /** Retrieve and set categories of collections and map categories to collections */
+  useCategorizeCollections(managedCategories, setCategorizedCollections);
 
   if (!namespaces) {
     return <LoadingPage />;
@@ -57,9 +66,7 @@ export function HubDashboard() {
                 label: 'Manage View',
                 type: PageActionType.Button,
                 selection: PageActionSelection.None,
-                onClick: () => {
-                  setDialog(<ManageView />);
-                },
+                onClick: openManageDashboard,
               },
             ]}
             position={DropdownPosition.right}
@@ -83,56 +90,12 @@ export function HubDashboard() {
             },
           ]}
         />
-        <PageDashboardCarousel
-          title="Featured Collections"
-          linkText="Go to Collections"
-          width="xxl"
-        >
-          <Card isFlat>
-            <CardBody>Card 1</CardBody>
-          </Card>
-          <Card isRounded isFlat>
-            <CardBody>Card 2</CardBody>
-          </Card>
-          <Card isRounded isFlat>
-            <CardBody>Card 3</CardBody>
-          </Card>
-          <Card isRounded isFlat>
-            <CardBody>Card 4</CardBody>
-          </Card>
-          <Card isRounded isFlat>
-            <CardBody>Card 5</CardBody>
-          </Card>
-          <Card isRounded isFlat>
-            <CardBody>Card 6</CardBody>
-          </Card>
-          <Card isRounded isFlat>
-            <CardBody>Card 7</CardBody>
-          </Card>
-          <Card isRounded isFlat>
-            <CardBody>Card 8</CardBody>
-          </Card>
-          <Card isRounded isFlat>
-            <CardBody>Card 9</CardBody>
-          </Card>
-          <Card isRounded isFlat>
-            <CardBody>Card 10</CardBody>
-          </Card>
-          <Card isRounded isFlat>
-            <CardBody>Card 11</CardBody>
-          </Card>
-        </PageDashboardCarousel>
-        <PageDashboardCarousel title="My Collections" linkText="Go to Collections" width="xxl">
-          <Card isFlat>
-            <CardBody>Card 1</CardBody>
-          </Card>
-          <Card isRounded isFlat>
-            <CardBody>Card 2</CardBody>
-          </Card>
-          <Card isRounded isFlat>
-            <CardBody>Card 3</CardBody>
-          </Card>
-        </PageDashboardCarousel>
+        {managedCategories.length ? (
+          <CollectionCategories
+            categories={managedCategories}
+            categorizedCollections={categorizedCollections}
+          />
+        ) : null}
       </PageDashboard>
     </PageLayout>
   );

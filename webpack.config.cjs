@@ -67,9 +67,9 @@ module.exports = function (env, argv) {
           ? JSON.stringify('')
           : JSON.stringify(process.env.DELAY ?? ''),
         'process.env.PWA': env.pwa ? JSON.stringify('true') : JSON.stringify(''),
-        'process.env.AWX': env.awx ? JSON.stringify('true') : JSON.stringify(''),
-        'process.env.HUB': env.hub ? JSON.stringify('true') : JSON.stringify(''),
-        'process.env.EDA': env.eda ? JSON.stringify('true') : JSON.stringify(''),
+
+        'process.env.UI_MODE': env.UI_MODE ? JSON.stringify(env.UI_MODE) : undefined,
+
         'process.env.AWX_ROUTE_PREFIX': env.awx_route_prefix
           ? JSON.stringify(env.awx_route_prefix)
           : JSON.stringify('/ui_next'),
@@ -79,9 +79,8 @@ module.exports = function (env, argv) {
         'process.env.EDA_ROUTE_PREFIX': env.eda_route_prefix
           ? JSON.stringify(env.eda_route_prefix)
           : JSON.stringify('/eda'),
-        'process.env.HUB_API_BASE_PATH': JSON.stringify(
-          env.hub_api_base_path || '/api/automation-hub'
-        ),
+
+        'process.env.HUB_API_BASE_PATH': JSON.stringify(env.hub_api_base_path || ''),
       }),
       isDevelopment && new ReactRefreshWebpackPlugin(),
       ...['en', 'es', 'fr', 'ja', 'ko', 'nl', 'zh', 'zu'].map((locale) => {

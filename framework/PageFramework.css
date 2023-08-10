@@ -29,3 +29,8 @@
 .pf-c-truncate__start {
   min-width: unset;
 }
+
+.pf-c-toolbar .pf-c-toolbar__content {
+  flex-wrap: wrap;
+  row-gap: 8px;
+}
