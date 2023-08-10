@@ -85,7 +85,9 @@ describe('organizations', () => {
 
   it('navigates to the edit form from the organizations list row item', () => {
     cy.navigateTo(/^Organizations$/);
-    cy.clickTableRowKebabAction(organization.name, /^Edit organization$/);
+    cy.getTableRowByText(organization.name).within(() => {
+      cy.get('#edit-organization').click();
+    });
     cy.hasTitle(/^Edit Organization$/);
   });
 

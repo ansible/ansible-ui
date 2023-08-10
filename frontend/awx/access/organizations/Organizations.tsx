@@ -20,6 +20,7 @@ import {
   PageTable,
 } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
+import { usePersistentFilters } from '../../../common/PersistentFilters';
 import {
   useCreatedColumn,
   useDescriptionColumn,
@@ -33,15 +34,14 @@ import {
   useModifiedByToolbarFilter,
   useNameToolbarFilter,
 } from '../../common/awx-toolbar-filters';
+import { useAwxConfig } from '../../common/useAwxConfig';
+import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
 import { Organization } from '../../interfaces/Organization';
 import { useAwxView } from '../../useAwxView';
 import { AccessNav } from '../common/AccessNav';
-import { usePersistentFilters } from '../../../common/PersistentFilters';
 import { useSelectUsersAddOrganizations } from '../users/hooks/useSelectUsersAddOrganizations';
 import { useSelectUsersRemoveOrganizations } from '../users/hooks/useSelectUsersRemoveOrganizations';
 import { useDeleteOrganizations } from './hooks/useDeleteOrganizations';
-import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
-import { useAwxConfig } from '../../common/useAwxConfig';
 
 export function Organizations() {
   const { t } = useTranslation();
@@ -115,6 +115,7 @@ export function Organizations() {
       {
         type: PageActionType.Link,
         selection: PageActionSelection.Single,
+        isPinned: true,
         icon: EditIcon,
         label: t('Edit organization'),
         href: (organization) => {
