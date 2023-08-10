@@ -338,6 +338,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs:
+      - packages
       - awx-ui-image
     strategy:
       fail-fast: false
@@ -452,6 +453,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs:
+      - packages
       - hub-ui-image
     strategy:
       fail-fast: false
@@ -509,7 +511,7 @@ jobs:
           config: specPattern=cypress/e2e/hub/**/*.cy.{js,jsx,ts,tsx}
           base-url: 'https://localhost:4102'
         env:
-          CYPRESS_TEST_STANDALONE: true
+          TEST_STANDALONE: true
           HUB_HOST: ${{ secrets.HUB_HOST }}
           HUB_PROTOCOL: ${{ secrets.HUB_PROTOCOL }}
           CYPRESS_HUB_SERVER: http://localhost:5001
@@ -569,6 +571,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs:
+      - packages
       - eda-ui-image
     strategy:
       fail-fast: false
@@ -626,7 +629,7 @@ jobs:
           config: specPattern=cypress/e2e/eda/**/*.cy.{js,jsx,ts,tsx}
           base-url: 'https://localhost:4103'
         env:
-          CYPRESS_TEST_STANDALONE: true
+          TEST_STANDALONE: true
           HUB_HOST: ${{ secrets.EDA_HOST }}
           HUB_PROTOCOL: ${{ secrets.EDA_PROTOCOL }}
           CYPRESS_AWX_SERVER: ${{ secrets.CYPRESS_AWX_SERVER }}
