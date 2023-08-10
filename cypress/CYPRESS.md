@@ -32,7 +32,7 @@ graph LR;
 
    | Environment Variable   | Description                                                                         |
    | ---------------------- | ----------------------------------------------------------------------------------- |
-   | `CYPRESS_AWX_SERVER`   | URL of the AWX server to run E2E tests against. `Default: <https://localhost:8043>` |
+   | `CYPRESS_AWX_HOST`   | URL of the AWX server to run E2E tests against. `Default: <https://localhost:8043>` |
    | `CYPRESS_AWX_USERNAME` | username for logging into the AWX server. `Default: admin`                          |
    | `CYPRESS_AWX_PASSWORD` | password for logging into the AWX server. `Default: admin`                          |
 
@@ -42,7 +42,7 @@ graph LR;
 
    | Environment Variable      | Description                                                                                                                      |
    | ------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-   | `CYPRESS_EDA_SERVER`      | URL of the EDA server to run E2E tests against. `Default: <https://localhost:8000>`                                              |
+   | `CYPRESS_EDA_HOST`      | URL of the EDA server to run E2E tests against. `Default: <https://localhost:8000>`                                              |
    | `CYPRESS_EDA_USERNAME`    | username for logging into the EDA server. `Default: testuser`                                                                    |
    | `CYPRESS_EDA_PASSWORD`    | password for logging into the EDA server. `Default: testpass`                                                                    |
    | `CYPRESS_TEST_STANDALONE` | flag to indicate if UI should be tested standalone. (Login via route `/login` instead of `/automation-servers`) `Default: false` |

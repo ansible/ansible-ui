@@ -37,11 +37,11 @@ UI projects for [Ansible](https://www.ansible.com).
   |  Environment | Description                                |
   | -----------: | ------------------------------------------ |
   | AWX_PROTOCOL | The AWX server protocol (http) or (https). |
-  |   AWX_SERVER | The AWX server address with port.          |
+  |     AWX_HOST | The AWX server address with port.          |
 
   ```
   AWX_PROTOCOL=http
-  AWX_SERVER=localhost:8043
+  AWX_HOST=localhost:8043
   ```
 
   ```
@@ -59,13 +59,13 @@ UI projects for [Ansible](https://www.ansible.com).
   |          Environment | Description                                |
   | -------------------: | ------------------------------------------ |
   | CYPRESS_AWX_PROTOCOL | The AWX server protocol (http) or (https). |
-  |   CYPRESS_AWX_SERVER | The AWX server address with port.          |
+  |     CYPRESS_AWX_HOST | The AWX server address with port.          |
   | CYPRESS_AWX_USERNAME | The AWX server username.                   |
   | CYPRESS_AWX_PASSWORD | The AWX server password.                   |
 
   ```
   CYPRESS_AWX_PROTOCOL=$AWX_PROTOCOL
-  CYPRESS_AWX_SERVER=$AWX_SERVER
+  CYPRESS_AWX_HOST=$AWX_HOST
   CYPRESS_AWX_USERNAME='my-user'
   CYPRESS_AWX_PASSWORD='my-password'
   ```
@@ -81,11 +81,11 @@ UI projects for [Ansible](https://www.ansible.com).
   |  Environment | Description                                |
   | -----------: | ------------------------------------------ |
   | HUB_PROTOCOL | The HUB server protocol (http) or (https). |
-  |   HUB_SERVER | The HUB server address with port.          |
+  |     HUB_HOST | The HUB server address with port.          |
 
   ```
   HUB_PROTOCOL=http
-  HUB_SERVER=localhost:5001
+  HUB_HOST=localhost:5001
   ```
 
   ```
@@ -103,13 +103,13 @@ UI projects for [Ansible](https://www.ansible.com).
   |          Environment | Description                                |
   | -------------------: | ------------------------------------------ |
   | CYPRESS_HUB_PROTOCOL | The HUB server protocol (http) or (https). |
-  |   CYPRESS_HUB_SERVER | The HUB server address with port.          |
+  |     CYPRESS_HUB_HOST | The HUB server address with port.          |
   | CYPRESS_HUB_USERNAME | The HUB server username.                   |
   | CYPRESS_HUB_PASSWORD | The HUB server password.                   |
 
   ```
   CYPRESS_HUB_PROTOCOL=$HUB_PROTOCOL
-  CYPRESS_HUB_SERVER=$HUB_SERVER
+  CYPRESS_HUB_HOST=$HUB_HOST
   CYPRESS_HUB_USERNAME='my-user'
   CYPRESS_HUB_PASSWORD='my-password'
   ```
@@ -125,11 +125,11 @@ UI projects for [Ansible](https://www.ansible.com).
   |  Environment | Description                                |
   | -----------: | ------------------------------------------ |
   | EDA_PROTOCOL | The EDA server protocol (http) or (https). |
-  |   EDA_SERVER | The EDA server address with port.          |
+  |     EDA_HOST | The EDA server address with port.          |
 
   ```
   EDA_PROTOCOL=http
-  EDA_SERVER=localhost:8000
+  EDA_HOST=localhost:8000
   ```
 
   ```
@@ -147,13 +147,13 @@ UI projects for [Ansible](https://www.ansible.com).
   |          Environment | Description                                |
   | -------------------: | ------------------------------------------ |
   | CYPRESS_EDA_PROTOCOL | The EDA server protocol (http) or (https). |
-  |   CYPRESS_EDA_SERVER | The EDA server address with port.          |
+  |     CYPRESS_EDA_HOST | The EDA server address with port.          |
   | CYPRESS_EDA_USERNAME | The EDA server username.                   |
   | CYPRESS_EDA_PASSWORD | The EDA server password.                   |
 
   ```
   CYPRESS_EDA_PROTOCOL=$EDA_PROTOCOL
-  CYPRESS_EDA_SERVER=$EDA_SERVER
+  CYPRESS_EDA_HOST=$EDA_HOST
   CYPRESS_EDA_USERNAME='my-user'
   CYPRESS_EDA_PASSWORD='my-password'
   ```

@@ -62,7 +62,7 @@ Cypress.Commands.add('awxLogin', () => {
     'AWX',
     () => {
       cy.login(
-        Cypress.env('AWX_SERVER') as string,
+        Cypress.env('AWX_HOST') as string,
         Cypress.env('AWX_USERNAME') as string,
         Cypress.env('AWX_PASSWORD') as string,
         AutomationServerType.AWX
@@ -84,7 +84,7 @@ Cypress.Commands.add('edaLogin', () => {
     'EDA',
     () => {
       cy.login(
-        Cypress.env('EDA_SERVER') as string,
+        Cypress.env('EDA_HOST') as string,
         Cypress.env('EDA_USERNAME') as string,
         Cypress.env('EDA_PASSWORD') as string,
         AutomationServerType.EDA

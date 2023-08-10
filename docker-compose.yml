@@ -9,7 +9,7 @@ services:
       - 4101:8080
     environment:
       - AWX_PROTOCOL=http
-      - AWX_SERVER=localhost:8043
+      - AWX_HOST=localhost:8043
       - LOG_LEVEL=debug
 
   hub:
@@ -21,7 +21,7 @@ services:
       - 4102:8080
     environment:
       - HUB_PROTOCOL=http
-      - HUB_SERVER=localhost:5001
+      - HUB_HOST=localhost:5001
       - LOG_LEVEL=debug
 
   eda:
@@ -33,5 +33,5 @@ services:
       - 4103:8080
     environment:
       - EDA_PROTOCOL=http
-      - EDA_SERVER=localhost:8000
+      - EDA_HOST=localhost:8000
       - LOG_LEVEL=debug
