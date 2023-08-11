@@ -106,6 +106,15 @@ export function EdaUserDetailsInternal({
       },
       {
         type: PageActionType.Button,
+        variant: ButtonVariant.primary,
+        selection: PageActionSelection.Single,
+        icon: PencilAltIcon,
+        isPinned: true,
+        label: t('Edit user'),
+        onClick: () => navigate(RouteObj.EditCurrentEdaUser),
+      },
+      {
+        type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete user'),

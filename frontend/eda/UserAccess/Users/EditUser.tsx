@@ -69,6 +69,70 @@ export function CreateUser() {
   );
 }
 
+export function EditEdaCurrentUser() {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const params = useParams<{ id?: string }>();
+  const id = Number(params.id);
+  const { data: user } = useGet<EdaUser>(`${API_PREFIX}/users/me/`);
+  const { data: rolesResult } = useGet<EdaResult<EdaRole>>(`${API_PREFIX}/roles/`);
+  const roles = rolesResult?.results;
+  const patchRequest = usePatchRequest<EdaUserCreateUpdate, EdaUser>();
+  const onSubmit: PageFormSubmitHandler<UserInput> = async (
+    userInput: UserInput,
+    _setError,
+    setFieldError
+  ) => {
+    const { roles, confirmPassword, ...user } = userInput;
+    if (user.password) {
+      if (confirmPassword !== user.password) {
+        setFieldError('confirmPassword', { message: t('Password does not match.') });
+        return false;
+      }
+    }
+    const editUser: EdaUserCreateUpdate = { ...user, roles: roles?.map((role) => role.id) ?? [] };
+    const updatedUser = await patchRequest(`${API_PREFIX}/users/${id}/`, editUser);
+    navigate(RouteObj.EdaUserDetails.replace(':id', updatedUser.id.toString()));
+  };
+
+  const onCancel = () => navigate(-1);
+
+  if (!user || !rolesResult) {
+    return (
+      <PageLayout>
+        <PageHeader
+          breadcrumbs={[{ label: t('Users'), to: RouteObj.EdaUsers }, { label: t('Edit user') }]}
+        />
+      </PageLayout>
+    );
+  }
+
+  const defaultValue: Partial<UserInput> = {
+    ...user,
+    roles: roles?.filter((role) => user.roles.find((roleRef) => roleRef.id === role.id)) ?? [],
+  };
+  return (
+    <PageLayout>
+      <PageHeader
+        title={`${t('Edit')} ${user?.username || t('User')}`}
+        breadcrumbs={[
+          { label: t('Users'), to: RouteObj.EdaUsers },
+          { label: `${t('Edit')} ${user?.username || t('Credential')}` },
+        ]}
+      />
+      <PageForm<UserInput>
+        submitText={t('Save user')}
+        onSubmit={onSubmit}
+        cancelText={t('Cancel')}
+        onCancel={onCancel}
+        defaultValue={defaultValue}
+      >
+        <UserInputs mode="edit" />
+      </PageForm>
+    </PageLayout>
+  );
+}
+
 export function EditUser() {
   const { t } = useTranslation();
   const navigate = useNavigate();
