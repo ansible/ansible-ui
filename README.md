@@ -76,22 +76,22 @@ CYPRESS_EDA_PASSWORD='my-password'
 | NPM Script                  | Description                             |
 | --------------------------- | --------------------------------------- |
 | `npm run awx`               | Run AWX on <http://localhost:4101>      |
-| `npm run e2e:awx`           | Run AWX component tests from Cypress UI |
-| `npm run e2e:run:awx`       | Run AWX component tests from CLI        |
-| `npm run component:awx`     | Run AWX E2E tests from Cypress UI       |
-| `npm run component:run:awx` | Run AWX E2E tests from CLI              |
+| `npm run e2e:awx`           | Run AWX E2E tests from Cypress UI       |
+| `npm run e2e:run:awx`       | Run AWX E2E tests from CLI              |
+| `npm run component:awx`     | Run AWX component tests from Cypress UI |
+| `npm run component:run:awx` | Run AWX component tests from CLI        |
 |                             |                                         |
 | `npm run hub`               | Run HUB on <http://localhost:4102>      |
-| `npm run e2e:hub`           | Run HUB component tests from Cypress UI |
-| `npm run e2e:run:hub`       | Run HUB component tests from CLI        |
-| `npm run component:hub`     | Run HUB E2E tests from Cypress UI       |
-| `npm run component:run:hub` | Run HUB E2E tests from CLI              |
+| `npm run e2e:hub`           | Run HUB E2E tests from Cypress UI       |
+| `npm run e2e:run:hub`       | Run HUB E2E tests from CLI              |
+| `npm run component:hub`     | Run HUB component tests from Cypress UI |
+| `npm run component:run:hub` | Run HUB component tests from CLI        |
 |                             |                                         |
 | `npm run eda`               | Run EDA on <http://localhost:4103>      |
-| `npm run e2e:eda`           | Run EDA component tests from Cypress UI |
-| `npm run e2e:run:eda`       | Run EDA component tests from CLI        |
-| `npm run component:eda`     | Run EDA E2E tests from Cypress UI       |
-| `npm run component:run:eda` | Run EDA E2E tests from CLI              |
+| `npm run e2e:eda`           | Run EDA E2E tests from Cypress UI       |
+| `npm run e2e:run:eda`       | Run EDA E2E tests from CLI              |
+| `npm run component:eda`     | Run EDA component tests from Cypress UI |
+| `npm run component:run:eda` | Run EDA component tests from CLI        |
 |                             |                                         |
 | `npm run tsc`               | Run Typescript compiler checks          |
 | `npm run eslint`            | Run eslint checks                       |
