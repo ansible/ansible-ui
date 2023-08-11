@@ -1,52 +1,15 @@
-import { randomString } from '../../framework/utils/random-string';
-import { AutomationServerType } from '../../frontend/automation-servers/AutomationServer';
+Cypress.Commands.add('login', (server: string, username: string, password: string) => {
+  window.localStorage.setItem('theme', 'light');
+  window.localStorage.setItem('disclaimer', 'true');
 
-Cypress.Commands.add(
-  'login',
-  (server: string, username: string, password: string, serverType: AutomationServerType) => {
-    window.localStorage.setItem('theme', 'light');
-    window.localStorage.setItem('disclaimer', 'true');
-
-    if (Cypress.env('TEST_STANDALONE') === true) {
-      cy.visit(`/login`, {
-        retryOnStatusCodeFailure: true,
-        retryOnNetworkFailure: true,
-      });
-      cy.typeInputByLabel(/^Username$/, username);
-      cy.typeInputByLabel(/^Password$/, password);
-      cy.get('button[type=submit]').click();
-      return;
-    }
-
-    cy.visit(`/automation-servers`, {
-      retryOnStatusCodeFailure: true,
-      retryOnNetworkFailure: true,
-    });
-
-    cy.clickButton(/^Add automation server$/);
-    const automationServerName = 'E2E ' + randomString(4);
-    cy.getDialog().within(() => {
-      cy.typeInputByLabel(/^Name$/, automationServerName);
-      cy.typeInputByLabel(/^Url$/, server);
-      switch (serverType) {
-        case AutomationServerType.AWX:
-          cy.selectDropdownOptionByLabel(/^Automation type$/, 'AWX Ansible Server');
-          break;
-        case AutomationServerType.EDA:
-          cy.selectDropdownOptionByLabel(/^Automation type$/, 'Event Driven Automation Server');
-          break;
-        default:
-          cy.selectDropdownOptionByLabel(/^Automation type$/, 'AWX Ansible Server');
-      }
-      cy.get('button[type=submit]').click();
-    });
-
-    cy.contains('a', automationServerName).click();
-    cy.typeInputByLabel(/^Username$/, username);
-    cy.typeInputByLabel(/^Password$/, password);
-    cy.get('button[type=submit]').click();
-  }
-);
+  cy.visit(`/login`, {
+    retryOnStatusCodeFailure: true,
+    retryOnNetworkFailure: true,
+  });
+  cy.typeInputByLabel(/^Username$/, username);
+  cy.typeInputByLabel(/^Password$/, password);
+  cy.get('button[type=submit]').click();
+});
 
 Cypress.Commands.add('edaLogout', () => {
   cy.get('.pf-c-dropdown__toggle')
@@ -64,8 +27,7 @@ Cypress.Commands.add('awxLogin', () => {
       cy.login(
         Cypress.env('AWX_SERVER') as string,
         Cypress.env('AWX_USERNAME') as string,
-        Cypress.env('AWX_PASSWORD') as string,
-        AutomationServerType.AWX
+        Cypress.env('AWX_PASSWORD') as string
       );
       cy.hasTitle('Welcome to');
     },
@@ -86,8 +48,7 @@ Cypress.Commands.add('edaLogin', () => {
       cy.login(
         Cypress.env('EDA_SERVER') as string,
         Cypress.env('EDA_USERNAME') as string,
-        Cypress.env('EDA_PASSWORD') as string,
-        AutomationServerType.EDA
+        Cypress.env('EDA_PASSWORD') as string
       );
       cy.hasTitle('Welcome to');
     },
