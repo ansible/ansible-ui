@@ -3,7 +3,7 @@
 UI projects for [Ansible](https://www.ansible.com).
 
 - [Getting Started](#getting-started)
-- [Working with Automation Controller (AWX) UI](#working-with-automation-controller-awx-ui)
+- [Working with Automation Controller UI](#working-with-automation-controller-ui)
 - [Working with Automation Hub UI](#working-with-automation-hub-ui)
 - [Working with Event Driven Automation UI](#working-with-event-driven-automation-ui)
 - [Documentation](#documentation)
@@ -30,7 +30,7 @@ UI projects for [Ansible](https://www.ansible.com).
    npm ci
    ```
 
-## Working with Automation Controller (AWX) UI
+## Working with Automation Controller UI
 
 - Start AWX
 
@@ -48,13 +48,21 @@ UI projects for [Ansible](https://www.ansible.com).
   npm run awx
   ```
 
-- Run AWX Component Tests
+- AWX Component Tests
+
+  Run AWX component tests from Cypress UI
 
   ```
   npm run component:awx
   ```
 
-- Run AWX E2E Tests
+  Run AWX component tests from CLI
+
+  ```
+  npm run component:run:awx
+  ```
+
+- AWX E2E Tests
 
   |          Environment | Description              |
   | -------------------: | ------------------------ |
@@ -68,8 +76,16 @@ UI projects for [Ansible](https://www.ansible.com).
   CYPRESS_AWX_PASSWORD='my-password'
   ```
 
+  Run AWX E2E tests from Cypress UI
+
   ```
   npm run e2e:awx
+  ```
+
+  Run AWX E2E tests from CLI
+
+  ```
+  npm run e2e:run:awx
   ```
 
 ## Working with Automation Hub UI
@@ -90,13 +106,21 @@ UI projects for [Ansible](https://www.ansible.com).
   npm run hub
   ```
 
-- Run HUB Component Tests
+- HUB Component Tests
+
+  Run HUB component tests from Cypress UI
 
   ```
   npm run component:hub
   ```
 
-- Run HUB E2E Tests
+  Run HUB component tests from CLI
+
+  ```
+  npm run component:run:hub
+  ```
+
+- HUB E2E Tests
 
   |          Environment | Description              |
   | -------------------: | ------------------------ |
@@ -110,8 +134,16 @@ UI projects for [Ansible](https://www.ansible.com).
   CYPRESS_HUB_PASSWORD='my-password'
   ```
 
+  Run HUB E2E tests from Cypress UI
+
   ```
   npm run e2e:hub
+  ```
+
+  Run HUB E2E tests from CLI
+
+  ```
+  npm run e2e:run:hub
   ```
 
 ## Working with Event Driven Automation UI
@@ -132,13 +164,21 @@ UI projects for [Ansible](https://www.ansible.com).
   npm run eda
   ```
 
-- Run EDA Component Tests
+- EDA Component Tests
+
+  Run EDA component tests from Cypress UI
 
   ```
   npm run component:eda
   ```
 
-- Run EDA E2E Tests
+  Run EDA component tests from CLI
+
+  ```
+  npm run component:run:eda
+  ```
+
+- EDA E2E Tests
 
   |          Environment | Description              |
   | -------------------: | ------------------------ |
@@ -152,8 +192,16 @@ UI projects for [Ansible](https://www.ansible.com).
   CYPRESS_EDA_PASSWORD='my-password'
   ```
 
+  Run EDA E2E tests from Cypress UI
+
   ```
   npm run e2e:eda
+  ```
+
+  Run EDA E2E tests from CLI
+
+  ```
+  npm run e2e:run:eda
   ```
 
 ## Documentation
