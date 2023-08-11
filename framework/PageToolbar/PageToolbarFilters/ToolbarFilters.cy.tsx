@@ -1,8 +1,8 @@
 /* eslint-disable i18next/no-literal-string */
 import { PageSection } from '@patternfly/react-core';
 import { useState } from 'react';
-import { idKeyFn } from '../../../../frontend/hub/api';
-import { PageTableToolbar } from '../PageToolbar';
+import { idKeyFn } from '../../../frontend/hub/api';
+import { PageToolbar } from '../PageToolbar';
 import {
   IFilterState,
   IToolbarFilter,
@@ -10,7 +10,8 @@ import {
   ToolbarFilterType,
 } from '../PageToolbarFilter';
 import { IToolbarDateRangeFilter } from './ToolbarDateRangeFilter';
-import { IToolbarMultiSelectFilter, IToolbarSingleSelectFilter } from './ToolbarSelectFilter';
+import { IToolbarMultiSelectFilter } from './ToolbarMultiSelectFilter';
+import { IToolbarSingleSelectFilter } from './ToolbarSingleSelectFilter';
 
 function ToolbarFiltersTest(
   props: Omit<PageToolbarFiltersProps, 'filterState' | 'setFilterState'>
@@ -22,7 +23,7 @@ function ToolbarFiltersTest(
     }));
   return (
     <>
-      <PageTableToolbar
+      <PageToolbar
         keyFn={idKeyFn}
         itemCount={1}
         page={1}

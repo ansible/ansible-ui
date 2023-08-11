@@ -18,11 +18,11 @@ import useSWR from 'swr';
 import {
   IFilterState,
   IToolbarFilter,
-  PageTableToolbar,
+  PageToolbar,
   Scrollable,
   ToolbarFilterType,
 } from '../../../../framework';
-import { PageTableSortOption } from '../../../../framework/PageTable/PageToolbar/PageToolbarSort';
+import { PageTableSortOption } from '../../../../framework/PageToolbar/PageToolbarSort';
 import { EmptyStateFilter } from '../../../../framework/components/EmptyStateFilter';
 import { LoadingState } from '../../../../framework/components/LoadingState';
 import { useSearchParams } from '../../../../framework/components/useSearchParams';
@@ -223,7 +223,7 @@ export function AutomationCalculator(props: { schema: ChartSchemaElement[] }) {
 
   return (
     <>
-      <PageTableToolbar
+      <PageToolbar
         keyFn={keyFn}
         itemCount={0}
         toolbarFilters={toolbarFilters}

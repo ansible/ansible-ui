@@ -1,4 +1,3 @@
-import { SelectVariant } from '@patternfly/react-core';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IToolbarFilter, ToolbarFilterType } from '../../../../framework';
@@ -7,7 +6,7 @@ import { pulpAPI } from '../../api';
 
 export function useCollectionFilters() {
   const { t } = useTranslation();
-  const [searchText, setSearchText] = useState('');
+  const [searchText, _setSearchText] = useState('');
   const [repositories, setRepositories] = useState<Repository[]>([]);
 
   const { data, isLoading } = useGet<{ results: Repository[] }>(
@@ -20,8 +19,8 @@ export function useCollectionFilters() {
     }
   }, [data?.results, isLoading]);
 
-  return useMemo<IToolbarFilter[]>(
-    () => [
+  return useMemo<IToolbarFilter[]>(() => {
+    const filters: IToolbarFilter[] = [
       {
         key: 'keywords',
         label: t('Name'),
@@ -41,16 +40,16 @@ export function useCollectionFilters() {
         label: t('Repository'),
         type: ToolbarFilterType.SingleSelect,
         query: 'repository',
-        variant: SelectVariant.single,
         options:
           repositories?.map((repo: Repository) => {
             return { value: repo.name, label: repo.name };
           }) || [],
         placeholder: t('Select repositories'),
-        hasSearch: true,
-        onSearchTextChange: (text) => {
-          setSearchText(text);
-        },
+        // Disabling the following lines as we move to support an AsyncSingleSelect filter type
+        // hasSearch: true,
+        // onSearchTextChange: (text) => {
+        //   setSearchText(text);
+        // },
       },
       {
         key: 'tags',
@@ -81,9 +80,9 @@ export function useCollectionFilters() {
         ],
         placeholder: t('Select signatures'),
       },
-    ],
-    [t, repositories]
-  );
+    ];
+    return filters;
+  }, [t, repositories]);
 }
 
 interface Repository {

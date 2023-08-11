@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
-import { IFilterState } from './PageTable/PageToolbar/PageToolbarFilter';
+import { IFilterState } from './PageToolbar/PageToolbarFilter';
 import { useIsMountedRef } from './components/useIsMounted';
 import { useSearchParams } from './components/useSearchParams';
 import { useWindowLocation } from './components/useWindowLocation';

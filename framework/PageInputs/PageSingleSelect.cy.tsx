@@ -76,30 +76,6 @@ describe('PageSingleSelect', () => {
     cy.singleSelectShouldHaveSelectedOption('#test', testObjects[1].name);
   });
 
-  it('should support string options', () => {
-    const options = ['abc', 'def'];
-    cy.mount(
-      <PageSingleSelectTest
-        placeholder={placeholderText}
-        options={options}
-        defaultValue={options[0]}
-      />
-    );
-    cy.singleSelectShouldHaveSelectedOption('#test', options[0]);
-  });
-
-  it('should support number options', () => {
-    const options = [1, 2];
-    cy.mount(
-      <PageSingleSelectTest
-        placeholder={placeholderText}
-        options={options}
-        defaultValue={options[0]}
-      />
-    );
-    cy.singleSelectShouldHaveSelectedOption('#test', options[0].toString());
-  });
-
   it('should support filtering options when more than 10 items', () => {
     cy.mount(<PageSingleSelectTest placeholder={placeholderText} options={options} />);
     cy.get('#test').click();
@@ -110,7 +86,6 @@ describe('PageSingleSelect', () => {
   });
 
   it('should show footer', () => {
-    const options = ['abc', 'def'];
     cy.mount(
       <PageSingleSelectTest placeholder={placeholderText} options={options} footer="Footer" />
     );

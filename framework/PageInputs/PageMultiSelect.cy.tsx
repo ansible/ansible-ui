@@ -92,32 +92,6 @@ describe('PageMultiSelect', () => {
     cy.get('#test').should('have.text', placeholderText);
   });
 
-  it('should support string options', () => {
-    const options = ['abc', 'def'];
-    cy.mount(
-      <PageMultiSelectTest
-        placeholder={placeholderText}
-        options={options}
-        defaultValues={options}
-      />
-    );
-    cy.multiSelectShouldHaveSelectedOption('#test', options[0]);
-    cy.multiSelectShouldHaveSelectedOption('#test', options[1]);
-  });
-
-  it('should support number options', () => {
-    const options = [1, 2];
-    cy.mount(
-      <PageMultiSelectTest
-        placeholder={placeholderText}
-        options={options}
-        defaultValues={options}
-      />
-    );
-    cy.multiSelectShouldHaveSelectedOption('#test', options[0].toString());
-    cy.multiSelectShouldHaveSelectedOption('#test', options[1].toString());
-  });
-
   it('should support filtering options when more than 10 items', () => {
     cy.mount(<PageMultiSelectTest placeholder={placeholderText} options={options} />);
     cy.get('#test').click();

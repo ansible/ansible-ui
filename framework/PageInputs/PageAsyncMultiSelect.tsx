@@ -3,11 +3,11 @@ import { SyncAltIcon } from '@patternfly/react-icons';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageMultiSelect, PageMultiSelectProps } from './PageMultiSelect';
-import { IPageSelectOption } from './PageSelectOption';
+import { PageSelectOption } from './PageSelectOption';
 
 export interface PageAsyncMultiSelectQueryResult<ValueT> {
   total: number;
-  options: IPageSelectOption<ValueT>[];
+  options: PageSelectOption<ValueT>[];
 }
 
 export interface PageAsyncMultiSelectProps<ValueT>
@@ -52,7 +52,7 @@ export function PageAsyncMultiSelect<
   const [loading, setLoading] = useState(false);
   const [loadingError, setLoadingError] = useState<Error>();
   const [total, setTotal] = useState(0);
-  const [options, setOptions] = useState<IPageSelectOption<ValueT>[] | null>();
+  const [options, setOptions] = useState<PageSelectOption<ValueT>[] | null>();
   const [page, setPage] = useState(1);
 
   const abortController = useRef(new AbortController()).current;
@@ -79,7 +79,7 @@ export function PageAsyncMultiSelect<
             .then((result) => {
               if (abortController.signal.aborted) return;
               setOptions((prevOptions) => {
-                let newOptions: IPageSelectOption<ValueT>[];
+                let newOptions: PageSelectOption<ValueT>[];
                 if (prevOptions) {
                   newOptions = [...prevOptions, ...result.options];
                 } else {

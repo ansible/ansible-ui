@@ -4,7 +4,7 @@ import { IToolbarFilter } from '../../../../../framework';
 import {
   IFilterState,
   PageToolbarFilters,
-} from '../../../../../framework/PageTable/PageToolbar/PageToolbarFilter';
+} from '../../../../../framework/PageToolbar/PageToolbarFilter';
 
 interface IJobOutputToolbarProps {
   toolbarFilters: IToolbarFilter[];

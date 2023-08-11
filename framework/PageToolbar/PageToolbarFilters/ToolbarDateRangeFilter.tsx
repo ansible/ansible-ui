@@ -2,7 +2,7 @@ import { Button, DatePicker, ToolbarItem, isValidDate } from '@patternfly/react-
 import { TimesCircleIcon } from '@patternfly/react-icons';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageSingleSelect } from '../../../PageInputs/PageSingleSelect';
+import { PageSingleSelect } from '../../PageInputs/PageSingleSelect';
 import { ToolbarFilterType } from '../PageToolbarFilter';
 import { ToolbarFilterCommon } from './ToolbarFilterCommon';
 
@@ -25,37 +25,37 @@ export interface IToolbarDateRangeFilterProps {
   id?: string;
   label?: string;
   placeholder: string;
-  values: string[];
-  setValues: (values: string[]) => void;
+  filterValues?: string[] | undefined;
+  setFilterValues: (setter: (prevValues: string[] | undefined) => string[]) => void;
   options: IToolbarDateFilterOption[];
   isRequired?: boolean;
   defaultValue?: string;
 }
 
 export function ToolbarDateRangeFilter(props: IToolbarDateRangeFilterProps) {
-  const { values, setValues, placeholder, isRequired, defaultValue } = props;
+  const { filterValues, setFilterValues, placeholder, isRequired, defaultValue } = props;
 
-  const selectedValue = values.length > 0 ? values[0] : undefined;
+  const selectedValue = filterValues && filterValues.length > 0 ? filterValues[0] : undefined;
   const selectedOption = props.options.find((option) => option.value === selectedValue);
 
   if (isRequired && !selectedOption) {
-    setValues([defaultValue ?? props.options[0].value]);
+    setFilterValues(() => [defaultValue ?? props.options[0].value]);
   }
 
   function onSelectChange(value: string) {
     const option = props.options.find((option) => option.value === value);
     if (option) {
-      setValues([value]);
+      setFilterValues(() => [value]);
     }
   }
 
   const [from, setFrom] = useState<string | undefined>(() => {
-    if (values.length > 1) return values[1];
+    if (filterValues && filterValues.length > 1) return filterValues[1];
     return undefined;
   });
 
   const [to, setTo] = useState<string | undefined>(() => {
-    if (values.length > 2) return values[2];
+    if (filterValues && filterValues.length > 2) return filterValues[2];
     return undefined;
   });
 
@@ -68,9 +68,9 @@ export function ToolbarDateRangeFilter(props: IToolbarDateRangeFilterProps) {
           newValues.push(to);
         }
       }
-      setValues(newValues);
+      setFilterValues(() => newValues);
     }
-  }, [selectedOption, from, to, setValues]);
+  }, [selectedOption, from, to, setFilterValues]);
 
   return (
     <ToolbarItem>
