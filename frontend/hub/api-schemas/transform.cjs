@@ -6,6 +6,7 @@ const fs = require('fs');
 const path = require('path');
 
 const filePrefix = '';
+debugger;
 
 // Specify the path to your JSON file
 const filePath = path.join(__dirname, 'swagger.json');
@@ -140,6 +141,7 @@ function createIndexFile(jsonData) {
 
 function searchForListObject(jsonData, objName, objKey, pathKey) {
   try {
+    debugger;
     let value = jsonData.components.schemas[objKey];
     let ref = value?.properties?.results?.items?.$ref;
 
