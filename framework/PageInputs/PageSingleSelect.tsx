@@ -3,7 +3,7 @@ import { Select, SelectList, SelectOption } from '@patternfly/react-core/next';
 import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import './PageSelect.css';
-import { PageSelectOption, getPageSelectOptions } from './PageSelectOption';
+import { PageSelectOption } from './PageSelectOption';
 import './PageSingleSelect.css';
 
 export interface PageSingleSelectProps<ValueT> {
@@ -27,6 +27,14 @@ export interface PageSingleSelectProps<ValueT> {
 
   /** The footer to show at the bottom of the dropdown. */
   footer?: ReactNode;
+
+  /**
+   * Whether the select required an option to be selected.
+   *
+   * If true, the select will autoselect the first option,
+   * else the select will contain a clear button.
+   */
+  isRequired?: boolean;
 }
 
 /**
@@ -68,10 +76,8 @@ export function PageSingleSelect<
   ValueT
 >(props: PageSingleSelectProps<ValueT>) {
   const { t } = useTranslation();
-  const { id, icon, value, onSelect, placeholder } = props;
+  const { id, icon, value, onSelect, options, placeholder } = props;
   const [isOpen, setIsOpen] = useState(false);
-
-  const options = getPageSelectOptions<ValueT>(props.options);
 
   const selectedOption = useMemo(
     () => options.find((option) => value === option.value),
@@ -124,6 +130,12 @@ export function PageSingleSelect<
     }
   }, [isOpen]);
 
+  useEffect(() => {
+    if (props.isRequired && !selectedOption && options.length > 0) {
+      onSelect(options[0].value);
+    }
+  }, [onSelect, options, props.isRequired, selectedOption]);
+
   const visibleOptions = useMemo(
     () =>
       options.filter((option) => {
@@ -131,6 +143,11 @@ export function PageSingleSelect<
         else return option.label.toLowerCase().includes(searchValue.toLowerCase());
       }),
     [options, searchValue]
+  );
+
+  const showSearch = useMemo(
+    () => visibleOptions.length > 10 || searchValue,
+    [searchValue, visibleOptions.length]
   );
 
   return (
@@ -143,25 +160,27 @@ export function PageSingleSelect<
         toggle={Toggle}
         style={{ zIndex: isOpen ? 9999 : undefined }}
       >
-        <div className="page-select-header">
-          <SearchInput
-            id={id ? `${id}-search` : undefined}
-            ref={searchRef}
-            value={searchValue}
-            onChange={(_, value: string) => setSearchValue(value)}
-            onClear={(event) => {
-              event.stopPropagation();
-              setSearchValue('');
-            }}
-          />
-        </div>
+        {showSearch && (
+          <div className="page-select-header">
+            <SearchInput
+              id={id ? `${id}-search` : undefined}
+              ref={searchRef}
+              value={searchValue}
+              onChange={(_, value: string) => setSearchValue(value)}
+              onClear={(event) => {
+                event.stopPropagation();
+                setSearchValue('');
+              }}
+            />
+          </div>
+        )}
         {visibleOptions.length === 0 ? (
           <div style={{ margin: 16 }}>{t('No results found')}</div>
         ) : (
           <SelectList className="page-select-list">
             {visibleOptions.map((option) => (
               <SelectOption
-                key={option.key}
+                key={option.key !== undefined ? option.key : option.label}
                 itemId={option.key !== undefined ? option.key : option.label}
                 description={option.description}
               >

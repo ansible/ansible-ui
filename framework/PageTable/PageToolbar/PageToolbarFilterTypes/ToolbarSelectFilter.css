@@ -1,4 +1,0 @@
-/* This fixes the wrapping of the select toggle with chips */
-.pf-c-select__toggle-wrapper {
-  flex-wrap: nowrap;
-}

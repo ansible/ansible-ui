@@ -1,41 +1,42 @@
 import {
-  SelectVariant,
   ToolbarFilter,
   ToolbarGroup,
   ToolbarItem,
   ToolbarToggleGroup,
 } from '@patternfly/react-core';
-
 import { FilterIcon } from '@patternfly/react-icons';
 import { Dispatch, SetStateAction, useCallback, useState } from 'react';
-import { PageSingleSelect } from '../../PageInputs/PageSingleSelect';
-import { useBreakpoint } from '../../components/useBreakPoint';
-import { useFrameworkTranslations } from '../../useFrameworkTranslations';
+import { PageSingleSelect } from '../PageInputs/PageSingleSelect';
+import { useBreakpoint } from '../components/useBreakPoint';
+import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import {
   IToolbarDateRangeFilter,
   ToolbarDateRangeFilter,
-} from './PageToolbarFilterTypes/ToolbarDateRangeFilter';
+} from './PageToolbarFilters/ToolbarDateRangeFilter';
 import {
   IToolbarMultiSelectFilter,
+  ToolbarMultiSelectFilter,
+} from './PageToolbarFilters/ToolbarMultiSelectFilter';
+import {
   IToolbarSingleSelectFilter,
-  ToolbarSelectFilter,
-} from './PageToolbarFilterTypes/ToolbarSelectFilter';
-import { IToolbarTextFilter, ToolbarTextFilter } from './PageToolbarFilterTypes/ToolbarTextFilter';
+  ToolbarSingleSelectFilter,
+} from './PageToolbarFilters/ToolbarSingleSelectFilter';
+import { IToolbarTextFilter, ToolbarTextFilter } from './PageToolbarFilters/ToolbarTextFilter';
 
 /** Represents the types of filters that can be used in the toolbar */
 export enum ToolbarFilterType {
-  Text = 'text',
-  SingleSelect = 'singleselect',
-  MultiSelect = 'multiselect',
-  DateRange = 'daterange',
+  Text,
+  SingleSelect,
+  MultiSelect,
+  DateRange,
 }
 
 /** An IToolbarFilter represents a filter that can be used in the toolbar */
 export type IToolbarFilter =
   | IToolbarTextFilter
+  | IToolbarDateRangeFilter
   | IToolbarSingleSelectFilter
-  | IToolbarMultiSelectFilter
-  | IToolbarDateRangeFilter;
+  | IToolbarMultiSelectFilter;
 
 /** Represents the state of the toolbar filters. i.e. What is currently selected for filters. */
 export type IFilterState = Record<string, string[] | undefined>;
@@ -90,24 +91,8 @@ function FiltersToolbarItem(props: PageToolbarFiltersProps) {
             <ToolbarFilterComponent
               id="filter-input"
               filter={selectedFilter}
-              addFilter={(value: string) => {
-                setFilterState?.((filters) => {
-                  let values = filters?.[selectedFilterKey];
-                  if (!values) values = [];
-                  if (!values.includes(value)) values.push(value);
-                  return { ...filters, [selectedFilterKey]: values };
-                });
-              }}
-              removeFilter={(value: string) => {
-                setFilterState?.((filters) => {
-                  let values = filters?.[selectedFilterKey];
-                  if (!values) values = [];
-                  values = values.filter((v) => v !== value);
-                  return { ...filters, [selectedFilterKey]: values };
-                });
-              }}
+              filterState={filterState}
               setFilterState={setFilterState}
-              values={filterState?.[selectedFilterKey] ?? []}
             />
           </ToolbarItem>
         </>
@@ -120,7 +105,6 @@ function FiltersToolbarItem(props: PageToolbarFiltersProps) {
             icon={<FilterIcon />}
             options={toolbarFilters.map((filter) => ({
               label: filter.label,
-              // description: filter.description,
               value: filter.key,
             }))}
             placeholder=""
@@ -128,24 +112,8 @@ function FiltersToolbarItem(props: PageToolbarFiltersProps) {
           <ToolbarFilterComponent
             id="filter-input"
             filter={selectedFilter}
-            addFilter={(value: string) => {
-              setFilterState?.((filters) => {
-                let values = filters?.[selectedFilterKey];
-                if (!values) values = [];
-                if (!values.includes(value)) values.push(value);
-                return { ...filters, [selectedFilterKey]: values };
-              });
-            }}
-            removeFilter={(value: string) => {
-              setFilterState?.((filters) => {
-                let values = filters?.[selectedFilterKey];
-                if (!values) values = [];
-                values = values.filter((v) => v !== value);
-                return { ...filters, [selectedFilterKey]: values };
-              });
-            }}
+            filterState={filterState}
             setFilterState={setFilterState}
-            values={filterState?.[selectedFilterKey] ?? []}
           />
         </ToolbarItem>
       )}
@@ -207,16 +175,23 @@ export function PageToolbarFilters(props: PageToolbarFiltersProps) {
               key={filter.label}
               categoryName={filter.label}
               chips={values.map((value) => {
-                return 'options' in filter
-                  ? filter.options.find((o) => o.value === value)?.label ?? value
-                  : value;
+                switch (filter.type) {
+                  case ToolbarFilterType.SingleSelect:
+                  case ToolbarFilterType.MultiSelect:
+                    return filter.options.find((o) => o.value === value)?.label ?? value;
+                  default:
+                    return value;
+                }
               })}
               deleteChip={(_group, value) => {
                 setFilterState?.((filters) => {
                   const newState = { ...filters };
                   value = typeof value === 'string' ? value : value.key;
-                  if ('options' in filter) {
-                    value = filter.options.find((o) => o.label === value)?.value ?? value;
+                  switch (filter.type) {
+                    case ToolbarFilterType.SingleSelect:
+                    case ToolbarFilterType.MultiSelect:
+                      value = filter.options.find((o) => o.value === value)?.label ?? value;
+                      break;
                   }
                   let values = filters[filter.key];
                   if (values) {
@@ -253,16 +228,32 @@ export function PageToolbarFilters(props: PageToolbarFiltersProps) {
 function ToolbarFilterComponent(props: {
   id?: string;
   filter: IToolbarFilter;
-  values: string[];
-  addFilter: (value: string) => void;
-  removeFilter: (value: string) => void;
+  filterState: IFilterState;
   setFilterState: Dispatch<SetStateAction<IFilterState>>;
 }): JSX.Element {
-  const { filter, values, addFilter, removeFilter, setFilterState } = props;
-  const setValues = useCallback(
-    (values: string[]) => {
+  const { filter, filterState, setFilterState } = props;
+
+  const filterValues = filterState?.[filter.key];
+
+  const setFilterValues = useCallback(
+    (setter: (prevValues: string[] | undefined) => string[] | undefined) => {
       setFilterState((filters) => {
-        return { ...filters, [filter.key]: values };
+        const newFilters = { ...filters };
+        const filterValues = newFilters[filter.key] ?? [];
+        newFilters[filter.key] = setter(filterValues);
+        return newFilters;
+      });
+    },
+    [filter.key, setFilterState]
+  );
+
+  const addFilter = useCallback(
+    (value: string) => {
+      setFilterState((filters) => {
+        const newFilters = { ...filters };
+        const filterValues = newFilters[filter.key] ?? [];
+        newFilters[filter.key] = [...filterValues, value];
+        return newFilters;
       });
     },
     [filter.key, setFilterState]
@@ -281,35 +272,24 @@ function ToolbarFilterComponent(props: {
 
     case ToolbarFilterType.SingleSelect:
       return (
-        <ToolbarSelectFilter
+        <ToolbarSingleSelectFilter
           id={props.id ?? filter.key}
-          values={values}
-          addFilter={addFilter}
-          removeFilter={removeFilter}
-          options={filter.options}
           placeholder={filter.placeholder}
-          variant={SelectVariant.single}
-          hasSearch={filter.hasSearch}
-          onSearchTextChange={filter.onSearchTextChange}
-          hasClear={filter.isPinned}
+          filterValues={filterValues}
+          setFilterValues={setFilterValues}
+          options={filter.options}
           isRequired={filter.isRequired}
-          defaultValue={filter.defaultValue}
         />
       );
 
     case ToolbarFilterType.MultiSelect:
       return (
-        <ToolbarSelectFilter
+        <ToolbarMultiSelectFilter
           id={props.id ?? filter.key}
-          values={values}
-          addFilter={addFilter}
-          removeFilter={removeFilter}
-          options={filter.options}
           placeholder={filter.placeholder}
-          variant={SelectVariant.checkbox}
-          hasSearch={filter.hasSearch}
-          onSearchTextChange={filter.onSearchTextChange}
-          label={filter.isPinned ? filter.label : undefined} // when a multi select filter is pinned, we want to show the label in the select
+          filterValues={filterValues}
+          setFilterValues={setFilterValues}
+          options={filter.options}
         />
       );
 
@@ -319,8 +299,8 @@ function ToolbarFilterComponent(props: {
           id={props.id ?? filter.key}
           label={filter.label}
           placeholder={filter.placeholder ?? ''}
-          values={values}
-          setValues={setValues}
+          filterValues={filterValues}
+          setFilterValues={setFilterValues}
           options={filter.options}
           isRequired={filter.isRequired}
           defaultValue={filter.defaultValue}

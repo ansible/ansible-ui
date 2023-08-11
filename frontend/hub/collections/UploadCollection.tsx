@@ -2,13 +2,13 @@ import { Alert, Radio } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import {
+  ITableColumn,
   PageDetails,
   PageForm,
   PageHeader,
   PageLayout,
   PageTable,
   TextCell,
-  ITableColumn,
 } from '../../../framework';
 import { PageDetail } from '../../../framework/PageDetails/PageDetail';
 import { PageFormFileUpload } from '../../../framework/PageForm/Inputs/PageFormFileUpload';
@@ -17,18 +17,18 @@ import { LoadingPage } from '../../../framework/components/LoadingPage';
 import { RouteObj } from '../../Routes';
 import { postRequestFile } from '../../common/crud/Data';
 import { useGetRequest } from '../../common/crud/useGetRequest';
+import { hubAPI, pulpAPI } from '../api';
 import { useHubNamespaces } from '../namespaces/hooks/useHubNamespaces';
 import { useRepositories } from '../repositories/hooks/useRepositories';
-import { hubAPI, pulpAPI } from '../api';
 import { PulpItemsResponse } from '../usePulpView';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
-import { usePulpView } from '../usePulpView';
 import { IToolbarFilter } from '../../../framework';
-import { nameKeyFn } from '../api';
+import { ToolbarFilterType } from '../../../framework/PageToolbar/PageToolbarFilter';
 import { useSearchParams } from '../../../framework/components/useSearchParams';
-import { ToolbarFilterType } from '../../../framework/PageTable/PageToolbar/PageToolbarFilter';
+import { nameKeyFn } from '../api';
+import { usePulpView } from '../usePulpView';
 
 interface UploadData {
   file: unknown;

@@ -11,10 +11,10 @@ import {
 } from '@patternfly/react-core';
 import { Dispatch, Fragment, SetStateAction, useCallback } from 'react';
 import styled from 'styled-components';
-import { IPageAction, PageActionSelection } from '../../PageActions/PageAction';
-import { PageActions } from '../../PageActions/PageActions';
-import { BulkSelector } from '../../components/BulkSelector';
-import { useBreakpoint } from '../../components/useBreakPoint';
+import { IPageAction, PageActionSelection } from '../PageActions/PageAction';
+import { PageActions } from '../PageActions/PageActions';
+import { BulkSelector } from '../components/BulkSelector';
+import { useBreakpoint } from '../components/useBreakPoint';
 import { PageTableViewType } from './PageTableViewType';
 import './PageToolbar.css';
 import { IFilterState, IToolbarFilter, PageToolbarFilters } from './PageToolbarFilter';
@@ -35,7 +35,7 @@ const ToolbarContent = styled(PFToolbarContent)`
   }
 `;
 
-export type PageTableToolbarProps<T extends object> = {
+export type PageToolbarProps<T extends object> = {
   localStorageKey?: string;
 
   openColumnModal?: () => void;
@@ -80,7 +80,7 @@ export type PageTableToolbarProps<T extends object> = {
   sortOptions?: PageTableSortOption[];
 };
 
-export function PageTableToolbar<T extends object>(props: PageTableToolbarProps<T>) {
+export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
   const {
     itemCount,
     page,

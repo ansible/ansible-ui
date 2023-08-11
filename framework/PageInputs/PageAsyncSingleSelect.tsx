@@ -2,12 +2,12 @@ import { Button, Flex, FlexItem, Spinner, Split, SplitItem, Stack } from '@patte
 import { SyncAltIcon } from '@patternfly/react-icons';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IPageSelectOption } from './PageSelectOption';
+import { PageSelectOption } from './PageSelectOption';
 import { PageSingleSelect, PageSingleSelectProps } from './PageSingleSelect';
 
 export interface PageAsyncSingleSelectQueryResult<ValueT> {
   total: number;
-  options: IPageSelectOption<ValueT>[];
+  options: PageSelectOption<ValueT>[];
 }
 
 export interface PageAsyncSingleSelectProps<ValueT>
@@ -52,7 +52,7 @@ export function PageAsyncSingleSelect<
   const [loading, setLoading] = useState(false);
   const [loadingError, setLoadingError] = useState<Error>();
   const [total, setTotal] = useState(0);
-  const [options, setOptions] = useState<IPageSelectOption<ValueT>[] | null>();
+  const [options, setOptions] = useState<PageSelectOption<ValueT>[] | null>();
   const [page, setPage] = useState(1);
 
   const abortController = useRef(new AbortController()).current;
@@ -79,7 +79,7 @@ export function PageAsyncSingleSelect<
             .then((result) => {
               if (abortController.signal.aborted) return;
               setOptions((prevOptions) => {
-                let newOptions: IPageSelectOption<ValueT>[];
+                let newOptions: PageSelectOption<ValueT>[];
                 if (prevOptions) {
                   newOptions = [...prevOptions, ...result.options];
                 } else {
