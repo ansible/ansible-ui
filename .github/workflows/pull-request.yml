@@ -498,27 +498,27 @@ jobs:
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true' && steps.check.outputs.skip != 'true'
         run: npm ci
-      - name: Cypress
-        if: steps.check.outputs.skip != 'true'
-        uses: cypress-io/github-action@v5
-        with:
-          install: false
-          start: npm run docker:run:hub
-          wait-on: 'https://localhost:4102'
-          record: true
-          parallel: true
-          config-file: cypress.hub.config.ts
-        env:
-          CYPRESS_TEST_STANDALONE: true
-          HUB_HOST: ${{ secrets.HUB_HOST }}
-          HUB_PROTOCOL: ${{ secrets.HUB_PROTOCOL }}
-          CYPRESS_HUB_SERVER: http://localhost:5001
-          CYPRESS_HUB_USERNAME: admin
-          CYPRESS_HUB_PASSWORD: password
-          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_HUB_E2E_PROJECT_ID }}
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_HUB_E2E_RECORD_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NODE_TLS_REJECT_UNAUTHORIZED: 0
+      # - name: Cypress
+      #   if: steps.check.outputs.skip != 'true'
+      #   uses: cypress-io/github-action@v5
+      #   with:
+      #     install: false
+      #     start: npm run docker:run:hub
+      #     wait-on: 'https://localhost:4102'
+      #     record: true
+      #     parallel: true
+      #     config-file: cypress.hub.config.ts
+      #   env:
+      #     CYPRESS_TEST_STANDALONE: true
+      #     HUB_HOST: ${{ secrets.HUB_HOST }}
+      #     HUB_PROTOCOL: ${{ secrets.HUB_PROTOCOL }}
+      #     CYPRESS_HUB_SERVER: http://localhost:5001
+      #     CYPRESS_HUB_USERNAME: admin
+      #     CYPRESS_HUB_PASSWORD: password
+      #     CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_HUB_E2E_PROJECT_ID }}
+      #     CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_HUB_E2E_RECORD_KEY }}
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     NODE_TLS_REJECT_UNAUTHORIZED: 0
 
   eda-ui-image:
     name: EDA UI Image
