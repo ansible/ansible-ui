@@ -9,7 +9,7 @@
 
 // URL of interface:
 // /api/v3/tasks/
-// Part of response collection PaginatedTaskSummaryResponseList
+// Part of response collection HubItemsResponse
 
 /*
 TaskSerializer but without detail fields.

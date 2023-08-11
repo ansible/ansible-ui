@@ -9,7 +9,7 @@
 
 // URL of interface:
 // /api/v1/search/roles/
-// Part of response collection PaginatedLegacyRoleResponseList
+// Part of response collection PulpItemsResponse
 
 export interface LegacyRoleResponse {
   id: number;

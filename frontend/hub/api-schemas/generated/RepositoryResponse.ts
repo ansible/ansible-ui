@@ -9,7 +9,7 @@
 
 // URL of interface:
 // /api/pulp/api/v3/repositories/
-// Part of response collection PaginatedRepositoryResponseList
+// Part of response collection PulpItemsResponse
 
 export interface RepositoryResponse {
   name: string;

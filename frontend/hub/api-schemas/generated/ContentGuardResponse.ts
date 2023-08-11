@@ -9,7 +9,7 @@
 
 // URL of interface:
 // /api/pulp/api/v3/contentguards/
-// Part of response collection PaginatedContentGuardResponseList
+// Part of response collection PulpItemsResponse
 
 /*
 Base serializer for use with :class:`pulpcore.app.models.Model`

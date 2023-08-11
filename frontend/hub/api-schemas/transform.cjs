@@ -6,7 +6,6 @@ const fs = require('fs');
 const path = require('path');
 
 const filePrefix = '';
-debugger;
 
 // Specify the path to your JSON file
 const filePath = path.join(__dirname, 'swagger.json');
@@ -85,15 +84,29 @@ function createPathsForSchemas(jsonData) {
               listItem: searchForListObject(jsonData, objName, objKey, pathKey),
             };
 
-            let listItemName = pathSchemas[objName].listItem?.name;
+            const listItem = pathSchemas[objName].listItem;
+
+            let listItemName = listItem?.name;
+            let listName = objName;
+
+            if (listItem.apiType) {
+              if (listItem.apiType == 'hub') {
+                listName = 'HubItemsResponse';
+              }
+
+              if (listItem.apiType == 'pulp') {
+                listName = 'PulpItemsResponse';
+              }
+            }
 
             if (listItemName) {
-              finalName = `${objName}<${listItemName}>`;
+              finalName = `${listName}<${listItemName}>`;
               pathSchemas[listItemName] = {};
               pathSchemas[listItemName].objectName = listItemName;
               pathSchemas[listItemName].listItemOf = {};
               pathSchemas[listItemName].listItemOf.path = pathKey;
-              pathSchemas[listItemName].listItemOf.objectName = objName;
+              pathSchemas[listItemName].listItemOf.objectName = listName;
+              pathSchemas[listItemName].listItemOf.originalObjectName = objName;
             }
 
             fileContent += add(finalName);
@@ -141,11 +154,13 @@ function createIndexFile(jsonData) {
 
 function searchForListObject(jsonData, objName, objKey, pathKey) {
   try {
-    debugger;
     let value = jsonData.components.schemas[objKey];
     let ref = value?.properties?.results?.items?.$ref;
 
+    let apiType = 'pulp';
+
     if (!ref) {
+      apiType = 'hub';
       ref = value.properties?.data?.items?.$ref;
     }
 
@@ -156,7 +171,7 @@ function searchForListObject(jsonData, objName, objKey, pathKey) {
     let newObjKey = refToObjectKey(ref);
     let newObjName = schemaKeyToInterface(newObjKey);
 
-    return { key: newObjKey, name: newObjName };
+    return { key: newObjKey, name: newObjName, apiType };
   } catch (ex) {
     console.log(ex);
     return null;

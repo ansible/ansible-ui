@@ -10,7 +10,7 @@ import { RepositoryResponse } from './index';
 
 // URL of interface:
 // /api/pulp/api/v3/distributions/
-// Part of response collection PaginatedDistributionResponseList
+// Part of response collection HubItemsResponse
 
 export interface DistributionResponse {
   pulp_id: string;

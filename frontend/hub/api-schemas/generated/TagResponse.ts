@@ -9,7 +9,7 @@
 
 // URL of interface:
 // /api/pulp/api/v3/pulp_ansible/tags/
-// Part of response collection PaginatedTagResponseList
+// Part of response collection HubItemsResponse
 
 // A serializer for the Tag model.
 export interface TagResponse {

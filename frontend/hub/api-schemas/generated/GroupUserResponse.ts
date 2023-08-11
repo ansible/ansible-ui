@@ -9,7 +9,7 @@
 
 // URL of interface:
 // /api/pulp/api/v3/groups/{group_pk}/users/
-// Part of response collection PaginatedGroupUserResponseList
+// Part of response collection HubItemsResponse
 
 // Serializer for Users that belong to a Group.
 export interface GroupUserResponse {

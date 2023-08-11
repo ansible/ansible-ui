@@ -9,7 +9,7 @@
 
 // URL of interface:
 // /api/v3/namespaces/
-// Part of response collection PaginatedNamespaceSummaryResponseList
+// Part of response collection HubItemsResponse
 
 /*
 NamespaceSerializer but without 'links' or 'resources'.

@@ -9,7 +9,7 @@
 
 // URL of interface:
 // /api/_ui/v1/imports/collections/
-// Part of response collection PaginatedImportTaskListResponseList
+// Part of response collection HubItemsResponse
 
 // A serializer for a CollectionImport list view.
 export interface ImportTaskListResponse {

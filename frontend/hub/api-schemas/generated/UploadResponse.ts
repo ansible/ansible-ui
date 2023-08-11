@@ -9,7 +9,7 @@
 
 // URL of interface:
 // /api/pulp/api/v3/uploads/
-// Part of response collection PaginatedUploadResponseList
+// Part of response collection PulpItemsResponse
 
 // Serializer for chunked uploads.
 export interface UploadResponse {

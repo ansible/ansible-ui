@@ -10,7 +10,7 @@ import { CollectionMetadataResponse } from './index';
 
 // URL of interface:
 // /pulp_ansible/galaxy/{path}/api/v2/collections/{namespace}/{name}/versions/
-// Part of response collection PaginatedGalaxyCollectionVersionResponseList
+// Part of response collection PulpItemsResponse
 
 // A serializer for a CollectionVersion.
 export interface GalaxyCollectionVersionResponse {

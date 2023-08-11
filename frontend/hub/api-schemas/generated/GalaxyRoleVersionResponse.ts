@@ -9,7 +9,7 @@
 
 // URL of interface:
 // /pulp_ansible/galaxy/{path}/api/v1/roles/{role_pk}/versions/
-// Part of response collection PaginatedGalaxyRoleVersionResponseList
+// Part of response collection PulpItemsResponse
 
 // A serializer for Galaxy's representation of Role versions.
 export interface GalaxyRoleVersionResponse {

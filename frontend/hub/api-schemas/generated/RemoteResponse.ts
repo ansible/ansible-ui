@@ -9,7 +9,7 @@
 
 // URL of interface:
 // /api/pulp/api/v3/remotes/
-// Part of response collection PaginatedRemoteResponseList
+// Part of response collection PulpItemsResponse
 
 /*
 Every remote defined by a plugin should have a Remote serializer that inherits from this

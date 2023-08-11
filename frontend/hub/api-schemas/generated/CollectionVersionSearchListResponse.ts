@@ -11,7 +11,7 @@ import { CollectionSummaryResponse } from './index';
 
 // URL of interface:
 // /pulp_ansible/galaxy/default/api/v3/plugin/ansible/search/collection-versions/
-// Part of response collection PaginatedCollectionVersionSearchListResponseList
+// Part of response collection HubItemsResponse
 
 // Cross-repo search results.
 export interface CollectionVersionSearchListResponse {

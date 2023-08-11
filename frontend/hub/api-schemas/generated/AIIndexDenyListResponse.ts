@@ -9,7 +9,7 @@
 
 // URL of interface:
 // /api/_ui/v1/ai_deny_index/
-// Part of response collection AIIndexDenyResultsResponse
+// Part of response collection PulpItemsResponse
 
 export interface AIIndexDenyListResponse {
   scope: string;
