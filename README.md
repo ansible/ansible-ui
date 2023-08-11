@@ -32,6 +32,30 @@ UI projects for [Ansible](https://www.ansible.com).
 
 ## Working with Automation Controller UI
 
+|          Environment | Description                                |
+| -------------------: | ------------------------------------------ |
+|         AWX_PROTOCOL | The AWX server protocol (http) or (https). |
+|             AWX_HOST | The AWX server address with port.          |
+|   CYPRESS_AWX_SERVER | The AWX server.                            |
+| CYPRESS_AWX_USERNAME | The AWX server username.                   |
+| CYPRESS_AWX_PASSWORD | The AWX server password.                   |
+
+```
+AWX_PROTOCOL=http
+AWX_HOST=localhost:8043
+CYPRESS_AWX_SERVER=$AWX_PROTOCOL://$AWX_HOST
+CYPRESS_AWX_USERNAME='my-user'
+CYPRESS_AWX_PASSWORD='my-password'
+```
+
+|                    Script | Description                             |
+| ------------------------: | --------------------------------------- |
+|               npm run awx | Run AWX                                 |
+|     npm run component:awx | Run AWX component tests from Cypress UI |
+| npm run component:run:awx | Run AWX component tests from CLI        |
+|           npm run e2e:awx | Run AWX E2E tests from Cypress UI       |
+|       npm run e2e:run:awx | Run AWX E2E tests from CLI              |
+
 - Start AWX
 
   |  Environment | Description                                |
@@ -47,6 +71,8 @@ UI projects for [Ansible](https://www.ansible.com).
   ```
   npm run awx
   ```
+
+  > http://localhost:4101
 
 - AWX Component Tests
 
@@ -106,6 +132,9 @@ UI projects for [Ansible](https://www.ansible.com).
   npm run hub
   ```
 
+    > http://localhost:4102
+
+
 - HUB Component Tests
 
   Run HUB component tests from Cypress UI
@@ -163,6 +192,8 @@ UI projects for [Ansible](https://www.ansible.com).
   ```
   npm run eda
   ```
+
+  > http://localhost:4103
 
 - EDA Component Tests
 
