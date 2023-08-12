@@ -225,7 +225,7 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
             <EdaExtraVarsCell
               label={t('Variables')}
               helpText={t(
-                'Pass extra command line variables to the playbook. This is the -e or --extra-vars command line parameter for ansible-playbook. Provide key/value pairs using either YAML or JSON. Refer to the documentation for example syntax.'
+                `The variables for the rulebook are in a JSON or YAML format. The content would be equivalent to the file passed through the '--vars' flag of ansible-rulebook command.`
               )}
               id={rulebookActivation.extra_var.id}
             />
