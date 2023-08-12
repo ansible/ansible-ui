@@ -77,6 +77,15 @@ export function useRulebookActivationColumns() {
         list: 'secondary',
         modal: ColumnModalOption.Hidden,
       },
+      {
+        header: t('Activation ID'),
+        type: 'text',
+        value: (activation) => activation.id.toString(),
+        table: ColumnTableOption.Expanded,
+        card: 'hidden',
+        list: 'secondary',
+        modal: ColumnModalOption.Hidden,
+      },
     ],
     [t]
   );
