@@ -22,7 +22,7 @@ export function PageDashboardChart(props: {
   xLabel?: string;
   yLabel?: string;
   minDomain?: number | { x?: number; y?: number };
-  variant?: 'stacked' | 'lines';
+  variant?: 'stackedAreaChart' | 'lineChart';
 }) {
   let { groups } = props;
   const { xLabel, yLabel, minDomain } = props;
@@ -84,7 +84,7 @@ export function PageDashboardChart(props: {
             label={yLabel}
             style={{ axisLabel: { fontSize: 16 } }}
           />
-          {props.variant === 'lines' ? (
+          {props.variant === 'lineChart' ? (
             groups.map((group, index) => (
               <ChartLine
                 key={index}
