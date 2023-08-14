@@ -1,5 +1,5 @@
 import { Button, Divider, Modal, ModalBoxBody, ModalVariant } from '@patternfly/react-core';
-import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePageDialog } from '../PageDialogs/PageDialog';
 import { useSelected } from '../PageTable/useTableItems';
@@ -41,17 +41,14 @@ export interface ManageItemsProps<ItemT extends object> {
   /** Variant controls the size of the modal */
   variant?: ModalVariant;
 
-  /** Callback to determine is an item is selected. */
-  isSelected?: (item: ItemT) => boolean;
-
-  /** Callback to set if an item is selected. */
-  setSelected?: (item: ItemT, selected: boolean) => void;
-
   /** Callback to save the manages state to localstorage format. */
-  saveFn?: (items: ItemT[]) => object[];
+  saveFn?: (items: ItemT) => unknown;
 
   /** Callback to load the manages state from localstorage format. */
-  loadFn?: (items: ItemT[], data: object[]) => void;
+  loadFn?: (items: ItemT, data: unknown) => void;
+
+  /** Setting to include a column of checkboxes to enable selection of rows */
+  hideSelection?: boolean;
 }
 
 /**
@@ -63,105 +60,90 @@ export interface ManageItemsProps<ItemT extends object> {
 export function useManageItems<ItemT extends object>(options: ManageItemsProps<ItemT>) {
   const [_, setDialog] = usePageDialog();
   const [keyFn] = useState(() => options.keyFn);
-  const [isSelected] = useState(() => options.isSelected);
-  const [setSelected] = useState(() => options.setSelected);
   const [saveFn] = useState(() => options.saveFn);
   const [loadFn] = useState(() => options.loadFn);
 
-  const [items, setItems] = useState<ItemT[]>(() => {
+  // This is the order/enabled/state that is stored in localstorage
+  const [itemsState, setItemsState] = useState<IManagedItemState[] | undefined>(() => {
     try {
       const value = localStorage.getItem(options.id);
       if (typeof value === 'string') {
         const data: unknown = JSON.parse(value);
-        if (Array.isArray(data) && data.every((i) => typeof i === 'object')) {
-          if (loadFn) {
-            const newItems = [...options.items];
-            loadFn(newItems, data as object[]);
-            return newItems;
-          } else {
-            return data as ItemT[];
-          }
+        if (
+          Array.isArray(data) &&
+          data.every((i) => typeof i === 'object') &&
+          data.every((i) => 'key' in i && 'enabled' in i)
+        ) {
+          return data as IManagedItemState[];
         }
       }
-      return options.items;
     } catch {
-      return options.items;
+      // Do nothing
     }
+    return undefined;
   });
 
-  useEffect(() => {
-    setItems((items) => {
-      const newItems = [...items];
-      for (const newItem of options.items) {
-        const key = keyFn(newItem);
-        const existingItem = items.find((item) => keyFn(item) === key);
-        if (existingItem) {
-          Object.assign(existingItem, newItem);
-        } else {
-          newItems.push(newItem);
-        }
-      }
-      return newItems;
-    });
-  }, [keyFn, loadFn, options.items, saveFn]);
+  const items = useMemo(() => {
+    if (!itemsState) {
+      return options.items;
+    } else {
+      return options.items
+        .map((item) => {
+          if (loadFn) {
+            const itemState = itemsState.find((i) => i.key === keyFn(item));
+            if (itemState && itemState.state) {
+              loadFn(item, itemState.state);
+            }
+          }
+          return item;
+        })
+        .sort((a, b) => {
+          const aIndex = itemsState.findIndex((i) => i.key === keyFn(a));
+          const bIndex = itemsState.findIndex((i) => i.key === keyFn(b));
+          if (aIndex === -1 && bIndex === -1) return 0;
+          if (aIndex === -1) return 1;
+          if (bIndex === -1) return -1;
+          return aIndex - bIndex;
+        });
+    }
+  }, [itemsState, keyFn, loadFn, options.items]);
+
+  const selectedItems = useMemo(() => {
+    if (itemsState) {
+      return items.filter((item) => {
+        const itemState = itemsState.find((i) => i.key === keyFn(item));
+        return itemState ? itemState.enabled : true;
+      });
+    } else {
+      return items;
+    }
+  }, [items, itemsState, keyFn]);
 
   const onApplyChanges = useCallback(
-    (items: ItemT[]) => {
-      setItems(items);
-      if (saveFn) {
-        localStorage.setItem(options.id, JSON.stringify(saveFn(items)));
-      } else {
-        localStorage.setItem(options.id, JSON.stringify(items));
-      }
+    (orderedItems: ItemT[], selectedItems: ItemT[]) => {
+      const managedItemsState: IManagedItemState[] = orderedItems.map((item) => ({
+        key: keyFn(item),
+        enabled: selectedItems.includes(item),
+        state: saveFn ? saveFn(item) : undefined,
+      }));
+      setItemsState(managedItemsState);
+      localStorage.setItem(options.id, JSON.stringify(managedItemsState));
     },
-    [options.id, saveFn, setItems]
+    [keyFn, options.id, saveFn]
   );
 
-  const openModal = () =>
+  const openManageItems = () =>
     setDialog(
       <ManageItemsModal
         {...options}
         keyFn={keyFn}
         items={items}
-        defaultSelectedItems={items.filter((item) => isSelected?.(item))}
+        defaultSelectedItems={selectedItems}
         onApplyChanges={onApplyChanges}
       />
     );
 
-  const visibleItems = useMemo(
-    () => items.filter((item) => (isSelected ? isSelected(item) : true)),
-    [isSelected, items]
-  );
-
-  const selectItem = useCallback(() => {
-    return setSelected
-      ? (item: ItemT) => {
-          setSelected(item, true);
-          setItems((items) => [...items]);
-        }
-      : () => {
-          alert('No setSelected callback provided');
-        };
-  }, [setSelected]);
-
-  const unselectItem = useCallback(() => {
-    return setSelected
-      ? (item: ItemT) => {
-          setSelected(item, false);
-          setItems((items) => [...items]);
-        }
-      : () => {
-          alert('No setSelected callback provided');
-        };
-  }, [setSelected]);
-
-  return {
-    openModal,
-    items: visibleItems,
-    isSelected: isSelected ? isSelected : () => false,
-    selectItem,
-    unselectItem,
-  };
+  return { openManageItems, managedItems: selectedItems };
 }
 
 export function ManageItemsModal<ItemT extends object>(
@@ -187,13 +169,6 @@ export function ManageItemsModal<ItemT extends object>(
   } = useSelected(items, keyFn, props.defaultSelectedItems);
 
   const onApply = () => {
-    for (const item of items) {
-      if (!selectedItems.includes(item)) {
-        props.setSelected?.(item, false);
-      } else {
-        props.setSelected?.(item, true);
-      }
-    }
     onApplyChanges(items, selectedItems);
     setDialog(undefined);
   };
@@ -226,12 +201,16 @@ export function ManageItemsModal<ItemT extends object>(
           selectAll={selectAll}
           unselectAll={unselectAll}
           hideColumnHeaders={props.hideColumnHeaders}
-          isSelectableWithCheckbox={
-            props.isSelected !== undefined && props.setSelected !== undefined
-          }
+          isSelectableWithCheckbox={props.hideSelection !== true}
         />
       </ModalBoxBody>
       <Divider />
     </Modal>
   );
+}
+
+interface IManagedItemState {
+  key: string | number;
+  enabled: boolean;
+  state?: unknown;
 }

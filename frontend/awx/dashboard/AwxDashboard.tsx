@@ -6,24 +6,24 @@ import { Trans, useTranslation } from 'react-i18next';
 import useSWR from 'swr';
 import { PageHeader, PageLayout, usePageDialog } from '../../../framework';
 import { PageDashboard } from '../../../framework/PageDashboard/PageDashboard';
+import { useActiveUser } from '../../common/useActiveUser';
 import { useAwxConfig } from '../common/useAwxConfig';
+import { Inventory } from '../interfaces/Inventory';
 import { Job } from '../interfaces/Job';
+import { Project } from '../interfaces/Project';
 import { useAwxView } from '../useAwxView';
 import { WelcomeModal } from './WelcomeModal';
-import { AwxJobActivityCard } from './cards/AwxJobActivityCard';
-import { AwxRecentJobsCard } from './cards/AwxRecentJobsCard';
-import { AwxRecentProjectsCard } from './cards/AwxRecentProjectsCard';
-import { AwxProjectsCard } from './cards/AwxProjectsCard';
 import { AwxHostsCard } from './cards/AwxHostsCard';
 import { AwxInventoriesCard } from './cards/AwxInventoriesCard';
+import { AwxJobActivityCard } from './cards/AwxJobActivityCard';
+import { AwxProjectsCard } from './cards/AwxProjectsCard';
 import { AwxRecentInventoriesCard } from './cards/AwxRecentInventoriesCard';
+import { AwxRecentJobsCard } from './cards/AwxRecentJobsCard';
+import { AwxRecentProjectsCard } from './cards/AwxRecentProjectsCard';
 import { useManagedAwxDashboard } from './hooks/useManagedAwxDashboard';
-import { Project } from '../interfaces/Project';
-import { Inventory } from '../interfaces/Inventory';
-import { useActiveUser } from '../../common/useActiveUser';
 
 const HIDE_WELCOME_MESSAGE = 'hide-welcome-message';
-type Resource = { id: string; name: string; selected: boolean };
+type Resource = { id: string; name: string };
 
 export function AwxDashboard() {
   const { t } = useTranslation();
@@ -108,9 +108,6 @@ function DashboardInternal(props: { managedResources: Resource[] }) {
   return (
     <PageDashboard>
       {managedResources.map((r: Resource) => {
-        if (!r.selected) {
-          return <></>;
-        }
         switch (true) {
           case r.id === 'recent_job_activity':
             return <AwxJobActivityCard />;

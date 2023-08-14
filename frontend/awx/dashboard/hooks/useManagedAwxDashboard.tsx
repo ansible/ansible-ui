@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useManageItems } from '../../../../framework/components/useManagedItems';
 
-type Resource = { id: string; name: string; selected: boolean };
+type Resource = { id: string; name: string };
 
 export function useManagedAwxDashboard() {
   const { t } = useTranslation();
@@ -27,24 +27,21 @@ export function useManagedAwxDashboard() {
     ],
     [t]
   );
-  const { openModal: openManageDashboard, items: managedResources } = useManageItems<Resource>({
-    id: 'awx-dashboard',
-    title: 'Manage Dashboard',
-    description: t(
-      'Hide or show the panels you want to see on the overview page by selecting or unselecting, respectively. The panels are ordered from top to bottom on the list. Use the draggable icon :: to re-order your view.'
-    ),
-    items: resources,
-    keyFn: (resources) => resources.id,
-    columns,
-    hideColumnHeaders: true,
-    isSelected: (resource) => resource.selected,
-    setSelected: (resource, selected) => {
-      resource.selected = selected;
-    },
-  });
+  const { openManageItems: openManageDashboard, managedItems: managedResources } =
+    useManageItems<Resource>({
+      id: 'awx-dashboard',
+      title: 'Manage Dashboard',
+      description: t(
+        'Hide or show the panels you want to see on the overview page by selecting or unselecting, respectively. The panels are ordered from top to bottom on the list. Use the draggable icon :: to re-order your view.'
+      ),
+      items: resources,
+      keyFn: (resources) => resources.id,
+      columns,
+      hideColumnHeaders: true,
+    });
 
   return {
     openManageDashboard,
-    managedResources: managedResources.filter((resource) => resource.selected),
+    managedResources,
   };
 }
