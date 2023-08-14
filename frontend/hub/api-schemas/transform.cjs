@@ -14,6 +14,8 @@ function add(string, depth) {
   return depthString(depth) + string + '\n';
 }
 
+let notCreated = [];
+
 function addComment(string, depth) {
   let resString = '';
   if (string.includes('\n')) {
@@ -97,6 +99,8 @@ function createPathsForSchemas(jsonData) {
               if (listItem.apiType == 'pulp') {
                 listName = 'PulpItemsResponse';
               }
+
+              pathSchemas[objName].doNotCreate = true;
             }
 
             if (listItemName) {
@@ -132,14 +136,26 @@ function createPathsForSchemas(jsonData) {
   return pathSchemas;
 }
 
-function createIndexFile(jsonData) {
+/*
+function createIndexFile(jsonData, pathSchemas) {
   const data = jsonData.components.schemas;
   let fileContent = '';
 
   for (var key in data) {
     // export * from "./RepositoryResponse";
+
     const interfaceName = schemaKeyToInterface(key);
-    fileContent += add(`export * from  "./${interfaceName}";`);
+    const pathSchema = pathSchemas[interfaceName];
+
+    if (pathSchema)
+    {
+      if (!pathSchema.doNotCreate) {
+        fileContent += add(`export * from  "./${interfaceName}";`);
+      }
+    }else
+    {
+      debugger;
+    }
   }
 
   const filePath = path.join(__dirname, filePrefix + 'generated/index.ts');
@@ -150,7 +166,7 @@ function createIndexFile(jsonData) {
       console.log(`File ${filePath} written successfully!`);
     }
   });
-}
+}*/
 
 function searchForListObject(jsonData, objName, objKey, pathKey) {
   try {
@@ -240,7 +256,7 @@ fs.readFile(filePath, 'utf8', (err, data) => {
     const jsonData = JSON.parse(data);
 
     const pathSchemas = createPathsForSchemas(jsonData);
-    createIndexFile(jsonData);
+    //createIndexFile(jsonData, pathSchemas);
     const schemas = jsonData.components.schemas;
     const keys = Object.keys(schemas);
 
@@ -269,6 +285,8 @@ fs.readFile(filePath, 'utf8', (err, data) => {
         fileContent += add('');
 
         fileContent += add('/* eslint-disable @typescript-eslint/no-empty-interface */');
+
+        let canCreateFile = true;
 
         if (pathSchemas[interfaceName]) {
           interfacePath = pathSchemas[interfaceName]?.path;
@@ -308,25 +326,38 @@ fs.readFile(filePath, 'utf8', (err, data) => {
         let fileContent2 = '';
 
         for (var imported in needImport) {
-          fileContent2 += add('import { ' + imported + ' } from "./index";');
+          fileContent2 += add(`import { ${imported} } from "./${imported}";`);
         }
 
         fileContent2 += fileContent;
 
         console.log('writing ' + filePath);
 
-        fs.writeFile(filePath, fileContent2, 'utf8', (err) => {
-          if (err) {
-            console.error('Error writing file:', err);
-          } else {
-            console.log(`File ${filePath} written successfully!`);
-          }
-        });
+        const pathSchema = pathSchemas[interfaceName];
+
+        let doNotCreate = false;
+
+        if (pathSchema && pathSchema.doNotCreate) {
+          doNotCreate = true;
+        }
+
+        if (!doNotCreate) {
+          fs.writeFile(filePath, fileContent2, 'utf8', (err) => {
+            if (err) {
+              console.error('Error writing file:', err);
+            } else {
+              console.log(`File ${filePath} written successfully!`);
+            }
+          });
+        } else {
+          notCreated.push({ name: interfaceName, pathSchema: pathSchemas[interfaceName], schema });
+        }
       } catch (ex) {
         console.log(ex);
       }
     });
 
+    console.log(notCreated);
     // Use the parsed JSON data
   } catch (error) {
     console.error('Error parsing JSON:', error);
