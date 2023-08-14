@@ -29,24 +29,13 @@ export function useCollectionFilters() {
         comparison: 'equals',
       },
       {
-        key: 'type',
-        label: t('Type'),
-        type: ToolbarFilterType.MultiSelect,
-        query: 'type',
-        options: [
-          { label: t('Synced'), value: 'synced' },
-          { label: t('Unsynced'), value: 'unsynced' },
-        ],
-        placeholder: t('Select types'),
-      },
-      {
         key: 'signature',
         label: t('Signature'),
         type: ToolbarFilterType.MultiSelect,
-        query: 'sign_state',
+        query: 'is_signed',
         options: [
-          { label: t('Signed'), value: 'signed' },
-          { label: t('Unsigned'), value: 'unsigned' },
+          { label: t('Signed'), value: 'true' },
+          { label: t('Unsigned'), value: 'false' },
         ],
         placeholder: t('Select signatures'),
       },
