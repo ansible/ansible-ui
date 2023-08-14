@@ -16,7 +16,7 @@ export function AwxJobActivityCard() {
       linkText={t('Go to Jobs')}
       to={RouteObj.Jobs}
       width="xxl"
-      height="sm"
+      height="md"
       headerControls={
         <Flex spaceItems={{ default: 'spaceItemsNone' }} style={{ gap: 8 }}>
           <FlexItem>

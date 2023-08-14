@@ -111,14 +111,14 @@ const RuleAuditChart = () => {
     <PageDashboardCard
       title={t('Rule Runs')}
       width="xxl"
-      height="sm"
+      height="md"
       to={RouteObj.EdaRuleAudit}
       help={t('Rule audit allows auditing of rules which have been triggered by incoming events.')}
     >
       <PageDashboardChart
         groups={[
-          { color: pfSuccess, values: successfulRuns },
-          { color: pfDanger, values: failedRuns },
+          { label: t('Success'), color: pfSuccess, values: successfulRuns },
+          { label: t('Failed'), color: pfDanger, values: failedRuns },
         ]}
       />
     </PageDashboardCard>
