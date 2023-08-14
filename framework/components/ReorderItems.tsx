@@ -176,7 +176,8 @@ export function ReorderItems<T extends object>(props: ReorderItemsProps<T>) {
     <TableComposable
       aria-label={t(`Table with draggable rows`)}
       className={isDragging ? styles.modifiers.dragOver : ''}
-      variant={'compact'}
+      variant="compact"
+      gridBreakPoint=""
     >
       {!hideColumnHeaders && (
         <Thead>
