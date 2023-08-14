@@ -136,38 +136,6 @@ function createPathsForSchemas(jsonData) {
   return pathSchemas;
 }
 
-/*
-function createIndexFile(jsonData, pathSchemas) {
-  const data = jsonData.components.schemas;
-  let fileContent = '';
-
-  for (var key in data) {
-    // export * from "./RepositoryResponse";
-
-    const interfaceName = schemaKeyToInterface(key);
-    const pathSchema = pathSchemas[interfaceName];
-
-    if (pathSchema)
-    {
-      if (!pathSchema.doNotCreate) {
-        fileContent += add(`export * from  "./${interfaceName}";`);
-      }
-    }else
-    {
-      debugger;
-    }
-  }
-
-  const filePath = path.join(__dirname, filePrefix + 'generated/index.ts');
-  fs.writeFile(filePath, fileContent, 'utf8', (err) => {
-    if (err) {
-      console.error('Error writing file:', err);
-    } else {
-      console.log(`File ${filePath} written successfully!`);
-    }
-  });
-}*/
-
 function searchForListObject(jsonData, objName, objKey, pathKey) {
   try {
     let value = jsonData.components.schemas[objKey];
@@ -256,7 +224,6 @@ fs.readFile(filePath, 'utf8', (err, data) => {
     const jsonData = JSON.parse(data);
 
     const pathSchemas = createPathsForSchemas(jsonData);
-    //createIndexFile(jsonData, pathSchemas);
     const schemas = jsonData.components.schemas;
     const keys = Object.keys(schemas);
 
