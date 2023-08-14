@@ -1,0 +1,17 @@
+{
+  "count": 1,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 1,
+      "type": "user",
+      "username": "normalUser",
+      "first_name": "",
+      "last_name": "",
+      "email": "normalUser@test.com",
+      "is_superuser": false,
+      "is_system_auditor": false
+    }
+  ]
+}

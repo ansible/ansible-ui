@@ -3,7 +3,6 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import {
-  DateTimeCell,
   PageTable,
   useColumnsWithoutExpandedRow,
   useColumnsWithoutSort,
@@ -11,48 +10,43 @@ import {
 } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
 import { RouteObj } from '../../../Routes';
-import { Job } from '../../interfaces/Job';
-import { UnifiedJob } from '../../interfaces/UnifiedJob';
+import { useModifiedColumn } from '../../../common/columns';
+import { Inventory } from '../../interfaces/Inventory';
+import { useInventoriesColumns } from '../../resources/inventories/hooks/useInventoriesColumns';
 import { IAwxView } from '../../useAwxView';
-import { useJobsColumns } from '../../views/jobs/hooks/useJobsColumns';
 
-export function AwxRecentJobsCard(props: { view: IAwxView<Job>; showEmptyStateNonAdmin: boolean }) {
+export function AwxRecentInventoriesCard(props: {
+  view: IAwxView<Inventory>;
+  showEmptyStateNonAdmin: boolean;
+}) {
   const { view, showEmptyStateNonAdmin } = props;
   const { t } = useTranslation();
   const navigate = useNavigate();
-  let columns = useJobsColumns();
+  const modifiedColumn = useModifiedColumn();
+
+  let columns = useInventoriesColumns();
   columns = useVisibleModalColumns(columns);
-  columns = useMemo(
-    () => [
-      ...columns,
-      {
-        header: t('Finished'),
-        cell: (job: UnifiedJob) =>
-          job.finished && <DateTimeCell format="date-time" value={job.started} />,
-      },
-    ],
-    [columns, t]
-  );
+  columns = useMemo(() => [...columns, modifiedColumn], [columns, modifiedColumn]);
   columns = useColumnsWithoutSort(columns);
   columns = useColumnsWithoutExpandedRow(columns);
 
   return (
     <PageDashboardCard
-      title={t('Recent Jobs')}
-      subtitle={t('Recently finished jobs')}
+      title={t('Recent Inventories')}
+      subtitle={t('Recently updated inventories')}
       width="lg"
       height="md"
-      linkText={t('Go to Jobs')}
-      to={RouteObj.Jobs}
+      linkText={t('Go to Inventories')}
+      to={RouteObj.Inventories}
     >
       {showEmptyStateNonAdmin ? (
         <PageTable
           disableBodyPadding={true}
           tableColumns={columns}
           autoHidePagination={true}
-          errorStateTitle={t('Error loading jobs')}
+          errorStateTitle={t('Error loading inventories')}
           emptyStateVariant={'light'}
-          emptyStateTitle={t('There are currently no jobs')}
+          emptyStateTitle={t('There are currently no inventories')}
           {...view}
           compact
           itemCount={view.itemCount !== undefined ? Math.min(view.itemCount, 7) : undefined}
@@ -64,14 +58,14 @@ export function AwxRecentJobsCard(props: { view: IAwxView<Job>; showEmptyStateNo
           disableBodyPadding={true}
           tableColumns={columns}
           autoHidePagination={true}
-          errorStateTitle={t('Error loading jobs')}
+          errorStateTitle={t('Error loading inventories')}
           emptyStateIcon={PlusCircleIcon}
           emptyStateButtonIcon={<PlusCircleIcon />}
           emptyStateVariant={'light'}
-          emptyStateTitle={t('There are currently no jobs')}
-          emptyStateDescription={t('Create a job by clicking the button below.')}
-          emptyStateButtonText={t('Create job')}
-          emptyStateButtonClick={() => navigate(RouteObj.CreateJobTemplate)}
+          emptyStateTitle={t('There are currently no inventories')}
+          emptyStateDescription={t('Create a inventory by clicking the button below.')}
+          emptyStateButtonText={t('Create inventory')}
+          emptyStateButtonClick={() => navigate(RouteObj.CreateInventory)}
           {...view}
           compact
           itemCount={view.itemCount !== undefined ? Math.min(view.itemCount, 7) : undefined}

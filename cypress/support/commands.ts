@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /// <reference types="cypress" />
 import '@cypress/code-coverage/support';
+import '@4tw/cypress-drag-drop';
 import { SetOptional, SetRequired } from 'type-fest';
 import { AutomationServerType } from '../../frontend/automation-servers/AutomationServer';
 import { AwxToken } from '../../frontend/awx/interfaces/AwxToken';
