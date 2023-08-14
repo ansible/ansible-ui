@@ -5,7 +5,6 @@ export interface CollectionCategory {
   name: string;
   searchKey: string;
   searchValue: string;
-  selected?: boolean;
 }
 
 export interface CategorizedCollections {

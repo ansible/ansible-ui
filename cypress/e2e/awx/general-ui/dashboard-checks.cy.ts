@@ -33,6 +33,11 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
     cy.contains('tr', 'Projects').find('input').uncheck();
     cy.clickModalButton('Apply');
     cy.contains('.pf-c-card__header', 'Projects').should('not.be.visible');
+    cy.clickButton('Manage view');
+    cy.get('.pf-c-modal-box__title-text').should('contain', 'Manage Dashboard');
+    cy.contains('tr', 'Projects').find('input').check();
+    cy.clickModalButton('Apply');
+    cy.contains('.pf-c-card__header', 'Projects').should('be.visible');
   });
 
   it('within the Manage Dashboard modal, clicking the Cancel button should revert any changes', () => {
@@ -109,24 +114,25 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
     cy.checkAnchorLinks('Go to Hosts');
   });
 
-  it('checks projects count', () => {
-    cy.intercept('GET', 'api/v2/dashboard/').as('getProjects');
-    cy.visit(`/ui_next/dashboard`);
-    cy.contains('.pf-c-card__header', 'Projects')
-      .next()
-      .within(() => {
-        cy.contains('tspan', 'Ready')
-          .invoke('text')
-          .then((text: string) => {
-            cy.wait('@getProjects')
-              .its('response.body.projects.total')
-              .then((total) => {
-                expect(total).to.equal(parseInt(text.split(':')[1]));
-              });
-          });
-      });
-    cy.checkAnchorLinks('Go to Projects');
-  });
+  // JT Disabling invalid test. Ready count does not always match the total count.
+  // it('checks projects count', () => {
+  //   cy.intercept('GET', 'api/v2/dashboard/').as('getProjects');
+  //   cy.visit(`/ui_next/dashboard`);
+  //   cy.contains('.pf-c-card__header', 'Projects')
+  //     .next()
+  //     .within(() => {
+  //       cy.contains('tspan', 'Ready')
+  //         .invoke('text')
+  //         .then((text: string) => {
+  //           cy.wait('@getProjects')
+  //             .its('response.body.projects.total')
+  //             .then((total) => {
+  //               expect(total).to.equal(parseInt(text.split(':')[1]));
+  //             });
+  //         });
+  //     });
+  //   cy.checkAnchorLinks('Go to Projects');
+  // });
 
   it('checks jobs count and the max # of jobs in the table', () => {
     cy.intercept('GET', '/api/v2/unified_jobs/?order_by=-finished&page=1&page_size=10').as(
