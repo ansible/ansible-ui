@@ -33,6 +33,11 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
     cy.contains('tr', 'Projects').find('input').uncheck();
     cy.clickModalButton('Apply');
     cy.contains('.pf-c-card__header', 'Projects').should('not.be.visible');
+    cy.clickButton('Manage view');
+    cy.get('.pf-c-modal-box__title-text').should('contain', 'Manage Dashboard');
+    cy.contains('tr', 'Projects').find('input').check();
+    cy.clickModalButton('Apply');
+    cy.contains('.pf-c-card__header', 'Projects').should('be.visible');
   });
 
   it('within the Manage Dashboard modal, clicking the Cancel button should revert any changes', () => {

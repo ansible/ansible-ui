@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useManageItems } from '../../../../framework/components/useManagedItems';
 
-type Resource = { id: string; name: string; selected: boolean };
+type Resource = { id: string; name: string };
 
 export function useManagedAwxDashboard() {
   const { t } = useTranslation();
