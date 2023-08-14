@@ -5,14 +5,14 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
-import { Collection } from '../Collection';
+import { CollectionVersionSearch } from '../Collection';
 import { useDeleteCollections } from './useDeleteCollections';
 
-export function useCollectionActions(callback?: (collections: Collection[]) => void) {
+export function useCollectionActions(callback?: (collections: CollectionVersionSearch[]) => void) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const deleteCollections = useDeleteCollections(callback);
-  return useMemo<IPageAction<Collection>[]>(
+  return useMemo<IPageAction<CollectionVersionSearch>[]>(
     () => [
       {
         type: PageActionType.Button,
