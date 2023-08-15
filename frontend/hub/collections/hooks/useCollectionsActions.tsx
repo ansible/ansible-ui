@@ -7,11 +7,16 @@ import { IPageAction, PageActionSelection, PageActionType } from '../../../../fr
 import { RouteObj } from '../../../Routes';
 import { CollectionVersionSearch } from '../Collection';
 import { useDeleteCollections } from './useDeleteCollections';
+import { useDeprecateCollections } from './useDeprecateCollections';
+import { useDeleteCollectionsFromRepository } from './useDeleteCollectionsFromRepository';
 
 export function useCollectionsActions(callback: (collections: CollectionVersionSearch[]) => void) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const deleteCollections = useDeleteCollections(callback);
+  const deleteCollectionsFromRepository = useDeleteCollectionsFromRepository(callback);
+  const deprecateCollections = useDeprecateCollections(callback);
+
   return useMemo<IPageAction<CollectionVersionSearch>[]>(
     () => [
       {
@@ -35,13 +40,21 @@ export function useCollectionsActions(callback: (collections: CollectionVersionS
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
+        icon: TrashIcon,
+        label: t('Delete selected collections from repository'),
+        onClick: deleteCollectionsFromRepository,
+        isDanger: true,
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
         icon: BanIcon,
         label: t('Deprecate selected collections'),
-        onClick: () => {
-          /**/
+        onClick: (collections) => {
+          deprecateCollections(collections);
         },
       },
     ],
-    [t, navigate, deleteCollections]
+    [t, navigate, deleteCollections, deprecateCollections, deleteCollectionsFromRepository]
   );
 }

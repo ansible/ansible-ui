@@ -1,13 +1,14 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../framework';
-import { requestDelete } from '../../../common/crud/Data';
+import { requestPatch, requestGet } from '../../../common/crud/Data';
 import { collectionKeyFn } from '../../api';
 import { CollectionVersionSearch } from '../Collection';
 import { useCollectionColumns } from './useCollectionColumns';
-import { hubAPI } from '../../api';
+import { hubAPI, pulpAPI } from '../../api';
+import { PulpItemsResponse } from '../../usePulpView';
 
-export function useDeleteCollections(
+export function useDeprecateCollections(
   onComplete?: (collections: CollectionVersionSearch[]) => void
 ) {
   const { t } = useTranslation();
@@ -17,11 +18,11 @@ export function useDeleteCollections(
   return useCallback(
     (collections: CollectionVersionSearch[]) => {
       bulkAction({
-        title: t('Permanently delete collections', { count: collections.length }),
-        confirmText: t('Yes, I confirm that I want to delete these {{count}} collections.', {
+        title: t('Permanently deprecate collections', { count: collections.length }),
+        confirmText: t('Yes, I confirm that I want to deprecate these {{count}} collections.', {
           count: collections.length,
         }),
-        actionButtonText: t('Delete collections', { count: collections.length }),
+        actionButtonText: t('Deprecate collections', { count: collections.length }),
         items: collections.sort((l, r) =>
           compareStrings(
             l.collection_version.name + l.repository.name,
@@ -33,12 +34,23 @@ export function useDeleteCollections(
         confirmationColumns,
         actionColumns,
         onComplete,
-        actionFn: (collection: CollectionVersionSearch) =>
-          requestDelete(
-            hubAPI`/v3/plugin/ansible/content/published/collections/index/${collection.collection_version.namespace}/${collection.collection_version.name}/`
-          ),
+        actionFn: (collection: CollectionVersionSearch) => deprecateCollection(collection),
       });
     },
     [actionColumns, bulkAction, confirmationColumns, onComplete, t]
   );
+}
+
+async function deprecateCollection(collection: CollectionVersionSearch) {
+  const distro: PulpItemsResponse<Distribution> = await requestGet(
+    pulpAPI`/distributions/ansible/ansible/?repository=${collection.repository.pulp_href}`
+  );
+  return requestPatch(
+    hubAPI`/v3/plugin/ansible/content/${distro.results[0].base_path}/collections/index/${collection.collection_version.namespace}/${collection.collection_version.name}/`,
+    { deprecated: true }
+  );
+}
+
+interface Distribution {
+  base_path: string;
 }
