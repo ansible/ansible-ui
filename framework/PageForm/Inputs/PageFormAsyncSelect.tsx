@@ -10,13 +10,7 @@ import {
 } from '@patternfly/react-core';
 import { SearchIcon, SyncAltIcon } from '@patternfly/react-icons';
 import { ReactElement, ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
-import {
-  Controller,
-  FieldPath,
-  FieldPathValue,
-  FieldValues,
-  useFormContext,
-} from 'react-hook-form';
+import { Controller, FieldPath, FieldValues, PathValue, useFormContext } from 'react-hook-form';
 import { useFrameworkTranslations } from '../../useFrameworkTranslations';
 import { capitalizeFirstLetter } from '../../utils/strings';
 import { PageFormGroup } from './PageFormGroup';
@@ -24,7 +18,7 @@ import { PageFormGroup } from './PageFormGroup';
 export interface PageFormAsyncSelectProps<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
-  SelectionType = unknown
+  SelectionType = unknown,
 > {
   id?: string;
   name: TFieldName;
@@ -51,7 +45,7 @@ export interface PageFormAsyncSelectProps<
 export function PageFormAsyncSelect<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
-  SelectionType = any
+  SelectionType = any,
 >(props: PageFormAsyncSelectProps<TFieldValues, TFieldName, SelectionType>) {
   const {
     isRequired,
@@ -82,12 +76,12 @@ export function PageFormAsyncSelect<
 
   const queryHandler = useCallback(
     (page: number) => {
-      setValue(name, undefined as FieldPathValue<TFieldValues, TFieldName>);
+      setValue(name, undefined as PathValue<TFieldValues, TFieldName>);
       setLoadingError(undefined);
       return query(page)
         .then((result) => {
           if (result.total === 1 && result.values.length === 1) {
-            setValue(name, result.values[0] as FieldPathValue<TFieldValues, TFieldName>);
+            setValue(name, result.values[0] as PathValue<TFieldValues, TFieldName>);
           }
           return result;
         })
@@ -237,7 +231,7 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
       (options ?? [])
         .filter((option) => {
           if (!filterValue) return true;
-          if (option instanceof AsyncSelectSelectOptionObject<SelectionType>) {
+          if (option) {
             return option.toString().toLowerCase().indexOf(filterValue.toLowerCase()) !== -1;
           }
           return false;
@@ -247,7 +241,7 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
             key={option.toString()}
             value={option}
             description={
-              option instanceof AsyncSelectSelectOptionObject<SelectionType> && option.option
+              'option' in option && option.option
                 ? valueToDescription?.(option.option as SelectionType)
                 : undefined
             }
@@ -276,7 +270,7 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
         typeAheadAriaLabel={placeholder}
         selections={value}
         onSelect={(_, value) => {
-          if (value instanceof AsyncSelectSelectOptionObject<SelectionType>) {
+          if (typeof value === 'object' && 'option' in value && value.option) {
             onSelect(value.option as SelectionType);
             setOpen(false);
           }
@@ -332,7 +326,7 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
             key={option.toString()}
             value={option}
             description={
-              option instanceof AsyncSelectSelectOptionObject<SelectionType> && option.option
+              'option' in option && option.option
                 ? valueToDescription?.(option.option as SelectionType)
                 : undefined
             }
@@ -361,7 +355,10 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
 }
 
 class AsyncSelectSelectOptionObject<SelectionType> implements SelectOptionObject {
-  constructor(public option: SelectionType, private asString: (option: SelectionType) => string) {}
+  constructor(
+    public option: SelectionType,
+    private asString: (option: SelectionType) => string
+  ) {}
 
   toString() {
     return this.asString(this.option);

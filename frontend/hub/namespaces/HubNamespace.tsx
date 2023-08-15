@@ -11,7 +11,7 @@ export interface HubNamespace {
       id: number;
       name: string;
       object_roles: string[];
-    }
+    },
   ];
   related_fields: object;
 }

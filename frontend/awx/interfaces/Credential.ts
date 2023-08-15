@@ -52,7 +52,7 @@ export interface Credential
   };
   kind: string;
   credential_type: number;
-  inputs: Record<string | 'url', string | number>;
+  inputs: Record<string, string | number>;
   cloud: boolean;
   organization: number | null;
   managed: boolean;

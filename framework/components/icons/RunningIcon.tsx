@@ -1,7 +1,7 @@
 import { SyncAltIcon } from '@patternfly/react-icons';
-import styled, { Keyframes, keyframes } from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
-const Spin: Keyframes = keyframes`
+const Spin = keyframes`
   from {
     transform: rotate(0);
   }

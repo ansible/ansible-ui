@@ -3,7 +3,7 @@ import { FormGroupDateTimePicker } from './FormGroupDateTimePicker';
 
 export type PageFormDateTimePickerProps<
   TFieldValues extends FieldValues = FieldValues,
-  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 > = {
   name: TFieldName;
   datePlaceHolder?: string;
@@ -12,7 +12,7 @@ export type PageFormDateTimePickerProps<
 };
 export function PageFormDateTimePicker<
   TFieldValues extends FieldValues = FieldValues,
-  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >(props: PageFormDateTimePickerProps<TFieldValues, TFieldName>) {
   const { control } = useFormContext<TFieldValues>();
 

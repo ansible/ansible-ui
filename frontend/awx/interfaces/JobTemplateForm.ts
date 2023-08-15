@@ -5,19 +5,17 @@ export interface JobTemplateSummaryFields
   extends Omit<
     JobTemplate['summary_fields'],
     | 'created_by'
-    | 'modified_by'
-    | 'organization'
-    | 'inventory'
-    | 'project'
     | 'execution_environment'
+    | 'inventory'
     | 'last_job'
     | 'last_update'
+    | 'modified_by'
     | 'object_roles'
-    | 'user_capabilities'
+    | 'organization'
+    | 'project'
+    | 'recent_jobs'
     | 'resolved_environment'
     | 'user_capabilities'
-    | 'recent_jobs'
-    | 'organization'
   > {
   inventory?: { name?: string; id?: number } | null;
   project: { id?: number; name?: string; organization?: number } | null;

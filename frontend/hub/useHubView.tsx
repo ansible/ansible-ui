@@ -26,7 +26,7 @@ export type IHubView<T extends object> = IView &
   ISelected<T> & {
     itemCount: number | undefined;
     pageItems: T[] | undefined;
-    refresh: () => Promise<HubItemsResponse<T> | undefined>;
+    refresh: () => Promise<void>;
     unselectItemsAndRefresh: (items: T[]) => void;
   };
 
@@ -104,7 +104,9 @@ export function useHubView<T extends object>({
     refreshInterval: 30000,
   });
   const { data, mutate } = response;
-  const refresh = useCallback(() => mutate(), [mutate]);
+  const refresh = useCallback(async () => {
+    await mutate();
+  }, [mutate]);
 
   const nextPage = serverlessURL(data?.links?.next);
   useSWR<HubItemsResponse<T>>(nextPage, fetcher, {

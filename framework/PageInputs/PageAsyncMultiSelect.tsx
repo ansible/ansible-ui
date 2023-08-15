@@ -45,7 +45,7 @@ export interface PageAsyncMultiSelectProps<ValueT>
  */
 export function PageAsyncMultiSelect<
   /** The type of the value of the select and of the options values. */
-  ValueT
+  ValueT,
 >(props: PageAsyncMultiSelectProps<ValueT>) {
   const { t } = useTranslation();
 

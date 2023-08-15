@@ -1,7 +1,7 @@
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import styled, { css } from 'styled-components';
 
-const CardPageContainer = styled.div`
+const CardPageContainer = styled.div<{ visibleCardsPerPage: number }>`
   display: grid;
   gap: 30px;
   margin-bottom: var(--pf-global--spacer--lg);

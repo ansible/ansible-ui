@@ -36,7 +36,7 @@ export type PageFormDataEditorInputProps<
   TFieldName extends FieldPathByValue<TFieldValues, undefined | string> = FieldPathByValue<
     TFieldValues,
     undefined | string
-  >
+  >,
 > = {
   name: TFieldName;
   validate?: Validate<string, TFieldValues> | Record<string, Validate<string, TFieldValues>>;
@@ -50,7 +50,7 @@ export function PageFormDataEditor<
   TFieldName extends FieldPathByValue<TFieldValues, undefined | string> = FieldPathByValue<
     TFieldValues,
     undefined | string
-  >
+  >,
 >(props: PageFormDataEditorInputProps<TFieldValues, TFieldName>) {
   const { t } = useTranslation();
   const { isReadOnly, validate, isExpandable, defaultExpanded, ...formGroupInputProps } = props;

@@ -77,7 +77,7 @@ const defaultTranslations: IFrameworkTranslations = {
 const FrameworkTranslationsContext = createContext<
   [
     translations: IFrameworkTranslations,
-    setTranslations: Dispatch<SetStateAction<IFrameworkTranslations>>
+    setTranslations: Dispatch<SetStateAction<IFrameworkTranslations>>,
   ]
 >([defaultTranslations, () => alert('Use FrameworkTranslationsProvider')]);
 

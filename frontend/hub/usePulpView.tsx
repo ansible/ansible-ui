@@ -22,7 +22,7 @@ export type IHubView<T extends object> = IView &
   ISelected<T> & {
     itemCount: number | undefined;
     pageItems: T[] | undefined;
-    refresh: () => Promise<PulpItemsResponse<T> | undefined>;
+    refresh: () => Promise<void>;
   };
 
 export function usePulpView<T extends object>({
@@ -89,7 +89,9 @@ export function usePulpView<T extends object>({
     refreshInterval: 30000,
   });
   const { data, mutate } = response;
-  const refresh = useCallback(() => mutate(), [mutate]);
+  const refresh = useCallback(async () => {
+    await mutate();
+  }, [mutate]);
 
   const nextPage = serverlessURL(data?.next);
   useSWR<PulpItemsResponse<T>>(nextPage, fetcher, {
