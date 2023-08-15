@@ -20,6 +20,6 @@ jobs:
       - name: Sync
         if: github.event.action == "sync"
         run: |
-          git pull https://github.com/ansible/ansible-ui.git main
+          git fetch https://github.com/ansible/ansible-ui.git main
           git merge --no-ff FETCH_HEAD -m "Merge from upstream"
           git push origin main
