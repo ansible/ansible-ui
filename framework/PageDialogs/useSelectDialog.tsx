@@ -37,7 +37,7 @@ interface ISelectDialogOptions<T extends object, TMultiple> {
  */
 export function useSelectDialog<
   T extends { id: number | string; name: string | undefined },
-  TMultiple = false
+  TMultiple = false,
 >(options: ISelectDialogOptions<T, TMultiple>) {
   const { view, tableColumns, toolbarFilters, confirm, cancel, selected, isMultiple } = options;
   const [title, setTitle] = useState('');
@@ -99,7 +99,7 @@ export type SelectDialogProps<T extends object, TMultiple> = {
 
 export function SelectDialog<
   T extends { id: number | string; name: string | undefined },
-  TMultiple = false
+  TMultiple = false,
 >(props: SelectDialogProps<T, TMultiple>) {
   const {
     title,

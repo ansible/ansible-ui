@@ -10,7 +10,7 @@ import { useSelectOrganization, useSelectOrganization2 } from '../hooks/useSelec
 
 export function PageFormOrganizationSelect<
   TFieldValues extends FieldValues = FieldValues,
-  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >(props: { name: TFieldName; organizationPath?: string; isRequired?: boolean }) {
   const { t } = useTranslation();
   const selectOrganization = useSelectOrganization();
@@ -47,7 +47,7 @@ export function PageFormOrganizationSelect<
 
 export function PageFormSelectOrganization<
   TFieldValues extends FieldValues = FieldValues,
-  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >(props: { name: TFieldName; isRequired?: boolean }) {
   const { t } = useTranslation();
   const openSelectDialog = useSelectOrganization2();

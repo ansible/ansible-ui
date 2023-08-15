@@ -358,9 +358,9 @@ export function AutomationCalculatorInternal(props: {
     const abortController = new AbortController();
     setIsLoading(true);
     requestPost<ReportDataResponse>(
-      `/api/v2/analytics/roi_templates/?limit=${perPage}&offset=${(page - 1) * perPage}&sort_by=${
-        sortOption?.value
-      }${encodeURIComponent(`:${sortOrder}`)}`,
+      `/api/v2/analytics/roi_templates/?limit=${perPage}&offset=${
+        (page - 1) * perPage
+      }&sort_by=${sortOption?.value}${encodeURIComponent(`:${sortOrder}`)}`,
       requestBody,
       abortController.signal
     )

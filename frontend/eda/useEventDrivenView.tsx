@@ -11,7 +11,7 @@ export type IEdaView<T extends { id: number | string }> = IView &
   ISelected<T> & {
     itemCount: number | undefined;
     pageItems: T[] | undefined;
-    refresh: () => Promise<AwxItemsResponse<T> | undefined>;
+    refresh: () => Promise<void>;
     selectItemsAndRefresh: (items: T[]) => void;
     unselectItemsAndRefresh: (items: T[]) => void;
     refreshing: boolean;
@@ -101,9 +101,9 @@ export function useEdaView<T extends { id: number | string }>(options: {
   });
   const { data, mutate } = response;
   const [refreshing, setRefreshing] = useState(false);
-  const refresh = useCallback(() => {
+  const refresh = useCallback(async () => {
     setRefreshing(true);
-    return mutate().finally(() => {
+    await mutate().finally(() => {
       setRefreshing(false);
     });
   }, [mutate]);

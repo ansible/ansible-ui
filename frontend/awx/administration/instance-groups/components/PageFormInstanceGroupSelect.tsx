@@ -7,7 +7,7 @@ import { useSelectInstanceGroups } from '../hooks/useSelectInstanceGroups';
 
 export function PageFormInstanceGroupSelect<
   TFieldValues extends FieldValues = FieldValues,
-  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >(props: {
   name: TFieldName;
   labelHelp: string;

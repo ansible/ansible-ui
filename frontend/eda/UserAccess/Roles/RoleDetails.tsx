@@ -80,9 +80,7 @@ export function RoleDetails() {
                   <DescriptionListDescription>
                     {!!permission?.action.length && (
                       <LabelGroup numLabels={5}>
-                        {permission?.action.map((action) => (
-                          <Label key={action}>{action}</Label>
-                        ))}
+                        {permission?.action.map((action) => <Label key={action}>{action}</Label>)}
                       </LabelGroup>
                     )}
                   </DescriptionListDescription>
