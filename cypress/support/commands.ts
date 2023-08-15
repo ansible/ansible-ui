@@ -4,7 +4,6 @@
 import '@cypress/code-coverage/support';
 import '@4tw/cypress-drag-drop';
 import { SetOptional, SetRequired } from 'type-fest';
-import { AutomationServerType } from '../../frontend/automation-servers/AutomationServer';
 import { AwxToken } from '../../frontend/awx/interfaces/AwxToken';
 import { Credential } from '../../frontend/awx/interfaces/Credential';
 import { ExecutionEnvironment } from '../../frontend/awx/interfaces/ExecutionEnvironment';
@@ -40,12 +39,7 @@ import './rest-commands';
 declare global {
   namespace Cypress {
     interface Chainable {
-      login(
-        server: string,
-        username: string,
-        password: string,
-        serverType: AutomationServerType
-      ): Chainable<void>;
+      login(server: string, username: string, password: string): Chainable<void>;
       edaLogout(): Chainable<EdaUser | undefined>;
       awxLogin(): Chainable<void>;
       edaLogin(): Chainable<void>;

@@ -1,6 +1,12 @@
 # Ansible UI
 
-The UI projects for [Ansible](https://www.ansible.com).
+UI projects for [Ansible](https://www.ansible.com).
+
+- [Getting Started](#getting-started)
+- [Environment Variables](#environment-variables)
+- [NPM Scripts](#npm-scripts)
+- [Documentation](#documentation)
+- [Code of Conduct](#code-of-conduct)
 
 ## Getting Started
 
@@ -23,42 +29,79 @@ The UI projects for [Ansible](https://www.ansible.com).
    npm ci
    ```
 
-4. Start the Projects
+## Environment Variables
 
-   - AWX - Ansible Controller
+|   Environment Variable | Description                                |
+| ---------------------: | ------------------------------------------ |
+|         `AWX_PROTOCOL` | The AWX server protocol (http) or (https). |
+|             `AWX_HOST` | The AWX server address with port.          |
+|   `CYPRESS_AWX_SERVER` | The AWX server URL.                        |
+| `CYPRESS_AWX_USERNAME` | The AWX server username.                   |
+| `CYPRESS_AWX_PASSWORD` | The AWX server password.                   |
+|                        |                                            |
+|         `HUB_PROTOCOL` | The HUB server protocol (http) or (https). |
+|             `HUB_HOST` | The HUB server address with port.          |
+|   `CYPRESS_HUB_SERVER` | The HUB server URL.                        |
+| `CYPRESS_HUB_USERNAME` | The HUB server username.                   |
+| `CYPRESS_HUB_PASSWORD` | The HUB server password.                   |
+|                        |                                            |
+|         `EDA_PROTOCOL` | The EDA server protocol (http) or (https). |
+|             `EDA_HOST` | The EDA server address with port.          |
+|   `CYPRESS_EDA_SERVER` | The EDA server URL.                        |
+| `CYPRESS_EDA_USERNAME` | The EDA server username.                   |
+| `CYPRESS_EDA_PASSWORD` | The EDA server password.                   |
 
-     | Environment | Description                   |
-     | ----------: | ----------------------------- |
-     |  AWX_SERVER | The AWX server to connect to. |
+```
+AWX_PROTOCOL=http
+AWX_HOST=localhost:8043
+CYPRESS_AWX_SERVER=$AWX_PROTOCOL://$AWX_HOST
+CYPRESS_AWX_USERNAME='my-user'
+CYPRESS_AWX_PASSWORD='my-password'
 
-     ```
-     npm run awx
-     ```
+HUB_PROTOCOL=http
+HUB_HOST=localhost:8000
+CYPRESS_HUB_SERVER=$HUB_PROTOCOL://$HUB_HOST
+CYPRESS_HUB_USERNAME='my-user'
+CYPRESS_HUB_PASSWORD='my-password'
 
-   - HUB - Automation Hub
+EDA_PROTOCOL=http
+EDA_HOST=localhost:5001
+CYPRESS_EDA_SERVER=$EDA_PROTOCOL://$EDA_HOST
+CYPRESS_EDA_USERNAME='my-user'
+CYPRESS_EDA_PASSWORD='my-password'
+```
 
-     | Environment | Description                   |
-     | ----------: | ----------------------------- |
-     |  HUB_SERVER | The HUB server to connect to. |
+## NPM Scripts
 
-     ```
-     npm run hub
-     ```
+| NPM Script                  | Description                             |
+| --------------------------- | --------------------------------------- |
+| `npm run awx`               | Run AWX on <http://localhost:4101>      |
+| `npm run e2e:awx`           | Run AWX E2E tests from Cypress UI       |
+| `npm run e2e:run:awx`       | Run AWX E2E tests from CLI              |
+| `npm run component:awx`     | Run AWX component tests from Cypress UI |
+| `npm run component:run:awx` | Run AWX component tests from CLI        |
+|                             |                                         |
+| `npm run hub`               | Run HUB on <http://localhost:4102>      |
+| `npm run e2e:hub`           | Run HUB E2E tests from Cypress UI       |
+| `npm run e2e:run:hub`       | Run HUB E2E tests from CLI              |
+| `npm run component:hub`     | Run HUB component tests from Cypress UI |
+| `npm run component:run:hub` | Run HUB component tests from CLI        |
+|                             |                                         |
+| `npm run eda`               | Run EDA on <http://localhost:4103>      |
+| `npm run e2e:eda`           | Run EDA E2E tests from Cypress UI       |
+| `npm run e2e:run:eda`       | Run EDA E2E tests from CLI              |
+| `npm run component:eda`     | Run EDA component tests from Cypress UI |
+| `npm run component:run:eda` | Run EDA component tests from CLI        |
+|                             |                                         |
+| `npm run tsc`               | Run Typescript compiler checks          |
+| `npm run eslint`            | Run eslint checks                       |
+| `npm run prettier`          | Run prettier format checks              |
+| `npm run prettier:fix`      | Fix prettier format of files            |
 
-   - EDA - Event Driven Automation
+## Documentation
 
-     | Environment | Description                   |
-     | ----------: | ----------------------------- |
-     |  EDA_SERVER | The EDA server to connect to. |
-
-     ```
-     npm run eda
-     ```
-
-5. View the development documentation
-
-   - [Development](./docs/DEVELOPMENT.md)
-   - [Framework](./framework/README.md) - A framework for building applications using [PatternFly](https://www.patternfly.org).
+- [Development](./docs/DEVELOPMENT.md)
+- [Framework](./framework/README.md) - A framework for building applications using [PatternFly](https://www.patternfly.org).
 
 ## Code of Conduct
 
