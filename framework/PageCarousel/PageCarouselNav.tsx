@@ -1,10 +1,9 @@
-import { Button, Bullseye, ButtonVariant } from '@patternfly/react-core';
+import { Bullseye, Button, ButtonVariant } from '@patternfly/react-core';
 import { AngleLeftIcon, AngleRightIcon } from '@patternfly/react-icons';
-import { useEffect } from 'react';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import styled, { css } from 'styled-components';
 
-const PageNavDotButton = styled(Button)`
+const PageNavDotButton = styled(Button)<{ isCurrentPage: boolean }>`
   && {
     background-color: blue;
     height: 10px;

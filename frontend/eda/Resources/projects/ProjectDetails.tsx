@@ -32,6 +32,7 @@ import { postRequest } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
 import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
 import { EdaProject, EdaProjectRead } from '../../interfaces/EdaProject';
+import { ImportStateEnum } from '../../interfaces/generated/eda-api';
 import { useDeleteProjects } from './hooks/useDeleteProjects';
 
 export function ProjectDetails() {
@@ -75,7 +76,10 @@ export function ProjectDetails() {
         isPinned: true,
         label: t('Sync project'),
         isHidden: (project: EdaProject) => {
-          return project?.import_state === 'pending' || project?.import_state === 'running';
+          return (
+            project?.import_state === ImportStateEnum.Pending ||
+            project?.import_state === ImportStateEnum.Running
+          );
         },
         onClick: (project: EdaProject) => syncProject(project),
       },

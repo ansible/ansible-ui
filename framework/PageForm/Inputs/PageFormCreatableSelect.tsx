@@ -12,7 +12,7 @@ import { FormGroupTypeAheadMultiSelect } from './FormGroupTypeAheadMultiSelect';
 
 export type PageFormCreatableSelectProps<
   TFieldValues extends FieldValues = FieldValues,
-  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 > = {
   name: TFieldName;
   id?: string;
@@ -31,7 +31,7 @@ export type PageFormCreatableSelectProps<
 /**  Select wrapper for use with react-hook-form */
 export function PageFormCreatableSelect<
   TFieldValues extends FieldValues = FieldValues,
-  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >(props: PageFormCreatableSelectProps<TFieldValues, TFieldName>) {
   const { isRequired, validate, ...rest } = props;
   const {

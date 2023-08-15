@@ -42,7 +42,7 @@ export interface LaunchConfiguration {
         name: string;
         credential_type: number;
         passwords_needed: string[];
-      }
+      },
     ];
     execution_environment: { id: number; name: string } | undefined | null;
     forks: number;

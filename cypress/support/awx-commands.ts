@@ -364,7 +364,7 @@ Cypress.Commands.add(
 
 Cypress.Commands.add('awxRequestPost', function awxRequestPost<
   RequestBodyT extends Cypress.RequestBody,
-  ResponseBodyT = RequestBodyT
+  ResponseBodyT = RequestBodyT,
 >(url: string, body: RequestBodyT) {
   cy.awxRequest<ResponseBodyT>('POST', url, body).then((response) => response.body);
 });

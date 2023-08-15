@@ -11,7 +11,7 @@ import { FormGroupTextArea, FormGroupTextAreaProps } from './FormGroupTextArea';
 
 export type PageFormTextAreaProps<
   TFieldValues extends FieldValues = FieldValues,
-  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 > = {
   name: TFieldName;
   minLength?: number | ValidationRule<number>;
@@ -23,7 +23,7 @@ export type PageFormTextAreaProps<
 /** PatternFly TextArea wrapper for use with react-hook-form */
 export function PageFormTextArea<
   TFieldValues extends FieldValues = FieldValues,
-  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >(props: PageFormTextAreaProps<TFieldValues, TFieldName>) {
   const { name, label, isReadOnly, isRequired, minLength, maxLength, pattern, validate } = props;
   const {

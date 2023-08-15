@@ -2,7 +2,11 @@ import { stringify } from 'yaml';
 
 export class AnsibleError extends Error {
   public readonly json: object | undefined;
-  constructor(msg: string, public code: number, public description?: string) {
+  constructor(
+    msg: string,
+    public code: number,
+    public description?: string
+  ) {
     super(msg);
     Object.setPrototypeOf(this, AnsibleError.prototype);
     this.name = 'AnsibleError';

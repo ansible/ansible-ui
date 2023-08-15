@@ -21,7 +21,7 @@ import { useFrameworkTranslations } from '../../useFrameworkTranslations';
 import { capitalizeFirstLetter } from '../../utils/strings';
 import { PageFormGroup, PageFormGroupProps } from './PageFormGroup';
 
-const ChipHolder = styled.div`
+const ChipHolder = styled.div<{ isDisabled?: boolean }>`
   --pf-c-form-control--Height: auto;
   background-color: ${(props: { isDisabled?: boolean }) =>
     props.isDisabled ? 'var(--pf-global--disabled-color--300)' : null};
@@ -30,7 +30,7 @@ const ChipHolder = styled.div`
 export type PageFormMultiInputProps<
   T,
   TFieldValues extends FieldValues = FieldValues,
-  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 > = {
   name: TFieldName;
   placeholder?: string;
@@ -51,7 +51,7 @@ interface FieldValuesWithArray<T> extends FieldValues {
 export function PageFormMultiInput<
   T extends { id: number | string; name: string },
   TFieldValues extends FieldValuesWithArray<T> = FieldValuesWithArray<T>,
-  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >(props: PageFormMultiInputProps<T, TFieldValues, TFieldName>) {
   const { validate, selectTitle, selectOpen, placeholder, ...formGroupInputProps } = props;
   const { label, name, isRequired, minLength, maxLength, pattern, isDisabled } = props;
