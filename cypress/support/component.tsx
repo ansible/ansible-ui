@@ -18,13 +18,15 @@ import '@patternfly/patternfly/patternfly-base.css';
 
 import { Page } from '@patternfly/react-core';
 import 'cypress-react-selector';
-import { mount } from 'cypress/react18';
 import type { MountReturn } from 'cypress/react';
+import { mount } from 'cypress/react18';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { PageFramework } from '../../framework';
 import { User } from '../../frontend/awx/interfaces/User';
 import { ActiveUserProvider } from '../../frontend/common/useActiveUser';
 import './commands';
+
+import '../../frontend/i18n';
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')

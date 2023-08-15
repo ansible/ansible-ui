@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
-import { PageTableViewTypeE } from '../../../../framework/PageTable/PageToolbar/PageTableViewType';
+import { PageTableViewTypeE } from '../../../../framework/PageToolbar/PageTableViewType';
 import { RouteObj } from '../../../Routes';
 import { API_PREFIX } from '../../constants';
 import { EdaDecisionEnvironment } from '../../interfaces/EdaDecisionEnvironment';
@@ -30,6 +30,7 @@ export function DecisionEnvironments() {
         description={t('Decision environments are a container image to run Ansible rulebooks.')}
       />
       <PageTable
+        id={'eda-decision-environments'}
         tableColumns={tableColumns}
         toolbarActions={toolbarActions}
         toolbarFilters={toolbarFilters}

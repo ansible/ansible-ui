@@ -52,23 +52,26 @@ export function PageActionLink<T extends object>(props: {
 
   return (
     <Wrapper>
-      <Tooltip content={tooltip} trigger={tooltip ? undefined : 'manual'}>
-        <Button
-          id={id}
-          isDanger={action.isDanger}
-          icon={
-            Icon ? (
-              <IconSpan>
-                <Icon />
-              </IconSpan>
-            ) : undefined
-          }
-          isAriaDisabled={Boolean(isDisabled)}
-          component={(props) => <Link {...props} to={to} />}
-        >
-          {content}
-        </Button>
-      </Tooltip>
+      <Button
+        id={id}
+        isDanger={action.isDanger}
+        icon={
+          Icon ? (
+            <IconSpan>
+              <Icon />
+            </IconSpan>
+          ) : undefined
+        }
+        isAriaDisabled={Boolean(isDisabled)}
+        component={(props) => (
+          <Tooltip content={tooltip} trigger={tooltip ? undefined : 'manual'}>
+            <Link {...props} to={to} />
+          </Tooltip>
+        )}
+        variant={iconOnly ? 'plain' : undefined}
+      >
+        {iconOnly && Icon ? <Icon /> : content}
+      </Button>
     </Wrapper>
   );
 }

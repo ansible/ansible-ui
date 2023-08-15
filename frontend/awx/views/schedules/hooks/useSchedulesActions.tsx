@@ -2,13 +2,13 @@ import { EditIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
-import { Schedule } from '../../../interfaces/Schedule';
-import { useDeleteSchedules } from './useDeleteSchedules';
-import { cannotDeleteResource, cannotEditResource } from '../../../../common/utils/RBAChelpers';
-import { useGetSchedulCreateUrl } from './scheduleHelpers';
 import { requestPatch } from '../../../../common/crud/Data';
-import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { useOptions } from '../../../../common/crud/useOptions';
+import { cannotDeleteResource, cannotEditResource } from '../../../../common/utils/RBAChelpers';
+import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
+import { Schedule } from '../../../interfaces/Schedule';
+import { useGetSchedulCreateUrl } from './scheduleHelpers';
+import { useDeleteSchedules } from './useDeleteSchedules';
 
 export function useSchedulesActions(options: {
   onScheduleToggleorDeleteCompleted: () => void;
@@ -35,6 +35,7 @@ export function useSchedulesActions(options: {
         label: t(`Edit schedule`),
         isDisabled: (schedule) => cannotEditResource(schedule, t, canCreateSchedule),
         href: () => editUrl,
+        isPinned: true,
       },
       {
         isPinned: true,

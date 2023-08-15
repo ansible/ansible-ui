@@ -27,13 +27,13 @@ import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../framework';
 import { RouteObj } from '../../Routes';
+import { hubAPI, idKeyFn } from '../api';
 import { useHubView } from '../useHubView';
 import { Collection } from './Collection';
 import { useCollectionActions } from './hooks/useCollectionActions';
 import { useCollectionColumns } from './hooks/useCollectionColumns';
 import { useCollectionFilters } from './hooks/useCollectionFilters';
 import { useCollectionsActions } from './hooks/useCollectionsActions';
-import { idKeyFn, hubAPI } from '../api';
 
 export function Collections() {
   const { t } = useTranslation();
@@ -47,7 +47,8 @@ export function Collections() {
   });
   const toolbarActions = useCollectionsActions(view.unselectItemsAndRefresh);
   const rowActions = useCollectionActions(view.unselectItemsAndRefresh);
-  const showFeaturedCollections = view.itemCount === 0 && Object.keys(view.filters).length === 0;
+  const showFeaturedCollections =
+    view.itemCount === 0 && Object.keys(view.filterState).length === 0;
   return (
     <PageLayout>
       <PageHeader

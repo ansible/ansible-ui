@@ -26,14 +26,9 @@ root.render(
 /* istanbul ignore next */
 if (process.env.PWA === 'true' && 'serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker
-      .register('/service-worker.js')
-      // .then((registration) => {
-      //     console.log('SW registered: ', registration)
-      // })
-      .catch((registrationError) => {
-        // eslint-disable-next-line no-console
-        console.error('SW registration failed: ', registrationError);
-      });
+    navigator.serviceWorker.register('/service-worker.js').catch((registrationError) => {
+      // eslint-disable-next-line no-console
+      console.error('SW registration failed: ', registrationError);
+    });
   });
 }

@@ -1,8 +1,8 @@
-import React, { FunctionComponent } from 'react';
 import { Card, CardBody, CardTitle, Spinner, Title } from '@patternfly/react-core';
+import { FunctionComponent } from 'react';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import currencyFormatter from '../utilities/currencyFormatter';
-import { useTranslation } from 'react-i18next';
 
 interface Props {
   totalSavings: number;
@@ -34,7 +34,7 @@ const TotalSavings: FunctionComponent<Props> = ({
             <Title
               headingLevel="h3"
               size={index === 0 ? '4xl' : 'xl'}
-              style={{ color: 'var(--pf-global--success-color--200)' }}
+              style={{ color: 'var(--pf-global--success-color--100)' }}
             >
               {isLoading ? (
                 <SpinnerDiv>

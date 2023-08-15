@@ -1,16 +1,16 @@
 import { useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
+import type { IFilterState, IToolbarFilter } from '../../../../../framework';
 import { Job } from '../../../interfaces/Job';
 import './JobOutput.css';
 import { JobOutputLoadingRow } from './JobOutputLoadingRow';
-import { IJobOutputRow, jobEventToRows, tracebackToRows, JobOutputRow } from './JobOutputRow';
+import { IJobOutputRow, JobOutputRow, jobEventToRows, tracebackToRows } from './JobOutputRow';
 import { useJobOutput } from './useJobOutput';
 import {
-  useJobOutputChildrenSummary,
   IJobOutputChildrenSummary,
+  useJobOutputChildrenSummary,
 } from './useJobOutputChildrenSummary';
 import { useVirtualizedList } from './useVirtualized';
-import type { IToolbarFilter } from '../../../../../framework';
 
 export interface ICollapsed {
   [uuid: string]: boolean;
@@ -28,14 +28,14 @@ const ScrollContainer = styled.div`
 interface IJobOutputEventsProps {
   job: Job;
   toolbarFilters: IToolbarFilter[];
-  filters: Record<string, string[]>;
+  filterState: IFilterState;
 }
 
 export function JobOutputEvents(props: IJobOutputEventsProps) {
-  const { job, toolbarFilters, filters } = props;
+  const { job, toolbarFilters, filterState } = props;
   // TODO set job status on ws event change
   const isJobRunning = !job.status || runningJobTypes.includes(job.status);
-  const isFiltered = Object.keys(filters).length > 0;
+  const isFiltered = Object.keys(filterState).length > 0;
 
   const { childrenSummary, isFlatMode } = useJobOutputChildrenSummary(
     job,
@@ -44,7 +44,7 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
   const { jobEventCount, getJobOutputEvent, queryJobOutputEvent } = useJobOutput(
     job,
     toolbarFilters,
-    filters,
+    filterState,
     50
   );
 

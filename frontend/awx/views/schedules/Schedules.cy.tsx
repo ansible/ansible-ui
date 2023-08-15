@@ -109,7 +109,7 @@ describe('schedules .cy.ts', () => {
       cy.mount(<Schedules />);
       cy.contains('a', /^Create schedule$/).should('have.attr', 'aria-disabled', 'true');
     });
-    it('Edit, Delete Schedule button is disabled if the user does not have permission(s)', () => {
+    it('Delete Schedule button is disabled if the user does not have permission(s)', () => {
       mockSchedulesList.results[1].summary_fields.user_capabilities.edit = false;
       mockSchedulesList.results[1].summary_fields.user_capabilities.delete = false;
       mockSchedulesList.results[2].enabled = true;
@@ -130,9 +130,6 @@ describe('schedules .cy.ts', () => {
         .within(() => {
           cy.get('input.pf-c-switch__input').should('have.attr', 'disabled');
           cy.get('.pf-c-dropdown__toggle').click();
-          cy.get('.pf-c-dropdown__menu-item')
-            .contains(/^Edit schedule$/)
-            .should('have.attr', 'aria-disabled', 'true');
           cy.get('.pf-c-dropdown__menu-item')
             .contains(/^Delete schedule$/)
             .should('have.attr', 'aria-disabled', 'true');

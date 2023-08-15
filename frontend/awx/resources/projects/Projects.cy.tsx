@@ -159,7 +159,7 @@ describe('projects.cy.ts', () => {
       });
       cy.get('div[data-ouia-component-type="PF4/ModalContent"]').within(() => {
         cy.hasAlert(
-          '{{count}} of the selected project sync jobs cannot be canceled because they are not running.'
+          '1 of the selected project sync jobs cannot be canceled because they are not running.'
         ).should('exist');
         cy.contains('td', ' Project 1 Org 0')
           .parent()
@@ -183,7 +183,7 @@ describe('projects.cy.ts', () => {
       });
       cy.get('div[data-ouia-component-type="PF4/ModalContent"]').within(() => {
         cy.hasAlert(
-          '{{count}} of the selected project sync jobs cannot be cancelled due to insufficient permissions.'
+          '1 of the selected project sync jobs cannot be cancelled due to insufficient permissions.'
         ).should('exist');
         cy.contains('td', ' Project 2 Org 0')
           .parent()
@@ -195,7 +195,7 @@ describe('projects.cy.ts', () => {
       cy.clickButton(/^Clear all filters$/);
     });
 
-    it('Sync, Copy, Edit, Delete Project button is disabled if the user does not have permission(s)', () => {
+    it('Sync, Copy, Delete Project button is disabled if the user does not have permission(s)', () => {
       cy.mount(<Projects />);
       cy.contains('td', ' Project 1 Org 0')
         .parent()
@@ -204,9 +204,6 @@ describe('projects.cy.ts', () => {
           cy.get('.pf-c-dropdown__toggle').click();
           cy.get('.pf-c-dropdown__menu-item')
             .contains(/^Copy project$/)
-            .should('have.attr', 'aria-disabled', 'true');
-          cy.get('.pf-c-dropdown__menu-item')
-            .contains(/^Edit project$/)
             .should('have.attr', 'aria-disabled', 'true');
           cy.get('.pf-c-dropdown__menu-item')
             .contains(/^Delete project$/)

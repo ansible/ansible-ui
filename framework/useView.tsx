@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
+import { IFilterState } from './PageToolbar/PageToolbarFilter';
 import { useIsMountedRef } from './components/useIsMounted';
 import { useSearchParams } from './components/useSearchParams';
 import { useWindowLocation } from './components/useWindowLocation';
@@ -20,8 +21,8 @@ export interface IView {
   setSort: (sort: string) => void;
   sortDirection: 'asc' | 'desc';
   setSortDirection: (sortDirection: 'asc' | 'desc') => void;
-  filters: Record<string, string[]>;
-  setFilters: Dispatch<SetStateAction<Record<string, string[]>>>;
+  filterState: IFilterState;
+  setFilterState: Dispatch<SetStateAction<IFilterState>>;
   clearAllFilters: () => void;
 }
 
@@ -50,7 +51,7 @@ export function useView(options: {
    * - sort
    * - sortDirection
    */
-  defaultValues?: Partial<Pick<IView, 'filters' | 'sort' | 'sortDirection'>> | undefined;
+  defaultValues?: Partial<Pick<IView, 'filterState' | 'sort' | 'sortDirection'>> | undefined;
 
   /**
    * Disable the use of query string parameters when using this view
@@ -140,8 +141,8 @@ export function useView(options: {
     return defaultValues?.sortDirection ?? 'asc';
   });
 
-  const [filters, setFilters] = useState<Record<string, string[]>>(() => {
-    const filters: Record<string, string[]> = defaultValues?.filters ?? {};
+  const [filterState, setFilterState] = useState<IFilterState>(() => {
+    const filters: IFilterState = defaultValues?.filterState ?? {};
     for (const key of searchParams.keys()) {
       if (defaultIgnoreQueryStringKeys.includes(key)) continue;
       const value = searchParams.get(key);
@@ -153,7 +154,7 @@ export function useView(options: {
     return filters;
   });
 
-  const clearAllFilters = useCallback(() => setFilters({}), [setFilters]);
+  const clearAllFilters = useCallback(() => setFilterState({}), [setFilterState]);
 
   const location = useWindowLocation();
 
@@ -178,8 +179,9 @@ export function useView(options: {
     }
 
     // For each filter with value, add it to the query string
-    for (const filter in filters) {
-      newSearchParams.set(filter, filters[filter].join(','));
+    for (const filter in filterState) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      newSearchParams.set(filter, filterState[filter]!.join(','));
     }
 
     setSearchParams(newSearchParams);
@@ -190,7 +192,7 @@ export function useView(options: {
     disableQueryString,
     page,
     perPage,
-    filters,
+    filterState,
     ignoreQueryStringKeys,
     filterQueryStringKeys,
     mountedRef,
@@ -212,11 +214,11 @@ export function useView(options: {
       setSort,
       sortDirection,
       setSortDirection,
-      filters,
-      setFilters,
+      filterState,
+      setFilterState,
       clearAllFilters,
     }),
-    [clearAllFilters, filters, page, perPage, sort, sortDirection]
+    [clearAllFilters, filterState, page, perPage, sort, sortDirection]
   );
 }
 

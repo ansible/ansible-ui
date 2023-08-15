@@ -46,7 +46,7 @@ describe('Teams.cy.ts', () => {
       cy.get('[type="checkbox"][id="select-all"]').check();
       cy.clickToolbarKebabAction(/^Delete selected teams$/);
       cy.contains(
-        '{{count}} of the selected teams cannot be deleted due to insufficient permissions.'
+        '1 of the selected teams cannot be deleted due to insufficient permissions.'
       ).should('be.visible');
     });
 

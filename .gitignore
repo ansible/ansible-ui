@@ -2,8 +2,11 @@
 /build
 /certs
 /coverage
+/dist
 /node_modules
 /publish
 .DS_Store
 /storybook-static
 .vscode
+/cypress/.nyc_output
+/cypress/coverage
