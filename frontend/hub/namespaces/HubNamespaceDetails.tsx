@@ -17,6 +17,8 @@ import { HubNamespace } from './HubNamespace';
 import { useHubView } from '../useHubView';
 import { usePulpSearchView } from '../usePulpSearchView';
 import { useHubNamespaceActions } from './hooks/useHubNamespaceActions';
+import { useHubNamespaceMetadataActions } from './hooks/useHubNamespaceMetadataActions';
+
 import { HubNamespaceMetadataType } from './HubNamespaceMetadataType';
 import { useHubNamespaceMetadataColumns } from './hooks/useHubNamespaceMetadataColumns';
 import { useCollectionFilters } from '../collections/hooks/useCollectionFilters';
@@ -65,6 +67,7 @@ export function NamespaceDetails() {
 function NamespaceDetailsTab(props: { namespace?: HubNamespace }) {
   const { t } = useTranslation();
   const tableColumns = useHubNamespaceMetadataColumns();
+  const rowActions = useHubNamespaceMetadataActions();
   const view = usePulpSearchView<HubNamespaceMetadataType>({
     url: hubAPI`/v3/plugin/ansible/search/namespace-metadata/`,
     keyFn: (item) => item.metadata.pulp_href + ':' + item.repository.name,
@@ -76,6 +79,7 @@ function NamespaceDetailsTab(props: { namespace?: HubNamespace }) {
     <PageLayout>
       <PageTable
         tableColumns={tableColumns}
+        rowActions={rowActions}
         errorStateTitle={t('Error loading namespaces')}
         emptyStateTitle={t('No namespaces yet')}
         {...view}

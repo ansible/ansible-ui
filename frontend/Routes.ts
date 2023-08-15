@@ -212,7 +212,7 @@ export const RouteObj = {
   NamespaceDetails: `${hubRoutePrefix}/namespaces/:id`,
   CreateNamespace: `${hubRoutePrefix}/namespaces/create`,
   EditNamespace: `${hubRoutePrefix}/namespaces/:id/edit`,
-
+  EditNamespaceDetails: `${hubRoutePrefix}/namespaces/:id/edit-details`,
   Approvals: `${hubRoutePrefix}/approvals`,
   ApprovalDetails: `${hubRoutePrefix}/approvals/details/:id`,
 

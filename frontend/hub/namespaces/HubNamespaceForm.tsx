@@ -107,21 +107,6 @@ function HubNamespaceInputs(props: { isReadOnly?: boolean }) {
         isRequired
         isReadOnly={isReadOnly}
       />
-      <PageFormTextInput<HubNamespace>
-        name="latest_metadata.description"
-        label={t('Description')}
-        placeholder={t('Enter description')}
-      />
-      <PageFormTextInput<HubNamespace>
-        name="latest_metadata.company"
-        label={t('Company')}
-        placeholder={t('Enter company')}
-      />
-      <PageFormTextInput<HubNamespace>
-        name="latest_metadata.avatar_url"
-        label={t('Logo URL')}
-        placeholder={t('Enter logo URL')}
-      />
     </>
   );
 }
