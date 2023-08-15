@@ -50,12 +50,8 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
     cy.contains('li', 'History').click();
     cy.wait('@getRBAInstance')
       .its('response.body.results[0].id')
-      .then((id) => {
-        cy.wrap(id).as('ID');
-        cy.get('@ID').then(($id) => {
-          const id = $id.toString();
-          cy.contains('td[data-label="Name"]', `${id} - ${edaRBA.name}`);
-        });
+      .then((id: string) => {
+        cy.contains('td[data-label="Name"]', `${id} - ${edaRBA.name}`);
       });
   });
 });

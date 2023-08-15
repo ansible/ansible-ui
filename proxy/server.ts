@@ -112,11 +112,13 @@ export function startServer(options: ServerOptions): Promise<Http2Server | undef
           }
         })
         .on('message', (data) => {
-          logger.debug({
-            msg: 'websocket proxy message',
-            ...(JSON.parse(data.toString()) as unknown as object),
-          });
-          ws.send(data.toString());
+          if (typeof data === 'string') {
+            logger.debug({
+              msg: 'websocket proxy message',
+              ...(JSON.parse(data) as unknown as object),
+            });
+            ws.send(data);
+          }
         })
         .on('close', () => {
           logger.debug({ msg: 'websocket proxy close' });
@@ -124,14 +126,15 @@ export function startServer(options: ServerOptions): Promise<Http2Server | undef
 
       ws.on('error', (err) => logger.error({ msg: 'websocket error', message: err.message }))
         .on('message', (data) => {
+          if (typeof data !== 'string') return;
           logger.debug({
             msg: 'websocket message',
-            ...(JSON.parse(data.toString()) as unknown as object),
+            ...(JSON.parse(data) as unknown as object),
           });
           if (messageQueue) {
-            messageQueue.push(data.toString());
+            messageQueue.push(data);
           } else {
-            websocket?.send(data.toString());
+            websocket?.send(data);
           }
         })
         .on('close', () => {
