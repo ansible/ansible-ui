@@ -37,11 +37,7 @@ describe('EDA Dashboard', () => {
 
   it('checks Ansible header title', () => {
     cy.visit('/eda/dashboard/');
-    if (Cypress.env('TEST_STANDALONE') === true) {
-      cy.hasTitle('Welcome to Ansible Automation Platform').should('be.visible');
-    } else {
-      cy.hasTitle('Welcome to EDA Server').should('be.visible');
-    }
+    cy.hasTitle('Welcome to Event Driven Automation').should('be.visible');
   });
 
   // it('shows the user an RBA card with a list of RBAs visible including working links', () => {
@@ -146,11 +142,7 @@ describe('dashboard checks when resources before any resources are created', () 
   // });
 
   it('checks the dashboard landing page titles ', () => {
-    if (Cypress.env('TEST_STANDALONE') === true) {
-      cy.hasTitle('Welcome to Ansible Automation Platform').should('be.visible');
-    } else {
-      cy.hasTitle('Welcome to EDA Server').should('be.visible');
-    }
+    cy.hasTitle('Welcome to Event Driven Automation').should('be.visible');
     cy.contains(
       'p span',
       'Connect intelligence, analytics and service requests to enable more responsive and resilient automation.'
