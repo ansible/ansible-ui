@@ -294,19 +294,18 @@ jobs:
     runs-on: ubuntu-latest
     needs: packages
     timeout-minutes: 10
+    outputs:
+      awx: ${{ steps.changed-awx.outputs.changed == 'true' }}
     steps:
-      - name: Check for changes
-        id: check
-        run: echo "skip=${{ needs.packages.outputs.awx != 'true' }}" >> "$GITHUB_OUTPUT"
       - uses: actions/checkout@v3
-        if: steps.check.outputs.skip != 'true'
+        if: needs.packages.outputs.awx == 'true'
         with:
           fetch-depth: 1
       - name: PreCache
-        if: steps.check.outputs.skip != 'true'
+        if: needs.packages.outputs.awx == 'true'
         run: npm version 0.0.0 --no-git-tag-version
       - name: Cache dependencies
-        if: steps.check.outputs.skip != 'true' && steps.cache.outputs.cache-hit != 'true'
+        if: needs.packages.outputs.awx == 'true' && steps.cache.outputs.cache-hit != 'true'
         id: cache
         uses: actions/cache@v3
         with:
@@ -315,19 +314,19 @@ jobs:
             /home/runner/.cache/Cypress
           key: modules-${{ hashFiles('package-lock.json') }}
       - name: Install dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
+        if: steps.cache.outputs.cache-hit == 'true'
         run: npm ci
       - name: NPM Build
-        if: steps.check.outputs.skip != 'true'
+        if: needs.packages.outputs.awx == 'true'
         run: npm run build:awx
       - name: Build Image
-        if: steps.check.outputs.skip != 'true'
+        if: needs.packages.outputs.awx == 'true'
         run: npm run docker:build:awx
       - name: Save Image
-        if: steps.check.outputs.skip != 'true'
+        if: needs.packages.outputs.awx == 'true'
         run: docker save awx-ui > awx-ui.tar
       - name: Upload Image
-        if: steps.check.outputs.skip != 'true'
+        if: needs.packages.outputs.awx == 'true'
         uses: actions/upload-artifact@v3
         with:
           name: awx-ui.tar
@@ -338,39 +337,35 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs:
-      - packages
       - awx-ui-image
     strategy:
       fail-fast: false
       matrix:
         containers: [1, 2]
     steps:
-      - name: Check for changes
-        id: check
-        run: echo "skip=${{ needs.packages.outputs.awx != 'true' }}" >> "$GITHUB_OUTPUT"
       - name: Download container image
-        if: steps.check.outputs.skip != 'true'
+        if: needs.awx-ui-image.outputs.awx == 'true'
         uses: actions/download-artifact@v3
         with:
           name: awx-ui.tar
       - name: Load container image
-        if: steps.check.outputs.skip != 'true'
+        if: needs.awx-ui-image.outputs.awx == 'true'
         run: docker load --input awx-ui.tar
       - name: Checkout
-        if: steps.check.outputs.skip != 'true'
+        if: needs.awx-ui-image.outputs.awx == 'true'
         uses: actions/checkout@v3
         with:
           fetch-depth: 1
       - name: Setup node
-        if: steps.check.outputs.skip != 'true'
+        if: needs.awx-ui-image.outputs.awx == 'true'
         uses: actions/setup-node@v3
         with:
           node-version: 18
       - name: PreCache
-        if: steps.check.outputs.skip != 'true'
+        if: needs.awx-ui-image.outputs.awx == 'true'
         run: npm version 0.0.0 --no-git-tag-version
       - name: Cache dependencies
-        if: steps.check.outputs.skip != 'true'
+        if: needs.awx-ui-image.outputs.awx == 'true'
         id: cache
         uses: actions/cache@v3
         with:
@@ -379,10 +374,10 @@ jobs:
             /home/runner/.cache/Cypress
           key: modules-${{ hashFiles('package-lock.json') }}
       - name: Install dependencies
-        if: steps.check.outputs.skip != 'true' && steps.cache.outputs.cache-hit != 'true'
+        if: needs.awx-ui-image.outputs.awx == 'true' && steps.cache.outputs.cache-hit != 'true'
         run: npm ci
       - name: Cypress
-        if: steps.check.outputs.skip != 'true'
+        if: needs.awx-ui-image.outputs.awx == 'true'
         uses: cypress-io/github-action@v5
         with:
           install: false
