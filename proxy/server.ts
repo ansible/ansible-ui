@@ -267,15 +267,16 @@ export async function stopServer(): Promise<void> {
       await new Promise<void>((resolve) => setTimeout(resolve, delay * 1000));
     }
 
-    await new Promise<void>((resolve) =>
-      server?.close((err: Error | undefined) => {
-        if (err) {
-          logger.error({ msg: 'server close error', name: err.name, error: err.message });
-        } else {
-          logger.debug({ msg: 'server closed' });
-        }
-        resolve();
-      })
+    await new Promise<void>(
+      (resolve) =>
+        server?.close((err: Error | undefined) => {
+          if (err) {
+            logger.error({ msg: 'server close error', name: err.name, error: err.message });
+          } else {
+            logger.debug({ msg: 'server closed' });
+          }
+          resolve();
+        })
     );
   }
 }

@@ -10,7 +10,7 @@ import { useGetAllPagesAWX } from '../../common/crud/useGetAllPagesAWX';
  */
 export function PageFormLabelSelect<
   TFieldValues extends FieldValues = FieldValues,
-  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >(props: {
   labelHelpTitle: string;
   labelHelp: string;

@@ -7,7 +7,7 @@ import { useSettings } from '../../Settings';
 
 export function DataEditor<
   TFieldValues extends FieldValues = FieldValues,
-  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >(props: {
   name: TFieldName;
   language?: string;

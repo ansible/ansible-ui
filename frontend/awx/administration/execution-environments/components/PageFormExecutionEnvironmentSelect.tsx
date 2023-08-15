@@ -10,7 +10,7 @@ import { useSelectExecutionEnvironments } from '../hooks/useSelectExecutionEnvir
 
 export function PageFormExecutionEnvironmentSelect<
   TFieldValues extends FieldValues = FieldValues,
-  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >(props: {
   name: TFieldName;
   executionEnvironmentPath?: string;

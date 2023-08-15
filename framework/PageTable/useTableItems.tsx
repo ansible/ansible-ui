@@ -244,15 +244,18 @@ export function useSelectedInMemory<T extends object>(
 
       const itemsKeys = !items
         ? {}
-        : items.reduce((itemsKeys, item) => {
-            const key = keyFn(item);
-            itemsKeys[key] = item;
-            if (selectedMap[key] && selectedMap[key] !== item) {
-              changed = true;
-              selectedMap[key] = item;
-            }
-            return itemsKeys;
-          }, {} as Record<string | number, T>);
+        : items.reduce(
+            (itemsKeys, item) => {
+              const key = keyFn(item);
+              itemsKeys[key] = item;
+              if (selectedMap[key] && selectedMap[key] !== item) {
+                changed = true;
+                selectedMap[key] = item;
+              }
+              return itemsKeys;
+            },
+            {} as Record<string | number, T>
+          );
 
       const removeKeyMap: Record<string | number, true> = {};
       for (const key in selectedMap) {

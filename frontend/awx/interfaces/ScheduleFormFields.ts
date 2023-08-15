@@ -59,7 +59,7 @@ export interface ScheduleFormFields
       name: string;
       credential_type: number;
       passwords_needed: string[];
-    }
+    },
   ];
   newCredentials: [
     {
@@ -67,7 +67,7 @@ export interface ScheduleFormFields
       name: string;
       credential_type: number;
       passwords_needed: string[];
-    }
+    },
   ];
   execution_environment: { id: number; name: string };
   executionEnvironmentId: number;

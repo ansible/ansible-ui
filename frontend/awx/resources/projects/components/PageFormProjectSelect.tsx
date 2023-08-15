@@ -9,7 +9,7 @@ import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 
 export function PageFormProjectSelect<
   TFieldValues extends FieldValues = FieldValues,
-  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >(props: { name: TFieldName; isRequired?: boolean; project?: string; projectPath?: string }) {
   const { t } = useTranslation();
 

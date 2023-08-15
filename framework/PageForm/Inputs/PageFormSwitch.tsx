@@ -13,7 +13,7 @@ import { Help } from '../../components/Help';
 
 export type PageFormSwitchProps<
   TFieldValues extends FieldValues = FieldValues,
-  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 > = {
   name: TFieldName;
   helperText?: string;
@@ -29,7 +29,7 @@ export type PageFormSwitchProps<
 
 export function PageFormSwitch<
   TFieldValues extends FieldValues = FieldValues,
-  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >(props: PageFormSwitchProps<TFieldValues, TFieldName>) {
   const {
     name,
