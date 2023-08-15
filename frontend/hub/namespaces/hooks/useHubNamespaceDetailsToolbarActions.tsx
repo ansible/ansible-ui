@@ -1,9 +1,7 @@
-import { ButtonVariant } from '@patternfly/react-core';
-import { PlusIcon, TrashIcon } from '@patternfly/react-icons';
+import { TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../framework';
-import { RouteObj } from '../../../Routes';
 import { HubNamespaceMetadataType } from '../HubNamespaceMetadataType';
 import { useDeleteHubNamespaces } from './useDeleteHubNamespaces';
 
@@ -13,16 +11,6 @@ export function useHubNamespaceDetailsToolbarActions() {
 
   return useMemo<IPageAction<HubNamespaceMetadataType>[]>(
     () => [
-      {
-        type: PageActionType.Link,
-        selection: PageActionSelection.None,
-        isPinned: true,
-        variant: ButtonVariant.primary,
-        icon: PlusIcon,
-        label: t('Create namespace'),
-        href: RouteObj.CreateNamespace,
-      },
-      { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
