@@ -19,6 +19,8 @@ export function PageDashboardChart(props: {
     }[];
   }[];
   settings?: {
+    // prevent y axis to show float values
+    onlyIntegerTicks?: boolean;
     // minimal shown value
     minDomain?: number | { x?: number; y?: number };
     // label for x ax
@@ -96,6 +98,12 @@ export function PageDashboardChart(props: {
             dependentAxis
             showGrid
             label={settings && settings.yLabel}
+            tickFormat={
+              settings && settings.onlyIntegerTicks
+                ? //eslint-disable-next-line @typescript-eslint/no-unsafe-return
+                  (t) => (Number.isInteger(t) ? t : '')
+                : undefined
+            }
             style={{ axisLabel: { fontSize: 16 } }}
           />
           <ChartStack>
