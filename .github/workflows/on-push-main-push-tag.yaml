@@ -42,7 +42,7 @@ jobs:
         run: |
           git add --all
           git commit -m "${{ env.VERSION }} [skip ci]"
-          git push origin --all
+          git push origin --all --no-verify
 
       - name: Git Tag Version and Push
         run: |
@@ -67,4 +67,4 @@ jobs:
 
       - name: Git Tag Push
         run: |
-          git push origin --tags
+          git push origin --tags --no-verify
