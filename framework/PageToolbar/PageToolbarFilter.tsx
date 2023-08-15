@@ -81,21 +81,19 @@ function FiltersToolbarItem(props: PageToolbarFiltersProps) {
   return (
     <>
       {toolbarFilters.length === 1 ? (
-        <>
-          <ToolbarItem>
-            {showLabel && (
-              <div style={{ marginTop: 6, marginRight: 6, whiteSpace: 'nowrap' }}>
-                {toolbarFilters[0].label}
-              </div>
-            )}
-            <ToolbarFilterComponent
-              id="filter-input"
-              filter={selectedFilter}
-              filterState={filterState}
-              setFilterState={setFilterState}
-            />
-          </ToolbarItem>
-        </>
+        <ToolbarItem>
+          {showLabel && (
+            <div style={{ marginTop: 6, marginRight: 6, whiteSpace: 'nowrap' }}>
+              {toolbarFilters[0].label}
+            </div>
+          )}
+          <ToolbarFilterComponent
+            id="filter-input"
+            filter={selectedFilter}
+            filterState={filterState}
+            setFilterState={setFilterState}
+          />
+        </ToolbarItem>
       ) : (
         <ToolbarItem>
           <PageSingleSelect
