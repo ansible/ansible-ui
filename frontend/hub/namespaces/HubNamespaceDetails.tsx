@@ -14,14 +14,15 @@ import { RouteObj } from '../../Routes';
 import { useGet } from '../../common/crud/useGet';
 import { hubAPI } from '../api/utils';
 import { HubNamespace } from './HubNamespace';
+import { HubNamespaceMetadataType } from './HubNamespaceMetadataType';
 import { useHubView } from '../useHubView';
 import { usePulpSearchView } from '../usePulpSearchView';
+import { useHubNamespaceDetailsToolbarActions } from './hooks/useHubNamespaceDetailsToolbarActions';
 import { useHubNamespaceActions } from './hooks/useHubNamespaceActions';
 import { useHubNamespaceMetadataActions } from './hooks/useHubNamespaceMetadataActions';
-
-import { HubNamespaceMetadataType } from './HubNamespaceMetadataType';
 import { useHubNamespaceMetadataColumns } from './hooks/useHubNamespaceMetadataColumns';
 import { useCollectionFilters } from '../collections/hooks/useCollectionFilters';
+import { useHubNamespaceDetailsFilters } from '../namespaces/hooks/useHubNamespaceDetailsFilters';
 import { useCollectionVersionColumns } from '../collections/hooks/useCollectionVersionColumns';
 import { CollectionVersionSearch } from '../collections/CollectionVersionSearch';
 import { hubAPI } from '../api';
@@ -45,7 +46,7 @@ export function NamespaceDetails() {
         title={namespace?.name}
         breadcrumbs={[{ label: t('Namespaces'), to: RouteObj.Namespaces }, { label: params.id }]}
         headerActions={
-          <PageActions<HubNamespace>
+          <PageActions<HubNamespaceMetadataType>
             actions={pageActions}
             position={DropdownPosition.right}
             selectedItem={namespace}
@@ -66,12 +67,15 @@ export function NamespaceDetails() {
 
 function NamespaceDetailsTab(props: { namespace?: HubNamespace }) {
   const { t } = useTranslation();
+  const toolbarFilters = useHubNamespaceDetailsFilters();
+  const toolbarActions = useHubNamespaceDetailsToolbarActions();
   const tableColumns = useHubNamespaceMetadataColumns();
   const rowActions = useHubNamespaceMetadataActions();
   const view = usePulpSearchView<HubNamespaceMetadataType>({
     url: hubAPI`/v3/plugin/ansible/search/namespace-metadata/`,
     keyFn: (item) => item.metadata.pulp_href + ':' + item.repository.name,
     tableColumns,
+    toolbarFilters,
     sortKey: 'order_by',
     queryParams: { name: props?.namespace?.name },
   });
@@ -80,6 +84,8 @@ function NamespaceDetailsTab(props: { namespace?: HubNamespace }) {
       <PageTable
         tableColumns={tableColumns}
         rowActions={rowActions}
+        toolbarActions={toolbarActions}
+        toolbarFilters={toolbarFilters}
         errorStateTitle={t('Error loading namespaces')}
         emptyStateTitle={t('No namespaces yet')}
         {...view}

@@ -84,6 +84,11 @@ function HubNamespaceMetadataInputs() {
         label={t('Company')}
         placeholder={t('Enter company')}
       />
+      <PageFormTextInput<HubNamespaceMetadataType>
+        name="metadata.avatar_url"
+        label={t('Logo')}
+        placeholder={t('Enter logo url')}
+      />
     </>
   );
 }
