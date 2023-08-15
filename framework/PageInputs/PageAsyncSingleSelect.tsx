@@ -130,7 +130,7 @@ export function PageAsyncSingleSelect<
           <FlexItem>{t('Loading...')}</FlexItem>
         </Flex>
       ) : (
-        <Split>
+        <Split hasGutter>
           <SplitItem isFilled>
             {options?.length !== total && (
               <Button
