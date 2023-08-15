@@ -1,6 +1,8 @@
 name: Repository Dispatch
 
-on: [repository_dispatch]
+on:
+  repository_dispatch:
+    types: [sync]
 
 jobs:
   repository-dispatch:
@@ -18,7 +20,6 @@ jobs:
           git config --global user.email "actions@users.noreply.github.com"
 
       - name: Sync
-        if: github.event.action == "sync"
         run: |
           git fetch https://github.com/ansible/ansible-ui.git main
           git merge --no-ff FETCH_HEAD -m "Merge from upstream"
