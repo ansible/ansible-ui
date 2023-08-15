@@ -1,4 +1,4 @@
-name: eda-ui
+name: EDA UI Image
 
 on:
   push:
