@@ -602,7 +602,7 @@ function generateNodesAndLinks(state: State, workflowNodes: VisualizerWorkflowNo
     allNodeIds: number[],
     nodeIdToChartNodeIdMapping: Record<number, number>,
     chartNodeIdToIndexMapping: Record<number, number>,
-    nodeIdCounter: number
+    nodeIdCounter: number,
   ];
   const [arrayOfLinksForChart, nonRootNodeIds] = generateLinks(
     workflowNodes,

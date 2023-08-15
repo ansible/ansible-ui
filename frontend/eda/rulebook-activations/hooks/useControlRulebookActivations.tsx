@@ -7,7 +7,7 @@ import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { useRulebookActivationColumns } from './useRulebookActivationColumns';
 
 export function useEnableRulebookActivations(
-  onComplete: (rulebookActivations: (EdaRulebookActivation | EdaRulebookActivation)[]) => void
+  onComplete: (rulebookActivations: EdaRulebookActivation[]) => void
 ) {
   const { t } = useTranslation();
   const confirmationColumns = useRulebookActivationColumns();
@@ -72,7 +72,7 @@ export function useDisableRulebookActivations(
 }
 
 export function useRestartRulebookActivations(
-  onComplete: (rulebookActivations: (EdaRulebookActivation | EdaRulebookActivation)[]) => void
+  onComplete: (rulebookActivations: EdaRulebookActivation[]) => void
 ) {
   const { t } = useTranslation();
   const confirmationColumns = useRulebookActivationColumns();

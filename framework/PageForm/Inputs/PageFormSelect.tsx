@@ -16,7 +16,7 @@ import { IFormGroupSelectOption } from './FormGroupSelectOption';
 export type PageFormSelectProps<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
-  TSelection = unknown
+  TSelection = unknown,
 > = {
   /**
    * The id attribute specifies a unique id for an HTML element. The value of the id attribute must be unique within the HTML document.
@@ -96,7 +96,7 @@ export type PageFormSelectProps<
 export function PageFormSelect<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
-  TSelection = unknown
+  TSelection = unknown,
 >(props: PageFormSelectProps<TFieldValues, TFieldName, TSelection>) {
   const {
     name,

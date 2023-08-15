@@ -9,7 +9,7 @@ import { useSelectWorkflowJobTemplate } from '../hooks/useSelectWorkflowJobTempl
 
 export function PageFormWorkflowJobTemplateSelect<
   TFieldValues extends FieldValues = FieldValues,
-  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >(props: {
   name: TFieldName;
   isRequired?: boolean;

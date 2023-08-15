@@ -13,6 +13,6 @@ export interface Survey {
       default: string;
       choices: string;
       new_question: boolean;
-    }
+    },
   ];
 }

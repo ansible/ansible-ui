@@ -17,6 +17,7 @@ import {
 import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaUser';
 import {
   CredentialTypeEnum,
+  ImportStateEnum,
   RestartPolicyEnum,
 } from '../../frontend/eda/interfaces/generated/eda-api';
 import './auth';
@@ -162,7 +163,7 @@ Cypress.Commands.add('waitEdaProjectSync', (edaProject) => {
     (result) => {
       if (Array.isArray(result?.results) && result.results.length === 1) {
         const project = result.results[0];
-        if (project.import_state !== 'completed') {
+        if (project.import_state !== ImportStateEnum.Completed) {
           cy.wait(100).then(() => cy.waitEdaProjectSync(edaProject));
         } else {
           cy.wrap(project);

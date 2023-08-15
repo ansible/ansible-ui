@@ -63,21 +63,21 @@ export interface IPageActionButton extends IPageActionNoneCommon {
   type: PageActionType.Button;
   selection: PageActionSelection.None;
   variant?: ButtonVariant;
-  onClick: () => unknown | Promise<unknown>;
+  onClick: () => unknown;
 }
 
 export interface IPageActionButtonSingle<T extends object> extends IPageActionSingleCommon<T> {
   type: PageActionType.Button;
   selection: PageActionSelection.Single;
   variant?: ButtonVariant;
-  onClick: (item: T) => unknown | Promise<unknown>;
+  onClick: (item: T) => unknown;
 }
 
 export interface IPageActionButtonMultiple<T extends object> extends IPageActionMultipleCommon<T> {
   type: PageActionType.Button;
   selection: PageActionSelection.Multiple;
   variant?: ButtonVariant;
-  onClick: (items: T[]) => unknown | Promise<unknown>;
+  onClick: (items: T[]) => unknown;
 }
 
 export interface IPageActionLink extends IPageActionNoneCommon {
@@ -92,7 +92,7 @@ export interface IPageActionLinkSingle<T extends object> extends IPageActionSing
 
 export interface IPageActionSwitch extends IPageActionNoneCommon {
   type: PageActionType.Switch;
-  onToggle: (enable: boolean) => unknown | Promise<unknown>;
+  onToggle: (enable: boolean) => unknown;
   isSwitchOn: () => boolean;
   showPinnedLabel?: boolean;
   labelOff?: string;
@@ -101,7 +101,7 @@ export interface IPageActionSwitch extends IPageActionNoneCommon {
 
 export interface IPageActionSwitchSingle<T extends object> extends IPageActionSingleCommon<T> {
   type: PageActionType.Switch;
-  onToggle: (item: T, enable: boolean) => unknown | Promise<unknown>;
+  onToggle: (item: T, enable: boolean) => unknown;
   isSwitchOn: (item: T) => boolean;
   showPinnedLabel?: boolean;
   labelOff?: string;

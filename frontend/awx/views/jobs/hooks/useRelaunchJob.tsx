@@ -32,15 +32,13 @@ export function useRelaunchJob(jobRelaunchParams?: JobRelaunch) {
       let relaunchConfig;
       switch (job.type) {
         case 'ad_hoc_command': {
-          relaunchConfig = await requestGet<AwxItemsResponse<AdHocCommandRelaunch>>(
-            relaunchEndpoint
-          );
+          relaunchConfig =
+            await requestGet<AwxItemsResponse<AdHocCommandRelaunch>>(relaunchEndpoint);
           break;
         }
         case 'workflow_job': {
-          relaunchConfig = await requestGet<AwxItemsResponse<WorkflowJobRelaunch>>(
-            relaunchEndpoint
-          );
+          relaunchConfig =
+            await requestGet<AwxItemsResponse<WorkflowJobRelaunch>>(relaunchEndpoint);
           break;
         }
         case 'job': {

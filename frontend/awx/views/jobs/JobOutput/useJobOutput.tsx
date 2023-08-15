@@ -38,7 +38,7 @@ export function useJobOutput(
       const eventsSlug = job.type === 'job' ? 'job_events' : 'events';
       isQuerying.current.querying = true;
 
-      requestGet<AwxItemsResponse<JobEvent>>(
+      void requestGet<AwxItemsResponse<JobEvent>>(
         `/api/v2/${job.type}s/${job.id.toString()}/${eventsSlug}/?${qsParts.join('&')}`
       )
         .then((itemsResponse) => {

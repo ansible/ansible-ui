@@ -1,6 +1,6 @@
 /* istanbul ignore file */
 
-export function compareUnknowns(a: unknown | undefined | null, b: unknown | undefined | null) {
+export function compareUnknowns(a: unknown, b: unknown) {
   /* istanbul ignore next */
   if (a == undefined && b == undefined) return 0;
   /* istanbul ignore next */

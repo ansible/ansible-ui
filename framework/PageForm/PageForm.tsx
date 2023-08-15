@@ -10,7 +10,7 @@ import {
 import { JSONSchema6 } from 'json-schema';
 import { CSSProperties, ReactNode, useContext, useState } from 'react';
 import {
-  DeepPartial,
+  DefaultValues,
   ErrorOption,
   FieldPath,
   FieldValues,
@@ -31,7 +31,7 @@ export function PageForm<T extends object>(props: {
   onSubmit: PageFormSubmitHandler<T>;
   cancelText?: string;
   onCancel?: () => void;
-  defaultValue?: DeepPartial<T>;
+  defaultValue?: DefaultValues<T>;
   isVertical?: boolean;
   singleColumn?: boolean;
   disableScrolling?: boolean;
@@ -40,7 +40,7 @@ export function PageForm<T extends object>(props: {
 }) {
   const { defaultValue, disableBody, disablePadding } = props;
   const form = useForm<T>({
-    defaultValues: defaultValue ?? ({} as DeepPartial<T>),
+    defaultValues: defaultValue ?? ({} as DefaultValues<T>),
   });
 
   const [frameworkTranslations] = useFrameworkTranslations();

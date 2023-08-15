@@ -18,7 +18,7 @@ import { capitalizeFirstLetter } from '../../utils/strings';
 export type PageFormTextInputProps<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
-  TSelection extends FieldValues = FieldValues
+  TSelection extends FieldValues = FieldValues,
 > = {
   /**
    * The id attribute specifies a unique id for an HTML element. The value of the id attribute must be unique within the HTML document.
@@ -180,7 +180,7 @@ export type PageFormTextInputProps<
 export function PageFormTextInput<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
-  TSelection extends FieldValues = FieldValues
+  TSelection extends FieldValues = FieldValues,
 >(props: PageFormTextInputProps<TFieldValues, TFieldName, TSelection>) {
   const {
     type,

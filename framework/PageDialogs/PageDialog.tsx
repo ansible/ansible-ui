@@ -19,7 +19,7 @@ export function PageDialogProvider(props: { children: ReactNode }) {
 
 export function usePageDialog(): [
   dialog: ReactNode | undefined,
-  setDialog: Dispatch<SetStateAction<ReactNode | undefined>>
+  setDialog: Dispatch<SetStateAction<ReactNode | undefined>>,
 ] {
   return useContext(PageDialogContext);
 }

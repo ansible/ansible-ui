@@ -78,7 +78,7 @@ export interface PageMultiSelectProps<ValueT> {
  */
 export function PageMultiSelect<
   /** The type of the value of the select and of the options values. */
-  ValueT
+  ValueT,
 >(props: PageMultiSelectProps<ValueT>) {
   const { t } = useTranslation();
   const { id, icon, placeholder, values, onSelect, options, variant, disableClearSelection } =

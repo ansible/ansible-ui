@@ -1,21 +1,22 @@
+import { ButtonVariant } from '@patternfly/react-core';
 import { PencilAltIcon, SyncAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import {
-  errorToAlertProps,
   IPageAction,
   PageActionSelection,
   PageActionType,
+  errorToAlertProps,
   usePageAlertToaster,
 } from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
-import { EdaProject } from '../../../interfaces/EdaProject';
-import { IEdaView } from '../../../useEventDrivenView';
-import { useDeleteProjects } from './useDeleteProjects';
 import { postRequest } from '../../../../common/crud/Data';
 import { API_PREFIX } from '../../../constants';
-import { ButtonVariant } from '@patternfly/react-core';
+import { EdaProject } from '../../../interfaces/EdaProject';
+import { ImportStateEnum } from '../../../interfaces/generated/eda-api';
+import { IEdaView } from '../../../useEventDrivenView';
+import { useDeleteProjects } from './useDeleteProjects';
 
 export function useProjectActions(view: IEdaView<EdaProject>) {
   const { t } = useTranslation();
@@ -45,7 +46,8 @@ export function useProjectActions(view: IEdaView<EdaProject>) {
         icon: SyncAltIcon,
         isPinned: true,
         isHidden: (project: EdaProject) =>
-          project?.import_state === 'pending' || project?.import_state === 'running',
+          project?.import_state === ImportStateEnum.Pending ||
+          project?.import_state === ImportStateEnum.Running,
         label: t('Sync project'),
         onClick: (project: EdaProject) => syncProject(project),
       },

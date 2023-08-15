@@ -60,8 +60,8 @@ export function useGetSchedulCreateUrl(sublistEndPoint?: string) {
   const params = useParams<{ id: string; schedule_id?: string }>();
   if (!sublistEndPoint) return RouteObj.CreateSchedule;
   let createUrl: string = RouteObj.CreateSchedule;
-  const resource_type = Object.keys(createScheduleContainerRoutes).find((route) =>
-    sublistEndPoint?.split('/').includes(route)
+  const resource_type = Object.keys(createScheduleContainerRoutes).find(
+    (route) => sublistEndPoint?.split('/').includes(route)
   );
   if (resource_type && params?.id) {
     createUrl = createScheduleContainerRoutes[resource_type].replace(':id', params.id);

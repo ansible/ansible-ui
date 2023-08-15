@@ -28,7 +28,7 @@ export function useIdColumn<T extends { name: string; id: number }>() {
 }
 
 export function useNameColumn<
-  T extends { name?: string; hostname?: string; id: number }
+  T extends { name?: string; hostname?: string; id: number },
 >(options?: {
   header?: string;
   url?: string;
