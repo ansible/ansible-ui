@@ -1,0 +1,25 @@
+name: Repository Dispatch
+
+on: [repository_dispatch]
+
+jobs:
+  repository-dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          fetch-depth: 0
+
+      - name: Git Config
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@users.noreply.github.com"
+
+      - name: Sync
+        if: github.event.action == "sync"
+        run: |
+          git fetch https://github.com/ansible/ansible-ui.git main
+          git merge --no-ff FETCH_HEAD -m "Merge from upstream"
+          git push origin main
