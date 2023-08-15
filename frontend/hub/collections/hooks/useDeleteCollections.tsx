@@ -1,11 +1,12 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../framework';
-import { requestDelete } from '../../../common/crud/Data';
+import { requestDelete, requestGet } from '../../../common/crud/Data';
 import { collectionKeyFn } from '../../api';
 import { CollectionVersionSearch } from '../Collection';
 import { useCollectionColumns } from './useCollectionColumns';
 import { hubAPI } from '../../api';
+import { PulpItemsResponse } from '../../usePulpView';
 
 export function useDeleteCollections(
   onComplete?: (collections: CollectionVersionSearch[]) => void
@@ -33,12 +34,22 @@ export function useDeleteCollections(
         confirmationColumns,
         actionColumns,
         onComplete,
-        actionFn: (collection: CollectionVersionSearch) =>
-          requestDelete(
-            hubAPI`/v3/plugin/ansible/content/${collection.repository.name}/collections/index/${collection.collection_version.namespace}/${collection.collection_version.name}/`
-          ),
+        actionFn: (collection: CollectionVersionSearch) => deleteCollection(collection),
       });
     },
     [actionColumns, bulkAction, confirmationColumns, onComplete, t]
   );
+}
+
+async function deleteCollection(collection: CollectionVersionSearch) {
+  const distro: PulpItemsResponse<Distribution> = await requestGet(
+    `/api/automation-hub/pulp/api/v3/distributions/ansible/ansible/?repository=${collection.repository.pulp_href}`
+  );
+  return requestDelete(
+    hubAPI`/v3/plugin/ansible/content/${distro.results[0].base_path}/collections/index/${collection.collection_version.namespace}/${collection.collection_version.name}/`
+  );
+}
+
+interface Distribution {
+  base_path: string;
 }

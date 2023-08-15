@@ -28,7 +28,7 @@ export function useCollectionActions(callback?: (collections: CollectionVersionS
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: TrashIcon,
-        label: t('Delete entire collection'),
+        label: t('Delete entire collection from system'),
         onClick: (collection) => deleteCollections([collection]),
         isDanger: true,
       },
