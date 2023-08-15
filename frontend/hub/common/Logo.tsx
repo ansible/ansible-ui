@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { CSSProperties } from 'styled-components';
+import Defaultlogo from '../../assets/DefaultLogo.svg';
 import { AnsibleTowerIcon } from '@patternfly/react-icons';
 
 interface LogoProps {
-  // size should be css length measurment: eg. '100px'
-  size: string;
+  // size and width should be css length measurment: eg. '48px'
+  logoSize: string;
   width?: string;
   image: string | null;
   alt: string;
@@ -15,12 +16,13 @@ interface LogoProps {
 }
 
 export function Logo(props: LogoProps) {
-  const { size, width, image, alt, className, unlockWidth, fallbackToDefault, flexGrow } = props;
+  const { logoSize, width, image, alt, className, unlockWidth, fallbackToDefault, flexGrow } =
+    props;
 
   const [failed, setFailed] = useState<boolean>(false);
 
   const [style, setStyle] = useState<CSSProperties>({
-    height: size,
+    height: logoSize,
     display: 'flex',
     justifyContent: 'left',
     alignItems: 'left',
@@ -33,19 +35,19 @@ export function Logo(props: LogoProps) {
     }
 
     if (unlockWidth) {
-      setStyle({ ...style, minWidth: size });
+      setStyle({ ...style, minWidth: logoSize });
     } else {
-      setStyle({ ...style, width: size });
+      setStyle({ ...style, width: logoSize });
     }
-  }, [flexGrow, size, style, unlockWidth]);
+  }, [flexGrow, logoSize, style, unlockWidth]);
 
   return (
     <div className={className} style={style}>
       {failed || image === null ? (
-        <AnsibleTowerIcon />
+        <AnsibleTowerIcon style={{ height: '100%', width: '100%' }} />
       ) : (
         <img
-          style={{ objectFit: 'contain', maxHeight: size }}
+          style={{ objectFit: 'contain', height: logoSize }}
           src={image}
           alt={alt}
           onError={fallbackToDefault ? () => setFailed(true) : () => null}

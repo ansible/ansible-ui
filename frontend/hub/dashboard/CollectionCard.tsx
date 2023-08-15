@@ -37,19 +37,18 @@ export function CollectionCard(props: { collection: CollectionVersionSearch }) {
         item={collection}
         itemToCardFn={(item: CollectionVersionSearch) => ({
           id: item.collection_version.name,
-          icon: <AnsibleTowerIcon />,
-          // icon: (
-          //   <Logo
-          //     alt={t(
-          //       `${item.namespace_metadata?.company || item.collection_version.namespace} logo`
-          //     )}
-          //     fallbackToDefault
-          //     image={item.namespace_metadata?.avatar_url ?? null}
-          //     size="3em"
-          //     width="3em"
-          //     flexGrow
-          //   />
-          // ), // TODO: Update logo to use avatar_url if it exists
+          icon: (
+            <Logo
+              alt={t(
+                `${item.namespace_metadata?.company || item.collection_version.namespace} logo`
+              )}
+              fallbackToDefault
+              image={item.namespace_metadata?.avatar_url ?? null}
+              logoSize="48px"
+              width="48px"
+              flexGrow
+            />
+          ),
           title: (
             <TextCell
               text={item.collection_version.name}
