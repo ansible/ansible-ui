@@ -340,8 +340,7 @@ jobs:
     name: AWX E2E
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    needs:
-      - awx-ui-image
+    needs: awx-ui-image
     strategy:
       fail-fast: false
       matrix:
@@ -408,18 +407,15 @@ jobs:
     needs: packages
     timeout-minutes: 10
     steps:
-      - name: Check for changes
-        id: check
-        run: echo "skip=${{ needs.packages.outputs.hub != 'true' }}" >> "$GITHUB_OUTPUT"
       - uses: actions/checkout@v3
-        if: steps.check.outputs.skip != 'true'
+        if: needs.packages.outputs.hub == 'true'
         with:
           fetch-depth: 1
       - name: PreCache
-        if: steps.check.outputs.skip != 'true'
+        if: needs.packages.outputs.hub == 'true'
         run: npm version 0.0.0 --no-git-tag-version
       - name: Cache dependencies
-        if: steps.check.outputs.skip != 'true' && steps.cache.outputs.cache-hit != 'true'
+        if: needs.packages.outputs.hub == 'true' && steps.cache.outputs.cache-hit != 'true'
         id: cache
         uses: actions/cache@v3
         with:
@@ -431,16 +427,16 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
       - name: NPM Build
-        if: steps.check.outputs.skip != 'true'
+        if: needs.packages.outputs.hub == 'true'
         run: npm run build:hub
       - name: Build Image
-        if: steps.check.outputs.skip != 'true'
+        if: needs.packages.outputs.hub == 'true'
         run: npm run docker:build:hub
       - name: Save Image
-        if: steps.check.outputs.skip != 'true'
+        if: needs.packages.outputs.hub == 'true'
         run: docker save hub-ui > hub-ui.tar
       - name: Upload Image
-        if: steps.check.outputs.skip != 'true'
+        if: needs.packages.outputs.hub == 'true'
         uses: actions/upload-artifact@v3
         with:
           name: hub-ui.tar
@@ -450,43 +446,35 @@ jobs:
     name: HUB E2E
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    needs:
-      - packages
-      - hub-ui-image
+    needs: hub-ui-image
     strategy:
       fail-fast: false
       matrix:
         containers: [1]
     steps:
-      - name: Check for changes
-        id: check
-        run: echo "skip=${{ needs.packages.outputs.hub != 'true' }}" >> "$GITHUB_OUTPUT"
-      - name: Skip job
-        if: steps.check.outputs.skip == 'true'
-        run: echo "No build required"
       - name: Checkout
-        if: steps.check.outputs.skip != 'true'
+        if: needs.hub-ui-image.outputs.hub == 'true'
         uses: actions/checkout@v3
         with:
           fetch-depth: 1
       - name: Download container image
-        if: steps.check.outputs.skip != 'true'
+        if: needs.hub-ui-image.outputs.hub == 'true'
         uses: actions/download-artifact@v3
         with:
           name: hub-ui.tar
       - name: Load container image
-        if: steps.check.outputs.skip != 'true'
+        if: needs.hub-ui-image.outputs.hub == 'true'
         run: docker load --input hub-ui.tar
       - name: Setup Node
-        if: steps.check.outputs.skip != 'true'
+        if: needs.hub-ui-image.outputs.hub == 'true'
         uses: actions/setup-node@v3
         with:
           node-version: 18
       - name: PreCache
-        if: steps.check.outputs.skip != 'true'
+        if: needs.hub-ui-image.outputs.hub == 'true'
         run: npm version 0.0.0 --no-git-tag-version
       - name: Cache dependencies
-        if: steps.check.outputs.skip != 'true'
+        if: needs.hub-ui-image.outputs.hub == 'true'
         id: cache
         uses: actions/cache@v3
         with:
@@ -498,7 +486,7 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true' && steps.check.outputs.skip != 'true'
         run: npm ci
       # - name: Cypress
-      #   if: steps.check.outputs.skip != 'true'
+      #   if: needs.hub-ui-image.outputs.hub == 'true'
       #   uses: cypress-io/github-action@v5
       #   with:
       #     install: false
@@ -525,18 +513,15 @@ jobs:
     needs: packages
     timeout-minutes: 10
     steps:
-      - name: Check for changes
-        id: check
-        run: echo "skip=${{ needs.packages.outputs.eda != 'true' }}" >> "$GITHUB_OUTPUT"
       - uses: actions/checkout@v3
-        if: steps.check.outputs.skip != 'true'
+        if: needs.packages.outputs.eda == 'true'
         with:
           fetch-depth: 1
       - name: PreCache
-        if: steps.check.outputs.skip != 'true'
+        if: needs.packages.outputs.eda == 'true'
         run: npm version 0.0.0 --no-git-tag-version
       - name: Cache dependencies
-        if: steps.check.outputs.skip != 'true' && steps.cache.outputs.cache-hit != 'true'
+        if: needs.packages.outputs.eda == 'true' && steps.cache.outputs.cache-hit != 'true'
         id: cache
         uses: actions/cache@v3
         with:
@@ -548,16 +533,16 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
       - name: NPM Build
-        if: steps.check.outputs.skip != 'true'
+        if: needs.packages.outputs.eda == 'true'
         run: npm run build:eda
       - name: Build Image
-        if: steps.check.outputs.skip != 'true'
+        if: needs.packages.outputs.eda == 'true'
         run: npm run docker:build:eda
       - name: Save Image
-        if: steps.check.outputs.skip != 'true'
+        if: needs.packages.outputs.eda == 'true'
         run: docker save eda-ui > eda-ui.tar
       - name: Upload Image
-        if: steps.check.outputs.skip != 'true'
+        if: needs.packages.outputs.eda == 'true'
         uses: actions/upload-artifact@v3
         with:
           name: eda-ui.tar
@@ -567,43 +552,35 @@ jobs:
     name: EDA E2E
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    needs:
-      - packages
-      - eda-ui-image
+    needs: eda-ui-image
     strategy:
       fail-fast: false
       matrix:
         containers: [1]
     steps:
-      - name: Check for changes
-        id: check
-        run: echo "skip=${{ needs.packages.outputs.eda != 'true' }}" >> "$GITHUB_OUTPUT"
-      - name: Skip job
-        if: steps.check.outputs.skip == 'true'
-        run: echo "No build required"
       - name: Checkout
-        if: steps.check.outputs.skip != 'true'
+        if: needs.eda-ui-image.outputs.eda == 'true'
         uses: actions/checkout@v3
         with:
           fetch-depth: 1
       - name: Download container image
-        if: steps.check.outputs.skip != 'true'
+        if: needs.eda-ui-image.outputs.eda == 'true'
         uses: actions/download-artifact@v3
         with:
           name: eda-ui.tar
       - name: Load container image
-        if: steps.check.outputs.skip != 'true'
+        if: needs.eda-ui-image.outputs.eda == 'true'
         run: docker load --input eda-ui.tar
       - name: Setup Node
-        if: steps.check.outputs.skip != 'true'
+        if: needs.eda-ui-image.outputs.eda == 'true'
         uses: actions/setup-node@v3
         with:
           node-version: 18
       - name: PreCache
-        if: steps.check.outputs.skip != 'true'
+        if: needs.eda-ui-image.outputs.eda == 'true'
         run: npm version 0.0.0 --no-git-tag-version
       - name: Cache dependencies
-        if: steps.check.outputs.skip != 'true'
+        if: needs.eda-ui-image.outputs.eda == 'true'
         id: cache
         uses: actions/cache@v3
         with:
@@ -615,7 +592,7 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true' && steps.check.outputs.skip != 'true'
         run: npm ci
       - name: Cypress
-        if: steps.check.outputs.skip != 'true'
+        if: needs.eda-ui-image.outputs.eda == 'true'
         uses: cypress-io/github-action@v5
         with:
           install: false
