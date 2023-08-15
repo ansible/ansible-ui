@@ -1,4 +1,4 @@
-name: Publish
+name: Publish Framework
 
 on:
   push:
@@ -8,6 +8,7 @@ on:
 jobs:
   publish-framework:
     name: Publish Framework
+    if: github.repository == 'ansible/ansible-ui'
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
