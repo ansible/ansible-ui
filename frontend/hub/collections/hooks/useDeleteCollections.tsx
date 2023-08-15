@@ -35,7 +35,7 @@ export function useDeleteCollections(
         onComplete,
         actionFn: (collection: CollectionVersionSearch) =>
           requestDelete(
-            hubAPI`/v3/plugin/ansible/content/published/collections/index/${collection.collection_version.namespace}/${collection.collection_version.name}/`
+            hubAPI`/v3/plugin/ansible/content/${collection.repository.name}/collections/index/${collection.collection_version.namespace}/${collection.collection_version.name}/`
           ),
       });
     },
