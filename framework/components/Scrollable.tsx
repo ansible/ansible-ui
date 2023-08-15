@@ -32,10 +32,10 @@ export function Scrollable(props: {
   // }
 
   /* istanbul ignore next */
-  const borderTop = props.borderTop ? 'thin solid rgba(0, 0, 0, 0.12)' : '';
+  const borderTop = props.borderTop ? 'thin solid var(--pf-global--BorderColor--100)' : '';
 
   /* istanbul ignore next */
-  const borderBottom = props.borderBottom ? 'thin solid rgba(0, 0, 0, 0.12)' : '';
+  const borderBottom = props.borderBottom ? 'thin solid var(--pf-global--BorderColor--100)' : '';
 
   return (
     <div

@@ -185,48 +185,38 @@ export function useManageColumns<T extends object>(
     return columns;
   }, [disableCardView, disableListView, disableTableView, t]);
 
-  const loadColumns = useCallback((columns: ITableColumn<T>[], data: object[]) => {
-    const values = data as Pick<ITableColumn<T>, 'id' | 'header' | 'table' | 'list' | 'card'>[];
-    for (const column of columns) {
-      if (column.id) {
-        const value = values.find((value) => value.id === column.id);
-        if (value) {
-          column.table = value.table;
-          column.list = value.list;
-          column.card = value.card;
-        }
+  const loadColumn = useCallback((column: ITableColumn<T>, data: unknown) => {
+    if (typeof data === 'object' && data !== null) {
+      if ('table' in data && typeof data.table === 'string') {
+        column.table = data.table as ColumnTableOption;
       } else {
-        const value = values.find((value) => value.header === column.header);
-        if (value) {
-          column.table = value.table;
-          column.list = value.list;
-          column.card = value.card;
-        }
+        column.table = undefined;
+      }
+      if ('list' in data && typeof data.list === 'string') {
+        column.list = data.list as
+          | 'name'
+          | 'subtitle'
+          | 'description'
+          | 'hidden'
+          | 'primary'
+          | 'secondary';
+      } else {
+        column.list = undefined;
+      }
+      if ('card' in data && typeof data.card === 'string') {
+        column.card = data.card as 'name' | 'subtitle' | 'description' | 'hidden';
+      } else {
+        column.card = undefined;
       }
     }
-    columns.sort((a, b) => {
-      if (a.id && b.id) {
-        const valueAIndex = values.findIndex((value) => value.id === a.id);
-        const valueBIndex = values.findIndex((value) => value.id === b.id);
-        return valueAIndex - valueBIndex;
-      } else {
-        const valueAIndex = values.findIndex((value) => value.header === a.header);
-        const valueBIndex = values.findIndex((value) => value.header === b.header);
-        return valueAIndex - valueBIndex;
-      }
-    });
   }, []);
 
-  const saveColumns = useCallback(
-    (columns: ITableColumn<T>[]) =>
-      columns.map((column) => {
-        const { id, header, table, list, card } = column;
-        return { id, header, table, list, card };
-      }),
-    []
-  );
+  const saveColumn = useCallback((column: ITableColumn<T>) => {
+    const { table, list, card } = column;
+    return { table, list, card };
+  }, []);
 
-  const { openModal: openColumnManagement, items: managedColumns } = useManageItems<
+  const { openManageItems: openColumnManagement, managedItems: managedColumns } = useManageItems<
     ITableColumn<T>
   >({
     id: id,
@@ -235,9 +225,11 @@ export function useManageColumns<T extends object>(
     items: tableColumns,
     keyFn: (tableColumn) => tableColumn.id ?? tableColumn.header,
     columns,
-    loadFn: loadColumns,
-    saveFn: saveColumns,
+    loadFn: loadColumn,
+    saveFn: saveColumn,
+    hideSelection: true,
   });
+
   return {
     openColumnManagement,
     managedColumns,

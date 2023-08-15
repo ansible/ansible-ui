@@ -14,15 +14,7 @@ describe('EDA Login / Logoff', () => {
       cy.wait('@loggedOut').then((result) => {
         expect(result?.response?.statusCode).to.eql(204);
       });
-      if (edaUser && Cypress.env('TEST_STANDALONE') === true) {
-        cy.typeInputByLabel(/^Username$/, edaUser.username);
-        cy.typeInputByLabel(/^Password$/, Cypress.env('EDA_PASSWORD') as string);
-        cy.clickModalButton('Log in');
-        cy.get('.pf-c-dropdown__toggle').eq(1).should('contain', edaUser.username);
-      } else if (edaUser && !Cypress.env('TEST_STANDALONE')) {
-        cy.get('#E2E-title').then(() => {
-          cy.contains('E2E').click();
-        });
+      if (edaUser) {
         cy.typeInputByLabel(/^Username$/, edaUser.username);
         cy.typeInputByLabel(/^Password$/, Cypress.env('EDA_PASSWORD') as string);
         cy.clickModalButton('Log in');
@@ -57,32 +49,14 @@ describe('EDA Login / Logoff', () => {
     cy.hasDetail('Last name', userDetails.LastName);
     cy.hasDetail('Email', userDetails.Email);
     cy.hasDetail('Username', userDetails.Username);
-    if (Cypress.env('TEST_STANDALONE') === true) {
-      cy.intercept('GET', '/api/logout/').as('loggedOut');
-      cy.edaLogout();
-      cy.wait('@loggedOut').then((result) => {
-        expect(result?.response?.statusCode).to.eql(200);
-      });
-    } else {
-      cy.intercept('POST', '/api/eda/v1/auth/session/logout/').as('loggedOut');
-      cy.edaLogout();
-      cy.wait('@loggedOut').then((result) => {
-        expect(result?.response?.statusCode).to.eql(204);
-      });
-    }
-    if (Cypress.env('TEST_STANDALONE') === true) {
-      cy.typeInputByLabel(/^Username$/, userDetails.Username);
-      cy.typeInputByLabel(/^Password$/, userDetails.Password);
-      cy.clickModalButton('Log in');
-      cy.get('.pf-c-dropdown__toggle').eq(1).should('contain', userDetails.Username);
-    } else {
-      cy.get('#E2E-title').then(() => {
-        cy.contains('E2E').click();
-      });
-      cy.typeInputByLabel(/^Username$/, userDetails.Username);
-      cy.typeInputByLabel(/^Password$/, userDetails.Password);
-      cy.clickModalButton('Log in');
-      cy.get('.pf-c-dropdown__toggle').eq(1).should('contain', userDetails.Username);
-    }
+    cy.intercept('GET', '/api/logout/').as('loggedOut');
+    cy.edaLogout();
+    cy.wait('@loggedOut').then((result) => {
+      expect(result?.response?.statusCode).to.eql(200);
+    });
+    cy.typeInputByLabel(/^Username$/, userDetails.Username);
+    cy.typeInputByLabel(/^Password$/, userDetails.Password);
+    cy.clickModalButton('Log in');
+    cy.get('.pf-c-dropdown__toggle').eq(1).should('contain', userDetails.Username);
   });
 });

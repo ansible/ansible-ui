@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable, useInMemoryView } from '../../framework';
-import { PageTableViewTypeE } from '../../framework/PageTable/PageToolbar/PageTableViewType';
+import { PageTableViewTypeE } from '../../framework/PageToolbar/PageTableViewType';
 import { AutomationServer } from './AutomationServer';
 import { useAutomationServers } from './AutomationServersProvider';
 import { indexedDbItemKey } from './IndexDb';

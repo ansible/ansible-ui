@@ -1,22 +1,14 @@
-import { PageHeader, PageLayout } from '../../../../framework';
-import {
-  Bullseye,
-  Page,
-  PageSection,
-  Spinner,
-  LabelGroup,
-  Tooltip,
-  TooltipPosition,
-  Label,
-} from '@patternfly/react-core';
-import { AnalyticsErrorState } from './ErrorStates';
-import { useActiveUser } from '../../../common/useActiveUser';
-import { requestGet } from '../../../common/crud/Data';
-import { TAGS } from './constants';
-import useSWR from 'swr';
-import AutomationCalculator from './AutomationCalculator';
+import { Label, LabelGroup, Page, Tooltip, TooltipPosition } from '@patternfly/react-core';
+import { useEffect, useState } from 'react';
 import { ChartSchemaElement } from 'react-json-chart-builder';
-import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
+import useSWR from 'swr';
+import { PageHeader, PageLayout } from '../../../../framework';
+import { requestGet } from '../../../common/crud/Data';
+import { useActiveUser } from '../../../common/useActiveUser';
+import { AutomationCalculator } from './AutomationCalculator';
+import { AnalyticsErrorState } from './ErrorStates';
+import { TAGS } from './constants';
 
 export interface ReportItemsResponse {
   report: {
@@ -31,8 +23,7 @@ export interface ReportItemsResponse {
 
 export default function Reports() {
   const activeUser = useActiveUser();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data, isLoading, error } = useSWR<ReportItemsResponse, boolean, any>(
+  const { data, error } = useSWR<ReportItemsResponse, Error>(
     `/api/v2/analytics/report/automation_calculator/`,
     requestGet
   );
@@ -57,16 +48,6 @@ export default function Reports() {
     }
   }, [error]);
 
-  if (isLoading) {
-    return (
-      <PageSection isFilled>
-        <Bullseye>
-          <Spinner />
-        </Bullseye>
-      </PageSection>
-    );
-  }
-
   function ReportsInternal() {
     if (error || specificError) {
       return specificError ? <AnalyticsErrorState error={specificError} /> : <></>;
@@ -76,7 +57,7 @@ export default function Reports() {
   }
 
   const reportTags = (
-    <LabelGroup numLabels={6}>
+    <ReportTagsLabelGroup numLabels={6}>
       {!!data &&
         data.report.layoutProps.tags.map((tagKey, idx) => {
           const tag = TAGS.find((t) => t.key === tagKey);
@@ -94,7 +75,7 @@ export default function Reports() {
             );
           }
         })}
-    </LabelGroup>
+    </ReportTagsLabelGroup>
   );
   return (
     <Page>
@@ -102,10 +83,14 @@ export default function Reports() {
         <PageHeader
           title={data?.report?.name || ''}
           description={data?.report?.description || ''}
-          footer={data ? reportTags : undefined}
+          controls={data ? reportTags : undefined}
         />
-        {!activeUser?.is_superuser ? <AnalyticsErrorState /> : <ReportsInternal />}
+        {activeUser && !activeUser?.is_superuser ? <AnalyticsErrorState /> : <ReportsInternal />}
       </PageLayout>
     </Page>
   );
 }
+
+const ReportTagsLabelGroup = styled(LabelGroup)`
+  flex-wrap: nowrap;
+`;

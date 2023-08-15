@@ -18,7 +18,7 @@ describe('EDA rulebook activations- Create', () => {
     cy.createEdaProject().then((project) => {
       edaProject = project;
       cy.waitEdaProjectSync(project);
-      cy.getEdaRulebooks(edaProject, 'hello_echo.yml').then((edaRuleBooks) => {
+      cy.getEdaRulebooks(edaProject, 'basic_short.yml').then((edaRuleBooks) => {
         edaRuleBook = edaRuleBooks[0];
         cy.createEdaDecisionEnvironment().then((decisionEnvironment) => {
           edaDecisionEnvironment = decisionEnvironment;
@@ -108,19 +108,20 @@ describe('EDA rulebook activations- Edit, Delete', () => {
 
     cy.createEdaProject().then((project) => {
       edaProject = project;
-      cy.getEdaRulebooks(edaProject, 'hello_echo.yml').then((edaRuleBooks) => {
+      cy.waitEdaProjectSync(project);
+      cy.getEdaRulebooks(edaProject, 'basic_short.yml').then((edaRuleBooks) => {
         edaRuleBook = edaRuleBooks[0];
         cy.createEdaDecisionEnvironment().then((decisionEnvironment) => {
           edaDecisionEnvironment = decisionEnvironment;
           cy.createEdaRulebookActivation({
             rulebook_id: edaRuleBook.id,
-            decision_environment_id: decisionEnvironment.id,
+            decision_environment_id: edaDecisionEnvironment.id,
           }).then((edaRulebookActivation) => {
             edaRBA = edaRulebookActivation;
           });
           cy.createEdaRulebookActivation({
             rulebook_id: edaRuleBook.id,
-            decision_environment_id: decisionEnvironment.id,
+            decision_environment_id: edaDecisionEnvironment.id,
             is_enabled: false,
           }).then((edaRulebookActivation) => {
             edaDisabledRBA = edaRulebookActivation;

@@ -17,7 +17,7 @@ export function useManageHubDashboard() {
   );
   const collectionCategories: CollectionCategory[] = useCollectionCategories();
 
-  const { openModal: openManageDashboard, items: managedCategories } =
+  const { openManageItems: openManageDashboard, managedItems: managedCategories } =
     useManageItems<CollectionCategory>({
       id: 'hub-dashboard',
       title: 'Manage Dashboard',
@@ -28,22 +28,13 @@ export function useManageHubDashboard() {
       keyFn: (category) => category.id,
       columns,
       hideColumnHeaders: true,
-      isSelected: (category) => category.selected ?? true,
-      setSelected: (category, selected) => {
-        category.selected = selected;
-      },
     });
-
-  const visibleCategories = useMemo(
-    () => managedCategories.filter((category) => category.selected),
-    [managedCategories]
-  );
 
   return useMemo(
     () => ({
       openManageDashboard,
-      managedCategories: visibleCategories,
+      managedCategories,
     }),
-    [openManageDashboard, visibleCategories]
+    [openManageDashboard, managedCategories]
   );
 }

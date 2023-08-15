@@ -78,6 +78,7 @@ export function InstanceGroups() {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: EditIcon,
+        isPinned: true,
         label: t('Edit instance group'),
         onClick: (instanceGroup) =>
           navigate(RouteObj.EditInstanceGroup.replace(':id', instanceGroup.id.toString())),

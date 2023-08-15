@@ -26,11 +26,11 @@ import {
   useModifiedByToolbarFilter,
   useNameToolbarFilter,
 } from '../../common/awx-toolbar-filters';
+import { useAwxConfig } from '../../common/useAwxConfig';
+import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
 import { AwxHost } from '../../interfaces/AwxHost';
 import { useAwxView } from '../../useAwxView';
 import { useDeleteHosts } from './useDeleteHosts';
-import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
-import { useAwxConfig } from '../../common/useAwxConfig';
 
 export function Hosts() {
   const { t } = useTranslation();
@@ -71,6 +71,7 @@ export function Hosts() {
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
+        isPinned: true,
         icon: EditIcon,
         label: t('Edit host'),
         onClick: (host) => navigate(RouteObj.EditHost.replace(':id', host.id.toString())),

@@ -5,7 +5,6 @@ import { RouteObj } from '../../../Routes';
 
 export function AwxProjectsCard(props: { total: number; failed: number }) {
   const { t } = useTranslation();
-  if (props.total === 0) return <></>;
   return (
     <PageDashboardDonutCard
       title={t('Projects')}

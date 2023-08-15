@@ -16,8 +16,8 @@ import { UnifiedJob } from '../../interfaces/UnifiedJob';
 import { IAwxView } from '../../useAwxView';
 import { useJobsColumns } from '../../views/jobs/hooks/useJobsColumns';
 
-export function AwxRecentJobsCard(props: { view: IAwxView<Job> }) {
-  const { view } = props;
+export function AwxRecentJobsCard(props: { view: IAwxView<Job>; showEmptyStateNonAdmin: boolean }) {
+  const { view, showEmptyStateNonAdmin } = props;
   const { t } = useTranslation();
   const navigate = useNavigate();
   let columns = useJobsColumns();
@@ -38,31 +38,47 @@ export function AwxRecentJobsCard(props: { view: IAwxView<Job> }) {
 
   return (
     <PageDashboardCard
-      title={t('Jobs')}
+      title={t('Recent Jobs')}
       subtitle={t('Recently finished jobs')}
       width="lg"
       height="md"
       linkText={t('Go to Jobs')}
       to={RouteObj.Jobs}
     >
-      <PageTable
-        disableBodyPadding={true}
-        tableColumns={columns}
-        autoHidePagination={true}
-        errorStateTitle={t('Error loading jobs')}
-        emptyStateIcon={PlusCircleIcon}
-        emptyStateButtonIcon={<PlusCircleIcon />}
-        emptyStateVariant={'light'}
-        emptyStateTitle={t('There are currently no jobs')}
-        emptyStateDescription={t('Create a job by clicking the button below.')}
-        emptyStateButtonText={t('Create job')}
-        emptyStateButtonClick={() => navigate(RouteObj.CreateJobTemplate)}
-        {...view}
-        compact
-        itemCount={view.itemCount !== undefined ? Math.min(view.itemCount, 7) : undefined}
-        pageItems={view.pageItems ? view.pageItems.slice(0, 7) : undefined}
-        disableLastRowBorder
-      />
+      {showEmptyStateNonAdmin ? (
+        <PageTable
+          disableBodyPadding={true}
+          tableColumns={columns}
+          autoHidePagination={true}
+          errorStateTitle={t('Error loading jobs')}
+          emptyStateVariant={'light'}
+          emptyStateTitle={t('There are currently no jobs')}
+          {...view}
+          compact
+          itemCount={view.itemCount !== undefined ? Math.min(view.itemCount, 7) : undefined}
+          pageItems={view.pageItems ? view.pageItems.slice(0, 7) : []}
+          disableLastRowBorder
+        />
+      ) : (
+        <PageTable
+          disableBodyPadding={true}
+          tableColumns={columns}
+          autoHidePagination={true}
+          errorStateTitle={t('Error loading jobs')}
+          emptyStateIcon={PlusCircleIcon}
+          emptyStateButtonIcon={<PlusCircleIcon />}
+          emptyStateVariant={'light'}
+          emptyStateTitle={t('There are currently no jobs')}
+          emptyStateDescription={t('Create a job by clicking the button below.')}
+          emptyStateButtonText={t('Create job')}
+          emptyStateButtonClick={() => navigate(RouteObj.CreateJobTemplate)}
+          {...view}
+          compact
+          itemCount={view.itemCount !== undefined ? Math.min(view.itemCount, 7) : undefined}
+          pageItems={view.pageItems ? view.pageItems.slice(0, 7) : []}
+          disableLastRowBorder
+        />
+      )}
     </PageDashboardCard>
   );
 }

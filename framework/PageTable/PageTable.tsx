@@ -45,6 +45,10 @@ import { IPageAction, PageActionSelection } from '../PageActions/PageAction';
 import { PageActions } from '../PageActions/PageActions';
 import { PageBody } from '../PageBody';
 import { PageDetailsFromColumns } from '../PageDetails/PageDetailsFromColumns';
+import { PageTableViewType, PageTableViewTypeE } from '../PageToolbar/PageTableViewType';
+import { PageToolbar } from '../PageToolbar/PageToolbar';
+import { IFilterState, IToolbarFilter } from '../PageToolbar/PageToolbarFilter';
+import { usePageToolbarSortOptionsFromColumns } from '../PageToolbar/PageToolbarSort';
 import { useSettings } from '../Settings';
 import { EmptyStateError } from '../components/EmptyStateError';
 import { EmptyStateNoData } from '../components/EmptyStateNoData';
@@ -63,10 +67,6 @@ import {
   useVisibleTableColumns,
 } from './PageTableColumn';
 import { PageTableList } from './PageTableList';
-import { PageTableViewType, PageTableViewTypeE } from './PageToolbar/PageTableViewType';
-import { PageTableToolbar } from './PageToolbar/PageToolbar';
-import { IToolbarFilter } from './PageToolbar/PageToolbarFilter';
-import { usePageToolbarSortOptionsFromColumns } from './PageToolbar/PageToolbarSort';
 
 const ScrollDiv = styled.div`
   height: 100%;
@@ -107,8 +107,8 @@ export type PageTableProps<T extends object> = {
   rowActions?: IPageAction<T>[];
 
   toolbarFilters?: IToolbarFilter[];
-  filters?: Record<string, string[]>;
-  setFilters?: Dispatch<SetStateAction<Record<string, string[]>>>;
+  filterState?: IFilterState;
+  setFilterState?: Dispatch<SetStateAction<IFilterState>>;
   clearAllFilters?: () => void;
   pagination?: IPaginationRelatedProps;
   sort?: string;
@@ -203,7 +203,8 @@ export type PageTableProps<T extends object> = {
  * ```
  */
 export function PageTable<T extends object>(props: PageTableProps<T>) {
-  const { id, toolbarActions, filters, error, itemCount, disableBodyPadding, pagination } = props;
+  const { id, toolbarActions, filterState, error, itemCount, disableBodyPadding, pagination } =
+    props;
 
   const { openColumnManagement, managedColumns } = useManageColumns<T>(
     (id ?? '') + '-columns',
@@ -264,7 +265,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
     );
   }
 
-  if (itemCount === 0 && Object.keys(filters ?? {}).length === 0) {
+  if (itemCount === 0 && Object.keys(filterState ?? {}).length === 0) {
     return (
       <PageSection style={{ backgroundColor: 'transparent' }}>
         <EmptyStateNoData
@@ -304,7 +305,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
 
   return (
     <>
-      <PageTableToolbar
+      <PageToolbar
         {...props}
         openColumnModal={props.id ? openColumnManagement : undefined}
         showSelect={showSelect}
@@ -824,7 +825,7 @@ function TableCells<T extends object>(props: {
           style={{
             right: 0,
             padding: 0,
-            paddingRight: 0,
+            paddingRight: 8,
             zIndex: actionsExpanded ? 400 : undefined, // ZIndex 400 is needed for PF table stick headers
           }}
           className={props.scrollRight ? 'pf-m-border-left' : undefined}
