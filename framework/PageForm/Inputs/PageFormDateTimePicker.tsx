@@ -29,13 +29,13 @@ export function PageFormDateTimePicker<
           <>
             <FormGroupDateTimePicker
               {...props}
-              id="startDateTime"
-              dateValue={field?.value?.startDate as string}
-              timeValue={field?.value?.startTime as string}
-              onDateChange={(value: string) => field.onChange({ ...field.value, startDate: value })}
+              id="dateTime"
+              dateValue={field?.value?.date as string}
+              timeValue={field?.value?.time as string}
+              onDateChange={(date: string) => field.onChange({ ...field.value, date })}
               datePlaceHolder={props.datePlaceHolder}
               onTimeChange={(event: React.FormEvent<HTMLInputElement>, time: string) =>
-                field.onChange({ ...field.value, startTime: time })
+                field.onChange({ ...field.value, time })
               }
               timePlaceHolder={props.timePlaceHolder}
             />

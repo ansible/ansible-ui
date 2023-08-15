@@ -1,27 +1,19 @@
 import { useTranslation } from 'react-i18next';
 import { PageFormSelect, PageFormTextInput } from '../../../../../framework';
-import { RRule } from 'rrule';
+import { Frequency } from 'rrule';
 import { useGetMonthOptions, useGetWeekdayOptions } from '../hooks/ruleHelpers';
-import { Banner } from '@patternfly/react-core';
+import { Banner, Divider, Tooltip } from '@patternfly/react-core';
 import { PageFormDateTimePicker } from '../../../../../framework/PageForm/Inputs/PageFormDateTimePicker';
 import { RuleFormFields } from '../RuleForm';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { PageFormMultiSelect } from '../../../../../framework/PageForm/Inputs/PageFormMultiSelect';
-import styled from 'styled-components';
 
-const GlobalFieldsWrapper = styled.div`
-  display: flex;
-  & > * {
-    flex: auto;
-  }
-`;
 export function RuleInputs() {
   const { t } = useTranslation();
-  const frequencyOptions = RRule.FREQUENCIES.map((frequency) => ({
-    name: frequency,
-    value: frequency,
-    label: frequency,
-  }));
+  const frequencyOptions = Object.values(Frequency)
+    .filter((freq) => isNaN(Number(freq)))
+    .map((freq, i) => ({ name: freq, value: i, label: freq.toString() }));
+
   const weekdayOptions = useGetWeekdayOptions();
   const weeksOfYear = Array.from({ length: 52 }, (_, i) => i + 1).map((week) => ({
     value: week,
@@ -36,19 +28,30 @@ export function RuleInputs() {
 
   return (
     <>
-      <Banner variant="info" title={t('Schedule rules')}>
-        {t(
-          'The Start date/time and Local timezone fields below are global properties for this schedule and are shown for reference only.'
-        )}
-      </Banner>
-      <GlobalFieldsWrapper>
-        <PageFormDateTimePicker<RuleFormFields>
-          label={t('Start date/time')}
-          isDisabled
-          name={'startDateTime'}
-        />
-        <PageFormTextInput<RuleFormFields> name="timezone" isDisabled label={t('Timezone')} />
-      </GlobalFieldsWrapper>
+      <Tooltip
+        content={
+          <b>
+            {t(
+              'The Start date/time and Timezone are global properties for this schedule and are shown for reference only.'
+            )}
+          </b>
+        }
+      >
+        <Banner variant="info" title={t('Schedule rules')} className="pf-m-12-col">
+          <b>
+            {t(
+              'The Start date/time and Timezone are global properties for this schedule and are shown for reference only.'
+            )}
+          </b>
+        </Banner>
+      </Tooltip>
+      <PageFormDateTimePicker<RuleFormFields>
+        label={t('Start date/time')}
+        isDisabled
+        name={'startDateTime'}
+      />
+      <PageFormTextInput<RuleFormFields> name="timezone" isDisabled label={t('Timezone')} />
+      <Divider className="pf-m-12-col" />
       <PageFormSection title={t('Define occurances')}>
         <PageFormSelect<RuleFormFields>
           name="freq"
@@ -108,6 +111,7 @@ export function RuleInputs() {
           label={t('Occurances')}
         />
       </PageFormSection>
+      <Divider className="pf-m-12-col" />
       <PageFormSection>
         <PageFormTextInput<RuleFormFields>
           labelHelpTitle={t('Count')}

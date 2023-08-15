@@ -2,29 +2,30 @@ import { useTranslation } from 'react-i18next';
 import { PageForm, PageHeader, PageLayout } from '../../../../framework';
 import { RuleInputs } from './components/RuleInputs';
 import { DateTime } from 'luxon';
-import { dateToInputDateTime } from '../../../../framework/utils/dateTimeHelpers';
 import { useLocation, useParams } from 'react-router-dom';
 import { scheduleRulesRoutes } from './hooks/ruleHelpers';
 import { useMemo, useState } from 'react';
-import { requestGet } from '../../../common/crud/Data';
+import { requestGet, requestPatch } from '../../../common/crud/Data';
 import { Schedule } from '../../interfaces/Schedule';
-import { RRule } from 'rrule';
+import { Options, RRule, Weekday } from 'rrule';
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
+
+import { buildDateTimeObj } from './hooks/scheduleHelpers';
 
 export interface RuleFormFields {
   freq: number;
   frequencies: string[];
   interval: number;
-  wkst?: string;
-  byweekday?: { value: string; nmw: string };
-  bysetpos?: number[];
-  byweekno?: number[];
-  byyearday?: number[];
-  until: { endDate: string; endTime: string };
-  count?: number;
+  wkst: number;
+  byweekday: Weekday[];
+  bysetpos: number[];
+  byweekno: number[];
+  byyearday: number[];
+  until: { date: string; time: string };
+  count: number;
   bymonth: { name: string; value: number }[];
   timezone: string;
-  startDateTime: { startDate: string; startTime: string };
+  startDateTime: { date: string; time: string };
 }
 
 export function CreateScheduleRule() {
@@ -36,13 +37,49 @@ export function CreateScheduleRule() {
     id: string;
     source_id?: string;
   }>();
-  const now = DateTime.now();
 
-  const closestQuarterHour: DateTime = DateTime.fromMillis(
-    Math.ceil(now.toMillis() / 900000) * 900000
-  );
-  const [, time]: string[] = dateToInputDateTime(closestQuarterHour.toISO() as string);
-  const onSubmit = () => {};
+  const onSubmit = async (
+    values: Omit<Options, 'until'> & {
+      startDateTime: unknown;
+      until: { date: string; time: string };
+      timezone: string;
+    }
+  ) => {
+    if (!scheduleContainer) return; /// we actually want to throw and error here probably
+    const {
+      until: { date, time },
+      startDateTime,
+      timezone,
+      ...rest
+    } = values;
+
+    const container = RRule.fromString(scheduleContainer?.rrule);
+    // const {
+    //   options: { freq, dtstart, tzid },
+    // } = container;
+
+    const updatedContainer = {
+      ...container,
+      options: {
+        ...rest,
+        ...container.options,
+      },
+    };
+
+    if (date || time) {
+      updatedContainer.options.until = buildDateTimeObj({ date, time, timezone }).options.until;
+
+      const rruleObject = new RRule({
+        ...updatedContainer.options,
+      });
+
+      await requestPatch<Schedule>(`/api/v2/schedules/${scheduleContainer.id}/`, {
+        rrule: rruleObject.toString(),
+      }).then((res) => {
+        console.log(res);
+      });
+    }
+  };
   const onCancel = () => {};
   useMemo(() => {
     if (!schedule_id) return;
@@ -54,6 +91,9 @@ export function CreateScheduleRule() {
   if (!scheduleContainer) {
     return <LoadingPage />;
   }
+  const rule = new RRule(RRule.fromString(scheduleContainer.rrule).options);
+
+  const startTime = `${rule.options.byhour.toString()}:${rule.options.byminute.toString()}`;
 
   return (
     <PageLayout>
@@ -66,20 +106,16 @@ export function CreateScheduleRule() {
       />
       <PageForm<RuleFormFields>
         defaultValue={{
-          freq: 3,
           interval: 1,
-          wkst: 'SU',
-          until: { endDate: DateTime.now().toFormat('yyyy-LL-dd'), endTime: time },
+          freq: 0,
           timezone:
             RRule.fromString(scheduleContainer.rrule).options.tzid ||
             Intl.DateTimeFormat().resolvedOptions().timeZone,
           startDateTime: {
-            startDate: DateTime.fromISO(
+            date: DateTime.fromISO(
               RRule.fromString(scheduleContainer.rrule).options.dtstart.toISOString()
             ).toFormat('yyyy-LL-dd'),
-            startTime: DateTime.fromISO(
-              RRule.fromString(scheduleContainer.rrule).options.dtstart.toISOString()
-            ).toFormat('h:mm:ss'),
+            time: startTime,
           },
         }}
         scheduleContainer={scheduleContainer}

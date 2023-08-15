@@ -101,6 +101,7 @@ export function PageMultiSelect<
   const Toggle = (toggleRef: Ref<MenuToggleElement>) => {
     return (
       <MenuToggle
+        isFullWidth
         id={id}
         ref={toggleRef}
         onClick={() => setIsOpen((open) => !open)}

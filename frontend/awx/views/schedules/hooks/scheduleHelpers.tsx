@@ -22,6 +22,8 @@ import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { InventorySource } from '../../../interfaces/InventorySource';
 import { Project } from '../../../interfaces/Project';
+import { RRule, RRuleSet } from 'rrule';
+import { DateTime } from 'luxon';
 
 export const resourceSchedulePageRoutes: { [key: string]: string } = {
   inventory: RouteObj.InventorySourceSchedulePage,
@@ -362,4 +364,57 @@ export function useGetPromptOnLaunchFields(
     }
   });
   return fields;
+}
+
+export function buildScheduleContainer(values: ScheduleFormFields) {
+  const set = new RRuleSet();
+
+  const startRule = buildDateTimeObj({
+    date: values.startDateTime.date,
+    time: values.startDateTime.time,
+    timezone: values.timezone,
+  });
+  startRule.origOptions.tzid = values.timezone;
+  startRule.origOptions.freq = values.freq;
+  startRule.origOptions.interval = values.interval;
+  set.rrule(startRule);
+
+  return set;
+}
+
+const parseTime = (time: string) => [
+  DateTime.fromFormat(time, 'hh:mm a').hour,
+  DateTime.fromFormat(time, 'hh:mm a').minute,
+];
+
+export function buildDateTimeObj(values: {
+  date: string;
+  time: string;
+  timezone?: string;
+  start?: boolean;
+}) {
+  // Dates are formatted like "YYYY-MM-DD"
+  const [startYear, startMonth, startDay] = values.date.split('-');
+  // Times are formatted like "HH:MM:SS" or "HH:MM" if no seconds
+  // have been specified
+  const [startHour, startMinute] = parseTime(values.time);
+  const dateString = `${startYear}${pad(startMonth)}${pad(startDay)}T${pad(startHour)}${pad(
+    startMinute
+  )}00`;
+  let rruleString = values.timezone
+    ? `DTSTART;TZID=${values.timezone}:${dateString}`
+    : `DTSTART:${dateString}Z`;
+  if (!values.start) {
+    rruleString = values.timezone ? `until=${dateString}` : `until:${dateString}Z`;
+  }
+  const rule = RRule.fromString(rruleString);
+
+  return rule;
+}
+
+function pad(num: string | number) {
+  if (typeof num === 'string') {
+    return num;
+  }
+  return num < 10 ? `0${num}` : num;
 }

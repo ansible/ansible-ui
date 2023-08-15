@@ -12,6 +12,7 @@ import { Help } from '../../components/Help';
 import { useFrameworkTranslations } from '../../useFrameworkTranslations';
 import { capitalizeFirstLetter } from '../../utils/strings';
 import { PageMultiSelect } from '../../PageInputs/PageMultiSelect';
+import { PageSelectOption } from '../../PageInputs/PageSelectOption';
 
 export type PageFormMultiSelectProps<
   TFieldValues extends FieldValues = FieldValues,
@@ -51,7 +52,7 @@ export type PageFormMultiSelectProps<
    */
   placeholderText?: string;
 
-  options: { label: string; value: string | number }[];
+  options: PageSelectOption[];
 
   helperText?: string;
 
