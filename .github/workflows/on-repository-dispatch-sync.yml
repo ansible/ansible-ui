@@ -1,9 +1,10 @@
-name: Sync from upstream
+name: Sync
 
 on:
-  workflow_dispatch:
   repository_dispatch:
     types: [sync]
+
+concurrency: sync
 
 jobs:
   sync:
