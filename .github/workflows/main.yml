@@ -29,6 +29,15 @@ jobs:
       contents: write
 
     steps:
+      - name: Downstream sync
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EVENT: sync
+          ORG: ansible
+          REPO: aap-ui
+        run: |
+          curl -d "{\"event_type\": \"${EVENT}\"}" -H "Content-Type: application/json" -H "Authorization: token ${GITHUB_TOKEN}"
+
       - name: Checkout
         uses: actions/checkout@v3
         with:
