@@ -27,7 +27,7 @@ jobs:
 
     steps:
       - name: Downstream sync
-        if: github.repository_owner == 'ansible' && github.repository == 'ansible-ui'
+        if: github.repository == 'ansible/ansible-ui'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
