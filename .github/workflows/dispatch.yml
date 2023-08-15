@@ -1,6 +1,7 @@
-name: Repository Dispatch
+name: Sync from upstream
 
 on:
+  workflow_dispatch:
   repository_dispatch:
     types: [sync]
 
@@ -8,7 +9,7 @@ permissions:
   contents: write
 
 jobs:
-  repository-dispatch:
+  sync:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
