@@ -1,4 +1,4 @@
-name: Downstream - On Upstream Push Main - Merge Main
+name: On Upstream Push Main - Merge Main
 
 on:
   repository_dispatch:

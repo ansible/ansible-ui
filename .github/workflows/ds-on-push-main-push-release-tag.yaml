@@ -1,4 +1,4 @@
-name: Downstream - On Push Main - Push Release Tag
+name: On Push Main - Push Release Tag
 
 on:
   push:
@@ -10,6 +10,7 @@ concurrency: tag
 jobs:
   tag:
     name: Tag Release
+    if: github.repository == 'ansible/aap-ui'
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
