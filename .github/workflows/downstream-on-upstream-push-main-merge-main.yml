@@ -1,13 +1,14 @@
-name: Sync
+name: Downstream - On Upstream Push Main - Merge Main
 
 on:
   repository_dispatch:
     types: [sync]
 
-concurrency: sync
+concurrency: merge-main
 
 jobs:
   sync:
+    name: Merge Upstream Main to Main
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -21,7 +22,7 @@ jobs:
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@users.noreply.github.com"
 
-      - name: Sync
+      - name: Merge Upstream Main to Main
         run: |
           git fetch https://github.com/ansible/ansible-ui.git main
           git merge --no-ff FETCH_HEAD -m "Merge from upstream"
