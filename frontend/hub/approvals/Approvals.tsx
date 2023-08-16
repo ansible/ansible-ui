@@ -6,12 +6,12 @@ import { CollectionVersionSearch } from './Approval';
 import { useApprovalFilters } from './hooks/useApprovalFilters';
 import { useApprovalsColumns } from './hooks/useApprovalsColumns';
 import { useApprovalActions } from './hooks/useApprovalActions';
+import { useApprovalsActions } from './hooks/useApprovalsActions';
 
 export function Approvals() {
   const { t } = useTranslation();
   const toolbarFilters = useApprovalFilters();
   const tableColumns = useApprovalsColumns();
-  const rowActions = useApprovalActions();
 
   const view = useHubView<CollectionVersionSearch>({
     url: hubAPI`/v3/plugin/ansible/search/collection-versions/`,
@@ -22,6 +22,9 @@ export function Approvals() {
     defaultFilters: { status: ['pipeline=staging'] },
   });
 
+  const rowActions = useApprovalActions(view.unselectItemsAndRefresh);
+  const toolbarActions = useApprovalsActions(view.unselectItemsAndRefresh);
+
   return (
     <PageLayout>
       <PageHeader title={t('Collection Approvals')} />
@@ -29,6 +32,7 @@ export function Approvals() {
         toolbarFilters={toolbarFilters}
         tableColumns={tableColumns}
         rowActions={rowActions}
+        toolbarActions={toolbarActions}
         errorStateTitle={t('Error loading approvals')}
         emptyStateTitle={t('No approvals yet')}
         {...view}

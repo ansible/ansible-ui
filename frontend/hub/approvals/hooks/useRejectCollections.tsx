@@ -10,7 +10,7 @@ import { pulpAPI, parsePulpIDFromURL } from '../../api';
 import { useApprovalsColumns } from './useApprovalsColumns';
 import { PulpItemsResponse } from '../../usePulpView';
 
-export function useDeleteCollections(
+export function useRejectCollections(
   onComplete?: (collections: CollectionVersionSearch[]) => void
 ) {
   const { t } = useTranslation();
@@ -41,14 +41,9 @@ export function useDeleteCollections(
         actionColumns,
         onComplete,
         actionFn: (collection: CollectionVersionSearch) => rejectCollection(collection, getRequest),
-
-        /*postRequest(
-            pulpAPI`v3/repositories/ansible/ansible/${parsePulpIDFromURL(collection.repository.pulp_href) || ''}/move_collection_version/`, {
-                collection_versions : [`${ collection.collection_version.pulp_href }`]
-            })*/
       });
     },
-    [actionColumns, bulkAction, confirmationColumns, onComplete, t]
+    [actionColumns, bulkAction, confirmationColumns, onComplete, t, getRequest]
   );
 }
 
