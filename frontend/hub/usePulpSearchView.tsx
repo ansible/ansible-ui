@@ -49,21 +49,21 @@ export function usePulpSearchView<T extends object>({
   const view = useView({
     defaultValues: {
       sort: tableColumns && tableColumns.length ? tableColumns[0].sort : undefined,
-      filters: defaultFilters,
+      filterState: defaultFilters,
     },
     disableQueryString,
   });
   const itemCountRef = useRef<{ itemCount: number | undefined }>({ itemCount: undefined });
 
-  const { page, perPage, sort, sortDirection, filters } = view;
+  const { page, perPage, sort, sortDirection, filterState } = view;
 
   let queryString = queryParams ? `?${getQueryString(queryParams)}` : '';
 
-  if (filters) {
-    for (const key in filters) {
+  if (filterState) {
+    for (const key in filterState) {
       const toolbarFilter = toolbarFilters?.find((filter) => filter.key === key);
       if (toolbarFilter) {
-        const values = filters[key];
+        const values = filterState[key];
         if (values.length > 0) {
           queryString ? (queryString += '&') : (queryString += '?');
           if (values.length > 1) {
