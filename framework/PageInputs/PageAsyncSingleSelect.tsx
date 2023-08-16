@@ -10,19 +10,23 @@ export interface PageAsyncSingleSelectQueryResult<ValueT> {
   options: PageSelectOption<ValueT>[];
 }
 
+export type pageAsyncSingleSelectOptionsFunction<ValueT> = (
+  page: number,
+  signal: AbortSignal
+) => Promise<PageAsyncSingleSelectQueryResult<ValueT>>;
+
+export type pageQueryErrorTextType =  string | ((error: Error) => string)
+
 export interface PageAsyncSingleSelectProps<ValueT>
   extends Omit<PageSingleSelectProps<ValueT>, 'options'> {
   /** The function to query for options. */
-  queryOptions: (
-    page: number,
-    signal: AbortSignal
-  ) => Promise<PageAsyncSingleSelectQueryResult<ValueT>>;
+  queryOptions: pageAsyncSingleSelectOptionsFunction<ValueT>;
 
   /** The placeholder to show while querying. */
   queryPlaceholder?: string;
 
   /** The placeholder to show if the query fails. */
-  queryErrorText?: string | ((error: Error) => string);
+  queryErrorText?: pageQueryErrorTextType;
 }
 
 /**

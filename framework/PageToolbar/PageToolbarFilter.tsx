@@ -29,6 +29,7 @@ export enum ToolbarFilterType {
   SingleSelect,
   MultiSelect,
   DateRange,
+  AsyncSingleSelect,
 }
 
 /** An IToolbarFilter represents a filter that can be used in the toolbar */
