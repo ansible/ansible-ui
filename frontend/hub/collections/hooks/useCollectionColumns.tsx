@@ -34,6 +34,7 @@ export function useCollectionColumns(_options?: { disableSort?: boolean; disable
         card: 'name',
         list: 'name',
         icon: () => <AnsibleTowerIcon />,
+        sort: 'name',
       },
       {
         header: t('Repository'),
@@ -44,6 +45,7 @@ export function useCollectionColumns(_options?: { disableSort?: boolean; disable
         header: t('Namespace'),
         type: 'text',
         value: (collection) => collection.collection_version.namespace,
+        sort: 'namespace',
       },
       {
         header: t('Description'),
@@ -71,6 +73,7 @@ export function useCollectionColumns(_options?: { disableSort?: boolean; disable
         value: (collection) => collection.collection_version.version,
         card: 'hidden',
         list: 'secondary',
+        sort: 'version',
       },
       {
         header: t('Signed state'),
