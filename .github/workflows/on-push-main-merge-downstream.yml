@@ -1,32 +1,21 @@
-name: Main
+name: On Push Main - Merge Downstream
 
 on:
   push:
     branches:
       - main
   workflow_dispatch:
-    inputs:
-      version:
-        description: Version
-        required: true
-        default: patch
-        type: choice
-        options:
-          - major
-          - minor
-          - patch
-          - prerelease
 
 concurrency: main
 
 jobs:
-  sync-to-downstream:
-    name: Sync Main to Downstream
+  merge-to-downstream:
+    name: Merge Main to Downstream
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
     steps:
-      - name: Downstream sync
+      - name: Downstream Merge
         if: github.repository == 'ansible/ansible-ui'
         env:
           AAP_UI_TOKEN: ${{ secrets.AAP_UI_TOKEN }}
