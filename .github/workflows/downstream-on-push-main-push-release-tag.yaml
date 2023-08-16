@@ -1,4 +1,4 @@
-name: Tag
+name: Downstream - On Push Main - Push Release Tag
 
 on:
   push:
