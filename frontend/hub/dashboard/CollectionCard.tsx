@@ -11,6 +11,7 @@ import {
   Small,
 } from '../../../framework/PageTable/PageTableCard';
 import { CollectionVersionSearch } from '../collections/CollectionVersionSearch';
+import { RouteObj } from '../../Routes';
 
 export function CollectionCard(props: { collection: CollectionVersionSearch }) {
   const { t } = useTranslation();
