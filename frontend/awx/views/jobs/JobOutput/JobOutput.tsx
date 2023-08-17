@@ -1,5 +1,5 @@
+import { useState, useMemo } from 'react';
 import { PageSection, Skeleton } from '@patternfly/react-core';
-import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { IFilterState, ToolbarFilterType, type IToolbarFilter } from '../../../../../framework';
@@ -9,6 +9,7 @@ import './JobOutput.css';
 import { JobOutputEvents } from './JobOutputEvents';
 import { JobOutputToolbar } from './JobOutputToolbar';
 import { JobStatusBar } from './JobStatusBar';
+import { isJobRunning } from './util';
 
 const Section = styled(PageSection)`
   display: flex;
@@ -16,10 +17,12 @@ const Section = styled(PageSection)`
   height: calc(100vh - 204px);
 `;
 
-export function JobOutput(props: { job: Job }) {
-  const { job } = props;
+export function JobOutput(props: { job: Job; reloadJob: () => void }) {
+  const { job, reloadJob } = props;
   const toolbarFilters = useOutputFilters();
   const [filterState, setFilterState] = useState<IFilterState>({});
+  const isRunning = isJobRunning(job.status);
+  const [isFollowModeEnabled, setIsFollowModeEnabled] = useState(isRunning);
 
   if (!job) {
     return <Skeleton />;
@@ -32,8 +35,18 @@ export function JobOutput(props: { job: Job }) {
         toolbarFilters={toolbarFilters}
         filterState={filterState}
         setFilterState={setFilterState}
+        jobStatus={job.status}
+        isFollowModeEnabled={isFollowModeEnabled}
+        setIsFollowModeEnabled={setIsFollowModeEnabled}
       />
-      <JobOutputEvents job={job} toolbarFilters={toolbarFilters} filterState={filterState} />
+      <JobOutputEvents
+        job={job}
+        reloadJob={reloadJob}
+        toolbarFilters={toolbarFilters}
+        filterState={filterState}
+        isFollowModeEnabled={isFollowModeEnabled}
+        setIsFollowModeEnabled={setIsFollowModeEnabled}
+      />
     </Section>
   );
 }

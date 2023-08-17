@@ -11,6 +11,7 @@ type WebSocketMessage = {
   type?: string;
   status?: string;
   inventory_id?: number;
+  unified_job_id?: number;
 };
 
 const WS_EVENTS_BATCH_SIZE = 15;
@@ -18,6 +19,7 @@ const runningJobTypes: string[] = ['new', 'pending', 'waiting', 'running'];
 
 export function useJobOutput(
   job: Job,
+  reloadJob: () => void,
   toolbarFilters: IToolbarFilter[],
   filterState: IFilterState,
   pageSize: number
@@ -136,8 +138,11 @@ export function useJobOutput(
           batchTimeout.current = setTimeout(addBatchedEvents, 500);
         }
       }
+      if (message?.group_name === 'jobs' && message?.unified_job_id === job.id && message?.status) {
+        reloadJob();
+      }
     },
-    [addBatchedEvents, eventGroup]
+    [addBatchedEvents, eventGroup, reloadJob, job.id]
   );
   useAwxWebSocketSubscription(
     {
