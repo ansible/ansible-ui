@@ -36,7 +36,7 @@ export function HubRouter() {
       <Route path={RouteObjWithoutPrefix.EditNamespace} element={<EditHubNamespace />} />
       <Route path={RouteObjWithoutPrefix.NamespaceDetails} element={<NamespaceDetails />} />
       <Route
-        path={RouteObjWithoutPrefix.EditNamespaceDetails}
+        path={RouteObjWithoutPrefix.EditNamespaceMetadataDetails}
         element={<EditHubNamespaceMetadata />}
       />
 
