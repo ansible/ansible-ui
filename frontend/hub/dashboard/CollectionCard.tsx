@@ -1,17 +1,19 @@
-import { CardBody } from '@patternfly/react-core';
 import { AnsibleTowerIcon, CheckCircleIcon } from '@patternfly/react-icons';
-import { CSSProperties, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { PageDetail, TextCell } from '../../../framework';
-import { useCarouselContext } from '../../../framework/PageCarousel/PageCarousel';
-import {
-  ColumnsDiv,
-  PageDetailDiv,
-  PageTableCard,
-  Small,
-} from '../../../framework/PageTable/PageTableCard';
+import { PageDetailDiv, PageTableCard, Small } from '../../../framework/PageTable/PageTableCard';
 import { CollectionVersionSearch } from '../collections/CollectionVersionSearch';
+import { PageDetail, TextCell } from '../../../framework';
+import { useTranslation } from 'react-i18next';
+import { CardBody } from '@patternfly/react-core';
+import { useCarouselContext } from '../../../framework/PageCarousel/PageCarousel';
+import styled, { CSSProperties } from 'styled-components';
+import { useMemo } from 'react';
 import { RouteObj } from '../../Routes';
+
+export const ColumnsDiv = styled.div`
+  display: grid;
+  gap: 6px;
+  align-items: baseline;
+`;
 
 export function CollectionCard(props: { collection: CollectionVersionSearch }) {
   const { t } = useTranslation();
