@@ -1,9 +1,38 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IToolbarFilter, ToolbarFilterType } from '../../../../framework';
+import { useGetRequest } from '../../../common/crud/useGetRequest';
+import { pageAsyncSingleSelectOptionsFunction } from './../../../../framework/PageInputs/PageAsyncSingleSelect';
+import { PulpItemsResponse } from './../../usePulpView';
+import { pulpAPI } from './../../api';
+import { useCallback } from 'react';
 
 export function useApprovalFilters() {
   const { t } = useTranslation();
+  const repoRequest = useGetRequest<PulpItemsResponse<Repository>>();
+
+  const repoQueryOptions: pageAsyncSingleSelectOptionsFunction<string> = useCallback(
+    (page) => {
+      const pageSize = 10;
+
+      async function load() {
+        const data = await repoRequest(pulpAPI`/v3/repositories/ansible/ansible/`, {
+          offset: pageSize * page,
+          limit: pageSize,
+        });
+        return {
+          total: pageSize,
+          options: data.results.map((r) => {
+            return { label: r.name, value: r.name };
+          }),
+        };
+      }
+
+      return load();
+    },
+    [repoRequest]
+  );
+
   const toolbarFilters = useMemo<IToolbarFilter[]>(
     () => [
       {
@@ -21,6 +50,13 @@ export function useApprovalFilters() {
         comparison: 'equals',
       },
       {
+        key: 'repository',
+        label: t('Repository'),
+        type: ToolbarFilterType.AsyncSingleSelect,
+        query: 'repository',
+        queryOptions: repoQueryOptions,
+      },
+      {
         key: 'status',
         label: t('Status'),
         type: ToolbarFilterType.MultiSelect,
@@ -33,7 +69,11 @@ export function useApprovalFilters() {
         placeholder: t('Select statuses'),
       },
     ],
-    [t]
+    [t, repoQueryOptions]
   );
   return toolbarFilters;
+}
+
+interface Repository {
+  name: string;
 }

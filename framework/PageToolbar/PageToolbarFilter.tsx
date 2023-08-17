@@ -23,6 +23,8 @@ import {
 } from './PageToolbarFilters/ToolbarSingleSelectFilter';
 import { IToolbarTextFilter, ToolbarTextFilter } from './PageToolbarFilters/ToolbarTextFilter';
 
+import { IToolbarAsyncSingleSelectFilter } from './PageToolbarFilters/ToolbarAsyncSingleSelectFilter';
+
 /** Represents the types of filters that can be used in the toolbar */
 export enum ToolbarFilterType {
   Text,
@@ -37,7 +39,8 @@ export type IToolbarFilter =
   | IToolbarTextFilter
   | IToolbarDateRangeFilter
   | IToolbarSingleSelectFilter
-  | IToolbarMultiSelectFilter;
+  | IToolbarMultiSelectFilter
+  | IToolbarAsyncSingleSelectFilter;
 
 /** Represents the state of the toolbar filters. i.e. What is currently selected for filters. */
 export type IFilterState = Record<string, string[] | undefined>;
@@ -306,4 +309,5 @@ function ToolbarFilterComponent(props: {
         />
       );
   }
+  return <></>;
 }

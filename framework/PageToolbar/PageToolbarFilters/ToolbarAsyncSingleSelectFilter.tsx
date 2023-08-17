@@ -8,7 +8,6 @@ import {
 export interface IToolbarAsyncSingleSelectFilter extends ToolbarFilterCommon {
   type: ToolbarFilterType.AsyncSingleSelect;
   isRequired?: boolean;
-  placeholder: string;
 
   /** The function to query for options. */
   queryOptions: pageAsyncSingleSelectOptionsFunction<string>;
