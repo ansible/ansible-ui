@@ -15,7 +15,7 @@ export type pageAsyncSingleSelectOptionsFunction<ValueT> = (
   signal: AbortSignal
 ) => Promise<PageAsyncSingleSelectQueryResult<ValueT>>;
 
-export type pageQueryErrorTextType =  string | ((error: Error) => string)
+export type pageQueryErrorTextType = string | ((error: Error) => string);
 
 export interface PageAsyncSingleSelectProps<ValueT>
   extends Omit<PageSingleSelectProps<ValueT>, 'options'> {

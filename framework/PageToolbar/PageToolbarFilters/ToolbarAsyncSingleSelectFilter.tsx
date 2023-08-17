@@ -1,21 +1,24 @@
 import { ToolbarFilterType } from '../PageToolbarFilter';
 import { ToolbarFilterCommon } from './ToolbarFilterCommon';
-import { pageAsyncSingleSelectOptionsFunction, pageQueryErrorTextType } from './../../PageInputs/PageAsyncSingleSelect';
+import {
+  pageAsyncSingleSelectOptionsFunction,
+  pageQueryErrorTextType,
+} from './../../PageInputs/PageAsyncSingleSelect';
 
-export interface IToolbarSingleSelectFilter<ValueT> extends ToolbarFilterCommon {
+export interface IToolbarSingleSelectFilter extends ToolbarFilterCommon {
   type: ToolbarFilterType.AsyncSingleSelect;
   isRequired?: boolean;
   placeholder: string;
 
-    /** The function to query for options. */
-    queryOptions: pageAsyncSingleSelectOptionsFunction<ValueT>;
+  /** The function to query for options. */
+  queryOptions: pageAsyncSingleSelectOptionsFunction<string>;
 
-    /** The placeholder to show while querying. */
-    queryPlaceholder?: string;
-  
-    /** The placeholder to show if the query fails. */
-    queryErrorText?: pageQueryErrorTextType;
+  /** The placeholder to show while querying. */
+  queryPlaceholder?: string;
 
-    // useHook for modal here
-    openBrowse?: (onSelect: (value: ValueT) => void, defaultSelection?: ValueT) => void;
+  /** The placeholder to show if the query fails. */
+  queryErrorText?: pageQueryErrorTextType;
+
+  // useHook for modal here
+  openBrowse?: (onSelect: (value: string) => void, defaultSelection?: string) => void;
 }
