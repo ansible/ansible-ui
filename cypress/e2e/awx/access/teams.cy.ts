@@ -156,7 +156,7 @@ describe('teams', () => {
     cy.clickButton(/^Clear all filters$/);
   });
 
-  it('can remove a role from a user via the team access tab row action', () => {
+  it.only('can remove a role from a user via the team access tab row action', () => {
     cy.requestPost<User>(`/api/v2/users/${user1.id.toString()}/roles/`, {
       id: team.summary_fields.object_roles.member_role.id,
     });
@@ -168,17 +168,19 @@ describe('teams', () => {
     cy.hasTitle(team.name);
     cy.clickTab(/^Access$/, true);
     cy.filterTableByText(user1.username);
-    cy.contains('tr', user1.username)
-      .find(
+    cy.getTableRowByText(user1.username).within(() => {
+      cy.get(
         `div[data-ouia-component-id="Read-${team.summary_fields.object_roles.read_role.id}"] button`
-      )
-      .click();
+      ).click();
+    });
     cy.contains('Remove user access');
     cy.clickButton('Delete');
     cy.filterTableByText(user1.username);
-    cy.contains('tr', user1.username)
-      .find(`div[data-ouia-component-id="Read-${team.summary_fields.object_roles.read_role.id}"]`)
-      .should('not.exist');
+    cy.getTableRowByText(user1.username).within(() => {
+      cy.get(
+        `div[data-ouia-component-id="Read-${team.summary_fields.object_roles.read_role.id}"]`
+      ).should('not.exist');
+    });
     cy.requestPost<User>(`/api/v2/users/${user1.id.toString()}/roles/`, {
       id: team.summary_fields.object_roles.member_role.id,
       disassociate: true,

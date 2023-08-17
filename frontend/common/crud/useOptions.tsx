@@ -57,6 +57,17 @@ function useOptionsRequest<ResponseBody>() {
       }
       throw await createRequestError(response);
     }
-    return (await response.json()) as ResponseBody;
+    switch (response.status) {
+      case 204:
+        return null as ResponseBody;
+      default:
+        if (response.headers.get('content-type')?.includes('application/json')) {
+          return (await response.json()) as ResponseBody;
+        } else if (response.headers.get('content-type')?.includes('text/plain')) {
+          return (await response.text()) as unknown as ResponseBody;
+        } else {
+          return (await response.blob()) as unknown as ResponseBody;
+        }
+    }
   };
 }
