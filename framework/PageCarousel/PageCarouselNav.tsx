@@ -1,6 +1,8 @@
 import { Bullseye, Button, ButtonVariant } from '@patternfly/react-core';
 import { AngleLeftIcon, AngleRightIcon } from '@patternfly/react-icons';
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
 const PageNavDotButton = styled(Button)<{ isCurrentPage: boolean }>`
@@ -33,6 +35,7 @@ export function PageCarouselNav(props: {
   totalPages: number;
 }) {
   const { setPage, currentPage, totalPages } = props;
+  const { t } = useTranslation();
 
   // If the page is resized (enlarged) and the number of page dots reduce
   useEffect(() => {
@@ -52,15 +55,16 @@ export function PageCarouselNav(props: {
             setPage(i);
           }}
           isCurrentPage={i === currentPage}
+          aria-label={t(`Navigate to page {{currentPage}}.`, { currentPage })}
         ></PageNavDotButton>
       );
     }
     return dots;
-  }, [currentPage, setPage, totalPages]);
+  }, [currentPage, setPage, t, totalPages]);
 
   return (
     <div>
-      <Bullseye>
+      <Bullseye aria-label={t('Navigation buttons')}>
         <Button
           variant={ButtonVariant.plain}
           isDisabled={currentPage === 0}
@@ -68,6 +72,7 @@ export function PageCarouselNav(props: {
           onClick={() => {
             setPage(Math.max(0, currentPage - 1));
           }}
+          aria-label={t('Navigate to the previous page')}
         ></Button>
         {pageDots}
         <Button
@@ -77,6 +82,7 @@ export function PageCarouselNav(props: {
           onClick={() => {
             setPage(Math.min(totalPages - 1, currentPage + 1));
           }}
+          aria-label={t('Navigate to the next page')}
         ></Button>
       </Bullseye>
     </div>
