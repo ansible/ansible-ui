@@ -3,19 +3,25 @@ import { RefObject, useCallback, useEffect, useState } from 'react';
 
 export function useVirtualizedList<T>(containerRef: RefObject<HTMLElement>, items: T[]) {
   const scrollBuffer = 400;
-
   const [scrollTop, setScrollTop] = useState(0);
+  const [containerHeight, setContainerHeight] = useState(0);
+
   const onScroll = useCallback(() => {
     if (!containerRef.current) return;
     setScrollTop(containerRef.current.scrollTop);
     setContainerHeight(containerRef.current.clientHeight);
   }, [containerRef]);
+
   useEffect(() => {
     if (!containerRef.current) return;
-    containerRef.current.onscroll = onScroll;
+    const el = containerRef.current;
+    el.addEventListener('scroll', onScroll);
+
+    return () => {
+      el.removeEventListener('scroll', onScroll);
+    };
   }, [containerRef, onScroll]);
 
-  const [containerHeight, setContainerHeight] = useState(0);
   const onResize = useCallback(() => {
     if (!containerRef.current) return;
     setContainerHeight(containerRef.current.clientHeight);

@@ -27,13 +27,13 @@ describe('JobOutput.cy.tsx', () => {
   });
 
   it('renders job output', () => {
-    cy.mount(<JobOutput job={job as unknown as Job} />);
+    cy.mount(<JobOutput job={job as unknown as Job} reloadJob={() => null} />);
     cy.get('h1').should('have.text', 'Demo Job Template');
     cy.get('.output-grid').find('.output-grid-row').should('have.length', 13);
   });
 
   it('collapses play output', () => {
-    cy.mount(<JobOutput job={job as unknown as Job} />);
+    cy.mount(<JobOutput job={job as unknown as Job} reloadJob={() => null} />);
     cy.get('.output-grid').find('.output-grid-row').should('have.length', 13);
     cy.get('.output-grid').find('button > svg').first().click();
     cy.get('.output-grid').find('.output-grid-row').should('have.length', 5);
