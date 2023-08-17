@@ -9,6 +9,7 @@ import { CollectionVersionSearch } from '../Collection';
 import { useDeleteCollections } from './useDeleteCollections';
 import { useDeprecateCollections } from './useDeprecateCollections';
 import { useDeleteCollectionsFromRepository } from './useDeleteCollectionsFromRepository';
+import { useHubContext } from './../../useHubContext';
 
 export function useCollectionsActions(callback: (collections: CollectionVersionSearch[]) => void) {
   const { t } = useTranslation();
@@ -16,6 +17,7 @@ export function useCollectionsActions(callback: (collections: CollectionVersionS
   const deleteCollections = useDeleteCollections(callback);
   const deleteCollectionsFromRepository = useDeleteCollectionsFromRepository(callback);
   const deprecateCollections = useDeprecateCollections(callback);
+  const context = useHubContext();
 
   return useMemo<IPageAction<CollectionVersionSearch>[]>(
     () => [
@@ -36,6 +38,9 @@ export function useCollectionsActions(callback: (collections: CollectionVersionS
         label: t('Delete selected collections'),
         onClick: deleteCollections,
         isDanger: true,
+        isDisabled: context.hasPermission('ansible.delete_collection')
+          ? ''
+          : t`You dont have rights to this operation`,
       },
       {
         type: PageActionType.Button,
@@ -44,6 +49,9 @@ export function useCollectionsActions(callback: (collections: CollectionVersionS
         label: t('Delete selected collections from repository'),
         onClick: deleteCollectionsFromRepository,
         isDanger: true,
+        isDisabled: context.hasPermission('ansible.delete_collection')
+          ? ''
+          : t`You dont have rights to this operation`,
       },
       {
         type: PageActionType.Button,
@@ -55,6 +63,6 @@ export function useCollectionsActions(callback: (collections: CollectionVersionS
         },
       },
     ],
-    [t, navigate, deleteCollections, deprecateCollections, deleteCollectionsFromRepository]
+    [t, navigate, deleteCollections, deprecateCollections, deleteCollectionsFromRepository, context]
   );
 }
