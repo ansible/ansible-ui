@@ -1,16 +1,11 @@
-import useSWR from 'swr';
 import { TextCell } from '../../../../framework';
-import { useFetcher } from '../../../common/crud/Data';
+import { useGet } from '../../../common/crud/useGet';
 import { EdaRulebook } from '../../interfaces/EdaRulebook';
 
 export function EdaRulebookCell(props: { id?: number }) {
-  const fetcher = useFetcher();
-  const { data } = useSWR<EdaRulebook>(
+  const { data } = useGet<EdaRulebook>(
     props.id ? `/api/eda/v1/rulebooks/${props.id}/` : undefined,
-    fetcher,
-    {
-      dedupingInterval: 10 * 1000,
-    }
+    { dedupingInterval: 10 * 1000 }
   );
   if (!data) {
     switch (typeof props.id) {

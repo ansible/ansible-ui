@@ -1,19 +1,19 @@
-import { RRule, RRuleSet } from 'rrule';
-import { useTranslation } from 'react-i18next';
-import { PageForm, PageHeader, PageLayout, PageFormSubmitHandler } from '../../../../framework';
-import { RouteObj } from '../../../Routes';
 import { DateTime } from 'luxon';
-import { dateToInputDateTime } from '../../../../framework/utils/dateTimeHelpers';
-import { ScheduleInputs } from './components/ScheduleInputs';
-import { useGet } from '../../../common/crud/useGet';
 import { useMemo, useState } from 'react';
-import { LoadingPage } from '../../../../framework/components/LoadingPage';
-import { getAwxError } from '../../useAwxView';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { RRule, RRuleSet } from 'rrule';
+import { PageForm, PageFormSubmitHandler, PageHeader, PageLayout } from '../../../../framework';
+import { LoadingPage } from '../../../../framework/components/LoadingPage';
+import { dateToInputDateTime } from '../../../../framework/utils/dateTimeHelpers';
+import { RouteObj } from '../../../Routes';
 import { postRequest } from '../../../common/crud/Data';
-import { ScheduleFormFields } from '../../interfaces/ScheduleFormFields';
+import { useGet } from '../../../common/crud/useGet';
 import { AwxError } from '../../common/AwxError';
 import { getAddedAndRemoved } from '../../common/util/getAddedAndRemoved';
+import { ScheduleFormFields } from '../../interfaces/ScheduleFormFields';
+import { getAwxError } from '../../useAwxView';
+import { ScheduleInputs } from './components/ScheduleInputs';
 
 const routes: { [key: string]: string } = {
   inventory: RouteObj.InventorySourceScheduleDetails,

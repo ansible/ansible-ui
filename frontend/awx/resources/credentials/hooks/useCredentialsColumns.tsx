@@ -11,9 +11,9 @@ import {
   useNameColumn,
 } from '../../../../common/columns';
 import { useGet } from '../../../../common/crud/useGet';
+import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { Credential } from '../../../interfaces/Credential';
 import { CredentialType } from '../../../interfaces/CredentialType';
-import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 
 export function useCredentialsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();

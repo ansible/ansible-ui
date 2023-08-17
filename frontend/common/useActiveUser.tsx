@@ -1,9 +1,9 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { AwxItemsResponse } from '../awx/common/AwxItemsResponse';
 import { User } from '../awx/interfaces/User';
-import { useGet } from './crud/useGet';
 import { API_PREFIX } from '../eda/constants';
 import { EdaUser } from '../eda/interfaces/EdaUser';
+import { useGet } from './crud/useGet';
 
 const ActiveUserContext = createContext<User | EdaUser | null | undefined>(undefined);
 

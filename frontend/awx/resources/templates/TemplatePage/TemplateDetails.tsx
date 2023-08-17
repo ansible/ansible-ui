@@ -9,6 +9,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import { PageDetail, PageDetails } from '../../../../../framework';
+import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
 import { RouteObj } from '../../../../Routes';
 import { useGet } from '../../../../common/crud/useGet';
 import { CredentialLabel } from '../../../common/CredentialLabel';
@@ -16,7 +17,6 @@ import { UserDateDetail } from '../../../common/UserDateDetail';
 import { useVerbosityString } from '../../../common/useVerbosityString';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
-import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
 
 function useInstanceGroups(templateId: string) {
   const { data } = useGet<{ results: InstanceGroup[] }>(
