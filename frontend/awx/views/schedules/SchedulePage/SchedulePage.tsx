@@ -4,18 +4,18 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { PageActions, PageHeader, PageLayout } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { RouteObj } from '../../../../Routes';
-import { RoutedTabs, RoutedTab, PageBackTab } from '../../../../common/RoutedTabs';
-import { useGetItem } from '../../../../common/crud/useGetItem';
+import { PageBackTab, RoutedTab, RoutedTabs } from '../../../../common/RoutedTabs';
+import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxError } from '../../../common/AwxError';
 import { Schedule } from '../../../interfaces/Schedule';
-import { useSchedulesActions } from '../hooks/useSchedulesActions';
-import { ScheduleDetails } from './ScheduleDetails';
-import { ScheduleRules } from './ScheduleRules';
 import {
   resourceSchedulePageRoutes,
   scheduleDetailRoutes,
   scheduleResourceTypeOptions,
 } from '../hooks/scheduleHelpers';
+import { useSchedulesActions } from '../hooks/useSchedulesActions';
+import { ScheduleDetails } from './ScheduleDetails';
+import { ScheduleRules } from './ScheduleRules';
 
 const rulesListRoutes: { [key: string]: string } = {
   inventory: RouteObj.InventorySourceScheduleRules,

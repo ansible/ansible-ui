@@ -14,13 +14,13 @@ import { PageDetailCodeEditor } from '../../../framework/PageDetails/PageDetailC
 import { formatDateString } from '../../../framework/utils/formatDateString';
 import { RouteObj } from '../../Routes';
 import { AwxItemsResponse } from '../../awx/common/AwxItemsResponse';
+import { StatusCell } from '../../common/Status';
 import { useGet } from '../../common/crud/useGet';
 import { PageDetailsSection } from '../common/PageDetailsSection';
 import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../constants';
 import { EdaActivationInstance } from '../interfaces/EdaActivationInstance';
 import { EdaActivationInstanceLog } from '../interfaces/EdaActivationInstanceLog';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
-import { StatusCell } from '../../common/Status';
 
 export function ActivationInstanceDetails() {
   const { t } = useTranslation();
@@ -28,13 +28,13 @@ export function ActivationInstanceDetails() {
   const { data: activationInstance } = useGet<EdaActivationInstance>(
     `${API_PREFIX}/activation-instances/${params.id ?? ''}/`,
     undefined,
-    SWR_REFRESH_INTERVAL
+    { refreshInterval: SWR_REFRESH_INTERVAL }
   );
 
   const { data: activationInstanceLogInfo } = useGet<AwxItemsResponse<EdaActivationInstanceLog>>(
     `${API_PREFIX}/activation-instances/${params.id ?? ''}/logs/?page_size=1`,
     undefined,
-    SWR_REFRESH_INTERVAL
+    { refreshInterval: SWR_REFRESH_INTERVAL }
   );
 
   const { data: activationInstanceLog } = useGet<AwxItemsResponse<EdaActivationInstanceLog>>(
@@ -42,13 +42,13 @@ export function ActivationInstanceDetails() {
       activationInstanceLogInfo?.count || 10
     }`,
     undefined,
-    SWR_REFRESH_INTERVAL
+    { refreshInterval: SWR_REFRESH_INTERVAL }
   );
 
   const { data: activation } = useGet<EdaRulebookActivation>(
     `${API_PREFIX}/activations/${activationInstance?.activation_id ?? ''}/`,
     undefined,
-    SWR_REFRESH_INTERVAL
+    { refreshInterval: SWR_REFRESH_INTERVAL }
   );
 
   const renderActivationDetailsTab = (

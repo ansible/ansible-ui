@@ -61,7 +61,7 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
   const { data: rulebookActivation, refresh } = useGet<EdaRulebookActivation>(
     `${API_PREFIX}/activations/${params.id ?? ''}/`,
     undefined,
-    SWR_REFRESH_INTERVAL
+    { refreshInterval: SWR_REFRESH_INTERVAL }
   );
 
   const enableRulebookActivation = useEnableRulebookActivations((enabled) => {

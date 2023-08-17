@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IToolbarFilter, ToolbarFilterType } from '../../../../framework';
-import { useGetRequest } from '../../../common/crud/useGetRequest';
+import { useGetRequest } from '../../../common/crud/useGet';
 import { PageAsyncSingleSelectOptionsFn } from './../../../../framework/PageInputs/PageAsyncSingleSelect';
 import { pulpAPI } from './../../api';
 import { PulpItemsResponse } from './../../usePulpView';

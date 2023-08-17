@@ -69,6 +69,9 @@ export const baseConfig: Cypress.ConfigOptions = {
             'process.env.EDA_ROUTE_PREFIX': JSON.stringify('/eda'),
           }),
         ],
+        devServer: {
+          port: 4200,
+        },
       },
     },
     specPattern: ['frontend/**/*.cy.tsx', 'framework/**/*.cy.tsx'],

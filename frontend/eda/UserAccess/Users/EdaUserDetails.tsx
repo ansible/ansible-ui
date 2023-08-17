@@ -13,34 +13,32 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
+  DateTimeCell,
   IPageAction,
   PageActionSelection,
   PageActionType,
   PageActions,
+  PageDetail,
+  PageDetails,
   PageHeader,
   PageLayout,
-  PageDetails,
-  PageDetail,
-  PageTabs,
   PageTab,
-  DateTimeCell,
+  PageTabs,
 } from '../../../../framework';
+import { LoadingPage } from '../../../../framework/components/LoadingPage';
 import { RouteObj } from '../../../Routes';
 import { useGet } from '../../../common/crud/useGet';
+import { useEdaActiveUser } from '../../../common/useActiveUser';
 import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
 import { EdaUser } from '../../interfaces/EdaUser';
-import { useDeleteUsers } from './hooks/useDeleteUser';
 import { ControllerTokens } from './ControllerTokens';
-import { LoadingPage } from '../../../../framework/components/LoadingPage';
-import { useEdaActiveUser } from '../../../common/useActiveUser';
+import { useDeleteUsers } from './hooks/useDeleteUser';
 
 export function EdaUserDetails({ initialTabIndex = 0 }) {
   const params = useParams<{ id: string }>();
-  const { data: user } = useGet<EdaUser>(
-    `${API_PREFIX}/users/${params.id ?? ''}/`,
-    undefined,
-    SWR_REFRESH_INTERVAL
-  );
+  const { data: user } = useGet<EdaUser>(`${API_PREFIX}/users/${params.id ?? ''}/`, undefined, {
+    refreshInterval: SWR_REFRESH_INTERVAL,
+  });
   if (!user) return <LoadingPage breadcrumbs tabs />;
   return <EdaUserDetailsInternal initialTabIndex={initialTabIndex} user={user} />;
 }

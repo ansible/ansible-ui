@@ -50,7 +50,7 @@ export function DecisionEnvironmentDetails() {
   const { data: decisionEnvironment } = useGet<EdaDecisionEnvironmentRead>(
     `${API_PREFIX}/decision-environments/${params.id ?? ''}/`,
     undefined,
-    SWR_REFRESH_INTERVAL
+    { refreshInterval: SWR_REFRESH_INTERVAL }
   );
 
   const { data: credential } = useGet<EdaCredential>(
