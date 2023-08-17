@@ -33,6 +33,24 @@ export function useCollectionCategories() {
           searchKey: 'tags',
           searchValue: 'eda',
         },
+        {
+          id: 'database',
+          name: 'Database collections',
+          searchKey: 'tags',
+          searchValue: 'database',
+        },
+        {
+          id: 'cloud',
+          name: 'Cloud collections',
+          searchKey: 'tags',
+          searchValue: 'cloud',
+        },
+        {
+          id: 'application',
+          name: 'Application collections',
+          searchKey: 'tags',
+          searchValue: 'application',
+        },
       ] as CollectionCategory[],
       links: {
         next: null,
