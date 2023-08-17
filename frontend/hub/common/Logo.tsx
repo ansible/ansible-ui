@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { CSSProperties } from 'styled-components';
-import Defaultlogo from '../../assets/DefaultLogo.svg';
 import { AnsibleTowerIcon } from '@patternfly/react-icons';
 
 interface LogoProps {
