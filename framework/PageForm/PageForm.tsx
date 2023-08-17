@@ -126,9 +126,9 @@ export function PageForm<T extends object>(props: {
             title={error.message ?? ''}
             isInline
             style={{ paddingLeft: isMd && props.onCancel ? 190 : undefined }}
-            isExpandable={error instanceof RequestError ? true : false}
+            isExpandable={error instanceof RequestError ? !!error.details : false}
           >
-            {error instanceof RequestError ? JSON.stringify(error.body) : undefined}
+            {error instanceof RequestError ? error.details : undefined}
           </Alert>
         )}
         {props.onCancel ? (
