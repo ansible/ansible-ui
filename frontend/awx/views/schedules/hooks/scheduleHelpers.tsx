@@ -95,7 +95,9 @@ export function useGetCreateRuleRoute() {
   }
   return createUrl;
 }
-export const promptonLaunchFieldNames: string[] = [
+
+type PromptOnLaunchField = keyof LaunchConfiguration;
+export const promptonLaunchFieldNames: PromptOnLaunchField[] = [
   'ask_job_type_on_launch',
   'ask_inventory_on_launch',
   'ask_credential_on_launch',
@@ -139,7 +141,7 @@ export function useGetPromptOnLaunchFields(
 
   if (!resourceForSchedule || resourceForSchedule?.type === 'inventory_source') return [];
 
-  promptonLaunchFieldNames.forEach((fieldName: string) => {
+  promptonLaunchFieldNames.forEach((fieldName: PromptOnLaunchField) => {
     if (!promptFields || promptFields[fieldName] !== true) return;
     switch (fieldName) {
       case 'ask_job_type_on_launch':

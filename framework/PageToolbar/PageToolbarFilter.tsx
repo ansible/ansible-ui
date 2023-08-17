@@ -6,10 +6,12 @@ import {
 } from '@patternfly/react-core';
 import { FilterIcon } from '@patternfly/react-icons';
 import { Dispatch, SetStateAction, useCallback, useState } from 'react';
+import { PageAsyncSingleSelect } from '../PageInputs/PageAsyncSingleSelect';
 import { PageMultiSelect } from '../PageInputs/PageMultiSelect';
 import { PageSingleSelect } from '../PageInputs/PageSingleSelect';
 import { useBreakpoint } from '../components/useBreakPoint';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
+import { IToolbarAsyncSingleSelectFilter } from './PageToolbarFilters/ToolbarAsyncSingleSelectFilter';
 import {
   IToolbarDateRangeFilter,
   ToolbarDateRangeFilter,
@@ -24,6 +26,7 @@ export enum ToolbarFilterType {
   SingleSelect,
   MultiSelect,
   DateRange,
+  AsyncSingleSelect,
 }
 
 /** An IToolbarFilter represents a filter that can be used in the toolbar */
@@ -31,7 +34,8 @@ export type IToolbarFilter =
   | IToolbarTextFilter
   | IToolbarDateRangeFilter
   | IToolbarSingleSelectFilter
-  | IToolbarMultiSelectFilter;
+  | IToolbarMultiSelectFilter
+  | IToolbarAsyncSingleSelectFilter;
 
 /** Represents the state of the toolbar filters. i.e. What is currently selected for filters. */
 export type IFilterState = Record<string, string[] | undefined>;
@@ -271,6 +275,20 @@ function ToolbarFilterComponent(props: {
           value={filterValues && filterValues?.length > 0 ? filterValues[0] : ''}
           onSelect={(item) => setFilterValues(() => [item])}
           options={filter.options}
+          isRequired={filter.isRequired}
+        />
+      );
+
+    case ToolbarFilterType.AsyncSingleSelect:
+      return (
+        <PageAsyncSingleSelect<string>
+          id={props.id ?? filter.key}
+          value={filterValues && filterValues?.length > 0 ? filterValues[0] : ''}
+          onSelect={(item) => setFilterValues(() => [item])}
+          placeholder={filter.placeholder || ''}
+          queryOptions={filter.queryOptions}
+          queryErrorText={filter.queryErrorText}
+          queryPlaceholder={filter.queryPlaceholder}
           isRequired={filter.isRequired}
         />
       );
