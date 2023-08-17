@@ -1,9 +1,9 @@
 import { useCallback, useMemo } from 'react';
 import useSWRInfinite from 'swr/infinite';
-import { AwxItemsResponse } from '../../awx/common/AwxItemsResponse';
-import { useGetRequest } from './useGetRequest';
+import { useGetRequest } from '../../common/crud/useGet';
+import { AwxItemsResponse } from './AwxItemsResponse';
 
-export function useGetAllPagesAWX<T extends object>(url: string) {
+export function useAwxGetAllPages<T extends object>(url: string) {
   const getRequest = useGetRequest<AwxItemsResponse<T>>();
   const getKey = useCallback(
     (pageIndex: number, previousPageData: AwxItemsResponse<T>) => {

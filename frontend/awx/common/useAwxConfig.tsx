@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
-import { Config } from '../interfaces/Config';
 import { useGet } from '../../common/crud/useGet';
+import { Config } from '../interfaces/Config';
 
 const AwxConfigContext = createContext<Config | null | undefined>(undefined);
 

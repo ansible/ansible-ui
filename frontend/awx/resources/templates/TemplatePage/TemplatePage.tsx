@@ -6,13 +6,13 @@ import { PageActions, PageHeader, PageLayout } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { RouteObj } from '../../../../Routes';
 import { PageNotImplemented } from '../../../../common/PageNotImplemented';
-import { RoutedTabs, RoutedTab, PageBackTab } from '../../../../common/RoutedTabs';
-import { useGetItem } from '../../../../common/crud/useGetItem';
+import { PageBackTab, RoutedTab, RoutedTabs } from '../../../../common/RoutedTabs';
+import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxError } from '../../../common/AwxError';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
+import { Schedules } from '../../../views/schedules/Schedules';
 import { useTemplateActions } from '../hooks/useTemplateActions';
 import { TemplateDetails } from './TemplateDetails';
-import { Schedules } from '../../../views/schedules/Schedules';
 
 export function TemplatePage() {
   const { t } = useTranslation();
