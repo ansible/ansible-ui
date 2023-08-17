@@ -24,6 +24,7 @@ import {
 import { IToolbarTextFilter, ToolbarTextFilter } from './PageToolbarFilters/ToolbarTextFilter';
 
 import { IToolbarAsyncSingleSelectFilter } from './PageToolbarFilters/ToolbarAsyncSingleSelectFilter';
+import { PageAsyncSingleSelect } from '../PageInputs/PageAsyncSingleSelect';
 
 /** Represents the types of filters that can be used in the toolbar */
 export enum ToolbarFilterType {
@@ -281,6 +282,19 @@ function ToolbarFilterComponent(props: {
           setFilterValues={setFilterValues}
           options={filter.options}
           isRequired={filter.isRequired}
+        />
+      );
+
+    case ToolbarFilterType.AsyncSingleSelect:
+      return (
+        <PageAsyncSingleSelect<string>
+          id={props.id ?? filter.key}
+          value={filterValues && filterValues?.length > 0 ? filterValues[0] : ''}
+          onSelect={(item) => {
+            setFilterValues(() => [item]);
+          }}
+          placeholder={filter.placeholder || ''}
+          {...filter}
         />
       );
 

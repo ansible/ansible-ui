@@ -16,12 +16,12 @@ export function useApprovalFilters() {
       const pageSize = 10;
 
       async function load() {
-        const data = await repoRequest(pulpAPI`/v3/repositories/ansible/ansible/`, {
-          offset: pageSize * page,
+        const data = await repoRequest(pulpAPI`/repositories/ansible/ansible/`, {
+          offset: pageSize * (page - 1),
           limit: pageSize,
         });
         return {
-          total: pageSize,
+          total: pageSize * 10,
           options: data.results.map((r) => {
             return { label: r.name, value: r.name };
           }),
@@ -53,7 +53,7 @@ export function useApprovalFilters() {
         key: 'repository',
         label: t('Repository'),
         type: ToolbarFilterType.AsyncSingleSelect,
-        query: 'repository',
+        query: 'repository_name',
         queryOptions: repoQueryOptions,
       },
       {
