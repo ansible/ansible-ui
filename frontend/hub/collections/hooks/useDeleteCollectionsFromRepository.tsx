@@ -1,14 +1,12 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../framework';
-import { requestDelete, requestGet } from '../../../common/crud/Data';
-import { collectionKeyFn } from '../../api';
+import { postRequest } from '../../../common/crud/Data';
+import { collectionKeyFn, pulpAPI, parsePulpIDFromURL } from '../../api';
 import { CollectionVersionSearch } from '../Collection';
 import { useCollectionColumns } from './useCollectionColumns';
-import { hubAPI, pulpAPI } from '../../api';
-import { PulpItemsResponse } from '../../usePulpView';
 
-export function useDeleteCollections(
+export function useDeleteCollectionsFromRepository(
   onComplete?: (collections: CollectionVersionSearch[]) => void
 ) {
   const { t } = useTranslation();
@@ -18,7 +16,7 @@ export function useDeleteCollections(
   return useCallback(
     (collections: CollectionVersionSearch[]) => {
       bulkAction({
-        title: t('Permanently delete collections', { count: collections.length }),
+        title: t('Permanently delete collections from repositories', { count: collections.length }),
         confirmText: t('Yes, I confirm that I want to delete these {{count}} collections.', {
           count: collections.length,
         }),
@@ -34,22 +32,22 @@ export function useDeleteCollections(
         confirmationColumns,
         actionColumns,
         onComplete,
-        actionFn: (collection: CollectionVersionSearch) => deleteCollection(collection),
+        actionFn: (collection: CollectionVersionSearch) =>
+          deleteCollectionFromRepository(collection),
       });
     },
     [actionColumns, bulkAction, confirmationColumns, onComplete, t]
   );
 }
 
-async function deleteCollection(collection: CollectionVersionSearch) {
-  const distro: PulpItemsResponse<Distribution> = await requestGet(
-    pulpAPI`/distributions/ansible/ansible/?repository=${collection.repository.pulp_href}`
+async function deleteCollectionFromRepository(collection: CollectionVersionSearch) {
+  return postRequest(
+    pulpAPI`/repositories/ansible/ansible/${
+      parsePulpIDFromURL(collection.repository.pulp_href) || ''
+    }/modify/`,
+    {
+      remove_content_units: [collection.collection_version.pulp_href],
+      base_version: collection.repository.latest_version_href,
+    }
   );
-  return requestDelete(
-    hubAPI`/v3/plugin/ansible/content/${distro.results[0].base_path}/collections/index/${collection.collection_version.namespace}/${collection.collection_version.name}/`
-  );
-}
-
-interface Distribution {
-  base_path: string;
 }

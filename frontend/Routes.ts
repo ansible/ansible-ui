@@ -201,7 +201,7 @@ export const RouteObj = {
 
   HubDashboard: `${hubRoutePrefix}/dashboard`,
   Collections: `${hubRoutePrefix}/collections`,
-  CollectionDetails: `${hubRoutePrefix}/collections/details/:id`,
+  CollectionDetails: `${hubRoutePrefix}/collections/details/`,
   UploadCollection: `${hubRoutePrefix}/collections/upload`,
 
   Repositories: `${hubRoutePrefix}/repositories`,
