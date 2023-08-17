@@ -44,7 +44,7 @@ export function ProjectDetails() {
   const { data: project, refresh } = useGet<EdaProject>(
     `${API_PREFIX}/projects/${params.id ?? ''}/`,
     undefined,
-    SWR_REFRESH_INTERVAL
+    { refreshInterval: SWR_REFRESH_INTERVAL }
   );
   const syncProject = useCallback(
     (project: EdaProject) =>

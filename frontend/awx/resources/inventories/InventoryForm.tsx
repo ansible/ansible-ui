@@ -12,13 +12,13 @@ import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { PageFormSelectOrganization } from '../../access/organizations/components/PageFormOrganizationSelect';
 import { getOrganizationByName } from '../../access/organizations/utils/getOrganizationByName';
 import { PageFormInstanceGroupSelect } from '../../administration/instance-groups/components/PageFormInstanceGroupSelect';
+import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { PageFormLabelSelect } from '../../common/PageFormLabelSelect';
 import { getAddedAndRemoved } from '../../common/util/getAddedAndRemoved';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { Inventory } from '../../interfaces/Inventory';
 import { Label } from '../../interfaces/Label';
 import { getAwxError } from '../../useAwxView';
-import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 
 interface InventoryFields extends FieldValues {
   inventory: Inventory;

@@ -1,17 +1,12 @@
-import useSWR from 'swr';
 import { TextCell } from '../../../../../framework';
 import { RouteObj } from '../../../../Routes';
-import { useFetcher } from '../../../../common/crud/Data';
+import { useGet } from '../../../../common/crud/useGet';
 import { EdaProject } from '../../../interfaces/EdaProject';
 
 export function EdaDecisionEnvironmentCell(props: { id?: number }) {
-  const fetcher = useFetcher();
-  const { data } = useSWR<EdaProject>(
+  const { data } = useGet<EdaProject>(
     props.id ? `/api/eda/v1/decision-environments/${props.id}/` : undefined,
-    fetcher,
-    {
-      dedupingInterval: 10 * 1000,
-    }
+    { dedupingInterval: 10 * 1000 }
   );
   if (!data) {
     switch (typeof props.id) {

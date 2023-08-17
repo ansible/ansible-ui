@@ -50,11 +50,11 @@ import { Scrollable } from '../../../framework/components/Scrollable';
 import { RouteObj } from '../../Routes';
 import { StatusCell } from '../../common/Status';
 import { useGet } from '../../common/crud/useGet';
+import { hubAPI } from '../api';
 import { HubItemsResponse } from '../useHubView';
 import { CollectionVersionSearch } from './Collection';
 import { useCollectionActions } from './hooks/useCollectionActions';
 import { useCollectionColumns } from './hooks/useCollectionColumns';
-import { hubAPI } from '../api';
 
 export function CollectionDetails() {
   const { t } = useTranslation();

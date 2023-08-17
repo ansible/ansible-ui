@@ -25,14 +25,14 @@ import {
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
 import { RouteObj } from '../../../Routes';
 import { StatusCell } from '../../../common/Status';
-import { useGetItem } from '../../../common/crud/useGetItem';
+import { useGetItem } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { AwxError } from '../../common/AwxError';
 import { Instance } from '../../interfaces/Instance';
 
 import { Dotted } from '../../../../framework/components/Dotted';
-import { useNodeTypeTooltip } from './hooks/useNodeTypeTooltip';
 import { capitalizeFirstLetter } from '../../../../framework/utils/strings';
+import { useNodeTypeTooltip } from './hooks/useNodeTypeTooltip';
 
 export function InstanceDetails() {
   const { t } = useTranslation();

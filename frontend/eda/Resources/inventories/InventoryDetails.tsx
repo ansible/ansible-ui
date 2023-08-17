@@ -37,7 +37,7 @@ export function InventoryDetails() {
   const { data: inventory } = useGet<EdaInventory>(
     `${API_PREFIX}/inventory/${params.id ?? ''}/`,
     undefined,
-    SWR_REFRESH_INTERVAL
+    { refreshInterval: SWR_REFRESH_INTERVAL }
   );
   const [copied, setCopied] = React.useState(false);
 

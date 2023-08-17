@@ -14,8 +14,8 @@ import {
 } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { RouteObj } from '../../../../Routes';
-import { useGetItem } from '../../../../common/crud/useGetItem';
-import { RoutedTabs, RoutedTab, PageBackTab } from '../../../../common/RoutedTabs';
+import { PageBackTab, RoutedTab, RoutedTabs } from '../../../../common/RoutedTabs';
+import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxError } from '../../../common/AwxError';
 import { User } from '../../../interfaces/User';
 import { useDeleteUsers } from '../hooks/useDeleteUsers';

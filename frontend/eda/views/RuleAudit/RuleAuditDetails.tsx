@@ -33,7 +33,7 @@ export function RuleAuditDetails() {
   const { data: ruleAudit } = useGet<EdaRuleAudit>(
     `${API_PREFIX}/audit-rules/${params.id ?? ''}/`,
     undefined,
-    SWR_REFRESH_INTERVAL
+    { refreshInterval: SWR_REFRESH_INTERVAL }
   );
 
   const renderRuleAuditDetailsTab = (ruleAudit: EdaRuleAudit | undefined): JSX.Element => {

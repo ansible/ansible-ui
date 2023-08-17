@@ -1,6 +1,4 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { useTranslation } from 'react-i18next';
-import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   Label,
   LabelGroup,
@@ -9,12 +7,14 @@ import {
   TextListItemVariants,
   TextListVariants,
 } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { DateTimeCell, PageDetail, PageDetails, TextCell } from '../../../../../framework';
-import { useGet } from '../../../../common/crud/useGet';
 import { RouteObj } from '../../../../Routes';
+import { useGet } from '../../../../common/crud/useGet';
+import { useVerbosityString } from '../../../common/useVerbosityString';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { Inventory } from '../../../interfaces/Inventory';
-import { useVerbosityString } from '../../../common/useVerbosityString';
 
 function useInstanceGroups(inventoryId: string) {
   const { data } = useGet<{ results: InstanceGroup[] }>(

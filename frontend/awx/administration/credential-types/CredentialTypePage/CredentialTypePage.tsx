@@ -2,13 +2,13 @@
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { PageHeader, PageLayout } from '../../../../../framework';
-import { RoutedTabs, RoutedTab, PageBackTab } from '../../../../common/RoutedTabs';
+import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { RouteObj } from '../../../../Routes';
 import { PageNotImplemented } from '../../../../common/PageNotImplemented';
-import { useGetItem } from '../../../../common/crud/useGetItem';
-import { CredentialType } from '../../../interfaces/CredentialType';
+import { PageBackTab, RoutedTab, RoutedTabs } from '../../../../common/RoutedTabs';
+import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxError } from '../../../common/AwxError';
-import { LoadingPage } from '../../../../../framework/components/LoadingPage';
+import { CredentialType } from '../../../interfaces/CredentialType';
 
 export function CredentialTypePage() {
   const { t } = useTranslation();

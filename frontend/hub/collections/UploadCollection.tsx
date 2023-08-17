@@ -16,7 +16,7 @@ import { PageFormWatch } from '../../../framework/PageForm/Utils/PageFormWatch';
 import { LoadingPage } from '../../../framework/components/LoadingPage';
 import { RouteObj } from '../../Routes';
 import { postRequestFile } from '../../common/crud/Data';
-import { useGetRequest } from '../../common/crud/useGetRequest';
+import { useGetRequest } from '../../common/crud/useGet';
 import { hubAPI, pulpAPI } from '../api';
 import { useHubNamespaces } from '../namespaces/hooks/useHubNamespaces';
 import { useRepositories } from '../repositories/hooks/useRepositories';

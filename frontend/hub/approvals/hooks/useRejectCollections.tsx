@@ -2,13 +2,11 @@ import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../framework';
 import { postRequest } from '../../../common/crud/Data';
-import { useGetRequest } from '../../../common/crud/useGetRequest';
-import { collectionKeyFn } from '../../api';
-import { CollectionVersionSearch } from '../Approval';
-
-import { pulpAPI, parsePulpIDFromURL } from '../../api';
-import { useApprovalsColumns } from './useApprovalsColumns';
+import { useGetRequest } from '../../../common/crud/useGet';
+import { collectionKeyFn, parsePulpIDFromURL, pulpAPI } from '../../api';
 import { PulpItemsResponse } from '../../usePulpView';
+import { CollectionVersionSearch } from '../Approval';
+import { useApprovalsColumns } from './useApprovalsColumns';
 
 export function useRejectCollections(
   onComplete?: (collections: CollectionVersionSearch[]) => void

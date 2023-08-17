@@ -3,21 +3,21 @@ import { DropdownPosition } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { PageActions, PageHeader, PageLayout } from '../../../../../framework';
-import { RoutedTabs, RoutedTab, PageBackTab } from '../../../../common/RoutedTabs';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { RouteObj } from '../../../../Routes';
 import { PageNotImplemented } from '../../../../common/PageNotImplemented';
-import { useGetItem } from '../../../../common/crud/useGetItem';
+import { PageBackTab, RoutedTab, RoutedTabs } from '../../../../common/RoutedTabs';
+import { useGet } from '../../../../common/crud/useGet';
 import { AwxError } from '../../../common/AwxError';
 import { Project } from '../../../interfaces/Project';
+import { Schedules } from '../../../views/schedules/Schedules';
 import { useProjectActions } from '../hooks/useProjectActions';
 import { ProjectDetails } from './ProjectDetails';
-import { Schedules } from '../../../views/schedules/Schedules';
 
 export function ProjectPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { error, data: project, refresh } = useGetItem<Project>('/api/v2/projects', params.id);
+  const { error, data: project, refresh } = useGet<Project>(`/api/v2/projects/${params.id ?? ''}`);
   const navigate = useNavigate();
   const itemActions = useProjectActions(() => navigate(RouteObj.Projects));
 

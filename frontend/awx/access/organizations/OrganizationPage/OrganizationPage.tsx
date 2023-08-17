@@ -13,16 +13,16 @@ import {
   PageLayout,
 } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
-import { RoutedTabs, RoutedTab, PageBackTab } from '../../../../common/RoutedTabs';
 import { RouteObj } from '../../../../Routes';
-import { useGetItem } from '../../../../common/crud/useGetItem';
+import { PageNotImplemented } from '../../../../common/PageNotImplemented';
+import { PageBackTab, RoutedTab, RoutedTabs } from '../../../../common/RoutedTabs';
+import { useGet } from '../../../../common/crud/useGet';
 import { AwxError } from '../../../common/AwxError';
 import { Organization } from '../../../interfaces/Organization';
 import { useDeleteOrganizations } from '../hooks/useDeleteOrganizations';
 import { OrganizationAccess } from './OrganizationAccess';
 import { OrganizationDetails } from './OrganizationDetails';
 import { OrganizationTeams } from './OrganizationTeams';
-import { PageNotImplemented } from '../../../../common/PageNotImplemented';
 
 export function OrganizationPage() {
   const { t } = useTranslation();
@@ -31,7 +31,7 @@ export function OrganizationPage() {
     data: organization,
     error,
     refresh,
-  } = useGetItem<Organization>('/api/v2/organizations', params.id);
+  } = useGet<Organization>(`/api/v2/organizations/${params.id ?? ''}`);
   const history = useNavigate();
 
   const deleteOrganizations = useDeleteOrganizations((deleted: Organization[]) => {

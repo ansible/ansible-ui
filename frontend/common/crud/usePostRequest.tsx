@@ -1,76 +1,44 @@
-import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RouteObj } from '../../Routes';
-import { AnsibleError } from './ansible-error';
-import { getCookie } from './cookie';
-import { Delay } from './delay';
+import { createRequestError } from './RequestError';
+import { requestCommon } from './requestCommon';
+import { useAbortController } from './useAbortController';
 
-export function usePostRequest<RequestBody = object, ResponseBody = RequestBody>() {
+/**
+ * Hook for making POST API requests
+ *
+ * - Returns a function that takes a url and body and returns the response body
+ * - Throws an RequestError if the response is not ok
+ * - Navigates to the login page if the response is a 401
+ * - Supports aborting the request on unmount
+ */
+export function usePostRequest<RequestBody, ResponseBody = RequestBody>() {
   const navigate = useNavigate();
-
-  const abortSignalRef = useRef<{ signal?: AbortSignal }>({});
-  useEffect(() => {
-    const abortController = new AbortController();
-    abortSignalRef.current.signal = abortController.signal;
-    return () => abortController.abort();
-  }, []);
-
+  const abortController = useAbortController();
   return async (url: string, body: RequestBody, signal?: AbortSignal) => {
-    await Delay();
-
-    const response = await fetch(url, {
+    const response = await requestCommon({
+      url,
       method: 'POST',
-      body: JSON.stringify(body),
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-        Accepts: 'application/json',
-        'X-CSRFToken': getCookie('csrftoken') ?? '',
-      },
-      signal: signal ?? abortSignalRef.current.signal,
+      body,
+      signal: signal ?? abortController.signal,
     });
     if (!response.ok) {
       if (response.status === 401) {
         navigate(RouteObj.Login + '?navigate-back=true');
       }
-
-      let responseBody: string | undefined;
-      try {
-        responseBody = await response.text();
-      } catch {
-        // Do nothing - response body was not valid json
-      }
-
-      throw new AnsibleError(response.statusText, response.status, responseBody);
+      throw await createRequestError(response);
     }
-
     switch (response.status) {
-      case 204: // No Content
+      case 204:
         return null as ResponseBody;
-    }
-
-    try {
-      return (await response.json()) as ResponseBody;
-    } catch {
-      return null as ResponseBody;
+      default:
+        if (response.headers.get('content-type')?.includes('application/json')) {
+          return (await response.json()) as ResponseBody;
+        } else if (response.headers.get('content-type')?.includes('text/plain')) {
+          return (await response.text()) as unknown as ResponseBody;
+        } else {
+          return (await response.blob()) as unknown as ResponseBody;
+        }
     }
   };
-}
-
-export function postRequest<RequestBody = object>(
-  url: string,
-  body: RequestBody,
-  signal?: AbortSignal
-) {
-  return fetch(url, {
-    method: 'POST',
-    body: JSON.stringify(body),
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      Accepts: 'application/json',
-      'X-CSRFToken': getCookie('csrftoken') ?? '',
-    },
-    signal: signal,
-  });
 }
