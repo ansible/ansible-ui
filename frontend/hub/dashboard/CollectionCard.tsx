@@ -1,13 +1,14 @@
-import { AnsibleTowerIcon, CheckCircleIcon } from '@patternfly/react-icons';
+import { CheckCircleIcon } from '@patternfly/react-icons';
 import { PageDetailDiv, PageTableCard, Small } from '../../../framework/PageTable/PageTableCard';
 import { CollectionVersionSearch } from '../collections/CollectionVersionSearch';
 import { PageDetail, TextCell } from '../../../framework';
 import { useTranslation } from 'react-i18next';
-import { CardBody } from '@patternfly/react-core';
+import { CardBody, Truncate } from '@patternfly/react-core';
 import { useCarouselContext } from '../../../framework/PageCarousel/PageCarousel';
 import styled, { CSSProperties } from 'styled-components';
 import { useMemo } from 'react';
 import { RouteObj } from '../../Routes';
+import { Logo } from '../common/Logo';
 
 export const ColumnsDiv = styled.div`
   display: grid;
@@ -36,7 +37,18 @@ export function CollectionCard(props: { collection: CollectionVersionSearch }) {
         item={collection}
         itemToCardFn={(item: CollectionVersionSearch) => ({
           id: item.collection_version.name,
-          icon: <AnsibleTowerIcon />, // TODO: Update logo to use avatar_url if it exists
+          icon: (
+            <Logo
+              alt={t(
+                `${item.namespace_metadata?.company || item.collection_version.namespace} logo`
+              )}
+              fallbackToDefault
+              image={item.namespace_metadata?.avatar_url ?? null}
+              logoSize="48px"
+              width="48px"
+              flexGrow
+            />
+          ),
           title: (
             <TextCell
               text={item.collection_version.name}
@@ -55,9 +67,10 @@ export function CollectionCard(props: { collection: CollectionVersionSearch }) {
             <CardBody>
               <TextCell text={item.collection_version.version} />
               {item.collection_version.description && (
-                <PageDetail>
-                  <div>{item.collection_version.description}</div>
-                </PageDetail>
+                <Truncate
+                  content={item.collection_version.description}
+                  tooltipPosition={'bottom'}
+                />
               )}
               <PageDetail>
                 <PageDetailDiv>
