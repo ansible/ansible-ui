@@ -39,6 +39,7 @@ export interface IPageTableCard {
   id: string | number;
   icon?: ReactNode;
   title: ReactNode;
+  iconAboveTitle?: boolean;
   subtitle?: ReactNode;
   cardBody: ReactNode;
   labels?: {
@@ -60,6 +61,10 @@ const CardHeaderDiv = styled.div`
   display: flex;
   flex-wrap: nowrap;
   max-width: 100%;
+`;
+
+const CardIconDiv = styled.div`
+  margin-bottom: 16px;
 `;
 
 const CardTopDiv = styled.div`
@@ -152,8 +157,15 @@ export function PageTableCard<T extends object>(props: {
       <CardHeader style={{ display: 'flex', flexWrap: 'nowrap', maxWidth: '100%' }}>
         <CardHeaderDiv>
           <CardTopDiv>
-            {card.icon && <IconWrapper size="xl">{card.icon}</IconWrapper>}
+            {card.iconAboveTitle
+              ? null
+              : card.icon && <IconWrapper size="xl">{card.icon}</IconWrapper>}
             <CardDiv>
+              {card.iconAboveTitle ? (
+                <CardIconDiv>
+                  {card.icon && <IconWrapper size="xl">{card.icon}</IconWrapper>}
+                </CardIconDiv>
+              ) : null}
               <CardTitle>
                 <Truncate content={card.title as string} />
               </CardTitle>

@@ -1,16 +1,19 @@
-import { CardBody } from '@patternfly/react-core';
 import { AnsibleTowerIcon, CheckCircleIcon } from '@patternfly/react-icons';
-import { CSSProperties, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { PageDetail, TextCell } from '../../../framework';
-import { useCarouselContext } from '../../../framework/PageCarousel/PageCarousel';
-import {
-  ColumnsDiv,
-  PageDetailDiv,
-  PageTableCard,
-  Small,
-} from '../../../framework/PageTable/PageTableCard';
+import { PageDetailDiv, PageTableCard, Small } from '../../../framework/PageTable/PageTableCard';
 import { CollectionVersionSearch } from '../collections/CollectionVersionSearch';
+import { PageDetail, TextCell } from '../../../framework';
+import { useTranslation } from 'react-i18next';
+import { CardBody } from '@patternfly/react-core';
+import { useCarouselContext } from '../../../framework/PageCarousel/PageCarousel';
+import styled, { CSSProperties } from 'styled-components';
+import { useMemo } from 'react';
+import { RouteObj } from '../../Routes';
+
+export const ColumnsDiv = styled.div`
+  display: grid;
+  gap: 6px;
+  align-items: baseline;
+`;
 
 export function CollectionCard(props: { collection: CollectionVersionSearch }) {
   const { t } = useTranslation();
@@ -34,7 +37,13 @@ export function CollectionCard(props: { collection: CollectionVersionSearch }) {
         itemToCardFn={(item: CollectionVersionSearch) => ({
           id: item.collection_version.name,
           icon: <AnsibleTowerIcon />, // TODO: Update logo to use avatar_url if it exists
-          title: <TextCell text={item.collection_version.name} />,
+          title: (
+            <TextCell
+              text={item.collection_version.name}
+              to={RouteObj.CollectionDetails.replace(':id', item.collection_version.name)}
+            />
+          ),
+          iconAboveTitle: true,
           subtitle: (
             <TextCell
               text={t('Provided by {{provider}}', {
@@ -45,40 +54,52 @@ export function CollectionCard(props: { collection: CollectionVersionSearch }) {
           cardBody: (
             <CardBody>
               <TextCell text={item.collection_version.version} />
-              <TextCell text={item.collection_version.description} />
+              {item.collection_version.description && (
+                <PageDetail>
+                  <div>{item.collection_version.description}</div>
+                </PageDetail>
+              )}
               <PageDetail>
                 <PageDetailDiv>
                   <ColumnsDiv>
-                    <>
+                    <dd>
                       {
                         item.collection_version.contents.filter((c) => c.content_type === 'module')
                           .length
                       }
-                    </>
-                    <Small>{t('Modules')}</Small>
+                    </dd>
+                    <Small>
+                      <dt>{t('Modules')}</dt>
+                    </Small>
                   </ColumnsDiv>
                   <ColumnsDiv>
-                    <>
+                    <dd>
                       {
                         item.collection_version.contents.filter((c) => c.content_type === 'role')
                           .length
                       }
-                    </>
-                    <Small>{t('Roles')}</Small>
+                    </dd>
+                    <Small>
+                      <dt>{t('Roles')}</dt>
+                    </Small>
                   </ColumnsDiv>
                   <ColumnsDiv>
-                    <>
+                    <dd>
                       {
                         item.collection_version.contents.filter(
                           (c) => c.content_type !== 'module' && c.content_type !== 'role'
                         ).length
                       }
-                    </>
-                    <Small>{t('Plugins')}</Small>
+                    </dd>
+                    <Small>
+                      <dt>{t('Plugins')}</dt>
+                    </Small>
                   </ColumnsDiv>
                   <ColumnsDiv>
-                    <>{Object.keys(item.collection_version.dependencies).length}</>
-                    <Small>{t('Dependencies')}</Small>
+                    <dd>{Object.keys(item.collection_version.dependencies).length}</dd>
+                    <Small>
+                      <dt>{t('Dependencies')}</dt>
+                    </Small>
                   </ColumnsDiv>
                 </PageDetailDiv>
               </PageDetail>
