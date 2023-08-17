@@ -1,4 +1,4 @@
-import { AnsibleTowerIcon, CheckCircleIcon } from '@patternfly/react-icons';
+import { CheckCircleIcon } from '@patternfly/react-icons';
 import { PageDetailDiv, PageTableCard, Small } from '../../../framework/PageTable/PageTableCard';
 import { CollectionVersionSearch } from '../collections/CollectionVersionSearch';
 import { PageDetail, TextCell } from '../../../framework';
