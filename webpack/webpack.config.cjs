@@ -8,6 +8,7 @@ const CopyPlugin = require('copy-webpack-plugin');
 const MergeJsonWebpackPlugin = require('merge-jsons-webpack-plugin');
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
+const path = require('path');
 
 switch (process.env.UI_MODE) {
   case 'AWX':
@@ -153,7 +154,8 @@ module.exports = function (env, argv) {
     output: {
       clean: true,
       filename: isProduction ? '[contenthash].js' : undefined,
-      publicPath: '/',
+      path: path.resolve(__dirname, '../build/public'),
+      publicPath: process.env.PUBLIC_PATH || '/',
     },
     optimization: {
       minimizer: [

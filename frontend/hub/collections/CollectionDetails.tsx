@@ -52,17 +52,19 @@ import { StatusCell } from '../../common/Status';
 import { useGet } from '../../common/crud/useGet';
 import { hubAPI } from '../api';
 import { HubItemsResponse } from '../useHubView';
-import { Collection } from './Collection';
+import { CollectionVersionSearch } from './Collection';
 import { useCollectionActions } from './hooks/useCollectionActions';
 import { useCollectionColumns } from './hooks/useCollectionColumns';
 
 export function CollectionDetails() {
   const { t } = useTranslation();
-  const params = useParams<{ id: string }>();
-  const { data, refresh } = useGet<HubItemsResponse<Collection>>(
-    hubAPI`/_ui/v1/repo/published/?limit=1&name=${params.id ?? ''}`
+  const params = useParams<{ name: string; namespace: string; repository: string }>();
+  const { data, refresh } = useGet<HubItemsResponse<CollectionVersionSearch>>(
+    hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${params.name || ''}&namespace=${
+      params.namespace || ''
+    }&repository=${params.repository || ''} }`
   );
-  let collection: Collection | undefined = undefined;
+  let collection: CollectionVersionSearch | undefined = undefined;
   if (data && data.data && data.data.length > 0) {
     collection = data.data[0];
   }
@@ -70,13 +72,13 @@ export function CollectionDetails() {
   return (
     <PageLayout>
       <PageHeader
-        title={collection?.name}
+        title={collection?.collection_version.name}
         breadcrumbs={[
           { label: t('Collections'), to: RouteObj.Collections },
-          { label: collection?.name },
+          { label: collection?.collection_version.name },
         ]}
         headerActions={
-          <PageActions<Collection>
+          <PageActions<CollectionVersionSearch>
             actions={itemActions}
             position={DropdownPosition.right}
             selectedItem={collection}
@@ -107,13 +109,13 @@ export function CollectionDetails() {
   );
 }
 
-function CollectionDetailsTab(props: { collection?: Collection }) {
+function CollectionDetailsTab(props: { collection?: CollectionVersionSearch }) {
   const { collection } = props;
   const tableColumns = useCollectionColumns();
   return <PageDetailsFromColumns item={collection} columns={tableColumns} />;
 }
 
-function CollectionInstallTab(props: { collection?: Collection }) {
+function CollectionInstallTab(props: { collection?: CollectionVersionSearch }) {
   const { t } = useTranslation();
   const { collection } = props;
   return (
@@ -121,20 +123,21 @@ function CollectionInstallTab(props: { collection?: Collection }) {
       <PageSection variant="light">
         <PageDetails>
           <PageDetail label={t('License')}>
-            {collection?.latest_version?.metadata?.license &&
+            {/*collection?.latest_version?.metadata?.license &&
               collection.latest_version.metadata.license?.length > 0 &&
-              collection.latest_version.metadata.license[0]}
+              collection.latest_version.metadata.license[0]*/}
+            {t`License not implemented yet`}
           </PageDetail>
           <PageDetail label={t('Installation')}>
             <CopyCell
-              text={`ansible-galaxy collection install ${collection?.namespace?.name ?? ''}.${
-                collection?.name ?? ''
-              }`}
+              text={`ansible-galaxy collection install ${
+                collection?.collection_version?.namespace ?? ''
+              }.${collection?.collection_version.name ?? ''}`}
             />
           </PageDetail>
           <PageDetail label={t('Requires')}>
-            {collection?.latest_version.requires_ansible &&
-              `${t('Ansible')} ${collection.latest_version.requires_ansible}`}
+            {collection?.collection_version.require_ansible &&
+              `${t('Ansible')} ${collection.collection_version.require_ansible}`}
           </PageDetail>
         </PageDetails>
       </PageSection>
@@ -142,14 +145,14 @@ function CollectionInstallTab(props: { collection?: Collection }) {
   );
 }
 
-function CollectionDocumentationTab(props: { collection?: Collection }) {
+function CollectionDocumentationTab(props: { collection?: CollectionVersionSearch }) {
   const { collection } = props;
 
   const [content, setContent] = useState<IContents>();
 
   const { data } = useGet<CollectionDocs>(
-    hubAPI`/_ui/v1/repo/published/${collection?.namespace.name ?? ''}/${
-      collection?.name ?? ''
+    hubAPI`/_ui/v1/repo/published/${collection?.collection_version.name ?? ''}/${
+      collection?.collection_version.name ?? ''
     }/?include_related=my_permissions`
   );
 
@@ -381,7 +384,7 @@ function CollectionDocumentationTabContent(props: {
   );
 }
 
-function CollectionContentsTab(_props: { collection?: Collection }) {
+function CollectionContentsTab(_props: { collection?: CollectionVersionSearch }) {
   return (
     <Scrollable>
       <PageSection variant="light">TODO</PageSection>
@@ -389,12 +392,12 @@ function CollectionContentsTab(_props: { collection?: Collection }) {
   );
 }
 
-function CollectionImportLogTab(props: { collection?: Collection }) {
+function CollectionImportLogTab(props: { collection?: CollectionVersionSearch }) {
   const { collection } = props;
   const { t } = useTranslation();
   const { data: collectionImportsResponse } = useGet<HubItemsResponse<CollectionImport>>(
     collection
-      ? hubAPI`/_ui/v1/imports/collections/?namespace=${collection.namespace.name}&name=${collection.name}&version=${collection.latest_version.version}&sort=-created&limit=1`
+      ? hubAPI`/_ui/v1/imports/collections/?namespace=${collection.collection_version.namespace}&name=${collection.collection_version.name}&version=${collection.collection_version.version}&sort=-created&limit=1`
       : ''
   );
 
@@ -476,7 +479,7 @@ interface CollectionImport {
   messages?: { time: number; level: 'INFO' | 'WARNING' | 'ERROR'; message: string }[];
 }
 
-function CollectionDependenciesTab(props: { collection?: Collection }) {
+function CollectionDependenciesTab(props: { collection?: CollectionVersionSearch }) {
   const { collection } = props;
   const { t } = useTranslation();
   if (!collection) return <></>;
@@ -486,12 +489,12 @@ function CollectionDependenciesTab(props: { collection?: Collection }) {
         <Stack hasGutter>
           <Title headingLevel="h2">{t('Dependencies')}</Title>
           <DescriptionList isHorizontal>
-            {Object.keys(collection.latest_version.metadata.dependencies).map((key) => {
+            {Object.keys(collection.collection_version.dependencies).map((key) => {
               return (
                 <DescriptionListGroup key={key}>
                   <DescriptionListTerm>{key}</DescriptionListTerm>
                   <DescriptionListDescription>
-                    {collection.latest_version.metadata.dependencies[key]}
+                    {collection.collection_version.dependencies[key]}
                   </DescriptionListDescription>
                 </DescriptionListGroup>
               );
