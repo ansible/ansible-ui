@@ -73,7 +73,7 @@ export interface PageSingleSelectProps<ValueT> {
  */
 export function PageSingleSelect<
   /** The type of the value of the select and of the options values. */
-  ValueT
+  ValueT,
 >(props: PageSingleSelectProps<ValueT>) {
   const { t } = useTranslation();
   const { id, icon, value, onSelect, options, placeholder } = props;

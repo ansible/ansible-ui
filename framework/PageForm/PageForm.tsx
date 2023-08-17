@@ -8,7 +8,7 @@ import {
   Tooltip,
 } from '@patternfly/react-core';
 import { JSONSchema6 } from 'json-schema';
-import { CSSProperties, ReactNode, useContext, useState } from 'react';
+import { BaseSyntheticEvent, CSSProperties, ReactNode, useContext, useState } from 'react';
 import {
   DefaultValues,
   ErrorOption,
@@ -17,6 +17,7 @@ import {
   FormProvider,
   Path,
   useForm,
+  UseFormReturn,
   useFormState,
 } from 'react-hook-form';
 import { RequestError } from '../../frontend/common/crud/RequestError';
@@ -31,7 +32,7 @@ export function PageForm<T extends object>(props: {
   children?: ReactNode;
   submitText: string;
   additionalActionText?: string;
-  onClickAdditionalAction?: () => void;
+  onClickAdditionalAction?: PageFormSubmitHandler<T>;
   onSubmit: PageFormSubmitHandler<T>;
   cancelText?: string;
   onCancel?: () => void;
@@ -57,42 +58,57 @@ export function PageForm<T extends object>(props: {
   const multipleColumns = props.singleColumn ? false : settings.formColumns === 'multiple';
 
   const maxWidth: number | undefined = multipleColumns ? 1600 : isHorizontal ? 960 : 800;
+  const handleSubmitError = (err: unknown) => {
+    err instanceof Error ? setError(err) : setError(new Error('Unknown error'));
+    if (
+      typeof err === 'object' &&
+      err !== null &&
+      'json' in err &&
+      typeof err.json === 'object' &&
+      err.json !== null
+    ) {
+      for (const key in err.json) {
+        let value = (err.json as Record<string, string>)[key];
+        if (typeof value === 'string') {
+          setFieldError(key as unknown as Path<T>, { message: value });
+        } else if (Array.isArray(value)) {
+          value = value[0];
+          if (typeof value === 'string') {
+            setFieldError(key as unknown as Path<T>, { message: value });
+          }
+        }
+      }
+    }
+  };
 
   let Component = (
     <FormProvider {...form}>
       <Form
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        onSubmit={handleSubmit(async (data) => {
-          setError(null);
-          try {
-            await props.onSubmit(
-              data,
-              (error: string) => setError(new Error(error)),
-              setFieldError
-            );
-          } catch (err) {
-            err instanceof Error ? setError(err) : setError(new Error('Unknown error'));
-            if (
-              typeof err === 'object' &&
-              err !== null &&
-              'json' in err &&
-              typeof err.json === 'object' &&
-              err.json !== null
-            ) {
-              for (const key in err.json) {
-                let value = (err.json as Record<string, string>)[key];
-                if (typeof value === 'string') {
-                  setFieldError(key as unknown as Path<T>, { message: value });
-                } else if (Array.isArray(value)) {
-                  value = value[0];
-                  if (typeof value === 'string') {
-                    setFieldError(key as unknown as Path<T>, { message: value });
-                  }
-                }
-              }
+        onSubmit={handleSubmit(
+          async (
+            data,
+            event?: BaseSyntheticEvent & { nativeEvent: { submitter?: { innerHTML: string } } }
+          ) => {
+            setError(null);
+            let isSecondaryButton = false;
+
+            if (event !== undefined && event?.nativeEvent?.submitter) {
+              isSecondaryButton =
+                event.nativeEvent.submitter?.innerHTML === props.additionalActionText;
+            }
+            try {
+              await props.onSubmit(
+                data,
+                (error: string) => setError(new Error(error)),
+                setFieldError,
+                isSecondaryButton ? form : undefined
+              );
+            } catch (err) {
+              handleSubmitError(err);
             }
           }
-        })}
+        )}
         isHorizontal={isHorizontal}
         style={{
           display: 'flex',
@@ -139,7 +155,7 @@ export function PageForm<T extends object>(props: {
             <ActionGroup style={{ marginTop: 0 }}>
               <PageFormSubmitButton>{props.submitText}</PageFormSubmitButton>
               {props.additionalActionText ? (
-                <Button onClick={props.onClickAdditionalAction} type="button" variant="secondary">
+                <Button aria-label={props.additionalActionText} type="submit" variant="secondary">
                   {props.additionalActionText}
                 </Button>
               ) : null}
@@ -191,7 +207,8 @@ export function PageFormGrid(props: {
 export type PageFormSubmitHandler<T extends FieldValues> = (
   data: T,
   setError: (error: string) => void,
-  setFieldError: (fieldName: FieldPath<T>, error: ErrorOption) => void
+  setFieldError: (fieldName: FieldPath<T>, error: ErrorOption) => void,
+  from: UseFormReturn<T> | undefined
 ) => Promise<unknown>;
 
 export function PageFormSubmitButton(props: { children: ReactNode; style?: CSSProperties }) {

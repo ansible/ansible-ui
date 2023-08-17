@@ -19,12 +19,8 @@ export function ScheduleRules(props: { rrule: string }) {
   const navigate = useNavigate();
 
   const createUrl: string = useGetCreateRuleRoute();
+  const [_dtstart, ...rules] = props.rrule.split(' ');
 
-  const [
-    ,
-    // startInfo, This value will be used once the rule form is implemented
-    ...rules
-  ] = props.rrule.split(' ');
   const mappedRRules = rules.map((rule) => ({ rrule: rule }));
   const rowActions = useMemo<IPageAction<{ rrule: string }>[]>(
     () => [

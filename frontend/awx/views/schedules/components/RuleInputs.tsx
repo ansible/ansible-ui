@@ -19,9 +19,23 @@ export function RuleInputs() {
     value: week,
     label: `${week}`,
   }));
-  const daysOfYear = Array.from({ length: 366 }, (_, i) => i + 1).map((day) => ({
+  const daysOfYear = Array.from(Array(366), (_, i) => i + 1).map((day) => ({
     value: day,
     label: `${day}`,
+  }));
+  const minutesOfHour = Array.from(Array(60), (_, i) => i).map((minute) => ({
+    value: minute,
+    label: `${minute}`,
+  }));
+
+  const daysOfMonth = Array.from(Array(31), (_, i) => i + 1).map((day) => ({
+    value: day,
+    label: `${day}`,
+  }));
+
+  const hoursOfDay = Array.from(Array(24), (_, i) => i).map((hour) => ({
+    value: hour,
+    label: `${hour}`,
   }));
 
   const monthOptions = useGetMonthOptions();
@@ -48,7 +62,7 @@ export function RuleInputs() {
       <PageFormDateTimePicker<RuleFormFields>
         label={t('Start date/time')}
         isDisabled
-        name={'startDateTime'}
+        name={'dtstart'}
       />
       <PageFormTextInput<RuleFormFields> name="timezone" isDisabled label={t('Timezone')} />
       <Divider className="pf-m-12-col" />
@@ -92,6 +106,36 @@ export function RuleInputs() {
           labelHelpTitle={t('Annual weeks(s) number')}
         />
         <PageFormMultiSelect<RuleFormFields>
+          name="byminute"
+          placeholderText={t('Select minutes of the houron which to run the schedule')}
+          options={minutesOfHour}
+          label={t('Minute(s) of hour')}
+          labelHelp={t(
+            'This is the byhour field.  This field is used to declare minute(s) of the hour the schedule should run.'
+          )}
+          labelHelpTitle={t('Minute(s) of hour')}
+        />
+        <PageFormMultiSelect<RuleFormFields>
+          name="byhour"
+          placeholderText={t('Select hour of day on which to run the schedule')}
+          options={hoursOfDay}
+          label={t('Hour of day')}
+          labelHelp={t(
+            'This is the byhour field.  This field is used to declare hours of day the schedule should run.'
+          )}
+          labelHelpTitle={t('Hour of day')}
+        />
+        <PageFormMultiSelect<RuleFormFields>
+          name="bymonthday"
+          placeholderText={t('Select days of the month on which to run the schedule')}
+          options={daysOfMonth}
+          label={t('Monthly day(s) number')}
+          labelHelp={t(
+            'This is the bymonthday field.  This field is used to declare numbered days of the month the schedule should run.'
+          )}
+          labelHelpTitle={t('Monthly day(s) number')}
+        />
+        <PageFormMultiSelect<RuleFormFields>
           name="byyearday"
           placeholderText={t('Select days of the year on which to run the schedule')}
           options={daysOfYear}
@@ -123,6 +167,7 @@ export function RuleInputs() {
         />
         <PageFormDateTimePicker<RuleFormFields>
           name="until"
+          timePlaceHolder="HH:MM AM/PM"
           label={t('Until')}
           labelHelpTitle={t('Until')}
           labelHelp={t('Use this rule until the specified date/time')}

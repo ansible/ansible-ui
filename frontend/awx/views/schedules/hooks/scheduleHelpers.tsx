@@ -373,6 +373,7 @@ export function buildScheduleContainer(values: ScheduleFormFields) {
     date: values.startDateTime.date,
     time: values.startDateTime.time,
     timezone: values.timezone,
+    start: !values.until,
   });
   startRule.origOptions.tzid = values.timezone;
   startRule.origOptions.freq = values.freq;
@@ -382,9 +383,9 @@ export function buildScheduleContainer(values: ScheduleFormFields) {
   return set;
 }
 
-const parseTime = (time: string) => [
-  DateTime.fromFormat(time, 'hh:mm a').hour,
-  DateTime.fromFormat(time, 'hh:mm a').minute,
+export const parseTime = (time: string) => [
+  DateTime.fromFormat(time, 'h:mm a').hour,
+  DateTime.fromFormat(time, 'h:mm a').minute,
 ];
 
 export function buildDateTimeObj(values: {
@@ -412,7 +413,7 @@ export function buildDateTimeObj(values: {
   return rule;
 }
 
-function pad(num: string | number) {
+export function pad(num: string | number) {
   if (typeof num === 'string') {
     return num;
   }

@@ -34,9 +34,9 @@ export function PageFormDateTimePicker<
               timeValue={field?.value?.time as string}
               onDateChange={(date: string) => field.onChange({ ...field.value, date })}
               datePlaceHolder={props.datePlaceHolder}
-              onTimeChange={(event: React.FormEvent<HTMLInputElement>, time: string) =>
-                field.onChange({ ...field.value, time })
-              }
+              onTimeChange={(_event, time: string) => {
+                field.onChange({ ...field.value, time });
+              }}
               timePlaceHolder={props.timePlaceHolder}
             />
           </>

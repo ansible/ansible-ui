@@ -13,31 +13,31 @@ export function useGetWeekdayOptions() {
   const { t } = useTranslation();
   const weekdayOptions = [
     {
-      value: RRule.SU.toString(),
+      value: RRule.SU,
       label: t('Sunday'),
     },
     {
-      value: RRule.MO.toString(),
+      value: RRule.MO,
       label: t('Monday'),
     },
     {
-      value: RRule.TU.toString(),
+      value: RRule.TU,
       label: t('Tuesday'),
     },
     {
-      value: RRule.WE.toString(),
+      value: RRule.WE,
       label: t('Wednesday'),
     },
     {
-      value: RRule.TH.toString(),
+      value: RRule.TH,
       label: t('Thursday'),
     },
     {
-      value: RRule.FR.toString(),
+      value: RRule.FR,
       label: t('Friday'),
     },
     {
-      value: RRule.SA.toString(),
+      value: RRule.SA,
       label: t('Saturday'),
     },
   ];

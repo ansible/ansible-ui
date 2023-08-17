@@ -1,99 +1,162 @@
 import { useTranslation } from 'react-i18next';
-import { PageForm, PageHeader, PageLayout } from '../../../../framework';
+import {
+  PageForm,
+  PageFormSubmitHandler,
+  PageHeader,
+  PageLayout,
+  usePageAlertToaster,
+} from '../../../../framework';
 import { RuleInputs } from './components/RuleInputs';
-import { DateTime } from 'luxon';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { scheduleRulesRoutes } from './hooks/ruleHelpers';
 import { useMemo, useState } from 'react';
 import { requestGet, requestPatch } from '../../../common/crud/Data';
 import { Schedule } from '../../interfaces/Schedule';
-import { Options, RRule, Weekday } from 'rrule';
+import { Options, RRule, RRuleSet, Weekday } from 'rrule';
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
 
 import { buildDateTimeObj } from './hooks/scheduleHelpers';
+import { formatDateString } from '../../../../framework/utils/dateTimeHelpers';
+import { UseFormReturn } from 'react-hook-form';
+import { AwxError } from '../../common/AwxError';
 
 export interface RuleFormFields {
   freq: number;
-  frequencies: string[];
   interval: number;
   wkst: number;
+  dtstart: { date: string; time: string };
   byweekday: Weekday[];
   bysetpos: number[];
   byweekno: number[];
   byyearday: number[];
+  bymonthday: number[];
+  bynmonthday: number[];
+  byhour: number[];
+  byminute: number[];
+  bysecond: number[];
   until: { date: string; time: string };
   count: number;
-  bymonth: { name: string; value: number }[];
+  bymonth: number[];
   timezone: string;
-  startDateTime: { date: string; time: string };
+  byeaster: number;
 }
 
 export function CreateScheduleRule() {
   const { t } = useTranslation();
+  const [error, setError] = useState<Error | null>(null);
   const [scheduleContainer, setScheduleContainer] = useState<Schedule>();
   const { pathname } = useLocation();
-  const { schedule_id } = useParams<{
+  const { schedule_id, id: resource_id } = useParams<{
     schedule_id: string;
     id: string;
     source_id?: string;
   }>();
+  const navigate = useNavigate();
+  const alertToaster = usePageAlertToaster();
 
-  const onSubmit = async (
-    values: Omit<Options, 'until'> & {
-      startDateTime: unknown;
-      until: { date: string; time: string };
-      timezone: string;
-    }
+  const onSubmit: PageFormSubmitHandler<RuleFormFields> = async (
+    values: RuleFormFields,
+    _setError,
+    _setFieldError,
+    form: UseFormReturn<RuleFormFields, object> | undefined
   ) => {
-    if (!scheduleContainer) return; /// we actually want to throw and error here probably
-    const {
-      until: { date, time },
-      startDateTime,
-      timezone,
-      ...rest
-    } = values;
-
+    if (!scheduleContainer) return;
+    const { until, dtstart, timezone, ...rest } = values;
     const container = RRule.fromString(scheduleContainer?.rrule);
-    // const {
-    //   options: { freq, dtstart, tzid },
-    // } = container;
 
-    const updatedContainer = {
-      ...container,
-      options: {
-        ...rest,
-        ...container.options,
-      },
+    const updatedContainer: Options = {
+      ...container.options,
+      ...rest,
     };
-
-    if (date || time) {
-      updatedContainer.options.until = buildDateTimeObj({ date, time, timezone }).options.until;
-
-      const rruleObject = new RRule({
-        ...updatedContainer.options,
-      });
-
-      await requestPatch<Schedule>(`/api/v2/schedules/${scheduleContainer.id}/`, {
-        rrule: rruleObject.toString(),
-      }).then((res) => {
-        console.log(res);
-      });
+    if (until?.date || until?.time) {
+      const { date, time } = until;
+      updatedContainer.until = buildDateTimeObj({
+        date,
+        time,
+        timezone,
+        start: false,
+      }).options.until;
     }
+
+    const [start, ...rules] = scheduleContainer.rrule.split(' ');
+    scheduleContainer.rrule.split(' ');
+    const rruleObject = new RRule(updatedContainer);
+    const set = new RRuleSet();
+    set.rrule(rruleObject);
+    const updatedRules = rules.filter((rule) => rule !== rruleObject.toString().split('\n')[1]);
+    const dedupedRRuleString = [start, updatedRules[0], set.toString().split('\n')[1]].join(' ');
+
+    await requestPatch<Schedule>(`/api/v2/schedules/${scheduleContainer.id}/`, {
+      rrule: dedupedRRuleString,
+    })
+      .then((res) => {
+        alertToaster.addAlert({
+          variant: 'success',
+          title: t(`Successfully added rule to schedule ${res.name}`),
+        });
+        if (form !== undefined) {
+          const { reset } = form;
+          reset(
+            {
+              ...form.formState.defaultValues,
+            },
+            {
+              keepValues: false,
+              keepDirty: false,
+              keepErrors: false,
+              keepTouched: false,
+            }
+          );
+        } else {
+          navigate(
+            scheduleRulesRoutes[
+              pathname.split('/').find((i) => Object.keys(scheduleRulesRoutes).includes(i)) || ''
+            ]
+              ?.replace(':id', res.summary_fields.unified_job_template.id.toString())
+              .replace(':schedule_id', res.id.toString())
+          );
+        }
+      })
+      .catch((err) => {
+        if (err instanceof Error) {
+          alertToaster.addAlert({
+            variant: 'danger',
+            title: t('Failed to add rule to schedule'),
+            children: err instanceof Error && err.message,
+          });
+        }
+      });
   };
-  const onCancel = () => {};
+
+  const onCancel = () => {
+    navigate(
+      scheduleRulesRoutes[
+        pathname.split('/').find((i) => Object.keys(scheduleRulesRoutes).includes(i)) || ''
+      ]
+        ?.replace(':id', resource_id as string)
+        .replace(':schedule_id', schedule_id as string)
+    );
+  };
+
   useMemo(() => {
     if (!schedule_id) return;
-    void requestGet<Schedule>(`/api/v2/schedules/${schedule_id}`).then((res) => {
-      setScheduleContainer(res);
-    });
+    void requestGet<Schedule>(`/api/v2/schedules/${schedule_id}`)
+      .then((res) => {
+        setScheduleContainer(res);
+      })
+      .catch((err) => {
+        if (err instanceof Error) setError(err);
+      });
   }, [schedule_id]);
 
   if (!scheduleContainer) {
     return <LoadingPage />;
   }
-  const rule = new RRule(RRule.fromString(scheduleContainer.rrule).options);
+  if (error) {
+    return <AwxError error={error} />;
+  }
 
-  const startTime = `${rule.options.byhour.toString()}:${rule.options.byminute.toString()}`;
+  const dtstart = formatDateString(scheduleContainer.dtstart, scheduleContainer.timezone);
 
   return (
     <PageLayout>
@@ -111,18 +174,12 @@ export function CreateScheduleRule() {
           timezone:
             RRule.fromString(scheduleContainer.rrule).options.tzid ||
             Intl.DateTimeFormat().resolvedOptions().timeZone,
-          startDateTime: {
-            date: DateTime.fromISO(
-              RRule.fromString(scheduleContainer.rrule).options.dtstart.toISOString()
-            ).toFormat('yyyy-LL-dd'),
-            time: startTime,
-          },
+          dtstart: { date: dtstart.split(',')[0], time: dtstart.split(',')[1] },
         }}
-        scheduleContainer={scheduleContainer}
-        submitText={t('Create another rule')}
-        additionalActionText={t('Finalize rules')}
-        onClickAdditionalAction={() => {}}
-        cancelText={t('Cancel rule creation')}
+        submitText={t('Finalize rules')}
+        additionalActionText={t('Create another rule')}
+        onClickAdditionalAction={onSubmit}
+        cancelText={t('Cancel')}
         onSubmit={onSubmit}
         onCancel={onCancel}
       >

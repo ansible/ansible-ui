@@ -16,7 +16,8 @@ import { PageSelectOption } from '../../PageInputs/PageSelectOption';
 
 export type PageFormMultiSelectProps<
   TFieldValues extends FieldValues = FieldValues,
-  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
+  ValueT = FieldPathValue<TFieldValues, TFieldName>,
 > = {
   /**
    * The id attribute specifies a unique id for an HTML element. The value of the id attribute must be unique within the HTML document.
@@ -52,7 +53,7 @@ export type PageFormMultiSelectProps<
    */
   placeholderText?: string;
 
-  options: PageSelectOption[];
+  options: PageSelectOption<ValueT>[];
 
   helperText?: string;
 
@@ -88,7 +89,7 @@ export type PageFormMultiSelectProps<
 
 export function PageFormMultiSelect<
   TFieldValues extends FieldValues = FieldValues,
-  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >(props: PageFormMultiSelectProps<TFieldValues, TFieldName>) {
   const {
     name,

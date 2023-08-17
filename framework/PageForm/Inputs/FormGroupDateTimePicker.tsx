@@ -57,6 +57,7 @@ export function FormGroupDateTimePicker(props: FormGroupDateTimePickerProps) {
           isDisabled={props.isDisabled}
           placeholder={timePlaceHolder}
           time={timeValue}
+          inputProps={{ value: timeValue ?? '' }}
           onChange={onTimeChange}
         />
       </InputGroup>
