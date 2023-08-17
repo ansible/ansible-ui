@@ -1,12 +1,12 @@
 import { postRequest, requestGet } from '../../../common/crud/Data';
-import { Launch } from '../../interfaces/Launch';
+import { LaunchConfiguration } from '../../interfaces/LaunchConfiguration';
 
 import { Job } from '../../interfaces/Job';
 // TODO: Add launch prompt functionality.  This includes, but it not limited to:
 // 1) Fetching labels from api
 // 2) Fetching survey from api
 // 3) Doing what needs to be done with this data in the prompt workflow.
-function canLaunchWithoutPrompt(launchData: Launch) {
+function canLaunchWithoutPrompt(launchData: LaunchConfiguration) {
   return (
     launchData.can_start_without_user_input &&
     !launchData.ask_inventory_on_launch &&
@@ -25,16 +25,19 @@ function canLaunchWithoutPrompt(launchData: Launch) {
   );
 }
 
+type LaunchWithParamsType = LaunchConfiguration & LaunchConfiguration['credential_passwords'];
 export const handleLaunch = async (resourceType: string, resourceId: number) => {
   const readLaunch =
     resourceType === 'workflow_job_template'
-      ? requestGet<Launch>(`/api/v2/workflow_job_templates/${resourceId.toString()}/launch/`)
-      : requestGet<Launch>(`/api/v2/job_templates/${resourceId.toString()}/launch/`);
+      ? requestGet<LaunchConfiguration>(
+          `/api/v2/workflow_job_templates/${resourceId.toString()}/launch/`
+        )
+      : requestGet<LaunchConfiguration>(`/api/v2/job_templates/${resourceId.toString()}/launch/`);
 
   try {
-    const launchResponse: Launch = await readLaunch;
+    const launchResponse: LaunchConfiguration = await readLaunch;
     if (canLaunchWithoutPrompt(launchResponse)) {
-      return launchWithParams(resourceType, resourceId, {} as Launch);
+      return launchWithParams(resourceType, resourceId, {} as LaunchWithParamsType);
     } else {
       throw Error;
       // TODO show launch prompt
@@ -44,7 +47,12 @@ export const handleLaunch = async (resourceType: string, resourceId: number) => 
   }
 };
 
-const launchWithParams = (resourceType: string, resourceId: number, params?: Launch) => {
+type LaunchCredentialPasswordsType = keyof LaunchConfiguration['credential_passwords'];
+const launchWithParams = (
+  resourceType: string,
+  resourceId: number,
+  params?: LaunchWithParamsType
+) => {
   let jobPromise;
 
   if (resourceType === 'job_template') {
@@ -59,11 +67,14 @@ const launchWithParams = (resourceType: string, resourceId: number, params?: Lau
   } else if (resourceType === 'workflow_job') {
     jobPromise = postRequest<Job>(`/api/v2/workflow_jobs/${resourceId.toString()}/launch/`, params);
   } else if (resourceType === 'ad_hoc_command') {
-    if (params?.credential_passwords) {
+    if (params && params.credential_passwords) {
       // The api expects the passwords at the top level of the object instead of nested
       // in credential_passwords like the other relaunch endpoints
-      Object.keys(params.credential_passwords).forEach((key) => {
-        params[key] = params.credential_passwords[key];
+      const credentialPasswords: LaunchConfiguration['credential_passwords'] =
+        params.credential_passwords || {};
+      Object.keys(credentialPasswords).forEach((key) => {
+        const credentialPassword = credentialPasswords[key as LaunchCredentialPasswordsType];
+        params[key as LaunchCredentialPasswordsType] = credentialPassword;
       });
     }
     jobPromise = postRequest<Job>(
@@ -75,24 +86,36 @@ const launchWithParams = (resourceType: string, resourceId: number, params?: Lau
   return jobPromise;
 };
 
-export const handleRelaunch = async (resourceType: string, resourceId: number, params?: Launch) => {
+export const handleRelaunch = async (
+  resourceType: string,
+  resourceId: number,
+  params?: LaunchConfiguration
+) => {
   let readRelaunch;
   let relaunch;
 
   if (resourceType === 'inventory_update') {
     // We'll need to handle the scenario where the src no longer exists
-    readRelaunch = requestGet<Launch>(
+    readRelaunch = requestGet<LaunchConfiguration>(
       `/api/v2/inventory_sources/${resourceId.toString()}/relaunch/`
     );
   } else if (resourceType === 'project_update') {
     // We'll need to handle the scenario where the project no longer exists
-    readRelaunch = requestGet<Launch>(`/api/v2/project_updates/${resourceId.toString()}/relaunch/`);
+    readRelaunch = requestGet<LaunchConfiguration>(
+      `/api/v2/project_updates/${resourceId.toString()}/relaunch/`
+    );
   } else if (resourceType === 'workflow_job') {
-    readRelaunch = requestGet<Launch>(`/api/v2/workflow_jobs/${resourceId.toString()}/relaunch/`);
+    readRelaunch = requestGet<LaunchConfiguration>(
+      `/api/v2/workflow_jobs/${resourceId.toString()}/relaunch/`
+    );
   } else if (resourceType === 'ad_hoc_command') {
-    readRelaunch = requestGet<Launch>(`/api/v2/ad_hoc_commands/${resourceId.toString()}/relaunch/`);
+    readRelaunch = requestGet<LaunchConfiguration>(
+      `/api/v2/ad_hoc_commands/${resourceId.toString()}/relaunch/`
+    );
   } else if (resourceType === 'job') {
-    readRelaunch = requestGet<Launch>(`/api/v2/jobs/${resourceId.toString()}/relaunch/`);
+    readRelaunch = requestGet<LaunchConfiguration>(
+      `/api/v2/jobs/${resourceId.toString()}/relaunch/`
+    );
   }
 
   try {
