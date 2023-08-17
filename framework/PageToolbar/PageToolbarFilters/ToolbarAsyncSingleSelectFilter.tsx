@@ -5,7 +5,7 @@ import {
   pageQueryErrorTextType,
 } from './../../PageInputs/PageAsyncSingleSelect';
 
-export interface IToolbarSingleSelectFilter extends ToolbarFilterCommon {
+export interface IToolbarAsyncSingleSelectFilter extends ToolbarFilterCommon {
   type: ToolbarFilterType.AsyncSingleSelect;
   isRequired?: boolean;
   placeholder: string;
