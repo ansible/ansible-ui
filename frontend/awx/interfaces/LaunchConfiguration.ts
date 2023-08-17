@@ -1,5 +1,4 @@
 export interface LaunchConfiguration {
-  [key: string]: string | boolean | number | string[] | object;
   can_start_without_user_input: boolean;
   passwords_needed_to_start: string[];
   ask_scm_branch_on_launch: boolean;
@@ -22,6 +21,13 @@ export interface LaunchConfiguration {
   variables_needed_to_start: string[];
   credential_needed_to_start: boolean;
   inventory_needed_to_start: boolean;
+  credential_passwords: {
+    ssh_password: string;
+    become_password: string;
+    ssh_key_unlock: string;
+    vault_password: string;
+    [key: `vault_password.${string}`]: string;
+  };
   defaults: {
     inventory: {
       name: string;
