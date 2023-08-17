@@ -16,6 +16,7 @@ export function useApprovalActions(callback?: (collections: CollectionVersionSea
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
+        isPinned: true,
         icon: TrashIcon,
         label: t('Reject'),
         onClick: (collection) => rejectCollections([collection]),
