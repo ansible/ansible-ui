@@ -6,9 +6,11 @@ import {
 } from '@patternfly/react-core';
 import { FilterIcon } from '@patternfly/react-icons';
 import { Dispatch, SetStateAction, useCallback, useState } from 'react';
+import { PageAsyncSingleSelect } from '../PageInputs/PageAsyncSingleSelect';
 import { PageSingleSelect } from '../PageInputs/PageSingleSelect';
 import { useBreakpoint } from '../components/useBreakPoint';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
+import { IToolbarAsyncSingleSelectFilter } from './PageToolbarFilters/ToolbarAsyncSingleSelectFilter';
 import {
   IToolbarDateRangeFilter,
   ToolbarDateRangeFilter,
@@ -22,9 +24,6 @@ import {
   ToolbarSingleSelectFilter,
 } from './PageToolbarFilters/ToolbarSingleSelectFilter';
 import { IToolbarTextFilter, ToolbarTextFilter } from './PageToolbarFilters/ToolbarTextFilter';
-
-import { IToolbarAsyncSingleSelectFilter } from './PageToolbarFilters/ToolbarAsyncSingleSelectFilter';
-import { PageAsyncSingleSelect } from '../PageInputs/PageAsyncSingleSelect';
 
 /** Represents the types of filters that can be used in the toolbar */
 export enum ToolbarFilterType {
@@ -290,11 +289,12 @@ function ToolbarFilterComponent(props: {
         <PageAsyncSingleSelect<string>
           id={props.id ?? filter.key}
           value={filterValues && filterValues?.length > 0 ? filterValues[0] : ''}
-          onSelect={(item) => {
-            setFilterValues(() => [item]);
-          }}
+          onSelect={(item) => setFilterValues(() => [item])}
           placeholder={filter.placeholder || ''}
-          {...filter}
+          queryOptions={filter.queryOptions}
+          queryErrorText={filter.queryErrorText}
+          queryPlaceholder={filter.queryPlaceholder}
+          isRequired={filter.isRequired}
         />
       );
 
@@ -323,5 +323,4 @@ function ToolbarFilterComponent(props: {
         />
       );
   }
-  return <></>;
 }

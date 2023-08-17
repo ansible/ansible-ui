@@ -1,17 +1,16 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IToolbarFilter, ToolbarFilterType } from '../../../../framework';
 import { useGetRequest } from '../../../common/crud/useGetRequest';
-import { pageAsyncSingleSelectOptionsFunction } from './../../../../framework/PageInputs/PageAsyncSingleSelect';
-import { PulpItemsResponse } from './../../usePulpView';
+import { PageAsyncSingleSelectOptionsFn } from './../../../../framework/PageInputs/PageAsyncSingleSelect';
 import { pulpAPI } from './../../api';
-import { useCallback } from 'react';
+import { PulpItemsResponse } from './../../usePulpView';
 
 export function useApprovalFilters() {
   const { t } = useTranslation();
   const repoRequest = useGetRequest<PulpItemsResponse<Repository>>();
 
-  const repoQueryOptions: pageAsyncSingleSelectOptionsFunction<string> = useCallback(
+  const repoQueryOptions: PageAsyncSingleSelectOptionsFn<string> = useCallback(
     (page) => {
       const pageSize = 10;
 
@@ -21,7 +20,7 @@ export function useApprovalFilters() {
           limit: pageSize,
         });
         return {
-          total: pageSize * 10,
+          total: data.count,
           options: data.results.map((r) => {
             return { label: r.name, value: r.name };
           }),

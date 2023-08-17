@@ -10,23 +10,23 @@ export interface PageAsyncSingleSelectQueryResult<ValueT> {
   options: PageSelectOption<ValueT>[];
 }
 
-export type pageAsyncSingleSelectOptionsFunction<ValueT> = (
+export type PageAsyncSingleSelectOptionsFn<ValueT> = (
   page: number,
   signal: AbortSignal
 ) => Promise<PageAsyncSingleSelectQueryResult<ValueT>>;
 
-export type pageQueryErrorTextType = string | ((error: Error) => string);
+export type PageAsyncQueryErrorTextType = string | ((error: Error) => string);
 
 export interface PageAsyncSingleSelectProps<ValueT>
   extends Omit<PageSingleSelectProps<ValueT>, 'options'> {
   /** The function to query for options. */
-  queryOptions: pageAsyncSingleSelectOptionsFunction<ValueT>;
+  queryOptions: PageAsyncSingleSelectOptionsFn<ValueT>;
 
   /** The placeholder to show while querying. */
   queryPlaceholder?: string;
 
   /** The placeholder to show if the query fails. */
-  queryErrorText?: pageQueryErrorTextType;
+  queryErrorText?: PageAsyncQueryErrorTextType;
 }
 
 /**
@@ -49,7 +49,7 @@ export interface PageAsyncSingleSelectProps<ValueT>
  */
 export function PageAsyncSingleSelect<
   /** The type of the value of the select and of the options values. */
-  ValueT,
+  ValueT
 >(props: PageAsyncSingleSelectProps<ValueT>) {
   const { t } = useTranslation();
 
