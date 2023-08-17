@@ -49,7 +49,7 @@ export interface PageAsyncSingleSelectProps<ValueT>
  */
 export function PageAsyncSingleSelect<
   /** The type of the value of the select and of the options values. */
-  ValueT
+  ValueT,
 >(props: PageAsyncSingleSelectProps<ValueT>) {
   const { t } = useTranslation();
 
