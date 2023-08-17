@@ -43,9 +43,13 @@ export function useGetItem<T = unknown>(url: string, id?: string | number) {
 export function useGetRequest<ResponseBody>() {
   const navigate = useNavigate();
   const abortController = useAbortController();
-  return async (url: string, signal?: AbortSignal) => {
+  return async (
+    url: string,
+    query?: Record<string, string | number | boolean>,
+    signal?: AbortSignal
+  ) => {
     const response = await requestCommon({
-      url,
+      url: url + normalizeQueryString(query),
       method: 'GET',
       signal: signal ?? abortController.signal,
     });
