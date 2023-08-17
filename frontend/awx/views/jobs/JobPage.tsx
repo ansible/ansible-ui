@@ -51,7 +51,7 @@ function useGetJob(id?: string, type?: string) {
   const { data: job, refresh: refreshJob } = useGet<Job>(
     id ? `/api/v2/${path}/${id}/` : '',
     undefined,
-    0
+    { refreshInterval: 0 }
   );
   return { job, refreshJob };
 }
