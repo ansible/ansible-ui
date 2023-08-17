@@ -156,7 +156,7 @@ describe('teams', () => {
     cy.clickButton(/^Clear all filters$/);
   });
 
-  it.only('can remove a role from a user via the team access tab row action', () => {
+  it('can remove a role from a user via the team access tab row action', () => {
     cy.requestPost<User>(`/api/v2/users/${user1.id.toString()}/roles/`, {
       id: team.summary_fields.object_roles.member_role.id,
     });
