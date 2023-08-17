@@ -1,72 +1,62 @@
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import useSWR from 'swr';
+import useSWR, { SWRConfiguration } from 'swr';
 import { RouteObj } from '../../Routes';
-import { AnsibleError } from './ansible-error';
-import { Delay } from './delay';
+import { createRequestError } from './RequestError';
+import { normalizeQueryString } from './normalizeQueryString';
+import { requestCommon } from './requestCommon';
+import { useAbortController } from './useAbortController';
 
-export function useOptions<T>(url: string) {
-  const optionsRequest = useOptionsRequest<T>();
-
-  const abortSignalRef = useRef<{ signal?: AbortSignal }>({});
-  useEffect(() => {
-    const abortController = new AbortController();
-    abortSignalRef.current.signal = abortController.signal;
-    return () => abortController.abort();
-  }, []);
-
-  const response = useSWR<T>(url, optionsRequest, {
+export function useOptions<T>(
+  url: string | undefined,
+  query?: Record<string, string | number | boolean>,
+  swrConfiguration: SWRConfiguration = {}
+) {
+  const getOptions = useOptionsRequest<T>();
+  url += normalizeQueryString(query);
+  const response = useSWR<T>(url, getOptions, {
     dedupingInterval: 0,
+    ...swrConfiguration,
   });
-
-  const refresh = useCallback(() => {
-    void response.mutate();
-  }, [response]);
-
-  let error = response.error as Error | undefined;
-  if (!(error instanceof Error)) error = new Error('Unknown error');
-
+  const refresh = useCallback(() => void response.mutate(), [response]);
+  let error = response.error as Error;
+  if (error && !(error instanceof Error)) {
+    error = new Error('Unknown error');
+  }
   return useMemo(
     () => ({
-      isLoading: response.isLoading,
       data: response.data,
-      error: error,
+      error: response.isLoading ? undefined : error,
       refresh,
+      isLoading: response.isLoading,
     }),
-    [response.isLoading, response.data, error, refresh]
+    [response.data, response.isLoading, error, refresh]
   );
 }
 
-function useOptionsRequest<ResponseBody = unknown>() {
+/**
+ * Hook for making OPTIONS API requests
+ *
+ * - Returns a function that takes a url and body and returns the response body
+ * - Throws an RequestError if the response is not ok
+ * - Navigates to the login page if the response is a 401
+ * - Supports aborting the request on unmount
+ */
+function useOptionsRequest<ResponseBody>() {
   const navigate = useNavigate();
-
-  const abortController = useRef(new AbortController());
-  useEffect(() => () => abortController.current.abort(), []);
-
-  return async (url: string) => {
-    await Delay();
-
-    const response = await fetch(url, {
+  const abortController = useAbortController();
+  return async (url: string, signal?: AbortSignal) => {
+    const response = await requestCommon({
+      url,
       method: 'OPTIONS',
-      credentials: 'include',
-      signal: abortController.current.signal,
+      signal: signal ?? abortController.signal,
     });
-
     if (!response.ok) {
       if (response.status === 401) {
         navigate(RouteObj.Login + '?navigate-back=true');
       }
-
-      let responseBody: string | undefined;
-      try {
-        responseBody = await response.text();
-      } catch {
-        // Do nothing - response body was not valid json
-      }
-
-      throw new AnsibleError(response.statusText, response.status, responseBody);
+      throw await createRequestError(response);
     }
-
     return (await response.json()) as ResponseBody;
   };
 }

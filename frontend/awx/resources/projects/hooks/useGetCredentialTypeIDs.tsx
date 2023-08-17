@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useGet } from '../../../../common/crud/useGet';
-import { CredentialType } from '../../../interfaces/CredentialType';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
+import { CredentialType } from '../../../interfaces/CredentialType';
 
 /**
  * Returns an object that maps credential types (scm, Insights, cryptography) to their IDs

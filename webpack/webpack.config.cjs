@@ -107,7 +107,6 @@ module.exports = function (env, argv) {
         'process.env.EDA_ROUTE_PREFIX': env.eda_route_prefix
           ? JSON.stringify(env.eda_route_prefix)
           : JSON.stringify('/eda'),
-
         'process.env.HUB_API_BASE_PATH': JSON.stringify(env.hub_api_base_path || ''),
       }),
       isDevelopment && new ReactRefreshWebpackPlugin(),

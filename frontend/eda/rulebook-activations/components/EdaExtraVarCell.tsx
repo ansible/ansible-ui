@@ -1,7 +1,6 @@
-import useSWR from 'swr';
-import { useFetcher } from '../../../common/crud/Data';
-import { EdaExtraVars } from '../../interfaces/EdaExtraVars';
 import { PageDetailCodeEditor } from '../../../../framework/PageDetails/PageDetailCodeEditor';
+import { useGet } from '../../../common/crud/useGet';
+import { EdaExtraVars } from '../../interfaces/EdaExtraVars';
 
 export function EdaExtraVarsCell(props: {
   id?: number | null;
@@ -9,13 +8,9 @@ export function EdaExtraVarsCell(props: {
   label?: string;
   helpText?: string;
 }) {
-  const fetcher = useFetcher();
-  const { data } = useSWR<EdaExtraVars>(
+  const { data } = useGet<EdaExtraVars>(
     props.id ? `/api/eda/v1/extra-vars/${props.id}/` : undefined,
-    fetcher,
-    {
-      dedupingInterval: 10 * 1000,
-    }
+    { dedupingInterval: 10 * 1000 }
   );
   if (!data) {
     switch (typeof props.id) {

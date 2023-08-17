@@ -1,50 +1,33 @@
-import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RouteObj } from '../../Routes';
-import { AnsibleError } from './ansible-error';
-import { getCookie } from './cookie';
-import { Delay } from './delay';
+import { createRequestError } from './RequestError';
+import { requestCommon } from './requestCommon';
+import { useAbortController } from './useAbortController';
 
+/**
+ * Hook for making PATCH API requests
+ *
+ * - Returns a function that takes a url and body and returns the response body
+ * - Throws an RequestError if the response is not ok
+ * - Navigates to the login page if the response is a 401
+ * - Supports aborting the request on unmount
+ */
 export function usePatchRequest<RequestBody, ResponseBody>() {
   const navigate = useNavigate();
-
-  const abortSignalRef = useRef<{ signal?: AbortSignal }>({});
-  useEffect(() => {
-    const abortController = new AbortController();
-    abortSignalRef.current.signal = abortController.signal;
-    return () => abortController.abort();
-  }, []);
-
-  return async (url: string, body: RequestBody) => {
-    await Delay();
-
-    const response = await fetch(url, {
+  const abortController = useAbortController();
+  return async (url: string, body: RequestBody, signal?: AbortSignal) => {
+    const response = await requestCommon({
+      url,
       method: 'PATCH',
-      body: JSON.stringify(body),
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-        Accepts: 'application/json',
-        'X-CSRFToken': getCookie('csrftoken') ?? '',
-      },
-      signal: abortSignalRef.current.signal,
+      body,
+      signal: signal ?? abortController.signal,
     });
-
     if (!response.ok) {
       if (response.status === 401) {
         navigate(RouteObj.Login + '?navigate-back=true');
       }
-
-      let responseBody: string | undefined;
-      try {
-        responseBody = await response.text();
-      } catch {
-        // Do nothing - response body was not valid json
-      }
-
-      throw new AnsibleError(response.statusText, response.status, responseBody);
+      throw await createRequestError(response);
     }
-
     return (await response.json()) as ResponseBody;
   };
 }

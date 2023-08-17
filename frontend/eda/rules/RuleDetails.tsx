@@ -30,11 +30,9 @@ import { EdaRulebookCell } from '../rulebooks/components/EdaRulebookCell';
 export function RuleDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { data: rule } = useGet<EdaRule>(
-    `${API_PREFIX}/rules/${params.id ?? ''}/`,
-    undefined,
-    SWR_REFRESH_INTERVAL
-  );
+  const { data: rule } = useGet<EdaRule>(`${API_PREFIX}/rules/${params.id ?? ''}/`, undefined, {
+    refreshInterval: SWR_REFRESH_INTERVAL,
+  });
   const [copied, setCopied] = React.useState(false);
 
   const clipboardCopyFunc = (event: React.MouseEvent, text: { toString: () => string }) => {

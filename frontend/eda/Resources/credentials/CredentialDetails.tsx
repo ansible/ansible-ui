@@ -46,7 +46,7 @@ export function CredentialDetails() {
   const { data: credential } = useGet<EdaCredential>(
     `${API_PREFIX}/credentials/${params.id ?? ''}/`,
     undefined,
-    SWR_REFRESH_INTERVAL
+    { refreshInterval: SWR_REFRESH_INTERVAL }
   );
 
   const deleteCredentials = useDeleteCredentials((deleted) => {

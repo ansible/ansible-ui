@@ -1,17 +1,17 @@
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { PageDetail, PageDetails, DateTimeCell, TextCell } from '../../../../../framework';
+import styled from 'styled-components';
+import { DateTimeCell, PageDetail, PageDetails, TextCell } from '../../../../../framework';
+import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { RouteObj } from '../../../../Routes';
+import { useGetItem } from '../../../../common/crud/useGet';
+import { AwxError } from '../../../common/AwxError';
+import { useAwxGetAllPages } from '../../../common/useAwxGetAllPages';
 import { Credential } from '../../../interfaces/Credential';
 import { CredentialInputSource } from '../../../interfaces/CredentialInputSource';
 import { CredentialType } from '../../../interfaces/CredentialType';
 import { CredentialTypeDetail } from '../components/CredentialTypeDetail';
-import { useMemo } from 'react';
-import { useGetAllPagesAWX } from '../../../../common/crud/useGetAllPagesAWX';
-import styled from 'styled-components';
-import { useGetItem } from '../../../../common/crud/useGetItem';
-import { LoadingPage } from '../../../../../framework/components/LoadingPage';
-import { AwxError } from '../../../common/AwxError';
 
 const PluginFieldText = styled.p`
   margin-top: 10px;
@@ -55,7 +55,7 @@ export function CredentialDetails(props: { credential: Credential }) {
     error: inputSourcesError,
     isLoading: isInputSourceLoading,
     refresh: refreshInputSources,
-  } = useGetAllPagesAWX<CredentialInputSource>(
+  } = useAwxGetAllPages<CredentialInputSource>(
     `/api/v2/credentials/${credential.id}/input_sources/`
   );
 

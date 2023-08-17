@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { PageHeader, PageLayout } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
-import { useGetItem } from '../../../../common/crud/useGetItem';
+import { useGet } from '../../../../common/crud/useGet';
 import { AwxError } from '../../../common/AwxError';
 import { Team } from '../../../interfaces/Team';
 import { AddRolesForm } from '../../roles/AddRolesForm';
@@ -10,7 +10,7 @@ import { AddRolesForm } from '../../roles/AddRolesForm';
 export function AddRolesToTeam() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { error, data: team, refresh } = useGetItem<Team>('/api/v2/teams', params.id);
+  const { error, data: team, refresh } = useGet<Team>(`/api/v2/teams/${params.id ?? ''}`);
   const navigate = useNavigate();
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;

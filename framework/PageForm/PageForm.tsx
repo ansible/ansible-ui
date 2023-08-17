@@ -19,6 +19,7 @@ import {
   useForm,
   useFormState,
 } from 'react-hook-form';
+import { RequestError } from '../../frontend/common/crud/RequestError';
 import { useBreakpoint } from '../components/useBreakPoint';
 import { PageBody } from '../PageBody';
 import { SettingsContext } from '../Settings';
@@ -125,9 +126,9 @@ export function PageForm<T extends object>(props: {
             title={error.message ?? ''}
             isInline
             style={{ paddingLeft: isMd && props.onCancel ? 190 : undefined }}
-            isExpandable={'description' in error ? typeof error.description === 'string' : false}
+            isExpandable={error instanceof RequestError ? true : false}
           >
-            {'description' in error && typeof error.description === 'string' && error.description}
+            {error instanceof RequestError ? JSON.stringify(error.body) : undefined}
           </Alert>
         )}
         {props.onCancel ? (

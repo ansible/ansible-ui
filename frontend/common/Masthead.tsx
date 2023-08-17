@@ -46,7 +46,7 @@ import { useAwxConfig } from '../awx/common/useAwxConfig';
 import getDocsBaseUrl from '../awx/common/util/getDocsBaseUrl';
 import { API_PREFIX } from '../eda/constants';
 import { useAnsibleAboutModal } from './AboutModal';
-import { postRequest } from './crud/usePostRequest';
+import { postRequest } from './crud/Data';
 import { useActiveUser } from './useActiveUser';
 
 const MastheadBrandDiv = styled.div`
