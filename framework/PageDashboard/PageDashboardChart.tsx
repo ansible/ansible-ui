@@ -12,39 +12,30 @@ import './PageDashboardChart.css';
 
 export function PageDashboardChart(props: {
   groups: {
+    label?: string;
     color: string;
     values: {
       label: string;
       value: number;
     }[];
   }[];
-  settings?: {
-    // prevent y axis to show float values
-    onlyIntegerTicks?: boolean;
-    // minimal shown value
-    minDomain?: number | { x?: number; y?: number };
-    // label for x ax
-    yLabel?: string;
-    // label for y ax
-    xLabel?: string;
-    // prevents filtering of zero values
-    allowZero?: boolean;
-    // chart will have lines instead of area
-    useLines?: boolean;
-    // data to be shown in the legend
-    legendData?: {
-      name: string;
-      symbol?: {
-        fill?: string;
-        type?: string;
-      };
-    }[];
-  };
+  // prevent y axis to show float values
+  onlyIntegerTicks?: boolean;
+  // minimal shown value
+  minDomain?: number | { x?: number; y?: number };
+  // label for x ax
+  yLabel?: string;
+  // label for y ax
+  xLabel?: string;
+  // prevents filtering of zero values
+  allowZero?: boolean;
+  // chart will have lines instead of area
+  useLines?: boolean;
 }) {
   let { groups } = props;
-  const { settings } = props;
+  const { allowZero, xLabel, yLabel, minDomain, onlyIntegerTicks, useLines } = props;
 
-  groups = settings?.allowZero
+  groups = allowZero
     ? groups
     : groups.filter((group) => {
         for (const value of group.values) {
@@ -52,31 +43,38 @@ export function PageDashboardChart(props: {
         }
         return false;
       });
-
+  const legendData = groups
+    .filter((group) => !!group.label)
+    .map((group) => {
+      return { name: group.label, symbol: { fill: group.color, type: 'square' } };
+    });
+  let paddingBottom = 60;
+  if (xLabel) {
+    if (legendData.length > 0) {
+      paddingBottom += 40;
+    } else {
+      paddingBottom += 16;
+    }
+  } else if (legendData) paddingBottom += 12;
   return (
     <PageChartContainer className="page-chart">
       {(size) => (
         <Chart
           padding={{
-            bottom: settings?.xLabel ? 70 : 60,
-            left: settings?.yLabel ? 70 : 60,
-            right: 40,
+            bottom: paddingBottom,
+            left: 60 + (yLabel ? 19 : 0),
+            right: 24,
             top: 16,
           }}
           colorScale={groups.map((group) => group.color)}
-          height={settings && settings.legendData ? size.height * 0.9 : size.height}
+          height={size.height}
           width={size.width}
-          minDomain={settings && settings.minDomain}
+          minDomain={minDomain}
           legendPosition={'bottom'}
           legendComponent={
-            settings &&
-            settings.legendData && (
-              <ChartLegend
-                width={size.height * 0.1}
-                data={settings.legendData}
-                orientation={'horizontal'}
-              />
-            )
+            legendData.length > 0 ? (
+              <ChartLegend data={legendData} orientation={'horizontal'} />
+            ) : undefined
           }
           containerComponent={
             <ChartVoronoiContainer
@@ -87,43 +85,39 @@ export function PageDashboardChart(props: {
             />
           }
         >
-          <ChartAxis
-            fixLabelOverlap
-            // tickFormat={(date: string) => `${new Date(date).toLocaleDateString()}`}
-            //  tickFormat={(n) => `${Math.round(n)}`}
-            label={settings && settings.xLabel}
-            style={{ axisLabel: { fontSize: 16 } }}
-          />
+          <ChartAxis fixLabelOverlap label={xLabel} style={{ axisLabel: { fontSize: 16 } }} />
           <ChartAxis
             dependentAxis
             showGrid
-            label={settings && settings.yLabel}
+            label={yLabel}
             tickFormat={
-              settings && settings.onlyIntegerTicks
+              onlyIntegerTicks
                 ? //eslint-disable-next-line @typescript-eslint/no-unsafe-return
                   (t) => (Number.isInteger(t) ? t : '')
                 : undefined
             }
             style={{ axisLabel: { fontSize: 16 } }}
           />
-          <ChartStack>
-            {groups.map((group, index) =>
-              settings && settings.useLines ? (
-                <ChartLine
-                  style={{ data: { strokeWidth: 3 } }}
-                  key={index}
-                  data={group.values.map((value) => ({ x: value.label, y: value.value }))}
-                  interpolation="monotoneX"
-                />
-              ) : (
+          {useLines ? (
+            groups.map((group, index) => (
+              <ChartLine
+                style={{ data: { strokeWidth: 3 } }}
+                key={index}
+                data={group.values.map((value) => ({ x: value.label, y: value.value }))}
+                interpolation="monotoneX"
+              />
+            ))
+          ) : (
+            <ChartStack>
+              {groups.map((group, index) => (
                 <ChartArea
                   key={index}
                   data={group.values.map((value) => ({ x: value.label, y: value.value }))}
                   interpolation="monotoneX"
                 />
-              )
-            )}
-          </ChartStack>
+              ))}
+            </ChartStack>
+          )}
         </Chart>
       )}
     </PageChartContainer>
