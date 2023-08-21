@@ -56,6 +56,10 @@ export function PageDashboardChart(props: {
       paddingBottom += 16;
     }
   } else if (legendData) paddingBottom += 12;
+
+  // edge case if all values are zero set maxDomain for y to 5 to make it look normal
+  const onlyZeros = !groups.find((group) => group.values.find((value) => value.value !== 0));
+
   return (
     <PageChartContainer className="page-chart">
       {(size) => (
@@ -70,6 +74,7 @@ export function PageDashboardChart(props: {
           height={size.height}
           width={size.width}
           minDomain={minDomain}
+          maxDomain={onlyZeros ? {y: 5} : undefined}
           legendPosition={'bottom'}
           legendComponent={
             legendData.length > 0 ? (
