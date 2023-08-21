@@ -35,8 +35,8 @@ export function Projects() {
         toolbarFilters={toolbarFilters}
         rowActions={rowActions}
         errorStateTitle={t('Error loading projects')}
-        emptyStateTitle={t('No projects yet')}
-        emptyStateDescription={t('To get started, create a project.')}
+        emptyStateTitle={t('There are currently no projects created for your organization.')}
+        emptyStateDescription={t('Please create a project by using the button below.')}
         emptyStateButtonText={t('Create project')}
         emptyStateButtonClick={() => navigate(RouteObj.CreateEdaProject)}
         {...view}
