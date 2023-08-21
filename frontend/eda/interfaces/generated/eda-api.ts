@@ -54,10 +54,12 @@ export interface ActivationInstance {
    * * `running` - running
    * * `pending` - pending
    * * `failed` - failed
+   * * `stopping` - stopping
    * * `stopped` - stopped
    * * `completed` - completed
+   * * `unresponsive` - unresponsive
    */
-  status?: Status7EbEnum;
+  status?: StatusB37Enum;
   activation_id: number;
   /** @format date-time */
   started_at: string;
@@ -88,10 +90,12 @@ export interface ActivationList {
    * * `running` - running
    * * `pending` - pending
    * * `failed` - failed
+   * * `stopping` - stopping
    * * `stopped` - stopped
    * * `completed` - completed
+   * * `unresponsive` - unresponsive
    */
-  status: Status7EbEnum;
+  status: StatusB37Enum;
   decision_environment_id: number | null;
   project_id: number | null;
   rulebook_id: number | null;
@@ -129,10 +133,12 @@ export interface ActivationRead {
    * * `running` - running
    * * `pending` - pending
    * * `failed` - failed
+   * * `stopping` - stopping
    * * `stopped` - stopped
    * * `completed` - completed
+   * * `unresponsive` - unresponsive
    */
-  status: Status7EbEnum;
+  status: StatusB37Enum;
   project?: ProjectRef | null;
   /** Serializer for Rulebook reference. */
   rulebook: RulebookRef;
@@ -157,6 +163,8 @@ export interface ActivationRead {
   created_at: string;
   /** @format date-time */
   modified_at: string;
+  /** @format date-time */
+  restarted_at?: string | null;
 }
 
 export interface AuditAction {
@@ -206,43 +214,27 @@ export interface AuditEvent {
   audit_actions: string[];
 }
 
-export interface AuditRule {
+export interface AuditRuleDetail {
   /** ID of the fired rule */
   id: number;
   /** Name of the fired rule */
   name: string;
   /** Description of the fired rule */
-  description?: string;
+  description: string;
   /** Status of the fired rule */
   status?: string;
-  /** @format date-time */
-  created_at: string;
-  /**
-   * The fired timestamp of the rule
-   * @format date-time
-   */
-  fired_at: string;
-  /** @format uuid */
-  rule_uuid?: string | null;
-  /** @format uuid */
-  ruleset_uuid?: string | null;
+  /** @example {"id":0,"name":"string"} */
+  activation_instance: {
+    id?: number | null;
+    name?: string;
+  };
   /** Name of the related ruleset */
   ruleset_name?: string;
-  activation_instance?: {
-    id: number | null;
-    name: string;
-  };
-  job_instance_id: number | null;
-  definition?: Record<string, any>;
-}
-
-export interface AuditRuleOut {
-  /** ID of the fired rule */
-  id: number;
-  /** Name of the fired rule */
-  name: string;
-  /** Status of the fired rule */
-  status?: string;
+  /**
+   * The created timestamp of the action
+   * @format date-time
+   */
+  created_at: string;
   /**
    * The fired timestamp of the rule
    * @format date-time
@@ -250,17 +242,25 @@ export interface AuditRuleOut {
   fired_at: string;
   /** The action definition in the rule */
   definition?: Record<string, any>;
+}
+
+export interface AuditRuleList {
+  /** ID of the fired rule */
+  id: number;
+  /** Name of the fired rule */
+  name: string;
+  /** Status of the fired rule */
+  status?: string;
+  /** @example {"id":0,"name":"string"} */
+  activation_instance: {
+    id?: number | null;
+    name?: string;
+  };
   /**
-   * The created timestamp of the action
+   * The fired timestamp of the rule
    * @format date-time
    */
-  created_at: string;
-  activation_instance?: {
-    id: number | null;
-    name: string;
-  };
-  /** Name of the related Activation */
-  activation_name: string;
+  fired_at: string;
 }
 
 export interface AwxToken {
@@ -382,6 +382,11 @@ export interface ExtraVar {
   extra_var: string;
 }
 
+export interface ExtraVarCreate {
+  /** Content of the extra_var */
+  extra_var: string;
+}
+
 /** Serializer for Extra Var reference. */
 export interface ExtraVarRef {
   id: number;
@@ -423,6 +428,26 @@ export interface PaginatedActivationInstanceList {
   /** @example 50 */
   page?: number | null;
   results?: ActivationInstance[];
+}
+
+export interface PaginatedActivationInstanceLogList {
+  /** @example 123 */
+  count?: number;
+  /**
+   * @format uri
+   * @example "/eda/api/v1/example/?page=51&page_size=100"
+   */
+  next?: string | null;
+  /**
+   * @format uri
+   * @example "/eda/api/v1/example/?page=49&page_size=100"
+   */
+  previous?: string | null;
+  /** @example 100 */
+  page_size?: number | null;
+  /** @example 50 */
+  page?: number | null;
+  results?: ActivationInstanceLog[];
 }
 
 export interface PaginatedActivationListList {
@@ -485,7 +510,7 @@ export interface PaginatedAuditEventList {
   results?: AuditEvent[];
 }
 
-export interface PaginatedAuditRuleList {
+export interface PaginatedAuditRuleListList {
   /** @example 123 */
   count?: number;
   /**
@@ -502,7 +527,7 @@ export interface PaginatedAuditRuleList {
   page_size?: number | null;
   /** @example 50 */
   page?: number | null;
-  results?: AuditRule[];
+  results?: AuditRuleList[];
 }
 
 export interface PaginatedAwxTokenList {
@@ -758,6 +783,20 @@ export interface PatchedCredentialCreate {
   secret?: string | null;
 }
 
+export interface PatchedCurrentUserUpdate {
+  /** @maxLength 150 */
+  first_name?: string;
+  /** @maxLength 150 */
+  last_name?: string;
+  /**
+   * Email address
+   * @format email
+   * @maxLength 254
+   */
+  email?: string;
+  password?: string;
+}
+
 /** Serializer for creating the DecisionEnvironment. */
 export interface PatchedDecisionEnvironmentCreate {
   name?: string;
@@ -766,29 +805,17 @@ export interface PatchedDecisionEnvironmentCreate {
   credential_id?: number | null;
 }
 
-export interface PatchedProject {
-  name?: string;
-  description?: string;
+export interface PatchedProjectUpdateRequest {
+  /** Name of the project */
+  name?: string | null;
+  /** Description of the project */
+  description?: string | null;
+  /** Credential id of the project */
   credential_id?: number | null;
-  id?: number;
-  url?: string;
-  git_hash?: string;
-  import_state?: ImportStateEnum;
-  import_error?: string | null;
-  /** @format uuid */
-  import_task_id?: string | null;
-  /** @format date-time */
-  created_at?: string;
-  /** @format date-time */
-  modified_at?: string;
 }
 
 export interface PatchedUserCreateUpdate {
-  /**
-   * Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
-   * @maxLength 150
-   * @pattern ^[\w.@+-]+$
-   */
+  /** The user's log in name. */
   username?: string;
   /** @maxLength 150 */
   first_name?: string;
@@ -821,7 +848,7 @@ export interface Playbook {
 export interface Project {
   name: string;
   description?: string;
-  credential_id: number | null;
+  credential_id?: number | null;
   id: number;
   url: string;
   git_hash: string;
@@ -1033,10 +1060,12 @@ export interface RulesetOut {
  * * `running` - running
  * * `pending` - pending
  * * `failed` - failed
+ * * `stopping` - stopping
  * * `stopped` - stopped
  * * `completed` - completed
+ * * `unresponsive` - unresponsive
  */
-export enum Status7EbEnum {
+export enum StatusB37Enum {
   Starting = 'starting',
   Running = 'running',
   Pending = 'pending',
@@ -1044,6 +1073,7 @@ export enum Status7EbEnum {
   Stopping = 'stopping',
   Stopped = 'stopped',
   Completed = 'completed',
+  Unresponsive = 'unresponsive',
 }
 
 export interface Task {
@@ -1090,11 +1120,7 @@ export enum TaskStatusEnum {
 }
 
 export interface UserCreateUpdate {
-  /**
-   * Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
-   * @maxLength 150
-   * @pattern ^[\w.@+-]+$
-   */
+  /** The user's log in name. */
   username: string;
   /** @maxLength 150 */
   first_name?: string;
@@ -1112,11 +1138,7 @@ export interface UserCreateUpdate {
 
 export interface UserDetail {
   id: number;
-  /**
-   * Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
-   * @maxLength 150
-   * @pattern ^[\w.@+-]+$
-   */
+  /** The user's log in name. */
   username: string;
   /**
    * Email address
@@ -1342,7 +1364,7 @@ export class HttpClient<SecurityDataType = unknown> {
           ...(requestParams.headers || {}),
           ...(type && type !== ContentType.FormData ? { 'Content-Type': type } : {}),
         },
-        signal: cancelToken ? this.createAbortSignal(cancelToken) : requestParams.signal,
+        signal: (cancelToken ? this.createAbortSignal(cancelToken) : requestParams.signal) || null,
         body: typeof body === 'undefined' || body === null ? null : payloadFormatter(body),
       }
     ).then(async (response) => {
@@ -1450,14 +1472,28 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @description List all logs for the Activation Instance
      *
      * @tags activation-instances
-     * @name ActivationInstancesLogsRetrieve
+     * @name ActivationInstancesLogsList
      * @request GET:/activation-instances/{id}/logs/
      * @secure
      */
-    activationInstancesLogsRetrieve: (id: number, params: RequestParams = {}) =>
-      this.request<ActivationInstanceLog, any>({
+    activationInstancesLogsList: (
+      id: number,
+      query?: {
+        /** Filter by activation instance name. */
+        name?: string;
+        /** A page number within the paginated result set. */
+        page?: number;
+        /** Number of results to return per page. */
+        page_size?: number;
+        /** Filter by activation instance status. */
+        status?: string;
+      },
+      params: RequestParams = {}
+    ) =>
+      this.request<PaginatedActivationInstanceLogList, any>({
         path: `/activation-instances/${id}/logs/`,
         method: 'GET',
+        query: query,
         secure: true,
         format: 'json',
         ...params,
@@ -1569,7 +1605,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @secure
      */
     activationsEnableCreate: (id: number, params: RequestParams = {}) =>
-      this.request<void, any>({
+      this.request<void, void>({
         path: `/activations/${id}/enable/`,
         method: 'POST',
         secure: true,
@@ -1624,6 +1660,8 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         page?: number;
         /** Number of results to return per page. */
         page_size?: number;
+        /** Filter by rule audit event source name. */
+        source_name?: string;
       },
       params: RequestParams = {}
     ) =>
@@ -1664,6 +1702,8 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      */
     auditRulesList: (
       query?: {
+        /** Filter by rule audit name. */
+        name?: string;
         /** A page number within the paginated result set. */
         page?: number;
         /** Number of results to return per page. */
@@ -1671,27 +1711,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       },
       params: RequestParams = {}
     ) =>
-      this.request<PaginatedAuditRuleList, any>({
+      this.request<PaginatedAuditRuleListList, any>({
         path: `/audit-rules/`,
         method: 'GET',
         query: query,
-        secure: true,
-        format: 'json',
-        ...params,
-      }),
-
-    /**
-     * @description Get the fired rule by its id
-     *
-     * @tags audit-rules
-     * @name AuditRulesRetrieve
-     * @request GET:/audit-rules/{id}/
-     * @secure
-     */
-    auditRulesRetrieve: (id: number, params: RequestParams = {}) =>
-      this.request<AuditRuleOut, any>({
-        path: `/audit-rules/${id}/`,
-        method: 'GET',
         secure: true,
         format: 'json',
         ...params,
@@ -1708,6 +1731,8 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     auditRulesActionsList: (
       id: number,
       query?: {
+        /** Filter by rule audit action name. */
+        name?: string;
         /** A page number within the paginated result set. */
         page?: number;
         /** Number of results to return per page. */
@@ -1739,6 +1764,8 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         page?: number;
         /** Number of results to return per page. */
         page_size?: number;
+        /** Filter by rule audit event source name. */
+        source_name?: string;
       },
       params: RequestParams = {}
     ) =>
@@ -1746,6 +1773,23 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         path: `/audit-rules/${id}/events/`,
         method: 'GET',
         query: query,
+        secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Get the fired rule by its id
+     *
+     * @tags audit-rules
+     * @name AuditRulesRetrieve
+     * @request GET:/audit-rules/{id}/
+     * @secure
+     */
+    auditRulesRetrieve: (id: number, params: RequestParams = {}) =>
+      this.request<AuditRuleDetail, any>({
+        path: `/audit-rules/${id}/`,
+        method: 'GET',
         secure: true,
         format: 'json',
         ...params,
@@ -2045,7 +2089,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/extra-vars/
      * @secure
      */
-    extraVarsCreate: (data: ExtraVar, params: RequestParams = {}) =>
+    extraVarsCreate: (data: ExtraVarCreate, params: RequestParams = {}) =>
       this.request<ExtraVar, any>({
         path: `/extra-vars/`,
         method: 'POST',
@@ -2192,8 +2236,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request PATCH:/projects/{id}/
      * @secure
      */
-    projectsPartialUpdate: (id: number, data: PatchedProject, params: RequestParams = {}) =>
-      this.request<Project, any>({
+    projectsPartialUpdate: (
+      id: number,
+      data: PatchedProjectUpdateRequest,
+      params: RequestParams = {}
+    ) =>
+      this.request<Project, void>({
         path: `/projects/${id}/`,
         method: 'PATCH',
         body: data,
@@ -2632,15 +2680,34 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @description Get current user.
      *
      * @tags users
-     * @name RetrieveCurrentUser
+     * @name GetCurrentUser
      * @request GET:/users/me/
      * @secure
      */
-    retrieveCurrentUser: (params: RequestParams = {}) =>
+    getCurrentUser: (params: RequestParams = {}) =>
       this.request<UserDetail, any>({
         path: `/users/me/`,
         method: 'GET',
         secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Update current user.
+     *
+     * @tags users
+     * @name UpdateCurrentUser
+     * @request PATCH:/users/me/
+     * @secure
+     */
+    updateCurrentUser: (data: PatchedCurrentUserUpdate, params: RequestParams = {}) =>
+      this.request<UserDetail, any>({
+        path: `/users/me/`,
+        method: 'PATCH',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
         format: 'json',
         ...params,
       }),
