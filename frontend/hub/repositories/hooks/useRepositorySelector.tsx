@@ -130,7 +130,7 @@ export function useRepositoryFilters() {
         key: 'keywords',
         label: t('Name'),
         type: ToolbarFilterType.Text,
-        query: 'keywords',
+        query: 'name',
         comparison: 'equals',
       },
     ],
