@@ -9,13 +9,13 @@
   },
   "homepage": "https://github.com/ansible/ansible-ui/tree/main/framework#readme",
   "type": "module",
-  "main": "./index.umd.cjs",
-  "module": "./index.js",
-  "types": "./framework/index.d.ts",
+  "main": "./index.umd.js",
+  "module": "./index.mjs",
+  "types": "./index.d.ts",
   "exports": {
     ".": {
-      "import": "./index.js",
-      "require": "./index.umd.cjs"
+      "import": "./index.mjs",
+      "require": "./index.umd.js"
     },
     "./style.css": {
       "import": "./style.css",
