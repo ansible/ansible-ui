@@ -74,7 +74,7 @@ export function PageDashboardChart(props: {
           height={size.height}
           width={size.width}
           minDomain={minDomain}
-          maxDomain={onlyZeros ? {y: 5} : undefined}
+          maxDomain={onlyZeros ? { y: 5 } : undefined}
           legendPosition={'bottom'}
           legendComponent={
             legendData.length > 0 ? (
