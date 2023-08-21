@@ -48,6 +48,9 @@
         "tags": ["activation-instances"],
         "security": [
           {
+            "cookieAuth": []
+          },
+          {
             "basicAuth": []
           }
         ],
@@ -83,6 +86,9 @@
         "tags": ["activation-instances"],
         "security": [
           {
+            "cookieAuth": []
+          },
+          {
             "basicAuth": []
           }
         ],
@@ -116,6 +122,9 @@
         "tags": ["activation-instances"],
         "security": [
           {
+            "cookieAuth": []
+          },
+          {
             "basicAuth": []
           }
         ],
@@ -128,7 +137,7 @@
     },
     "/activation-instances/{id}/logs/": {
       "get": {
-        "operationId": "activation_instances_logs_retrieve",
+        "operationId": "activation_instances_logs_list",
         "description": "List all logs for the Activation Instance",
         "parameters": [
           {
@@ -139,10 +148,47 @@
             },
             "description": "A unique integer value identifying this activation instance.",
             "required": true
+          },
+          {
+            "in": "query",
+            "name": "name",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by activation instance name."
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page_size",
+            "required": false,
+            "in": "query",
+            "description": "Number of results to return per page.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by activation instance status."
           }
         ],
         "tags": ["activation-instances"],
         "security": [
+          {
+            "cookieAuth": []
+          },
           {
             "basicAuth": []
           }
@@ -152,7 +198,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ActivationInstanceLog"
+                  "$ref": "#/components/schemas/PaginatedActivationInstanceLogList"
                 }
               }
             },
@@ -196,6 +242,9 @@
         "tags": ["activations"],
         "security": [
           {
+            "cookieAuth": []
+          },
+          {
             "basicAuth": []
           }
         ],
@@ -237,6 +286,9 @@
         },
         "security": [
           {
+            "cookieAuth": []
+          },
+          {
             "basicAuth": []
           }
         ],
@@ -271,6 +323,9 @@
         "tags": ["activations"],
         "security": [
           {
+            "cookieAuth": []
+          },
+          {
             "basicAuth": []
           }
         ],
@@ -304,6 +359,9 @@
         "tags": ["activations"],
         "security": [
           {
+            "cookieAuth": []
+          },
+          {
             "basicAuth": []
           }
         ],
@@ -331,6 +389,9 @@
         ],
         "tags": ["activations"],
         "security": [
+          {
+            "cookieAuth": []
+          },
           {
             "basicAuth": []
           }
@@ -360,12 +421,18 @@
         "tags": ["activations"],
         "security": [
           {
+            "cookieAuth": []
+          },
+          {
             "basicAuth": []
           }
         ],
         "responses": {
           "204": {
             "description": "Activation has been enabled."
+          },
+          "409": {
+            "description": "Activation not enabled do to current activation status"
           }
         }
       }
@@ -387,6 +454,9 @@
         ],
         "tags": ["activations"],
         "security": [
+          {
+            "cookieAuth": []
+          },
           {
             "basicAuth": []
           }
@@ -423,6 +493,9 @@
         "tags": ["activations"],
         "security": [
           {
+            "cookieAuth": []
+          },
+          {
             "basicAuth": []
           }
         ],
@@ -455,10 +528,21 @@
             "schema": {
               "type": "integer"
             }
+          },
+          {
+            "in": "query",
+            "name": "source_name",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by rule audit event source name."
           }
         ],
         "tags": ["audit-events"],
         "security": [
+          {
+            "cookieAuth": []
+          },
           {
             "basicAuth": []
           }
@@ -496,6 +580,9 @@
         "tags": ["audit-events"],
         "security": [
           {
+            "cookieAuth": []
+          },
+          {
             "basicAuth": []
           }
         ],
@@ -519,6 +606,14 @@
         "description": "List all fired rules",
         "parameters": [
           {
+            "in": "query",
+            "name": "name",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by rule audit name."
+          },
+          {
             "name": "page",
             "required": false,
             "in": "query",
@@ -540,6 +635,9 @@
         "tags": ["audit-rules"],
         "security": [
           {
+            "cookieAuth": []
+          },
+          {
             "basicAuth": []
           }
         ],
@@ -548,46 +646,11 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PaginatedAuditRuleList"
+                  "$ref": "#/components/schemas/PaginatedAuditRuleListList"
                 }
               }
             },
             "description": "Return a list of fired rules."
-          }
-        }
-      }
-    },
-    "/audit-rules/{id}/": {
-      "get": {
-        "operationId": "audit_rules_retrieve",
-        "description": "Get the fired rule by its id",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "id",
-            "schema": {
-              "type": "integer"
-            },
-            "description": "A unique integer value identifying this audit rule.",
-            "required": true
-          }
-        ],
-        "tags": ["audit-rules"],
-        "security": [
-          {
-            "basicAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuditRuleOut"
-                }
-              }
-            },
-            "description": "Return the fired rule by its id."
           }
         }
       }
@@ -603,8 +666,16 @@
             "schema": {
               "type": "integer"
             },
-            "description": "A unique integer value identifying this audit rule.",
+            "description": "A unique integer value identifying this rule audit.",
             "required": true
+          },
+          {
+            "in": "query",
+            "name": "name",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by rule audit action name."
           },
           {
             "name": "page",
@@ -627,6 +698,9 @@
         ],
         "tags": ["audit-rules"],
         "security": [
+          {
+            "cookieAuth": []
+          },
           {
             "basicAuth": []
           }
@@ -656,7 +730,7 @@
             "schema": {
               "type": "integer"
             },
-            "description": "A unique integer value identifying this audit rule.",
+            "description": "A unique integer value identifying this Audit Rule.",
             "required": true
           },
           {
@@ -676,10 +750,21 @@
             "schema": {
               "type": "integer"
             }
+          },
+          {
+            "in": "query",
+            "name": "source_name",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by rule audit event source name."
           }
         ],
         "tags": ["audit-rules"],
         "security": [
+          {
+            "cookieAuth": []
+          },
           {
             "basicAuth": []
           }
@@ -698,12 +783,53 @@
         }
       }
     },
+    "/audit-rules/{id}/": {
+      "get": {
+        "operationId": "audit_rules_retrieve",
+        "description": "Get the fired rule by its id",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "A unique integer value identifying this audit rule.",
+            "required": true
+          }
+        ],
+        "tags": ["audit-rules"],
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditRuleDetail"
+                }
+              }
+            },
+            "description": "Return the fired rule by its id."
+          }
+        }
+      }
+    },
     "/auth/session/login/": {
       "get": {
         "operationId": "auth_session_preflight",
         "description": "Use this method to set a CSRF cookie.",
         "tags": ["auth"],
         "security": [
+          {
+            "cookieAuth": []
+          },
           {
             "basicAuth": []
           }
@@ -739,6 +865,9 @@
           "required": true
         },
         "security": [
+          {
+            "cookieAuth": []
+          },
           {
             "basicAuth": []
           }
@@ -805,6 +934,9 @@
         "tags": ["credentials"],
         "security": [
           {
+            "cookieAuth": []
+          },
+          {
             "basicAuth": []
           }
         ],
@@ -847,6 +979,9 @@
         },
         "security": [
           {
+            "cookieAuth": []
+          },
+          {
             "basicAuth": []
           }
         ],
@@ -881,6 +1016,9 @@
         ],
         "tags": ["credentials"],
         "security": [
+          {
+            "cookieAuth": []
+          },
           {
             "basicAuth": []
           }
@@ -934,6 +1072,9 @@
         },
         "security": [
           {
+            "cookieAuth": []
+          },
+          {
             "basicAuth": []
           }
         ],
@@ -966,6 +1107,9 @@
         ],
         "tags": ["credentials"],
         "security": [
+          {
+            "cookieAuth": []
+          },
           {
             "basicAuth": []
           }
@@ -1012,6 +1156,9 @@
         "tags": ["decision-environments"],
         "security": [
           {
+            "cookieAuth": []
+          },
+          {
             "basicAuth": []
           }
         ],
@@ -1054,6 +1201,9 @@
         },
         "security": [
           {
+            "cookieAuth": []
+          },
+          {
             "basicAuth": []
           }
         ],
@@ -1088,6 +1238,9 @@
         ],
         "tags": ["decision-environments"],
         "security": [
+          {
+            "cookieAuth": []
+          },
           {
             "basicAuth": []
           }
@@ -1141,6 +1294,9 @@
         },
         "security": [
           {
+            "cookieAuth": []
+          },
+          {
             "basicAuth": []
           }
         ],
@@ -1173,6 +1329,9 @@
         ],
         "tags": ["decision-environments"],
         "security": [
+          {
+            "cookieAuth": []
+          },
           {
             "basicAuth": []
           }
@@ -1211,6 +1370,9 @@
         "tags": ["extra-vars"],
         "security": [
           {
+            "cookieAuth": []
+          },
+          {
             "basicAuth": []
           }
         ],
@@ -1235,23 +1397,26 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ExtraVar"
+                "$ref": "#/components/schemas/ExtraVarCreate"
               }
             },
             "application/x-www-form-urlencoded": {
               "schema": {
-                "$ref": "#/components/schemas/ExtraVar"
+                "$ref": "#/components/schemas/ExtraVarCreate"
               }
             },
             "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/ExtraVar"
+                "$ref": "#/components/schemas/ExtraVarCreate"
               }
             }
           },
           "required": true
         },
         "security": [
+          {
+            "cookieAuth": []
+          },
           {
             "basicAuth": []
           }
@@ -1287,6 +1452,9 @@
         ],
         "tags": ["extra-vars"],
         "security": [
+          {
+            "cookieAuth": []
+          },
           {
             "basicAuth": []
           }
@@ -1332,6 +1500,9 @@
         "tags": ["playbooks"],
         "security": [
           {
+            "cookieAuth": []
+          },
+          {
             "basicAuth": []
           }
         ],
@@ -1366,6 +1537,9 @@
         ],
         "tags": ["playbooks"],
         "security": [
+          {
+            "cookieAuth": []
+          },
           {
             "basicAuth": []
           }
@@ -1427,6 +1601,9 @@
         "tags": ["projects"],
         "security": [
           {
+            "cookieAuth": []
+          },
+          {
             "basicAuth": []
           }
         ],
@@ -1469,6 +1646,9 @@
         },
         "security": [
           {
+            "cookieAuth": []
+          },
+          {
             "basicAuth": []
           }
         ],
@@ -1503,6 +1683,9 @@
         ],
         "tags": ["projects"],
         "security": [
+          {
+            "cookieAuth": []
+          },
           {
             "basicAuth": []
           }
@@ -1539,22 +1722,25 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PatchedProject"
+                "$ref": "#/components/schemas/PatchedProjectUpdateRequest"
               }
             },
             "application/x-www-form-urlencoded": {
               "schema": {
-                "$ref": "#/components/schemas/PatchedProject"
+                "$ref": "#/components/schemas/PatchedProjectUpdateRequest"
               }
             },
             "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/PatchedProject"
+                "$ref": "#/components/schemas/PatchedProjectUpdateRequest"
               }
             }
           }
         },
         "security": [
+          {
+            "cookieAuth": []
+          },
           {
             "basicAuth": []
           }
@@ -1569,6 +1755,12 @@
               }
             },
             "description": "Update successful. Return an updated project."
+          },
+          "400": {
+            "description": "Update failed with bad request."
+          },
+          "409": {
+            "description": "Update failed with integrity checking."
           }
         }
       },
@@ -1588,6 +1780,9 @@
         ],
         "tags": ["projects"],
         "security": [
+          {
+            "cookieAuth": []
+          },
           {
             "basicAuth": []
           }
@@ -1637,6 +1832,9 @@
         },
         "security": [
           {
+            "cookieAuth": []
+          },
+          {
             "basicAuth": []
           }
         ],
@@ -1681,6 +1879,9 @@
         "tags": ["roles"],
         "security": [
           {
+            "cookieAuth": []
+          },
+          {
             "basicAuth": []
           }
         ],
@@ -1716,6 +1917,9 @@
         ],
         "tags": ["roles"],
         "security": [
+          {
+            "cookieAuth": []
+          },
           {
             "basicAuth": []
           }
@@ -1776,6 +1980,9 @@
         ],
         "tags": ["rulebooks"],
         "security": [
+          {
+            "cookieAuth": []
+          },
           {
             "basicAuth": []
           }
@@ -1838,6 +2045,9 @@
         "tags": ["rulebooks"],
         "security": [
           {
+            "cookieAuth": []
+          },
+          {
             "basicAuth": []
           }
         ],
@@ -1873,6 +2083,9 @@
         "tags": ["rulebooks"],
         "security": [
           {
+            "cookieAuth": []
+          },
+          {
             "basicAuth": []
           }
         ],
@@ -1907,6 +2120,9 @@
         ],
         "tags": ["rulebooks"],
         "security": [
+          {
+            "cookieAuth": []
+          },
           {
             "basicAuth": []
           }
@@ -1952,6 +2168,9 @@
         "tags": ["rules"],
         "security": [
           {
+            "cookieAuth": []
+          },
+          {
             "basicAuth": []
           }
         ],
@@ -1986,6 +2205,9 @@
         ],
         "tags": ["rules"],
         "security": [
+          {
+            "cookieAuth": []
+          },
           {
             "basicAuth": []
           }
@@ -2039,6 +2261,9 @@
         "tags": ["rulesets"],
         "security": [
           {
+            "cookieAuth": []
+          },
+          {
             "basicAuth": []
           }
         ],
@@ -2073,6 +2298,9 @@
         ],
         "tags": ["rulesets"],
         "security": [
+          {
+            "cookieAuth": []
+          },
           {
             "basicAuth": []
           }
@@ -2135,6 +2363,9 @@
         "tags": ["rulesets"],
         "security": [
           {
+            "cookieAuth": []
+          },
+          {
             "basicAuth": []
           }
         ],
@@ -2157,6 +2388,9 @@
         "operationId": "tasks_list",
         "tags": ["tasks"],
         "security": [
+          {
+            "cookieAuth": []
+          },
           {
             "basicAuth": []
           }
@@ -2194,6 +2428,9 @@
         ],
         "tags": ["tasks"],
         "security": [
+          {
+            "cookieAuth": []
+          },
           {
             "basicAuth": []
           }
@@ -2239,6 +2476,9 @@
         "tags": ["users"],
         "security": [
           {
+            "cookieAuth": []
+          },
+          {
             "basicAuth": []
           }
         ],
@@ -2281,6 +2521,9 @@
         },
         "security": [
           {
+            "cookieAuth": []
+          },
+          {
             "basicAuth": []
           }
         ],
@@ -2315,6 +2558,9 @@
         ],
         "tags": ["users"],
         "security": [
+          {
+            "cookieAuth": []
+          },
           {
             "basicAuth": []
           }
@@ -2368,6 +2614,9 @@
         },
         "security": [
           {
+            "cookieAuth": []
+          },
+          {
             "basicAuth": []
           }
         ],
@@ -2401,6 +2650,9 @@
         "tags": ["users"],
         "security": [
           {
+            "cookieAuth": []
+          },
+          {
             "basicAuth": []
           }
         ],
@@ -2413,10 +2665,57 @@
     },
     "/users/me/": {
       "get": {
-        "operationId": "retrieve_current_user",
+        "operationId": "get_current_user",
         "description": "Get current user.",
         "tags": ["users"],
         "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDetail"
+                }
+              }
+            },
+            "description": "Return current user."
+          }
+        }
+      },
+      "patch": {
+        "operationId": "update_current_user",
+        "description": "Update current user.",
+        "tags": ["users"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchedCurrentUserUpdate"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchedCurrentUserUpdate"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchedCurrentUserUpdate"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          },
           {
             "basicAuth": []
           }
@@ -2462,6 +2761,9 @@
         "tags": ["users"],
         "security": [
           {
+            "cookieAuth": []
+          },
+          {
             "basicAuth": []
           }
         ],
@@ -2504,6 +2806,9 @@
         },
         "security": [
           {
+            "cookieAuth": []
+          },
+          {
             "basicAuth": []
           }
         ],
@@ -2539,6 +2844,9 @@
         "tags": ["users"],
         "security": [
           {
+            "cookieAuth": []
+          },
+          {
             "basicAuth": []
           }
         ],
@@ -2571,6 +2879,9 @@
         ],
         "tags": ["users"],
         "security": [
+          {
+            "cookieAuth": []
+          },
           {
             "basicAuth": []
           }
@@ -2635,7 +2946,7 @@
             "type": "string"
           },
           "status": {
-            "$ref": "#/components/schemas/Status7ebEnum"
+            "$ref": "#/components/schemas/StatusB37Enum"
           },
           "activation_id": {
             "type": "integer",
@@ -2695,7 +3006,7 @@
             "type": "boolean"
           },
           "status": {
-            "$ref": "#/components/schemas/Status7ebEnum"
+            "$ref": "#/components/schemas/StatusB37Enum"
           },
           "decision_environment_id": {
             "type": "integer",
@@ -2787,7 +3098,7 @@
             "nullable": true
           },
           "status": {
-            "$ref": "#/components/schemas/Status7ebEnum"
+            "$ref": "#/components/schemas/StatusB37Enum"
           },
           "project": {
             "allOf": [
@@ -2841,6 +3152,11 @@
             "type": "string",
             "format": "date-time",
             "readOnly": true
+          },
+          "restarted_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
           }
         },
         "required": [
@@ -2936,7 +3252,7 @@
         },
         "required": ["audit_actions", "id", "received_at", "source_name", "source_type"]
       },
-      "AuditRule": {
+      "AuditRuleDetail": {
         "type": "object",
         "properties": {
           "id": {
@@ -2955,55 +3271,46 @@
             "type": "string",
             "description": "Status of the fired rule"
           },
+          "activation_instance": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "nullable": true
+              },
+              "name": {
+                "type": "string"
+              }
+            },
+            "example": {
+              "id": 0,
+              "name": "string"
+            },
+            "readOnly": true
+          },
+          "ruleset_name": {
+            "type": "string",
+            "description": "Name of the related ruleset"
+          },
           "created_at": {
             "type": "string",
             "format": "date-time",
-            "readOnly": true
+            "description": "The created timestamp of the action"
           },
           "fired_at": {
             "type": "string",
             "format": "date-time",
             "description": "The fired timestamp of the rule"
           },
-          "rule_uuid": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
-          "ruleset_uuid": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
-          "ruleset_name": {
-            "type": "string",
-            "description": "Name of the related ruleset"
-          },
-          "activation_instance_id": {
-            "type": "integer",
-            "nullable": true,
-            "readOnly": true
-          },
-          "job_instance_id": {
-            "type": "integer",
-            "nullable": true,
-            "readOnly": true
-          },
           "definition": {
             "type": "object",
-            "additionalProperties": {}
+            "additionalProperties": {},
+            "description": "The action definition in the rule"
           }
         },
-        "required": [
-          "activation_instance_id",
-          "created_at",
-          "fired_at",
-          "id",
-          "job_instance_id",
-          "name"
-        ]
+        "required": ["activation_instance", "created_at", "description", "fired_at", "id", "name"]
       },
-      "AuditRuleOut": {
+      "AuditRuleList": {
         "type": "object",
         "properties": {
           "id": {
@@ -3018,31 +3325,30 @@
             "type": "string",
             "description": "Status of the fired rule"
           },
+          "activation_instance": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "nullable": true
+              },
+              "name": {
+                "type": "string"
+              }
+            },
+            "example": {
+              "id": 0,
+              "name": "string"
+            },
+            "readOnly": true
+          },
           "fired_at": {
             "type": "string",
             "format": "date-time",
             "description": "The fired timestamp of the rule"
-          },
-          "definition": {
-            "type": "object",
-            "additionalProperties": {},
-            "description": "The action definition in the rule"
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "The created timestamp of the action"
-          },
-          "activation_id": {
-            "type": "integer",
-            "description": "ID of the related Activation"
-          },
-          "activation_name": {
-            "type": "string",
-            "description": "Name of the related Activation"
           }
         },
-        "required": ["activation_id", "activation_name", "created_at", "fired_at", "id", "name"]
+        "required": ["activation_instance", "fired_at", "id", "name"]
       },
       "AwxToken": {
         "type": "object",
@@ -3304,6 +3610,16 @@
         },
         "required": ["extra_var", "id"]
       },
+      "ExtraVarCreate": {
+        "type": "object",
+        "properties": {
+          "extra_var": {
+            "type": "string",
+            "description": "Content of the extra_var"
+          }
+        },
+        "required": ["extra_var"]
+      },
       "ExtraVarRef": {
         "type": "object",
         "description": "Serializer for Extra Var reference.",
@@ -3365,6 +3681,43 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ActivationInstance"
+            }
+          }
+        }
+      },
+      "PaginatedActivationInstanceLogList": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "example": 123
+          },
+          "next": {
+            "type": "string",
+            "nullable": true,
+            "format": "uri",
+            "example": "/eda/api/v1/example/?page=51&page_size=100"
+          },
+          "previous": {
+            "type": "string",
+            "nullable": true,
+            "format": "uri",
+            "example": "/eda/api/v1/example/?page=49&page_size=100"
+          },
+          "page_size": {
+            "type": "integer",
+            "nullable": true,
+            "example": 100
+          },
+          "page": {
+            "type": "integer",
+            "nullable": true,
+            "example": 50
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ActivationInstanceLog"
             }
           }
         }
@@ -3480,7 +3833,7 @@
           }
         }
       },
-      "PaginatedAuditRuleList": {
+      "PaginatedAuditRuleListList": {
         "type": "object",
         "properties": {
           "count": {
@@ -3512,7 +3865,7 @@
           "results": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/AuditRule"
+              "$ref": "#/components/schemas/AuditRuleList"
             }
           }
         }
@@ -3983,6 +4336,29 @@
           }
         }
       },
+      "PatchedCurrentUserUpdate": {
+        "type": "object",
+        "properties": {
+          "first_name": {
+            "type": "string",
+            "maxLength": 150
+          },
+          "last_name": {
+            "type": "string",
+            "maxLength": 150
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email address",
+            "maxLength": 254
+          },
+          "password": {
+            "type": "string",
+            "writeOnly": true
+          }
+        }
+      },
       "PatchedDecisionEnvironmentCreate": {
         "type": "object",
         "description": "Serializer for creating the DecisionEnvironment.",
@@ -4002,60 +4378,23 @@
           }
         }
       },
-      "PatchedProject": {
+      "PatchedProjectUpdateRequest": {
         "type": "object",
         "properties": {
           "name": {
-            "type": "string"
+            "type": "string",
+            "nullable": true,
+            "description": "Name of the project"
           },
           "description": {
-            "type": "string"
+            "type": "string",
+            "nullable": true,
+            "description": "Description of the project"
           },
           "credential_id": {
             "type": "integer",
             "nullable": true,
-            "readOnly": true
-          },
-          "id": {
-            "type": "integer",
-            "readOnly": true
-          },
-          "url": {
-            "type": "string",
-            "readOnly": true
-          },
-          "git_hash": {
-            "type": "string",
-            "readOnly": true
-          },
-          "import_state": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/ImportStateEnum"
-              }
-            ],
-            "readOnly": true
-          },
-          "import_error": {
-            "type": "string",
-            "readOnly": true,
-            "nullable": true
-          },
-          "import_task_id": {
-            "type": "string",
-            "format": "uuid",
-            "readOnly": true,
-            "nullable": true
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time",
-            "readOnly": true
-          },
-          "modified_at": {
-            "type": "string",
-            "format": "date-time",
-            "readOnly": true
+            "description": "Credential id of the project"
           }
         }
       },
@@ -4064,9 +4403,7 @@
         "properties": {
           "username": {
             "type": "string",
-            "description": "Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.",
-            "pattern": "^[\\w.@+-]+$",
-            "maxLength": 150
+            "description": "The user's log in name."
           },
           "first_name": {
             "type": "string",
@@ -4151,8 +4488,7 @@
           },
           "credential_id": {
             "type": "integer",
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
           },
           "id": {
             "type": "integer",
@@ -4198,7 +4534,6 @@
         },
         "required": [
           "created_at",
-          "credential_id",
           "git_hash",
           "id",
           "import_error",
@@ -4592,10 +4927,19 @@
           "source_types"
         ]
       },
-      "Status7ebEnum": {
-        "enum": ["starting", "running", "pending", "failed", "stopped", "completed"],
+      "StatusB37Enum": {
+        "enum": [
+          "starting",
+          "running",
+          "pending",
+          "failed",
+          "stopping",
+          "stopped",
+          "completed",
+          "unresponsive"
+        ],
         "type": "string",
-        "description": "* `starting` - starting\n* `running` - running\n* `pending` - pending\n* `failed` - failed\n* `stopped` - stopped\n* `completed` - completed"
+        "description": "* `starting` - starting\n* `running` - running\n* `pending` - pending\n* `failed` - failed\n* `stopping` - stopping\n* `stopped` - stopped\n* `completed` - completed\n* `unresponsive` - unresponsive"
       },
       "Task": {
         "type": "object",
@@ -4681,9 +5025,7 @@
         "properties": {
           "username": {
             "type": "string",
-            "description": "Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.",
-            "pattern": "^[\\w.@+-]+$",
-            "maxLength": 150
+            "description": "The user's log in name."
           },
           "first_name": {
             "type": "string",
@@ -4722,9 +5064,7 @@
           },
           "username": {
             "type": "string",
-            "description": "Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.",
-            "pattern": "^[\\w.@+-]+$",
-            "maxLength": 150
+            "description": "The user's log in name."
           },
           "email": {
             "type": "string",

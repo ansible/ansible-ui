@@ -31,7 +31,7 @@ import { useGet } from '../../common/crud/useGet';
 import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../constants';
 import { EdaActivationInstance } from '../interfaces/EdaActivationInstance';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
-import { Status7EbEnum } from '../interfaces/generated/eda-api';
+import { StatusB37Enum } from '../interfaces/generated/eda-api';
 import { useEdaView } from '../useEventDrivenView';
 import { EdaExtraVarsCell } from './components/EdaExtraVarCell';
 import { useActivationHistoryColumns } from './hooks/useActivationHistoryColumns';
@@ -103,7 +103,7 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
         },
         isSwitchOn: (activation: EdaRulebookActivation) => activation.is_enabled ?? false,
         isDisabled: (activation: EdaRulebookActivation) =>
-          activation.status === Status7EbEnum.Stopping
+          activation.status === StatusB37Enum.Stopping
             ? t('Cannot change activation status while stopping')
             : undefined,
       },
@@ -201,6 +201,11 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
           </PageDetail>
           <PageDetail label={t('Fire count')}>
             {rulebookActivation?.rules_fired_count || 0}
+          </PageDetail>
+          <PageDetail label={t('Last restarted')}>
+            {rulebookActivation?.restarted_at
+              ? formatDateString(rulebookActivation.restarted_at)
+              : ''}
           </PageDetail>
           <PageDetail label={t('Restart count')}>
             {rulebookActivation?.restart_count || 0}
