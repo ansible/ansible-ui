@@ -7,6 +7,7 @@ import {
 import { FilterIcon } from '@patternfly/react-icons';
 import { Dispatch, SetStateAction, useCallback, useState } from 'react';
 import { PageAsyncSingleSelect } from '../PageInputs/PageAsyncSingleSelect';
+import { PageMultiSelect } from '../PageInputs/PageMultiSelect';
 import { PageSingleSelect } from '../PageInputs/PageSingleSelect';
 import { useBreakpoint } from '../components/useBreakPoint';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
@@ -15,14 +16,8 @@ import {
   IToolbarDateRangeFilter,
   ToolbarDateRangeFilter,
 } from './PageToolbarFilters/ToolbarDateRangeFilter';
-import {
-  IToolbarMultiSelectFilter,
-  ToolbarMultiSelectFilter,
-} from './PageToolbarFilters/ToolbarMultiSelectFilter';
-import {
-  IToolbarSingleSelectFilter,
-  ToolbarSingleSelectFilter,
-} from './PageToolbarFilters/ToolbarSingleSelectFilter';
+import { IToolbarMultiSelectFilter } from './PageToolbarFilters/ToolbarMultiSelectFilter';
+import { IToolbarSingleSelectFilter } from './PageToolbarFilters/ToolbarSingleSelectFilter';
 import { IToolbarTextFilter, ToolbarTextFilter } from './PageToolbarFilters/ToolbarTextFilter';
 
 /** Represents the types of filters that can be used in the toolbar */
@@ -274,11 +269,11 @@ function ToolbarFilterComponent(props: {
 
     case ToolbarFilterType.SingleSelect:
       return (
-        <ToolbarSingleSelectFilter
+        <PageSingleSelect
           id={props.id ?? filter.key}
           placeholder={filter.placeholder}
-          filterValues={filterValues}
-          setFilterValues={setFilterValues}
+          value={filterValues && filterValues?.length > 0 ? filterValues[0] : ''}
+          onSelect={(item) => setFilterValues(() => [item])}
           options={filter.options}
           isRequired={filter.isRequired}
         />
@@ -300,12 +295,14 @@ function ToolbarFilterComponent(props: {
 
     case ToolbarFilterType.MultiSelect:
       return (
-        <ToolbarMultiSelectFilter
+        <PageMultiSelect<string>
           id={props.id ?? filter.key}
           placeholder={filter.placeholder}
-          filterValues={filterValues}
-          setFilterValues={setFilterValues}
+          values={filterValues}
+          onSelect={setFilterValues}
           options={filter.options}
+          variant="count"
+          disableClearSelection
         />
       );
 
