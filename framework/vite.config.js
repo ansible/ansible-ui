@@ -1,12 +1,11 @@
 // vite.config.js
-import { resolve } from 'path';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
   build: {
     lib: {
       name: '@ansible/ansible-ui-framework',
-      entry: resolve(__dirname, 'framework/index.ts'),
+      entry: 'index.ts',
       fileName: 'index',
     },
     rollupOptions: {
