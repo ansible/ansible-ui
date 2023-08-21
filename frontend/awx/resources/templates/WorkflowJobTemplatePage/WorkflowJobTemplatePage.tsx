@@ -2,7 +2,13 @@
 import { DropdownPosition } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageActions, PageHeader, PageLayout, useGetPageUrl } from '../../../../../framework';
+import {
+  PageActions,
+  PageHeader,
+  PageLayout,
+  useGetPageUrl,
+  usePageNavigate,
+} from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { PageNotImplemented } from '../../../../common/PageNotImplemented';
 import { PageBackTab, RoutedTab, RoutedTabs } from '../../../../common/RoutedTabs';
@@ -12,6 +18,8 @@ import { AwxRoute } from '../../../AwxRoutes';
 import { AwxError } from '../../../common/AwxError';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { Schedules } from '../../../views/schedules/Schedules';
+import { WorkflowJobTemplateDetails } from './WorkflowJobTemplateDetails';
+import { useTemplateActions } from '../hooks/useTemplateActions';
 
 export function WorkflowJobTemplatePage() {
   const { t } = useTranslation();
@@ -23,7 +31,10 @@ export function WorkflowJobTemplatePage() {
   } = useGetItem<WorkflowJobTemplate>('/api/v2/workflow_job_templates', params.id);
 
   const getPageUrl = useGetPageUrl();
-
+  const pageNavigate = usePageNavigate();
+  const itemActions = useTemplateActions({
+    onTemplatesDeleted: () => pageNavigate(AwxRoute.Templates),
+  });
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!template) return <LoadingPage breadcrumbs tabs />;
 
@@ -37,7 +48,7 @@ export function WorkflowJobTemplatePage() {
         ]}
         headerActions={
           <PageActions<WorkflowJobTemplate>
-            actions={[]}
+            actions={itemActions}
             position={DropdownPosition.right}
             selectedItem={template}
           />
@@ -50,7 +61,7 @@ export function WorkflowJobTemplatePage() {
           persistentFilterKey="templates"
         />
         <RoutedTab label={t('Details')} url={RouteObj.WorkflowJobTemplateDetails}>
-          <PageNotImplemented />
+          <WorkflowJobTemplateDetails template={template} />
         </RoutedTab>
         <RoutedTab label={t('Access')} url={RouteObj.WorkflowJobTemplateAccess}>
           <PageNotImplemented />

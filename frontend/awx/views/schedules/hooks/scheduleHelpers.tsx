@@ -81,7 +81,7 @@ export function useGetCreateRuleRoute() {
   const createRuleRoutes: { [key: string]: string } = {
     inventories: RouteObj.InventorySourceCreateScheduleRules,
     job_template: RouteObj.JobTemplateCreateScheduleRules,
-    workflow_job_templates: RouteObj.WorkflowJobTemplateCreateScheduleRules,
+    workflow_job_template: RouteObj.WorkflowJobTemplateCreateScheduleRules,
     projects: RouteObj.ProjectCreateScheduleRules,
   };
 

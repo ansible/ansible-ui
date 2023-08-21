@@ -18,8 +18,8 @@ export function useTemplateActions(options: {
   const navigate = useNavigate();
   const deleteTemplates = useDeleteTemplates(onTemplatesDeleted);
 
-  return useMemo<IPageAction<JobTemplate>[]>(() => {
-    const itemActions: IPageAction<JobTemplate>[] = [
+  return useMemo<IPageAction<JobTemplate | WorkflowJobTemplate>[]>(() => {
+    const itemActions: IPageAction<JobTemplate | WorkflowJobTemplate>[] = [
       {
         type: PageActionType.Link,
         selection: PageActionSelection.Single,
@@ -27,7 +27,11 @@ export function useTemplateActions(options: {
         icon: EditIcon,
         label: t('Edit template'),
         ouiaId: 'job-template-detail-edit-button',
-        href: (template) => RouteObj.EditJobTemplate.replace(':id', template?.id.toString() ?? ''),
+        href: (template) =>
+          (template.type === 'job_template'
+            ? RouteObj.EditJobTemplate
+            : RouteObj.EditWorkflowJobTemplate
+          ).replace(':id', template?.id.toString()) ?? '',
       },
       {
         type: PageActionType.Button,

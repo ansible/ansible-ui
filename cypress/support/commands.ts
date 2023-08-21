@@ -10,6 +10,7 @@ import { ExecutionEnvironment } from '../../frontend/awx/interfaces/ExecutionEnv
 import { InstanceGroup } from '../../frontend/awx/interfaces/InstanceGroup';
 import { Inventory } from '../../frontend/awx/interfaces/Inventory';
 import { JobTemplate } from '../../frontend/awx/interfaces/JobTemplate';
+import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/generated-from-swagger/api';
 import { Label } from '../../frontend/awx/interfaces/Label';
 import { Organization } from '../../frontend/awx/interfaces/Organization';
 import { Project } from '../../frontend/awx/interfaces/Project';
@@ -364,6 +365,9 @@ declare global {
         >
       ): Chainable<JobTemplate>;
 
+      createAwxWorkflowJobTemplate(
+        jobTemplate: WorkflowJobTemplate
+      ): Chainable<WorkflowJobTemplate>;
       /**
        * This command creates a job template with specific variables that will work in conjunction with
        * an EDA project and rulebook activation.

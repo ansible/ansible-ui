@@ -16,8 +16,11 @@ export interface WorkflowJobTemplate
   modified: string;
   webhook_service: 'github' | 'gitlab' | null;
   ask_instance_groups_on_launch: boolean;
-  webhook_credential: number;
-  related: { schedules: string; instance_groups: string };
+  skip_tags: string;
+  job_tags: string;
+  webhook_credential: number | null;
+  extra_vars: '---';
+  related: { schedules: string; instance_groups: string; webhook_receiver: string };
   summary_fields: {
     webhook_credential: {
       id: number;
@@ -27,6 +30,7 @@ export interface WorkflowJobTemplate
       cloud: boolean;
       credential_type_id: number;
     };
+    labels: { count: number; results: { id: number; name: string }[] };
     inventory?: {
       name: string;
       id: number;
@@ -61,6 +65,7 @@ export interface WorkflowJobTemplate
       name: string;
       id: number;
     };
+    recent_jobs: [];
     created_by: SummaryFieldsByUser;
     modified_by: SummaryFieldsByUser;
     object_roles: {
