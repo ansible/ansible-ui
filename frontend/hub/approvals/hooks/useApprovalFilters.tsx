@@ -5,10 +5,22 @@ import { useGetRequest } from '../../../common/crud/useGet';
 import { PageAsyncSingleSelectOptionsFn } from './../../../../framework/PageInputs/PageAsyncSingleSelect';
 import { pulpAPI } from './../../api';
 import { PulpItemsResponse } from './../../usePulpView';
+import { useSelectRepositorySingle } from './../../repositories/hooks/useRepositorySelector';
+import { selectedToString } from './../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSingleSelectFilter';
+
+import { AnsibleAnsibleRepositoryResponse as Repository } from './../../api-schemas/generated/AnsibleAnsibleRepositoryResponse';
 
 export function useApprovalFilters() {
   const { t } = useTranslation();
   const repoRequest = useGetRequest<PulpItemsResponse<Repository>>();
+
+  const repoSelector = selectedToString<Repository>(
+    useSelectRepositorySingle(),
+    (item) => item.name,
+    (name) => {
+      return { name };
+    }
+  );
 
   const repoQueryOptions: PageAsyncSingleSelectOptionsFn<string> = useCallback(
     (page) => {
@@ -54,6 +66,7 @@ export function useApprovalFilters() {
         type: ToolbarFilterType.AsyncSingleSelect,
         query: 'repository_name',
         queryOptions: repoQueryOptions,
+        openBrowse: repoSelector,
       },
       {
         key: 'status',
@@ -71,8 +84,4 @@ export function useApprovalFilters() {
     [t, repoQueryOptions]
   );
   return toolbarFilters;
-}
-
-interface Repository {
-  name: string;
 }
