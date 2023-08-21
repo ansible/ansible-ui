@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../framework';
 import { postRequest } from '../../../common/crud/Data';
-import { collectionKeyFn, pulpAPI, parsePulpIDFromURL } from '../../api';
+import { collectionKeyFn, parsePulpIDFromURL, pulpAPI } from '../../api/utils';
 import { CollectionVersionSearch } from '../Collection';
 import { useCollectionColumns } from './useCollectionColumns';
 

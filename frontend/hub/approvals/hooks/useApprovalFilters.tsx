@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { IToolbarFilter, ToolbarFilterType } from '../../../../framework';
 import { useGetRequest } from '../../../common/crud/useGet';
 import { PageAsyncSingleSelectOptionsFn } from './../../../../framework/PageInputs/PageAsyncSingleSelect';
-import { pulpAPI } from './../../api';
+import { pulpAPI } from './../../api/utils';
 import { PulpItemsResponse } from './../../usePulpView';
 
 export function useApprovalFilters() {
