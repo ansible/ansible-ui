@@ -30,19 +30,11 @@ function SelectRepository(props: {
     keyFn: (item) => item.name,
   });
 
-  let onSelect = (repository: Repository) => {
-    console.log(repository);
-  };
-
-  let onMultiSelect = (repositories: Repository[]) => {
-    console.log(repositories);
-  };
-
   if (props.multiSelection) {
     return (
       <MultiSelectDialog<Repository>
         {...props}
-        onSelect={props.onMultiselect ? props.onMultiselect : onMultiSelect}
+        onSelect={props.onMultiselect ? props.onMultiselect : ([]) => {}}
         toolbarFilters={toolbarFilters}
         tableColumns={tableColumns}
         view={view}
@@ -52,7 +44,7 @@ function SelectRepository(props: {
     return (
       <SelectSingleDialog<Repository>
         {...props}
-        onSelect={props.onSelect ? props.onSelect : onSelect}
+        onSelect={props.onSelect ? props.onSelect : () => {}}
         toolbarFilters={toolbarFilters}
         tableColumns={tableColumns}
         view={view}
