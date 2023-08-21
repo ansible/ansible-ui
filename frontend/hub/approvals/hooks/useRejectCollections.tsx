@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../framework';
 import { postRequest } from '../../../common/crud/Data';
 import { useGetRequest } from '../../../common/crud/useGet';
-import { collectionKeyFn, parsePulpIDFromURL, pulpAPI } from '../../api';
+import { collectionKeyFn, parsePulpIDFromURL, pulpAPI } from '../../api/utils';
 import { PulpItemsResponse } from '../../usePulpView';
 import { CollectionVersionSearch } from '../Approval';
 import { useApprovalsColumns } from './useApprovalsColumns';

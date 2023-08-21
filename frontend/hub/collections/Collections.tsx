@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../framework';
 import { RouteObj } from '../../Routes';
-import { hubAPI, collectionKeyFn } from '../api';
+import { hubAPI, collectionKeyFn } from '../api/utils';
 import { useHubView } from '../useHubView';
 import { CollectionVersionSearch } from './Collection';
 import { useCollectionActions } from './hooks/useCollectionActions';

@@ -50,7 +50,7 @@ import { Scrollable } from '../../../framework/components/Scrollable';
 import { RouteObj } from '../../Routes';
 import { StatusCell } from '../../common/Status';
 import { useGet } from '../../common/crud/useGet';
-import { hubAPI } from '../api';
+import { hubAPI } from '../api/utils';
 import { HubItemsResponse } from '../useHubView';
 import { CollectionVersionSearch } from './Collection';
 import { useCollectionActions } from './hooks/useCollectionActions';

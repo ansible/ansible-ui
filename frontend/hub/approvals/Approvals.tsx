@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable } from '../../../framework';
-import { collectionKeyFn, hubAPI } from '../api';
+import { collectionKeyFn, hubAPI } from '../api/utils';
 import { useHubView } from '../useHubView';
 import { CollectionVersionSearch } from './Approval';
 import { useApprovalFilters } from './hooks/useApprovalFilters';

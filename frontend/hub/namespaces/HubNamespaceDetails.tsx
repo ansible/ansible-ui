@@ -5,7 +5,7 @@ import { PageActions, PageHeader, PageLayout, PageTab, PageTabs } from '../../..
 import { PageDetailsFromColumns } from '../../../framework/PageDetails/PageDetailsFromColumns';
 import { RouteObj } from '../../Routes';
 import { useGet } from '../../common/crud/useGet';
-import { hubAPI } from '../api';
+import { hubAPI } from '../api/utils';
 import { HubItemsResponse } from '../useHubView';
 import { HubNamespace } from './HubNamespace';
 import { useHubNamespaceActions } from './hooks/useHubNamespaceActions';

@@ -3,7 +3,8 @@ import { compareStrings, useBulkConfirmation } from '../../../../framework';
 import { requestDelete } from '../../../common/crud/Data';
 import { HubNamespace } from '../HubNamespace';
 import { useHubNamespacesColumns } from './useHubNamespacesColumns';
-import { hubAPI, nameKeyFn } from '../../api';
+import { hubAPI } from '../../api/utils';
+import { nameKeyFn } from '../../../common/utils/nameKeyFn';
 
 export function useDeleteHubNamespaces(onComplete: (namespaces: HubNamespace[]) => void) {
   const { t } = useTranslation();

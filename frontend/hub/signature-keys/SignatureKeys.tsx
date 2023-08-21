@@ -17,7 +17,7 @@ import {
   ToolbarFilterType,
 } from '../../../framework';
 import { downloadTextFile } from '../../../framework/utils/download-file';
-import { pulpAPI, pulpHrefKeyFn } from '../api';
+import { pulpAPI, pulpHrefKeyFn } from '../api/utils';
 import { usePulpView } from '../usePulpView';
 import { SignatureKey } from './SignatureKey';
 
