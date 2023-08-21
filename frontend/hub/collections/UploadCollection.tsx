@@ -1,4 +1,5 @@
 import { Alert, Radio } from '@patternfly/react-core';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -17,18 +18,16 @@ import { LoadingPage } from '../../../framework/components/LoadingPage';
 import { RouteObj } from '../../Routes';
 import { postRequestFile } from '../../common/crud/Data';
 import { useGetRequest } from '../../common/crud/useGet';
-import { hubAPI, pulpAPI } from '../api';
+import { hubAPI, pulpAPI } from '../api/utils';
 import { useHubNamespaces } from '../namespaces/hooks/useHubNamespaces';
 import { useRepositories } from '../repositories/hooks/useRepositories';
 import { PulpItemsResponse } from '../usePulpView';
 
-import { useEffect, useMemo, useState } from 'react';
-
 import { IToolbarFilter } from '../../../framework';
 import { ToolbarFilterType } from '../../../framework/PageToolbar/PageToolbarFilter';
 import { useSearchParams } from '../../../framework/components/useSearchParams';
-import { nameKeyFn } from '../api';
 import { usePulpView } from '../usePulpView';
+import { nameKeyFn } from '../../common/utils/nameKeyFn';
 
 interface UploadData {
   file: unknown;
