@@ -106,7 +106,7 @@ export function PageDashboardChart(props: {
           {useLines ? (
             groups.map((group, index) => (
               <ChartLine
-                style={{ data: { strokeWidth: 3 } }}
+                style={{ data: { strokeWidth: 3, stroke: group.color } }}
                 key={index}
                 data={group.values.map((value) => ({ x: value.label, y: value.value }))}
                 interpolation="monotoneX"
