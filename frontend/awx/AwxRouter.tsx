@@ -54,6 +54,7 @@ import Jobs from './views/jobs/Jobs';
 import { CreateSchedule } from './views/schedules/ScheduleForm';
 import { SchedulePage } from './views/schedules/SchedulePage/SchedulePage';
 import { Schedules } from './views/schedules/Schedules';
+import { CreateScheduleRule } from './views/schedules/RuleForm';
 
 export function AwxRouter() {
   const RouteObjWithoutPrefix = useRoutesWithoutPrefix(RouteObj.AWX);
@@ -74,11 +75,20 @@ export function AwxRouter() {
         {[
           RouteObjWithoutPrefix.JobTemplateSchedulesCreate,
           RouteObjWithoutPrefix.WorkflowJobTemplateSchedulesCreate,
+          RouteObjWithoutPrefix.InventorySourceSchedulesCreate,
           RouteObjWithoutPrefix.ProjectSchedulesCreate,
           RouteObjWithoutPrefix.CreateSchedule,
         ].map((path) => {
           return <Route path={path} key={path} element={<CreateSchedule />} />;
         })}
+        {[
+          RouteObjWithoutPrefix.JobTemplateCreateScheduleRules,
+          RouteObjWithoutPrefix.WorkflowJobTemplateCreateScheduleRules,
+          RouteObjWithoutPrefix.ProjectCreateScheduleRules,
+          RouteObjWithoutPrefix.InventorySourceCreateScheduleRules,
+        ].map((path) => (
+          <Route path={path} key={path} element={<CreateScheduleRule />} />
+        ))}
         {[
           RouteObjWithoutPrefix.JobTemplateSchedulePage,
           RouteObjWithoutPrefix.WorkflowJobTemplateSchedulePage,
