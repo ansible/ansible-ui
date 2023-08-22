@@ -2,7 +2,6 @@ import { DateTime } from 'luxon';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { RRule, RRuleSet } from 'rrule';
 import { PageForm, PageFormSubmitHandler, PageHeader, PageLayout } from '../../../../framework';
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
 import { dateToInputDateTime } from '../../../../framework/utils/dateTimeHelpers';
@@ -14,6 +13,7 @@ import { getAddedAndRemoved } from '../../common/util/getAddedAndRemoved';
 import { ScheduleFormFields } from '../../interfaces/ScheduleFormFields';
 import { getAwxError } from '../../useAwxView';
 import { ScheduleInputs } from './components/ScheduleInputs';
+import { buildScheduleContainer } from './hooks/scheduleHelpers';
 
 const routes: { [key: string]: string } = {
   inventory: RouteObj.InventorySourceScheduleDetails,
@@ -218,7 +218,7 @@ export function CreateSchedule() {
           count: 1,
           endingType: 'never',
           timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-          startDateTime: { startDate: currentDate, startTime: time },
+          startDateTime: { date: currentDate, time: time },
         }}
         submitText={t('Submit schedule')}
         onSubmit={onSubmit}
@@ -232,56 +232,4 @@ export function CreateSchedule() {
       </PageForm>
     </PageLayout>
   );
-}
-
-function buildScheduleContainer(values: ScheduleFormFields) {
-  const set = new RRuleSet();
-
-  // if (!useUTCStart) {
-  const startRule = buildDtStartObj({
-    startDate: values.startDateTime.startDate,
-    startTime: values.startDateTime.startTime,
-    timezone: values.timezone,
-  });
-  startRule.origOptions.tzid = values.timezone;
-  startRule.origOptions.freq = values.freq;
-  startRule.origOptions.interval = values.interval;
-  set.rrule(startRule);
-  // }
-
-  return set;
-}
-
-const parseTime = (time: string) => [
-  DateTime.fromFormat(time, 'h:mm a').hour,
-  DateTime.fromFormat(time, 'h:mm a').minute,
-];
-
-export function buildDtStartObj(values: {
-  startDate: string;
-  startTime: string;
-  timezone: string;
-}) {
-  // Dates are formatted like "YYYY-MM-DD"
-  const [startYear, startMonth, startDay] = values.startDate.split('-');
-  // Times are formatted like "HH:MM:SS" or "HH:MM" if no seconds
-  // have been specified
-  const [startHour, startMinute] = parseTime(values.startTime);
-
-  const dateString = `${startYear}${pad(startMonth)}${pad(startDay)}T${pad(startHour)}${pad(
-    startMinute
-  )}00`;
-  const rruleString = values.timezone
-    ? `DTSTART;TZID=${values.timezone}:${dateString}`
-    : `DTSTART:${dateString}Z`;
-  const rule = RRule.fromString(rruleString);
-
-  return rule;
-}
-
-function pad(num: string | number) {
-  if (typeof num === 'string') {
-    return num;
-  }
-  return num < 10 ? `0${num}` : num;
 }
