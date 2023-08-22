@@ -11,7 +11,7 @@ import { RouteObj } from '../../Routes';
 import { useGet } from '../../common/crud/useGet';
 import { usePatchRequest } from '../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../common/crud/usePostRequest';
-import { hubAPI } from '../api';
+import { hubAPI } from '../api/utils';
 import { HubNamespace } from './HubNamespace';
 
 export function CreateHubNamespace() {
