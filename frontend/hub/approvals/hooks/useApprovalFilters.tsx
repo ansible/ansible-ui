@@ -3,18 +3,17 @@ import { useTranslation } from 'react-i18next';
 import { IToolbarFilter, ToolbarFilterType } from '../../../../framework';
 import { useGetRequest } from '../../../common/crud/useGet';
 import { PageAsyncSingleSelectOptionsFn } from './../../../../framework/PageInputs/PageAsyncSingleSelect';
+import { toolbarSingleSelectBrowseAdapter } from './../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSingleSelectFilter';
 import { pulpAPI } from './../../api';
-import { PulpItemsResponse } from './../../usePulpView';
-import { useSelectRepositorySingle } from './../../repositories/hooks/useRepositorySelector';
-import { selectedToString } from './../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSingleSelectFilter';
-
 import { AnsibleAnsibleRepositoryResponse as Repository } from './../../api-schemas/generated/AnsibleAnsibleRepositoryResponse';
+import { useSelectRepositorySingle } from './../../repositories/hooks/useRepositorySelector';
+import { PulpItemsResponse } from './../../usePulpView';
 
 export function useApprovalFilters() {
   const { t } = useTranslation();
   const repoRequest = useGetRequest<PulpItemsResponse<Repository>>();
 
-  const repoSelector = selectedToString<Repository>(
+  const repoSelector = toolbarSingleSelectBrowseAdapter<Repository>(
     useSelectRepositorySingle(),
     (item) => item.name,
     (name) => {
@@ -81,7 +80,7 @@ export function useApprovalFilters() {
         placeholder: t('Select statuses'),
       },
     ],
-    [t, repoQueryOptions]
+    [t, repoQueryOptions, repoSelector]
   );
   return toolbarFilters;
 }

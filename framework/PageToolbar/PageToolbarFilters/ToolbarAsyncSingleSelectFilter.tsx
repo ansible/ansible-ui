@@ -5,7 +5,11 @@ import {
 } from './../../PageInputs/PageAsyncSingleSelect';
 import { ToolbarFilterCommon } from './ToolbarFilterCommon';
 
-type openBrowseType = (onSelect: (value: string) => void, defaultSelection?: string) => void;
+/** A function to open a single selection browse modal for a toolbar filter. */
+type ToolbarOpenSingleSelectBrowse = (
+  onSelect: (value: string) => void,
+  defaultSelection?: string
+) => void;
 
 export interface IToolbarAsyncSingleSelectFilter extends ToolbarFilterCommon {
   type: ToolbarFilterType.AsyncSingleSelect;
@@ -19,8 +23,8 @@ export interface IToolbarAsyncSingleSelectFilter extends ToolbarFilterCommon {
   /** The placeholder to show if the query fails. */
   queryErrorText?: PageAsyncQueryErrorTextType;
 
-  // useHook for modal here
-  openBrowse?: openBrowseType;
+  /** The function to open the browse modal. */
+  openBrowse?: ToolbarOpenSingleSelectBrowse;
 
   /**
    * Whether the select required an option to be selected.
@@ -31,21 +35,29 @@ export interface IToolbarAsyncSingleSelectFilter extends ToolbarFilterCommon {
   isRequired?: boolean;
 }
 
-// returns function that works with strings and internaly, it does call the original typed function
-export function selectedToString<T>(
-  // original useSelect function with generic type T
-  fn: (onItemSelect: (itemValue: T) => void, itemDefaultSelection?: T) => void,
-  // transform T to string function
-  getNameFn: (item: T) => string,
-  // transform string to object function
-  setNameFn: (name: string) => object
-): openBrowseType {
-  return (onStringSelect: (stringValue: string) => void, stringDefaultSelection?: string) => {
-    fn(
-      (item: T) => {
-        onStringSelect(getNameFn(item));
-      },
-      setNameFn(stringDefaultSelection || '') as T
+/**
+ * Helper function to adapt an object based select dialog to a string based select dialog for use in the toolbar.
+ *
+ * Toolbars use string based filters, but many select dialog uses objects.
+ * The toolbar filter uses strings because the values are synced to the URL query string.
+ *
+ * @param selectFn Function to open the original select dialog that uses objects.
+ * @param keyFn Function to get a unique key from the object. Used as the string value in the toolbar filter values and query string.
+ * @param objectFn Function to create an object from the key. Used for default selection in the dialog.
+ * @returns A function to open the select dialog.
+ */
+export function toolbarSingleSelectBrowseAdapter<T>(
+  /** The function to open the original select dialog that uses objects. */
+  selectFn: (onItemSelect: (itemValue: T) => void, itemDefaultSelection?: T) => void,
+  /** The function to get a unique key from the object. Used as the string value in the toolbar filter values and query string. */
+  keyFn: (item: T) => string,
+  /** The function to create an object from the key. Used for default selection in the dialog. */
+  objectFn: (name: string) => object
+): ToolbarOpenSingleSelectBrowse {
+  return (onSelect: (value: string) => void, defaultSelection?: string) => {
+    selectFn(
+      (item: T) => onSelect(keyFn(item)),
+      defaultSelection ? (objectFn(defaultSelection) as T) : undefined
     );
   };
 }

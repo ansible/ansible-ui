@@ -1,9 +1,9 @@
 import {
+  Button,
   ToolbarFilter,
   ToolbarGroup,
   ToolbarItem,
   ToolbarToggleGroup,
-  Button,
 } from '@patternfly/react-core';
 import { FilterIcon } from '@patternfly/react-icons';
 import { Dispatch, SetStateAction, useCallback, useState } from 'react';
@@ -297,23 +297,19 @@ function ToolbarFilterComponent(props: {
           queryPlaceholder={filter.queryPlaceholder}
           isRequired={filter.isRequired}
           footer={
-            filter?.openBrowse ? (
+            filter.openBrowse ? (
               <Button
                 variant="link"
                 onClick={() => {
-                  filter?.openBrowse?.(
-                    (selection) => {
-                      setFilterValues(() => [selection]);
-                    },
+                  filter.openBrowse?.(
+                    (selection) => setFilterValues(() => [selection]),
                     filterValues && filterValues.length > 0 ? filterValues[0] : undefined
                   );
                 }}
               >
                 Browse
               </Button>
-            ) : (
-              <></>
-            )
+            ) : undefined
           }
         />
       );

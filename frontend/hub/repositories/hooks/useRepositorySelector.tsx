@@ -1,15 +1,16 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { usePageDialog } from '../../../../framework';
-import { SelectSingleDialog } from '../../../../framework/PageDialogs/SelectSingleDialog';
+import {
+  ITableColumn,
+  IToolbarFilter,
+  TextCell,
+  ToolbarFilterType,
+  usePageDialog,
+} from '../../../../framework';
 import { MultiSelectDialog } from '../../../../framework/PageDialogs/MultiSelectDialog';
-import { usePulpView } from '../../usePulpView';
-
-import { useMemo } from 'react';
-import { ITableColumn, TextCell } from '../../../../framework';
-import { ToolbarFilterType, IToolbarFilter } from '../../../../framework';
+import { SelectSingleDialog } from '../../../../framework/PageDialogs/SelectSingleDialog';
 import { pulpAPI } from '../../api';
-
+import { usePulpView } from '../../usePulpView';
 import { AnsibleAnsibleRepositoryResponse as Repository } from './../../api-schemas/generated/AnsibleAnsibleRepositoryResponse';
 
 function SelectRepository(props: {
@@ -37,7 +38,7 @@ function SelectRepository(props: {
     return (
       <MultiSelectDialog<Repository>
         {...props}
-        onSelect={props.onMultiselect ? props.onMultiselect : ([]) => {}}
+        onSelect={props.onMultiselect ? props.onMultiselect : () => {}}
         toolbarFilters={toolbarFilters}
         tableColumns={tableColumns}
         view={view}
