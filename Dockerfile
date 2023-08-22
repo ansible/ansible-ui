@@ -3,7 +3,7 @@ FROM --platform=${TARGETPLATFORM:-linux/amd64} nginx:alpine as awx-ui
 COPY /nginx/nginx.conf /etc/nginx/nginx.conf
 COPY /nginx/awx.conf /etc/nginx/templates/default.conf.template
 COPY /build/awx /usr/share/nginx/html
-RUN chmod g+rwx /var/cache/nginx /var/run /var/log/nginx
+RUN chmod g+rwx /var/cache/nginx /var/run /var/log/nginx /var/lib/nginx
 CMD ["nginx", "-g", "daemon off;"]
 
 # hub-ui
@@ -11,7 +11,7 @@ FROM --platform=${TARGETPLATFORM:-linux/amd64} nginx:alpine as hub-ui
 COPY /nginx/nginx.conf /etc/nginx/nginx.conf
 COPY /nginx/hub.conf /etc/nginx/templates/default.conf.template
 COPY /build/hub /usr/share/nginx/html
-RUN chmod g+rwx /var/cache/nginx /var/run /var/log/nginx
+RUN chmod g+rwx /var/cache/nginx /var/run /var/log/nginx /var/lib/nginx
 CMD ["nginx", "-g", "daemon off;"]
 
 # eda-ui
@@ -19,6 +19,7 @@ FROM --platform=${TARGETPLATFORM:-linux/amd64} nginx:alpine as eda-ui
 COPY /nginx/nginx.conf /etc/nginx/nginx.conf
 COPY /nginx/eda.conf /etc/nginx/templates/default.conf.template
 COPY /build/eda /usr/share/nginx/html
+RUN do mkdir -m 0775 -p /var/lib/nginx
 RUN chmod g+rwx /var/cache/nginx /var/run /var/log/nginx /var/lib/nginx
 CMD ["nginx", "-g", "daemon off;"]
 
