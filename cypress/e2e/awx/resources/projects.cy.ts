@@ -21,7 +21,7 @@ describe('projects', () => {
   });
 
   after(() => {
-    cy.deleteAwxOrganization(organization).then(() => {
+    cy.deleteAwxOrganization(organization, { failOnStatusCode: false }).then(() => {
       /**
        * Deleting the organization does not delete the underlying projects.
        * So get all projects without an organization and delete them. Multiple test runs
