@@ -297,16 +297,23 @@ function ToolbarFilterComponent(props: {
           queryPlaceholder={filter.queryPlaceholder}
           isRequired={filter.isRequired}
           footer={
-            <Button
-              variant="link"
-              onClick={() => {
-                filter?.openBrowse?.((selection) => {
-                  addFilter(selection);
-                }, filter.defaultSelection);
-              }}
-            >
-              Browse
-            </Button>
+            filter?.openBrowse ? (
+              <Button
+                variant="link"
+                onClick={() => {
+                  filter?.openBrowse?.(
+                    (selection) => {
+                      setFilterValues(() => [selection]);
+                    },
+                    filterValues && filterValues.length > 0 ? filterValues[0] : undefined
+                  );
+                }}
+              >
+                Browse
+              </Button>
+            ) : (
+              <></>
+            )
           }
         />
       );

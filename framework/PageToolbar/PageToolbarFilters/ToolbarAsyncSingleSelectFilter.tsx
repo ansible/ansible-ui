@@ -22,9 +22,6 @@ export interface IToolbarAsyncSingleSelectFilter extends ToolbarFilterCommon {
   // useHook for modal here
   openBrowse?: openBrowseType;
 
-  // default selected item
-  defaultSelection?: string;
-
   /**
    * Whether the select required an option to be selected.
    *

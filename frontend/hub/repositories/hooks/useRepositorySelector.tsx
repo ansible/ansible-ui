@@ -28,6 +28,9 @@ function SelectRepository(props: {
     tableColumns,
     disableQueryString: true,
     keyFn: (item) => item.name,
+    defaultSelection: props.multiSelection
+      ? (props.defaultRepository as Repository[])
+      : [props.defaultRepository as Repository],
   });
 
   if (props.multiSelection) {
