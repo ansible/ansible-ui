@@ -109,7 +109,7 @@ export function PageSingleSelect<
 
   const onSelectHandler = useCallback(
     (_: unknown, itemId: string | number | undefined) => {
-      const newSelectedOption = options.find((option) => {
+      const newSelectedOption: PageSelectOption<ValueT> | undefined = options.find((option) => {
         if (option.key !== undefined) return option.key === itemId;
         else return option.label === itemId;
       });

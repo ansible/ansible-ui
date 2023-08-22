@@ -16,7 +16,7 @@ export interface ScheduleFormFields
   name: string;
   description?: string;
   resource_type: string;
-  startDateTime: { startDate: string; startTime: string };
+  startDateTime: { date: string; time: string };
   timezone: string;
   frequencies: string[];
   freq: number;
