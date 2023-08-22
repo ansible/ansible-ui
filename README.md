@@ -51,24 +51,24 @@ UI projects for [Ansible](https://www.ansible.com).
 | `CYPRESS_EDA_USERNAME` | The EDA server username.                   |
 | `CYPRESS_EDA_PASSWORD` | The EDA server password.                   |
 
-```
-AWX_PROTOCOL=http
-AWX_HOST=localhost:8043
-CYPRESS_AWX_SERVER=$AWX_PROTOCOL://$AWX_HOST
-CYPRESS_AWX_USERNAME='my-user'
-CYPRESS_AWX_PASSWORD='my-password'
+```zsh
+export AWX_PROTOCOL=http
+export AWX_HOST=localhost:8043
+export CYPRESS_AWX_SERVER=$AWX_PROTOCOL://$AWX_HOST
+export CYPRESS_AWX_USERNAME='my-user'
+export CYPRESS_AWX_PASSWORD='my-password'
 
-HUB_PROTOCOL=http
-HUB_HOST=localhost:8000
-CYPRESS_HUB_SERVER=$HUB_PROTOCOL://$HUB_HOST
-CYPRESS_HUB_USERNAME='my-user'
-CYPRESS_HUB_PASSWORD='my-password'
+export HUB_PROTOCOL=http
+export HUB_HOST=localhost:8000
+export CYPRESS_HUB_SERVER=$HUB_PROTOCOL://$HUB_HOST
+export CYPRESS_HUB_USERNAME='my-user'
+export CYPRESS_HUB_PASSWORD='my-password'
 
-EDA_PROTOCOL=http
-EDA_HOST=localhost:5001
-CYPRESS_EDA_SERVER=$EDA_PROTOCOL://$EDA_HOST
-CYPRESS_EDA_USERNAME='my-user'
-CYPRESS_EDA_PASSWORD='my-password'
+export EDA_PROTOCOL=http
+export EDA_HOST=localhost:5001
+export CYPRESS_EDA_SERVER=$EDA_PROTOCOL://$EDA_HOST
+export CYPRESS_EDA_USERNAME='my-user'
+export CYPRESS_EDA_PASSWORD='my-password'
 ```
 
 ## NPM Scripts
@@ -106,5 +106,3 @@ CYPRESS_EDA_PASSWORD='my-password'
 ## Code of Conduct
 
 We ask all of our community members and contributors to adhere to the [Ansible code of conduct](http://docs.ansible.com/ansible/latest/community/code_of_conduct.html). If you have questions or need assistance, please reach out to our community team at [codeofconduct@ansible.com](mailto:codeofconduct@ansible.com)
-
-.
