@@ -46,7 +46,7 @@ export function NamespaceDetails() {
         title={namespace?.name}
         breadcrumbs={[{ label: t('Namespaces'), to: RouteObj.Namespaces }, { label: params.id }]}
         headerActions={
-          <PageActions<HubNamespaceMetadataType>
+          <PageActions<HubNamespace>
             actions={pageActions}
             position={DropdownPosition.right}
             selectedItem={namespace}
