@@ -1,7 +1,13 @@
 import { Flex, FlexItem, Text } from '@patternfly/react-core';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageDashboard, PageHeader, PageLayout, PageTableToolbar } from '../../../../framework';
+import {
+  IFilterState,
+  PageDashboard,
+  PageHeader,
+  PageLayout,
+  PageToolbar,
+} from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
 import { SubscriptionUsageChart } from '../subscription-usage/SubscriptionUsageChart';
 import { useSubscriptionUsageFilters } from './useSubscriptionUsageFilters';
@@ -20,14 +26,14 @@ interface ISubscriptionUsageChartData {
       hosts_added: number;
       hosts_deleted: number;
       indirectly_managed_hosts: number;
-    }
+    },
   ];
 }
 
 export default function SubscriptionUsage() {
   const { t } = useTranslation();
   const toolbarFilters = useSubscriptionUsageFilters();
-  const [dateRange, setDateRange] = useState<Record<string, string[]>>({ dateRange: ['year'] });
+  const [dateRange, setDateRange] = useState<IFilterState>({ dateRange: ['year'] });
   const systemData = useGet<Settings>('/api/v2/settings/system/');
   const { data } = useGet<ISubscriptionUsageChartData>(`/api/v2/host_metric_summary_monthly/`);
 
@@ -39,12 +45,12 @@ export default function SubscriptionUsage() {
         titleHelp={t('Chart showing subscription capacity and licenses consumed per month.')}
         description={t('Chart showing subscription capacity and licenses consumed per month.')}
       />
-      <PageTableToolbar
+      <PageToolbar
         keyFn={getItemKey}
         itemCount={data?.count}
         toolbarFilters={toolbarFilters}
-        setFilters={setDateRange}
-        filters={dateRange}
+        setFilterState={setDateRange}
+        filterState={dateRange}
         disableCardView
         disableListView
         disableTableView

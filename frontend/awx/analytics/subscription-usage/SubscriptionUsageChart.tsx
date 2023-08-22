@@ -1,6 +1,6 @@
 import { Bullseye, Spinner } from '@patternfly/react-core';
 import useSWR from 'swr';
-import { useSettings } from '../../../../framework';
+import { IFilterState, useSettings } from '../../../../framework';
 import { PageDashboardChart } from '../../../../framework/PageDashboard/PageDashboardChart';
 
 interface ISubscriptionUsageChartData {
@@ -13,15 +13,15 @@ interface ISubscriptionUsageChartData {
       hosts_added: number;
       hosts_deleted: number;
       indirectly_managed_hosts: number;
-    }
+    },
   ];
 }
 
-export function SubscriptionUsageChart(props: { period: Record<string, string[]> }) {
+export function SubscriptionUsageChart(props: { period: IFilterState }) {
   const calculateDateRange = () => {
     const today = new Date();
     let date = '';
-    switch (props.period.dateRange[0]) {
+    switch (props.period.dateRange?.[0]) {
       case 'year':
         date =
           today.getMonth() < 10
@@ -39,6 +39,12 @@ export function SubscriptionUsageChart(props: { period: Record<string, string[]>
           today.getMonth() < 10
             ? `${today.getFullYear() - 3}-0${today.getMonth() + 1}-01`
             : `${today.getFullYear() - 3}-${today.getMonth() + 1}-01`;
+        break;
+      default:
+        date =
+          today.getMonth() < 10
+            ? `${today.getFullYear() - 1}-0${today.getMonth() + 1}-01`
+            : `${today.getFullYear() - 1}-${today.getMonth() + 1}-01`;
         break;
     }
     return date;
@@ -66,10 +72,10 @@ export function SubscriptionUsageChart(props: { period: Record<string, string[]>
     }) ?? [];
 
   const { activeTheme } = useSettings();
-  let capacityColor = 'var(--pf-chart-color-green-300)';
-  if (activeTheme === 'dark') capacityColor = 'var(--pf-chart-color-green-300)';
-  let consumedColor = 'var(--pf-chart-color-red-200)';
-  if (activeTheme === 'dark') consumedColor = 'var(--pf-chart-color-red-300)';
+  let capacityColor = 'var(--pf-chart-color-red-200)';
+  if (activeTheme === 'dark') capacityColor = 'var(--pf-chart-color-red-300)';
+  let consumedColor = 'var(--pf-chart-color-blue-200)';
+  if (activeTheme === 'dark') consumedColor = 'var(--pf-chart-color-blue-300)';
 
   if (isLoading)
     return (
@@ -81,20 +87,14 @@ export function SubscriptionUsageChart(props: { period: Record<string, string[]>
   return (
     <PageDashboardChart
       groups={[
-        { color: capacityColor, values: capacity },
-        { color: consumedColor, values: consumed },
+        { label: 'Subscriptions consumed', color: consumedColor, values: consumed },
+        { label: 'Subscription capacity', color: capacityColor, values: capacity },
       ]}
-      settings={{
-        xLabel: 'Month',
-        yLabel: 'Unique hosts',
-        legendData: [
-          { name: 'Subscription capacity', symbol: { fill: capacityColor } },
-          { name: 'Subscriptions consumed', symbol: { fill: consumedColor } },
-        ],
-        allowZero: true,
-        useLines: true,
-        onlyIntegerTicks: true,
-      }}
+      xLabel="Month"
+      yLabel="Unique hosts"
+      allowZero={true}
+      useLines={true}
+      onlyIntegerTicks={true}
     />
   );
 }
