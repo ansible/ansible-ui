@@ -116,9 +116,10 @@ const RuleAuditChart = () => {
       help={t('Rule audit allows auditing of rules which have been triggered by incoming events.')}
     >
       <PageDashboardChart
+        yLabel={t('Rule Runs')}
         groups={[
-          { color: pfSuccess, values: successfulRuns },
-          { color: pfDanger, values: failedRuns },
+          { label: t('Success'), color: pfSuccess, values: successfulRuns },
+          { label: t('Failed'), color: pfDanger, values: failedRuns },
         ]}
       />
     </PageDashboardCard>
