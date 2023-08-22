@@ -10,6 +10,8 @@ export interface Schedule
   next_run: string;
   rrule: string;
   name: string;
+  dtstart: string;
+  timezone: string;
   enabled: boolean;
   created: string;
   modified: string;
