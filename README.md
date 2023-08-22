@@ -51,7 +51,7 @@ UI projects for [Ansible](https://www.ansible.com).
 | `CYPRESS_EDA_USERNAME` | The EDA server username.                   |
 | `CYPRESS_EDA_PASSWORD` | The EDA server password.                   |
 
-```sh
+```zsh
 export AWX_PROTOCOL=http
 export AWX_HOST=localhost:8043
 export CYPRESS_AWX_SERVER=$AWX_PROTOCOL://$AWX_HOST
@@ -106,5 +106,3 @@ export CYPRESS_EDA_PASSWORD='my-password'
 ## Code of Conduct
 
 We ask all of our community members and contributors to adhere to the [Ansible code of conduct](http://docs.ansible.com/ansible/latest/community/code_of_conduct.html). If you have questions or need assistance, please reach out to our community team at [codeofconduct@ansible.com](mailto:codeofconduct@ansible.com)
-
-.
