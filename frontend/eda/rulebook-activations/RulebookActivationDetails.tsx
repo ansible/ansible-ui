@@ -141,6 +141,7 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
     return (
       <Scrollable>
         <PageDetails>
+          <PageDetail label={t('Activation ID')}>{rulebookActivation?.id || ''}</PageDetail>
           <PageDetail label={t('Name')}>{rulebookActivation?.name || ''}</PageDetail>
           <PageDetail label={t('Description')}>{rulebookActivation?.description || ''}</PageDetail>
           <PageDetail
