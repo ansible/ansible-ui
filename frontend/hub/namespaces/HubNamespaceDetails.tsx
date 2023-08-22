@@ -25,8 +25,6 @@ import { useCollectionFilters } from '../collections/hooks/useCollectionFilters'
 import { useHubNamespaceDetailsFilters } from '../namespaces/hooks/useHubNamespaceDetailsFilters';
 import { useCollectionVersionColumns } from '../collections/hooks/useCollectionVersionColumns';
 import { CollectionVersionSearch } from '../collections/CollectionVersionSearch';
-import { hubAPI } from '../api';
-import { DropdownPosition } from '@patternfly/react-core';
 
 export function NamespaceDetails() {
   const { t } = useTranslation();
