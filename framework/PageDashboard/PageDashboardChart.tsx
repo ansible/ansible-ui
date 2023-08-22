@@ -67,7 +67,7 @@ export function PageDashboardChart(props: {
           padding={{
             bottom: paddingBottom,
             left: 60 + (yLabel ? 19 : 0),
-            right: 44,
+            right: 40,
             top: 16,
           }}
           colorScale={groups.map((group) => group.color)}
