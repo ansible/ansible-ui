@@ -21,8 +21,8 @@ COPY /nginx/eda.conf /etc/nginx/templates/default.conf.template
 COPY /build/eda /usr/share/nginx/html
 RUN mkdir -m 0775 -p /var/lib/nginx
 RUN chmod g+rwx /var/cache/nginx /var/run /var/log/nginx /var/lib/nginx
-CMD ["nginx", "-g", "daemon off;"]
-
+RUN adduser -S eda -u 1001 -G root
+USER eda
 
 # ARG USER_ID=${USER_ID:-1001}
 # RUN adduser -S eda -u "$USER_ID" -G root
