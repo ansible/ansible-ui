@@ -9,7 +9,7 @@ import {
 } from '../../../../framework';
 import { MultiSelectDialog } from '../../../../framework/PageDialogs/MultiSelectDialog';
 import { SelectSingleDialog } from '../../../../framework/PageDialogs/SelectSingleDialog';
-import { pulpAPI } from '../../api';
+import { pulpAPI } from '../../api/utils';
 import { usePulpView } from '../../usePulpView';
 import { AnsibleAnsibleRepositoryResponse as Repository } from './../../api-schemas/generated/AnsibleAnsibleRepositoryResponse';
 
