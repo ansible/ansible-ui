@@ -1,4 +1,5 @@
 import { Bullseye, Spinner } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import useSWR from 'swr';
 import { useSettings } from '../../../../framework';
 import { PageDashboardChart } from '../../../../framework/PageDashboard/PageDashboardChart';
@@ -23,6 +24,7 @@ export function JobsChart(props: {
   period?: DashboardJobPeriod;
   jobType?: DashboardJobType;
 }) {
+  const { t } = useTranslation();
   const { period, jobType } = props;
 
   const { data, isLoading } = useSWR<IJobChartData>(
@@ -67,12 +69,14 @@ export function JobsChart(props: {
 
   return (
     <PageDashboardChart
+      yLabel={t('Job Count')}
       groups={[
-        { color: successfulColor, values: successful },
-        { color: failedColor, values: failed },
-        { color: errorColor, values: error },
-        { color: canceledColor, values: canceled },
+        { label: t('Successful'), color: successfulColor, values: successful },
+        { label: t('Failed'), color: failedColor, values: failed },
+        { label: t('Error'), color: errorColor, values: error },
+        { label: t('Canceled'), color: canceledColor, values: canceled },
       ]}
+      onlyIntegerTicks
     />
   );
 }
