@@ -683,6 +683,10 @@ declare global {
        */
       deleteEdaDecisionEnvironment(decisionEnvironment: EdaDecisionEnvironment): Chainable<void>;
       waitEdaDESync(edaDE: EdaDecisionEnvironment): Chainable<EdaDecisionEnvironment>;
+
+      // -- HUB COMMANDS
+
+      galaxykit(operation: string, ...args: string[]): Cypress.Chainable<string[] | Promise<never>>;
     }
   }
 }
