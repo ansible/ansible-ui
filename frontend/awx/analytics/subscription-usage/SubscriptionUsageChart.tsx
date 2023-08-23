@@ -64,11 +64,19 @@ export function SubscriptionUsageChart(props: { period: IFilterState }) {
 
   const capacity =
     data?.results.map(({ date, license_capacity }) => {
-      return { label: dateFormatter(date), value: license_capacity };
+      return {
+        label: dateFormatter(date),
+        value: license_capacity,
+      };
     }) ?? [];
   const consumed =
-    data?.results.map(({ date, license_consumed }) => {
-      return { label: dateFormatter(date), value: license_consumed };
+    data?.results.map(({ date, license_consumed, hosts_added, hosts_deleted }) => {
+      return {
+        label: dateFormatter(date),
+        value: license_consumed,
+        hosts_added: hosts_added,
+        hosts_deleted: hosts_deleted,
+      };
     }) ?? [];
 
   const { activeTheme } = useSettings();

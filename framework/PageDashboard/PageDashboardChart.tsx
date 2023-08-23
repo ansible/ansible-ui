@@ -14,6 +14,8 @@ export function PageDashboardChart(props: {
     values: {
       label: string;
       value: number;
+      hosts_added?: number;
+      hosts_deleted?: number;
     }[];
   }[];
 }) {
@@ -36,9 +38,20 @@ export function PageDashboardChart(props: {
           height={size.height}
           containerComponent={
             <ChartVoronoiContainer
-              labels={(point: { datum: { x: string | number; y: string | number } }) => {
+              labels={(point: {
+                datum: {
+                  x: string | number;
+                  y: string | number;
+                  hosts_added?: string | number;
+                  hosts_deleted?: string | number;
+                };
+              }) => {
                 const datum = point.datum;
-                return `${datum.x}: ${datum.y}`;
+                return yLabel == 'Unique hosts' && datum.hosts_added !== undefined
+                  ? `${datum.x} \n Subscription(s) consumed: ${datum.y} \n Hosts added: ${datum.hosts_added} \n Hosts deleted: ${datum.hosts_deleted}`
+                  : yLabel == 'Unique hosts' && datum.hosts_added == undefined
+                  ? `${datum.x} \n Subscription capacity: ${datum.y}`
+                  : `${datum.x}: ${datum.y}`;
               }}
             />
           }
@@ -53,7 +66,19 @@ export function PageDashboardChart(props: {
             {groups.map((group, index) => (
               <ChartArea
                 key={index}
-                data={group.values.map((value) => ({ x: value.label, y: value.value }))}
+                data={group.values.map((value) =>
+                  group.label == 'Subscriptions consumed'
+                    ? {
+                        x: value.label,
+                        y: value.value,
+                        hosts_added: value.hosts_added,
+                        hosts_deleted: value.hosts_deleted,
+                      }
+                    : {
+                        x: value.label,
+                        y: value.value,
+                      }
+                )}
                 interpolation="monotoneX"
               />
             ))}

@@ -42,8 +42,12 @@ export default function SubscriptionUsage() {
       <PageHeader
         title={t('Subscription usage')}
         titleHelpTitle={t('Subscription usage')}
-        titleHelp={t('Chart showing subscription capacity and licenses consumed per month.')}
-        description={t('Chart showing subscription capacity and licenses consumed per month.')}
+        titleHelp={t(
+          'A chart showing historical usage of your subscription. Subscription capacity and licenses consumed per month are displayed, with the ability to filter by the last year, two years, or three years.'
+        )}
+        description={t(
+          'A chart showing historical usage of your subscription. Subscription capacity and licenses consumed per month are displayed, with the ability to filter by the last year, two years, or three years.'
+        )}
       />
       <PageToolbar
         keyFn={getItemKey}
