@@ -16,6 +16,14 @@ export const ColumnsDiv = styled.div`
   align-items: baseline;
 `;
 
+// TODO: If deployment mode is INSIGHTS, CERTIFIED_REPO should be set to 'published'. This needs to be updated
+// in the future when we are able to identify INSIGHTS mode
+const CERTIFIED_REPO = 'rh-certified';
+
+function CertifiedIcon() {
+  return <i class="fas fa-certificate"></i>;
+}
+
 export function CollectionCard(props: { collection: CollectionVersionSearch }) {
   const { t } = useTranslation();
   const { collection } = props;
@@ -65,7 +73,7 @@ export function CollectionCard(props: { collection: CollectionVersionSearch }) {
           ),
           cardBody: (
             <CardBody>
-              <TextCell text={item.collection_version.version} />
+              <TextCell text={`v${item.collection_version.version}`} />
               {item.collection_version.description && (
                 <Truncate
                   content={item.collection_version.description}
@@ -118,16 +126,34 @@ export function CollectionCard(props: { collection: CollectionVersionSearch }) {
               </PageDetail>
             </CardBody>
           ),
-          labels: item.is_signed
-            ? [
-                {
-                  label: t('Signed'),
-                  color: 'green',
-                  icon: <CheckCircleIcon />,
-                  variant: 'outline',
-                },
-              ]
-            : undefined,
+          labels: [
+            ...(item.repository.name === CERTIFIED_REPO
+              ? [
+                  {
+                    label: t('Certified'),
+                    color: 'blue',
+                    icon: <CertifiedIcon />,
+                    variant: 'outline',
+                  },
+                ]
+              : [
+                  {
+                    label: item.repository.name,
+                    color: 'blue',
+                    variant: 'outline',
+                  },
+                ]),
+            ...(item.is_signed
+              ? [
+                  {
+                    label: t('Signed'),
+                    color: 'green',
+                    icon: <CheckCircleIcon />,
+                    variant: 'outline',
+                  },
+                ]
+              : []),
+          ],
         })}
       ></PageTableCard>
     </div>
