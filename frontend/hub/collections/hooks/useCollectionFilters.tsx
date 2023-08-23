@@ -3,10 +3,22 @@ import { useTranslation } from 'react-i18next';
 import { IToolbarFilter, ToolbarFilterType } from '../../../../framework';
 import { useRepoQueryOptions } from './../../repositories/hooks/useRepoQueryOptions';
 
+import { toolbarMultiSelectBrowseAdapter } from './../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncMultiSelectFilter';
+import { AnsibleAnsibleRepositoryResponse as Repository } from './../../api-schemas/generated/AnsibleAnsibleRepositoryResponse';
+import { useSelectRepositoryMulti } from './../../repositories/hooks/useRepositorySelector';
+
 export function useCollectionFilters() {
   const { t } = useTranslation();
 
   const repoQueryOptions = useRepoQueryOptions();
+
+  const repoSelector = toolbarMultiSelectBrowseAdapter<Repository>(
+    useSelectRepositoryMulti(),
+    (item) => item.name,
+    (name) => {
+      return { name };
+    }
+  );
 
   return useMemo<IToolbarFilter[]>(() => {
     const filters: IToolbarFilter[] = [
@@ -48,6 +60,7 @@ export function useCollectionFilters() {
         type: ToolbarFilterType.AsyncMultiSelect,
         query: 'repository_name',
         queryOptions: repoQueryOptions,
+        openBrowse: repoSelector,
       },
     ];
     return filters;
