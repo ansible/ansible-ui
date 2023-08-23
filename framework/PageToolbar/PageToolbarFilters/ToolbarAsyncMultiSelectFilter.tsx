@@ -12,7 +12,7 @@ type ToolbarOpenMultiSelectBrowse = (
 ) => void;
 
 export interface IToolbarAsyncMultiSelectFilter extends ToolbarFilterCommon {
-  type: ToolbarFilterType.AsyncSingleSelect;
+  type: ToolbarFilterType.AsyncMultiSelect;
 
   /** The function to query for options. */
   queryOptions: PageAsyncMultiSelectOptionsFn<string>;
