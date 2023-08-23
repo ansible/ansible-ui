@@ -31,7 +31,7 @@ import { useGet } from '../../common/crud/useGet';
 import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../constants';
 import { EdaActivationInstance } from '../interfaces/EdaActivationInstance';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
-import { StatusB37Enum } from '../interfaces/generated/eda-api';
+import { Status0E7Enum } from '../interfaces/generated/eda-api';
 import { useEdaView } from '../useEventDrivenView';
 import { EdaExtraVarsCell } from './components/EdaExtraVarCell';
 import { useActivationHistoryColumns } from './hooks/useActivationHistoryColumns';
@@ -104,7 +104,7 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
         },
         isSwitchOn: (activation: EdaRulebookActivation) => activation.is_enabled ?? false,
         isDisabled: (activation: EdaRulebookActivation) =>
-          activation.status === StatusB37Enum.Stopping
+          activation.status === Status0E7Enum.Stopping
             ? t('Cannot change activation status while stopping')
             : undefined,
       },
