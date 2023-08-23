@@ -55,10 +55,12 @@ import { CreateSchedule } from './views/schedules/ScheduleForm';
 import { SchedulePage } from './views/schedules/SchedulePage/SchedulePage';
 import { Schedules } from './views/schedules/Schedules';
 import { CreateScheduleRule } from './views/schedules/RuleForm';
+import { SystemSettings } from './interfaces/SystemSettings';
+import { useGet } from '../common/crud/useGet';
 
 export function AwxRouter() {
   const RouteObjWithoutPrefix = useRoutesWithoutPrefix(RouteObj.AWX);
-
+  const { data } = useGet<SystemSettings>(`/api/v2/settings/system/`);
   return (
     <Suspense
       fallback={
@@ -105,7 +107,17 @@ export function AwxRouter() {
           path={RouteObjWithoutPrefix.WorkflowApprovalDetails}
           element={<PageNotImplemented />}
         />
-        <Route path={RouteObjWithoutPrefix.HostMetrics} element={<HostMetrics />} />
+
+        <Route
+          path={RouteObjWithoutPrefix.HostMetrics}
+          element={
+            data?.SUBSCRIPTION_USAGE_MODEL === 'unique_managed_hosts' ? (
+              <HostMetrics />
+            ) : (
+              <PageNotFound />
+            )
+          }
+        />
         <Route path={RouteObjWithoutPrefix.Templates} element={<Templates />} />
         <Route path={RouteObjWithoutPrefix.JobTemplatePage} element={<TemplatePage />} />
         <Route

@@ -6,13 +6,15 @@ import { RouteObj } from '../Routes';
 import { CommonSidebar } from '../common/CommonSidebar';
 import { isRouteActive } from '../common/Masthead';
 import { useActiveUser } from '../common/useActiveUser';
+import { SystemSettings } from './interfaces/SystemSettings';
+import { useGet } from '../common/crud/useGet';
 
 export function AwxSidebar() {
   const { t } = useTranslation();
   const location = useLocation();
   const onClick = usePageNavBarClick();
   const activeUser = useActiveUser();
-
+  const { data, error, isLoading } = useGet<SystemSettings>(`/api/v2/settings/system/`);
   return (
     <CommonSidebar>
       <NavExpandable
@@ -209,13 +211,14 @@ export function AwxSidebar() {
           >
             {t('Reports')}
           </NavItem>
-
-          <NavItem
-            isActive={isRouteActive(RouteObj.HostMetrics, location)}
-            onClick={() => onClick(RouteObj.HostMetrics)}
-          >
-            {t('Host Metrics')}
-          </NavItem>
+          {data?.SUBSCRIPTION_USAGE_MODEL === 'unique_managed_hosts' && !error && !isLoading && (
+            <NavItem
+              isActive={isRouteActive(RouteObj.HostMetrics, location)}
+              onClick={() => onClick(RouteObj.HostMetrics)}
+            >
+              {t('Host Metrics')}
+            </NavItem>
+          )}
         </NavExpandable>
       )}
       {process.env.NODE_ENV === 'development' && (
