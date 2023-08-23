@@ -21,7 +21,7 @@ export const ColumnsDiv = styled.div`
 const CERTIFIED_REPO = 'rh-certified';
 
 function CertifiedIcon() {
-  return <i class="fas fa-certificate"></i>;
+  return <i className="fas fa-certificate"></i>;
 }
 
 export function CollectionCard(props: { collection: CollectionVersionSearch }) {
