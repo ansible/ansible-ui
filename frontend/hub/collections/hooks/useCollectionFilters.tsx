@@ -1,9 +1,12 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IToolbarFilter, ToolbarFilterType } from '../../../../framework';
+import { useRepoQueryOptions } from './../../repositories/hooks/useRepoQueryOptions';
 
 export function useCollectionFilters() {
   const { t } = useTranslation();
+
+  const repoQueryOptions = useRepoQueryOptions();
 
   return useMemo<IToolbarFilter[]>(() => {
     const filters: IToolbarFilter[] = [
@@ -38,6 +41,13 @@ export function useCollectionFilters() {
           { label: t('Unsigned'), value: 'false' },
         ],
         placeholder: t('Select signatures'),
+      },
+      {
+        key: 'repository',
+        label: t('Repository'),
+        type: ToolbarFilterType.AsyncMultiSelect,
+        query: 'repository_name',
+        queryOptions: repoQueryOptions,
       },
     ];
     return filters;
