@@ -32,6 +32,7 @@ export function usePulpView<T extends object>({
   tableColumns,
   disableQueryString,
   queryParams,
+  defaultSelection,
 }: {
   url: string;
   keyFn: (item: T) => string | number;
@@ -39,6 +40,8 @@ export function usePulpView<T extends object>({
   tableColumns?: ITableColumn<T>[];
   disableQueryString?: boolean;
   queryParams?: QueryParams;
+  /** The default items that should be initially selected. */
+  defaultSelection?: T[];
 }): IHubView<T> {
   const view = useView({
     defaultValues: { sort: tableColumns && tableColumns.length ? tableColumns[0].sort : undefined },
@@ -107,7 +110,7 @@ export function usePulpView<T extends object>({
     }
   }
 
-  const selection = useSelected(data?.results ?? [], keyFn);
+  const selection = useSelected(data?.results ?? [], keyFn, defaultSelection);
 
   if (data?.count !== undefined) {
     itemCountRef.current.itemCount = data?.count;

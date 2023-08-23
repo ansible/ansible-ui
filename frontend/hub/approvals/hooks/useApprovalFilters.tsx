@@ -2,13 +2,24 @@ import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IToolbarFilter, ToolbarFilterType } from '../../../../framework';
 import { useGetRequest } from '../../../common/crud/useGet';
+import { pulpAPI } from '../../api/utils';
 import { PageAsyncSingleSelectOptionsFn } from './../../../../framework/PageInputs/PageAsyncSingleSelect';
-import { pulpAPI } from './../../api/utils';
+import { toolbarSingleSelectBrowseAdapter } from './../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSingleSelectFilter';
+import { AnsibleAnsibleRepositoryResponse as Repository } from './../../api-schemas/generated/AnsibleAnsibleRepositoryResponse';
+import { useSelectRepositorySingle } from './../../repositories/hooks/useRepositorySelector';
 import { PulpItemsResponse } from './../../usePulpView';
 
 export function useApprovalFilters() {
   const { t } = useTranslation();
   const repoRequest = useGetRequest<PulpItemsResponse<Repository>>();
+
+  const repoSelector = toolbarSingleSelectBrowseAdapter<Repository>(
+    useSelectRepositorySingle(),
+    (item) => item.name,
+    (name) => {
+      return { name };
+    }
+  );
 
   const repoQueryOptions: PageAsyncSingleSelectOptionsFn<string> = useCallback(
     (page) => {
@@ -54,6 +65,7 @@ export function useApprovalFilters() {
         type: ToolbarFilterType.AsyncSingleSelect,
         query: 'repository_name',
         queryOptions: repoQueryOptions,
+        openBrowse: repoSelector,
       },
       {
         key: 'status',
@@ -68,11 +80,7 @@ export function useApprovalFilters() {
         placeholder: t('Select statuses'),
       },
     ],
-    [t, repoQueryOptions]
+    [t, repoQueryOptions, repoSelector]
   );
   return toolbarFilters;
-}
-
-interface Repository {
-  name: string;
 }
