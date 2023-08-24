@@ -1,6 +1,6 @@
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { DateCell, ITableColumn, TextCell } from '../../../../framework';
+import { DateTimeCell, ITableColumn, TextCell } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
 import { StatusCell } from '../../../common/Status';
 import { EdaActivationInstance } from '../../interfaces/EdaActivationInstance';
@@ -26,7 +26,7 @@ export function useActivationHistoryColumns() {
       },
       {
         header: t('Start date'),
-        cell: (instance) => <DateCell value={instance.started_at} />,
+        cell: (instance) => <DateTimeCell format={'date-time'} value={instance.started_at} />,
       },
     ],
     [t]
