@@ -9,6 +9,7 @@ export function usePageChartColors() {
   let warningColor = 'var(--pf-chart-color-gold-400)';
   let canceledColor = 'var(--pf-chart-color-black-400)';
   let blueColor = 'var(--pf-chart-color-blue-300)';
+  let cyanColor = 'var(--pf-chart-color-cyan-300)';
   let redColor = 'var(--pf-chart-color-red-100)';
   let greenColor = 'var(--pf-chart-color-green-300)';
   let yellowColor = 'var(--pf-chart-color-gold-400)';
@@ -24,6 +25,7 @@ export function usePageChartColors() {
       warningColor = 'var(--pf-chart-color-gold-300)';
       canceledColor = 'var(--pf-chart-color-black-400)';
       blueColor = 'var(--pf-chart-color-blue-400)';
+      cyanColor = 'var(--pf-chart-color-cyan-400)';
       redColor = 'var(--pf-chart-color-red-400)';
       greenColor = 'var(--pf-chart-color-green-400)';
       yellowColor = 'var(--pf-chart-color-gold-300)';
@@ -44,6 +46,7 @@ export function usePageChartColors() {
     purpleColor,
     orangeColor,
     redColor,
+    cyanColor,
     greenColor,
     greyColor,
     chartColors: [
@@ -51,6 +54,7 @@ export function usePageChartColors() {
       yellowColor,
       purpleColor,
       orangeColor,
+      cyanColor,
       redColor,
       greenColor,
       greyColor,
