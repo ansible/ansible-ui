@@ -13,6 +13,7 @@ import {
 } from '@patternfly/react-charts';
 import { useSettings } from '../Settings';
 import { PageChartContainer } from './PageChartContainer';
+import './PageDashboardChart.css';
 
 const CursorVoronoiContainer = createContainer('voronoi', 'cursor') as React.FunctionComponent<
   ChartVoronoiContainerProps & ChartCursorContainerProps
@@ -142,24 +143,17 @@ export function PageDashboardChart(props: {
                 name={'scatter-' + index}
                 data={group.values.map((value) => ({ x: value.label, y: value.value }))}
                 size={({ active }) => (active ? 6 : 3)}
-                style={{
-                  data: {
-                    fill: group.color,
-                    strokeWidth: activeTheme !== undefined ? 2 : undefined,
-                    stroke: activeTheme === 'dark' ? '#0004' : '#FFF4',
-                  },
-                }}
               />
             ))}
           {(!props.variant || props.variant === 'stackedAreaChart') && (
             <ChartStack>
-              {groups.reverse().map((group, index) => (
+              {groups.map((group, index) => (
                 <ChartArea
                   key={index}
                   name={index.toString()}
                   data={group.values.map((value) => ({ x: value.label, y: value.value }))}
                   interpolation="monotoneX"
-                  style={{ data: { strokeWidth: 3, stroke: group.color, fill: group.color } }}
+                  style={{ data: { strokeWidth: 2 } }}
                 />
               ))}
             </ChartStack>
@@ -175,13 +169,6 @@ export function PageDashboardChart(props: {
                     y: value.value,
                   }))}
                   size={({ active }) => (active ? 6 : 3)}
-                  style={{
-                    data: {
-                      strokeWidth: activeTheme !== undefined ? 2 : undefined,
-                      stroke: activeTheme === 'dark' ? '#0004' : '#FFF4',
-                      fill: group.color,
-                    },
-                  }}
                 />
               ))}
             </ChartStack>
