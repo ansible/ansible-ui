@@ -43,6 +43,7 @@ declare global {
       edaLogout(): Chainable<EdaUser | undefined>;
       awxLogin(): Chainable<void>;
       edaLogin(): Chainable<void>;
+      hubLogin(): Chainable<void>;
 
       // --- NAVIGATION COMMANDS ---
 
