@@ -61,3 +61,24 @@ Cypress.Commands.add('edaLogin', () => {
   );
   cy.visit(`/eda`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true });
 });
+
+Cypress.Commands.add('hubLogin', () => {
+  cy.session(
+    'HUB',
+    () => {
+      cy.login(
+        Cypress.env('HUB_SERVER') as string,
+        Cypress.env('HUB_USERNAME') as string,
+        Cypress.env('HUB_PASSWORD') as string
+      );
+      cy.hasTitle('Welcome to');
+    },
+    {
+      cacheAcrossSpecs: true,
+      validate: () => {
+        cy.request({ method: 'GET', url: 'api/automation-hub/_ui/v1/me/' });
+      },
+    }
+  );
+  cy.visit(`/`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true });
+});
