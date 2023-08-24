@@ -1,8 +1,11 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-/// <reference types="cypress" />
+import { HubDashboard, HubRoutes } from './constants';
 
 describe('hub dashboard', () => {
-  it.skip('renders', () => {
-    // TODO
+  before(() => {
+    cy.hubLogin();
+  });
+  it('render the hub dashboard', () => {
+    cy.visit(HubRoutes.dashboard);
+    cy.get('.pf-c-title').contains(HubDashboard.title);
   });
 });
