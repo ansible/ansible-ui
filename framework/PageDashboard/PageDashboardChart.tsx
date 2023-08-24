@@ -5,6 +5,7 @@ import {
   ChartLegend,
   ChartLine,
   ChartStack,
+  ChartTooltip,
   ChartVoronoiContainer,
 } from '@patternfly/react-charts';
 import { PageChartContainer } from './PageChartContainer';
@@ -68,25 +69,30 @@ export function PageDashboardChart(props: {
             bottom: paddingBottom,
             left: 60 + (yLabel ? 19 : 0),
             right: 40,
-            top: 16,
+            top: 8,
           }}
           colorScale={groups.map((group) => group.color)}
           height={size.height}
           width={size.width}
           minDomain={minDomain}
           maxDomain={onlyZeros ? { y: 5 } : undefined}
-          legendPosition={'bottom'}
+          legendPosition="bottom"
           legendComponent={
             legendData.length > 0 ? (
-              <ChartLegend data={legendData} orientation={'horizontal'} />
+              <ChartLegend data={legendData} orientation="horizontal" />
             ) : undefined
           }
           containerComponent={
             <ChartVoronoiContainer
-              labels={(point: { datum: { x: string | number; y: string | number } }) => {
+              voronoiDimension="x"
+              labels={(point: {
+                datum: { x: string | number; y: string | number; _stack: number };
+              }) => {
                 const datum = point.datum;
-                return `${datum.x}: ${datum.y}`;
+                const group = groups[datum._stack - 1];
+                return `${group?.label}: ${datum.y}`;
               }}
+              labelComponent={<ChartTooltip dy={-7} constrainToVisibleArea />}
             />
           }
         >
@@ -119,6 +125,7 @@ export function PageDashboardChart(props: {
                   key={index}
                   data={group.values.map((value) => ({ x: value.label, y: value.value }))}
                   interpolation="monotoneX"
+                  style={{ data: { strokeWidth: 3, stroke: group.color } }}
                 />
               ))}
             </ChartStack>
