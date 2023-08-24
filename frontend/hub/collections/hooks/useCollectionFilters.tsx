@@ -64,5 +64,5 @@ export function useCollectionFilters() {
       },
     ];
     return filters;
-  }, [t]);
+  }, [t, repoQueryOptions, repoSelector]);
 }
