@@ -69,6 +69,7 @@ export function JobsChart(props: {
         { label: t('Successful'), color: successfulColor, values: successful },
       ]}
       onlyIntegerTicks
+      variant="lineChart"
     />
   );
 }

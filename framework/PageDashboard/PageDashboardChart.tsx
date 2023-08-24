@@ -144,13 +144,9 @@ export function PageDashboardChart(props: {
                 size={({ active }) => (active ? 6 : 3)}
                 style={{
                   data: {
+                    fill: group.color,
                     strokeWidth: activeTheme !== undefined ? 2 : undefined,
-                    stroke:
-                      activeTheme === 'dark'
-                        ? '#0004'
-                        : activeTheme === 'light'
-                        ? '#FFF4'
-                        : undefined,
+                    stroke: activeTheme === 'dark' ? '#0004' : '#FFF4',
                   },
                 }}
               />
@@ -182,12 +178,7 @@ export function PageDashboardChart(props: {
                   style={{
                     data: {
                       strokeWidth: activeTheme !== undefined ? 2 : undefined,
-                      stroke:
-                        activeTheme === 'dark'
-                          ? '#0004'
-                          : activeTheme === 'light'
-                          ? '#FFF4'
-                          : undefined,
+                      stroke: activeTheme === 'dark' ? '#0004' : '#FFF4',
                     },
                   }}
                 />
