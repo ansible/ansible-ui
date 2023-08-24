@@ -41,6 +41,7 @@ import {
   useRestartRulebookActivations,
 } from './hooks/useControlRulebookActivations';
 import { useDeleteRulebookActivations } from './hooks/useDeleteRulebookActivations';
+import { useActivationHistoryFilters } from './hooks/useActivationHistoryFilters';
 
 // eslint-disable-next-line react/prop-types
 export function RulebookActivationDetails({ initialTabIndex = 0 }) {
@@ -238,16 +239,19 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
   function ActivationHistoryTab() {
     const params = useParams<{ id: string }>();
     const { t } = useTranslation();
+    const toolbarFilters = useActivationHistoryFilters();
 
     const tableColumns = useActivationHistoryColumns();
     const view = useEdaView<EdaActivationInstance>({
       url: `${API_PREFIX}/activations/${params?.id || ''}/instances/`,
+      toolbarFilters,
       tableColumns,
     });
     return (
       <PageLayout>
         <PageTable
           tableColumns={tableColumns}
+          toolbarFilters={toolbarFilters}
           errorStateTitle={t('Error loading history')}
           emptyStateTitle={t('No activation history')}
           emptyStateIcon={CubesIcon}
