@@ -19,6 +19,7 @@ export type AccessRole = {
 };
 export interface User extends Omit<SwaggerUser, 'id' | 'username' | 'summary_fields'> {
   id: number;
+  url: string;
   username: string;
   user_type?: 'normal' | 'administrator' | 'auditor';
   disassociate?: boolean;

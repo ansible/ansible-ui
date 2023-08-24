@@ -9,11 +9,12 @@ import { Label } from './Label';
 export interface CommonInventory
   extends Omit<
     SwaggerInventory,
-    'id' | 'name' | 'type' | 'kind' | 'summary_fields' | 'organization'
+    'id' | 'name' | 'type' | 'kind' | 'summary_fields' | 'organization' | 'related'
   > {
   id: number;
   name: string;
   type: 'inventory';
+  related: { access_list: string };
   summary_fields: {
     organization: SummaryFieldsOrganization;
     created_by: SummaryFieldsByUser;

@@ -24,7 +24,7 @@ export interface Credential
     created_by?: string;
     modified_by?: string;
     activity_stream?: string;
-    access_list?: string;
+    access_list: string;
     object_roles?: string;
     owner_users?: string;
     owner_teams?: string;

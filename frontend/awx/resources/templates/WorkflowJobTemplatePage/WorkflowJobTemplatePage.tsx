@@ -12,6 +12,7 @@ import { AwxRoute } from '../../../AwxRoutes';
 import { AwxError } from '../../../common/AwxError';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { Schedules } from '../../../views/schedules/Schedules';
+import { AccessList } from '../../../views/accessList/AccessList';
 
 export function WorkflowJobTemplatePage() {
   const { t } = useTranslation();
@@ -53,7 +54,7 @@ export function WorkflowJobTemplatePage() {
           <PageNotImplemented />
         </RoutedTab>
         <RoutedTab label={t('Access')} url={RouteObj.WorkflowJobTemplateAccess}>
-          <PageNotImplemented />
+          <AccessList sublistEndpoint={template.related.access_list} />
         </RoutedTab>
         <RoutedTab label={t('Notifications')} url={RouteObj.WorkflowJobTemplateNotifications}>
           <PageNotImplemented />

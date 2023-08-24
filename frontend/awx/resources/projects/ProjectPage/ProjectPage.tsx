@@ -14,6 +14,7 @@ import { Project } from '../../../interfaces/Project';
 import { Schedules } from '../../../views/schedules/Schedules';
 import { useProjectActions } from '../hooks/useProjectActions';
 import { ProjectDetails } from './ProjectDetails';
+import { AccessList } from '../../../views/accessList/AccessList';
 
 export function ProjectPage() {
   const { t } = useTranslation();
@@ -53,7 +54,7 @@ export function ProjectPage() {
           <ProjectDetails project={project} />
         </RoutedTab>
         <RoutedTab label={t('Access')} url={RouteObj.ProjectAccess}>
-          <PageNotImplemented />
+          <AccessList sublistEndpoint={project.related.access_list} />
         </RoutedTab>
         <RoutedTab label={t('Job templates')} url={RouteObj.ProjectTemplates}>
           <PageNotImplemented />
