@@ -1,12 +1,12 @@
 import { CheckCircleIcon } from '@patternfly/react-icons';
 import { PageDetailDiv, PageTableCard, Small } from '../../../framework/PageTable/PageTableCard';
 import { CollectionVersionSearch } from '../collections/CollectionVersionSearch';
-import { PageDetail, TextCell } from '../../../framework';
+import { LabelColor, PageDetail, TextCell } from '../../../framework';
 import { useTranslation } from 'react-i18next';
 import { CardBody, Truncate } from '@patternfly/react-core';
 import { useCarouselContext } from '../../../framework/PageCarousel/PageCarousel';
 import styled, { CSSProperties } from 'styled-components';
-import { useMemo } from 'react';
+import { ReactNode, useCallback, useMemo } from 'react';
 import { RouteObj } from '../../Routes';
 import { Logo } from '../common/Logo';
 
@@ -15,6 +15,23 @@ export const ColumnsDiv = styled.div`
   gap: 6px;
   align-items: baseline;
 `;
+
+// TODO: If deployment mode is INSIGHTS, CERTIFIED_REPO should be set to 'published'. This needs to be updated
+// in the future when we are able to identify INSIGHTS mode
+const CERTIFIED_REPO = 'rh-certified';
+
+type Labels =
+  | {
+      label: string;
+      color?: LabelColor;
+      icon?: ReactNode;
+      variant?: 'outline' | 'filled' | undefined;
+    }[]
+  | undefined;
+
+function CertifiedIcon() {
+  return <i className="fas fa-certificate"></i>;
+}
 
 export function CollectionCard(props: { collection: CollectionVersionSearch }) {
   const { t } = useTranslation();
@@ -30,6 +47,38 @@ export function CollectionCard(props: { collection: CollectionVersionSearch }) {
     }
     return {};
   }, [parentCarouselWidth, visibleCards]);
+
+  const getLabels = useCallback(
+    (item: CollectionVersionSearch) => {
+      const cardLabels: Labels =
+        item.repository.name === CERTIFIED_REPO
+          ? [
+              {
+                label: t('Certified'),
+                color: 'blue',
+                icon: <CertifiedIcon />,
+                variant: 'outline',
+              },
+            ]
+          : [
+              {
+                label: item.repository.name,
+                color: 'blue',
+                variant: 'outline',
+              },
+            ];
+      if (item.is_signed) {
+        cardLabels?.push({
+          label: t('Signed'),
+          color: 'green',
+          icon: <CheckCircleIcon />,
+          variant: 'outline',
+        });
+      }
+      return cardLabels;
+    },
+    [t]
+  );
 
   return (
     <div className="size-container" style={divMaxWidth}>
@@ -65,7 +114,7 @@ export function CollectionCard(props: { collection: CollectionVersionSearch }) {
           ),
           cardBody: (
             <CardBody>
-              <TextCell text={item.collection_version.version} />
+              <TextCell text={`v${item.collection_version.version}`} />
               {item.collection_version.description && (
                 <Truncate
                   content={item.collection_version.description}
@@ -118,16 +167,7 @@ export function CollectionCard(props: { collection: CollectionVersionSearch }) {
               </PageDetail>
             </CardBody>
           ),
-          labels: item.is_signed
-            ? [
-                {
-                  label: t('Signed'),
-                  color: 'green',
-                  icon: <CheckCircleIcon />,
-                  variant: 'outline',
-                },
-              ]
-            : undefined,
+          labels: getLabels(item),
         })}
       ></PageTableCard>
     </div>
