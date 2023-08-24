@@ -63,10 +63,10 @@ export function JobsChart(props: {
     <PageDashboardChart
       yLabel={t('Job Count')}
       groups={[
-        { label: t('Canceled'), color: canceledColor, values: canceled },
+        { label: t('Successful'), color: successfulColor, values: successful },
         { label: t('Error'), color: errorColor, values: error },
         { label: t('Failed'), color: failedColor, values: failed },
-        { label: t('Successful'), color: successfulColor, values: successful },
+        { label: t('Canceled'), color: canceledColor, values: canceled },
       ]}
       onlyIntegerTicks
       variant="stackedAreaChart"

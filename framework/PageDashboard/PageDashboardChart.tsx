@@ -153,13 +153,13 @@ export function PageDashboardChart(props: {
             ))}
           {(!props.variant || props.variant === 'stackedAreaChart') && (
             <ChartStack>
-              {groups.map((group, index) => (
+              {groups.reverse().map((group, index) => (
                 <ChartArea
                   key={index}
                   name={index.toString()}
                   data={group.values.map((value) => ({ x: value.label, y: value.value }))}
                   interpolation="monotoneX"
-                  style={{ data: { strokeWidth: 3, stroke: group.color } }}
+                  style={{ data: { strokeWidth: 3, stroke: group.color, fill: group.color } }}
                 />
               ))}
             </ChartStack>
@@ -179,6 +179,7 @@ export function PageDashboardChart(props: {
                     data: {
                       strokeWidth: activeTheme !== undefined ? 2 : undefined,
                       stroke: activeTheme === 'dark' ? '#0004' : '#FFF4',
+                      fill: group.color,
                     },
                   }}
                 />
