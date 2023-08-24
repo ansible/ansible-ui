@@ -11,7 +11,6 @@ import {
   ChartVoronoiContainerProps,
   createContainer,
 } from '@patternfly/react-charts';
-import { useSettings } from '../Settings';
 import { PageChartContainer } from './PageChartContainer';
 import './PageDashboardChart.css';
 
@@ -71,8 +70,6 @@ export function PageDashboardChart(props: {
 
   // edge case if all values are zero set maxDomain for y to 5 to make it look normal
   const onlyZeros = !groups.find((group) => group.values.find((value) => value.value !== 0));
-
-  const { activeTheme } = useSettings();
 
   return (
     <PageChartContainer className="page-chart">
