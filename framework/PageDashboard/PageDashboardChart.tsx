@@ -103,6 +103,7 @@ export function PageDashboardChart(props: {
                 <ChartLegendTooltip
                   title={(datum: { x: number | string }) => datum.x}
                   legendData={legendData}
+                  cornerRadius={8}
                 />
               }
               mouseFollowTooltips
