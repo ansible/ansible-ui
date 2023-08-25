@@ -62,7 +62,7 @@ function ProjectCreateInputs() {
         label={t('Credential')}
         placeholderText={t('Select credential')}
         options={[
-          { label: t('No credential'), value: null, isPlaceholder: true },
+          { label: t('Select credential'), value: null, isPlaceholder: true },
           ...(credentials?.results
             ? credentials.results.map((item: { name: string; id: number }) => ({
                 label: item.name,
@@ -109,7 +109,7 @@ function ProjectEditInputs() {
         label={t('Credential')}
         placeholderText={t('Select credential')}
         options={[
-          { label: t('No credential'), value: null, isPlaceholder: true },
+          { label: t('Select credential'), value: null, isPlaceholder: true },
           ...(credentials?.results
             ? credentials.results.map((item: { name: string; id: number }) => ({
                 label: item.name,

@@ -67,14 +67,15 @@ function DecisionEnvironmentInputs() {
         name={'credential_id'}
         label={t('Credential')}
         placeholderText={t('Select credential')}
-        options={
-          credentials?.results
+        options={[
+          { label: t('Select credential'), value: null, isPlaceholder: true },
+          ...(credentials?.results
             ? credentials.results.map((item: { name: string; id: number }) => ({
                 label: item.name,
                 value: item.id,
               }))
-            : []
-        }
+            : []),
+        ]}
         footer={<Link to={RouteObj.CreateEdaCredential}>Create credential</Link>}
         labelHelp={t('The token needed to utilize the Decision environment image.')}
         labelHelpTitle={t('Credential')}
