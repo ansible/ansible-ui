@@ -1,10 +1,11 @@
 import { useTranslation } from 'react-i18next';
-import { pfDanger, pfSuccess } from '../../../../framework';
 import { PageDashboardDonutCard } from '../../../../framework/PageDashboard/PageDonutChart';
+import { usePageChartColors } from '../../../../framework/PageDashboard/usePageChartColors';
 import { RouteObj } from '../../../Routes';
 
 export function AwxHostsCard(props: { total: number; failed: number }) {
   const { t } = useTranslation();
+  const { successfulColor, failedColor } = usePageChartColors();
   return (
     <PageDashboardDonutCard
       title={t('Hosts')}
@@ -14,12 +15,12 @@ export function AwxHostsCard(props: { total: number; failed: number }) {
         {
           label: t('Ready'),
           count: props.total - props.failed,
-          color: pfSuccess,
+          color: successfulColor,
         },
         {
           label: t('Failed'),
           count: props.failed,
-          color: pfDanger,
+          color: failedColor,
         },
       ]}
     />
