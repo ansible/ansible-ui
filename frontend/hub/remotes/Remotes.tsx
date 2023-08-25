@@ -53,6 +53,7 @@ export function Remotes() {
     <PageLayout>
       <PageHeader title={t('Remotes')} description={t('Remotes')} />
       <PageTable<IRemotes>
+        id="hub-remotes-table"
         toolbarFilters={toolbarFilters}
         tableColumns={tableColumns}
         toolbarActions={toolbarActions}

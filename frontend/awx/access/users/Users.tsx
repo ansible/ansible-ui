@@ -215,7 +215,7 @@ export function Users() {
         navigation={<AccessNav active="users" />}
       />
       <PageTable<User>
-        id="awx-users"
+        id="awx-users-table"
         toolbarFilters={toolbarFilters}
         toolbarActions={toolbarActions}
         tableColumns={tableColumns}
@@ -301,6 +301,7 @@ export function AccessTable(props: { url: string }) {
 
   return (
     <PageTable<User>
+      id="awx-users-table"
       toolbarFilters={toolbarFilters}
       toolbarActions={toolbarActions}
       tableColumns={tableColumns}

@@ -11,6 +11,7 @@ import { CubesIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
 import {
   IPageAction,
   PageActionSelection,
@@ -22,7 +23,6 @@ import { Role } from '../../../interfaces/Role';
 import { User } from '../../../interfaces/User';
 import { useAwxView } from '../../../useAwxView';
 import { useRolesColumns, useRolesFilters } from '../../roles/Roles';
-import styled from 'styled-components';
 
 const EmptyStateDiv = styled.div`
   height: 100%;
@@ -103,6 +103,7 @@ export function UserRoles(props: { user: User }) {
   return (
     <>
       <PageTable<Role>
+        id="awx-roles-table"
         toolbarFilters={toolbarFilters}
         tableColumns={tableColumns}
         toolbarActions={toolbarActions}

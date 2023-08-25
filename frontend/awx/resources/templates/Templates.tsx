@@ -132,6 +132,7 @@ export function Templates() {
         )}
       />
       <PageTable<JobTemplate | WorkflowJobTemplate>
+        id="awx-job-templates-table"
         toolbarFilters={toolbarFilters}
         toolbarActions={toolbarActions}
         tableColumns={tableColumns}

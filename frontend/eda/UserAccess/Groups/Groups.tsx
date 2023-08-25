@@ -26,6 +26,7 @@ export function Groups() {
     <PageLayout>
       <PageHeader title={t('Groups')} />
       <PageTable
+        id="eda-groups-table"
         tableColumns={tableColumns}
         toolbarActions={toolbarActions}
         toolbarFilters={toolbarFilters}

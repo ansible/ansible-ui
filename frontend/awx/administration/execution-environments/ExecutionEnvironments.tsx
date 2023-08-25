@@ -17,6 +17,7 @@ import { RouteObj } from '../../../Routes';
 import {
   useCreatedColumn,
   useDescriptionColumn,
+  useIdColumn,
   useModifiedColumn,
   useNameColumn,
   useOrganizationNameColumn,
@@ -112,6 +113,7 @@ export function ExecutionEnvironments() {
         titleDocLink={`${getDocsBaseUrl(config)}/html/userguide/execution_environments.html`}
       />
       <PageTable<ExecutionEnvironment>
+        id="awx-execution-environments-table"
         toolbarFilters={toolbarFilters}
         toolbarActions={toolbarActions}
         tableColumns={tableColumns}
@@ -170,12 +172,14 @@ export function useExecutionEnvironmentsColumns(options?: {
     ...options,
     onClick: nameClick,
   });
+  const idColumn = useIdColumn<ExecutionEnvironment>();
   const descriptionColumn = useDescriptionColumn();
   const organizationColumn = useOrganizationNameColumn(options);
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);
   const tableColumns = useMemo<ITableColumn<ExecutionEnvironment>[]>(
     () => [
+      idColumn,
       nameColumn,
       descriptionColumn,
       {
@@ -186,7 +190,7 @@ export function useExecutionEnvironmentsColumns(options?: {
       createdColumn,
       modifiedColumn,
     ],
-    [nameColumn, descriptionColumn, t, organizationColumn, createdColumn, modifiedColumn]
+    [idColumn, nameColumn, descriptionColumn, t, organizationColumn, createdColumn, modifiedColumn]
   );
   return tableColumns;
 }

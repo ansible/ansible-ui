@@ -44,6 +44,7 @@ export function Credentials() {
         )}
       />
       <PageTable<Credential>
+        id="awx-credentials-table"
         toolbarFilters={toolbarFilters}
         toolbarActions={toolbarActions}
         tableColumns={tableColumns}

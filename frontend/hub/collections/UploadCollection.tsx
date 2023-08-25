@@ -138,6 +138,7 @@ export function UploadCollectionByFile() {
         </div>
 
         <PageTable<Repository>
+          id="hub-repositories-table"
           onSelect={(repo) => {
             setSelectedRepo({ name: repo.name, pulp_href: repo.pulp_href });
           }}

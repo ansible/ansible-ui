@@ -78,6 +78,7 @@ export function Projects() {
         )}
       />
       <PageTable<Project>
+        id="awx-projects-table"
         toolbarFilters={toolbarFilters}
         toolbarActions={toolbarActions}
         tableColumns={tableColumns}

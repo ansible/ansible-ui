@@ -29,7 +29,7 @@ export function Projects() {
         description={t('Projects are a logical collection of rulebooks.')}
       />
       <PageTable
-        id={'eda-projects'}
+        id="eda-projects-table"
         tableColumns={tableColumns}
         toolbarActions={toolbarActions}
         toolbarFilters={toolbarFilters}
