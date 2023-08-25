@@ -189,6 +189,7 @@ export function PageFormSelect<
                   key={option.label}
                   value={option.label}
                   label={option.label}
+                  isPlaceholder={option?.isPlaceholder}
                   description={option.description}
                 >
                   {option.label}

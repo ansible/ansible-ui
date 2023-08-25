@@ -61,14 +61,15 @@ function ProjectCreateInputs() {
         name={'credential_id'}
         label={t('Credential')}
         placeholderText={t('Select credential')}
-        options={
-          credentials?.results
+        options={[
+          { label: t('No credential'), value: null, isPlaceholder: true },
+          ...(credentials?.results
             ? credentials.results.map((item: { name: string; id: number }) => ({
                 label: item.name,
                 value: item.id,
               }))
-            : []
-        }
+            : []),
+        ]}
         footer={<Link to={RouteObj.CreateEdaCredential}>{t('Create credential')}</Link>}
         labelHelpTitle={t('Credential')}
         labelHelp={t('The token needed to utilize the SCM URL.')}
@@ -107,14 +108,15 @@ function ProjectEditInputs() {
         name={'credential_id'}
         label={t('Credential')}
         placeholderText={t('Select credential')}
-        options={
-          credentials?.results
+        options={[
+          { label: t('No credential'), value: null, isPlaceholder: true },
+          ...(credentials?.results
             ? credentials.results.map((item: { name: string; id: number }) => ({
                 label: item.name,
                 value: item.id,
               }))
-            : []
-        }
+            : []),
+        ]}
         footer={<Link to={RouteObj.CreateEdaCredential}>{t('Create credential')}</Link>}
       />
     </>

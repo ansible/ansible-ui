@@ -7,6 +7,7 @@ export interface IFormGroupSelectOption<T> {
   label: string;
   description?: string;
   value: T;
+  isPlaceholder?: boolean;
   additionalControls?: ReactNode;
 }
 
