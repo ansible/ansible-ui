@@ -1,10 +1,10 @@
 import { ChartDonut, ChartDonutProps, ChartDonutUtilization } from '@patternfly/react-charts';
 import { CardBody, Flex, FlexItem, Skeleton, Split, SplitItem } from '@patternfly/react-core';
-import { PageChartContainer } from './PageChartContainer';
-import { PageDashboardCard } from './PageDashboardCard';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { pfDisabled } from '../components/pfcolors';
-import { useTranslation } from 'react-i18next';
+import { PageChartContainer } from './PageChartContainer';
+import { PageDashboardCard } from './PageDashboardCard';
 
 const FlexItemDiv = styled.div`
   width: 12px;
@@ -19,7 +19,14 @@ export function PageDonutChart(
   if (total !== 0) {
     return (
       <PageChartContainer>
-        {(size) => <ChartDonut {...props} width={size.width} height={size.height} />}
+        {(size) => (
+          <ChartDonut
+            {...props}
+            width={size.width}
+            height={size.height}
+            padding={{ top: 0, left: 0, right: size.width - size.height, bottom: 0 }}
+          />
+        )}
       </PageChartContainer>
     );
   } else {
@@ -35,7 +42,7 @@ export function PageDonutChart(
             legendOrientation="vertical"
             colorScale={[pfDisabled]}
             title={total.toString()}
-            padding={{ top: 0, left: 0, right: 0, bottom: 0 }}
+            padding={{ top: 0, left: 0, right: size.width - size.height, bottom: 0 }}
           />
         )}
       </PageChartContainer>
@@ -88,7 +95,6 @@ export function PageDashboardDonutCard(props: {
             data={items.map((item) => ({ x: item.label, y: item.count }))}
             title={total.toString()}
             colorScale={items.map((item) => item.color)}
-            padding={{ top: 0, left: 0, right: 0, bottom: 0 }}
             legendData={items.map((item) => ({ name: `${item.label}: ${item.count}` }))}
             legendOrientation="vertical"
             legendPosition="right"
