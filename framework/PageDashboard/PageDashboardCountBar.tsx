@@ -21,7 +21,7 @@ export function PageDashboardCountBar(props: PageDashboardCountBarProps) {
           style={{
             display: 'flex',
             flexWrap: 'wrap',
-            justifyContent: 'space-around',
+            justifyContent: 'space-evenly',
             paddingLeft: 8,
             paddingRight: 8,
             gap: 16,
