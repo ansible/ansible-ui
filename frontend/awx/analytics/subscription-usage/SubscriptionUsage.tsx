@@ -70,7 +70,9 @@ export default function SubscriptionUsage() {
               <FlexItem>
                 <Text component="small">
                   Last recalculation date:{' '}
-                  {systemData.data?.HOST_METRIC_SUMMARY_TASK_LAST_TS.slice(0, 10)}
+                  {systemData.data !== undefined
+                    ? systemData.data.HOST_METRIC_SUMMARY_TASK_LAST_TS.slice(0, 10)
+                    : null}
                 </Text>
               </FlexItem>
             </Flex>

@@ -1,7 +1,8 @@
 import { Bullseye, Spinner } from '@patternfly/react-core';
 import useSWR from 'swr';
-import { IFilterState, useSettings } from '../../../../framework';
+import { IFilterState } from '../../../../framework';
 import { PageDashboardChart } from '../../../../framework/PageDashboard/PageDashboardChart';
+import { usePageChartColors } from '../../../../framework/PageDashboard/usePageChartColors';
 
 interface ISubscriptionUsageChartData {
   results: [
@@ -62,28 +63,27 @@ export function SubscriptionUsageChart(props: { period: IFilterState }) {
     return newDate;
   };
 
-  const capacity =
-    data?.results.map(({ date, license_capacity }) => {
-      return {
-        label: dateFormatter(date),
-        value: license_capacity,
-      };
-    }) ?? [];
   const consumed =
-    data?.results.map(({ date, license_consumed, hosts_added, hosts_deleted }) => {
-      return {
-        label: dateFormatter(date),
-        value: license_consumed,
-        hosts_added: hosts_added,
-        hosts_deleted: hosts_deleted,
-      };
-    }) ?? [];
+    data !== undefined
+      ? data.results.map(({ date, license_consumed }) => {
+          return {
+            label: dateFormatter(date),
+            value: license_consumed,
+          };
+        })
+      : [];
 
-  const { activeTheme } = useSettings();
-  let capacityColor = 'var(--pf-chart-color-red-200)';
-  if (activeTheme === 'dark') capacityColor = 'var(--pf-chart-color-red-300)';
-  let consumedColor = 'var(--pf-chart-color-blue-200)';
-  if (activeTheme === 'dark') consumedColor = 'var(--pf-chart-color-blue-300)';
+  const capacity =
+    data !== undefined
+      ? data.results.map(({ date, license_capacity }) => {
+          return {
+            label: dateFormatter(date),
+            value: license_capacity,
+          };
+        })
+      : [];
+
+  const { blueColor, redColor } = usePageChartColors();
 
   if (isLoading)
     return (
@@ -95,14 +95,14 @@ export function SubscriptionUsageChart(props: { period: IFilterState }) {
   return (
     <PageDashboardChart
       groups={[
-        { label: 'Subscriptions consumed', color: consumedColor, values: consumed },
-        { label: 'Subscription capacity', color: capacityColor, values: capacity },
+        { label: 'Subscriptions consumed ', color: blueColor, values: consumed },
+        { label: 'Subscription capacity', color: redColor, values: capacity },
       ]}
       xLabel="Month"
       yLabel="Unique hosts"
-      allowZero={true}
-      useLines={true}
-      onlyIntegerTicks={true}
+      variant="lineChart"
+      allowZero
+      onlyIntegerTicks
     />
   );
 }

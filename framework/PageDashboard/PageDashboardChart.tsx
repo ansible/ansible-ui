@@ -14,8 +14,6 @@ export function PageDashboardChart(props: {
     values: {
       label: string;
       value: number;
-      hosts_added?: number;
-      hosts_deleted?: number;
     }[];
   }[];
 }) {
