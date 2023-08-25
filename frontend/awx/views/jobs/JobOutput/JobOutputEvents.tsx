@@ -1,53 +1,60 @@
 import { useMemo, useRef, useState } from 'react';
-import { Banner } from '@patternfly/react-core';
-import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import type { IFilterState, IToolbarFilter } from '../../../../../framework';
 import { Job } from '../../../interfaces/Job';
 import './JobOutput.css';
 import { JobOutputLoadingRow } from './JobOutputLoadingRow';
-import { IJobOutputRow, jobEventToRows, tracebackToRows, JobOutputRow } from './JobOutputRow';
+import { IJobOutputRow, JobOutputRow, jobEventToRows, tracebackToRows } from './JobOutputRow';
 import { useJobOutput } from './useJobOutput';
+import { PageControls } from './PageControls';
 import {
-  useJobOutputChildrenSummary,
   IJobOutputChildrenSummary,
+  useJobOutputChildrenSummary,
 } from './useJobOutputChildrenSummary';
 import { useVirtualizedList } from './useVirtualized';
-import type { IToolbarFilter } from '../../../../../framework';
+import { useScrollControls } from './useScrollControls';
+import { isJobRunning } from './util';
 
 export interface ICollapsed {
   [uuid: string]: boolean;
 }
 
-const runningJobTypes: string[] = ['new', 'pending', 'waiting', 'running'];
-
 const ScrollContainer = styled.div`
   overflow: auto;
   backgroundcolor: var(--pf-global--BackgroundColor--100);
   font-size: var(--pf-global--FontSize--sm);
-  border-block: 1px solid var(--pf-global--BorderColor--100);
+  border-bottom: 1px solid var(--pf-global--BorderColor--100);
 `;
 
 interface IJobOutputEventsProps {
   job: Job;
+  reloadJob: () => void;
   toolbarFilters: IToolbarFilter[];
-  filters: Record<string, string[]>;
+  filterState: IFilterState;
+  isFollowModeEnabled: boolean;
+  setIsFollowModeEnabled: (isFollowModeEnabled: boolean) => void;
 }
 
 export function JobOutputEvents(props: IJobOutputEventsProps) {
-  const { t } = useTranslation();
-  const { job, toolbarFilters, filters } = props;
-  // TODO set job status on ws event change
-  const isJobRunning = !job.status || runningJobTypes.includes(job.status);
-  const isFiltered = Object.keys(filters).length > 0;
+  const {
+    job,
+    reloadJob,
+    toolbarFilters,
+    filterState,
+    isFollowModeEnabled,
+    setIsFollowModeEnabled,
+  } = props;
+  const isFiltered = Object.keys(filterState).length > 0;
 
   const { childrenSummary, isFlatMode } = useJobOutputChildrenSummary(
     job,
-    isJobRunning || isFiltered
+    isJobRunning(job.status) || isFiltered
   );
   const { jobEventCount, getJobOutputEvent, queryJobOutputEvent } = useJobOutput(
     job,
+    reloadJob,
     toolbarFilters,
-    filters,
+    filterState,
     50
   );
 
@@ -95,27 +102,26 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
   const estimatedMaxLines = jobOutputRows.length * 5;
   const outputLineChars = String(estimatedMaxLines).length;
 
+  const { scrollToTop, scrollToBottom, scrollPageDown, scrollPageUp } = useScrollControls(
+    containerRef,
+    isFollowModeEnabled,
+    setIsFollowModeEnabled,
+    jobOutputRows.length,
+    isJobRunning(job.status)
+  );
+
   return (
     <>
-      {/* <PageSection variant="light">
-        <LabelGroup numLabels={999}>
-          <Label variant="outline">Event Count: {jobEventCount}</Label>
-          <Label variant="outline">Row Count: {jobOutputRows.length}</Label>
-          <Label variant="outline">Visible Row Count: {visibleItems.length}</Label>
-          <Label variant="outline">Before Spacing: {beforeRowsHeight}px</Label>
-          <Label variant="outline">After Spacing: {afterRowsHeight}px</Label>
-        </LabelGroup>
-      </PageSection>
-      <Divider /> */}
-      {isJobRunning ? (
-        <Banner variant="warning">
-          <p>
-            {t(
-              'This job is currently running. Live event streaming has not been added yet to the tech preview.'
-            )}
-          </p>
-        </Banner>
-      ) : null}
+      <PageControls
+        onScrollFirst={scrollToTop}
+        onScrollLast={scrollToBottom}
+        onScrollNext={scrollPageDown}
+        onScrollPrevious={scrollPageUp}
+        toggleExpandCollapseAll={() => null}
+        isFlatMode={isFlatMode}
+        isTemplateJob={job.type === 'job'}
+        isAllCollapsed={false}
+      />
       <ScrollContainer
         ref={containerRef}
         tabIndex={0} // eslint-disable-line jsx-a11y/no-noninteractive-tabindex

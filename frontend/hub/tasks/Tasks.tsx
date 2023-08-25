@@ -11,12 +11,13 @@ import {
   PageLayout,
   PageTable,
   TextCell,
+  ToolbarFilterType,
 } from '../../../framework';
 import { RouteObj } from '../../Routes';
 import { StatusCell } from '../../common/Status';
+import { parsePulpIDFromURL, pulpAPI, pulpHrefKeyFn } from '../api/utils';
 import { usePulpView } from '../usePulpView';
 import { Task } from './Task';
-import { parsePulpIDFromURL, pulpAPI, pulpHrefKeyFn } from '../api';
 
 export function Tasks() {
   const { t } = useTranslation();
@@ -113,14 +114,14 @@ export function useTaskFilters() {
       {
         key: 'name',
         label: t('Task name'),
-        type: 'string',
+        type: ToolbarFilterType.Text,
         query: 'name__contains',
         comparison: 'contains',
       },
       {
         key: 'status',
         label: t('Status'),
-        type: 'string',
+        type: ToolbarFilterType.Text,
         query: 'state',
         comparison: 'equals',
       },

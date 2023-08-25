@@ -1,6 +1,7 @@
 import '@cypress/code-coverage/support';
 import { SetRequired } from 'type-fest';
 import { randomString } from '../../framework/utils/random-string';
+import { AwxItemsResponse } from '../../frontend/awx/common/AwxItemsResponse';
 import { AwxHost } from '../../frontend/awx/interfaces/AwxHost';
 import { AwxToken } from '../../frontend/awx/interfaces/AwxToken';
 import { Credential } from '../../frontend/awx/interfaces/Credential';
@@ -14,7 +15,6 @@ import { Project } from '../../frontend/awx/interfaces/Project';
 import { Schedule } from '../../frontend/awx/interfaces/Schedule';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
-import { ItemsResponse } from '../../frontend/common/crud/Data';
 import './auth';
 import './commands';
 import './rest-commands';
@@ -95,17 +95,6 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('selectToolbarFilterType', (text: string | RegExp) => {
-  cy.get('#filter-form-group').within(() => {
-    cy.get('.pf-c-select button').as('filterTypeBtn');
-    cy.get('@filterTypeBtn').should('not.be.disabled');
-    cy.get('@filterTypeBtn').click();
-    cy.get('.pf-c-select__menu').within(() => {
-      cy.clickButton(text);
-    });
-  });
-});
-
 Cypress.Commands.add('setTablePageSize', (text: '10' | '20' | '50' | '100') => {
   cy.get('.pf-c-pagination')
     .first()
@@ -115,18 +104,6 @@ Cypress.Commands.add('setTablePageSize', (text: '10' | '20' | '50' | '100') => {
         cy.contains('button', `${text} per page`).click();
       });
     });
-});
-
-Cypress.Commands.add('filterTableByText', (text: string) => {
-  cy.get('#filter-input').within(() => {
-    cy.get('input').clear().type(text, { delay: 0 });
-  });
-  cy.get('[aria-label="apply filter"]').click();
-});
-
-Cypress.Commands.add('filterTableByTypeAndText', (filterLabel: string | RegExp, text: string) => {
-  cy.selectToolbarFilterType(filterLabel);
-  cy.filterTableByText(text);
 });
 
 Cypress.Commands.add('clickLink', (label: string | RegExp) => {
@@ -387,7 +364,7 @@ Cypress.Commands.add(
 
 Cypress.Commands.add('awxRequestPost', function awxRequestPost<
   RequestBodyT extends Cypress.RequestBody,
-  ResponseBodyT = RequestBodyT
+  ResponseBodyT = RequestBodyT,
 >(url: string, body: RequestBodyT) {
   cy.awxRequest<ResponseBodyT>('POST', url, body).then((response) => response.body);
 });
@@ -674,7 +651,7 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add('getAwxJobTemplateByName', (awxJobTemplateName: string) => {
-  cy.awxRequestGet<ItemsResponse<JobTemplate>>(
+  cy.awxRequestGet<AwxItemsResponse<JobTemplate>>(
     `/api/v2/job_templates/?name=${awxJobTemplateName}`
   ).then((result) => {
     cy.log('RESULT RESULT', result);

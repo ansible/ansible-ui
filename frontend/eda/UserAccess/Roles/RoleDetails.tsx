@@ -1,3 +1,11 @@
+import {
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  Label,
+  LabelGroup,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
@@ -12,23 +20,13 @@ import { RouteObj } from '../../../Routes';
 import { useGet } from '../../../common/crud/useGet';
 import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
 import { EdaRole } from '../../interfaces/EdaRole';
-import {
-  DescriptionList,
-  DescriptionListDescription,
-  DescriptionListGroup,
-  DescriptionListTerm,
-  Label,
-  LabelGroup,
-} from '@patternfly/react-core';
 
 export function RoleDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { data: role } = useGet<EdaRole>(
-    `${API_PREFIX}/roles/${params.id ?? ''}/`,
-    undefined,
-    SWR_REFRESH_INTERVAL
-  );
+  const { data: role } = useGet<EdaRole>(`${API_PREFIX}/roles/${params.id ?? ''}/`, undefined, {
+    refreshInterval: SWR_REFRESH_INTERVAL,
+  });
   const ResourceTypes = {
     activation: t('Activation'),
     activation_instance: t('Activation Instance'),
@@ -80,9 +78,7 @@ export function RoleDetails() {
                   <DescriptionListDescription>
                     {!!permission?.action.length && (
                       <LabelGroup numLabels={5}>
-                        {permission?.action.map((action) => (
-                          <Label key={action}>{action}</Label>
-                        ))}
+                        {permission?.action.map((action) => <Label key={action}>{action}</Label>)}
                       </LabelGroup>
                     )}
                   </DescriptionListDescription>

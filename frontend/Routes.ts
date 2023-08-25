@@ -9,6 +9,7 @@ const awxRoutePrefix: RouteType = process.env.AWX_ROUTE_PREFIX
 const hubRoutePrefix: RouteType = process.env.HUB_ROUTE_PREFIX
   ? (process.env.HUB_ROUTE_PREFIX as RouteType)
   : '/hub';
+
 const edaRoutePrefix: RouteType = process.env.EDA_ROUTE_PREFIX
   ? (process.env.EDA_ROUTE_PREFIX as RouteType)
   : '/eda';
@@ -28,6 +29,7 @@ export const RouteObj = {
   EditSchedule: `${awxRoutePrefix}/:resource_type/:resource_id/schedules/:schedule_id/edit`,
   ScheduleDetails: `${awxRoutePrefix}/:resource_type/:resource_id/schedules/:schedule_id/details`,
   CreateSchedule: `${awxRoutePrefix}/schedules/create`,
+
   ActivityStream: `${awxRoutePrefix}/activity_stream`,
   WorkflowApprovals: `${awxRoutePrefix}/workflow_approvals`,
   WorkflowApprovalPage: `${awxRoutePrefix}/workflow_approvals/:id/*`,
@@ -37,21 +39,28 @@ export const RouteObj = {
   // Resources
   Templates: `${awxRoutePrefix}/templates`,
   JobTemplatePage: `${awxRoutePrefix}/job_template/:id/*`,
-  JobTemplateScheduleDetails: `${awxRoutePrefix}/job_template/:id/schedules/:schedule_id/details`,
-  JobTemplateSchedules: `${awxRoutePrefix}/job_template/:id/schedules`,
-  JobTemplateSchedulesCreate: `${awxRoutePrefix}/job_template/:id/schedules/create`,
   JobTemplateDetails: `${awxRoutePrefix}/job_template/:id/details`,
   JobTemplateAccess: `${awxRoutePrefix}/job_template/:id/access`,
   JobTemplateNotifications: `${awxRoutePrefix}/job_template/:id/notifications`,
   JobTemplateJobs: `${awxRoutePrefix}/job_template/:id/jobs`,
   JobTemplateSurvey: `${awxRoutePrefix}/job_template/:id/survey`,
+
+  JobTemplateSchedules: `${awxRoutePrefix}/job_template/:id/schedules/`,
+  JobTemplateSchedulePage: `${awxRoutePrefix}/job_template/:id/schedules/:schedule_id/*`,
+  JobTemplateScheduleDetails: `${awxRoutePrefix}/job_template/:id/schedules/:schedule_id/details`,
+  JobTemplateScheduleRules: `${awxRoutePrefix}/job_template/:id/schedules/:schedule_id/rules`,
+  JobTemplateCreateScheduleRules: `${awxRoutePrefix}/job_template/:id/schedules/:schedule_id/rules/create`,
+  JobTemplateSchedulesCreate: `${awxRoutePrefix}/job_template/:id/schedules/create`,
   WorkflowJobTemplatePage: `${awxRoutePrefix}/workflow_job_template/:id/*`,
   WorkflowJobTemplateDetails: `${awxRoutePrefix}/workflow_job_template/:id/details`,
   WorkflowJobTemplateAccess: `${awxRoutePrefix}/workflow_job_template/:id/access`,
   WorkflowJobTemplateNotifications: `${awxRoutePrefix}/workflow_job_template/:id/notifications`,
   WorkflowJobTemplateSchedules: `${awxRoutePrefix}/workflow_job_template/:id/schedules`,
-  WorkflowJobTemplateScheduleDetails: `${awxRoutePrefix}/workflow_job_template/:id/schedules/:schedule_id/details`,
+  WorkflowJobTemplateSchedulePage: `${awxRoutePrefix}/workflow_job_template/:id/schedules/:schedule_id/*`,
   WorkflowJobTemplateSchedulesCreate: `${awxRoutePrefix}/workflow_job_template/:id/schedules/create`,
+  WorkflowJobTemplateScheduleDetails: `${awxRoutePrefix}/workflow_job_template/:id/schedules/:schedule_id/details`,
+  WorkflowJobTemplateCreateScheduleRules: `${awxRoutePrefix}/workflow_job_template/:id/schedules/:schedule_id/rules/create`,
+  WorkflowJobTemplateScheduleRules: `${awxRoutePrefix}/workflow_job_template/:id/schedules/:schedule_id/rules`,
   WorkflowJobTemplateJobs: `${awxRoutePrefix}/workflow_job_template/:id/jobs`,
   WorkflowJobTemplateSurvey: `${awxRoutePrefix}/workflow_job_template/:id/survey`,
   WorkflowJobTemplateVisualizer: `${awxRoutePrefix}/workflow_job_template/:id/visualizer`,
@@ -74,8 +83,11 @@ export const RouteObj = {
   ProjectTemplates: `${awxRoutePrefix}/projects/:id/templates`,
   ProjectNotifications: `${awxRoutePrefix}/projects/:id/notifications`,
   ProjectSchedules: `${awxRoutePrefix}/projects/:id/schedules`,
-  ProjectScheduleDetails: `${awxRoutePrefix}/projects/:id/schedules/:schedule_id/details`,
+  ProjectSchedulePage: `${awxRoutePrefix}/projects/:id/schedules/:schedule_id/*`,
   ProjectSchedulesCreate: `${awxRoutePrefix}/projects/:id/schedules/create`,
+  ProjectScheduleDetails: `${awxRoutePrefix}/projects/:id/schedules/:schedule_id/details`,
+  ProjectCreateScheduleRules: `${awxRoutePrefix}/project/:id/schedules/:schedule_id/rules/create`,
+  ProjectScheduleRules: `${awxRoutePrefix}/project/:id/schedules/:schedule_id/rules`,
   CreateProject: `${awxRoutePrefix}/projects/create`,
   EditProject: `${awxRoutePrefix}/projects/:id/edit`,
 
@@ -86,10 +98,14 @@ export const RouteObj = {
   InventoryGroups: `${awxRoutePrefix}/inventories/:inventory_type/:id/groups`,
   InventoryHosts: `${awxRoutePrefix}/inventories/:inventory_type/:id/hosts`,
   InventorySources: `${awxRoutePrefix}/inventories/:inventory_type/:id/sources`,
-  InventorySourcesDetails: `${awxRoutePrefix}/inventories/inventory/:id/sources/:source_id/details`,
+  InventorySourcesPage: `${awxRoutePrefix}/inventories/:inventory_type/:id/sources/:source_id/*`,
+  InventorySourcesDetails: `${awxRoutePrefix}/inventories/:inventory_type/:id/sources/:source_id/details`,
+  InventorySourceSchedulesCreate: `${awxRoutePrefix}/inventories/:inventory_type/:id/sources/:source_id/schedules/create`,
   InventorySourceSchedules: `${awxRoutePrefix}/inventories/:inventory_type/:id/sources/:source_id/schedules`,
+  InventorySourceSchedulePage: `${awxRoutePrefix}/inventories/:inventory_type/:id/sources/:source_id/schedules/:schedule_id/*`,
   InventorySourceScheduleDetails: `${awxRoutePrefix}/inventories/inventory/:id/sources/:source_id/schedules/:schedule_id/details`,
-  InventorySourceSchedulesCreate: `${awxRoutePrefix}/inventories/inventory/:id/sources/:source_id/schedules/create`,
+  InventorySourceCreateScheduleRules: `${awxRoutePrefix}/inventories/inventory/:id/sources/:source_id/schedules/:schedule_id/rules/create`,
+  InventorySourceScheduleRules: `${awxRoutePrefix}/inventories/inventory/:id/sources/:source_id/schedules/:schedule_id/rules`,
   InventoryJobs: `${awxRoutePrefix}/inventories/:inventory_type/:id/jobs`,
   InventoryJobTemplates: `${awxRoutePrefix}/inventories/:inventory_type/:id/job_templates`,
   CreateInventory: `${awxRoutePrefix}/inventories/create`,
@@ -149,6 +165,7 @@ export const RouteObj = {
   ManagementJobs: `${awxRoutePrefix}/management_jobs`,
   ManagementJobPage: `${awxRoutePrefix}/management_jobs/:id/*`,
   ManagementJobSchedules: `${awxRoutePrefix}/management_jobs/:id/schedules`,
+  ManagementJobSchedulesDetails: `${awxRoutePrefix}/management_jobs/:id/schedules/:schedule_id/details`,
   ManagementJobNotifications: `${awxRoutePrefix}/management_jobs/:id/notifications`,
 
   InstanceGroups: `${awxRoutePrefix}/instance-groups`,
@@ -185,7 +202,7 @@ export const RouteObj = {
 
   HubDashboard: `${hubRoutePrefix}/dashboard`,
   Collections: `${hubRoutePrefix}/collections`,
-  CollectionDetails: `${hubRoutePrefix}/collections/details/:id`,
+  CollectionDetails: `${hubRoutePrefix}/collections/details/`,
   UploadCollection: `${hubRoutePrefix}/collections/upload`,
 
   Repositories: `${hubRoutePrefix}/repositories`,
@@ -202,6 +219,9 @@ export const RouteObj = {
 
   HubExecutionEnvironments: `${hubRoutePrefix}/execution-environments`,
   HubExecutionEnvironmentDetails: `${hubRoutePrefix}/execution-environments/details/:id`,
+
+  Remotes: `${hubRoutePrefix}/remotes`,
+  CreateRemotes: `${hubRoutePrefix}/remotes/create`,
 
   RemoteRegistries: `${hubRoutePrefix}/remote-registries`,
 

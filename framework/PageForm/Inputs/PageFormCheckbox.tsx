@@ -3,7 +3,7 @@ import { Controller, FieldPath, FieldValues, useFormContext, Validate } from 're
 
 export type PageFormCheckboxProps<
   TFieldValues extends FieldValues = FieldValues,
-  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 > = {
   id?: string;
   name: TFieldName;
@@ -13,7 +13,7 @@ export type PageFormCheckboxProps<
 /** PatternFly Checkbox wrapper for use with react-hook-form */
 export function PageFormCheckbox<
   TFieldValues extends FieldValues = FieldValues,
-  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >(props: PageFormCheckboxProps<TFieldValues, TFieldName>) {
   const { name, readOnly, validate, ...rest } = props;
   const {

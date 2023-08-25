@@ -16,10 +16,11 @@ export function useIdColumn<T extends { name: string; id: number }>() {
     () => ({
       header: t('Id'),
       cell: (team) => team.id,
-      enabled: false,
       minWidth: 0,
+      table: ColumnTableOption.Hidden,
       card: 'hidden',
       list: 'hidden',
+      modal: ColumnModalOption.Hidden,
     }),
     [t]
   );
@@ -27,7 +28,7 @@ export function useIdColumn<T extends { name: string; id: number }>() {
 }
 
 export function useNameColumn<
-  T extends { name?: string; hostname?: string; id: number }
+  T extends { name?: string; hostname?: string; id: number },
 >(options?: {
   header?: string;
   url?: string;
@@ -66,8 +67,9 @@ export function useDescriptionColumn<T extends { description?: string | null | u
       header: t('Description'),
       type: 'description',
       value: (item) => item.description,
-      list: 'secondary',
       table: ColumnTableOption.Description,
+      list: 'description',
+      card: 'description',
       modal: ColumnModalOption.Hidden,
     }),
     [t]

@@ -12,7 +12,7 @@ import { ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { PageTable } from '../PageTable/PageTable';
-import { ITableColumn } from '../PageTable/PageTableColumn';
+import { ITableColumn, useVisibleModalColumns } from '../PageTable/PageTableColumn';
 import { usePaged } from '../PageTable/useTableItems';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { compareStrings } from '../utils/compare';
@@ -105,7 +105,7 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
     return items;
   }, [items, isItemNonActionable]);
 
-  const { paged, page, perPage, setPage, setPerPage } = usePaged(sortedItems);
+  const pagination = usePaged(sortedItems);
   const [confirmed, setConfirmed] = useState(!confirmText);
   /**
    * If there are non-actionable rows, the first column will contain exclamation icons
@@ -140,6 +140,8 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
     }
     return items;
   }, [isItemNonActionable, items]);
+
+  const modalColumns = useVisibleModalColumns(columnsForConfirmation);
 
   return (
     <Modal
@@ -178,14 +180,11 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
               ))}
             <PageTable<T>
               key="items"
-              pageItems={paged}
+              pageItems={pagination.paged}
               itemCount={items.length}
-              tableColumns={columnsForConfirmation}
+              tableColumns={modalColumns}
               keyFn={keyFn}
-              page={page}
-              perPage={perPage}
-              setPage={setPage}
-              setPerPage={setPerPage}
+              pagination={pagination}
               compact
               errorStateTitle="Error"
               emptyStateTitle="No items"

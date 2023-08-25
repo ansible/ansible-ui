@@ -3,13 +3,13 @@ import { DropdownPosition } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { PageActions, PageHeader, PageLayout } from '../../../../../framework';
-import { RoutedTabs, RoutedTab, PageBackTab } from '../../../../common/RoutedTabs';
-import { useGetItem } from '../../../../common/crud/useGetItem';
 import { RouteObj } from '../../../../Routes';
+import { PageNotImplemented } from '../../../../common/PageNotImplemented';
+import { PageBackTab, RoutedTab, RoutedTabs } from '../../../../common/RoutedTabs';
+import { useGetItem } from '../../../../common/crud/useGet';
 import { Credential } from '../../../interfaces/Credential';
 import { useCredentialActions } from '../hooks/useCredentialActions';
 import { CredentialDetails } from './CredentialDetails';
-import { PageNotImplemented } from '../../../../common/PageNotImplemented';
 
 export function CredentialPage() {
   const { t } = useTranslation();

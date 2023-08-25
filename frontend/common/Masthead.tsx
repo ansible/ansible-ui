@@ -35,24 +35,19 @@ import { Children, ReactNode, Suspense, useCallback, useLayoutEffect, useState }
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import useSWR, { mutate } from 'swr';
-import { useBreakpoint } from '../../framework';
-import { usePageNavSideBar } from '../../framework/PageNav/PageNavSidebar';
-import { useSettingsDialog } from '../../framework/Settings';
+import { mutate } from 'swr';
+import { useBreakpoint, usePageNavSideBar, useSettingsDialog } from '../../framework';
 import { RouteObj } from '../Routes';
 import AwxIcon from '../assets/AWX.svg';
 import EdaIcon from '../assets/EDA.svg';
-import { useAutomationServers } from '../automation-servers/contexts/AutomationServerProvider';
-import { AutomationServerType } from '../automation-servers/interfaces/AutomationServerType';
+import { AutomationServerType } from '../automation-servers/AutomationServer';
+import { useActiveAutomationServer } from '../automation-servers/AutomationServersProvider';
 import { useAwxConfig } from '../awx/common/useAwxConfig';
 import getDocsBaseUrl from '../awx/common/util/getDocsBaseUrl';
 import { API_PREFIX } from '../eda/constants';
 import { useAnsibleAboutModal } from './AboutModal';
-import { swrOptions, useFetcher } from './crud/Data';
-import { postRequest } from './crud/usePostRequest';
-import { shouldShowAutmationServers } from './should-show-autmation-servers';
+import { postRequest } from './crud/Data';
 import { useActiveUser } from './useActiveUser';
-import { EdaUser } from '../eda/interfaces/EdaUser';
 
 const MastheadBrandDiv = styled.div`
   display: flex;
@@ -82,7 +77,9 @@ const ToolbarSpan = styled.span`
 function isEdaServer(
   server: { type: AutomationServerType; name: string; url: string } | undefined
 ): boolean {
-  return (server?.type && server.type === AutomationServerType.EDA) || process.env.EDA === 'true';
+  return (
+    (server?.type && server.type === AutomationServerType.EDA) || process.env.UI_MODE === 'EDA'
+  );
 }
 
 export function AnsibleMasthead(props: { hideLogin?: boolean }) {
@@ -94,7 +91,7 @@ export function AnsibleMasthead(props: { hideLogin?: boolean }) {
 
   const brand: string = process.env.BRAND ?? '';
   const product: string = process.env.PRODUCT ?? t('Ansible');
-  const { automationServer } = useAutomationServers();
+  const automationServer = useActiveAutomationServer();
   const config = useAwxConfig();
   const navBar = usePageNavSideBar();
 
@@ -111,7 +108,7 @@ export function AnsibleMasthead(props: { hideLogin?: boolean }) {
         <MastheadMain>
           <MastheadBrand>
             <MastheadBrandDiv>
-              {shouldShowAutmationServers().showAutomationServers ? (
+              {!process.env.UI_MODE ? (
                 <>
                   {automationServer?.type === AutomationServerType.EDA && <EdaIcon />}
                   {automationServer?.type === AutomationServerType.AWX && <AwxIcon />}
@@ -150,7 +147,19 @@ export function AnsibleMasthead(props: { hideLogin?: boolean }) {
           </MastheadBrand>
         </MastheadMain>
       )}
-      {!hideLogin && (
+      {hideLogin ? (
+        <MastheadContent style={{ marginLeft: 0, minHeight: isSmallOrLarger ? undefined : 0 }}>
+          {/* <Toolbar id="toolbar" isFullHeight isStatic> */}
+          <Toolbar id="toolbar" style={{ padding: 0 }}>
+            <ToolbarContent>
+              <ToolbarSpan />
+              <ToolbarItem>
+                <Button icon={<CogIcon />} variant={ButtonVariant.plain} onClick={openSettings} />
+              </ToolbarItem>
+            </ToolbarContent>
+          </Toolbar>
+        </MastheadContent>
+      ) : (
         <MastheadContent style={{ marginLeft: 0, minHeight: isSmallOrLarger ? undefined : 0 }}>
           <ToolbarSpan />
           {/* <Toolbar id="toolbar" isFullHeight isStatic> */}
@@ -289,28 +298,9 @@ function AccountDropdown() {
   );
 }
 
-export function EdaUserInfo() {
-  const fetcher = useFetcher();
-  const meResponse = useSWR<EdaUser>(`${API_PREFIX}/users/me/`, fetcher, swrOptions);
-  return meResponse?.data;
-}
-
-function UserInfo() {
-  const { automationServer } = useAutomationServers();
-  const fetcher = useFetcher();
-  const meResponse = useSWR<{ results: { username: string }[] }>(
-    automationServer ? '/api/v2/me/' : undefined,
-    fetcher,
-    swrOptions
-  );
-  return meResponse.data?.results?.[0];
-}
-
 function AccountDropdownInternal() {
   const isSmallOrLarger = useBreakpoint('sm');
-  const { automationServer } = useAutomationServers();
-  const edaActiveUser = isEdaServer(automationServer) ? EdaUserInfo() : undefined;
-  const userInfo = isEdaServer(automationServer) ? edaActiveUser : UserInfo();
+  const automationServer = useActiveAutomationServer();
   const history = useNavigate();
   const [open, setOpen] = useState(false);
   const onSelect = useCallback(() => {
@@ -334,7 +324,7 @@ function AccountDropdownInternal() {
             <FlexItem>
               <UserCircleIcon size="md" />
             </FlexItem>
-            {isSmallOrLarger && <FlexItem wrap="nowrap">{userInfo?.username}</FlexItem>}
+            {isSmallOrLarger && <FlexItem wrap="nowrap">{activeUser?.username}</FlexItem>}
           </Flex>
         </DropdownToggle>
       }
@@ -345,7 +335,7 @@ function AccountDropdownInternal() {
           key="user-details"
           onClick={() => {
             isEdaServer(automationServer)
-              ? history(edaActiveUser ? RouteObj.EdaMyDetails : RouteObj.EdaUsers)
+              ? history(activeUser ? RouteObj.EdaMyDetails : RouteObj.EdaUsers)
               : history(
                   activeUser
                     ? RouteObj.UserDetails.replace(':id', activeUser.id.toString())

@@ -4,7 +4,7 @@
     "module": "ES2020",
     "jsx": "react-jsx",
     "lib": ["ES2020", "DOM"],
-    "types": ["cypress", "cypress-react-selector"],
+    "types": ["cypress", "cypress-react-selector", "@4tw/cypress-drag-drop"],
     "allowSyntheticDefaultImports": true,
     "allowJs": true,
     "sourceMap": true,
@@ -30,9 +30,7 @@
     "frontend",
     "framework",
     "cypress",
-    "proxy",
-    "cypress.config.ts",
-    "cypress.eda.ts",
+    "*.config.ts",
     "cypress.d.ts",
     "i18next-parser.config.cjs"
   ]

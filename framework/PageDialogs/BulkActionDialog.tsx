@@ -11,7 +11,7 @@ import { CheckCircleIcon, ExclamationCircleIcon, PendingIcon } from '@patternfly
 import pLimit from 'p-limit';
 import { useCallback, useEffect, useState } from 'react';
 import { PageTable } from '../PageTable/PageTable';
-import { ITableColumn } from '../PageTable/PageTableColumn';
+import { ITableColumn, useVisibleModalColumns } from '../PageTable/PageTableColumn';
 import { usePaged } from '../PageTable/useTableItems';
 import { pfDanger, pfInfo, pfSuccess } from '../components/pfcolors';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
@@ -156,12 +156,15 @@ function BulkActionDialog<T extends object>(props: BulkActionDialogProps<T>) {
     void process();
   }, [abortController, actionFn, items, keyFn, onComplete, translations.errorText]);
 
-  const { paged, page, perPage, setPage, setPerPage } = usePaged(items);
+  const pagination = usePaged(items);
+
+  const modalColumns = useVisibleModalColumns(actionColumns);
 
   return (
     <Modal
       titleIconVariant={isDanger ? 'warning' : undefined}
       title={title}
+      aria-label={title}
       variant={ModalVariant.medium}
       isOpen
       onClose={() => {
@@ -195,10 +198,10 @@ function BulkActionDialog<T extends object>(props: BulkActionDialogProps<T>) {
         >
           <PageTable<T>
             key="status"
-            pageItems={[...paged]}
+            pageItems={[...pagination.paged]}
             itemCount={items.length}
             tableColumns={[
-              ...actionColumns,
+              ...modalColumns,
               {
                 header: 'Status',
                 cell: (item) => {
@@ -227,10 +230,7 @@ function BulkActionDialog<T extends object>(props: BulkActionDialogProps<T>) {
               },
             ]}
             keyFn={keyFn}
-            page={page}
-            perPage={perPage}
-            setPage={setPage}
-            setPerPage={setPerPage}
+            pagination={pagination}
             compact
             errorStateTitle=""
             emptyStateTitle="No items"

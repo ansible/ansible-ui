@@ -9,11 +9,11 @@ import {
 } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
 import { useGet } from '../../../common/crud/useGet';
+import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { useInvalidateCacheOnUnmount } from '../../../common/useInvalidateCache';
 import { API_PREFIX } from '../../constants';
 import { EdaRole } from '../../interfaces/EdaRole';
-import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 
 export function EditRole() {
   const { t } = useTranslation();

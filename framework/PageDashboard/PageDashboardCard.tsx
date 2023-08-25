@@ -135,6 +135,7 @@ export function PageDashboardCard(props: {
         gridRow: rowSpan ? `span ${rowSpan}` : undefined,
         minHeight,
         maxHeight: height,
+        maxWidth: '100%',
         ...props.style,
       }}
       isCompact={props.isCompact}

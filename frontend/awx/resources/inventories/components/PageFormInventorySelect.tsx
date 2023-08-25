@@ -1,14 +1,15 @@
 import { ReactElement, useCallback } from 'react';
 import { FieldPath, FieldValues } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { ItemsResponse, requestGet } from '../../../../common/crud/Data';
+import { PageFormAsyncSelect } from '../../../../../framework/PageForm/Inputs/PageFormAsyncSelect';
+import { requestGet } from '../../../../common/crud/Data';
 import { Inventory } from '../../../interfaces/Inventory';
 import { useSelectInventory } from '../hooks/useSelectInventory';
-import { PageFormAsyncSelect } from '../../../../../framework/PageForm/Inputs/PageFormAsyncSelect';
+import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 
 export function PageFormInventorySelect<
   TFieldValues extends FieldValues = FieldValues,
-  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >(props: {
   name: TFieldName;
   isRequired?: boolean;
@@ -18,7 +19,7 @@ export function PageFormInventorySelect<
   const { t } = useTranslation();
   const openSelectDialog = useSelectInventory();
   const query = useCallback(async () => {
-    const response = await requestGet<ItemsResponse<Inventory>>(
+    const response = await requestGet<AwxItemsResponse<Inventory>>(
       `/api/v2/inventories/?page_size=200`
     );
     return Promise.resolve({

@@ -5,14 +5,21 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
-import { Collection } from '../Collection';
+import { CollectionVersionSearch } from '../Collection';
 import { useDeleteCollections } from './useDeleteCollections';
+import { useDeprecateCollections } from './useDeprecateCollections';
+import { useDeleteCollectionsFromRepository } from './useDeleteCollectionsFromRepository';
+import { useHubContext } from './../../useHubContext';
 
-export function useCollectionsActions(callback: (collections: Collection[]) => void) {
+export function useCollectionsActions(callback: (collections: CollectionVersionSearch[]) => void) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const deleteCollections = useDeleteCollections(callback);
-  return useMemo<IPageAction<Collection>[]>(
+  const deleteCollectionsFromRepository = useDeleteCollectionsFromRepository(callback);
+  const deprecateCollections = useDeprecateCollections(callback);
+  const context = useHubContext();
+
+  return useMemo<IPageAction<CollectionVersionSearch>[]>(
     () => [
       {
         type: PageActionType.Button,
@@ -31,17 +38,31 @@ export function useCollectionsActions(callback: (collections: Collection[]) => v
         label: t('Delete selected collections'),
         onClick: deleteCollections,
         isDanger: true,
+        isDisabled: context.hasPermission('ansible.delete_collection')
+          ? ''
+          : t`You dont have rights to this operation`,
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
+        icon: TrashIcon,
+        label: t('Delete selected collections from repository'),
+        onClick: deleteCollectionsFromRepository,
+        isDanger: true,
+        isDisabled: context.hasPermission('ansible.delete_collection')
+          ? ''
+          : t`You dont have rights to this operation`,
       },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: BanIcon,
         label: t('Deprecate selected collections'),
-        onClick: () => {
-          /**/
+        onClick: (collections) => {
+          deprecateCollections(collections);
         },
       },
     ],
-    [t, navigate, deleteCollections]
+    [t, navigate, deleteCollections, deprecateCollections, deleteCollectionsFromRepository, context]
   );
 }

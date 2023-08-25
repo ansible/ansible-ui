@@ -2,85 +2,174 @@ import {
   Chart,
   ChartArea,
   ChartAxis,
+  ChartCursorContainerProps,
+  ChartLegend,
+  ChartLegendTooltip,
+  ChartLine,
+  ChartScatter,
   ChartStack,
-  ChartVoronoiContainer,
+  ChartVoronoiContainerProps,
+  createContainer,
 } from '@patternfly/react-charts';
 import { PageChartContainer } from './PageChartContainer';
 import './PageDashboardChart.css';
 
+const CursorVoronoiContainer = createContainer('voronoi', 'cursor') as React.FunctionComponent<
+  ChartVoronoiContainerProps & ChartCursorContainerProps
+>;
+
 export function PageDashboardChart(props: {
   groups: {
+    label?: string;
     color: string;
     values: {
       label: string;
       value: number;
     }[];
   }[];
+  // prevent y axis to show float values
+  onlyIntegerTicks?: boolean;
+  // minimal shown value
+  minDomain?: number | { x?: number; y?: number };
+  // label for x ax
+  yLabel?: string;
+  // label for y ax
+  xLabel?: string;
+  // prevents filtering of zero values
+  allowZero?: boolean;
+  /** variant of the chart */
+  variant?: 'stackedAreaChart' | 'lineChart';
 }) {
+  const { allowZero, xLabel, yLabel, minDomain, onlyIntegerTicks } = props;
   let { groups } = props;
-
-  groups = groups.filter((group) => {
-    for (const value of group.values) {
-      if (value.value !== 0) return true;
+  groups = allowZero
+    ? groups
+    : groups.filter((group) => {
+        for (const value of group.values) {
+          if (value.value !== 0) return true;
+        }
+        return false;
+      });
+  const legendData = groups
+    .filter((group) => !!group.label)
+    .map((group, index) => {
+      return {
+        childName: `${index}`, // Sync tooltip legend with the series associated with given chart name
+        name: group.label,
+        symbol: { fill: group.color, type: 'square' },
+      };
+    });
+  let paddingBottom = 60;
+  if (xLabel) {
+    if (legendData.length > 0) {
+      paddingBottom += 40;
+    } else {
+      paddingBottom += 16;
     }
-    return false;
-  });
+  } else if (legendData) paddingBottom += 12;
+
+  // edge case if all values are zero set maxDomain for y to 5 to make it look normal
+  const onlyZeros = !groups.find((group) => group.values.find((value) => value.value !== 0));
 
   return (
     <PageChartContainer className="page-chart">
       {(size) => (
         <Chart
-          padding={{ bottom: 60, left: 60, right: 40, top: 16 }}
+          name="ggg"
+          padding={{
+            bottom: paddingBottom,
+            left: 60 + (yLabel ? 19 : 0),
+            right: 40,
+            top: 8,
+          }}
           colorScale={groups.map((group) => group.color)}
-          width={size.width}
           height={size.height}
+          width={size.width}
+          minDomain={minDomain}
+          maxDomain={onlyZeros ? { y: 5 } : undefined}
+          legendPosition="bottom"
+          legendComponent={
+            legendData.length > 0 ? (
+              <ChartLegend data={legendData} orientation="horizontal" />
+            ) : undefined
+          }
           containerComponent={
-            <ChartVoronoiContainer
-              labels={(point: {
-                datum: {
-                  x: string | number;
-                  y: string | number;
-                  hosts_added?: string | number;
-                  hosts_deleted?: string | number;
-                };
-              }) => {
-                const datum = point.datum;
-                return yLabel == 'Unique hosts' && datum.hosts_added !== undefined
-                  ? `${datum.x} \n Subscription(s) consumed: ${datum.y} \n Hosts added: ${datum.hosts_added} \n Hosts deleted: ${datum.hosts_deleted}`
-                  : yLabel == 'Unique hosts' && datum.hosts_added == undefined
-                  ? `${datum.x} \n Subscription capacity: ${datum.y}`
-                  : `${datum.x}: ${datum.y}`;
-              }}
+            <CursorVoronoiContainer
+              cursorDimension="x"
+              labels={(point: { datum: { y: string | number } }) => point.datum.y.toString()}
+              labelComponent={
+                <ChartLegendTooltip
+                  title={(datum: { x: number | string }) => datum.x}
+                  legendData={legendData}
+                  cornerRadius={8}
+                />
+              }
+              mouseFollowTooltips
+              voronoiDimension="x"
+              voronoiPadding={50}
             />
           }
         >
+          <ChartAxis fixLabelOverlap label={xLabel} style={{ axisLabel: { fontSize: 16 } }} />
           <ChartAxis
-            fixLabelOverlap
-            // tickFormat={(date: string) => `${new Date(date).toLocaleDateString()}`}
-            //  tickFormat={(n) => `${Math.round(n)}`}
+            dependentAxis
+            showGrid
+            label={yLabel}
+            tickFormat={
+              onlyIntegerTicks
+                ? //eslint-disable-next-line @typescript-eslint/no-unsafe-return
+                  (t) => (Number.isInteger(t) ? t : '')
+                : undefined
+            }
+            style={{ axisLabel: { fontSize: 16 } }}
           />
-          <ChartAxis dependentAxis showGrid />
-          <ChartStack>
-            {groups.map((group, index) => (
-              <ChartArea
+          {props.variant === 'lineChart' &&
+            groups.map((group, index) => (
+              <ChartLine
                 key={index}
-                data={group.values.map((value) =>
-                  group.label == 'Subscriptions consumed'
-                    ? {
-                        x: value.label,
-                        y: value.value,
-                        hosts_added: value.hosts_added,
-                        hosts_deleted: value.hosts_deleted,
-                      }
-                    : {
-                        x: value.label,
-                        y: value.value,
-                      }
-                )}
+                name={index.toString()}
+                style={{ data: { strokeWidth: 3, stroke: group.color } }}
+                data={group.values.map((value) => ({ x: value.label, y: value.value }))}
                 interpolation="monotoneX"
               />
             ))}
-          </ChartStack>
+          {props.variant === 'lineChart' &&
+            groups.map((group, index) => (
+              <ChartScatter
+                key={'scatter-' + index}
+                name={'scatter-' + index}
+                data={group.values.map((value) => ({ x: value.label, y: value.value }))}
+                size={({ active }) => (active ? 6 : 3)}
+              />
+            ))}
+          {(!props.variant || props.variant === 'stackedAreaChart') && (
+            <ChartStack>
+              {groups.map((group, index) => (
+                <ChartArea
+                  key={index}
+                  name={index.toString()}
+                  data={group.values.map((value) => ({ x: value.label, y: value.value }))}
+                  interpolation="monotoneX"
+                  style={{ data: { strokeWidth: 2 } }}
+                />
+              ))}
+            </ChartStack>
+          )}
+          {(!props.variant || props.variant === 'stackedAreaChart') && (
+            <ChartStack>
+              {groups.map((group, index) => (
+                <ChartScatter
+                  key={'scatter-' + index}
+                  name={'scatter-' + index}
+                  data={group.values.map((value) => ({
+                    x: value.label,
+                    y: value.value,
+                  }))}
+                  size={({ active }) => (active ? 6 : 3)}
+                />
+              ))}
+            </ChartStack>
+          )}
         </Chart>
       )}
     </PageChartContainer>

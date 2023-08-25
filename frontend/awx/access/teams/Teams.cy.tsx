@@ -1,3 +1,4 @@
+import { ToolbarFilterType } from '../../../../framework';
 import * as useOptions from '../../../common/crud/useOptions';
 import { Teams } from './Teams';
 
@@ -24,9 +25,7 @@ describe('Teams.cy.ts', () => {
       cy.intercept('/api/v2/teams/?organization__name__icontains=Organization%201*').as(
         'orgFilterRequest'
       );
-      cy.hasTitle(/^Teams$/);
-      cy.contains('button.pf-c-select__toggle', /^Name$/).click();
-      cy.get('ul.pf-c-select__menu').within(() => {
+      cy.openToolbarFilterTypeSelect().within(() => {
         cy.contains(/^Name$/).should('be.visible');
         cy.contains(/^Organization$/).should('be.visible');
         cy.contains(/^Created by$/).should('be.visible');
@@ -47,7 +46,7 @@ describe('Teams.cy.ts', () => {
       cy.get('[type="checkbox"][id="select-all"]').check();
       cy.clickToolbarKebabAction(/^Delete selected teams$/);
       cy.contains(
-        '{{count}} of the selected teams cannot be deleted due to insufficient permissions.'
+        '1 of the selected teams cannot be deleted due to insufficient permissions.'
       ).should('be.visible');
     });
 
@@ -63,7 +62,7 @@ describe('Teams.cy.ts', () => {
           actions: {
             POST: {
               name: {
-                type: 'string',
+                type: ToolbarFilterType.Text,
                 required: true,
                 label: 'Name',
                 max_length: 512,
@@ -87,7 +86,7 @@ describe('Teams.cy.ts', () => {
           actions: {
             POST: {
               name: {
-                type: 'string',
+                type: ToolbarFilterType.Text,
                 required: true,
                 label: 'Name',
                 max_length: 512,

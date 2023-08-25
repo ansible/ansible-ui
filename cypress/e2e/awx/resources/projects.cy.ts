@@ -2,9 +2,9 @@
 /// <reference types="cypress" />
 
 import { randomString } from '../../../../framework/utils/random-string';
+import { AwxItemsResponse } from '../../../../frontend/awx/common/AwxItemsResponse';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
-import { ItemsResponse } from '../../../../frontend/common/crud/Data';
 
 describe('projects', () => {
   let organization: Organization;
@@ -21,7 +21,7 @@ describe('projects', () => {
   });
 
   after(() => {
-    cy.deleteAwxOrganization(organization).then(() => {
+    cy.deleteAwxOrganization(organization, { failOnStatusCode: false }).then(() => {
       /**
        * Deleting the organization does not delete the underlying projects.
        * So get all projects without an organization and delete them. Multiple test runs
@@ -29,7 +29,7 @@ describe('projects', () => {
        * This also cleans up projects that were syncing and could not be deleted by other runs,
        * making a self cleaning E2E system for the live server.
        */
-      cy.requestGet<ItemsResponse<Project>>(
+      cy.requestGet<AwxItemsResponse<Project>>(
         `/api/v2/projects/?page_size=100&organization=null`
       ).then((itemsResponse) => {
         for (const project of itemsResponse.results) {
@@ -66,7 +66,7 @@ describe('projects', () => {
     cy.navigateTo(/^Projects$/);
     cy.clickTableRow(project.name);
     cy.hasTitle(project.name);
-    cy.clickPageAction(/^Edit project$/);
+    cy.clickButton(/^Edit project$/);
     cy.hasTitle(/^Edit Project$/);
     cy.typeInputByLabel(/^Name$/, `${project.name} - edited`);
     cy.typeInputByLabel(/^Source Control Branch\/Tag\/Commit$/, 'foobar');
@@ -76,7 +76,7 @@ describe('projects', () => {
   });
   it('can edit a project from the project list row action', () => {
     cy.navigateTo(/^Projects$/);
-    cy.clickTableRowKebabAction(project.name, /^Edit project$/);
+    cy.clickTableRowActionIcon(project.name, 'Edit project');
     cy.hasTitle(/^Edit Project$/);
     cy.clickButton(/^Cancel$/);
     cy.hasTitle(/^Projects$/);

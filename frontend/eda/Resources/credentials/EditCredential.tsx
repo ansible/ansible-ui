@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
 import {
   PageForm,
-  PageFormSelectOption,
+  PageFormSelect,
   PageFormSubmitHandler,
   PageFormTextInput,
   PageHeader,
@@ -15,23 +15,24 @@ import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { API_PREFIX } from '../../constants';
 import { EdaCredential, EdaCredentialCreate } from '../../interfaces/EdaCredential';
+import { CredentialTypeEnum } from '../../interfaces/generated/eda-api';
 
 export function CredentialOptions(t: TFunction<'translation'>) {
   return [
     {
       label: t('GitHub personal access token'),
       description: t('GitHub personal access token'),
-      value: 'GitHub Personal Access Token',
+      value: CredentialTypeEnum.GitHubPersonalAccessToken,
     },
     {
       label: t('GitLab personal access token'),
       description: t('GitLab personal access token'),
-      value: 'GitLab Personal Access Token',
+      value: CredentialTypeEnum.GitLabPersonalAccessToken,
     },
     {
       label: t('Container registry'),
       description: t('Container registry token'),
-      value: 'Container Registry',
+      value: CredentialTypeEnum.ContainerRegistry,
     },
   ];
 }
@@ -63,7 +64,7 @@ function CredentialInputs() {
         placeholder={t('Enter description ')}
         maxLength={150}
       />
-      <PageFormSelectOption<EdaCredentialCreate>
+      <PageFormSelect<EdaCredentialCreate>
         name="credential_type"
         label={t('Credential type')}
         isRequired

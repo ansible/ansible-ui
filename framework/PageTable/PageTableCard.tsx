@@ -32,13 +32,22 @@ import {
   TableColumnCell,
 } from './PageTableColumn';
 
+export const Small = styled.small`
+  opacity: 0.7;
+`;
 export interface IPageTableCard {
   id: string | number;
   icon?: ReactNode;
   title: ReactNode;
+  iconAboveTitle?: boolean;
   subtitle?: ReactNode;
   cardBody: ReactNode;
-  labels?: { label: string; color?: LabelColor }[]; // TODO - disable/enable auto generated filters
+  labels?: {
+    label: string;
+    color?: LabelColor;
+    icon?: ReactNode;
+    variant?: 'outline' | 'filled' | undefined;
+  }[]; // TODO - disable/enable auto generated filters
   badge?: string;
   badgeColor?: LabelColor;
   badgeTooltip?: string;
@@ -52,6 +61,10 @@ const CardHeaderDiv = styled.div`
   display: flex;
   flex-wrap: nowrap;
   max-width: 100%;
+`;
+
+const CardIconDiv = styled.div`
+  margin-bottom: 16px;
 `;
 
 const CardTopDiv = styled.div`
@@ -77,14 +90,14 @@ const CardFooterLabelsDiv = styled.div`
   flex-grow: 1;
 `;
 
-const PageDetailDiv = styled.div`
+export const PageDetailDiv = styled.div`
   display: flex;
   gap: 16px;
   margin-top: 8px;
   flex-wrap: wrap;
 `;
 
-const ColumnsDiv = styled.div`
+export const ColumnsDiv = styled.div`
   display: flex;
   gap: 6px;
   align-items: baseline;
@@ -144,8 +157,15 @@ export function PageTableCard<T extends object>(props: {
       <CardHeader style={{ display: 'flex', flexWrap: 'nowrap', maxWidth: '100%' }}>
         <CardHeaderDiv>
           <CardTopDiv>
-            {card.icon && <IconWrapper size="xl">{card.icon}</IconWrapper>}
+            {card.iconAboveTitle
+              ? null
+              : card.icon && <IconWrapper size="xl">{card.icon}</IconWrapper>}
             <CardDiv>
+              {card.iconAboveTitle ? (
+                <CardIconDiv>
+                  {card.icon && <IconWrapper size="xl">{card.icon}</IconWrapper>}
+                </CardIconDiv>
+              ) : null}
               <CardTitle>
                 <Truncate content={card.title as string} />
               </CardTitle>
@@ -213,7 +233,12 @@ export function PageTableCard<T extends object>(props: {
               {card.labels && (
                 <LabelGroup numLabels={999}>
                   {card.labels.map((item) => (
-                    <Label key={item.label} color={item.color}>
+                    <Label
+                      key={item.label}
+                      color={item.color}
+                      icon={item.icon}
+                      variant={item.variant}
+                    >
                       <Truncate content={item.label} style={{ minWidth: 0 }} />
                     </Label>
                   ))}
@@ -245,6 +270,7 @@ export function useColumnsToTableCardFn<T extends object>(
     const cardColumns: ITableColumn<T>[] = [];
 
     for (const column of columns) {
+      if (column.card === 'hidden') continue;
       switch (column.type) {
         case 'description':
           if (!descriptionColumn) descriptionColumn = column;
@@ -265,8 +291,6 @@ export function useColumnsToTableCardFn<T extends object>(
               break;
             case 'description':
               descriptionColumn = column;
-              break;
-            case 'hidden':
               break;
             default:
               cardColumns.push(column);
@@ -310,7 +334,7 @@ export function useColumnsToTableCardFn<T extends object>(
           <CardBody>
             <DescriptionList isCompact>
               {hasDescription && descriptionColumn && (
-                <PageDetail key={descriptionColumn.id}>
+                <PageDetail key={descriptionColumn.id ?? descriptionColumn.header}>
                   {descriptionColumn.type === 'description' ? (
                     <div>{descriptionColumn.value(item)}</div>
                   ) : (
@@ -319,17 +343,17 @@ export function useColumnsToTableCardFn<T extends object>(
                 </PageDetail>
               )}
               {visibleCardColumns.map((column) => (
-                <PageDetail key={column.id} label={column.header}>
+                <PageDetail key={column.id ?? column.header} label={column.header}>
                   <TableColumnCell column={column} item={item} />
                 </PageDetail>
               ))}
               {countColumns.length > 0 && (
-                <PageDetail>
+                <PageDetail key="count-columns">
                   <PageDetailDiv>
                     {countColumns.map((column, i) => (
                       <ColumnsDiv key={i}>
                         <TableColumnCell column={column} item={item} />
-                        <small style={{ opacity: 0.7 }}>{column.header}</small>
+                        <Small>{column.header}</Small>
                       </ColumnsDiv>
                     ))}
                   </PageDetailDiv>

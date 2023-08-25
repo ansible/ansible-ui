@@ -3,14 +3,15 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 import useSWR from 'swr';
 import { ISelected, ITableColumn, IToolbarFilter, useSelected } from '../../framework';
 import { IView, useView } from '../../framework/useView';
-import { ItemsResponse, getItemKey, swrOptions, useFetcher } from '../common/crud/Data';
+import { AwxItemsResponse } from '../awx/common/AwxItemsResponse';
+import { getItemKey, swrOptions, useFetcher } from '../common/crud/Data';
 import { SWR_REFRESH_INTERVAL } from './constants';
 
 export type IEdaView<T extends { id: number | string }> = IView &
   ISelected<T> & {
     itemCount: number | undefined;
     pageItems: T[] | undefined;
-    refresh: () => Promise<ItemsResponse<T> | undefined>;
+    refresh: () => Promise<void>;
     selectItemsAndRefresh: (items: T[]) => void;
     unselectItemsAndRefresh: (items: T[]) => void;
     refreshing: boolean;
@@ -50,22 +51,22 @@ export function useEdaView<T extends { id: number | string }>(options: {
     defaultSortDirection = defaultSortColumn?.defaultSortDirection;
   }
 
-  const view = useView(
-    { sort: defaultSort, sortDirection: defaultSortDirection },
-    disableQueryString
-  );
+  const view = useView({
+    defaultValues: { sort: defaultSort, sortDirection: defaultSortDirection },
+    disableQueryString,
+  });
   const itemCountRef = useRef<{ itemCount: number | undefined }>({ itemCount: undefined });
 
-  const { page, perPage, sort, sortDirection, filters } = view;
+  const { page, perPage, sort, sortDirection, filterState } = view;
 
   let queryString = options?.queryParams ? `?${getQueryString(options.queryParams)}` : '';
 
-  if (filters) {
-    for (const key in filters) {
+  if (filterState) {
+    for (const key in filterState) {
       const toolbarFilter = toolbarFilters?.find((filter) => filter.key === key);
       if (toolbarFilter) {
-        const values = filters[key];
-        if (values.length > 0) {
+        const values = filterState[key];
+        if (values && values.length > 0) {
           queryString ? (queryString += '&') : (queryString += '?');
           if (values.length > 1) {
             queryString += values.map((value) => `or__${toolbarFilter.query}=${value}`).join('&');
@@ -94,20 +95,20 @@ export function useEdaView<T extends { id: number | string }>(options: {
 
   url += queryString;
   const fetcher = useFetcher();
-  const response = useSWR<ItemsResponse<T>>(url, fetcher, {
+  const response = useSWR<AwxItemsResponse<T>>(url, fetcher, {
     ...swrOptions,
     refreshInterval: SWR_REFRESH_INTERVAL,
   });
   const { data, mutate } = response;
   const [refreshing, setRefreshing] = useState(false);
-  const refresh = useCallback(() => {
+  const refresh = useCallback(async () => {
     setRefreshing(true);
-    return mutate().finally(() => {
+    await mutate().finally(() => {
       setRefreshing(false);
     });
   }, [mutate]);
 
-  useSWR<ItemsResponse<T>>(data?.next, fetcher, swrOptions);
+  useSWR<AwxItemsResponse<T>>(data?.next, fetcher, swrOptions);
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   let error: Error | undefined = response.error;

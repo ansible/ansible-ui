@@ -3,8 +3,10 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
-import { useOptions } from '../../../common/crud/useOptions';
 import { usePersistentFilters } from '../../../common/PersistentFilters';
+import { useOptions } from '../../../common/crud/useOptions';
+import { useAwxConfig } from '../../common/useAwxConfig';
+import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { Team } from '../../interfaces/Team';
 import { useAwxView } from '../../useAwxView';
@@ -13,8 +15,6 @@ import { useTeamActions } from './hooks/useTeamActions';
 import { useTeamToolbarActions } from './hooks/useTeamToolbarActions';
 import { useTeamsColumns } from './hooks/useTeamsColumns';
 import { useTeamsFilters } from './hooks/useTeamsFilters';
-import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
-import { useAwxConfig } from '../../common/useAwxConfig';
 
 export function Teams() {
   const { t } = useTranslation();
@@ -52,6 +52,7 @@ export function Teams() {
         navigation={<AccessNav active="teams" />}
       />
       <PageTable<Team>
+        id="awx-teams"
         toolbarFilters={toolbarFilters}
         toolbarActions={toolbarActions}
         tableColumns={tableColumns}

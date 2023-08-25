@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, TextCell } from '../../../../../framework';
-import { DateCell } from '../../../../../framework';
+import { DateCell, ITableColumn, TextCell } from '../../../../../framework';
 import { HostMetric } from '../../../interfaces/HostMetric';
 
 export function useHostMetricsColumns() {

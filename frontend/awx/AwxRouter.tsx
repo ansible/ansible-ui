@@ -17,47 +17,51 @@ import { CreateUser, EditUser } from './access/users/UserForm';
 import { UserPage } from './access/users/UserPage/UserPage';
 import { Users } from './access/users/Users';
 import { AddRolesToUser } from './access/users/components/AddRolesToUser';
+import { ApplicationPage } from './administration/applications/ApplicationPage/ApplicationPage';
+import { Applications } from './administration/applications/Applications';
+import { CredentialTypePage } from './administration/credential-types/CredentialTypePage/CredentialTypePage';
+import { CredentialTypes } from './administration/credential-types/CredentialTypes';
 import { ExecutionEnvironments } from './administration/execution-environments/ExecutionEnvironments';
 import { InstanceGroups } from './administration/instance-groups/InstanceGroups';
 import { EditInstance } from './administration/instances/EditInstance';
 import { InstanceDetails } from './administration/instances/InstanceDetails';
 import { Instances } from './administration/instances/Instances';
+import { ManagementJobPage } from './administration/management-jobs/ManagementJobPage/ManagementJobPage';
+import { ManagementJobs } from './administration/management-jobs/ManagementJobs';
+import { NotificationPage } from './administration/notifications/NotificationPage/NotificationPage';
+import { Notifications } from './administration/notifications/Notifications';
 import Reports from './analytics/Reports/Reports';
 import { AwxDashboard } from './dashboard/AwxDashboard';
 import { CreateCredential, EditCredential } from './resources/credentials/CredentialForm';
 import { CredentialPage } from './resources/credentials/CredentialPage/CredentialPage';
 import { Credentials } from './resources/credentials/Credentials';
+import { HostPage } from './resources/hosts/HostPage/HostPage';
 import { Hosts } from './resources/hosts/Hosts';
 import { Inventories } from './resources/inventories/Inventories';
 import { CreateInventory, EditInventory } from './resources/inventories/InventoryForm';
 import { InventoryPage } from './resources/inventories/InventoryPage/InventoryPage';
+import { CreateProject, EditProject } from './resources/projects/ProjectPage/ProjectForm';
 import { ProjectPage } from './resources/projects/ProjectPage/ProjectPage';
 import { Projects } from './resources/projects/Projects';
 import { CreateJobTemplate, EditJobTemplate } from './resources/templates/TemplateForm';
-import { CreateSchedule } from './views/schedules/ScheduleForm';
 import { TemplatePage } from './resources/templates/TemplatePage/TemplatePage';
-import { WorkflowJobTemplatePage } from './resources/templates/WorkflowJobTemplatePage/WorkflowJobTemplatePage';
 import { Templates } from './resources/templates/Templates';
+import { WorkflowJobTemplatePage } from './resources/templates/WorkflowJobTemplatePage/WorkflowJobTemplatePage';
 import Settings from './settings/Settings';
+import HostMetrics from './views/jobs/HostMetrics';
 import { JobPage } from './views/jobs/JobPage';
 import Jobs from './views/jobs/Jobs';
-import HostMetrics from './views/jobs/HostMetrics';
-import { CreateProject, EditProject } from './resources/projects/ProjectPage/ProjectForm';
+import { CreateSchedule } from './views/schedules/ScheduleForm';
+import { SchedulePage } from './views/schedules/SchedulePage/SchedulePage';
 import { Schedules } from './views/schedules/Schedules';
-import { HostPage } from './resources/hosts/HostPage/HostPage';
-import { CredentialTypePage } from './administration/credential-types/CredentialTypePage/CredentialTypePage';
-import { CredentialTypes } from './administration/credential-types/CredentialTypes';
-import { NotificationPage } from './administration/notifications/NotificationPage/NotificationPage';
-import { Notifications } from './administration/notifications/Notifications';
-import { ManagementJobPage } from './administration/management-jobs/ManagementJobPage/ManagementJobPage';
-import { ManagementJobs } from './administration/management-jobs/ManagementJobs';
-import { ApplicationPage } from './administration/applications/ApplicationPage/ApplicationPage';
-import { Applications } from './administration/applications/Applications';
+import { CreateScheduleRule } from './views/schedules/RuleForm';
+import { SystemSettings } from './interfaces/SystemSettings';
+import { useGet } from '../common/crud/useGet';
 import SubscriptionUsage from './analytics/subscription-usage/SubscriptionUsage';
 
 export function AwxRouter() {
   const RouteObjWithoutPrefix = useRoutesWithoutPrefix(RouteObj.AWX);
-
+  const { data } = useGet<SystemSettings>(`/api/v2/settings/system/`);
   return (
     <Suspense
       fallback={
@@ -74,11 +78,28 @@ export function AwxRouter() {
         {[
           RouteObjWithoutPrefix.JobTemplateSchedulesCreate,
           RouteObjWithoutPrefix.WorkflowJobTemplateSchedulesCreate,
+          RouteObjWithoutPrefix.InventorySourceSchedulesCreate,
           RouteObjWithoutPrefix.ProjectSchedulesCreate,
           RouteObjWithoutPrefix.CreateSchedule,
         ].map((path) => {
           return <Route path={path} key={path} element={<CreateSchedule />} />;
         })}
+        {[
+          RouteObjWithoutPrefix.JobTemplateCreateScheduleRules,
+          RouteObjWithoutPrefix.WorkflowJobTemplateCreateScheduleRules,
+          RouteObjWithoutPrefix.ProjectCreateScheduleRules,
+          RouteObjWithoutPrefix.InventorySourceCreateScheduleRules,
+        ].map((path) => (
+          <Route path={path} key={path} element={<CreateScheduleRule />} />
+        ))}
+        {[
+          RouteObjWithoutPrefix.JobTemplateSchedulePage,
+          RouteObjWithoutPrefix.WorkflowJobTemplateSchedulePage,
+          RouteObjWithoutPrefix.ProjectSchedulePage,
+          RouteObjWithoutPrefix.InventorySourceSchedulePage,
+        ].map((path) => (
+          <Route path={path} key={path} element={<SchedulePage />} />
+        ))}
         <Route path={RouteObjWithoutPrefix.Schedules} element={<Schedules />} />
         <Route path={RouteObjWithoutPrefix.ActivityStream} element={<PageNotImplemented />} />
         <Route path={RouteObjWithoutPrefix.WorkflowApprovals} element={<PageNotImplemented />} />
@@ -87,7 +108,17 @@ export function AwxRouter() {
           path={RouteObjWithoutPrefix.WorkflowApprovalDetails}
           element={<PageNotImplemented />}
         />
-        <Route path={RouteObjWithoutPrefix.HostMetrics} element={<HostMetrics />} />
+
+        <Route
+          path={RouteObjWithoutPrefix.HostMetrics}
+          element={
+            data?.SUBSCRIPTION_USAGE_MODEL === 'unique_managed_hosts' ? (
+              <HostMetrics />
+            ) : (
+              <PageNotFound />
+            )
+          }
+        />
         <Route path={RouteObjWithoutPrefix.Templates} element={<Templates />} />
         <Route path={RouteObjWithoutPrefix.JobTemplatePage} element={<TemplatePage />} />
         <Route

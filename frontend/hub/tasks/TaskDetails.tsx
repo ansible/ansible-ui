@@ -7,8 +7,8 @@ import { RouteObj } from '../../Routes';
 import { AwxError } from '../../awx/common/AwxError';
 import { StatusCell } from '../../common/Status';
 import { useGet } from '../../common/crud/useGet';
+import { pulpAPI } from '../api/utils';
 import { Task } from './Task';
-import { pulpAPI } from '../api';
 
 export function TaskDetails() {
   const { t } = useTranslation();

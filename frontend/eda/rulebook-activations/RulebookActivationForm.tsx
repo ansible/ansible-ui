@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import {
   PageForm,
   PageFormDataEditor,
-  PageFormSelectOption,
+  PageFormSelect,
   PageFormSubmitHandler,
   PageFormSwitch,
   PageFormTextInput,
@@ -76,7 +76,11 @@ export function CreateRulebookActivation() {
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
-        defaultValue={{ restart_policy: RestartPolicyEnum.Always, is_enabled: true, variables: '' }}
+        defaultValue={{
+          restart_policy: RestartPolicyEnum.OnFailure,
+          is_enabled: true,
+          variables: '',
+        }}
       >
         <RulebookActivationInputs />
       </PageForm>
@@ -140,7 +144,7 @@ export function RulebookActivationInputs() {
         id={'description'}
         placeholder={t('Enter description')}
       />
-      <PageFormSelectOption<IEdaRulebookActivationInputs>
+      <PageFormSelect<IEdaRulebookActivationInputs>
         name="project_id"
         label={t('Project')}
         placeholderText={t('Select project')}
@@ -172,7 +176,7 @@ export function RulebookActivationInputs() {
         labelHelp={t('Rulebooks will be shown according to the project selected.')}
         labelHelpTitle={t('Rulebook')}
       />
-      <PageFormSelectOption<IEdaRulebookActivationInputs>
+      <PageFormSelect<IEdaRulebookActivationInputs>
         name="decision_environment_id"
         label={t('Decision environment')}
         placeholderText={t('Select decision environment')}
@@ -189,7 +193,7 @@ export function RulebookActivationInputs() {
         labelHelp={t('Decision environments are a container image to run Ansible rulebooks.')}
         labelHelpTitle={t('Decision environment')}
       />
-      <PageFormSelectOption<IEdaRulebookActivationInputs>
+      <PageFormSelect<IEdaRulebookActivationInputs>
         name="restart_policy"
         label={t('Restart policy')}
         placeholderText={t('Select restart policy')}
@@ -213,7 +217,7 @@ export function RulebookActivationInputs() {
           isExpandable
           defaultExpanded={false}
           labelHelp={t(
-            'Pass extra command line variables to the playbook. This is the -e or --extra-vars command line parameter for ansible-playbook. Provide key/value pairs using either YAML or JSON. Refer to the documentation for example syntax.'
+            `The variables for the rulebook are in a JSON or YAML format. The content would be equivalent to the file passed through the '--vars' flag of ansible-rulebook command.`
           )}
           labelHelpTitle={t('Variables')}
         />

@@ -32,6 +32,7 @@ import { postRequest } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
 import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
 import { EdaProject, EdaProjectRead } from '../../interfaces/EdaProject';
+import { ImportStateEnum } from '../../interfaces/generated/eda-api';
 import { useDeleteProjects } from './hooks/useDeleteProjects';
 
 export function ProjectDetails() {
@@ -43,7 +44,7 @@ export function ProjectDetails() {
   const { data: project, refresh } = useGet<EdaProject>(
     `${API_PREFIX}/projects/${params.id ?? ''}/`,
     undefined,
-    SWR_REFRESH_INTERVAL
+    { refreshInterval: SWR_REFRESH_INTERVAL }
   );
   const syncProject = useCallback(
     (project: EdaProject) =>
@@ -75,7 +76,10 @@ export function ProjectDetails() {
         isPinned: true,
         label: t('Sync project'),
         isHidden: (project: EdaProject) => {
-          return project?.import_state === 'pending' || project?.import_state === 'running';
+          return (
+            project?.import_state === ImportStateEnum.Pending ||
+            project?.import_state === ImportStateEnum.Running
+          );
         },
         onClick: (project: EdaProject) => syncProject(project),
       },
@@ -112,9 +116,7 @@ export function ProjectDetails() {
         </PageDetail>
         <PageDetail
           label={t('SCM URL')}
-          helpText={t(
-            'A URL to a remote archive, such as a Github Release or a build artifact stored in Artifactory and unpacks it into the project path for use.'
-          )}
+          helpText={t('HTTP[S] protocol address of a repository, such as GitHub or GitLab.')}
         >
           {project?.url || ''}
         </PageDetail>

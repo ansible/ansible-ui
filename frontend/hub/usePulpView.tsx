@@ -9,10 +9,10 @@ import {
   useSelected,
   useView,
 } from '../../framework';
-import { QueryParams, getQueryString, serverlessURL } from './api';
 import { useFetcher } from '../common/crud/Data';
+import { QueryParams, getQueryString, serverlessURL } from './api/utils';
 
-interface PulpItemsResponse<T extends object> {
+export interface PulpItemsResponse<T extends object> {
   count: number;
   results: T[];
   next?: string;
@@ -22,7 +22,7 @@ export type IHubView<T extends object> = IView &
   ISelected<T> & {
     itemCount: number | undefined;
     pageItems: T[] | undefined;
-    refresh: () => Promise<PulpItemsResponse<T> | undefined>;
+    refresh: () => Promise<void>;
   };
 
 export function usePulpView<T extends object>({
@@ -32,6 +32,7 @@ export function usePulpView<T extends object>({
   tableColumns,
   disableQueryString,
   queryParams,
+  defaultSelection,
 }: {
   url: string;
   keyFn: (item: T) => string | number;
@@ -39,23 +40,25 @@ export function usePulpView<T extends object>({
   tableColumns?: ITableColumn<T>[];
   disableQueryString?: boolean;
   queryParams?: QueryParams;
+  /** The default items that should be initially selected. */
+  defaultSelection?: T[];
 }): IHubView<T> {
-  const view = useView(
-    { sort: tableColumns && tableColumns.length ? tableColumns[0].sort : undefined },
-    disableQueryString
-  );
+  const view = useView({
+    defaultValues: { sort: tableColumns && tableColumns.length ? tableColumns[0].sort : undefined },
+    disableQueryString,
+  });
   const itemCountRef = useRef<{ itemCount: number | undefined }>({ itemCount: undefined });
 
-  const { page, perPage, sort, sortDirection, filters } = view;
+  const { page, perPage, sort, sortDirection, filterState } = view;
 
   let queryString = queryParams ? `?${getQueryString(queryParams)}` : '';
 
-  if (filters) {
-    for (const key in filters) {
+  if (filterState) {
+    for (const key in filterState) {
       const toolbarFilter = toolbarFilters?.find((filter) => filter.key === key);
       if (toolbarFilter) {
-        const values = filters[key];
-        if (values.length > 0) {
+        const values = filterState[key];
+        if (values && values.length > 0) {
           queryString ? (queryString += '&') : (queryString += '?');
           if (values.length > 1) {
             queryString += values.map((value) => `or__${toolbarFilter.query}=${value}`).join('&');
@@ -89,7 +92,9 @@ export function usePulpView<T extends object>({
     refreshInterval: 30000,
   });
   const { data, mutate } = response;
-  const refresh = useCallback(() => mutate(), [mutate]);
+  const refresh = useCallback(async () => {
+    await mutate();
+  }, [mutate]);
 
   const nextPage = serverlessURL(data?.next);
   useSWR<PulpItemsResponse<T>>(nextPage, fetcher, {
@@ -105,7 +110,7 @@ export function usePulpView<T extends object>({
     }
   }
 
-  const selection = useSelected(data?.results ?? [], keyFn);
+  const selection = useSelected(data?.results ?? [], keyFn, defaultSelection);
 
   if (data?.count !== undefined) {
     itemCountRef.current.itemCount = data?.count;

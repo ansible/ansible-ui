@@ -10,9 +10,9 @@ import {
   useModifiedColumn,
   useNameColumn,
 } from '../../../../common/columns';
-import { Credential } from '../../../interfaces/Credential';
 import { useGet } from '../../../../common/crud/useGet';
-import { ItemsResponse } from '../../../../common/crud/Data';
+import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
+import { Credential } from '../../../interfaces/Credential';
 import { CredentialType } from '../../../interfaces/CredentialType';
 
 export function useCredentialsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
@@ -28,7 +28,7 @@ export function useCredentialsColumns(options?: { disableSort?: boolean; disable
   const descriptionColumn = useDescriptionColumn();
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);
-  const itemsResponse = useGet<ItemsResponse<CredentialType>>(
+  const itemsResponse = useGet<AwxItemsResponse<CredentialType>>(
     '/api/v2/credential_types/?page=1&page_size=200'
   );
   const credentialTypesMap: { [id: number]: string } = useMemo(() => {

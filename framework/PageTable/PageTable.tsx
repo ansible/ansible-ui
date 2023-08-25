@@ -44,13 +44,17 @@ import styled from 'styled-components';
 import { IPageAction, PageActionSelection } from '../PageActions/PageAction';
 import { PageActions } from '../PageActions/PageActions';
 import { PageBody } from '../PageBody';
-import { useColumnModal } from '../PageColumnModal';
 import { PageDetailsFromColumns } from '../PageDetails/PageDetailsFromColumns';
+import { PageTableViewType, PageTableViewTypeE } from '../PageToolbar/PageTableViewType';
+import { PageToolbar } from '../PageToolbar/PageToolbar';
+import { IFilterState, IToolbarFilter } from '../PageToolbar/PageToolbarFilter';
+import { usePageToolbarSortOptionsFromColumns } from '../PageToolbar/PageToolbarSort';
 import { useSettings } from '../Settings';
 import { EmptyStateError } from '../components/EmptyStateError';
 import { EmptyStateNoData } from '../components/EmptyStateNoData';
 import { Scrollable } from '../components/Scrollable';
 import { useBreakpoint } from '../components/useBreakPoint';
+import { useManageColumns } from '../components/useManageColumns';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { PagePagination } from './PagePagination';
 import './PageTable.css';
@@ -63,10 +67,6 @@ import {
   useVisibleTableColumns,
 } from './PageTableColumn';
 import { PageTableList } from './PageTableList';
-import { PageTableViewType, PageTableViewTypeE } from './PageToolbar/PageTableViewType';
-import { PageTableToolbar } from './PageToolbar/PageToolbar';
-import { IToolbarFilter } from './PageToolbar/PageToolbarFilter';
-import { usePageToolbarSortOptionsFromColumns } from './PageToolbar/PageToolbarSort';
 
 const ScrollDiv = styled.div`
   height: 100%;
@@ -86,10 +86,14 @@ const ColumnCellDiv = styled.div`
   padding-top: 5px;
   padding-bottom: 5px;
 `;
-
+export type IPaginationRelatedProps = {
+  page: number;
+  perPage: number;
+  setPage: (page: number) => void;
+  setPerPage: (perPage: number) => void;
+};
 export type PageTableProps<T extends object> = {
-  // TODO table id to save table settings
-  // id: string
+  id?: string;
 
   keyFn: (item: T) => string | number;
 
@@ -103,20 +107,15 @@ export type PageTableProps<T extends object> = {
   rowActions?: IPageAction<T>[];
 
   toolbarFilters?: IToolbarFilter[];
-  filters?: Record<string, string[]>;
-  setFilters?: Dispatch<SetStateAction<Record<string, string[]>>>;
+  filterState?: IFilterState;
+  setFilterState?: Dispatch<SetStateAction<IFilterState>>;
   clearAllFilters?: () => void;
-
+  pagination?: IPaginationRelatedProps;
   sort?: string;
   setSort?: (sort: string) => void;
   sortDirection?: 'asc' | 'desc';
   setSortDirection?: (sortDirection: 'asc' | 'desc') => void;
   compact?: boolean;
-
-  page: number;
-  perPage: number;
-  setPage: (page: number) => void;
-  setPerPage: (perPage: number) => void;
 
   /** Auto hide the pagination at the bottom of the table if there are less items than in a page. */
   autoHidePagination?: boolean;
@@ -162,10 +161,6 @@ export type PageTableProps<T extends object> = {
   disableListView?: boolean;
   disableCardView?: boolean;
 
-  /** Disables column management for the table. Used for tables in modals. */
-  // TODO - only enable column management on tables with id
-  disableColumnManagement?: boolean;
-
   // TODO remember user setting so that when they return to this table it uses their last setting
   defaultTableView?: PageTableViewType;
 
@@ -175,7 +170,7 @@ export type PageTableProps<T extends object> = {
    */
   // TODO - There is a request to add a user setting to allow users to turn off padding.
   disableBodyPadding?: boolean;
-
+  disablePagination?: boolean;
   /**
    * Default subtitle is used in list and card views as the default subtitle if there is no subtitle column.
    * Example is team card that has the work 'team' under the team name. Makes the card feel polished.
@@ -208,57 +203,16 @@ export type PageTableProps<T extends object> = {
  * ```
  */
 export function PageTable<T extends object>(props: PageTableProps<T>) {
-  const { toolbarActions, filters, error, itemCount, disableBodyPadding } = props;
+  const { id, toolbarActions, filterState, error, itemCount, disableBodyPadding, pagination } =
+    props;
 
-  const { openColumnModal, columnModal, managedColumns } = useColumnModal(props.tableColumns);
-  const tableColumns = useVisibleTableColumns(managedColumns);
-
-  const descriptionColumns = useDescriptionColumns(managedColumns);
-  const expandedRowColumns = useExpandedColumns(managedColumns);
-  const expandedRow = useMemo(() => {
-    const expandedRowFunctions: ((item: T) => ReactNode)[] = [];
-
-    if (descriptionColumns.length) {
-      for (const descriptionColumn of descriptionColumns) {
-        if ('value' in descriptionColumn) {
-          expandedRowFunctions.push((item) => {
-            const value = descriptionColumn.value?.(item);
-            if (value) {
-              return <div>{value}</div>;
-            }
-          });
-        } else {
-          expandedRowFunctions.push((item) => descriptionColumn.cell(item));
-        }
-      }
-    }
-
-    if (expandedRowColumns.length) {
-      expandedRowFunctions.push((item) => (
-        <PageDetailsFromColumns
-          item={item}
-          columns={expandedRowColumns}
-          disablePadding
-          numberOfColumns="multiple"
-        />
-      ));
-    }
-
-    if (props.expandedRow) {
-      expandedRowFunctions.push(props.expandedRow);
-    }
-
-    if (expandedRowFunctions.length === 0) return undefined;
-    if (expandedRowFunctions.length === 1) return expandedRowFunctions[0];
-
-    const newExpandedRow = (item: T) => (
-      <Stack hasGutter style={{ gap: 12 }}>
-        {expandedRowFunctions.map((fn) => fn(item))}
-      </Stack>
-    );
-
-    return newExpandedRow;
-  }, [descriptionColumns, expandedRowColumns, props.expandedRow]);
+  const { openColumnManagement, managedColumns } = useManageColumns<T>(
+    (id ?? '') + '-columns',
+    props.tableColumns,
+    props.disableTableView,
+    props.disableListView,
+    props.disableCardView
+  );
 
   const showSelect =
     props.showSelect ||
@@ -270,20 +224,39 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
   const hasListViewType = !props.disableListView;
   // const hasCardViewType = !props.disableCardView;
 
-  const [viewType, setViewType] = useState<PageTableViewType>(
-    () =>
+  const [viewType, setViewTypeState] = useState<PageTableViewType>(() => {
+    const value = props.id ? localStorage.getItem(props.id + '-view') : undefined;
+    switch (value) {
+      case 'table':
+        return PageTableViewTypeE.Table;
+      case 'list':
+        return PageTableViewTypeE.List;
+      case 'cards':
+        return PageTableViewTypeE.Cards;
+    }
+    return (
       props.defaultTableView ??
       (hasTableViewType
         ? PageTableViewTypeE.Table
         : hasListViewType
         ? PageTableViewTypeE.List
         : PageTableViewTypeE.Cards)
+    );
+  });
+  const setViewType = useCallback(
+    (viewType: PageTableViewType) => {
+      setViewTypeState(viewType);
+      if (props.id) {
+        localStorage.setItem(props.id + '-view', viewType);
+      }
+    },
+    [props.id]
   );
 
   const usePadding = useBreakpoint('md') && disableBodyPadding !== true;
 
   const sortOptions = usePageToolbarSortOptionsFromColumns(props.tableColumns);
-
+  const needsPagination = !props.disablePagination && pagination;
   if (error) {
     return (
       <ErrorStateDiv>
@@ -292,7 +265,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
     );
   }
 
-  if (itemCount === 0 && Object.keys(filters ?? {}).length === 0) {
+  if (itemCount === 0 && Object.keys(filterState ?? {}).length === 0) {
     return (
       <PageSection style={{ backgroundColor: 'transparent' }}>
         <EmptyStateNoData
@@ -332,9 +305,9 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
 
   return (
     <>
-      <PageTableToolbar
+      <PageToolbar
         {...props}
-        openColumnModal={openColumnModal}
+        openColumnModal={props.id ? openColumnManagement : undefined}
         showSelect={showSelect}
         viewType={viewType}
         setViewType={setViewType}
@@ -343,7 +316,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
       />
       {viewType === PageTableViewTypeE.Table && (
         <PageBody disablePadding={disableBodyPadding}>
-          <PageTableView {...props} tableColumns={tableColumns} expandedRow={expandedRow} />
+          <PageTableView {...props} {...pagination} tableColumns={managedColumns} />
         </PageBody>
       )}
       {viewType === PageTableViewTypeE.List && (
@@ -359,27 +332,27 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
                   : undefined,
               }}
             >
-              <PageTableList {...props} showSelect={showSelect} />
+              <PageTableList {...props} showSelect={showSelect} tableColumns={managedColumns} />
             </div>
           </PageSection>
         </Scrollable>
       )}
       {viewType === PageTableViewTypeE.Cards && (
         <Scrollable>
-          <PageTableCards {...props} showSelect={showSelect} />
+          <PageTableCards {...props} showSelect={showSelect} tableColumns={managedColumns} />
         </Scrollable>
       )}
-      {(!props.autoHidePagination || (props.itemCount ?? 0) > props.perPage) && (
-        <PagePagination {...props} topBorder />
-      )}
-      {columnModal}
+      {needsPagination &&
+        (!props.autoHidePagination ||
+          (pagination.perPage && (props.itemCount ?? 0) > pagination.perPage)) && (
+          <PagePagination {...props} {...pagination} topBorder />
+        )}
     </>
   );
 }
 
 function PageTableView<T extends object>(props: PageTableProps<T>) {
   const {
-    tableColumns,
     pageItems,
     selectItem,
     unselectItem,
@@ -389,12 +362,61 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
     rowActions,
     toolbarActions,
     itemCount,
-    perPage,
     clearAllFilters,
     onSelect,
     unselectAll,
-    expandedRow,
   } = props;
+
+  const tableColumns = useVisibleTableColumns(props.tableColumns);
+
+  const descriptionColumns = useDescriptionColumns(props.tableColumns);
+  const expandedRowColumns = useExpandedColumns(props.tableColumns);
+  const expandedRow = useMemo(() => {
+    const expandedRowFunctions: ((item: T) => ReactNode)[] = [];
+
+    if (descriptionColumns.length) {
+      for (const descriptionColumn of descriptionColumns) {
+        if ('value' in descriptionColumn) {
+          expandedRowFunctions.push((item) => {
+            const value = descriptionColumn.value?.(item);
+            if (value) {
+              return <div key={descriptionColumn.id ?? descriptionColumn.header}>{value}</div>;
+            }
+          });
+        } else {
+          expandedRowFunctions.push((item) => descriptionColumn.cell(item));
+        }
+      }
+    }
+
+    if (expandedRowColumns.length) {
+      expandedRowFunctions.push((item) => (
+        <PageDetailsFromColumns
+          key={keyFn(item)}
+          item={item}
+          columns={expandedRowColumns}
+          disablePadding
+          numberOfColumns="multiple"
+        />
+      ));
+    }
+
+    if (props.expandedRow) {
+      expandedRowFunctions.push(props.expandedRow);
+    }
+
+    if (expandedRowFunctions.length === 0) return undefined;
+    if (expandedRowFunctions.length === 1) return expandedRowFunctions[0];
+
+    const newExpandedRow = (item: T) => (
+      <Stack hasGutter style={{ gap: 12 }}>
+        {expandedRowFunctions.map((fn) => fn(item))}
+      </Stack>
+    );
+
+    return newExpandedRow;
+  }, [descriptionColumns, expandedRowColumns, keyFn, props.expandedRow]);
+
   const [translations] = useFrameworkTranslations();
   const showSelect =
     props.showSelect ||
@@ -458,11 +480,12 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
             scrollRight={scroll.right > 1}
             tableColumns={tableColumns}
             onSelect={onSelect}
+            expandedRow={expandedRow}
           />
         )}
         <Tbody>
           {itemCount === undefined
-            ? new Array(perPage).fill(0).map((_, index) => (
+            ? new Array(10).fill(0).map((_, index) => (
                 <Tr key={index}>
                   <Td>
                     <TableCellDiv>
@@ -472,7 +495,7 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
                 </Tr>
               ))
             : pageItems === undefined
-            ? new Array(Math.min(perPage, itemCount)).fill(0).map((_, index) => (
+            ? new Array(Math.min(10, itemCount)).fill(0).map((_, index) => (
                 <Tr key={index}>
                   {showSelect && <Td></Td>}
                   <Td colSpan={tableColumns.length}>
@@ -587,29 +610,27 @@ function TableHead<T extends object>(props: {
             &nbsp;
           </Th>
         )}
-        {columns
-          .filter((column) => column.enabled !== false)
-          .map((column, index) => {
-            return (
-              <Th
-                key={column.header}
-                sort={getColumnSort(index, column)}
-                modifier="nowrap"
-                style={{
-                  minWidth:
-                    column.minWidth === 0
-                      ? '1%'
-                      : column.minWidth !== undefined
-                      ? column.minWidth
-                      : undefined,
-                  maxWidth: column.maxWidth !== undefined ? column.maxWidth : undefined,
-                  backgroundColor: 'inherit',
-                }}
-              >
-                {column.header}
-              </Th>
-            );
-          })}
+        {columns.map((column, index) => {
+          return (
+            <Th
+              key={column.header}
+              sort={getColumnSort(index, column)}
+              modifier="nowrap"
+              style={{
+                minWidth:
+                  column.minWidth === 0
+                    ? '1%'
+                    : column.minWidth !== undefined
+                    ? column.minWidth
+                    : undefined,
+                maxWidth: column.maxWidth !== undefined ? column.maxWidth : undefined,
+                backgroundColor: 'inherit',
+              }}
+            >
+              {column.header}
+            </Th>
+          );
+        })}
         {itemActions !== undefined && (
           <Td
             isActionCell
@@ -747,7 +768,7 @@ function TableRow<T extends object>(props: {
           )}
           {onSelect && <Td isStickyColumn stickyMinWidth="0px" hasRightBorder={props.scrollLeft} />}
           <Td
-            colSpan={columns.filter((column) => column.enabled !== false).length}
+            colSpan={columns.length}
             style={{ paddingBottom: settings.tableLayout === 'compact' ? 12 : 24, paddingTop: 0 }}
           >
             <CollapseColumn>{expandedContent}</CollapseColumn>
@@ -784,20 +805,18 @@ function TableCells<T extends object>(props: {
   const [actionsExpanded, setActionsExpanded] = useState(false);
   return (
     <Fragment>
-      {columns
-        .filter((column) => column.enabled !== false)
-        .map((column) => {
-          return (
-            <Td
-              key={column.header}
-              dataLabel={column.header}
-              modifier="nowrap"
-              style={{ width: column.minWidth === 0 ? '0%' : undefined }}
-            >
-              <TableColumnCell item={item} column={column} />
-            </Td>
-          );
-        })}
+      {columns.map((column) => {
+        return (
+          <Td
+            key={column.header}
+            dataLabel={column.header}
+            modifier="nowrap"
+            style={{ width: column.minWidth === 0 ? '0%' : undefined }}
+          >
+            <TableColumnCell item={item} column={column} />
+          </Td>
+        );
+      })}
       {rowActions !== undefined && rowActions.length > 0 && (
         <Td
           isActionCell
@@ -806,7 +825,7 @@ function TableCells<T extends object>(props: {
           style={{
             right: 0,
             padding: 0,
-            paddingRight: 0,
+            paddingRight: 8,
             zIndex: actionsExpanded ? 400 : undefined, // ZIndex 400 is needed for PF table stick headers
           }}
           className={props.scrollRight ? 'pf-m-border-left' : undefined}

@@ -28,7 +28,7 @@ export function RulebookDetails() {
   const { data: rulebook } = useGet<EdaRulebook>(
     `${API_PREFIX}/rulebooks/${params.id ?? ''}/`,
     undefined,
-    SWR_REFRESH_INTERVAL
+    { refreshInterval: SWR_REFRESH_INTERVAL }
   );
 
   const renderRulebookDetailsTab = (rulebook: EdaRulebook | undefined): JSX.Element => {

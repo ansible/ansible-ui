@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import useSWR from 'swr';
 import {
   PageForm,
-  PageFormSelectOption,
+  PageFormSelect,
   PageFormSubmitHandler,
   PageHeader,
   PageLayout,
@@ -173,7 +173,7 @@ function UserInputs(props: { mode: 'create' | 'edit' }) {
           }
         }}
       />
-      <PageFormSelectOption<IUserInput>
+      <PageFormSelect<IUserInput>
         name="userType"
         label={t('User type')}
         placeholderText={t('Select user type')}

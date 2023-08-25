@@ -14,6 +14,7 @@ import {
   PageLayout,
   PageTable,
   TextCell,
+  ToolbarFilterType,
 } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
 import { useCreatedColumn, useModifiedColumn } from '../../../common/columns';
@@ -77,6 +78,7 @@ export function InstanceGroups() {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: EditIcon,
+        isPinned: true,
         label: t('Edit instance group'),
         onClick: (instanceGroup) =>
           navigate(RouteObj.EditInstanceGroup.replace(':id', instanceGroup.id.toString())),
@@ -128,7 +130,7 @@ export function useInstanceGroupsFilters() {
       {
         key: 'name',
         label: t('Name'),
-        type: 'string',
+        type: ToolbarFilterType.Text,
         query: 'name__icontains',
         comparison: 'contains',
       },

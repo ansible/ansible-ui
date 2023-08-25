@@ -1,32 +1,25 @@
-import { ThumbsDownIcon, ThumbsUpIcon } from '@patternfly/react-icons';
+import { TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../framework';
-import { Approval } from '../Approval';
+import { useRejectCollections } from './useRejectCollections';
+import { CollectionVersionSearch } from '../Approval';
 
-export function useApprovalsActions() {
+export function useApprovalsActions(callback: (collections: CollectionVersionSearch[]) => void) {
   const { t } = useTranslation();
-  return useMemo<IPageAction<Approval>[]>(
+  const rejectCollections = useRejectCollections(callback);
+
+  return useMemo<IPageAction<CollectionVersionSearch>[]>(
     () => [
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
-        icon: ThumbsUpIcon,
-        label: t('Approve collections'),
-        onClick: () => {
-          alert('TODO');
-        },
-      },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Multiple,
-        icon: ThumbsDownIcon,
-        label: t('Deny collections'),
-        onClick: () => {
-          alert('TODO');
-        },
+        icon: TrashIcon,
+        label: t('Reject selected collections'),
+        onClick: rejectCollections,
+        isDanger: true,
       },
     ],
-    [t]
+    [t, rejectCollections]
   );
 }

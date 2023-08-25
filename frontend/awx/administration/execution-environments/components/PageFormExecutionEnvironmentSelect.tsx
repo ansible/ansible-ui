@@ -1,15 +1,16 @@
+import { Tooltip } from '@patternfly/react-core';
 import { ReactElement } from 'react';
 import { FieldPath, FieldValues, useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { PageFormTextInput } from '../../../../../framework/PageForm/Inputs/PageFormTextInput';
-import { ItemsResponse, requestGet } from '../../../../common/crud/Data';
+import { requestGet } from '../../../../common/crud/Data';
+import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
 import { useSelectExecutionEnvironments } from '../hooks/useSelectExecutionEnvironments';
-import { Tooltip } from '@patternfly/react-core';
 
 export function PageFormExecutionEnvironmentSelect<
   TFieldValues extends FieldValues = FieldValues,
-  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+  TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >(props: {
   name: TFieldName;
   executionEnvironmentPath?: string;
@@ -43,7 +44,7 @@ export function PageFormExecutionEnvironmentSelect<
             return undefined;
           }
           try {
-            const itemsResponse = await requestGet<ItemsResponse<ExecutionEnvironment>>(
+            const itemsResponse = await requestGet<AwxItemsResponse<ExecutionEnvironment>>(
               `/api/v2/execution_environments/?name=${executionEnvironmentName}`
             );
             if (itemsResponse.results.length === 0) return t('Execution environment not found.');

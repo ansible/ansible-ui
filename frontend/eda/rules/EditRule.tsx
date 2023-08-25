@@ -10,10 +10,10 @@ import {
 } from '../../../framework';
 import { RouteObj } from '../../Routes';
 import { useGet } from '../../common/crud/useGet';
+import { usePatchRequest } from '../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../common/crud/usePostRequest';
 import { API_PREFIX } from '../constants';
 import { EdaRule } from '../interfaces/EdaRule';
-import { usePatchRequest } from '../../common/crud/usePatchRequest';
 
 export function EditRule() {
   const { t } = useTranslation();

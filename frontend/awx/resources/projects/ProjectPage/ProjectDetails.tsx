@@ -23,10 +23,10 @@ import { useGet } from '../../../../common/crud/useGet';
 import { ScmType } from '../../../../common/scm';
 import { CredentialLabel } from '../../../common/CredentialLabel';
 import { ExecutionEnvironmentDetail } from '../../../common/ExecutionEnvironmentDetail';
-import { useAwxWebSocketSubscription } from '../../../common/useAwxWebSocket';
-import { Project } from '../../../interfaces/Project';
 import { useAwxConfig } from '../../../common/useAwxConfig';
+import { useAwxWebSocketSubscription } from '../../../common/useAwxWebSocket';
 import getDocsBaseUrl from '../../../common/util/getDocsBaseUrl';
+import { Project } from '../../../interfaces/Project';
 
 export function ProjectDetails(props: { project: Project }) {
   const { t } = useTranslation();

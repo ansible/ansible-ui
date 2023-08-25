@@ -31,7 +31,7 @@ import { useGet } from '../../common/crud/useGet';
 import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../constants';
 import { EdaActivationInstance } from '../interfaces/EdaActivationInstance';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
-import { Status7EbEnum } from '../interfaces/generated/eda-api';
+import { StatusB37Enum } from '../interfaces/generated/eda-api';
 import { useEdaView } from '../useEventDrivenView';
 import { EdaExtraVarsCell } from './components/EdaExtraVarCell';
 import { useActivationHistoryColumns } from './hooks/useActivationHistoryColumns';
@@ -41,6 +41,7 @@ import {
   useRestartRulebookActivations,
 } from './hooks/useControlRulebookActivations';
 import { useDeleteRulebookActivations } from './hooks/useDeleteRulebookActivations';
+import { useActivationHistoryFilters } from './hooks/useActivationHistoryFilters';
 
 // eslint-disable-next-line react/prop-types
 export function RulebookActivationDetails({ initialTabIndex = 0 }) {
@@ -61,7 +62,7 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
   const { data: rulebookActivation, refresh } = useGet<EdaRulebookActivation>(
     `${API_PREFIX}/activations/${params.id ?? ''}/`,
     undefined,
-    SWR_REFRESH_INTERVAL
+    { refreshInterval: SWR_REFRESH_INTERVAL }
   );
 
   const enableRulebookActivation = useEnableRulebookActivations((enabled) => {
@@ -103,7 +104,7 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
         },
         isSwitchOn: (activation: EdaRulebookActivation) => activation.is_enabled ?? false,
         isDisabled: (activation: EdaRulebookActivation) =>
-          activation.status === Status7EbEnum.Stopping
+          activation.status === StatusB37Enum.Stopping
             ? t('Cannot change activation status while stopping')
             : undefined,
       },
@@ -113,8 +114,7 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
         icon: RedoIcon,
         label: t('Restart rulebook activation'),
         isDanger: false,
-        isHidden: (activation: EdaRulebookActivation) =>
-          !activation.is_enabled || activation.restart_policy !== 'always',
+        isHidden: (activation: EdaRulebookActivation) => !activation.is_enabled,
         onClick: (activation: EdaRulebookActivation) => restartRulebookActivation([activation]),
       },
       {
@@ -142,36 +142,9 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
     return (
       <Scrollable>
         <PageDetails>
+          <PageDetail label={t('Activation ID')}>{rulebookActivation?.id || ''}</PageDetail>
           <PageDetail label={t('Name')}>{rulebookActivation?.name || ''}</PageDetail>
           <PageDetail label={t('Description')}>{rulebookActivation?.description || ''}</PageDetail>
-          <PageDetail
-            label={t('Decision environment')}
-            helpText={t('Decision environments are a container image to run Ansible rulebooks.')}
-          >
-            {rulebookActivation && rulebookActivation?.decision_environment?.id ? (
-              <Link
-                to={RouteObj.EdaDecisionEnvironmentDetails.replace(
-                  ':id',
-                  `${rulebookActivation?.decision_environment?.id || ''}`
-                )}
-              >
-                {rulebookActivation?.decision_environment?.name}
-              </Link>
-            ) : (
-              rulebookActivation?.decision_environment?.name || ''
-            )}
-          </PageDetail>
-          <PageDetail
-            label={t('Rulebook')}
-            helpText={t('Rulebooks will be shown according to the project selected.')}
-          >
-            {rulebookActivation?.rulebook?.name || ''}
-          </PageDetail>
-          <PageDetail label={t('Restart policy')} helpText={restartPolicyHelpBlock}>
-            {rulebookActivation?.restart_policy
-              ? t(capitalizeFirstLetter(rulebookActivation?.restart_policy))
-              : ''}
-          </PageDetail>
           <PageDetail
             label={t('Project')}
             helpText={t('Projects are a logical collection of rulebooks.')}
@@ -189,6 +162,34 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
               rulebookActivation?.project?.name || ''
             )}
           </PageDetail>
+          <PageDetail
+            label={t('Rulebook')}
+            helpText={t('Rulebooks will be shown according to the project selected.')}
+          >
+            {rulebookActivation?.rulebook?.name || ''}
+          </PageDetail>
+          <PageDetail
+            label={t('Decision environment')}
+            helpText={t('Decision environments are a container image to run Ansible rulebooks.')}
+          >
+            {rulebookActivation && rulebookActivation?.decision_environment?.id ? (
+              <Link
+                to={RouteObj.EdaDecisionEnvironmentDetails.replace(
+                  ':id',
+                  `${rulebookActivation?.decision_environment?.id || ''}`
+                )}
+              >
+                {rulebookActivation?.decision_environment?.name}
+              </Link>
+            ) : (
+              rulebookActivation?.decision_environment?.name || ''
+            )}
+          </PageDetail>
+          <PageDetail label={t('Restart policy')} helpText={restartPolicyHelpBlock}>
+            {rulebookActivation?.restart_policy
+              ? t(capitalizeFirstLetter(rulebookActivation?.restart_policy))
+              : ''}
+          </PageDetail>
           <PageDetail label={t('Activation status')}>
             <StatusCell status={rulebookActivation?.status || ''} />
           </PageDetail>
@@ -202,6 +203,11 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
           </PageDetail>
           <PageDetail label={t('Fire count')}>
             {rulebookActivation?.rules_fired_count || 0}
+          </PageDetail>
+          <PageDetail label={t('Last restarted')}>
+            {rulebookActivation?.restarted_at
+              ? formatDateString(rulebookActivation.restarted_at)
+              : ''}
           </PageDetail>
           <PageDetail label={t('Restart count')}>
             {rulebookActivation?.restart_count || 0}
@@ -220,7 +226,7 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
             <EdaExtraVarsCell
               label={t('Variables')}
               helpText={t(
-                'Pass extra command line variables to the playbook. This is the -e or --extra-vars command line parameter for ansible-playbook. Provide key/value pairs using either YAML or JSON. Refer to the documentation for example syntax.'
+                `The variables for the rulebook are in a JSON or YAML format. The content would be equivalent to the file passed through the '--vars' flag of ansible-rulebook command.`
               )}
               id={rulebookActivation.extra_var.id}
             />
@@ -233,16 +239,19 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
   function ActivationHistoryTab() {
     const params = useParams<{ id: string }>();
     const { t } = useTranslation();
+    const toolbarFilters = useActivationHistoryFilters();
 
     const tableColumns = useActivationHistoryColumns();
     const view = useEdaView<EdaActivationInstance>({
       url: `${API_PREFIX}/activations/${params?.id || ''}/instances/`,
+      toolbarFilters,
       tableColumns,
     });
     return (
       <PageLayout>
         <PageTable
           tableColumns={tableColumns}
+          toolbarFilters={toolbarFilters}
           errorStateTitle={t('Error loading history')}
           emptyStateTitle={t('No activation history')}
           emptyStateIcon={CubesIcon}

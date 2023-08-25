@@ -1,7 +1,6 @@
 import getValue from 'get-value';
 import { useEffect, useMemo } from 'react';
 import { ITableColumn } from './PageTable/PageTableColumn';
-import { IToolbarFilter } from './PageTable/PageToolbar/PageToolbarFilter';
 import {
   ISelected,
   useFiltered,
@@ -9,6 +8,7 @@ import {
   useSelectedInMemory,
   useSorted,
 } from './PageTable/useTableItems';
+import { IToolbarFilter } from './PageToolbar/PageToolbarFilter';
 import { IView, useView } from './useView';
 import { compareUnknowns } from './utils/compare';
 
@@ -28,13 +28,11 @@ export function useInMemoryView<T extends object>(options: {
   error?: Error;
 }): IInMemoryView<T> {
   const { items, keyFn, tableColumns, toolbarFilters, disableQueryString } = options;
-  const view = useView(
-    {
-      sort: tableColumns && tableColumns.length ? tableColumns[0].sort : undefined,
-    },
-    disableQueryString
-  );
-  const { page, perPage, sort, sortDirection, filters } = view;
+  const view = useView({
+    defaultValues: { sort: tableColumns && tableColumns.length ? tableColumns[0].sort : undefined },
+    disableQueryString,
+  });
+  const { page, perPage, sort, sortDirection, filterState } = view;
 
   const sorted = useSorted(items);
   const { setSort } = sorted;
@@ -55,25 +53,28 @@ export function useInMemoryView<T extends object>(options: {
   const filtered = useFiltered(sorted.sorted, keyFn);
   const { setFilterFn } = filtered;
   useEffect(() => {
-    if (Object.keys(filters).length === 0) {
+    if (Object.keys(filterState).length === 0) {
       setFilterFn(undefined);
     } else {
       setFilterFn((item: T) => {
-        for (const key in filters) {
+        for (const key in filterState) {
           const toolbarFilter = toolbarFilters?.find((filter) => filter.key === key);
           if (toolbarFilter) {
             const value = getValue(item, toolbarFilter.query) as unknown;
             if (typeof value === 'string') {
-              for (const filterValue of filters[key]) {
-                if (value.toLowerCase().includes(filterValue.toLowerCase())) return true;
+              const filterValues = filterState[key];
+              if (filterValues && filterValues.length !== 0) {
+                if (!filterValues.includes(value)) {
+                  return false;
+                }
               }
             }
           }
         }
-        return false;
+        return true;
       });
     }
-  }, [filters, setFilterFn, toolbarFilters]);
+  }, [filterState, setFilterFn, toolbarFilters]);
 
   const paged = usePaged(filtered.filtered);
   const { setPage, setPerPage } = paged;

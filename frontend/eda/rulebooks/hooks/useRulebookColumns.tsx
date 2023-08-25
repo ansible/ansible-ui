@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import { ColumnTableOption, ITableColumn, TextCell } from '../../../../framework';
 import { RouteObj } from '../../../Routes';
 import { EdaProjectCell } from '../../Resources/projects/components/EdaProjectCell';
@@ -8,7 +7,6 @@ import { EdaRulebook } from '../../interfaces/EdaRulebook';
 
 export function useRulebookColumns() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   return useMemo<ITableColumn<EdaRulebook>[]>(
     () => [
       {
@@ -16,9 +14,7 @@ export function useRulebookColumns() {
         cell: (rulebook) => (
           <TextCell
             text={rulebook.name}
-            onClick={() =>
-              navigate(RouteObj.EdaRulebookDetails.replace(':id', rulebook.id.toString()))
-            }
+            to={RouteObj.EdaRulebookDetails.replace(':id', rulebook.id.toString())}
           />
         ),
         card: 'name',
@@ -67,6 +63,6 @@ export function useRulebookColumns() {
         list: 'secondary',
       },
     ],
-    [navigate, t]
+    [t]
   );
 }

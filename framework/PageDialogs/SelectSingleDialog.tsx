@@ -2,8 +2,8 @@ import { Button, Modal, ModalVariant } from '@patternfly/react-core';
 import { useCallback } from 'react';
 import { PageTable } from '../PageTable/PageTable';
 import { ITableColumn } from '../PageTable/PageTableColumn';
-import { IToolbarFilter } from '../PageTable/PageToolbar/PageToolbarFilter';
 import { ISelected } from '../PageTable/useTableItems';
+import { IToolbarFilter } from '../PageToolbar/PageToolbarFilter';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { IView } from '../useView';
 import { usePageDialog } from './PageDialog';
@@ -28,6 +28,7 @@ export function SelectSingleDialog<T extends object>(props: SelectSingleDialogPr
   return (
     <Modal
       title={title}
+      aria-label={title}
       isOpen
       onClose={onClose}
       variant={ModalVariant.medium}
@@ -69,7 +70,6 @@ export function SelectSingleDialog<T extends object>(props: SelectSingleDialogPr
           errorStateTitle={props.errorStateTitle ?? translations.errorText}
           disableCardView
           disableListView
-          disableColumnManagement
           compact
           disableBodyPadding
           onSelect={(item) => {

@@ -6,12 +6,13 @@ import { PageFormGroup } from '../../../../framework/PageForm/Inputs/PageFormGro
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { PageForm, PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
 import { RouteObj } from '../../../Routes';
-import { ItemsResponse, postRequest, requestPatch } from '../../../common/crud/Data';
+import { postRequest, requestPatch } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { PageFormSelectOrganization } from '../../access/organizations/components/PageFormOrganizationSelect';
 import { getOrganizationByName } from '../../access/organizations/utils/getOrganizationByName';
 import { PageFormInstanceGroupSelect } from '../../administration/instance-groups/components/PageFormInstanceGroupSelect';
+import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { PageFormLabelSelect } from '../../common/PageFormLabelSelect';
 import { getAddedAndRemoved } from '../../common/util/getAddedAndRemoved';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
@@ -89,7 +90,7 @@ export function EditInventory() {
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
   const { data: inventory } = useGet<Inventory>(`/api/v2/inventories/${id.toString()}/`);
-  const { data: igResponse } = useGet<ItemsResponse<InstanceGroup>>(
+  const { data: igResponse } = useGet<AwxItemsResponse<InstanceGroup>>(
     `/api/v2/inventories/${id.toString()}/instance_groups/`
   );
   // Fetch instance groups associated with the inventory

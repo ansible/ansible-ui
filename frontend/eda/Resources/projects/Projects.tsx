@@ -29,13 +29,14 @@ export function Projects() {
         description={t('Projects are a logical collection of rulebooks.')}
       />
       <PageTable
+        id={'eda-projects'}
         tableColumns={tableColumns}
         toolbarActions={toolbarActions}
         toolbarFilters={toolbarFilters}
         rowActions={rowActions}
         errorStateTitle={t('Error loading projects')}
-        emptyStateTitle={t('No projects yet')}
-        emptyStateDescription={t('To get started, create a project.')}
+        emptyStateTitle={t('There are currently no projects created for your organization.')}
+        emptyStateDescription={t('Please create a project by using the button below.')}
         emptyStateButtonText={t('Create project')}
         emptyStateButtonClick={() => navigate(RouteObj.CreateEdaProject)}
         {...view}

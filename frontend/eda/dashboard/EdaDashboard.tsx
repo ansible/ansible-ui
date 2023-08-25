@@ -6,9 +6,10 @@ import { PageDashboard } from '../../../framework/PageDashboard/PageDashboard';
 import { PageDashboardCard } from '../../../framework/PageDashboard/PageDashboardCard';
 import { RouteObj } from '../../Routes';
 import { API_PREFIX } from '../constants';
+import { EdaControllerToken } from '../interfaces/EdaControllerToken';
 import { EdaDecisionEnvironment } from '../interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../interfaces/EdaProject';
-import { EdaRuleAudit } from '../interfaces/EdaRuleAudit';
+import { EdaRuleAuditItem } from '../interfaces/EdaRuleAudit';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
 import { useEdaView } from '../useEventDrivenView';
 import { EdaDecisionEnvironmentsCard } from './cards/EdaDecisionEnvironmentsCard';
@@ -16,7 +17,6 @@ import { EdaRecentProjectsCard } from './cards/EdaProjectsCard';
 import { EdaRuleAuditCard } from './cards/EdaRuleAuditCard';
 import RuleAuditChart from './cards/EdaRuleAuditChartCard';
 import { EdaRulebookActivationsCard } from './cards/EdaRulebookActivationsCard';
-import { EdaControllerToken } from '../interfaces/EdaControllerToken';
 
 export function EdaDashboard() {
   const { t } = useTranslation();
@@ -39,7 +39,7 @@ export function EdaDashboard() {
     queryParams: { page: '1', page_size: '10' },
     disableQueryString: true,
   });
-  const edaRuleAuditView = useEdaView<EdaRuleAudit>({
+  const edaRuleAuditView = useEdaView<EdaRuleAuditItem>({
     url: `${API_PREFIX}/audit-rules/`,
     queryParams: { page: '1', page_size: '10' },
     disableQueryString: true,

@@ -1,7 +1,8 @@
 /* eslint-disable i18next/no-literal-string */
+import * as mockSchedulesList from '../../../../cypress/fixtures/schedules.json';
+import { ToolbarFilterType } from '../../../../framework';
 import * as useOptions from '../../../common/crud/useOptions';
 import { Schedules } from './Schedules';
-import * as mockSchedulesList from '../../../../cypress/fixtures/schedules.json';
 
 describe('schedules .cy.ts', () => {
   describe('Non-empty list', () => {
@@ -28,7 +29,7 @@ describe('schedules .cy.ts', () => {
               help_text: 'A value representing the schedules iCal recurrence rule.',
               label: 'Rrule',
               required: true,
-              type: 'string',
+              type: ToolbarFilterType.Text,
             },
           },
         },
@@ -43,8 +44,7 @@ describe('schedules .cy.ts', () => {
     it('Schedules list has filters for Name, and Description,', () => {
       cy.mount(<Schedules />);
       cy.hasTitle(/^Schedules$/);
-      cy.contains('button.pf-c-select__toggle', /^Name$/).click();
-      cy.get('ul.pf-c-select__menu').within(() => {
+      cy.openToolbarFilterTypeSelect().within(() => {
         cy.contains(/^Name$/).should('be.visible');
         cy.contains(/^Description$/).should('be.visible');
       });
@@ -53,8 +53,7 @@ describe('schedules .cy.ts', () => {
       cy.mount(<Schedules />);
       cy.intercept('api/v2/schedules/?name__icontains=Template*').as('nameFilterRequest');
       cy.hasTitle(/^Schedules$/);
-      cy.contains('button.pf-c-select__toggle', /^Name$/).click();
-      cy.filterTableByText('Template');
+      cy.filterTableByTypeAndText(/^Name$/, 'Template');
       // A network request is made based on the filter selected on the UI
       cy.wait('@nameFilterRequest');
       // Clear filter
@@ -65,11 +64,7 @@ describe('schedules .cy.ts', () => {
       cy.mount(<Schedules />);
       cy.intercept('api/v2/schedules/?description__icontains=bar*').as('descriptionFilterRequest');
       cy.hasTitle(/^Schedules$/);
-      cy.contains('button.pf-c-select__toggle', /^Name$/).click();
-      cy.get('ul.pf-c-select__menu').within(() => {
-        cy.contains('button', /^Description$/).click();
-      });
-      cy.filterTableByText('bar');
+      cy.filterTableByTypeAndText(/^Description$/, 'bar');
       // A network request is made based on the filter selected on the UI
       cy.wait('@descriptionFilterRequest');
       // Clear filter
@@ -99,7 +94,7 @@ describe('schedules .cy.ts', () => {
           actions: {
             GET: {
               name: {
-                type: 'string',
+                type: ToolbarFilterType.Text,
                 required: true,
                 label: 'Name',
                 max_length: 512,
@@ -114,7 +109,7 @@ describe('schedules .cy.ts', () => {
       cy.mount(<Schedules />);
       cy.contains('a', /^Create schedule$/).should('have.attr', 'aria-disabled', 'true');
     });
-    it('Edit, Delete Schedule button is disabled if the user does not have permission(s)', () => {
+    it('Delete Schedule button is disabled if the user does not have permission(s)', () => {
       mockSchedulesList.results[1].summary_fields.user_capabilities.edit = false;
       mockSchedulesList.results[1].summary_fields.user_capabilities.delete = false;
       mockSchedulesList.results[2].enabled = true;
@@ -136,9 +131,6 @@ describe('schedules .cy.ts', () => {
           cy.get('input.pf-c-switch__input').should('have.attr', 'disabled');
           cy.get('.pf-c-dropdown__toggle').click();
           cy.get('.pf-c-dropdown__menu-item')
-            .contains(/^Edit schedule$/)
-            .should('have.attr', 'aria-disabled', 'true');
-          cy.get('.pf-c-dropdown__menu-item')
             .contains(/^Delete schedule$/)
             .should('have.attr', 'aria-disabled', 'true');
         });
@@ -150,7 +142,7 @@ describe('schedules .cy.ts', () => {
           actions: {
             POST: {
               name: {
-                type: 'string',
+                type: ToolbarFilterType.Text,
                 required: true,
                 label: 'Name',
                 max_length: 512,
@@ -196,7 +188,7 @@ describe('schedules .cy.ts', () => {
           actions: {
             POST: {
               name: {
-                type: 'string',
+                type: ToolbarFilterType.Text,
                 required: true,
                 label: 'Name',
                 max_length: 512,

@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /// <reference types="cypress" />
 import '@cypress/code-coverage/support';
+import '@4tw/cypress-drag-drop';
 import { SetOptional, SetRequired } from 'type-fest';
 import { AwxToken } from '../../frontend/awx/interfaces/AwxToken';
 import { Credential } from '../../frontend/awx/interfaces/Credential';
@@ -31,21 +32,18 @@ import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaU
 import './auth';
 import './awx-commands';
 import { IAwxResources } from './awx-commands';
+import './common-commands';
 import './eda-commands';
 import './rest-commands';
 
 declare global {
   namespace Cypress {
     interface Chainable {
-      login(
-        server: string,
-        username: string,
-        password: string,
-        serverType: string
-      ): Chainable<void>;
+      login(server: string, username: string, password: string): Chainable<void>;
       edaLogout(): Chainable<EdaUser | undefined>;
       awxLogin(): Chainable<void>;
       edaLogin(): Chainable<void>;
+      hubLogin(): Chainable<void>;
 
       // --- NAVIGATION COMMANDS ---
 
@@ -76,12 +74,53 @@ declare global {
         multiselect?: boolean
       ): Chainable<void>;
 
+      singleSelectShouldHaveSelectedOption(
+        selector: string,
+        label: string | RegExp
+      ): Chainable<void>;
+      singleSelectShouldContainOption(selector: string, label: string | RegExp): Chainable<void>;
+      selectSingleSelectOption(selector: string, label: string | RegExp): Chainable<void>;
+
+      multiSelectShouldHaveSelectedOption(
+        selector: string,
+        label: string | RegExp
+      ): Chainable<void>;
+      multiSelectShouldNotHaveSelectedOption(
+        selector: string,
+        label: string | RegExp
+      ): Chainable<void>;
+      selectMultiSelectOption(selector: string, label: string | RegExp): Chainable<void>;
+
       // --- TABLE COMMANDS ---
 
       /** Change the current filter type in the table toolbar. */
       selectToolbarFilterType(filterLabel: string | RegExp): Chainable<void>;
 
       setTablePageSize(text: '10' | '20' | '50' | '100'): Chainable<void>;
+
+      getFiltersToolbarItem(): Chainable<JQuery<HTMLElement>>;
+
+      /**
+       * Find the toolbar filter select, click it and returns the opened menu element.
+       *
+       * @example
+       * ```
+       * cy.openToolbarFilterTypeSelect().within(() => {
+       *   cy.contains(/^Name$/).should('be.visible');
+       * });
+       * ```
+       */
+      openToolbarFilterTypeSelect(): Chainable<JQuery<HTMLElement>>;
+
+      filterBySingleSelection(
+        filterType: RegExp | string,
+        selectLabel: RegExp | string
+      ): Chainable<void>;
+
+      filterByMultiSelection(
+        filterType: RegExp | string,
+        selectLabel: RegExp | string
+      ): Chainable<void>;
 
       /** Filter the table using it's current filter by entering text. */
       filterTableByText(text: string): Chainable<void>;

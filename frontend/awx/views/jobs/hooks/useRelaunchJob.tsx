@@ -1,8 +1,9 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { usePageAlertToaster } from '../../../../../framework';
-import { ItemsResponse, requestGet } from '../../../../common/crud/Data';
+import { requestGet } from '../../../../common/crud/Data';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
+import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import {
   AdHocCommandRelaunch,
   InventorySourceUpdate,
@@ -31,11 +32,13 @@ export function useRelaunchJob(jobRelaunchParams?: JobRelaunch) {
       let relaunchConfig;
       switch (job.type) {
         case 'ad_hoc_command': {
-          relaunchConfig = await requestGet<ItemsResponse<AdHocCommandRelaunch>>(relaunchEndpoint);
+          relaunchConfig =
+            await requestGet<AwxItemsResponse<AdHocCommandRelaunch>>(relaunchEndpoint);
           break;
         }
         case 'workflow_job': {
-          relaunchConfig = await requestGet<ItemsResponse<WorkflowJobRelaunch>>(relaunchEndpoint);
+          relaunchConfig =
+            await requestGet<AwxItemsResponse<WorkflowJobRelaunch>>(relaunchEndpoint);
           break;
         }
         case 'job': {

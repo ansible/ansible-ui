@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import {
   ColumnModalOption,
   ColumnTableOption,
@@ -13,7 +12,6 @@ import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 
 export function useRulebookActivationColumns() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   return useMemo<ITableColumn<EdaRulebookActivation>[]>(
     () => [
       {
@@ -21,14 +19,10 @@ export function useRulebookActivationColumns() {
         cell: (rulebookActivation) => (
           <TextCell
             text={rulebookActivation.name}
-            onClick={() =>
-              navigate(
-                RouteObj.EdaRulebookActivationDetails.replace(
-                  ':id',
-                  rulebookActivation.id.toString()
-                )
-              )
-            }
+            to={RouteObj.EdaRulebookActivationDetails.replace(
+              ':id',
+              rulebookActivation.id.toString()
+            )}
           />
         ),
         card: 'name',
@@ -83,7 +77,16 @@ export function useRulebookActivationColumns() {
         list: 'secondary',
         modal: ColumnModalOption.Hidden,
       },
+      {
+        header: t('Activation ID'),
+        type: 'text',
+        value: (activation) => activation.id.toString(),
+        table: ColumnTableOption.Expanded,
+        card: 'hidden',
+        list: 'secondary',
+        modal: ColumnModalOption.Hidden,
+      },
     ],
-    [navigate, t]
+    [t]
   );
 }

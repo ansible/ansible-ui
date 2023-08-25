@@ -4,7 +4,6 @@ import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { EmptyStateCustom } from '../../../../framework/components/EmptyStateCustom';
 import { useActiveUser } from '../../../common/useActiveUser';
-import Picture from '../../assets/images/ansible_analytics_screenshot.png';
 
 export function AnalyticsErrorState(props: { error?: string }) {
   const { t } = useTranslation();
@@ -101,14 +100,6 @@ export function AnalyticsErrorState(props: { error?: string }) {
           footNote={t(
             'Gain insights into your deployments through visual dashboards and organization statistics, calculate your return on investment, explore automation processes details.'
           )}
-          image={
-            <img
-              width="50%"
-              height="50%"
-              src={Picture}
-              alt={t('Automation Analytics is currently not enabled to send data.')}
-            />
-          }
         />
       </>
     );

@@ -13,8 +13,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageTable } from '../PageTable/PageTable';
 import { ITableColumn, TableColumnCell } from '../PageTable/PageTableColumn';
-import { IToolbarFilter } from '../PageTable/PageToolbar/PageToolbarFilter';
 import { ISelected } from '../PageTable/useTableItems';
+import { IToolbarFilter } from '../PageToolbar/PageToolbarFilter';
 import { Collapse } from '../components/Collapse';
 import { IView } from '../useView';
 import { usePageDialog } from './PageDialog';
@@ -37,7 +37,7 @@ interface ISelectDialogOptions<T extends object, TMultiple> {
  */
 export function useSelectDialog<
   T extends { id: number | string; name: string | undefined },
-  TMultiple = false
+  TMultiple = false,
 >(options: ISelectDialogOptions<T, TMultiple>) {
   const { view, tableColumns, toolbarFilters, confirm, cancel, selected, isMultiple } = options;
   const [title, setTitle] = useState('');
@@ -99,7 +99,7 @@ export type SelectDialogProps<T extends object, TMultiple> = {
 
 export function SelectDialog<
   T extends { id: number | string; name: string | undefined },
-  TMultiple = false
+  TMultiple = false,
 >(props: SelectDialogProps<T, TMultiple>) {
   const {
     title,
@@ -198,7 +198,6 @@ export function SelectDialog<
             onSelect={() => null}
             disableCardView
             disableListView
-            disableColumnManagement
             compact
             disableBodyPadding
           />

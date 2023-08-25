@@ -6,10 +6,11 @@ import { PageActions, PageHeader, PageLayout } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { RouteObj } from '../../../../Routes';
 import { PageNotImplemented } from '../../../../common/PageNotImplemented';
-import { RoutedTabs, RoutedTab, PageBackTab } from '../../../../common/RoutedTabs';
-import { useGetItem } from '../../../../common/crud/useGetItem';
+import { PageBackTab, RoutedTab, RoutedTabs } from '../../../../common/RoutedTabs';
+import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxError } from '../../../common/AwxError';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
+import { Schedules } from '../../../views/schedules/Schedules';
 
 export function WorkflowJobTemplatePage() {
   const { t } = useTranslation();
@@ -52,7 +53,7 @@ export function WorkflowJobTemplatePage() {
           <PageNotImplemented />
         </RoutedTab>
         <RoutedTab label={t('Schedules')} url={RouteObj.WorkflowJobTemplateSchedules}>
-          <PageNotImplemented />
+          <Schedules sublistEndpoint={`/api/v2/workflow_job_templates/${template.id}/schedules/`} />
         </RoutedTab>
         <RoutedTab label={t('Jobs')} url={RouteObj.WorkflowJobTemplateJobs}>
           <PageNotImplemented />

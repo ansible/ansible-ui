@@ -1,7 +1,8 @@
 import { Bullseye, Spinner } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import useSWR from 'swr';
-import { useSettings } from '../../../../framework';
 import { PageDashboardChart } from '../../../../framework/PageDashboard/PageDashboardChart';
+import { usePageChartColors } from '../../../../framework/PageDashboard/usePageChartColors';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
 
 export type UnifiedJobSummary = Pick<UnifiedJob, 'id' | 'finished' | 'failed'>;
@@ -23,6 +24,7 @@ export function JobsChart(props: {
   period?: DashboardJobPeriod;
   jobType?: DashboardJobType;
 }) {
+  const { t } = useTranslation();
   const { period, jobType } = props;
 
   const { data, isLoading } = useSWR<IJobChartData>(
@@ -48,15 +50,7 @@ export function JobsChart(props: {
   const canceled = data?.jobs.canceled?.map(reducer) ?? [];
   const error = data?.jobs.error?.map(reducer) ?? [];
 
-  const { activeTheme } = useSettings();
-  let successfulColor = 'var(--pf-chart-color-green-300)';
-  if (activeTheme === 'dark') successfulColor = 'var(--pf-chart-color-green-300)';
-  let failedColor = 'var(--pf-chart-color-red-200)';
-  if (activeTheme === 'dark') failedColor = 'var(--pf-chart-color-red-300)';
-  let errorColor = 'var(--pf-chart-color-red-100)';
-  if (activeTheme === 'dark') errorColor = 'var(--pf-chart-color-red-200)';
-  let canceledColor = 'var(--pf-chart-color-black-400)';
-  if (activeTheme === 'dark') canceledColor = 'var(--pf-chart-color-black-400)';
+  const { successfulColor, failedColor, errorColor, canceledColor } = usePageChartColors();
 
   if (isLoading)
     return (
@@ -67,12 +61,15 @@ export function JobsChart(props: {
 
   return (
     <PageDashboardChart
+      yLabel={t('Job Count')}
       groups={[
-        { color: successfulColor, values: successful },
-        { color: failedColor, values: failed },
-        { color: errorColor, values: error },
-        { color: canceledColor, values: canceled },
+        { label: t('Successful'), color: successfulColor, values: successful },
+        { label: t('Error'), color: errorColor, values: error },
+        { label: t('Failed'), color: failedColor, values: failed },
+        { label: t('Canceled'), color: canceledColor, values: canceled },
       ]}
+      onlyIntegerTicks
+      variant="stackedAreaChart"
     />
   );
 }

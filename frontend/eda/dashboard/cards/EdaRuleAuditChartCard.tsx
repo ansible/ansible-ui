@@ -7,12 +7,12 @@ import { RouteObj } from '../../../Routes';
 import { useGet } from '../../../common/crud/useGet';
 import { API_PREFIX } from '../../constants';
 import { EdaResult } from '../../interfaces/EdaResult';
-import { EdaRuleAudit } from '../../interfaces/EdaRuleAudit';
+import { EdaRuleAuditItem } from '../../interfaces/EdaRuleAudit';
 
 const RuleAuditChart = () => {
   const { t } = useTranslation();
 
-  const { data } = useGet<EdaResult<EdaRuleAudit>>(`${API_PREFIX}/audit-rules/`);
+  const { data } = useGet<EdaResult<EdaRuleAuditItem>>(`${API_PREFIX}/audit-rules/`);
 
   // Chart Test Code
   // const generateRandomEdaRuleAudits = useCallback(
@@ -116,9 +116,10 @@ const RuleAuditChart = () => {
       help={t('Rule audit allows auditing of rules which have been triggered by incoming events.')}
     >
       <PageDashboardChart
+        yLabel={t('Rule Runs')}
         groups={[
-          { color: pfSuccess, values: successfulRuns },
-          { color: pfDanger, values: failedRuns },
+          { label: t('Success'), color: pfSuccess, values: successfulRuns },
+          { label: t('Failed'), color: pfDanger, values: failedRuns },
         ]}
       />
     </PageDashboardCard>

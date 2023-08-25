@@ -10,16 +10,17 @@ import {
   PageTabs,
   Scrollable,
 } from '../../../framework';
+import { PageDetailCodeEditor } from '../../../framework/PageDetails/PageDetailCodeEditor';
 import { formatDateString } from '../../../framework/utils/formatDateString';
 import { RouteObj } from '../../Routes';
-import { ItemsResponse } from '../../common/crud/Data';
+import { AwxItemsResponse } from '../../awx/common/AwxItemsResponse';
+import { StatusCell } from '../../common/Status';
 import { useGet } from '../../common/crud/useGet';
 import { PageDetailsSection } from '../common/PageDetailsSection';
 import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../constants';
 import { EdaActivationInstance } from '../interfaces/EdaActivationInstance';
 import { EdaActivationInstanceLog } from '../interfaces/EdaActivationInstanceLog';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
-import { PageDetailCodeEditor } from '../../../framework/PageDetails/PageDetailCodeEditor';
 
 export function ActivationInstanceDetails() {
   const { t } = useTranslation();
@@ -27,27 +28,27 @@ export function ActivationInstanceDetails() {
   const { data: activationInstance } = useGet<EdaActivationInstance>(
     `${API_PREFIX}/activation-instances/${params.id ?? ''}/`,
     undefined,
-    SWR_REFRESH_INTERVAL
+    { refreshInterval: SWR_REFRESH_INTERVAL }
   );
 
-  const { data: activationInstanceLogInfo } = useGet<ItemsResponse<EdaActivationInstanceLog>>(
+  const { data: activationInstanceLogInfo } = useGet<AwxItemsResponse<EdaActivationInstanceLog>>(
     `${API_PREFIX}/activation-instances/${params.id ?? ''}/logs/?page_size=1`,
     undefined,
-    SWR_REFRESH_INTERVAL
+    { refreshInterval: SWR_REFRESH_INTERVAL }
   );
 
-  const { data: activationInstanceLog } = useGet<ItemsResponse<EdaActivationInstanceLog>>(
+  const { data: activationInstanceLog } = useGet<AwxItemsResponse<EdaActivationInstanceLog>>(
     `${API_PREFIX}/activation-instances/${params.id ?? ''}/logs/?page_size=${
       activationInstanceLogInfo?.count || 10
     }`,
     undefined,
-    SWR_REFRESH_INTERVAL
+    { refreshInterval: SWR_REFRESH_INTERVAL }
   );
 
   const { data: activation } = useGet<EdaRulebookActivation>(
     `${API_PREFIX}/activations/${activationInstance?.activation_id ?? ''}/`,
     undefined,
-    SWR_REFRESH_INTERVAL
+    { refreshInterval: SWR_REFRESH_INTERVAL }
   );
 
   const renderActivationDetailsTab = (
@@ -59,7 +60,9 @@ export function ActivationInstanceDetails() {
           <PageDetail label={t('Name')}>
             {`${activationInstance?.id || ''} - ${activationInstance?.name || ''}`}
           </PageDetail>
-          <PageDetail label={t('Status')}>{activationInstance?.status || ''}</PageDetail>
+          <PageDetail label={t('Status')}>
+            {<StatusCell status={activationInstance?.status || 'unknown'} />}
+          </PageDetail>
           <PageDetail label={t('Start date')}>
             {activationInstance?.started_at ? formatDateString(activationInstance?.started_at) : ''}
           </PageDetail>

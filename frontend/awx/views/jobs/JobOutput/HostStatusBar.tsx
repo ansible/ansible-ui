@@ -1,25 +1,24 @@
-import React from 'react';
-import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
 import { Badge, Tooltip } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 import {
-  pfSuccess,
   pfDanger,
-  pfWarning,
   pfInfo,
+  pfSuccess,
+  pfWarning,
 } from '../../../../../framework/components/pfcolors';
 import type { HostStatusCounts } from '../../../interfaces/Job';
 
 const BarWrapper = styled.div`
   background-color: var(--pf-global--Color--light-300);
   display: flex;
-  height: 7px;
+  min-height: 7px;
   margin-top: 16px;
   margin-bottom: 8px;
   width: 100%;
 `;
 
-const BarSegment = styled.div`
+const BarSegment = styled.div<{ count: number }>`
   background-color: ${(props) => props.color || 'inherit'};
   flex-grow: ${(props: { count: number }) => props.count || 0};
 `;

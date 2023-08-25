@@ -33,7 +33,7 @@ export function RuleAuditDetails() {
   const { data: ruleAudit } = useGet<EdaRuleAudit>(
     `${API_PREFIX}/audit-rules/${params.id ?? ''}/`,
     undefined,
-    SWR_REFRESH_INTERVAL
+    { refreshInterval: SWR_REFRESH_INTERVAL }
   );
 
   const renderRuleAuditDetailsTab = (ruleAudit: EdaRuleAudit | undefined): JSX.Element => {
@@ -61,6 +61,7 @@ export function RuleAuditDetails() {
               ruleAudit?.activation_instance?.name || ''
             )}
           </PageDetail>
+          <PageDetail label={t('Rule set')}>{ruleAudit?.ruleset_name || ''}</PageDetail>
           <PageDetail label={t('Created')}>
             {ruleAudit?.created_at ? formatDateString(ruleAudit?.created_at) : ''}
           </PageDetail>
@@ -86,6 +87,7 @@ export function RuleAuditDetails() {
     return (
       <PageLayout>
         <PageTable
+          id={'eda-rule-audit-actions'}
           tableColumns={tableColumns}
           toolbarFilters={toolbarFilters}
           errorStateTitle={t('Error loading actions')}
@@ -111,6 +113,7 @@ export function RuleAuditDetails() {
     return (
       <PageLayout>
         <PageTable
+          id={'eda-rule-audit-events'}
           tableColumns={tableColumns}
           toolbarFilters={toolbarFilters}
           errorStateTitle={t('Error loading events')}

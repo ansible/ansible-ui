@@ -31,9 +31,9 @@ import {
 import { ExecutionEnvironment } from '../../interfaces/ExecutionEnvironment';
 import { useAwxView } from '../../useAwxView';
 
-import { useDeleteExecutionEnvironments } from './hooks/useDeleteExecutionEnvironments';
-import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
 import { useAwxConfig } from '../../common/useAwxConfig';
+import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
+import { useDeleteExecutionEnvironments } from './hooks/useDeleteExecutionEnvironments';
 
 export function ExecutionEnvironments() {
   const { t } = useTranslation();
@@ -78,6 +78,7 @@ export function ExecutionEnvironments() {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: EditIcon,
+        isPinned: true,
         label: t('Edit execution environment'),
         onClick: (executionEnvironment) =>
           navigate(
