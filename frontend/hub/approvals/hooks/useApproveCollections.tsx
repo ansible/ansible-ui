@@ -54,7 +54,7 @@ export function approveCollection(
 
   async function innerAsync() {
     const repoRes = (await getRequest(
-      pulpAPI`/repositories/ansible/ansible/?name=published`
+      pulpAPI`/repositories/ansible/ansible/?pulp_label_select=pipeline=approved`
     )) as PulpItemsResponse<Repository>;
     approvedRepo = repoRes.results[0].pulp_href;
 
