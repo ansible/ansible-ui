@@ -10,13 +10,15 @@ export interface PageAsyncMultiSelectQueryResult<ValueT> {
   options: PageSelectOption<ValueT>[];
 }
 
+export type PageAsyncMultiSelectOptionsFn<ValueT> = (
+  page: number,
+  signal: AbortSignal
+) => Promise<PageAsyncMultiSelectQueryResult<ValueT>>;
+
 export interface PageAsyncMultiSelectProps<ValueT>
   extends Omit<PageMultiSelectProps<ValueT>, 'options'> {
   /** The function to query for options. */
-  queryOptions: (
-    page: number,
-    signal: AbortSignal
-  ) => Promise<PageAsyncMultiSelectQueryResult<ValueT>>;
+  queryOptions: PageAsyncMultiSelectOptionsFn<ValueT>;
 
   /** The placeholder to show while querying. */
   queryPlaceholder?: string;

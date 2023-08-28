@@ -140,6 +140,7 @@ export function PageDashboardChart(props: {
                 name={'scatter-' + index}
                 data={group.values.map((value) => ({ x: value.label, y: value.value }))}
                 size={({ active }) => (active ? 6 : 3)}
+                style={{ data: { fill: group.color } }}
               />
             ))}
           {(!props.variant || props.variant === 'stackedAreaChart') && (
