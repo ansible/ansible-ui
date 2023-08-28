@@ -2,7 +2,13 @@ import { HTTPError } from 'ky';
 import { AutomationServerType } from '../../automation-servers/AutomationServer';
 import { activeAutomationServer } from '../../automation-servers/AutomationServersProvider';
 import { Task, TaskResponse } from '../tasks/Task';
-import { deleteHubRequest, getHubRequest, patchHubRequest, putHubRequest } from './request';
+import {
+  deleteHubRequest,
+  getHubRequest,
+  patchHubRequest,
+  postHubRequest,
+  putHubRequest,
+} from './request';
 
 function apiTag(strings: TemplateStringsArray, ...values: string[]) {
   if (strings[0]?.[0] !== '/') {
@@ -135,6 +141,21 @@ export async function hubAPIPut<T extends object, RequestBody = unknown>(
     }
   } catch (error) {
     throw new Error('Error updating item');
+  }
+}
+
+export async function hubAPIPost<T extends object, RequestBody = unknown>(
+  url: string,
+  data: RequestBody,
+  signal?: AbortSignal
+) {
+  try {
+    const { response, statusCode } = await postHubRequest<T>(url, data, signal);
+    if (statusCode === 202) {
+      await parseTaskResponse(response as TaskResponse, signal);
+    }
+  } catch (error) {
+    throw new Error('Error creating item');
   }
 }
 
