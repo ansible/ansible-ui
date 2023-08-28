@@ -8,11 +8,13 @@ import {
 import { FilterIcon } from '@patternfly/react-icons';
 import { Dispatch, SetStateAction, useCallback, useState } from 'react';
 import { PageAsyncSingleSelect } from '../PageInputs/PageAsyncSingleSelect';
+import { PageAsyncMultiSelect } from '../PageInputs/PageAsyncMultiSelect';
 import { PageMultiSelect } from '../PageInputs/PageMultiSelect';
 import { PageSingleSelect } from '../PageInputs/PageSingleSelect';
 import { useBreakpoint } from '../components/useBreakPoint';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { IToolbarAsyncSingleSelectFilter } from './PageToolbarFilters/ToolbarAsyncSingleSelectFilter';
+import { IToolbarAsyncMultiSelectFilter } from './PageToolbarFilters/ToolbarAsyncMultiSelectFilter';
 import {
   IToolbarDateRangeFilter,
   ToolbarDateRangeFilter,
@@ -28,6 +30,7 @@ export enum ToolbarFilterType {
   MultiSelect,
   DateRange,
   AsyncSingleSelect,
+  AsyncMultiSelect,
 }
 
 /** An IToolbarFilter represents a filter that can be used in the toolbar */
@@ -36,7 +39,8 @@ export type IToolbarFilter =
   | IToolbarDateRangeFilter
   | IToolbarSingleSelectFilter
   | IToolbarMultiSelectFilter
-  | IToolbarAsyncSingleSelectFilter;
+  | IToolbarAsyncSingleSelectFilter
+  | IToolbarAsyncMultiSelectFilter;
 
 /** Represents the state of the toolbar filters. i.e. What is currently selected for filters. */
 export type IFilterState = Record<string, string[] | undefined>;
@@ -299,6 +303,34 @@ function ToolbarFilterComponent(props: {
                   filter.openBrowse?.(
                     (selection) => setFilterValues(() => [selection]),
                     filterValues && filterValues.length > 0 ? filterValues[0] : undefined
+                  );
+                }}
+              >
+                Browse
+              </Button>
+            ) : undefined
+          }
+        />
+      );
+
+    case ToolbarFilterType.AsyncMultiSelect:
+      return (
+        <PageAsyncMultiSelect<string>
+          id={props.id ?? filter.key}
+          values={filterValues}
+          onSelect={setFilterValues}
+          placeholder={filter.placeholder || ''}
+          queryOptions={filter.queryOptions}
+          queryErrorText={filter.queryErrorText}
+          queryPlaceholder={filter.queryPlaceholder}
+          footer={
+            filter.openBrowse ? (
+              <Button
+                variant="link"
+                onClick={() => {
+                  filter.openBrowse?.(
+                    (selection) => setFilterValues(() => selection),
+                    filterValues
                   );
                 }}
               >
