@@ -4,10 +4,11 @@ The HUB backend, specifically the Pulp API, uses an asynchronous task system for
 
 In order to ease the developer experience, it was created the following functions to ease the parse of the task system.
 
-## PATCH, PUT, DELETE actions
+## POST, PATCH, PUT, DELETE actions
 
-For the actions mentioned above, the HUB provides specialized functions that interact with the task system. Using any of these functions:
+For the actions mentioned above, the HUB provides specialized functions that interact with the task system. Using any of these **functions**:
 
+- `hubAPIPost`: Post request to a given URL with the supplied data and handles `202` responses by parsing the task system.
 - `hubAPIDelete`: Deletes a resource at a given URL and handles `202` responses by parsing the task system.
 - `hubAPIPatch`: Updates a resource at a specified URL with the provided data and handles `202` responses by parsing the task system.
 - `hubAPIPut`: Replaces a resource at a given URL with the supplied data and handles `202` responses by parsing the task system.
