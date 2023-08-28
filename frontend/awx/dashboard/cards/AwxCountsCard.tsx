@@ -42,11 +42,13 @@ export function AwxCountsCard(props: { data: IAwxDashboardData }) {
                     label: t('Ready'),
                     count: data.projects.total - data.projects.failed,
                     color: successfulColor,
+                    link: RouteObj.Projects + '?status=successful',
                   },
                   {
                     label: t('Failed'),
                     count: data.projects.failed,
                     color: failedColor,
+                    link: RouteObj.Projects + '?status=failed,error,cenceled,missing',
                   },
                 ]
               : undefined,
