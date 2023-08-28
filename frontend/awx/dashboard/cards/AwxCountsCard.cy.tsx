@@ -1,38 +1,47 @@
+import { RouteObj } from '../../../Routes';
 import { IAwxDashboardData } from '../AwxDashboard';
 import { AwxCountsCard } from './AwxCountsCard';
 
-describe('TeamForm.cy.ts', () => {
-  it('Create Team - Displays organization error message on internal server error', () => {
-    cy.intercept(
-      { method: 'GET', url: '/api/v2/organizations/*' },
-      { statusCode: 500, message: 'Internal Server Error' }
-    );
+describe('AwxCountsCard.cy.ts', () => {
+  it('should render the counts card with the correct counts', () => {
     const data: IAwxDashboardData = {
-      inventories: {
-        url: '',
-        total: 0,
-        total_with_inventory_source: 0,
-        job_failed: 0,
-        inventory_failed: 0,
-      },
-      inventory_sources: {
-        ec2: { url: '', failures_url: '', label: '', total: 0, failed: 0 },
-      },
-      groups: { url: '', total: 0, inventory_failed: 0 },
-      hosts: { url: '', failures_url: '', total: 0, failed: 0 },
-      projects: { url: '', failures_url: '', total: 0, failed: 0 },
-      scm_types: {
-        git: { url: '', label: '', failures_url: '', total: 0, failed: 0 },
-        svn: { url: '', label: '', failures_url: '', total: 0, failed: 0 },
-        archive: { url: '', label: '', failures_url: '', total: 0, failed: 0 },
-      },
-      users: { url: '', total: 0 },
-      organizations: { url: '', total: 0 },
-      teams: { url: '', total: 0 },
-      credentials: { url: '', total: 0 },
-      job_templates: { url: '', total: 0 },
-    };
+      inventories: { total: 3, inventory_failed: 1 },
+      hosts: { total: 20, failed: 9 },
+      projects: { total: 7, failed: 4 },
+    } as IAwxDashboardData;
+
     cy.mount(<AwxCountsCard data={data} />);
-    cy.contains('Error loading organizations').should('be.visible');
+
+    cy.contains('Hosts')
+      .parent()
+      .within(() => {
+        cy.contains(data.hosts.total).should('have.attr', 'href', RouteObj.Hosts);
+        cy.contains(data.hosts.total - data.hosts.failed);
+        cy.contains(data.hosts.failed);
+      });
+
+    cy.contains('Projects')
+      .parent()
+      .within(() => {
+        cy.contains(data.projects.total).should('have.attr', 'href', RouteObj.Projects);
+
+        cy.contains(data.projects.total - data.projects.failed)
+          .parent()
+          .contains('Ready')
+          .should('have.attr', 'href', RouteObj.Projects + '?status=successful');
+
+        cy.contains(data.projects.failed)
+          .parent()
+          .contains('Failed')
+          .should('have.attr', 'href', RouteObj.Projects + '?status=failed,error,canceled,missing');
+      });
+
+    cy.contains('Inventories')
+      .parent()
+      .within(() => {
+        cy.contains(data.inventories.total).should('have.attr', 'href', RouteObj.Inventories);
+        cy.contains(data.inventories.total - data.inventories.inventory_failed);
+        cy.contains(data.inventories.inventory_failed);
+      });
   });
 });

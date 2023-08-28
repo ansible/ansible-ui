@@ -15,6 +15,9 @@
 // ***********************************************************
 
 import '@patternfly/patternfly/patternfly-base.css';
+import '@patternfly/patternfly/patternfly-charts.css';
+
+import '@patternfly/patternfly/patternfly-charts-theme-dark.css';
 
 import { Page } from '@patternfly/react-core';
 import 'cypress-react-selector';
