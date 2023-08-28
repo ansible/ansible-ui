@@ -30,32 +30,32 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
     cy.visit(`/ui_next/dashboard`);
     cy.clickButton('Manage view');
     cy.get('.pf-c-modal-box__title-text').should('contain', 'Manage Dashboard');
-    cy.contains('tr', 'Projects').find('input').uncheck();
+    cy.contains('tr', 'Resource Counts').find('input').uncheck();
     cy.clickModalButton('Apply');
-    cy.contains('.pf-c-card__header', 'Projects').should('not.be.visible');
+    cy.contains('.pf-c-card__header', 'Resource Counts').should('not.be.visible');
     cy.clickButton('Manage view');
     cy.get('.pf-c-modal-box__title-text').should('contain', 'Manage Dashboard');
-    cy.contains('tr', 'Projects').find('input').check();
+    cy.contains('tr', 'Resource Counts').find('input').check();
     cy.clickModalButton('Apply');
-    cy.contains('.pf-c-card__header', 'Projects').should('be.visible');
+    cy.contains('.pf-c-card__header', 'Resource Counts').should('be.visible');
   });
 
   it('within the Manage Dashboard modal, clicking the Cancel button should revert any changes', () => {
     cy.visit(`/ui_next/dashboard`);
     cy.clickButton('Manage view');
     cy.get('.pf-c-modal-box__title-text').should('contain', 'Manage Dashboard');
-    cy.contains('tr', 'Projects').find('input').uncheck();
+    cy.contains('tr', 'Resource Counts').find('input').uncheck();
     cy.clickModalButton('Cancel');
-    cy.contains('.pf-c-card__header', 'Projects').should('be.visible');
+    cy.contains('.pf-c-card__header', 'Resource Counts').should('be.visible');
   });
 
   it('within the Manage Dashboard modal, clicking the Close button should revert any changes', () => {
     cy.visit(`/ui_next/dashboard`);
     cy.clickButton('Manage view');
     cy.get('.pf-c-modal-box__title-text').should('contain', 'Manage Dashboard');
-    cy.contains('tr', 'Projects').find('input').uncheck();
+    cy.contains('tr', 'Resource Counts').find('input').uncheck();
     cy.get('[aria-label="Close"]').click();
-    cy.contains('.pf-c-card__header', 'Projects').should('be.visible');
+    cy.contains('.pf-c-card__header', 'Resource Counts').should('be.visible');
   });
   // Manage Dashboard modal table does not currently support keyboard input to reorder items, use drag & drop
   it('within the Manage Dashboard modal, dragging a resource should reorder the resource', () => {
