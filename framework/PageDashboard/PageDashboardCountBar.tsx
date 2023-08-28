@@ -7,7 +7,7 @@ import { PageDashboardCard } from './PageDashboardCard';
 export type PageDashboardCountBarProps = {
   counts: {
     title: string;
-    total: number;
+    total?: number;
     to: string;
     counts?: { label: string; count: number; color: string; link?: string }[];
   }[];
@@ -38,11 +38,13 @@ export function PageDashboardCountBar(props: PageDashboardCountBarProps) {
                   {item.title}
                 </Title>
               </Link>
-              {item.counts ? (
+              {'counts' in item && item.counts ? (
                 <>
                   <div style={{ maxHeight: 64, marginTop: -4, marginBottom: -4 }}>
                     <ChartDonut
-                      title={item.total.toString()}
+                      title={item.counts
+                        .reduce<number>((acc, curr) => acc + curr.count, 0)
+                        .toString()}
                       titleComponent={<PageChartLabel to={item.to} />}
                       padding={{ top: 0, left: 0, right: 0, bottom: 0 }}
                       width={64}

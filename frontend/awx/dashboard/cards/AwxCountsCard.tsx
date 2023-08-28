@@ -13,7 +13,6 @@ export function AwxCountsCard(props: { data: IAwxDashboardData }) {
       counts={[
         {
           title: t('Hosts'),
-          total: data?.hosts.total ?? 0,
           to: RouteObj.Hosts,
           counts:
             data?.hosts.total ?? 0
@@ -33,7 +32,6 @@ export function AwxCountsCard(props: { data: IAwxDashboardData }) {
         },
         {
           title: t('Projects'),
-          total: data?.projects.total ?? 0,
           to: RouteObj.Projects,
           counts:
             data?.projects.total ?? 0
@@ -55,7 +53,6 @@ export function AwxCountsCard(props: { data: IAwxDashboardData }) {
         },
         {
           title: t('Inventories'),
-          total: data?.inventories.total ?? 0,
           to: RouteObj.Inventories,
           counts:
             data?.inventories.total ?? 0
