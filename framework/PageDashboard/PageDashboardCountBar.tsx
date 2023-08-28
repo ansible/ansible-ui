@@ -27,44 +27,50 @@ export function PageDashboardCountBar(props: PageDashboardCountBarProps) {
             gap: 16,
           }}
         >
-          {props.counts.map((item, index) => (
-            <div key={index} style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-              <Link to={item.to} style={{ color: 'var(--pf-global--text--Color)' }}>
-                <Title
-                  headingLevel="h3"
-                  size="xl"
-                  style={{ whiteSpace: 'nowrap', textDecoration: 'none' }}
-                >
-                  {item.title}
-                </Title>
-              </Link>
-              {'counts' in item && item.counts ? (
-                <>
-                  <div style={{ maxHeight: 64, marginTop: -4, marginBottom: -4 }}>
-                    <ChartDonut
-                      title={item.counts
-                        .reduce<number>((acc, curr) => acc + curr.count, 0)
-                        .toString()}
-                      titleComponent={<PageChartLabel to={item.to} />}
-                      padding={{ top: 0, left: 0, right: 0, bottom: 0 }}
-                      width={64}
-                      height={64}
-                      data={item.counts.map((count) => ({ x: count.label, y: count.count }))}
-                      colorScale={item.counts.map((count) => count.color)}
-                      cornerRadius={3}
-                      allowTooltip={false}
-                    />
-                  </div>
-                  <PageChartLegend legend={item.counts} />
-                </>
-              ) : (
-                <span style={{ fontSize: 'xx-large', lineHeight: 1 }}>{item.total}</span>
-              )}
-              {/* <Link to={item.to}>
+          {props.counts.map((item, index) => {
+            const total: number =
+              item.total ??
+              item.counts?.reduce<number>((acc: number, curr) => acc + (curr.count ?? 0), 0) ??
+              0;
+            return (
+              <div key={index} style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                <Link to={item.to} style={{ color: 'var(--pf-global--text--Color)' }}>
+                  <Title
+                    headingLevel="h3"
+                    size="xl"
+                    style={{ whiteSpace: 'nowrap', textDecoration: 'none' }}
+                  >
+                    {item.title}
+                  </Title>
+                </Link>
+                {total && 'counts' in item && item.counts ? (
+                  <>
+                    <div style={{ maxHeight: 64, marginTop: -4, marginBottom: -4 }}>
+                      <ChartDonut
+                        title={item.counts
+                          .reduce<number>((acc, curr) => acc + curr.count, 0)
+                          .toString()}
+                        titleComponent={<PageChartLabel to={item.to} />}
+                        padding={{ top: 0, left: 0, right: 0, bottom: 0 }}
+                        width={64}
+                        height={64}
+                        data={item.counts.map((count) => ({ x: count.label, y: count.count }))}
+                        colorScale={item.counts.map((count) => count.color)}
+                        cornerRadius={3}
+                        allowTooltip={false}
+                      />
+                    </div>
+                    <PageChartLegend legend={item.counts} />
+                  </>
+                ) : (
+                  <span style={{ fontSize: 'xx-large', lineHeight: 1 }}>{total}</span>
+                )}
+                {/* <Link to={item.to}>
                 <ArrowRightIcon />
               </Link> */}
-            </div>
-          ))}
+              </div>
+            );
+          })}
         </div>
       </CardBody>
     </PageDashboardCard>
