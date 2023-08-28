@@ -195,7 +195,7 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
           </PageDetail>
           <PageDetail label={t('Project git hash')}>
             <ClipboardCopy hoverTip="Copy" clickTip="Copied" variant="inline-compact">
-              {rulebookActivation?.project?.git_hash || ''}
+              {rulebookActivation?.git_hash || ''}
             </ClipboardCopy>
           </PageDetail>
           <PageDetail label={t('Number of rules')}>
