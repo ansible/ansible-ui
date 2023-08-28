@@ -1,9 +1,8 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../framework';
-import { postRequest } from '../../../common/crud/Data';
 import { useGetRequest } from '../../../common/crud/useGet';
-import { collectionKeyFn, parsePulpIDFromURL, pulpAPI } from '../../api/utils';
+import { collectionKeyFn, parsePulpIDFromURL, pulpAPI, hubAPIPost } from '../../api/utils';
 import { PulpItemsResponse } from '../../usePulpView';
 import { CollectionVersionSearch } from '../Approval';
 import { useApprovalsColumns } from './useApprovalsColumns';
@@ -57,7 +56,7 @@ export function rejectCollection(
     )) as PulpItemsResponse<Repository>;
     rejectedRepo = repoRes.results[0].pulp_href;
 
-    return postRequest(
+    await hubAPIPost(
       pulpAPI`/repositories/ansible/ansible/${
         parsePulpIDFromURL(collection.repository.pulp_href) || ''
       }/move_collection_version/`,
