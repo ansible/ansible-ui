@@ -201,7 +201,10 @@ function UserInputs(props: { mode: 'create' | 'edit' }) {
         isRequired
       />
       {mode === 'create' && (
-        <PageFormOrganizationSelect<IUserInput> name="user.summary_fields.organization.name" />
+        <PageFormOrganizationSelect<IUserInput>
+          name="user.summary_fields.organization.name"
+          isRequired
+        />
       )}
       <PageFormSection>
         <PageFormTextInput<IUserInput>
