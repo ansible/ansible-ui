@@ -105,7 +105,6 @@ function DashboardInternal(props: { managedResources: Resource[] }) {
 
   return (
     <PageDashboard>
-      <AwxCountsCard data={data} />
       {managedResources.map((resource: Resource) => {
         switch (resource.id) {
           case 'counts':
