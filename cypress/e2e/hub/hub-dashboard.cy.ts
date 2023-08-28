@@ -54,7 +54,7 @@ describe('hub dashboard', () => {
     cy.contains('tr', 'Application collections').find('input').uncheck();
     cy.contains('tr', 'Storage collections').find('input').uncheck();
     cy.clickModalButton('Apply');
-    cy.contains('div.pf-c-card__header', 'Storage collections').should('not.be.visible');
+    cy.get('div.pf-c-card__header').should('not.contain', 'Storage collections');
     cy.clickPageAction(/^Manage view/);
     cy.contains('tr', 'Storage collections').find('input').check();
     cy.clickModalButton('Apply');
