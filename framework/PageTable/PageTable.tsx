@@ -86,12 +86,14 @@ const ColumnCellDiv = styled.div`
   padding-top: 5px;
   padding-bottom: 5px;
 `;
+
 export type IPaginationRelatedProps = {
   page: number;
   perPage: number;
   setPage: (page: number) => void;
   setPerPage: (perPage: number) => void;
 };
+
 export type PageTableProps<T extends object> = {
   id?: string;
 
@@ -185,6 +187,11 @@ export type PageTableProps<T extends object> = {
   expandedRow?: (item: T) => ReactNode;
 
   disableLastRowBorder?: boolean;
+
+  /**
+   * This will render content between PageToolbar and table hader.
+   */
+  topContent?: React.ReactNode;
 };
 
 /**
