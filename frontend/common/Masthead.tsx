@@ -38,10 +38,6 @@ import styled from 'styled-components';
 import { mutate } from 'swr';
 import { useBreakpoint, usePageNavSideBar, useSettingsDialog } from '../../framework';
 import { RouteObj } from '../Routes';
-import AwxIcon from '../assets/AWX.svg';
-import EdaIcon from '../assets/EDA.svg';
-import { AutomationServerType } from '../automation-servers/AutomationServer';
-import { useActiveAutomationServer } from '../automation-servers/AutomationServersProvider';
 import { useAwxConfig } from '../awx/common/useAwxConfig';
 import getDocsBaseUrl from '../awx/common/util/getDocsBaseUrl';
 import { API_PREFIX } from '../eda/constants';
@@ -74,12 +70,8 @@ const ToolbarSpan = styled.span`
 //   width: 24px;
 // `;
 
-function isEdaServer(
-  server: { type: AutomationServerType; name: string; url: string } | undefined
-): boolean {
-  return (
-    (server?.type && server.type === AutomationServerType.EDA) || process.env.UI_MODE === 'EDA'
-  );
+function isEdaServer(): boolean {
+  return process.env.UI_MODE === 'EDA';
 }
 
 export function AnsibleMasthead(props: { hideLogin?: boolean }) {
@@ -91,7 +83,6 @@ export function AnsibleMasthead(props: { hideLogin?: boolean }) {
 
   const brand: string = process.env.BRAND ?? '';
   const product: string = process.env.PRODUCT ?? t('Ansible');
-  const automationServer = useActiveAutomationServer();
   const config = useAwxConfig();
   const navBar = usePageNavSideBar();
 
@@ -108,19 +99,12 @@ export function AnsibleMasthead(props: { hideLogin?: boolean }) {
         <MastheadMain>
           <MastheadBrand>
             <MastheadBrandDiv>
-              {!process.env.UI_MODE ? (
-                <>
-                  {automationServer?.type === AutomationServerType.EDA && <EdaIcon />}
-                  {automationServer?.type === AutomationServerType.AWX && <AwxIcon />}
-                </>
-              ) : (
-                <img
-                  src="/static/media/brand-logo.svg"
-                  alt={t('brand logo')}
-                  height="45"
-                  style={{ height: '45px' }}
-                />
-              )}
+              <img
+                src="/static/media/brand-logo.svg"
+                alt={t('brand logo')}
+                height="45"
+                style={{ height: '45px' }}
+              />
               <IconDiv>
                 {brand && (
                   <TruncateContentSpan>
@@ -176,7 +160,7 @@ export function AnsibleMasthead(props: { hideLogin?: boolean }) {
                 <ToolbarItem>
                   <Refresh />
                 </ToolbarItem>
-                {!isEdaServer(automationServer) && (
+                {!isEdaServer() && (
                   <ToolbarItem>
                     <Notifications />
                   </ToolbarItem>
@@ -220,7 +204,7 @@ export function AnsibleMasthead(props: { hideLogin?: boolean }) {
                       <DropdownItem
                         onClick={() => {
                           open(
-                            isEdaServer(automationServer)
+                            isEdaServer()
                               ? 'https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/2.4/html/eda-getting-started-guide/index'
                               : `${getDocsBaseUrl(config)}/html/userguide/index.html`,
                             '_blank'
@@ -300,7 +284,6 @@ function AccountDropdown() {
 
 function AccountDropdownInternal() {
   const isSmallOrLarger = useBreakpoint('sm');
-  const automationServer = useActiveAutomationServer();
   const history = useNavigate();
   const [open, setOpen] = useState(false);
   const onSelect = useCallback(() => {
@@ -334,7 +317,7 @@ function AccountDropdownInternal() {
         <DropdownItem
           key="user-details"
           onClick={() => {
-            isEdaServer(automationServer)
+            isEdaServer()
               ? history(activeUser ? RouteObj.EdaMyDetails : RouteObj.EdaUsers)
               : history(
                   activeUser
@@ -349,7 +332,7 @@ function AccountDropdownInternal() {
           key="logout"
           onClick={() => {
             async function logout() {
-              isEdaServer(automationServer)
+              isEdaServer()
                 ? await postRequest(`${API_PREFIX}/auth/session/logout/`, {})
                 : await fetch('/api/logout/');
               history('/');
