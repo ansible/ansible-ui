@@ -40,7 +40,7 @@ This upgrade script takes care of:
 - Running upgrades on packages that have newer version available (updating them to the latest versions)
 - Running `npm test` (lint, tsc, component tests) before and after updates to verify that the tests pass with the updated packages before applying the change.
 
-**Note:** If a test fails then the script updates packages one by one and runs `npm test` after individual package updates. This could be a slow process dependending on the number of errors and the number of package updates.
+**Note:** If a test fails then the script updates packages one by one and runs `npm test` after individual package updates. This could be a slow process depending on the number of errors and the number of package updates.
 
 ## npm audit failures
 
