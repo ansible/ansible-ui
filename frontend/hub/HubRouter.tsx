@@ -10,7 +10,7 @@ import { NamespaceDetails } from './namespaces/HubNamespaceDetails';
 import { CreateHubNamespace, EditHubNamespace } from './namespaces/HubNamespaceForm';
 import { Namespaces } from './namespaces/HubNamespaces';
 import { RemoteRegistries } from './remote-registries/RemoteRegistries';
-import { CreateRemote } from './remotes/RemoteForm';
+import { CreateRemote, EditRemote } from './remotes/RemoteForm';
 import { Remotes } from './remotes/Remotes';
 import { Repositories } from './repositories/Repositories';
 import { SignatureKeys } from './signature-keys/SignatureKeys';
@@ -46,6 +46,7 @@ export function HubRouter() {
       <Route path={RouteObjWithoutPrefix.APIToken} element={<Token />} />
       <Route path={RouteObjWithoutPrefix.Remotes} element={<Remotes />} />
       <Route path={RouteObjWithoutPrefix.CreateRemotes} element={<CreateRemote />} />
+      <Route path={RouteObjWithoutPrefix.EditRemotes} element={<EditRemote />} />
     </Routes>
   );
 }
