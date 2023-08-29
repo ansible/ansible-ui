@@ -68,6 +68,7 @@ function DecisionEnvironmentInputs() {
       <PageFormSelect
         name={'credential_id'}
         label={t('Credential')}
+        isRequired={false}
         placeholderText={t('Select credential')}
         options={
           credentials?.results
