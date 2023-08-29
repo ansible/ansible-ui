@@ -196,6 +196,7 @@ export const RouteObj = {
   //Analytics
   ControllerReports: `${awxRoutePrefix}/reports`,
   ControllerReport: `${awxRoutePrefix}/report/:id`,
+  SubscriptionUsage: `${awxRoutePrefix}/subscription-usage`,
 
   Hub: `${hubRoutePrefix}`,
 
