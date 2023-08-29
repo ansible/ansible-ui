@@ -145,7 +145,6 @@
     "rrule": "^2.7.2",
     "selfsigned": "2.1.1",
     "set-value": "^4.1.0",
-    "shell-escape-tag": "^2.0.2",
     "stream-browserify": "3.0.0",
     "style-loader": "3.3.3",
     "styled-components": "5.3.11",

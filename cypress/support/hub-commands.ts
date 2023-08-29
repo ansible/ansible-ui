@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
-import shell from 'shell-escape-tag';
 import './commands';
 import './rest-commands';
 import { HubItemsResponse } from '../../frontend/hub/useHubView';
 import { CollectionVersionSearch } from '../../frontend/hub/collections/CollectionVersionSearch';
+import { escapeForShellCommand } from './utils';
 
 const apiPrefix = Cypress.env('HUB_API_PREFIX') as string;
 
@@ -17,11 +17,9 @@ Cypress.Commands.add('galaxykit', (operation: string, ...args: string[]) => {
 
   cy.log(`${galaxykitCommand} ${operation} ${args.join(' ')}`);
 
-  const cmd = shell`${shell.preserve(
-    galaxykitCommand
-  )} -s ${server} -u ${adminUsername} -p ${adminPassword} ${shell.preserve(
-    operation
-  )} ${args}` as string;
+  const cmd = `${galaxykitCommand} -s '${server}' -u '${adminUsername}' -p '${adminPassword}' ${escapeForShellCommand(
+    `${operation} ${args.join(' ')}`
+  )}`;
 
   cy.exec(cmd, options).then(({ code, stderr, stdout }) => {
     cy.log(`RUN ${cmd}`, code, stderr, stdout).then(() => {
