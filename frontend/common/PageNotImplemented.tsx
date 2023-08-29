@@ -10,8 +10,7 @@ import {
 } from '@patternfly/react-core';
 import { ExclamationCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, Link } from 'react-router-dom';
-import { RouteObj } from '../Routes';
+import { Link, useNavigate } from 'react-router-dom';
 
 export function PageNotImplemented(props: { dashboardUrl?: string }) {
   const { t } = useTranslation();
@@ -27,11 +26,7 @@ export function PageNotImplemented(props: { dashboardUrl?: string }) {
         <EmptyStateSecondaryActions>
           <Stack hasGutter>
             <Button onClick={() => navigate(-1)}>{t('Return to previous page')}</Button>
-            <Button
-              component={(props) => (
-                <Link to={dashboardUrl ?? RouteObj.AutomationServers} {...props} />
-              )}
-            >
+            <Button component={(props) => <Link to={dashboardUrl} {...props} />}>
               {t('Return to dashboard')}
             </Button>
           </Stack>
