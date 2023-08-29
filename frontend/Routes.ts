@@ -235,14 +235,8 @@ export const RouteObj = {
 
   AwxDebug: `${awxRoutePrefix}/debug`,
 
-  AutomationServers: `/automation-servers`,
-  AwxAutomationServers: `${awxRoutePrefix}/automation-servers`,
-  HubAutomationServers: `${hubRoutePrefix}/automation-servers`,
-
   // EDA server prefix
   Eda: `${edaRoutePrefix}`,
-
-  EdaAutomationServers: `${edaRoutePrefix}/automation-servers`,
 
   EdaDashboard: `${edaRoutePrefix}/dashboard`,
 
