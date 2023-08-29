@@ -9,6 +9,7 @@ import { HubDashboard } from './dashboard/Dashboard';
 import { ExecutionEnvironments } from './execution-environments/ExecutionEnvironments';
 import { NamespaceDetails } from './namespaces/HubNamespaceDetails';
 import { CreateHubNamespace, EditHubNamespace } from './namespaces/HubNamespaceForm';
+import { EditHubNamespaceMetadata } from './namespaces/HubNamespaceMetadataForm';
 import { CreateRemote } from './remotes/RemoteForm';
 import { Namespaces } from './namespaces/HubNamespaces';
 import { RemoteRegistries } from './remote-registries/RemoteRegistries';
@@ -34,6 +35,10 @@ export function HubRouter() {
       <Route path={RouteObjWithoutPrefix.CreateNamespace} element={<CreateHubNamespace />} />
       <Route path={RouteObjWithoutPrefix.EditNamespace} element={<EditHubNamespace />} />
       <Route path={RouteObjWithoutPrefix.NamespaceDetails} element={<NamespaceDetails />} />
+      <Route
+        path={RouteObjWithoutPrefix.EditNamespaceMetadataDetails}
+        element={<EditHubNamespaceMetadata />}
+      />
 
       <Route path={RouteObjWithoutPrefix.Repositories} element={<Repositories />} />
       <Route path={RouteObjWithoutPrefix.Approvals} element={<Approvals />} />

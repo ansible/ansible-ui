@@ -1,17 +1,29 @@
-export interface HubNamespace {
+export interface LinksType {
+  name: string;
+  url: string;
+}
+
+export interface LatestMetadataType {
   pulp_href: string;
-  id: number;
   name: string;
   company: string;
   email: string;
-  avatar_url: string;
   description: string;
-  groups: [
-    {
-      id: number;
-      name: string;
-      object_roles: string[];
-    },
-  ];
-  related_fields: object;
+  resources: string;
+  links: LinksType[];
+  avatar_sha256: string | null;
+  avatar_url: string | null;
+  metadata_sha256: string;
+  task: string | null;
+  groups: string[];
+}
+
+export interface HubNamespace {
+  description?: string;
+  company?: string;
+  pulp_href: string;
+  pulp_created: string;
+  name: string;
+  my_permissions: string[];
+  latest_metadata: LatestMetadataType;
 }

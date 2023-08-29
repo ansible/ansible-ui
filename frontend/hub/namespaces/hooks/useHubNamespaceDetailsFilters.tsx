@@ -2,15 +2,15 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IToolbarFilter, ToolbarFilterType } from '../../../../framework';
 
-export function useHubNamespaceFilters() {
+export function useHubNamespaceDetailsFilters() {
   const { t } = useTranslation();
   const toolbarFilters = useMemo<IToolbarFilter[]>(
     () => [
       {
-        key: 'name__icontains',
-        label: t('Name'),
+        key: 'repository_name__icontains',
+        label: t('Repository'),
         type: ToolbarFilterType.Text,
-        query: 'name__icontains',
+        query: 'repository_name__icontains',
         comparison: 'contains',
       },
     ],

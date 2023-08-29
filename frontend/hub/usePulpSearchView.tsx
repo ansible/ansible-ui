@@ -10,27 +10,12 @@ import {
   useView,
 } from '../../framework';
 import { useFetcher } from '../common/crud/Data';
-import { QueryParams, getQueryString, serverlessURL } from './api/utils';
+import { QueryParams, getQueryString, serverlessURL } from './api';
 
-export interface HubItemsResponse<T extends object> {
-  meta: {
-    count: number;
-  };
-  data: T[];
-  links: {
-    next?: string;
-  };
-}
-
-export interface HubItemsResponse2<T> {
+export interface PulpSearchItemsResponse<T> {
   count: number;
   next?: string | null;
   previous?: string | null;
-  results: T[];
-}
-
-export interface HubNamespaceResponse<T extends object> {
-  count: number;
   results: T[];
 }
 
@@ -38,11 +23,11 @@ export type IHubView<T extends object> = IView &
   ISelected<T> & {
     itemCount: number | undefined;
     pageItems: T[] | undefined;
-    refresh: () => Promise<void>;
+    refresh: () => Promise<PulpSearchItemsResponse<T> | undefined>;
     unselectItemsAndRefresh: (items: T[]) => void;
   };
 
-export function useHubView<T extends object>({
+export function usePulpSearchView<T extends object>({
   url,
   keyFn,
   toolbarFilters,
@@ -79,7 +64,7 @@ export function useHubView<T extends object>({
       const toolbarFilter = toolbarFilters?.find((filter) => filter.key === key);
       if (toolbarFilter) {
         const values = filterState[key];
-        if (values && values.length > 0) {
+        if (values.length > 0) {
           queryString ? (queryString += '&') : (queryString += '?');
           if (values.length > 1) {
             queryString += values.map((value) => `or__${toolbarFilter.query}=${value}`).join('&');
@@ -111,17 +96,15 @@ export function useHubView<T extends object>({
 
   url += queryString;
   const fetcher = useFetcher();
-  const response = useSWR<HubItemsResponse<T>>(url, fetcher, {
+  const response = useSWR<PulpSearchItemsResponse<T>>(url, fetcher, {
     dedupingInterval: 0,
     refreshInterval: 30000,
   });
   const { data, mutate } = response;
-  const refresh = useCallback(async () => {
-    await mutate();
-  }, [mutate]);
+  const refresh = useCallback(() => mutate(), [mutate]);
 
-  const nextPage = serverlessURL(data?.links?.next);
-  useSWR<HubItemsResponse<T>>(nextPage, fetcher, {
+  const nextPage = serverlessURL(data?.next);
+  useSWR<PulpSearchItemsResponse<T>>(nextPage, fetcher, {
     dedupingInterval: 0,
   });
 
@@ -134,10 +117,10 @@ export function useHubView<T extends object>({
     }
   }
 
-  const selection = useSelected(data?.data ?? [], keyFn);
+  const selection = useSelected(data?.results ?? [], keyFn);
 
-  if (data?.meta.count !== undefined) {
-    itemCountRef.current.itemCount = data?.meta.count;
+  if (data?.count !== undefined) {
+    itemCountRef.current.itemCount = data?.count;
   }
 
   const unselectItemsAndRefresh = useCallback(
@@ -152,11 +135,11 @@ export function useHubView<T extends object>({
     return {
       refresh,
       itemCount: itemCountRef.current.itemCount,
-      pageItems: data?.data,
+      pageItems: data?.results,
       error,
       ...view,
       ...selection,
       unselectItemsAndRefresh,
     };
-  }, [data?.data, error, refresh, selection, unselectItemsAndRefresh, view]);
+  }, [data?.results, error, refresh, selection, unselectItemsAndRefresh, view]);
 }
