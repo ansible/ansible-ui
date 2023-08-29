@@ -1,6 +1,4 @@
 import { HTTPError } from 'ky';
-import { AutomationServerType } from '../../automation-servers/AutomationServer';
-import { activeAutomationServer } from '../../automation-servers/AutomationServersProvider';
 import { Task, TaskResponse } from '../tasks/Task';
 import {
   deleteHubRequest,
@@ -29,11 +27,7 @@ function apiTag(strings: TemplateStringsArray, ...values: string[]) {
 export function hubAPI(strings: TemplateStringsArray, ...values: string[]) {
   let base = process.env.HUB_API_BASE_PATH;
   if (!base) {
-    if (activeAutomationServer?.type === AutomationServerType.Galaxy) {
-      base = '/api/galaxy';
-    } else {
-      base = '/api/automation-hub';
-    }
+    base = '/api/galaxy';
   }
   return base + apiTag(strings, ...values);
 }
@@ -41,11 +35,7 @@ export function hubAPI(strings: TemplateStringsArray, ...values: string[]) {
 export function pulpAPI(strings: TemplateStringsArray, ...values: string[]) {
   let base = process.env.HUB_API_BASE_PATH;
   if (!base) {
-    if (activeAutomationServer?.type === AutomationServerType.Galaxy) {
-      base = '/api/galaxy';
-    } else {
-      base = '/api/automation-hub';
-    }
+    base = '/api/automation-hub';
   }
   return base + '/pulp/api/v3' + apiTag(strings, ...values);
 }
