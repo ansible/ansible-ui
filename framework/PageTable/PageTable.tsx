@@ -189,9 +189,15 @@ export type PageTableProps<T extends object> = {
   disableLastRowBorder?: boolean;
 
   /**
-   * This will render content between PageToolbar and table hader.
+   * This will render content between PageToolbar and table hader. Set scrollOutsideTable to true, if you want proper scrolling in table.
    */
   topContent?: React.ReactNode;
+
+  /**
+   * If topContent is set and this variable is set to true, it will render scrollable area outside of both table and topContent,
+   * if set to false (or not set at all), scrollable area will render in table only (default setting).
+   */
+  scrollOutsideTable?: boolean;
 };
 
 /**
@@ -310,6 +316,17 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
     );
   }
 
+  let tableContent = (
+    <>
+      <PageSection>{props.topContent}</PageSection>
+      <PageTableView {...props} {...pagination} tableColumns={managedColumns} />
+    </>
+  );
+
+  if (props.scrollOutsideTable) {
+    tableContent = <Scrollable>{tableContent}</Scrollable>;
+  }
+
   return (
     <>
       <PageToolbar
@@ -322,12 +339,11 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
         sortOptions={sortOptions}
       />
       {viewType === PageTableViewTypeE.Table && (
-        <PageBody disablePadding={disableBodyPadding}>
-          <PageTableView {...props} {...pagination} tableColumns={managedColumns} />
-        </PageBody>
+        <PageBody disablePadding={disableBodyPadding}>{tableContent}</PageBody>
       )}
       {viewType === PageTableViewTypeE.List && (
         <Scrollable>
+          <PageSection>{props.topContent}</PageSection>
           <PageSection padding={{ default: 'noPadding', md: 'padding' }}>
             <div
               style={{
@@ -346,6 +362,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
       )}
       {viewType === PageTableViewTypeE.Cards && (
         <Scrollable>
+          <PageSection>{props.topContent}</PageSection>
           <PageTableCards {...props} showSelect={showSelect} tableColumns={managedColumns} />
         </Scrollable>
       )}
@@ -460,8 +477,8 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
 
   const settings = useSettings();
 
-  return (
-    <ScrollDiv className="pf-c-scroll-inner-wrapper" ref={containerRef} onScroll={onScroll}>
+  let returnElement = (
+    <>
       <TableComposable
         aria-label="Simple table"
         variant={
@@ -551,8 +568,18 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
           )}
         </EmptyState>
       )}
-    </ScrollDiv>
+    </>
   );
+
+  if (!props.scrollOutsideTable) {
+    returnElement = (
+      <ScrollDiv className="pf-c-scroll-inner-wrapper" ref={containerRef} onScroll={onScroll}>
+        {returnElement}
+      </ScrollDiv>
+    );
+  }
+
+  return returnElement;
 }
 
 function TableHead<T extends object>(props: {
