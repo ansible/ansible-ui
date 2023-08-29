@@ -1,7 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { usePostRequest } from '../../common/crud/usePostRequest';
-import { IRemotes } from './Remotes';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   PageForm,
   PageFormCheckbox,
@@ -10,18 +8,33 @@ import {
   PageHeader,
   PageLayout,
 } from '../../../framework';
-import { PageFormGroup } from '../../../framework/PageForm/Inputs/PageFormGroup';
-import { appendTrailingSlash, pulpAPI } from '../api/utils';
-import { RouteObj } from '../../Routes';
-import { PageFormExpandableSection } from '../../../framework/PageForm/PageFormExpandableSection';
 import { PageFormFileUpload } from '../../../framework/PageForm/Inputs/PageFormFileUpload';
+import { PageFormGroup } from '../../../framework/PageForm/Inputs/PageFormGroup';
+import { PageFormExpandableSection } from '../../../framework/PageForm/PageFormExpandableSection';
+import { LoadingPage } from '../../../framework/components/LoadingPage';
+import { RouteObj } from '../../Routes';
+import { AwxError } from '../../awx/common/AwxError';
+import { useGet } from '../../common/crud/useGet';
+import { usePostRequest } from '../../common/crud/usePostRequest';
+import { appendTrailingSlash, hubAPIPut, parsePulpIDFromURL, pulpAPI } from '../api/utils';
+import { PulpItemsResponse } from '../usePulpView';
+import { IRemotes } from './Remotes';
+
+interface RemoteFormProps extends IRemotes {
+  client_key?: string;
+  password?: string;
+  proxy_password?: string;
+  proxy_username?: string;
+  token?: string;
+  username?: string;
+}
 
 export function CreateRemote() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const postRequest = usePostRequest<IRemotes>();
   const onSubmit: PageFormSubmitHandler<IRemotes> = async (remote) => {
-    const url = appendTrailingSlash(remote.url);
+    const url: string = appendTrailingSlash(remote.url);
     await postRequest(pulpAPI`/remotes/ansible/collection/`, {
       ...remote,
       url,
@@ -54,13 +67,128 @@ export function CreateRemote() {
   );
 }
 
-interface RemoteFormProps extends IRemotes {
-  token?: string;
-  username?: string;
-  password?: string;
-  sso_url?: string;
-  proxy_username?: string;
-  proxy_password?: string;
+const initialRemote: Partial<RemoteFormProps> = {
+  name: '',
+  url: '',
+  ca_cert: null,
+  client_cert: null,
+  tls_validation: true,
+  proxy_url: null,
+  download_concurrency: null,
+  rate_limit: null,
+  requirements_file: null,
+  auth_url: null,
+  signed_only: false,
+
+  hidden_fields: [
+    'client_key',
+    'proxy_username',
+    'proxy_password',
+    'username',
+    'password',
+    'token',
+  ].map((name) => ({ name, is_set: false })),
+};
+
+type RemoteFormPropsKey = keyof RemoteFormProps;
+function smartUpdate(modifiedRemote: RemoteFormProps, unmodifiedRemote: RemoteFormProps) {
+  // Adapted from https://github.com/ansible/ansible-hub-ui/blob/625157662113cd68c3b121508fa8f64613339a71/src/api/ansible-remote.ts#L5
+  if (modifiedRemote.hidden_fields) {
+    delete modifiedRemote.hidden_fields;
+  }
+
+  if (modifiedRemote.my_permissions) {
+    delete modifiedRemote.my_permissions;
+  }
+
+  Object.keys(modifiedRemote).forEach((key) => {
+    const propKey = key as keyof RemoteFormProps;
+    if (modifiedRemote[propKey] === '' || modifiedRemote[propKey] === null) {
+      delete modifiedRemote[propKey];
+    }
+  });
+
+  // Pulp complains if auth_url gets sent with a request that doesn't include a
+  // valid token, even if the token exists in the database and isn't being changed.
+  // To solve this issue, simply delete auth_url from the request if it hasn't
+  // been updated by the user.
+  if (modifiedRemote.auth_url === unmodifiedRemote.auth_url) {
+    delete modifiedRemote.auth_url;
+  }
+  const keys = Object.keys(modifiedRemote) as RemoteFormPropsKey[];
+  for (const field of keys) {
+    // API returns headers:null but doesn't accept it .. and we don't edit headers
+    if (modifiedRemote[field] === null && unmodifiedRemote[field] === null) {
+      delete modifiedRemote[field];
+    }
+  }
+
+  return modifiedRemote;
+}
+export function EditRemote() {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const params = useParams<{ id?: string }>();
+  const name = params.id;
+  const { data, error, refresh } = useGet<PulpItemsResponse<RemoteFormProps>>(
+    pulpAPI`/remotes/ansible/collection/?name=${name ?? ''}`
+  );
+
+  if (error) return <AwxError error={error} handleRefresh={refresh} />;
+  if (!data) return <LoadingPage breadcrumbs tabs />;
+
+  const remote = data.results[0];
+
+  const handleRefresh = () => {
+    // Navigate back when remote is not found
+    if (!error && !remote) {
+      navigate(-1);
+    }
+  };
+
+  const onSubmit: PageFormSubmitHandler<RemoteFormProps> = async (modifiedRemote) => {
+    const updatedRemote = smartUpdate(modifiedRemote, remote);
+    await hubAPIPut<RemoteFormProps>(
+      pulpAPI`/remotes/ansible/collection/${parsePulpIDFromURL(modifiedRemote.pulp_href) ?? ''}`,
+      updatedRemote
+    );
+    navigate(-1);
+  };
+
+  if (data && data.count === 0 && !error && !remote) {
+    return (
+      <PageLayout>
+        <PageHeader
+          breadcrumbs={[{ label: t('Remotes'), to: RouteObj.Remotes }, { label: t('Edit Remote') }]}
+        />
+        <AwxError error={new Error(t('Remote not found'))} handleRefresh={handleRefresh} />
+      </PageLayout>
+    );
+  }
+
+  return (
+    <PageLayout>
+      <PageHeader
+        title={t('Edit Remote')}
+        breadcrumbs={[{ label: t('Remotes'), to: RouteObj.Remotes }, { label: t(' Remote') }]}
+      />
+      <PageForm<RemoteFormProps>
+        submitText={t('Edit Remote')}
+        onSubmit={onSubmit}
+        onCancel={() => navigate(-1)}
+        defaultValue={{ ...initialRemote, ...remote }}
+      >
+        <>
+          <RemoteInputs />
+          <PageFormExpandableSection singleColumn>
+            <ProxyAdvancedRemoteInputs />
+            <CertificatesAdvancedRemoteInputs />
+            <MiscAdvancedRemoteInputs />
+          </PageFormExpandableSection>
+        </>
+      </PageForm>
+    </PageLayout>
+  );
 }
 
 function ProxyAdvancedRemoteInputs() {
@@ -185,7 +313,7 @@ function RemoteInputs() {
         labelHelp={t('Token for authenticating to the server URL.')}
       />
       <PageFormTextInput<RemoteFormProps>
-        name="sso_url"
+        name="auth_url"
         label={t('SSO URL')}
         placeholder={t('Enter a SSO URL')}
         labelHelp={t('Single sign on URL.')}
