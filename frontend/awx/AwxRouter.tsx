@@ -2,7 +2,6 @@ import { Bullseye, Spinner } from '@patternfly/react-core';
 import { Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { RouteObj, useRoutesWithoutPrefix } from '../Routes';
-import { AutomationServers } from '../automation-servers/AutomationServers';
 import Debug from '../common/Debug';
 import { PageNotFound } from '../common/PageNotFound';
 import { PageNotImplemented } from '../common/PageNotImplemented';
@@ -70,7 +69,6 @@ export function AwxRouter() {
       }
     >
       <Routes>
-        <Route path={RouteObjWithoutPrefix.AwxAutomationServers} element={<AutomationServers />} />
         <Route path={RouteObjWithoutPrefix.Dashboard} element={<AwxDashboard />} />
         <Route path={RouteObjWithoutPrefix.Jobs} element={<Jobs />} />
         <Route path={RouteObjWithoutPrefix.JobPage} element={<JobPage />} />

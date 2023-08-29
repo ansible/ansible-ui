@@ -1,6 +1,5 @@
 import { Route, Routes } from 'react-router-dom';
 import { RouteObj, useRoutesWithoutPrefix } from '../Routes';
-import { AutomationServers } from '../automation-servers/AutomationServers';
 import { CredentialDetails } from './Resources/credentials/CredentialDetails';
 import { Credentials } from './Resources/credentials/Credentials';
 import { CreateCredential, EditCredential } from './Resources/credentials/EditCredential';
@@ -41,8 +40,6 @@ export function EventDrivenRouter() {
 
   return (
     <Routes>
-      <Route path={RouteObjWithoutPrefix.EdaAutomationServers} element={<AutomationServers />} />
-
       <Route path={RouteObjWithoutPrefix.EdaDashboard} element={<EdaDashboard />} />
 
       <Route path={RouteObjWithoutPrefix.CreateEdaProject} element={<CreateProject />} />

@@ -1,6 +1,5 @@
 import { Route, Routes } from 'react-router-dom';
 import { RouteObj, useRoutesWithoutPrefix } from '../Routes';
-import { AutomationServers } from '../automation-servers/AutomationServers';
 import { Approvals } from './approvals/Approvals';
 import { CollectionDetails } from './collections/CollectionDetails';
 import { Collections } from './collections/Collections';
@@ -9,9 +8,9 @@ import { HubDashboard } from './dashboard/Dashboard';
 import { ExecutionEnvironments } from './execution-environments/ExecutionEnvironments';
 import { NamespaceDetails } from './namespaces/HubNamespaceDetails';
 import { CreateHubNamespace, EditHubNamespace } from './namespaces/HubNamespaceForm';
-import { CreateRemote } from './remotes/RemoteForm';
 import { Namespaces } from './namespaces/HubNamespaces';
 import { RemoteRegistries } from './remote-registries/RemoteRegistries';
+import { CreateRemote } from './remotes/RemoteForm';
 import { Remotes } from './remotes/Remotes';
 import { Repositories } from './repositories/Repositories';
 import { SignatureKeys } from './signature-keys/SignatureKeys';
@@ -24,7 +23,6 @@ export function HubRouter() {
 
   return (
     <Routes>
-      <Route path={RouteObjWithoutPrefix.HubAutomationServers} element={<AutomationServers />} />
       <Route path={RouteObjWithoutPrefix.HubDashboard} element={<HubDashboard />} />
       <Route path={RouteObjWithoutPrefix.Collections} element={<Collections />} />
       <Route path={RouteObjWithoutPrefix.UploadCollection} element={<UploadCollection />} />
