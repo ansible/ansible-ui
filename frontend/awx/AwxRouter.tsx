@@ -57,6 +57,7 @@ import { Schedules } from './views/schedules/Schedules';
 import { CreateScheduleRule } from './views/schedules/RuleForm';
 import { SystemSettings } from './interfaces/SystemSettings';
 import { useGet } from '../common/crud/useGet';
+import SubscriptionUsage from './analytics/subscription-usage/SubscriptionUsage';
 
 export function AwxRouter() {
   const RouteObjWithoutPrefix = useRoutesWithoutPrefix(RouteObj.AWX);
@@ -178,6 +179,7 @@ export function AwxRouter() {
         <Route path={RouteObjWithoutPrefix.ControllerReports} element={<Reports />} />
         <Route path={RouteObjWithoutPrefix.AwxDebug} element={<Debug />} />
         <Route path="*" element={<PageNotFound dashboardUrl={RouteObj.Dashboard} />} />
+        <Route path={RouteObjWithoutPrefix.SubscriptionUsage} element={<SubscriptionUsage />} />
       </Routes>
     </Suspense>
   );

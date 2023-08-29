@@ -212,12 +212,20 @@ export function AwxSidebar() {
             {t('Reports')}
           </NavItem>
           {data?.SUBSCRIPTION_USAGE_MODEL === 'unique_managed_hosts' && !error && !isLoading && (
-            <NavItem
-              isActive={isRouteActive(RouteObj.HostMetrics, location)}
-              onClick={() => onClick(RouteObj.HostMetrics)}
-            >
-              {t('Host Metrics')}
-            </NavItem>
+            <>
+              <NavItem
+                isActive={isRouteActive(RouteObj.HostMetrics, location)}
+                onClick={() => onClick(RouteObj.HostMetrics)}
+              >
+                {t('Host Metrics')}
+              </NavItem>
+              <NavItem
+                isActive={isRouteActive(RouteObj.SubscriptionUsage, location)}
+                onClick={() => onClick(RouteObj.SubscriptionUsage)}
+              >
+                {t('Subscription Usage')}
+              </NavItem>
+            </>
           )}
         </NavExpandable>
       )}
