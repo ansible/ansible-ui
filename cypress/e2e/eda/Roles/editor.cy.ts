@@ -32,7 +32,6 @@ describe('Editor EDA Role - Resource types and permissions', () => {
       'Project',
       'Inventory',
       'Extra Vars',
-      'Playbook',
       'Rulebook',
       'Decision environment',
       'Credential',
