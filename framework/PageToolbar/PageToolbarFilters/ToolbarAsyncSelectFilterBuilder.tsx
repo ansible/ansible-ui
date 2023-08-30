@@ -18,6 +18,7 @@ export type AsyncSelectFilterBuilderProps<T extends object> = {
   toolbarFilters?: IToolbarFilter[];
   viewParams: ViewExtendedOptions<T>;
   useView: (viewParams: ViewExtendedOptions<T>) => BaseView<T>;
+  multiSelection?: boolean;
 };
 
 export function useAsyncSingleSelectFilterBuilder<T extends object>(
@@ -31,9 +32,9 @@ export function useAsyncSingleSelectFilterBuilder<T extends object>(
       (onSelect: (value: T) => void, defaultSelection?: T) => {
         setDialog(
           <SelectFilter<T>
-            multiSelection={false}
-            onSelect={onSelect}
             defaultSelection={defaultSelection}
+            onSelect={onSelect}
+            multiSelection={false}
             {...props}
           />
         );

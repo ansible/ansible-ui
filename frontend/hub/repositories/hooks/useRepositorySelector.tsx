@@ -7,12 +7,26 @@ import {
   ToolbarFilterType,
   usePageDialog,
 } from '../../../../framework';
-import { MultiSelectDialog } from '../../../../framework/PageDialogs/MultiSelectDialog';
-import { SelectSingleDialog } from '../../../../framework/PageDialogs/SelectSingleDialog';
-import { pulpAPI } from '../../api/utils';
-import { usePulpView } from '../../usePulpView';
 import { AnsibleAnsibleRepositoryResponse as Repository } from './../../api-schemas/generated/AnsibleAnsibleRepositoryResponse';
+import { useAsyncSingleSelectFilterBuilder } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSelectFilterBuilder';
 
+export function useSelectRepositorySingle() {
+  const [_, setDialog] = usePageDialog();
+  const { t } = useTranslation();
+  const toolbarFilters = useRepositoryFilters();
+
+  const onSelectRepository = useAsyncSingleSelectFilterBuilder<Repository>({
+    toolbarFilters: useRepositoryFilters(),
+  });
+  return onSelectRepository;
+}
+
+export function useSelectRepositoryMulti() {
+  const [_, setDialog] = usePageDialog();
+  const { t } = useTranslation();
+}
+
+/*
 function SelectRepository(props: {
   title: string;
   onSelect?: (repository: Repository) => void;
@@ -96,6 +110,7 @@ export function useSelectRepositoryMulti() {
   );
   return onSelectRepository;
 }
+*/
 
 export function useRepositoryColumns(_options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
