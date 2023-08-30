@@ -5,12 +5,16 @@ import { IPageAction, PageActionSelection, PageActionType } from '../../../../fr
 import { CollectionVersionSearch } from '../Approval';
 import { useRejectCollections } from './useRejectCollections';
 import { useApproveCollections } from './useApproveCollections';
+import { useHubContext } from './../../useHubContext';
 
 export function useApprovalActions(callback?: (collections: CollectionVersionSearch[]) => void) {
   const { t } = useTranslation();
 
   const rejectCollections = useRejectCollections(callback);
   const approveCollections = useApproveCollections(callback);
+  const { featureFlags } = useHubContext();
+  const { collection_auto_sign, require_upload_signatures, can_upload_signatures } = featureFlags;
+  const autoSign = collection_auto_sign && !require_upload_signatures;
 
   return useMemo<IPageAction<CollectionVersionSearch>[]>(
     () => [
@@ -20,9 +24,11 @@ export function useApprovalActions(callback?: (collections: CollectionVersionSea
         selection: PageActionSelection.Single,
         isPinned: true,
         icon: ThumbsUpIcon,
-        label: t('Approve'),
+        label: autoSign ? t('Sign and approve') : t('Approve'),
         onClick: (collection) => approveCollections([collection]),
         isDanger: false,
+        isDisabled: (collection) =>
+          can_upload_signatures && require_upload_signatures && collection.is_signed ? true : false,
       },
       { type: PageActionType.Seperator },
       {
@@ -35,6 +41,13 @@ export function useApprovalActions(callback?: (collections: CollectionVersionSea
         isDanger: true,
       },
     ],
-    [t, rejectCollections, approveCollections]
+    [
+      t,
+      rejectCollections,
+      approveCollections,
+      autoSign,
+      can_upload_signatures,
+      require_upload_signatures,
+    ]
   );
 }
