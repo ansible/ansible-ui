@@ -13,7 +13,6 @@ export function useCollectionFilters() {
   const repoQueryOptions = useRepoQueryOptions();
   const selectRepositoryMulti = useSelectRepositoryMulti();
 
-  debugger;
   const repoSelector = toolbarMultiSelectBrowseAdapter<Repository>(
     selectRepositoryMulti.onBrowse,
     (item) => item.name,
