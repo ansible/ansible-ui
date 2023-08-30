@@ -17,7 +17,7 @@ import { ProjectDetails } from './ProjectDetails';
 export function ProjectPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { error, data: project, refresh } = useGet<Project>(`/api/v2/projects/${params.id ?? ''}`);
+  const { error, data: project, refresh } = useGet<Project>(`/api/v2/projects/${params.id ?? ''}/`);
   const navigate = useNavigate();
   const itemActions = useProjectActions(() => navigate(RouteObj.Projects));
 

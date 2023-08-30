@@ -31,7 +31,7 @@ export function OrganizationPage() {
     data: organization,
     error,
     refresh,
-  } = useGet<Organization>(`/api/v2/organizations/${params.id ?? ''}`);
+  } = useGet<Organization>(`/api/v2/organizations/${params.id ?? ''}/`);
   const history = useNavigate();
 
   const deleteOrganizations = useDeleteOrganizations((deleted: Organization[]) => {
