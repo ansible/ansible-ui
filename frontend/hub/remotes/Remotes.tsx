@@ -1,13 +1,13 @@
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../framework';
-import { usePulpView } from '../usePulpView';
+import { RouteObj } from '../../common/Routes';
 import { pulpAPI, pulpHrefKeyFn } from '../api/utils';
+import { usePulpView } from '../usePulpView';
 import { useRemoteActions } from './hooks/useRemoteActions';
 import { useRemoteColumns } from './hooks/useRemoteColumns';
 import { useRemoteFilters } from './hooks/useRemoteFilters';
 import { useRemoteToolbarActions } from './hooks/useRemoteToolbarActions';
-import { useNavigate } from 'react-router-dom';
-import { RouteObj } from '../../Routes';
 
 export interface IRemotes {
   auth_url?: string | null;

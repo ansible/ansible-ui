@@ -1,13 +1,13 @@
+import { ButtonVariant } from '@patternfly/react-core';
+import { EditIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IPageAction, PageActionSelection, PageActionType } from '../../../../framework';
-import { EditIcon, TrashIcon } from '@patternfly/react-icons';
-import { ButtonVariant } from '@patternfly/react-core';
-import { IRemotes } from '../Remotes';
-import { RouteObj } from '../../../Routes';
 import { useNavigate } from 'react-router-dom';
-import { useDeleteRemotes } from './useDeleteRemotes';
+import { IPageAction, PageActionSelection, PageActionType } from '../../../../framework';
+import { RouteObj } from '../../../common/Routes';
 import { IPulpView } from '../../usePulpView';
+import { IRemotes } from '../Remotes';
+import { useDeleteRemotes } from './useDeleteRemotes';
 
 export function useRemoteActions(view: IPulpView<IRemotes>) {
   const { t } = useTranslation();

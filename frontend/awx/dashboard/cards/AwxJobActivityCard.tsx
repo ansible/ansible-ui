@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FormGroupSelectOption } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
-import { RouteObj } from '../../../Routes';
+import { RouteObj } from '../../../common/Routes';
 import { DashboardJobPeriod, DashboardJobType, JobsChart } from '../charts/JobsChart';
 
 export function AwxJobActivityCard() {

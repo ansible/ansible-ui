@@ -8,6 +8,9 @@ const proxyUrl = new URL(awxServer);
 
 module.exports = function (env, argv) {
   const config = webpackConfig(env, argv);
+
+  config.entry = './frontend/awx/AWX.tsx';
+
   config.devServer.proxy = {
     '/api': {
       target: awxServer,

@@ -4,7 +4,7 @@ import useSWR, { useSWRConfig } from 'swr';
 import { PageFormCheckbox, PageHeader, PageLayout } from '../../../../framework';
 import { PageFormSlider } from '../../../../framework/PageForm/Inputs/PageFormSlider';
 import { PageForm, PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
-import { RouteObj } from '../../../Routes';
+import { RouteObj } from '../../../common/Routes';
 import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data';
 import { Instance } from '../../interfaces/Instance';
 import { getAwxError } from '../../useAwxView';

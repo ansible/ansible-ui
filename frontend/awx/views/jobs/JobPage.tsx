@@ -2,8 +2,8 @@
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { PageHeader, PageLayout } from '../../../../framework';
-import { RouteObj } from '../../../Routes';
 import { PageBackTab, RoutedTab, RoutedTabs } from '../../../common/RoutedTabs';
+import { RouteObj } from '../../../common/Routes';
 import { useGet } from '../../../common/crud/useGet';
 import { Job } from '../../interfaces/Job';
 import { JobDetails } from './JobDetails';

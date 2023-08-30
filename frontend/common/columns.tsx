@@ -8,7 +8,7 @@ import {
   ITableColumn,
   TextCell,
 } from '../../framework';
-import { RouteObj } from '../Routes';
+import { RouteObj } from './Routes';
 
 export function useIdColumn<T extends { name: string; id: number }>() {
   const { t } = useTranslation();

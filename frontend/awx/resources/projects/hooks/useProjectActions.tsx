@@ -9,7 +9,7 @@ import {
   PageActionType,
   usePageAlertToaster,
 } from '../../../../../framework';
-import { RouteObj } from '../../../../Routes';
+import { RouteObj } from '../../../../common/Routes';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { Project } from '../../../interfaces/Project';
 import { useCancelProjects } from './useCancelProjects';

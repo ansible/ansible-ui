@@ -11,18 +11,18 @@ import { useCallback, useEffect, useReducer } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { RouteObj } from '../../../../../Routes.ts';
+import { RouteObj } from '../../../../../common/Routes.js';
 import { visualizerReducer } from '../WorkflowReducer.tsx';
-import { WorkflowDispatchContext, WorkflowStateContext } from './shared/WorkflowContext.jsx';
 import {
   WorkflowApprovalAPI,
   WorkflowJobTemplateNodesAPI,
   WorkflowJobTemplatesAPI,
 } from './TemplatesAPI/index.jsx';
+import { WorkflowDispatchContext, WorkflowStateContext } from './shared/WorkflowContext.jsx';
+import { layoutGraph } from './utils/WorkflowUtils.jsx';
 import { getAddedAndRemoved } from './utils/getAddedAndRemoved.jsx';
 import { stringIsUUID } from './utils/strings.jsx';
 import useRequest from './utils/useRequest.jsx';
-import { layoutGraph } from './utils/WorkflowUtils.jsx';
 // import { DeleteAllNodesModal, UnsavedChangesModal } from './Modals';
 // import { LinkAddModal, LinkDeleteModal, LinkEditModal } from './Modals/LinkModals';
 // import { NodeAddModal, NodeEditModal, NodeDeleteModal, NodeViewModal } from './Modals/NodeModals';

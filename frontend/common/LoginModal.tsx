@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { PageForm, PageFormSubmitHandler, usePageDialog } from '../../framework';
 import { PageFormTextInput } from '../../framework/PageForm/Inputs/PageFormTextInput';
-import { RouteObj } from '../Routes';
+import { RouteObj } from './Routes';
 import { setCookie } from './crud/cookie';
 import { useInvalidateCacheOnUnmount } from './useInvalidateCache';
 

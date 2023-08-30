@@ -26,7 +26,7 @@ import {
   PageTabs,
 } from '../../../../framework';
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
-import { RouteObj } from '../../../Routes';
+import { RouteObj } from '../../../common/Routes';
 import { useGet } from '../../../common/crud/useGet';
 import { useEdaActiveUser } from '../../../common/useActiveUser';
 import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';

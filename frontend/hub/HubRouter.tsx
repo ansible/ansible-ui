@@ -1,5 +1,5 @@
 import { Route, Routes } from 'react-router-dom';
-import { RouteObj, useRoutesWithoutPrefix } from '../Routes';
+import { RouteObj, useRoutesWithoutPrefix } from '../common/Routes';
 import { Approvals } from './approvals/Approvals';
 import { CollectionDetails } from './collections/CollectionDetails';
 import { Collections } from './collections/Collections';

@@ -1,9 +1,8 @@
-import { useNavigate } from 'react-router-dom';
-import { RouteObj } from '../../../../Routes';
-import { useTranslation } from 'react-i18next';
 import { useCallback, useMemo } from 'react';
-import { JobTemplate } from '../../../interfaces/JobTemplate';
-import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { ITableColumn } from '../../../../../framework';
+import { RouteObj } from '../../../../common/Routes';
 import {
   useCreatedColumn,
   useDescriptionColumn,
@@ -11,7 +10,8 @@ import {
   useNameColumn,
   useTypeColumn,
 } from '../../../../common/columns';
-import { ITableColumn } from '../../../../../framework';
+import { JobTemplate } from '../../../interfaces/JobTemplate';
+import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 
 export function useTemplateColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const navigate = useNavigate();

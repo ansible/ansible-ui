@@ -19,7 +19,7 @@ import {
   PageTabs,
 } from '../../../framework';
 import { formatDateString } from '../../../framework/utils/formatDateString';
-import { RouteObj } from '../../Routes';
+import { RouteObj } from '../../common/Routes';
 import { useGet } from '../../common/crud/useGet';
 import { EdaProjectCell } from '../Resources/projects/components/EdaProjectCell';
 import { PageDetailsSection } from '../common/PageDetailsSection';

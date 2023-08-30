@@ -10,7 +10,7 @@ import {
   useVisibleModalColumns,
 } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
-import { RouteObj } from '../../../Routes';
+import { RouteObj } from '../../../common/Routes';
 import { useDecisionEnvironmentColumns } from '../../Resources/decision-environments/hooks/useDecisionEnvironmentColumns';
 import { EdaDecisionEnvironment } from '../../interfaces/EdaDecisionEnvironment';
 import { IEdaView } from '../../useEventDrivenView';
