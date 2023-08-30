@@ -27,7 +27,7 @@ export function escapeForShellCommand(args: string[]) {
 
 function escapeString(s: string) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unnecessary-type-assertion
-  const newString = s.replaceAll(/[!\\]/g, '\\$&') as string;
+  const newString = s.replaceAll(/[\\]/g, '\\$&');
   return `"${newString}"`;
 }
 
