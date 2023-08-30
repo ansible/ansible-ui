@@ -33,7 +33,6 @@ export function useApproveCollections(
           )
         ),
         keyFn: collectionKeyFn,
-        isDanger: true,
         confirmationColumns,
         actionColumns,
         onComplete,
