@@ -9,7 +9,7 @@ const proxyUrl = new URL(hubServer);
 module.exports = function (env, argv) {
   const config = webpackConfig(env, argv);
 
-  config.entry = './frontend/hub/HUB.tsx';
+  config.entry = './frontend/hub/Hub.tsx';
 
   config.devServer.proxy = {
     '/api': {
