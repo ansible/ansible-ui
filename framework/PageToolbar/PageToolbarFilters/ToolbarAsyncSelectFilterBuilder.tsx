@@ -18,7 +18,6 @@ export type AsyncSelectFilterBuilderProps<T extends object> = {
   toolbarFilters?: IToolbarFilter[];
   viewParams: ViewExtendedOptions<T>;
   useView: (viewParams: ViewExtendedOptions<T>) => BaseView<T>;
-  multiSelection?: boolean;
 };
 
 export function useAsyncSingleSelectFilterBuilder<T extends object>(
@@ -56,7 +55,7 @@ export function useAsyncMultiSelectFilterBuilder<T extends object>(
         setDialog(
           <SelectFilter<T>
             defaultSelection={defaultSelection}
-            onMultiselect={onSelect}
+            onMultiSelect={onSelect}
             multiSelection={true}
             {...props}
           />
@@ -67,10 +66,11 @@ export function useAsyncMultiSelectFilterBuilder<T extends object>(
   };
 }
 
+
 function SelectFilter<T extends object>(
   props: {
     onSelect?: (item: T) => void;
-    onMultiselect?: (items: T[]) => void;
+    onMultiSelect? : (items: T[]) => void;
     defaultSelection?: T | T[];
     multiSelection: boolean;
   } & AsyncSelectFilterBuilderProps<T>
@@ -83,7 +83,7 @@ function SelectFilter<T extends object>(
     return (
       <MultiSelectDialog<T>
         {...props}
-        onSelect={props.onMultiselect ? props.onMultiselect : () => {}}
+        onSelect={props.onMultiSelect ? props.onMultiSelect : () => {} }
         toolbarFilters={toolbarFilters ? toolbarFilters : []}
         tableColumns={tableColumns}
         view={view}
@@ -93,7 +93,7 @@ function SelectFilter<T extends object>(
     return (
       <SelectSingleDialog<T>
         {...props}
-        onSelect={props.onSelect ? props.onSelect : () => {}}
+        onSelect={props.onSelect ? props.onSelect : () => {}  }
         toolbarFilters={toolbarFilters ? toolbarFilters : []}
         tableColumns={tableColumns}
         view={view}

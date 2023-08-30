@@ -1,16 +1,17 @@
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ITableColumn,
   IToolbarFilter,
   TextCell,
   ToolbarFilterType,
-  usePageDialog,
 } from '../../../../framework';
 import { AnsibleAnsibleRepositoryResponse as Repository } from './../../api-schemas/generated/AnsibleAnsibleRepositoryResponse';
-import { useAsyncSingleSelectFilterBuilder } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSelectFilterBuilder';
+import { useAsyncSingleSelectFilterBuilder, useAsyncMultiSelectFilterBuilder, AsyncSelectFilterBuilderProps } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSelectFilterBuilder';
+import { usePulpView } from '../../usePulpView';
+import { pulpAPI } from '../../api/utils';
 
-export function useSelectRepositorySingle() {
+/*export function useSelectRepositorySingle() {
   const [_, setDialog] = usePageDialog();
   const { t } = useTranslation();
   const toolbarFilters = useRepositoryFilters();
@@ -19,11 +20,44 @@ export function useSelectRepositorySingle() {
     toolbarFilters: useRepositoryFilters(),
   });
   return onSelectRepository;
+}*/
+
+
+function useParameters() : AsyncSelectFilterBuilderProps<Repository>
+{ 
+  const tableColumns = useRepositoryColumns();
+  const toolbarFilters = useRepositoryFilters();
+  const { t } = useTranslation();
+
+  return  {
+    title : t`Select Repository`,
+    tableColumns,
+    toolbarFilters,
+    useView : usePulpView,
+    viewParams : {
+      url: pulpAPI`/repositories/ansible/ansible/`,
+      toolbarFilters,
+      tableColumns,
+      disableQueryString: true,
+      keyFn: (item) => item.name,
+    }
+  };
 }
 
 export function useSelectRepositoryMulti() {
-  const [_, setDialog] = usePageDialog();
-  const { t } = useTranslation();
+  const params = useParameters(); 
+
+  return useAsyncMultiSelectFilterBuilder<Repository>(
+    params
+  );
+}
+
+export function useSelectRepositorySingle() {
+  const params = useParameters(); 
+
+  return useAsyncSingleSelectFilterBuilder<Repository>(
+    params
+  );
 }
 
 /*

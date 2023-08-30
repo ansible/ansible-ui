@@ -11,9 +11,11 @@ export function useCollectionFilters() {
   const { t } = useTranslation();
 
   const repoQueryOptions = useRepoQueryOptions();
+  const selectRepositoryMulti = useSelectRepositoryMulti();
 
+  debugger;
   const repoSelector = toolbarMultiSelectBrowseAdapter<Repository>(
-    useSelectRepositoryMulti(),
+    selectRepositoryMulti.onBrowse,
     (item) => item.name,
     (name) => {
       return { name };
