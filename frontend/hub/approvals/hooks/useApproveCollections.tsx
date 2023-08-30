@@ -7,7 +7,7 @@ import { PulpItemsResponse } from '../../usePulpView';
 import { CollectionVersionSearch } from '../Approval';
 import { useApprovalsColumns } from './useApprovalsColumns';
 
-export function useRejectCollections(
+export function useApproveCollections(
   onComplete?: (collections: CollectionVersionSearch[]) => void
 ) {
   const { t } = useTranslation();
@@ -21,11 +21,11 @@ export function useRejectCollections(
   return useCallback(
     (collections: CollectionVersionSearch[]) => {
       bulkAction({
-        title: t('Reject collections', { count: collections.length }),
-        confirmText: t('Yes, I confirm that I want to reject these {{count}} collections.', {
+        title: t('Approve collections', { count: collections.length }),
+        confirmText: t('Yes, I confirm that I want to approve these {{count}} collections.', {
           count: collections.length,
         }),
-        actionButtonText: t('Reject collections', { count: collections.length }),
+        actionButtonText: t('Approve collections', { count: collections.length }),
         items: collections.sort((l, r) =>
           compareStrings(
             l.collection_version.pulp_href + l.repository.name,
@@ -33,28 +33,28 @@ export function useRejectCollections(
           )
         ),
         keyFn: collectionKeyFn,
-        isDanger: true,
         confirmationColumns,
         actionColumns,
         onComplete,
-        actionFn: (collection: CollectionVersionSearch) => rejectCollection(collection, getRequest),
+        actionFn: (collection: CollectionVersionSearch) =>
+          approveCollection(collection, getRequest),
       });
     },
     [actionColumns, bulkAction, confirmationColumns, onComplete, t, getRequest]
   );
 }
 
-export function rejectCollection(
+export function approveCollection(
   collection: CollectionVersionSearch,
   getRequest: ReturnType<typeof useGetRequest>
 ) {
-  let rejectedRepo = '';
+  let approvedRepo = '';
 
   async function innerAsync() {
     const repoRes = (await getRequest(
-      pulpAPI`/repositories/ansible/ansible/?name=rejected`
+      pulpAPI`/repositories/ansible/ansible/?pulp_label_select=pipeline=approved`
     )) as PulpItemsResponse<Repository>;
-    rejectedRepo = repoRes.results[0].pulp_href;
+    approvedRepo = repoRes.results[0].pulp_href;
 
     await hubAPIPost(
       pulpAPI`/repositories/ansible/ansible/${
@@ -62,7 +62,7 @@ export function rejectCollection(
       }/move_collection_version/`,
       {
         collection_versions: [`${collection.collection_version.pulp_href}`],
-        destination_repositories: [rejectedRepo],
+        destination_repositories: [approvedRepo],
       }
     );
   }
