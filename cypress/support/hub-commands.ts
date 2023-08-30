@@ -17,8 +17,8 @@ Cypress.Commands.add('galaxykit', (operation: string, ...args: string[]) => {
 
   cy.log(`${galaxykitCommand} ${operation} ${args.join(' ')}`);
 
-  const cmd = `${galaxykitCommand} -s '${server}' -u '${adminUsername}' -p '${adminPassword}' ${escapeForShellCommand(
-    `${operation} ${args.join(' ')}`
+  const cmd = `${galaxykitCommand} -s '${server}' -u '${adminUsername}' -p '${adminPassword}' ${operation} ${escapeForShellCommand(
+    args
   )}`;
 
   cy.exec(cmd, options).then(({ code, stderr, stdout }) => {
@@ -64,23 +64,26 @@ Cypress.Commands.add(
 
     if (tags?.length) {
       cy.galaxykit(
-        `-i collection upload ${namespaceName} ${collectionName} --tags ${tags.join(' ')}`
+        '-i collection upload',
+        namespaceName,
+        collectionName,
+        `--tags ${tags.join(' ')}`
       );
     } else {
-      cy.galaxykit(`-i collection upload ${namespaceName} ${collectionName}`);
+      cy.galaxykit('-i collection upload', namespaceName, collectionName);
     }
 
     waitTillPublished(10);
 
     // TODO for Insights mode
     // if (insightsLogin) {
-    //   cy.galaxykit(`-i collection move ${namespace} ${collection}`);
+    //   cy.galaxykit('-i collection move', namespace, collection);
     // }
   }
 );
 
 Cypress.Commands.add('deleteNamespace', (namespaceName: string) => {
-  cy.galaxykit(`namespace delete ${namespaceName}`);
+  cy.galaxykit('namespace delete', namespaceName);
 });
 
 Cypress.Commands.add('deleteCollectionsInNamespace', (namespaceName: string) => {
