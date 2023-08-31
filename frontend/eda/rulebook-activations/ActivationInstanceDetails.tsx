@@ -12,8 +12,8 @@ import {
 } from '../../../framework';
 import { PageDetailCodeEditor } from '../../../framework/PageDetails/PageDetailCodeEditor';
 import { formatDateString } from '../../../framework/utils/formatDateString';
-import { RouteObj } from '../../Routes';
 import { AwxItemsResponse } from '../../awx/common/AwxItemsResponse';
+import { RouteObj } from '../../common/Routes';
 import { StatusCell } from '../../common/Status';
 import { useGet } from '../../common/crud/useGet';
 import { PageDetailsSection } from '../common/PageDetailsSection';

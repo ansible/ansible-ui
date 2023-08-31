@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { PageDetail, PageDetails } from '../../../../framework';
-import { RouteObj } from '../../../Routes';
+import { RouteObj } from '../../../common/Routes';
 import { useOptions } from '../../../common/crud/useOptions';
 import { CredentialLabel } from '../../common/CredentialLabel';
 import { ExecutionEnvironmentDetail } from '../../common/ExecutionEnvironmentDetail';

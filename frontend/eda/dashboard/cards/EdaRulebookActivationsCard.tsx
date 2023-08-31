@@ -9,7 +9,7 @@ import {
   useVisibleModalColumns,
 } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
-import { RouteObj } from '../../../Routes';
+import { RouteObj } from '../../../common/Routes';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { useRulebookActivationColumns } from '../../rulebook-activations/hooks/useRulebookActivationColumns';
 import { IEdaView } from '../../useEventDrivenView';

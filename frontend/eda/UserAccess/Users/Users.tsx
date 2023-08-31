@@ -1,13 +1,13 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
-import { RouteObj } from '../../../Routes';
+import { RouteObj } from '../../../common/Routes';
+import { API_PREFIX } from '../../constants';
 import { EdaUser } from '../../interfaces/EdaUser';
+import { useEdaView } from '../../useEventDrivenView';
 import { useUserActions } from './hooks/useUserActions';
 import { useUserColumns } from './hooks/useUserColumns';
 import { useUsersActions } from './hooks/useUsersActions';
-import { API_PREFIX } from '../../constants';
-import { useEdaView } from '../../useEventDrivenView';
 
 export function Users() {
   const { t } = useTranslation();

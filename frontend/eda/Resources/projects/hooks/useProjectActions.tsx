@@ -10,7 +10,7 @@ import {
   errorToAlertProps,
   usePageAlertToaster,
 } from '../../../../../framework';
-import { RouteObj } from '../../../../Routes';
+import { RouteObj } from '../../../../common/Routes';
 import { postRequest } from '../../../../common/crud/Data';
 import { API_PREFIX } from '../../../constants';
 import { EdaProject } from '../../../interfaces/EdaProject';

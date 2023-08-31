@@ -1,7 +1,7 @@
 import { Fragment, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageHeader } from '../../../framework';
-import { RouteObj } from '../../Routes';
+import { RouteObj } from '../../common/Routes';
 
 export default function Settings() {
   const { t } = useTranslation();

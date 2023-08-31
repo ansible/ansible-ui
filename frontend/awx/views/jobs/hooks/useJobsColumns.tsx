@@ -10,7 +10,7 @@ import {
   TextCell,
 } from '../../../../../framework';
 import { ElapsedTimeCell } from '../../../../../framework/PageCells/ElapsedTimeCell';
-import { RouteObj } from '../../../../Routes';
+import { RouteObj } from '../../../../common/Routes';
 import { StatusCell } from '../../../../common/Status';
 import { useOptions } from '../../../../common/crud/useOptions';
 import { CredentialLabel } from '../../../common/CredentialLabel';

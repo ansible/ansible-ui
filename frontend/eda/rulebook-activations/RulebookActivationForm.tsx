@@ -15,7 +15,7 @@ import {
 } from '../../../framework';
 import { PageFormAsyncSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncSelect';
 import { PageFormSection } from '../../../framework/PageForm/Utils/PageFormSection';
-import { RouteObj } from '../../Routes';
+import { RouteObj } from '../../common/Routes';
 import { requestGet } from '../../common/crud/Data';
 import { useGet } from '../../common/crud/useGet';
 import { usePostRequest } from '../../common/crud/usePostRequest';

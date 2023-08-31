@@ -4,7 +4,7 @@ import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
-import { RouteObj } from '../../../../Routes';
+import { RouteObj } from '../../../../common/Routes';
 import { requestPatch } from '../../../../common/crud/Data';
 import { Instance } from '../../../interfaces/Instance';
 import { useRunHealthCheck } from './useRunHealthCheck';

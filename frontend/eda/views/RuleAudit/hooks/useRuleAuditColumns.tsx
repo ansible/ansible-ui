@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ColumnModalOption, ITableColumn, TextCell } from '../../../../../framework';
 import { formatDateString } from '../../../../../framework/utils/formatDateString';
-import { RouteObj } from '../../../../Routes';
+import { RouteObj } from '../../../../common/Routes';
 import { StatusCell } from '../../../../common/Status';
 import { EdaRuleAuditItem } from '../../../interfaces/EdaRuleAudit';
 

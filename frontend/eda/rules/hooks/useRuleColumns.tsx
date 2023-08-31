@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ITableColumn, TextCell } from '../../../../framework';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
-import { RouteObj } from '../../../Routes';
+import { RouteObj } from '../../../common/Routes';
 import { EdaProjectCell } from '../../Resources/projects/components/EdaProjectCell';
 import { EdaRule } from '../../interfaces/EdaRule';
 import { EdaRulebookCell } from '../../rulebooks/components/EdaRulebookCell';

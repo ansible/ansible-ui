@@ -4,12 +4,12 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../framework';
-import { RouteObj } from '../../../Routes';
+import { RouteObj } from '../../../common/Routes';
 import { CollectionVersionSearch } from '../Collection';
-import { useDeleteCollections } from './useDeleteCollections';
-import { useDeprecateCollections } from './useDeprecateCollections';
-import { useDeleteCollectionsFromRepository } from './useDeleteCollectionsFromRepository';
 import { useHubContext } from './../../useHubContext';
+import { useDeleteCollections } from './useDeleteCollections';
+import { useDeleteCollectionsFromRepository } from './useDeleteCollectionsFromRepository';
+import { useDeprecateCollections } from './useDeprecateCollections';
 
 export function useCollectionsActions(callback: (collections: CollectionVersionSearch[]) => void) {
   const { t } = useTranslation();

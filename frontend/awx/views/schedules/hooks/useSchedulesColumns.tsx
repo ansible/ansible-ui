@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { DateTimeCell, ITableColumn, TextCell } from '../../../../../framework';
-import { RouteObj } from '../../../../Routes';
+import { RouteObj } from '../../../../common/Routes';
 import { useDescriptionColumn, useNameColumn, useTypeColumn } from '../../../../common/columns';
 import { Schedule } from '../../../interfaces/Schedule';
 

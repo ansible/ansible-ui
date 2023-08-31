@@ -12,8 +12,8 @@ import { PageFormFileUpload } from '../../../framework/PageForm/Inputs/PageFormF
 import { PageFormGroup } from '../../../framework/PageForm/Inputs/PageFormGroup';
 import { PageFormExpandableSection } from '../../../framework/PageForm/PageFormExpandableSection';
 import { LoadingPage } from '../../../framework/components/LoadingPage';
-import { RouteObj } from '../../Routes';
 import { AwxError } from '../../awx/common/AwxError';
+import { RouteObj } from '../../common/Routes';
 import { useGet } from '../../common/crud/useGet';
 import { usePostRequest } from '../../common/crud/usePostRequest';
 import { appendTrailingSlash, hubAPIPut, parsePulpIDFromURL, pulpAPI } from '../api/utils';

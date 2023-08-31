@@ -1,6 +1,6 @@
-import { RouteObj } from '../../../Routes';
-import { Projects } from './Projects';
+import { RouteObj } from '../../../common/Routes';
 import { API_PREFIX } from '../../constants';
+import { Projects } from './Projects';
 
 describe('Projects.cy.ts', () => {
   beforeEach(() => {

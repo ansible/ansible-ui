@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { PageDashboardDonutCard } from '../../../../framework/PageDashboard/PageDonutChart';
 import { usePageChartColors } from '../../../../framework/PageDashboard/usePageChartColors';
-import { RouteObj } from '../../../Routes';
+import { RouteObj } from '../../../common/Routes';
 
 export function AwxHostsCard(props: { total: number; failed: number }) {
   const { t } = useTranslation();

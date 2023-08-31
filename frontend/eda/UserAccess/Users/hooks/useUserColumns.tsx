@@ -7,7 +7,7 @@ import {
   LabelsCell,
   TextCell,
 } from '../../../../../framework';
-import { RouteObj } from '../../../../Routes';
+import { RouteObj } from '../../../../common/Routes';
 import { EdaUser } from '../../../interfaces/EdaUser';
 
 export function useUserColumns() {

@@ -12,7 +12,7 @@ import {
   PageHeader,
   PageLayout,
 } from '../../../../framework';
-import { RouteObj } from '../../../Routes';
+import { RouteObj } from '../../../common/Routes';
 import { useGet } from '../../../common/crud/useGet';
 import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
 import { EdaGroup } from '../../interfaces/EdaGroup';

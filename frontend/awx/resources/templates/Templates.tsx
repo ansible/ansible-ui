@@ -11,8 +11,8 @@ import {
   PageLayout,
   PageTable,
 } from '../../../../framework';
-import { RouteObj } from '../../../Routes';
 import { usePersistentFilters } from '../../../common/PersistentFilters';
+import { RouteObj } from '../../../common/Routes';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
 import { JobTemplate } from '../../interfaces/JobTemplate';

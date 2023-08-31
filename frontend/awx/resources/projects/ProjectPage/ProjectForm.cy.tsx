@@ -1,4 +1,4 @@
-import { RouteObj } from '../../../../Routes';
+import { RouteObj } from '../../../../common/Routes';
 import * as useOptions from '../../../../common/crud/useOptions';
 import * as useAwxConfig from '../../../common/useAwxConfig';
 import { CreateProject, EditProject } from './ProjectForm';

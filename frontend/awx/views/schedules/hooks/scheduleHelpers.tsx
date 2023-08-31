@@ -1,29 +1,29 @@
-import { RouteObj } from '../../../../Routes';
-import { useParams, useLocation } from 'react-router-dom';
-import { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
-import { PageFormCredentialSelect } from '../../../resources/credentials/components/PageFormCredentialSelect';
+import { DateTime } from 'luxon';
+import { ReactElement } from 'react';
+import { useWatch } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import { useLocation, useParams } from 'react-router-dom';
+import { RRule, RRuleSet } from 'rrule';
 import {
   PageFormDataEditor,
   PageFormSelect,
   PageFormSwitch,
   PageFormTextInput,
 } from '../../../../../framework';
-import { useTranslation } from 'react-i18next';
-import { PageFormExecutionEnvironmentSelect } from '../../../administration/execution-environments/components/PageFormExecutionEnvironmentSelect';
-import { PageFormInstanceGroupSelect } from '../../../administration/instance-groups/components/PageFormInstanceGroupSelect';
-import { PageFormInventorySelect } from '../../../resources/inventories/components/PageFormInventorySelect';
-import { PageFormLabelSelect } from '../../../common/PageFormLabelSelect';
 import { PageFormCreatableSelect } from '../../../../../framework/PageForm/Inputs/PageFormCreatableSelect';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
-import { ReactElement } from 'react';
-import { useWatch } from 'react-hook-form';
-import { ScheduleFormFields } from '../../../interfaces/ScheduleFormFields';
-import { JobTemplate } from '../../../interfaces/JobTemplate';
-import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
+import { RouteObj } from '../../../../common/Routes';
+import { PageFormExecutionEnvironmentSelect } from '../../../administration/execution-environments/components/PageFormExecutionEnvironmentSelect';
+import { PageFormInstanceGroupSelect } from '../../../administration/instance-groups/components/PageFormInstanceGroupSelect';
+import { PageFormLabelSelect } from '../../../common/PageFormLabelSelect';
 import { InventorySource } from '../../../interfaces/InventorySource';
+import { JobTemplate } from '../../../interfaces/JobTemplate';
+import { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
 import { Project } from '../../../interfaces/Project';
-import { RRule, RRuleSet } from 'rrule';
-import { DateTime } from 'luxon';
+import { ScheduleFormFields } from '../../../interfaces/ScheduleFormFields';
+import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
+import { PageFormCredentialSelect } from '../../../resources/credentials/components/PageFormCredentialSelect';
+import { PageFormInventorySelect } from '../../../resources/inventories/components/PageFormInventorySelect';
 
 export const resourceSchedulePageRoutes: { [key: string]: string } = {
   inventory: RouteObj.InventorySourceSchedulePage,

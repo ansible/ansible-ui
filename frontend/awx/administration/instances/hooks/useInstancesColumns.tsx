@@ -11,7 +11,7 @@ import {
 } from '../../../../../framework';
 import { Dotted } from '../../../../../framework/components/Dotted';
 import { capitalizeFirstLetter } from '../../../../../framework/utils/strings';
-import { RouteObj } from '../../../../Routes';
+import { RouteObj } from '../../../../common/Routes';
 import { StatusCell } from '../../../../common/Status';
 import { useCreatedColumn, useModifiedColumn, useNameColumn } from '../../../../common/columns';
 import { Instance } from '../../../interfaces/Instance';
