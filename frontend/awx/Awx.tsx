@@ -57,7 +57,7 @@ function Routing() {
       <Routes>
         <Route path={RouteObj.AWX + '/*'} element={<AWX />} />
         <Route path={RouteObj.Login} element={<Login />} />
-        <Route path="/" element={<Navigate to={RouteObj.Login} />} />
+        <Route path="/" element={<Navigate to={RouteObj.Dashboard} />} />
         <Route path="*" element={<PageNotFound />} />
       </Routes>
     </PageFramework>

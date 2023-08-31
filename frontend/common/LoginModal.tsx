@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import { PageForm, PageFormSubmitHandler, usePageDialog } from '../../framework';
 import { PageFormTextInput } from '../../framework/PageForm/Inputs/PageFormTextInput';
 import { RouteObj } from './Routes';
+import { SocialAuthLogin } from './SocialAuthLogin';
 import { setCookie } from './crud/cookie';
 import { useInvalidateCacheOnUnmount } from './useInvalidateCache';
 
@@ -163,33 +164,36 @@ function LoginForm(props: { defaultServerId?: string | number; onLogin?: () => v
   );
 
   return (
-    <PageForm
-      submitText={t('Log in')}
-      onSubmit={onSubmit}
-      cancelText={t('Cancel')}
-      isVertical
-      singleColumn
-      disableBody
-      disablePadding
-      disableScrolling
-      autoComplete={'off'}
-    >
-      <PageFormTextInput
-        name="username"
-        label={t('Username')}
-        placeholder={t('Enter username')}
-        isRequired
-        autoFocus
-        autoComplete="off"
-      />
-      <PageFormTextInput
-        name="password"
-        label={t('Password')}
-        placeholder={t('Enter password')}
-        type="password"
-        isRequired
-        autoComplete="off"
-      />
-    </PageForm>
+    <div>
+      <PageForm
+        submitText={t('Log in')}
+        onSubmit={onSubmit}
+        cancelText={t('Cancel')}
+        isVertical
+        singleColumn
+        disableBody
+        disablePadding
+        disableScrolling
+        autoComplete={'off'}
+      >
+        <PageFormTextInput
+          name="username"
+          label={t('Username')}
+          placeholder={t('Enter username')}
+          isRequired
+          autoFocus
+          autoComplete="off"
+        />
+        <PageFormTextInput
+          name="password"
+          label={t('Password')}
+          placeholder={t('Enter password')}
+          type="password"
+          isRequired
+          autoComplete="off"
+        />
+      </PageForm>
+      <SocialAuthLogin />
+    </div>
   );
 }

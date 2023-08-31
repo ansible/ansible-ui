@@ -21,6 +21,17 @@ module.exports = function (env, argv) {
         req.headers.referer = proxyUrl.href;
       },
     },
+    '/sso': {
+      target: awxServer,
+      secure: false,
+      bypass: (req, res, options) => {
+        // req.headers.host = proxyUrl.host;
+        req.headers.origin = proxyUrl.origin;
+        // req.headers.referer = proxyUrl.href;
+        req.headers.host = 'localhost:4101';
+        req.referrer = 'https://localhost:4101/login';
+      },
+    },
     '/websocket': {
       target: awxServer,
       ws: true,
