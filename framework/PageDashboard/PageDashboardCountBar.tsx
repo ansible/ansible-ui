@@ -28,12 +28,13 @@ export function PageDashboardCountBar(props: PageDashboardCountBarProps) {
           }}
         >
           {props.counts.map((item, index) => {
+            const id = item.title.toLowerCase().replace(/ /g, '-');
             const total: number =
               item.total ??
               item.counts?.reduce<number>((acc: number, curr) => acc + (curr.count ?? 0), 0) ??
               0;
             return (
-              <div key={index} style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+              <div id={id} key={index} style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
                 <Link to={item.to} style={{ color: 'var(--pf-global--text--Color)' }}>
                   <Title
                     headingLevel="h3"
@@ -45,7 +46,10 @@ export function PageDashboardCountBar(props: PageDashboardCountBarProps) {
                 </Link>
                 {total && 'counts' in item && item.counts ? (
                   <>
-                    <div style={{ maxHeight: 64, marginTop: -4, marginBottom: -4 }}>
+                    <div
+                      id={`${id}-chart`}
+                      style={{ maxHeight: 64, marginTop: -4, marginBottom: -4 }}
+                    >
                       <ChartDonut
                         title={item.counts
                           .reduce<number>((acc, curr) => acc + curr.count, 0)
@@ -60,7 +64,7 @@ export function PageDashboardCountBar(props: PageDashboardCountBarProps) {
                         allowTooltip={false}
                       />
                     </div>
-                    <PageChartLegend legend={item.counts} />
+                    <PageChartLegend id={`${id}-legend`} legend={item.counts} />
                   </>
                 ) : (
                   <span style={{ fontSize: 'xx-large', lineHeight: 1 }}>{total}</span>
@@ -78,6 +82,7 @@ export function PageDashboardCountBar(props: PageDashboardCountBarProps) {
 }
 
 export function PageChartLegend(props: {
+  id: string;
   legend: { label: string; count: number; color: string; link?: string }[];
 }) {
   return (
@@ -97,7 +102,11 @@ export function PageChartLegend(props: {
               key={index * 3 + 0}
               style={{ width: 10, height: 10, backgroundColor: item.color, borderRadius: 2 }}
             />
-            <div key={index * 3 + 1} style={{ fontSize: 'small', textAlign: 'center' }}>
+            <div
+              id={`${props.id}-${item.label.toLowerCase().replace(/ /g, '-')}-count`}
+              key={index * 3 + 1}
+              style={{ fontSize: 'small', textAlign: 'center' }}
+            >
               {item.count}
             </div>
             <div key={index * 3 + 2} style={{ fontSize: 'small' }}>

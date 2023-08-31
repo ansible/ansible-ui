@@ -1,4 +1,5 @@
 import { AwxItemsResponse } from '../../../../frontend/awx/common/AwxItemsResponse';
+import { IAwxDashboardData } from '../../../../frontend/awx/dashboard/AwxDashboard';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Job } from '../../../../frontend/awx/interfaces/Job';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
@@ -78,62 +79,58 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
   });
 
   it('checks inventories count', () => {
-    cy.intercept('GET', 'api/v2/dashboard/').as('getInventories');
+    cy.intercept('GET', 'api/v2/dashboard/').as('getDashboard');
     cy.visit(`/ui_next/dashboard`);
-    cy.contains('.pf-c-card__header', 'Inventories')
-      .next()
-      .within(() => {
-        cy.contains('tspan', 'Ready')
-          .invoke('text')
-          .then((text: string) => {
-            cy.wait('@getInventories')
-              .its('response.body.inventories.total')
-              .then((total) => {
-                expect(total).to.equal(parseInt(text.split(':')[1]));
-              });
-          });
+    cy.wait('@getDashboard')
+      .its('response.body')
+      .then((data: IAwxDashboardData) => {
+        cy.get('#inventories-chart').should('contain', data.inventories.total);
+        const readyCount = data.inventories.total - data.inventories.inventory_failed;
+        if (readyCount > 0) {
+          cy.get('#inventories-legend-synced-count').should('contain', readyCount);
+        }
+        if (data.inventories.inventory_failed > 0) {
+          cy.get('#inventories-legend-failed-count').should(
+            'contain',
+            data.inventories.inventory_failed
+          );
+        }
       });
-    cy.checkAnchorLinks('Go to Inventories');
   });
 
   it('checks hosts count', () => {
-    cy.intercept('GET', 'api/v2/dashboard/').as('getHosts');
+    cy.intercept('GET', 'api/v2/dashboard/').as('getDashboard');
     cy.visit(`/ui_next/dashboard`);
-    cy.contains('.pf-c-card__header', 'Hosts')
-      .next()
-      .within(() => {
-        cy.contains('tspan', 'Ready')
-          .invoke('text')
-          .then((text: string) => {
-            cy.wait('@getHosts')
-              .its('response.body.hosts.total')
-              .then((total) => {
-                expect(total).to.equal(parseInt(text.split(':')[1]));
-              });
-          });
+    cy.wait('@getDashboard')
+      .its('response.body')
+      .then((data: IAwxDashboardData) => {
+        cy.get('#hosts-chart').should('contain', data.hosts.total);
+        const readyCount = data.hosts.total - data.hosts.failed;
+        if (readyCount > 0) {
+          cy.get('#hosts-legend-ready-count').should('contain', readyCount);
+        }
+        if (data.hosts.failed > 0) {
+          cy.get('#hosts-legend-failed-count').should('contain', data.hosts.failed);
+        }
       });
-    cy.checkAnchorLinks('Go to Hosts');
   });
 
-  // JT Disabling invalid test. Ready count does not always match the total count.
-  // it('checks projects count', () => {
-  //   cy.intercept('GET', 'api/v2/dashboard/').as('getProjects');
-  //   cy.visit(`/ui_next/dashboard`);
-  //   cy.contains('.pf-c-card__header', 'Projects')
-  //     .next()
-  //     .within(() => {
-  //       cy.contains('tspan', 'Ready')
-  //         .invoke('text')
-  //         .then((text: string) => {
-  //           cy.wait('@getProjects')
-  //             .its('response.body.projects.total')
-  //             .then((total) => {
-  //               expect(total).to.equal(parseInt(text.split(':')[1]));
-  //             });
-  //         });
-  //     });
-  //   cy.checkAnchorLinks('Go to Projects');
-  // });
+  it('checks projects count', () => {
+    cy.intercept('GET', 'api/v2/dashboard/').as('getDashboard');
+    cy.visit(`/ui_next/dashboard`);
+    cy.wait('@getDashboard')
+      .its('response.body')
+      .then((data: IAwxDashboardData) => {
+        cy.get('#projects-chart').should('contain', data.projects.total);
+        const readyCount = data.projects.total - data.projects.failed;
+        if (readyCount > 0) {
+          cy.get('#projects-legend-ready-count').should('contain', readyCount);
+        }
+        if (data.projects.failed > 0) {
+          cy.get('#projects-legend-failed-count').should('contain', data.projects.failed);
+        }
+      });
+  });
 
   it('checks jobs count and the max # of jobs in the table', () => {
     cy.intercept('GET', '/api/v2/unified_jobs/?order_by=-finished&page=1&page_size=10').as(
