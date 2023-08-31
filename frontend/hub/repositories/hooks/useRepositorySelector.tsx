@@ -10,17 +10,6 @@ import {
 import { usePulpView } from '../../usePulpView';
 import { pulpAPI } from '../../api/utils';
 
-/*export function useSelectRepositorySingle() {
-  const [_, setDialog] = usePageDialog();
-  const { t } = useTranslation();
-  const toolbarFilters = useRepositoryFilters();
-
-  const onSelectRepository = useAsyncSingleSelectFilterBuilder<Repository>({
-    toolbarFilters: useRepositoryFilters(),
-  });
-  return onSelectRepository;
-}*/
-
 function useParameters(): AsyncSelectFilterBuilderProps<Repository> {
   const tableColumns = useRepositoryColumns();
   const toolbarFilters = useRepositoryFilters();
@@ -52,92 +41,6 @@ export function useSelectRepositorySingle() {
 
   return useAsyncSingleSelectFilterBuilder<Repository>(params);
 }
-
-/*
-function SelectRepository(props: {
-  title: string;
-  onSelect?: (repository: Repository) => void;
-  onMultiselect?: (repository: Repository[]) => void;
-  defaultRepository?: Repository | Repository[];
-  multiSelection: boolean;
-}) {
-  const toolbarFilters = useRepositoryFilters();
-  const tableColumns = useRepositoryColumns();
-
-  const view = usePulpView<Repository>({
-    url: pulpAPI`/repositories/ansible/ansible/`,
-    toolbarFilters,
-    tableColumns,
-    disableQueryString: true,
-    keyFn: (item) => item.name,
-    defaultSelection: props.multiSelection
-      ? (props.defaultRepository as Repository[])
-      : [props.defaultRepository as Repository],
-  });
-
-  if (props.multiSelection) {
-    return (
-      <MultiSelectDialog<Repository>
-        {...props}
-        onSelect={props.onMultiselect ? props.onMultiselect : () => {}}
-        toolbarFilters={toolbarFilters}
-        tableColumns={tableColumns}
-        view={view}
-      />
-    );
-  } else {
-    return (
-      <SelectSingleDialog<Repository>
-        {...props}
-        onSelect={props.onSelect ? props.onSelect : () => {}}
-        toolbarFilters={toolbarFilters}
-        tableColumns={tableColumns}
-        view={view}
-      />
-    );
-  }
-}
-
-export function useSelectRepositorySingle() {
-  const [_, setDialog] = usePageDialog();
-  const { t } = useTranslation();
-
-  const onSelectRepository = useCallback(
-    (onSelect: (value: Repository) => void, defaultSelection?: Repository) => {
-      setDialog(
-        <SelectRepository
-          title={t('Select organization')}
-          onSelect={onSelect}
-          defaultRepository={defaultSelection}
-          multiSelection={false}
-        />
-      );
-    },
-    [setDialog, t]
-  );
-  return onSelectRepository;
-}
-
-export function useSelectRepositoryMulti() {
-  const [_, setDialog] = usePageDialog();
-  const { t } = useTranslation();
-
-  const onSelectRepository = useCallback(
-    (onSelect: (value: Repository[]) => void, defaultSelection?: Repository[]) => {
-      setDialog(
-        <SelectRepository
-          title={t('Select organization')}
-          defaultRepository={defaultSelection}
-          multiSelection={true}
-          onMultiselect={onSelect}
-        />
-      );
-    },
-    [setDialog, t]
-  );
-  return onSelectRepository;
-}
-*/
 
 export function useRepositoryColumns(_options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
