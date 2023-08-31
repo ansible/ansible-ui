@@ -31,7 +31,7 @@ import { BarsIcon } from '@patternfly/react-icons';
 import { TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { Dispatch, SetStateAction, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import {
   CopyCell,
   PFColorE,
@@ -58,11 +58,12 @@ import { useCollectionColumns } from './hooks/useCollectionColumns';
 
 export function CollectionDetails() {
   const { t } = useTranslation();
-  const params = useParams<{ name: string; namespace: string; repository: string }>();
+  const [searchParams] = useSearchParams();
+
   const { data, refresh } = useGet<HubItemsResponse<CollectionVersionSearch>>(
-    hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${params.name || ''}&namespace=${
-      params.namespace || ''
-    }&repository=${params.repository || ''} }`
+    hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${searchParams.get('name') || ''}&namespace=${
+      searchParams.get('namespace') || ''
+    }&repository_name=${searchParams.get('repository') || ''}`
   );
   let collection: CollectionVersionSearch | undefined = undefined;
   if (data && data.data && data.data.length > 0) {
