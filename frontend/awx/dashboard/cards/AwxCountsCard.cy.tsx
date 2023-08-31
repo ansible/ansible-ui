@@ -1,4 +1,4 @@
-import { RouteObj } from '../../../Routes';
+import { RouteObj } from '../../../common/Routes';
 import { IAwxDashboardData } from '../AwxDashboard';
 import { AwxCountsCard } from './AwxCountsCard';
 
