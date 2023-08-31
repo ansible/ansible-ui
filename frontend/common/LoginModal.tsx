@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { PageForm, PageFormSubmitHandler, usePageDialog } from '../../framework';
-import { PageFormTextInput } from '../../framework/PageForm/Inputs/PageFormTextInput';
+import { PageFormTextInput } from '../../framework';
 import { RouteObj } from '../Routes';
 import { setCookie } from './crud/cookie';
 import { useInvalidateCacheOnUnmount } from './useInvalidateCache';
@@ -172,6 +172,7 @@ function LoginForm(props: { defaultServerId?: string | number; onLogin?: () => v
       disableBody
       disablePadding
       disableScrolling
+      autoComplete={'off'}
     >
       <PageFormTextInput
         name="username"
@@ -187,6 +188,7 @@ function LoginForm(props: { defaultServerId?: string | number; onLogin?: () => v
         placeholder={t('Enter password')}
         type="password"
         isRequired
+        autoComplete="off"
       />
     </PageForm>
   );
