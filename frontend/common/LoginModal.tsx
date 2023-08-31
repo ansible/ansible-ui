@@ -172,6 +172,7 @@ function LoginForm(props: { defaultServerId?: string | number; onLogin?: () => v
       disableBody
       disablePadding
       disableScrolling
+      autoComplete={'off'}
     >
       <PageFormTextInput
         name="username"
@@ -187,6 +188,7 @@ function LoginForm(props: { defaultServerId?: string | number; onLogin?: () => v
         placeholder={t('Enter password')}
         type="password"
         isRequired
+        autoComplete="off"
       />
     </PageForm>
   );
