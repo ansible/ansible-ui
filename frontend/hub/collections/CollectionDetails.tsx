@@ -47,7 +47,7 @@ import {
 } from '../../../framework';
 import { PageDetail } from '../../../framework/PageDetails/PageDetail';
 import { Scrollable } from '../../../framework/components/Scrollable';
-import { RouteObj } from '../../Routes';
+import { RouteObj } from '../../common/Routes';
 import { StatusCell } from '../../common/Status';
 import { useGet } from '../../common/crud/useGet';
 import { hubAPI } from '../api/utils';

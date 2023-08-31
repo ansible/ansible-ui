@@ -1,13 +1,13 @@
-import { CheckCircleIcon } from '@patternfly/react-icons';
-import { PageDetailDiv, PageTableCard, Small } from '../../../framework/PageTable/PageTableCard';
-import { CollectionVersionSearch } from '../collections/CollectionVersionSearch';
-import { LabelColor, PageDetail, TextCell } from '../../../framework';
-import { useTranslation } from 'react-i18next';
 import { CardBody, Truncate } from '@patternfly/react-core';
-import { useCarouselContext } from '../../../framework/PageCarousel/PageCarousel';
-import styled, { CSSProperties } from 'styled-components';
+import { CheckCircleIcon } from '@patternfly/react-icons';
 import { ReactNode, useCallback, useMemo } from 'react';
-import { RouteObj } from '../../Routes';
+import { useTranslation } from 'react-i18next';
+import styled, { CSSProperties } from 'styled-components';
+import { LabelColor, PageDetail, TextCell } from '../../../framework';
+import { useCarouselContext } from '../../../framework/PageCarousel/PageCarousel';
+import { PageDetailDiv, PageTableCard, Small } from '../../../framework/PageTable/PageTableCard';
+import { RouteObj } from '../../common/Routes';
+import { CollectionVersionSearch } from '../collections/CollectionVersionSearch';
 import { Logo } from '../common/Logo';
 
 export const ColumnsDiv = styled.div`

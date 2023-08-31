@@ -17,11 +17,9 @@ import { AnsibleMasthead } from '../common/Masthead';
 import { PageNotFound } from '../common/PageNotFound';
 import { RouteObj } from '../common/Routes';
 import '../common/i18n';
-import { ActiveUserProvider } from '../common/useActiveUser';
-import { AwxRouter } from './AwxRouter';
-import { AwxSidebar } from './AwxSidebar';
-import { AwxConfigProvider } from './common/useAwxConfig';
-import { WebSocketProvider } from './common/useAwxWebSocket';
+import { ActiveEdaUserProvider } from '../common/useActiveUser';
+import { EventDrivenRouter } from './EventDrivenRouter';
+import { EventDrivenSidebar } from './EventDrivenSidebar';
 
 const container = document.createElement('div');
 container.style.position = 'fixed';
@@ -55,7 +53,7 @@ function Routing() {
   return (
     <PageFramework navigate={navigate}>
       <Routes>
-        <Route path={RouteObj.AWX + '/*'} element={<AWX />} />
+        <Route path={RouteObj.Eda + '/*'} element={<EDA />} />
         <Route path={RouteObj.Login} element={<Login />} />
         <Route path="/" element={<Navigate to={RouteObj.Login} />} />
         <Route path="*" element={<PageNotFound />} />
@@ -64,16 +62,12 @@ function Routing() {
   );
 }
 
-export function AWX() {
+export function EDA() {
   return (
-    <WebSocketProvider>
-      <ActiveUserProvider>
-        <AwxConfigProvider>
-          <Page header={<AnsibleMasthead />} sidebar={<AwxSidebar />}>
-            <AwxRouter />
-          </Page>
-        </AwxConfigProvider>
-      </ActiveUserProvider>
-    </WebSocketProvider>
+    <ActiveEdaUserProvider>
+      <Page header={<AnsibleMasthead />} sidebar={<EventDrivenSidebar />}>
+        <EventDrivenRouter />
+      </Page>
+    </ActiveEdaUserProvider>
   );
 }

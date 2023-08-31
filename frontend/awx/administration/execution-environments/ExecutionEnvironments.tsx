@@ -13,7 +13,7 @@ import {
   PageLayout,
   PageTable,
 } from '../../../../framework';
-import { RouteObj } from '../../../Routes';
+import { RouteObj } from '../../../common/Routes';
 import {
   useCreatedColumn,
   useDescriptionColumn,

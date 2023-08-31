@@ -26,7 +26,7 @@ import { User } from '../../frontend/awx/interfaces/User';
 import { ActiveUserProvider } from '../../frontend/common/useActiveUser';
 import './commands';
 
-import '../../frontend/i18n';
+import '../../frontend/common/i18n';
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')

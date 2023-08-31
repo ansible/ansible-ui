@@ -8,6 +8,9 @@ const proxyUrl = new URL(edaServer);
 
 module.exports = function (env, argv) {
   const config = webpackConfig(env, argv);
+
+  config.entry = './frontend/eda/Eda.tsx';
+
   config.devServer.proxy = {
     '/api': {
       target: edaServer,

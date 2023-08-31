@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { IPageAction, PageActionSelection, PageActionType, PageTable } from '../../../../framework';
-import { RouteObj } from '../../../Routes';
+import { RouteObj } from '../../../common/Routes';
 import { useActiveUser } from '../../../common/useActiveUser';
 import { AccessRole, User } from '../../interfaces/User';
 import { useAwxView } from '../../useAwxView';
