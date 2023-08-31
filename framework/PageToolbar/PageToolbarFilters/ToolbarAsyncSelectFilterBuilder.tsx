@@ -38,7 +38,7 @@ export function useAsyncSingleSelectFilterBuilder<T extends object>(
           />
         );
       },
-      [setDialog, t]
+      [setDialog, t, props]
     ),
   };
 }
@@ -61,7 +61,7 @@ export function useAsyncMultiSelectFilterBuilder<T extends object>(
           />
         );
       },
-      [setDialog, t]
+      [setDialog, t, props]
     ),
   };
 }
