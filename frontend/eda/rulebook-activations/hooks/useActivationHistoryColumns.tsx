@@ -1,7 +1,7 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DateTimeCell, ITableColumn, TextCell } from '../../../../framework';
-import { RouteObj } from '../../../Routes';
+import { RouteObj } from '../../../common/Routes';
 import { StatusCell } from '../../../common/Status';
 import { EdaActivationInstance } from '../../interfaces/EdaActivationInstance';
 

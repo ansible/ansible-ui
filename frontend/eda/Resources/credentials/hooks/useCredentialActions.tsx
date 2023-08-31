@@ -1,13 +1,13 @@
+import { ButtonVariant } from '@patternfly/react-core';
 import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
-import { RouteObj } from '../../../../Routes';
+import { RouteObj } from '../../../../common/Routes';
 import { EdaCredential } from '../../../interfaces/EdaCredential';
 import { IEdaView } from '../../../useEventDrivenView';
 import { useDeleteCredentials } from './useDeleteCredentials';
-import { ButtonVariant } from '@patternfly/react-core';
 
 export function useCredentialActions(view: IEdaView<EdaCredential>) {
   const { t } = useTranslation();

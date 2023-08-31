@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ColumnTableOption, ITableColumn, TextCell } from '../../../../framework';
-import { RouteObj } from '../../../Routes';
+import { RouteObj } from '../../../common/Routes';
 import { EdaProjectCell } from '../../Resources/projects/components/EdaProjectCell';
 import { EdaRulebook } from '../../interfaces/EdaRulebook';
 

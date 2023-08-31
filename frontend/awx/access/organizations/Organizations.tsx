@@ -19,8 +19,8 @@ import {
   PageLayout,
   PageTable,
 } from '../../../../framework';
-import { RouteObj } from '../../../Routes';
 import { usePersistentFilters } from '../../../common/PersistentFilters';
+import { RouteObj } from '../../../common/Routes';
 import {
   useCreatedColumn,
   useDescriptionColumn,

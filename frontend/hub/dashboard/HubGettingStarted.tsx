@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { PageDashboardGettingStarted, PageDashboardGettingStartedStep } from '../../../framework';
-import { RouteObj } from '../../Routes';
+import { RouteObj } from '../../common/Routes';
 
 export function HubGettingStartedCard(props: {
   hasNamespace: boolean;

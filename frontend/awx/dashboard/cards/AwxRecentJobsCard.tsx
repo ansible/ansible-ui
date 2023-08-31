@@ -10,7 +10,7 @@ import {
   useVisibleModalColumns,
 } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
-import { RouteObj } from '../../../Routes';
+import { RouteObj } from '../../../common/Routes';
 import { Job } from '../../interfaces/Job';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
 import { IAwxView } from '../../useAwxView';

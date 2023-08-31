@@ -1,10 +1,11 @@
 import { Bullseye, Spinner } from '@patternfly/react-core';
 import { Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
-import { RouteObj, useRoutesWithoutPrefix } from '../Routes';
 import Debug from '../common/Debug';
 import { PageNotFound } from '../common/PageNotFound';
 import { PageNotImplemented } from '../common/PageNotImplemented';
+import { RouteObj, useRoutesWithoutPrefix } from '../common/Routes';
+import { useGet } from '../common/crud/useGet';
 import { CreateOrganization, EditOrganization } from './access/organizations/OrganizationForm';
 import { OrganizationPage } from './access/organizations/OrganizationPage/OrganizationPage';
 import { Organizations } from './access/organizations/Organizations';
@@ -30,7 +31,9 @@ import { ManagementJobs } from './administration/management-jobs/ManagementJobs'
 import { NotificationPage } from './administration/notifications/NotificationPage/NotificationPage';
 import { Notifications } from './administration/notifications/Notifications';
 import Reports from './analytics/Reports/Reports';
+import SubscriptionUsage from './analytics/subscription-usage/SubscriptionUsage';
 import { AwxDashboard } from './dashboard/AwxDashboard';
+import { SystemSettings } from './interfaces/SystemSettings';
 import { CreateCredential, EditCredential } from './resources/credentials/CredentialForm';
 import { CredentialPage } from './resources/credentials/CredentialPage/CredentialPage';
 import { Credentials } from './resources/credentials/Credentials';
@@ -50,13 +53,10 @@ import Settings from './settings/Settings';
 import HostMetrics from './views/jobs/HostMetrics';
 import { JobPage } from './views/jobs/JobPage';
 import Jobs from './views/jobs/Jobs';
+import { CreateScheduleRule } from './views/schedules/RuleForm';
 import { CreateSchedule } from './views/schedules/ScheduleForm';
 import { SchedulePage } from './views/schedules/SchedulePage/SchedulePage';
 import { Schedules } from './views/schedules/Schedules';
-import { CreateScheduleRule } from './views/schedules/RuleForm';
-import { SystemSettings } from './interfaces/SystemSettings';
-import { useGet } from '../common/crud/useGet';
-import SubscriptionUsage from './analytics/subscription-usage/SubscriptionUsage';
 
 export function AwxRouter() {
   const RouteObjWithoutPrefix = useRoutesWithoutPrefix(RouteObj.AWX);

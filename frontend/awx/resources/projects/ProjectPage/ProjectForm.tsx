@@ -10,7 +10,7 @@ import {
   PageHeader,
   PageLayout,
 } from '../../../../../framework';
-import { RouteObj } from '../../../../Routes';
+import { RouteObj } from '../../../../common/Routes';
 import { requestPatch } from '../../../../common/crud/Data';
 import { useGet } from '../../../../common/crud/useGet';
 import { useOptions } from '../../../../common/crud/useOptions';
