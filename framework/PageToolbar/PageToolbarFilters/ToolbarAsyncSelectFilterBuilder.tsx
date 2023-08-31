@@ -24,7 +24,6 @@ export function useAsyncSingleSelectFilterBuilder<T extends object>(
   props: AsyncSelectFilterBuilderProps<T>
 ) {
   const [_, setDialog] = usePageDialog();
-  const { t } = useTranslation();
 
   return {
     onBrowse: useCallback(
@@ -38,7 +37,7 @@ export function useAsyncSingleSelectFilterBuilder<T extends object>(
           />
         );
       },
-      [setDialog, t, props]
+      [setDialog, props]
     ),
   };
 }
@@ -47,7 +46,6 @@ export function useAsyncMultiSelectFilterBuilder<T extends object>(
   props: AsyncSelectFilterBuilderProps<T>
 ) {
   const [_, setDialog] = usePageDialog();
-  const { t } = useTranslation();
 
   return {
     onBrowse: useCallback(
@@ -61,7 +59,7 @@ export function useAsyncMultiSelectFilterBuilder<T extends object>(
           />
         );
       },
-      [setDialog, t, props]
+      [setDialog, props]
     ),
   };
 }
