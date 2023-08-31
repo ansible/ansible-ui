@@ -61,9 +61,11 @@ export function CollectionDetails() {
   const [searchParams] = useSearchParams();
 
   const { data, refresh } = useGet<HubItemsResponse<CollectionVersionSearch>>(
-    hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${searchParams.get('name') || ''}&namespace=${
-      searchParams.get('namespace') || ''
-    }&repository_name=${searchParams.get('repository') || ''}`
+    hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${
+      searchParams.get('name') || ''
+    }&namespace=${searchParams.get('namespace') || ''}&repository_name=${
+      searchParams.get('repository') || ''
+    }`
   );
   let collection: CollectionVersionSearch | undefined = undefined;
   if (data && data.data && data.data.length > 0) {
