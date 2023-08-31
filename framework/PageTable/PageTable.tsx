@@ -318,7 +318,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
 
   let tableContent = (
     <>
-      <PageSection>{props.topContent}</PageSection>
+      {props.topContent && <PageSection>{props.topContent}</PageSection>}
       <PageTableView {...props} {...pagination} tableColumns={managedColumns} />
     </>
   );
@@ -343,7 +343,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
       )}
       {viewType === PageTableViewTypeE.List && (
         <Scrollable>
-          <PageSection>{props.topContent}</PageSection>
+          {props.topContent && <PageSection>{props.topContent}</PageSection>}
           <PageSection padding={{ default: 'noPadding', md: 'padding' }}>
             <div
               style={{
@@ -362,7 +362,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
       )}
       {viewType === PageTableViewTypeE.Cards && (
         <Scrollable>
-          <PageSection>{props.topContent}</PageSection>
+          {props.topContent && <PageSection>{props.topContent}</PageSection>}
           <PageTableCards {...props} showSelect={showSelect} tableColumns={managedColumns} />
         </Scrollable>
       )}
