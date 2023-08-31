@@ -230,12 +230,13 @@ function BulkActionDialog<T extends object>(props: BulkActionDialogProps<T>) {
               },
             ]}
             keyFn={keyFn}
-            pagination={pagination}
+            // pagination={pagination}
             compact
             errorStateTitle=""
             emptyStateTitle="No items"
             autoHidePagination={true}
             disableBodyPadding
+            {...pagination}
           />
         </div>
       </ModalBoxBody>
