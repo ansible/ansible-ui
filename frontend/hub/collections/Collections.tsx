@@ -57,10 +57,6 @@ export function Collections() {
         {...view}
         defaultTableView="list"
         defaultSubtitle={t('Collection')}
-        topContent={
-          <img src="https://artistmonkeys.com/wp-content/uploads/2021/11/Lothlorien-Elven-forest-landscape-7.jpg"></img>
-        }
-        scrollOutsideTable={true}
       />
     </PageLayout>
   );
