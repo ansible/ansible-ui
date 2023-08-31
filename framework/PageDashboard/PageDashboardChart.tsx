@@ -85,7 +85,7 @@ export function PageDashboardChart(props: {
 
   const padding = {
     top: 0 + 16,
-    bottom: 16 + 16,
+    bottom: 32 + 16,
     left: 12 + Math.round(maxDomainY).toString().length * 9.5 + 16,
     right: 0 + 16,
   };
@@ -107,15 +107,10 @@ export function PageDashboardChart(props: {
           display: 'flex',
           flexDirection: 'column',
           flexGrow: 1,
+          gap: 16,
         }}
       >
-        <div
-          style={{
-            display: 'flex',
-            flexGrow: 1,
-            margin: -16,
-          }}
-        >
+        <div style={{ height: '100%', margin: -16 }}>
           <PageChartContainer className="page-chart">
             {(size) => (
               <Chart
@@ -204,21 +199,16 @@ export function PageDashboardChart(props: {
             )}
           </PageChartContainer>
         </div>
-        <PageChartLegend legend={legend} horizontal />
         {xLabel && (
           <XAxisLabel label={xLabel} paddingLeft={padding.left} paddingRight={padding.right} />
         )}
+        <PageChartLegend legend={legend} horizontal />
       </div>
     </div>
   );
 }
 
-function XAxisLabel(props: {
-  label: string;
-  paddingLeft?: number;
-  paddingRight?: number;
-  paddingBottom?: number;
-}) {
+function XAxisLabel(props: { label: string; paddingLeft?: number; paddingRight?: number }) {
   return (
     <span
       style={{
@@ -228,8 +218,6 @@ function XAxisLabel(props: {
         alignItems: 'center',
         paddingLeft: props.paddingLeft,
         paddingRight: props.paddingRight,
-        paddingBottom: props.paddingBottom,
-        marginTop: 16,
       }}
     >
       {props.label}

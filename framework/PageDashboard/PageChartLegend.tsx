@@ -14,7 +14,6 @@ export function PageChartLegend(props: {
           alignItems: 'center',
           justifyContent: 'center',
           gap: 20,
-          paddingTop: 16,
         }}
       >
         {props.legend.map((item, index) => {
@@ -27,7 +26,6 @@ export function PageChartLegend(props: {
                 flexDirection: 'row',
                 alignItems: 'center',
                 justifyContent: 'center',
-                marginTop: 16,
                 gap: 6,
               }}
             >

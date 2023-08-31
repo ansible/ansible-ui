@@ -585,7 +585,14 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
 
   if (!props.scrollOutsideTable) {
     returnElement = (
-      <ScrollDiv className="pf-c-scroll-inner-wrapper" ref={containerRef} onScroll={onScroll}>
+      <ScrollDiv
+        className="pf-c-scroll-inner-wrapper"
+        ref={containerRef}
+        onScroll={onScroll}
+        style={{
+          backgroundColor: 'var(--pf-global--BackgroundColor--100)',
+        }}
+      >
         {returnElement}
       </ScrollDiv>
     );

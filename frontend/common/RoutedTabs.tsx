@@ -1,26 +1,25 @@
 import {
-  Children,
-  isValidElement,
-  ReactNode,
-  ReactElement,
-  useCallback,
-  useMemo,
-  useEffect,
-} from 'react';
-import { Routes, Route, useParams, useNavigate, useLocation } from 'react-router-dom';
-import {
-  Divider,
   Flex,
   FlexItem,
   PageSection,
   PageSectionTypes,
   Skeleton,
   Tab,
+  TabTitleText,
   Tabs,
   TabsComponent,
-  TabTitleText,
 } from '@patternfly/react-core';
 import { CaretLeftIcon } from '@patternfly/react-icons';
+import {
+  Children,
+  ReactElement,
+  ReactNode,
+  isValidElement,
+  useCallback,
+  useEffect,
+  useMemo,
+} from 'react';
+import { Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { getPersistentFilters } from './PersistentFilters';
 
 interface IRoutedTabProps {
@@ -102,16 +101,17 @@ export function RoutedTabs(props: {
 
   return (
     <>
-      <PageSection type={PageSectionTypes.tabs} className="border-bottom">
+      <PageSection type={PageSectionTypes.tabs}>
         <Flex spaceItems={{ default: 'spaceItemsNone' }}>
           {props.preComponents && (
             <>
               <FlexItem>{props.preComponents}</FlexItem>
-              <Divider orientation={{ default: 'vertical' }} component="div" />
+              {/* <Divider orientation={{ default: 'vertical' }} component="div" /> */}
             </>
           )}
-          <FlexItem grow={{ default: 'grow' }}>
+          <FlexItem>
             <Tabs
+              isBox
               activeKey={activeKey}
               onSelect={handleSelect}
               inset={
@@ -119,14 +119,8 @@ export function RoutedTabs(props: {
                   ? undefined
                   : {
                       default: 'insetNone',
-                      sm: 'insetNone',
-                      md: 'insetNone',
-                      lg: 'insetNone',
-                      xl: 'insetSm',
-                      ['2xl']: 'insetSm',
                     }
               }
-              hasBorderBottom={false}
               component={TabsComponent.nav}
             >
               {children.map((child, index) => {
@@ -153,9 +147,17 @@ export function RoutedTabs(props: {
               })}
             </Tabs>
           </FlexItem>
+          <FlexItem
+            grow={{ default: 'grow' }}
+            className="border-left border-bottom"
+            style={{
+              backgroundColor: 'var(--pf-global--BackgroundColor--200)',
+              alignSelf: 'normal',
+            }}
+          />
           {props.postComponents && (
             <>
-              <Divider orientation={{ default: 'vertical' }} />
+              {/* <Divider orientation={{ default: 'vertical' }} /> */}
               <FlexItem style={{ paddingRight: 16 }}>{props.postComponents}</FlexItem>
             </>
           )}
@@ -195,7 +197,7 @@ export function PageBackTab(props: {
       title={
         <TabTitleText>
           <CaretLeftIcon />
-          {label}
+          <span style={{ marginLeft: 6 }}>{label}</span>
         </TabTitleText>
       }
       href={`${url}${qs}`}
