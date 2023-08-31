@@ -57,6 +57,7 @@ export function Schedules(props: { sublistEndpoint?: string }) {
         )}
       />
       <PageTable<Schedule>
+        id="awx-schedules-table"
         toolbarFilters={toolbarFilters}
         toolbarActions={toolbarActions}
         tableColumns={tableColumns}

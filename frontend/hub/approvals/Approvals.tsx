@@ -3,10 +3,10 @@ import { PageHeader, PageLayout, PageTable } from '../../../framework';
 import { collectionKeyFn, hubAPI } from '../api/utils';
 import { useHubView } from '../useHubView';
 import { CollectionVersionSearch } from './Approval';
-import { useApprovalFilters } from './hooks/useApprovalFilters';
-import { useApprovalsColumns } from './hooks/useApprovalsColumns';
 import { useApprovalActions } from './hooks/useApprovalActions';
+import { useApprovalFilters } from './hooks/useApprovalFilters';
 import { useApprovalsActions } from './hooks/useApprovalsActions';
+import { useApprovalsColumns } from './hooks/useApprovalsColumns';
 
 export function Approvals() {
   const { t } = useTranslation();
@@ -29,6 +29,7 @@ export function Approvals() {
     <PageLayout>
       <PageHeader title={t('Collection Approvals')} />
       <PageTable<CollectionVersionSearch>
+        id="hub-collection-version-search-table"
         toolbarFilters={toolbarFilters}
         tableColumns={tableColumns}
         rowActions={rowActions}

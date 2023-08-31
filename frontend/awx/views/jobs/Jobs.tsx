@@ -88,7 +88,7 @@ export default function Jobs() {
         }
       />
       <PageTable
-        id="awx-jobs"
+        id="awx-jobs-table"
         toolbarFilters={toolbarFilters}
         tableColumns={tableColumns}
         toolbarActions={toolbarActions}

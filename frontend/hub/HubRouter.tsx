@@ -1,5 +1,5 @@
 import { Route, Routes } from 'react-router-dom';
-import { RouteObj, useRoutesWithoutPrefix } from '../Routes';
+import { RouteObj, useRoutesWithoutPrefix } from '../common/Routes';
 import { Approvals } from './approvals/Approvals';
 import { CollectionDetails } from './collections/CollectionDetails';
 import { Collections } from './collections/Collections';
@@ -17,6 +17,7 @@ import { SignatureKeys } from './signature-keys/SignatureKeys';
 import { TaskDetails } from './tasks/TaskDetails';
 import { Tasks } from './tasks/Tasks';
 import { Token } from './token/Token';
+import { RemoteDetails } from './remotes/RemoteDetails';
 
 export function HubRouter() {
   const RouteObjWithoutPrefix = useRoutesWithoutPrefix(RouteObj.Hub);
@@ -47,6 +48,7 @@ export function HubRouter() {
       <Route path={RouteObjWithoutPrefix.Remotes} element={<Remotes />} />
       <Route path={RouteObjWithoutPrefix.CreateRemotes} element={<CreateRemote />} />
       <Route path={RouteObjWithoutPrefix.EditRemotes} element={<EditRemote />} />
+      <Route path={RouteObjWithoutPrefix.RemoteDetails} element={<RemoteDetails />} />
     </Routes>
   );
 }

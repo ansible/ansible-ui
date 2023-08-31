@@ -25,6 +25,7 @@ export function RuleAudit() {
         )}
       />
       <PageTable
+        id="eda-rule-audit-table"
         tableColumns={tableColumns}
         emptyStateIcon={CubesIcon}
         errorStateTitle={t('Error loading rule audit data')}

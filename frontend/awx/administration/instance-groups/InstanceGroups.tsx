@@ -16,7 +16,7 @@ import {
   TextCell,
   ToolbarFilterType,
 } from '../../../../framework';
-import { RouteObj } from '../../../Routes';
+import { RouteObj } from '../../../common/Routes';
 import { useCreatedColumn, useModifiedColumn } from '../../../common/columns';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { useAwxView } from '../../useAwxView';
@@ -107,6 +107,7 @@ export function InstanceGroups() {
         )}
       />
       <PageTable<InstanceGroup>
+        id="awx-instance-groups-table"
         toolbarFilters={toolbarFilters}
         toolbarActions={toolbarActions}
         tableColumns={tableColumns}

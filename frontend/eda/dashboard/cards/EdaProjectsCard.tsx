@@ -9,7 +9,7 @@ import {
   useVisibleModalColumns,
 } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
-import { RouteObj } from '../../../Routes';
+import { RouteObj } from '../../../common/Routes';
 import { useProjectColumns } from '../../Resources/projects/hooks/useProjectColumns';
 import { EdaProject } from '../../interfaces/EdaProject';
 import { IEdaView } from '../../useEventDrivenView';

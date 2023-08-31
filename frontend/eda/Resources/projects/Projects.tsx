@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
-import { RouteObj } from '../../../Routes';
+import { RouteObj } from '../../../common/Routes';
 import { API_PREFIX } from '../../constants';
 import { EdaProject } from '../../interfaces/EdaProject';
 import { useEdaView } from '../../useEventDrivenView';
@@ -29,7 +29,7 @@ export function Projects() {
         description={t('Projects are a logical collection of rulebooks.')}
       />
       <PageTable
-        id={'eda-projects'}
+        id="eda-projects-table"
         tableColumns={tableColumns}
         toolbarActions={toolbarActions}
         toolbarFilters={toolbarFilters}

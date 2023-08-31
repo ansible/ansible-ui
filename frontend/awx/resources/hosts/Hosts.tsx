@@ -13,7 +13,7 @@ import {
   PageLayout,
   PageTable,
 } from '../../../../framework';
-import { RouteObj } from '../../../Routes';
+import { RouteObj } from '../../../common/Routes';
 import {
   useCreatedColumn,
   useDescriptionColumn,
@@ -110,6 +110,7 @@ export function Hosts() {
         titleDocLink={`${getDocsBaseUrl(config)}/html/userguide/hosts.html`}
       />
       <PageTable<AwxHost>
+        id="awx-hosts-table"
         toolbarFilters={toolbarFilters}
         toolbarActions={toolbarActions}
         tableColumns={tableColumns}

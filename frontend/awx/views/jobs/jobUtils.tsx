@@ -1,5 +1,5 @@
+import { RouteObj } from '../../../common/Routes';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
-import { RouteObj } from '../../../Routes';
 
 /** Returns the jobs API endpoint based on the job type */
 export function getJobsAPIUrl(type: string) {

@@ -2,9 +2,9 @@ import { NavExpandable, NavItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { usePageNavBarClick } from '../../framework';
-import { RouteObj } from '../Routes';
 import { CommonSidebar } from '../common/CommonSidebar';
 import { isRouteActive } from '../common/Masthead';
+import { RouteObj } from '../common/Routes';
 import { useEdaActiveUser } from '../common/useActiveUser';
 
 export function EventDrivenSidebar() {

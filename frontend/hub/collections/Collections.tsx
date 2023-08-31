@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../framework';
-import { RouteObj } from '../../Routes';
-import { hubAPI, collectionKeyFn } from '../api/utils';
+import { RouteObj } from '../../common/Routes';
+import { collectionKeyFn, hubAPI } from '../api/utils';
 import { useHubView } from '../useHubView';
 import { CollectionVersionSearch } from './Collection';
 import { useCollectionActions } from './hooks/useCollectionActions';
@@ -45,6 +45,7 @@ export function Collections() {
       />
 
       <PageTable<CollectionVersionSearch>
+        id="hub-collection-version-search-table"
         toolbarFilters={toolbarFilters}
         toolbarActions={toolbarActions}
         tableColumns={tableColumns}

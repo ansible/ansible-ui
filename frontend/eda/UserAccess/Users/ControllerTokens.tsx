@@ -1,12 +1,12 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageLayout, PageTable } from '../../../../framework';
-import { RouteObj } from '../../../Routes';
+import { RouteObj } from '../../../common/Routes';
+import { API_PREFIX } from '../../constants';
 import { EdaControllerToken } from '../../interfaces/EdaControllerToken';
+import { useEdaView } from '../../useEventDrivenView';
 import { useControllerTokenActions } from './hooks/useControllerTokenActions';
 import { useControllerTokensColumns } from './hooks/useControllerTokensColumns';
-import { API_PREFIX } from '../../constants';
-import { useEdaView } from '../../useEventDrivenView';
 
 export function ControllerTokens() {
   const { t } = useTranslation();
@@ -21,6 +21,7 @@ export function ControllerTokens() {
   return (
     <PageLayout>
       <PageTable
+        id="eda-controller-tokens-table"
         tableColumns={tableColumns}
         rowActions={rowActions}
         errorStateTitle={t('Error loading controller tokens')}

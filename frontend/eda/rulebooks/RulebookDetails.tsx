@@ -13,7 +13,7 @@ import {
   useInMemoryView,
 } from '../../../framework';
 import { formatDateString } from '../../../framework/utils/formatDateString';
-import { RouteObj } from '../../Routes';
+import { RouteObj } from '../../common/Routes';
 import { useGet } from '../../common/crud/useGet';
 import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../constants';
 import { EdaResult } from '../interfaces/EdaResult';
@@ -71,6 +71,7 @@ export function RulebookDetails() {
     return (
       <PageLayout>
         <PageTable
+          id="eda-rulesets-table"
           tableColumns={tableColumns}
           toolbarFilters={toolbarFilters}
           errorStateTitle={t('Error loading rulesets')}

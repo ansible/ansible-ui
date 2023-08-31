@@ -10,7 +10,7 @@ import {
   useVisibleModalColumns,
 } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
-import { RouteObj } from '../../../Routes';
+import { RouteObj } from '../../../common/Routes';
 import { useDecisionEnvironmentColumns } from '../../Resources/decision-environments/hooks/useDecisionEnvironmentColumns';
 import { EdaDecisionEnvironment } from '../../interfaces/EdaDecisionEnvironment';
 import { IEdaView } from '../../useEventDrivenView';
@@ -46,6 +46,7 @@ export function EdaDecisionEnvironmentsCard(props: { view: IEdaView<EdaDecisionE
       help={t('Decision environments are a container image to run Ansible rulebooks.')}
     >
       <PageTable
+        id="eda-decision-environments-table"
         disableBodyPadding={true}
         tableColumns={columns}
         autoHidePagination={true}

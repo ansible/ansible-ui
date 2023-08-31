@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { PageActions, PageHeader, PageLayout, PageTab, PageTabs } from '../../../framework';
 import { PageDetailsFromColumns } from '../../../framework/PageDetails/PageDetailsFromColumns';
-import { RouteObj } from '../../Routes';
+import { RouteObj } from '../../common/Routes';
 import { useGet } from '../../common/crud/useGet';
 import { hubAPI } from '../api/utils';
 import { HubItemsResponse } from '../useHubView';
