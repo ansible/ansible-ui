@@ -4,13 +4,9 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { PageForm, PageFormSelect, PageFormSubmitHandler, usePageDialog } from '../../framework';
-import { PageFormTextInput } from '../../framework/PageForm/Inputs/PageFormTextInput';
-import { LoadingState } from '../../framework/components/LoadingState';
+import { PageForm, PageFormSubmitHandler, usePageDialog } from '../../framework';
+import { PageFormTextInput } from '../../framework';
 import { RouteObj } from '../Routes';
-import { AutomationServerType } from '../automation-servers/AutomationServer';
-import { useAutomationServers } from '../automation-servers/AutomationServersProvider';
-import { useSetActiveAutomationServer } from '../automation-servers/hooks/useSetActiveAutomationServer';
 import { setCookie } from './crud/cookie';
 import { useInvalidateCacheOnUnmount } from './useInvalidateCache';
 
@@ -75,9 +71,6 @@ function LoginForm(props: { defaultServerId?: string | number; onLogin?: () => v
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const automationServers = useAutomationServers();
-  const setActiveAutomationServer = useSetActiveAutomationServer();
-
   useInvalidateCacheOnUnmount();
 
   const onSubmit = useCallback<
@@ -85,47 +78,25 @@ function LoginForm(props: { defaultServerId?: string | number; onLogin?: () => v
   >(
     async (data, setError) => {
       try {
-        const automationServer = automationServers?.find(
-          (automationServer) => automationServer.id === data.serverId
-        );
         let loginPageUrl = '';
         let searchString = 'name="csrfmiddlewaretoken" value="';
-        if (automationServer) {
-          setActiveAutomationServer?.(automationServer);
-          setCookie('server', automationServer.url);
 
-          switch (automationServer.type) {
-            case AutomationServerType.AWX:
-              loginPageUrl = '/api/login/';
-              break;
-            case AutomationServerType.EDA:
-              loginPageUrl = '/api/eda/v1/auth/session/login/';
-              searchString = 'csrfToken: "';
-              break;
-            case AutomationServerType.Galaxy:
-              loginPageUrl = `/api/galaxy/_ui/v1/auth/login/`;
-              break;
-            case AutomationServerType.HUB:
-              loginPageUrl = `/api/automation-hub/_ui/v1/auth/login/`;
-              break;
-          }
-        } else {
-          switch (process.env.UI_MODE) {
-            case 'AWX':
-              loginPageUrl = '/api/login/';
-              break;
-            case 'EDA':
-              loginPageUrl = '/api/eda/v1/auth/session/login/';
-              searchString = 'csrfToken: "';
-              break;
-            case 'GALAXY':
-              loginPageUrl = `/api/galaxy/_ui/v1/auth/login/`;
-              break;
-            case 'HUB':
-              loginPageUrl = `/api/automation-hub/_ui/v1/auth/login/`;
-              break;
-          }
+        switch (process.env.UI_MODE) {
+          case 'AWX':
+            loginPageUrl = '/api/login/';
+            break;
+          case 'EDA':
+            loginPageUrl = '/api/eda/v1/auth/session/login/';
+            searchString = 'csrfToken: "';
+            break;
+          case 'GALAXY':
+            loginPageUrl = `/api/galaxy/_ui/v1/auth/login/`;
+            break;
+          case 'HUB':
+            loginPageUrl = `/api/automation-hub/_ui/v1/auth/login/`;
+            break;
         }
+
         if (!loginPageUrl) return;
 
         const loginPage = await ky.get(loginPageUrl, { credentials: 'include' }).text();
@@ -166,32 +137,17 @@ function LoginForm(props: { defaultServerId?: string | number; onLogin?: () => v
           }
         }
 
-        if (automationServer) {
-          switch (automationServer.type) {
-            case AutomationServerType.AWX:
-              navigate(RouteObj.Dashboard);
-              break;
-            case AutomationServerType.EDA:
-              navigate(RouteObj.EdaDashboard);
-              break;
-            case AutomationServerType.HUB:
-            case AutomationServerType.Galaxy:
-              navigate(RouteObj.HubDashboard);
-              break;
-          }
-        } else {
-          switch (process.env.UI_MODE) {
-            case 'AWX':
-              navigate(RouteObj.Dashboard);
-              break;
-            case 'EDA':
-              navigate(RouteObj.EdaDashboard);
-              break;
-            case 'HUB':
-            case 'GALAXY':
-              navigate(RouteObj.HubDashboard);
-              break;
-          }
+        switch (process.env.UI_MODE) {
+          case 'AWX':
+            navigate(RouteObj.Dashboard);
+            break;
+          case 'EDA':
+            navigate(RouteObj.EdaDashboard);
+            break;
+          case 'HUB':
+          case 'GALAXY':
+            navigate(RouteObj.HubDashboard);
+            break;
         }
 
         props.onLogin?.();
@@ -203,9 +159,8 @@ function LoginForm(props: { defaultServerId?: string | number; onLogin?: () => v
         }
       }
     },
-    [automationServers, navigate, props, setActiveAutomationServer, t]
+    [navigate, props, t]
   );
-  if (!automationServers) return <LoadingState />;
 
   return (
     <PageForm
@@ -214,34 +169,11 @@ function LoginForm(props: { defaultServerId?: string | number; onLogin?: () => v
       cancelText={t('Cancel')}
       isVertical
       singleColumn
-      defaultValue={
-        process.env.UI_MODE
-          ? {}
-          : {
-              serverId: automationServers?.find((automationServer) =>
-                props.defaultServerId
-                  ? automationServer.id === props.defaultServerId
-                  : automationServer.isActive
-              )?.id,
-            }
-      }
       disableBody
       disablePadding
       disableScrolling
+      autoComplete={'off'}
     >
-      {!process.env.UI_MODE && (
-        <PageFormSelect
-          name="serverId"
-          label={t('Automation server')}
-          placeholderText={t('Select automation server')}
-          options={(automationServers ?? []).map((automationServer) => ({
-            label: automationServer.name,
-            description: automationServer.url,
-            value: automationServer.id,
-          }))}
-          isRequired
-        />
-      )}
       <PageFormTextInput
         name="username"
         label={t('Username')}
@@ -256,6 +188,7 @@ function LoginForm(props: { defaultServerId?: string | number; onLogin?: () => v
         placeholder={t('Enter password')}
         type="password"
         isRequired
+        autoComplete="off"
       />
     </PageForm>
   );

@@ -196,6 +196,7 @@ export const RouteObj = {
   //Analytics
   ControllerReports: `${awxRoutePrefix}/reports`,
   ControllerReport: `${awxRoutePrefix}/report/:id`,
+  SubscriptionUsage: `${awxRoutePrefix}/subscription-usage`,
 
   Hub: `${hubRoutePrefix}`,
 
@@ -221,6 +222,8 @@ export const RouteObj = {
 
   Remotes: `${hubRoutePrefix}/remotes`,
   CreateRemotes: `${hubRoutePrefix}/remotes/create`,
+  EditRemotes: `${hubRoutePrefix}/remotes/:id/edit`,
+  RemoteDetails: `${hubRoutePrefix}/remotes/details/:id`,
 
   RemoteRegistries: `${hubRoutePrefix}/remote-registries`,
 
@@ -233,14 +236,8 @@ export const RouteObj = {
 
   AwxDebug: `${awxRoutePrefix}/debug`,
 
-  AutomationServers: `/automation-servers`,
-  AwxAutomationServers: `${awxRoutePrefix}/automation-servers`,
-  HubAutomationServers: `${hubRoutePrefix}/automation-servers`,
-
   // EDA server prefix
   Eda: `${edaRoutePrefix}`,
-
-  EdaAutomationServers: `${edaRoutePrefix}/automation-servers`,
 
   EdaDashboard: `${edaRoutePrefix}/dashboard`,
 

@@ -42,6 +42,7 @@ export function PageForm<T extends object>(props: {
   disableScrolling?: boolean;
   disableBody?: boolean;
   disablePadding?: boolean;
+  autoComplete?: string;
 }) {
   const { defaultValue, disableBody, disablePadding } = props;
   const form = useForm<T>({
@@ -110,6 +111,7 @@ export function PageForm<T extends object>(props: {
           }
         )}
         isHorizontal={isHorizontal}
+        autoComplete={props?.autoComplete || 'on'}
         style={{
           display: 'flex',
           flexDirection: 'column',
