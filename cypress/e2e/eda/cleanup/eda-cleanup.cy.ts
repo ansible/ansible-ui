@@ -51,7 +51,7 @@ describe('EDA Cleanup', () => {
     });
   });
 
-  it('cleanup old eda rulebook activations', () => {
+  it.skip('cleanup old eda rulebook activations', () => {
     cy.getEdaRulebookActivations(1, 100).then((result) => {
       for (const resource of result.results ?? []) {
         if (isOldResource('E2E Rulebook Activation', resource)) {

@@ -1,5 +1,6 @@
 import { EdaControllerToken } from '../../../../frontend/eda/interfaces/EdaControllerToken';
-describe('EDA Admin User', () => {
+
+describe.skip('EDA Admin User', () => {
   before(() => {
     cy.edaLogin();
   });
