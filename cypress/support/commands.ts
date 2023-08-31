@@ -96,6 +96,10 @@ declare global {
         label: string | RegExp
       ): Chainable<void>;
       selectMultiSelectOption(selector: string, label: string | RegExp): Chainable<void>;
+      addAndSelectItemFromMulitSelectDropdown(
+        label: string | RegExp,
+        itemText: string
+      ): Chainable<void>;
 
       // --- TABLE COMMANDS ---
 

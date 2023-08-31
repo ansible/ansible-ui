@@ -1,4 +1,4 @@
-import { Button, FormSection } from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core';
 import { SyncAltIcon } from '@patternfly/react-icons';
 import { useCallback, useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
@@ -11,6 +11,7 @@ import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { CredentialType } from '../../../interfaces/CredentialType';
 import { JobTemplateForm } from '../../../interfaces/JobTemplateForm';
 import { PageFormCredentialSelect } from '../../credentials/components/PageFormCredentialSelect';
+import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 
 export function WebhookSubForm() {
   const { t } = useTranslation();
@@ -56,7 +57,7 @@ export function WebhookSubForm() {
   const isUpdateKeyDisabled =
     pathname.endsWith('/add') || webhookKey === 'A NEW WEBHOOK KEY WILL BE GENERATED ON SAVE.';
   return (
-    <FormSection title={t('Webhook details')}>
+    <PageFormSection title={t('Webhook details')}>
       <PageFormSelect<JobTemplateForm>
         name="webhook_service"
         label={t('Webhook service')}
@@ -101,6 +102,6 @@ export function WebhookSubForm() {
           labelHelpTitle={t('Webhook credential')}
         />
       ) : null}
-    </FormSection>
+    </PageFormSection>
   );
 }

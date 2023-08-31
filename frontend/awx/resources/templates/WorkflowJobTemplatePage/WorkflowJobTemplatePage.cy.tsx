@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable i18next/no-literal-string */
 import { WorkflowJobTemplatePage } from './WorkflowJobTemplatePage';
-import { RouteObj } from '../../../../Routes';
+import { RouteObj } from '../../../../common/Routes';
 
 describe('WorflowJobTemplatePage', () => {
   beforeEach(() => {

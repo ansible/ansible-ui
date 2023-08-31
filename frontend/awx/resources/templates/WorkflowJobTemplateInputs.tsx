@@ -71,19 +71,6 @@ export function WorkflowJobTemplateInputs(props: {
           <PageFormCheckbox label={t('Prompt on launch')} name="ask_labels_on_launch" />
         }
       />
-      <PageFormSection singleColumn>
-        <PageFormDataEditor<WorkflowJobTemplateFormType>
-          additionalControls={
-            <PageFormCheckbox label={t('Prompt on launch')} name="ask_variables_on_launch" />
-          }
-          labelHelpTitle={t('Extra Variables')}
-          labelHelp={t(`Optional extra variables to be applied to job template`)}
-          toggleLanguages={['yaml', 'json']}
-          label={t('Extra Variables')}
-          name="extra_vars"
-          isExpandable
-        />
-      </PageFormSection>
       <PageFormCreatableSelect<WorkflowJobTemplateFormType>
         labelHelpTitle={t('Job tags')}
         labelHelp={t(
@@ -110,14 +97,29 @@ export function WorkflowJobTemplateInputs(props: {
         label={t('Skip tags')}
         options={workflowJobTemplate?.arrayedSkipTags ?? [{ value: '', label: '' }]}
       />
-      <PageFormCheckbox<WorkflowJobTemplateFormType>
-        label={t('Enable webhook')}
-        name="isWebhookEnabled"
-      />
-      <PageFormCheckbox<WorkflowJobTemplateFormType>
-        label={t('Enable Concurrent jobs')}
-        name="allow_simultaneous"
-      />
+      <PageFormSection singleColumn>
+        <PageFormDataEditor<WorkflowJobTemplateFormType>
+          additionalControls={
+            <PageFormCheckbox label={t('Prompt on launch')} name="ask_variables_on_launch" />
+          }
+          labelHelpTitle={t('Extra Variables')}
+          labelHelp={t(`Optional extra variables to be applied to job template`)}
+          toggleLanguages={['yaml', 'json']}
+          label={t('Extra Variables')}
+          name="extra_vars"
+          isExpandable
+        />
+      </PageFormSection>
+      <PageFormSection title={t('Options')}>
+        <PageFormCheckbox<WorkflowJobTemplateFormType>
+          label={t('Enable webhook')}
+          name="isWebhookEnabled"
+        />
+        <PageFormCheckbox<WorkflowJobTemplateFormType>
+          label={t('Enable concurrent jobs')}
+          name="allow_simultaneous"
+        />
+      </PageFormSection>
 
       {isWebhookEnabled ? <WebhookSubForm /> : null}
     </>

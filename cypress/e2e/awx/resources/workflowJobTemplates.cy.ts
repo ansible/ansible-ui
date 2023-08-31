@@ -5,10 +5,7 @@ import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 
 describe('Workflow Job templates form', () => {
   let organization: Organization;
-
   let inventory: Inventory;
-
-  // let githubTokenCrendential: Credential;
   let label: Label;
 
   before(() => {
@@ -29,72 +26,22 @@ describe('Workflow Job templates form', () => {
     cy.deleteAwxOrganization(organization);
   });
 
-  it.skip('Should create job template with all fields except for prompt on launch values', () => {
+  it('Should create job template with all fields except for prompt on launch values', () => {
     const jtName = 'E2E ' + randomString(4);
 
     cy.navigateTo(/^Templates$/);
     cy.clickButton(/^Create template$/);
     cy.clickLink(/^Create workflow job template$/);
-
-    // Name
     cy.typeInputByLabel(/^Name$/, jtName);
-
-    // Description
     cy.typeInputByLabel(/^Description$/, 'this is a description');
-
     cy.selectDropdownOptionByLabel(/^Labels$/, label.name.toString(), true);
-
-    // Job tags
-    cy.contains('.pf-c-form__label-text', /^Job tags$/)
-      .parent()
-      .parent()
-      .parent()
-      .parent()
-      .within(() => {
-        cy.get('.pf-c-form__group-control').within(() => {
-          cy.get("input[type='text']")
-            .click()
-            .type('test job tag')
-            .parent()
-            .parent()
-            .parent()
-            .within(() => {
-              cy.get('.pf-c-select__menu').within(() => {
-                cy.get('button').contains('test job tag').click();
-              });
-            });
-        });
-      });
-
-    // Skip tags
-    cy.contains('.pf-c-form__label-text', /^Skip tags$/)
-      .parent()
-      .parent()
-      .parent()
-      .parent()
-      .within(() => {
-        cy.get('.pf-c-form__group-control').within(() => {
-          cy.get("input[type='text']")
-            .click()
-            .type('test skip tag')
-            .parent()
-            .parent()
-            .parent()
-            .within(() => {
-              cy.get('.pf-c-select__menu').within(() => {
-                cy.get('button').contains('test skip tag').click();
-              });
-            });
-        });
-      });
-
-    cy.get('input#allow_simultaneous').click();
-
+    cy.addAndSelectItemFromMulitSelectDropdown('Job tags', 'test job tag');
+    cy.addAndSelectItemFromMulitSelectDropdown(/^Skip tags$/, 'test skip tag');
     cy.clickButton(/^Create workflow job template$/);
     cy.hasTitle(jtName);
   });
 
-  it.skip('Should edit a workflow job template', () => {
+  it('Should edit a workflow job template', () => {
     cy.navigateTo(/^Templates$/);
     cy.createAwxWorkflowJobTemplate({
       organization: organization.id,
@@ -103,7 +50,7 @@ describe('Workflow Job templates form', () => {
       const newName = (workflowJobTemplate.name ?? '') + ' edited';
       if (!workflowJobTemplate.name) return;
 
-      cy.clickTableRowKebabAction(workflowJobTemplate?.name, /^Edit template$/);
+      cy.clickTableRowPinnedAction(workflowJobTemplate?.name, 'edit-template', true);
       cy.typeInputByLabel(/^Name$/, newName);
       cy.typeInputByLabel(/^Description$/, 'this is a new description');
       cy.clickButton(/^Save workflow job template$/);
