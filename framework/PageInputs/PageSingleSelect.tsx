@@ -145,11 +145,6 @@ export function PageSingleSelect<
     [options, searchValue]
   );
 
-  const showSearch = useMemo(
-    () => visibleOptions.length > 10 || searchValue,
-    [searchValue, visibleOptions.length]
-  );
-
   return (
     <div className="page-single-select">
       <Select
@@ -160,20 +155,18 @@ export function PageSingleSelect<
         toggle={Toggle}
         style={{ zIndex: isOpen ? 9999 : undefined }}
       >
-        {showSearch && (
-          <div className="page-select-header">
-            <SearchInput
-              id={id ? `${id}-search` : undefined}
-              ref={searchRef}
-              value={searchValue}
-              onChange={(_, value: string) => setSearchValue(value)}
-              onClear={(event) => {
-                event.stopPropagation();
-                setSearchValue('');
-              }}
-            />
-          </div>
-        )}
+        <div className="page-select-header">
+          <SearchInput
+            id={id ? `${id}-search` : undefined}
+            ref={searchRef}
+            value={searchValue}
+            onChange={(_, value: string) => setSearchValue(value)}
+            onClear={(event) => {
+              event.stopPropagation();
+              setSearchValue('');
+            }}
+          />
+        </div>
         {visibleOptions.length === 0 ? (
           <div style={{ margin: 16 }}>{t('No results found')}</div>
         ) : (
