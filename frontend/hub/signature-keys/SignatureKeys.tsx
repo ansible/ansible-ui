@@ -54,6 +54,7 @@ export function SignatureKeys() {
         )}
       />
       <PageTable<SignatureKey>
+        id="hub-signature-keys-table"
         toolbarFilters={toolbarFilters}
         tableColumns={tableColumns}
         rowActions={rowActions}

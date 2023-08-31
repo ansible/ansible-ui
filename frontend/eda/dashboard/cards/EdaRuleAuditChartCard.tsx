@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { compareStrings, pfDanger, pfSuccess } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
 import { PageDashboardChart } from '../../../../framework/PageDashboard/PageDashboardChart';
-import { RouteObj } from '../../../Routes';
+import { RouteObj } from '../../../common/Routes';
 import { useGet } from '../../../common/crud/useGet';
 import { API_PREFIX } from '../../constants';
 import { EdaResult } from '../../interfaces/EdaResult';

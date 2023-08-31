@@ -19,8 +19,8 @@ import {
   PageLayout,
   PageTable,
 } from '../../../../framework';
-import { RouteObj } from '../../../Routes';
 import { usePersistentFilters } from '../../../common/PersistentFilters';
+import { RouteObj } from '../../../common/Routes';
 import {
   useCreatedColumn,
   useDescriptionColumn,
@@ -167,6 +167,7 @@ export function Organizations() {
         navigation={<AccessNav active="organizations" />}
       />
       <PageTable<Organization>
+        id="awx-organizations-table"
         toolbarFilters={toolbarFilters}
         toolbarActions={toolbarActions}
         tableColumns={tableColumns}

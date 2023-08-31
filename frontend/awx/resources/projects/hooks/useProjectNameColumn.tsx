@@ -1,11 +1,11 @@
 import { Split, SplitItem, Tooltip } from '@patternfly/react-core';
 import { ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
-import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { ITableColumn } from '../../../../../framework';
 import { IconWrapper } from '../../../../../framework/components/IconWrapper';
-import { RouteObj } from '../../../../Routes';
+import { RouteObj } from '../../../../common/Routes';
 import { Project } from '../../../interfaces/Project';
 
 export function useProjectNameColumn(options?: { disableLinks?: boolean }) {

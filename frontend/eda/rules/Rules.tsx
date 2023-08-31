@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../framework';
-import { RouteObj } from '../../Routes';
+import { RouteObj } from '../../common/Routes';
 import { API_PREFIX } from '../constants';
 import { EdaRule } from '../interfaces/EdaRule';
 import { useEdaView } from '../useEventDrivenView';
@@ -22,6 +22,7 @@ export function Rules() {
     <PageLayout>
       <PageHeader title={t('Rules')} />
       <PageTable
+        id="eda-rules-table"
         tableColumns={tableColumns}
         toolbarFilters={toolbarFilters}
         errorStateTitle={t('Error loading rules')}

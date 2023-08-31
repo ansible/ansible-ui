@@ -1,8 +1,8 @@
 /* eslint-disable i18next/no-literal-string */
+import { RouteObj } from '../../../../common/Routes';
 import { Credential } from '../../../interfaces/Credential';
 import { CredentialType } from '../../../interfaces/CredentialType';
 import { CredentialPage } from './CredentialPage';
-import { RouteObj } from '../../../../Routes';
 
 describe('CredentialPage', () => {
   beforeEach(() => {

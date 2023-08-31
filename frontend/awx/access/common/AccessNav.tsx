@@ -1,7 +1,7 @@
 import { Nav, NavItem, NavList } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { RouteObj } from '../../../Routes';
+import { RouteObj } from '../../../common/Routes';
 
 export function AccessNav(props: { active: 'organizations' | 'teams' | 'users' }) {
   const { t } = useTranslation();

@@ -13,8 +13,8 @@ import {
   PageLayout,
 } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
-import { RouteObj } from '../../../../Routes';
 import { PageBackTab, RoutedTab, RoutedTabs } from '../../../../common/RoutedTabs';
+import { RouteObj } from '../../../../common/Routes';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxError } from '../../../common/AwxError';
 import { User } from '../../../interfaces/User';

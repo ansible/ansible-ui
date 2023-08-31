@@ -15,7 +15,7 @@ import { PageDetail } from '../../../framework/PageDetails/PageDetail';
 import { PageFormFileUpload } from '../../../framework/PageForm/Inputs/PageFormFileUpload';
 import { PageFormWatch } from '../../../framework/PageForm/Utils/PageFormWatch';
 import { LoadingPage } from '../../../framework/components/LoadingPage';
-import { RouteObj } from '../../Routes';
+import { RouteObj } from '../../common/Routes';
 import { postRequestFile } from '../../common/crud/Data';
 import { useGetRequest } from '../../common/crud/useGet';
 import { hubAPI, pulpAPI } from '../api/utils';
@@ -26,8 +26,8 @@ import { PulpItemsResponse } from '../usePulpView';
 import { IToolbarFilter } from '../../../framework';
 import { ToolbarFilterType } from '../../../framework/PageToolbar/PageToolbarFilter';
 import { useSearchParams } from '../../../framework/components/useSearchParams';
-import { usePulpView } from '../usePulpView';
 import { nameKeyFn } from '../../common/utils/nameKeyFn';
+import { usePulpView } from '../usePulpView';
 
 interface UploadData {
   file: unknown;
@@ -138,6 +138,7 @@ export function UploadCollectionByFile() {
         </div>
 
         <PageTable<Repository>
+          id="hub-repositories-table"
           onSelect={(repo) => {
             setSelectedRepo({ name: repo.name, pulp_href: repo.pulp_href });
           }}

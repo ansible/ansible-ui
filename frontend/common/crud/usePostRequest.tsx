@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { RouteObj } from '../../Routes';
+import { RouteObj } from '../Routes';
 import { createRequestError } from './RequestError';
 import { requestCommon } from './requestCommon';
 import { useAbortController } from './useAbortController';

@@ -1,6 +1,6 @@
 /* eslint-disable i18next/no-literal-string */
+import { RouteObj } from '../../../common/Routes';
 import { ProjectDetails } from './ProjectDetails';
-import { RouteObj } from '../../../Routes';
 
 describe('ProjectDetails', () => {
   beforeEach(() => {

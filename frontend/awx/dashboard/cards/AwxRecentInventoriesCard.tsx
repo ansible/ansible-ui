@@ -9,7 +9,7 @@ import {
   useVisibleModalColumns,
 } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
-import { RouteObj } from '../../../Routes';
+import { RouteObj } from '../../../common/Routes';
 import { useModifiedColumn } from '../../../common/columns';
 import { Inventory } from '../../interfaces/Inventory';
 import { useInventoriesColumns } from '../../resources/inventories/hooks/useInventoriesColumns';
@@ -40,7 +40,7 @@ export function AwxRecentInventoriesCard(props: {
       to={RouteObj.Inventories}
     >
       {showEmptyStateNonAdmin ? (
-        <PageTable
+        <PageTable<Inventory>
           disableBodyPadding={true}
           tableColumns={columns}
           autoHidePagination={true}
@@ -54,7 +54,7 @@ export function AwxRecentInventoriesCard(props: {
           disableLastRowBorder
         />
       ) : (
-        <PageTable
+        <PageTable<Inventory>
           disableBodyPadding={true}
           tableColumns={columns}
           autoHidePagination={true}

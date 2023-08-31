@@ -13,7 +13,7 @@ import {
   Scrollable,
 } from '../../../../framework';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
-import { RouteObj } from '../../../Routes';
+import { RouteObj } from '../../../common/Routes';
 import { StatusCell } from '../../../common/Status';
 import { useGet } from '../../../common/crud/useGet';
 import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
@@ -87,7 +87,7 @@ export function RuleAuditDetails() {
     return (
       <PageLayout>
         <PageTable
-          id={'eda-rule-audit-actions'}
+          id="eda-rule-audit-actions"
           tableColumns={tableColumns}
           toolbarFilters={toolbarFilters}
           errorStateTitle={t('Error loading actions')}
@@ -113,7 +113,7 @@ export function RuleAuditDetails() {
     return (
       <PageLayout>
         <PageTable
-          id={'eda-rule-audit-events'}
+          id="eda-rule-audit-events"
           tableColumns={tableColumns}
           toolbarFilters={toolbarFilters}
           errorStateTitle={t('Error loading events')}

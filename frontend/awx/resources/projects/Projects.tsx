@@ -3,10 +3,12 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
-import { RouteObj } from '../../../Routes';
-import { useOptions } from '../../../common/crud/useOptions';
-import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
 import { usePersistentFilters } from '../../../common/PersistentFilters';
+import { RouteObj } from '../../../common/Routes';
+import { useOptions } from '../../../common/crud/useOptions';
+import { useAwxConfig } from '../../common/useAwxConfig';
+import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
+import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { Project } from '../../interfaces/Project';
 import { useAwxView } from '../../useAwxView';
@@ -14,8 +16,6 @@ import { useProjectActions } from './hooks/useProjectActions';
 import { useProjectToolbarActions } from './hooks/useProjectToolbarActions';
 import { useProjectsColumns } from './hooks/useProjectsColumns';
 import { useProjectsFilters } from './hooks/useProjectsFilters';
-import { useAwxConfig } from '../../common/useAwxConfig';
-import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
 
 export function Projects() {
   const { t } = useTranslation();
@@ -78,6 +78,7 @@ export function Projects() {
         )}
       />
       <PageTable<Project>
+        id="awx-projects-table"
         toolbarFilters={toolbarFilters}
         toolbarActions={toolbarActions}
         tableColumns={tableColumns}

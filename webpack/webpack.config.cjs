@@ -3,7 +3,6 @@ const CssMinimizerWebpackPlugin = require('css-minimizer-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const webpack = require('webpack');
-const { GenerateSW } = require('workbox-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const MergeJsonWebpackPlugin = require('merge-jsons-webpack-plugin');
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
@@ -120,21 +119,14 @@ module.exports = function (env, argv) {
           space: 4,
         });
       }),
-      new HtmlWebpackPlugin({
-        title: process.env.PRODUCT,
-        template: 'frontend/index.html',
-      }),
+      new HtmlWebpackPlugin({ title: process.env.PRODUCT }),
       new MiniCssExtractPlugin({
         filename: '[contenthash].css',
         chunkFilename: '[id].[contenthash:8].css',
         ignoreOrder: false,
       }),
-      env.pwa && new GenerateSW({ clientsClaim: true, skipWaiting: true }),
       new CopyPlugin({
-        patterns: [
-          { from: 'frontend/icons', to: 'static/media' },
-          { from: 'frontend/manifest.webmanifest' },
-        ],
+        patterns: [{ from: 'frontend/icons', to: 'static/media' }],
       }),
       new MonacoWebpackPlugin({
         languages: ['json', 'yaml', 'shell'],

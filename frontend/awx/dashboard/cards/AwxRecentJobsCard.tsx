@@ -10,7 +10,7 @@ import {
   useVisibleModalColumns,
 } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
-import { RouteObj } from '../../../Routes';
+import { RouteObj } from '../../../common/Routes';
 import { Job } from '../../interfaces/Job';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
 import { IAwxView } from '../../useAwxView';
@@ -46,7 +46,7 @@ export function AwxRecentJobsCard(props: { view: IAwxView<Job>; showEmptyStateNo
       to={RouteObj.Jobs}
     >
       {showEmptyStateNonAdmin ? (
-        <PageTable
+        <PageTable<Job>
           disableBodyPadding={true}
           tableColumns={columns}
           autoHidePagination={true}
@@ -60,7 +60,7 @@ export function AwxRecentJobsCard(props: { view: IAwxView<Job>; showEmptyStateNo
           disableLastRowBorder
         />
       ) : (
-        <PageTable
+        <PageTable<Job>
           disableBodyPadding={true}
           tableColumns={columns}
           autoHidePagination={true}

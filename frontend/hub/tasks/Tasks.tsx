@@ -13,7 +13,7 @@ import {
   TextCell,
   ToolbarFilterType,
 } from '../../../framework';
-import { RouteObj } from '../../Routes';
+import { RouteObj } from '../../common/Routes';
 import { StatusCell } from '../../common/Status';
 import { parsePulpIDFromURL, pulpAPI, pulpHrefKeyFn } from '../api/utils';
 import { usePulpView } from '../usePulpView';
@@ -34,6 +34,7 @@ export function Tasks() {
     <PageLayout>
       <PageHeader title={t('Tasks')} />
       <PageTable<Task>
+        id="hub-tasks-table"
         toolbarFilters={toolbarFilters}
         tableColumns={tableColumns}
         errorStateTitle={t('Error loading tasks')}

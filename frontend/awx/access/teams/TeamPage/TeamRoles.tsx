@@ -10,7 +10,7 @@ import {
   PageActionType,
   PageTable,
 } from '../../../../../framework';
-import { RouteObj } from '../../../../Routes';
+import { RouteObj } from '../../../../common/Routes';
 import { Role } from '../../../interfaces/Role';
 import { Team } from '../../../interfaces/Team';
 import { useAwxView } from '../../../useAwxView';
@@ -68,6 +68,7 @@ export function TeamRoles(props: { team: Team }) {
   );
   return (
     <PageTable<Role>
+      id="awx-roles-table"
       toolbarFilters={toolbarFilters}
       tableColumns={tableColumns}
       toolbarActions={toolbarActions}

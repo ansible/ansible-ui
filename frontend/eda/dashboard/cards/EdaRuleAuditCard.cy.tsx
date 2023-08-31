@@ -1,6 +1,6 @@
-import { RouteObj } from '../../../Routes';
-import { EdaDashboard } from '../EdaDashboard';
+import { RouteObj } from '../../../common/Routes';
 import { API_PREFIX } from '../../constants';
+import { EdaDashboard } from '../EdaDashboard';
 
 describe('EdaRuleAuditCard.cy.ts', () => {
   beforeEach(() => {

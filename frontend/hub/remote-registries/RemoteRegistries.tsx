@@ -29,6 +29,7 @@ export function RemoteRegistries() {
         )}
       />
       <PageTable<RemoteRegistry>
+        id="hub-remote-registries-table"
         toolbarFilters={toolbarFilters}
         tableColumns={tableColumns}
         toolbarActions={toolbarActions}

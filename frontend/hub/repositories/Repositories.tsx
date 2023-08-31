@@ -15,10 +15,10 @@ import {
   PageTabs,
   TextCell,
 } from '../../../framework';
-import { RouteObj } from '../../Routes';
+import { RouteObj } from '../../common/Routes';
+import { hubAPI, pulpHrefKeyFn, pulpIdKeyFn } from '../api/utils';
 import { useHubView } from '../useHubView';
 import { RemoteRepository, Repository } from './Repository';
-import { hubAPI, pulpIdKeyFn, pulpHrefKeyFn } from '../api/utils';
 
 export function Repositories() {
   const { t } = useTranslation();
@@ -53,6 +53,7 @@ export function LocalRepositories() {
   });
   return (
     <PageTable<Repository>
+      id="hub-repositories-table"
       // toolbarFilters={toolbarFilters}
       tableColumns={tableColumns}
       errorStateTitle={t('Error loading repositories')}
@@ -136,6 +137,7 @@ export function RemoteRepositories() {
   );
   return (
     <PageTable<RemoteRepository>
+      id="hub-remote-repositories-table"
       rowActions={rowActions}
       tableColumns={tableColumns}
       errorStateTitle={t('Error loading repositories')}

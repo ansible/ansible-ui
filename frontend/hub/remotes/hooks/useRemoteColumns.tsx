@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ITableColumn, TextCell } from '../../../../framework';
 import { IRemotes } from '../Remotes';
-import { RouteObj } from '../../../Routes';
+import { RouteObj } from '../../../common/Routes';
 
 export function useRemoteColumns() {
   const { t } = useTranslation();

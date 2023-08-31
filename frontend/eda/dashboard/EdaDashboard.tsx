@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { PageHeader } from '../../../framework';
 import { PageDashboard } from '../../../framework/PageDashboard/PageDashboard';
 import { PageDashboardCard } from '../../../framework/PageDashboard/PageDashboardCard';
-import { RouteObj } from '../../Routes';
+import { RouteObj } from '../../common/Routes';
 import { API_PREFIX } from '../constants';
 import { EdaControllerToken } from '../interfaces/EdaControllerToken';
 import { EdaDecisionEnvironment } from '../interfaces/EdaDecisionEnvironment';

@@ -12,7 +12,7 @@ import { useCallback, useEffect, useReducer } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { RouteObj } from '../../../../../Routes.ts';
+import { RouteObj } from '../../../../../common/Routes.js';
 import { visualizerReducer } from '../WorkflowReducer.tsx';
 import {
   WorkflowApprovalAPI,
