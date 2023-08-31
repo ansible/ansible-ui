@@ -167,6 +167,7 @@ export function Organizations() {
         navigation={<AccessNav active="organizations" />}
       />
       <PageTable<Organization>
+        id="awx-organizations-table"
         toolbarFilters={toolbarFilters}
         toolbarActions={toolbarActions}
         tableColumns={tableColumns}

@@ -103,6 +103,7 @@ export function Inventories() {
         )}
       />
       <PageTable<Inventory>
+        id="awx-inventories-table"
         toolbarFilters={toolbarFilters}
         toolbarActions={toolbarActions}
         tableColumns={tableColumns}

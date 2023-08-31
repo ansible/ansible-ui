@@ -45,6 +45,7 @@ export function Collections() {
       />
 
       <PageTable<CollectionVersionSearch>
+        id="hub-collection-version-search-table"
         toolbarFilters={toolbarFilters}
         toolbarActions={toolbarActions}
         tableColumns={tableColumns}

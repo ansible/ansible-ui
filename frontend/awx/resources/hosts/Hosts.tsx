@@ -110,6 +110,7 @@ export function Hosts() {
         titleDocLink={`${getDocsBaseUrl(config)}/html/userguide/hosts.html`}
       />
       <PageTable<AwxHost>
+        id="awx-hosts-table"
         toolbarFilters={toolbarFilters}
         toolbarActions={toolbarActions}
         tableColumns={tableColumns}

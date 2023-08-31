@@ -61,6 +61,7 @@ export function CommonNamespaces({ url }: { url: string }) {
   const view = useHubView<HubNamespace>({ url, keyFn: idKeyFn, toolbarFilters, tableColumns });
   return (
     <PageTable<HubNamespace>
+      id="hub-namespaces-table"
       toolbarFilters={toolbarFilters}
       tableColumns={tableColumns}
       toolbarActions={toolbarActions}

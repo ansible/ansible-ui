@@ -31,6 +31,7 @@ export function Instances() {
         )}
       />
       <PageTable<Instance>
+        id="awx-instances-table"
         toolbarFilters={toolbarFilters}
         toolbarActions={toolbarActions}
         tableColumns={tableColumns}

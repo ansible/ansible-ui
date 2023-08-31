@@ -53,6 +53,7 @@ export function LocalRepositories() {
   });
   return (
     <PageTable<Repository>
+      id="hub-repositories-table"
       // toolbarFilters={toolbarFilters}
       tableColumns={tableColumns}
       errorStateTitle={t('Error loading repositories')}
@@ -136,6 +137,7 @@ export function RemoteRepositories() {
   );
   return (
     <PageTable<RemoteRepository>
+      id="hub-remote-repositories-table"
       rowActions={rowActions}
       tableColumns={tableColumns}
       errorStateTitle={t('Error loading repositories')}

@@ -82,6 +82,7 @@ export function UserTeams(props: { user: User }) {
         title={t('Being a team member grants the user all the permissions of the team.')}
       />
       <PageTable<Team>
+        id="awx-teams-table"
         toolbarFilters={toolbarFilters}
         tableColumns={tableColumns}
         toolbarActions={toolbarActions}

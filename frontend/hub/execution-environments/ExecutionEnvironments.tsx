@@ -30,6 +30,7 @@ export function ExecutionEnvironments() {
         )}
       />
       <PageTable<ExecutionEnvironment>
+        id="hub-execution-environments-table"
         toolbarFilters={toolbarFilters}
         tableColumns={tableColumns}
         toolbarActions={toolbarActions}

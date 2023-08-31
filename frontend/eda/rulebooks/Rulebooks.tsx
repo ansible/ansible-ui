@@ -23,6 +23,7 @@ export function Rulebooks() {
     <PageLayout>
       <PageHeader title={t('Rulebooks')} />
       <PageTable
+        id="eda-rulebooks-table"
         tableColumns={tableColumns}
         toolbarFilters={toolbarFilters}
         errorStateTitle={t('Error loading rulebooks')}

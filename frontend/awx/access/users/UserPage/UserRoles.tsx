@@ -103,6 +103,7 @@ export function UserRoles(props: { user: User }) {
   return (
     <>
       <PageTable<Role>
+        id="awx-roles-table"
         toolbarFilters={toolbarFilters}
         tableColumns={tableColumns}
         toolbarActions={toolbarActions}
