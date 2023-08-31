@@ -1,14 +1,11 @@
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 
-import { PageSection, ToggleGroup, ToggleGroupItem } from '@patternfly/react-core';
-import { TachometerAltIcon } from '@patternfly/react-icons';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePersistentFilters } from '../../../common/PersistentFilters';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
 import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
-import { JobsChart } from '../../dashboard/charts/JobsChart';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
 import { useAwxView } from '../../useAwxView';
 import { useJobRowActions } from './hooks/useJobRowActions';
@@ -34,7 +31,7 @@ export default function Jobs() {
   usePersistentFilters('jobs');
   const config = useAwxConfig();
 
-  const [showGraph, setShowGraph] = useState(false);
+  // const [showGraph, setShowGraph] = useState(false);
 
   const { refresh } = view;
   const handleWebSocketMessage = useCallback(
@@ -76,16 +73,16 @@ export default function Jobs() {
           `A job is an instance of {{product}} launching an Ansible playbook against an inventory of hosts.`,
           { product }
         )}
-        headerActions={
-          <ToggleGroup aria-label={t('show graph toggle')}>
-            <ToggleGroupItem
-              icon={<TachometerAltIcon />}
-              aria-label={t('toggle show graph')}
-              isSelected={showGraph}
-              onChange={() => setShowGraph((show) => !show)}
-            />
-          </ToggleGroup>
-        }
+        // headerActions={
+        //   <ToggleGroup aria-label={t('show graph toggle')}>
+        //     <ToggleGroupItem
+        //       icon={<TachometerAltIcon />}
+        //       aria-label={t('toggle show graph')}
+        //       isSelected={showGraph}
+        //       onChange={() => setShowGraph((show) => !show)}
+        //     />
+        //   </ToggleGroup>
+        // }
       />
       <PageTable
         id="awx-jobs-table"
@@ -98,13 +95,13 @@ export default function Jobs() {
         emptyStateDescription={t('Please run a job to populate this list.')}
         {...view}
         defaultSubtitle={t('Job')}
-        topContent={
-          showGraph && (
-            <PageSection>
-              <JobsChart height={250} />
-            </PageSection>
-          )
-        }
+        // topContent={
+        //   showGraph && (
+        //     <PageSection>
+        //       <JobsChart height={250} />
+        //     </PageSection>
+        //   )
+        // }
       />
     </PageLayout>
   );
