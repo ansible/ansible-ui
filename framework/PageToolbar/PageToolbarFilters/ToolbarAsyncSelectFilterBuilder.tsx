@@ -74,9 +74,11 @@ function SelectFilter<T extends object>(
     multiSelection: boolean;
   } & AsyncSelectFilterBuilderProps<T>
 ) {
+  debugger;
+  const viewParams : object = { ...props.viewParams, defaultSelection : props.defaultSelection };
   const toolbarFilters = props.toolbarFilters;
   const tableColumns = props.tableColumns;
-  const view = props.useView(props.viewParams);
+  const view = props.useView(viewParams as ViewExtendedOptions<T>);
 
   if (props.multiSelection) {
     return (
