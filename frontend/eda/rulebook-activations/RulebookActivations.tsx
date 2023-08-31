@@ -29,6 +29,7 @@ export function RulebookActivations() {
         description={t('Rulebook activations are rulebooks that have been activated to run.')}
       />
       <PageTable
+        id="eda-rulebook-activations-table"
         tableColumns={tableColumns}
         toolbarActions={toolbarActions}
         toolbarFilters={toolbarFilters}

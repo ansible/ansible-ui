@@ -31,7 +31,7 @@ export function Credentials() {
         )}
       />
       <PageTable
-        id={'eda-credentials'}
+        id="eda-credentials-table"
         tableColumns={tableColumns}
         toolbarActions={toolbarActions}
         toolbarFilters={toolbarFilters}

@@ -46,7 +46,7 @@ export function AwxRecentJobsCard(props: { view: IAwxView<Job>; showEmptyStateNo
       to={RouteObj.Jobs}
     >
       {showEmptyStateNonAdmin ? (
-        <PageTable
+        <PageTable<Job>
           disableBodyPadding={true}
           tableColumns={columns}
           autoHidePagination={true}
@@ -60,7 +60,7 @@ export function AwxRecentJobsCard(props: { view: IAwxView<Job>; showEmptyStateNo
           disableLastRowBorder
         />
       ) : (
-        <PageTable
+        <PageTable<Job>
           disableBodyPadding={true}
           tableColumns={columns}
           autoHidePagination={true}

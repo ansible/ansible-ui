@@ -68,6 +68,7 @@ export function TeamRoles(props: { team: Team }) {
   );
   return (
     <PageTable<Role>
+      id="awx-roles-table"
       toolbarFilters={toolbarFilters}
       tableColumns={tableColumns}
       toolbarActions={toolbarActions}

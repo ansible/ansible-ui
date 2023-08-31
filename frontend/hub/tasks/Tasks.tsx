@@ -34,6 +34,7 @@ export function Tasks() {
     <PageLayout>
       <PageHeader title={t('Tasks')} />
       <PageTable<Task>
+        id="hub-tasks-table"
         toolbarFilters={toolbarFilters}
         tableColumns={tableColumns}
         errorStateTitle={t('Error loading tasks')}

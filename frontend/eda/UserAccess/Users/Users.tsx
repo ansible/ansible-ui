@@ -28,7 +28,7 @@ export function Users() {
         )}
       />
       <PageTable
-        id={'eda-users'}
+        id="eda-users-table"
         tableColumns={tableColumns}
         toolbarActions={toolbarActions}
         rowActions={rowActions}

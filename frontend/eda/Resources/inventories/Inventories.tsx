@@ -23,7 +23,7 @@ export function Inventories() {
     <PageLayout>
       <PageHeader title={t('Inventories')} />
       <PageTable
-        id={'eda-inventories'}
+        id="eda-inventories-table"
         tableColumns={tableColumns}
         toolbarActions={toolbarActions}
         toolbarFilters={toolbarFilters}
