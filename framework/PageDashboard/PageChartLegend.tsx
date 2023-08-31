@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 
 export function PageChartLegend(props: {
+  id: string;
   legend: { label: string; count?: number; color: string; link?: string }[];
   horizontal?: boolean;
 }) {
@@ -30,6 +31,7 @@ export function PageChartLegend(props: {
               }}
             >
               <div
+                id={`${props.id}-${item.label.toLowerCase().replace(/ /g, '-')}-count`}
                 style={{ width: 10, height: 10, backgroundColor: item.color, borderRadius: 2 }}
               />
               <div style={{ fontSize: 'small', textAlign: 'center' }}>{item.count}</div>
@@ -65,7 +67,11 @@ export function PageChartLegend(props: {
               key={index * 3 + 0}
               style={{ width: 10, height: 10, backgroundColor: item.color, borderRadius: 2 }}
             />
-            <div key={index * 3 + 1} style={{ fontSize: 'small', textAlign: 'center' }}>
+            <div
+              id={`${props.id}-${item.label.toLowerCase().replace(/ /g, '-')}-count`}
+              key={index * 3 + 1}
+              style={{ fontSize: 'small', textAlign: 'center' }}
+            >
               {item.count}
             </div>
             <div key={index * 3 + 2} style={{ fontSize: 'small' }}>
