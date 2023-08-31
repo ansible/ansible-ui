@@ -12,10 +12,12 @@ import {
   resourceSchedulePageRoutes,
   scheduleDetailRoutes,
   scheduleResourceTypeOptions,
+  schedulesListRoutes,
 } from '../hooks/scheduleHelpers';
 import { useSchedulesActions } from '../hooks/useSchedulesActions';
 import { ScheduleDetails } from './ScheduleDetails';
 import { ScheduleRules } from './ScheduleRules';
+import { useMemo } from 'react';
 
 const rulesListRoutes: { [key: string]: string } = {
   inventory: RouteObj.InventorySourceScheduleRules,
@@ -42,7 +44,18 @@ export function SchedulePage() {
   const itemActions = useSchedulesActions({
     onScheduleToggleorDeleteCompleted: () => navigate(RouteObj.Schedules),
   });
-
+  const generateBackToSchedulesUrl: string = useMemo(() => {
+    if (!resource_type || !schedule) return RouteObj.Schedules;
+    if (resource_type === 'inventory' && schedule?.summary_fields.inventory) {
+      return RouteObj.InventorySourceSchedules.replace(':inventory_type', resource_type as string)
+        .replace(':id', schedule.summary_fields.inventory.id.toString())
+        .replace(':source_id', schedule.summary_fields.unified_job_template.id.toString());
+    }
+    return schedulesListRoutes[resource_type].replace(
+      ':id',
+      schedule.summary_fields?.unified_job_template.id.toString()
+    );
+  }, [resource_type, schedule]);
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!schedule) return <LoadingPage breadcrumbs tabs />;
   return (
@@ -66,7 +79,7 @@ export function SchedulePage() {
       >
         <PageBackTab
           label={t('Back to Schedules')}
-          url={RouteObj.ProjectSchedules.replace(':id', params.id as string)}
+          url={generateBackToSchedulesUrl}
           persistentFilterKey={resource_type ? `${resource_type}-schedules` : 'schedules'}
         />
         <RoutedTab
