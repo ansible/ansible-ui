@@ -1,5 +1,4 @@
 import { useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
 import { ITableColumn, IToolbarFilter, usePageDialog, ISelected } from '../../../framework';
 import { MultiSelectDialog } from '../../../framework/PageDialogs/MultiSelectDialog';
 import { SelectSingleDialog } from '../../../framework/PageDialogs/SelectSingleDialog';
