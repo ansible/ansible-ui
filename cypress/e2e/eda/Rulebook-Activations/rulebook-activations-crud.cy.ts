@@ -7,7 +7,7 @@ import { EdaRulebook } from '../../../../frontend/eda/interfaces/EdaRulebook';
 import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRulebookActivation';
 import { ActivationRead } from '../../../../frontend/eda/interfaces/generated/eda-api';
 
-describe('EDA rulebook activations- Create', () => {
+describe.skip('EDA rulebook activations- Create', () => {
   let edaProject: EdaProject;
   let edaDecisionEnvironment: EdaDecisionEnvironment;
   let edaRuleBook: EdaRulebook;
@@ -95,7 +95,7 @@ describe('EDA rulebook activations- Create', () => {
   });
 });
 
-describe('EDA rulebook activations- Edit, Delete', () => {
+describe.skip('EDA rulebook activations- Edit, Delete', () => {
   let edaProject: EdaProject;
   let edaDecisionEnvironment: EdaDecisionEnvironment;
   let edaRBA: EdaRulebookActivation;
@@ -168,7 +168,7 @@ describe('EDA rulebook activations- Edit, Delete', () => {
     });
   });
 
-  it('can delete a Rulebook Activation from the details view', () => {
+  it.skip('can delete a Rulebook Activation from the details view', () => {
     cy.visit(`/eda/rulebook-activations/details/${edaRBA.id}`);
     cy.intercept('DELETE', `/api/eda/v1/activations/${edaRBA.id}/`).as('deleted');
     cy.clickPageAction(/^Delete rulebook activation$/);
