@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ITableColumn, TextCell } from '../../../../framework';
 import { IRemotes } from '../Remotes';
+import { RouteObj } from '../../../Routes';
 
 export function useRemoteColumns() {
   const { t } = useTranslation();
@@ -9,7 +10,9 @@ export function useRemoteColumns() {
     () => [
       {
         header: t('Remote name'),
-        cell: (remote) => <TextCell text={remote.name} />,
+        cell: (remote) => (
+          <TextCell text={remote.name} to={RouteObj.RemoteDetails.replace(':id', remote.name)} />
+        ),
         sort: 'name',
         card: 'name',
         list: 'name',
