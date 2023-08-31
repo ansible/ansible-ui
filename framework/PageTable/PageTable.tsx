@@ -43,7 +43,6 @@ import {
 import styled from 'styled-components';
 import { IPageAction, PageActionSelection } from '../PageActions/PageAction';
 import { PageActions } from '../PageActions/PageActions';
-import { PageBody } from '../PageBody';
 import { PageDetailsFromColumns } from '../PageDetails/PageDetailsFromColumns';
 import { PageTableViewType, PageTableViewTypeE } from '../PageToolbar/PageTableViewType';
 import { PageToolbar } from '../PageToolbar/PageToolbar';
@@ -316,16 +315,31 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
     );
   }
 
-  let tableContent = (
+  let topContent = props.topContent;
+  if (topContent) {
+    topContent = (
+      <PageSection
+        variant="light"
+        padding={{ default: 'noPadding' }}
+        style={{
+          borderBottom: 'thin solid var(--pf-global--BorderColor--100)',
+        }}
+      >
+        {props.topContent}
+      </PageSection>
+    );
+  }
+
+  const tableContent = (
     <>
-      {props.topContent && <PageSection>{props.topContent}</PageSection>}
+      {topContent}
       <PageTableView {...props} {...pagination} tableColumns={managedColumns} />
     </>
   );
 
-  if (props.scrollOutsideTable) {
-    tableContent = <Scrollable>{tableContent}</Scrollable>;
-  }
+  // if (props.scrollOutsideTable) {
+  //   tableContent = <Scrollable>{tableContent}</Scrollable>;
+  // }
 
   return (
     <>
@@ -338,13 +352,11 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
         bottomBorder
         sortOptions={sortOptions}
       />
-      {viewType === PageTableViewTypeE.Table && (
-        <PageBody disablePadding={disableBodyPadding}>{tableContent}</PageBody>
-      )}
+      {viewType === PageTableViewTypeE.Table && <>{tableContent}</>}
       {viewType === PageTableViewTypeE.List && (
         <Scrollable>
-          {props.topContent && <PageSection>{props.topContent}</PageSection>}
-          <PageSection padding={{ default: 'noPadding', md: 'padding' }}>
+          {topContent}
+          <PageSection padding={{ default: 'noPadding' }}>
             <div
               style={{
                 borderLeft: usePadding
@@ -362,7 +374,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
       )}
       {viewType === PageTableViewTypeE.Cards && (
         <Scrollable>
-          {props.topContent && <PageSection>{props.topContent}</PageSection>}
+          {props.topContent}
           <PageTableCards {...props} showSelect={showSelect} tableColumns={managedColumns} />
         </Scrollable>
       )}
