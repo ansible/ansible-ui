@@ -2,7 +2,6 @@ import { Bullseye, Spinner } from '@patternfly/react-core';
 import { Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { RouteObj, useRoutesWithoutPrefix } from '../Routes';
-import { AutomationServers } from '../automation-servers/AutomationServers';
 import Debug from '../common/Debug';
 import { PageNotFound } from '../common/PageNotFound';
 import { PageNotImplemented } from '../common/PageNotImplemented';
@@ -57,6 +56,7 @@ import { Schedules } from './views/schedules/Schedules';
 import { CreateScheduleRule } from './views/schedules/RuleForm';
 import { SystemSettings } from './interfaces/SystemSettings';
 import { useGet } from '../common/crud/useGet';
+import SubscriptionUsage from './analytics/subscription-usage/SubscriptionUsage';
 
 export function AwxRouter() {
   const RouteObjWithoutPrefix = useRoutesWithoutPrefix(RouteObj.AWX);
@@ -70,7 +70,6 @@ export function AwxRouter() {
       }
     >
       <Routes>
-        <Route path={RouteObjWithoutPrefix.AwxAutomationServers} element={<AutomationServers />} />
         <Route path={RouteObjWithoutPrefix.Dashboard} element={<AwxDashboard />} />
         <Route path={RouteObjWithoutPrefix.Jobs} element={<Jobs />} />
         <Route path={RouteObjWithoutPrefix.JobPage} element={<JobPage />} />
@@ -178,6 +177,7 @@ export function AwxRouter() {
         <Route path={RouteObjWithoutPrefix.ControllerReports} element={<Reports />} />
         <Route path={RouteObjWithoutPrefix.AwxDebug} element={<Debug />} />
         <Route path="*" element={<PageNotFound dashboardUrl={RouteObj.Dashboard} />} />
+        <Route path={RouteObjWithoutPrefix.SubscriptionUsage} element={<SubscriptionUsage />} />
       </Routes>
     </Suspense>
   );
