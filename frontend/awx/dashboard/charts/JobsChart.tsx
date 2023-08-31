@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import useSWR from 'swr';
 import { PageDashboardChart } from '../../../../framework/PageDashboard/PageDashboardChart';
 import { usePageChartColors } from '../../../../framework/PageDashboard/usePageChartColors';
-import { RouteObj } from '../../../Routes';
+import { RouteObj } from '../../../common/Routes';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
 
 export type UnifiedJobSummary = Pick<UnifiedJob, 'id' | 'finished' | 'failed'>;
