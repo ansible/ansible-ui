@@ -21,6 +21,7 @@ export function Roles() {
         )}
       />
       <PageTable
+        id="eda-roles-table"
         tableColumns={tableColumns}
         errorStateTitle={t('Error loading roles')}
         emptyStateTitle={t('There are currently no roles added for your organization.')}

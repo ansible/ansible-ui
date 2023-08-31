@@ -76,6 +76,7 @@ export function ScheduleRules(props: { rrule: string }) {
         )}
       />
       <PageTable<{ rrule: string }>
+        id="awx-schedule-rules-table"
         rowActions={rowActions}
         toolbarActions={toolbarActions}
         errorStateTitle={t('Error loading rule')}

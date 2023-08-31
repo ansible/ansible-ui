@@ -23,6 +23,7 @@ export function OrganizationTeams(props: { organization: Organization }) {
   });
   return (
     <PageTable<Team>
+      id="awx-teams-table"
       toolbarFilters={toolbarFilters}
       tableColumns={tableColumns}
       errorStateTitle={t('Error loading teams')}

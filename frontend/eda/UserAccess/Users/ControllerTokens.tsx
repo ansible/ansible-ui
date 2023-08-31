@@ -21,6 +21,7 @@ export function ControllerTokens() {
   return (
     <PageLayout>
       <PageTable
+        id="eda-controller-tokens-table"
         tableColumns={tableColumns}
         rowActions={rowActions}
         errorStateTitle={t('Error loading controller tokens')}

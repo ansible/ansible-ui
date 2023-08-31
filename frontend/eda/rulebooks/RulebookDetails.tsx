@@ -71,6 +71,7 @@ export function RulebookDetails() {
     return (
       <PageLayout>
         <PageTable
+          id="eda-rulesets-table"
           tableColumns={tableColumns}
           toolbarFilters={toolbarFilters}
           errorStateTitle={t('Error loading rulesets')}

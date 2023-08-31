@@ -47,6 +47,7 @@ export function Remotes() {
     <PageLayout>
       <PageHeader title={t('Remotes')} description={t('Remotes')} />
       <PageTable<IRemotes>
+        id="hub-remotes-table"
         defaultSubtitle={t('Remote')}
         emptyStateButtonClick={() => navigate(RouteObj.CreateRemotes)}
         emptyStateButtonText={t('Create remote')}

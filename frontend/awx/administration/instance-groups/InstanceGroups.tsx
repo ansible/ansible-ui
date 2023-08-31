@@ -107,6 +107,7 @@ export function InstanceGroups() {
         )}
       />
       <PageTable<InstanceGroup>
+        id="awx-instance-groups-table"
         toolbarFilters={toolbarFilters}
         toolbarActions={toolbarActions}
         tableColumns={tableColumns}

@@ -40,7 +40,7 @@ export function AwxRecentInventoriesCard(props: {
       to={RouteObj.Inventories}
     >
       {showEmptyStateNonAdmin ? (
-        <PageTable
+        <PageTable<Inventory>
           disableBodyPadding={true}
           tableColumns={columns}
           autoHidePagination={true}
@@ -54,7 +54,7 @@ export function AwxRecentInventoriesCard(props: {
           disableLastRowBorder
         />
       ) : (
-        <PageTable
+        <PageTable<Inventory>
           disableBodyPadding={true}
           tableColumns={columns}
           autoHidePagination={true}
