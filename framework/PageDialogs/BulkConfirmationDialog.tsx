@@ -184,12 +184,13 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
               itemCount={items.length}
               tableColumns={modalColumns}
               keyFn={keyFn}
-              pagination={pagination}
+              // pagination={pagination}
               compact
               errorStateTitle="Error"
               emptyStateTitle="No items"
               autoHidePagination={true}
               disableBodyPadding
+              {...pagination}
             />
           </ModalBodyDiv>
           {confirmText && actionableItems.length > 0 && (

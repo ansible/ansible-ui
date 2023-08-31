@@ -85,6 +85,11 @@ export function ScheduleRules(props: { rrule: string }) {
         emptyStateButtonText={t('Create Rule')}
         emptyStateButtonClick={() => navigate(createUrl)}
         defaultSubtitle={t('Rules')}
+        disablePagination
+        page={1}
+        perPage={mappedRRules.length}
+        setPage={() => 1}
+        setPerPage={() => mappedRRules.length}
         {...view}
       />
     </PageLayout>
