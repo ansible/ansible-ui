@@ -7,7 +7,7 @@ import {
   PageDashboardGettingStarted,
   PageDashboardGettingStartedStep,
 } from '../../../../framework';
-import { RouteObj } from '../../../Routes';
+import { RouteObj } from '../../../common/Routes';
 
 export function AwxGettingStartedCard(props: {
   hasInventory: boolean;

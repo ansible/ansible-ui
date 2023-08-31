@@ -7,11 +7,11 @@ import {
   PageHeader,
   PageLayout,
 } from '../../../../framework';
-import { RouteObj } from '../../../Routes';
+import { RouteObj } from '../../../common/Routes';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
+import { useEdaActiveUser } from '../../../common/useActiveUser';
 import { API_PREFIX } from '../../constants';
 import { EdaControllerToken, EdaControllerTokenCreate } from '../../interfaces/EdaControllerToken';
-import { useEdaActiveUser } from '../../../common/useActiveUser';
 
 function ControllerTokenInputs() {
   const { t } = useTranslation();

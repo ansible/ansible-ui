@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ITableColumn, TextCell } from '../../../../../framework';
-import { RouteObj } from '../../../../Routes';
+import { RouteObj } from '../../../../common/Routes';
 import { useCreatedColumn } from '../../../../common/columns';
 import { User } from '../../../interfaces/User';
 import { UserType } from '../components/UserType';

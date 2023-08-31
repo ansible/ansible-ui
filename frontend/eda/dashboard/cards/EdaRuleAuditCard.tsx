@@ -7,9 +7,9 @@ import {
   useVisibleModalColumns,
 } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
-import { RouteObj } from '../../../Routes';
-import { IEdaView } from '../../useEventDrivenView';
+import { RouteObj } from '../../../common/Routes';
 import { EdaRuleAuditItem } from '../../interfaces/EdaRuleAudit';
+import { IEdaView } from '../../useEventDrivenView';
 import { useRuleAuditColumns } from '../../views/RuleAudit/hooks/useRuleAuditColumns';
 
 export function EdaRuleAuditCard(props: { view: IEdaView<EdaRuleAuditItem> }) {

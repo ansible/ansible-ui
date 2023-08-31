@@ -1,5 +1,5 @@
+import { RouteObj } from '../../../../common/Routes';
 import { TeamPage } from './TeamPage';
-import { RouteObj } from '../../../../Routes';
 
 describe('TeamPage', () => {
   beforeEach(() => {

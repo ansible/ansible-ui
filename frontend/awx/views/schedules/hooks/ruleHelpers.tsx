@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { RRule } from 'rrule';
-import { RouteObj } from '../../../../Routes';
+import { RouteObj } from '../../../../common/Routes';
 
 export const scheduleRulesRoutes: { [key: string]: string } = {
   inventory: RouteObj.InventorySourceScheduleRules,

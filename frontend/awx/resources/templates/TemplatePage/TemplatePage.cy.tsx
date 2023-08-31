@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable i18next/no-literal-string */
+import { RouteObj } from '../../../../common/Routes';
 import { TemplatePage } from './TemplatePage';
-import { RouteObj } from '../../../../Routes';
 
 describe('TemplatePage', () => {
   beforeEach(() => {

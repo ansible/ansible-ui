@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useSWR, { SWRConfiguration } from 'swr';
-import { RouteObj } from '../../Routes';
+import { RouteObj } from '../Routes';
 import { createRequestError } from './RequestError';
 import { normalizeQueryString } from './normalizeQueryString';
 import { requestCommon } from './requestCommon';

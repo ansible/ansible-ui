@@ -5,7 +5,7 @@ import { PageFormCheckbox, PageHeader, PageLayout } from '../../../../framework'
 import { PageFormGroup } from '../../../../framework/PageForm/Inputs/PageFormGroup';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { PageForm, PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
-import { RouteObj } from '../../../Routes';
+import { RouteObj } from '../../../common/Routes';
 import { postRequest, requestPatch } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';

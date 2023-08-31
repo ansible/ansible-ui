@@ -16,7 +16,7 @@ import {
   TextCell,
   ToolbarFilterType,
 } from '../../../../framework';
-import { RouteObj } from '../../../Routes';
+import { RouteObj } from '../../../common/Routes';
 import { useCreatedColumn, useModifiedColumn } from '../../../common/columns';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { useAwxView } from '../../useAwxView';

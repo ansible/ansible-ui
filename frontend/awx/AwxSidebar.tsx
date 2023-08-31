@@ -2,12 +2,12 @@ import { NavExpandable, NavItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { usePageNavBarClick } from '../../framework/PageNav/PageNavSidebar';
-import { RouteObj } from '../Routes';
 import { CommonSidebar } from '../common/CommonSidebar';
 import { isRouteActive } from '../common/Masthead';
+import { RouteObj } from '../common/Routes';
+import { useGet } from '../common/crud/useGet';
 import { useActiveUser } from '../common/useActiveUser';
 import { SystemSettings } from './interfaces/SystemSettings';
-import { useGet } from '../common/crud/useGet';
 
 export function AwxSidebar() {
   const { t } = useTranslation();

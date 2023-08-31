@@ -7,7 +7,7 @@ import {
   DateTimeCell,
   ITableColumn,
 } from '../../../../../framework';
-import { RouteObj } from '../../../../Routes';
+import { RouteObj } from '../../../../common/Routes';
 import { Project } from '../../../interfaces/Project';
 
 export function useLastUsedColumn() {

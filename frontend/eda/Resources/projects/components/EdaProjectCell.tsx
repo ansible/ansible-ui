@@ -1,5 +1,5 @@
 import { TextCell } from '../../../../../framework';
-import { RouteObj } from '../../../../Routes';
+import { RouteObj } from '../../../../common/Routes';
 import { useGet } from '../../../../common/crud/useGet';
 import { EdaProject } from '../../../interfaces/EdaProject';
 

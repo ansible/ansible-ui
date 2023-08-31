@@ -15,10 +15,10 @@ import {
   PageTabs,
   TextCell,
 } from '../../../framework';
-import { RouteObj } from '../../Routes';
+import { RouteObj } from '../../common/Routes';
+import { hubAPI, pulpHrefKeyFn, pulpIdKeyFn } from '../api/utils';
 import { useHubView } from '../useHubView';
 import { RemoteRepository, Repository } from './Repository';
-import { hubAPI, pulpIdKeyFn, pulpHrefKeyFn } from '../api/utils';
 
 export function Repositories() {
   const { t } = useTranslation();

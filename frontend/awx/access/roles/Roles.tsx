@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ITableColumn, IToolbarFilter, TextCell, ToolbarFilterType } from '../../../../framework';
-import { RouteObj } from '../../../Routes';
+import { RouteObj } from '../../../common/Routes';
 import { Role } from '../../interfaces/Role';
 import { IRoles, useRolesMetadata } from './useRoleMetadata';
 

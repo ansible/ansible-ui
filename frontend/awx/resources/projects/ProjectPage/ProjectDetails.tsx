@@ -17,7 +17,7 @@ import {
   TextCell,
 } from '../../../../../framework';
 import { StandardPopover } from '../../../../../framework/components/StandardPopover';
-import { RouteObj } from '../../../../Routes';
+import { RouteObj } from '../../../../common/Routes';
 import { StatusCell } from '../../../../common/Status';
 import { useGet } from '../../../../common/crud/useGet';
 import { ScmType } from '../../../../common/scm';

@@ -9,7 +9,7 @@ import {
   useVisibleModalColumns,
 } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
-import { RouteObj } from '../../../Routes';
+import { RouteObj } from '../../../common/Routes';
 import { useModifiedColumn } from '../../../common/columns';
 import { Project } from '../../interfaces/Project';
 import { useProjectsColumns } from '../../resources/projects/hooks/useProjectsColumns';

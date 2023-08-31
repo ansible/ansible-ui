@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../framework';
-import { RouteObj } from '../../Routes';
+import { RouteObj } from '../../common/Routes';
 import { API_PREFIX } from '../constants';
 import { EdaRule } from '../interfaces/EdaRule';
 import { useEdaView } from '../useEventDrivenView';

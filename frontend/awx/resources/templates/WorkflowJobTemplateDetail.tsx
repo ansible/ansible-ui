@@ -26,8 +26,8 @@ import {
   PageTabs,
 } from '../../../../framework';
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
-import { RouteObj } from '../../../Routes';
 import { PageNotImplemented } from '../../../common/PageNotImplemented';
+import { RouteObj } from '../../../common/Routes';
 import { useGetItem } from '../../../common/crud/useGet';
 import { AwxError } from '../../common/AwxError';
 import { UserDateDetail } from '../../common/UserDateDetail';

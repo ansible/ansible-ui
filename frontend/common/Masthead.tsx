@@ -37,11 +37,11 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { mutate } from 'swr';
 import { useBreakpoint, usePageNavSideBar, useSettingsDialog } from '../../framework';
-import { RouteObj } from '../Routes';
 import { useAwxConfig } from '../awx/common/useAwxConfig';
 import getDocsBaseUrl from '../awx/common/util/getDocsBaseUrl';
 import { API_PREFIX } from '../eda/constants';
 import { useAnsibleAboutModal } from './AboutModal';
+import { RouteObj } from './Routes';
 import { postRequest } from './crud/Data';
 import { useActiveUser } from './useActiveUser';
 

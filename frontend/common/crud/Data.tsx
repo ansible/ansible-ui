@@ -2,7 +2,7 @@
 import ky, { HTTPError, ResponsePromise } from 'ky';
 import { Input, Options } from 'ky/distribution/types/options';
 import { SWRConfiguration } from 'swr';
-import { RouteObj } from '../../Routes';
+import { RouteObj } from '../Routes';
 import { getCookie } from './cookie';
 
 export async function requestGet<ResponseBody>(

@@ -4,10 +4,10 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
-import { RouteObj } from '../../../../Routes';
+import { RouteObj } from '../../../../common/Routes';
+import { cannotDeleteResource, cannotEditResource } from '../../../../common/utils/RBAChelpers';
 import { Credential } from '../../../interfaces/Credential';
 import { useDeleteCredentials } from './useDeleteCredentials';
-import { cannotDeleteResource, cannotEditResource } from '../../../../common/utils/RBAChelpers';
 
 export function useCredentialActions(options?: { onDeleted: (credentials: Credential[]) => void }) {
   const { t } = useTranslation();

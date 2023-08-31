@@ -1,13 +1,13 @@
+import { ButtonVariant } from '@patternfly/react-core';
 import { CopyIcon, EditIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
-import { RouteObj } from '../../../../Routes';
+import { RouteObj } from '../../../../common/Routes';
 import { Inventory } from '../../../interfaces/Inventory';
 import { useCopyInventory } from './useCopyInventory';
 import { useDeleteInventories } from './useDeleteInventories';
-import { ButtonVariant } from '@patternfly/react-core';
 
 type InventoryActionOptions = {
   onInventoriesDeleted: (inventories: Inventory[]) => void;
