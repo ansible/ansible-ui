@@ -86,6 +86,7 @@ export function UserOrganizations(props: { user: User }) {
         )}
       />
       <PageTable<Organization>
+        id="awx-organizations-table"
         toolbarFilters={toolbarFilters}
         tableColumns={tableColumns}
         toolbarActions={toolbarActions}

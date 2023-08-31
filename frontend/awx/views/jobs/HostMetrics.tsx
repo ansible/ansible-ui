@@ -1,12 +1,12 @@
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 
 import { useTranslation } from 'react-i18next';
+import { HostMetric } from '../../interfaces/HostMetric';
 import { useAwxView } from '../../useAwxView';
-import { useHostMetricsRowActions } from './hooks/useHostMetricsRowActions';
 import { useHostMetricsColumns } from './hooks/useHostMetricsColumns';
 import { useHostMetricsFilters } from './hooks/useHostMetricsFilters';
+import { useHostMetricsRowActions } from './hooks/useHostMetricsRowActions';
 import { useHostMetricsToolbarActions } from './hooks/useHostMetricsToolbarActions';
-import { HostMetric } from '../../interfaces/HostMetric';
 
 export default function HostMetrics() {
   const { t } = useTranslation();
@@ -36,6 +36,7 @@ export default function HostMetrics() {
         )}
       />
       <PageTable
+        id="awx-host-metrics-table"
         toolbarFilters={toolbarFilters}
         tableColumns={tableColumns}
         toolbarActions={toolbarActions}

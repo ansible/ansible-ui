@@ -30,7 +30,7 @@ export function DecisionEnvironments() {
         description={t('Decision environments are a container image to run Ansible rulebooks.')}
       />
       <PageTable
-        id={'eda-decision-environments'}
+        id="eda-decision-environments-table"
         tableColumns={tableColumns}
         toolbarActions={toolbarActions}
         toolbarFilters={toolbarFilters}

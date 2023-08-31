@@ -22,6 +22,7 @@ export function Rules() {
     <PageLayout>
       <PageHeader title={t('Rules')} />
       <PageTable
+        id="eda-rules-table"
         tableColumns={tableColumns}
         toolbarFilters={toolbarFilters}
         errorStateTitle={t('Error loading rules')}
