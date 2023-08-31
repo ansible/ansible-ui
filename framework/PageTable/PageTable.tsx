@@ -87,13 +87,6 @@ const ColumnCellDiv = styled.div`
   padding-bottom: 5px;
 `;
 
-export type IPaginationRelatedProps = {
-  page: number;
-  perPage: number;
-  setPage: (page: number) => void;
-  setPerPage: (perPage: number) => void;
-};
-
 export type PageTableProps<T extends object> = {
   id?: string;
 
@@ -112,7 +105,10 @@ export type PageTableProps<T extends object> = {
   filterState?: IFilterState;
   setFilterState?: Dispatch<SetStateAction<IFilterState>>;
   clearAllFilters?: () => void;
-  pagination?: IPaginationRelatedProps;
+  page: number;
+  perPage: number;
+  setPage: (page: number) => void;
+  setPerPage: (perPage: number) => void;
   sort?: string;
   setSort?: (sort: string) => void;
   sortDirection?: 'asc' | 'desc';
@@ -216,8 +212,7 @@ export type PageTableProps<T extends object> = {
  * ```
  */
 export function PageTable<T extends object>(props: PageTableProps<T>) {
-  const { id, toolbarActions, filterState, error, itemCount, disableBodyPadding, pagination } =
-    props;
+  const { id, toolbarActions, filterState, error, itemCount, disableBodyPadding } = props;
 
   const { openColumnManagement, managedColumns } = useManageColumns<T>(
     (id ?? '') + '-columns',
@@ -269,7 +264,6 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
   const usePadding = useBreakpoint('md') && disableBodyPadding !== true;
 
   const sortOptions = usePageToolbarSortOptionsFromColumns(props.tableColumns);
-  const needsPagination = !props.disablePagination && pagination;
   if (error) {
     return (
       <ErrorStateDiv>
@@ -319,7 +313,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
   let tableContent = (
     <>
       {props.topContent && <PageSection>{props.topContent}</PageSection>}
-      <PageTableView {...props} {...pagination} tableColumns={managedColumns} />
+      <PageTableView {...props} tableColumns={managedColumns} />
     </>
   );
 
@@ -366,10 +360,9 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
           <PageTableCards {...props} showSelect={showSelect} tableColumns={managedColumns} />
         </Scrollable>
       )}
-      {needsPagination &&
-        (!props.autoHidePagination ||
-          (pagination.perPage && (props.itemCount ?? 0) > pagination.perPage)) && (
-          <PagePagination {...props} {...pagination} topBorder />
+      {!props.disablePagination &&
+        (!props.autoHidePagination || (props.itemCount ?? 0) > props.perPage) && (
+          <PagePagination {...props} topBorder />
         )}
     </>
   );

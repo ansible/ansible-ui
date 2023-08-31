@@ -43,6 +43,12 @@ export const scheduleResourceTypeOptions: string[] = [
   'inventory',
   'projects',
 ];
+export const schedulesListRoutes: { [key: string]: string } = {
+  job_template: RouteObj.JobTemplateSchedules,
+  workflow_job_template: RouteObj.WorkflowJobTemplateSchedules,
+  inventory: RouteObj.InventorySourceSchedules,
+  projects: RouteObj.ProjectSchedules,
+};
 
 export const scheduleDetailRoutes: { [key: string]: string } = {
   inventory: RouteObj.InventorySourceScheduleDetails,
