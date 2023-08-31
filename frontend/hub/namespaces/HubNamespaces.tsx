@@ -1,15 +1,15 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTab, PageTable, PageTabs } from '../../../framework';
-import { RouteObj } from '../../Routes';
+import { RouteObj } from '../../common/Routes';
+import { idKeyFn } from '../../common/utils/nameKeyFn';
+import { hubAPI } from '../api/utils';
 import { useHubView } from '../useHubView';
 import { HubNamespace } from './HubNamespace';
 import { useHubNamespaceActions } from './hooks/useHubNamespaceActions';
 import { useHubNamespaceFilters } from './hooks/useHubNamespaceFilters';
 import { useHubNamespaceToolbarActions } from './hooks/useHubNamespaceToolbarActions';
 import { useHubNamespacesColumns } from './hooks/useHubNamespacesColumns';
-import { hubAPI } from '../api/utils';
-import { idKeyFn } from '../../common/utils/nameKeyFn';
 
 export function Namespaces() {
   const { t } = useTranslation();

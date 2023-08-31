@@ -13,7 +13,7 @@ import {
   Scrollable,
 } from '../../../../framework';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
-import { RouteObj } from '../../../Routes';
+import { RouteObj } from '../../../common/Routes';
 import { StatusCell } from '../../../common/Status';
 import { useGet } from '../../../common/crud/useGet';
 import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';

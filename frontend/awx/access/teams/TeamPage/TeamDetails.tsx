@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { PageDetail, PageDetails, DateTimeCell, TextCell } from '../../../../../framework';
-import { RouteObj } from '../../../../Routes';
+import { DateTimeCell, PageDetail, PageDetails, TextCell } from '../../../../../framework';
+import { RouteObj } from '../../../../common/Routes';
 import { Team } from '../../../interfaces/Team';
 
 export function TeamDetails(props: { team: Team }) {

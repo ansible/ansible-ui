@@ -2,7 +2,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { PageDetail } from '../../../framework/PageDetails/PageDetail';
 import { formatDateString } from '../../../framework/utils/formatDateString';
-import { RouteObj } from '../../Routes';
+import { RouteObj } from '../../common/Routes';
 
 interface User {
   id: number;

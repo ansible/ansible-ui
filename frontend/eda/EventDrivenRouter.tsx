@@ -1,5 +1,5 @@
 import { Route, Routes } from 'react-router-dom';
-import { RouteObj, useRoutesWithoutPrefix } from '../Routes';
+import { RouteObj, useRoutesWithoutPrefix } from '../common/Routes';
 import { CredentialDetails } from './Resources/credentials/CredentialDetails';
 import { Credentials } from './Resources/credentials/Credentials';
 import { CreateCredential, EditCredential } from './Resources/credentials/EditCredential';

@@ -18,8 +18,8 @@ import {
   PageLayout,
   PageTable,
 } from '../../../../framework';
-import { RouteObj } from '../../../Routes';
 import { usePersistentFilters } from '../../../common/PersistentFilters';
+import { RouteObj } from '../../../common/Routes';
 import { useOptions } from '../../../common/crud/useOptions';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
