@@ -223,6 +223,7 @@ export const RouteObj = {
   Remotes: `${hubRoutePrefix}/remotes`,
   CreateRemotes: `${hubRoutePrefix}/remotes/create`,
   EditRemotes: `${hubRoutePrefix}/remotes/:id/edit`,
+  RemoteDetails: `${hubRoutePrefix}/remotes/details/:id`,
 
   RemoteRegistries: `${hubRoutePrefix}/remote-registries`,
 
