@@ -27,6 +27,7 @@ import {
   StackItem,
   Title,
 } from '@patternfly/react-core';
+import { DateTime } from 'luxon';
 import { BarsIcon } from '@patternfly/react-icons';
 import { TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { Dispatch, SetStateAction, useMemo, useState } from 'react';
@@ -55,10 +56,12 @@ import { HubItemsResponse } from '../useHubView';
 import { CollectionVersionSearch } from './Collection';
 import { useCollectionActions } from './hooks/useCollectionActions';
 import { useCollectionColumns } from './hooks/useCollectionColumns';
+import { PageSingleSelect } from './../../../framework/PageInputs/PageSingleSelect';
 
 export function CollectionDetails() {
   const { t } = useTranslation();
   const [searchParams] = useSearchParams();
+
 
   const { data, refresh } = useGet<HubItemsResponse<CollectionVersionSearch>>(
     hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${
@@ -72,6 +75,7 @@ export function CollectionDetails() {
     collection = data.data[0];
   }
   const itemActions = useCollectionActions(() => void refresh());
+  
   return (
     <PageLayout>
       <PageHeader
@@ -87,6 +91,23 @@ export function CollectionDetails() {
             selectedItem={collection}
           />
         }
+      />
+      {t('Version')} 
+      <PageSingleSelect<string>
+        options={ data ? 
+          data.data.map( (item) => {
+          let label = item.collection_version.version + ' ' + t('updated') + `${ DateTime.fromISO(item.collection_version.pulp_created).toRelative()} (${item.is_signed ? t('Signed') : t('Unsigned')})`;
+          if (item.is_highest)
+          {
+            label += '(' + t('Latest') + ')';
+          }
+          return { 
+            value : item.collection_version.version, 
+            label };
+        }) : [] }
+        onSelect={ () => {} }
+        placeholder={''}
+        value={'ahoj'}
       />
       <PageTabs>
         <PageTab label={t('Details')}>
