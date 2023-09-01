@@ -1,13 +1,14 @@
-import { useParams } from 'react-router-dom';
 import {
   ClipboardCopyButton,
   CodeBlock,
   CodeBlockAction,
   CodeBlockCode,
 } from '@patternfly/react-core';
-import { useTranslation } from 'react-i18next';
-import { PageDetail } from './PageDetail';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
+import { useClipboard } from '../hooks/useClipboard';
+import { PageDetail } from './PageDetail';
 
 export function PageDetailCodeEditor(props: {
   label?: string;
@@ -19,13 +20,11 @@ export function PageDetailCodeEditor(props: {
   const { id } = useParams();
   const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
-  const clipboardCopyFunc = (event: React.MouseEvent<Element, MouseEvent>, text: string) => {
-    void navigator.clipboard.writeText(text);
-  };
+  const { copySuccess, writeToClipboard } = useClipboard();
 
   const onClick = (event: React.MouseEvent<Element, MouseEvent>, text: string) => {
-    clipboardCopyFunc(event, text);
-    setCopied(true);
+    writeToClipboard(text);
+    setCopied(copySuccess);
   };
 
   const actions = props?.showCopyToClipboard ? (
