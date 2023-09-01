@@ -6,7 +6,13 @@ describe('PageFormCodeEditor', () => {
   interface CodeEditor {
     extra_vars: string;
   }
-  const yaml = 'one: 1\ntwo: two';
+
+  let yamlContent = '';
+  before(() => {
+    cy.fixture('extra_vars.yaml').then((yaml: string) => {
+      yamlContent = yaml;
+    });
+  });
 
   it('should mount properly', () => {
     cy.mount(
@@ -14,7 +20,7 @@ describe('PageFormCodeEditor', () => {
         onSubmit={() => Promise.resolve()}
         onCancel={() => null}
         submitText="Submit"
-        defaultValue={{ extra_vars: yaml }}
+        defaultValue={{ extra_vars: yamlContent }}
       >
         <PageFormDataEditor
           label="Extra Variables"
@@ -25,10 +31,10 @@ describe('PageFormCodeEditor', () => {
       </PageForm>
     );
     expect(cy.get('label').contains('Extra Variables'));
-    expect(cy.get('div#wrapper').should('not.exist'));
+    expect(cy.get('div#data-editor').should('not.exist'));
   });
 
-  it('should mount expanded, with copy button and 2 toggle language buttons', () => {
+  it('should mount expanded, upload, download, and copy button and 2 toggle language buttons', () => {
     cy.mount(
       <PageForm<CodeEditor>
         submitText="submit"
@@ -46,9 +52,65 @@ describe('PageFormCodeEditor', () => {
       </PageForm>
     );
     expect(cy.get('div#copy-button').should('be.visible'));
+    expect(cy.get('div#upload-button').should('be.visible'));
+    expect(cy.get('div#download-button').should('be.visible'));
     expect(cy.get('div#toggle-json').should('be.visible'));
     expect(cy.get('div#toggle-yaml').should('be.visible'));
-    expect(cy.get('div#wrapper').should('be.visible'));
+    expect(cy.get('div#data-editor').should('be.visible'));
+  });
+
+  it('it should allow to upload a file', () => {
+    cy.mount(
+      <PageForm<CodeEditor>
+        onSubmit={() => Promise.resolve()}
+        onCancel={() => null}
+        submitText="submit"
+        defaultValue={{ extra_vars: '' }}
+      >
+        <PageFormDataEditor
+          label="Extra Variables"
+          name="extra_vars"
+          defaultExpanded
+          toggleLanguages={['json', 'yaml']}
+          isExpandable
+        />
+      </PageForm>
+    );
+
+    cy.fixture('extra_vars.yaml').as('yamlFixture');
+    // because of input is hidden, we need to force
+    cy.get('input[type="file"]')
+      .selectFile('@yamlFixture', { force: true })
+      .then(() => {
+        cy.get('#data-editor').find('textarea').should('have.value', yamlContent);
+      });
+  });
+
+  it('it should allow to drag a file', () => {
+    cy.mount(
+      <PageForm<CodeEditor>
+        onSubmit={() => Promise.resolve()}
+        onCancel={() => null}
+        submitText="submit"
+        defaultValue={{ extra_vars: '' }}
+      >
+        <PageFormDataEditor
+          label="Extra Variables"
+          name="extra_vars"
+          defaultExpanded
+          toggleLanguages={['json', 'yaml']}
+          isExpandable
+        />
+      </PageForm>
+    );
+
+    cy.fixture('extra_vars.yaml').as('yamlFixture');
+    // because of input is hidden, we need to force
+    cy.get('input[type="file"]')
+      .selectFile('@yamlFixture', { force: true, action: 'drag-drop' })
+      .then(() => {
+        cy.get('#data-editor').find('textarea').should('have.value', yamlContent);
+      });
   });
 
   // RANDOM FAILING TEST

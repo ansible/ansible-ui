@@ -20,6 +20,7 @@ export function DataEditor<
   onChange: (value: string) => void;
 }) {
   const { onChange, language, setError, name, clearErrors } = props;
+  const idDataEditorElement = 'data-editor';
 
   const divEl = useRef<HTMLDivElement>(null);
 
@@ -137,7 +138,7 @@ export function DataEditor<
       editorRef.current?.editor?.setValue(props.value);
     }
     const valueArray = props.value.split('\n');
-    const element = document.getElementById('wrapper');
+    const element = document.getElementById(idDataEditorElement);
     if (valueArray.length > 0 && element) {
       element.style.minHeight = '75px';
       element.style.height = `${(valueArray.length + 3) * 19}` + 'px';
@@ -174,7 +175,7 @@ export function DataEditor<
   return (
     <div
       className={`pf-c-form-control`}
-      id="wrapper"
+      id={idDataEditorElement}
       style={{ backgroundPosition: 'calc(100% - 1.2em) .5em', padding: 0 }}
       aria-invalid={props.invalid ? 'true' : undefined}
     >
