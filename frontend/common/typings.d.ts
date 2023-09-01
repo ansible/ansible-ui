@@ -17,6 +17,8 @@ declare module '*.jpg' {
   export default content;
 }
 
+declare module 'shell-escape-tag';
+
 declare namespace NodeJS {
   export interface ProcessEnv {
     NODE_ENV: string;

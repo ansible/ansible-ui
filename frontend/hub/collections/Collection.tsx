@@ -4,7 +4,7 @@ export interface Collection {
   id: number;
   name: string;
   sign_state: 'unsigned' | 'signed';
-  deprecates: boolean;
+  deprecated: boolean;
   download_count: number;
   namespace: HubNamespace;
   latest_version: {

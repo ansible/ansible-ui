@@ -31,6 +31,7 @@ import {
 import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaUser';
 import './auth';
 import './awx-commands';
+import './hub-commands';
 import { IAwxResources } from './awx-commands';
 import './common-commands';
 import './eda-commands';
@@ -683,6 +684,17 @@ declare global {
        */
       deleteEdaDecisionEnvironment(decisionEnvironment: EdaDecisionEnvironment): Chainable<void>;
       waitEdaDESync(edaDE: EdaDecisionEnvironment): Chainable<EdaDecisionEnvironment>;
+
+      // -- HUB COMMANDS
+
+      galaxykit(operation: string, ...args: string[]): Cypress.Chainable<string[]>;
+      createApprovedCollection(
+        namespaceName: string,
+        collectionName: string,
+        tags?: string[]
+      ): Cypress.Chainable<void>;
+      deleteNamespace(namespaceName: string): Cypress.Chainable<void>;
+      deleteCollectionsInNamespace(namespaceName: string): Cypress.Chainable<void>;
     }
   }
 }
