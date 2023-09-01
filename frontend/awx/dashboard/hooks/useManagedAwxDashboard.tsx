@@ -17,13 +17,11 @@ export function useManagedAwxDashboard() {
   );
   const resources: Resource[] = useMemo(
     () => [
-      { id: 'recent_job_activity', name: t('Recent job activity'), selected: true },
-      { id: 'host', name: t('Hosts'), selected: true },
-      { id: 'project', name: t('Projects'), selected: true },
-      { id: 'inventory', name: t('Inventories'), selected: true },
-      { id: 'recent_jobs', name: t('Recent jobs'), selected: true },
-      { id: 'recent_projects', name: t('Recent projects'), selected: true },
-      { id: 'recent_inventories', name: t('Recent inventories'), selected: true },
+      { id: 'counts', name: t('Resource Counts') },
+      { id: 'recent_job_activity', name: t('Recent job activity') },
+      { id: 'recent_jobs', name: t('Recent jobs') },
+      { id: 'recent_projects', name: t('Recent projects') },
+      { id: 'recent_inventories', name: t('Recent inventories') },
     ],
     [t]
   );
