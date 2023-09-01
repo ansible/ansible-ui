@@ -48,11 +48,10 @@ export function useDecisionEnvironmentsColumns() {
       },
       {
         header: t('Credential'),
-        cell: (decisionEnvironment) => <EdaCredentialCell id={decisionEnvironment.credential_id} />,
+        cell: (decisionEnvironment) => (
+          <EdaCredentialCell credential_id={decisionEnvironment.credential_id} />
+        ),
         value: (decisionEnvironment) => decisionEnvironment.credential_id,
-        // table: ColumnTableOption.Expanded,
-        list: 'secondary',
-        modal: ColumnModalOption.Hidden,
       },
       {
         header: t('Created'),
@@ -113,12 +112,9 @@ export function useDecisionEnvironmentColumns() {
       {
         header: t('Credential'),
         cell: (decisionEnvironment) => (
-          <EdaCredentialCell id={decisionEnvironment.credential?.id} />
+          <EdaCredentialCell credential_id={decisionEnvironment?.credential?.id} />
         ),
         value: (decisionEnvironment) => decisionEnvironment?.credential?.id,
-        // table: ColumnTableOption.Expanded,
-        list: 'secondary',
-        modal: ColumnModalOption.Hidden,
       },
       {
         header: t('Created'),

@@ -3,23 +3,27 @@ import { RouteObj } from '../../../../common/Routes';
 import { useGet } from '../../../../common/crud/useGet';
 import { EdaCredential } from '../../../interfaces/EdaCredential';
 
-export function EdaCredentialCell(props: { id?: number | null }) {
+export function EdaCredentialCell(props: { credential_id?: number | null }) {
   const { data } = useGet<EdaCredential>(
-    props.id ? `/api/eda/v1/credentials/${props.id}/` : undefined,
+    props.credential_id ? `/api/eda/v1/credentials/${props.credential_id}/` : undefined,
     { dedupingInterval: 10 * 1000 }
   );
   if (!data) {
-    switch (typeof props.id) {
+    switch (typeof props.credential_id) {
       case 'number':
       case 'string':
-        return <>{props.id}</>;
+        return <>{props.credential_id}</>;
     }
     return <></>;
   }
   return (
     <TextCell
       text={data.name}
-      to={props.id ? RouteObj.EdaCredentialDetails.replace(':id', props.id.toString()) : undefined}
+      to={
+        props.credential_id
+          ? RouteObj.EdaCredentialDetails.replace(':id', props.credential_id.toString())
+          : undefined
+      }
     />
   );
 }
