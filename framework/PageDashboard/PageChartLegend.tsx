@@ -32,7 +32,13 @@ export function PageChartLegend(props: {
             >
               <div
                 id={`${props.id}-${item.label.toLowerCase().replace(/ /g, '-')}-count`}
-                style={{ width: 10, height: 10, backgroundColor: item.color, borderRadius: 2 }}
+                style={{
+                  width: 10,
+                  height: 10,
+                  backgroundColor: item.color,
+                  borderRadius: 2,
+                  marginRight: 4,
+                }}
               />
               <div style={{ fontSize: 'small', textAlign: 'center' }}>{item.count}</div>
               <div style={{ fontSize: 'small' }}>
@@ -65,7 +71,13 @@ export function PageChartLegend(props: {
           <>
             <div
               key={index * 3 + 0}
-              style={{ width: 10, height: 10, backgroundColor: item.color, borderRadius: 2 }}
+              style={{
+                width: 10,
+                height: 10,
+                backgroundColor: item.color,
+                borderRadius: 2,
+                marginRight: 4,
+              }}
             />
             <div
               id={`${props.id}-${item.label.toLowerCase().replace(/ /g, '-')}-count`}
