@@ -41,7 +41,6 @@ import {
   PageDetailsFromColumns,
   PageHeader,
   PageLayout,
-  PageBody,
   PageTab,
   PageTabs,
   getPatternflyColor,
@@ -60,14 +59,16 @@ import { useCollectionColumns } from './hooks/useCollectionColumns';
 import { PageSingleSelect } from './../../../framework/PageInputs/PageSingleSelect';
 import { CheckCircleIcon, ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { Label } from '@patternfly/react-core';
+import { AwxError } from '../../awx/common/AwxError';
 
 export function CollectionDetails() {
   const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const [collection, setCollection] = useState<CollectionVersionSearch | undefined>(undefined);
+  const itemActions = useCollectionActions(() => void refresh());
 
   // load all collections versions belong to the repository
-  const { data, refresh } = useGet<HubItemsResponse<CollectionVersionSearch>>(
+  const { data, refresh, error, isLoading } = useGet<HubItemsResponse<CollectionVersionSearch>>(
     hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${
       searchParams.get('name') || ''
     }&namespace=${searchParams.get('namespace') || ''}&repository_name=${
@@ -75,13 +76,21 @@ export function CollectionDetails() {
     }&order_by=-pulp_created`
   );
 
+  if (error || (isLoading == false && data && data.data.length == 0)) {
+    return (
+      <AwxError
+        error={error || { name: 'not found', message: t('Not Found') }}
+        handleRefresh={refresh}
+      />
+    );
+  }
+
   // initial setting of highest version collections selected
   if (data && data.data.length > 0 && !collection) {
     setCollection(data.data.find((item) => item.is_highest));
   }
 
   const collections = data ? data.data : [];
-  const itemActions = useCollectionActions(() => void refresh());
 
   return (
     <PageLayout>
