@@ -34,6 +34,8 @@ export function usePulpView<T extends object>({
   disableQueryString,
   queryParams,
   defaultSelection,
+  defaultSort: initialDefaultSort,
+  defaultSortDirection: initialDefaultSortDirection,
 }: {
   url: string;
   keyFn: (item: T) => string | number;
@@ -43,9 +45,21 @@ export function usePulpView<T extends object>({
   queryParams?: QueryParams;
   /** The default items that should be initially selected. */
   defaultSelection?: T[];
+  defaultSort?: string | undefined;
+  defaultSortDirection?: 'asc' | 'desc' | undefined;
 }): IPulpView<T> {
+  let defaultSort: string | undefined = initialDefaultSort;
+  let defaultSortDirection: 'asc' | 'desc' | undefined = initialDefaultSortDirection;
+
+  // If a column is defined with defaultSort:true use that column to set the default sort, otherwise use the first column
+  if (tableColumns && tableColumns.length) {
+    const defaultSortColumn = tableColumns.find((column) => column.defaultSort) ?? tableColumns[0];
+    defaultSort = defaultSortColumn?.sort;
+    defaultSortDirection = defaultSortColumn?.defaultSortDirection;
+  }
+
   const view = useView({
-    defaultValues: { sort: tableColumns && tableColumns.length ? tableColumns[0].sort : undefined },
+    defaultValues: { sort: defaultSort, sortDirection: defaultSortDirection },
     disableQueryString,
   });
   const itemCountRef = useRef<{ itemCount: number | undefined }>({ itemCount: undefined });

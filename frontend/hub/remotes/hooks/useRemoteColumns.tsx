@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, TextCell } from '../../../../framework';
+import { ColumnTableOption, ITableColumn, TextCell } from '../../../../framework';
 import { IRemotes } from '../Remotes';
 import { RouteObj } from '../../../common/Routes';
 
@@ -23,6 +23,14 @@ export function useRemoteColumns() {
         sort: 'url',
         card: 'name',
         list: 'name',
+      },
+      {
+        header: t('Created'),
+        cell: (remote) => <TextCell text={remote.pulp_created} />,
+        sort: 'pulp_created',
+        defaultSort: true,
+        defaultSortDirection: 'desc',
+        table: ColumnTableOption.Hidden,
       },
     ],
     [t]
