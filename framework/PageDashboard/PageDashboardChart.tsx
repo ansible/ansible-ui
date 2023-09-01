@@ -20,6 +20,7 @@ const CursorVoronoiContainer = createContainer('voronoi', 'cursor') as React.Fun
 >;
 
 export function PageDashboardChart(props: {
+  id?: string;
   groups: {
     label?: string;
     color: string;
@@ -202,7 +203,7 @@ export function PageDashboardChart(props: {
         {xLabel && (
           <XAxisLabel label={xLabel} paddingLeft={padding.left} paddingRight={padding.right} />
         )}
-        <PageChartLegend legend={legend} horizontal />
+        <PageChartLegend id={props.id ?? 'chart'} legend={legend} horizontal />
       </div>
     </div>
   );
