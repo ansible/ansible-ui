@@ -4,10 +4,9 @@ import { usePageAlertToaster } from '../PageAlertToaster';
 import { AlertProps } from '@patternfly/react-core';
 
 type UseClipboardResult = {
-  writeToClipboard: (text: string) => Promise<void>;
+  writeToClipboard: (text: string) => void;
   copySuccess: boolean;
 };
-
 /**
  * A custom React hook to interact with the Clipboard API.
  *
@@ -20,7 +19,6 @@ type UseClipboardResult = {
 export function useClipboard(): UseClipboardResult {
   const { t } = useTranslation();
   const [copySuccess, setCopySuccess] = useState<boolean>(false);
-
   const alertToaster = usePageAlertToaster();
 
   const alertSuccess: AlertProps = {
@@ -38,19 +36,26 @@ export function useClipboard(): UseClipboardResult {
     title: t('Clipboard is not supported in this browser.'),
   };
 
-  const writeToClipboard = async (text: string) => {
-    if (!navigator.clipboard) {
-      alertToaster.addAlert(alertNavigatorWarning);
-      return;
-    }
-    try {
-      await navigator.clipboard.writeText(text);
-      alertToaster.addAlert(alertSuccess);
-      setCopySuccess(true);
-    } catch (err) {
+  const writeToClipboard = (text: string) => {
+    const copyToClipboardAsync = async () => {
+      if (!navigator.clipboard) {
+        alertToaster.addAlert(alertNavigatorWarning);
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(text);
+        alertToaster.addAlert(alertSuccess);
+        setCopySuccess(true);
+      } catch (err) {
+        alertToaster.removeAlert(alertSuccess);
+        alertToaster.addAlert(alertError);
+      }
+    };
+
+    copyToClipboardAsync().catch(() => {
       alertToaster.removeAlert(alertSuccess);
       alertToaster.addAlert(alertError);
-    }
+    });
   };
 
   return { copySuccess, writeToClipboard };

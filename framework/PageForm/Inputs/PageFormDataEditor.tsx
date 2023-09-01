@@ -1,25 +1,32 @@
-import { useCallback, useEffect, useState } from 'react';
+import {
+  AlertProps,
+  Flex,
+  FlexItem,
+  ToggleGroupItem as PFToggleGroupItem,
+  ToggleGroup,
+  Tooltip,
+} from '@patternfly/react-core';
+import { AngleRightIcon, CopyIcon, UploadIcon, DownloadIcon } from '@patternfly/react-icons';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useDropzone } from 'react-dropzone';
 import {
   Controller,
+  FieldErrors,
   FieldPathByValue,
   FieldValues,
   PathValue,
-  useFormContext,
   Validate,
+  useFormContext,
 } from 'react-hook-form';
-import { FormGroupTextInputProps, usePageAlertToaster } from '../..';
-import { capitalizeFirstLetter } from '../../utils/strings';
-import { PageFormGroup } from './PageFormGroup';
-import { isJsonObject, isJsonString, jsonToYaml, yamlToJson } from '../../utils/codeEditorUtils';
 import { useTranslation } from 'react-i18next';
-import {
-  ToggleGroup,
-  ToggleGroupItem as PFToggleGroupItem,
-  AlertProps,
-} from '@patternfly/react-core';
-import { AngleRightIcon, CopyIcon } from '@patternfly/react-icons';
 import styled from 'styled-components';
+import { FormGroupTextInputProps, usePageAlertToaster } from '../..';
+import { isJsonObject, isJsonString, jsonToYaml, yamlToJson } from '../../utils/codeEditorUtils';
+import { capitalizeFirstLetter } from '../../utils/strings';
 import { DataEditor } from './DataEditor';
+import { PageFormGroup } from './PageFormGroup';
+import { downloadTextFile } from '../../utils/download-file';
+import { useClipboard } from '../../hooks/useClipboard';
 
 const ToggleGroupItem = styled(PFToggleGroupItem)`
   &&:first-child#copy-button {
@@ -31,6 +38,108 @@ const ErrorWrapper = styled.p`
   color: var(--pf-c-form__helper-text--m-error--Color);
   font-size: var(--pf-c-form__helper-text--FontSize);
 `;
+
+function ActionsRow(props: {
+  handleCopy: () => void;
+  handleDownload: () => void;
+  handleUpload: () => void;
+  allowCopy?: boolean;
+  allowDownload?: boolean;
+  allowUpload?: boolean;
+  toggleLanguages?: string[];
+  setLanguage: (language: string) => void;
+  selectedLanguage: string;
+  errors: FieldErrors<FieldValues>;
+  name: string;
+}) {
+  const { t } = useTranslation();
+  const {
+    handleCopy,
+    handleDownload,
+    handleUpload,
+    allowCopy,
+    allowDownload,
+    allowUpload,
+    toggleLanguages,
+    setLanguage,
+    selectedLanguage,
+    errors,
+    name,
+  } = props;
+
+  const actionItems: JSX.Element[] = [];
+
+  if (allowCopy) {
+    actionItems.push(
+      <Tooltip key="copy-file" content={t('Copy')}>
+        <ToggleGroupItem
+          key="copy-button"
+          id="copy-button"
+          aria-label={t('Copy to clipboard')}
+          icon={<CopyIcon />}
+          type="button"
+          onClick={() => handleCopy()}
+        />
+      </Tooltip>
+    );
+  }
+
+  if (allowUpload) {
+    actionItems.push(
+      <Tooltip key="upload-file" content={t('Upload')}>
+        <ToggleGroupItem
+          key="upload-button"
+          id="upload-button"
+          aria-label={t('Upload from file')}
+          icon={<UploadIcon />}
+          type="button"
+          onClick={() => handleUpload()}
+        />
+      </Tooltip>
+    );
+  }
+
+  if (allowDownload) {
+    actionItems.push(
+      <Tooltip key="download-file" content={t('Download')}>
+        <ToggleGroupItem
+          key="download-button"
+          id="download-button"
+          aria-label={t('Download file')}
+          icon={<DownloadIcon />}
+          type="button"
+          onClick={() => handleDownload()}
+        />
+      </Tooltip>
+    );
+  }
+
+  const languageActions: JSX.Element[] =
+    toggleLanguages?.map((language) => (
+      <ToggleGroupItem
+        key={language}
+        id={`toggle-${language}`}
+        aria-label={t('Toggle to {{language}}', { language })}
+        isSelected={selectedLanguage === language}
+        isDisabled={Boolean(errors[name])}
+        text={language}
+        type="button"
+        onChange={() => setLanguage(language)}
+      />
+    )) || [];
+
+  return (
+    <Flex justifyContent={{ default: 'justifyContentSpaceBetween' }}>
+      <FlexItem>
+        <ToggleGroup isCompact>{actionItems}</ToggleGroup>
+      </FlexItem>
+      <FlexItem align={{ default: 'alignRight' }}>
+        <ToggleGroup isCompact>{languageActions}</ToggleGroup>
+      </FlexItem>
+    </Flex>
+  );
+}
+
 export type PageFormDataEditorInputProps<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPathByValue<TFieldValues, undefined | string> = FieldPathByValue<
@@ -42,6 +151,9 @@ export type PageFormDataEditorInputProps<
   validate?: Validate<string, TFieldValues> | Record<string, Validate<string, TFieldValues>>;
   toggleLanguages?: string[];
   isExpandable?: boolean;
+  allowUpload?: boolean;
+  allowCopy?: boolean;
+  allowDownload?: boolean;
   defaultExpanded?: boolean;
 } & Omit<FormGroupTextInputProps, 'onChange'>;
 
@@ -53,8 +165,20 @@ export function PageFormDataEditor<
   >,
 >(props: PageFormDataEditorInputProps<TFieldValues, TFieldName>) {
   const { t } = useTranslation();
-  const { isReadOnly, validate, isExpandable, defaultExpanded, ...formGroupInputProps } = props;
-  const { label, name, isRequired } = props;
+  const {
+    allowCopy = true,
+    allowDownload = true,
+    allowUpload = true,
+    defaultExpanded,
+    isExpandable,
+    isReadOnly,
+    isRequired,
+    label,
+    name,
+    toggleLanguages,
+    validate,
+    ...formGroupInputProps
+  } = props;
   const {
     formState: { isSubmitting, isValidating, errors },
     setError: setFormError,
@@ -64,15 +188,18 @@ export function PageFormDataEditor<
     setValue,
   } = useFormContext<TFieldValues>();
 
+  const [selectedLanguage, setSelectedLanguage] = useState('yaml');
+  const [isCollapsed, setCollapsed] = useState(!defaultExpanded);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const alertToaster = usePageAlertToaster();
+  const { writeToClipboard } = useClipboard();
+  const id = props.id ?? name.split('.').join('-');
+
   useEffect(() => {
     if (!errors[name]) {
       clearErrors(name);
     }
   }, [errors, name, clearErrors]);
-
-  const id = props.id ?? name.split('.').join('-');
-  const [selectedLanguage, setSelectedLanguage] = useState('yaml');
-  const [isCollapsed, setCollapsed] = useState(!defaultExpanded);
 
   const handleLanguageChange = useCallback(
     (language: string) => {
@@ -122,61 +249,61 @@ export function PageFormDataEditor<
     [handleLanguageChange, name, setFormError, t]
   );
 
-  const alertToaster = usePageAlertToaster();
+  const handleCopy = useCallback(() => {
+    writeToClipboard(getValues(name) as string);
+  }, [getValues, name, writeToClipboard]);
 
-  const handleCopy = useCallback(async () => {
+  const handleUpload = useCallback(() => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  }, []);
+
+  const handleDownload = useCallback(() => {
+    const fileName = name || 'codeEditorData';
+    downloadTextFile(fileName, getValues(name) as string);
     const alert: AlertProps = {
       variant: 'success',
-      title: t('Copied to clipboard'),
+      title: t('File downloaded'),
     };
-    try {
-      await navigator.clipboard.writeText(getValues(name));
-      alertToaster.addAlert(alert);
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        alertToaster.replaceAlert(alert, {
-          variant: 'danger',
-          title: t('Failed to copy to clipboard'),
-          children: err instanceof Error && err.message,
-        });
-      } else {
-        alertToaster.replaceAlert(alert, {
-          variant: 'danger',
-          title: t('Failed to copy to clipboard'),
-          children: t('Unable to copy'),
-        });
-      }
-    }
-  }, [alertToaster, t, getValues, name]);
+    alertToaster.addAlert(alert);
+  }, [alertToaster, getValues, name, t]);
 
-  const toggleItems = [
-    <ToggleGroupItem
-      key="copy-button"
-      id="copy-button"
-      aria-label={t('Copy to clipboard')}
-      isSelected={false}
-      isDisabled={false}
-      icon={<CopyIcon />}
-      type="button"
-      onClick={() => void handleCopy()}
-    />,
-  ];
-  if (props.toggleLanguages) {
-    props.toggleLanguages.forEach((language) => {
-      toggleItems.push(
-        <ToggleGroupItem
-          key={language}
-          id={`toggle-${language}`}
-          aria-label={t('Toggle to {{language}}')}
-          isSelected={selectedLanguage === language}
-          isDisabled={Boolean(errors[name])}
-          text={language}
-          type="button"
-          onChange={() => setLanguage(language)}
-        />
-      );
-    });
-  }
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      const file = acceptedFiles[0];
+      const reader = new FileReader();
+      reader.onload = () => {
+        const contents = reader.result;
+        if (typeof contents === 'string') {
+          setValue(name, contents as PathValue<TFieldValues, TFieldName>);
+          // Alert for a successful file upload
+          const alert: AlertProps = {
+            variant: 'success',
+            title: t('File uploaded'),
+          };
+          alertToaster.addAlert(alert);
+        }
+      };
+      reader.onerror = () => {
+        // Alert for a failed file upload
+        const alert: AlertProps = {
+          variant: 'danger',
+          title: t('Failed to upload file'),
+          children: t('Unable to upload'),
+        };
+        alertToaster.addAlert(alert);
+      };
+      reader.readAsText(file);
+    },
+    [setValue, name, t, alertToaster]
+  );
+
+  const dropzone = useDropzone({
+    onDrop,
+    multiple: false,
+  });
+
   return (
     <Controller<TFieldValues, TFieldName>
       name={name}
@@ -184,6 +311,7 @@ export function PageFormDataEditor<
       shouldUnregister
       render={({ field: { name, onChange, value }, fieldState: { error } }) => {
         const errorSet = [...new Set(error?.message?.split('\n'))];
+        const disabled = value !== undefined && value !== null && value !== '';
         return (
           <PageFormGroup
             {...formGroupInputProps}
@@ -212,18 +340,42 @@ export function PageFormDataEditor<
           >
             {(!isExpandable || !isCollapsed) && (
               <>
-                <ToggleGroup isCompact>{toggleItems}</ToggleGroup>
-                <DataEditor<TFieldValues, TFieldName>
-                  setError={setFormError}
-                  clearErrors={clearErrors}
-                  id={id}
+                <ActionsRow
+                  key="actions-row"
+                  allowCopy={allowCopy}
+                  allowDownload={allowDownload}
+                  allowUpload={allowUpload}
+                  errors={errors}
+                  handleCopy={() => handleCopy()}
+                  handleDownload={handleDownload}
+                  handleUpload={handleUpload}
                   name={name}
-                  language={selectedLanguage}
-                  value={value}
-                  onChange={onChange}
-                  isReadOnly={isReadOnly || isSubmitting}
-                  invalid={!(validate && isValidating) && error?.message !== undefined}
+                  selectedLanguage={selectedLanguage}
+                  setLanguage={setLanguage}
+                  toggleLanguages={toggleLanguages}
                 />
+                <div
+                  id="code-editor-dropzone"
+                  {...dropzone.getRootProps({ disabled })}
+                  style={{ width: '100%', height: '100%' }}
+                >
+                  <input
+                    id="code-editor-dropzone-input"
+                    {...dropzone.getInputProps()}
+                    ref={fileInputRef}
+                  />
+                  <DataEditor<TFieldValues, TFieldName>
+                    setError={setFormError}
+                    clearErrors={clearErrors}
+                    id={id}
+                    name={name}
+                    language={selectedLanguage}
+                    value={value}
+                    onChange={onChange}
+                    isReadOnly={isReadOnly || isSubmitting}
+                    invalid={!(validate && isValidating) && error?.message !== undefined}
+                  />
+                </div>
               </>
             )}
           </PageFormGroup>
