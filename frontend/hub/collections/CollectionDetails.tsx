@@ -58,12 +58,8 @@ import { CollectionVersionSearch } from './Collection';
 import { useCollectionActions } from './hooks/useCollectionActions';
 import { useCollectionColumns } from './hooks/useCollectionColumns';
 import { PageSingleSelect } from './../../../framework/PageInputs/PageSingleSelect';
-import {
-  CheckCircleIcon,
-  ExclamationTriangleIcon,
-} from '@patternfly/react-icons';
+import { CheckCircleIcon, ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { Label } from '@patternfly/react-core';
-
 
 export function CollectionDetails() {
   const { t } = useTranslation();
@@ -80,12 +76,9 @@ export function CollectionDetails() {
   );
 
   // initial setting of highest version collections selected
-  if (data && data.data.length > 0 && !collection)
-  {
-    setCollection(data.data.find( (item) => item.is_highest));
+  if (data && data.data.length > 0 && !collection) {
+    setCollection(data.data.find((item) => item.is_highest));
   }
-
-
 
   const collections = data ? data.data : [];
   const itemActions = useCollectionActions(() => void refresh());
@@ -105,53 +98,58 @@ export function CollectionDetails() {
             selectedItem={collection}
           />
         }
-        description={ t('Repository: ') + collection?.repository.name}
-        footer = {
+        description={t('Repository: ') + collection?.repository.name}
+        footer={
           <div style={{ display: 'flex', alignItems: 'center' }}>
-          {t('Version')} 
-          <PageSingleSelect<string>
-            options={ data ? 
-              data.data.map( (item) => {
-              let label = item.collection_version.version + ' ' + t('updated') + `${ DateTime.fromISO(item.collection_version.pulp_created).toRelative()} (${item.is_signed ? t('signed') : t('unsigned')})`;
-              if (item.is_highest)
-              {
-                label += ' (' + t('latest') + ')';
+            {t('Version')}
+            <PageSingleSelect<string>
+              options={
+                data
+                  ? data.data.map((item) => {
+                      let label =
+                        item.collection_version.version +
+                        ' ' +
+                        t('updated') +
+                        `${DateTime.fromISO(item.collection_version.pulp_created).toRelative()} (${
+                          item.is_signed ? t('signed') : t('unsigned')
+                        })`;
+                      if (item.is_highest) {
+                        label += ' (' + t('latest') + ')';
+                      }
+                      return {
+                        value: item.collection_version.version,
+                        label,
+                      };
+                    })
+                  : []
               }
-              return { 
-                value : item.collection_version.version, 
-                label };
-            }) : [] }
-            onSelect={ (item : string) => { 
-              const found = collections.find( (item2) => item2.collection_version.version == item) 
-              if (found)
-              {
-                setCollection(found);
-              }
-            }}
-            placeholder={''}
-            value={collection ? collection.collection_version.version : ''}
-          />
-          {
-            collection && (t('Last updated') + ' ' + DateTime.fromISO(collection.collection_version.pulp_created).toRelative())
-          }
-          {
-            collection && (collection.is_signed ? 
-                (
-                    <Label icon={<CheckCircleIcon />} variant="outline" color="green">
-                      {' ' + t('Signed')}
-                    </Label>
-                  )
-                  :
-                  (
-                    <Label icon={<ExclamationTriangleIcon />} variant="outline" color="orange">
-                      {' ' +  t('Unsigned')}
-                    </Label>
-                  ))
-          }
-        </div>
+              onSelect={(item: string) => {
+                const found = collections.find((item2) => item2.collection_version.version == item);
+                if (found) {
+                  setCollection(found);
+                }
+              }}
+              placeholder={''}
+              value={collection ? collection.collection_version.version : ''}
+            />
+            {collection &&
+              t('Last updated') +
+                ' ' +
+                DateTime.fromISO(collection.collection_version.pulp_created).toRelative()}
+            {collection &&
+              (collection.is_signed ? (
+                <Label icon={<CheckCircleIcon />} variant="outline" color="green">
+                  {' ' + t('Signed')}
+                </Label>
+              ) : (
+                <Label icon={<ExclamationTriangleIcon />} variant="outline" color="orange">
+                  {' ' + t('Unsigned')}
+                </Label>
+              ))}
+          </div>
         }
       />
-      
+
       <PageTabs>
         <PageTab label={t('Details')}>
           <CollectionDetailsTab collection={collection} />
@@ -172,7 +170,6 @@ export function CollectionDetails() {
           <CollectionDependenciesTab collection={collection} />
         </PageTab>
       </PageTabs>
-  
     </PageLayout>
   );
 }
