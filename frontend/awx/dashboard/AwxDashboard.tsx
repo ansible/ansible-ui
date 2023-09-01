@@ -13,10 +13,8 @@ import { Job } from '../interfaces/Job';
 import { Project } from '../interfaces/Project';
 import { useAwxView } from '../useAwxView';
 import { WelcomeModal } from './WelcomeModal';
-import { AwxHostsCard } from './cards/AwxHostsCard';
-import { AwxInventoriesCard } from './cards/AwxInventoriesCard';
+import { AwxCountsCard } from './cards/AwxCountsCard';
 import { AwxJobActivityCard } from './cards/AwxJobActivityCard';
-import { AwxProjectsCard } from './cards/AwxProjectsCard';
 import { AwxRecentInventoriesCard } from './cards/AwxRecentInventoriesCard';
 import { AwxRecentJobsCard } from './cards/AwxRecentJobsCard';
 import { AwxRecentProjectsCard } from './cards/AwxRecentProjectsCard';
@@ -92,7 +90,7 @@ function DashboardInternal(props: { managedResources: Resource[] }) {
     defaultSort: 'modified',
     defaultSortDirection: 'desc',
   });
-  const { data, isLoading } = useSWR<IDashboardData>(`/api/v2/dashboard/`, (url: string) =>
+  const { data, isLoading } = useSWR<IAwxDashboardData>(`/api/v2/dashboard/`, (url: string) =>
     fetch(url).then((r) => r.json())
   );
   if (!data || isLoading) {
@@ -107,36 +105,27 @@ function DashboardInternal(props: { managedResources: Resource[] }) {
 
   return (
     <PageDashboard>
-      {managedResources.map((r: Resource) => {
-        switch (true) {
-          case r.id === 'recent_job_activity':
+      {managedResources.map((resource: Resource) => {
+        switch (resource.id) {
+          case 'counts':
+            return <AwxCountsCard data={data} />;
+          case 'recent_job_activity':
             return <AwxJobActivityCard />;
-          case r.id === 'project':
-            return <AwxProjectsCard total={data.projects.total} failed={data.projects.failed} />;
-          case r.id === 'host':
-            return <AwxHostsCard total={data.hosts.total} failed={data.hosts.failed} />;
-          case r.id === 'inventory':
-            return (
-              <AwxInventoriesCard
-                total={data.inventories.total}
-                failed={data.inventories.inventory_failed}
-              />
-            );
-          case r.id === 'recent_jobs':
+          case 'recent_jobs':
             return (
               <AwxRecentJobsCard
                 view={recentJobsView}
                 showEmptyStateNonAdmin={!canEdit && recentJobsView.itemCount === 0}
               />
             );
-          case r.id === 'recent_projects':
+          case 'recent_projects':
             return (
               <AwxRecentProjectsCard
                 view={recentProjectsView}
                 showEmptyStateNonAdmin={!canEdit && recentProjectsView.itemCount === 0}
               />
             );
-          case r.id === 'recent_inventories':
+          case 'recent_inventories':
             return (
               <AwxRecentInventoriesCard
                 view={recentInventoriesView}
@@ -151,7 +140,7 @@ function DashboardInternal(props: { managedResources: Resource[] }) {
   );
 }
 
-interface IDashboardData {
+export interface IAwxDashboardData {
   inventories: {
     url: string;
     total: number;
