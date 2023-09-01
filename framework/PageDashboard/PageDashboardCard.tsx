@@ -1,4 +1,14 @@
-import { Card, CardHeader, Flex, FlexItem, Stack, Text, Title } from '@patternfly/react-core';
+import {
+  Button,
+  Card,
+  CardFooter,
+  CardHeader,
+  Flex,
+  FlexItem,
+  Stack,
+  Text,
+  Title,
+} from '@patternfly/react-core';
 import { CSSProperties, ReactNode, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { Help } from '../components/Help';
@@ -17,6 +27,11 @@ export function PageDashboardCard(props: {
   linkText?: string;
   to?: string;
   children?: ReactNode;
+  footerActionButton?: {
+    icon?: ReactNode;
+    title: string;
+    onClick: () => unknown;
+  };
 
   /**
    * Cards are in a grid layout with 12 columns.
@@ -194,6 +209,29 @@ export function PageDashboardCard(props: {
         </CardHeader>
       )}
       {props.children}
+      {props.footerActionButton && (
+        <CardFooter>
+          <Stack style={{ width: '100%' }}>
+            <Flex
+              fullWidth={{ default: 'fullWidth' }}
+              spaceItems={{ default: 'spaceItemsNone' }}
+              alignItems={{ default: 'alignItemsFlexStart' }}
+              justifyContent={{ default: 'justifyContentFlexEnd' }}
+              style={{ columnGap: 24, rowGap: 8 }}
+            >
+              <FlexItem>
+                <Button
+                  variant="link"
+                  icon={props.footerActionButton.icon ? props.footerActionButton.icon : null}
+                  onClick={props.footerActionButton.onClick}
+                >
+                  {props.footerActionButton.title}
+                </Button>
+              </FlexItem>
+            </Flex>
+          </Stack>
+        </CardFooter>
+      )}
     </Card>
   );
 }
