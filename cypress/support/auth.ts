@@ -1,3 +1,15 @@
+Cypress.Commands.add('requiredVariablesAreSet', (requiredVariables: string[]) => {
+  if (Cypress.env('IS_GITHUB_ACTION') || process.env.IS_GITHUB_ACTION) {
+    cy.log('Skipping requiredVariablesAreSet check in GitHub Actions');
+    return;
+  }
+  requiredVariables.forEach((variable) => {
+    if (!Cypress.env(variable)) {
+      throw new Error(`Missing required environment variable: ${variable}`);
+    }
+  });
+});
+
 Cypress.Commands.add('login', (server: string, username: string, password: string) => {
   window.localStorage.setItem('theme', 'light');
   window.localStorage.setItem('disclaimer', 'true');
@@ -21,6 +33,7 @@ Cypress.Commands.add('edaLogout', () => {
 });
 
 Cypress.Commands.add('awxLogin', () => {
+  cy.requiredVariablesAreSet(['AWX_SERVER', 'AWX_USERNAME', 'AWX_PASSWORD']);
   cy.session(
     'AWX',
     () => {
@@ -42,6 +55,7 @@ Cypress.Commands.add('awxLogin', () => {
 });
 
 Cypress.Commands.add('edaLogin', () => {
+  cy.requiredVariablesAreSet(['EDA_SERVER', 'EDA_USERNAME', 'EDA_PASSWORD']);
   cy.session(
     'EDA',
     () => {
@@ -63,6 +77,7 @@ Cypress.Commands.add('edaLogin', () => {
 });
 
 Cypress.Commands.add('hubLogin', () => {
+  cy.requiredVariablesAreSet(['HUB_SERVER', 'HUB_USERNAME', 'HUB_PASSWORD']);
   cy.session(
     'HUB',
     () => {
