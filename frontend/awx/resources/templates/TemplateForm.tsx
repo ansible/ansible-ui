@@ -14,26 +14,20 @@ import { getAddedAndRemoved } from '../../common/util/getAddedAndRemoved';
 import { Credential } from '../../interfaces/Credential';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { JobTemplate } from '../../interfaces/JobTemplate';
-import { JobTemplateForm } from '../../interfaces/JobTemplateForm';
+import { JobTemplateForm, JobTemplateCreate } from '../../interfaces/JobTemplateForm';
 import { Label } from '../../interfaces/Label';
 import { Organization } from '../../interfaces/Organization';
 import { getAwxError } from '../../useAwxView';
-import { getJobTemplateDefaultValues } from './JobTemplateFormHelpers';
+import { getJobTemplateDefaultValues, stringifyTags } from './JobTemplateFormHelpers';
 import JobTemplateInputs from './JobTemplateInputs';
 
-const stringifyTags: (tags: { value: string }[]) => string = (tags) => {
-  const stringifiedTags = tags.filter((tag) => {
-    if (tag.value !== '') return tag.value;
-  });
-  return stringifiedTags.map((i) => i.value).join(',');
-};
 export function EditJobTemplate() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
   const {
-    data: jobtemplate,
+    data: jobTemplate,
     error: jobTemplateError,
     refresh: jobTemplateRefresh,
     isLoading: isJobTemplateLoading,
@@ -47,52 +41,34 @@ export function EditJobTemplate() {
     `/api/v2/job_templates/${id.toString()}/instance_groups/`
   );
 
-  const defaultValues: JobTemplateForm = useMemo(
-    () =>
-      getJobTemplateDefaultValues(t, {
-        ...jobtemplate,
-        isProvisioningCallbackEnabled: Boolean(jobtemplate?.related?.callback),
-        isWebhookEnabled: Boolean(jobtemplate?.related?.webhook_receiver),
-        instanceGroups: instanceGroups?.results ?? [],
-        arrayedSkipTags: jobtemplate?.skip_tags
-          .split(',')
-          .map((tag) => ({ value: tag, label: tag })),
-        arrayedJobTags: jobtemplate?.job_tags.split(',').map((tag) => ({ value: tag, label: tag })),
-      } as JobTemplateForm),
-    [t, jobtemplate, instanceGroups]
+  const defaultValues = useMemo(
+    () => getJobTemplateDefaultValues(t, jobTemplate, instanceGroups?.results ?? []),
+    [t, jobTemplate, instanceGroups]
   );
   const { cache } = useSWRConfig();
   const onSubmit: PageFormSubmitHandler<JobTemplateForm> = async (
     values: JobTemplateForm,
     setError: (message: string) => void
   ) => {
-    const {
-      arrayedJobTags,
-      arrayedSkipTags,
-      summary_fields: { credentials, labels },
-    } = values;
-    values.project = values.summary_fields.project?.id;
-    let jobTags = '';
-    let skipTags = '';
-    if (arrayedJobTags?.length) {
-      jobTags = stringifyTags(arrayedJobTags);
-    }
-    if (arrayedSkipTags.length) {
-      skipTags = stringifyTags(arrayedSkipTags);
-    }
+    const { credentials, labels, instance_groups, ...rest } = values;
+    const formValues = {
+      ...rest,
+      project: values.project.id,
+      execution_environment: values.execution_environment?.id || null,
+      inventory: values.inventory?.id || null,
+      job_tags: stringifyTags(values.job_tags) ?? '',
+      skip_tags: stringifyTags(values.skip_tags) ?? '',
+      webhook_credential: values.webhook_credential?.id || null,
+    };
+
     try {
-      await requestPatch<JobTemplateForm>(`/api/v2/job_templates/${id}/`, {
-        ...values,
-        job_tags: jobTags ?? '',
-        skip_tags: skipTags ?? '',
-        webhook_credential: values.summary_fields.webhook_credential?.id,
-      });
+      await requestPatch<JobTemplateForm>(`/api/v2/job_templates/${id}/`, formValues);
       (cache as unknown as { clear: () => void }).clear?.();
       const promises = [];
 
-      promises.push(submitCredentials(jobtemplate as JobTemplate, credentials));
-      promises.push(submitLabels(jobtemplate as JobTemplate, labels?.results));
-      promises.push(submitInstanceGroups(id, values.instanceGroups));
+      promises.push(submitCredentials(jobTemplate as JobTemplate, credentials));
+      promises.push(submitLabels(jobTemplate as JobTemplate, labels));
+      promises.push(submitInstanceGroups(id, instance_groups));
       navigate(RouteObj.JobTemplateDetails.replace(':id', `${id}`.toString()));
     } catch (err) {
       if (err instanceof Error) {
@@ -135,44 +111,34 @@ export function EditJobTemplate() {
 export function CreateJobTemplate() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const postRequest = usePostRequest<JobTemplateForm, JobTemplate>();
+  const postRequest = usePostRequest<JobTemplateCreate, JobTemplate>();
+  const defaultValues = useMemo(() => getJobTemplateDefaultValues(t, {} as JobTemplate), [t]);
 
-  const defaultValues: JobTemplateForm = useMemo(
-    () => getJobTemplateDefaultValues(t, {} as JobTemplateForm),
-    [t]
-  );
   const onSubmit: PageFormSubmitHandler<JobTemplateForm> = async (values, setError) => {
-    const {
-      arrayedJobTags,
-      arrayedSkipTags,
-      summary_fields: { credentials = [], labels, webhook_credential },
-    } = values;
-    values.project = values?.summary_fields?.project?.id;
-    let jobTags = '';
-    let skipTags = '';
-    if (values?.arrayedJobTags?.length) {
-      jobTags = stringifyTags(arrayedJobTags);
-    }
-    if (values?.arrayedSkipTags.length) {
-      skipTags = stringifyTags(arrayedSkipTags);
-    }
+    const { credentials, labels, instance_groups, ...rest } = values;
+    const formValues = {
+      ...rest,
+      project: values.project.id,
+      execution_environment: values.execution_environment?.id
+        ? values.execution_environment?.id
+        : null,
+      inventory: values.inventory?.id || null,
+      job_tags: stringifyTags(values.job_tags) ?? '',
+      skip_tags: stringifyTags(values.skip_tags) ?? '',
+      webhook_credential: values.webhook_credential?.id || null,
+    };
+
     try {
-      const template = await postRequest(`/api/v2/job_templates/`, {
-        ...values,
-        job_tags: jobTags,
-        skip_tags: skipTags,
-        summary_fields: values.summary_fields,
-        webhook_credential: webhook_credential?.id ? webhook_credential?.id : null,
-      });
+      const template = await postRequest(`/api/v2/job_templates/`, formValues);
       const promises = [];
       if (credentials?.length > 0) {
         promises.push(submitCredentials(template, credentials));
       }
-      if (labels?.results && labels?.results?.length > 0) {
-        promises.push(submitLabels(template, labels.results));
+      if (labels && labels?.length > 0) {
+        promises.push(submitLabels(template, labels));
       }
-      if (values.instanceGroups.length > 0) {
-        promises.push(submitInstanceGroups(template.id, values.instanceGroups));
+      if (instance_groups.length > 0) {
+        promises.push(submitInstanceGroups(template.id, instance_groups));
       }
       if (promises.length > 0) await Promise.all(promises);
 
