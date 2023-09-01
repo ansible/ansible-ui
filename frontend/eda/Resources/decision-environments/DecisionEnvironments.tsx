@@ -7,7 +7,7 @@ import { API_PREFIX } from '../../constants';
 import { EdaDecisionEnvironment } from '../../interfaces/EdaDecisionEnvironment';
 import { useEdaView } from '../../useEventDrivenView';
 import { useDecisionEnvironmentActions } from './hooks/useDecisionEnvironmentActions';
-import { useDecisionEnvironmentColumns } from './hooks/useDecisionEnvironmentColumns';
+import { useDecisionEnvironmentsColumns } from './hooks/useDecisionEnvironmentColumns';
 import { useDecisionEnvironmentFilters } from './hooks/useDecisionEnvironmentFilters';
 import { useDecisionEnvironmentsActions } from './hooks/useDecisionEnvironmentsActions';
 
@@ -15,7 +15,7 @@ export function DecisionEnvironments() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const toolbarFilters = useDecisionEnvironmentFilters();
-  const tableColumns = useDecisionEnvironmentColumns();
+  const tableColumns = useDecisionEnvironmentsColumns();
   const view = useEdaView<EdaDecisionEnvironment>({
     url: `${API_PREFIX}/decision-environments/`,
     toolbarFilters,
