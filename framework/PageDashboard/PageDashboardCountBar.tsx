@@ -44,6 +44,10 @@ export function PageDashboardCountBar(props: PageDashboardCountBarProps) {
                     {item.title}
                   </Title>
                 </Link>
+
+                {/* if there is a total and the item has counts and counts is not undefined */}
+                {/* then we want to show the donut chart instead of just a count whisch is in the else */}
+                {/* Note: even if there is counts but total is 0 we want to just render the count  */}
                 {total && 'counts' in item && item.counts ? (
                   <>
                     <div
@@ -67,11 +71,9 @@ export function PageDashboardCountBar(props: PageDashboardCountBarProps) {
                     <PageChartLegend id={`${id}-legend`} legend={item.counts} />
                   </>
                 ) : (
+                  // This renders the total if there are no counts or total is zero
                   <span style={{ fontSize: 'xx-large', lineHeight: 1 }}>{total}</span>
                 )}
-                {/* <Link to={item.to}>
-                <ArrowRightIcon />
-              </Link> */}
               </div>
             );
           })}
