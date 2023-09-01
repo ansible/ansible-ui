@@ -370,9 +370,7 @@ Cypress.Commands.add('ensureEdaCurrentUserAwxToken', () => {
   cy.getEdaCurrentUserAwxTokens().then((result) => {
     switch (result.count) {
       case 0:
-        cy.createAwxToken().then((awxToken) => {
-          cy.addEdaCurrentUserAwxToken(awxToken.token);
-        });
+        cy.addEdaCurrentUserAwxToken('testtoken');
         break;
       case 1:
         // Do nothing - token exists
