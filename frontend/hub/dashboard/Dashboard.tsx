@@ -48,7 +48,7 @@ export function HubDashboard() {
               },
               {
                 icon: CogIcon,
-                label: 'Manage View',
+                label: 'Manage view',
                 type: PageActionType.Button,
                 selection: PageActionSelection.None,
                 onClick: openManageDashboard,

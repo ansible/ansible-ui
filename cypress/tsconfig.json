@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "lib": ["es5", "dom"],
+    "lib": ["ES2021.String", "dom"],
     "types": ["cypress", "node"],
     "jsx": "react"
   },
