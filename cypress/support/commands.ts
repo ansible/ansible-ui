@@ -45,6 +45,7 @@ declare global {
       awxLogin(): Chainable<void>;
       edaLogin(): Chainable<void>;
       hubLogin(): Chainable<void>;
+      requiredVariablesAreSet(requiredVariables: string[]): Chainable<void>;
 
       // --- NAVIGATION COMMANDS ---
 
