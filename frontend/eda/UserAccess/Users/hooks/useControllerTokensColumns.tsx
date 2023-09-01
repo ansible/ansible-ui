@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ColumnModalOption, ITableColumn, TextCell } from '../../../../../framework';
+import { ColumnModalOption, DateTimeCell, ITableColumn, TextCell } from '../../../../../framework';
 import { EdaControllerToken } from '../../../interfaces/EdaControllerToken';
 
 export function useControllerTokensColumns() {
@@ -19,7 +19,8 @@ export function useControllerTokensColumns() {
       },
       {
         header: t('Created'),
-        type: 'datetime',
+        cell: (token: EdaControllerToken) =>
+          token.created_at && <DateTimeCell format="date-time" value={token.created_at} />,
         value: (token) => token.created_at,
         modal: ColumnModalOption.Hidden,
       },

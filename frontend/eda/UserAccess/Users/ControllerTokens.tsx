@@ -7,6 +7,7 @@ import { EdaControllerToken } from '../../interfaces/EdaControllerToken';
 import { useEdaView } from '../../useEventDrivenView';
 import { useControllerTokenActions } from './hooks/useControllerTokenActions';
 import { useControllerTokensColumns } from './hooks/useControllerTokensColumns';
+import { PageTableViewTypeE } from '../../../../framework/PageToolbar/PageTableViewType';
 
 export function ControllerTokens() {
   const { t } = useTranslation();
@@ -24,6 +25,7 @@ export function ControllerTokens() {
         id="eda-controller-tokens-table"
         tableColumns={tableColumns}
         rowActions={rowActions}
+        defaultTableView={PageTableViewTypeE.List}
         errorStateTitle={t('Error loading controller tokens')}
         emptyStateTitle={t('You currently do not have any tokens from Automation Controller.')}
         emptyStateDescription={t(
