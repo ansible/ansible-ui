@@ -1,8 +1,9 @@
-import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Trans, useTranslation } from 'react-i18next';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   PageForm,
   PageFormCheckbox,
+  PageFormDataEditor,
   PageFormSubmitHandler,
   PageFormTextInput,
   PageHeader,
@@ -19,6 +20,7 @@ import { usePostRequest } from '../../common/crud/usePostRequest';
 import { appendTrailingSlash, hubAPIPut, parsePulpIDFromURL, pulpAPI } from '../api/utils';
 import { PulpItemsResponse } from '../usePulpView';
 import { IRemotes } from './Remotes';
+import { PageFormSection } from '../../../framework/PageForm/Utils/PageFormSection';
 
 interface RemoteFormProps extends IRemotes {
   client_key?: string;
@@ -28,6 +30,13 @@ interface RemoteFormProps extends IRemotes {
   token?: string;
   username?: string;
 }
+const yamlRequirementsTemplate = [
+  '# Sample requirements.yaml',
+  '',
+  'collections:',
+  '  - name: my_namespace.my_collection_name',
+  '  - name: my_namespace.my_collection_name2',
+].join('\n');
 
 export function CreateRemote() {
   const { t } = useTranslation();
@@ -52,7 +61,7 @@ export function CreateRemote() {
         submitText={t('Create remote')}
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
-        defaultValue={{ name: '', url: '' }}
+        defaultValue={{ name: '', url: '', requirements_file: yamlRequirementsTemplate }}
       >
         <>
           <RemoteInputs />
@@ -60,6 +69,7 @@ export function CreateRemote() {
             <ProxyAdvancedRemoteInputs />
             <CertificatesAdvancedRemoteInputs />
             <MiscAdvancedRemoteInputs />
+            <RequirementsFile />
           </PageFormExpandableSection>
         </>
       </PageForm>
@@ -76,7 +86,7 @@ const initialRemote: Partial<RemoteFormProps> = {
   proxy_url: null,
   download_concurrency: null,
   rate_limit: null,
-  requirements_file: null,
+  requirements_file: '',
   auth_url: null,
   signed_only: false,
 
@@ -184,6 +194,7 @@ export function EditRemote() {
             <ProxyAdvancedRemoteInputs />
             <CertificatesAdvancedRemoteInputs />
             <MiscAdvancedRemoteInputs />
+            <RequirementsFile />
           </PageFormExpandableSection>
         </>
       </PageForm>
@@ -319,5 +330,34 @@ function RemoteInputs() {
         labelHelp={t('Single sign on URL.')}
       />
     </>
+  );
+}
+
+const TranslationLabelHelp = () => {
+  return (
+    <Trans i18nKey="requirementsFileHelp">
+      This uses the same{' '}
+      <Link to="https://docs.ansible.com/ansible/latest/user_guide/collections_using.html#installing-collections-with-ansible-galaxy">
+        requirements.yml{' '}
+      </Link>
+      format as the ansible - galaxy CLI with the caveat that roles are not supported and the source
+      parameter is not supported.
+    </Trans>
+  );
+};
+
+function RequirementsFile() {
+  const { t } = useTranslation();
+  return (
+    <PageFormSection singleColumn>
+      <PageFormDataEditor<RemoteFormProps>
+        name="requirements_file"
+        label={t('Requirements file')}
+        defaultExpanded={true}
+        labelHelp={TranslationLabelHelp()}
+        toggleLanguages={['yaml']}
+        labelHelpTitle={t('Requirements file')}
+      />
+    </PageFormSection>
   );
 }

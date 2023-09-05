@@ -2,6 +2,7 @@ import { Label, LabelGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { PageDetail, PageDetails, PageHeader, PageLayout } from '../../../framework';
+import { PageDetailCodeEditor } from '../../../framework/PageDetails/PageDetailCodeEditor';
 import { LoadingPage } from '../../../framework/components/LoadingPage';
 import { AwxError } from '../../awx/common/AwxError';
 import { RouteObj } from '../../common/Routes';
@@ -102,6 +103,13 @@ export function RemoteDetails() {
               t('---')
             )}
           </PageDetail>
+        </PageDetails>
+        <PageDetails numberOfColumns="single">
+          <PageDetailCodeEditor
+            label={t('YAML requirements')}
+            value={remote?.requirements_file ?? '---'}
+            showCopyToClipboard={true}
+          />
         </PageDetails>
       </PageLayout>
     </>

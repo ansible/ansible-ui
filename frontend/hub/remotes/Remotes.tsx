@@ -19,7 +19,7 @@ export interface IRemotes {
   pulp_href: string;
   pulp_created: string;
   rate_limit: number | null;
-  requirements_file: string | null;
+  requirements_file: string;
   tls_validation: boolean;
   url: string;
   signed_only: boolean;

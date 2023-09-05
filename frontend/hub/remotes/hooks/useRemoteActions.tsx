@@ -18,7 +18,7 @@ export function useRemoteActions(view: IPulpView<IRemotes>) {
       {
         icon: EditIcon,
         isPinned: true,
-        label: t('Edit remote 2'),
+        label: t('Edit remote'),
         onClick: (remotes) =>
           navigate(RouteObj.EditRemotes.replace(':id', remotes.name.toString())),
         selection: PageActionSelection.Single,
