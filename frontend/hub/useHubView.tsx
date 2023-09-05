@@ -39,6 +39,8 @@ export function useHubView<T extends object>({
   queryParams,
   sortKey,
   defaultFilters,
+  defaultSort: initialDefaultSort,
+  defaultSortDirection: initialDefaultSortDirection,
 }: {
   url: string;
   keyFn: (item: T) => string | number;
@@ -48,10 +50,23 @@ export function useHubView<T extends object>({
   queryParams?: QueryParams;
   sortKey?: string;
   defaultFilters?: Record<string, string[]>;
+  defaultSort?: string | undefined;
+  defaultSortDirection?: 'asc' | 'desc' | undefined;
 }): IHubView<T> {
+  let defaultSort: string | undefined = initialDefaultSort;
+  let defaultSortDirection: 'asc' | 'desc' | undefined = initialDefaultSortDirection;
+
+  // If a column is defined with defaultSort:true use that column to set the default sort, otherwise use the first column
+  if (tableColumns && tableColumns.length) {
+    const defaultSortColumn = tableColumns.find((column) => column.defaultSort) ?? tableColumns[0];
+    defaultSort = defaultSortColumn?.sort;
+    defaultSortDirection = defaultSortColumn?.defaultSortDirection;
+  }
+
   const view = useView({
     defaultValues: {
-      sort: tableColumns && tableColumns.length ? tableColumns[0].sort : undefined,
+      sort: defaultSort,
+      sortDirection: defaultSortDirection,
       filterState: defaultFilters,
     },
     disableQueryString,
