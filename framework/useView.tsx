@@ -37,7 +37,7 @@ export interface IView {
  * - filters
  *
  * It also manages the query string parameters for the table.
- * It will load the dafulat values from the query string if they exist.
+ * It will load the default values from the query string if they exist.
  * It will also update the query string when the values change.
  *
  * In most use cases, you will not need to use this hook directly.
@@ -65,7 +65,7 @@ export function useView(options: {
    *
    * Example:
    *   if ignoreQueryStringKeys=['abc'] then clearing filters would not clear 'abc' from the query string
-   *   this would allow pages to have querystirng values that are not cleared by filters.
+   *   this would allow pages to have querystring values that are not cleared by filters.
    */
   ignoreQueryStringKeys?: string[];
 
