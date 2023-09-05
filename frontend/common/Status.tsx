@@ -53,6 +53,7 @@ function useLabel(status: string, t: (str: string) => string) {
     completed: t('Completed'),
     canceled: t('Canceled'),
     changed: t('Changed'),
+    deleting: t('Deleting'),
     denied: t('Denied'),
     'deprovision-fail': t('Deprovisioning fail'),
     deprovisioning: t('Deprovisioning'),
@@ -118,6 +119,7 @@ function getColor(status: string) {
       return 'orange';
     case 'stopped':
       return undefined;
+    case 'deleting':
     case 'deprovisioning':
     case 'disabled':
     case 'provisioning':
@@ -167,6 +169,7 @@ function getIcon(status: string) {
     case 'provisioning':
     case 'skipped':
       return MinusCircleIcon;
+    case 'deleting':
     case 'starting':
     case 'stopping':
       return HourglassStartIcon;
