@@ -6,6 +6,7 @@ import { CollectionVersionSearch } from '../collections/CollectionVersionSearch'
 import { ReactNode, useMemo } from 'react';
 import { CogIcon } from '@patternfly/react-icons';
 import { useSelectCollectionsDialog } from '../collections/hooks/useSelectCollections';
+import { collectionKeyFn } from '../api/utils';
 
 type FooterAction = {
   icon?: ReactNode;
@@ -31,7 +32,6 @@ export function CollectionCategoryCarousel(props: {
         icon: <CogIcon />,
         title: t('Manage content'),
         onClick: () => {
-          console.log('Clicked Manage content');
           selectCollections(
             t('Select featured collections content'),
             t(
@@ -39,6 +39,7 @@ export function CollectionCategoryCarousel(props: {
             ),
             (collections: CollectionVersionSearch[]) => {
               console.log('Collections', collections);
+              // Create post requests to Marks API to mark featured collections
             }
           );
         },
@@ -62,3 +63,33 @@ export function CollectionCategoryCarousel(props: {
     </PageDashboardCarousel>
   );
 }
+
+// async function saveFeaturedCollections(
+//   currentFeaturedCollections: CollectionVersionSearch[],
+//   originalFeaturedCollections: CollectionVersionSearch[]
+// ) {
+//   // TODO: move getAddedAndRemoved to common folder outside awx folder
+//   const { added, removed } = getAddedAndRemoved(
+//     originalFeaturedCollections ?? ([] as CollectionVersionSearch[]),
+//     currentFeaturedCollections ?? ([] as CollectionVersionSearch[])
+//   );
+
+//   if (added.length === 0 && removed.length === 0) {
+//     return;
+//   }
+
+//   const promisesToUnmarkFeaturedCollections = removed.map((collection: CollectionVersionSearch) =>
+//     postRequest(`/api/v2/inventories/${inventory.id.toString()}/instance_groups/`, {
+//       id: instanceGroup.id,
+//       disassociate: true,
+//     })
+//   );
+//   const promisesToMarkFeaturedCollections = added.map((collection: CollectionVersionSearch) =>
+//     postRequest(`/api/v2/inventories/${inventory.id.toString()}/instance_groups/`, {
+//       id: instanceGroup.id,
+//     })
+//   );
+
+//   const results = await Promise.all([...disassociationPromises, ...associationPromises]);
+//   return results;
+// }

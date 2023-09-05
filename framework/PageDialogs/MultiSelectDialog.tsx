@@ -30,6 +30,7 @@ export type MultiSelectDialogProps<T extends object> = {
   cancelText?: string;
   emptyStateTitle?: string;
   errorStateTitle?: string;
+  defaultSort?: string;
 };
 
 export function MultiSelectDialog<T extends object>(props: MultiSelectDialogProps<T>) {
@@ -42,6 +43,7 @@ export function MultiSelectDialog<T extends object>(props: MultiSelectDialogProp
     confirmText,
     cancelText,
     onSelect,
+    defaultSort,
   } = props;
   const [_, setDialog] = usePageDialog();
   const onClose = useCallback(() => setDialog(undefined), [setDialog]);
@@ -125,6 +127,7 @@ export function MultiSelectDialog<T extends object>(props: MultiSelectDialogProp
             disableListView
             compact
             disableBodyPadding
+            sort={defaultSort}
           />
         </div>
       </Collapse>

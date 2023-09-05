@@ -26,6 +26,8 @@ export function CollectionMultiSelectDialog(props: {
         value: (collection) => collection.collection_version.name,
         cell: (collection) => <TextCell text={collection.collection_version.name} />,
         sort: 'name',
+        card: 'name',
+        list: 'name',
         defaultSort: true,
       },
       {
@@ -61,6 +63,8 @@ export function CollectionMultiSelectDialog(props: {
       toolbarFilters={toolbarFilters}
       tableColumns={tableColumns}
       view={view}
+      defaultSort="name"
+      confirmText={t('Select')}
     />
   );
 }
