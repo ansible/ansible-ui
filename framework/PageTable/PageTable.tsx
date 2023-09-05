@@ -52,7 +52,6 @@ import { useSettings } from '../Settings';
 import { EmptyStateError } from '../components/EmptyStateError';
 import { EmptyStateNoData } from '../components/EmptyStateNoData';
 import { Scrollable } from '../components/Scrollable';
-import { useBreakpoint } from '../components/useBreakPoint';
 import { useManageColumns } from '../components/useManageColumns';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { PagePagination } from './PagePagination';
@@ -258,8 +257,6 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
     },
     [props.id]
   );
-
-  const usePadding = useBreakpoint('md') && disableBodyPadding !== true;
 
   const sortOptions = usePageToolbarSortOptionsFromColumns(props.tableColumns);
   if (error) {
