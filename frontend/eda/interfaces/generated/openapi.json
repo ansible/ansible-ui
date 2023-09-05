@@ -68,6 +68,70 @@
         }
       }
     },
+    "/activation-instances/{id}/logs/": {
+      "get": {
+        "operationId": "activation_instances_logs_list",
+        "description": "List all logs for the Activation Instance",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "A unique integer value identifying this Activation Instance.",
+            "required": true
+          },
+          {
+            "in": "query",
+            "name": "log",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by activation instance log."
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page_size",
+            "required": false,
+            "in": "query",
+            "description": "Number of results to return per page.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "tags": ["activation-instances"],
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedActivationInstanceLogList"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
     "/activation-instances/{id}/": {
       "get": {
         "operationId": "activation_instances_retrieve",
@@ -135,78 +199,6 @@
         }
       }
     },
-    "/activation-instances/{id}/logs/": {
-      "get": {
-        "operationId": "activation_instances_logs_list",
-        "description": "List all logs for the Activation Instance",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "id",
-            "schema": {
-              "type": "integer"
-            },
-            "description": "A unique integer value identifying this activation instance.",
-            "required": true
-          },
-          {
-            "in": "query",
-            "name": "name",
-            "schema": {
-              "type": "string"
-            },
-            "description": "Filter by activation instance name."
-          },
-          {
-            "name": "page",
-            "required": false,
-            "in": "query",
-            "description": "A page number within the paginated result set.",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "page_size",
-            "required": false,
-            "in": "query",
-            "description": "Number of results to return per page.",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "in": "query",
-            "name": "status",
-            "schema": {
-              "type": "string"
-            },
-            "description": "Filter by activation instance status."
-          }
-        ],
-        "tags": ["activation-instances"],
-        "security": [
-          {
-            "cookieAuth": []
-          },
-          {
-            "basicAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PaginatedActivationInstanceLogList"
-                }
-              }
-            },
-            "description": ""
-          }
-        }
-      }
-    },
     "/activations/": {
       "get": {
         "operationId": "activations_list",
@@ -237,6 +229,14 @@
             "schema": {
               "type": "integer"
             }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by activation status."
           }
         ],
         "tags": ["activations"],
@@ -298,6 +298,78 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ActivationRead"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/activations/{id}/instances/": {
+      "get": {
+        "operationId": "activations_instances_list",
+        "description": "List all instances for the Activation",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "A unique integer value identifying this rulebook.",
+            "required": true
+          },
+          {
+            "in": "query",
+            "name": "name",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by activation instance name."
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page_size",
+            "required": false,
+            "in": "query",
+            "description": "Number of results to return per page.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by activation instance status."
+          }
+        ],
+        "tags": ["activations"],
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "basicAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedActivationInstanceList"
                 }
               }
             },
@@ -433,44 +505,6 @@
           },
           "409": {
             "description": "Activation not enabled do to current activation status"
-          }
-        }
-      }
-    },
-    "/activations/{id}/instances/": {
-      "get": {
-        "operationId": "activations_instances_retrieve",
-        "description": "List all instances for the Activation",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "id",
-            "schema": {
-              "type": "integer"
-            },
-            "description": "A unique integer value identifying this activation.",
-            "required": true
-          }
-        ],
-        "tags": ["activations"],
-        "security": [
-          {
-            "cookieAuth": []
-          },
-          {
-            "basicAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PaginatedActivationInstanceList"
-                }
-              }
-            },
-            "description": "Return a list of Activation Instances."
           }
         }
       }
@@ -1473,91 +1507,6 @@
         }
       }
     },
-    "/playbooks/": {
-      "get": {
-        "operationId": "playbooks_list",
-        "description": "List all playbooks",
-        "parameters": [
-          {
-            "name": "page",
-            "required": false,
-            "in": "query",
-            "description": "A page number within the paginated result set.",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "page_size",
-            "required": false,
-            "in": "query",
-            "description": "Number of results to return per page.",
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "tags": ["playbooks"],
-        "security": [
-          {
-            "cookieAuth": []
-          },
-          {
-            "basicAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PaginatedPlaybookList"
-                }
-              }
-            },
-            "description": "Return a list of playbooks."
-          }
-        }
-      }
-    },
-    "/playbooks/{id}/": {
-      "get": {
-        "operationId": "playbooks_retrieve",
-        "description": "Get the playbook by its id",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "id",
-            "schema": {
-              "type": "integer"
-            },
-            "description": "A unique integer value identifying this playbook.",
-            "required": true
-          }
-        ],
-        "tags": ["playbooks"],
-        "security": [
-          {
-            "cookieAuth": []
-          },
-          {
-            "basicAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Playbook"
-                }
-              }
-            },
-            "description": "Return the playbook by its id."
-          }
-        }
-      }
-    },
     "/projects/": {
       "get": {
         "operationId": "projects_list",
@@ -1797,7 +1746,7 @@
     "/projects/{id}/sync/": {
       "post": {
         "operationId": "projects_sync_create",
-        "description": "Provide default implementation to get_response_serializer_class.\n\nThe view class should override this method if the response body format\nis different from the request.",
+        "description": "Sync a project",
         "parameters": [
           {
             "in": "path",
@@ -1810,26 +1759,6 @@
           }
         ],
         "tags": ["projects"],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Project"
-              }
-            },
-            "application/x-www-form-urlencoded": {
-              "schema": {
-                "$ref": "#/components/schemas/Project"
-              }
-            },
-            "multipart/form-data": {
-              "schema": {
-                "$ref": "#/components/schemas/Project"
-              }
-            }
-          },
-          "required": true
-        },
         "security": [
           {
             "cookieAuth": []
@@ -1843,7 +1772,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TaskRef"
+                  "$ref": "#/components/schemas/Project"
                 }
               }
             },
@@ -2946,7 +2875,7 @@
             "type": "string"
           },
           "status": {
-            "$ref": "#/components/schemas/StatusB37Enum"
+            "$ref": "#/components/schemas/Status0e7Enum"
           },
           "activation_id": {
             "type": "integer",
@@ -3006,7 +2935,7 @@
             "type": "boolean"
           },
           "status": {
-            "$ref": "#/components/schemas/StatusB37Enum"
+            "$ref": "#/components/schemas/Status0e7Enum"
           },
           "decision_environment_id": {
             "type": "integer",
@@ -3068,8 +2997,7 @@
           "rulebook_id",
           "rulebook_name",
           "rules_count",
-          "rules_fired_count",
-          "status"
+          "rules_fired_count"
         ]
       },
       "ActivationRead": {
@@ -3098,7 +3026,7 @@
             "nullable": true
           },
           "status": {
-            "$ref": "#/components/schemas/StatusB37Enum"
+            "$ref": "#/components/schemas/Status0e7Enum"
           },
           "project": {
             "allOf": [
@@ -3168,8 +3096,7 @@
           "rulebook",
           "rulebook_name",
           "rules_count",
-          "rules_fired_count",
-          "status"
+          "rules_fired_count"
         ]
       },
       "AuditAction": {
@@ -3263,10 +3190,6 @@
             "type": "string",
             "description": "Name of the fired rule"
           },
-          "description": {
-            "type": "string",
-            "description": "Description of the fired rule"
-          },
           "status": {
             "type": "string",
             "description": "Status of the fired rule"
@@ -3301,14 +3224,9 @@
             "type": "string",
             "format": "date-time",
             "description": "The fired timestamp of the rule"
-          },
-          "definition": {
-            "type": "object",
-            "additionalProperties": {},
-            "description": "The action definition in the rule"
           }
         },
-        "required": ["activation_instance", "created_at", "description", "fired_at", "id", "name"]
+        "required": ["activation_instance", "created_at", "fired_at", "id", "name"]
       },
       "AuditRuleList": {
         "type": "object",
@@ -4018,43 +3936,6 @@
           }
         }
       },
-      "PaginatedPlaybookList": {
-        "type": "object",
-        "properties": {
-          "count": {
-            "type": "integer",
-            "example": 123
-          },
-          "next": {
-            "type": "string",
-            "nullable": true,
-            "format": "uri",
-            "example": "/eda/api/v1/example/?page=51&page_size=100"
-          },
-          "previous": {
-            "type": "string",
-            "nullable": true,
-            "format": "uri",
-            "example": "/eda/api/v1/example/?page=49&page_size=100"
-          },
-          "page_size": {
-            "type": "integer",
-            "nullable": true,
-            "example": 100
-          },
-          "page": {
-            "type": "integer",
-            "nullable": true,
-            "example": 50
-          },
-          "results": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Playbook"
-            }
-          }
-        }
-      },
       "PaginatedProjectList": {
         "type": "object",
         "properties": {
@@ -4383,7 +4264,6 @@
         "properties": {
           "name": {
             "type": "string",
-            "nullable": true,
             "description": "Name of the project"
           },
           "description": {
@@ -4395,6 +4275,10 @@
             "type": "integer",
             "nullable": true,
             "description": "Credential id of the project"
+          },
+          "verify_ssl": {
+            "type": "boolean",
+            "description": "Indicates if SSL verification is enabled"
           }
         }
       },
@@ -4454,29 +4338,6 @@
         },
         "required": ["action", "resource_type"]
       },
-      "Playbook": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "readOnly": true
-          },
-          "name": {
-            "type": "string",
-            "description": "Name of the playbook"
-          },
-          "playbook": {
-            "type": "string",
-            "description": "Content of the playbook"
-          },
-          "project_id": {
-            "type": "integer",
-            "nullable": true,
-            "readOnly": true
-          }
-        },
-        "required": ["id", "name", "playbook", "project_id"]
-      },
       "Project": {
         "type": "object",
         "properties": {
@@ -4489,6 +4350,9 @@
           "credential_id": {
             "type": "integer",
             "nullable": true
+          },
+          "verify_ssl": {
+            "type": "boolean"
           },
           "id": {
             "type": "integer",
@@ -4559,6 +4423,9 @@
           "credential_id": {
             "type": "integer",
             "nullable": true
+          },
+          "verify_ssl": {
+            "type": "boolean"
           }
         },
         "required": ["name", "url"]
@@ -4580,6 +4447,9 @@
               }
             ],
             "nullable": true
+          },
+          "verify_ssl": {
+            "type": "boolean"
           },
           "id": {
             "type": "integer",
@@ -4668,14 +4538,13 @@
           "project",
           "inventory",
           "extra_var",
-          "playbook",
           "rulebook",
           "role",
           "decision_environment",
           "credential"
         ],
         "type": "string",
-        "description": "* `activation` - activation\n* `activation_instance` - activation_instance\n* `audit_rule` - audit_rule\n* `audit_event` - audit_event\n* `task` - task\n* `user` - user\n* `project` - project\n* `inventory` - inventory\n* `extra_var` - extra_var\n* `playbook` - playbook\n* `rulebook` - rulebook\n* `role` - role\n* `decision_environment` - decision_environment\n* `credential` - credential"
+        "description": "* `activation` - activation\n* `activation_instance` - activation_instance\n* `audit_rule` - audit_rule\n* `audit_event` - audit_event\n* `task` - task\n* `user` - user\n* `project` - project\n* `inventory` - inventory\n* `extra_var` - extra_var\n* `rulebook` - rulebook\n* `role` - role\n* `decision_environment` - decision_environment\n* `credential` - credential"
       },
       "RestartPolicyEnum": {
         "enum": ["always", "on-failure", "never"],
@@ -4927,7 +4796,7 @@
           "source_types"
         ]
       },
-      "StatusB37Enum": {
+      "Status0e7Enum": {
         "enum": [
           "starting",
           "running",
@@ -4935,11 +4804,12 @@
           "failed",
           "stopping",
           "stopped",
+          "deleting",
           "completed",
           "unresponsive"
         ],
         "type": "string",
-        "description": "* `starting` - starting\n* `running` - running\n* `pending` - pending\n* `failed` - failed\n* `stopping` - stopping\n* `stopped` - stopped\n* `completed` - completed\n* `unresponsive` - unresponsive"
+        "description": "* `starting` - starting\n* `running` - running\n* `pending` - pending\n* `failed` - failed\n* `stopping` - stopping\n* `stopped` - stopped\n* `deleting` - deleting\n* `completed` - completed\n* `unresponsive` - unresponsive"
       },
       "Task": {
         "type": "object",
@@ -4990,21 +4860,6 @@
           "started_at",
           "status"
         ]
-      },
-      "TaskRef": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "href": {
-            "type": "string",
-            "format": "uri",
-            "readOnly": true
-          }
-        },
-        "required": ["href", "id"]
       },
       "TaskStatusEnum": {
         "enum": [
