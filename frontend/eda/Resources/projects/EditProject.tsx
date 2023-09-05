@@ -101,11 +101,15 @@ function ProjectEditInputs() {
         aria-disabled={true}
         isDisabled={true}
         label={t('SCM type')}
+        labelHelpTitle={t('SCM type')}
+        labelHelp={t('There is currently only one SCM available for use.')}
         placeholder={t('Git')}
       />
       <PageFormSelect
         name={'credential_id'}
         label={t('Credential')}
+        labelHelpTitle={t('Credential')}
+        labelHelp={t('The token needed to utilize the SCM URL.')}
         placeholderText={t('Select credential')}
         options={
           credentials?.results
