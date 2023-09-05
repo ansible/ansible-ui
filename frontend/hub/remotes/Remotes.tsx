@@ -17,6 +17,7 @@ export interface IRemotes {
   name: string;
   proxy_url?: string | null;
   pulp_href: string;
+  pulp_created: string;
   rate_limit: number | null;
   requirements_file: string | null;
   tls_validation: boolean;
@@ -34,7 +35,7 @@ export function Remotes() {
   const toolbarFilters = useRemoteFilters();
   const tableColumns = useRemoteColumns();
   const view = usePulpView<IRemotes>({
-    url: pulpAPI`/remotes/`,
+    url: pulpAPI`/remotes/ansible/collection/`,
     keyFn: pulpHrefKeyFn,
     toolbarFilters,
     tableColumns,
