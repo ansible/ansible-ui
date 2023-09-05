@@ -75,13 +75,13 @@ export function PageDashboardChart(props: {
     }));
 
   const maxDomainY = useMemo(() => {
-    let max = 1;
+    const maxValues: Record<string, number> = {};
     for (const group of groups) {
-      for (const value of group.values) {
-        if (value.value > max) max = value.value;
+      for (const entry of group.values) {
+        maxValues[entry.label] = (maxValues[entry.label] ?? 0) + entry.value;
       }
     }
-    return max;
+    return Object.values(maxValues).reduce((max, value) => (value > max ? value : max), 0);
   }, [groups]);
 
   const padding = {
