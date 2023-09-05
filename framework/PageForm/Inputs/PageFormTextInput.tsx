@@ -252,7 +252,7 @@ export function PageFormTextInput<
                 id={id}
                 placeholder={placeholder}
                 onChange={onChangeHandler}
-                value={value}
+                value={value ?? ''}
                 aria-describedby={id ? `${id}-form-group` : undefined}
                 validated={helperTextInvalid ? 'error' : undefined}
                 type={type === 'password' ? (showSecret ? 'text' : 'password') : type}
