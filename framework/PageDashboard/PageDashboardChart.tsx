@@ -85,7 +85,7 @@ export function PageDashboardChart(props: {
   }, [groups]);
 
   const padding = {
-    top: 0 + 16,
+    top: 4 + 16,
     bottom: 32 + 16,
     left: 12 + Math.round(maxDomainY).toString().length * 9.5 + 16,
     right: 0 + 16,

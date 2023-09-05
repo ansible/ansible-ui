@@ -30,26 +30,12 @@ export function PageChartLegend(props: {
                 gap: 6,
               }}
             >
-              <div
+              <PageChartLegendColor
                 id={`${props.id}-${item.label.toLowerCase().replace(/ /g, '-')}-count`}
-                style={{
-                  width: 10,
-                  height: 10,
-                  backgroundColor: item.color,
-                  borderRadius: 2,
-                  marginRight: 4,
-                }}
+                color={item.color}
               />
-              <div style={{ fontSize: 'small', textAlign: 'center' }}>{item.count}</div>
-              <div style={{ fontSize: 'small' }}>
-                {item.link ? (
-                  <Link to={item.link} style={{ textDecoration: 'none' }}>
-                    {item.label}
-                  </Link>
-                ) : (
-                  item.label
-                )}
-              </div>
+              <PageChartLegendCount count={item.count} />
+              <PageChartLegendLabel label={item.label} link={item.link} />
             </div>
           );
         })}
@@ -61,6 +47,7 @@ export function PageChartLegend(props: {
       style={{
         display: 'grid',
         gridTemplateColumns: 'auto auto auto',
+        rowGap: 6,
         columnGap: 6,
         alignItems: 'center',
       }}
@@ -69,35 +56,53 @@ export function PageChartLegend(props: {
         if (item.count === 0) return <></>;
         return (
           <>
-            <div
-              key={index * 3 + 0}
-              style={{
-                width: 10,
-                height: 10,
-                backgroundColor: item.color,
-                borderRadius: 2,
-                marginRight: 4,
-              }}
-            />
-            <div
+            <PageChartLegendColor key={index * 3 + 0} color={item.color} />
+            <PageChartLegendCount
               id={`${props.id}-${item.label.toLowerCase().replace(/ /g, '-')}-count`}
               key={index * 3 + 1}
-              style={{ fontSize: 'small', textAlign: 'center' }}
-            >
-              {item.count}
-            </div>
-            <div key={index * 3 + 2} style={{ fontSize: 'small' }}>
-              {item.link ? (
-                <Link to={item.link} style={{ textDecoration: 'none' }}>
-                  {item.label}
-                </Link>
-              ) : (
-                item.label
-              )}
-            </div>
+              count={item.count}
+            />
+            <PageChartLegendLabel key={index * 3 + 2} label={item.label} link={item.link} />
           </>
         );
       })}
+    </div>
+  );
+}
+
+function PageChartLegendColor(props: { id?: string; color: string }) {
+  return (
+    <div
+      id={props.id}
+      style={{
+        width: 10,
+        height: 10,
+        backgroundColor: props.color,
+        borderRadius: 2,
+        marginRight: 4,
+      }}
+    />
+  );
+}
+
+function PageChartLegendCount(props: { id?: string; count?: number }) {
+  return (
+    <div id={props.id} style={{ fontSize: 'small', lineHeight: '1em', textAlign: 'center' }}>
+      {props.count}
+    </div>
+  );
+}
+
+function PageChartLegendLabel(props: { label: string; link?: string }) {
+  return (
+    <div style={{ fontSize: 'small', lineHeight: '1em' }}>
+      {props.link ? (
+        <Link to={props.link} style={{ textDecoration: 'none' }}>
+          {props.label}
+        </Link>
+      ) : (
+        props.label
+      )}
     </div>
   );
 }
