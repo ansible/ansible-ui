@@ -30,7 +30,7 @@ export function useAwxView<T extends { id: number }>(options: {
   /** The base url for the view. */
   url: string;
 
-  /** The filters for the view. Used to manage the keys used in the brower querystrings which store the filter results. */
+  /** The filters for the view. Used to manage the keys used in the browser querystrings which store the filter results. */
   toolbarFilters?: IToolbarFilter[];
 
   /** The table columns for the view. Used to determine the default sort. */
@@ -39,7 +39,7 @@ export function useAwxView<T extends { id: number }>(options: {
   /** Extra querystring params passed to the backed API.  */
   queryParams?: QueryParams;
 
-  /** Disable the brower querystring updating. Used when a table is in a details page or modal. */
+  /** Disable the browser querystring updating. Used when a table is in a details page or modal. */
   disableQueryString?: boolean;
 
   /** The default items that should be initially selected. */
