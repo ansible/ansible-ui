@@ -56,10 +56,11 @@ export interface ActivationInstance {
    * * `failed` - failed
    * * `stopping` - stopping
    * * `stopped` - stopped
+   * * `deleting` - deleting
    * * `completed` - completed
    * * `unresponsive` - unresponsive
    */
-  status?: StatusB37Enum;
+  status?: Status0E7Enum;
   activation_id: number;
   /** @format date-time */
   started_at: string;
@@ -92,10 +93,11 @@ export interface ActivationList {
    * * `failed` - failed
    * * `stopping` - stopping
    * * `stopped` - stopped
+   * * `deleting` - deleting
    * * `completed` - completed
    * * `unresponsive` - unresponsive
    */
-  status: StatusB37Enum;
+  status?: Status0E7Enum;
   decision_environment_id: number | null;
   project_id: number | null;
   rulebook_id: number | null;
@@ -135,10 +137,11 @@ export interface ActivationRead {
    * * `failed` - failed
    * * `stopping` - stopping
    * * `stopped` - stopped
+   * * `deleting` - deleting
    * * `completed` - completed
    * * `unresponsive` - unresponsive
    */
-  status: StatusB37Enum;
+  status?: Status0E7Enum;
   project?: ProjectRef | null;
   /** Serializer for Rulebook reference. */
   rulebook: RulebookRef;
@@ -219,8 +222,6 @@ export interface AuditRuleDetail {
   id: number;
   /** Name of the fired rule */
   name: string;
-  /** Description of the fired rule */
-  description: string;
   /** Status of the fired rule */
   status?: string;
   /** @example {"id":0,"name":"string"} */
@@ -240,8 +241,6 @@ export interface AuditRuleDetail {
    * @format date-time
    */
   fired_at: string;
-  /** The action definition in the rule */
-  definition?: Record<string, any>;
 }
 
 export interface AuditRuleList {
@@ -610,26 +609,6 @@ export interface PaginatedExtraVarList {
   results?: ExtraVar[];
 }
 
-export interface PaginatedPlaybookList {
-  /** @example 123 */
-  count?: number;
-  /**
-   * @format uri
-   * @example "/eda/api/v1/example/?page=51&page_size=100"
-   */
-  next?: string | null;
-  /**
-   * @format uri
-   * @example "/eda/api/v1/example/?page=49&page_size=100"
-   */
-  previous?: string | null;
-  /** @example 100 */
-  page_size?: number | null;
-  /** @example 50 */
-  page?: number | null;
-  results?: Playbook[];
-}
-
 export interface PaginatedProjectList {
   /** @example 123 */
   count?: number;
@@ -807,11 +786,13 @@ export interface PatchedDecisionEnvironmentCreate {
 
 export interface PatchedProjectUpdateRequest {
   /** Name of the project */
-  name?: string | null;
+  name?: string;
   /** Description of the project */
   description?: string | null;
   /** Credential id of the project */
   credential_id?: number | null;
+  /** Indicates if SSL verification is enabled */
+  verify_ssl?: boolean;
 }
 
 export interface PatchedUserCreateUpdate {
@@ -836,19 +817,11 @@ export interface PermissionRef {
   action: ActionEnum;
 }
 
-export interface Playbook {
-  id: number;
-  /** Name of the playbook */
-  name: string;
-  /** Content of the playbook */
-  playbook: string;
-  project_id: number | null;
-}
-
 export interface Project {
   name: string;
   description?: string;
   credential_id?: number | null;
+  verify_ssl?: boolean;
   id: number;
   url: string;
   git_hash: string;
@@ -867,6 +840,7 @@ export interface ProjectCreateRequest {
   name: string;
   description?: string;
   credential_id?: number | null;
+  verify_ssl?: boolean;
 }
 
 /** Serializer for reading the Project with embedded objects. */
@@ -874,6 +848,7 @@ export interface ProjectRead {
   name: string;
   description?: string;
   credential?: CredentialRef | null;
+  verify_ssl?: boolean;
   id: number;
   url: string;
   git_hash: string;
@@ -905,7 +880,6 @@ export interface ProjectRef {
  * * `project` - project
  * * `inventory` - inventory
  * * `extra_var` - extra_var
- * * `playbook` - playbook
  * * `rulebook` - rulebook
  * * `role` - role
  * * `decision_environment` - decision_environment
@@ -921,7 +895,6 @@ export enum ResourceTypeEnum {
   Project = 'project',
   Inventory = 'inventory',
   ExtraVar = 'extra_var',
-  Playbook = 'playbook',
   Rulebook = 'rulebook',
   Role = 'role',
   DecisionEnvironment = 'decision_environment',
@@ -1062,16 +1035,18 @@ export interface RulesetOut {
  * * `failed` - failed
  * * `stopping` - stopping
  * * `stopped` - stopped
+ * * `deleting` - deleting
  * * `completed` - completed
  * * `unresponsive` - unresponsive
  */
-export enum StatusB37Enum {
+export enum Status0E7Enum {
   Starting = 'starting',
   Running = 'running',
   Pending = 'pending',
   Failed = 'failed',
   Stopping = 'stopping',
   Stopped = 'stopped',
+  Deleting = 'deleting',
   Completed = 'completed',
   Unresponsive = 'unresponsive',
 }
@@ -1089,13 +1064,6 @@ export interface Task {
   /** @format date-time */
   finished_at: string | null;
   result: Record<string, any>;
-}
-
-export interface TaskRef {
-  /** @format uuid */
-  id: string;
-  /** @format uri */
-  href: string;
 }
 
 /**
@@ -1436,6 +1404,35 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       }),
 
     /**
+     * @description List all logs for the Activation Instance
+     *
+     * @tags activation-instances
+     * @name ActivationInstancesLogsList
+     * @request GET:/activation-instances/{id}/logs/
+     * @secure
+     */
+    activationInstancesLogsList: (
+      id: number,
+      query?: {
+        /** Filter by activation instance log. */
+        log?: string;
+        /** A page number within the paginated result set. */
+        page?: number;
+        /** Number of results to return per page. */
+        page_size?: number;
+      },
+      params: RequestParams = {}
+    ) =>
+      this.request<PaginatedActivationInstanceLogList, any>({
+        path: `/activation-instances/${id}/logs/`,
+        method: 'GET',
+        query: query,
+        secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
      * @description Get the Activation Instance by its id
      *
      * @tags activation-instances
@@ -1467,37 +1464,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         secure: true,
         ...params,
       }),
-
-    /**
-     * @description List all logs for the Activation Instance
-     *
-     * @tags activation-instances
-     * @name ActivationInstancesLogsList
-     * @request GET:/activation-instances/{id}/logs/
-     * @secure
-     */
-    activationInstancesLogsList: (
-      id: number,
-      query?: {
-        /** Filter by activation instance name. */
-        name?: string;
-        /** A page number within the paginated result set. */
-        page?: number;
-        /** Number of results to return per page. */
-        page_size?: number;
-        /** Filter by activation instance status. */
-        status?: string;
-      },
-      params: RequestParams = {}
-    ) =>
-      this.request<PaginatedActivationInstanceLogList, any>({
-        path: `/activation-instances/${id}/logs/`,
-        method: 'GET',
-        query: query,
-        secure: true,
-        format: 'json',
-        ...params,
-      }),
   };
   activations = {
     /**
@@ -1516,6 +1482,8 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         page?: number;
         /** Number of results to return per page. */
         page_size?: number;
+        /** Filter by activation status. */
+        status?: string;
       },
       params: RequestParams = {}
     ) =>
@@ -1543,6 +1511,37 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         body: data,
         secure: true,
         type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description List all instances for the Activation
+     *
+     * @tags activations
+     * @name ActivationsInstancesList
+     * @request GET:/activations/{id}/instances/
+     * @secure
+     */
+    activationsInstancesList: (
+      id: number,
+      query?: {
+        /** Filter by activation instance name. */
+        name?: string;
+        /** A page number within the paginated result set. */
+        page?: number;
+        /** Number of results to return per page. */
+        page_size?: number;
+        /** Filter by activation instance status. */
+        status?: string;
+      },
+      params: RequestParams = {}
+    ) =>
+      this.request<PaginatedActivationInstanceList, any>({
+        path: `/activations/${id}/instances/`,
+        method: 'GET',
+        query: query,
+        secure: true,
         format: 'json',
         ...params,
       }),
@@ -1609,23 +1608,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         path: `/activations/${id}/enable/`,
         method: 'POST',
         secure: true,
-        ...params,
-      }),
-
-    /**
-     * @description List all instances for the Activation
-     *
-     * @tags activations
-     * @name ActivationsInstancesRetrieve
-     * @request GET:/activations/{id}/instances/
-     * @secure
-     */
-    activationsInstancesRetrieve: (id: number, params: RequestParams = {}) =>
-      this.request<PaginatedActivationInstanceList, any>({
-        path: `/activations/${id}/instances/`,
-        method: 'GET',
-        secure: true,
-        format: 'json',
         ...params,
       }),
 
@@ -2117,50 +2099,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         ...params,
       }),
   };
-  playbooks = {
-    /**
-     * @description List all playbooks
-     *
-     * @tags playbooks
-     * @name PlaybooksList
-     * @request GET:/playbooks/
-     * @secure
-     */
-    playbooksList: (
-      query?: {
-        /** A page number within the paginated result set. */
-        page?: number;
-        /** Number of results to return per page. */
-        page_size?: number;
-      },
-      params: RequestParams = {}
-    ) =>
-      this.request<PaginatedPlaybookList, any>({
-        path: `/playbooks/`,
-        method: 'GET',
-        query: query,
-        secure: true,
-        format: 'json',
-        ...params,
-      }),
-
-    /**
-     * @description Get the playbook by its id
-     *
-     * @tags playbooks
-     * @name PlaybooksRetrieve
-     * @request GET:/playbooks/{id}/
-     * @secure
-     */
-    playbooksRetrieve: (id: number, params: RequestParams = {}) =>
-      this.request<Playbook, any>({
-        path: `/playbooks/${id}/`,
-        method: 'GET',
-        secure: true,
-        format: 'json',
-        ...params,
-      }),
-  };
   projects = {
     /**
      * @description List all projects
@@ -2268,20 +2206,18 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       }),
 
     /**
-     * @description Provide default implementation to get_response_serializer_class. The view class should override this method if the response body format is different from the request.
+     * @description Sync a project
      *
      * @tags projects
      * @name ProjectsSyncCreate
      * @request POST:/projects/{id}/sync/
      * @secure
      */
-    projectsSyncCreate: (id: number, data: Project, params: RequestParams = {}) =>
-      this.request<TaskRef, any>({
+    projectsSyncCreate: (id: number, params: RequestParams = {}) =>
+      this.request<Project, any>({
         path: `/projects/${id}/sync/`,
         method: 'POST',
-        body: data,
         secure: true,
-        type: ContentType.Json,
         format: 'json',
         ...params,
       }),
