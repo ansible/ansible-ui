@@ -60,9 +60,8 @@ describe('Job templates form', () => {
     cy.deleteAwxInstanceGroup(instanceGroup);
   });
 
-  it.skip('Should create job template with all fields except for prompt on launch values', () => {
-    //this test requires refactoring when Job Template creation is enabled
-    const jtName = 'E2E ' + randomString(4);
+  it('Should create job template with all fields except for prompt on launch values', () => {
+    const jtName = 'E2E-JT ' + randomString(4);
 
     cy.navigateTo('awx', 'templates');
     cy.clickButton(/^Create template$/);
@@ -72,130 +71,157 @@ describe('Job templates form', () => {
     cy.get('[data-cy="name"]').type(jtName);
 
     // Description
-    cy.get('[data-cy="description"]').type('this is a description');
-
+    cy.typeInputByLabel(/^Description$/, 'This is a JT description');
+    cy.selectPromptOnLaunchByLabel(/^Inventory$/);
+    cy.selectDropdownOptionByLabel(/^Project$/, project.name);
+    cy.selectDropdownOptionByLabel(/^Playbook$/, 'hello_world.yml');
+    cy.clickButton(/^Create job template$/);
+    cy.hasTitle(jtName);
+    // cy.getCheckboxByLabel('Prompt on launch');
     // Inventory
-    cy.get('input[placeholder="Enter inventory"]')
-      .parent()
-      .within(() => {
-        cy.get('button[aria-label="Options menu"]').click();
-      });
-    cy.selectTableRowInDialog(inventory.name, true, 'radio').click();
-    cy.clickModalButton('Confirm');
-
-    // Project
-    cy.get('input[placeholder="Add project"]')
-      .parent()
-      .within(() => {
-        cy.get('button[aria-label="Options menu"]').click();
-      });
-    cy.selectTableRowInDialog(project.name, true, 'radio').click();
-    cy.clickModalButton('Confirm');
-
-    // Playbook
-    cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
-
-    // Execution Environment
-    cy.get('input[placeholder="Add execution environment"]')
-      .parent()
-      .within(() => {
-        cy.get('button[aria-label="Options menu"]').click();
-      });
-    cy.selectTableRowInDialog(executionEnvironment.name, true, 'radio').click();
-    cy.clickModalButton('Confirm');
-
-    // Credentials
-    cy.get('input[placeholder="Add credentials"]')
-      .parent()
-      .within(() => {
-        cy.get('button[aria-label="Options menu"]').click();
-      });
-    cy.selectTableRowInDialog(machineCredential.name, true, 'checkbox').click();
-    cy.clickModalButton('Confirm');
-
-    // Labels
-    cy.selectDropdownOptionByResourceName('labels.select', label.name.toString());
-
-    cy.get('[data-cy="forks"]').type('10');
-    cy.get('[data-cy="limit"]').type('10');
-    cy.get('[data-cy="verbosity"]').type('1');
-    cy.get('[data-cy="job-slicing"]').type('10');
-    cy.get('[data-cy="timeout"]').type('10');
-    cy.get('[data-cy="show-changes-toggle"]').click();
-
-    // Instance Groups
-    cy.get('input[placeholder="Add instance groups"]')
-      .parent()
-      .within(() => {
-        cy.get('button[aria-label="Options menu"]').click();
-      });
-    cy.selectTableRowInDialog(instanceGroup.name, true, 'checkbox').click();
-    cy.clickModalButton('Confirm');
-
-    // Job tags
-    cy.contains('.pf-c-form__label-text', /^Job tags$/)
-      .parent()
-      .parent()
-      .parent()
-      .parent()
-      .within(() => {
-        cy.get('.pf-c-form__group-control').within(() => {
-          cy.get("input[type='text']")
-            .click()
-            .type('test job tag')
-            .parent()
-            .parent()
-            .parent()
-            .within(() => {
-              cy.get('.pf-c-select__menu').within(() => {
-                cy.get('button').contains('test job tag').click();
-              });
-            });
-        });
-      });
-
-    // Skip tags
-    cy.contains('.pf-c-form__label-text', /^Skip tags$/)
-      .parent()
-      .parent()
-      .parent()
-      .parent()
-      .within(() => {
-        cy.get('.pf-c-form__group-control').within(() => {
-          cy.get("input[type='text']")
-            .click()
-            .type('test skip tag')
-            .parent()
-            .parent()
-            .parent()
-            .within(() => {
-              cy.get('.pf-c-select__menu').within(() => {
-                cy.get('button').contains('test skip tag').click();
-              });
-            });
-        });
-      });
-
-    cy.get('input#become_enabled').click();
-    cy.get('input#isProvisioningCallbackEnabled').click();
-    // cy.get('input#isWebhookEnabled').click();
-    cy.get('input#allow_simultaneous').click();
-    cy.get('input#use_fact_cache').click();
-    cy.get('input#prevent_instance_group_fallback').click();
-    cy.get('[data-cy="host-config-key"]').type('test config key');
-
-    // cy.selectDropdownOptionByResourceName('webhook-service', 'GitHub');
-
-    // cy.get('input[placeholder="Add webhook credential"]')
+    // cy.get('input[placeholder="Enter inventory"]')
     //   .parent()
     //   .within(() => {
     //     cy.get('button[aria-label="Options menu"]').click();
     //   });
-    // cy.selectTableRowInDialog(githubTokenCrendential.name, true, 'radio').click();
+    // cy.selectTableRowInDialog(inventory.name, true, 'radio').click();
     // cy.clickModalButton('Confirm');
 
+    // Project
+    // cy.get('input[placeholder="Add project"]')
+    //   .parent()
+    //   .within(() => {
+    //     cy.get('button[aria-label="Options menu"]').click();
+    //   });
+    // cy.selectTableRowInDialog(project.name, true, 'radio').click();
+    // cy.clickModalButton('Confirm');
+
+    // // Playbook
+    // cy.selectDropdownOptionByLabel(/^Playbook$/, 'hello_world.yml');
+
+    // // Execution Environment
+    // cy.get('input[placeholder="Add execution environment"]')
+    //   .parent()
+    //   .within(() => {
+    //     cy.get('button[aria-label="Options menu"]').click();
+    //   });
+    // cy.selectTableRowInDialog(executionEnvironment.name, true, 'radio').click();
+    // cy.clickModalButton('Confirm');
+
+    // // Credentials
+    // cy.get('input[placeholder="Add credentials"]')
+    //   .parent()
+    //   .within(() => {
+    //     cy.get('button[aria-label="Options menu"]').click();
+    //   });
+    // cy.selectTableRowInDialog(machineCredential.name, true, 'checkbox').click();
+    // cy.clickModalButton('Confirm');
+
+    // // Labels
+    // cy.selectDropdownOptionByLabel(/^Labels$/, label.name.toString(), true);
+
+    // cy.typeInputByLabel(/^Forks$/, '10');
+    // cy.typeInputByLabel(/^Limit$/, '10');
+    // cy.typeInputByLabel(/^Verbosity$/, '1');
+    // cy.typeInputByLabel(/^Job slicing$/, '10');
+    // cy.typeInputByLabel(/^Timeout$/, '10');
+    // cy.getFormGroupByLabel(/^Show changes$/)
+    //   .parent()
+    //   .within(() => {
+    //     cy.get('.pf-c-switch__toggle').click();
+    //   });
+
+    // // Instance Groups
+    // cy.get('input[placeholder="Add instance groups"]')
+    //   .parent()
+    //   .within(() => {
+    //     cy.get('button[aria-label="Options menu"]').click();
+    //   });
+    // cy.selectTableRowInDialog(instanceGroup.name, true, 'checkbox').click();
+    // cy.clickModalButton('Confirm');
+
+    // // Job tags
+    // cy.contains('.pf-c-form__label-text', /^Job tags$/)
+    //   .parent()
+    //   .parent()
+    //   .parent()
+    //   .parent()
+    //   .within(() => {
+    //     cy.get('.pf-c-form__group-control').within(() => {
+    //       cy.get("input[type='text']")
+    //         .click()
+    //         .type('test job tag')
+    //         .parent()
+    //         .parent()
+    //         .parent()
+    //         .within(() => {
+    //           cy.get('.pf-c-select__menu').within(() => {
+    //             cy.get('button').contains('test job tag').click();
+    //           });
+    //         });
+    //     });
+    //   });
+
+    // // Skip tags
+    // cy.contains('.pf-c-form__label-text', /^Skip tags$/)
+    //   .parent()
+    //   .parent()
+    //   .parent()
+    //   .parent()
+    //   .within(() => {
+    //     cy.get('.pf-c-form__group-control').within(() => {
+    //       cy.get("input[type='text']")
+    //         .click()
+    //         .type('test skip tag')
+    //         .parent()
+    //         .parent()
+    //         .parent()
+    //         .within(() => {
+    //           cy.get('.pf-c-select__menu').within(() => {
+    //             cy.get('button').contains('test skip tag').click();
+    //           });
+    //         });
+    //     });
+    //   });
+
+    // cy.get('input#become_enabled').click();
+    // cy.get('input#isProvisioningCallbackEnabled').click();
+    // // cy.get('input#isWebhookEnabled').click();
+    // cy.get('input#allow_simultaneous').click();
+    // cy.get('input#use_fact_cache').click();
+    // cy.get('input#prevent_instance_group_fallback').click();
+    // cy.typeInputByLabel(/^Host config key$/, 'test config key');
+
+    // // cy.selectDropdownOptionByLabel(/^Webhook service$/, 'GitHub');
+
+    // // cy.get('input[placeholder="Add webhook credential"]')
+    // //   .parent()
+    // //   .within(() => {
+    // //     cy.get('button[aria-label="Options menu"]').click();
+    // //   });
+    // // cy.selectTableRowInDialog(githubTokenCrendential.name, true, 'radio').click();
+    // // cy.clickModalButton('Confirm');
+
+    // cy.clickButton(/^Create job template$/);
+    // cy.hasTitle(jtName);
+  });
+
+  it.only('creation of job template using values from the prompt on launch wizard', () => {
+    const jtName = 'E2E-POLJT ' + randomString(4);
+
+    cy.navigateTo(/^Templates$/);
+    cy.clickButton(/^Create template$/);
+    cy.clickLink(/^Create job template$/);
+    cy.typeInputByLabel(/^Name$/, jtName);
+    cy.typeInputByLabel(/^Description$/, 'This is a JT with POL wizard description');
+    cy.selectPromptOnLaunchByLabel(/^Inventory$/);
+    cy.selectDropdownOptionByLabel(/^Project$/, project.name);
+    cy.selectDropdownOptionByLabel(/^Playbook$/, 'hello_world.yml');
     cy.clickButton(/^Create job template$/);
-    cy.verifyPageTitle(jtName);
+    cy.hasTitle(jtName);
+    cy.navigateTo(/^Templates$/);
+    cy.getTableRowByText(jtName).should('be.visible');
+    cy.clickTableRowActionIcon(jtName, 'Launch template');
   });
 
   it.skip('Should edit a job template', () => {
