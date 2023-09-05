@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import styled from 'styled-components';
 
 export function PageChartLegend(props: {
   id: string;
@@ -7,51 +8,25 @@ export function PageChartLegend(props: {
 }) {
   if (props.horizontal) {
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 20,
-        }}
-      >
+      <PageChartLegendHorizontalStyle>
         {props.legend.map((item, index) => {
           if (item.count === 0) return <></>;
           return (
-            <div
-              key={index}
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 6,
-              }}
-            >
+            <PageChartLegendHorizontalItemStyle key={index}>
               <PageChartLegendColor
                 id={`${props.id}-${item.label.toLowerCase().replace(/ /g, '-')}-count`}
                 color={item.color}
               />
               <PageChartLegendCount count={item.count} />
               <PageChartLegendLabel label={item.label} link={item.link} />
-            </div>
+            </PageChartLegendHorizontalItemStyle>
           );
         })}
-      </div>
+      </PageChartLegendHorizontalStyle>
     );
   }
   return (
-    <div
-      style={{
-        display: 'grid',
-        gridTemplateColumns: 'auto auto auto',
-        rowGap: 6,
-        columnGap: 6,
-        alignItems: 'center',
-      }}
-    >
+    <PageChartLegendVerticalStyle>
       {props.legend.map((item, index) => {
         if (item.count === 0) return <></>;
         return (
@@ -66,36 +41,21 @@ export function PageChartLegend(props: {
           </>
         );
       })}
-    </div>
+    </PageChartLegendVerticalStyle>
   );
 }
 
 function PageChartLegendColor(props: { id?: string; color: string }) {
-  return (
-    <div
-      id={props.id}
-      style={{
-        width: 10,
-        height: 10,
-        backgroundColor: props.color,
-        borderRadius: 2,
-        marginRight: 4,
-      }}
-    />
-  );
+  return <PageChartLegendColorStyle id={props.id} style={{ backgroundColor: props.color }} />;
 }
 
 function PageChartLegendCount(props: { id?: string; count?: number }) {
-  return (
-    <div id={props.id} style={{ fontSize: 'small', lineHeight: '1em', textAlign: 'center' }}>
-      {props.count}
-    </div>
-  );
+  return <PageChartLegendCountStyle id={props.id}>{props.count}</PageChartLegendCountStyle>;
 }
 
 function PageChartLegendLabel(props: { label: string; link?: string }) {
   return (
-    <div style={{ fontSize: 'small', lineHeight: '1em' }}>
+    <PageChartLegendLabelStyle>
       {props.link ? (
         <Link to={props.link} style={{ textDecoration: 'none' }}>
           {props.label}
@@ -103,6 +63,49 @@ function PageChartLegendLabel(props: { label: string; link?: string }) {
       ) : (
         props.label
       )}
-    </div>
+    </PageChartLegendLabelStyle>
   );
 }
+
+const PageChartLegendHorizontalStyle = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+`;
+
+const PageChartLegendHorizontalItemStyle = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+`;
+
+const PageChartLegendVerticalStyle = styled.div`
+  display: grid;
+  grid-template-columns: auto auto auto;
+  row-gap: 6px;
+  column-gap: 6px;
+  align-items: center;
+`;
+
+const PageChartLegendColorStyle = styled.div`
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  margin-right: 4px;
+`;
+
+const PageChartLegendCountStyle = styled.div`
+  font-size: small;
+  line-height: 1em;
+  text-align: center;
+`;
+
+const PageChartLegendLabelStyle = styled.div`
+  font-size: small;
+  line-height: 1em;
+`;

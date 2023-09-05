@@ -103,12 +103,7 @@ export function RoutedTabs(props: {
     <>
       <PageSection type={PageSectionTypes.tabs}>
         <Flex spaceItems={{ default: 'spaceItemsNone' }}>
-          {props.preComponents && (
-            <>
-              <FlexItem>{props.preComponents}</FlexItem>
-              {/* <Divider orientation={{ default: 'vertical' }} component="div" /> */}
-            </>
-          )}
+          {props.preComponents && <FlexItem>{props.preComponents}</FlexItem>}
           <FlexItem>
             <Tabs
               isBox
@@ -156,10 +151,7 @@ export function RoutedTabs(props: {
             }}
           />
           {props.postComponents && (
-            <>
-              {/* <Divider orientation={{ default: 'vertical' }} /> */}
-              <FlexItem style={{ paddingRight: 16 }}>{props.postComponents}</FlexItem>
-            </>
+            <FlexItem style={{ paddingRight: 16 }}>{props.postComponents}</FlexItem>
           )}
         </Flex>
       </PageSection>
