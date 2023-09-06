@@ -229,7 +229,7 @@ export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
           {!props.disablePagination && (
             <ToolbarItem
               visibility={{ default: 'hidden', '2xl': 'visible' }}
-              style={{ marginLeft: 24 }}
+              style={{ marginLeft: 24, alignSelf: 'center' }}
             >
               <Pagination
                 variant={PaginationVariant.top}

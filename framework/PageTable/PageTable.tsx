@@ -43,7 +43,6 @@ import {
 import styled from 'styled-components';
 import { IPageAction, PageActionSelection } from '../PageActions/PageAction';
 import { PageActions } from '../PageActions/PageActions';
-import { PageBody } from '../PageBody';
 import { PageDetailsFromColumns } from '../PageDetails/PageDetailsFromColumns';
 import { PageTableViewType, PageTableViewTypeE } from '../PageToolbar/PageTableViewType';
 import { PageToolbar } from '../PageToolbar/PageToolbar';
@@ -53,7 +52,6 @@ import { useSettings } from '../Settings';
 import { EmptyStateError } from '../components/EmptyStateError';
 import { EmptyStateNoData } from '../components/EmptyStateNoData';
 import { Scrollable } from '../components/Scrollable';
-import { useBreakpoint } from '../components/useBreakPoint';
 import { useManageColumns } from '../components/useManageColumns';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { PagePagination } from './PagePagination';
@@ -190,10 +188,9 @@ export type PageTableProps<T extends object> = {
   topContent?: React.ReactNode;
 
   /**
-   * If topContent is set and this variable is set to true, it will render scrollable area outside of both table and topContent,
-   * if set to false (or not set at all), scrollable area will render in table only (default setting).
+   * If topContent is set and this variable is set to true, topContent will be scrolled with table.
    */
-  scrollOutsideTable?: boolean;
+  scrollTopContent?: boolean;
 };
 
 /**
@@ -212,7 +209,7 @@ export type PageTableProps<T extends object> = {
  * ```
  */
 export function PageTable<T extends object>(props: PageTableProps<T>) {
-  const { id, toolbarActions, filterState, error, itemCount, disableBodyPadding } = props;
+  const { id, toolbarActions, filterState, error, itemCount } = props;
 
   const { openColumnManagement, managedColumns } = useManageColumns<T>(
     (id ?? '') + '-columns',
@@ -261,8 +258,6 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
     [props.id]
   );
 
-  const usePadding = useBreakpoint('md') && disableBodyPadding !== true;
-
   const sortOptions = usePageToolbarSortOptionsFromColumns(props.tableColumns);
   if (error) {
     return (
@@ -310,15 +305,19 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
     );
   }
 
-  let tableContent = (
-    <>
-      {props.topContent && <PageSection>{props.topContent}</PageSection>}
-      <PageTableView {...props} tableColumns={managedColumns} />
-    </>
-  );
-
-  if (props.scrollOutsideTable) {
-    tableContent = <Scrollable>{tableContent}</Scrollable>;
+  let topContent = props.topContent;
+  if (topContent) {
+    topContent = (
+      <PageSection
+        variant="light"
+        padding={{ default: 'noPadding' }}
+        style={{
+          borderBottom: 'thin solid var(--pf-global--BorderColor--100)',
+        }}
+      >
+        {props.topContent}
+      </PageSection>
+    );
   }
 
   return (
@@ -333,32 +332,57 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
         sortOptions={sortOptions}
       />
       {viewType === PageTableViewTypeE.Table && (
-        <PageBody disablePadding={disableBodyPadding}>{tableContent}</PageBody>
+        <>
+          {props.scrollTopContent ? (
+            <Scrollable>
+              {topContent}
+              <PageTableView {...props} tableColumns={managedColumns} />
+            </Scrollable>
+          ) : (
+            <>
+              {topContent}
+              <PageTableView {...props} tableColumns={managedColumns} />
+            </>
+          )}
+        </>
       )}
       {viewType === PageTableViewTypeE.List && (
-        <Scrollable>
-          {props.topContent && <PageSection>{props.topContent}</PageSection>}
-          <PageSection padding={{ default: 'noPadding', md: 'padding' }}>
-            <div
-              style={{
-                borderLeft: usePadding
-                  ? 'thin solid var(--pf-global--BorderColor--100)'
-                  : undefined,
-                borderRight: usePadding
-                  ? 'thin solid var(--pf-global--BorderColor--100)'
-                  : undefined,
-              }}
-            >
-              <PageTableList {...props} showSelect={showSelect} tableColumns={managedColumns} />
-            </div>
-          </PageSection>
-        </Scrollable>
+        <>
+          {props.scrollTopContent ? (
+            <Scrollable>
+              {topContent}
+              <PageSection padding={{ default: 'noPadding' }}>
+                <PageTableList {...props} showSelect={showSelect} tableColumns={managedColumns} />
+              </PageSection>
+            </Scrollable>
+          ) : (
+            <>
+              {topContent}
+              <Scrollable>
+                <PageSection padding={{ default: 'noPadding' }}>
+                  <PageTableList {...props} showSelect={showSelect} tableColumns={managedColumns} />
+                </PageSection>
+              </Scrollable>
+            </>
+          )}
+        </>
       )}
       {viewType === PageTableViewTypeE.Cards && (
-        <Scrollable>
-          {props.topContent && <PageSection>{props.topContent}</PageSection>}
-          <PageTableCards {...props} showSelect={showSelect} tableColumns={managedColumns} />
-        </Scrollable>
+        <>
+          {props.scrollTopContent ? (
+            <Scrollable>
+              {topContent}
+              <PageTableCards {...props} showSelect={showSelect} tableColumns={managedColumns} />
+            </Scrollable>
+          ) : (
+            <>
+              {topContent}
+              <Scrollable>
+                <PageTableCards {...props} showSelect={showSelect} tableColumns={managedColumns} />
+              </Scrollable>
+            </>
+          )}
+        </>
       )}
       {!props.disablePagination &&
         (!props.autoHidePagination || (props.itemCount ?? 0) > props.perPage) && (
@@ -564,9 +588,16 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
     </>
   );
 
-  if (!props.scrollOutsideTable) {
+  if (!props.scrollTopContent) {
     returnElement = (
-      <ScrollDiv className="pf-c-scroll-inner-wrapper" ref={containerRef} onScroll={onScroll}>
+      <ScrollDiv
+        className="pf-c-scroll-inner-wrapper"
+        ref={containerRef}
+        onScroll={onScroll}
+        style={{
+          backgroundColor: 'var(--pf-global--BackgroundColor--100)',
+        }}
+      >
         {returnElement}
       </ScrollDiv>
     );

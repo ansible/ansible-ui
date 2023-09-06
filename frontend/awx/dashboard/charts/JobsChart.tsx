@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import useSWR from 'swr';
 import { PageDashboardChart } from '../../../../framework/PageDashboard/PageDashboardChart';
 import { usePageChartColors } from '../../../../framework/PageDashboard/usePageChartColors';
+import { RouteObj } from '../../../common/Routes';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
 
 export type UnifiedJobSummary = Pick<UnifiedJob, 'id' | 'finished' | 'failed'>;
@@ -62,14 +63,34 @@ export function JobsChart(props: {
   return (
     <PageDashboardChart
       yLabel={t('Job Count')}
-      groups={[
-        { label: t('Successful'), color: successfulColor, values: successful },
-        { label: t('Error'), color: errorColor, values: error },
-        { label: t('Failed'), color: failedColor, values: failed },
-        { label: t('Canceled'), color: canceledColor, values: canceled },
-      ]}
-      onlyIntegerTicks
       variant="stackedAreaChart"
+      groups={[
+        {
+          label: t('Successful'),
+          color: successfulColor,
+          values: successful,
+          link: RouteObj.Jobs + '?status=successful',
+        },
+        {
+          label: t('Error'),
+          color: errorColor,
+          values: error,
+          link: RouteObj.Jobs + '?status=error',
+        },
+        {
+          label: t('Failed'),
+          color: failedColor,
+          values: failed,
+          link: RouteObj.Jobs + '?status=failed',
+        },
+        {
+          label: t('Canceled'),
+          color: canceledColor,
+          values: canceled,
+          link: RouteObj.Jobs + '?status=canceled',
+        },
+      ]}
+      height={props.height}
     />
   );
 }

@@ -22,6 +22,7 @@ export interface PageContainerSize {
 export function PageChartContainer(props: {
   children: (size: PageContainerSize) => ReactNode;
   className?: string;
+  height?: number;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [containerSize, setContainerSize] = useState<PageContainerSize>({
@@ -48,7 +49,7 @@ export function PageChartContainer(props: {
   useEffect(() => updateSize(), [ref, updateSize]);
   useResizeObserver(ref, () => updateSize());
   return (
-    <ChartContainerDiv ref={ref} className={props.className}>
+    <ChartContainerDiv ref={ref} className={props.className} style={{ height: props.height }}>
       <PropsDiv>{props.children(containerSize)}</PropsDiv>
     </ChartContainerDiv>
   );
