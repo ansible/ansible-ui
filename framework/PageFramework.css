@@ -2,6 +2,10 @@
   border-top: thin solid var(--pf-global--BorderColor--100);
 }
 
+.border-left {
+  border-left: thin solid var(--pf-global--BorderColor--100);
+}
+
 .border-bottom {
   border-bottom: thin solid var(--pf-global--BorderColor--100);
 }

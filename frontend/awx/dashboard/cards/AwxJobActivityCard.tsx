@@ -1,4 +1,4 @@
-import { Flex, FlexItem } from '@patternfly/react-core';
+import { CardBody, Flex, FlexItem } from '@patternfly/react-core';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FormGroupSelectOption } from '../../../../framework';
@@ -54,7 +54,9 @@ export function AwxJobActivityCard() {
         </Flex>
       }
     >
-      <JobsChart period={period} jobType={jobType} />
+      <CardBody>
+        <JobsChart period={period} jobType={jobType} />
+      </CardBody>
     </PageDashboardCard>
   );
 }

@@ -2,6 +2,7 @@ import { ChartDonut, ChartLabel, ChartLabelProps } from '@patternfly/react-chart
 import { CardBody, Title } from '@patternfly/react-core';
 import { CSSProperties } from 'react';
 import { Link } from 'react-router-dom';
+import { PageChartLegend } from './PageChartLegend';
 import { PageDashboardCard } from './PageDashboardCard';
 
 export type PageDashboardCountBarProps = {
@@ -80,50 +81,6 @@ export function PageDashboardCountBar(props: PageDashboardCountBarProps) {
         </div>
       </CardBody>
     </PageDashboardCard>
-  );
-}
-
-export function PageChartLegend(props: {
-  id: string;
-  legend: { label: string; count: number; color: string; link?: string }[];
-}) {
-  return (
-    <div
-      style={{
-        display: 'grid',
-        gridTemplateColumns: 'auto auto auto',
-        columnGap: 6,
-        alignItems: 'center',
-      }}
-    >
-      {props.legend.map((item, index) => {
-        if (item.count === 0) return <></>;
-        return (
-          <>
-            <div
-              key={index * 3 + 0}
-              style={{ width: 10, height: 10, backgroundColor: item.color, borderRadius: 2 }}
-            />
-            <div
-              id={`${props.id}-${item.label.toLowerCase().replace(/ /g, '-')}-count`}
-              key={index * 3 + 1}
-              style={{ fontSize: 'small', textAlign: 'center' }}
-            >
-              {item.count}
-            </div>
-            <div key={index * 3 + 2} style={{ fontSize: 'small' }}>
-              {item.link ? (
-                <Link to={item.link} style={{ textDecoration: 'none' }}>
-                  {item.label}
-                </Link>
-              ) : (
-                item.label
-              )}
-            </div>
-          </>
-        );
-      })}
-    </div>
   );
 }
 

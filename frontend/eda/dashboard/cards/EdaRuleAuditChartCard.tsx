@@ -1,3 +1,4 @@
+import { CardBody } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { compareStrings, pfDanger, pfSuccess } from '../../../../framework';
@@ -115,13 +116,15 @@ const RuleAuditChart = () => {
       to={RouteObj.EdaRuleAudit}
       help={t('Rule audit allows auditing of rules which have been triggered by incoming events.')}
     >
-      <PageDashboardChart
-        yLabel={t('Rule Runs')}
-        groups={[
-          { label: t('Success'), color: pfSuccess, values: successfulRuns },
-          { label: t('Failed'), color: pfDanger, values: failedRuns },
-        ]}
-      />
+      <CardBody>
+        <PageDashboardChart
+          yLabel={t('Rule Runs')}
+          groups={[
+            { label: t('Success'), color: pfSuccess, values: successfulRuns },
+            { label: t('Failed'), color: pfDanger, values: failedRuns },
+          ]}
+        />
+      </CardBody>
     </PageDashboardCard>
   );
 };
