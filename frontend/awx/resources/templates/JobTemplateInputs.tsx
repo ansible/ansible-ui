@@ -26,7 +26,7 @@ function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
   const { setValue } = useFormContext<JobTemplateForm>();
   const [playbookOptions, setPlaybookOptions] = useState<string[]>();
   const projectPath = useWatch({
-    name: 'summary_fields.project',
+    name: 'project',
   }) as Project;
   const isProvisioningCallbackEnabled = useWatch<JobTemplateForm>({
     name: 'isProvisioningCallbackEnabled',
@@ -88,14 +88,10 @@ function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
         additionalControls={
           <PageFormCheckbox label={t('Prompt on launch')} name="ask_inventory_on_launch" />
         }
-        name="summary_fields.inventory.name"
+        name="inventory"
         isRequired={!isInventoryPrompted}
       />
-      <PageFormProjectSelect<JobTemplateForm>
-        name="summary_fields.project"
-        project="project"
-        isRequired
-      />
+      <PageFormProjectSelect<JobTemplateForm> name="project" isRequired />
 
       <PageFormSelect<JobTemplateForm>
         name="playbook"
@@ -129,12 +125,12 @@ function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
             name="ask_execution_environment_on_launch"
           />
         }
-        name="summary_fields.execution_environment.name"
-        executionEnvironmentIdPath="execution_environment"
+        name="execution_environment.name"
+        executionEnvironmentIdPath="execution_environment.id"
         organizationId={organizationId ?? ''}
       />
       <PageFormCredentialSelect<JobTemplateForm>
-        name="summary_fields.credentials"
+        name="credentials"
         additionalControls={
           <PageFormCheckbox label={t('Prompt on launch')} name="ask_credential_on_launch" />
         }
@@ -151,7 +147,7 @@ function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
         labelHelp={t(
           `Optional labels that describe this job template, such as 'dev' or 'test'. Labels can be used to group and filter job templates and completed jobs.`
         )}
-        name="summary_fields.labels.results"
+        name="labels"
         additionalControls={
           <PageFormCheckbox label={t('Prompt on launch')} name="ask_labels_on_launch" />
         }
@@ -244,13 +240,13 @@ function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
         labelHelp={t(
           'Tags are useful when you have a large playbook, and you want to run a specific part of a play or task. Use commas to separate multiple tags. Refer to the documentation for details on the usage of tags.'
         )}
-        name="arrayedJobTags"
+        name="job_tags"
         additionalControls={
           <PageFormCheckbox label={t('Prompt on launch')} name="ask_tags_on_launch" />
         }
         placeholderText={t('Select or create job tags')}
         label={t('Job tags')}
-        options={jobtemplate?.arrayedJobTags ?? [{ value: '', label: '' }]}
+        options={jobtemplate?.job_tags ?? [{ value: '', label: '', name: '' }]}
       />
       <PageFormCreatableSelect<JobTemplateForm>
         labelHelpTitle={t('Skip tags')}
@@ -260,10 +256,10 @@ function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
         additionalControls={
           <PageFormCheckbox label={t('Prompt on launch')} name="ask_skip_tags_on_launch" />
         }
-        name="arrayedSkipTags"
+        name="skip_tags"
         placeholderText={t('Select or create skip tags')}
         label={t('Skip tags')}
-        options={jobtemplate?.arrayedSkipTags ?? [{ value: '', label: '' }]}
+        options={jobtemplate?.skip_tags ?? [{ value: '', label: '', name: '' }]}
       />
       <PageFormSection singleColumn>
         <PageFormDataEditor<JobTemplateForm>

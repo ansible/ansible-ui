@@ -36,7 +36,7 @@ export interface PageFormAsyncSelectProps<
   isRequired?: boolean;
   isReadOnly?: boolean;
   openSelectDialog?: (
-    onSelect: (value: SelectionType | undefined) => void,
+    onSelect: (value: SelectionType | null) => void,
     defaultSelection?: SelectionType
   ) => void;
   limit: number;
@@ -150,7 +150,7 @@ export interface AsyncSelectProps<SelectionType> {
   value: SelectionType | undefined;
   valueToString: (value: SelectionType | undefined) => string;
   valueToDescription?: (value: SelectionType | undefined) => ReactNode;
-  onSelect: (value: SelectionType | undefined) => void;
+  onSelect: (value: SelectionType | null) => void;
   query: (pageSize: number) => Promise<{ total: number; values: SelectionType[] }>;
   placeholder: string;
   variant?: 'single' | 'typeahead' | 'typeaheadMulti';
@@ -164,7 +164,7 @@ export interface AsyncSelectProps<SelectionType> {
   limit: number;
   loadingError?: boolean;
   openSelectDialog?: (
-    onSelect: (value: SelectionType | undefined) => void,
+    onSelect: (value: SelectionType | null) => void,
     defaultSelection?: SelectionType
   ) => void;
 }
@@ -275,7 +275,7 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
             setOpen(false);
           }
         }}
-        onClear={value && !props.isRequired ? () => onSelect(undefined) : undefined}
+        onClear={value && !props.isRequired ? () => onSelect(null) : undefined}
         isOpen={open}
         onToggle={(open) => {
           if (loadingError) {

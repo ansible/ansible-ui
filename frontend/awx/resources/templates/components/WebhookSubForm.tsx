@@ -94,8 +94,8 @@ export function WebhookSubForm() {
         <PageFormCredentialSelect<JobTemplateForm>
           label={t('Webhook credential')}
           credentialType={webhookCredentialType?.results[0].id as unknown as number}
-          name="summary_fields.webhook_credential.name"
-          credentialIdPath="summary_fields.webhook_credential.id"
+          name="webhook_credential.name"
+          credentialIdPath="webhook_credential.id"
           isDisabled={!webhookService}
           placeholder={t('Add webhook credential')}
           labelHelpTitle={t('Webhook credential')}
