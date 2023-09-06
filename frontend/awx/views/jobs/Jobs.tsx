@@ -1,13 +1,11 @@
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 
-import { Divider, PageSection, Stack, Title, TitleSizes } from '@patternfly/react-core';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePersistentFilters } from '../../../common/PersistentFilters';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
 import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
-import { JobsChart } from '../../dashboard/charts/JobsChart';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
 import { useAwxView } from '../../useAwxView';
 import { useJobRowActions } from './hooks/useJobRowActions';
@@ -33,7 +31,7 @@ export default function Jobs() {
   usePersistentFilters('jobs');
   const config = useAwxConfig();
 
-  const [showGraph] = useState(false);
+  // const [showGraph, setShowGraph] = useState(false);
 
   const { refresh } = view;
   const handleWebSocketMessage = useCallback(
@@ -86,19 +84,6 @@ export default function Jobs() {
         //   </ToggleGroup>
         // }
       />
-      {showGraph && (
-        <>
-          <PageSection variant="light">
-            <Stack hasGutter>
-              <Title headingLevel="h2" size={TitleSizes['lg']}>
-                {t('Job runs in the last 30 days')}
-              </Title>
-              <JobsChart height={250} />
-            </Stack>
-          </PageSection>
-          <Divider />
-        </>
-      )}
       <PageTable
         id="awx-jobs-table"
         toolbarFilters={toolbarFilters}
@@ -110,6 +95,13 @@ export default function Jobs() {
         emptyStateDescription={t('Please run a job to populate this list.')}
         {...view}
         defaultSubtitle={t('Job')}
+        // topContent={
+        //   showGraph && (
+        //     <PageSection>
+        //       <JobsChart height={250} />
+        //     </PageSection>
+        //   )
+        // }
       />
     </PageLayout>
   );
