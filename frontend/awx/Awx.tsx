@@ -5,23 +5,14 @@ import '@patternfly/patternfly/patternfly-charts-theme-dark.css';
 
 import '../common/styles.css';
 
-import { Page } from '@patternfly/react-core';
 import { Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
 import { useTranslation } from 'react-i18next';
-import { BrowserRouter, Navigate, Route, Routes, useNavigate } from 'react-router-dom';
-import { PageFramework } from '../../framework';
+import { PageApp } from '../../framework/PageNavigation/PageApp';
 import ErrorBoundary from '../../framework/components/ErrorBoundary';
-import { Login } from '../common/Login';
 import { AnsibleMasthead } from '../common/Masthead';
-import { PageNotFound } from '../common/PageNotFound';
-import { RouteObj } from '../common/Routes';
 import '../common/i18n';
-import { ActiveUserProvider } from '../common/useActiveUser';
-import { AwxRouter } from './AwxRouter';
-import { AwxSidebar } from './AwxSidebar';
-import { AwxConfigProvider } from './common/useAwxConfig';
-import { WebSocketProvider } from './common/useAwxWebSocket';
+import { useAwxNavigation } from './useAwxNavigation';
 
 const container = document.createElement('div');
 container.style.position = 'fixed';
@@ -40,40 +31,17 @@ root.render(
 export default function Main() {
   const { t } = useTranslation();
   return (
-    // <StrictMode>
     <ErrorBoundary message={t('An error occured')}>
-      <BrowserRouter>
-        <Routing />
-      </BrowserRouter>
+      <AWX />
     </ErrorBoundary>
-    // </StrictMode>
-  );
-}
-
-function Routing() {
-  const navigate = useNavigate();
-  return (
-    <PageFramework navigate={navigate}>
-      <Routes>
-        <Route path={RouteObj.AWX + '/*'} element={<AWX />} />
-        <Route path={RouteObj.Login} element={<Login />} />
-        <Route path="/" element={<Navigate to={RouteObj.Login} />} />
-        <Route path="*" element={<PageNotFound />} />
-      </Routes>
-    </PageFramework>
   );
 }
 
 export function AWX() {
+  const awxNavigation = useAwxNavigation();
   return (
-    <WebSocketProvider>
-      <ActiveUserProvider>
-        <AwxConfigProvider>
-          <Page header={<AnsibleMasthead />} sidebar={<AwxSidebar />}>
-            <AwxRouter />
-          </Page>
-        </AwxConfigProvider>
-      </ActiveUserProvider>
-    </WebSocketProvider>
+    // <Page header={<AnsibleMasthead />} sidebar={<AwxSidebar />}>
+    <PageApp navigationItems={awxNavigation} header={<AnsibleMasthead />} />
+    // </Page>
   );
 }
