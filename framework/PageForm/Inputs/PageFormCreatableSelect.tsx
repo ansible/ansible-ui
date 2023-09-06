@@ -55,12 +55,17 @@ export function PageFormCreatableSelect<
             const values: { name: string }[] = getValues(props.name);
             onChange(!chip ? [] : values.filter((v: { name: string }) => v.name !== chip));
           }}
-          onHandleSelection={(v) => {
-            const values: string[] = getValues(props.name);
-            if (values) {
-              return onChange([...values, v]);
+          onHandleSelection={(item) => {
+            let newValue;
+            const selectedItem = item as { name: string };
+            const values: { name: string }[] = getValues(props.name);
+
+            if (values.find((value) => value.name === selectedItem.name)) {
+              newValue = values.filter((i) => i !== selectedItem);
+            } else {
+              newValue = [...values, selectedItem];
             }
-            return onChange([v]);
+            return onChange(newValue);
           }}
         />
       )}
