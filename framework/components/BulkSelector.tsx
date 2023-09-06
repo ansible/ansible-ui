@@ -110,12 +110,15 @@ export function BulkSelector<T extends object>(props: BulkSelectorProps<T>) {
   );
 
   return (
-    <Dropdown
-      isOpen={isOpen}
-      toggle={toggle}
-      dropdownItems={dropdownItems}
-      // ZIndex 400 is needed for PF table stick headers
-      style={{ zIndex: 400 }}
-    />
+    // Negative margin is needed to align the bulk select with table checkboxes
+    <div style={{ marginLeft: -8 }}>
+      <Dropdown
+        isOpen={isOpen}
+        toggle={toggle}
+        dropdownItems={dropdownItems}
+        // ZIndex 400 is needed for PF table stick headers
+        style={{ zIndex: 400 }}
+      />
+    </div>
   );
 }

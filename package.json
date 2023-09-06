@@ -10,7 +10,7 @@
   },
   "homepage": "https://github.com/ansible/ansible-ui#readme",
   "scripts": {
-    "start": "concurrently npm:awx npm:hub npm:eda -c cyan,green,blue",
+    "start": "echo Usage: npm start:[awx:hub:eda]",
     "awx": "UI_MODE=AWX webpack serve --mode development --config ./webpack/webpack.awx.cjs --port 4101 --open",
     "hub": "UI_MODE=HUB webpack serve --mode development --config ./webpack/webpack.hub.cjs --port 4102 --open",
     "eda": "UI_MODE=EDA webpack serve --mode development --config ./webpack/webpack.eda.cjs --port 4103 --open",
