@@ -48,7 +48,7 @@ export interface JobTemplate
     | 'webhook_credential'
   > {
   id: number;
-  host_config_key?: string;
+  host_config_key: string;
   description?: string;
   extra_vars: string;
   diff_mode: boolean;
@@ -83,6 +83,18 @@ export interface JobTemplate
   job_tags: string;
   skip_tags: string;
   execution_environment?: number;
+  inventory: number;
+  job_slice_count: number;
+  last_job_failed: boolean;
+  last_job_run: string;
+  limit: string;
+  next_job_run: string;
+  playbook: string;
+  prevent_instance_group_fallback: boolean;
+  scm_branch: string;
+  survey_enabled: boolean;
+  timeout: number;
+  use_fact_cache: boolean;
   related: {
     callback: string;
     named_url: string;
@@ -195,11 +207,11 @@ export interface JobTemplate
     };
     recent_jobs: RecentJob[];
     credentials: SummaryFieldCredential[] | [];
-    webhook_credential?: SummaryFieldCredential;
+    webhook_credential: SummaryFieldCredential;
   };
-  webhook_credential: number | null;
+  webhook_credential: number;
   webhook_url: string;
   webhook_key: string;
-  webhook_service?: 'github' | 'gitlab';
+  webhook_service: 'github' | 'gitlab';
   project: number;
 }
