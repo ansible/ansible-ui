@@ -15,7 +15,9 @@ import { useHubView } from '../../useHubView';
 export function CollectionMultiSelectDialog(props: {
   title: string;
   description: string;
-  onSelect: (collections: CollectionVersionSearch[]) => void;
+  onSelect: (collections: CollectionVersionSearch[]) => Promise<unknown>;
+  defaultSelection: CollectionVersionSearch[];
+  maxSelections?: number;
 }) {
   const { t } = useTranslation();
   const toolbarFilters = useCollectionFilters();
@@ -56,6 +58,7 @@ export function CollectionMultiSelectDialog(props: {
       is_highest: 'true',
     },
     toolbarFilters,
+    defaultSelection: props.defaultSelection,
   });
   return (
     <MultiSelectDialog
@@ -65,23 +68,31 @@ export function CollectionMultiSelectDialog(props: {
       view={view}
       defaultSort="name"
       confirmText={t('Select')}
+      maxSelections={props.maxSelections}
     />
   );
 }
 
-export function useSelectCollectionsDialog() {
+export function useSelectCollectionsDialog(defaultSelection: CollectionVersionSearch[]) {
   const [_, setDialog] = usePageDialog();
   const openSelectCollectionsDialog = useCallback(
     (
       title: string,
       description: string,
-      onSelect: (collections: CollectionVersionSearch[]) => void
+      onSelect: (collections: CollectionVersionSearch[]) => Promise<unknown>,
+      maxSelections?: number
     ) => {
       setDialog(
-        <CollectionMultiSelectDialog title={title} description={description} onSelect={onSelect} />
+        <CollectionMultiSelectDialog
+          title={title}
+          description={description}
+          onSelect={onSelect}
+          defaultSelection={defaultSelection}
+          maxSelections={maxSelections}
+        />
       );
     },
-    [setDialog]
+    [defaultSelection, setDialog]
   );
   return openSelectCollectionsDialog;
 }

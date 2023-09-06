@@ -12,7 +12,7 @@ export function PageDashboardCarousel(props: {
   footerActionButton?: {
     icon?: ReactNode;
     title: string;
-    onClick: () => unknown;
+    onClick: () => void;
   };
 }) {
   return (

@@ -31,6 +31,7 @@ export type MultiSelectDialogProps<T extends object> = {
   emptyStateTitle?: string;
   errorStateTitle?: string;
   defaultSort?: string;
+  maxSelections?: number;
 };
 
 export function MultiSelectDialog<T extends object>(props: MultiSelectDialogProps<T>) {
@@ -44,6 +45,7 @@ export function MultiSelectDialog<T extends object>(props: MultiSelectDialogProp
     cancelText,
     onSelect,
     defaultSort,
+    maxSelections,
   } = props;
   const [_, setDialog] = usePageDialog();
   const onClose = useCallback(() => setDialog(undefined), [setDialog]);
@@ -128,6 +130,7 @@ export function MultiSelectDialog<T extends object>(props: MultiSelectDialogProp
             compact
             disableBodyPadding
             sort={defaultSort}
+            maxSelections={maxSelections}
           />
         </div>
       </Collapse>

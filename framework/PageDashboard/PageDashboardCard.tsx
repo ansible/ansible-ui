@@ -30,7 +30,7 @@ export function PageDashboardCard(props: {
   footerActionButton?: {
     icon?: ReactNode;
     title: string;
-    onClick: () => unknown;
+    onClick: () => void;
   };
 
   /**
@@ -223,7 +223,9 @@ export function PageDashboardCard(props: {
                 <Button
                   variant="link"
                   icon={props.footerActionButton.icon ? props.footerActionButton.icon : null}
-                  onClick={props.footerActionButton.onClick}
+                  onClick={() => {
+                    void props.footerActionButton?.onClick();
+                  }}
                 >
                   {props.footerActionButton.title}
                 </Button>
