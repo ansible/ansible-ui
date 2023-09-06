@@ -8,7 +8,7 @@ export function PageNavigation(props: { navigationItems: PageNavigationItem[] })
     <PageSidebar
       isNavOpen={navBar.isOpen}
       nav={
-        <Nav>
+        <Nav className="border-top">
           <NavList>
             <PageNavigationItems baseRoute={''} items={navigationItems} />
           </NavList>
@@ -52,7 +52,8 @@ function PageNavigationItem(props: { item: PageNavigationItem; baseRoute: string
     'children' in item &&
     item.children.find((child) => child.label !== undefined) !== undefined
   ) {
-    if (!item.label) return <></>;
+    if (item.label === undefined) return <></>;
+    if (item.label === '') return <PageNavigationItems items={item.children} baseRoute={route} />;
     return (
       <NavExpandable title={item.label} isActive={location.pathname.startsWith(route)} isExpanded>
         <PageNavigationItems items={item.children} baseRoute={route} />
