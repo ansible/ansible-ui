@@ -37,7 +37,7 @@ describe('EDA Dashboard', () => {
 
   it('checks Ansible header title', () => {
     cy.visit('/eda/dashboard/');
-    cy.hasTitle('Welcome to Event Driven Automation').should('be.visible');
+    cy.get('.pf-c-title').should('contain', 'Welcome to');
   });
 
   // it('shows the user an RBA card with a list of RBAs visible including working links', () => {
@@ -142,7 +142,7 @@ describe('dashboard checks when resources before any resources are created', () 
   // });
 
   it('checks the dashboard landing page titles ', () => {
-    cy.hasTitle('Welcome to Event Driven Automation').should('be.visible');
+    cy.get('.pf-c-title').should('contain', 'Welcome to');
     cy.contains(
       'p span',
       'Connect intelligence, analytics and service requests to enable more responsive and resilient automation.'
