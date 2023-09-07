@@ -4,6 +4,7 @@ import { useCollectionFilters } from './useCollectionFilters';
 import {
   ColumnTableOption,
   ITableColumn,
+  LabelsCell,
   MultiSelectDialog,
   TextCell,
   usePageDialog,
@@ -11,6 +12,15 @@ import {
 import { CollectionVersionSearch } from '../Collection';
 import { collectionKeyFn, hubAPI } from '../../api/utils';
 import { useHubView } from '../../useHubView';
+import { Label, Truncate } from '@patternfly/react-core';
+
+// TODO: If deployment mode is INSIGHTS, CERTIFIED_REPO should be set to 'published'. This needs to be updated
+// in the future when we are able to identify INSIGHTS mode
+const CERTIFIED_REPO = 'rh-certified';
+
+function CertifiedIcon() {
+  return <i className="fas fa-certificate"></i>;
+}
 
 export function CollectionMultiSelectDialog(props: {
   title: string;
@@ -45,6 +55,19 @@ export function CollectionMultiSelectDialog(props: {
         value: (collection) => collection.collection_version.version,
         table: ColumnTableOption.Hidden,
         sort: 'version',
+      },
+      {
+        header: t('Repository'),
+        cell: (collection: CollectionVersionSearch) =>
+          collection.repository.name === CERTIFIED_REPO ? (
+            <Label color="blue" icon={<CertifiedIcon />} variant="outline">
+              <Truncate content={t('Certified')} style={{ minWidth: 0 }} />
+            </Label>
+          ) : (
+            <Label color="blue" variant="outline">
+              <Truncate content={collection.repository.name} style={{ minWidth: 0 }} />
+            </Label>
+          ),
       },
     ],
     [t]
