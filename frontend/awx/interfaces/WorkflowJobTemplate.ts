@@ -1,5 +1,6 @@
+import { Label } from './Label';
 import { WorkflowJobTemplate as SwaggerWorkflowJobTemplate } from './generated-from-swagger/api';
-import { SummaryFieldsByUser } from './summary-fields/summary-fields';
+import { SummaryFieldCredential, SummaryFieldsByUser } from './summary-fields/summary-fields';
 
 export interface WorkflowJobTemplate
   extends Omit<
@@ -14,23 +15,21 @@ export interface WorkflowJobTemplate
   created: string;
   allow_simultaneous: boolean;
   modified: string;
-  webhook_service: 'github' | 'gitlab' | null;
+  webhook_service?: 'github' | 'gitlab';
   ask_instance_groups_on_launch: boolean;
   skip_tags: string;
   job_tags: string;
   webhook_credential: number | null;
   extra_vars: '---';
-  related: { schedules: string; instance_groups: string; webhook_receiver: string };
+  related: {
+    schedules: string;
+    instance_groups: string;
+    webhook_receiver: string;
+    webhook_key: string;
+  };
   summary_fields: {
-    webhook_credential: {
-      id: number;
-      name: string;
-      description: string;
-      kind: string;
-      cloud: boolean;
-      credential_type_id: number;
-    };
-    labels: { count: number; results: { id: number; name: string }[] };
+    webhook_credential: SummaryFieldCredential;
+    labels: { count: number; results: Label[] };
     inventory?: {
       name: string;
       id: number;
@@ -46,7 +45,7 @@ export interface WorkflowJobTemplate
       kind: '' | 'smart' | 'constructed';
     };
     organization?: {
-      id: string;
+      id: number;
       name: string;
       description: string;
     };
@@ -75,4 +74,68 @@ export interface WorkflowJobTemplate
       approval_role: { id: number };
     };
   };
+}
+
+export interface WorkflowJobTemplateCreate
+  extends Omit<
+    WorkflowJobTemplate,
+    | 'id'
+    | 'name'
+    | 'extra_vars'
+    | 'summary_fields'
+    | 'related'
+    | 'job_type'
+    | 'type'
+    | 'created'
+    | 'modified'
+    | 'ask_instance_groups_on_launch'
+  > {
+  name: string;
+  inventory?: number;
+  isWebhookEnabled: boolean;
+  allow_simultaneous: boolean;
+  webhook_service?: 'github' | 'gitlab';
+  labels: Label[] | null;
+
+  skip_tags: string;
+  job_tags: string;
+  webhook_credential: number | null;
+  extra_vars: string;
+  organization?: number;
+}
+
+export interface WorkflowJobTemplateForm
+  extends Omit<
+    WorkflowJobTemplate,
+    | 'summary_fields'
+    | 'organization'
+    | 'inventory'
+    | 'webhook_credential'
+    | 'skip_tags'
+    | 'job_tags'
+    | 'type'
+    | 'id'
+    | 'job_type'
+    | 'related'
+    | 'created'
+    | 'modified'
+    | 'extra_vars'
+    | 'webhook_service'
+    | 'ask_instance_groups_on_launch'
+  > {
+  isWebhookEnabled: boolean;
+  extra_vars: string;
+  id?: number;
+  webhook_receiver?: string;
+  webhook_key?: string;
+  webhook_service?: 'github' | 'gitlab';
+  skip_tags: { name: string; value: string; label: string }[];
+  job_tags: { name: string; value: string; label: string }[];
+  webhook_credential: SummaryFieldCredential | null;
+  labels: Label[] | null;
+  inventory: {
+    name: string;
+    id: number;
+  } | null;
+  organization: { name: string; id: number } | null;
 }

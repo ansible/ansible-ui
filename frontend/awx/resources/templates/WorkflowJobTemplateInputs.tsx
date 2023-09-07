@@ -1,42 +1,43 @@
 import { useTranslation } from 'react-i18next';
 import { PageFormCheckbox, PageFormDataEditor, PageFormTextInput } from '../../../../framework';
-import { PageFormOrganizationSelect } from '../../access/organizations/components/PageFormOrganizationSelect';
+import { PageFormSelectOrganization } from '../../access/organizations/components/PageFormOrganizationSelect';
 import { PageFormInventorySelect } from '../inventories/components/PageFormInventorySelect';
 import { PageFormLabelSelect } from '../../common/PageFormLabelSelect';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 import { PageFormCreatableSelect } from '../../../../framework/PageForm/Inputs/PageFormCreatableSelect';
 import { WebhookSubForm } from './components/WebhookSubForm';
 import { useWatch } from 'react-hook-form';
-import { WorkflowJobTemplateFormType } from './WorkflowJobTemplateForm';
+
+import { WorkflowJobTemplateForm } from '../../interfaces/WorkflowJobTemplate';
 
 export function WorkflowJobTemplateInputs(props: {
-  workflowJobTemplate?: WorkflowJobTemplateFormType;
+  workflowJobTemplate?: WorkflowJobTemplateForm;
 }) {
   const { workflowJobTemplate } = props;
-  const isWebhookEnabled = useWatch<WorkflowJobTemplateFormType>({ name: 'isWebhookEnabled' });
+  const isWebhookEnabled = useWatch<WorkflowJobTemplateForm>({ name: 'isWebhookEnabled' });
 
   const { t } = useTranslation();
   return (
     <>
-      <PageFormTextInput<WorkflowJobTemplateFormType>
+      <PageFormTextInput<WorkflowJobTemplateForm>
         name="name"
         label={t('Name')}
         isRequired
         placeholder={t('Add a name for this job template')}
       />
-      <PageFormTextInput<WorkflowJobTemplateFormType>
+      <PageFormTextInput<WorkflowJobTemplateForm>
         name="description"
         label={t('Description')}
         placeholder={t('Add a description for this job template')}
       />
-      <PageFormOrganizationSelect<WorkflowJobTemplateFormType> name="summary_fields.organization.name" />
-      <PageFormInventorySelect<WorkflowJobTemplateFormType>
+      <PageFormSelectOrganization<WorkflowJobTemplateForm> name="organization" />
+      <PageFormInventorySelect<WorkflowJobTemplateForm>
         additionalControls={
           <PageFormCheckbox label={t('Prompt on launch')} name="ask_inventory_on_launch" />
         }
-        name="summary_fields.inventory.name"
+        name="inventory"
       />
-      <PageFormTextInput<WorkflowJobTemplateFormType>
+      <PageFormTextInput<WorkflowJobTemplateForm>
         placeholder={t('Add a limit to reduce number of hosts.')}
         additionalControls={
           <PageFormCheckbox label={t('Prompt on launch')} name="ask_limit_on_launch" />
@@ -48,7 +49,7 @@ export function WorkflowJobTemplateInputs(props: {
         )}
         label={t('Limit')}
       />
-      <PageFormTextInput<WorkflowJobTemplateFormType>
+      <PageFormTextInput<WorkflowJobTemplateForm>
         name="scm_branch"
         placeholder={t('Add a source control branch')}
         labelHelpTitle={t('Source control branch')}
@@ -61,30 +62,30 @@ export function WorkflowJobTemplateInputs(props: {
         label={t('Source control branch')}
       />
 
-      <PageFormLabelSelect<WorkflowJobTemplateFormType>
+      <PageFormLabelSelect<WorkflowJobTemplateForm>
         labelHelpTitle={t('Labels')}
         labelHelp={t(
           `Optional labels that describe this job template, such as 'dev' or 'test'. Labels can be used to group and filter job templates and completed jobs.`
         )}
-        name="summary_fields.labels.results"
+        name="labels"
         additionalControls={
           <PageFormCheckbox label={t('Prompt on launch')} name="ask_labels_on_launch" />
         }
       />
-      <PageFormCreatableSelect<WorkflowJobTemplateFormType>
+      <PageFormCreatableSelect<WorkflowJobTemplateForm>
         labelHelpTitle={t('Job tags')}
         labelHelp={t(
           'Tags are useful when you have a large playbook, and you want to run a specific part of a play or task. Use commas to separate multiple tags. Refer to the documentation for details on the usage of tags.'
         )}
-        name="arrayedJobTags"
+        name="job_tags"
         additionalControls={
           <PageFormCheckbox label={t('Prompt on launch')} name="ask_tags_on_launch" />
         }
         placeholderText={t('Select or create job tags')}
         label={t('Job tags')}
-        options={workflowJobTemplate?.arrayedJobTags ?? [{ value: '', label: '' }]}
+        options={workflowJobTemplate?.job_tags ?? [{ value: '', label: '' }]}
       />
-      <PageFormCreatableSelect<WorkflowJobTemplateFormType>
+      <PageFormCreatableSelect<WorkflowJobTemplateForm>
         labelHelpTitle={t('Skip tags')}
         labelHelp={t(
           'Skip tags are useful when you have a large playbook, and you want to skip specific parts of a play or task. Use commas to separate multiple tags. Refer to the documentation for details on the usage of tags.'
@@ -92,13 +93,13 @@ export function WorkflowJobTemplateInputs(props: {
         additionalControls={
           <PageFormCheckbox label={t('Prompt on launch')} name="ask_skip_tags_on_launch" />
         }
-        name="arrayedSkipTags"
+        name="skip_tags"
         placeholderText={t('Select or create skip tags')}
         label={t('Skip tags')}
-        options={workflowJobTemplate?.arrayedSkipTags ?? [{ value: '', label: '' }]}
+        options={workflowJobTemplate?.skip_tags ?? [{ value: '', label: '' }]}
       />
       <PageFormSection singleColumn>
-        <PageFormDataEditor<WorkflowJobTemplateFormType>
+        <PageFormDataEditor<WorkflowJobTemplateForm>
           additionalControls={
             <PageFormCheckbox label={t('Prompt on launch')} name="ask_variables_on_launch" />
           }
@@ -111,11 +112,11 @@ export function WorkflowJobTemplateInputs(props: {
         />
       </PageFormSection>
       <PageFormSection title={t('Options')}>
-        <PageFormCheckbox<WorkflowJobTemplateFormType>
+        <PageFormCheckbox<WorkflowJobTemplateForm>
           label={t('Enable webhook')}
           name="isWebhookEnabled"
         />
-        <PageFormCheckbox<WorkflowJobTemplateFormType>
+        <PageFormCheckbox<WorkflowJobTemplateForm>
           label={t('Enable concurrent jobs')}
           name="allow_simultaneous"
         />

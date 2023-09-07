@@ -11,22 +11,16 @@ import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { AwxError } from '../../common/AwxError';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { getAddedAndRemoved } from '../../common/util/getAddedAndRemoved';
-import { WorkflowJobTemplate } from '../../interfaces/WorkflowJobTemplate';
+import {
+  WorkflowJobTemplate,
+  WorkflowJobTemplateCreate,
+  WorkflowJobTemplateForm,
+} from '../../interfaces/WorkflowJobTemplate';
 import { Label } from '../../interfaces/Label';
 import { Organization } from '../../interfaces/Organization';
 import { WorkflowJobTemplateInputs } from './WorkflowJobTemplateInputs';
+import { parseStringToTagArray, stringifyTags } from './JobTemplateFormHelpers';
 
-export type WorkflowJobTemplateFormType = WorkflowJobTemplate & {
-  arrayedSkipTags: { label: string; value: string }[];
-  arrayedJobTags: { label: string; value: string }[];
-  isWebhookEnabled: boolean;
-};
-const stringifyTags: (tags: { value: string; label: string }[]) => string = (tags) => {
-  const stringifiedTags = tags.filter((tag) => {
-    if (tag.value !== '') return tag.value;
-  });
-  return stringifiedTags.map((i) => i.value).join(',');
-};
 export function EditWorkflowJobTemplate() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -40,51 +34,56 @@ export function EditWorkflowJobTemplate() {
     isLoading,
   } = useGet<WorkflowJobTemplate>(`/api/v2/workflow_job_templates/${id.toString()}/`);
 
-  const defaultValues: WorkflowJobTemplateFormType = useMemo(
-    () =>
-      ({
-        ...workflowJobTemplate,
-        isWebhookEnabled: Boolean(workflowJobTemplate?.related?.webhook_receiver),
-        arrayedSkipTags: workflowJobTemplate?.skip_tags
-          ?.split(',')
-          .map((tag) => ({ value: tag, label: tag })) || [{ value: '', label: '' }],
-        arrayedJobTags: workflowJobTemplate?.job_tags
-          ?.split(',')
-          .map((tag) => ({ value: tag, label: tag })) || [{ value: '', label: '' }],
-      }) as WorkflowJobTemplateFormType,
+  const onSubmit: PageFormSubmitHandler<WorkflowJobTemplateForm> = async (
+    values: WorkflowJobTemplateForm
+  ) => {
+    const { labels, ...rest } = values;
+    await requestPatch<WorkflowJobTemplateForm>(`/api/v2/workflow_job_templates/${id}/`, {
+      ...rest,
+      inventory: values.inventory?.id || null,
+      job_tags: stringifyTags(values.job_tags) ?? '',
+      organization: values.organization?.id || null,
+      skip_tags: stringifyTags(values.skip_tags) ?? '',
+      webhook_credential: values.webhook_credential?.id,
+    });
+    (cache as unknown as { clear: () => void }).clear?.();
+
+    if (labels && labels.length) {
+      await submitLabels(workflowJobTemplate as WorkflowJobTemplate, labels);
+    }
+    navigate(RouteObj.WorkflowJobTemplateDetails.replace(':id', `${id}`.toString()));
+  };
+
+  const defaultValues: WorkflowJobTemplateForm = useMemo(
+    () => ({
+      allow_simultaneous: workflowJobTemplate?.allow_simultaneous || false,
+      ask_inventory_on_launch: workflowJobTemplate?.ask_inventory_on_launch || false,
+      ask_labels_on_launch: workflowJobTemplate?.ask_labels_on_launch || false,
+      ask_limit_on_launch: workflowJobTemplate?.ask_limit_on_launch || false,
+      ask_scm_branch_on_launch: workflowJobTemplate?.ask_scm_branch_on_launch || false,
+      ask_skip_tags_on_launch: workflowJobTemplate?.ask_skip_tags_on_launch || false,
+      ask_tags_on_launch: workflowJobTemplate?.ask_tags_on_launch || false,
+      ask_variables_on_launch: workflowJobTemplate?.ask_variables_on_launch || false,
+      description: workflowJobTemplate?.description || '',
+      extra_vars: workflowJobTemplate?.extra_vars || '---',
+      inventory: workflowJobTemplate?.summary_fields.inventory || null,
+      isWebhookEnabled: Boolean(workflowJobTemplate?.related?.webhook_receiver),
+      job_tags: parseStringToTagArray(workflowJobTemplate?.skip_tags || ''),
+      organization: workflowJobTemplate?.summary_fields.organization || null,
+      labels: workflowJobTemplate?.summary_fields?.labels?.results || null,
+      limit: workflowJobTemplate?.limit || '',
+      name: workflowJobTemplate?.name || '',
+      scm_branch: workflowJobTemplate?.scm_branch || '',
+      skip_tags: parseStringToTagArray(workflowJobTemplate?.job_tags || ''),
+      webhook_credential: workflowJobTemplate?.summary_fields.webhook_credential || null,
+      webhook_key: workflowJobTemplate?.related.webhook_key || '',
+      webhook_receiver: workflowJobTemplate?.related.webhook_receiver,
+      webhook_service: workflowJobTemplate?.webhook_service || undefined,
+    }),
     [workflowJobTemplate]
   );
   const { cache } = useSWRConfig();
-  const onSubmit: PageFormSubmitHandler<WorkflowJobTemplateFormType> = async (
-    values: WorkflowJobTemplateFormType
-  ) => {
-    const {
-      arrayedJobTags,
-      arrayedSkipTags,
-      summary_fields: { labels },
-    } = values;
 
-    let jobTags = '';
-    let skipTags = '';
-    if (arrayedJobTags?.length) {
-      jobTags = stringifyTags(arrayedJobTags);
-    }
-    if (arrayedSkipTags.length) {
-      skipTags = stringifyTags(arrayedSkipTags);
-    }
-
-    await requestPatch<WorkflowJobTemplate>(`/api/v2/workflow_job_templates/${id}/`, {
-      ...values,
-      job_tags: jobTags ?? '',
-      skip_tags: skipTags ?? '',
-      webhook_credential: values.summary_fields.webhook_credential?.id,
-    });
-    (cache as unknown as { clear: () => void }).clear?.();
-    const promises = [];
-
-    promises.push(submitLabels(workflowJobTemplate as WorkflowJobTemplate, labels?.results));
-    navigate(RouteObj.WorkflowJobTemplateDetails.replace(':id', `${id}`.toString()));
-  };
   if (error instanceof Error) {
     return <AwxError error={error} handleRefresh={refresh} />;
   }
@@ -92,13 +91,13 @@ export function EditWorkflowJobTemplate() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Edit Job Template')}
+        title={t('Edit Workflow Job Template')}
         breadcrumbs={[
           { label: t('Templates'), to: RouteObj.Templates },
-          { label: t('Edit Job Template') },
+          { label: t('Edit Workflow Job Template') },
         ]}
       />
-      <PageForm<WorkflowJobTemplateFormType>
+      <PageForm<WorkflowJobTemplateForm>
         submitText={t('Save workflow job template')}
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
@@ -109,53 +108,39 @@ export function EditWorkflowJobTemplate() {
     </PageLayout>
   );
 }
+
 export function CreateWorkflowJobTemplate() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const postRequest = usePostRequest<WorkflowJobTemplate>();
+  const postRequest = usePostRequest<WorkflowJobTemplateCreate, WorkflowJobTemplate>();
 
-  const defaultValues: {
-    arrayedSkipTags: { value: string; label: string }[];
-    arrayedJobTags: { value: string; label: string }[];
-  } = useMemo(
+  const onSubmit: PageFormSubmitHandler<WorkflowJobTemplateForm> = async (values) => {
+    const { labels, webhook_credential } = values;
+
+    const template = await postRequest(`/api/v2/workflow_job_templates/`, {
+      ...values,
+      inventory: values.inventory?.id,
+      job_tags: stringifyTags(values.job_tags || ''),
+      organization: values.organization?.id,
+      skip_tags: stringifyTags(values.skip_tags || ''),
+      webhook_credential: webhook_credential?.id ?? null,
+    });
+
+    if (labels && labels?.length > 0) {
+      await submitLabels(template, labels);
+    }
+
+    navigate(RouteObj.WorkflowJobTemplateDetails.replace(':id', template.id.toString()));
+  };
+
+  const defaultValues = useMemo(
     () => ({
-      arrayedSkipTags: [{ value: '', label: '' }],
-      arrayedJobTags: [{ value: '', label: '' }],
+      job_tags: parseStringToTagArray('') || [],
+      skip_tags: parseStringToTagArray('') || [],
       extra_vars: '---\n',
     }),
     []
   );
-  const onSubmit: PageFormSubmitHandler<WorkflowJobTemplateFormType> = async (values) => {
-    const {
-      arrayedJobTags,
-      arrayedSkipTags,
-      summary_fields: { labels, webhook_credential },
-    } = values;
-    let jobTags = '';
-    let skipTags = '';
-    if (values?.arrayedJobTags?.length) {
-      jobTags = stringifyTags(arrayedJobTags);
-    }
-    if (values?.arrayedSkipTags.length) {
-      skipTags = stringifyTags(arrayedSkipTags);
-    }
-
-    const template = await postRequest(`/api/v2/workflow_job_templates/`, {
-      ...values,
-      job_tags: jobTags,
-      skip_tags: skipTags,
-      webhook_credential: webhook_credential?.id ? webhook_credential?.id : null,
-    });
-    const promises = [];
-
-    if (labels?.results && labels?.results?.length > 0) {
-      promises.push(submitLabels(template, labels.results));
-    }
-
-    if (promises.length > 0) await Promise.all(promises);
-
-    navigate(RouteObj.WorkflowJobTemplateDetails.replace(':id', template.id.toString()));
-  };
 
   return (
     <PageLayout>
@@ -166,7 +151,7 @@ export function CreateWorkflowJobTemplate() {
           { label: t('Create Workflow Job Template') },
         ]}
       />
-      <PageForm<WorkflowJobTemplateFormType>
+      <PageForm<WorkflowJobTemplateForm>
         submitText={t('Create workflow job template')}
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
@@ -178,7 +163,7 @@ export function CreateWorkflowJobTemplate() {
   );
 }
 
-async function submitLabels(template: WorkflowJobTemplate, labels: { id: number; name: string }[]) {
+async function submitLabels(template: WorkflowJobTemplate, labels: Label[]) {
   const { added, removed } = getAddedAndRemoved(
     template.summary_fields?.labels?.results || ([] as Label[]),
     labels ?? ([] as Label[])
@@ -195,7 +180,7 @@ async function submitLabels(template: WorkflowJobTemplate, labels: { id: number;
     }
   }
   const disassociationPromises = removed.map((label: { id: number }) =>
-    postRequest(`/api/v2/worflow_job_templates/${template.id.toString()}/labels/`, {
+    postRequest(`/api/v2/workflow_job_templates/${template.id.toString()}/labels/`, {
       id: label.id,
       disassociate: true,
     })
