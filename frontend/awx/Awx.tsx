@@ -12,7 +12,6 @@ import { useTranslation } from 'react-i18next';
 import { BrowserRouter, Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import { PageFramework } from '../../framework';
 import ErrorBoundary from '../../framework/components/ErrorBoundary';
-import { Login } from '../common/Login';
 import { AnsibleMasthead } from '../common/Masthead';
 import { PageNotFound } from '../common/PageNotFound';
 import { RouteObj } from '../common/Routes';
@@ -20,6 +19,7 @@ import '../common/i18n';
 import { ActiveUserProvider } from '../common/useActiveUser';
 import { AwxRouter } from './AwxRouter';
 import { AwxSidebar } from './AwxSidebar';
+import { AwxLogin } from './AwxLogin';
 import { AwxConfigProvider } from './common/useAwxConfig';
 import { WebSocketProvider } from './common/useAwxWebSocket';
 
@@ -56,7 +56,7 @@ function Routing() {
     <PageFramework navigate={navigate}>
       <Routes>
         <Route path={RouteObj.AWX + '/*'} element={<AWX />} />
-        <Route path={RouteObj.Login} element={<Login />} />
+        <Route path={RouteObj.Login} element={<AwxLogin />} />
         <Route path="/" element={<Navigate to={RouteObj.Dashboard} />} />
         <Route path="*" element={<PageNotFound />} />
       </Routes>

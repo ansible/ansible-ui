@@ -1,9 +1,18 @@
 import { useCallback, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import background from '../../node_modules/@patternfly/patternfly/assets/images/pfbg_1200.jpg';
 import { useLoginModal } from './LoginModal';
+import type { AuthOptions } from './SocialAuthLogin';
 
-export function Login() {
+type LoginProps = {
+  authOptions?: AuthOptions;
+  loginUrl: string;
+};
+
+export function Login(props: LoginProps) {
+  const { authOptions, loginUrl } = props;
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchparams] = useSearchParams();
   const navigateBack = useCallback(() => {
@@ -11,8 +20,14 @@ export function Login() {
       navigate(-2);
     }
   }, [navigate, searchparams]);
-  const openLoginModal = useLoginModal(navigateBack);
+
+  const openLoginModal = useLoginModal({
+    authOptions,
+    loginUrl,
+    onLogin: navigateBack,
+  });
   useEffect(() => openLoginModal(), [openLoginModal]);
+
   return (
     <div
       style={{

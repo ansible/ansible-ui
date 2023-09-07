@@ -1,4 +1,4 @@
-import { LoginMainFooter, Button } from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core';
 import { GithubIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useGet } from '../common/crud/useGet';
@@ -21,14 +21,18 @@ const Grid = styled.div`
   gap: 30px 50px;
 `;
 
-type AuthOptions = {
+export type AuthOptions = {
   [key: string]: {
     login_url: string;
   };
 };
 
-export function SocialAuthLogin() {
-  const { data: options } = useGet<AuthOptions>('/api/v2/auth/');
+type SocialAuthLoginProps = {
+  options?: AuthOptions;
+};
+
+export function SocialAuthLogin(props: SocialAuthLoginProps) {
+  const { options } = props;
   const { t } = useTranslation();
 
   if (!options || !Object.keys(options).length) {

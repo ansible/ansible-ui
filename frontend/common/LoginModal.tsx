@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import { PageForm, PageFormSubmitHandler, usePageDialog } from '../../framework';
 import { PageFormTextInput } from '../../framework/PageForm/Inputs/PageFormTextInput';
 import { RouteObj } from './Routes';
-import { SocialAuthLogin } from './SocialAuthLogin';
+import { AuthOptions, SocialAuthLogin } from './SocialAuthLogin';
 import { setCookie } from './crud/cookie';
 import { useInvalidateCacheOnUnmount } from './useInvalidateCache';
 
@@ -15,7 +15,13 @@ const LoginModalDiv = styled.div`
   padding: 24px;
 `;
 
-export function LoginModal(props: { serverId?: string | number; onLogin?: () => void }) {
+type LoginModalProps = {
+  authOptions?: AuthOptions;
+  loginUrl?: string;
+  onLogin?: () => void;
+};
+
+export function LoginModal(props: LoginModalProps) {
   const { t } = useTranslation();
   const [_, setDialog] = usePageDialog();
   const navigate = useNavigate();
@@ -44,31 +50,48 @@ export function LoginModal(props: { serverId?: string | number; onLogin?: () => 
       hasNoBodyWrapper
     >
       <LoginModalDiv>
-        <LoginForm defaultServerId={props.serverId} onLogin={props.onLogin} />
+        <LoginForm
+          loginUrl={props.loginUrl}
+          authOptions={props.authOptions}
+          onLogin={props.onLogin}
+        />
       </LoginModalDiv>
     </Modal>
   );
 }
 
-export function useLoginModal(onLogin?: () => void) {
+export function useLoginModal(args: {
+  authOptions?: AuthOptions;
+  loginUrl?: string;
+  onLogin?: () => void;
+}) {
+  const { authOptions, loginUrl, onLogin } = args;
   const [_, setDialog] = usePageDialog();
   const onLoginHandler = useCallback(() => onLogin?.(), [onLogin]);
   return useCallback(
-    (serverId?: string | number) =>
+    () =>
       setDialog(
         <LoginModal
-          serverId={serverId}
+          authOptions={authOptions}
+          loginUrl={loginUrl}
           onLogin={() => {
             setDialog(undefined);
             onLoginHandler();
           }}
         />
       ),
-    [onLoginHandler, setDialog]
+    [onLoginHandler, setDialog, authOptions, loginUrl]
   );
 }
 
-function LoginForm(props: { defaultServerId?: string | number; onLogin?: () => void }) {
+type LoginFormProps = {
+  loginUrl?: string;
+  authOptions?: AuthOptions;
+  onLogin?: () => void;
+};
+
+function LoginForm(props: LoginFormProps) {
+  const { authOptions } = props;
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -79,23 +102,27 @@ function LoginForm(props: { defaultServerId?: string | number; onLogin?: () => v
   >(
     async (data, setError) => {
       try {
-        let loginPageUrl = '';
+        let loginPageUrl = props.loginUrl;
         let searchString = 'name="csrfmiddlewaretoken" value="';
 
-        switch (process.env.UI_MODE) {
-          case 'AWX':
-            loginPageUrl = '/api/login/';
-            break;
-          case 'EDA':
-            loginPageUrl = '/api/eda/v1/auth/session/login/';
-            searchString = 'csrfToken: "';
-            break;
-          case 'GALAXY':
-            loginPageUrl = `/api/galaxy/_ui/v1/auth/login/`;
-            break;
-          case 'HUB':
-            loginPageUrl = `/api/automation-hub/_ui/v1/auth/login/`;
-            break;
+        if (!loginPageUrl) {
+          // This is the "old" way to determine the url; leaving this here until
+          // all apps are updated to pass in the url via prop
+          switch (process.env.UI_MODE) {
+            case 'AWX':
+              loginPageUrl = '/api/login/';
+              break;
+            case 'EDA':
+              loginPageUrl = '/api/eda/v1/auth/session/login/';
+              searchString = 'csrfToken: "';
+              break;
+            case 'GALAXY':
+              loginPageUrl = `/api/galaxy/_ui/v1/auth/login/`;
+              break;
+            case 'HUB':
+              loginPageUrl = `/api/automation-hub/_ui/v1/auth/login/`;
+              break;
+          }
         }
 
         if (!loginPageUrl) return;
@@ -193,7 +220,7 @@ function LoginForm(props: { defaultServerId?: string | number; onLogin?: () => v
           autoComplete="off"
         />
       </PageForm>
-      <SocialAuthLogin />
+      <SocialAuthLogin options={authOptions} />
     </div>
   );
 }
