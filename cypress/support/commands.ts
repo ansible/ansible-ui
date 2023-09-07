@@ -315,6 +315,7 @@ declare global {
         skipSync?: boolean
       ): Chainable<Project>;
 
+      waitForJobToFinish(jobId?: number): Chainable<void>;
       /** Create an execution environment in AWX */
       createAwxExecutionEnvironment(
         executionEnvironment: Partial<Omit<ExecutionEnvironment, 'id'>>

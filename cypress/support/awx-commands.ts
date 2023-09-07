@@ -18,6 +18,7 @@ import { User } from '../../frontend/awx/interfaces/User';
 import './auth';
 import './commands';
 import './rest-commands';
+import { Job } from '../../frontend/awx/interfaces/Job';
 
 //  AWX related custom command implementation
 
@@ -708,6 +709,26 @@ function waitForProjectToFinishSyncing(projectId: number) {
     waitForProjectToFinishSyncing(projectId);
   });
 }
+function waitForJobToFinish(id?: number) {
+  cy.awxRequestGet<Job>(`/api/v2/jobs/${id}`).then((job) => {
+    // Assuming that projects could take up to 5 min to sync if the instance is under load with other jobs
+    if (job.status === 'successful' || requestCount > 300) {
+      if (requestCount > 300) {
+        cy.log('Reached maximum number of requests for reading project status');
+      }
+      // Reset request count
+      requestCount = 1;
+      return;
+    }
+    requestCount++;
+    cy.wait(1000);
+    waitForJobToFinish(job.id);
+  });
+}
+
+Cypress.Commands.add('waitForJobToFinish', (jobId?: number) => {
+  waitForJobToFinish(jobId);
+});
 
 Cypress.Commands.add(
   'createInventoryHostGroup',

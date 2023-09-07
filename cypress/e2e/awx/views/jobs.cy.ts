@@ -114,12 +114,8 @@ describe('jobs', () => {
         const jobId = testJob.id ? testJob.id.toString() : '';
         cy.filterTableByTypeAndText('ID', jobId);
         const jobName = testJob.name ? testJob.name : '';
-        cy.getTableRowByText(jobName, false).within(() => {
-          cy.get('[data-label="Status"]', { timeout: 120 * 1000 }).should('not.contain', 'New');
-          cy.get('[data-label="Status"]', { timeout: 120 * 1000 }).should('not.contain', 'Waiting');
-          cy.get('[data-label="Status"]', { timeout: 120 * 1000 }).should('not.contain', 'Pending');
-          cy.get('[data-label="Status"]', { timeout: 120 * 1000 }).should('not.contain', 'Running');
-        });
+        cy.waitForJobToFinish(testJob.id);
+        cy.reload();
         cy.clickTableRowKebabAction(jobName, /^Delete job$/, false);
         cy.get('#confirm').click();
         cy.clickButton(/^Delete job/);
@@ -140,12 +136,8 @@ describe('jobs', () => {
       const jobId = jobList.id ? jobList.id.toString() : '';
       cy.filterTableByTypeAndText('ID', jobId);
       const jobName = jobList.name ? jobList.name : '';
-      cy.getTableRowByText(jobName, false).within(() => {
-        cy.get('[data-label="Status"]', { timeout: 120 * 1000 }).should('not.contain', 'New');
-        cy.get('[data-label="Status"]', { timeout: 120 * 1000 }).should('not.contain', 'Waiting');
-        cy.get('[data-label="Status"]', { timeout: 120 * 1000 }).should('not.contain', 'Pending');
-        cy.get('[data-label="Status"]', { timeout: 120 * 1000 }).should('not.contain', 'Running');
-      });
+      cy.waitForJobToFinish(jobList.id);
+      cy.reload();
       cy.selectTableRow(jobName, false);
       cy.clickToolbarKebabAction(/^Delete selected jobs$/);
       cy.get('#confirm').click();
