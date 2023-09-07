@@ -31,7 +31,7 @@ export function CollectionCategoryCarousel(props: {
   const categoryName = useCategoryName(category, t);
   const selectCollections = useSelectCollectionsDialog(collections);
   const alertToaster = usePageAlertToaster();
-  const { user } = useHubContext();
+  const context = useHubContext();
 
   const footerActionButton = useMemo<FooterAction | undefined>(() => {
     /**
@@ -39,7 +39,7 @@ export function CollectionCategoryCarousel(props: {
      * Since we don't have the API to retrieve "featured" collections yet,
      * this is set to "eda" temporarily to be able to view the UI.
      */
-    if (user.is_superuser && props.category === 'eda') {
+    if (context?.user?.is_superuser && props.category === 'eda') {
       return {
         icon: <CogIcon />,
         title: t('Manage content'),
@@ -64,7 +64,14 @@ export function CollectionCategoryCarousel(props: {
         },
       };
     }
-  }, [alertToaster, collections, props.category, selectCollections, t, user.is_superuser]);
+  }, [
+    alertToaster,
+    collections,
+    context?.user?.is_superuser,
+    props.category,
+    selectCollections,
+    t,
+  ]);
 
   return (
     <PageDashboardCarousel

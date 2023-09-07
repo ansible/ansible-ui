@@ -1,0 +1,30 @@
+{
+  "GALAXY_ENABLE_UNAUTHENTICATED_COLLECTION_ACCESS": false,
+  "GALAXY_ENABLE_UNAUTHENTICATED_COLLECTION_DOWNLOAD": false,
+  "GALAXY_FEATURE_FLAGS": {
+    "legacy_roles": false,
+    "display_repositories": true,
+    "execution_environments": true,
+    "ai_deny_index": false,
+    "collection_signing": true,
+    "require_upload_signatures": false,
+    "signatures_enabled": true,
+    "can_upload_signatures": false,
+    "can_create_signatures": true,
+    "collection_auto_sign": true,
+    "display_signatures": true,
+    "container_signing": true,
+    "_messages": []
+  },
+  "GALAXY_TOKEN_EXPIRATION": null,
+  "GALAXY_REQUIRE_CONTENT_APPROVAL": false,
+  "GALAXY_COLLECTION_SIGNING_SERVICE": "ansible-default",
+  "GALAXY_AUTO_SIGN_COLLECTIONS": true,
+  "GALAXY_SIGNATURE_UPLOAD_ENABLED": false,
+  "GALAXY_REQUIRE_SIGNATURE_FOR_APPROVAL": false,
+  "GALAXY_MINIMUM_PASSWORD_LENGTH": null,
+  "GALAXY_AUTH_LDAP_ENABLED": null,
+  "GALAXY_CONTAINER_SIGNING_SERVICE": "container-default",
+  "GALAXY_LDAP_MIRROR_ONLY_EXISTING_GROUPS": false,
+  "GALAXY_LDAP_DISABLE_REFERRALS": null
+}
