@@ -7,7 +7,6 @@ import { Login } from '../common/Login';
 import { PageNotFound } from '../common/PageNotFound';
 import { PageNotImplemented } from '../common/PageNotImplemented';
 import { ActiveUserProvider } from '../common/useActiveUser';
-import { ExecutionEnvironments } from '../hub/execution-environments/ExecutionEnvironments';
 import { CreateOrganization, EditOrganization } from './access/organizations/OrganizationForm';
 import { OrganizationPage } from './access/organizations/OrganizationPage/OrganizationPage';
 import { Organizations } from './access/organizations/Organizations';
@@ -23,6 +22,7 @@ import { ApplicationPage } from './administration/applications/ApplicationPage/A
 import { Applications } from './administration/applications/Applications';
 import { CredentialTypePage } from './administration/credential-types/CredentialTypePage/CredentialTypePage';
 import { CredentialTypes } from './administration/credential-types/CredentialTypes';
+import { ExecutionEnvironments } from './administration/execution-environments/ExecutionEnvironments';
 import { InstanceGroups } from './administration/instance-groups/InstanceGroups';
 import { EditInstance } from './administration/instances/EditInstance';
 import { InstanceDetails } from './administration/instances/InstanceDetails';
