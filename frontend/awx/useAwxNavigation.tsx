@@ -65,258 +65,274 @@ export function useAwxNavigation() {
     const navigationItems: PageNavigationItem[] = [
       {
         label: '',
-        path: 'ui_next',
+        path: '',
         element: <AwxRoot />,
         children: [
           {
-            label: t('Dashboard'),
-            path: 'dashboard',
-            element: <AwxDashboard />,
-          },
-          {
-            label: t('Views'),
-            path: 'views',
+            label: '',
+            path: process.env.AWX_ROUTE_PREFIX,
             children: [
               {
-                label: t('Jobs'),
-                path: 'jobs',
-                element: <Jobs />,
-                children: [
-                  { path: ':job_type/:id/*', element: <JobPage /> },
-                  { path: '', element: <Jobs /> },
-                ],
+                label: t('Dashboard'),
+                path: 'dashboard',
+                element: <AwxDashboard />,
               },
               {
-                label: t('Schedules'),
-                path: 'schedules',
-                children: [
-                  { path: 'create', element: <CreateSchedule /> },
-                  {
-                    path: ':resource_type/:resource_id/:schedule_id/edit',
-                    element: <SchedulePage />,
-                  },
-                  { path: '', element: <Schedules /> },
-                ],
-              },
-              {
-                label: t('Activity Stream'),
-                path: 'activity-stream',
-                element: <PageNotImplemented />,
-              },
-              {
-                label: t('Workflow Approvals'),
-                path: 'workflow-approvals',
-                children: [
-                  { path: ':id/*', element: <PageNotImplemented /> },
-                  { path: '', element: <PageNotImplemented /> },
-                ],
-              },
-            ],
-          },
-          {
-            label: t('Resources'),
-            path: 'resources',
-            children: [
-              {
-                label: 'Templates',
-                path: 'templates',
+                label: t('Views'),
+                path: 'views',
                 children: [
                   {
+                    label: t('Jobs'),
                     path: 'jobs',
                     children: [
-                      { path: 'create', element: <CreateJobTemplate /> },
-                      { path: ':id/edit', element: <EditJobTemplate /> },
-                      { path: ':id/schedules/:schedule_id/*', element: <SchedulePage /> },
-                      { path: ':id/*', element: <TemplatePage /> },
+                      { path: ':job_type/:id/*', element: <JobPage /> },
+                      { path: '', element: <Jobs /> },
                     ],
                   },
                   {
-                    path: 'workflows',
+                    label: t('Schedules'),
+                    path: 'schedules',
                     children: [
-                      { path: ':id/schedules/:schedule_id/*', element: <SchedulePage /> },
-                      { path: ':id/*', element: <WorkflowJobTemplatePage /> },
+                      { path: 'create', element: <CreateSchedule /> },
+                      {
+                        path: ':resource_type/:resource_id/:schedule_id/edit',
+                        element: <SchedulePage />,
+                      },
+                      { path: '', element: <Schedules /> },
                     ],
                   },
-                  { path: '', element: <Templates /> },
-                ],
-              },
-              {
-                label: t('Credentials'),
-                path: 'credentials',
-                children: [
-                  { path: 'create', element: <CreateCredential /> },
-                  { path: ':id/edit', element: <EditCredential /> },
-                  { path: ':id/*', element: <CredentialPage /> },
-                  { path: '', element: <Credentials /> },
-                ],
-              },
-              {
-                label: t('Projects'),
-                path: 'projects',
-                children: [
-                  { path: 'create', element: <CreateProject /> },
-                  { path: ':id/edit', element: <EditProject /> },
-                  { path: ':id/schedules/:schedule_id/*', element: <SchedulePage /> },
-                  { path: ':id/*', element: <ProjectPage /> },
-                  { path: '', element: <Projects /> },
-                ],
-              },
-              {
-                label: t('Inventories'),
-                path: 'inventories',
-                children: [
-                  { path: 'create', element: <CreateInventory /> },
-                  { path: ':inventory_type/:id/edit', element: <EditInventory /> },
                   {
-                    path: ':inventory_type/:id/schedules/:schedule_id/*',
-                    element: <SchedulePage />,
+                    label: t('Activity Stream'),
+                    path: 'activity-stream',
+                    element: <PageNotImplemented />,
                   },
-                  { path: ':inventory_type/:id/*', element: <InventoryPage /> },
-                  { path: '', element: <Inventories /> },
+                  {
+                    label: t('Workflow Approvals'),
+                    path: 'workflow-approvals',
+                    children: [
+                      { path: ':id/*', element: <PageNotImplemented /> },
+                      { path: '', element: <PageNotImplemented /> },
+                    ],
+                  },
                 ],
               },
               {
-                label: t('Hosts'),
-                path: 'hosts',
-                children: [
-                  { path: ':id/*', element: <HostPage /> },
-                  { path: '', element: <Hosts /> },
-                ],
-              },
-            ],
-          },
-          {
-            label: t('Access'),
-            path: 'access',
-            children: [
-              {
-                label: t('Organizations'),
-                path: 'organizations',
-                children: [
-                  { path: 'create', element: <CreateOrganization /> },
-                  { path: ':id/edit', element: <EditOrganization /> },
-                  { path: ':id/*', element: <OrganizationPage /> },
-                  { path: '', element: <Organizations /> },
-                ],
-              },
-              {
-                label: t('Teams'),
-                path: 'teams',
-                children: [
-                  { path: 'create', element: <CreateTeam /> },
-                  { path: ':id/edit', element: <EditTeam /> },
-                  { path: ':id/roles/add', element: <AddRolesToTeam /> },
-                  { path: ':id/*', element: <TeamPage /> },
-                  { path: '', element: <Teams /> },
-                ],
-              },
-              {
-                label: t('Users'),
-                path: 'users',
-                children: [
-                  { path: 'create', element: <CreateUser /> },
-                  { path: ':id/edit', element: <EditUser /> },
-                  { path: ':id/roles/add', element: <AddRolesToUser /> },
-                  { path: ':id/*', element: <UserPage /> },
-                  { path: '', element: <Users /> },
-                ],
-              },
-            ],
-          },
-          {
-            label: t('Administration'),
-            path: 'administration',
-            children: [
-              {
-                label: t('Credential Types'),
-                path: 'credential-types',
-                children: [
-                  { path: ':id/*', element: <CredentialTypePage /> },
-                  { path: '', element: <CredentialTypes /> },
-                ],
-              },
-              {
-                label: t('Notifictions'),
-                path: 'notifications',
-                children: [
-                  { path: ':id/*', element: <NotificationPage /> },
-                  { path: '', element: <Notifications /> },
-                ],
-              },
-              {
-                label: t('Management Jobs'),
-                path: 'management-jobs',
+                label: t('Resources'),
+                path: 'resources',
                 children: [
                   {
-                    path: ':resource_id/schedules/:schedule_id/details',
-                    element: <SchedulePage />,
+                    label: 'Templates',
+                    path: 'templates',
+                    children: [
+                      {
+                        path: 'jobs',
+                        children: [
+                          { path: 'create', element: <CreateJobTemplate /> },
+                          { path: ':id/edit', element: <EditJobTemplate /> },
+                          { path: ':id/schedules/:schedule_id/*', element: <SchedulePage /> },
+                          { path: ':id/*', element: <TemplatePage /> },
+                        ],
+                      },
+                      {
+                        path: 'workflows',
+                        children: [
+                          { path: ':id/schedules/:schedule_id/*', element: <SchedulePage /> },
+                          { path: ':id/*', element: <WorkflowJobTemplatePage /> },
+                        ],
+                      },
+                      { path: '', element: <Templates /> },
+                    ],
                   },
-                  { path: ':id/*', element: <ManagementJobPage /> },
-                  { path: '', element: <ManagementJobs /> },
+                  {
+                    label: t('Credentials'),
+                    path: 'credentials',
+                    children: [
+                      { path: 'create', element: <CreateCredential /> },
+                      { path: ':id/edit', element: <EditCredential /> },
+                      { path: ':id/*', element: <CredentialPage /> },
+                      { path: '', element: <Credentials /> },
+                    ],
+                  },
+                  {
+                    label: t('Projects'),
+                    path: 'projects',
+                    children: [
+                      { path: 'create', element: <CreateProject /> },
+                      { path: ':id/edit', element: <EditProject /> },
+                      { path: ':id/schedules/:schedule_id/*', element: <SchedulePage /> },
+                      { path: ':id/*', element: <ProjectPage /> },
+                      { path: '', element: <Projects /> },
+                    ],
+                  },
+                  {
+                    label: t('Inventories'),
+                    path: 'inventories',
+                    children: [
+                      { path: 'create', element: <CreateInventory /> },
+                      { path: ':inventory_type/:id/edit', element: <EditInventory /> },
+                      {
+                        path: ':inventory_type/:id/schedules/:schedule_id/*',
+                        element: <SchedulePage />,
+                      },
+                      { path: ':inventory_type/:id/*', element: <InventoryPage /> },
+                      { path: '', element: <Inventories /> },
+                    ],
+                  },
+                  {
+                    label: t('Hosts'),
+                    path: 'hosts',
+                    children: [
+                      { path: ':id/*', element: <HostPage /> },
+                      { path: '', element: <Hosts /> },
+                    ],
+                  },
                 ],
               },
               {
-                label: t('Instace Groups'),
-                path: 'instance-groups',
-                element: <InstanceGroups />,
-              },
-              {
-                label: t('Instances'),
-                path: 'instances',
+                label: t('Access'),
+                path: 'access',
                 children: [
-                  { path: ':id/edit', element: <EditInstance /> },
-                  { path: ':id/*', element: <InstanceDetails /> },
-                  { path: '', element: <Instances /> },
+                  {
+                    label: t('Organizations'),
+                    path: 'organizations',
+                    children: [
+                      { path: 'create', element: <CreateOrganization /> },
+                      { path: ':id/edit', element: <EditOrganization /> },
+                      { path: ':id/*', element: <OrganizationPage /> },
+                      { path: '', element: <Organizations /> },
+                    ],
+                  },
+                  {
+                    label: t('Teams'),
+                    path: 'teams',
+                    children: [
+                      { path: 'create', element: <CreateTeam /> },
+                      { path: ':id/edit', element: <EditTeam /> },
+                      { path: ':id/roles/add', element: <AddRolesToTeam /> },
+                      { path: ':id/*', element: <TeamPage /> },
+                      { path: '', element: <Teams /> },
+                    ],
+                  },
+                  {
+                    label: t('Users'),
+                    path: 'users',
+                    children: [
+                      { path: 'create', element: <CreateUser /> },
+                      { path: ':id/edit', element: <EditUser /> },
+                      { path: ':id/roles/add', element: <AddRolesToUser /> },
+                      { path: ':id/*', element: <UserPage /> },
+                      { path: '', element: <Users /> },
+                    ],
+                  },
                 ],
               },
               {
-                label: t('Applications'),
-                path: 'applications',
+                label: t('Administration'),
+                path: 'administration',
                 children: [
-                  { path: ':id/*', element: <ApplicationPage /> },
-                  { path: '', element: <Applications /> },
+                  {
+                    label: t('Credential Types'),
+                    path: 'credential-types',
+                    children: [
+                      { path: ':id/*', element: <CredentialTypePage /> },
+                      { path: '', element: <CredentialTypes /> },
+                    ],
+                  },
+                  {
+                    label: t('Notifictions'),
+                    path: 'notifications',
+                    children: [
+                      { path: ':id/*', element: <NotificationPage /> },
+                      { path: '', element: <Notifications /> },
+                    ],
+                  },
+                  {
+                    label: t('Management Jobs'),
+                    path: 'management-jobs',
+                    children: [
+                      {
+                        path: ':resource_id/schedules/:schedule_id/details',
+                        element: <SchedulePage />,
+                      },
+                      { path: ':id/*', element: <ManagementJobPage /> },
+                      { path: '', element: <ManagementJobs /> },
+                    ],
+                  },
+                  {
+                    label: t('Instance Groups'),
+                    path: 'instance-groups',
+                    element: <InstanceGroups />,
+                  },
+                  {
+                    label: t('Instances'),
+                    path: 'instances',
+                    children: [
+                      { path: ':id/edit', element: <EditInstance /> },
+                      { path: ':id/*', element: <InstanceDetails /> },
+                      { path: '', element: <Instances /> },
+                    ],
+                  },
+                  {
+                    label: t('Applications'),
+                    path: 'applications',
+                    children: [
+                      { path: ':id/*', element: <ApplicationPage /> },
+                      { path: '', element: <Applications /> },
+                    ],
+                  },
+                  {
+                    label: t('Execution Environments'),
+                    path: 'execution-environments',
+                    element: <ExecutionEnvironments />,
+                  },
+                  {
+                    label: 'Topology View',
+                    path: 'topology',
+                    element: <PageNotImplemented />,
+                  },
                 ],
               },
               {
-                label: t('Execution Environments'),
-                path: 'execution-environments',
-                element: <ExecutionEnvironments />,
+                label: t('Analytics'),
+                path: 'analytics',
+                children: [
+                  {
+                    label: t('Reports'),
+                    path: 'reports',
+                    element: <Reports />,
+                  },
+                  {
+                    label: 'Host Metrics',
+                    path: 'host-metrics',
+                    element: <HostMetrics />,
+                  },
+                  {
+                    label: 'Subscription Usage',
+                    path: 'subscription-usage',
+                    element: <SubscriptionUsage />,
+                  },
+                ],
               },
               {
-                label: 'Topology View',
-                path: 'topology',
-                element: <PageNotImplemented />,
+                label: t('Settings'),
+                path: 'settings',
+                element: <Settings />,
               },
             ],
-          },
-          {
-            label: t('Analytics'),
-            path: 'analytics',
-            children: [
-              {
-                label: t('Reports'),
-                path: 'reports',
-                element: <Reports />,
-              },
-              {
-                label: 'Host Metrics',
-                path: 'host-metrics',
-                element: <HostMetrics />,
-              },
-              {
-                label: 'Subscription Usage',
-                path: 'subscription-usage',
-                element: <SubscriptionUsage />,
-              },
-            ],
-          },
-          {
-            label: t('Settings'),
-            path: 'settings',
-            element: <Settings />,
           },
           { path: 'login', element: <Login /> },
-          { path: '', element: <Navigate to="dashboard" /> },
+          {
+            path: '',
+            element: (
+              <Navigate
+                to={
+                  process.env.AWX_ROUTE_PREFIX
+                    ? process.env.AWX_ROUTE_PREFIX + '/dashboard'
+                    : 'dashboard'
+                }
+              />
+            ),
+          },
           { path: '*', element: <PageNotFound /> },
         ],
       },

@@ -8,7 +8,7 @@ export function PageNavigation(props: { navigationItems: PageNavigationItem[] })
     <PageSidebar
       isNavOpen={navBar.isOpen}
       nav={
-        <Nav className="border-top">
+        <Nav>
           <NavList>
             <PageNavigationItems baseRoute={''} items={navigationItems} />
           </NavList>
@@ -45,7 +45,8 @@ export function PageNavigationItems(props: { items: PageNavigationItem[]; baseRo
 function PageNavigationItem(props: { item: PageNavigationItem; baseRoute: string }) {
   const onClickNavItem = usePageNavBarClick();
   const { item } = props;
-  const route = props.baseRoute + '/' + item.path;
+  let route = props.baseRoute + '/' + item.path;
+  route = route.replace('//', '/');
   if (item.path === '/' && 'children' in item) {
     return <PageNavigationItems items={item.children} baseRoute={''} />;
   } else if (
