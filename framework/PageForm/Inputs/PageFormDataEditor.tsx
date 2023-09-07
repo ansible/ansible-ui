@@ -155,6 +155,7 @@ export type PageFormDataEditorInputProps<
   allowCopy?: boolean;
   allowDownload?: boolean;
   defaultExpanded?: boolean;
+  shouldUnregister?: boolean;
 } & Omit<FormGroupTextInputProps, 'onChange'>;
 
 export function PageFormDataEditor<
@@ -177,8 +178,10 @@ export function PageFormDataEditor<
     name,
     toggleLanguages,
     validate,
+    shouldUnregister = true,
     ...formGroupInputProps
   } = props;
+
   const {
     formState: { isSubmitting, isValidating, errors },
     setError: setFormError,
@@ -308,7 +311,7 @@ export function PageFormDataEditor<
     <Controller<TFieldValues, TFieldName>
       name={name}
       control={control}
-      shouldUnregister
+      shouldUnregister={shouldUnregister}
       render={({ field: { name, onChange, value }, fieldState: { error } }) => {
         const errorSet = [...new Set(error?.message?.split('\n'))];
         const disabled = value !== undefined && value !== null && value !== '';

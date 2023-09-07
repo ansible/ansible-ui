@@ -15,6 +15,7 @@ export function PageFormInventorySelect<
   isRequired?: boolean;
   additionalControls?: ReactElement;
   labelHelp?: string;
+  shouldUnregister?: boolean;
 }) {
   const { t } = useTranslation();
   const openSelectDialog = useSelectInventory();
@@ -46,6 +47,7 @@ export function PageFormInventorySelect<
       isRequired={props.isRequired}
       limit={200}
       openSelectDialog={openSelectDialog}
+      shouldUnregister={props.shouldUnregister}
     />
   );
 }

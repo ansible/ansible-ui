@@ -17,8 +17,16 @@ export function PageFormLabelSelect<
   name: TFieldName;
   placeholderText?: string;
   additionalControls?: ReactElement;
+  shouldUnregister?: boolean;
 }) {
-  const { labelHelpTitle, labelHelp, name, placeholderText, additionalControls } = props;
+  const {
+    labelHelpTitle,
+    labelHelp,
+    name,
+    placeholderText,
+    additionalControls,
+    shouldUnregister = true,
+  } = props;
   const { t } = useTranslation();
 
   const { items, isLoading } = useAwxGetAllPages<Label>(
@@ -36,6 +44,7 @@ export function PageFormLabelSelect<
       options={
         options?.map((label) => ({ value: label, label: label.name })) ?? [{ label: '', value: '' }]
       }
+      shouldUnregister={shouldUnregister}
     />
   );
 }

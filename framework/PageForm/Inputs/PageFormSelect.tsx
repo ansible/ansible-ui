@@ -88,6 +88,16 @@ export type PageFormSelectProps<
   isRequired?: boolean;
   fieldNameToResetOnFieldChange?: TFieldName;
 
+  /**
+   * When true, the input will be unregistered when unmounted.
+   *
+   * @default true
+   * @see https://react-hook-form.com/api/useform/register#shouldunregister
+   *
+   * Note: You should set this to false when you are working with the wizard to avoid losing its value after unmounting.
+   */
+  shouldUnregister?: boolean;
+
   validate?:
     | Validate<FieldPathValue<TFieldValues, TFieldName>, TFieldValues>
     | Record<string, Validate<FieldPathValue<TFieldValues, TFieldName>, TFieldValues>>;
@@ -113,6 +123,7 @@ export function PageFormSelect<
     isRequired,
     validate,
     fieldNameToResetOnFieldChange,
+    shouldUnregister = true,
   } = props;
 
   const id = props.id ?? name.split('.').join('-');
@@ -132,7 +143,7 @@ export function PageFormSelect<
     <Controller<TFieldValues, TFieldName>
       name={name}
       control={control}
-      shouldUnregister
+      shouldUnregister={shouldUnregister}
       render={({ field: { onChange, value }, fieldState: { error } }) => {
         if (value === '') {
           if (options.length === 1 && isRequired) {

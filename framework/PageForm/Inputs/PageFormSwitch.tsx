@@ -25,6 +25,7 @@ export type PageFormSwitchProps<
   formLabel?: string;
   labelHelp?: string;
   labelHelpTitle?: string;
+  shouldUnregister?: boolean;
 } & Omit<SwitchProps, 'onChange' | 'ref' | 'instance'>;
 
 export function PageFormSwitch<
@@ -40,6 +41,7 @@ export function PageFormSwitch<
     formLabel,
     labelHelp,
     labelHelpTitle,
+    shouldUnregister = true,
     ...rest
   } = props;
   const {
@@ -50,7 +52,7 @@ export function PageFormSwitch<
     <Controller<TFieldValues, TFieldName>
       name={name}
       control={control}
-      shouldUnregister
+      shouldUnregister={shouldUnregister}
       render={({ field: { onChange, value }, fieldState: { error } }) => {
         return (
           <FormGroup

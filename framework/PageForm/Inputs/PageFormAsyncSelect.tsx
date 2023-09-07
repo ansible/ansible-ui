@@ -40,6 +40,7 @@ export interface PageFormAsyncSelectProps<
     defaultSelection?: SelectionType
   ) => void;
   limit: number;
+  shouldUnregister?: boolean;
 }
 
 export function PageFormAsyncSelect<
@@ -61,6 +62,7 @@ export function PageFormAsyncSelect<
     labelHelp,
     labelHelpTitle,
     additionalControls,
+    shouldUnregister = true,
   } = props;
   const id = props.id ?? name.split('.').join('-');
 
@@ -99,7 +101,7 @@ export function PageFormAsyncSelect<
     <Controller<TFieldValues, TFieldName>
       name={name}
       control={control}
-      shouldUnregister
+      shouldUnregister={shouldUnregister}
       render={({ field: { onChange, value }, fieldState: { error } }) => {
         return (
           <PageFormGroup

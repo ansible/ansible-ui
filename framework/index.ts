@@ -47,6 +47,7 @@ export * from './PageTable/useTableItems';
 export * from './PageTabs';
 export * from './PageToolbar/PageToolbar';
 export * from './PageToolbar/PageToolbarFilter';
+export * from './PageWizard/PageWizard';
 export * from './Settings';
 export * from './components/BulkSelector';
 export * from './components/Collapse';

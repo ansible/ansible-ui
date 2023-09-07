@@ -13,6 +13,7 @@ export function PageFormInstanceGroupSelect<
   labelHelp: string;
   additionalControls?: ReactNode;
   isRequired?: boolean;
+  shouldUnregister?: boolean;
 }) {
   const { t } = useTranslation();
   const selectInstanceGroup = useSelectInstanceGroups(true);

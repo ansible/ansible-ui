@@ -41,6 +41,7 @@ export type PageFormMultiInputProps<
   selectTitle?: string;
   isDisabled?: boolean;
   selectOpen?: (callback: (selection: T[]) => void, title: string) => void;
+  shouldUnregister?: boolean;
 } & Omit<PageFormGroupProps, 'onChange' | 'value'> &
   ChipGroupProps;
 
@@ -54,7 +55,16 @@ export function PageFormMultiInput<
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >(props: PageFormMultiInputProps<T, TFieldValues, TFieldName>) {
   const { validate, selectTitle, selectOpen, placeholder, ...formGroupInputProps } = props;
-  const { label, name, isRequired, minLength, maxLength, pattern, isDisabled } = props;
+  const {
+    label,
+    name,
+    isRequired,
+    minLength,
+    maxLength,
+    pattern,
+    isDisabled,
+    shouldUnregister = true,
+  } = props;
   const {
     control,
     setValue,
@@ -66,7 +76,7 @@ export function PageFormMultiInput<
     <Controller<TFieldValues, TFieldName>
       name={name}
       control={control}
-      shouldUnregister
+      shouldUnregister={shouldUnregister}
       render={({ field: { onChange, value }, fieldState: { error } }) => {
         const removeItem = (item: T) => {
           onChange(value.filter((i) => i.id !== item.id));

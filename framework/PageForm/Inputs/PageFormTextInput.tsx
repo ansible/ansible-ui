@@ -170,6 +170,16 @@ export type PageFormTextInputProps<
    * Note: The autocomplete attribute works with the following input types: text, search, url, tel, email, password, datepickers, range, and color.
    */
   autoComplete?: string;
+
+  /**
+   * When true, the input will be unregistered when unmounted.
+   *
+   * @default true
+   * @see https://react-hook-form.com/api/useform/register#shouldunregister
+   *
+   * Note: You should set this to false when you are working with the wizard to avoid losing its value after unmounting.
+   */
+  shouldUnregister?: boolean;
 };
 
 /**
@@ -206,6 +216,7 @@ export function PageFormTextInput<
     selectValue,
     autoFocus,
     autoComplete,
+    shouldUnregister = true,
   } = props;
 
   const id = props.id ?? name.split('.').join('-');
@@ -224,7 +235,7 @@ export function PageFormTextInput<
     <Controller<TFieldValues, TFieldName>
       name={name}
       control={control}
-      shouldUnregister
+      shouldUnregister={shouldUnregister}
       render={({ field: { onChange, value, name }, fieldState: { error } }) => {
         const helperTextInvalid = error?.message
           ? validate && isValidating

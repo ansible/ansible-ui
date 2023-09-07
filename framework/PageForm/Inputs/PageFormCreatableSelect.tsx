@@ -26,6 +26,7 @@ export type PageFormCreatableSelectProps<
   validate?:
     | Validate<FieldPathValue<TFieldValues, TFieldName>, TFieldValues>
     | Record<string, Validate<FieldPathValue<TFieldValues, TFieldName>, TFieldValues>>;
+  shouldUnregister?: boolean;
 };
 
 /**  Select wrapper for use with react-hook-form */
@@ -33,7 +34,7 @@ export function PageFormCreatableSelect<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >(props: PageFormCreatableSelectProps<TFieldValues, TFieldName>) {
-  const { isRequired, validate, ...rest } = props;
+  const { isRequired, validate, shouldUnregister = true, ...rest } = props;
   const {
     control,
     formState: { isSubmitting },
@@ -43,7 +44,7 @@ export function PageFormCreatableSelect<
     <Controller<TFieldValues, TFieldName>
       name={props.name}
       control={control}
-      shouldUnregister
+      shouldUnregister={shouldUnregister}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <FormGroupTypeAheadMultiSelect
           {...rest}

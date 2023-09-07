@@ -21,6 +21,7 @@ export function PageFormExecutionEnvironmentSelect<
   label?: string;
   isDisabled?: boolean;
   tooltip?: string;
+  shouldUnregister?: boolean;
 }) {
   const { name, organizationId, executionEnvironmentIdPath, executionEnvironmentPath, ...rest } =
     props;
