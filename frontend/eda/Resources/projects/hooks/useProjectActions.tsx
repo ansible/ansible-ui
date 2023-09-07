@@ -55,6 +55,7 @@ export function useProjectActions(view: IEdaView<EdaProject>) {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: PencilAltIcon,
+        isPinned: true,
         label: t('Edit project'),
         onClick: (project: EdaProject) =>
           navigate(RouteObj.EditEdaProject.replace(':id', project.id.toString())),
