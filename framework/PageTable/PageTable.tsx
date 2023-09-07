@@ -182,6 +182,9 @@ export type PageTableProps<T extends object> = {
 
   disableLastRowBorder?: boolean;
 
+  /** Optional: Max selections permitted in a table. If this number of selections has been made,
+   * the checkboxes on the rest of the rows are disabled until an item is unselected.
+   */
   maxSelections?: number;
 
   /**

@@ -2,11 +2,11 @@ import { collectionKeyFn } from '../../api/utils';
 import { CollectionVersionSearch } from '../../collections/Collection';
 
 /**
- * Utility function to get arrays of collections (pulp_hrefs) to be removed from selection and added to selections
- * based on original and updated selection of collections
- * @param original original list of items
- * @param current updated list of items
- * @returns object containing 2 lists: pulp_hrefs of collections to be added and collections to be removed
+ * Utility function to get arrays of collections (pulp_hrefs) to be removed and added based on original and
+ * updated selection of collections (in a select dialog for example)
+ * @param original original list of collections
+ * @param current updated list of collections
+ * @returns object containing 2 lists: pulp_hrefs of collections to be added and pulp_hrefs of collections to be removed
  */
 export function getAddedAndRemovedCollections(
   original: CollectionVersionSearch[],

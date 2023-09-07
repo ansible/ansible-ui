@@ -11,7 +11,6 @@ import { parsePulpIDFromURL } from '../common/utils/parsePulpIDFromURL';
 import { postHubRequest } from '../api/request';
 import { hubAPI } from '../api/utils';
 import { errorToAlertProps, usePageAlertToaster } from '../../../framework';
-// import { collectionKeyFn } from '../api/utils';
 
 type FooterAction = {
   icon?: ReactNode;
@@ -33,6 +32,11 @@ export function CollectionCategoryCarousel(props: {
   const alertToaster = usePageAlertToaster();
 
   const footerActionButton = useMemo<FooterAction | undefined>(() => {
+    /**
+     * TODO: This needs to be changed to category "featured" but since we don't have the API
+     * to retrieve "Featured" collections yet, this is set to "eda" temporarily to be able to
+     * view the UI
+     */
     if (props.category === 'eda') {
       return {
         icon: <CogIcon />,
@@ -50,7 +54,7 @@ export function CollectionCategoryCarousel(props: {
                 alertToaster.addAlert(errorToAlertProps(error));
               }
             },
-            3 // Select max 12 collections
+            12 // Select max 12 collections
           );
         },
       };
