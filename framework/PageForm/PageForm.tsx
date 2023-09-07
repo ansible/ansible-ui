@@ -20,12 +20,12 @@ import {
   UseFormReturn,
   useFormState,
 } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { RequestError } from '../../frontend/common/crud/RequestError';
 import { useBreakpoint } from '../components/useBreakPoint';
 import { PageBody } from '../PageBody';
 import { SettingsContext } from '../Settings';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
-import { useTranslation } from 'react-i18next';
 
 export function PageForm<T extends object>(props: {
   schema?: JSONSchema6;
@@ -120,6 +120,22 @@ export function PageForm<T extends object>(props: {
           gap: 0,
         }}
       >
+        {error && (
+          <Alert
+            variant="danger"
+            title={error.message ?? ''}
+            isInline
+            style={{
+              paddingLeft: isMd && props.onCancel ? 24 : undefined,
+              position: 'sticky',
+              top: 0,
+              zIndex: 1000,
+            }}
+            isExpandable={error instanceof RequestError ? !!error.details : false}
+          >
+            {error instanceof RequestError ? error.details : undefined}
+          </Alert>
+        )}
         {props.disableScrolling ? (
           <div style={{ maxWidth, padding: disablePadding ? undefined : 24 }}>
             <PageFormGrid isVertical={props.isVertical} singleColumn={props.singleColumn}>
@@ -140,17 +156,6 @@ export function PageForm<T extends object>(props: {
               </PageFormGrid>
             </div>
           </div>
-        )}
-        {error && (
-          <Alert
-            variant="danger"
-            title={error.message ?? ''}
-            isInline
-            style={{ paddingLeft: isMd && props.onCancel ? 190 : undefined }}
-            isExpandable={error instanceof RequestError ? !!error.details : false}
-          >
-            {error instanceof RequestError ? error.details : undefined}
-          </Alert>
         )}
         {props.onCancel ? (
           <div className="dark-2 border-top" style={{ padding: disablePadding ? undefined : 24 }}>
