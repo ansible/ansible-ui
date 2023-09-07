@@ -87,7 +87,6 @@ export function RuleAuditDetails() {
     return (
       <PageLayout>
         <PageTable
-          id="eda-rule-audit-actions"
           tableColumns={tableColumns}
           toolbarFilters={toolbarFilters}
           errorStateTitle={t('Error loading actions')}
@@ -113,7 +112,6 @@ export function RuleAuditDetails() {
     return (
       <PageLayout>
         <PageTable
-          id="eda-rule-audit-events"
           tableColumns={tableColumns}
           toolbarFilters={toolbarFilters}
           errorStateTitle={t('Error loading events')}
