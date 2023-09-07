@@ -32,6 +32,7 @@ export type MultiSelectDialogProps<T extends object> = {
   errorStateTitle?: string;
   defaultSort?: string;
   maxSelections?: number;
+  allowZeroSelections?: boolean;
 };
 
 export function MultiSelectDialog<T extends object>(props: MultiSelectDialogProps<T>) {
@@ -46,6 +47,7 @@ export function MultiSelectDialog<T extends object>(props: MultiSelectDialogProp
     onSelect,
     defaultSort,
     maxSelections,
+    allowZeroSelections,
   } = props;
   const [_, setDialog] = usePageDialog();
   const onClose = useCallback(() => setDialog(undefined), [setDialog]);
@@ -68,7 +70,7 @@ export function MultiSelectDialog<T extends object>(props: MultiSelectDialogProp
             onClose();
             onSelect(view.selectedItems);
           }}
-          isAriaDisabled={view.selectedItems.length === 0}
+          isAriaDisabled={view.selectedItems.length === 0 && !allowZeroSelections}
         >
           {confirmText ?? translations.confirmText}
         </Button>,

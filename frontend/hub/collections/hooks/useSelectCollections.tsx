@@ -18,6 +18,7 @@ export function CollectionMultiSelectDialog(props: {
   onSelect: (collections: CollectionVersionSearch[]) => Promise<unknown>;
   defaultSelection: CollectionVersionSearch[];
   maxSelections?: number;
+  allowZeroSelections?: boolean;
 }) {
   const { t } = useTranslation();
   const toolbarFilters = useCollectionFilters();
@@ -69,6 +70,7 @@ export function CollectionMultiSelectDialog(props: {
       defaultSort="name"
       confirmText={t('Select')}
       maxSelections={props.maxSelections}
+      allowZeroSelections={props.allowZeroSelections}
     />
   );
 }
@@ -80,7 +82,10 @@ export function useSelectCollectionsDialog(defaultSelection: CollectionVersionSe
       title: string,
       description: string,
       onSelect: (collections: CollectionVersionSearch[]) => Promise<unknown>,
-      maxSelections?: number
+      options?: {
+        maxSelections?: number;
+        allowZeroSelections?: boolean;
+      }
     ) => {
       setDialog(
         <CollectionMultiSelectDialog
@@ -88,7 +93,8 @@ export function useSelectCollectionsDialog(defaultSelection: CollectionVersionSe
           description={description}
           onSelect={onSelect}
           defaultSelection={defaultSelection}
-          maxSelections={maxSelections}
+          maxSelections={options?.maxSelections}
+          allowZeroSelections={options?.allowZeroSelections}
         />
       );
     },

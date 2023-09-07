@@ -11,6 +11,7 @@ import { parsePulpIDFromURL } from '../common/utils/parsePulpIDFromURL';
 import { postHubRequest } from '../api/request';
 import { hubAPI } from '../api/utils';
 import { errorToAlertProps, usePageAlertToaster } from '../../../framework';
+import { useHubContext } from '../useHubContext';
 
 type FooterAction = {
   icon?: ReactNode;
@@ -30,14 +31,15 @@ export function CollectionCategoryCarousel(props: {
   const categoryName = useCategoryName(category, t);
   const selectCollections = useSelectCollectionsDialog(collections);
   const alertToaster = usePageAlertToaster();
+  const { user } = useHubContext();
 
   const footerActionButton = useMemo<FooterAction | undefined>(() => {
     /**
-     * TODO: This needs to be changed to category "featured" but since we don't have the API
-     * to retrieve "Featured" collections yet, this is set to "eda" temporarily to be able to
-     * view the UI
+     * TODO: The category in the condition below needs to be changed to "featured".
+     * Since we don't have the API to retrieve "featured" collections yet,
+     * this is set to "eda" temporarily to be able to view the UI.
      */
-    if (props.category === 'eda') {
+    if (user.is_superuser && props.category === 'eda') {
       return {
         icon: <CogIcon />,
         title: t('Manage content'),
@@ -54,12 +56,15 @@ export function CollectionCategoryCarousel(props: {
                 alertToaster.addAlert(errorToAlertProps(error));
               }
             },
-            12 // Select max 12 collections
+            {
+              maxSelections: 12,
+              allowZeroSelections: true,
+            }
           );
         },
       };
     }
-  }, [alertToaster, collections, props.category, selectCollections, t]);
+  }, [alertToaster, collections, props.category, selectCollections, t, user.is_superuser]);
 
   return (
     <PageDashboardCarousel
@@ -109,7 +114,7 @@ function getPromisesToMarkAndUnmarkCollections(
   Object.keys(repoToCollectionPulpHrefsMap).forEach((repoPulpId) => {
     promises.push(
       postHubRequest(hubAPI`/pulp/api/v3/repositories/ansible/ansible/${repoPulpId}/${option}/`, {
-        content_units: 'abc', //repoToCollectionPulpHrefsMap[repoPulpId],
+        content_units: repoToCollectionPulpHrefsMap[repoPulpId],
         value: markValue,
       })
     );
@@ -118,7 +123,7 @@ function getPromisesToMarkAndUnmarkCollections(
   return promises;
 }
 
-// Make API requests to mark/unmark collections as featured based on the selections in the Manage Content modal
+// Make API requests to mark/unmark collections as "featured" based on the selections in the Manage Content modal
 async function saveFeaturedCollections(
   currentFeaturedCollections: CollectionVersionSearch[],
   originalFeaturedCollections: CollectionVersionSearch[]
