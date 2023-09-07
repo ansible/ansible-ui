@@ -40,7 +40,7 @@ export function RuleAuditDetails() {
     return (
       <Scrollable>
         <PageDetails>
-          <PageDetail label={t('Rule name')}>{ruleAudit?.name || ''}</PageDetail>
+          <PageDetail label={t('Name')}>{ruleAudit?.name || ''}</PageDetail>
           <PageDetail label={t('Status')}>
             <StatusCell status={ruleAudit?.status || ''} />
           </PageDetail>
