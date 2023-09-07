@@ -4,7 +4,6 @@ import { useCollectionFilters } from './useCollectionFilters';
 import {
   ColumnTableOption,
   ITableColumn,
-  LabelsCell,
   MultiSelectDialog,
   TextCell,
   usePageDialog,
