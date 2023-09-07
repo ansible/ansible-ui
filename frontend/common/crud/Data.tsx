@@ -1,14 +1,22 @@
 /* eslint-disable no-console */
-import ky, { ResponsePromise } from 'ky';
-import { Input, Options } from 'ky/distribution/types/options';
 import { SWRConfiguration } from 'swr';
 import { getCookie } from './cookie';
+import { createRequestError } from './RequestError';
+import { requestCommon } from './requestCommon';
+
+interface Options {
+  method: 'GET' | 'POST' | 'PATCH' | 'DELETE' | 'OPTIONS';
+  headers?: HeadersInit;
+  json?: unknown;
+  signal?: AbortSignal;
+}
 
 export async function requestGet<ResponseBody>(
   url: string,
   signal?: AbortSignal
 ): Promise<ResponseBody> {
-  return requestCommon<ResponseBody>(url, { signal }, ky.get);
+  const options: Options = { signal, method: 'GET' };
+  return requestFactory<ResponseBody>(url, options);
 }
 
 export async function postRequest<ResponseBody, RequestBody = unknown>(
@@ -16,85 +24,88 @@ export async function postRequest<ResponseBody, RequestBody = unknown>(
   json: RequestBody,
   signal?: AbortSignal
 ): Promise<ResponseBody> {
-  return requestCommon<ResponseBody>(url, { json, signal }, ky.post);
+  const options: Options = {
+    method: 'POST',
+    json,
+    signal,
+  };
+  return requestFactory<ResponseBody>(url, options);
 }
 
 export async function postRequestFile(
   url: string,
   file: Blob,
   signal?: AbortSignal
-): Promise<string> {
+): Promise<unknown> {
   const body = new FormData();
   body.append('file', file);
-  return ky
-    .post(url, {
-      body,
-      signal,
-      credentials: 'include',
-      headers: {
-        'X-CSRFToken': getCookie('csrftoken') ?? '',
-      },
-    })
-    .json();
+
+  const response = await fetch(url, {
+    method: 'POST',
+    body,
+    signal,
+    credentials: 'include',
+    headers: {
+      'X-CSRFToken': getCookie('csrftoken') ?? '',
+    },
+  });
+
+  if (!response.ok) {
+    throw await createRequestError(response);
+  }
+
+  return (await response.json()) as unknown;
 }
 
 export async function requestPatch<ResponseBody, RequestBody = unknown>(
   url: string,
   json: RequestBody
 ): Promise<ResponseBody> {
-  return requestCommon<ResponseBody>(url, { json }, ky.patch);
+  const options: Options = {
+    method: 'PATCH',
+    json,
+  };
+  return requestFactory<ResponseBody>(url, options);
 }
 
 export async function requestDelete<ResponseBody>(
   url: string,
   signal?: AbortSignal
 ): Promise<ResponseBody> {
-  return requestCommon<ResponseBody>(url, { signal }, ky.delete);
+  const options: Options = { signal, method: 'DELETE' };
+  return requestFactory<ResponseBody>(url, options);
 }
 
-async function requestCommon<ResponseBody>(
-  url: string,
-  options: Options,
-  methodFn: (input: Input, options: Options) => ResponsePromise
-) {
-  if (process.env.DELAY)
-    await new Promise((resolve) => setTimeout(resolve, Number(process.env.DELAY)));
+async function requestFactory<ResponseBody>(url: string, options: Options) {
+  const method = options.method;
+  const body = options.json;
+  const headers = options.headers;
+  const signal = options.signal || new AbortController().signal;
 
-  const result = await methodFn(url, {
-    ...options,
-    credentials: 'include',
-    headers: {
-      ...options.headers,
-      'X-CSRFToken': getCookie('csrftoken'),
-    },
+  const result = await requestCommon({
+    url,
+    method,
+    body,
+    headers,
+    signal,
+  });
+  if (!result.ok) {
+    throw await createRequestError(result);
+  }
+  // There is an AWX endpoint that returns 202 on DELETE, with no body. Workaround.
+  if (method === 'DELETE') {
+    if (result.status === 202 || result.status === 204) {
+      return null as ResponseBody;
+    }
+  }
 
-    hooks: {
-      beforeError: [
-        async (error) => {
-          const { response } = error;
-
-          let body: unknown;
-          try {
-            body = await response?.clone().json();
-          } catch (bodyParseError) {
-            return error;
-          }
-
-          if (
-            typeof body === 'object' &&
-            body !== null &&
-            'msg' in body &&
-            typeof body.msg === 'string'
-          ) {
-            error.name = 'Error';
-            error.message = body.msg;
-          }
-          return error;
-        },
-      ],
-    },
-  }).json<ResponseBody>();
-  return result;
+  // EDA logout returns 204 with no body. Workaround.
+  if (method === 'POST') {
+    if (result.status === 204) {
+      return null as ResponseBody;
+    }
+  }
+  return result.json() as Promise<ResponseBody>;
 }
 
 export function useFetcher() {

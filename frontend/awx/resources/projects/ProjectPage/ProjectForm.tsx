@@ -99,7 +99,7 @@ export function CreateProject() {
 
       navigate(RouteObj.ProjectDetails.replace(':id', newProject.id.toString()));
     } catch (err) {
-      setError(await getAwxError(err));
+      setError(getAwxError(err));
     }
   };
   return (
@@ -180,7 +180,7 @@ export function EditProject() {
 
       navigate(RouteObj.ProjectDetails.replace(':id', updatedProject.id.toString()));
     } catch (err) {
-      setError(await getAwxError(err));
+      setError(getAwxError(err));
     }
   };
 

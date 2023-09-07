@@ -61,7 +61,7 @@ export function CreateInventory() {
         )
       );
     } catch (err) {
-      setError(await getAwxError(err));
+      setError(getAwxError(err));
     }
   };
   return (
@@ -131,7 +131,7 @@ export function EditInventory() {
         )
       );
     } catch (err) {
-      setError(await getAwxError(err));
+      setError(getAwxError(err));
     }
   };
   if (!inventory) {
