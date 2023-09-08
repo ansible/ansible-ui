@@ -35,8 +35,8 @@ export type PageNavigationItem = PageNavigationGroup | PageNavigationComponent;
 export function PageNavigationItems(props: { items: PageNavigationItem[]; baseRoute: string }) {
   return (
     <>
-      {props.items.map((item) => (
-        <PageNavigationItem key={item.path} item={item} baseRoute={props.baseRoute} />
+      {props.items.map((item, index) => (
+        <PageNavigationItem key={index} item={item} baseRoute={props.baseRoute} />
       ))}
     </>
   );

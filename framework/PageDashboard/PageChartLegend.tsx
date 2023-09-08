@@ -1,3 +1,4 @@
+import { Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -10,7 +11,7 @@ export function PageChartLegend(props: {
     return (
       <PageChartLegendHorizontalStyle>
         {props.legend.map((item, index) => {
-          if (item.count === 0) return <></>;
+          if (item.count === 0) return <Fragment key={index} />;
           return (
             <PageChartLegendHorizontalItemStyle key={index}>
               <PageChartLegendColor
@@ -28,17 +29,16 @@ export function PageChartLegend(props: {
   return (
     <PageChartLegendVerticalStyle>
       {props.legend.map((item, index) => {
-        if (item.count === 0) return <></>;
+        if (item.count === 0) return <Fragment key={index} />;
         return (
-          <>
-            <PageChartLegendColor key={index * 3 + 0} color={item.color} />
+          <Fragment key={index}>
+            <PageChartLegendColor color={item.color} />
             <PageChartLegendCount
               id={`${props.id}-${item.label.toLowerCase().replace(/ /g, '-')}-count`}
-              key={index * 3 + 1}
               count={item.count}
             />
-            <PageChartLegendLabel key={index * 3 + 2} label={item.label} link={item.link} />
-          </>
+            <PageChartLegendLabel label={item.label} link={item.link} />
+          </Fragment>
         );
       })}
     </PageChartLegendVerticalStyle>
