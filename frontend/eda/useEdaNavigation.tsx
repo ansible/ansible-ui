@@ -18,7 +18,7 @@ import { Projects } from './Resources/projects/Projects';
 import { EditRole } from './UserAccess/Roles/EditRole';
 import { RoleDetails } from './UserAccess/Roles/RoleDetails';
 import { Roles } from './UserAccess/Roles/Roles';
-import { EdaUserDetails } from './UserAccess/Users/EdaUserDetails';
+import { EdaMyDetails, EdaUserDetails } from './UserAccess/Users/EdaUserDetails';
 import { CreateUser, EditUser } from './UserAccess/Users/EditUser';
 import { Users } from './UserAccess/Users/Users';
 import { EdaDashboard } from './dashboard/EdaDashboard';
@@ -109,6 +109,8 @@ export function useEdaNavigation() {
                 label: t('Users'),
                 path: 'users',
                 children: [
+                  { path: 'me', element: <EdaMyDetails /> },
+                  { path: 'me/tokens', element: <EdaMyDetails initialTabIndex={1} /> },
                   { path: 'create', element: <CreateUser /> },
                   { path: 'edit/:id', element: <EditUser /> },
                   { path: 'details/:id', element: <EdaUserDetails /> },
