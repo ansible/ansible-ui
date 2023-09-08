@@ -152,7 +152,7 @@ module.exports = function (env, argv) {
     optimization: {
       splitChunks: {
         cacheGroups: {
-          patternfly: { test: /[\\/]node_modules[\\/]@patternfly[\\/]/ },
+          patternfly: { test: /[\\/]node_modules[\\/]@patternfly/ },
           monaco: { test: /[\\/]node_modules[\\/]monaco/ },
           vendors: { test: /[\\/]node_modules[\\/]/ },
         },
