@@ -12,6 +12,7 @@ import { postHubRequest } from '../api/request';
 import { hubAPI } from '../api/utils';
 import { errorToAlertProps, usePageAlertToaster } from '../../../framework';
 import { useHubContext } from '../useHubContext';
+import { RouteObj } from '../../common/Routes';
 
 type FooterAction = {
   icon?: ReactNode;
@@ -25,8 +26,10 @@ type FooterAction = {
 export function CollectionCategoryCarousel(props: {
   category: string;
   collections: CollectionVersionSearch[];
+  searchKey: string;
+  searchValue: string;
 }) {
-  const { category, collections } = props;
+  const { category, collections, searchKey, searchValue } = props;
   const { t } = useTranslation();
   const categoryName = useCategoryName(category, t);
   const selectCollections = useSelectCollectionsDialog(collections);
@@ -79,6 +82,7 @@ export function CollectionCategoryCarousel(props: {
       linkText={t('Go to Collections')}
       width="xxl"
       footerActionButton={footerActionButton}
+      to={RouteObj.Collections + `?${searchKey}=${searchValue}`}
     >
       {collections.map((collection: CollectionVersionSearch) => (
         <CollectionCard

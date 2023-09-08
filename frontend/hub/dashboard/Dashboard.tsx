@@ -58,6 +58,8 @@ export function HubDashboard() {
               key={category.id}
               category={category.id}
               collections={categorizedCollections[category.id]}
+              searchKey={category.searchKey}
+              searchValue={category.searchValue}
             />
           ) : null
         )}
