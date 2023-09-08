@@ -1,5 +1,5 @@
 /* eslint-disable i18next/no-literal-string */
-import { ButtonVariant, DropdownPosition } from '@patternfly/react-core';
+import { Bullseye, Button, ButtonVariant, DropdownPosition } from '@patternfly/react-core';
 import { CogIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import {
@@ -15,6 +15,7 @@ import { useState } from 'react';
 import { CategorizedCollections } from './CollectionCategory';
 import { useCategorizeCollections } from './hooks/useCategorizeCollections';
 import { CollectionCategoryCarousel } from './CollectionCategories';
+import { EmptyStateNoData } from '../../../framework/components/EmptyStateNoData';
 
 export function HubDashboard() {
   const { t } = useTranslation();
@@ -51,6 +52,20 @@ export function HubDashboard() {
           />
         }
       />
+      {managedCategories.length === 0 && (
+        <Bullseye>
+          <EmptyStateNoData
+            button={
+              <Button icon={<CogIcon />} onClick={openManageDashboard}>
+                {t('Manage view')}
+              </Button>
+            }
+            title={t('There is currently no content selected to be shown on the dashboard.')}
+            description={t('There is currently no content selected to be shown on the dashboard.')}
+            variant="full"
+          ></EmptyStateNoData>
+        </Bullseye>
+      )}
       <PageDashboard>
         {managedCategories.map((category) =>
           categorizedCollections[category.id] ? (
