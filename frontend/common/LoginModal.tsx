@@ -17,7 +17,8 @@ const LoginModalDiv = styled.div`
 
 type LoginModalProps = {
   authOptions?: AuthOptions;
-  loginUrl?: string;
+  apiUrl?: string;
+  onLoginUrl?: string;
   onLogin?: () => void;
 };
 
@@ -51,8 +52,9 @@ export function LoginModal(props: LoginModalProps) {
     >
       <LoginModalDiv>
         <LoginForm
-          loginUrl={props.loginUrl}
+          apiUrl={props.apiUrl}
           authOptions={props.authOptions}
+          onLoginUrl={props.onLoginUrl}
           onLogin={props.onLogin}
         />
       </LoginModalDiv>
@@ -62,10 +64,11 @@ export function LoginModal(props: LoginModalProps) {
 
 export function useLoginModal(args: {
   authOptions?: AuthOptions;
-  loginUrl?: string;
+  apiUrl?: string;
+  onLoginUrl?: string;
   onLogin?: () => void;
 }) {
-  const { authOptions, loginUrl, onLogin } = args;
+  const { authOptions, apiUrl, onLoginUrl, onLogin } = args;
   const [_, setDialog] = usePageDialog();
   const onLoginHandler = useCallback(() => onLogin?.(), [onLogin]);
   return useCallback(
@@ -73,20 +76,22 @@ export function useLoginModal(args: {
       setDialog(
         <LoginModal
           authOptions={authOptions}
-          loginUrl={loginUrl}
+          apiUrl={apiUrl}
+          onLoginUrl={onLoginUrl}
           onLogin={() => {
             setDialog(undefined);
             onLoginHandler();
           }}
         />
       ),
-    [onLoginHandler, setDialog, authOptions, loginUrl]
+    [onLoginHandler, setDialog, authOptions, apiUrl, onLoginUrl]
   );
 }
 
 type LoginFormProps = {
-  loginUrl?: string;
+  apiUrl?: string;
   authOptions?: AuthOptions;
+  onLoginUrl?: string;
   onLogin?: () => void;
 };
 
@@ -102,7 +107,7 @@ function LoginForm(props: LoginFormProps) {
   >(
     async (data, setError) => {
       try {
-        let loginPageUrl = props.loginUrl;
+        let loginPageUrl = props.apiUrl;
         let searchString = 'name="csrfmiddlewaretoken" value="';
 
         if (!loginPageUrl) {
@@ -165,6 +170,9 @@ function LoginForm(props: LoginFormProps) {
           }
         }
 
+        if (props.onLoginUrl) {
+          navigate(props.onLoginUrl);
+        }
         switch (process.env.UI_MODE) {
           case 'AWX':
             navigate(RouteObj.Dashboard);

@@ -25,11 +25,9 @@ module.exports = function (env, argv) {
       target: awxServer,
       secure: false,
       bypass: (req, res, options) => {
-        // req.headers.host = proxyUrl.host;
         req.headers.origin = proxyUrl.origin;
-        // req.headers.referer = proxyUrl.href;
-        req.headers.host = 'localhost:4101';
-        req.referrer = 'https://localhost:4101/login';
+        req.headers.host = getRawHeader(req.rawHeaders, 'Host') || proxyUrl.host;
+        req.referrer = getRawHeader(req.rawHeaders, 'Referer') || proxyUrl.href;
       },
     },
     '/websocket': {
@@ -45,3 +43,11 @@ module.exports = function (env, argv) {
   };
   return config;
 };
+
+function getRawHeader(rawHeaders, headerName) {
+  const index = rawHeaders.indexOf(headerName);
+  if (index === -1) {
+    return null;
+  }
+  return rawHeaders[index + 1];
+}

@@ -6,11 +6,12 @@ import type { AuthOptions } from './SocialAuthLogin';
 
 type LoginProps = {
   authOptions?: AuthOptions;
-  loginUrl?: string;
+  apiUrl?: string;
+  onLoginUrl?: string;
 };
 
 export function Login(props: LoginProps) {
-  const { authOptions, loginUrl } = props;
+  const { authOptions, apiUrl, onLoginUrl } = props;
   const navigate = useNavigate();
   const [searchparams] = useSearchParams();
   const navigateBack = useCallback(() => {
@@ -21,7 +22,8 @@ export function Login(props: LoginProps) {
 
   const openLoginModal = useLoginModal({
     authOptions,
-    loginUrl,
+    apiUrl,
+    onLoginUrl,
     onLogin: navigateBack,
   });
   useEffect(() => openLoginModal(), [openLoginModal]);
