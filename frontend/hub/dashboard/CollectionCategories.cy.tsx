@@ -8,7 +8,14 @@ describe('CollectionCategories.cy.tsx', () => {
     cy.fixture('application_collection_versions').then(
       (collectionVersionsResponse: HubItemsResponse<CollectionVersionSearch>) => {
         const collections = collectionVersionsResponse.data;
-        cy.mount(<CollectionCategoryCarousel collections={collections} category="application" />);
+        cy.mount(
+          <CollectionCategoryCarousel
+            collections={collections}
+            category="application"
+            searchKey="tags"
+            searchValue="application"
+          />
+        );
         cy.get('.pf-c-card__header').should('contain', 'Application collections');
         // Based on the viewport size in the cypress config, the carousel will display 3 of the 4 cards
         cy.get('div[id="page-carousel-cards-application-collections-0"]').within(() => {
@@ -22,7 +29,14 @@ describe('CollectionCategories.cy.tsx', () => {
     cy.fixture('application_collection_versions').then(
       (collectionVersionsResponse: HubItemsResponse<CollectionVersionSearch>) => {
         const collections = collectionVersionsResponse.data;
-        cy.mount(<CollectionCategoryCarousel collections={collections} category="application" />);
+        cy.mount(
+          <CollectionCategoryCarousel
+            collections={collections}
+            category="application"
+            searchKey="tags"
+            searchValue="application"
+          />
+        );
         // The 4th collection card should not be visible at first
         cy.contains(
           'div[id="slide-container-application-collections"] div.pf-c-card__title',

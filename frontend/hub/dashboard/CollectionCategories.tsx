@@ -79,10 +79,10 @@ export function CollectionCategoryCarousel(props: {
   return (
     <PageDashboardCarousel
       title={categoryName}
-      linkText={t('Go to Collections')}
+      linkText={t('Go to collections')}
+      to={RouteObj.Collections + `?${searchKey}=${searchValue}`}
       width="xxl"
       footerActionButton={footerActionButton}
-      to={RouteObj.Collections + `?${searchKey}=${searchValue}`}
     >
       {collections.map((collection: CollectionVersionSearch) => (
         <CollectionCard
