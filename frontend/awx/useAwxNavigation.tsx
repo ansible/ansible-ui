@@ -162,7 +162,7 @@ export function useAwxNavigation() {
                 path: 'inventories',
                 children: [
                   { path: 'create', element: <CreateInventory /> },
-                  { path: ':inventory_type/:id/edit', element: <EditInventory /> },
+                  { path: ':id/edit', element: <EditInventory /> },
                   {
                     path: ':inventory_type/:id/schedules/:schedule_id/*',
                     element: <SchedulePage />,

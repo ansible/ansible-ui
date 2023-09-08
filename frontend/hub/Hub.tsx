@@ -3,8 +3,6 @@ import '@patternfly/patternfly/patternfly-charts.css';
 
 import '@patternfly/patternfly/patternfly-charts-theme-dark.css';
 
-import '../common/styles.css';
-
 import { Page } from '@patternfly/react-core';
 import { Suspense } from 'react';
 import { createRoot } from 'react-dom/client';

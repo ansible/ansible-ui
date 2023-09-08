@@ -150,6 +150,13 @@ module.exports = function (env, argv) {
       publicPath: process.env.PUBLIC_PATH || '/',
     },
     optimization: {
+      splitChunks: {
+        cacheGroups: {
+          patternfly: { test: /[\\/]node_modules[\\/]@patternfly[\\/]/ },
+          monaco: { test: /[\\/]node_modules[\\/]monaco/ },
+          vendors: { test: /[\\/]node_modules[\\/]/ },
+        },
+      },
       minimizer: [
         '...',
         new CssMinimizerWebpackPlugin({
