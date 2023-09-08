@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ColumnModalOption, ITableColumn, TextCell } from '../../../../../framework';
+import { ColumnModalOption, ITableColumn, LabelsCell, TextCell } from '../../../../../framework';
 import { formatDateString } from '../../../../../framework/utils/formatDateString';
 import { RouteObj } from '../../../../common/Routes';
 import { StatusCell } from '../../../../common/Status';
@@ -39,7 +39,11 @@ export function useRuleAuditColumns() {
               )}
             />
           ) : (
-            <TextCell text={ruleAudit?.activation_instance?.name || ''} />
+            <LabelsCell
+              labels={[
+                ruleAudit?.activation_instance?.name === 'DELETED' ? t('Deleted') : t('Unknown'),
+              ]}
+            />
           ),
         modal: ColumnModalOption.Hidden,
       },
