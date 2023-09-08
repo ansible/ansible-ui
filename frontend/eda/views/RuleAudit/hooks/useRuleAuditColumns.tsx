@@ -41,7 +41,7 @@ export function useRuleAuditColumns() {
           ) : (
             <LabelsCell
               labels={[
-                ruleAudit?.activation_instance?.name === 'DELETED' ? t('Deleted') : 'unknown',
+                ruleAudit?.activation_instance?.name === 'DELETED' ? t('Deleted') : t('Unknown'),
               ]}
             />
           ),

@@ -3,6 +3,7 @@ import { CubesIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import {
+  LabelsCell,
   PageDetail,
   PageDetails,
   PageHeader,
@@ -58,7 +59,11 @@ export function RuleAuditDetails() {
                 {ruleAudit?.activation_instance?.name}
               </Link>
             ) : (
-              ruleAudit?.activation_instance?.name || ''
+              <LabelsCell
+                labels={[
+                  ruleAudit?.activation_instance?.name === 'DELETED' ? t('Deleted') : t('Unknown'),
+                ]}
+              />
             )}
           </PageDetail>
           <PageDetail label={t('Rule set')}>{ruleAudit?.ruleset_name || ''}</PageDetail>
