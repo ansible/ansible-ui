@@ -15,16 +15,26 @@ import { DecisionEnvironments } from './Resources/decision-environments/Decision
 import { CreateProject, EditProject } from './Resources/projects/EditProject';
 import { ProjectDetails } from './Resources/projects/ProjectDetails';
 import { Projects } from './Resources/projects/Projects';
+import { EditGroup } from './UserAccess/Groups/EditGroup';
+import { GroupDetails } from './UserAccess/Groups/GroupDetails';
+import { Groups } from './UserAccess/Groups/Groups';
 import { EditRole } from './UserAccess/Roles/EditRole';
 import { RoleDetails } from './UserAccess/Roles/RoleDetails';
 import { Roles } from './UserAccess/Roles/Roles';
+import { CreateControllerToken } from './UserAccess/Users/CreateControllerToken';
 import { EdaMyDetails, EdaUserDetails } from './UserAccess/Users/EdaUserDetails';
 import { CreateUser, EditUser } from './UserAccess/Users/EditUser';
 import { Users } from './UserAccess/Users/Users';
 import { EdaDashboard } from './dashboard/EdaDashboard';
+import { ActivationInstanceDetails } from './rulebook-activations/ActivationInstanceDetails';
 import { RulebookActivationDetails } from './rulebook-activations/RulebookActivationDetails';
 import { CreateRulebookActivation } from './rulebook-activations/RulebookActivationForm';
 import { RulebookActivations } from './rulebook-activations/RulebookActivations';
+import { RulebookDetails } from './rulebooks/RulebookDetails';
+import { Rulebooks } from './rulebooks/Rulebooks';
+import { EditRule } from './rules/EditRule';
+import { RuleDetails } from './rules/RuleDetails';
+import { Rules } from './rules/Rules';
 import { RuleAudit } from './views/RuleAudit/RuleAudit';
 import { RuleAuditDetails } from './views/RuleAudit/RuleAuditDetails';
 
@@ -59,8 +69,37 @@ export function useEdaNavigation() {
                 path: 'rulebook-activations',
                 children: [
                   { path: 'create', element: <CreateRulebookActivation /> },
-                  { path: 'details/:id', element: <RulebookActivationDetails /> },
+                  {
+                    path: 'details/:id',
+                    element: <RulebookActivationDetails initialTabIndex={0} />,
+                  },
+                  {
+                    path: 'details/:id/history',
+                    element: <RulebookActivationDetails initialTabIndex={1} />,
+                  },
+                  {
+                    path: 'activations-instances/details/:id',
+                    element: <ActivationInstanceDetails />,
+                  },
                   { path: '', element: <RulebookActivations /> },
+                ],
+              },
+              {
+                // label: t('Rulebooks'),
+                path: 'rulebooks',
+                children: [
+                  { path: ':id/*', element: <RulebookDetails /> },
+                  { path: '', element: <Rulebooks /> },
+                ],
+              },
+              {
+                // label: t('Rules'),
+                path: 'rules',
+                children: [
+                  { path: 'create', element: <EditRule /> },
+                  { path: 'edit/:id', element: <EditRule /> },
+                  { path: 'details/:id', element: <RuleDetails /> },
+                  { path: '', element: <Rules /> },
                 ],
               },
             ],
@@ -106,14 +145,39 @@ export function useEdaNavigation() {
             path: 'access',
             children: [
               {
+                // label: t('Groups'),
+                path: 'groups',
+                children: [
+                  { path: 'create', element: <EditGroup /> },
+                  { path: 'edit/:id', element: <EditGroup /> },
+                  { path: 'details/:id', element: <GroupDetails /> },
+                  { path: '', element: <Groups /> },
+                ],
+              },
+              {
                 label: t('Users'),
                 path: 'users',
                 children: [
-                  { path: 'me', element: <EdaMyDetails /> },
-                  { path: 'me/tokens', element: <EdaMyDetails initialTabIndex={1} /> },
+                  {
+                    path: 'me',
+                    children: [
+                      { path: 'tokens', element: <EdaMyDetails initialTabIndex={1} /> },
+                      { path: '', element: <EdaMyDetails initialTabIndex={0} /> },
+                    ],
+                  },
                   { path: 'create', element: <CreateUser /> },
                   { path: 'edit/:id', element: <EditUser /> },
-                  { path: 'details/:id', element: <EdaUserDetails /> },
+                  {
+                    path: 'details/:id',
+                    children: [
+                      { path: 'tokens', element: <EdaUserDetails initialTabIndex={1} /> },
+                      { path: '', element: <EdaUserDetails initialTabIndex={0} /> },
+                    ],
+                  },
+                  {
+                    path: 'tokens',
+                    children: [{ path: 'create', element: <CreateControllerToken /> }],
+                  },
                   { path: '', element: <Users /> },
                 ],
               },
