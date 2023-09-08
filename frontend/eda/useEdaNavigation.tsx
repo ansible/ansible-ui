@@ -1,8 +1,10 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate, Outlet } from 'react-router-dom';
-import { PageNavigationItem } from '../../framework/PageNavigation/PageNavigation';
-import { ActiveEdaUserProvider } from '../common/useActiveUser';
+import { Navigate, useNavigate } from 'react-router-dom';
+import {
+  PageNavigationItem,
+  useNavigationRoutes,
+} from '../../framework/PageNavigation/PageNavigation';
 import { CredentialDetails } from './Resources/credentials/CredentialDetails';
 import { Credentials } from './Resources/credentials/Credentials';
 import { CreateCredential, EditCredential } from './Resources/credentials/EditCredential';
@@ -38,6 +40,65 @@ import { Rules } from './rules/Rules';
 import { RuleAudit } from './views/RuleAudit/RuleAudit';
 import { RuleAuditDetails } from './views/RuleAudit/RuleAuditDetails';
 
+export enum EdaRoute {
+  Eda = 'eda',
+
+  Dashboard = 'eda-dashboard',
+
+  RuleAudits = 'eda-rule-audits',
+  RuleAuditDetails = 'eda-rule-audit-details',
+
+  RulebookActivations = 'eda-rulebook-activations',
+  CreateRulebookActivation = 'eda-create-rulebook-activation',
+  RulebookActivationDetails = 'eda-rulebook-activation-details',
+  RulebookActivationHistory = 'eda-rulebook-activation-history',
+  RulebookActivationInstancesDetails = 'eda-rulebook-activation-instances-details',
+
+  Rulebooks = 'eda-rulebooks',
+  RulebookDetails = 'eda-rulebook-details',
+
+  Projects = 'eda-projects',
+  CreateProject = 'eda-create-project',
+  EditProject = 'eda-edit-project',
+  ProjectDetails = 'eda-project-details',
+
+  DecisionEnvironments = 'eda-decision-environments',
+  CreateDecisionEnvironment = 'eda-create-decision-environment',
+  EditDecisionEnvironment = 'eda-edit-decision-environment',
+  DecisionEnvironmentDetails = 'eda-decision-environment-details',
+
+  Credentials = 'eda-credentials',
+  CreateCredential = 'eda-create-credential',
+  EditCredential = 'eda-edit-credential',
+  CredentialDetails = 'eda-credential-details',
+
+  Groups = 'eda-groups',
+  CreateGroup = 'eda-create-group',
+  EditGroup = 'eda-edit-group',
+  GroupDetails = 'eda-group-details',
+
+  Users = 'eda-users',
+  CreateUser = 'eda-create-user',
+  EditUser = 'eda-edit-user',
+  UserDetails = 'eda-user-details',
+  UserTokens = 'eda-user-tokens',
+
+  Rules = 'eda-rules',
+  CreateRule = 'eda-create-rule',
+  EditRule = 'eda-edit-rule',
+  RuleDetails = 'eda-rule-details',
+
+  Roles = 'eda-roles',
+  CreateRole = 'eda-create-role',
+  EditRole = 'eda-edit-role',
+  RoleDetails = 'eda-role-details',
+
+  EdaMyDetails = 'eda-my-details',
+  EdaMyTokens = 'eda-my-tokens',
+
+  CreateControllerToken = 'eda-create-controller-token',
+}
+
 export function useEdaNavigation() {
   const { t } = useTranslation();
   const pageNavigationItems = useMemo<PageNavigationItem[]>(() => {
@@ -45,9 +106,9 @@ export function useEdaNavigation() {
       {
         label: '',
         path: process.env.EDA_ROUTE_PREFIX,
-        element: <EdaRoot />,
         children: [
           {
+            id: EdaRoute.Dashboard,
             label: t('Dashboard'),
             path: 'dashboard',
             element: <EdaDashboard />,
@@ -57,49 +118,88 @@ export function useEdaNavigation() {
             path: 'views',
             children: [
               {
-                label: t('Rule Audit'),
-                path: 'rule-audit',
+                label: t('Rule Audits'),
+                path: 'rule-audits',
                 children: [
-                  { path: ':id/*', element: <RuleAuditDetails /> },
-                  { path: '', element: <RuleAudit /> },
+                  {
+                    id: EdaRoute.RuleAuditDetails,
+                    path: ':id/*',
+                    element: <RuleAuditDetails />,
+                  },
+                  {
+                    id: EdaRoute.RuleAudits,
+                    path: '',
+                    element: <RuleAudit />,
+                  },
                 ],
               },
               {
                 label: t('Rulebook Activations'),
                 path: 'rulebook-activations',
                 children: [
-                  { path: 'create', element: <CreateRulebookActivation /> },
                   {
+                    id: EdaRoute.CreateRulebookActivation,
+                    path: 'create',
+                    element: <CreateRulebookActivation />,
+                  },
+                  {
+                    id: EdaRoute.RulebookActivationDetails,
                     path: 'details/:id',
                     element: <RulebookActivationDetails initialTabIndex={0} />,
                   },
                   {
+                    id: EdaRoute.RulebookActivationHistory,
                     path: 'details/:id/history',
                     element: <RulebookActivationDetails initialTabIndex={1} />,
                   },
                   {
+                    id: EdaRoute.RulebookActivationInstancesDetails,
                     path: 'activations-instances/details/:id',
                     element: <ActivationInstanceDetails />,
                   },
-                  { path: '', element: <RulebookActivations /> },
+                  { id: EdaRoute.RulebookActivations, path: '', element: <RulebookActivations /> },
                 ],
               },
               {
                 // label: t('Rulebooks'),
                 path: 'rulebooks',
                 children: [
-                  { path: ':id/*', element: <RulebookDetails /> },
-                  { path: '', element: <Rulebooks /> },
+                  {
+                    id: EdaRoute.RulebookDetails,
+                    path: ':id/*',
+                    element: <RulebookDetails />,
+                  },
+                  {
+                    id: EdaRoute.Rulebooks,
+                    path: '',
+                    element: <Rulebooks />,
+                  },
                 ],
               },
               {
                 // label: t('Rules'),
                 path: 'rules',
                 children: [
-                  { path: 'create', element: <EditRule /> },
-                  { path: 'edit/:id', element: <EditRule /> },
-                  { path: 'details/:id', element: <RuleDetails /> },
-                  { path: '', element: <Rules /> },
+                  {
+                    id: EdaRoute.CreateRule,
+                    path: 'create',
+                    element: <EditRule />,
+                  },
+                  {
+                    id: EdaRoute.EditRule,
+                    path: 'edit/:id',
+                    element: <EditRule />,
+                  },
+                  {
+                    id: EdaRoute.RuleDetails,
+                    path: 'details/:id',
+                    element: <RuleDetails />,
+                  },
+                  {
+                    id: EdaRoute.Rules,
+                    path: '',
+                    element: <Rules />,
+                  },
                 ],
               },
             ],
@@ -112,30 +212,78 @@ export function useEdaNavigation() {
                 label: t('Projects'),
                 path: 'projects',
                 children: [
-                  { path: 'create', element: <CreateProject /> },
-                  { path: 'edit/:id', element: <EditProject /> },
-                  { path: 'details/:id', element: <ProjectDetails /> },
-                  { path: '', element: <Projects /> },
+                  {
+                    id: EdaRoute.CreateProject,
+                    path: 'create',
+                    element: <CreateProject />,
+                  },
+                  {
+                    id: EdaRoute.EditProject,
+                    path: 'edit/:id',
+                    element: <EditProject />,
+                  },
+                  {
+                    id: EdaRoute.ProjectDetails,
+                    path: 'details/:id',
+                    element: <ProjectDetails />,
+                  },
+                  {
+                    id: EdaRoute.Projects,
+                    path: '',
+                    element: <Projects />,
+                  },
                 ],
               },
               {
                 label: t('Decision Environments'),
                 path: 'decision-environments',
                 children: [
-                  { path: 'create', element: <CreateDecisionEnvironment /> },
-                  { path: 'edit/:id', element: <EditDecisionEnvironment /> },
-                  { path: 'details/:id', element: <DecisionEnvironmentDetails /> },
-                  { path: '', element: <DecisionEnvironments /> },
+                  {
+                    id: EdaRoute.CreateDecisionEnvironment,
+                    path: 'create',
+                    element: <CreateDecisionEnvironment />,
+                  },
+                  {
+                    id: EdaRoute.EditDecisionEnvironment,
+                    path: 'edit/:id',
+                    element: <EditDecisionEnvironment />,
+                  },
+                  {
+                    id: EdaRoute.DecisionEnvironmentDetails,
+                    path: 'details/:id',
+                    element: <DecisionEnvironmentDetails />,
+                  },
+                  {
+                    id: EdaRoute.DecisionEnvironments,
+                    path: '',
+                    element: <DecisionEnvironments />,
+                  },
                 ],
               },
               {
                 label: t('Credentials'),
                 path: 'credentials',
                 children: [
-                  { path: 'create', element: <CreateCredential /> },
-                  { path: 'edit/:id', element: <EditCredential /> },
-                  { path: 'details/:id', element: <CredentialDetails /> },
-                  { path: '', element: <Credentials /> },
+                  {
+                    id: EdaRoute.CreateCredential,
+                    path: 'create',
+                    element: <CreateCredential />,
+                  },
+                  {
+                    id: EdaRoute.EditCredential,
+                    path: 'edit/:id',
+                    element: <EditCredential />,
+                  },
+                  {
+                    id: EdaRoute.CredentialDetails,
+                    path: 'details/:id',
+                    element: <CredentialDetails />,
+                  },
+                  {
+                    id: EdaRoute.Credentials,
+                    path: '',
+                    element: <Credentials />,
+                  },
                 ],
               },
             ],
@@ -148,10 +296,26 @@ export function useEdaNavigation() {
                 // label: t('Groups'),
                 path: 'groups',
                 children: [
-                  { path: 'create', element: <EditGroup /> },
-                  { path: 'edit/:id', element: <EditGroup /> },
-                  { path: 'details/:id', element: <GroupDetails /> },
-                  { path: '', element: <Groups /> },
+                  {
+                    id: EdaRoute.CreateGroup,
+                    path: 'create',
+                    element: <EditGroup />,
+                  },
+                  {
+                    id: EdaRoute.EditGroup,
+                    path: 'edit/:id',
+                    element: <EditGroup />,
+                  },
+                  {
+                    id: EdaRoute.GroupDetails,
+                    path: 'details/:id',
+                    element: <GroupDetails />,
+                  },
+                  {
+                    id: EdaRoute.Groups,
+                    path: '',
+                    element: <Groups />,
+                  },
                 ],
               },
               {
@@ -161,34 +325,84 @@ export function useEdaNavigation() {
                   {
                     path: 'me',
                     children: [
-                      { path: 'tokens', element: <EdaMyDetails initialTabIndex={1} /> },
-                      { path: '', element: <EdaMyDetails initialTabIndex={0} /> },
+                      {
+                        id: EdaRoute.EdaMyTokens,
+                        path: 'tokens',
+                        element: <EdaMyDetails initialTabIndex={1} />,
+                      },
+                      {
+                        id: EdaRoute.EdaMyDetails,
+                        path: '',
+                        element: <EdaMyDetails initialTabIndex={0} />,
+                      },
                     ],
                   },
-                  { path: 'create', element: <CreateUser /> },
-                  { path: 'edit/:id', element: <EditUser /> },
+                  {
+                    id: EdaRoute.CreateUser,
+                    path: 'create',
+                    element: <CreateUser />,
+                  },
+                  {
+                    id: EdaRoute.EditUser,
+                    path: 'edit/:id',
+                    element: <EditUser />,
+                  },
                   {
                     path: 'details/:id',
                     children: [
-                      { path: 'tokens', element: <EdaUserDetails initialTabIndex={1} /> },
-                      { path: '', element: <EdaUserDetails initialTabIndex={0} /> },
+                      {
+                        id: EdaRoute.UserTokens,
+                        path: 'tokens',
+                        element: <EdaUserDetails initialTabIndex={1} />,
+                      },
+                      {
+                        id: EdaRoute.UserDetails,
+                        path: '',
+                        element: <EdaUserDetails initialTabIndex={0} />,
+                      },
                     ],
                   },
                   {
                     path: 'tokens',
-                    children: [{ path: 'create', element: <CreateControllerToken /> }],
+                    children: [
+                      {
+                        id: EdaRoute.CreateControllerToken,
+                        path: 'create',
+                        element: <CreateControllerToken />,
+                      },
+                    ],
                   },
-                  { path: '', element: <Users /> },
+                  {
+                    id: EdaRoute.Users,
+                    path: '',
+                    element: <Users />,
+                  },
                 ],
               },
               {
                 label: t('Roles'),
                 path: 'roles',
                 children: [
-                  { path: 'create', element: <EditRole /> },
-                  { path: 'edit/:id', element: <EditRole /> },
-                  { path: 'details/:id', element: <RoleDetails /> },
-                  { path: '', element: <Roles /> },
+                  {
+                    id: EdaRoute.CreateRole,
+                    path: 'create',
+                    element: <EditRole />,
+                  },
+                  {
+                    id: EdaRoute.EditRole,
+                    path: 'edit/:id',
+                    element: <EditRole />,
+                  },
+                  {
+                    id: EdaRoute.RoleDetails,
+                    path: 'details/:id',
+                    element: <RoleDetails />,
+                  },
+                  {
+                    id: EdaRoute.Roles,
+                    path: '',
+                    element: <Roles />,
+                  },
                 ],
               },
             ],
@@ -196,6 +410,7 @@ export function useEdaNavigation() {
         ],
       },
       {
+        id: EdaRoute.Eda,
         path: '/',
         element: (
           <Navigate
@@ -214,10 +429,9 @@ export function useEdaNavigation() {
   return pageNavigationItems;
 }
 
-export function EdaRoot() {
-  return (
-    <ActiveEdaUserProvider>
-      <Outlet />
-    </ActiveEdaUserProvider>
-  );
+export function useEdaNavigate() {
+  const navigate = useNavigate();
+  const navigation = useEdaNavigation();
+  const routes = useNavigationRoutes(navigation);
+  return (route: EdaRoute) => navigate(routes[route]);
 }

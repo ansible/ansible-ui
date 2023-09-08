@@ -8,6 +8,8 @@ import { PageLayout } from '../PageLayout';
 import { PageNavigation, PageNavigationItem } from './PageNavigation';
 
 export function PageApp(props: {
+  root?: ReactNode;
+
   /** Component for the header of the page. */
   header?: ReactNode;
 
@@ -28,22 +30,28 @@ export function PageApp(props: {
         path: '',
         element: <PageFrameworkRoute />,
         children: [
-          { path: 'login', element: <Login /> },
           {
             path: '',
-            element: (
-              <PageLayoutRoute
-                header={header}
-                sidebar={<PageNavigation navigationItems={navigationItems} />}
-              />
-            ),
-            children: navigationItems,
+            element: props.root ?? <></>,
+            children: [
+              { path: 'login', element: <Login /> },
+              {
+                path: '',
+                element: (
+                  <PageLayoutRoute
+                    header={header}
+                    sidebar={<PageNavigation navigationItems={navigationItems} />}
+                  />
+                ),
+                children: navigationItems,
+              },
+              { path: '*', element: <PageNotFound /> },
+            ],
           },
-          { path: '*', element: <PageNotFound /> },
         ],
       },
     ],
-    [header, navigationItems]
+    [header, navigationItems, props.root]
   );
   const router = useMemo(() => createBrowserRouter(routes, { basename }), [basename, routes]);
   return <RouterProvider router={router} />;

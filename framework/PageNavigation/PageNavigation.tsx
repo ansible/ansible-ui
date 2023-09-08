@@ -1,4 +1,5 @@
 import { Nav, NavExpandable, NavItem, NavList, PageSidebar } from '@patternfly/react-core';
+import { useMemo } from 'react';
 import { usePageNavBarClick, usePageNavSideBar } from '../PageNav/PageNavSidebar';
 
 export function PageNavigation(props: { navigationItems: PageNavigationItem[] }) {
@@ -25,6 +26,7 @@ interface PageNavigationGroup {
 }
 
 interface PageNavigationComponent {
+  id: string;
   label?: string;
   path: string;
   element: JSX.Element;
@@ -68,4 +70,23 @@ function PageNavigationItem(props: { item: PageNavigationItem; baseRoute: string
     );
   }
   return <></>;
+}
+
+/** Creates a map of navigation item IDs to their routes. */
+export function useNavigationRoutes(navigationItems: PageNavigationItem[]) {
+  return useMemo(() => createNavigateToRoutes('', navigationItems), [navigationItems]);
+}
+
+function createNavigateToRoutes(base: string, navigationItems: PageNavigationItem[]) {
+  const routes: { [key: string]: string } = {};
+  navigationItems.forEach((item) => {
+    if ('id' in item) {
+      routes[item.id] = item.path;
+    }
+    if ('children' in item) {
+      const itemBase = (base + '/' + item.path).replace('//', '/');
+      Object.assign(routes, createNavigateToRoutes(itemBase, item.children));
+    }
+  });
+  return routes;
 }
