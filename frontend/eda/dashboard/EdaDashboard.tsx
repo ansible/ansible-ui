@@ -74,9 +74,15 @@ export function EdaDashboard() {
             <CardBody>
               <Stack hasGutter>
                 <Text>
-                  {t('To learn how to get started, view the documentation, ')}
+                  {t('To learn how to get started, ')}
                   <Link
                     to="https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/2.4/html/eda-getting-started-guide/index"
+                    target="_blank"
+                  >
+                    {t('view the documentation, ')}
+                  </Link>
+                  <Link
+                    to="https://www.redhat.com/en/engage/event-driven-ansible-20220907"
                     target="_blank"
                   >
                     {t('check out our instruct guides')}
