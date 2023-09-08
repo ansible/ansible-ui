@@ -1,8 +1,7 @@
 /* eslint-disable no-console */
-import ky, { HTTPError, ResponsePromise } from 'ky';
+import ky, { ResponsePromise } from 'ky';
 import { Input, Options } from 'ky/distribution/types/options';
 import { SWRConfiguration } from 'swr';
-import { RouteObj } from '../Routes';
 import { getCookie } from './cookie';
 
 export async function requestGet<ResponseBody>(
@@ -61,52 +60,41 @@ async function requestCommon<ResponseBody>(
   if (process.env.DELAY)
     await new Promise((resolve) => setTimeout(resolve, Number(process.env.DELAY)));
 
-  try {
-    const result = await methodFn(url, {
-      ...options,
-      credentials: 'include',
-      headers: {
-        ...options.headers,
-        'X-CSRFToken': getCookie('csrftoken'),
-      },
+  const result = await methodFn(url, {
+    ...options,
+    credentials: 'include',
+    headers: {
+      ...options.headers,
+      'X-CSRFToken': getCookie('csrftoken'),
+    },
 
-      hooks: {
-        beforeError: [
-          async (error) => {
-            const { response } = error;
+    hooks: {
+      beforeError: [
+        async (error) => {
+          const { response } = error;
 
-            let body: unknown;
-            try {
-              body = await response?.clone().json();
-            } catch (bodyParseError) {
-              return error;
-            }
-
-            if (
-              typeof body === 'object' &&
-              body !== null &&
-              'msg' in body &&
-              typeof body.msg === 'string'
-            ) {
-              error.name = 'Error';
-              error.message = body.msg;
-            }
+          let body: unknown;
+          try {
+            body = await response?.clone().json();
+          } catch (bodyParseError) {
             return error;
-          },
-        ],
-      },
-    }).json<ResponseBody>();
-    return result;
-  } catch (err) {
-    if (err instanceof HTTPError) {
-      switch (err.response.status) {
-        case 401:
-          location.assign(RouteObj.Login + '?navigate-back=true');
-          break;
-      }
-    }
-    throw err;
-  }
+          }
+
+          if (
+            typeof body === 'object' &&
+            body !== null &&
+            'msg' in body &&
+            typeof body.msg === 'string'
+          ) {
+            error.name = 'Error';
+            error.message = body.msg;
+          }
+          return error;
+        },
+      ],
+    },
+  }).json<ResponseBody>();
+  return result;
 }
 
 export function useFetcher() {
