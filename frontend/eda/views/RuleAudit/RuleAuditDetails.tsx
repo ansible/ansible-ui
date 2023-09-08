@@ -3,6 +3,7 @@ import { CubesIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import {
+  LabelsCell,
   PageDetail,
   PageDetails,
   PageHeader,
@@ -40,7 +41,7 @@ export function RuleAuditDetails() {
     return (
       <Scrollable>
         <PageDetails>
-          <PageDetail label={t('Rule name')}>{ruleAudit?.name || ''}</PageDetail>
+          <PageDetail label={t('Name')}>{ruleAudit?.name || ''}</PageDetail>
           <PageDetail label={t('Status')}>
             <StatusCell status={ruleAudit?.status || ''} />
           </PageDetail>
@@ -58,7 +59,11 @@ export function RuleAuditDetails() {
                 {ruleAudit?.activation_instance?.name}
               </Link>
             ) : (
-              ruleAudit?.activation_instance?.name || ''
+              <LabelsCell
+                labels={[
+                  ruleAudit?.activation_instance?.name === 'DELETED' ? t('Deleted') : t('Unknown'),
+                ]}
+              />
             )}
           </PageDetail>
           <PageDetail label={t('Rule set')}>{ruleAudit?.ruleset_name || ''}</PageDetail>
@@ -87,7 +92,6 @@ export function RuleAuditDetails() {
     return (
       <PageLayout>
         <PageTable
-          id="eda-rule-audit-actions"
           tableColumns={tableColumns}
           toolbarFilters={toolbarFilters}
           errorStateTitle={t('Error loading actions')}
@@ -113,7 +117,6 @@ export function RuleAuditDetails() {
     return (
       <PageLayout>
         <PageTable
-          id="eda-rule-audit-events"
           tableColumns={tableColumns}
           toolbarFilters={toolbarFilters}
           errorStateTitle={t('Error loading events')}
