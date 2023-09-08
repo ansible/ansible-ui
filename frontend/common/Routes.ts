@@ -258,7 +258,7 @@ export const RouteObj = {
   EditEdaDecisionEnvironment: `${edaRoutePrefix}/decision-environments/edit/:id`,
 
   EdaRuleAudit: `${edaRoutePrefix}/rule-audit`,
-  EdaRuleAuditDetails: `${edaRoutePrefix}/rule-audit/details/:id`,
+  EdaRuleAuditDetails: `${edaRoutePrefix}/rule-audit/:id`,
 
   EdaRulebookActivations: `${edaRoutePrefix}/rulebook-activations`,
   EdaRulebookActivationDetails: `${edaRoutePrefix}/rulebook-activations/details/:id`,

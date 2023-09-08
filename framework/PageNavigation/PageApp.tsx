@@ -12,7 +12,7 @@ export function PageApp(props: {
   header?: ReactNode;
 
   /** The navigation items for the page. */
-  navigationItems: PageNavigationItem[];
+  navigation: PageNavigationItem[];
 
   /**
    * The basename of the app for situations where you can't deploy to the root of the domain, but a sub directory.
@@ -21,7 +21,7 @@ export function PageApp(props: {
    */
   basename?: string;
 }) {
-  const { navigationItems, basename, header } = props;
+  const { navigation: navigationItems, basename, header } = props;
   const routes = useMemo(
     () => [
       {

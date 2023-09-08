@@ -9,6 +9,6 @@ import '../common/i18n';
 import { useAwxNavigation } from './useAwxNavigation';
 
 export default function AwxMain() {
-  const awxNavigation = useAwxNavigation();
-  return <PageApp header={<AnsibleMasthead />} navigationItems={awxNavigation} />;
+  const navigation = useAwxNavigation();
+  return <PageApp header={<AnsibleMasthead />} navigation={navigation} />;
 }
