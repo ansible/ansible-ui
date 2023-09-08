@@ -83,6 +83,7 @@ export function CollectionCategoryCarousel(props: {
       to={RouteObj.Collections + `?${searchKey}=${searchValue}`}
       width="xxl"
       footerActionButton={footerActionButton}
+      to={RouteObj.Collections + `?${searchKey}=${searchValue}`}
     >
       {collections.map((collection: CollectionVersionSearch) => (
         <CollectionCard
