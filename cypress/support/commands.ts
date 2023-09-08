@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-namespace */
 /// <reference types="cypress" />
-import '@cypress/code-coverage/support';
 import '@4tw/cypress-drag-drop';
+import '@cypress/code-coverage/support';
 import { SetOptional, SetRequired } from 'type-fest';
 import { AwxToken } from '../../frontend/awx/interfaces/AwxToken';
 import { Credential } from '../../frontend/awx/interfaces/Credential';
@@ -31,10 +31,10 @@ import {
 import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaUser';
 import './auth';
 import './awx-commands';
-import './hub-commands';
 import { IAwxResources } from './awx-commands';
 import './common-commands';
 import './eda-commands';
+import './hub-commands';
 import './rest-commands';
 
 declare global {
@@ -547,6 +547,7 @@ declare global {
       ): Chainable<EdaResult<EdaRulebookActivation>>;
       getEdaCredentials(page: number, pageSize: number): Chainable<EdaResult<EdaCredential>>;
       getEdaUsers(page: number, pageSize: number): Chainable<EdaResult<EdaUser>>;
+      getEdaUser(id: number): Chainable<EdaUser>;
 
       /**Identify a particular EDA project and make it available for use in testing. */
       getEdaProjectByName(edaProjectName: string): Chainable<EdaProject | undefined>;

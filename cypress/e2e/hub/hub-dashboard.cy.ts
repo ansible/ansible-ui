@@ -1,5 +1,5 @@
 import { randomString } from '../../../framework/utils/random-string';
-import { HubDashboard, HubRoutes } from './constants';
+import { HubDashboard } from './constants';
 
 const namespaceName = 'e2e_namespace_' + randomString(4, undefined, { isLowercase: true });
 
@@ -28,11 +28,11 @@ describe('hub dashboard', () => {
     cy.deleteNamespace(namespaceName);
   });
   it('render the hub dashboard', () => {
-    cy.visit(HubRoutes.dashboard);
+    cy.navigateTo(/^Dashboard$/);
     cy.get('.pf-c-title').contains(HubDashboard.title);
   });
   it('Verify that EDA collections are displayed', () => {
-    cy.visit(HubRoutes.dashboard);
+    cy.navigateTo(/^Dashboard$/);
     cy.contains('div.pf-c-card__header', 'Event-Driven Ansible content')
       .parent()
       .within(() => {
@@ -40,13 +40,13 @@ describe('hub dashboard', () => {
       });
   });
   it('clicking on Cog icon opens the Manage view modal', () => {
-    cy.visit(HubRoutes.dashboard);
+    cy.navigateTo(/^Dashboard$/);
     cy.clickPageAction(/^Manage view/);
     cy.get('.pf-c-modal-box__title-text').should('contain', 'Manage Dashboard');
     cy.get('[aria-label="Close"]').click();
   });
   it('within the Manage Dashboard modal, unchecking a resource should hide the resource', () => {
-    cy.visit(HubRoutes.dashboard);
+    cy.navigateTo(/^Dashboard$/);
     cy.clickPageAction(/^Manage view/);
     cy.contains('tr', 'Cloud collections').find('input').uncheck();
     cy.contains('tr', 'Networking collections').find('input').uncheck();

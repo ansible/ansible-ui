@@ -36,7 +36,7 @@ describe('EDA Dashboard', () => {
   });
 
   it('checks Ansible header title', () => {
-    cy.visit('/eda/dashboard/');
+    cy.navigateTo(/^Dashboard$/);
     cy.hasTitle('Welcome to Event Driven Automation').should('be.visible');
   });
 
