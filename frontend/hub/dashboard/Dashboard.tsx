@@ -61,7 +61,7 @@ export function HubDashboard() {
               </Button>
             }
             title={t('There is currently no content selected to be shown on the dashboard.')}
-            description={t('There is currently no content selected to be shown on the dashboard.')}
+            description={t('Please manage this view by using the button below.')}
             variant="full"
           ></EmptyStateNoData>
         </Bullseye>
