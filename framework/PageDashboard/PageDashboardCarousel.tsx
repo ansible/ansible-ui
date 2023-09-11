@@ -9,6 +9,11 @@ export function PageDashboardCarousel(props: {
   to?: string;
   width?: PageDashboardCardWidth;
   children: ReactNode;
+  footerActionButton?: {
+    icon?: ReactNode;
+    title: string;
+    onClick: () => void;
+  };
 }) {
   return (
     <PageDashboardCard
@@ -16,6 +21,7 @@ export function PageDashboardCarousel(props: {
       linkText={props.linkText}
       to={props.to}
       width={props.width}
+      footerActionButton={props.footerActionButton}
     >
       <CardBody>
         <PageCarousel carouselId={props.title.replace(/\s+/g, '-').toLowerCase()}>

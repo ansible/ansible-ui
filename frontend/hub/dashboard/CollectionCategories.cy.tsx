@@ -1,4 +1,5 @@
 import { CollectionVersionSearch } from '../approvals/Approval';
+import { HubUser, HubContextProvider } from '../useHubContext';
 import { HubItemsResponse } from '../useHubView';
 import { CollectionCategoryCarousel } from './CollectionCategories';
 
@@ -33,6 +34,42 @@ describe('CollectionCategories.cy.tsx', () => {
           'div[id="slide-container-application-collections"] div.pf-c-card__title',
           collections[3].collection_version.name
         ).should('be.visible');
+      }
+    );
+  });
+
+  it('renders Manage Content button for platform admin', () => {
+    cy.intercept('**/_ui/v1/me/', { fixture: 'hub_admin.json' });
+    cy.intercept('**/_ui/v1/settings/', { fixture: 'hub_settings.json' });
+    cy.intercept('**/_ui/v1/feature-flags/', { fixture: 'hub_feature_flags.json' });
+    cy.fixture('collection_versions_eda').then(
+      (collectionVersionsResponse: HubItemsResponse<CollectionVersionSearch>) => {
+        const collections = collectionVersionsResponse.data;
+        cy.mount(
+          <HubContextProvider>
+            <CollectionCategoryCarousel collections={collections} category="eda" />
+          </HubContextProvider>
+        );
+        cy.get('.pf-c-card__footer button').contains('Manage content').should('be.visible');
+      }
+    );
+  });
+
+  it('Manage Content button should not be shown for non-admin user', () => {
+    cy.fixture('hub_admin').then((user: HubUser) => {
+      cy.intercept('**/_ui/v1/me/', { ...user, is_superuser: false });
+    });
+    cy.intercept('**/_ui/v1/settings/', { fixture: 'hub_settings.json' });
+    cy.intercept('**/_ui/v1/feature-flags/', { fixture: 'hub_feature_flags.json' });
+    cy.fixture('collection_versions_eda').then(
+      (collectionVersionsResponse: HubItemsResponse<CollectionVersionSearch>) => {
+        const collections = collectionVersionsResponse.data;
+        cy.mount(
+          <HubContextProvider>
+            <CollectionCategoryCarousel collections={collections} category="eda" />
+          </HubContextProvider>
+        );
+        cy.contains('Manage content', 'button').should('not.exist');
       }
     );
   });

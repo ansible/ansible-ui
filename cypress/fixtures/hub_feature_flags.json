@@ -1,0 +1,15 @@
+{
+  "legacy_roles": false,
+  "display_repositories": true,
+  "execution_environments": true,
+  "ai_deny_index": false,
+  "collection_signing": true,
+  "require_upload_signatures": false,
+  "signatures_enabled": true,
+  "can_upload_signatures": false,
+  "can_create_signatures": true,
+  "collection_auto_sign": true,
+  "display_signatures": true,
+  "container_signing": true,
+  "_messages": []
+}

@@ -21,6 +21,7 @@ export interface IFrameworkTranslations {
   noResultsMatchCriteria: string;
   noSelection: string;
   noSelections: string;
+  noneSelectedText: string;
   ofText: string;
   pendingText: string;
   pleaseFixValidationErrors: string;
@@ -58,6 +59,7 @@ const defaultTranslations: IFrameworkTranslations = {
   noResultsMatchCriteria: 'No results match this filter criteria. Clear all filters and try again.',
   noSelection: 'No selection',
   noSelections: 'No selections',
+  noneSelectedText: 'None - Please make a selection below.',
   ofText: 'of',
   pendingText: 'Pending',
   pleaseFixValidationErrors: 'Please fix validation errors.',

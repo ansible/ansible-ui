@@ -30,15 +30,15 @@ export function Logo(props: LogoProps) {
 
   useEffect(() => {
     if (flexGrow) {
-      setStyle({ ...style, flexGrow: 1 });
+      setStyle((prevStyle) => ({ ...prevStyle, flexGrow: 1 }));
     }
 
     if (unlockWidth) {
-      setStyle({ ...style, minWidth: logoSize });
+      setStyle((prevStyle) => ({ ...prevStyle, minWidth: logoSize }));
     } else {
-      setStyle({ ...style, width: logoSize });
+      setStyle((prevStyle) => ({ ...prevStyle, width: logoSize }));
     }
-  }, [flexGrow, logoSize, style, unlockWidth]);
+  }, [flexGrow, logoSize, unlockWidth]);
 
   return (
     <div className={className} style={style}>
