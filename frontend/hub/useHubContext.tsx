@@ -58,7 +58,7 @@ type HubGroup = {
   object_roles?: string[];
 };
 
-type HubUser = {
+export type HubUser = {
   auth_provider: string[];
   date_joined: string;
   email: string;
