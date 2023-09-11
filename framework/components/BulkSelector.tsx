@@ -16,6 +16,9 @@ export interface BulkSelectorProps<T> {
   unselectAll?: () => void;
   keyFn: (item: T) => string | number;
   selectNoneText?: string;
+  /** Optional: Max selections permitted in a table. The bulk selector is disabled based on this value.
+   */
+  maxSelections?: number;
 }
 
 export function BulkSelector<T extends object>(props: BulkSelectorProps<T>) {
@@ -23,7 +26,7 @@ export function BulkSelector<T extends object>(props: BulkSelectorProps<T>) {
   const isSmallOrLarger = useBreakpoint('sm');
   const [translations] = useFrameworkTranslations();
 
-  const { pageItems, selectedItems, selectItems, unselectAll } = props;
+  const { pageItems, selectedItems, selectItems, unselectAll, maxSelections } = props;
 
   const allPageItemsSelected =
     props.itemCount !== undefined &&
@@ -54,6 +57,27 @@ export function BulkSelector<T extends object>(props: BulkSelectorProps<T>) {
     }
   }, [isSmallOrLarger, selectedItems]);
 
+  const unselectedPageItems = useMemo(
+    () => pageItems?.filter((item) => !selectedItems?.includes(item)),
+    [pageItems, selectedItems]
+  );
+
+  /** Disable bulk selection if max number of allowed selections has been specified and
+   * bulk selection on the page will cause the number of selections to exceed the max allowed
+   * selections.
+   */
+  const disableBulkSelector = useMemo(
+    () =>
+      Boolean(
+        maxSelections &&
+          selectedItems &&
+          unselectedPageItems &&
+          !allPageItemsSelected &&
+          selectedItems?.length + unselectedPageItems.length > maxSelections
+      ),
+    [allPageItemsSelected, maxSelections, selectedItems, unselectedPageItems]
+  );
+
   const toggle = useMemo(() => {
     const selectedCount = selectedItems ? selectedItems.length : 0;
     return (
@@ -70,9 +94,10 @@ export function BulkSelector<T extends object>(props: BulkSelectorProps<T>) {
           </DropdownToggleCheckbox>,
         ]}
         onToggle={(isOpen) => setIsOpen(isOpen)}
+        isDisabled={disableBulkSelector}
       />
     );
-  }, [selectedItems, allPageItemsSelected, onToggleCheckbox, toggleText]);
+  }, [selectedItems, allPageItemsSelected, onToggleCheckbox, toggleText, disableBulkSelector]);
 
   const selectNoneDropdownItem = useMemo(() => {
     return (

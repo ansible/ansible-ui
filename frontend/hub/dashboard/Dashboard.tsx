@@ -1,6 +1,6 @@
 /* eslint-disable i18next/no-literal-string */
 import { ButtonVariant, DropdownPosition } from '@patternfly/react-core';
-import { CogIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { CogIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import {
   PageActionSelection,
@@ -38,18 +38,11 @@ export function HubDashboard() {
           <PageActions
             actions={[
               {
-                label: 'Build Environment',
-                icon: PlusCircleIcon,
-                type: PageActionType.Button,
-                variant: ButtonVariant.primary,
-                selection: PageActionSelection.None,
-                isPinned: true,
-                onClick: () => alert('TODO'),
-              },
-              {
                 icon: CogIcon,
                 label: 'Manage view',
                 type: PageActionType.Button,
+                variant: ButtonVariant.link,
+                isPinned: true,
                 selection: PageActionSelection.None,
                 onClick: openManageDashboard,
               },
