@@ -61,7 +61,12 @@ describe('CollectionCategories.cy.tsx', () => {
         const collections = collectionVersionsResponse.data;
         cy.mount(
           <HubContextProvider>
-            <CollectionCategoryCarousel collections={collections} category="eda" />
+            <CollectionCategoryCarousel
+              collections={collections}
+              category="eda"
+              searchKey="tags"
+              searchValue="eda"
+            />
           </HubContextProvider>
         );
         cy.get('.pf-c-card__footer button').contains('Manage content').should('be.visible');
@@ -71,6 +76,7 @@ describe('CollectionCategories.cy.tsx', () => {
 
   it('Manage Content button should not be shown for non-admin user', () => {
     cy.fixture('hub_admin').then((user: HubUser) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       cy.intercept('**/_ui/v1/me/', { ...user, is_superuser: false });
     });
     cy.intercept('**/_ui/v1/settings/', { fixture: 'hub_settings.json' });
@@ -80,7 +86,12 @@ describe('CollectionCategories.cy.tsx', () => {
         const collections = collectionVersionsResponse.data;
         cy.mount(
           <HubContextProvider>
-            <CollectionCategoryCarousel collections={collections} category="eda" />
+            <CollectionCategoryCarousel
+              collections={collections}
+              category="eda"
+              searchKey="tags"
+              searchValue="eda"
+            />
           </HubContextProvider>
         );
         cy.contains('Manage content', 'button').should('not.exist');
