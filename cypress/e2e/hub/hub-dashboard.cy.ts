@@ -30,24 +30,42 @@ describe('hub dashboard', () => {
   it('render the hub dashboard', () => {
     cy.visit(HubRoutes.dashboard);
     cy.get('.pf-c-title').contains(HubDashboard.title);
+    cy.get('section.pf-c-page__main-section')
+      .first()
+      .within(() => {
+        cy.get('.pf-c-title').should('contain', HubDashboard.title);
+        cy.get('span.pf-c-truncate__start').should('contain', HubDashboard.description);
+      });
   });
-  it('Verify that EDA collections are displayed', () => {
+  it('verify that EDA collections are displayed', () => {
     cy.visit(HubRoutes.dashboard);
     cy.contains('div.pf-c-card__header', 'Event-Driven Ansible content')
       .parent()
       .within(() => {
-        cy.get(`article.pf-c-card[id=${collectionNames.eda.collection1}]`).should('be.visible');
+        cy.get(`article.pf-c-card[id=${collectionNames.eda.collection1}]`).should('exist');
       });
+  });
+  it('clicking on "Go to collections" opens collections UI filtered by EDA collections', () => {
+    cy.visit(HubRoutes.dashboard);
+    cy.contains('div.pf-c-card__header', 'Event-Driven Ansible content')
+      .parent()
+      .within(() => {
+        cy.contains('a', 'Go to collections').click();
+      });
+    cy.url().should('contain', 'tags=eda');
+    cy.get('div.pf-c-toolbar__group').contains('Tags').should('be.visible');
+    cy.get('div.pf-c-toolbar__group').contains('eda').should('be.visible');
+    cy.getTableRowByText(collectionNames.eda.collection1).should('be.visible');
   });
   it('clicking on Cog icon opens the Manage view modal', () => {
     cy.visit(HubRoutes.dashboard);
-    cy.clickPageAction(/^Manage view/);
+    cy.clickButton('Manage view');
     cy.get('.pf-c-modal-box__title-text').should('contain', 'Manage Dashboard');
     cy.get('[aria-label="Close"]').click();
   });
   it('within the Manage Dashboard modal, unchecking a resource should hide the resource', () => {
     cy.visit(HubRoutes.dashboard);
-    cy.clickPageAction(/^Manage view/);
+    cy.clickButton('Manage view');
     cy.contains('tr', 'Cloud collections').find('input').uncheck();
     cy.contains('tr', 'Networking collections').find('input').uncheck();
     cy.contains('tr', 'Database collections').find('input').uncheck();
@@ -55,7 +73,7 @@ describe('hub dashboard', () => {
     cy.contains('tr', 'Storage collections').find('input').uncheck();
     cy.clickModalButton('Apply');
     cy.get('div.pf-c-card__header').should('not.contain', 'Storage collections');
-    cy.clickPageAction(/^Manage view/);
+    cy.clickButton(/^Manage view/);
     cy.contains('tr', 'Storage collections').find('input').check();
     cy.clickModalButton('Apply');
     cy.contains('div.pf-c-card__header', 'Storage collections').should('be.visible');

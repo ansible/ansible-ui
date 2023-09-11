@@ -101,7 +101,10 @@ export function CollectionCard(props: { collection: CollectionVersionSearch }) {
           title: (
             <TextCell
               text={item.collection_version.name}
-              to={RouteObj.CollectionDetails.replace(':id', item.collection_version.name)}
+              to={
+                RouteObj.CollectionDetails +
+                `?name=${item.collection_version.name}&namespace=${item.collection_version.namespace}&repository=${item.repository.name}`
+              }
             />
           ),
           iconAboveTitle: true,
