@@ -182,6 +182,11 @@ export type PageTableProps<T extends object> = {
 
   disableLastRowBorder?: boolean;
 
+  /** Optional: Max selections permitted in a table. If this number of selections has been made,
+   * the checkboxes on the rest of the rows are disabled until an item is unselected.
+   */
+  maxSelections?: number;
+
   /**
    * This will render content between PageToolbar and table hader. Set scrollOutsideTable to true, if you want proper scrolling in table.
    */
@@ -406,6 +411,7 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
     clearAllFilters,
     onSelect,
     unselectAll,
+    maxSelections,
   } = props;
 
   const tableColumns = useVisibleTableColumns(props.tableColumns);
@@ -565,6 +571,8 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
                   expandedRow={expandedRow}
                   isLastRow={rowIndex === pageItems.length - 1}
                   disableLastRowBorder={props.disableLastRowBorder}
+                  maxSelections={maxSelections}
+                  selectedItems={props.selectedItems}
                 />
               ))}
         </Tbody>
@@ -728,6 +736,8 @@ function TableRow<T extends object>(props: {
   expandedRow?: (item: T) => ReactNode;
   isLastRow?: boolean;
   disableLastRowBorder?: boolean;
+  maxSelections?: number;
+  selectedItems?: T[];
 }) {
   const {
     columns,
@@ -743,10 +753,23 @@ function TableRow<T extends object>(props: {
     onSelect,
     expandedRow,
     disableLastRowBorder,
+    maxSelections,
+    selectedItems,
   } = props;
   const [expanded, setExpanded] = useState(false);
   const settings = useSettings();
   const expandedContent = expandedRow?.(item);
+  const disableRow = useCallback(
+    (item: T) => {
+      if (selectedItems?.length === maxSelections) {
+        // disable checkboxes for remaining rows
+        return !selectedItems?.includes(item);
+      }
+      return false;
+    },
+    [maxSelections, selectedItems]
+  );
+
   return (
     <>
       <Tr
@@ -783,6 +806,7 @@ function TableRow<T extends object>(props: {
                       }
                     },
                     isSelected: isItemSelected,
+                    isDisabled: maxSelections && selectedItems ? disableRow(item) : false,
                   }
                 : undefined
             }
@@ -804,6 +828,7 @@ function TableRow<T extends object>(props: {
               },
               isSelected: isItemSelected ?? false,
               variant: isSelectMultiple ? 'checkbox' : 'radio',
+              disable: maxSelections && selectedItems ? disableRow(item) : false,
             }}
             isStickyColumn
             stickyMinWidth="0px"

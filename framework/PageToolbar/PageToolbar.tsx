@@ -78,6 +78,9 @@ export type PageToolbarProps<T extends object> = {
   disablePagination?: boolean;
   bottomBorder?: boolean;
   sortOptions?: PageTableSortOption[];
+  /** Optional: Max selections permitted in a table. The bulk selector within the toolbar is disabled based on this value.
+   */
+  maxSelections?: number;
 };
 
 export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {

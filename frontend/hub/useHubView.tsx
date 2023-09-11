@@ -41,6 +41,7 @@ export function useHubView<T extends object>({
   defaultFilters,
   defaultSort: initialDefaultSort,
   defaultSortDirection: initialDefaultSortDirection,
+  defaultSelection,
 }: {
   url: string;
   keyFn: (item: T) => string | number;
@@ -52,6 +53,7 @@ export function useHubView<T extends object>({
   defaultFilters?: Record<string, string[]>;
   defaultSort?: string | undefined;
   defaultSortDirection?: 'asc' | 'desc' | undefined;
+  defaultSelection?: T[];
 }): IHubView<T> {
   let defaultSort: string | undefined = initialDefaultSort;
   let defaultSortDirection: 'asc' | 'desc' | undefined = initialDefaultSortDirection;
@@ -137,7 +139,7 @@ export function useHubView<T extends object>({
     }
   }
 
-  const selection = useSelected(data?.data ?? [], keyFn);
+  const selection = useSelected(data?.data ?? [], keyFn, defaultSelection);
 
   if (data?.meta.count !== undefined) {
     itemCountRef.current.itemCount = data?.meta.count;
