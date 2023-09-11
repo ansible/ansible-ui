@@ -160,6 +160,7 @@ module.exports = function (env, argv) {
       ],
     },
     devServer: {
+      https: true,
       historyApiFallback: true,
       compress: true,
       hot: true,
