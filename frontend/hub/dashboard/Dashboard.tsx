@@ -40,7 +40,7 @@ export function HubDashboard() {
             actions={[
               {
                 icon: CogIcon,
-                label: 'Manage view',
+                label: t('Manage view'),
                 type: PageActionType.Button,
                 variant: ButtonVariant.link,
                 isPinned: true,
