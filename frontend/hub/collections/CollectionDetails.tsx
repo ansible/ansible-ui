@@ -119,6 +119,7 @@ export function CollectionDetails() {
                         item.collection_version.version +
                         ' ' +
                         t('updated') +
+                        ' ' +
                         `${DateTime.fromISO(item.collection_version.pulp_created).toRelative()} (${
                           item.is_signed ? t('signed') : t('unsigned')
                         })`;
