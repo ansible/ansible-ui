@@ -12,7 +12,7 @@ export function useApprovalFilters() {
   const repoQueryOptions = useRepoQueryOptions();
 
   const repoSelector = toolbarSingleSelectBrowseAdapter<Repository>(
-    useSelectRepositorySingle(),
+    useSelectRepositorySingle().onBrowse,
     (item) => item.name,
     (name) => {
       return { name };
