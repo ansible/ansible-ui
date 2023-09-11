@@ -4,6 +4,13 @@ Cypress.Commands.add('getFiltersToolbarItem', () => {
   cy.get('#filter').parent().parent().parent().parent();
 });
 
+Cypress.Commands.add('getListRowByText', (name: string | RegExp, filter?: boolean) => {
+  if (filter !== false && typeof name === 'string') {
+    cy.filterTableByText(name);
+  }
+  cy.contains('li', name);
+});
+
 Cypress.Commands.add('openToolbarFilterTypeSelect', () => {
   cy.getFiltersToolbarItem().within(() => {
     cy.get('#filter').click().parent().get('.pf-c-menu');
