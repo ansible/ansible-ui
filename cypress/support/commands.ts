@@ -136,6 +136,9 @@ declare global {
       /** Get the table row containing the specified text. */
       getTableRowByText(name: string | RegExp, filter?: boolean): Chainable<void>;
 
+      /** Get the list row containing the specified text. */
+      getListRowByText(name: string | RegExp, filter?: boolean): Chainable<void>;
+
       /** Select the create resource option from a toolbar create dropdown button.  ie. AWX template list toolbar **/
       clickToolbarDropdownCreateButton(
         createButtonLabel: string | RegExp,
