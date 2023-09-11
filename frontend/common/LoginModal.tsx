@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { PageForm, PageFormSubmitHandler, usePageDialog } from '../../framework';
 import { PageFormTextInput } from '../../framework/PageForm/Inputs/PageFormTextInput';
+import { hubAPI } from '../hub/api/utils';
 import { RouteObj } from './Routes';
 import { setCookie } from './crud/cookie';
 import { useInvalidateCacheOnUnmount } from './useInvalidateCache';
@@ -90,10 +91,8 @@ function LoginForm(props: { defaultServerId?: string | number; onLogin?: () => v
             searchString = 'csrfToken: "';
             break;
           case 'GALAXY':
-            loginPageUrl = `/api/galaxy/_ui/v1/auth/login/`;
-            break;
           case 'HUB':
-            loginPageUrl = `/api/automation-hub/_ui/v1/auth/login/`;
+            loginPageUrl = hubAPI`/_ui/v1/auth/login/`;
             break;
         }
 

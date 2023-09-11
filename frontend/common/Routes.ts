@@ -207,7 +207,7 @@ export const RouteObj = {
   UploadCollection: `${hubRoutePrefix}/collections/upload`,
 
   Repositories: `${hubRoutePrefix}/repositories`,
-  RepositoryDetails: `${hubRoutePrefix}/repositories/details/:id`,
+  RepositoryDetails: `${hubRoutePrefix}/repositories/details/:CollectionDetails`,
   EditRepository: `${hubRoutePrefix}/repositories/edit/:id`,
 
   Namespaces: `${hubRoutePrefix}/namespaces`,
