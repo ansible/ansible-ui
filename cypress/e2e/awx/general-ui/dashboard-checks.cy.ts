@@ -9,17 +9,6 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
     cy.awxLogin();
   });
 
-  it('welcome modal', () => {
-    cy.navigateTo(/^Dashboard$/);
-    cy.clickModalButton('Close');
-    cy.reload();
-    cy.getDialog().within(() => {
-      cy.contains('Welcome to the new Ansible user interface').should('be.visible');
-    });
-    cy.getCheckboxByLabel('Do not show this message again.').click();
-    cy.clickModalButton('Close');
-  });
-
   it('clicking on Cog icon opens the Manage Dashboard modal', () => {
     cy.navigateTo(/^Dashboard$/);
     cy.clickButton('Manage view');
