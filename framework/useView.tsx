@@ -4,6 +4,8 @@ import { useIsMountedRef } from './components/useIsMounted';
 import { useSearchParams } from './components/useSearchParams';
 import { useWindowLocation } from './components/useWindowLocation';
 
+import { ITableColumn, IToolbarFilter } from '../framework';
+
 /**
  * The IView interface defines the state for a table.
  *
@@ -44,7 +46,8 @@ export interface IView {
  * Instead, you will use a wrapper hook that uses this hook.
  * That wrapper hook will be the hook that knows how to work with the data from the API.
  */
-export function useView(options: {
+
+export interface ViewOptions {
   /**
    * The default values to use for the view
    * - filters
@@ -78,7 +81,24 @@ export function useView(options: {
    * utilizing this option.
    */
   filterQueryStringKeys?: string[];
-}): IView {
+}
+
+export type QueryParams = {
+  [key: string]: string;
+};
+
+export interface ViewExtendedOptions<T extends object> extends ViewOptions {
+  url: string;
+  keyFn: (item: T) => string | number;
+  toolbarFilters?: IToolbarFilter[];
+  tableColumns?: ITableColumn<T>[];
+  disableQueryString?: boolean;
+  queryParams?: QueryParams;
+  sortKey?: string;
+  defaultFilters?: Record<string, string[]>;
+}
+
+export function useView(options: ViewOptions): IView {
   const { defaultValues, disableQueryString, ignoreQueryStringKeys, filterQueryStringKeys } =
     options;
 
