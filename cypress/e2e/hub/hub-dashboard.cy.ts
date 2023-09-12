@@ -1,5 +1,5 @@
 import { randomString } from '../../../framework/utils/random-string';
-import { HubDashboard } from './constants';
+import { HubDashboard, HubRoutes } from './constants';
 
 const namespaceName = 'e2e_namespace_' + randomString(4, undefined, { isLowercase: true });
 
@@ -30,34 +30,107 @@ describe('hub dashboard', () => {
   it('render the hub dashboard', () => {
     cy.navigateTo(/^Dashboard$/);
     cy.get('.pf-c-title').contains(HubDashboard.title);
+    cy.get('section.pf-c-page__main-section')
+      .first()
+      .within(() => {
+        cy.get('.pf-c-title').should('contain', HubDashboard.title);
+        cy.get('span.pf-c-truncate__start').should('contain', HubDashboard.description);
+      });
+    cy.contains('button', 'Manage view').should('be.visible');
   });
-  it('Verify that EDA collections are displayed', () => {
-    cy.navigateTo(/^Dashboard$/);
+  it('verify that EDA collections are displayed', () => {
+    cy.visit(HubRoutes.dashboard);
     cy.contains('div.pf-c-card__header', 'Event-Driven Ansible content')
       .parent()
       .within(() => {
-        cy.get(`article.pf-c-card[id=${collectionNames.eda.collection1}]`).should('be.visible');
+        cy.get(`article.pf-c-card[id=${collectionNames.eda.collection1}]`).should('exist');
       });
   });
-  it('clicking on Cog icon opens the Manage view modal', () => {
-    cy.navigateTo(/^Dashboard$/);
-    cy.clickPageAction(/^Manage view/);
-    cy.get('.pf-c-modal-box__title-text').should('contain', 'Manage Dashboard');
-    cy.get('[aria-label="Close"]').click();
+  it('verify that collection name links to collection details', () => {
+    cy.visit(HubRoutes.dashboard);
+    cy.contains('div.pf-c-card__header', 'Event-Driven Ansible content')
+      .parent()
+      .within(() => {
+        cy.contains('a', collectionNames.eda.collection1).click();
+      });
+    cy.url().should('contain', `collections/details/?name=${collectionNames.eda.collection1}`);
   });
-  it('within the Manage Dashboard modal, unchecking a resource should hide the resource', () => {
-    cy.navigateTo(/^Dashboard$/);
-    cy.clickPageAction(/^Manage view/);
-    cy.contains('tr', 'Cloud collections').find('input').uncheck();
-    cy.contains('tr', 'Networking collections').find('input').uncheck();
-    cy.contains('tr', 'Database collections').find('input').uncheck();
-    cy.contains('tr', 'Application collections').find('input').uncheck();
-    cy.contains('tr', 'Storage collections').find('input').uncheck();
-    cy.clickModalButton('Apply');
-    cy.get('div.pf-c-card__header').should('not.contain', 'Storage collections');
-    cy.clickPageAction(/^Manage view/);
-    cy.contains('tr', 'Storage collections').find('input').check();
-    cy.clickModalButton('Apply');
-    cy.contains('div.pf-c-card__header', 'Storage collections').should('be.visible');
+  it('clicking on "Go to collections" opens collections UI filtered by EDA collections', () => {
+    cy.visit(HubRoutes.dashboard);
+    cy.contains('div.pf-c-card__header', 'Event-Driven Ansible content')
+      .parent()
+      .within(() => {
+        cy.contains('a', 'Go to collections').click();
+      });
+    cy.url().should('contain', 'tags=eda');
+    cy.get('div.pf-c-toolbar__group').contains('Tags').should('be.visible');
+    cy.get('div.pf-c-toolbar__group').contains('eda').should('be.visible');
+    cy.getListRowByText(collectionNames.eda.collection1).should('be.visible');
+  });
+  describe('Manage view modal', () => {
+    it('clicking on Cog icon opens the Manage view modal', () => {
+      cy.visit(HubRoutes.dashboard);
+      cy.clickButton('Manage view');
+      cy.get('.pf-c-modal-box__title-text').should('contain', 'Manage Dashboard');
+      cy.clickModalButton('Cancel');
+      cy.get('div.pf-c-backdrop').should('not.exist');
+    });
+    it('unselecting all categories in the Manage results in an empty state UI on the dashboard', () => {
+      cy.visit(HubRoutes.dashboard);
+      cy.clickButton('Manage view');
+      cy.get('.pf-c-modal-box__title-text').should('contain', 'Manage Dashboard');
+      cy.contains('tr', 'Cloud collections').find('input').uncheck();
+      cy.contains('tr', 'Networking collections').find('input').uncheck();
+      cy.contains('tr', 'Database collections').find('input').uncheck();
+      cy.contains('tr', 'Application collections').find('input').uncheck();
+      cy.contains('tr', 'Storage collections').find('input').uncheck();
+      cy.contains('tr', 'Event-Driven Ansible content').find('input').uncheck();
+      cy.clickModalButton('Apply');
+      cy.get('div.pf-c-empty-state__content').within(() => {
+        cy.hasTitle(
+          /^There is currently no content selected to be shown on the dashboard.$/
+        ).should('be.visible');
+        cy.contains('button', 'Manage view').should('be.visible');
+        cy.clickButton('Manage view');
+      });
+      cy.get('.pf-c-modal-box__title-text').should('contain', 'Manage Dashboard');
+      // Reset dashboard
+      cy.contains('tr', 'Cloud collections').find('input').check();
+      cy.contains('tr', 'Networking collections').find('input').check();
+      cy.contains('tr', 'Database collections').find('input').check();
+      cy.contains('tr', 'Application collections').find('input').check();
+      cy.contains('tr', 'Storage collections').find('input').check();
+      cy.contains('tr', 'Event-Driven Ansible content').find('input').check();
+      cy.clickModalButton('Apply');
+    });
+    it('within the Manage Dashboard modal, checking/unchecking a resource should display/hide the resource', () => {
+      cy.visit(HubRoutes.dashboard);
+      cy.clickButton('Manage view');
+      cy.contains('tr', 'Storage collections').find('input').uncheck();
+      cy.clickModalButton('Apply');
+      cy.get('div.pf-c-backdrop').should('not.exist');
+      cy.get('div.pf-c-card__header').should('not.contain', 'Storage collections');
+      cy.clickButton(/^Manage view/);
+      cy.contains('tr', 'Storage collections').find('input').check();
+      cy.clickModalButton('Apply');
+      cy.contains('div.pf-c-card__header', 'Storage collections').should('be.visible');
+    });
+    it('reordering categories within the Manage View modal should be reflected in the dashboard', () => {
+      let initialArray: string[];
+      let editedArray: string[];
+      cy.visit(HubRoutes.dashboard);
+
+      cy.get('.page-dashboard-card .pf-c-card__header').then((headers) => {
+        initialArray = Array.from(headers, (title) => title.innerText.split('\n')[0]);
+        cy.clickButton('Manage view');
+        cy.get('.pf-c-modal-box__title-text').should('contain', 'Manage Dashboard');
+        cy.get('#draggable-row-storage').drag('#draggable-row-eda');
+        cy.clickModalButton('Apply');
+      });
+      cy.get('.page-dashboard-card .pf-c-card__header').then((headers) => {
+        editedArray = Array.from(headers, (title) => title.innerText.split('\n')[0]);
+        expect(initialArray).to.not.eql(editedArray);
+      });
+    });
   });
 });

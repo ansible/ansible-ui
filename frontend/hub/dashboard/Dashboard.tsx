@@ -1,6 +1,6 @@
 /* eslint-disable i18next/no-literal-string */
-import { ButtonVariant, DropdownPosition } from '@patternfly/react-core';
-import { CogIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { Bullseye, Button, ButtonVariant, DropdownPosition } from '@patternfly/react-core';
+import { CogIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import {
   PageActionSelection,
@@ -15,6 +15,7 @@ import { useState } from 'react';
 import { CategorizedCollections } from './CollectionCategory';
 import { useCategorizeCollections } from './hooks/useCategorizeCollections';
 import { CollectionCategoryCarousel } from './CollectionCategories';
+import { EmptyStateNoData } from '../../../framework/components/EmptyStateNoData';
 
 export function HubDashboard() {
   const { t } = useTranslation();
@@ -38,18 +39,11 @@ export function HubDashboard() {
           <PageActions
             actions={[
               {
-                label: 'Build Environment',
-                icon: PlusCircleIcon,
-                type: PageActionType.Button,
-                variant: ButtonVariant.primary,
-                selection: PageActionSelection.None,
-                isPinned: true,
-                onClick: () => alert('TODO'),
-              },
-              {
                 icon: CogIcon,
-                label: 'Manage view',
+                label: t('Manage view'),
                 type: PageActionType.Button,
+                variant: ButtonVariant.link,
+                isPinned: true,
                 selection: PageActionSelection.None,
                 onClick: openManageDashboard,
               },
@@ -58,6 +52,20 @@ export function HubDashboard() {
           />
         }
       />
+      {managedCategories.length === 0 && (
+        <Bullseye>
+          <EmptyStateNoData
+            button={
+              <Button icon={<CogIcon />} onClick={openManageDashboard}>
+                {t('Manage view')}
+              </Button>
+            }
+            title={t('There is currently no content selected to be shown on the dashboard.')}
+            description={t('Please manage this view by using the button below.')}
+            variant="full"
+          ></EmptyStateNoData>
+        </Bullseye>
+      )}
       <PageDashboard>
         {managedCategories.map((category) =>
           categorizedCollections[category.id] ? (
@@ -65,6 +73,8 @@ export function HubDashboard() {
               key={category.id}
               category={category.id}
               collections={categorizedCollections[category.id]}
+              searchKey={category.searchKey}
+              searchValue={category.searchValue}
             />
           ) : null
         )}

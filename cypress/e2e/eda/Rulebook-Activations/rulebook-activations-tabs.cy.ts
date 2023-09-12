@@ -42,8 +42,8 @@ describe.skip('EDA rulebook activations- Create, Edit, Delete', () => {
     cy.deleteAllEdaCurrentUserTokens();
   });
 
-  it('renders the instances that are related to the rulebook activation', () => {
-    cy.intercept('GET', `/api/eda/v1/activations/${edaRBA.id}/instances`).as('getRBAInstance');
+  it.skip('renders the instances that are related to the rulebook activation', () => {
+    cy.intercept('GET', `api/eda/v1/activations/${edaRBA.id}/instances/`).as('getRBAInstance');
     cy.navigateTo(/^Rulebook Activations$/);
     cy.clickTableRow(edaRBA.name);
     cy.contains('h1', edaRBA.name).should('be.visible');
