@@ -51,7 +51,7 @@ describe('EDA Cleanup', () => {
     });
   });
 
-  it.skip('cleanup old eda rulebook activations', () => {
+  it('cleanup old eda rulebook activations', () => {
     cy.getEdaRulebookActivations(1, 100).then((result) => {
       for (const resource of result.results ?? []) {
         if (isOldResource('E2E Rulebook Activation', resource)) {
@@ -73,10 +73,14 @@ describe('EDA Cleanup', () => {
 
   it('cleanup old eda users', () => {
     cy.getEdaUsers(1, 100).then((result) => {
-      for (const resource of result.results ?? []) {
-        if (isOldResource('E2EUser', resource)) {
-          cy.deleteEdaUser(resource);
-        }
+      for (const user of result.results ?? []) {
+        cy.getEdaUser(user.id).then((user) => {
+          if (user.username.startsWith('E2EUser')) {
+            if (new Date(user.created_at) < new Date(Date.now() - 10 * 60 * 1000)) {
+              cy.deleteEdaUser(user);
+            }
+          }
+        });
       }
     });
   });

@@ -128,7 +128,7 @@ Cypress.Commands.add('getEdaRulebookActivation', (edaRulebookActivationName: str
 });
 
 Cypress.Commands.add('deleteEdaRulebookActivation', (edaRulebookActivation) => {
-  cy.waitForRulebookActionStatus(edaRulebookActivation);
+  // cy.waitForRulebookActionStatus(edaRulebookActivation);
   cy.requestDelete(`/api/eda/v1/activations/${edaRulebookActivation.id}/`, {
     failOnStatusCode: false,
   }).then(() => {
@@ -199,6 +199,10 @@ Cypress.Commands.add('getEdaCredentials', (page: number, perPage: number) => {
 
 Cypress.Commands.add('getEdaUsers', (page: number, perPage: number) => {
   cy.requestGet<EdaResult<EdaUser>>(`/api/eda/v1/users/?page=${page}&page_size=${perPage}`);
+});
+
+Cypress.Commands.add('getEdaUser', (id: number) => {
+  cy.requestGet<EdaResult<EdaUser>>(`/api/eda/v1/users/${id}/`);
 });
 
 Cypress.Commands.add('getEdaProjectByName', (edaProjectName: string) => {
