@@ -33,8 +33,8 @@ export function Users() {
         toolbarActions={toolbarActions}
         rowActions={rowActions}
         errorStateTitle={t('Error loading users')}
-        emptyStateTitle={t('No users yet')}
-        emptyStateDescription={t('To get started, create a user.')}
+        emptyStateTitle={t('There are currently no users created for your organization.')}
+        emptyStateDescription={t('Please create a user by using the button below.')}
         emptyStateButtonText={t('Create user')}
         emptyStateButtonClick={() => navigate(RouteObj.CreateEdaUser)}
         {...view}
