@@ -35,8 +35,10 @@ export function RulebookActivations() {
         toolbarFilters={toolbarFilters}
         rowActions={rowActions}
         errorStateTitle={t('Error loading rulebook activations')}
-        emptyStateTitle={t('No rulebook activations yet')}
-        emptyStateDescription={t('To get started, create a rulebook activation.')}
+        emptyStateTitle={t(
+          'There are currently no rulebook activations created for your organization.'
+        )}
+        emptyStateDescription={t('Please create a rulebook activation by using the button below.')}
         emptyStateButtonText={t('Create rulebook activation')}
         emptyStateButtonClick={() => navigate(RouteObj.CreateEdaRulebookActivation)}
         {...view}

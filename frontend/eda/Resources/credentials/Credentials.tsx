@@ -37,8 +37,8 @@ export function Credentials() {
         toolbarFilters={toolbarFilters}
         rowActions={rowActions}
         errorStateTitle={t('Error loading credentials')}
-        emptyStateTitle={t('No credentials yet')}
-        emptyStateDescription={t('To get started, create a credential.')}
+        emptyStateTitle={t('There are currently no credentials created for your organization.')}
+        emptyStateDescription={t('Please create a credential by using the button below.')}
         emptyStateButtonText={t('Create credential')}
         emptyStateButtonClick={() => navigate(RouteObj.CreateEdaCredential)}
         {...view}
