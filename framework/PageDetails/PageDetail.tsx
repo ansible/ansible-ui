@@ -5,7 +5,7 @@ import {
 } from '@patternfly/react-core';
 import { ReactNode } from 'react';
 import { StandardPopover } from '../components/StandardPopover';
-import { useID } from '../hooks/useId';
+import { useID } from '../hooks/useID';
 
 export function PageDetail(props: {
   id?: string;
