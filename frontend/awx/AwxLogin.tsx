@@ -1,16 +1,13 @@
 import { Login } from '../common/Login';
-import { RouteObj, useRoutesWithoutPrefix } from '../common/Routes';
 import type { AuthOptions } from '../common/SocialAuthLogin';
 import { useGet } from '../common/crud/useGet';
+import { AwxRoute } from './AwxRoutes';
+import { useGetAwxUrl } from './useAwxNavigate';
 
 export function AwxLogin() {
   const { data: options } = useGet<AuthOptions>('/api/v2/auth/');
-  const RouteObjWithoutPrefix = useRoutesWithoutPrefix(RouteObj.AWX);
+  const getAwxUrl = useGetAwxUrl();
   return (
-    <Login
-      authOptions={options}
-      apiUrl="/api/login/"
-      onLoginUrl={RouteObjWithoutPrefix.Dashboard}
-    />
+    <Login authOptions={options} apiUrl="/api/login/" onLoginUrl={getAwxUrl(AwxRoute.Login)} />
   );
 }

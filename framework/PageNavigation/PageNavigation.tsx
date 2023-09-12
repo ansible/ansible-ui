@@ -80,12 +80,12 @@ export function useNavigationRoutes(navigationItems: PageNavigationItem[]) {
 function createNavigateToRoutes(base: string, navigationItems: PageNavigationItem[]) {
   const routes: { [key: string]: string } = {};
   navigationItems.forEach((item) => {
+    const itemPath = (base + '/' + item.path).replace('//', '/');
     if ('id' in item) {
-      routes[item.id] = item.path;
+      routes[item.id] = (itemPath + '/').replace('//', '/');
     }
     if ('children' in item) {
-      const itemBase = (base + '/' + item.path).replace('//', '/');
-      Object.assign(routes, createNavigateToRoutes(itemBase, item.children));
+      Object.assign(routes, createNavigateToRoutes(itemPath, item.children));
     }
   });
   return routes;

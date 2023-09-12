@@ -19,14 +19,14 @@ export const RouteObj = {
 
   AWX: `${awxRoutePrefix}`,
 
-  Dashboard: `${awxRoutePrefix}/dashboard`,
+  // Dashboard: `${awxRoutePrefix}/dashboard`,
 
   // Views/Jobs
-  Jobs: `${awxRoutePrefix}/views/jobs`,
+  // Jobs: `${awxRoutePrefix}/views/jobs`,
   JobPage: `${awxRoutePrefix}/views/jobs/:job_type/:id/*`,
   JobOutput: `${awxRoutePrefix}/views/jobs/:job_type/:id/output`,
   JobDetails: `${awxRoutePrefix}/views/jobs/:job_type/:id/details`,
-  Schedules: `${awxRoutePrefix}/views/schedules`,
+  // Schedules: `${awxRoutePrefix}/views/schedules`,
   EditSchedule: `${awxRoutePrefix}/views/:resource_type/:resource_id/schedules/:schedule_id/edit`,
   ScheduleDetails: `${awxRoutePrefix}/views/:schedule_id/:resource_id/schedules/:schedule_id/details`,
   CreateSchedule: `${awxRoutePrefix}/views/schedules/create`,

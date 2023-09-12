@@ -11,12 +11,15 @@ import {
 } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
 import { RouteObj } from '../../../common/Routes';
+import { AwxRoute } from '../../AwxRoutes';
 import { Job } from '../../interfaces/Job';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
+import { useGetAwxUrl } from '../../useAwxNavigate';
 import { IAwxView } from '../../useAwxView';
 import { useJobsColumns } from '../../views/jobs/hooks/useJobsColumns';
 
 export function AwxRecentJobsCard(props: { view: IAwxView<Job>; showEmptyStateNonAdmin: boolean }) {
+  const getAwxUrl = useGetAwxUrl();
   const { view, showEmptyStateNonAdmin } = props;
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -43,7 +46,7 @@ export function AwxRecentJobsCard(props: { view: IAwxView<Job>; showEmptyStateNo
       width="lg"
       height="md"
       linkText={t('Go to Jobs')}
-      to={RouteObj.Jobs}
+      to={getAwxUrl(AwxRoute.Jobs)}
     >
       {showEmptyStateNonAdmin ? (
         <PageTable<Job>
