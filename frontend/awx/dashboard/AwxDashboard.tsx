@@ -108,12 +108,13 @@ function DashboardInternal(props: { managedResources: Resource[] }) {
       {managedResources.map((resource: Resource) => {
         switch (resource.id) {
           case 'counts':
-            return <AwxCountsCard data={data} />;
+            return <AwxCountsCard key={resource.id} data={data} />;
           case 'recent_job_activity':
-            return <AwxJobActivityCard />;
+            return <AwxJobActivityCard key={resource.id} />;
           case 'recent_jobs':
             return (
               <AwxRecentJobsCard
+                key={resource.id}
                 view={recentJobsView}
                 showEmptyStateNonAdmin={!canEdit && recentJobsView.itemCount === 0}
               />
@@ -121,6 +122,7 @@ function DashboardInternal(props: { managedResources: Resource[] }) {
           case 'recent_projects':
             return (
               <AwxRecentProjectsCard
+                key={resource.id}
                 view={recentProjectsView}
                 showEmptyStateNonAdmin={!canEdit && recentProjectsView.itemCount === 0}
               />
@@ -128,6 +130,7 @@ function DashboardInternal(props: { managedResources: Resource[] }) {
           case 'recent_inventories':
             return (
               <AwxRecentInventoriesCard
+                key={resource.id}
                 view={recentInventoriesView}
                 showEmptyStateNonAdmin={!canEdit && recentInventoriesView.itemCount === 0}
               />

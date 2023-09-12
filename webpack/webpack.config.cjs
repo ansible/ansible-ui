@@ -107,7 +107,9 @@ module.exports = function (env, argv) {
         'process.env.EDA_ROUTE_PREFIX': env.eda_route_prefix
           ? JSON.stringify(env.eda_route_prefix)
           : JSON.stringify('/eda'),
-        'process.env.HUB_API_BASE_PATH': JSON.stringify(env.hub_api_base_path || ''),
+        'process.env.HUB_API_BASE_PATH': process.env.HUB_API_BASE_PATH
+          ? JSON.stringify(process.env.HUB_API_BASE_PATH)
+          : JSON.stringify(env.hub_api_base_path || ''),
       }),
       isDevelopment && new ReactRefreshWebpackPlugin(),
       ...['en', 'es', 'fr', 'ja', 'ko', 'nl', 'zh', 'zu'].map((locale) => {
@@ -150,6 +152,13 @@ module.exports = function (env, argv) {
       publicPath: process.env.PUBLIC_PATH || '/',
     },
     optimization: {
+      splitChunks: {
+        cacheGroups: {
+          patternfly: { test: /[\\/]node_modules[\\/]@patternfly/ },
+          monaco: { test: /[\\/]node_modules[\\/]monaco/ },
+          vendors: { test: /[\\/]node_modules[\\/]/ },
+        },
+      },
       minimizer: [
         '...',
         new CssMinimizerWebpackPlugin({
