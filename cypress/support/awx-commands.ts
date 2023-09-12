@@ -798,10 +798,30 @@ Cypress.Commands.add(
 );
 
 // Global variable to store the token for AWX
-// Created on demand when a cammand needs it
+// Created on demand when a command needs it
 let globalAwxToken: AwxToken | undefined;
 
 after(() => {
   // Delete the token if it was created
   if (globalAwxToken) cy.deleteAwxToken(globalAwxToken, { failOnStatusCode: false });
+});
+
+Cypress.Commands.add('waitForTemplateStatus', (jobID: string) => {
+  cy.requestGet<AwxRecentJobsCard>(
+    `api/v2/jobs/${jobID}/job_events/?order_by=counter&page=1&page_size=50`
+  )
+    .its('results[0].summary_fields.job.status')
+
+    .then((status: string) => {
+      cy.log(status);
+      switch (status) {
+        case 'failed':
+        case 'successful':
+          cy.wrap(status);
+          break;
+        default:
+          cy.wait(100).then(() => cy.waitForTemplateStatus(jobID));
+          break;
+      }
+    });
 });

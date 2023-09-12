@@ -40,6 +40,7 @@ import './common-commands';
 import './eda-commands';
 import './hub-commands';
 import './rest-commands';
+import { AwxItemsResponse } from '../../frontend/awx/common/AwxItemsResponse';
 
 declare global {
   namespace Cypress {
@@ -483,6 +484,8 @@ declare global {
       createInventoryHostGroup(
         organization: Organization
       ): Chainable<{ inventory: Inventory; host: Host; group: Group }>;
+
+      waitForTemplateStatus(job: AwxItemsResponse): Chainable<AwxItemsResponse>;
 
       // --- EDA COMMANDS ---
 

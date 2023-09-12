@@ -1,9 +1,9 @@
 import { randomString } from '../../../../framework/utils/random-string';
-import { Credential } from '../../../../frontend/awx/interfaces/Credential';
-import { ExecutionEnvironment } from '../../../../frontend/awx/interfaces/ExecutionEnvironment';
-import { InstanceGroup } from '../../../../frontend/awx/interfaces/InstanceGroup';
+// import { Credential } from '../../../../frontend/awx/interfaces/Credential';
+// import { ExecutionEnvironment } from '../../../../frontend/awx/interfaces/ExecutionEnvironment';
+// import { InstanceGroup } from '../../../../frontend/awx/interfaces/InstanceGroup';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
-import { Label } from '../../../../frontend/awx/interfaces/Label';
+//import { Label } from '../../../../frontend/awx/interfaces/Label';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
 
@@ -11,11 +11,11 @@ describe('Job templates form', () => {
   let organization: Organization;
   let project: Project;
   let inventory: Inventory;
-  let executionEnvironment: ExecutionEnvironment;
+  //let executionEnvironment: ExecutionEnvironment;
   // let githubTokenCrendential: Credential;
-  let machineCredential: Credential;
-  let label: Label;
-  let instanceGroup: InstanceGroup;
+  //let machineCredential: Credential;
+  //let label: Label;
+  //let instanceGroup: InstanceGroup;
 
   before(() => {
     cy.awxLogin();
@@ -33,50 +33,80 @@ describe('Job templates form', () => {
         inventory = i;
       });
 
-      cy.createAwxExecutionEnvironment({ organization: organization.id }).then((ee) => {
-        executionEnvironment = ee;
-      });
+      // cy.createAwxExecutionEnvironment({ organization: organization.id }).then((ee) => {
+      //   executionEnvironment = ee;
+      // });
 
-      cy.createAWXCredential({
-        kind: 'machine',
-        organization: organization.id,
-        credential_type: 1,
-      }).then((cred) => {
-        machineCredential = cred;
-      });
+      // cy.createAWXCredential({
+      //   kind: 'github_token',
+      //   organization: organization.id,
+      //   credential_type: 11,
+      // }).then((cred) => {
+      //   githubTokenCrendential = cred;
+      // });
 
-      cy.createAwxInstanceGroup().then((ig) => {
-        instanceGroup = ig;
-      });
+      // cy.createAWXCredential({
+      //   kind: 'machine',
+      //   organization: organization.id,
+      //   credential_type: 1,
+      // }).then((cred) => {
+      //   machineCredential = cred;
+      // });
 
-      cy.createAwxLabel({ organization: organization.id }).then((l) => {
-        label = l;
-      });
+      // cy.createAwxInstanceGroup().then((ig) => {
+      //   instanceGroup = ig;
+      // });
+
+      // cy.createAwxLabel({ organization: organization.id }).then((l) => {
+      //   label = l;
+      // });
     });
   });
 
   after(() => {
-    cy.deleteAwxOrganization(organization);
-    cy.deleteAwxInstanceGroup(instanceGroup);
+    //cy.deleteAwxOrganization(organization);
+    //cy.deleteAwxInstanceGroup(instanceGroup);
   });
 
-  it('Should create job template with all fields except for prompt on launch values', () => {
+  it.only('Should create job template with all fields except for prompt on launch values', () => {
+    cy.intercept('POST', `/api/v2/job_templates`).as('launchJT');
     const jtName = 'E2E-JT ' + randomString(4);
 
     cy.navigateTo('awx', 'templates');
     cy.clickButton(/^Create template$/);
     cy.clickLink(/^Create job template$/);
-
-    // Name
-    cy.get('[data-cy="name"]').type(jtName);
-
-    // Description
+    cy.typeInputByLabel(/^Name$/, jtName);
     cy.typeInputByLabel(/^Description$/, 'This is a JT description');
     cy.selectPromptOnLaunchByLabel(/^Inventory$/);
     cy.selectDropdownOptionByLabel(/^Project$/, project.name);
     cy.selectDropdownOptionByLabel(/^Playbook$/, 'hello_world.yml');
     cy.clickButton(/^Create job template$/);
-    cy.hasTitle(jtName);
+    cy.wait('@launchJT')
+      .its('response.body.id')
+      .then((id: string) => {
+        cy.log(id);
+        cy.hasTitle(jtName);
+        cy.navigateTo(/^Templates$/);
+        cy.getTableRowByText(jtName).should('be.visible');
+        cy.clickTableRowActionIcon(jtName, 'Launch template');
+        cy.intercept('GET', `api/v2/job_templates/${id}/launch`).as('launchIcon');
+        cy.wait('@launchIcon').then((launchIcon) => {
+          expect(launchIcon?.response?.statusCode).to.eq(200);
+        });
+        cy.selectDropdownOptionByLabel(/^Inventory$/, inventory.name);
+        cy.clickButton(/^Next/);
+        cy.intercept('POST', `api/v2/job_templates/${id}/launch/`).as('postLaunch');
+        cy.clickButton(/^Launch/);
+      });
+    cy.wait('@postLaunch')
+      .its('response.body.id')
+      .then((jobId: string) => {
+        cy.navigateTo(/^Jobs$/);
+        cy.clickTableRow(jtName);
+        cy.waitForTemplateStatus(jobId);
+      });
+
+    //cy.hasTitle(jtName);
     // cy.getCheckboxByLabel('Prompt on launch');
     // Inventory
     // cy.get('input[placeholder="Enter inventory"]')
@@ -206,7 +236,8 @@ describe('Job templates form', () => {
     // cy.hasTitle(jtName);
   });
 
-  it.only('creation of job template using values from the prompt on launch wizard', () => {
+  it('creation of job template using values from the prompt on launch wizard', () => {
+    cy.intercept('POST', `/api/v2/job_templates`).as('launchJT');
     const jtName = 'E2E-POLJT ' + randomString(4);
 
     cy.navigateTo(/^Templates$/);
@@ -218,10 +249,30 @@ describe('Job templates form', () => {
     cy.selectDropdownOptionByLabel(/^Project$/, project.name);
     cy.selectDropdownOptionByLabel(/^Playbook$/, 'hello_world.yml');
     cy.clickButton(/^Create job template$/);
-    cy.hasTitle(jtName);
-    cy.navigateTo(/^Templates$/);
-    cy.getTableRowByText(jtName).should('be.visible');
-    cy.clickTableRowActionIcon(jtName, 'Launch template');
+    cy.wait('@launchJT')
+      .its('response.body.id')
+      .then((id: string) => {
+        cy.log(id);
+        cy.hasTitle(jtName);
+        cy.navigateTo(/^Templates$/);
+        cy.getTableRowByText(jtName).should('be.visible');
+        cy.clickTableRowActionIcon(jtName, 'Launch template');
+        cy.intercept('GET', `api/v2/job_templates/${id}/launch`).as('launchIcon');
+        cy.wait('@launchIcon').then((launchIcon) => {
+          expect(launchIcon?.response?.statusCode).to.eq(200);
+        });
+        cy.selectDropdownOptionByLabel(/^Inventory$/, inventory.name);
+        cy.clickButton(/^Next/);
+        cy.intercept('POST', `api/v2/job_templates/${id}/launch/`).as('postLaunch');
+        cy.clickButton(/^Launch/);
+      });
+    cy.wait('@postLaunch')
+      .its('response.body.id')
+      .then((jobId: string) => {
+        cy.navigateTo(/^Jobs$/);
+        cy.clickTableRow(jtName);
+        cy.waitForTemplateStatus(jobId);
+      });
   });
 
   it.skip('Should edit a job template', () => {
