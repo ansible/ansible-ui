@@ -66,6 +66,12 @@ export HUB_HOST=localhost:8000
 export CYPRESS_HUB_SERVER=$HUB_PROTOCOL://$HUB_HOST
 export CYPRESS_HUB_USERNAME='my-user'
 export CYPRESS_HUB_PASSWORD='my-password'
+export CYPRESS_HUB_API_PREFIX='/api/automation-hub/'
+export CYPRESS_HUB_GALAXYKIT_COMMAND='galaxykit --ignore-certs'
+# For integration tests: Check that the Ansible binary was correctly installed
+# under the Python directory. Add it to the PATH variable. This is needed for
+# the galaxykit commands that create hub resources for tests.
+
 
 export EDA_PROTOCOL=http
 export EDA_HOST=localhost:5001
