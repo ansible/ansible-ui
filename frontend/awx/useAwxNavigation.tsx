@@ -6,6 +6,7 @@ import {
   useNavigationRoutes,
 } from '../../framework/PageNavigation/PageNavigation';
 import { PageNotImplemented } from '../common/PageNotImplemented';
+import { ActiveUserProvider } from '../common/useActiveUser';
 import { AwxLogin } from './AwxLogin';
 import { CreateOrganization, EditOrganization } from './access/organizations/OrganizationForm';
 import { OrganizationPage } from './access/organizations/OrganizationPage/OrganizationPage';
@@ -33,6 +34,8 @@ import { NotificationPage } from './administration/notifications/NotificationPag
 import { Notifications } from './administration/notifications/Notifications';
 import Reports from './analytics/Reports/Reports';
 import SubscriptionUsage from './analytics/subscription-usage/SubscriptionUsage';
+import { AwxConfigProvider } from './common/useAwxConfig';
+import { WebSocketProvider } from './common/useAwxWebSocket';
 import { AwxDashboard } from './dashboard/AwxDashboard';
 import { CreateCredential, EditCredential } from './resources/credentials/CredentialForm';
 import { CredentialPage } from './resources/credentials/CredentialPage/CredentialPage';
@@ -56,9 +59,6 @@ import Jobs from './views/jobs/Jobs';
 import { CreateSchedule } from './views/schedules/ScheduleForm';
 import { SchedulePage } from './views/schedules/SchedulePage/SchedulePage';
 import { Schedules } from './views/schedules/Schedules';
-import { WebSocketProvider } from './common/useAwxWebSocket';
-import { ActiveUserProvider } from '../common/useActiveUser';
-import { AwxConfigProvider } from './common/useAwxConfig';
 
 export enum AwxRoute {
   Awx = 'awx',
