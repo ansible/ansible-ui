@@ -65,6 +65,9 @@ export function CollectionDetails() {
   const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const itemActions = useCollectionActions(() => void refresh());
+  const [collection, setCollection] = useState<CollectionVersionSearch | undefined>(undefined);
+
+  let collectionError: JSX.Element | undefined = undefined;
 
   function setVersionParams(version: string) {
     setSearchParams((params) => {
@@ -72,31 +75,27 @@ export function CollectionDetails() {
       return params;
     });
   }
+  // load all collections versions belong to the repository
+  const collectionsResult = useGet<HubItemsResponse<CollectionVersionSearch>>(
+    hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${
+      searchParams.get('name') || ''
+    }&namespace=${searchParams.get('namespace') || ''}&repository_name=${
+      searchParams.get('repository') || ''
+    }&order_by=-pulp_created`
+  );
 
-  function loadVersions() {
-    // load all collections versions belong to the repository
-    const { data, error, isLoading } = useGet<HubItemsResponse<CollectionVersionSearch>>(
-      hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${
-        searchParams.get('name') || ''
-      }&namespace=${searchParams.get('namespace') || ''}&repository_name=${
-        searchParams.get('repository') || ''
-      }&order_by=-pulp_created`
+  if (
+    collectionsResult.error ||
+    (collectionsResult.isLoading == false &&
+      collectionsResult.data &&
+      collectionsResult.data.data.length == 0)
+  ) {
+    collectionError = (
+      <AwxError error={collectionsResult.error || { name: 'not found', message: t('Not Found') }} />
     );
-
-    let result: { error: JSX.Element | null; data: CollectionVersionSearch[] } = {
-      error: null,
-      data: data ? data.data : [],
-    };
-
-    if (error || (isLoading == false && data && data.data.length == 0)) {
-      result.error = <AwxError error={error || { name: 'not found', message: t('Not Found') }} />;
-    }
-
-    return result;
   }
 
-  const versionsResponse = loadVersions();
-  const collections = versionsResponse.data;
+  const collections = collectionsResult.data ? collectionsResult.data.data : [];
 
   // load collection by search params
   const version = searchParams.get('version');
@@ -111,8 +110,6 @@ export function CollectionDetails() {
     versionFilter = '&version=' + version;
   }
 
-  let collection = null;
-
   const { data, refresh, error, isLoading } = useGet<HubItemsResponse<CollectionVersionSearch>>(
     hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${
       searchParams.get('name') || ''
@@ -124,7 +121,13 @@ export function CollectionDetails() {
   );
 
   if (data && data.data.length > 0) {
-    collection = data.data[0];
+    const newCollection = data.data[0];
+    if (
+      !collection ||
+      collection.collection_version.version != newCollection.collection_version.version
+    ) {
+      setCollection(newCollection);
+    }
   }
   if (error || (isLoading == false && data && data.data.length == 0)) {
     return (
@@ -135,8 +138,8 @@ export function CollectionDetails() {
     );
   }
 
-  if (versionsResponse.error) {
-    return versionsResponse.error;
+  if (collectionError) {
+    return collectionError;
   }
 
   return (
