@@ -99,7 +99,7 @@ export function InventoryDetails() {
           <PageDetail label={t('Created')}>
             {inventory?.created_at ? formatDateString(inventory.created_at) : ''}
           </PageDetail>
-          <PageDetail label={t('Modified')}>
+          <PageDetail label={t('Last modified')}>
             {inventory?.modified_at ? formatDateString(inventory.modified_at) : ''}
           </PageDetail>
         </PageDetails>
