@@ -16,7 +16,7 @@ import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { PageNotImplemented } from '../../../../common/PageNotImplemented';
 import { PageBackTab, RoutedTab, RoutedTabs } from '../../../../common/RoutedTabs';
 import { RouteObj } from '../../../../common/Routes';
-import { useGet } from '../../../../common/crud/useGet';
+import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxError } from '../../../common/AwxError';
 import { Organization } from '../../../interfaces/Organization';
 import { useDeleteOrganizations } from '../hooks/useDeleteOrganizations';
@@ -31,12 +31,12 @@ export function OrganizationPage() {
     data: organization,
     error,
     refresh,
-  } = useGet<Organization>(`/api/v2/organizations/${params.id ?? ''}/`);
-  const history = useNavigate();
+  } = useGetItem<Organization>('/api/v2/organizations/', params.id);
+  const navigate = useNavigate();
 
   const deleteOrganizations = useDeleteOrganizations((deleted: Organization[]) => {
     if (deleted.length > 0) {
-      history(RouteObj.Organizations);
+      navigate(RouteObj.Organizations);
     }
   });
 
@@ -50,7 +50,7 @@ export function OrganizationPage() {
         icon: EditIcon,
         label: t('Edit organization'),
         onClick: (organization) =>
-          history(RouteObj.EditOrganization.replace(':id', organization?.id.toString() ?? '')),
+          navigate(RouteObj.EditOrganization.replace(':id', organization?.id.toString() ?? '')),
       },
       { type: PageActionType.Seperator },
       {
@@ -66,7 +66,7 @@ export function OrganizationPage() {
       },
     ];
     return itemActions;
-  }, [deleteOrganizations, history, t]);
+  }, [deleteOrganizations, navigate, t]);
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!organization) return <LoadingPage breadcrumbs tabs />;

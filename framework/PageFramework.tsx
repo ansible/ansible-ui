@@ -1,7 +1,8 @@
+import './PageFramework.css';
+
 import { ReactNode } from 'react';
 import { PageAlertToasterProvider } from './PageAlertToaster';
 import { PageDialogProvider } from './PageDialogs/PageDialog';
-import './PageFramework.css';
 import { PageNavSideBarProvider } from './PageNav/PageNavSidebar';
 import { SettingsProvider } from './Settings';
 import { PageNavigateCallbackContextProvider } from './components/usePageNavigate';

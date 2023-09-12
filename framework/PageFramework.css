@@ -1,3 +1,9 @@
+#app {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+}
+
 .border-top {
   border-top: thin solid var(--pf-global--BorderColor--100);
 }

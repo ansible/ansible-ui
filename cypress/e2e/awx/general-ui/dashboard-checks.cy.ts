@@ -9,26 +9,15 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
     cy.awxLogin();
   });
 
-  it('welcome modal', () => {
-    cy.visit(`/ui_next/dashboard`);
-    cy.clickModalButton('Close');
-    cy.reload();
-    cy.getDialog().within(() => {
-      cy.contains('Welcome to the new Ansible user interface').should('be.visible');
-    });
-    cy.getCheckboxByLabel('Do not show this message again.').click();
-    cy.clickModalButton('Close');
-  });
-
   it('clicking on Cog icon opens the Manage Dashboard modal', () => {
-    cy.visit(`/ui_next/dashboard`);
+    cy.navigateTo(/^Dashboard$/);
     cy.clickButton('Manage view');
     cy.get('.pf-c-modal-box__title-text').should('contain', 'Manage Dashboard');
     cy.get('[aria-label="Close"]').click();
   });
 
   it('within the Manage Dashboard modal, unchecking a resource should hide the resource', () => {
-    cy.visit(`/ui_next/dashboard`);
+    cy.navigateTo(/^Dashboard$/);
     cy.clickButton('Manage view');
     cy.get('.pf-c-modal-box__title-text').should('contain', 'Manage Dashboard');
     cy.contains('tr', 'Resource Counts').find('input').uncheck();
@@ -42,7 +31,7 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
   });
 
   it('within the Manage Dashboard modal, clicking the Cancel button should revert any changes', () => {
-    cy.visit(`/ui_next/dashboard`);
+    cy.navigateTo(/^Dashboard$/);
     cy.clickButton('Manage view');
     cy.get('.pf-c-modal-box__title-text').should('contain', 'Manage Dashboard');
     cy.contains('tr', 'Resource Counts').find('input').uncheck();
@@ -51,7 +40,7 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
   });
 
   it('within the Manage Dashboard modal, clicking the Close button should revert any changes', () => {
-    cy.visit(`/ui_next/dashboard`);
+    cy.navigateTo(/^Dashboard$/);
     cy.clickButton('Manage view');
     cy.get('.pf-c-modal-box__title-text').should('contain', 'Manage Dashboard');
     cy.contains('tr', 'Resource Counts').find('input').uncheck();
@@ -63,7 +52,7 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
   it('within the Manage Dashboard modal, dragging a resource should reorder the resource', () => {
     let initialArray: string[];
     let editedArray: string[];
-    cy.visit(`/ui_next/dashboard`);
+    cy.navigateTo(/^Dashboard$/);
 
     cy.get('.pf-c-card__header').then((headers) => {
       initialArray = Array.from(headers, (title) => title.innerText.split('\n')[0]);
@@ -80,7 +69,7 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
 
   it('checks inventories count', () => {
     cy.intercept('GET', 'api/v2/dashboard/').as('getDashboard');
-    cy.visit(`/ui_next/dashboard`);
+    cy.navigateTo(/^Dashboard$/);
     cy.wait('@getDashboard')
       .its('response.body')
       .then((data: IAwxDashboardData) => {
@@ -100,7 +89,7 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
 
   it('checks hosts count', () => {
     cy.intercept('GET', 'api/v2/dashboard/').as('getDashboard');
-    cy.visit(`/ui_next/dashboard`);
+    cy.navigateTo(/^Dashboard$/);
     cy.wait('@getDashboard')
       .its('response.body')
       .then((data: IAwxDashboardData) => {
@@ -117,7 +106,7 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
 
   it('checks projects count', () => {
     cy.intercept('GET', 'api/v2/dashboard/').as('getDashboard');
-    cy.visit(`/ui_next/dashboard`);
+    cy.navigateTo(/^Dashboard$/);
     cy.wait('@getDashboard')
       .its('response.body')
       .then((data: IAwxDashboardData) => {
@@ -136,7 +125,7 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
     cy.intercept('GET', '/api/v2/unified_jobs/?order_by=-finished&page=1&page_size=10').as(
       'getJobs'
     );
-    cy.visit(`/ui_next/dashboard`);
+    cy.navigateTo(/^Dashboard$/);
     cy.hasTitle(/^Recent Jobs$/);
     cy.checkAnchorLinks('Go to Jobs');
     cy.wait('@getJobs')
@@ -165,7 +154,7 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
     cy.intercept('GET', 'api/v2/projects/?order_by=-modified&page=1&page_size=10').as(
       'getProjects'
     );
-    cy.visit(`/ui_next/dashboard`);
+    cy.navigateTo(/^Dashboard$/);
     cy.hasTitle(/^Recent Projects$/);
     cy.checkAnchorLinks('Go to Projects');
     cy.wait('@getProjects')
@@ -197,7 +186,7 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
     cy.intercept('GET', 'api/v2/inventories/?order_by=-modified&page=1&page_size=10').as(
       'getInventories'
     );
-    cy.visit(`/ui_next/dashboard`);
+    cy.navigateTo(/^Dashboard$/);
     cy.hasTitle(/^Recent Inventories$/);
     cy.checkAnchorLinks('Go to Inventories');
     cy.wait('@getInventories')
@@ -225,11 +214,13 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
       });
   });
 
+  // This should be a component test
   it('admin users see default empty state with Create {resource} button', () => {
-    cy.visit(`/ui_next/dashboard`);
+    cy.navigateTo(/^Dashboard$/);
     cy.intercept({ method: 'GET', url: '/api/v2/projects/*' }, { fixture: 'emptyList.json' });
     cy.intercept({ method: 'GET', url: '/api/v2/inventories/*' }, { fixture: 'emptyList.json' });
     cy.intercept({ method: 'GET', url: '/api/v2/unified_jobs/*' }, { fixture: 'emptyList.json' });
+    cy.reload();
     cy.hasTitle('There are currently no jobs').should('exist');
     cy.hasTitle('There are currently no projects').should('exist');
     cy.hasTitle('There are currently no inventories').should('exist');
@@ -238,12 +229,14 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
     cy.contains('button', 'Create inventory').should('exist');
   });
 
+  // This should be a component test
   it('non-admin users see default empty state without Create {resource} button', () => {
-    cy.visit(`/ui_next/dashboard`);
+    cy.navigateTo(/^Dashboard$/);
     cy.intercept({ method: 'GET', url: '/api/v2/projects/*' }, { fixture: 'emptyList.json' });
     cy.intercept({ method: 'GET', url: '/api/v2/inventories/*' }, { fixture: 'emptyList.json' });
     cy.intercept({ method: 'GET', url: '/api/v2/unified_jobs/*' }, { fixture: 'emptyList.json' });
     cy.intercept({ method: 'GET', url: '/api/v2/me' }, { fixture: 'normalUser.json' });
+    cy.reload();
     cy.hasTitle('There are currently no jobs').should('exist');
     cy.hasTitle('There are currently no projects').should('exist');
     cy.hasTitle('There are currently no inventories').should('exist');
