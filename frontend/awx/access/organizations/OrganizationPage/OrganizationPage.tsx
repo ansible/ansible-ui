@@ -32,11 +32,11 @@ export function OrganizationPage() {
     error,
     refresh,
   } = useGetItem<Organization>('/api/v2/organizations/', params.id);
-  const nagivate = useNavigate();
+  const navigate = useNavigate();
 
   const deleteOrganizations = useDeleteOrganizations((deleted: Organization[]) => {
     if (deleted.length > 0) {
-      nagivate(RouteObj.Organizations);
+      navigate(RouteObj.Organizations);
     }
   });
 
@@ -50,7 +50,7 @@ export function OrganizationPage() {
         icon: EditIcon,
         label: t('Edit organization'),
         onClick: (organization) =>
-          nagivate(RouteObj.EditOrganization.replace(':id', organization?.id.toString() ?? '')),
+          navigate(RouteObj.EditOrganization.replace(':id', organization?.id.toString() ?? '')),
       },
       { type: PageActionType.Seperator },
       {
@@ -66,7 +66,7 @@ export function OrganizationPage() {
       },
     ];
     return itemActions;
-  }, [deleteOrganizations, nagivate, t]);
+  }, [deleteOrganizations, navigate, t]);
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!organization) return <LoadingPage breadcrumbs tabs />;
