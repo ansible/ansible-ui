@@ -46,6 +46,23 @@ describe('hub dashboard', () => {
         cy.get(`article.pf-c-card[id=${collectionNames.eda.collection1}]`).should('exist');
       });
   });
+  it('verify that API request indicated a limit of 12 collections sorted by latest created timestamp', () => {
+    cy.intercept(
+      'GET',
+      '/api/automation-hub/v3/plugin/ansible/search/collection-versions/?limit=12&order_by=-pulp_created&tags=eda',
+      (req) => {
+        req.alias = 'latest12collections';
+      }
+    );
+    cy.visit(HubRoutes.dashboard);
+    cy.contains('div.pf-c-card__header', 'Event-Driven Ansible content')
+      .parent()
+      .within(() => {
+        cy.get(`article.pf-c-card[id=${collectionNames.eda.collection1}]`).should('exist');
+      });
+    // assert that a matching request has been made
+    cy.wait('@latest12collections');
+  });
   it('verify that collection name links to collection details', () => {
     cy.visit(HubRoutes.dashboard);
     cy.contains('div.pf-c-card__header', 'Event-Driven Ansible content')
