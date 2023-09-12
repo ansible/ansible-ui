@@ -43,7 +43,7 @@ export function RulebookDetails() {
             <PageDetail label={t('Created')}>
               {rulebook?.created_at ? formatDateString(rulebook.created_at) : ''}
             </PageDetail>
-            <PageDetail label={t('Modified')}>
+            <PageDetail label={t('Last modified')}>
               {rulebook?.modified_at ? formatDateString(rulebook.modified_at) : ''}
             </PageDetail>
           </PageDetails>

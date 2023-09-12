@@ -88,7 +88,7 @@ export function RuleDetails() {
           <PageDetail label={t('Created')}>
             {rule?.created_at ? formatDateString(rule.created_at) : ''}
           </PageDetail>
-          <PageDetail label={t('Modified')}>
+          <PageDetail label={t('Last modified')}>
             {rule?.modified_at ? formatDateString(rule.modified_at) : ''}
           </PageDetail>
         </PageDetails>
