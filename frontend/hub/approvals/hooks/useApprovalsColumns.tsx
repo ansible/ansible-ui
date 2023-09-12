@@ -44,9 +44,19 @@ export function useApprovalsColumns(_options?: { disableSort?: boolean; disableL
           }
 
           if (approval.repository?.pulp_labels?.pipeline == 'approved') {
-            return (
-              <TextCell icon={<ThumbsUpIcon />} text={t('Approved')} color={PFColorE.Success} />
-            );
+            if (approval.is_signed) {
+              return (
+                <TextCell
+                  icon={<ThumbsUpIcon />}
+                  text={t('Signed and Approved')}
+                  color={PFColorE.Success}
+                />
+              );
+            } else {
+              return (
+                <TextCell icon={<ThumbsUpIcon />} text={t('Approved')} color={PFColorE.Success} />
+              );
+            }
           }
 
           if (approval.repository?.pulp_labels?.pipeline == 'rejected') {
