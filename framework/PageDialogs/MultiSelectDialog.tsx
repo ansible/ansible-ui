@@ -88,7 +88,7 @@ export function MultiSelectDialog<T extends object>(props: MultiSelectDialogProp
               {view.selectedItems.map((item, i) => {
                 if (tableColumns && tableColumns.length > 0) {
                   return (
-                    <Label key={i} onClick={() => view.unselectItem(item)}>
+                    <Label key={i} onClose={() => view.unselectItem(item)} isClosable>
                       <TableColumnCell
                         item={item}
                         column={
