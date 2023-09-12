@@ -5,13 +5,16 @@ import {
 } from '@patternfly/react-core';
 import { ReactNode } from 'react';
 import { StandardPopover } from '../components/StandardPopover';
+import { useID } from '../hooks/useID';
 
 export function PageDetail(props: {
+  id?: string;
   label?: string;
   children?: ReactNode;
   helpText?: string | ReactNode;
   isEmpty?: boolean;
 }) {
+  const id = useID(props);
   const { label, children, helpText, isEmpty } = props;
   if (children === null || typeof children === 'undefined' || children === '') {
     return <></>;
@@ -19,7 +22,6 @@ export function PageDetail(props: {
   if (isEmpty) {
     return <></>;
   }
-
   return (
     <DescriptionListGroup>
       {label && (
@@ -28,7 +30,7 @@ export function PageDetail(props: {
           {helpText ? <StandardPopover header={label} content={helpText} /> : null}
         </DescriptionListTerm>
       )}
-      <DescriptionListDescription id={label?.toLowerCase().split(' ').join('-')}>
+      <DescriptionListDescription id={id} data-cy={id}>
         {children}
       </DescriptionListDescription>
     </DescriptionListGroup>
