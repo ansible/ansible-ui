@@ -146,7 +146,7 @@ export function ProjectDetails() {
         <PageDetail label={t('Created')}>
           {project?.created_at ? formatDateString(project.created_at) : ''}
         </PageDetail>
-        <PageDetail label={t('Modified')}>
+        <PageDetail label={t('Last modified')}>
           {project?.modified_at ? formatDateString(project.modified_at) : ''}
         </PageDetail>
       </PageDetails>

@@ -120,7 +120,7 @@ export function DecisionEnvironmentDetails() {
         <PageDetail label={t('Created')}>
           <DateTimeCell format="date-time" value={decisionEnvironment?.created_at} />
         </PageDetail>
-        <PageDetail label={t('Modified')}>
+        <PageDetail label={t('Last modified')}>
           <DateTimeCell format="date-time" value={decisionEnvironment?.modified_at} />
         </PageDetail>
       </PageDetails>

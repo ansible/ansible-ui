@@ -74,7 +74,7 @@ export function EdaUserDetailsInternal({
         <PageDetail label={t('Created')}>
           <DateTimeCell format="date-time" value={user?.created_at} />
         </PageDetail>
-        <PageDetail label={t('Modified')}>
+        <PageDetail label={t('Last modified')}>
           <DateTimeCell format="date-time" value={user?.modified_at} />
         </PageDetail>
         {user?.roles && user.roles.length ? (

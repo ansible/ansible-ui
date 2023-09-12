@@ -42,7 +42,7 @@ describe.skip('EDA rulebook activations- Create, Edit, Delete', () => {
     cy.deleteAllEdaCurrentUserTokens();
   });
 
-  it('renders the instances that are related to the rulebook activation', () => {
+  it.skip('renders the instances that are related to the rulebook activation', () => {
     cy.intercept('GET', `api/eda/v1/activations/${edaRBA.id}/instances/?page=1&page_size=10`).as(
       'getRBAInstance'
     );
