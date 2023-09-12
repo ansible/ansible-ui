@@ -5,15 +5,19 @@ import { DateTimeCell, PageDetail, PageDetails, TextCell } from '../../../../../
 import { RouteObj } from '../../../../common/Routes';
 import { Team } from '../../../interfaces/Team';
 
-export function TeamDetails(props: { team: Team }) {
+export function TeamDetails(props: { team: Team; disablePadding?: boolean }) {
   const { t } = useTranslation();
   const { team } = props;
   const history = useNavigate();
   return (
-    <PageDetails>
-      <PageDetail label={t('Name')}>{team.name}</PageDetail>
-      <PageDetail label={t('Description')}>{team.description}</PageDetail>
-      <PageDetail label={t('Organization')}>
+    <PageDetails disablePadding={props.disablePadding}>
+      <PageDetail label={t('Name')} isEmpty={!team.name}>
+        {team.name}
+      </PageDetail>
+      <PageDetail label={t('Description')} isEmpty={!team.description}>
+        {team.description}
+      </PageDetail>
+      <PageDetail label={t('Organization')} isEmpty={!team.summary_fields?.organization?.name}>
         <TextCell
           text={team.summary_fields?.organization?.name}
           to={RouteObj.OrganizationDetails.replace(
@@ -22,7 +26,7 @@ export function TeamDetails(props: { team: Team }) {
           )}
         />
       </PageDetail>
-      <PageDetail label={t('Created')}>
+      <PageDetail label={t('Created')} isEmpty={!team.created}>
         <DateTimeCell
           format="since"
           value={team.created}
@@ -37,7 +41,7 @@ export function TeamDetails(props: { team: Team }) {
           }
         />
       </PageDetail>
-      <PageDetail label={t('Last modified')}>
+      <PageDetail label={t('Last modified')} isEmpty={!team.modified}>
         <DateTimeCell
           format="since"
           value={team.modified}
