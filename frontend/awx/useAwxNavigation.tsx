@@ -1,11 +1,12 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate, Outlet, useNavigate } from 'react-router-dom';
 import {
   PageNavigationItem,
   useNavigationRoutes,
 } from '../../framework/PageNavigation/PageNavigation';
 import { PageNotImplemented } from '../common/PageNotImplemented';
+import { AwxLogin } from './AwxLogin';
 import { CreateOrganization, EditOrganization } from './access/organizations/OrganizationForm';
 import { OrganizationPage } from './access/organizations/OrganizationPage/OrganizationPage';
 import { Organizations } from './access/organizations/Organizations';
@@ -55,6 +56,9 @@ import Jobs from './views/jobs/Jobs';
 import { CreateSchedule } from './views/schedules/ScheduleForm';
 import { SchedulePage } from './views/schedules/SchedulePage/SchedulePage';
 import { Schedules } from './views/schedules/Schedules';
+import { WebSocketProvider } from './common/useAwxWebSocket';
+import { ActiveUserProvider } from '../common/useActiveUser';
+import { AwxConfigProvider } from './common/useAwxConfig';
 
 export enum AwxRoute {
   Awx = 'awx',
@@ -159,6 +163,8 @@ export enum AwxRoute {
   // Settings
 
   Settings = 'awx-settings',
+
+  Login = 'awx-login',
 }
 
 export function useAwxNavigation() {
@@ -166,8 +172,22 @@ export function useAwxNavigation() {
   const pageNavigationItems = useMemo<PageNavigationItem[]>(() => {
     const navigationItems: PageNavigationItem[] = [
       {
+        id: AwxRoute.Login,
+        path: 'login',
+        element: <AwxLogin />,
+      },
+      {
         label: '',
         path: process.env.AWX_ROUTE_PREFIX,
+        element: (
+          <WebSocketProvider>
+            <ActiveUserProvider>
+              <AwxConfigProvider>
+                <Outlet />
+              </AwxConfigProvider>
+            </ActiveUserProvider>
+          </WebSocketProvider>
+        ),
         children: [
           {
             id: AwxRoute.Dashboard,

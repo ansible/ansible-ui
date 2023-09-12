@@ -5,6 +5,7 @@ import {
   PageNavigationItem,
   useNavigationRoutes,
 } from '../../framework/PageNavigation/PageNavigation';
+import { Login } from '../common/Login';
 import { CredentialDetails } from './Resources/credentials/CredentialDetails';
 import { Credentials } from './Resources/credentials/Credentials';
 import { CreateCredential, EditCredential } from './Resources/credentials/EditCredential';
@@ -97,6 +98,8 @@ export enum EdaRoute {
   EdaMyTokens = 'eda-my-tokens',
 
   CreateControllerToken = 'eda-create-controller-token',
+
+  Login = 'eda-login',
 }
 
 export function useEdaNavigation() {
@@ -408,6 +411,11 @@ export function useEdaNavigation() {
             ],
           },
         ],
+      },
+      {
+        id: EdaRoute.Login,
+        path: 'login',
+        element: <Login />,
       },
       {
         id: EdaRoute.Eda,

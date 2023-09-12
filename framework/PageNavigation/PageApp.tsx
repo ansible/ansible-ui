@@ -1,14 +1,15 @@
 import { Page } from '@patternfly/react-core';
 import { ReactNode, useMemo } from 'react';
 import { Outlet, RouterProvider, createBrowserRouter, useNavigate } from 'react-router-dom';
-import { Login } from '../../frontend/common/Login';
 import { PageNotFound } from '../../frontend/common/PageNotFound';
 import { PageFramework } from '../PageFramework';
 import { PageLayout } from '../PageLayout';
 import { PageNavigation, PageNavigationItem } from './PageNavigation';
 
 export function PageApp(props: {
-  root?: ReactNode;
+  login: ReactNode;
+
+  root: ReactNode;
 
   /** Component for the header of the page. */
   header?: ReactNode;
@@ -23,35 +24,35 @@ export function PageApp(props: {
    */
   basename?: string;
 }) {
-  const { navigation: navigationItems, basename, header } = props;
+  const { navigation, basename, header } = props;
   const routes = useMemo(
     () => [
       {
         path: '',
         element: <PageFrameworkRoute />,
         children: [
+          { path: 'login', element: props.login },
           {
             path: '',
             element: props.root ?? <></>,
             children: [
-              { path: 'login', element: <Login /> },
               {
                 path: '',
                 element: (
                   <PageLayoutRoute
                     header={header}
-                    sidebar={<PageNavigation navigationItems={navigationItems} />}
+                    sidebar={<PageNavigation navigationItems={navigation} />}
                   />
                 ),
-                children: navigationItems,
+                children: navigation,
               },
-              { path: '*', element: <PageNotFound /> },
             ],
           },
+          { path: '*', element: <PageNotFound /> },
         ],
       },
     ],
-    [header, navigationItems, props.root]
+    [header, navigation, props.login, props.root]
   );
   const router = useMemo(() => createBrowserRouter(routes, { basename }), [basename, routes]);
   return <RouterProvider router={router} />;

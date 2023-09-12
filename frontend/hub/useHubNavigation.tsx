@@ -5,6 +5,7 @@ import {
   PageNavigationItem,
   useNavigationRoutes,
 } from '../../framework/PageNavigation/PageNavigation';
+import { Login } from '../common/Login';
 import { Approvals } from './approvals/Approvals';
 import { CollectionDetails } from './collections/CollectionDetails';
 import { Collections } from './collections/Collections';
@@ -63,6 +64,8 @@ export enum HubRoute {
   // Access
 
   APIToken = 'hub-api-token',
+
+  Login = 'hub-login',
 }
 
 export function useHubNavigation() {
@@ -248,6 +251,11 @@ export function useHubNavigation() {
             ],
           },
         ],
+      },
+      {
+        id: HubRoute.Login,
+        path: 'login',
+        element: <Login />,
       },
       {
         id: HubRoute.Hub,
