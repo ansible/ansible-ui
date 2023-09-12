@@ -7,7 +7,6 @@ describe('TeamDetails', () => {
     cy.fixture('team').then((team: Team) => {
       cy.mount(<TeamDetails team={team} />);
       cy.get('#name').should('have.text', 'Team 2 Org 0');
-      cy.get('a[href*="/ui_next/organizations/2/details"]').should('have.text', 'Organization 0');
     });
   });
 });

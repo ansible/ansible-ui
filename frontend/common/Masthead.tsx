@@ -284,7 +284,7 @@ function AccountDropdown() {
 
 function AccountDropdownInternal() {
   const isSmallOrLarger = useBreakpoint('sm');
-  const history = useNavigate();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const onSelect = useCallback(() => {
     setOpen((open) => !open);
@@ -318,8 +318,8 @@ function AccountDropdownInternal() {
           key="user-details"
           onClick={() => {
             isEdaServer()
-              ? history(activeUser ? RouteObj.EdaMyDetails : RouteObj.EdaUsers)
-              : history(
+              ? navigate(activeUser ? RouteObj.EdaMyDetails : RouteObj.EdaUsers)
+              : navigate(
                   activeUser
                     ? RouteObj.UserDetails.replace(':id', activeUser.id.toString())
                     : RouteObj.Users
@@ -335,7 +335,7 @@ function AccountDropdownInternal() {
               isEdaServer()
                 ? await postRequest(`${API_PREFIX}/auth/session/logout/`, {})
                 : await fetch('/api/logout/');
-              history('/');
+              navigate('/login');
             }
             void logout();
           }}
