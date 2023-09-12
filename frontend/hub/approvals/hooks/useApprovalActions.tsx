@@ -1,4 +1,5 @@
-import { ThumbsDownIcon, ThumbsUpIcon } from '@patternfly/react-icons';
+import { ThumbsDownIcon, ThumbsUpIcon, UploadIcon } from '@patternfly/react-icons';
+import { ButtonVariant } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../framework';
@@ -19,6 +20,17 @@ export function useApprovalActions(callback?: (collections: CollectionVersionSea
   return useMemo<IPageAction<CollectionVersionSearch>[]>(
     () => [
       { type: PageActionType.Seperator },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        isPinned: true,
+        variant: ButtonVariant.primary,
+        icon: UploadIcon,
+        label: t('Upload signature'),
+        onClick: (collection) => approveCollections([collection]),
+        isDanger: false,
+        isDisabled: (collection) => can_upload_signatures || collection.is_signed,
+      },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
