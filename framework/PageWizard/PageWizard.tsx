@@ -19,10 +19,6 @@ export interface PageWizardStep {
 interface PageWizardState {
   activeStep: PageWizardStep;
   steps: PageWizardStep[];
-  stepsValid?: Record<string, boolean | undefined>;
-  setStepsValid?: (
-    update: (stepsValid: Record<string, boolean | undefined>) => Record<string, boolean | undefined>
-  ) => void;
   isToggleExpanded: boolean;
   setToggleExpanded: (update: (toggleNavExpanded: boolean) => boolean) => void;
 }
@@ -37,13 +33,19 @@ export function PageWizard(props: {
   const navigate = useNavigate();
   const [isToggleExpanded, setToggleExpanded] = useState(false);
   const [activeStep, setActiveStep] = useState<PageWizardStep>(props.steps[0]);
-  const [stepsValid, setStepsValid] = useState<Record<string, boolean | undefined>>({});
+  const [data, setData] = useState<object>({});
+  const [stepdata, setSetData] = useState<Record<string, object>>({});
 
-  const onNext = useCallback(() => {
-    const index = props.steps.indexOf(activeStep);
-    setActiveStep(props.steps[index + 1]);
-    return Promise.resolve();
-  }, [activeStep, props.steps]);
+  const onNext = useCallback(
+    (data: object) => {
+      setSetData((prev) => ({ ...prev, [activeStep.id]: data }));
+      setData((prev) => ({ ...prev, ...data }));
+      const index = props.steps.indexOf(activeStep);
+      setActiveStep(props.steps[index + 1]);
+      return Promise.resolve();
+    },
+    [activeStep, props.steps]
+  );
 
   const onBack = useCallback(() => {
     const index = props.steps.indexOf(activeStep);
@@ -57,8 +59,6 @@ export function PageWizard(props: {
       value={{
         activeStep,
         steps: props.steps,
-        stepsValid,
-        setStepsValid,
         isToggleExpanded: isToggleExpanded,
         setToggleExpanded: setToggleExpanded,
       }}
@@ -91,6 +91,7 @@ export function PageWizard(props: {
               onSubmit={onNext}
               footer={<PageWizardFooter onBack={onBack} onCancel={onCancel} />}
               disableBody
+              defaultValue={stepdata[activeStep.id]}
             >
               {activeStep.inputs}
             </PageForm>
@@ -99,7 +100,11 @@ export function PageWizard(props: {
               <PageSection variant="light" isFilled hasOverflowScroll>
                 {activeStep.element}
               </PageSection>
-              <PageWizardFooter onNext={() => void onNext()} onBack={onBack} onCancel={onCancel} />
+              <PageWizardFooter
+                onNext={() => void onNext({})}
+                onBack={onBack}
+                onCancel={onCancel}
+              />
             </div>
           )}
           {/* </main> */}
