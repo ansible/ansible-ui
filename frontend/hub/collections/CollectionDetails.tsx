@@ -63,9 +63,17 @@ import { AwxError } from '../../awx/common/AwxError';
 
 export function CollectionDetails() {
   const { t } = useTranslation();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [collection, setCollection] = useState<CollectionVersionSearch | undefined>(undefined);
   const itemActions = useCollectionActions(() => void refresh());
+
+  function setCollectionAndParams(collection: CollectionVersionSearch) {
+    setCollection(collection);
+    setSearchParams((params) => {
+      params.set('version', collection.collection_version.version);
+      return params;
+    });
+  }
 
   // load all collections versions belong to the repository
   const { data, refresh, error, isLoading } = useGet<HubItemsResponse<CollectionVersionSearch>>(
@@ -86,8 +94,22 @@ export function CollectionDetails() {
   }
 
   // initial setting of highest version collections selected
-  if (data && data.data.length > 0 && !collection) {
+  if (!searchParams.get('version') && data && data.data.length > 0 && !collection) {
     setCollection(data.data.find((item) => item.is_highest));
+  }
+
+  // initial setting of version in search params
+  if (searchParams.get('version') && data && data.data.length && !collection) {
+    const found = data?.data.find(
+      (item) => item.collection_version.version == searchParams.get('version')
+    );
+    if (found) {
+      setCollectionAndParams(found);
+    } else {
+      return (
+        <AwxError error={{ name: 'not found', message: t('Not Found') }} handleRefresh={refresh} />
+      );
+    }
   }
 
   const collections = data ? data.data : [];
@@ -136,7 +158,7 @@ export function CollectionDetails() {
               onSelect={(item: string) => {
                 const found = collections.find((item2) => item2.collection_version.version == item);
                 if (found) {
-                  setCollection(found);
+                  setCollectionAndParams(found);
                 }
               }}
               placeholder={''}
