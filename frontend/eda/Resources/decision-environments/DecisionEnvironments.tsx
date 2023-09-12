@@ -37,8 +37,10 @@ export function DecisionEnvironments() {
         defaultTableView={PageTableViewTypeE.Cards}
         rowActions={rowActions}
         errorStateTitle={t('Error loading decision environments')}
-        emptyStateTitle={t('No decision environments yet')}
-        emptyStateDescription={t('To get started, create a decision environment.')}
+        emptyStateTitle={t(
+          'There are currently no decision environments created for your organization.'
+        )}
+        emptyStateDescription={t('Please create a decision environment by using the button below.')}
         emptyStateButtonText={t('Create decision environment')}
         emptyStateButtonClick={() => navigate(RouteObj.CreateEdaDecisionEnvironment)}
         {...view}
