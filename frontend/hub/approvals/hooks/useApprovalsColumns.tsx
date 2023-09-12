@@ -8,7 +8,7 @@ import { useHubContext } from './../../useHubContext';
 export function useApprovalsColumns(_options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
   const { featureFlags } = useHubContext();
-  const { display_signatures, can_upload_signatures, require_upload_signatures } = featureFlags;
+  const { can_upload_signatures, require_upload_signatures } = featureFlags;
   const tableColumns = useMemo<ITableColumn<CollectionVersionSearch>[]>(
     () => [
       {
@@ -50,18 +50,20 @@ export function useApprovalsColumns(_options?: { disableSort?: boolean; disableL
             );
           }
 
-          if (approval.repository?.pulp_labels?.pipeline == 'approved') {
-            return (
-              <TextCell
-                icon={<ThumbsUpIcon />}
-                text={
-                  display_signatures && approval.is_signed === true
-                    ? t('Signed and approved')
-                    : t('Approved')
-                }
-                color={PFColorE.Success}
-              />
-            );
+          if (approval.repository.pulp_labels.pipeline == 'approved') {
+            if (approval.is_signed) {
+              return (
+                <TextCell
+                  icon={<ThumbsUpIcon />}
+                  text={t('Signed and Approved')}
+                  color={PFColorE.Success}
+                />
+              );
+            } else {
+              return (
+                <TextCell icon={<ThumbsUpIcon />} text={t('Approved')} color={PFColorE.Success} />
+              );
+            }
           }
 
           if (approval.repository?.pulp_labels?.pipeline == 'rejected') {
@@ -79,7 +81,7 @@ export function useApprovalsColumns(_options?: { disableSort?: boolean; disableL
         sort: 'pulp_created',
       },
     ],
-    [t, display_signatures, can_upload_signatures, require_upload_signatures]
+    [t, can_upload_signatures, require_upload_signatures]
   );
   return tableColumns;
 }
