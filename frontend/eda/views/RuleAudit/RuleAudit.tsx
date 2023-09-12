@@ -33,8 +33,8 @@ export function RuleAudit() {
         toolbarFilters={toolbarFilters}
         emptyStateIcon={CubesIcon}
         errorStateTitle={t('Error loading rule audit data')}
-        emptyStateTitle={t('No rule audit data')}
-        emptyStateDescription={t('No rule audit data')}
+        emptyStateTitle={t('There is currently no rule audit data for your organization.')}
+        emptyStateDescription={t('Rule audit data will populate once a rulebook activation runs.')}
         {...view}
         defaultSubtitle={t('Rule Audit')}
       />
