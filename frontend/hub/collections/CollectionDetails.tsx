@@ -64,26 +64,68 @@ import { AwxError } from '../../awx/common/AwxError';
 export function CollectionDetails() {
   const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [collection, setCollection] = useState<CollectionVersionSearch | undefined>(undefined);
   const itemActions = useCollectionActions(() => void refresh());
 
-  function setCollectionAndParams(collection: CollectionVersionSearch) {
-    setCollection(collection);
+  function setVersionParams(version: string) {
     setSearchParams((params) => {
-      params.set('version', collection.collection_version.version);
+      params.set('version', version);
       return params;
     });
   }
 
-  // load all collections versions belong to the repository
+  function loadVersions() {
+    // load all collections versions belong to the repository
+    const { data, error, isLoading } = useGet<HubItemsResponse<CollectionVersionSearch>>(
+      hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${
+        searchParams.get('name') || ''
+      }&namespace=${searchParams.get('namespace') || ''}&repository_name=${
+        searchParams.get('repository') || ''
+      }&order_by=-pulp_created`
+    );
+
+    let result: { error: JSX.Element | null; data: CollectionVersionSearch[] } = {
+      error: null,
+      data: data ? data.data : [],
+    };
+
+    if (error || (isLoading == false && data && data.data.length == 0)) {
+      result.error = <AwxError error={error || { name: 'not found', message: t('Not Found') }} />;
+    }
+
+    return result;
+  }
+
+  const versionsResponse = loadVersions();
+  const collections = versionsResponse.data;
+
+  // load collection by search params
+  const version = searchParams.get('version');
+
+  let highestFilter = '';
+  let versionFilter = '';
+
+  if (!version) {
+    // for unspecified version, load highest
+    highestFilter = '&isHighest=true';
+  } else {
+    versionFilter = '&version=' + version;
+  }
+
+  let collection = null;
+
   const { data, refresh, error, isLoading } = useGet<HubItemsResponse<CollectionVersionSearch>>(
     hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${
       searchParams.get('name') || ''
     }&namespace=${searchParams.get('namespace') || ''}&repository_name=${
       searchParams.get('repository') || ''
-    }&order_by=-pulp_created`
+    }&order_by=-pulp_created` +
+      versionFilter +
+      highestFilter
   );
 
+  if (data && data.data.length > 0) {
+    collection = data.data[0];
+  }
   if (error || (isLoading == false && data && data.data.length == 0)) {
     return (
       <AwxError
@@ -93,26 +135,9 @@ export function CollectionDetails() {
     );
   }
 
-  // initial setting of highest version collections selected
-  if (!searchParams.get('version') && data && data.data.length > 0 && !collection) {
-    setCollection(data.data.find((item) => item.is_highest));
+  if (versionsResponse.error) {
+    return versionsResponse.error;
   }
-
-  // initial setting of version in search params
-  if (searchParams.get('version') && data && data.data.length && !collection) {
-    const found = data?.data.find(
-      (item) => item.collection_version.version == searchParams.get('version')
-    );
-    if (found) {
-      setCollectionAndParams(found);
-    } else {
-      return (
-        <AwxError error={{ name: 'not found', message: t('Not Found') }} handleRefresh={refresh} />
-      );
-    }
-  }
-
-  const collections = data ? data.data : [];
 
   return (
     <PageLayout>
@@ -123,11 +148,13 @@ export function CollectionDetails() {
           { label: collection?.collection_version.name },
         ]}
         headerActions={
-          <PageActions<CollectionVersionSearch>
-            actions={itemActions}
-            position={DropdownPosition.right}
-            selectedItem={collection}
-          />
+          collection && (
+            <PageActions<CollectionVersionSearch>
+              actions={itemActions}
+              position={DropdownPosition.right}
+              selectedItem={collection}
+            />
+          )
         }
         description={t('Repository: ') + collection?.repository.name}
         footer={
@@ -135,8 +162,8 @@ export function CollectionDetails() {
             {t('Version')}
             <PageSingleSelect<string>
               options={
-                data
-                  ? data.data.map((item) => {
+                collections
+                  ? collections.map((item) => {
                       let label =
                         item.collection_version.version +
                         ' ' +
@@ -158,7 +185,7 @@ export function CollectionDetails() {
               onSelect={(item: string) => {
                 const found = collections.find((item2) => item2.collection_version.version == item);
                 if (found) {
-                  setCollectionAndParams(found);
+                  setVersionParams(found.collection_version.version);
                 }
               }}
               placeholder={''}
@@ -182,26 +209,28 @@ export function CollectionDetails() {
         }
       />
 
-      <PageTabs>
-        <PageTab label={t('Details')}>
-          <CollectionDetailsTab collection={collection} />
-        </PageTab>
-        <PageTab label={t('Install')}>
-          <CollectionInstallTab collection={collection} />
-        </PageTab>
-        <PageTab label={t('Documentation')}>
-          <CollectionDocumentationTab collection={collection} />
-        </PageTab>
-        <PageTab label={t('Contents')}>
-          <CollectionContentsTab collection={collection} />
-        </PageTab>
-        <PageTab label={t('Import log')}>
-          <CollectionImportLogTab collection={collection} />
-        </PageTab>
-        <PageTab label={t('Dependencies')}>
-          <CollectionDependenciesTab collection={collection} />
-        </PageTab>
-      </PageTabs>
+      {collection && (
+        <PageTabs>
+          <PageTab label={t('Details')}>
+            <CollectionDetailsTab collection={collection} />
+          </PageTab>
+          <PageTab label={t('Install')}>
+            <CollectionInstallTab collection={collection} />
+          </PageTab>
+          <PageTab label={t('Documentation')}>
+            <CollectionDocumentationTab collection={collection} />
+          </PageTab>
+          <PageTab label={t('Contents')}>
+            <CollectionContentsTab collection={collection} />
+          </PageTab>
+          <PageTab label={t('Import log')}>
+            <CollectionImportLogTab collection={collection} />
+          </PageTab>
+          <PageTab label={t('Dependencies')}>
+            <CollectionDependenciesTab collection={collection} />
+          </PageTab>
+        </PageTabs>
+      )}
     </PageLayout>
   );
 }
