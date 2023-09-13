@@ -202,38 +202,38 @@ export const RouteObj = {
   Hub: `${hubRoutePrefix}`,
 
   HubDashboard: `${hubRoutePrefix}/dashboard`,
-  Collections: `${hubRoutePrefix}/collections`,
-  CollectionDetails: `${hubRoutePrefix}/collections/details/`,
-  UploadCollection: `${hubRoutePrefix}/collections/upload`,
+  Collections: `${hubRoutePrefix}/automation-content/collections`,
+  CollectionDetails: `${hubRoutePrefix}/automation-content/collections/details/`,
+  UploadCollection: `${hubRoutePrefix}/automation-content/collections/upload`,
 
-  Repositories: `${hubRoutePrefix}/repositories`,
-  RepositoryDetails: `${hubRoutePrefix}/repositories/details/:CollectionDetails`,
-  EditRepository: `${hubRoutePrefix}/repositories/edit/:id`,
+  Repositories: `${hubRoutePrefix}/administration/repositories`,
+  RepositoryDetails: `${hubRoutePrefix}/administration/repositories/details/:CollectionDetails`,
+  EditRepository: `${hubRoutePrefix}/administration/repositories/edit/:id`,
 
-  Namespaces: `${hubRoutePrefix}/namespaces`,
-  NamespaceDetails: `${hubRoutePrefix}/namespaces/:id`,
-  CreateNamespace: `${hubRoutePrefix}/namespaces/create`,
-  EditNamespace: `${hubRoutePrefix}/namespaces/:id/edit`,
+  Namespaces: `${hubRoutePrefix}/automation-content/namespaces`,
+  NamespaceDetails: `${hubRoutePrefix}/automation-content/namespaces/:id`,
+  CreateNamespace: `${hubRoutePrefix}/automation-content/namespaces/create`,
+  EditNamespace: `${hubRoutePrefix}/automation-content/namespaces/:id/edit`,
 
-  Approvals: `${hubRoutePrefix}/approvals`,
-  ApprovalDetails: `${hubRoutePrefix}/approvals/details/:id`,
+  Approvals: `${hubRoutePrefix}/administration/approvals`,
+  ApprovalDetails: `${hubRoutePrefix}/administration/approvals/details/:id`,
 
-  HubExecutionEnvironments: `${hubRoutePrefix}/execution-environments`,
-  HubExecutionEnvironmentDetails: `${hubRoutePrefix}/execution-environments/details/:id`,
+  HubExecutionEnvironments: `${hubRoutePrefix}/automation-content/execution-environments`,
+  HubExecutionEnvironmentDetails: `${hubRoutePrefix}/automation-content/execution-environments/details/:id`,
 
-  Remotes: `${hubRoutePrefix}/remotes`,
-  CreateRemotes: `${hubRoutePrefix}/remotes/create`,
-  EditRemotes: `${hubRoutePrefix}/remotes/:id/edit`,
-  RemoteDetails: `${hubRoutePrefix}/remotes/details/:id`,
+  Remotes: `${hubRoutePrefix}/administration/remotes`,
+  CreateRemotes: `${hubRoutePrefix}/administration/remotes/create`,
+  EditRemotes: `${hubRoutePrefix}/administration/remotes/:id/edit`,
+  RemoteDetails: `${hubRoutePrefix}/administration/remotes/details/:id`,
 
-  RemoteRegistries: `${hubRoutePrefix}/remote-registries`,
+  RemoteRegistries: `${hubRoutePrefix}/administration/remote-registries`,
 
-  Tasks: `${hubRoutePrefix}/tasks`,
-  TaskDetails: `${hubRoutePrefix}/tasks/details/:id`,
+  Tasks: `${hubRoutePrefix}/administration/tasks`,
+  TaskDetails: `${hubRoutePrefix}/administration/tasks/details/:id`,
 
-  SignatureKeys: `${hubRoutePrefix}/signature-keys`,
+  SignatureKeys: `${hubRoutePrefix}/automation-content/signature-keys`,
 
-  APIToken: `${hubRoutePrefix}/api-token`,
+  APIToken: `${hubRoutePrefix}/access/api-token`,
 
   AwxDebug: `${awxRoutePrefix}/debug`,
 

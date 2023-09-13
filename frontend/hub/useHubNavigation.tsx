@@ -174,7 +174,7 @@ export function useHubNavigation() {
               },
               {
                 label: t('Remote Registries'),
-                path: 'remote registries',
+                path: 'remote-registries',
                 children: [
                   {
                     id: HubRoute.RemoteRegistries,
