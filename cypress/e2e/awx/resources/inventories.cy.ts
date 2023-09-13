@@ -37,13 +37,13 @@ describe('inventories', () => {
   });
 
   it('can render the inventories list page', () => {
-    cy.navigateTo(/^Inventories$/);
+    cy.navigateTo('awx', 'inventories');
     cy.hasTitle(/^Inventories$/);
   });
 
   it('creates an inventory from the inventories list page', () => {
     const inventoryName = 'E2E Inventory ' + randomString(4);
-    cy.navigateTo(/^Inventories$/);
+    cy.navigateTo('awx', 'inventories');
     cy.clickButton(/^Create inventory$/);
     cy.clickLink(/^Create inventory$/);
     cy.typeInputByLabel(/^Name$/, inventoryName);
@@ -61,7 +61,7 @@ describe('inventories', () => {
   });
 
   it('edits an inventory from the inventory list row item', () => {
-    cy.navigateTo(/^Inventories$/);
+    cy.navigateTo('awx', 'inventories');
     cy.clickTableRowActionIcon(inventory?.name, 'Edit inventory');
     cy.get('input[aria-label="Add instance groups"]')
       .parent()
@@ -79,7 +79,7 @@ describe('inventories', () => {
   });
 
   it('edits an inventory from the inventory details page', () => {
-    cy.navigateTo(/^Inventories$/);
+    cy.navigateTo('awx', 'inventories');
     cy.clickTableRow(inventory.name);
     cy.hasTitle(inventory.name);
     cy.clickButton(/^Edit inventory/);
@@ -91,7 +91,7 @@ describe('inventories', () => {
 
   it('deletes an inventory from the details page', () => {
     cy.createAwxInventory().then((testInventory) => {
-      cy.navigateTo(/^Inventories$/);
+      cy.navigateTo('awx', 'inventories');
       cy.clickTableRow(testInventory.name);
       cy.hasTitle(testInventory.name);
       cy.clickPageAction(/^Delete inventory/);
@@ -105,7 +105,7 @@ describe('inventories', () => {
   });
 
   it('copies an inventory from the details page', () => {
-    cy.navigateTo(/^Inventories$/);
+    cy.navigateTo('awx', 'inventories');
     cy.clickTableRow(inventory.name);
     cy.hasTitle(inventory.name);
     cy.clickPageAction(/^Copy inventory/);
@@ -122,7 +122,7 @@ describe('inventories', () => {
 
   it('can copy an inventory from the inventory list row item', () => {
     cy.createAwxInventory().then((testInventory) => {
-      cy.navigateTo(/^Inventories$/);
+      cy.navigateTo('awx', 'inventories');
       cy.clickTableRowKebabAction(testInventory.name, /^Copy inventory$/, true);
       cy.hasAlert(`${testInventory.name.toString()} copied`);
       cy.requestDelete(`/api/v2/inventories/${testInventory.id.toString()}/`, {
@@ -133,7 +133,7 @@ describe('inventories', () => {
 
   it('can delete an inventory from the inventory list row item', () => {
     cy.createAwxInventory().then((testInventory) => {
-      cy.navigateTo(/^Inventories$/);
+      cy.navigateTo('awx', 'inventories');
       cy.clickTableRowKebabAction(testInventory.name, /^Delete inventory$/, true);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete inventory/);
@@ -145,7 +145,7 @@ describe('inventories', () => {
 
   it('can delete an inventory from the inventory list toolbar', () => {
     cy.createAwxInventory().then((testInventory) => {
-      cy.navigateTo(/^Inventories$/);
+      cy.navigateTo('awx', 'inventories');
       cy.selectTableRow(testInventory.name, true);
       cy.clickToolbarKebabAction(/^Delete selected inventories$/);
       cy.get('#confirm').click();

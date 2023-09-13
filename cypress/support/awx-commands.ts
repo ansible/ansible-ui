@@ -127,13 +127,13 @@ Cypress.Commands.add('clickButton', (label: string | RegExp) => {
   cy.contains('button:not(:disabled):not(:hidden)', label).click();
 });
 
-Cypress.Commands.add('navigateTo', (label: string | RegExp) => {
+Cypress.Commands.add('navigateTo', (component: string, label: string) => {
   cy.get('#page-sidebar').then((c) => {
     if (c.hasClass('pf-m-collapsed')) {
       cy.get('#nav-toggle').click();
     }
   });
-  cy.contains('.pf-c-nav__link', label).click();
+  cy.get(`[data-cy="${component}-${label}"]`).click();
   cy.get('#page-sidebar').then((c) => {
     if (!c.hasClass('pf-m-collapsed')) {
       cy.get('#nav-toggle').click();

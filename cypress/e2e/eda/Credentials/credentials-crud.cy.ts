@@ -9,7 +9,7 @@ describe('EDA Credentials- Create, Edit, Delete', () => {
 
   it('can create a container registry credential, and assert the information showing on the details page', () => {
     const name = 'E2E Credential ' + randomString(4);
-    cy.navigateTo(/^Credentials$/);
+    cy.navigateTo('eda', 'credentials');
     cy.get('h1').should('contain', 'Credentials');
     cy.clickButton(/^Create credential$/);
     cy.typeInputByLabel(/^Name$/, name);
@@ -32,7 +32,7 @@ describe('EDA Credentials- Create, Edit, Delete', () => {
 
   it('can create a GitHub token credential, and assert the information showing on the details page', () => {
     const name = 'E2E Credential ' + randomString(4);
-    cy.navigateTo(/^Credentials$/);
+    cy.navigateTo('eda', 'credentials');
     cy.get('h1').should('contain', 'Credentials');
     cy.clickButton(/^Create credential$/);
     cy.typeInputByLabel(/^Name$/, name);
@@ -55,7 +55,7 @@ describe('EDA Credentials- Create, Edit, Delete', () => {
 
   it('can create a GitLab token credential, and assert the information showing on the details page', () => {
     const name = 'E2E Credential ' + randomString(4);
-    cy.navigateTo(/^Credentials$/);
+    cy.navigateTo('eda', 'credentials');
     cy.get('h1').should('contain', 'Credentials');
     cy.clickButton(/^Create credential$/);
     cy.typeInputByLabel(/^Name$/, name);
@@ -78,7 +78,7 @@ describe('EDA Credentials- Create, Edit, Delete', () => {
 
   it('can edit a credential', () => {
     cy.createEdaCredential().then((edaCredential) => {
-      cy.navigateTo(/^Credentials$/);
+      cy.navigateTo('eda', 'credentials');
       cy.get('h1').should('contain', 'Credentials');
       cy.clickTableRow(edaCredential.name);
       cy.clickButton(/^Edit credential$/);
@@ -93,14 +93,14 @@ describe('EDA Credentials- Create, Edit, Delete', () => {
       cy.hasDetail('Description', 'this credential type has been changed');
       cy.hasDetail('Credential type', 'GitHub personal access token');
       cy.hasDetail('Username', 'velveeta');
-      cy.navigateTo(/^Credentials$/);
+      cy.navigateTo('eda', 'credentials');
       cy.deleteEdaCredential(edaCredential);
     });
   });
 
   it('can delete a credential', () => {
     cy.createEdaCredential().then((edaCredential) => {
-      cy.navigateTo(/^Credentials$/);
+      cy.navigateTo('eda', 'credentials');
       cy.get('h1').should('contain', 'Credentials');
       cy.clickTableRow(edaCredential.name);
       cy.hasTitle(edaCredential.name);

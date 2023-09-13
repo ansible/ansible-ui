@@ -32,7 +32,7 @@ describe('EDA Login / Logoff', () => {
       Email: 'first.last@redhat.com',
       Password: `${randomString(12)}`,
     };
-    cy.navigateTo(/^Users$/);
+    cy.navigateTo('eda', 'users');
     cy.contains('h1', 'Users');
     cy.clickButton(/^Create user$/);
     //the following code must be refactored to use data-cy when this test is unskipped

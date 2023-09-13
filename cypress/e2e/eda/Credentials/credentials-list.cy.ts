@@ -6,13 +6,13 @@ describe('EDA Credentials List', () => {
   });
 
   it('renders the Credentials list page', () => {
-    cy.navigateTo(/^Credentials$/);
+    cy.navigateTo('eda', 'credentials');
     cy.hasTitle(/^Credentials$/);
   });
 
   it('renders the Credentials details page and shows expected information', () => {
     cy.createEdaCredential().then((edaCredential) => {
-      cy.navigateTo(/^Credentials$/);
+      cy.navigateTo('eda', 'credentials');
       cy.clickTableRow(edaCredential.name);
       cy.hasTitle(edaCredential.name);
       cy.clickButton(/^Details$/);
@@ -23,7 +23,7 @@ describe('EDA Credentials List', () => {
 
   it('can filter the Credentials list based on Name', () => {
     cy.createEdaCredential().then((edaCredential) => {
-      cy.navigateTo(/^Credentials$/);
+      cy.navigateTo('eda', 'credentials');
       cy.filterTableByText(edaCredential.name);
       cy.get('td[data-label="Name"]').should('contain', edaCredential.name);
       cy.deleteEdaCredential(edaCredential);
@@ -33,7 +33,7 @@ describe('EDA Credentials List', () => {
   it('can bulk delete Credentials from the Credentials list', () => {
     cy.createEdaCredential().then((edaCredential) => {
       cy.createEdaCredential().then((testCredential) => {
-        cy.navigateTo(/^Credentials$/);
+        cy.navigateTo('eda', 'credentials');
         cy.selectTableRow(edaCredential.name);
         cy.selectTableRow(testCredential.name);
         cy.clickToolbarKebabAction(/^Delete selected credentials$/);

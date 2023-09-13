@@ -35,7 +35,7 @@ describe.skip('EDA rulebook activations- Create', () => {
 
   it('can create a Rulebook Activation including custom variables, enable it, and assert the information showing on the details page', () => {
     const name = 'E2E Rulebook Activation ' + randomString(4);
-    cy.navigateTo(/^Rulebook Activations$/);
+    cy.navigateTo('eda', 'rulebook-activations');
     cy.clickButton(/^Create rulebook activation$/);
     cy.get('h1').should('contain', 'Create Rulebook Activation');
     cy.typeInputByLabel(/^Name$/, name);
@@ -49,7 +49,7 @@ describe.skip('EDA rulebook activations- Create', () => {
     cy.wait('@edaRBA').then((edaRBA) => {
       const rbaToBeDeleted = edaRBA?.response?.body as ActivationRead;
       cy.get('h1').should('contain', name);
-      cy.navigateTo(/^Rulebook Activations$/);
+      cy.navigateTo('eda', 'rulebook-activations');
       cy.deleteEdaRulebookActivation(rbaToBeDeleted);
     });
   });
@@ -57,7 +57,7 @@ describe.skip('EDA rulebook activations- Create', () => {
   it.skip('can restart a Rulebook Activation from the from the line item in list view', () => {
     //uncomment this test when rulebook activations are stable enough to test
     const name = 'E2E Rulebook Activation ' + randomString(4);
-    cy.navigateTo(/^Rulebook Activations$/);
+    cy.navigateTo('eda', 'rulebook-activations');
     cy.clickButton(/^Create rulebook activation$/);
     cy.get('h1').should('contain', 'Create Rulebook Activation');
     cy.typeInputByLabel(/^Name$/, name);
@@ -139,7 +139,7 @@ describe.skip('EDA rulebook activations- Edit, Delete', () => {
   });
 
   it('can disable a Rulebook Activation', () => {
-    cy.navigateTo(/^Rulebook Activations$/);
+    cy.navigateTo('eda', 'rulebook-activations');
     cy.filterTableByText(edaRBA.name);
     cy.getTableRowByText(edaRBA.name).within(() => {
       cy.get('.pf-c-switch__toggle').click();
@@ -154,7 +154,7 @@ describe.skip('EDA rulebook activations- Edit, Delete', () => {
   });
 
   it('can enable a Rulebook Activation', () => {
-    cy.navigateTo(/^Rulebook Activations$/);
+    cy.navigateTo('eda', 'rulebook-activations');
     cy.filterTableByText(edaDisabledRBA.name);
     cy.getTableRowByText(edaDisabledRBA.name).within(() => {
       cy.get('.pf-c-switch__toggle').click();

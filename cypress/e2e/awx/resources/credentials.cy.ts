@@ -27,7 +27,7 @@ describe('credentials', () => {
       credential_type: 1,
       organization: organization.id,
     }).then((testCredential) => (credential = testCredential));
-    cy.navigateTo(/^Credentials$/);
+    cy.navigateTo('awx', 'credentials');
   });
 
   afterEach(() => {
