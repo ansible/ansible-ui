@@ -10,16 +10,16 @@ import {
   useVisibleModalColumns,
 } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
+import { useGetPageUrl } from '../../../../framework/PageNavigation/useGetPageUrl';
 import { RouteObj } from '../../../common/Routes';
 import { AwxRoute } from '../../AwxRoutes';
 import { Job } from '../../interfaces/Job';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
-import { useGetAwxUrl } from '../../useAwxNavigate';
 import { IAwxView } from '../../useAwxView';
 import { useJobsColumns } from '../../views/jobs/hooks/useJobsColumns';
 
 export function AwxRecentJobsCard(props: { view: IAwxView<Job>; showEmptyStateNonAdmin: boolean }) {
-  const getAwxUrl = useGetAwxUrl();
+  const getPageUrl = useGetPageUrl();
   const { view, showEmptyStateNonAdmin } = props;
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -46,7 +46,7 @@ export function AwxRecentJobsCard(props: { view: IAwxView<Job>; showEmptyStateNo
       width="lg"
       height="md"
       linkText={t('Go to Jobs')}
-      to={getAwxUrl(AwxRoute.Jobs)}
+      to={getPageUrl(AwxRoute.Jobs)}
     >
       {showEmptyStateNonAdmin ? (
         <PageTable<Job>

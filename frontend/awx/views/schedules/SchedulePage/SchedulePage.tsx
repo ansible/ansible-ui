@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { PageActions, PageHeader, PageLayout } from '../../../../../framework';
+import { useGetPageUrl } from '../../../../../framework/PageNavigation/useGetPageUrl';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { PageBackTab, RoutedTab, RoutedTabs } from '../../../../common/RoutedTabs';
 import { RouteObj } from '../../../../common/Routes';
@@ -10,7 +11,6 @@ import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
 import { AwxError } from '../../../common/AwxError';
 import { Schedule } from '../../../interfaces/Schedule';
-import { useGetAwxUrl } from '../../../useAwxNavigate';
 import {
   resourceSchedulePageRoutes,
   scheduleDetailRoutes,
@@ -30,7 +30,7 @@ const rulesListRoutes: { [key: string]: string } = {
 
 export function SchedulePage() {
   const { t } = useTranslation();
-  const getAwxUrl = useGetAwxUrl();
+  const getPageUrl = useGetPageUrl();
   const location = useLocation();
   const params = useParams<{ id: string; source_id?: string; schedule_id: string }>();
   const {
@@ -45,10 +45,10 @@ export function SchedulePage() {
   );
 
   const itemActions = useSchedulesActions({
-    onScheduleToggleorDeleteCompleted: () => navigate(getAwxUrl(AwxRoute.Schedules)),
+    onScheduleToggleorDeleteCompleted: () => navigate(getPageUrl(AwxRoute.Schedules)),
   });
   const generateBackToSchedulesUrl: string = useMemo(() => {
-    if (!resource_type || !schedule) return getAwxUrl(AwxRoute.Schedules);
+    if (!resource_type || !schedule) return getPageUrl(AwxRoute.Schedules);
     if (resource_type === 'inventory' && schedule?.summary_fields.inventory) {
       return RouteObj.InventorySourceSchedules.replace(':inventory_type', resource_type as string)
         .replace(':id', schedule.summary_fields.inventory.id.toString())
@@ -58,7 +58,7 @@ export function SchedulePage() {
       ':id',
       schedule.summary_fields?.unified_job_template.id.toString()
     );
-  }, [getAwxUrl, resource_type, schedule]);
+  }, [getPageUrl, resource_type, schedule]);
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!schedule) return <LoadingPage breadcrumbs tabs />;
   return (
@@ -87,13 +87,13 @@ export function SchedulePage() {
         />
         <RoutedTab
           label={t('Details')}
-          url={resource_type ? scheduleDetailRoutes[resource_type] : getAwxUrl(AwxRoute.Schedules)}
+          url={resource_type ? scheduleDetailRoutes[resource_type] : getPageUrl(AwxRoute.Schedules)}
         >
           <ScheduleDetails schedule={schedule} />
         </RoutedTab>
         <RoutedTab
           label={t(`Rules`)}
-          url={resource_type ? rulesListRoutes[resource_type] : getAwxUrl(AwxRoute.Schedules)}
+          url={resource_type ? rulesListRoutes[resource_type] : getPageUrl(AwxRoute.Schedules)}
         >
           <ScheduleRules rrule={schedule.rrule} />
         </RoutedTab>

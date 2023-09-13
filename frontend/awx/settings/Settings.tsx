@@ -1,15 +1,15 @@
 import { Fragment, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageHeader } from '../../../framework';
+import { useGetPageUrl } from '../../../framework/PageNavigation/useGetPageUrl';
 import { AwxRoute } from '../AwxRoutes';
-import { useGetAwxUrl } from '../useAwxNavigate';
 
 export default function Settings() {
   const { t } = useTranslation();
-  const getAwxUrl = useGetAwxUrl();
+  const getPageUrl = useGetPageUrl();
   const breadcrumbs = useMemo(
-    () => [{ label: 'Dashboard', to: getAwxUrl(AwxRoute.Dashboard) }, { label: 'Settings' }],
-    [getAwxUrl]
+    () => [{ label: 'Dashboard', to: getPageUrl(AwxRoute.Dashboard) }, { label: 'Settings' }],
+    [getPageUrl]
   );
   return (
     <Fragment>

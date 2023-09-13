@@ -1,10 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate, useNavigate } from 'react-router-dom';
-import {
-  PageNavigationItem,
-  useNavigationRoutes,
-} from '../../framework/PageNavigation/PageNavigation';
+import { Navigate } from 'react-router-dom';
+import { PageNavigationItem } from '../../framework/PageNavigation/PageNavigationItem';
 import { Login } from '../common/Login';
 import { Approvals } from './approvals/Approvals';
 import { CollectionDetails } from './collections/CollectionDetails';
@@ -275,11 +272,4 @@ export function useHubNavigation() {
   }, [t]);
 
   return pageNavigationItems;
-}
-
-export function useHubNavigate() {
-  const navigate = useNavigate();
-  const navigation = useHubNavigation();
-  const routes = useNavigationRoutes(navigation);
-  return (route: HubRoute) => navigate(routes[route]);
 }

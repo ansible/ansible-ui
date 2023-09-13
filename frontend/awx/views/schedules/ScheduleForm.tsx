@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageForm, PageFormSubmitHandler, PageHeader, PageLayout } from '../../../../framework';
+import { useGetPageUrl } from '../../../../framework/PageNavigation/useGetPageUrl';
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
 import { dateToInputDateTime } from '../../../../framework/utils/dateTimeHelpers';
 import { RouteObj } from '../../../common/Routes';
@@ -12,7 +13,6 @@ import { AwxRoute } from '../../AwxRoutes';
 import { AwxError } from '../../common/AwxError';
 import { getAddedAndRemoved } from '../../common/util/getAddedAndRemoved';
 import { ScheduleFormFields } from '../../interfaces/ScheduleFormFields';
-import { useGetAwxUrl } from '../../useAwxNavigate';
 import { getAwxError } from '../../useAwxView';
 import { ScheduleInputs } from './components/ScheduleInputs';
 import { buildScheduleContainer } from './hooks/scheduleHelpers';
@@ -26,7 +26,7 @@ const routes: { [key: string]: string } = {
 
 export function CreateSchedule() {
   const { t } = useTranslation();
-  const getAwxUrl = useGetAwxUrl();
+  const getPageUrl = useGetPageUrl();
   const now = DateTime.now();
   const [error, setError] = useState<Error | null>(null);
   const closestQuarterHour: DateTime = DateTime.fromMillis(
@@ -200,7 +200,7 @@ export function CreateSchedule() {
       <PageHeader
         title={t('Create Schedule')}
         breadcrumbs={[
-          { label: t('Schedules'), to: getAwxUrl(AwxRoute.Schedules) },
+          { label: t('Schedules'), to: getPageUrl(AwxRoute.Schedules) },
           { label: t('Create Schedule') },
         ]}
       />

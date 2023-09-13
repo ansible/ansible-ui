@@ -4,7 +4,9 @@ import { Outlet, RouterProvider, createBrowserRouter, useNavigate } from 'react-
 import { PageNotFound } from '../../frontend/common/PageNotFound';
 import { PageFramework } from '../PageFramework';
 import { PageLayout } from '../PageLayout';
-import { PageNavigation, PageNavigationItem } from './PageNavigation';
+import { PageNavigation } from './PageNavigation';
+import { PageNavigationItem } from './PageNavigationItem';
+import { PageNavigationRoutesProvider } from './PageNavigationRoutesProvider';
 
 export function PageApp(props: {
   login: ReactNode;
@@ -41,7 +43,7 @@ export function PageApp(props: {
                 element: (
                   <PageLayoutRoute
                     header={header}
-                    sidebar={<PageNavigation navigationItems={navigation} />}
+                    sidebar={<PageNavigation navigation={navigation} />}
                   />
                 ),
                 children: navigation,
@@ -55,7 +57,11 @@ export function PageApp(props: {
     [header, navigation, props.login, props.root]
   );
   const router = useMemo(() => createBrowserRouter(routes, { basename }), [basename, routes]);
-  return <RouterProvider router={router} />;
+  return (
+    <PageNavigationRoutesProvider navigation={navigation}>
+      <RouterProvider router={router} />
+    </PageNavigationRoutesProvider>
+  );
 }
 
 function PageFrameworkRoute() {

@@ -1,6 +1,6 @@
 import { Nav, NavItemSeparator, NavList, PageSidebar } from '@patternfly/react-core';
 import { ReactNode } from 'react';
-import { usePageNavSideBar } from '../../framework/PageNav/PageNavSidebar';
+import { usePageNavSideBar } from '../../framework/PageNavigation/PageNavSidebar';
 
 export function CommonSidebar(props: { children?: ReactNode }) {
   const navBar = usePageNavSideBar();

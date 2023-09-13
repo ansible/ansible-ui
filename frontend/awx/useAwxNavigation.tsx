@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate, Outlet } from 'react-router-dom';
-import { PageNavigationItem } from '../../framework/PageNavigation/PageNavigation';
+import { PageNavigationItem } from '../../framework/PageNavigation/PageNavigationItem';
 import { PageNotImplemented } from '../common/PageNotImplemented';
 import { ActiveUserProvider } from '../common/useActiveUser';
 import { AwxLogin } from './AwxLogin';
