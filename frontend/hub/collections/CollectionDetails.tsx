@@ -27,11 +27,12 @@ import {
   StackItem,
   Title,
 } from '@patternfly/react-core';
+import { DateTime } from 'luxon';
 import { BarsIcon } from '@patternfly/react-icons';
 import { TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { Dispatch, SetStateAction, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import {
   CopyCell,
   PFColorE,
@@ -55,20 +56,92 @@ import { HubItemsResponse } from '../useHubView';
 import { CollectionVersionSearch } from './Collection';
 import { useCollectionActions } from './hooks/useCollectionActions';
 import { useCollectionColumns } from './hooks/useCollectionColumns';
+import { PageSingleSelect } from './../../../framework/PageInputs/PageSingleSelect';
+import { CheckCircleIcon, ExclamationTriangleIcon } from '@patternfly/react-icons';
+import { Label } from '@patternfly/react-core';
+import { AwxError } from '../../awx/common/AwxError';
 
 export function CollectionDetails() {
   const { t } = useTranslation();
-  const params = useParams<{ name: string; namespace: string; repository: string }>();
-  const { data, refresh } = useGet<HubItemsResponse<CollectionVersionSearch>>(
-    hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${params.name || ''}&namespace=${
-      params.namespace || ''
-    }&repository=${params.repository || ''} }`
-  );
-  let collection: CollectionVersionSearch | undefined = undefined;
-  if (data && data.data && data.data.length > 0) {
-    collection = data.data[0];
-  }
+  const [searchParams, setSearchParams] = useSearchParams();
   const itemActions = useCollectionActions(() => void refresh());
+  const [collection, setCollection] = useState<CollectionVersionSearch | undefined>(undefined);
+
+  let collectionError: JSX.Element | undefined = undefined;
+
+  function setVersionParams(version: string) {
+    setSearchParams((params) => {
+      params.set('version', version);
+      return params;
+    });
+  }
+  // load all collections versions belong to the repository
+  const collectionsResult = useGet<HubItemsResponse<CollectionVersionSearch>>(
+    hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${
+      searchParams.get('name') || ''
+    }&namespace=${searchParams.get('namespace') || ''}&repository_name=${
+      searchParams.get('repository') || ''
+    }&order_by=-version`
+  );
+
+  if (
+    collectionsResult.error ||
+    (collectionsResult.isLoading == false &&
+      collectionsResult.data &&
+      collectionsResult.data.data.length == 0)
+  ) {
+    collectionError = (
+      <AwxError error={collectionsResult.error || { name: 'not found', message: t('Not Found') }} />
+    );
+  }
+
+  const collections = collectionsResult.data ? collectionsResult.data.data : [];
+
+  // load collection by search params
+  const version = searchParams.get('version');
+
+  let highestFilter = '';
+  let versionFilter = '';
+
+  if (!version) {
+    // for unspecified version, load highest
+    highestFilter = '&isHighest=true';
+  } else {
+    versionFilter = '&version=' + version;
+  }
+
+  const { data, refresh, error, isLoading } = useGet<HubItemsResponse<CollectionVersionSearch>>(
+    hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${
+      searchParams.get('name') || ''
+    }&namespace=${searchParams.get('namespace') || ''}&repository_name=${
+      searchParams.get('repository') || ''
+    }&order_by=-version` +
+      versionFilter +
+      highestFilter
+  );
+
+  if (data && data.data.length > 0) {
+    const newCollection = data.data[0];
+    if (
+      !collection ||
+      collection.collection_version.version != newCollection.collection_version.version
+    ) {
+      setCollection(newCollection);
+    }
+  }
+  if (error || (isLoading == false && data && data.data.length == 0)) {
+    return (
+      <AwxError
+        error={error || { name: 'not found', message: t('Not Found') }}
+        handleRefresh={refresh}
+      />
+    );
+  }
+
+  if (collectionError) {
+    return collectionError;
+  }
+
   return (
     <PageLayout>
       <PageHeader
@@ -78,33 +151,89 @@ export function CollectionDetails() {
           { label: collection?.collection_version.name },
         ]}
         headerActions={
-          <PageActions<CollectionVersionSearch>
-            actions={itemActions}
-            position={DropdownPosition.right}
-            selectedItem={collection}
-          />
+          collection && (
+            <PageActions<CollectionVersionSearch>
+              actions={itemActions}
+              position={DropdownPosition.right}
+              selectedItem={collection}
+            />
+          )
+        }
+        description={t('Repository: ') + collection?.repository.name}
+        footer={
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            {t('Version')}
+            <PageSingleSelect<string>
+              options={
+                collections
+                  ? collections.map((item) => {
+                      let label =
+                        item.collection_version.version +
+                        ' ' +
+                        t('updated') +
+                        ' ' +
+                        `${DateTime.fromISO(item.collection_version.pulp_created).toRelative()} (${
+                          item.is_signed ? t('signed') : t('unsigned')
+                        })`;
+                      if (item.is_highest) {
+                        label += ' (' + t('latest') + ')';
+                      }
+                      return {
+                        value: item.collection_version.version,
+                        label,
+                      };
+                    })
+                  : []
+              }
+              onSelect={(item: string) => {
+                const found = collections.find((item2) => item2.collection_version.version == item);
+                if (found) {
+                  setVersionParams(found.collection_version.version);
+                }
+              }}
+              placeholder={''}
+              value={collection ? collection.collection_version.version : ''}
+            />
+            {collection &&
+              t('Last updated') +
+                ' ' +
+                DateTime.fromISO(collection.collection_version.pulp_created).toRelative()}
+            {collection &&
+              (collection.is_signed ? (
+                <Label icon={<CheckCircleIcon />} variant="outline" color="green">
+                  {' ' + t('Signed')}
+                </Label>
+              ) : (
+                <Label icon={<ExclamationTriangleIcon />} variant="outline" color="orange">
+                  {' ' + t('Unsigned')}
+                </Label>
+              ))}
+          </div>
         }
       />
-      <PageTabs>
-        <PageTab label={t('Details')}>
-          <CollectionDetailsTab collection={collection} />
-        </PageTab>
-        <PageTab label={t('Install')}>
-          <CollectionInstallTab collection={collection} />
-        </PageTab>
-        <PageTab label={t('Documentation')}>
-          <CollectionDocumentationTab collection={collection} />
-        </PageTab>
-        <PageTab label={t('Contents')}>
-          <CollectionContentsTab collection={collection} />
-        </PageTab>
-        <PageTab label={t('Import log')}>
-          <CollectionImportLogTab collection={collection} />
-        </PageTab>
-        <PageTab label={t('Dependencies')}>
-          <CollectionDependenciesTab collection={collection} />
-        </PageTab>
-      </PageTabs>
+
+      {collection && (
+        <PageTabs>
+          <PageTab label={t('Details')}>
+            <CollectionDetailsTab collection={collection} />
+          </PageTab>
+          <PageTab label={t('Install')}>
+            <CollectionInstallTab collection={collection} />
+          </PageTab>
+          <PageTab label={t('Documentation')}>
+            <CollectionDocumentationTab collection={collection} />
+          </PageTab>
+          <PageTab label={t('Contents')}>
+            <CollectionContentsTab collection={collection} />
+          </PageTab>
+          <PageTab label={t('Import log')}>
+            <CollectionImportLogTab collection={collection} />
+          </PageTab>
+          <PageTab label={t('Dependencies')}>
+            <CollectionDependenciesTab collection={collection} />
+          </PageTab>
+        </PageTabs>
+      )}
     </PageLayout>
   );
 }
