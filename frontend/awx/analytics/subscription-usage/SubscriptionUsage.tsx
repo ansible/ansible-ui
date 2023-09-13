@@ -1,4 +1,4 @@
-import { Flex, FlexItem, Text } from '@patternfly/react-core';
+import { CardBody, Flex, FlexItem, Text } from '@patternfly/react-core';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -78,7 +78,9 @@ export default function SubscriptionUsage() {
             </Flex>
           }
         >
-          <SubscriptionUsageChart period={dateRange} />
+          <CardBody>
+            <SubscriptionUsageChart period={dateRange} />
+          </CardBody>
         </PageDashboardCard>
       </PageDashboard>
     </PageLayout>
