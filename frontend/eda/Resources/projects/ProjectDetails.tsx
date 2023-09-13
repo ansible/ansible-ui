@@ -1,10 +1,15 @@
 import {
   ButtonVariant,
+  Checkbox,
   ClipboardCopy,
   DropdownPosition,
   PageSection,
   Skeleton,
   Stack,
+  TextList,
+  TextListItem,
+  TextListItemVariants,
+  TextListVariants,
 } from '@patternfly/react-core';
 import { PencilAltIcon, SyncAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
@@ -148,6 +153,19 @@ export function ProjectDetails() {
         </PageDetail>
         <PageDetail label={t('Last modified')}>
           {project?.modified_at ? formatDateString(project.modified_at) : ''}
+        </PageDetail>
+        <PageDetail label={t('Options')}>
+          <TextList component={TextListVariants.ul}>
+            <TextListItem component={TextListItemVariants.li}>
+              <Checkbox
+                id="verify_ssl"
+                name="verify_ssl"
+                label={t`Verify SSL`}
+                checked={project?.verify_ssl}
+                readOnly={true}
+              />
+            </TextListItem>
+          </TextList>
         </PageDetail>
       </PageDetails>
     );
