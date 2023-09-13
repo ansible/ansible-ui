@@ -12,9 +12,14 @@
 
 export interface LegacyRoleVersionsResponse {
   count: string;
+
   next: string;
+
   next_link: string;
+
   previous: string;
+
   previous_link: string;
+
   results: string;
 }

@@ -10,7 +10,8 @@
 // A serializer for the mark action.
 export interface AnsibleRepositoryMark {
   // List of collection version hrefs to mark, use * to mark all content in repository
-  content_units: unknown;
+  // content_units				:	unknown;
+
   // The string value of this mark.
   value: string;
 }

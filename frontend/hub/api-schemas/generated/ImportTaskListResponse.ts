@@ -14,12 +14,20 @@
 // A serializer for a CollectionImport list view.
 export interface ImportTaskListResponse {
   id: string;
+
   state: string;
+
   namespace: string;
+
   name: string;
+
   version: string;
+
   created_at: string;
+
   updated_at: string;
+
   started_at: string;
+
   finished_at: string;
 }

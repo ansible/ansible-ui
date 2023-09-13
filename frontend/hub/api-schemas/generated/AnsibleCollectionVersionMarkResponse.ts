@@ -14,9 +14,12 @@
 export interface AnsibleCollectionVersionMarkResponse {
   // Timestamp of creation.
   pulp_created: string;
+
   pulp_href: string;
+
   // The content this mark is pointing to.
   marked_collection: string;
+
   // The string value of this mark.
   value: string;
 }

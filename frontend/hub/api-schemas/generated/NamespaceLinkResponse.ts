@@ -9,5 +9,6 @@
 
 export interface NamespaceLinkResponse {
   name: string;
+
   url: string;
 }

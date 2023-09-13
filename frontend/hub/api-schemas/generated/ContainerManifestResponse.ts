@@ -13,20 +13,28 @@
 // Serializer for Manifests.
 export interface ContainerManifestResponse {
   pulp_href: string;
+
   // Timestamp of creation.
   pulp_created: string;
+
   // Artifact file representing the physical content
   artifact: string;
+
   // sha256 of the Manifest file
   digest: string;
+
   // Manifest schema version
   schema_version: number;
+
   // Manifest media type of the file
   media_type: string;
+
   // Manifests that are referenced by this Manifest List
-  listed_manifests: unknown;
+  // listed_manifests				:	unknown;
+
   // Blob that contains configuration for this Manifest
   config_blob: string;
+
   // Blobs that are referenced by this Manifest
-  blobs: unknown;
+  // blobs				:	unknown;
 }

@@ -13,23 +13,35 @@
 // Serializer for Ansible Repositories.
 export interface AnsibleAnsibleRepositoryResponse {
   pulp_href: string;
+
   // Timestamp of creation.
   pulp_created: string;
+
   versions_href: string;
-  pulp_labels: unknown;
+
+  // pulp_labels				:	unknown;
+
   latest_version_href: string;
+
   // A unique name for this repository.
   name: string;
+
   // An optional description.
   description: string;
+
   // Retain X versions of the repository. Default is null which retains all versions.
   retain_repo_versions: number;
+
   // An optional remote to use by default when syncing.
   remote: string;
+
   // Last synced metadata time.
   last_synced_metadata_time: string;
+
   // Gpg public key to verify collection signatures against
   gpgkey: string;
-  last_sync_task: unknown;
+
+  // last_sync_task				:	unknown;
+
   private: boolean;
 }

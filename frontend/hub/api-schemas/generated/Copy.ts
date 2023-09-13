@@ -10,5 +10,5 @@
 // A serializer for Content Copy API.
 export interface Copy {
   // A JSON document describing sources, destinations, and content to be copied
-  config: unknown;
+  // config				:	unknown;
 }

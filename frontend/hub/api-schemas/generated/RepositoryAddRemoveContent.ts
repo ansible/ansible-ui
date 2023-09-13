@@ -18,9 +18,11 @@ of plugins are namespaced properly.
 */
 export interface RepositoryAddRemoveContent {
   // A list of content units to add to a new repository version. This content is added after remove_content_units are removed.
-  add_content_units: unknown;
+  // add_content_units				:	unknown;
+
   // A list of content units to remove from the latest repository version. You may also specify '*' as an entry to remove all content. This content is removed before add_content_units are added.
-  remove_content_units: unknown;
+  // remove_content_units				:	unknown;
+
   // A repository version whose content will be used as the initial set of content for the new repository version
   base_version: string;
 }

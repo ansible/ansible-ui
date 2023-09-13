@@ -9,5 +9,6 @@
 
 export interface GalaxyLogin {
   username: string;
+
   password: string;
 }

@@ -12,5 +12,6 @@
 
 export interface GalaxyLoginResponse {
   username: string;
+
   password: string;
 }

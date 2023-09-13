@@ -11,6 +11,7 @@
 export interface TagImage {
   // A tag name
   tag: string;
+
   // sha256 of the Manifest file
   digest: string;
 }

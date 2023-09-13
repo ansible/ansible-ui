@@ -9,8 +9,12 @@
 
 export interface LegacySync {
   baseurl: string;
+
   github_user: string;
+
   role_name: string;
+
   role_version: string;
+
   limit: number;
 }

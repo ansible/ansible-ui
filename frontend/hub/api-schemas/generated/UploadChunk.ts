@@ -11,6 +11,7 @@
 export interface UploadChunk {
   // A chunk of the uploaded file.
   file: string;
+
   // The SHA-256 checksum of the chunk if available.
   sha256: string;
 }

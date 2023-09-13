@@ -19,6 +19,7 @@ of plugins are namespaced properly.
 export interface ContentAppStatusResponse {
   // The name of the worker.
   name: string;
+
   // Timestamp of the last time the worker talked to the service.
   last_heartbeat: string;
 }

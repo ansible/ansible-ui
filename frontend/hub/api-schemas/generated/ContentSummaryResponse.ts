@@ -9,7 +9,7 @@
 
 // Serializer for the RepositoryVersion content summary
 export interface ContentSummaryResponse {
-  added: unknown;
-  removed: unknown;
-  present: unknown;
+  // added				:	unknown;
+  // removed				:	unknown;
+  // present				:	unknown;
 }

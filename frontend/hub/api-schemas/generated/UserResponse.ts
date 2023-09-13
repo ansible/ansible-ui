@@ -12,15 +12,23 @@
 
 export interface UserResponse {
   id: number;
+
   // Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
   username: string;
+
   first_name: string;
+
   last_name: string;
+
   email: string;
+
   // The groups this user belongs to. A user will get all permissions granted to each of their groups.
-  groups: unknown;
+  // groups				:	unknown;
+
   date_joined: string;
+
   // Designates that this user has all permissions without explicitly assigning them.
   is_superuser: boolean;
+
   auth_provider: string;
 }

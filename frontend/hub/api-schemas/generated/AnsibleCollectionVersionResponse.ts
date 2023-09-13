@@ -14,54 +14,80 @@
 export interface AnsibleCollectionVersionResponse {
   // Artifact file representing the physical content
   artifact: string;
+
   // Timestamp of creation.
   pulp_created: string;
+
   pulp_href: string;
+
   // The SHA-256 checksum if available.
   sha256: string;
+
   // The MD5 checksum if available.
   md5: string;
+
   // The SHA-1 checksum if available.
   sha1: string;
+
   // The SHA-224 checksum if available.
   sha224: string;
+
   // The SHA-384 checksum if available.
   sha384: string;
+
   // The SHA-512 checksum if available.
   sha512: string;
+
   // A collection identifier.
   id: string;
+
   // A list of the CollectionVersion content's authors.
-  authors: unknown;
+  // authors				:	unknown;
+
   // A JSON field with data about the contents.
-  contents: unknown;
+  // contents				:	unknown;
+
   // A dict declaring Collections that this collection requires to be installed for it to be usable.
-  dependencies: unknown;
+  // dependencies				:	unknown;
+
   // A short summary description of the collection.
   description: string;
+
   // A JSON field holding the various documentation blobs in the collection.
-  docs_blob: unknown;
+  // docs_blob				:	unknown;
+
   // A JSON field holding MANIFEST.json data.
-  manifest: unknown;
+  // manifest				:	unknown;
+
   // A JSON field holding FILES.json data.
-  files: unknown;
+  // files				:	unknown;
+
   // The URL to any online docs.
   documentation: string;
+
   // The URL to the homepage of the collection/project.
   homepage: string;
+
   // The URL to the collection issue tracker.
   issues: string;
+
   // A list of licenses for content inside of a collection.
-  license: unknown;
+  // license				:	unknown;
+
   // The name of the collection.
   name: string;
+
   // The namespace of the collection.
   namespace: string;
+
   // The URL of the originating SCM repository.
   origin_repository: string;
-  tags: unknown;
+
+  // tags				:	unknown;
+
   // The version of the collection.
   version: string;
+
   // The version of Ansible required to use the collection. Multiple versions can be separated with a comma.
   requires_ansible: string;
 }
