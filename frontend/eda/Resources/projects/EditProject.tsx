@@ -3,12 +3,14 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
 import {
   PageForm,
+  PageFormCheckbox,
   PageFormSelect,
   PageFormSubmitHandler,
   PageFormTextInput,
   PageHeader,
   PageLayout,
 } from '../../../../framework';
+import { PageFormGroup } from '../../../../framework/PageForm/Inputs/PageFormGroup';
 import { RouteObj } from '../../../common/Routes';
 import { useGet } from '../../../common/crud/useGet';
 import { usePatchRequest } from '../../../common/crud/usePatchRequest';
@@ -73,6 +75,12 @@ function ProjectCreateInputs() {
         labelHelpTitle={t('Credential')}
         labelHelp={t('The token needed to utilize the SCM URL.')}
       />
+      <PageFormGroup
+        label={t('Options')}
+        labelHelp={t('Verify SSL before synchronize project over HTTPS.')}
+      >
+        <PageFormCheckbox<EdaProjectCreate> label={t('Verify SSL')} name="verify_ssl" />
+      </PageFormGroup>
     </>
   );
 }
@@ -121,11 +129,20 @@ function ProjectEditInputs() {
         }
         footer={<Link to={RouteObj.CreateEdaCredential}>{t('Create credential')}</Link>}
       />
+      <PageFormGroup
+        label={t('Options')}
+        labelHelp={t('Verify SSL before synchronize project over HTTPS.')}
+      >
+        <PageFormCheckbox label={t('Verify SSL')} name="verify_ssl" />
+      </PageFormGroup>
     </>
   );
 }
 
 export function CreateProject() {
+  const defaultValues: Partial<EdaProject> = {
+    verify_ssl: true,
+  };
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { cache } = useSWRConfig();
@@ -152,6 +169,7 @@ export function CreateProject() {
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
+        defaultValue={{ ...defaultValues }}
       >
         <ProjectCreateInputs />
       </PageForm>
