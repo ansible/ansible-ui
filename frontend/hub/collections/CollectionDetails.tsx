@@ -81,7 +81,7 @@ export function CollectionDetails() {
       searchParams.get('name') || ''
     }&namespace=${searchParams.get('namespace') || ''}&repository_name=${
       searchParams.get('repository') || ''
-    }&order_by=-pulp_created`
+    }&order_by=-version`
   );
 
   if (
@@ -115,7 +115,7 @@ export function CollectionDetails() {
       searchParams.get('name') || ''
     }&namespace=${searchParams.get('namespace') || ''}&repository_name=${
       searchParams.get('repository') || ''
-    }&order_by=-pulp_created` +
+    }&order_by=-version` +
       versionFilter +
       highestFilter
   );
