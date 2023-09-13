@@ -1,4 +1,3 @@
-import { HTTPError } from 'ky';
 import { useCallback, useMemo, useRef } from 'react';
 import useSWR from 'swr';
 import {
@@ -11,6 +10,7 @@ import {
 } from '../../framework';
 import { useFetcher } from '../common/crud/Data';
 import { QueryParams, getQueryString, serverlessURL } from './api/utils';
+import { RequestError } from '../common/crud/RequestError';
 
 export interface HubItemsResponse<T extends object> {
   meta: {
@@ -132,8 +132,8 @@ export function useHubView<T extends object>({
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   let error: Error | undefined = response.error;
-  if (error instanceof HTTPError) {
-    if (error.response.status === 404 && view.page > 1) {
+  if (error instanceof RequestError) {
+    if (error.statusCode === 404 && view.page > 1) {
       view.setPage(1);
       error = undefined;
     }
@@ -166,10 +166,10 @@ export function useHubView<T extends object>({
   }, [data?.data, error, refresh, selection, unselectItemsAndRefresh, view]);
 }
 
-export async function getAwxError(err: unknown) {
-  if (err instanceof HTTPError) {
+export function getAwxError(err: unknown) {
+  if (err instanceof RequestError) {
     try {
-      const response = (await err.response.json()) as { __all__?: string[] };
+      const response = err.json as { __all__?: string[] };
       if ('__all__' in response && Array.isArray(response.__all__)) {
         return JSON.stringify(response.__all__[0]);
       } else {

@@ -1,4 +1,3 @@
-import { HTTPError } from 'ky';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import useSWR from 'swr';
 import { ISelected, ITableColumn, IToolbarFilter, useSelected } from '../../framework';
@@ -6,6 +5,7 @@ import { IView, useView } from '../../framework/useView';
 import { AwxItemsResponse } from '../awx/common/AwxItemsResponse';
 import { getItemKey, swrOptions, useFetcher } from '../common/crud/Data';
 import { SWR_REFRESH_INTERVAL } from './constants';
+import { RequestError } from '../common/crud/RequestError';
 
 export type IEdaView<T extends { id: number | string }> = IView &
   ISelected<T> & {
@@ -112,8 +112,8 @@ export function useEdaView<T extends { id: number | string }>(options: {
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   let error: Error | undefined = response.error;
-  if (error instanceof HTTPError) {
-    if (error.response.status === 404 && view.page > 1) {
+  if (error instanceof RequestError) {
+    if (error.statusCode === 404 && view.page > 1) {
       view.setPage(1);
       error = undefined;
     }
