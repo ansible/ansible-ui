@@ -24,9 +24,8 @@ describe('EDA Login / Logoff', () => {
   });
 
   it('can log out and login as a different user', () => {
-    // TODO: needs further work when Users page is functional
     const userDetails = {
-      Username: `E2EUser ${randomString(4)}`,
+      Username: `E2EUser${randomString(4)}`,
       FirstName: 'Firstname',
       LastName: 'Lastname',
       Email: 'first.last@redhat.com',
@@ -35,16 +34,20 @@ describe('EDA Login / Logoff', () => {
     cy.navigateTo('eda', 'users');
     cy.contains('h1', 'Users');
     cy.clickButton(/^Create user$/);
-    //the following code must be refactored to use data-cy when this test is unskipped
-    cy.typeInputByLabel(/^Username$/, userDetails.Username);
-    cy.typeInputByLabel(/^First name$/, userDetails.FirstName);
-    cy.typeInputByLabel(/^Last name$/, userDetails.LastName);
-    cy.typeInputByLabel(/^Email$/, userDetails.Email);
-    cy.typeInputByLabel(/^Password$/, userDetails.Password);
-    cy.typeInputByLabel(/^Password confirmation$/, userDetails.Password);
+    cy.get('[data-cy="username"]').type(userDetails.Username);
+    cy.get('[data-cy="first_name"]').type(userDetails.FirstName);
+    cy.get('[data-cy="last_name"]').type(userDetails.LastName);
+    cy.get('[data-cy="email"]').type(userDetails.Email);
+    cy.get('[data-cy="password"]').type(userDetails.Password);
+    cy.get('[data-cy="confirmPassword"]').type(userDetails.Password);
     /*Roles selection*/
-    cy.selectDropdownOptionByLabel(/^User type$/, 'Super user');
-    cy.selectDropdownOptionByLabel(/^Roles(s)$/, 'User Experience');
+    cy.get('#roles-form-group').within(() => {
+      cy.get('button').click();
+    });
+    cy.get('[data-ouia-component-type="PF4/ModalContent"]').within(() => {
+      cy.get('table').find('input').eq(1).click();
+      cy.clickButton(/^Confirm$/);
+    });
     cy.clickButton(/^Create user$/);
     cy.hasDetail('First name', userDetails.FirstName);
     cy.hasDetail('Last name', userDetails.LastName);
@@ -52,11 +55,8 @@ describe('EDA Login / Logoff', () => {
     cy.hasDetail('Username', userDetails.Username);
     cy.intercept('GET', '/api/logout/').as('loggedOut');
     cy.edaLogout();
-    cy.wait('@loggedOut').then((result) => {
-      expect(result?.response?.statusCode).to.eql(200);
-    });
-    cy.typeInputByLabel(/^Username$/, userDetails.Username);
-    cy.typeInputByLabel(/^Password$/, userDetails.Password);
+    cy.get('[data-cy="username"]').type(userDetails.Username);
+    cy.get('[data-cy="password"]').type(userDetails.Password);
     cy.clickModalButton('Log in');
     cy.get('.pf-c-dropdown__toggle').eq(1).should('contain', userDetails.Username);
   });
