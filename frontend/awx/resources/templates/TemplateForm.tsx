@@ -144,7 +144,7 @@ export function CreateJobTemplate() {
 
       navigate(RouteObj.JobTemplateDetails.replace(':id', template.id.toString()));
     } catch (err) {
-      setError(await getAwxError(err));
+      setError(getAwxError(err));
     }
   };
 

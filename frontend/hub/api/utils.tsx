@@ -1,4 +1,4 @@
-import { HTTPError } from 'ky';
+import { RequestError } from '../../common/crud/RequestError';
 import { Task, TaskResponse } from '../tasks/Task';
 import {
   deleteHubRequest,
@@ -94,7 +94,7 @@ export async function hubAPIDelete<T extends object>(url: string, signal?: Abort
       await parseTaskResponse(response as TaskResponse, signal);
     }
   } catch (error) {
-    throw new Error('Error deleting item');
+    handleError(error, 'Error deleting item');
   }
 }
 
@@ -109,7 +109,7 @@ export async function hubAPIPatch<T extends object, RequestBody = unknown>(
       await parseTaskResponse(response as TaskResponse, signal);
     }
   } catch (error) {
-    throw new Error('Error updating item');
+    handleError(error, 'Error updating item');
   }
 }
 
@@ -124,7 +124,7 @@ export async function hubAPIPut<T extends object, RequestBody = unknown>(
       await parseTaskResponse(response as TaskResponse, signal);
     }
   } catch (error) {
-    throw new Error('Error updating item');
+    handleError(error, 'Error updating item');
   }
 }
 
@@ -139,7 +139,15 @@ export async function hubAPIPost<T extends object, RequestBody = unknown>(
       await parseTaskResponse(response as TaskResponse, signal);
     }
   } catch (error) {
-    throw new Error('Error creating item');
+    handleError(error, 'Error creating item');
+  }
+}
+
+function handleError(error: unknown, defaultMessage: string) {
+  if (error instanceof RequestError) {
+    throw error;
+  } else {
+    throw new Error(defaultMessage);
   }
 }
 
@@ -204,8 +212,8 @@ export async function waitForTask(
       retries--;
     }
   } catch (error) {
-    if (error instanceof HTTPError) {
-      if (error.response.status === 404) {
+    if (error instanceof RequestError) {
+      if (error.statusCode === 404) {
         throw new Error(`Task not found`);
       }
     } else {
