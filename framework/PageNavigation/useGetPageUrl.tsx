@@ -9,6 +9,6 @@ export function useGetPageUrl() {
       if (!params) return url;
       return Object.keys(params).reduce((acc, key) => acc.replace(`:${key}`, params[key]), url);
     }
-    return '/';
+    return '';
   };
 }
