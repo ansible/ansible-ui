@@ -51,7 +51,7 @@ export function CreateUser() {
       );
       navigate(RouteObj.UserDetails.replace(':id', newUser.id.toString()));
     } catch (err) {
-      setError(await getAwxError(err));
+      setError(getAwxError(err));
     }
   };
 
@@ -101,7 +101,7 @@ export function EditUser() {
       const newUser = await requestPatch<User>(`/api/v2/users/${id}/`, user);
       navigate(RouteObj.UserDetails.replace(':id', newUser.id.toString()));
     } catch (err) {
-      setError(await getAwxError(err));
+      setError(getAwxError(err));
     }
   };
 

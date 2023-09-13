@@ -1,5 +1,4 @@
 import { Modal, ModalVariant, Stack, Title, TitleSizes } from '@patternfly/react-core';
-import ky, { HTTPError } from 'ky';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -9,6 +8,7 @@ import { PageFormTextInput } from '../../framework/PageForm/Inputs/PageFormTextI
 import { hubAPI } from '../hub/api/utils';
 import { RouteObj } from './Routes';
 import { AuthOptions, SocialAuthLogin } from './SocialAuthLogin';
+import { RequestError, createRequestError } from './crud/RequestError';
 import { setCookie } from './crud/cookie';
 import { useInvalidateCacheOnUnmount } from './useInvalidateCache';
 
@@ -130,7 +130,16 @@ function LoginForm(props: LoginFormProps) {
 
         if (!loginPageUrl) return;
 
-        const loginPage = await ky.get(loginPageUrl, { credentials: 'include' }).text();
+        const loginPageResponse = await fetch(loginPageUrl, {
+          credentials: 'include',
+          headers: {
+            Accept: 'text/*',
+          },
+        });
+        if (!loginPageResponse.ok) {
+          throw await createRequestError(loginPageResponse);
+        }
+        const loginPage = await loginPageResponse.text();
         const searchStringIndex = loginPage.indexOf(searchString);
         let csrfmiddlewaretoken: string | undefined;
         if (searchStringIndex !== -1) {
@@ -150,18 +159,23 @@ function LoginForm(props: LoginFormProps) {
         searchParams.set('next', '/');
 
         try {
-          await ky.post(loginPageUrl, {
+          const response = await fetch(loginPageUrl, {
             credentials: 'include',
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
             body: searchParams,
             redirect: 'manual',
           });
+          if (!response.ok) {
+            throw await createRequestError(response);
+          }
         } catch (err) {
-          if (!(err instanceof HTTPError)) {
+          if (!(err instanceof RequestError)) {
             throw err;
           }
-          if (err.response.status === 0) {
+          if (err.statusCode === 0) {
             // Do nothing
-          } else if (err.response.status === 401 || err.response.status === 403) {
+          } else if (err.statusCode === 401 || err.statusCode === 403) {
             throw new Error('Invalid username or password. Please try again.');
           } else {
             throw err;

@@ -1,10 +1,10 @@
-import { HTTPError } from 'ky';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import useSWR from 'swr';
 import { ISelected, ITableColumn, IToolbarFilter, useSelected } from '../../framework';
 import { IView, useView } from '../../framework/useView';
 import { getItemKey, swrOptions, useFetcher } from '../common/crud/Data';
 import { AwxItemsResponse } from './common/AwxItemsResponse';
+import { RequestError } from '../common/crud/RequestError';
 
 export type IAwxView<T extends { id: number }> = IView &
   ISelected<T> & {
@@ -119,8 +119,8 @@ export function useAwxView<T extends { id: number }>(options: {
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   let error: Error | undefined = response.error;
-  if (error instanceof HTTPError) {
-    if (error.response.status === 404 && view.page > 1) {
+  if (error instanceof RequestError) {
+    if (error.statusCode === 404 && view.page > 1) {
       view.setPage(1);
       error = undefined;
     }
@@ -172,10 +172,10 @@ export function useAwxView<T extends { id: number }>(options: {
   ]);
 }
 
-export async function getAwxError(err: unknown) {
-  if (err instanceof HTTPError) {
+export function getAwxError(err: unknown) {
+  if (err instanceof RequestError) {
     try {
-      const response = (await err.response.json()) as { __all__?: string[] };
+      const response = err.json as { __all__?: string[] };
       if ('__all__' in response && Array.isArray(response.__all__)) {
         return JSON.stringify(response.__all__[0]);
       } else {

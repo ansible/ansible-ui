@@ -41,7 +41,7 @@ export function CreateOrganization() {
       await Promise.all(igRequests);
       navigate(RouteObj.OrganizationDetails.replace(':id', organization.id.toString()));
     } catch (err) {
-      setError(await getAwxError(err));
+      setError(getAwxError(err));
     }
   };
   const onCancel = () => navigate(-1);
@@ -111,7 +111,7 @@ export function EditOrganization() {
       await Promise.all(igRequests);
       navigate(RouteObj.OrganizationDetails.replace(':id', organization.id.toString()));
     } catch (err) {
-      setError(await getAwxError(err));
+      setError(getAwxError(err));
     }
   };
   const onCancel = () => navigate(-1);
