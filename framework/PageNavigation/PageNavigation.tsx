@@ -31,6 +31,16 @@ function PageNavigationItems(props: { items: PageNavigationItem[]; baseRoute: st
 }
 
 function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRoute: string }) {
+  let id: string | undefined;
+  if ('id' in props.item) {
+    id = props.item.id;
+  } else if ('children' in props.item) {
+    const rootChild = props.item.children.find((child) => child.path === '');
+    if (rootChild && 'id' in rootChild) {
+      id = rootChild.id;
+    }
+  }
+
   const onClickNavItem = usePageNavBarClick();
   const { item } = props;
   let route = props.baseRoute + '/' + item.path;
@@ -50,7 +60,12 @@ function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRout
     );
   } else if ('label' in item) {
     return (
-      <NavItem isActive={location.pathname.startsWith(route)} onClick={() => onClickNavItem(route)}>
+      <NavItem
+        id={id}
+        isActive={location.pathname.startsWith(route)}
+        onClick={() => onClickNavItem(route)}
+        data-cy={id}
+      >
         {item.label}
       </NavItem>
     );

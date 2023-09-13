@@ -52,7 +52,7 @@ export function CreateCredential() {
       const newCredential = await postRequest('/api/v2/credentials/', credential);
       navigate(RouteObj.CredentialDetails.replace(':id', newCredential.id.toString()));
     } catch (err) {
-      setError(await getAwxError(err));
+      setError(getAwxError(err));
     }
   };
   return (
@@ -102,7 +102,7 @@ export function EditCredential() {
       await requestPatch<Credential>(`/api/v2/credentials/${id}/`, editedCredential);
       navigate(-1);
     } catch (err) {
-      setError(await getAwxError(err));
+      setError(getAwxError(err));
     }
   };
   if (!credential) {

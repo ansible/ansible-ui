@@ -170,7 +170,7 @@ export function CreateSchedule() {
         );
       }
     } catch (err) {
-      setError(await getAwxError(err));
+      setError(getAwxError(err));
     }
   };
   const onCancel = () => navigate(-1);

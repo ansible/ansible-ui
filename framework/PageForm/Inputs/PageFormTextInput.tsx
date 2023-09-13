@@ -260,6 +260,7 @@ export function PageFormTextInput<
                 isDisabled={isDisabled}
                 autoFocus={autoFocus}
                 autoComplete={autoComplete}
+                data-cy={id}
               />
               {type === 'password' && (
                 <Button
