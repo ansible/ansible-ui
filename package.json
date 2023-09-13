@@ -61,6 +61,7 @@
     "docker:run:eda": "echo http://localhost:4103 && docker run --name eda-ui --rm -e LOG_LEVEL=debug -p 4103:8080 -e EDA_HOST=$EDA_HOST -e EDA_PROTOCOL=$EDA_PROTOCOL eda-ui"
   },
   "dependencies": {
+    "@ansible/react-json-chart-builder": "^1.15.2",
     "@babel/core": "7.22.15",
     "@babel/plugin-proposal-object-rest-spread": "7.20.7",
     "@babel/preset-react": "7.22.15",
@@ -138,7 +139,6 @@
     "react-dropzone": "14.2.3",
     "react-hook-form": "7.46.1",
     "react-i18next": "11.18.6",
-    "react-json-chart-builder": "1.14.3",
     "react-refresh": "0.14.0",
     "react-router-dom": "6.15.0",
     "react-use-websocket": "4.3.1",

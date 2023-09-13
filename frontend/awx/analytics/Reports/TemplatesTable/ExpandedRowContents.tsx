@@ -8,7 +8,7 @@ import {
 } from '@patternfly/react-core';
 import currencyFormatter from '../../utilities/currencyFormatter';
 import { useTranslation } from 'react-i18next';
-import { ChartLegendEntry } from 'react-json-chart-builder';
+import { ChartLegendEntry } from '@ansible/react-json-chart-builder';
 
 interface Props {
   template: ChartLegendEntry;
