@@ -227,8 +227,6 @@ export const RouteObj = {
 
   APIToken: `${hubRoutePrefix}/api-token`,
 
-  AwxDebug: `${awxRoutePrefix}/debug`,
-
   // EDA server prefix
   Eda: `${edaRoutePrefix}`,
 
