@@ -24,7 +24,7 @@ function createNavigateToRoutes(base: string, navigation: PageNavigationItem[]) 
   navigation.forEach((item) => {
     const itemPath = (base + '/' + item.path).replace('//', '/');
     if ('id' in item) {
-      routes[item.id] = (itemPath + '/').replace('//', '/');
+      routes[item.id] = itemPath;
     }
     if ('children' in item) {
       Object.assign(routes, createNavigateToRoutes(itemPath, item.children));
