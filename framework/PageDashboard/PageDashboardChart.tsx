@@ -42,6 +42,13 @@ export function PageDashboardChart(props: {
   allowZero?: boolean;
   /** variant of the chart */
   variant?: 'stackedAreaChart' | 'lineChart';
+  /** additional padding if needed for chart */
+  padding?: {
+    top?: number;
+    bottom?: number;
+    left?: number;
+    right: number;
+  };
 
   height?: number;
 }) {
@@ -85,10 +92,10 @@ export function PageDashboardChart(props: {
   }, [groups]);
 
   const padding = {
-    top: 4 + 16,
-    bottom: 32 + 16,
-    left: 12 + Math.round(maxDomainY).toString().length * 9.5 + 16,
-    right: 0 + 16,
+    top: (props.padding?.top ?? 4) + 16,
+    bottom: (props.padding?.bottom ?? 32) + 16,
+    left: (props.padding?.left ?? 12) + Math.round(maxDomainY).toString().length * 9.5 + 16,
+    right: (props.padding?.right ?? 0) + 16,
   };
 
   return (
