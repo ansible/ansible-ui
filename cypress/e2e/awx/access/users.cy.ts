@@ -41,10 +41,10 @@ describe('Users List Actions', () => {
     const password = randomString(12);
     cy.navigateTo('awx', 'users');
     cy.clickLink(/^Create user$/);
-    cy.typeInputByLabel(/^Username$/, userName);
-    cy.typeInputByLabel(/^Password$/, password);
-    cy.typeInputByLabel(/^Confirm password$/, password);
-    cy.typeInputByLabel(/^Organization$/, organization.name);
+    cy.get('[data-cy="user-username"]').type(userName);
+    cy.get('[data-cy="user-password"]').type(password);
+    cy.get('[data-cy="confirmPassword"]').type(password);
+    cy.get('[data-cy="user-summary_fields-organization-name"]').type(organization.name);
     cy.clickButton(/^Create user$/);
     cy.hasTitle(userName);
     // Clean up this user
@@ -68,7 +68,7 @@ describe('Users List Actions', () => {
     cy.hasTitle(user.username);
     cy.clickButton(/^Edit user$/);
     cy.hasTitle(/^Edit User$/);
-    cy.typeInputByLabel(/^Username$/, user.username + 'a');
+    cy.get('[data-cy="user-username"]').type(user.username + 'a');
     cy.clickButton(/^Save user$/);
     cy.hasTitle(`${user.username}a`);
   });

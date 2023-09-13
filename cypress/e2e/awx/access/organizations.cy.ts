@@ -42,10 +42,9 @@ describe('organizations', () => {
     const organizationName = 'E2E Organization ' + randomString(4);
     cy.navigateTo('awx', 'organizations');
     cy.clickLink(/^Create organization$/);
-    cy.typeInputByLabel(/^Name$/, organizationName);
+    cy.get('[data-cy="organization-name"]').type(organizationName);
     cy.clickButton(/^Create organization$/);
     cy.hasTitle(organizationName);
-    // Clean up this organization
     cy.clickPageAction(/^Delete organization/);
     cy.get('#confirm').click();
     cy.clickButton(/^Delete organization/);
@@ -66,7 +65,7 @@ describe('organizations', () => {
     cy.hasTitle(organization.name);
     cy.clickButton(/^Edit organization$/);
     cy.hasTitle(/^Edit Organization$/);
-    cy.typeInputByLabel(/^Name$/, organization.name + 'a');
+    cy.get('[data-cy="organization-name"]').type(organization.name + 'a');
     cy.clickButton(/^Save organization$/);
     cy.hasTitle(`${organization.name}a`);
   });

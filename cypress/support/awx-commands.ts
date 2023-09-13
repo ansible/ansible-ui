@@ -57,6 +57,7 @@ Cypress.Commands.add('typeInputByLabel', (label: string | RegExp, text: string) 
 
 Cypress.Commands.add(
   'selectDropdownOptionByLabel',
+  //adjust this command once the dropdown component has data-cy added
   (label: string | RegExp, text: string, multiselect?: boolean) => {
     // Used for Typeahead multiselect components
     if (multiselect) {
