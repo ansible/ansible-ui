@@ -78,7 +78,7 @@ export function useApprovalsColumns(_options?: { disableSort?: boolean; disableL
         sort: 'pulp_created',
       },
     ],
-    [t]
+    [t, display_signatures]
   );
   return tableColumns;
 }
