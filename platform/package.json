@@ -1,0 +1,5 @@
+{
+  "scripts": {
+    "start": "cd .. && UI_MODE=AWX webpack serve --mode development --config ./platform/webpack.platform.cjs --port 4100 --open"
+  }
+}
