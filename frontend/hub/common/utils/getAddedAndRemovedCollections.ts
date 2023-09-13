@@ -21,12 +21,12 @@ export function getAddedAndRemovedCollections(
       !current.find(
         (cur) =>
           collectionKeyFn({
-            collection_version: { pulp_href: cur.collection_version.pulp_href },
-            repository: { name: cur.repository.name },
+            collection_version: { pulp_href: cur.collection_version?.pulp_href || '' },
+            repository: { name: cur.repository?.name || '' },
           }) ===
           collectionKeyFn({
-            collection_version: { pulp_href: orig.collection_version.pulp_href },
-            repository: { name: orig.repository.name },
+            collection_version: { pulp_href: orig.collection_version?.pulp_href || '' },
+            repository: { name: orig.repository?.name || ''},
           })
       )
     ) {
@@ -38,12 +38,12 @@ export function getAddedAndRemovedCollections(
       !original.find(
         (orig) =>
           collectionKeyFn({
-            collection_version: { pulp_href: orig.collection_version.pulp_href },
-            repository: { name: orig.repository.name },
+            collection_version: { pulp_href: orig.collection_version?.pulp_href || '' },
+            repository: { name: orig.repository?.name || '' },
           }) ===
           collectionKeyFn({
-            collection_version: { pulp_href: cur.collection_version.pulp_href },
-            repository: { name: cur.repository.name },
+            collection_version: { pulp_href: cur.collection_version?.pulp_href || '' },
+            repository: { name: cur.repository?.name || '' },
           })
       )
     ) {

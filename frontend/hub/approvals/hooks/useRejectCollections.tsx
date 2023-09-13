@@ -28,8 +28,8 @@ export function useRejectCollections(
         actionButtonText: t('Reject collections', { count: collections.length }),
         items: collections.sort((l, r) =>
           compareStrings(
-            l.collection_version.pulp_href + l.repository.name,
-            r.collection_version.pulp_href + r.repository.name
+            l.collection_version?.pulp_href || '' + l.repository?.name,
+            r.collection_version?.pulp_href || '' + r.repository?.name
           )
         ),
         keyFn: collectionKeyFn,
@@ -58,10 +58,10 @@ export function rejectCollection(
 
     await hubAPIPost(
       pulpAPI`/repositories/ansible/ansible/${
-        parsePulpIDFromURL(collection.repository.pulp_href) || ''
+        parsePulpIDFromURL(collection.repository?.pulp_href || '') || ''
       }/move_collection_version/`,
       {
-        collection_versions: [`${collection.collection_version.pulp_href}`],
+        collection_versions: [`${collection.collection_version?.pulp_href}`],
         destination_repositories: [rejectedRepo],
       }
     );

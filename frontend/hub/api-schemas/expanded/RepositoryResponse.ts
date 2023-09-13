@@ -9,5 +9,7 @@ declare module './../generated/RepositoryResponse' {
     pulp_labels?: {
       pipeline?: string;
     };
+    pulp_href: string;
+    latest_version_href: string;
   }
 }
