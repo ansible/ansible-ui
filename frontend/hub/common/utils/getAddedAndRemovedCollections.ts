@@ -26,7 +26,7 @@ export function getAddedAndRemovedCollections(
           }) ===
           collectionKeyFn({
             collection_version: { pulp_href: orig.collection_version?.pulp_href || '' },
-            repository: { name: orig.repository?.name || ''},
+            repository: { name: orig.repository?.name || '' },
           })
       )
     ) {

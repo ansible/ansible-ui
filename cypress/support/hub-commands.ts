@@ -2,7 +2,7 @@
 import './commands';
 import './rest-commands';
 import { HubItemsResponse } from '../../frontend/hub/useHubView';
-import { CollectionVersionSearch } from '../../frontend/hub/collections/CollectionVersionSearch';
+import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
 import { escapeForShellCommand } from './utils';
 
 const apiPrefix = Cypress.env('HUB_API_PREFIX') as string;
@@ -94,10 +94,10 @@ Cypress.Commands.add('deleteCollectionsInNamespace', (namespaceName: string) => 
     for (const collection of itemsResponse.data) {
       cy.galaxykit(
         'collection delete',
-        collection.collection_version.namespace,
-        collection.collection_version.name,
-        collection.collection_version.version,
-        collection.repository.name
+        collection.collection_version?.namespace || '',
+        collection.collection_version?.name || '',
+        collection.collection_version?.version || '',
+        collection.repository?.name || ''
       );
     }
   });

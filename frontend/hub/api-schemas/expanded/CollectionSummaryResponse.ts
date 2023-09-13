@@ -2,6 +2,13 @@ import '../generated/CollectionSummaryResponse';
 
 declare module '../generated/CollectionSummaryResponse' {
   interface CollectionSummaryResponse {
+    namespace_metadata?: {
+        pulp_href: string;
+        name: string;
+        company: string;
+        description: string;
+        avatar_url: string;
+      };
     // A JSON field with data about the contents.
     contents?: ContentSummaryType[];
     tags?: {

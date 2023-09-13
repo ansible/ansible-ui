@@ -7,7 +7,7 @@ import { LabelColor, PageDetail, TextCell, useGetPageUrl } from '../../../framew
 import { useCarouselContext } from '../../../framework/PageCarousel/PageCarousel';
 import { PageDetailDiv, PageTableCard, Small } from '../../../framework/PageTable/PageTableCard';
 import { HubRoute } from '../HubRoutes';
-import { CollectionVersionSearch } from '../collections/CollectionVersionSearch';
+import { CollectionVersionSearch } from '../collections/Collection';
 import { Logo } from '../common/Logo';
 
 export const ColumnsDiv = styled.div`
@@ -52,7 +52,7 @@ export function CollectionCard(props: { collection: CollectionVersionSearch }) {
   const getLabels = useCallback(
     (item: CollectionVersionSearch) => {
       const cardLabels: Labels =
-        item.repository.name === CERTIFIED_REPO
+        item.repository?.name === CERTIFIED_REPO
           ? [
               {
                 label: t('Certified'),
@@ -63,7 +63,7 @@ export function CollectionCard(props: { collection: CollectionVersionSearch }) {
             ]
           : [
               {
-                label: item.repository.name,
+                label: item.repository?.name,
                 color: 'blue',
                 variant: 'outline',
               },
@@ -86,11 +86,11 @@ export function CollectionCard(props: { collection: CollectionVersionSearch }) {
       <PageTableCard
         item={collection}
         itemToCardFn={(item: CollectionVersionSearch) => ({
-          id: item.collection_version.name,
+          id: item.collection_version?.name,
           icon: (
             <Logo
               alt={t(
-                `${item.namespace_metadata?.company || item.collection_version.namespace} logo`
+                `${item.namespace_metadata?.company || item.collection_version?.namespace} logo`
               )}
               fallbackToDefault
               image={item.namespace_metadata?.avatar_url ?? null}
@@ -101,30 +101,31 @@ export function CollectionCard(props: { collection: CollectionVersionSearch }) {
           ),
           title: (
             <TextCell
-              text={item.collection_version.name}
+              text={item.collection_version?.name}
               to={getPageUrl(HubRoute.CollectionPage, {
                 query: {
-                  name: item.collection_version.name,
-                  namespace: item.collection_version.namespace,
-                  repository: item.repository.name,
+                  name: item.collection_version?.name,
+                  namespace: item.collection_version?.namespace,
+                  repository: item.repository?.name,
                 },
               })}
+
             />
           ),
           iconAboveTitle: true,
           subtitle: (
             <TextCell
               text={t('Provided by {{provider}}', {
-                provider: item.collection_version.namespace,
+                provider: item.collection_version?.namespace,
               })}
             />
           ),
           cardBody: (
             <CardBody>
-              <TextCell text={`v${item.collection_version.version}`} />
-              {item.collection_version.description && (
+              <TextCell text={`v${item.collection_version?.version}`} />
+              {item.collection_version?.description && (
                 <Truncate
-                  content={item.collection_version.description}
+                  content={item.collection_version?.description}
                   tooltipPosition={'bottom'}
                 />
               )}
@@ -132,10 +133,9 @@ export function CollectionCard(props: { collection: CollectionVersionSearch }) {
                 <PageDetailDiv>
                   <ColumnsDiv>
                     <dd>
-                      {
+                      {item.collection_version?.contents &&
                         item.collection_version.contents.filter((c) => c.content_type === 'module')
-                          .length
-                      }
+                          .length}
                     </dd>
                     <Small>
                       <dt>{t('Modules')}</dt>
@@ -143,10 +143,9 @@ export function CollectionCard(props: { collection: CollectionVersionSearch }) {
                   </ColumnsDiv>
                   <ColumnsDiv>
                     <dd>
-                      {
+                      {item.collection_version?.contents &&
                         item.collection_version.contents.filter((c) => c.content_type === 'role')
-                          .length
-                      }
+                          .length}
                     </dd>
                     <Small>
                       <dt>{t('Roles')}</dt>
@@ -154,18 +153,17 @@ export function CollectionCard(props: { collection: CollectionVersionSearch }) {
                   </ColumnsDiv>
                   <ColumnsDiv>
                     <dd>
-                      {
+                      {item.collection_version?.contents &&
                         item.collection_version.contents.filter(
                           (c) => c.content_type !== 'module' && c.content_type !== 'role'
-                        ).length
-                      }
+                        ).length}
                     </dd>
                     <Small>
                       <dt>{t('Plugins')}</dt>
                     </Small>
                   </ColumnsDiv>
                   <ColumnsDiv>
-                    <dd>{Object.keys(item.collection_version.dependencies).length}</dd>
+                    <dd>{Object.keys(item.collection_version?.dependencies || {}).length}</dd>
                     <Small>
                       <dt>{t('Dependencies')}</dt>
                     </Small>
