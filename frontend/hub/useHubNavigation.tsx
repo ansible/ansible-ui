@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
 import { PageNavigationItem } from '../../framework/PageNavigation/PageNavigationItem';
 import { Login } from '../common/Login';
+import { HubRoute } from './HubRoutes';
 import { Approvals } from './approvals/Approvals';
 import { CollectionDetails } from './collections/CollectionDetails';
 import { Collections } from './collections/Collections';
@@ -21,49 +22,6 @@ import { SignatureKeys } from './signature-keys/SignatureKeys';
 import { TaskDetails } from './tasks/TaskDetails';
 import { Tasks } from './tasks/Tasks';
 import { Token } from './token/Token';
-
-export enum HubRoute {
-  Hub = 'hub',
-
-  Dashboard = 'hub-dashboard',
-
-  // Automation Content
-
-  Namespaces = 'hub-namespaces',
-  CreateNamespace = 'hub-create-namespace',
-  EditNamespace = 'hub-edit-namespace',
-  NamespaceDetails = 'hub-namespace-details',
-
-  Collections = 'hub-collections',
-  UploadCollection = 'hub-create-collection',
-  CollectionDetails = 'hub-collection-details',
-
-  ExecutionEnvironments = 'hub-execution-environments',
-
-  SignatureKeys = 'hub-signature-keys',
-
-  // Administration
-
-  Repositories = 'hub-repositories',
-
-  RemoteRegistries = 'hub-remote-registries',
-
-  Tasks = 'hub-tasks',
-  TaskDetails = 'hub-task-details',
-
-  Approvals = 'hub-approvals',
-
-  Remotes = 'hub-remotes',
-  CreateRemote = 'hub-create-remote',
-  EditRemote = 'hub-edit-remote',
-  RemoteDetails = 'hub-remote-details',
-
-  // Access
-
-  APIToken = 'hub-api-token',
-
-  Login = 'hub-login',
-}
 
 export function useHubNavigation() {
   const { t } = useTranslation();
