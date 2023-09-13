@@ -21,11 +21,11 @@ export const RouteObj = {
 
   // Views/Jobs
   // Jobs: `${awxRoutePrefix}/views/jobs`,
-  JobPage: `${awxRoutePrefix}/views/jobs/:job_type/:id/*`,
+  // JobPage: `${awxRoutePrefix}/views/jobs/:job_type/:id/*`,
   JobOutput: `${awxRoutePrefix}/views/jobs/:job_type/:id/output`,
   JobDetails: `${awxRoutePrefix}/views/jobs/:job_type/:id/details`,
   // Schedules: `${awxRoutePrefix}/views/schedules`,
-  EditSchedule: `${awxRoutePrefix}/views/:resource_type/:resource_id/schedules/:schedule_id/edit`,
+  // EditSchedule: `${awxRoutePrefix}/views/:resource_type/:resource_id/schedules/:schedule_id/edit`,
   ScheduleDetails: `${awxRoutePrefix}/views/:schedule_id/:resource_id/schedules/:schedule_id/details`,
   CreateSchedule: `${awxRoutePrefix}/views/schedules/create`,
 
@@ -62,7 +62,6 @@ export const RouteObj = {
   EditJobTemplate: `${awxRoutePrefix}/resources/job_template/:id/edit`,
   EditWorkflowJobTemplate: `${awxRoutePrefix}/resources/workflow_job_template/:id/edit`,
 
-  Credentials: `${awxRoutePrefix}/resources/credentials`,
   CredentialPage: `${awxRoutePrefix}/resources/credentials/:id/*`,
   CredentialDetails: `${awxRoutePrefix}/resources/credentials/:id/details`,
   CredentialAccess: `${awxRoutePrefix}/resources/credentials/:id/access`,
