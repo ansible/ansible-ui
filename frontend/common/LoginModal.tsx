@@ -123,6 +123,7 @@ function LoginForm(props: LoginFormProps) {
               searchString = 'csrfToken: "';
               break;
             case 'GALAXY':
+            case 'HUB':
               loginPageUrl = hubAPI`/_ui/v1/auth/login/`;
               break;
           }
