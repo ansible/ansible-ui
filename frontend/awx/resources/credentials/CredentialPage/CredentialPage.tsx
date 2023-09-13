@@ -1,8 +1,14 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { DropdownPosition } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
-import { PageActions, PageHeader, PageLayout, useGetPageUrl } from '../../../../../framework';
+import { useParams } from 'react-router-dom';
+import {
+  PageActions,
+  PageHeader,
+  PageLayout,
+  useGetPageUrl,
+  usePageNavigate,
+} from '../../../../../framework';
 import { PageNotImplemented } from '../../../../common/PageNotImplemented';
 import { PageBackTab, RoutedTab, RoutedTabs } from '../../../../common/RoutedTabs';
 import { RouteObj } from '../../../../common/Routes';
@@ -17,7 +23,7 @@ export function CredentialPage() {
   const params = useParams<{ id: string }>();
   const { data: credential } = useGetItem<Credential>('/api/v2/credentials', params.id);
   const getPageUrl = useGetPageUrl();
-  const pageNavigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const actions = useCredentialActions({
     onDeleted: () => pageNavigate(AwxRoute.Credentials),
   });
