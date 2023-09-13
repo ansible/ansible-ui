@@ -11,7 +11,9 @@ export function PlatformDashboard() {
           'Empower, Automate, Connect: Unleash Possibilities with the Ansible Automation Platform.'
         )}
       />
-      <PageDashboard></PageDashboard>
+      <PageDashboard>
+        <></>
+      </PageDashboard>
     </PageLayout>
   );
 }
