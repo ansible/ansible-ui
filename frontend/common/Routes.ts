@@ -1,5 +1,3 @@
-import { useMemo } from 'react';
-
 export type RouteType = `/${string}`;
 
 const awxRoutePrefix: RouteType = process.env.AWX_ROUTE_PREFIX
@@ -30,11 +28,6 @@ export const RouteObj = {
   EditSchedule: `${awxRoutePrefix}/views/:resource_type/:resource_id/schedules/:schedule_id/edit`,
   ScheduleDetails: `${awxRoutePrefix}/views/:schedule_id/:resource_id/schedules/:schedule_id/details`,
   CreateSchedule: `${awxRoutePrefix}/views/schedules/create`,
-
-  ActivityStream: `${awxRoutePrefix}/views/activity_stream`,
-  WorkflowApprovals: `${awxRoutePrefix}/views/workflow_approvals`,
-  WorkflowApprovalPage: `${awxRoutePrefix}/views/workflow_approvals/:id/*`,
-  WorkflowApprovalDetails: `${awxRoutePrefix}/views/workflow_approvals/:id/details`,
 
   // Resources
   Templates: `${awxRoutePrefix}/resources/templates`,
@@ -296,17 +289,3 @@ export const RouteObj = {
   EdaMyDetails: `${edaRoutePrefix}/access/users/me`,
   EdaMyTokens: `${edaRoutePrefix}/access/users/me/tokens`,
 };
-
-export function useRoutesWithoutPrefix(prefix: string) {
-  const routesWithoutPrefix = useMemo(() => {
-    const routes = { ...RouteObj };
-    for (const route in RouteObj) {
-      const routePath = (RouteObj as Record<string, string>)[route];
-      if (routePath.startsWith(prefix)) {
-        (routes as Record<string, string>)[route] = routePath.replace(prefix, '');
-      }
-    }
-    return routes;
-  }, [prefix]);
-  return routesWithoutPrefix;
-}

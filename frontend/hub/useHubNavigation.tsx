@@ -56,7 +56,7 @@ export function useHubNavigation() {
                     element: <EditHubNamespace />,
                   },
                   {
-                    id: HubRoute.NamespaceDetails,
+                    id: HubRoute.NamespacePage,
                     path: ':id/*',
                     element: <NamespaceDetails />,
                   },
@@ -77,7 +77,7 @@ export function useHubNavigation() {
                     element: <UploadCollection />,
                   },
                   {
-                    id: HubRoute.CollectionDetails,
+                    id: HubRoute.CollectionPage,
                     path: ':id/*',
                     element: <CollectionDetails />,
                   },
@@ -143,7 +143,7 @@ export function useHubNavigation() {
                 path: 'tasks',
                 children: [
                   {
-                    id: HubRoute.TaskDetails,
+                    id: HubRoute.TaskPage,
                     path: ':id/*',
                     element: <TaskDetails />,
                   },
@@ -180,7 +180,7 @@ export function useHubNavigation() {
                     element: <EditRemote />,
                   },
                   {
-                    id: HubRoute.RemoteDetails,
+                    id: HubRoute.RemotePage,
                     path: ':id/*',
                     element: <RemoteDetails />,
                   },

@@ -1,6 +1,6 @@
 import { Page } from '@patternfly/react-core';
 import { ReactNode, useMemo } from 'react';
-import { Outlet, RouterProvider, createBrowserRouter, useNavigate } from 'react-router-dom';
+import { Outlet, RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { PageNotFound } from '../../frontend/common/PageNotFound';
 import { PageFramework } from '../PageFramework';
 import { PageLayout } from '../PageLayout';
@@ -31,7 +31,11 @@ export function PageApp(props: {
     () => [
       {
         path: '',
-        element: <PageFrameworkRoute />,
+        element: (
+          <PageFramework>
+            <Outlet />
+          </PageFramework>
+        ),
         children: [
           { path: 'login', element: props.login },
           {
@@ -41,10 +45,11 @@ export function PageApp(props: {
               {
                 path: '',
                 element: (
-                  <PageLayoutRoute
-                    header={header}
-                    sidebar={<PageNavigation navigation={navigation} />}
-                  />
+                  <Page header={header} sidebar={<PageNavigation navigation={navigation} />}>
+                    <PageLayout>
+                      <Outlet />
+                    </PageLayout>
+                  </Page>
                 ),
                 children: navigation,
               },
@@ -61,25 +66,5 @@ export function PageApp(props: {
     <PageNavigationRoutesProvider navigation={navigation}>
       <RouterProvider router={router} />
     </PageNavigationRoutesProvider>
-  );
-}
-
-function PageFrameworkRoute() {
-  const navigate = useNavigate();
-  return (
-    <PageFramework navigate={navigate}>
-      <Outlet />
-    </PageFramework>
-  );
-}
-
-function PageLayoutRoute(props: { header?: ReactNode; sidebar?: ReactNode }) {
-  const { header, sidebar } = props;
-  return (
-    <Page header={header} sidebar={sidebar}>
-      <PageLayout>
-        <Outlet />
-      </PageLayout>
-    </Page>
   );
 }

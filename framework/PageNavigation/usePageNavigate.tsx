@@ -5,5 +5,10 @@ import { useGetPageUrl } from './useGetPageUrl';
 export function usePageNavigate() {
   const navigate = useNavigate();
   const getPageUrl = useGetPageUrl();
-  return (pageId: string) => navigate(getPageUrl(pageId));
+  return (pageId: string, params?: Record<string, string>) => {
+    const url = getPageUrl(pageId, params);
+    if (url) {
+      navigate(url);
+    }
+  };
 }

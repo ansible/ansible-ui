@@ -62,7 +62,7 @@ export function useEdaNavigation() {
                 path: 'rule-audits',
                 children: [
                   {
-                    id: EdaRoute.RuleAuditDetails,
+                    id: EdaRoute.RuleAuditPage,
                     path: ':id/*',
                     element: <RuleAuditDetails />,
                   },
@@ -83,7 +83,7 @@ export function useEdaNavigation() {
                     element: <CreateRulebookActivation />,
                   },
                   {
-                    id: EdaRoute.RulebookActivationDetails,
+                    id: EdaRoute.RulebookActivationPage,
                     path: 'details/:id',
                     element: <RulebookActivationDetails initialTabIndex={0} />,
                   },
@@ -93,7 +93,7 @@ export function useEdaNavigation() {
                     element: <RulebookActivationDetails initialTabIndex={1} />,
                   },
                   {
-                    id: EdaRoute.RulebookActivationInstancesDetails,
+                    id: EdaRoute.RulebookActivationInstancesPage,
                     path: 'activations-instances/details/:id',
                     element: <ActivationInstanceDetails />,
                   },
@@ -105,7 +105,7 @@ export function useEdaNavigation() {
                 path: 'rulebooks',
                 children: [
                   {
-                    id: EdaRoute.RulebookDetails,
+                    id: EdaRoute.RulebookPage,
                     path: ':id/*',
                     element: <RulebookDetails />,
                   },
@@ -131,7 +131,7 @@ export function useEdaNavigation() {
                     element: <EditRule />,
                   },
                   {
-                    id: EdaRoute.RuleDetails,
+                    id: EdaRoute.RulePage,
                     path: 'details/:id',
                     element: <RuleDetails />,
                   },
@@ -163,7 +163,7 @@ export function useEdaNavigation() {
                     element: <EditProject />,
                   },
                   {
-                    id: EdaRoute.ProjectDetails,
+                    id: EdaRoute.ProjectPage,
                     path: 'details/:id',
                     element: <ProjectDetails />,
                   },
@@ -189,7 +189,7 @@ export function useEdaNavigation() {
                     element: <EditDecisionEnvironment />,
                   },
                   {
-                    id: EdaRoute.DecisionEnvironmentDetails,
+                    id: EdaRoute.DecisionEnvironmentPage,
                     path: 'details/:id',
                     element: <DecisionEnvironmentDetails />,
                   },
@@ -215,7 +215,7 @@ export function useEdaNavigation() {
                     element: <EditCredential />,
                   },
                   {
-                    id: EdaRoute.CredentialDetails,
+                    id: EdaRoute.CredentialPage,
                     path: 'details/:id',
                     element: <CredentialDetails />,
                   },
@@ -247,7 +247,7 @@ export function useEdaNavigation() {
                     element: <EditGroup />,
                   },
                   {
-                    id: EdaRoute.GroupDetails,
+                    id: EdaRoute.GroupPage,
                     path: 'details/:id',
                     element: <GroupDetails />,
                   },
@@ -271,7 +271,7 @@ export function useEdaNavigation() {
                         element: <EdaMyDetails initialTabIndex={1} />,
                       },
                       {
-                        id: EdaRoute.EdaMyDetails,
+                        id: EdaRoute.EdaMyPage,
                         path: '',
                         element: <EdaMyDetails initialTabIndex={0} />,
                       },
@@ -296,7 +296,7 @@ export function useEdaNavigation() {
                         element: <EdaUserDetails initialTabIndex={1} />,
                       },
                       {
-                        id: EdaRoute.UserDetails,
+                        id: EdaRoute.UserPage,
                         path: '',
                         element: <EdaUserDetails initialTabIndex={0} />,
                       },
@@ -334,7 +334,7 @@ export function useEdaNavigation() {
                     element: <EditRole />,
                   },
                   {
-                    id: EdaRoute.RoleDetails,
+                    id: EdaRoute.RolePage,
                     path: 'details/:id',
                     element: <RoleDetails />,
                   },

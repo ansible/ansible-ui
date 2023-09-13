@@ -6,7 +6,7 @@ export enum AwxRoute {
   // Views
 
   Jobs = 'awx-jobs',
-  JobDetails = 'awx-job-details',
+  JobPage = 'awx-job-page',
 
   Schedules = 'awx-schedules',
   CreateSchedule = 'awx-create-schedule',
@@ -15,56 +15,56 @@ export enum AwxRoute {
   ActivityStream = 'awx-activity-stream',
 
   WorkflowApprovals = 'awx-workflow-approvals',
-  WorkflowApprovalDetails = 'awx-workflow-approval-details',
+  WorkflowApprovalPage = 'awx-workflow-approval-page',
 
   // Resources
 
   Templates = 'awx-templates',
   CreateTemplate = 'awx-create-template',
   EditTemplate = 'awx-edit-template',
-  TemplateDetails = 'awx-template-details',
+  TemplatePage = 'awx-template-page',
   TemplateSchedule = 'awx-template-schedule',
 
   WorkflowJobTemplateSchedule = 'awx-workflow-job-template-schedule',
-  WorkflowJobTemplateDetails = 'awx-workflow-job-template-details',
+  WorkflowJobTemplatePage = 'awx-workflow-job-template-page',
 
   Credentials = 'awx-credentials',
   CreateCredential = 'awx-create-credential',
   EditCredential = 'awx-edit-credential',
-  CredentialDetails = 'awx-credential-details',
+  CredentialPage = 'awx-credential-page',
 
   Projects = 'awx-projects',
   CreateProject = 'awx-create-project',
   EditProject = 'awx-edit-project',
-  ProjectDetails = 'awx-project-details',
+  ProjectPage = 'awx-project-page',
   ProjectSchedules = 'awx-project-schedules',
 
   Inventories = 'awx-inventories',
   CreateInventory = 'awx-create-inventory',
   EditInventory = 'awx-edit-inventory',
-  InventoryDetails = 'awx-inventory-details',
+  InventoryPage = 'awx-inventory-page',
   InventorySchedules = 'awx-inventory-schedules',
 
   Hosts = 'awx-hosts',
-  HostDetails = 'awx-host-details',
+  HostPage = 'awx-host-page',
 
   // Access
 
   Organizations = 'awx-organizations',
   CreateOrganization = 'awx-create-organization',
   EditOrganization = 'awx-edit-organization',
-  OrganizationDetails = 'awx-organization-details',
+  OrganizationPage = 'awx-organization-page',
 
   Teams = 'awx-teams',
   CreateTeam = 'awx-create-team',
   EditTeam = 'awx-edit-team',
-  TeamDetails = 'awx-team-details',
+  TeamPage = 'awx-team-page',
   AddRolesToTeam = 'awx-add-roles-to-team',
 
   Users = 'awx-users',
   CreateUser = 'awx-create-user',
   EditUser = 'awx-edit-user',
-  UserDetails = 'awx-user-details',
+  UserPage = 'awx-user-page',
   AddRolesToUser = 'awx-add-roles-to-user',
 
   // Administration
@@ -73,20 +73,20 @@ export enum AwxRoute {
   CredentialType = 'awx-credential-type',
 
   Notifications = 'awx-notifications',
-  NotificationDetails = 'awx-notification-details',
+  NotificationPage = 'awx-notification-page',
 
   ManagementJobs = 'awx-management-jobs',
-  ManagementJobDetails = 'awx-management-job-details',
+  ManagementJobPage = 'awx-management-job-page',
   ManagementJobSchedules = 'awx-management-job-schedules',
 
   InstanceGroups = 'awx-instance-groups',
 
   Instances = 'awx-instances',
   EditInstance = 'awx-edit-instance',
-  InstanceDetails = 'awx-instance-details',
+  InstancePage = 'awx-instance-page',
 
   Applications = 'awx-applications',
-  ApplicationDetails = 'awx-application-details',
+  ApplicationPage = 'awx-application-page',
 
   ExecutionEnvironments = 'awx-execution-environments',
 

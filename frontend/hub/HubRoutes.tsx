@@ -7,11 +7,11 @@ export enum HubRoute {
   Namespaces = 'hub-namespaces',
   CreateNamespace = 'hub-create-namespace',
   EditNamespace = 'hub-edit-namespace',
-  NamespaceDetails = 'hub-namespace-details',
+  NamespacePage = 'hub-namespace-page',
 
   Collections = 'hub-collections',
   UploadCollection = 'hub-create-collection',
-  CollectionDetails = 'hub-collection-details',
+  CollectionPage = 'hub-collection-page',
 
   ExecutionEnvironments = 'hub-execution-environments',
 
@@ -23,14 +23,14 @@ export enum HubRoute {
   RemoteRegistries = 'hub-remote-registries',
 
   Tasks = 'hub-tasks',
-  TaskDetails = 'hub-task-details',
+  TaskPage = 'hub-task-page',
 
   Approvals = 'hub-approvals',
 
   Remotes = 'hub-remotes',
   CreateRemote = 'hub-create-remote',
   EditRemote = 'hub-edit-remote',
-  RemoteDetails = 'hub-remote-details',
+  RemotePage = 'hub-remote-page',
 
   // Access
   APIToken = 'hub-api-token',

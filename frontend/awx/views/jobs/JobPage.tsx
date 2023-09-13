@@ -24,10 +24,10 @@ export function JobPage() {
         title={job?.name}
         breadcrumbs={[{ label: t('Jobs'), to: getPageUrl(AwxRoute.Jobs) }, { label: job?.name }]}
       />
-      <RoutedTabs isLoading={!job} baseUrl={RouteObj.JobPage}>
+      <RoutedTabs isLoading={!job} baseUrl={getPageUrl(AwxRoute.JobPage)!}>
         <PageBackTab
           label={t('Back to Jobs')}
-          url={getPageUrl(AwxRoute.Jobs)}
+          url={getPageUrl(AwxRoute.Jobs)!}
           persistentFilterKey="jobs"
         />
         <RoutedTab label={t('Output')} url={RouteObj.JobOutput}>

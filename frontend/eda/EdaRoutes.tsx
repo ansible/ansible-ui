@@ -4,54 +4,54 @@ export enum EdaRoute {
   Dashboard = 'eda-dashboard',
 
   RuleAudits = 'eda-rule-audits',
-  RuleAuditDetails = 'eda-rule-audit-details',
+  RuleAuditPage = 'eda-rule-audit-page',
 
   RulebookActivations = 'eda-rulebook-activations',
   CreateRulebookActivation = 'eda-create-rulebook-activation',
-  RulebookActivationDetails = 'eda-rulebook-activation-details',
+  RulebookActivationPage = 'eda-rulebook-activation-page',
   RulebookActivationHistory = 'eda-rulebook-activation-history',
-  RulebookActivationInstancesDetails = 'eda-rulebook-activation-instances-details',
+  RulebookActivationInstancesPage = 'eda-rulebook-activation-instances-page',
 
   Rulebooks = 'eda-rulebooks',
-  RulebookDetails = 'eda-rulebook-details',
+  RulebookPage = 'eda-rulebook-page',
 
   Projects = 'eda-projects',
   CreateProject = 'eda-create-project',
   EditProject = 'eda-edit-project',
-  ProjectDetails = 'eda-project-details',
+  ProjectPage = 'eda-project-page',
 
   DecisionEnvironments = 'eda-decision-environments',
   CreateDecisionEnvironment = 'eda-create-decision-environment',
   EditDecisionEnvironment = 'eda-edit-decision-environment',
-  DecisionEnvironmentDetails = 'eda-decision-environment-details',
+  DecisionEnvironmentPage = 'eda-decision-environment-page',
 
   Credentials = 'eda-credentials',
   CreateCredential = 'eda-create-credential',
   EditCredential = 'eda-edit-credential',
-  CredentialDetails = 'eda-credential-details',
+  CredentialPage = 'eda-credential-page',
 
   Groups = 'eda-groups',
   CreateGroup = 'eda-create-group',
   EditGroup = 'eda-edit-group',
-  GroupDetails = 'eda-group-details',
+  GroupPage = 'eda-group-page',
 
   Users = 'eda-users',
   CreateUser = 'eda-create-user',
   EditUser = 'eda-edit-user',
-  UserDetails = 'eda-user-details',
+  UserPage = 'eda-user-page',
   UserTokens = 'eda-user-tokens',
 
   Rules = 'eda-rules',
   CreateRule = 'eda-create-rule',
   EditRule = 'eda-edit-rule',
-  RuleDetails = 'eda-rule-details',
+  RulePage = 'eda-rule-page',
 
   Roles = 'eda-roles',
   CreateRole = 'eda-create-role',
   EditRole = 'eda-edit-role',
-  RoleDetails = 'eda-role-details',
+  RolePage = 'eda-role-page',
 
-  EdaMyDetails = 'eda-my-details',
+  EdaMyPage = 'eda-my-page',
   EdaMyTokens = 'eda-my-tokens',
 
   CreateControllerToken = 'eda-create-controller-token',

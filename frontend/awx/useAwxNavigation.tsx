@@ -95,7 +95,7 @@ export function useAwxNavigation() {
                 path: 'jobs',
                 children: [
                   {
-                    id: AwxRoute.JobDetails,
+                    id: AwxRoute.JobPage,
                     path: ':job_type/:id/*',
                     element: <JobPage />,
                   },
@@ -138,7 +138,7 @@ export function useAwxNavigation() {
                 path: 'workflow-approvals',
                 children: [
                   {
-                    id: AwxRoute.WorkflowApprovalDetails,
+                    id: AwxRoute.WorkflowApprovalPage,
                     path: ':id/*',
                     element: <PageNotImplemented />,
                   },
@@ -178,7 +178,7 @@ export function useAwxNavigation() {
                         element: <SchedulePage />,
                       },
                       {
-                        id: AwxRoute.TemplateDetails,
+                        id: AwxRoute.TemplatePage,
                         path: ':id/*',
                         element: <TemplatePage />,
                       },
@@ -193,7 +193,7 @@ export function useAwxNavigation() {
                         element: <SchedulePage />,
                       },
                       {
-                        id: AwxRoute.WorkflowJobTemplateDetails,
+                        id: AwxRoute.WorkflowJobTemplatePage,
                         path: ':id/*',
                         element: <WorkflowJobTemplatePage />,
                       },
@@ -221,7 +221,7 @@ export function useAwxNavigation() {
                     element: <EditCredential />,
                   },
                   {
-                    id: AwxRoute.CredentialDetails,
+                    id: AwxRoute.CredentialPage,
                     path: ':id/*',
                     element: <CredentialPage />,
                   },
@@ -252,7 +252,7 @@ export function useAwxNavigation() {
                     element: <SchedulePage />,
                   },
                   {
-                    id: AwxRoute.ProjectDetails,
+                    id: AwxRoute.ProjectPage,
                     path: ':id/*',
                     element: <ProjectPage />,
                   },
@@ -283,7 +283,7 @@ export function useAwxNavigation() {
                     element: <SchedulePage />,
                   },
                   {
-                    id: AwxRoute.InventoryDetails,
+                    id: AwxRoute.InventoryPage,
                     path: ':inventory_type/:id/*',
                     element: <InventoryPage />,
                   },
@@ -299,7 +299,7 @@ export function useAwxNavigation() {
                 path: 'hosts',
                 children: [
                   {
-                    id: AwxRoute.HostDetails,
+                    id: AwxRoute.HostPage,
                     path: ':id/*',
                     element: <HostPage />,
                   },
@@ -331,7 +331,7 @@ export function useAwxNavigation() {
                     element: <EditOrganization />,
                   },
                   {
-                    id: AwxRoute.OrganizationDetails,
+                    id: AwxRoute.OrganizationPage,
                     path: ':id/*',
                     element: <OrganizationPage />,
                   },
@@ -362,7 +362,7 @@ export function useAwxNavigation() {
                     element: <AddRolesToTeam />,
                   },
                   {
-                    id: AwxRoute.TeamDetails,
+                    id: AwxRoute.TeamPage,
                     path: ':id/*',
                     element: <TeamPage />,
                   },
@@ -393,7 +393,7 @@ export function useAwxNavigation() {
                     element: <AddRolesToUser />,
                   },
                   {
-                    id: AwxRoute.UserDetails,
+                    id: AwxRoute.UserPage,
                     path: ':id/*',
                     element: <UserPage />,
                   },
@@ -431,7 +431,7 @@ export function useAwxNavigation() {
                 path: 'notifications',
                 children: [
                   {
-                    id: AwxRoute.NotificationDetails,
+                    id: AwxRoute.NotificationPage,
                     path: ':id/*',
                     element: <NotificationPage />,
                   },
@@ -452,7 +452,7 @@ export function useAwxNavigation() {
                     element: <SchedulePage />,
                   },
                   {
-                    id: AwxRoute.ManagementJobDetails,
+                    id: AwxRoute.ManagementJobPage,
                     path: ':id/*',
                     element: <ManagementJobPage />,
                   },
@@ -479,7 +479,7 @@ export function useAwxNavigation() {
                     element: <EditInstance />,
                   },
                   {
-                    id: AwxRoute.InstanceDetails,
+                    id: AwxRoute.InstancePage,
                     path: ':id/*',
                     element: <InstanceDetails />,
                   },
@@ -495,7 +495,7 @@ export function useAwxNavigation() {
                 path: 'applications',
                 children: [
                   {
-                    id: AwxRoute.ApplicationDetails,
+                    id: AwxRoute.ApplicationPage,
                     path: ':id/*',
                     element: <ApplicationPage />,
                   },
