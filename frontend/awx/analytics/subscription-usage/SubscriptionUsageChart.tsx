@@ -103,6 +103,7 @@ export function SubscriptionUsageChart(props: { period: IFilterState }) {
       variant="lineChart"
       allowZero
       onlyIntegerTicks
+      padding={{ right: 15 }}
     />
   );
 }
