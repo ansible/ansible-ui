@@ -15,15 +15,15 @@ describe('EDA Login / Logoff', () => {
         expect(result?.response?.statusCode).to.eql(204);
       });
       if (edaUser) {
-        cy.typeInputByLabel(/^Username$/, edaUser.username);
-        cy.typeInputByLabel(/^Password$/, Cypress.env('EDA_PASSWORD') as string);
+        cy.get('[data-cy="username"]').type(edaUser.username);
+        cy.get('[data-cy="password"]').type(Cypress.env('EDA_PASSWORD') as string);
         cy.clickModalButton('Log in');
         cy.get('.pf-c-dropdown__toggle').eq(1).should('contain', edaUser.username);
       }
     });
   });
 
-  it.skip('can log out and login as a different user', () => {
+  it('can log out and login as a different user', () => {
     // TODO: needs further work when Users page is functional
     const userDetails = {
       Username: `E2EUser ${randomString(4)}`,
@@ -35,6 +35,7 @@ describe('EDA Login / Logoff', () => {
     cy.navigateTo(/^Users$/);
     cy.contains('h1', 'Users');
     cy.clickButton(/^Create user$/);
+    //the following code must be refactored to use data-cy when this test is unskipped
     cy.typeInputByLabel(/^Username$/, userDetails.Username);
     cy.typeInputByLabel(/^First name$/, userDetails.FirstName);
     cy.typeInputByLabel(/^Last name$/, userDetails.LastName);
