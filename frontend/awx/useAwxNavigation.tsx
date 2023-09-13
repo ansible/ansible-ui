@@ -265,49 +265,49 @@ export function useAwxNavigation() {
             path: 'resources',
             children: [
               {
+                path: 'job_template',
+                children: [
+                  {
+                    id: AwxRoute.CreateTemplate,
+                    path: 'create',
+                    element: <CreateJobTemplate />,
+                  },
+                  {
+                    id: AwxRoute.EditTemplate,
+                    path: ':id/edit',
+                    element: <EditJobTemplate />,
+                  },
+                  {
+                    id: AwxRoute.TemplateSchedule,
+                    path: ':id/schedules/:schedule_id/*',
+                    element: <SchedulePage />,
+                  },
+                  {
+                    id: AwxRoute.TemplateDetails,
+                    path: ':id/*',
+                    element: <TemplatePage />,
+                  },
+                ],
+              },
+              {
+                path: 'workflow_job_template',
+                children: [
+                  {
+                    id: AwxRoute.WorkflowJobTemplateSchedule,
+                    path: ':id/schedules/:schedule_id/*',
+                    element: <SchedulePage />,
+                  },
+                  {
+                    id: AwxRoute.WorkflowJobTemplateDetails,
+                    path: ':id/*',
+                    element: <WorkflowJobTemplatePage />,
+                  },
+                ],
+              },
+              {
                 label: 'Templates',
                 path: 'templates',
                 children: [
-                  {
-                    path: 'jobs',
-                    children: [
-                      {
-                        id: AwxRoute.CreateTemplate,
-                        path: 'create',
-                        element: <CreateJobTemplate />,
-                      },
-                      {
-                        id: AwxRoute.EditTemplate,
-                        path: ':id/edit',
-                        element: <EditJobTemplate />,
-                      },
-                      {
-                        id: AwxRoute.TemplateSchedule,
-                        path: ':id/schedules/:schedule_id/*',
-                        element: <SchedulePage />,
-                      },
-                      {
-                        id: AwxRoute.TemplateDetails,
-                        path: ':id/*',
-                        element: <TemplatePage />,
-                      },
-                    ],
-                  },
-                  {
-                    path: 'workflows',
-                    children: [
-                      {
-                        id: AwxRoute.WorkflowJobTemplateSchedule,
-                        path: ':id/schedules/:schedule_id/*',
-                        element: <SchedulePage />,
-                      },
-                      {
-                        id: AwxRoute.WorkflowJobTemplateDetails,
-                        path: ':id/*',
-                        element: <WorkflowJobTemplatePage />,
-                      },
-                    ],
-                  },
                   {
                     id: AwxRoute.Templates,
                     path: '',
