@@ -32,7 +32,7 @@ export function EditInstance() {
       (cache as unknown as { clear: () => void }).clear?.();
       navigate(-1);
     } catch (err) {
-      setError(await getAwxError(err));
+      setError(getAwxError(err));
     }
   };
   const onCancel = () => navigate(-1);
