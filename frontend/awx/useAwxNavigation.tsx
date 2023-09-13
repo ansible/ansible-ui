@@ -663,7 +663,7 @@ export function useAwxNavigation() {
       },
       {
         id: AwxRoute.Awx,
-        path: '/',
+        path: '',
         element: (
           <Navigate
             to={

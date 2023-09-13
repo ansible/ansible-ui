@@ -419,7 +419,7 @@ export function useEdaNavigation() {
       },
       {
         id: EdaRoute.Eda,
-        path: '/',
+        path: '',
         element: (
           <Navigate
             to={

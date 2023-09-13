@@ -259,7 +259,7 @@ export function useHubNavigation() {
       },
       {
         id: HubRoute.Hub,
-        path: '/',
+        path: '',
         element: (
           <Navigate
             to={
