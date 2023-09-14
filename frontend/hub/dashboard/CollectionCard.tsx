@@ -63,7 +63,7 @@ export function CollectionCard(props: { collection: CollectionVersionSearch }) {
             ]
           : [
               {
-                label: item.repository?.name,
+                label: item.repository?.name || '',
                 color: 'blue',
                 variant: 'outline',
               },
@@ -86,7 +86,7 @@ export function CollectionCard(props: { collection: CollectionVersionSearch }) {
       <PageTableCard
         item={collection}
         itemToCardFn={(item: CollectionVersionSearch) => ({
-          id: item.collection_version?.name,
+          id: item.collection_version?.name || '',
           icon: (
             <Logo
               alt={t(

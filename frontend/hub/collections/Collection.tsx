@@ -3,10 +3,6 @@ import { HubNamespace } from '../namespaces/HubNamespace';
 import { CollectionVersionSearchListResponse as CollectionVersionSearch } from '../api-schemas/generated/CollectionVersionSearchListResponse';
 export { CollectionVersionSearch };
 
-debugger;
-const a : CollectionVersionSearch = {} as any;
-const b = 5;
-
 export interface Collection {
   id: number;
   name: string;
