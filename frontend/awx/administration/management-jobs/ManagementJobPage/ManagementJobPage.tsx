@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageHeader, PageLayout } from '../../../../../framework';
+import { PageHeader, PageLayout, useGetPageUrl } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { PageNotImplemented } from '../../../../common/PageNotImplemented';
 import { PageBackTab, RoutedTab, RoutedTabs } from '../../../../common/RoutedTabs';
 import { RouteObj } from '../../../../common/Routes';
 import { useGetItem } from '../../../../common/crud/useGet';
+import { AwxRoute } from '../../../AwxRoutes';
 import { AwxError } from '../../../common/AwxError';
 import { SystemJobTemplate } from '../../../interfaces/SystemJobTemplate';
 
@@ -19,6 +20,8 @@ export function ManagementJobPage() {
     refresh,
   } = useGetItem<SystemJobTemplate>('/api/v2/system_job_templates', params.id);
 
+  const getPageUrl = useGetPageUrl();
+
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!system_job_template) return <LoadingPage breadcrumbs tabs />;
 
@@ -27,7 +30,7 @@ export function ManagementJobPage() {
       <PageHeader
         title={system_job_template?.name}
         breadcrumbs={[
-          { label: t('Management Jobs'), to: RouteObj.ManagementJobs },
+          { label: t('Management Jobs'), to: getPageUrl(AwxRoute.ManagementJobs) },
           { label: system_job_template?.name },
         ]}
         headerActions={[]}

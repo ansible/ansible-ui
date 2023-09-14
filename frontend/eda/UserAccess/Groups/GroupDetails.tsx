@@ -11,9 +11,11 @@ import {
   PageDetailsFromColumns,
   PageHeader,
   PageLayout,
+  useGetPageUrl,
 } from '../../../../framework';
 import { RouteObj } from '../../../common/Routes';
 import { useGet } from '../../../common/crud/useGet';
+import { EdaRoute } from '../../EdaRoutes';
 import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
 import { EdaGroup } from '../../interfaces/EdaGroup';
 import { useDeleteGroups } from './hooks/useDeleteGroup';
@@ -55,11 +57,17 @@ export function GroupDetails() {
     ],
     [deleteGroups, navigate, t]
   );
+
+  const getPageUrl = useGetPageUrl();
+
   return (
     <PageLayout>
       <PageHeader
         title={group?.name}
-        breadcrumbs={[{ label: t('Groups'), to: RouteObj.EdaGroups }, { label: group?.name }]}
+        breadcrumbs={[
+          { label: t('Groups'), to: getPageUrl(EdaRoute.Groups) },
+          { label: group?.name },
+        ]}
         headerActions={
           <PageActions<EdaGroup>
             actions={itemActions}

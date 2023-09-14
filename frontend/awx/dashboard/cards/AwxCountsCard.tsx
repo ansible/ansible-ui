@@ -1,19 +1,22 @@
 import { useTranslation } from 'react-i18next';
+import { useGetPageUrl } from '../../../../framework';
 import { PageDashboardCountBar } from '../../../../framework/PageDashboard/PageDashboardCountBar';
 import { usePageChartColors } from '../../../../framework/PageDashboard/usePageChartColors';
 import { RouteObj } from '../../../common/Routes';
+import { AwxRoute } from '../../AwxRoutes';
 import { IAwxDashboardData } from '../AwxDashboard';
 
 export function AwxCountsCard(props: { data: IAwxDashboardData }) {
   const { t } = useTranslation();
   const { data } = props;
   const { successfulColor, failedColor } = usePageChartColors();
+  const getPageUrl = useGetPageUrl();
   return (
     <PageDashboardCountBar
       counts={[
         {
           title: t('Hosts'),
-          to: RouteObj.Hosts,
+          to: getPageUrl(AwxRoute.Hosts),
           counts:
             data?.hosts.total ?? 0
               ? [
@@ -32,7 +35,7 @@ export function AwxCountsCard(props: { data: IAwxDashboardData }) {
         },
         {
           title: t('Projects'),
-          to: RouteObj.Projects,
+          to: getPageUrl(AwxRoute.Projects),
           counts:
             data?.projects.total ?? 0
               ? [
@@ -53,7 +56,7 @@ export function AwxCountsCard(props: { data: IAwxDashboardData }) {
         },
         {
           title: t('Inventories'),
-          to: RouteObj.Inventories,
+          to: getPageUrl(AwxRoute.Inventories),
           counts:
             data?.inventories.total ?? 0
               ? [

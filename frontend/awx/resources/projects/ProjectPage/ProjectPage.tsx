@@ -2,12 +2,13 @@
 import { DropdownPosition } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { PageActions, PageHeader, PageLayout } from '../../../../../framework';
+import { PageActions, PageHeader, PageLayout, useGetPageUrl } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { PageNotImplemented } from '../../../../common/PageNotImplemented';
 import { PageBackTab, RoutedTab, RoutedTabs } from '../../../../common/RoutedTabs';
 import { RouteObj } from '../../../../common/Routes';
 import { useGet } from '../../../../common/crud/useGet';
+import { AwxRoute } from '../../../AwxRoutes';
 import { AwxError } from '../../../common/AwxError';
 import { Project } from '../../../interfaces/Project';
 import { Schedules } from '../../../views/schedules/Schedules';
@@ -21,6 +22,8 @@ export function ProjectPage() {
   const navigate = useNavigate();
   const itemActions = useProjectActions(() => navigate(RouteObj.Projects));
 
+  const getPageUrl = useGetPageUrl();
+
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!project) return <LoadingPage breadcrumbs tabs />;
 
@@ -28,7 +31,10 @@ export function ProjectPage() {
     <PageLayout>
       <PageHeader
         title={project?.name}
-        breadcrumbs={[{ label: t('Projects'), to: RouteObj.Projects }, { label: project?.name }]}
+        breadcrumbs={[
+          { label: t('Projects'), to: getPageUrl(AwxRoute.Projects) },
+          { label: project?.name },
+        ]}
         headerActions={
           <PageActions<Project>
             actions={itemActions}

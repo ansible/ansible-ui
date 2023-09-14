@@ -103,7 +103,7 @@ export function useAccessColumns(
         },
       },
     ],
-    [deleteRole, t]
+    [deleteRole, getPageUrl, t]
   );
   return tableColumns;
 }

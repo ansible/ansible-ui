@@ -7,11 +7,13 @@ import {
   PageFormTextInput,
   PageHeader,
   PageLayout,
+  useGetPageUrl,
 } from '../../../framework';
 import { RouteObj } from '../../common/Routes';
 import { useGet } from '../../common/crud/useGet';
 import { usePatchRequest } from '../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../common/crud/usePostRequest';
+import { EdaRoute } from '../EdaRoutes';
 import { API_PREFIX } from '../constants';
 import { EdaRule } from '../interfaces/EdaRule';
 
@@ -39,13 +41,17 @@ export function EditRule() {
     }
   };
   const onCancel = () => navigate(-1);
+  const getPageUrl = useGetPageUrl();
 
   if (Number.isInteger(id)) {
     if (!rule) {
       return (
         <PageLayout>
           <PageHeader
-            breadcrumbs={[{ label: t('Rules'), to: RouteObj.EdaRules }, { label: t('Edit Rule') }]}
+            breadcrumbs={[
+              { label: t('Rules'), to: getPageUrl(EdaRoute.Rules) },
+              { label: t('Edit Rule') },
+            ]}
           />
         </PageLayout>
       );
@@ -54,7 +60,10 @@ export function EditRule() {
         <PageLayout>
           <PageHeader
             title={t('Edit Rule')}
-            breadcrumbs={[{ label: t('Rules'), to: RouteObj.EdaRules }, { label: t('Edit Rule') }]}
+            breadcrumbs={[
+              { label: t('Rules'), to: getPageUrl(EdaRoute.Rules) },
+              { label: t('Edit Rule') },
+            ]}
           />
           <PageForm
             submitText={t('Save rule')}
@@ -73,7 +82,10 @@ export function EditRule() {
       <PageLayout>
         <PageHeader
           title={t('Create Rule')}
-          breadcrumbs={[{ label: t('Rules'), to: RouteObj.EdaRules }, { label: t('Create Rule') }]}
+          breadcrumbs={[
+            { label: t('Rules'), to: getPageUrl(EdaRoute.Rules) },
+            { label: t('Create Rule') },
+          ]}
         />
         <PageForm
           submitText={t('Create rule')}
