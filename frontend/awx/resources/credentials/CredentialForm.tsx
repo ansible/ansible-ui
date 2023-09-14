@@ -1,6 +1,12 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { PageFormSelect, PageHeader, PageLayout, compareStrings } from '../../../../framework';
+import {
+  PageFormSelect,
+  PageHeader,
+  PageLayout,
+  compareStrings,
+  useGetPageUrl,
+} from '../../../../framework';
 import { PageFormTextArea } from '../../../../framework/PageForm/Inputs/PageFormTextArea';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { PageForm, PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
@@ -10,6 +16,7 @@ import { requestPatch } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { useActiveUser } from '../../../common/useActiveUser';
+import { AwxRoute } from '../../AwxRoutes';
 import { PageFormOrganizationSelect } from '../../access/organizations/components/PageFormOrganizationSelect';
 import { getOrganizationByName } from '../../access/organizations/utils/getOrganizationByName';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
@@ -26,6 +33,7 @@ export function CreateCredential() {
   const navigate = useNavigate();
   const activeUser = useActiveUser();
   const postRequest = usePostRequest<Credential>();
+  const getPageUrl = useGetPageUrl();
   const onSubmit: PageFormSubmitHandler<CredentialForm> = async (credential, setError) => {
     try {
       if (credential.summary_fields.organization?.name) {
@@ -52,7 +60,7 @@ export function CreateCredential() {
       <PageHeader
         title={t('Create Credential')}
         breadcrumbs={[
-          { label: t('Credentials'), to: RouteObj.Credentials },
+          { label: t('Credentials'), to: getPageUrl(AwxRoute.Credentials) },
           { label: t('Create Credential') },
         ]}
       />
@@ -74,6 +82,7 @@ export function EditCredential() {
   const id = Number(params.id);
   const { data: credential } = useGet<Credential>(`/api/v2/credentials/${id.toString()}/`);
   const activeUser = useActiveUser();
+  const getPageUrl = useGetPageUrl();
 
   const onSubmit: PageFormSubmitHandler<CredentialForm> = async (editedCredential, setError) => {
     try {
@@ -101,7 +110,7 @@ export function EditCredential() {
       <PageLayout>
         <PageHeader
           breadcrumbs={[
-            { label: t('Credentials'), to: RouteObj.Credentials },
+            { label: t('Credentials'), to: getPageUrl(AwxRoute.Credentials) },
             { label: t('Edit Credential') },
           ]}
         />
@@ -113,7 +122,7 @@ export function EditCredential() {
       <PageHeader
         title={t('Edit Credential')}
         breadcrumbs={[
-          { label: t('Credentials'), to: RouteObj.Credentials },
+          { label: t('Credentials'), to: getPageUrl(AwxRoute.Credentials) },
           { label: t('Edit Credential') },
         ]}
       />

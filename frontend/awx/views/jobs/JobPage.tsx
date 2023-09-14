@@ -2,9 +2,11 @@
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { PageHeader, PageLayout } from '../../../../framework';
+import { useGetPageUrl } from '../../../../framework/PageNavigation/useGetPageUrl';
 import { PageBackTab, RoutedTab, RoutedTabs } from '../../../common/RoutedTabs';
 import { RouteObj } from '../../../common/Routes';
 import { useGet } from '../../../common/crud/useGet';
+import { AwxRoute } from '../../AwxRoutes';
 import { Job } from '../../interfaces/Job';
 import { JobDetails } from './JobDetails';
 import { JobOutput } from './JobOutput/JobOutput';
@@ -12,6 +14,7 @@ import { WorkflowOutput } from './WorkflowOutput';
 
 export function JobPage() {
   const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
   const params = useParams<{ id: string; job_type: string }>();
   const { job, refreshJob } = useGetJob(params.id, params.job_type);
   // TODO handle 404/no job
@@ -19,10 +22,14 @@ export function JobPage() {
     <PageLayout>
       <PageHeader
         title={job?.name}
-        breadcrumbs={[{ label: t('Jobs'), to: RouteObj.Jobs }, { label: job?.name }]}
+        breadcrumbs={[{ label: t('Jobs'), to: getPageUrl(AwxRoute.Jobs) }, { label: job?.name }]}
       />
-      <RoutedTabs isLoading={!job} baseUrl={RouteObj.JobPage}>
-        <PageBackTab label={t('Back to Jobs')} url={RouteObj.Jobs} persistentFilterKey="jobs" />
+      <RoutedTabs isLoading={!job} baseUrl={getPageUrl(AwxRoute.JobPage)!}>
+        <PageBackTab
+          label={t('Back to Jobs')}
+          url={getPageUrl(AwxRoute.Jobs)!}
+          persistentFilterKey="jobs"
+        />
         <RoutedTab label={t('Output')} url={RouteObj.JobOutput}>
           {job?.type === 'workflow_job' ? (
             <WorkflowOutput job={job} />

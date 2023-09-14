@@ -3,7 +3,8 @@ import { useTranslation } from 'react-i18next';
 import useSWR from 'swr';
 import { PageDashboardChart } from '../../../../framework/PageDashboard/PageDashboardChart';
 import { usePageChartColors } from '../../../../framework/PageDashboard/usePageChartColors';
-import { RouteObj } from '../../../common/Routes';
+import { useGetPageUrl } from '../../../../framework/PageNavigation/useGetPageUrl';
+import { AwxRoute } from '../../AwxRoutes';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
 
 export type UnifiedJobSummary = Pick<UnifiedJob, 'id' | 'finished' | 'failed'>;
@@ -25,6 +26,8 @@ export function JobsChart(props: {
   period?: DashboardJobPeriod;
   jobType?: DashboardJobType;
 }) {
+  const getPageUrl = useGetPageUrl();
+
   const { t } = useTranslation();
   const { period, jobType } = props;
 
@@ -69,25 +72,25 @@ export function JobsChart(props: {
           label: t('Successful'),
           color: successfulColor,
           values: successful,
-          link: RouteObj.Jobs + '?status=successful',
+          link: getPageUrl(AwxRoute.Jobs) + '?status=successful',
         },
         {
           label: t('Error'),
           color: errorColor,
           values: error,
-          link: RouteObj.Jobs + '?status=error',
+          link: getPageUrl(AwxRoute.Jobs) + '?status=error',
         },
         {
           label: t('Failed'),
           color: failedColor,
           values: failed,
-          link: RouteObj.Jobs + '?status=failed',
+          link: getPageUrl(AwxRoute.Jobs) + '?status=failed',
         },
         {
           label: t('Canceled'),
           color: canceledColor,
           values: canceled,
-          link: RouteObj.Jobs + '?status=canceled',
+          link: getPageUrl(AwxRoute.Jobs) + '?status=canceled',
         },
       ]}
       height={props.height}

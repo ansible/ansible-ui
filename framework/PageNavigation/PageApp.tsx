@@ -1,10 +1,12 @@
 import { Page } from '@patternfly/react-core';
 import { ReactNode, useMemo } from 'react';
-import { Outlet, RouterProvider, createBrowserRouter, useNavigate } from 'react-router-dom';
+import { Outlet, RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { PageNotFound } from '../../frontend/common/PageNotFound';
 import { PageFramework } from '../PageFramework';
 import { PageLayout } from '../PageLayout';
-import { PageNavigation, PageNavigationItem } from './PageNavigation';
+import { PageNavigation } from './PageNavigation';
+import { PageNavigationItem } from './PageNavigationItem';
+import { PageNavigationRoutesProvider } from './PageNavigationRoutesProvider';
 
 export function PageApp(props: {
   login: ReactNode;
@@ -29,7 +31,11 @@ export function PageApp(props: {
     () => [
       {
         path: '',
-        element: <PageFrameworkRoute />,
+        element: (
+          <PageFramework>
+            <Outlet />
+          </PageFramework>
+        ),
         children: [
           { path: 'login', element: props.login },
           {
@@ -39,10 +45,11 @@ export function PageApp(props: {
               {
                 path: '',
                 element: (
-                  <PageLayoutRoute
-                    header={header}
-                    sidebar={<PageNavigation navigationItems={navigation} />}
-                  />
+                  <Page header={header} sidebar={<PageNavigation navigation={navigation} />}>
+                    <PageLayout>
+                      <Outlet />
+                    </PageLayout>
+                  </Page>
                 ),
                 children: navigation,
               },
@@ -55,25 +62,9 @@ export function PageApp(props: {
     [header, navigation, props.login, props.root]
   );
   const router = useMemo(() => createBrowserRouter(routes, { basename }), [basename, routes]);
-  return <RouterProvider router={router} />;
-}
-
-function PageFrameworkRoute() {
-  const navigate = useNavigate();
   return (
-    <PageFramework navigate={navigate}>
-      <Outlet />
-    </PageFramework>
-  );
-}
-
-function PageLayoutRoute(props: { header?: ReactNode; sidebar?: ReactNode }) {
-  const { header, sidebar } = props;
-  return (
-    <Page header={header} sidebar={sidebar}>
-      <PageLayout>
-        <Outlet />
-      </PageLayout>
-    </Page>
+    <PageNavigationRoutesProvider navigation={navigation}>
+      <RouterProvider router={router} />
+    </PageNavigationRoutesProvider>
   );
 }
