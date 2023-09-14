@@ -1,4 +1,4 @@
-import { ExclamationTriangleIcon, ThumbsUpIcon } from '@patternfly/react-icons';
+import { ExclamationTriangleIcon, ThumbsDownIcon, ThumbsUpIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DateTimeCell, ITableColumn, PFColorE, TextCell } from '../../../../framework';
@@ -50,7 +50,7 @@ export function useApprovalsColumns(_options?: { disableSort?: boolean; disableL
           }
 
           if (approval.repository.pulp_labels.pipeline == 'rejected') {
-            return <TextCell icon={<ThumbsUpIcon />} text={t('Rejected')} color={PFColorE.Red} />;
+            return <TextCell icon={<ThumbsDownIcon />} text={t('Rejected')} color={PFColorE.Red} />;
           }
         },
       },
