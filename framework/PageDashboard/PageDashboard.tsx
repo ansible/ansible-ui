@@ -8,7 +8,7 @@ export const PageDashboardContext = createContext({ columns: 1 });
 
 const Divisor = 1662 / 24;
 
-export function PageDashboard(props: { children: ReactNode }) {
+export function PageDashboard(props: { children?: ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
 
   const [columns, setColumns] = useState(1);

@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { PageHeader, PageLayout } from '../../../../framework';
+import { PageHeader, PageLayout, useGetPageUrl } from '../../../../framework';
 import { PageFormTextArea } from '../../../../framework/PageForm/Inputs/PageFormTextArea';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { PageForm, PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
@@ -9,6 +9,7 @@ import { RouteObj } from '../../../common/Routes';
 import { useGet } from '../../../common/crud/useGet';
 import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
+import { AwxRoute } from '../../AwxRoutes';
 import { Team } from '../../interfaces/Team';
 import { PageFormSelectOrganization } from '../organizations/components/PageFormOrganizationSelect';
 
@@ -21,11 +22,15 @@ export function CreateTeam() {
     const createdTeam = await postRequest('/api/v2/teams/', team);
     navigate(RouteObj.TeamDetails.replace(':id', createdTeam.id.toString()));
   };
+  const getPageUrl = useGetPageUrl();
   return (
     <PageLayout>
       <PageHeader
         title={t('Create Team')}
-        breadcrumbs={[{ label: t('Teams'), to: RouteObj.Teams }, { label: t('Create Team') }]}
+        breadcrumbs={[
+          { label: t('Teams'), to: getPageUrl(AwxRoute.Teams) },
+          { label: t('Create Team') },
+        ]}
       />
       <PageForm submitText={t('Create team')} onSubmit={onSubmit} onCancel={() => navigate(-1)}>
         <TeamInputs />
@@ -46,11 +51,15 @@ export function EditTeam() {
     await patchRequest(`/api/v2/teams/${id}/`, team);
     navigate(-1);
   };
+  const getPageUrl = useGetPageUrl();
   if (!team) {
     return (
       <PageLayout>
         <PageHeader
-          breadcrumbs={[{ label: t('Teams'), to: RouteObj.Teams }, { label: t('Edit Team') }]}
+          breadcrumbs={[
+            { label: t('Teams'), to: getPageUrl(AwxRoute.Teams) },
+            { label: t('Edit Team') },
+          ]}
         />
       </PageLayout>
     );
@@ -59,7 +68,10 @@ export function EditTeam() {
     <PageLayout>
       <PageHeader
         title={t('Edit Team')}
-        breadcrumbs={[{ label: t('Teams'), to: RouteObj.Teams }, { label: t('Edit Team') }]}
+        breadcrumbs={[
+          { label: t('Teams'), to: getPageUrl(AwxRoute.Teams) },
+          { label: t('Edit Team') },
+        ]}
       />
       <PageForm
         submitText={t('Save team')}

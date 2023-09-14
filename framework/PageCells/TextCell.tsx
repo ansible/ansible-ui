@@ -1,8 +1,8 @@
 import { Flex, FlexItem } from '@patternfly/react-core';
 import { ReactNode } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { IconWrapper } from '../components/IconWrapper';
 import { PFColor, getPatternflyColor } from '../components/pfcolors';
-import { usePageNavigate } from '../components/usePageNavigate';
 
 export interface TextCellProps {
   icon?: ReactNode;
@@ -17,7 +17,7 @@ export interface TextCellProps {
   disableLinks?: boolean;
 }
 export function TextCell(props: TextCellProps) {
-  const navigate = usePageNavigate();
+  const navigate = useNavigate();
   return (
     <Flex
       spaceItems={{ default: 'spaceItemsNone' }}
@@ -58,6 +58,7 @@ export function TextCell(props: TextCellProps) {
                   if (props.onClick) {
                     props.onClick();
                   } else {
+                    if (!props.to) return;
                     navigate(props.to);
                   }
                 }}

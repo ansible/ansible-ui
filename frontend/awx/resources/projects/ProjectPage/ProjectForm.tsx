@@ -9,12 +9,14 @@ import {
   PageFormTextInput,
   PageHeader,
   PageLayout,
+  useGetPageUrl,
 } from '../../../../../framework';
 import { RouteObj } from '../../../../common/Routes';
 import { requestPatch } from '../../../../common/crud/Data';
 import { useGet } from '../../../../common/crud/useGet';
 import { useOptions } from '../../../../common/crud/useOptions';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
+import { AwxRoute } from '../../../AwxRoutes';
 import { PageFormSelectOrganization } from '../../../access/organizations/components/PageFormOrganizationSelect';
 import { getOrganizationByName } from '../../../access/organizations/utils/getOrganizationByName';
 import { PageFormExecutionEnvironmentSelect } from '../../../administration/execution-environments/components/PageFormExecutionEnvironmentSelect';
@@ -102,12 +104,15 @@ export function CreateProject() {
       setError(getAwxError(err));
     }
   };
+
+  const getPageUrl = useGetPageUrl();
+
   return (
     <PageLayout>
       <PageHeader
         title={t('Create Project')}
         breadcrumbs={[
-          { label: t('Projects'), to: RouteObj.Projects },
+          { label: t('Projects'), to: getPageUrl(AwxRoute.Projects) },
           { label: t('Create Project') },
         ]}
       />
@@ -184,12 +189,14 @@ export function EditProject() {
     }
   };
 
+  const getPageUrl = useGetPageUrl();
+
   if (!project) {
     return (
       <PageLayout>
         <PageHeader
           breadcrumbs={[
-            { label: t('Projects'), to: RouteObj.Projects },
+            { label: t('Projects'), to: getPageUrl(AwxRoute.Projects) },
             { label: t('Edit Project') },
           ]}
         />
@@ -202,7 +209,7 @@ export function EditProject() {
       <PageHeader
         title={t('Edit Project')}
         breadcrumbs={[
-          { label: t('Projects'), to: RouteObj.Projects },
+          { label: t('Projects'), to: getPageUrl(AwxRoute.Projects) },
           { label: t('Edit Project') },
         ]}
       />

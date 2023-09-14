@@ -6,11 +6,13 @@ import {
   PageFormTextInput,
   PageHeader,
   PageLayout,
+  useGetPageUrl,
 } from '../../../framework';
 import { RouteObj } from '../../common/Routes';
 import { useGet } from '../../common/crud/useGet';
 import { usePatchRequest } from '../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../common/crud/usePostRequest';
+import { HubRoute } from '../HubRoutes';
 import { hubAPI } from '../api/utils';
 import { HubNamespace } from './HubNamespace';
 
@@ -22,12 +24,14 @@ export function CreateHubNamespace() {
     const createdNamespace = await postRequest(hubAPI`/_ui/v1/namespaces/`, namespace);
     navigate(RouteObj.NamespaceDetails.replace(':id', createdNamespace.name.toString()));
   };
+  const getPageUrl = useGetPageUrl();
+
   return (
     <PageLayout>
       <PageHeader
         title={t('Create Namespace')}
         breadcrumbs={[
-          { label: t('Namespaces'), to: RouteObj.Namespaces },
+          { label: t('Namespaces'), to: getPageUrl(HubRoute.Namespaces) },
           { label: t('Create Namespace') },
         ]}
       />
@@ -54,12 +58,14 @@ export function EditHubNamespace() {
     await patchRequest(hubAPI`/_ui/v1/namespaces/`, namespace);
     navigate(-1);
   };
+  const getPageUrl = useGetPageUrl();
+
   if (!namespace) {
     return (
       <PageLayout>
         <PageHeader
           breadcrumbs={[
-            { label: t('Namespaces'), to: RouteObj.Namespaces },
+            { label: t('Namespaces'), to: getPageUrl(HubRoute.Namespaces) },
             { label: t('Edit Namespace') },
           ]}
         />
@@ -71,7 +77,7 @@ export function EditHubNamespace() {
       <PageHeader
         title={t('Edit Namespace')}
         breadcrumbs={[
-          { label: t('Namespaces'), to: RouteObj.Namespaces },
+          { label: t('Namespaces'), to: getPageUrl(HubRoute.Namespaces) },
           { label: t('Edit Namespace') },
         ]}
       />

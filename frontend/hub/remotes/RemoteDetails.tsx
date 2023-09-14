@@ -1,11 +1,11 @@
 import { Label, LabelGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageDetail, PageDetails, PageHeader, PageLayout } from '../../../framework';
+import { PageDetail, PageDetails, PageHeader, PageLayout, useGetPageUrl } from '../../../framework';
 import { LoadingPage } from '../../../framework/components/LoadingPage';
 import { AwxError } from '../../awx/common/AwxError';
-import { RouteObj } from '../../common/Routes';
 import { useGet } from '../../common/crud/useGet';
+import { HubRoute } from '../HubRoutes';
 import { pulpAPI } from '../api/utils';
 import { Repository } from '../repositories/Repository';
 import { PulpItemsResponse } from '../usePulpView';
@@ -57,6 +57,8 @@ export function RemoteDetails() {
     refreshRepositories
   );
 
+  const getPageUrl = useGetPageUrl();
+
   if (loadingOrErrorRemotes) return loadingOrErrorRemotes;
   if (loadingOrErrorRepositories) return loadingOrErrorRepositories;
 
@@ -65,7 +67,10 @@ export function RemoteDetails() {
       <PageLayout>
         <PageHeader
           title={remote?.name}
-          breadcrumbs={[{ label: t('Remotes'), to: RouteObj.Remotes }, { label: remote?.name }]}
+          breadcrumbs={[
+            { label: t('Remotes'), to: getPageUrl(HubRoute.Remotes) },
+            { label: remote?.name },
+          ]}
         />
         <PageDetails>
           <PageDetail label={t('Name')}>{remote?.name}</PageDetail>

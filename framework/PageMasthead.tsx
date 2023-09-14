@@ -10,8 +10,8 @@ import {
 } from '@patternfly/react-core';
 import { BarsIcon } from '@patternfly/react-icons';
 import { Children, ReactNode } from 'react';
-import { usePageNavSideBar } from './PageNav/PageNavSidebar';
 import styled from 'styled-components';
+import { usePageNavSideBar } from './PageNavigation/PageNavSidebar';
 
 const ToolbarSpacingDiv = styled.div`
   flex-grow: 1;

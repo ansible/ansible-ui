@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { PageForm, PageFormSubmitHandler, usePageDialog } from '../../framework';
 import { PageFormTextInput } from '../../framework/PageForm/Inputs/PageFormTextInput';
+import { usePageNavigate } from '../../framework/PageNavigation/usePageNavigate';
+import { AwxRoute } from '../awx/AwxRoutes';
 import { hubAPI } from '../hub/api/utils';
 import { RouteObj } from './Routes';
 import { AuthOptions, SocialAuthLogin } from './SocialAuthLogin';
@@ -100,6 +102,7 @@ function LoginForm(props: LoginFormProps) {
   const { authOptions } = props;
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
 
   useInvalidateCacheOnUnmount();
 
@@ -188,7 +191,7 @@ function LoginForm(props: LoginFormProps) {
         }
         switch (process.env.UI_MODE) {
           case 'AWX':
-            navigate(RouteObj.Dashboard);
+            pageNavigate(AwxRoute.Dashboard);
             break;
           case 'EDA':
             navigate(RouteObj.EdaDashboard);
@@ -208,7 +211,7 @@ function LoginForm(props: LoginFormProps) {
         }
       }
     },
-    [navigate, props, t]
+    [pageNavigate, navigate, props, t]
   );
 
   return (

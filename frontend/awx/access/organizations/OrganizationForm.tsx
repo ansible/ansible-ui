@@ -2,12 +2,19 @@ import { FieldValues } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import useSWR from 'swr';
-import { PageForm, PageFormSubmitHandler, PageHeader, PageLayout } from '../../../../framework';
+import {
+  PageForm,
+  PageFormSubmitHandler,
+  PageHeader,
+  PageLayout,
+  useGetPageUrl,
+} from '../../../../framework';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { RouteObj } from '../../../common/Routes';
 import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { useInvalidateCacheOnUnmount } from '../../../common/useInvalidateCache';
+import { AwxRoute } from '../../AwxRoutes';
 import { PageFormExecutionEnvironmentSelect } from '../../administration/execution-environments/components/PageFormExecutionEnvironmentSelect';
 import { PageFormInstanceGroupSelect } from '../../administration/instance-groups/components/PageFormInstanceGroupSelect';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
@@ -45,13 +52,13 @@ export function CreateOrganization() {
     }
   };
   const onCancel = () => navigate(-1);
-
+  const getPageUrl = useGetPageUrl();
   return (
     <PageLayout>
       <PageHeader
         title={t('Create Organization')}
         breadcrumbs={[
-          { label: t('Organizations'), to: RouteObj.Organizations },
+          { label: t('Organizations'), to: getPageUrl(AwxRoute.Organizations) },
           { label: t('Create Organization') },
         ]}
       />
@@ -115,13 +122,13 @@ export function EditOrganization() {
     }
   };
   const onCancel = () => navigate(-1);
-
+  const getPageUrl = useGetPageUrl();
   return (
     <PageLayout>
       <PageHeader
         title={t('Edit Organization')}
         breadcrumbs={[
-          { label: t('Organizations'), to: RouteObj.Organizations },
+          { label: t('Organizations'), to: getPageUrl(AwxRoute.Organizations) },
           { label: t('Edit Organization') },
         ]}
       />
