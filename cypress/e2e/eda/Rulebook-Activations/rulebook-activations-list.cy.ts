@@ -39,7 +39,7 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
   });
 
   it('can filter the rulebook activations list based on Name filter option', () => {
-    cy.navigateTo(/^Rulebook Activations$/);
+    cy.navigateTo('eda', 'rulebook-activations');
     cy.hasTitle(/^Rulebook Activations$/)
       .next('p')
       .should('have.text', 'Rulebook activations are rulebooks that have been activated to run.');
@@ -47,7 +47,7 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
   });
 
   it('can disable a Rulebook Activation from the line item in list view', () => {
-    cy.navigateTo(/^Rulebook Activations$/);
+    cy.navigateTo('eda', 'rulebook-activations');
     cy.edaRuleBookActivationCheckbox(edaRBA.name);
     cy.clickEdaPageAction('Disable selected activations');
     cy.get('div[role="dialog"]').within(() => {
@@ -60,7 +60,7 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
   });
 
   it('can delete a single Rulebook Activation from the line item on the list view', () => {
-    cy.navigateTo(/^Rulebook Activations$/);
+    cy.navigateTo('eda', 'rulebook-activations');
     cy.edaRuleBookActivationCheckbox(edaRBA.name);
     cy.clickEdaPageAction('Delete selected activations');
     cy.get('div[role="dialog"]').within(() => {

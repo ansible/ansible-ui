@@ -121,7 +121,7 @@ export function InventoryDetails() {
         breadcrumbs={[
           {
             label: t('Inventories'),
-            // to: RouteObj.EdaInventories
+            // to: getPageUrl(EdaRoute.Inventories)
           },
           { label: inventory?.name },
         ]}

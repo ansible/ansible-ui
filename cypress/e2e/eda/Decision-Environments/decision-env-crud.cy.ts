@@ -6,17 +6,17 @@ describe('EDA decision environment- Create, Edit, Delete', () => {
   });
 
   it('can render the decision environments list page', () => {
-    cy.navigateTo(/^Decision Environments$/);
+    cy.navigateTo('eda', 'decision-environments');
     cy.hasTitle(/^Decision Environments$/);
   });
 
   it('can create an decision environment and assert the information showing on the details page', () => {
     const de_name = 'E2E Decision Environment ' + randomString(4);
-    cy.navigateTo(/^Decision Environments$/);
+    cy.navigateTo('eda', 'decision-environments');
     cy.hasTitle(/^Decision Environments$/);
     cy.clickButton(/^Create decision environment$/);
-    cy.typeInputByLabel(/^Name$/, de_name);
-    cy.typeInputByLabel(/^Image$/, 'quay.io/ansible/ansible-rulebook:main');
+    cy.get('[data-cy="name"]').type(de_name);
+    cy.get('[data-cy="image_url"]').type('quay.io/ansible/ansible-rulebook:main');
     cy.clickButton(/^Create decision environment$/);
     cy.hasTitle(de_name);
     cy.getEdaDecisionEnvironmentByName(de_name).then((de) => {
@@ -31,7 +31,7 @@ describe('EDA decision environment- Create, Edit, Delete', () => {
 
   it('can verify edit functionality of a decision environment', () => {
     cy.createEdaDecisionEnvironment().then((edaDE) => {
-      cy.navigateTo(/^Decision Environments$/);
+      cy.navigateTo('eda', 'decision-environments');
       cy.hasTitle(/^Decision Environments$/);
       /*
       DE's are displayed by default in card view hence clickTableRow() doesn't work 
@@ -43,7 +43,7 @@ describe('EDA decision environment- Create, Edit, Delete', () => {
       });
       cy.clickButton(/^Edit decision environment$/);
       cy.hasTitle(`Edit ${edaDE.name}`);
-      cy.typeInputByLabel(/^Name$/, edaDE.name + 'edited');
+      cy.get('[data-cy="name"]').type(edaDE.name + 'edited');
       cy.clickButton(/^Save decision environment$/);
       cy.hasTitle(`${edaDE.name}edited`);
       cy.deleteEdaDecisionEnvironment(edaDE);
@@ -56,7 +56,7 @@ describe('EDA decision environment- Create, Edit, Delete', () => {
 
   it('can delete a decision environment from the details page', () => {
     cy.createEdaDecisionEnvironment().then((edaDE) => {
-      cy.navigateTo(/^Decision Environments$/);
+      cy.navigateTo('eda', 'decision-environments');
       cy.hasTitle(/^Decision Environments$/);
       cy.get('button[aria-label="table view"]').click();
       cy.contains('td', edaDE.name).within(() => {

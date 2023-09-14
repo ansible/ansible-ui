@@ -42,7 +42,7 @@ describe('Operator EDA Role - Resource types and permissions', () => {
       'Credential',
     ];
     const operatorActions = ['read'];
-    cy.navigateTo(/^Roles$/);
+    cy.navigateTo('eda', 'roles');
     cy.clickLink(/^Operator$/);
     cy.contains('h1', 'Operator').should('be.visible');
     cy.contains('dd#name', 'Operator').should('be.visible');

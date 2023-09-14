@@ -27,7 +27,7 @@ describe('Viewer EDA Role - Resource types and permissions', () => {
       'Decision environment',
     ];
     const viewerActions = ['read'];
-    cy.navigateTo(/^Roles$/);
+    cy.navigateTo('eda', 'roles');
     cy.clickLink(/^Viewer$/);
     cy.contains('h1', 'Viewer').should('be.visible');
     cy.contains('dd#name', 'Viewer').should('be.visible');

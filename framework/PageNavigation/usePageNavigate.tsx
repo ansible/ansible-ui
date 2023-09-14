@@ -5,7 +5,7 @@ import { useGetPageUrl } from './useGetPageUrl';
 export function usePageNavigate() {
   const navigate = useNavigate();
   const getPageUrl = useGetPageUrl();
-  return (pageId: string, params?: Record<string, string>) => {
+  return (pageId: string, params?: Record<string, string | number>) => {
     const url = getPageUrl(pageId, params);
     if (url) {
       navigate(url);

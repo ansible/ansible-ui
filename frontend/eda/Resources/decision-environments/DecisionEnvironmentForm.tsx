@@ -8,11 +8,13 @@ import {
   PageFormTextInput,
   PageHeader,
   PageLayout,
+  useGetPageUrl,
 } from '../../../../framework';
 import { RouteObj } from '../../../common/Routes';
 import { useGet } from '../../../common/crud/useGet';
 import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
+import { EdaRoute } from '../../EdaRoutes';
 import { API_PREFIX } from '../../constants';
 import { EdaCredential } from '../../interfaces/EdaCredential';
 import {
@@ -100,12 +102,13 @@ export function CreateDecisionEnvironment() {
     );
   };
   const onCancel = () => navigate(-1);
+  const getPageUrl = useGetPageUrl();
   return (
     <PageLayout>
       <PageHeader
         title={t('Create Decision Environment')}
         breadcrumbs={[
-          { label: t('Decision Environments'), to: RouteObj.EdaDecisionEnvironments },
+          { label: t('Decision Environments'), to: getPageUrl(EdaRoute.DecisionEnvironments) },
           { label: t('Create Decision Environment') },
         ]}
       />
@@ -138,13 +141,14 @@ export function EditDecisionEnvironment() {
     navigate(-1);
   };
   const onCancel = () => navigate(-1);
+  const getPageUrl = useGetPageUrl();
 
   if (!decisionEnvironment) {
     return (
       <PageLayout>
         <PageHeader
           breadcrumbs={[
-            { label: t('Decision Environments'), to: RouteObj.EdaDecisionEnvironments },
+            { label: t('Decision Environments'), to: getPageUrl(EdaRoute.DecisionEnvironments) },
             { label: t('Edit Decision Environment') },
           ]}
         />
@@ -156,7 +160,7 @@ export function EditDecisionEnvironment() {
         <PageHeader
           title={`${t('Edit')} ${decisionEnvironment?.name || t('Decision Environment')}`}
           breadcrumbs={[
-            { label: t('Decision Environments'), to: RouteObj.EdaDecisionEnvironments },
+            { label: t('Decision Environments'), to: getPageUrl(EdaRoute.DecisionEnvironments) },
             { label: `${t('Edit')} ${decisionEnvironment?.name || t('Decision Environment')}` },
           ]}
         />

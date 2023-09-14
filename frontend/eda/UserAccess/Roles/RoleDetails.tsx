@@ -15,9 +15,10 @@ import {
   PageHeader,
   PageLayout,
   Scrollable,
+  useGetPageUrl,
 } from '../../../../framework';
-import { RouteObj } from '../../../common/Routes';
 import { useGet } from '../../../common/crud/useGet';
+import { EdaRoute } from '../../EdaRoutes';
 import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
 import { EdaRole } from '../../interfaces/EdaRole';
 
@@ -44,11 +45,13 @@ export function RoleDetails() {
     credential: t('Credential'),
   };
 
+  const getPageUrl = useGetPageUrl();
+
   return (
     <PageLayout>
       <PageHeader
         title={role?.name}
-        breadcrumbs={[{ label: t('Roles'), to: RouteObj.EdaRoles }, { label: role?.name }]}
+        breadcrumbs={[{ label: t('Roles'), to: getPageUrl(EdaRoute.Roles) }, { label: role?.name }]}
       />
       <Scrollable>
         <PageDetails>

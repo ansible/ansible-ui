@@ -8,11 +8,13 @@ import {
   PageFormTextInput,
   PageHeader,
   PageLayout,
+  useGetPageUrl,
 } from '../../../../framework';
 import { RouteObj } from '../../../common/Routes';
 import { useGet } from '../../../common/crud/useGet';
 import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
+import { EdaRoute } from '../../EdaRoutes';
 import { API_PREFIX } from '../../constants';
 import { EdaCredential, EdaCredentialCreate } from '../../interfaces/EdaCredential';
 import { CredentialTypeEnum } from '../../interfaces/generated/eda-api';
@@ -105,12 +107,14 @@ export function CreateCredential() {
     navigate(RouteObj.EdaCredentialDetails.replace(':id', newCredential.id.toString()));
   };
   const onCancel = () => navigate(-1);
+  const getPageUrl = useGetPageUrl();
+
   return (
     <PageLayout>
       <PageHeader
         title={t('Create Credential')}
         breadcrumbs={[
-          { label: t('Credentials'), to: RouteObj.EdaCredentials },
+          { label: t('Credentials'), to: getPageUrl(EdaRoute.Credentials) },
           { label: t('Create Credential') },
         ]}
       />
@@ -144,13 +148,14 @@ export function EditCredential() {
     navigate(-1);
   };
   const onCancel = () => navigate(-1);
+  const getPageUrl = useGetPageUrl();
 
   if (!credential) {
     return (
       <PageLayout>
         <PageHeader
           breadcrumbs={[
-            { label: t('Credentials'), to: RouteObj.EdaCredentials },
+            { label: t('Credentials'), to: getPageUrl(EdaRoute.Credentials) },
             { label: t('Edit Credential') },
           ]}
         />
@@ -162,7 +167,7 @@ export function EditCredential() {
         <PageHeader
           title={`${t('Edit')} ${credential?.name || t('Credential')}`}
           breadcrumbs={[
-            { label: t('Credentials'), to: RouteObj.EdaCredentials },
+            { label: t('Credentials'), to: getPageUrl(EdaRoute.Credentials) },
             { label: `${t('Edit')} ${credential?.name || t('Credential')}` },
           ]}
         />

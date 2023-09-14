@@ -228,8 +228,6 @@ export const RouteObj = {
   APIToken: `${hubRoutePrefix}/access/api-token`,
 
   // EDA server prefix
-  Eda: `${edaRoutePrefix}`,
-
   EdaDashboard: `${edaRoutePrefix}/dashboard`,
 
   EdaProjects: `${edaRoutePrefix}/resources/projects`,

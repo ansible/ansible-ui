@@ -10,11 +10,11 @@ describe('EDA Projects CRUD', () => {
 
   it('can create a Project, sync it, and assert the information showing on the details page', () => {
     const name = 'E2E Project ' + randomString(4);
-    cy.navigateTo(/^Projects$/);
+    cy.navigateTo('eda', 'projects');
     cy.get('h1').should('contain', 'Projects');
     cy.clickButton(/^Create project$/);
-    cy.typeInputByLabel(/^Name$/, name);
-    cy.typeInputByLabel(/^SCM URL$/, 'https://github.com/ansible/ansible-ui');
+    cy.get('[data-cy="name"]').type(name);
+    cy.get('[data-cy="url"]').type('https://github.com/ansible/ansible-ui');
     cy.clickButton(/^Create project$/);
     cy.hasTitle(name);
     cy.getEdaProjectByName(name).then((project) => {
@@ -25,12 +25,12 @@ describe('EDA Projects CRUD', () => {
 
   it('can edit a project from the list view', () => {
     cy.createEdaProject().then((edaProject) => {
-      cy.navigateTo(/^Projects$/);
+      cy.navigateTo('eda', 'projects');
       cy.get('h1').should('contain', 'Projects');
       cy.clickTableRow(edaProject.name);
       cy.clickPageAction(/^Edit project$/);
       cy.hasTitle(`Edit ${edaProject.name}`);
-      cy.typeInputByLabel(/^Name$/, edaProject.name + 'a');
+      cy.get('[data-cy="name"]').type(edaProject.name + 'a');
       cy.clickButton(/^Save project$/);
       cy.hasTitle(`${edaProject.name}a`);
       cy.deleteEdaProject(edaProject);
@@ -39,7 +39,7 @@ describe('EDA Projects CRUD', () => {
 
   it('deletes a Project from kebab menu from the project details page', () => {
     cy.createEdaProject().then((edaProject) => {
-      cy.navigateTo(/^Projects$/);
+      cy.navigateTo('eda', 'projects');
       cy.clickTableRow(edaProject.name);
       cy.hasTitle(edaProject.name);
       cy.intercept('DELETE', `/api/eda/v1/projects/${edaProject.id}/`).as('deleted');
