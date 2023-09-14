@@ -2,16 +2,20 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { EditIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { IPageAction, PageActionSelection, PageActionType } from '../../../../framework';
-import { RouteObj } from '../../../common/Routes';
+import {
+  IPageAction,
+  PageActionSelection,
+  PageActionType,
+  usePageNavigate,
+} from '../../../../framework';
+import { HubRoute } from '../../HubRoutes';
 import { IPulpView } from '../../usePulpView';
 import { IRemotes } from '../Remotes';
 import { useDeleteRemotes } from './useDeleteRemotes';
 
 export function useRemoteActions(view: IPulpView<IRemotes>) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const deleteRemotes = useDeleteRemotes(view.unselectItemsAndRefresh);
   const actions = useMemo<IPageAction<IRemotes>[]>(
     () => [
@@ -19,8 +23,7 @@ export function useRemoteActions(view: IPulpView<IRemotes>) {
         icon: EditIcon,
         isPinned: true,
         label: t('Edit remote 2'),
-        onClick: (remotes) =>
-          navigate(RouteObj.EditRemotes.replace(':id', remotes.name.toString())),
+        onClick: (remotes) => pageNavigate(HubRoute.EditRemote, { id: remotes.name }),
         selection: PageActionSelection.Single,
         type: PageActionType.Button,
         variant: ButtonVariant.primary,
@@ -37,7 +40,7 @@ export function useRemoteActions(view: IPulpView<IRemotes>) {
         isDanger: true,
       },
     ],
-    [t, navigate, deleteRemotes]
+    [t, pageNavigate, deleteRemotes]
   );
 
   return actions;

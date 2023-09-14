@@ -169,24 +169,9 @@ export const RouteObj = {
   CreateExecutionEnvironment: `${awxRoutePrefix}/administration/execution-environments/create`,
   EditExecutionEnvironment: `${awxRoutePrefix}/administration/execution-environments/:id/edit`,
 
-  HubDashboard: `${hubRoutePrefix}/dashboard`,
+  // Hub
   Collections: `${hubRoutePrefix}/automation-content/collections`,
   CollectionDetails: `${hubRoutePrefix}/automation-content/collections/details/`,
-  UploadCollection: `${hubRoutePrefix}/automation-content/collections/upload`,
-
-  EditRepository: `${hubRoutePrefix}/administration/repositories/edit/:id`,
-
-  NamespaceDetails: `${hubRoutePrefix}/automation-content/namespaces/:id`,
-  CreateNamespace: `${hubRoutePrefix}/automation-content/namespaces/create`,
-  EditNamespace: `${hubRoutePrefix}/automation-content/namespaces/:id/edit`,
-
-  Approvals: `${hubRoutePrefix}/administration/approvals`,
-
-  CreateRemotes: `${hubRoutePrefix}/administration/remotes/create`,
-  EditRemotes: `${hubRoutePrefix}/administration/remotes/:id/edit`,
-  RemoteDetails: `${hubRoutePrefix}/administration/remotes/details/:id`,
-
-  TaskDetails: `${hubRoutePrefix}/administration/tasks/details/:id`,
 
   // EDA server prefix
   EdaDashboard: `${edaRoutePrefix}/dashboard`,

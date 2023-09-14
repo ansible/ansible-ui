@@ -1,8 +1,14 @@
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { PageHeader, PageLayout, PageTab, PageTable, PageTabs } from '../../../framework';
-import { RouteObj } from '../../common/Routes';
+import {
+  PageHeader,
+  PageLayout,
+  PageTab,
+  PageTable,
+  PageTabs,
+  usePageNavigate,
+} from '../../../framework';
 import { idKeyFn } from '../../common/utils/nameKeyFn';
+import { HubRoute } from '../HubRoutes';
 import { hubAPI } from '../api/utils';
 import { useHubView } from '../useHubView';
 import { HubNamespace } from './HubNamespace';
@@ -53,7 +59,7 @@ export function MyNamespaces() {
 
 export function CommonNamespaces({ url }: { url: string }) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const toolbarFilters = useHubNamespaceFilters();
   const tableColumns = useHubNamespacesColumns();
   const toolbarActions = useHubNamespaceToolbarActions();
@@ -70,7 +76,7 @@ export function CommonNamespaces({ url }: { url: string }) {
       emptyStateTitle={t('No namespaces yet')}
       emptyStateDescription={t('To get started, create an namespace.')}
       emptyStateButtonText={t('Add namespace')}
-      emptyStateButtonClick={() => navigate(RouteObj.CreateNamespace)}
+      emptyStateButtonClick={() => pageNavigate(HubRoute.CreateNamespace)}
       {...view}
       defaultSubtitle={t('Namespace')}
       defaultTableView="cards"

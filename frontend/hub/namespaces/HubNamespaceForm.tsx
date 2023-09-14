@@ -7,8 +7,8 @@ import {
   PageHeader,
   PageLayout,
   useGetPageUrl,
+  usePageNavigate,
 } from '../../../framework';
-import { RouteObj } from '../../common/Routes';
 import { useGet } from '../../common/crud/useGet';
 import { usePatchRequest } from '../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../common/crud/usePostRequest';
@@ -19,10 +19,11 @@ import { HubNamespace } from './HubNamespace';
 export function CreateHubNamespace() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const postRequest = usePostRequest<HubNamespace>();
   const onSubmit: PageFormSubmitHandler<HubNamespace> = async (namespace) => {
     const createdNamespace = await postRequest(hubAPI`/_ui/v1/namespaces/`, namespace);
-    navigate(RouteObj.NamespaceDetails.replace(':id', createdNamespace.name.toString()));
+    pageNavigate(HubRoute.NamespacePage, { id: createdNamespace.name });
   };
   const getPageUrl = useGetPageUrl();
 

@@ -1,7 +1,6 @@
 import { CogIcon, EditIcon, SyncIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import {
   DateTimeCell,
   IPageAction,
@@ -14,8 +13,9 @@ import {
   PageTable,
   PageTabs,
   TextCell,
+  usePageNavigate,
 } from '../../../framework';
-import { RouteObj } from '../../common/Routes';
+import { HubRoute } from '../HubRoutes';
 import { hubAPI, pulpHrefKeyFn, pulpIdKeyFn } from '../api/utils';
 import { useHubView } from '../useHubView';
 import { RemoteRepository, Repository } from './Repository';
@@ -99,7 +99,7 @@ export function useLocalRepositoriesColumns(_options?: {
 
 export function RemoteRepositories() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const tableColumns = useRemoteRepositoriesColumns();
   const view = useHubView<RemoteRepository>({
     url: hubAPI`/_ui/v1/remotes/`,
@@ -113,27 +113,24 @@ export function RemoteRepositories() {
         selection: PageActionSelection.Single,
         icon: CogIcon,
         label: t('Configure repository'),
-        onClick: (repository) =>
-          navigate(RouteObj.EditRepository.replace(':id', repository.name.toString())),
+        onClick: (repository) => pageNavigate(HubRoute.EditRemote, { id: repository.name }),
       },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: SyncIcon,
         label: t('Sync repository'),
-        onClick: (repository) =>
-          navigate(RouteObj.EditRepository.replace(':id', repository.name.toString())),
+        onClick: (repository) => pageNavigate(HubRoute.EditRemote, { id: repository.name }),
       },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: EditIcon,
         label: t('Edit repository'),
-        onClick: (repository) =>
-          navigate(RouteObj.EditRepository.replace(':id', repository.name.toString())),
+        onClick: (repository) => pageNavigate(HubRoute.EditRemote, { id: repository.name }),
       },
     ],
-    [navigate, t]
+    [pageNavigate, t]
   );
   return (
     <PageTable<RemoteRepository>

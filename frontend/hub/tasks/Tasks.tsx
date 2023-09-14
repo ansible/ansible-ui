@@ -12,9 +12,10 @@ import {
   PageTable,
   TextCell,
   ToolbarFilterType,
+  usePageNavigate,
 } from '../../../framework';
-import { RouteObj } from '../../common/Routes';
 import { StatusCell } from '../../common/Status';
+import { HubRoute } from '../HubRoutes';
 import { parsePulpIDFromURL, pulpAPI, pulpHrefKeyFn } from '../api/utils';
 import { usePulpView } from '../usePulpView';
 import { Task } from './Task';
@@ -49,6 +50,7 @@ export function Tasks() {
 export function useTasksColumns(_options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const tableColumns = useMemo<ITableColumn<Task>[]>(
     () => [
       {
@@ -57,9 +59,7 @@ export function useTasksColumns(_options?: { disableSort?: boolean; disableLinks
           <TextCell
             text={task.name}
             onClick={() =>
-              navigate(
-                RouteObj.TaskDetails.replace(':id', parsePulpIDFromURL(task.pulp_href) || '')
-              )
+              pageNavigate(HubRoute.TaskPage, { id: parsePulpIDFromURL(task.pulp_href) || '' })
             }
           />
         ),

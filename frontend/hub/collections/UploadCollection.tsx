@@ -11,12 +11,12 @@ import {
   PageTable,
   TextCell,
   useGetPageUrl,
+  usePageNavigate,
 } from '../../../framework';
 import { PageDetail } from '../../../framework/PageDetails/PageDetail';
 import { PageFormFileUpload } from '../../../framework/PageForm/Inputs/PageFormFileUpload';
 import { PageFormWatch } from '../../../framework/PageForm/Utils/PageFormWatch';
 import { LoadingPage } from '../../../framework/components/LoadingPage';
-import { RouteObj } from '../../common/Routes';
 import { postRequestFile } from '../../common/crud/Data';
 import { useGetRequest } from '../../common/crud/useGet';
 import { hubAPI, pulpAPI } from '../api/utils';
@@ -71,6 +71,7 @@ export function UploadCollectionByFile() {
   const namespaces = useHubNamespaces();
   const repositories = useRepositories();
   const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const onCancel = () => navigate(-1);
   const toolbarFilters = useRepoFilters();
   const tableColumns = useRepositoriesColumns();
@@ -168,7 +169,7 @@ export function UploadCollectionByFile() {
     return postRequestFile(
       hubAPI`/v3/plugin/ansible/content/${base_path}/collections/artifacts/`,
       data.file as Blob
-    ).then(() => navigate(RouteObj.Approvals));
+    ).then(() => pageNavigate(HubRoute.Approvals));
   }
 
   return (

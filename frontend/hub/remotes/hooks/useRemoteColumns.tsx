@@ -1,17 +1,18 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ColumnTableOption, ITableColumn, TextCell } from '../../../../framework';
+import { ColumnTableOption, ITableColumn, TextCell, useGetPageUrl } from '../../../../framework';
+import { HubRoute } from '../../HubRoutes';
 import { IRemotes } from '../Remotes';
-import { RouteObj } from '../../../common/Routes';
 
 export function useRemoteColumns() {
   const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
   const tableColumns = useMemo<ITableColumn<IRemotes>[]>(
     () => [
       {
         header: t('Remote name'),
         cell: (remote) => (
-          <TextCell text={remote.name} to={RouteObj.RemoteDetails.replace(':id', remote.name)} />
+          <TextCell text={remote.name} to={getPageUrl(HubRoute.RemotePage, { id: remote.name })} />
         ),
         sort: 'name',
         card: 'name',

@@ -3,8 +3,13 @@ import { BanIcon, TrashIcon, UploadIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { IPageAction, PageActionSelection, PageActionType } from '../../../../framework';
-import { RouteObj } from '../../../common/Routes';
+import {
+  IPageAction,
+  PageActionSelection,
+  PageActionType,
+  usePageNavigate,
+} from '../../../../framework';
+import { HubRoute } from '../../HubRoutes';
 import { CollectionVersionSearch } from '../Collection';
 import { useHubContext } from './../../useHubContext';
 import { useDeleteCollections } from './useDeleteCollections';
@@ -14,6 +19,7 @@ import { useDeprecateCollections } from './useDeprecateCollections';
 export function useCollectionActions(callback?: (collections: CollectionVersionSearch[]) => void) {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const deleteCollections = useDeleteCollections(callback);
   const deprecateCollections = useDeprecateCollections(callback);
   const deleteCollectionsFromRepository = useDeleteCollectionsFromRepository();
@@ -28,7 +34,7 @@ export function useCollectionActions(callback?: (collections: CollectionVersionS
         variant: ButtonVariant.secondary,
         isPinned: true,
         label: t('Upload new version'),
-        onClick: () => navigate(RouteObj.UploadCollection),
+        onClick: () => pageNavigate(HubRoute.UploadCollection),
       },
       { type: PageActionType.Seperator },
       {
