@@ -1,13 +1,11 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate, Outlet, useNavigate } from 'react-router-dom';
-import {
-  PageNavigationItem,
-  useNavigationRoutes,
-} from '../../framework/PageNavigation/PageNavigation';
+import { Navigate, Outlet } from 'react-router-dom';
+import { PageNavigationItem } from '../../framework/PageNavigation/PageNavigationItem';
 import { PageNotImplemented } from '../common/PageNotImplemented';
 import { ActiveUserProvider } from '../common/useActiveUser';
 import { AwxLogin } from './AwxLogin';
+import { AwxRoute } from './AwxRoutes';
 import { CreateOrganization, EditOrganization } from './access/organizations/OrganizationForm';
 import { OrganizationPage } from './access/organizations/OrganizationPage/OrganizationPage';
 import { Organizations } from './access/organizations/Organizations';
@@ -60,113 +58,6 @@ import { CreateSchedule } from './views/schedules/ScheduleForm';
 import { SchedulePage } from './views/schedules/SchedulePage/SchedulePage';
 import { Schedules } from './views/schedules/Schedules';
 
-export enum AwxRoute {
-  Awx = 'awx',
-
-  Dashboard = 'awx-dashboard',
-
-  // Views
-
-  Jobs = 'awx-jobs',
-  JobDetails = 'awx-job-details',
-
-  Schedules = 'awx-schedules',
-  CreateSchedule = 'awx-create-schedule',
-  EditSchedule = 'awx-edit-schedule',
-
-  ActivityStream = 'awx-activity-stream',
-
-  WorkflowApprovals = 'awx-workflow-approvals',
-  WorkflowApprovalDetails = 'awx-workflow-approval-details',
-
-  // Resources
-
-  Templates = 'awx-templates',
-  CreateTemplate = 'awx-create-template',
-  EditTemplate = 'awx-edit-template',
-  TemplateDetails = 'awx-template-details',
-  TemplateSchedule = 'awx-template-schedule',
-
-  WorkflowJobTemplateSchedule = 'awx-workflow-job-template-schedule',
-  WorkflowJobTemplateDetails = 'awx-workflow-job-template-details',
-
-  Credentials = 'awx-credentials',
-  CreateCredential = 'awx-create-credential',
-  EditCredential = 'awx-edit-credential',
-  CredentialDetails = 'awx-credential-details',
-
-  Projects = 'awx-projects',
-  CreateProject = 'awx-create-project',
-  EditProject = 'awx-edit-project',
-  ProjectDetails = 'awx-project-details',
-  ProjectSchedules = 'awx-project-schedules',
-
-  Inventories = 'awx-inventories',
-  CreateInventory = 'awx-create-inventory',
-  EditInventory = 'awx-edit-inventory',
-  InventoryDetails = 'awx-inventory-details',
-  InventorySchedules = 'awx-inventory-schedules',
-
-  Hosts = 'awx-hosts',
-  HostDetails = 'awx-host-details',
-
-  // Access
-
-  Organizations = 'awx-organizations',
-  CreateOrganization = 'awx-create-organization',
-  EditOrganization = 'awx-edit-organization',
-  OrganizationDetails = 'awx-organization-details',
-
-  Teams = 'awx-teams',
-  CreateTeam = 'awx-create-team',
-  EditTeam = 'awx-edit-team',
-  TeamDetails = 'awx-team-details',
-  AddRolesToTeam = 'awx-add-roles-to-team',
-
-  Users = 'awx-users',
-  CreateUser = 'awx-create-user',
-  EditUser = 'awx-edit-user',
-  UserDetails = 'awx-user-details',
-  AddRolesToUser = 'awx-add-roles-to-user',
-
-  // Administration
-
-  CredentialTypes = 'awx-credential-types',
-  CredentialType = 'awx-credential-type',
-
-  Notifications = 'awx-notifications',
-  NotificationDetails = 'awx-notification-details',
-
-  ManagementJobs = 'awx-management-jobs',
-  ManagementJobDetails = 'awx-management-job-details',
-  ManagementJobSchedules = 'awx-management-job-schedules',
-
-  InstanceGroups = 'awx-instance-groups',
-
-  Instances = 'awx-instances',
-  EditInstance = 'awx-edit-instance',
-  InstanceDetails = 'awx-instance-details',
-
-  Applications = 'awx-applications',
-  ApplicationDetails = 'awx-application-details',
-
-  ExecutionEnvironments = 'awx-execution-environments',
-
-  TopologyView = 'awx-topology-view',
-
-  // Analytics
-
-  Reports = 'awx-reports',
-  HostMetrics = 'awx-host-metrics',
-  SubscriptionUsage = 'awx-subscription-usage',
-
-  // Settings
-
-  Settings = 'awx-settings',
-
-  Login = 'awx-login',
-}
-
 export function useAwxNavigation() {
   const { t } = useTranslation();
   const pageNavigationItems = useMemo<PageNavigationItem[]>(() => {
@@ -204,7 +95,7 @@ export function useAwxNavigation() {
                 path: 'jobs',
                 children: [
                   {
-                    id: AwxRoute.JobDetails,
+                    id: AwxRoute.JobPage,
                     path: ':job_type/:id/*',
                     element: <JobPage />,
                   },
@@ -247,7 +138,7 @@ export function useAwxNavigation() {
                 path: 'workflow-approvals',
                 children: [
                   {
-                    id: AwxRoute.WorkflowApprovalDetails,
+                    id: AwxRoute.WorkflowApprovalPage,
                     path: ':id/*',
                     element: <PageNotImplemented />,
                   },
@@ -287,7 +178,7 @@ export function useAwxNavigation() {
                         element: <SchedulePage />,
                       },
                       {
-                        id: AwxRoute.TemplateDetails,
+                        id: AwxRoute.TemplatePage,
                         path: ':id/*',
                         element: <TemplatePage />,
                       },
@@ -302,7 +193,7 @@ export function useAwxNavigation() {
                         element: <SchedulePage />,
                       },
                       {
-                        id: AwxRoute.WorkflowJobTemplateDetails,
+                        id: AwxRoute.WorkflowJobTemplatePage,
                         path: ':id/*',
                         element: <WorkflowJobTemplatePage />,
                       },
@@ -330,7 +221,7 @@ export function useAwxNavigation() {
                     element: <EditCredential />,
                   },
                   {
-                    id: AwxRoute.CredentialDetails,
+                    id: AwxRoute.CredentialPage,
                     path: ':id/*',
                     element: <CredentialPage />,
                   },
@@ -361,7 +252,7 @@ export function useAwxNavigation() {
                     element: <SchedulePage />,
                   },
                   {
-                    id: AwxRoute.ProjectDetails,
+                    id: AwxRoute.ProjectPage,
                     path: ':id/*',
                     element: <ProjectPage />,
                   },
@@ -392,7 +283,7 @@ export function useAwxNavigation() {
                     element: <SchedulePage />,
                   },
                   {
-                    id: AwxRoute.InventoryDetails,
+                    id: AwxRoute.InventoryPage,
                     path: ':inventory_type/:id/*',
                     element: <InventoryPage />,
                   },
@@ -408,7 +299,7 @@ export function useAwxNavigation() {
                 path: 'hosts',
                 children: [
                   {
-                    id: AwxRoute.HostDetails,
+                    id: AwxRoute.HostPage,
                     path: ':id/*',
                     element: <HostPage />,
                   },
@@ -440,7 +331,7 @@ export function useAwxNavigation() {
                     element: <EditOrganization />,
                   },
                   {
-                    id: AwxRoute.OrganizationDetails,
+                    id: AwxRoute.OrganizationPage,
                     path: ':id/*',
                     element: <OrganizationPage />,
                   },
@@ -471,7 +362,7 @@ export function useAwxNavigation() {
                     element: <AddRolesToTeam />,
                   },
                   {
-                    id: AwxRoute.TeamDetails,
+                    id: AwxRoute.TeamPage,
                     path: ':id/*',
                     element: <TeamPage />,
                   },
@@ -502,7 +393,7 @@ export function useAwxNavigation() {
                     element: <AddRolesToUser />,
                   },
                   {
-                    id: AwxRoute.UserDetails,
+                    id: AwxRoute.UserPage,
                     path: ':id/*',
                     element: <UserPage />,
                   },
@@ -540,7 +431,7 @@ export function useAwxNavigation() {
                 path: 'notifications',
                 children: [
                   {
-                    id: AwxRoute.NotificationDetails,
+                    id: AwxRoute.NotificationPage,
                     path: ':id/*',
                     element: <NotificationPage />,
                   },
@@ -561,7 +452,7 @@ export function useAwxNavigation() {
                     element: <SchedulePage />,
                   },
                   {
-                    id: AwxRoute.ManagementJobDetails,
+                    id: AwxRoute.ManagementJobPage,
                     path: ':id/*',
                     element: <ManagementJobPage />,
                   },
@@ -588,7 +479,7 @@ export function useAwxNavigation() {
                     element: <EditInstance />,
                   },
                   {
-                    id: AwxRoute.InstanceDetails,
+                    id: AwxRoute.InstancePage,
                     path: ':id/*',
                     element: <InstanceDetails />,
                   },
@@ -604,7 +495,7 @@ export function useAwxNavigation() {
                 path: 'applications',
                 children: [
                   {
-                    id: AwxRoute.ApplicationDetails,
+                    id: AwxRoute.ApplicationPage,
                     path: ':id/*',
                     element: <ApplicationPage />,
                   },
@@ -679,11 +570,4 @@ export function useAwxNavigation() {
   }, [t]);
 
   return pageNavigationItems;
-}
-
-export function useAwxNavigate() {
-  const navigate = useNavigate();
-  const navigation = useAwxNavigation();
-  const routes = useNavigationRoutes(navigation);
-  return (route: AwxRoute) => navigate(routes[route]);
 }

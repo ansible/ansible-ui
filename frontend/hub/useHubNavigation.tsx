@@ -1,11 +1,9 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate, useNavigate } from 'react-router-dom';
-import {
-  PageNavigationItem,
-  useNavigationRoutes,
-} from '../../framework/PageNavigation/PageNavigation';
+import { Navigate } from 'react-router-dom';
+import { PageNavigationItem } from '../../framework/PageNavigation/PageNavigationItem';
 import { Login } from '../common/Login';
+import { HubRoute } from './HubRoutes';
 import { Approvals } from './approvals/Approvals';
 import { CollectionDetails } from './collections/CollectionDetails';
 import { Collections } from './collections/Collections';
@@ -24,49 +22,6 @@ import { SignatureKeys } from './signature-keys/SignatureKeys';
 import { TaskDetails } from './tasks/TaskDetails';
 import { Tasks } from './tasks/Tasks';
 import { Token } from './token/Token';
-
-export enum HubRoute {
-  Hub = 'hub',
-
-  Dashboard = 'hub-dashboard',
-
-  // Automation Content
-
-  Namespaces = 'hub-namespaces',
-  CreateNamespace = 'hub-create-namespace',
-  EditNamespace = 'hub-edit-namespace',
-  NamespaceDetails = 'hub-namespace-details',
-
-  Collections = 'hub-collections',
-  UploadCollection = 'hub-create-collection',
-  CollectionDetails = 'hub-collection-details',
-
-  ExecutionEnvironments = 'hub-execution-environments',
-
-  SignatureKeys = 'hub-signature-keys',
-
-  // Administration
-
-  Repositories = 'hub-repositories',
-
-  RemoteRegistries = 'hub-remote-registries',
-
-  Tasks = 'hub-tasks',
-  TaskDetails = 'hub-task-details',
-
-  Approvals = 'hub-approvals',
-
-  Remotes = 'hub-remotes',
-  CreateRemote = 'hub-create-remote',
-  EditRemote = 'hub-edit-remote',
-  RemoteDetails = 'hub-remote-details',
-
-  // Access
-
-  APIToken = 'hub-api-token',
-
-  Login = 'hub-login',
-}
 
 export function useHubNavigation() {
   const { t } = useTranslation();
@@ -101,7 +56,7 @@ export function useHubNavigation() {
                     element: <EditHubNamespace />,
                   },
                   {
-                    id: HubRoute.NamespaceDetails,
+                    id: HubRoute.NamespacePage,
                     path: ':id/*',
                     element: <NamespaceDetails />,
                   },
@@ -122,7 +77,7 @@ export function useHubNavigation() {
                     element: <UploadCollection />,
                   },
                   {
-                    id: HubRoute.CollectionDetails,
+                    id: HubRoute.CollectionPage,
                     path: ':id/*',
                     element: <CollectionDetails />,
                   },
@@ -188,7 +143,7 @@ export function useHubNavigation() {
                 path: 'tasks',
                 children: [
                   {
-                    id: HubRoute.TaskDetails,
+                    id: HubRoute.TaskPage,
                     path: ':id/*',
                     element: <TaskDetails />,
                   },
@@ -225,7 +180,7 @@ export function useHubNavigation() {
                     element: <EditRemote />,
                   },
                   {
-                    id: HubRoute.RemoteDetails,
+                    id: HubRoute.RemotePage,
                     path: ':id/*',
                     element: <RemoteDetails />,
                   },
@@ -275,11 +230,4 @@ export function useHubNavigation() {
   }, [t]);
 
   return pageNavigationItems;
-}
-
-export function useHubNavigate() {
-  const navigate = useNavigate();
-  const navigation = useHubNavigation();
-  const routes = useNavigationRoutes(navigation);
-  return (route: HubRoute) => navigate(routes[route]);
 }
