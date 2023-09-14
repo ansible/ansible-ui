@@ -17,3 +17,7 @@ interface PageNavigationComponent {
  * Used both for the sidebar navigation and for the page routes.
  */
 export type PageNavigationItem = PageNavigationGroup | PageNavigationComponent;
+
+export function removeLeadingSlash(path: string): string {
+  return path.replace(/^\//, '');
+}
