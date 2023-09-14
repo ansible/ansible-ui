@@ -2,11 +2,12 @@
 import { DropdownPosition } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { PageActions, PageHeader, PageLayout } from '../../../../../framework';
+import { PageActions, PageHeader, PageLayout, useGetPageUrl } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { PageBackTab, RoutedTab, RoutedTabs } from '../../../../common/RoutedTabs';
 import { RouteObj } from '../../../../common/Routes';
 import { useGetItem } from '../../../../common/crud/useGet';
+import { AwxRoute } from '../../../AwxRoutes';
 import { AwxError } from '../../../common/AwxError';
 import { Team } from '../../../interfaces/Team';
 import { useViewActivityStream } from '../../common/useViewActivityStream';
@@ -26,6 +27,7 @@ export function TeamPage() {
   });
   const viewActivityStreamAction = useViewActivityStream('team');
   const pageActions = [...viewActivityStreamAction, ...itemActions];
+  const getPageUrl = useGetPageUrl();
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!team) return <LoadingPage breadcrumbs tabs />;
@@ -34,7 +36,7 @@ export function TeamPage() {
     <PageLayout>
       <PageHeader
         title={team?.name}
-        breadcrumbs={[{ label: t('Teams'), to: RouteObj.Teams }, { label: team?.name }]}
+        breadcrumbs={[{ label: t('Teams'), to: getPageUrl(AwxRoute.Teams) }, { label: team?.name }]}
         headerActions={
           <PageActions<Team>
             actions={pageActions}

@@ -2,12 +2,13 @@
 import { DropdownPosition } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { PageActions, PageHeader, PageLayout } from '../../../../../framework';
+import { PageActions, PageHeader, PageLayout, useGetPageUrl } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { PageNotImplemented } from '../../../../common/PageNotImplemented';
 import { PageBackTab, RoutedTab, RoutedTabs } from '../../../../common/RoutedTabs';
 import { RouteObj } from '../../../../common/Routes';
 import { useGetItem } from '../../../../common/crud/useGet';
+import { AwxRoute } from '../../../AwxRoutes';
 import { AwxError } from '../../../common/AwxError';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { Schedules } from '../../../views/schedules/Schedules';
@@ -27,6 +28,8 @@ export function TemplatePage() {
     onTemplatesDeleted: () => navigate(RouteObj.Templates),
   });
 
+  const getPageUrl = useGetPageUrl();
+
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!template) return <LoadingPage breadcrumbs tabs />;
 
@@ -34,7 +37,10 @@ export function TemplatePage() {
     <PageLayout>
       <PageHeader
         title={template?.name}
-        breadcrumbs={[{ label: t('Templates'), to: RouteObj.Templates }, { label: template?.name }]}
+        breadcrumbs={[
+          { label: t('Templates'), to: getPageUrl(AwxRoute.Templates) },
+          { label: template?.name },
+        ]}
         headerActions={
           <PageActions<JobTemplate>
             actions={itemActions}

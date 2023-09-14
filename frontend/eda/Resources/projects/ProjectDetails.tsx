@@ -28,6 +28,7 @@ import {
   PageTabs,
   TextCell,
   errorToAlertProps,
+  useGetPageUrl,
   usePageAlertToaster,
 } from '../../../../framework';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
@@ -35,6 +36,7 @@ import { RouteObj } from '../../../common/Routes';
 import { StatusCell } from '../../../common/Status';
 import { postRequest } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
+import { EdaRoute } from '../../EdaRoutes';
 import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
 import { EdaProject, EdaProjectRead } from '../../interfaces/EdaProject';
 import { ImportStateEnum } from '../../interfaces/generated/eda-api';
@@ -170,12 +172,16 @@ export function ProjectDetails() {
       </PageDetails>
     );
   };
+  const getPageUrl = useGetPageUrl();
 
   return (
     <PageLayout>
       <PageHeader
         title={project?.name}
-        breadcrumbs={[{ label: t('Projects'), to: RouteObj.EdaProjects }, { label: project?.name }]}
+        breadcrumbs={[
+          { label: t('Projects'), to: getPageUrl(EdaRoute.Projects) },
+          { label: project?.name },
+        ]}
         headerActions={
           <PageActions<EdaProject>
             actions={itemActions}

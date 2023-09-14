@@ -22,12 +22,14 @@ import {
   PageTable,
   PageTabs,
   Scrollable,
+  useGetPageUrl,
 } from '../../../framework';
 import { formatDateString } from '../../../framework/utils/formatDateString';
 import { capitalizeFirstLetter } from '../../../framework/utils/strings';
 import { RouteObj } from '../../common/Routes';
 import { StatusCell } from '../../common/Status';
 import { useGet } from '../../common/crud/useGet';
+import { EdaRoute } from '../EdaRoutes';
 import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../constants';
 import { EdaActivationInstance } from '../interfaces/EdaActivationInstance';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
@@ -263,12 +265,14 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
     );
   }
 
+  const getPageUrl = useGetPageUrl();
+
   return (
     <PageLayout>
       <PageHeader
         title={rulebookActivation?.name}
         breadcrumbs={[
-          { label: t('Rulebook Activations'), to: RouteObj.EdaRulebookActivations },
+          { label: t('Rulebook Activations'), to: getPageUrl(EdaRoute.RulebookActivations) },
           { label: rulebookActivation?.name },
         ]}
         headerActions={

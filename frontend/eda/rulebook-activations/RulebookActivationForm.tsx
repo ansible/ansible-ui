@@ -12,6 +12,7 @@ import {
   PageHeader,
   PageLayout,
   compareStrings,
+  useGetPageUrl,
 } from '../../../framework';
 import { PageFormAsyncSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncSelect';
 import { PageFormSection } from '../../../framework/PageForm/Utils/PageFormSection';
@@ -31,6 +32,7 @@ import {
   EdaRulebookActivationCreate,
 } from '../interfaces/EdaRulebookActivation';
 import { RestartPolicyEnum } from '../interfaces/generated/eda-api';
+import { EdaRoute } from '../EdaRoutes';
 
 export function CreateRulebookActivation() {
   const { t } = useTranslation();
@@ -61,13 +63,14 @@ export function CreateRulebookActivation() {
     );
   };
   const onCancel = () => navigate(-1);
+  const getPageUrl = useGetPageUrl();
 
   return (
     <PageLayout>
       <PageHeader
         title={t('Create Rulebook Activation')}
         breadcrumbs={[
-          { label: t('Rulebook Activations'), to: RouteObj.EdaRulebookActivations },
+          { label: t('Rulebook Activations'), to: getPageUrl(EdaRoute.RulebookActivations) },
           { label: t('Create Rulebook Activation') },
         ]}
       />

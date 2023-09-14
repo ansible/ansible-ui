@@ -1,15 +1,16 @@
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import {
   PageTable,
   useColumnsWithoutExpandedRow,
   useColumnsWithoutSort,
+  useGetPageUrl,
+  usePageNavigate,
   useVisibleModalColumns,
 } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
-import { RouteObj } from '../../../common/Routes';
+import { EdaRoute } from '../../EdaRoutes';
 import { useProjectColumns } from '../../Resources/projects/hooks/useProjectColumns';
 import { EdaProject } from '../../interfaces/EdaProject';
 import { IEdaView } from '../../useEventDrivenView';
@@ -17,13 +18,13 @@ import { IEdaView } from '../../useEventDrivenView';
 export function EdaRecentProjectsCard(props: { view: IEdaView<EdaProject> }) {
   const { view } = props;
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const tableColumns = useProjectColumns();
   let columns = useVisibleModalColumns(tableColumns);
   columns = useMemo(() => columns, [columns]);
   columns = useColumnsWithoutSort(columns);
   columns = useColumnsWithoutExpandedRow(columns);
-
+  const getPageUrl = useGetPageUrl();
+  const pageNavigate = usePageNavigate();
   return (
     <PageDashboardCard
       title={t('Projects')}
@@ -31,7 +32,7 @@ export function EdaRecentProjectsCard(props: { view: IEdaView<EdaProject> }) {
       height="md"
       width="md"
       linkText={t('Go to Projects')}
-      to={RouteObj.EdaProjects}
+      to={getPageUrl(EdaRoute.Projects)}
       helpTitle={t('Projects')}
       help={t('Projects are a logical collection of rulebooks.')}
     >
@@ -46,7 +47,7 @@ export function EdaRecentProjectsCard(props: { view: IEdaView<EdaProject> }) {
         emptyStateTitle={t('There are currently no projects')}
         emptyStateDescription={t('Create a project by clicking the button below.')}
         emptyStateButtonText={t('Create project')}
-        emptyStateButtonClick={() => navigate(RouteObj.CreateEdaProject)}
+        emptyStateButtonClick={() => pageNavigate(EdaRoute.CreateProject)}
         {...view}
         compact
         itemCount={view.itemCount !== undefined ? Math.min(view.itemCount, 7) : undefined}

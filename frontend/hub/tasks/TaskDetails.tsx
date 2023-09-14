@@ -1,12 +1,18 @@
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { DateTimeCell, PageDetails, PageHeader, PageLayout } from '../../../framework';
+import {
+  DateTimeCell,
+  PageDetails,
+  PageHeader,
+  PageLayout,
+  useGetPageUrl,
+} from '../../../framework';
 import { PageDetail } from '../../../framework/PageDetails/PageDetail';
 import { LoadingPage } from '../../../framework/components/LoadingPage';
 import { AwxError } from '../../awx/common/AwxError';
-import { RouteObj } from '../../common/Routes';
 import { StatusCell } from '../../common/Status';
 import { useGet } from '../../common/crud/useGet';
+import { HubRoute } from '../HubRoutes';
 import { pulpAPI } from '../api/utils';
 import { Task } from './Task';
 
@@ -19,6 +25,8 @@ export function TaskDetails() {
     refresh,
   } = useGet<Task>(params.id ? pulpAPI`/tasks/${params.id}` : '');
 
+  const getPageUrl = useGetPageUrl();
+
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!task) return <LoadingPage breadcrumbs tabs />;
 
@@ -26,7 +34,10 @@ export function TaskDetails() {
     <PageLayout>
       <PageHeader
         title={task?.name}
-        breadcrumbs={[{ label: t('Task Management'), to: RouteObj.Tasks }, { label: task?.name }]}
+        breadcrumbs={[
+          { label: t('Task Management'), to: getPageUrl(HubRoute.Tasks) },
+          { label: task?.name },
+        ]}
       />
       <PageDetails>
         <PageDetail label={t('Name')}>{task?.name}</PageDetail>

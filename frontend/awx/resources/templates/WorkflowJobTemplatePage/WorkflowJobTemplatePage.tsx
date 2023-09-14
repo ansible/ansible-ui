@@ -2,12 +2,13 @@
 import { DropdownPosition } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageActions, PageHeader, PageLayout } from '../../../../../framework';
+import { PageActions, PageHeader, PageLayout, useGetPageUrl } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { PageNotImplemented } from '../../../../common/PageNotImplemented';
 import { PageBackTab, RoutedTab, RoutedTabs } from '../../../../common/RoutedTabs';
 import { RouteObj } from '../../../../common/Routes';
 import { useGetItem } from '../../../../common/crud/useGet';
+import { AwxRoute } from '../../../AwxRoutes';
 import { AwxError } from '../../../common/AwxError';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { Schedules } from '../../../views/schedules/Schedules';
@@ -21,6 +22,8 @@ export function WorkflowJobTemplatePage() {
     refresh,
   } = useGetItem<WorkflowJobTemplate>('/api/v2/workflow_job_templates', params.id);
 
+  const getPageUrl = useGetPageUrl();
+
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!template) return <LoadingPage breadcrumbs tabs />;
 
@@ -28,7 +31,10 @@ export function WorkflowJobTemplatePage() {
     <PageLayout>
       <PageHeader
         title={template?.name}
-        breadcrumbs={[{ label: t('Templates'), to: RouteObj.Templates }, { label: template?.name }]}
+        breadcrumbs={[
+          { label: t('Templates'), to: getPageUrl(AwxRoute.Templates) },
+          { label: template?.name },
+        ]}
         headerActions={
           <PageActions<WorkflowJobTemplate>
             actions={[]}

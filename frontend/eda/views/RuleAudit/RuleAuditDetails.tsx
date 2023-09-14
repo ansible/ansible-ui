@@ -12,11 +12,13 @@ import {
   PageTable,
   PageTabs,
   Scrollable,
+  useGetPageUrl,
 } from '../../../../framework';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { RouteObj } from '../../../common/Routes';
 import { StatusCell } from '../../../common/Status';
 import { useGet } from '../../../common/crud/useGet';
+import { EdaRoute } from '../../EdaRoutes';
 import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
 import { EdaRuleAudit } from '../../interfaces/EdaRuleAudit';
 import { EdaRuleAuditAction } from '../../interfaces/EdaRuleAuditAction';
@@ -130,12 +132,14 @@ export function RuleAuditDetails() {
     );
   }
 
+  const getPageUrl = useGetPageUrl();
+
   return (
     <PageLayout>
       <PageHeader
         title={ruleAudit?.name}
         breadcrumbs={[
-          { label: t('Rule Audit'), to: RouteObj.EdaRuleAudit },
+          { label: t('Rule Audit'), to: getPageUrl(EdaRoute.RuleAudits) },
           { label: ruleAudit?.name },
         ]}
       />

@@ -17,10 +17,10 @@ import {
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
 import { CSSProperties, Fragment, ReactNode } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './PageFramework.css';
-import { usePageNavSideBar } from './PageNav/PageNavSidebar';
+import { usePageNavSideBar } from './PageNavigation/PageNavSidebar';
 import { useBreakpoint } from './components/useBreakPoint';
-import { usePageNavigate } from './components/usePageNavigate';
 import { useFrameworkTranslations } from './useFrameworkTranslations';
 
 export interface ICatalogBreadcrumb {
@@ -32,7 +32,7 @@ export interface ICatalogBreadcrumb {
 }
 
 function Breadcrumbs(props: { breadcrumbs: ICatalogBreadcrumb[]; style?: CSSProperties }) {
-  const navigate = usePageNavigate();
+  const navigate = useNavigate();
   if (!props.breadcrumbs) return <Fragment />;
   return (
     <Breadcrumb style={props.style}>
@@ -50,6 +50,7 @@ function Breadcrumbs(props: { breadcrumbs: ICatalogBreadcrumb[]; style?: CSSProp
                 href={breadcrumb.to}
                 onClick={(e) => {
                   e.preventDefault();
+                  if (!breadcrumb.to) return;
                   navigate(breadcrumb.to);
                 }}
               >

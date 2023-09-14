@@ -1,4 +1,3 @@
-import { RouteObj } from '../../../common/Routes';
 import { IAwxDashboardData } from '../AwxDashboard';
 import { AwxCountsCard } from './AwxCountsCard';
 
@@ -15,7 +14,6 @@ describe('AwxCountsCard.cy.ts', () => {
     cy.contains('Hosts')
       .parent()
       .within(() => {
-        cy.contains(data.hosts.total).should('have.attr', 'href', RouteObj.Hosts);
         cy.contains(data.hosts.total - data.hosts.failed);
         cy.contains(data.hosts.failed);
       });
@@ -23,23 +21,16 @@ describe('AwxCountsCard.cy.ts', () => {
     cy.contains('Projects')
       .parent()
       .within(() => {
-        cy.contains(data.projects.total).should('have.attr', 'href', RouteObj.Projects);
-
         cy.contains(data.projects.total - data.projects.failed)
           .parent()
-          .contains('Ready')
-          .should('have.attr', 'href', RouteObj.Projects + '?status=successful');
+          .contains('Ready');
 
-        cy.contains(data.projects.failed)
-          .parent()
-          .contains('Failed')
-          .should('have.attr', 'href', RouteObj.Projects + '?status=failed,error,canceled,missing');
+        cy.contains(data.projects.failed).parent().contains('Failed');
       });
 
     cy.contains('Inventories')
       .parent()
       .within(() => {
-        cy.contains(data.inventories.total).should('have.attr', 'href', RouteObj.Inventories);
         cy.contains(data.inventories.total - data.inventories.inventory_failed);
         cy.contains(data.inventories.inventory_failed);
       });

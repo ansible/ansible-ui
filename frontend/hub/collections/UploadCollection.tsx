@@ -10,6 +10,7 @@ import {
   PageLayout,
   PageTable,
   TextCell,
+  useGetPageUrl,
 } from '../../../framework';
 import { PageDetail } from '../../../framework/PageDetails/PageDetail';
 import { PageFormFileUpload } from '../../../framework/PageForm/Inputs/PageFormFileUpload';
@@ -27,6 +28,7 @@ import { IToolbarFilter } from '../../../framework';
 import { ToolbarFilterType } from '../../../framework/PageToolbar/PageToolbarFilter';
 import { useSearchParams } from '../../../framework/components/useSearchParams';
 import { nameKeyFn } from '../../common/utils/nameKeyFn';
+import { HubRoute } from '../HubRoutes';
 import { usePulpView } from '../usePulpView';
 
 interface UploadData {
@@ -49,12 +51,13 @@ export interface Distribution {
 
 export function UploadCollection() {
   const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
   return (
     <PageLayout>
       <PageHeader
         title={t('Upload Collection')}
         breadcrumbs={[
-          { label: t('Collections'), to: RouteObj.Collections },
+          { label: t('Collections'), to: getPageUrl(HubRoute.Collections) },
           { label: t('Upload Collection') },
         ]}
       />

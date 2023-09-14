@@ -2,10 +2,15 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { MinusCircleIcon, PlusIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { IPageAction, PageActionSelection, PageActionType, PageTable } from '../../../../framework';
-import { RouteObj } from '../../../common/Routes';
+import {
+  IPageAction,
+  PageActionSelection,
+  PageActionType,
+  PageTable,
+  usePageNavigate,
+} from '../../../../framework';
 import { useActiveUser } from '../../../common/useActiveUser';
+import { AwxRoute } from '../../AwxRoutes';
 import { AccessRole, User } from '../../interfaces/User';
 import { useAwxView } from '../../useAwxView';
 import { useSelectUsersAddTeams } from '../users/hooks/useSelectUsersAddTeams';
@@ -149,7 +154,7 @@ export function ResourceAccessList(props: { url: string; resource: ResourceType 
     [canAddAndRemoveUsers, removeUsersFromResource, resource, t, view.unselectItemsAndRefresh]
   );
 
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
 
   return (
     <PageTable<User>
@@ -161,7 +166,7 @@ export function ResourceAccessList(props: { url: string; resource: ResourceType 
       emptyStateTitle={t('No users yet')}
       emptyStateDescription={t('To get started, create a user.')}
       emptyStateButtonText={t('Create user')}
-      emptyStateButtonClick={() => navigate(RouteObj.CreateUser)}
+      emptyStateButtonClick={() => pageNavigate(AwxRoute.CreateUser)}
       {...view}
     />
   );
