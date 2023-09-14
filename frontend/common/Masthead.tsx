@@ -50,6 +50,7 @@ import { API_PREFIX } from '../eda/constants';
 import { useAnsibleAboutModal } from './AboutModal';
 import { postRequest } from './crud/Data';
 import { useActiveUser } from './useActiveUser';
+import { hubAPI } from '../hub/api/utils';
 
 const MastheadBrandDiv = styled.div`
   display: flex;
@@ -78,6 +79,10 @@ const ToolbarSpan = styled.span`
 
 function isEdaServer(): boolean {
   return process.env.UI_MODE === 'EDA';
+}
+
+function isHubServer(): boolean {
+  return process.env.UI_MODE === 'HUB';
 }
 
 export function AnsibleMasthead(props: { hideLogin?: boolean }) {
@@ -342,9 +347,13 @@ function AccountDropdownInternal() {
           data-cy="logout"
           onClick={() => {
             async function logout() {
-              isEdaServer()
-                ? await postRequest(`${API_PREFIX}/auth/session/logout/`, {})
-                : await fetch('/api/logout/');
+              if (isHubServer()) {
+                await postRequest(hubAPI`/_ui/v1/auth/logout/`, {});
+              } else if (isEdaServer()) {
+                await postRequest(`${API_PREFIX}/auth/session/logout/`, {});
+              } else {
+                await fetch('/api/logout/');
+              }
               navigate('/login');
             }
             void logout();
