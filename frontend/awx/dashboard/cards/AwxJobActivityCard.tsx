@@ -3,18 +3,20 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FormGroupSelectOption } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
-import { RouteObj } from '../../../common/Routes';
+import { useGetPageUrl } from '../../../../framework/PageNavigation/useGetPageUrl';
+import { AwxRoute } from '../../AwxRoutes';
 import { DashboardJobPeriod, DashboardJobType, JobsChart } from '../charts/JobsChart';
 
 export function AwxJobActivityCard() {
   const { t } = useTranslation();
   const [period, setPeriod] = useState<DashboardJobPeriod | undefined>('month');
   const [jobType, setJobType] = useState<DashboardJobType | undefined>('all');
+  const getPageUrl = useGetPageUrl();
   return (
     <PageDashboardCard
       title={t('Recent Job Activity')}
       linkText={t('Go to Jobs')}
-      to={RouteObj.Jobs}
+      to={getPageUrl(AwxRoute.Jobs)}
       width="xxl"
       height="sm"
       headerControls={

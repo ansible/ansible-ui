@@ -1,11 +1,9 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate, useNavigate } from 'react-router-dom';
-import {
-  PageNavigationItem,
-  useNavigationRoutes,
-} from '../../framework/PageNavigation/PageNavigation';
+import { Navigate } from 'react-router-dom';
+import { PageNavigationItem } from '../../framework/PageNavigation/PageNavigationItem';
 import { Login } from '../common/Login';
+import { EdaRoute } from './EdaRoutes';
 import { CredentialDetails } from './Resources/credentials/CredentialDetails';
 import { Credentials } from './Resources/credentials/Credentials';
 import { CreateCredential, EditCredential } from './Resources/credentials/EditCredential';
@@ -41,67 +39,6 @@ import { Rules } from './rules/Rules';
 import { RuleAudit } from './views/RuleAudit/RuleAudit';
 import { RuleAuditDetails } from './views/RuleAudit/RuleAuditDetails';
 
-export enum EdaRoute {
-  Eda = 'eda',
-
-  Dashboard = 'eda-dashboard',
-
-  RuleAudits = 'eda-rule-audits',
-  RuleAuditDetails = 'eda-rule-audit-details',
-
-  RulebookActivations = 'eda-rulebook-activations',
-  CreateRulebookActivation = 'eda-create-rulebook-activation',
-  RulebookActivationDetails = 'eda-rulebook-activation-details',
-  RulebookActivationHistory = 'eda-rulebook-activation-history',
-  RulebookActivationInstancesDetails = 'eda-rulebook-activation-instances-details',
-
-  Rulebooks = 'eda-rulebooks',
-  RulebookDetails = 'eda-rulebook-details',
-
-  Projects = 'eda-projects',
-  CreateProject = 'eda-create-project',
-  EditProject = 'eda-edit-project',
-  ProjectDetails = 'eda-project-details',
-
-  DecisionEnvironments = 'eda-decision-environments',
-  CreateDecisionEnvironment = 'eda-create-decision-environment',
-  EditDecisionEnvironment = 'eda-edit-decision-environment',
-  DecisionEnvironmentDetails = 'eda-decision-environment-details',
-
-  Credentials = 'eda-credentials',
-  CreateCredential = 'eda-create-credential',
-  EditCredential = 'eda-edit-credential',
-  CredentialDetails = 'eda-credential-details',
-
-  Groups = 'eda-groups',
-  CreateGroup = 'eda-create-group',
-  EditGroup = 'eda-edit-group',
-  GroupDetails = 'eda-group-details',
-
-  Users = 'eda-users',
-  CreateUser = 'eda-create-user',
-  EditUser = 'eda-edit-user',
-  UserDetails = 'eda-user-details',
-  UserTokens = 'eda-user-tokens',
-
-  Rules = 'eda-rules',
-  CreateRule = 'eda-create-rule',
-  EditRule = 'eda-edit-rule',
-  RuleDetails = 'eda-rule-details',
-
-  Roles = 'eda-roles',
-  CreateRole = 'eda-create-role',
-  EditRole = 'eda-edit-role',
-  RoleDetails = 'eda-role-details',
-
-  EdaMyDetails = 'eda-my-details',
-  EdaMyTokens = 'eda-my-tokens',
-
-  CreateControllerToken = 'eda-create-controller-token',
-
-  Login = 'eda-login',
-}
-
 export function useEdaNavigation() {
   const { t } = useTranslation();
   const pageNavigationItems = useMemo<PageNavigationItem[]>(() => {
@@ -125,7 +62,7 @@ export function useEdaNavigation() {
                 path: 'rule-audits',
                 children: [
                   {
-                    id: EdaRoute.RuleAuditDetails,
+                    id: EdaRoute.RuleAuditPage,
                     path: ':id/*',
                     element: <RuleAuditDetails />,
                   },
@@ -146,7 +83,7 @@ export function useEdaNavigation() {
                     element: <CreateRulebookActivation />,
                   },
                   {
-                    id: EdaRoute.RulebookActivationDetails,
+                    id: EdaRoute.RulebookActivationPage,
                     path: 'details/:id',
                     element: <RulebookActivationDetails initialTabIndex={0} />,
                   },
@@ -156,7 +93,7 @@ export function useEdaNavigation() {
                     element: <RulebookActivationDetails initialTabIndex={1} />,
                   },
                   {
-                    id: EdaRoute.RulebookActivationInstancesDetails,
+                    id: EdaRoute.RulebookActivationInstancesPage,
                     path: 'activations-instances/details/:id',
                     element: <ActivationInstanceDetails />,
                   },
@@ -168,7 +105,7 @@ export function useEdaNavigation() {
                 path: 'rulebooks',
                 children: [
                   {
-                    id: EdaRoute.RulebookDetails,
+                    id: EdaRoute.RulebookPage,
                     path: ':id/*',
                     element: <RulebookDetails />,
                   },
@@ -194,7 +131,7 @@ export function useEdaNavigation() {
                     element: <EditRule />,
                   },
                   {
-                    id: EdaRoute.RuleDetails,
+                    id: EdaRoute.RulePage,
                     path: 'details/:id',
                     element: <RuleDetails />,
                   },
@@ -226,7 +163,7 @@ export function useEdaNavigation() {
                     element: <EditProject />,
                   },
                   {
-                    id: EdaRoute.ProjectDetails,
+                    id: EdaRoute.ProjectPage,
                     path: 'details/:id',
                     element: <ProjectDetails />,
                   },
@@ -252,7 +189,7 @@ export function useEdaNavigation() {
                     element: <EditDecisionEnvironment />,
                   },
                   {
-                    id: EdaRoute.DecisionEnvironmentDetails,
+                    id: EdaRoute.DecisionEnvironmentPage,
                     path: 'details/:id',
                     element: <DecisionEnvironmentDetails />,
                   },
@@ -278,7 +215,7 @@ export function useEdaNavigation() {
                     element: <EditCredential />,
                   },
                   {
-                    id: EdaRoute.CredentialDetails,
+                    id: EdaRoute.CredentialPage,
                     path: 'details/:id',
                     element: <CredentialDetails />,
                   },
@@ -310,7 +247,7 @@ export function useEdaNavigation() {
                     element: <EditGroup />,
                   },
                   {
-                    id: EdaRoute.GroupDetails,
+                    id: EdaRoute.GroupPage,
                     path: 'details/:id',
                     element: <GroupDetails />,
                   },
@@ -334,7 +271,7 @@ export function useEdaNavigation() {
                         element: <EdaMyDetails initialTabIndex={1} />,
                       },
                       {
-                        id: EdaRoute.EdaMyDetails,
+                        id: EdaRoute.EdaMyPage,
                         path: '',
                         element: <EdaMyDetails initialTabIndex={0} />,
                       },
@@ -359,7 +296,7 @@ export function useEdaNavigation() {
                         element: <EdaUserDetails initialTabIndex={1} />,
                       },
                       {
-                        id: EdaRoute.UserDetails,
+                        id: EdaRoute.UserPage,
                         path: '',
                         element: <EdaUserDetails initialTabIndex={0} />,
                       },
@@ -397,7 +334,7 @@ export function useEdaNavigation() {
                     element: <EditRole />,
                   },
                   {
-                    id: EdaRoute.RoleDetails,
+                    id: EdaRoute.RolePage,
                     path: 'details/:id',
                     element: <RoleDetails />,
                   },
@@ -435,11 +372,4 @@ export function useEdaNavigation() {
   }, [t]);
 
   return pageNavigationItems;
-}
-
-export function useEdaNavigate() {
-  const navigate = useNavigate();
-  const navigation = useEdaNavigation();
-  const routes = useNavigationRoutes(navigation);
-  return (route: EdaRoute) => navigate(routes[route]);
 }
