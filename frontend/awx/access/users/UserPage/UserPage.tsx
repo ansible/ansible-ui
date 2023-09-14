@@ -11,11 +11,13 @@ import {
   PageActions,
   PageHeader,
   PageLayout,
+  useGetPageUrl,
 } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { PageBackTab, RoutedTab, RoutedTabs } from '../../../../common/RoutedTabs';
 import { RouteObj } from '../../../../common/Routes';
 import { useGetItem } from '../../../../common/crud/useGet';
+import { AwxRoute } from '../../../AwxRoutes';
 import { AwxError } from '../../../common/AwxError';
 import { User } from '../../../interfaces/User';
 import { useDeleteUsers } from '../hooks/useDeleteUsers';
@@ -60,6 +62,8 @@ export function UserPage() {
     return itemActions;
   }, [t, history, deleteUsers]);
 
+  const getPageUrl = useGetPageUrl();
+
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!user) return <LoadingPage breadcrumbs tabs />;
 
@@ -67,7 +71,10 @@ export function UserPage() {
     <PageLayout>
       <PageHeader
         title={user.username}
-        breadcrumbs={[{ label: t('Users'), to: RouteObj.Users }, { label: user.username }]}
+        breadcrumbs={[
+          { label: t('Users'), to: getPageUrl(AwxRoute.Users) },
+          { label: user.username },
+        ]}
         headerActions={
           <PageActions<User>
             actions={itemActions}

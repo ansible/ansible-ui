@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageHeader, PageLayout } from '../../../../../framework';
+import { PageHeader, PageLayout, useGetPageUrl } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { PageNotImplemented } from '../../../../common/PageNotImplemented';
 import { PageBackTab, RoutedTab, RoutedTabs } from '../../../../common/RoutedTabs';
 import { RouteObj } from '../../../../common/Routes';
 import { useGetItem } from '../../../../common/crud/useGet';
+import { AwxRoute } from '../../../AwxRoutes';
 import { AwxError } from '../../../common/AwxError';
 import { Application } from '../../../interfaces/Application';
 
@@ -19,6 +20,8 @@ export function ApplicationPage() {
     refresh,
   } = useGetItem<Application>('/api/v2/applications', params.id);
 
+  const getPageUrl = useGetPageUrl();
+
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!application) return <LoadingPage breadcrumbs tabs />;
 
@@ -27,7 +30,7 @@ export function ApplicationPage() {
       <PageHeader
         title={application?.name}
         breadcrumbs={[
-          { label: t('Applications'), to: RouteObj.Applications },
+          { label: t('Applications'), to: getPageUrl(AwxRoute.Applications) },
           { label: application?.name },
         ]}
         headerActions={[]}

@@ -8,11 +8,13 @@ import {
   PageFormTextInput,
   PageHeader,
   PageLayout,
+  useGetPageUrl,
 } from '../../../../framework';
 import { RouteObj } from '../../../common/Routes';
 import { useGet } from '../../../common/crud/useGet';
 import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
+import { EdaRoute } from '../../EdaRoutes';
 import { API_PREFIX } from '../../constants';
 import { EdaResult } from '../../interfaces/EdaResult';
 import { EdaRole, EdaRoleRef } from '../../interfaces/EdaRole';
@@ -43,12 +45,16 @@ export function CreateUser() {
   };
 
   const onCancel = () => navigate(-1);
+  const getPageUrl = useGetPageUrl();
 
   return (
     <>
       <PageHeader
         title={t('Create User')}
-        breadcrumbs={[{ label: t('Users'), to: RouteObj.EdaUsers }, { label: t('Create User') }]}
+        breadcrumbs={[
+          { label: t('Users'), to: getPageUrl(EdaRoute.Users) },
+          { label: t('Create User') },
+        ]}
       />
       <PageForm
         submitText={t('Create user')}
@@ -89,12 +95,16 @@ export function EditUser() {
   };
 
   const onCancel = () => navigate(-1);
+  const getPageUrl = useGetPageUrl();
 
   if (!user || !rolesResult) {
     return (
       <PageLayout>
         <PageHeader
-          breadcrumbs={[{ label: t('Users'), to: RouteObj.EdaUsers }, { label: t('Edit user') }]}
+          breadcrumbs={[
+            { label: t('Users'), to: getPageUrl(EdaRoute.Users) },
+            { label: t('Edit user') },
+          ]}
         />
       </PageLayout>
     );
@@ -109,7 +119,7 @@ export function EditUser() {
       <PageHeader
         title={`${t('Edit')} ${user?.username || t('User')}`}
         breadcrumbs={[
-          { label: t('Users'), to: RouteObj.EdaUsers },
+          { label: t('Users'), to: getPageUrl(EdaRoute.Users) },
           { label: `${t('Edit')} ${user?.username || t('Credential')}` },
         ]}
       />

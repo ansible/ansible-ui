@@ -6,12 +6,14 @@ import {
   PageFormTextInput,
   PageHeader,
   PageLayout,
+  useGetPageUrl,
 } from '../../../../framework';
 import { RouteObj } from '../../../common/Routes';
 import { useGet } from '../../../common/crud/useGet';
 import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { useInvalidateCacheOnUnmount } from '../../../common/useInvalidateCache';
+import { EdaRoute } from '../../EdaRoutes';
 import { API_PREFIX } from '../../constants';
 import { EdaRole } from '../../interfaces/EdaRole';
 
@@ -37,13 +39,17 @@ export function EditRole() {
     }
   };
   const onCancel = () => navigate(-1);
+  const getPageUrl = useGetPageUrl();
 
   if (Number.isInteger(id)) {
     if (!Role) {
       return (
         <PageLayout>
           <PageHeader
-            breadcrumbs={[{ label: t('Roles'), to: RouteObj.EdaRoles }, { label: t('Edit Role') }]}
+            breadcrumbs={[
+              { label: t('Roles'), to: getPageUrl(EdaRoute.Roles) },
+              { label: t('Edit Role') },
+            ]}
           />
         </PageLayout>
       );
@@ -52,7 +58,10 @@ export function EditRole() {
         <PageLayout>
           <PageHeader
             title={t('Edit Role')}
-            breadcrumbs={[{ label: t('Roles'), to: RouteObj.EdaRoles }, { label: t('Edit Role') }]}
+            breadcrumbs={[
+              { label: t('Roles'), to: getPageUrl(EdaRoute.Roles) },
+              { label: t('Edit Role') },
+            ]}
           />
           <PageForm<EdaRole>
             submitText={t('Save role')}
@@ -72,7 +81,10 @@ export function EditRole() {
       <PageLayout>
         <PageHeader
           title={t('Create Role')}
-          breadcrumbs={[{ label: t('Roles'), to: RouteObj.EdaRoles }, { label: t('Create Role') }]}
+          breadcrumbs={[
+            { label: t('Roles'), to: getPageUrl(EdaRoute.Roles) },
+            { label: t('Create Role') },
+          ]}
         />
         <PageForm<EdaRole>
           submitText={t('Create role')}

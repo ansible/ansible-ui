@@ -24,11 +24,13 @@ import {
   PageLayout,
   PageTab,
   PageTabs,
+  useGetPageUrl,
 } from '../../../../framework';
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
 import { PageNotImplemented } from '../../../common/PageNotImplemented';
 import { RouteObj } from '../../../common/Routes';
 import { useGetItem } from '../../../common/crud/useGet';
+import { AwxRoute } from '../../AwxRoutes';
 import { AwxError } from '../../common/AwxError';
 import { UserDateDetail } from '../../common/UserDateDetail';
 import { WorkflowJobTemplate } from '../../interfaces/WorkflowJobTemplate';
@@ -76,6 +78,8 @@ export function WorkflowJobTemplateDetail() {
     return itemActions;
   }, [deleteTemplates, history, t]);
 
+  const getPageUrl = useGetPageUrl();
+
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!template) return <LoadingPage breadcrumbs tabs />;
 
@@ -83,7 +87,10 @@ export function WorkflowJobTemplateDetail() {
     <PageLayout>
       <PageHeader
         title={template?.name}
-        breadcrumbs={[{ label: t('Templates'), to: RouteObj.Templates }, { label: template?.name }]}
+        breadcrumbs={[
+          { label: t('Templates'), to: getPageUrl(AwxRoute.Templates) },
+          { label: template?.name },
+        ]}
         headerActions={
           <PageActions<WorkflowJobTemplate>
             actions={itemActions}

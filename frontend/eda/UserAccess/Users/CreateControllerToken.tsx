@@ -6,10 +6,12 @@ import {
   PageFormTextInput,
   PageHeader,
   PageLayout,
+  useGetPageUrl,
 } from '../../../../framework';
 import { RouteObj } from '../../../common/Routes';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { useEdaActiveUser } from '../../../common/useActiveUser';
+import { EdaRoute } from '../../EdaRoutes';
 import { API_PREFIX } from '../../constants';
 import { EdaControllerToken, EdaControllerTokenCreate } from '../../interfaces/EdaControllerToken';
 
@@ -54,9 +56,11 @@ export function CreateControllerToken() {
   };
   const onCancel = () => navigate(-1);
 
+  const getPageUrl = useGetPageUrl();
+
   const canViewUsers = user?.roles.some((role) => role.name === 'Admin' || role.name === 'Auditor');
   const breadcrumbs = [
-    ...(canViewUsers ? [{ label: t('Users'), to: RouteObj.EdaUsers }] : []),
+    ...(canViewUsers ? [{ label: t('Users'), to: getPageUrl(EdaRoute.Users) }] : []),
     {
       label: user?.username ?? '',
       to: canViewUsers

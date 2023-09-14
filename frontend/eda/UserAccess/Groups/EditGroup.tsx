@@ -6,12 +6,14 @@ import {
   PageFormTextInput,
   PageHeader,
   PageLayout,
+  useGetPageUrl,
 } from '../../../../framework';
 import { RouteObj } from '../../../common/Routes';
 import { useGet } from '../../../common/crud/useGet';
 import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { useInvalidateCacheOnUnmount } from '../../../common/useInvalidateCache';
+import { EdaRoute } from '../../EdaRoutes';
 import { API_PREFIX } from '../../constants';
 import { EdaGroup } from '../../interfaces/EdaGroup';
 
@@ -37,6 +39,7 @@ export function EditGroup() {
     }
   };
   const onCancel = () => navigate(-1);
+  const getPageUrl = useGetPageUrl();
 
   if (Number.isInteger(id)) {
     if (!Group) {
@@ -44,7 +47,7 @@ export function EditGroup() {
         <PageLayout>
           <PageHeader
             breadcrumbs={[
-              { label: t('Groups'), to: RouteObj.EdaGroups },
+              { label: t('Groups'), to: getPageUrl(EdaRoute.Groups) },
               { label: t('Edit Group') },
             ]}
           />
@@ -56,7 +59,7 @@ export function EditGroup() {
           <PageHeader
             title={t('Edit Group')}
             breadcrumbs={[
-              { label: t('Groups'), to: RouteObj.EdaGroups },
+              { label: t('Groups'), to: getPageUrl(EdaRoute.Groups) },
               { label: t('Edit Group') },
             ]}
           />
@@ -78,7 +81,7 @@ export function EditGroup() {
         <PageHeader
           title={t('Create Group')}
           breadcrumbs={[
-            { label: t('Groups'), to: RouteObj.EdaGroups },
+            { label: t('Groups'), to: getPageUrl(EdaRoute.Groups) },
             { label: t('Create Group') },
           ]}
         />

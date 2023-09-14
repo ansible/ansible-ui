@@ -11,12 +11,14 @@ import {
   PageActions,
   PageHeader,
   PageLayout,
+  useGetPageUrl,
 } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { PageNotImplemented } from '../../../../common/PageNotImplemented';
 import { PageBackTab, RoutedTab, RoutedTabs } from '../../../../common/RoutedTabs';
 import { RouteObj } from '../../../../common/Routes';
 import { useGetItem } from '../../../../common/crud/useGet';
+import { AwxRoute } from '../../../AwxRoutes';
 import { AwxError } from '../../../common/AwxError';
 import { Organization } from '../../../interfaces/Organization';
 import { useDeleteOrganizations } from '../hooks/useDeleteOrganizations';
@@ -68,6 +70,8 @@ export function OrganizationPage() {
     return itemActions;
   }, [deleteOrganizations, navigate, t]);
 
+  const getPageUrl = useGetPageUrl();
+
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!organization) return <LoadingPage breadcrumbs tabs />;
 
@@ -76,7 +80,7 @@ export function OrganizationPage() {
       <PageHeader
         title={organization?.name}
         breadcrumbs={[
-          { label: t('Organizations'), to: RouteObj.Organizations },
+          { label: t('Organizations'), to: getPageUrl(AwxRoute.Organizations) },
           { label: organization?.name },
         ]}
         headerActions={

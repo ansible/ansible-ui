@@ -1,10 +1,17 @@
 import { DropdownPosition } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageActions, PageHeader, PageLayout, PageTab, PageTabs } from '../../../framework';
+import {
+  PageActions,
+  PageHeader,
+  PageLayout,
+  PageTab,
+  PageTabs,
+  useGetPageUrl,
+} from '../../../framework';
 import { PageDetailsFromColumns } from '../../../framework/PageDetails/PageDetailsFromColumns';
-import { RouteObj } from '../../common/Routes';
 import { useGet } from '../../common/crud/useGet';
+import { HubRoute } from '../HubRoutes';
 import { hubAPI } from '../api/utils';
 import { HubItemsResponse } from '../useHubView';
 import { HubNamespace } from './HubNamespace';
@@ -21,6 +28,7 @@ export function NamespaceDetails() {
   if (data && data.data && data.data.length > 0) {
     namespace = data.data[0];
   }
+  const getPageUrl = useGetPageUrl();
 
   const pageActions = useHubNamespaceActions();
   return (
@@ -28,7 +36,7 @@ export function NamespaceDetails() {
       <PageHeader
         title={namespace?.name}
         breadcrumbs={[
-          { label: t('Namespaces'), to: RouteObj.Namespaces },
+          { label: t('Namespaces'), to: getPageUrl(HubRoute.Namespaces) },
           { label: namespace?.name },
         ]}
         headerActions={

@@ -1,7 +1,7 @@
 import { FieldValues } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { PageFormCheckbox, PageHeader, PageLayout } from '../../../../framework';
+import { PageFormCheckbox, PageHeader, PageLayout, useGetPageUrl } from '../../../../framework';
 import { PageFormGroup } from '../../../../framework/PageForm/Inputs/PageFormGroup';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { PageForm, PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
@@ -9,6 +9,7 @@ import { RouteObj } from '../../../common/Routes';
 import { postRequest, requestPatch } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
+import { AwxRoute } from '../../AwxRoutes';
 import { PageFormSelectOrganization } from '../../access/organizations/components/PageFormOrganizationSelect';
 import { getOrganizationByName } from '../../access/organizations/utils/getOrganizationByName';
 import { PageFormInstanceGroupSelect } from '../../administration/instance-groups/components/PageFormInstanceGroupSelect';
@@ -64,12 +65,15 @@ export function CreateInventory() {
       setError(getAwxError(err));
     }
   };
+
+  const getPageUrl = useGetPageUrl();
+
   return (
     <PageLayout>
       <PageHeader
         title={t('Create Inventory')}
         breadcrumbs={[
-          { label: t('Inventories'), to: RouteObj.Inventories },
+          { label: t('Inventories'), to: getPageUrl(AwxRoute.Inventories) },
           { label: t('Create Inventory') },
         ]}
       />
@@ -134,24 +138,28 @@ export function EditInventory() {
       setError(getAwxError(err));
     }
   };
+
+  const getPageUrl = useGetPageUrl();
+
   if (!inventory) {
     return (
       <PageLayout>
         <PageHeader
           breadcrumbs={[
-            { label: t('Inventories'), to: RouteObj.Inventories },
+            { label: t('Inventories'), to: getPageUrl(AwxRoute.Inventories) },
             { label: t('Edit Inventory') },
           ]}
         />
       </PageLayout>
     );
   }
+
   return (
     <PageLayout>
       <PageHeader
         title={t('Edit Inventory')}
         breadcrumbs={[
-          { label: t('Inventories'), to: RouteObj.Inventories },
+          { label: t('Inventories'), to: getPageUrl(AwxRoute.Inventories) },
           { label: t('Edit Inventory') },
         ]}
       />
