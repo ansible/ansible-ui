@@ -3,11 +3,19 @@ import { ITableColumn, IToolbarFilter, usePageDialog, ISelected } from './../../
 import { Button, Modal, ModalVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
+import {
+  useRepositoryColumns,
+  useRepositoryFilters,
+} from './../../repositories/hooks/useRepositorySelector';
+import { PageTable } from './../../../../framework/PageTable/PageTable';
+import { usePulpView } from '../../usePulpView';
+import { AnsibleAnsibleRepositoryResponse as Repository } from './../../api-schemas/generated/AnsibleAnsibleRepositoryResponse';
+import { pulpAPI } from '../../api/utils';
 
 export function useCopyToRepository() {
   const [_, setDialog] = usePageDialog();
   const { t } = useTranslation();
-  const [collections, setCollections] = useState<CollectionVersionSearch[]>([]);
+  const [repositories, setRepositories] = useState<Repository[]>([]);
 
   return (collection: CollectionVersionSearch) => {
     setDialog(
@@ -29,7 +37,7 @@ export function useCopyToRepository() {
         <CopyToRepositoryTable
           collection={collection}
           selectedItems={(items) => {
-            setCollections(items);
+            setRepositories(items);
           }}
         />
       </Modal>
@@ -39,7 +47,32 @@ export function useCopyToRepository() {
 
 function CopyToRepositoryTable(props: {
   collection: CollectionVersionSearch;
-  selectedItems: (collections: CollectionVersionSearch[]) => void;
+  selectedItems: (repositories: Repository[]) => void;
 }) {
-  return <></>;
+  const toolbarFilters = useRepositoryFilters();
+  const tableColumns = useRepositoryColumns();
+  const { t } = useTranslation();
+
+  const view = usePulpView({
+    url: pulpAPI`/repositories/ansible/ansible/`,
+    toolbarFilters,
+    tableColumns,
+    disableQueryString: true,
+    keyFn: (item) => item.name,
+  });
+
+  return (
+    <PageTable<Repository>
+      id="hub-collection-version-search-table"
+      toolbarFilters={toolbarFilters}
+      tableColumns={tableColumns}
+      errorStateTitle={t('Error loading collections')}
+      emptyStateTitle={t('No collections yet')}
+      emptyStateDescription={t('To get started, upload a collection.')}
+      emptyStateButtonText={t('Upload collection')}
+      {...view}
+      defaultTableView="list"
+      defaultSubtitle={t('Repository')}
+    />
+  );
 }
