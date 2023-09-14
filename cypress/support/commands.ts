@@ -66,7 +66,10 @@ declare global {
       /** Get a checkbox by its label. */
       getCheckboxByLabel(label: string | RegExp): Chainable<JQuery<HTMLElement>>;
 
-      /** Finds an input by label and types the text into the input.*/
+      /** Finds an input by label and types the text into the input.
+       *
+       * @deprecated - use data-cy locators to find the elements directly instead.
+       */
       typeInputByLabel(label: string | RegExp, text: string): Chainable<void>;
 
       /** Finds a dropdown/select component by its dropdownLabel and clicks on the option specified by dropdownOptionLabel.*/

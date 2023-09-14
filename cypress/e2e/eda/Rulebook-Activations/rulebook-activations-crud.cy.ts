@@ -7,7 +7,7 @@ import { EdaRulebook } from '../../../../frontend/eda/interfaces/EdaRulebook';
 import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRulebookActivation';
 import { ActivationRead } from '../../../../frontend/eda/interfaces/generated/eda-api';
 
-describe.skip('EDA rulebook activations- Create', () => {
+describe('EDA rulebook activations- Create', () => {
   let edaProject: EdaProject;
   let edaDecisionEnvironment: EdaDecisionEnvironment;
   let edaRuleBook: EdaRulebook;
@@ -33,13 +33,13 @@ describe.skip('EDA rulebook activations- Create', () => {
     cy.deleteAllEdaCurrentUserTokens();
   });
 
-  it('can create a Rulebook Activation including custom variables, enable it, and assert the information showing on the details page', () => {
+  it('can create a Rulebook Activation including custom variables and assert the information showing on the details page', () => {
     const name = 'E2E Rulebook Activation ' + randomString(4);
     cy.navigateTo('eda', 'rulebook-activations');
     cy.clickButton(/^Create rulebook activation$/);
     cy.get('h1').should('contain', 'Create Rulebook Activation');
-    cy.typeInputByLabel(/^Name$/, name);
-    cy.typeInputByLabel(/^Description$/, 'This is a new rulebook activation.');
+    cy.get('[data-cy="name"]').type(name);
+    cy.get('[data-cy="description"]').type('This is a new rulebook activation.');
     cy.selectDropdownOptionByLabel(/^Project$/, edaProject.name);
     cy.selectDropdownOptionByLabel(/^Rulebook$/, edaRuleBook.name);
     cy.selectDropdownOptionByLabel(/^Decision environment$/, edaDecisionEnvironment.name);
@@ -55,13 +55,13 @@ describe.skip('EDA rulebook activations- Create', () => {
   });
 
   it.skip('can restart a Rulebook Activation from the from the line item in list view', () => {
-    //uncomment this test when rulebook activations are stable enough to test
+    //this test should only live downstream
     const name = 'E2E Rulebook Activation ' + randomString(4);
     cy.navigateTo('eda', 'rulebook-activations');
     cy.clickButton(/^Create rulebook activation$/);
     cy.get('h1').should('contain', 'Create Rulebook Activation');
-    cy.typeInputByLabel(/^Name$/, name);
-    cy.typeInputByLabel(/^Description$/, 'This is a new rulebook activation.');
+    cy.get('[data-cy="name"]').type(name);
+    cy.get('[data-cy="description"]').type('This is a new rulebook activation.');
     cy.selectDropdownOptionByLabel(/^Project$/, edaProject.name);
     cy.selectDropdownOptionByLabel(/^Rulebook$/, edaRuleBook.name);
     cy.selectDropdownOptionByLabel(/^Decision environment$/, edaDecisionEnvironment.name);
@@ -95,7 +95,7 @@ describe.skip('EDA rulebook activations- Create', () => {
   });
 });
 
-describe.skip('EDA rulebook activations- Edit, Delete', () => {
+describe('EDA rulebook activations- Edit, Delete', () => {
   let edaProject: EdaProject;
   let edaDecisionEnvironment: EdaDecisionEnvironment;
   let edaRBA: EdaRulebookActivation;
@@ -138,7 +138,8 @@ describe.skip('EDA rulebook activations- Edit, Delete', () => {
     cy.deleteAllEdaCurrentUserTokens();
   });
 
-  it('can disable a Rulebook Activation', () => {
+  it.skip('can disable a Rulebook Activation', () => {
+    //this test should only live downstream
     cy.navigateTo('eda', 'rulebook-activations');
     cy.filterTableByText(edaRBA.name);
     cy.getTableRowByText(edaRBA.name).within(() => {
@@ -153,7 +154,8 @@ describe.skip('EDA rulebook activations- Edit, Delete', () => {
     });
   });
 
-  it('can enable a Rulebook Activation', () => {
+  it.skip('can enable a Rulebook Activation', () => {
+    //this test should only live downstream
     cy.navigateTo('eda', 'rulebook-activations');
     cy.filterTableByText(edaDisabledRBA.name);
     cy.getTableRowByText(edaDisabledRBA.name).within(() => {
@@ -169,6 +171,7 @@ describe.skip('EDA rulebook activations- Edit, Delete', () => {
   });
 
   it.skip('can delete a Rulebook Activation from the details view', () => {
+    //this test should only live downstream
     cy.visit(`/eda/rulebook-activations/details/${edaRBA.id}`);
     cy.intercept('DELETE', `/api/eda/v1/activations/${edaRBA.id}/`).as('deleted');
     cy.clickPageAction(/^Delete rulebook activation$/);

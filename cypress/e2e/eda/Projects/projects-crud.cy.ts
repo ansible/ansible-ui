@@ -13,8 +13,8 @@ describe('EDA Projects CRUD', () => {
     cy.navigateTo('eda', 'projects');
     cy.get('h1').should('contain', 'Projects');
     cy.clickButton(/^Create project$/);
-    cy.typeInputByLabel(/^Name$/, name);
-    cy.typeInputByLabel(/^SCM URL$/, 'https://github.com/ansible/ansible-ui');
+    cy.get('[data-cy="name"]').type(name);
+    cy.get('[data-cy="url"]').type('https://github.com/ansible/ansible-ui');
     cy.clickButton(/^Create project$/);
     cy.hasTitle(name);
     cy.getEdaProjectByName(name).then((project) => {
@@ -30,7 +30,7 @@ describe('EDA Projects CRUD', () => {
       cy.clickTableRow(edaProject.name);
       cy.clickPageAction(/^Edit project$/);
       cy.hasTitle(`Edit ${edaProject.name}`);
-      cy.typeInputByLabel(/^Name$/, edaProject.name + 'a');
+      cy.get('[data-cy="name"]').type(edaProject.name + 'a');
       cy.clickButton(/^Save project$/);
       cy.hasTitle(`${edaProject.name}a`);
       cy.deleteEdaProject(edaProject);
