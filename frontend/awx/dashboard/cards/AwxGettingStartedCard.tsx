@@ -7,7 +7,8 @@ import {
   PageDashboardGettingStarted,
   PageDashboardGettingStartedStep,
 } from '../../../../framework';
-import { RouteObj } from '../../../common/Routes';
+import { useGetPageUrl } from '../../../../framework/PageNavigation/useGetPageUrl';
+import { AwxRoute } from '../../AwxRoutes';
 
 export function AwxGettingStartedCard(props: {
   hasInventory: boolean;
@@ -16,29 +17,29 @@ export function AwxGettingStartedCard(props: {
 }) {
   const { t } = useTranslation();
   const { hasInventory, hasExecutionEnvironment, hasJobTemplate } = props;
-
+  const getPageUrl = useGetPageUrl();
   const steps = useMemo<PageDashboardGettingStartedStep[]>(
     () => [
       {
         title: t('Inventory'),
         description: t('Create an inventory.'),
-        to: RouteObj.Inventories,
+        to: getPageUrl(AwxRoute.Inventories),
         isComplete: hasInventory,
       },
       {
         title: t('Execution Environment'),
         description: t('Create an execution environment.'),
-        to: RouteObj.ExecutionEnvironments,
+        to: getPageUrl(AwxRoute.ExecutionEnvironments),
         isComplete: hasExecutionEnvironment,
       },
       {
         title: t('Job Template'),
         description: t('Create a job template.'),
-        to: RouteObj.Jobs,
+        to: getPageUrl(AwxRoute.Jobs),
         isComplete: hasJobTemplate,
       },
     ],
-    [hasExecutionEnvironment, hasInventory, hasJobTemplate, t]
+    [getPageUrl, hasExecutionEnvironment, hasInventory, hasJobTemplate, t]
   );
 
   return (

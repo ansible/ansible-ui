@@ -1,9 +1,10 @@
 import { Nav, NavExpandable, NavItem, NavList, PageSidebar } from '@patternfly/react-core';
-import { useMemo } from 'react';
-import { usePageNavBarClick, usePageNavSideBar } from '../PageNav/PageNavSidebar';
+import { usePageNavBarClick, usePageNavSideBar } from './PageNavSidebar';
+import { PageNavigationItem } from './PageNavigationItem';
 
-export function PageNavigation(props: { navigationItems: PageNavigationItem[] }) {
-  const { navigationItems } = props;
+/** Renders a sidebar navigation menu from an arroy of navigation items. */
+export function PageNavigation(props: { navigation: PageNavigationItem[] }) {
+  const { navigation: navigationItems } = props;
   const navBar = usePageNavSideBar();
   return (
     <PageSidebar
@@ -19,32 +20,17 @@ export function PageNavigation(props: { navigationItems: PageNavigationItem[] })
   );
 }
 
-interface PageNavigationGroup {
-  label?: string;
-  path: string;
-  children: PageNavigationItem[];
-}
-
-interface PageNavigationComponent {
-  id: string;
-  label?: string;
-  path: string;
-  element: JSX.Element;
-}
-
-export type PageNavigationItem = PageNavigationGroup | PageNavigationComponent;
-
-export function PageNavigationItems(props: { items: PageNavigationItem[]; baseRoute: string }) {
+function PageNavigationItems(props: { items: PageNavigationItem[]; baseRoute: string }) {
   return (
     <>
       {props.items.map((item, index) => (
-        <PageNavigationItem key={index} item={item} baseRoute={props.baseRoute} />
+        <PageNavigationItemComponent key={index} item={item} baseRoute={props.baseRoute} />
       ))}
     </>
   );
 }
 
-function PageNavigationItem(props: { item: PageNavigationItem; baseRoute: string }) {
+function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRoute: string }) {
   let id: string | undefined;
   if ('id' in props.item) {
     id = props.item.id;
@@ -85,23 +71,4 @@ function PageNavigationItem(props: { item: PageNavigationItem; baseRoute: string
     );
   }
   return <></>;
-}
-
-/** Creates a map of navigation item IDs to their routes. */
-export function useNavigationRoutes(navigationItems: PageNavigationItem[]) {
-  return useMemo(() => createNavigateToRoutes('', navigationItems), [navigationItems]);
-}
-
-function createNavigateToRoutes(base: string, navigationItems: PageNavigationItem[]) {
-  const routes: { [key: string]: string } = {};
-  navigationItems.forEach((item) => {
-    if ('id' in item) {
-      routes[item.id] = item.path;
-    }
-    if ('children' in item) {
-      const itemBase = (base + '/' + item.path).replace('//', '/');
-      Object.assign(routes, createNavigateToRoutes(itemBase, item.children));
-    }
-  });
-  return routes;
 }
