@@ -28,7 +28,6 @@
   },
   "include": [
     "frontend",
-    "platform",
     "framework",
     "cypress",
     "*.config.ts",
