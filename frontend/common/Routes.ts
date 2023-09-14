@@ -203,7 +203,7 @@ export const RouteObj = {
   EditRepository: `${hubRoutePrefix}/administration/repositories/edit/:id`,
 
   Namespaces: `${hubRoutePrefix}/automation-content/namespaces`,
-  NamespaceDetails: `${hubRoutePrefix}/automation-content/namespaces/:id`,
+  NamespaceDetails: `${hubRoutePrefix}/automation-content/namespaces/details/:id`,
   CreateNamespace: `${hubRoutePrefix}/automation-content/namespaces/create`,
   EditNamespace: `${hubRoutePrefix}/automation-content/namespaces/:id/edit`,
 
