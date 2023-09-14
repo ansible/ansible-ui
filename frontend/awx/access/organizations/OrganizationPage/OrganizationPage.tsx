@@ -3,7 +3,7 @@ import { ButtonVariant, DropdownPosition } from '@patternfly/react-core';
 import { EditIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import {
   IPageAction,
   PageActionSelection,
@@ -12,6 +12,7 @@ import {
   PageHeader,
   PageLayout,
   useGetPageUrl,
+  usePageNavigate,
 } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { PageNotImplemented } from '../../../../common/PageNotImplemented';
@@ -34,11 +35,11 @@ export function OrganizationPage() {
     error,
     refresh,
   } = useGetItem<Organization>('/api/v2/organizations/', params.id);
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
 
   const deleteOrganizations = useDeleteOrganizations((deleted: Organization[]) => {
     if (deleted.length > 0) {
-      navigate(RouteObj.Organizations);
+      pageNavigate(AwxRoute.Organizations);
     }
   });
 
@@ -51,8 +52,7 @@ export function OrganizationPage() {
         isPinned: true,
         icon: EditIcon,
         label: t('Edit organization'),
-        onClick: (organization) =>
-          navigate(RouteObj.EditOrganization.replace(':id', organization?.id.toString() ?? '')),
+        onClick: (organization) => pageNavigate(AwxRoute.EditOrganization, { id: organization.id }),
       },
       { type: PageActionType.Seperator },
       {
@@ -68,7 +68,7 @@ export function OrganizationPage() {
       },
     ];
     return itemActions;
-  }, [deleteOrganizations, navigate, t]);
+  }, [deleteOrganizations, pageNavigate, t]);
 
   const getPageUrl = useGetPageUrl();
 
@@ -99,11 +99,12 @@ export function OrganizationPage() {
 export function OrganizationPageTabs(props: { organization: Organization }) {
   const { organization } = props;
   const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
   return (
     <RoutedTabs baseUrl={RouteObj.OrganizationPage}>
       <PageBackTab
         label={t('Back to Organizations')}
-        url={RouteObj.Organizations}
+        url={getPageUrl(AwxRoute.Organizations)}
         persistentFilterKey="organizations"
       />
       <RoutedTab label={t('Details')} url={RouteObj.OrganizationDetails}>

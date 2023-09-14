@@ -38,7 +38,7 @@ export function NotificationPage() {
       <RoutedTabs isLoading={!notification_template} baseUrl={RouteObj.NotificationPage}>
         <PageBackTab
           label={t('Back to Notifications')}
-          url={RouteObj.Notifications}
+          url={getPageUrl(AwxRoute.Notifications)}
           persistentFilterKey="notifications"
         />
         <RoutedTab label={t('Details')} url={RouteObj.NotificationDetails}>

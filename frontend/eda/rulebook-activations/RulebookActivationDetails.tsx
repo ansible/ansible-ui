@@ -8,7 +8,7 @@ import {
 import { CubesIcon, RedoIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import {
   IPageAction,
   PageActionSelection,
@@ -23,6 +23,7 @@ import {
   PageTabs,
   Scrollable,
   useGetPageUrl,
+  usePageNavigate,
 } from '../../../framework';
 import { formatDateString } from '../../../framework/utils/formatDateString';
 import { capitalizeFirstLetter } from '../../../framework/utils/strings';
@@ -49,7 +50,7 @@ import { useDeleteRulebookActivations } from './hooks/useDeleteRulebookActivatio
 export function RulebookActivationDetails({ initialTabIndex = 0 }) {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const restartPolicyHelpBlock = (
     <>
       <p>{t('A policy to decide when to restart a rulebook.')}</p>
@@ -87,7 +88,7 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
 
   const deleteRulebookActivations = useDeleteRulebookActivations((deleted) => {
     if (deleted.length > 0) {
-      navigate(RouteObj.EdaRulebookActivations);
+      pageNavigate(EdaRoute.RulebookActivations);
     }
   });
   const itemActions = useMemo<IPageAction<EdaRulebookActivation>[]>(() => {

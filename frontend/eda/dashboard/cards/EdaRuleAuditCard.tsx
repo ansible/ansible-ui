@@ -4,10 +4,11 @@ import {
   PageTable,
   useColumnsWithoutExpandedRow,
   useColumnsWithoutSort,
+  useGetPageUrl,
   useVisibleModalColumns,
 } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
-import { RouteObj } from '../../../common/Routes';
+import { EdaRoute } from '../../EdaRoutes';
 import { EdaRuleAuditItem } from '../../interfaces/EdaRuleAudit';
 import { IEdaView } from '../../useEventDrivenView';
 import { useRuleAuditColumns } from '../../views/RuleAudit/hooks/useRuleAuditColumns';
@@ -15,6 +16,7 @@ import { useRuleAuditColumns } from '../../views/RuleAudit/hooks/useRuleAuditCol
 export function EdaRuleAuditCard(props: { view: IEdaView<EdaRuleAuditItem> }) {
   const { view } = props;
   const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
   const tableColumns = useRuleAuditColumns();
   let columns = useVisibleModalColumns(tableColumns);
   columns = useColumnsWithoutSort(columns);
@@ -25,7 +27,7 @@ export function EdaRuleAuditCard(props: { view: IEdaView<EdaRuleAuditItem> }) {
       subtitle={t('Recently fired rules')}
       height="md"
       linkText={t('Go to Rule Audit')}
-      to={RouteObj.EdaRuleAudit}
+      to={getPageUrl(EdaRoute.RuleAudits)}
       helpTitle={t('Rule audit')}
       help={t('Rule audit allows auditing of rules which have been triggered by incoming events.')}
     >

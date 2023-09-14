@@ -105,7 +105,6 @@ export const RouteObj = {
   CreateSmartInventory: `${awxRoutePrefix}/resources/smart_inventory/create`,
   CreateConstructedInventory: `${awxRoutePrefix}/resources/constructed_inventory/create`,
 
-  Hosts: `${awxRoutePrefix}/resources/hosts`,
   HostPage: `${awxRoutePrefix}/resources/hosts/:id/*`,
   HostDetails: `${awxRoutePrefix}/resources/hosts/:id/details`,
   HostFacts: `${awxRoutePrefix}/resources/hosts/:id/facts`,
@@ -115,7 +114,6 @@ export const RouteObj = {
   EditHost: `${awxRoutePrefix}/resources/hosts/:id/edit`,
 
   // Access
-  Organizations: `${awxRoutePrefix}/access/organizations`,
   OrganizationPage: `${awxRoutePrefix}/access/organizations/:id/*`,
   OrganizationDetails: `${awxRoutePrefix}/access/organizations/:id/details`,
   OrganizationAccess: `${awxRoutePrefix}/access/organizations/:id/access`,
@@ -125,7 +123,6 @@ export const RouteObj = {
   CreateOrganization: `${awxRoutePrefix}/access/organizations/create`,
   EditOrganization: `${awxRoutePrefix}/access/organizations/:id/edit`,
 
-  Teams: `${awxRoutePrefix}/access/teams`,
   TeamPage: `${awxRoutePrefix}/access/teams/:id/*`,
   TeamDetails: `${awxRoutePrefix}/access/teams/:id/details`,
   TeamAccess: `${awxRoutePrefix}/access/teams/:id/access`,
@@ -134,7 +131,6 @@ export const RouteObj = {
   EditTeam: `${awxRoutePrefix}/access/teams/:id/edit`,
   AddRolesToTeam: `${awxRoutePrefix}/access/teams/:id/roles/add`,
 
-  Users: `${awxRoutePrefix}/access/users`,
   UserPage: `${awxRoutePrefix}/access/users/:id/*`,
   UserDetails: `${awxRoutePrefix}/access/users/:id/details`,
   UserOrganizations: `${awxRoutePrefix}/access/users/:id/organizations`,
@@ -149,7 +145,6 @@ export const RouteObj = {
   CredentialTypePage: `${awxRoutePrefix}/administration/credential_types/:id/*`,
   CredentialTypeDetails: `${awxRoutePrefix}/administration/credential_types/:id/details`,
 
-  Notifications: `${awxRoutePrefix}/administration/notification_templates`,
   NotificationPage: `${awxRoutePrefix}/administration/notification_templates/:id/*`,
   NotificationDetails: `${awxRoutePrefix}/administration/notification_templates/:id/details`,
   ManagementJobs: `${awxRoutePrefix}/administration/management_jobs`,
@@ -162,12 +157,10 @@ export const RouteObj = {
   CreateInstanceGroup: `${awxRoutePrefix}/administration/instance-groups/create`,
   EditInstanceGroup: `${awxRoutePrefix}/administration/instance-groups/:id/edit`,
 
-  Applications: `${awxRoutePrefix}/administration/applications`,
   ApplicationPage: `${awxRoutePrefix}/administration/applications/:id/*`,
   ApplicationDetails: `${awxRoutePrefix}/administration/applications/:id/details`,
   ApplicationTokens: `${awxRoutePrefix}/administration/applications/:id/tokens`,
 
-  Instances: `${awxRoutePrefix}/administration/instances`,
   InstanceDetails: `${awxRoutePrefix}/administration/instances/:id`,
   CreateInstance: `${awxRoutePrefix}/administration/instances/create`,
   EditInstance: `${awxRoutePrefix}/administration/instances/:id/edit`,
@@ -198,25 +191,20 @@ export const RouteObj = {
   // EDA server prefix
   EdaDashboard: `${edaRoutePrefix}/dashboard`,
 
-  EdaProjects: `${edaRoutePrefix}/resources/projects`,
   EdaProjectDetails: `${edaRoutePrefix}/resources/projects/details/:id`,
   CreateEdaProject: `${edaRoutePrefix}/resources/projects/create`,
   EditEdaProject: `${edaRoutePrefix}/resources/projects/edit/:id`,
 
-  EdaCredentials: `${edaRoutePrefix}/resources/credentials`,
   EdaCredentialDetails: `${edaRoutePrefix}/resources/credentials/details/:id`,
   CreateEdaCredential: `${edaRoutePrefix}/resources/credentials/create`,
   EditEdaCredential: `${edaRoutePrefix}/resources/credentials/edit/:id`,
 
-  EdaDecisionEnvironments: `${edaRoutePrefix}/resources/decision-environments`,
   EdaDecisionEnvironmentDetails: `${edaRoutePrefix}/resources/decision-environments/details/:id`,
   CreateEdaDecisionEnvironment: `${edaRoutePrefix}/resources/decision-environments/create`,
   EditEdaDecisionEnvironment: `${edaRoutePrefix}/resources/decision-environments/edit/:id`,
 
-  EdaRuleAudit: `${edaRoutePrefix}/views/rule-audits`,
   EdaRuleAuditDetails: `${edaRoutePrefix}/views/rule-audits/:id`,
 
-  EdaRulebookActivations: `${edaRoutePrefix}/views/rulebook-activations`,
   EdaRulebookActivationDetails: `${edaRoutePrefix}/views/rulebook-activations/details/:id`,
   EdaRulebookActivationDetailsHistory: `${edaRoutePrefix}/views/rulebook-activations/details/:id/history`,
   CreateEdaRulebookActivation: `${edaRoutePrefix}/views/rulebook-activations/create`,
@@ -227,8 +215,6 @@ export const RouteObj = {
 
   EdaRuleDetails: `${edaRoutePrefix}/rules/details/:id`,
 
-  EdaUsers: `${edaRoutePrefix}/access/users`,
-  EdaGroups: `${edaRoutePrefix}/access/groups`,
   CreateEdaUser: `${edaRoutePrefix}/access/users/create`,
   EdaUserDetailsTokens: `${edaRoutePrefix}/access/users/details/:id/tokens`,
   EdaUserDetails: `${edaRoutePrefix}/access/users/details/:id`,
@@ -238,7 +224,4 @@ export const RouteObj = {
   EditEdaGroup: `${edaRoutePrefix}/access/group/edit/:id`,
   EdaRoleDetails: `${edaRoutePrefix}/access/roles/details/:id`,
   CreateEdaControllerToken: `${edaRoutePrefix}/access/users/tokens/create`,
-
-  EdaMyDetails: `${edaRoutePrefix}/access/users/me`,
-  EdaMyTokens: `${edaRoutePrefix}/access/users/me/tokens`,
 };
