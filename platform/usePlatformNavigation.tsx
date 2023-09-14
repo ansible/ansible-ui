@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageNavigationItem } from '../framework/PageNavigation/PageNavigation';
+import { PageNavigationItem } from '../framework';
 import { useAwxNavigation } from '../frontend/awx/useAwxNavigation';
 import { useEdaNavigation } from '../frontend/eda/useEdaNavigation';
 import { useHubNavigation } from '../frontend/hub/useHubNavigation';
