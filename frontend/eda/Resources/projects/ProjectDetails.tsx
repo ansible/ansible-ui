@@ -1,7 +1,6 @@
 import {
   ButtonVariant,
   Checkbox,
-  ClipboardCopy,
   DropdownPosition,
   PageSection,
   Skeleton,
@@ -16,6 +15,7 @@ import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
+  CopyCell,
   IPageAction,
   PageActionSelection,
   PageActionType,
@@ -144,9 +144,7 @@ export function ProjectDetails() {
           )}
         </PageDetail>
         <PageDetail label={t('Git hash')}>
-          <ClipboardCopy hoverTip="Copy" clickTip="Copied" variant="inline-compact">
-            {project?.git_hash || ''}
-          </ClipboardCopy>
+          <CopyCell text={project?.git_hash ? project.git_hash : ''} />
         </PageDetail>
         <PageDetail label={t('Status')}>
           <StatusCell status={project?.import_state || ''} />

@@ -1,15 +1,10 @@
-import {
-  ClipboardCopy,
-  DropdownPosition,
-  PageSection,
-  Skeleton,
-  Stack,
-} from '@patternfly/react-core';
+import { DropdownPosition, PageSection, Skeleton, Stack } from '@patternfly/react-core';
 import { CubesIcon, RedoIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import {
+  CopyCell,
   IPageAction,
   PageActionSelection,
   PageActionType,
@@ -197,9 +192,11 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
             <StatusCell status={rulebookActivation?.status || ''} />
           </PageDetail>
           <PageDetail label={t('Project git hash')}>
-            <ClipboardCopy hoverTip="Copy" clickTip="Copied" variant="inline-compact">
-              {rulebookActivation?.project?.git_hash || ''}
-            </ClipboardCopy>
+            <CopyCell
+              text={
+                rulebookActivation?.project?.git_hash ? rulebookActivation?.project.git_hash : ''
+              }
+            />
           </PageDetail>
           <PageDetail label={t('Number of rules')}>
             {rulebookActivation?.rules_count || 0}
