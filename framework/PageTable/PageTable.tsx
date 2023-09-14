@@ -53,6 +53,7 @@ import { EmptyStateError } from '../components/EmptyStateError';
 import { EmptyStateNoData } from '../components/EmptyStateNoData';
 import { Scrollable } from '../components/Scrollable';
 import { useManageColumns } from '../components/useManageColumns';
+import { getID } from '../hooks/useID';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { PagePagination } from './PagePagination';
 import './PageTable.css';
@@ -672,6 +673,7 @@ function TableHead<T extends object>(props: {
             stickyMinWidth="0px"
             hasRightBorder={props.scrollLeft}
             style={{ backgroundColor: 'inherit' }}
+            data-cy={'selections-column-header'}
           >
             &nbsp;
           </Th>
@@ -692,6 +694,7 @@ function TableHead<T extends object>(props: {
                 maxWidth: column.maxWidth !== undefined ? column.maxWidth : undefined,
                 backgroundColor: 'inherit',
               }}
+              data-cy={getID(column.header + '-column-header')}
             >
               {column.header}
             </Th>
@@ -710,6 +713,7 @@ function TableHead<T extends object>(props: {
               zIndex: 302,
             }}
             className={props.scrollRight ? 'pf-m-border-left' : undefined}
+            data-cy={'action-column-header'}
           >
             &nbsp;
           </Td>
@@ -778,6 +782,11 @@ function TableRow<T extends object>(props: {
           boxShadow: 'unset',
           borderBottom: expanded || (props.isLastRow && disableLastRowBorder) ? 'unset' : undefined,
         }}
+        cy-data={
+          'id' in item && (typeof item.id === 'string' || typeof item.id === 'number')
+            ? `row-id-${item.id.toString()}`
+            : `row-${rowIndex}`
+        }
       >
         {expandedRow && (
           <Td
@@ -791,6 +800,7 @@ function TableRow<T extends object>(props: {
                 : undefined
             }
             style={{ paddingLeft: expandedContent ? 8 : 4 }}
+            cy-data={'expand-column-cell'}
           />
         )}
         {showSelect && (
@@ -813,6 +823,7 @@ function TableRow<T extends object>(props: {
             isStickyColumn
             stickyMinWidth="0px"
             hasRightBorder={props.scrollLeft}
+            cy-data={'checkbox-column-cell'}
           />
         )}
         {onSelect && (
@@ -833,6 +844,7 @@ function TableRow<T extends object>(props: {
             isStickyColumn
             stickyMinWidth="0px"
             hasRightBorder={props.scrollLeft}
+            cy-data={'checkbox-column-cell'}
           />
         )}
         <TableCells
@@ -895,6 +907,7 @@ function TableCells<T extends object>(props: {
             dataLabel={column.header}
             modifier="nowrap"
             style={{ width: column.minWidth === 0 ? '0%' : undefined }}
+            cy-data={getID(column.header + '-column-cell')}
           >
             <TableColumnCell item={item} column={column} />
           </Td>
@@ -912,6 +925,7 @@ function TableCells<T extends object>(props: {
             zIndex: actionsExpanded ? 400 : undefined, // ZIndex 400 is needed for PF table stick headers
           }}
           className={props.scrollRight ? 'pf-m-border-left' : undefined}
+          cy-data={'actions-column-cell'}
         >
           <PageActions
             actions={rowActions}

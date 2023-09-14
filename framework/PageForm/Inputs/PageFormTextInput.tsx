@@ -12,6 +12,7 @@ import {
   useFormContext,
 } from 'react-hook-form';
 import { Help } from '../../components/Help';
+import { useID } from '../../hooks/useID';
 import { useFrameworkTranslations } from '../../useFrameworkTranslations';
 import { capitalizeFirstLetter } from '../../utils/strings';
 
@@ -208,7 +209,7 @@ export function PageFormTextInput<
     autoComplete,
   } = props;
 
-  const id = props.id ?? name.split('.').join('-');
+  const id = useID(props);
 
   const {
     control,
@@ -246,6 +247,7 @@ export function PageFormTextInput<
             isRequired={isRequired}
             labelIcon={labelHelp ? <Help title={labelHelpTitle} help={labelHelp} /> : undefined}
             labelInfo={additionalControls}
+            data-cy={id}
           >
             <InputGroup>
               <TextInput
