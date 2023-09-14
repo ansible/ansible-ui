@@ -4,7 +4,7 @@ import { baseConfig } from './cypress.base.config';
 import setValue from 'set-value';
 
 baseConfig.e2e!.specPattern = 'cypress/e2e/eda/**/*.cy.ts';
-baseConfig.e2e!.baseUrl = 'http://localhost:4103';
+baseConfig.e2e!.baseUrl = 'https://localhost:4103';
 baseConfig.component!.specPattern = 'frontend/eda/**/*.cy.{js,jsx,ts,tsx}';
 setValue(baseConfig, 'component.devServer.webpackConfig.devServer.port', 4203);
 
