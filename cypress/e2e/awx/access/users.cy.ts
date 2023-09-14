@@ -32,19 +32,19 @@ describe('Users List Actions', () => {
   });
 
   it('renders the users list page', () => {
-    cy.navigateTo(/^Users$/);
+    cy.navigateTo('awx', 'users');
     cy.hasTitle(/^Users$/);
   });
 
   it('creates and then deletes a basic user', () => {
     const userName = 'E2E_User_' + randomString(4);
     const password = randomString(12);
-    cy.navigateTo(/^Users$/);
+    cy.navigateTo('awx', 'users');
     cy.clickLink(/^Create user$/);
-    cy.typeInputByLabel(/^Username$/, userName);
-    cy.typeInputByLabel(/^Password$/, password);
-    cy.typeInputByLabel(/^Confirm password$/, password);
-    cy.typeInputByLabel(/^Organization$/, organization.name);
+    cy.get('[data-cy="user-username"]').type(userName);
+    cy.get('[data-cy="user-password"]').type(password);
+    cy.get('[data-cy="confirmPassword"]').type(password);
+    cy.get('[data-cy="user-summary_fields-organization-name"]').type(organization.name);
     cy.clickButton(/^Create user$/);
     cy.hasTitle(userName);
     // Clean up this user
@@ -55,7 +55,7 @@ describe('Users List Actions', () => {
   });
 
   it('renders the user details page', () => {
-    cy.navigateTo(/^Users$/);
+    cy.navigateTo('awx', 'users');
     cy.clickTableRow(user.username);
     cy.hasTitle(user.username);
     cy.clickLink(/^Details$/);
@@ -63,18 +63,18 @@ describe('Users List Actions', () => {
   });
 
   it('edits a user from the details page', () => {
-    cy.navigateTo(/^Users$/);
+    cy.navigateTo('awx', 'users');
     cy.clickTableRow(user.username);
     cy.hasTitle(user.username);
     cy.clickButton(/^Edit user$/);
     cy.hasTitle(/^Edit User$/);
-    cy.typeInputByLabel(/^Username$/, user.username + 'a');
+    cy.get('[data-cy="user-username"]').type(user.username + 'a');
     cy.clickButton(/^Save user$/);
     cy.hasTitle(`${user.username}a`);
   });
 
   it('navigates to the edit form from the users list row item', () => {
-    cy.navigateTo(/^Users$/);
+    cy.navigateTo('awx', 'users');
     cy.clickTableRowPinnedAction(user.username, 'Edit user');
     cy.hasTitle(/^Edit User$/);
   });
@@ -103,7 +103,7 @@ describe('Users Delete Actions', () => {
   });
 
   it('deletes a user from the details page', () => {
-    cy.navigateTo(/^Users$/);
+    cy.navigateTo('awx', 'users');
     cy.clickTableRow(user.username);
     cy.hasTitle(user.username);
     cy.clickPageAction(/^Delete user/);
@@ -113,7 +113,7 @@ describe('Users Delete Actions', () => {
   });
 
   it('deletes a user from the users list row item', () => {
-    cy.navigateTo(/^Users$/);
+    cy.navigateTo('awx', 'users');
     cy.clickTableRowKebabAction(user.username, /^Delete user$/);
     cy.get('#confirm').click();
     cy.clickButton(/^Delete user/);
@@ -123,7 +123,7 @@ describe('Users Delete Actions', () => {
   });
 
   it('deletes a user from the users list toolbar', () => {
-    cy.navigateTo(/^Users$/);
+    cy.navigateTo('awx', 'users');
     cy.selectTableRow(user.username);
     cy.clickToolbarKebabAction(/^Delete selected users$/);
     cy.get('#confirm').click();

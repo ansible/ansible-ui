@@ -67,9 +67,10 @@ describe('Job templates form', () => {
   });
 
   it.skip('Should create job template with all fields except for prompt on launch values', () => {
+    //this test requires refactoring when Job Template creation is enabled
     const jtName = 'E2E ' + randomString(4);
 
-    cy.navigateTo(/^Templates$/);
+    cy.navigateTo('awx', 'templates');
     cy.clickButton(/^Create template$/);
     cy.clickLink(/^Create job template$/);
 
@@ -208,7 +209,8 @@ describe('Job templates form', () => {
   });
 
   it.skip('Should edit a job template', () => {
-    cy.navigateTo(/^Templates$/);
+    //this test requires refactoring when Job Template creation is enabled
+    cy.navigateTo('awx', 'templates');
     cy.createAwxJobTemplate({
       organization: organization.id,
       project: project.id,
@@ -224,7 +226,7 @@ describe('Job templates form', () => {
   });
 
   it('Should delete a job template', () => {
-    cy.navigateTo(/^Templates$/);
+    cy.navigateTo('awx', 'templates');
     cy.createAwxJobTemplate({
       organization: organization.id,
       project: project.id,

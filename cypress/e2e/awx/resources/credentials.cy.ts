@@ -27,7 +27,7 @@ describe('credentials', () => {
       credential_type: 1,
       organization: organization.id,
     }).then((testCredential) => (credential = testCredential));
-    cy.navigateTo(/^Credentials$/);
+    cy.navigateTo('awx', 'credentials');
   });
 
   afterEach(() => {
@@ -41,8 +41,8 @@ describe('credentials', () => {
   it('create credential', () => {
     const credentialName = 'E2E Credential ' + randomString(4);
     cy.clickButton(/^Create credential$/);
-    cy.typeInputByLabel(/^Name$/, credentialName);
-    cy.typeInputByLabel(/^Organization$/, organization.name);
+    cy.get('[data-cy="name"]').type(credentialName);
+    cy.get('[data-cy="summary_fields-organization-name"]').type(organization.name);
     cy.selectDropdownOptionByLabel(/^Credential type$/, 'Amazon Web Services');
     cy.clickButton(/^Create credential$/);
     cy.hasTitle(credentialName);
@@ -52,7 +52,7 @@ describe('credentials', () => {
     cy.clickTableRow(credential.name);
     cy.clickButton(/^Edit credential$/);
     cy.hasTitle(/^Edit Credential$/);
-    cy.typeInputByLabel(/^Name$/, credential.name + 'a');
+    cy.get('[data-cy="name"]').type(credential.name + 'a');
     cy.clickButton(/^Save credential$/);
     cy.hasTitle(`${credential.name}a`);
   });
@@ -69,7 +69,7 @@ describe('credentials', () => {
     cy.hasTitle(credential.name);
     cy.clickButton(/^Edit credential$/);
     cy.hasTitle(/^Edit Credential$/);
-    cy.typeInputByLabel(/^Name$/, credential.name + 'a');
+    cy.get('[data-cy="name"]').type(credential.name + 'a');
     cy.clickButton(/^Save credential$/);
     cy.hasTitle(`${credential.name}a`);
   });
