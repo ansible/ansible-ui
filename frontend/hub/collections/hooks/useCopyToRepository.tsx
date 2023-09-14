@@ -2,7 +2,7 @@ import { CollectionVersionSearch } from '../Collection';
 import { ITableColumn, IToolbarFilter, usePageDialog, ISelected } from './../../../../framework';
 import { Button, Modal, ModalVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useState } from 'react';
+import { useState, useEffect, Dispatch, SetStateAction } from 'react';
 import {
   useRepositoryColumns,
   useRepositoryFilters,
@@ -11,13 +11,12 @@ import { PageTable } from './../../../../framework/PageTable/PageTable';
 import { usePulpView } from '../../usePulpView';
 import { AnsibleAnsibleRepositoryResponse as Repository } from './../../api-schemas/generated/AnsibleAnsibleRepositoryResponse';
 import { pulpAPI, hubAPI } from '../../api/utils';
-import { useGet } from './../../../common/crud/useGet';
+import { useGetRequest } from './../../../common/crud/useGet';
 import { HubItemsResponse } from '../../useHubView';
 
 export function useCopyToRepository() {
   const [_, setDialog] = usePageDialog();
   const { t } = useTranslation();
-  const [repositories, setRepositories] = useState<Repository[]>([]);
 
   return (collection: CollectionVersionSearch) => {
     setDialog(
@@ -38,9 +37,6 @@ export function useCopyToRepository() {
       >
         <CopyToRepositoryTable
           collection={collection}
-          selectedItems={(items) => {
-            setRepositories(items);
-          }}
         />
       </Modal>
     );
@@ -49,12 +45,36 @@ export function useCopyToRepository() {
 
 function CopyToRepositoryTable(props: {
   collection: CollectionVersionSearch;
-  selectedItems: (repositories: Repository[]) => void;
 }) {
   const toolbarFilters = useRepositoryFilters();
   const tableColumns = useRepositoryColumns();
   const { t } = useTranslation();
   const { collection } = props;
+  const request = useGetRequest<HubItemsResponse<CollectionVersionSearch>>();
+
+  const [selectedRepositories, setSelectedRepositories] = useState<Repository[]>([]);
+
+  const [ fixedRepositories, setFixedRepositories ] = useState<Repository[]>([]);
+
+  async function getSelected()
+  {
+    const repos = await request(hubAPI`/v3/plugin/ansible/search/collection-versions?name=${
+        collection.collection_version?.name || '' } &&version=${collection.collection_version?.version || ''}`);
+
+        if (repos.data?.length > 0)
+        {
+            const reposMapped = repos.data.map( (item) => item.repository as Repository);
+            setSelectedRepositories(reposMapped);
+            setFixedRepositories(reposMapped);
+        }
+  }
+
+  useEffect( () => {
+    getSelected();
+  }, []);
+
+
+ 
 
   const view = usePulpView({
     url: pulpAPI`/repositories/ansible/ansible/`,
@@ -64,16 +84,11 @@ function CopyToRepositoryTable(props: {
     keyFn: (item) => item.name,
   });
 
-  const collectionVersions = useGet<
-    HubItemsResponse<CollectionVersionSearch>
-  >(hubAPI`/v3/plugin/ansible/search/collection-versions?name=${
-    collection.collection_version?.name || ''
-  }
-    &&version=${collection.collection_version?.version || ''}`);
+ 
 
   return (
     <PageTable<Repository>
-      id="hub-collection-version-search-table"
+      id="hub-copy-to-repository-table"
       toolbarFilters={toolbarFilters}
       tableColumns={tableColumns}
       errorStateTitle={t('Error loading collections')}
@@ -83,6 +98,10 @@ function CopyToRepositoryTable(props: {
       {...view}
       defaultTableView="list"
       defaultSubtitle={t('Repository')}
+      showSelect = {true}
+      compact = {true}
+      isSelectMultiple = {true}
+      isSelected={ (item) => selectedRepositories.find( (i) => i.name == item.name) ? true : false }
     />
   );
 }
