@@ -1,7 +1,6 @@
 import {
   ButtonVariant,
   Checkbox,
-  ClipboardCopy,
   DropdownPosition,
   PageSection,
   Skeleton,
@@ -30,6 +29,7 @@ import {
   errorToAlertProps,
   useGetPageUrl,
   usePageAlertToaster,
+  CopyCell,
 } from '../../../../framework';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { RouteObj } from '../../../common/Routes';
@@ -142,9 +142,7 @@ export function ProjectDetails() {
           )}
         </PageDetail>
         <PageDetail label={t('Git hash')}>
-          <ClipboardCopy hoverTip="Copy" clickTip="Copied" variant="inline-compact">
-            {project?.git_hash || ''}
-          </ClipboardCopy>
+          <CopyCell text={project?.git_hash ? project.git_hash : ''} />
         </PageDetail>
         <PageDetail label={t('Status')}>
           <StatusCell status={project?.import_state || ''} />
