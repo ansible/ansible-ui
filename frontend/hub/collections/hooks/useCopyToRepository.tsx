@@ -10,7 +10,9 @@ import {
 import { PageTable } from './../../../../framework/PageTable/PageTable';
 import { usePulpView } from '../../usePulpView';
 import { AnsibleAnsibleRepositoryResponse as Repository } from './../../api-schemas/generated/AnsibleAnsibleRepositoryResponse';
-import { pulpAPI } from '../../api/utils';
+import { pulpAPI, hubAPI } from '../../api/utils';
+import { useGet } from './../../../common/crud/useGet';
+import { HubItemsResponse } from '../../useHubView';
 
 export function useCopyToRepository() {
   const [_, setDialog] = usePageDialog();
@@ -52,6 +54,7 @@ function CopyToRepositoryTable(props: {
   const toolbarFilters = useRepositoryFilters();
   const tableColumns = useRepositoryColumns();
   const { t } = useTranslation();
+  const { collection } = props;
 
   const view = usePulpView({
     url: pulpAPI`/repositories/ansible/ansible/`,
@@ -60,6 +63,13 @@ function CopyToRepositoryTable(props: {
     disableQueryString: true,
     keyFn: (item) => item.name,
   });
+
+  const collectionVersions = useGet<
+    HubItemsResponse<CollectionVersionSearch>
+  >(hubAPI`/v3/plugin/ansible/search/collection-versions?name=${
+    collection.collection_version?.name || ''
+  }
+    &&version=${collection.collection_version?.version || ''}`);
 
   return (
     <PageTable<Repository>
