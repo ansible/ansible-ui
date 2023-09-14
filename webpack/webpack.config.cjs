@@ -100,13 +100,13 @@ module.exports = function (env, argv) {
         'process.env.UI_MODE': JSON.stringify(process.env.UI_MODE),
         'process.env.AWX_ROUTE_PREFIX': env.awx_route_prefix
           ? JSON.stringify(env.awx_route_prefix)
-          : JSON.stringify('ui_next'),
+          : JSON.stringify('/ui_next'),
         'process.env.HUB_ROUTE_PREFIX': env.hub_route_prefix
           ? JSON.stringify(env.hub_route_prefix)
-          : JSON.stringify('hub'),
+          : JSON.stringify('/hub'),
         'process.env.EDA_ROUTE_PREFIX': env.eda_route_prefix
           ? JSON.stringify(env.eda_route_prefix)
-          : JSON.stringify('eda'),
+          : JSON.stringify('/eda'),
         'process.env.HUB_API_BASE_PATH': process.env.HUB_API_BASE_PATH
           ? JSON.stringify(process.env.HUB_API_BASE_PATH)
           : JSON.stringify(env.hub_api_base_path || ''),

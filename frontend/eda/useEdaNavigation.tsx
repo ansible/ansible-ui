@@ -1,7 +1,10 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
-import { PageNavigationItem } from '../../framework/PageNavigation/PageNavigationItem';
+import {
+  PageNavigationItem,
+  removeLeadingSlash,
+} from '../../framework/PageNavigation/PageNavigationItem';
 import { Login } from '../common/Login';
 import { EdaRoute } from './EdaRoutes';
 import { CredentialDetails } from './Resources/credentials/CredentialDetails';
@@ -45,7 +48,7 @@ export function useEdaNavigation() {
     const navigationItems: PageNavigationItem[] = [
       {
         label: '',
-        path: process.env.EDA_ROUTE_PREFIX,
+        path: removeLeadingSlash(process.env.EDA_ROUTE_PREFIX),
         children: [
           {
             id: EdaRoute.Dashboard,
