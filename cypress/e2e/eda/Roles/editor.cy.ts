@@ -37,7 +37,7 @@ describe('Editor EDA Role - Resource types and permissions', () => {
       'Credential',
     ];
     const editorActions = ['create', 'read', 'update', 'delete'];
-    cy.navigateTo(/^Roles$/);
+    cy.navigateTo('eda', 'roles');
     cy.clickLink(/^Editor$/);
     cy.contains('h1', 'Editor').should('be.visible');
     cy.contains('dd#name', 'Editor').should('be.visible');

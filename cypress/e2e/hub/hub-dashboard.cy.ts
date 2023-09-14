@@ -28,7 +28,7 @@ describe('hub dashboard', () => {
     cy.deleteNamespace(namespaceName);
   });
   it('render the hub dashboard', () => {
-    cy.navigateTo(/^Dashboard$/);
+    cy.navigateTo('hub', 'dashboard');
     cy.get('.pf-c-title').contains(HubDashboard.title);
     cy.get('section.pf-c-page__main-section')
       .first()

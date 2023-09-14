@@ -60,7 +60,7 @@ export function useHubNavigation() {
                   },
                   {
                     id: HubRoute.NamespacePage,
-                    path: ':id/*',
+                    path: 'details/:id/*',
                     element: <NamespaceDetails />,
                   },
                   {
@@ -184,7 +184,7 @@ export function useHubNavigation() {
                   },
                   {
                     id: HubRoute.RemotePage,
-                    path: ':id/*',
+                    path: 'details/:id/*',
                     element: <RemoteDetails />,
                   },
                   {

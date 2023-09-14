@@ -14,14 +14,14 @@ describe('schedules', () => {
   });
 
   it('renders schedules list', () => {
-    cy.navigateTo(/^Schedules$/);
+    cy.navigateTo('awx', 'schedules');
     cy.hasTitle(/^Schedules$/);
     cy.getTableRowByText(schedule.name);
     cy.deleteAWXSchedule(schedule);
   });
 
   it('renders the toolbar and row actions', () => {
-    cy.navigateTo(/^Schedules$/);
+    cy.navigateTo('awx', 'schedules');
     cy.get('.pf-c-toolbar__group button.toggle-kebab').click();
     cy.get('.pf-c-dropdown__menu').within(() => {
       cy.contains(/^Delete selected schedules$/).should('exist');
@@ -30,7 +30,7 @@ describe('schedules', () => {
   });
 
   it('deletes a schedule from the schedules list row', () => {
-    cy.navigateTo(/^Schedules$/);
+    cy.navigateTo('awx', 'schedules');
     cy.clickTableRowKebabAction(schedule.name, /^Delete schedule$/, true);
     cy.get('#confirm').click();
     cy.clickButton(/^Delete schedule/);
@@ -41,7 +41,7 @@ describe('schedules', () => {
   });
 
   it('deletes a schedule from the schedules list toolbar', () => {
-    cy.navigateTo(/^Schedules$/);
+    cy.navigateTo('awx', 'schedules');
     cy.getTableRowByText(schedule.name).within(() => {
       cy.get('input[aria-label="Select all rows"]').click();
     });

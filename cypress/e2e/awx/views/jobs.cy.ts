@@ -45,7 +45,7 @@ describe('jobs', () => {
   });
 
   it('renders jobs list', () => {
-    cy.navigateTo(/^Jobs$/);
+    cy.navigateTo('awx', 'jobs');
     cy.hasTitle(/^Jobs$/);
     const jobId = jobList.id ? jobList.id.toString() : '';
     const jobName = jobList.name ? jobList.name : '';
@@ -54,7 +54,7 @@ describe('jobs', () => {
   });
 
   it('relaunches job and navigates to job output', () => {
-    cy.navigateTo(/^Jobs$/);
+    cy.navigateTo('awx', 'jobs');
     const jobId = jobList.id ? jobList.id.toString() : '';
     const jobName = jobList.name ? jobList.name : '';
     cy.filterTableByTypeAndText('ID', jobId);
@@ -64,7 +64,7 @@ describe('jobs', () => {
   });
 
   it('renders the toolbar and row actions', () => {
-    cy.navigateTo(/^Jobs$/);
+    cy.navigateTo('awx', 'jobs');
     cy.get('.pf-c-toolbar__group button.toggle-kebab').click();
     cy.get('.pf-c-dropdown__menu').within(() => {
       cy.contains(/^Delete selected jobs$/).should('exist');
@@ -83,7 +83,7 @@ describe('jobs', () => {
   });
 
   it('renders additional details on expanding job row', () => {
-    cy.navigateTo(/^Jobs$/);
+    cy.navigateTo('awx', 'jobs');
     cy.filterTableByTypeAndText('ID', jobList.id ? jobList.id.toString() : '');
     const jobName = jobList.name ? jobList.name : '';
     cy.expandTableRow(jobName, false);
@@ -94,7 +94,7 @@ describe('jobs', () => {
   });
 
   it('filters jobs by id', () => {
-    cy.navigateTo(/^Jobs$/);
+    cy.navigateTo('awx', 'jobs');
     const jobId = jobList.id ? jobList.id.toString() : '';
     cy.selectToolbarFilterType('ID');
     cy.get('#filter-input').type(jobId, { delay: 0 });
@@ -110,7 +110,7 @@ describe('jobs', () => {
     const jobTemplateId = jobTemplate.id ? jobTemplate.id.toString() : '';
     cy.requestPost<UnifiedJobList>(`/api/v2/job_templates/${jobTemplateId}/launch/`, {}).then(
       (testJob) => {
-        cy.navigateTo(/^Jobs$/);
+        cy.navigateTo('awx', 'jobs');
         const jobId = testJob.id ? testJob.id.toString() : '';
         cy.filterTableByTypeAndText('ID', jobId);
         const jobName = testJob.name ? testJob.name : '';
@@ -136,7 +136,7 @@ describe('jobs', () => {
       `/api/v2/job_templates/${jobTemplate.id.toString()}/launch/`,
       {} as UnifiedJobList
     ).then((jobList) => {
-      cy.navigateTo(/^Jobs$/);
+      cy.navigateTo('awx', 'jobs');
       const jobId = jobList.id ? jobList.id.toString() : '';
       cy.filterTableByTypeAndText('ID', jobId);
       const jobName = jobList.name ? jobList.name : '';
