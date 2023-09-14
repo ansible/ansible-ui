@@ -8,8 +8,8 @@ import {
 } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, TextCell } from '../../../../framework';
-import { RouteObj } from '../../../common/Routes';
+import { ITableColumn, TextCell, useGetPageUrl } from '../../../../framework';
+import { AwxRoute } from '../../AwxRoutes';
 import { AccessRole, User } from '../../interfaces/User';
 
 export function useAccessColumns(
@@ -17,15 +17,13 @@ export function useAccessColumns(
   deleteRole?: (role: AccessRole, user: User) => void
 ) {
   const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
   const tableColumns = useMemo<ITableColumn<User>[]>(
     () => [
       {
         header: t('Username'),
         cell: (user) => (
-          <TextCell
-            text={user.username}
-            to={RouteObj.UserDetails.replace(':id', user.id.toString())}
-          />
+          <TextCell text={user.username} to={getPageUrl(AwxRoute.UserPage, { id: user.id })} />
         ),
         card: 'name',
         list: 'name',
