@@ -57,6 +57,7 @@ Cypress.Commands.add('typeInputByLabel', (label: string | RegExp, text: string) 
 
 Cypress.Commands.add(
   'selectDropdownOptionByLabel',
+  //adjust this command once the dropdown component has data-cy added
   (label: string | RegExp, text: string, multiselect?: boolean) => {
     // Used for Typeahead multiselect components
     if (multiselect) {
@@ -127,13 +128,13 @@ Cypress.Commands.add('clickButton', (label: string | RegExp) => {
   cy.contains('button:not(:disabled):not(:hidden)', label).click();
 });
 
-Cypress.Commands.add('navigateTo', (label: string | RegExp) => {
+Cypress.Commands.add('navigateTo', (component: string, label: string) => {
   cy.get('#page-sidebar').then((c) => {
     if (c.hasClass('pf-m-collapsed')) {
       cy.get('#nav-toggle').click();
     }
   });
-  cy.contains('.pf-c-nav__link', label).click();
+  cy.get(`[data-cy="${component}-${label}"]`).click();
   cy.get('#page-sidebar').then((c) => {
     if (!c.hasClass('pf-m-collapsed')) {
       cy.get('#nav-toggle').click();

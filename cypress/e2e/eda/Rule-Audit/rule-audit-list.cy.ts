@@ -25,7 +25,7 @@
 //   });
 
 //   it('can render the Rule Audits list view', () => {
-//     cy.navigateTo(/^Rule Audit$/);
+//     cy.navigateTo('eda', 'rule-audits');
 //     cy.hasTitle(/^Rule Audit$/)
 //       .next('p')
 //       .should(
@@ -44,7 +44,7 @@
 //   //             rulebook_id: edaRulebook.id,
 //   //             decision_environment_id: edaDecisionEnvironment.id,
 //   //           }).then((edaRulebookActivation) => {
-//   //             cy.navigateTo(/^Rule Audit$/);
+//   //             cy.navigateTo('eda', 'rule-audits');
 //   //             // cy.deleteEdaRulebookActivation(edaRulebookActivation);
 //   //           });
 //   //           cy.deleteEdaDecisionEnvironment(edaDecisionEnvironment);

@@ -50,7 +50,7 @@ declare global {
       // --- NAVIGATION COMMANDS ---
 
       /**Navigates to a page of the UI using using the links on the page sidebar. Intended as an alternative to cy.visit(). */
-      navigateTo(label: string | RegExp): Chainable<void>;
+      navigateTo(component: string, label: string): Chainable<void>;
 
       /**Locates a title using its label. No assertion is made. */
       hasTitle(label: string | RegExp): Chainable<void>;
@@ -66,7 +66,10 @@ declare global {
       /** Get a checkbox by its label. */
       getCheckboxByLabel(label: string | RegExp): Chainable<JQuery<HTMLElement>>;
 
-      /** Finds an input by label and types the text into the input.*/
+      /** Finds an input by label and types the text into the input.
+       *
+       * @deprecated - use data-cy locators to find the elements directly instead.
+       */
       typeInputByLabel(label: string | RegExp, text: string): Chainable<void>;
 
       /** Finds a dropdown/select component by its dropdownLabel and clicks on the option specified by dropdownOptionLabel.*/
