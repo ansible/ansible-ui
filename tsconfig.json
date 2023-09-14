@@ -26,5 +26,16 @@
     // "isolatedModules": true
     // "strictNullChecks": true
   },
-  "include": ["awx", "eda", "hub", "platform", "frontend", "framework", "cypress"]
+  "include": [
+    "awx",
+    "eda",
+    "hub",
+    "platform",
+    "frontend",
+    "framework",
+    "cypress",
+    "*.config.ts",
+    "cypress.d.ts",
+    "i18next-parser.config.cjs"
+  ]
 }
