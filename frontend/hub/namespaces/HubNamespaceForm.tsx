@@ -23,7 +23,7 @@ export function CreateHubNamespace() {
   const postRequest = usePostRequest<HubNamespace>();
   const onSubmit: PageFormSubmitHandler<HubNamespace> = async (namespace) => {
     const createdNamespace = await postRequest(hubAPI`/_ui/v1/namespaces/`, namespace);
-    pageNavigate(HubRoute.NamespacePage, { id: createdNamespace.name });
+    pageNavigate(HubRoute.NamespacePage, { params: { id: createdNamespace.name } });
   };
   const getPageUrl = useGetPageUrl();
 

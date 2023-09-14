@@ -26,7 +26,8 @@ export function useHubNamespaceActions() {
         isPinned: true,
         icon: EditIcon,
         label: t('Edit namespace'),
-        onClick: (namespace) => pageNavigate(HubRoute.EditNamespace, { id: namespace.name }),
+        onClick: (namespace) =>
+          pageNavigate(HubRoute.EditNamespace, { params: { id: namespace.name } }),
       },
       { type: PageActionType.Seperator },
       {

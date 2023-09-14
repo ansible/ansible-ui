@@ -329,7 +329,7 @@ function AccountDropdownInternal() {
                 ? pageNavigate(EdaRoute.MyPage)
                 : pageNavigate(EdaRoute.Users)
               : activeUser
-              ? pageNavigate(AwxRoute.UserPage, { id: activeUser.id })
+              ? pageNavigate(AwxRoute.UserPage, { params: { id: activeUser.id } })
               : pageNavigate(AwxRoute.Users);
           }}
         >

@@ -18,7 +18,7 @@ export function useHubNamespacesColumns(_options?: {
         cell: (namespace) => (
           <TextCell
             text={namespace.name}
-            to={getPageUrl(HubRoute.NamespacePage, { id: namespace.name })}
+            to={getPageUrl(HubRoute.NamespacePage, { params: { id: namespace.name } })}
           />
         ),
         value: (namespace) => namespace.name,

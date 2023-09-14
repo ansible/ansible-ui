@@ -12,7 +12,10 @@ export function useRemoteColumns() {
       {
         header: t('Remote name'),
         cell: (remote) => (
-          <TextCell text={remote.name} to={getPageUrl(HubRoute.RemotePage, { id: remote.name })} />
+          <TextCell
+            text={remote.name}
+            to={getPageUrl(HubRoute.RemotePage, { params: { id: remote.name } })}
+          />
         ),
         sort: 'name',
         card: 'name',

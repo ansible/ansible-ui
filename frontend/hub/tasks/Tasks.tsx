@@ -57,7 +57,9 @@ export function useTasksColumns(_options?: { disableSort?: boolean; disableLinks
           <TextCell
             text={task.name}
             onClick={() =>
-              pageNavigate(HubRoute.TaskPage, { id: parsePulpIDFromURL(task.pulp_href) || '' })
+              pageNavigate(HubRoute.TaskPage, {
+                params: { id: parsePulpIDFromURL(task.pulp_href) || '' },
+              })
             }
           />
         ),

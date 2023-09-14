@@ -113,21 +113,24 @@ export function RemoteRepositories() {
         selection: PageActionSelection.Single,
         icon: CogIcon,
         label: t('Configure repository'),
-        onClick: (repository) => pageNavigate(HubRoute.EditRemote, { id: repository.name }),
+        onClick: (repository) =>
+          pageNavigate(HubRoute.EditRemote, { params: { id: repository.name } }),
       },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: SyncIcon,
         label: t('Sync repository'),
-        onClick: (repository) => pageNavigate(HubRoute.EditRemote, { id: repository.name }),
+        onClick: (repository) =>
+          pageNavigate(HubRoute.EditRemote, { params: { id: repository.name } }),
       },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: EditIcon,
         label: t('Edit repository'),
-        onClick: (repository) => pageNavigate(HubRoute.EditRemote, { id: repository.name }),
+        onClick: (repository) =>
+          pageNavigate(HubRoute.EditRemote, { params: { id: repository.name } }),
       },
     ],
     [pageNavigate, t]

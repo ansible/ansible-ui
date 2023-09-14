@@ -52,7 +52,8 @@ export function OrganizationPage() {
         isPinned: true,
         icon: EditIcon,
         label: t('Edit organization'),
-        onClick: (organization) => pageNavigate(AwxRoute.EditOrganization, { id: organization.id }),
+        onClick: (organization) =>
+          pageNavigate(AwxRoute.EditOrganization, { params: { id: organization.id } }),
       },
       { type: PageActionType.Seperator },
       {

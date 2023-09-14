@@ -48,7 +48,7 @@ export function UserPage() {
         isPinned: true,
         icon: EditIcon,
         label: t('Edit user'),
-        onClick: (user) => pageNavigate(AwxRoute.EditUser, { id: user.id }),
+        onClick: (user) => pageNavigate(AwxRoute.EditUser, { params: { id: user.id } }),
       },
       { type: PageActionType.Seperator },
       {

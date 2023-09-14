@@ -23,7 +23,7 @@ export function useRemoteActions(view: IPulpView<IRemotes>) {
         icon: EditIcon,
         isPinned: true,
         label: t('Edit remote 2'),
-        onClick: (remotes) => pageNavigate(HubRoute.EditRemote, { id: remotes.name }),
+        onClick: (remotes) => pageNavigate(HubRoute.EditRemote, { params: { id: remotes.name } }),
         selection: PageActionSelection.Single,
         type: PageActionType.Button,
         variant: ButtonVariant.primary,
