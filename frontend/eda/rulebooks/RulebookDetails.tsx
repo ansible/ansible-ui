@@ -10,11 +10,12 @@ import {
   PageTable,
   PageTabs,
   Scrollable,
+  useGetPageUrl,
   useInMemoryView,
 } from '../../../framework';
 import { formatDateString } from '../../../framework/utils/formatDateString';
-import { RouteObj } from '../../common/Routes';
 import { useGet } from '../../common/crud/useGet';
+import { EdaRoute } from '../EdaRoutes';
 import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../constants';
 import { EdaResult } from '../interfaces/EdaResult';
 import { EdaRulebook } from '../interfaces/EdaRulebook';
@@ -83,13 +84,14 @@ export function RulebookDetails() {
       </PageLayout>
     );
   }
+  const getPageUrl = useGetPageUrl();
 
   return (
     <PageLayout>
       <PageHeader
         title={rulebook?.name}
         breadcrumbs={[
-          { label: t('Rulebooks'), to: RouteObj.EdaRulebooks },
+          { label: t('Rulebooks'), to: getPageUrl(EdaRoute.Rulebooks) },
           { label: rulebook?.name },
         ]}
       />

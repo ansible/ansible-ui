@@ -17,6 +17,7 @@ import {
   DrawerPanelBody,
   DrawerPanelContent,
   DropdownPosition,
+  Label,
   Nav,
   NavExpandable,
   NavItem,
@@ -27,9 +28,9 @@ import {
   StackItem,
   Title,
 } from '@patternfly/react-core';
-import { DateTime } from 'luxon';
-import { BarsIcon } from '@patternfly/react-icons';
+import { BarsIcon, CheckCircleIcon, ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
+import { DateTime } from 'luxon';
 import { Dispatch, SetStateAction, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
@@ -45,21 +46,20 @@ import {
   PageTabs,
   getPatternflyColor,
   useBreakpoint,
+  useGetPageUrl,
 } from '../../../framework';
 import { PageDetail } from '../../../framework/PageDetails/PageDetail';
 import { Scrollable } from '../../../framework/components/Scrollable';
-import { RouteObj } from '../../common/Routes';
+import { AwxError } from '../../awx/common/AwxError';
 import { StatusCell } from '../../common/Status';
 import { useGet } from '../../common/crud/useGet';
+import { HubRoute } from '../HubRoutes';
 import { hubAPI } from '../api/utils';
 import { HubItemsResponse } from '../useHubView';
+import { PageSingleSelect } from './../../../framework/PageInputs/PageSingleSelect';
 import { CollectionVersionSearch } from './Collection';
 import { useCollectionActions } from './hooks/useCollectionActions';
 import { useCollectionColumns } from './hooks/useCollectionColumns';
-import { PageSingleSelect } from './../../../framework/PageInputs/PageSingleSelect';
-import { CheckCircleIcon, ExclamationTriangleIcon } from '@patternfly/react-icons';
-import { Label } from '@patternfly/react-core';
-import { AwxError } from '../../awx/common/AwxError';
 
 export function CollectionDetails() {
   const { t } = useTranslation();
@@ -129,6 +129,9 @@ export function CollectionDetails() {
       setCollection(newCollection);
     }
   }
+
+  const getPageUrl = useGetPageUrl();
+
   if (error || (isLoading == false && data && data.data.length == 0)) {
     return (
       <AwxError
@@ -147,7 +150,7 @@ export function CollectionDetails() {
       <PageHeader
         title={collection?.collection_version.name}
         breadcrumbs={[
-          { label: t('Collections'), to: RouteObj.Collections },
+          { label: t('Collections'), to: getPageUrl(HubRoute.Collections) },
           { label: collection?.collection_version.name },
         ]}
         headerActions={

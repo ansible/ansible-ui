@@ -59,13 +59,17 @@ export function SchedulePage() {
       schedule.summary_fields?.unified_job_template.id.toString()
     );
   }, [getPageUrl, resource_type, schedule]);
+
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!schedule) return <LoadingPage breadcrumbs tabs />;
   return (
     <PageLayout>
       <PageHeader
         title={schedule?.name}
-        breadcrumbs={[{ label: t('Schedules'), to: RouteObj.Templates }, { label: schedule?.name }]}
+        breadcrumbs={[
+          { label: t('Schedules'), to: getPageUrl(AwxRoute.Templates) },
+          { label: schedule?.name },
+        ]}
         headerActions={
           <PageActions<Schedule>
             actions={itemActions}

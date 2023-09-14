@@ -17,10 +17,11 @@ import {
   PageLayout,
   PageTab,
   PageTabs,
+  useGetPageUrl,
 } from '../../../framework';
 import { formatDateString } from '../../../framework/utils/formatDateString';
-import { RouteObj } from '../../common/Routes';
 import { useGet } from '../../common/crud/useGet';
+import { EdaRoute } from '../EdaRoutes';
 import { EdaProjectCell } from '../Resources/projects/components/EdaProjectCell';
 import { PageDetailsSection } from '../common/PageDetailsSection';
 import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../constants';
@@ -102,12 +103,13 @@ export function RuleDetails() {
       </React.Fragment>
     );
   };
+  const getPageUrl = useGetPageUrl();
 
   return (
     <PageLayout>
       <PageHeader
         title={rule?.name}
-        breadcrumbs={[{ label: t('Rules'), to: RouteObj.EdaRules }, { label: rule?.name }]}
+        breadcrumbs={[{ label: t('Rules'), to: getPageUrl(EdaRoute.Rules) }, { label: rule?.name }]}
       />
       {rule ? (
         <PageTabs>

@@ -2,19 +2,26 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
-import { PageForm, PageFormSubmitHandler, PageHeader, PageLayout } from '../../../../framework';
+import {
+  PageForm,
+  PageFormSubmitHandler,
+  PageHeader,
+  PageLayout,
+  useGetPageUrl,
+} from '../../../../framework';
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
 import { RouteObj } from '../../../common/Routes';
 import { postRequest, requestGet, requestPatch } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
+import { AwxRoute } from '../../AwxRoutes';
 import { AwxError } from '../../common/AwxError';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { getAddedAndRemoved } from '../../common/util/getAddedAndRemoved';
 import { Credential } from '../../interfaces/Credential';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { JobTemplate } from '../../interfaces/JobTemplate';
-import { JobTemplateForm, JobTemplateCreate } from '../../interfaces/JobTemplateForm';
+import { JobTemplateCreate, JobTemplateForm } from '../../interfaces/JobTemplateForm';
 import { Label } from '../../interfaces/Label';
 import { Organization } from '../../interfaces/Organization';
 import { getAwxError } from '../../useAwxView';
@@ -78,6 +85,9 @@ export function EditJobTemplate() {
       }
     }
   };
+
+  const getPageUrl = useGetPageUrl();
+
   const jobTemplateFormError = jobTemplateError || instanceGroupsError;
   if (jobTemplateFormError instanceof Error) {
     return (
@@ -93,7 +103,7 @@ export function EditJobTemplate() {
       <PageHeader
         title={t('Edit Job Template')}
         breadcrumbs={[
-          { label: t('Templates'), to: RouteObj.Templates },
+          { label: t('Templates'), to: getPageUrl(AwxRoute.Templates) },
           { label: t('Edit Job Template') },
         ]}
       />
@@ -148,12 +158,14 @@ export function CreateJobTemplate() {
     }
   };
 
+  const getPageUrl = useGetPageUrl();
+
   return (
     <PageLayout>
       <PageHeader
         title={t('Create Job Template')}
         breadcrumbs={[
-          { label: t('Templates'), to: RouteObj.Templates },
+          { label: t('Templates'), to: getPageUrl(AwxRoute.Templates) },
           { label: t('Create Job Template') },
         ]}
       />

@@ -21,6 +21,7 @@ import {
   PageDetails,
   PageHeader,
   PageLayout,
+  useGetPageUrl,
 } from '../../../../framework';
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
 import { RouteObj } from '../../../common/Routes';
@@ -32,6 +33,7 @@ import { Instance } from '../../interfaces/Instance';
 
 import { Dotted } from '../../../../framework/components/Dotted';
 import { capitalizeFirstLetter } from '../../../../framework/utils/strings';
+import { AwxRoute } from '../../AwxRoutes';
 import { useNodeTypeTooltip } from './hooks/useNodeTypeTooltip';
 
 export function InstanceDetails() {
@@ -67,6 +69,8 @@ export function InstanceDetails() {
     return itemActions;
   }, [t, history, postRequest, instance?.id]);
 
+  const getPageUrl = useGetPageUrl();
+
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!instance) return <LoadingPage breadcrumbs tabs />;
 
@@ -75,7 +79,7 @@ export function InstanceDetails() {
       <PageHeader
         title={instance?.hostname}
         breadcrumbs={[
-          { label: t('Instances'), to: RouteObj.Instances },
+          { label: t('Instances'), to: getPageUrl(AwxRoute.Instances) },
           { label: instance?.hostname },
         ]}
         headerActions={

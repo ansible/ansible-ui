@@ -9,6 +9,7 @@ import {
   PageTab,
   PageTabs,
   Scrollable,
+  useGetPageUrl,
 } from '../../../framework';
 import { PageDetailCodeEditor } from '../../../framework/PageDetails/PageDetailCodeEditor';
 import { formatDateString } from '../../../framework/utils/formatDateString';
@@ -16,6 +17,7 @@ import { AwxItemsResponse } from '../../awx/common/AwxItemsResponse';
 import { RouteObj } from '../../common/Routes';
 import { StatusCell } from '../../common/Status';
 import { useGet } from '../../common/crud/useGet';
+import { EdaRoute } from '../EdaRoutes';
 import { PageDetailsSection } from '../common/PageDetailsSection';
 import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../constants';
 import { EdaActivationInstance } from '../interfaces/EdaActivationInstance';
@@ -83,12 +85,14 @@ export function ActivationInstanceDetails() {
     );
   };
 
+  const getPageUrl = useGetPageUrl();
+
   return (
     <PageLayout>
       <PageHeader
         title={`${activationInstance?.id || ''} - ${activationInstance?.name || ''}`}
         breadcrumbs={[
-          { label: t('Rulebook Activations'), to: RouteObj.EdaRulebookActivations },
+          { label: t('Rulebook Activations'), to: getPageUrl(EdaRoute.RulebookActivations) },
           {
             label: activation?.name || '',
             to: RouteObj.EdaRulebookActivationDetails.replace(
