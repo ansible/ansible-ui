@@ -3,8 +3,12 @@ import { Text } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { PageDashboardGettingStarted, PageDashboardGettingStartedStep } from '../../../framework';
-import { RouteObj } from '../../common/Routes';
+import {
+  PageDashboardGettingStarted,
+  PageDashboardGettingStartedStep,
+  useGetPageUrl,
+} from '../../../framework';
+import { HubRoute } from '../HubRoutes';
 
 export function HubGettingStartedCard(props: {
   hasNamespace: boolean;
@@ -13,29 +17,30 @@ export function HubGettingStartedCard(props: {
 }) {
   const { t } = useTranslation();
   const { hasNamespace, hasExecutionEnvironment, hasCollection } = props;
+  const getPageUrl = useGetPageUrl();
 
   const steps = useMemo<PageDashboardGettingStartedStep[]>(
     () => [
       {
         title: t('Namespace'),
         description: t('Create an namespace.'),
-        to: RouteObj.CreateNamespace,
+        to: getPageUrl(HubRoute.CreateNamespace),
         isComplete: hasNamespace,
       },
       {
         title: t('Collection'),
         description: t('Create a collection.'),
-        to: RouteObj.Collections,
+        to: getPageUrl(HubRoute.Collections),
         isComplete: hasCollection,
       },
       {
         title: t('Environment'),
         description: t('Create an environment.'),
-        to: RouteObj.HubExecutionEnvironments,
+        to: getPageUrl(HubRoute.ExecutionEnvironments),
         isComplete: hasExecutionEnvironment,
       },
     ],
-    [t, hasNamespace, hasCollection, hasExecutionEnvironment]
+    [t, getPageUrl, hasNamespace, hasCollection, hasExecutionEnvironment]
   );
 
   return (

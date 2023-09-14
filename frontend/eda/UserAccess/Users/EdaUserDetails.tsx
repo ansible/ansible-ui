@@ -24,11 +24,13 @@ import {
   PageLayout,
   PageTab,
   PageTabs,
+  useGetPageUrl,
 } from '../../../../framework';
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
 import { RouteObj } from '../../../common/Routes';
 import { useGet } from '../../../common/crud/useGet';
 import { useEdaActiveUser } from '../../../common/useActiveUser';
+import { EdaRoute } from '../../EdaRoutes';
 import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
 import { EdaUser } from '../../interfaces/EdaUser';
 import { ControllerTokens } from './ControllerTokens';
@@ -115,6 +117,8 @@ export function EdaUserDetailsInternal({
     [deleteUsers, navigate, t]
   );
 
+  const getPageUrl = useGetPageUrl();
+
   const activeUser = useEdaActiveUser();
   if (!activeUser) return <LoadingPage breadcrumbs tabs />;
   const isViewingSelf = Number(user.id) === Number(activeUser.id);
@@ -130,7 +134,7 @@ export function EdaUserDetailsInternal({
         title={user?.username}
         breadcrumbs={
           canViewUsers
-            ? [{ label: t('Users'), to: RouteObj.EdaUsers }, { label: user?.username }]
+            ? [{ label: t('Users'), to: getPageUrl(EdaRoute.Users) }, { label: user?.username }]
             : undefined
         }
         headerActions={

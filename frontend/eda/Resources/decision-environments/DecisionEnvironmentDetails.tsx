@@ -21,6 +21,7 @@ import {
   PageLayout,
   PageTab,
   PageTabs,
+  useGetPageUrl,
 } from '../../../../framework';
 import { RouteObj } from '../../../common/Routes';
 import { useGet } from '../../../common/crud/useGet';
@@ -28,6 +29,7 @@ import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
 import { EdaCredential } from '../../interfaces/EdaCredential';
 import { EdaDecisionEnvironmentRead } from '../../interfaces/EdaDecisionEnvironment';
 import { useDeleteDecisionEnvironment } from './hooks/useDeleteDecisionEnvironments';
+import { EdaRoute } from '../../EdaRoutes';
 
 export function DecisionEnvironmentDetails() {
   const { t } = useTranslation();
@@ -127,12 +129,14 @@ export function DecisionEnvironmentDetails() {
     );
   };
 
+  const getPageUrl = useGetPageUrl();
+
   return (
     <PageLayout>
       <PageHeader
         title={decisionEnvironment?.name}
         breadcrumbs={[
-          { label: t('Decision Environments'), to: RouteObj.EdaDecisionEnvironments },
+          { label: t('Decision Environments'), to: getPageUrl(EdaRoute.DecisionEnvironments) },
           { label: decisionEnvironment?.name },
         ]}
         headerActions={

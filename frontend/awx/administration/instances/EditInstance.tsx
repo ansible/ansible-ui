@@ -1,11 +1,11 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import useSWR, { useSWRConfig } from 'swr';
-import { PageFormCheckbox, PageHeader, PageLayout } from '../../../../framework';
+import { PageFormCheckbox, PageHeader, PageLayout, useGetPageUrl } from '../../../../framework';
 import { PageFormSlider } from '../../../../framework/PageForm/Inputs/PageFormSlider';
 import { PageForm, PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
-import { RouteObj } from '../../../common/Routes';
 import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data';
+import { AwxRoute } from '../../AwxRoutes';
 import { Instance } from '../../interfaces/Instance';
 import { getAwxError } from '../../useAwxView';
 
@@ -37,12 +37,14 @@ export function EditInstance() {
   };
   const onCancel = () => navigate(-1);
 
+  const getPageUrl = useGetPageUrl();
+
   if (!instance) {
     return (
       <PageLayout>
         <PageHeader
           breadcrumbs={[
-            { label: t('Instances'), to: RouteObj.Instances },
+            { label: t('Instances'), to: getPageUrl(AwxRoute.Instances) },
             { label: t('Edit Instance') },
           ]}
         />
@@ -54,7 +56,7 @@ export function EditInstance() {
         <PageHeader
           title={instance.hostname}
           breadcrumbs={[
-            { label: t('Instances'), to: RouteObj.Instances },
+            { label: t('Instances'), to: getPageUrl(AwxRoute.Instances) },
             { label: instance.hostname },
           ]}
         />

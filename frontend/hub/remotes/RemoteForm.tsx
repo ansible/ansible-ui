@@ -7,15 +7,16 @@ import {
   PageFormTextInput,
   PageHeader,
   PageLayout,
+  useGetPageUrl,
 } from '../../../framework';
 import { PageFormFileUpload } from '../../../framework/PageForm/Inputs/PageFormFileUpload';
 import { PageFormGroup } from '../../../framework/PageForm/Inputs/PageFormGroup';
 import { PageFormExpandableSection } from '../../../framework/PageForm/PageFormExpandableSection';
 import { LoadingPage } from '../../../framework/components/LoadingPage';
 import { AwxError } from '../../awx/common/AwxError';
-import { RouteObj } from '../../common/Routes';
 import { useGet } from '../../common/crud/useGet';
 import { usePostRequest } from '../../common/crud/usePostRequest';
+import { HubRoute } from '../HubRoutes';
 import { appendTrailingSlash, hubAPIPut, parsePulpIDFromURL, pulpAPI } from '../api/utils';
 import { PulpItemsResponse } from '../usePulpView';
 import { IRemotes } from './Remotes';
@@ -41,12 +42,15 @@ export function CreateRemote() {
     });
     navigate(-1);
   };
-
+  const getPageUrl = useGetPageUrl();
   return (
     <PageLayout>
       <PageHeader
         title={t('Create Remote')}
-        breadcrumbs={[{ label: t('Remotes'), to: RouteObj.Remotes }, { label: t('Create Remote') }]}
+        breadcrumbs={[
+          { label: t('Remotes'), to: getPageUrl(HubRoute.Remotes) },
+          { label: t('Create Remote') },
+        ]}
       />
       <PageForm<IRemotes>
         submitText={t('Create remote')}
@@ -134,6 +138,8 @@ export function EditRemote() {
     pulpAPI`/remotes/ansible/collection/?name=${name ?? ''}`
   );
 
+  const getPageUrl = useGetPageUrl();
+
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!data) return <LoadingPage breadcrumbs tabs />;
 
@@ -159,7 +165,10 @@ export function EditRemote() {
     return (
       <PageLayout>
         <PageHeader
-          breadcrumbs={[{ label: t('Remotes'), to: RouteObj.Remotes }, { label: t('Edit Remote') }]}
+          breadcrumbs={[
+            { label: t('Remotes'), to: getPageUrl(HubRoute.Remotes) },
+            { label: t('Edit Remote') },
+          ]}
         />
         <AwxError error={new Error(t('Remote not found'))} handleRefresh={handleRefresh} />
       </PageLayout>
@@ -170,7 +179,10 @@ export function EditRemote() {
     <PageLayout>
       <PageHeader
         title={t('Edit Remote')}
-        breadcrumbs={[{ label: t('Remotes'), to: RouteObj.Remotes }, { label: t(' Remote') }]}
+        breadcrumbs={[
+          { label: t('Remotes'), to: getPageUrl(HubRoute.Remotes) },
+          { label: t(' Remote') },
+        ]}
       />
       <PageForm<RemoteFormProps>
         submitText={t('Edit Remote')}
@@ -178,14 +190,12 @@ export function EditRemote() {
         onCancel={() => navigate(-1)}
         defaultValue={{ ...initialRemote, ...remote }}
       >
-        <>
-          <RemoteInputs />
-          <PageFormExpandableSection singleColumn>
-            <ProxyAdvancedRemoteInputs />
-            <CertificatesAdvancedRemoteInputs />
-            <MiscAdvancedRemoteInputs />
-          </PageFormExpandableSection>
-        </>
+        <RemoteInputs />
+        <PageFormExpandableSection singleColumn>
+          <ProxyAdvancedRemoteInputs />
+          <CertificatesAdvancedRemoteInputs />
+          <MiscAdvancedRemoteInputs />
+        </PageFormExpandableSection>
       </PageForm>
     </PageLayout>
   );
