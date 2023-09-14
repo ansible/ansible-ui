@@ -34,7 +34,7 @@ export function useRemoteColumns() {
         table: ColumnTableOption.Hidden,
       },
     ],
-    [t]
+    [getPageUrl, t]
   );
   return tableColumns;
 }

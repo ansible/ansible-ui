@@ -2,7 +2,6 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { BanIcon, TrashIcon, UploadIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import {
   IPageAction,
   PageActionSelection,
@@ -18,7 +17,6 @@ import { useDeprecateCollections } from './useDeprecateCollections';
 
 export function useCollectionsActions(callback: (collections: CollectionVersionSearch[]) => void) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
   const deleteCollections = useDeleteCollections(callback);
   const deleteCollectionsFromRepository = useDeleteCollectionsFromRepository(callback);

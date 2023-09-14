@@ -41,7 +41,7 @@ export function useHubNamespacesColumns(_options?: {
         list: 'secondary',
       },
     ],
-    [t]
+    [getPageUrl, t]
   );
   return tableColumns;
 }

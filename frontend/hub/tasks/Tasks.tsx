@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import {
   ColumnTableOption,
   DateTimeCell,
@@ -49,7 +48,6 @@ export function Tasks() {
 
 export function useTasksColumns(_options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
   const tableColumns = useMemo<ITableColumn<Task>[]>(
     () => [
@@ -103,7 +101,7 @@ export function useTasksColumns(_options?: { disableSort?: boolean; disableLinks
         list: 'secondary',
       },
     ],
-    [navigate, t]
+    [pageNavigate, t]
   );
   return tableColumns;
 }
