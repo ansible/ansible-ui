@@ -14,6 +14,7 @@ import { useHubContext } from './../../useHubContext';
 import { useDeleteCollections } from './useDeleteCollections';
 import { useDeleteCollectionsFromRepository } from './useDeleteCollectionsFromRepository';
 import { useDeprecateCollections } from './useDeprecateCollections';
+import { useCopyToRepository } from './useCopyToRepository';
 
 export function useCollectionActions(
   callback?: (collections: CollectionVersionSearch[]) => void,
@@ -23,7 +24,6 @@ export function useCollectionActions(
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const deprecateCollections = useDeprecateCollections(callback);
-
   const deleteCollections = useDeleteCollections(callback, false, detail);
   const deleteCollectionsFromRepository = useDeleteCollectionsFromRepository(
     callback,
@@ -37,6 +37,8 @@ export function useCollectionActions(
     detail
   );
   const deleteCollectionsVersions = useDeleteCollections(callback, true, detail);
+  const copyToRepository = useCopyToRepository();
+
   const context = useHubContext();
 
   return useMemo<IPageAction<CollectionVersionSearch>[]>(
@@ -103,6 +105,18 @@ export function useCollectionActions(
           deleteCollectionsVersionsFromRepository([collection]);
         },
         isHidden: () => (detail ? false : true),
+      },
+      {
+        type: PageActionType.Button,
+        selection : PageActionSelection.Single,
+        icon: UploadIcon,
+        label: t('Copy version to repositories'),
+        onClick: (collection) => {
+          copyToRepository(collection);
+        },
+        isDisabled: context.featureFlags.display_repositories
+          ? ''
+          : t`You dont have rights to this operation`,
       },
     ],
     [
