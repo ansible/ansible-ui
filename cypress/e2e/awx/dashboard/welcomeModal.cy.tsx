@@ -4,14 +4,14 @@ describe('dashboard: Welcome modal', () => {
   });
 
   it('renders the Welcome Modal on the dashboard', () => {
-    cy.navigateTo(/^Dashboard$/);
+    cy.navigateTo('awx', 'dashboard');
     cy.getDialog().within(() => {
       cy.contains('Welcome to the new Ansible user interface').should('be.visible');
     });
   });
 
   it('renders the Welcome Modal on reload of the dashboard until checkbox is selected', () => {
-    cy.navigateTo(/^Dashboard$/);
+    cy.navigateTo('awx', 'dashboard');
     cy.getDialog().within(() => {
       cy.contains('Welcome to the new Ansible user interface').should('be.visible');
     });
@@ -29,7 +29,7 @@ describe('dashboard: Welcome modal', () => {
   });
 
   it('verifies the tech preview banner title in the new UI and the working links to and from the old UI', () => {
-    cy.navigateTo(/^Dashboard$/);
+    cy.navigateTo('awx', 'dashboard');
     cy.get('div.pf-c-banner.pf-m-info p')
       .should(
         'have.text',

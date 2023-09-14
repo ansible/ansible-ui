@@ -16,7 +16,7 @@ describe.skip('EDA Admin User', () => {
 
   it('checks the empty state for Controller token page and create Controller token CTA does not exist with existing token', () => {
     cy.intercept('GET', 'api/eda/v1/users/me/awx-tokens/?page=1&page_size=10').as('checkToken');
-    cy.navigateTo(/^Users$/);
+    cy.navigateTo('eda', 'users');
     cy.contains('h1', 'Users');
     cy.contains(
       'p',

@@ -30,7 +30,7 @@ describe('Auditor EDA Role - Resource types and permissions', () => {
       'Credential',
     ];
     const auditorActions = ['read'];
-    cy.navigateTo(/^Roles$/);
+    cy.navigateTo('eda', 'roles');
     cy.clickLink(/^Auditor$/);
     cy.contains('h1', 'Auditor').should('be.visible');
     cy.contains('dd#name', 'Auditor').should('be.visible');

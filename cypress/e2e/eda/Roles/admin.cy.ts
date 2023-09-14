@@ -40,7 +40,7 @@ describe('Admin EDA Role - Resource types and permissions', () => {
       'Credential',
     ];
     const adminActions = ['create', 'read', 'update', 'delete'];
-    cy.navigateTo(/^Roles$/);
+    cy.navigateTo('eda', 'roles');
     cy.clickLink(/^Admin$/);
     cy.contains('h1', 'Admin').should('be.visible');
     cy.contains('dd#name', 'Admin').should('be.visible');

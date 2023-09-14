@@ -6,7 +6,7 @@ describe('EDA Roles List', () => {
   });
 
   it('can render the Roles list view and utilize the Roles links to view details', () => {
-    cy.navigateTo(/^Roles$/);
+    cy.navigateTo('eda', 'roles');
     cy.hasTitle(/^Roles$/)
       .next('p')
       .should(

@@ -40,17 +40,17 @@ describe('projects', () => {
   });
 
   it('can render the projects list page', () => {
-    cy.navigateTo(/^Projects$/);
+    cy.navigateTo('awx', 'projects');
     cy.hasTitle(/^Projects$/);
   });
   it('create project', () => {
     const projectName = 'E2E Project ' + randomString(4);
-    cy.navigateTo(/^Projects$/);
+    cy.navigateTo('awx', 'projects');
     cy.clickLink(/^Create project$/);
-    cy.typeInputByLabel(/^Name$/, projectName);
+    cy.get('[data-cy="project-name"]').type(projectName);
     cy.selectDropdownOptionByLabel(/^Organization$/, organization.name);
     cy.selectDropdownOptionByLabel(/^Source Control Type$/, 'Git');
-    cy.typeInputByLabel(/^Source Control URL$/, 'https://github.com/ansible/ansible-tower-samples');
+    cy.get('[data-cy="project-scm_url"]').type('https://github.com/ansible/ansible-tower-samples');
     cy.getCheckboxByLabel('Allow Branch Override').click();
     cy.clickButton(/^Create project$/);
     cy.hasTitle(projectName);
@@ -63,51 +63,51 @@ describe('projects', () => {
     cy.hasTitle(/^Projects$/);
   });
   it('can edit a project from the project details tab', () => {
-    cy.navigateTo(/^Projects$/);
+    cy.navigateTo('awx', 'projects');
     cy.clickTableRow(project.name);
     cy.hasTitle(project.name);
     cy.clickButton(/^Edit project$/);
     cy.hasTitle(/^Edit Project$/);
-    cy.typeInputByLabel(/^Name$/, `${project.name} - edited`);
-    cy.typeInputByLabel(/^Source Control Branch\/Tag\/Commit$/, 'foobar');
+    cy.get('[data-cy="project-name"]').type(`${project.name} - edited`);
+    cy.get('[data-cy="project-scm_branch"]').type('foobar');
     cy.clickButton(/^Save project$/);
     cy.hasTitle(`${project.name} - edited`);
     cy.hasDetail(/^Source control branch$/, 'foobar');
   });
   it('can edit a project from the project list row action', () => {
-    cy.navigateTo(/^Projects$/);
+    cy.navigateTo('awx', 'projects');
     cy.clickTableRowActionIcon(project.name, 'Edit project');
     cy.hasTitle(/^Edit Project$/);
     cy.clickButton(/^Cancel$/);
     cy.hasTitle(/^Projects$/);
   });
   it('can navigate to project details tab', () => {
-    cy.navigateTo(/^Projects$/);
+    cy.navigateTo('awx', 'projects');
     cy.clickTableRow(project.name);
     cy.hasTitle(project.name);
     cy.clickLink(/^Details$/);
     cy.get('#name').should('contain', project.name);
   });
   it('can navigate to project access tab', () => {
-    cy.navigateTo(/^Projects$/);
+    cy.navigateTo('awx', 'projects');
     cy.clickTableRow(project.name);
     cy.hasTitle(project.name);
     cy.clickTab(/^Access$/, true);
   });
   it('can navigate to project job templates tab', () => {
-    cy.navigateTo(/^Projects$/);
+    cy.navigateTo('awx', 'projects');
     cy.clickTableRow(project.name);
     cy.hasTitle(project.name);
     cy.clickTab(/^Job templates$/, true);
   });
   it('can navigate to project notifications tab', () => {
-    cy.navigateTo(/^Projects$/);
+    cy.navigateTo('awx', 'projects');
     cy.clickTableRow(project.name);
     cy.hasTitle(project.name);
     cy.clickTab(/^Notifications$/, true);
   });
   it('can navigate to project schedules tab', () => {
-    cy.navigateTo(/^Projects$/);
+    cy.navigateTo('awx', 'projects');
     cy.clickTableRow(project.name);
     cy.hasTitle(project.name);
     cy.clickTab(/^Schedules$/, true);
@@ -119,7 +119,7 @@ describe('projects', () => {
       scm_type: 'git', // Only projects with scm_type and scm_url can be copied
       scm_url: 'foo',
     }).then((testProject) => {
-      cy.navigateTo(/^Projects$/);
+      cy.navigateTo('awx', 'projects');
       cy.clickTableRow(testProject.name);
       cy.hasTitle(testProject.name);
       cy.clickPageAction(/^Copy project$/);
@@ -132,7 +132,7 @@ describe('projects', () => {
       name: 'E2E Project ' + randomString(4),
       organization: organization.id,
     }).then((testProject) => {
-      cy.navigateTo(/^Projects$/);
+      cy.navigateTo('awx', 'projects');
       cy.clickTableRow(testProject.name);
       cy.hasTitle(testProject.name);
       cy.clickPageAction(/^Delete project/);
@@ -144,7 +144,7 @@ describe('projects', () => {
   });
   it('can sync project from project details page', () => {
     cy.createAwxProject().then((project) => {
-      cy.navigateTo(/^Projects$/);
+      cy.navigateTo('awx', 'projects');
       cy.clickTableRow(project.name);
       cy.hasTitle(project.name);
       cy.intercept(`api/v2/projects/${project.id}/update/`).as('projectUpdateRequest');
@@ -155,7 +155,7 @@ describe('projects', () => {
   });
   it('can sync project from projects list table row kebab menu', () => {
     cy.createAwxProject().then((project) => {
-      cy.navigateTo(/^Projects$/);
+      cy.navigateTo('awx', 'projects');
       cy.filterTableByText(project.name);
       cy.contains('td', project.name)
         .parent()
@@ -175,7 +175,7 @@ describe('projects', () => {
   //     scm_type: 'git', // Only projects with scm_type and scm_url can be synced
   //     scm_url: 'foo',
   //   }).then((testProject) => {
-  //     cy.navigateTo(/^Projects$/);
+  //     cy.navigateTo('awx', 'projects');
   //     cy.filterTableByText(testProject.name);
   //     cy.contains('td', testProject.name)
   //       .parent()
@@ -200,7 +200,7 @@ describe('projects', () => {
       scm_type: 'git', // Only projects with scm_type and scm_url can be synced
       scm_url: 'foo',
     }).then((testProject) => {
-      cy.navigateTo(/^Projects$/);
+      cy.navigateTo('awx', 'projects');
       cy.clickTableRowKebabAction(testProject.name, /^Copy project$/);
       cy.getTableRowByText(`${testProject.name} @`).should('be.visible');
       cy.requestDelete(`/api/v2/projects/${testProject.id}/`, { failOnStatusCode: false });
@@ -208,7 +208,7 @@ describe('projects', () => {
   });
 
   //   it('can edit project from projects list table row kebab menu', () => {
-  //       cy.navigateTo(/^Projects$/, true);
+  //       cy.navigateTo('awx', 'projects');
   //       cy.get('#edit-project').click();
   //       cy.hasTitle(/^Edit project$/);
   //   });
@@ -218,7 +218,7 @@ describe('projects', () => {
       name: 'E2E Project ' + randomString(4),
       organization: organization.id,
     }).then((testProject) => {
-      cy.navigateTo(/^Projects$/);
+      cy.navigateTo('awx', 'projects');
       cy.clickTableRowKebabAction(testProject.name, /^Delete project$/);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete project/);
@@ -234,7 +234,7 @@ describe('projects', () => {
       name: 'E2E Project ' + randomString(4),
       organization: organization.id,
     }).then((testProject) => {
-      cy.navigateTo(/^Projects$/);
+      cy.navigateTo('awx', 'projects');
       cy.selectTableRow(testProject.name);
       cy.clickToolbarKebabAction(/^Delete selected projects$/);
       cy.get('#confirm').click();
@@ -254,7 +254,7 @@ describe('projects', () => {
   //     scm_type: 'git', // Only projects with scm_type and scm_url can be synced
   //     scm_url: 'foo',
   //   }).then((testProject) => {
-  //     cy.navigateTo(/^Projects$/);
+  //     cy.navigateTo('awx', 'projects');
   //     cy.selectTableRow(testProject.name);
   //     cy.clickToolbarKebabAction(/^Cancel selected projects$/);
   //     cy.get('#confirm').click();

@@ -36,7 +36,7 @@ describe('EDA Dashboard', () => {
   });
 
   it('checks Ansible header title', () => {
-    cy.navigateTo(/^Dashboard$/);
+    cy.navigateTo('eda', 'dashboard');
     cy.get('.pf-c-title').should('contain', 'Welcome to');
   });
 
@@ -47,20 +47,20 @@ describe('EDA Dashboard', () => {
   // });
 
   it('shows the user a Project card with a list of Projects visible including working links', () => {
-    cy.navigateTo(/^Dashboard$/);
+    cy.navigateTo('eda', 'dashboard');
     cy.get('[data-label="Name"] div > a').contains('E2E Project').click();
     // cy.url().should('match', new RegExp('eda/projects/details/[0-9]*'));
   });
 
   it('shows the user a DE card with a list of DEs visible including working links', () => {
-    cy.navigateTo(/^Dashboard$/);
+    cy.navigateTo('eda', 'dashboard');
     cy.get('[data-label="Name"] div > a').contains('E2E Decision Environment').click();
     // cy.url().should('match', new RegExp('eda/decision-environments/details/[0-9]*'));
   });
 
   it('verifies the working links - user can create a project using the CTA, when there are no projects', () => {
     cy.intercept('GET', '/api/eda/v1/projects/*').as('getProjects');
-    cy.navigateTo(/^Dashboard$/);
+    cy.navigateTo('eda', 'dashboard');
     cy.wait('@getProjects')
       .its('response.body.results')
       .then((results: Array<EdaProject>) => {
@@ -84,7 +84,7 @@ describe('EDA Dashboard', () => {
 
   it('verifies the working links - user can see create an RBA(Rulebook Activation) using the CTA when there are no RBAs', () => {
     cy.intercept('GET', '/api/eda/v1/activations/*').as('getRBAs');
-    cy.navigateTo(/^Dashboard$/);
+    cy.navigateTo('eda', 'dashboard');
     cy.wait('@getRBAs')
       .its('response.body.results')
       .then((results: Array<EdaRulebookActivation>) => {
@@ -110,7 +110,7 @@ describe('EDA Dashboard', () => {
 
   it('verifies the working links - user can create a Decision Environments(DE) using the CTA, when there are no DEs', () => {
     cy.intercept('GET', '/api/eda/v1/decision-environments/*').as('getDEs');
-    cy.navigateTo(/^Dashboard$/);
+    cy.navigateTo('eda', 'dashboard');
     cy.wait('@getDEs')
       .its('response.body.results')
       .then((results: Array<EdaDecisionEnvironment>) => {
@@ -136,7 +136,7 @@ describe('EDA Dashboard', () => {
 describe('dashboard checks when resources before any resources are created', () => {
   // THIS NEEDS TO BE MOVED TO A COMPONENT TEST AS THE STATE OF THE E2E SERVER IS UNKNOWN AND THIS MAY NOT SHOW UP
   // it('checks instruction guide link works in the Getting Started section of the Dashboard page', () => {
-  //   cy.navigateTo(/^Dashboard$/);
+  //   cy.navigateTo('eda', 'dashboard');
   //   cy.hasTitle(/^Getting Started$/).should('be.visible');
   //   cy.checkAnchorLinks('check out our instruct guides');
   // });
@@ -165,7 +165,7 @@ describe('dashboard checks when resources before any resources are created', () 
   // THIS NEEDS TO BE MOVED TO A COMPONENT TEST AS THE STATE OF THE E2E SERVER IS UNKNOWN AND THIS MAY NOT SHOW UP
   // it('checks resource creation links work in the Getting Started section of the Dashboard page', () => {
   //   const resources = ['Project', 'Decision Environment', 'Rulebook Activation'];
-  //   cy.navigateTo(/^Dashboard$/);
+  //   cy.navigateTo('eda', 'dashboard');
   //   cy.hasTitle(/^Getting Started$/).should('be.visible');
   //   cy.get('ol.pf-c-progress-stepper').within(() => {
   //     resources.forEach((resource) => {
@@ -175,17 +175,17 @@ describe('dashboard checks when resources before any resources are created', () 
   // });
 
   it('user can navigate to the Projects page using the link from the Dashboard', () => {
-    cy.navigateTo(/^Dashboard$/);
+    cy.navigateTo('eda', 'dashboard');
     cy.checkAnchorLinks('Go to Projects');
   });
 
   it('user can navigate to the Rulebook Activations page using the link from the Dashboard', () => {
-    cy.navigateTo(/^Dashboard$/);
+    cy.navigateTo('eda', 'dashboard');
     cy.checkAnchorLinks('Go to Rulebook Activations');
   });
 
   it('user can navigate to the Rulebook Activations page using the link from the Dashboard', () => {
-    cy.navigateTo(/^Dashboard$/);
+    cy.navigateTo('eda', 'dashboard');
     cy.checkAnchorLinks('Go to Decision Environments');
   });
 });

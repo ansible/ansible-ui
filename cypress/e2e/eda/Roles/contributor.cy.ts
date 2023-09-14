@@ -38,7 +38,7 @@ describe('Contributor EDA Role - Resource types and permissions', () => {
       'Credential',
     ];
     const contributorActions = ['create', 'read', 'update', 'delete'];
-    cy.navigateTo(/^Roles$/);
+    cy.navigateTo('eda', 'roles');
     cy.clickLink(/^Contributor$/);
     cy.contains('h1', 'Contributor').should('be.visible');
     cy.contains('dd#name', 'Contributor').should('be.visible');
