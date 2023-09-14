@@ -20,10 +20,12 @@ import {
   PageLayout,
   PageTab,
   PageTabs,
+  useGetPageUrl,
 } from '../../../../framework';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { RouteObj } from '../../../common/Routes';
 import { useGet } from '../../../common/crud/useGet';
+import { EdaRoute } from '../../EdaRoutes';
 import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
 import { EdaCredential } from '../../interfaces/EdaCredential';
 import { CredentialOptions } from './EditCredential';
@@ -104,12 +106,14 @@ export function CredentialDetails() {
     );
   };
 
+  const getPageUrl = useGetPageUrl();
+
   return (
     <PageLayout>
       <PageHeader
         title={credential?.name}
         breadcrumbs={[
-          { label: t('Credentials'), to: RouteObj.EdaCredentials },
+          { label: t('Credentials'), to: getPageUrl(EdaRoute.Credentials) },
           { label: credential?.name },
         ]}
         headerActions={

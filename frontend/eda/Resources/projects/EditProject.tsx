@@ -9,6 +9,7 @@ import {
   PageFormTextInput,
   PageHeader,
   PageLayout,
+  useGetPageUrl,
 } from '../../../../framework';
 import { PageFormGroup } from '../../../../framework/PageForm/Inputs/PageFormGroup';
 import { RouteObj } from '../../../common/Routes';
@@ -20,6 +21,7 @@ import { API_PREFIX } from '../../constants';
 import { EdaCredential } from '../../interfaces/EdaCredential';
 import { EdaProject, EdaProjectCreate, EdaProjectRead } from '../../interfaces/EdaProject';
 import { EdaResult } from '../../interfaces/EdaResult';
+import { EdaRoute } from '../../EdaRoutes';
 
 function ProjectCreateInputs() {
   const { t } = useTranslation();
@@ -155,12 +157,14 @@ export function CreateProject() {
   };
 
   const onCancel = () => navigate(-1);
+  const getPageUrl = useGetPageUrl();
+
   return (
     <PageLayout>
       <PageHeader
         title={t('Create Project')}
         breadcrumbs={[
-          { label: t('Projects'), to: RouteObj.EdaProjects },
+          { label: t('Projects'), to: getPageUrl(EdaRoute.Projects) },
           { label: t('Create Project') },
         ]}
       />
@@ -193,13 +197,13 @@ export function EditProject() {
     navigate(-1);
   };
   const onCancel = () => navigate(-1);
-
+  const getPageUrl = useGetPageUrl();
   if (!project) {
     return (
       <PageLayout>
         <PageHeader
           breadcrumbs={[
-            { label: t('Projects'), to: RouteObj.EdaProjects },
+            { label: t('Projects'), to: getPageUrl(EdaRoute.Projects) },
             { label: t('Edit Project') },
           ]}
         />
@@ -211,7 +215,7 @@ export function EditProject() {
         <PageHeader
           title={`${t('Edit')} ${project?.name || t('Project')}`}
           breadcrumbs={[
-            { label: t('Projects'), to: RouteObj.EdaProjects },
+            { label: t('Projects'), to: getPageUrl(EdaRoute.Projects) },
             { label: `${t('Edit')} ${project?.name || t('Project')}` },
           ]}
         />

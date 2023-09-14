@@ -2,7 +2,7 @@
 import { DropdownPosition } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { PageActions, PageHeader, PageLayout } from '../../../../../framework';
+import { PageActions, PageHeader, PageLayout, useGetPageUrl } from '../../../../../framework';
 import { PageNotImplemented } from '../../../../common/PageNotImplemented';
 import { PageBackTab, RoutedTab, RoutedTabs } from '../../../../common/RoutedTabs';
 import { RouteObj } from '../../../../common/Routes';
@@ -10,6 +10,7 @@ import { useGet } from '../../../../common/crud/useGet';
 import { Inventory } from '../../../interfaces/Inventory';
 import { useInventoryActions } from '../hooks/useInventoryActions';
 import { InventoryDetails } from './InventoryDetails';
+import { AwxRoute } from '../../../AwxRoutes';
 
 export function InventoryPage() {
   const { t } = useTranslation();
@@ -19,12 +20,14 @@ export function InventoryPage() {
   const itemActions = useInventoryActions({
     onInventoriesDeleted: () => navigate(RouteObj.Inventories),
   });
+  const getPageUrl = useGetPageUrl();
+
   return (
     <PageLayout>
       <PageHeader
         title={inventory?.name}
         breadcrumbs={[
-          { label: t('Inventories'), to: RouteObj.Inventories },
+          { label: t('Inventories'), to: getPageUrl(AwxRoute.Inventories) },
           { label: inventory?.name },
         ]}
         headerActions={

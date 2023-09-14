@@ -8,12 +8,14 @@ import {
   PageFormSubmitHandler,
   PageHeader,
   PageLayout,
+  useGetPageUrl,
 } from '../../../../framework';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 import { RouteObj } from '../../../common/Routes';
 import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
+import { AwxRoute } from '../../AwxRoutes';
 import { Organization } from '../../interfaces/Organization';
 import { User } from '../../interfaces/User';
 import { getAwxError } from '../../useAwxView';
@@ -56,12 +58,16 @@ export function CreateUser() {
   };
 
   const onCancel = () => navigate(-1);
+  const getPageUrl = useGetPageUrl();
 
   return (
     <>
       <PageHeader
         title={t('Create User')}
-        breadcrumbs={[{ label: t('Users'), to: RouteObj.Users }, { label: t('Create User') }]}
+        breadcrumbs={[
+          { label: t('Users'), to: getPageUrl(AwxRoute.Users) },
+          { label: t('Create User') },
+        ]}
       />
       <PageForm
         submitText={t('Create user')}
@@ -105,13 +111,18 @@ export function EditUser() {
     }
   };
 
+  const getPageUrl = useGetPageUrl();
+
   const onCancel = () => navigate(-1);
 
   if (!user) {
     return (
       <PageLayout>
         <PageHeader
-          breadcrumbs={[{ label: t('Users'), to: RouteObj.Users }, { label: t('Edit User') }]}
+          breadcrumbs={[
+            { label: t('Users'), to: getPageUrl(AwxRoute.Users) },
+            { label: t('Edit User') },
+          ]}
         />
       </PageLayout>
     );
@@ -130,7 +141,10 @@ export function EditUser() {
     <PageLayout>
       <PageHeader
         title={t('Edit User')}
-        breadcrumbs={[{ label: t('Users'), to: RouteObj.Users }, { label: t('Edit User') }]}
+        breadcrumbs={[
+          { label: t('Users'), to: getPageUrl(AwxRoute.Users) },
+          { label: t('Edit User') },
+        ]}
       />
       <PageForm<IUserInput>
         submitText={t('Save user')}
