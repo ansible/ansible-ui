@@ -1,6 +1,6 @@
 import useResizeObserver from '@react-hook/resize-observer';
 import * as monaco from 'monaco-editor';
-import { setDiagnosticsOptions as setYamlDiagnosticOptions } from 'monaco-yaml';
+import { configureMonacoYaml } from 'monaco-yaml';
 import { useEffect, useRef } from 'react';
 import { FieldPath, FieldValues, UseFormClearErrors, UseFormSetError } from 'react-hook-form';
 import { useSettings } from '../../Settings';
@@ -31,7 +31,7 @@ export function DataEditor<
   const settings = useSettings();
 
   useEffect(() => {
-    setYamlDiagnosticOptions({
+    configureMonacoYaml(monaco, {
       validate: true,
       format: true,
       schemas: [
