@@ -3,11 +3,13 @@ import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageForm, PageFormSubmitHandler, PageHeader, PageLayout } from '../../../../framework';
+import { useGetPageUrl } from '../../../../framework/PageNavigation/useGetPageUrl';
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
 import { dateToInputDateTime } from '../../../../framework/utils/dateTimeHelpers';
 import { RouteObj } from '../../../common/Routes';
 import { postRequest } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
+import { AwxRoute } from '../../AwxRoutes';
 import { AwxError } from '../../common/AwxError';
 import { getAddedAndRemoved } from '../../common/util/getAddedAndRemoved';
 import { ScheduleFormFields } from '../../interfaces/ScheduleFormFields';
@@ -24,6 +26,7 @@ const routes: { [key: string]: string } = {
 
 export function CreateSchedule() {
   const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
   const now = DateTime.now();
   const [error, setError] = useState<Error | null>(null);
   const closestQuarterHour: DateTime = DateTime.fromMillis(
@@ -197,7 +200,7 @@ export function CreateSchedule() {
       <PageHeader
         title={t('Create Schedule')}
         breadcrumbs={[
-          { label: t('Schedules'), to: RouteObj.Schedules },
+          { label: t('Schedules'), to: getPageUrl(AwxRoute.Schedules) },
           { label: t('Create Schedule') },
         ]}
       />
