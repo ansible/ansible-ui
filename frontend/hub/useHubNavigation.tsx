@@ -45,6 +45,7 @@ export function useHubNavigation() {
             path: 'automation-content',
             children: [
               {
+                id: HubRoute.Namespaces,
                 label: t('Namespaces'),
                 path: 'namespaces',
                 children: [
@@ -64,13 +65,13 @@ export function useHubNavigation() {
                     element: <NamespaceDetails />,
                   },
                   {
-                    id: HubRoute.Namespaces,
                     path: '',
                     element: <Namespaces />,
                   },
                 ],
               },
               {
+                id: HubRoute.Collections,
                 label: t('Collections'),
                 path: 'collections',
                 children: [
@@ -85,29 +86,28 @@ export function useHubNavigation() {
                     element: <CollectionDetails />,
                   },
                   {
-                    id: HubRoute.Collections,
                     path: '',
                     element: <Collections />,
                   },
                 ],
               },
               {
+                id: HubRoute.ExecutionEnvironments,
                 label: t('Execution Environments'),
                 path: 'execution Environments',
                 children: [
                   {
-                    id: HubRoute.ExecutionEnvironments,
                     path: '',
                     element: <ExecutionEnvironments />,
                   },
                 ],
               },
               {
+                id: HubRoute.SignatureKeys,
                 label: t('Signature Keys'),
                 path: 'signature keys',
                 children: [
                   {
-                    id: HubRoute.SignatureKeys,
                     path: '',
                     element: <SignatureKeys />,
                   },
@@ -120,28 +120,29 @@ export function useHubNavigation() {
             path: 'administration',
             children: [
               {
+                id: HubRoute.Repositories,
                 label: t('Repositories'),
                 path: 'repositories',
                 children: [
                   {
-                    id: HubRoute.Repositories,
                     path: '',
                     element: <Repositories />,
                   },
                 ],
               },
               {
+                id: HubRoute.RemoteRegistries,
                 label: t('Remote Registries'),
                 path: 'remote-registries',
                 children: [
                   {
-                    id: HubRoute.RemoteRegistries,
                     path: '',
                     element: <RemoteRegistries />,
                   },
                 ],
               },
               {
+                id: HubRoute.Tasks,
                 label: t('Tasks'),
                 path: 'tasks',
                 children: [
@@ -151,24 +152,24 @@ export function useHubNavigation() {
                     element: <TaskDetails />,
                   },
                   {
-                    id: HubRoute.Tasks,
                     path: '',
                     element: <Tasks />,
                   },
                 ],
               },
               {
+                id: HubRoute.Approvals,
                 label: t('Approvals'),
                 path: 'approvals',
                 children: [
                   {
-                    id: HubRoute.Approvals,
                     path: '',
                     element: <Approvals />,
                   },
                 ],
               },
               {
+                id: HubRoute.Remotes,
                 label: t('Remotes'),
                 path: 'remotes',
                 children: [
@@ -188,7 +189,6 @@ export function useHubNavigation() {
                     element: <RemoteDetails />,
                   },
                   {
-                    id: HubRoute.Remotes,
                     path: '',
                     element: <Remotes />,
                   },
