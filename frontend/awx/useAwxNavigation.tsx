@@ -94,6 +94,7 @@ export function useAwxNavigation() {
             path: 'views',
             children: [
               {
+                id: AwxRoute.Jobs,
                 label: t('Jobs'),
                 path: 'jobs',
                 children: [
@@ -103,13 +104,13 @@ export function useAwxNavigation() {
                     element: <JobPage />,
                   },
                   {
-                    id: AwxRoute.Jobs,
                     path: '',
                     element: <Jobs />,
                   },
                 ],
               },
               {
+                id: AwxRoute.Schedules,
                 label: t('Schedules'),
                 path: 'schedules',
                 children: [
@@ -124,7 +125,6 @@ export function useAwxNavigation() {
                     element: <SchedulePage />,
                   },
                   {
-                    id: AwxRoute.Schedules,
                     path: '',
                     element: <Schedules />,
                   },
@@ -137,6 +137,7 @@ export function useAwxNavigation() {
                 element: <PageNotImplemented />,
               },
               {
+                id: AwxRoute.WorkflowApprovals,
                 label: t('Workflow Approvals'),
                 path: 'workflow-approvals',
                 children: [
@@ -146,7 +147,6 @@ export function useAwxNavigation() {
                     element: <PageNotImplemented />,
                   },
                   {
-                    id: AwxRoute.WorkflowApprovals,
                     path: '',
                     element: <PageNotImplemented />,
                   },
@@ -159,6 +159,7 @@ export function useAwxNavigation() {
             path: 'resources',
             children: [
               {
+                id: AwxRoute.Templates,
                 label: 'Templates',
                 path: 'templates',
                 children: [
@@ -203,13 +204,13 @@ export function useAwxNavigation() {
                     ],
                   },
                   {
-                    id: AwxRoute.Templates,
                     path: '',
                     element: <Templates />,
                   },
                 ],
               },
               {
+                id: AwxRoute.Inventories,
                 label: t('Credentials'),
                 path: 'credentials',
                 children: [
@@ -229,13 +230,13 @@ export function useAwxNavigation() {
                     element: <CredentialPage />,
                   },
                   {
-                    id: AwxRoute.Credentials,
                     path: '',
                     element: <Credentials />,
                   },
                 ],
               },
               {
+                id: AwxRoute.Projects,
                 label: t('Projects'),
                 path: 'projects',
                 children: [
@@ -260,13 +261,13 @@ export function useAwxNavigation() {
                     element: <ProjectPage />,
                   },
                   {
-                    id: AwxRoute.Projects,
                     path: '',
                     element: <Projects />,
                   },
                 ],
               },
               {
+                id: AwxRoute.Inventories,
                 label: t('Inventories'),
                 path: 'inventories',
                 children: [
@@ -291,13 +292,13 @@ export function useAwxNavigation() {
                     element: <InventoryPage />,
                   },
                   {
-                    id: AwxRoute.Inventories,
                     path: '',
                     element: <Inventories />,
                   },
                 ],
               },
               {
+                id: AwxRoute.Hosts,
                 label: t('Hosts'),
                 path: 'hosts',
                 children: [
@@ -307,7 +308,6 @@ export function useAwxNavigation() {
                     element: <HostPage />,
                   },
                   {
-                    id: AwxRoute.Hosts,
                     path: '',
                     element: <Hosts />,
                   },
@@ -320,6 +320,7 @@ export function useAwxNavigation() {
             path: 'access',
             children: [
               {
+                id: AwxRoute.Organizations,
                 label: t('Organizations'),
                 path: 'organizations',
                 children: [
@@ -339,13 +340,13 @@ export function useAwxNavigation() {
                     element: <OrganizationPage />,
                   },
                   {
-                    id: AwxRoute.Organizations,
                     path: '',
                     element: <Organizations />,
                   },
                 ],
               },
               {
+                id: AwxRoute.Teams,
                 label: t('Teams'),
                 path: 'teams',
                 children: [
@@ -370,13 +371,13 @@ export function useAwxNavigation() {
                     element: <TeamPage />,
                   },
                   {
-                    id: AwxRoute.Teams,
                     path: '',
                     element: <Teams />,
                   },
                 ],
               },
               {
+                id: AwxRoute.Users,
                 label: t('Users'),
                 path: 'users',
                 children: [
@@ -401,7 +402,6 @@ export function useAwxNavigation() {
                     element: <UserPage />,
                   },
                   {
-                    id: AwxRoute.Users,
                     path: '',
                     element: <Users />,
                   },
@@ -414,6 +414,7 @@ export function useAwxNavigation() {
             path: 'administration',
             children: [
               {
+                id: AwxRoute.CredentialTypes,
                 label: t('Credential Types'),
                 path: 'credential-types',
                 children: [
@@ -423,13 +424,13 @@ export function useAwxNavigation() {
                     element: <CredentialTypePage />,
                   },
                   {
-                    id: AwxRoute.CredentialTypes,
                     path: '',
                     element: <CredentialTypes />,
                   },
                 ],
               },
               {
+                id: AwxRoute.Notifications,
                 label: t('Notifictions'),
                 path: 'notifications',
                 children: [
@@ -439,13 +440,13 @@ export function useAwxNavigation() {
                     element: <NotificationPage />,
                   },
                   {
-                    id: AwxRoute.Notifications,
                     path: '',
                     element: <Notifications />,
                   },
                 ],
               },
               {
+                id: AwxRoute.ManagementJobs,
                 label: t('Management Jobs'),
                 path: 'management-jobs',
                 children: [
@@ -460,7 +461,6 @@ export function useAwxNavigation() {
                     element: <ManagementJobPage />,
                   },
                   {
-                    id: AwxRoute.ManagementJobs,
                     path: '',
                     element: <ManagementJobs />,
                   },
@@ -473,6 +473,7 @@ export function useAwxNavigation() {
                 element: <InstanceGroups />,
               },
               {
+                id: AwxRoute.Instances,
                 label: t('Instances'),
                 path: 'instances',
                 children: [
@@ -487,13 +488,13 @@ export function useAwxNavigation() {
                     element: <InstanceDetails />,
                   },
                   {
-                    id: AwxRoute.Instances,
                     path: '',
                     element: <Instances />,
                   },
                 ],
               },
               {
+                id: AwxRoute.Applications,
                 label: t('Applications'),
                 path: 'applications',
                 children: [
@@ -503,7 +504,6 @@ export function useAwxNavigation() {
                     element: <ApplicationPage />,
                   },
                   {
-                    id: AwxRoute.Applications,
                     path: '',
                     element: <Applications />,
                   },

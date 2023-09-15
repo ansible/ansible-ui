@@ -61,6 +61,7 @@ export function useEdaNavigation() {
             path: 'views',
             children: [
               {
+                id: EdaRoute.RuleAudits,
                 label: t('Rule Audits'),
                 path: 'rule-audits',
                 children: [
@@ -70,13 +71,13 @@ export function useEdaNavigation() {
                     element: <RuleAuditDetails />,
                   },
                   {
-                    id: EdaRoute.RuleAudits,
                     path: '',
                     element: <RuleAudit />,
                   },
                 ],
               },
               {
+                id: EdaRoute.RulebookActivations,
                 label: t('Rulebook Activations'),
                 path: 'rulebook-activations',
                 children: [
@@ -100,10 +101,14 @@ export function useEdaNavigation() {
                     path: 'activations-instances/details/:id',
                     element: <ActivationInstanceDetails />,
                   },
-                  { id: EdaRoute.RulebookActivations, path: '', element: <RulebookActivations /> },
+                  {
+                    path: '',
+                    element: <RulebookActivations />,
+                  },
                 ],
               },
               {
+                id: EdaRoute.Rulebooks,
                 // label: t('Rulebooks'),
                 path: 'rulebooks',
                 children: [
@@ -113,13 +118,13 @@ export function useEdaNavigation() {
                     element: <RulebookDetails />,
                   },
                   {
-                    id: EdaRoute.Rulebooks,
                     path: '',
                     element: <Rulebooks />,
                   },
                 ],
               },
               {
+                id: EdaRoute.Rules,
                 // label: t('Rules'),
                 path: 'rules',
                 children: [
@@ -139,7 +144,6 @@ export function useEdaNavigation() {
                     element: <RuleDetails />,
                   },
                   {
-                    id: EdaRoute.Rules,
                     path: '',
                     element: <Rules />,
                   },
@@ -152,6 +156,7 @@ export function useEdaNavigation() {
             path: 'resources',
             children: [
               {
+                id: EdaRoute.Projects,
                 label: t('Projects'),
                 path: 'projects',
                 children: [
@@ -171,13 +176,13 @@ export function useEdaNavigation() {
                     element: <ProjectDetails />,
                   },
                   {
-                    id: EdaRoute.Projects,
                     path: '',
                     element: <Projects />,
                   },
                 ],
               },
               {
+                id: EdaRoute.DecisionEnvironments,
                 label: t('Decision Environments'),
                 path: 'decision-environments',
                 children: [
@@ -197,13 +202,13 @@ export function useEdaNavigation() {
                     element: <DecisionEnvironmentDetails />,
                   },
                   {
-                    id: EdaRoute.DecisionEnvironments,
                     path: '',
                     element: <DecisionEnvironments />,
                   },
                 ],
               },
               {
+                id: EdaRoute.Credentials,
                 label: t('Credentials'),
                 path: 'credentials',
                 children: [
@@ -223,7 +228,6 @@ export function useEdaNavigation() {
                     element: <CredentialDetails />,
                   },
                   {
-                    id: EdaRoute.Credentials,
                     path: '',
                     element: <Credentials />,
                   },
@@ -236,6 +240,7 @@ export function useEdaNavigation() {
             path: 'access',
             children: [
               {
+                id: EdaRoute.Groups,
                 // label: t('Groups'),
                 path: 'groups',
                 children: [
@@ -255,13 +260,13 @@ export function useEdaNavigation() {
                     element: <GroupDetails />,
                   },
                   {
-                    id: EdaRoute.Groups,
                     path: '',
                     element: <Groups />,
                   },
                 ],
               },
               {
+                id: EdaRoute.Users,
                 label: t('Users'),
                 path: 'users',
                 children: [
@@ -291,6 +296,7 @@ export function useEdaNavigation() {
                     element: <EditUser />,
                   },
                   {
+                    id: EdaRoute.UserPage,
                     path: 'details/:id',
                     children: [
                       {
@@ -299,7 +305,6 @@ export function useEdaNavigation() {
                         element: <EdaUserDetails initialTabIndex={1} />,
                       },
                       {
-                        id: EdaRoute.UserPage,
                         path: '',
                         element: <EdaUserDetails initialTabIndex={0} />,
                       },
@@ -316,13 +321,13 @@ export function useEdaNavigation() {
                     ],
                   },
                   {
-                    id: EdaRoute.Users,
                     path: '',
                     element: <Users />,
                   },
                 ],
               },
               {
+                id: EdaRoute.Roles,
                 label: t('Roles'),
                 path: 'roles',
                 children: [
@@ -342,7 +347,6 @@ export function useEdaNavigation() {
                     element: <RoleDetails />,
                   },
                   {
-                    id: EdaRoute.Roles,
                     path: '',
                     element: <Roles />,
                   },
