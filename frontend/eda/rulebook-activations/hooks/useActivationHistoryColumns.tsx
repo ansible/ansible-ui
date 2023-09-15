@@ -14,7 +14,7 @@ export function useActivationHistoryColumns() {
         cell: (instance) => (
           <TextCell
             text={`${instance?.id || ''} - ${instance?.name || ''}`}
-            to={RouteObj.EdaActivationInstanceDetails.replace(':id', instance.id.toString())}
+            to={RouteObj.ActivationInstancePage.replace(':id', instance.id.toString())}
           />
         ),
         card: 'name',

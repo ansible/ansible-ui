@@ -22,7 +22,6 @@ import {
 } from '../../../framework';
 import { formatDateString } from '../../../framework/utils/formatDateString';
 import { capitalizeFirstLetter } from '../../../framework/utils/strings';
-import { RouteObj } from '../../common/Routes';
 import { StatusCell } from '../../common/Status';
 import { useGet } from '../../common/crud/useGet';
 import { EdaRoute } from '../EdaRoutes';
@@ -46,6 +45,7 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const pageNavigate = usePageNavigate();
+  const getPageUrl = useGetPageUrl();
   const restartPolicyHelpBlock = (
     <>
       <p>{t('A policy to decide when to restart a rulebook.')}</p>
@@ -149,10 +149,9 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
           >
             {rulebookActivation && rulebookActivation.project?.id ? (
               <Link
-                to={RouteObj.EdaProjectDetails.replace(
-                  ':id',
-                  `${rulebookActivation.project?.id || ''}`
-                )}
+                to={getPageUrl(EdaRoute.ProjectPage, {
+                  params: { id: rulebookActivation.project.id },
+                })}
               >
                 {rulebookActivation?.project?.name}
               </Link>
@@ -172,10 +171,9 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
           >
             {rulebookActivation && rulebookActivation?.decision_environment?.id ? (
               <Link
-                to={RouteObj.EdaDecisionEnvironmentDetails.replace(
-                  ':id',
-                  `${rulebookActivation?.decision_environment?.id || ''}`
-                )}
+                to={getPageUrl(EdaRoute.DecisionEnvironmentPage, {
+                  params: { id: rulebookActivation?.decision_environment?.id },
+                })}
               >
                 {rulebookActivation?.decision_environment?.name}
               </Link>
@@ -239,6 +237,7 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
   function ActivationHistoryTab() {
     const params = useParams<{ id: string }>();
     const { t } = useTranslation();
+
     const toolbarFilters = useActivationHistoryFilters();
 
     const tableColumns = useActivationHistoryColumns();
@@ -262,8 +261,6 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
       </PageLayout>
     );
   }
-
-  const getPageUrl = useGetPageUrl();
 
   return (
     <PageLayout>

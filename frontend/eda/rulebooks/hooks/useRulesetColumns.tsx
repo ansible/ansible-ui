@@ -13,7 +13,7 @@ export function useRulesetColumns() {
         cell: (ruleset) => (
           <TextCell
             text={ruleset.name}
-            to={RouteObj.EdaRulesetDetails.replace(':id', ruleset.id.toString())}
+            to={RouteObj.RulesetPage.replace(':id', ruleset.id.toString())}
           />
         ),
         card: 'name',

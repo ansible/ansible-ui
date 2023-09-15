@@ -6,12 +6,14 @@ import {
   ITableColumn,
   LabelsCell,
   TextCell,
+  useGetPageUrl,
 } from '../../../../../framework';
-import { RouteObj } from '../../../../common/Routes';
+import { EdaRoute } from '../../../EdaRoutes';
 import { EdaUser } from '../../../interfaces/EdaUser';
 
 export function useUserColumns() {
   const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
   return useMemo<ITableColumn<EdaUser>[]>(
     () => [
       {
@@ -19,7 +21,7 @@ export function useUserColumns() {
         cell: (user) => (
           <TextCell
             text={user.username}
-            to={RouteObj.EdaUserDetails.replace(':id', user.id.toString())}
+            to={getPageUrl(EdaRoute.UserPage, { params: { id: user.id } })}
           />
         ),
         card: 'name',
@@ -44,6 +46,6 @@ export function useUserColumns() {
         modal: ColumnModalOption.Hidden,
       },
     ],
-    [t]
+    [getPageUrl, t]
   );
 }

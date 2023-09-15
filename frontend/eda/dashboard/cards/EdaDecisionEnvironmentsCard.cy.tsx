@@ -1,4 +1,3 @@
-import { RouteObj } from '../../../common/Routes';
 import { API_PREFIX } from '../../constants';
 import { EdaDashboard } from '../EdaDashboard';
 
@@ -54,10 +53,7 @@ describe('EdaDecisionEnvironmentsCard.cy.ts', () => {
         results: [],
       }
     );
-    cy.mount(<EdaDashboard />, {
-      path: RouteObj.EdaDashboard,
-      initialEntries: [RouteObj.EdaDashboard],
-    });
+    cy.mount(<EdaDashboard />);
   });
   it('Dashboard renders the correct decision environment columns', () => {
     cy.contains(/^Recently updated environments$/).should('be.visible');

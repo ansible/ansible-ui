@@ -13,7 +13,7 @@ import {
 import { PencilAltIcon, SyncAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import {
   CopyCell,
   IPageAction,
@@ -33,7 +33,6 @@ import {
   usePageNavigate,
 } from '../../../../framework';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
-import { RouteObj } from '../../../common/Routes';
 import { StatusCell } from '../../../common/Status';
 import { postRequest } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
@@ -46,8 +45,8 @@ import { useDeleteProjects } from './hooks/useDeleteProjects';
 export function ProjectDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
+  const getPageUrl = useGetPageUrl();
   const alertToaster = usePageAlertToaster();
 
   const { data: project, refresh } = useGet<EdaProject>(
@@ -98,7 +97,7 @@ export function ProjectDetails() {
         icon: PencilAltIcon,
         label: t('Edit project'),
         onClick: (project: EdaProject) =>
-          navigate(RouteObj.EditEdaProject.replace(':id', project.id.toString())),
+          pageNavigate(EdaRoute.EditProject, { params: { id: project.id } }),
       },
       {
         type: PageActionType.Button,
@@ -109,7 +108,7 @@ export function ProjectDetails() {
         isDanger: true,
       },
     ],
-    [deleteProjects, navigate, syncProject, t]
+    [deleteProjects, pageNavigate, syncProject, t]
   );
 
   const renderProjectDetailsTab = (project: EdaProjectRead | undefined): JSX.Element => {
@@ -135,7 +134,7 @@ export function ProjectDetails() {
         >
           {project && project.credential ? (
             <Link
-              to={RouteObj.EdaCredentialDetails.replace(':id', `${project?.credential?.id || ''}`)}
+              to={getPageUrl(EdaRoute.CredentialPage, { params: { id: project?.credential?.id } })}
             >
               {project?.credential?.name}
             </Link>
@@ -172,7 +171,6 @@ export function ProjectDetails() {
       </PageDetails>
     );
   };
-  const getPageUrl = useGetPageUrl();
 
   return (
     <PageLayout>

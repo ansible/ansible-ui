@@ -1,4 +1,3 @@
-import { RouteObj } from '../../common/Routes';
 import { API_PREFIX } from '../constants';
 import { EdaDashboard } from './EdaDashboard';
 
@@ -40,10 +39,7 @@ describe('EdaDashboard.cy.ts', () => {
         results: [],
       }
     );
-    cy.mount(<EdaDashboard />, {
-      path: RouteObj.EdaDashboard,
-      initialEntries: [RouteObj.EdaDashboard],
-    });
+    cy.mount(<EdaDashboard />);
   });
   it('Dashboard has the correct title', () => {
     cy.contains(
