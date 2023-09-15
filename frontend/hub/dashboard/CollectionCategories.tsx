@@ -1,18 +1,18 @@
-import { useTranslation } from 'react-i18next';
-import { PageDashboardCarousel } from '../../../framework/PageDashboard/PageDashboardCarousel';
-import { useCategoryName } from './hooks/useCategoryName';
-import { CollectionCard } from './CollectionCard';
-import { CollectionVersionSearch } from '../collections/CollectionVersionSearch';
-import { ReactNode, useMemo } from 'react';
 import { CogIcon } from '@patternfly/react-icons';
+import { ReactNode, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { errorToAlertProps, useGetPageUrl, usePageAlertToaster } from '../../../framework';
+import { PageDashboardCarousel } from '../../../framework/PageDashboard/PageDashboardCarousel';
+import { HubRoute } from '../HubRoutes';
+import { postHubRequest } from '../api/request';
+import { hubAPI } from '../api/utils';
+import { CollectionVersionSearch } from '../collections/CollectionVersionSearch';
 import { useSelectCollectionsDialog } from '../collections/hooks/useSelectCollections';
 import { getAddedAndRemovedCollections } from '../common/utils/getAddedAndRemovedCollections';
 import { parsePulpIDFromURL } from '../common/utils/parsePulpIDFromURL';
-import { postHubRequest } from '../api/request';
-import { hubAPI } from '../api/utils';
-import { errorToAlertProps, usePageAlertToaster } from '../../../framework';
 import { useHubContext } from '../useHubContext';
-import { RouteObj } from '../../common/Routes';
+import { CollectionCard } from './CollectionCard';
+import { useCategoryName } from './hooks/useCategoryName';
 
 type FooterAction = {
   icon?: ReactNode;
@@ -35,6 +35,7 @@ export function CollectionCategoryCarousel(props: {
   const selectCollections = useSelectCollectionsDialog(collections);
   const alertToaster = usePageAlertToaster();
   const context = useHubContext();
+  const getPageUrl = useGetPageUrl();
 
   const footerActionButton = useMemo<FooterAction | undefined>(() => {
     /**
@@ -80,7 +81,7 @@ export function CollectionCategoryCarousel(props: {
     <PageDashboardCarousel
       title={categoryName}
       linkText={t('Go to collections')}
-      to={RouteObj.Collections + `?${searchKey}=${searchValue}`}
+      to={getPageUrl(HubRoute.Collections, { query: { [searchKey]: searchValue } })}
       width="xxl"
       footerActionButton={footerActionButton}
     >

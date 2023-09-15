@@ -6,12 +6,13 @@ import {
 } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, TextCell } from '../../../../framework';
-import { RouteObj } from '../../../common/Routes';
+import { ITableColumn, TextCell, useGetPageUrl } from '../../../../framework';
+import { HubRoute } from '../../HubRoutes';
 import { CollectionVersionSearch } from '../Collection';
 
 export function useCollectionColumns(_options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
   return useMemo<ITableColumn<CollectionVersionSearch>[]>(
     () => [
       {
@@ -20,15 +21,13 @@ export function useCollectionColumns(_options?: { disableSort?: boolean; disable
         cell: (collection) => (
           <TextCell
             text={collection.collection_version.name}
-            to={
-              RouteObj.CollectionDetails +
-              '?name=' +
-              collection.collection_version.name +
-              '&namespace=' +
-              collection.collection_version.namespace +
-              '&repository=' +
-              collection.repository.name
-            }
+            to={getPageUrl(HubRoute.CollectionPage, {
+              query: {
+                name: collection.collection_version.name,
+                namespace: collection.collection_version.namespace,
+                repository: collection.repository.name,
+              },
+            })}
           />
         ),
         card: 'name',

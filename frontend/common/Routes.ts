@@ -169,10 +169,6 @@ export const RouteObj = {
   CreateExecutionEnvironment: `${awxRoutePrefix}/administration/execution-environments/create`,
   EditExecutionEnvironment: `${awxRoutePrefix}/administration/execution-environments/:id/edit`,
 
-  // Hub
-  Collections: `${hubRoutePrefix}/automation-content/collections`,
-  CollectionDetails: `${hubRoutePrefix}/automation-content/collections/details/`,
-
   // EDA server prefix
   EdaDashboard: `${edaRoutePrefix}/dashboard`,
 
