@@ -2,16 +2,20 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { PlusIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
-import { RouteObj } from '../../../../common/Routes';
+import {
+  IPageAction,
+  PageActionSelection,
+  PageActionType,
+  usePageNavigate,
+} from '../../../../../framework';
+import { EdaRoute } from '../../../EdaRoutes';
 import { EdaCredential } from '../../../interfaces/EdaCredential';
 import { IEdaView } from '../../../useEventDrivenView';
 import { useDeleteCredentials } from './useDeleteCredentials';
 
 export function useCredentialsActions(view: IEdaView<EdaCredential>) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const deleteCredentials = useDeleteCredentials(view.unselectItemsAndRefresh);
   return useMemo<IPageAction<EdaCredential>[]>(
     () => [
@@ -22,7 +26,7 @@ export function useCredentialsActions(view: IEdaView<EdaCredential>) {
         isPinned: true,
         icon: PlusIcon,
         label: t('Create credential'),
-        onClick: () => navigate(RouteObj.CreateEdaCredential),
+        onClick: () => pageNavigate(EdaRoute.CreateCredential),
       },
       {
         type: PageActionType.Button,
@@ -33,6 +37,6 @@ export function useCredentialsActions(view: IEdaView<EdaCredential>) {
         isDanger: true,
       },
     ],
-    [deleteCredentials, navigate, t]
+    [deleteCredentials, pageNavigate, t]
   );
 }

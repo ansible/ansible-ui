@@ -9,8 +9,8 @@ import {
   PageHeader,
   PageLayout,
   useGetPageUrl,
+  usePageNavigate,
 } from '../../../../framework';
-import { RouteObj } from '../../../common/Routes';
 import { useGet } from '../../../common/crud/useGet';
 import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
@@ -97,6 +97,7 @@ function CredentialInputs() {
 export function CreateCredential() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
 
   const { cache } = useSWRConfig();
   const postRequest = usePostRequest<EdaCredentialCreate, EdaCredential>();
@@ -104,7 +105,7 @@ export function CreateCredential() {
   const onSubmit: PageFormSubmitHandler<EdaCredentialCreate> = async (credential) => {
     const newCredential = await postRequest(`${API_PREFIX}/credentials/`, credential);
     (cache as unknown as { clear: () => void }).clear?.();
-    navigate(RouteObj.EdaCredentialDetails.replace(':id', newCredential.id.toString()));
+    pageNavigate(EdaRoute.CredentialPage, { params: { id: newCredential.id } });
   };
   const onCancel = () => navigate(-1);
   const getPageUrl = useGetPageUrl();

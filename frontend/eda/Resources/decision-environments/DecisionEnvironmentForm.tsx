@@ -25,6 +25,7 @@ import { EdaResult } from '../../interfaces/EdaResult';
 
 function DecisionEnvironmentInputs() {
   const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
   const { data: credentials } = useGet<EdaResult<EdaCredential>>(`${API_PREFIX}/credentials/`);
   const imageHelpBlock = (
     <>
@@ -77,7 +78,7 @@ function DecisionEnvironmentInputs() {
               }))
             : []
         }
-        footer={<Link to={RouteObj.CreateEdaCredential}>Create credential</Link>}
+        footer={<Link to={getPageUrl(EdaRoute.CreateCredential)}>Create credential</Link>}
         labelHelp={t('The token needed to utilize the Decision environment image.')}
         labelHelpTitle={t('Credential')}
       />

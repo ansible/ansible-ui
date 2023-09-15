@@ -110,10 +110,9 @@ export function DecisionEnvironmentDetails() {
         >
           {decisionEnvironment && decisionEnvironment.credential?.id ? (
             <Link
-              to={RouteObj.EdaCredentialDetails.replace(
-                ':id',
-                `${decisionEnvironment?.credential?.id || ''}`
-              )}
+              to={getPageUrl(EdaRoute.CredentialPage, {
+                params: { id: decisionEnvironment?.credential?.id },
+              })}
             >
               {credential?.name}
             </Link>

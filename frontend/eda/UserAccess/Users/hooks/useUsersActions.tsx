@@ -2,16 +2,20 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { PlusIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
-import { RouteObj } from '../../../../common/Routes';
+import {
+  IPageAction,
+  PageActionSelection,
+  PageActionType,
+  usePageNavigate,
+} from '../../../../../framework';
+import { EdaRoute } from '../../../EdaRoutes';
 import { EdaUser } from '../../../interfaces/EdaUser';
 import { IEdaView } from '../../../useEventDrivenView';
 import { useDeleteUsers } from './useDeleteUser';
 
 export function useUsersActions(view: IEdaView<EdaUser>) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const deleteUsers = useDeleteUsers(view.unselectItemsAndRefresh);
   return useMemo<IPageAction<EdaUser>[]>(
     () => [
@@ -22,7 +26,7 @@ export function useUsersActions(view: IEdaView<EdaUser>) {
         isPinned: true,
         icon: PlusIcon,
         label: t('Create user'),
-        onClick: () => navigate(RouteObj.CreateEdaUser),
+        onClick: () => pageNavigate(EdaRoute.CreateUser),
       },
       {
         type: PageActionType.Button,
@@ -33,6 +37,6 @@ export function useUsersActions(view: IEdaView<EdaUser>) {
         isDanger: true,
       },
     ],
-    [deleteUsers, navigate, t]
+    [deleteUsers, pageNavigate, t]
   );
 }

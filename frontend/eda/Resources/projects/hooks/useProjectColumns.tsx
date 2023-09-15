@@ -6,13 +6,15 @@ import {
   CopyCell,
   ITableColumn,
   TextCell,
+  useGetPageUrl,
 } from '../../../../../framework';
-import { RouteObj } from '../../../../common/Routes';
 import { StatusCell } from '../../../../common/Status';
+import { EdaRoute } from '../../../EdaRoutes';
 import { EdaProject } from '../../../interfaces/EdaProject';
 
 export function useProjectColumns() {
   const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
   return useMemo<ITableColumn<EdaProject>[]>(
     () => [
       {
@@ -20,7 +22,7 @@ export function useProjectColumns() {
         cell: (project) => (
           <TextCell
             text={project.name}
-            to={RouteObj.EdaProjectDetails.replace(':id', project.id.toString())}
+            to={getPageUrl(EdaRoute.ProjectPage, { params: { id: project.id } })}
           />
         ),
         card: 'name',

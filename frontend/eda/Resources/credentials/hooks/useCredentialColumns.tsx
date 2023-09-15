@@ -1,11 +1,12 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ColumnTableOption, ITableColumn, TextCell } from '../../../../../framework';
-import { RouteObj } from '../../../../common/Routes';
+import { ColumnTableOption, ITableColumn, TextCell, useGetPageUrl } from '../../../../../framework';
+import { EdaRoute } from '../../../EdaRoutes';
 import { EdaCredential } from '../../../interfaces/EdaCredential';
 
 export function useCredentialColumns() {
   const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
   return useMemo<ITableColumn<EdaCredential>[]>(
     () => [
       {
@@ -13,7 +14,9 @@ export function useCredentialColumns() {
         cell: (credential) => (
           <TextCell
             text={credential.name}
-            to={RouteObj.EdaCredentialDetails.replace(':id', credential.id.toString())}
+            to={getPageUrl(EdaRoute.CredentialPage, {
+              params: { id: credential.id },
+            })}
           />
         ),
         card: 'name',

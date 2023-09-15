@@ -20,6 +20,7 @@ import { RouteObj } from '../../common/Routes';
 import { requestGet } from '../../common/crud/Data';
 import { useGet } from '../../common/crud/useGet';
 import { usePostRequest } from '../../common/crud/usePostRequest';
+import { EdaRoute } from '../EdaRoutes';
 import { EdaProjectCell } from '../Resources/projects/components/EdaProjectCell';
 import { API_PREFIX } from '../constants';
 import { EdaDecisionEnvironment } from '../interfaces/EdaDecisionEnvironment';
@@ -32,7 +33,6 @@ import {
   EdaRulebookActivationCreate,
 } from '../interfaces/EdaRulebookActivation';
 import { RestartPolicyEnum } from '../interfaces/generated/eda-api';
-import { EdaRoute } from '../EdaRoutes';
 
 export function CreateRulebookActivation() {
   const { t } = useTranslation();
@@ -93,6 +93,7 @@ export function CreateRulebookActivation() {
 
 export function RulebookActivationInputs() {
   const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
   const restartPolicyHelpBlock = (
     <>
       <p>{t('A policy to decide when to restart a rulebook.')}</p>
@@ -159,7 +160,7 @@ export function RulebookActivationInputs() {
               }))
             : []
         }
-        footer={<Link to={RouteObj.CreateEdaProject}>Create project</Link>}
+        footer={<Link to={getPageUrl(EdaRoute.CreateProject)}>Create project</Link>}
         labelHelp={t('Projects are a logical collection of rulebooks.')}
         labelHelpTitle={t('Project')}
       />
@@ -192,7 +193,11 @@ export function RulebookActivationInputs() {
             : []
         }
         isRequired
-        footer={<Link to={RouteObj.CreateEdaDecisionEnvironment}>Create decision environment</Link>}
+        footer={
+          <Link to={getPageUrl(EdaRoute.CreateDecisionEnvironment)}>
+            Create decision environment
+          </Link>
+        }
         labelHelp={t('Decision environments are a container image to run Ansible rulebooks.')}
         labelHelpTitle={t('Decision environment')}
       />
