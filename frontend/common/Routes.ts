@@ -4,10 +4,6 @@ const awxRoutePrefix: RouteType = process.env.AWX_ROUTE_PREFIX
   ? (process.env.AWX_ROUTE_PREFIX as RouteType)
   : '/ui_next';
 
-const hubRoutePrefix: RouteType = process.env.HUB_ROUTE_PREFIX
-  ? (process.env.HUB_ROUTE_PREFIX as RouteType)
-  : '/hub';
-
 const edaRoutePrefix: RouteType = process.env.EDA_ROUTE_PREFIX
   ? (process.env.EDA_ROUTE_PREFIX as RouteType)
   : '/eda';
@@ -168,10 +164,6 @@ export const RouteObj = {
   ExecutionEnvironmentDetails: `${awxRoutePrefix}/administration/execution-environments/:id/details`,
   CreateExecutionEnvironment: `${awxRoutePrefix}/administration/execution-environments/create`,
   EditExecutionEnvironment: `${awxRoutePrefix}/administration/execution-environments/:id/edit`,
-
-  // Hub
-  Collections: `${hubRoutePrefix}/automation-content/collections`,
-  CollectionDetails: `${hubRoutePrefix}/automation-content/collections/details/`,
 
   // EDA server prefix
   EdaDashboard: `${edaRoutePrefix}/dashboard`,
