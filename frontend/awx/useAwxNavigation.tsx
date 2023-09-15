@@ -198,7 +198,7 @@ export function useAwxNavigation() {
                 ],
               },
               {
-                id: AwxRoute.Inventories,
+                id: AwxRoute.Credentials,
                 label: t('Credentials'),
                 path: 'credentials',
                 children: [
