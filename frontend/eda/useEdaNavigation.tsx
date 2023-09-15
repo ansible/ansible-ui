@@ -269,12 +269,12 @@ export function useEdaNavigation() {
                     path: 'me',
                     children: [
                       {
-                        id: EdaRoute.EdaMyTokens,
+                        id: EdaRoute.MyTokens,
                         path: 'tokens',
                         element: <EdaMyDetails initialTabIndex={1} />,
                       },
                       {
-                        id: EdaRoute.EdaMyPage,
+                        id: EdaRoute.MyPage,
                         path: '',
                         element: <EdaMyDetails initialTabIndex={0} />,
                       },

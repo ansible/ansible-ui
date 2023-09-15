@@ -104,10 +104,7 @@ export const RouteObj = {
   EditInventory: `${awxRoutePrefix}/resources/inventories/:id/edit`,
   CreateSmartInventory: `${awxRoutePrefix}/resources/smart_inventory/create`,
   CreateConstructedInventory: `${awxRoutePrefix}/resources/constructed_inventory/create`,
-  EditSmartInventory: `${awxRoutePrefix}/resources/smart_inventory/:id/edit`,
-  EditConstructedInventory: `${awxRoutePrefix}/resources/constructed_inventory/:id/edit`,
 
-  Hosts: `${awxRoutePrefix}/resources/hosts`,
   HostPage: `${awxRoutePrefix}/resources/hosts/:id/*`,
   HostDetails: `${awxRoutePrefix}/resources/hosts/:id/details`,
   HostFacts: `${awxRoutePrefix}/resources/hosts/:id/facts`,
@@ -117,7 +114,6 @@ export const RouteObj = {
   EditHost: `${awxRoutePrefix}/resources/hosts/:id/edit`,
 
   // Access
-  Organizations: `${awxRoutePrefix}/access/organizations`,
   OrganizationPage: `${awxRoutePrefix}/access/organizations/:id/*`,
   OrganizationDetails: `${awxRoutePrefix}/access/organizations/:id/details`,
   OrganizationAccess: `${awxRoutePrefix}/access/organizations/:id/access`,
@@ -127,7 +123,6 @@ export const RouteObj = {
   CreateOrganization: `${awxRoutePrefix}/access/organizations/create`,
   EditOrganization: `${awxRoutePrefix}/access/organizations/:id/edit`,
 
-  Teams: `${awxRoutePrefix}/access/teams`,
   TeamPage: `${awxRoutePrefix}/access/teams/:id/*`,
   TeamDetails: `${awxRoutePrefix}/access/teams/:id/details`,
   TeamAccess: `${awxRoutePrefix}/access/teams/:id/access`,
@@ -136,7 +131,6 @@ export const RouteObj = {
   EditTeam: `${awxRoutePrefix}/access/teams/:id/edit`,
   AddRolesToTeam: `${awxRoutePrefix}/access/teams/:id/roles/add`,
 
-  Users: `${awxRoutePrefix}/access/users`,
   UserPage: `${awxRoutePrefix}/access/users/:id/*`,
   UserDetails: `${awxRoutePrefix}/access/users/:id/details`,
   UserOrganizations: `${awxRoutePrefix}/access/users/:id/organizations`,
@@ -151,7 +145,6 @@ export const RouteObj = {
   CredentialTypePage: `${awxRoutePrefix}/administration/credential_types/:id/*`,
   CredentialTypeDetails: `${awxRoutePrefix}/administration/credential_types/:id/details`,
 
-  Notifications: `${awxRoutePrefix}/administration/notification_templates`,
   NotificationPage: `${awxRoutePrefix}/administration/notification_templates/:id/*`,
   NotificationDetails: `${awxRoutePrefix}/administration/notification_templates/:id/details`,
   ManagementJobs: `${awxRoutePrefix}/administration/management_jobs`,
@@ -160,115 +153,53 @@ export const RouteObj = {
   ManagementJobSchedulesDetails: `${awxRoutePrefix}/administration/management_jobs/:id/schedules/:schedule_id/details`,
   ManagementJobNotifications: `${awxRoutePrefix}/administration/management_jobs/:id/notifications`,
 
-  InstanceGroups: `${awxRoutePrefix}/administration/instance-groups`,
   InstanceGroupDetails: `${awxRoutePrefix}/administration/instance-groups/:id`,
   CreateInstanceGroup: `${awxRoutePrefix}/administration/instance-groups/create`,
   EditInstanceGroup: `${awxRoutePrefix}/administration/instance-groups/:id/edit`,
 
-  Applications: `${awxRoutePrefix}/administration/applications`,
   ApplicationPage: `${awxRoutePrefix}/administration/applications/:id/*`,
   ApplicationDetails: `${awxRoutePrefix}/administration/applications/:id/details`,
   ApplicationTokens: `${awxRoutePrefix}/administration/applications/:id/tokens`,
 
-  Instances: `${awxRoutePrefix}/administration/instances`,
   InstanceDetails: `${awxRoutePrefix}/administration/instances/:id`,
   CreateInstance: `${awxRoutePrefix}/administration/instances/create`,
   EditInstance: `${awxRoutePrefix}/administration/instances/:id/edit`,
 
-  ExecutionEnvironments: `${awxRoutePrefix}/administration/execution-environments`,
   ExecutionEnvironmentDetails: `${awxRoutePrefix}/administration/execution-environments/:id/details`,
   CreateExecutionEnvironment: `${awxRoutePrefix}/administration/execution-environments/create`,
   EditExecutionEnvironment: `${awxRoutePrefix}/administration/execution-environments/:id/edit`,
 
-  TopologyView: `${awxRoutePrefix}/administration/topology`,
-
-  // Settings
-  Settings: `${awxRoutePrefix}/settings`,
-
-  //Analytics
-  ControllerReports: `${awxRoutePrefix}/analytics/reports`,
-  ControllerReport: `${awxRoutePrefix}/analytics/reports/:id`,
-  HostMetrics: `${awxRoutePrefix}/analytics//host-metrics`,
-  SubscriptionUsage: `${awxRoutePrefix}/analytics/subscription-usage`,
-
-  Hub: `${hubRoutePrefix}`,
-
-  HubDashboard: `${hubRoutePrefix}/dashboard`,
+  // Hub
   Collections: `${hubRoutePrefix}/automation-content/collections`,
   CollectionDetails: `${hubRoutePrefix}/automation-content/collections/details/`,
-  UploadCollection: `${hubRoutePrefix}/automation-content/collections/upload`,
-
-  Repositories: `${hubRoutePrefix}/administration/repositories`,
-  RepositoryDetails: `${hubRoutePrefix}/administration/repositories/details/:CollectionDetails`,
-  EditRepository: `${hubRoutePrefix}/administration/repositories/edit/:id`,
-
-  Namespaces: `${hubRoutePrefix}/automation-content/namespaces`,
-  NamespaceDetails: `${hubRoutePrefix}/automation-content/namespaces/details/:id`,
-  CreateNamespace: `${hubRoutePrefix}/automation-content/namespaces/create`,
-  EditNamespace: `${hubRoutePrefix}/automation-content/namespaces/:id/edit`,
-
-  Approvals: `${hubRoutePrefix}/administration/approvals`,
-  ApprovalDetails: `${hubRoutePrefix}/administration/approvals/details/:id`,
-
-  HubExecutionEnvironments: `${hubRoutePrefix}/automation-content/execution-environments`,
-  HubExecutionEnvironmentDetails: `${hubRoutePrefix}/automation-content/execution-environments/details/:id`,
-
-  Remotes: `${hubRoutePrefix}/administration/remotes`,
-  CreateRemotes: `${hubRoutePrefix}/administration/remotes/create`,
-  EditRemotes: `${hubRoutePrefix}/administration/remotes/:id/edit`,
-  RemoteDetails: `${hubRoutePrefix}/administration/remotes/details/:id`,
-
-  RemoteRegistries: `${hubRoutePrefix}/administration/remote-registries`,
-
-  Tasks: `${hubRoutePrefix}/administration/tasks`,
-  TaskDetails: `${hubRoutePrefix}/administration/tasks/details/:id`,
-
-  SignatureKeys: `${hubRoutePrefix}/automation-content/signature-keys`,
-
-  APIToken: `${hubRoutePrefix}/access/api-token`,
 
   // EDA server prefix
   EdaDashboard: `${edaRoutePrefix}/dashboard`,
 
-  EdaProjects: `${edaRoutePrefix}/resources/projects`,
   EdaProjectDetails: `${edaRoutePrefix}/resources/projects/details/:id`,
   CreateEdaProject: `${edaRoutePrefix}/resources/projects/create`,
   EditEdaProject: `${edaRoutePrefix}/resources/projects/edit/:id`,
 
-  EdaCredentials: `${edaRoutePrefix}/resources/credentials`,
   EdaCredentialDetails: `${edaRoutePrefix}/resources/credentials/details/:id`,
   CreateEdaCredential: `${edaRoutePrefix}/resources/credentials/create`,
   EditEdaCredential: `${edaRoutePrefix}/resources/credentials/edit/:id`,
 
-  EdaDecisionEnvironments: `${edaRoutePrefix}/resources/decision-environments`,
   EdaDecisionEnvironmentDetails: `${edaRoutePrefix}/resources/decision-environments/details/:id`,
   CreateEdaDecisionEnvironment: `${edaRoutePrefix}/resources/decision-environments/create`,
   EditEdaDecisionEnvironment: `${edaRoutePrefix}/resources/decision-environments/edit/:id`,
 
-  EdaRuleAudit: `${edaRoutePrefix}/views/rule-audits`,
   EdaRuleAuditDetails: `${edaRoutePrefix}/views/rule-audits/:id`,
 
-  EdaRulebookActivations: `${edaRoutePrefix}/views/rulebook-activations`,
   EdaRulebookActivationDetails: `${edaRoutePrefix}/views/rulebook-activations/details/:id`,
   EdaRulebookActivationDetailsHistory: `${edaRoutePrefix}/views/rulebook-activations/details/:id/history`,
   CreateEdaRulebookActivation: `${edaRoutePrefix}/views/rulebook-activations/create`,
-  EditEdaRulebookActivation: `${edaRoutePrefix}/views/rulebook-activations/edit/:id`,
   EdaActivationInstanceDetails: `${edaRoutePrefix}/views/rulebook-activations/activations-instances/details/:id`,
 
-  EdaRulebooks: `${edaRoutePrefix}/rulebooks`,
   EdaRulebookDetails: `${edaRoutePrefix}/rulebooks/details/:id`,
   EdaRulesetDetails: `${edaRoutePrefix}/rulesets/details/:id`,
-  CreateEdaRulebook: `${edaRoutePrefix}/rulebooks/create`,
-  EditEdaRulebook: `${edaRoutePrefix}/rulebooks/edit/:id`,
 
-  EdaRules: `${edaRoutePrefix}/rules`,
   EdaRuleDetails: `${edaRoutePrefix}/rules/details/:id`,
-  CreateEdaRule: `${edaRoutePrefix}/rules/create`,
-  EditEdaRule: `${edaRoutePrefix}/rules/edit/:id`,
 
-  EdaUsers: `${edaRoutePrefix}/access/users`,
-  EdaGroups: `${edaRoutePrefix}/access/groups`,
-  EdaRoles: `${edaRoutePrefix}/access/roles`,
   CreateEdaUser: `${edaRoutePrefix}/access/users/create`,
   EdaUserDetailsTokens: `${edaRoutePrefix}/access/users/details/:id/tokens`,
   EdaUserDetails: `${edaRoutePrefix}/access/users/details/:id`,
@@ -276,11 +207,6 @@ export const RouteObj = {
   CreateEdaGroup: `${edaRoutePrefix}/access/groups/create`,
   EdaGroupDetails: `${edaRoutePrefix}/access/groups/details/:id`,
   EditEdaGroup: `${edaRoutePrefix}/access/group/edit/:id`,
-  CreateEdaRole: `${edaRoutePrefix}/access/roles/create`,
   EdaRoleDetails: `${edaRoutePrefix}/access/roles/details/:id`,
-  EditEdaRole: `${edaRoutePrefix}/access/roles/edit/:id`,
   CreateEdaControllerToken: `${edaRoutePrefix}/access/users/tokens/create`,
-
-  EdaMyDetails: `${edaRoutePrefix}/access/users/me`,
-  EdaMyTokens: `${edaRoutePrefix}/access/users/me/tokens`,
 };

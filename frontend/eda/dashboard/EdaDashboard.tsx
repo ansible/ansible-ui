@@ -1,10 +1,11 @@
 import { CardBody, ProgressStep, ProgressStepper, Stack, Text } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { PageHeader } from '../../../framework';
+import { PageHeader, useGetPageUrl } from '../../../framework';
 import { PageDashboard } from '../../../framework/PageDashboard/PageDashboard';
 import { PageDashboardCard } from '../../../framework/PageDashboard/PageDashboardCard';
 import { RouteObj } from '../../common/Routes';
+import { EdaRoute } from '../EdaRoutes';
 import { API_PREFIX } from '../constants';
 import { EdaControllerToken } from '../interfaces/EdaControllerToken';
 import { EdaDecisionEnvironment } from '../interfaces/EdaDecisionEnvironment';
@@ -20,6 +21,7 @@ import { EdaRulebookActivationsCard } from './cards/EdaRulebookActivationsCard';
 
 export function EdaDashboard() {
   const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
   const edaProjectView = useEdaView<EdaProject>({
     url: `${API_PREFIX}/projects/`,
     queryParams: { page: '1', page_size: '10' },
@@ -106,7 +108,9 @@ export function EdaDashboard() {
                     variant={!hasProject ? 'pending' : hasDecisionEnvironment ? 'success' : 'info'}
                     description={t('Create a decision environment.')}
                   >
-                    <Link to={RouteObj.EdaDecisionEnvironments}>{t('Decision Environment')}</Link>
+                    <Link to={getPageUrl(EdaRoute.DecisionEnvironments)}>
+                      {t('Decision Environment')}
+                    </Link>
                   </ProgressStep>
                   <ProgressStep
                     variant={

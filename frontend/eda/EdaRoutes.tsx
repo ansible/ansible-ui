@@ -51,8 +51,8 @@ export enum EdaRoute {
   EditRole = 'eda-edit-role',
   RolePage = 'eda-role-page',
 
-  EdaMyPage = 'eda-my-page',
-  EdaMyTokens = 'eda-my-tokens',
+  MyPage = 'eda-my-page',
+  MyTokens = 'eda-my-tokens',
 
   CreateControllerToken = 'eda-create-controller-token',
 
