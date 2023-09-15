@@ -9,8 +9,8 @@ import {
   PageHeader,
   PageLayout,
   useGetPageUrl,
+  usePageNavigate,
 } from '../../../../framework';
-import { RouteObj } from '../../../common/Routes';
 import { useGet } from '../../../common/crud/useGet';
 import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
@@ -89,6 +89,7 @@ function DecisionEnvironmentInputs() {
 export function CreateDecisionEnvironment() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const { cache } = useSWRConfig();
   const postRequest = usePostRequest<Partial<EdaDecisionEnvironment>, EdaDecisionEnvironment>();
 
@@ -98,9 +99,7 @@ export function CreateDecisionEnvironment() {
       decisionEnvironment
     );
     (cache as unknown as { clear: () => void }).clear?.();
-    navigate(
-      RouteObj.EdaDecisionEnvironmentDetails.replace(':id', newDecisionEnvironment.id.toString())
-    );
+    pageNavigate(EdaRoute.DecisionEnvironmentPage, { params: { id: newDecisionEnvironment.id } });
   };
   const onCancel = () => navigate(-1);
   const getPageUrl = useGetPageUrl();

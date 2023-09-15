@@ -65,7 +65,6 @@ export function useProjectColumns() {
         modal: ColumnModalOption.Hidden,
       },
     ],
-
-    [t]
+    [getPageUrl, t]
   );
 }

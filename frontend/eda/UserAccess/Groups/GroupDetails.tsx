@@ -2,7 +2,7 @@ import { DropdownPosition } from '@patternfly/react-core';
 import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import {
   IPageAction,
   PageActionSelection,
@@ -14,7 +14,6 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
-import { RouteObj } from '../../../common/Routes';
 import { useGet } from '../../../common/crud/useGet';
 import { EdaRoute } from '../../EdaRoutes';
 import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
@@ -25,7 +24,6 @@ import { useGroupColumns } from './hooks/useGroupColumns';
 export function GroupDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
   const { data: group } = useGet<EdaGroup>(`${API_PREFIX}/groups/${params.id ?? ''}/`, undefined, {
     refreshInterval: SWR_REFRESH_INTERVAL,
@@ -46,7 +44,7 @@ export function GroupDetails() {
         icon: PencilAltIcon,
         label: t('Edit group'),
         onClick: (group: EdaGroup) =>
-          navigate(RouteObj.EditEdaGroup.replace(':id', group.id.toString())),
+          pageNavigate(EdaRoute.EditGroup, { params: { id: group.id } }),
       },
       {
         type: PageActionType.Button,
@@ -57,7 +55,7 @@ export function GroupDetails() {
         isDanger: true,
       },
     ],
-    [deleteGroups, navigate, t]
+    [deleteGroups, pageNavigate, t]
   );
 
   const getPageUrl = useGetPageUrl();

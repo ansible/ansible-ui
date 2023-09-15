@@ -9,8 +9,8 @@ import {
   PageHeader,
   PageLayout,
   useGetPageUrl,
+  usePageNavigate,
 } from '../../../../framework';
-import { RouteObj } from '../../../common/Routes';
 import { useGet } from '../../../common/crud/useGet';
 import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
@@ -29,6 +29,7 @@ type UserInput = Omit<EdaUserCreateUpdate, 'roles'> & {
 export function CreateUser() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const postRequest = usePostRequest<EdaUserCreateUpdate, EdaUser>();
   const onSubmit: PageFormSubmitHandler<UserInput> = async (userInput, _, setFieldError) => {
     const { roles, confirmPassword, ...user } = userInput;
@@ -41,7 +42,7 @@ export function CreateUser() {
       roles: roles?.map((role) => role.id) ?? [],
     };
     const newUser = await postRequest(`${API_PREFIX}/users/`, createUser);
-    navigate(RouteObj.EdaUserDetails.replace(':id', newUser.id.toString()));
+    pageNavigate(EdaRoute.UserPage, { params: { id: newUser.id } });
   };
 
   const onCancel = () => navigate(-1);
@@ -71,6 +72,7 @@ export function CreateUser() {
 export function EditUser() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
   const { data: user } = useGet<EdaUser>(`${API_PREFIX}/users/${id.toString()}/`);
@@ -91,7 +93,7 @@ export function EditUser() {
     }
     const editUser: EdaUserCreateUpdate = { ...user, roles: roles?.map((role) => role.id) ?? [] };
     const updatedUser = await patchRequest(`${API_PREFIX}/users/${id}/`, editUser);
-    navigate(RouteObj.EdaUserDetails.replace(':id', updatedUser.id.toString()));
+    pageNavigate(EdaRoute.UserPage, { params: { id: updatedUser.id } });
   };
 
   const onCancel = () => navigate(-1);

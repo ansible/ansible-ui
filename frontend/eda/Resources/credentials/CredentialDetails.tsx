@@ -8,7 +8,7 @@ import {
 import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { TFunction, useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import {
   IPageAction,
   PageActionSelection,
@@ -44,7 +44,6 @@ export function CredentialDetails() {
     </>
   );
   const params = useParams<{ id: string }>();
-  const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
   const { data: credential } = useGet<EdaCredential>(
     `${API_PREFIX}/credentials/${params.id ?? ''}/`,

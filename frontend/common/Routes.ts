@@ -174,24 +174,8 @@ export const RouteObj = {
   CollectionDetails: `${hubRoutePrefix}/automation-content/collections/details/`,
 
   // EDA
-  EdaDecisionEnvironmentDetails: `${edaRoutePrefix}/resources/decision-environments/details/:id`,
-  EditEdaDecisionEnvironment: `${edaRoutePrefix}/resources/decision-environments/edit/:id`,
-
-  EdaRuleAuditDetails: `${edaRoutePrefix}/views/rule-audits/:id`,
-
-  EdaRulebookActivationDetails: `${edaRoutePrefix}/views/rulebook-activations/details/:id`,
   EdaRulebookActivationDetailsHistory: `${edaRoutePrefix}/views/rulebook-activations/details/:id/history`,
-  EdaActivationInstanceDetails: `${edaRoutePrefix}/views/rulebook-activations/activations-instances/details/:id`,
-
-  EdaRulebookDetails: `${edaRoutePrefix}/rulebooks/details/:id`,
-  EdaRulesetDetails: `${edaRoutePrefix}/rulesets/details/:id`,
-
-  EdaRuleDetails: `${edaRoutePrefix}/rules/details/:id`,
-
+  ActivationInstancePage: `${edaRoutePrefix}/views/rulebook-activations/activations-instances/details/:id`,
+  RulesetPage: `${edaRoutePrefix}/rulesets/details/:id`,
   EdaUserDetailsTokens: `${edaRoutePrefix}/access/users/details/:id/tokens`,
-  EdaUserDetails: `${edaRoutePrefix}/access/users/details/:id`,
-  EditEdaUser: `${edaRoutePrefix}/access/users/edit/:id`,
-  EdaGroupDetails: `${edaRoutePrefix}/access/groups/details/:id`,
-  EditEdaGroup: `${edaRoutePrefix}/access/group/edit/:id`,
-  EdaRoleDetails: `${edaRoutePrefix}/access/roles/details/:id`,
 };

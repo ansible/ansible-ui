@@ -13,10 +13,10 @@ import {
   PageLayout,
   compareStrings,
   useGetPageUrl,
+  usePageNavigate,
 } from '../../../framework';
 import { PageFormAsyncSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncSelect';
 import { PageFormSection } from '../../../framework/PageForm/Utils/PageFormSection';
-import { RouteObj } from '../../common/Routes';
 import { requestGet } from '../../common/crud/Data';
 import { useGet } from '../../common/crud/useGet';
 import { usePostRequest } from '../../common/crud/usePostRequest';
@@ -37,6 +37,7 @@ import { RestartPolicyEnum } from '../interfaces/generated/eda-api';
 export function CreateRulebookActivation() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
 
   const postEdaExtraVars = usePostRequest<Partial<EdaExtraVars>, { id: number }>();
   const postEdaRulebookActivation = usePostRequest<object, EdaRulebookActivation>();
@@ -58,9 +59,7 @@ export function CreateRulebookActivation() {
       `${API_PREFIX}/activations/`,
       rulebookActivation
     );
-    navigate(
-      RouteObj.EdaRulebookActivationDetails.replace(':id', newRulebookActivation.id.toString())
-    );
+    pageNavigate(EdaRoute.RulebookActivationPage, { params: { id: newRulebookActivation.id } });
   };
   const onCancel = () => navigate(-1);
   const getPageUrl = useGetPageUrl();

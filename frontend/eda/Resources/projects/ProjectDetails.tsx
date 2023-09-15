@@ -134,9 +134,7 @@ export function ProjectDetails() {
         >
           {project && project.credential ? (
             <Link
-              to={
-                (getPageUrl(EdaRoute.CredentialPage), { params: { id: project?.credential?.id } })
-              }
+              to={getPageUrl(EdaRoute.CredentialPage, { params: { id: project?.credential?.id } })}
             >
               {project?.credential?.name}
             </Link>

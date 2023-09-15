@@ -51,7 +51,6 @@ export function useCredentialColumns() {
         list: 'secondary',
       },
     ],
-
-    [t]
+    [getPageUrl, t]
   );
 }

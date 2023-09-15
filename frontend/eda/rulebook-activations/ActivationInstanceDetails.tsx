@@ -95,10 +95,7 @@ export function ActivationInstanceDetails() {
           { label: t('Rulebook Activations'), to: getPageUrl(EdaRoute.RulebookActivations) },
           {
             label: activation?.name || '',
-            to: RouteObj.EdaRulebookActivationDetails.replace(
-              ':id',
-              activationInstance?.activation_id.toString() || ''
-            ),
+            to: getPageUrl(EdaRoute.RulebookActivationPage, { params: { id: activation?.id } }),
           },
           {
             label: t('History'),
