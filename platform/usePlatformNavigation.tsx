@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageNavigationItem } from '../framework';
+import { PageNavigationItem, removeNavigationItemById } from '../framework';
+import { AwxRoute } from '../frontend/awx/AwxRoutes';
 import { useAwxNavigation } from '../frontend/awx/useAwxNavigation';
 import { useEdaNavigation } from '../frontend/eda/useEdaNavigation';
 import { useHubNavigation } from '../frontend/hub/useHubNavigation';
@@ -11,8 +12,9 @@ export function usePlatformNavigation() {
   const awxNavigation = useAwxNavigation();
   const hubNavigation = useHubNavigation();
   const edaNavigation = useEdaNavigation();
+  const analyticsNavigation = removeNavigationItemById(awxNavigation, AwxRoute.Reports);
   const pageNavigationItems = useMemo<PageNavigationItem[]>(() => {
-    const navigationItems: PageNavigationItem[] = [
+    const navigationItems = [
       {
         id: 'platform-dashboard',
         label: t('Dashboard'),
@@ -37,8 +39,9 @@ export function usePlatformNavigation() {
         path: 'eda',
         children: edaNavigation,
       },
+      analyticsNavigation,
     ];
-    return navigationItems;
-  }, [awxNavigation, edaNavigation, hubNavigation, t]);
+    return navigationItems.filter((item) => item !== undefined) as PageNavigationItem[];
+  }, [analyticsNavigation, awxNavigation, edaNavigation, hubNavigation, t]);
   return pageNavigationItems;
 }

@@ -9,7 +9,7 @@ import { AwxLogin } from '../frontend/awx/AwxLogin';
 import { AnsibleMasthead } from '../frontend/common/Masthead';
 import { usePlatformNavigation } from './usePlatformNavigation';
 
-export default function AwxMain() {
+export default function PlatformMain() {
   const navigation = usePlatformNavigation();
   return (
     <PageApp
