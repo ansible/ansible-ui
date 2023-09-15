@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
 import { PageNavigationItem, removeNavigationItemById } from '../framework';
-import { AwxLogin } from '../frontend/awx/AwxLogin';
 import { AwxRoute } from '../frontend/awx/AwxRoutes';
 import { useAwxNavigation } from '../frontend/awx/useAwxNavigation';
 import { useEdaNavigation } from '../frontend/eda/useEdaNavigation';
@@ -18,11 +17,6 @@ export function usePlatformNavigation() {
   const analyticsNavigation = removeNavigationItemById(awxNavigation, AwxRoute.Reports);
   const pageNavigationItems = useMemo<PageNavigationItem[]>(() => {
     const navigationItems = [
-      {
-        id: PlatformRoute.Login,
-        path: 'login',
-        element: <AwxLogin />,
-      },
       {
         id: PlatformRoute.Dashboard,
         label: t('Dashboard'),
