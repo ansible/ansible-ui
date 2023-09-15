@@ -44,7 +44,7 @@ export function useCollectionsActions(callback: (collections: CollectionVersionS
         isDanger: true,
         isDisabled: context.hasPermission('ansible.delete_collection')
           ? ''
-          : t`You dont have rights to this operation`,
+          : t`You do not have rights to this operation`,
       },
       {
         type: PageActionType.Button,
@@ -55,7 +55,7 @@ export function useCollectionsActions(callback: (collections: CollectionVersionS
         isDanger: true,
         isDisabled: context.hasPermission('ansible.delete_collection')
           ? ''
-          : t`You dont have rights to this operation`,
+          : t`You do not have rights to this operation`,
       },
       {
         type: PageActionType.Button,
