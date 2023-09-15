@@ -1,11 +1,12 @@
 interface PageNavigationGroup {
+  id?: string;
   label?: string;
   path: string;
   children: PageNavigationItem[];
 }
 
 interface PageNavigationComponent {
-  id: string;
+  id?: string;
   label?: string;
   path: string;
   element: JSX.Element;
