@@ -7,7 +7,6 @@ import { PlatformRoute } from './PlatformRoutes';
 export function PlatformLogin() {
   // const { data: options } = useGet<AuthOptions>('/api/gateway/v1/auth/');
   const getPageUrl = useGetPageUrl();
-  console.log(getPageUrl(PlatformRoute.Dashboard));
   return (
     <Login
       authOptions={{}}
