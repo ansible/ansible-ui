@@ -7,8 +7,9 @@ import { PageForm, PageFormSubmitHandler, usePageDialog } from '../../framework'
 import { PageFormTextInput } from '../../framework/PageForm/Inputs/PageFormTextInput';
 import { usePageNavigate } from '../../framework/PageNavigation/usePageNavigate';
 import { AwxRoute } from '../awx/AwxRoutes';
+import { EdaRoute } from '../eda/EdaRoutes';
+import { HubRoute } from '../hub/HubRoutes';
 import { hubAPI } from '../hub/api/utils';
-import { RouteObj } from './Routes';
 import { AuthOptions, SocialAuthLogin } from './SocialAuthLogin';
 import { RequestError, createRequestError } from './crud/RequestError';
 import { setCookie } from './crud/cookie';
@@ -194,11 +195,11 @@ function LoginForm(props: LoginFormProps) {
             pageNavigate(AwxRoute.Dashboard);
             break;
           case 'EDA':
-            navigate(RouteObj.EdaDashboard);
+            pageNavigate(EdaRoute.Dashboard);
             break;
           case 'HUB':
           case 'GALAXY':
-            navigate(RouteObj.HubDashboard);
+            pageNavigate(HubRoute.Dashboard);
             break;
         }
 

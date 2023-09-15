@@ -3,7 +3,7 @@ import { ButtonVariant, DropdownPosition } from '@patternfly/react-core';
 import { EditIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import {
   IPageAction,
   PageActionSelection,
@@ -12,6 +12,7 @@ import {
   PageHeader,
   PageLayout,
   useGetPageUrl,
+  usePageNavigate,
 } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { PageBackTab, RoutedTab, RoutedTabs } from '../../../../common/RoutedTabs';
@@ -30,11 +31,11 @@ export function UserPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const { error, data: user, refresh } = useGetItem<User>('/api/v2/users', params.id);
-  const history = useNavigate();
+  const pageNavigate = usePageNavigate();
 
   const deleteUsers = useDeleteUsers((deleted: User[]) => {
     if (deleted.length > 0) {
-      history(RouteObj.Users);
+      pageNavigate(AwxRoute.Users);
     }
   });
 
@@ -47,7 +48,7 @@ export function UserPage() {
         isPinned: true,
         icon: EditIcon,
         label: t('Edit user'),
-        onClick: (user) => history(RouteObj.EditUser.replace(':id', user.id.toString() ?? '')),
+        onClick: (user) => pageNavigate(AwxRoute.EditUser, { params: { id: user.id } }),
       },
       { type: PageActionType.Seperator },
       {
@@ -60,7 +61,7 @@ export function UserPage() {
       },
     ];
     return itemActions;
-  }, [t, history, deleteUsers]);
+  }, [t, pageNavigate, deleteUsers]);
 
   const getPageUrl = useGetPageUrl();
 
@@ -83,8 +84,12 @@ export function UserPage() {
           />
         }
       />
-      <RoutedTabs baseUrl={RouteObj.UserPage}>
-        <PageBackTab label={t('Back to Users')} url={RouteObj.Users} persistentFilterKey="users" />
+      <RoutedTabs baseUrl={getPageUrl(AwxRoute.UserPage)}>
+        <PageBackTab
+          label={t('Back to Users')}
+          url={getPageUrl(AwxRoute.Users)}
+          persistentFilterKey="users"
+        />
         <RoutedTab label={t('Details')} url={RouteObj.UserDetails}>
           <UserDetails user={user} />
         </RoutedTab>

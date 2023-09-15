@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import {
   ColumnTableOption,
   DateTimeCell,
@@ -12,9 +11,10 @@ import {
   PageTable,
   TextCell,
   ToolbarFilterType,
+  usePageNavigate,
 } from '../../../framework';
-import { RouteObj } from '../../common/Routes';
 import { StatusCell } from '../../common/Status';
+import { HubRoute } from '../HubRoutes';
 import { parsePulpIDFromURL, pulpAPI, pulpHrefKeyFn } from '../api/utils';
 import { usePulpView } from '../usePulpView';
 import { Task } from './Task';
@@ -48,7 +48,7 @@ export function Tasks() {
 
 export function useTasksColumns(_options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const tableColumns = useMemo<ITableColumn<Task>[]>(
     () => [
       {
@@ -57,9 +57,9 @@ export function useTasksColumns(_options?: { disableSort?: boolean; disableLinks
           <TextCell
             text={task.name}
             onClick={() =>
-              navigate(
-                RouteObj.TaskDetails.replace(':id', parsePulpIDFromURL(task.pulp_href) || '')
-              )
+              pageNavigate(HubRoute.TaskPage, {
+                params: { id: parsePulpIDFromURL(task.pulp_href) || '' },
+              })
             }
           />
         ),
@@ -103,7 +103,7 @@ export function useTasksColumns(_options?: { disableSort?: boolean; disableLinks
         list: 'secondary',
       },
     ],
-    [navigate, t]
+    [pageNavigate, t]
   );
   return tableColumns;
 }

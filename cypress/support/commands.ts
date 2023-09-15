@@ -50,7 +50,7 @@ declare global {
       // --- NAVIGATION COMMANDS ---
 
       /**Navigates to a page of the UI using using the links on the page sidebar. Intended as an alternative to cy.visit(). */
-      navigateTo(component: string, label: string): Chainable<void>;
+      navigateTo(component: 'awx' | 'eda' | 'hub', label: string): Chainable<void>;
 
       /**Locates a title using its label. No assertion is made. */
       hasTitle(label: string | RegExp): Chainable<void>;

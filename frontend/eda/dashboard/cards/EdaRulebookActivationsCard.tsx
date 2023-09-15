@@ -6,10 +6,12 @@ import {
   PageTable,
   useColumnsWithoutExpandedRow,
   useColumnsWithoutSort,
+  useGetPageUrl,
   useVisibleModalColumns,
 } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
 import { RouteObj } from '../../../common/Routes';
+import { EdaRoute } from '../../EdaRoutes';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { useRulebookActivationColumns } from '../../rulebook-activations/hooks/useRulebookActivationColumns';
 import { IEdaView } from '../../useEventDrivenView';
@@ -18,6 +20,7 @@ export function EdaRulebookActivationsCard(props: { view: IEdaView<EdaRulebookAc
   const { view } = props;
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const getPageUrl = useGetPageUrl();
   const tableColumns = useRulebookActivationColumns();
   let columns = useVisibleModalColumns(tableColumns);
   columns = useMemo(() => columns, [columns]);
@@ -29,7 +32,7 @@ export function EdaRulebookActivationsCard(props: { view: IEdaView<EdaRulebookAc
       subtitle={t('Recently updated activations')}
       height="md"
       linkText={t('Go to Rulebook Activations')}
-      to={RouteObj.EdaRulebookActivations}
+      to={getPageUrl(EdaRoute.RulebookActivations)}
       helpTitle={t('Rulebook activations')}
       help={t('Rulebook activations are rulebooks that have been activated to run.')}
     >

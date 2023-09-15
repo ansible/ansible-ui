@@ -21,6 +21,7 @@ import {
   PageTab,
   PageTabs,
   useGetPageUrl,
+  usePageNavigate,
 } from '../../../../framework';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { RouteObj } from '../../../common/Routes';
@@ -45,6 +46,7 @@ export function CredentialDetails() {
   );
   const params = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const { data: credential } = useGet<EdaCredential>(
     `${API_PREFIX}/credentials/${params.id ?? ''}/`,
     undefined,
@@ -53,7 +55,7 @@ export function CredentialDetails() {
 
   const deleteCredentials = useDeleteCredentials((deleted) => {
     if (deleted.length > 0) {
-      navigate(RouteObj.EdaCredentials);
+      pageNavigate(EdaRoute.Credentials);
     }
   });
 

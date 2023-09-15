@@ -25,6 +25,7 @@ import {
   PageTab,
   PageTabs,
   useGetPageUrl,
+  usePageNavigate,
 } from '../../../../framework';
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
 import { RouteObj } from '../../../common/Routes';
@@ -60,9 +61,10 @@ export function EdaUserDetailsInternal({
 }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const deleteUsers = useDeleteUsers((deleted) => {
     if (deleted && deleted.length > 0) {
-      navigate(RouteObj.EdaUsers);
+      pageNavigate(EdaRoute.Users);
     }
   });
 

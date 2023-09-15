@@ -1,8 +1,8 @@
 import { RedhatIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, TextCell } from '../../../../framework';
-import { RouteObj } from '../../../common/Routes';
+import { ITableColumn, TextCell, useGetPageUrl } from '../../../../framework';
+import { HubRoute } from '../../HubRoutes';
 import { HubNamespace } from '../HubNamespace';
 
 export function useHubNamespacesColumns(_options?: {
@@ -10,6 +10,7 @@ export function useHubNamespacesColumns(_options?: {
   disableLinks?: boolean;
 }) {
   const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
   const tableColumns = useMemo<ITableColumn<HubNamespace>[]>(
     () => [
       {
@@ -17,7 +18,7 @@ export function useHubNamespacesColumns(_options?: {
         cell: (namespace) => (
           <TextCell
             text={namespace.name}
-            to={RouteObj.NamespaceDetails.replace(':id', namespace.name)}
+            to={getPageUrl(HubRoute.NamespacePage, { params: { id: namespace.name } })}
           />
         ),
         value: (namespace) => namespace.name,
@@ -40,7 +41,7 @@ export function useHubNamespacesColumns(_options?: {
         list: 'secondary',
       },
     ],
-    [t]
+    [getPageUrl, t]
   );
   return tableColumns;
 }

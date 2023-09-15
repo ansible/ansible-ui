@@ -22,19 +22,21 @@ import {
   PageTab,
   PageTabs,
   useGetPageUrl,
+  usePageNavigate,
 } from '../../../../framework';
 import { RouteObj } from '../../../common/Routes';
 import { useGet } from '../../../common/crud/useGet';
+import { EdaRoute } from '../../EdaRoutes';
 import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
 import { EdaCredential } from '../../interfaces/EdaCredential';
 import { EdaDecisionEnvironmentRead } from '../../interfaces/EdaDecisionEnvironment';
 import { useDeleteDecisionEnvironment } from './hooks/useDeleteDecisionEnvironments';
-import { EdaRoute } from '../../EdaRoutes';
 
 export function DecisionEnvironmentDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const imageHelpBlock = (
     <>
       <p>
@@ -61,7 +63,7 @@ export function DecisionEnvironmentDetails() {
 
   const deleteDecisionEnvironment = useDeleteDecisionEnvironment((deleted) => {
     if (deleted.length > 0) {
-      navigate(RouteObj.EdaDecisionEnvironments);
+      pageNavigate(EdaRoute.DecisionEnvironments);
     }
   });
 

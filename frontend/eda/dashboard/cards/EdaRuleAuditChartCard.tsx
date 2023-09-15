@@ -1,17 +1,18 @@
 import { CardBody } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings, pfDanger, pfSuccess } from '../../../../framework';
+import { compareStrings, pfDanger, pfSuccess, useGetPageUrl } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
 import { PageDashboardChart } from '../../../../framework/PageDashboard/PageDashboardChart';
-import { RouteObj } from '../../../common/Routes';
 import { useGet } from '../../../common/crud/useGet';
+import { EdaRoute } from '../../EdaRoutes';
 import { API_PREFIX } from '../../constants';
 import { EdaResult } from '../../interfaces/EdaResult';
 import { EdaRuleAuditItem } from '../../interfaces/EdaRuleAudit';
 
 const RuleAuditChart = () => {
   const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
 
   const { data } = useGet<EdaResult<EdaRuleAuditItem>>(`${API_PREFIX}/audit-rules/`);
 
@@ -113,7 +114,7 @@ const RuleAuditChart = () => {
       title={t('Rule Runs')}
       width="xxl"
       height="sm"
-      to={RouteObj.EdaRuleAudit}
+      to={getPageUrl(EdaRoute.RuleAudits)}
       help={t('Rule audit allows auditing of rules which have been triggered by incoming events.')}
     >
       <CardBody>

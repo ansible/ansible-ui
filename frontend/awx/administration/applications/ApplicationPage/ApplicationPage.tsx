@@ -38,7 +38,7 @@ export function ApplicationPage() {
       <RoutedTabs isLoading={!application} baseUrl={RouteObj.ApplicationPage}>
         <PageBackTab
           label={t('Back to Applications')}
-          url={RouteObj.Applications}
+          url={getPageUrl(AwxRoute.Applications)}
           persistentFilterKey="applications"
         />
         <RoutedTab label={t('Details')} url={RouteObj.ApplicationDetails}>
