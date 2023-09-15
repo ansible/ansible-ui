@@ -29,7 +29,7 @@ describe('Workflow Job templates form', () => {
   it('Should create job template with all fields except for prompt on launch values', () => {
     const jtName = 'E2E ' + randomString(4);
 
-    cy.navigateTo(/^Templates$/);
+    cy.navigateTo('awx', 'templates');
     cy.clickButton(/^Create template$/);
     cy.clickLink(/^Create workflow job template$/);
     cy.typeInputByLabel(/^Name$/, jtName);
@@ -42,7 +42,7 @@ describe('Workflow Job templates form', () => {
   });
 
   it('Should edit a workflow job template', () => {
-    cy.navigateTo(/^Templates$/);
+    cy.navigateTo('awx', 'templates');
     cy.createAwxWorkflowJobTemplate({
       organization: organization.id,
       inventory: inventory.id,
@@ -50,7 +50,7 @@ describe('Workflow Job templates form', () => {
       const newName = (workflowJobTemplate.name ?? '') + ' edited';
       if (!workflowJobTemplate.name) return;
 
-      cy.clickTableRowPinnedAction(workflowJobTemplate?.name, 'edit-template', true);
+      cy.clickTableRowPinnedAction(workflowJobTemplate?.name, 'Edit template', true);
       cy.typeInputByLabel(/^Name$/, newName);
       cy.typeInputByLabel(/^Description$/, 'this is a new description');
       cy.clickButton(/^Save workflow job template$/);
@@ -59,7 +59,7 @@ describe('Workflow Job templates form', () => {
   });
 
   it('Should delete a workflow job template', () => {
-    cy.navigateTo(/^Templates$/);
+    cy.navigateTo('awx', 'templates');
     cy.createAwxWorkflowJobTemplate({
       organization: organization.id,
       inventory: inventory.id,

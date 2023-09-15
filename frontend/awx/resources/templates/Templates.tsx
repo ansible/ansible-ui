@@ -12,7 +12,6 @@ import {
   usePageNavigate,
 } from '../../../../framework';
 import { usePersistentFilters } from '../../../common/PersistentFilters';
-import { RouteObj } from '../../../common/Routes';
 import { AwxRoute } from '../../AwxRoutes';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';

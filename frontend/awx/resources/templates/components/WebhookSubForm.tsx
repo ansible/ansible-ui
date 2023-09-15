@@ -1,7 +1,7 @@
 import { Button } from '@patternfly/react-core';
 import { SyncAltIcon } from '@patternfly/react-icons';
 import { useCallback, useEffect } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useParams } from 'react-router-dom';
 import { PageFormSelect, PageFormTextInput } from '../../../../../framework';
@@ -12,21 +12,22 @@ import { CredentialType } from '../../../interfaces/CredentialType';
 import { JobTemplateForm } from '../../../interfaces/JobTemplateForm';
 import { PageFormCredentialSelect } from '../../credentials/components/PageFormCredentialSelect';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
+import { WorkflowJobTemplateForm } from '../../../interfaces/WorkflowJobTemplate';
 
 export function WebhookSubForm() {
   const { t } = useTranslation();
   const params = useParams<{ id?: string }>();
-  const { watch, setValue } = useFormContext<JobTemplateForm>();
-  const webhookKey = watch('webhook_key');
-  const webhookService = watch('webhook_service');
-  const isWebhookEnabled = watch('isWebhookEnabled');
+  const { setValue } = useFormContext<JobTemplateForm | WorkflowJobTemplateForm>();
+  const webhookKey = useWatch({ name: 'webhook_key' }) as string;
+  const webhookService = useWatch({ name: 'webhook_service' }) as string;
+  const isWebhookEnabled = useWatch({ name: 'enable_webhook' }) as boolean;
 
   const { pathname } = useLocation();
 
   const { data: webhookCredentialType } = useGet<AwxItemsResponse<CredentialType>>(
     `/api/v2/credential_types/`,
     {
-      namespace: `${webhookService as string}_token`,
+      namespace: `${webhookService}_token`,
     }
   );
 
@@ -39,7 +40,7 @@ export function WebhookSubForm() {
   }, [isWebhookEnabled, setValue, params]);
 
   useGet<AwxItemsResponse<CredentialType>>(
-    `/api/v2/credential_types/?namespace=${webhookService as string}_token`
+    `/api/v2/credential_types/?namespace=${webhookService}_token`
   );
 
   useEffect(() => {
@@ -92,7 +93,7 @@ export function WebhookSubForm() {
         }
       />
       {webhookCredentialType?.results.length ? (
-        <PageFormCredentialSelect<JobTemplateForm>
+        <PageFormCredentialSelect<JobTemplateForm | WorkflowJobTemplateForm>
           label={t('Webhook credential')}
           credentialType={webhookCredentialType?.results[0].id as unknown as number}
           name="webhook_credential.name"

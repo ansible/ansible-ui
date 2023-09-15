@@ -46,6 +46,7 @@ export interface JobTemplate
     | 'forks'
     | 'host_config_key'
     | 'webhook_credential'
+    | 'type'
   > {
   id: number;
   host_config_key: string;

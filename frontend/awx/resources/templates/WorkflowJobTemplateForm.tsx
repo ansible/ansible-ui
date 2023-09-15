@@ -38,50 +38,50 @@ export function EditWorkflowJobTemplate() {
     values: WorkflowJobTemplateForm
   ) => {
     const { labels, ...rest } = values;
+
     await requestPatch<WorkflowJobTemplateForm>(`/api/v2/workflow_job_templates/${id}/`, {
       ...rest,
       inventory: values.inventory?.id || null,
       job_tags: stringifyTags(values.job_tags) ?? '',
       organization: values.organization?.id || null,
       skip_tags: stringifyTags(values.skip_tags) ?? '',
-      webhook_credential: values.webhook_credential?.id,
+      webhook_credential: values.webhook_credential?.id || null,
+      webhook_service: values.webhook_service || '',
     });
     (cache as unknown as { clear: () => void }).clear?.();
 
-    if (labels && labels.length) {
-      await submitLabels(workflowJobTemplate as WorkflowJobTemplate, labels);
-    }
+    await submitLabels(workflowJobTemplate as WorkflowJobTemplate, labels);
     navigate(RouteObj.WorkflowJobTemplateDetails.replace(':id', `${id}`.toString()));
   };
 
-  const defaultValues: WorkflowJobTemplateForm = useMemo(
-    () => ({
-      allow_simultaneous: workflowJobTemplate?.allow_simultaneous || false,
-      ask_inventory_on_launch: workflowJobTemplate?.ask_inventory_on_launch || false,
-      ask_labels_on_launch: workflowJobTemplate?.ask_labels_on_launch || false,
-      ask_limit_on_launch: workflowJobTemplate?.ask_limit_on_launch || false,
-      ask_scm_branch_on_launch: workflowJobTemplate?.ask_scm_branch_on_launch || false,
-      ask_skip_tags_on_launch: workflowJobTemplate?.ask_skip_tags_on_launch || false,
-      ask_tags_on_launch: workflowJobTemplate?.ask_tags_on_launch || false,
-      ask_variables_on_launch: workflowJobTemplate?.ask_variables_on_launch || false,
-      description: workflowJobTemplate?.description || '',
-      extra_vars: workflowJobTemplate?.extra_vars || '---',
-      inventory: workflowJobTemplate?.summary_fields.inventory || null,
-      isWebhookEnabled: Boolean(workflowJobTemplate?.related?.webhook_receiver),
-      job_tags: parseStringToTagArray(workflowJobTemplate?.skip_tags || ''),
-      organization: workflowJobTemplate?.summary_fields.organization || null,
-      labels: workflowJobTemplate?.summary_fields?.labels?.results || null,
-      limit: workflowJobTemplate?.limit || '',
-      name: workflowJobTemplate?.name || '',
-      scm_branch: workflowJobTemplate?.scm_branch || '',
-      skip_tags: parseStringToTagArray(workflowJobTemplate?.job_tags || ''),
-      webhook_credential: workflowJobTemplate?.summary_fields.webhook_credential || null,
-      webhook_key: workflowJobTemplate?.related.webhook_key || '',
-      webhook_receiver: workflowJobTemplate?.related.webhook_receiver,
-      webhook_service: workflowJobTemplate?.webhook_service || undefined,
-    }),
-    [workflowJobTemplate]
-  );
+  const defaultValues = useMemo(() => {
+    if (!workflowJobTemplate) return;
+    return {
+      allow_simultaneous: workflowJobTemplate.allow_simultaneous || false,
+      ask_inventory_on_launch: workflowJobTemplate.ask_inventory_on_launch || false,
+      ask_labels_on_launch: workflowJobTemplate.ask_labels_on_launch || false,
+      ask_limit_on_launch: workflowJobTemplate.ask_limit_on_launch || false,
+      ask_scm_branch_on_launch: workflowJobTemplate.ask_scm_branch_on_launch || false,
+      ask_skip_tags_on_launch: workflowJobTemplate.ask_skip_tags_on_launch || false,
+      ask_tags_on_launch: workflowJobTemplate.ask_tags_on_launch || false,
+      ask_variables_on_launch: workflowJobTemplate.ask_variables_on_launch || false,
+      description: workflowJobTemplate.description || '',
+      extra_vars: workflowJobTemplate.extra_vars || '---',
+      inventory: workflowJobTemplate.summary_fields.inventory || null,
+      isWebhookEnabled: Boolean(workflowJobTemplate.related?.webhook_receiver),
+      job_tags: parseStringToTagArray(workflowJobTemplate.skip_tags || ''),
+      organization: workflowJobTemplate.summary_fields.organization || null,
+      labels: workflowJobTemplate.summary_fields?.labels?.results || [],
+      limit: workflowJobTemplate.limit || '',
+      name: workflowJobTemplate.name || '',
+      scm_branch: workflowJobTemplate.scm_branch || '',
+      skip_tags: parseStringToTagArray(workflowJobTemplate.job_tags || ''),
+      webhook_credential: workflowJobTemplate.summary_fields.webhook_credential || null,
+      webhook_key: workflowJobTemplate.related.webhook_key || '',
+      webhook_receiver: workflowJobTemplate.related.webhook_receiver,
+      webhook_service: workflowJobTemplate.webhook_service || '',
+    };
+  }, [workflowJobTemplate]);
   const { cache } = useSWRConfig();
 
   if (error instanceof Error) {
@@ -115,10 +115,10 @@ export function CreateWorkflowJobTemplate() {
   const postRequest = usePostRequest<WorkflowJobTemplateCreate, WorkflowJobTemplate>();
 
   const onSubmit: PageFormSubmitHandler<WorkflowJobTemplateForm> = async (values) => {
-    const { labels, webhook_credential } = values;
+    const { labels, webhook_credential, ...rest } = values;
 
     const template = await postRequest(`/api/v2/workflow_job_templates/`, {
-      ...values,
+      ...rest,
       inventory: values.inventory?.id,
       job_tags: stringifyTags(values.job_tags || ''),
       organization: values.organization?.id,
@@ -126,9 +126,7 @@ export function CreateWorkflowJobTemplate() {
       webhook_credential: webhook_credential?.id ?? null,
     });
 
-    if (labels && labels?.length > 0) {
-      await submitLabels(template, labels);
-    }
+    await submitLabels(template, labels);
 
     navigate(RouteObj.WorkflowJobTemplateDetails.replace(':id', template.id.toString()));
   };
@@ -163,7 +161,10 @@ export function CreateWorkflowJobTemplate() {
   );
 }
 
-async function submitLabels(template: WorkflowJobTemplate, labels: Label[]) {
+async function submitLabels(
+  template: WorkflowJobTemplate,
+  labels: { id: number; name: string }[] | []
+) {
   const { added, removed } = getAddedAndRemoved(
     template.summary_fields?.labels?.results || ([] as Label[]),
     labels ?? ([] as Label[])

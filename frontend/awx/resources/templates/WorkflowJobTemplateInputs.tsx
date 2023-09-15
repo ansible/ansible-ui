@@ -6,16 +6,22 @@ import { PageFormLabelSelect } from '../../common/PageFormLabelSelect';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 import { PageFormCreatableSelect } from '../../../../framework/PageForm/Inputs/PageFormCreatableSelect';
 import { WebhookSubForm } from './components/WebhookSubForm';
-import { useWatch } from 'react-hook-form';
-
+import { useFormContext, useWatch } from 'react-hook-form';
 import { WorkflowJobTemplateForm } from '../../interfaces/WorkflowJobTemplate';
+import { useEffect } from 'react';
 
 export function WorkflowJobTemplateInputs(props: {
   workflowJobTemplate?: WorkflowJobTemplateForm;
 }) {
   const { workflowJobTemplate } = props;
+  const { setValue } = useFormContext<WorkflowJobTemplateForm>();
   const isWebhookEnabled = useWatch<WorkflowJobTemplateForm>({ name: 'isWebhookEnabled' });
-
+  useEffect(() => {
+    if (!isWebhookEnabled) {
+      setValue('webhook_service', undefined);
+      setValue('webhook_credential', null);
+    }
+  }, [isWebhookEnabled, setValue]);
   const { t } = useTranslation();
   return (
     <>
