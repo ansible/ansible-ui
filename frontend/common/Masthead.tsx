@@ -295,7 +295,7 @@ function AccountDropdownInternal() {
         <DropdownToggle
           id="account"
           ouiaId="account"
-          cy-data="account"
+          data-cy="account"
           toggleIndicator={null}
           onToggle={onToggle}
           style={{ paddingRight: 0, paddingLeft: 8 }}
@@ -315,7 +315,7 @@ function AccountDropdownInternal() {
           key="user-details"
           id="user-details"
           ouiaId="user-details"
-          cy-data="user-details"
+          data-cy="user-details"
           onClick={() => {
             isEdaServer()
               ? navigate(activeUser ? RouteObj.EdaMyDetails : RouteObj.EdaUsers)
@@ -332,7 +332,7 @@ function AccountDropdownInternal() {
           key="logout"
           id="logout"
           ouiaId="logout"
-          cy-data="logout"
+          data-cy="logout"
           onClick={() => {
             async function logout() {
               isEdaServer()

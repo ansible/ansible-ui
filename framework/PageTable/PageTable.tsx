@@ -782,7 +782,7 @@ function TableRow<T extends object>(props: {
           boxShadow: 'unset',
           borderBottom: expanded || (props.isLastRow && disableLastRowBorder) ? 'unset' : undefined,
         }}
-        cy-data={
+        data-cy={
           'id' in item && (typeof item.id === 'string' || typeof item.id === 'number')
             ? `row-id-${item.id.toString()}`
             : `row-${rowIndex}`
@@ -800,7 +800,7 @@ function TableRow<T extends object>(props: {
                 : undefined
             }
             style={{ paddingLeft: expandedContent ? 8 : 4 }}
-            cy-data={'expand-column-cell'}
+            data-cy={'expand-column-cell'}
           />
         )}
         {showSelect && (
@@ -823,7 +823,7 @@ function TableRow<T extends object>(props: {
             isStickyColumn
             stickyMinWidth="0px"
             hasRightBorder={props.scrollLeft}
-            cy-data={'checkbox-column-cell'}
+            data-cy={'checkbox-column-cell'}
           />
         )}
         {onSelect && (
@@ -844,7 +844,7 @@ function TableRow<T extends object>(props: {
             isStickyColumn
             stickyMinWidth="0px"
             hasRightBorder={props.scrollLeft}
-            cy-data={'checkbox-column-cell'}
+            data-cy={'checkbox-column-cell'}
           />
         )}
         <TableCells
@@ -907,7 +907,7 @@ function TableCells<T extends object>(props: {
             dataLabel={column.header}
             modifier="nowrap"
             style={{ width: column.minWidth === 0 ? '0%' : undefined }}
-            cy-data={getID(column.header + '-column-cell')}
+            data-cy={getID(column.header + '-column-cell')}
           >
             <TableColumnCell item={item} column={column} />
           </Td>
@@ -925,7 +925,7 @@ function TableCells<T extends object>(props: {
             zIndex: actionsExpanded ? 400 : undefined, // ZIndex 400 is needed for PF table stick headers
           }}
           className={props.scrollRight ? 'pf-m-border-left' : undefined}
-          cy-data={'actions-column-cell'}
+          data-cy={'actions-column-cell'}
         >
           <PageActions
             actions={rowActions}
