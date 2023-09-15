@@ -10,7 +10,7 @@ export function useGetPageUrl() {
       query?: Record<string, string | number>;
     }
   ) => {
-    let url = routes[id];
+    let url = routes[id] ?? '';
     const params = options?.params;
     const query = options?.query;
     if (url) {
@@ -25,7 +25,10 @@ export function useGetPageUrl() {
           .map((key) => `${key}=${query[key]}`)
           .join('&')}`;
       }
+    } else {
+      console.error(`Page id ${id} not found`); // eslint-disable-line no-console
     }
-    return '';
+
+    return url;
   };
 }
