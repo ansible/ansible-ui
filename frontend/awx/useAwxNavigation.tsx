@@ -73,6 +73,15 @@ export function useAwxNavigation() {
       {
         label: '',
         path: removeLeadingSlash(process.env.AWX_ROUTE_PREFIX),
+        element: (
+          <WebSocketProvider>
+            <ActiveUserProvider>
+              <AwxConfigProvider>
+                <Outlet />
+              </AwxConfigProvider>
+            </ActiveUserProvider>
+          </WebSocketProvider>
+        ),
         children: [
           {
             id: AwxRoute.Dashboard,
