@@ -102,6 +102,24 @@ export function usePlatformNavigation() {
         path: 'rules',
         children: [ruleAudits, rulebookActivations],
       },
+      // {
+      //   id: PlatformRoute.AWX,
+      //   label: t('Automation Controller'),
+      //   path: 'awx',
+      //   children: awx,
+      // },
+      // {
+      //   id: PlatformRoute.HUB,
+      //   label: t('Automation Hub'),
+      //   path: 'hub',
+      //   children: hub,
+      // },
+      // {
+      //   id: PlatformRoute.EDA,
+      //   label: t('Event Driven Automation'),
+      //   path: 'eda',
+      //   children: eda,
+      // },
       analytics,
       {
         label: t('Quick Starts'),
