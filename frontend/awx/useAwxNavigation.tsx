@@ -1,12 +1,11 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate, Outlet } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import {
   PageNavigationItem,
   removeLeadingSlash,
 } from '../../framework/PageNavigation/PageNavigationItem';
 import { PageNotImplemented } from '../common/PageNotImplemented';
-import { ActiveUserProvider } from '../common/useActiveUser';
 import { AwxLogin } from './AwxLogin';
 import { AwxRoute } from './AwxRoutes';
 import { CreateOrganization, EditOrganization } from './access/organizations/OrganizationForm';
@@ -35,8 +34,6 @@ import { NotificationPage } from './administration/notifications/NotificationPag
 import { Notifications } from './administration/notifications/Notifications';
 import Reports from './analytics/Reports/Reports';
 import SubscriptionUsage from './analytics/subscription-usage/SubscriptionUsage';
-import { AwxConfigProvider } from './common/useAwxConfig';
-import { WebSocketProvider } from './common/useAwxWebSocket';
 import { AwxDashboard } from './dashboard/AwxDashboard';
 import { CreateCredential, EditCredential } from './resources/credentials/CredentialForm';
 import { CredentialPage } from './resources/credentials/CredentialPage/CredentialPage';
@@ -73,15 +70,6 @@ export function useAwxNavigation() {
       {
         label: '',
         path: removeLeadingSlash(process.env.AWX_ROUTE_PREFIX),
-        element: (
-          <WebSocketProvider>
-            <ActiveUserProvider>
-              <AwxConfigProvider>
-                <Outlet />
-              </AwxConfigProvider>
-            </ActiveUserProvider>
-          </WebSocketProvider>
-        ),
         children: [
           {
             id: AwxRoute.Dashboard,
@@ -524,6 +512,7 @@ export function useAwxNavigation() {
             ],
           },
           {
+            id: AwxRoute.Analytics,
             label: t('Analytics'),
             path: 'analytics',
             children: [
