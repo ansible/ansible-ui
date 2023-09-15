@@ -1,8 +1,14 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { DropdownPosition } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
-import { PageActions, PageHeader, PageLayout, useGetPageUrl } from '../../../../../framework';
+import { useParams } from 'react-router-dom';
+import {
+  PageActions,
+  PageHeader,
+  PageLayout,
+  useGetPageUrl,
+  usePageNavigate,
+} from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { PageBackTab, RoutedTab, RoutedTabs } from '../../../../common/RoutedTabs';
 import { RouteObj } from '../../../../common/Routes';
@@ -20,9 +26,9 @@ export function TeamPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const { error, data: team, refresh } = useGetItem<Team>('/api/v2/teams', params.id);
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const itemActions = useTeamActions({
-    onTeamsDeleted: () => navigate(RouteObj.Teams),
+    onTeamsDeleted: () => pageNavigate(AwxRoute.Teams),
     isDetailsPageAction: true,
   });
   const viewActivityStreamAction = useViewActivityStream('team');
@@ -46,7 +52,11 @@ export function TeamPage() {
         }
       />
       <RoutedTabs isLoading={!team} baseUrl={RouteObj.TeamPage}>
-        <PageBackTab label={t('Back to Teams')} url={RouteObj.Teams} persistentFilterKey="teams" />
+        <PageBackTab
+          label={t('Back to Teams')}
+          url={getPageUrl(AwxRoute.Teams)}
+          persistentFilterKey="teams"
+        />
         <RoutedTab label={t('Details')} url={RouteObj.TeamDetails}>
           <TeamDetails team={team} />
         </RoutedTab>

@@ -36,12 +36,18 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { mutate } from 'swr';
-import { useBreakpoint, usePageNavSideBar, useSettingsDialog } from '../../framework';
+import {
+  useBreakpoint,
+  usePageNavSideBar,
+  usePageNavigate,
+  useSettingsDialog,
+} from '../../framework';
+import { AwxRoute } from '../awx/AwxRoutes';
 import { useAwxConfig } from '../awx/common/useAwxConfig';
 import getDocsBaseUrl from '../awx/common/util/getDocsBaseUrl';
+import { EdaRoute } from '../eda/EdaRoutes';
 import { API_PREFIX } from '../eda/constants';
 import { useAnsibleAboutModal } from './AboutModal';
-import { RouteObj } from './Routes';
 import { postRequest } from './crud/Data';
 import { useActiveUser } from './useActiveUser';
 
@@ -294,6 +300,7 @@ function AccountDropdownInternal() {
   }, []);
   const { t } = useTranslation();
   const activeUser = useActiveUser();
+  const pageNavigate = usePageNavigate();
   return (
     <Dropdown
       onSelect={onSelect}
@@ -318,12 +325,12 @@ function AccountDropdownInternal() {
           key="user-details"
           onClick={() => {
             isEdaServer()
-              ? navigate(activeUser ? RouteObj.EdaMyDetails : RouteObj.EdaUsers)
-              : navigate(
-                  activeUser
-                    ? RouteObj.UserDetails.replace(':id', activeUser.id.toString())
-                    : RouteObj.Users
-                );
+              ? activeUser
+                ? pageNavigate(EdaRoute.MyPage)
+                : pageNavigate(EdaRoute.Users)
+              : activeUser
+              ? pageNavigate(AwxRoute.UserPage, { params: { id: activeUser.id } })
+              : pageNavigate(AwxRoute.Users);
           }}
         >
           {t('User details')}

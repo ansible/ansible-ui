@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { PageHeader, PageLayout, PageTable } from '../../../framework';
-import { RouteObj } from '../../common/Routes';
+import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../framework';
+import { HubRoute } from '../HubRoutes';
 import { pulpAPI, pulpHrefKeyFn } from '../api/utils';
 import { usePulpView } from '../usePulpView';
 import { useRemoteActions } from './hooks/useRemoteActions';
@@ -43,14 +42,14 @@ export function Remotes() {
   const toolbarActions = useRemoteToolbarActions(view);
   const rowActions = useRemoteActions(view);
 
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   return (
     <PageLayout>
       <PageHeader title={t('Remotes')} description={t('Remotes')} />
       <PageTable<IRemotes>
         id="hub-remotes-table"
         defaultSubtitle={t('Remote')}
-        emptyStateButtonClick={() => navigate(RouteObj.CreateRemotes)}
+        emptyStateButtonClick={() => pageNavigate(HubRoute.CreateRemote)}
         emptyStateButtonText={t('Create remote')}
         emptyStateTitle={t('No remotes yet')}
         errorStateTitle={t('Error loading remotes')}

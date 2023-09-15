@@ -15,6 +15,7 @@ import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
+  CopyCell,
   IPageAction,
   PageActionSelection,
   PageActionType,
@@ -29,7 +30,7 @@ import {
   errorToAlertProps,
   useGetPageUrl,
   usePageAlertToaster,
-  CopyCell,
+  usePageNavigate,
 } from '../../../../framework';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { RouteObj } from '../../../common/Routes';
@@ -46,6 +47,7 @@ export function ProjectDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const alertToaster = usePageAlertToaster();
 
   const { data: project, refresh } = useGet<EdaProject>(
@@ -69,7 +71,7 @@ export function ProjectDetails() {
   );
   const deleteProjects = useDeleteProjects((deleted) => {
     if (deleted.length > 0) {
-      navigate(RouteObj.EdaProjects);
+      pageNavigate(EdaRoute.Projects);
     }
   });
 

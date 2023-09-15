@@ -29,7 +29,11 @@ export function HostPage() {
         headerActions={[]}
       />
       <RoutedTabs isLoading={!host} baseUrl={RouteObj.HostPage}>
-        <PageBackTab label={t('Back to Hosts')} url={RouteObj.Hosts} persistentFilterKey="hosts" />
+        <PageBackTab
+          label={t('Back to Hosts')}
+          url={getPageUrl(AwxRoute.Hosts)}
+          persistentFilterKey="hosts"
+        />
         <RoutedTab label={t('Details')} url={RouteObj.HostDetails}>
           <PageNotImplemented />
         </RoutedTab>

@@ -2,15 +2,19 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { EditIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { IPageAction, PageActionSelection, PageActionType } from '../../../../framework';
-import { RouteObj } from '../../../common/Routes';
+import {
+  IPageAction,
+  PageActionSelection,
+  PageActionType,
+  usePageNavigate,
+} from '../../../../framework';
+import { HubRoute } from '../../HubRoutes';
 import { HubNamespace } from '../HubNamespace';
 import { useDeleteHubNamespaces } from './useDeleteHubNamespaces';
 
 export function useHubNamespaceActions() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const deleteHubNamespaces = useDeleteHubNamespaces(() => null);
 
   return useMemo(() => {
@@ -23,7 +27,7 @@ export function useHubNamespaceActions() {
         icon: EditIcon,
         label: t('Edit namespace'),
         onClick: (namespace) =>
-          navigate(RouteObj.EditNamespace.replace(':id', namespace.name.toString())),
+          pageNavigate(HubRoute.EditNamespace, { params: { id: namespace.name } }),
       },
       { type: PageActionType.Seperator },
       {
@@ -36,5 +40,5 @@ export function useHubNamespaceActions() {
       },
     ];
     return actions;
-  }, [deleteHubNamespaces, navigate, t]);
+  }, [deleteHubNamespaces, pageNavigate, t]);
 }

@@ -7,6 +7,7 @@ import {
   PageHeader,
   PageLayout,
   useGetPageUrl,
+  usePageNavigate,
 } from '../../../../framework';
 import { RouteObj } from '../../../common/Routes';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
@@ -47,12 +48,13 @@ function ControllerTokenInputs() {
 export function CreateControllerToken() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const postRequest = usePostRequest<EdaControllerTokenCreate, EdaControllerToken>();
   const user = useEdaActiveUser();
 
   const onSubmit: PageFormSubmitHandler<EdaControllerTokenCreate> = async (token) => {
     await postRequest(`${API_PREFIX}/users/me/awx-tokens/`, token);
-    navigate(RouteObj.EdaMyTokens);
+    pageNavigate(EdaRoute.MyTokens);
   };
   const onCancel = () => navigate(-1);
 
@@ -65,13 +67,13 @@ export function CreateControllerToken() {
       label: user?.username ?? '',
       to: canViewUsers
         ? RouteObj.EdaUserDetails.replace(':id', `${user?.id || ''}`)
-        : RouteObj.EdaMyDetails,
+        : getPageUrl(EdaRoute.MyPage),
     },
     {
       label: t('Controller tokens'),
       to: canViewUsers
         ? RouteObj.EdaUserDetailsTokens.replace(':id', `${user?.id || ''}`)
-        : RouteObj.EdaMyTokens,
+        : getPageUrl(EdaRoute.MyTokens),
     },
     { label: user?.username ?? '' },
   ];

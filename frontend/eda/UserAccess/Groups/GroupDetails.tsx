@@ -12,6 +12,7 @@ import {
   PageHeader,
   PageLayout,
   useGetPageUrl,
+  usePageNavigate,
 } from '../../../../framework';
 import { RouteObj } from '../../../common/Routes';
 import { useGet } from '../../../common/crud/useGet';
@@ -25,6 +26,7 @@ export function GroupDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const { data: group } = useGet<EdaGroup>(`${API_PREFIX}/groups/${params.id ?? ''}/`, undefined, {
     refreshInterval: SWR_REFRESH_INTERVAL,
   });
@@ -32,7 +34,7 @@ export function GroupDetails() {
 
   const deleteGroups = useDeleteGroups((deleted) => {
     if (deleted.length > 0) {
-      navigate(RouteObj.EdaGroups);
+      pageNavigate(EdaRoute.Groups);
     }
   });
 
