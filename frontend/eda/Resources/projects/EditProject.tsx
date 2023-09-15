@@ -10,23 +10,24 @@ import {
   PageHeader,
   PageLayout,
   useGetPageUrl,
+  usePageNavigate,
 } from '../../../../framework';
 import { PageFormGroup } from '../../../../framework/PageForm/Inputs/PageFormGroup';
-import { RouteObj } from '../../../common/Routes';
 import { useGet } from '../../../common/crud/useGet';
 import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { useIsValidUrl } from '../../../common/validation/useIsValidUrl';
+import { EdaRoute } from '../../EdaRoutes';
 import { API_PREFIX } from '../../constants';
 import { EdaCredential } from '../../interfaces/EdaCredential';
 import { EdaProject, EdaProjectCreate, EdaProjectRead } from '../../interfaces/EdaProject';
 import { EdaResult } from '../../interfaces/EdaResult';
-import { EdaRoute } from '../../EdaRoutes';
 
 function ProjectCreateInputs() {
   const { t } = useTranslation();
   const { data: credentials } = useGet<EdaResult<EdaCredential>>(`${API_PREFIX}/credentials/`);
   const isValidUrl = useIsValidUrl();
+  const getPageUrl = useGetPageUrl();
   return (
     <>
       <PageFormTextInput<EdaProjectCreate>
@@ -73,7 +74,7 @@ function ProjectCreateInputs() {
               }))
             : []
         }
-        footer={<Link to={RouteObj.CreateEdaCredential}>{t('Create credential')}</Link>}
+        footer={<Link to={getPageUrl(EdaRoute.CreateCredential)}>{t('Create credential')}</Link>}
         labelHelpTitle={t('Credential')}
         labelHelp={t('The token needed to utilize the SCM URL.')}
       />
@@ -89,6 +90,7 @@ function ProjectCreateInputs() {
 
 function ProjectEditInputs() {
   const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
   const { data: credentials } = useGet<EdaResult<EdaCredential>>(`${API_PREFIX}/credentials/`);
   return (
     <>
@@ -129,7 +131,7 @@ function ProjectEditInputs() {
               }))
             : []
         }
-        footer={<Link to={RouteObj.CreateEdaCredential}>{t('Create credential')}</Link>}
+        footer={<Link to={getPageUrl(EdaRoute.CreateCredential)}>{t('Create credential')}</Link>}
       />
       <PageFormGroup
         label={t('Options')}
@@ -147,13 +149,14 @@ export function CreateProject() {
   };
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const { cache } = useSWRConfig();
   const postRequest = usePostRequest<EdaProjectCreate, EdaProject>();
 
   const onSubmit: PageFormSubmitHandler<EdaProjectCreate> = async (project) => {
     const newProject = await postRequest(`${API_PREFIX}/projects/`, project);
     (cache as unknown as { clear: () => void }).clear?.();
-    navigate(RouteObj.EdaProjectDetails.replace(':id', newProject.id.toString()));
+    pageNavigate(EdaRoute.ProjectPage, { params: { id: newProject.id } });
   };
 
   const onCancel = () => navigate(-1);

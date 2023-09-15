@@ -5,13 +5,15 @@ import {
   ColumnTableOption,
   ITableColumn,
   TextCell,
+  useGetPageUrl,
 } from '../../../../framework';
-import { RouteObj } from '../../../common/Routes';
 import { StatusCell } from '../../../common/Status';
+import { EdaRoute } from '../../EdaRoutes';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 
 export function useRulebookActivationColumns() {
   const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
   return useMemo<ITableColumn<EdaRulebookActivation>[]>(
     () => [
       {
@@ -19,10 +21,9 @@ export function useRulebookActivationColumns() {
         cell: (rulebookActivation) => (
           <TextCell
             text={rulebookActivation.name}
-            to={RouteObj.EdaRulebookActivationDetails.replace(
-              ':id',
-              rulebookActivation.id.toString()
-            )}
+            to={getPageUrl(EdaRoute.RulebookActivationPage, {
+              params: { id: rulebookActivation.id },
+            })}
           />
         ),
         card: 'name',
@@ -87,6 +88,6 @@ export function useRulebookActivationColumns() {
         modal: ColumnModalOption.Hidden,
       },
     ],
-    [t]
+    [getPageUrl, t]
   );
 }

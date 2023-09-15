@@ -1,17 +1,16 @@
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { PageLayout, PageTable } from '../../../../framework';
-import { RouteObj } from '../../../common/Routes';
+import { PageLayout, PageTable, usePageNavigate } from '../../../../framework';
+import { PageTableViewTypeE } from '../../../../framework/PageToolbar/PageTableViewType';
+import { EdaRoute } from '../../EdaRoutes';
 import { API_PREFIX } from '../../constants';
 import { EdaControllerToken } from '../../interfaces/EdaControllerToken';
 import { useEdaView } from '../../useEventDrivenView';
 import { useControllerTokenActions } from './hooks/useControllerTokenActions';
 import { useControllerTokensColumns } from './hooks/useControllerTokensColumns';
-import { PageTableViewTypeE } from '../../../../framework/PageToolbar/PageTableViewType';
 
 export function ControllerTokens() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const tableColumns = useControllerTokensColumns();
 
   const view = useEdaView<EdaControllerToken>({
@@ -32,7 +31,7 @@ export function ControllerTokens() {
           'Please create a token from Automation Controller by using the button below.'
         )}
         emptyStateButtonText={t('Create controller token')}
-        emptyStateButtonClick={() => navigate(RouteObj.CreateEdaControllerToken)}
+        emptyStateButtonClick={() => pageNavigate(EdaRoute.CreateControllerToken)}
         {...view}
         defaultSubtitle={t('Controller tokens')}
       />

@@ -1,16 +1,15 @@
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import {
   PageTable,
   useColumnsWithoutExpandedRow,
   useColumnsWithoutSort,
   useGetPageUrl,
+  usePageNavigate,
   useVisibleModalColumns,
 } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
-import { RouteObj } from '../../../common/Routes';
 import { EdaRoute } from '../../EdaRoutes';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { useRulebookActivationColumns } from '../../rulebook-activations/hooks/useRulebookActivationColumns';
@@ -19,7 +18,7 @@ import { IEdaView } from '../../useEventDrivenView';
 export function EdaRulebookActivationsCard(props: { view: IEdaView<EdaRulebookActivation> }) {
   const { view } = props;
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const getPageUrl = useGetPageUrl();
   const tableColumns = useRulebookActivationColumns();
   let columns = useVisibleModalColumns(tableColumns);
@@ -47,7 +46,7 @@ export function EdaRulebookActivationsCard(props: { view: IEdaView<EdaRulebookAc
         emptyStateTitle={t('There are currently no rulebook activations')}
         emptyStateDescription={t('Create a rulebook activation by clicking the button below.')}
         emptyStateButtonText={t('Create rulebook activation')}
-        emptyStateButtonClick={() => navigate(RouteObj.CreateEdaRulebookActivation)}
+        emptyStateButtonClick={() => pageNavigate(EdaRoute.CreateRulebookActivation)}
         {...view}
         compact
         itemCount={view.itemCount !== undefined ? Math.min(view.itemCount, 7) : undefined}

@@ -2,16 +2,20 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { PlusIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
-import { RouteObj } from '../../../../common/Routes';
+import {
+  IPageAction,
+  PageActionSelection,
+  PageActionType,
+  usePageNavigate,
+} from '../../../../../framework';
+import { EdaRoute } from '../../../EdaRoutes';
 import { EdaProject } from '../../../interfaces/EdaProject';
 import { IEdaView } from '../../../useEventDrivenView';
 import { useDeleteProjects } from './useDeleteProjects';
 
 export function useProjectsActions(view: IEdaView<EdaProject>) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const deleteProjects = useDeleteProjects(view.unselectItemsAndRefresh);
   return useMemo<IPageAction<EdaProject>[]>(
     () => [
@@ -22,7 +26,7 @@ export function useProjectsActions(view: IEdaView<EdaProject>) {
         isPinned: true,
         icon: PlusIcon,
         label: t('Create project'),
-        onClick: () => navigate(RouteObj.CreateEdaProject),
+        onClick: () => pageNavigate(EdaRoute.CreateProject),
       },
       {
         type: PageActionType.Button,
@@ -33,6 +37,6 @@ export function useProjectsActions(view: IEdaView<EdaProject>) {
         isDanger: true,
       },
     ],
-    [deleteProjects, navigate, t]
+    [deleteProjects, pageNavigate, t]
   );
 }

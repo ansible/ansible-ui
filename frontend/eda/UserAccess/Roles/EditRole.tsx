@@ -7,8 +7,8 @@ import {
   PageHeader,
   PageLayout,
   useGetPageUrl,
+  usePageNavigate,
 } from '../../../../framework';
-import { RouteObj } from '../../../common/Routes';
 import { useGet } from '../../../common/crud/useGet';
 import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
@@ -20,6 +20,7 @@ import { EdaRole } from '../../interfaces/EdaRole';
 export function EditRole() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
   const { data: Role } = useGet<EdaRole>(`${API_PREFIX}/roles/${id.toString()}/`);
@@ -35,7 +36,7 @@ export function EditRole() {
       navigate(-1);
     } else {
       const newRole = await postRequest(`${API_PREFIX}/roles/`, Role);
-      navigate(RouteObj.EdaRoleDetails.replace(':id', newRole.id.toString()));
+      pageNavigate(EdaRoute.RolePage, { params: { id: newRole.id } });
     }
   };
   const onCancel = () => navigate(-1);

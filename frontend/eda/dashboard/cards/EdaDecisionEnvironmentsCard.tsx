@@ -1,17 +1,16 @@
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import {
   DateTimeCell,
   PageTable,
   useColumnsWithoutExpandedRow,
   useColumnsWithoutSort,
   useGetPageUrl,
+  usePageNavigate,
   useVisibleModalColumns,
 } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
-import { RouteObj } from '../../../common/Routes';
 import { EdaRoute } from '../../EdaRoutes';
 import { useDecisionEnvironmentColumns } from '../../Resources/decision-environments/hooks/useDecisionEnvironmentColumns';
 import { EdaDecisionEnvironment } from '../../interfaces/EdaDecisionEnvironment';
@@ -20,7 +19,7 @@ import { IEdaView } from '../../useEventDrivenView';
 export function EdaDecisionEnvironmentsCard(props: { view: IEdaView<EdaDecisionEnvironment> }) {
   const { view } = props;
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const getPageUrl = useGetPageUrl();
   const tableColumns = useDecisionEnvironmentColumns();
   let columns = useVisibleModalColumns(tableColumns);
@@ -60,7 +59,7 @@ export function EdaDecisionEnvironmentsCard(props: { view: IEdaView<EdaDecisionE
         emptyStateTitle={t('There are currently no decision environments')}
         emptyStateDescription={t('Create a decision environment by clicking the button below.')}
         emptyStateButtonText={t('Create Decision Environment')}
-        emptyStateButtonClick={() => navigate(RouteObj.CreateEdaDecisionEnvironment)}
+        emptyStateButtonClick={() => pageNavigate(EdaRoute.CreateDecisionEnvironment)}
         {...view}
         compact
         itemCount={view.itemCount !== undefined ? Math.min(view.itemCount, 7) : undefined}

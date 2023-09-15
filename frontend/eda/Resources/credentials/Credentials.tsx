@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { PageHeader, PageLayout, PageTable } from '../../../../framework';
-import { RouteObj } from '../../../common/Routes';
+import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../../framework';
+import { EdaRoute } from '../../EdaRoutes';
 import { API_PREFIX } from '../../constants';
 import { EdaCredential } from '../../interfaces/EdaCredential';
 import { useEdaView } from '../../useEventDrivenView';
@@ -12,7 +11,7 @@ import { useCredentialsActions } from './hooks/useCredentialsActions';
 
 export function Credentials() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const toolbarFilters = useCredentialFilters();
   const tableColumns = useCredentialColumns();
   const view = useEdaView<EdaCredential>({
@@ -40,7 +39,7 @@ export function Credentials() {
         emptyStateTitle={t('There are currently no credentials created for your organization.')}
         emptyStateDescription={t('Please create a credential by using the button below.')}
         emptyStateButtonText={t('Create credential')}
-        emptyStateButtonClick={() => navigate(RouteObj.CreateEdaCredential)}
+        emptyStateButtonClick={() => pageNavigate(EdaRoute.CreateCredential)}
         {...view}
         defaultSubtitle={t('Credential')}
       />

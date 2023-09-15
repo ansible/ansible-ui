@@ -1,12 +1,13 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ColumnTableOption, ITableColumn, TextCell } from '../../../../framework';
-import { RouteObj } from '../../../common/Routes';
+import { ColumnTableOption, ITableColumn, TextCell, useGetPageUrl } from '../../../../framework';
+import { EdaRoute } from '../../EdaRoutes';
 import { EdaProjectCell } from '../../Resources/projects/components/EdaProjectCell';
 import { EdaRulebook } from '../../interfaces/EdaRulebook';
 
 export function useRulebookColumns() {
   const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
   return useMemo<ITableColumn<EdaRulebook>[]>(
     () => [
       {
@@ -14,7 +15,7 @@ export function useRulebookColumns() {
         cell: (rulebook) => (
           <TextCell
             text={rulebook.name}
-            to={RouteObj.EdaRulebookDetails.replace(':id', rulebook.id.toString())}
+            to={getPageUrl(EdaRoute.RulebookPage, { params: { id: rulebook.id } })}
           />
         ),
         card: 'name',
@@ -63,6 +64,6 @@ export function useRulebookColumns() {
         list: 'secondary',
       },
     ],
-    [t]
+    [getPageUrl, t]
   );
 }

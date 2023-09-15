@@ -1,8 +1,7 @@
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { PageHeader, PageLayout, PageTable } from '../../../../framework';
+import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../../framework';
 import { PageTableViewTypeE } from '../../../../framework/PageToolbar/PageTableViewType';
-import { RouteObj } from '../../../common/Routes';
+import { EdaRoute } from '../../EdaRoutes';
 import { API_PREFIX } from '../../constants';
 import { EdaDecisionEnvironment } from '../../interfaces/EdaDecisionEnvironment';
 import { useEdaView } from '../../useEventDrivenView';
@@ -13,7 +12,7 @@ import { useDecisionEnvironmentsActions } from './hooks/useDecisionEnvironmentsA
 
 export function DecisionEnvironments() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const toolbarFilters = useDecisionEnvironmentFilters();
   const tableColumns = useDecisionEnvironmentsColumns();
   const view = useEdaView<EdaDecisionEnvironment>({
@@ -42,7 +41,7 @@ export function DecisionEnvironments() {
         )}
         emptyStateDescription={t('Please create a decision environment by using the button below.')}
         emptyStateButtonText={t('Create decision environment')}
-        emptyStateButtonClick={() => navigate(RouteObj.CreateEdaDecisionEnvironment)}
+        emptyStateButtonClick={() => pageNavigate(EdaRoute.CreateDecisionEnvironment)}
         {...view}
         defaultSubtitle={t('Decision Environment')}
       />

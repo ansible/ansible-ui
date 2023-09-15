@@ -1,11 +1,12 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, TextCell } from '../../../../../framework';
-import { RouteObj } from '../../../../common/Routes';
+import { ITableColumn, TextCell, useGetPageUrl } from '../../../../../framework';
+import { EdaRoute } from '../../../EdaRoutes';
 import { EdaGroup } from '../../../interfaces/EdaGroup';
 
 export function useGroupColumns() {
   const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
   return useMemo<ITableColumn<EdaGroup>[]>(
     () => [
       {
@@ -13,7 +14,7 @@ export function useGroupColumns() {
         cell: (group) => (
           <TextCell
             text={group.name}
-            to={RouteObj.EdaGroupDetails.replace(':id', group.id.toString())}
+            to={getPageUrl(EdaRoute.GroupPage, { params: { id: group.id } })}
           />
         ),
         card: 'name',
@@ -26,6 +27,6 @@ export function useGroupColumns() {
         list: 'description',
       },
     ],
-    [t]
+    [getPageUrl, t]
   );
 }

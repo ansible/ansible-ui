@@ -5,8 +5,9 @@ import {
   ColumnTableOption,
   ITableColumn,
   TextCell,
+  useGetPageUrl,
 } from '../../../../../framework';
-import { RouteObj } from '../../../../common/Routes';
+import { EdaRoute } from '../../../EdaRoutes';
 import {
   EdaDecisionEnvironment,
   EdaDecisionEnvironmentRead,
@@ -15,6 +16,7 @@ import { EdaCredentialCell } from '../../credentials/components/EdaCredentialCel
 
 export function useDecisionEnvironmentsColumns() {
   const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
   return useMemo<ITableColumn<EdaDecisionEnvironment>[]>(
     () => [
       {
@@ -22,10 +24,9 @@ export function useDecisionEnvironmentsColumns() {
         cell: (decisionEnvironment) => (
           <TextCell
             text={decisionEnvironment.name}
-            to={RouteObj.EdaDecisionEnvironmentDetails.replace(
-              ':id',
-              decisionEnvironment.id.toString()
-            )}
+            to={getPageUrl(EdaRoute.DecisionEnvironmentPage, {
+              params: { id: decisionEnvironment.id },
+            })}
           />
         ),
         card: 'name',
@@ -72,12 +73,13 @@ export function useDecisionEnvironmentsColumns() {
         modal: ColumnModalOption.Hidden,
       },
     ],
-    [t]
+    [getPageUrl, t]
   );
 }
 
 export function useDecisionEnvironmentColumns() {
   const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
   return useMemo<ITableColumn<EdaDecisionEnvironmentRead>[]>(
     () => [
       {
@@ -85,9 +87,10 @@ export function useDecisionEnvironmentColumns() {
         cell: (decisionEnvironment) => (
           <TextCell
             text={decisionEnvironment.name}
-            to={RouteObj.EdaDecisionEnvironmentDetails.replace(
-              ':id',
-              decisionEnvironment.id.toString()
+            to={getPageUrl(
+              EdaRoute.DecisionEnvironmentPage,
+
+              { params: { id: decisionEnvironment.id } }
             )}
           />
         ),
@@ -135,6 +138,6 @@ export function useDecisionEnvironmentColumns() {
         modal: ColumnModalOption.Hidden,
       },
     ],
-    [t]
+    [getPageUrl, t]
   );
 }
