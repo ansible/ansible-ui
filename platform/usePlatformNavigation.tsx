@@ -18,16 +18,21 @@ export function usePlatformNavigation() {
   const hub = useHubNavigation();
   const eda = useEdaNavigation();
 
-  const topology = removeNavigationItemById(awx, AwxRoute.TopologyView);
-  const instanceGroups = removeNavigationItemById(awx, AwxRoute.InstanceGroups);
-  const instances = removeNavigationItemById(awx, AwxRoute.Instances);
-
+  // Inventories
   const inventories = removeNavigationItemById(awx, AwxRoute.Inventories);
   const hosts = removeNavigationItemById(awx, AwxRoute.Hosts);
   const projects = removeNavigationItemById(awx, AwxRoute.Projects);
 
-  const analytics = removeNavigationItemById(awx, AwxRoute.Reports);
+  // Automation Mesh
+  const topology = removeNavigationItemById(awx, AwxRoute.TopologyView);
+  const instanceGroups = removeNavigationItemById(awx, AwxRoute.InstanceGroups);
+  const instances = removeNavigationItemById(awx, AwxRoute.Instances);
 
+  // Automation Analytics
+  const analytics = removeNavigationItemById(awx, AwxRoute.Analytics);
+  analytics!.label = t('Automation Analytics');
+
+  // Content Discovery
   const namespaces = removeNavigationItemById(hub, HubRoute.Namespaces);
   const collections = removeNavigationItemById(hub, HubRoute.Collections);
   const executionEnvironments = removeNavigationItemById(awx, AwxRoute.ExecutionEnvironments);
@@ -97,24 +102,6 @@ export function usePlatformNavigation() {
         path: 'rules',
         children: [ruleAudits, rulebookActivations],
       },
-      // {
-      //   id: PlatformRoute.AWX,
-      //   label: t('Automation Controller'),
-      //   path: 'awx',
-      //   children: awx,
-      // },
-      // {
-      //   id: PlatformRoute.HUB,
-      //   label: t('Automation Hub'),
-      //   path: 'hub',
-      //   children: hub,
-      // },
-      // {
-      //   id: PlatformRoute.EDA,
-      //   label: t('Event Driven Automation'),
-      //   path: 'eda',
-      //   children: eda,
-      // },
       analytics,
       {
         label: t('Quick Starts'),
@@ -159,7 +146,10 @@ export function usePlatformNavigation() {
     ];
     return navigationItems.filter((item) => item !== undefined) as PageNavigationItem[];
   }, [
+    activityStream,
     analytics,
+    applications,
+    approvals,
     collections,
     credentialTypes,
     credentials,
@@ -170,13 +160,20 @@ export function usePlatformNavigation() {
     instances,
     inventories,
     jobs,
+    managementJobs,
     namespaces,
+    notifications,
     organizations,
     projects,
+    remoteRegistries,
+    remotes,
+    reposiitories,
     ruleAudits,
     rulebookActivations,
     schedules,
+    signtureKeys,
     t,
+    tasks,
     teams,
     templates,
     topology,
