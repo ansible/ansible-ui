@@ -524,6 +524,7 @@ export function useAwxNavigation() {
             ],
           },
           {
+            id: AwxRoute.Analytics,
             label: t('Analytics'),
             path: 'analytics',
             children: [
