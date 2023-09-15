@@ -2,6 +2,7 @@ import { Label, LabelGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { PageDetail, PageDetails, PageHeader, PageLayout, useGetPageUrl } from '../../../framework';
+import { PageDetailCodeEditor } from '../../../framework/PageDetails/PageDetailCodeEditor';
 import { LoadingPage } from '../../../framework/components/LoadingPage';
 import { AwxError } from '../../awx/common/AwxError';
 import { useGet } from '../../common/crud/useGet';
@@ -62,6 +63,9 @@ export function RemoteDetails() {
   if (loadingOrErrorRemotes) return loadingOrErrorRemotes;
   if (loadingOrErrorRepositories) return loadingOrErrorRepositories;
 
+  const emptyRequirementFieldValue = '---';
+  const requirementsFileValue = remote?.requirements_file ?? emptyRequirementFieldValue;
+
   return (
     <>
       <PageLayout>
@@ -107,6 +111,13 @@ export function RemoteDetails() {
               t('---')
             )}
           </PageDetail>
+        </PageDetails>
+        <PageDetails numberOfColumns="single">
+          <PageDetailCodeEditor
+            label={t('YAML requirements')}
+            value={requirementsFileValue}
+            showCopyToClipboard={requirementsFileValue !== emptyRequirementFieldValue}
+          />
         </PageDetails>
       </PageLayout>
     </>
