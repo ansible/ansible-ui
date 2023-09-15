@@ -46,7 +46,7 @@ describe('inventories', () => {
     cy.navigateTo('awx', 'inventories');
     cy.clickButton(/^Create inventory$/);
     cy.clickLink(/^Create inventory$/);
-    cy.get('[data-cy="inventory-name"]').type(inventoryName);
+    cy.get('[data-cy="inventory-name"]').eq(1).type(inventoryName);
     cy.selectDropdownOptionByLabel(/^Organization$/, organization.name);
     cy.getCheckboxByLabel('Prevent instance group fallback').click();
     cy.clickButton(/^Create inventory$/);

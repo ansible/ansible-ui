@@ -38,8 +38,8 @@ describe('EDA rulebook activations- Create', () => {
     cy.navigateTo('eda', 'rulebook-activations');
     cy.clickButton(/^Create rulebook activation$/);
     cy.get('h1').should('contain', 'Create Rulebook Activation');
-    cy.get('[data-cy="name"]').type(name);
-    cy.get('[data-cy="description"]').type('This is a new rulebook activation.');
+    cy.get('[data-cy="name"]').eq(1).type(name);
+    cy.get('[data-cy="description"]').eq(1).type('This is a new rulebook activation.');
     cy.selectDropdownOptionByLabel(/^Project$/, edaProject.name);
     cy.selectDropdownOptionByLabel(/^Rulebook$/, edaRuleBook.name);
     cy.selectDropdownOptionByLabel(/^Decision environment$/, edaDecisionEnvironment.name);
@@ -60,8 +60,8 @@ describe('EDA rulebook activations- Create', () => {
     cy.navigateTo('eda', 'rulebook-activations');
     cy.clickButton(/^Create rulebook activation$/);
     cy.get('h1').should('contain', 'Create Rulebook Activation');
-    cy.get('[data-cy="name"]').type(name);
-    cy.get('[data-cy="description"]').type('This is a new rulebook activation.');
+    cy.get('[data-cy="name"]').eq(1).type(name);
+    cy.get('[data-cy="description"]').eq(1).type('This is a new rulebook activation.');
     cy.selectDropdownOptionByLabel(/^Project$/, edaProject.name);
     cy.selectDropdownOptionByLabel(/^Rulebook$/, edaRuleBook.name);
     cy.selectDropdownOptionByLabel(/^Decision environment$/, edaDecisionEnvironment.name);

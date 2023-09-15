@@ -45,7 +45,7 @@ describe('teams', () => {
     const teamName = 'E2E Team ' + randomString(4);
     cy.navigateTo('awx', 'teams');
     cy.clickLink(/^Create team$/);
-    cy.get('[data-cy="name"]').type(teamName);
+    cy.get('[data-cy="name"]').eq(1).type(teamName);
     cy.selectDropdownOptionByLabel(/^Organization$/, organization.name);
     cy.clickButton(/^Create team$/);
     cy.hasTitle(teamName); // This team will be cleaned up when we delete the org at the end of the tests
@@ -82,7 +82,9 @@ describe('teams', () => {
     cy.clickTableRow(team.name);
     cy.clickButton(/^Edit team$/);
     cy.hasTitle(/^Edit Team$/);
-    cy.get('[data-cy="name"]').type(team.name + 'a');
+    cy.get('[data-cy="name"]')
+      .eq(1)
+      .type(team.name + 'a');
     cy.clickButton(/^Save team$/);
     cy.hasTitle(`${team.name}a`);
   });
