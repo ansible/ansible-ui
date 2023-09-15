@@ -3,10 +3,10 @@ import { CheckCircleIcon } from '@patternfly/react-icons';
 import { ReactNode, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { CSSProperties } from 'styled-components';
-import { LabelColor, PageDetail, TextCell } from '../../../framework';
+import { LabelColor, PageDetail, TextCell, useGetPageUrl } from '../../../framework';
 import { useCarouselContext } from '../../../framework/PageCarousel/PageCarousel';
 import { PageDetailDiv, PageTableCard, Small } from '../../../framework/PageTable/PageTableCard';
-import { RouteObj } from '../../common/Routes';
+import { HubRoute } from '../HubRoutes';
 import { CollectionVersionSearch } from '../collections/CollectionVersionSearch';
 import { Logo } from '../common/Logo';
 
@@ -37,6 +37,7 @@ export function CollectionCard(props: { collection: CollectionVersionSearch }) {
   const { t } = useTranslation();
   const { collection } = props;
   const { width: parentCarouselWidth, visibleCards } = useCarouselContext();
+  const getPageUrl = useGetPageUrl();
 
   const divMaxWidth: CSSProperties = useMemo(() => {
     if (visibleCards === 4) {
@@ -101,10 +102,13 @@ export function CollectionCard(props: { collection: CollectionVersionSearch }) {
           title: (
             <TextCell
               text={item.collection_version.name}
-              to={
-                RouteObj.CollectionDetails +
-                `?name=${item.collection_version.name}&namespace=${item.collection_version.namespace}&repository=${item.repository.name}`
-              }
+              to={getPageUrl(HubRoute.CollectionPage, {
+                query: {
+                  name: item.collection_version.name,
+                  namespace: item.collection_version.namespace,
+                  repository: item.repository.name,
+                },
+              })}
             />
           ),
           iconAboveTitle: true,
