@@ -165,40 +165,8 @@ export const RouteObj = {
   CreateExecutionEnvironment: `${awxRoutePrefix}/administration/execution-environments/create`,
   EditExecutionEnvironment: `${awxRoutePrefix}/administration/execution-environments/:id/edit`,
 
-  // EDA server prefix
-  EdaDashboard: `${edaRoutePrefix}/dashboard`,
-
-  EdaProjectDetails: `${edaRoutePrefix}/resources/projects/details/:id`,
-  CreateEdaProject: `${edaRoutePrefix}/resources/projects/create`,
-  EditEdaProject: `${edaRoutePrefix}/resources/projects/edit/:id`,
-
-  EdaCredentialDetails: `${edaRoutePrefix}/resources/credentials/details/:id`,
-  CreateEdaCredential: `${edaRoutePrefix}/resources/credentials/create`,
-  EditEdaCredential: `${edaRoutePrefix}/resources/credentials/edit/:id`,
-
-  EdaDecisionEnvironmentDetails: `${edaRoutePrefix}/resources/decision-environments/details/:id`,
-  CreateEdaDecisionEnvironment: `${edaRoutePrefix}/resources/decision-environments/create`,
-  EditEdaDecisionEnvironment: `${edaRoutePrefix}/resources/decision-environments/edit/:id`,
-
-  EdaRuleAuditDetails: `${edaRoutePrefix}/views/rule-audits/:id`,
-
-  EdaRulebookActivationDetails: `${edaRoutePrefix}/views/rulebook-activations/details/:id`,
   EdaRulebookActivationDetailsHistory: `${edaRoutePrefix}/views/rulebook-activations/details/:id/history`,
-  CreateEdaRulebookActivation: `${edaRoutePrefix}/views/rulebook-activations/create`,
-  EdaActivationInstanceDetails: `${edaRoutePrefix}/views/rulebook-activations/activations-instances/details/:id`,
-
-  EdaRulebookDetails: `${edaRoutePrefix}/rulebooks/details/:id`,
-  EdaRulesetDetails: `${edaRoutePrefix}/rulesets/details/:id`,
-
-  EdaRuleDetails: `${edaRoutePrefix}/rules/details/:id`,
-
-  CreateEdaUser: `${edaRoutePrefix}/access/users/create`,
+  ActivationInstancePage: `${edaRoutePrefix}/views/rulebook-activations/activations-instances/details/:id`,
+  RulesetPage: `${edaRoutePrefix}/rulesets/details/:id`,
   EdaUserDetailsTokens: `${edaRoutePrefix}/access/users/details/:id/tokens`,
-  EdaUserDetails: `${edaRoutePrefix}/access/users/details/:id`,
-  EditEdaUser: `${edaRoutePrefix}/access/users/edit/:id`,
-  CreateEdaGroup: `${edaRoutePrefix}/access/groups/create`,
-  EdaGroupDetails: `${edaRoutePrefix}/access/groups/details/:id`,
-  EditEdaGroup: `${edaRoutePrefix}/access/group/edit/:id`,
-  EdaRoleDetails: `${edaRoutePrefix}/access/roles/details/:id`,
-  CreateEdaControllerToken: `${edaRoutePrefix}/access/users/tokens/create`,
 };

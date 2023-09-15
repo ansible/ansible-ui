@@ -1,12 +1,13 @@
-import { TextCell } from '../../../../../framework';
-import { RouteObj } from '../../../../common/Routes';
+import { TextCell, useGetPageUrl } from '../../../../../framework';
 import { useGet } from '../../../../common/crud/useGet';
+import { EdaRoute } from '../../../EdaRoutes';
 import { EdaProject } from '../../../interfaces/EdaProject';
 
 export function EdaProjectCell(props: { id?: number | null; disableLink?: boolean }) {
   const { data } = useGet<EdaProject>(props.id ? `/api/eda/v1/projects/${props.id}/` : undefined, {
     dedupingInterval: 10 * 1000,
   });
+  const getPageUrl = useGetPageUrl();
   if (!data) {
     switch (typeof props.id) {
       case 'number':
@@ -20,7 +21,7 @@ export function EdaProjectCell(props: { id?: number | null; disableLink?: boolea
       text={data.name}
       to={
         props.id && !props.disableLink
-          ? RouteObj.EdaProjectDetails.replace(':id', props.id.toString())
+          ? getPageUrl(EdaRoute.ProjectPage, { params: { id: props.id } })
           : undefined
       }
     />

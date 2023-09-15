@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import { PageHeader, useGetPageUrl } from '../../../framework';
 import { PageDashboard } from '../../../framework/PageDashboard/PageDashboard';
 import { PageDashboardCard } from '../../../framework/PageDashboard/PageDashboardCard';
-import { RouteObj } from '../../common/Routes';
 import { EdaRoute } from '../EdaRoutes';
 import { API_PREFIX } from '../constants';
 import { EdaControllerToken } from '../interfaces/EdaControllerToken';
@@ -96,13 +95,15 @@ export function EdaDashboard() {
                     variant={hasControllerToken ? 'success' : 'info'}
                     description={t('Create a Controller token.')}
                   >
-                    <Link to={RouteObj.CreateEdaControllerToken}>{t('Controller Token')}</Link>
+                    <Link to={getPageUrl(EdaRoute.CreateControllerToken)}>
+                      {t('Controller Token')}
+                    </Link>
                   </ProgressStep>
                   <ProgressStep
                     variant={hasProject ? 'success' : 'info'}
                     description={t('Create a project.')}
                   >
-                    <Link to={RouteObj.CreateEdaProject}>{t('Project')}</Link>
+                    <Link to={getPageUrl(EdaRoute.CreateProject)}>{t('Project')}</Link>
                   </ProgressStep>
                   <ProgressStep
                     variant={!hasProject ? 'pending' : hasDecisionEnvironment ? 'success' : 'info'}
@@ -122,7 +123,7 @@ export function EdaDashboard() {
                     }
                     description={t('Create a rulebook activation.')}
                   >
-                    <Link to={RouteObj.CreateEdaRulebookActivation}>
+                    <Link to={getPageUrl(EdaRoute.CreateRulebookActivation)}>
                       {t('Rulebook Activation')}
                     </Link>
                   </ProgressStep>

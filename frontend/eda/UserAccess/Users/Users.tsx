@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { PageHeader, PageLayout, PageTable } from '../../../../framework';
-import { RouteObj } from '../../../common/Routes';
+import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../../framework';
+import { EdaRoute } from '../../EdaRoutes';
 import { API_PREFIX } from '../../constants';
 import { EdaUser } from '../../interfaces/EdaUser';
 import { useEdaView } from '../../useEventDrivenView';
@@ -11,7 +10,7 @@ import { useUsersActions } from './hooks/useUsersActions';
 
 export function Users() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const tableColumns = useUserColumns();
   const view = useEdaView<EdaUser>({
     url: `${API_PREFIX}/users/`,
@@ -36,7 +35,7 @@ export function Users() {
         emptyStateTitle={t('There are currently no users created for your organization.')}
         emptyStateDescription={t('Please create a user by using the button below.')}
         emptyStateButtonText={t('Create user')}
-        emptyStateButtonClick={() => navigate(RouteObj.CreateEdaUser)}
+        emptyStateButtonClick={() => pageNavigate(EdaRoute.CreateUser)}
         {...view}
         defaultSubtitle={t('User')}
       />

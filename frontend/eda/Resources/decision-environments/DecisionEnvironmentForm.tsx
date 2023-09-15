@@ -9,8 +9,8 @@ import {
   PageHeader,
   PageLayout,
   useGetPageUrl,
+  usePageNavigate,
 } from '../../../../framework';
-import { RouteObj } from '../../../common/Routes';
 import { useGet } from '../../../common/crud/useGet';
 import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
@@ -25,6 +25,7 @@ import { EdaResult } from '../../interfaces/EdaResult';
 
 function DecisionEnvironmentInputs() {
   const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
   const { data: credentials } = useGet<EdaResult<EdaCredential>>(`${API_PREFIX}/credentials/`);
   const imageHelpBlock = (
     <>
@@ -77,7 +78,7 @@ function DecisionEnvironmentInputs() {
               }))
             : []
         }
-        footer={<Link to={RouteObj.CreateEdaCredential}>Create credential</Link>}
+        footer={<Link to={getPageUrl(EdaRoute.CreateCredential)}>Create credential</Link>}
         labelHelp={t('The token needed to utilize the Decision environment image.')}
         labelHelpTitle={t('Credential')}
       />
@@ -88,6 +89,7 @@ function DecisionEnvironmentInputs() {
 export function CreateDecisionEnvironment() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const { cache } = useSWRConfig();
   const postRequest = usePostRequest<Partial<EdaDecisionEnvironment>, EdaDecisionEnvironment>();
 
@@ -97,9 +99,7 @@ export function CreateDecisionEnvironment() {
       decisionEnvironment
     );
     (cache as unknown as { clear: () => void }).clear?.();
-    navigate(
-      RouteObj.EdaDecisionEnvironmentDetails.replace(':id', newDecisionEnvironment.id.toString())
-    );
+    pageNavigate(EdaRoute.DecisionEnvironmentPage, { params: { id: newDecisionEnvironment.id } });
   };
   const onCancel = () => navigate(-1);
   const getPageUrl = useGetPageUrl();

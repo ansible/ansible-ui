@@ -13,13 +13,14 @@ import {
   PageLayout,
   compareStrings,
   useGetPageUrl,
+  usePageNavigate,
 } from '../../../framework';
 import { PageFormAsyncSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncSelect';
 import { PageFormSection } from '../../../framework/PageForm/Utils/PageFormSection';
-import { RouteObj } from '../../common/Routes';
 import { requestGet } from '../../common/crud/Data';
 import { useGet } from '../../common/crud/useGet';
 import { usePostRequest } from '../../common/crud/usePostRequest';
+import { EdaRoute } from '../EdaRoutes';
 import { EdaProjectCell } from '../Resources/projects/components/EdaProjectCell';
 import { API_PREFIX } from '../constants';
 import { EdaDecisionEnvironment } from '../interfaces/EdaDecisionEnvironment';
@@ -32,11 +33,11 @@ import {
   EdaRulebookActivationCreate,
 } from '../interfaces/EdaRulebookActivation';
 import { RestartPolicyEnum } from '../interfaces/generated/eda-api';
-import { EdaRoute } from '../EdaRoutes';
 
 export function CreateRulebookActivation() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
 
   const postEdaExtraVars = usePostRequest<Partial<EdaExtraVars>, { id: number }>();
   const postEdaRulebookActivation = usePostRequest<object, EdaRulebookActivation>();
@@ -58,9 +59,7 @@ export function CreateRulebookActivation() {
       `${API_PREFIX}/activations/`,
       rulebookActivation
     );
-    navigate(
-      RouteObj.EdaRulebookActivationDetails.replace(':id', newRulebookActivation.id.toString())
-    );
+    pageNavigate(EdaRoute.RulebookActivationPage, { params: { id: newRulebookActivation.id } });
   };
   const onCancel = () => navigate(-1);
   const getPageUrl = useGetPageUrl();
@@ -93,6 +92,7 @@ export function CreateRulebookActivation() {
 
 export function RulebookActivationInputs() {
   const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
   const restartPolicyHelpBlock = (
     <>
       <p>{t('A policy to decide when to restart a rulebook.')}</p>
@@ -159,7 +159,7 @@ export function RulebookActivationInputs() {
               }))
             : []
         }
-        footer={<Link to={RouteObj.CreateEdaProject}>Create project</Link>}
+        footer={<Link to={getPageUrl(EdaRoute.CreateProject)}>Create project</Link>}
         labelHelp={t('Projects are a logical collection of rulebooks.')}
         labelHelpTitle={t('Project')}
       />
@@ -192,7 +192,11 @@ export function RulebookActivationInputs() {
             : []
         }
         isRequired
-        footer={<Link to={RouteObj.CreateEdaDecisionEnvironment}>Create decision environment</Link>}
+        footer={
+          <Link to={getPageUrl(EdaRoute.CreateDecisionEnvironment)}>
+            Create decision environment
+          </Link>
+        }
         labelHelp={t('Decision environments are a container image to run Ansible rulebooks.')}
         labelHelpTitle={t('Decision environment')}
       />
