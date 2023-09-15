@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { PageHeader, PageLayout, PageTable } from '../../../framework';
-import { RouteObj } from '../../common/Routes';
+import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../framework';
+import { HubRoute } from '../HubRoutes';
 import { collectionKeyFn, hubAPI } from '../api/utils';
 import { useHubView } from '../useHubView';
 import { CollectionVersionSearch } from './Collection';
@@ -12,7 +11,7 @@ import { useCollectionsActions } from './hooks/useCollectionsActions';
 
 export function Collections() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const toolbarFilters = useCollectionFilters();
   const tableColumns = useCollectionColumns();
   const view = useHubView<CollectionVersionSearch>({
@@ -54,7 +53,7 @@ export function Collections() {
         emptyStateTitle={t('No collections yet')}
         emptyStateDescription={t('To get started, upload a collection.')}
         emptyStateButtonText={t('Upload collection')}
-        emptyStateButtonClick={() => navigate(RouteObj.UploadCollection)}
+        emptyStateButtonClick={() => pageNavigate(HubRoute.UploadCollection)}
         {...view}
         defaultTableView="list"
         defaultSubtitle={t('Collection')}

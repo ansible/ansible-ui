@@ -7,10 +7,12 @@ import {
   PageTable,
   useColumnsWithoutExpandedRow,
   useColumnsWithoutSort,
+  useGetPageUrl,
   useVisibleModalColumns,
 } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
 import { RouteObj } from '../../../common/Routes';
+import { EdaRoute } from '../../EdaRoutes';
 import { useDecisionEnvironmentColumns } from '../../Resources/decision-environments/hooks/useDecisionEnvironmentColumns';
 import { EdaDecisionEnvironment } from '../../interfaces/EdaDecisionEnvironment';
 import { IEdaView } from '../../useEventDrivenView';
@@ -19,6 +21,7 @@ export function EdaDecisionEnvironmentsCard(props: { view: IEdaView<EdaDecisionE
   const { view } = props;
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const getPageUrl = useGetPageUrl();
   const tableColumns = useDecisionEnvironmentColumns();
   let columns = useVisibleModalColumns(tableColumns);
   columns = useMemo(
@@ -41,7 +44,7 @@ export function EdaDecisionEnvironmentsCard(props: { view: IEdaView<EdaDecisionE
       subtitle={t('Recently updated environments')}
       height="md"
       linkText={t('Go to Decision Environments')}
-      to={RouteObj.EdaDecisionEnvironments}
+      to={getPageUrl(EdaRoute.DecisionEnvironments)}
       helpTitle={t('Decision environments')}
       help={t('Decision environments are a container image to run Ansible rulebooks.')}
     >

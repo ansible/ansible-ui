@@ -27,12 +27,10 @@ describe('TeamPage', () => {
     );
   });
   it('Displays tabs for Details, Access and Roles', () => {
-    cy.get('a[data-ouia-component-type="PF4/TabButton"]').should('have.length', 4);
-    cy.get('a[data-ouia-component-type="PF4/TabButton"]')
-      .eq(0)
-      .should('have.text', 'Back to Teams');
-    cy.get('a[data-ouia-component-type="PF4/TabButton"]').eq(1).should('have.text', 'Details');
-    cy.get('a[data-ouia-component-type="PF4/TabButton"]').eq(2).should('have.text', 'Access');
-    cy.get('a[data-ouia-component-type="PF4/TabButton"]').eq(3).should('have.text', 'Roles');
+    cy.get('[data-ouia-component-type="PF4/TabButton"]').should('have.length', 4);
+    cy.get('[data-ouia-component-type="PF4/TabButton"]').eq(0).should('have.text', 'Back to Teams');
+    cy.get('[data-ouia-component-type="PF4/TabButton"]').eq(1).should('have.text', 'Details');
+    cy.get('[data-ouia-component-type="PF4/TabButton"]').eq(2).should('have.text', 'Access');
+    cy.get('[data-ouia-component-type="PF4/TabButton"]').eq(3).should('have.text', 'Roles');
   });
 });

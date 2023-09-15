@@ -1,4 +1,3 @@
-import { RouteObj } from '../../../common/Routes';
 import { API_PREFIX } from '../../constants';
 import { Projects } from './Projects';
 
@@ -48,10 +47,7 @@ describe('Projects.cy.ts', () => {
         ],
       }
     );
-    cy.mount(<Projects />, {
-      path: RouteObj.EdaProjects,
-      initialEntries: [RouteObj.EdaProjects],
-    });
+    cy.mount(<Projects />);
   });
 
   it('Renders the correct projects columns', () => {
