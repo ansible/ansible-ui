@@ -96,6 +96,6 @@ export function useCollectionColumns(_options?: { disableSort?: boolean; disable
         value: (collection) => !collection.is_signed || collection.is_signed,
       },
     ],
-    [t]
+    [getPageUrl, t]
   );
 }
