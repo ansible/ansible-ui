@@ -192,7 +192,7 @@ export function useRolesMetadata(): {
       member_role: {
         id: 'Member',
         label: t('Member'),
-        description: t('Has all the permissons of the team'),
+        description: t('Has all the permissions of the team'),
       },
     },
   };

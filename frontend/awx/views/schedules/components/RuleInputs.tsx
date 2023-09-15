@@ -107,7 +107,7 @@ export function RuleInputs() {
         />
         <PageFormMultiSelect<RuleFormFields>
           name="byminute"
-          placeholderText={t('Select minutes of the houron which to run the schedule')}
+          placeholderText={t('Select minutes of the hour on which to run the schedule')}
           options={minutesOfHour}
           label={t('Minute(s) of hour')}
           labelHelp={t(
