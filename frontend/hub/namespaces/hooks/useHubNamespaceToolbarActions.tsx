@@ -33,7 +33,7 @@ export function useHubNamespaceToolbarActions() {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Delete selected namesapces'),
+        label: t('Delete selected namespaces'),
         onClick: deleteHubNamespaces,
         isDanger: true,
       },
