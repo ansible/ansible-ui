@@ -38,6 +38,8 @@ describe('EDA Users List', () => {
       roles: [editorRoleID],
     }).then((edaUser) => {
       cy.navigateTo('eda', 'users');
+      cy.setTablePageSize('100');
+      cy.clickTableRow(edaUser.username, false);
       cy.contains(edaUser.username).click();
       cy.hasTitle(edaUser.username);
       cy.clickButton(/^Details$/);
