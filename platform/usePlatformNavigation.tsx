@@ -1,10 +1,13 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Navigate } from 'react-router-dom';
 import { PageNavigationItem } from '../framework';
+import { PlatformRoute } from './PlatformRoutes';
 import { useAwxNavigation } from '../frontend/awx/useAwxNavigation';
 import { useEdaNavigation } from '../frontend/eda/useEdaNavigation';
 import { useHubNavigation } from '../frontend/hub/useHubNavigation';
 import { PlatformDashboard } from './dashboard/PlatformDashboard';
+import { AwxLogin } from '../frontend/awx/AwxLogin';
 
 export function usePlatformNavigation() {
   const { t } = useTranslation();
@@ -14,28 +17,38 @@ export function usePlatformNavigation() {
   const pageNavigationItems = useMemo<PageNavigationItem[]>(() => {
     const navigationItems: PageNavigationItem[] = [
       {
-        id: 'platform-dashboard',
+        id: PlatformRoute.Login,
+        path: 'login',
+        element: <AwxLogin />,
+      },
+      {
+        id: PlatformRoute.Dashboard,
         label: t('Dashboard'),
         path: 'dashboard',
         element: <PlatformDashboard />,
       },
       {
-        id: 'platform-awx',
+        id: PlatformRoute.AWX,
         label: t('Automation Controller'),
         path: 'awx',
         children: awxNavigation,
       },
       {
-        id: 'platform-hub',
+        id: PlatformRoute.HUB,
         label: t('Automation Hub'),
         path: 'hub',
         children: hubNavigation,
       },
       {
-        id: 'platform-eda',
+        id: PlatformRoute.EDA,
         label: t('Event Driven Automation'),
         path: 'eda',
         children: edaNavigation,
+      },
+      {
+        id: PlatformRoute.Root,
+        path: '',
+        element: <Navigate to="dashboard" />,
       },
     ];
     return navigationItems;
