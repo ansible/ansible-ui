@@ -53,7 +53,7 @@ export function useManageColumns<T extends object>(
               {
                 value: ColumnTableOption.Expanded,
                 label: t('Expanded'),
-                description: t('Show the column when the item is expandedas a detail.'),
+                description: t('Show the column when the item is expanded as a detail.'),
               },
               {
                 value: ColumnTableOption.Hidden,
