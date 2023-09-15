@@ -2,16 +2,20 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
-import { RouteObj } from '../../../../common/Routes';
+import {
+  IPageAction,
+  PageActionSelection,
+  PageActionType,
+  usePageNavigate,
+} from '../../../../../framework';
+import { EdaRoute } from '../../../EdaRoutes';
 import { EdaDecisionEnvironment } from '../../../interfaces/EdaDecisionEnvironment';
 import { IEdaView } from '../../../useEventDrivenView';
 import { useDeleteDecisionEnvironments } from './useDeleteDecisionEnvironments';
 
 export function useDecisionEnvironmentActions(view: IEdaView<EdaDecisionEnvironment>) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const deleteDecisionEnvironments = useDeleteDecisionEnvironments(view.unselectItemsAndRefresh);
   return useMemo<IPageAction<EdaDecisionEnvironment>[]>(
     () => [
@@ -23,9 +27,9 @@ export function useDecisionEnvironmentActions(view: IEdaView<EdaDecisionEnvironm
         isPinned: true,
         label: t('Edit decision environment'),
         onClick: (decisionEnvironment: EdaDecisionEnvironment) =>
-          navigate(
-            RouteObj.EditEdaDecisionEnvironment.replace(':id', decisionEnvironment.id.toString())
-          ),
+          pageNavigate(EdaRoute.EditDecisionEnvironment, {
+            params: { id: decisionEnvironment.id },
+          }),
       },
       {
         type: PageActionType.Button,
@@ -37,6 +41,6 @@ export function useDecisionEnvironmentActions(view: IEdaView<EdaDecisionEnvironm
         isDanger: true,
       },
     ],
-    [deleteDecisionEnvironments, navigate, t]
+    [deleteDecisionEnvironments, pageNavigate, t]
   );
 }

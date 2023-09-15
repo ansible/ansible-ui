@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { PageHeader, PageLayout, PageTable } from '../../../../framework';
-import { RouteObj } from '../../../common/Routes';
+import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../../framework';
+import { EdaRoute } from '../../EdaRoutes';
 import { API_PREFIX } from '../../constants';
 import { EdaProject } from '../../interfaces/EdaProject';
 import { useEdaView } from '../../useEventDrivenView';
@@ -12,7 +11,7 @@ import { useProjectsActions } from './hooks/useProjectsActions';
 
 export function Projects() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const toolbarFilters = useProjectFilters();
   const tableColumns = useProjectColumns();
   const view = useEdaView<EdaProject>({
@@ -38,7 +37,7 @@ export function Projects() {
         emptyStateTitle={t('There are currently no projects created for your organization.')}
         emptyStateDescription={t('Please create a project by using the button below.')}
         emptyStateButtonText={t('Create project')}
-        emptyStateButtonClick={() => navigate(RouteObj.CreateEdaProject)}
+        emptyStateButtonClick={() => pageNavigate(EdaRoute.CreateProject)}
         {...view}
         defaultSubtitle={t('Project')}
       />

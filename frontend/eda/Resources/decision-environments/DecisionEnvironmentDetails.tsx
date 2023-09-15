@@ -8,7 +8,7 @@ import {
 import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import {
   DateTimeCell,
   IPageAction,
@@ -24,7 +24,6 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
-import { RouteObj } from '../../../common/Routes';
 import { useGet } from '../../../common/crud/useGet';
 import { EdaRoute } from '../../EdaRoutes';
 import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
@@ -35,7 +34,6 @@ import { useDeleteDecisionEnvironment } from './hooks/useDeleteDecisionEnvironme
 export function DecisionEnvironmentDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
   const imageHelpBlock = (
     <>
@@ -77,9 +75,9 @@ export function DecisionEnvironmentDetails() {
         isPinned: true,
         label: t('Edit decision environment'),
         onClick: (decisionEnvironment: EdaDecisionEnvironmentRead) =>
-          navigate(
-            RouteObj.EditEdaDecisionEnvironment.replace(':id', `${decisionEnvironment?.id || ''}`)
-          ),
+          pageNavigate(EdaRoute.EditDecisionEnvironment, {
+            params: { id: decisionEnvironment.id },
+          }),
       },
       {
         type: PageActionType.Button,
@@ -91,7 +89,7 @@ export function DecisionEnvironmentDetails() {
         isDanger: true,
       },
     ],
-    [deleteDecisionEnvironment, navigate, t]
+    [deleteDecisionEnvironment, pageNavigate, t]
   );
 
   const renderDecisionEnvironmentDetailsTab = (
@@ -110,10 +108,9 @@ export function DecisionEnvironmentDetails() {
         >
           {decisionEnvironment && decisionEnvironment.credential?.id ? (
             <Link
-              to={RouteObj.EdaCredentialDetails.replace(
-                ':id',
-                `${decisionEnvironment?.credential?.id || ''}`
-              )}
+              to={getPageUrl(EdaRoute.CredentialPage, {
+                params: { id: decisionEnvironment?.credential?.id },
+              })}
             >
               {credential?.name}
             </Link>

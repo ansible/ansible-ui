@@ -1,4 +1,3 @@
-import { RouteObj } from '../../../common/Routes';
 import { API_PREFIX } from '../../constants';
 import { EdaDashboard } from '../EdaDashboard';
 
@@ -89,10 +88,7 @@ describe('EdaRuleAuditCard.cy.ts', () => {
         ],
       }
     );
-    cy.mount(<EdaDashboard />, {
-      path: RouteObj.EdaDashboard,
-      initialEntries: [RouteObj.EdaDashboard],
-    });
+    cy.mount(<EdaDashboard />);
   });
   it('Dashboard renders the correct rule audit columns', () => {
     cy.contains(/^Recently fired rules$/).should('be.visible');

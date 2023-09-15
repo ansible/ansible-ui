@@ -8,7 +8,7 @@ import {
 import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { TFunction, useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import {
   IPageAction,
   PageActionSelection,
@@ -24,7 +24,6 @@ import {
   usePageNavigate,
 } from '../../../../framework';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
-import { RouteObj } from '../../../common/Routes';
 import { useGet } from '../../../common/crud/useGet';
 import { EdaRoute } from '../../EdaRoutes';
 import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
@@ -45,7 +44,6 @@ export function CredentialDetails() {
     </>
   );
   const params = useParams<{ id: string }>();
-  const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
   const { data: credential } = useGet<EdaCredential>(
     `${API_PREFIX}/credentials/${params.id ?? ''}/`,
@@ -69,7 +67,7 @@ export function CredentialDetails() {
         isPinned: true,
         label: t('Edit credential'),
         onClick: (credential: EdaCredential) =>
-          navigate(RouteObj.EditEdaCredential.replace(':id', credential.id.toString())),
+          pageNavigate(EdaRoute.EditCredential, { params: { id: credential.id } }),
       },
       {
         type: PageActionType.Button,
@@ -80,7 +78,7 @@ export function CredentialDetails() {
         isDanger: true,
       },
     ],
-    [deleteCredentials, navigate, t]
+    [deleteCredentials, pageNavigate, t]
   );
 
   const renderCredentialDetailsTab = (

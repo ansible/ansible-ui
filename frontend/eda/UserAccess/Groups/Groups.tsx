@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { PageHeader, PageLayout, PageTable } from '../../../../framework';
-import { RouteObj } from '../../../common/Routes';
+import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../../framework';
+import { EdaRoute } from '../../EdaRoutes';
 import { API_PREFIX } from '../../constants';
 import { EdaGroup } from '../../interfaces/EdaGroup';
 import { useEdaView } from '../../useEventDrivenView';
@@ -12,7 +11,7 @@ import { useGroupsActions } from './hooks/useGroupsActions';
 
 export function Groups() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const toolbarFilters = useGroupFilters();
   const tableColumns = useGroupColumns();
   const view = useEdaView<EdaGroup>({
@@ -35,7 +34,7 @@ export function Groups() {
         emptyStateTitle={t('No groups yet')}
         emptyStateDescription={t('To get started, create a group.')}
         emptyStateButtonText={t('Create group')}
-        emptyStateButtonClick={() => navigate(RouteObj.CreateEdaGroup)}
+        emptyStateButtonClick={() => pageNavigate(EdaRoute.CreateGroup)}
         {...view}
         defaultSubtitle={t('Group')}
       />

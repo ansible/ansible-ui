@@ -1,13 +1,21 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ColumnModalOption, ITableColumn, LabelsCell, TextCell } from '../../../../../framework';
+import {
+  ColumnModalOption,
+  ITableColumn,
+  LabelsCell,
+  TextCell,
+  useGetPageUrl,
+} from '../../../../../framework';
 import { formatDateString } from '../../../../../framework/utils/formatDateString';
 import { RouteObj } from '../../../../common/Routes';
 import { StatusCell } from '../../../../common/Status';
+import { EdaRoute } from '../../../EdaRoutes';
 import { EdaRuleAuditItem } from '../../../interfaces/EdaRuleAudit';
 
 export function useRuleAuditColumns() {
   const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
   return useMemo<ITableColumn<EdaRuleAuditItem>[]>(
     () => [
       {
@@ -15,7 +23,7 @@ export function useRuleAuditColumns() {
         cell: (ruleAudit) => (
           <TextCell
             text={ruleAudit?.name}
-            to={RouteObj.EdaRuleAuditDetails.replace(':id', ruleAudit?.id?.toString())}
+            to={getPageUrl(EdaRoute.RuleAuditPage, { params: { id: ruleAudit?.id } })}
           />
         ),
         card: 'name',
@@ -33,7 +41,7 @@ export function useRuleAuditColumns() {
           ruleAudit?.activation_instance?.id ? (
             <TextCell
               text={ruleAudit?.activation_instance?.name || ''}
-              to={RouteObj.EdaActivationInstanceDetails.replace(
+              to={RouteObj.ActivationInstancePage.replace(
                 ':id',
                 ruleAudit?.activation_instance?.id?.toString() || ''
               )}
@@ -56,6 +64,6 @@ export function useRuleAuditColumns() {
         ),
       },
     ],
-    [t]
+    [getPageUrl, t]
   );
 }

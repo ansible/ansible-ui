@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { PageHeader, PageLayout, PageTable } from '../../../framework';
-import { RouteObj } from '../../common/Routes';
+import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../framework';
+import { EdaRoute } from '../EdaRoutes';
 import { API_PREFIX } from '../constants';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
 import { useEdaView } from '../useEventDrivenView';
@@ -12,7 +11,7 @@ import { useRulebookActivationsActions } from './hooks/useRulebookActivationsAct
 
 export function RulebookActivations() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const toolbarFilters = useRulebookActivationFilters();
   const tableColumns = useRulebookActivationColumns();
   const view = useEdaView<EdaRulebookActivation>({
@@ -40,7 +39,7 @@ export function RulebookActivations() {
         )}
         emptyStateDescription={t('Please create a rulebook activation by using the button below.')}
         emptyStateButtonText={t('Create rulebook activation')}
-        emptyStateButtonClick={() => navigate(RouteObj.CreateEdaRulebookActivation)}
+        emptyStateButtonClick={() => pageNavigate(EdaRoute.CreateRulebookActivation)}
         {...view}
         defaultSubtitle={t('Rulebook Activation')}
       />

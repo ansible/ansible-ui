@@ -66,7 +66,7 @@ export function CreateControllerToken() {
     {
       label: user?.username ?? '',
       to: canViewUsers
-        ? RouteObj.EdaUserDetails.replace(':id', `${user?.id || ''}`)
+        ? getPageUrl(EdaRoute.UserPage, { params: { id: user?.id } })
         : getPageUrl(EdaRoute.MyPage),
     },
     {

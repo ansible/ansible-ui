@@ -8,8 +8,8 @@ export function usePageNavigate() {
   return (
     pageId: string,
     options?: {
-      params?: Record<string, string | number>;
-      query?: Record<string, string | number>;
+      params?: Record<string, string | number | undefined>;
+      query?: Record<string, string | number | undefined>;
     }
   ) => {
     const url = getPageUrl(pageId, options);

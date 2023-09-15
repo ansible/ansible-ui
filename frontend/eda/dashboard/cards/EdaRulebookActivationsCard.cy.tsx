@@ -1,4 +1,3 @@
-import { RouteObj } from '../../../common/Routes';
 import { API_PREFIX } from '../../constants';
 import { EdaDashboard } from '../EdaDashboard';
 
@@ -63,10 +62,7 @@ describe('EdaRulebookActivationsCard.cy.ts', () => {
         results: [],
       }
     );
-    cy.mount(<EdaDashboard />, {
-      path: RouteObj.EdaDashboard,
-      initialEntries: [RouteObj.EdaDashboard],
-    });
+    cy.mount(<EdaDashboard />);
   });
   it('Dashboard renders the correct rulebook activations columns', () => {
     cy.contains(/^Recently updated activations$/).should('be.visible');

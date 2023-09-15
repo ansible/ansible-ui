@@ -1,11 +1,12 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, TextCell } from '../../../../../framework';
-import { RouteObj } from '../../../../common/Routes';
+import { ITableColumn, TextCell, useGetPageUrl } from '../../../../../framework';
+import { EdaRoute } from '../../../EdaRoutes';
 import { EdaRole } from '../../../interfaces/EdaRole';
 
 export function useRoleColumns(withLinks: boolean) {
   const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
   return useMemo<ITableColumn<EdaRole>[]>(
     () => [
       {
@@ -14,7 +15,7 @@ export function useRoleColumns(withLinks: boolean) {
           withLinks ? (
             <TextCell
               text={role.name}
-              to={RouteObj.EdaRoleDetails.replace(':id', role.id.toString())}
+              to={getPageUrl(EdaRoute.RolePage, { params: { id: role.id } })}
             />
           ) : (
             <TextCell text={role.name} />
@@ -29,6 +30,6 @@ export function useRoleColumns(withLinks: boolean) {
         list: 'description',
       },
     ],
-    [withLinks, t]
+    [t, withLinks, getPageUrl]
   );
 }

@@ -7,8 +7,8 @@ import {
   PageHeader,
   PageLayout,
   useGetPageUrl,
+  usePageNavigate,
 } from '../../../../framework';
-import { RouteObj } from '../../../common/Routes';
 import { useGet } from '../../../common/crud/useGet';
 import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
@@ -20,6 +20,7 @@ import { EdaGroup } from '../../interfaces/EdaGroup';
 export function EditGroup() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
   const { data: Group } = useGet<EdaGroup>(`${API_PREFIX}/groups/${id.toString()}/`);
@@ -35,7 +36,7 @@ export function EditGroup() {
       navigate(-1);
     } else {
       const newGroup = await postRequest(`${API_PREFIX}/groups/`, Group);
-      navigate(RouteObj.EdaGroupDetails.replace(':id', newGroup.id.toString()));
+      pageNavigate(EdaRoute.GroupPage, { params: { id: newGroup.id } });
     }
   };
   const onCancel = () => navigate(-1);

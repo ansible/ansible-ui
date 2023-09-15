@@ -1,5 +1,4 @@
 /* eslint-disable i18next/no-literal-string */
-import { RouteObj } from '../../../common/Routes';
 import { ProjectDetails } from './ProjectDetails';
 
 describe('ProjectDetails', () => {
@@ -17,10 +16,7 @@ describe('ProjectDetails', () => {
 
   it('Component renders and displays project', () => {
     it('Project details are displayed correctly', () => {
-      cy.mount(<ProjectDetails />, {
-        path: RouteObj.EdaProjectDetails,
-        initialEntries: [RouteObj.EdaProjectDetails.replace(':id', '1')],
-      });
+      cy.mount(<ProjectDetails />);
       cy.get('#name').should('have.text', 'Sample Project');
       cy.contains('dd#name>div', 'Sample Project').should('exist');
       cy.get('#description').should('have.text', 'Sample project description');

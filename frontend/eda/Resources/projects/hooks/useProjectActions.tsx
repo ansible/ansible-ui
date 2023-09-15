@@ -2,16 +2,16 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { PencilAltIcon, SyncAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   errorToAlertProps,
   usePageAlertToaster,
+  usePageNavigate,
 } from '../../../../../framework';
-import { RouteObj } from '../../../../common/Routes';
 import { postRequest } from '../../../../common/crud/Data';
+import { EdaRoute } from '../../../EdaRoutes';
 import { API_PREFIX } from '../../../constants';
 import { EdaProject } from '../../../interfaces/EdaProject';
 import { ImportStateEnum } from '../../../interfaces/generated/eda-api';
@@ -20,7 +20,7 @@ import { useDeleteProjects } from './useDeleteProjects';
 
 export function useProjectActions(view: IEdaView<EdaProject>) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const deleteProjects = useDeleteProjects(view.unselectItemsAndRefresh);
   const alertToaster = usePageAlertToaster();
   const syncProject = useCallback(
@@ -58,7 +58,7 @@ export function useProjectActions(view: IEdaView<EdaProject>) {
         isPinned: true,
         label: t('Edit project'),
         onClick: (project: EdaProject) =>
-          navigate(RouteObj.EditEdaProject.replace(':id', project.id.toString())),
+          pageNavigate(EdaRoute.EditProject, { params: { id: project.id } }),
       },
       {
         type: PageActionType.Button,
@@ -69,6 +69,6 @@ export function useProjectActions(view: IEdaView<EdaProject>) {
         isDanger: true,
       },
     ],
-    [deleteProjects, syncProject, navigate, t]
+    [deleteProjects, syncProject, pageNavigate, t]
   );
 }

@@ -8,8 +8,8 @@ import {
   PageHeader,
   PageLayout,
   useGetPageUrl,
+  usePageNavigate,
 } from '../../../framework';
-import { RouteObj } from '../../common/Routes';
 import { useGet } from '../../common/crud/useGet';
 import { usePatchRequest } from '../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../common/crud/usePostRequest';
@@ -20,6 +20,7 @@ import { EdaRule } from '../interfaces/EdaRule';
 export function EditRule() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
   const { data: rule } = useGet<EdaRule>(`${API_PREFIX}/rules/${id}}/`);
@@ -37,7 +38,7 @@ export function EditRule() {
     } else {
       const newRule = await postRequest(`${API_PREFIX}/rules/`, rule);
       (cache as unknown as { clear: () => void }).clear?.();
-      navigate(RouteObj.EdaRuleDetails.replace(':id', newRule.id.toString()));
+      pageNavigate(EdaRoute.RulePage, { params: { id: newRule.id } });
     }
   };
   const onCancel = () => navigate(-1);

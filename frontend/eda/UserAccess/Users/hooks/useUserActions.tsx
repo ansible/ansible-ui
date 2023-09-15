@@ -2,16 +2,20 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
-import { RouteObj } from '../../../../common/Routes';
+import {
+  IPageAction,
+  PageActionSelection,
+  PageActionType,
+  usePageNavigate,
+} from '../../../../../framework';
+import { EdaRoute } from '../../../EdaRoutes';
 import { EdaUser } from '../../../interfaces/EdaUser';
 import { IEdaView } from '../../../useEventDrivenView';
 import { useDeleteUsers } from './useDeleteUser';
 
 export function useUserActions(view: IEdaView<EdaUser>) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const deleteUsers = useDeleteUsers(view.unselectItemsAndRefresh);
   return useMemo<IPageAction<EdaUser>[]>(
     () => [
@@ -22,18 +26,17 @@ export function useUserActions(view: IEdaView<EdaUser>) {
         icon: PencilAltIcon,
         label: t('Edit user'),
         isPinned: true,
-        onClick: (User: EdaUser) =>
-          navigate(RouteObj.EditEdaUser.replace(':id', User.id.toString())),
+        onClick: (user: EdaUser) => pageNavigate(EdaRoute.EditUser, { params: { id: user.id } }),
       },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete user'),
-        onClick: (User: EdaUser) => deleteUsers([User]),
+        onClick: (user: EdaUser) => deleteUsers([user]),
         isDanger: true,
       },
     ],
-    [deleteUsers, navigate, t]
+    [deleteUsers, pageNavigate, t]
   );
 }

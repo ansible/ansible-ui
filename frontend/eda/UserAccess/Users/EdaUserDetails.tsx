@@ -11,7 +11,7 @@ import {
 import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import {
   DateTimeCell,
   IPageAction,
@@ -28,7 +28,6 @@ import {
   usePageNavigate,
 } from '../../../../framework';
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
-import { RouteObj } from '../../../common/Routes';
 import { useGet } from '../../../common/crud/useGet';
 import { useEdaActiveUser } from '../../../common/useActiveUser';
 import { EdaRoute } from '../../EdaRoutes';
@@ -60,7 +59,6 @@ export function EdaUserDetailsInternal({
   user: EdaUser;
 }) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
   const deleteUsers = useDeleteUsers((deleted) => {
     if (deleted && deleted.length > 0) {
@@ -104,8 +102,7 @@ export function EdaUserDetailsInternal({
         icon: PencilAltIcon,
         isPinned: true,
         label: t('Edit user'),
-        onClick: (user: EdaUser) =>
-          navigate(RouteObj.EditEdaUser.replace(':id', user.id.toString())),
+        onClick: (user: EdaUser) => pageNavigate(EdaRoute.EditUser, { params: { id: user.id } }),
       },
       {
         type: PageActionType.Button,
@@ -116,7 +113,7 @@ export function EdaUserDetailsInternal({
         isDanger: true,
       },
     ],
-    [deleteUsers, navigate, t]
+    [deleteUsers, pageNavigate, t]
   );
 
   const getPageUrl = useGetPageUrl();
