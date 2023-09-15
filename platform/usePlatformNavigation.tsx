@@ -4,51 +4,183 @@ import { Navigate } from 'react-router-dom';
 import { PageNavigationItem, removeNavigationItemById } from '../framework';
 import { AwxRoute } from '../frontend/awx/AwxRoutes';
 import { useAwxNavigation } from '../frontend/awx/useAwxNavigation';
+import { EdaRoute } from '../frontend/eda/EdaRoutes';
+import { UnderDevelopment } from '../frontend/eda/under-development/UnderDevelopment';
 import { useEdaNavigation } from '../frontend/eda/useEdaNavigation';
+import { HubRoute } from '../frontend/hub/HubRoutes';
 import { useHubNavigation } from '../frontend/hub/useHubNavigation';
 import { PlatformRoute } from './PlatformRoutes';
 import { PlatformDashboard } from './dashboard/PlatformDashboard';
 
 export function usePlatformNavigation() {
   const { t } = useTranslation();
-  const awxNavigation = useAwxNavigation();
-  const hubNavigation = useHubNavigation();
-  const edaNavigation = useEdaNavigation();
-  const analyticsNavigation = removeNavigationItemById(awxNavigation, AwxRoute.Reports);
+  const awx = useAwxNavigation();
+  const hub = useHubNavigation();
+  const eda = useEdaNavigation();
+
+  const topology = removeNavigationItemById(awx, AwxRoute.TopologyView);
+  const instanceGroups = removeNavigationItemById(awx, AwxRoute.InstanceGroups);
+  const instances = removeNavigationItemById(awx, AwxRoute.Instances);
+
+  const inventories = removeNavigationItemById(awx, AwxRoute.Inventories);
+  const hosts = removeNavigationItemById(awx, AwxRoute.Hosts);
+  const projects = removeNavigationItemById(awx, AwxRoute.Projects);
+
+  const analytics = removeNavigationItemById(awx, AwxRoute.Reports);
+
+  const namespaces = removeNavigationItemById(hub, HubRoute.Namespaces);
+  const collections = removeNavigationItemById(hub, HubRoute.Collections);
+  const executionEnvironments = removeNavigationItemById(awx, AwxRoute.ExecutionEnvironments);
+  const decisionEnvironments = removeNavigationItemById(eda, EdaRoute.DecisionEnvironments);
+
+  // Automation Execution
+  const templates = removeNavigationItemById(awx, AwxRoute.Templates);
+  const schedules = removeNavigationItemById(awx, AwxRoute.Schedules);
+  const jobs = removeNavigationItemById(awx, AwxRoute.Jobs);
+
+  // Rulebook Activations
+  const ruleAudits = removeNavigationItemById(eda, EdaRoute.RuleAudits);
+  const rulebookActivations = removeNavigationItemById(eda, EdaRoute.RulebookActivations);
+
+  // Utilities
+  const activityStream = removeNavigationItemById(awx, AwxRoute.ActivityStream);
+  const signtureKeys = removeNavigationItemById(hub, HubRoute.SignatureKeys);
+  const reposiitories = removeNavigationItemById(hub, HubRoute.Repositories);
+  const remotes = removeNavigationItemById(hub, HubRoute.Remotes);
+  const remoteRegistries = removeNavigationItemById(hub, HubRoute.RemoteRegistries);
+  const tasks = removeNavigationItemById(hub, HubRoute.Tasks);
+  const approvals = removeNavigationItemById(hub, HubRoute.Approvals);
+  const notifications = removeNavigationItemById(awx, AwxRoute.Notifications);
+  const managementJobs = removeNavigationItemById(awx, AwxRoute.ManagementJobs);
+  const applications = removeNavigationItemById(awx, AwxRoute.Applications);
+
+  // Access
+  const organizations = removeNavigationItemById(awx, AwxRoute.Organizations);
+  const teams = removeNavigationItemById(awx, AwxRoute.Teams);
+  const users = removeNavigationItemById(awx, AwxRoute.Users);
+
+  // Adminsitration
+  const credentials = removeNavigationItemById(awx, AwxRoute.Credentials);
+  const credentialTypes = removeNavigationItemById(awx, AwxRoute.CredentialTypes);
+
   const pageNavigationItems = useMemo<PageNavigationItem[]>(() => {
     const navigationItems = [
       {
         id: PlatformRoute.Dashboard,
-        label: t('Dashboard'),
-        path: 'dashboard',
+        label: t('Overview'),
+        path: 'overview',
         element: <PlatformDashboard />,
       },
       {
-        id: PlatformRoute.AWX,
-        label: t('Automation Controller'),
-        path: 'awx',
-        children: awxNavigation,
+        label: t('Inventories'),
+        path: 'inventories',
+        children: [inventories, hosts],
       },
       {
-        id: PlatformRoute.HUB,
-        label: t('Automation Hub'),
-        path: 'hub',
-        children: hubNavigation,
+        label: t('Automation Mesh'),
+        path: 'mesh',
+        children: [topology, instanceGroups, instances],
+      },
+      projects,
+      {
+        label: t('Content Discovery'),
+        path: 'content',
+        children: [namespaces, collections, executionEnvironments, decisionEnvironments],
       },
       {
-        id: PlatformRoute.EDA,
-        label: t('Event Driven Automation'),
-        path: 'eda',
-        children: edaNavigation,
+        label: t('Automation Execution'),
+        path: 'execution',
+        children: [templates, schedules, jobs],
       },
-      analyticsNavigation,
+      {
+        label: t('Rulebook Activations'),
+        path: 'rules',
+        children: [ruleAudits, rulebookActivations],
+      },
+      // {
+      //   id: PlatformRoute.AWX,
+      //   label: t('Automation Controller'),
+      //   path: 'awx',
+      //   children: awx,
+      // },
+      // {
+      //   id: PlatformRoute.HUB,
+      //   label: t('Automation Hub'),
+      //   path: 'hub',
+      //   children: hub,
+      // },
+      // {
+      //   id: PlatformRoute.EDA,
+      //   label: t('Event Driven Automation'),
+      //   path: 'eda',
+      //   children: eda,
+      // },
+      analytics,
+      {
+        label: t('Quick Starts'),
+        path: 'quick-starts',
+        element: <UnderDevelopment />,
+      },
+      {
+        id: 'platform-adminsitration',
+        label: t('Administration'),
+        path: 'administration',
+        children: [
+          {
+            label: t('Utilities'),
+            path: 'utilities',
+            children: [
+              activityStream,
+              signtureKeys,
+              reposiitories,
+              remotes,
+              remoteRegistries,
+              tasks,
+              approvals,
+              notifications,
+              managementJobs,
+              applications,
+            ],
+          },
+          {
+            label: t('Access'),
+            path: 'access',
+            children: [organizations, teams, users],
+          },
+          credentials,
+          credentialTypes,
+        ],
+      },
       {
         id: PlatformRoute.Root,
         path: '',
-        element: <Navigate to="dashboard" />,
+        element: <Navigate to="overview" />,
       },
     ];
     return navigationItems.filter((item) => item !== undefined) as PageNavigationItem[];
-  }, [analyticsNavigation, awxNavigation, edaNavigation, hubNavigation, t]);
+  }, [
+    analytics,
+    collections,
+    credentialTypes,
+    credentials,
+    decisionEnvironments,
+    executionEnvironments,
+    hosts,
+    instanceGroups,
+    instances,
+    inventories,
+    jobs,
+    namespaces,
+    organizations,
+    projects,
+    ruleAudits,
+    rulebookActivations,
+    schedules,
+    t,
+    teams,
+    templates,
+    topology,
+    users,
+  ]);
   return pageNavigationItems;
 }
