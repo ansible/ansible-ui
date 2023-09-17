@@ -1,4 +1,4 @@
-import { ChartData, ChartDataSerie } from 'react-json-chart-builder';
+import { ChartData, ChartDataSerie } from '@ansible/react-json-chart-builder';
 import { v4 } from 'uuid';
 import { ApiReturnType, ApiType, GroupedApi } from './types';
 

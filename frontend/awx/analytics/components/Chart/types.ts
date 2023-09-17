@@ -1,4 +1,4 @@
-import { ChartLegendEntry } from 'react-json-chart-builder';
+import { ChartLegendEntry } from '@ansible/react-json-chart-builder';
 
 export enum ApiType {
   nonGrouped = 'nonGrouped',
