@@ -1,4 +1,4 @@
-import { ChartSchemaElement, ChartType } from 'react-json-chart-builder';
+import { ChartSchemaElement, ChartType } from '@ansible/react-json-chart-builder';
 import { TagName } from './constants';
 
 export type AttributesType = { key: string; value: string }[];

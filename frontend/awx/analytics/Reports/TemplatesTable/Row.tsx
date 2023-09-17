@@ -12,7 +12,7 @@ import { global_disabled_color_200 as globalDisabledColor200 } from '@patternfly
 
 import currencyFormatter from '../../utilities/currencyFormatter';
 import numberFormatter from '../../utilities/numberFormatter';
-import { ChartLegendEntry } from 'react-json-chart-builder';
+import { ChartLegendEntry } from '@ansible/react-json-chart-builder';
 import ExpandedRowContents from './ExpandedRowContents';
 import { useTranslation } from 'react-i18next';
 
