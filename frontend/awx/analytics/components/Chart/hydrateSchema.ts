@@ -1,4 +1,4 @@
-import { ChartSchemaElement, ChartType } from 'react-json-chart-builder';
+import { ChartSchemaElement, ChartType } from '@ansible/react-json-chart-builder';
 import { AttributeType } from '../Toolbar/types';
 /**
  * I have strong hunch that you can use one function to hydrate
