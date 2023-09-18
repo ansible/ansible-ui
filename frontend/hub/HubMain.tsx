@@ -21,7 +21,7 @@ export default function AwxMain() {
           <Outlet />
         </HubContextProvider>
       }
-      header={<AnsibleMasthead />}
+      masthead={<AnsibleMasthead />}
       navigation={navigation}
     />
   );

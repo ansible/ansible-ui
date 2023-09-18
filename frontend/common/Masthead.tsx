@@ -20,7 +20,6 @@ import {
   ToolbarContent,
   ToolbarGroup,
   ToolbarItem,
-  Tooltip,
   Truncate,
 } from '@patternfly/react-core';
 import {
@@ -28,14 +27,12 @@ import {
   CogIcon,
   ExternalLinkAltIcon,
   QuestionCircleIcon,
-  RedoAltIcon,
   UserCircleIcon,
 } from '@patternfly/react-icons';
-import { Children, ReactNode, Suspense, useCallback, useLayoutEffect, useState } from 'react';
+import { Children, ReactNode, Suspense, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { mutate } from 'swr';
 import {
   useBreakpoint,
   usePageNavSideBar,
@@ -48,6 +45,7 @@ import getDocsBaseUrl from '../awx/common/util/getDocsBaseUrl';
 import { EdaRoute } from '../eda/EdaRoutes';
 import { API_PREFIX } from '../eda/constants';
 import { useAnsibleAboutModal } from './AboutModal';
+import { PageRefreshIcon } from './PageRefreshIcon';
 import { postRequest } from './crud/Data';
 import { useActiveUser } from './useActiveUser';
 
@@ -80,8 +78,7 @@ function isEdaServer(): boolean {
   return process.env.UI_MODE === 'EDA';
 }
 
-export function AnsibleMasthead(props: { hideLogin?: boolean }) {
-  const { hideLogin } = props;
+export function AnsibleMasthead() {
   const isSmallOrLarger = useBreakpoint('sm');
   const { t } = useTranslation();
   const openSettings = useSettingsDialog(t);
@@ -94,13 +91,11 @@ export function AnsibleMasthead(props: { hideLogin?: boolean }) {
 
   return (
     <Masthead display={{ default: 'inline' }}>
-      {!hideLogin && (
-        <MastheadToggle onClick={() => navBar.setState({ isOpen: !navBar.isOpen })}>
-          <PageToggleButton variant="plain" aria-label="Global navigation">
-            <BarsIcon />
-          </PageToggleButton>
-        </MastheadToggle>
-      )}
+      <MastheadToggle onClick={() => navBar.setState({ isOpen: !navBar.isOpen })}>
+        <PageToggleButton variant="plain" aria-label="Global navigation">
+          <BarsIcon />
+        </PageToggleButton>
+      </MastheadToggle>
       {isSmallOrLarger ? (
         <MastheadMain>
           <MastheadBrand>
@@ -137,50 +132,38 @@ export function AnsibleMasthead(props: { hideLogin?: boolean }) {
           </MastheadBrand>
         </MastheadMain>
       )}
-      {hideLogin ? (
-        <MastheadContent style={{ marginLeft: 0, minHeight: isSmallOrLarger ? undefined : 0 }}>
-          {/* <Toolbar id="toolbar" isFullHeight isStatic> */}
-          <Toolbar id="toolbar" style={{ padding: 0 }}>
-            <ToolbarContent>
-              <ToolbarSpan />
-              <ToolbarItem>
-                <Button icon={<CogIcon />} variant={ButtonVariant.plain} onClick={openSettings} />
-              </ToolbarItem>
-            </ToolbarContent>
-          </Toolbar>
-        </MastheadContent>
-      ) : (
-        <MastheadContent style={{ marginLeft: 0, minHeight: isSmallOrLarger ? undefined : 0 }}>
-          <ToolbarSpan />
-          {/* <Toolbar id="toolbar" isFullHeight isStatic> */}
-          <Toolbar id="toolbar" style={{ padding: 0 }}>
-            <ToolbarContent>
-              <ToolbarGroup
-                variant="icon-button-group"
-                alignment={{ default: 'alignRight' }}
-                spacer={{ default: 'spacerNone', md: 'spacerMd' }}
-              >
-                {/* {process.env.NODE_ENV === 'development' && windowSize !== 'xs' && (
+
+      <MastheadContent style={{ marginLeft: 0, minHeight: isSmallOrLarger ? undefined : 0 }}>
+        <ToolbarSpan />
+        {/* <Toolbar id="toolbar" isFullHeight isStatic> */}
+        <Toolbar id="toolbar" style={{ padding: 0 }}>
+          <ToolbarContent>
+            <ToolbarGroup
+              variant="icon-button-group"
+              alignment={{ default: 'alignRight' }}
+              spacer={{ default: 'spacerNone', md: 'spacerMd' }}
+            >
+              {/* {process.env.NODE_ENV === 'development' && windowSize !== 'xs' && (
                                 <ToolbarItem style={{ paddingRight: 8 }}>{windowSize.toUpperCase()}</ToolbarItem>
                             )} */}
+              <ToolbarItem>
+                <PageRefreshIcon />
+              </ToolbarItem>
+              {!isEdaServer() && (
                 <ToolbarItem>
-                  <Refresh />
+                  <Notifications />
                 </ToolbarItem>
-                {!isEdaServer() && (
-                  <ToolbarItem>
-                    <Notifications />
-                  </ToolbarItem>
-                )}
+              )}
 
-                {/* <ToolbarItem>
+              {/* <ToolbarItem>
                   <ApplicationLauncherBasic />
                 </ToolbarItem> */}
 
-                <ToolbarGroup
-                  variant="icon-button-group"
-                  visibility={{ default: 'hidden', lg: 'visible' }}
-                >
-                  {/* <ToolbarItem>
+              <ToolbarGroup
+                variant="icon-button-group"
+                visibility={{ default: 'hidden', lg: 'visible' }}
+              >
+                {/* <ToolbarItem>
                                     <AppBarDropdown icon={<CogIcon />}>
                                         <DropdownGroup label="Theme">
                                             <DropdownItem
@@ -198,42 +181,37 @@ export function AnsibleMasthead(props: { hideLogin?: boolean }) {
                                         </DropdownGroup>
                                     </AppBarDropdown>
                                 </ToolbarItem> */}
-                  <ToolbarItem>
-                    <Button
-                      icon={<CogIcon />}
-                      variant={ButtonVariant.plain}
-                      onClick={openSettings}
-                    />
-                  </ToolbarItem>
-                  <ToolbarItem>
-                    <AppBarDropdown icon={<QuestionCircleIcon />}>
-                      <DropdownItem
-                        onClick={() => {
-                          open(
-                            isEdaServer()
-                              ? 'https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/2.4/html/eda-getting-started-guide/index'
-                              : `${getDocsBaseUrl(config)}/html/userguide/index.html`,
-                            '_blank'
-                          );
-                        }}
-                        icon={<ExternalLinkAltIcon />}
-                      >
-                        {t('Documentation')}
-                      </DropdownItem>
-                      <DropdownItem onClick={() => openAnsibleAboutModal({})}>
-                        {t('About')}
-                      </DropdownItem>
-                    </AppBarDropdown>
-                  </ToolbarItem>
-                </ToolbarGroup>
+                <ToolbarItem>
+                  <Button icon={<CogIcon />} variant={ButtonVariant.plain} onClick={openSettings} />
+                </ToolbarItem>
+                <ToolbarItem>
+                  <AppBarDropdown icon={<QuestionCircleIcon />}>
+                    <DropdownItem
+                      onClick={() => {
+                        open(
+                          isEdaServer()
+                            ? 'https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/2.4/html/eda-getting-started-guide/index'
+                            : `${getDocsBaseUrl(config)}/html/userguide/index.html`,
+                          '_blank'
+                        );
+                      }}
+                      icon={<ExternalLinkAltIcon />}
+                    >
+                      {t('Documentation')}
+                    </DropdownItem>
+                    <DropdownItem onClick={() => openAnsibleAboutModal({})}>
+                      {t('About')}
+                    </DropdownItem>
+                  </AppBarDropdown>
+                </ToolbarItem>
               </ToolbarGroup>
-              <ToolbarItem>
-                <AccountDropdown />
-              </ToolbarItem>
-            </ToolbarContent>
-          </Toolbar>
-        </MastheadContent>
-      )}
+            </ToolbarGroup>
+            <ToolbarItem>
+              <AccountDropdown />
+            </ToolbarItem>
+          </ToolbarContent>
+        </Toolbar>
+      </MastheadContent>
     </Masthead>
   );
 }
@@ -248,7 +226,7 @@ export function isRouteActive(route: string | string[], location: { pathname: st
   return location.pathname.includes(route);
 }
 
-function AppBarDropdown(props: { icon: ReactNode; children: ReactNode }) {
+export function AppBarDropdown(props: { icon: ReactNode; children: ReactNode }) {
   const [open, setOpen] = useState(false);
   const onSelect = useCallback(() => {
     setOpen((open) => !open);
@@ -272,7 +250,7 @@ function AppBarDropdown(props: { icon: ReactNode; children: ReactNode }) {
   );
 }
 
-function AccountDropdown() {
+export function AccountDropdown() {
   return (
     <Suspense
       fallback={
@@ -375,62 +353,5 @@ function NotificationsInternal() {
       style={{ marginRight: workflowApprovals.length === 0 ? undefined : 12 }}
       // onClick={() => history(RouteObj.WorkflowApprovals)}
     />
-  );
-}
-
-export function Refresh() {
-  const [refreshing, setRefreshing] = useState(false);
-  const refresh = useCallback(() => {
-    setRefreshing(true);
-    void mutate((key) => typeof key === 'string').finally(() => {
-      setRefreshing(false);
-    });
-  }, []);
-  const [rotation, setRotation] = useState(0);
-
-  useLayoutEffect(() => {
-    let frame: number;
-    let start: number;
-    function rotate(timestamp: number) {
-      if (start === undefined) {
-        start = timestamp;
-      }
-      const elapsed = timestamp - start;
-      start = timestamp;
-      frame = requestAnimationFrame(rotate);
-      setRotation((rotate) => rotate + elapsed / 3);
-    }
-    function stop(timestamp: number) {
-      if (start === undefined) {
-        start = timestamp;
-      }
-      const elapsed = timestamp - start;
-      start = timestamp;
-
-      frame = requestAnimationFrame(stop);
-      setRotation((rotate) => {
-        if (Math.floor(rotate / 360) !== Math.floor((rotate + elapsed / 3) / 360)) {
-          cancelAnimationFrame(frame);
-          return 0;
-        }
-        return rotate + elapsed / 3;
-      });
-    }
-
-    if (refreshing) {
-      frame = requestAnimationFrame(rotate);
-      return () => cancelAnimationFrame(frame);
-    } else {
-      frame = requestAnimationFrame(stop);
-      return () => cancelAnimationFrame(frame);
-    }
-  }, [refreshing]);
-
-  return (
-    <Tooltip content="Refresh" position="bottom" entryDelay={1000}>
-      <Button id="refresh" onClick={refresh} variant="plain">
-        <RedoAltIcon style={{ transform: `rotateZ(${rotation}deg)` }} />
-      </Button>
-    </Tooltip>
   );
 }

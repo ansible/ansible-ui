@@ -5,10 +5,10 @@ import '@patternfly/patternfly/patternfly-charts-theme-dark.css';
 
 import { Outlet } from 'react-router-dom';
 import { PageApp } from '../../framework/PageNavigation/PageApp';
-import { AnsibleMasthead } from '../common/Masthead';
 import '../common/i18n';
 import { ActiveUserProvider } from '../common/useActiveUser';
 import { AwxLogin } from './AwxLogin';
+import { AwxMasthead } from './AwxMasthead';
 import { AwxConfigProvider } from './common/useAwxConfig';
 import { WebSocketProvider } from './common/useAwxWebSocket';
 import { useAwxNavigation } from './useAwxNavigation';
@@ -27,7 +27,7 @@ export default function AwxMain() {
           </ActiveUserProvider>
         </WebSocketProvider>
       }
-      header={<AnsibleMasthead />}
+      masthead={<AwxMasthead />}
       navigation={navigation}
     />
   );

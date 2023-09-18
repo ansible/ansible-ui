@@ -1,43 +1,50 @@
 import {
   Masthead,
+  MastheadBrand,
+  MastheadContent,
   MastheadMain,
   MastheadToggle,
   PageToggleButton,
+  Stack,
+  Text,
   Title,
   Toolbar,
   ToolbarContent,
-  ToolbarItem,
+  Truncate,
 } from '@patternfly/react-core';
 import { BarsIcon } from '@patternfly/react-icons';
-import { Children, ReactNode } from 'react';
-import styled from 'styled-components';
+import { ReactNode } from 'react';
 import { usePageNavSideBar } from './PageNavigation/PageNavSidebar';
 
-const ToolbarSpacingDiv = styled.div`
-  flex-grow: 1;
-`;
-
-const StyledToolbar = styled(Toolbar)`
-  padding: 0px;
-`;
-
-export function PageMasthead(props: { title: string; brand?: string; children?: ReactNode }) {
+export function PageMasthead(props: {
+  icon?: ReactNode;
+  brand?: string;
+  title: string;
+  children?: ReactNode;
+}) {
   return (
-    <Masthead>
+    <Masthead display={{ default: 'inline' }}>
       <PageMastheadToggle />
       <MastheadMain>
-        <Title headingLevel="h1" style={{ fontWeight: 'bold', lineHeight: 1.2 }}>
-          {props.title}
-        </Title>
+        <MastheadBrand style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          {props.icon}
+          <Stack style={{ color: 'white', cursor: 'default' }}>
+            {props.brand && (
+              <Text>
+                <Truncate content={props.brand} style={{ minWidth: 0 }} />
+              </Text>
+            )}
+            <Title headingLevel="h1" style={{ lineHeight: 1 }}>
+              <Truncate content={props.title} style={{ minWidth: 0 }} />
+            </Title>
+          </Stack>
+        </MastheadBrand>
       </MastheadMain>
-      <StyledToolbar id="toolbar">
-        <ToolbarContent>
-          <ToolbarSpacingDiv />
-          {Children.toArray(props.children).map((child, index) => (
-            <ToolbarItem key={index}>{child}</ToolbarItem>
-          ))}
-        </ToolbarContent>
-      </StyledToolbar>
+      <MastheadContent>
+        <Toolbar id="toolbar">
+          <ToolbarContent>{props.children}</ToolbarContent>
+        </Toolbar>
+      </MastheadContent>
     </Masthead>
   );
 }

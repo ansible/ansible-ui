@@ -21,7 +21,7 @@ export default function EdaMain() {
           <Outlet />
         </ActiveEdaUserProvider>
       }
-      header={<AnsibleMasthead />}
+      masthead={<AnsibleMasthead />}
       navigation={navigation}
     />
   );
