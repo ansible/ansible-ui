@@ -16,17 +16,19 @@ export function useGetPageUrl() {
     if (url) {
       if (params) {
         url = Object.keys(params).reduce((acc, key) => {
-          const value = params[key];
+          let value = params[key];
           if (value === undefined) return acc;
-          return acc.replace(`:${key}`, (params[key] ?? '').toString());
+          value = encodeURIComponent(value.toString());
+          return acc.replace(`:${key}`, value);
         }, url);
       }
       if (query) {
         url = `${url}?${Object.keys(query)
           .map((key) => {
-            const value = query[key];
+            let value = query[key];
             if (value === undefined) return '';
-            return `${key}=${query[key]}`;
+            value = encodeURIComponent(value.toString());
+            return `${key}=${value}`;
           })
           .join('&')
           .replace('/&&/g', '&')}`;
