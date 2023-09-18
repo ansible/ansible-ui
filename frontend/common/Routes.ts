@@ -138,6 +138,121 @@ export const RouteObj = {
   CreateExecutionEnvironment: `${awxRoutePrefix}/administration/execution-environments/create`,
   EditExecutionEnvironment: `${awxRoutePrefix}/administration/execution-environments/:id/edit`,
 
-  RulesetPage: `${edaRoutePrefix}/rulesets/details/:id`,
-  EdaUserDetailsTokens: `${edaRoutePrefix}/access/users/details/:id/tokens`,
+  Instances: `${awxRoutePrefix}/instances`,
+  InstanceDetails: `${awxRoutePrefix}/instances/details/:id`,
+  CreateInstance: `${awxRoutePrefix}/instances/create`,
+  EditInstance: `${awxRoutePrefix}/instances/:id/edit`,
+
+  ExecutionEnvironments: `${awxRoutePrefix}/execution-environments`,
+  ExecutionEnvironmentDetails: `${awxRoutePrefix}/execution-environments/:id/details`,
+  CreateExecutionEnvironment: `${awxRoutePrefix}/execution-environments/create`,
+  EditExecutionEnvironment: `${awxRoutePrefix}/execution-environments/:id/edit`,
+
+  TopologyView: `${awxRoutePrefix}/topology`,
+
+  // Settings
+  Settings: `${awxRoutePrefix}/settings`,
+
+  //Analytics
+  ControllerReports: `${awxRoutePrefix}/reports`,
+  ControllerReport: `${awxRoutePrefix}/report/:id`,
+  SubscriptionUsage: `${awxRoutePrefix}/subscription-usage`,
+
+  Hub: `${hubRoutePrefix}`,
+
+  HubDashboard: `${hubRoutePrefix}/dashboard`,
+  Collections: `${hubRoutePrefix}/collections`,
+  CollectionDetails: `${hubRoutePrefix}/collections/details/`,
+  UploadCollection: `${hubRoutePrefix}/collections/upload`,
+  CollectionSignatureUpload: `${hubRoutePrefix}/collections/upload-signature`,
+
+  Repositories: `${hubRoutePrefix}/repositories`,
+  RepositoryDetails: `${hubRoutePrefix}/repositories/details/:id`,
+  EditRepository: `${hubRoutePrefix}/repositories/edit/:id`,
+
+  Namespaces: `${hubRoutePrefix}/namespaces`,
+  NamespaceDetails: `${hubRoutePrefix}/namespaces/:id`,
+  CreateNamespace: `${hubRoutePrefix}/namespaces/create`,
+  EditNamespace: `${hubRoutePrefix}/namespaces/:id/edit`,
+
+  Approvals: `${hubRoutePrefix}/approvals`,
+  ApprovalDetails: `${hubRoutePrefix}/approvals/details/:id`,
+
+  HubExecutionEnvironments: `${hubRoutePrefix}/execution-environments`,
+  HubExecutionEnvironmentDetails: `${hubRoutePrefix}/execution-environments/details/:id`,
+
+  Remotes: `${hubRoutePrefix}/remotes`,
+  CreateRemotes: `${hubRoutePrefix}/remotes/create`,
+  EditRemotes: `${hubRoutePrefix}/remotes/:id/edit`,
+  RemoteDetails: `${hubRoutePrefix}/remotes/details/:id`,
+
+  RemoteRegistries: `${hubRoutePrefix}/remote-registries`,
+
+  Tasks: `${hubRoutePrefix}/tasks`,
+  TaskDetails: `${hubRoutePrefix}/tasks/details/:id`,
+
+  SignatureKeys: `${hubRoutePrefix}/signature-keys`,
+
+  APIToken: `${hubRoutePrefix}/api-token`,
+
+  AwxDebug: `${awxRoutePrefix}/debug`,
+
+  // EDA server prefix
+  Eda: `${edaRoutePrefix}`,
+
+  EdaDashboard: `${edaRoutePrefix}/dashboard`,
+
+  EdaProjects: `${edaRoutePrefix}/projects`,
+  EdaProjectDetails: `${edaRoutePrefix}/projects/details/:id`,
+  CreateEdaProject: `${edaRoutePrefix}/projects/create`,
+  EditEdaProject: `${edaRoutePrefix}/projects/edit/:id`,
+
+  EdaCredentials: `${edaRoutePrefix}/credentials`,
+  EdaCredentialDetails: `${edaRoutePrefix}/credentials/details/:id`,
+  CreateEdaCredential: `${edaRoutePrefix}/credentials/create`,
+  EditEdaCredential: `${edaRoutePrefix}/credentials/edit/:id`,
+
+  EdaDecisionEnvironments: `${edaRoutePrefix}/decision-environments`,
+  EdaDecisionEnvironmentDetails: `${edaRoutePrefix}/decision-environments/details/:id`,
+  CreateEdaDecisionEnvironment: `${edaRoutePrefix}/decision-environments/create`,
+  EditEdaDecisionEnvironment: `${edaRoutePrefix}/decision-environments/edit/:id`,
+
+  EdaRuleAudit: `${edaRoutePrefix}/rule-audit`,
+  EdaRuleAuditDetails: `${edaRoutePrefix}/rule-audit/details/:id`,
+
+  EdaRulebookActivations: `${edaRoutePrefix}/rulebook-activations`,
+  EdaRulebookActivationDetails: `${edaRoutePrefix}/rulebook-activations/details/:id`,
+  EdaRulebookActivationDetailsHistory: `${edaRoutePrefix}/rulebook-activations/details/:id/history`,
+  CreateEdaRulebookActivation: `${edaRoutePrefix}/rulebook-activations/create`,
+  EditEdaRulebookActivation: `${edaRoutePrefix}/rulebook-activations/edit/:id`,
+  EdaActivationInstanceDetails: `${edaRoutePrefix}/rulebook-activations/activations-instances/details/:id`,
+
+  EdaRulebooks: `${edaRoutePrefix}/rulebooks`,
+  EdaRulebookDetails: `${edaRoutePrefix}/rulebooks/details/:id`,
+  EdaRulesetDetails: `${edaRoutePrefix}/rulesets/details/:id`,
+  CreateEdaRulebook: `${edaRoutePrefix}/rulebooks/create`,
+  EditEdaRulebook: `${edaRoutePrefix}/rulebooks/edit/:id`,
+
+  EdaRules: `${edaRoutePrefix}/rules`,
+  EdaRuleDetails: `${edaRoutePrefix}/rules/details/:id`,
+  CreateEdaRule: `${edaRoutePrefix}/rules/create`,
+  EditEdaRule: `${edaRoutePrefix}/rules/edit/:id`,
+
+  EdaUsers: `${edaRoutePrefix}/users`,
+  EdaGroups: `${edaRoutePrefix}/groups`,
+  EdaRoles: `${edaRoutePrefix}/roles`,
+  CreateEdaUser: `${edaRoutePrefix}/users/create`,
+  EdaUserDetailsTokens: `${edaRoutePrefix}/users/details/:id/tokens`,
+  EdaUserDetails: `${edaRoutePrefix}/users/details/:id`,
+  EditEdaUser: `${edaRoutePrefix}/users/edit/:id`,
+  CreateEdaGroup: `${edaRoutePrefix}/groups/create`,
+  EdaGroupDetails: `${edaRoutePrefix}/groups/details/:id`,
+  EditEdaGroup: `${edaRoutePrefix}/group/edit/:id`,
+  CreateEdaRole: `${edaRoutePrefix}/roles/create`,
+  EdaRoleDetails: `${edaRoutePrefix}/roles/details/:id`,
+  EditEdaRole: `${edaRoutePrefix}/roles/edit/:id`,
+  CreateEdaControllerToken: `${edaRoutePrefix}/users/tokens/create`,
+
+  EdaMyDetails: `${edaRoutePrefix}/users/me`,
+  EdaMyTokens: `${edaRoutePrefix}/users/me/tokens`,
 };

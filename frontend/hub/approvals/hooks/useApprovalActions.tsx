@@ -7,10 +7,12 @@ import { CollectionVersionSearch } from '../Approval';
 import { useRejectCollections } from './useRejectCollections';
 import { useApproveCollections } from './useApproveCollections';
 import { useHubContext } from './../../useHubContext';
+import { useNavigate } from 'react-router-dom';
+import { RouteObj } from '../../../common/Routes';
 
 export function useApprovalActions(callback?: (collections: CollectionVersionSearch[]) => void) {
   const { t } = useTranslation();
-
+  const navigate = useNavigate();
   const rejectCollections = useRejectCollections(callback);
   const approveCollections = useApproveCollections(callback);
   const { featureFlags } = useHubContext();
@@ -27,7 +29,11 @@ export function useApprovalActions(callback?: (collections: CollectionVersionSea
         variant: ButtonVariant.primary,
         icon: UploadIcon,
         label: t('Upload signature'),
-        onClick: (collection) => approveCollections([collection]),
+        onClick: (i) => {
+          navigate(
+            `${RouteObj.CollectionSignatureUpload}/?name=${i.collection_version.name}&namespace=${i.collection_version.namespace}&repository=staging&version=${i.collection_version.version}`
+          );
+        },
         isDanger: false,
         isDisabled: (collection) => can_upload_signatures || collection.is_signed,
       },
@@ -60,6 +66,7 @@ export function useApprovalActions(callback?: (collections: CollectionVersionSea
       autoSign,
       can_upload_signatures,
       require_upload_signatures,
+      navigate,
     ]
   );
 }
