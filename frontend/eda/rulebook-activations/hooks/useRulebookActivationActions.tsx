@@ -33,6 +33,8 @@ export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivatio
           else void disableActivations([activation]);
         },
         isSwitchOn: (activation: EdaRulebookActivation) => activation.is_enabled ?? false,
+        isHidden: (activation: EdaRulebookActivation) =>
+          activation?.status === Status0E7Enum.Deleting,
         isDisabled: (activation: EdaRulebookActivation) =>
           activation.status === Status0E7Enum.Stopping
             ? t('Cannot change activation status while stopping')
@@ -43,7 +45,8 @@ export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivatio
         selection: PageActionSelection.Single,
         icon: RedoIcon,
         label: t('Restart rulebook activation'),
-        isHidden: (activation: EdaRulebookActivation) => !activation.is_enabled,
+        isHidden: (activation: EdaRulebookActivation) =>
+          !activation.is_enabled || activation?.status === Status0E7Enum.Deleting,
         onClick: (activation: EdaRulebookActivation) => restartActivations([activation]),
       },
       {
@@ -51,6 +54,8 @@ export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivatio
         selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete rulebook activation'),
+        isHidden: (activation: EdaRulebookActivation) =>
+          activation?.status === Status0E7Enum.Deleting,
         onClick: (rulebookActivation: EdaRulebookActivation) =>
           deleteRulebookActivations([rulebookActivation]),
         isDanger: true,
