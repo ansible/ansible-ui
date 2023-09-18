@@ -104,6 +104,7 @@ export function SubscriptionUsageChart(props: { period: IFilterState }) {
       allowZero
       onlyIntegerTicks
       padding={{ right: 15 }}
+      showLegendCount={false}
     />
   );
 }
