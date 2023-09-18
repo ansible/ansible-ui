@@ -2,18 +2,23 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { PlusCircleIcon, PlusIcon, SyncIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
-import { RouteObj } from '../../../../common/Routes';
+import {
+  IPageAction,
+  PageActionSelection,
+  PageActionType,
+  useGetPageUrl,
+} from '../../../../../framework';
+import { useOptions } from '../../../../common/crud/useOptions';
+import { AwxRoute } from '../../../AwxRoutes';
+import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { Team } from '../../../interfaces/Team';
 import { IAwxView } from '../../../useAwxView';
 import { useSelectUsersAddTeams } from '../../users/hooks/useSelectUsersAddTeams';
-// import { useSelectUsersRemoveTeams } from '../../users/hooks/useSelectUsersRemoveTeams';
-import { useOptions } from '../../../../common/crud/useOptions';
-import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { useDeleteTeams } from './useDeleteTeams';
 
 export function useTeamToolbarActions(view: IAwxView<Team>) {
   const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
   const deleteTeams = useDeleteTeams(view.unselectItemsAndRefresh);
   const selectUsersAddTeams = useSelectUsersAddTeams();
   // const selectUsersRemoveTeams = useSelectUsersRemoveTeams();
@@ -34,7 +39,7 @@ export function useTeamToolbarActions(view: IAwxView<Team>) {
           : t(
               'You do not have permission to create a team. Please contact your organization administrator if there is an issue with your access.'
             ),
-        href: RouteObj.CreateTeam,
+        href: getPageUrl(AwxRoute.CreateTeam),
       },
       { type: PageActionType.Seperator },
       {
@@ -74,6 +79,6 @@ export function useTeamToolbarActions(view: IAwxView<Team>) {
         isDanger: true,
       },
     ],
-    [canCreateTeam, deleteTeams, selectUsersAddTeams, t, view]
+    [canCreateTeam, deleteTeams, getPageUrl, selectUsersAddTeams, t, view]
   );
 }

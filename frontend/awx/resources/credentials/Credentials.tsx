@@ -1,8 +1,7 @@
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { PageHeader, PageLayout, PageTable } from '../../../../framework';
+import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../../framework';
 import { usePersistentFilters } from '../../../common/PersistentFilters';
-import { RouteObj } from '../../../common/Routes';
+import { AwxRoute } from '../../AwxRoutes';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
 import { Credential } from '../../interfaces/Credential';
@@ -15,7 +14,7 @@ import { useCredentialsFilters } from './hooks/useCredentialsFilters';
 export function Credentials() {
   const { t } = useTranslation();
   const product: string = process.env.PRODUCT ?? t('AWX');
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   usePersistentFilters('credentials');
   const toolbarFilters = useCredentialsFilters();
   const tableColumns = useCredentialsColumns();
@@ -53,7 +52,7 @@ export function Credentials() {
         emptyStateTitle={t('No credentials yet')}
         emptyStateDescription={t('To get started, create an credential.')}
         emptyStateButtonText={t('Create credential')}
-        emptyStateButtonClick={() => navigate(RouteObj.CreateCredential)}
+        emptyStateButtonClick={() => pageNavigate(AwxRoute.CreateCredential)}
         {...view}
         defaultSubtitle={t('Credential')}
       />

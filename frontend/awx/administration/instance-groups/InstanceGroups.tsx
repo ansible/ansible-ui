@@ -2,7 +2,6 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { EditIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import {
   CapacityCell,
   IPageAction,
@@ -15,16 +14,18 @@ import {
   PageTable,
   TextCell,
   ToolbarFilterType,
+  usePageNavigate,
 } from '../../../../framework';
 import { RouteObj } from '../../../common/Routes';
 import { useCreatedColumn, useModifiedColumn } from '../../../common/columns';
+import { AwxRoute } from '../../AwxRoutes';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { useAwxView } from '../../useAwxView';
 import { useDeleteInstanceGroups } from './hooks/useDeleteInstanceGroups';
 
 export function InstanceGroups() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const toolbarFilters = useInstanceGroupsFilters();
   const tableColumns = useInstanceGroupsColumns();
   const view = useAwxView({
@@ -49,13 +50,13 @@ export function InstanceGroups() {
             type: PageActionType.Button,
             selection: PageActionSelection.None,
             label: t('Create container group'),
-            onClick: () => navigate(RouteObj.CreateInstanceGroup),
+            onClick: () => pageNavigate(AwxRoute.CreateInstanceGroup),
           },
           {
             type: PageActionType.Button,
             selection: PageActionSelection.None,
             label: t('Create instance group'),
-            onClick: () => navigate(RouteObj.CreateInstanceGroup),
+            onClick: () => pageNavigate(AwxRoute.CreateInstanceGroup),
           },
         ],
       },
@@ -69,7 +70,7 @@ export function InstanceGroups() {
         isDanger: true,
       },
     ],
-    [deleteInstanceGroups, navigate, t]
+    [deleteInstanceGroups, pageNavigate, t]
   );
 
   const rowActions = useMemo<IPageAction<InstanceGroup>[]>(
@@ -81,7 +82,7 @@ export function InstanceGroups() {
         isPinned: true,
         label: t('Edit instance group'),
         onClick: (instanceGroup) =>
-          navigate(RouteObj.EditInstanceGroup.replace(':id', instanceGroup.id.toString())),
+          pageNavigate(AwxRoute.EditInstanceGroup, { params: { id: instanceGroup.id } }),
       },
       { type: PageActionType.Seperator },
       {
@@ -93,7 +94,7 @@ export function InstanceGroups() {
         isDanger: true,
       },
     ],
-    [deleteInstanceGroups, navigate, t]
+    [deleteInstanceGroups, pageNavigate, t]
   );
 
   return (
@@ -116,7 +117,7 @@ export function InstanceGroups() {
         emptyStateTitle={t('No instance groups yet')}
         emptyStateDescription={t('To get started, create an instance group.')}
         emptyStateButtonText={t('Create instance group')}
-        emptyStateButtonClick={() => navigate(RouteObj.CreateInstanceGroup)}
+        emptyStateButtonClick={() => pageNavigate(AwxRoute.CreateInstanceGroup)}
         {...view}
         defaultSubtitle={t('Instance Group')}
       />
