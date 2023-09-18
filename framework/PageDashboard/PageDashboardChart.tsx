@@ -49,6 +49,8 @@ export function PageDashboardChart(props: {
     left?: number;
     right: number;
   };
+  /** show item count in legend */
+  showLegendCount?: boolean;
 
   height?: number;
 }) {
@@ -210,7 +212,13 @@ export function PageDashboardChart(props: {
         {xLabel && (
           <XAxisLabel label={xLabel} paddingLeft={padding.left} paddingRight={padding.right} />
         )}
-        <PageChartLegend id={props.id ?? 'chart'} legend={legend} horizontal />
+        <PageChartLegend
+          id={props.id ?? 'chart'}
+          legend={legend}
+          horizontal
+          showLegendCount={props.showLegendCount}
+          allowZero={props.allowZero}
+        />
       </div>
     </div>
   );
