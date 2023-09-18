@@ -149,7 +149,6 @@ function UserInputs(props: { mode: 'create' | 'edit' }) {
         placeholder={t('Enter username')}
         isRequired
         maxLength={150}
-        autoComplete="new-username"
         validate={(username: string) => {
           for (const c of username) {
             if (
@@ -182,7 +181,6 @@ function UserInputs(props: { mode: 'create' | 'edit' }) {
         label={t('Password')}
         placeholder={t('Enter password')}
         type="password"
-        autoComplete="new-password"
         isRequired={mode === 'create'}
       />
       <PageFormTextInput<UserInput>
@@ -190,7 +188,6 @@ function UserInputs(props: { mode: 'create' | 'edit' }) {
         label={t('Confirm password')}
         placeholder={t('Enter password')}
         type="password"
-        autoComplete="new-password"
         isRequired={mode === 'create'}
       />
       <PageFormRolesSelect<UserInput> name="roles" isRequired />
