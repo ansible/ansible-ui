@@ -54,15 +54,12 @@ export const RouteObj = {
   WorkflowJobTemplateSurvey: `${awxRoutePrefix}/resources/workflow_job_template/:id/survey`,
   WorkflowJobTemplateVisualizer: `${awxRoutePrefix}/resources/workflow_job_template/:id/visualizer`,
   CreateWorkflowJobTemplate: `${awxRoutePrefix}/resources/workflow_job_template/create`,
-  CreateJobTemplate: `${awxRoutePrefix}/resources/job_template/create`,
   EditJobTemplate: `${awxRoutePrefix}/resources/job_template/:id/edit`,
   EditWorkflowJobTemplate: `${awxRoutePrefix}/resources/workflow_job_template/:id/edit`,
 
   CredentialPage: `${awxRoutePrefix}/resources/credentials/:id/*`,
   CredentialDetails: `${awxRoutePrefix}/resources/credentials/:id/details`,
   CredentialAccess: `${awxRoutePrefix}/resources/credentials/:id/access`,
-  CreateCredential: `${awxRoutePrefix}/resources/credentials/create`,
-  EditCredential: `${awxRoutePrefix}/resources/credentials/:id/edit`,
 
   Projects: `${awxRoutePrefix}/resources/projects`,
   ProjectPage: `${awxRoutePrefix}/resources/projects/:id/*`,
@@ -76,7 +73,6 @@ export const RouteObj = {
   ProjectScheduleDetails: `${awxRoutePrefix}/resources/projects/:id/schedules/:schedule_id/details`,
   ProjectCreateScheduleRules: `${awxRoutePrefix}/resources/project/:id/schedules/:schedule_id/rules/create`,
   ProjectScheduleRules: `${awxRoutePrefix}/resources/project/:id/schedules/:schedule_id/rules`,
-  CreateProject: `${awxRoutePrefix}/resources/projects/create`,
   EditProject: `${awxRoutePrefix}/resources/projects/:id/edit`,
 
   Inventories: `${awxRoutePrefix}/resources/inventories`,
@@ -96,18 +92,12 @@ export const RouteObj = {
   InventorySourceScheduleRules: `${awxRoutePrefix}/resources/inventories/inventory/:id/sources/:source_id/schedules/:schedule_id/rules`,
   InventoryJobs: `${awxRoutePrefix}/resources/inventories/:inventory_type/:id/jobs`,
   InventoryJobTemplates: `${awxRoutePrefix}/resources/inventories/:inventory_type/:id/job_templates`,
-  CreateInventory: `${awxRoutePrefix}/resources/inventories/create`,
-  EditInventory: `${awxRoutePrefix}/resources/inventories/:id/edit`,
-  CreateSmartInventory: `${awxRoutePrefix}/resources/smart_inventory/create`,
-  CreateConstructedInventory: `${awxRoutePrefix}/resources/constructed_inventory/create`,
 
   HostPage: `${awxRoutePrefix}/resources/hosts/:id/*`,
   HostDetails: `${awxRoutePrefix}/resources/hosts/:id/details`,
   HostFacts: `${awxRoutePrefix}/resources/hosts/:id/facts`,
   HostGroups: `${awxRoutePrefix}/resources/hosts/:id/groups`,
   HostJobs: `${awxRoutePrefix}/resources/hosts/:id/jobs`,
-  CreateHost: `${awxRoutePrefix}/resources/hosts/create`,
-  EditHost: `${awxRoutePrefix}/resources/hosts/:id/edit`,
 
   // Access
   OrganizationPage: `${awxRoutePrefix}/access/organizations/:id/*`,
@@ -116,25 +106,17 @@ export const RouteObj = {
   OrganizationTeams: `${awxRoutePrefix}/access/organizations/:id/teams`,
   OrganizationExecutionEnvironments: `${awxRoutePrefix}/access/organizations/:id/execution_environments`,
   OrganizationNotifications: `${awxRoutePrefix}/access/organizations/:id/notifications`,
-  CreateOrganization: `${awxRoutePrefix}/access/organizations/create`,
-  EditOrganization: `${awxRoutePrefix}/access/organizations/:id/edit`,
 
   TeamPage: `${awxRoutePrefix}/access/teams/:id/*`,
   TeamDetails: `${awxRoutePrefix}/access/teams/:id/details`,
   TeamAccess: `${awxRoutePrefix}/access/teams/:id/access`,
   TeamRoles: `${awxRoutePrefix}/access/teams/:id/roles`,
-  CreateTeam: `${awxRoutePrefix}/access/teams/create`,
-  EditTeam: `${awxRoutePrefix}/access/teams/:id/edit`,
-  AddRolesToTeam: `${awxRoutePrefix}/access/teams/:id/roles/add`,
 
   UserPage: `${awxRoutePrefix}/access/users/:id/*`,
   UserDetails: `${awxRoutePrefix}/access/users/:id/details`,
   UserOrganizations: `${awxRoutePrefix}/access/users/:id/organizations`,
   UserTeams: `${awxRoutePrefix}/access/users/:id/teams`,
   UserRoles: `${awxRoutePrefix}/access/users/:id/roles`,
-  CreateUser: `${awxRoutePrefix}/access/users/create`,
-  EditUser: `${awxRoutePrefix}/access/users/:id/edit`,
-  AddRolesToUser: `${awxRoutePrefix}/access/users/:id/roles/add`,
 
   // Administration
   CredentialTypes: `${awxRoutePrefix}/administration/credential_types`,
@@ -150,16 +132,6 @@ export const RouteObj = {
   ManagementJobNotifications: `${awxRoutePrefix}/administration/management_jobs/:id/notifications`,
 
   InstanceGroupDetails: `${awxRoutePrefix}/administration/instance-groups/:id`,
-  CreateInstanceGroup: `${awxRoutePrefix}/administration/instance-groups/create`,
-  EditInstanceGroup: `${awxRoutePrefix}/administration/instance-groups/:id/edit`,
-
-  ApplicationPage: `${awxRoutePrefix}/administration/applications/:id/*`,
-  ApplicationDetails: `${awxRoutePrefix}/administration/applications/:id/details`,
-  ApplicationTokens: `${awxRoutePrefix}/administration/applications/:id/tokens`,
-
-  InstanceDetails: `${awxRoutePrefix}/administration/instances/:id`,
-  CreateInstance: `${awxRoutePrefix}/administration/instances/create`,
-  EditInstance: `${awxRoutePrefix}/administration/instances/:id/edit`,
 
   ExecutionEnvironmentDetails: `${awxRoutePrefix}/administration/execution-environments/:id/details`,
   CreateExecutionEnvironment: `${awxRoutePrefix}/administration/execution-environments/create`,

@@ -2,16 +2,20 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { PlusIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
-import { RouteObj } from '../../../../common/Routes';
+import {
+  IPageAction,
+  PageActionSelection,
+  PageActionType,
+  usePageNavigate,
+} from '../../../../../framework';
+import { AwxRoute } from '../../../AwxRoutes';
 import { Credential } from '../../../interfaces/Credential';
 import { IAwxView } from '../../../useAwxView';
 import { useDeleteCredentials } from './useDeleteCredentials';
 
 export function useCredentialToolbarActions(view: IAwxView<Credential>) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const deleteCredentials = useDeleteCredentials(view.unselectItemsAndRefresh);
   const toolbarActions = useMemo<IPageAction<Credential>[]>(
     () => [
@@ -22,7 +26,7 @@ export function useCredentialToolbarActions(view: IAwxView<Credential>) {
         isPinned: true,
         icon: PlusIcon,
         label: t('Create credential'),
-        onClick: () => navigate(RouteObj.CreateCredential),
+        onClick: () => pageNavigate(AwxRoute.CreateCredential),
       },
       { type: PageActionType.Seperator },
       {
@@ -34,7 +38,7 @@ export function useCredentialToolbarActions(view: IAwxView<Credential>) {
         isDanger: true,
       },
     ],
-    [navigate, deleteCredentials, t]
+    [pageNavigate, deleteCredentials, t]
   );
   return toolbarActions;
 }

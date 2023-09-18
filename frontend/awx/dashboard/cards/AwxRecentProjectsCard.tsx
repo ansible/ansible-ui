@@ -1,16 +1,17 @@
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import {
   PageTable,
   useColumnsWithoutExpandedRow,
   useColumnsWithoutSort,
+  usePageNavigate,
   useVisibleModalColumns,
 } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
 import { RouteObj } from '../../../common/Routes';
 import { useModifiedColumn } from '../../../common/columns';
+import { AwxRoute } from '../../AwxRoutes';
 import { Project } from '../../interfaces/Project';
 import { useProjectsColumns } from '../../resources/projects/hooks/useProjectsColumns';
 import { IAwxView } from '../../useAwxView';
@@ -21,7 +22,7 @@ export function AwxRecentProjectsCard(props: {
 }) {
   const { view, showEmptyStateNonAdmin } = props;
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const modifiedColumn = useModifiedColumn();
 
   let columns = useProjectsColumns();
@@ -65,7 +66,7 @@ export function AwxRecentProjectsCard(props: {
           emptyStateTitle={t('There are currently no projects')}
           emptyStateDescription={t('Create a project by clicking the button below.')}
           emptyStateButtonText={t('Create project')}
-          emptyStateButtonClick={() => navigate(RouteObj.CreateProject)}
+          emptyStateButtonClick={() => pageNavigate(AwxRoute.CreateProject)}
           {...view}
           compact
           itemCount={view.itemCount !== undefined ? Math.min(view.itemCount, 7) : undefined}

@@ -2,17 +2,22 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { BanIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { RouteObj } from '../../../../common/Routes';
+import {
+  IPageAction,
+  PageActionSelection,
+  PageActionType,
+  useGetPageUrl,
+} from '../../../../../framework';
 import { useOptions } from '../../../../common/crud/useOptions';
+import { AwxRoute } from '../../../AwxRoutes';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { Project } from '../../../interfaces/Project';
 import { useCancelProjects } from './useCancelProjects';
 import { useDeleteProjects } from './useDeleteProjects';
 
-import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
-
 export function useProjectToolbarActions(onComplete: (projects: Project[]) => void) {
   const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
   const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/v2/projects/');
   const canCreateProject = Boolean(data && data.actions && data.actions['POST']);
 
@@ -33,7 +38,7 @@ export function useProjectToolbarActions(onComplete: (projects: Project[]) => vo
           : t(
               'You do not have permission to create a project. Please contact your organization administrator if there is an issue with your access.'
             ),
-        href: RouteObj.CreateProject,
+        href: getPageUrl(AwxRoute.CreateProject),
       },
       {
         type: PageActionType.Button,
@@ -52,7 +57,7 @@ export function useProjectToolbarActions(onComplete: (projects: Project[]) => vo
         isDanger: true,
       },
     ],
-    [canCreateProject, cancelProjects, deleteProjects, t]
+    [canCreateProject, cancelProjects, deleteProjects, getPageUrl, t]
   );
 
   return ProjectToolbarActions;

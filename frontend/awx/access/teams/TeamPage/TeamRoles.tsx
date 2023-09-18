@@ -3,14 +3,14 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { PlusIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   PageTable,
+  usePageNavigate,
 } from '../../../../../framework';
-import { RouteObj } from '../../../../common/Routes';
+import { AwxRoute } from '../../../AwxRoutes';
 import { Role } from '../../../interfaces/Role';
 import { Team } from '../../../interfaces/Team';
 import { useAwxView } from '../../../useAwxView';
@@ -21,7 +21,7 @@ export function TeamRoles(props: { team: Team }) {
   const { t } = useTranslation();
   const toolbarFilters = useRolesFilters();
   const tableColumns = useRolesColumns();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const view = useAwxView<Role>({
     url: `/api/v2/teams/${team.id}/roles/`,
     toolbarFilters,
@@ -37,7 +37,7 @@ export function TeamRoles(props: { team: Team }) {
         isPinned: true,
         icon: PlusIcon,
         label: t('Add role to team'),
-        onClick: () => navigate(RouteObj.AddRolesToTeam.replace(':id', team.id.toString())),
+        onClick: () => pageNavigate(AwxRoute.AddRolesToTeam, { params: { id: team.id } }),
       },
       { type: PageActionType.Seperator },
       {
@@ -49,7 +49,7 @@ export function TeamRoles(props: { team: Team }) {
         isDanger: true,
       },
     ],
-    [navigate, t, team.id]
+    [pageNavigate, t, team.id]
   );
   const rowActions = useMemo<IPageAction<Role>[]>(
     () => [
@@ -78,7 +78,7 @@ export function TeamRoles(props: { team: Team }) {
       emptyStateDescription={t('To get started, add roles to the team.')}
       emptyStateButtonText={t('Add role to team')}
       emptyStateButtonClick={() =>
-        navigate(RouteObj.AddRolesToTeam.replace(':id', team.id.toString()))
+        pageNavigate(AwxRoute.AddRolesToTeam, { params: { id: team.id } })
       }
       {...view}
     />

@@ -18,6 +18,8 @@ import {
   PageHeader,
   PageLayout,
   PageTable,
+  useGetPageUrl,
+  usePageNavigate,
 } from '../../../../framework';
 import { usePersistentFilters } from '../../../common/PersistentFilters';
 import { RouteObj } from '../../../common/Routes';
@@ -28,6 +30,7 @@ import {
   useModifiedColumn,
   useNameColumn,
 } from '../../../common/columns';
+import { AwxRoute } from '../../AwxRoutes';
 import {
   useCreatedByToolbarFilter,
   useDescriptionToolbarFilter,
@@ -46,7 +49,8 @@ import { useDeleteOrganizations } from './hooks/useDeleteOrganizations';
 export function Organizations() {
   const { t } = useTranslation();
   const product: string = process.env.PRODUCT ?? t('AWX');
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
+  const getPageUrl = useGetPageUrl();
   usePersistentFilters('organizations');
   const config = useAwxConfig();
 
@@ -74,7 +78,7 @@ export function Organizations() {
         variant: ButtonVariant.primary,
         icon: PlusIcon,
         label: t('Create organization'),
-        href: RouteObj.CreateOrganization,
+        href: getPageUrl(AwxRoute.CreateOrganization),
       },
       { type: PageActionType.Seperator },
       {
@@ -103,6 +107,7 @@ export function Organizations() {
     ],
     [
       t,
+      getPageUrl,
       deleteOrganizations,
       selectUsersAddOrganizations,
       view.selectedItems,
@@ -119,7 +124,7 @@ export function Organizations() {
         icon: EditIcon,
         label: t('Edit organization'),
         href: (organization) => {
-          return RouteObj.EditOrganization.replace(':id', organization.id.toString());
+          return getPageUrl(AwxRoute.EditOrganization, { params: { id: organization.id } });
         },
       },
       { type: PageActionType.Seperator },
@@ -148,7 +153,13 @@ export function Organizations() {
       },
     ];
     return actions;
-  }, [t, selectUsersAddOrganizations, selectUsersRemoveOrganizations, deleteOrganizations]);
+  }, [
+    t,
+    getPageUrl,
+    selectUsersAddOrganizations,
+    selectUsersRemoveOrganizations,
+    deleteOrganizations,
+  ]);
 
   return (
     <PageLayout>
@@ -176,7 +187,7 @@ export function Organizations() {
         emptyStateTitle={t('No organizations yet')}
         emptyStateDescription={t('To get started, create an organization.')}
         emptyStateButtonText={t('Create organization')}
-        emptyStateButtonClick={() => navigate(RouteObj.CreateOrganization)}
+        emptyStateButtonClick={() => pageNavigate(AwxRoute.CreateOrganization)}
         {...view}
         defaultSubtitle={t('Organization')}
       />

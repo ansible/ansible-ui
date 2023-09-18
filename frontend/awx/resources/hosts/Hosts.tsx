@@ -12,6 +12,7 @@ import {
   PageHeader,
   PageLayout,
   PageTable,
+  usePageNavigate,
 } from '../../../../framework';
 import { RouteObj } from '../../../common/Routes';
 import {
@@ -20,6 +21,7 @@ import {
   useModifiedColumn,
   useNameColumn,
 } from '../../../common/columns';
+import { AwxRoute } from '../../AwxRoutes';
 import {
   useCreatedByToolbarFilter,
   useDescriptionToolbarFilter,
@@ -35,7 +37,7 @@ import { useDeleteHosts } from './useDeleteHosts';
 export function Hosts() {
   const { t } = useTranslation();
   const product: string = process.env.PRODUCT ?? t('AWX');
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const toolbarFilters = useHostsFilters();
   const tableColumns = useHostsColumns();
   const view = useAwxView<AwxHost>({ url: '/api/v2/hosts/', toolbarFilters, tableColumns });
@@ -51,7 +53,7 @@ export function Hosts() {
         isPinned: true,
         icon: PlusIcon,
         label: t('Create host'),
-        onClick: () => navigate(RouteObj.CreateHost),
+        onClick: () => pageNavigate(AwxRoute.CreateHost),
       },
       { type: PageActionType.Seperator },
       {
@@ -63,7 +65,7 @@ export function Hosts() {
         isDanger: true,
       },
     ],
-    [navigate, deleteHosts, t]
+    [pageNavigate, deleteHosts, t]
   );
 
   const rowActions = useMemo<IPageAction<AwxHost>[]>(
@@ -74,7 +76,7 @@ export function Hosts() {
         isPinned: true,
         icon: EditIcon,
         label: t('Edit host'),
-        onClick: (host) => navigate(RouteObj.EditHost.replace(':id', host.id.toString())),
+        onClick: (host) => pageNavigate(AwxRoute.EditHost, { params: { id: host.id } }),
       },
       { type: PageActionType.Seperator },
       {
@@ -86,7 +88,7 @@ export function Hosts() {
         isDanger: true,
       },
     ],
-    [navigate, deleteHosts, t]
+    [pageNavigate, deleteHosts, t]
   );
 
   return (
@@ -119,7 +121,7 @@ export function Hosts() {
         emptyStateTitle={t('No hosts yet')}
         emptyStateDescription={t('To get started, create an host.')}
         emptyStateButtonText={t('Create host')}
-        emptyStateButtonClick={() => navigate(RouteObj.CreateHost)}
+        emptyStateButtonClick={() => pageNavigate(AwxRoute.CreateHost)}
         {...view}
         defaultSubtitle={t('Host')}
       />
