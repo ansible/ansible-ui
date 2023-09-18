@@ -10,6 +10,9 @@ import {
 import { StatusCell } from '../../../common/Status';
 import { EdaRoute } from '../../EdaRoutes';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
+import { Status0E7Enum } from '../../interfaces/generated/eda-api';
+import { Label } from '@patternfly/react-core';
+import { InfoCircleIcon } from '@patternfly/react-icons';
 
 export function useRulebookActivationColumns() {
   const { t } = useTranslation();
@@ -18,14 +21,17 @@ export function useRulebookActivationColumns() {
     () => [
       {
         header: t('Name'),
-        cell: (rulebookActivation) => (
-          <TextCell
-            text={rulebookActivation.name}
-            to={getPageUrl(EdaRoute.RulebookActivationPage, {
-              params: { id: rulebookActivation.id },
-            })}
-          />
-        ),
+        cell: (rulebookActivation) =>
+          rulebookActivation?.status !== Status0E7Enum.Deleting ? (
+            <TextCell
+              text={rulebookActivation.name}
+              to={getPageUrl(EdaRoute.RulebookActivationPage, {
+                params: { id: rulebookActivation.id },
+              })}
+            />
+          ) : (
+            <TextCell text={rulebookActivation.name} />
+          ),
         card: 'name',
         list: 'name',
       },
@@ -40,7 +46,14 @@ export function useRulebookActivationColumns() {
       },
       {
         header: t('Activation status'),
-        cell: (activation) => <StatusCell status={activation?.status} />,
+        cell: (activation) =>
+          activation?.status === Status0E7Enum.Deleting ? (
+            <Label color="red" icon={<InfoCircleIcon />}>
+              {t('Pending delete')}
+            </Label>
+          ) : (
+            <StatusCell status={activation?.status} />
+          ),
       },
       {
         header: t('Number of rules'),

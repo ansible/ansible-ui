@@ -97,6 +97,7 @@ function getColor(status: string) {
     case 'successful':
     case 'success':
       return 'green';
+    case 'deleting':
     case 'denied':
     case 'deprovision-fail':
     case 'error':
@@ -119,7 +120,6 @@ function getColor(status: string) {
       return 'orange';
     case 'stopped':
       return undefined;
-    case 'deleting':
     case 'deprovisioning':
     case 'disabled':
     case 'provisioning':
@@ -144,6 +144,7 @@ function getIcon(status: string) {
     case 'new':
     case 'never-updated':
       return InfoCircleIcon;
+    case 'deleting':
     case 'deprovision-fail':
     case 'error':
     case 'failed':
@@ -169,7 +170,6 @@ function getIcon(status: string) {
     case 'provisioning':
     case 'skipped':
       return MinusCircleIcon;
-    case 'deleting':
     case 'starting':
     case 'stopping':
       return HourglassStartIcon;
