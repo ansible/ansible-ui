@@ -10,15 +10,15 @@ import {
 import { CubesIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   PageTable,
+  usePageNavigate,
 } from '../../../../../framework';
-import { RouteObj } from '../../../../common/Routes';
+import { AwxRoute } from '../../../AwxRoutes';
 import { Role } from '../../../interfaces/Role';
 import { User } from '../../../interfaces/User';
 import { useAwxView } from '../../../useAwxView';
@@ -34,7 +34,7 @@ export function UserRoles(props: { user: User }) {
   const { t } = useTranslation();
   const toolbarFilters = useRolesFilters();
   const tableColumns = useRolesColumns();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const view = useAwxView<Role>({
     url: `/api/v2/users/${user.id}/roles/`,
     toolbarFilters,
@@ -50,7 +50,7 @@ export function UserRoles(props: { user: User }) {
         isPinned: true,
         icon: PlusIcon,
         label: t('Add role to user'),
-        onClick: () => navigate(RouteObj.AddRolesToUser.replace(':id', user.id.toString())),
+        onClick: () => pageNavigate(AwxRoute.AddRolesToUser, { params: { id: user.id } }),
       },
       { type: PageActionType.Seperator },
       {
@@ -62,7 +62,7 @@ export function UserRoles(props: { user: User }) {
         isDanger: true,
       },
     ],
-    [navigate, t, user.id]
+    [pageNavigate, t, user.id]
   );
   const rowActions = useMemo<IPageAction<Role>[]>(
     () => [

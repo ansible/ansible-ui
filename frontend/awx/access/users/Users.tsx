@@ -9,7 +9,6 @@ import {
 } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import {
   IPageAction,
   PageActionSelection,
@@ -17,10 +16,12 @@ import {
   PageHeader,
   PageLayout,
   PageTable,
+  useGetPageUrl,
+  usePageNavigate,
 } from '../../../../framework';
 import { usePersistentFilters } from '../../../common/PersistentFilters';
-import { RouteObj } from '../../../common/Routes';
 import { useOptions } from '../../../common/crud/useOptions';
+import { AwxRoute } from '../../AwxRoutes';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
@@ -38,7 +39,8 @@ import { useUsersFilters } from './hooks/useUsersFilters';
 export function Users() {
   const { t } = useTranslation();
   const product: string = process.env.PRODUCT ?? t('AWX');
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
+  const getPageUrl = useGetPageUrl();
   usePersistentFilters('users');
   const config = useAwxConfig();
 
@@ -72,7 +74,7 @@ export function Users() {
           : t(
               'You do not have permission to create a user. Please contact your system administrator if there is an issue with your access.'
             ),
-        href: RouteObj.CreateUser,
+        href: getPageUrl(AwxRoute.CreateUser),
       },
       { type: PageActionType.Seperator },
       {
@@ -116,13 +118,14 @@ export function Users() {
     ],
     [
       t,
+      canCreateUser,
+      getPageUrl,
       deleteUsers,
       selectTeamsAddUsers,
       view.selectedItems,
       selectTeamsRemoveUsers,
       selectOrganizationsAddUsers,
       selectOrganizationsRemoveUsers,
-      canCreateUser,
     ]
   );
 
@@ -145,7 +148,7 @@ export function Users() {
         icon: EditIcon,
         label: t('Edit user'),
         isDisabled: (user: User) => cannotEditUser(user),
-        onClick: (user) => navigate(RouteObj.EditUser.replace(':id', user.id.toString())),
+        onClick: (user) => pageNavigate(AwxRoute.EditUser, { params: { id: user.id } }),
       },
       { type: PageActionType.Seperator },
       {
@@ -190,7 +193,7 @@ export function Users() {
     ];
   }, [
     deleteUsers,
-    navigate,
+    pageNavigate,
     selectOrganizationsAddUsers,
     selectOrganizationsRemoveUsers,
     selectTeamsAddUsers,
@@ -235,7 +238,7 @@ export function Users() {
         }
         emptyStateIcon={canCreateUser ? undefined : CubesIcon}
         emptyStateButtonText={canCreateUser ? t('Create user') : undefined}
-        emptyStateButtonClick={canCreateUser ? () => navigate(RouteObj.CreateUser) : undefined}
+        emptyStateButtonClick={canCreateUser ? () => pageNavigate(AwxRoute.CreateUser) : undefined}
         {...view}
       />
     </PageLayout>
@@ -245,11 +248,9 @@ export function Users() {
 /* deprecated (see access/organizations/OrganizationPage/OrganizationAccess.tsx) */
 export function AccessTable(props: { url: string }) {
   const { t } = useTranslation();
-
   const toolbarFilters = useUsersFilters();
-
   const tableColumns = useUsersColumns();
-
+  const getPageUrl = useGetPageUrl();
   const view = useAwxView<User>({
     url: props.url,
     toolbarFilters,
@@ -267,7 +268,7 @@ export function AccessTable(props: { url: string }) {
         icon: PlusIcon,
         label: t('Add users'),
         shortLabel: t('Add access'),
-        href: RouteObj.CreateUser,
+        href: getPageUrl(AwxRoute.CreateUser),
       },
       {
         type: PageActionType.Button,
@@ -281,7 +282,7 @@ export function AccessTable(props: { url: string }) {
         isDanger: true,
       },
     ],
-    [t]
+    [getPageUrl, t]
   );
 
   const rowActions = useMemo<IPageAction<User>[]>(
@@ -297,7 +298,7 @@ export function AccessTable(props: { url: string }) {
     [t]
   );
 
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
 
   return (
     <PageTable<User>
@@ -310,7 +311,7 @@ export function AccessTable(props: { url: string }) {
       emptyStateTitle={t('No users yet')}
       emptyStateDescription={t('To get started, create a user.')}
       emptyStateButtonText={t('Create user')}
-      emptyStateButtonClick={() => navigate(RouteObj.CreateUser)}
+      emptyStateButtonClick={() => pageNavigate(AwxRoute.CreateUser)}
       {...view}
     />
   );

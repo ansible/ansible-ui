@@ -6,6 +6,7 @@ import {
   removeLeadingSlash,
 } from '../../framework/PageNavigation/PageNavigationItem';
 import { PageNotImplemented } from '../common/PageNotImplemented';
+import { UnderDevelopment } from '../eda/under-development/UnderDevelopment';
 import { AwxLogin } from './AwxLogin';
 import { AwxRoute } from './AwxRoutes';
 import { CreateOrganization, EditOrganization } from './access/organizations/OrganizationForm';
@@ -155,7 +156,7 @@ export function useAwxNavigation() {
                     path: 'jobs',
                     children: [
                       {
-                        id: AwxRoute.CreateTemplate,
+                        id: AwxRoute.CreateJobTemplate,
                         path: 'create',
                         element: <CreateJobTemplate />,
                       },
@@ -458,7 +459,27 @@ export function useAwxNavigation() {
                 id: AwxRoute.InstanceGroups,
                 label: t('Instance Groups'),
                 path: 'instance-groups',
-                element: <InstanceGroups />,
+                children: [
+                  {
+                    id: AwxRoute.CreateInstanceGroup,
+                    path: 'create',
+                    element: <UnderDevelopment />,
+                  },
+                  {
+                    id: AwxRoute.EditInstanceGroup,
+                    path: ':id/edit',
+                    element: <UnderDevelopment />,
+                  },
+                  {
+                    id: AwxRoute.InstanceGroupPage,
+                    path: ':id/*',
+                    element: <UnderDevelopment />,
+                  },
+                  {
+                    path: '',
+                    element: <InstanceGroups />,
+                  },
+                ],
               },
               {
                 id: AwxRoute.Instances,

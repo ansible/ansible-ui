@@ -2,9 +2,13 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { CopyIcon, EditIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
-import { RouteObj } from '../../../../common/Routes';
+import {
+  IPageAction,
+  PageActionSelection,
+  PageActionType,
+  usePageNavigate,
+} from '../../../../../framework';
+import { AwxRoute } from '../../../AwxRoutes';
 import { Inventory } from '../../../interfaces/Inventory';
 import { useCopyInventory } from './useCopyInventory';
 import { useDeleteInventories } from './useDeleteInventories';
@@ -19,7 +23,7 @@ export function useInventoryActions({
   onInventoryCopied = () => null,
 }: InventoryActionOptions) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const deleteInventories = useDeleteInventories(onInventoriesDeleted);
   const copyInventory = useCopyInventory(onInventoryCopied);
 
@@ -52,7 +56,7 @@ export function useInventoryActions({
         label: t('Edit inventory'),
         isDisabled: (inventory: Inventory) => cannotEditInventory(inventory),
         onClick: (inventory) =>
-          navigate(RouteObj.EditInventory.replace(':id', inventory.id.toString())),
+          pageNavigate(AwxRoute.EditInventory, { params: { id: inventory.id } }),
       },
       {
         type: PageActionType.Button,
@@ -73,5 +77,5 @@ export function useInventoryActions({
         isDanger: true,
       },
     ];
-  }, [deleteInventories, copyInventory, navigate, t]);
+  }, [deleteInventories, copyInventory, pageNavigate, t]);
 }

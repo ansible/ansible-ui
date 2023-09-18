@@ -8,7 +8,7 @@ import {
 import { EditIcon, HeartbeatIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import {
   BytesCell,
   CapacityCell,
@@ -22,9 +22,9 @@ import {
   PageHeader,
   PageLayout,
   useGetPageUrl,
+  usePageNavigate,
 } from '../../../../framework';
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
-import { RouteObj } from '../../../common/Routes';
 import { StatusCell } from '../../../common/Status';
 import { useGetItem } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
@@ -40,7 +40,7 @@ export function InstanceDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const { error, data: instance, refresh } = useGetItem<Instance>('/api/v2/instances', params.id);
-  const history = useNavigate();
+  const pageNavigate = usePageNavigate();
   const postRequest = usePostRequest();
   const itemActions: IPageAction<Instance>[] = useMemo(() => {
     const itemActions: IPageAction<Instance>[] = [
@@ -51,8 +51,7 @@ export function InstanceDetails() {
         isPinned: true,
         icon: EditIcon,
         label: t('Edit instance'),
-        onClick: (instance) =>
-          history(RouteObj.EditInstance.replace(':id', instance?.id.toString() ?? '')),
+        onClick: (instance) => pageNavigate(AwxRoute.EditInstance, { params: { id: instance.id } }),
       },
       {
         type: PageActionType.Button,
@@ -67,7 +66,7 @@ export function InstanceDetails() {
       },
     ];
     return itemActions;
-  }, [t, history, postRequest, instance?.id]);
+  }, [t, pageNavigate, postRequest, instance?.id]);
 
   const getPageUrl = useGetPageUrl();
 

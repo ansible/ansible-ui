@@ -1,11 +1,10 @@
 import { CubesIcon } from '@patternfly/react-icons';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { PageHeader, PageLayout, PageTable } from '../../../../framework';
+import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../../framework';
 import { usePersistentFilters } from '../../../common/PersistentFilters';
-import { RouteObj } from '../../../common/Routes';
 import { useOptions } from '../../../common/crud/useOptions';
+import { AwxRoute } from '../../AwxRoutes';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
 import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
@@ -20,7 +19,7 @@ import { useProjectsFilters } from './hooks/useProjectsFilters';
 export function Projects() {
   const { t } = useTranslation();
   const product: string = process.env.PRODUCT ?? t('AWX');
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const toolbarFilters = useProjectsFilters();
   const tableColumns = useProjectsColumns();
   const view = useAwxView<Project>({
@@ -99,7 +98,7 @@ export function Projects() {
         emptyStateIcon={canCreateProject ? undefined : CubesIcon}
         emptyStateButtonText={canCreateProject ? t('Create project') : undefined}
         emptyStateButtonClick={
-          canCreateProject ? () => navigate(RouteObj.CreateProject) : undefined
+          canCreateProject ? () => pageNavigate(AwxRoute.CreateProject) : undefined
         }
         {...view}
         defaultSubtitle={t('Project')}
