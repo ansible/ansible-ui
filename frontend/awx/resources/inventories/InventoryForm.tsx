@@ -1,7 +1,13 @@
 import { FieldValues } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { PageFormCheckbox, PageHeader, PageLayout, useGetPageUrl } from '../../../../framework';
+import {
+  PageFormCheckbox,
+  PageFormDataEditor,
+  PageHeader,
+  PageLayout,
+  useGetPageUrl,
+} from '../../../../framework';
 import { PageFormGroup } from '../../../../framework/PageForm/Inputs/PageFormGroup';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
@@ -192,6 +198,11 @@ function InventoryInputs() {
           `Optional labels that describe this inventory, such as 'dev' or 'test'. Labels can be used to group and filter inventories and completed jobs.`
         )}
         name="inventory.summary_fields.labels.results"
+      />
+      <PageFormDataEditor
+        toggleLanguages={['yaml', 'json']}
+        name="inventory.variables"
+        label={t('Variables')}
       />
       <PageFormGroup
         label={t('Options')}
