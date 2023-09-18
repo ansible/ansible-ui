@@ -3,11 +3,11 @@ import { useNavigate, useParams } from 'react-router-dom';
 import useSWR, { useSWRConfig } from 'swr';
 import { PageFormCheckbox, PageHeader, PageLayout, useGetPageUrl } from '../../../../framework';
 import { PageFormSlider } from '../../../../framework/PageForm/Inputs/PageFormSlider';
-import { PageForm, PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
+import { PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
 import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data';
+import { AwxPageForm } from '../../AwxPageForm';
 import { AwxRoute } from '../../AwxRoutes';
 import { Instance } from '../../interfaces/Instance';
-import { getAwxError } from '../../useAwxView';
 
 export function EditInstance() {
   const { t } = useTranslation();
@@ -23,17 +23,13 @@ export function EditInstance() {
 
   const { cache } = useSWRConfig();
 
-  const onSubmit: PageFormSubmitHandler<Instance> = async (editedInstance, setError) => {
-    try {
-      editedInstance.capacity_adjustment = (Math.round(
-        (editedInstance.capacity_adjustment as unknown as number) * 100
-      ) / 100) as unknown as string;
-      await requestPatch<Instance>(`/api/v2/instances/${id}/`, editedInstance);
-      (cache as unknown as { clear: () => void }).clear?.();
-      navigate(-1);
-    } catch (err) {
-      setError(getAwxError(err));
-    }
+  const onSubmit: PageFormSubmitHandler<Instance> = async (editedInstance) => {
+    editedInstance.capacity_adjustment = (Math.round(
+      (editedInstance.capacity_adjustment as unknown as number) * 100
+    ) / 100) as unknown as string;
+    await requestPatch<Instance>(`/api/v2/instances/${id}/`, editedInstance);
+    (cache as unknown as { clear: () => void }).clear?.();
+    navigate(-1);
   };
   const onCancel = () => navigate(-1);
 
@@ -60,7 +56,7 @@ export function EditInstance() {
             { label: instance.hostname },
           ]}
         />
-        <PageForm<Instance>
+        <AwxPageForm<Instance>
           submitText={t('Save instance')}
           onSubmit={onSubmit}
           cancelText={t('Cancel')}
@@ -78,7 +74,7 @@ export function EditInstance() {
             valueLabel={t('forks')}
           />
           <PageFormCheckbox<Instance> name="enabled" label={t('Enabled')} />
-        </PageForm>
+        </AwxPageForm>
       </PageLayout>
     );
   }
