@@ -2,7 +2,6 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { EditIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import {
   IPageAction,
   PageActionSelection,
@@ -10,9 +9,11 @@ import {
   PageHeader,
   PageLayout,
   PageTable,
+  usePageNavigate,
 } from '../../../../framework';
 import { usePersistentFilters } from '../../../common/PersistentFilters';
 import { RouteObj } from '../../../common/Routes';
+import { AwxRoute } from '../../AwxRoutes';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
 import { JobTemplate } from '../../interfaces/JobTemplate';
@@ -24,7 +25,7 @@ import { useTemplateFilters } from './hooks/useTemplateFilters';
 
 export function Templates() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const toolbarFilters = useTemplateFilters();
   const tableColumns = useTemplateColumns();
   const view = useAwxView<JobTemplate | WorkflowJobTemplate>({
@@ -54,13 +55,13 @@ export function Templates() {
             type: PageActionType.Button,
             selection: PageActionSelection.None,
             label: t('Create job template'),
-            onClick: () => navigate(RouteObj.CreateJobTemplate),
+            onClick: () => pageNavigate(AwxRoute.CreateJobTemplate),
           },
           {
             type: PageActionType.Button,
             selection: PageActionSelection.None,
             label: t('Create workflow job template'),
-            onClick: () => navigate(RouteObj.CreateWorkflowJobTemplate),
+            onClick: () => pageNavigate(AwxRoute.CreateWorkflowJobTemplate),
           },
         ],
       },
@@ -73,7 +74,7 @@ export function Templates() {
         isDanger: true,
       },
     ],
-    [deleteTemplates, navigate, t]
+    [deleteTemplates, pageNavigate, t]
   );
 
   const rowActions = useMemo<IPageAction<JobTemplate | WorkflowJobTemplate>[]>(
@@ -141,7 +142,7 @@ export function Templates() {
         emptyStateTitle={t('No templates yet')}
         emptyStateDescription={t('To get started, create a template.')}
         emptyStateButtonText={t('Create template')}
-        emptyStateButtonClick={() => navigate(RouteObj.CreateJobTemplate)}
+        emptyStateButtonClick={() => pageNavigate(AwxRoute.CreateJobTemplate)}
         {...view}
         defaultSubtitle={t('Template')}
       />

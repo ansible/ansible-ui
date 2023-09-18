@@ -2,10 +2,14 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
-import { RouteObj } from '../../../../common/Routes';
+import {
+  IPageAction,
+  PageActionSelection,
+  PageActionType,
+  usePageNavigate,
+} from '../../../../../framework';
 import { useOptions } from '../../../../common/crud/useOptions';
+import { AwxRoute } from '../../../AwxRoutes';
 import { Inventory } from '../../../interfaces/Inventory';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { IAwxView } from '../../../useAwxView';
@@ -13,7 +17,7 @@ import { useDeleteInventories } from './useDeleteInventories';
 
 export function useInventoriesToolbarActions(view: IAwxView<Inventory>) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const paegNavigate = usePageNavigate();
   const deleteInventories = useDeleteInventories(view.unselectItemsAndRefresh);
   const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/v2/inventories/');
   const canCreateInventory = Boolean(data && data.actions && data.actions['POST']);
@@ -38,19 +42,19 @@ export function useInventoriesToolbarActions(view: IAwxView<Inventory>) {
             type: PageActionType.Button,
             selection: PageActionSelection.None,
             label: t('Create inventory'),
-            onClick: () => navigate(RouteObj.CreateInventory),
+            onClick: () => paegNavigate(AwxRoute.CreateInventory),
           },
           {
             type: PageActionType.Button,
             selection: PageActionSelection.None,
             label: t('Create smart inventory'),
-            onClick: () => navigate(RouteObj.CreateSmartInventory),
+            onClick: () => paegNavigate(AwxRoute.CreateSmartInventory),
           },
           {
             type: PageActionType.Button,
             selection: PageActionSelection.None,
             label: t('Create constructed inventory'),
-            onClick: () => navigate(RouteObj.CreateConstructedInventory),
+            onClick: () => paegNavigate(AwxRoute.CreateConstructedInventory),
           },
         ],
       },
@@ -66,5 +70,5 @@ export function useInventoriesToolbarActions(view: IAwxView<Inventory>) {
     ];
 
     return actions;
-  }, [canCreateInventory, deleteInventories, navigate, t]);
+  }, [canCreateInventory, deleteInventories, paegNavigate, t]);
 }

@@ -2,10 +2,14 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { EditIcon, MinusCircleIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
-import { RouteObj } from '../../../../common/Routes';
+import {
+  IPageAction,
+  PageActionSelection,
+  PageActionType,
+  usePageNavigate,
+} from '../../../../../framework';
 import { useActiveUser } from '../../../../common/useActiveUser';
+import { AwxRoute } from '../../../AwxRoutes';
 import { Team } from '../../../interfaces/Team';
 import { useSelectAndRemoveUsersFromTeam } from '../../users/hooks/useSelectAndRemoveUsersFromTeam';
 import { useSelectUsersAddTeams } from '../../users/hooks/useSelectUsersAddTeams';
@@ -17,7 +21,7 @@ export function useTeamActions(options: {
 }) {
   const { onTeamsDeleted } = options;
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const deleteTeams = useDeleteTeams(onTeamsDeleted);
   const selectUsersAddTeams = useSelectUsersAddTeams();
   const selectAndRemoveUsersFromTeam = useSelectAndRemoveUsersFromTeam();
@@ -54,7 +58,7 @@ export function useTeamActions(options: {
         icon: EditIcon,
         label: t('Edit team'),
         isDisabled: (team: Team) => cannotEditTeam(team),
-        onClick: (team) => navigate(RouteObj.EditTeam.replace(':id', team.id.toString())),
+        onClick: (team) => pageNavigate(AwxRoute.EditTeam, { params: { id: team.id } }),
       },
       { type: PageActionType.Seperator },
       {
@@ -88,7 +92,7 @@ export function useTeamActions(options: {
   }, [
     activeUser?.is_superuser,
     deleteTeams,
-    navigate,
+    pageNavigate,
     selectAndRemoveUsersFromTeam,
     selectUsersAddTeams,
     t,

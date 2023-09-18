@@ -1,10 +1,9 @@
 import { CubesIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { PageHeader, PageLayout, PageTable } from '../../../../framework';
+import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../../framework';
 import { usePersistentFilters } from '../../../common/PersistentFilters';
-import { RouteObj } from '../../../common/Routes';
 import { useOptions } from '../../../common/crud/useOptions';
+import { AwxRoute } from '../../AwxRoutes';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
@@ -18,7 +17,7 @@ import { useTeamsFilters } from './hooks/useTeamsFilters';
 
 export function Teams() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const toolbarFilters = useTeamsFilters();
   const tableColumns = useTeamsColumns();
   const view = useAwxView<Team>({ url: '/api/v2/teams/', toolbarFilters, tableColumns });
@@ -72,7 +71,7 @@ export function Teams() {
         }
         emptyStateIcon={canCreateTeam ? undefined : CubesIcon}
         emptyStateButtonText={canCreateTeam ? t('Create team') : undefined}
-        emptyStateButtonClick={canCreateTeam ? () => navigate(RouteObj.CreateTeam) : undefined}
+        emptyStateButtonClick={canCreateTeam ? () => pageNavigate(AwxRoute.CreateTeam) : undefined}
         {...view}
         defaultSubtitle={t('Team')}
       />

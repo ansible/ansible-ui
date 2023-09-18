@@ -1,16 +1,17 @@
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import {
   PageTable,
   useColumnsWithoutExpandedRow,
   useColumnsWithoutSort,
+  usePageNavigate,
   useVisibleModalColumns,
 } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
 import { RouteObj } from '../../../common/Routes';
 import { useModifiedColumn } from '../../../common/columns';
+import { AwxRoute } from '../../AwxRoutes';
 import { Inventory } from '../../interfaces/Inventory';
 import { useInventoriesColumns } from '../../resources/inventories/hooks/useInventoriesColumns';
 import { IAwxView } from '../../useAwxView';
@@ -21,7 +22,7 @@ export function AwxRecentInventoriesCard(props: {
 }) {
   const { view, showEmptyStateNonAdmin } = props;
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const modifiedColumn = useModifiedColumn();
 
   let columns = useInventoriesColumns();
@@ -65,7 +66,7 @@ export function AwxRecentInventoriesCard(props: {
           emptyStateTitle={t('There are currently no inventories')}
           emptyStateDescription={t('Create a inventory by clicking the button below.')}
           emptyStateButtonText={t('Create inventory')}
-          emptyStateButtonClick={() => navigate(RouteObj.CreateInventory)}
+          emptyStateButtonClick={() => pageNavigate(AwxRoute.CreateInventory)}
           {...view}
           compact
           itemCount={view.itemCount !== undefined ? Math.min(view.itemCount, 7) : undefined}

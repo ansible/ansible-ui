@@ -1,34 +1,33 @@
 import { Tooltip } from '@patternfly/react-core';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import {
   BytesCell,
   CapacityCell,
   ColumnTableOption,
   DateTimeCell,
   ITableColumn,
+  usePageNavigate,
 } from '../../../../../framework';
 import { Dotted } from '../../../../../framework/components/Dotted';
 import { capitalizeFirstLetter } from '../../../../../framework/utils/strings';
-import { RouteObj } from '../../../../common/Routes';
 import { StatusCell } from '../../../../common/Status';
 import { useCreatedColumn, useModifiedColumn, useNameColumn } from '../../../../common/columns';
+import { AwxRoute } from '../../../AwxRoutes';
 import { Instance } from '../../../interfaces/Instance';
 import { useNodeTypeTooltip } from './useNodeTypeTooltip';
 
 export function useInstancesColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
 
   const toolTipMap: {
     [item: string]: string;
   } = useNodeTypeTooltip();
 
   const nameClick = useCallback(
-    (instance: Instance) =>
-      navigate(RouteObj.InstanceDetails.replace(':id', instance.id.toString())),
-    [navigate]
+    (instance: Instance) => pageNavigate(AwxRoute.InstancePage, { params: { id: instance.id } }),
+    [pageNavigate]
   );
 
   const makeReadable = useCallback(

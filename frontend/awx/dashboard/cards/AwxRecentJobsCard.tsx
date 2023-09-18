@@ -11,7 +11,6 @@ import {
 } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
 import { useGetPageUrl } from '../../../../framework/PageNavigation/useGetPageUrl';
-import { RouteObj } from '../../../common/Routes';
 import { AwxRoute } from '../../AwxRoutes';
 import { Job } from '../../interfaces/Job';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
@@ -74,7 +73,7 @@ export function AwxRecentJobsCard(props: { view: IAwxView<Job>; showEmptyStateNo
           emptyStateTitle={t('There are currently no jobs')}
           emptyStateDescription={t('Create a job by clicking the button below.')}
           emptyStateButtonText={t('Create job')}
-          emptyStateButtonClick={() => navigate(RouteObj.CreateJobTemplate)}
+          emptyStateButtonClick={() => navigate(AwxRoute.CreateJobTemplate)}
           {...view}
           compact
           itemCount={view.itemCount !== undefined ? Math.min(view.itemCount, 7) : undefined}

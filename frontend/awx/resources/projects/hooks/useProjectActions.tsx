@@ -2,15 +2,15 @@ import { AlertProps, ButtonVariant } from '@patternfly/react-core';
 import { CopyIcon, EditIcon, MinusCircleIcon, SyncIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   usePageAlertToaster,
+  usePageNavigate,
 } from '../../../../../framework';
-import { RouteObj } from '../../../../common/Routes';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
+import { AwxRoute } from '../../../AwxRoutes';
 import { Project } from '../../../interfaces/Project';
 import { useCancelProjects } from './useCancelProjects';
 import { useDeleteProjects } from './useDeleteProjects';
@@ -20,7 +20,7 @@ export function useProjectActions(
   showToastMessage?: boolean
 ) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const deleteProjects = useDeleteProjects(onComplete);
   const cancelProjects = useCancelProjects();
   const alertToaster = usePageAlertToaster();
@@ -107,7 +107,7 @@ export function useProjectActions(
         icon: EditIcon,
         label: t('Edit project'),
         isDisabled: (project: Project) => cannotEditProject(project),
-        onClick: (project) => navigate(RouteObj.EditProject.replace(':id', project.id.toString())),
+        onClick: (project) => pageNavigate(AwxRoute.EditProject, { params: { id: project.id } }),
       },
       {
         type: PageActionType.Button,
@@ -149,5 +149,13 @@ export function useProjectActions(
         isDanger: true,
       },
     ];
-  }, [alertToaster, cancelProjects, deleteProjects, showToastMessage, navigate, postRequest, t]);
+  }, [
+    alertToaster,
+    cancelProjects,
+    deleteProjects,
+    showToastMessage,
+    pageNavigate,
+    postRequest,
+    t,
+  ]);
 }

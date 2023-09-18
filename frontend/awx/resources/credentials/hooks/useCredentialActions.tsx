@@ -2,16 +2,20 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { EditIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
-import { RouteObj } from '../../../../common/Routes';
+import {
+  IPageAction,
+  PageActionSelection,
+  PageActionType,
+  usePageNavigate,
+} from '../../../../../framework';
 import { cannotDeleteResource, cannotEditResource } from '../../../../common/utils/RBAChelpers';
+import { AwxRoute } from '../../../AwxRoutes';
 import { Credential } from '../../../interfaces/Credential';
 import { useDeleteCredentials } from './useDeleteCredentials';
 
 export function useCredentialActions(options?: { onDeleted: (credentials: Credential[]) => void }) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const deleteCredentials = useDeleteCredentials(options?.onDeleted);
   const rowActions = useMemo<IPageAction<Credential>[]>(
     () => [
@@ -24,7 +28,7 @@ export function useCredentialActions(options?: { onDeleted: (credentials: Creden
         label: t('Edit credential'),
         isDisabled: (credential) => cannotEditResource(credential, t),
         onClick: (credential) =>
-          navigate(RouteObj.EditCredential.replace(':id', credential.id.toString())),
+          pageNavigate(AwxRoute.EditCredential, { params: { id: credential.id } }),
       },
       { type: PageActionType.Seperator },
       {
@@ -37,7 +41,7 @@ export function useCredentialActions(options?: { onDeleted: (credentials: Creden
         isDanger: true,
       },
     ],
-    [navigate, deleteCredentials, t]
+    [pageNavigate, deleteCredentials, t]
   );
   return rowActions;
 }

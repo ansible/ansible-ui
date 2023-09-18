@@ -1,7 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
-import { RouteObj } from '../../../common/Routes';
 import { Instance } from '../../interfaces/Instance';
 import { useAwxView } from '../../useAwxView';
 import { useInstanceRowActions } from './hooks/useInstanceRowActions';
@@ -11,7 +9,6 @@ import { useInstancesFilters } from './hooks/useInstancesFilter';
 
 export function Instances() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const toolbarFilters = useInstancesFilters();
   const tableColumns = useInstancesColumns();
   const view = useAwxView<Instance>({
@@ -38,9 +35,6 @@ export function Instances() {
         rowActions={rowActions}
         errorStateTitle={t('Error loading instances')}
         emptyStateTitle={t('No instances yet')}
-        emptyStateDescription={t('To get started, create an instance.')}
-        emptyStateButtonText={t('Create instance')}
-        emptyStateButtonClick={() => navigate(RouteObj.CreateInstance)}
         {...view}
       />
     </PageLayout>

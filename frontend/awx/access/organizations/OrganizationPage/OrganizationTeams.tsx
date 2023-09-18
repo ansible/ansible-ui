@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { PageTable } from '../../../../../framework';
-import { RouteObj } from '../../../../common/Routes';
+import { PageTable, usePageNavigate } from '../../../../../framework';
+import { AwxRoute } from '../../../AwxRoutes';
 import { Organization } from '../../../interfaces/Organization';
 import { Team } from '../../../interfaces/Team';
 import { useAwxView } from '../../../useAwxView';
@@ -12,7 +11,7 @@ import { useTeamsFilters } from '../../teams/hooks/useTeamsFilters';
 export function OrganizationTeams(props: { organization: Organization }) {
   const { organization } = props;
   const { t } = useTranslation();
-  const history = useNavigate();
+  const pageHistory = usePageNavigate();
   const toolbarFilters = useTeamsFilters();
   const tableColumns = useTeamsColumns();
   const view = useAwxView<Team>({
@@ -30,7 +29,7 @@ export function OrganizationTeams(props: { organization: Organization }) {
       emptyStateTitle={t('No teams yet')}
       emptyStateDescription={t('To get started, create a team.')}
       emptyStateButtonText={t('Create team')}
-      emptyStateButtonClick={() => history(RouteObj.CreateTeam)}
+      emptyStateButtonClick={() => pageHistory(AwxRoute.CreateTeam)}
       {...view}
     />
   );
