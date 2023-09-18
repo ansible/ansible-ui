@@ -36,7 +36,6 @@ function ProjectCreateInputs() {
         placeholder={t('Enter name')}
         isRequired
         maxLength={150}
-        autoComplete="new-name"
       />
       <PageFormTextInput<EdaProjectCreate>
         name="description"
@@ -100,7 +99,6 @@ function ProjectEditInputs() {
         placeholder={t('Enter name')}
         isRequired
         maxLength={150}
-        autoComplete="new-name"
       />
       <PageFormTextInput<EdaProjectCreate>
         name="description"
