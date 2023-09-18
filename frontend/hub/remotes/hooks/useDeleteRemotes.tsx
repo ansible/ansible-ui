@@ -1,7 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../framework';
 import { nameKeyFn } from '../../../common/utils/nameKeyFn';
-import { hubAPIDelete, parsePulpIDFromURL, pulpAPI } from '../../api/utils';
+import { hubAPIDelete, parsePulpIDFromURL } from '../../api/utils';
+import { pulpAPI } from '../../api/formatPath';
 import { IRemotes } from '../Remotes';
 import { useRemoteColumns } from './useRemoteColumns';
 

@@ -11,7 +11,7 @@ import {
 } from '../../../../framework';
 import { postRequest, requestDelete, requestGet } from '../../../common/crud/Data';
 import { SigningServiceResponse } from '../../api-schemas/generated/SigningServiceResponse';
-import { hubAPI, pulpAPI } from '../../api/utils';
+import { hubAPI, pulpAPI } from '../../api/formatPath';
 import { HubContext, useHubContext } from '../../useHubContext';
 import { PulpItemsResponse } from '../../usePulpView';
 import { ExecutionEnvironment } from '../ExecutionEnvironment';

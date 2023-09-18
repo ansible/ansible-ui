@@ -16,7 +16,7 @@ import { LoadingPage } from '../../../framework/components/LoadingPage';
 import { AwxError } from '../../awx/common/AwxError';
 import { useGet } from '../../common/crud/useGet';
 import { HubRoute } from '../HubRoutes';
-import { pulpAPI } from '../api/utils';
+import { pulpAPI } from '../api/formatPath';
 import { Repository } from '../repositories/Repository';
 import { PulpItemsResponse } from '../usePulpView';
 import { IRemotes } from './Remotes';

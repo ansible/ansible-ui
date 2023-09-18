@@ -1,4 +1,4 @@
-import { apiTag } from '../../hub/api/utils';
+import { apiTag } from '../../hub/api/formatPath';
 
 export function awxAPI(strings: TemplateStringsArray, ...values: string[]) {
   const base = process.env.AWX_API_PREFIX;
