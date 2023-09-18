@@ -58,7 +58,6 @@ function CredentialInputs() {
         placeholder={t('Enter name')}
         isRequired
         maxLength={150}
-        autoComplete="new-name"
       />
       <PageFormTextInput<EdaCredentialCreate>
         name="description"
