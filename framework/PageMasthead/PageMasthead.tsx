@@ -14,7 +14,7 @@ import {
 } from '@patternfly/react-core';
 import { BarsIcon } from '@patternfly/react-icons';
 import { ReactNode } from 'react';
-import { usePageNavSideBar } from './PageNavigation/PageNavSidebar';
+import { usePageNavSideBar } from '../PageNavigation/PageNavSidebar';
 
 export function PageMasthead(props: {
   icon?: ReactNode;

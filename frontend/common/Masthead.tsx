@@ -11,7 +11,6 @@ import {
   MastheadContent,
   MastheadMain,
   MastheadToggle,
-  NotificationBadge,
   PageToggleButton,
   Spinner,
   Title,
@@ -149,15 +148,6 @@ export function AnsibleMasthead() {
               <ToolbarItem>
                 <PageRefreshIcon />
               </ToolbarItem>
-              {!isEdaServer() && (
-                <ToolbarItem>
-                  <Notifications />
-                </ToolbarItem>
-              )}
-
-              {/* <ToolbarItem>
-                  <ApplicationLauncherBasic />
-                </ToolbarItem> */}
 
               <ToolbarGroup
                 variant="icon-button-group"
@@ -330,28 +320,6 @@ function AccountDropdownInternal() {
       ]}
       position="right"
       // style={{ marginTop: 4 }}
-    />
-  );
-}
-
-function Notifications() {
-  return (
-    <Suspense fallback={<></>}>
-      <NotificationsInternal />
-    </Suspense>
-  );
-}
-
-function NotificationsInternal() {
-  // const workflowApprovals = useWorkflowApprovals()
-  const workflowApprovals = [];
-  // const history = useNavigate()
-  return (
-    <NotificationBadge
-      variant={workflowApprovals.length === 0 ? 'read' : 'unread'}
-      count={workflowApprovals.length}
-      style={{ marginRight: workflowApprovals.length === 0 ? undefined : 12 }}
-      // onClick={() => history(RouteObj.WorkflowApprovals)}
     />
   );
 }
