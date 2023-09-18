@@ -226,7 +226,6 @@ function LoginForm(props: LoginFormProps) {
         disableBody
         disablePadding
         disableScrolling
-        autoComplete={'off'}
       >
         <PageFormTextInput
           name="username"
@@ -234,7 +233,6 @@ function LoginForm(props: LoginFormProps) {
           placeholder={t('Enter username')}
           isRequired
           autoFocus
-          autoComplete="off"
         />
         <PageFormTextInput
           name="password"
@@ -242,7 +240,6 @@ function LoginForm(props: LoginFormProps) {
           placeholder={t('Enter password')}
           type="password"
           isRequired
-          autoComplete="off"
         />
       </PageForm>
       <SocialAuthLogin options={authOptions} />

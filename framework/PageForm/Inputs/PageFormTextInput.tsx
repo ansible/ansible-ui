@@ -161,15 +161,6 @@ export type PageFormTextInputProps<
    * When present, it specifies that an <input> element should automatically get focus when the page loads.
    */
   autoFocus?: boolean;
-
-  /**
-   * The autocomplete attribute specifies whether or not an input field should have autocomplete enabled.
-   *
-   * Autocomplete allows the browser to predict the value. When a user starts to type in a field, the browser should display options to fill in the field, based on earlier typed values.
-   *
-   * Note: The autocomplete attribute works with the following input types: text, search, url, tel, email, password, datepickers, range, and color.
-   */
-  autoComplete?: string;
 };
 
 /**
@@ -205,7 +196,6 @@ export function PageFormTextInput<
     selectOpen,
     selectValue,
     autoFocus,
-    autoComplete,
   } = props;
 
   const id = props.id ?? name.split('.').join('-');
@@ -259,7 +249,7 @@ export function PageFormTextInput<
                 readOnlyVariant={isReadOnly ? 'default' : undefined}
                 isDisabled={isDisabled}
                 autoFocus={autoFocus}
-                autoComplete={autoComplete}
+                autoComplete="off"
                 data-cy={id}
               />
               {type === 'password' && (

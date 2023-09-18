@@ -26,7 +26,6 @@ function ControllerTokenInputs() {
         placeholder={t('Enter name')}
         isRequired
         maxLength={150}
-        autoComplete="new-name"
       />
       <PageFormTextInput<EdaControllerTokenCreate>
         name="description"

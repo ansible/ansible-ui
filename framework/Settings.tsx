@@ -146,7 +146,7 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
       hasNoBodyWrapper
     >
       <FormDiv>
-        <Form isHorizontal={settings.formLayout === 'horizontal'}>
+        <Form isHorizontal={settings.formLayout === 'horizontal'} autoComplete="off">
           <FormGroupSelect
             id="theme"
             label="Theme"
