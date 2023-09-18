@@ -5,7 +5,6 @@ import { PageHeader, PageLayout, useGetPageUrl } from '../../../../../framework'
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { PageNotImplemented } from '../../../../common/PageNotImplemented';
 import { PageBackTab, RoutedTab, RoutedTabs } from '../../../../common/RoutedTabs';
-import { RouteObj } from '../../../../common/Routes';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
 import { AwxError } from '../../../common/AwxError';
@@ -35,16 +34,16 @@ export function ApplicationPage() {
         ]}
         headerActions={[]}
       />
-      <RoutedTabs isLoading={!application} baseUrl={RouteObj.ApplicationPage}>
+      <RoutedTabs isLoading={!application} baseUrl={getPageUrl(AwxRoute.ApplicationPage)}>
         <PageBackTab
           label={t('Back to Applications')}
           url={getPageUrl(AwxRoute.Applications)}
           persistentFilterKey="applications"
         />
-        <RoutedTab label={t('Details')} url={RouteObj.ApplicationDetails}>
+        <RoutedTab label={t('Details')} url={getPageUrl(AwxRoute.ApplicationPage) + 'details'}>
           <PageNotImplemented />
         </RoutedTab>
-        <RoutedTab label={t('Tokens')} url={RouteObj.ApplicationTokens}>
+        <RoutedTab label={t('Tokens')} url={getPageUrl(AwxRoute.ApplicationPage) + 'tokens'}>
           <PageNotImplemented />
         </RoutedTab>
       </RoutedTabs>

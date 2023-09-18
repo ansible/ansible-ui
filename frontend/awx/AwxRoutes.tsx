@@ -20,7 +20,8 @@ export enum AwxRoute {
   // Resources
 
   Templates = 'awx-templates',
-  CreateTemplate = 'awx-create-template',
+  CreateJobTemplate = 'awx-create-job-template',
+  CreateWorkflowJobTemplate = 'awx-create-workflow-job-template',
   EditTemplate = 'awx-edit-template',
   TemplatePage = 'awx-template-page',
   TemplateSchedule = 'awx-template-schedule',
@@ -41,11 +42,15 @@ export enum AwxRoute {
 
   Inventories = 'awx-inventories',
   CreateInventory = 'awx-create-inventory',
+  CreateSmartInventory = 'awx-create-smart-inventory',
+  CreateConstructedInventory = 'awx-create-constructed-inventory',
   EditInventory = 'awx-edit-inventory',
   InventoryPage = 'awx-inventory-page',
   InventorySchedules = 'awx-inventory-schedules',
 
   Hosts = 'awx-hosts',
+  CreateHost = 'awx-create-host',
+  EditHost = 'awx-edit-host',
   HostPage = 'awx-host-page',
 
   // Access
@@ -79,6 +84,9 @@ export enum AwxRoute {
   ManagementJobPage = 'awx-management-job-page',
   ManagementJobSchedules = 'awx-management-job-schedules',
 
+  CreateInstanceGroup = 'awx-create-instance-group',
+  EditInstanceGroup = 'awx-edit-instance-group',
+  InstanceGroupPage = 'awx-instance-group-page',
   InstanceGroups = 'awx-instance-groups',
 
   Instances = 'awx-instances',

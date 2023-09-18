@@ -2,16 +2,20 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { EditIcon, HeartbeatIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
-import { RouteObj } from '../../../../common/Routes';
+import {
+  IPageAction,
+  PageActionSelection,
+  PageActionType,
+  usePageNavigate,
+} from '../../../../../framework';
 import { requestPatch } from '../../../../common/crud/Data';
+import { AwxRoute } from '../../../AwxRoutes';
 import { Instance } from '../../../interfaces/Instance';
 import { useRunHealthCheck } from './useRunHealthCheck';
 
 export function useInstanceRowActions(onComplete: (instances: Instance[]) => void) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
 
   const runHealthCheck = useRunHealthCheck(onComplete);
   const handleToggleInstance: (instance: Instance, enabled: boolean) => Promise<void> = useCallback(
@@ -54,10 +58,9 @@ export function useInstanceRowActions(onComplete: (instances: Instance[]) => voi
         icon: EditIcon,
         isPinned: true,
         label: t('Edit instance'),
-        onClick: (instance) =>
-          navigate(RouteObj.EditInstance.replace(':id', instance.id.toString())),
+        onClick: (instance) => pageNavigate(AwxRoute.EditInstance, { params: { id: instance.id } }),
       },
     ],
-    [runHealthCheck, navigate, handleToggleInstance, t]
+    [runHealthCheck, pageNavigate, handleToggleInstance, t]
   );
 }
