@@ -15,8 +15,8 @@ describe('EDA decision environment- Create, Edit, Delete', () => {
     cy.navigateTo('eda', 'decision-environments');
     cy.hasTitle(/^Decision Environments$/);
     cy.clickButton(/^Create decision environment$/);
-    cy.get('[data-cy="name"]').eq(1).type(de_name);
-    cy.get('[data-cy="image_url"]').eq(1).type('quay.io/ansible/ansible-rulebook:main');
+    cy.get('[data-cy="name"]').type(de_name);
+    cy.get('[data-cy="image_url"]').type('quay.io/ansible/ansible-rulebook:main');
     cy.clickButton(/^Create decision environment$/);
     cy.hasTitle(de_name);
     cy.getEdaDecisionEnvironmentByName(de_name).then((de) => {
@@ -43,9 +43,7 @@ describe('EDA decision environment- Create, Edit, Delete', () => {
       });
       cy.clickButton(/^Edit decision environment$/);
       cy.hasTitle(`Edit ${edaDE.name}`);
-      cy.get('[data-cy="name"]')
-        .eq(1)
-        .type(edaDE.name + 'edited');
+      cy.get('[data-cy="name"]').type(edaDE.name + 'edited');
       cy.clickButton(/^Save decision environment$/);
       cy.hasTitle(`${edaDE.name}edited`);
       cy.deleteEdaDecisionEnvironment(edaDE);

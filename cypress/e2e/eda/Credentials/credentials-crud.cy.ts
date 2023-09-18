@@ -12,11 +12,11 @@ describe('EDA Credentials- Create, Edit, Delete', () => {
     cy.navigateTo('eda', 'credentials');
     cy.get('h1').should('contain', 'Credentials');
     cy.clickButton(/^Create credential$/);
-    cy.get('[data-cy="name"]').eq(1).type(name);
-    cy.get('[data-cy="description"]').eq(1).type('This is a container registry credential.');
+    cy.get('[data-cy="name"]').type(name);
+    cy.get('[data-cy="description"]').type('This is a container registry credential.');
     cy.selectDropdownOptionByLabel(/^Credential type$/, 'Container registry');
-    cy.get('[data-cy="username"]').eq(1).type('admin');
-    cy.get('[data-cy="secret"]').eq(1).type('testtoken');
+    cy.get('[data-cy="username"]').type('admin');
+    cy.get('[data-cy="secret"]').type('testtoken');
     cy.clickButton(/^Create credential$/);
     cy.hasDetail('Name', name);
     cy.hasDetail('Description', 'This is a container registry credential.');
@@ -35,11 +35,11 @@ describe('EDA Credentials- Create, Edit, Delete', () => {
     cy.navigateTo('eda', 'credentials');
     cy.get('h1').should('contain', 'Credentials');
     cy.clickButton(/^Create credential$/);
-    cy.get('[data-cy="name"]').eq(1).type(name);
-    cy.get('[data-cy="description"]').eq(1).type('This is a GitHub Credential.');
-    cy.get('[data-cy="secret"]').eq(1).type('testtoken');
+    cy.get('[data-cy="name"]').type(name);
+    cy.get('[data-cy="description"]').type('This is a GitHub Credential.');
+    cy.get('[data-cy="secret"]').type('testtoken');
     cy.selectDropdownOptionByLabel(/^Credential type$/, 'GitHub personal access token');
-    cy.get('[data-cy="username"]').eq(1).type('admin');
+    cy.get('[data-cy="username"]').type('admin');
     cy.clickButton(/^Create credential$/);
     cy.hasDetail('Name', name);
     cy.hasDetail('Description', 'This is a GitHub Credential.');
@@ -58,11 +58,11 @@ describe('EDA Credentials- Create, Edit, Delete', () => {
     cy.navigateTo('eda', 'credentials');
     cy.get('h1').should('contain', 'Credentials');
     cy.clickButton(/^Create credential$/);
-    cy.get('[data-cy="name"]').eq(1).type(name);
-    cy.get('[data-cy="description"]').eq(1).type('This is a GitLab Credential.');
-    cy.get('[data-cy="secret"]').eq(1).type('testtoken');
+    cy.get('[data-cy="name"]').type(name);
+    cy.get('[data-cy="description"]').type('This is a GitLab Credential.');
+    cy.get('[data-cy="secret"]').type('testtoken');
     cy.selectDropdownOptionByLabel(/^Credential type$/, 'GitLab personal access token');
-    cy.get('[data-cy="username"]').eq(1).type('admin');
+    cy.get('[data-cy="username"]').type('admin');
     cy.clickButton(/^Create credential$/);
     cy.hasDetail('Name', name);
     cy.hasDetail('Description', 'This is a GitLab Credential.');
@@ -83,13 +83,11 @@ describe('EDA Credentials- Create, Edit, Delete', () => {
       cy.clickTableRow(edaCredential.name);
       cy.clickButton(/^Edit credential$/);
       cy.hasTitle(`Edit ${edaCredential.name}`);
-      cy.get('[data-cy="name"]')
-        .eq(1)
-        .type(edaCredential.name + 'lalala');
-      cy.get('[data-cy="description"]').eq(1).type('this credential type has been changed');
-      cy.get('[data-cy="secret"]').eq(1).type('testtoken');
+      cy.get('[data-cy="name"]').type(edaCredential.name + 'lalala');
+      cy.get('[data-cy="description"]').type('this credential type has been changed');
+      cy.get('[data-cy="secret"]').type('testtoken');
       cy.selectDropdownOptionByLabel(/^Credential type$/, 'GitHub personal access token');
-      cy.get('[data-cy="username"]').eq(1).type('velveeta');
+      cy.get('[data-cy="username"]').type('velveeta');
       cy.clickButton(/^Save credential$/);
       cy.hasDetail('Name', edaCredential.name + 'lalala');
       cy.hasDetail('Description', 'this credential type has been changed');

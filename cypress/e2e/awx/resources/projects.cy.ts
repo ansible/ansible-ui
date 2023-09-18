@@ -47,12 +47,10 @@ describe('projects', () => {
     const projectName = 'E2E Project ' + randomString(4);
     cy.navigateTo('awx', 'projects');
     cy.clickLink(/^Create project$/);
-    cy.get('[data-cy="project-name"]').eq(1).type(projectName);
+    cy.get('[data-cy="project-name"]').type(projectName);
     cy.selectDropdownOptionByLabel(/^Organization$/, organization.name);
     cy.selectDropdownOptionByLabel(/^Source Control Type$/, 'Git');
-    cy.get('[data-cy="project-scm_url"]')
-      .eq(1)
-      .type('https://github.com/ansible/ansible-tower-samples');
+    cy.get('[data-cy="project-scm_url"]').type('https://github.com/ansible/ansible-tower-samples');
     cy.getCheckboxByLabel('Allow Branch Override').click();
     cy.clickButton(/^Create project$/);
     cy.hasTitle(projectName);
@@ -70,8 +68,8 @@ describe('projects', () => {
     cy.hasTitle(project.name);
     cy.clickButton(/^Edit project$/);
     cy.hasTitle(/^Edit Project$/);
-    cy.get('[data-cy="project-name"]').eq(1).type(`${project.name} - edited`);
-    cy.get('[data-cy="project-scm_branch"]').eq(1).type('foobar');
+    cy.get('[data-cy="project-name"]').type(`${project.name} - edited`);
+    cy.get('[data-cy="project-scm_branch"]').type('foobar');
     cy.clickButton(/^Save project$/);
     cy.hasTitle(`${project.name} - edited`);
     cy.hasDetail(/^Source control branch$/, 'foobar');

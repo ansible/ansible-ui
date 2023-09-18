@@ -15,10 +15,8 @@ describe('EDA Login / Logoff', () => {
         expect(result?.response?.statusCode).to.eql(204);
       });
       if (edaUser) {
-        cy.get('[data-cy="username"]').eq(1).type(edaUser.username);
-        cy.get('[data-cy="password"]')
-          .eq(1)
-          .type(Cypress.env('EDA_PASSWORD') as string);
+        cy.get('[data-cy="username"]').type(edaUser.username);
+        cy.get('[data-cy="password"]').type(Cypress.env('EDA_PASSWORD') as string);
         cy.clickModalButton('Log in');
         cy.get('.pf-c-dropdown__toggle').eq(1).should('contain', edaUser.username);
       }
@@ -36,12 +34,12 @@ describe('EDA Login / Logoff', () => {
     cy.navigateTo('eda', 'users');
     cy.contains('h1', 'Users');
     cy.clickButton(/^Create user$/);
-    cy.get('[data-cy="username"]').eq(1).type(userDetails.Username);
-    cy.get('[data-cy="first_name"]').eq(1).type(userDetails.FirstName);
-    cy.get('[data-cy="last_name"]').eq(1).type(userDetails.LastName);
-    cy.get('[data-cy="email"]').eq(1).type(userDetails.Email);
-    cy.get('[data-cy="password"]').eq(1).type(userDetails.Password);
-    cy.get('[data-cy="confirmPassword"]').eq(1).type(userDetails.Password);
+    cy.get('[data-cy="username"]').type(userDetails.Username);
+    cy.get('[data-cy="first_name"]').type(userDetails.FirstName);
+    cy.get('[data-cy="last_name"]').type(userDetails.LastName);
+    cy.get('[data-cy="email"]').type(userDetails.Email);
+    cy.get('[data-cy="password"]').type(userDetails.Password);
+    cy.get('[data-cy="confirmPassword"]').type(userDetails.Password);
     /*Roles selection*/
     cy.get('#roles-form-group').within(() => {
       cy.get('button').click();
@@ -57,8 +55,8 @@ describe('EDA Login / Logoff', () => {
     cy.hasDetail('Username', userDetails.Username);
     cy.intercept('GET', '/api/logout/').as('loggedOut');
     cy.edaLogout();
-    cy.get('[data-cy="username"]').eq(1).type(userDetails.Username);
-    cy.get('[data-cy="password"]').eq(1).type(userDetails.Password);
+    cy.get('[data-cy="username"]').type(userDetails.Username);
+    cy.get('[data-cy="password"]').type(userDetails.Password);
     cy.clickModalButton('Log in');
     cy.get('.pf-c-dropdown__toggle').eq(1).should('contain', userDetails.Username);
   });
