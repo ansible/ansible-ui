@@ -83,7 +83,9 @@ export function PlatformMasthead(props: {
               label={t('User details')}
               onClick={() => pageNavigate(PlatformRoute.UserPage, { params: { id: activeUser?.id } })}
             /> */}
-            <DropdownItem id="logout" label={t('Logout')} onClick={() => void logout()} />
+            <DropdownItem id="logout" label={t('Logout')} onClick={() => void logout()}>
+              {t('Logout')}
+            </DropdownItem>
           </PageMastheadDropdown>
         </ToolbarItem>
       </ToolbarGroup>
