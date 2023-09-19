@@ -30,7 +30,6 @@ export function PageMastheadDropdown(props: {
       isPlain
       dropdownItems={props.children as ReactNode[]}
       position="right"
-      ouiaId={props.id}
       data-cy={props.id}
     />
   );

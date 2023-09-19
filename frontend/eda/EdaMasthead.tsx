@@ -80,8 +80,12 @@ export function EdaMasthead() {
               id="user-details"
               label={t('User details')}
               onClick={() => pageNavigate(EdaRoute.MyPage)}
-            />
-            <DropdownItem id="logout" label={t('Logout')} onClick={() => void logout()} />
+            >
+              {t('User details')}
+            </DropdownItem>
+            <DropdownItem id="logout" label={t('Logout')} onClick={() => void logout()}>
+              {t('Logout')}
+            </DropdownItem>
           </PageMastheadDropdown>
         </ToolbarItem>
       </ToolbarGroup>
