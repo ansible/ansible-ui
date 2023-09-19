@@ -31,7 +31,7 @@ import { BarsIcon } from '@patternfly/react-icons';
 import { TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { Dispatch, SetStateAction, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import {
   CopyCell,
   PFColorE,
@@ -54,19 +54,14 @@ import { hubAPI } from '../api/utils';
 import { HubItemsResponse } from '../useHubView';
 import { CollectionVersionSearch } from './Collection';
 import { useCollectionActions } from './hooks/useCollectionActions';
-
+import { HubRoute } from '../HubRoutes';
+import { useGetPageUrl } from '../../../framework';
 export function CollectionSignatureUpload() {
   const { t } = useTranslation();
-  const params = useParams<{
-    name: string;
-    namespace: string;
-    repository: string;
-    version: string;
-  }>();
+  const location = useLocation();
+  const getPageUrl = useGetPageUrl();
   const { data, refresh } = useGet<HubItemsResponse<CollectionVersionSearch>>(
-    hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${params.name || ''}&namespace=${
-      params.namespace || ''
-    }&repository=${params.repository || ''}&version=${params.version || ''} }`
+    hubAPI`/v3/plugin/ansible/search/collection-versions/?${location.search}`
   );
   let collection: CollectionVersionSearch | undefined = undefined;
   if (data && data.data && data.data.length > 0) {
@@ -78,7 +73,7 @@ export function CollectionSignatureUpload() {
       <PageHeader
         title={collection?.collection_version.name}
         breadcrumbs={[
-          { label: t('Collections'), to: RouteObj.Collections },
+          { label: t('Collections'), to: getPageUrl(HubRoute.Collections) },
           { label: collection?.collection_version.name },
         ]}
         headerActions={

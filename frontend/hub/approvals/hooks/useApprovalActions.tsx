@@ -7,12 +7,14 @@ import { CollectionVersionSearch } from '../Approval';
 import { useRejectCollections } from './useRejectCollections';
 import { useApproveCollections } from './useApproveCollections';
 import { useHubContext } from './../../useHubContext';
-import { useNavigate } from 'react-router-dom';
-import { RouteObj } from '../../../common/Routes';
+import { usePageNavigate } from '../../../../framework';
+import { HubRoute } from '../../../hub/HubRoutes';
+import { useParams } from 'react-router-dom';
 
 export function useApprovalActions(callback?: (collections: CollectionVersionSearch[]) => void) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
+  const params = useParams();
   const rejectCollections = useRejectCollections(callback);
   const approveCollections = useApproveCollections(callback);
   const { featureFlags } = useHubContext();
@@ -30,9 +32,15 @@ export function useApprovalActions(callback?: (collections: CollectionVersionSea
         icon: UploadIcon,
         label: t('Upload signature'),
         onClick: (i) => {
-          navigate(
-            `${RouteObj.CollectionSignatureUpload}/?name=${i.collection_version.name}&namespace=${i.collection_version.namespace}&repository=staging&version=${i.collection_version.version}`
-          );
+          pageNavigate(HubRoute.CollectionSignatureUpload, {
+            params: { ...params },
+            query: {
+              name: i.collection_version.name,
+              namespace: i.collection_version.namespace,
+              repository: 'staging',
+              version: i.collection_version.version,
+            },
+          });
         },
         isDanger: false,
         isDisabled: (collection) => can_upload_signatures || collection.is_signed,
@@ -66,7 +74,8 @@ export function useApprovalActions(callback?: (collections: CollectionVersionSea
       autoSign,
       can_upload_signatures,
       require_upload_signatures,
-      navigate,
+      pageNavigate,
+      params,
     ]
   );
 }
