@@ -1,5 +1,5 @@
 {
   "scripts": {
-    "start": "cd .. && UI_MODE=AWX PRODUCT='Ansible Automation Platform' webpack serve --mode development --config ./platform/webpack.platform.cjs --port 4100 --open"
+    "start": "cd .. && UI_MODE=AWX BRAND='Red Hat' PRODUCT='Ansible Automation Platform' webpack serve --mode development --config ./platform/webpack.platform.cjs --port 4100 --open"
   }
 }

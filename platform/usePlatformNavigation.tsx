@@ -12,7 +12,50 @@ import { useHubNavigation } from '../frontend/hub/useHubNavigation';
 import { PlatformRoute } from './PlatformRoutes';
 import { PlatformDashboard } from './dashboard/PlatformDashboard';
 
-export function usePlatformNavigation() {
+export function usePlatformNavigationA() {
+  const { t } = useTranslation();
+  const awx = useAwxNavigation();
+  const hub = useHubNavigation();
+  const eda = useEdaNavigation();
+
+  const pageNavigationItems = useMemo<PageNavigationItem[]>(() => {
+    const navigationItems = [
+      {
+        id: PlatformRoute.Dashboard,
+        label: t('Overview'),
+        path: 'overview',
+        element: <PlatformDashboard />,
+      },
+      {
+        id: PlatformRoute.AWX,
+        label: t('Automation Controller'),
+        path: 'awx',
+        children: awx,
+      },
+      {
+        id: PlatformRoute.HUB,
+        label: t('Automation Hub'),
+        path: 'hub',
+        children: hub,
+      },
+      {
+        id: PlatformRoute.EDA,
+        label: t('Event Driven Automation'),
+        path: 'eda',
+        children: eda,
+      },
+      {
+        id: PlatformRoute.Root,
+        path: '',
+        element: <Navigate to="overview" />,
+      },
+    ];
+    return navigationItems.filter((item) => item !== undefined) as PageNavigationItem[];
+  }, [awx, eda, hub, t]);
+  return pageNavigationItems;
+}
+
+export function usePlatformNavigationB() {
   const { t } = useTranslation();
   const awx = useAwxNavigation();
   const hub = useHubNavigation();
@@ -102,24 +145,6 @@ export function usePlatformNavigation() {
         path: 'rules',
         children: [ruleAudits, rulebookActivations],
       },
-      // {
-      //   id: PlatformRoute.AWX,
-      //   label: t('Automation Controller'),
-      //   path: 'awx',
-      //   children: awx,
-      // },
-      // {
-      //   id: PlatformRoute.HUB,
-      //   label: t('Automation Hub'),
-      //   path: 'hub',
-      //   children: hub,
-      // },
-      // {
-      //   id: PlatformRoute.EDA,
-      //   label: t('Event Driven Automation'),
-      //   path: 'eda',
-      //   children: eda,
-      // },
       analytics,
       {
         label: t('Quick Starts'),

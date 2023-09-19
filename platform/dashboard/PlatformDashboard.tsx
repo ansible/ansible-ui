@@ -6,7 +6,7 @@ export function PlatformDashboard() {
   return (
     <PageLayout>
       <PageHeader
-        title={t(`Welcome to tha Ansible Automation Platform`)}
+        title={t(`Welcome to the Ansible Automation Platform`)}
         description={t(
           'Empower, Automate, Connect: Unleash Possibilities with the Ansible Automation Platform.'
         )}
