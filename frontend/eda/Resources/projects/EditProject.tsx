@@ -117,6 +117,7 @@ function ProjectEditInputs() {
       />
       <PageFormSelect
         name={'credential_id'}
+        isRequired={false}
         label={t('Credential')}
         labelHelpTitle={t('Credential')}
         labelHelp={t('The token needed to utilize the SCM URL.')}
