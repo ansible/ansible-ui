@@ -78,7 +78,11 @@ declare global {
       ): Chainable<void>;
 
       /** Finds a dropdown/select component by its dropdownLabel and clicks on the option specified by dropdownOptionLabel.*/
-      selectPromptOnLaunchByLabel(dropdownLabel: string | RegExp): Chainable<void>;
+      selectPromptOnLaunchByLabel(
+        dropdownLabel: string | RegExp,
+        isSelected?: boolean = true,
+        text?: string
+      ): Chainable<void>;
 
       singleSelectShouldHaveSelectedOption(
         selector: string,

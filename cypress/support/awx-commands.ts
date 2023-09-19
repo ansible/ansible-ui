@@ -75,16 +75,33 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('selectPromptOnLaunchByLabel', (label: string | RegExp) => {
-  cy.contains('.pf-c-form__label-text', label)
-    .parent()
-    .parent()
-    .parent()
-    .parent()
-    .within(() => {
-      cy.getCheckboxByLabel('Prompt on launch').click();
-    });
-});
+Cypress.Commands.add(
+  'selectPromptOnLaunchByLabel',
+  (label: string | RegExp, isSelected?: boolean = true, text?: string) => {
+    isSelected
+      ? cy
+          .contains('.pf-c-form__label-text', label)
+          .parent()
+          .parent()
+          .parent()
+          .parent()
+          .within(() => {
+            cy.getCheckboxByLabel('Prompt on launch').click();
+          })
+      : cy
+          .contains('.pf-c-form__label-text', label)
+          .parent()
+          .parent()
+          .parent()
+          .parent()
+          .within(() => {
+            cy.get('button[aria-label="Options menu"]').click();
+            cy.get('.pf-c-select__menu').within(() => {
+              cy.contains('button', text).click();
+            });
+          });
+  }
+);
 
 Cypress.Commands.add('setTablePageSize', (text: '10' | '20' | '50' | '100') => {
   cy.get('.pf-c-pagination')

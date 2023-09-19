@@ -68,7 +68,7 @@ describe('Job templates form', () => {
     //cy.deleteAwxInstanceGroup(instanceGroup);
   });
 
-  it.only('Should create job template with all fields except for prompt on launch values', () => {
+  it('Should create job template with all fields except for prompt on launch values', () => {
     cy.intercept('POST', `/api/v2/job_templates`).as('launchJT');
     const jtName = 'E2E-JT ' + randomString(4);
 
@@ -77,7 +77,8 @@ describe('Job templates form', () => {
     cy.clickLink(/^Create job template$/);
     cy.typeInputByLabel(/^Name$/, jtName);
     cy.typeInputByLabel(/^Description$/, 'This is a JT description');
-    cy.selectPromptOnLaunchByLabel(/^Inventory$/);
+    cy.selectPromptOnLaunchByLabel(/^Inventory$/, false, inventory.name);
+   // cy.selectDropdownOptionByLabel(/^Inventory$/, inventory.name);
     cy.selectDropdownOptionByLabel(/^Project$/, project.name);
     cy.selectDropdownOptionByLabel(/^Playbook$/, 'hello_world.yml');
     cy.clickButton(/^Create job template$/);
@@ -236,7 +237,7 @@ describe('Job templates form', () => {
     // cy.hasTitle(jtName);
   });
 
-  it('creation of job template using values from the prompt on launch wizard', () => {
+  it.only('creation of job template using values from the prompt on launch wizard', () => {
     cy.intercept('POST', `/api/v2/job_templates`).as('launchJT');
     const jtName = 'E2E-POLJT ' + randomString(4);
 
