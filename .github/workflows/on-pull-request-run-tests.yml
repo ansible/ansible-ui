@@ -382,6 +382,8 @@ jobs:
           auto-cancel-after-failures: 1
           config-file: cypress.awx.config.ts
         env:
+          AWX_PROTOCOL: ${{ secrets.AWX_PROTOCOL }}
+          AWX_HOST: ${{ secrets.AWX_HOST }}
           AWX_SERVER: ${{ secrets.CYPRESS_AWX_SERVER }}
           AWX_USERNAME: ${{ secrets.CYPRESS_AWX_USERNAME }}
           AWX_PASSWORD: ${{ secrets.CYPRESS_AWX_PASSWORD }}
@@ -596,6 +598,8 @@ jobs:
           auto-cancel-after-failures: 1
           config-file: cypress.eda.config.ts
         env:
+          EDA_PROTOCOL: ${{ secrets.EDA_PROTOCOL }}
+          EDA_HOST: ${{ secrets.EDA_HOST }}
           AWX_SERVER: ${{ secrets.CYPRESS_AWX_SERVER }}
           AWX_USERNAME: ${{ secrets.CYPRESS_AWX_USERNAME }}
           AWX_PASSWORD: ${{ secrets.CYPRESS_AWX_PASSWORD }}
