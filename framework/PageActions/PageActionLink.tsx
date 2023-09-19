@@ -2,6 +2,7 @@ import { Button, Tooltip } from '@patternfly/react-core';
 import { ComponentClass, Fragment, FunctionComponent } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import { useID } from '../hooks/useID';
 import { IPageActionLink, IPageActionLinkSingle, PageActionSelection } from './PageAction';
 import { usePageActionDisabled } from './PageActionUtils';
 
@@ -31,7 +32,7 @@ export function PageActionLink<T extends object>(props: {
     ? action.label
     : undefined;
 
-  const id = action.label.toLowerCase().split(' ').join('-');
+  const id = useID(action);
   const content = iconOnly && Icon ? <Icon /> : action.label;
 
   let to: string;
@@ -69,6 +70,8 @@ export function PageActionLink<T extends object>(props: {
           </Tooltip>
         )}
         variant={iconOnly ? 'plain' : undefined}
+        ouiaId={id}
+        data-cy={id}
       >
         {iconOnly && Icon ? <Icon /> : content}
       </Button>

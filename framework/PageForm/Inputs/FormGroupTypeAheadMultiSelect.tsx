@@ -9,6 +9,7 @@ import {
   SelectVariant,
 } from '@patternfly/react-core';
 import React, { useState } from 'react';
+import { getID } from '../../hooks/useID';
 import { PageFormGroup } from './PageFormGroup';
 
 export type FormGroupTypeAheadMultiSelectProps = Pick<
@@ -100,11 +101,18 @@ export function FormGroupTypeAheadMultiSelect(props: FormGroupTypeAheadMultiSele
         }}
         isDisabled={isReadOnly || isSubmitting}
       >
-        {options.map((option) => (
-          <SelectOption key={`${option.label}-${props.name}`} value={option.value}>
-            {option.label}
-          </SelectOption>
-        ))}
+        {options.map((option) => {
+          const optionId = getID(option);
+          return (
+            <SelectOption
+              key={`${option.label}-${props.name}`}
+              value={option.value}
+              data-cy={optionId}
+            >
+              {option.label}
+            </SelectOption>
+          );
+        })}
       </Select>
     </PageFormGroup>
   );

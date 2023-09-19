@@ -12,6 +12,7 @@ import { CircleIcon } from '@patternfly/react-icons';
 import { ComponentClass, FunctionComponent, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import { getID } from '../hooks/useID';
 import { IPageAction, PageActionSelection, PageActionType } from './PageAction';
 import { PageActionSwitch } from './PageActionSwitch';
 import { isPageActionHidden, usePageActionDisabled } from './PageActionUtils';
@@ -94,6 +95,8 @@ export function PageActionDropdown<T extends object>(props: PageActionDropdownPr
     onOpen?.(label ?? 'default', dropdownOpen);
   }, [dropdownOpen, label, onOpen, props]);
 
+  const id = getID(props.label ?? 'actions-dropdown');
+
   if (actions.length === 0) return <></>;
   const Icon = icon;
   const toggleIcon = Icon ? <Icon /> : label;
@@ -118,6 +121,8 @@ export function PageActionDropdown<T extends object>(props: PageActionDropdownPr
             </div>
           ) : undefined
         }
+        ouiaId={id}
+        data-cy={id}
       >
         {iconOnly ? undefined : label}
       </DropdownToggle>
@@ -128,6 +133,8 @@ export function PageActionDropdown<T extends object>(props: PageActionDropdownPr
         onToggle={() => setDropdownOpen(!dropdownOpen)}
         toggleVariant={isPrimary ? 'primary' : undefined}
         style={isPrimary && !label ? { color: 'var(--pf-global--Color--light-100)' } : {}}
+        ouiaId={id}
+        data-cy={id}
       >
         {toggleIcon}
       </KebabToggle>
@@ -210,6 +217,9 @@ function PageDropdownActionItem<T extends object>(props: {
                 }
               }}
               isAriaDisabled={isButtonDisabled}
+              id={getID(action)}
+              ouiaId={getID(action)}
+              data-cy={getID(action)}
             >
               {action.label}
             </DropdownItem>

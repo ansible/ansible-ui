@@ -1,6 +1,7 @@
 import { Button, ButtonVariant, Tooltip } from '@patternfly/react-core';
 import { ComponentClass, Fragment, FunctionComponent } from 'react';
 import styled from 'styled-components';
+import { useID } from '../hooks/useID';
 import {
   IPageActionButton,
   IPageActionButtonMultiple,
@@ -52,7 +53,7 @@ export function PageActionButton<T extends object>(props: {
     variant = ButtonVariant.plain;
   }
 
-  const id = action.label.toLowerCase().split(' ').join('-');
+  const id = useID(action);
   const content = iconOnly && Icon ? <Icon /> : action.label;
 
   return (
@@ -84,6 +85,8 @@ export function PageActionButton<T extends object>(props: {
             }
           }}
           aria-label={iconOnly ? action.label : ''}
+          ouiaId={id}
+          data-cy={id}
         >
           {content}
         </Button>
