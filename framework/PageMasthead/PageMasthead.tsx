@@ -16,6 +16,7 @@ import {
 import { BarsIcon } from '@patternfly/react-icons';
 import { ReactNode } from 'react';
 import { usePageNavSideBar } from '../PageNavigation/PageNavSidebar';
+import { useBreakpoint } from '../components/useBreakPoint';
 
 export function PageMasthead(props: {
   icon?: ReactNode;
@@ -23,27 +24,30 @@ export function PageMasthead(props: {
   title: string;
   children?: ReactNode;
 }) {
+  const isSmallOrLarger = useBreakpoint('sm');
   return (
     <Masthead display={{ default: 'inline' }}>
       <PageMastheadToggle />
       <MastheadMain>
         <MastheadBrand>{props.icon}</MastheadBrand>
       </MastheadMain>
-      <MastheadContent>
-        <Toolbar id="toolbar">
+      <MastheadContent style={{ marginLeft: 0 }}>
+        <Toolbar id="toolbar" inset={{ default: 'insetNone' }}>
           <ToolbarContent>
-            <ToolbarItem>
-              <Stack style={{ color: 'white', cursor: 'default' }}>
-                {props.brand && (
-                  <Text>
-                    <Truncate content={props.brand} style={{ minWidth: 0 }} />
-                  </Text>
-                )}
-                <Title headingLevel="h1" style={{ lineHeight: 1 }}>
-                  <Truncate content={props.title} style={{ minWidth: 0 }} />
-                </Title>
-              </Stack>
-            </ToolbarItem>
+            {isSmallOrLarger && (
+              <ToolbarItem>
+                <Stack style={{ color: 'white', cursor: 'default' }}>
+                  {props.brand && (
+                    <Text>
+                      <Truncate content={props.brand} style={{ minWidth: 0 }} />
+                    </Text>
+                  )}
+                  <Title headingLevel="h1" style={{ lineHeight: 1 }}>
+                    <Truncate content={props.title} style={{ minWidth: 0 }} />
+                  </Title>
+                </Stack>
+              </ToolbarItem>
+            )}
             {props.children}
           </ToolbarContent>
         </Toolbar>

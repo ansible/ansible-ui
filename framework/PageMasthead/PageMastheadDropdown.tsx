@@ -1,5 +1,6 @@
 import { Dropdown, DropdownToggle, Flex, FlexItem } from '@patternfly/react-core';
 import { ReactNode, useCallback, useState } from 'react';
+import { useBreakpoint } from '../components/useBreakPoint';
 
 export function PageMastheadDropdown(props: {
   id: string;
@@ -7,6 +8,7 @@ export function PageMastheadDropdown(props: {
   label?: string;
   children: ReactNode;
 }) {
+  const isSmallOrLarger = useBreakpoint('sm');
   const [open, setOpen] = useState(false);
   const onSelect = useCallback(() => setOpen((open) => !open), []);
   const onToggle = useCallback(() => setOpen((open) => !open), []);
@@ -22,7 +24,7 @@ export function PageMastheadDropdown(props: {
             spaceItems={{ default: 'spaceItemsSm' }}
           >
             <FlexItem>{props.icon}</FlexItem>
-            <FlexItem wrap="nowrap">{props.label}</FlexItem>
+            {isSmallOrLarger && <FlexItem wrap="nowrap">{props.label}</FlexItem>}
           </Flex>
         </DropdownToggle>
       }
