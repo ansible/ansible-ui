@@ -11,8 +11,10 @@
 export interface StorageResponse {
   // Total number of bytes
   total: number;
+
   // Number of bytes in use
   used: number;
+
   // Number of free bytes
   free: number;
 }

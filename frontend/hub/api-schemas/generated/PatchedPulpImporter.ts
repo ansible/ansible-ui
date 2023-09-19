@@ -11,6 +11,7 @@
 export interface PatchedPulpImporter {
   // Unique name of the Importer.
   name: string;
+
   // Mapping of repo names in an export file to the repo names in Pulp. For example, if the export has a repo named 'foo' and the repo to import content into was 'bar', the mapping would be "{'foo': 'bar'}".
-  repo_mapping: unknown;
+  // repo_mapping				:	unknown;
 }

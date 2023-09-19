@@ -9,10 +9,16 @@
 
 export interface ContainerNamespaceResponse {
   id: string;
+
   pulp_href: string;
+
   name: string;
-  my_permissions: unknown;
-  owners: unknown;
+
+  // my_permissions				:	unknown;
+
+  // owners				:	unknown;
+
   created_at: string;
+
   updated_at: string;
 }

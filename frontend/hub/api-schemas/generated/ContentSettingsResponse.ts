@@ -11,6 +11,7 @@
 export interface ContentSettingsResponse {
   // The CONTENT_ORIGIN setting for this Pulp instance
   content_origin: string;
+
   // The CONTENT_PATH_PREFIX setting for this Pulp instance
   content_path_prefix: string;
 }

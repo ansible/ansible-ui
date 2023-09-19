@@ -9,7 +9,8 @@
 
 export interface OrphansCleanup {
   // Will delete specified content and associated Artifacts if they are orphans.
-  content_hrefs: unknown;
+  // content_hrefs				:	unknown;
+
   // The time in minutes for how long Pulp will hold orphan Content and Artifacts before they become candidates for deletion by this orphan cleanup task. This should ideally be longer than your longest running task otherwise any content created during that task could be cleaned up before the task finishes. If not specified, a default value is taken from the setting ORPHAN_PROTECTION_TIME.
   orphan_protection_time: number;
 }

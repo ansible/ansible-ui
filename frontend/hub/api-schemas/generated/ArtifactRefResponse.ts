@@ -10,6 +10,8 @@
 // A serializer for an Artifact reference.
 export interface ArtifactRefResponse {
   filename: string;
+
   sha256: string;
+
   size: number;
 }

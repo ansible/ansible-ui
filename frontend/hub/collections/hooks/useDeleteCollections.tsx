@@ -24,8 +24,8 @@ export function useDeleteCollections(
         actionButtonText: t('Delete collections', { count: collections.length }),
         items: collections.sort((l, r) =>
           compareStrings(
-            l.collection_version.name + l.repository.name,
-            r.collection_version.name + l.repository.name
+            l.collection_version?.name || '' + l.repository?.name,
+            r.collection_version?.name || '' + l.repository?.name
           )
         ),
         keyFn: collectionKeyFn,
@@ -42,10 +42,12 @@ export function useDeleteCollections(
 
 async function deleteCollection(collection: CollectionVersionSearch) {
   const distro: PulpItemsResponse<Distribution> = await requestGet(
-    pulpAPI`/distributions/ansible/ansible/?repository=${collection.repository.pulp_href}`
+    pulpAPI`/distributions/ansible/ansible/?repository=${collection?.repository?.pulp_href || ''}`
   );
   return requestDelete(
-    hubAPI`/v3/plugin/ansible/content/${distro.results[0].base_path}/collections/index/${collection.collection_version.namespace}/${collection.collection_version.name}/`
+    hubAPI`/v3/plugin/ansible/content/${distro.results[0].base_path}/collections/index/${
+      collection?.collection_version?.namespace || ''
+    }/${collection?.collection_version?.name || ''}/`
   );
 }
 

@@ -9,6 +9,8 @@
 
 export interface LegacyImportResponse {
   github_user: string;
+
   github_repo: string;
+
   alternate_role_name: string;
 }

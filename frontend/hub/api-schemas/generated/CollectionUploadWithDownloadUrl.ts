@@ -10,5 +10,6 @@
 // A serializer for the Collection One Shot Upload API.
 export interface CollectionUploadWithDownloadUrl {
   file: string;
+
   sha256: string;
 }

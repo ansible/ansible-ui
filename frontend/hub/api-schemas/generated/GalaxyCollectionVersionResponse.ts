@@ -15,13 +15,18 @@ import { CollectionMetadataResponse } from './CollectionMetadataResponse';
 // A serializer for a CollectionVersion.
 export interface GalaxyCollectionVersionResponse {
   version: string;
+
   // Get href.
   href: string;
+
   // Create a namespace dict.
-  namespace: unknown;
+  // namespace				:	unknown;
+
   // Create a collection dict.
-  collection: unknown;
+  // collection				:	unknown;
+
   // Create an artifact dict.
-  artifact: unknown;
-  metadata: CollectionMetadataResponse;
+  // artifact				:	unknown;
+
+  metadata?: CollectionMetadataResponse;
 }

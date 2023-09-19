@@ -22,12 +22,17 @@ of plugins are namespaced properly.
 */
 export interface RepositoryVersionResponse {
   pulp_href: string;
+
   // Timestamp of creation.
   pulp_created: string;
+
   number: number;
+
   repository: string;
+
   // A repository version whose content was used as the initial set of content for this repository version
   base_version: string;
+
   // Various count summaries of the content in the version and the HREF to view them.
-  content_summary: unknown;
+  // content_summary				:	unknown;
 }

@@ -13,10 +13,13 @@
 // A serializer for ContentRedirectContentGuard.
 export interface ContentRedirectContentGuardResponse {
   pulp_href: string;
+
   // Timestamp of creation.
   pulp_created: string;
+
   // The unique name.
   name: string;
+
   // An optional description.
   description: string;
 }

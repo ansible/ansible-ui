@@ -13,20 +13,28 @@
 // Serializer for image manifest signatures.
 export interface ContainerManifestSignatureResponse {
   pulp_href: string;
+
   // Timestamp of creation.
   pulp_created: string;
+
   // Signature name in the format of `digest_algo:manifest_digest@random_32_chars`
   name: string;
+
   // sha256 digest of the signature blob
   digest: string;
+
   // Container signature type, e.g. 'atomic'
   type: string;
+
   // Signing key ID
   key_id: string;
+
   // Timestamp of a signature
   timestamp: number;
+
   // Signature creator
   creator: string;
+
   // Manifest that is signed
   signed_manifest: string;
 }

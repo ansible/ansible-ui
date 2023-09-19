@@ -16,10 +16,13 @@ A repository must be specified, to which the container image content will be add
 export interface OCIBuildImage {
   // Artifact representing the Containerfile that should be used to run podman-build.
   containerfile_artifact: string;
+
   // An uploaded Containerfile that should be used to run podman-build.
   containerfile: string;
+
   // A tag name for the new image being built.
   tag: string;
+
   // A JSON string where each key is an artifact href and the value is it's relative path (name) inside the /pulp_working_directory of the build container executing the Containerfile.
-  artifacts: unknown;
+  // artifacts				:	unknown;
 }

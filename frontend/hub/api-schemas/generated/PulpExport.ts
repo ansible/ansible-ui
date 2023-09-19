@@ -11,14 +11,19 @@
 export interface PulpExport {
   // A URI of the task that ran the Export.
   task: string;
+
   // Do a Full (true) or Incremental (false) export.
   full: boolean;
+
   // Generate report on what would be exported and disk-space required.
   dry_run: boolean;
+
   // List of explicit repo-version hrefs to export (replaces current_version).
-  versions: unknown;
+  // versions				:	unknown;
+
   // Chunk export-tarfile into pieces of chunk_size bytes. Recognizes units of B/KB/MB/GB/TB. A chunk has a maximum size of 1TB.
   chunk_size: string;
+
   // List of explicit last-exported-repo-version hrefs (replaces last_export).
-  start_versions: unknown;
+  // start_versions				:	unknown;
 }

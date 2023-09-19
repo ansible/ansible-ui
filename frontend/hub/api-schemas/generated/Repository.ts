@@ -17,13 +17,17 @@ ModelSerializers's ``Meta`` class. This ensures that the OpenAPI definitions
 of plugins are namespaced properly.
 */
 export interface Repository {
-  pulp_labels: unknown;
+  // pulp_labels				:	unknown;
+
   // A unique name for this repository.
   name: string;
+
   // An optional description.
   description: string;
+
   // Retain X versions of the repository. Default is null which retains all versions.
   retain_repo_versions: number;
+
   // An optional remote to use by default when syncing.
   remote: string;
 }

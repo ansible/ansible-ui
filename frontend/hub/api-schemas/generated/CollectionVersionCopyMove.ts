@@ -14,9 +14,11 @@ This will carry associated content like Signatures and Marks along.
 */
 export interface CollectionVersionCopyMove {
   // A list of collection versions to move or copy.
-  collection_versions: unknown;
+  // collection_versions				:	unknown;
+
   // List of repository HREFs to put content in.
-  destination_repositories: unknown;
+  // destination_repositories				:	unknown;
+
   // HREF for a signing service. This will be used to sign the collection before moving putting it in any new repositories.
   signing_service: string;
 }
