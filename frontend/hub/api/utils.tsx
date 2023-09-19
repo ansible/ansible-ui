@@ -8,6 +8,10 @@ import {
   putHubRequest,
 } from './request';
 
+function getBaseAPIPath() {
+  return process.env.HUB_API_BASE_PATH || '/api/automation-hub';
+}
+
 function apiTag(strings: TemplateStringsArray, ...values: string[]) {
   if (strings[0]?.[0] !== '/') {
     throw new Error('Invalid URL');
@@ -25,12 +29,12 @@ function apiTag(strings: TemplateStringsArray, ...values: string[]) {
 }
 
 export function hubAPI(strings: TemplateStringsArray, ...values: string[]) {
-  const base = process.env.HUB_API_BASE_PATH || '/api/automation-hub';
+  const base = getBaseAPIPath();
   return base + apiTag(strings, ...values);
 }
 
 export function pulpAPI(strings: TemplateStringsArray, ...values: string[]) {
-  const base = process.env.HUB_API_BASE_PATH || '/api/automation-hub';
+  const base = getBaseAPIPath();
   return base + '/pulp/api/v3' + apiTag(strings, ...values);
 }
 
