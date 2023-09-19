@@ -1,8 +1,9 @@
 const webpackConfig = require('./webpack.config');
 
-const awxServer = process.env.AWX_HOST
-  ? process.env.AWX_PROTOCOL + '://' + process.env.AWX_HOST
-  : 'http://localhost:8043';
+const awxServer =
+  process.env.AWX_SERVER || process.env.AWX_HOST
+    ? process.env.AWX_PROTOCOL + '://' + process.env.AWX_HOST
+    : 'http://localhost:8043';
 
 const proxyUrl = new URL(awxServer);
 

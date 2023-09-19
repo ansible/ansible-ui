@@ -27,11 +27,12 @@ declare namespace NodeJS {
     DISCLAIMER: string;
     VERSION: string;
     DELAY: string;
-    PWA: string;
     UI_MODE?: 'AWX' | 'HUB' | 'EDA' | 'GALAXY';
     AWX_ROUTE_PREFIX: string;
     HUB_ROUTE_PREFIX: string;
     EDA_ROUTE_PREFIX: string;
-    HUB_API_BASE_PATH: string;
+    AWX_API_PREFIX: string;
+    HUB_API_PREFIX: string;
+    EDA_API_PREFIX: string;
   }
 }
