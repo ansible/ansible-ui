@@ -11,6 +11,7 @@ import {
 import { SearchIcon, SyncAltIcon } from '@patternfly/react-icons';
 import { ReactElement, ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { Controller, FieldPath, FieldValues, PathValue, useFormContext } from 'react-hook-form';
+import { getID, useID } from '../../hooks/useID';
 import { useFrameworkTranslations } from '../../useFrameworkTranslations';
 import { capitalizeFirstLetter } from '../../utils/strings';
 import { PageFormGroup } from './PageFormGroup';
@@ -62,7 +63,7 @@ export function PageFormAsyncSelect<
     labelHelpTitle,
     additionalControls,
   } = props;
-  const id = props.id ?? name.split('.').join('-');
+  const id = useID(props);
 
   const {
     control,
@@ -236,19 +237,23 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
           }
           return false;
         })
-        .map((option) => (
-          <SelectOption
-            key={option.toString()}
-            value={option}
-            description={
-              'option' in option && option.option
-                ? valueToDescription?.(option.option as SelectionType)
-                : undefined
-            }
-          >
-            {option.toString()}
-          </SelectOption>
-        )),
+        .map((option) => {
+          const optionId = getID(option.toString());
+          return (
+            <SelectOption
+              key={option.toString()}
+              value={option}
+              description={
+                'option' in option && option.option
+                  ? valueToDescription?.(option.option as SelectionType)
+                  : undefined
+              }
+              data-cy={optionId}
+            >
+              {option.toString()}
+            </SelectOption>
+          );
+        }),
     [options, valueToDescription]
   );
   return (

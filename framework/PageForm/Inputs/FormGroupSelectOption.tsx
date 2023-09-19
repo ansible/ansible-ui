@@ -1,5 +1,6 @@
 import { SelectGroup, SelectOption, SelectOptionObject } from '@patternfly/react-core';
 import { ChangeEvent, ReactNode, useCallback } from 'react';
+import { getID } from '../../hooks/useID';
 import { FormGroupSelect, FormGroupSelectProps } from './FormGroupSelect';
 
 export interface IFormGroupSelectOption<T> {
@@ -79,28 +80,36 @@ export function FormGroupSelectOption<T>(props: FormGroupSelectOptionProps<T>) {
       isGrouped={isGrouped}
     >
       {!isGrouped
-        ? options.map((option) => (
-            <SelectOption
-              key={option.label}
-              value={option.label}
-              label={option.label}
-              description={option.description}
-            >
-              {option.label}
-            </SelectOption>
-          ))
+        ? options.map((option) => {
+            const optionId = getID(option);
+            return (
+              <SelectOption
+                key={option.label}
+                value={option.label}
+                label={option.label}
+                description={option.description}
+                data-cy={optionId}
+              >
+                {option.label}
+              </SelectOption>
+            );
+          })
         : Object.keys(groups).map((group) => (
             <SelectGroup key={group} label={group}>
-              {groups[group].map((option) => (
-                <SelectOption
-                  key={option.label}
-                  value={option.label}
-                  label={option.label}
-                  description={option.description}
-                >
-                  {option.label}
-                </SelectOption>
-              ))}
+              {groups[group].map((option) => {
+                const optionId = getID(option);
+                return (
+                  <SelectOption
+                    key={option.label}
+                    value={option.label}
+                    label={option.label}
+                    description={option.description}
+                    data-cy={optionId}
+                  >
+                    {option.label}
+                  </SelectOption>
+                );
+              })}
             </SelectGroup>
           ))}
     </FormGroupSelect>

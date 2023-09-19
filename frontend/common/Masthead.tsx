@@ -96,7 +96,12 @@ export function AnsibleMasthead(props: { hideLogin?: boolean }) {
     <Masthead display={{ default: 'inline' }}>
       {!hideLogin && (
         <MastheadToggle onClick={() => navBar.setState({ isOpen: !navBar.isOpen })}>
-          <PageToggleButton variant="plain" aria-label="Global navigation">
+          <PageToggleButton
+            variant="plain"
+            aria-label="Global navigation"
+            ouiaId="nav-toggle"
+            data-cy="nav-toggle"
+          >
             <BarsIcon />
           </PageToggleButton>
         </MastheadToggle>
@@ -144,7 +149,12 @@ export function AnsibleMasthead(props: { hideLogin?: boolean }) {
             <ToolbarContent>
               <ToolbarSpan />
               <ToolbarItem>
-                <Button icon={<CogIcon />} variant={ButtonVariant.plain} onClick={openSettings} />
+                <Button
+                  icon={<CogIcon />}
+                  variant={ButtonVariant.plain}
+                  onClick={openSettings}
+                  data-cy="settings"
+                />
               </ToolbarItem>
             </ToolbarContent>
           </Toolbar>
@@ -171,42 +181,22 @@ export function AnsibleMasthead(props: { hideLogin?: boolean }) {
                     <Notifications />
                   </ToolbarItem>
                 )}
-
-                {/* <ToolbarItem>
-                  <ApplicationLauncherBasic />
-                </ToolbarItem> */}
-
                 <ToolbarGroup
                   variant="icon-button-group"
                   visibility={{ default: 'hidden', lg: 'visible' }}
                 >
-                  {/* <ToolbarItem>
-                                    <AppBarDropdown icon={<CogIcon />}>
-                                        <DropdownGroup label="Theme">
-                                            <DropdownItem
-                                                icon={theme === ThemeE.Light ? <SunIcon /> : <IconGroupDiv />}
-                                                onClick={() => setTheme?.(ThemeE.Light)}
-                                            >
-                                                Light
-                                            </DropdownItem>
-                                            <DropdownItem
-                                                icon={theme === ThemeE.Dark ? <MoonIcon /> : <IconGroupDiv />}
-                                                onClick={() => setTheme?.(ThemeE.Dark)}
-                                            >
-                                                Dark
-                                            </DropdownItem>
-                                        </DropdownGroup>
-                                    </AppBarDropdown>
-                                </ToolbarItem> */}
                   <ToolbarItem>
                     <Button
+                      id="settings"
                       icon={<CogIcon />}
                       variant={ButtonVariant.plain}
                       onClick={openSettings}
+                      ouiaId="settings"
+                      data-cy="settings"
                     />
                   </ToolbarItem>
                   <ToolbarItem>
-                    <AppBarDropdown icon={<QuestionCircleIcon />}>
+                    <AppBarDropdown icon={<QuestionCircleIcon />} id="help">
                       <DropdownItem
                         onClick={() => {
                           open(
@@ -217,10 +207,11 @@ export function AnsibleMasthead(props: { hideLogin?: boolean }) {
                           );
                         }}
                         icon={<ExternalLinkAltIcon />}
+                        data-cy="documentation"
                       >
                         {t('Documentation')}
                       </DropdownItem>
-                      <DropdownItem onClick={() => openAnsibleAboutModal({})}>
+                      <DropdownItem onClick={() => openAnsibleAboutModal({})} data-cy="about">
                         {t('About')}
                       </DropdownItem>
                     </AppBarDropdown>
@@ -248,7 +239,7 @@ export function isRouteActive(route: string | string[], location: { pathname: st
   return location.pathname.includes(route);
 }
 
-function AppBarDropdown(props: { icon: ReactNode; children: ReactNode }) {
+function AppBarDropdown(props: { id?: string; icon: ReactNode; children: ReactNode }) {
   const [open, setOpen] = useState(false);
   const onSelect = useCallback(() => {
     setOpen((open) => !open);
@@ -258,6 +249,7 @@ function AppBarDropdown(props: { icon: ReactNode; children: ReactNode }) {
   }, []);
   return (
     <Dropdown
+      id={props.id}
       onSelect={onSelect}
       toggle={
         <DropdownToggle toggleIndicator={null} onToggle={onToggle}>
@@ -268,6 +260,8 @@ function AppBarDropdown(props: { icon: ReactNode; children: ReactNode }) {
       isPlain
       dropdownItems={open ? Children.toArray(props.children) : undefined}
       position="right"
+      ouiaId={props.id}
+      data-cy={props.id}
     />
   );
 }
@@ -306,6 +300,9 @@ function AccountDropdownInternal() {
       onSelect={onSelect}
       toggle={
         <DropdownToggle
+          id="account"
+          ouiaId="account"
+          data-cy="account"
           toggleIndicator={null}
           onToggle={onToggle}
           style={{ paddingRight: 0, paddingLeft: 8 }}
@@ -323,6 +320,9 @@ function AccountDropdownInternal() {
       dropdownItems={[
         <DropdownItem
           key="user-details"
+          id="user-details"
+          ouiaId="user-details"
+          data-cy="user-details"
           onClick={() => {
             isEdaServer()
               ? activeUser
@@ -337,6 +337,9 @@ function AccountDropdownInternal() {
         </DropdownItem>,
         <DropdownItem
           key="logout"
+          id="logout"
+          ouiaId="logout"
+          data-cy="logout"
           onClick={() => {
             async function logout() {
               isEdaServer()
@@ -370,10 +373,13 @@ function NotificationsInternal() {
   // const history = useNavigate()
   return (
     <NotificationBadge
+      id="notifications"
       variant={workflowApprovals.length === 0 ? 'read' : 'unread'}
       count={workflowApprovals.length}
       style={{ marginRight: workflowApprovals.length === 0 ? undefined : 12 }}
       // onClick={() => history(RouteObj.WorkflowApprovals)}
+      ouiaId="notifications"
+      data-cy="notifications"
     />
   );
 }
@@ -428,7 +434,7 @@ export function Refresh() {
 
   return (
     <Tooltip content="Refresh" position="bottom" entryDelay={1000}>
-      <Button id="refresh" onClick={refresh} variant="plain">
+      <Button id="refresh" onClick={refresh} variant="plain" ouiaId="refresh" data-cy="refresh">
         <RedoAltIcon style={{ transform: `rotateZ(${rotation}deg)` }} />
       </Button>
     </Tooltip>

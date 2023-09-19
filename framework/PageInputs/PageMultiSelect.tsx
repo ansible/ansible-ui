@@ -9,6 +9,7 @@ import { Select, SelectList, SelectOption } from '@patternfly/react-core/next';
 import { TimesIcon } from '@patternfly/react-icons';
 import { ReactNode, Ref, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { getID } from '../hooks/useID';
 import './PageMultiSelect.css';
 import './PageSelect.css';
 import { PageSelectOption } from './PageSelectOption';
@@ -113,6 +114,7 @@ export function PageMultiSelect<
               break;
           }
         }}
+        data-cy={id}
       >
         {icon && <span style={{ paddingLeft: 4, paddingRight: 12 }}>{icon}</span>}
         {selectedOptions.length > 0 ? (
@@ -220,21 +222,25 @@ export function PageMultiSelect<
           <div style={{ margin: 16 }}>{t('No results found')}</div>
         ) : (
           <SelectList className="page-select-list">
-            {visibleOptions.map((option) => (
-              <SelectOption
-                key={option.key !== undefined ? option.key : option.label}
-                itemId={option.key !== undefined ? option.key : option.label}
-                description={
-                  option.description ? (
-                    <div style={{ maxWidth: 300 }}>{option.description}</div>
-                  ) : undefined
-                }
-                hasCheck
-                isSelected={selectedOptions.includes(option)}
-              >
-                {option.label}
-              </SelectOption>
-            ))}
+            {visibleOptions.map((option) => {
+              const optionId = getID(option);
+              return (
+                <SelectOption
+                  key={option.key !== undefined ? option.key : option.label}
+                  itemId={option.key !== undefined ? option.key : option.label}
+                  description={
+                    option.description ? (
+                      <div style={{ maxWidth: 300 }}>{option.description}</div>
+                    ) : undefined
+                  }
+                  hasCheck
+                  isSelected={selectedOptions.includes(option)}
+                  data-cy={optionId}
+                >
+                  {option.label}
+                </SelectOption>
+              );
+            })}
           </SelectList>
         )}
         {props.footer && <div className="page-select-footer">{props.footer}</div>}
