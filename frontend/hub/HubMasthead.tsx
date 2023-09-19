@@ -4,34 +4,35 @@ import '@patternfly/patternfly/patternfly-charts.css';
 import '@patternfly/patternfly/patternfly-charts-theme-dark.css';
 
 import { ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
-import { ExternalLinkAltIcon, QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
+import { QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageMasthead, usePageNavigate } from '../../framework';
 import { PageMastheadDropdown } from '../../framework/PageMasthead/PageMastheadDropdown';
+import { PageNotificationsIcon } from '../../framework/PageMasthead/PageNotificationsIcon';
 import { PageSettingsIcon } from '../../framework/PageMasthead/PageSettingsIcon';
 import { PageThemeSwitcher } from '../../framework/PageMasthead/PageThemeSwitcher';
-import EdaIcon from '../../icons/eda-logo.svg';
+import HubIcon from '../../icons/hub-logo.svg';
 import { useAnsibleAboutModal } from '../common/AboutModal';
 import { PageRefreshIcon } from '../common/PageRefreshIcon';
 import { postRequest } from '../common/crud/Data';
 import '../common/i18n';
 import { useActiveUser } from '../common/useActiveUser';
-import { EdaRoute } from './EdaRoutes';
-import { API_PREFIX } from './constants';
+import { HubRoute } from './HubRoutes';
+import { hubAPI } from './api/utils';
 
-export function EdaMasthead() {
+export function HubMasthead() {
   const { t } = useTranslation();
   const openAnsibleAboutModal = useAnsibleAboutModal();
   const pageNavigate = usePageNavigate();
   const activeUser = useActiveUser();
   const logout = useCallback(async () => {
-    await postRequest(`${API_PREFIX}/auth/session/logout/`, {});
-    pageNavigate(EdaRoute.Login);
+    await postRequest(hubAPI`/_ui/v1/auth/logout/`, {});
+    pageNavigate(HubRoute.Login);
   }, [pageNavigate]);
   return (
     <PageMasthead
-      icon={<EdaIcon style={{ height: 64 }} />}
+      icon={<HubIcon style={{ height: 64 }} />}
       title={process.env.PRODUCT}
       brand={process.env.BRAND}
     >
@@ -46,24 +47,21 @@ export function EdaMasthead() {
         <ToolbarItem>
           <PageSettingsIcon />
         </ToolbarItem>
-        {/* <ToolbarItem>
-          <PageNotificationsIcon count={0} onClick={() => pageNavigate(EdaRoute.Notifications)} />
-        </ToolbarItem> */}
+        <ToolbarItem>
+          <PageNotificationsIcon count={0} onClick={() => pageNavigate(HubRoute.Approvals)} />
+        </ToolbarItem>
         <ToolbarItem>
           <PageMastheadDropdown
             id="help-menu"
             icon={<QuestionCircleIcon />}
             items={[
-              {
-                id: 'documentation',
-                icon: <ExternalLinkAltIcon />,
-                label: t('Documentation'),
-                onClick: () =>
-                  open(
-                    'https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/2.4/html/eda-getting-started-guide/index',
-                    '_blank'
-                  ),
-              },
+              // {
+              //   id: 'documentation',
+              //   icon: <ExternalLinkAltIcon />,
+              //   label: t('Documentation'),
+              //   onClick: () =>
+              //     open(`${getDocsBaseUrl(config)}/html/userguide/index.html`, '_blank'),
+              // },
               {
                 id: 'about',
                 label: t('About'),
@@ -78,11 +76,11 @@ export function EdaMasthead() {
             icon={<UserCircleIcon size="md" />}
             label={activeUser?.username}
             items={[
-              {
-                id: 'user-details',
-                label: t('User details'),
-                onClick: () => pageNavigate(EdaRoute.MyPage),
-              },
+              // {
+              //   id: 'user-details',
+              //   label: t('User details'),
+              //   onClick: () => pageNavigate(HubRoute.UserPage, { params: { id: activeUser?.id } }),
+              // },
               { id: 'logout', label: t('Logout'), onClick: () => void logout() },
             ]}
           />
