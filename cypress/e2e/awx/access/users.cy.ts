@@ -43,8 +43,8 @@ describe('Users List Actions', () => {
     cy.clickLink(/^Create user$/);
     cy.get('[data-cy="user-username"]').type(userName);
     cy.get('[data-cy="user-password"]').type(password);
-    cy.get('[data-cy="confirmPassword"]').type(password);
-    cy.get('[data-cy="user-summary_fields-organization-name"]').type(organization.name);
+    cy.get('[data-cy="confirmpassword"]').type(password);
+    cy.get('[data-cy="user-summary-fields-organization-name"]').type(organization.name);
     cy.clickButton(/^Create user$/);
     cy.hasTitle(userName);
     // Clean up this user
