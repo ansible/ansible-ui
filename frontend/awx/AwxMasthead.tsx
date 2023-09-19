@@ -1,8 +1,3 @@
-import '@patternfly/patternfly/patternfly-base.css';
-import '@patternfly/patternfly/patternfly-charts.css';
-
-import '@patternfly/patternfly/patternfly-charts-theme-dark.css';
-
 import { DropdownItem, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
 import { useCallback } from 'react';
