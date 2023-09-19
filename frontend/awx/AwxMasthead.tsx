@@ -3,7 +3,7 @@ import '@patternfly/patternfly/patternfly-charts.css';
 
 import '@patternfly/patternfly/patternfly-charts-theme-dark.css';
 
-import { ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
+import { DropdownItem, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -12,12 +12,12 @@ import { PageMastheadDropdown } from '../../framework/PageMasthead/PageMastheadD
 import { PageNotificationsIcon } from '../../framework/PageMasthead/PageNotificationsIcon';
 import { PageSettingsIcon } from '../../framework/PageMasthead/PageSettingsIcon';
 import { PageThemeSwitcher } from '../../framework/PageMasthead/PageThemeSwitcher';
-import AwxIcon from '../../icons/awx-logo.svg';
 import { useAnsibleAboutModal } from '../common/AboutModal';
 import { PageRefreshIcon } from '../common/PageRefreshIcon';
 import '../common/i18n';
 import { useActiveUser } from '../common/useActiveUser';
 import { AwxRoute } from './AwxRoutes';
+import AwxIcon from './awx-logo.svg';
 import { useAwxConfig } from './common/useAwxConfig';
 import getDocsBaseUrl from './common/util/getDocsBaseUrl';
 
@@ -52,39 +52,39 @@ export function AwxMasthead() {
           <PageNotificationsIcon count={0} onClick={() => pageNavigate(AwxRoute.Notifications)} />
         </ToolbarItem>
         <ToolbarItem>
-          <PageMastheadDropdown
-            id="help-menu"
-            icon={<QuestionCircleIcon />}
-            items={[
-              {
-                id: 'documentation',
-                icon: <ExternalLinkAltIcon />,
-                label: t('Documentation'),
-                onClick: () =>
-                  open(`${getDocsBaseUrl(config)}/html/userguide/index.html`, '_blank'),
-              },
-              {
-                id: 'about',
-                label: t('About'),
-                onClick: () => openAnsibleAboutModal({}),
-              },
-            ]}
-          />
+          <PageMastheadDropdown id="help-menu" icon={<QuestionCircleIcon />}>
+            <DropdownItem
+              id="documentation"
+              icon={<ExternalLinkAltIcon />}
+              component="a"
+              href={`${getDocsBaseUrl(config)}/html/userguide/index.html`}
+              target="_blank"
+              data-cy="masthead-documentation"
+            >
+              {t('Documentation')}
+            </DropdownItem>
+            <DropdownItem
+              id="about"
+              onClick={() => openAnsibleAboutModal({})}
+              data-cy="masthead-about"
+            >
+              {t('About')}
+            </DropdownItem>
+          </PageMastheadDropdown>
         </ToolbarItem>
         <ToolbarItem>
           <PageMastheadDropdown
             id="account-menu"
             icon={<UserCircleIcon size="md" />}
             label={activeUser?.username}
-            items={[
-              {
-                id: 'user-details',
-                label: t('User details'),
-                onClick: () => pageNavigate(AwxRoute.UserPage, { params: { id: activeUser?.id } }),
-              },
-              { id: 'logout', label: t('Logout'), onClick: () => void logout() },
-            ]}
-          />
+          >
+            <DropdownItem
+              id="user-details"
+              label={t('User details')}
+              onClick={() => pageNavigate(AwxRoute.UserPage, { params: { id: activeUser?.id } })}
+            />
+            <DropdownItem id="logout" label={t('Logout')} onClick={() => void logout()} />
+          </PageMastheadDropdown>
         </ToolbarItem>
       </ToolbarGroup>
     </PageMasthead>

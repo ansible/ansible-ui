@@ -1,38 +1,15 @@
-import { Dropdown, DropdownItem, DropdownToggle, Flex, FlexItem } from '@patternfly/react-core';
-import { ReactNode, useCallback, useMemo, useState } from 'react';
-
-interface IPageMastheadDroptionItem {
-  id: string;
-  icon?: ReactNode;
-  label: ReactNode;
-  onClick: () => void;
-}
+import { Dropdown, DropdownToggle, Flex, FlexItem } from '@patternfly/react-core';
+import { ReactNode, useCallback, useState } from 'react';
 
 export function PageMastheadDropdown(props: {
   id: string;
   icon: ReactNode;
   label?: string;
-  items: IPageMastheadDroptionItem[];
+  children: ReactNode;
 }) {
   const [open, setOpen] = useState(false);
   const onSelect = useCallback(() => setOpen((open) => !open), []);
   const onToggle = useCallback(() => setOpen((open) => !open), []);
-  const dropdownItems = useMemo(
-    () =>
-      props.items.map((item) => (
-        <DropdownItem
-          key={item.id}
-          id={item.id}
-          ouiaId={item.id}
-          data-cy={item.id}
-          onClick={item.onClick}
-          icon={item.icon}
-        >
-          {item.label}
-        </DropdownItem>
-      )),
-    [props.items]
-  );
   return (
     <Dropdown
       id={props.id}
@@ -51,7 +28,7 @@ export function PageMastheadDropdown(props: {
       }
       isOpen={open}
       isPlain
-      dropdownItems={dropdownItems}
+      dropdownItems={props.children}
       position="right"
       ouiaId={props.id}
       data-cy={props.id}
