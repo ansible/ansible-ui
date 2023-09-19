@@ -43,6 +43,7 @@ import { ManagementJobs } from './administration/management-jobs/ManagementJobs'
 import { NotificationPage } from './administration/notifications/NotificationPage/NotificationPage';
 import { Notifications } from './administration/notifications/Notifications';
 import Reports from './analytics/Reports/Reports';
+import { AnalyticsBuilder } from './analytics/AnalyticsBuilder/AnalyticsBuilder';
 import SubscriptionUsage from './analytics/subscription-usage/SubscriptionUsage';
 import { AwxDashboard } from './dashboard/AwxDashboard';
 import { CreateCredential, EditCredential } from './resources/credentials/CredentialForm';
@@ -1019,6 +1020,12 @@ export function useAwxNavigation() {
                 label: t('Reports'),
                 path: 'reports',
                 element: <Reports />,
+              },
+              {
+                id: 'TestAnalyticsBuilder',
+                label: t('Analytics builder'),
+                path: 'builder',
+                element: <AnalyticsBuilder />,
               },
               {
                 id: AwxRoute.HostMetrics,
