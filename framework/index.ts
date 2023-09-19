@@ -38,7 +38,7 @@ export * from './PageForm/PageForm';
 export * from './PageFramework';
 export * from './PageHeader';
 export * from './PageLayout';
-export * from './PageMasthead';
+export * from './PageMasthead/PageMasthead';
 export * from './PageNavigation/PageApp';
 export * from './PageNavigation/PageNavSidebar';
 export * from './PageNavigation/PageNavigation';

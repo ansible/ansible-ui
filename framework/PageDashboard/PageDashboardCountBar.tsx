@@ -63,9 +63,9 @@ export function PageDashboardCountBar(props: PageDashboardCountBarProps) {
                         padding={{ top: 0, left: 0, right: 0, bottom: 0 }}
                         width={64}
                         height={64}
-                        data={item.counts.map((count) => ({ x: count.label, y: count.count }))}
+                        data={item.counts.map((count) => ({ x: ' ', y: count.count }))}
                         colorScale={item.counts.map((count) => count.color)}
-                        cornerRadius={3}
+                        cornerRadius={1}
                         allowTooltip={false}
                       />
                     </div>
