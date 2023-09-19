@@ -9,5 +9,6 @@
 
 export interface SyncListCollectionSummaryResponse {
   namespace: string;
+
   name: string;
 }

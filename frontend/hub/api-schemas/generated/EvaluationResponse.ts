@@ -11,8 +11,10 @@
 export interface EvaluationResponse {
   // Parameter value being evaluated.
   context: string;
+
   // True if evaluation passed, false otherwise.
   is_valid: boolean;
+
   // Messages describing results of all evaluations done. May be an empty list.
-  messages: unknown;
+  // messages				:	unknown;
 }

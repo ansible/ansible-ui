@@ -9,15 +9,20 @@
 
 // Serializer for Container Repositories.
 export interface PatchedcontainerContainerRepository {
-  pulp_labels: unknown;
+  // pulp_labels				:	unknown;
+
   // A unique name for this repository.
   name: string;
+
   // An optional description.
   description: string;
+
   // Retain X versions of the repository. Default is null which retains all versions.
   retain_repo_versions: number;
+
   // An optional remote to use by default when syncing.
   remote: string;
+
   // A reference to an associated signing service.
   manifest_signing_service: string;
 }

@@ -13,12 +13,20 @@ import { Policy8baEnum } from './Policy8baEnum';
 
 export interface SyncListResponse {
   id: number;
+
   name: string;
-  policy: Policy8baEnum;
+
+  policy?: Policy8baEnum;
+
   upstream_repository: string;
+
   repository: string;
+
   distribution: string;
-  collections: unknown;
-  namespaces: unknown;
+
+  // collections				:	unknown;
+
+  // namespaces				:	unknown;
+
   groups: string;
 }

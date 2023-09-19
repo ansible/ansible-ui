@@ -13,12 +13,16 @@
 // Serializer for FilesystemExports.
 export interface FilesystemExportResponse {
   pulp_href: string;
+
   // Timestamp of creation.
   pulp_created: string;
+
   // A URI of the task that ran the Export.
   task: string;
+
   // Resources that were exported.
-  exported_resources: unknown;
+  // exported_resources				:	unknown;
+
   // Any additional parameters that were used to create the export.
-  params: unknown;
+  // params				:	unknown;
 }

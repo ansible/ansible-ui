@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
-import { CollectionVersionSearch } from '../../frontend/hub/collections/CollectionVersionSearch';
+import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
 import { HubItemsResponse } from '../../frontend/hub/useHubView';
 import './commands';
 import './rest-commands';
@@ -95,10 +95,10 @@ Cypress.Commands.add('deleteCollectionsInNamespace', (namespaceName: string) => 
     for (const collection of itemsResponse.data) {
       cy.galaxykit(
         'collection delete',
-        collection.collection_version.namespace,
-        collection.collection_version.name,
-        collection.collection_version.version,
-        collection.repository.name
+        collection.collection_version?.namespace || '',
+        collection.collection_version?.name || '',
+        collection.collection_version?.version || '',
+        collection.repository?.name || ''
       );
     }
   });

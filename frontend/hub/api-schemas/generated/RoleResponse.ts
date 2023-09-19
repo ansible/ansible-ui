@@ -13,14 +13,19 @@
 // Serializer for Role.
 export interface RoleResponse {
   pulp_href: string;
+
   // Timestamp of creation.
   pulp_created: string;
+
   // The name of this role.
   name: string;
+
   // An optional description.
   description: string;
+
   // List of permissions defining the role.
-  permissions: unknown;
+  // permissions				:	unknown;
+
   // True if the role is system managed.
   locked: boolean;
 }

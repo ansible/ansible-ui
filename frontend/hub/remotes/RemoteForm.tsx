@@ -217,7 +217,7 @@ export function EditRemote() {
         ]}
       />
       <PageForm<RemoteFormProps>
-        submitText={t('Edit Remote')}
+        submitText={t('Edit remote')}
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
         defaultValue={remoteDefaultValues}

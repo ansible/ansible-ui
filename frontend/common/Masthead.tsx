@@ -47,6 +47,7 @@ import { useAnsibleAboutModal } from './AboutModal';
 import { PageRefreshIcon } from './PageRefreshIcon';
 import { postRequest } from './crud/Data';
 import { useActiveUser } from './useActiveUser';
+import { hubAPI } from '../hub/api/utils';
 
 const MastheadBrandDiv = styled.div`
   display: flex;
@@ -75,6 +76,10 @@ const ToolbarSpan = styled.span`
 
 function isEdaServer(): boolean {
   return process.env.UI_MODE === 'EDA';
+}
+
+function isHubServer(): boolean {
+  return process.env.UI_MODE === 'HUB';
 }
 
 export function AnsibleMasthead() {
@@ -226,6 +231,7 @@ export function AppBarDropdown(props: { icon: ReactNode; children: ReactNode }) 
   }, []);
   return (
     <Dropdown
+      id={props.id}
       onSelect={onSelect}
       toggle={
         <DropdownToggle toggleIndicator={null} onToggle={onToggle}>
@@ -236,6 +242,8 @@ export function AppBarDropdown(props: { icon: ReactNode; children: ReactNode }) 
       isPlain
       dropdownItems={open ? Children.toArray(props.children) : undefined}
       position="right"
+      ouiaId={props.id}
+      data-cy={props.id}
     />
   );
 }
@@ -274,6 +282,9 @@ function AccountDropdownInternal() {
       onSelect={onSelect}
       toggle={
         <DropdownToggle
+          id="account"
+          ouiaId="account"
+          data-cy="account"
           toggleIndicator={null}
           onToggle={onToggle}
           style={{ paddingRight: 0, paddingLeft: 8 }}
@@ -291,6 +302,9 @@ function AccountDropdownInternal() {
       dropdownItems={[
         <DropdownItem
           key="user-details"
+          id="user-details"
+          ouiaId="user-details"
+          data-cy="user-details"
           onClick={() => {
             isEdaServer()
               ? activeUser
@@ -305,11 +319,18 @@ function AccountDropdownInternal() {
         </DropdownItem>,
         <DropdownItem
           key="logout"
+          id="logout"
+          ouiaId="logout"
+          data-cy="logout"
           onClick={() => {
             async function logout() {
-              isEdaServer()
-                ? await postRequest(`${API_PREFIX}/auth/session/logout/`, {})
-                : await fetch('/api/logout/');
+              if (isHubServer()) {
+                await postRequest(hubAPI`/_ui/v1/auth/logout/`, {});
+              } else if (isEdaServer()) {
+                await postRequest(`${API_PREFIX}/auth/session/logout/`, {});
+              } else {
+                await fetch('/api/logout/');
+              }
               navigate('/login');
             }
             void logout();

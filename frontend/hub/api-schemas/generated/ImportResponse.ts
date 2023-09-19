@@ -13,10 +13,13 @@
 // Serializer for Imports.
 export interface ImportResponse {
   pulp_href: string;
+
   // Timestamp of creation.
   pulp_created: string;
+
   // A URI of the Task that ran the Import.
   task: string;
+
   // Any parameters that were used to create the import.
-  params: unknown;
+  // params				:	unknown;
 }

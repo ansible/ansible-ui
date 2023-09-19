@@ -2,6 +2,7 @@ import { MenuToggle, MenuToggleElement, SearchInput } from '@patternfly/react-co
 import { Select, SelectList, SelectOption } from '@patternfly/react-core/next';
 import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { getID } from '../hooks/useID';
 import './PageSelect.css';
 import { PageSelectOption } from './PageSelectOption';
 import './PageSingleSelect.css';
@@ -97,6 +98,7 @@ export function PageSingleSelect<
             break;
         }
       }}
+      data-cy={id}
     >
       {icon && <span style={{ paddingLeft: 4, paddingRight: 12 }}>{icon}</span>}
       {selectedOption ? (
@@ -171,15 +173,19 @@ export function PageSingleSelect<
           <div style={{ margin: 16 }}>{t('No results found')}</div>
         ) : (
           <SelectList className="page-select-list">
-            {visibleOptions.map((option) => (
-              <SelectOption
-                key={option.key !== undefined ? option.key : option.label}
-                itemId={option.key !== undefined ? option.key : option.label}
-                description={option.description}
-              >
-                {option.label}
-              </SelectOption>
-            ))}
+            {visibleOptions.map((option) => {
+              const optionId = getID(option);
+              return (
+                <SelectOption
+                  key={option.key !== undefined ? option.key : option.label}
+                  itemId={option.key !== undefined ? option.key : option.label}
+                  description={option.description}
+                  daya-cy={optionId}
+                >
+                  {option.label}
+                </SelectOption>
+              );
+            })}
           </SelectList>
         )}
         {props.footer && <div className="page-select-footer">{props.footer}</div>}

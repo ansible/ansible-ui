@@ -35,11 +35,11 @@ describe('EDA Login / Logoff', () => {
     cy.contains('h1', 'Users');
     cy.clickButton(/^Create user$/);
     cy.get('[data-cy="username"]').type(userDetails.Username);
-    cy.get('[data-cy="first_name"]').type(userDetails.FirstName);
-    cy.get('[data-cy="last_name"]').type(userDetails.LastName);
+    cy.get('[data-cy="first-name"]').type(userDetails.FirstName);
+    cy.get('[data-cy="last-name"]').type(userDetails.LastName);
     cy.get('[data-cy="email"]').type(userDetails.Email);
     cy.get('[data-cy="password"]').type(userDetails.Password);
-    cy.get('[data-cy="confirmPassword"]').type(userDetails.Password);
+    cy.get('[data-cy="confirmpassword"]').type(userDetails.Password);
     /*Roles selection*/
     cy.get('#roles-form-group').within(() => {
       cy.get('button').click();

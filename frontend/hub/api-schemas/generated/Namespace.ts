@@ -9,11 +9,18 @@
 
 export interface Namespace {
   name: string;
+
   company: string;
+
   email: string;
+
   avatar_url: string;
+
   description: string;
-  links: unknown;
+
+  // links				:	unknown;
+
   groups: string;
+
   resources: string;
 }

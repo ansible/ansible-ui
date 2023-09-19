@@ -11,8 +11,10 @@
 export interface PatchedFilesystemExporter {
   // Unique name of the file system exporter.
   name: string;
+
   // File system location to export to.
   path: string;
+
   /*
 	Method of exporting
 
@@ -20,5 +22,5 @@ export interface PatchedFilesystemExporter {
 * `hardlink` - Export by hardlinking
 * `symlink` - Export by symlinking
 	*/
-  method: unknown;
+  // method				:	unknown;
 }

@@ -14,7 +14,6 @@ export type FormGroupTextInputProps = Pick<
   | 'onChange'
   | 'type'
   | 'aria-label'
-  | 'autoComplete'
   | 'autoFocus'
   | 'innerRef'
   | 'minLength'
@@ -40,7 +39,7 @@ export function FormGroupTextInput(props: FormGroupTextInputProps) {
     <PageFormGroup {...formGroupProps} id={id}>
       <InputGroup>
         <TextInput
-          autoComplete={props.autoComplete}
+          autoComplete="off"
           placeholder={placeholder}
           onChange={props.onChange}
           id={id}

@@ -15,11 +15,17 @@ import { CollectionSummaryResponse } from './CollectionSummaryResponse';
 
 // Cross-repo search results.
 export interface CollectionVersionSearchListResponse {
-  repository: RepositoryResponse;
-  collection_version: CollectionSummaryResponse;
+  repository?: RepositoryResponse;
+
+  collection_version?: CollectionSummaryResponse;
+
   repository_version: string;
-  namespace_metadata: unknown;
+
+  // namespace_metadata				:	unknown;
+
   is_highest: boolean;
+
   is_deprecated: boolean;
+
   is_signed: boolean;
 }

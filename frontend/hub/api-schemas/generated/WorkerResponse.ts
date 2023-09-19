@@ -21,12 +21,16 @@ of plugins are namespaced properly.
 */
 export interface WorkerResponse {
   pulp_href: string;
+
   // Timestamp of creation.
   pulp_created: string;
+
   // The name of the worker.
   name: string;
+
   // Timestamp of the last time the worker talked to the service.
   last_heartbeat: string;
+
   // The task this worker is currently executing, or empty if the worker is not currently assigned to a task.
   current_task: string;
 }

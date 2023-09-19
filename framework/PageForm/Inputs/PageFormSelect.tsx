@@ -9,6 +9,7 @@ import {
   useFormContext,
 } from 'react-hook-form';
 import { Help } from '../../components/Help';
+import { getID, useID } from '../../hooks/useID';
 import { useFrameworkTranslations } from '../../useFrameworkTranslations';
 import { capitalizeFirstLetter } from '../../utils/strings';
 import { IFormGroupSelectOption } from './FormGroupSelectOption';
@@ -115,7 +116,7 @@ export function PageFormSelect<
     fieldNameToResetOnFieldChange,
   } = props;
 
-  const id = props.id ?? name.split('.').join('-');
+  const id = useID(props);
 
   const {
     control,
@@ -167,6 +168,7 @@ export function PageFormSelect<
             helperTextInvalid={helperTextInvalid}
             validated={helperTextInvalid ? 'error' : undefined}
             isRequired={isRequired}
+            data-cy={`${id ?? ''}-form-group`}
           >
             <Select
               id={id}
@@ -183,17 +185,24 @@ export function PageFormSelect<
               isDisabled={isDisabled || isReadOnly || isSubmitting}
               hasPlaceholderStyle
               footer={footer}
+              ouiaId={id}
+              data-cy={id}
             >
-              {options.map((option) => (
-                <SelectOption
-                  key={option.label}
-                  value={option.label}
-                  label={option.label}
-                  description={option.description}
-                >
-                  {option.label}
-                </SelectOption>
-              ))}
+              {options.map((option) => {
+                const optionId = getID(option);
+                return (
+                  <SelectOption
+                    id={optionId}
+                    key={option.label}
+                    value={option.label}
+                    label={option.label}
+                    description={option.description}
+                    data-cy={optionId}
+                  >
+                    {option.label}
+                  </SelectOption>
+                );
+              })}
             </Select>
           </FormGroup>
         );

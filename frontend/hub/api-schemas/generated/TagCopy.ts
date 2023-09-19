@@ -11,8 +11,10 @@
 export interface TagCopy {
   // A URI of the repository to copy content from.
   source_repository: string;
+
   // A URI of the repository version to copy content from.
   source_repository_version: string;
+
   // A list of tag names to copy.
-  names: unknown;
+  // names				:	unknown;
 }

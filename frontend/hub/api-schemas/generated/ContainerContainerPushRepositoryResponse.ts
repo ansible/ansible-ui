@@ -14,16 +14,24 @@
 export interface ContainerContainerPushRepositoryResponse {
   // A unique name for this repository.
   name: string;
-  pulp_labels: unknown;
+
+  // pulp_labels				:	unknown;
+
   versions_href: string;
+
   // A reference to an associated signing service.
   manifest_signing_service: string;
+
   latest_version_href: string;
+
   // Timestamp of creation.
   pulp_created: string;
+
   // An optional description.
   description: string;
+
   pulp_href: string;
+
   // Retain X versions of the repository. Default is null which retains all versions.
   retain_repo_versions: number;
 }

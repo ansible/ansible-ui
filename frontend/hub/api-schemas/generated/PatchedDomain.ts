@@ -11,8 +11,10 @@
 export interface PatchedDomain {
   // A name for this domain.
   name: string;
+
   // An optional description.
   description: string;
+
   /*
 	Backend storage class for domain.
 
@@ -20,11 +22,14 @@ export interface PatchedDomain {
 * `storages.backends.s3boto3.S3Boto3Storage` - Use Amazon S3 as storage
 * `storages.backends.azure_storage.AzureStorage` - Use Azure Blob as storage
 	*/
-  storage_class: unknown;
+  // storage_class				:	unknown;
+
   // Settings for storage class.
-  storage_settings: unknown;
+  // storage_settings				:	unknown;
+
   // Boolean to have the content app redirect to object storage.
   redirect_to_object_storage: boolean;
+
   // Boolean to hide distributions with a content guard in the content app.
   hide_guarded_distributions: boolean;
 }

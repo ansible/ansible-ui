@@ -10,5 +10,6 @@
 // A serializer for a Collection Version namespace field.
 export interface CollectionNamespaceResponse {
   name: string;
+
   metadata_sha256: string;
 }

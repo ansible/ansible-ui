@@ -18,16 +18,22 @@ of plugins are namespaced properly.
 */
 export interface MinimalTaskResponse {
   pulp_href: string;
+
   // Timestamp of creation.
   pulp_created: string;
+
   // The name of task.
   name: string;
+
   // The current state of the task. The possible values include: 'waiting', 'skipped', 'running', 'completed', 'failed', 'canceled' and 'canceling'.
   state: string;
+
   // Timestamp of the when this task started execution.
   started_at: string;
+
   // Timestamp of the when this task stopped execution.
   finished_at: string;
+
   // The worker associated with this task. This field is empty if a worker is not yet assigned.
   worker: string;
 }

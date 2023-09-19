@@ -1,4 +1,7 @@
-export interface ContentSummaryType {
+import { CollectionVersionSearchListResponse as CollectionVersionSearch } from '../api-schemas/generated/CollectionVersionSearchListResponse';
+export { CollectionVersionSearch };
+
+/*export interface ContentSummaryType {
   name: string;
   content_type: string;
   description: string;
@@ -47,4 +50,4 @@ export interface CollectionVersionSearch {
     versions_href: string;
   };
   repository_version: string;
-}
+}*/

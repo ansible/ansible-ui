@@ -50,7 +50,7 @@ describe('projects', () => {
     cy.get('[data-cy="project-name"]').type(projectName);
     cy.selectDropdownOptionByLabel(/^Organization$/, organization.name);
     cy.selectDropdownOptionByLabel(/^Source Control Type$/, 'Git');
-    cy.get('[data-cy="project-scm_url"]').type('https://github.com/ansible/ansible-tower-samples');
+    cy.get('[data-cy="project-scm-url"]').type('https://github.com/ansible/ansible-tower-samples');
     cy.getCheckboxByLabel('Allow Branch Override').click();
     cy.clickButton(/^Create project$/);
     cy.hasTitle(projectName);
@@ -69,7 +69,7 @@ describe('projects', () => {
     cy.clickButton(/^Edit project$/);
     cy.hasTitle(/^Edit Project$/);
     cy.get('[data-cy="project-name"]').type(`${project.name} - edited`);
-    cy.get('[data-cy="project-scm_branch"]').type('foobar');
+    cy.get('[data-cy="project-scm-branch"]').type('foobar');
     cy.clickButton(/^Save project$/);
     cy.hasTitle(`${project.name} - edited`);
     cy.hasDetail(/^Source control branch$/, 'foobar');
