@@ -45,6 +45,7 @@ export function PageFormTextArea<
           isReadOnly={isReadOnly || isSubmitting}
           minLength={undefined}
           maxLength={undefined}
+          data-cy={props.id ?? name}
         />
       )}
       rules={{
