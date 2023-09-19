@@ -76,8 +76,12 @@ export function AwxMasthead() {
               id="user-details"
               label={t('User details')}
               onClick={() => pageNavigate(AwxRoute.UserPage, { params: { id: activeUser?.id } })}
-            />
-            <DropdownItem id="logout" label={t('Logout')} onClick={() => void logout()} />
+            >
+              {t('User details')}
+            </DropdownItem>
+            <DropdownItem id="logout" label={t('Logout')} onClick={() => void logout()}>
+              {t('Logout')}
+            </DropdownItem>
           </PageMastheadDropdown>
         </ToolbarItem>
       </ToolbarGroup>
