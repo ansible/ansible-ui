@@ -10,6 +10,7 @@ import {
   Title,
   Toolbar,
   ToolbarContent,
+  ToolbarItem,
   Truncate,
 } from '@patternfly/react-core';
 import { BarsIcon } from '@patternfly/react-icons';
@@ -26,23 +27,25 @@ export function PageMasthead(props: {
     <Masthead display={{ default: 'inline' }}>
       <PageMastheadToggle />
       <MastheadMain>
-        <MastheadBrand style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          {props.icon}
-          <Stack style={{ color: 'white', cursor: 'default' }}>
-            {props.brand && (
-              <Text>
-                <Truncate content={props.brand} style={{ minWidth: 0 }} />
-              </Text>
-            )}
-            <Title headingLevel="h1" style={{ lineHeight: 1 }}>
-              <Truncate content={props.title} style={{ minWidth: 0 }} />
-            </Title>
-          </Stack>
-        </MastheadBrand>
+        <MastheadBrand>{props.icon}</MastheadBrand>
       </MastheadMain>
       <MastheadContent>
         <Toolbar id="toolbar">
-          <ToolbarContent>{props.children}</ToolbarContent>
+          <ToolbarContent>
+            <ToolbarItem>
+              <Stack style={{ color: 'white', cursor: 'default' }}>
+                {props.brand && (
+                  <Text>
+                    <Truncate content={props.brand} style={{ minWidth: 0 }} />
+                  </Text>
+                )}
+                <Title headingLevel="h1" style={{ lineHeight: 1 }}>
+                  <Truncate content={props.title} style={{ minWidth: 0 }} />
+                </Title>
+              </Stack>
+            </ToolbarItem>
+            {props.children}
+          </ToolbarContent>
         </Toolbar>
       </MastheadContent>
     </Masthead>
