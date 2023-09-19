@@ -31,26 +31,27 @@ UI projects for [Ansible](https://www.ansible.com).
 
 ## Environment Variables
 
-|     Environment Variable | Description                                      |
-| -----------------------: | ------------------------------------------------ |
-|           `AWX_PROTOCOL` | The AWX server protocol (http) or (https).       |
-|               `AWX_HOST` | The AWX server address with port.                |
-|     `CYPRESS_AWX_SERVER` | The AWX server URL.                              |
-|   `CYPRESS_AWX_USERNAME` | The AWX server username.                         |
-|   `CYPRESS_AWX_PASSWORD` | The AWX server password.                         |
-|                          |                                                  |
-|           `HUB_PROTOCOL` | The HUB server protocol (http) or (https).       |
-|               `HUB_HOST` | The HUB server address with port.                |
-|     `CYPRESS_HUB_SERVER` | The HUB server URL.                              |
-|   `CYPRESS_HUB_USERNAME` | The HUB server username.                         |
-|   `CYPRESS_HUB_PASSWORD` | The HUB server password.                         |
-| `CYPRESS_HUB_API_PREFIX` | The HUB API prefix (eg. `/api/automation-hub/`). |
-|                          |                                                  |
-|           `EDA_PROTOCOL` | The EDA server protocol (http) or (https).       |
-|               `EDA_HOST` | The EDA server address with port.                |
-|     `CYPRESS_EDA_SERVER` | The EDA server URL.                              |
-|   `CYPRESS_EDA_USERNAME` | The EDA server username.                         |
-|   `CYPRESS_EDA_PASSWORD` | The EDA server password.                         |
+|            Environment Variable | Description                                             |
+| ------------------------------: | ------------------------------------------------------- |
+|                  `AWX_PROTOCOL` | The AWX server protocol (http) or (https).              |
+|                      `AWX_HOST` | The AWX server address with port.                       |
+|            `CYPRESS_AWX_SERVER` | The AWX server URL.                                     |
+|          `CYPRESS_AWX_USERNAME` | The AWX server username.                                |
+|          `CYPRESS_AWX_PASSWORD` | The AWX server password.                                |
+|                                 |                                                         |
+|                  `HUB_PROTOCOL` | The HUB server protocol (http) or (https).              |
+|                      `HUB_HOST` | The HUB server address with port.                       |
+|            `CYPRESS_HUB_SERVER` | The HUB server URL.                                     |
+|          `CYPRESS_HUB_USERNAME` | The HUB server username.                                |
+|          `CYPRESS_HUB_PASSWORD` | The HUB server password.                                |
+|        `CYPRESS_HUB_API_PREFIX` | The HUB API prefix (eg. `/api/automation-hub/`).        |
+| `CYPRESS_HUB_GALAXYKIT_COMMAND` | The galaxykit command (eg. `galaxykit --ignore-certs`). |
+|                                 |                                                         |
+|                  `EDA_PROTOCOL` | The EDA server protocol (http) or (https).              |
+|                      `EDA_HOST` | The EDA server address with port.                       |
+|            `CYPRESS_EDA_SERVER` | The EDA server URL.                                     |
+|          `CYPRESS_EDA_USERNAME` | The EDA server username.                                |
+|          `CYPRESS_EDA_PASSWORD` | The EDA server password.                                |
 
 ```zsh
 export AWX_PROTOCOL=http
