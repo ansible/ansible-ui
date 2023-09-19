@@ -1,7 +1,15 @@
-import { Label, LabelGroup } from '@patternfly/react-core';
+import { DropdownPosition, Label, LabelGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageDetail, PageDetails, PageHeader, PageLayout, useGetPageUrl } from '../../../framework';
+import {
+  PageActions,
+  PageDetail,
+  PageDetails,
+  PageHeader,
+  PageLayout,
+  useGetPageUrl,
+  usePageNavigate,
+} from '../../../framework';
 import { PageDetailCodeEditor } from '../../../framework/PageDetails/PageDetailCodeEditor';
 import { LoadingPage } from '../../../framework/components/LoadingPage';
 import { AwxError } from '../../awx/common/AwxError';
@@ -11,6 +19,7 @@ import { pulpAPI } from '../api/utils';
 import { Repository } from '../repositories/Repository';
 import { PulpItemsResponse } from '../usePulpView';
 import { IRemotes } from './Remotes';
+import { useRemoteActions } from './hooks/useRemoteActions';
 
 function useErrorHandlerAndLoading<T>(
   data: T | undefined,
@@ -30,6 +39,10 @@ function useErrorHandlerAndLoading<T>(
 
 export function RemoteDetails() {
   const { t } = useTranslation();
+  const pageNavigate = usePageNavigate();
+  const pageActions = useRemoteActions({
+    onRemotesDeleted: () => pageNavigate(HubRoute.Remotes),
+  });
   const params = useParams<{ id: string }>();
   const {
     data: remotesData,
@@ -75,6 +88,13 @@ export function RemoteDetails() {
             { label: t('Remotes'), to: getPageUrl(HubRoute.Remotes) },
             { label: remote?.name },
           ]}
+          headerActions={
+            <PageActions<IRemotes>
+              actions={pageActions}
+              position={DropdownPosition.right}
+              selectedItem={remote}
+            />
+          }
         />
         <PageDetails>
           <PageDetail label={t('Name')}>{remote?.name}</PageDetail>
