@@ -49,13 +49,8 @@ export function useApprovalsColumns(_options?: { disableSort?: boolean; disableL
             );
           }
 
-<<<<<<< HEAD
-          if (approval.repository.pulp_labels.pipeline == 'rejected') {
-            return <TextCell icon={<ThumbsDownIcon />} text={t('Rejected')} color={PFColorE.Red} />;
-=======
           if (approval.repository?.pulp_labels?.pipeline == 'rejected') {
-            return <TextCell icon={<ThumbsUpIcon />} text={t('Rejected')} color={PFColorE.Red} />;
->>>>>>> dc30a3a5 (WIP)
+            return <TextCell icon={<ThumbsDownIcon />} text={t('Rejected')} color={PFColorE.Red} />;
           }
         },
       },

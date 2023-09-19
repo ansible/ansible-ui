@@ -109,7 +109,6 @@ export function CollectionCard(props: { collection: CollectionVersionSearch }) {
                   repository: item.repository?.name,
                 },
               })}
-
             />
           ),
           iconAboveTitle: true,
