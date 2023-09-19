@@ -2,12 +2,11 @@
 
 UI projects for [Ansible](https://www.ansible.com).
 
-- [Ansible UI](#ansible-ui)
-  - [Getting Started](#getting-started)
-  - [Environment Variables](#environment-variables)
-  - [NPM Scripts](#npm-scripts)
-  - [Documentation](#documentation)
-  - [Code of Conduct](#code-of-conduct)
+- [Getting Started](#getting-started)
+- [Environment Variables](#environment-variables)
+- [NPM Scripts](#npm-scripts)
+- [Documentation](#documentation)
+- [Code of Conduct](#code-of-conduct)
 
 ## Getting Started
 
@@ -46,7 +45,6 @@ UI projects for [Ansible](https://www.ansible.com).
 |          `CYPRESS_HUB_USERNAME` | The HUB server username.                                |
 |          `CYPRESS_HUB_PASSWORD` | The HUB server password.                                |
 |        `CYPRESS_HUB_API_PREFIX` | The HUB API prefix (eg. `/api/automation-hub/`).        |
-| `CYPRESS_HUB_GALAXYKIT_COMMAND` | The galaxykit command (eg. `galaxykit --ignore-certs`). |
 |                                 |                                                         |
 |                  `EDA_PROTOCOL` | The EDA server protocol (http) or (https).              |
 |                      `EDA_HOST` | The EDA server address with port.                       |

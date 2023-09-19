@@ -6,9 +6,9 @@ import '@patternfly/patternfly/patternfly-charts-theme-dark.css';
 import { Outlet } from 'react-router-dom';
 import { PageApp } from '../../framework/PageNavigation/PageApp';
 import { Login } from '../common/Login';
-import { AnsibleMasthead } from '../common/Masthead';
 import '../common/i18n';
 import { ActiveEdaUserProvider } from '../common/useActiveUser';
+import { EdaMasthead } from './EdaMasthead';
 import { useEdaNavigation } from './useEdaNavigation';
 
 export default function EdaMain() {
@@ -21,7 +21,7 @@ export default function EdaMain() {
           <Outlet />
         </ActiveEdaUserProvider>
       }
-      masthead={<AnsibleMasthead />}
+      masthead={<EdaMasthead />}
       navigation={navigation}
     />
   );

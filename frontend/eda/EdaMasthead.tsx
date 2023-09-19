@@ -6,26 +6,20 @@ import '@patternfly/patternfly/patternfly-charts-theme-dark.css';
 import { DropdownItem, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, QuestionCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { PageMasthead, usePageNavigate } from '../../framework';
-import { PageNotificationsIcon } from '../../framework/PageMasthead/PageNotificationsIcon';
+import { PageMasthead } from '../../framework';
 import { PageSettingsIcon } from '../../framework/PageMasthead/PageSettingsIcon';
 import { PageThemeSwitcher } from '../../framework/PageMasthead/PageThemeSwitcher';
 import { useAnsibleAboutModal } from '../common/AboutModal';
 import { AccountDropdown, AppBarDropdown } from '../common/Masthead';
 import { PageRefreshIcon } from '../common/PageRefreshIcon';
 import '../common/i18n';
-import { AwxRoute } from './AwxRoutes';
-import { useAwxConfig } from './common/useAwxConfig';
-import getDocsBaseUrl from './common/util/getDocsBaseUrl';
-import AwxIcon from './icons/awx-logo.svg';
+import EdaIcon from './icons/eda-logo.svg';
 
-export function AwxMasthead() {
+export function EdaMasthead() {
   const { t } = useTranslation();
   const openAnsibleAboutModal = useAnsibleAboutModal();
-  const config = useAwxConfig();
-  const pageNavigate = usePageNavigate();
   return (
-    <PageMasthead icon={<AwxIcon style={{ height: 64 }} />} title={t('')}>
+    <PageMasthead icon={<EdaIcon style={{ height: 64 }} />} title={t('Event Driven Automation')}>
       <ToolbarItem style={{ flexGrow: 1 }} />
       <ToolbarGroup variant="icon-button-group">
         <ToolbarItem>
@@ -37,13 +31,18 @@ export function AwxMasthead() {
         <ToolbarItem>
           <PageSettingsIcon />
         </ToolbarItem>
-        <ToolbarItem>
-          <PageNotificationsIcon count={0} onClick={() => pageNavigate(AwxRoute.Notifications)} />
-        </ToolbarItem>
+        {/* <ToolbarItem>
+          <PageNotificationsIcon count={0} onClick={() => pageNavigate(EdaRoute.Notifications)} />
+        </ToolbarItem> */}
         <ToolbarItem>
           <AppBarDropdown icon={<QuestionCircleIcon />}>
             <DropdownItem
-              onClick={() => open(`${getDocsBaseUrl(config)}/html/userguide/index.html`, '_blank')}
+              onClick={() =>
+                open(
+                  'https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/2.4/html/eda-getting-started-guide/index',
+                  '_blank'
+                )
+              }
               icon={<ExternalLinkAltIcon />}
             >
               {t('Documentation')}

@@ -26,7 +26,7 @@ export function PageMasthead(props: {
     <Masthead display={{ default: 'inline' }}>
       <PageMastheadToggle />
       <MastheadMain>
-        <MastheadBrand style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <MastheadBrand style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           {props.icon}
           <Stack style={{ color: 'white', cursor: 'default' }}>
             {props.brand && (
