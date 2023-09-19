@@ -42,7 +42,7 @@ UI projects for [Ansible](https://www.ansible.com).
 |            `EDA_SERVER` | The EDA server (protocol://host:port).              |
 |          `EDA_USERNAME` | The EDA server username. (only used by Cypress)     |
 |          `EDA_PASSWORD` | The EDA server password. (only used by Cypress)     |
-|        `EDA_API_PREFIX` | The EDA server API prefix. (`/api/eda/v1`)             |
+|        `EDA_API_PREFIX` | The EDA server API prefix. (`/api/eda/v1`)          |
 |      `EDA_ROUTE_PREFIX` | The EDA UI route prefix. (`/eda`)                   |
 |                         |                                                     |
 |            `HUB_SERVER` | The HUB server (protocol://host:port).              |
@@ -66,7 +66,7 @@ export HUB_USERNAME='my-user'
 export HUB_PASSWORD='my-password'
 ```
 
-> Note: For Hub integration tests: Check that the Ansible binary was correctly installed  under the Python directory. Add it to the PATH variable. This is needed for the galaxykit commands that create hub resources for tests.
+> Note: For Hub integration tests: Check that the Ansible binary was correctly installed under the Python directory. Add it to the PATH variable. This is needed for the galaxykit commands that create hub resources for tests.
 
 ## NPM Scripts
 
