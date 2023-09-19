@@ -40,7 +40,7 @@ export function Remotes() {
     tableColumns,
   });
   const toolbarActions = useRemoteToolbarActions(view);
-  const rowActions = useRemoteActions(view);
+  const rowActions = useRemoteActions({ onRemotesDeleted: view.unselectItemsAndRefresh });
 
   const pageNavigate = usePageNavigate();
   return (

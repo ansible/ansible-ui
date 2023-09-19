@@ -9,14 +9,14 @@ import {
   usePageNavigate,
 } from '../../../../framework';
 import { HubRoute } from '../../HubRoutes';
-import { IPulpView } from '../../usePulpView';
 import { IRemotes } from '../Remotes';
 import { useDeleteRemotes } from './useDeleteRemotes';
 
-export function useRemoteActions(view: IPulpView<IRemotes>) {
+export function useRemoteActions(options: { onRemotesDeleted: (remotes: IRemotes[]) => void }) {
+  const { onRemotesDeleted } = options;
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const deleteRemotes = useDeleteRemotes(view.unselectItemsAndRefresh);
+  const deleteRemotes = useDeleteRemotes(onRemotesDeleted);
   const actions = useMemo<IPageAction<IRemotes>[]>(
     () => [
       {
