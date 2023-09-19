@@ -125,7 +125,7 @@ export function PageFormSelect<
   } = useFormContext<TFieldValues>();
 
   const [open, setOpen] = useState(false);
-  const onToggle = useCallback(() => setOpen((open) => !open), []);
+  const onToggle = useCallback(() => setOpen(!open), [open]);
 
   const [translations] = useFrameworkTranslations();
 
@@ -180,6 +180,14 @@ export function PageFormSelect<
               onSelect={onSelectHandler}
               isOpen={open}
               onToggle={onToggle}
+              onClear={
+                isRequired
+                  ? undefined
+                  : () => {
+                      onChange(null);
+                      setOpen(false);
+                    }
+              }
               maxHeight={280}
               validated={helperTextInvalid ? 'error' : undefined}
               isDisabled={isDisabled || isReadOnly || isSubmitting}
