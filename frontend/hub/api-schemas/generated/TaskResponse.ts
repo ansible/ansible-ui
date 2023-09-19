@@ -12,15 +12,26 @@
 
 export interface TaskResponse {
   pulp_id: string;
+
   name: string;
+
   created_at: string;
+
   updated_at: string;
+
   finished_at: string;
+
   started_at: string;
+
   state: string;
-  error: unknown;
-  worker: unknown;
+
+  // error				:	unknown;
+
+  // worker				:	unknown;
+
   parent_task: string;
-  child_tasks: unknown;
-  progress_reports: unknown;
+
+  // child_tasks				:	unknown;
+
+  // progress_reports				:	unknown;
 }

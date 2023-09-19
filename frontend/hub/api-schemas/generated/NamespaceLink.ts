@@ -9,5 +9,6 @@
 
 export interface NamespaceLink {
   name: string;
+
   url: string;
 }

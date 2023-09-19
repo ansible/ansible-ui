@@ -11,5 +11,5 @@
 // /api/pulp/api/v3/uploads/{pulp_id}/list_roles/
 
 export interface ObjectRolesResponse {
-  roles: unknown;
+  // roles				:	unknown;
 }

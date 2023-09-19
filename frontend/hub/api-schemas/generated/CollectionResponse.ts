@@ -14,16 +14,23 @@
 export interface CollectionResponse {
   // Get href.
   href: string;
+
   namespace: string;
+
   name: string;
+
   // Get deprecated.
   deprecated: boolean;
+
   // Get a link to a collection versions list.
   versions_url: string;
+
   // Get a highest version and its link.
-  highest_version: unknown;
+  // highest_version				:	unknown;
+
   // Get the timestamp of the lowest version CollectionVersion's created timestamp.
   created_at: string;
+
   // Get the timestamp of the highest version CollectionVersion's created timestamp.
   updated_at: string;
 }

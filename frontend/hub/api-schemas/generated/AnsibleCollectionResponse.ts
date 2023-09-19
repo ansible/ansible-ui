@@ -14,6 +14,7 @@
 export interface AnsibleCollectionResponse {
   // The name of the Collection.
   name: string;
+
   // The namespace of the Collection.
   namespace: string;
 }

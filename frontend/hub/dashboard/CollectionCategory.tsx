@@ -1,4 +1,4 @@
-import { CollectionVersionSearch } from '../collections/CollectionVersionSearch';
+import { CollectionVersionSearch } from '../collections/Collection';
 
 export interface CollectionCategory {
   id: string;

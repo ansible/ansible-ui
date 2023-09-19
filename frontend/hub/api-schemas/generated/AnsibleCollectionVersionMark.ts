@@ -11,6 +11,7 @@
 export interface AnsibleCollectionVersionMark {
   // The content this mark is pointing to.
   marked_collection: string;
+
   // The string value of this mark.
   value: string;
 }

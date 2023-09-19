@@ -10,10 +10,16 @@ import { Policy8baEnum } from './Policy8baEnum';
 
 export interface SyncList {
   name: string;
-  policy: Policy8baEnum;
+
+  policy?: Policy8baEnum;
+
   upstream_repository: string;
+
   distribution: string;
-  collections: unknown;
-  namespaces: unknown;
+
+  // collections				:	unknown;
+
+  // namespaces				:	unknown;
+
   groups: string;
 }

@@ -13,21 +13,30 @@
 // A serializer for Namespaces.
 export interface AnsibleAnsibleNamespaceMetadataResponse {
   pulp_href: string;
+
   // Required named, only accepts lowercase, numbers and underscores.
   name: string;
+
   // Optional namespace company owner.
   company: string;
+
   // Optional namespace contact email.
   email: string;
+
   // Optional short description.
   description: string;
+
   // Optional resource page in markdown format.
   resources: string;
+
   // Labeled related links.
-  links: unknown;
+  // links				:	unknown;
+
   // SHA256 digest of avatar image if present.
   avatar_sha256: string;
+
   // Download link for avatar image if present.
   avatar_url: string;
+
   metadata_sha256: string;
 }

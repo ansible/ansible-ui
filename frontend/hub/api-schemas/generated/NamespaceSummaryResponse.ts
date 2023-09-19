@@ -18,14 +18,24 @@ For use in _ui/collection detail views.
 */
 export interface NamespaceSummaryResponse {
   pulp_href: string;
+
   id: number;
+
   name: string;
+
   company: string;
+
   email: string;
+
   avatar_url: string;
+
   description: string;
+
   groups: string;
-  related_fields: unknown;
+
+  // related_fields				:	unknown;
+
   metadata_sha256: string;
+
   avatar_sha256: string;
 }

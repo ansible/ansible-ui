@@ -11,10 +11,13 @@
 export interface ManifestCopy {
   // A URI of the repository to copy content from.
   source_repository: string;
+
   // A URI of the repository version to copy content from.
   source_repository_version: string;
+
   // A list of manifest digests to copy.
-  digests: unknown;
+  // digests				:	unknown;
+
   // A list of media_types to copy.
-  media_types: unknown;
+  // media_types				:	unknown;
 }

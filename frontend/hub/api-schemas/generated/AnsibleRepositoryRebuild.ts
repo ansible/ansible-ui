@@ -10,6 +10,8 @@
 // Serializer for Ansible Repository Rebuild.
 export interface AnsibleRepositoryRebuild {
   namespace: string;
+
   name: string;
+
   version: string;
 }

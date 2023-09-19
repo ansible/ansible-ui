@@ -10,21 +10,30 @@
 // Collection Version serializer without docs blob.
 export interface CollectionSummaryResponse {
   pulp_href: string;
+
   // The namespace of the collection.
   namespace: string;
+
   // The name of the collection.
   name: string;
+
   // The version of the collection.
   version: string;
+
   // The version of Ansible required to use the collection. Multiple versions can be separated with a comma.
   requires_ansible: string;
+
   // Timestamp of creation.
   pulp_created: string;
+
   // A JSON field with data about the contents.
-  contents: unknown;
+  // contents				:	unknown;
+
   // A dict declaring Collections that this collection requires to be installed for it to be usable.
-  dependencies: unknown;
+  // dependencies				:	unknown;
+
   // A short summary description of the collection.
   description: string;
-  tags: unknown;
+
+  // tags				:	unknown;
 }

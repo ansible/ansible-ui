@@ -166,6 +166,7 @@ function serializeObjectInterface(schema, depth, interfaceName, needImport) {
   try {
     let fileContent = '';
     for (var propertyKey in schema.properties) {
+      fileContent += add('', 0);
       const property = schema.properties[propertyKey];
       // type, description, format : 'date-time'
       const type = property.type;
@@ -196,13 +197,13 @@ function serializeObjectInterface(schema, depth, interfaceName, needImport) {
 
       if (property.$ref) {
         let objectName = refToObjectKey(property.$ref);
-        fileContent += add(propertyKey + tabs + ':' + '\t' + objectName, depth);
+        fileContent += add(propertyKey + '?' + tabs + ':' + '\t' + objectName, depth);
         needImport[objectName] = true;
         continue;
       }
 
-      // rest is unknown
-      fileContent += add(propertyKey + tabs + ':' + '\t' + 'unknown;', depth);
+      // rest is unknown - add it only as comment so we are able to expand it without using Omit and create new type
+      fileContent += addComment(propertyKey + tabs + ':' + '\t' + 'unknown;', depth);
     }
 
     return { fileContent };

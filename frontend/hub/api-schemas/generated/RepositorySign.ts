@@ -11,8 +11,10 @@
 export interface RepositorySign {
   // A signing service to sign with. This will override a signing service set on the repo.
   manifest_signing_service: string;
+
   // Future base path content will be distributed at for sync repos
   future_base_path: string;
+
   // A list of tags to sign.
-  tags_list: unknown;
+  // tags_list				:	unknown;
 }

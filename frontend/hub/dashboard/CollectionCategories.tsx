@@ -6,7 +6,7 @@ import { PageDashboardCarousel } from '../../../framework/PageDashboard/PageDash
 import { HubRoute } from '../HubRoutes';
 import { postHubRequest } from '../api/request';
 import { hubAPI } from '../api/utils';
-import { CollectionVersionSearch } from '../collections/CollectionVersionSearch';
+import { CollectionVersionSearch } from '../collections/Collection';
 import { useSelectCollectionsDialog } from '../collections/hooks/useSelectCollections';
 import { getAddedAndRemovedCollections } from '../common/utils/getAddedAndRemovedCollections';
 import { parsePulpIDFromURL } from '../common/utils/parsePulpIDFromURL';
@@ -87,7 +87,7 @@ export function CollectionCategoryCarousel(props: {
     >
       {collections.map((collection: CollectionVersionSearch) => (
         <CollectionCard
-          key={collection.collection_version.name}
+          key={collection.collection_version?.name}
           collection={collection}
         ></CollectionCard>
       ))}
@@ -100,12 +100,14 @@ function getRepoToCollectionPulpHrefsMap(collections: CollectionVersionSearch[])
   const repoToCollectionPulpHrefsMap: { [key: string]: string[] } = {};
 
   collections.forEach((collection) => {
-    const repoPulpId = parsePulpIDFromURL(collection.repository.pulp_href);
+    const repoPulpId = parsePulpIDFromURL(collection.repository?.pulp_href || '');
     if (repoPulpId) {
       if (!repoToCollectionPulpHrefsMap[repoPulpId]) {
-        repoToCollectionPulpHrefsMap[repoPulpId] = [collection.collection_version.pulp_href];
+        repoToCollectionPulpHrefsMap[repoPulpId] = [collection.collection_version?.pulp_href || ''];
       } else {
-        repoToCollectionPulpHrefsMap[repoPulpId].push(collection.collection_version.pulp_href);
+        repoToCollectionPulpHrefsMap[repoPulpId].push(
+          collection.collection_version?.pulp_href || ''
+        );
       }
     }
   });

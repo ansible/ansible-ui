@@ -11,8 +11,10 @@
 export interface AnsibleCollectionVersionSignature {
   // An uploaded file that may be turned into the artifact of the content unit.
   file: string;
+
   // A URI of a repository the new content unit should be associated with.
   repository: string;
+
   // The content this signature is pointing to.
   signed_collection: string;
 }

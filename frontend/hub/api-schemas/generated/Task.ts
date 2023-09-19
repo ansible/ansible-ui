@@ -19,6 +19,7 @@ of plugins are namespaced properly.
 export interface Task {
   // The name of task.
   name: string;
+
   // The logging correlation id associated with this task
   logging_cid: string;
 }

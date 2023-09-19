@@ -14,7 +14,10 @@ import { RepositoryResponse } from './RepositoryResponse';
 
 export interface DistributionResponse {
   pulp_id: string;
+
   name: string;
+
   base_path: string;
-  repository: RepositoryResponse;
+
+  repository?: RepositoryResponse;
 }

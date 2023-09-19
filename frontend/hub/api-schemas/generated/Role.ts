@@ -11,8 +11,10 @@
 export interface Role {
   // The name of this role.
   name: string;
+
   // An optional description.
   description: string;
+
   // List of permissions defining the role.
-  permissions: unknown;
+  // permissions				:	unknown;
 }

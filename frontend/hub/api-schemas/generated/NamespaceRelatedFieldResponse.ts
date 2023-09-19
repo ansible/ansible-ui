@@ -32,5 +32,5 @@ MySerializer will return:
 when called with `?include_related=foo&include_related=bar`.
 */
 export interface NamespaceRelatedFieldResponse {
-  my_permissions: unknown;
+  // my_permissions				:	unknown;
 }

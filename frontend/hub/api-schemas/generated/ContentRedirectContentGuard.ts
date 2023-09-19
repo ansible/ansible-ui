@@ -11,6 +11,7 @@
 export interface ContentRedirectContentGuard {
   // The unique name.
   name: string;
+
   // An optional description.
   description: string;
 }

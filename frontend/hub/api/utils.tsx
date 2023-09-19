@@ -77,10 +77,10 @@ export function pulpHrefKeyFn(item: { pulp_href: string }) {
 }
 
 export function collectionKeyFn(item: {
-  collection_version: { pulp_href: string };
-  repository: { name: string };
+  collection_version?: { pulp_href: string };
+  repository?: { name: string };
 }) {
-  return item.collection_version.pulp_href + '_' + item.repository.name;
+  return item.collection_version?.pulp_href + '_' + item.repository?.name;
 }
 
 export function appendTrailingSlash(url: string) {

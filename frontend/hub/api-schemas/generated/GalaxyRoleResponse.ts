@@ -15,6 +15,8 @@
 export interface GalaxyRoleResponse {
   // Get id.
   id: string;
+
   name: string;
+
   namespace: string;
 }

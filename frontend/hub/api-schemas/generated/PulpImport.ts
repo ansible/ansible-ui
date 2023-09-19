@@ -11,8 +11,10 @@
 export interface PulpImport {
   // Path to export that will be imported.
   path: string;
+
   // Path to a table-of-contents file describing chunks to be validated, reassembled, and imported.
   toc: string;
+
   // If True, missing repositories will be automatically created during the import.
   create_repositories: boolean;
 }

@@ -21,12 +21,17 @@ of plugins are namespaced properly.
 */
 export interface RBACContentGuardResponse {
   pulp_href: string;
+
   // Timestamp of creation.
   pulp_created: string;
+
   // The unique name.
   name: string;
+
   // An optional description.
   description: string;
-  users: unknown;
-  groups: unknown;
+
+  // users				:	unknown;
+
+  // groups				:	unknown;
 }

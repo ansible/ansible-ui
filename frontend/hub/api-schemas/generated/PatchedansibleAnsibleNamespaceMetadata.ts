@@ -11,16 +11,22 @@
 export interface PatchedansibleAnsibleNamespaceMetadata {
   // Required named, only accepts lowercase, numbers and underscores.
   name: string;
+
   // Optional namespace company owner.
   company: string;
+
   // Optional namespace contact email.
   email: string;
+
   // Optional short description.
   description: string;
+
   // Optional resource page in markdown format.
   resources: string;
+
   // Labeled related links.
-  links: unknown;
+  // links				:	unknown;
+
   // Optional avatar image for Namespace
   avatar: string;
 }

@@ -12,10 +12,16 @@
 
 export interface LegacyNamespacesResponse {
   id: number;
+
   url: string;
+
   summary_fields: string;
+
   created: string;
+
   modified: string;
+
   name: string;
+
   avatar_url: string;
 }

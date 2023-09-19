@@ -13,16 +13,28 @@
 
 export interface LegacyRoleResponse {
   id: number;
+
   upstream_id: string;
+
   created: string;
+
   modified: string;
+
   github_user: string;
+
   username: string;
+
   github_repo: string;
+
   github_branch: string;
+
   commit: string;
+
   name: string;
+
   description: string;
+
   summary_fields: string;
+
   download_count: string;
 }

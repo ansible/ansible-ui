@@ -11,19 +11,27 @@
 export interface ContainerContainerDistribution {
   // The base (relative) path component of the published url. Avoid paths that                     overlap with other distribution base paths (e.g. "foo" and "foo/bar")
   base_path: string;
+
   // A unique name. Ex, `rawhide` and `stable`.
   name: string;
-  pulp_labels: unknown;
+
+  // pulp_labels				:	unknown;
+
   // Whether this distribution should be shown in the content app.
   hidden: boolean;
+
   // The latest RepositoryVersion for this Repository will be served.
   repository: string;
+
   // An optional content-guard. If none is specified, a default one will be used.
   content_guard: string;
+
   // RepositoryVersion to be served
   repository_version: string;
+
   // Restrict pull access to explicitly authorized users. Defaults to unrestricted pull access.
   private: boolean;
+
   // An optional description.
   description: string;
 }
