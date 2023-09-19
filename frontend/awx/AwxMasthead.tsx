@@ -9,7 +9,6 @@ import { PageSettingsIcon } from '../../framework/PageMasthead/PageSettingsIcon'
 import { PageThemeSwitcher } from '../../framework/PageMasthead/PageThemeSwitcher';
 import { useAnsibleAboutModal } from '../common/AboutModal';
 import { PageRefreshIcon } from '../common/PageRefreshIcon';
-import '../common/i18n';
 import { useActiveUser } from '../common/useActiveUser';
 import { AwxRoute } from './AwxRoutes';
 import AwxIcon from './awx-logo.svg';

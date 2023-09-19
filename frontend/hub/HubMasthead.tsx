@@ -10,7 +10,6 @@ import { PageThemeSwitcher } from '../../framework/PageMasthead/PageThemeSwitche
 import { useAnsibleAboutModal } from '../common/AboutModal';
 import { PageRefreshIcon } from '../common/PageRefreshIcon';
 import { postRequest } from '../common/crud/Data';
-import '../common/i18n';
 import { useActiveUser } from '../common/useActiveUser';
 import { HubRoute } from './HubRoutes';
 import { hubAPI } from './api/utils';
