@@ -44,3 +44,7 @@
   flex-wrap: wrap;
   row-gap: 8px;
 }
+
+.pf-c-page__sidebar-body {
+  padding-top: 0;
+}

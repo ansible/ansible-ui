@@ -13,8 +13,8 @@ export function PageApp(props: {
 
   root: ReactNode;
 
-  /** Component for the header of the page. */
-  header?: ReactNode;
+  /** Component for the masthead of the page. */
+  masthead?: ReactNode;
 
   /** The navigation items for the page. */
   navigation: PageNavigationItem[];
@@ -26,7 +26,7 @@ export function PageApp(props: {
    */
   basename?: string;
 }) {
-  const { navigation, basename, header } = props;
+  const { navigation, basename, masthead: header } = props;
   const routes = useMemo(
     () => [
       {

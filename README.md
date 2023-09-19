@@ -2,12 +2,11 @@
 
 UI projects for [Ansible](https://www.ansible.com).
 
-- [Ansible UI](#ansible-ui)
-  - [Getting Started](#getting-started)
-  - [Environment Variables](#environment-variables)
-  - [NPM Scripts](#npm-scripts)
-  - [Documentation](#documentation)
-  - [Code of Conduct](#code-of-conduct)
+- [Getting Started](#getting-started)
+- [Environment Variables](#environment-variables)
+- [NPM Scripts](#npm-scripts)
+- [Documentation](#documentation)
+- [Code of Conduct](#code-of-conduct)
 
 ## Getting Started
 
