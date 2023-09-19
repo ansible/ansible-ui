@@ -12,7 +12,7 @@ import { PageMastheadDropdown } from '../../framework/PageMasthead/PageMastheadD
 import { PageNotificationsIcon } from '../../framework/PageMasthead/PageNotificationsIcon';
 import { PageSettingsIcon } from '../../framework/PageMasthead/PageSettingsIcon';
 import { PageThemeSwitcher } from '../../framework/PageMasthead/PageThemeSwitcher';
-import HubIcon from '../../icons/hub-logo.svg';
+import Logo from '../../icons/galaxy-logo.svg';
 import { useAnsibleAboutModal } from '../common/AboutModal';
 import { PageRefreshIcon } from '../common/PageRefreshIcon';
 import { postRequest } from '../common/crud/Data';
@@ -32,8 +32,9 @@ export function HubMasthead() {
   }, [pageNavigate]);
   return (
     <PageMasthead
-      icon={<HubIcon style={{ height: 64 }} />}
-      title={process.env.PRODUCT}
+      icon={<Logo style={{ height: 48, marginTop: -8 }} />}
+      // title={process.env.PRODUCT}
+      title=""
       brand={process.env.BRAND}
     >
       <ToolbarItem style={{ flexGrow: 1 }} />
