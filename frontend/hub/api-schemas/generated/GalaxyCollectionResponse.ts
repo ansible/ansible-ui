@@ -13,15 +13,22 @@
 // A serializer for a Collection.
 export interface GalaxyCollectionResponse {
   id: string;
+
   name: string;
+
   // Create a namespace dict.
-  namespace: unknown;
+  // namespace				:	unknown;
+
   // Get href.
   href: string;
+
   // Get versions_url.
   versions_url: string;
+
   created: string;
+
   modified: string;
+
   // Get latest version.
-  latest_version: unknown;
+  // latest_version				:	unknown;
 }

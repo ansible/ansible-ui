@@ -19,14 +19,19 @@ of plugins are namespaced properly.
 export interface ProgressReportResponse {
   // The message shown to the user for the progress report.
   message: string;
+
   // Identifies the type of progress report'.
   code: string;
+
   // The current state of the progress report. The possible values are: 'waiting', 'skipped', 'running', 'completed', 'failed', 'canceled' and 'canceling'. The default is 'waiting'.
   state: string;
+
   // The total count of items.
   total: number;
+
   // The count of items already processed. Defaults to 0.
   done: number;
+
   // The suffix to be shown with the progress report.
   suffix: string;
 }

@@ -21,24 +21,35 @@ of plugins are namespaced properly.
 */
 export interface TaskGroupResponse {
   pulp_href: string;
+
   // A description of the task group.
   description: string;
+
   // Whether all tasks have been spawned for this task group.
   all_tasks_dispatched: boolean;
+
   // Number of tasks in the 'waiting' state
   waiting: number;
+
   // Number of tasks in the 'skipped' state
   skipped: number;
+
   // Number of tasks in the 'running' state
   running: number;
+
   // Number of tasks in the 'completed' state
   completed: number;
+
   // Number of tasks in the 'canceled' state
   canceled: number;
+
   // Number of tasks in the 'failed' state
   failed: number;
+
   // Number of tasks in the 'canceling' state
   canceling: number;
-  group_progress_reports: unknown;
-  tasks: unknown;
+
+  // group_progress_reports				:	unknown;
+
+  // tasks				:	unknown;
 }

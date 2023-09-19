@@ -11,10 +11,13 @@
 export interface FilesystemExport {
   // A URI of the task that ran the Export.
   task: string;
+
   // A URI of the publication to be exported.
   publication: string;
+
   // A URI of the repository version export.
   repository_version: string;
+
   // The URI of the last-exported-repo-version.
   start_repository_version: string;
 }

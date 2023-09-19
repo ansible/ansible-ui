@@ -14,10 +14,13 @@
 // Serializer for chunked uploads.
 export interface UploadResponse {
   pulp_href: string;
+
   // Timestamp of creation.
   pulp_created: string;
+
   // The size of the upload in bytes.
   size: number;
+
   // Timestamp when upload is committed.
   completed: string;
 }

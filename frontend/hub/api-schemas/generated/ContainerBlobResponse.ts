@@ -13,10 +13,13 @@
 // Serializer for Blobs.
 export interface ContainerBlobResponse {
   pulp_href: string;
+
   // Timestamp of creation.
   pulp_created: string;
+
   // Artifact file representing the physical content
   artifact: string;
+
   // sha256 of the Blob file
   digest: string;
 }

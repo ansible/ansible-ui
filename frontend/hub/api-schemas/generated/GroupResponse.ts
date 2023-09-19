@@ -14,6 +14,8 @@
 export interface GroupResponse {
   // Name
   name: string;
+
   pulp_href: string;
+
   id: number;
 }

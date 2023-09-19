@@ -12,11 +12,18 @@
 
 export interface LegacyUserResponse {
   id: number;
+
   url: string;
+
   summary_fields: string;
+
   created: string;
+
   username: string;
+
   full_name: string;
+
   date_joined: string;
+
   avatar_url: string;
 }

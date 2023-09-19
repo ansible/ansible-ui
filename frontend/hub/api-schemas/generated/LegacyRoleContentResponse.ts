@@ -12,5 +12,6 @@
 
 export interface LegacyRoleContentResponse {
   readme: string;
+
   readme_html: string;
 }

@@ -13,13 +13,19 @@
 // Serializer for GroupRole.
 export interface GroupRoleResponse {
   pulp_href: string;
+
   // Timestamp of creation.
   pulp_created: string;
+
   role: string;
+
   // pulp_href of the object for which role permissions should be asserted. If set to 'null', permissions will act on the model-level.
   content_object: string;
+
   description: string;
-  permissions: unknown;
+
+  // permissions				:	unknown;
+
   // Domain this role should be applied on, mutually exclusive with content_object.
   domain: string;
 }

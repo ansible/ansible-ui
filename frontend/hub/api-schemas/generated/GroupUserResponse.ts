@@ -15,5 +15,6 @@
 export interface GroupUserResponse {
   // Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
   username: string;
+
   pulp_href: string;
 }

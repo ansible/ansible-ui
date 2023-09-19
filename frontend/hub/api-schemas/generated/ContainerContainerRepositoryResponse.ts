@@ -13,19 +13,28 @@
 // Serializer for Container Repositories.
 export interface ContainerContainerRepositoryResponse {
   pulp_href: string;
+
   // Timestamp of creation.
   pulp_created: string;
+
   versions_href: string;
-  pulp_labels: unknown;
+
+  // pulp_labels				:	unknown;
+
   latest_version_href: string;
+
   // A unique name for this repository.
   name: string;
+
   // An optional description.
   description: string;
+
   // Retain X versions of the repository. Default is null which retains all versions.
   retain_repo_versions: number;
+
   // An optional remote to use by default when syncing.
   remote: string;
+
   // A reference to an associated signing service.
   manifest_signing_service: string;
 }

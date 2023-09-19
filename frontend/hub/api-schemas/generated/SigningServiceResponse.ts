@@ -13,14 +13,19 @@
 // A serializer for the model declaring a signing service.
 export interface SigningServiceResponse {
   pulp_href: string;
+
   // Timestamp of creation.
   pulp_created: string;
+
   // A unique name used to recognize a script.
   name: string;
+
   // The value of a public key used for the repository verification.
   public_key: string;
+
   // The fingerprint of the public key.
   pubkey_fingerprint: string;
+
   // An absolute path to a script which is going to be used for the signing.
   script: string;
 }

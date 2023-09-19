@@ -13,19 +13,27 @@
 // Serializer for Ansible Distributions.
 export interface AnsibleAnsibleDistributionResponse {
   pulp_href: string;
+
   // Timestamp of creation.
   pulp_created: string;
+
   // The base (relative) path component of the published url. Avoid paths that                     overlap with other distribution base paths (e.g. "foo" and "foo/bar")
   base_path: string;
+
   // An optional content-guard.
   content_guard: string;
+
   // A unique name. Ex, `rawhide` and `stable`.
   name: string;
+
   // The latest RepositoryVersion for this Repository will be served.
   repository: string;
+
   // RepositoryVersion to be served
   repository_version: string;
+
   // The URL of a Collection content source.
   client_url: string;
-  pulp_labels: unknown;
+
+  // pulp_labels				:	unknown;
 }

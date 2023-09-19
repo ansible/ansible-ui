@@ -40,13 +40,13 @@ describe('CollectionCategories.cy.tsx', () => {
         // The 4th collection card should not be visible at first
         cy.contains(
           'div[id="slide-container-application-collections"] div.pf-c-card__title',
-          collections[3].collection_version.name
+          collections[3].collection_version?.name || ''
         ).should('not.be.visible');
         // Navigate to next page in the carousel to view the 4th card
         cy.get('button[aria-label="Navigate to the next page"]').click();
         cy.contains(
           'div[id="slide-container-application-collections"] div.pf-c-card__title',
-          collections[3].collection_version.name
+          collections[3].collection_version?.name || ''
         ).should('be.visible');
       }
     );

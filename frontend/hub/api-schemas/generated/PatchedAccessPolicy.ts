@@ -10,11 +10,11 @@
 // Serializer for AccessPolicy.
 export interface PatchedAccessPolicy {
   // List of callables that define the new permissions to be created for new objects.This is deprecated. Use `creation_hooks` instead.
-  permissions_assignment: unknown;
+  // permissions_assignment				:	unknown;
   // List of callables that may associate user roles for new objects.
-  creation_hooks: unknown;
+  // creation_hooks				:	unknown;
   // List of policy statements defining the policy.
-  statements: unknown;
+  // statements				:	unknown;
   // A callable for performing queryset scoping. See plugin documentation for valid callables. Set to blank to turn off queryset scoping.
-  queryset_scoping: unknown;
+  // queryset_scoping				:	unknown;
 }

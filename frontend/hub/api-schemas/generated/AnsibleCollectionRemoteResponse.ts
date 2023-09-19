@@ -13,42 +13,62 @@
 // A serializer for Collection Remotes.
 export interface AnsibleCollectionRemoteResponse {
   pk: string;
+
   name: string;
+
   // The URL of an external content source.
   url: string;
+
   // The URL to receive a session token from, e.g. used with Automation Hub.
   auth_url: string;
+
   /*
 	The policy to use when downloading content.
 
 * `immediate` - immediate
 * `When syncing, download all metadata and content now.` - When syncing, download all metadata and content now.
 	*/
-  policy: unknown;
+  // policy				:	unknown;
+
   // The string version of Collection requirements yaml.
   requirements_file: string;
+
   created_at: string;
+
   updated_at: string;
+
   // Remote user.
   username: string;
+
   // If True, TLS peer validation must be performed.
   tls_validation: boolean;
+
   // A PEM encoded client certificate used for authentication.
   client_cert: string;
+
   // A PEM encoded CA certificate used to validate the server certificate presented by the remote server.
   ca_cert: string;
+
   last_sync_task: string;
-  repositories: unknown;
+
+  // repositories				:	unknown;
+
   pulp_href: string;
+
   // Total number of simultaneous connections. If not set then the default value will be used.
   download_concurrency: number;
+
   // The proxy URL. Format: scheme://host:port
   proxy_url: string;
+
   // User for proxy authentication.
   proxy_username: string;
-  write_only_fields: unknown;
+
+  // write_only_fields				:	unknown;
+
   // Limits requests per second for each concurrent downloader
   rate_limit: number;
+
   // Sync only collections that have a signature
   signed_only: boolean;
 }

@@ -14,42 +14,62 @@
 export interface AnsibleGitRemoteResponse {
   // aiohttp.ClientTimeout.sock_read (q.v.) for download-connections. The default is null, which will cause the default from the aiohttp library to be used.
   sock_read_timeout: number;
+
   // A unique name for this remote.
   name: string;
-  pulp_labels: unknown;
+
+  // pulp_labels				:	unknown;
+
   // aiohttp.ClientTimeout.sock_connect (q.v.) for download-connections. The default is null, which will cause the default from the aiohttp library to be used.
   sock_connect_timeout: number;
+
   // aiohttp.ClientTimeout.connect (q.v.) for download-connections. The default is null, which will cause the default from the aiohttp library to be used.
   connect_timeout: number;
+
   // If True, TLS peer validation must be performed.
   tls_validation: boolean;
+
   // Total number of simultaneous connections. If not set then the default value will be used.
   download_concurrency: number;
+
   // Maximum number of retry attempts after a download failure. If not set then the default value (3) will be used.
   max_retries: number;
+
   // Timestamp of creation.
   pulp_created: string;
+
   // A PEM encoded CA certificate used to validate the server certificate presented by the remote server.
   ca_cert: string;
+
   // The URL of an external content source.
   url: string;
+
   pulp_href: string;
+
   // List of hidden (write only) fields
-  hidden_fields: unknown;
+  // hidden_fields				:	unknown;
+
   // Headers for aiohttp.Clientsession
-  headers: unknown;
+  // headers				:	unknown;
+
   // Timestamp of the most recent update of the remote.
   pulp_last_updated: string;
+
   // A PEM encoded client certificate used for authentication.
   client_cert: string;
+
   // aiohttp.ClientTimeout.total (q.v.) for download-connections. The default is null, which will cause the default from the aiohttp library to be used.
   total_timeout: number;
+
   // Limits requests per second for each concurrent downloader
   rate_limit: number;
+
   // The proxy URL. Format: scheme://host:port
   proxy_url: string;
+
   // If True, only metadata about the content will be stored in Pulp. Clients will retrieve content from the remote URL.
   metadata_only: boolean;
+
   // A git ref. e.g.: branch, tag, or commit sha.
   git_ref: string;
 }

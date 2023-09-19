@@ -11,5 +11,6 @@
 export interface UserGroupResponse {
   // Name.
   name: string;
+
   pulp_href: string;
 }

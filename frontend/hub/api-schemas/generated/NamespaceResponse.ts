@@ -12,16 +12,28 @@
 
 export interface NamespaceResponse {
   pulp_href: string;
+
   id: number;
+
   name: string;
+
   company: string;
+
   email: string;
+
   avatar_url: string;
+
   description: string;
-  links: unknown;
+
+  // links				:	unknown;
+
   groups: string;
+
   resources: string;
-  related_fields: unknown;
+
+  // related_fields				:	unknown;
+
   metadata_sha256: string;
+
   avatar_sha256: string;
 }

@@ -10,6 +10,7 @@
 export interface Purge {
   // Purge tasks completed earlier than this timestamp. Format '%Y-%m-%d[T%H:%M:%S]'
   finished_before: string;
+
   // List of task-states to be purged. Only 'final' states are allowed.
-  states: unknown;
+  // states				:	unknown;
 }

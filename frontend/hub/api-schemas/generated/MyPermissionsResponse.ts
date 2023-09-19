@@ -11,5 +11,5 @@
 // /api/pulp/api/v3/uploads/{pulp_id}/my_permissions/
 
 export interface MyPermissionsResponse {
-  permissions: unknown;
+  // permissions				:	unknown;
 }

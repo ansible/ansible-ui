@@ -13,7 +13,9 @@
 // Serializer for ContainerNamespaces.
 export interface ContainerContainerNamespaceResponse {
   pulp_href: string;
+
   // Timestamp of creation.
   pulp_created: string;
+
   name: string;
 }

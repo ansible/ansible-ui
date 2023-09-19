@@ -19,6 +19,7 @@ of plugins are namespaced properly.
 export interface PatchedRBACContentGuard {
   // The unique name.
   name: string;
+
   // An optional description.
   description: string;
 }

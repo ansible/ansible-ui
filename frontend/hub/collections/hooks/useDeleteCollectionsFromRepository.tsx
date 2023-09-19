@@ -23,8 +23,8 @@ export function useDeleteCollectionsFromRepository(
         actionButtonText: t('Delete collections', { count: collections.length }),
         items: collections.sort((l, r) =>
           compareStrings(
-            l.collection_version.name + l.repository.name,
-            r.collection_version.name + l.repository.name
+            l.collection_version?.name || '' + l.repository?.name,
+            r.collection_version?.name || '' + l.repository?.name
           )
         ),
         keyFn: collectionKeyFn,
@@ -43,11 +43,11 @@ export function useDeleteCollectionsFromRepository(
 async function deleteCollectionFromRepository(collection: CollectionVersionSearch) {
   return postRequest(
     pulpAPI`/repositories/ansible/ansible/${
-      parsePulpIDFromURL(collection.repository.pulp_href) || ''
+      parsePulpIDFromURL(collection.repository?.pulp_href || '') || ''
     }/modify/`,
     {
-      remove_content_units: [collection.collection_version.pulp_href],
-      base_version: collection.repository.latest_version_href,
+      remove_content_units: [collection.collection_version?.pulp_href || ''],
+      base_version: collection.repository?.latest_version_href || '',
     }
   );
 }

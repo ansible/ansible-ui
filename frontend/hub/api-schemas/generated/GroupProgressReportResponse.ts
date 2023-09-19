@@ -19,12 +19,16 @@ of plugins are namespaced properly.
 export interface GroupProgressReportResponse {
   // The message shown to the user for the group progress report.
   message: string;
+
   // Identifies the type of group progress report'.
   code: string;
+
   // The total count of items.
   total: number;
+
   // The count of items already processed. Defaults to 0.
   done: number;
+
   // The suffix to be shown with the group progress report.
   suffix: string;
 }

@@ -13,12 +13,16 @@
 // A serializer for signature models.
 export interface AnsibleCollectionVersionSignatureResponse {
   pulp_href: string;
+
   // Timestamp of creation.
   pulp_created: string;
+
   // The content this signature is pointing to.
   signed_collection: string;
+
   // The fingerprint of the public key.
   pubkey_fingerprint: string;
+
   // The signing service used to create the signature.
   signing_service: string;
 }

@@ -10,6 +10,8 @@ import { LegacyTaskSummaryFieldsResponse } from './LegacyTaskSummaryFieldsRespon
 
 export interface LegacyTaskResultsResponse {
   state: string;
+
   id: number;
-  summary_fields: LegacyTaskSummaryFieldsResponse;
+
+  summary_fields?: LegacyTaskSummaryFieldsResponse;
 }

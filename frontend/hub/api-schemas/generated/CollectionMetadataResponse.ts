@@ -9,14 +9,23 @@
 
 // A serializer for a CollectionVersion metadata.
 export interface CollectionMetadataResponse {
-  authors: unknown;
-  contents: unknown;
-  dependencies: unknown;
+  // authors				:	unknown;
+
+  // contents				:	unknown;
+
+  // dependencies				:	unknown;
+
   description: string;
+
   documentation: string;
+
   homepage: string;
+
   issues: string;
-  license: unknown;
+
+  // license				:	unknown;
+
   repository: string;
-  tags: unknown;
+
+  // tags				:	unknown;
 }

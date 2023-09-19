@@ -10,7 +10,8 @@
 // A serializer for the signing action.
 export interface AnsibleRepositorySignature {
   // List of collection version hrefs to sign, use * to sign all content in repository
-  content_units: unknown;
+  // content_units				:	unknown;
+
   // A signing service to use to sign the collections
   signing_service: string;
 }

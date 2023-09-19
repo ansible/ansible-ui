@@ -10,11 +10,16 @@
 // A serializer for a CollectionVersion list item.
 export interface CollectionVersionListResponse {
   version: string;
+
   // Get href.
   href: string;
+
   created_at: string;
+
   updated_at: string;
+
   requires_ansible: string;
+
   // Get a list of mark values filtering only those in the current repo.
-  marks: unknown;
+  // marks				:	unknown;
 }

@@ -11,10 +11,13 @@
 export interface VersionResponse {
   // Name of a versioned component of Pulp
   component: string;
+
   // Version of the component (e.g. 3.0.0)
   version: string;
+
   // Python package name providing the component
   package: string;
+
   // Domain feature compatibility of component
   domain_compatible: boolean;
 }

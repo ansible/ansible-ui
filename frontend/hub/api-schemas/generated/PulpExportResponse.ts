@@ -13,16 +13,22 @@
 // Serializer for PulpExports.
 export interface PulpExportResponse {
   pulp_href: string;
+
   // Timestamp of creation.
   pulp_created: string;
+
   // A URI of the task that ran the Export.
   task: string;
+
   // Resources that were exported.
-  exported_resources: unknown;
+  // exported_resources				:	unknown;
+
   // Any additional parameters that were used to create the export.
-  params: unknown;
+  // params				:	unknown;
+
   // Dictionary of filename: sha256hash entries for export-output-file(s)
-  output_file_info: unknown;
+  // output_file_info				:	unknown;
+
   // Filename and sha256-checksum of table-of-contents for this export
-  toc_info: unknown;
+  // toc_info				:	unknown;
 }

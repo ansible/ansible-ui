@@ -9,8 +9,12 @@
 
 export interface AnsibleDistributionResponse {
   name: string;
+
   base_path: string;
+
   content_guard: string;
+
   created_at: string;
+
   updated_at: string;
 }

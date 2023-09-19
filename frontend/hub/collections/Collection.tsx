@@ -1,5 +1,8 @@
 import { HubNamespace } from '../namespaces/HubNamespace';
 
+import { CollectionVersionSearchListResponse as CollectionVersionSearch } from '../api-schemas/generated/CollectionVersionSearchListResponse';
+export { CollectionVersionSearch };
+
 export interface Collection {
   id: number;
   name: string;
@@ -28,6 +31,7 @@ export interface Collection {
   };
 }
 
+/*
 export interface CollectionVersionSearch {
   collection_version: {
     contents: ContentSummaryType[];
@@ -78,3 +82,4 @@ export interface ContentSummaryType {
   content_type: string;
   description: string;
 }
+*/

@@ -22,9 +22,12 @@ of plugins are namespaced properly.
 */
 export interface PublicationResponse {
   pulp_href: string;
+
   // Timestamp of creation.
   pulp_created: string;
+
   repository_version: string;
+
   // A URI of the repository to be published.
   repository: string;
 }

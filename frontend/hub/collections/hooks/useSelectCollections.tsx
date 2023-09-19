@@ -35,8 +35,8 @@ export function CollectionMultiSelectDialog(props: {
     () => [
       {
         header: t('Name'),
-        value: (collection) => collection.collection_version.name,
-        cell: (collection) => <TextCell text={collection.collection_version.name} />,
+        value: (collection) => collection.collection_version?.name,
+        cell: (collection) => <TextCell text={collection.collection_version?.name} />,
         sort: 'name',
         card: 'name',
         list: 'name',
@@ -45,26 +45,26 @@ export function CollectionMultiSelectDialog(props: {
       {
         header: t('Description'),
         type: 'description',
-        value: (collection) => collection.collection_version.description,
+        value: (collection) => collection.collection_version?.description,
         table: ColumnTableOption.Expanded,
       },
       {
         header: t('Version'),
         type: 'text',
-        value: (collection) => collection.collection_version.version,
+        value: (collection) => collection.collection_version?.version,
         table: ColumnTableOption.Hidden,
         sort: 'version',
       },
       {
         header: t('Repository'),
         cell: (collection: CollectionVersionSearch) =>
-          collection.repository.name === CERTIFIED_REPO ? (
+          collection.repository?.name === CERTIFIED_REPO ? (
             <Label color="blue" icon={<CertifiedIcon />} variant="outline">
               <Truncate content={t('Certified')} style={{ minWidth: 0 }} />
             </Label>
           ) : (
             <Label color="blue" variant="outline">
-              <Truncate content={collection.repository.name} style={{ minWidth: 0 }} />
+              <Truncate content={collection.repository?.name || ''} style={{ minWidth: 0 }} />
             </Label>
           ),
       },

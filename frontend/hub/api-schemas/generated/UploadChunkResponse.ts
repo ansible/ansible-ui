@@ -10,5 +10,6 @@
 // A mixin for validating unknown serializers' fields.
 export interface UploadChunkResponse {
   offset: number;
+
   size: number;
 }

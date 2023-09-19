@@ -11,12 +11,16 @@
 export interface CollectionOneShot {
   // The Collection tarball.
   file: string;
+
   // An optional sha256 checksum of the uploaded file.
   sha256: string;
+
   // The expected 'namespace' of the Collection to be verified against the metadata during import.
   expected_namespace: string;
+
   // The expected 'name' of the Collection to be verified against the metadata during import.
   expected_name: string;
+
   // The expected version of the Collection to be verified against the metadata during import.
   expected_version: string;
 }
