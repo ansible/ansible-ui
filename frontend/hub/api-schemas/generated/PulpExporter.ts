@@ -11,9 +11,12 @@
 export interface PulpExporter {
   // Unique name of the file system exporter.
   name: string;
+
   // File system directory to store exported tar.gzs.
   path: string;
-  repositories: unknown;
+
+  // repositories				:	unknown;
+
   // Last attempted export for this PulpExporter
   last_export: string;
 }

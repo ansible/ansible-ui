@@ -10,7 +10,7 @@
 // Serializer for reclaim disk space operation.
 export interface ReclaimSpace {
   // Will reclaim space for the specified list of repos. Use ['*'] to specify all repos.
-  repo_hrefs: unknown;
+  // repo_hrefs				:	unknown;
   // Will exclude repo versions from space reclaim.
-  repo_versions_keeplist: unknown;
+  // repo_versions_keeplist				:	unknown;
 }

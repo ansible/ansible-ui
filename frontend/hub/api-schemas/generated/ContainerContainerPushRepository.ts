@@ -11,11 +11,15 @@
 export interface ContainerContainerPushRepository {
   // A unique name for this repository.
   name: string;
-  pulp_labels: unknown;
+
+  // pulp_labels				:	unknown;
+
   // A reference to an associated signing service.
   manifest_signing_service: string;
+
   // An optional description.
   description: string;
+
   // Retain X versions of the repository. Default is null which retains all versions.
   retain_repo_versions: number;
 }

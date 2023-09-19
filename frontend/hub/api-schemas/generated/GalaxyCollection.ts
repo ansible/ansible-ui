@@ -10,7 +10,10 @@
 // A serializer for a Collection.
 export interface GalaxyCollection {
   id: string;
+
   name: string;
+
   created: string;
+
   modified: string;
 }

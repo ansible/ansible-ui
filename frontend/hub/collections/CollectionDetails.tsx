@@ -124,7 +124,7 @@ export function CollectionDetails() {
     const newCollection = data.data[0];
     if (
       !collection ||
-      collection.collection_version.version != newCollection.collection_version.version
+      collection.collection_version?.version != newCollection.collection_version?.version
     ) {
       setCollection(newCollection);
     }
@@ -148,10 +148,10 @@ export function CollectionDetails() {
   return (
     <PageLayout>
       <PageHeader
-        title={collection?.collection_version.name}
+        title={collection?.collection_version?.name}
         breadcrumbs={[
           { label: t('Collections'), to: getPageUrl(HubRoute.Collections) },
-          { label: collection?.collection_version.name },
+          { label: collection?.collection_version?.name },
         ]}
         headerActions={
           collection && (
@@ -162,7 +162,7 @@ export function CollectionDetails() {
             />
           )
         }
-        description={t('Repository: ') + collection?.repository.name}
+        description={t('Repository: ') + collection?.repository?.name}
         footer={
           <div style={{ display: 'flex', alignItems: 'center' }}>
             {t('Version')}
@@ -171,36 +171,38 @@ export function CollectionDetails() {
                 collections
                   ? collections.map((item) => {
                       let label =
-                        item.collection_version.version +
+                        item.collection_version?.version +
                         ' ' +
                         t('updated') +
                         ' ' +
-                        `${DateTime.fromISO(item.collection_version.pulp_created).toRelative()} (${
-                          item.is_signed ? t('signed') : t('unsigned')
-                        })`;
+                        `${DateTime.fromISO(
+                          item.collection_version?.pulp_created || ''
+                        ).toRelative()} (${item.is_signed ? t('signed') : t('unsigned')})`;
                       if (item.is_highest) {
                         label += ' (' + t('latest') + ')';
                       }
                       return {
-                        value: item.collection_version.version,
+                        value: item.collection_version?.version || '',
                         label,
                       };
                     })
                   : []
               }
               onSelect={(item: string) => {
-                const found = collections.find((item2) => item2.collection_version.version == item);
-                if (found) {
-                  setVersionParams(found.collection_version.version);
+                const found = collections.find(
+                  (item2) => item2.collection_version?.version == item
+                );
+                if (found && found.collection_version) {
+                  setVersionParams(found.collection_version?.version);
                 }
               }}
               placeholder={''}
-              value={collection ? collection.collection_version.version : ''}
+              value={collection?.collection_version?.version || ''}
             />
-            {collection &&
+            {collection?.collection_version &&
               t('Last updated') +
                 ' ' +
-                DateTime.fromISO(collection.collection_version.pulp_created).toRelative()}
+                DateTime.fromISO(collection.collection_version?.pulp_created).toRelative()}
             {collection &&
               (collection.is_signed ? (
                 <Label icon={<CheckCircleIcon />} variant="outline" color="green">
@@ -264,12 +266,12 @@ function CollectionInstallTab(props: { collection?: CollectionVersionSearch }) {
             <CopyCell
               text={`ansible-galaxy collection install ${
                 collection?.collection_version?.namespace ?? ''
-              }.${collection?.collection_version.name ?? ''}`}
+              }.${collection?.collection_version?.name ?? ''}`}
             />
           </PageDetail>
           <PageDetail label={t('Requires')}>
-            {collection?.collection_version.require_ansible &&
-              `${t('Ansible')} ${collection.collection_version.require_ansible}`}
+            {collection?.collection_version?.require_ansible &&
+              `${t('Ansible')} ${collection.collection_version?.require_ansible}`}
           </PageDetail>
         </PageDetails>
       </PageSection>
@@ -283,8 +285,8 @@ function CollectionDocumentationTab(props: { collection?: CollectionVersionSearc
   const [content, setContent] = useState<IContents>();
 
   const { data } = useGet<CollectionDocs>(
-    hubAPI`/_ui/v1/repo/published/${collection?.collection_version.name ?? ''}/${
-      collection?.collection_version.name ?? ''
+    hubAPI`/_ui/v1/repo/published/${collection?.collection_version?.name || ''}/${
+      collection?.collection_version?.name || ''
     }/?include_related=my_permissions`
   );
 
@@ -529,7 +531,11 @@ function CollectionImportLogTab(props: { collection?: CollectionVersionSearch })
   const { t } = useTranslation();
   const { data: collectionImportsResponse } = useGet<HubItemsResponse<CollectionImport>>(
     collection
-      ? hubAPI`/_ui/v1/imports/collections/?namespace=${collection.collection_version.namespace}&name=${collection.collection_version.name}&version=${collection.collection_version.version}&sort=-created&limit=1`
+      ? hubAPI`/_ui/v1/imports/collections/?namespace=${
+          collection.collection_version?.namespace || ''
+        }&name=${collection.collection_version?.name || ''}&version=${
+          collection.collection_version?.version || ''
+        }&sort=-created&limit=1`
       : ''
   );
 
@@ -614,7 +620,7 @@ interface CollectionImport {
 function CollectionDependenciesTab(props: { collection?: CollectionVersionSearch }) {
   const { collection } = props;
   const { t } = useTranslation();
-  if (!collection) return <></>;
+  if (!collection?.collection_version?.dependencies) return <></>;
   return (
     <Scrollable>
       <PageSection variant="light">
@@ -626,7 +632,9 @@ function CollectionDependenciesTab(props: { collection?: CollectionVersionSearch
                 <DescriptionListGroup key={key}>
                   <DescriptionListTerm>{key}</DescriptionListTerm>
                   <DescriptionListDescription>
-                    {collection.collection_version.dependencies[key]}
+                    {collection.collection_version?.dependencies
+                      ? collection.collection_version.dependencies[key]
+                      : ''}
                   </DescriptionListDescription>
                 </DescriptionListGroup>
               );

@@ -13,10 +13,13 @@
 // Serializer for Tags.
 export interface ContainerTagResponse {
   pulp_href: string;
+
   // Timestamp of creation.
   pulp_created: string;
+
   // Tag name
   name: string;
+
   // Manifest that is tagged
   tagged_manifest: string;
 }

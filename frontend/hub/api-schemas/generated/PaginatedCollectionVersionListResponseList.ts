@@ -8,7 +8,7 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
 
 export interface PaginatedCollectionVersionListResponseList {
-  meta: unknown;
-  links: unknown;
-  data: unknown;
+  // meta				:	unknown;
+  // links				:	unknown;
+  // data				:	unknown;
 }

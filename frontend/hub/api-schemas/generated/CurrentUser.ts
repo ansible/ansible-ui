@@ -10,10 +10,15 @@
 export interface CurrentUser {
   // Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
   username: string;
+
   first_name: string;
+
   last_name: string;
+
   email: string;
+
   password: string;
+
   // Designates that this user has all permissions without explicitly assigning them.
   is_superuser: boolean;
 }

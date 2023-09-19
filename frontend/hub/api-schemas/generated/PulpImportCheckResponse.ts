@@ -10,9 +10,9 @@
 // Return the response to a PulpImport import-check call.
 export interface PulpImportCheckResponse {
   // Evaluation of proposed 'toc' file for PulpImport
-  toc: unknown;
+  // toc				:	unknown;
   // Evaluation of proposed 'path' file for PulpImport
-  path: unknown;
+  // path				:	unknown;
   // Evaluation of proposed 'repo_mapping' file for PulpImport
-  repo_mapping: unknown;
+  // repo_mapping				:	unknown;
 }

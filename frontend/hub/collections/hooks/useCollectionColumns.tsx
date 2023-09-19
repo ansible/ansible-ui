@@ -17,15 +17,15 @@ export function useCollectionColumns(_options?: { disableSort?: boolean; disable
     () => [
       {
         header: t('Name'),
-        value: (collection) => collection.collection_version.name,
+        value: (collection) => collection.collection_version?.name,
         cell: (collection) => (
           <TextCell
-            text={collection.collection_version.name}
+            text={collection.collection_version?.name}
             to={getPageUrl(HubRoute.CollectionPage, {
               query: {
-                name: collection.collection_version.name,
-                namespace: collection.collection_version.namespace,
-                repository: collection.repository.name,
+                name: collection.collection_version?.name,
+                namespace: collection.collection_version?.namespace,
+                repository: collection.repository?.name,
               },
             })}
           />
@@ -38,18 +38,18 @@ export function useCollectionColumns(_options?: { disableSort?: boolean; disable
       {
         header: t('Repository'),
         type: 'text',
-        value: (collection) => collection.repository.name,
+        value: (collection) => collection.repository?.name,
       },
       {
         header: t('Namespace'),
         type: 'text',
-        value: (collection) => collection.collection_version.namespace,
+        value: (collection) => collection.collection_version?.namespace,
         sort: 'namespace',
       },
       {
         header: t('Description'),
         type: 'description',
-        value: (collection) => collection.collection_version.description,
+        value: (collection) => collection.collection_version?.description,
         card: 'description',
         list: 'description',
       },
@@ -57,19 +57,20 @@ export function useCollectionColumns(_options?: { disableSort?: boolean; disable
         header: t('Modules'),
         type: 'count',
         value: (collection) =>
-          collection.collection_version.contents.filter((c) => c.content_type === 'module').length,
+          collection.collection_version?.contents?.filter((c) => c.content_type === 'module')
+            .length,
       },
       {
         header: t('Updated'),
         type: 'datetime',
-        value: (collection) => collection.collection_version.pulp_created,
+        value: (collection) => collection.collection_version?.pulp_created,
         card: 'hidden',
         list: 'secondary',
       },
       {
         header: t('Version'),
         type: 'text',
-        value: (collection) => collection.collection_version.version,
+        value: (collection) => collection.collection_version?.version,
         card: 'hidden',
         list: 'secondary',
         sort: 'version',

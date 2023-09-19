@@ -9,7 +9,10 @@
 
 export interface LegacyTaskSummaryTaskMessagesFieldsResponse {
   id: string;
+
   message_type: string;
+
   message_text: string;
+
   state: string;
 }

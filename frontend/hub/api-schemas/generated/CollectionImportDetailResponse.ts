@@ -13,11 +13,18 @@
 // A serializer for a CollectionImport detail view.
 export interface CollectionImportDetailResponse {
   id: string;
+
   state: string;
+
   created_at: string;
+
   updated_at: string;
+
   started_at: string;
+
   finished_at: string;
-  error: unknown;
-  messages: unknown;
+
+  // error				:	unknown;
+
+  // messages				:	unknown;
 }

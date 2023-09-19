@@ -13,27 +13,43 @@
 // A serializer for a CollectionVersion.
 export interface CollectionVersionResponse {
   version: string;
+
   // Get href.
   href: string;
+
   created_at: string;
+
   updated_at: string;
+
   requires_ansible: string;
+
   // Get a list of mark values filtering only those in the current repo.
-  marks: unknown;
-  artifact: unknown;
-  collection: unknown;
+  // marks				:	unknown;
+
+  // artifact				:	unknown;
+
+  // collection				:	unknown;
+
   // Get artifact download URL.
   download_url: string;
+
   name: string;
-  namespace: unknown;
+
+  // namespace				:	unknown;
+
   signatures: string;
-  metadata: unknown;
+
+  // metadata				:	unknown;
+
   // Get the git URL.
   git_url: string;
+
   // Get the git commit sha.
   git_commit_sha: string;
+
   // A JSON field holding MANIFEST.json data.
-  manifest: unknown;
+  // manifest				:	unknown;
+
   // A JSON field holding FILES.json data.
-  files: unknown;
+  // files				:	unknown;
 }

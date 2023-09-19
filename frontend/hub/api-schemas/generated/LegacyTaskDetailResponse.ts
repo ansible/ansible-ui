@@ -12,5 +12,5 @@ import { LegacyTaskResultsResponse } from './LegacyTaskResultsResponse';
 // /api/v1/tasks/{id}/
 
 export interface LegacyTaskDetailResponse {
-  results: LegacyTaskResultsResponse;
+  results?: LegacyTaskResultsResponse;
 }

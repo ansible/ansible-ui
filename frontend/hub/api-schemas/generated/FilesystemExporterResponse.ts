@@ -13,12 +13,16 @@
 // Serializer for FilesystemExporters.
 export interface FilesystemExporterResponse {
   pulp_href: string;
+
   // Timestamp of creation.
   pulp_created: string;
+
   // Unique name of the file system exporter.
   name: string;
+
   // File system location to export to.
   path: string;
+
   /*
 	Method of exporting
 
@@ -26,5 +30,5 @@ export interface FilesystemExporterResponse {
 * `hardlink` - Export by hardlinking
 * `symlink` - Export by symlinking
 	*/
-  method: unknown;
+  // method				:	unknown;
 }

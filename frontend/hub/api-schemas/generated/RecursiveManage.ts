@@ -10,5 +10,5 @@
 // Serializer for adding and removing content to/from a Container repository.
 export interface RecursiveManage {
   // A list of content units to operate on.
-  content_units: unknown;
+  // content_units				:	unknown;
 }

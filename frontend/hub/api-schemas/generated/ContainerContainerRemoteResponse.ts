@@ -13,27 +13,39 @@
 // A Serializer for ContainerRemote.
 export interface ContainerContainerRemoteResponse {
   pulp_href: string;
+
   // Timestamp of creation.
   pulp_created: string;
+
   // A unique name for this remote.
   name: string;
+
   // The URL of an external content source.
   url: string;
+
   // A PEM encoded CA certificate used to validate the server certificate presented by the remote server.
   ca_cert: string;
+
   // A PEM encoded client certificate used for authentication.
   client_cert: string;
+
   // If True, TLS peer validation must be performed.
   tls_validation: boolean;
+
   // The proxy URL. Format: scheme://host:port
   proxy_url: string;
-  pulp_labels: unknown;
+
+  // pulp_labels				:	unknown;
+
   // Timestamp of the most recent update of the remote.
   pulp_last_updated: string;
+
   // Total number of simultaneous connections. If not set then the default value will be used.
   download_concurrency: number;
+
   // Maximum number of retry attempts after a download failure. If not set then the default value (3) will be used.
   max_retries: number;
+
   /*
 	
         immediate - All manifests and blobs are downloaded and saved during a sync.
@@ -46,23 +58,32 @@ export interface ContainerContainerRemoteResponse {
 * `on_demand` - When syncing, download metadata, but do not download content now. Instead, download content as clients request it, and save it in Pulp to be served for future client requests.
 * `streamed` - When syncing, download metadata, but do not download content now. Instead,download content as clients request it, but never save it in Pulp. This causes future requests for that same content to have to be downloaded again.
 	*/
-  policy: unknown;
+  // policy				:	unknown;
+
   // aiohttp.ClientTimeout.total (q.v.) for download-connections. The default is null, which will cause the default from the aiohttp library to be used.
   total_timeout: number;
+
   // aiohttp.ClientTimeout.connect (q.v.) for download-connections. The default is null, which will cause the default from the aiohttp library to be used.
   connect_timeout: number;
+
   // aiohttp.ClientTimeout.sock_connect (q.v.) for download-connections. The default is null, which will cause the default from the aiohttp library to be used.
   sock_connect_timeout: number;
+
   // aiohttp.ClientTimeout.sock_read (q.v.) for download-connections. The default is null, which will cause the default from the aiohttp library to be used.
   sock_read_timeout: number;
+
   // Headers for aiohttp.Clientsession
-  headers: unknown;
+  // headers				:	unknown;
+
   // Limits requests per second for each concurrent downloader
   rate_limit: number;
+
   // List of hidden (write only) fields
-  hidden_fields: unknown;
+  // hidden_fields				:	unknown;
+
   // Name of the upstream repository
   upstream_name: string;
+
   /*
 	
             A list of tags to include during sync.
@@ -70,7 +91,8 @@ export interface ContainerContainerRemoteResponse {
             'include_tags' is evaluated before 'exclude_tags'.
             
 	*/
-  include_tags: unknown;
+  // include_tags				:	unknown;
+
   /*
 	
             A list of tags to exclude during sync.
@@ -78,7 +100,8 @@ export interface ContainerContainerRemoteResponse {
             'exclude_tags' is evaluated after 'include_tags'.
             
 	*/
-  exclude_tags: unknown;
+  // exclude_tags				:	unknown;
+
   // A URL to a sigstore to download image signatures from
   sigstore: string;
 }
