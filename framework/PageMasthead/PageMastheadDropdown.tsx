@@ -28,7 +28,7 @@ export function PageMastheadDropdown(props: {
       }
       isOpen={open}
       isPlain
-      dropdownItems={props.children}
+      dropdownItems={props.children as ReactNode[]}
       position="right"
       ouiaId={props.id}
       data-cy={props.id}
