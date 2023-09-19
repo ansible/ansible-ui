@@ -6,8 +6,8 @@ import '@patternfly/patternfly/patternfly-charts-theme-dark.css';
 import { Outlet } from 'react-router-dom';
 import { PageApp } from '../../framework/PageNavigation/PageApp';
 import { Login } from '../common/Login';
-import { AnsibleMasthead } from '../common/Masthead';
 import '../common/i18n';
+import { HubMasthead } from './HubMasthead';
 import { HubContextProvider } from './useHubContext';
 import { useHubNavigation } from './useHubNavigation';
 
@@ -21,7 +21,7 @@ export default function AwxMain() {
           <Outlet />
         </HubContextProvider>
       }
-      header={<AnsibleMasthead />}
+      masthead={<HubMasthead />}
       navigation={navigation}
     />
   );
