@@ -81,7 +81,7 @@ export function useGetCreateRuleRoute() {
   const createRuleRoutes: { [key: string]: string } = {
     inventories: RouteObj.InventorySourceCreateScheduleRules,
     job_template: RouteObj.JobTemplateCreateScheduleRules,
-    workflow_job_templates: RouteObj.WorkflowJobTemplateCreateScheduleRules,
+    workflow_job_template: RouteObj.WorkflowJobTemplateCreateScheduleRules,
     projects: RouteObj.ProjectCreateScheduleRules,
   };
 
@@ -149,6 +149,11 @@ export function useGetPromptOnLaunchFields(
 
   if (!resourceForSchedule || resourceForSchedule?.type === 'inventory_source') return [];
 
+  let organizationId: string | undefined = undefined;
+  if (resourceForSchedule) {
+    organizationId = resourceForSchedule?.summary_fields?.organization?.id.toString() || undefined;
+  }
+
   promptonLaunchFieldNames.forEach((fieldName: PromptOnLaunchField) => {
     if (!promptFields || promptFields[fieldName] !== true) return;
     switch (fieldName) {
@@ -192,7 +197,7 @@ export function useGetPromptOnLaunchFields(
           <PageFormExecutionEnvironmentSelect<ScheduleFormFields>
             key={`${fieldName}`}
             executionEnvironmentIdPath="execution_environment.id"
-            organizationId={resourceForSchedule?.organization?.toString() ?? undefined}
+            organizationId={organizationId}
             name="execution_environment.name"
           />
         );

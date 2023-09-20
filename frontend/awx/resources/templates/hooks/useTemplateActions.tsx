@@ -2,7 +2,12 @@ import { EditIcon, RocketIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
+import {
+  IPageAction,
+  PageActionSelection,
+  PageActionType,
+  usePageAlertToaster,
+} from '../../../../../framework';
 import { RouteObj } from '../../../../common/Routes';
 import { handleLaunch } from '../../../common/util/launchHandlers';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
@@ -13,13 +18,15 @@ import { useDeleteTemplates } from '../hooks/useDeleteTemplates';
 export function useTemplateActions(options: {
   onTemplatesDeleted: (templates: (JobTemplate | WorkflowJobTemplate)[]) => void;
 }) {
+  const alertToaster = usePageAlertToaster();
+
   const { onTemplatesDeleted } = options;
   const { t } = useTranslation();
   const navigate = useNavigate();
   const deleteTemplates = useDeleteTemplates(onTemplatesDeleted);
 
-  return useMemo<IPageAction<JobTemplate>[]>(() => {
-    const itemActions: IPageAction<JobTemplate>[] = [
+  return useMemo<IPageAction<JobTemplate | WorkflowJobTemplate>[]>(() => {
+    const itemActions: IPageAction<JobTemplate | WorkflowJobTemplate>[] = [
       {
         type: PageActionType.Link,
         selection: PageActionSelection.Single,
@@ -27,7 +34,11 @@ export function useTemplateActions(options: {
         icon: EditIcon,
         label: t('Edit template'),
         ouiaId: 'job-template-detail-edit-button',
-        href: (template) => RouteObj.EditJobTemplate.replace(':id', template?.id.toString() ?? ''),
+        href: (template) =>
+          (template.type === 'job_template'
+            ? RouteObj.EditJobTemplate
+            : RouteObj.EditWorkflowJobTemplate
+          ).replace(':id', template?.id.toString()) ?? '',
       },
       {
         type: PageActionType.Button,
@@ -36,12 +47,16 @@ export function useTemplateActions(options: {
         label: t('Launch template'),
         onClick: async (template) => {
           try {
-            const job = await handleLaunch(template?.type as string, template?.id);
+            const job = await handleLaunch(template?.type, template?.id);
             if (job) {
               navigate(getJobOutputUrl(job));
             }
-          } catch {
-            // handle error
+          } catch (err) {
+            alertToaster.addAlert({
+              variant: 'danger',
+              title: t('Failed to launch job'),
+              children: err instanceof Error && err.message,
+            });
           }
         },
         ouiaId: 'job-template-detail-launch-button',
@@ -62,5 +77,5 @@ export function useTemplateActions(options: {
       },
     ];
     return itemActions;
-  }, [deleteTemplates, navigate, t]);
+  }, [deleteTemplates, navigate, alertToaster, t]);
 }

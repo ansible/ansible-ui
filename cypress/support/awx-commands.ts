@@ -18,6 +18,7 @@ import { User } from '../../frontend/awx/interfaces/User';
 import './auth';
 import './commands';
 import './rest-commands';
+import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/generated-from-swagger/api';
 
 //  AWX related custom command implementation
 
@@ -636,6 +637,13 @@ Cypress.Commands.add(
     });
   }
 );
+
+Cypress.Commands.add('createAwxWorkflowJobTemplate', (jobTemplate: WorkflowJobTemplate) => {
+  cy.requestPost<WorkflowJobTemplate>('/api/v2/workflow_job_templates/', {
+    name: 'E2E Job Template ' + randomString(4),
+    ...jobTemplate,
+  });
+});
 
 Cypress.Commands.add(
   'createEdaAwxJobTemplate',
