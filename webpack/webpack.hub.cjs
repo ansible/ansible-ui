@@ -1,14 +1,6 @@
 const webpackConfig = require('./webpack.config');
-
-const HUB_SERVER =
-  process.env.EDA_SERVER ||
-  process.env.CYPRESS_HUB_SERVER ||
-  (process.env.HUB_HOST & process.env.HUB_PROTOCOL
-    ? `${process.env.HUB_PROTOCOL}://${process.env.HUB_HOST}`
-    : 'http://localhost:8000');
-
+const { HUB_SERVER } = require('./environment.cjs');
 const proxyUrl = new URL(HUB_SERVER);
-
 module.exports = function (env, argv) {
   const config = webpackConfig(env, argv);
 

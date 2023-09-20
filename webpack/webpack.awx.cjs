@@ -1,14 +1,6 @@
 const webpackConfig = require('./webpack.config');
-
-const AWX_SERVER =
-  process.env.AWX_SERVER ||
-  process.env.CYPRESS_AWX_SERVER ||
-  (process.env.AWX_HOST & process.env.AWX_PROTOCOL
-    ? `${process.env.AWX_PROTOCOL}://${process.env.AWX_HOST}`
-    : 'http://localhost:8043');
-
+const { AWX_SERVER } = require('./environment.cjs');
 const proxyUrl = new URL(AWX_SERVER);
-
 module.exports = function (env, argv) {
   const config = webpackConfig(env, argv);
 
@@ -35,13 +27,9 @@ module.exports = function (env, argv) {
     },
     '/websocket': {
       target: AWX_SERVER,
-      ws: true,
       secure: false,
-      bypass: (req) => {
-        req.headers.host = proxyUrl.host;
-        req.headers.origin = proxyUrl.origin;
-        req.headers.referer = proxyUrl.href;
-      },
+      ws: true,
+      changeOrigin: true,
     },
   };
   return config;

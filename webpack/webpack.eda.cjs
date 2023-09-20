@@ -1,14 +1,6 @@
 const webpackConfig = require('./webpack.config');
-
-const EDA_SERVER =
-  process.env.EDA_SERVER ||
-  process.env.CYPRESS_EDA_SERVER ||
-  (process.env.EDA_HOST & process.env.EDA_PROTOCOL
-    ? `${process.env.EDA_PROTOCOL}://${process.env.EDA_HOST}`
-    : 'http://localhost:8000');
-
+const { EDA_SERVER } = require('./environment.cjs');
 const proxyUrl = new URL(EDA_SERVER);
-
 module.exports = function (env, argv) {
   const config = webpackConfig(env, argv);
 
