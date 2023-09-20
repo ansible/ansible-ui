@@ -7,6 +7,7 @@ import { PageMastheadDropdown } from '../framework/PageMasthead/PageMastheadDrop
 import { PageSettingsIcon } from '../framework/PageMasthead/PageSettingsIcon';
 import { PageThemeSwitcher } from '../framework/PageMasthead/PageThemeSwitcher';
 import { PageRefreshIcon } from '../frontend/common/PageRefreshIcon';
+import { useActivePlatformUser } from './hooks/useActivePlatformUser';
 import { PlatformRoute } from './PlatformRoutes';
 import PlatformIcon from './platform-icon.svg';
 
@@ -16,10 +17,12 @@ export function PlatformMasthead(props: {
 }) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
+  const activeUser = useActivePlatformUser();
   const logout = useCallback(async () => {
-    await fetch('/api/logout/');
+    await fetch('/api/gateway/v1/logout/');
     pageNavigate(PlatformRoute.Login);
   }, [pageNavigate]);
+
   return (
     <PageMasthead
       icon={<PlatformIcon style={{ width: 52 }} />}
@@ -76,12 +79,14 @@ export function PlatformMasthead(props: {
           <PageMastheadDropdown
             id="account-menu"
             icon={<UserCircleIcon size="md" />}
-            // label={activeUser?.username}
+            label={activeUser?.username}
           >
             {/* <DropdownItem
               id="user-details"
               label={t('User details')}
-              onClick={() => pageNavigate(PlatformRoute.UserPage, { params: { id: activeUser?.id } })}
+              onClick={() =>
+                pageNavigate(PlatformRoute.UserPage, { params: { id: activeUser?.id } })
+              }
             /> */}
             <DropdownItem id="logout" label={t('Logout')} onClick={() => void logout()}>
               {t('Logout')}
