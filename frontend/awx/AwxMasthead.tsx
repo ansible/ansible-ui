@@ -1,8 +1,3 @@
-import '@patternfly/patternfly/patternfly-base.css';
-import '@patternfly/patternfly/patternfly-charts.css';
-
-import '@patternfly/patternfly/patternfly-charts-theme-dark.css';
-
 import { DropdownItem, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
 import { useCallback } from 'react';
@@ -14,7 +9,6 @@ import { PageSettingsIcon } from '../../framework/PageMasthead/PageSettingsIcon'
 import { PageThemeSwitcher } from '../../framework/PageMasthead/PageThemeSwitcher';
 import { useAnsibleAboutModal } from '../common/AboutModal';
 import { PageRefreshIcon } from '../common/PageRefreshIcon';
-import '../common/i18n';
 import { useActiveUser } from '../common/useActiveUser';
 import { AwxRoute } from './AwxRoutes';
 import AwxIcon from './awx-logo.svg';
@@ -82,8 +76,12 @@ export function AwxMasthead() {
               id="user-details"
               label={t('User details')}
               onClick={() => pageNavigate(AwxRoute.UserPage, { params: { id: activeUser?.id } })}
-            />
-            <DropdownItem id="logout" label={t('Logout')} onClick={() => void logout()} />
+            >
+              {t('User details')}
+            </DropdownItem>
+            <DropdownItem id="logout" label={t('Logout')} onClick={() => void logout()}>
+              {t('Logout')}
+            </DropdownItem>
           </PageMastheadDropdown>
         </ToolbarItem>
       </ToolbarGroup>

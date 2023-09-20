@@ -9,6 +9,34 @@ const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
 const path = require('path');
 
+const AWX_PROTOCOL = process.env.AWX_PROTOCOL || 'http';
+const AWX_HOST = process.env.AWX_HOST || 'localhost:8043';
+const AWX_SERVER =
+  process.env.AWX_SERVER || process.env.CYPRESS_AWX_SERVER || `${AWX_PROTOCOL}://${AWX_HOST}`;
+const AWX_USERNAME = process.env.AWX_USERNAME || process.env.CYPRESS_AWX_USERNAME || 'admin';
+const AWX_PASSWORD = process.env.AWX_PASSWORD || process.env.CYPRESS_AWX_PASSWORD || 'password';
+const AWX_API_PREFIX = process.env.AWX_API_PREFIX || '/api/v2';
+const AWX_ROUTE_PREFIX = process.env.AWX_ROUTE_PREFIX || '/ui_next';
+
+const EDA_PROTOCOL = process.env.EDA_PROTOCOL || 'http';
+const EDA_HOST = process.env.EDA_HOST || 'localhost:5001';
+const EDA_SERVER =
+  process.env.EDA_SERVER || process.env.CYPRESS_EDA_SERVER || `${EDA_PROTOCOL}://${EDA_HOST}`;
+const EDA_USERNAME = process.env.EDA_USERNAME || process.env.CYPRESS_EDA_USERNAME || 'admin';
+const EDA_PASSWORD = process.env.EDA_PASSWORD || process.env.CYPRESS_EDA_PASSWORD || 'password';
+const EDA_API_PREFIX = process.env.EDA_API_PREFIX || '/api/eda/v1';
+const EDA_ROUTE_PREFIX = process.env.EDA_ROUTE_PREFIX || '/eda';
+
+const HUB_PROTOCOL = process.env.HUB_PROTOCOL || 'http';
+const HUB_HOST = process.env.HUB_HOST || 'localhost:8000';
+const HUB_SERVER =
+  process.env.HUB_SERVER || process.env.CYPRESS_HUB_SERVER || `${HUB_PROTOCOL}://${HUB_HOST}`;
+const HUB_USERNAME = process.env.HUB_USERNAME || process.env.CYPRESS_HUB_USERNAME || 'admin';
+const HUB_PASSWORD = process.env.HUB_PASSWORD || process.env.CYPRESS_HUB_PASSWORD || 'password';
+const HUB_API_PREFIX =
+  process.env.HUB_API_PREFIX || process.env.HUB_API_BASE_PATH || '/api/automation-hub/';
+const HUB_ROUTE_PREFIX = process.env.HUB_ROUTE_PREFIX || '/hub';
+
 switch (process.env.UI_MODE) {
   case 'AWX':
   case 'HUB':
@@ -28,7 +56,7 @@ switch (process.env.UI_MODE) {
 if (!process.env.PRODUCT) {
   switch (process.env.UI_MODE) {
     case 'AWX':
-      process.env.PRODUCT = 'Automation Controller';
+      process.env.PRODUCT = 'AWX';
       break;
     case 'HUB':
       process.env.PRODUCT = 'Automation Hub';
@@ -93,23 +121,13 @@ module.exports = function (env, argv) {
         'process.env.VERSION': isProduction
           ? JSON.stringify(process.env.VERSION)
           : JSON.stringify('development'),
-        'process.env.DELAY': isProduction
-          ? JSON.stringify('')
-          : JSON.stringify(process.env.DELAY ?? ''),
-        'process.env.PWA': env.pwa ? JSON.stringify('true') : JSON.stringify(''),
         'process.env.UI_MODE': JSON.stringify(process.env.UI_MODE),
-        'process.env.AWX_ROUTE_PREFIX': env.awx_route_prefix
-          ? JSON.stringify(env.awx_route_prefix)
-          : JSON.stringify('/ui_next'),
-        'process.env.HUB_ROUTE_PREFIX': env.hub_route_prefix
-          ? JSON.stringify(env.hub_route_prefix)
-          : JSON.stringify('/hub'),
-        'process.env.EDA_ROUTE_PREFIX': env.eda_route_prefix
-          ? JSON.stringify(env.eda_route_prefix)
-          : JSON.stringify('/eda'),
-        'process.env.HUB_API_BASE_PATH': process.env.HUB_API_BASE_PATH
-          ? JSON.stringify(process.env.HUB_API_BASE_PATH)
-          : JSON.stringify(env.hub_api_base_path || ''),
+        'process.env.AWX_ROUTE_PREFIX': JSON.stringify(AWX_ROUTE_PREFIX),
+        'process.env.AWX_API_PREFIX': JSON.stringify(AWX_API_PREFIX),
+        'process.env.EDA_ROUTE_PREFIX': JSON.stringify(EDA_ROUTE_PREFIX),
+        'process.env.EDA_API_PREFIX': JSON.stringify(EDA_API_PREFIX),
+        'process.env.HUB_ROUTE_PREFIX': JSON.stringify(HUB_ROUTE_PREFIX),
+        'process.env.HUB_API_PREFIX': JSON.stringify(HUB_API_PREFIX),
       }),
       isDevelopment && new ReactRefreshWebpackPlugin(),
       ...['en', 'es', 'fr', 'ja', 'ko', 'nl', 'zh', 'zu'].map((locale) => {

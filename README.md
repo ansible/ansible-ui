@@ -31,53 +31,42 @@ UI projects for [Ansible](https://www.ansible.com).
 
 ## Environment Variables
 
-|            Environment Variable | Description                                             |
-| ------------------------------: | ------------------------------------------------------- |
-|                  `AWX_PROTOCOL` | The AWX server protocol (http) or (https).              |
-|                      `AWX_HOST` | The AWX server address with port.                       |
-|            `CYPRESS_AWX_SERVER` | The AWX server URL.                                     |
-|          `CYPRESS_AWX_USERNAME` | The AWX server username.                                |
-|          `CYPRESS_AWX_PASSWORD` | The AWX server password.                                |
-|                                 |                                                         |
-|                  `HUB_PROTOCOL` | The HUB server protocol (http) or (https).              |
-|                      `HUB_HOST` | The HUB server address with port.                       |
-|            `CYPRESS_HUB_SERVER` | The HUB server URL.                                     |
-|          `CYPRESS_HUB_USERNAME` | The HUB server username.                                |
-|          `CYPRESS_HUB_PASSWORD` | The HUB server password.                                |
-|        `CYPRESS_HUB_API_PREFIX` | The HUB API prefix (eg. `/api/automation-hub/`).        |
-| `CYPRESS_HUB_GALAXYKIT_COMMAND` | The galaxykit command (eg. `galaxykit --ignore-certs`). |
-|                                 |                                                         |
-|                  `EDA_PROTOCOL` | The EDA server protocol (http) or (https).              |
-|                      `EDA_HOST` | The EDA server address with port.                       |
-|            `CYPRESS_EDA_SERVER` | The EDA server URL.                                     |
-|          `CYPRESS_EDA_USERNAME` | The EDA server username.                                |
-|          `CYPRESS_EDA_PASSWORD` | The EDA server password.                                |
+|    Environment Variable | Description                                         |
+| ----------------------: | --------------------------------------------------- |
+|            `AWX_SERVER` | The AWX server (protocol://host:port).              |
+|          `AWX_USERNAME` | The AWX server username. (only used by Cypress)     |
+|          `AWX_PASSWORD` | The AWX server password. (only used by Cypress)     |
+|        `AWX_API_PREFIX` | The AWX server API prefix. (`/api/v2`)              |
+|      `AWX_ROUTE_PREFIX` | The AWX UI route prefix. (`/awx`)                   |
+|                         |                                                     |
+|            `EDA_SERVER` | The EDA server (protocol://host:port).              |
+|          `EDA_USERNAME` | The EDA server username. (only used by Cypress)     |
+|          `EDA_PASSWORD` | The EDA server password. (only used by Cypress)     |
+|        `EDA_API_PREFIX` | The EDA server API prefix. (`/api/eda/v1`)          |
+|      `EDA_ROUTE_PREFIX` | The EDA UI route prefix. (`/eda`)                   |
+|                         |                                                     |
+|            `HUB_SERVER` | The HUB server (protocol://host:port).              |
+|          `HUB_USERNAME` | The HUB server username. (only used by Cypress)     |
+|          `HUB_PASSWORD` | The HUB server password. (only used by Cypress)     |
+|        `HUB_API_PREFIX` | The HUB server API prefix. (`/api/automation-hub/`) |
+|      `HUB_ROUTE_PREFIX` | The HUB UI route prefix. (`/hub`)                   |
+| `HUB_GALAXYKIT_COMMAND` | The galaxykit command. (`galaxykit --ignore-certs`) |
 
 ```zsh
-export AWX_PROTOCOL=http
-export AWX_HOST=localhost:8043
-export CYPRESS_AWX_SERVER=$AWX_PROTOCOL://$AWX_HOST
-export CYPRESS_AWX_USERNAME='my-user'
-export CYPRESS_AWX_PASSWORD='my-password'
+export AWX_SERVER=http://localhost:8043
+export AWX_USERNAME='my-user'
+export AWX_PASSWORD='my-password'
 
-export HUB_PROTOCOL=http
-export HUB_HOST=localhost:8000
-export CYPRESS_HUB_SERVER=$HUB_PROTOCOL://$HUB_HOST
-export CYPRESS_HUB_USERNAME='my-user'
-export CYPRESS_HUB_PASSWORD='my-password'
-export CYPRESS_HUB_API_PREFIX='/api/automation-hub/'
-export CYPRESS_HUB_GALAXYKIT_COMMAND='galaxykit --ignore-certs'
-# For integration tests: Check that the Ansible binary was correctly installed
-# under the Python directory. Add it to the PATH variable. This is needed for
-# the galaxykit commands that create hub resources for tests.
+export EDA_SERVER=http://localhost:5001
+export EDA_USERNAME='my-user'
+export EDA_PASSWORD='my-password'
 
-
-export EDA_PROTOCOL=http
-export EDA_HOST=localhost:5001
-export CYPRESS_EDA_SERVER=$EDA_PROTOCOL://$EDA_HOST
-export CYPRESS_EDA_USERNAME='my-user'
-export CYPRESS_EDA_PASSWORD='my-password'
+export HUB_SERVER=http://localhost:8000
+export HUB_USERNAME='my-user'
+export HUB_PASSWORD='my-password'
 ```
+
+> Note: For Hub integration tests: Check that the Ansible binary was correctly installed under the Python directory. Add it to the PATH variable. This is needed for the galaxykit commands that create hub resources for tests.
 
 ## NPM Scripts
 
