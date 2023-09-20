@@ -382,8 +382,8 @@ jobs:
           auto-cancel-after-failures: 1
           config-file: cypress.awx.config.ts
         env:
-          AWX_SERVER: ${{ secrets.AWX_SERVER }}
-          AWX_USERNAME: ${{ secrets.AWX_USERNAME }}
+          AWX_SERVER: ${{ vars.AWX_SERVER }}
+          AWX_USERNAME: ${{ vars.AWX_USERNAME }}
           AWX_PASSWORD: ${{ secrets.AWX_PASSWORD }}
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_AWX_E2E_PROJECT_ID }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_AWX_E2E_RECORD_KEY }}
@@ -488,9 +488,9 @@ jobs:
       # auto-cancel-after-failures: 1
       #     config-file: cypress.hub.config.ts
       #   env:
-      #     HUB_SERVER: ${{ secrets.HUB_SERVER }}
-      #     HUB_USERNAME: admin
-      #     HUB_PASSWORD: password
+      #     HUB_SERVER: ${{ vars.HUB_SERVER }}
+      #     HUB_USERNAME: ${{ vars.HUB_USERNAME }}
+      #     HUB_PASSWORD: ${{ secrets.HUB_PASSWORD }}
       #     CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_HUB_E2E_PROJECT_ID }}
       #     CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_HUB_E2E_RECORD_KEY }}
       #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -594,11 +594,11 @@ jobs:
           auto-cancel-after-failures: 1
           config-file: cypress.eda.config.ts
         env:
-          AWX_SERVER: ${{ secrets.AWX_SERVER }}
-          AWX_USERNAME: ${{ secrets.AWX_USERNAME }}
+          AWX_SERVER: ${{ vars.AWX_SERVER }}
+          AWX_USERNAME: ${{ vars.AWX_USERNAME }}
           AWX_PASSWORD: ${{ secrets.AWX_PASSWORD }}
-          EDA_SERVER: ${{ secrets.EDA_SERVER }}
-          EDA_USERNAME: ${{ secrets.EDA_USERNAME }}
+          EDA_SERVER: ${{ vars.EDA_SERVER }}
+          EDA_USERNAME: ${{ vars.EDA_USERNAME }}
           EDA_PASSWORD: ${{ secrets.EDA_PASSWORD }}
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_EDA_E2E_PROJECT_ID }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_EDA_E2E_RECORD_KEY }}
