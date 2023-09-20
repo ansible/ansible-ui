@@ -101,6 +101,7 @@ function transformEndpoint(url: string) {
 export function AnalyticsBuilder(props: AnalyticsBuilderProps) {
   const [mainData, setMainData] = useState<MainRequestDefinition | null>(null);
   const [options, setOptions] = useState<OptionsDefinition | null>(null);
+  const [error, setError] = useState<any>(null);
 
   const post = usePostRequest();
   const get = useGetRequest();
@@ -128,21 +129,19 @@ export function AnalyticsBuilder(props: AnalyticsBuilderProps) {
       props.processOptions?.(props, result2);
       setOptions(result2);
     } catch (error) {
-      alert(error);
+      setError(error);
     }
   }
 
   useEffect(() => {
-    setMainData(null);
-    setOptions(null);
     readData();
-  }, [props.main_url]);
+  }, []);
 
   if (mainData && options) {
     return <AnalyticsBody mainData={mainData} options={options} {...props} />;
   }
 
-  return <>Analytics builder - loading</>;
+  return <>Analytics builder - loading {error && 'Some error ocurred'}</>;
 }
 
 export type ObjectType = any;
@@ -201,18 +200,35 @@ function buildTableColumns(params: AnalyticsColumnBuilderProps) {
     return columns;
   }
 
+  // initialy create columns by table headers so they are in fixed positions
+  if (params.mainData?.report.tableHeaders && params.mainData.report.tableHeaders.length > 0) {
+    for (const tableHeader of params.mainData.report.tableHeaders) {
+      let column = {} as ITableColumnTypeText<ObjectType>;
+      column.id = tableHeader.key;
+    }
+  }
+
   // create columns initialy by incomming data
   if (params.view.pageItems.length > 0) {
     const obj = params.view.pageItems[0];
 
     // loop over obj items
     for (let key in obj) {
-      let column = {} as ITableColumnTypeText<ObjectType>;
+      let alreadyExist = columns.find((item) => item.id == key);
+
+      let column = {} as ITableColumn<ObjectType>;
+
+      if (alreadyExist) {
+        column = alreadyExist;
+      }
       column.type = 'text';
       column.header = key;
       column.value = (item) => item[key] as string;
-      columns.push(column);
       column.id = key;
+
+      if (!alreadyExist) {
+        columns.push(column);
+      }
     }
   }
 

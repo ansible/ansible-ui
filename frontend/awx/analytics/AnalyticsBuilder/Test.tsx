@@ -44,7 +44,7 @@ export function Test() {
     <>
       <MySelectDropdown items={items} onChange={(item) => selectionChange(item)} />
       Selected : {reportName} <br />
-      {reportName && <AnalyticsBuilder {...props}></AnalyticsBuilder>}
+      {reportName && <AnalyticsBuilder {...props} key={reportName}></AnalyticsBuilder>}
     </>
   );
 }
