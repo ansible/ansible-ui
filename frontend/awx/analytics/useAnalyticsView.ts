@@ -11,6 +11,7 @@ import {
 import { usePostFetcher } from '../../common/crud/Data';
 
 import { RequestError } from '../../common/crud/RequestError';
+import { AnalyticsBuilderProps } from './AnalyticsBuilder/AnalyticsBuilder';
 
 export interface AnalyticsItemsResponse<T extends object> {
   meta: { count: number; legend: T[] };
@@ -47,6 +48,7 @@ export function useAnalyticsView<T extends object>({
   defaultSort: initialDefaultSort,
   defaultSortDirection: initialDefaultSortDirection,
   defaultSelection,
+  builderProps,
 }: {
   url: string;
   keyFn: (item: T) => string | number;
@@ -59,7 +61,11 @@ export function useAnalyticsView<T extends object>({
   defaultSort?: string | undefined;
   defaultSortDirection?: 'asc' | 'desc' | undefined;
   defaultSelection?: T[];
+  builderProps?: AnalyticsBuilderProps;
 }): IAnalyticsView<T> {
+  let postData = builderProps?.defaultDataParams || {};
+  builderProps?.processDataRequestPayload?.(builderProps, postData);
+
   let defaultSort: string | undefined = initialDefaultSort;
   let defaultSortDirection: 'asc' | 'desc' | undefined = initialDefaultSortDirection;
 

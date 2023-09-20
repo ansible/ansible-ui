@@ -32,6 +32,12 @@ export interface AnalyticsBuilderProps {
   // on the fly postprocessing of default params
   processOptionsRequestPayload?: (props: AnalyticsBuilderProps, data: object) => void;
 
+  // default post data params
+  defaultDataParams?: object;
+
+  // on the fly postprocessing of default params
+  processDataRequestPayload?: (props: AnalyticsBuilderProps, data: object) => void;
+
   // default item.id
   rowKeyFn?: (item: ObjectType) => string | number;
 }
@@ -123,6 +129,7 @@ function AnalyticsBody(props: AnalyticsBodyProps) {
   const analyticsView = useAnalyticsView<ObjectType>({
     url: props.mainData.report.layoutProps.dataEndpoint,
     keyFn: props.rowKeyFn ? props.rowKeyFn : () => 0,
+    builderProps: props,
   });
 
   return (

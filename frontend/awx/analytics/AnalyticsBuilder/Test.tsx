@@ -24,7 +24,10 @@ const reports = {
   },*/
 };
 
+const hostsByOrganizationParams = reportDefaultParams('hosts_by_organization');
+
 const hostsByOrganization: AnalyticsBuilderProps = {
   main_url: '/api/v2/analytics/report/hosts_by_organization/',
-  defaultOptionsParams: reportDefaultParams('hosts_by_organization'),
+  defaultOptionsParams: hostsByOrganizationParams,
+  defaultDataParams: hostsByOrganizationParams,
 };
