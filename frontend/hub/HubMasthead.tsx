@@ -57,6 +57,7 @@ export function HubMasthead() {
             >
               {t('Documentation')}
             </DropdownItem> */}
+            <></>
             <DropdownItem
               id="about"
               onClick={() => openAnsibleAboutModal({})}
@@ -77,7 +78,8 @@ export function HubMasthead() {
               label={t('User details')}
               onClick={() => pageNavigate(HubRoute.UserPage, { params: { id: activeUser?.id } })}
             /> */}
-            <DropdownItem id="logout" label={t('Logout')} onClick={() => void logout()}>
+            <></>
+            <DropdownItem id="logout" onClick={() => void logout()}>
               {t('Logout')}
             </DropdownItem>
           </PageMastheadDropdown>
