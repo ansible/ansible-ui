@@ -38,6 +38,7 @@ export enum EdaRoute {
   Users = 'eda-users',
   CreateUser = 'eda-create-user',
   EditUser = 'eda-edit-user',
+  EditCurrentUser = 'eda-edit-current-user',
   UserPage = 'eda-user-page',
   UserTokens = 'eda-user-tokens',
 
