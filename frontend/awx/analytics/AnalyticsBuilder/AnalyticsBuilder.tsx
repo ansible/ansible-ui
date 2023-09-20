@@ -205,6 +205,7 @@ function buildTableColumns(params: AnalyticsColumnBuilderProps) {
     for (const tableHeader of params.mainData.report.tableHeaders) {
       let column = {} as ITableColumnTypeText<ObjectType>;
       column.id = tableHeader.key;
+      columns.push(column);
     }
   }
 
