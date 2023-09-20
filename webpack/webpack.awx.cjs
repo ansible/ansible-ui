@@ -35,13 +35,9 @@ module.exports = function (env, argv) {
     },
     '/websocket': {
       target: AWX_SERVER,
-      ws: true,
       secure: false,
-      bypass: (req) => {
-        req.headers.host = proxyUrl.host;
-        req.headers.origin = proxyUrl.origin;
-        req.headers.referer = proxyUrl.href;
-      },
+      ws: true,
+      changeOrigin: true,
     },
   };
   return config;

@@ -187,7 +187,7 @@ module.exports = function (env, argv) {
       ],
     },
     devServer: {
-      // https: true, // Enable for using oAuth in dev environment
+      https: true, // Enable for using oAuth in dev environment
       historyApiFallback: true,
       compress: true,
       hot: true,
