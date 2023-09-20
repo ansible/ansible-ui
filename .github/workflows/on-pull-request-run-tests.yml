@@ -382,11 +382,11 @@ jobs:
           auto-cancel-after-failures: 1
           config-file: cypress.awx.config.ts
         env:
-          AWX_HOST: ${{ secrets.AWX_HOST }}
           AWX_PROTOCOL: ${{ secrets.AWX_PROTOCOL }}
-          CYPRESS_AWX_SERVER: ${{ secrets.CYPRESS_AWX_SERVER }}
-          CYPRESS_AWX_USERNAME: ${{ secrets.CYPRESS_AWX_USERNAME }}
-          CYPRESS_AWX_PASSWORD: ${{ secrets.CYPRESS_AWX_PASSWORD }}
+          AWX_HOST: ${{ secrets.AWX_HOST }}
+          AWX_SERVER: ${{ secrets.CYPRESS_AWX_SERVER }}
+          AWX_USERNAME: ${{ secrets.CYPRESS_AWX_USERNAME }}
+          AWX_PASSWORD: ${{ secrets.CYPRESS_AWX_PASSWORD }}
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_AWX_E2E_PROJECT_ID }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_AWX_E2E_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -598,14 +598,14 @@ jobs:
           auto-cancel-after-failures: 1
           config-file: cypress.eda.config.ts
         env:
-          EDA_HOST: ${{ secrets.EDA_HOST }}
           EDA_PROTOCOL: ${{ secrets.EDA_PROTOCOL }}
-          CYPRESS_AWX_SERVER: ${{ secrets.CYPRESS_AWX_SERVER }}
-          CYPRESS_AWX_USERNAME: ${{ secrets.CYPRESS_AWX_USERNAME }}
-          CYPRESS_AWX_PASSWORD: ${{ secrets.CYPRESS_AWX_PASSWORD }}
-          CYPRESS_EDA_SERVER: ${{ secrets.CYPRESS_EDA_SERVER }}
-          CYPRESS_EDA_USERNAME: ${{ secrets.CYPRESS_EDA_USERNAME }}
-          CYPRESS_EDA_PASSWORD: ${{ secrets.CYPRESS_EDA_PASSWORD }}
+          EDA_HOST: ${{ secrets.EDA_HOST }}
+          AWX_SERVER: ${{ secrets.CYPRESS_AWX_SERVER }}
+          AWX_USERNAME: ${{ secrets.CYPRESS_AWX_USERNAME }}
+          AWX_PASSWORD: ${{ secrets.CYPRESS_AWX_PASSWORD }}
+          EDA_SERVER: ${{ secrets.CYPRESS_EDA_SERVER }}
+          EDA_USERNAME: ${{ secrets.CYPRESS_EDA_USERNAME }}
+          EDA_PASSWORD: ${{ secrets.CYPRESS_EDA_PASSWORD }}
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_EDA_E2E_PROJECT_ID }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_EDA_E2E_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
