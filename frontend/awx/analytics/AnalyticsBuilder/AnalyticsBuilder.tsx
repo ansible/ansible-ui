@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useAnalyticsView, IAnalyticsView } from '../../analytics/useAnalyticsView';
 import { PageTable } from '../../../../framework/PageTable/PageTable';
 import { ITableColumn, ITableColumnTypeText } from '../../../../framework';
+import { string } from 'yaml/dist/schema/common/string';
 
 export interface MainRequestDefinition {
   report: {
@@ -25,12 +26,48 @@ export interface AnalyticsBuilderProps {
   processMainData?: (mainData: MainRequestDefinition) => void;
   processOptions?: (options: OptionsDefinition) => void;
 
+  // default item.id
   rowKeyFn: (item: ObjectType) => string | number;
 }
 
 interface AnalyticsBodyProps extends AnalyticsBuilderProps {
   mainData: MainRequestDefinition;
   options: OptionsDefinition;
+}
+
+export function FillDefaultProps(props: AnalyticsBuilderProps) {
+  // set id function as default
+  if (!props.rowKeyFn) {
+    props.rowKeyFn = (item: { id: number }) => item.id;
+  }
+}
+
+// swamps endpoint path from old path using v1 version and tower analytics. Example
+// /api/tower-analytics/v1/report/hosts_by_organization/
+// transforms to
+// /api/v2/analytics/report/hosts_by_organization/
+function transformEndpoint(url: string) {
+  const urls = url.split('/');
+  for (let id = 0; id < urls.length; id++) {
+    const val = urls[id];
+
+    if (val == 'tower-analytics') {
+      urls[id] = 'analytics';
+      continue;
+    }
+
+    if (val == 'v1') {
+      // change path - swap analytics and version set to v2
+      if (id - 1 >= 0) {
+        const store = urls[id - 1];
+        urls[id - 1] = 'v2';
+        urls[id] = store;
+      }
+      break;
+    }
+  }
+
+  return urls.join('/');
 }
 
 export function AnalyticsBuilder(props: AnalyticsBuilderProps) {
@@ -42,6 +79,13 @@ export function AnalyticsBuilder(props: AnalyticsBuilderProps) {
 
   async function readData() {
     const result = (await get(props.main_url, {})) as MainRequestDefinition;
+    result.report.layoutProps.dataEndpoint = transformEndpoint(
+      result.report.layoutProps.dataEndpoint
+    );
+    result.report.layoutProps.optionsEndpoint = transformEndpoint(
+      result.report.layoutProps.optionsEndpoint
+    );
+
     props.processMainData?.(result);
     setMainData(result);
 
