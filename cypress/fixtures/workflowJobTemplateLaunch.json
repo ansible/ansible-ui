@@ -1,0 +1,36 @@
+{
+  "ask_inventory_on_launch": false,
+  "ask_limit_on_launch": false,
+  "ask_scm_branch_on_launch": false,
+  "can_start_without_user_input": true,
+  "defaults": {
+    "inventory": {
+      "name": null,
+      "id": null
+    },
+    "limit": null,
+    "scm_branch": null,
+    "labels": [
+      {
+        "id": 79,
+        "name": "E2E Label DnWA"
+      }
+    ],
+    "job_tags": "",
+    "skip_tags": "",
+    "extra_vars": ""
+  },
+  "survey_enabled": false,
+  "variables_needed_to_start": [],
+  "node_templates_missing": [],
+  "node_prompts_rejected": [],
+  "workflow_job_template_data": {
+    "name": "E2E 6GDe",
+    "id": 152,
+    "description": "this is a description"
+  },
+  "ask_variables_on_launch": false,
+  "ask_labels_on_launch": false,
+  "ask_skip_tags_on_launch": false,
+  "ask_tags_on_launch": false
+}

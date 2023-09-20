@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { EditIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -12,7 +12,6 @@ import {
   usePageNavigate,
 } from '../../../../framework';
 import { usePersistentFilters } from '../../../common/PersistentFilters';
-import { RouteObj } from '../../../common/Routes';
 import { AwxRoute } from '../../AwxRoutes';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
@@ -22,6 +21,7 @@ import { useAwxView } from '../../useAwxView';
 import { useDeleteTemplates } from './hooks/useDeleteTemplates';
 import { useTemplateColumns } from './hooks/useTemplateColumns';
 import { useTemplateFilters } from './hooks/useTemplateFilters';
+import { useTemplateActions } from './hooks/useTemplateActions';
 
 export function Templates() {
   const { t } = useTranslation();
@@ -77,48 +77,8 @@ export function Templates() {
     [deleteTemplates, pageNavigate, t]
   );
 
-  const rowActions = useMemo<IPageAction<JobTemplate | WorkflowJobTemplate>[]>(
-    () => [
-      // TODO: Launch template
-      // {
-      //   type: PageActionType.Button,
-      //   selection: PageActionSelection.Single,
-      //   icon: RocketIcon,
-      //   isPinned: true,
-      //   label: t('Launch template'),
-      //   onClick: async (template) => {
-      //     // try {
-      //     //   const job = await handleLaunch(template?.type as string, template?.id);
-      //     //   if (job) {
-      //     //     navigate(getJobOutputUrl(job));
-      //     //   }
-      //     // } catch {
-      //     //   // handle error
-      //     // }
-      //   },
-      //   ouiaId: 'job-template-detail-launch-button',
-      //   isDanger: false,
-      // },
-      {
-        type: PageActionType.Link,
-        selection: PageActionSelection.Single,
-        isPinned: true,
-        icon: EditIcon,
-        label: t(`Edit template`),
-        href: (template) => RouteObj.EditJobTemplate.replace(':id', template.id.toString()),
-      },
-      { type: PageActionType.Seperator },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Single,
-        icon: TrashIcon,
-        label: t(`Delete template`),
-        onClick: (template) => deleteTemplates([template]),
-        isDanger: true,
-      },
-    ],
-    [deleteTemplates, t]
-  );
+  const rowActions = useTemplateActions({ onTemplatesDeleted: view.unselectItemsAndRefresh });
+
   return (
     <PageLayout>
       <PageHeader

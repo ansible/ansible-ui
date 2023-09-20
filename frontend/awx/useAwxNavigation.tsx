@@ -58,6 +58,10 @@ import Jobs from './views/jobs/Jobs';
 import { CreateSchedule } from './views/schedules/ScheduleForm';
 import { SchedulePage } from './views/schedules/SchedulePage/SchedulePage';
 import { Schedules } from './views/schedules/Schedules';
+import {
+  CreateWorkflowJobTemplate,
+  EditWorkflowJobTemplate,
+} from './resources/templates/WorkflowJobTemplateForm';
 
 export function useAwxNavigation() {
   const { t } = useTranslation();
@@ -148,12 +152,11 @@ export function useAwxNavigation() {
             path: 'resources',
             children: [
               {
-                id: AwxRoute.Templates,
-                label: 'Templates',
+                label: t('Templates'),
                 path: 'templates',
                 children: [
                   {
-                    path: 'jobs',
+                    path: 'job_template',
                     children: [
                       {
                         id: AwxRoute.CreateJobTemplate,
@@ -166,7 +169,7 @@ export function useAwxNavigation() {
                         element: <EditJobTemplate />,
                       },
                       {
-                        id: AwxRoute.TemplateSchedule,
+                        id: AwxRoute.TemplateSchedulePage,
                         path: ':id/schedules/:schedule_id/*',
                         element: <SchedulePage />,
                       },
@@ -178,10 +181,15 @@ export function useAwxNavigation() {
                     ],
                   },
                   {
-                    path: 'workflows',
+                    path: 'workflow_job_template',
                     children: [
                       {
-                        id: AwxRoute.WorkflowJobTemplateSchedule,
+                        id: AwxRoute.CreateWorkflowJobTemplate,
+                        path: 'create',
+                        element: <CreateWorkflowJobTemplate />,
+                      },
+                      {
+                        id: AwxRoute.WorkflowJobTemplateSchedulePage,
                         path: ':id/schedules/:schedule_id/*',
                         element: <SchedulePage />,
                       },
@@ -190,9 +198,15 @@ export function useAwxNavigation() {
                         path: ':id/*',
                         element: <WorkflowJobTemplatePage />,
                       },
+                      {
+                        id: AwxRoute.EditWorkflowJobTemplate,
+                        path: ':id/edit',
+                        element: <EditWorkflowJobTemplate />,
+                      },
                     ],
                   },
                   {
+                    id: AwxRoute.Templates,
                     path: '',
                     element: <Templates />,
                   },

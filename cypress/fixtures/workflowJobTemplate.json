@@ -1,0 +1,105 @@
+{
+  "id": 1,
+  "type": "workflow_job_template",
+  "url": "/api/v2/workflow_job_templates/152/",
+  "related": {
+    "named_url": "/api/v2/workflow_job_templates/E2E 6GDe++/",
+    "created_by": "/api/v2/users/1/",
+    "modified_by": "/api/v2/users/1/",
+    "workflow_jobs": "/api/v2/workflow_job_templates/152/workflow_jobs/",
+    "schedules": "/api/v2/workflow_job_templates/152/schedules/",
+    "launch": "/api/v2/workflow_job_templates/152/launch/",
+    "webhook_key": "/api/v2/workflow_job_templates/152/webhook_key/",
+    "webhook_receiver": "",
+    "workflow_nodes": "/api/v2/workflow_job_templates/152/workflow_nodes/",
+    "labels": "/api/v2/workflow_job_templates/152/labels/",
+    "activity_stream": "/api/v2/workflow_job_templates/152/activity_stream/",
+    "notification_templates_started": "/api/v2/workflow_job_templates/152/notification_templates_started/",
+    "notification_templates_success": "/api/v2/workflow_job_templates/152/notification_templates_success/",
+    "notification_templates_error": "/api/v2/workflow_job_templates/152/notification_templates_error/",
+    "notification_templates_approvals": "/api/v2/workflow_job_templates/152/notification_templates_approvals/",
+    "access_list": "/api/v2/workflow_job_templates/152/access_list/",
+    "object_roles": "/api/v2/workflow_job_templates/152/object_roles/",
+    "survey_spec": "/api/v2/workflow_job_templates/152/survey_spec/",
+    "copy": "/api/v2/workflow_job_templates/152/copy/"
+  },
+  "summary_fields": {
+    "created_by": {
+      "id": 1,
+      "username": "admin",
+      "first_name": "",
+      "last_name": ""
+    },
+    "modified_by": {
+      "id": 1,
+      "username": "admin",
+      "first_name": "",
+      "last_name": ""
+    },
+    "object_roles": {
+      "admin_role": {
+        "description": "Can manage all aspects of the workflow job template",
+        "name": "Admin",
+        "id": 5986
+      },
+      "execute_role": {
+        "description": "May run the workflow job template",
+        "name": "Execute",
+        "id": 5987
+      },
+      "read_role": {
+        "description": "May view settings for the workflow job template",
+        "name": "Read",
+        "id": 5988
+      },
+      "approval_role": {
+        "description": "Can approve or deny a workflow approval node",
+        "name": "Approve",
+        "id": 5989
+      }
+    },
+    "user_capabilities": {
+      "edit": true,
+      "delete": true,
+      "start": true,
+      "schedule": true,
+      "copy": true
+    },
+    "labels": {
+      "count": 1,
+      "results": [
+        {
+          "id": 79,
+          "name": "E2E Label DnWA"
+        }
+      ]
+    },
+    "recent_jobs": []
+  },
+  "created": "2023-08-21T19:49:59.680106Z",
+  "modified": "2023-08-21T19:49:59.680124Z",
+  "name": "E2E 6GDe",
+  "description": "this is a description",
+  "last_job_run": null,
+  "last_job_failed": false,
+  "next_job_run": null,
+  "status": "never updated",
+  "extra_vars": "",
+  "organization": null,
+  "survey_enabled": false,
+  "allow_simultaneous": true,
+  "ask_variables_on_launch": false,
+  "inventory": null,
+  "limit": null,
+  "scm_branch": null,
+  "ask_inventory_on_launch": false,
+  "ask_scm_branch_on_launch": false,
+  "ask_limit_on_launch": false,
+  "webhook_service": "",
+  "webhook_credential": null,
+  "ask_labels_on_launch": false,
+  "ask_skip_tags_on_launch": false,
+  "ask_tags_on_launch": false,
+  "skip_tags": "",
+  "job_tags": ""
+}
