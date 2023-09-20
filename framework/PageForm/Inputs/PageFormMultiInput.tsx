@@ -17,7 +17,7 @@ import {
   useFormContext,
 } from 'react-hook-form';
 import styled from 'styled-components';
-import { useFrameworkTranslations } from '../../useFrameworkTranslations';
+import { useTranslation } from 'react-i18next';
 import { capitalizeFirstLetter } from '../../utils/strings';
 import { PageFormGroup, PageFormGroupProps } from './PageFormGroup';
 
@@ -60,8 +60,7 @@ export function PageFormMultiInput<
     setValue,
     formState: { isSubmitting, isValidating },
   } = useFormContext<TFieldValues>();
-  const [translations] = useFrameworkTranslations();
-
+  const { t } = useTranslation();
   return (
     <Controller<TFieldValues, TFieldName>
       name={name}
@@ -83,11 +82,8 @@ export function PageFormMultiInput<
                 <ChipHolder isDisabled={isSubmitting || isDisabled} className="pf-c-form-control">
                   <ChipGroup
                     numChips={5}
-                    expandedText={translations.showLess}
-                    collapsedText={translations.countMore.replace(
-                      '{count}',
-                      `${value?.length - 5}`
-                    )}
+                    expandedText={t('Show Less')}
+                    collapsedText={t(`{count: ${value?.length - 5}} more`)}
                   >
                     {value?.map((item) => (
                       <Chip key={item.id} onClick={() => removeItem(item)}>

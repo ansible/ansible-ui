@@ -1,10 +1,10 @@
 /* eslint-disable i18next/no-literal-string */
 import { Flex, FlexItem } from '@patternfly/react-core';
 import { useSettings } from '../Settings';
-import { useFrameworkTranslations } from '../useFrameworkTranslations';
+import { useTranslation } from 'react-i18next';
 
 export function CapacityCell(props: { format?: string; used: number; capacity: number }) {
-  const [translations] = useFrameworkTranslations();
+  const { t } = useTranslation();
   const settings = useSettings();
   const ratio = props.used / props.capacity;
   if (props.capacity === 0) return <></>;
@@ -55,7 +55,7 @@ export function CapacityCell(props: { format?: string; used: number; capacity: n
       ) : (
         <FlexItem>
           {props.used}
-          {` ${translations.ofText} `}
+          {t('of')}
           {props.capacity}
         </FlexItem>
       )}

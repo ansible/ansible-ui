@@ -327,11 +327,11 @@ describe('projects.cy.ts', () => {
     it('Empty state is displayed correctly for user without permission to create projects', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({
         data: {
-          actions: {},
+          actions: { GET: {} },
         },
       }));
       cy.mount(<Projects />);
-      cy.contains(/^You do not have permission to create a project$/);
+      cy.contains(/^You do not have permission to create a project.$/);
       cy.contains(
         /^Please contact your organization administrator if there is an issue with your access.$/
       );

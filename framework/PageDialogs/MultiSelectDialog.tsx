@@ -14,10 +14,10 @@ import { PageTable } from '../PageTable/PageTable';
 import { ITableColumn, TableColumnCell } from '../PageTable/PageTableColumn';
 import { ISelected } from '../PageTable/useTableItems';
 import { IToolbarFilter } from '../PageToolbar/PageToolbarFilter';
-import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { IView } from '../useView';
 import { usePageDialog } from './PageDialog';
 import { Collapse } from '../components/Collapse';
+import { useTranslation } from 'react-i18next';
 
 export type MultiSelectDialogProps<T extends object> = {
   title: string;
@@ -51,7 +51,7 @@ export function MultiSelectDialog<T extends object>(props: MultiSelectDialogProp
   } = props;
   const [_, setDialog] = usePageDialog();
   const onClose = useCallback(() => setDialog(undefined), [setDialog]);
-  const [translations] = useFrameworkTranslations();
+  const { t } = useTranslation();
   return (
     <Modal
       title={title}
@@ -72,17 +72,17 @@ export function MultiSelectDialog<T extends object>(props: MultiSelectDialogProp
           }}
           isAriaDisabled={view.selectedItems.length === 0 && !allowZeroSelections}
         >
-          {confirmText ?? translations.confirmText}
+          {confirmText ?? t('Confirm')}
         </Button>,
         <Button key="cancel" variant="link" onClick={onClose}>
-          {cancelText ?? translations.cancelText}
+          {cancelText ?? t('Cancel')}
         </Button>,
       ]}
       hasNoBodyWrapper
     >
       <ModalBoxBody style={{ overflow: 'hidden' }}>
         <Split hasGutter>
-          <SplitItem style={{ fontWeight: 'bold' }}>{translations.selectedText}</SplitItem>
+          <SplitItem style={{ fontWeight: 'bold' }}>{t('Selected')}</SplitItem>
           {view.selectedItems.length > 0 ? (
             <LabelGroup>
               {view.selectedItems.map((item, i) => {
@@ -104,7 +104,9 @@ export function MultiSelectDialog<T extends object>(props: MultiSelectDialogProp
               })}
             </LabelGroup>
           ) : (
-            <SplitItem style={{ fontStyle: 'italic' }}>{translations.noneSelectedText}</SplitItem>
+            <SplitItem style={{ fontStyle: 'italic' }}>
+              {t('None - Please make a selection below.')}
+            </SplitItem>
           )}
         </Split>
       </ModalBoxBody>
@@ -124,8 +126,8 @@ export function MultiSelectDialog<T extends object>(props: MultiSelectDialogProp
             tableColumns={tableColumns}
             toolbarFilters={toolbarFilters}
             {...view}
-            emptyStateTitle={props.emptyStateTitle ?? translations.noItemsFound}
-            errorStateTitle={props.errorStateTitle ?? translations.errorText}
+            emptyStateTitle={props.emptyStateTitle ?? t('No items found')}
+            errorStateTitle={props.errorStateTitle ?? t('Error')}
             showSelect
             disableCardView
             disableListView

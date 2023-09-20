@@ -16,8 +16,7 @@ import {
 import { useCallback, useMemo } from 'react';
 import { PageSingleSelect } from '../PageInputs/PageSingleSelect';
 import { ITableColumn } from '../PageTable/PageTableColumn';
-import { useFrameworkTranslations } from '../useFrameworkTranslations';
-
+import { useTranslation } from 'react-i18next';
 export type PageToolbarSortProps = {
   sort?: string;
   setSort?: (sort: string) => void;
@@ -39,8 +38,7 @@ export function PageToolbarSort(props: PageToolbarSortProps) {
   const sortOption = sortOptions?.find((sortOption) => sortOption.value === sort);
   const sortType = sortOption ? sortOption.type : undefined;
 
-  const [translations] = useFrameworkTranslations();
-
+  const { t } = useTranslation();
   const sortDirectionIcon = useMemo(() => {
     switch (sortType) {
       case 'text':
@@ -76,7 +74,7 @@ export function PageToolbarSort(props: PageToolbarSortProps) {
   return (
     <ToolbarToggleGroup breakpoint="md" toggleIcon={undefined}>
       <ToolbarGroup variant="filter-group">
-        <ToolbarItem variant="label">{translations.sort}</ToolbarItem>
+        <ToolbarItem variant="label">{t('Sort')}</ToolbarItem>
         <ToolbarItem>
           <Split>
             <ToolbarSortSelect

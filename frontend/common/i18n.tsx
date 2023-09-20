@@ -31,6 +31,7 @@ void i18n
       lookupLocalStorage: 'lang',
     },
     fallbackLng: 'en', // use en if detected lng is not available
+    saveMissing: true,
     supportedLngs: ['en', 'es', 'fr', 'ja', 'ko', 'nl', 'zh', 'zu'],
     interpolation: {
       escapeValue: false, // react already safes from xss => https://www.i18next.com/translation-function/interpolation#unescape

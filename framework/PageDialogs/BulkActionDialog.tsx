@@ -14,8 +14,8 @@ import { PageTable } from '../PageTable/PageTable';
 import { ITableColumn, useVisibleModalColumns } from '../PageTable/PageTableColumn';
 import { usePaged } from '../PageTable/useTableItems';
 import { pfDanger, pfInfo, pfSuccess } from '../components/pfcolors';
-import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { usePageDialog } from './PageDialog';
+import { useTranslation } from 'react-i18next';
 
 export interface BulkActionDialogProps<T extends object> {
   /** The title of the model.
@@ -78,7 +78,7 @@ function BulkActionDialog<T extends object>(props: BulkActionDialogProps<T>) {
     processingText,
     isDanger,
   } = props;
-  const [translations] = useFrameworkTranslations();
+  const { t } = useTranslation();
   const [isProcessing, setProcessing] = useState(true);
   const [isCanceled, setCanceled] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -138,7 +138,7 @@ function BulkActionDialog<T extends object>(props: BulkActionDialogProps<T>) {
                     [key]: `Unknown error`,
                   }));
                 }
-                setError(translations.errorText);
+                setError(t('Error'));
               }
             } finally {
               if (!abortController.signal.aborted) {
@@ -154,7 +154,7 @@ function BulkActionDialog<T extends object>(props: BulkActionDialogProps<T>) {
       onComplete?.(successfulItems);
     }
     void process();
-  }, [abortController, actionFn, items, keyFn, onComplete, translations.errorText]);
+  }, [abortController, actionFn, items, keyFn, onComplete, t]);
 
   const pagination = usePaged(items);
 
@@ -175,12 +175,12 @@ function BulkActionDialog<T extends object>(props: BulkActionDialogProps<T>) {
         isProcessing
           ? [
               <Button key="cancel" variant="link" onClick={onCancelClicked}>
-                {translations.cancelText}
+                {t('Cancel')}
               </Button>,
             ]
           : [
               <Button key="close" variant="secondary" onClick={onCloseClicked}>
-                {translations.closeText}
+                {t('Close')}
               </Button>,
             ]
       }
@@ -210,14 +210,14 @@ function BulkActionDialog<T extends object>(props: BulkActionDialogProps<T>) {
                   if (status === undefined) {
                     return (
                       <span style={{ color: pfInfo }}>
-                        {<PendingIcon />}&nbsp; {translations.pendingText}
+                        {<PendingIcon />}&nbsp; {t('Pending')}
                       </span>
                     );
                   }
                   if (status === null) {
                     return (
                       <span style={{ color: pfSuccess }}>
-                        {<CheckCircleIcon />}&nbsp; {translations.successText}
+                        {<CheckCircleIcon />}&nbsp; {t('Success')}
                       </span>
                     );
                   }
@@ -245,12 +245,12 @@ function BulkActionDialog<T extends object>(props: BulkActionDialogProps<T>) {
           value={(progress / items.length) * 100}
           title={
             abortController.signal.aborted
-              ? translations.canceledText
+              ? t('Cancelled')
               : error
-              ? translations.errorText
+              ? t('Error')
               : !isProcessing
-              ? translations.successText
-              : processingText ?? translations.processingText
+              ? t('Success')
+              : processingText ?? t('Processing...')
           }
           size={ProgressSize.lg}
           variant={

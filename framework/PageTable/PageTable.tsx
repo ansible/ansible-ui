@@ -54,7 +54,7 @@ import { EmptyStateNoData } from '../components/EmptyStateNoData';
 import { Scrollable } from '../components/Scrollable';
 import { useManageColumns } from '../components/useManageColumns';
 import { getID } from '../hooks/useID';
-import { useFrameworkTranslations } from '../useFrameworkTranslations';
+import { useTranslation } from 'react-i18next';
 import { PagePagination } from './PagePagination';
 import './PageTable.css';
 import { PageTableCards } from './PageTableCards';
@@ -465,7 +465,7 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
     return newExpandedRow;
   }, [descriptionColumns, expandedRowColumns, keyFn, props.expandedRow]);
 
-  const [translations] = useFrameworkTranslations();
+  const { t } = useTranslation();
   const showSelect =
     props.showSelect ||
     toolbarActions?.find(
@@ -582,13 +582,15 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
         <EmptyState style={{ paddingTop: 48 }}>
           <EmptyStateIcon icon={SearchIcon} />
           <Title headingLevel="h2" size="lg">
-            {translations.noResultsFound}
+            {t('No results found')}
           </Title>
-          <EmptyStateBody>{translations.noResultsMatchCriteria}</EmptyStateBody>
+          <EmptyStateBody>
+            {t('No results match this filter criteria. Clear all filters and try again.')}
+          </EmptyStateBody>
           {clearAllFilters && (
             <EmptyStateSecondaryActions>
               <Button variant="primary" onClick={clearAllFilters}>
-                {translations.clearAllFilters}
+                {t('Clear all filters')}
               </Button>
             </EmptyStateSecondaryActions>
           )}

@@ -1,9 +1,9 @@
 import { Button, Split, SplitItem } from '@patternfly/react-core';
 import { DateTime } from 'luxon';
 import { useEffect, useState } from 'react';
-import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { formatDateString } from '../utils/formatDateString';
 import styled from 'styled-components';
+import { useTranslation } from 'react-i18next';
 
 export function DateCell(props: { value: number | string }) {
   const date = new Date(props.value);
@@ -25,7 +25,7 @@ export function DateTimeCell(props: {
   format?: 'since' | 'date-time';
   onClick?: () => void;
 }) {
-  const [translations] = useFrameworkTranslations();
+  const { t } = useTranslation();
   const { author, onClick } = props;
   const [dateTime, setDateTime] = useState<string | null>(null);
   useEffect(() => {
@@ -52,7 +52,7 @@ export function DateTimeCell(props: {
   return (
     <DateCellSpan className="date-time">
       {dateTime}
-      {author && <span>&nbsp;{translations.by}&nbsp;</span>}
+      {author && <span>&nbsp;{t('by')}&nbsp;</span>}
       {onClick ? (
         <Button variant="link" isInline onClick={onClick}>
           {author}

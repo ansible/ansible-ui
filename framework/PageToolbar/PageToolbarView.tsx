@@ -7,7 +7,7 @@ import {
   Tooltip,
 } from '@patternfly/react-core';
 import { ColumnsIcon, ListIcon, TableIcon, ThLargeIcon } from '@patternfly/react-icons';
-import { useFrameworkTranslations } from '../useFrameworkTranslations';
+import { useTranslation } from 'react-i18next';
 import { PageTableViewType, PageTableViewTypeE } from './PageTableViewType';
 
 export type PageToolbarViewProps = {
@@ -22,8 +22,7 @@ export type PageToolbarViewProps = {
 export function PageToolbarView(props: PageToolbarViewProps) {
   const { viewType, setViewType, openColumnModal } = props;
 
-  const [translations] = useFrameworkTranslations();
-
+  const { t } = useTranslation();
   let viewTypeCount = 0;
   if (!props.disableTableView) viewTypeCount++;
   if (!props.disableCardView) viewTypeCount++;
@@ -33,7 +32,7 @@ export function PageToolbarView(props: PageToolbarViewProps) {
     <ToolbarGroup variant="button-group" style={{ justifyContent: 'end', marginRight: 0 }}>
       {openColumnModal && (
         <ToolbarItem>
-          <Tooltip content={translations.manageColumns}>
+          <Tooltip content={t('Manage columns')}>
             <Button variant="plain" icon={<ColumnsIcon />} onClick={openColumnModal} />
           </Tooltip>
         </ToolbarItem>
@@ -52,7 +51,7 @@ export function PageToolbarView(props: PageToolbarViewProps) {
                   case PageTableViewTypeE.Cards:
                     return (
                       <Tooltip
-                        content={translations.cardView}
+                        content={t('Card view')}
                         key={vt}
                         position="top-end"
                         enableFlip={false}
@@ -68,7 +67,7 @@ export function PageToolbarView(props: PageToolbarViewProps) {
                   case PageTableViewTypeE.List:
                     return (
                       <Tooltip
-                        content={translations.listView}
+                        content={t('List view')}
                         key={vt}
                         position="top-end"
                         enableFlip={false}
@@ -84,7 +83,7 @@ export function PageToolbarView(props: PageToolbarViewProps) {
                   case PageTableViewTypeE.Table:
                     return (
                       <Tooltip
-                        content={translations.tableView}
+                        content={t('Table view')}
                         key={vt}
                         position="top-end"
                         enableFlip={false}

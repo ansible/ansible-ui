@@ -9,10 +9,10 @@ import {
   useFormContext,
 } from 'react-hook-form';
 import { Help } from '../../components/Help';
-import { useFrameworkTranslations } from '../../useFrameworkTranslations';
 import { capitalizeFirstLetter } from '../../utils/strings';
 import { PageMultiSelect } from '../../PageInputs/PageMultiSelect';
 import { PageSelectOption } from '../../PageInputs/PageSelectOption';
+import { useTranslation } from 'react-i18next';
 
 export type PageFormMultiSelectProps<
   TFieldValues extends FieldValues = FieldValues,
@@ -112,8 +112,7 @@ export function PageFormMultiSelect<
     formState: { isSubmitting, isValidating },
   } = useFormContext<TFieldValues>();
 
-  const [translations] = useFrameworkTranslations();
-
+  const { t } = useTranslation();
   return (
     <Controller<TFieldValues, TFieldName>
       name={name}
@@ -122,7 +121,7 @@ export function PageFormMultiSelect<
       render={({ field: { value, onChange }, fieldState: { error } }) => {
         const helperTextInvalid = error?.message
           ? validate && isValidating
-            ? translations.validating
+            ? t('Validating...')
             : error?.message
           : undefined;
 

@@ -34,7 +34,6 @@ export function Projects() {
   const canCreateProject = Boolean(data && data.actions && data.actions['POST']);
   const { refresh } = view;
   usePersistentFilters('projects');
-
   const handleWebSocketMessage = useCallback(
     (message?: { group_name?: string; type?: string }) => {
       switch (message?.group_name) {
@@ -86,7 +85,7 @@ export function Projects() {
         emptyStateTitle={
           canCreateProject
             ? t('There are currently no projects added to your organization.')
-            : t('You do not have permission to create a project')
+            : t('You do not have permission to create a project.')
         }
         emptyStateDescription={
           canCreateProject

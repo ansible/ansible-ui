@@ -12,7 +12,7 @@ import { PageAsyncMultiSelect } from '../PageInputs/PageAsyncMultiSelect';
 import { PageMultiSelect } from '../PageInputs/PageMultiSelect';
 import { PageSingleSelect } from '../PageInputs/PageSingleSelect';
 import { useBreakpoint } from '../components/useBreakPoint';
-import { useFrameworkTranslations } from '../useFrameworkTranslations';
+import { useTranslation } from 'react-i18next';
 import { IToolbarAsyncSingleSelectFilter } from './PageToolbarFilters/ToolbarAsyncSingleSelectFilter';
 import { IToolbarAsyncMultiSelectFilter } from './PageToolbarFilters/ToolbarAsyncMultiSelectFilter';
 import {
@@ -127,8 +127,7 @@ function FiltersToolbarItem(props: PageToolbarFiltersProps) {
 export function PageToolbarFilters(props: PageToolbarFiltersProps) {
   const { toolbarFilters, setFilterState, filterState } = props;
 
-  const [translations] = useFrameworkTranslations();
-
+  const { t } = useTranslation();
   // When the screen is small, show the filter label in the expanded filter section
   const showFilterLabel = !useBreakpoint('md');
 
@@ -148,7 +147,7 @@ export function PageToolbarFilters(props: PageToolbarFiltersProps) {
   return (
     <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md">
       <ToolbarGroup variant="filter-group" style={{ flexWrap: 'wrap', gap: 16 }}>
-        {showFilterLabel && <ToolbarItem variant="label">{translations.filter}</ToolbarItem>}
+        {showFilterLabel && <ToolbarItem variant="label">{t('Filter')}</ToolbarItem>}
         <FiltersToolbarItem
           toolbarFilters={groupedFilters}
           setFilterState={setFilterState}

@@ -21,7 +21,7 @@ import { useNavigate } from 'react-router-dom';
 import './PageFramework.css';
 import { usePageNavSideBar } from './PageNavigation/PageNavSidebar';
 import { useBreakpoint } from './components/useBreakPoint';
-import { useFrameworkTranslations } from './useFrameworkTranslations';
+import { useTranslation } from 'react-i18next';
 
 export interface ICatalogBreadcrumb {
   id?: string;
@@ -109,7 +109,7 @@ export function PageHeader(props: PageHeaderProps) {
   const isMdOrLarger = useBreakpoint('md');
   const navBar = usePageNavSideBar();
   const navigation = navBar.isOpen && isXl ? undefined : props.navigation;
-  const [translations] = useFrameworkTranslations();
+  const { t } = useTranslation();
   return (
     <>
       {navigation && (
@@ -126,21 +126,6 @@ export function PageHeader(props: PageHeaderProps) {
             <PageNavigation style={{ paddingTop: 0, flexShrink: 1, flexGrow: 1 }}>
               {navigation}
             </PageNavigation>
-            {/* {!isMdOrLarger && props.titleDocLink && (
-                            <FlexItem>
-                                <Bullseye>
-                                    <Button
-                                        icon={<ExternalLinkAltIcon style={{ paddingRight: 4, paddingTop: 4 }} />}
-                                        variant="link"
-                                        onClick={() => window.open(props.titleDocLink, '_blank')}
-                                        isInline
-                                        style={{ whiteSpace: 'nowrap' }}
-                                    >
-                                        {isSmLarger ? <span>{t('Documentation')}</span> : <span>{'Docs'}</span>}
-                                    </Button>
-                                </Bullseye>
-                            </FlexItem>
-                        )} */}
           </Flex>
         </PageSection>
       )}
@@ -179,7 +164,7 @@ export function PageHeader(props: PageHeaderProps) {
                               onClick={() => window.open(props.titleDocLink, '_blank')}
                               isInline
                             >
-                              {translations.documentation}
+                              {t('Documentation')}
                             </Button>
                           </StackItem>
                         )}

@@ -4,7 +4,7 @@ import { ReactNode, createContext, useCallback, useContext, useEffect, useState 
 import styled from 'styled-components';
 import { usePageDialog } from './PageDialogs/PageDialog';
 import { FormGroupSelect } from './PageForm/Inputs/FormGroupSelect';
-import { useFrameworkTranslations } from './useFrameworkTranslations';
+import { useTranslation } from 'react-i18next';
 
 const FormDiv = styled.div`
   padding: var(--pf-global--spacer--lg);
@@ -129,7 +129,7 @@ export function useSettingsDialog(t: (t: string) => string) {
 export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) => void }) {
   const onClose = () => props.setOpen(false);
   const [settings, setSettings] = useContext(SettingsContext);
-  const [translations] = useFrameworkTranslations();
+  const { t } = useTranslation();
   return (
     <Modal
       title="Settings"
@@ -140,7 +140,7 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
       tabIndex={0}
       actions={[
         <Button key="close" variant="primary" onClick={onClose}>
-          {translations.closeText}
+          {t('Close')}
         </Button>,
       ]}
       hasNoBodyWrapper
@@ -149,7 +149,7 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
         <Form isHorizontal={settings.formLayout === 'horizontal'} autoComplete="off">
           <FormGroupSelect
             id="theme"
-            label="Theme"
+            label={t('Theme')}
             value={settings.theme ?? 'system'}
             onSelect={(_, theme) =>
               setSettings({ ...settings, theme: theme as 'system' | 'light' | 'dark' })
@@ -162,7 +162,7 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
           </FormGroupSelect>
           <FormGroupSelect
             id="table-layout"
-            label="Table Layout"
+            label={t('Table Layout')}
             value={settings.tableLayout ?? 'comfortable'}
             onSelect={(_, tableLayout) =>
               setSettings({
@@ -177,7 +177,7 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
           </FormGroupSelect>
           <FormGroupSelect
             id="form-columns"
-            label="Form Columns"
+            label={t('Form Columns')}
             value={settings.formColumns ?? 'multiple'}
             onSelect={(_, formColumns) =>
               setSettings({
@@ -192,7 +192,7 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
           </FormGroupSelect>
           <FormGroupSelect
             id="form-layout"
-            label="Form Layout"
+            label={t('Form Layout')}
             value={settings.formLayout ?? 'vertical'}
             onSelect={(_, formLayout) =>
               setSettings({

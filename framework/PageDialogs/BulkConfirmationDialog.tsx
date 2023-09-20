@@ -14,10 +14,10 @@ import styled from 'styled-components';
 import { PageTable } from '../PageTable/PageTable';
 import { ITableColumn, useVisibleModalColumns } from '../PageTable/PageTableColumn';
 import { usePaged } from '../PageTable/useTableItems';
-import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { compareStrings } from '../utils/compare';
 import { BulkActionDialogProps, useBulkActionDialog } from './BulkActionDialog';
 import { usePageDialog } from './PageDialog';
+import { useTranslation } from 'react-i18next';
 
 const ModalBodyDiv = styled.div`
   display: flex;
@@ -91,7 +91,7 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
     isDanger,
   } = props;
   const [_, setDialog] = usePageDialog();
-  const [translations] = useFrameworkTranslations();
+  const { t } = useTranslation();
   const onCloseClicked = useCallback(() => {
     setDialog(undefined);
     onClose?.();
@@ -165,7 +165,7 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
           {actionButtonText}
         </Button>,
         <Button key="cancel" variant="link" onClick={onClose}>
-          {translations.cancelText}
+          {t('Cancel')}
         </Button>,
       ]}
       hasNoBodyWrapper
@@ -184,7 +184,6 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
               itemCount={items.length}
               tableColumns={modalColumns}
               keyFn={keyFn}
-              // pagination={pagination}
               compact
               errorStateTitle="Error"
               emptyStateTitle="No items"

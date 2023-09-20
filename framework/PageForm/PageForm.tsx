@@ -24,7 +24,6 @@ import { RequestError } from '../../frontend/common/crud/RequestError';
 import { useBreakpoint } from '../components/useBreakPoint';
 import { PageBody } from '../PageBody';
 import { SettingsContext } from '../Settings';
-import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { useTranslation } from 'react-i18next';
 
 export function PageForm<T extends object>(props: {
@@ -47,9 +46,7 @@ export function PageForm<T extends object>(props: {
   const form = useForm<T>({
     defaultValues: defaultValue ?? ({} as DefaultValues<T>),
   });
-
-  const [frameworkTranslations] = useFrameworkTranslations();
-
+  const { t } = useTranslation();
   const { handleSubmit, setError: setFieldError } = form;
   const [error, setError] = useState<Error | null>(null);
   const isMd = useBreakpoint('md');
@@ -162,7 +159,7 @@ export function PageForm<T extends object>(props: {
               ) : null}
               {props.onCancel && (
                 <PageFormCancelButton onCancel={props.onCancel}>
-                  {props.cancelText ?? frameworkTranslations.cancelText}
+                  {props.cancelText ?? t('Cancel')}
                 </PageFormCancelButton>
               )}
             </ActionGroup>

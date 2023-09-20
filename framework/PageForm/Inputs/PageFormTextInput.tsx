@@ -13,7 +13,7 @@ import {
 } from 'react-hook-form';
 import { Help } from '../../components/Help';
 import { useID } from '../../hooks/useID';
-import { useFrameworkTranslations } from '../../useFrameworkTranslations';
+import { useTranslation } from 'react-i18next';
 import { capitalizeFirstLetter } from '../../utils/strings';
 
 export type PageFormTextInputProps<
@@ -219,8 +219,7 @@ export function PageFormTextInput<
 
   const [showSecret, setShowSecret] = useState(false);
 
-  const [translations] = useFrameworkTranslations();
-
+  const { t } = useTranslation();
   return (
     <Controller<TFieldValues, TFieldName>
       name={name}
@@ -229,7 +228,7 @@ export function PageFormTextInput<
       render={({ field: { onChange, value, name }, fieldState: { error } }) => {
         const helperTextInvalid = error?.message
           ? validate && isValidating
-            ? translations.validating
+            ? t('Validating....')
             : error?.message
           : undefined;
 

@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
-import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { IPageAction, PageActionSelection } from './PageAction';
+import { useTranslation } from 'react-i18next';
 
 export function isPageActionHidden<T extends object>(
   action: IPageAction<T>,
@@ -26,7 +26,7 @@ export function isPageActionHidden<T extends object>(
 }
 
 export function usePageActionDisabled<T extends object>() {
-  const [translations] = useFrameworkTranslations();
+  const { t } = useTranslation();
   return useCallback(
     (
       action: IPageAction<T>,
@@ -49,7 +49,7 @@ export function usePageActionDisabled<T extends object>() {
               return action.isDisabled;
             }
             if (action.isDisabled) {
-              if (!selectedItem) return translations.noSelection;
+              if (!selectedItem) return t('No selection');
               return action.isDisabled(selectedItem);
             }
             break;
@@ -59,13 +59,13 @@ export function usePageActionDisabled<T extends object>() {
               return action.isDisabled;
             }
             if (action.isDisabled) {
-              if (!selectedItems) return translations.noSelections;
+              if (!selectedItems) return t('No selections');
               return action.isDisabled(selectedItems);
             }
             break;
         }
       }
     },
-    [translations.noSelection, translations.noSelections]
+    [t]
   );
 }

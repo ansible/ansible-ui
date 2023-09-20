@@ -1,7 +1,7 @@
 import { Button, Popover, Stack, StackItem } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
 import { ReactNode } from 'react';
-import { useFrameworkTranslations } from '../useFrameworkTranslations';
+import { useTranslation } from 'react-i18next';
 
 export function Help(props: {
   help?: ReactNode | string | string[];
@@ -9,7 +9,7 @@ export function Help(props: {
   docLink?: string;
 }) {
   const { help, title, docLink } = props;
-  const [translations] = useFrameworkTranslations();
+  const { t } = useTranslation();
   if (!help) return <></>;
   return (
     <Popover
@@ -29,7 +29,7 @@ export function Help(props: {
                 onClick={() => window.open(docLink, '_blank')}
                 isInline
               >
-                {translations.documentation}
+                {t('Documentation')}
               </Button>
             </StackItem>
           )}

@@ -10,9 +10,9 @@ import {
 } from 'react-hook-form';
 import { Help } from '../../components/Help';
 import { getID, useID } from '../../hooks/useID';
-import { useFrameworkTranslations } from '../../useFrameworkTranslations';
 import { capitalizeFirstLetter } from '../../utils/strings';
 import { IFormGroupSelectOption } from './FormGroupSelectOption';
+import { useTranslation } from 'react-i18next';
 
 export type PageFormSelectProps<
   TFieldValues extends FieldValues = FieldValues,
@@ -127,8 +127,7 @@ export function PageFormSelect<
   const [open, setOpen] = useState(false);
   const onToggle = useCallback(() => setOpen(!open), [open]);
 
-  const [translations] = useFrameworkTranslations();
-
+  const { t } = useTranslation();
   return (
     <Controller<TFieldValues, TFieldName>
       name={name}
@@ -151,7 +150,7 @@ export function PageFormSelect<
 
         const helperTextInvalid = error?.message
           ? validate && isValidating
-            ? translations.validating
+            ? t('Validating....')
             : error?.message
           : undefined;
 
@@ -197,7 +196,7 @@ export function PageFormSelect<
               data-cy={id}
             >
               {options.map((option) => {
-                const optionId = getID(option);
+                const optionId: string | undefined = getID(option);
                 return (
                   <SelectOption
                     id={optionId}

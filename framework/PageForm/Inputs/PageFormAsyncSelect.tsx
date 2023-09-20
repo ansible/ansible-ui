@@ -12,7 +12,7 @@ import { SearchIcon, SyncAltIcon } from '@patternfly/react-icons';
 import { ReactElement, ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { Controller, FieldPath, FieldValues, PathValue, useFormContext } from 'react-hook-form';
 import { getID, useID } from '../../hooks/useID';
-import { useFrameworkTranslations } from '../../useFrameworkTranslations';
+import { useTranslation } from 'react-i18next';
 import { capitalizeFirstLetter } from '../../utils/strings';
 import { PageFormGroup } from './PageFormGroup';
 
@@ -73,8 +73,7 @@ export function PageFormAsyncSelect<
 
   const [loadingError, setLoadingError] = useState<Error>();
 
-  const [frameworkTranslations] = useFrameworkTranslations();
-
+  const { t } = useTranslation();
   const queryHandler = useCallback(
     (page: number) => {
       setValue(name, undefined as PathValue<TFieldValues, TFieldName>);
@@ -89,11 +88,11 @@ export function PageFormAsyncSelect<
         .catch((err) => {
           err instanceof Error
             ? setLoadingError(err)
-            : setLoadingError(new Error(frameworkTranslations.unknownError));
+            : setLoadingError(new Error(t('Unknown error')));
           return { total: 0, values: [] };
         });
     },
-    [frameworkTranslations.unknownError, name, query, setValue]
+    [t, name, query, setValue]
   );
 
   return (
@@ -197,7 +196,7 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
   const [options, setOptions] = useState<SelectOptionObject[] | null>(null);
   const [useSelectDialog, setUseSelectDialog] = useState(false);
 
-  const [frameworkTranslations] = useFrameworkTranslations();
+  const { t } = useTranslation();
 
   const [loading, setLoading] = useState(false);
   const reload = useCallback(() => {
@@ -265,7 +264,7 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
         hasPlaceholderStyle
         placeholderText={
           loadingError
-            ? frameworkTranslations.clickToRefresh
+            ? t('Click to refresh')
             : loadingPlaceholder
             ? loading
               ? loadingPlaceholder

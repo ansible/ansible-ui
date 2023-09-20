@@ -4,9 +4,9 @@ import { PageTable } from '../PageTable/PageTable';
 import { ITableColumn } from '../PageTable/PageTableColumn';
 import { ISelected } from '../PageTable/useTableItems';
 import { IToolbarFilter } from '../PageToolbar/PageToolbarFilter';
-import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { IView } from '../useView';
 import { usePageDialog } from './PageDialog';
+import { useTranslation } from 'react-i18next';
 
 export type SelectSingleDialogProps<T extends object> = {
   title: string;
@@ -24,7 +24,7 @@ export function SelectSingleDialog<T extends object>(props: SelectSingleDialogPr
   const { title, view, tableColumns, toolbarFilters, confirmText, cancelText, onSelect } = props;
   const [_, setDialog] = usePageDialog();
   const onClose = useCallback(() => setDialog(undefined), [setDialog]);
-  const [translations] = useFrameworkTranslations();
+  const { t } = useTranslation();
   return (
     <Modal
       title={title}
@@ -46,10 +46,10 @@ export function SelectSingleDialog<T extends object>(props: SelectSingleDialogPr
           }}
           isAriaDisabled={view.selectedItems.length === 0}
         >
-          {confirmText ?? translations.confirmText}
+          {confirmText ?? t('Confirm')}
         </Button>,
         <Button key="cancel" variant="link" onClick={onClose}>
-          {cancelText ?? translations.cancelText}
+          {cancelText ?? t('Cancel')}
         </Button>,
       ]}
       hasNoBodyWrapper
@@ -66,8 +66,8 @@ export function SelectSingleDialog<T extends object>(props: SelectSingleDialogPr
           tableColumns={tableColumns}
           toolbarFilters={toolbarFilters}
           {...view}
-          emptyStateTitle={props.emptyStateTitle ?? translations.noItemsFound}
-          errorStateTitle={props.errorStateTitle ?? translations.errorText}
+          emptyStateTitle={props.emptyStateTitle ?? t('No items found')}
+          errorStateTitle={props.errorStateTitle ?? t('Error')}
           disableCardView
           disableListView
           compact
