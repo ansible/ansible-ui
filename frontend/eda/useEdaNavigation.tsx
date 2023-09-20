@@ -27,7 +27,7 @@ import { RoleDetails } from './UserAccess/Roles/RoleDetails';
 import { Roles } from './UserAccess/Roles/Roles';
 import { CreateControllerToken } from './UserAccess/Users/CreateControllerToken';
 import { EdaMyDetails, EdaUserDetails } from './UserAccess/Users/EdaUserDetails';
-import { CreateUser, EditUser } from './UserAccess/Users/EditUser';
+import { CreateUser, EditUser, EditCurrentUser } from './UserAccess/Users/EditUser';
 import { Users } from './UserAccess/Users/Users';
 import { EdaDashboard } from './dashboard/EdaDashboard';
 import { ActivationInstanceDetails } from './rulebook-activations/ActivationInstanceDetails';
@@ -294,6 +294,11 @@ export function useEdaNavigation() {
                     id: EdaRoute.EditUser,
                     path: 'edit/:id',
                     element: <EditUser />,
+                  },
+                  {
+                    id: EdaRoute.EditCurrentUser,
+                    path: 'edit/me',
+                    element: <EditCurrentUser />,
                   },
                   {
                     id: EdaRoute.UserPage,

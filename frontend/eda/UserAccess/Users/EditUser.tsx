@@ -18,11 +18,15 @@ import { EdaRoute } from '../../EdaRoutes';
 import { API_PREFIX } from '../../constants';
 import { EdaResult } from '../../interfaces/EdaResult';
 import { EdaRole, EdaRoleRef } from '../../interfaces/EdaRole';
-import { EdaUser, EdaUserCreateUpdate } from '../../interfaces/EdaUser';
+import { EdaCurrentUserUpdate, EdaUser, EdaUserCreateUpdate } from '../../interfaces/EdaUser';
 import { PageFormRolesSelect } from '../Roles/components/PageFormRolesSelect';
 
 type UserInput = Omit<EdaUserCreateUpdate, 'roles'> & {
   roles?: EdaRoleRef[];
+  confirmPassword: string;
+};
+
+type CurrentUserInput = EdaCurrentUserUpdate & {
   confirmPassword: string;
 };
 
@@ -66,6 +70,58 @@ export function CreateUser() {
         <UserInputs mode="create" />
       </PageForm>
     </>
+  );
+}
+
+export function EditCurrentUser() {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
+  const { data: user } = useGet<EdaUser>(`${API_PREFIX}/users/me/`);
+  const patchRequest = usePatchRequest<EdaCurrentUserUpdate, EdaUser>();
+  const onSubmit: PageFormSubmitHandler<UserInput> = async (
+    userInput: CurrentUserInput,
+    _setError,
+    setFieldError
+  ) => {
+    const { confirmPassword, ...user } = userInput;
+    if (user.password) {
+      if (confirmPassword !== user.password) {
+        setFieldError('confirmPassword', { message: t('Password does not match.') });
+        return false;
+      }
+    }
+    const editUser: EdaCurrentUserUpdate = { ...user };
+    const updatedUser = await patchRequest(`${API_PREFIX}/users/me/`, editUser);
+    pageNavigate(EdaRoute.MyPage, { params: { id: updatedUser.id } });
+  };
+
+  const onCancel = () => navigate(-1);
+
+  if (!user) {
+    return (
+      <PageLayout>
+        <PageHeader breadcrumbs={[{ label: t('Edit user') }]} />
+      </PageLayout>
+    );
+  }
+
+  return (
+    <PageLayout>
+      <PageHeader
+        title={`${t('Edit')} ${user?.username || t('User')}`}
+        breadcrumbs={[{ label: `${t('Edit user')}` }]}
+      />
+      <PageForm<UserInput>
+        submitText={t('Save user')}
+        onSubmit={onSubmit}
+        cancelText={t('Cancel')}
+        onCancel={onCancel}
+        defaultValue={user}
+      >
+        <CurrentUserInputs />
+      </PageForm>
+    </PageLayout>
   );
 }
 
@@ -135,6 +191,42 @@ export function EditUser() {
         <UserInputs mode="edit" />
       </PageForm>
     </PageLayout>
+  );
+}
+function CurrentUserInputs() {
+  const { t } = useTranslation();
+  return (
+    <Fragment>
+      <PageFormTextInput<CurrentUserInput>
+        name="first_name"
+        label={t('First name')}
+        placeholder={t('Enter first name')}
+        maxLength={150}
+      />
+      <PageFormTextInput<CurrentUserInput>
+        name="last_name"
+        label={t('Last name')}
+        placeholder={t('Enter last name')}
+        maxLength={150}
+      />
+      <PageFormTextInput<CurrentUserInput>
+        name="email"
+        label={t('Email')}
+        placeholder={t('Enter email')}
+      />
+      <PageFormTextInput<CurrentUserInput>
+        name="password"
+        label={t('Password')}
+        placeholder={t('Enter password')}
+        type="password"
+      />
+      <PageFormTextInput<CurrentUserInput>
+        name="confirmPassword"
+        label={t('Confirm password')}
+        placeholder={t('Enter password')}
+        type="password"
+      />
+    </Fragment>
   );
 }
 

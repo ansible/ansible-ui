@@ -46,7 +46,7 @@ export function EdaUserDetails({ initialTabIndex = 0 }) {
 }
 
 export function EdaMyDetails({ initialTabIndex = 0 }) {
-  const activeUser = useEdaActiveUser();
+  const { data: activeUser } = useGet<EdaUser>(`${API_PREFIX}/users/me/`);
   if (!activeUser) return <LoadingPage breadcrumbs tabs />;
   return <EdaUserDetailsInternal initialTabIndex={initialTabIndex} user={activeUser} />;
 }
@@ -93,6 +93,16 @@ export function EdaUserDetailsInternal({
       </PageDetails>
     );
   };
+  const getPageUrl = useGetPageUrl();
+
+  const activeUser = useEdaActiveUser();
+  const isViewingSelf = Number(user.id) === Number(activeUser.id);
+  const canEditUser =
+    activeUser.is_superuser || activeUser?.roles.some((role) => role.name === 'Admin');
+  const canViewUsers =
+    activeUser.is_superuser ||
+    activeUser?.roles.some((role) => role.name === 'Admin' || role.name === 'Auditor');
+
   const itemActions = useMemo<IPageAction<EdaUser>[]>(
     () => [
       {
@@ -102,31 +112,32 @@ export function EdaUserDetailsInternal({
         icon: PencilAltIcon,
         isPinned: true,
         label: t('Edit user'),
+        isHidden: (_user: EdaUser) => !canEditUser,
         onClick: (user: EdaUser) => pageNavigate(EdaRoute.EditUser, { params: { id: user.id } }),
+      },
+      {
+        type: PageActionType.Button,
+        variant: ButtonVariant.primary,
+        selection: PageActionSelection.Single,
+        icon: PencilAltIcon,
+        isPinned: true,
+        isHidden: (_user: EdaUser) => canEditUser || !isViewingSelf,
+        label: t('Edit user'),
+        onClick: () => pageNavigate(EdaRoute.EditCurrentUser),
       },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete user'),
+        isHidden: (_user: EdaUser) => isViewingSelf,
         onClick: (user: EdaUser) => deleteUsers([user]),
         isDanger: true,
       },
     ],
-    [deleteUsers, pageNavigate, t]
+    [canEditUser, deleteUsers, isViewingSelf, pageNavigate, t]
   );
-
-  const getPageUrl = useGetPageUrl();
-
-  const activeUser = useEdaActiveUser();
   if (!activeUser) return <LoadingPage breadcrumbs tabs />;
-  const isViewingSelf = Number(user.id) === Number(activeUser.id);
-  const canEditUser =
-    activeUser.is_superuser || activeUser?.roles.some((role) => role.name === 'Admin');
-  const canViewUsers =
-    activeUser.is_superuser ||
-    activeUser?.roles.some((role) => role.name === 'Admin' || role.name === 'Auditor');
-
   return (
     <PageLayout>
       <PageHeader
@@ -137,13 +148,11 @@ export function EdaUserDetailsInternal({
             : undefined
         }
         headerActions={
-          canEditUser ? (
-            <PageActions<EdaUser>
-              actions={itemActions}
-              position={DropdownPosition.right}
-              selectedItem={user}
-            />
-          ) : null
+          <PageActions<EdaUser>
+            actions={itemActions}
+            position={DropdownPosition.right}
+            selectedItem={user}
+          />
         }
       />
       {user ? (
