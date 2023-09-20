@@ -7,21 +7,51 @@ import {
   FillDefaultProps,
 } from './AnalyticsBuilder';
 
+import {useState } from 'react';
+
 import { reportDefaultParams } from './constants';
 
 export function Test() {
-  const props = hostsByOrganization as AnalyticsBuilderProps;
-  FillDefaultProps(props);
-  return <AnalyticsBuilder {...props}></AnalyticsBuilder>;
+  const [reportName, setReportName ] = useState<string>('');
+  const props = {} as AnalyticsBuilderProps;
+
+  fillReports(props, reportName);
+  fillDefaultProps(props);
+
+  const items = fillReportTypes();
+
+
+  return ( 
+    <>
+    
+   
+    {reportName && <AnalyticsBuilder {...props}></AnalyticsBuilder>};
+  </>);
 }
 
-const reports = {
-  main_url: '/api/v2/analytics/report/automation_calculator/',
+function fillReportTypes()
+{
+    const items = [];
+    
+}
 
-  /*processMainData: (data: MainRequestDefinition) => {
-    data.report.layoutProps.optionsEndpoint = '/api/v2/analytics/roi_templates_options/';
-    data.report.layoutProps.dataEndpoint = '/api/v2/analytics/roi_templates/';
-  },*/
+function fillReports(props : AnalyticsBuilderProps, name : string)
+{
+    props.main_url = `/api/v2/analytics/report/${name}/`;
+    const defaultParams = reportDefaultParams(name);
+
+    props.defaultDataParams = defaultParams;
+    props.defaultDataParams = defaultParams;
+}
+
+function fillDefaultProps(props : AnalyticsBuilderProps)
+{
+    props.rowKeyFn = (item) => item.id;
+}
+
+/*
+const automationCalculator = {
+  main_url: '/api/v2/analytics/report/automation_calculator/',
 };
 
 const hostsByOrganizationParams = reportDefaultParams('hosts_by_organization');
@@ -30,4 +60,6 @@ const hostsByOrganization: AnalyticsBuilderProps = {
   main_url: '/api/v2/analytics/report/hosts_by_organization/',
   defaultOptionsParams: hostsByOrganizationParams,
   defaultDataParams: hostsByOrganizationParams,
-};
+};*/
+
+

@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useMemo, useRef, useState, useEffect } from 'react';
 import useSWR from 'swr';
 import {
   ISelected,
@@ -8,7 +8,7 @@ import {
   useSelected,
   useView,
 } from '../../../framework';
-import { usePostFetcher } from '../../common/crud/Data';
+import { postRequest, usePostFetcher } from '../../common/crud/Data';
 
 import { RequestError } from '../../common/crud/RequestError';
 import { AnalyticsBuilderProps } from './AnalyticsBuilder/AnalyticsBuilder';
@@ -25,8 +25,6 @@ export type IAnalyticsView<T extends object> = IView &
   ISelected<T> & {
     itemCount: number | undefined;
     pageItems: T[] | undefined;
-    refresh: () => Promise<void>;
-    unselectItemsAndRefresh: (items: T[]) => void;
     originalData: undefined;
   };
 
@@ -63,6 +61,10 @@ export function useAnalyticsView<T extends object>({
   defaultSelection?: T[];
   builderProps?: AnalyticsBuilderProps;
 }): IAnalyticsView<T> {
+
+  const [data, setData] = useState<AnalyticsItemsResponse<T> | undefined>(undefined);
+  const [error, setError] = useState<any>(undefined);
+
   let postData = builderProps?.defaultDataParams || {};
   builderProps?.processDataRequestPayload?.(builderProps, postData);
 
@@ -128,15 +130,32 @@ export function useAnalyticsView<T extends object>({
 
   url += queryString;
 
-  const fetcher = usePostFetcher();
-  const response = useSWR<AnalyticsItemsResponse<T>>(url, fetcher, {
+  async function fetchData()
+  {
+    try{
+      const data = await postRequest(url, postData) as AnalyticsItemsResponse<T>;
+      setData(data);
+    }catch(error)
+    {
+      setError(error);
+    }
+  }
+
+  useEffect( () => {
+    fetchData();
+  }, [queryString]);
+  
+  //const fetcher = usePostFetcher();
+  /*const response = useSWR<AnalyticsItemsResponse<T>>(url, fetcher, {
     dedupingInterval: 0,
     refreshInterval: 30000,
-  });
-  const { data, mutate } = response;
+  });*/
+
+
+  /*const { data, mutate } = response;
   const refresh = useCallback(async () => {
     await mutate();
-  }, [mutate]);
+  }, [mutate]);*/
 
   // refresh probably not needed
   /*const nextPage = data?.links?.next;
@@ -145,11 +164,10 @@ export function useAnalyticsView<T extends object>({
   });*/
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  let error: Error | undefined = response.error;
   if (error instanceof RequestError) {
     if (error.statusCode === 404 && view.page > 1) {
       view.setPage(1);
-      error = undefined;
+      setError(undefined);
     }
   }
 
@@ -159,14 +177,15 @@ export function useAnalyticsView<T extends object>({
     itemCountRef.current.itemCount = data?.meta.legend.length;
   }*/
 
-  const unselectItemsAndRefresh = useCallback(
+  /*const unselectItemsAndRefresh = useCallback(
     (items: T[]) => {
       selection.unselectItems(items);
       void refresh();
     },
     [refresh, selection]
-  );
+  );*/
 
+  /*
   return useMemo(() => {
     return {
       refresh,
@@ -179,6 +198,19 @@ export function useAnalyticsView<T extends object>({
       originalData: data as undefined,
     };
   }, [data?.meta.legend, error, refresh, selection, unselectItemsAndRefresh, view, data]);
+  */
+
+  return useMemo(() => {
+    return {
+      itemCount: data?.meta.count,
+      pageItems: data?.meta.legend,
+      error,
+      ...view,
+      ...selection,
+      originalData: data as undefined,
+    };
+  }, [data?.meta.legend, error, selection, view, data]);
+  
 }
 
 export function getAwxError(err: unknown) {
