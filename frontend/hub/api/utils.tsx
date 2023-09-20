@@ -9,7 +9,7 @@ import {
 } from './request';
 
 function getBaseAPIPath() {
-  return process.env.HUB_API_PREFIX || '/api/automation-hub';
+  return process.env.HUB_API_PREFIX;
 }
 
 export function apiTag(strings: TemplateStringsArray, ...values: string[]) {
