@@ -7,6 +7,8 @@ import {
   FillDefaultProps,
 } from './AnalyticsBuilder';
 
+import { reportDefaultParams } from './constants';
+
 export function Test() {
   const props = hostsByOrganization as AnalyticsBuilderProps;
   FillDefaultProps(props);
@@ -22,6 +24,7 @@ const reports = {
   },*/
 };
 
-const hostsByOrganization = {
+const hostsByOrganization: AnalyticsBuilderProps = {
   main_url: '/api/v2/analytics/report/hosts_by_organization/',
+  defaultOptionsParams: reportDefaultParams('hosts_by_organization'),
 };

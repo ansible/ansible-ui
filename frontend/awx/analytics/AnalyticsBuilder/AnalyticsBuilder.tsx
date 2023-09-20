@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useAnalyticsView, IAnalyticsView } from '../../analytics/useAnalyticsView';
 import { PageTable } from '../../../../framework/PageTable/PageTable';
 import { ITableColumn, ITableColumnTypeText } from '../../../../framework';
-import { string } from 'yaml/dist/schema/common/string';
+import { NavItem } from '@patternfly/react-core';
 
 export interface MainRequestDefinition {
   report: {
@@ -23,11 +23,17 @@ export interface OptionsDefinition {}
 export interface AnalyticsBuilderProps {
   main_url: string;
   // used for processing and adding, or modyfying some data that came from the server and are not complete
-  processMainData?: (mainData: MainRequestDefinition) => void;
-  processOptions?: (options: OptionsDefinition) => void;
+  processMainData?: (props: AnalyticsBuilderProps, mainData: MainRequestDefinition) => void;
+  processOptions?: (props: AnalyticsBuilderProps, options: OptionsDefinition) => void;
+
+  // default post options params
+  defaultOptionsParams?: object;
+
+  // on the fly postprocessing of default params
+  processOptionsRequestPayload?: (props: AnalyticsBuilderProps, data: object) => void;
 
   // default item.id
-  rowKeyFn: (item: ObjectType) => string | number;
+  rowKeyFn?: (item: ObjectType) => string | number;
 }
 
 interface AnalyticsBodyProps extends AnalyticsBuilderProps {
@@ -86,14 +92,17 @@ export function AnalyticsBuilder(props: AnalyticsBuilderProps) {
       result.report.layoutProps.optionsEndpoint
     );
 
-    props.processMainData?.(result);
+    props.processMainData?.(props, result);
     setMainData(result);
+
+    let optionsPayload = props.defaultOptionsParams || {};
+    props.processOptionsRequestPayload?.(props, optionsPayload);
 
     const result2 = (await post(
       result.report.layoutProps.optionsEndpoint,
-      {}
+      optionsPayload
     )) as OptionsDefinition;
-    props.processOptions?.(result2);
+    props.processOptions?.(props, result2);
     setOptions(result2);
   }
 
@@ -113,7 +122,7 @@ export type ObjectType = any;
 function AnalyticsBody(props: AnalyticsBodyProps) {
   const analyticsView = useAnalyticsView<ObjectType>({
     url: props.mainData.report.layoutProps.dataEndpoint,
-    keyFn: props.rowKeyFn,
+    keyFn: props.rowKeyFn ? props.rowKeyFn : () => 0,
   });
 
   return (
