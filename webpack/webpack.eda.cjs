@@ -1,6 +1,6 @@
 const webpackConfig = require('./webpack.config');
-const { EDA_SERVER } = require('./environment.cjs');
-const proxyUrl = new URL(EDA_SERVER);
+const env = require('./environment.cjs');
+const proxyUrl = new URL(env.EDA_SERVER);
 module.exports = function (env, argv) {
   const config = webpackConfig(env, argv);
 
@@ -8,7 +8,7 @@ module.exports = function (env, argv) {
 
   config.devServer.proxy = {
     '/api': {
-      target: EDA_SERVER,
+      target: env.EDA_SERVER,
       secure: false,
       bypass: (req) => {
         req.headers.host = proxyUrl.host;

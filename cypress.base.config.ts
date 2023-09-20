@@ -1,6 +1,6 @@
 import codeCoverage from '@cypress/code-coverage/task';
 import pkg from 'webpack';
-import * as env from './webpack/environment.cjs';
+import env from './webpack/environment.cjs';
 const { DefinePlugin } = pkg;
 
 export const baseConfig: Cypress.ConfigOptions = {

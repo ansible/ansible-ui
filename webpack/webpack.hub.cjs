@@ -1,6 +1,6 @@
 const webpackConfig = require('./webpack.config');
-const { HUB_SERVER } = require('./environment.cjs');
-const proxyUrl = new URL(HUB_SERVER);
+const env = require('./environment.cjs');
+const proxyUrl = new URL(env.HUB_SERVER);
 module.exports = function (env, argv) {
   const config = webpackConfig(env, argv);
 
@@ -8,7 +8,7 @@ module.exports = function (env, argv) {
 
   config.devServer.proxy = {
     '/api': {
-      target: HUB_SERVER,
+      target: env.HUB_SERVER,
       secure: false,
       bypass: (req) => {
         req.headers.host = proxyUrl.host;

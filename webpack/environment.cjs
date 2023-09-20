@@ -26,7 +26,7 @@ const HUB_API_PREFIX =
   process.env.HUB_API_PREFIX || process.env.HUB_API_BASE_PATH || '/api/automation-hub';
 const HUB_ROUTE_PREFIX = process.env.HUB_ROUTE_PREFIX || '/hub';
 
-export {
+module.exports = {
   AWX_API_PREFIX,
   AWX_PASSWORD,
   AWX_ROUTE_PREFIX,
