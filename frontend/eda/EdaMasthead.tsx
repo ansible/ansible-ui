@@ -1,8 +1,3 @@
-import '@patternfly/patternfly/patternfly-base.css';
-import '@patternfly/patternfly/patternfly-charts.css';
-
-import '@patternfly/patternfly/patternfly-charts-theme-dark.css';
-
 import { DropdownItem, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
 import { useCallback } from 'react';
@@ -14,7 +9,6 @@ import { PageThemeSwitcher } from '../../framework/PageMasthead/PageThemeSwitche
 import { useAnsibleAboutModal } from '../common/AboutModal';
 import { PageRefreshIcon } from '../common/PageRefreshIcon';
 import { postRequest } from '../common/crud/Data';
-import '../common/i18n';
 import { useActiveUser } from '../common/useActiveUser';
 import { EdaRoute } from './EdaRoutes';
 import { API_PREFIX } from './constants';
