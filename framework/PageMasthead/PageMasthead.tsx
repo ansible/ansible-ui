@@ -36,9 +36,11 @@ export function PageMasthead(props: {
           <ToolbarContent>
             {isSmallOrLarger && (
               <ToolbarItem>
-                <Stack style={{ color: 'white', cursor: 'default' }}>
+                <Stack
+                  style={{ color: 'white', cursor: 'default', marginTop: -2, marginBottom: -2 }}
+                >
                   {props.brand && (
-                    <Text>
+                    <Text style={{ marginTop: -6 }}>
                       <Truncate content={props.brand} style={{ minWidth: 0 }} />
                     </Text>
                   )}

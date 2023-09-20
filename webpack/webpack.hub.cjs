@@ -1,8 +1,9 @@
 const webpackConfig = require('./webpack.config');
 
-const hubServer = process.env.HUB_HOST
-  ? process.env.HUB_PROTOCOL + '://' + process.env.HUB_HOST
-  : 'http://localhost:5001';
+const hubServer =
+  process.env.HUB_SERVER || process.env.HUB_HOST
+    ? process.env.HUB_PROTOCOL + '://' + process.env.HUB_HOST
+    : 'http://localhost:5001';
 
 const proxyUrl = new URL(hubServer);
 

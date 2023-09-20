@@ -1,8 +1,9 @@
 const webpackConfig = require('./webpack.config');
 
-const edaServer = process.env.EDA_HOST
-  ? process.env.EDA_PROTOCOL + '://' + process.env.EDA_HOST
-  : 'http://localhost:8000';
+const edaServer =
+  process.env.EDA_SERVER || process.env.EDA_HOST
+    ? process.env.EDA_PROTOCOL + '://' + process.env.EDA_HOST
+    : 'http://localhost:8000';
 
 const proxyUrl = new URL(edaServer);
 
