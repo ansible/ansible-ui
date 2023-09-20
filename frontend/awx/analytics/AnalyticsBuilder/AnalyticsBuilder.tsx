@@ -90,31 +90,35 @@ export function AnalyticsBuilder(props: AnalyticsBuilderProps) {
   const get = useGetRequest();
 
   async function readData() {
-    const result = (await get(props.main_url, {})) as MainRequestDefinition;
-    result.report.layoutProps.dataEndpoint = transformEndpoint(
-      result.report.layoutProps.dataEndpoint
-    );
-    result.report.layoutProps.optionsEndpoint = transformEndpoint(
-      result.report.layoutProps.optionsEndpoint
-    );
+    try {
+      const result = (await get(props.main_url, {})) as MainRequestDefinition;
+      result.report.layoutProps.dataEndpoint = transformEndpoint(
+        result.report.layoutProps.dataEndpoint
+      );
+      result.report.layoutProps.optionsEndpoint = transformEndpoint(
+        result.report.layoutProps.optionsEndpoint
+      );
 
-    props.processMainData?.(props, result);
-    setMainData(result);
+      props.processMainData?.(props, result);
+      setMainData(result);
 
-    let optionsPayload = props.defaultOptionsParams || {};
-    props.processOptionsRequestPayload?.(props, optionsPayload);
+      let optionsPayload = props.defaultOptionsParams || {};
+      props.processOptionsRequestPayload?.(props, optionsPayload);
 
-    const result2 = (await post(
-      result.report.layoutProps.optionsEndpoint,
-      optionsPayload
-    )) as OptionsDefinition;
-    props.processOptions?.(props, result2);
-    setOptions(result2);
+      const result2 = (await post(
+        result.report.layoutProps.optionsEndpoint,
+        optionsPayload
+      )) as OptionsDefinition;
+      props.processOptions?.(props, result2);
+      setOptions(result2);
+    } catch (error) {
+      alert(error);
+    }
   }
 
   useEffect(() => {
     readData();
-  }, []);
+  }, [props.main_url]);
 
   if (mainData && options) {
     return <AnalyticsBody mainData={mainData} options={options} {...props} />;

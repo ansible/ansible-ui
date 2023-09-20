@@ -178,7 +178,7 @@ const mostUsedModulesExpandedAttributes = [
   'host_task_unreachable_count',
 ];
 
-const allDefaultParams: any = {
+export const allDefaultParams: any = {
   reports: {
     defaultParams: {
       limit: '20',

@@ -7,12 +7,13 @@ import {
   FillDefaultProps,
 } from './AnalyticsBuilder';
 
-import {useState } from 'react';
+import { useState } from 'react';
+import { Select, SelectOption, SelectOptionObject } from '@patternfly/react-core';
 
-import { reportDefaultParams } from './constants';
+import { reportDefaultParams, allDefaultParams } from './constants';
 
 export function Test() {
-  const [reportName, setReportName ] = useState<string>('');
+  const [reportName, setReportName] = useState<string>('');
   const props = {} as AnalyticsBuilderProps;
 
   fillReports(props, reportName);
@@ -20,33 +21,33 @@ export function Test() {
 
   const items = fillReportTypes();
 
-
-  return ( 
+  return (
     <>
-    
-   
-    {reportName && <AnalyticsBuilder {...props}></AnalyticsBuilder>};
-  </>);
+      <MySelectDropdown items={items} onChange={(item) => setReportName(item)} />
+      Selected : {reportName} <br />
+      {reportName && <AnalyticsBuilder {...props}></AnalyticsBuilder>}
+    </>
+  );
 }
 
-function fillReportTypes()
-{
-    const items = [];
-    
+function fillReportTypes() {
+  const items: string[] = [];
+  for (const key in allDefaultParams) {
+    items.push(key);
+  }
+  return items;
 }
 
-function fillReports(props : AnalyticsBuilderProps, name : string)
-{
-    props.main_url = `/api/v2/analytics/report/${name}/`;
-    const defaultParams = reportDefaultParams(name);
+function fillReports(props: AnalyticsBuilderProps, name: string) {
+  props.main_url = `/api/v2/analytics/report/${name}/`;
+  const defaultParams = reportDefaultParams(name);
 
-    props.defaultDataParams = defaultParams;
-    props.defaultDataParams = defaultParams;
+  props.defaultOptionsParams = defaultParams;
+  props.defaultDataParams = defaultParams;
 }
 
-function fillDefaultProps(props : AnalyticsBuilderProps)
-{
-    props.rowKeyFn = (item) => item.id;
+function fillDefaultProps(props: AnalyticsBuilderProps) {
+  props.rowKeyFn = (item) => item.id;
 }
 
 /*
@@ -62,4 +63,31 @@ const hostsByOrganization: AnalyticsBuilderProps = {
   defaultDataParams: hostsByOrganizationParams,
 };*/
 
+const MySelectDropdown = (props: { items: string[]; onChange: (item: string) => void }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [selected, setSelected] = useState<string>('');
 
+  const onToggle = (isOpen: boolean) => {
+    setIsOpen(isOpen);
+  };
+
+  const onSelect = (event: any, selection: SelectOptionObject) => {
+    setSelected(selection.toString());
+    setIsOpen(!isOpen);
+    props.onChange(selection.toString());
+  };
+
+  return (
+    <Select
+      isOpen={isOpen}
+      selections={selected}
+      onToggle={onToggle}
+      onSelect={onSelect}
+      placeholderText="Select an item"
+    >
+      {props.items.map((item, index) => (
+        <SelectOption key={index} value={item} />
+      ))}
+    </Select>
+  );
+};

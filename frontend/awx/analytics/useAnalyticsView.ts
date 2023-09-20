@@ -61,7 +61,6 @@ export function useAnalyticsView<T extends object>({
   defaultSelection?: T[];
   builderProps?: AnalyticsBuilderProps;
 }): IAnalyticsView<T> {
-
   const [data, setData] = useState<AnalyticsItemsResponse<T> | undefined>(undefined);
   const [error, setError] = useState<any>(undefined);
 
@@ -130,27 +129,24 @@ export function useAnalyticsView<T extends object>({
 
   url += queryString;
 
-  async function fetchData()
-  {
-    try{
-      const data = await postRequest(url, postData) as AnalyticsItemsResponse<T>;
+  async function fetchData() {
+    try {
+      const data = (await postRequest(url, postData)) as AnalyticsItemsResponse<T>;
       setData(data);
-    }catch(error)
-    {
+    } catch (error) {
       setError(error);
     }
   }
 
-  useEffect( () => {
+  useEffect(() => {
     fetchData();
-  }, [queryString]);
-  
+  }, [url]);
+
   //const fetcher = usePostFetcher();
   /*const response = useSWR<AnalyticsItemsResponse<T>>(url, fetcher, {
     dedupingInterval: 0,
     refreshInterval: 30000,
   });*/
-
 
   /*const { data, mutate } = response;
   const refresh = useCallback(async () => {
@@ -210,7 +206,6 @@ export function useAnalyticsView<T extends object>({
       originalData: data as undefined,
     };
   }, [data?.meta.legend, error, selection, view, data]);
-  
 }
 
 export function getAwxError(err: unknown) {
