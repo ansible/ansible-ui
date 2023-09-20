@@ -11,6 +11,7 @@ import { HubRoute } from '../frontend/hub/HubRoutes';
 import { useHubNavigation } from '../frontend/hub/useHubNavigation';
 import { PlatformRoute } from './PlatformRoutes';
 import { PlatformDashboard } from './dashboard/PlatformDashboard';
+import { PlatformLogin } from './PlatformLogin';
 
 export function usePlatformNavigationA() {
   const { t } = useTranslation();
@@ -20,6 +21,11 @@ export function usePlatformNavigationA() {
 
   const pageNavigationItems = useMemo<PageNavigationItem[]>(() => {
     const navigationItems = [
+      {
+        id: PlatformRoute.Login,
+        path: 'login',
+        element: <PlatformLogin />,
+      },
       {
         id: PlatformRoute.Dashboard,
         label: t('Overview'),
