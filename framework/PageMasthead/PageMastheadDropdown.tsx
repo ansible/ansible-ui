@@ -12,6 +12,8 @@ export function PageMastheadDropdown(props: {
   const [open, setOpen] = useState(false);
   const onSelect = useCallback(() => setOpen((open) => !open), []);
   const onToggle = useCallback(() => setOpen((open) => !open), []);
+  const children = Array.isArray(props.children) ? props.children : [props.children];
+
   return (
     <Dropdown
       id={props.id}
@@ -30,7 +32,7 @@ export function PageMastheadDropdown(props: {
       }
       isOpen={open}
       isPlain
-      dropdownItems={props.children as ReactNode[]}
+      dropdownItems={children}
       position="right"
       data-cy={props.id}
     />
