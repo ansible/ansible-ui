@@ -10,7 +10,9 @@
 // A serializer for a Collection reference.
 export interface CollectionRefResponse {
   id: string;
+
   name: string;
+
   // Returns link to a collection.
   href: string;
 }

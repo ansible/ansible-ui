@@ -11,7 +11,10 @@
 export interface AnsibleRole {
   // Artifact file representing the physical content
   artifact: string;
+
   version: string;
+
   name: string;
+
   namespace: string;
 }

@@ -11,8 +11,10 @@
 export interface ContainerRepositorySyncURL {
   // A remote to sync from. This will override a remote set on repository.
   remote: string;
+
   // If ``True``, synchronization will remove all content that is not present in the remote repository. If ``False``, sync will be additive only.
   mirror: boolean;
+
   // If ``True``, only signed content will be synced. Signatures are not verified.
   signed_only: boolean;
 }

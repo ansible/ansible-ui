@@ -13,11 +13,16 @@
 // A serializer for Role versions.
 export interface AnsibleRoleResponse {
   pulp_href: string;
+
   // Artifact file representing the physical content
   artifact: string;
+
   // Timestamp of creation.
   pulp_created: string;
+
   version: string;
+
   name: string;
+
   namespace: string;
 }

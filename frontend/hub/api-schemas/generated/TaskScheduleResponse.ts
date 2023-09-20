@@ -21,16 +21,22 @@ of plugins are namespaced properly.
 */
 export interface TaskScheduleResponse {
   pulp_href: string;
+
   // Timestamp of creation.
   pulp_created: string;
+
   // The name of the task schedule.
   name: string;
+
   // The name of the task to be scheduled.
   task_name: string;
+
   // Periodicity of the schedule.
   dispatch_interval: string;
+
   // Timestamp of the next time the task will be dispatched.
   next_dispatch: string;
+
   // The last task dispatched by this schedule.
   last_task: string;
 }

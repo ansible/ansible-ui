@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
+import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
+import { HubItemsResponse } from '../../frontend/hub/useHubView';
 import './commands';
 import './rest-commands';
-import { HubItemsResponse } from '../../frontend/hub/useHubView';
-import { CollectionVersionSearch } from '../../frontend/hub/collections/CollectionVersionSearch';
 import { escapeForShellCommand } from './utils';
 
 const apiPrefix = Cypress.env('HUB_API_PREFIX') as string;
@@ -11,7 +11,8 @@ const apiPrefix = Cypress.env('HUB_API_PREFIX') as string;
 Cypress.Commands.add('galaxykit', (operation: string, ...args: string[]) => {
   const adminUsername = Cypress.env('HUB_USERNAME') as string;
   const adminPassword = Cypress.env('HUB_PASSWORD') as string;
-  const galaxykitCommand = Cypress.env('HUB_GALAXYKIT_COMMAND') as string;
+  const galaxykitCommand =
+    (Cypress.env('HUB_GALAXYKIT_COMMAND') as string) ?? 'galaxykit --ignore-certs';
   const server = (Cypress.env('HUB_SERVER') as string) + apiPrefix;
   const options = { failOnNonZeroExit: false };
 
@@ -94,10 +95,10 @@ Cypress.Commands.add('deleteCollectionsInNamespace', (namespaceName: string) => 
     for (const collection of itemsResponse.data) {
       cy.galaxykit(
         'collection delete',
-        collection.collection_version.namespace,
-        collection.collection_version.name,
-        collection.collection_version.version,
-        collection.repository.name
+        collection.collection_version?.namespace || '',
+        collection.collection_version?.name || '',
+        collection.collection_version?.version || '',
+        collection.repository?.name || ''
       );
     }
   });

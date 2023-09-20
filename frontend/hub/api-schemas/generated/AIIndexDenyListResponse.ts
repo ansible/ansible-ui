@@ -13,5 +13,6 @@
 
 export interface AIIndexDenyListResponse {
   scope: string;
+
   reference: string;
 }

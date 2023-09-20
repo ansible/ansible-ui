@@ -14,7 +14,9 @@ This is used in conjunction with ``pulpcore.app.viewsets.base.RolesMixin`` and r
 underlying object to be passed as ``content_object`` in the context.
 */
 export interface NestedRoleResponse {
-  users: unknown;
-  groups: unknown;
+  // users				:	unknown;
+
+  // groups				:	unknown;
+
   role: string;
 }

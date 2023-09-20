@@ -22,8 +22,10 @@ of plugins are namespaced properly.
 */
 export interface MultipleArtifactContentResponse {
   pulp_href: string;
+
   // Timestamp of creation.
   pulp_created: string;
+
   // A dict mapping relative paths inside the Content to the correspondingArtifact URLs. E.g.: {'relative/path': '/artifacts/1/'
-  artifacts: unknown;
+  // artifacts				:	unknown;
 }

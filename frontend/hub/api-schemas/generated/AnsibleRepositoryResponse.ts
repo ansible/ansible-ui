@@ -9,10 +9,16 @@
 
 export interface AnsibleRepositoryResponse {
   name: string;
+
   description: string;
+
   next_version: number;
-  distributions: unknown;
+
+  // distributions				:	unknown;
+
   created_at: string;
+
   updated_at: string;
+
   last_sync_task: string;
 }

@@ -18,9 +18,14 @@ For use in /tasks/<str:pk>/ detail views.
 */
 export interface TaskSummaryResponse {
   pulp_id: string;
+
   name: string;
+
   state: string;
+
   started_at: string;
+
   finished_at: string;
+
   href: string;
 }

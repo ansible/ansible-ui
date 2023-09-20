@@ -14,6 +14,7 @@
 // A serializer for Galaxy's representation of Role versions.
 export interface GalaxyRoleVersionResponse {
   name: string;
+
   // Get source.
   source: string;
 }

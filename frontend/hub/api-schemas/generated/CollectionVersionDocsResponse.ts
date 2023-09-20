@@ -12,5 +12,5 @@
 
 // A serializer to display the docs_blob of a CollectionVersion.
 export interface CollectionVersionDocsResponse {
-  docs_blob: unknown;
+  // docs_blob				:	unknown;
 }

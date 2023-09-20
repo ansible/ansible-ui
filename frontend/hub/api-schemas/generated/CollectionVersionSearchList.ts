@@ -11,10 +11,15 @@ import { CollectionSummary } from './CollectionSummary';
 
 // Cross-repo search results.
 export interface CollectionVersionSearchList {
-  repository: Repository;
-  collection_version: CollectionSummary;
-  namespace_metadata: unknown;
+  repository?: Repository;
+
+  collection_version?: CollectionSummary;
+
+  // namespace_metadata				:	unknown;
+
   is_highest: boolean;
+
   is_deprecated: boolean;
+
   is_signed: boolean;
 }

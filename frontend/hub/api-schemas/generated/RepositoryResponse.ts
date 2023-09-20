@@ -13,9 +13,14 @@
 
 export interface RepositoryResponse {
   name: string;
+
   description: string;
+
   pulp_id: string;
+
   pulp_last_updated: string;
+
   content_count: number;
+
   gpgkey: string;
 }

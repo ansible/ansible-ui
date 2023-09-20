@@ -8,6 +8,10 @@ import {
   putHubRequest,
 } from './request';
 
+function getBaseAPIPath() {
+  return process.env.HUB_API_PREFIX || '/api/automation-hub';
+}
+
 export function apiTag(strings: TemplateStringsArray, ...values: string[]) {
   if (strings[0]?.[0] !== '/') {
     throw new Error('Invalid URL');
@@ -25,12 +29,12 @@ export function apiTag(strings: TemplateStringsArray, ...values: string[]) {
 }
 
 export function hubAPI(strings: TemplateStringsArray, ...values: string[]) {
-  const base = process.env.HUB_API_PREFIX || '/api/automation-hub';
+  const base = getBaseAPIPath();
   return base + apiTag(strings, ...values);
 }
 
 export function pulpAPI(strings: TemplateStringsArray, ...values: string[]) {
-  const base = process.env.HUB_API_PREFIX || '/api/automation-hub';
+  const base = getBaseAPIPath();
   return base + '/pulp/api/v3' + apiTag(strings, ...values);
 }
 
@@ -77,10 +81,10 @@ export function pulpHrefKeyFn(item: { pulp_href: string }) {
 }
 
 export function collectionKeyFn(item: {
-  collection_version: { pulp_href: string };
-  repository: { name: string };
+  collection_version?: { pulp_href: string };
+  repository?: { name: string };
 }) {
-  return item.collection_version.pulp_href + '_' + item.repository.name;
+  return item.collection_version?.pulp_href + '_' + item.repository?.name;
 }
 
 export function appendTrailingSlash(url: string) {

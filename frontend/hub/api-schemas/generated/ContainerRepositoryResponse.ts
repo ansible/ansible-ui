@@ -13,11 +13,18 @@ import { ContainerNamespaceResponse } from './ContainerNamespaceResponse';
 
 export interface ContainerRepositoryResponse {
   id: string;
+
   pulp_href: string;
+
   name: string;
-  pulp: unknown;
-  namespace: ContainerNamespaceResponse;
+
+  // pulp				:	unknown;
+
+  namespace?: ContainerNamespaceResponse;
+
   description: string;
+
   created_at: string;
+
   updated_at: string;
 }
