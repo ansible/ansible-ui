@@ -1,89 +1,92 @@
-import {
-  Alert,
-  Breadcrumb,
-  BreadcrumbItem,
-  Button,
-  CodeBlock,
-  DescriptionList,
-  DescriptionListDescription,
-  DescriptionListGroup,
-  DescriptionListTerm,
-  Drawer,
-  DrawerActions,
-  DrawerCloseButton,
-  DrawerContent,
-  DrawerContentBody,
-  DrawerHead,
-  DrawerPanelBody,
-  DrawerPanelContent,
-  DropdownPosition,
-  Nav,
-  NavExpandable,
-  NavItem,
-  NavList,
-  PageSection,
-  SearchInput,
-  Stack,
-  StackItem,
-  Title,
-} from '@patternfly/react-core';
-import { BarsIcon } from '@patternfly/react-icons';
-import { TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
-import { Dispatch, SetStateAction, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams, useLocation } from 'react-router-dom';
-import {
-  CopyCell,
-  PFColorE,
-  PageActions,
-  PageDetails,
-  PageDetailsFromColumns,
-  PageHeader,
-  PageLayout,
-  PageTab,
-  PageTabs,
-  getPatternflyColor,
-  useBreakpoint,
-} from '../../../framework';
-import { PageDetail } from '../../../framework/PageDetails/PageDetail';
-import { Scrollable } from '../../../framework/components/Scrollable';
-import { RouteObj } from '../../common/Routes';
-import { StatusCell } from '../../common/Status';
-import { useGet } from '../../common/crud/useGet';
-import { hubAPI } from '../api/utils';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { PageFormFileUpload } from '../../../framework/PageForm/Inputs/PageFormFileUpload';
+import { PageHeader, PageLayout, PageForm } from '../../../framework';
+import { useGet, useGetRequest } from '../../common/crud/useGet';
+import { hubAPI, pulpAPI } from '../api/utils';
 import { HubItemsResponse } from '../useHubView';
 import { CollectionVersionSearch } from './Collection';
-import { useCollectionActions } from './hooks/useCollectionActions';
 import { HubRoute } from '../HubRoutes';
 import { useGetPageUrl } from '../../../framework';
+import { postRequestFile } from '../../common/crud/Data';
+import { usePageNavigate } from '../../../framework/PageNavigation/usePageNavigate';
+import { PulpItemsResponse } from '../usePulpView';
+
+interface UploadData {
+  file: unknown;
+  repository: string;
+  signed_collection: string;
+}
+
 export function CollectionSignatureUpload() {
   const { t } = useTranslation();
   const location = useLocation();
   const getPageUrl = useGetPageUrl();
-  const { data, refresh } = useGet<HubItemsResponse<CollectionVersionSearch>>(
+  const { data } = useGet<HubItemsResponse<CollectionVersionSearch>>(
     hubAPI`/v3/plugin/ansible/search/collection-versions/?${location.search}`
   );
   let collection: CollectionVersionSearch | undefined = undefined;
   if (data && data.data && data.data.length > 0) {
     collection = data.data[0];
   }
-  const itemActions = useCollectionActions(() => void refresh());
   return (
     <PageLayout>
       <PageHeader
-        title={collection?.collection_version.name}
+        title={t('Signature upload')}
         breadcrumbs={[
           { label: t('Collections'), to: getPageUrl(HubRoute.Collections) },
           { label: collection?.collection_version.name },
         ]}
-        headerActions={
-          <PageActions<CollectionVersionSearch>
-            actions={itemActions}
-            position={DropdownPosition.right}
-            selectedItem={collection}
-          />
-        }
       />
+      <UploadSignatureByFile />
     </PageLayout>
+  );
+}
+
+export function UploadSignatureByFile() {
+  const getRequest = useGetRequest();
+  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
+  const { t } = useTranslation();
+  const onCancel = () => navigate(-1);
+
+  const { data } = useGet<HubItemsResponse<CollectionVersionSearch>>(
+    hubAPI`/v3/plugin/ansible/search/collection-versions/?${location.search}`
+  );
+  let collection: CollectionVersionSearch | undefined = undefined;
+  if (data && data.data && data.data.length > 0) {
+    collection = data.data[0];
+  }
+  const collectionID = collection?.collection_version.pulp_href;
+
+  async function submitData(data: UploadData) {
+    const repoRes = (await getRequest(
+      pulpAPI`/repositories/ansible/ansible/?pulp_label_select=pipeline=staging`
+    )) as PulpItemsResponse<Repository>;
+
+    const stagingRepo = repoRes.results[0].pulp_href;
+
+    return postRequestFile(
+      pulpAPI`/content/ansible/collection_signatures/`,
+      data.file as Blob,
+      stagingRepo,
+      collectionID
+    ).then(() => pageNavigate(HubRoute.Approvals));
+  }
+
+  return (
+    <>
+      <PageForm<UploadData>
+        submitText={t('Confirm')}
+        cancelText={t('Cancel')}
+        onCancel={onCancel}
+        onSubmit={(data) => {
+          return submitData(data);
+        }}
+        singleColumn={true}
+      >
+        <PageFormFileUpload label={t('Signature file')} name="file" isRequired />
+      </PageForm>
+    </>
   );
 }

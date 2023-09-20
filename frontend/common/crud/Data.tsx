@@ -35,10 +35,18 @@ export async function postRequest<ResponseBody, RequestBody = unknown>(
 export async function postRequestFile(
   url: string,
   file: Blob,
+  repository?: string,
+  signed_collection?: string,
   signal?: AbortSignal
 ): Promise<unknown> {
   const body = new FormData();
   body.append('file', file);
+  {
+    repository && body.append('repository', repository);
+  }
+  {
+    signed_collection && body.append('signed_collection', signed_collection);
+  }
 
   const response = await fetch(url, {
     method: 'POST',
