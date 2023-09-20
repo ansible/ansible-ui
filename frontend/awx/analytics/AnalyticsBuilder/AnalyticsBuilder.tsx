@@ -4,11 +4,12 @@ import { useState, useEffect } from 'react';
 import { useAnalyticsView, IAnalyticsView } from '../../analytics/useAnalyticsView';
 import { PageTable } from '../../../../framework/PageTable/PageTable';
 import { ITableColumn, ITableColumnTypeText } from '../../../../framework';
-import { NavItem } from '@patternfly/react-core';
+
+import { ColumnTableOption } from '../../../../framework/PageTable/PageTableColumn';
 
 export interface MainRequestDefinition {
   report: {
-    table_headers: [];
+    tableHeaders: [{ key: string; value: string }];
 
     layoutProps: {
       // TODO - fix in API
@@ -160,22 +161,50 @@ function AnalyticsTable(props: AnalyticsTableProps) {
 }
 
 function buildTableColumns(params: AnalyticsTableProps) {
-  let columns: unknown[] = [];
+  let columns: ITableColumn<ObjectType>[] = [];
 
-  if (!params.view?.pageItems || params.view?.pageItems.length == 0) {
+  if (!params.view?.pageItems) {
     return columns;
   }
 
-  const obj = params.view.pageItems[0];
+  // create columns initialy by incomming data
+  if (params.view.pageItems.length > 0) {
+    const obj = params.view.pageItems[0];
 
-  // loop over obj items
-  for (let key in obj) {
-    let column = {} as ITableColumnTypeText<ObjectType>;
-    column.type = 'text';
-    column.header = key;
-    column.value = (item) => item[key] as string;
-    columns.push(column);
+    // loop over obj items
+    for (let key in obj) {
+      let column = {} as ITableColumnTypeText<ObjectType>;
+      column.type = 'text';
+      column.header = key;
+      column.value = (item) => item[key] as string;
+      columns.push(column);
+      column.id = key;
+    }
   }
+
+  // fine tune columns by tableHeaders if any
+
+  if (params.mainData?.report.tableHeaders && params.mainData.report.tableHeaders.length > 0) {
+    // set nice names
+    for (const tableHeader of params.mainData.report.tableHeaders) {
+      const col = columns.find((item) => item.id == tableHeader.key);
+
+      if (col) {
+        col.header = tableHeader.value;
+      }
+    }
+
+    // hide all columns into expanded that are not in table Header
+    for (const col of columns) {
+      let found = params.mainData?.report?.tableHeaders?.find((item) => item.key == col.id);
+      if (!found) {
+        col.table = ColumnTableOption.Expanded;
+      }
+    }
+  }
+
+  // another fine tunning done by outside config script
+  // TODO
 
   return columns;
 }
