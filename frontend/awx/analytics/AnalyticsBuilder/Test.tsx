@@ -3,19 +3,22 @@ import {
   MainRequestDefinition,
   OptionsDefinition,
   ObjectType,
+  AnalyticsBuilderProps,
 } from './AnalyticsBuilder';
 
 export function Test() {
-  return (
-    <AnalyticsBuilder
-      main_url="/api/v2/analytics/report/automation_calculator/"
-      processMainData={processMainDataForReports}
-      rowKeyFn={(item) => item.id}
-    ></AnalyticsBuilder>
-  );
+  const props = reports as AnalyticsBuilderProps;
+
+  return <AnalyticsBuilder {...props}></AnalyticsBuilder>;
 }
 
-function processMainDataForReports(data: MainRequestDefinition) {
-  data.report.layoutProps.optionsEndpoint = '/api/v2/analytics/roi_templates_options/';
-  data.report.layoutProps.dataEndpoint = '/api/v2/analytics/roi_templates/';
-}
+const reports = {
+  main_url: '/api/v2/analytics/report/automation_calculator/',
+
+  processMainData: (data: MainRequestDefinition) => {
+    data.report.layoutProps.optionsEndpoint = '/api/v2/analytics/roi_templates_options/';
+    data.report.layoutProps.dataEndpoint = '/api/v2/analytics/roi_templates/';
+  },
+
+  rowKeyFn: (item: { id: number }) => item.id,
+};
