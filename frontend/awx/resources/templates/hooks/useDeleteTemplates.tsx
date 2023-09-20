@@ -23,7 +23,7 @@ export function useDeleteTemplates(
     bulkAction({
       title:
         templates.length === 1
-          ? getSingularDeleteTitle(templates[0].type as string)
+          ? getSingularDeleteTitle(templates[0].type)
           : t('Permanently delete templates'),
       confirmText: t('Yes, I confirm that I want to delete these {{count}} templates.', {
         count: templates.length,

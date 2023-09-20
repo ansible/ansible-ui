@@ -48,7 +48,8 @@ interface IMount {
     route?: {
       path: string;
       initialEntries: string[];
-    }
+    },
+    fixture?: string
   ): Cypress.Chainable<MountReturn>;
 }
 declare global {
@@ -63,8 +64,8 @@ declare global {
   }
 }
 
-Cypress.Commands.add('mount', (component, route) => {
-  cy.fixture('activeUser').then((activeUser: User) => {
+Cypress.Commands.add('mount', (component, route, activeUserFixture) => {
+  cy.fixture(activeUserFixture || 'activeUser.json').then((activeUser: User) => {
     cy.intercept(
       {
         method: 'GET',
@@ -82,7 +83,7 @@ Cypress.Commands.add('mount', (component, route) => {
         <ActiveUserProvider>
           <Page>
             <Routes>
-              <Route path={`${route?.path || '/:id'}`} element={component} />
+              <Route path={`${route?.path || '/:id/*'}`} element={component} />
             </Routes>
           </Page>
         </ActiveUserProvider>
