@@ -6,13 +6,17 @@ import {
   AnalyticsBuilderProps,
   FillDefaultProps,
 } from './AnalyticsBuilder';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Select, SelectOption, SelectOptionObject } from '@patternfly/react-core';
 
 import { reportDefaultParams, allDefaultParams } from './constants';
 
 export function Test() {
+  const location = useLocation();
+  const navigate = useNavigate();
+
   const [reportName, setReportName] = useState<string>('');
   const props = {} as AnalyticsBuilderProps;
 
@@ -21,9 +25,24 @@ export function Test() {
 
   const items = fillReportTypes();
 
+  function selectionChange(item: string) {
+    setReportName(item);
+
+    /*const query = new URLSearchParams(location.search);
+    query.delete('sort');
+    navigate(`${location.pathname}?${query.toString()}`);*/
+  }
+
+  /*
+  useEffect( () => {
+    const query = new URLSearchParams(location.search);
+    query.delete('sort');
+    navigate(`${location.pathname}?${query.toString()}`);
+  }, [])*/
+
   return (
     <>
-      <MySelectDropdown items={items} onChange={(item) => setReportName(item)} />
+      <MySelectDropdown items={items} onChange={(item) => selectionChange(item)} />
       Selected : {reportName} <br />
       {reportName && <AnalyticsBuilder {...props}></AnalyticsBuilder>}
     </>

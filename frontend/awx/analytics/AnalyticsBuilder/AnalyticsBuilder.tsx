@@ -19,10 +19,13 @@ export interface MainRequestDefinition {
   };
 }
 
-export interface OptionsDefinition {}
+export interface OptionsDefinition {
+  sort_options: [{ key: string }];
+}
 
 export interface AnalyticsBuilderProps {
   main_url: string;
+
   // used for processing and adding, or modyfying some data that came from the server and are not complete
   processMainData?: (props: AnalyticsBuilderProps, mainData: MainRequestDefinition) => void;
   processOptions?: (props: AnalyticsBuilderProps, options: OptionsDefinition) => void;
@@ -39,6 +42,9 @@ export interface AnalyticsBuilderProps {
   // on the fly postprocessing of default params
   processDataRequestPayload?: (props: AnalyticsBuilderProps, data: object) => void;
 
+  // used for final modifying of columns before they are passed into the table and view
+  processTableColumns?: (props: AnalyticsBodyProps, columns: ITableColumn<ObjectType>[]) => void;
+
   // default item.id
   rowKeyFn?: (item: ObjectType) => string | number;
 }
@@ -46,6 +52,15 @@ export interface AnalyticsBuilderProps {
 interface AnalyticsBodyProps extends AnalyticsBuilderProps {
   mainData: MainRequestDefinition;
   options: OptionsDefinition;
+}
+
+interface AnalyticsTableProps extends AnalyticsBodyProps {
+  tableColumns: ITableColumn<ObjectType>[];
+  view: IAnalyticsView<ObjectType>;
+}
+
+interface AnalyticsColumnBuilderProps extends AnalyticsBodyProps {
+  view: IAnalyticsView<ObjectType>;
 }
 
 export function FillDefaultProps(props: AnalyticsBuilderProps) {
@@ -118,6 +133,8 @@ export function AnalyticsBuilder(props: AnalyticsBuilderProps) {
   }
 
   useEffect(() => {
+    setMainData(null);
+    setOptions(null);
     readData();
   }, [props.main_url]);
 
@@ -131,37 +148,54 @@ export function AnalyticsBuilder(props: AnalyticsBuilderProps) {
 export type ObjectType = any;
 
 function AnalyticsBody(props: AnalyticsBodyProps) {
-  const analyticsView = useAnalyticsView<ObjectType>({
+  let sortableColumns = getAvailableSortingKeys(props);
+
+  const view = useAnalyticsView<ObjectType>({
     url: props.mainData.report.layoutProps.dataEndpoint,
     keyFn: props.rowKeyFn ? props.rowKeyFn : () => 0,
     builderProps: props,
+    sortableColumns,
   });
+
+  const newProps = { ...props, view };
+
+  const columns = buildTableColumns({ ...newProps }) as ITableColumn<ObjectType>[];
 
   return (
     <>
       Analytics builder - body
-      <AnalyticsTable view={analyticsView} {...props}></AnalyticsTable>
+      <AnalyticsTable {...newProps} tableColumns={columns}></AnalyticsTable>
     </>
   );
 }
 
-type AnalyticsTableProps = AnalyticsBodyProps & { view: IAnalyticsView<ObjectType> };
-
 function AnalyticsTable(props: AnalyticsTableProps) {
-  const columns = buildTableColumns(props) as ITableColumn<ObjectType>[];
-
   return (
     <PageTable<ObjectType>
       {...props.view}
       errorStateTitle="some error title"
       emptyStateTitle="empty state title"
-      tableColumns={columns}
+      tableColumns={props.tableColumns || []}
     />
   );
 }
 
-function buildTableColumns(params: AnalyticsTableProps) {
-  let columns: ITableColumn<ObjectType>[] = [];
+// those columns are for view only, for sorting
+function getAvailableSortingKeys(params: AnalyticsBodyProps) {
+  const sortKeys: string[] = [];
+
+  // set sort by
+  if (params.options.sort_options) {
+    for (const sort of params.options.sort_options) {
+      sortKeys.push(sort.key);
+    }
+  }
+
+  return sortKeys;
+}
+
+function buildTableColumns(params: AnalyticsColumnBuilderProps) {
+  const columns: ITableColumn<ObjectType>[] = [];
 
   if (!params.view?.pageItems) {
     return columns;
@@ -183,7 +217,6 @@ function buildTableColumns(params: AnalyticsTableProps) {
   }
 
   // fine tune columns by tableHeaders if any
-
   if (params.mainData?.report.tableHeaders && params.mainData.report.tableHeaders.length > 0) {
     // set nice names
     for (const tableHeader of params.mainData.report.tableHeaders) {
@@ -203,8 +236,19 @@ function buildTableColumns(params: AnalyticsTableProps) {
     }
   }
 
+  // set sort by
+  if (params.options.sort_options) {
+    for (const sort of params.options.sort_options) {
+      const col = columns.find((item) => item.id == sort.key);
+
+      if (col) {
+        col.sort = col.id;
+      }
+    }
+  }
+
   // another fine tunning done by outside config script
-  // TODO
+  params.processTableColumns?.(params, columns);
 
   return columns;
 }

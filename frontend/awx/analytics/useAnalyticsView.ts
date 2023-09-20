@@ -47,6 +47,7 @@ export function useAnalyticsView<T extends object>({
   defaultSortDirection: initialDefaultSortDirection,
   defaultSelection,
   builderProps,
+  sortableColumns,
 }: {
   url: string;
   keyFn: (item: T) => string | number;
@@ -60,6 +61,7 @@ export function useAnalyticsView<T extends object>({
   defaultSortDirection?: 'asc' | 'desc' | undefined;
   defaultSelection?: T[];
   builderProps?: AnalyticsBuilderProps;
+  sortableColumns?: string[];
 }): IAnalyticsView<T> {
   const [data, setData] = useState<AnalyticsItemsResponse<T> | undefined>(undefined);
   const [error, setError] = useState<any>(undefined);
@@ -110,14 +112,23 @@ export function useAnalyticsView<T extends object>({
   }
 
   if (sort) {
-    if (!sortKey) {
-      sortKey = 'sort';
+    let canSort = tableColumns?.find((item) => item.sort == sort) ? true : false;
+
+    if (!canSort) {
+      // try sortableColumns instead if table columns not defined
+      canSort = sortableColumns?.find((item) => item == sort) ? true : false;
     }
-    queryString ? (queryString += '&') : (queryString += '?');
-    if (sortDirection === 'desc') {
-      queryString += `${sortKey}=-${sort}`;
-    } else {
-      queryString += `${sortKey}=${sort}`;
+
+    if (canSort) {
+      if (!sortKey) {
+        sortKey = 'sort_by';
+      }
+      queryString ? (queryString += '&') : (queryString += '?');
+      if (sortDirection === 'desc') {
+        queryString += `${sortKey}=${sort}:desc`;
+      } else {
+        queryString += `${sortKey}=${sort}:asc`;
+      }
     }
   }
 
