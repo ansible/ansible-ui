@@ -1,32 +1,46 @@
 import { WorkflowJobTemplate as SwaggerWorkflowJobTemplate } from './generated-from-swagger/api';
-import { SummaryFieldsByUser } from './summary-fields/summary-fields';
+import { SummaryFieldCredential, SummaryFieldsByUser } from './summary-fields/summary-fields';
 
 export interface WorkflowJobTemplate
   extends Omit<
     SwaggerWorkflowJobTemplate,
-    'id' | 'name' | 'summary_fields' | 'job_type' | 'type' | 'related'
+    | 'id'
+    | 'name'
+    | 'summary_fields'
+    | 'job_type'
+    | 'type'
+    | 'related'
+    | 'webhook_service'
+    | 'status'
+    | 'last_job_run'
+    | 'next_job_run'
+    | 'last_job_failed'
   > {
   id: number;
-  job_type: 'workflow_job_template';
+  organization: number | null;
   name: string;
-  inventory?: number;
-  type: 'workflow_job_template';
+  inventory: number | null;
+  type: string;
   created: string;
   allow_simultaneous: boolean;
   modified: string;
-  webhook_service: 'github' | 'gitlab' | null;
-  ask_instance_groups_on_launch: boolean;
-  webhook_credential: number;
-  related: { schedules: string; instance_groups: string };
+  webhook_service: string;
+  skip_tags: string;
+  job_tags: string;
+  webhook_credential: number | null;
+  extra_vars: string;
+  last_job_run: string | null;
+  last_job_failed: boolean;
+  next_job_run: string | null;
+  status: string;
+  related: {
+    schedules: string;
+    webhook_receiver: string;
+    webhook_key: string;
+  };
   summary_fields: {
-    webhook_credential: {
-      id: number;
-      name: string;
-      description: string;
-      kind: string;
-      cloud: boolean;
-      credential_type_id: number;
-    };
+    webhook_credential?: SummaryFieldCredential;
+    labels: { count: number; results: { id: number; name: string }[] };
     inventory?: {
       name: string;
       id: number;
@@ -42,32 +56,107 @@ export interface WorkflowJobTemplate
       kind: '' | 'smart' | 'constructed';
     };
     organization?: {
-      id: string;
-      name: string;
-      description: string;
-    };
-    execute_role: {
-      description: string;
-      name: string;
       id: number;
-    };
-    read_role: {
-      description: string;
       name: string;
-      id: number;
-    };
-    approval_role: {
       description: string;
-      name: string;
-      id: number;
     };
+    object_roles: {
+      execute_role: {
+        description: string;
+        name: string;
+        id: number;
+      };
+      read_role: {
+        description: string;
+        name: string;
+        id: number;
+      };
+      approval_role: {
+        description: string;
+        name: string;
+        id: number;
+      };
+    };
+    recent_jobs:
+      | { id: number; status: string; finished: null; canceled_on: null; type: string }[]
+      | [];
     created_by: SummaryFieldsByUser;
     modified_by: SummaryFieldsByUser;
-    object_roles: {
-      admin_role: { id: number };
-      execute_role: { id: number };
-      read_role: { id: number };
-      approval_role: { id: number };
-    };
   };
+}
+
+export interface WorkflowJobTemplateForm
+  extends Omit<
+    WorkflowJobTemplate,
+    | 'summary_fields'
+    | 'status'
+    | 'last_job_run'
+    | 'next_job_run'
+    | 'last_job_failed'
+    | 'organization'
+    | 'inventory'
+    | 'webhook_credential'
+    | 'skip_tags'
+    | 'job_tags'
+    | 'type'
+    | 'id'
+    | 'job_type'
+    | 'related'
+    | 'created'
+    | 'modified'
+    | 'extra_vars'
+    | 'ask_instance_groups_on_launch'
+    | 'webhook_service'
+    | 'labels'
+  > {
+  isWebhookEnabled: boolean;
+  extra_vars: string;
+  id?: number;
+  webhook_receiver?: string;
+  webhook_key?: string;
+  skip_tags: { name: string; value: string; label: string }[];
+  job_tags: { name: string; value: string; label: string }[];
+  webhook_credential: SummaryFieldCredential | null;
+  labels: { id: number; name: string }[] | [];
+  inventory: {
+    name: string;
+    id: number;
+  } | null;
+  webhook_service?: string;
+  organization: { name: string; id: number } | null;
+}
+
+export interface WorkflowJobTemplateCreate
+  extends Omit<
+    WorkflowJobTemplate,
+    | 'id'
+    | 'name'
+    | 'extra_vars'
+    | 'summary_fields'
+    | 'related'
+    | 'job_type'
+    | 'type'
+    | 'created'
+    | 'modified'
+    | 'ask_instance_groups_on_launch'
+    | 'inventory'
+    | 'status'
+    | 'last_job_run'
+    | 'next_job_run'
+    | 'last_job_failed'
+    | 'webhook_service'
+    | 'labels'
+    | 'organization'
+  > {
+  name: string;
+  inventory?: number;
+  isWebhookEnabled: boolean;
+  allow_simultaneous: boolean;
+  webhook_service?: string;
+  labels?: { id: number; name: string }[] | null;
+  skip_tags: string;
+  job_tags: string;
+  webhook_credential: number | null;
+  extra_vars: string;
+  organization?: number;
 }
