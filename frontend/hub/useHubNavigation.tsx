@@ -94,7 +94,7 @@ export function useHubNavigation() {
               {
                 id: HubRoute.ExecutionEnvironments,
                 label: t('Execution Environments'),
-                path: 'execution Environments',
+                path: 'execution-environments',
                 children: [
                   {
                     path: '',
@@ -105,7 +105,7 @@ export function useHubNavigation() {
               {
                 id: HubRoute.SignatureKeys,
                 label: t('Signature Keys'),
-                path: 'signature keys',
+                path: 'signature-keys',
                 children: [
                   {
                     path: '',
