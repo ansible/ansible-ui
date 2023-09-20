@@ -382,11 +382,9 @@ jobs:
           auto-cancel-after-failures: 1
           config-file: cypress.awx.config.ts
         env:
-          AWX_PROTOCOL: ${{ secrets.AWX_PROTOCOL }}
-          AWX_HOST: ${{ secrets.AWX_HOST }}
-          AWX_SERVER: ${{ secrets.CYPRESS_AWX_SERVER }}
-          AWX_USERNAME: ${{ secrets.CYPRESS_AWX_USERNAME }}
-          AWX_PASSWORD: ${{ secrets.CYPRESS_AWX_PASSWORD }}
+          AWX_SERVER: ${{ secrets.AWX_SERVER }}
+          AWX_USERNAME: ${{ secrets.AWX_USERNAME }}
+          AWX_PASSWORD: ${{ secrets.AWX_PASSWORD }}
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_AWX_E2E_PROJECT_ID }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_AWX_E2E_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -598,14 +596,12 @@ jobs:
           auto-cancel-after-failures: 1
           config-file: cypress.eda.config.ts
         env:
-          EDA_PROTOCOL: ${{ secrets.EDA_PROTOCOL }}
-          EDA_HOST: ${{ secrets.EDA_HOST }}
-          AWX_SERVER: ${{ secrets.CYPRESS_AWX_SERVER }}
-          AWX_USERNAME: ${{ secrets.CYPRESS_AWX_USERNAME }}
-          AWX_PASSWORD: ${{ secrets.CYPRESS_AWX_PASSWORD }}
-          EDA_SERVER: ${{ secrets.CYPRESS_EDA_SERVER }}
-          EDA_USERNAME: ${{ secrets.CYPRESS_EDA_USERNAME }}
-          EDA_PASSWORD: ${{ secrets.CYPRESS_EDA_PASSWORD }}
+          AWX_SERVER: ${{ secrets.AWX_SERVER }}
+          AWX_USERNAME: ${{ secrets.AWX_USERNAME }}
+          AWX_PASSWORD: ${{ secrets.AWX_PASSWORD }}
+          EDA_SERVER: ${{ secrets.EDA_SERVER }}
+          EDA_USERNAME: ${{ secrets.EDA_USERNAME }}
+          EDA_PASSWORD: ${{ secrets.EDA_PASSWORD }}
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_EDA_E2E_PROJECT_ID }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_EDA_E2E_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
