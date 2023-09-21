@@ -34,17 +34,8 @@ export default function Reports() {
       setSpecificError('');
     } else {
       // @ts-expect-error: Cannot override type coming from useSWR
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-      error?.response
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-        .clone()
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-        .json()
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-        .then((r: { error?: { keyword?: string } }) =>
-          setSpecificError(r?.error?.keyword || 'unknown')
-        )
-        .catch(() => setSpecificError('unknown'));
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
+      setSpecificError(error?.body?.error?.keyword || 'unknown');
     }
   }, [error]);
 
