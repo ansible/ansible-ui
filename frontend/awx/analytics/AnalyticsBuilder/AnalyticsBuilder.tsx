@@ -4,8 +4,14 @@ import { useState, useEffect } from 'react';
 import { useAnalyticsView, IAnalyticsView } from '../../analytics/useAnalyticsView';
 import { PageTable } from '../../../../framework/PageTable/PageTable';
 import { ITableColumn, ITableColumnTypeText } from '../../../../framework';
+import {
+  IToolbarFilter,
+  ToolbarFilterType,
+} from '../../../../framework/PageToolbar/PageToolbarFilter';
+import { PageSelectOption } from '../../../../framework/PageInputs/PageSelectOption';
 
 import { ColumnTableOption } from '../../../../framework/PageTable/PageTableColumn';
+import { IToolbarSingleSelectFilter } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarSingleSelectFilter';
 
 export interface MainRequestDefinition {
   report: {
@@ -19,8 +25,11 @@ export interface MainRequestDefinition {
   };
 }
 
+export type ObjectType = any;
+
 export interface OptionsDefinition {
   sort_options: [{ key: string }];
+  [key: string]: any;
 }
 
 export interface AnalyticsBuilderProps {
@@ -31,16 +40,16 @@ export interface AnalyticsBuilderProps {
   processOptions?: (props: AnalyticsBuilderProps, options: OptionsDefinition) => void;
 
   // default post options params
-  defaultOptionsParams?: object;
+  defaultOptionsParams?: ObjectType;
 
   // on the fly postprocessing of default params
-  processOptionsRequestPayload?: (props: AnalyticsBuilderProps, data: object) => void;
+  processOptionsRequestPayload?: (props: AnalyticsBuilderProps, data: ObjectType) => void;
 
   // default post data params
-  defaultDataParams?: object;
+  defaultDataParams?: ObjectType;
 
   // on the fly postprocessing of default params
-  processDataRequestPayload?: (props: AnalyticsBuilderProps, data: object) => void;
+  processDataRequestPayload?: (props: AnalyticsBuilderProps, data: ObjectType) => void;
 
   // used for final modifying of columns before they are passed into the table and view
   processTableColumns?: (props: AnalyticsBodyProps, columns: ITableColumn<ObjectType>[]) => void;
@@ -57,6 +66,7 @@ interface AnalyticsBodyProps extends AnalyticsBuilderProps {
 interface AnalyticsTableProps extends AnalyticsBodyProps {
   tableColumns: ITableColumn<ObjectType>[];
   view: IAnalyticsView<ObjectType>;
+  toolbarFilters: IToolbarFilter[];
 }
 
 interface AnalyticsColumnBuilderProps extends AnalyticsBodyProps {
@@ -144,16 +154,17 @@ export function AnalyticsBuilder(props: AnalyticsBuilderProps) {
   return <>Analytics builder - loading {error && 'Some error ocurred'}</>;
 }
 
-export type ObjectType = any;
-
 function AnalyticsBody(props: AnalyticsBodyProps) {
   let sortableColumns = getAvailableSortingKeys(props);
+
+  const filters = buildTableFilters(props);
 
   const view = useAnalyticsView<ObjectType>({
     url: props.mainData.report.layoutProps.dataEndpoint,
     keyFn: props.rowKeyFn ? props.rowKeyFn : () => 0,
     builderProps: props,
     sortableColumns,
+    toolbarFilters: filters,
   });
 
   const newProps = { ...props, view };
@@ -163,7 +174,11 @@ function AnalyticsBody(props: AnalyticsBodyProps) {
   return (
     <>
       Analytics builder - body
-      <AnalyticsTable {...newProps} tableColumns={columns}></AnalyticsTable>
+      <AnalyticsTable
+        {...newProps}
+        tableColumns={columns}
+        toolbarFilters={filters}
+      ></AnalyticsTable>
     </>
   );
 }
@@ -175,6 +190,7 @@ function AnalyticsTable(props: AnalyticsTableProps) {
       errorStateTitle="some error title"
       emptyStateTitle="empty state title"
       tableColumns={props.tableColumns || []}
+      toolbarFilters={props.toolbarFilters}
     />
   );
 }
@@ -191,6 +207,54 @@ function getAvailableSortingKeys(params: AnalyticsBodyProps) {
   }
 
   return sortKeys;
+}
+
+function buildTableFilters(params: AnalyticsBodyProps) {
+  const filters: IToolbarFilter[] = [];
+  // add main filter
+  let filter: IToolbarSingleSelectFilter = {
+    key: 'main_filter',
+    type: ToolbarFilterType.SingleSelect,
+    options: computeMainFilterOptions(params),
+    placeholder: '',
+    query: 'main_filter',
+    label: '',
+  };
+
+  if (filter.options.length > 0) {
+    filters.push(filter);
+  }
+  return filters;
+}
+
+function computeMainFilterOptions(params: AnalyticsBodyProps) {
+  const items: PageSelectOption<ObjectType>[] = [];
+  const postParams = params.defaultOptionsParams;
+  if (!postParams) {
+    return items;
+  }
+
+  const options = params.options;
+
+  for (const key in postParams) {
+    const postParam = postParams[key];
+    if (Array.isArray(postParam) && options) {
+      // determine if it matches the options
+      const found = Object.keys(options).find((item) => item == key);
+      if (found) {
+        // add it to the dropdown items
+        const item: PageSelectOption<ObjectType> = {
+          key,
+          value: key,
+          label: key,
+        };
+
+        items.push(item);
+      }
+    }
+  }
+
+  return items;
 }
 
 function buildTableColumns(params: AnalyticsColumnBuilderProps) {
