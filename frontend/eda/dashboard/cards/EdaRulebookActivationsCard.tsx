@@ -11,12 +11,18 @@ import {
 } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
 import { EdaRoute } from '../../EdaRoutes';
+import { API_PREFIX } from '../../constants';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { useRulebookActivationColumns } from '../../rulebook-activations/hooks/useRulebookActivationColumns';
-import { IEdaView } from '../../useEventDrivenView';
+import { useEdaView } from '../../useEventDrivenView';
 
-export function EdaRulebookActivationsCard(props: { view: IEdaView<EdaRulebookActivation> }) {
-  const { view } = props;
+export function EdaRulebookActivationsCard() {
+  const view = useEdaView<EdaRulebookActivation>({
+    url: `${API_PREFIX}/activations/`,
+    queryParams: { page: '1', page_size: '10' },
+    disableQueryString: true,
+  });
+
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const getPageUrl = useGetPageUrl();
