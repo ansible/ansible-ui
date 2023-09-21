@@ -99,8 +99,6 @@ export function useAnalyticsBuilderView<T extends object>({
     disableQueryString,
   });
 
-  //const itemCountRef = useRef<{ itemCount: number | undefined }>({ itemCount: undefined });
-
   const { page, perPage, sort, sortDirection, filterState } = view;
 
   let queryString = queryParams ? `?${getQueryString(queryParams)}` : '';
@@ -119,35 +117,10 @@ export function useAnalyticsBuilderView<T extends object>({
           for (const value of values) {
             postData[key].push(value);
           }
-
-          /*queryString ? (queryString += '&') : (queryString += '?');
-          if (values.length > 1) {
-            queryString += values.map((value) => `or__${toolbarFilter.query}=${value}`).join('&');
-          } else {
-            queryString += `${toolbarFilter.query}=${values.join(',')}`;
-          }*/
         }
       }
     }
   }
-
-  /*
-  if (filterState) {
-    for (const key in filterState) {
-      const toolbarFilter = toolbarFilters?.find((filter) => filter.key === key);
-      if (toolbarFilter) {
-        const values = filterState[key];
-        if (values && values.length > 0) {
-          queryString ? (queryString += '&') : (queryString += '?');
-          if (values.length > 1) {
-            queryString += values.map((value) => `or__${toolbarFilter.query}=${value}`).join('&');
-          } else {
-            queryString += `${toolbarFilter.query}=${values.join(',')}`;
-          }
-        }
-      }
-    }
-  }*/
 
   if (sort) {
     let canSort = tableColumns?.find((item) => item.sort == sort) ? true : false;
@@ -195,23 +168,6 @@ export function useAnalyticsBuilderView<T extends object>({
     fetchData();
   }, [changed]);
 
-  //const fetcher = usePostFetcher();
-  /*const response = useSWR<AnalyticsItemsResponse<T>>(url, fetcher, {
-    dedupingInterval: 0,
-    refreshInterval: 30000,
-  });*/
-
-  /*const { data, mutate } = response;
-  const refresh = useCallback(async () => {
-    await mutate();
-  }, [mutate]);*/
-
-  // refresh probably not needed
-  /*const nextPage = data?.links?.next;
-  useSWR<AnalyticsItemsResponse<T>>(nextPage, fetcher, {
-    dedupingInterval: 0,
-  });*/
-
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   if (error instanceof RequestError) {
     if (error.statusCode === 404 && view.page > 1) {
@@ -221,33 +177,6 @@ export function useAnalyticsBuilderView<T extends object>({
   }
 
   const selection = useSelected(data?.meta.legend ?? [], keyFn, defaultSelection);
-
-  /*if (data?.meta.legend.length !== undefined) {
-    itemCountRef.current.itemCount = data?.meta.legend.length;
-  }*/
-
-  /*const unselectItemsAndRefresh = useCallback(
-    (items: T[]) => {
-      selection.unselectItems(items);
-      void refresh();
-    },
-    [refresh, selection]
-  );*/
-
-  /*
-  return useMemo(() => {
-    return {
-      refresh,
-      itemCount: data?.meta.count,
-      pageItems: data?.meta.legend,
-      error,
-      ...view,
-      ...selection,
-      unselectItemsAndRefresh,
-      originalData: data as undefined,
-    };
-  }, [data?.meta.legend, error, refresh, selection, unselectItemsAndRefresh, view, data]);
-  */
 
   return useMemo(() => {
     return {
