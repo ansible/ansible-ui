@@ -209,7 +209,7 @@ export function TemplateLaunchWizard() {
 
   const { defaults } = config;
 
-  const readOnlyLabels = defaults.labels.map((label) => ({
+  const readOnlyLabels = defaults?.labels?.map((label) => ({
     ...label,
     isReadOnly: true,
   }));
