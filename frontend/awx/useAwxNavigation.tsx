@@ -281,6 +281,11 @@ export function useAwxNavigation() {
                           },
                         ],
                       },
+                      {
+                        id: AwxRoute.TemplateLaunchWizard,
+                        path: ':id/launch',
+                        element: <TemplateLaunchWizard />,
+                      },
                     ],
                   },
                   {
