@@ -278,12 +278,12 @@ describe('Job templates form', () => {
         cy.selectRowItemInFormGroupLookupModal(/^Instance group$/, instanceGroup.name);
         cy.clickButton(/^Next/);
         cy.intercept('POST', `api/v2/job_templates/${id}/launch/`).as('postLaunch');
-        cy.clickButton(/^Launch/);
+        cy.clickButton(/^Finish/);
       });
     cy.wait('@postLaunch')
       .its('response.body.id')
       .then((jobId: string) => {
-        cy.navigateTo('awx', /^Jobs$/);
+        cy.navigateTo('awx', 'jobs');
         cy.clickTableRow(jtName);
         cy.waitForTemplateStatus(jobId);
       });
