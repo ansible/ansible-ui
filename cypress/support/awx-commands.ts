@@ -246,7 +246,7 @@ Cypress.Commands.add(
   (name: string | RegExp, filter?: boolean, inputType = 'checkbox') => {
     cy.getDialog().within(() => {
       cy.getTableRowByText(name, filter).within(() => {
-        cy.get(`input[type=${inputType}]`).click();
+        cy.get('td[data-cy=checkbox-column-cell]').click();
       });
     });
   }

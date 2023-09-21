@@ -102,7 +102,8 @@ describe('Job templates form', () => {
     cy.wait('@postLaunch')
       .its('response.body.id')
       .then((jobId: string) => {
-        cy.navigateTo(/^Jobs$/);
+        //cy.navigateTo(/^Jobs$/);
+        cy.navigateTo('awx', 'jobs');
         cy.clickTableRow(jtName);
         cy.waitForTemplateStatus(jobId);
       });
@@ -252,11 +253,6 @@ describe('Job templates form', () => {
     cy.selectPromptOnLaunchByLabel(/^Execution environment$/);
     cy.selectPromptOnLaunchByLabel(/^Credentials$/);
     cy.selectPromptOnLaunchByLabel(/^Instance group$/);
-    // cy.selectPromptOnLaunchByLabel(/^Labels$/);
-    // cy.selectPromptOnLaunchByLabel(/^Forks$/);
-    // cy.selectPromptOnLaunchByLabel(/^Limit$/);
-    // cy.selectPromptOnLaunchByLabel(/^Execution environment$/);
-    // cy.selectPromptOnLaunchByLabel(/^Execution environment$/);
     cy.clickButton(/^Create job template$/);
     cy.wait('@launchJT')
       .its('response.body.id')
@@ -272,11 +268,14 @@ describe('Job templates form', () => {
         });
         cy.selectDropdownOptionByLabel(/^Inventory$/, inventory.name);
         cy.clickButton(/^Next/);
-        cy.selectDropdownOptionByLabel(/^Credentials$/, machineCredential.name, true);
+        cy.selectRowItemInFormGroupLookupModal(/^Credentials$/, machineCredential.name);
         cy.clickButton(/^Next/);
-        cy.selectDropdownOptionByLabel(/^Execution environment$/, executionEnvironment.name);
+        cy.selectRowItemInFormGroupLookupModal(
+          /^Execution environment$/,
+          executionEnvironment.name
+        );
         cy.clickButton(/^Next/);
-        cy.selectDropdownOptionByLabel(/^Instance group$/, instanceGroup.name);
+        cy.selectRowItemInFormGroupLookupModal(/^Instance group$/, instanceGroup.name);
         cy.clickButton(/^Next/);
         cy.intercept('POST', `api/v2/job_templates/${id}/launch/`).as('postLaunch');
         cy.clickButton(/^Launch/);
