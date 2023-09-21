@@ -1,6 +1,6 @@
 import '@patternfly/patternfly/patternfly-base.css';
-import '@patternfly/patternfly/patternfly-charts.css';
 import '@patternfly/patternfly/patternfly-charts-theme-dark.css';
+import '@patternfly/patternfly/patternfly-charts.css';
 
 import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
@@ -9,9 +9,9 @@ import { AwxConfigProvider } from '../frontend/awx/common/useAwxConfig';
 import { WebSocketProvider } from '../frontend/awx/common/useAwxWebSocket';
 import { ActiveEdaUserProvider, ActiveUserProvider } from '../frontend/common/useActiveUser';
 import { HubContextProvider } from '../frontend/hub/useHubContext';
-import { ActivePlatformUserProvider } from './hooks/useActivePlatformUser';
 import { PlatformLogin } from './PlatformLogin';
 import { PlatformMasthead } from './PlatformMasthead';
+import { ActivePlatformUserProvider } from './hooks/useActivePlatformUser';
 import { usePlatformNavigationA, usePlatformNavigationB } from './usePlatformNavigation';
 
 export default function PlatformMain() {
