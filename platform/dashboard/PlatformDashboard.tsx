@@ -4,7 +4,6 @@ import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { PageDashboard, PageDashboardCard, PageHeader, PageLayout } from '../../framework';
-import { AwxCountsCard } from '../../frontend/awx/dashboard/cards/AwxCountsCard';
 import { AwxJobActivityCard } from '../../frontend/awx/dashboard/cards/AwxJobActivityCard';
 import { AwxRecentInventoriesCard } from '../../frontend/awx/dashboard/cards/AwxRecentInventoriesCard';
 import { AwxRecentJobsCard } from '../../frontend/awx/dashboard/cards/AwxRecentJobsCard';
@@ -108,7 +107,7 @@ export function PlatformDashboard() {
         <PageDashboardCard title={t('Execution Environments')} width="xxl">
           <CardBody>Something goes here.</CardBody>
         </PageDashboardCard>
-        <AwxCountsCard />
+        {/* <AwxCountsCard /> */}
         <AwxJobActivityCard />
         <AwxRecentJobsCard />
         <AwxRecentProjectsCard />
