@@ -34,6 +34,14 @@ export function getQueryString(queryParams: QueryParams) {
     .join('&');
 }
 
+/*
+function computeAvailableFilterKeys(builderProps: AnalyticsBodyProps)
+{
+  const keys = computeMainFilterKeys(builderProps);
+  keys.push('quick_date_range');
+  return keys;
+}*/
+
 export function useAnalyticsBuilderView<T extends object>({
   url,
   keyFn,
@@ -70,10 +78,12 @@ export function useAnalyticsBuilderView<T extends object>({
 
   // clear all params that are not in filters
   if (builderProps) {
-    const keys = computeMainFilterKeys(builderProps);
-    for (const key of keys) {
+    const availableFilterKeys = computeMainFilterKeys(builderProps);
+    for (const key of availableFilterKeys) {
       if (postData[key]) {
-        postData[key] = [];
+        if (Array.isArray(postData[key])) {
+          postData[key] = [];
+        }
       }
     }
   }
@@ -109,11 +119,13 @@ export function useAnalyticsBuilderView<T extends object>({
       if (toolbarFilter) {
         const values = filterState[key];
 
-        if (!Array.isArray(postData[key])) {
+        if (!values || values.length == 0) {
           continue;
         }
 
-        if (values && values.length > 0) {
+        if (!Array.isArray(postData[key])) {
+          postData[key] = values[0];
+        } else {
           for (const value of values) {
             postData[key].push(value);
           }

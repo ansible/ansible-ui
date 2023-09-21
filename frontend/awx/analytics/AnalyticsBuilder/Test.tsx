@@ -30,8 +30,7 @@ export function Test() {
   const items = fillReportTypes();
 
   function selectionChange(item: string) {
-    queryParams.set('reportName', item);
-    navigate(`${location.pathname}?${queryParams.toString()}`);
+    navigate(`${location.pathname}?reportName=${item}`);
 
     /*const query = new URLSearchParams(location.search);
     query.delete('sort');

@@ -255,7 +255,7 @@ function buildTableFilters(params: AnalyticsBodyProps, queryParams: URLSearchPar
     });
     filters.push({
       key: quick_date_range,
-      type: ToolbarFilterType.MultiSelect,
+      type: ToolbarFilterType.SingleSelect,
       options: quickDateRangeOptions,
       query: quick_date_range,
       label: quick_date_range,
