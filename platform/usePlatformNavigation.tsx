@@ -9,59 +9,11 @@ import { UnderDevelopment } from '../frontend/eda/under-development/UnderDevelop
 import { useEdaNavigation } from '../frontend/eda/useEdaNavigation';
 import { HubRoute } from '../frontend/hub/HubRoutes';
 import { useHubNavigation } from '../frontend/hub/useHubNavigation';
+import { PlatformLogin } from './PlatformLogin';
 import { PlatformRoute } from './PlatformRoutes';
 import { PlatformDashboard } from './dashboard/PlatformDashboard';
-import { PlatformLogin } from './PlatformLogin';
 
 export function usePlatformNavigationA() {
-  const { t } = useTranslation();
-  const awx = useAwxNavigation();
-  const hub = useHubNavigation();
-  const eda = useEdaNavigation();
-
-  const pageNavigationItems = useMemo<PageNavigationItem[]>(() => {
-    const navigationItems = [
-      {
-        id: PlatformRoute.Login,
-        path: 'login',
-        element: <PlatformLogin />,
-      },
-      {
-        id: PlatformRoute.Dashboard,
-        label: t('Overview'),
-        path: 'overview',
-        element: <PlatformDashboard />,
-      },
-      {
-        id: PlatformRoute.AWX,
-        label: t('Automation Controller'),
-        path: 'awx',
-        children: awx,
-      },
-      {
-        id: PlatformRoute.HUB,
-        label: t('Automation Hub'),
-        path: 'hub',
-        children: hub,
-      },
-      {
-        id: PlatformRoute.EDA,
-        label: t('Event Driven Automation'),
-        path: 'eda',
-        children: eda,
-      },
-      {
-        id: PlatformRoute.Root,
-        path: '',
-        element: <Navigate to="overview" />,
-      },
-    ];
-    return navigationItems.filter((item) => item !== undefined) as PageNavigationItem[];
-  }, [awx, eda, hub, t]);
-  return pageNavigationItems;
-}
-
-export function usePlatformNavigationB() {
   const { t } = useTranslation();
   const awx = useAwxNavigation();
   const hub = useHubNavigation();
@@ -228,5 +180,53 @@ export function usePlatformNavigationB() {
     topology,
     users,
   ]);
+  return pageNavigationItems;
+}
+
+export function usePlatformNavigationB() {
+  const { t } = useTranslation();
+  const awx = useAwxNavigation();
+  const hub = useHubNavigation();
+  const eda = useEdaNavigation();
+
+  const pageNavigationItems = useMemo<PageNavigationItem[]>(() => {
+    const navigationItems = [
+      {
+        id: PlatformRoute.Login,
+        path: 'login',
+        element: <PlatformLogin />,
+      },
+      {
+        id: PlatformRoute.Dashboard,
+        label: t('Overview'),
+        path: 'overview',
+        element: <PlatformDashboard />,
+      },
+      {
+        id: PlatformRoute.AWX,
+        label: t('Automation Controller'),
+        path: 'awx',
+        children: awx,
+      },
+      {
+        id: PlatformRoute.HUB,
+        label: t('Automation Hub'),
+        path: 'hub',
+        children: hub,
+      },
+      {
+        id: PlatformRoute.EDA,
+        label: t('Event Driven Automation'),
+        path: 'eda',
+        children: eda,
+      },
+      {
+        id: PlatformRoute.Root,
+        path: '',
+        element: <Navigate to="overview" />,
+      },
+    ];
+    return navigationItems.filter((item) => item !== undefined) as PageNavigationItem[];
+  }, [awx, eda, hub, t]);
   return pageNavigationItems;
 }

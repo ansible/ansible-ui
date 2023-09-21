@@ -1,4 +1,10 @@
-import { DropdownItem, Switch, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
+import {
+  DropdownItem,
+  DropdownSeparator,
+  Radio,
+  ToolbarGroup,
+  ToolbarItem,
+} from '@patternfly/react-core';
 import { UserCircleIcon } from '@patternfly/react-icons';
 import { Dispatch, SetStateAction, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -7,8 +13,8 @@ import { PageMastheadDropdown } from '../framework/PageMasthead/PageMastheadDrop
 import { PageSettingsIcon } from '../framework/PageMasthead/PageSettingsIcon';
 import { PageThemeSwitcher } from '../framework/PageMasthead/PageThemeSwitcher';
 import { PageRefreshIcon } from '../frontend/common/PageRefreshIcon';
-import { useActivePlatformUser } from './hooks/useActivePlatformUser';
 import { PlatformRoute } from './PlatformRoutes';
+import { useActivePlatformUser } from './hooks/useActivePlatformUser';
 import PlatformIcon from './platform-icon.svg';
 
 export function PlatformMasthead(props: {
@@ -29,17 +35,6 @@ export function PlatformMasthead(props: {
       title={process.env.PRODUCT}
       brand={process.env.BRAND}
     >
-      <ToolbarItem>
-        <Switch
-          id="navigation-version"
-          label={t('Navigation B')}
-          labelOff={t('Navigation A')}
-          isChecked={props.navigationVersion === 'B'}
-          onChange={(checked) => props.setNavigationVersion(checked ? 'B' : 'A')}
-          aria-label="Navigation Version"
-        />
-      </ToolbarItem>
-
       <ToolbarItem style={{ flexGrow: 1 }} />
       <ToolbarGroup variant="icon-button-group">
         <ToolbarItem>
@@ -88,6 +83,23 @@ export function PlatformMasthead(props: {
                 pageNavigate(PlatformRoute.UserPage, { params: { id: activeUser?.id } })
               }
             /> */}
+            <DropdownItem onClick={() => props.setNavigationVersion('A')}>
+              <Radio
+                id="a"
+                name="navigation"
+                label={t(`Navigation A`)}
+                isChecked={props.navigationVersion === 'A'}
+              />
+            </DropdownItem>
+            <DropdownItem onClick={() => props.setNavigationVersion('B')}>
+              <Radio
+                id="b"
+                name="navigation"
+                label={t(`Navigation B`)}
+                isChecked={props.navigationVersion === 'B'}
+              />
+            </DropdownItem>
+            <DropdownSeparator />
             <DropdownItem id="logout" label={t('Logout')} onClick={() => void logout()}>
               {t('Logout')}
             </DropdownItem>
