@@ -17,7 +17,11 @@ export function Test() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [reportName, setReportName] = useState<string>('');
+  //const [reportName, setReportName] = useState<string>('');
+  const queryParams = new URLSearchParams(location.search);
+
+  const reportName = queryParams.get('reportName') || '';
+
   const props = {} as AnalyticsBuilderProps;
 
   fillReports(props, reportName);
@@ -26,7 +30,8 @@ export function Test() {
   const items = fillReportTypes();
 
   function selectionChange(item: string) {
-    setReportName(item);
+    queryParams.set('reportName', item);
+    navigate(`${location.pathname}?${queryParams.toString()}`);
 
     /*const query = new URLSearchParams(location.search);
     query.delete('sort');

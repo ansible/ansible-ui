@@ -12,6 +12,10 @@ import { PageSelectOption } from '../../../../framework/PageInputs/PageSelectOpt
 
 import { ColumnTableOption } from '../../../../framework/PageTable/PageTableColumn';
 import { IToolbarSingleSelectFilter } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarSingleSelectFilter';
+import { useLocation } from 'react-router-dom';
+
+const main_filter = 'main___filter';
+const secondary_filter = 'secondary___filter';
 
 export interface MainRequestDefinition {
   report: {
@@ -155,9 +159,12 @@ export function AnalyticsBuilder(props: AnalyticsBuilderProps) {
 }
 
 function AnalyticsBody(props: AnalyticsBodyProps) {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+
   let sortableColumns = getAvailableSortingKeys(props);
 
-  const filters = buildTableFilters(props);
+  const filters = buildTableFilters(props, queryParams);
 
   const view = useAnalyticsView<ObjectType>({
     url: props.mainData.report.layoutProps.dataEndpoint,
@@ -209,21 +216,50 @@ function getAvailableSortingKeys(params: AnalyticsBodyProps) {
   return sortKeys;
 }
 
-function buildTableFilters(params: AnalyticsBodyProps) {
+function buildTableFilters(params: AnalyticsBodyProps, queryParams: URLSearchParams) {
   const filters: IToolbarFilter[] = [];
+
   // add main filter
-  let filter: IToolbarSingleSelectFilter = {
-    key: 'main_filter',
+  const filter: IToolbarSingleSelectFilter = {
+    key: main_filter,
     type: ToolbarFilterType.SingleSelect,
     options: computeMainFilterOptions(params),
-    placeholder: '',
-    query: 'main_filter',
-    label: '',
+    placeholder: main_filter,
+    query: main_filter,
+    label: main_filter,
   };
 
   if (filter.options.length > 0) {
     filters.push(filter);
   }
+
+  // get secondary filter
+
+  let options2: PageSelectOption<string>[] = [];
+  const secondary_filter_name = queryParams.get(main_filter);
+  if (secondary_filter_name) {
+    const options = params?.options;
+    const option = options?.[secondary_filter_name] as { key: string; value: string }[];
+
+    if (option) {
+      // build filter from this option
+      options2 = option.map((item) => {
+        return { key: item.key, value: item.value, label: item.value };
+      });
+    }
+  }
+
+  const filter2: IToolbarSingleSelectFilter = {
+    key: secondary_filter,
+    type: ToolbarFilterType.SingleSelect,
+    options: options2,
+    placeholder: secondary_filter,
+    query: secondary_filter,
+    label: secondary_filter,
+  };
+
+  filters.push(filter2);
+
   return filters;
 }
 
