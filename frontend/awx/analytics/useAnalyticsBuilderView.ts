@@ -11,7 +11,7 @@ import {
 import { postRequest, usePostFetcher } from '../../common/crud/Data';
 
 import { RequestError } from '../../common/crud/RequestError';
-import { AnalyticsBuilderProps } from './AnalyticsBuilder/AnalyticsBuilder';
+import { AnalyticsBodyProps, computeMainFilterKeys } from './AnalyticsBuilder/AnalyticsBuilder';
 
 export interface AnalyticsItemsResponse<T extends object> {
   meta: { count: number; legend: T[] };
@@ -60,13 +60,24 @@ export function useAnalyticsBuilderView<T extends object>({
   defaultSort?: string | undefined;
   defaultSortDirection?: 'asc' | 'desc' | undefined;
   defaultSelection?: T[];
-  builderProps?: AnalyticsBuilderProps;
+  builderProps?: AnalyticsBodyProps;
   sortableColumns?: string[];
 }): IAnalyticsBuilderView<T> {
   const [data, setData] = useState<AnalyticsItemsResponse<T> | undefined>(undefined);
   const [error, setError] = useState<any>(undefined);
 
   let postData = builderProps?.defaultDataParams || {};
+
+  // clear all params that are not in filters
+  if (builderProps) {
+    const keys = computeMainFilterKeys(builderProps);
+    for (const key of keys) {
+      if (postData[key]) {
+        postData[key] = [];
+      }
+    }
+  }
+
   builderProps?.processDataRequestPayload?.(builderProps, postData);
 
   let defaultSort: string | undefined = initialDefaultSort;
@@ -99,6 +110,33 @@ export function useAnalyticsBuilderView<T extends object>({
       const toolbarFilter = toolbarFilters?.find((filter) => filter.key === key);
       if (toolbarFilter) {
         const values = filterState[key];
+
+        if (!Array.isArray(postData[key])) {
+          continue;
+        }
+
+        if (values && values.length > 0) {
+          for (const value of values) {
+            postData[key].push(value);
+          }
+
+          /*queryString ? (queryString += '&') : (queryString += '?');
+          if (values.length > 1) {
+            queryString += values.map((value) => `or__${toolbarFilter.query}=${value}`).join('&');
+          } else {
+            queryString += `${toolbarFilter.query}=${values.join(',')}`;
+          }*/
+        }
+      }
+    }
+  }
+
+  /*
+  if (filterState) {
+    for (const key in filterState) {
+      const toolbarFilter = toolbarFilters?.find((filter) => filter.key === key);
+      if (toolbarFilter) {
+        const values = filterState[key];
         if (values && values.length > 0) {
           queryString ? (queryString += '&') : (queryString += '?');
           if (values.length > 1) {
@@ -109,7 +147,7 @@ export function useAnalyticsBuilderView<T extends object>({
         }
       }
     }
-  }
+  }*/
 
   if (sort) {
     let canSort = tableColumns?.find((item) => item.sort == sort) ? true : false;
@@ -149,9 +187,13 @@ export function useAnalyticsBuilderView<T extends object>({
     }
   }
 
+  // we cant only run fetch when url changes, but also when something in postData changes
+  const postDataJson = JSON.stringify(postData);
+  const changed = url + postDataJson;
+
   useEffect(() => {
     fetchData();
-  }, [url]);
+  }, [changed]);
 
   //const fetcher = usePostFetcher();
   /*const response = useSWR<AnalyticsItemsResponse<T>>(url, fetcher, {

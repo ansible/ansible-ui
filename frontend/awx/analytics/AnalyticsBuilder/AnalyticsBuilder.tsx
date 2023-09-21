@@ -62,12 +62,12 @@ export interface AnalyticsBuilderProps {
   rowKeyFn?: (item: ObjectType) => string | number;
 }
 
-interface AnalyticsBodyProps extends AnalyticsBuilderProps {
+export interface AnalyticsBodyProps extends AnalyticsBuilderProps {
   mainData: MainRequestDefinition;
   options: OptionsDefinition;
 }
 
-interface AnalyticsTableProps extends AnalyticsBodyProps {
+export interface AnalyticsTableProps extends AnalyticsBodyProps {
   tableColumns: ITableColumn<ObjectType>[];
   view: IAnalyticsBuilderView<ObjectType>;
   toolbarFilters: IToolbarFilter[];
@@ -224,7 +224,7 @@ function buildTableFilters(params: AnalyticsBodyProps, queryParams: URLSearchPar
   for (const key of keys) {
     const paramOption = params?.options?.[key] as { key: string; value: string }[];
     const options = paramOption?.map((item) => {
-      return { key: item.key, value: item.value, label: item.value };
+      return { key: item.key, value: item.key, label: item.value };
     });
 
     if (options) {
@@ -241,52 +241,10 @@ function buildTableFilters(params: AnalyticsBodyProps, queryParams: URLSearchPar
     }
   }
 
-  // add main filter
-  /*const filter: IToolbarSingleSelectFilter = {
-    key: main_filter,
-    type: ToolbarFilterType.SingleSelect,
-    options: computeMainFilterOptions(params),
-    placeholder: 'Select',
-    query: main_filter,
-    label: main_filter,
-  };
-
-  if (filter.options.length > 0) {
-    filters.push(filter);
-  }
-
-  // get secondary filter
-
-  let options2: PageSelectOption<string>[] = [];
-  const secondary_filter_name = queryParams.get(main_filter);
-  if (secondary_filter_name) {
-    const options = params?.options;
-    const option = options?.[secondary_filter_name] as { key: string; value: string }[];
-
-    if (option) {
-      // build filter from this option
-      options2 = option.map((item) => {
-        return { key: item.key, value: item.value, label: item.value };
-      });
-    }
-  }
-
-  const filter2: IToolbarSingleSelectFilter = {
-    key: secondary_filter,
-    type: ToolbarFilterType.SingleSelect,
-    options: options2,
-    query: secondary_filter,
-    label: secondary_filter,
-    placeholder: 'Select',
-  };
-
-  filters.push(filter2);
-
-  */
   return filters;
 }
 
-function computeMainFilterKeys(params: AnalyticsBodyProps) {
+export function computeMainFilterKeys(params: AnalyticsBodyProps) {
   const items: string[] = [];
   const postParams = params.defaultOptionsParams;
   if (!postParams) {
