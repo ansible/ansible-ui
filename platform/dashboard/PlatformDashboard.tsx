@@ -121,7 +121,7 @@ export function PlatformDashboard() {
 function DashboardCardHeader(props: { icon?: ReactNode; title: string; subtitle: string }) {
   return (
     <CardHeader>
-      <Stack hasGutter>
+      <Stack>
         <div>{props.icon}</div>
         <Stack>
           <CardTitle>{props.title}</CardTitle>
