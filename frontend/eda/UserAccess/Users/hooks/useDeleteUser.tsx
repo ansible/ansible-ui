@@ -7,7 +7,7 @@ import { API_PREFIX } from '../../../constants';
 import { EdaUser } from '../../../interfaces/EdaUser';
 import { useUserColumns } from './useUserColumns';
 
-export function useDeleteUsers(onComplete: (Users: EdaUser[]) => void) {
+export function useDeleteUsers(onComplete: (users: EdaUser[]) => void) {
   const { t } = useTranslation();
   const confirmationColumns = useUserColumns();
   const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
