@@ -1,10 +1,8 @@
 const webpackConfig = require('../webpack/webpack.config');
 
-const platformServer = process.env.PLATFORM_HOST
-  ? process.env.PLATFORM_PROTOCOL + '://' + process.env.PLATFORM_HOST
-  : 'https://localhost:8000';
+const PLATFORM_SERVER = process.env.PLATFORM_SERVER || 'https://example.com';
 
-const proxyUrl = new URL(platformServer);
+const proxyUrl = new URL(PLATFORM_SERVER);
 
 module.exports = function (env, argv) {
   const config = webpackConfig(env, argv);
@@ -13,7 +11,7 @@ module.exports = function (env, argv) {
 
   config.devServer.proxy = {
     '/api': {
-      target: platformServer,
+      target: PLATFORM_SERVER,
       secure: false,
       bypass: (req) => {
         req.headers.host = proxyUrl.host;
@@ -22,7 +20,7 @@ module.exports = function (env, argv) {
       },
     },
     '/sso': {
-      target: platformServer,
+      target: PLATFORM_SERVER,
       secure: false,
       bypass: (req, res, options) => {
         req.headers.origin = proxyUrl.origin;
@@ -31,14 +29,10 @@ module.exports = function (env, argv) {
       },
     },
     '/websocket': {
-      target: platformServer,
-      ws: true,
+      target: PLATFORM_SERVER,
       secure: false,
-      bypass: (req) => {
-        req.headers.host = proxyUrl.host;
-        req.headers.origin = proxyUrl.origin;
-        req.headers.referer = proxyUrl.href;
-      },
+      ws: true,
+      changeOrigin: true,
     },
   };
   return config;
