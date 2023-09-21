@@ -21,7 +21,7 @@ export type QueryParams = {
   [key: string]: string;
 };
 
-export type IAnalyticsView<T extends object> = IView &
+export type IAnalyticsBuilderView<T extends object> = IView &
   ISelected<T> & {
     itemCount: number | undefined;
     pageItems: T[] | undefined;
@@ -62,7 +62,7 @@ export function useAnalyticsBuilderView<T extends object>({
   defaultSelection?: T[];
   builderProps?: AnalyticsBuilderProps;
   sortableColumns?: string[];
-}): IAnalyticsView<T> {
+}): IAnalyticsBuilderView<T> {
   const [data, setData] = useState<AnalyticsItemsResponse<T> | undefined>(undefined);
   const [error, setError] = useState<any>(undefined);
 

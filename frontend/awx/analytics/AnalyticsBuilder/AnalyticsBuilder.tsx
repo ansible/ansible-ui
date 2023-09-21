@@ -1,7 +1,7 @@
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { useGetRequest } from '../../../common/crud/useGet';
 import { useState, useEffect } from 'react';
-import { useAnalyticsBuilderView, IAnalyticsView } from '../useAnalyticsBuilderView';
+import { useAnalyticsBuilderView, IAnalyticsBuilderView } from '../useAnalyticsBuilderView';
 import { PageTable } from '../../../../framework/PageTable/PageTable';
 import { ITableColumn, ITableColumnTypeText } from '../../../../framework';
 import {
@@ -69,12 +69,12 @@ interface AnalyticsBodyProps extends AnalyticsBuilderProps {
 
 interface AnalyticsTableProps extends AnalyticsBodyProps {
   tableColumns: ITableColumn<ObjectType>[];
-  view: IAnalyticsView<ObjectType>;
+  view: IAnalyticsBuilderView<ObjectType>;
   toolbarFilters: IToolbarFilter[];
 }
 
 interface AnalyticsColumnBuilderProps extends AnalyticsBodyProps {
-  view: IAnalyticsView<ObjectType>;
+  view: IAnalyticsBuilderView<ObjectType>;
 }
 
 export function FillDefaultProps(props: AnalyticsBuilderProps) {
