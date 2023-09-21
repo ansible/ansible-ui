@@ -33,6 +33,7 @@ export type ObjectType = any;
 
 export interface OptionsDefinition {
   sort_options: [{ key: string }];
+  group_by: [{ key: string; value: string }];
   [key: string]: any;
 }
 
@@ -245,8 +246,13 @@ function buildTableFilters(params: AnalyticsBodyProps, queryParams: URLSearchPar
 }
 
 export function computeMainFilterKeys(params: AnalyticsBodyProps) {
-  const items: string[] = [];
-  const postParams = params.defaultOptionsParams;
+  let items: string[] = [];
+
+  if (params.options.group_by && Array.isArray(params.options.group_by)) {
+    items = params.options.group_by.map((item) => item.key + '_id');
+  }
+
+  /*const postParams = params.defaultOptionsParams;
   if (!postParams) {
     return items;
   }
@@ -265,6 +271,7 @@ export function computeMainFilterKeys(params: AnalyticsBodyProps) {
     }
   }
 
+  return items;*/
   return items;
 }
 
