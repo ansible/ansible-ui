@@ -17,6 +17,8 @@ import { useLocation } from 'react-router-dom';
 const main_filter = 'main___filter';
 const secondary_filter = 'secondary___filter';
 
+type KeyValue = { key: string; value: string };
+
 export interface MainRequestDefinition {
   report: {
     tableHeaders: [{ key: string; value: string }];
@@ -32,8 +34,9 @@ export interface MainRequestDefinition {
 export type ObjectType = any;
 
 export interface OptionsDefinition {
-  sort_options: [{ key: string }];
-  group_by: [{ key: string; value: string }];
+  sort_options: KeyValue[];
+  group_by: KeyValue[];
+  quick_date_range: KeyValue[];
   [key: string]: any;
 }
 
@@ -240,6 +243,25 @@ function buildTableFilters(params: AnalyticsBodyProps, queryParams: URLSearchPar
 
       filters.push(filter);
     }
+  }
+
+  // quick date range filter
+  const quick_date_range = 'quick_date_range';
+  let quickDateRangeOptions = [];
+
+  if (Array.isArray(params?.options?.quick_date_range)) {
+    quickDateRangeOptions = params.options.quick_date_range.map((item) => {
+      return { key: item.key, value: item.key, label: item.value };
+    });
+    filters.push({
+      key: quick_date_range,
+      type: ToolbarFilterType.MultiSelect,
+      options: quickDateRangeOptions,
+      query: quick_date_range,
+      label: quick_date_range,
+      placeholder: 'Select',
+      isPinned: true,
+    });
   }
 
   return filters;
