@@ -14,13 +14,15 @@ import { useModifiedColumn } from '../../../common/columns';
 import { AwxRoute } from '../../AwxRoutes';
 import { Project } from '../../interfaces/Project';
 import { useProjectsColumns } from '../../resources/projects/hooks/useProjectsColumns';
-import { IAwxView } from '../../useAwxView';
+import { useAwxView } from '../../useAwxView';
 
-export function AwxRecentProjectsCard(props: {
-  view: IAwxView<Project>;
-  showEmptyStateNonAdmin: boolean;
-}) {
-  const { view, showEmptyStateNonAdmin } = props;
+export function AwxRecentProjectsCard() {
+  const view = useAwxView<Project>({
+    url: '/api/v2/projects/',
+    disableQueryString: true,
+    defaultSort: 'modified',
+    defaultSortDirection: 'desc',
+  });
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const modifiedColumn = useModifiedColumn();
@@ -40,40 +42,24 @@ export function AwxRecentProjectsCard(props: {
       linkText={t('Go to Projects')}
       to={RouteObj.Projects}
     >
-      {showEmptyStateNonAdmin ? (
-        <PageTable
-          disableBodyPadding={true}
-          tableColumns={columns}
-          autoHidePagination={true}
-          errorStateTitle={t('Error loading projects')}
-          emptyStateVariant={'light'}
-          emptyStateTitle={t('There are currently no projects')}
-          {...view}
-          compact
-          itemCount={view.itemCount !== undefined ? Math.min(view.itemCount, 7) : undefined}
-          pageItems={view.pageItems ? view.pageItems.slice(0, 7) : []}
-          disableLastRowBorder
-        />
-      ) : (
-        <PageTable
-          disableBodyPadding={true}
-          tableColumns={columns}
-          autoHidePagination={true}
-          errorStateTitle={t('Error loading projects')}
-          emptyStateIcon={PlusCircleIcon}
-          emptyStateButtonIcon={<PlusCircleIcon />}
-          emptyStateVariant={'light'}
-          emptyStateTitle={t('There are currently no projects')}
-          emptyStateDescription={t('Create a project by clicking the button below.')}
-          emptyStateButtonText={t('Create project')}
-          emptyStateButtonClick={() => pageNavigate(AwxRoute.CreateProject)}
-          {...view}
-          compact
-          itemCount={view.itemCount !== undefined ? Math.min(view.itemCount, 7) : undefined}
-          pageItems={view.pageItems ? view.pageItems.slice(0, 7) : []}
-          disableLastRowBorder
-        />
-      )}
+      <PageTable
+        disableBodyPadding={true}
+        tableColumns={columns}
+        autoHidePagination={true}
+        errorStateTitle={t('Error loading projects')}
+        emptyStateIcon={PlusCircleIcon}
+        emptyStateButtonIcon={<PlusCircleIcon />}
+        emptyStateVariant={'light'}
+        emptyStateTitle={t('There are currently no projects')}
+        emptyStateDescription={t('Create a project by clicking the button below.')}
+        emptyStateButtonText={t('Create project')}
+        emptyStateButtonClick={() => pageNavigate(AwxRoute.CreateProject)}
+        {...view}
+        compact
+        itemCount={view.itemCount !== undefined ? Math.min(view.itemCount, 7) : undefined}
+        pageItems={view.pageItems ? view.pageItems.slice(0, 7) : []}
+        disableLastRowBorder
+      />
     </PageDashboardCard>
   );
 }
