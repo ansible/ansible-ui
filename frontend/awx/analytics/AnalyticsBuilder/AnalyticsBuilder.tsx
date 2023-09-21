@@ -280,6 +280,7 @@ function buildTableColumns(params: AnalyticsColumnBuilderProps) {
     for (const tableHeader of params.mainData.report.tableHeaders) {
       let column = {} as ITableColumnTypeText<ObjectType>;
       column.id = tableHeader.key;
+      column.type = 'text';
       columns.push(column);
     }
   }
@@ -298,7 +299,9 @@ function buildTableColumns(params: AnalyticsColumnBuilderProps) {
         column = alreadyExist;
       }
       column.type = 'text';
-      column.header = key;
+      if (!column.header) {
+        column.header = key;
+      }
       column.value = (item) => item[key] as string;
       column.id = key;
 
@@ -315,7 +318,7 @@ function buildTableColumns(params: AnalyticsColumnBuilderProps) {
       const col = columns.find((item) => item.id == tableHeader.key);
 
       if (col) {
-        col.header = tableHeader.value;
+        col.header = tableHeader.value + '(' + tableHeader.key + ')';
       }
     }
 
@@ -336,6 +339,13 @@ function buildTableColumns(params: AnalyticsColumnBuilderProps) {
       if (col) {
         col.sort = col.id;
       }
+    }
+  }
+
+  // ensure values are not missing
+  for (const col of columns) {
+    if (!col.value) {
+      col.value = () => 'Value is missing in data';
     }
   }
 

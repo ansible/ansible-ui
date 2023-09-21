@@ -838,6 +838,7 @@ function TableCells<T extends object>(props: {
 }) {
   const { columns, item, rowActions } = props;
   const [actionsExpanded, setActionsExpanded] = useState(false);
+
   return (
     <Fragment>
       {columns.map((column) => {
