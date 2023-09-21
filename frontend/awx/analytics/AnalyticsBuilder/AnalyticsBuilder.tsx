@@ -223,21 +223,21 @@ function getAvailableSortingKeys(params: AnalyticsBodyProps) {
 function buildTableFilters(params: AnalyticsBodyProps, queryParams: URLSearchParams) {
   const filters: IToolbarFilter[] = [];
 
-  const keys = computeMainFilterKeys(params);
+  const mainFilters = computeMainFilterKeys(params);
 
-  for (const key of keys) {
-    const paramOption = params?.options?.[key] as { key: string; value: string }[];
+  for (const mainFilter of mainFilters) {
+    const paramOption = params?.options?.[mainFilter.key] as { key: string; value: string }[];
     const options = paramOption?.map((item) => {
       return { key: item.key, value: item.key, label: item.value };
     });
 
     if (options) {
       const filter: IToolbarMultiSelectFilter = {
-        key: key,
+        key: mainFilter.key,
         type: ToolbarFilterType.MultiSelect,
         options: options,
-        query: key,
-        label: key,
+        query: mainFilter.key,
+        label: mainFilter.value,
         placeholder: 'Select',
       };
 
@@ -258,7 +258,7 @@ function buildTableFilters(params: AnalyticsBodyProps, queryParams: URLSearchPar
       type: ToolbarFilterType.SingleSelect,
       options: quickDateRangeOptions,
       query: quick_date_range,
-      label: quick_date_range,
+      label: 'Quick Date Range',
       placeholder: 'Select',
       isPinned: true,
     });
@@ -268,32 +268,41 @@ function buildTableFilters(params: AnalyticsBodyProps, queryParams: URLSearchPar
 }
 
 export function computeMainFilterKeys(params: AnalyticsBodyProps) {
-  let items: string[] = [];
+  let items: { key: string; value: string }[] = [];
 
   if (params.options.group_by && Array.isArray(params.options.group_by)) {
-    items = params.options.group_by.map((item) => item.key + '_id');
+    items = params.options.group_by.map((item) => {
+      return { key: item.key + '_id', value: item.value };
+    });
   }
 
-  /*const postParams = params.defaultOptionsParams;
-  if (!postParams) {
-    return items;
-  }
+  if (items.length == 0) {
+    // if group by missing, try to determine them automatically
+    const postParams = params.defaultOptionsParams;
+    if (!postParams) {
+      return items;
+    }
 
-  const options = params.options;
+    const options = params.options;
 
-  for (const key in postParams) {
-    const postParam = postParams[key];
-    if (Array.isArray(postParam) && options) {
-      // determine if it matches the options
-      const found = Object.keys(options).find((item) => item == key);
-      if (found) {
-        // add it to the items keys
-        items.push(key);
+    for (const option in options) {
+      if (option.endsWith('_id')) {
+        items.push({ key: option, value: option });
       }
     }
+    /*for (const key in postParams) {
+      const postParam = postParams[key];
+      if (Array.isArray(postParam) && options) {
+        // determine if it matches the options
+        const found = Object.keys(options).find((item) => item == key);
+        if (found) {
+          // add it to the items keys
+          items.push(key);
+        }
+      }
+    }*/
   }
 
-  return items;*/
   return items;
 }
 

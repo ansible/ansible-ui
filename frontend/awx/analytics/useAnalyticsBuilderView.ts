@@ -78,7 +78,7 @@ export function useAnalyticsBuilderView<T extends object>({
 
   // clear all params that are not in filters
   if (builderProps) {
-    const availableFilterKeys = computeMainFilterKeys(builderProps);
+    const availableFilterKeys = computeMainFilterKeys(builderProps).map((item) => item.key);
     for (const key of availableFilterKeys) {
       if (postData[key]) {
         if (Array.isArray(postData[key])) {
