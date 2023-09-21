@@ -1,7 +1,7 @@
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { useGetRequest } from '../../../common/crud/useGet';
 import { useState, useEffect } from 'react';
-import { useAnalyticsView, IAnalyticsView } from '../../analytics/useAnalyticsView';
+import { useAnalyticsBuilderView, IAnalyticsView } from '../useAnalyticsBuilderView';
 import { PageTable } from '../../../../framework/PageTable/PageTable';
 import { ITableColumn, ITableColumnTypeText } from '../../../../framework';
 import {
@@ -166,7 +166,7 @@ function AnalyticsBody(props: AnalyticsBodyProps) {
 
   const filters = buildTableFilters(props, queryParams);
 
-  const view = useAnalyticsView<ObjectType>({
+  const view = useAnalyticsBuilderView<ObjectType>({
     url: props.mainData.report.layoutProps.dataEndpoint,
     keyFn: props.rowKeyFn ? props.rowKeyFn : () => 0,
     builderProps: props,
