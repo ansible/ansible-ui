@@ -11,7 +11,7 @@ import {
 import { PageSelectOption } from '../../../../framework/PageInputs/PageSelectOption';
 
 import { ColumnTableOption } from '../../../../framework/PageTable/PageTableColumn';
-import { IToolbarSingleSelectFilter } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarSingleSelectFilter';
+import { IToolbarMultiSelectFilter } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarMultiSelectFilter';
 import { useLocation } from 'react-router-dom';
 
 const main_filter = 'main___filter';
@@ -219,12 +219,34 @@ function getAvailableSortingKeys(params: AnalyticsBodyProps) {
 function buildTableFilters(params: AnalyticsBodyProps, queryParams: URLSearchParams) {
   const filters: IToolbarFilter[] = [];
 
+  const keys = computeMainFilterKeys(params);
+
+  for (const key of keys) {
+    const paramOption = params?.options?.[key] as { key: string; value: string }[];
+    const options = paramOption?.map((item) => {
+      return { key: item.key, value: item.value, label: item.value };
+    });
+
+    if (options) {
+      const filter: IToolbarMultiSelectFilter = {
+        key: key,
+        type: ToolbarFilterType.MultiSelect,
+        options: options,
+        query: key,
+        label: key,
+        placeholder: 'Select',
+      };
+
+      filters.push(filter);
+    }
+  }
+
   // add main filter
-  const filter: IToolbarSingleSelectFilter = {
+  /*const filter: IToolbarSingleSelectFilter = {
     key: main_filter,
     type: ToolbarFilterType.SingleSelect,
     options: computeMainFilterOptions(params),
-    placeholder: main_filter,
+    placeholder: 'Select',
     query: main_filter,
     label: main_filter,
   };
@@ -253,18 +275,19 @@ function buildTableFilters(params: AnalyticsBodyProps, queryParams: URLSearchPar
     key: secondary_filter,
     type: ToolbarFilterType.SingleSelect,
     options: options2,
-    placeholder: secondary_filter,
     query: secondary_filter,
     label: secondary_filter,
+    placeholder: 'Select',
   };
 
   filters.push(filter2);
 
+  */
   return filters;
 }
 
-function computeMainFilterOptions(params: AnalyticsBodyProps) {
-  const items: PageSelectOption<ObjectType>[] = [];
+function computeMainFilterKeys(params: AnalyticsBodyProps) {
+  const items: string[] = [];
   const postParams = params.defaultOptionsParams;
   if (!postParams) {
     return items;
@@ -278,14 +301,8 @@ function computeMainFilterOptions(params: AnalyticsBodyProps) {
       // determine if it matches the options
       const found = Object.keys(options).find((item) => item == key);
       if (found) {
-        // add it to the dropdown items
-        const item: PageSelectOption<ObjectType> = {
-          key,
-          value: key,
-          label: key,
-        };
-
-        items.push(item);
+        // add it to the items keys
+        items.push(key);
       }
     }
   }
