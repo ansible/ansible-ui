@@ -231,6 +231,7 @@ function LoginForm(props: LoginFormProps) {
           name="username"
           label={t('Username')}
           placeholder={t('Enter username')}
+          autoComplete={process.env.NODE_ENV === 'development' ? 'on' : 'off'}
           isRequired
           autoFocus
         />
@@ -239,6 +240,7 @@ function LoginForm(props: LoginFormProps) {
           label={t('Password')}
           placeholder={t('Enter password')}
           type="password"
+          autoComplete={process.env.NODE_ENV === 'development' ? 'on' : 'off'}
           isRequired
         />
       </PageForm>
