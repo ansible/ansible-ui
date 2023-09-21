@@ -31,7 +31,7 @@ jobs:
         run: npm ci
 
       - name: NPM Build
-        working-directory: platform-ui
+        working-directory: platform
         run: npm run build
 
       - name: Set up QEMU
