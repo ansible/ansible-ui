@@ -230,18 +230,20 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
   });
 
   // This should be a component test
-  it('non-admin users see default empty state without Create {resource} button', () => {
-    cy.navigateTo('awx', 'dashboard');
-    cy.intercept({ method: 'GET', url: '/api/v2/projects/*' }, { fixture: 'emptyList.json' });
-    cy.intercept({ method: 'GET', url: '/api/v2/inventories/*' }, { fixture: 'emptyList.json' });
-    cy.intercept({ method: 'GET', url: '/api/v2/unified_jobs/*' }, { fixture: 'emptyList.json' });
-    cy.intercept({ method: 'GET', url: '/api/v2/me' }, { fixture: 'normalUser.json' });
-    cy.reload();
-    cy.hasTitle('There are currently no jobs').should('exist');
-    cy.hasTitle('There are currently no projects').should('exist');
-    cy.hasTitle('There are currently no inventories').should('exist');
-    cy.contains('button', 'Create job').should('not.exist');
-    cy.contains('button', 'Create project').should('not.exist');
-    cy.contains('button', 'Create inventory').should('not.exist');
-  });
+  // Normal users might still be able to create resources f they have the right permissions
+  // this is not a valid test.
+  // it('non-admin users see default empty state without Create {resource} button', () => {
+  //   cy.navigateTo('awx', 'dashboard');
+  //   cy.intercept({ method: 'GET', url: '/api/v2/projects/*' }, { fixture: 'emptyList.json' });
+  //   cy.intercept({ method: 'GET', url: '/api/v2/inventories/*' }, { fixture: 'emptyList.json' });
+  //   cy.intercept({ method: 'GET', url: '/api/v2/unified_jobs/*' }, { fixture: 'emptyList.json' });
+  //   cy.intercept({ method: 'GET', url: '/api/v2/me' }, { fixture: 'normalUser.json' });
+  //   cy.reload();
+  //   cy.hasTitle('There are currently no jobs').should('exist');
+  //   cy.hasTitle('There are currently no projects').should('exist');
+  //   cy.hasTitle('There are currently no inventories').should('exist');
+  //   cy.contains('button', 'Create job').should('not.exist');
+  //   cy.contains('button', 'Create project').should('not.exist');
+  //   cy.contains('button', 'Create inventory').should('not.exist');
+  // });
 });

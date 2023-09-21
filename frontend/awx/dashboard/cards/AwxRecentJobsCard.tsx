@@ -14,12 +14,17 @@ import { useGetPageUrl } from '../../../../framework/PageNavigation/useGetPageUr
 import { AwxRoute } from '../../AwxRoutes';
 import { Job } from '../../interfaces/Job';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
-import { IAwxView } from '../../useAwxView';
+import { useAwxView } from '../../useAwxView';
 import { useJobsColumns } from '../../views/jobs/hooks/useJobsColumns';
 
-export function AwxRecentJobsCard(props: { view: IAwxView<Job>; showEmptyStateNonAdmin: boolean }) {
+export function AwxRecentJobsCard() {
   const getPageUrl = useGetPageUrl();
-  const { view, showEmptyStateNonAdmin } = props;
+  const view = useAwxView<Job>({
+    url: '/api/v2/unified_jobs/',
+    disableQueryString: true,
+    defaultSort: 'finished',
+    defaultSortDirection: 'desc',
+  });
   const { t } = useTranslation();
   const navigate = useNavigate();
   let columns = useJobsColumns();
@@ -47,40 +52,24 @@ export function AwxRecentJobsCard(props: { view: IAwxView<Job>; showEmptyStateNo
       linkText={t('Go to Jobs')}
       to={getPageUrl(AwxRoute.Jobs)}
     >
-      {showEmptyStateNonAdmin ? (
-        <PageTable<Job>
-          disableBodyPadding={true}
-          tableColumns={columns}
-          autoHidePagination={true}
-          errorStateTitle={t('Error loading jobs')}
-          emptyStateVariant={'light'}
-          emptyStateTitle={t('There are currently no jobs')}
-          {...view}
-          compact
-          itemCount={view.itemCount !== undefined ? Math.min(view.itemCount, 7) : undefined}
-          pageItems={view.pageItems ? view.pageItems.slice(0, 7) : []}
-          disableLastRowBorder
-        />
-      ) : (
-        <PageTable<Job>
-          disableBodyPadding={true}
-          tableColumns={columns}
-          autoHidePagination={true}
-          errorStateTitle={t('Error loading jobs')}
-          emptyStateIcon={PlusCircleIcon}
-          emptyStateButtonIcon={<PlusCircleIcon />}
-          emptyStateVariant={'light'}
-          emptyStateTitle={t('There are currently no jobs')}
-          emptyStateDescription={t('Create a job by clicking the button below.')}
-          emptyStateButtonText={t('Create job')}
-          emptyStateButtonClick={() => navigate(AwxRoute.CreateJobTemplate)}
-          {...view}
-          compact
-          itemCount={view.itemCount !== undefined ? Math.min(view.itemCount, 7) : undefined}
-          pageItems={view.pageItems ? view.pageItems.slice(0, 7) : []}
-          disableLastRowBorder
-        />
-      )}
+      <PageTable<Job>
+        disableBodyPadding={true}
+        tableColumns={columns}
+        autoHidePagination={true}
+        errorStateTitle={t('Error loading jobs')}
+        emptyStateIcon={PlusCircleIcon}
+        emptyStateButtonIcon={<PlusCircleIcon />}
+        emptyStateVariant={'light'}
+        emptyStateTitle={t('There are currently no jobs')}
+        emptyStateDescription={t('Create a job by clicking the button below.')}
+        emptyStateButtonText={t('Create job')}
+        emptyStateButtonClick={() => navigate(AwxRoute.CreateJobTemplate)}
+        {...view}
+        compact
+        itemCount={view.itemCount !== undefined ? Math.min(view.itemCount, 7) : undefined}
+        pageItems={view.pageItems ? view.pageItems.slice(0, 7) : []}
+        disableLastRowBorder
+      />
     </PageDashboardCard>
   );
 }
