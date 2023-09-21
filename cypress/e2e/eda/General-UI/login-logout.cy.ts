@@ -53,8 +53,9 @@ describe('EDA Login / Logoff', () => {
     cy.hasDetail('Last name', userDetails.LastName);
     cy.hasDetail('Email', userDetails.Email);
     cy.hasDetail('Username', userDetails.Username);
-    cy.intercept('GET', '/api/logout/').as('loggedOut');
+    cy.intercept('POST', '/api/eda/v1/auth/session/logout/').as('login');
     cy.edaLogout();
+    cy.wait('@login');
     cy.get('[data-cy="username"]').type(userDetails.Username);
     cy.get('[data-cy="password"]').type(userDetails.Password);
     cy.clickModalButton('Log in');
