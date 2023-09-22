@@ -15,6 +15,8 @@ import { ColumnTableOption } from '../../../../framework/PageTable/PageTableColu
 import { IToolbarMultiSelectFilter } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarMultiSelectFilter';
 import { useLocation } from 'react-router-dom';
 
+import { customFunctions } from './../components/Chart';
+
 type KeyValue = { key: string; value: string };
 
 export interface MainDataDefinition {
@@ -227,6 +229,8 @@ function AnalyticsTable(props: AnalyticsTableProps) {
     return tooltip;
   };
 
+  //let proxy = new Proxy(customFunctions({}), handler as AnyType);
+
   return (
     <PageTable<ObjectType>
       {...props.view}
@@ -242,18 +246,44 @@ function AnalyticsTable(props: AnalyticsTableProps) {
             tooltip: 'Savings for',
             field: sortOption,
             label: props.options?.sort_options?.find((item) => item.key == sortOption)?.value,
+            xTickFormat: '',
             chartType:
               availableChartTypes && availableChartTypes.length > 0
                 ? availableChartTypes?.[0]
                 : ('line' as ObjectType),
           })}
           data={{ items: props.view.pageItems }}
-          specificFunctions={{ labelFormat: { customTooltipFormatting } }}
+          specificFunctions={{
+            labelFormat: { customTooltipFormatting },
+            onClick: {
+              handleClick: (event, props) => {
+                alert('click');
+              },
+            },
+          }}
         />
       }
     />
   );
 }
+
+let handler = {
+  get: function (obj: AnyType, prop: AnyType) {
+    console.log(`Getting property ${prop}`);
+
+    if (prop == 'onClick') {
+    }
+
+    return obj[prop];
+  },
+
+  set: function (obj: AnyType, prop: AnyType, value: AnyType) {
+    console.log(`Setting property ${prop} to ${value}`);
+
+    obj[prop] = value;
+    return true;
+  },
+};
 
 // those columns are for view only, for sorting
 function getAvailableSortingKeys(params: AnalyticsBodyProps) {
@@ -460,4 +490,13 @@ const formattedValue = (key: string, value: number) => {
       val = value.toFixed(2);
   }
   return val;
+};
+
+const currencyFormatter = (n: number): string => {
+  const formatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+  });
+
+  return formatter.format(n); /* $2,500.00 */
 };

@@ -31,28 +31,30 @@ const CustomPoint: FC<Props> = ({ x, y, disableInlineStyles, ...props }) => {
   ) : null;
 };
 
-const customFunctions = (specificFunctions?: ChartFunctions) => ({
-  ...functions,
-  axisFormat: {
-    ...functions.axisFormat,
-    formatAsYear: (tick: string | number) =>
-      Intl.DateTimeFormat('en', { year: 'numeric' }).format(new Date(tick)),
-    formatAsMonth: (tick: string | number) =>
-      Intl.DateTimeFormat('en', { month: 'long' }).format(new Date(tick)),
-    ...specificFunctions?.axisFormat,
-  },
-  labelFormat: {
-    ...functions.labelFormat,
-    ...specificFunctions?.labelFormat,
-  },
-  onClick: {
-    ...functions.onClick,
-    ...specificFunctions?.onClick,
-  },
-  dataComponent: {
-    scatterPlot: CustomPoint,
-  },
-});
+export const customFunctions = (specificFunctions?: ChartFunctions) => {
+  return {
+    ...functions,
+    axisFormat: {
+      ...functions.axisFormat,
+      formatAsYear: (tick: string | number) =>
+        Intl.DateTimeFormat('en', { year: 'numeric' }).format(new Date(tick)),
+      formatAsMonth: (tick: string | number) =>
+        Intl.DateTimeFormat('en', { month: 'long' }).format(new Date(tick)),
+      ...specificFunctions?.axisFormat,
+    },
+    labelFormat: {
+      ...functions.labelFormat,
+      ...specificFunctions?.labelFormat,
+    },
+    onClick: {
+      ...functions.onClick,
+      ...specificFunctions?.onClick,
+    },
+    dataComponent: {
+      scatterPlot: CustomPoint,
+    },
+  };
+};
 
 const applyHiddenFilter = (chartData: ChartData, chartSeriesHidden: string[] = []): ChartData => ({
   ...chartData,
@@ -82,6 +84,8 @@ const Chart: FC<Props> = ({ schema, data, specificFunctions }) => {
     setChartData(applyHiddenFilter(convertApiToData(data), chartSeriesHiddenProps));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
+
+  debugger;
   return (
     <ChartBuilder
       schema={schema}
