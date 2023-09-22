@@ -1,10 +1,11 @@
 import {
   AnalyticsBuilder,
-  MainRequestDefinition,
+  MainDataDefinition,
   OptionsDefinition,
   ObjectType,
   AnalyticsBuilderProps,
   FillDefaultProps,
+  AnyType,
 } from './AnalyticsBuilder';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -65,7 +66,6 @@ function fillReports(props: AnalyticsBuilderProps, name: string) {
   props.main_url = `/api/v2/analytics/report/${name}/`;
   const defaultParams = reportDefaultParams(name);
 
-  props.defaultOptionsParams = defaultParams;
   props.defaultDataParams = defaultParams;
 }
 
@@ -94,7 +94,7 @@ const MySelectDropdown = (props: { items: string[]; onChange: (item: string) => 
     setIsOpen(isOpen);
   };
 
-  const onSelect = (event: any, selection: SelectOptionObject) => {
+  const onSelect = (event: AnyType, selection: SelectOptionObject) => {
     setSelected(selection.toString());
     setIsOpen(!isOpen);
     props.onChange(selection.toString());

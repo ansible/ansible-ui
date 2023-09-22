@@ -8,18 +8,16 @@ import {
   IToolbarFilter,
   ToolbarFilterType,
 } from '../../../../framework/PageToolbar/PageToolbarFilter';
-import { PageSelectOption } from '../../../../framework/PageInputs/PageSelectOption';
+import Chart from '../components/Chart';
+import hydrateSchema from '../components/Chart/hydrateSchema';
 
 import { ColumnTableOption } from '../../../../framework/PageTable/PageTableColumn';
 import { IToolbarMultiSelectFilter } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarMultiSelectFilter';
 import { useLocation } from 'react-router-dom';
 
-const main_filter = 'main___filter';
-const secondary_filter = 'secondary___filter';
-
 type KeyValue = { key: string; value: string };
 
-export interface MainRequestDefinition {
+export interface MainDataDefinition {
   report: {
     tableHeaders: [{ key: string; value: string }];
 
@@ -27,34 +25,43 @@ export interface MainRequestDefinition {
       // TODO - fix in API
       dataEndpoint: string;
       optionsEndpoint: string;
+
+      schema: ObjectType;
     };
+
+    availableChartTypes?: string[];
   };
 }
 
-export type ObjectType = any;
+export type ObjectType = AnyType;
+export type AnyType = any;
 
 export interface OptionsDefinition {
   sort_options: KeyValue[];
   group_by: KeyValue[];
   quick_date_range: KeyValue[];
-  [key: string]: any;
+  [key: string]: AnyType;
+}
+
+export interface DefaultDataParams {
+  sort_options?: string;
+  quick_date_range?: string;
+  group_by?: string;
+  [key: string]: AnyType;
 }
 
 export interface AnalyticsBuilderProps {
   main_url: string;
 
   // used for processing and adding, or modyfying some data that came from the server and are not complete
-  processMainData?: (props: AnalyticsBuilderProps, mainData: MainRequestDefinition) => void;
+  processMainData?: (props: AnalyticsBuilderProps, mainData: MainDataDefinition) => void;
   processOptions?: (props: AnalyticsBuilderProps, options: OptionsDefinition) => void;
-
-  // default post options params
-  defaultOptionsParams?: ObjectType;
 
   // on the fly postprocessing of default params
   processOptionsRequestPayload?: (props: AnalyticsBuilderProps, data: ObjectType) => void;
 
   // default post data params
-  defaultDataParams?: ObjectType;
+  defaultDataParams?: DefaultDataParams;
 
   // on the fly postprocessing of default params
   processDataRequestPayload?: (props: AnalyticsBuilderProps, data: ObjectType) => void;
@@ -67,7 +74,7 @@ export interface AnalyticsBuilderProps {
 }
 
 export interface AnalyticsBodyProps extends AnalyticsBuilderProps {
-  mainData: MainRequestDefinition;
+  mainData: MainDataDefinition;
   options: OptionsDefinition;
 }
 
@@ -117,16 +124,16 @@ function transformEndpoint(url: string) {
 }
 
 export function AnalyticsBuilder(props: AnalyticsBuilderProps) {
-  const [mainData, setMainData] = useState<MainRequestDefinition | null>(null);
+  const [mainData, setMainData] = useState<MainDataDefinition | null>(null);
   const [options, setOptions] = useState<OptionsDefinition | null>(null);
-  const [error, setError] = useState<any>(null);
+  const [error, setError] = useState<AnyType>(null);
 
   const post = usePostRequest();
   const get = useGetRequest();
 
   async function readData() {
     try {
-      const result = (await get(props.main_url, {})) as MainRequestDefinition;
+      const result = (await get(props.main_url, {})) as MainDataDefinition;
       result.report.layoutProps.dataEndpoint = transformEndpoint(
         result.report.layoutProps.dataEndpoint
       );
@@ -137,7 +144,7 @@ export function AnalyticsBuilder(props: AnalyticsBuilderProps) {
       props.processMainData?.(props, result);
       setMainData(result);
 
-      let optionsPayload = props.defaultOptionsParams || {};
+      let optionsPayload = props.defaultDataParams || {};
       props.processOptionsRequestPayload?.(props, optionsPayload);
 
       const result2 = (await post(
@@ -195,6 +202,31 @@ function AnalyticsBody(props: AnalyticsBodyProps) {
 }
 
 function AnalyticsTable(props: AnalyticsTableProps) {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+
+  let sortOption = queryParams.get('sort');
+
+  // fix the desc sorting with prefix -
+  if (sortOption && sortOption.length > 0 && sortOption[0] == '-') {
+    sortOption = sortOption.substring(1);
+  }
+
+  if (!sortOption) {
+    sortOption = props.defaultDataParams?.sort_options || '';
+  }
+
+  const availableChartTypes = props.mainData.report?.availableChartTypes;
+
+  const customTooltipFormatting = ({ datum }: { datum: Record<string, any> }) => {
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+    const tooltip = `${sortOption} for ${datum.name || ''}: ${
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      formattedValue('successful_hosts_savings', datum.y) || ''
+    }`;
+    return tooltip;
+  };
+
   return (
     <PageTable<ObjectType>
       {...props.view}
@@ -202,6 +234,23 @@ function AnalyticsTable(props: AnalyticsTableProps) {
       emptyStateTitle="empty state title"
       tableColumns={props.tableColumns || []}
       toolbarFilters={props.toolbarFilters}
+      scrollTopContent={true}
+      topContent={
+        <Chart
+          schema={hydrateSchema(props.mainData.report.layoutProps.schema)({
+            y: sortOption,
+            tooltip: 'Savings for',
+            field: sortOption,
+            label: props.options?.sort_options?.find((item) => item.key == sortOption)?.value,
+            chartType:
+              availableChartTypes && availableChartTypes.length > 0
+                ? availableChartTypes?.[0]
+                : ('line' as ObjectType),
+          })}
+          data={{ items: props.view.pageItems }}
+          specificFunctions={{ labelFormat: { customTooltipFormatting } }}
+        />
+      }
     />
   );
 }
@@ -278,7 +327,7 @@ export function computeMainFilterKeys(params: AnalyticsBodyProps) {
 
   if (items.length == 0) {
     // if group by missing, try to determine them automatically
-    const postParams = params.defaultOptionsParams;
+    const postParams = params.defaultDataParams;
     if (!postParams) {
       return items;
     }
@@ -392,3 +441,23 @@ function buildTableColumns(params: AnalyticsColumnBuilderProps) {
 
   return columns;
 }
+
+const formattedValue = (key: string, value: number) => {
+  let val;
+  switch (key) {
+    case 'elapsed':
+      val = value.toFixed(2) + ' seconds';
+      break;
+    case 'template_automation_percentage':
+      val = value.toFixed(2) + '%';
+      break;
+    case 'successful_hosts_savings':
+    case 'failed_hosts_costs':
+    case 'monetary_gain':
+      val = currencyFormatter(value);
+      break;
+    default:
+      val = value.toFixed(2);
+  }
+  return val;
+};
