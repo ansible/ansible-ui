@@ -17,12 +17,12 @@ import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { EdaRoute } from '../../EdaRoutes';
 import { API_PREFIX } from '../../constants';
 import { EdaResult } from '../../interfaces/EdaResult';
-import { EdaRole, EdaRoleRef } from '../../interfaces/EdaRole';
+import { EdaRole } from '../../interfaces/EdaRole';
 import { EdaCurrentUserUpdate, EdaUser, EdaUserCreateUpdate } from '../../interfaces/EdaUser';
-import { PageFormRolesSelect } from '../Roles/components/PageFormRolesSelect';
+import { PageFormMultiSelect } from '../../../../framework/PageForm/Inputs/PageFormMultiSelect';
 
 type UserInput = Omit<EdaUserCreateUpdate, 'roles'> & {
-  roles?: EdaRoleRef[];
+  roles?: string[];
   confirmPassword: string;
 };
 
@@ -43,7 +43,7 @@ export function CreateUser() {
     }
     const createUser: EdaUserCreateUpdate = {
       ...user,
-      roles: roles?.map((role) => role.id) ?? [],
+      roles: roles ?? [],
     };
     const newUser = await postRequest(`${API_PREFIX}/users/`, createUser);
     pageNavigate(EdaRoute.UserPage, { params: { id: newUser.id } });
@@ -97,7 +97,6 @@ export function EditCurrentUser() {
   };
 
   const onCancel = () => navigate(-1);
-
   if (!user) {
     return (
       <PageLayout>
@@ -105,7 +104,7 @@ export function EditCurrentUser() {
       </PageLayout>
     );
   }
-
+  const editUser: EdaCurrentUserUpdate = { ...user };
   return (
     <PageLayout>
       <PageHeader
@@ -117,7 +116,7 @@ export function EditCurrentUser() {
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
-        defaultValue={user}
+        defaultValue={editUser}
       >
         <CurrentUserInputs />
       </PageForm>
@@ -133,7 +132,6 @@ export function EditUser() {
   const id = Number(params.id);
   const { data: user } = useGet<EdaUser>(`${API_PREFIX}/users/${id.toString()}/`);
   const { data: rolesResult } = useGet<EdaResult<EdaRole>>(`${API_PREFIX}/roles/`);
-  const roles = rolesResult?.results;
   const patchRequest = usePatchRequest<EdaUserCreateUpdate, EdaUser>();
   const onSubmit: PageFormSubmitHandler<UserInput> = async (
     userInput: UserInput,
@@ -147,7 +145,7 @@ export function EditUser() {
         return false;
       }
     }
-    const editUser: EdaUserCreateUpdate = { ...user, roles: roles?.map((role) => role.id) ?? [] };
+    const editUser: EdaUserCreateUpdate = { ...user, roles: roles ?? [] };
     const updatedUser = await patchRequest(`${API_PREFIX}/users/${id}/`, editUser);
     pageNavigate(EdaRoute.UserPage, { params: { id: updatedUser.id } });
   };
@@ -167,10 +165,9 @@ export function EditUser() {
       </PageLayout>
     );
   }
-
   const defaultValue: Partial<UserInput> = {
     ...user,
-    roles: roles?.filter((role) => user.roles.find((roleRef) => roleRef.id === role.id)) ?? [],
+    roles: user.roles.map((role) => role.id),
   };
   return (
     <PageLayout>
@@ -233,6 +230,9 @@ function CurrentUserInputs() {
 function UserInputs(props: { mode: 'create' | 'edit' }) {
   const { mode } = props;
   const { t } = useTranslation();
+  const { data: userRoles } = useGet<EdaResult<EdaRole>>(
+    `${API_PREFIX}/roles/?page=1&page_size=200`
+  );
   return (
     <Fragment>
       <PageFormTextInput<UserInput>
@@ -282,7 +282,20 @@ function UserInputs(props: { mode: 'create' | 'edit' }) {
         type="password"
         isRequired={mode === 'create'}
       />
-      <PageFormRolesSelect<UserInput> name="roles" isRequired />
+      <PageFormMultiSelect<UserInput>
+        name="roles"
+        options={
+          userRoles?.results
+            ? userRoles.results.map((item) => ({
+                label: item.name,
+                value: item.id,
+                description: item?.description || '',
+              }))
+            : []
+        }
+        isRequired
+        placeholderText={t('Select role(s)')}
+      />
     </Fragment>
   );
 }
