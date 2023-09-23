@@ -15,9 +15,8 @@ import { ColumnTableOption } from '../../../../framework/PageTable/PageTableColu
 import { IToolbarMultiSelectFilter } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarMultiSelectFilter';
 import { useLocation } from 'react-router-dom';
 
-import { customFunctions } from './../components/Chart';
 import { ChartFunctions } from '@ansible/react-json-chart-builder';
-import { WrapObjectInProxy  } from './ProxyWrapper';
+
 
 type KeyValue = { key: string; value: string };
 
@@ -234,7 +233,7 @@ function AnalyticsTable(props: AnalyticsTableProps) {
   const specificFunctions : ChartFunctions = 
   {
     labelFormat: { customTooltipFormatting },
-    onClick: {},
+    onClick: { handleClick : () => {}},
     axisFormat: {},
     style: {},
     dataComponent: {},
@@ -257,13 +256,13 @@ function AnalyticsTable(props: AnalyticsTableProps) {
             tooltip: 'Savings for',
             field: sortOption,
             label: props.options?.sort_options?.find((item) => item.key == sortOption)?.value,
-            xTickFormat: '',
+            xTickFormat: 'formatDateAsDayMonth',
             chartType:
               availableChartTypes && availableChartTypes.length > 0
                 ? availableChartTypes?.[0]
                 : ('line' as ObjectType),
           })}
-          data={{ items: props.view.pageItems }}
+          data={props.view.originalData as AnyType}
           specificFunctions={specificFunctions
           }
         />
