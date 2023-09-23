@@ -239,8 +239,6 @@ function AnalyticsTable(props: AnalyticsTableProps) {
     dataComponent: {},
   };
  
-  //let proxy = new Proxy(customFunctions({}), handler as AnyType);
-
   return (
     <PageTable<ObjectType>
       {...props.view}

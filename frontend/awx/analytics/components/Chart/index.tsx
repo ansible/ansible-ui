@@ -9,7 +9,6 @@ import ChartBuilder, {
 import { convertApiToData } from './convertApi';
 import { ApiReturnType } from './types';
 import { ChartDataSerie } from '@ansible/react-json-chart-builder/dist/cjs';
-import { wrapObjectInProxy } from '../../AnalyticsBuilder/ProxyWrapper';
 import { AnyType } from '../../AnalyticsBuilder/AnalyticsBuilder';
 
 interface Props {
