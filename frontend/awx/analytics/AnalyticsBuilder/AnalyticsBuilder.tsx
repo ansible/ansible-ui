@@ -17,7 +17,6 @@ import { useLocation } from 'react-router-dom';
 
 import { ChartFunctions } from '@ansible/react-json-chart-builder';
 
-
 type KeyValue = { key: string; value: string };
 
 export interface MainDataDefinition {
@@ -50,6 +49,7 @@ export interface DefaultDataParams {
   sort_options?: string;
   quick_date_range?: string;
   group_by?: string;
+  granularity?: string;
   [key: string]: AnyType;
 }
 
@@ -230,15 +230,14 @@ function AnalyticsTable(props: AnalyticsTableProps) {
     return tooltip;
   };
 
-  const specificFunctions : ChartFunctions = 
-  {
+  const specificFunctions: ChartFunctions = {
     labelFormat: { customTooltipFormatting },
-    onClick: { handleClick : () => {}},
+    onClick: { handleClick: () => {} },
     axisFormat: {},
     style: {},
     dataComponent: {},
   };
- 
+
   return (
     <PageTable<ObjectType>
       {...props.view}
@@ -254,15 +253,14 @@ function AnalyticsTable(props: AnalyticsTableProps) {
             tooltip: 'Savings for',
             field: sortOption,
             label: props.options?.sort_options?.find((item) => item.key == sortOption)?.value,
-            xTickFormat: 'formatDateAsDayMonth',
+            xTickFormat: getDateFormatByGranularity(props.defaultDataParams?.granularity || ''),
             chartType:
               availableChartTypes && availableChartTypes.length > 0
                 ? availableChartTypes?.[0]
                 : ('line' as ObjectType),
           })}
           data={props.view.originalData as AnyType}
-          specificFunctions={specificFunctions
-          }
+          specificFunctions={specificFunctions}
         />
       }
     />
@@ -483,4 +481,11 @@ const currencyFormatter = (n: number): string => {
   });
 
   return formatter.format(n); /* $2,500.00 */
+};
+
+const getDateFormatByGranularity = (granularity: string): string => {
+  if (granularity === 'yearly') return 'formatAsYear';
+  if (granularity === 'monthly') return 'formatAsMonth';
+  if (granularity === 'daily') return 'formatDateAsDayMonth';
+  return '';
 };

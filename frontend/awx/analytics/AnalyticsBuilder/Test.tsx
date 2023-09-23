@@ -18,7 +18,6 @@ export function Test() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  //const [reportName, setReportName] = useState<string>('');
   const queryParams = new URLSearchParams(location.search);
 
   const reportName = queryParams.get('reportName') || '';
@@ -32,18 +31,7 @@ export function Test() {
 
   function selectionChange(item: string) {
     navigate(`${location.pathname}?reportName=${item}`);
-
-    /*const query = new URLSearchParams(location.search);
-    query.delete('sort');
-    navigate(`${location.pathname}?${query.toString()}`);*/
   }
-
-  /*
-  useEffect( () => {
-    const query = new URLSearchParams(location.search);
-    query.delete('sort');
-    navigate(`${location.pathname}?${query.toString()}`);
-  }, [])*/
 
   return (
     <>
@@ -72,19 +60,6 @@ function fillReports(props: AnalyticsBuilderProps, name: string) {
 function fillDefaultProps(props: AnalyticsBuilderProps) {
   props.rowKeyFn = (item) => item.id;
 }
-
-/*
-const automationCalculator = {
-  main_url: '/api/v2/analytics/report/automation_calculator/',
-};
-
-const hostsByOrganizationParams = reportDefaultParams('hosts_by_organization');
-
-const hostsByOrganization: AnalyticsBuilderProps = {
-  main_url: '/api/v2/analytics/report/hosts_by_organization/',
-  defaultOptionsParams: hostsByOrganizationParams,
-  defaultDataParams: hostsByOrganizationParams,
-};*/
 
 const MySelectDropdown = (props: { items: string[]; onChange: (item: string) => void }) => {
   const [isOpen, setIsOpen] = useState(false);

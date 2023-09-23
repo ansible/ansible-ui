@@ -86,10 +86,9 @@ const Chart: FC<Props> = ({ schema, data, specificFunctions }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
-
   return (
     <ChartBuilder
-      schema={(schema) as AnyType}
+      schema={schema as AnyType}
       functions={{
         ...customFunctions(specificFunctions),
       }}
