@@ -78,28 +78,48 @@ Cypress.Commands.add(
 Cypress.Commands.add(
   'selectPromptOnLaunchByLabel',
   (label: string | RegExp, isSelected?: boolean = true, text?: string) => {
-    isSelected
-      ? cy
-          .contains('.pf-c-form__label-text', label)
-          .parent()
-          .parent()
-          .parent()
-          .parent()
-          .within(() => {
-            cy.getCheckboxByLabel('Prompt on launch').click();
-          })
-      : cy
-          .contains('.pf-c-form__label-text', label)
-          .parent()
-          .parent()
-          .parent()
-          .parent()
-          .within(() => {
-            cy.get('button[aria-label="Options menu"]').click();
-            cy.get('.pf-c-select__menu').within(() => {
-              cy.contains('button', text).click();
+    if (isSelected) {
+      cy.contains('.pf-c-form__label-text', label)
+        .parent()
+        .parent()
+        .parent()
+        .parent()
+        .within(() => {
+          cy.getCheckboxByLabel('Prompt on launch').click();
+        });
+    } else {
+      switch (label) {
+        case 'Inventory':
+          cy.get('input[placeholder="Select inventory"]')
+            .parent()
+            .parent()
+            .within(() => {
+              cy.get('button[aria-label="Options menu"]').click();
             });
+          cy.get('.pf-c-select__menu').within(() => {
+            cy.contains('button', text).click();
           });
+          break;
+        case 'Execution environment':
+          cy.get('input[placeholder="Add execution environment"]')
+            .parent()
+            .within(() => {
+              cy.get('button[aria-label="Options menu"]').click();
+            });
+          cy.selectTableRowInDialog(text, true, 'radio').click();
+          cy.clickModalButton('Confirm');
+          break;
+        case 'Credentials':
+          cy.get('input[placeholder="Add credentials"]')
+            .parent()
+            .within(() => {
+              cy.get('button[aria-label="Options menu"]').click();
+            });
+          cy.selectTableRowInDialog(text, true, 'checkbox').click();
+          cy.clickModalButton('Confirm');
+          break;
+      }
+    }
   }
 );
 
