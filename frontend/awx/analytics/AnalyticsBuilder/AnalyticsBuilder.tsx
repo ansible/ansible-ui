@@ -16,6 +16,8 @@ import { IToolbarMultiSelectFilter } from '../../../../framework/PageToolbar/Pag
 import { useLocation } from 'react-router-dom';
 
 import { customFunctions } from './../components/Chart';
+import { ChartFunctions } from '@ansible/react-json-chart-builder';
+import { WrapObjectInProxy  } from './ProxyWrapper';
 
 type KeyValue = { key: string; value: string };
 
@@ -229,6 +231,15 @@ function AnalyticsTable(props: AnalyticsTableProps) {
     return tooltip;
   };
 
+  const specificFunctions : ChartFunctions = 
+  {
+    labelFormat: { customTooltipFormatting },
+    onClick: {},
+    axisFormat: {},
+    style: {},
+    dataComponent: {},
+  };
+ 
   //let proxy = new Proxy(customFunctions({}), handler as AnyType);
 
   return (
@@ -253,37 +264,13 @@ function AnalyticsTable(props: AnalyticsTableProps) {
                 : ('line' as ObjectType),
           })}
           data={{ items: props.view.pageItems }}
-          specificFunctions={{
-            labelFormat: { customTooltipFormatting },
-            onClick: {
-              handleClick: (event, props) => {
-                alert('click');
-              },
-            },
-          }}
+          specificFunctions={specificFunctions
+          }
         />
       }
     />
   );
 }
-
-let handler = {
-  get: function (obj: AnyType, prop: AnyType) {
-    console.log(`Getting property ${prop}`);
-
-    if (prop == 'onClick') {
-    }
-
-    return obj[prop];
-  },
-
-  set: function (obj: AnyType, prop: AnyType, value: AnyType) {
-    console.log(`Setting property ${prop} to ${value}`);
-
-    obj[prop] = value;
-    return true;
-  },
-};
 
 // those columns are for view only, for sorting
 function getAvailableSortingKeys(params: AnalyticsBodyProps) {
