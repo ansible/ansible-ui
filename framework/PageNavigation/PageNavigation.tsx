@@ -12,7 +12,7 @@ export function PageNavigation(props: { navigation: PageNavigationItem[] }) {
     <PageSidebar
       isNavOpen={navBar.isOpen}
       nav={
-        <Nav>
+        <Nav className="side-nav">
           <NavList>
             <PageNavigationItems baseRoute={''} items={navigationItems} />
           </NavList>
