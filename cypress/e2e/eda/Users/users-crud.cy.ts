@@ -38,7 +38,6 @@ describe('EDA Users- Create, Edit, Delete', () => {
     cy.get('[data-cy="password"]').type(userInfo.Password);
     cy.get('[data-cy="confirmpassword"]').type(userInfo.Password);
     cy.selectEdaUserRoleByName(contributorRoleName);
-    cy.contains('button', 'Confirm').should('be.enabled').click();
     cy.intercept('POST', `/api/eda/v1/users/`).as('createUser');
     cy.clickButton(/^Create user$/);
     cy.hasDetail('First name', userInfo.FirstName);
@@ -67,7 +66,6 @@ describe('EDA Users- Create, Edit, Delete', () => {
       cy.get('[data-cy="password"]').type('newpass');
       cy.get('[data-cy="confirmpassword"]').type('newpass');
       cy.selectEdaUserRoleByName(auditorRoleName);
-      cy.contains('button', 'Confirm').should('be.enabled').click();
       cy.clickButton(/^Save user$/);
       cy.hasDetail('Username', `${edaUser.username}edited`);
       cy.hasDetail('First name', 'firstname-edited');
@@ -105,15 +103,16 @@ describe('EDA Users- Create, Edit, Delete', () => {
     cy.contains('h1', 'Users');
     cy.setTablePageSize('100');
     cy.clickButton(/^Create user$/);
-    cy.get('button[aria-label="Options menu"]').click();
-    userRoles.forEach((role) => {
-      cy.contains(role)
-        .should('be.visible')
-        .parents('td[data-label="Name"]')
-        .prev()
-        .within(() => {
-          cy.get('input[type="checkbox"]').click();
+    cy.contains('.pf-c-form__label-text', 'Role(s)')
+      .parent()
+      .parent()
+      .parent()
+      .parent()
+      .within(() => {
+        cy.get('button[data-cy="roles"]').click();
+        userRoles.forEach((role) => {
+          cy.get(`[data-cy="${role.toLowerCase()}"]`).click();
         });
-    });
+      });
   });
 });

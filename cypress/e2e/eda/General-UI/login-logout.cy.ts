@@ -41,13 +41,7 @@ describe('EDA Login / Logoff', () => {
     cy.get('[data-cy="password"]').type(userDetails.Password);
     cy.get('[data-cy="confirmpassword"]').type(userDetails.Password);
     /*Roles selection*/
-    cy.get('#roles-form-group').within(() => {
-      cy.get('button').click();
-    });
-    cy.get('[data-ouia-component-type="PF4/ModalContent"]').within(() => {
-      cy.get('table').find('input').eq(1).click();
-      cy.clickButton(/^Confirm$/);
-    });
+    cy.selectEdaUserRoleByName('Contributor');
     cy.clickButton(/^Create user$/);
     cy.hasDetail('First name', userDetails.FirstName);
     cy.hasDetail('Last name', userDetails.LastName);
