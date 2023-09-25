@@ -1,5 +1,4 @@
 import {
-  Bullseye,
   Button,
   DropdownPosition,
   EmptyState,
@@ -9,7 +8,6 @@ import {
   Flex,
   PageSection,
   Skeleton,
-  Spinner,
   Stack,
   Title,
 } from '@patternfly/react-core';
@@ -285,16 +283,6 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
           ))
         }
       />
-    );
-  }
-
-  if (itemCount === undefined) {
-    return (
-      <PageSection isFilled variant="light">
-        <Bullseye>
-          <Spinner />
-        </Bullseye>
-      </PageSection>
     );
   }
 
