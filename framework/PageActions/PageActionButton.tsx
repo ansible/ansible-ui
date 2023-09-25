@@ -86,7 +86,6 @@ export function PageActionButton<T extends object>(props: {
           }}
           aria-label={iconOnly ? action.label : ''}
           ouiaId={id}
-          data-cy={id}
         >
           {content}
         </Button>

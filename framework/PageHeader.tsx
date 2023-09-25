@@ -40,6 +40,7 @@ function Breadcrumbs(props: { breadcrumbs: ICatalogBreadcrumb[]; style?: CSSProp
         if (!breadcrumb.label) return <Fragment key={index}></Fragment>;
         return (
           <BreadcrumbItem
+            data-cy={breadcrumb.label}
             id={breadcrumb.id}
             key={breadcrumb.id ?? breadcrumb.label ?? index}
             component={breadcrumb.component}
@@ -48,6 +49,7 @@ function Breadcrumbs(props: { breadcrumbs: ICatalogBreadcrumb[]; style?: CSSProp
             {breadcrumb.to ? (
               <a
                 href={breadcrumb.to}
+                data-cy={breadcrumb.label}
                 onClick={(e) => {
                   e.preventDefault();
                   if (!breadcrumb.to) return;

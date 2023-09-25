@@ -180,7 +180,7 @@ export function PageSingleSelect<
                   key={option.key !== undefined ? option.key : option.label}
                   itemId={option.key !== undefined ? option.key : option.label}
                   description={option.description}
-                  daya-cy={optionId}
+                  data-cy={optionId}
                 >
                   {option.label}
                 </SelectOption>
