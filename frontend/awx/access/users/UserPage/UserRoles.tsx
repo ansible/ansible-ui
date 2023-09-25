@@ -4,7 +4,6 @@ import {
   EmptyState,
   EmptyStateBody,
   EmptyStateIcon,
-  EmptyStateVariant,
   Title,
 } from '@patternfly/react-core';
 import { CubesIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons';
@@ -87,7 +86,7 @@ export function UserRoles(props: { user: User }) {
   if (isSysAdmin) {
     return (
       <EmptyStateDiv>
-        <EmptyState variant={EmptyStateVariant.small} style={{ paddingTop: 48 }}>
+        <EmptyState>
           <EmptyStateIcon icon={CubesIcon} />
           <Title headingLevel="h2" size="lg">
             {t(`System Administrator`)}

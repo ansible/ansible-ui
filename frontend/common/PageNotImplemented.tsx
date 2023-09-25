@@ -4,8 +4,6 @@ import {
   EmptyStateBody,
   EmptyStateIcon,
   EmptyStateSecondaryActions,
-  EmptyStateVariant,
-  PageSection,
   Stack,
   Title,
 } from '@patternfly/react-core';
@@ -17,22 +15,20 @@ export function PageNotImplemented() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   return (
-    <PageSection isWidthLimited style={{ background: 'transparent' }}>
-      <EmptyState variant={EmptyStateVariant.small}>
-        <EmptyStateIcon icon={WrenchIcon} />
-        <Title headingLevel="h2" size="lg">
-          {t('Under Development')}
-        </Title>
-        <EmptyStateBody>{t('This page is not yet available in the tech preview.')}</EmptyStateBody>
-        <EmptyStateSecondaryActions>
-          <Stack hasGutter>
-            <Button onClick={() => navigate(-1)}>{t('Return to previous page')}</Button>
-            <Button component={(props) => <Link to={'/'} {...props} />}>
-              {t('Return to dashboard')}
-            </Button>
-          </Stack>
-        </EmptyStateSecondaryActions>
-      </EmptyState>
-    </PageSection>
+    <EmptyState>
+      <EmptyStateIcon icon={WrenchIcon} />
+      <Title headingLevel="h2" size="lg">
+        {t('Under Development')}
+      </Title>
+      <EmptyStateBody>{t('This page is not yet available in the tech preview.')}</EmptyStateBody>
+      <EmptyStateSecondaryActions>
+        <Stack hasGutter>
+          <Button onClick={() => navigate(-1)}>{t('Return to previous page')}</Button>
+          <Button component={(props) => <Link to={'/'} {...props} />}>
+            {t('Return to dashboard')}
+          </Button>
+        </Stack>
+      </EmptyStateSecondaryActions>
+    </EmptyState>
   );
 }

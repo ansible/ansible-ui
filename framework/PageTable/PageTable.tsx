@@ -6,7 +6,6 @@ import {
   EmptyStateBody,
   EmptyStateIcon,
   EmptyStateSecondaryActions,
-  EmptyStateVariant,
   Flex,
   PageSection,
   Skeleton,
@@ -69,11 +68,6 @@ import { PageTableList } from './PageTableList';
 
 const ScrollDiv = styled.div`
   height: 100%;
-`;
-
-const ErrorStateDiv = styled.div`
-  height: 100%;
-  background-color: var(--pf-global--BackgroundColor--100);
 `;
 
 const TableCellDiv = styled.div`
@@ -266,38 +260,31 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
 
   const sortOptions = usePageToolbarSortOptionsFromColumns(props.tableColumns);
   if (error) {
-    return (
-      <ErrorStateDiv>
-        <EmptyStateError titleProp={props.errorStateTitle} message={error.message} />
-      </ErrorStateDiv>
-    );
+    return <EmptyStateError titleProp={props.errorStateTitle} message={error.message} />;
   }
 
   if (itemCount === 0 && Object.keys(filterState ?? {}).length === 0) {
     return (
-      <PageSection style={{ backgroundColor: 'transparent' }}>
-        <EmptyStateNoData
-          title={props.emptyStateTitle}
-          description={props.emptyStateDescription}
-          button={
-            (props.emptyStateButtonClick && (
-              <Button
-                variant="primary"
-                onClick={props.emptyStateButtonClick}
-                icon={props.emptyStateButtonIcon ? props.emptyStateButtonIcon : null}
-              >
-                {props.emptyStateButtonText}
-              </Button>
-            )) ||
-            (props.emptyStateActions && (
-              <Flex justifyContent={{ default: 'justifyContentCenter' }}>
-                <PageActions actions={props.emptyStateActions} />
-              </Flex>
-            ))
-          }
-          variant={EmptyStateVariant.large}
-        />
-      </PageSection>
+      <EmptyStateNoData
+        title={props.emptyStateTitle}
+        description={props.emptyStateDescription}
+        button={
+          (props.emptyStateButtonClick && (
+            <Button
+              variant="primary"
+              onClick={props.emptyStateButtonClick}
+              icon={props.emptyStateButtonIcon ? props.emptyStateButtonIcon : null}
+            >
+              {props.emptyStateButtonText}
+            </Button>
+          )) ||
+          (props.emptyStateActions && (
+            <Flex justifyContent={{ default: 'justifyContentCenter' }}>
+              <PageActions actions={props.emptyStateActions} />
+            </Flex>
+          ))
+        }
+      />
     );
   }
 
@@ -579,7 +566,7 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
         </Tbody>
       </TableComposable>
       {itemCount === 0 && (
-        <EmptyState style={{ paddingTop: 48 }}>
+        <EmptyState>
           <EmptyStateIcon icon={SearchIcon} />
           <Title headingLevel="h2" size="lg">
             {translations.noResultsFound}

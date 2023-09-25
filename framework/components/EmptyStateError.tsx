@@ -1,13 +1,6 @@
+import { Button, EmptyState, EmptyStateBody, EmptyStateIcon, Title } from '@patternfly/react-core';
 import { ExclamationCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import {
-  Title,
-  EmptyStateBody,
-  EmptyState,
-  EmptyStateIcon,
-  EmptyStateVariant,
-  Button,
-} from '@patternfly/react-core';
 
 export function EmptyStateError(props: { titleProp?: string; message?: string }) {
   const { t } = useTranslation();
@@ -16,7 +9,7 @@ export function EmptyStateError(props: { titleProp?: string; message?: string })
   const button = t('Refresh');
   const { titleProp, message } = props;
   return (
-    <EmptyState variant={EmptyStateVariant.small} style={{ paddingTop: 48 }}>
+    <EmptyState>
       <EmptyStateIcon icon={ExclamationCircleIcon} color="var(--pf-global--danger-color--100)" />
       <Title headingLevel="h2" size="lg">
         {titleProp || title}
