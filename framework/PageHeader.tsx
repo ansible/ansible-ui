@@ -146,7 +146,7 @@ export function PageHeader(props: PageHeaderProps) {
       )}
       <PageSection
         variant={PageSectionVariants.light}
-        className="border-top border-bottom dark-3"
+        className="border-top border-bottom dark-2"
         style={{
           paddingTop: breadcrumbs ? (isXl ? 16 : 12) : isXl ? 16 : 12,
           paddingBottom: isXl ? 16 : 12,
