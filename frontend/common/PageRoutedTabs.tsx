@@ -1,25 +1,34 @@
 import { PageSection, Tab, Tabs } from '@patternfly/react-core';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useGetPageUrl, usePageNavigate } from '../../framework';
+import { getPersistentFilters } from './PersistentFilters';
 
 export function PageRoutedTabs(props: {
+  backTab?: { label: string; page: string; persistentFilterKey: string };
   tabs: { label: string; page: string }[];
   params?: { [key: string]: string | number };
-  preComponents?: React.ReactNode;
 }) {
   const pageNavigate = usePageNavigate();
+  const navigate = useNavigate();
   const getPageUrl = useGetPageUrl();
+  const location = useLocation();
+  const activeTab = props.tabs.find(
+    (tab) => getPageUrl(tab.page, { params: props.params }) === location.pathname
+  );
+  const querystring = getPersistentFilters(props.backTab?.persistentFilterKey);
+  const query = parseQuery(querystring);
   const onSelect = (
     event: React.MouseEvent<HTMLElement, MouseEvent>,
     eventKey: number | string
   ) => {
     event.preventDefault();
-    pageNavigate(eventKey.toString(), { params: props.params });
+    if (eventKey === props.backTab?.page) {
+      navigate(getPageUrl(eventKey.toString(), { params: props.params, query }));
+    } else {
+      pageNavigate(eventKey.toString(), { params: props.params });
+    }
   };
-  const location = useLocation();
-  const activeTab = props.tabs.find(
-    (tab) => getPageUrl(tab.page, { params: props.params }) === location.pathname
-  );
+
   return (
     <>
       <Tabs
@@ -28,7 +37,14 @@ export function PageRoutedTabs(props: {
         activeKey={activeTab?.page}
         style={{ backgroundColor: 'var(--pf-c-tabs__link--BackgroundColor)' }}
       >
-        {props.preComponents}
+        {props.backTab && (
+          <Tab
+            key={props.backTab.page}
+            eventKey={props.backTab.page}
+            title={props.backTab.label}
+            href={getPageUrl(props.backTab.page, { params: props.params, query })}
+          />
+        )}
         {props.tabs.map((tab) => (
           <Tab
             key={tab.page}
@@ -43,4 +59,17 @@ export function PageRoutedTabs(props: {
       </PageSection>
     </>
   );
+}
+
+function parseQuery(queryString: string) {
+  const query: Record<string, string> = {};
+  const pairs = (queryString[0] === '?' ? queryString.substr(1) : queryString).split('&');
+  for (let i = 0; i < pairs.length; i++) {
+    const pair = pairs[i].split('=');
+    if (pair.length < 2) continue;
+    const key = decodeURIComponent(pair[0]);
+    const value = decodeURIComponent(pair[1] || '');
+    query[key] = decodeURIComponent(value);
+  }
+  return query;
 }

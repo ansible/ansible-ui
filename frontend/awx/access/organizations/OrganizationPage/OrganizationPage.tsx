@@ -16,7 +16,6 @@ import {
 } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { PageRoutedTabs } from '../../../../common/PageRoutedTabs';
-import { PageBackTab } from '../../../../common/RoutedTabs';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
 import { AwxError } from '../../../common/AwxError';
@@ -96,9 +95,13 @@ export function OrganizationPage() {
 export function OrganizationPageTabs(props: { organization: Organization }) {
   const { organization } = props;
   const { t } = useTranslation();
-  const getPageUrl = useGetPageUrl();
   return (
     <PageRoutedTabs
+      backTab={{
+        label: t('Back to Organizations'),
+        page: AwxRoute.Organizations,
+        persistentFilterKey: 'organizations',
+      }}
       tabs={[
         { label: t('Details'), page: AwxRoute.OrganizationDetails },
         { label: t('Access'), page: AwxRoute.OrganizationAccess },
@@ -107,9 +110,6 @@ export function OrganizationPageTabs(props: { organization: Organization }) {
         { label: t('Notifications'), page: AwxRoute.OrganizationNotifications },
       ]}
       params={{ id: organization.id }}
-      preComponents={
-        <PageBackTab label={t('Back to Organizations')} url={getPageUrl(AwxRoute.Organizations)} />
-      }
     />
   );
 }
