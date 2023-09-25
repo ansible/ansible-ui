@@ -58,6 +58,7 @@ export function useAnalyticsBuilderView<T extends object>({
   defaultSelection,
   builderProps,
   sortableColumns,
+  disableLoading,
 }: {
   url: string;
   keyFn: (item: T) => string | number;
@@ -72,6 +73,7 @@ export function useAnalyticsBuilderView<T extends object>({
   defaultSelection?: T[];
   builderProps?: AnalyticsBodyProps;
   sortableColumns?: string[];
+  disableLoading?: boolean;
 }): IAnalyticsBuilderView<T> {
   const [data, setData] = useState<AnalyticsItemsResponse<T> | undefined>(undefined);
   const [error, setError] = useState<any>(undefined);
@@ -160,8 +162,10 @@ export function useAnalyticsBuilderView<T extends object>({
   const changed = url + postDataJson;
 
   useEffect(() => {
-    fetchData();
-  }, [changed]);
+    if (!disableLoading) {
+      fetchData();
+    }
+  }, [changed, disableLoading]);
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   if (error instanceof RequestError) {

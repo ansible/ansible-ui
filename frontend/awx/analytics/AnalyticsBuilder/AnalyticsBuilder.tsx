@@ -79,9 +79,8 @@ export interface AnalyticsBuilderProps {
 }
 
 export interface AnalyticsBodyProps extends AnalyticsBuilderProps {
-  mainData: MainDataDefinition;
-  options: OptionsDefinition;
-  reloadOptions: () => void;
+  mainData?: MainDataDefinition;
+  options?: OptionsDefinition;
 }
 
 export interface AnalyticsTableProps extends AnalyticsBodyProps {
@@ -130,16 +129,18 @@ function transformEndpoint(url: string) {
 }
 
 export function AnalyticsBuilder(props: AnalyticsBuilderProps) {
-  const [mainData, setMainData] = useState<MainDataDefinition | null>(null);
-  const [options, setOptions] = useState<OptionsDefinition | null>(null);
-  const [error, setError] = useState<AnyType>(null);
+  const [mainData, setMainData] = useState<MainDataDefinition | undefined>(undefined);
+  const [options, setOptions] = useState<OptionsDefinition | undefined>(undefined);
+  const [error, setError] = useState<AnyType>(undefined);
+
+  const parameters: AnalyticsBodyProps = { ...props, mainData, options };
 
   const post = usePostRequest();
   const get = useGetRequest();
 
   async function readData() {
     try {
-      const result = (await get(props.main_url, {})) as MainDataDefinition;
+      const result = (await get(parameters.main_url, {})) as MainDataDefinition;
       result.report.layoutProps.dataEndpoint = transformEndpoint(
         result.report.layoutProps.dataEndpoint
       );
@@ -147,7 +148,7 @@ export function AnalyticsBuilder(props: AnalyticsBuilderProps) {
         result.report.layoutProps.optionsEndpoint
       );
 
-      props.processMainData?.(props, result);
+      parameters.processMainData?.(parameters, result);
       setMainData(result);
 
       readOptions(result);
@@ -158,19 +159,18 @@ export function AnalyticsBuilder(props: AnalyticsBuilderProps) {
 
   async function readOptions(mainData?: MainDataDefinition) {
     try {
-      debugger;
       if (!mainData) {
         return;
       }
 
-      let optionsPayload = props.defaultDataParams || {};
-      props.processOptionsRequestPayload?.(props, optionsPayload);
+      let optionsPayload = parameters.defaultDataParams || {};
+      parameters.processOptionsRequestPayload?.(parameters, optionsPayload);
 
       const result2 = (await post(
         mainData.report.layoutProps.optionsEndpoint,
         optionsPayload
       )) as OptionsDefinition;
-      props.processOptions?.(props, result2);
+      parameters.processOptions?.(parameters, result2);
       setOptions(result2);
     } catch (error) {
       setError(error);
@@ -181,61 +181,48 @@ export function AnalyticsBuilder(props: AnalyticsBuilderProps) {
     readData();
   }, []);
 
-  if (mainData && options) {
-    return (
-      <AnalyticsBody
-        mainData={mainData}
-        options={options}
-        {...props}
-        reloadOptions={() => {
-          readOptions(mainData);
-        }}
-      />
-    );
-  }
-
-  return <>Analytics builder - loading {error && 'Some error ocurred'}</>;
-}
-
-function AnalyticsBody(props: AnalyticsBodyProps) {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
 
   const [searchParams] = useSearchParams();
   let granularityParam =
-    searchParams.get('granularity') || props.defaultDataParams?.granularity || '';
+    searchParams.get('granularity') || parameters.defaultDataParams?.granularity || '';
 
   const [granularity, setGranularity] = useState<string>(granularityParam || '');
 
   if (granularityParam !== granularity) {
     setGranularity(granularityParam);
-    props.reloadOptions();
+    readOptions(mainData);
   }
 
-  let sortableColumns = getAvailableSortingKeys(props);
+  let sortableColumns = getAvailableSortingKeys(parameters);
 
-  const filters = buildTableFilters(props, queryParams);
+  const filters = buildTableFilters(parameters, queryParams);
 
   const view = useAnalyticsBuilderView<ObjectType>({
-    url: props.mainData.report.layoutProps.dataEndpoint,
-    keyFn: props.rowKeyFn ? props.rowKeyFn : () => 0,
-    builderProps: props,
+    url: parameters.mainData?.report.layoutProps.dataEndpoint || '',
+    keyFn: parameters.rowKeyFn ? parameters.rowKeyFn : () => 0,
+    builderProps: parameters,
     sortableColumns,
     toolbarFilters: filters,
+    disableLoading: !(options && mainData),
   });
 
-  const newProps = { ...props, view };
+  const newProps = { ...parameters, view };
 
   const columns = buildTableColumns({ ...newProps }) as ITableColumn<ObjectType>[];
 
   return (
     <>
       Analytics builder - body
-      <AnalyticsTable
-        {...newProps}
-        tableColumns={columns}
-        toolbarFilters={filters}
-      ></AnalyticsTable>
+      {error}
+      {mainData && options && (
+        <AnalyticsTable
+          {...newProps}
+          tableColumns={columns}
+          toolbarFilters={filters}
+        ></AnalyticsTable>
+      )}
     </>
   );
 }
@@ -255,7 +242,7 @@ function AnalyticsTable(props: AnalyticsTableProps) {
     sortOption = props.defaultDataParams?.sort_options || '';
   }
 
-  const availableChartTypes = props.mainData.report?.availableChartTypes;
+  const availableChartTypes = props.mainData?.report?.availableChartTypes;
 
   const customTooltipFormatting = ({ datum }: { datum: Record<string, any> }) => {
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
@@ -284,7 +271,7 @@ function AnalyticsTable(props: AnalyticsTableProps) {
       scrollTopContent={true}
       topContent={
         <Chart
-          schema={hydrateSchema(props.mainData.report.layoutProps.schema)({
+          schema={hydrateSchema(props.mainData?.report.layoutProps.schema)({
             y: sortOption,
             tooltip: 'Savings for',
             field: sortOption,
@@ -308,7 +295,7 @@ function getAvailableSortingKeys(params: AnalyticsBodyProps) {
   const sortKeys: string[] = [];
 
   // set sort by
-  if (params.options.sort_options) {
+  if (params.options?.sort_options) {
     for (const sort of params.options.sort_options) {
       sortKeys.push(sort.key);
     }
@@ -347,9 +334,10 @@ function buildTableFilters(params: AnalyticsBodyProps, queryParams: URLSearchPar
   let granularityOptions = [];
 
   if (Array.isArray(params?.options?.granularity)) {
-    granularityOptions = params.options.granularity.map((item) => {
-      return { key: item.key, value: item.key, label: item.value };
-    });
+    granularityOptions =
+      params.options?.granularity.map((item) => {
+        return { key: item.key, value: item.key, label: item.value };
+      }) || [];
     filters.push({
       key: granularity,
       type: ToolbarFilterType.SingleSelect,
@@ -366,9 +354,10 @@ function buildTableFilters(params: AnalyticsBodyProps, queryParams: URLSearchPar
   let quickDateRangeOptions = [];
 
   if (Array.isArray(params?.options?.quick_date_range)) {
-    quickDateRangeOptions = params.options.quick_date_range.map((item) => {
-      return { key: item.key, value: item.key, label: item.value };
-    });
+    quickDateRangeOptions =
+      params.options?.quick_date_range.map((item) => {
+        return { key: item.key, value: item.key, label: item.value };
+      }) || [];
     filters.push({
       key: quick_date_range,
       type: ToolbarFilterType.SingleSelect,
@@ -386,8 +375,8 @@ function buildTableFilters(params: AnalyticsBodyProps, queryParams: URLSearchPar
 export function computeMainFilterKeys(params: AnalyticsBodyProps) {
   let items: { key: string; value: string }[] = [];
 
-  if (params.options.group_by && Array.isArray(params.options.group_by)) {
-    items = params.options.group_by.map((item) => {
+  if (params.options?.group_by && Array.isArray(params.options?.group_by)) {
+    items = params.options?.group_by.map((item) => {
       return { key: item.key + '_id', value: item.value };
     });
   }
@@ -486,8 +475,8 @@ function buildTableColumns(params: AnalyticsColumnBuilderProps) {
   }
 
   // set sort by
-  if (params.options.sort_options) {
-    for (const sort of params.options.sort_options) {
+  if (params.options?.sort_options) {
+    for (const sort of params.options?.sort_options) {
       const col = columns.find((item) => item.id == sort.key);
 
       if (col) {
