@@ -1,0 +1,11 @@
+.pf-c-nav__item ::before {
+  content: unset;
+}
+
+.pf-c-nav__item.pf-m-expandable::before {
+  content: unset;
+}
+
+.pf-c-nav > .pf-c-nav__list > .pf-c-nav__item {
+  border-bottom: 1px solid #fff3;
+}
