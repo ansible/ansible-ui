@@ -284,6 +284,7 @@ function UserInputs(props: { mode: 'create' | 'edit' }) {
       />
       <PageFormMultiSelect<UserInput>
         name="roles"
+        label={t('Role(s)')}
         options={
           userRoles?.results
             ? userRoles.results.map((item) => ({
