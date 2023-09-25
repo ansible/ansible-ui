@@ -148,11 +148,19 @@ export function AnalyticsBuilder(props: AnalyticsBuilderProps) {
       props.processMainData?.(props, result);
       setMainData(result);
 
+      readOptions(result);
+    } catch (error) {
+      setError(error);
+    }
+  }
+
+  async function readOptions(mainData: MainDataDefinition) {
+    try {
       let optionsPayload = props.defaultDataParams || {};
       props.processOptionsRequestPayload?.(props, optionsPayload);
 
       const result2 = (await post(
-        result.report.layoutProps.optionsEndpoint,
+        mainData.report.layoutProps.optionsEndpoint,
         optionsPayload
       )) as OptionsDefinition;
       props.processOptions?.(props, result2);
