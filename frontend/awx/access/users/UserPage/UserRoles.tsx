@@ -9,7 +9,6 @@ import {
 import { CubesIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
 import {
   IPageAction,
   PageActionSelection,
@@ -22,11 +21,6 @@ import { Role } from '../../../interfaces/Role';
 import { User } from '../../../interfaces/User';
 import { useAwxView } from '../../../useAwxView';
 import { useRolesColumns, useRolesFilters } from '../../roles/Roles';
-
-const EmptyStateDiv = styled.div`
-  height: 100%;
-  background-color: var(--pf-global--BackgroundColor--100);
-`;
 
 export function UserRoles(props: { user: User }) {
   const { user } = props;
@@ -85,17 +79,15 @@ export function UserRoles(props: { user: User }) {
 
   if (isSysAdmin) {
     return (
-      <EmptyStateDiv>
-        <EmptyState>
-          <EmptyStateIcon icon={CubesIcon} />
-          <Title headingLevel="h2" size="lg">
-            {t(`System Administrator`)}
-          </Title>
-          <EmptyStateBody>
-            {t(`System administrators have unrestricted access to all resources.`)}
-          </EmptyStateBody>
-        </EmptyState>
-      </EmptyStateDiv>
+      <EmptyState isFullHeight>
+        <EmptyStateIcon icon={CubesIcon} />
+        <Title headingLevel="h2" size="lg">
+          {t(`System Administrator`)}
+        </Title>
+        <EmptyStateBody>
+          {t(`System administrators have unrestricted access to all resources.`)}
+        </EmptyStateBody>
+      </EmptyState>
     );
   }
 

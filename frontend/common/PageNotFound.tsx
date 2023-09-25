@@ -16,7 +16,7 @@ export function PageNotFound(props: { dashboardUrl?: string }) {
   const navigate = useNavigate();
   const { dashboardUrl } = props;
   return (
-    <EmptyState>
+    <EmptyState isFullHeight>
       <EmptyStateIcon icon={ExclamationCircleIcon} />
       <Title headingLevel="h2" size="lg">
         {t('Page not found')}

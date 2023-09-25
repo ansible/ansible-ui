@@ -566,7 +566,7 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
         </Tbody>
       </TableComposable>
       {itemCount === 0 && (
-        <EmptyState>
+        <EmptyState isFullHeight>
           <EmptyStateIcon icon={SearchIcon} />
           <Title headingLevel="h2" size="lg">
             {translations.noResultsFound}

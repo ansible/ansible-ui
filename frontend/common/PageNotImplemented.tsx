@@ -15,7 +15,7 @@ export function PageNotImplemented() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   return (
-    <EmptyState>
+    <EmptyState isFullHeight>
       <EmptyStateIcon icon={WrenchIcon} />
       <Title headingLevel="h2" size="lg">
         {t('Under Development')}

@@ -9,7 +9,7 @@ export function EmptyStateError(props: { titleProp?: string; message?: string })
   const button = t('Refresh');
   const { titleProp, message } = props;
   return (
-    <EmptyState>
+    <EmptyState isFullHeight>
       <EmptyStateIcon icon={ExclamationCircleIcon} color="var(--pf-global--danger-color--100)" />
       <Title headingLevel="h2" size="lg">
         {titleProp || title}
