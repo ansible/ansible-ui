@@ -9,7 +9,11 @@ export function PageRoutedTabs(props: {
 }) {
   const pageNavigate = usePageNavigate();
   const getPageUrl = useGetPageUrl();
-  const onSelect = (_event: unknown, eventKey: number | string) => {
+  const onSelect = (
+    event: React.MouseEvent<HTMLElement, MouseEvent>,
+    eventKey: number | string
+  ) => {
+    event.preventDefault();
     pageNavigate(eventKey.toString(), { params: props.params });
   };
   const location = useLocation();
@@ -22,13 +26,16 @@ export function PageRoutedTabs(props: {
         onSelect={onSelect}
         isBox
         activeKey={activeTab?.page}
-        style={{
-          backgroundColor: 'var(--pf-c-tabs__link--BackgroundColor)',
-        }}
+        style={{ backgroundColor: 'var(--pf-c-tabs__link--BackgroundColor)' }}
       >
         {props.preComponents}
         {props.tabs.map((tab) => (
-          <Tab key={tab.page} eventKey={tab.page} title={tab.label} />
+          <Tab
+            key={tab.page}
+            eventKey={tab.page}
+            title={tab.label}
+            href={getPageUrl(tab.page, { params: props.params })}
+          />
         ))}
       </Tabs>
       <PageSection variant="light" isFilled padding={{ default: 'noPadding' }}>
