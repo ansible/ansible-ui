@@ -26,7 +26,12 @@ export function PageMasthead(props: {
 }) {
   const isSmallOrLarger = useBreakpoint('sm');
   return (
-    <Masthead display={{ default: 'inline' }}>
+    <Masthead
+      display={{ default: 'inline' }}
+      style={{
+        borderBottom: '1px solid #fff4',
+      }}
+    >
       <PageMastheadToggle />
       <MastheadMain>
         <MastheadBrand>{props.icon}</MastheadBrand>
