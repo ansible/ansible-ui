@@ -13,7 +13,8 @@ import hydrateSchema from '../components/Chart/hydrateSchema';
 
 import { ColumnTableOption } from '../../../../framework/PageTable/PageTableColumn';
 import { IToolbarMultiSelectFilter } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarMultiSelectFilter';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useSearchParams } from './../../../../framework/components/useSearchParams';
 
 import { ChartFunctions } from '@ansible/react-json-chart-builder';
 
@@ -80,6 +81,7 @@ export interface AnalyticsBuilderProps {
 export interface AnalyticsBodyProps extends AnalyticsBuilderProps {
   mainData: MainDataDefinition;
   options: OptionsDefinition;
+  reloadOptions: () => void;
 }
 
 export interface AnalyticsTableProps extends AnalyticsBodyProps {
@@ -154,8 +156,13 @@ export function AnalyticsBuilder(props: AnalyticsBuilderProps) {
     }
   }
 
-  async function readOptions(mainData: MainDataDefinition) {
+  async function readOptions(mainData?: MainDataDefinition) {
     try {
+      debugger;
+      if (!mainData) {
+        return;
+      }
+
       let optionsPayload = props.defaultDataParams || {};
       props.processOptionsRequestPayload?.(props, optionsPayload);
 
@@ -175,7 +182,16 @@ export function AnalyticsBuilder(props: AnalyticsBuilderProps) {
   }, []);
 
   if (mainData && options) {
-    return <AnalyticsBody mainData={mainData} options={options} {...props} />;
+    return (
+      <AnalyticsBody
+        mainData={mainData}
+        options={options}
+        {...props}
+        reloadOptions={() => {
+          readOptions(mainData);
+        }}
+      />
+    );
   }
 
   return <>Analytics builder - loading {error && 'Some error ocurred'}</>;
@@ -184,6 +200,17 @@ export function AnalyticsBuilder(props: AnalyticsBuilderProps) {
 function AnalyticsBody(props: AnalyticsBodyProps) {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
+
+  const [searchParams] = useSearchParams();
+  let granularityParam =
+    searchParams.get('granularity') || props.defaultDataParams?.granularity || '';
+
+  const [granularity, setGranularity] = useState<string>(granularityParam || '');
+
+  if (granularityParam !== granularity) {
+    setGranularity(granularityParam);
+    props.reloadOptions();
+  }
 
   let sortableColumns = getAvailableSortingKeys(props);
 
