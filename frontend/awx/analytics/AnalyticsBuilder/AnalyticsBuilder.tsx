@@ -30,9 +30,8 @@ export interface MainDataDefinition {
       optionsEndpoint: string;
 
       schema: ObjectType;
+      availableChartTypes?: string[];
     };
-
-    availableChartTypes?: string[];
   };
 }
 
@@ -233,6 +232,14 @@ function AnalyticsTable(props: AnalyticsTableProps) {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
 
+  const availableChartTypes = props.mainData?.report?.layoutProps.availableChartTypes;
+  const [searchParams] = useSearchParams();
+
+  let chartTypeParam =
+    searchParams.get('chart_type') ||
+    (availableChartTypes && availableChartTypes.length > 0 && availableChartTypes[0]) ||
+    'line';
+
   let sortOption = queryParams.get('sort');
 
   // fix the desc sorting with prefix -
@@ -243,8 +250,6 @@ function AnalyticsTable(props: AnalyticsTableProps) {
   if (!sortOption) {
     sortOption = props.defaultDataParams?.sort_options || '';
   }
-
-  const availableChartTypes = props.mainData?.report?.availableChartTypes;
 
   const customTooltipFormatting = ({ datum }: { datum: Record<string, any> }) => {
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
@@ -279,10 +284,7 @@ function AnalyticsTable(props: AnalyticsTableProps) {
             field: sortOption,
             label: props.options?.sort_options?.find((item) => item.key == sortOption)?.value,
             xTickFormat: getDateFormatByGranularity(props.defaultDataParams?.granularity || ''),
-            chartType:
-              availableChartTypes && availableChartTypes.length > 0
-                ? availableChartTypes?.[0]
-                : ('line' as ObjectType),
+            chartType: chartTypeParam as AnyType,
           })}
           data={props.view.originalData as AnyType}
           specificFunctions={specificFunctions}
@@ -367,6 +369,25 @@ function buildTableFilters(params: AnalyticsBodyProps, queryParams: URLSearchPar
       query: quick_date_range,
       label: 'Quick Date Range',
       placeholder: 'Select quick date range',
+      isPinned: true,
+    });
+  }
+
+  // chart type - TODO will be replaced by another selector
+  let graphTypeOptions = [];
+
+  if (Array.isArray(params?.mainData?.report.layoutProps.availableChartTypes)) {
+    graphTypeOptions =
+      params?.mainData?.report.layoutProps.availableChartTypes.map((item) => {
+        return { key: item, value: item, label: item };
+      }) || [];
+    filters.push({
+      key: 'chart_type',
+      type: ToolbarFilterType.SingleSelect,
+      options: graphTypeOptions,
+      query: 'chart_type',
+      label: 'Chart type',
+      placeholder: 'Select chart type',
       isPinned: true,
     });
   }
