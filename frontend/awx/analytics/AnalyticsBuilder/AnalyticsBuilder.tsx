@@ -42,6 +42,7 @@ export interface OptionsDefinition {
   sort_options: KeyValue[];
   group_by: KeyValue[];
   quick_date_range: KeyValue[];
+  granularity: KeyValue[];
   [key: string]: AnyType;
 }
 
@@ -306,6 +307,25 @@ function buildTableFilters(params: AnalyticsBodyProps, queryParams: URLSearchPar
     }
   }
 
+  // granularity
+  const granularity = 'granularity';
+  let granularityOptions = [];
+
+  if (Array.isArray(params?.options?.granularity)) {
+    granularityOptions = params.options.granularity.map((item) => {
+      return { key: item.key, value: item.key, label: item.value };
+    });
+    filters.push({
+      key: granularity,
+      type: ToolbarFilterType.SingleSelect,
+      options: granularityOptions,
+      query: granularity,
+      label: 'Granularity',
+      placeholder: 'Select granularity',
+      isPinned: true,
+    });
+  }
+
   // quick date range filter
   const quick_date_range = 'quick_date_range';
   let quickDateRangeOptions = [];
@@ -320,7 +340,7 @@ function buildTableFilters(params: AnalyticsBodyProps, queryParams: URLSearchPar
       options: quickDateRangeOptions,
       query: quick_date_range,
       label: 'Quick Date Range',
-      placeholder: 'Select',
+      placeholder: 'Select quick date range',
       isPinned: true,
     });
   }
