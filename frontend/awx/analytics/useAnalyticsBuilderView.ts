@@ -7,11 +7,13 @@ import {
   IView,
   useSelected,
   useView,
+  IFilterState,
 } from '../../../framework';
 import { postRequest, usePostFetcher } from '../../common/crud/Data';
 
 import { RequestError } from '../../common/crud/RequestError';
 import { AnalyticsBodyProps, computeMainFilterKeys } from './AnalyticsBuilder/AnalyticsBuilder';
+import { DefaultDataParams } from './AnalyticsBuilder/AnalyticsBuilder';
 
 export interface AnalyticsItemsResponse<T extends object> {
   meta: { count: number; legend: T[] };
@@ -113,27 +115,6 @@ export function useAnalyticsBuilderView<T extends object>({
 
   let queryString = queryParams ? `?${getQueryString(queryParams)}` : '';
 
-  if (filterState) {
-    for (const key in filterState) {
-      const toolbarFilter = toolbarFilters?.find((filter) => filter.key === key);
-      if (toolbarFilter) {
-        const values = filterState[key];
-
-        if (!values || values.length == 0) {
-          continue;
-        }
-
-        if (!Array.isArray(postData[key])) {
-          postData[key] = values[0];
-        } else {
-          for (const value of values) {
-            postData[key].push(value);
-          }
-        }
-      }
-    }
-  }
-
   if (sort) {
     let canSort = tableColumns?.find((item) => item.sort == sort) ? true : false;
 
@@ -154,6 +135,8 @@ export function useAnalyticsBuilderView<T extends object>({
       }
     }
   }
+
+  fillFilters(postData, filterState, toolbarFilters || []);
 
   queryString ? (queryString += '&') : (queryString += '?');
   queryString += `offset=${(page - 1) * perPage}`;
@@ -218,5 +201,32 @@ export function getAwxError(err: unknown) {
     return err.message;
   } else {
     return 'unknown error';
+  }
+}
+
+export function fillFilters(
+  postData: DefaultDataParams,
+  filterState: IFilterState,
+  toolbarFilters: IToolbarFilter[]
+) {
+  if (filterState) {
+    for (const key in filterState) {
+      const toolbarFilter = toolbarFilters?.find((filter) => filter.key === key);
+      if (toolbarFilter) {
+        const values = filterState[key];
+
+        if (!values || values.length == 0) {
+          continue;
+        }
+
+        if (!Array.isArray(postData[key])) {
+          postData[key] = values[0];
+        } else {
+          for (const value of values) {
+            postData[key].push(value);
+          }
+        }
+      }
+    }
   }
 }
