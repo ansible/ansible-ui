@@ -5,9 +5,9 @@ import {
   Form,
   Grid,
   gridItemSpanValueShape,
+  PageSection,
   Tooltip,
 } from '@patternfly/react-core';
-import { JSONSchema6 } from 'json-schema';
 import { BaseSyntheticEvent, CSSProperties, ReactNode, useContext, useState } from 'react';
 import {
   DefaultValues,
@@ -20,17 +20,17 @@ import {
   UseFormReturn,
   useFormState,
 } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { RequestError } from '../../frontend/common/crud/RequestError';
+import { Scrollable } from '../components/Scrollable';
 import { useBreakpoint } from '../components/useBreakPoint';
 import { PageBody } from '../PageBody';
 import { SettingsContext } from '../Settings';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
-import { useTranslation } from 'react-i18next';
 
 export function PageForm<T extends object>(props: {
-  schema?: JSONSchema6;
   children?: ReactNode;
-  submitText: string;
+  submitText?: string;
   additionalActionText?: string;
   onClickAdditionalAction?: PageFormSubmitHandler<T>;
   onSubmit: PageFormSubmitHandler<T>;
@@ -42,10 +42,12 @@ export function PageForm<T extends object>(props: {
   disableScrolling?: boolean;
   disableBody?: boolean;
   disablePadding?: boolean;
+  disableGrid?: boolean;
+  autoComplete?: string;
+  footer?: ReactNode;
 }) {
-  const { defaultValue, disableBody, disablePadding } = props;
   const form = useForm<T>({
-    defaultValues: defaultValue ?? ({} as DefaultValues<T>),
+    defaultValues: props.defaultValue ?? ({} as DefaultValues<T>),
   });
 
   const [frameworkTranslations] = useFrameworkTranslations();
@@ -55,9 +57,7 @@ export function PageForm<T extends object>(props: {
   const isMd = useBreakpoint('md');
   const [settings] = useContext(SettingsContext);
   const isHorizontal = props.isVertical ? false : settings.formLayout === 'horizontal';
-  const multipleColumns = props.singleColumn ? false : settings.formColumns === 'multiple';
 
-  const maxWidth: number | undefined = multipleColumns ? 1600 : isHorizontal ? 960 : 800;
   const handleSubmitError = (err: unknown) => {
     err instanceof Error ? setError(err) : setError(new Error('Unknown error'));
     if (
@@ -80,6 +80,15 @@ export function PageForm<T extends object>(props: {
       }
     }
   };
+
+  let children = props.children;
+  if (props.disableGrid !== true) {
+    children = (
+      <PageFormGrid isVertical={props.isVertical} singleColumn={props.singleColumn}>
+        {props.children}
+      </PageFormGrid>
+    );
+  }
 
   let Component = (
     <FormProvider {...form}>
@@ -115,31 +124,12 @@ export function PageForm<T extends object>(props: {
           display: 'flex',
           flexDirection: 'column',
           flexGrow: 1,
-          overflow: props.disableScrolling ? undefined : 'hidden',
+          height: '100%',
+          maxHeight: '100%',
+          overflow: 'hidden',
           gap: 0,
         }}
       >
-        {props.disableScrolling ? (
-          <div style={{ maxWidth, padding: disablePadding ? undefined : 24 }}>
-            <PageFormGrid isVertical={props.isVertical} singleColumn={props.singleColumn}>
-              {props.children}
-            </PageFormGrid>
-          </div>
-        ) : (
-          <div
-            style={{
-              height: '100%',
-              flexGrow: 1,
-              overflow: 'auto',
-            }}
-          >
-            <div style={{ maxWidth, padding: disablePadding ? undefined : 24 }}>
-              <PageFormGrid isVertical={props.isVertical} singleColumn={props.singleColumn}>
-                {props.children}
-              </PageFormGrid>
-            </div>
-          </div>
-        )}
         {error && (
           <Alert
             variant="danger"
@@ -151,9 +141,22 @@ export function PageForm<T extends object>(props: {
             {error instanceof RequestError ? error.details : undefined}
           </Alert>
         )}
-        {props.onCancel ? (
-          <div className="dark-2 border-top" style={{ padding: disablePadding ? undefined : 24 }}>
-            <ActionGroup style={{ marginTop: 0 }}>
+        <Scrollable>
+          <PageSection
+            variant="light"
+            isFilled
+            isWidthLimited
+            padding={{ default: props.disablePadding ? 'noPadding' : 'padding' }}
+            // hasOverflowScroll
+          >
+            {children}
+          </PageSection>
+        </Scrollable>
+        {props.footer ? (
+          props.footer
+        ) : (
+          <PageSection variant="light" isFilled={false}>
+            <ActionGroup>
               <PageFormSubmitButton>{props.submitText}</PageFormSubmitButton>
               {props.additionalActionText ? (
                 <Button aria-label={props.additionalActionText} type="submit" variant="secondary">
@@ -166,20 +169,25 @@ export function PageForm<T extends object>(props: {
                 </PageFormCancelButton>
               )}
             </ActionGroup>
-          </div>
-        ) : (
-          <PageFormSubmitButton style={{ marginTop: 48 }}>{props.submitText}</PageFormSubmitButton>
+          </PageSection>
         )}
       </Form>
     </FormProvider>
   );
 
-  if (!disableBody) {
+  if (!props.disableBody) {
     Component = <PageBody>{Component}</PageBody>;
   }
 
   return Component;
 }
+
+export type PageFormSubmitHandler<T extends FieldValues> = (
+  data: T,
+  setError: (error: string) => void,
+  setFieldError: (fieldName: FieldPath<T>, error: ErrorOption) => void,
+  from: UseFormReturn<T> | undefined
+) => Promise<unknown>;
 
 export function PageFormGrid(props: {
   children?: ReactNode;
@@ -204,13 +212,6 @@ export function PageFormGrid(props: {
 
   return Component;
 }
-
-export type PageFormSubmitHandler<T extends FieldValues> = (
-  data: T,
-  setError: (error: string) => void,
-  setFieldError: (fieldName: FieldPath<T>, error: ErrorOption) => void,
-  from: UseFormReturn<T> | undefined
-) => Promise<unknown>;
 
 export function PageFormSubmitButton(props: { children: ReactNode; style?: CSSProperties }) {
   const { isSubmitting, errors } = useFormState();
