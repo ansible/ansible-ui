@@ -78,6 +78,10 @@ export enum AwxRoute {
   CreateUser = 'awx-create-user',
   EditUser = 'awx-edit-user',
   UserPage = 'awx-user-page',
+  UserDetails = 'awx-user-details',
+  UserOrganizations = 'awx-user-organizations',
+  UserTeams = 'awx-user-teams',
+  UserRoles = 'awx-user-roles',
   AddRolesToUser = 'awx-add-roles-to-user',
 
   // Administration

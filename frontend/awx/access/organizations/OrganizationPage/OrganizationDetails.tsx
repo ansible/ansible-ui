@@ -1,9 +1,10 @@
 import { Label, LabelGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { DateTimeCell, PageDetail, PageDetails } from '../../../../../framework';
+import { DateTimeCell, PageDetail, PageDetails, useGetPageUrl } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { RouteObj } from '../../../../common/Routes';
+import { AwxRoute } from '../../../AwxRoutes';
 import { useGet, useGetItem } from '../../../../common/crud/useGet';
 import { CredentialLabel } from '../../../common/CredentialLabel';
 import { ExecutionEnvironmentDetail } from '../../../common/ExecutionEnvironmentDetail';
@@ -30,6 +31,7 @@ export function OrganizationDetails() {
   const params = useParams<{ id: string }>();
   const { data: organization } = useGetItem<Organization>('/api/v2/organizations/', params.id);
   const history = useNavigate();
+  const getPageUrl = useGetPageUrl();
 
   const galaxyCredentials = useGalaxyCredentials(params.id || '0');
   const instanceGroups = useInstanceGroups(params.id || '0');
@@ -62,10 +64,9 @@ export function OrganizationDetails() {
           author={organization.summary_fields?.created_by?.username}
           onClick={() =>
             history(
-              RouteObj.UserDetails.replace(
-                ':id',
-                (organization.summary_fields?.created_by?.id ?? 0).toString()
-              )
+              getPageUrl(AwxRoute.UserDetails, {
+                params: { id: (organization.summary_fields?.created_by?.id ?? 0).toString() },
+              })
             )
           }
         />
@@ -77,10 +78,9 @@ export function OrganizationDetails() {
           author={organization.summary_fields?.modified_by?.username}
           onClick={() =>
             history(
-              RouteObj.UserDetails.replace(
-                ':id',
-                (organization.summary_fields?.modified_by?.id ?? 0).toString()
-              )
+              getPageUrl(AwxRoute.UserDetails, {
+                params: { id: (organization.summary_fields?.modified_by?.id ?? 0).toString() },
+              })
             )
           }
         />

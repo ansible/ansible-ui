@@ -9,6 +9,7 @@ import {
 import { CubesIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import {
   IPageAction,
   PageActionSelection,
@@ -16,13 +17,24 @@ import {
   PageTable,
   usePageNavigate,
 } from '../../../../../framework';
+import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
 import { Role } from '../../../interfaces/Role';
 import { User } from '../../../interfaces/User';
 import { useAwxView } from '../../../useAwxView';
 import { useRolesColumns, useRolesFilters } from '../../roles/Roles';
 
-export function UserRoles(props: { user: User }) {
+export function UserRoles() {
+  const params = useParams<{ id: string }>();
+  const { data: user } = useGetItem<User>('/api/v2/users', params.id);
+
+  if (!user) {
+    return null;
+  }
+  return <UserRolesInternal user={user} />;
+}
+
+function UserRolesInternal(props: { user: User }) {
   const { user } = props;
   const { t } = useTranslation();
   const toolbarFilters = useRolesFilters();
