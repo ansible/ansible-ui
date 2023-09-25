@@ -55,7 +55,7 @@ describe('organizations', () => {
     cy.navigateTo('awx', 'organizations');
     cy.clickTableRow(organization.name);
     cy.hasTitle(organization.name);
-    cy.clickButton(/^Details$/);
+    cy.clickLink(/^Details$/);
     cy.contains('#name', organization.name);
   });
 
