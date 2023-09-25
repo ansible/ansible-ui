@@ -369,6 +369,10 @@ export function useAwxNavigation() {
                         path: 'notifications',
                         element: <PageNotImplemented />,
                       },
+                      {
+                        path: '',
+                        element: <Navigate to="details" />,
+                      },
                     ],
                   },
                   {
