@@ -11,6 +11,8 @@ import {
 import Chart from '../components/Chart';
 import hydrateSchema from '../components/Chart/hydrateSchema';
 
+import { ToggleGroup, ToggleGroupItem } from '@patternfly/react-core';
+
 import { ColumnTableOption } from '../../../../framework/PageTable/PageTableColumn';
 import { IToolbarMultiSelectFilter } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarMultiSelectFilter';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -231,14 +233,20 @@ export function AnalyticsBuilder(props: AnalyticsBuilderProps) {
 function AnalyticsTable(props: AnalyticsTableProps) {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
+  const navigate = useNavigate();
 
   const availableChartTypes = props.mainData?.report?.layoutProps.availableChartTypes;
-  const [searchParams] = useSearchParams();
+  const [chartType, setChartType] = useState<string>(
+    (availableChartTypes && availableChartTypes.length > 0 && availableChartTypes[0]) || 'line'
+  );
 
-  let chartTypeParam =
+  // const [searchParams] = useSearchParams();
+
+  /*let chartTypeParam =
     searchParams.get('chart_type') ||
     (availableChartTypes && availableChartTypes.length > 0 && availableChartTypes[0]) ||
     'line';
+*/
 
   let sortOption = queryParams.get('sort');
 
@@ -284,14 +292,40 @@ function AnalyticsTable(props: AnalyticsTableProps) {
             field: sortOption,
             label: props.options?.sort_options?.find((item) => item.key == sortOption)?.value,
             xTickFormat: getDateFormatByGranularity(props.defaultDataParams?.granularity || ''),
-            chartType: chartTypeParam as AnyType,
+            chartType: chartType as AnyType,
           })}
           data={props.view.originalData as AnyType}
           specificFunctions={specificFunctions}
         />
       }
+      toolbarContent={
+        availableChartTypes &&
+        availableChartTypes.length > 1 && (
+          <ToggleGroup aria-label="Chart type toggle" key="chart-toggle">
+            {availableChartTypes.map((chartTypeItem) => (
+              <ToggleGroupItem
+                key={chartTypeItem}
+                data-cy={'chart_type'}
+                text={`${capitalize(chartTypeItem)} Chart`}
+                buttonId={chartTypeItem}
+                isSelected={chartTypeItem === chartType}
+                onChange={() => {
+                  setChartType(chartTypeItem);
+                }}
+              />
+            ))}
+          </ToggleGroup>
+        )
+      }
     />
   );
+}
+
+function capitalize(string: string) {
+  if (string.length == 0) {
+    return string;
+  }
+  return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 // those columns are for view only, for sorting
@@ -374,7 +408,7 @@ function buildTableFilters(params: AnalyticsBodyProps, queryParams: URLSearchPar
   }
 
   // chart type - TODO will be replaced by another selector
-  let graphTypeOptions = [];
+  /*let graphTypeOptions = [];
 
   if (Array.isArray(params?.mainData?.report.layoutProps.availableChartTypes)) {
     graphTypeOptions =
@@ -390,7 +424,7 @@ function buildTableFilters(params: AnalyticsBodyProps, queryParams: URLSearchPar
       placeholder: 'Select chart type',
       isPinned: true,
     });
-  }
+  }*/
 
   return filters;
 }

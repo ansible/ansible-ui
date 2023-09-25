@@ -175,6 +175,8 @@ export type PageTableProps<T extends object> = {
    */
   topContent?: React.ReactNode;
 
+  toolbarContent?: React.ReactNode;
+
   /**
    * If topContent is set and this variable is set to true, topContent will be scrolled with table.
    */

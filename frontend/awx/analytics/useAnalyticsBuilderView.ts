@@ -111,6 +111,7 @@ export function useAnalyticsBuilderView<T extends object>({
       filterState: defaultFilters,
     },
     disableQueryString,
+    ignoreQueryStringKeys: ['reportName', 'chart_type'],
   });
 
   const { page, perPage, sort, sortDirection, filterState } = view;
