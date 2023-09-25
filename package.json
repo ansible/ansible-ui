@@ -165,7 +165,7 @@
     "yaml": "2.3.2"
   },
   "devDependencies": {
-    "@4tw/cypress-drag-drop": "2.2.4",
+    "@4tw/cypress-drag-drop": "2.2.5",
     "@cypress/code-coverage": "3.11.0",
     "@types/js-yaml": "4.0.5",
     "@typescript-eslint/eslint-plugin": "6.6.0",
