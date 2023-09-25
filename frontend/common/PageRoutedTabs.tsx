@@ -18,7 +18,14 @@ export function PageRoutedTabs(props: {
   );
   return (
     <>
-      <Tabs onSelect={onSelect} isBox activeKey={activeTab?.page}>
+      <Tabs
+        onSelect={onSelect}
+        isBox
+        activeKey={activeTab?.page}
+        style={{
+          backgroundColor: 'var(--pf-c-tabs__link--BackgroundColor)',
+        }}
+      >
         {props.preComponents}
         {props.tabs.map((tab) => (
           <Tab key={tab.page} eventKey={tab.page} title={tab.label} />
