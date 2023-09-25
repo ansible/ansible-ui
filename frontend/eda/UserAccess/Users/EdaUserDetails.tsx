@@ -96,11 +96,11 @@ export function EdaUserDetailsInternal({
   const getPageUrl = useGetPageUrl();
 
   const activeUser = useEdaActiveUser();
-  const isViewingSelf = Number(user.id) === Number(activeUser.id);
+  const isViewingSelf = Number(user.id) === Number(activeUser?.id);
   const canEditUser =
-    activeUser.is_superuser || activeUser?.roles.some((role) => role.name === 'Admin');
+    activeUser?.is_superuser || activeUser?.roles.some((role) => role.name === 'Admin');
   const canViewUsers =
-    activeUser.is_superuser ||
+    activeUser?.is_superuser ||
     activeUser?.roles.some((role) => role.name === 'Admin' || role.name === 'Auditor');
 
   const itemActions = useMemo<IPageAction<EdaUser>[]>(
