@@ -410,7 +410,6 @@ export function AutomationCalculatorInternal(props: {
     return tooltip;
   };
 
-  debugger;
   const renderLeft = () => (
     <Card isPlain>
       <CardHeader>
