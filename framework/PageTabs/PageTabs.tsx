@@ -84,6 +84,7 @@ export function PageTabs(props: {
                     }
               }
               hasBorderBottom={false}
+              isBox
             >
               {tabs}
             </Tabs>

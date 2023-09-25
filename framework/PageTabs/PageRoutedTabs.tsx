@@ -1,7 +1,7 @@
 import { PageSection, Tab, Tabs } from '@patternfly/react-core';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { useGetPageUrl, usePageNavigate } from '../../framework';
-import { getPersistentFilters } from './PersistentFilters';
+import { useGetPageUrl, usePageNavigate } from '..';
+import { getPersistentFilters } from '../../frontend/common/PersistentFilters';
 
 export function PageRoutedTabs(props: {
   backTab?: { label: string; page: string; persistentFilterKey: string };
