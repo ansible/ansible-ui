@@ -138,6 +138,10 @@ export function AnalyticsBuilder(props: AnalyticsBuilderProps) {
   const post = usePostRequest();
   const get = useGetRequest();
 
+  const [searchParams] = useSearchParams();
+  let granularityParam =
+    searchParams.get('granularity') || parameters.defaultDataParams?.granularity || '';
+
   async function readData() {
     try {
       const result = (await get(parameters.main_url, {})) as MainDataDefinition;
@@ -164,6 +168,8 @@ export function AnalyticsBuilder(props: AnalyticsBuilderProps) {
       }
 
       let optionsPayload = parameters.defaultDataParams || {};
+      // ensure that granularity is up to date
+      optionsPayload.granularity = granularityParam;
       parameters.processOptionsRequestPayload?.(parameters, optionsPayload);
 
       const result2 = (await post(
@@ -183,10 +189,6 @@ export function AnalyticsBuilder(props: AnalyticsBuilderProps) {
 
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-
-  const [searchParams] = useSearchParams();
-  let granularityParam =
-    searchParams.get('granularity') || parameters.defaultDataParams?.granularity || '';
 
   const [granularity, setGranularity] = useState<string>(granularityParam || '');
 
