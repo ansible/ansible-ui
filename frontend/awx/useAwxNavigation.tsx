@@ -6,7 +6,6 @@ import {
   removeLeadingSlash,
 } from '../../framework/PageNavigation/PageNavigationItem';
 import { PageNotImplemented } from '../common/PageNotImplemented';
-import { UnderDevelopment } from '../eda/under-development/UnderDevelopment';
 import { AwxLogin } from './AwxLogin';
 import { AwxRoute } from './AwxRoutes';
 import { CreateOrganization, EditOrganization } from './access/organizations/OrganizationForm';
@@ -363,12 +362,12 @@ export function useAwxNavigation() {
                       {
                         id: AwxRoute.OrganizationExecutionEnvironments,
                         path: 'execution-environments',
-                        element: <UnderDevelopment />,
+                        element: <PageNotImplemented />,
                       },
                       {
                         id: AwxRoute.OrganizationNotifications,
                         path: 'notifications',
-                        element: <UnderDevelopment />,
+                        element: <PageNotImplemented />,
                       },
                     ],
                   },
@@ -507,17 +506,17 @@ export function useAwxNavigation() {
                   {
                     id: AwxRoute.CreateInstanceGroup,
                     path: 'create',
-                    element: <UnderDevelopment />,
+                    element: <PageNotImplemented />,
                   },
                   {
                     id: AwxRoute.EditInstanceGroup,
                     path: ':id/edit',
-                    element: <UnderDevelopment />,
+                    element: <PageNotImplemented />,
                   },
                   {
                     id: AwxRoute.InstanceGroupPage,
                     path: ':id/*',
-                    element: <UnderDevelopment />,
+                    element: <PageNotImplemented />,
                   },
                   {
                     path: '',
