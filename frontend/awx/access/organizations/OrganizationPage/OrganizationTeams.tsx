@@ -1,21 +1,21 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { PageTable, usePageNavigate } from '../../../../../framework';
 import { AwxRoute } from '../../../AwxRoutes';
-import { Organization } from '../../../interfaces/Organization';
 import { Team } from '../../../interfaces/Team';
 import { useAwxView } from '../../../useAwxView';
 import { useTeamsColumns } from '../../teams/hooks/useTeamsColumns';
 import { useTeamsFilters } from '../../teams/hooks/useTeamsFilters';
 
-export function OrganizationTeams(props: { organization: Organization }) {
-  const { organization } = props;
+export function OrganizationTeams() {
+  const params = useParams<{ id: string }>();
   const { t } = useTranslation();
   const pageHistory = usePageNavigate();
   const toolbarFilters = useTeamsFilters();
   const tableColumns = useTeamsColumns();
   const view = useAwxView<Team>({
-    url: `/api/v2/organizations/${organization.id}/teams/`,
+    url: `/api/v2/organizations/${params.id}/teams/`,
     toolbarFilters,
     tableColumns,
     disableQueryString: true,

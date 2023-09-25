@@ -10,7 +10,10 @@ import { UnderDevelopment } from '../eda/under-development/UnderDevelopment';
 import { AwxLogin } from './AwxLogin';
 import { AwxRoute } from './AwxRoutes';
 import { CreateOrganization, EditOrganization } from './access/organizations/OrganizationForm';
+import { OrganizationAccess } from './access/organizations/OrganizationPage/OrganizationAccess';
+import { OrganizationDetails } from './access/organizations/OrganizationPage/OrganizationDetails';
 import { OrganizationPage } from './access/organizations/OrganizationPage/OrganizationPage';
+import { OrganizationTeams } from './access/organizations/OrganizationPage/OrganizationTeams';
 import { Organizations } from './access/organizations/Organizations';
 import { CreateTeam, EditTeam } from './access/teams/TeamForm';
 import { TeamPage } from './access/teams/TeamPage/TeamPage';
@@ -50,6 +53,10 @@ import { Projects } from './resources/projects/Projects';
 import { CreateJobTemplate, EditJobTemplate } from './resources/templates/TemplateForm';
 import { TemplatePage } from './resources/templates/TemplatePage/TemplatePage';
 import { Templates } from './resources/templates/Templates';
+import {
+  CreateWorkflowJobTemplate,
+  EditWorkflowJobTemplate,
+} from './resources/templates/WorkflowJobTemplateForm';
 import { WorkflowJobTemplatePage } from './resources/templates/WorkflowJobTemplatePage/WorkflowJobTemplatePage';
 import Settings from './settings/Settings';
 import HostMetrics from './views/jobs/HostMetrics';
@@ -58,10 +65,6 @@ import Jobs from './views/jobs/Jobs';
 import { CreateSchedule } from './views/schedules/ScheduleForm';
 import { SchedulePage } from './views/schedules/SchedulePage/SchedulePage';
 import { Schedules } from './views/schedules/Schedules';
-import {
-  CreateWorkflowJobTemplate,
-  EditWorkflowJobTemplate,
-} from './resources/templates/WorkflowJobTemplateForm';
 
 export function useAwxNavigation() {
   const { t } = useTranslation();
@@ -339,8 +342,35 @@ export function useAwxNavigation() {
                   },
                   {
                     id: AwxRoute.OrganizationPage,
-                    path: ':id/*',
+                    path: ':id',
                     element: <OrganizationPage />,
+                    children: [
+                      {
+                        id: AwxRoute.OrganizationDetails,
+                        path: 'details',
+                        element: <OrganizationDetails />,
+                      },
+                      {
+                        id: AwxRoute.OrganizationAccess,
+                        path: 'access',
+                        element: <OrganizationAccess />,
+                      },
+                      {
+                        id: AwxRoute.OrganizationTeams,
+                        path: 'teams',
+                        element: <OrganizationTeams />,
+                      },
+                      {
+                        id: AwxRoute.OrganizationExecutionEnvironments,
+                        path: 'execution-environments',
+                        element: <UnderDevelopment />,
+                      },
+                      {
+                        id: AwxRoute.OrganizationNotifications,
+                        path: 'notifications',
+                        element: <UnderDevelopment />,
+                      },
+                    ],
                   },
                   {
                     path: '',

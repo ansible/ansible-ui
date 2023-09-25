@@ -15,17 +15,13 @@ import {
   usePageNavigate,
 } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
-import { PageNotImplemented } from '../../../../common/PageNotImplemented';
-import { PageBackTab, RoutedTab, RoutedTabs } from '../../../../common/RoutedTabs';
-import { RouteObj } from '../../../../common/Routes';
+import { PageRoutedTabs } from '../../../../common/PageRoutedTabs';
+import { PageBackTab } from '../../../../common/RoutedTabs';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
 import { AwxError } from '../../../common/AwxError';
 import { Organization } from '../../../interfaces/Organization';
 import { useDeleteOrganizations } from '../hooks/useDeleteOrganizations';
-import { OrganizationAccess } from './OrganizationAccess';
-import { OrganizationDetails } from './OrganizationDetails';
-import { OrganizationTeams } from './OrganizationTeams';
 
 export function OrganizationPage() {
   const { t } = useTranslation();
@@ -102,30 +98,18 @@ export function OrganizationPageTabs(props: { organization: Organization }) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   return (
-    <RoutedTabs baseUrl={RouteObj.OrganizationPage}>
-      <PageBackTab
-        label={t('Back to Organizations')}
-        url={getPageUrl(AwxRoute.Organizations)}
-        persistentFilterKey="organizations"
-      />
-      <RoutedTab label={t('Details')} url={RouteObj.OrganizationDetails}>
-        <OrganizationDetails organization={organization} />
-      </RoutedTab>
-      <RoutedTab label={t('Access')} url={RouteObj.OrganizationAccess}>
-        <OrganizationAccess organization={organization} />
-      </RoutedTab>
-      <RoutedTab label={t('Teams')} url={RouteObj.OrganizationTeams}>
-        <OrganizationTeams organization={organization} />
-      </RoutedTab>
-      <RoutedTab
-        label={t('Execution environments')}
-        url={RouteObj.OrganizationExecutionEnvironments}
-      >
-        <PageNotImplemented />
-      </RoutedTab>
-      <RoutedTab label={t('Notifications')} url={RouteObj.OrganizationNotifications}>
-        <PageNotImplemented />
-      </RoutedTab>
-    </RoutedTabs>
+    <PageRoutedTabs
+      tabs={[
+        { label: t('Details'), page: AwxRoute.OrganizationDetails },
+        { label: t('Access'), page: AwxRoute.OrganizationAccess },
+        { label: t('Teams'), page: AwxRoute.OrganizationTeams },
+        { label: t('Execution environments'), page: AwxRoute.OrganizationExecutionEnvironments },
+        { label: t('Notifications'), page: AwxRoute.OrganizationNotifications },
+      ]}
+      params={{ id: organization.id }}
+      preComponents={
+        <PageBackTab label={t('Back to Organizations')} url={getPageUrl(AwxRoute.Organizations)} />
+      }
+    />
   );
 }

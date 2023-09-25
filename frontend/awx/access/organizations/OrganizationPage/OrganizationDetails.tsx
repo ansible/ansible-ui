@@ -2,8 +2,9 @@ import { Label, LabelGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { DateTimeCell, PageDetail, PageDetails } from '../../../../../framework';
+import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { RouteObj } from '../../../../common/Routes';
-import { useGet } from '../../../../common/crud/useGet';
+import { useGet, useGetItem } from '../../../../common/crud/useGet';
 import { CredentialLabel } from '../../../common/CredentialLabel';
 import { ExecutionEnvironmentDetail } from '../../../common/ExecutionEnvironmentDetail';
 import { Credential } from '../../../interfaces/Credential';
@@ -24,14 +25,18 @@ function useInstanceGroups(orgId: string) {
   return data?.results ?? [];
 }
 
-export function OrganizationDetails(props: { organization: Organization }) {
+export function OrganizationDetails() {
   const { t } = useTranslation();
-  const { organization } = props;
-  const history = useNavigate();
   const params = useParams<{ id: string }>();
+  const { data: organization } = useGetItem<Organization>('/api/v2/organizations/', params.id);
+  const history = useNavigate();
 
   const galaxyCredentials = useGalaxyCredentials(params.id || '0');
   const instanceGroups = useInstanceGroups(params.id || '0');
+
+  if (!organization) {
+    return <LoadingPage />;
+  }
 
   // TODO look up license type from context (TBD) and add max hosts
   return (

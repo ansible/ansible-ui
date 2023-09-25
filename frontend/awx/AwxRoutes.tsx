@@ -62,6 +62,11 @@ export enum AwxRoute {
   CreateOrganization = 'awx-create-organization',
   EditOrganization = 'awx-edit-organization',
   OrganizationPage = 'awx-organization-page',
+  OrganizationDetails = 'awx-organization-details',
+  OrganizationAccess = 'awx-organization-access',
+  OrganizationTeams = 'awx-organization-teams',
+  OrganizationExecutionEnvironments = 'awx-organization-execution-environments',
+  OrganizationNotifications = 'awx-organization-notifications',
 
   Teams = 'awx-teams',
   CreateTeam = 'awx-create-team',
