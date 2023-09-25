@@ -1,4 +1,5 @@
-import { PageSection, Tab, Tabs } from '@patternfly/react-core';
+import { PageSection, Tab, TabTitleText, Tabs } from '@patternfly/react-core';
+import { CaretLeftIcon } from '@patternfly/react-icons';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useGetPageUrl, usePageNavigate } from '..';
 import { getPersistentFilters } from '../../frontend/common/PersistentFilters';
@@ -41,7 +42,12 @@ export function PageRoutedTabs(props: {
           <Tab
             key={props.backTab.page}
             eventKey={props.backTab.page}
-            title={props.backTab.label}
+            title={
+              <TabTitleText>
+                <CaretLeftIcon />
+                <span style={{ marginLeft: 6 }}>{props.backTab.label}</span>
+              </TabTitleText>
+            }
             href={getPageUrl(props.backTab.page, { params: props.params, query })}
           />
         )}
