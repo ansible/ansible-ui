@@ -105,3 +105,15 @@
 .flex-row.gap-y-6 {
   column-gap: 24px;
 }
+
+.flex-row.flex-grow {
+  flex-grow: 1;
+}
+
+.flex-fow.full-width {
+  width: 100%;
+}
+
+.flex-row.full-height {
+  height: 100%;
+}

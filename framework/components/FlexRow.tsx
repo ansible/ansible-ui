@@ -1,6 +1,21 @@
 import { clsx } from 'clsx';
 import './FlexRow.css';
 
+/**
+ * A flexible row container that allows for easy alignment and spacing of child elements.
+ *
+ * @param props - The props for the FlexRow component.
+ * @param props.children - The child elements to be rendered within the FlexRow.
+ * @param props.align - The vertical alignment of the child elements within the FlexRow.
+ * @param props.spacing - The horizontal spacing between child elements within the FlexRow.
+ * @param props.justify - The horizontal alignment of the child elements within the FlexRow.
+ * @param props.wrap - Whether or not child elements should wrap to the next line when they exceed the width of the FlexRow.
+ * @param props.wrapSpacing - The vertical spacing between wrapped lines of child elements within the FlexRow.
+ * @param props.grow - Whether or not the FlexRow should grow to fill available space.
+ * @param props.fullWidth - Whether or not the FlexRow should take up the full width of its container.
+ * @param props.fullHeight - Whether or not the FlexRow should take up the full height of its container.
+ * @returns The FlexRow component.
+ */
 export function FlexRow(props: {
   children?: React.ReactNode;
   align?: 'top' | 'center' | 'bottom' | 'baseline' | 'stretch';
@@ -8,6 +23,9 @@ export function FlexRow(props: {
   justify?: 'left' | 'middle' | 'right';
   wrap?: boolean;
   wrapSpacing?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
+  grow?: boolean;
+  fullWidth?: boolean;
+  fullHeight?: boolean;
 }) {
   return (
     <div
@@ -36,6 +54,9 @@ export function FlexRow(props: {
         'gap-y-4': props.wrapSpacing === 'lg',
         'gap-y-5': props.wrapSpacing === 'xl',
         'gap-y-6': props.wrapSpacing === 'xxl',
+        'flex-grow': props.grow,
+        'full-width': props.fullWidth,
+        'full-height': props.fullHeight,
       })}
     >
       {props.children}

@@ -10,6 +10,7 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { CSSProperties, ReactNode, useContext } from 'react';
+import { Link } from 'react-router-dom';
 import { FlexColumn } from '../components/FlexColumn';
 import { FlexRow } from '../components/FlexRow';
 import { Help } from '../components/Help';
@@ -160,12 +161,12 @@ export function PageDashboardCard(props: {
     >
       {(props.title || props.linkText) && (
         <CardHeader>
-          <FlexColumn>
+          <FlexColumn fullWidth>
             <FlexRow align="center" spacing="md">
               {props.icon}
-              <FlexColumn>
+              <FlexColumn grow>
                 {props.supertitle && (
-                  <Text component="small" style={{ opacity: 0.8 }}>
+                  <Text component="small" style={{ opacity: 0.7 }}>
                     {props.supertitle}
                   </Text>
                 )}
@@ -176,12 +177,17 @@ export function PageDashboardCard(props: {
                   <Help help={props.help} title={props.helpTitle} docLink={props.helpDocLink} />
                 </FlexRow>
                 {props.subtitle && (
-                  <Text component="small" style={{ opacity: 0.8 }}>
+                  <Text component="small" style={{ opacity: 0.7 }}>
                     {props.subtitle}
                   </Text>
                 )}
               </FlexColumn>
+              {props.headerControls}
+              <Text component="small">
+                {props.linkText && <Link to={props.to as string}>{props.linkText}</Link>}
+              </Text>
             </FlexRow>
+
             {props.description && (
               <span style={{ opacity: 0.8, paddingTop: 6 }}>{props.description}</span>
             )}
