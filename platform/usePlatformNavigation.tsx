@@ -5,13 +5,13 @@ import { PageNavigationItem, removeNavigationItemById } from '../framework';
 import { AwxRoute } from '../frontend/awx/AwxRoutes';
 import { useAwxNavigation } from '../frontend/awx/useAwxNavigation';
 import { EdaRoute } from '../frontend/eda/EdaRoutes';
-import { UnderDevelopment } from '../frontend/eda/under-development/UnderDevelopment';
 import { useEdaNavigation } from '../frontend/eda/useEdaNavigation';
 import { HubRoute } from '../frontend/hub/HubRoutes';
 import { useHubNavigation } from '../frontend/hub/useHubNavigation';
 import { PlatformLogin } from './PlatformLogin';
 import { PlatformRoute } from './PlatformRoutes';
 import { PlatformDashboard } from './dashboard/PlatformDashboard';
+import { Lightspeed } from './lightspeed/Lightspeed';
 
 export function usePlatformNavigationA() {
   const { t } = useTranslation();
@@ -77,72 +77,72 @@ export function usePlatformNavigationA() {
         path: 'overview',
         element: <PlatformDashboard />,
       },
-      {
-        label: t('Inventories'),
-        path: 'inventories',
-        children: [inventories, hosts],
-      },
-      {
-        label: t('Automation Mesh'),
-        path: 'mesh',
-        children: [topology, instanceGroups, instances],
-      },
       projects,
-      {
-        label: t('Content Discovery'),
-        path: 'content',
-        children: [namespaces, collections, executionEnvironments, decisionEnvironments],
-      },
       {
         label: t('Automation Execution'),
         path: 'execution',
-        children: [templates, schedules, jobs],
+        children: [jobs, templates, schedules, executionEnvironments],
       },
       {
-        label: t('Rulebook Activations'),
-        path: 'rules',
-        children: [ruleAudits, rulebookActivations],
+        label: t('Event Driven Automation'),
+        path: 'event-driven',
+        children: [ruleAudits, rulebookActivations, decisionEnvironments],
+      },
+      {
+        label: t('Automation Infrastructure'),
+        path: 'mesh',
+        children: [topology, instanceGroups, instances, inventories, hosts],
+      },
+      {
+        label: t('Automation Content'),
+        path: 'content',
+        children: [namespaces, collections],
       },
       analytics,
       {
-        label: t('Quick Starts'),
-        path: 'quick-starts',
-        element: <UnderDevelopment />,
-      },
-      {
-        id: 'platform-adminsitration',
-        label: t('Administration'),
-        path: 'administration',
+        label: t('Automation Credentials'),
+        path: 'keys',
         children: [
-          {
-            label: t('Utilities'),
-            path: 'utilities',
-            children: [
-              activityStream,
-              signtureKeys,
-              reposiitories,
-              remotes,
-              remoteRegistries,
-              tasks,
-              approvals,
-              notifications,
-              managementJobs,
-              applications,
-            ],
-          },
-          {
-            label: t('Access'),
-            path: 'access',
-            children: [organizations, teams, users],
-          },
           credentials,
           credentialTypes,
+          {
+            id: 'API Tokens',
+            label: 'API Tokens',
+            path: 'tokens',
+          },
         ],
+      },
+      {
+        label: t('Access Management'),
+        path: 'access',
+        children: [organizations, teams, users],
+      },
+      {
+        id: 'lightspeed',
+        label: 'Ansible Lightspeed with Watson Code Assistant',
+        path: 'lightspeed',
+        element: <Lightspeed />,
       },
       {
         id: PlatformRoute.Root,
         path: '',
         element: <Navigate to="overview" />,
+      },
+      {
+        label: t('Utilities'),
+        path: 'utilities',
+        children: [
+          activityStream,
+          signtureKeys,
+          reposiitories,
+          remotes,
+          remoteRegistries,
+          tasks,
+          approvals,
+          notifications,
+          managementJobs,
+          applications,
+        ],
       },
     ];
     return navigationItems.filter((item) => item !== undefined) as PageNavigationItem[];
@@ -189,6 +189,9 @@ export function usePlatformNavigationB() {
   const hub = useHubNavigation();
   const eda = useEdaNavigation();
 
+  const analytics = removeNavigationItemById(awx, AwxRoute.Analytics);
+  analytics!.label = t('Automation Analytics');
+
   const pageNavigationItems = useMemo<PageNavigationItem[]>(() => {
     const navigationItems = [
       {
@@ -220,6 +223,7 @@ export function usePlatformNavigationB() {
         path: 'eda',
         children: eda,
       },
+      analytics,
       {
         id: PlatformRoute.Root,
         path: '',
@@ -227,6 +231,6 @@ export function usePlatformNavigationB() {
       },
     ];
     return navigationItems.filter((item) => item !== undefined) as PageNavigationItem[];
-  }, [awx, eda, hub, t]);
+  }, [analytics, awx, eda, hub, t]);
   return pageNavigationItems;
 }

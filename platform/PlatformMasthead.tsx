@@ -8,6 +8,7 @@ import {
 import { UserCircleIcon } from '@patternfly/react-icons';
 import { Dispatch, SetStateAction, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSWRConfig } from 'swr';
 import { PageMasthead, usePageNavigate } from '../framework';
 import { PageMastheadDropdown } from '../framework/PageMasthead/PageMastheadDropdown';
 import { PageSettingsIcon } from '../framework/PageMasthead/PageSettingsIcon';
@@ -24,10 +25,15 @@ export function PlatformMasthead(props: {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const activeUser = useActivePlatformUser();
+
+  const { cache } = useSWRConfig();
   const logout = useCallback(async () => {
     await fetch('/api/gateway/v1/logout/');
+    for (const key of cache.keys()) {
+      cache.delete(key);
+    }
     pageNavigate(PlatformRoute.Login);
-  }, [pageNavigate]);
+  }, [cache, pageNavigate]);
 
   return (
     <PageMasthead
