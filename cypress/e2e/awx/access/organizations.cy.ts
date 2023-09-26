@@ -93,12 +93,14 @@ describe('organizations', () => {
   it('deletes an organization from the organizations list row item', () => {
     cy.createAwxOrganization().then((testOrganization) => {
       cy.navigateTo('awx', 'organizations');
-      cy.clickTableRowKebabAction(testOrganization.name, /^Delete organization$/);
+      cy.get(`[data-cy="row-id-${testOrganization.id}"]`).within(() => {
+        cy.get('[data-cy="actions-dropdown"]').click();
+        cy.get('[data-cy="delete-organization"]').click();
+      });
       cy.get('#confirm').click();
       cy.clickButton(/^Delete organization/);
       cy.contains(/^Success$/);
       cy.clickButton(/^Close$/);
-      cy.clickButton(/^Clear all filters$/);
     });
   });
 

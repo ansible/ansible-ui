@@ -220,6 +220,7 @@ export function PageFormSubmitButton(props: { children: ReactNode; style?: CSSPr
   return (
     <Tooltip content={t('Please fix errors')} trigger={hasErrors ? undefined : 'manual'}>
       <Button
+        data-cy={'Submit'}
         type="submit"
         isDisabled={isSubmitting}
         isLoading={isSubmitting}
@@ -235,7 +236,7 @@ export function PageFormSubmitButton(props: { children: ReactNode; style?: CSSPr
 
 export function PageFormCancelButton(props: { onCancel: () => void; children: ReactNode }) {
   return (
-    <Button type="button" variant="link" onClick={props.onCancel}>
+    <Button data-cy={'Cancel'} type="button" variant="link" onClick={props.onCancel}>
       {props.children}
     </Button>
   );

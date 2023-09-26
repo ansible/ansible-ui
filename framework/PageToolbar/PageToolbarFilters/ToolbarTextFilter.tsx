@@ -50,7 +50,7 @@ export function ToolbarTextFilter(props: IToolbarTextFilterProps) {
 
   return (
     <InputGroup>
-      <TextInputGroup style={{ minWidth: 220 }}>
+      <TextInputGroup data-cy={'text-input'} style={{ minWidth: 220 }}>
         <TextInputGroupMain
           id={props.id}
           value={value}
