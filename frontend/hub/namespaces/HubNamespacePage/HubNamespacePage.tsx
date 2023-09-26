@@ -1,24 +1,16 @@
 import { DropdownPosition } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import {
-  PageActions,
-  PageHeader,
-  PageLayout,
-  PageTab,
-  PageTabs,
-  useGetPageUrl,
-} from '../../../framework';
-import { PageDetailsFromColumns } from '../../../framework/PageDetails/PageDetailsFromColumns';
-import { useGet } from '../../common/crud/useGet';
-import { HubRoute } from '../HubRoutes';
-import { hubAPI } from '../api/utils';
-import { HubItemsResponse } from '../useHubView';
-import { HubNamespace } from './HubNamespace';
-import { useHubNamespaceActions } from './hooks/useHubNamespaceActions';
-import { useHubNamespacesColumns } from './hooks/useHubNamespacesColumns';
+import { PageActions, PageHeader, PageLayout, useGetPageUrl } from '../../../../framework';
+import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
+import { useGet } from '../../../common/crud/useGet';
+import { HubRoute } from '../../HubRoutes';
+import { hubAPI } from '../../api/utils';
+import { HubItemsResponse } from '../../useHubView';
+import { HubNamespace } from '../HubNamespace';
+import { useHubNamespaceActions } from '../hooks/useHubNamespaceActions';
 
-export function NamespaceDetails() {
+export function HubNamespacePage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const { data } = useGet<HubItemsResponse<HubNamespace>>(
@@ -29,7 +21,6 @@ export function NamespaceDetails() {
     namespace = data.data[0];
   }
   const getPageUrl = useGetPageUrl();
-
   const pageActions = useHubNamespaceActions();
   return (
     <PageLayout>
@@ -47,17 +38,15 @@ export function NamespaceDetails() {
           />
         }
       />
-      <PageTabs>
-        <PageTab label={t('Details')}>
-          <NamespaceDetailsTab namespace={namespace} />
-        </PageTab>
-      </PageTabs>
+      <PageRoutedTabs
+        tabs={[
+          {
+            label: t('Details'),
+            page: HubRoute.NamespaceDetails,
+          },
+        ]}
+        params={{ id: namespace?.name }}
+      />
     </PageLayout>
   );
-}
-
-function NamespaceDetailsTab(props: { namespace?: HubNamespace }) {
-  const { namespace } = props;
-  const tableColumns = useHubNamespacesColumns();
-  return <PageDetailsFromColumns item={namespace} columns={tableColumns} />;
 }

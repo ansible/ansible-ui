@@ -27,12 +27,15 @@ import { RoleDetails } from './UserAccess/Roles/RoleDetails';
 import { Roles } from './UserAccess/Roles/Roles';
 import { CreateControllerToken } from './UserAccess/Users/CreateControllerToken';
 import { EdaMyDetails, EdaUserDetails } from './UserAccess/Users/EdaUserDetails';
-import { CreateUser, EditUser, EditCurrentUser } from './UserAccess/Users/EditUser';
+import { CreateUser, EditCurrentUser, EditUser } from './UserAccess/Users/EditUser';
 import { Users } from './UserAccess/Users/Users';
 import { EdaDashboard } from './dashboard/EdaDashboard';
-import { ActivationInstanceDetails } from './rulebook-activations/ActivationInstanceDetails';
-import { RulebookActivationDetails } from './rulebook-activations/RulebookActivationDetails';
+import { ActivationInstanceDetails } from './rulebook-activations/ActivationInstancePage/ActivationInstanceDetails';
+import { ActivationInstancePage } from './rulebook-activations/ActivationInstancePage/ActivationInstancePage';
 import { CreateRulebookActivation } from './rulebook-activations/RulebookActivationForm';
+import { RulebookActivationDetails } from './rulebook-activations/RulebookActivationPage/RulebookActivationDetails';
+import { RulebookActivationHistory } from './rulebook-activations/RulebookActivationPage/RulebookActivationHistory';
+import { RulebookActivationPage } from './rulebook-activations/RulebookActivationPage/RulebookActivationPage';
 import { RulebookActivations } from './rulebook-activations/RulebookActivations';
 import { RulebookDetails } from './rulebooks/RulebookDetails';
 import { Rulebooks } from './rulebooks/Rulebooks';
@@ -87,20 +90,52 @@ export function useEdaNavigation() {
                     element: <CreateRulebookActivation />,
                   },
                   {
+                    id: EdaRoute.RulebookActivationInstancePage,
+                    path: ':id/history/:instanceId',
+                    element: <ActivationInstancePage />,
+                    children: [
+                      {
+                        id: EdaRoute.RulebookActivationInstanceDetails,
+                        path: 'details',
+                        element: <ActivationInstanceDetails />,
+                      },
+                      {
+                        path: '',
+                        element: <Navigate to="details" />,
+                      },
+                    ],
+                  },
+                  {
                     id: EdaRoute.RulebookActivationPage,
-                    path: 'details/:id',
-                    element: <RulebookActivationDetails initialTabIndex={0} />,
+                    path: ':id',
+                    element: <RulebookActivationPage />,
+                    children: [
+                      {
+                        id: EdaRoute.RulebookActivationDetails,
+                        path: 'details',
+                        element: <RulebookActivationDetails />,
+                      },
+                      {
+                        id: EdaRoute.RulebookActivationHistory,
+                        path: 'history',
+                        element: <RulebookActivationHistory />,
+                      },
+                      {
+                        path: '',
+                        element: <Navigate to="details" />,
+                      },
+                    ],
                   },
-                  {
-                    id: EdaRoute.RulebookActivationHistory,
-                    path: 'details/:id/history',
-                    element: <RulebookActivationDetails initialTabIndex={1} />,
-                  },
-                  {
-                    id: EdaRoute.RulebookActivationInstancesPage,
-                    path: 'activations-instances/details/:id',
-                    element: <ActivationInstanceDetails />,
-                  },
+                  // {
+                  //   id: EdaRoute.RulebookActivationPage,
+                  //   path: 'details/:id',
+                  //   element: <RulebookActivationPage initialTabIndex={0} />,
+                  // },
+                  // {
+                  //   id: EdaRoute.RulebookActivationHistory,
+                  //   path: 'details/:id/history',
+                  //   element: <RulebookActivationPage initialTabIndex={1} />,
+                  // },
                   {
                     path: '',
                     element: <RulebookActivations />,

@@ -1,19 +1,8 @@
-import {
-  Divider,
-  Flex,
-  FlexItem,
-  PageSection,
-  PageSectionTypes,
-  Skeleton,
-  Tab,
-  Tabs,
-} from '@patternfly/react-core';
+import { PageSection, Skeleton, Tab, Tabs } from '@patternfly/react-core';
 import { Children, ReactNode, isValidElement, useCallback, useState } from 'react';
 
 export function PageTabs(props: {
   children: ReactNode;
-  preComponents?: ReactNode;
-  postComponents?: ReactNode;
   initialTabIndex?: number;
   loading?: boolean;
 }) {
@@ -55,48 +44,15 @@ export function PageTabs(props: {
 
   return (
     <>
-      <PageSection type={PageSectionTypes.tabs} className="border-bottom">
-        <Flex spaceItems={{ default: 'spaceItemsNone' }}>
-          {props.preComponents && (
-            <>
-              <FlexItem
-              // style={{ paddingLeft: 16 }}
-              >
-                {props.preComponents}
-              </FlexItem>
-              <Divider orientation={{ default: 'vertical' }} component="div" />
-            </>
-          )}
-          <FlexItem grow={{ default: 'grow' }}>
-            <Tabs
-              activeKey={activeKey}
-              onSelect={onSelect}
-              inset={
-                props.preComponents
-                  ? undefined
-                  : {
-                      default: 'insetNone',
-                      sm: 'insetNone',
-                      md: 'insetNone',
-                      lg: 'insetNone',
-                      xl: 'insetSm',
-                      ['2xl']: 'insetSm',
-                    }
-              }
-              hasBorderBottom={false}
-              isBox
-            >
-              {tabs}
-            </Tabs>
-          </FlexItem>
-          {props.postComponents && (
-            <>
-              <Divider orientation={{ default: 'vertical' }} />
-              <FlexItem style={{ paddingRight: 16 }}>{props.postComponents}</FlexItem>
-            </>
-          )}
-        </Flex>
-      </PageSection>
+      <Tabs
+        activeKey={activeKey}
+        onSelect={onSelect}
+        inset={{ default: 'insetSm' }}
+        isBox
+        style={{ backgroundColor: 'var(--pf-c-tabs__link--BackgroundColor)' }}
+      >
+        {tabs}
+      </Tabs>
       {content}
     </>
   );
