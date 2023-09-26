@@ -2,6 +2,7 @@ import { DropdownItem, ToolbarGroup, ToolbarItem } from '@patternfly/react-core'
 import { ExternalLinkAltIcon, QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSWRConfig } from 'swr';
 import { PageMasthead, usePageNavigate } from '../../framework';
 import { PageMastheadDropdown } from '../../framework/PageMasthead/PageMastheadDropdown';
 import { PageNotificationsIcon } from '../../framework/PageMasthead/PageNotificationsIcon';
@@ -21,10 +22,14 @@ export function AwxMasthead() {
   const config = useAwxConfig();
   const pageNavigate = usePageNavigate();
   const activeUser = useActiveUser();
+  const { cache } = useSWRConfig();
   const logout = useCallback(async () => {
     await fetch('/api/logout/');
+    for (const key of cache.keys()) {
+      cache.delete(key);
+    }
     pageNavigate(AwxRoute.Login);
-  }, [pageNavigate]);
+  }, [cache, pageNavigate]);
   return (
     <PageMasthead
       icon={<AwxIcon style={{ height: 64 }} />}
