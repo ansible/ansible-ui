@@ -49,7 +49,7 @@ export * from './PageTable/PageTable';
 export * from './PageTable/PageTableCards';
 export * from './PageTable/PageTableColumn';
 export * from './PageTable/useTableItems';
-export * from './PageTabs';
+export * from './PageTabs/PageTabs';
 export * from './PageToolbar/PageToolbar';
 export * from './PageToolbar/PageToolbarFilter';
 export * from './PageWizard';

@@ -3,6 +3,7 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { CubesIcon, MinusCircleIcon, PlusIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import {
   IPageAction,
   PageActionSelection,
@@ -10,6 +11,7 @@ import {
   PageTable,
 } from '../../../../../framework';
 import { DetailInfo } from '../../../../../framework/components/DetailInfo';
+import { useGetItem } from '../../../../common/crud/useGet';
 import { useOptions } from '../../../../common/crud/useOptions';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { Team } from '../../../interfaces/Team';
@@ -20,7 +22,17 @@ import { useSelectTeamsAddUsers } from '../../teams/hooks/useSelectTeamsAddUsers
 import { useTeamsColumns } from '../../teams/hooks/useTeamsColumns';
 import { useTeamsFilters } from '../../teams/hooks/useTeamsFilters';
 
-export function UserTeams(props: { user: User }) {
+export function UserTeams() {
+  const params = useParams<{ id: string }>();
+  const { data: user } = useGetItem<User>('/api/v2/users', params.id);
+
+  if (!user) {
+    return null;
+  }
+  return <UserTeamsInternal user={user} />;
+}
+
+function UserTeamsInternal(props: { user: User }) {
   const { user } = props;
   const { t } = useTranslation();
   const toolbarFilters = useTeamsFilters();

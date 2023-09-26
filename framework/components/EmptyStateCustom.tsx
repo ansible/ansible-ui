@@ -1,4 +1,3 @@
-import React, { ComponentClass, ReactElement, ReactNode } from 'react';
 import {
   EmptyState,
   EmptyStateBody,
@@ -7,6 +6,7 @@ import {
   EmptyStateVariant,
   Title,
 } from '@patternfly/react-core';
+import React, { ComponentClass, ReactElement, ReactNode } from 'react';
 
 export function EmptyStateCustom(props: {
   title: string;
@@ -20,7 +20,7 @@ export function EmptyStateCustom(props: {
 }) {
   const { title, description, icon, button, footNote, image, variant, style } = props;
   return (
-    <EmptyState variant={variant || EmptyStateVariant.full} style={style}>
+    <EmptyState variant={variant || EmptyStateVariant.full} style={style} isFullHeight>
       {icon && <EmptyStateIcon icon={icon} />}
       <Title headingLevel="h4" size="lg">
         {title}

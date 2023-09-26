@@ -147,8 +147,12 @@ export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
   if (itemCount === undefined) {
     return (
       <Toolbar
-        className="border-bottom dark-2"
-        style={{ paddingBottom: sm ? undefined : 8, paddingTop: sm ? undefined : 8, zIndex: 400 }}
+        className="page-table-toolbar"
+        style={{
+          paddingBottom: sm ? undefined : 8,
+          paddingTop: sm ? undefined : 8,
+          borderBottom: bottomBorder ? 'thin solid var(--pf-global--BorderColor--100)' : undefined,
+        }}
       >
         <ToolbarContent>
           <ToolbarItem style={{ width: '100%' }}>
