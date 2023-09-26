@@ -8,15 +8,7 @@ import {
   Tab,
   Tabs,
 } from '@patternfly/react-core';
-import {
-  Children,
-  Dispatch,
-  isValidElement,
-  ReactNode,
-  SetStateAction,
-  useCallback,
-  useState,
-} from 'react';
+import { Children, ReactNode, isValidElement, useCallback, useState } from 'react';
 
 export function PageTabs(props: {
   children: ReactNode;
@@ -92,6 +84,7 @@ export function PageTabs(props: {
                     }
               }
               hasBorderBottom={false}
+              isBox
             >
               {tabs}
             </Tabs>
@@ -111,34 +104,4 @@ export function PageTabs(props: {
 
 export function PageTab(props: { label?: string; children: ReactNode }) {
   return <>{props.children}</>;
-}
-
-export function PageTabsOld(props: {
-  activeKey: string | number;
-  setActiveKey: Dispatch<SetStateAction<string | number>>;
-  children: ReactNode;
-}) {
-  const { activeKey, setActiveKey } = props;
-  const onSelect = useCallback(
-    (_: unknown, key: string | number) => setActiveKey(key),
-    [setActiveKey]
-  );
-  return (
-    <PageSection type={PageSectionTypes.tabs} style={{ flexGrow: 1 }}>
-      <Tabs
-        activeKey={activeKey}
-        onSelect={onSelect}
-        inset={{
-          default: 'insetNone',
-          sm: 'insetNone',
-          md: 'insetNone',
-          lg: 'insetNone',
-          xl: 'insetSm',
-          ['2xl']: 'insetSm',
-        }}
-      >
-        {props.children}
-      </Tabs>
-    </PageSection>
-  );
 }

@@ -1,14 +1,22 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { DateTimeCell, PageDetail, PageDetails, TextCell } from '../../../../../framework';
-import { RouteObj } from '../../../../common/Routes';
+import {
+  DateTimeCell,
+  PageDetail,
+  PageDetails,
+  TextCell,
+  useGetPageUrl,
+} from '../../../../../framework';
+import { AwxRoute } from '../../../AwxRoutes';
 import { Team } from '../../../interfaces/Team';
 
 export function TeamDetails(props: { team: Team }) {
   const { t } = useTranslation();
   const { team } = props;
   const history = useNavigate();
+  const getPageUrl = useGetPageUrl();
+
   return (
     <PageDetails>
       <PageDetail label={t('Name')}>{team.name}</PageDetail>
@@ -16,10 +24,9 @@ export function TeamDetails(props: { team: Team }) {
       <PageDetail label={t('Organization')}>
         <TextCell
           text={team.summary_fields?.organization?.name}
-          to={RouteObj.OrganizationDetails.replace(
-            ':id',
-            (team.summary_fields?.organization?.id ?? '').toString()
-          )}
+          to={getPageUrl(AwxRoute.OrganizationDetails, {
+            params: { id: (team.summary_fields?.organization?.id ?? '').toString() },
+          })}
         />
       </PageDetail>
       <PageDetail label={t('Created')}>
@@ -29,10 +36,9 @@ export function TeamDetails(props: { team: Team }) {
           author={team.summary_fields?.created_by?.username}
           onClick={() =>
             history(
-              RouteObj.UserDetails.replace(
-                ':id',
-                (team.summary_fields?.created_by?.id ?? 0).toString()
-              )
+              getPageUrl(AwxRoute.UserDetails, {
+                params: { id: (team.summary_fields?.created_by?.id ?? 0).toString() },
+              })
             )
           }
         />
@@ -44,10 +50,11 @@ export function TeamDetails(props: { team: Team }) {
           author={team.summary_fields?.modified_by?.username}
           onClick={() =>
             history(
-              RouteObj.UserDetails.replace(
-                ':id',
-                (team.summary_fields?.modified_by?.id ?? 0).toString()
-              )
+              getPageUrl(AwxRoute.UserDetails, {
+                params: {
+                  id: (team.summary_fields?.modified_by?.id ?? 0).toString(),
+                },
+              })
             )
           }
         />

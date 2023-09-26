@@ -1,10 +1,9 @@
 import {
   Button,
   EmptyState,
+  EmptyStateBody,
   EmptyStateIcon,
   EmptyStateSecondaryActions,
-  EmptyStateVariant,
-  Page,
   Stack,
   Title,
 } from '@patternfly/react-core';
@@ -17,22 +16,20 @@ export function PageNotFound(props: { dashboardUrl?: string }) {
   const navigate = useNavigate();
   const { dashboardUrl } = props;
   return (
-    <Page>
-      <EmptyState variant={EmptyStateVariant.small} style={{ paddingTop: 48 }}>
-        <EmptyStateIcon icon={ExclamationCircleIcon} />
-        <Title headingLevel="h2" size="lg">
-          {t('We could not find that page')}
-        </Title>
-        {/* <EmptyStateBody>{error.message}</EmptyStateBody> */}
-        <EmptyStateSecondaryActions>
-          <Stack hasGutter>
-            <Button onClick={() => navigate(-1)}>{t('Return to previous page')}</Button>
-            <Button component={(props) => <Link to={dashboardUrl} {...props} />}>
-              {t('Return to dashboard')}
-            </Button>
-          </Stack>
-        </EmptyStateSecondaryActions>
-      </EmptyState>
-    </Page>
+    <EmptyState isFullHeight>
+      <EmptyStateIcon icon={ExclamationCircleIcon} />
+      <Title headingLevel="h2" size="lg">
+        {t('Page not found')}
+      </Title>
+      <EmptyStateBody>{t('We could not find that page.')}</EmptyStateBody>
+      <EmptyStateSecondaryActions>
+        <Stack hasGutter>
+          <Button onClick={() => navigate(-1)}>{t('Return to previous page')}</Button>
+          <Button component={(props) => <Link to={dashboardUrl} {...props} />}>
+            {t('Return to dashboard')}
+          </Button>
+        </Stack>
+      </EmptyStateSecondaryActions>
+    </EmptyState>
   );
 }

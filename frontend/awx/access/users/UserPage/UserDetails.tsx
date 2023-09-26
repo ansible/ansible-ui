@@ -1,13 +1,20 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { PageDetail, PageDetails, DateTimeCell } from '../../../../../framework';
 import { User } from '../../../interfaces/User';
+import { useGetItem } from '../../../../common/crud/useGet';
 import { AuthenticationType } from '../components/AuthenticationType';
 import { UserType } from '../components/UserType';
 
-export function UserDetails(props: { user: User }) {
+export function UserDetails() {
   const { t } = useTranslation();
-  const { user } = props;
+  const params = useParams<{ id: string }>();
+  const { data: user } = useGetItem<User>('/api/v2/users', params.id);
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <>

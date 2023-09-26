@@ -6,11 +6,13 @@ import {
   removeLeadingSlash,
 } from '../../framework/PageNavigation/PageNavigationItem';
 import { PageNotImplemented } from '../common/PageNotImplemented';
-import { UnderDevelopment } from '../eda/under-development/UnderDevelopment';
 import { AwxLogin } from './AwxLogin';
 import { AwxRoute } from './AwxRoutes';
 import { CreateOrganization, EditOrganization } from './access/organizations/OrganizationForm';
+import { OrganizationAccess } from './access/organizations/OrganizationPage/OrganizationAccess';
+import { OrganizationDetails } from './access/organizations/OrganizationPage/OrganizationDetails';
 import { OrganizationPage } from './access/organizations/OrganizationPage/OrganizationPage';
+import { OrganizationTeams } from './access/organizations/OrganizationPage/OrganizationTeams';
 import { Organizations } from './access/organizations/Organizations';
 import { CreateTeam, EditTeam } from './access/teams/TeamForm';
 import { TeamPage } from './access/teams/TeamPage/TeamPage';
@@ -18,6 +20,10 @@ import { Teams } from './access/teams/Teams';
 import { AddRolesToTeam } from './access/teams/components/AddRolesToTeam';
 import { CreateUser, EditUser } from './access/users/UserForm';
 import { UserPage } from './access/users/UserPage/UserPage';
+import { UserDetails } from './access/users/UserPage/UserDetails';
+import { UserOrganizations } from './access/users/UserPage/UserOrganizations';
+import { UserTeams } from './access/users/UserPage/UserTeams';
+import { UserRoles } from './access/users/UserPage/UserRoles';
 import { Users } from './access/users/Users';
 import { AddRolesToUser } from './access/users/components/AddRolesToUser';
 import { ApplicationPage } from './administration/applications/ApplicationPage/ApplicationPage';
@@ -50,6 +56,10 @@ import { Projects } from './resources/projects/Projects';
 import { CreateJobTemplate, EditJobTemplate } from './resources/templates/TemplateForm';
 import { TemplatePage } from './resources/templates/TemplatePage/TemplatePage';
 import { Templates } from './resources/templates/Templates';
+import {
+  CreateWorkflowJobTemplate,
+  EditWorkflowJobTemplate,
+} from './resources/templates/WorkflowJobTemplateForm';
 import { WorkflowJobTemplatePage } from './resources/templates/WorkflowJobTemplatePage/WorkflowJobTemplatePage';
 import Settings from './settings/Settings';
 import HostMetrics from './views/jobs/HostMetrics';
@@ -58,10 +68,6 @@ import Jobs from './views/jobs/Jobs';
 import { CreateSchedule } from './views/schedules/ScheduleForm';
 import { SchedulePage } from './views/schedules/SchedulePage/SchedulePage';
 import { Schedules } from './views/schedules/Schedules';
-import {
-  CreateWorkflowJobTemplate,
-  EditWorkflowJobTemplate,
-} from './resources/templates/WorkflowJobTemplateForm';
 
 export function useAwxNavigation() {
   const { t } = useTranslation();
@@ -339,8 +345,39 @@ export function useAwxNavigation() {
                   },
                   {
                     id: AwxRoute.OrganizationPage,
-                    path: ':id/*',
+                    path: ':id',
                     element: <OrganizationPage />,
+                    children: [
+                      {
+                        id: AwxRoute.OrganizationDetails,
+                        path: 'details',
+                        element: <OrganizationDetails />,
+                      },
+                      {
+                        id: AwxRoute.OrganizationAccess,
+                        path: 'access',
+                        element: <OrganizationAccess />,
+                      },
+                      {
+                        id: AwxRoute.OrganizationTeams,
+                        path: 'teams',
+                        element: <OrganizationTeams />,
+                      },
+                      {
+                        id: AwxRoute.OrganizationExecutionEnvironments,
+                        path: 'execution-environments',
+                        element: <PageNotImplemented />,
+                      },
+                      {
+                        id: AwxRoute.OrganizationNotifications,
+                        path: 'notifications',
+                        element: <PageNotImplemented />,
+                      },
+                      {
+                        path: '',
+                        element: <Navigate to="details" />,
+                      },
+                    ],
                   },
                   {
                     path: '',
@@ -401,8 +438,30 @@ export function useAwxNavigation() {
                   },
                   {
                     id: AwxRoute.UserPage,
-                    path: ':id/*',
+                    path: ':id',
                     element: <UserPage />,
+                    children: [
+                      {
+                        id: AwxRoute.UserDetails,
+                        path: 'details',
+                        element: <UserDetails />,
+                      },
+                      {
+                        id: AwxRoute.UserOrganizations,
+                        path: 'organizations',
+                        element: <UserOrganizations />,
+                      },
+                      {
+                        id: AwxRoute.UserTeams,
+                        path: 'teams',
+                        element: <UserTeams />,
+                      },
+                      {
+                        id: AwxRoute.UserRoles,
+                        path: 'roles',
+                        element: <UserRoles />,
+                      },
+                    ],
                   },
                   {
                     path: '',
@@ -477,17 +536,17 @@ export function useAwxNavigation() {
                   {
                     id: AwxRoute.CreateInstanceGroup,
                     path: 'create',
-                    element: <UnderDevelopment />,
+                    element: <PageNotImplemented />,
                   },
                   {
                     id: AwxRoute.EditInstanceGroup,
                     path: ':id/edit',
-                    element: <UnderDevelopment />,
+                    element: <PageNotImplemented />,
                   },
                   {
                     id: AwxRoute.InstanceGroupPage,
                     path: ':id/*',
-                    element: <UnderDevelopment />,
+                    element: <PageNotImplemented />,
                   },
                   {
                     path: '',

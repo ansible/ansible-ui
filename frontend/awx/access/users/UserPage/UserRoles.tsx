@@ -4,13 +4,12 @@ import {
   EmptyState,
   EmptyStateBody,
   EmptyStateIcon,
-  EmptyStateVariant,
   Title,
 } from '@patternfly/react-core';
 import { CubesIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import { useParams } from 'react-router-dom';
 import {
   IPageAction,
   PageActionSelection,
@@ -18,18 +17,24 @@ import {
   PageTable,
   usePageNavigate,
 } from '../../../../../framework';
+import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
 import { Role } from '../../../interfaces/Role';
 import { User } from '../../../interfaces/User';
 import { useAwxView } from '../../../useAwxView';
 import { useRolesColumns, useRolesFilters } from '../../roles/Roles';
 
-const EmptyStateDiv = styled.div`
-  height: 100%;
-  background-color: var(--pf-global--BackgroundColor--100);
-`;
+export function UserRoles() {
+  const params = useParams<{ id: string }>();
+  const { data: user } = useGetItem<User>('/api/v2/users', params.id);
 
-export function UserRoles(props: { user: User }) {
+  if (!user) {
+    return null;
+  }
+  return <UserRolesInternal user={user} />;
+}
+
+function UserRolesInternal(props: { user: User }) {
   const { user } = props;
   const { t } = useTranslation();
   const toolbarFilters = useRolesFilters();
@@ -86,17 +91,15 @@ export function UserRoles(props: { user: User }) {
 
   if (isSysAdmin) {
     return (
-      <EmptyStateDiv>
-        <EmptyState variant={EmptyStateVariant.small} style={{ paddingTop: 48 }}>
-          <EmptyStateIcon icon={CubesIcon} />
-          <Title headingLevel="h2" size="lg">
-            {t(`System Administrator`)}
-          </Title>
-          <EmptyStateBody>
-            {t(`System administrators have unrestricted access to all resources.`)}
-          </EmptyStateBody>
-        </EmptyState>
-      </EmptyStateDiv>
+      <EmptyState isFullHeight>
+        <EmptyStateIcon icon={CubesIcon} />
+        <Title headingLevel="h2" size="lg">
+          {t(`System Administrator`)}
+        </Title>
+        <EmptyStateBody>
+          {t(`System administrators have unrestricted access to all resources.`)}
+        </EmptyStateBody>
+      </EmptyState>
     );
   }
 

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { ButtonVariant, DropdownPosition } from '@patternfly/react-core';
 import { EditIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
@@ -15,17 +14,12 @@ import {
   usePageNavigate,
 } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
-import { PageBackTab, RoutedTab, RoutedTabs } from '../../../../common/RoutedTabs';
-import { RouteObj } from '../../../../common/Routes';
+import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
 import { AwxError } from '../../../common/AwxError';
 import { User } from '../../../interfaces/User';
 import { useDeleteUsers } from '../hooks/useDeleteUsers';
-import { UserDetails } from './UserDetails';
-import { UserOrganizations } from './UserOrganizations';
-import { UserRoles } from './UserRoles';
-import { UserTeams } from './UserTeams';
 
 export function UserPage() {
   const { t } = useTranslation();
@@ -84,25 +78,20 @@ export function UserPage() {
           />
         }
       />
-      <RoutedTabs baseUrl={getPageUrl(AwxRoute.UserPage)}>
-        <PageBackTab
-          label={t('Back to Users')}
-          url={getPageUrl(AwxRoute.Users)}
-          persistentFilterKey="users"
-        />
-        <RoutedTab label={t('Details')} url={RouteObj.UserDetails}>
-          <UserDetails user={user} />
-        </RoutedTab>
-        <RoutedTab label={t('Organizations')} url={RouteObj.UserOrganizations}>
-          <UserOrganizations user={user} />
-        </RoutedTab>
-        <RoutedTab label={t('Teams')} url={RouteObj.UserTeams}>
-          <UserTeams user={user} />
-        </RoutedTab>
-        <RoutedTab label={t('Roles')} url={RouteObj.UserRoles}>
-          <UserRoles user={user} />
-        </RoutedTab>
-      </RoutedTabs>
+      <PageRoutedTabs
+        backTab={{
+          label: t('Back to Users'),
+          page: AwxRoute.Users,
+          persistentFilterKey: 'users',
+        }}
+        tabs={[
+          { label: t('Details'), page: AwxRoute.UserDetails },
+          { label: t('Organizations'), page: AwxRoute.UserOrganizations },
+          { label: t('Teams'), page: AwxRoute.UserTeams },
+          { label: t('Roles'), page: AwxRoute.UserRoles },
+        ]}
+        params={{ id: user.id }}
+      />
     </PageLayout>
   );
 }
