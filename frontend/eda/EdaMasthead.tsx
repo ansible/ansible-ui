@@ -2,6 +2,7 @@ import { DropdownItem, ToolbarGroup, ToolbarItem } from '@patternfly/react-core'
 import { ExternalLinkAltIcon, QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSWRConfig } from 'swr';
 import { PageMasthead, usePageNavigate } from '../../framework';
 import { PageMastheadDropdown } from '../../framework/PageMasthead/PageMastheadDropdown';
 import { PageSettingsIcon } from '../../framework/PageMasthead/PageSettingsIcon';
@@ -19,10 +20,14 @@ export function EdaMasthead() {
   const openAnsibleAboutModal = useAnsibleAboutModal();
   const pageNavigate = usePageNavigate();
   const activeUser = useActiveUser();
+  const { cache } = useSWRConfig();
   const logout = useCallback(async () => {
     await postRequest(`${API_PREFIX}/auth/session/logout/`, {});
+    for (const key of cache.keys()) {
+      cache.delete(key);
+    }
     pageNavigate(EdaRoute.Login);
-  }, [pageNavigate]);
+  }, [cache, pageNavigate]);
   return (
     <PageMasthead
       icon={<EdaIcon style={{ height: 64 }} />}
