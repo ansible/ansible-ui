@@ -25,7 +25,7 @@ export function PageDetail(props: {
   return (
     <DescriptionListGroup>
       {label && (
-        <DescriptionListTerm>
+        <DescriptionListTerm style={{ opacity: 0.6 }}>
           {label}
           {helpText ? <StandardPopover header={label} content={helpText} /> : null}
         </DescriptionListTerm>

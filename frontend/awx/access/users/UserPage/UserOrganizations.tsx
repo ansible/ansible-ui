@@ -3,6 +3,7 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { MinusCircleIcon, PlusIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import {
   IPageAction,
   PageActionSelection,
@@ -10,6 +11,7 @@ import {
   PageTable,
 } from '../../../../../framework';
 import { DetailInfo } from '../../../../../framework/components/DetailInfo';
+import { useGetItem } from '../../../../common/crud/useGet';
 import { Organization } from '../../../interfaces/Organization';
 import { User } from '../../../interfaces/User';
 import { useAwxView } from '../../../useAwxView';
@@ -20,11 +22,22 @@ import {
 import { useRemoveOrganizationsFromUsers } from '../../organizations/hooks/useRemoveOrganizationsFromUsers';
 import { useSelectOrganizationsAddUsers } from '../../organizations/hooks/useSelectOrganizationsAddUsers';
 
-export function UserOrganizations(props: { user: User }) {
-  const { user } = props;
+export function UserOrganizations() {
+  const params = useParams<{ id: string }>();
+  const { data: user } = useGetItem<User>('/api/v2/users', params.id);
+
+  if (!user) {
+    return null;
+  }
+  return <UserOrganizationsInternal user={user} />;
+}
+
+function UserOrganizationsInternal(props: { user: User }) {
   const { t } = useTranslation();
+  const { user } = props;
   const toolbarFilters = useOrganizationsFilters();
   const tableColumns = useOrganizationsColumns();
+
   const view = useAwxView<Organization>({
     url: `/api/v2/users/${user.id}/organizations/`,
     toolbarFilters,
