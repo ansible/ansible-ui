@@ -1,13 +1,15 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, TextCell } from '../../../../../framework';
-import { RouteObj } from '../../../../common/Routes';
+import { ITableColumn, TextCell, useGetPageUrl } from '../../../../../framework';
+import { AwxRoute } from '../../../AwxRoutes';
 import { useCreatedColumn } from '../../../../common/columns';
 import { User } from '../../../interfaces/User';
 import { UserType } from '../components/UserType';
 
 export function useUsersColumns(options?: { disableLinks?: boolean; disableSort?: boolean }) {
   const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
+
   const createdColumn = useCreatedColumn(options);
   const tableColumns = useMemo<ITableColumn<User>[]>(
     () => [
@@ -16,7 +18,7 @@ export function useUsersColumns(options?: { disableLinks?: boolean; disableSort?
         cell: (user) => (
           <TextCell
             text={user.username}
-            to={RouteObj.UserDetails.replace(':id', user.id.toString())}
+            to={getPageUrl(AwxRoute.UserDetails, { params: { id: user.id.toString() } })}
           />
         ),
         card: 'name',
@@ -53,7 +55,7 @@ export function useUsersColumns(options?: { disableLinks?: boolean; disableSort?
         sort: undefined,
       },
     ],
-    [createdColumn, t]
+    [createdColumn, getPageUrl, t]
   );
   return tableColumns;
 }
