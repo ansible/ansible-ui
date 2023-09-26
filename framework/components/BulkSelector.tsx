@@ -86,6 +86,7 @@ export function BulkSelector<T extends object>(props: BulkSelectorProps<T>) {
           <DropdownToggleCheckbox
             id="select-all"
             key="select-all"
+            data-cy="select-all"
             aria-label="Select all"
             isChecked={allPageItemsSelected ? true : selectedCount > 0 ? null : false}
             onChange={onToggleCheckbox}

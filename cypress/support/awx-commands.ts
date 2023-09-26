@@ -189,7 +189,7 @@ Cypress.Commands.add(
   'clickTableRowKebabAction',
   (name: string | RegExp, label: string | RegExp, filter?: boolean) => {
     cy.getTableRowByText(name, filter).within(() => {
-      cy.get('.pf-c-dropdown__toggle').click();
+      cy.get('[data-cy="actions-dropdown"]').click();
       cy.contains('.pf-c-dropdown__menu-item', label)
         .should('not.be.disabled')
         .should('not.have.attr', 'aria-disabled', 'true')
