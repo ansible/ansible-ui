@@ -34,6 +34,7 @@ export function PageRoutedTabs(props: {
     <>
       <Tabs
         onSelect={onSelect}
+        inset={{ default: 'insetSm' }}
         isBox
         activeKey={activeTab?.page}
         style={{ backgroundColor: 'var(--pf-c-tabs__link--BackgroundColor)' }}
