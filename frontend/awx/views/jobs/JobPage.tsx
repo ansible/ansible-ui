@@ -47,12 +47,12 @@ export function JobPage() {
 
 function useGetJob(id?: string, type?: string) {
   const apiPaths: { [key: string]: string } = {
-    project: 'project_updates',
-    inventory: 'inventory_updates',
-    playbook: 'jobs',
+    projects: 'project_updates',
+    inventoies: 'inventory_updates',
+    job: 'jobs',
     command: 'ad_hoc_commands',
-    management: 'system_jobs',
-    workflow: 'workflow_jobs',
+    management_jobs: 'system_jobs',
+    workflow_job: 'workflow_jobs',
   };
   const path = type ? apiPaths[type] : 'jobs';
   const { data: job, refresh: refreshJob } = useGet<Job>(

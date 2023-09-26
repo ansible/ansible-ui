@@ -1,6 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { usePageAlertToaster } from '../../../../../framework';
+import { useGetPageUrl, usePageAlertToaster } from '../../../../../framework';
 import { requestGet } from '../../../../common/crud/Data';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
@@ -12,12 +11,13 @@ import {
   WorkflowJobRelaunch,
 } from '../../../interfaces/RelaunchConfiguration';
 import { UnifiedJob } from '../../../interfaces/UnifiedJob';
-import { getJobOutputUrl, getRelaunchEndpoint } from '../jobUtils';
+import { getRelaunchEndpoint } from '../jobUtils';
+import { AwxRoute } from '../../../AwxRoutes';
 
 export function useRelaunchJob(jobRelaunchParams?: JobRelaunch) {
   const alertToaster = usePageAlertToaster();
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const getPageUrl = useGetPageUrl();
   const postRequest = usePostRequest();
 
   return async (job: UnifiedJob) => {
@@ -60,30 +60,31 @@ export function useRelaunchJob(jobRelaunchParams?: JobRelaunch) {
       ) {
         // TODO: If password is needed for relaunch, handle with dialog
       } else {
-        let relaunchJob;
         switch (job.type) {
           case 'ad_hoc_command': {
-            relaunchJob = await postRequest(relaunchEndpoint, {} as AdHocCommandRelaunch);
+            await postRequest(relaunchEndpoint, {} as AdHocCommandRelaunch);
             break;
           }
           case 'workflow_job': {
-            relaunchJob = await postRequest(relaunchEndpoint, {} as WorkflowJobRelaunch);
+            await postRequest(relaunchEndpoint, {} as WorkflowJobRelaunch);
             break;
           }
           case 'job': {
-            relaunchJob = await postRequest(relaunchEndpoint, {
+            await postRequest(relaunchEndpoint, {
               ...jobRelaunchParams,
             } as JobRelaunch);
             break;
           }
           case 'inventory_update':
-            relaunchJob = await postRequest(relaunchEndpoint, {} as InventorySourceUpdate);
+            await postRequest(relaunchEndpoint, {} as InventorySourceUpdate);
             break;
           case 'project_update':
-            relaunchJob = await postRequest(relaunchEndpoint, {} as ProjectUpdateView);
+            await postRequest(relaunchEndpoint, {} as ProjectUpdateView);
             break;
         }
-        navigate(getJobOutputUrl(relaunchJob as UnifiedJob));
+        getPageUrl(AwxRoute.JobPage, {
+          params: { id: job.id, job_type: job.type },
+        });
       }
     } catch (error) {
       alertToaster.addAlert({

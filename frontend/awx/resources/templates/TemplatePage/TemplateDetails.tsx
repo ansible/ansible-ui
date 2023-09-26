@@ -8,15 +8,16 @@ import {
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
-import { PageDetail, PageDetails } from '../../../../../framework';
+import { LoadingPage, PageDetail, PageDetails } from '../../../../../framework';
 import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
 import { RouteObj } from '../../../../common/Routes';
-import { useGet } from '../../../../common/crud/useGet';
+import { useGet, useGetItem } from '../../../../common/crud/useGet';
 import { CredentialLabel } from '../../../common/CredentialLabel';
 import { UserDateDetail } from '../../../common/UserDateDetail';
 import { useVerbosityString } from '../../../common/useVerbosityString';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
+import { AwxError } from '../../../common/AwxError';
 
 function useInstanceGroups(templateId: string) {
   const { data } = useGet<{ results: InstanceGroup[] }>(
@@ -25,13 +26,20 @@ function useInstanceGroups(templateId: string) {
   return data?.results ?? [];
 }
 
-export function TemplateDetails(props: { template: JobTemplate }) {
+export function TemplateDetails() {
   const { t } = useTranslation();
-  const { template } = props;
   const params = useParams<{ id: string }>();
-  const { summary_fields: summaryFields } = template;
-
+  const {
+    error,
+    data: template,
+    refresh,
+  } = useGetItem<JobTemplate>('/api/v2/job_templates', params.id);
   const instanceGroups = useInstanceGroups(params.id || '0');
+
+  const verbosity: string = useVerbosityString(template?.verbosity);
+  if (error) return <AwxError error={error} handleRefresh={refresh} />;
+  if (!template) return <LoadingPage breadcrumbs tabs />;
+  const { summary_fields: summaryFields } = template;
 
   const showOptionsField =
     template.become_enabled ||
@@ -118,7 +126,7 @@ export function TemplateDetails(props: { template: JobTemplate }) {
       </PageDetail>
       <PageDetail label={t('Forks')}>{template.forks || 0}</PageDetail>
       <PageDetail label={t('Limit')}>{template.limit}</PageDetail>
-      <PageDetail label={t('Verbosity')}>{useVerbosityString(template.verbosity)}</PageDetail>
+      <PageDetail label={t('Verbosity')}>{verbosity}</PageDetail>
       <PageDetail label={t('Timeout')}>{template.timeout || 0}</PageDetail>
       <PageDetail label={t('Show changes')}>{template.diff_mode ? t`On` : t`Off`}</PageDetail>
       <PageDetail label={t('Job slicing')}>{template.job_slice_count}</PageDetail>
