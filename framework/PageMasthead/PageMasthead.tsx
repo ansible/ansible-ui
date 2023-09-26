@@ -67,7 +67,7 @@ export function PageMastheadToggle() {
   const navBar = usePageNavSideBar();
   return (
     <MastheadToggle onClick={() => navBar.setState({ isOpen: !navBar.isOpen })}>
-      <PageToggleButton variant="plain" aria-label="Global navigation">
+      <PageToggleButton data-cy={'nav-toggle'} variant="plain" aria-label="Global navigation">
         <BarsIcon />
       </PageToggleButton>
     </MastheadToggle>

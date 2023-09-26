@@ -24,6 +24,7 @@ export function PageFormSlider(props: {
   return (
     <FormGroup
       id={`${id}-form-group`}
+      data-cy={`${id}-form-group`}
       fieldId={id}
       label={props.label}
       helperText={props.helperText}

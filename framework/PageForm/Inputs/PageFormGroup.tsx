@@ -20,6 +20,7 @@ export function PageFormGroup(props: PageFormGroupProps) {
   return (
     <FormGroup
       id={`${props.id ?? ''}-form-group`}
+      data-cy={`${props.id ?? ''}-form-group`}
       fieldId={props.id}
       label={label}
       helperText={helperText}
