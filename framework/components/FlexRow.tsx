@@ -1,30 +1,32 @@
 import { clsx } from 'clsx';
 import './FlexRow.css';
 
-/**
- * A flexible row container that allows for easy alignment and spacing of child elements.
- *
- * @param props - The props for the FlexRow component.
- * @param props.children - The child elements to be rendered within the FlexRow.
- * @param props.align - The vertical alignment of the child elements within the FlexRow.
- * @param props.spacing - The horizontal spacing between child elements within the FlexRow.
- * @param props.justify - The horizontal alignment of the child elements within the FlexRow.
- * @param props.wrap - Whether or not child elements should wrap to the next line when they exceed the width of the FlexRow.
- * @param props.wrapSpacing - The vertical spacing between wrapped lines of child elements within the FlexRow.
- * @param props.grow - Whether or not the FlexRow should grow to fill available space.
- * @param props.fullWidth - Whether or not the FlexRow should take up the full width of its container.
- * @param props.fullHeight - Whether or not the FlexRow should take up the full height of its container.
- * @returns The FlexRow component.
- */
+/** A flexible row container that allows for easy alignment and spacing of child elements. */
 export function FlexRow(props: {
   children?: React.ReactNode;
+
+  /** The vertical alignment of the child elements within the FlexRow. */
   align?: 'top' | 'center' | 'bottom' | 'baseline' | 'stretch';
+
+  /** The horizontal spacing between child elements within the FlexRow. */
   spacing?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
+
+  /** The horizontal alignment of the child elements within the FlexRow. */
   justify?: 'left' | 'middle' | 'right';
+
+  /** Whether or not child elements should wrap to the next line when they exceed the width of the FlexRow. */
   wrap?: boolean;
+
+  /** The vertical spacing between wrapped lines of child elements within the FlexRow. */
   wrapSpacing?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
+
+  /** Whether or not the FlexRow should grow to fill available space. */
   grow?: boolean;
+
+  /** Whether or not the FlexRow should take up the full width of its container. */
   fullWidth?: boolean;
+
+  /** Whether or not the FlexRow should take up the full height of its container. */
   fullHeight?: boolean;
 }) {
   return (
