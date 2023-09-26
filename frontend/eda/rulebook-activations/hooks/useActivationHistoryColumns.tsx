@@ -32,6 +32,6 @@ export function useActivationHistoryColumns() {
         cell: (instance) => <DateTimeCell format={'date-time'} value={instance.started_at} />,
       },
     ],
-    [t]
+    [getPageUrl, t]
   );
 }
