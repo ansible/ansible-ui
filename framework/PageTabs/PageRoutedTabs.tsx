@@ -7,7 +7,7 @@ import { getPersistentFilters } from '../../frontend/common/PersistentFilters';
 export function PageRoutedTabs(props: {
   backTab?: { label: string; page: string; persistentFilterKey: string };
   tabs: { label: string; page: string }[];
-  params?: { [key: string]: string | number };
+  params?: { [key: string]: string | number | undefined };
 }) {
   const pageNavigate = usePageNavigate();
   const navigate = useNavigate();
