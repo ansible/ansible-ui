@@ -14,10 +14,10 @@ import { PageTable } from '../PageTable/PageTable';
 import { ITableColumn, TableColumnCell } from '../PageTable/PageTableColumn';
 import { ISelected } from '../PageTable/useTableItems';
 import { IToolbarFilter } from '../PageToolbar/PageToolbarFilter';
+import { Collapse } from '../components/Collapse';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { IView } from '../useView';
 import { usePageDialog } from './PageDialog';
-import { Collapse } from '../components/Collapse';
 
 export type MultiSelectDialogProps<T extends object> = {
   title: string;
@@ -56,6 +56,7 @@ export function MultiSelectDialog<T extends object>(props: MultiSelectDialogProp
     <Modal
       title={title}
       aria-label={title}
+      ouiaId={title}
       description={description}
       isOpen
       onClose={onClose}
