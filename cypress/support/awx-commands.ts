@@ -843,12 +843,17 @@ after(() => {
   if (globalAwxToken) cy.deleteAwxToken(globalAwxToken, { failOnStatusCode: false });
 });
 
-Cypress.Commands.add('waitForTemplateStatus', (jobID: string) => {
+Cypress.Commands.add('waitForTemplateStatus', (jobID: number) => {
   cy.requestGet<AwxRecentJobsCard>(
     `api/v2/jobs/${jobID}/job_events/?order_by=counter&page=1&page_size=50`
   )
-    .its('results[0].summary_fields.job.status')
-
+    .its('results')
+    .then((results: { summary_fields: { job: { status: string } } }[]) => {
+      if (results.length > 0) {
+        return results[0].summary_fields.job.status;
+      }
+      return '';
+    })
     .then((status: string) => {
       cy.log(status);
       switch (status) {

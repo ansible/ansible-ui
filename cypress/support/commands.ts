@@ -489,7 +489,7 @@ declare global {
         organization: Organization
       ): Chainable<{ inventory: Inventory; host: Host; group: Group }>;
 
-      waitForTemplateStatus(job: AwxItemsResponse): Chainable<AwxItemsResponse>;
+      waitForTemplateStatus(jobID: number): Chainable<AwxItemsResponse>;
 
       // --- EDA COMMANDS ---
 
