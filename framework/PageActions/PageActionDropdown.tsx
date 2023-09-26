@@ -154,6 +154,7 @@ export function PageActionDropdown<T extends object>(props: PageActionDropdownPr
           hasIcons={hasIcons}
           hasSwitches={hasSwitches}
           index={index}
+          data-cy={id}
         />
       ))}
       position={position}
