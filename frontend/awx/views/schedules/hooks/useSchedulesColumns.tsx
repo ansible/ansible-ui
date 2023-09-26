@@ -16,27 +16,27 @@ export function useSchedulesColumns(options?: { disableSort?: boolean; disableLi
   const jobTypeLabels: JobTypeLabel = useMemo(
     () => ({
       inventory_update: {
-        name: t('Inventory Sync'),
+        name: t('Inventory sync'),
         scheduleDetailsRoute: RouteObj.InventorySourceScheduleDetails,
         resourceDetailsRoute: RouteObj.InventorySourcesDetails,
       },
       job: {
-        name: t('Playbook Run'),
+        name: t('Playbook run'),
         scheduleDetailsRoute: RouteObj.JobTemplateScheduleDetails,
         resourceDetailsRoute: RouteObj.JobTemplateDetails,
       },
       project_update: {
-        name: t('Source Control Update'),
+        name: t('Source control update'),
         scheduleDetailsRoute: RouteObj.ProjectScheduleDetails,
         resourceDetailsRoute: RouteObj.ProjectDetails,
       },
       system_job: {
-        name: t('Management Job'),
+        name: t('Management job'),
         scheduleDetailsRoute: RouteObj.ManagementJobSchedulesDetails,
         resourceDetailsRoute: RouteObj.ManagementJobs,
       },
       workflow_job: {
-        name: t('Workflow Job'),
+        name: t('Workflow job'),
         scheduleDetailsRoute: RouteObj.WorkflowJobTemplateScheduleDetails,
         resourceDetailsRoute: RouteObj.WorkflowJobTemplateDetails,
       },
