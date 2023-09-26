@@ -64,6 +64,7 @@ function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRout
     return (
       <NavItem
         id={id}
+        href={route}
         isActive={location.pathname.startsWith(route)}
         onClick={() => onClickNavItem(route)}
         data-cy={id}
