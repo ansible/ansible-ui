@@ -8,7 +8,6 @@ import {
   useGetPageUrl,
 } from '../../../../../framework';
 import { formatDateString } from '../../../../../framework/utils/formatDateString';
-import { RouteObj } from '../../../../common/Routes';
 import { StatusCell } from '../../../../common/Status';
 import { EdaRoute } from '../../../EdaRoutes';
 import { EdaRuleAuditItem } from '../../../interfaces/EdaRuleAudit';
@@ -41,10 +40,9 @@ export function useRuleAuditColumns() {
           ruleAudit?.activation_instance?.id ? (
             <TextCell
               text={ruleAudit?.activation_instance?.name || ''}
-              to={RouteObj.ActivationInstancePage.replace(
-                ':id',
-                ruleAudit?.activation_instance?.id?.toString() || ''
-              )}
+              to={getPageUrl(EdaRoute.RulebookActivationInstancePage, {
+                params: { id: ruleAudit?.id, instanceId: ruleAudit?.activation_instance?.id },
+              })}
             />
           ) : (
             <LabelsCell
