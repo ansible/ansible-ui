@@ -133,6 +133,7 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
   return (
     <Modal
       title="Settings"
+      ouiaId={'Settings'}
       aria-label="Settings"
       isOpen={props.open}
       onClose={onClose}

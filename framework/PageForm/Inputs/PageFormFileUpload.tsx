@@ -56,6 +56,7 @@ export function PageFormFileUpload(props: PageFormFileUploadProps) {
           >
             <FileUpload
               id={`file-upload-${props.name}`}
+              data-cy={`file-upload-${props.name}`}
               type={props.type || 'dataURL'}
               value={value as string}
               hideDefaultPreview={props.hideDefaultPreview}

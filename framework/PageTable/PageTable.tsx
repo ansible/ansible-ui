@@ -474,6 +474,7 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
       <>
         <TableComposable
           aria-label="Simple table"
+          ouiaId="simple-table"
           variant={
             props.compact ? 'compact' : settings.tableLayout === 'compact' ? 'compact' : undefined
           }

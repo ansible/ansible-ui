@@ -8,11 +8,11 @@ import {
   Validate,
   useFormContext,
 } from 'react-hook-form';
+import { PageMultiSelect } from '../../PageInputs/PageMultiSelect';
+import { PageSelectOption } from '../../PageInputs/PageSelectOption';
 import { Help } from '../../components/Help';
 import { useFrameworkTranslations } from '../../useFrameworkTranslations';
 import { capitalizeFirstLetter } from '../../utils/strings';
-import { PageMultiSelect } from '../../PageInputs/PageMultiSelect';
-import { PageSelectOption } from '../../PageInputs/PageSelectOption';
 
 export type PageFormMultiSelectProps<
   TFieldValues extends FieldValues = FieldValues,
@@ -139,6 +139,7 @@ export function PageFormMultiSelect<
           >
             <PageMultiSelect
               id={id}
+              data-cy={id}
               placeholder={placeholderText}
               options={options}
               aria-describedby={id ? `${id}-form-group` : undefined}

@@ -31,6 +31,7 @@ export function PageFormCheckbox<
           <Checkbox
             {...rest}
             id={props.id ?? name.split('.').join('-')}
+            data-cy={props.id ?? name.split('.').join('-')}
             isChecked={!!value}
             onChange={onChange}
             readOnly={readOnly || isSubmitting}
