@@ -40,7 +40,7 @@ export function PageToolbarView(props: PageToolbarViewProps) {
       )}
       {viewTypeCount > 1 && (
         <ToolbarItem>
-          <ToggleGroup aria-label="table view toggle">
+          <ToggleGroup data-cy={'table-view-toggle'} aria-label="table view toggle">
             {[
               !props.disableTableView && PageTableViewTypeE.Table,
               !props.disableListView && PageTableViewTypeE.List,
@@ -62,6 +62,7 @@ export function PageToolbarView(props: PageToolbarViewProps) {
                           isSelected={viewType === PageTableViewTypeE.Cards}
                           onClick={() => setViewType?.(PageTableViewTypeE.Cards)}
                           aria-label="card view"
+                          data-cy={'card-view'}
                         />
                       </Tooltip>
                     );
@@ -78,6 +79,7 @@ export function PageToolbarView(props: PageToolbarViewProps) {
                           isSelected={viewType === PageTableViewTypeE.List}
                           onClick={() => setViewType?.(PageTableViewTypeE.List)}
                           aria-label="list view"
+                          data-cy={'list-view'}
                         />
                       </Tooltip>
                     );
@@ -94,6 +96,7 @@ export function PageToolbarView(props: PageToolbarViewProps) {
                           isSelected={viewType === PageTableViewTypeE.Table}
                           onClick={() => setViewType?.(PageTableViewTypeE.Table)}
                           aria-label="table view"
+                          data-cy={'table-view'}
                         />
                       </Tooltip>
                     );

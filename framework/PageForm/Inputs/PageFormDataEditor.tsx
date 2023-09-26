@@ -75,6 +75,7 @@ function ActionsRow(props: {
         <ToggleGroupItem
           key="copy-button"
           id="copy-button"
+          data-cy="copy-button"
           aria-label={t('Copy to clipboard')}
           icon={<CopyIcon />}
           type="button"
@@ -90,6 +91,7 @@ function ActionsRow(props: {
         <ToggleGroupItem
           key="upload-button"
           id="upload-button"
+          data-cy="upload-button"
           aria-label={t('Upload from file')}
           icon={<UploadIcon />}
           type="button"
@@ -105,6 +107,7 @@ function ActionsRow(props: {
         <ToggleGroupItem
           key="download-button"
           id="download-button"
+          data-cy="download-button"
           aria-label={t('Download file')}
           icon={<DownloadIcon />}
           type="button"
@@ -119,6 +122,7 @@ function ActionsRow(props: {
       <ToggleGroupItem
         key={language}
         id={`toggle-${language}`}
+        data-cy={`toggle-${language}`}
         aria-label={t('Toggle to {{language}}', { language })}
         isSelected={selectedLanguage === language}
         isDisabled={Boolean(errors[name])}
@@ -368,6 +372,7 @@ export function PageFormDataEditor<
                     setError={setFormError}
                     clearErrors={clearErrors}
                     id={id}
+                    data-cy={id}
                     name={name}
                     language={selectedLanguage}
                     value={value}

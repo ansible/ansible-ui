@@ -35,7 +35,12 @@ export function PageDashboardCountBar(props: PageDashboardCountBarProps) {
               item.counts?.reduce<number>((acc: number, curr) => acc + (curr.count ?? 0), 0) ??
               0;
             return (
-              <div id={id} key={index} style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+              <div
+                data-cy={id}
+                id={id}
+                key={index}
+                style={{ display: 'flex', gap: 12, alignItems: 'center' }}
+              >
                 <Link to={item.to} style={{ color: 'var(--pf-global--text--Color)' }}>
                   <Title
                     headingLevel="h3"

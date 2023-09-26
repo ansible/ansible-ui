@@ -43,6 +43,7 @@ export function FormGroupTextInput(props: FormGroupTextInputProps) {
           placeholder={placeholder}
           onChange={props.onChange}
           id={id}
+          data-cy={id}
           onBlur={props.onBlur}
           label={undefined}
           value={props.value}

@@ -155,6 +155,7 @@ export function PageDashboardCard(props: {
       }}
       isCompact={props.isCompact}
       className="page-dashboard-card"
+      data-cy={props.title}
     >
       {(props.title || props.linkText) && (
         <CardHeader>

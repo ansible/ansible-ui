@@ -177,6 +177,7 @@ export function ManageItemsModal<ItemT extends object>(
     <Modal
       title={title}
       aria-label={title}
+      ouiaId={title}
       description={<div style={{ marginBottom: 16 }}>{description}</div>}
       variant={props.variant ?? ModalVariant.medium}
       isOpen

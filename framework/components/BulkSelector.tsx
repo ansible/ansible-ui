@@ -85,6 +85,7 @@ export function BulkSelector<T extends object>(props: BulkSelectorProps<T>) {
         splitButtonItems={[
           <DropdownToggleCheckbox
             id="select-all"
+            ouiaId={'select-all'}
             key="select-all"
             data-cy="select-all"
             aria-label="Select all"
@@ -104,6 +105,7 @@ export function BulkSelector<T extends object>(props: BulkSelectorProps<T>) {
     return (
       <DropdownItem
         id="select-none"
+        ouiaId={'select-none'}
         key="select-none"
         onClick={() => {
           unselectAll?.();
@@ -119,6 +121,7 @@ export function BulkSelector<T extends object>(props: BulkSelectorProps<T>) {
     return (
       <DropdownItem
         id="select-page"
+        ouiaId={'select-page'}
         key="select-page"
         onClick={() => {
           selectItems?.(pageItems ?? []);
