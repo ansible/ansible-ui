@@ -1,12 +1,13 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { DateTimeCell, ITableColumn, TextCell } from '../../../../framework';
-import { RouteObj } from '../../../common/Routes';
+import { DateTimeCell, ITableColumn, TextCell, useGetPageUrl } from '../../../../framework';
 import { StatusCell } from '../../../common/Status';
+import { EdaRoute } from '../../EdaRoutes';
 import { EdaActivationInstance } from '../../interfaces/EdaActivationInstance';
 
 export function useActivationHistoryColumns() {
   const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
   return useMemo<ITableColumn<EdaActivationInstance>[]>(
     () => [
       {
@@ -14,7 +15,9 @@ export function useActivationHistoryColumns() {
         cell: (instance) => (
           <TextCell
             text={`${instance?.id || ''} - ${instance?.name || ''}`}
-            to={RouteObj.ActivationInstancePage.replace(':id', instance.id.toString())}
+            to={getPageUrl(EdaRoute.RulebookActivationInstancePage, {
+              params: { id: instance.activation_id, instanceId: instance.id },
+            })}
           />
         ),
         card: 'name',
