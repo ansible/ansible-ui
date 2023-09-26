@@ -148,6 +148,7 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
       titleIconVariant={isDanger ? 'warning' : undefined}
       title={title}
       aria-label={title}
+      ouiaId={title}
       description={prompt}
       variant={ModalVariant.medium}
       isOpen
@@ -155,6 +156,7 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
       actions={[
         <Button
           key="submit"
+          ouiaId="submit"
           variant={isDanger ? 'danger' : 'primary'}
           onClick={() => {
             onCloseClicked();
@@ -197,6 +199,7 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
             <ConfirmBoxDiv>
               <Checkbox
                 id="confirm"
+                ouiaId="confirm"
                 label={confirmText}
                 isChecked={confirmed}
                 onChange={setConfirmed}

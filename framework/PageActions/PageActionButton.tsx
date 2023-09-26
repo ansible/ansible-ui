@@ -61,6 +61,7 @@ export function PageActionButton<T extends object>(props: {
       <Tooltip content={tooltip} trigger={tooltip ? undefined : 'manual'}>
         <Button
           id={id}
+          data-cy={id}
           variant={variant}
           isDanger={action.isDanger}
           icon={
