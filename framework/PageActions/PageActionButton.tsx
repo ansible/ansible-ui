@@ -61,6 +61,7 @@ export function PageActionButton<T extends object>(props: {
       <Tooltip content={tooltip} trigger={tooltip ? undefined : 'manual'}>
         <Button
           id={id}
+          data-cy={id}
           variant={variant}
           isDanger={action.isDanger}
           icon={
@@ -86,7 +87,6 @@ export function PageActionButton<T extends object>(props: {
           }}
           aria-label={iconOnly ? action.label : ''}
           ouiaId={id}
-          data-cy={id}
         >
           {content}
         </Button>

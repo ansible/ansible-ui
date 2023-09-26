@@ -26,7 +26,12 @@ export function PageMasthead(props: {
 }) {
   const isSmallOrLarger = useBreakpoint('sm');
   return (
-    <Masthead display={{ default: 'inline' }}>
+    <Masthead
+      display={{ default: 'inline' }}
+      style={{
+        borderBottom: '1px solid #fff4',
+      }}
+    >
       <PageMastheadToggle />
       <MastheadMain>
         <MastheadBrand>{props.icon}</MastheadBrand>
@@ -62,7 +67,7 @@ export function PageMastheadToggle() {
   const navBar = usePageNavSideBar();
   return (
     <MastheadToggle onClick={() => navBar.setState({ isOpen: !navBar.isOpen })}>
-      <PageToggleButton variant="plain" aria-label="Global navigation">
+      <PageToggleButton data-cy={'nav-toggle'} variant="plain" aria-label="Global navigation">
         <BarsIcon />
       </PageToggleButton>
     </MastheadToggle>

@@ -1,16 +1,12 @@
 import {
-  Bullseye,
   Button,
   DropdownPosition,
   EmptyState,
   EmptyStateBody,
   EmptyStateIcon,
   EmptyStateSecondaryActions,
-  EmptyStateVariant,
   Flex,
   PageSection,
-  Skeleton,
-  Spinner,
   Stack,
   Title,
 } from '@patternfly/react-core';
@@ -55,6 +51,7 @@ import { Scrollable } from '../components/Scrollable';
 import { useManageColumns } from '../components/useManageColumns';
 import { getID } from '../hooks/useID';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
+import { PageLoadingTable } from './PageLoadingTable';
 import { PagePagination } from './PagePagination';
 import './PageTable.css';
 import { PageTableCards } from './PageTableCards';
@@ -69,21 +66,6 @@ import { PageTableList } from './PageTableList';
 
 const ScrollDiv = styled.div`
   height: 100%;
-`;
-
-const ErrorStateDiv = styled.div`
-  height: 100%;
-  background-color: var(--pf-global--BackgroundColor--100);
-`;
-
-const TableCellDiv = styled.div`
-  padding-top: 5px;
-  padding-bottom: 5px;
-`;
-
-const ColumnCellDiv = styled.div`
-  padding-top: 5px;
-  padding-bottom: 5px;
 `;
 
 export type PageTableProps<T extends object> = {
@@ -266,48 +248,31 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
 
   const sortOptions = usePageToolbarSortOptionsFromColumns(props.tableColumns);
   if (error) {
-    return (
-      <ErrorStateDiv>
-        <EmptyStateError titleProp={props.errorStateTitle} message={error.message} />
-      </ErrorStateDiv>
-    );
+    return <EmptyStateError titleProp={props.errorStateTitle} message={error.message} />;
   }
 
   if (itemCount === 0 && Object.keys(filterState ?? {}).length === 0) {
     return (
-      <PageSection style={{ backgroundColor: 'transparent' }}>
-        <EmptyStateNoData
-          title={props.emptyStateTitle}
-          description={props.emptyStateDescription}
-          button={
-            (props.emptyStateButtonClick && (
-              <Button
-                variant="primary"
-                onClick={props.emptyStateButtonClick}
-                icon={props.emptyStateButtonIcon ? props.emptyStateButtonIcon : null}
-              >
-                {props.emptyStateButtonText}
-              </Button>
-            )) ||
-            (props.emptyStateActions && (
-              <Flex justifyContent={{ default: 'justifyContentCenter' }}>
-                <PageActions actions={props.emptyStateActions} />
-              </Flex>
-            ))
-          }
-          variant={EmptyStateVariant.large}
-        />
-      </PageSection>
-    );
-  }
-
-  if (itemCount === undefined) {
-    return (
-      <PageSection isFilled variant="light">
-        <Bullseye>
-          <Spinner />
-        </Bullseye>
-      </PageSection>
+      <EmptyStateNoData
+        title={props.emptyStateTitle}
+        description={props.emptyStateDescription}
+        button={
+          (props.emptyStateButtonClick && (
+            <Button
+              variant="primary"
+              onClick={props.emptyStateButtonClick}
+              icon={props.emptyStateButtonIcon ? props.emptyStateButtonIcon : null}
+            >
+              {props.emptyStateButtonText}
+            </Button>
+          )) ||
+          (props.emptyStateActions && (
+            <Flex justifyContent={{ default: 'justifyContentCenter' }}>
+              <PageActions actions={props.emptyStateActions} />
+            </Flex>
+          ))
+        }
+      />
     );
   }
 
@@ -501,26 +466,22 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
 
   const settings = useSettings();
 
-  let returnElement = (
-    <>
-      <TableComposable
-        aria-label="Simple table"
-        variant={
-          props.compact ? 'compact' : settings.tableLayout === 'compact' ? 'compact' : undefined
-        }
-        gridBreakPoint=""
-        isStickyHeader
-        className="page-table"
-      >
-        {itemCount === undefined ? (
-          <Thead>
-            <Tr>
-              <Th>
-                <Skeleton />
-              </Th>
-            </Tr>
-          </Thead>
-        ) : (
+  let returnElement: JSX.Element;
+  if (props.itemCount === undefined || pageItems === undefined) {
+    returnElement = <PageLoadingTable />;
+  } else {
+    returnElement = (
+      <>
+        <TableComposable
+          aria-label="Simple table"
+          ouiaId="simple-table"
+          variant={
+            props.compact ? 'compact' : settings.tableLayout === 'compact' ? 'compact' : undefined
+          }
+          gridBreakPoint=""
+          isStickyHeader
+          className="page-table"
+        >
           <TableHead
             {...props}
             showSelect={showSelect}
@@ -530,72 +491,51 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
             onSelect={onSelect}
             expandedRow={expandedRow}
           />
+          <Tbody>
+            {pageItems.map((item, rowIndex) => (
+              <TableRow<T>
+                key={keyFn ? keyFn(item) : rowIndex}
+                columns={tableColumns}
+                item={item}
+                isItemSelected={isSelected?.(item)}
+                isSelectMultiple={isSelectMultiple}
+                selectItem={selectItem}
+                unselectItem={unselectItem}
+                rowActions={rowActions}
+                rowIndex={rowIndex}
+                showSelect={showSelect}
+                scrollLeft={scroll.left > 0}
+                scrollRight={scroll.right > 1}
+                unselectAll={unselectAll}
+                onSelect={onSelect}
+                expandedRow={expandedRow}
+                isLastRow={rowIndex === pageItems.length - 1}
+                disableLastRowBorder={props.disableLastRowBorder}
+                maxSelections={maxSelections}
+                selectedItems={props.selectedItems}
+              />
+            ))}
+          </Tbody>
+        </TableComposable>
+        {itemCount === 0 && (
+          <EmptyState isFullHeight>
+            <EmptyStateIcon icon={SearchIcon} />
+            <Title headingLevel="h2" size="lg">
+              {translations.noResultsFound}
+            </Title>
+            <EmptyStateBody>{translations.noResultsMatchCriteria}</EmptyStateBody>
+            {clearAllFilters && (
+              <EmptyStateSecondaryActions>
+                <Button variant="primary" onClick={clearAllFilters}>
+                  {translations.clearAllFilters}
+                </Button>
+              </EmptyStateSecondaryActions>
+            )}
+          </EmptyState>
         )}
-        <Tbody>
-          {itemCount === undefined
-            ? new Array(10).fill(0).map((_, index) => (
-                <Tr key={index}>
-                  <Td>
-                    <TableCellDiv>
-                      <Skeleton height="27px" />
-                    </TableCellDiv>
-                  </Td>
-                </Tr>
-              ))
-            : pageItems === undefined
-            ? new Array(Math.min(10, itemCount)).fill(0).map((_, index) => (
-                <Tr key={index}>
-                  {showSelect && <Td></Td>}
-                  <Td colSpan={tableColumns.length}>
-                    <ColumnCellDiv>
-                      <Skeleton height="27px" />
-                    </ColumnCellDiv>
-                  </Td>
-                </Tr>
-              ))
-            : pageItems?.map((item, rowIndex) => (
-                <TableRow<T>
-                  key={keyFn ? keyFn(item) : rowIndex}
-                  columns={tableColumns}
-                  item={item}
-                  isItemSelected={isSelected?.(item)}
-                  isSelectMultiple={isSelectMultiple}
-                  selectItem={selectItem}
-                  unselectItem={unselectItem}
-                  rowActions={rowActions}
-                  rowIndex={rowIndex}
-                  showSelect={showSelect}
-                  scrollLeft={scroll.left > 0}
-                  scrollRight={scroll.right > 1}
-                  unselectAll={unselectAll}
-                  onSelect={onSelect}
-                  expandedRow={expandedRow}
-                  isLastRow={rowIndex === pageItems.length - 1}
-                  disableLastRowBorder={props.disableLastRowBorder}
-                  maxSelections={maxSelections}
-                  selectedItems={props.selectedItems}
-                />
-              ))}
-        </Tbody>
-      </TableComposable>
-      {itemCount === 0 && (
-        <EmptyState style={{ paddingTop: 48 }}>
-          <EmptyStateIcon icon={SearchIcon} />
-          <Title headingLevel="h2" size="lg">
-            {translations.noResultsFound}
-          </Title>
-          <EmptyStateBody>{translations.noResultsMatchCriteria}</EmptyStateBody>
-          {clearAllFilters && (
-            <EmptyStateSecondaryActions>
-              <Button variant="primary" onClick={clearAllFilters}>
-                {translations.clearAllFilters}
-              </Button>
-            </EmptyStateSecondaryActions>
-          )}
-        </EmptyState>
-      )}
-    </>
-  );
+      </>
+    );
+  }
 
   if (!props.scrollTopContent) {
     returnElement = (

@@ -26,12 +26,14 @@ import './commands';
 /*  EDA related custom command implementation  */
 
 Cypress.Commands.add('selectEdaUserRoleByName', (roleName: string) => {
-  cy.get('button[aria-label="Options menu"]').click();
-  cy.contains(roleName)
-    .parents('td[data-label="Name"]')
-    .prev()
+  cy.contains('.pf-c-form__label-text', 'Role(s)')
+    .parent()
+    .parent()
+    .parent()
+    .parent()
     .within(() => {
-      cy.get('input[type="checkbox"]').click();
+      cy.get('button[data-cy="roles"]').click();
+      cy.get(`[data-cy="${roleName.toLowerCase()}"]`).click();
     });
 });
 

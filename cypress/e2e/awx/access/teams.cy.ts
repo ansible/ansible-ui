@@ -59,9 +59,12 @@ describe('teams', () => {
       id: team.summary_fields.object_roles.member_role.id,
     });
     cy.navigateTo('awx', 'teams');
-    cy.clickTableRowKebabAction(team.name, /^Remove users$/);
-    cy.selectTableRowInDialog(user1.username);
-    cy.selectTableRowInDialog(user2.username);
+    cy.get(`[data-cy="row-id-${team.id}"]`).within(() => {
+      cy.get('[data-cy="actions-dropdown"]').click();
+      cy.get('[data-cy="remove-users"]').click();
+    });
+    cy.get(`[data-cy="row-id-${user1.id}"]`).find('input').click();
+    cy.get(`[data-cy="row-id-${user2.id}"]`).find('input').click();
     cy.get('#confirm').click();
     cy.get('#confirm').click();
     cy.clickButton(/^Remove user/);
@@ -94,8 +97,12 @@ describe('teams', () => {
     cy.clickTab(/^Access$/, true);
     // Add users to team -> TODO: Replace with Wizard when it is ready
     cy.clickButton(/^Add users$/);
-    cy.selectTableRowInDialog(user1.username);
-    cy.selectTableRowInDialog(user2.username);
+    cy.get('[data-ouia-component-type="PF4/ModalContent"]').within(() => {
+      cy.filterTableByText(user1.username);
+      cy.get(`[data-cy="row-id-${user1.id}"]`).find('input').click();
+      cy.filterTableByText(user2.username);
+      cy.get(`[data-cy="row-id-${user2.id}"]`).find('input').click();
+    });
     cy.getDialog().within(() => {
       cy.clickButton(/^Add/);
       cy.contains(/^Success$/);

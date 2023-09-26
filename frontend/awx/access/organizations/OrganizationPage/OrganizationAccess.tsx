@@ -1,25 +1,12 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { useTranslation } from 'react-i18next';
-import { PageTab, PageTabs } from '../../../../../framework';
-import { Organization } from '../../../interfaces/Organization';
+import { useParams } from 'react-router-dom';
 import { AccessTable } from '../../users/Users';
 
 /**
  * TODO: AccessTable should be replaced with ResourceAccessList component
  * and then deleted (it's no longer used anywhere else)
  */
-export function OrganizationAccess(props: { organization: Organization }) {
-  const { organization } = props;
-  const { t } = useTranslation();
-  // TODO: Utilize ResourceAccessList component
-  return (
-    <PageTabs>
-      <PageTab label={t('Users')}>
-        <AccessTable url={`/api/v2/organizations/${organization.id}/access_list/`} />
-      </PageTab>
-      <PageTab label={t('Teams')}>
-        <AccessTable url={`/api/v2/organizations/${organization.id}/access_list/`} />
-      </PageTab>
-    </PageTabs>
-  );
+export function OrganizationAccess() {
+  const params = useParams<{ id: string }>();
+  return <AccessTable url={`/api/v2/organizations/${params.id}/access_list/`} />;
 }

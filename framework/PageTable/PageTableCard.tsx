@@ -142,6 +142,7 @@ export function PageTableCard<T extends object>(props: {
   return (
     <Card
       id={card.id as string}
+      ouiaId={card.id as string}
       key={card.id ?? card.title}
       isFlat
       isLarge

@@ -7,14 +7,14 @@ import {
 } from '@patternfly/react-core';
 import { FilterIcon } from '@patternfly/react-icons';
 import { Dispatch, SetStateAction, useCallback, useState } from 'react';
-import { PageAsyncSingleSelect } from '../PageInputs/PageAsyncSingleSelect';
 import { PageAsyncMultiSelect } from '../PageInputs/PageAsyncMultiSelect';
+import { PageAsyncSingleSelect } from '../PageInputs/PageAsyncSingleSelect';
 import { PageMultiSelect } from '../PageInputs/PageMultiSelect';
 import { PageSingleSelect } from '../PageInputs/PageSingleSelect';
 import { useBreakpoint } from '../components/useBreakPoint';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
-import { IToolbarAsyncSingleSelectFilter } from './PageToolbarFilters/ToolbarAsyncSingleSelectFilter';
 import { IToolbarAsyncMultiSelectFilter } from './PageToolbarFilters/ToolbarAsyncMultiSelectFilter';
+import { IToolbarAsyncSingleSelectFilter } from './PageToolbarFilters/ToolbarAsyncSingleSelectFilter';
 import {
   IToolbarDateRangeFilter,
   ToolbarDateRangeFilter,
@@ -96,6 +96,7 @@ function FiltersToolbarItem(props: PageToolbarFiltersProps) {
             filter={selectedFilter}
             filterState={filterState}
             setFilterState={setFilterState}
+            data-cy={selectedFilter}
           />
         </ToolbarItem>
       ) : (
@@ -110,12 +111,14 @@ function FiltersToolbarItem(props: PageToolbarFiltersProps) {
               value: filter.key,
             }))}
             placeholder=""
+            data-cy={selectedFilter}
           />
           <ToolbarFilterComponent
             id="filter-input"
             filter={selectedFilter}
             filterState={filterState}
             setFilterState={setFilterState}
+            data-cy={selectedFilter}
           />
         </ToolbarItem>
       )}

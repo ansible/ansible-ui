@@ -40,6 +40,7 @@ function Breadcrumbs(props: { breadcrumbs: ICatalogBreadcrumb[]; style?: CSSProp
         if (!breadcrumb.label) return <Fragment key={index}></Fragment>;
         return (
           <BreadcrumbItem
+            data-cy={breadcrumb.label}
             id={breadcrumb.id}
             key={breadcrumb.id ?? breadcrumb.label ?? index}
             component={breadcrumb.component}
@@ -48,6 +49,7 @@ function Breadcrumbs(props: { breadcrumbs: ICatalogBreadcrumb[]; style?: CSSProp
             {breadcrumb.to ? (
               <a
                 href={breadcrumb.to}
+                data-cy={breadcrumb.label}
                 onClick={(e) => {
                   e.preventDefault();
                   if (!breadcrumb.to) return;
@@ -115,7 +117,7 @@ export function PageHeader(props: PageHeaderProps) {
       {navigation && (
         <PageSection
           variant={PageSectionVariants.light}
-          className="border-top dark-1"
+          className="dark-1 border-bottom"
           style={{ paddingLeft: 0, paddingTop: 0, paddingBottom: 0 }}
         >
           <Flex
@@ -146,7 +148,7 @@ export function PageHeader(props: PageHeaderProps) {
       )}
       <PageSection
         variant={PageSectionVariants.light}
-        className="border-top border-bottom dark-2"
+        className="border-bottom dark-2"
         style={{
           paddingTop: breadcrumbs ? (isXl ? 16 : 12) : isXl ? 16 : 12,
           paddingBottom: isXl ? 16 : 12,
