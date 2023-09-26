@@ -7,7 +7,7 @@ import { getPersistentFilters } from '../../frontend/common/PersistentFilters';
 export function PageRoutedTabs(props: {
   backTab?: { label: string; page: string; persistentFilterKey: string };
   tabs: { label: string; page: string }[];
-  params?: { [key: string]: string | number };
+  params?: { [key: string]: string | number | undefined };
 }) {
   const pageNavigate = usePageNavigate();
   const navigate = useNavigate();
@@ -34,6 +34,7 @@ export function PageRoutedTabs(props: {
     <>
       <Tabs
         onSelect={onSelect}
+        inset={{ default: 'insetSm' }}
         isBox
         activeKey={activeTab?.page}
         style={{ backgroundColor: 'var(--pf-c-tabs__link--BackgroundColor)' }}

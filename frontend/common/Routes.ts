@@ -138,8 +138,6 @@ export const RouteObj = {
   CreateExecutionEnvironment: `${awxRoutePrefix}/administration/execution-environments/create`,
   EditExecutionEnvironment: `${awxRoutePrefix}/administration/execution-environments/:id/edit`,
 
-  EdaRulebookActivationDetailsHistory: `${edaRoutePrefix}/views/rulebook-activations/details/:id/history`,
-  ActivationInstancePage: `${edaRoutePrefix}/views/rulebook-activations/activations-instances/details/:id`,
   RulesetPage: `${edaRoutePrefix}/rulesets/details/:id`,
   EdaUserDetailsTokens: `${edaRoutePrefix}/access/users/details/:id/tokens`,
 };
