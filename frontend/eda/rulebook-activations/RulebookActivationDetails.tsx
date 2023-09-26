@@ -28,7 +28,7 @@ import { EdaRoute } from '../EdaRoutes';
 import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../constants';
 import { EdaActivationInstance } from '../interfaces/EdaActivationInstance';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
-import { Status0E7Enum } from '../interfaces/generated/eda-api';
+import { RestartPolicyEnum, Status0E7Enum } from '../interfaces/generated/eda-api';
 import { useEdaView } from '../useEventDrivenView';
 import { EdaExtraVarsCell } from './components/EdaExtraVarCell';
 import { useActivationHistoryColumns } from './hooks/useActivationHistoryColumns';
@@ -40,6 +40,18 @@ import {
 } from './hooks/useControlRulebookActivations';
 import { useDeleteRulebookActivations } from './hooks/useDeleteRulebookActivations';
 
+function restartPolicyName(policy: RestartPolicyEnum, t: (str: string) => string) {
+  switch (policy) {
+    case RestartPolicyEnum.OnFailure:
+      return t('On failure');
+    case RestartPolicyEnum.Always:
+      return t('Always');
+    case RestartPolicyEnum.Never:
+      return t('Never');
+    default:
+      return capitalizeFirstLetter(policy);
+  }
+}
 // eslint-disable-next-line react/prop-types
 export function RulebookActivationDetails({ initialTabIndex = 0 }) {
   const { t } = useTranslation();
@@ -183,7 +195,7 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
           </PageDetail>
           <PageDetail label={t('Restart policy')} helpText={restartPolicyHelpBlock}>
             {rulebookActivation?.restart_policy
-              ? t(capitalizeFirstLetter(rulebookActivation?.restart_policy))
+              ? restartPolicyName(rulebookActivation?.restart_policy, t)
               : ''}
           </PageDetail>
           <PageDetail label={t('Activation status')}>
