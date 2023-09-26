@@ -284,6 +284,7 @@ export function useColumnsToDataList<T extends object>(
                   position={DropdownPosition.right}
                   selectedItem={item}
                   iconOnly
+                  collapse="always"
                 />
               </DataListAction>
             )}

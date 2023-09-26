@@ -2,6 +2,7 @@ import { DropdownItem, ToolbarGroup, ToolbarItem } from '@patternfly/react-core'
 import { QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSWRConfig } from 'swr';
 import { PageMasthead, usePageNavigate } from '../../framework';
 import { PageMastheadDropdown } from '../../framework/PageMasthead/PageMastheadDropdown';
 import { PageNotificationsIcon } from '../../framework/PageMasthead/PageNotificationsIcon';
@@ -20,10 +21,14 @@ export function HubMasthead() {
   const openAnsibleAboutModal = useAnsibleAboutModal();
   const pageNavigate = usePageNavigate();
   const activeUser = useActiveUser();
+  const { cache } = useSWRConfig();
   const logout = useCallback(async () => {
     await postRequest(hubAPI`/_ui/v1/auth/logout/`, {});
+    for (const key of cache.keys()) {
+      cache.delete(key);
+    }
     pageNavigate(HubRoute.Login);
-  }, [pageNavigate]);
+  }, [cache, pageNavigate]);
   return (
     <PageMasthead
       icon={<Logo style={{ height: 48, marginTop: -8 }} />}
