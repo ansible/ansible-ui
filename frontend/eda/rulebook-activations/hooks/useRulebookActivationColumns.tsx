@@ -20,6 +20,12 @@ export function useRulebookActivationColumns() {
   return useMemo<ITableColumn<EdaRulebookActivation>[]>(
     () => [
       {
+        header: t('Activation ID'),
+        type: 'text',
+        value: (activation) => activation.id.toString(),
+        modal: ColumnModalOption.Hidden,
+      },
+      {
         header: t('Name'),
         cell: (rulebookActivation) =>
           rulebookActivation?.status !== Status0E7Enum.Deleting ? (
@@ -86,15 +92,6 @@ export function useRulebookActivationColumns() {
         header: t('Last modified'),
         type: 'datetime',
         value: (activation) => activation.modified_at,
-        table: ColumnTableOption.Expanded,
-        card: 'hidden',
-        list: 'secondary',
-        modal: ColumnModalOption.Hidden,
-      },
-      {
-        header: t('Activation ID'),
-        type: 'text',
-        value: (activation) => activation.id.toString(),
         table: ColumnTableOption.Expanded,
         card: 'hidden',
         list: 'secondary',
