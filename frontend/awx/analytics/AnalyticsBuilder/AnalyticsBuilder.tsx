@@ -285,18 +285,20 @@ function AnalyticsTable(props: AnalyticsTableProps) {
       toolbarFilters={props.toolbarFilters}
       scrollTopContent={true}
       topContent={
-        <Chart
-          schema={hydrateSchema(props.mainData?.report.layoutProps.schema)({
-            y: sortOption,
-            tooltip: 'Savings for',
-            field: sortOption,
-            label: props.options?.sort_options?.find((item) => item.key == sortOption)?.value,
-            xTickFormat: getDateFormatByGranularity(props.defaultDataParams?.granularity || ''),
-            chartType: chartType as AnyType,
-          })}
-          data={props.view.originalData as AnyType}
-          specificFunctions={specificFunctions}
-        />
+        props.view.originalData && (
+          <Chart
+            schema={hydrateSchema(props.mainData?.report.layoutProps.schema)({
+              y: sortOption,
+              tooltip: 'Savings for',
+              field: sortOption,
+              label: props.options?.sort_options?.find((item) => item.key == sortOption)?.value,
+              xTickFormat: getDateFormatByGranularity(props.defaultDataParams?.granularity || ''),
+              chartType: chartType as AnyType,
+            })}
+            data={props.view.originalData as AnyType}
+            specificFunctions={specificFunctions}
+          />
+        )
       }
       toolbarContent={
         availableChartTypes &&
