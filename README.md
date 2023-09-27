@@ -17,7 +17,7 @@ UI projects for [Ansible](https://www.ansible.com).
 
    Note: The project should with older versions of node and npm but may require regenerating the package-lock.json.
 
-2. Clone Repository
+2. Clone the Repository
 
    ```
    git clone git@github.com:ansible/ansible-ui.git
