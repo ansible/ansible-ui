@@ -154,7 +154,7 @@ export function useAnalyticsReportBuilderView<T extends object>({
 
   async function fetchData() {
     try {
-      const data = (await postRequest(url, postData)) as AnalyticsItemsResponse<T>;
+      const data = await postRequest(url, postData);
       setData(data);
     } catch (error) {
       setError(error);
@@ -231,7 +231,9 @@ export function fillFilters(
           postData[key] = values[0];
         } else {
           for (const value of values) {
-            postData[key].push(value);
+            if (postData) {
+              postData[key].push(value);
+            }
           }
         }
       }

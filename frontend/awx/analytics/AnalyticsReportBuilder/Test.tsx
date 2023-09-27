@@ -5,7 +5,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
-
 import {
   AnalyticsReportBuilder,
   AnalyticsReportBuilderProps,
@@ -84,7 +83,7 @@ const MySelectDropdown = (props: { items: string[]; onChange: (item: string) => 
       selections={selected}
       onToggle={onToggle}
       onSelect={onSelect}
-      placeholderText={'Select an item'}
+      placeholderText=""
     >
       {props.items.map((item, index) => (
         <SelectOption key={index} value={item} />

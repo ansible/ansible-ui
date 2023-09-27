@@ -173,7 +173,7 @@ export function AnalyticsReportBuilder(props: AnalyticsReportBuilderProps) {
       parameters.processMainData?.(parameters, result);
       setMainData(result);
 
-      readOptions(result);
+      await readOptions(result);
     } catch (error) {
       setError(error);
     }
@@ -202,7 +202,9 @@ export function AnalyticsReportBuilder(props: AnalyticsReportBuilderProps) {
   }
 
   useEffect(() => {
-    readData();
+    (async () => {
+      await readData();
+    })();
   }, []);
 
   const [granularity, setGranularity] = useState<string>(granularityParam || '');
@@ -212,7 +214,7 @@ export function AnalyticsReportBuilder(props: AnalyticsReportBuilderProps) {
     readOptions(mainData);
   }
 
-  let sortableColumns = getAvailableSortingKeys(parameters);
+  const sortableColumns = getAvailableSortingKeys(parameters);
 
   const filters = buildTableFilters(parameters);
 
@@ -227,7 +229,7 @@ export function AnalyticsReportBuilder(props: AnalyticsReportBuilderProps) {
 
   const newProps = { ...parameters, view };
 
-  const columns = buildTableColumns({ ...newProps }) as ITableColumn<AnyType>[];
+  const columns = buildTableColumns({ ...newProps });
 
   return (
     <>
@@ -511,7 +513,7 @@ function buildTableColumns(params: AnalyticsReportColumnBuilderProps) {
 
   // set sort by
   if (params.options?.sort_options) {
-    for (const sort of params.options?.sort_options) {
+    for (const sort of params.options.sort_options) {
       const col = columns.find((item) => item.id == sort.key);
 
       if (col) {

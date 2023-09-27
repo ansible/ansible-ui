@@ -1,4 +1,6 @@
-import React, { FC, useEffect, useState } from 'react';
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
+import { FC, useEffect, useState } from 'react';
 import { ExclamationCircleIcon } from '@patternfly/react-icons';
 import ChartBuilder, {
   ChartData,
