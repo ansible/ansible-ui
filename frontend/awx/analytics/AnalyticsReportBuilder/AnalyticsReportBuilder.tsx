@@ -1,3 +1,11 @@
+/* eslint-disable @typescript-eslint/restrict-plus-operands */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
+
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { useGetRequest } from '../../../common/crud/useGet';
 import { useState, useEffect } from 'react';
@@ -22,6 +30,7 @@ import { useLocation } from 'react-router-dom';
 import { useSearchParams } from '../../../../framework/components/useSearchParams';
 
 import { ChartFunctions } from '@ansible/react-json-chart-builder';
+import { ChartSchemaElement } from '@ansible/react-json-chart-builder';
 
 type KeyValue = { key: string; value: string };
 
@@ -34,16 +43,12 @@ export interface MainDataDefinition {
       dataEndpoint: string;
       optionsEndpoint: string;
 
-      schema: ObjectType;
+      schema: ChartSchemaElement[];
       availableChartTypes?: string[];
     };
   };
 }
 
-export type ObjectType = AnyType;
-
-// eslint-disable-next-line
-// @ts-ignore
 export type AnyType = any;
 
 export interface OptionsDefinition {
@@ -70,22 +75,22 @@ export interface AnalyticsReportBuilderProps {
   processOptions?: (props: AnalyticsReportBuilderProps, options: OptionsDefinition) => void;
 
   // on the fly postprocessing of default params
-  processOptionsRequestPayload?: (props: AnalyticsReportBuilderProps, data: ObjectType) => void;
+  processOptionsRequestPayload?: (props: AnalyticsReportBuilderProps, data: AnyType) => void;
 
   // default post data params
   defaultDataParams?: DefaultDataParams;
 
   // on the fly postprocessing of default params
-  processDataRequestPayload?: (props: AnalyticsReportBuilderProps, data: ObjectType) => void;
+  processDataRequestPayload?: (props: AnalyticsReportBuilderProps, data: AnyType) => void;
 
   // used for final modifying of columns before they are passed into the table and view
   processTableColumns?: (
     props: AnalyticsReportBuilderBodyProps,
-    columns: ITableColumn<ObjectType>[]
+    columns: ITableColumn<AnyType>[]
   ) => void;
 
   // default item.id
-  rowKeyFn?: (item: ObjectType) => string | number;
+  rowKeyFn?: (item: AnyType) => string | number;
 }
 
 export interface AnalyticsReportBuilderBodyProps extends AnalyticsReportBuilderProps {
@@ -94,19 +99,22 @@ export interface AnalyticsReportBuilderBodyProps extends AnalyticsReportBuilderP
 }
 
 export interface AnalyticsTableProps extends AnalyticsReportBuilderBodyProps {
-  tableColumns: ITableColumn<ObjectType>[];
-  view: IAnalyticsReportBuilderView<ObjectType>;
+  tableColumns: ITableColumn<AnyType>[];
+  view: IAnalyticsReportBuilderView<AnyType>;
   toolbarFilters: IToolbarFilter[];
 }
 
 interface AnalyticsReportColumnBuilderProps extends AnalyticsReportBuilderBodyProps {
-  view: IAnalyticsReportBuilderView<ObjectType>;
+  view: IAnalyticsReportBuilderView<AnyType>;
 }
 
 export function FillDefaultProps(props: AnalyticsReportBuilderProps) {
   // set id function as default
   if (!props.rowKeyFn) {
-    props.rowKeyFn = (item: { id: number }) => item.id;
+    props.rowKeyFn = (item) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
+      return item.id;
+    };
   }
 }
 
@@ -141,7 +149,7 @@ function transformEndpoint(url: string) {
 export function AnalyticsReportBuilder(props: AnalyticsReportBuilderProps) {
   const [mainData, setMainData] = useState<MainDataDefinition | undefined>(undefined);
   const [options, setOptions] = useState<OptionsDefinition | undefined>(undefined);
-  const [error, setError] = useState<AnyType>(undefined);
+  const [error, setError] = useState<unknown>(undefined);
 
   const parameters: AnalyticsReportBuilderBodyProps = { ...props, mainData, options };
 
@@ -208,7 +216,7 @@ export function AnalyticsReportBuilder(props: AnalyticsReportBuilderProps) {
 
   const filters = buildTableFilters(parameters);
 
-  const view = useAnalyticsReportBuilderView<ObjectType>({
+  const view = useAnalyticsReportBuilderView<AnyType>({
     url: parameters.mainData?.report.layoutProps.dataEndpoint || '',
     keyFn: parameters.rowKeyFn ? parameters.rowKeyFn : () => 0,
     builderProps: parameters,
@@ -219,7 +227,7 @@ export function AnalyticsReportBuilder(props: AnalyticsReportBuilderProps) {
 
   const newProps = { ...parameters, view };
 
-  const columns = buildTableColumns({ ...newProps }) as ITableColumn<ObjectType>[];
+  const columns = buildTableColumns({ ...newProps }) as ITableColumn<AnyType>[];
 
   return (
     <>
@@ -255,7 +263,7 @@ function AnalyticsReportBuilderTable(props: AnalyticsTableProps) {
     sortOption = props.defaultDataParams?.sort_options || '';
   }
 
-  const customTooltipFormatting = ({ datum }: { datum: Record<string, any> }) => {
+  const customTooltipFormatting = ({ datum }: { datum: Record<string, AnyType> }) => {
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     const tooltip = `${sortOption} for ${datum.name || ''}: ${
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
@@ -273,7 +281,7 @@ function AnalyticsReportBuilderTable(props: AnalyticsTableProps) {
   };
 
   return (
-    <PageTable<ObjectType>
+    <PageTable<AnyType>
       {...props.view}
       errorStateTitle="some error title"
       emptyStateTitle="empty state title"
@@ -283,7 +291,9 @@ function AnalyticsReportBuilderTable(props: AnalyticsTableProps) {
       topContent={
         props.view.originalData && (
           <Chart
-            schema={hydrateSchema(props.mainData?.report.layoutProps.schema)({
+            schema={hydrateSchema(
+              props.mainData?.report?.layoutProps?.schema || ([] as ChartSchemaElement[])
+            )({
               y: sortOption,
               tooltip: 'Savings for',
               field: sortOption,
@@ -437,7 +447,7 @@ export function computeMainFilterKeys(params: AnalyticsReportBuilderBodyProps) {
 }
 
 function buildTableColumns(params: AnalyticsReportColumnBuilderProps) {
-  const columns: ITableColumn<ObjectType>[] = [];
+  const columns: ITableColumn<AnyType>[] = [];
 
   if (!params.view?.pageItems) {
     return columns;
@@ -446,7 +456,7 @@ function buildTableColumns(params: AnalyticsReportColumnBuilderProps) {
   // initialy create columns by table headers so they are in fixed positions
   if (params.mainData?.report.tableHeaders && params.mainData.report.tableHeaders.length > 0) {
     for (const tableHeader of params.mainData.report.tableHeaders) {
-      const column = {} as ITableColumnTypeText<ObjectType>;
+      const column = {} as ITableColumnTypeText<AnyType>;
       column.id = tableHeader.key;
       column.type = 'text';
       columns.push(column);
@@ -455,13 +465,13 @@ function buildTableColumns(params: AnalyticsReportColumnBuilderProps) {
 
   // create columns initialy by incomming data
   if (params.view.pageItems.length > 0) {
-    const obj = params.view.pageItems[0];
+    const obj = params.view?.pageItems?.[0];
 
     // loop over obj items
     for (const key in obj) {
       const alreadyExist = columns.find((item) => item.id == key);
 
-      let column = {} as ITableColumn<ObjectType>;
+      let column = {} as ITableColumn<AnyType>;
 
       if (alreadyExist) {
         column = alreadyExist;

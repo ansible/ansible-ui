@@ -178,6 +178,7 @@ const mostUsedModulesExpandedAttributes = [
   'host_task_unreachable_count',
 ];
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const allDefaultParams: any = {
   reports: {
     defaultParams: {
