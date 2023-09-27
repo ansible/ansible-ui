@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { PageSection, Skeleton } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { IFilterState, ToolbarFilterType, type IToolbarFilter } from '../../../../../framework';
 import { Job } from '../../../interfaces/Job';
@@ -10,6 +11,7 @@ import { JobOutputEvents } from './JobOutputEvents';
 import { JobOutputToolbar } from './JobOutputToolbar';
 import { JobStatusBar } from './JobStatusBar';
 import { isJobRunning } from './util';
+import { useGetJob } from '../JobPage';
 
 const Section = styled(PageSection)`
   display: flex;
@@ -17,7 +19,17 @@ const Section = styled(PageSection)`
   height: calc(100vh - 204px);
 `;
 
-export function JobOutput(props: { job: Job; reloadJob: () => void }) {
+export function JobOutput() {
+  const params = useParams<{ id: string; job_type: string }>();
+  const { job, refreshJob } = useGetJob(params.id, params.job_type);
+
+  if (!job) {
+    return null;
+  }
+  return <JobOutputInner job={job} reloadJob={refreshJob} />;
+}
+
+function JobOutputInner(props: { job: Job; reloadJob: () => void }) {
   const { job, reloadJob } = props;
   const toolbarFilters = useOutputFilters();
   const [filterState, setFilterState] = useState<IFilterState>({});

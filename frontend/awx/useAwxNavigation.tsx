@@ -63,8 +63,10 @@ import {
 import { WorkflowJobTemplatePage } from './resources/templates/WorkflowJobTemplatePage/WorkflowJobTemplatePage';
 import Settings from './settings/Settings';
 import HostMetrics from './views/jobs/HostMetrics';
-import { JobPage } from './views/jobs/JobPage';
 import Jobs from './views/jobs/Jobs';
+import { JobPage } from './views/jobs/JobPage';
+import { JobOutput } from './views/jobs/JobOutput/JobOutput';
+import { JobDetails } from './views/jobs/JobDetails';
 import { CreateSchedule } from './views/schedules/ScheduleForm';
 import { SchedulePage } from './views/schedules/SchedulePage/SchedulePage';
 import { Schedules } from './views/schedules/Schedules';
@@ -99,8 +101,20 @@ export function useAwxNavigation() {
                 children: [
                   {
                     id: AwxRoute.JobPage,
-                    path: ':job_type/:id/*',
+                    path: ':job_type/:id',
                     element: <JobPage />,
+                    children: [
+                      {
+                        id: AwxRoute.JobOutput,
+                        path: 'output',
+                        element: <JobOutput />,
+                      },
+                      {
+                        id: AwxRoute.JobDetails,
+                        path: 'details',
+                        element: <JobDetails />,
+                      },
+                    ],
                   },
                   {
                     path: '',
