@@ -143,6 +143,8 @@ export interface ActivationRead {
    */
   status?: Status0E7Enum;
   project?: ProjectRef | null;
+  /** Git hash of the project that rulebook is part of */
+  git_hash?: string;
   /** Serializer for Rulebook reference. */
   rulebook: RulebookRef;
   extra_var?: ExtraVarRef | null;

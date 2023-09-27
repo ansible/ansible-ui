@@ -93,9 +93,7 @@ export function RulebookActivationDetails() {
           <StatusCell status={rulebookActivation?.status || ''} />
         </PageDetail>
         <PageDetail label={t('Project git hash')}>
-          <CopyCell
-            text={rulebookActivation?.project?.git_hash ? rulebookActivation?.project.git_hash : ''}
-          />
+          <CopyCell text={rulebookActivation?.git_hash ?? ''} />
         </PageDetail>
         <PageDetail label={t('Number of rules')}>{rulebookActivation?.rules_count || 0}</PageDetail>
         <PageDetail label={t('Fire count')}>
