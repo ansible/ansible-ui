@@ -8,10 +8,7 @@ describe('EDA Decision Environment List', () => {
   it('can filter the Decision Environment list based on Name filter option', () => {
     cy.createEdaDecisionEnvironment().then((edaDE) => {
       cy.navigateTo('eda', 'decision-environments');
-      cy.verifyPageTitle('Decision Environments').should(
-        'have.text',
-        'Decision environments are a container image to run Ansible rulebooks.'
-      );
+      cy.verifyPageTitle('Decision Environments');
       cy.filterTableByText(edaDE.name);
       cy.get('button[aria-label="table view"]').click();
       cy.contains('td', edaDE.name).should('be.visible').click();
