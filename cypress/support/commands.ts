@@ -10,14 +10,17 @@ import { ExecutionEnvironment } from '../../frontend/awx/interfaces/ExecutionEnv
 import { InstanceGroup } from '../../frontend/awx/interfaces/InstanceGroup';
 import { Inventory } from '../../frontend/awx/interfaces/Inventory';
 import { JobTemplate } from '../../frontend/awx/interfaces/JobTemplate';
-import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/generated-from-swagger/api';
 import { Label } from '../../frontend/awx/interfaces/Label';
 import { Organization } from '../../frontend/awx/interfaces/Organization';
 import { Project } from '../../frontend/awx/interfaces/Project';
 import { Schedule } from '../../frontend/awx/interfaces/Schedule';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
-import { Group, Host } from '../../frontend/awx/interfaces/generated-from-swagger/api';
+import {
+  Group,
+  Host,
+  WorkflowJobTemplate,
+} from '../../frontend/awx/interfaces/generated-from-swagger/api';
 import { EdaControllerToken } from '../../frontend/eda/interfaces/EdaControllerToken';
 import { EdaCredential } from '../../frontend/eda/interfaces/EdaCredential';
 import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisionEnvironment';
@@ -54,7 +57,10 @@ declare global {
       navigateTo(component: 'awx' | 'eda' | 'hub', label: string): Chainable<void>;
 
       /**Locates a title using its label. No assertion is made. */
-      hasTitle(label: string | RegExp): Chainable<void>;
+      verifyPageTitle(label: string): Chainable<void>;
+
+      /**Locates a title using its label. No assertion is made. */
+      navBarButtonLabel(component: string, label: string): Chainable<void>;
 
       // --- INPUT COMMANDS ---
 
@@ -66,12 +72,6 @@ declare global {
 
       /** Get a checkbox by its label. */
       getCheckboxByLabel(label: string | RegExp): Chainable<JQuery<HTMLElement>>;
-
-      /** Finds an input by label and types the text into the input.
-       *
-       * @deprecated - use data-cy locators to find the elements directly instead.
-       */
-      typeInputByLabel(label: string | RegExp, text: string): Chainable<void>;
 
       /** Finds a dropdown/select component by its dropdownLabel and clicks on the option specified by dropdownOptionLabel.*/
       selectDropdownOptionByLabel(

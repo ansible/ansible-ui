@@ -8,12 +8,10 @@ describe('EDA Decision Environment List', () => {
   it('can filter the Decision Environment list based on Name filter option', () => {
     cy.createEdaDecisionEnvironment().then((edaDE) => {
       cy.navigateTo('eda', 'decision-environments');
-      cy.hasTitle(/^Decision Environments$/)
-        .next('p')
-        .should(
-          'have.text',
-          'Decision environments are a container image to run Ansible rulebooks.'
-        );
+      cy.verifyPageTitle('Decision Environments').should(
+        'have.text',
+        'Decision environments are a container image to run Ansible rulebooks.'
+      );
       cy.filterTableByText(edaDE.name);
       cy.get('button[aria-label="table view"]').click();
       cy.contains('td', edaDE.name).should('be.visible').click();
@@ -47,14 +45,14 @@ describe('EDA Decision Environment List', () => {
   it.skip('can verify the delete functionality of items in the kebab menu of the DE list view', () => {
     cy.createEdaDecisionEnvironment().then((edaDE) => {
       cy.navigateTo('eda', 'decision-environments');
-      cy.hasTitle(/^Decision Environments$/);
+      cy.verifyPageTitle('Decision Environments');
       cy.clickListCardKebabAction(edaDE.name, /^Delete decision-environment$/);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete decision environment/);
       cy.contains(/^Success$/);
       cy.clickButton(/^Close$/);
       cy.clickButton(/^Clear all filters$/);
-      cy.hasTitle(/^Decision Environments$/);
+      cy.verifyPageTitle('Decision Environments');
     });
   });
 });

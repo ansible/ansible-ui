@@ -35,7 +35,7 @@ describe('organizations', () => {
 
   it('renders the organizations list page', () => {
     cy.navigateTo('awx', 'organizations');
-    cy.hasTitle(/^Organizations$/);
+    cy.navBarButtonLabel('awx', 'organizations');
   });
 
   it('creates and then deletes a basic organization', () => {
@@ -44,17 +44,19 @@ describe('organizations', () => {
     cy.clickLink(/^Create organization$/);
     cy.get('[data-cy="organization-name"]').type(organizationName);
     cy.clickButton(/^Create organization$/);
-    cy.hasTitle(organizationName);
+    cy.verifyPageTitle(organizationName);
     cy.clickPageAction(/^Delete organization/);
     cy.get('#confirm').click();
+    cy.intercept('DELETE', '/api/v2/organizations/*').as('delete');
     cy.clickButton(/^Delete organization/);
-    cy.hasTitle(/^Organizations$/);
+    cy.wait('@delete');
+    cy.navBarButtonLabel('awx', 'organizations');
   });
 
   it('renders the organization details page', () => {
     cy.navigateTo('awx', 'organizations');
     cy.clickTableRow(organization.name);
-    cy.hasTitle(organization.name);
+    cy.verifyPageTitle(organization.name);
     cy.clickLink(/^Details$/);
     cy.contains('#name', organization.name);
   });
@@ -62,23 +64,25 @@ describe('organizations', () => {
   it('edits an organization from the details page', () => {
     cy.navigateTo('awx', 'organizations');
     cy.clickTableRow(organization.name);
-    cy.hasTitle(organization.name);
+    cy.verifyPageTitle(organization.name);
     cy.clickButton(/^Edit organization$/);
-    cy.hasTitle(/^Edit Organization$/);
+    cy.verifyPageTitle('Edit Organization');
     cy.get('[data-cy="organization-name"]').type(organization.name + 'a');
     cy.clickButton(/^Save organization$/);
-    cy.hasTitle(`${organization.name}a`);
+    cy.verifyPageTitle(`${organization.name}a`);
   });
 
   it('deletes an organization from the details page', () => {
     cy.createAwxOrganization().then((testOrganization) => {
       cy.navigateTo('awx', 'organizations');
       cy.clickTableRow(testOrganization.name);
-      cy.hasTitle(testOrganization.name);
+      cy.verifyPageTitle(testOrganization.name);
       cy.clickPageAction(/^Delete organization/);
       cy.get('#confirm').click();
+      cy.intercept('DELETE', '/api/v2/organizations/*').as('delete');
       cy.clickButton(/^Delete organization/);
-      cy.hasTitle(/^Organizations$/);
+      cy.wait('@delete');
+      cy.navBarButtonLabel('awx', 'organizations');
     });
   });
 
@@ -87,7 +91,7 @@ describe('organizations', () => {
     cy.getTableRowByText(organization.name).within(() => {
       cy.get('#edit-organization').click();
     });
-    cy.hasTitle(/^Edit Organization$/);
+    cy.verifyPageTitle('Edit Organization');
   });
 
   it('deletes an organization from the organizations list row item', () => {

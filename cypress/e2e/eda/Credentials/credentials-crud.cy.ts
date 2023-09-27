@@ -82,7 +82,7 @@ describe('EDA Credentials- Create, Edit, Delete', () => {
       cy.get('h1').should('contain', 'Credentials');
       cy.clickTableRow(edaCredential.name);
       cy.clickButton(/^Edit credential$/);
-      cy.hasTitle(`Edit ${edaCredential.name}`);
+      cy.verifyPageTitle(`Edit ${edaCredential.name}`);
       cy.get('[data-cy="name"]').type(edaCredential.name + 'lalala');
       cy.get('[data-cy="description"]').type('this credential type has been changed');
       cy.get('[data-cy="secret"]').type('testtoken');
@@ -103,14 +103,14 @@ describe('EDA Credentials- Create, Edit, Delete', () => {
       cy.navigateTo('eda', 'credentials');
       cy.get('h1').should('contain', 'Credentials');
       cy.clickTableRow(edaCredential.name);
-      cy.hasTitle(edaCredential.name);
+      cy.verifyPageTitle(edaCredential.name);
       cy.intercept('DELETE', `/api/eda/v1/credentials/${edaCredential.id}/`).as('deleted');
       cy.clickPageAction(/^Delete credential$/);
       cy.clickModalConfirmCheckbox();
       cy.clickModalButton('Delete credential');
       cy.wait('@deleted').then((deleted) => {
         expect(deleted?.response?.statusCode).to.eql(204);
-        cy.hasTitle(/^Credentials$/);
+        cy.verifyPageTitle('Credentials');
       });
     });
   });

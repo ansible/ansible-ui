@@ -11,7 +11,7 @@ export function PageNavigation(props: { navigation: PageNavigationItem[] }) {
       <PageSidebar
         isNavOpen={navBar.isOpen}
         nav={
-          <Nav>
+          <Nav data-cy="page-navigation">
             <NavList>
               <PageNavigationItems baseRoute={''} items={navigationItems} />
             </NavList>

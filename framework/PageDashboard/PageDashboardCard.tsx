@@ -155,7 +155,7 @@ export function PageDashboardCard(props: {
       }}
       isCompact={props.isCompact}
       className="page-dashboard-card"
-      data-cy={props.title}
+      data-cy={props.supertitle}
     >
       {(props.title || props.linkText) && (
         <CardHeader>
@@ -172,12 +172,12 @@ export function PageDashboardCard(props: {
                   <FlexItem>
                     <Stack>
                       {props.supertitle && (
-                        <Text component="small" style={{ opacity: 0.8 }}>
+                        <Text data-cy="BLAH1" component="small" style={{ opacity: 0.8 }}>
                           {props.supertitle}
                         </Text>
                       )}
                       <Flex spaceItems={{ default: 'spaceItemsNone' }}>
-                        <Title headingLevel="h3" size="xl">
+                        <Title data-cy={props.title} headingLevel="h3" size="xl">
                           {props.title}
                         </Title>
                         <FlexItem alignSelf={{ default: 'alignSelfFlexStart' }}>
@@ -189,7 +189,7 @@ export function PageDashboardCard(props: {
                         </FlexItem>
                       </Flex>
                       {props.subtitle && (
-                        <Text component="small" style={{ opacity: 0.8 }}>
+                        <Text data-cy={props.subtitle} component="small" style={{ opacity: 0.8 }}>
                           {props.subtitle}
                         </Text>
                       )}
@@ -199,7 +199,7 @@ export function PageDashboardCard(props: {
               </FlexItem>
               {props.headerControls && <FlexItem>{props.headerControls}</FlexItem>}
               <FlexItem>
-                <Text component="small">
+                <Text data-cy={props.linkText} component="small">
                   {props.linkText && <Link to={props.to as string}>{props.linkText}</Link>}
                 </Text>
               </FlexItem>

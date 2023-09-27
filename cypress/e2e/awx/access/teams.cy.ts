@@ -38,7 +38,7 @@ describe('teams', () => {
 
   it('can render the teams list page', () => {
     cy.navigateTo('awx', 'teams');
-    cy.hasTitle(/^Teams$/);
+    cy.verifyPageTitle('Teams');
   });
 
   it('can create a basic team', () => {
@@ -48,7 +48,7 @@ describe('teams', () => {
     cy.get('[data-cy="name"]').type(teamName);
     cy.selectDropdownOptionByLabel(/^Organization$/, organization.name);
     cy.clickButton(/^Create team$/);
-    cy.hasTitle(teamName); // This team will be cleaned up when we delete the org at the end of the tests
+    cy.verifyPageTitle(teamName);
   });
 
   it('can remove users from the team via the teams list row item', () => {
@@ -75,7 +75,7 @@ describe('teams', () => {
   it('can render the team details page', () => {
     cy.navigateTo('awx', 'teams');
     cy.clickTableRow(team.name);
-    cy.hasTitle(team.name);
+    cy.verifyPageTitle(team.name);
     cy.clickLink(/^Details$/);
     cy.contains('#name', team.name);
   });
@@ -84,16 +84,16 @@ describe('teams', () => {
     cy.navigateTo('awx', 'teams');
     cy.clickTableRow(team.name);
     cy.clickButton(/^Edit team$/);
-    cy.hasTitle(/^Edit Team$/);
+    cy.verifyPageTitle('Edit Team');
     cy.get('[data-cy="name"]').type(team.name + 'a');
     cy.clickButton(/^Save team$/);
-    cy.hasTitle(`${team.name}a`);
+    cy.verifyPageTitle(`${team.name}a`);
   });
 
   it('can add users to the team via the team access tab toolbar', () => {
     cy.navigateTo('awx', 'teams');
     cy.clickTableRow(team.name);
-    cy.hasTitle(team.name);
+    cy.verifyPageTitle(team.name);
     cy.clickTab(/^Access$/, true);
     // Add users to team -> TODO: Replace with Wizard when it is ready
     cy.clickButton(/^Add users$/);
@@ -130,7 +130,7 @@ describe('teams', () => {
     });
     cy.navigateTo('awx', 'teams');
     cy.clickTableRow(team.name);
-    cy.hasTitle(team.name);
+    cy.verifyPageTitle(team.name);
     cy.clickTab(/^Access$/, true);
     // Remove users
     cy.selectTableRow(user1.username);
@@ -151,7 +151,7 @@ describe('teams', () => {
     });
     cy.navigateTo('awx', 'teams');
     cy.clickTableRow(team.name);
-    cy.hasTitle(team.name);
+    cy.verifyPageTitle(team.name);
     cy.clickTab(/^Access$/, true);
     cy.clickTableRowKebabAction(user1.username, /^Remove user$/);
     cy.get('#confirm').click();
@@ -172,7 +172,7 @@ describe('teams', () => {
     });
     cy.navigateTo('awx', 'teams');
     cy.clickTableRow(team.name);
-    cy.hasTitle(team.name);
+    cy.verifyPageTitle(team.name);
     cy.clickTab(/^Access$/, true);
     cy.filterTableByText(user1.username);
     cy.getTableRowByText(user1.username).within(() => {
@@ -197,34 +197,34 @@ describe('teams', () => {
   it('can render the team roles page', () => {
     cy.navigateTo('awx', 'teams');
     cy.clickTableRow(team.name);
-    cy.hasTitle(team.name);
+    cy.verifyPageTitle(team.name);
     cy.clickTab(/^Roles$/, true);
   });
 
   it('can navigate to the edit form from the team details page', () => {
     cy.navigateTo('awx', 'teams');
     cy.clickTableRow(team.name);
-    cy.hasTitle(team.name);
+    cy.verifyPageTitle(team.name);
     cy.clickButton(/^Edit team$/);
-    cy.hasTitle(/^Edit Team$/);
+    cy.verifyPageTitle('Edit Team');
   });
 
   it('can delete a team from the details page', () => {
     cy.createAwxTeam(organization).then((testTeam) => {
       cy.navigateTo('awx', 'teams');
       cy.clickTableRow(testTeam.name);
-      cy.hasTitle(testTeam.name);
+      cy.verifyPageTitle(testTeam.name);
       cy.clickPageAction(/^Delete team/);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete team/);
-      cy.hasTitle(/^Teams$/);
+      cy.verifyPageTitle('Teams');
     });
   });
 
   it('can navigate to the edit form from the team list row item', () => {
     cy.navigateTo('awx', 'teams');
     cy.clickTableRowPinnedAction(team.name, 'Edit team');
-    cy.hasTitle(/^Edit Team$/);
+    cy.verifyPageTitle('Edit Team');
   });
 
   it('can delete a team from the teams list row item', () => {

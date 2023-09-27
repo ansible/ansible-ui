@@ -43,7 +43,7 @@ Cypress.Commands.add('awxLogin', () => {
         Cypress.env('AWX_PASSWORD') as string
       );
       window.localStorage.setItem('hide-welcome-message', 'true');
-      cy.hasTitle('Welcome to');
+      cy.verifyPageTitle('Welcome to');
     },
     {
       cacheAcrossSpecs: true,
@@ -65,7 +65,7 @@ Cypress.Commands.add('edaLogin', () => {
         Cypress.env('EDA_USERNAME') as string,
         Cypress.env('EDA_PASSWORD') as string
       );
-      cy.hasTitle('Welcome to');
+      cy.verifyPageTitle('Welcome to');
     },
     {
       cacheAcrossSpecs: true,
@@ -87,7 +87,7 @@ Cypress.Commands.add('hubLogin', () => {
         Cypress.env('HUB_USERNAME') as string,
         Cypress.env('HUB_PASSWORD') as string
       );
-      cy.hasTitle('Welcome to');
+      cy.verifyPageTitle('Welcome to');
     },
     {
       cacheAcrossSpecs: true,

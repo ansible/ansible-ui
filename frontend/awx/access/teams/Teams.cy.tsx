@@ -15,7 +15,7 @@ describe('Teams.cy.ts', () => {
     it('Component renders', () => {
       cy.intercept({ method: 'GET', url: '/api/v2/teams/*' }, { fixture: 'teams.json' });
       cy.mount(<Teams />);
-      cy.hasTitle(/^Teams$/);
+      cy.navBarButtonLabel('awx', 'teams');
       cy.get('table').find('tr').should('have.length', 4);
     });
 
