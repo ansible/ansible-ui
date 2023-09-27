@@ -7,7 +7,6 @@ import {
   Title,
 } from '@patternfly/react-core';
 import React, { ComponentClass, ReactElement, ReactNode } from 'react';
-import { string } from 'yaml/dist/schema/common/string';
 
 export function EmptyStateCustom(props: {
   title: string;

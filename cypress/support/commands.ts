@@ -59,9 +59,6 @@ declare global {
       /**Locates a title using its label. No assertion is made. */
       verifyPageTitle(label: string): Chainable<void>;
 
-      /**Locates a title using its label. No assertion is made. */
-      navBarButtonLabel(component: string, label: string): Chainable<void>;
-
       // --- INPUT COMMANDS ---
 
       /** Get a FormGroup by it's label. A FormGroup is the PF component that wraps an input and provides a label. */

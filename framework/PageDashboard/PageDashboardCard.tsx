@@ -172,7 +172,7 @@ export function PageDashboardCard(props: {
                   <FlexItem>
                     <Stack>
                       {props.supertitle && (
-                        <Text data-cy="BLAH1" component="small" style={{ opacity: 0.8 }}>
+                        <Text data-cy={props.supertitle} component="small" style={{ opacity: 0.8 }}>
                           {props.supertitle}
                         </Text>
                       )}

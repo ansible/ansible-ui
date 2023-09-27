@@ -136,11 +136,6 @@ Cypress.Commands.add('navigateTo', (component: string, label: string) => {
   cy.get('[data-cy="refresh"]').click();
 });
 
-Cypress.Commands.add('navBarButtonLabel', (component: string, label: string) => {
-  const capitalizedLabel = label.charAt(0);
-  cy.get(`[data-cy="${component}-${label}"]`).should('contain', capitalizedLabel);
-});
-
 Cypress.Commands.add('verifyPageTitle', (label: string) => {
   cy.get(`[data-cy="page-title"]`).should('contain', label);
 });

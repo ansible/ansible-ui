@@ -35,7 +35,7 @@ describe('organizations', () => {
 
   it('renders the organizations list page', () => {
     cy.navigateTo('awx', 'organizations');
-    cy.navBarButtonLabel('awx', 'organizations');
+    cy.verifyPageTitle('Organizations');
   });
 
   it('creates and then deletes a basic organization', () => {
@@ -50,7 +50,7 @@ describe('organizations', () => {
     cy.intercept('DELETE', '/api/v2/organizations/*').as('delete');
     cy.clickButton(/^Delete organization/);
     cy.wait('@delete');
-    cy.navBarButtonLabel('awx', 'organizations');
+    cy.verifyPageTitle('Organizations');
   });
 
   it('renders the organization details page', () => {
@@ -82,7 +82,7 @@ describe('organizations', () => {
       cy.intercept('DELETE', '/api/v2/organizations/*').as('delete');
       cy.clickButton(/^Delete organization/);
       cy.wait('@delete');
-      cy.navBarButtonLabel('awx', 'organizations');
+      cy.verifyPageTitle('Organizations');
     });
   });
 
