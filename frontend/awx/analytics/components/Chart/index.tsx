@@ -9,7 +9,7 @@ import ChartBuilder, {
 import { convertApiToData } from './convertApi';
 import { ApiReturnType } from './types';
 import { ChartDataSerie } from '@ansible/react-json-chart-builder/dist/cjs';
-import { AnyType } from '../../AnalyticsBuilder/AnalyticsBuilder';
+import { AnyType } from '../../AnalyticsReportBuilder/AnalyticsReportBuilder';
 
 interface Props {
   schema: ChartSchemaElement[];

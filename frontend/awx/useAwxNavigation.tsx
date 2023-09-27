@@ -43,7 +43,7 @@ import { ManagementJobs } from './administration/management-jobs/ManagementJobs'
 import { NotificationPage } from './administration/notifications/NotificationPage/NotificationPage';
 import { Notifications } from './administration/notifications/Notifications';
 import Reports from './analytics/Reports/Reports';
-import { Test } from './analytics/AnalyticsBuilder/Test';
+import { Test } from './analytics/AnalyticsReportBuilder/Test';
 import SubscriptionUsage from './analytics/subscription-usage/SubscriptionUsage';
 import { AwxDashboard } from './dashboard/AwxDashboard';
 import { CreateCredential, EditCredential } from './resources/credentials/CredentialForm';
