@@ -24,6 +24,7 @@ export function useClipboard(): UseClipboardResult {
   const alertSuccess: AlertProps = {
     variant: 'success',
     title: t('Copied to clipboard'),
+    timeout: true,
   };
 
   const alertError: AlertProps = {
