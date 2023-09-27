@@ -48,7 +48,7 @@ describe('ProjectForm.cy.ts', () => {
     });
     it('validates required field for source control types', () => {
       cy.mount(<CreateProject />);
-      cy.get('[data-cy="name"]').type('Test Project');
+      cy.get('[data-cy="project-name"]').type('Test Project');
       cy.selectDropdownOptionByLabel(/^Organization$/, 'Default');
       // Git
       cy.selectDropdownOptionByLabel(/^Source Control Type$/, 'Git');
