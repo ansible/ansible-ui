@@ -41,6 +41,9 @@ export interface MainDataDefinition {
 }
 
 export type ObjectType = AnyType;
+
+// eslint-disable-next-line
+// @ts-ignore
 export type AnyType = any;
 
 export interface OptionsDefinition {
@@ -146,7 +149,7 @@ export function AnalyticsReportBuilder(props: AnalyticsReportBuilderProps) {
   const get = useGetRequest();
 
   const [searchParams] = useSearchParams();
-  let granularityParam =
+  const granularityParam =
     searchParams.get('granularity') || parameters.defaultDataParams?.granularity || '';
 
   async function readData() {
@@ -174,7 +177,7 @@ export function AnalyticsReportBuilder(props: AnalyticsReportBuilderProps) {
         return;
       }
 
-      let optionsPayload = parameters.defaultDataParams || {};
+      const optionsPayload = parameters.defaultDataParams || {};
       // ensure that granularity is up to date
       optionsPayload.granularity = granularityParam;
       parameters.processOptionsRequestPayload?.(parameters, optionsPayload);
@@ -194,9 +197,6 @@ export function AnalyticsReportBuilder(props: AnalyticsReportBuilderProps) {
     readData();
   }, []);
 
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-
   const [granularity, setGranularity] = useState<string>(granularityParam || '');
 
   if (granularityParam !== granularity) {
@@ -206,7 +206,7 @@ export function AnalyticsReportBuilder(props: AnalyticsReportBuilderProps) {
 
   let sortableColumns = getAvailableSortingKeys(parameters);
 
-  const filters = buildTableFilters(parameters, queryParams);
+  const filters = buildTableFilters(parameters);
 
   const view = useAnalyticsReportBuilderView<ObjectType>({
     url: parameters.mainData?.report.layoutProps.dataEndpoint || '',
@@ -223,7 +223,6 @@ export function AnalyticsReportBuilder(props: AnalyticsReportBuilderProps) {
 
   return (
     <>
-      Analytics builder - body
       {error}
       {mainData && options && (
         <AnalyticsReportBuilderTable
@@ -341,7 +340,7 @@ function getAvailableSortingKeys(params: AnalyticsReportBuilderBodyProps) {
   return sortKeys;
 }
 
-function buildTableFilters(params: AnalyticsReportBuilderBodyProps, queryParams: URLSearchParams) {
+function buildTableFilters(params: AnalyticsReportBuilderBodyProps) {
   const filters: IToolbarFilter[] = [];
 
   const mainFilters = computeMainFilterKeys(params);
@@ -447,7 +446,7 @@ function buildTableColumns(params: AnalyticsReportColumnBuilderProps) {
   // initialy create columns by table headers so they are in fixed positions
   if (params.mainData?.report.tableHeaders && params.mainData.report.tableHeaders.length > 0) {
     for (const tableHeader of params.mainData.report.tableHeaders) {
-      let column = {} as ITableColumnTypeText<ObjectType>;
+      const column = {} as ITableColumnTypeText<ObjectType>;
       column.id = tableHeader.key;
       column.type = 'text';
       columns.push(column);
@@ -459,8 +458,8 @@ function buildTableColumns(params: AnalyticsReportColumnBuilderProps) {
     const obj = params.view.pageItems[0];
 
     // loop over obj items
-    for (let key in obj) {
-      let alreadyExist = columns.find((item) => item.id == key);
+    for (const key in obj) {
+      const alreadyExist = columns.find((item) => item.id == key);
 
       let column = {} as ITableColumn<ObjectType>;
 
@@ -493,7 +492,7 @@ function buildTableColumns(params: AnalyticsReportColumnBuilderProps) {
 
     // hide all columns into expanded that are not in table Header
     for (const col of columns) {
-      let found = params.mainData?.report?.tableHeaders?.find((item) => item.key == col.id);
+      const found = params.mainData?.report?.tableHeaders?.find((item) => item.key == col.id);
       if (!found) {
         col.table = ColumnTableOption.Expanded;
       }

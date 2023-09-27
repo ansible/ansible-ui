@@ -5,7 +5,7 @@ import {
 } from './AnalyticsReportBuilder';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Select, SelectOption, SelectOptionObject } from '@patternfly/react-core';
 
 import { reportDefaultParams, allDefaultParams } from './constants';
@@ -32,7 +32,6 @@ export function Test() {
   return (
     <>
       <MySelectDropdown items={items} onChange={(item) => selectionChange(item)} />
-      Selected : {reportName} <br />
       {reportName && <AnalyticsReportBuilder {...props} key={reportName}></AnalyticsReportBuilder>}
     </>
   );
@@ -77,7 +76,7 @@ const MySelectDropdown = (props: { items: string[]; onChange: (item: string) => 
       selections={selected}
       onToggle={onToggle}
       onSelect={onSelect}
-      placeholderText="Select an item"
+      placeholderText={'Select an item'}
     >
       {props.items.map((item, index) => (
         <SelectOption key={index} value={item} />
