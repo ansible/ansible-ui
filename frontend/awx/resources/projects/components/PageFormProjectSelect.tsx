@@ -3,9 +3,9 @@ import { FieldPath, FieldPathValue, FieldValues, Path } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { PageFormAsyncSelect } from '../../../../../framework/PageForm/Inputs/PageFormAsyncSelect';
 import { requestGet } from '../../../../common/crud/Data';
+import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { Project } from '../../../interfaces/Project';
 import { useSelectProject } from '../hooks/useSelectProject';
-import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 
 export function PageFormProjectSelect<
   TFieldValues extends FieldValues = FieldValues,
@@ -25,6 +25,7 @@ export function PageFormProjectSelect<
   return (
     <PageFormAsyncSelect<TFieldValues, TFieldName>
       name={props.name}
+      id="project-select"
       label={t('Project')}
       query={query}
       valueToString={(value) => {

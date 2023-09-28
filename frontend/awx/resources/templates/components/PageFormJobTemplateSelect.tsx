@@ -3,9 +3,9 @@ import { FieldPath, FieldPathValue, FieldValues, Path } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { PageFormAsyncSelect } from '../../../../../framework/PageForm/Inputs/PageFormAsyncSelect';
 import { requestGet } from '../../../../common/crud/Data';
+import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { useSelectJobTemplate } from '../hooks/useSelectJobTemplate';
-import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 
 export function PageFormJobTemplateSelect<
   TFieldValues extends FieldValues = FieldValues,
@@ -33,6 +33,7 @@ export function PageFormJobTemplateSelect<
   return (
     <PageFormAsyncSelect<TFieldValues>
       name={props.name}
+      id="job-template-select"
       label={t('Job Template')}
       query={query}
       valueToString={(value) => {
