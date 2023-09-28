@@ -6,7 +6,7 @@ import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashb
 import { PageDashboardChart } from '../../../../framework/PageDashboard/PageDashboardChart';
 import { useGet } from '../../../common/crud/useGet';
 import { EdaRoute } from '../../EdaRoutes';
-import { API_PREFIX } from '../../constants';
+import { API_PREFIX, EDA_MAX_PAGE_SIZE } from '../../constants';
 import { EdaResult } from '../../interfaces/EdaResult';
 import { EdaRuleAuditItem } from '../../interfaces/EdaRuleAudit';
 
@@ -14,7 +14,9 @@ const RuleAuditChart = () => {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
 
-  const { data } = useGet<EdaResult<EdaRuleAuditItem>>(`${API_PREFIX}/audit-rules/`);
+  const { data } = useGet<EdaResult<EdaRuleAuditItem>>(
+    `${API_PREFIX}/audit-rules/?page_size=${EDA_MAX_PAGE_SIZE}`
+  );
 
   // Chart Test Code
   // const generateRandomEdaRuleAudits = useCallback(
@@ -105,10 +107,10 @@ const RuleAuditChart = () => {
 
     return { successfulRuns, failedRuns };
   }, [data]);
-
-  if (successfulRuns.length <= 1) {
+  if (successfulRuns.length === 0 && failedRuns.length === 0) {
     return <></>;
   }
+
   return (
     <PageDashboardCard
       title={t('Rule Runs')}
