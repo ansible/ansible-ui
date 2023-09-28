@@ -127,11 +127,7 @@ describe('Job templates form', () => {
     cy.get('[data-cy="verbosity"]').type('1');
     cy.get('[data-cy="job-slicing"]').type('10');
     cy.get('[data-cy="timeout"]').type('10');
-    cy.getFormGroupByLabel(/^Show changes$/)
-      .parent()
-      .within(() => {
-        cy.get('.pf-c-switch__toggle').click();
-      });
+    cy.get('[data-cy="show-changes-toggle"]').click();
 
     // Instance Groups
     cy.get('input[placeholder="Add instance groups"]')

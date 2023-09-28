@@ -128,7 +128,7 @@ export function PageFormMultiSelect<
 
         return (
           <FormGroup
-            id={`${id ?? ''}-form-group`}
+            id={`${id ?? 'select'}-form-group`}
             fieldId={id}
             label={label}
             labelIcon={labelHelp ? <Help title={labelHelpTitle} help={labelHelp} /> : undefined}
@@ -139,7 +139,7 @@ export function PageFormMultiSelect<
           >
             <PageMultiSelect
               id={id}
-              data-cy={id}
+              data-cy={id ?? name}
               placeholder={placeholderText}
               options={options}
               aria-describedby={id ? `${id}-form-group` : undefined}

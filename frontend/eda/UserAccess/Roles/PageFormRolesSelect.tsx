@@ -20,6 +20,7 @@ export function PageFormRolesSelect<TFieldValues extends FieldValues = FieldValu
   return (
     <PageFormMultiInput<EdaRole, TFieldValues>
       name={props.name}
+      id="roles-select"
       label={props.label || t('Roles')}
       selectTitle={t('Select roles')}
       selectOpen={selectRoles}
