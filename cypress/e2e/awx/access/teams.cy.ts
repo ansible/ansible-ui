@@ -41,7 +41,7 @@ describe('teams', () => {
     cy.verifyPageTitle('Teams');
   });
 
-  it.only('can create a basic team', () => {
+  it('can create a basic team', () => {
     const teamName = 'E2E Team ' + randomString(4);
     cy.navigateTo('awx', 'teams');
     cy.clickLink(/^Create team$/);
