@@ -7,13 +7,21 @@ export function PageThemeSwitcher() {
   const [settings, setSettings] = useContext(SettingsContext);
   if (settings.activeTheme === 'dark') {
     return (
-      <Button variant="plain" onClick={() => setSettings({ ...settings, theme: 'light' })}>
+      <Button
+        data-cy="settings-icon"
+        variant="plain"
+        onClick={() => setSettings({ ...settings, theme: 'light' })}
+      >
         <MoonIcon />
       </Button>
     );
   }
   return (
-    <Button variant="plain" onClick={() => setSettings({ ...settings, theme: 'dark' })}>
+    <Button
+      data-cy="theme-icon"
+      variant="plain"
+      onClick={() => setSettings({ ...settings, theme: 'dark' })}
+    >
       <SunIcon />
     </Button>
   );
