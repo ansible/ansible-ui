@@ -44,11 +44,11 @@ describe('ProjectForm.cy.ts', () => {
       cy.contains('Name is required.').should('be.visible');
       cy.contains('Organization is required.').should('be.visible');
       cy.contains('Source control type is required.').should('be.visible');
-      cy.hasTitle(/^Create Project$/);
+      cy.verifyPageTitle('Create Project');
     });
     it('validates required field for source control types', () => {
       cy.mount(<CreateProject />);
-      cy.typeInputByLabel(/^Name$/, 'Test Project');
+      cy.get('[data-cy="project-name"]').type('Test Project');
       cy.selectDropdownOptionByLabel(/^Organization$/, 'Default');
       // Git
       cy.selectDropdownOptionByLabel(/^Source Control Type$/, 'Git');
@@ -81,10 +81,10 @@ describe('ProjectForm.cy.ts', () => {
         path: RouteObj.EditProject,
         initialEntries: [RouteObj.EditProject.replace(':id', '9')],
       });
-      cy.typeInputByLabel(/^Content Signature Validation Credential$/, 'XYZ');
+      cy.get('[data-cy="project-summary-fields-signature-validation-credential-name"]').type('XYZ');
       cy.clickButton(/^Save project$/);
       cy.contains('Credential not found.').should('be.visible');
-      cy.hasTitle(/^Edit Project$/);
+      cy.verifyPageTitle('Edit Project');
     });
     it('validates source control credential', () => {
       cy.intercept(
@@ -101,15 +101,15 @@ describe('ProjectForm.cy.ts', () => {
         initialEntries: [RouteObj.EditProject.replace(':id', '9')],
       });
       // Incorrect credential
-      cy.typeInputByLabel(/^Source Control Credential$/, 'XYZ');
+      cy.get('[data-cy="project-summary-fields-credential-name"]').type('XYZ');
       cy.clickButton(/^Save project$/);
       cy.contains('Credential not found.').should('be.visible');
-      cy.hasTitle(/^Edit Project$/);
+      cy.verifyPageTitle('Edit Project');
     });
   });
   it('displays warning if there are no available playbook directories (Manual source control type)', () => {
     cy.mount(<CreateProject />);
-    cy.typeInputByLabel(/^Name$/, 'Test Project');
+    cy.get('[data-cy="project-name"]').type('Test Project');
     cy.selectDropdownOptionByLabel(/^Organization$/, 'Default');
     cy.selectDropdownOptionByLabel(/^Source Control Type$/, 'Manual');
     cy.contains('WARNING:').should('be.visible');

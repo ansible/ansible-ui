@@ -25,12 +25,7 @@ describe('EDA Users List', () => {
 
   it('renders the Users list page', () => {
     cy.navigateTo('eda', 'users');
-    cy.hasTitle(/^Users$/)
-      .next('p')
-      .should(
-        'have.text',
-        'A user is someone who has access to EDA with associated permissions and credentials.'
-      );
+    cy.verifyPageTitle('Users');
   });
 
   it('renders the Users details page and shows expected information', () => {
@@ -41,7 +36,7 @@ describe('EDA Users List', () => {
       cy.setTablePageSize('100');
       cy.clickTableRow(edaUser.username, false);
       cy.contains(edaUser.username).click();
-      cy.hasTitle(edaUser.username);
+      cy.verifyPageTitle(edaUser.username);
       cy.clickButton(/^Details$/);
       cy.get('dd#username').should('contain', edaUser.username);
       cy.deleteEdaUser(edaUser);

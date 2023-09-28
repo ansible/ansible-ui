@@ -24,10 +24,10 @@ Cypress.Commands.add('selectToolbarFilterType', (text: string | RegExp) => {
 });
 
 Cypress.Commands.add('filterTableByText', (text: string) => {
-  cy.get('#filter-input').within(() => {
+  cy.get('[data-cy="text-input"]').within(() => {
     cy.get('input').clear().type(text, { delay: 0 });
   });
-  cy.get('[aria-label="apply filter"]').click();
+  cy.get('[data-cy="apply-filter"]').click();
 });
 
 Cypress.Commands.add('filterTableByTypeAndText', (filterLabel: string | RegExp, text: string) => {

@@ -104,9 +104,7 @@ describe('hub dashboard', () => {
       cy.contains('tr', 'Event-Driven Ansible content').find('input').uncheck();
       cy.clickModalButton('Apply');
       cy.get('div.pf-c-empty-state__content').within(() => {
-        cy.hasTitle(
-          /^There is currently no content selected to be shown on the dashboard.$/
-        ).should('be.visible');
+        cy.verifyPageTitle('There is currently no content selected to be shown on the dashboard.');
         cy.contains('button', 'Manage view').should('be.visible');
         cy.clickButton('Manage view');
       });

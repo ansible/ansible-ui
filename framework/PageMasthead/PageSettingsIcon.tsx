@@ -6,5 +6,12 @@ import { useSettingsDialog } from '../Settings';
 export function PageSettingsIcon() {
   const { t } = useTranslation();
   const openSettings = useSettingsDialog(t);
-  return <Button icon={<CogIcon />} variant={ButtonVariant.plain} onClick={openSettings} />;
+  return (
+    <Button
+      data-cy="settings-icon"
+      icon={<CogIcon />}
+      variant={ButtonVariant.plain}
+      onClick={openSettings}
+    />
+  );
 }

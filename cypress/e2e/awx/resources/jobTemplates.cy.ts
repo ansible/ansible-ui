@@ -75,10 +75,10 @@ describe('Job templates form', () => {
     cy.clickLink(/^Create job template$/);
 
     // Name
-    cy.typeInputByLabel(/^Name$/, jtName);
+    cy.get('[data-cy="name"]').type(jtName);
 
     // Description
-    cy.typeInputByLabel(/^Description$/, 'this is a description');
+    cy.get('[data-cy="description"]').type('this is a description');
 
     // Inventory
     cy.get('input[placeholder="Enter inventory"]')
@@ -122,11 +122,11 @@ describe('Job templates form', () => {
     // Labels
     cy.selectDropdownOptionByLabel(/^Labels$/, label.name.toString(), true);
 
-    cy.typeInputByLabel(/^Forks$/, '10');
-    cy.typeInputByLabel(/^Limit$/, '10');
-    cy.typeInputByLabel(/^Verbosity$/, '1');
-    cy.typeInputByLabel(/^Job slicing$/, '10');
-    cy.typeInputByLabel(/^Timeout$/, '10');
+    cy.get('[data-cy="forks"]').type('10');
+    cy.get('[data-cy="limit"]').type('10');
+    cy.get('[data-cy="verbosity"]').type('1');
+    cy.get('[data-cy="job-slicing"]').type('10');
+    cy.get('[data-cy="timeout"]').type('10');
     cy.getFormGroupByLabel(/^Show changes$/)
       .parent()
       .within(() => {
@@ -192,7 +192,7 @@ describe('Job templates form', () => {
     cy.get('input#allow_simultaneous').click();
     cy.get('input#use_fact_cache').click();
     cy.get('input#prevent_instance_group_fallback').click();
-    cy.typeInputByLabel(/^Host config key$/, 'test config key');
+    cy.get('[data-cy="host-config-key"]').type('test config key');
 
     // cy.selectDropdownOptionByLabel(/^Webhook service$/, 'GitHub');
 
@@ -205,7 +205,7 @@ describe('Job templates form', () => {
     // cy.clickModalButton('Confirm');
 
     cy.clickButton(/^Create job template$/);
-    cy.hasTitle(jtName);
+    cy.verifyPageTitle(jtName);
   });
 
   it.skip('Should edit a job template', () => {
@@ -218,10 +218,10 @@ describe('Job templates form', () => {
     }).then((jobTemplate) => {
       const newName = (jobTemplate.name ?? '') + ' edited';
       cy.clickTableRowKebabAction(jobTemplate.name, /^Edit template$/);
-      cy.typeInputByLabel(/^Name$/, newName);
-      cy.typeInputByLabel(/^Description$/, 'this is a new description');
+      cy.get('[data-cy="name"]').type(newName);
+      cy.get('[data-cy="description"]').type('this is a new description');
       cy.clickButton(/^Save job template$/);
-      cy.hasTitle(newName);
+      cy.verifyPageTitle(newName);
     });
   });
 
