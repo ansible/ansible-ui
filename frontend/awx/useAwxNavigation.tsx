@@ -44,6 +44,7 @@ import SubscriptionUsage from './analytics/subscription-usage/SubscriptionUsage'
 import { AwxDashboard } from './dashboard/AwxDashboard';
 import { CreateCredential, EditCredential } from './resources/credentials/CredentialForm';
 import { CredentialPage } from './resources/credentials/CredentialPage/CredentialPage';
+import { CredentialDetails } from './resources/credentials/CredentialPage/CredentialDetails';
 import { Credentials } from './resources/credentials/Credentials';
 import { HostPage } from './resources/hosts/HostPage/HostPage';
 import { Hosts } from './resources/hosts/Hosts';
@@ -249,8 +250,20 @@ export function useAwxNavigation() {
                   },
                   {
                     id: AwxRoute.CredentialPage,
-                    path: ':id/*',
+                    path: ':id',
                     element: <CredentialPage />,
+                    children: [
+                      {
+                        id: AwxRoute.CredentialDetails,
+                        path: 'details',
+                        element: <CredentialDetails />,
+                      },
+                      {
+                        id: AwxRoute.CredentialAccess,
+                        path: 'access',
+                        element: <PageNotImplemented />,
+                      },
+                    ],
                   },
                   {
                     path: '',
