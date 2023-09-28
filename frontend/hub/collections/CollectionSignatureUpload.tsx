@@ -8,7 +8,7 @@ import { HubItemsResponse } from '../useHubView';
 import { CollectionVersionSearch } from './Collection';
 import { HubRoute } from '../HubRoutes';
 import { useGetPageUrl } from '../../../framework';
-import { postRequestFile } from '../../common/crud/Data';
+import { hubPostRequestFile } from '../api/request.ts';
 import { usePageNavigate } from '../../../framework/PageNavigation/usePageNavigate';
 import { PulpItemsResponse } from '../usePulpView';
 
@@ -66,7 +66,7 @@ export function UploadSignatureByFile() {
 
     const stagingRepo = repoRes.results[0].pulp_href;
 
-    return postRequestFile(
+    return hubPostRequestFile(
       pulpAPI`/content/ansible/collection_signatures/`,
       data.file as Blob,
       stagingRepo,
