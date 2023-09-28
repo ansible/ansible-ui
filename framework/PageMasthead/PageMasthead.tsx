@@ -37,7 +37,7 @@ export function PageMasthead(props: {
         <MastheadBrand>{props.icon}</MastheadBrand>
       </MastheadMain>
       <MastheadContent style={{ marginLeft: 0 }}>
-        <Toolbar id="toolbar" inset={{ default: 'insetNone' }}>
+        <Toolbar id="toolbar" data-cy="toolbar" inset={{ default: 'insetNone' }}>
           <ToolbarContent>
             {isSmallOrLarger && (
               <ToolbarItem>

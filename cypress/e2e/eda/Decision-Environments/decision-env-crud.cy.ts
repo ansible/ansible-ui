@@ -7,18 +7,18 @@ describe('EDA decision environment- Create, Edit, Delete', () => {
 
   it('can render the decision environments list page', () => {
     cy.navigateTo('eda', 'decision-environments');
-    cy.hasTitle(/^Decision Environments$/);
+    cy.verifyPageTitle('Decision Environments');
   });
 
   it('can create an decision environment and assert the information showing on the details page', () => {
     const de_name = 'E2E Decision Environment ' + randomString(4);
     cy.navigateTo('eda', 'decision-environments');
-    cy.hasTitle(/^Decision Environments$/);
+    cy.verifyPageTitle('Decision Environments');
     cy.clickButton(/^Create decision environment$/);
     cy.get('[data-cy="name"]').type(de_name);
     cy.get('[data-cy="image-url"]').type('quay.io/ansible/ansible-rulebook:main');
     cy.clickButton(/^Create decision environment$/);
-    cy.hasTitle(de_name);
+    cy.verifyPageTitle(de_name);
     cy.getEdaDecisionEnvironmentByName(de_name).then((de) => {
       cy.wrap(de).should('not.be.undefined');
       if (de) cy.deleteEdaDecisionEnvironment(de);
@@ -32,7 +32,7 @@ describe('EDA decision environment- Create, Edit, Delete', () => {
   it('can verify edit functionality of a decision environment', () => {
     cy.createEdaDecisionEnvironment().then((edaDE) => {
       cy.navigateTo('eda', 'decision-environments');
-      cy.hasTitle(/^Decision Environments$/);
+      cy.verifyPageTitle('Decision Environments');
       /*
       DE's are displayed by default in card view hence clickTableRow() doesn't work 
       cy.clickTableRow(edaDE.name);
@@ -42,10 +42,10 @@ describe('EDA decision environment- Create, Edit, Delete', () => {
         cy.get('a').click();
       });
       cy.clickButton(/^Edit decision environment$/);
-      cy.hasTitle(`Edit ${edaDE.name}`);
+      cy.verifyPageTitle(`Edit ${edaDE.name}`);
       cy.get('[data-cy="name"]').type(edaDE.name + 'edited');
       cy.clickButton(/^Save decision environment$/);
-      cy.hasTitle(`${edaDE.name}edited`);
+      cy.verifyPageTitle(`${edaDE.name}edited`);
       cy.deleteEdaDecisionEnvironment(edaDE);
     });
   });
@@ -57,12 +57,12 @@ describe('EDA decision environment- Create, Edit, Delete', () => {
   it('can delete a decision environment from the details page', () => {
     cy.createEdaDecisionEnvironment().then((edaDE) => {
       cy.navigateTo('eda', 'decision-environments');
-      cy.hasTitle(/^Decision Environments$/);
+      cy.verifyPageTitle('Decision Environments');
       cy.get('button[aria-label="table view"]').click();
       cy.contains('td', edaDE.name).within(() => {
         cy.get('a').click();
       });
-      cy.hasTitle(edaDE.name);
+      cy.verifyPageTitle(edaDE.name);
       cy.intercept('DELETE', `/api/eda/v1/decision-environments/${edaDE.id}/`).as('deleteDE');
       cy.clickPageAction(/^Delete decision environment$/);
       cy.clickModalConfirmCheckbox();
@@ -70,7 +70,7 @@ describe('EDA decision environment- Create, Edit, Delete', () => {
       cy.wait('@deleteDE').then((deleteDE) => {
         expect(deleteDE?.response?.statusCode).to.eql(204);
       });
-      cy.hasTitle(/^Decision Environments$/);
+      cy.verifyPageTitle('Decision Environments');
     });
   });
 });

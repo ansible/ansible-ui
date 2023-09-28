@@ -15,10 +15,10 @@ import { Project } from '../../frontend/awx/interfaces/Project';
 import { Schedule } from '../../frontend/awx/interfaces/Schedule';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
+import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/generated-from-swagger/api';
 import './auth';
 import './commands';
 import './rest-commands';
-import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/generated-from-swagger/api';
 
 //  AWX related custom command implementation
 
@@ -49,11 +49,6 @@ Cypress.Commands.add('getCheckboxByLabel', (label: string | RegExp) => {
         cy.get('#' + id);
       }
     });
-});
-
-Cypress.Commands.add('typeInputByLabel', (label: string | RegExp, text: string) => {
-  cy.getInputByLabel(label).clear();
-  cy.getInputByLabel(label).type(text, { delay: 0 });
 });
 
 Cypress.Commands.add(
@@ -130,22 +125,21 @@ Cypress.Commands.add('clickButton', (label: string | RegExp) => {
 });
 
 Cypress.Commands.add('navigateTo', (component: string, label: string) => {
-  cy.get('#page-sidebar').then((c) => {
-    if (c.hasClass('pf-m-collapsed')) {
-      cy.get('#nav-toggle').click();
+  cy.get('[data-cy="page-navigation"]').then((nav) => {
+    if (nav.is(':visible')) {
+      cy.log('BOO', nav);
+      cy.get(`[data-cy="${component}-${label}"]`).click();
+    } else {
+      cy.log('BAA', nav);
+      cy.get('[data-cy="nav-toggle"]').click();
+      cy.get(`[data-cy="${component}-${label}"]`).click();
     }
   });
-  cy.get(`[data-cy="${component}-${label}"]`).click();
-  cy.get('#page-sidebar').then((c) => {
-    if (!c.hasClass('pf-m-collapsed')) {
-      cy.get('#nav-toggle').click();
-    }
-  });
-  cy.get('#refresh').click();
+  cy.get('[data-cy="refresh"]').click();
 });
 
-Cypress.Commands.add('hasTitle', (label: string | RegExp) => {
-  cy.contains('.pf-c-title', label);
+Cypress.Commands.add('verifyPageTitle', (label: string) => {
+  cy.get(`[data-cy="page-title"]`).should('contain', label);
 });
 
 Cypress.Commands.add('hasAlert', (label: string | RegExp) => {

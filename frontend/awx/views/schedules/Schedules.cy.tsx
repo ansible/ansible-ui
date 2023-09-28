@@ -38,12 +38,12 @@ describe('schedules .cy.ts', () => {
 
     it('Schedules list renders', () => {
       cy.mount(<Schedules />);
-      cy.hasTitle(/^Schedules$/);
+      cy.verifyPageTitle('Schedules');
       cy.get('table').find('tr').should('have.length', 4);
     });
     it('Schedules list has filters for Name, and Description,', () => {
       cy.mount(<Schedules />);
-      cy.hasTitle(/^Schedules$/);
+      cy.verifyPageTitle('Schedules');
       cy.openToolbarFilterTypeSelect().within(() => {
         cy.contains(/^Name$/).should('be.visible');
         cy.contains(/^Description$/).should('be.visible');
@@ -52,7 +52,7 @@ describe('schedules .cy.ts', () => {
     it('Filter schedules by name', () => {
       cy.mount(<Schedules />);
       cy.intercept('api/v2/schedules/?name__icontains=Template*').as('nameFilterRequest');
-      cy.hasTitle(/^Schedules$/);
+      cy.verifyPageTitle('Schedules');
       cy.filterTableByTypeAndText(/^Name$/, 'Template');
       // A network request is made based on the filter selected on the UI
       cy.wait('@nameFilterRequest');
@@ -63,7 +63,7 @@ describe('schedules .cy.ts', () => {
     it('Filter schedules by description', () => {
       cy.mount(<Schedules />);
       cy.intercept('api/v2/schedules/?description__icontains=bar*').as('descriptionFilterRequest');
-      cy.hasTitle(/^Schedules$/);
+      cy.verifyPageTitle('Schedules');
       cy.filterTableByTypeAndText(/^Description$/, 'bar');
       // A network request is made based on the filter selected on the UI
       cy.wait('@descriptionFilterRequest');
