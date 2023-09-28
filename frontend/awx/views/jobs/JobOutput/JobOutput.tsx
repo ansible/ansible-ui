@@ -29,7 +29,7 @@ export function JobOutput() {
   return <JobOutputInner job={job} reloadJob={refreshJob} />;
 }
 
-function JobOutputInner(props: { job: Job; reloadJob: () => void }) {
+export function JobOutputInner(props: { job: Job; reloadJob: () => void }) {
   const { job, reloadJob } = props;
   const toolbarFilters = useOutputFilters();
   const [filterState, setFilterState] = useState<IFilterState>({});

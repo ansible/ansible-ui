@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable i18next/no-literal-string */
 import { CredentialType } from '../../../interfaces/CredentialType';
-import { CredentialDetails } from './CredentialDetails';
+import { CredentialDetailsInner as CredentialDetails } from './CredentialDetails';
 import mockCredential from '../../../../../cypress/fixtures/credential.json';
 import { Credential } from '../../../interfaces/Credential';
 
