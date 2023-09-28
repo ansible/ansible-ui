@@ -6,7 +6,7 @@ import { getPersistentFilters } from '../../frontend/common/PersistentFilters';
 
 export function PageRoutedTabs(props: {
   backTab?: { label: string; page: string; persistentFilterKey: string };
-  tabs: { label: string; page: string }[];
+  tabs: ({ label: string; page: string } | false)[];
   params?: { [key: string]: string | number | undefined };
 }) {
   const pageNavigate = usePageNavigate();
@@ -14,7 +14,7 @@ export function PageRoutedTabs(props: {
   const getPageUrl = useGetPageUrl();
   const location = useLocation();
   const activeTab = props.tabs.find(
-    (tab) => getPageUrl(tab.page, { params: props.params }) === location.pathname
+    (tab) => tab && getPageUrl(tab.page, { params: props.params }) === location.pathname
   );
   const querystring = getPersistentFilters(props.backTab?.persistentFilterKey);
   const query = parseQuery(querystring);
@@ -52,14 +52,16 @@ export function PageRoutedTabs(props: {
             href={getPageUrl(props.backTab.page, { params: props.params, query })}
           />
         )}
-        {props.tabs.map((tab) => (
-          <Tab
-            key={tab.page}
-            eventKey={tab.page}
-            title={tab.label}
-            href={getPageUrl(tab.page, { params: props.params })}
-          />
-        ))}
+        {props.tabs.map((tab) =>
+          tab ? (
+            <Tab
+              key={tab.page}
+              eventKey={tab.page}
+              title={tab.label}
+              href={getPageUrl(tab.page, { params: props.params })}
+            />
+          ) : null
+        )}
       </Tabs>
       <PageSection variant="light" isFilled padding={{ default: 'noPadding' }}>
         <Outlet />

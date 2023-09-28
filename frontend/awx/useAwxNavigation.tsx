@@ -51,6 +51,7 @@ import { Hosts } from './resources/hosts/Hosts';
 import { Inventories } from './resources/inventories/Inventories';
 import { CreateInventory, EditInventory } from './resources/inventories/InventoryForm';
 import { InventoryPage } from './resources/inventories/InventoryPage/InventoryPage';
+import { InventoryDetails } from './resources/inventories/InventoryPage/InventoryDetails';
 import { CreateProject, EditProject } from './resources/projects/ProjectPage/ProjectForm';
 import { ProjectPage } from './resources/projects/ProjectPage/ProjectPage';
 import { Projects } from './resources/projects/Projects';
@@ -324,8 +325,45 @@ export function useAwxNavigation() {
                   },
                   {
                     id: AwxRoute.InventoryPage,
-                    path: ':inventory_type/:id/*',
+                    path: ':inventory_type/:id/',
                     element: <InventoryPage />,
+                    children: [
+                      {
+                        id: AwxRoute.InventoryDetails,
+                        path: 'details',
+                        element: <InventoryDetails />,
+                      },
+                      {
+                        id: AwxRoute.InventoryAccess,
+                        path: 'access',
+                        element: <PageNotImplemented />,
+                      },
+                      {
+                        id: AwxRoute.InventoryGroups,
+                        path: 'groups',
+                        element: <PageNotImplemented />,
+                      },
+                      {
+                        id: AwxRoute.InventoryHosts,
+                        path: 'hosts',
+                        element: <PageNotImplemented />,
+                      },
+                      {
+                        id: AwxRoute.InventorySources,
+                        path: 'sources',
+                        element: <PageNotImplemented />,
+                      },
+                      {
+                        id: AwxRoute.InventoryJobs,
+                        path: 'jobs',
+                        element: <PageNotImplemented />,
+                      },
+                      {
+                        id: AwxRoute.InventoryJobTemplates,
+                        path: 'templates',
+                        element: <PageNotImplemented />,
+                      },
+                    ],
                   },
                   {
                     path: '',
