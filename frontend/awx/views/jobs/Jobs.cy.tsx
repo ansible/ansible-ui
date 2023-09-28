@@ -18,7 +18,7 @@ describe('Jobs.cy.ts', () => {
   });
   it('renders job list', () => {
     cy.mount(<Jobs />);
-    cy.hasTitle(/^Jobs$/);
+    cy.verifyPageTitle('Jobs');
     cy.get('table').find('tr').should('have.length', 11);
   });
   it('deletes job from toolbar menu', () => {

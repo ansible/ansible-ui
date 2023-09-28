@@ -83,6 +83,7 @@ export function ToolbarTextFilter(props: IToolbarTextFilterProps) {
 
       <Button
         variant={value ? 'primary' : 'control'}
+        data-cy="apply-filter"
         aria-label="apply filter"
         onClick={() => {
           props.addFilter(value);

@@ -33,9 +33,10 @@
 //       cy.clickLink(activeUser?.username);
 //       cy.clickTab('Controller Tokens');
 //       cy.clickButton('Create controller token');
-//       cy.hasTitle('Create Controller Token');
-//       cy.typeInputByLabel('Name', newTokenName);
-//       cy.typeInputByLabel('Token', awxToken.token);
+//       cy.verifyPageTitle('Create Controller Token');
+//       //the following two lines need to be refactored:
+//       cy.get('[data-cy="name"]').type(newTokenName);
+//       cy.get('[data-cy="token"]').type(awxToken.token);
 //       cy.intercept('POST', '/api/eda/v1/users/me/awx-tokens/').as('created');
 //       cy.clickButton('Create controller token');
 //       // cy.setPageSize(100);

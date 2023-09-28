@@ -17,6 +17,7 @@ export function PageMastheadDropdown(props: {
   return (
     <Dropdown
       id={props.id}
+      ouiaId={props.id}
       onSelect={onSelect}
       toggle={
         <DropdownToggle toggleIndicator={null} onToggle={onToggle}>
