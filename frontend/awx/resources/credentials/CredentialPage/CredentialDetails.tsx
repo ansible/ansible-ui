@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { DateTimeCell, PageDetail, PageDetails, TextCell } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
@@ -16,7 +16,19 @@ import { CredentialTypeDetail } from '../components/CredentialTypeDetail';
 const PluginFieldText = styled.p`
   margin-top: 10px;
 `;
-export function CredentialDetails(props: { credential: Credential }) {
+
+export function CredentialDetails() {
+  const params = useParams<{ id: string }>();
+  const { data: credential } = useGetItem<Credential>('/api/v2/credentials', params.id);
+
+  if (!credential) {
+    return null;
+  }
+
+  return <CredentialDetailsInner credential={credential} />;
+}
+
+export function CredentialDetailsInner(props: { credential: Credential }) {
   const { t } = useTranslation();
   const { credential } = props;
   const history = useNavigate();
