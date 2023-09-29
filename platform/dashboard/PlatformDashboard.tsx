@@ -45,7 +45,7 @@ export function PlatformDashboard() {
           <CardBody>
             <Gallery hasGutter minWidths={{ default: '390px' }}>
               <GalleryCard>
-                <GallaryCardHeader
+                <GalleryCardHeader
                   icon={<AnsibleContentCollectionsIcon style={iconStyle} />}
                   title="Browse Automation Content"
                   subtitle="Automation Hub"
@@ -57,7 +57,7 @@ export function PlatformDashboard() {
                 </CardBody>
               </GalleryCard>
               <GalleryCard>
-                <GallaryCardHeader
+                <GalleryCardHeader
                   icon={<ExecutionEnvironmentBuilderIcon style={iconStyle} />}
                   title="Build Environment"
                   subtitle="Automation Hub"
@@ -65,7 +65,7 @@ export function PlatformDashboard() {
                 <CardBody>Build, view, and sync an environment.</CardBody>
               </GalleryCard>
               <GalleryCard>
-                <GallaryCardHeader
+                <GalleryCardHeader
                   icon={<AutomationControllerIcon style={iconStyle} />}
                   title="Inventory"
                   subtitle="Inventory"
@@ -77,7 +77,7 @@ export function PlatformDashboard() {
                 </CardBody>
               </GalleryCard>
               <GalleryCard>
-                <GallaryCardHeader
+                <GalleryCardHeader
                   icon={<AutomationControllerIcon style={iconStyle} />}
                   title="Create Project"
                   subtitle="Automation Controller"
@@ -89,7 +89,7 @@ export function PlatformDashboard() {
                 </CardBody>
               </GalleryCard>
               <GalleryCard>
-                <GallaryCardHeader
+                <GalleryCardHeader
                   icon={<AutomationControllerIcon style={iconStyle} />}
                   title="Create Template"
                   subtitle="Automation Controller"
@@ -101,7 +101,7 @@ export function PlatformDashboard() {
                 </CardBody>
               </GalleryCard>
               <GalleryCard>
-                <GallaryCardHeader
+                <GalleryCardHeader
                   icon={<AnsibleRulebookIcon style={iconStyle} />}
                   title="Create Rulebook Activation"
                   subtitle="Event-Driven Ansible Controller"
@@ -109,7 +109,7 @@ export function PlatformDashboard() {
                 <CardBody>Create a rulebook activation</CardBody>
               </GalleryCard>
               <GalleryCard>
-                <GallaryCardHeader
+                <GalleryCardHeader
                   icon={<AutomationMeshIcon style={iconStyle} />}
                   title="Automation Mesh"
                   subtitle="Automation Controller"
@@ -121,7 +121,7 @@ export function PlatformDashboard() {
                 </CardBody>
               </GalleryCard>
               <GalleryCard>
-                <GallaryCardHeader
+                <GalleryCardHeader
                   icon={<AnsibleLightspeedIcon style={iconStyle} />}
                   title="Ansible Lightspeed"
                   subtitle="Ansible Lightspeed with Watson Code Assistant"
@@ -158,7 +158,7 @@ export function GalleryCard(props: { children: ReactNode }) {
   );
 }
 
-export function GallaryCardHeader(props: { icon?: ReactNode; title: string; subtitle: string }) {
+export function GalleryCardHeader(props: { icon?: ReactNode; title: string; subtitle: string }) {
   return (
     <CardHeader>
       <Split style={{ width: '100%' }}>
