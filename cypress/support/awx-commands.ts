@@ -391,7 +391,8 @@ Cypress.Commands.add(
       failOnStatusCode?: boolean;
     }
   ) => {
-    cy.awxRequestDelete(`/api/v2/organizations/${organization.id}/`, options);
+    if (!organization?.id) return;
+    cy.awxRequestDelete(`/api/v2/organizations/${organization?.id}/`, options);
   }
 );
 

@@ -7,18 +7,28 @@ import {
   TextListVariants,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
-import { PageDetail, PageDetails } from '../../../../../framework';
+import { Link, useParams } from 'react-router-dom';
+import { LoadingPage, PageDetail, PageDetails } from '../../../../../framework';
 import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
 import { RouteObj } from '../../../../common/Routes';
 
 import { CredentialLabel } from '../../../common/CredentialLabel';
 import { UserDateDetail } from '../../../common/UserDateDetail';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
+import { useGetItem } from '../../../../common/crud/useGet';
+import { AwxError } from '../../../common/AwxError';
 
-export function WorkflowJobTemplateDetails(props: { template: WorkflowJobTemplate }) {
+export function WorkflowJobTemplateDetails() {
   const { t } = useTranslation();
-  const { template } = props;
+  const params = useParams<{ id: string }>();
+  const {
+    data: template,
+    error,
+    refresh,
+  } = useGetItem<WorkflowJobTemplate>('/api/v2/workflow_job_templates/', params.id);
+  if (error) return <AwxError error={error} handleRefresh={refresh} />;
+  if (!template) return <LoadingPage breadcrumbs tabs />;
+
   const { summary_fields: summaryFields } = template;
 
   const showOptionsField = template.allow_simultaneous || template.webhook_service;

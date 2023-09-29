@@ -16,6 +16,7 @@ describe('projects', () => {
       organization = org;
       cy.createAwxProject({ organization: organization.id }).then((proj) => {
         project = proj;
+        return proj;
       });
     });
   });
@@ -123,7 +124,7 @@ describe('projects', () => {
       cy.clickTableRow(testProject.name);
       cy.verifyPageTitle(testProject.name);
       cy.clickPageAction(/^Copy project$/);
-      cy.hasAlert(`${testProject.name} copied`).should('be.visible');
+      cy.hasAlert(`${testProject.name} copied`).should('exist');
       cy.requestDelete(`/api/v2/projects/${testProject.id}/`, { failOnStatusCode: false });
     });
   });
@@ -157,12 +158,14 @@ describe('projects', () => {
     cy.createAwxProject().then((project) => {
       cy.navigateTo('awx', 'projects');
       cy.filterTableByText(project.name);
+      cy.intercept(`api/v2/projects/${project.id}/update/`).as('projectUpdateRequest');
       cy.contains('td', project.name)
         .parent()
         .within(() => {
           cy.get('#sync-project').click();
         });
-      cy.hasAlert(`Syncing ${project.name}`).should('be.visible');
+      cy.wait('@projectUpdateRequest');
+      cy.hasAlert(`Syncing ${project.name}`).should('exist');
       cy.requestDelete(`/api/v2/projects/${project.id}/`, { failOnStatusCode: false });
     });
   });

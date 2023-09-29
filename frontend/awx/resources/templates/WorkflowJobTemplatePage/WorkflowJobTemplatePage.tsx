@@ -10,19 +10,16 @@ import {
   usePageNavigate,
 } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
-import { PageNotImplemented } from '../../../../common/PageNotImplemented';
-import { PageBackTab, RoutedTab, RoutedTabs } from '../../../../common/RoutedTabs';
-import { RouteObj } from '../../../../common/Routes';
 import { useGet, useGetItem } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
 import { AwxError } from '../../../common/AwxError';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
-import { Schedules } from '../../../views/schedules/Schedules';
-import { WorkflowJobTemplateDetails } from './WorkflowJobTemplateDetails';
 import { useTemplateActions } from '../hooks/useTemplateActions';
 import { Organization } from '../../../interfaces/Organization';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { useActiveUser } from '../../../../common/useActiveUser';
+import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
+import { useMemo } from 'react';
 
 export function WorkflowJobTemplatePage() {
   const { t } = useTranslation();
@@ -34,6 +31,7 @@ export function WorkflowJobTemplatePage() {
     isLoading: isTemplateLoading,
     refresh,
   } = useGetItem<WorkflowJobTemplate>('/api/v2/workflow_job_templates', params.id);
+
   const {
     data: isNotifAdmin,
     error: isNotifAdminError,
@@ -49,9 +47,24 @@ export function WorkflowJobTemplatePage() {
   });
   const error = isNotifAdminError || templateError;
 
+  const tabs: { label: string; page: string }[] = useMemo(() => {
+    const tabs = [
+      { label: t('Details'), page: AwxRoute.WorkflowJobTemplateDetails },
+      { label: t('Access'), page: AwxRoute.WorkflowJobTemplateAccess },
+      { label: t('Schedules'), page: AwxRoute.WorkflowJobTemplateSchedules },
+      { label: t('Jobs'), page: AwxRoute.WorkflowJobTemplateJobs },
+      { label: t('Survey'), page: AwxRoute.WorkflowJobTemplateSurvey },
+    ];
+    if (currentUser?.is_system_auditor || (isNotifAdmin && isNotifAdmin.results.length > 0)) {
+      tabs.push({ label: t('Notifications'), page: AwxRoute.WorkflowJobTemplateNotifications });
+    }
+    return tabs;
+  }, [t, currentUser, isNotifAdmin]);
+
   if (error) return <AwxError error={error} handleRefresh={refresh || refreshNotifAdmin} />;
   if (!template || isTemplateLoading || isNotifAdminLoading)
     return <LoadingPage breadcrumbs tabs />;
+
   return (
     <PageLayout>
       <PageHeader
@@ -68,37 +81,15 @@ export function WorkflowJobTemplatePage() {
           />
         }
       />
-      <RoutedTabs isLoading={!template} baseUrl={RouteObj.WorkflowJobTemplatePage}>
-        <PageBackTab
-          label={t('Back to Templates')}
-          url={RouteObj.Templates}
-          persistentFilterKey="templates"
-        />
-        <RoutedTab label={t('Details')} url={RouteObj.WorkflowJobTemplateDetails}>
-          <WorkflowJobTemplateDetails template={template} />
-        </RoutedTab>
-        <RoutedTab label={t('Access')} url={RouteObj.WorkflowJobTemplateAccess}>
-          <PageNotImplemented />
-        </RoutedTab>
-        {currentUser?.is_system_auditor ||
-          (isNotifAdmin && isNotifAdmin.results.length > 0 && (
-            <RoutedTab label={t('Notifications')} url={RouteObj.WorkflowJobTemplateNotifications}>
-              <PageNotImplemented />
-            </RoutedTab>
-          ))}
-        <RoutedTab label={t('Schedules')} url={RouteObj.WorkflowJobTemplateSchedules}>
-          <Schedules sublistEndpoint={`/api/v2/workflow_job_templates/${template.id}/schedules/`} />
-        </RoutedTab>
-        <RoutedTab label={t('Jobs')} url={RouteObj.WorkflowJobTemplateJobs}>
-          <PageNotImplemented />
-        </RoutedTab>
-        <RoutedTab label={t('Survey')} url={RouteObj.WorkflowJobTemplateSurvey}>
-          <PageNotImplemented />
-        </RoutedTab>
-        <RoutedTab label={t('Visualizer')} url={RouteObj.WorkflowJobTemplateVisualizer}>
-          <PageNotImplemented />
-        </RoutedTab>
-      </RoutedTabs>
+      <PageRoutedTabs
+        backTab={{
+          label: t('Back to Templates'),
+          page: AwxRoute.Templates,
+          persistentFilterKey: 'templates',
+        }}
+        tabs={tabs}
+        params={{ id: template.id }}
+      />
     </PageLayout>
   );
 }
