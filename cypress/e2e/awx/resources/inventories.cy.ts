@@ -11,7 +11,7 @@ describe('inventories', () => {
   let instanceGroup: InstanceGroup;
   let label: Label;
 
-  before(() => {
+  beforeEach(() => {
     cy.awxLogin();
 
     cy.createAwxOrganization().then((org) => {
@@ -19,14 +19,12 @@ describe('inventories', () => {
       cy.createAwxLabel({ organization: organization.id }).then((lbl) => {
         label = lbl;
       });
-    });
-
-    cy.createAwxInventory().then((inv) => {
-      inventory = inv;
-    });
-
-    cy.createAwxInstanceGroup().then((ig) => {
-      instanceGroup = ig;
+      cy.createAwxInventory({ organization: organization.id }).then((inv) => {
+        inventory = inv;
+      });
+      cy.createAwxInstanceGroup().then((ig) => {
+        instanceGroup = ig;
+      });
     });
   });
 
