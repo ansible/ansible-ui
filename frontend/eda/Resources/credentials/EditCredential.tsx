@@ -82,12 +82,12 @@ function CredentialInputs() {
       />
       <PageFormTextInput<EdaCredentialCreate>
         name="secret"
-        label={t('Token/Password')}
+        label={t('Token')}
         type="password"
-        placeholder={t('Enter credential token or password')}
+        placeholder={t('Enter credential token')}
         isRequired
-        labelHelp={t('Tokens/passwords allow you to authenticate to your destination.')}
-        labelHelpTitle={t('Token/Password')}
+        labelHelp={t('Tokens allow you to authenticate to your destination.')}
+        labelHelpTitle={t('Token')}
       />
     </>
   );
