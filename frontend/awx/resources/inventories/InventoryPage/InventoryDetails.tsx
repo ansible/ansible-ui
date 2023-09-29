@@ -15,7 +15,6 @@ import { useGet } from '../../../../common/crud/useGet';
 import { useVerbosityString } from '../../../common/useVerbosityString';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { Inventory } from '../../../interfaces/Inventory';
-import { useGetInventory } from './InventoryPage';
 
 function useInstanceGroups(inventoryId: string) {
   const { data } = useGet<{ results: InstanceGroup[] }>(
@@ -24,18 +23,7 @@ function useInstanceGroups(inventoryId: string) {
   return data?.results ?? [];
 }
 
-export function InventoryDetails() {
-  const params = useParams<{ id: string; inventory_type: string }>();
-  const inventory = useGetInventory(params.id, params.inventory_type);
-
-  if (!inventory) {
-    return null;
-  }
-
-  return <InventoryDetailsInner inventory={inventory} />;
-}
-
-export function InventoryDetailsInner(props: { inventory: Inventory }) {
+export function InventoryDetails(props: { inventory: Inventory }) {
   const { t } = useTranslation();
   const { inventory } = props;
   const history = useNavigate();
