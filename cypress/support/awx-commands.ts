@@ -130,15 +130,18 @@ Cypress.Commands.add('clickButton', (label: string | RegExp) => {
 });
 
 Cypress.Commands.add('navigateTo', (component: string, label: string) => {
-  cy.get('[data-cy="page-navigation"]').then((nav) => {
-    if (nav.is(':visible')) {
-      cy.get(`[data-cy="${component}-${label}"]`).click();
-    } else {
-      cy.get('[data-cy="nav-toggle"]').click();
-      cy.get(`[data-cy="${component}-${label}"]`).click();
+  cy.get('#page-sidebar').then((c) => {
+    if (c.hasClass('pf-m-collapsed')) {
+      cy.get('#nav-toggle').click();
     }
   });
-  cy.get('[data-cy="refresh"]').click();
+  cy.get(`[data-cy="${component}-${label}"]`).click();
+  cy.get('#page-sidebar').then((c) => {
+    if (!c.hasClass('pf-m-collapsed')) {
+      cy.get('#nav-toggle').click();
+    }
+  });
+  cy.get('#refresh').click();
 });
 
 Cypress.Commands.add('hasTitle', (label: string | RegExp) => {
