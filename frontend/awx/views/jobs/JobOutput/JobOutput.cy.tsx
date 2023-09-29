@@ -1,4 +1,4 @@
-import { JobOutputInner as JobOutput } from './JobOutput';
+import { JobOutput } from './JobOutput';
 import job from '../../../../../cypress/fixtures/job.json';
 import type { Job } from '../../../interfaces/Job';
 

@@ -6,7 +6,7 @@ import { getPersistentFilters } from '../../frontend/common/PersistentFilters';
 
 export function PageRoutedTabs(props: {
   backTab?: { label: string; page: string; persistentFilterKey: string };
-  tabs: ({ label: string; page: string } | false)[];
+  tabs: { label: string; page: string }[];
   params?: { [key: string]: string | number | undefined };
 }) {
   const pageNavigate = usePageNavigate();
@@ -14,7 +14,7 @@ export function PageRoutedTabs(props: {
   const getPageUrl = useGetPageUrl();
   const location = useLocation();
   const activeTab = props.tabs.find(
-    (tab) => tab && getPageUrl(tab.page, { params: props.params }) === location.pathname
+    (tab) => getPageUrl(tab.page, { params: props.params }) === location.pathname
   );
   const querystring = getPersistentFilters(props.backTab?.persistentFilterKey);
   const query = parseQuery(querystring);
@@ -36,7 +36,7 @@ export function PageRoutedTabs(props: {
         onSelect={onSelect}
         inset={{ default: 'insetSm' }}
         isBox
-        activeKey={activeTab ? activeTab.page : undefined}
+        activeKey={activeTab?.page}
         style={{ backgroundColor: 'var(--pf-c-tabs__link--BackgroundColor)' }}
       >
         {props.backTab && (
@@ -52,16 +52,14 @@ export function PageRoutedTabs(props: {
             href={getPageUrl(props.backTab.page, { params: props.params, query })}
           />
         )}
-        {props.tabs.map((tab) =>
-          tab ? (
-            <Tab
-              key={tab.page}
-              eventKey={tab.page}
-              title={tab.label}
-              href={getPageUrl(tab.page, { params: props.params })}
-            />
-          ) : null
-        )}
+        {props.tabs.map((tab) => (
+          <Tab
+            key={tab.page}
+            eventKey={tab.page}
+            title={tab.label}
+            href={getPageUrl(tab.page, { params: props.params })}
+          />
+        ))}
       </Tabs>
       <PageSection variant="light" isFilled padding={{ default: 'noPadding' }}>
         <Outlet />
