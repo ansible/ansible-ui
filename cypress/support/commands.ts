@@ -402,6 +402,13 @@ declare global {
           failOnStatusCode?: boolean;
         }
       ): Chainable<void>;
+      deleteAwxCredential(
+        credential: Credential,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
+      ): Chainable<void>;
       deleteAwxInventory(
         inventory: Inventory,
         options?: {

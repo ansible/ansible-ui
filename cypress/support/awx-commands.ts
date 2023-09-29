@@ -303,6 +303,22 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add(
+  'deleteAwxCredential',
+  (
+    credential: Credential,
+    options?: {
+      /** Whether to fail on response codes other than 2xx and 3xx */
+      failOnStatusCode?: boolean;
+    }
+  ) => {
+    // Delete organization created for this credential (this will also delete the credential)
+    if (credential?.organization) {
+      cy.awxRequestDelete(`/api/v2/organizations/${credential.organization.toString()}/`, options);
+    }
+  }
+);
+
+Cypress.Commands.add(
   'awxRequest',
   function awxRequest<T>(
     method: string,
@@ -507,10 +523,9 @@ Cypress.Commands.add(
       failOnStatusCode?: boolean;
     }
   ) => {
-    const organizationId = inventory.organization;
     // Delete organization created for this inventory (this will also delete the inventory)
-    if (organizationId) {
-      cy.awxRequestDelete(`/api/v2/organizations/${organizationId.toString()}/`, options);
+    if (inventory?.organization) {
+      cy.awxRequestDelete(`/api/v2/organizations/${inventory.organization.toString()}/`, options);
     }
   }
 );

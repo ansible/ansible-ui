@@ -26,7 +26,6 @@ describe('credentials', () => {
       organization: organization.id,
       credential_type: 1,
     }).then((testCredential) => (credential = testCredential));
-    cy.navigateTo('awx', 'credentials');
   });
 
   afterEach(() => {
@@ -34,11 +33,13 @@ describe('credentials', () => {
   });
 
   it('credentials page', () => {
+    cy.navigateTo('awx', 'credentials');
     cy.verifyPageTitle('Credentials');
   });
 
   it('create credential', () => {
     const credentialName = 'E2E Credential ' + randomString(4);
+    cy.navigateTo('awx', 'credentials');
     cy.clickButton(/^Create credential$/);
     cy.get('[data-cy="name"]').type(credentialName);
     cy.get('[data-cy="summary-fields-organization-name"]').type(organization.name);
@@ -48,6 +49,7 @@ describe('credentials', () => {
   });
 
   it('edit credential', () => {
+    cy.navigateTo('awx', 'credentials');
     cy.clickTableRow(credential.name);
     cy.clickButton(/^Edit credential$/);
     cy.verifyPageTitle('Edit Credential');
@@ -57,6 +59,7 @@ describe('credentials', () => {
   });
 
   it('credential details', () => {
+    cy.navigateTo('awx', 'credentials');
     cy.clickTableRow(credential.name);
     cy.verifyPageTitle(credential.name);
     cy.clickLink(/^Details$/);
@@ -64,6 +67,7 @@ describe('credentials', () => {
   });
 
   it('credential details edit credential', () => {
+    cy.navigateTo('awx', 'credentials');
     cy.clickTableRow(credential.name);
     cy.verifyPageTitle(credential.name);
     cy.clickButton(/^Edit credential$/);
@@ -74,6 +78,7 @@ describe('credentials', () => {
   });
 
   it('credential details delete credential', () => {
+    cy.navigateTo('awx', 'credentials');
     cy.clickTableRow(credential.name);
     cy.verifyPageTitle(credential.name);
     cy.clickPageAction(/^Delete credential/);
@@ -83,11 +88,13 @@ describe('credentials', () => {
   });
 
   it('credentials table row edit credential', () => {
+    cy.navigateTo('awx', 'credentials');
     cy.clickTableRowPinnedAction(credential.name, 'Edit credential');
     cy.verifyPageTitle('Edit Credential');
   });
 
   it('credentials table row delete credential', () => {
+    cy.navigateTo('awx', 'credentials');
     cy.clickTableRowKebabAction(credential.name, /^Delete credential$/);
     cy.get('#confirm').click();
     cy.clickButton(/^Delete credential/);
@@ -97,6 +104,7 @@ describe('credentials', () => {
   });
 
   it('credentials toolbar delete credentials', () => {
+    cy.navigateTo('awx', 'credentials');
     cy.selectTableRow(credential.name);
     cy.clickToolbarKebabAction(/^Delete selected credentials$/);
     cy.get('#confirm').click();

@@ -9,19 +9,16 @@ describe('Users List Actions', () => {
   let organization: Organization;
   let user: User;
 
-  before(() => {
-    cy.awxLogin();
-
-    cy.createAwxOrganization().then((org) => {
-      organization = org;
-    });
-  });
-
   after(() => {
     cy.deleteAwxOrganization(organization);
   });
 
   beforeEach(() => {
+    cy.awxLogin();
+
+    cy.createAwxOrganization().then((org) => {
+      organization = org;
+    });
     cy.createAwxUser(organization).then((testUser) => {
       user = testUser;
     });
@@ -84,19 +81,16 @@ describe('Users Delete Actions', () => {
   let organization: Organization;
   let user: User;
 
-  before(() => {
-    cy.awxLogin();
-
-    cy.createAwxOrganization().then((org) => {
-      organization = org;
-    });
-  });
-
   after(() => {
     cy.deleteAwxOrganization(organization);
   });
 
   beforeEach(() => {
+    cy.awxLogin();
+
+    cy.createAwxOrganization().then((org) => {
+      organization = org;
+    });
     cy.createAwxUser(organization).then((testUser) => {
       user = testUser;
     });
