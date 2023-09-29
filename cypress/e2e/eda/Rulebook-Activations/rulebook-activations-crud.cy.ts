@@ -42,8 +42,7 @@ describe('EDA rulebook activations- Create', () => {
     cy.get('[data-cy="description"]').type('This is a new rulebook activation.');
     cy.selectDropdownOptionByResourceName('project-id', edaProject.name);
     cy.selectDropdownOptionByResourceName('rulebook', edaRuleBook.name);
-    cy.selectDropdownOptionByResourceName('decision-environment', edaDecisionEnvironment.name);
-    cy.selectDropdownOptionByResourceName('restart-policy', 'On failure');
+    cy.selectDropdownOptionByResourceName('decision-environment-id', edaDecisionEnvironment.name);
     cy.intercept('POST', '/api/eda/v1/activations/').as('edaRBA');
     cy.clickButton(/^Create rulebook activation$/);
     cy.wait('@edaRBA').then((edaRBA) => {

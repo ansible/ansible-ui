@@ -53,7 +53,7 @@ Cypress.Commands.add('getCheckboxByLabel', (label: string | RegExp) => {
 
 Cypress.Commands.add('selectDropdownOptionByResourceName', (resource: string, itemName: string) => {
   cy.get(`[data-cy*="${resource}-form-group"]`).within(() => {
-    cy.get('[data-ouia-component-id="menu-select"]')
+    cy.get('[data-ouia-component-id="menu-select"] button')
       .click()
       .then(() => {
         cy.contains('li', itemName).click();
