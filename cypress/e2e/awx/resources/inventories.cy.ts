@@ -98,9 +98,7 @@ describe('inventories', () => {
       cy.get('#confirm').click();
       cy.clickButton(/^Delete inventory/);
       cy.verifyPageTitle('Inventories');
-      cy.requestDelete(`/api/v2/organizations/${testInventory.organization}/`, {
-        failOnStatusCode: false,
-      });
+      cy.deleteAwxOrganization(organization);
     });
   });
 
@@ -125,9 +123,7 @@ describe('inventories', () => {
       cy.navigateTo('awx', 'inventories');
       cy.clickTableRowKebabAction(testInventory.name, /^Copy inventory$/, true);
       cy.hasAlert(`${testInventory.name.toString()} copied`);
-      cy.requestDelete(`/api/v2/inventories/${testInventory.id.toString()}/`, {
-        failOnStatusCode: false,
-      });
+      cy.deleteAwxInventory(testInventory);
     });
   });
 

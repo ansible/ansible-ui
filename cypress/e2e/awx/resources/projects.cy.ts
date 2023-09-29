@@ -33,7 +33,7 @@ describe('projects', () => {
         `/api/v2/projects/?page_size=100&organization=null`
       ).then((itemsResponse) => {
         for (const project of itemsResponse.results) {
-          cy.awxRequestDelete(`/api/v2/projects/${project.id}/`, { failOnStatusCode: false });
+          cy.deleteAwxProject(project);
         }
       });
     });
@@ -124,7 +124,7 @@ describe('projects', () => {
       cy.verifyPageTitle(testProject.name);
       cy.clickPageAction(/^Copy project$/);
       cy.hasAlert(`${testProject.name} copied`).should('be.visible');
-      cy.requestDelete(`/api/v2/projects/${testProject.id}/`, { failOnStatusCode: false });
+      cy.deleteAwxProject(testProject);
     });
   });
 
@@ -136,7 +136,7 @@ describe('projects', () => {
       cy.intercept(`api/v2/projects/${project.id}/update/`).as('projectUpdateRequest');
       cy.clickButton(/^Sync project$/);
       cy.wait('@projectUpdateRequest');
-      cy.requestDelete(`/api/v2/projects/${project.id}/`, { failOnStatusCode: false });
+      cy.deleteAwxProject(project);
     });
   });
   it('can sync project from projects list table row kebab menu', () => {
@@ -150,7 +150,7 @@ describe('projects', () => {
           cy.get('#sync-project').click();
         });
       cy.hasAlert(`Syncing ${project.name}`).should('be.visible');
-      cy.requestDelete(`/api/v2/projects/${project.id}/`, { failOnStatusCode: false });
+      cy.deleteAwxProject(project);
     });
   });
 
@@ -176,7 +176,7 @@ describe('projects', () => {
   //     cy.filterTableByText(testProject.name);
   //     cy.get('td[data-label="Status"]').should('contain', 'Canceled');
   //     cy.clickButton(/^Clear all filters$/);
-  //     cy.requestDelete(`/api/v2/projects/${testProject.id}/`, { failOnStatusCode: false });
+  //     cy.deleteAwxProject(testProject);
   //   });
   // });
 
@@ -190,7 +190,7 @@ describe('projects', () => {
       cy.navigateTo('awx', 'projects');
       cy.clickTableRowKebabAction(testProject.name, /^Copy project$/);
       cy.getTableRowByText(`${testProject.name} @`).should('be.visible');
-      cy.requestDelete(`/api/v2/projects/${testProject.id}/`, { failOnStatusCode: false });
+      cy.deleteAwxProject(testProject);
     });
   });
 

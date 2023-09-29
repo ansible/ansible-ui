@@ -409,7 +409,7 @@ Cypress.Commands.add(
       failOnStatusCode?: boolean;
     }
   ) => {
-    if (user?.id) {
+    if (user.id) {
       cy.awxRequestDelete(`/api/v2/users/${user.id}/`, options);
     }
   }
