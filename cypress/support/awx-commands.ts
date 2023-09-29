@@ -386,18 +386,16 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add('createAwxUser', (organization: Organization) => {
-  if (organization?.id) {
-    cy.awxRequestPost<Omit<User, 'id' | 'auth' | 'summary_fields'>, User>(
-      `/api/v2/organizations/${organization.id.toString()}/users/`,
-      {
-        username: 'e2e-user-' + randomString(4),
-        is_superuser: false,
-        is_system_auditor: false,
-        password: 'pw',
-        user_type: 'normal',
-      }
-    ).then((user) => user);
-  }
+  cy.awxRequestPost<Omit<User, 'id' | 'auth' | 'summary_fields'>, User>(
+    `/api/v2/organizations/${organization.id.toString()}/users/`,
+    {
+      username: 'e2e-user-' + randomString(4),
+      is_superuser: false,
+      is_system_auditor: false,
+      password: 'pw',
+      user_type: 'normal',
+    }
+  ).then((user) => user);
 });
 
 Cypress.Commands.add(
@@ -409,7 +407,7 @@ Cypress.Commands.add(
       failOnStatusCode?: boolean;
     }
   ) => {
-    if (user.id) {
+    if (user?.id) {
       cy.awxRequestDelete(`/api/v2/users/${user.id}/`, options);
     }
   }
