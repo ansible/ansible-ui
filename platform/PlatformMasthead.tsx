@@ -1,12 +1,6 @@
-import {
-  DropdownItem,
-  DropdownSeparator,
-  Radio,
-  ToolbarGroup,
-  ToolbarItem,
-} from '@patternfly/react-core';
+import { DropdownItem, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import { UserCircleIcon } from '@patternfly/react-icons';
-import { Dispatch, SetStateAction, useCallback } from 'react';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSWRConfig } from 'swr';
 import { PageMasthead, usePageNavigate } from '../framework';
@@ -18,10 +12,7 @@ import { PlatformRoute } from './PlatformRoutes';
 import { useActivePlatformUser } from './hooks/useActivePlatformUser';
 import PlatformIcon from './platform-icon.svg';
 
-export function PlatformMasthead(props: {
-  navigationVersion: 'A' | 'B';
-  setNavigationVersion: Dispatch<SetStateAction<'A' | 'B'>>;
-}) {
+export function PlatformMasthead() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const activeUser = useActivePlatformUser();
@@ -89,23 +80,6 @@ export function PlatformMasthead(props: {
                 pageNavigate(PlatformRoute.UserPage, { params: { id: activeUser?.id } })
               }
             /> */}
-            <DropdownItem onClick={() => props.setNavigationVersion('A')}>
-              <Radio
-                id="a"
-                name="navigation"
-                label={t(`Navigation A`)}
-                isChecked={props.navigationVersion === 'A'}
-              />
-            </DropdownItem>
-            <DropdownItem onClick={() => props.setNavigationVersion('B')}>
-              <Radio
-                id="b"
-                name="navigation"
-                label={t(`Navigation B`)}
-                isChecked={props.navigationVersion === 'B'}
-              />
-            </DropdownItem>
-            <DropdownSeparator />
             <DropdownItem id="logout" label={t('Logout')} onClick={() => void logout()}>
               {t('Logout')}
             </DropdownItem>

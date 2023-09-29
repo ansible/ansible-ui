@@ -1,8 +1,8 @@
 import '@patternfly/patternfly/patternfly-base.css';
-import '@patternfly/patternfly/patternfly-charts-theme-dark.css';
 import '@patternfly/patternfly/patternfly-charts.css';
 
-import { useState } from 'react';
+import '@patternfly/patternfly/patternfly-charts-theme-dark.css';
+
 import { Outlet } from 'react-router-dom';
 import { PageApp } from '../framework/PageNavigation/PageApp';
 import { AwxConfigProvider } from '../frontend/awx/common/useAwxConfig';
@@ -12,12 +12,10 @@ import { HubContextProvider } from '../frontend/hub/useHubContext';
 import { PlatformLogin } from './PlatformLogin';
 import { PlatformMasthead } from './PlatformMasthead';
 import { ActivePlatformUserProvider } from './hooks/useActivePlatformUser';
-import { usePlatformNavigationA, usePlatformNavigationB } from './usePlatformNavigation';
+import { usePlatformNavigation } from './usePlatformNavigation';
 
 export default function PlatformMain() {
-  const [navigationVersion, setNavigationVersion] = useState<'A' | 'B'>('A');
-  const navigationA = usePlatformNavigationA();
-  const navigationB = usePlatformNavigationB();
+  const navigation = usePlatformNavigation();
   return (
     <PageApp
       login={<PlatformLogin />}
@@ -36,13 +34,8 @@ export default function PlatformMain() {
           </ActivePlatformUserProvider>
         </WebSocketProvider>
       }
-      masthead={
-        <PlatformMasthead
-          navigationVersion={navigationVersion}
-          setNavigationVersion={setNavigationVersion}
-        />
-      }
-      navigation={navigationVersion === 'A' ? navigationA : navigationB}
+      masthead={<PlatformMasthead />}
+      navigation={navigation}
     />
   );
 }
