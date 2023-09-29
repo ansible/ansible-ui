@@ -51,47 +51,15 @@ Cypress.Commands.add('getCheckboxByLabel', (label: string | RegExp) => {
     });
 });
 
-// Cypress.Commands.add(
-//   'selectDropdownOptionByLabel',
-//adjust this command once the dropdown component has data-cy added
-// (label: string | RegExp, text: string, multiselect?: boolean) => {
-//   cy.get('[data-cy="summary-fields-organization"]')
-//   // Used for Typeahead multiselect components
-//   if (multiselect) {
-//     cy.contains('.pf-c-form__label-text', label)
-//       .parent()
-//       .parent()
-//       .parent()
-//       .parent()
-//       .within(() => {
-//         cy.get('button[aria-label="Options menu"]').click();
-//         cy.get('.pf-c-select__menu').within(() => {
-//           cy.contains('button', text).click();
-//         });
-//       });
-//     return;
-//   }
-//   cy.getFormGroupByLabel(label).within(() => {
-//     // Click button once it is enabled. Async loading of select will make it disabled until loaded.
-//     cy.get('button[aria-label="Options menu"]').click();
-
-//     // If the select menu contains a search, then search for the text
-
-//     cy.get('.pf-c-select__menu').then((selectMenu) => {
-//       if (selectMenu.find('.pf-m-search').length > 0) {
-//         cy.get('.pf-m-search:not(:disabled):not(:hidden)')
-//           .should('not.have.attr', 'aria-disabled', 'true')
-//           .clear()
-//           .type(text, { delay: 0 });
-//       }
-//     });
-
-//     cy.get('.pf-c-select__menu').within(() => {
-//       cy.contains('button', text).click();
-//     });
-//   });
-// }
-// );
+Cypress.Commands.add('selectDropdownOptionByResourceName', (resource: string, itemName: string) => {
+  cy.get(`[data-cy*="${resource}-form-group"]`).within(() => {
+    cy.get('[data-ouia-component-id="menu-select"]')
+      .click()
+      .then(() => {
+        cy.contains('li', itemName).click();
+      });
+  });
+});
 
 Cypress.Commands.add('setTablePageSize', (text: '10' | '20' | '50' | '100') => {
   cy.get('.pf-c-pagination')

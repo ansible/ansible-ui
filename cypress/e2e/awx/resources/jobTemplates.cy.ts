@@ -99,7 +99,7 @@ describe('Job templates form', () => {
     cy.clickModalButton('Confirm');
 
     // Playbook
-    cy.selectDropdownOptionByLabel(/^Playbook$/, 'hello_world.yml');
+    cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
 
     // Execution Environment
     cy.get('input[placeholder="Add execution environment"]')
@@ -120,7 +120,7 @@ describe('Job templates form', () => {
     cy.clickModalButton('Confirm');
 
     // Labels
-    cy.selectDropdownOptionByLabel(/^Labels$/, label.name.toString(), true);
+    cy.selectDropdownOptionByResourceName('labels.select', label.name.toString());
 
     cy.get('[data-cy="forks"]').type('10');
     cy.get('[data-cy="limit"]').type('10');
@@ -190,7 +190,7 @@ describe('Job templates form', () => {
     cy.get('input#prevent_instance_group_fallback').click();
     cy.get('[data-cy="host-config-key"]').type('test config key');
 
-    // cy.selectDropdownOptionByLabel(/^Webhook service$/, 'GitHub');
+    // cy.selectDropdownOptionByResourceName('webhook-service', 'GitHub');
 
     // cy.get('input[placeholder="Add webhook credential"]')
     //   .parent()

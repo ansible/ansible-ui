@@ -193,7 +193,7 @@ export function PageFormSelect<
               isDisabled={isDisabled || isReadOnly || isSubmitting}
               hasPlaceholderStyle
               footer={footer}
-              ouiaId={id}
+              ouiaId="menu-select"
               data-cy={id}
             >
               {options.map((option) => {

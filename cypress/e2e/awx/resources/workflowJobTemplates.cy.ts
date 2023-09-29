@@ -35,7 +35,7 @@ describe.skip('Workflow Job templates form', () => {
     cy.clickLink(/^Create workflow job template$/);
     cy.get('[data-cy="name"]').type(jtName);
     cy.get('[data-cy="description"]').type('this is a description');
-    cy.selectDropdownOptionByLabel(/^Labels$/, label.name.toString(), true);
+    cy.selectDropdownOptionByResourceName('labels', label.name.toString());
     cy.addAndSelectItemFromMulitSelectDropdown('Job tags', 'test job tag');
     cy.addAndSelectItemFromMulitSelectDropdown(/^Skip tags$/, 'test skip tag');
     cy.get('[data-cy="Submit"]').click();

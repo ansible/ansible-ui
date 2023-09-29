@@ -43,7 +43,7 @@ describe('credentials', () => {
     cy.clickButton(/^Create credential$/);
     cy.get('[data-cy="name"]').type(credentialName);
     cy.get('[data-cy="summary-fields-organization-name"]').type(organization.name);
-    cy.selectDropdownOptionByLabel(/^Credential type$/, 'Amazon Web Services');
+    cy.selectDropdownOptionByResourceName('credential-type', 'Amazon Web Services');
     cy.clickButton(/^Create credential$/);
     cy.verifyPageTitle(credentialName);
   });

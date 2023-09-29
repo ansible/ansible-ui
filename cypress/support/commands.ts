@@ -71,11 +71,7 @@ declare global {
       getCheckboxByLabel(label: string | RegExp): Chainable<JQuery<HTMLElement>>;
 
       /** Finds a dropdown/select component by its dropdownLabel and clicks on the option specified by dropdownOptionLabel.*/
-      selectDropdownOptionByLabel(
-        dropdownLabel: string | RegExp,
-        dropdownOptionLabel: string,
-        multiselect?: boolean
-      ): Chainable<void>;
+      selectDropdownOptionByResourceName(resource: string, itemName: string): Chainable<void>;
 
       singleSelectShouldHaveSelectedOption(
         selector: string,
