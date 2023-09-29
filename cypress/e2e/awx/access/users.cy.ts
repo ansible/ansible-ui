@@ -18,9 +18,7 @@ describe('Users List Actions', () => {
   });
 
   after(() => {
-    cy.requestDelete(`/api/v2/organizations/${organization.id}/`, {
-      failOnStatusCode: false,
-    });
+    cy.deleteAwxOrganization(organization);
   });
 
   beforeEach(() => {

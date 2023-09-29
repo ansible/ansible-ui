@@ -12,26 +12,25 @@ describe('credentials', () => {
   before(() => {
     cy.awxLogin();
 
-    cy.requestPost<Organization>('/api/v2/organizations/', {
-      name: 'E2E Credentials ' + randomString(4),
-    }).then((testOrg) => (organization = testOrg));
+    cy.createAwxOrganization().then((testOrg) => (organization = testOrg));
   });
 
   after(() => {
-    cy.requestDelete(`/api/v2/organizations/${organization.id}/`, { failOnStatusCode: false });
+    cy.deleteAwxOrganization(organization);
   });
 
   beforeEach(() => {
-    cy.requestPost<Credential>('/api/v2/credentials/', {
+    cy.createAWXCredential({
       name: 'E2E Credential ' + randomString(4),
-      credential_type: 1,
+      kind: 'machine',
       organization: organization.id,
+      credential_type: 1,
     }).then((testCredential) => (credential = testCredential));
     cy.navigateTo('awx', 'credentials');
   });
 
   afterEach(() => {
-    cy.requestDelete(`/api/v2/credentials/${credential.id}/`, { failOnStatusCode: false });
+    cy.awxRequestDelete(`/api/v2/credentials/${credential.id}/`, { failOnStatusCode: false });
   });
 
   it('credentials page', () => {

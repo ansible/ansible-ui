@@ -35,14 +35,6 @@ describe('Job templates form', () => {
         executionEnvironment = ee;
       });
 
-      // cy.createAWXCredential({
-      //   kind: 'github_token',
-      //   organization: organization.id,
-      //   credential_type: 11,
-      // }).then((cred) => {
-      //   githubTokenCrendential = cred;
-      // });
-
       cy.createAWXCredential({
         kind: 'machine',
         organization: organization.id,
