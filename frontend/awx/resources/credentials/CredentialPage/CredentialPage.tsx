@@ -9,14 +9,11 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../../framework';
-import { PageNotImplemented } from '../../../../common/PageNotImplemented';
-import { PageBackTab, RoutedTab, RoutedTabs } from '../../../../common/RoutedTabs';
-import { RouteObj } from '../../../../common/Routes';
+import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
 import { Credential } from '../../../interfaces/Credential';
 import { useCredentialActions } from '../hooks/useCredentialActions';
-import { CredentialDetails } from './CredentialDetails';
 
 export function CredentialPage() {
   const { t } = useTranslation();
@@ -43,7 +40,19 @@ export function CredentialPage() {
           />
         }
       />
-      <RoutedTabs isLoading={!credential} baseUrl={getPageUrl(AwxRoute.CredentialPage)}>
+      <PageRoutedTabs
+        backTab={{
+          label: t('Back to Credentials'),
+          page: AwxRoute.Credentials,
+          persistentFilterKey: 'credentials',
+        }}
+        tabs={[
+          { label: t('Details'), page: AwxRoute.CredentialDetails },
+          { label: t('Access'), page: AwxRoute.CredentialAccess },
+        ]}
+        params={{ id: params.id || 0 }}
+      />
+      {/* <RoutedTabs isLoading={!credential} baseUrl={getPageUrl(AwxRoute.CredentialPage)}>
         <PageBackTab
           label={t('Back to Credentials')}
           url={getPageUrl(AwxRoute.Credentials)}
@@ -55,7 +64,7 @@ export function CredentialPage() {
         <RoutedTab label={t('Access')} url={RouteObj.CredentialAccess}>
           <PageNotImplemented />
         </RoutedTab>
-      </RoutedTabs>
+      </RoutedTabs> */}
     </PageLayout>
   );
 }
