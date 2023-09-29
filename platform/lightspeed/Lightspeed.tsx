@@ -1,4 +1,4 @@
-import { Button, CardActions, CardBody, CardFooter } from '@patternfly/react-core';
+import { Button, CardBody, CardFooter } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { PageDashboard, PageDashboardCard, PageHeader, PageLayout } from '../../framework';
@@ -9,7 +9,10 @@ export function Lightspeed() {
     <PageLayout>
       <PageHeader title={t(`Ansible Lightspeed with IBM watsonx Code Assistant`)} />
       <PageDashboard>
-        <PageDashboardCard width="xxl">
+        <PageDashboardCard
+          width="xxl"
+          title={t('Ansible Lightspeed with IBM watsonx Code Assistant')}
+        >
           <CardBody>
             <p>
               {t(
@@ -23,11 +26,9 @@ export function Lightspeed() {
             </p>
           </CardBody>
           <CardFooter>
-            <CardActions>
-              <Button variant="primary" icon={<ExternalLinkAltIcon />}>
-                {t('Get started')}
-              </Button>
-            </CardActions>
+            <Button variant="primary" icon={<ExternalLinkAltIcon />}>
+              {t('Get started')}
+            </Button>
           </CardFooter>
         </PageDashboardCard>
         {/* <PageDashboardCard
