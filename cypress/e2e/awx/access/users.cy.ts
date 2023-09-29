@@ -24,7 +24,7 @@ describe('Users List Actions', () => {
     });
   });
 
-  afterEach(() => {
+  after(() => {
     cy.deleteAwxUser(user);
   });
 

@@ -25,7 +25,7 @@ describe('credentials', () => {
     }).then((testCredential) => (credential = testCredential));
   });
 
-  afterEach(() => {
+  after(() => {
     cy.awxRequestDelete(`/api/v2/credentials/${credential.id}/`, { failOnStatusCode: false });
   });
 
