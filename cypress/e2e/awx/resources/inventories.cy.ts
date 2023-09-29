@@ -47,7 +47,7 @@ describe('inventories', () => {
     cy.clickButton(/^Create inventory$/);
     cy.clickLink(/^Create inventory$/);
     cy.get('[data-cy="inventory-name"]').type(inventoryName);
-    cy.selectDropdownOptionByLabel(/^Organization$/, organization.name);
+    cy.selectDropdownOptionByResourceName('organization', organization.name);
     cy.getCheckboxByLabel('Prevent instance group fallback').click();
     cy.clickButton(/^Create inventory$/);
     cy.verifyPageTitle(inventoryName);
@@ -83,7 +83,7 @@ describe('inventories', () => {
     cy.clickTableRow(inventory.name);
     cy.verifyPageTitle(inventory.name);
     cy.clickButton(/^Edit inventory/);
-    cy.selectDropdownOptionByLabel(/^Labels$/, label.name);
+    cy.selectDropdownOptionByResourceName('labels.results', label.name);
     cy.contains('button', 'Save inventory').click();
     cy.verifyPageTitle(inventory.name);
     cy.hasDetail(/^Labels$/, label.name);

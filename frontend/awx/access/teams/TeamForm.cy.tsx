@@ -16,7 +16,7 @@ describe('TeamForm.cy.ts', () => {
     );
     cy.mount(<CreateTeam />);
     cy.get('[data-cy="name"]').type('Test');
-    cy.selectDropdownOptionByLabel(/^Organization$/, 'Default');
+    cy.selectDropdownOptionByResourceName('organization', 'Default');
     cy.intercept(
       { method: 'POST', url: '/api/v2/teams' },
       { statusCode: 500, message: 'Internal Server Error' }
