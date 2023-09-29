@@ -16,6 +16,9 @@ import { OrganizationTeams } from './access/organizations/OrganizationPage/Organ
 import { Organizations } from './access/organizations/Organizations';
 import { CreateTeam, EditTeam } from './access/teams/TeamForm';
 import { TeamPage } from './access/teams/TeamPage/TeamPage';
+import { TeamAccess } from './access/teams/TeamPage/TeamAccess';
+import { TeamDetails } from './access/teams/TeamPage/TeamDetails';
+import { TeamRoles } from './access/teams/TeamPage/TeamRoles';
 import { Teams } from './access/teams/Teams';
 import { AddRolesToTeam } from './access/teams/components/AddRolesToTeam';
 import { CreateUser, EditUser } from './access/users/UserForm';
@@ -472,8 +475,29 @@ export function useAwxNavigation() {
                   },
                   {
                     id: AwxRoute.TeamPage,
-                    path: ':id/*',
+                    path: ':id',
                     element: <TeamPage />,
+                    children: [
+                      {
+                        id: AwxRoute.TeamDetails,
+                        path: 'details',
+                        element: <TeamDetails />,
+                      },
+                      {
+                        id: AwxRoute.TeamAccess,
+                        path: 'access',
+                        element: <TeamAccess />,
+                      },
+                      {
+                        id: AwxRoute.TeamRoles,
+                        path: 'roles',
+                        element: <TeamRoles />,
+                      },
+                      {
+                        path: '',
+                        element: <Navigate to="details" />,
+                      },
+                    ],
                   },
                   {
                     path: '',
