@@ -19,9 +19,6 @@ import { DecisionEnvironments } from './Resources/decision-environments/Decision
 import { CreateProject, EditProject } from './Resources/projects/EditProject';
 import { ProjectDetails } from './Resources/projects/ProjectDetails';
 import { Projects } from './Resources/projects/Projects';
-import { EditGroup } from './UserAccess/Groups/EditGroup';
-import { GroupDetails } from './UserAccess/Groups/GroupDetails';
-import { Groups } from './UserAccess/Groups/Groups';
 import { EditRole } from './UserAccess/Roles/EditRole';
 import { RoleDetails } from './UserAccess/Roles/RoleDetails';
 import { Roles } from './UserAccess/Roles/Roles';
@@ -37,11 +34,6 @@ import { RulebookActivationDetails } from './rulebook-activations/RulebookActiva
 import { RulebookActivationHistory } from './rulebook-activations/RulebookActivationPage/RulebookActivationHistory';
 import { RulebookActivationPage } from './rulebook-activations/RulebookActivationPage/RulebookActivationPage';
 import { RulebookActivations } from './rulebook-activations/RulebookActivations';
-import { RulebookDetails } from './rulebooks/RulebookDetails';
-import { Rulebooks } from './rulebooks/Rulebooks';
-import { EditRule } from './rules/EditRule';
-import { RuleDetails } from './rules/RuleDetails';
-import { Rules } from './rules/Rules';
 import { RuleAudit } from './views/RuleAudit/RuleAudit';
 import { RuleAuditDetails } from './views/RuleAudit/RuleAuditDetails';
 
@@ -142,48 +134,6 @@ export function useEdaNavigation() {
                   },
                 ],
               },
-              {
-                id: EdaRoute.Rulebooks,
-                // label: t('Rulebooks'),
-                path: 'rulebooks',
-                children: [
-                  {
-                    id: EdaRoute.RulebookPage,
-                    path: ':id/*',
-                    element: <RulebookDetails />,
-                  },
-                  {
-                    path: '',
-                    element: <Rulebooks />,
-                  },
-                ],
-              },
-              {
-                id: EdaRoute.Rules,
-                // label: t('Rules'),
-                path: 'rules',
-                children: [
-                  {
-                    id: EdaRoute.CreateRule,
-                    path: 'create',
-                    element: <EditRule />,
-                  },
-                  {
-                    id: EdaRoute.EditRule,
-                    path: 'edit/:id',
-                    element: <EditRule />,
-                  },
-                  {
-                    id: EdaRoute.RulePage,
-                    path: 'details/:id',
-                    element: <RuleDetails />,
-                  },
-                  {
-                    path: '',
-                    element: <Rules />,
-                  },
-                ],
-              },
             ],
           },
           {
@@ -274,32 +224,6 @@ export function useEdaNavigation() {
             label: t('User Access'),
             path: 'access',
             children: [
-              {
-                id: EdaRoute.Groups,
-                // label: t('Groups'),
-                path: 'groups',
-                children: [
-                  {
-                    id: EdaRoute.CreateGroup,
-                    path: 'create',
-                    element: <EditGroup />,
-                  },
-                  {
-                    id: EdaRoute.EditGroup,
-                    path: 'edit/:id',
-                    element: <EditGroup />,
-                  },
-                  {
-                    id: EdaRoute.GroupPage,
-                    path: 'details/:id',
-                    element: <GroupDetails />,
-                  },
-                  {
-                    path: '',
-                    element: <Groups />,
-                  },
-                ],
-              },
               {
                 id: EdaRoute.Users,
                 label: t('Users'),
