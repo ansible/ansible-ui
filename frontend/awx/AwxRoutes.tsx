@@ -7,6 +7,8 @@ export enum AwxRoute {
 
   Jobs = 'awx-jobs',
   JobPage = 'awx-job-page',
+  JobOutput = 'awx-job-output',
+  JobDetails = 'awx-job-details',
 
   Schedules = 'awx-schedules',
   CreateSchedule = 'awx-create-schedule',
@@ -36,6 +38,8 @@ export enum AwxRoute {
   CreateCredential = 'awx-create-credential',
   EditCredential = 'awx-edit-credential',
   CredentialPage = 'awx-credential-page',
+  CredentialDetails = 'awx-credential-details',
+  CredentialAccess = 'awx-credentials-access',
 
   Projects = 'awx-projects',
   CreateProject = 'awx-create-project',
@@ -49,6 +53,13 @@ export enum AwxRoute {
   CreateConstructedInventory = 'awx-create-constructed-inventory',
   EditInventory = 'awx-edit-inventory',
   InventoryPage = 'awx-inventory-page',
+  InventoryDetails = 'awx-inventory-details',
+  InventoryAccess = 'awx-inventory-access',
+  InventoryGroups = 'awx-inventory-groups',
+  InventoryHosts = 'awx-inventory-hosts',
+  InventorySources = 'awx-inventory-sources',
+  InventoryJobs = 'awx-inventory-jobs',
+  InventoryJobTemplates = 'awx-inventory-job-templates',
   InventorySchedules = 'awx-inventory-schedules',
 
   Hosts = 'awx-hosts',

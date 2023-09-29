@@ -44,12 +44,14 @@ import SubscriptionUsage from './analytics/subscription-usage/SubscriptionUsage'
 import { AwxDashboard } from './dashboard/AwxDashboard';
 import { CreateCredential, EditCredential } from './resources/credentials/CredentialForm';
 import { CredentialPage } from './resources/credentials/CredentialPage/CredentialPage';
+import { CredentialDetails } from './resources/credentials/CredentialPage/CredentialDetails';
 import { Credentials } from './resources/credentials/Credentials';
 import { HostPage } from './resources/hosts/HostPage/HostPage';
 import { Hosts } from './resources/hosts/Hosts';
 import { Inventories } from './resources/inventories/Inventories';
 import { CreateInventory, EditInventory } from './resources/inventories/InventoryForm';
 import { InventoryPage } from './resources/inventories/InventoryPage/InventoryPage';
+import { InventoryDetails } from './resources/inventories/InventoryPage/InventoryDetails';
 import { CreateProject, EditProject } from './resources/projects/ProjectPage/ProjectForm';
 import { ProjectPage } from './resources/projects/ProjectPage/ProjectPage';
 import { Projects } from './resources/projects/Projects';
@@ -63,8 +65,10 @@ import {
 import { WorkflowJobTemplatePage } from './resources/templates/WorkflowJobTemplatePage/WorkflowJobTemplatePage';
 import Settings from './settings/Settings';
 import HostMetrics from './views/jobs/HostMetrics';
-import { JobPage } from './views/jobs/JobPage';
 import Jobs from './views/jobs/Jobs';
+import { JobPage } from './views/jobs/JobPage';
+import { JobOutput } from './views/jobs/JobOutput/JobOutput';
+import { JobDetails } from './views/jobs/JobDetails';
 import { CreateSchedule } from './views/schedules/ScheduleForm';
 import { SchedulePage } from './views/schedules/SchedulePage/SchedulePage';
 import { Schedules } from './views/schedules/Schedules';
@@ -99,8 +103,20 @@ export function useAwxNavigation() {
                 children: [
                   {
                     id: AwxRoute.JobPage,
-                    path: ':job_type/:id/*',
+                    path: ':job_type/:id',
                     element: <JobPage />,
+                    children: [
+                      {
+                        id: AwxRoute.JobOutput,
+                        path: 'output',
+                        element: <JobOutput />,
+                      },
+                      {
+                        id: AwxRoute.JobDetails,
+                        path: 'details',
+                        element: <JobDetails />,
+                      },
+                    ],
                   },
                   {
                     path: '',
@@ -235,8 +251,20 @@ export function useAwxNavigation() {
                   },
                   {
                     id: AwxRoute.CredentialPage,
-                    path: ':id/*',
+                    path: ':id',
                     element: <CredentialPage />,
+                    children: [
+                      {
+                        id: AwxRoute.CredentialDetails,
+                        path: 'details',
+                        element: <CredentialDetails />,
+                      },
+                      {
+                        id: AwxRoute.CredentialAccess,
+                        path: 'access',
+                        element: <PageNotImplemented />,
+                      },
+                    ],
                   },
                   {
                     path: '',
@@ -297,8 +325,45 @@ export function useAwxNavigation() {
                   },
                   {
                     id: AwxRoute.InventoryPage,
-                    path: ':inventory_type/:id/*',
+                    path: ':inventory_type/:id/',
                     element: <InventoryPage />,
+                    children: [
+                      {
+                        id: AwxRoute.InventoryDetails,
+                        path: 'details',
+                        element: <InventoryDetails />,
+                      },
+                      {
+                        id: AwxRoute.InventoryAccess,
+                        path: 'access',
+                        element: <PageNotImplemented />,
+                      },
+                      {
+                        id: AwxRoute.InventoryGroups,
+                        path: 'groups',
+                        element: <PageNotImplemented />,
+                      },
+                      {
+                        id: AwxRoute.InventoryHosts,
+                        path: 'hosts',
+                        element: <PageNotImplemented />,
+                      },
+                      {
+                        id: AwxRoute.InventorySources,
+                        path: 'sources',
+                        element: <PageNotImplemented />,
+                      },
+                      {
+                        id: AwxRoute.InventoryJobs,
+                        path: 'jobs',
+                        element: <PageNotImplemented />,
+                      },
+                      {
+                        id: AwxRoute.InventoryJobTemplates,
+                        path: 'templates',
+                        element: <PageNotImplemented />,
+                      },
+                    ],
                   },
                   {
                     path: '',

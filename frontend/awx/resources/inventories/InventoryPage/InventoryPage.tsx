@@ -3,13 +3,11 @@ import { DropdownPosition } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { PageActions, PageHeader, PageLayout, useGetPageUrl } from '../../../../../framework';
-import { PageNotImplemented } from '../../../../common/PageNotImplemented';
-import { PageBackTab, RoutedTab, RoutedTabs } from '../../../../common/RoutedTabs';
+import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { RouteObj } from '../../../../common/Routes';
 import { useGet } from '../../../../common/crud/useGet';
 import { Inventory } from '../../../interfaces/Inventory';
 import { useInventoryActions } from '../hooks/useInventoryActions';
-import { InventoryDetails } from './InventoryDetails';
 import { AwxRoute } from '../../../AwxRoutes';
 
 export function InventoryPage() {
@@ -21,6 +19,7 @@ export function InventoryPage() {
     onInventoriesDeleted: () => navigate(RouteObj.Inventories),
   });
   const getPageUrl = useGetPageUrl();
+  const isSmartInventory = inventory?.kind === 'smart';
 
   return (
     <PageLayout>
@@ -38,43 +37,28 @@ export function InventoryPage() {
           />
         }
       />
-      <RoutedTabs isLoading={!inventory} baseUrl={RouteObj.InventoryPage}>
-        <PageBackTab
-          label={t('Back to Inventories')}
-          url={RouteObj.Inventories}
-          persistentFilterKey="inventories"
-        />
-        <RoutedTab label={t('Details')} url={RouteObj.InventoryDetails}>
-          <InventoryDetails inventory={inventory!} />
-        </RoutedTab>
-        <RoutedTab label={t('Access')} url={RouteObj.InventoryAccess}>
-          <PageNotImplemented />
-        </RoutedTab>
-        {inventory?.kind !== 'smart' && (
-          <RoutedTab label={t('Groups')} url={RouteObj.InventoryGroups}>
-            <PageNotImplemented />
-          </RoutedTab>
-        )}
-        <RoutedTab label={t('Hosts')} url={RouteObj.InventoryHosts}>
-          <PageNotImplemented />
-        </RoutedTab>
-        {inventory?.kind === '' && (
-          <RoutedTab label={t('Sources')} url={RouteObj.InventorySources}>
-            <PageNotImplemented />
-          </RoutedTab>
-        )}
-        <RoutedTab label={t('Jobs')} url={RouteObj.InventoryJobs}>
-          <PageNotImplemented />
-        </RoutedTab>
-        <RoutedTab label={t('Job templates')} url={RouteObj.InventoryJobTemplates}>
-          <PageNotImplemented />
-        </RoutedTab>
-      </RoutedTabs>
+      <PageRoutedTabs
+        backTab={{
+          label: t('Back to Inventories'),
+          page: AwxRoute.Inventories,
+          persistentFilterKey: 'inventories',
+        }}
+        tabs={[
+          { label: t('Details'), page: AwxRoute.InventoryDetails },
+          { label: t('Access'), page: AwxRoute.InventoryAccess },
+          !isSmartInventory && { label: t('Groups'), page: AwxRoute.InventoryGroups },
+          { label: t('Hosts'), page: AwxRoute.InventoryHosts },
+          !isSmartInventory && { label: t('Sources'), page: AwxRoute.InventorySources },
+          { label: t('Jobs'), page: AwxRoute.InventoryJobs },
+          { label: t('Job templates'), page: AwxRoute.InventoryJobTemplates },
+        ]}
+        params={params}
+      />
     </PageLayout>
   );
 }
 
-function useGetInventory(id?: string, inventory_type?: string) {
+export function useGetInventory(id?: string, inventory_type?: string) {
   const path =
     inventory_type === 'constructed_inventory' ? 'constructed_inventories' : 'inventories';
   const { data: job } = useGet<Inventory>(id ? `/api/v2/${path}/${id}/` : '');
