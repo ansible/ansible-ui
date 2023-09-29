@@ -42,7 +42,7 @@ Cypress.Commands.add('awxLogin', () => {
         Cypress.env('AWX_USERNAME') as string,
         Cypress.env('AWX_PASSWORD') as string
       );
-      window.localStorage.setItem('hide-welcome-message', 'true');
+      // window.localStorage.setItem('hide-welcome-message', 'true');
       cy.verifyPageTitle('Welcome to');
     },
     {
