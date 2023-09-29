@@ -22,7 +22,9 @@ describe('Users List Actions', () => {
   });
 
   beforeEach(() => {
-    cy.createAwxUser(organization).then((testUser) => (user = testUser));
+    cy.createAwxUser(organization).then((testUser) => {
+      user = testUser;
+    });
   });
 
   afterEach(() => {
@@ -95,7 +97,9 @@ describe('Users Delete Actions', () => {
   });
 
   beforeEach(() => {
-    cy.createAwxUser(organization).then((testUser) => (user = testUser));
+    cy.createAwxUser(organization).then((testUser) => {
+      user = testUser;
+    });
   });
 
   it('deletes a user from the details page', () => {

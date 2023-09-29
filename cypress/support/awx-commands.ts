@@ -749,9 +749,9 @@ Cypress.Commands.add(
       failOnStatusCode?: boolean;
     }
   ) => {
-    const instanceGroupId = instanceGroup.id;
-    if (instanceGroupId) {
-      cy.awxRequestDelete(`/api/v2/instance_groups/${instanceGroupId.toString()}/`, options);
+    // const instanceGroupId = instanceGroup.id;
+    if (instanceGroup?.id) {
+      cy.awxRequestDelete(`/api/v2/instance_groups/${instanceGroup.id.toString()}/`, options);
     }
   }
 );
