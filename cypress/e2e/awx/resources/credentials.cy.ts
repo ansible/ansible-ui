@@ -35,7 +35,7 @@ describe('credentials', () => {
   });
 
   it('credentials page', () => {
-    cy.verifyPageTitle('Credentials');
+    cy.hasTitle(/^Credentials$/);
   });
 
   it('create credential', () => {
@@ -45,47 +45,47 @@ describe('credentials', () => {
     cy.get('[data-cy="summary-fields-organization-name"]').type(organization.name);
     cy.selectDropdownOptionByLabel(/^Credential type$/, 'Amazon Web Services');
     cy.clickButton(/^Create credential$/);
-    cy.verifyPageTitle(credentialName);
+    cy.hasTitle(credentialName);
   });
 
   it('edit credential', () => {
     cy.clickTableRow(credential.name);
     cy.clickButton(/^Edit credential$/);
-    cy.verifyPageTitle('Edit Credential');
+    cy.hasTitle(/^Edit Credential$/);
     cy.get('[data-cy="name"]').type(credential.name + 'a');
     cy.clickButton(/^Save credential$/);
-    cy.verifyPageTitle(`${credential.name}a`);
+    cy.hasTitle(`${credential.name}a`);
   });
 
   it('credential details', () => {
     cy.clickTableRow(credential.name);
-    cy.verifyPageTitle(credential.name);
+    cy.hasTitle(credential.name);
     cy.clickLink(/^Details$/);
     cy.contains('#name', credential.name);
   });
 
   it('credential details edit credential', () => {
     cy.clickTableRow(credential.name);
-    cy.verifyPageTitle(credential.name);
+    cy.hasTitle(credential.name);
     cy.clickButton(/^Edit credential$/);
-    cy.verifyPageTitle('Edit Credential');
+    cy.hasTitle(/^Edit Credential$/);
     cy.get('[data-cy="name"]').type(credential.name + 'a');
     cy.clickButton(/^Save credential$/);
-    cy.verifyPageTitle(`${credential.name}a`);
+    cy.hasTitle(`${credential.name}a`);
   });
 
   it('credential details delete credential', () => {
     cy.clickTableRow(credential.name);
-    cy.verifyPageTitle(credential.name);
+    cy.hasTitle(credential.name);
     cy.clickPageAction(/^Delete credential/);
     cy.get('#confirm').click();
     cy.clickButton(/^Delete credential/);
-    cy.verifyPageTitle('Credentials');
+    cy.hasTitle(/^Credentials$/);
   });
 
   it('credentials table row edit credential', () => {
     cy.clickTableRowPinnedAction(credential.name, 'Edit credential');
-    cy.verifyPageTitle('Edit Credential');
+    cy.hasTitle(/^Edit Credential$/);
   });
 
   it('credentials table row delete credential', () => {

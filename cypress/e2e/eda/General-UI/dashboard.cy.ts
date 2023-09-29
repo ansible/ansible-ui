@@ -65,13 +65,13 @@ describe('EDA Dashboard', () => {
       .its('response.body.results')
       .then((results: Array<EdaProject>) => {
         if (results.length === 0) {
-          cy.verifyPageTitle('There are currently no projects');
+          cy.hasTitle(/^There are currently no projects$/).should('be.visible');
           cy.contains(
             'div.pf-c-empty-state__body',
             'Create a project by clicking the button below.'
           );
           cy.clickButton(/^Create project$/);
-          cy.verifyPageTitle('Create project');
+          cy.hasTitle(/^Create project$/).should('be.visible');
         } else if (results.length >= 1) {
           cy.contains('h3', 'Projects')
             .parents('article.pf-c-card')
@@ -90,13 +90,13 @@ describe('EDA Dashboard', () => {
       .then((results: Array<EdaRulebookActivation>) => {
         if (results.length === 0) {
           cy.contains('h3', 'Rulebook Activations').scrollIntoView();
-          cy.verifyPageTitle('There are currently no rulebook activations');
+          cy.hasTitle(/^There are currently no rulebook activations$/).should('be.visible');
           cy.contains(
             'div.pf-c-empty-state__body',
             'Create a rulebook activation by clicking the button below.'
           );
           cy.clickButton(/^Create rulebook activation$/);
-          cy.verifyPageTitle('Create Rulebook Activation');
+          cy.hasTitle(/^Create Rulebook Activation$/).should('be.visible');
         } else if (results.length >= 1) {
           cy.contains('h3', 'Rulebook Activations')
             .scrollIntoView()
@@ -115,13 +115,13 @@ describe('EDA Dashboard', () => {
       .its('response.body.results')
       .then((results: Array<EdaDecisionEnvironment>) => {
         if (results.length === 0) {
-          cy.verifyPageTitle('There are currently no decision environments');
+          cy.hasTitle(/^There are currently no decision environments$/).should('be.visible');
           cy.contains(
             'div.pf-c-empty-state__body',
             'Create a decision environment by clicking the button below.'
           );
           cy.clickButton(/^Create decision environment$/);
-          cy.verifyPageTitle('Create decision environment');
+          cy.hasTitle(/^Create decision environment$/).should('be.visible');
         } else if (results.length >= 1) {
           cy.contains('h3', 'Decision Environments')
             .parents('article.pf-c-card')
@@ -134,60 +134,39 @@ describe('EDA Dashboard', () => {
 });
 
 describe('dashboard checks when resources before any resources are created', () => {
-  let edaProject: EdaProject;
-  // let gitHookDeployRuleBook: EdaRulebook;
-  let edaDecisionEnvironment: EdaDecisionEnvironment;
-  // let edaRBA: EdaRulebookActivation;
-
-  before(() => {
-    cy.edaLogin();
-    cy.createEdaProject().then((project) => {
-      edaProject = project;
-      cy.getEdaRulebooks(edaProject).then((_edaRuleBooksArray) => {
-        // gitHookDeployRuleBook = edaRuleBooksArray[0];
-        cy.createEdaDecisionEnvironment().then((decisionEnvironment) => {
-          edaDecisionEnvironment = decisionEnvironment;
-          // cy.createEdaRulebookActivation({
-          //   rulebook_id: gitHookDeployRuleBook.id,
-          //   decision_environment_id: decisionEnvironment.id,
-          // }).then((edaRulebookActivation) => {
-          //   edaRBA = edaRulebookActivation;
-          // });
-        });
-      });
-    });
-  });
-
-  after(() => {
-    // cy.deleteEdaRulebookActivation(edaRBA);
-    cy.deleteEdaDecisionEnvironment(edaDecisionEnvironment);
-    cy.deleteEdaProject(edaProject);
-  });
+  // THIS NEEDS TO BE MOVED TO A COMPONENT TEST AS THE STATE OF THE E2E SERVER IS UNKNOWN AND THIS MAY NOT SHOW UP
+  // it('checks instruction guide link works in the Getting Started section of the Dashboard page', () => {
+  //   cy.navigateTo('eda', 'dashboard');
+  //   cy.hasTitle(/^Getting Started$/).should('be.visible');
+  //   cy.checkAnchorLinks('check out our instruct guides');
+  // });
 
   it('checks the dashboard landing page titles ', () => {
-    cy.navigateTo('eda', 'dashboard');
-    cy.verifyPageTitle('Welcome to');
-    cy.get('[data-cy="Projects"]').should('contain', 'Projects');
-    cy.get('[data-cy="Recently updated projects"]').should('contain', 'Recently updated projects');
-    cy.get('[data-cy="Rulebook Activations"]').should('contain', 'Rulebook Activations');
-    cy.get('[data-cy="Recently updated activations"]').should(
-      'contain',
-      'Recently updated activations'
-    );
-    cy.get('[data-cy="Rule Audit"]').should('contain', 'Rule Audit');
-    cy.get('[data-cy="Recently fired rules"]').should('contain', 'Recently fired rules');
-    cy.get('[data-cy="Decision Environments"]').should('contain', 'Decision Environments');
-    cy.get('[data-cy="Recently updated environments"]').should(
-      'contain',
-      'Recently updated environments'
-    );
+    cy.get('.pf-c-title').should('contain', 'Welcome to');
+    cy.contains(
+      'p span',
+      'Connect intelligence, analytics and service requests to enable more responsive and resilient automation.'
+    ).should('be.visible');
+    cy.hasTitle(/^Projects$/).should('be.visible');
+    cy.contains('small', 'Recently updated projects').should('be.visible');
+    cy.hasTitle(/^Rulebook Activations$/)
+      .scrollIntoView()
+      .should('be.visible');
+    cy.contains('small', 'Recently updated activations').should('be.visible');
+    //TO DO: change the title to Rule Audit after fix
+    cy.hasTitle(/^Rule Audit$/)
+      .scrollIntoView()
+      .should('be.visible');
+    cy.contains('small', 'Recently fired rules').should('be.visible');
+    cy.hasTitle(/^Decision Environments$/).should('be.visible');
+    cy.contains('small', 'Recently updated environments').should('be.visible');
   });
 
   // THIS NEEDS TO BE MOVED TO A COMPONENT TEST AS THE STATE OF THE E2E SERVER IS UNKNOWN AND THIS MAY NOT SHOW UP
   // it('checks resource creation links work in the Getting Started section of the Dashboard page', () => {
   //   const resources = ['Project', 'Decision Environment', 'Rulebook Activation'];
   //   cy.navigateTo('eda', 'dashboard');
-  //   cy.verifyPageTitle('Getting Started');
+  //   cy.hasTitle(/^Getting Started$/).should('be.visible');
   //   cy.get('ol.pf-c-progress-stepper').within(() => {
   //     resources.forEach((resource) => {
   //       cy.checkAnchorLinks(resource);

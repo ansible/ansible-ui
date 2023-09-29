@@ -92,12 +92,12 @@ describe('Create job template ', () => {
   });
   it('Create Template - Displays error message on internal server error', () => {
     cy.mount(<CreateJobTemplate />);
-    cy.get('[data-cy="name"]').type('Test');
+    cy.typeInputByLabel(/^Name$/, 'Test');
   });
 
   it('Component renders', () => {
     cy.mount(<CreateJobTemplate />);
-    cy.verifyPageTitle('Create Job Template');
+    cy.hasTitle(/^Create Job Template$/);
   });
   it('Validates properly', () => {
     cy.mount(<CreateJobTemplate />);
@@ -108,7 +108,7 @@ describe('Create job template ', () => {
   });
   it('Should update fields properly', () => {
     cy.mount(<CreateJobTemplate />);
-    cy.get('[data-cy="name"]').type('Test');
+    cy.typeInputByLabel(/^Name$/, 'Test');
     cy.get('button[aria-describedby="job_type-form-group"]').click();
     cy.clickButton(/^Check$/);
     cy.selectDropdownOptionByLabel(/^Inventory$/, 'Demo Inventory', true);

@@ -179,7 +179,7 @@ describe('EDA rulebook activations- Edit, Delete', () => {
     cy.clickModalButton('Delete rulebook activations');
     cy.wait('@deleted').then((deleted) => {
       expect(deleted?.response?.statusCode).to.eql(204);
-      cy.verifyPageTitle('Rulebook Activations');
+      cy.hasTitle(/^Rulebook Activations$/);
     });
   });
 });

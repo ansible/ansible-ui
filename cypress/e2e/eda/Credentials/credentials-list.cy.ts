@@ -7,14 +7,14 @@ describe('EDA Credentials List', () => {
 
   it('renders the Credentials list page', () => {
     cy.navigateTo('eda', 'credentials');
-    cy.verifyPageTitle('Credentials');
+    cy.hasTitle(/^Credentials$/);
   });
 
   it('renders the Credentials details page and shows expected information', () => {
     cy.createEdaCredential().then((edaCredential) => {
       cy.navigateTo('eda', 'credentials');
       cy.clickTableRow(edaCredential.name);
-      cy.verifyPageTitle(edaCredential.name);
+      cy.hasTitle(edaCredential.name);
       cy.clickButton(/^Details$/);
       cy.get('[data-cy="name"]').should('contain', edaCredential.name);
       cy.deleteEdaCredential(edaCredential);

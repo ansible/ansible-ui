@@ -28,13 +28,13 @@ describe('projects.cy.ts', () => {
 
     it('Projects list renders', () => {
       cy.mount(<Projects />);
-      cy.verifyPageTitle('Projects');
+      cy.hasTitle(/^Projects$/);
       cy.get('tbody').find('tr').should('have.length', 11);
     });
 
     it('Projects list has filters for Name, Description, Type, Created By, and Modified By', () => {
       cy.mount(<Projects />);
-      cy.verifyPageTitle('Projects');
+      cy.hasTitle(/^Projects$/);
       cy.openToolbarFilterTypeSelect().within(() => {
         cy.contains(/^Name$/).should('be.visible');
         cy.contains(/^Description$/).should('be.visible');

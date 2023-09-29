@@ -33,7 +33,7 @@ describe('Users List Actions', () => {
 
   it('renders the users list page', () => {
     cy.navigateTo('awx', 'users');
-    cy.verifyPageTitle('Users');
+    cy.hasTitle(/^Users$/);
   });
 
   it('creates and then deletes a basic user', () => {
@@ -46,18 +46,18 @@ describe('Users List Actions', () => {
     cy.get('[data-cy="confirmpassword"]').type(password);
     cy.get('[data-cy="user-summary-fields-organization-name"]').type(organization.name);
     cy.clickButton(/^Create user$/);
-    cy.verifyPageTitle(userName);
+    cy.hasTitle(userName);
     // Clean up this user
     cy.clickPageAction(/^Delete user/);
     cy.get('#confirm').click();
     cy.clickButton(/^Delete user/);
-    cy.verifyPageTitle('Users');
+    cy.hasTitle(/^Users$/);
   });
 
   it('renders the user details page', () => {
     cy.navigateTo('awx', 'users');
     cy.clickTableRow(user.username);
-    cy.verifyPageTitle(user.username);
+    cy.hasTitle(user.username);
     cy.clickLink(/^Details$/);
     cy.contains('#username', user.username);
   });
@@ -65,18 +65,18 @@ describe('Users List Actions', () => {
   it('edits a user from the details page', () => {
     cy.navigateTo('awx', 'users');
     cy.clickTableRow(user.username);
-    cy.verifyPageTitle(user.username);
+    cy.hasTitle(user.username);
     cy.clickButton(/^Edit user$/);
-    cy.verifyPageTitle('Edit User');
+    cy.hasTitle(/^Edit User$/);
     cy.get('[data-cy="user-username"]').type(user.username + 'a');
     cy.clickButton(/^Save user$/);
-    cy.verifyPageTitle(`${user.username}a`);
+    cy.hasTitle(`${user.username}a`);
   });
 
   it('navigates to the edit form from the users list row item', () => {
     cy.navigateTo('awx', 'users');
     cy.clickTableRowPinnedAction(user.username, 'Edit user');
-    cy.verifyPageTitle('Edit User');
+    cy.hasTitle(/^Edit User$/);
   });
 });
 
@@ -105,11 +105,11 @@ describe('Users Delete Actions', () => {
   it('deletes a user from the details page', () => {
     cy.navigateTo('awx', 'users');
     cy.clickTableRow(user.username);
-    cy.verifyPageTitle(user.username);
+    cy.hasTitle(user.username);
     cy.clickPageAction(/^Delete user/);
     cy.get('#confirm').click();
     cy.clickButton(/^Delete user/);
-    cy.verifyPageTitle('Users');
+    cy.hasTitle(/^Users$/);
   });
 
   it('deletes a user from the users list row item', () => {

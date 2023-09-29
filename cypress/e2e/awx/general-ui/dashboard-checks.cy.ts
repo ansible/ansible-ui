@@ -126,20 +126,17 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
       'getJobs'
     );
     cy.navigateTo('awx', 'dashboard');
-    cy.get('[data-cy="Recent Jobs"]').should('contain', 'Recent Jobs');
+    cy.hasTitle(/^Recent Jobs$/);
     cy.checkAnchorLinks('Go to Jobs');
     cy.wait('@getJobs')
       .its('response.body.results')
       .then((results: AwxItemsResponse<Job>) => {
         if (results.count === 0) {
           cy.log('empty state check');
-          cy.get('[data-cy="There are currently no jobs"]').should(
-            'contain',
-            'There are currently no jobs'
-          );
+          cy.hasTitle(/^There are currently no jobs$/).should('be.visible');
           cy.contains('div.pf-c-empty-state__body', 'Create a job by clicking the button below.');
           cy.clickButton(/^Create job$/);
-          cy.get('[data-cy="Create Job Template"]').should('contain', 'Create Job Template');
+          cy.hasTitle(/^Create Job Template$/).should('be.visible');
         } else if (results.count >= 1) {
           cy.log('non empty state check');
           cy.contains('h3', 'Jobs')
@@ -158,20 +155,17 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
       'getProjects'
     );
     cy.navigateTo('awx', 'dashboard');
-    cy.get('[data-cy="Recent Projects"]').should('contain', 'Recent Projects');
+    cy.hasTitle(/^Recent Projects$/);
     cy.checkAnchorLinks('Go to Projects');
     cy.wait('@getProjects')
       .its('response.body.results')
       .then((results: AwxItemsResponse<Project>) => {
         if (results.count === 0) {
           cy.log('empty state check');
-          cy.get('[data-cy="There are currently no projects"]').should(
-            'contain',
-            'There are currently no projects'
-          );
+          cy.hasTitle(/^There are currently no projects$/).should('be.visible');
           cy.contains('div.pf-c-empty-state__body', 'Create a job by clicking the button below.');
           cy.clickButton(/^Create project$/);
-          cy.verifyPageTitle('Create Project');
+          cy.hasTitle(/^Create Project$/).should('be.visible');
         } else if (results.count >= 1) {
           cy.log('non empty state check');
           cy.contains('small', 'Recently updated projects')
@@ -193,23 +187,20 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
       'getInventories'
     );
     cy.navigateTo('awx', 'dashboard');
-    cy.get('[data-cy="Recent Inventories"]').should('contain', 'Recent Inventories');
+    cy.hasTitle(/^Recent Inventories$/);
     cy.checkAnchorLinks('Go to Inventories');
     cy.wait('@getInventories')
       .its('response.body.results')
       .then((results: AwxItemsResponse<Inventory>) => {
         if (results.count === 0) {
           cy.log('empty state check');
-          cy.get('[data-cy="There are currently no inventories"]').should(
-            'contain',
-            'There are currently no inventories'
-          );
+          cy.hasTitle(/^There are currently no inventories$/).should('be.visible');
           cy.contains(
             'div.pf-c-empty-state__body',
             'Create an inventory by clicking the button below.'
           );
           cy.clickButton(/^Create inventory$/);
-          cy.verifyPageTitle('Create Inventory$');
+          cy.hasTitle(/^Create Inventory$/).should('be.visible');
         } else if (results.count >= 1) {
           cy.log('non empty state check');
           cy.contains('h3', 'Inventories')
@@ -230,18 +221,9 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
     cy.intercept({ method: 'GET', url: '/api/v2/inventories/*' }, { fixture: 'emptyList.json' });
     cy.intercept({ method: 'GET', url: '/api/v2/unified_jobs/*' }, { fixture: 'emptyList.json' });
     cy.reload();
-    cy.get('[data-cy="There are currently no jobs"]').should(
-      'contain',
-      'There are currently no jobs'
-    );
-    cy.get('[data-cy="There are currently no projects"]').should(
-      'contain',
-      'There are currently no projects'
-    );
-    cy.get('[data-cy="There are currently no inventories"]').should(
-      'contain',
-      'There are currently no inventories'
-    );
+    cy.hasTitle('There are currently no jobs').should('exist');
+    cy.hasTitle('There are currently no projects').should('exist');
+    cy.hasTitle('There are currently no inventories').should('exist');
     cy.contains('button', 'Create job').should('exist');
     cy.contains('button', 'Create project').should('exist');
     cy.contains('button', 'Create inventory').should('exist');
@@ -257,9 +239,9 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
   //   cy.intercept({ method: 'GET', url: '/api/v2/unified_jobs/*' }, { fixture: 'emptyList.json' });
   //   cy.intercept({ method: 'GET', url: '/api/v2/me' }, { fixture: 'normalUser.json' });
   //   cy.reload();
-  //   cy.verifyPageTitle('There are currently no jobs');
-  //   cy.verifyPageTitle('There are currently no projects');
-  //   cy.verifyPageTitle('There are currently no inventories');
+  //   cy.hasTitle('There are currently no jobs').should('exist');
+  //   cy.hasTitle('There are currently no projects').should('exist');
+  //   cy.hasTitle('There are currently no inventories').should('exist');
   //   cy.contains('button', 'Create job').should('not.exist');
   //   cy.contains('button', 'Create project').should('not.exist');
   //   cy.contains('button', 'Create inventory').should('not.exist');

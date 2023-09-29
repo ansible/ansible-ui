@@ -41,7 +41,7 @@ describe('projects', () => {
 
   it('can render the projects list page', () => {
     cy.navigateTo('awx', 'projects');
-    cy.verifyPageTitle('Projects');
+    cy.hasTitle(/^Projects$/);
   });
   it('create project', () => {
     const projectName = 'E2E Project ' + randomString(4);
@@ -53,63 +53,63 @@ describe('projects', () => {
     cy.get('[data-cy="project-scm-url"]').type('https://github.com/ansible/ansible-tower-samples');
     cy.getCheckboxByLabel('Allow Branch Override').click();
     cy.clickButton(/^Create project$/);
-    cy.verifyPageTitle(projectName);
+    cy.hasTitle(projectName);
     cy.hasDetail(/^Organization$/, organization.name);
     cy.hasDetail(/^Source control type$/, 'Git');
     cy.hasDetail(/^Enabled options$/, 'Allow branch override');
     cy.clickPageAction(/^Delete project/);
     cy.get('#confirm').click();
     cy.clickButton(/^Delete project/);
-    cy.verifyPageTitle('Projects');
+    cy.hasTitle(/^Projects$/);
   });
   it('can edit a project from the project details tab', () => {
     cy.navigateTo('awx', 'projects');
     cy.clickTableRow(project.name);
-    cy.verifyPageTitle(project.name);
+    cy.hasTitle(project.name);
     cy.clickButton(/^Edit project$/);
-    cy.verifyPageTitle('Edit Project');
+    cy.hasTitle(/^Edit Project$/);
     cy.get('[data-cy="project-name"]').type(`${project.name} - edited`);
     cy.get('[data-cy="project-scm-branch"]').type('foobar');
     cy.clickButton(/^Save project$/);
-    cy.verifyPageTitle(`${project.name} - edited`);
+    cy.hasTitle(`${project.name} - edited`);
     cy.hasDetail(/^Source control branch$/, 'foobar');
   });
   it('can edit a project from the project list row action', () => {
     cy.navigateTo('awx', 'projects');
     cy.clickTableRowActionIcon(project.name, 'Edit project');
-    cy.verifyPageTitle('Edit Project');
+    cy.hasTitle(/^Edit Project$/);
     cy.clickButton(/^Cancel$/);
-    cy.verifyPageTitle('Projects');
+    cy.hasTitle(/^Projects$/);
   });
   it('can navigate to project details tab', () => {
     cy.navigateTo('awx', 'projects');
     cy.clickTableRow(project.name);
-    cy.verifyPageTitle(project.name);
+    cy.hasTitle(project.name);
     cy.clickLink(/^Details$/);
     cy.get('#name').should('contain', project.name);
   });
   it('can navigate to project access tab', () => {
     cy.navigateTo('awx', 'projects');
     cy.clickTableRow(project.name);
-    cy.verifyPageTitle(project.name);
+    cy.hasTitle(project.name);
     cy.clickTab(/^Access$/, true);
   });
   it('can navigate to project job templates tab', () => {
     cy.navigateTo('awx', 'projects');
     cy.clickTableRow(project.name);
-    cy.verifyPageTitle(project.name);
+    cy.hasTitle(project.name);
     cy.clickTab(/^Job templates$/, true);
   });
   it('can navigate to project notifications tab', () => {
     cy.navigateTo('awx', 'projects');
     cy.clickTableRow(project.name);
-    cy.verifyPageTitle(project.name);
+    cy.hasTitle(project.name);
     cy.clickTab(/^Notifications$/, true);
   });
   it('can navigate to project schedules tab', () => {
     cy.navigateTo('awx', 'projects');
     cy.clickTableRow(project.name);
-    cy.verifyPageTitle(project.name);
+    cy.hasTitle(project.name);
     cy.clickTab(/^Schedules$/, true);
   });
   it('can copy project from project details page', () => {
@@ -121,7 +121,7 @@ describe('projects', () => {
     }).then((testProject) => {
       cy.navigateTo('awx', 'projects');
       cy.clickTableRow(testProject.name);
-      cy.verifyPageTitle(testProject.name);
+      cy.hasTitle(testProject.name);
       cy.clickPageAction(/^Copy project$/);
       cy.hasAlert(`${testProject.name} copied`).should('be.visible');
       cy.requestDelete(`/api/v2/projects/${testProject.id}/`, { failOnStatusCode: false });
@@ -134,19 +134,19 @@ describe('projects', () => {
     }).then((testProject) => {
       cy.navigateTo('awx', 'projects');
       cy.clickTableRow(testProject.name);
-      cy.verifyPageTitle(testProject.name);
+      cy.hasTitle(testProject.name);
       cy.clickPageAction(/^Delete project/);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete project/);
       cy.getTableRowByText(testProject.name).should('not.exist');
-      cy.verifyPageTitle('Projects');
+      cy.hasTitle(/^Projects$/);
     });
   });
   it('can sync project from project details page', () => {
     cy.createAwxProject().then((project) => {
       cy.navigateTo('awx', 'projects');
       cy.clickTableRow(project.name);
-      cy.verifyPageTitle(project.name);
+      cy.hasTitle(project.name);
       cy.intercept(`api/v2/projects/${project.id}/update/`).as('projectUpdateRequest');
       cy.clickButton(/^Sync project$/);
       cy.wait('@projectUpdateRequest');
@@ -210,7 +210,7 @@ describe('projects', () => {
   //   it('can edit project from projects list table row kebab menu', () => {
   //       cy.navigateTo('awx', 'projects');
   //       cy.get('#edit-project').click();
-  //       cy.verifyPageTitle('Edit project');
+  //       cy.hasTitle(/^Edit project$/);
   //   });
 
   it('can delete project from projects list table row kebab menu', () => {

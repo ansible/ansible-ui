@@ -15,7 +15,7 @@ describe('TeamForm.cy.ts', () => {
       { count: 1, results: [{ id: 0, name: 'Default' }] }
     );
     cy.mount(<CreateTeam />);
-    cy.get('[data-cy="name"]').type('Test');
+    cy.typeInputByLabel(/^Name$/, 'Test');
     cy.selectDropdownOptionByLabel(/^Organization$/, 'Default');
     cy.intercept(
       { method: 'POST', url: '/api/v2/teams' },

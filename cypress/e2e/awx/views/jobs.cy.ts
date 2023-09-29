@@ -46,7 +46,7 @@ describe('jobs', () => {
 
   it('renders jobs list', () => {
     cy.navigateTo('awx', 'jobs');
-    cy.verifyPageTitle('Jobs');
+    cy.hasTitle(/^Jobs$/);
     const jobId = jobList.id ? jobList.id.toString() : '';
     const jobName = jobList.name ? jobList.name : '';
     cy.filterTableByTypeAndText('ID', jobId);
@@ -59,7 +59,7 @@ describe('jobs', () => {
     const jobName = jobList.name ? jobList.name : '';
     cy.filterTableByTypeAndText('ID', jobId);
     cy.clickTableRowPinnedAction(jobName, 'Relaunch job', false);
-    cy.verifyPageTitle(jobName);
+    cy.hasTitle(jobName).should('be.visible');
     cy.contains('.pf-c-tabs a', 'Output').should('have.attr', 'aria-selected', 'true');
   });
 

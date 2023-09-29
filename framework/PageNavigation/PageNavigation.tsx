@@ -9,18 +9,16 @@ export function PageNavigation(props: { navigation: PageNavigationItem[] }) {
   const { navigation: navigationItems } = props;
   const navBar = usePageNavSideBar();
   return (
-    <>
-      <PageSidebar
-        isNavOpen={navBar.isOpen}
-        nav={
-          <Nav data-cy="page-navigation" className="side-nav">
-            <NavList>
-              <PageNavigationItems baseRoute={''} items={navigationItems} />
-            </NavList>
-          </Nav>
-        }
-      />
-    </>
+    <PageSidebar
+      isNavOpen={navBar.isOpen}
+      nav={
+        <Nav className="side-nav">
+          <NavList>
+            <PageNavigationItems baseRoute={''} items={navigationItems} />
+          </NavList>
+        </Nav>
+      }
+    />
   );
 }
 

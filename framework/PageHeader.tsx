@@ -190,7 +190,7 @@ export function PageHeader(props: PageHeaderProps) {
                     position="bottom-start"
                     removeFindDomNode
                   >
-                    <Title data-cy="page-title" headingLevel="h1">
+                    <Title headingLevel="h1">
                       {title}
                       <Button
                         variant="link"
@@ -206,9 +206,7 @@ export function PageHeader(props: PageHeaderProps) {
                     </Title>
                   </Popover>
                 ) : (
-                  <Title data-cy="page-title" headingLevel="h1">
-                    {title}
-                  </Title>
+                  <Title headingLevel="h1">{title}</Title>
                 )
               ) : (
                 <Title headingLevel="h1">
@@ -216,11 +214,7 @@ export function PageHeader(props: PageHeaderProps) {
                 </Title>
               )}
               {isMdOrLarger && description && (
-                <Text
-                  data-cy="app-description"
-                  component="p"
-                  style={{ paddingTop: isXl ? 4 : 2, opacity: 0.8 }}
-                >
+                <Text component="p" style={{ paddingTop: isXl ? 4 : 2, opacity: 0.8 }}>
                   {typeof description === 'string' ? (
                     <Truncate content={description} />
                   ) : (
@@ -235,7 +229,6 @@ export function PageHeader(props: PageHeaderProps) {
             </FlexItem>
             {title && (headerActions || controls) && (
               <Flex
-                data-cy="manage-view"
                 direction={{ default: 'column' }}
                 spaceItems={{ default: 'spaceItemsSm', xl: 'spaceItemsMd' }}
                 justifyContent={{ default: 'justifyContentCenter' }}

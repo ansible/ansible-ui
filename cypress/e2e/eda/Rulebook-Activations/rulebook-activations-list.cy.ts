@@ -40,7 +40,9 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
 
   it('can filter the rulebook activations list based on Name filter option', () => {
     cy.navigateTo('eda', 'rulebook-activations');
-    cy.verifyPageTitle('Rulebook Activations');
+    cy.hasTitle(/^Rulebook Activations$/)
+      .next('p')
+      .should('have.text', 'Rulebook activations are rulebooks that have been activated to run.');
     cy.contains('td[data-label="Name"]', edaRBA.name).should('be.visible');
   });
 

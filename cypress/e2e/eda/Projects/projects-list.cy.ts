@@ -8,14 +8,14 @@ describe('EDA Projects List', () => {
 
   it('renders the EDA projects page', () => {
     cy.navigateTo('eda', 'projects');
-    cy.verifyPageTitle('Projects');
+    cy.hasTitle(/^Projects$/);
   });
 
   it('renders the Project details page', () => {
     cy.createEdaProject().then((edaProject) => {
       cy.navigateTo('eda', 'projects');
       cy.clickTableRow(edaProject.name);
-      cy.verifyPageTitle(edaProject.name);
+      cy.hasTitle(edaProject.name);
       cy.clickButton(/^Details$/);
       cy.get('#name').should('contain', edaProject.name);
       cy.deleteEdaProject(edaProject);

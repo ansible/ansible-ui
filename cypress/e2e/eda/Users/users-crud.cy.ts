@@ -58,7 +58,7 @@ describe('EDA Users- Create, Edit, Delete', () => {
       cy.setTablePageSize('100');
       cy.clickTableRow(edaUser.username, false);
       cy.contains('button#edit-user', 'Edit user').click();
-      cy.verifyPageTitle(`Edit ${edaUser.username}`);
+      cy.hasTitle(`Edit ${edaUser.username}`);
       cy.get('[data-cy="username"]').type(`${edaUser.username}edited`);
       cy.get('[data-cy="first-name"]').type('firstname-edited');
       cy.get('[data-cy="last-name"]').type('lastname-edited');
@@ -85,14 +85,14 @@ describe('EDA Users- Create, Edit, Delete', () => {
       cy.get('h1').should('contain', 'Users');
       cy.setTablePageSize('100');
       cy.clickTableRow(edaUser.username, false);
-      cy.verifyPageTitle(edaUser.username);
+      cy.hasTitle(edaUser.username);
       cy.intercept('DELETE', `/api/eda/v1/users/${edaUser.id}/`).as('deleteUser');
       cy.clickPageAction(/^Delete user$/);
       cy.clickModalConfirmCheckbox();
       cy.clickModalButton('Delete user');
       cy.wait('@deleteUser').then((deleteuser) => {
         expect(deleteuser?.response?.statusCode).to.eql(204);
-        cy.verifyPageTitle('Users');
+        cy.hasTitle(/^Users$/);
       });
     });
   });

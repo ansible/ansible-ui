@@ -18,7 +18,7 @@ describe('Inventories.cy.ts', () => {
     });
     it('should render inventory list', () => {
       cy.mount(<Inventories />);
-      cy.verifyPageTitle('Inventories');
+      cy.hasTitle(/^Inventories$/);
       cy.get('table').find('tr').should('have.length', 10);
     });
     it('should have filters for Name, Description, Type, Organization, Created By and Modified By', () => {
@@ -26,7 +26,7 @@ describe('Inventories.cy.ts', () => {
       cy.intercept('/api/v2/inventories/?organization__name__icontains=Organization%200*').as(
         'orgFilterRequest'
       );
-      cy.verifyPageTitle('Inventories');
+      cy.hasTitle(/^Inventories$/);
       cy.openToolbarFilterTypeSelect().within(() => {
         cy.contains(/^Name$/).should('be.visible');
         cy.contains(/^Description$/).should('be.visible');

@@ -3,8 +3,7 @@ import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Label } from '../../../../frontend/awx/interfaces/Label';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 
-describe.skip('Workflow Job templates form', () => {
-  //these tests need to be enabled when workflow job templates are working
+describe('Workflow Job templates form', () => {
   let organization: Organization;
   let inventory: Inventory;
   let label: Label;
@@ -33,13 +32,13 @@ describe.skip('Workflow Job templates form', () => {
     cy.navigateTo('awx', 'templates');
     cy.clickButton(/^Create template$/);
     cy.clickLink(/^Create workflow job template$/);
-    cy.get('[data-cy="name"]').type(jtName);
-    cy.get('[data-cy="description"]').type('this is a description');
+    cy.typeInputByLabel(/^Name$/, jtName);
+    cy.typeInputByLabel(/^Description$/, 'this is a description');
     cy.selectDropdownOptionByLabel(/^Labels$/, label.name.toString(), true);
     cy.addAndSelectItemFromMulitSelectDropdown('Job tags', 'test job tag');
     cy.addAndSelectItemFromMulitSelectDropdown(/^Skip tags$/, 'test skip tag');
-    cy.get('[data-cy="Submit"]').click();
-    cy.verifyPageTitle(jtName);
+    cy.clickButton(/^Create workflow job template$/);
+    cy.hasTitle(jtName);
   });
 
   it('Should edit a workflow job template', () => {
@@ -52,10 +51,10 @@ describe.skip('Workflow Job templates form', () => {
       if (!workflowJobTemplate.name) return;
 
       cy.clickTableRowPinnedAction(workflowJobTemplate?.name, 'Edit template', true);
-      cy.get('[data-cy="name"]').type(newName);
-      cy.get('[data-cy="description"]').type('this is a new description');
+      cy.typeInputByLabel(/^Name$/, newName);
+      cy.typeInputByLabel(/^Description$/, 'this is a new description');
       cy.clickButton(/^Save workflow job template$/);
-      cy.verifyPageTitle(newName);
+      cy.hasTitle(newName);
     });
   });
 

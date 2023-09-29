@@ -38,7 +38,7 @@ describe('inventories', () => {
 
   it('can render the inventories list page', () => {
     cy.navigateTo('awx', 'inventories');
-    cy.verifyPageTitle('Inventories');
+    cy.hasTitle(/^Inventories$/);
   });
 
   it('creates an inventory from the inventories list page', () => {
@@ -50,14 +50,14 @@ describe('inventories', () => {
     cy.selectDropdownOptionByLabel(/^Organization$/, organization.name);
     cy.getCheckboxByLabel('Prevent instance group fallback').click();
     cy.clickButton(/^Create inventory$/);
-    cy.verifyPageTitle(inventoryName);
+    cy.hasTitle(inventoryName);
     cy.hasDetail(/^Organization$/, organization.name);
     cy.hasDetail(/^Enabled options$/, 'Prevent instance group fallback');
     // Clean up this inventory
     cy.clickPageAction(/^Delete inventory/);
     cy.get('#confirm').click();
     cy.clickButton(/^Delete inventory/);
-    cy.verifyPageTitle('Inventories');
+    cy.hasTitle(/^Inventories$/);
   });
 
   it('edits an inventory from the inventory list row item', () => {
@@ -73,7 +73,7 @@ describe('inventories', () => {
       cy.selectTableRowInDialog(igName);
       cy.contains('button', 'Confirm').click();
       cy.contains('button', 'Save inventory').click();
-      cy.verifyPageTitle(inventory.name);
+      cy.hasTitle(inventory.name);
       cy.hasDetail(/^Instance groups$/, igName);
     }
   });
@@ -81,11 +81,11 @@ describe('inventories', () => {
   it('edits an inventory from the inventory details page', () => {
     cy.navigateTo('awx', 'inventories');
     cy.clickTableRow(inventory.name);
-    cy.verifyPageTitle(inventory.name);
+    cy.hasTitle(inventory.name);
     cy.clickButton(/^Edit inventory/);
     cy.selectDropdownOptionByLabel(/^Labels$/, label.name);
     cy.contains('button', 'Save inventory').click();
-    cy.verifyPageTitle(inventory.name);
+    cy.hasTitle(inventory.name);
     cy.hasDetail(/^Labels$/, label.name);
   });
 
@@ -93,11 +93,11 @@ describe('inventories', () => {
     cy.createAwxInventory().then((testInventory) => {
       cy.navigateTo('awx', 'inventories');
       cy.clickTableRow(testInventory.name);
-      cy.verifyPageTitle(testInventory.name);
+      cy.hasTitle(testInventory.name);
       cy.clickPageAction(/^Delete inventory/);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete inventory/);
-      cy.verifyPageTitle('Inventories');
+      cy.hasTitle(/^Inventories$/);
       cy.requestDelete(`/api/v2/organizations/${testInventory.organization}/`, {
         failOnStatusCode: false,
       });
@@ -107,7 +107,7 @@ describe('inventories', () => {
   it('copies an inventory from the details page', () => {
     cy.navigateTo('awx', 'inventories');
     cy.clickTableRow(inventory.name);
-    cy.verifyPageTitle(inventory.name);
+    cy.hasTitle(inventory.name);
     cy.clickPageAction(/^Copy inventory/);
     cy.hasAlert(`${inventory.name} copied`);
   });

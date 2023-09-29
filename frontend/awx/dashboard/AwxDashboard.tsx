@@ -42,7 +42,7 @@ export function AwxDashboard() {
   return (
     <PageLayout>
       {config?.ui_next && (
-        <Banner data-cy="tech-preview" variant="info">
+        <Banner variant="info">
           <p>
             <InfoCircleIcon />{' '}
             <Trans>
