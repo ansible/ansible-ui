@@ -10,6 +10,7 @@ describe('Users List Actions', () => {
   let user: User;
 
   beforeEach(() => {
+    cy.then(Cypress.session.clearCurrentSessionData);
     cy.awxLogin();
 
     cy.createAwxOrganization().then((org) => {
@@ -78,19 +79,20 @@ describe('Users Delete Actions', () => {
   let organization: Organization;
   let user: User;
 
-  after(() => {
-    cy.deleteAwxOrganization(organization);
-  });
-
   beforeEach(() => {
     cy.awxLogin();
 
     cy.createAwxOrganization().then((org) => {
       organization = org;
+      cy.createAwxUser(organization).then((testUser) => {
+        user = testUser;
+      });
     });
-    cy.createAwxUser(organization).then((testUser) => {
-      user = testUser;
-    });
+  });
+
+  after(() => {
+    cy.deleteAwxOrganization(organization);
+    cy.then(Cypress.session.clearCurrentSessionData);
   });
 
   it('deletes a user from the details page', () => {

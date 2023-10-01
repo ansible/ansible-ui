@@ -10,7 +10,7 @@ Cypress.Commands.add('requiredVariablesAreSet', (requiredVariables: string[]) =>
   });
 });
 
-Cypress.Commands.add('login', (server: string, username: string, password: string) => {
+Cypress.Commands.add('login', (username: string, password: string) => {
   window.localStorage.setItem('theme', 'light');
   window.localStorage.setItem('disclaimer', 'true');
 
@@ -38,35 +38,27 @@ Cypress.Commands.add('awxLogin', () => {
     'AWX',
     () => {
       cy.intercept('GET', '/api/v2/dashboard/').as('dashboard');
-      cy.login(
-        Cypress.env('AWX_SERVER') as string,
-        Cypress.env('AWX_USERNAME') as string,
-        Cypress.env('AWX_PASSWORD') as string
-      );
+      cy.login(Cypress.env('AWX_USERNAME') as string, Cypress.env('AWX_PASSWORD') as string);
       cy.wait('@dashboard');
       window.localStorage.setItem('hide-welcome-message', 'true');
-      cy.verifyPageTitle('Welcome to');
     },
     {
-      cacheAcrossSpecs: true,
-      validate: () => {
+      validate() {
         cy.request({ method: 'GET', url: '/api/v2/me/' });
+        cy.get('[data-cy="page-title"]').should('contain', 'Welcome to');
       },
+      cacheAcrossSpecs: true,
     }
   );
   cy.visit(`/ui_next`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true });
 });
 
 Cypress.Commands.add('edaLogin', () => {
-  cy.requiredVariablesAreSet(['EDA_SERVER', 'EDA_USERNAME', 'EDA_PASSWORD']);
+  cy.requiredVariablesAreSet(['EDA_USERNAME', 'EDA_PASSWORD']);
   cy.session(
     'EDA',
     () => {
-      cy.login(
-        Cypress.env('EDA_SERVER') as string,
-        Cypress.env('EDA_USERNAME') as string,
-        Cypress.env('EDA_PASSWORD') as string
-      );
+      cy.login(Cypress.env('EDA_USERNAME') as string, Cypress.env('EDA_PASSWORD') as string);
       cy.verifyPageTitle('Welcome to');
     },
     {
@@ -84,11 +76,7 @@ Cypress.Commands.add('hubLogin', () => {
   cy.session(
     'HUB',
     () => {
-      cy.login(
-        Cypress.env('HUB_SERVER') as string,
-        Cypress.env('HUB_USERNAME') as string,
-        Cypress.env('HUB_PASSWORD') as string
-      );
+      cy.login(Cypress.env('HUB_USERNAME') as string, Cypress.env('HUB_PASSWORD') as string);
       cy.verifyPageTitle('Welcome to');
     },
     {
