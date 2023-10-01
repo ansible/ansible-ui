@@ -5,7 +5,9 @@ import { Job } from '../../../../frontend/awx/interfaces/Job';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
 
 describe('Dashboard: General UI tests - resources count and empty state check', () => {
-  before(() => {
+  beforeEach(() => {
+    cy.clearCookies();
+    cy.clearAllSessionStorage();
     cy.awxLogin();
   });
 

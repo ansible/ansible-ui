@@ -1,5 +1,7 @@
 describe('dashboard: Welcome modal', () => {
-  before(() => {
+  beforeEach(() => {
+    cy.clearCookies();
+    cy.clearAllSessionStorage();
     cy.awxLogin();
   });
 

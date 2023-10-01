@@ -12,6 +12,8 @@ describe('inventories', () => {
   let label: Label;
 
   beforeEach(() => {
+    cy.clearCookies();
+    cy.clearAllSessionStorage();
     cy.awxLogin();
 
     cy.createAwxOrganization().then((org) => {

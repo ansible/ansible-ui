@@ -9,11 +9,9 @@ describe('credentials', () => {
   let organization: Organization;
   let credential: Credential;
 
-  after(() => {
-    cy.deleteAwxOrganization(organization);
-  });
-
   beforeEach(() => {
+    cy.clearCookies();
+    cy.clearAllSessionStorage();
     cy.awxLogin();
 
     cy.createAwxOrganization().then((testOrg) => (organization = testOrg));
@@ -26,6 +24,7 @@ describe('credentials', () => {
   });
 
   after(() => {
+    cy.deleteAwxOrganization(organization);
     cy.awxRequestDelete(`/api/v2/credentials/${credential.id}/`, { failOnStatusCode: false });
   });
 

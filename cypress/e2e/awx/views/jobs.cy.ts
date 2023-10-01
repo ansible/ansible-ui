@@ -10,7 +10,9 @@ describe('jobs', () => {
   let jobTemplate: JobTemplate;
   let jobList: UnifiedJobList;
 
-  before(() => {
+  beforeEach(() => {
+    cy.clearCookies();
+    cy.clearAllSessionStorage();
     cy.awxLogin();
 
     cy.createAwxOrganization().then((o) => {

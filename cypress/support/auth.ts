@@ -18,33 +18,23 @@ Cypress.Commands.add('login', (username: string, password: string) => {
     retryOnStatusCodeFailure: true,
     retryOnNetworkFailure: true,
   });
-  cy.get('[data-cy="username"]').type(username);
+  cy.get('[data-cy="username"]').type(username, { delay: 100 });
   cy.get('[data-cy="password"]').type(password);
   cy.get('button[type=submit]').click();
 });
 
-Cypress.Commands.add('edaLogout', () => {
-  cy.get('.pf-c-dropdown__toggle')
-    .eq(1)
-    .click()
-    .then(() => {
-      cy.get('ul>li>a').contains('Logout').click();
-    });
-});
-
 Cypress.Commands.add('awxLogin', () => {
-  cy.requiredVariablesAreSet(['AWX_SERVER', 'AWX_USERNAME', 'AWX_PASSWORD']);
+  cy.requiredVariablesAreSet(['AWX_USERNAME', 'AWX_PASSWORD']);
   cy.session(
     'AWX',
     () => {
       cy.login(Cypress.env('AWX_USERNAME') as string, Cypress.env('AWX_PASSWORD') as string);
-      cy.wait(5000);
       window.localStorage.setItem('hide-welcome-message', 'true');
+      cy.get('[data-cy="nav-toggle"]').should('exist');
     },
     {
       validate() {
-        cy.request({ method: 'GET', url: '/api/v2/me/' });
-        cy.get('[data-cy="page-title"]').should('contain', 'Welcome to');
+        cy.request({ method: 'GET', url: '/api/v2/me' });
       },
       cacheAcrossSpecs: true,
     }
@@ -70,8 +60,17 @@ Cypress.Commands.add('edaLogin', () => {
   cy.visit(`/eda`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true });
 });
 
+Cypress.Commands.add('edaLogout', () => {
+  cy.get('.pf-c-dropdown__toggle')
+    .eq(1)
+    .click()
+    .then(() => {
+      cy.get('ul>li>a').contains('Logout').click();
+    });
+});
+
 Cypress.Commands.add('hubLogin', () => {
-  cy.requiredVariablesAreSet(['HUB_SERVER', 'HUB_USERNAME', 'HUB_PASSWORD']);
+  cy.requiredVariablesAreSet(['HUB_USERNAME', 'HUB_PASSWORD']);
   cy.session(
     'HUB',
     () => {

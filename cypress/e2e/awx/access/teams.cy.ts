@@ -12,7 +12,9 @@ describe('teams', () => {
   let user1: User;
   let user2: User;
 
-  before(() => {
+  beforeEach(() => {
+    cy.clearCookies();
+    cy.clearAllSessionStorage();
     cy.awxLogin();
 
     cy.createAwxOrganization().then((org) => {

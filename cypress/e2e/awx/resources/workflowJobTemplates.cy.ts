@@ -9,7 +9,9 @@ describe.skip('Workflow Job templates form', () => {
   let inventory: Inventory;
   let label: Label;
 
-  before(() => {
+  beforeEach(() => {
+    cy.clearCookies();
+    cy.clearAllSessionStorage();
     cy.awxLogin();
 
     cy.createAwxOrganization().then((o) => {
