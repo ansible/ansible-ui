@@ -37,11 +37,13 @@ Cypress.Commands.add('awxLogin', () => {
   cy.session(
     'AWX',
     () => {
+      cy.intercept('GET', '/api/v2/dashboard/').as('dashboard');
       cy.login(
         Cypress.env('AWX_SERVER') as string,
         Cypress.env('AWX_USERNAME') as string,
         Cypress.env('AWX_PASSWORD') as string
       );
+      cy.wait('@dashboard');
       window.localStorage.setItem('hide-welcome-message', 'true');
       cy.verifyPageTitle('Welcome to');
     },
