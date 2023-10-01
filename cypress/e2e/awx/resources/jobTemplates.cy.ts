@@ -224,7 +224,13 @@ describe('Job templates form Create, Edit, Delete', () => {
       cy.hasTitle(/^Edit Job Template$/);
       cy.get('[data-cy="name"]').clear().type(newName);
       cy.typeInputByLabel(/^Description$/, 'this is a new description after editing');
+      cy.intercept('PATCH', `api/v2/job_templates/${jobTemplate.id}/`).as('editJT');
       cy.clickButton(/^Save job template$/);
+      cy.wait('@editJT')
+        .its('response.body.name')
+        .then((name: string) => {
+          expect(newName).to.be.equal(name);
+        });
       cy.hasTitle(newName);
       cy.intercept('DELETE', `/api/v2/job_templates/${jobTemplate.id}/`).as('deleteJobTemplate');
       cy.clickPageAction(/^Delete template/);
@@ -253,7 +259,13 @@ describe('Job templates form Create, Edit, Delete', () => {
       // * add data-cy=template-name
       cy.get('[data-cy="name"]').clear().type(newName);
       cy.typeInputByLabel(/^Description$/, 'this is a new description after editing');
+      cy.intercept('PATCH', `api/v2/job_templates/${jobTemplate.id}/`).as('editJT');
       cy.clickButton(/^Save job template$/);
+      cy.wait('@editJT')
+        .its('response.body.name')
+        .then((name: string) => {
+          expect(newName).to.be.equal(name);
+        });
       cy.hasTitle(newName);
       cy.intercept('DELETE', `/api/v2/job_templates/${jobTemplate.id}/`).as('deleteJobTemplate');
       cy.clickPageAction(/^Delete template/);
