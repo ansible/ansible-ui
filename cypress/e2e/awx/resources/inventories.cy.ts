@@ -33,7 +33,6 @@ describe('inventories', () => {
   after(() => {
     cy.deleteAwxInstanceGroup(instanceGroup);
     cy.deleteAwxInventory(inventory);
-    cy.deleteAwxOrganization(organization);
   });
 
   it('can render the inventories list page', () => {
