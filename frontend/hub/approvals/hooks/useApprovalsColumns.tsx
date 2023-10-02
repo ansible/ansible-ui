@@ -3,9 +3,13 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DateTimeCell, ITableColumn, PFColorE, TextCell } from '../../../../framework';
 import { CollectionVersionSearch } from '../Approval';
+import { useHubContext } from './../../useHubContext';
 
 export function useApprovalsColumns(_options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
+  const context = useHubContext();
+  const { display_signatures } = context.featureFlags;
+
   const tableColumns = useMemo<ITableColumn<CollectionVersionSearch>[]>(
     () => [
       {
@@ -44,9 +48,19 @@ export function useApprovalsColumns(_options?: { disableSort?: boolean; disableL
           }
 
           if (approval.repository?.pulp_labels?.pipeline == 'approved') {
-            return (
-              <TextCell icon={<ThumbsUpIcon />} text={t('Approved')} color={PFColorE.Success} />
-            );
+            if (approval.is_signed && display_signatures) {
+              return (
+                <TextCell
+                  icon={<ThumbsUpIcon />}
+                  text={t('Signed and Approved')}
+                  color={PFColorE.Success}
+                />
+              );
+            } else {
+              return (
+                <TextCell icon={<ThumbsUpIcon />} text={t('Approved')} color={PFColorE.Success} />
+              );
+            }
           }
 
           if (approval.repository?.pulp_labels?.pipeline == 'rejected') {
@@ -64,7 +78,7 @@ export function useApprovalsColumns(_options?: { disableSort?: boolean; disableL
         sort: 'pulp_created',
       },
     ],
-    [t]
+    [t, display_signatures]
   );
   return tableColumns;
 }
