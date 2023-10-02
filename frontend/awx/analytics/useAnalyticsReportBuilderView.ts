@@ -232,7 +232,8 @@ export function fillFilters(
           postData[key] = values[0];
         } else {
           for (const value of values) {
-            if (postData) {
+            if (postData && postData[key] && Array.isArray(postData[key])) {
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-call
               postData[key].push(value);
             }
           }
