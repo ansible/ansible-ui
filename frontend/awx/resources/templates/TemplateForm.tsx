@@ -57,7 +57,7 @@ export function EditJobTemplate() {
     values: JobTemplateForm,
     setError: (message: string) => void
   ) => {
-    const { credentials, labels, instance_groups, ...rest } = values;
+    const { credentials, labels, instance_groups, webhook_key, webhook_url, ...rest } = values;
     const formValues = {
       ...rest,
       project: values.project.id,
@@ -125,7 +125,7 @@ export function CreateJobTemplate() {
   const defaultValues = useMemo(() => getJobTemplateDefaultValues(t, {} as JobTemplate), [t]);
 
   const onSubmit: PageFormSubmitHandler<JobTemplateForm> = async (values, setError) => {
-    const { credentials, labels, instance_groups, ...rest } = values;
+    const { credentials, labels, instance_groups, webhook_key, webhook_url, ...rest } = values;
     const formValues = {
       ...rest,
       project: values.project.id,
