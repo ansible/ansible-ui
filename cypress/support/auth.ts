@@ -10,7 +10,7 @@ Cypress.Commands.add('requiredVariablesAreSet', (requiredVariables: string[]) =>
   });
 });
 
-Cypress.Commands.add('login', (username: string, password: string) => {
+Cypress.Commands.add('login', (server: string, username: string, password: string) => {
   window.localStorage.setItem('theme', 'light');
   window.localStorage.setItem('disclaimer', 'true');
 
@@ -24,15 +24,20 @@ Cypress.Commands.add('login', (username: string, password: string) => {
 });
 
 Cypress.Commands.add('awxLogin', () => {
-  cy.requiredVariablesAreSet(['AWX_USERNAME', 'AWX_PASSWORD']);
+  cy.requiredVariablesAreSet(['AWX_SERVER', 'AWX_USERNAME', 'AWX_PASSWORD']);
   cy.session(
     'AWX',
     () => {
-      cy.login(Cypress.env('AWX_USERNAME') as string, Cypress.env('AWX_PASSWORD') as string);
+      cy.login(
+        Cypress.env('AWX_SERVER') as string,
+        Cypress.env('AWX_USERNAME') as string,
+        Cypress.env('AWX_PASSWORD') as string
+      );
       window.localStorage.setItem('hide-welcome-message', 'true');
+      cy.get('[data-cy="nav-toggle"]').should('exist');
     },
     {
-      validate() {
+      validate: () => {
         cy.request({ method: 'GET', url: '/api/v2/me' });
       },
       cacheAcrossSpecs: true,
@@ -42,11 +47,15 @@ Cypress.Commands.add('awxLogin', () => {
 });
 
 Cypress.Commands.add('edaLogin', () => {
-  cy.requiredVariablesAreSet(['EDA_USERNAME', 'EDA_PASSWORD']);
+  cy.requiredVariablesAreSet(['EDA_SERVER', 'EDA_USERNAME', 'EDA_PASSWORD']);
   cy.session(
     'EDA',
     () => {
-      cy.login(Cypress.env('EDA_USERNAME') as string, Cypress.env('EDA_PASSWORD') as string);
+      cy.login(
+        Cypress.env('EDA_SERVER') as string,
+        Cypress.env('EDA_USERNAME') as string,
+        Cypress.env('EDA_PASSWORD') as string
+      );
       cy.verifyPageTitle('Welcome to');
     },
     {
@@ -69,11 +78,15 @@ Cypress.Commands.add('edaLogout', () => {
 });
 
 Cypress.Commands.add('hubLogin', () => {
-  cy.requiredVariablesAreSet(['HUB_USERNAME', 'HUB_PASSWORD']);
+  cy.requiredVariablesAreSet(['HUB_SERVER', 'HUB_USERNAME', 'HUB_PASSWORD']);
   cy.session(
     'HUB',
     () => {
-      cy.login(Cypress.env('HUB_USERNAME') as string, Cypress.env('HUB_PASSWORD') as string);
+      cy.login(
+        Cypress.env('HUB_SERVER') as string,
+        Cypress.env('HUB_USERNAME') as string,
+        Cypress.env('HUB_PASSWORD') as string
+      );
       cy.verifyPageTitle('Welcome to');
     },
     {
