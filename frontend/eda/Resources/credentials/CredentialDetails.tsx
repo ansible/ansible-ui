@@ -70,6 +70,9 @@ export function CredentialDetails() {
           pageNavigate(EdaRoute.EditCredential, { params: { id: credential.id } }),
       },
       {
+        type: PageActionType.Seperator,
+      },
+      {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: TrashIcon,
