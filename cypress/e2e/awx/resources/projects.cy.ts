@@ -12,9 +12,6 @@ describe('projects', () => {
 
   before(() => {
     cy.awxLogin();
-  });
-
-  beforeEach(() => {
     cy.createAwxOrganization().then((org) => {
       organization = org;
       cy.createAwxProject({ organization: organization.id }).then((proj) => {
@@ -24,21 +21,19 @@ describe('projects', () => {
   });
 
   after(() => {
-    cy.deleteAwxOrganization(organization, { failOnStatusCode: false }).then(() => {
-      /**
-       * Deleting the organization does not delete the underlying projects.
-       * So get all projects without an organization and delete them. Multiple test runs
-       * could be running, so only delete projects without an organization as those are not being used.
-       * This also cleans up projects that were syncing and could not be deleted by other runs,
-       * making a self cleaning E2E system for the live server.
-       */
-      cy.awxRequestGet<AwxItemsResponse<Project>>(
-        `/api/v2/projects/?page_size=100&organization=null`
-      ).then((itemsResponse) => {
-        for (const project of itemsResponse.results) {
-          cy.deleteAwxProject(project);
-        }
-      });
+    /**
+     * Deleting the organization does not delete the underlying projects.
+     * So get all projects without an organization and delete them. Multiple test runs
+     * could be running, so only delete projects without an organization as those are not being used.
+     * This also cleans up projects that were syncing and could not be deleted by other runs,
+     * making a self cleaning E2E system for the live server.
+     */
+    cy.awxRequestGet<AwxItemsResponse<Project>>(
+      `/api/v2/projects/?page_size=100&organization=null`
+    ).then((itemsResponse) => {
+      for (const project of itemsResponse.results) {
+        cy.deleteAwxProject(project);
+      }
     });
   });
 
@@ -139,22 +134,6 @@ describe('projects', () => {
     });
   });
 
-  it('can delete project from project details page', () => {
-    cy.requestPost<Project>('/api/v2/projects/', {
-      name: 'E2E Project ' + randomString(4),
-      organization: organization.id,
-    }).then((testProject) => {
-      cy.navigateTo('awx', 'projects');
-      cy.clickTableRow(testProject.name);
-      cy.verifyPageTitle(testProject.name);
-      cy.clickPageAction(/^Delete project/);
-      cy.get('#confirm').click();
-      cy.clickButton(/^Delete project/);
-      cy.getTableRowByText(testProject.name).should('not.exist');
-      cy.verifyPageTitle('Projects');
-    });
-  });
-
   it('can sync project from project details page', () => {
     cy.createAwxProject().then((project) => {
       cy.navigateTo('awx', 'projects');
@@ -222,12 +201,6 @@ describe('projects', () => {
     });
   });
 
-  //   it('can edit project from projects list table row kebab menu', () => {
-  //       cy.navigateTo('awx', 'projects');
-  //       cy.get('#edit-project').click();
-  //       cy.verifyPageTitle('Edit project');
-  //   });
-
   it('can delete project from projects list table row kebab menu', () => {
     cy.requestPost<Project>('/api/v2/projects/', {
       name: 'E2E Project ' + randomString(4),
@@ -258,6 +231,22 @@ describe('projects', () => {
       cy.clickButton(/^Close$/);
       cy.clickButton(/^Clear all filters$/);
       cy.getTableRowByText(testProject.name).should('not.exist');
+    });
+  });
+
+  it('can delete project from project details page', () => {
+    cy.requestPost<Project>('/api/v2/projects/', {
+      name: 'E2E Project ' + randomString(4),
+      organization: organization.id,
+    }).then((testProject) => {
+      cy.navigateTo('awx', 'projects');
+      cy.clickTableRow(testProject.name);
+      cy.verifyPageTitle(testProject.name);
+      cy.clickPageAction(/^Delete project/);
+      cy.get('#confirm').click();
+      cy.clickButton(/^Delete project/);
+      cy.getTableRowByText(testProject.name).should('not.exist');
+      cy.verifyPageTitle('Projects');
     });
   });
 
