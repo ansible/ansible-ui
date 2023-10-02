@@ -66,12 +66,13 @@ export function UploadSignatureByFile() {
 
     const stagingRepo = repoRes.results[0].pulp_href;
 
-    return hubPostRequestFile(
+    await hubPostRequestFile(
       pulpAPI`/content/ansible/collection_signatures/`,
       data.file as Blob,
       stagingRepo,
       collectionID
-    ).then(() => pageNavigate(HubRoute.Approvals));
+    );
+    pageNavigate(HubRoute.Approvals);
   }
 
   return (
