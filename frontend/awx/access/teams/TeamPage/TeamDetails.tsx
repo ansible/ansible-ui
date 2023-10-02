@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   DateTimeCell,
   PageDetail,
@@ -8,10 +7,18 @@ import {
   TextCell,
   useGetPageUrl,
 } from '../../../../../framework';
+import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
 import { Team } from '../../../interfaces/Team';
 
-export function TeamDetails(props: { team: Team }) {
+export function TeamDetails() {
+  const params = useParams<{ id: string }>();
+  const { data: team } = useGetItem<Team>('/api/v2/teams', params.id);
+
+  return team ? <TeamDetailsInner team={team} /> : null;
+}
+
+export function TeamDetailsInner(props: { team: Team }) {
   const { t } = useTranslation();
   const { team } = props;
   const history = useNavigate();
