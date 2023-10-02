@@ -8,10 +8,11 @@ import {
 } from '@patternfly/react-core';
 import { useCallback } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   CopyCell,
   DateTimeCell,
+  LoadingPage,
   PageDetail,
   PageDetails,
   TextCell,
@@ -27,14 +28,16 @@ import { useAwxConfig } from '../../../common/useAwxConfig';
 import { useAwxWebSocketSubscription } from '../../../common/useAwxWebSocket';
 import getDocsBaseUrl from '../../../common/util/getDocsBaseUrl';
 import { Project } from '../../../interfaces/Project';
+import { AwxError } from '../../../common/AwxError';
 
-export function ProjectDetails(props: { project: Project }) {
+export function ProjectDetails() {
   const { t } = useTranslation();
-  const { project } = props;
+  const params = useParams<{ id: string }>();
+
+  const { error, data: project, refresh } = useGet<Project>(`/api/v2/projects/${params.id ?? ''}/`);
   const history = useNavigate();
   const config = useAwxConfig();
-  const view = useGet<Project>(`/api/v2/projects/${project.id}/`);
-  const { refresh } = view;
+
   const handleWebSocketMessage = useCallback(
     (message?: { group_name?: string; type?: string }) => {
       switch (message?.group_name) {
@@ -198,7 +201,8 @@ export function ProjectDetails(props: { project: Project }) {
       )}
     </TextList>
   );
-
+  if (error) return <AwxError error={error} handleRefresh={refresh} />;
+  if (!project) return <LoadingPage breadcrumbs tabs />;
   return (
     <PageDetails>
       <PageDetail label={t('Name')}>{project.name}</PageDetail>
