@@ -12,7 +12,7 @@ type Items =
  * based on original and upsdated items
  * @param original original list of items
  * @param current updated list of items
- * @returns object containing 2 lists: ids to be added and ids to be removed
+ * @returns object containing 2 lists - ids to be added and ids to be removed
  */
 export function getAddedAndRemoved(original: Items[], current: Items[]) {
   original = original || [];
