@@ -31,7 +31,6 @@ describe('teams', () => {
   after(() => {
     cy.deleteAwxUser(user1);
     cy.deleteAwxUser(user2);
-    cy.deleteAwxTeam(team);
     cy.deleteAwxOrganization(organization);
   });
 
