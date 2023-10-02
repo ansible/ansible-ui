@@ -7,6 +7,9 @@ describe('schedules', () => {
 
   before(() => {
     cy.awxLogin();
+  });
+
+  beforeEach(() => {
     cy.createAWXSchedule().then((sched: Schedule) => (schedule = sched));
   });
 

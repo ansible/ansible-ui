@@ -11,6 +11,9 @@ describe('credentials', () => {
 
   before(() => {
     cy.awxLogin();
+  });
+
+  beforeEach(() => {
     cy.createAwxOrganization().then((testOrg) => (organization = testOrg));
     cy.createAWXCredential({
       name: 'E2E Credential ' + randomString(4),

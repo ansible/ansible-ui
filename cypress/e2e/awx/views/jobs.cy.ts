@@ -12,6 +12,9 @@ describe('jobs', () => {
 
   before(() => {
     cy.awxLogin();
+  });
+
+  beforeEach(() => {
     cy.createAwxOrganization().then((o) => {
       organization = o;
       cy.createAwxProject({ organization: organization.id }).then((project) => {

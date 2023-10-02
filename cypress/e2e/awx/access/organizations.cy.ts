@@ -10,6 +10,9 @@ describe('organizations', () => {
 
   before(() => {
     cy.awxLogin();
+  });
+
+  beforeEach(() => {
     cy.createAwxOrganization().then((org) => {
       organization = org;
     });

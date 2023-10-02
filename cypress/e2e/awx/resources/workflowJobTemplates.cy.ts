@@ -11,6 +11,9 @@ describe.skip('Workflow Job templates form', () => {
 
   before(() => {
     cy.awxLogin();
+  });
+
+  beforeEach(() => {
     cy.createAwxOrganization().then((o) => {
       organization = o;
       cy.createAwxInventory({ organization: organization.id }).then((i) => {

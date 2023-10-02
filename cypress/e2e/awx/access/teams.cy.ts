@@ -14,6 +14,9 @@ describe('teams', () => {
 
   before(() => {
     cy.awxLogin();
+  });
+
+  beforeEach(() => {
     cy.createAwxOrganization().then((org) => {
       organization = org;
       cy.createAwxTeam(organization).then((createdTeam) => {
