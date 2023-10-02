@@ -47,19 +47,20 @@ export function WorkflowJobTemplatePage() {
   });
   const error = isNotifAdminError || templateError;
 
-  const tabs: { label: string; page: string }[] = useMemo(() => {
-    const tabs = [
+  const tabs: ({ label: string; page: string } | false)[] = useMemo(
+    () => [
       { label: t('Details'), page: AwxRoute.WorkflowJobTemplateDetails },
       { label: t('Access'), page: AwxRoute.WorkflowJobTemplateAccess },
       { label: t('Schedules'), page: AwxRoute.WorkflowJobTemplateSchedules },
       { label: t('Jobs'), page: AwxRoute.WorkflowJobTemplateJobs },
       { label: t('Survey'), page: AwxRoute.WorkflowJobTemplateSurvey },
-    ];
-    if (currentUser?.is_system_auditor || (isNotifAdmin && isNotifAdmin.results.length > 0)) {
-      tabs.push({ label: t('Notifications'), page: AwxRoute.WorkflowJobTemplateNotifications });
-    }
-    return tabs;
-  }, [t, currentUser, isNotifAdmin]);
+      currentUser?.is_system_auditor || (isNotifAdmin && isNotifAdmin.results.length > 0)
+        ? { label: t('Notifications'), page: AwxRoute.WorkflowJobTemplateNotifications }
+        : false,
+    ],
+
+    [t, currentUser, isNotifAdmin]
+  );
 
   if (error) return <AwxError error={error} handleRefresh={refresh || refreshNotifAdmin} />;
   if (!template || isTemplateLoading || isNotifAdminLoading)

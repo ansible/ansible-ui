@@ -16,7 +16,6 @@ describe('projects', () => {
       organization = org;
       cy.createAwxProject({ organization: organization.id }).then((proj) => {
         project = proj;
-        return proj;
       });
     });
   });
@@ -60,9 +59,8 @@ describe('projects', () => {
     cy.hasDetail(/^Enabled options$/, 'Allow branch override');
     cy.clickPageAction(/^Delete project/);
     cy.get('#confirm').click();
-    cy.clickButton(/^Delete project/).then(() => {
-      cy.verifyPageTitle('Projects');
-    });
+    cy.clickButton(/^Delete project/);
+    cy.verifyPageTitle('Projects');
   });
   it('can edit a project from the project details tab', () => {
     cy.navigateTo('awx', 'projects');
@@ -125,7 +123,7 @@ describe('projects', () => {
       cy.clickTableRow(testProject.name);
       cy.verifyPageTitle(testProject.name);
       cy.clickPageAction(/^Copy project$/);
-      cy.hasAlert(`${testProject.name} copied`).should('exist');
+      cy.hasAlert(`${testProject.name} copied`).should('be.visible');
       cy.requestDelete(`/api/v2/projects/${testProject.id}/`, { failOnStatusCode: false });
     });
   });
@@ -151,8 +149,7 @@ describe('projects', () => {
         .within(() => {
           cy.get('#sync-project').click();
         });
-      cy.wait('@projectUpdateRequest');
-      cy.hasAlert(`Syncing ${project.name}`).should('exist');
+      cy.hasAlert(`Syncing ${project.name}`).should('be.visible');
       cy.requestDelete(`/api/v2/projects/${project.id}/`, { failOnStatusCode: false });
     });
   });
