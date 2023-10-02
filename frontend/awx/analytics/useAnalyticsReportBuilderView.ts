@@ -169,6 +169,7 @@ export function useAnalyticsReportBuilderView<T extends object>({
     if (!disableLoading) {
       fetchData();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [changed, disableLoading]);
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -190,7 +191,7 @@ export function useAnalyticsReportBuilderView<T extends object>({
       ...selection,
       originalData: data as undefined,
     };
-  }, [data?.meta.legend, error, selection, view, data]);
+  }, [error, selection, view, data]);
 }
 
 export function getAwxError(err: unknown) {
