@@ -11,7 +11,7 @@ describe('inventories', () => {
   let instanceGroup: InstanceGroup;
   let label: Label;
 
-  beforeEach(() => {
+  before(() => {
     cy.awxLogin();
     cy.createAwxOrganization().then((org) => {
       organization = org;
@@ -29,8 +29,8 @@ describe('inventories', () => {
 
   after(() => {
     cy.deleteAwxInstanceGroup(instanceGroup);
-    cy.deleteAwxOrganization(organization);
     cy.deleteAwxInventory(inventory);
+    cy.deleteAwxOrganization(organization);
   });
 
   it('can render the inventories list page', () => {

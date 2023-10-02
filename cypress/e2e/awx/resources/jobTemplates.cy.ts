@@ -17,7 +17,7 @@ describe('Job templates form', () => {
   let label: Label;
   let instanceGroup: InstanceGroup;
 
-  beforeEach(() => {
+  before(() => {
     cy.awxLogin();
     cy.createAwxOrganization().then((o) => {
       organization = o;

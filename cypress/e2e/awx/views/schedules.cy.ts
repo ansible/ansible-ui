@@ -5,7 +5,7 @@ import { Schedule } from '../../../../frontend/awx/interfaces/Schedule';
 describe('schedules', () => {
   let schedule: Schedule;
 
-  beforeEach(() => {
+  before(() => {
     cy.awxLogin();
     cy.createAWXSchedule().then((sched: Schedule) => (schedule = sched));
   });

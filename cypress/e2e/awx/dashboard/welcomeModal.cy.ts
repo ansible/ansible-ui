@@ -1,5 +1,5 @@
 describe('dashboard: Welcome modal', () => {
-  beforeEach(() => {
+  before(() => {
     cy.awxLogin();
   });
 

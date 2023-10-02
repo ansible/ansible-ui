@@ -9,7 +9,7 @@ describe('credentials', () => {
   let organization: Organization;
   let credential: Credential;
 
-  beforeEach(() => {
+  before(() => {
     cy.awxLogin();
     cy.createAwxOrganization().then((testOrg) => (organization = testOrg));
     cy.createAWXCredential({

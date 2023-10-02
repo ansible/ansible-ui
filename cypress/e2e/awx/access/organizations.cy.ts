@@ -8,7 +8,7 @@ import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 describe('organizations', () => {
   let organization: Organization;
 
-  beforeEach(() => {
+  before(() => {
     cy.awxLogin();
     cy.createAwxOrganization().then((org) => {
       organization = org;

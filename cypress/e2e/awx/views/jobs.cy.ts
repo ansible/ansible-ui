@@ -10,7 +10,7 @@ describe('jobs', () => {
   let jobTemplate: JobTemplate;
   let jobList: UnifiedJobList;
 
-  beforeEach(() => {
+  before(() => {
     cy.awxLogin();
     cy.createAwxOrganization().then((o) => {
       organization = o;
