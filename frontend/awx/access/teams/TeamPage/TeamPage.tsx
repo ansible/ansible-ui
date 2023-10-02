@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { DropdownPosition } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
@@ -10,17 +9,13 @@ import {
   usePageNavigate,
 } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
-import { PageBackTab, RoutedTab, RoutedTabs } from '../../../../common/RoutedTabs';
-import { RouteObj } from '../../../../common/Routes';
+import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
 import { AwxError } from '../../../common/AwxError';
 import { Team } from '../../../interfaces/Team';
 import { useViewActivityStream } from '../../common/useViewActivityStream';
 import { useTeamActions } from '../hooks/useTeamActions';
-import { TeamAccess } from './TeamAccess';
-import { TeamDetails } from './TeamDetails';
-import { TeamRoles } from './TeamRoles';
 
 export function TeamPage() {
   const { t } = useTranslation();
@@ -51,22 +46,19 @@ export function TeamPage() {
           />
         }
       />
-      <RoutedTabs isLoading={!team} baseUrl={RouteObj.TeamPage}>
-        <PageBackTab
-          label={t('Back to Teams')}
-          url={getPageUrl(AwxRoute.Teams)}
-          persistentFilterKey="teams"
-        />
-        <RoutedTab label={t('Details')} url={RouteObj.TeamDetails}>
-          <TeamDetails team={team} />
-        </RoutedTab>
-        <RoutedTab label={t('Access')} url={RouteObj.TeamAccess}>
-          <TeamAccess team={team} />
-        </RoutedTab>
-        <RoutedTab label={t('Roles')} url={RouteObj.TeamRoles}>
-          <TeamRoles team={team} />
-        </RoutedTab>
-      </RoutedTabs>
+      <PageRoutedTabs
+        backTab={{
+          label: t('Back to Teams'),
+          page: AwxRoute.Teams,
+          persistentFilterKey: 'teams',
+        }}
+        tabs={[
+          { label: t('Details'), page: AwxRoute.TeamDetails },
+          { label: t('Access'), page: AwxRoute.TeamAccess },
+          { label: t('Roles'), page: AwxRoute.TeamRoles },
+        ]}
+        params={{ id: team.id }}
+      />
     </PageLayout>
   );
 }

@@ -1,6 +1,6 @@
 /* eslint-disable i18next/no-literal-string */
 import { Team } from '../../../interfaces/Team';
-import { TeamDetails } from './TeamDetails';
+import { TeamDetailsInner as TeamDetails } from './TeamDetails';
 
 describe('TeamDetails', () => {
   it('Component renders and displays team', () => {

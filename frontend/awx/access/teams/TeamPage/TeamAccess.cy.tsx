@@ -1,6 +1,6 @@
 import { Team } from '../../../interfaces/Team';
 import { User } from '../../../interfaces/User';
-import { TeamAccess } from './TeamAccess';
+import { TeamAccessInner as TeamAccess } from './TeamAccess';
 
 describe('TeamAccess', () => {
   beforeEach(() => {
