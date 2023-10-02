@@ -11,8 +11,6 @@ describe('jobs', () => {
   let jobList: UnifiedJobList;
 
   beforeEach(() => {
-    cy.clearCookies();
-    cy.clearAllSessionStorage();
     cy.awxLogin();
 
     cy.createAwxOrganization().then((o) => {

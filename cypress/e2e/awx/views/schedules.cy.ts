@@ -6,8 +6,6 @@ describe('schedules', () => {
   let schedule: Schedule;
 
   beforeEach(() => {
-    cy.clearCookies();
-    cy.clearAllSessionStorage();
     cy.awxLogin();
     cy.createAWXSchedule().then((sched: Schedule) => (schedule = sched));
   });

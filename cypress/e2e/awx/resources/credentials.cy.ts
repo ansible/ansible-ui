@@ -10,8 +10,6 @@ describe('credentials', () => {
   let credential: Credential;
 
   beforeEach(() => {
-    cy.clearCookies();
-    cy.clearAllSessionStorage();
     cy.awxLogin();
 
     cy.createAwxOrganization().then((testOrg) => (organization = testOrg));

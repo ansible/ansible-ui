@@ -11,8 +11,6 @@ describe('projects', () => {
   let project: Project;
 
   beforeEach(() => {
-    cy.clearCookies();
-    cy.clearAllSessionStorage();
     cy.awxLogin();
     cy.createAwxOrganization().then((org) => {
       organization = org;
