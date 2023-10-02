@@ -61,6 +61,9 @@ export function useProjectActions(view: IEdaView<EdaProject>) {
           pageNavigate(EdaRoute.EditProject, { params: { id: project.id } }),
       },
       {
+        type: PageActionType.Seperator,
+      },
+      {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: TrashIcon,
