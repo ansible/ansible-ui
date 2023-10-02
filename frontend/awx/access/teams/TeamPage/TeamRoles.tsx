@@ -1,22 +1,31 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { ButtonVariant } from '@patternfly/react-core';
 import { PlusIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   PageTable,
   usePageNavigate,
+  useGetPageUrl,
 } from '../../../../../framework';
+import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
 import { Role } from '../../../interfaces/Role';
 import { Team } from '../../../interfaces/Team';
 import { useAwxView } from '../../../useAwxView';
 import { useRolesColumns, useRolesFilters } from '../../roles/Roles';
 
-export function TeamRoles(props: { team: Team }) {
+export function TeamRoles() {
+  const params = useParams<{ id: string }>();
+  const { data: team } = useGetItem<Team>('/api/v2/teams', params.id);
+
+  return team ? <TeamRolesInner team={team} /> : null;
+}
+
+export function TeamRolesInner(props: { team: Team }) {
   const { team } = props;
   const { t } = useTranslation();
   const toolbarFilters = useRolesFilters();
@@ -28,16 +37,17 @@ export function TeamRoles(props: { team: Team }) {
     tableColumns,
     disableQueryString: true,
   });
+  const getPageUrl = useGetPageUrl();
   const toolbarActions = useMemo<IPageAction<Role>[]>(
     () => [
       {
-        type: PageActionType.Button,
+        type: PageActionType.Link,
         selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
         isPinned: true,
         icon: PlusIcon,
         label: t('Add role to team'),
-        onClick: () => pageNavigate(AwxRoute.AddRolesToTeam, { params: { id: team.id } }),
+        href: getPageUrl(AwxRoute.AddRolesToTeam, { params: { id: team.id } }),
       },
       { type: PageActionType.Seperator },
       {
@@ -49,7 +59,7 @@ export function TeamRoles(props: { team: Team }) {
         isDanger: true,
       },
     ],
-    [pageNavigate, t, team.id]
+    [t, team.id, getPageUrl]
   );
   const rowActions = useMemo<IPageAction<Role>[]>(
     () => [

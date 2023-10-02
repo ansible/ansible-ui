@@ -119,6 +119,9 @@ export enum AwxRoute {
   CreateTeam = 'awx-create-team',
   EditTeam = 'awx-edit-team',
   TeamPage = 'awx-team-page',
+  TeamDetails = 'awx-team-details',
+  TeamAccess = 'awx-team-access',
+  TeamRoles = 'awx-team-roles',
   AddRolesToTeam = 'awx-add-roles-to-team',
 
   Users = 'awx-users',
