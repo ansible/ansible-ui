@@ -2,6 +2,7 @@
 /// <reference types="cypress" />
 
 import { randomString } from '../../../../framework/utils/random-string';
+import { AwxItemsResponse } from '../../../../frontend/awx/common/AwxItemsResponse';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
 
@@ -15,7 +16,25 @@ describe('projects', () => {
       organization = org;
       cy.createAwxProject({ organization: organization.id }).then((proj) => {
         project = proj;
-        cy.waitForProjectToFinishSyncing(proj.id);
+      });
+    });
+  });
+
+  after(() => {
+    cy.deleteAwxOrganization(organization, { failOnStatusCode: false }).then(() => {
+      /**
+       * Deleting the organization does not delete the underlying projects.
+       * So get all projects without an organization and delete them. Multiple test runs
+       * could be running, so only delete projects without an organization as those are not being used.
+       * This also cleans up projects that were syncing and could not be deleted by other runs,
+       * making a self cleaning E2E system for the live server.
+       */
+      cy.requestGet<AwxItemsResponse<Project>>(
+        `/api/v2/projects/?page_size=100&organization=null`
+      ).then((itemsResponse) => {
+        for (const project of itemsResponse.results) {
+          cy.requestDelete(`/api/v2/projects/${project.id}/`, { failOnStatusCode: false });
+        }
       });
     });
   });
