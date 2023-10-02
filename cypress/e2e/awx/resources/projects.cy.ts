@@ -112,6 +112,7 @@ describe('projects', () => {
       cy.verifyPageTitle(testProject.name);
       cy.clickPageAction(/^Copy project$/);
       cy.hasAlert(`${testProject.name} copied`).should('be.visible');
+      cy.waitForProjectToFinishSyncing(testProject.id);
       cy.deleteAwxProject(testProject);
     });
   });
@@ -124,6 +125,7 @@ describe('projects', () => {
       cy.intercept(`api/v2/projects/${project.id}/update/`).as('projectUpdateRequest');
       cy.clickButton(/^Sync project$/);
       cy.wait('@projectUpdateRequest');
+      cy.waitForProjectToFinishSyncing(project.id);
       cy.deleteAwxProject(project);
     });
   });
@@ -139,6 +141,7 @@ describe('projects', () => {
           cy.get('#sync-project').click();
         });
       cy.hasAlert(`Syncing ${project.name}`).should('be.visible');
+      cy.waitForProjectToFinishSyncing(project.id);
       cy.deleteAwxProject(project);
     });
   });
@@ -179,6 +182,7 @@ describe('projects', () => {
       cy.navigateTo('awx', 'projects');
       cy.clickTableRowKebabAction(testProject.name, /^Copy project$/);
       cy.getTableRowByText(`${testProject.name} @`).should('be.visible');
+      cy.waitForProjectToFinishSyncing(testProject.id);
       cy.deleteAwxProject(testProject);
     });
   });
@@ -190,6 +194,7 @@ describe('projects', () => {
     }).then((testProject) => {
       cy.navigateTo('awx', 'projects');
       cy.clickTableRowKebabAction(testProject.name, /^Delete project$/);
+      cy.waitForProjectToFinishSyncing(testProject.id);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete project/);
       cy.contains(/^Success$/);
@@ -207,6 +212,7 @@ describe('projects', () => {
       cy.navigateTo('awx', 'projects');
       cy.selectTableRow(testProject.name);
       cy.clickToolbarKebabAction(/^Delete selected projects$/);
+      cy.waitForProjectToFinishSyncing(testProject.id);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete project/);
       cy.contains(/^Success$/);
@@ -225,6 +231,7 @@ describe('projects', () => {
       cy.clickTableRow(testProject.name);
       cy.verifyPageTitle(testProject.name);
       cy.clickPageAction(/^Delete project/);
+      cy.waitForProjectToFinishSyncing(testProject.id);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete project/);
       cy.getTableRowByText(testProject.name).should('not.exist');

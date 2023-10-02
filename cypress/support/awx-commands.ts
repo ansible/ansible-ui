@@ -439,13 +439,31 @@ Cypress.Commands.add(
       ...project,
     }).then((project) => {
       if (!skipSync) {
-        waitForProjectToFinishSyncing(project.id);
+        cy.waitForProjectToFinishSyncing(project.id);
       } else {
         cy.wrap(project);
       }
     });
   }
 );
+
+Cypress.Commands.add('waitForProjectToFinishSyncing', (projectId: number) => {
+  let requestCount = 1;
+  cy.awxRequestGet<Project>(`/api/v2/projects/${projectId}`).then((project) => {
+    // Assuming that projects could take up to 5 min to sync if the instance is under load with other jobs
+    if (project.status === 'successful' || requestCount > 300) {
+      if (requestCount > 300) {
+        cy.log('Reached maximum number of requests for reading project status');
+      }
+      // Reset request count
+      requestCount = 1;
+      return;
+    }
+    requestCount++;
+    cy.wait(1000);
+    cy.waitForProjectToFinishSyncing(projectId);
+  });
+});
 
 Cypress.Commands.add(
   'createAwxExecutionEnvironment',
@@ -674,26 +692,6 @@ Cypress.Commands.add(
     }
   }
 );
-
-let requestCount = 1;
-
-// Polling to wait till a project is synced
-function waitForProjectToFinishSyncing(projectId: number) {
-  cy.awxRequestGet<Project>(`/api/v2/projects/${projectId}`).then((project) => {
-    // Assuming that projects could take up to 5 min to sync if the instance is under load with other jobs
-    if (project.status === 'successful' || requestCount > 300) {
-      if (requestCount > 300) {
-        cy.log('Reached maximum number of requests for reading project status');
-      }
-      // Reset request count
-      requestCount = 1;
-      return;
-    }
-    requestCount++;
-    cy.wait(1000);
-    waitForProjectToFinishSyncing(projectId);
-  });
-}
 
 Cypress.Commands.add(
   'createInventoryHostGroup',
