@@ -167,7 +167,9 @@ export function useAnalyticsReportBuilderView<T extends object>({
     }
 
     if (!disableLoading) {
-      fetchData();
+      void (async () => {
+        await fetchData();
+      })();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [changed, disableLoading]);

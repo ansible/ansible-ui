@@ -206,7 +206,7 @@ export function AnalyticsReportBuilder(props: AnalyticsReportBuilderProps) {
       return;
     }
 
-    (async () => {
+    void (async () => {
       await readData();
     })();
   });
@@ -215,7 +215,9 @@ export function AnalyticsReportBuilder(props: AnalyticsReportBuilderProps) {
 
   if (granularityParam !== granularity) {
     setGranularity(granularityParam);
-    readOptions(mainData);
+    void (async () => {
+      await readOptions(mainData);
+    })();
   }
 
   const sortableColumns = getAvailableSortingKeys(parameters);
