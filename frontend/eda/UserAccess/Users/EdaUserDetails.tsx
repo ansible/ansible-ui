@@ -126,6 +126,9 @@ export function EdaUserDetailsInternal({
         onClick: () => pageNavigate(EdaRoute.EditCurrentUser),
       },
       {
+        type: PageActionType.Seperator,
+      },
+      {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: TrashIcon,

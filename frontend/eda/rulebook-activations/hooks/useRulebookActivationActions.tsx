@@ -50,6 +50,9 @@ export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivatio
         onClick: (activation: EdaRulebookActivation) => restartActivations([activation]),
       },
       {
+        type: PageActionType.Seperator,
+      },
+      {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: TrashIcon,

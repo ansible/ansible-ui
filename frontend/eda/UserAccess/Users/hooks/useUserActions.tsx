@@ -32,6 +32,9 @@ export function useUserActions(view: IEdaView<EdaUser>) {
         onClick: (user: EdaUser) => pageNavigate(EdaRoute.EditUser, { params: { id: user.id } }),
       },
       {
+        type: PageActionType.Seperator,
+      },
+      {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: TrashIcon,

@@ -80,6 +80,9 @@ export function DecisionEnvironmentDetails() {
           }),
       },
       {
+        type: PageActionType.Seperator,
+      },
+      {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: TrashIcon,
