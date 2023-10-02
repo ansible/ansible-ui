@@ -15,6 +15,7 @@ describe('projects', () => {
       organization = org;
       cy.createAwxProject({ organization: organization.id }).then((proj) => {
         project = proj;
+        cy.waitForProjectToFinishSyncing(proj.id);
       });
     });
   });
