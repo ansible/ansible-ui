@@ -25,7 +25,6 @@ Cypress.Commands.add('login', (server: string, username: string, password: strin
 
 Cypress.Commands.add('awxLogin', () => {
   cy.requiredVariablesAreSet(['AWX_SERVER', 'AWX_USERNAME', 'AWX_PASSWORD']);
-  cy.reload();
   cy.session(
     'AWX',
     () => {
