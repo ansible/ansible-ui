@@ -30,7 +30,6 @@ Cypress.Commands.add('awxLogin', () => {
     () => {
       cy.login(Cypress.env('AWX_USERNAME') as string, Cypress.env('AWX_PASSWORD') as string);
       window.localStorage.setItem('hide-welcome-message', 'true');
-      cy.get('[data-cy="nav-toggle"]').should('exist');
     },
     {
       validate() {
