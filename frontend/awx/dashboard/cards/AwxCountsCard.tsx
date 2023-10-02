@@ -17,7 +17,7 @@ export function AwxCountsCard(props: { data: IAwxDashboardData }) {
           title: t('Hosts'),
           to: getPageUrl(AwxRoute.Hosts),
           counts:
-            data?.hosts.total ?? 0
+            data?.hosts?.total ?? 0
               ? [
                   {
                     label: t('Ready'),

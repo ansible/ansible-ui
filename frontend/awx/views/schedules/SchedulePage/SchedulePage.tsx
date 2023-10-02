@@ -1,37 +1,22 @@
 import { DropdownPosition } from '@patternfly/react-core';
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { PageActions, PageHeader, PageLayout } from '../../../../../framework';
 import { useGetPageUrl } from '../../../../../framework/PageNavigation/useGetPageUrl';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
-import { PageBackTab, RoutedTab, RoutedTabs } from '../../../../common/RoutedTabs';
-import { RouteObj } from '../../../../common/Routes';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
 import { AwxError } from '../../../common/AwxError';
 import { Schedule } from '../../../interfaces/Schedule';
-import {
-  resourceSchedulePageRoutes,
-  scheduleDetailRoutes,
-  scheduleResourceTypeOptions,
-  schedulesListRoutes,
-} from '../hooks/scheduleHelpers';
 import { useSchedulesActions } from '../hooks/useSchedulesActions';
-import { ScheduleDetails } from './ScheduleDetails';
-import { ScheduleRules } from './ScheduleRules';
+import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 
-const rulesListRoutes: { [key: string]: string } = {
-  inventory: RouteObj.InventorySourceScheduleRules,
-  job_template: RouteObj.JobTemplateScheduleRules,
-  workflow_job_template: RouteObj.WorkflowJobTemplateScheduleRules,
-  projects: RouteObj.ProjectScheduleRules,
-};
-
-export function SchedulePage() {
+export function SchedulePage(props: {
+  tabs: { label: string; page: string }[];
+  backTab: { label: string; page: string; persistentFilterKey: string };
+}) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
-  const location = useLocation();
   const params = useParams<{ id: string; source_id?: string; schedule_id: string }>();
   const {
     error,
@@ -40,25 +25,9 @@ export function SchedulePage() {
   } = useGetItem<Schedule>('/api/v2/schedules', params.schedule_id);
   const navigate = useNavigate();
 
-  const resource_type = scheduleResourceTypeOptions.find((route) =>
-    location.pathname.split('/').includes(route)
-  );
-
   const itemActions = useSchedulesActions({
     onScheduleToggleorDeleteCompleted: () => navigate(getPageUrl(AwxRoute.Schedules)),
   });
-  const generateBackToSchedulesUrl: string = useMemo(() => {
-    if (!resource_type || !schedule) return getPageUrl(AwxRoute.Schedules);
-    if (resource_type === 'inventory' && schedule?.summary_fields.inventory) {
-      return RouteObj.InventorySourceSchedules.replace(':inventory_type', resource_type as string)
-        .replace(':id', schedule.summary_fields.inventory.id.toString())
-        .replace(':source_id', schedule.summary_fields.unified_job_template.id.toString());
-    }
-    return schedulesListRoutes[resource_type].replace(
-      ':id',
-      schedule.summary_fields?.unified_job_template.id.toString()
-    );
-  }, [getPageUrl, resource_type, schedule]);
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!schedule) return <LoadingPage breadcrumbs tabs />;
@@ -78,30 +47,12 @@ export function SchedulePage() {
           />
         }
       />
-      <RoutedTabs
-        isLoading={!schedule}
-        baseUrl={
-          resource_type ? resourceSchedulePageRoutes[resource_type] : RouteObj.ScheduleDetails
-        }
-      >
-        <PageBackTab
-          label={t('Back to Schedules')}
-          url={generateBackToSchedulesUrl}
-          persistentFilterKey={resource_type ? `${resource_type}-schedules` : 'schedules'}
-        />
-        <RoutedTab
-          label={t('Details')}
-          url={resource_type ? scheduleDetailRoutes[resource_type] : getPageUrl(AwxRoute.Schedules)}
-        >
-          <ScheduleDetails schedule={schedule} />
-        </RoutedTab>
-        <RoutedTab
-          label={t(`Rules`)}
-          url={resource_type ? rulesListRoutes[resource_type] : getPageUrl(AwxRoute.Schedules)}
-        >
-          <ScheduleRules rrule={schedule.rrule} />
-        </RoutedTab>
-      </RoutedTabs>
+
+      <PageRoutedTabs
+        backTab={props.backTab}
+        tabs={props.tabs}
+        params={{ id: schedule.summary_fields.unified_job_template.id, schedule_id: schedule.id }}
+      />
     </PageLayout>
   );
 }
