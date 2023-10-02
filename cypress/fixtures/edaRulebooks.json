@@ -1,0 +1,99 @@
+{
+  "count": 12,
+  "next": "/api/eda/v1/rulebooks/?page=2&page_size=10",
+  "previous": null,
+  "page_size": 10,
+  "page": 1,
+  "results": [
+    {
+      "id": 1,
+      "name": "basic_short.yml",
+      "description": "",
+      "rulesets": "---\n# Basic rulebook with job template,\n# to be used with https://github.com/Alex-Izquierdo/eda-awx-project-sample\n- name: Basic short\n  hosts: all\n  sources:\n    - ansible.eda.range:\n        limit: 10\n        delay: 0.5\n  rules:\n    - name: Run JT at 8\n      condition: event.i == 8\n      actions:\n        - run_job_template:\n            organization: Default\n            name: run_basic\n            job_args:\n              extra_vars:\n                fake_execution_time: '5'\n\n        - debug:\n            msg: 'Basic short rulebook, event {{ event.i }}'\n",
+      "project_id": 1,
+      "created_at": "2023-09-22T14:48:04.477246Z",
+      "modified_at": "2023-09-22T14:48:04.477262Z"
+    },
+    {
+      "id": 2,
+      "name": "fail.yml",
+      "description": "",
+      "rulesets": "---\n- name: Execute a JT that will always fail\n  hosts: all\n  sources:\n    - ansible.eda.range:\n        limit: 10\n        delay: 0.5\n  rules:\n    - name: Run JT at 8\n      condition: event.i == 8\n      action:\n        run_job_template:\n          organization: Default\n          name: fail_basic\n",
+      "project_id": 1,
+      "created_at": "2023-09-22T14:48:04.483584Z",
+      "modified_at": "2023-09-22T14:48:04.483595Z"
+    },
+    {
+      "id": 3,
+      "name": "hello_echo.yml",
+      "description": "",
+      "rulesets": "---\n- name: Hello World\n  hosts: all\n  sources:\n    - ansible.eda.range:\n        limit: 5\n  rules:\n    - name: Say Hello\n      condition: event.i == 1\n      action:\n        debug:\n          msg: 'Hello World!'\n",
+      "project_id": 1,
+      "created_at": "2023-09-22T14:48:04.487573Z",
+      "modified_at": "2023-09-22T14:48:04.487581Z"
+    },
+    {
+      "id": 4,
+      "name": "hello_echo_with_var.yml",
+      "description": "",
+      "rulesets": "---\n- name: Hello with var\n  hosts: all\n  sources:\n    - ansible.eda.range:\n        limit: 5\n  rules:\n    - name: Say Hello\n      condition: event.i == 1\n      action:\n        debug:\n          msg: 'Hello {{ my_msg }}'\n",
+      "project_id": 1,
+      "created_at": "2023-09-22T14:48:04.491226Z",
+      "modified_at": "2023-09-22T14:48:04.491233Z"
+    },
+    {
+      "id": 5,
+      "name": "multi_action_delayed.yml",
+      "description": "",
+      "rulesets": "- name: Multi action with delay\n  hosts: all\n  sources:\n    - ansible.eda.range:\n        limit: 15\n        delay: 1\n\n  rules:\n    - name: Greetings with delay\n      condition: event.i == 1\n      actions:\n        - debug:\n            msg: 'Good morning'\n        - run_job_template:\n            organization: Default\n            name: run_basic\n            job_args:\n              extra_vars:\n                fake_execution_time: '3'\n        - debug:\n            msg: 'Good night'\n        - run_job_template:\n            organization: Default\n            name: run_basic\n            job_args:\n              extra_vars:\n                fake_execution_time: '2'\n",
+      "project_id": 1,
+      "created_at": "2023-09-22T14:48:04.495862Z",
+      "modified_at": "2023-09-22T14:48:04.495870Z"
+    },
+    {
+      "id": 6,
+      "name": "multi_ruleset.yml",
+      "description": "",
+      "rulesets": "---\n- name: My first ruleset\n  hosts: all\n  sources:\n    - ansible.eda.range:\n        limit: 5\n  rules:\n    - name: Say Hello from ruleset 1\n      condition: event.i == 1\n      action:\n        debug:\n          msg: 'Hello from ruleset 1'\n\n- name: My second ruleset\n  hosts: all\n  sources:\n    - ansible.eda.range:\n        limit: 5\n  rules:\n    - name: Say Hello from ruleset 2\n      condition: event.i == 4\n      action:\n        debug:\n          msg: 'Hello from ruleset 2'\n",
+      "project_id": 1,
+      "created_at": "2023-09-22T14:48:04.500216Z",
+      "modified_at": "2023-09-22T14:48:04.500223Z"
+    },
+    {
+      "id": 7,
+      "name": "range_long_running.yml",
+      "description": "",
+      "rulesets": "---\n- name: Long Running Range\n  hosts: all\n  sources:\n    - ansible.eda.range:\n        limit: 2592000 # 30 days\n        delay: 1\n  rules:\n    - name: Say Hello long running\n      condition: >\n        event.i == 5\n        or event.i == 30\n        or event.i == 90\n        or event.i == 300\n        or event.i == 3600\n        or event.i == 9000\n        or event.i == 86400\n        or event.i == 2591999\n      action:\n        debug:\n          msg: 'Hello World!, event.i = {{ event.i }}'\n",
+      "project_id": 1,
+      "created_at": "2023-09-22T14:48:04.504567Z",
+      "modified_at": "2023-09-22T14:48:04.504582Z"
+    },
+    {
+      "id": 8,
+      "name": "webhook_defaults.yml",
+      "description": "",
+      "rulesets": "---\n- name: Run a webhook listener service\n  hosts: all\n  sources:\n    - ansible.eda.webhook:\n  rules:\n    - name: Webhook event\n      condition: event.payload.ping == \"pong\"\n      action:\n        debug:\n          msg: 'Webhook triggered!'\n\n    - name: Shutdown\n      condition: event.payload.shutdown is defined\n      action:\n        shutdown:\n",
+      "project_id": 1,
+      "created_at": "2023-09-22T14:48:04.508394Z",
+      "modified_at": "2023-09-22T14:48:04.508407Z"
+    },
+    {
+      "id": 9,
+      "name": "webhook_port.yml",
+      "description": "",
+      "rulesets": "---\n- name: Run a webhook listener service\n  hosts: all\n  sources:\n    - ansible.eda.webhook:\n        port: 5000\n  rules:\n    - name: Webhook event\n      condition: event.payload.ping == \"pong\"\n      action:\n        debug:\n          msg: 'Webhook triggered!'\n\n    - name: Shutdown\n      condition: event.payload.shutdown is defined\n      action:\n        shutdown:\n",
+      "project_id": 1,
+      "created_at": "2023-09-22T14:48:04.512389Z",
+      "modified_at": "2023-09-22T14:48:04.512396Z"
+    },
+    {
+      "id": 10,
+      "name": "webhook_defaults.yml",
+      "description": "",
+      "rulesets": "---\n- name: Run a webhook listener service\n  hosts: all\n  sources:\n    - ansible.eda.webhook:\n  rules:\n    - name: Webhook event\n      condition: event.payload.ping == \"pong\"\n      action:\n        debug:\n          msg: 'Webhook triggered!'\n\n    - name: Shutdown\n      condition: event.payload.shutdown is defined\n      action:\n        shutdown:\n",
+      "project_id": 1,
+      "created_at": "2023-09-22T14:48:04.508394Z",
+      "modified_at": "2023-09-22T14:48:04.508407Z"
+    }
+  ]
+}
