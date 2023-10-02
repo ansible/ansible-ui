@@ -43,7 +43,7 @@ describe('projects', () => {
     cy.navigateTo('awx', 'projects');
     cy.verifyPageTitle('Projects');
   });
-  it('create project', () => {
+  it('create project and then delete project from project details page', () => {
     const projectName = 'E2E Project ' + randomString(4);
     cy.navigateTo('awx', 'projects');
     cy.clickLink(/^Create project$/);
@@ -127,21 +127,7 @@ describe('projects', () => {
       cy.requestDelete(`/api/v2/projects/${testProject.id}/`, { failOnStatusCode: false });
     });
   });
-  it('can delete project from project details page', () => {
-    cy.requestPost<Project>('/api/v2/projects/', {
-      name: 'E2E Project ' + randomString(4),
-      organization: organization.id,
-    }).then((testProject) => {
-      cy.navigateTo('awx', 'projects');
-      cy.clickTableRow(testProject.name);
-      cy.verifyPageTitle(testProject.name);
-      cy.clickPageAction(/^Delete project/);
-      cy.get('#confirm').click();
-      cy.clickButton(/^Delete project/);
-      cy.getTableRowByText(testProject.name).should('not.exist');
-      cy.verifyPageTitle('Projects');
-    });
-  });
+
   it('can sync project from project details page', () => {
     cy.createAwxProject().then((project) => {
       cy.navigateTo('awx', 'projects');
@@ -157,6 +143,7 @@ describe('projects', () => {
     cy.createAwxProject().then((project) => {
       cy.navigateTo('awx', 'projects');
       cy.filterTableByText(project.name);
+      cy.intercept(`api/v2/projects/${project.id}/update/`).as('projectUpdateRequest');
       cy.contains('td', project.name)
         .parent()
         .within(() => {

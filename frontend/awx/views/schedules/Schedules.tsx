@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 import { Schedule } from '../../interfaces/Schedule';
 import { useAwxView } from '../../useAwxView';
@@ -16,11 +16,16 @@ import { usePersistentFilters } from '../../../common/PersistentFilters';
 export function Schedules(props: { sublistEndpoint?: string }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const params = useParams<{ id: string }>();
   const location = useLocation();
   const toolbarFilters = useSchedulesFilter();
   const tableColumns = useSchedulesColumns();
+  const apiEndPoint: string | undefined = props.sublistEndpoint
+    ? `${props.sublistEndpoint}/${params.id}/schedules/`
+    : undefined;
+
   const view = useAwxView<Schedule>({
-    url: props.sublistEndpoint ?? '/api/v2/schedules/',
+    url: apiEndPoint ?? '/api/v2/schedules/',
     toolbarFilters,
     tableColumns,
   });
@@ -31,17 +36,14 @@ export function Schedules(props: { sublistEndpoint?: string }) {
   usePersistentFilters(resource_type ? `${resource_type}-schedules` : 'schedules');
 
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(
-    props.sublistEndpoint ?? '/api/v2/schedules/'
+    apiEndPoint ?? '/api/v2/schedules/'
   );
   const canCreateSchedule = Boolean(data && data.actions && data.actions['POST']);
-  const createUrl = useGetSchedulCreateUrl(props?.sublistEndpoint);
-  const toolbarActions = useScheduleToolbarActions(
-    view.unselectItemsAndRefresh,
-    props?.sublistEndpoint
-  );
+  const createUrl = useGetSchedulCreateUrl(apiEndPoint);
+  const toolbarActions = useScheduleToolbarActions(view.unselectItemsAndRefresh, apiEndPoint);
   const rowActions = useSchedulesActions({
     onScheduleToggleorDeleteCompleted: () => void view.refresh(),
-    sublistEndpoint: props?.sublistEndpoint,
+    sublistEndpoint: apiEndPoint,
   });
   return (
     <PageLayout>
