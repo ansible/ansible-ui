@@ -9,11 +9,8 @@ describe('Users List Actions', () => {
   let organization: Organization;
   let user: User;
 
-  before(() => {
-    cy.awxLogin();
-  });
-
   beforeEach(() => {
+    cy.awxLogin();
     cy.createAwxOrganization().then((org) => {
       organization = org;
       cy.createAwxUser(organization).then((testUser) => {
@@ -80,11 +77,8 @@ describe('Users Delete Actions', () => {
   let organization: Organization;
   let user: User;
 
-  before(() => {
-    cy.awxLogin();
-  });
-
   beforeEach(() => {
+    cy.awxLogin();
     cy.createAwxOrganization().then((org) => {
       organization = org;
       cy.createAwxUser(organization).then((testUser) => {
