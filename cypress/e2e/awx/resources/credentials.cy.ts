@@ -5,7 +5,7 @@ import { randomString } from '../../../../framework/utils/random-string';
 import { Credential } from '../../../../frontend/awx/interfaces/Credential';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 
-describe('credentials', () => {
+describe('Credentials', () => {
   let organization: Organization;
   let credential: Credential;
 
