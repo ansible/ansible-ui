@@ -202,10 +202,14 @@ export function AnalyticsReportBuilder(props: AnalyticsReportBuilderProps) {
   }
 
   useEffect(() => {
+    if (mainData) {
+      return;
+    }
+
     (async () => {
       await readData();
     })();
-  }, []);
+  });
 
   const [granularity, setGranularity] = useState<string>(granularityParam || '');
 

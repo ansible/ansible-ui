@@ -152,20 +152,20 @@ export function useAnalyticsReportBuilderView<T extends object>({
 
   url += queryString;
 
-  async function fetchData() {
-    try {
-      const data = await postRequest(url, postData);
-      setData(data);
-    } catch (error) {
-      setError(error);
-    }
-  }
-
   // we cant only run fetch when url changes, but also when something in postData changes
   const postDataJson = JSON.stringify(postData);
   const changed = url + postDataJson;
 
   useEffect(() => {
+    async function fetchData() {
+      try {
+        const data = await postRequest(url, postData);
+        setData(data);
+      } catch (error) {
+        setError(error);
+      }
+    }
+
     if (!disableLoading) {
       fetchData();
     }
