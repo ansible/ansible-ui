@@ -12,9 +12,11 @@ describe('teams', () => {
   let user1: User;
   let user2: User;
 
-  beforeEach(() => {
+  before(() => {
     cy.awxLogin();
+  });
 
+  beforeEach(() => {
     cy.createAwxOrganization().then((org) => {
       organization = org;
       cy.createAwxTeam(organization).then((createdTeam) => {

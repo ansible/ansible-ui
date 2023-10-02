@@ -11,9 +11,11 @@ describe('inventories', () => {
   let instanceGroup: InstanceGroup;
   let label: Label;
 
-  beforeEach(() => {
+  before(() => {
     cy.awxLogin();
+  });
 
+  beforeEach(() => {
     cy.createAwxOrganization().then((org) => {
       organization = org;
       cy.createAwxLabel({ organization: organization.id }).then((lbl) => {

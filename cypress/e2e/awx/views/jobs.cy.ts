@@ -10,9 +10,11 @@ describe('jobs', () => {
   let jobTemplate: JobTemplate;
   let jobList: UnifiedJobList;
 
-  beforeEach(() => {
+  before(() => {
     cy.awxLogin();
+  });
 
+  beforeEach(() => {
     cy.createAwxOrganization().then((o) => {
       organization = o;
       cy.createAwxProject({ organization: organization.id }).then((project) => {
@@ -38,7 +40,6 @@ describe('jobs', () => {
   });
 
   after(() => {
-    // Delete launched job
     const jobId = jobList?.id ? jobList?.id.toString() : '';
     cy.awxRequestDelete(`/api/v2/jobs/${jobId}/`, { failOnStatusCode: false });
     cy.deleteAwxOrganization(organization);

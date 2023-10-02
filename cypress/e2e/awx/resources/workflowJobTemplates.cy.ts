@@ -9,9 +9,11 @@ describe.skip('Workflow Job templates form', () => {
   let inventory: Inventory;
   let label: Label;
 
-  beforeEach(() => {
+  before(() => {
     cy.awxLogin();
+  });
 
+  beforeEach(() => {
     cy.createAwxOrganization().then((o) => {
       organization = o;
       cy.createAwxInventory({ organization: organization.id }).then((i) => {

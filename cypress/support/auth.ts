@@ -20,7 +20,7 @@ Cypress.Commands.add('login', (username: string, password: string) => {
   });
   cy.get('[data-cy="username"]').type(username, { delay: 100 });
   cy.get('[data-cy="password"]').type(password);
-  cy.get('button[type=submit]').click();
+  cy.get('[data-cy="Submit"]').click();
 });
 
 Cypress.Commands.add('awxLogin', () => {

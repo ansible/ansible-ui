@@ -10,8 +10,11 @@ describe('projects', () => {
   let organization: Organization;
   let project: Project;
 
-  beforeEach(() => {
+  before(() => {
     cy.awxLogin();
+  });
+
+  beforeEach(() => {
     cy.createAwxOrganization().then((org) => {
       organization = org;
       cy.createAwxProject({ organization: organization.id }).then((proj) => {
@@ -62,6 +65,7 @@ describe('projects', () => {
     cy.clickButton(/^Delete project/);
     cy.verifyPageTitle('Projects');
   });
+
   it('can edit a project from the project details tab', () => {
     cy.navigateTo('awx', 'projects');
     cy.clickTableRow(project.name);
@@ -74,6 +78,7 @@ describe('projects', () => {
     cy.verifyPageTitle(`${project.name} - edited`);
     cy.hasDetail(/^Source control branch$/, 'foobar');
   });
+
   it('can edit a project from the project list row action', () => {
     cy.navigateTo('awx', 'projects');
     cy.clickTableRowActionIcon(project.name, 'Edit project');
@@ -81,6 +86,7 @@ describe('projects', () => {
     cy.clickButton(/^Cancel$/);
     cy.verifyPageTitle('Projects');
   });
+
   it('can navigate to project details tab', () => {
     cy.navigateTo('awx', 'projects');
     cy.clickTableRow(project.name);
@@ -88,30 +94,35 @@ describe('projects', () => {
     cy.clickLink(/^Details$/);
     cy.get('#name').should('contain', project.name);
   });
+
   it('can navigate to project access tab', () => {
     cy.navigateTo('awx', 'projects');
     cy.clickTableRow(project.name);
     cy.verifyPageTitle(project.name);
     cy.clickTab(/^Access$/, true);
   });
+
   it('can navigate to project job templates tab', () => {
     cy.navigateTo('awx', 'projects');
     cy.clickTableRow(project.name);
     cy.verifyPageTitle(project.name);
     cy.clickTab(/^Job templates$/, true);
   });
+
   it('can navigate to project notifications tab', () => {
     cy.navigateTo('awx', 'projects');
     cy.clickTableRow(project.name);
     cy.verifyPageTitle(project.name);
     cy.clickTab(/^Notifications$/, true);
   });
+
   it('can navigate to project schedules tab', () => {
     cy.navigateTo('awx', 'projects');
     cy.clickTableRow(project.name);
     cy.verifyPageTitle(project.name);
     cy.clickTab(/^Schedules$/, true);
   });
+
   it('can copy project from project details page', () => {
     cy.requestPost<Project>('/api/v2/projects/', {
       name: 'E2E Project ' + randomString(4),
@@ -128,6 +139,22 @@ describe('projects', () => {
     });
   });
 
+  it('can delete project from project details page', () => {
+    cy.requestPost<Project>('/api/v2/projects/', {
+      name: 'E2E Project ' + randomString(4),
+      organization: organization.id,
+    }).then((testProject) => {
+      cy.navigateTo('awx', 'projects');
+      cy.clickTableRow(testProject.name);
+      cy.verifyPageTitle(testProject.name);
+      cy.clickPageAction(/^Delete project/);
+      cy.get('#confirm').click();
+      cy.clickButton(/^Delete project/);
+      cy.getTableRowByText(testProject.name).should('not.exist');
+      cy.verifyPageTitle('Projects');
+    });
+  });
+
   it('can sync project from project details page', () => {
     cy.createAwxProject().then((project) => {
       cy.navigateTo('awx', 'projects');
@@ -139,6 +166,7 @@ describe('projects', () => {
       cy.deleteAwxProject(project);
     });
   });
+
   it('can sync project from projects list table row kebab menu', () => {
     cy.createAwxProject().then((project) => {
       cy.navigateTo('awx', 'projects');
