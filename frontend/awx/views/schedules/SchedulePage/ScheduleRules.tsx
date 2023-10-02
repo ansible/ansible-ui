@@ -1,8 +1,9 @@
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   IPageAction,
   ITableColumn,
+  LoadingPage,
   PageActionSelection,
   PageActionType,
   PageHeader,
@@ -13,15 +14,21 @@ import { useGetCreateRuleRoute } from '../hooks/scheduleHelpers';
 import { useMemo } from 'react';
 import { ButtonVariant } from '@patternfly/react-core';
 import { EditIcon, PlusIcon } from '@patternfly/react-icons';
+import { useGetItem } from '../../../../common/crud/useGet';
+import { Schedule } from '../../../interfaces/Schedule';
+import { AwxError } from '../../../common/AwxError';
 
-export function ScheduleRules(props: { rrule: string }) {
+export function ScheduleRules() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-
+  const params = useParams<{ id: string; schedule_id: string; source_id?: string }>();
+  const {
+    data: schedule,
+    error,
+    refresh,
+  } = useGetItem<Schedule>('/api/v2/schedules/', params.schedule_id);
   const createUrl: string = useGetCreateRuleRoute();
-  const [_dtstart, ...rules] = props.rrule.split(' ');
 
-  const mappedRRules = rules.map((rule) => ({ rrule: rule }));
   const rowActions = useMemo<IPageAction<{ rrule: string }>[]>(
     () => [
       {
@@ -57,13 +64,19 @@ export function ScheduleRules(props: { rrule: string }) {
     }),
     []
   );
+
+  if (error) return <AwxError error={error} handleRefresh={refresh} />;
+  if (!schedule) return <LoadingPage breadcrumbs tabs />;
+
+  const [_dtstart, ...rules] = schedule.rrule.split(' ');
+  const mappedRRules = rules.map((rule) => ({ rrule: rule }));
+
   const view = {
     pageItems: mappedRRules,
     keyFn: (item: { rrule: string }) => item.rrule,
     tableColumns: [columns],
     itemCount: mappedRRules.length,
   };
-
   return (
     <PageLayout>
       <PageHeader

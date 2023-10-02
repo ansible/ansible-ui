@@ -8,6 +8,7 @@ import {
   PageHeader,
   PageLayout,
   useGetPageUrl,
+  usePageNavigate,
 } from '../../../../framework';
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
 import { RouteObj } from '../../../common/Routes';
@@ -30,7 +31,7 @@ import JobTemplateInputs from './JobTemplateInputs';
 
 export function EditJobTemplate() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
   const {
@@ -76,7 +77,7 @@ export function EditJobTemplate() {
       promises.push(submitCredentials(jobTemplate as JobTemplate, credentials));
       promises.push(submitLabels(jobTemplate as JobTemplate, labels));
       promises.push(submitInstanceGroups(id, instance_groups));
-      navigate(RouteObj.JobTemplateDetails.replace(':id', `${id}`.toString()));
+      pageNavigate(AwxRoute.JobTemplateDetails, { params: { id } });
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
@@ -110,7 +111,7 @@ export function EditJobTemplate() {
       <PageForm<JobTemplateForm>
         submitText={t('Save job template')}
         onSubmit={onSubmit}
-        onCancel={() => navigate(-1)}
+        onCancel={() => pageNavigate(AwxRoute.JobTemplateDetails, { params: { id } })}
         defaultValue={defaultValues}
       >
         <JobTemplateInputs jobtemplate={defaultValues} />
