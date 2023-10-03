@@ -2,6 +2,7 @@ import { createRequestError } from '../../common/crud/RequestError';
 import { getCookie } from '../../common/crud/cookie';
 import { TaskResponse } from '../tasks/Task';
 import { parseTaskResponse } from './utils.tsx';
+// import { TaskResponse } from '../api-schemas/generated/TaskResponse';
 
 interface Options {
   method: string;
@@ -85,14 +86,12 @@ export async function hubPostRequestFile(
   });
 
   if (response.status === 202) {
-    await parseTaskResponse(response as TaskResponse, signal);
+    await parseTaskResponse((await response.json()) as TaskResponse);
   }
-console.log("res", response);
+
   if (!response.ok) {
     throw await createRequestError(response);
   }
-
-  return (await response.json()) as unknown;
 }
 
 export async function postHubRequest<
