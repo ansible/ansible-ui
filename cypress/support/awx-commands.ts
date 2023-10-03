@@ -188,7 +188,7 @@ Cypress.Commands.add(
   'clickTableRowActionIcon',
   (name: string | RegExp, ariaLabel: string, filter?: boolean) => {
     cy.getTableRowByText(name, filter).within(() => {
-      cy.get(`[data-cy="edit-project"]`).click();
+      cy.get(`button[data-cy*="edit-"]`).click();
     });
   }
 );
