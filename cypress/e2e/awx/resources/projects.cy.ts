@@ -114,7 +114,6 @@ describe('projects', () => {
       cy.verifyPageTitle(testProject.name);
       cy.clickPageAction(/^Copy project$/);
       cy.hasAlert(`${testProject.name} copied`).should('be.visible');
-      cy.deleteAwxProject(testProject);
     });
   });
 
@@ -127,7 +126,6 @@ describe('projects', () => {
       cy.intercept(`api/v2/projects/${project.id}/update/`).as('projectUpdateRequest');
       cy.clickButton(/^Sync project$/);
       cy.wait('@projectUpdateRequest');
-      cy.deleteAwxProject(project);
     });
   });
 
@@ -143,7 +141,6 @@ describe('projects', () => {
           cy.get('#sync-project').click();
         });
       cy.hasAlert(`Syncing ${project.name}`).should('be.visible');
-      cy.deleteAwxProject(project);
     });
   });
 
@@ -184,7 +181,6 @@ describe('projects', () => {
       cy.waitForProjectToFinishSyncing(testProject.id);
       cy.clickTableRowKebabAction(testProject.name, /^Copy project$/);
       cy.getTableRowByText(`${testProject.name} @`).should('be.visible');
-      cy.deleteAwxProject(testProject);
     });
   });
 
