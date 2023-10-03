@@ -381,7 +381,6 @@ export function useAwxNavigation() {
                             path: 'notifications',
                             element: <PageNotImplemented />,
                           },
-
                           {
                             path: '',
                             element: <Navigate to="details" />,
@@ -901,54 +900,51 @@ export function useAwxNavigation() {
                 path: 'management-jobs',
                 children: [
                   {
+                    id: AwxRoute.ManagementJobSchedulePage,
+                    path: ':id/schedules/:schedule_id',
+                    element: (
+                      <SchedulePage
+                        backTab={{
+                          label: t('Back to Schedules'),
+                          page: AwxRoute.ManagementJobSchedules,
+                          persistentFilterKey: 'management-jobs-schedules',
+                        }}
+                        tabs={[
+                          {
+                            label: t('Details'),
+                            page: AwxRoute.ManagementJobScheduleDetails,
+                          },
+                          {
+                            label: t('Rules'),
+                            page: AwxRoute.ManagementJobScheduleRrules,
+                          },
+                        ]}
+                      />
+                    ),
+                  },
+                  {
+                    id: AwxRoute.ManagementJobEditSchedule,
+                    path: ':id/schedules/:schedule_id/edit',
+                    element: <PageNotImplemented />,
+                  },
+                  {
                     id: AwxRoute.ManagementJobPage,
-                    path: ':id/*',
+                    path: ':id',
                     element: <ManagementJobPage />,
                     children: [
                       {
                         id: AwxRoute.ManagementJobSchedules,
                         path: 'schedules',
-                        element: <Schedules sublistEndpoint={`/api/v2/system_jobs`} />,
+                        element: <Schedules sublistEndpoint={`/api/v2/system_job_templates`} />,
                       },
                       {
-                        id: AwxRoute.ManagementJobSchedulePage,
-                        path: ':schedule_id/*',
-                        element: (
-                          <SchedulePage
-                            backTab={{
-                              label: t('Back to Schedules'),
-                              page: AwxRoute.ManagementJobSchedules,
-                              persistentFilterKey: 'management-jobs-schedules',
-                            }}
-                            tabs={[
-                              {
-                                label: t('Details'),
-                                page: AwxRoute.JobTemplateScheduleDetails,
-                              },
-                              {
-                                label: t('Rules'),
-                                page: AwxRoute.JobTemplateScheduleRrules,
-                              },
-                            ]}
-                          />
-                        ),
-                        children: [
-                          {
-                            id: AwxRoute.ManagementJobScheduleDetails,
-                            path: 'details',
-                            element: <ScheduleDetails />,
-                          },
-                          {
-                            id: AwxRoute.ManagementJobScheduleRrules,
-                            path: 'rrules',
-                            element: <ScheduleRules />,
-                          },
-                          {
-                            id: AwxRoute.ManagementJobEditSchedule,
-                            path: 'edit',
-                            element: <PageNotImplemented />,
-                          },
-                        ],
+                        id: AwxRoute.ManagementJobNotifications,
+                        path: 'notifications',
+                        element: <PageNotImplemented />,
+                      },
+                      {
+                        path: '',
+                        element: <Navigate to="schedules" />,
                       },
                     ],
                   },

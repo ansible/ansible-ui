@@ -3,9 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { PageHeader, PageLayout, useGetPageUrl } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
-import { PageNotImplemented } from '../../../../common/PageNotImplemented';
-import { PageBackTab, RoutedTab, RoutedTabs } from '../../../../common/RoutedTabs';
-import { RouteObj } from '../../../../common/Routes';
+import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
 import { AwxError } from '../../../common/AwxError';
@@ -16,38 +14,37 @@ export function ManagementJobPage() {
   const params = useParams<{ id: string }>();
   const {
     error,
-    data: system_job_template,
+    data: systemJobTemplate,
     refresh,
   } = useGetItem<SystemJobTemplate>('/api/v2/system_job_templates', params.id);
 
   const getPageUrl = useGetPageUrl();
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
-  if (!system_job_template) return <LoadingPage breadcrumbs tabs />;
+  if (!systemJobTemplate) return <LoadingPage breadcrumbs tabs />;
 
   return (
     <PageLayout>
       <PageHeader
-        title={system_job_template?.name}
+        title={systemJobTemplate?.name}
         breadcrumbs={[
           { label: t('Management Jobs'), to: getPageUrl(AwxRoute.ManagementJobs) },
-          { label: system_job_template?.name },
+          { label: systemJobTemplate?.name },
         ]}
         headerActions={[]}
       />
-      <RoutedTabs isLoading={!system_job_template} baseUrl={RouteObj.ManagementJobPage}>
-        <PageBackTab
-          label={t('Back to Management Jobs')}
-          url={RouteObj.ManagementJobs}
-          persistentFilterKey="management_jobs"
-        />
-        <RoutedTab label={t('Schedules')} url={RouteObj.ManagementJobSchedules}>
-          <PageNotImplemented />
-        </RoutedTab>
-        <RoutedTab label={t('Notifications')} url={RouteObj.ManagementJobNotifications}>
-          <PageNotImplemented />
-        </RoutedTab>
-      </RoutedTabs>
+      <PageRoutedTabs
+        backTab={{
+          label: t('Back to Management Jobs'),
+          page: AwxRoute.ManagementJobPage,
+          persistentFilterKey: 'management-jobs',
+        }}
+        tabs={[
+          { label: t('Schedules'), page: AwxRoute.ManagementJobSchedules },
+          { label: t('Notifications'), page: AwxRoute.ManagementJobNotifications },
+        ]}
+        params={{ id: systemJobTemplate.id }}
+      />
     </PageLayout>
   );
 }
