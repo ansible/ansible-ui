@@ -2,7 +2,6 @@
 /// <reference types="cypress" />
 
 import { randomString } from '../../../../framework/utils/random-string';
-import { AwxItemsResponse } from '../../../../frontend/awx/common/AwxItemsResponse';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
 
@@ -16,25 +15,7 @@ describe('projects', () => {
       organization = org;
       cy.createAwxProject({ organization: organization.id }).then((proj) => {
         project = proj;
-      });
-    });
-  });
-
-  after(() => {
-    cy.deleteAwxOrganization(organization, { failOnStatusCode: false }).then(() => {
-      /**
-       * Deleting the organization does not delete the underlying projects.
-       * So get all projects without an organization and delete them. Multiple test runs
-       * could be running, so only delete projects without an organization as those are not being used.
-       * This also cleans up projects that were syncing and could not be deleted by other runs,
-       * making a self cleaning E2E system for the live server.
-       */
-      cy.requestGet<AwxItemsResponse<Project>>(
-        `/api/v2/projects/?page_size=100&organization=null`
-      ).then((itemsResponse) => {
-        for (const project of itemsResponse.results) {
-          cy.requestDelete(`/api/v2/projects/${project.id}/`, { failOnStatusCode: false });
-        }
+        cy.waitForProjectToFinishSyncing(project.id);
       });
     });
   });
@@ -128,11 +109,11 @@ describe('projects', () => {
       scm_url: 'https://github.com/ansible/ansible-ui',
     }).then((testProject) => {
       cy.navigateTo('awx', 'projects');
+      cy.waitForProjectToFinishSyncing(testProject.id);
       cy.clickTableRow(testProject.name);
       cy.verifyPageTitle(testProject.name);
       cy.clickPageAction(/^Copy project$/);
       cy.hasAlert(`${testProject.name} copied`).should('be.visible');
-      cy.waitForProjectToFinishSyncing(testProject.id);
       cy.deleteAwxProject(testProject);
     });
   });
@@ -140,12 +121,12 @@ describe('projects', () => {
   it('can sync project from project details page', () => {
     cy.createAwxProject().then((project) => {
       cy.navigateTo('awx', 'projects');
+      cy.waitForProjectToFinishSyncing(project.id);
       cy.clickTableRow(project.name);
       cy.verifyPageTitle(project.name);
       cy.intercept(`api/v2/projects/${project.id}/update/`).as('projectUpdateRequest');
       cy.clickButton(/^Sync project$/);
       cy.wait('@projectUpdateRequest');
-      cy.waitForProjectToFinishSyncing(project.id);
       cy.deleteAwxProject(project);
     });
   });
@@ -153,6 +134,7 @@ describe('projects', () => {
   it('can sync project from projects list table row kebab menu', () => {
     cy.createAwxProject().then((project) => {
       cy.navigateTo('awx', 'projects');
+      cy.waitForProjectToFinishSyncing(project.id);
       cy.filterTableByText(project.name);
       cy.intercept(`api/v2/projects/${project.id}/update/`).as('projectUpdateRequest');
       cy.contains('td', project.name)
@@ -161,7 +143,6 @@ describe('projects', () => {
           cy.get('#sync-project').click();
         });
       cy.hasAlert(`Syncing ${project.name}`).should('be.visible');
-      cy.waitForProjectToFinishSyncing(project.id);
       cy.deleteAwxProject(project);
     });
   });
@@ -200,9 +181,9 @@ describe('projects', () => {
       scm_url: 'https://github.com/ansible/ansible-ui',
     }).then((testProject) => {
       cy.navigateTo('awx', 'projects');
+      cy.waitForProjectToFinishSyncing(testProject.id);
       cy.clickTableRowKebabAction(testProject.name, /^Copy project$/);
       cy.getTableRowByText(`${testProject.name} @`).should('be.visible');
-      cy.waitForProjectToFinishSyncing(testProject.id);
       cy.deleteAwxProject(testProject);
     });
   });
@@ -213,8 +194,8 @@ describe('projects', () => {
       organization: organization.id,
     }).then((testProject) => {
       cy.navigateTo('awx', 'projects');
-      cy.clickTableRowKebabAction(testProject.name, /^Delete project$/);
       cy.waitForProjectToFinishSyncing(testProject.id);
+      cy.clickTableRowKebabAction(testProject.name, /^Delete project$/);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete project/);
       cy.contains(/^Success$/);
@@ -230,9 +211,9 @@ describe('projects', () => {
       organization: organization.id,
     }).then((testProject) => {
       cy.navigateTo('awx', 'projects');
+      cy.waitForProjectToFinishSyncing(testProject.id);
       cy.selectTableRow(testProject.name);
       cy.clickToolbarKebabAction(/^Delete selected projects$/);
-      cy.waitForProjectToFinishSyncing(testProject.id);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete project/);
       cy.contains(/^Success$/);
@@ -248,10 +229,10 @@ describe('projects', () => {
       organization: organization.id,
     }).then((testProject) => {
       cy.navigateTo('awx', 'projects');
+      cy.waitForProjectToFinishSyncing(testProject.id);
       cy.clickTableRow(testProject.name);
       cy.verifyPageTitle(testProject.name);
       cy.clickPageAction(/^Delete project/);
-      cy.waitForProjectToFinishSyncing(testProject.id);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete project/);
       cy.getTableRowByText(testProject.name).should('not.exist');
