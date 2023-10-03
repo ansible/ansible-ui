@@ -1,23 +1,36 @@
 import { CollectionVersionSearch } from '../Collection';
-import { ITableColumn, IToolbarFilter, usePageDialog, ISelected } from './../../../../framework';
+import { usePageDialog } from './../../../../framework';
 import { Button, Modal, ModalVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useState, useEffect, Dispatch, SetStateAction } from 'react';
+import { useState, useEffect, Dispatch, SetStateAction, useRef } from 'react';
 import {
   useRepositoryColumns,
   useRepositoryFilters,
 } from './../../repositories/hooks/useRepositorySelector';
 import { PageTable } from './../../../../framework/PageTable/PageTable';
 import { usePulpView } from '../../usePulpView';
-import { RepositoryResponse } from './../../api-schemas/generated/RepositoryResponse';
 import { AnsibleAnsibleRepositoryResponse } from './../../api-schemas/generated/AnsibleAnsibleRepositoryResponse';
 import { pulpAPI, hubAPI } from '../../api/utils';
 import { useGetRequest } from './../../../common/crud/useGet';
 import { HubItemsResponse } from '../../useHubView';
+import { PulpItemsResponse } from '../../usePulpView';
+import { parsePulpIDFromURL } from '../../api/utils';
+import { useHubContext } from './../../useHubContext';
+import { SigningServiceResponse } from '../../api-schemas/generated/SigningServiceResponse';
+
+// this have to be inside object, because react setter will otherwise call the function, if it see reference to function
+type onClickFunc = {
+  func: () => void;
+} | null;
 
 export function useCopyToRepository() {
   const [_, setDialog] = usePageDialog();
   const { t } = useTranslation();
+  const onClickFunc = useRef<onClickFunc>(null);
+
+  function onClick() {
+    onClickFunc?.current?.func();
+  }
 
   return (collection: CollectionVersionSearch) => {
     setDialog(
@@ -29,29 +42,93 @@ export function useCopyToRepository() {
         variant={ModalVariant.large}
         tabIndex={0}
         actions={[
-          <Button key="select" variant="primary" id="select" onClick={() => {}}>
+          <Button key="select" variant="primary" id="select" onClick={() => onClick()}>
             {t('Select')}
           </Button>,
           <Button key="cancel" variant="link" onClick={() => {}}></Button>,
         ]}
         hasNoBodyWrapper
       >
-        <CopyToRepositoryTable collection={collection} />
+        <CopyToRepositoryTable
+          collection={collection}
+          setOnClickFunc={(param) => {
+            debugger;
+            onClickFunc.current = param;
+          }}
+        />
       </Modal>
     );
   };
 }
 
-function CopyToRepositoryTable(props: { collection: CollectionVersionSearch }) {
+function CopyToRepositoryTable(props: {
+  collection: CollectionVersionSearch;
+  setOnClickFunc: (param: onClickFunc) => void;
+}) {
   const toolbarFilters = useRepositoryFilters();
   const tableColumns = useRepositoryColumns();
   const { t } = useTranslation();
   const { collection } = props;
   const request = useGetRequest<HubItemsResponse<CollectionVersionSearch>>();
+  const pulpRequest = useGetRequest<PulpItemsResponse<SigningServiceResponse>>();
+  const context = useHubContext();
 
   const [selectedRepositories, setSelectedRepositories] = useState<Repository[]>([]);
 
   const [fixedRepositories, setFixedRepositories] = useState<Repository[]>([]);
+
+  const copyToRepositories = async () => {
+    const { collection_version, repository } = props.collection;
+    if (!repository) {
+      return;
+    }
+
+    const pulpId = parsePulpIDFromURL(repository?.pulp_href);
+
+    const signingServiceName = context.settings.GALAXY_COLLECTION_SIGNING_SERVICE;
+
+    const signingService = await pulpRequest(pulpAPI`signing-services/?name=${signingServiceName}`);
+
+    /* let signingService = null;
+    try {
+      const signingList = await SigningServiceAPI.list({
+        name: signingServiceName,
+      });
+      signingService = signingList.data.results[0].pulp_href;
+    } catch {
+      setLoading(false);
+      props.addAlert({
+        title: t`Failed to copy collection version.`,
+        variant: 'danger',
+        description: t`Signing service ${signingServiceName} not found`,
+      });
+      return;
+    }
+
+    const repoHrefs = repositoryList
+      .filter((repo) => selectedRepos.includes(repo.name))
+      .map((repo) => repo.pulp_href);
+
+    Repositories.copyCollectionVersion(
+      pulpId,
+      [collection_version.pulp_href],
+      repoHrefs,
+      signingService,
+    )
+      .then(({ data }) => {
+        selectedRepos.map((repo) => {
+          props.addAlert(
+            taskAlert(
+              data.task,
+              t`Started adding ${collection_version.namespace}.${collection_version.name} v${collection_version.version} from "${repository.name}" to repository "${repo}".`,
+            ),
+          );
+        });
+      })
+      .catch((e) => {
+       
+      });*/
+  };
 
   useEffect(() => {
     async function getSelected() {
@@ -68,7 +145,15 @@ function CopyToRepositoryTable(props: { collection: CollectionVersionSearch }) {
       }
     }
 
-    getSelected();
+    void (async () => {
+      debugger;
+      props.setOnClickFunc({ func: copyToRepositories });
+      try {
+        await getSelected();
+      } catch (error) {
+        // TODO - error handling
+      }
+    })();
   }, []);
 
   const view = usePulpView({
@@ -126,4 +211,5 @@ function CopyToRepositoryTable(props: { collection: CollectionVersionSearch }) {
 
 interface Repository {
   name: string;
+  pulp_href: string;
 }
