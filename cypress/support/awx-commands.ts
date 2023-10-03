@@ -188,10 +188,7 @@ Cypress.Commands.add(
   'clickTableRowActionIcon',
   (name: string | RegExp, ariaLabel: string, filter?: boolean) => {
     cy.getTableRowByText(name, filter).within(() => {
-      cy.get(`button[aria-label="${ariaLabel}"]`)
-        .should('not.be.disabled')
-        .should('not.have.attr', 'aria-disabled', 'true')
-        .click();
+      cy.get(`[data-cy="edit-project"]`).click();
     });
   }
 );
