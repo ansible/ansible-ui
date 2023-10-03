@@ -869,14 +869,25 @@ export function useAwxNavigation() {
                 ],
               },
               {
-                id: AwxRoute.Notifications,
+                id: AwxRoute.NotificationTemplates,
                 label: t('Notifications'),
                 path: 'notifications',
                 children: [
                   {
-                    id: AwxRoute.NotificationPage,
+                    id: AwxRoute.NotificationTemplatePage,
                     path: ':id/*',
                     element: <NotificationPage />,
+                    children: [
+                      {
+                        id: AwxRoute.NotificationTemplateDetails,
+                        path: 'details',
+                        element: <PageNotImplemented />,
+                      },
+                      {
+                        path: '',
+                        element: <Navigate to="details" />,
+                      },
+                    ],
                   },
                   {
                     path: '',
