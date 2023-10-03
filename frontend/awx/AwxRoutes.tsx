@@ -138,6 +138,7 @@ export enum AwxRoute {
 
   CredentialTypes = 'awx-credential-types',
   CredentialType = 'awx-credential-type',
+  CredentialTypeDetails = 'awx-credential-type-details',
 
   Notifications = 'awx-notifications',
   NotificationPage = 'awx-notification-page',

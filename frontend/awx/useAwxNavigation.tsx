@@ -823,6 +823,10 @@ export function useAwxNavigation() {
                         path: 'roles',
                         element: <UserRoles />,
                       },
+                      {
+                        path: '',
+                        element: <Navigate to="details" />,
+                      },
                     ],
                   },
                   {
@@ -844,8 +848,19 @@ export function useAwxNavigation() {
                 children: [
                   {
                     id: AwxRoute.CredentialType,
-                    path: ':id/*',
+                    path: ':id/',
                     element: <CredentialTypePage />,
+                    children: [
+                      {
+                        id: AwxRoute.CredentialTypeDetails,
+                        path: 'details',
+                        element: <PageNotImplemented />,
+                      },
+                      {
+                        path: '',
+                        element: <Navigate to="details" />,
+                      },
+                    ],
                   },
                   {
                     path: '',
