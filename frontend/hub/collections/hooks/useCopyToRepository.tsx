@@ -9,7 +9,8 @@ import {
 } from './../../repositories/hooks/useRepositorySelector';
 import { PageTable } from './../../../../framework/PageTable/PageTable';
 import { usePulpView } from '../../usePulpView';
-import { AnsibleAnsibleRepositoryResponse as Repository } from './../../api-schemas/generated/AnsibleAnsibleRepositoryResponse';
+import { RepositoryResponse } from './../../api-schemas/generated/RepositoryResponse';
+import { AnsibleAnsibleRepositoryResponse } from './../../api-schemas/generated/AnsibleAnsibleRepositoryResponse';
 import { pulpAPI, hubAPI } from '../../api/utils';
 import { useGetRequest } from './../../../common/crud/useGet';
 import { HubItemsResponse } from '../../useHubView';
@@ -35,46 +36,40 @@ export function useCopyToRepository() {
         ]}
         hasNoBodyWrapper
       >
-        <CopyToRepositoryTable
-          collection={collection}
-        />
+        <CopyToRepositoryTable collection={collection} />
       </Modal>
     );
   };
 }
 
-function CopyToRepositoryTable(props: {
-  collection: CollectionVersionSearch;
-}) {
+function CopyToRepositoryTable(props: { collection: CollectionVersionSearch }) {
   const toolbarFilters = useRepositoryFilters();
   const tableColumns = useRepositoryColumns();
   const { t } = useTranslation();
   const { collection } = props;
   const request = useGetRequest<HubItemsResponse<CollectionVersionSearch>>();
 
-  const [selectedRepositories, setSelectedRepositories] = useState<Repository[]>([]);
+  const [selectedRepositories, setSelectedRepositories] = useState<RepositoryResponse[]>([]);
 
-  const [ fixedRepositories, setFixedRepositories ] = useState<Repository[]>([]);
+  const [fixedRepositories, setFixedRepositories] = useState<RepositoryResponse[]>([]);
 
-  async function getSelected()
-  {
-    const repos = await request(hubAPI`/v3/plugin/ansible/search/collection-versions?name=${
-        collection.collection_version?.name || '' } &&version=${collection.collection_version?.version || ''}`);
+  async function getSelected() {
+    const repos = await request(
+      hubAPI`/v3/plugin/ansible/search/collection-versions?name=${
+        collection.collection_version?.name || ''
+      } &&version=${collection.collection_version?.version || ''}`
+    );
 
-        if (repos.data?.length > 0)
-        {
-            const reposMapped = repos.data.map( (item) => item.repository as Repository);
-            setSelectedRepositories(reposMapped);
-            setFixedRepositories(reposMapped);
-        }
+    if (repos.data?.length > 0) {
+      const reposMapped = repos.data.map((item) => item.repository || ({} as RepositoryResponse));
+      setSelectedRepositories(reposMapped);
+      setFixedRepositories(reposMapped);
+    }
   }
 
-  useEffect( () => {
+  useEffect(() => {
     getSelected();
   }, []);
-
-
- 
 
   const view = usePulpView({
     url: pulpAPI`/repositories/ansible/ansible/`,
@@ -84,10 +79,8 @@ function CopyToRepositoryTable(props: {
     keyFn: (item) => item.name,
   });
 
- 
-
   return (
-    <PageTable<Repository>
+    <PageTable<AnsibleAnsibleRepositoryResponse>
       id="hub-copy-to-repository-table"
       toolbarFilters={toolbarFilters}
       tableColumns={tableColumns}
@@ -98,10 +91,10 @@ function CopyToRepositoryTable(props: {
       {...view}
       defaultTableView="list"
       defaultSubtitle={t('Repository')}
-      showSelect = {true}
-      compact = {true}
-      isSelectMultiple = {true}
-      isSelected={ (item) => selectedRepositories.find( (i) => i.name == item.name) ? true : false }
+      showSelect={true}
+      compact={true}
+      isSelectMultiple={true}
+      isSelected={(item) => (selectedRepositories.find((i) => i.name == item.name) ? true : false)}
     />
   );
 }
