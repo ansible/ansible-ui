@@ -49,25 +49,25 @@ function CopyToRepositoryTable(props: { collection: CollectionVersionSearch }) {
   const { collection } = props;
   const request = useGetRequest<HubItemsResponse<CollectionVersionSearch>>();
 
-  const [selectedRepositories, setSelectedRepositories] = useState<RepositoryResponse[]>([]);
+  const [selectedRepositories, setSelectedRepositories] = useState<Repository[]>([]);
 
-  const [fixedRepositories, setFixedRepositories] = useState<RepositoryResponse[]>([]);
-
-  async function getSelected() {
-    const repos = await request(
-      hubAPI`/v3/plugin/ansible/search/collection-versions?name=${
-        collection.collection_version?.name || ''
-      } &&version=${collection.collection_version?.version || ''}`
-    );
-
-    if (repos.data?.length > 0) {
-      const reposMapped = repos.data.map((item) => item.repository || ({} as RepositoryResponse));
-      setSelectedRepositories(reposMapped);
-      setFixedRepositories(reposMapped);
-    }
-  }
+  const [fixedRepositories, setFixedRepositories] = useState<Repository[]>([]);
 
   useEffect(() => {
+    async function getSelected() {
+      const repos = await request(
+        hubAPI`/v3/plugin/ansible/search/collection-versions?name=${
+          collection.collection_version?.name || ''
+        } &&version=${collection.collection_version?.version || ''}`
+      );
+
+      if (repos.data?.length > 0) {
+        const reposMapped = repos.data.map((item) => item.repository || ({} as Repository));
+        setSelectedRepositories(reposMapped);
+        setFixedRepositories(reposMapped);
+      }
+    }
+
     getSelected();
   }, []);
 
@@ -95,6 +95,32 @@ function CopyToRepositoryTable(props: { collection: CollectionVersionSearch }) {
       compact={true}
       isSelectMultiple={true}
       isSelected={(item) => (selectedRepositories.find((i) => i.name == item.name) ? true : false)}
+      selectItem={(item) => {
+        const newItems = [...selectedRepositories, item];
+        setSelectedRepositories(newItems);
+      }}
+      selectItems={(items) => {
+        let newItems = [...selectedRepositories];
+        for (const item of items) {
+          if (!selectedRepositories.find((item2) => item.name == item2.name)) {
+            newItems.push(item);
+          }
+        }
+
+        setSelectedRepositories(newItems);
+      }}
+      unselectItem={(item) => {
+        if (!fixedRepositories.find((item2) => item.name == item2.name)) {
+          setSelectedRepositories(selectedRepositories.filter((item2) => item2.name != item.name));
+        }
+      }}
+      unselectAll={() => {
+        setSelectedRepositories(fixedRepositories);
+      }}
     />
   );
+}
+
+interface Repository {
+  name: string;
 }
