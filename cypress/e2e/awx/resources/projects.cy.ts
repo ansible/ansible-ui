@@ -125,7 +125,7 @@ describe('projects', () => {
       name: 'E2E Project ' + randomString(4),
       organization: organization.id,
       scm_type: 'git', // Only projects with scm_type and scm_url can be copied
-      scm_url: 'foo',
+      scm_url: 'https://github.com/ansible/ansible-ui',
     }).then((testProject) => {
       cy.navigateTo('awx', 'projects');
       cy.clickTableRow(testProject.name);
@@ -172,7 +172,7 @@ describe('projects', () => {
   //     name: 'E2E Project ' + randomString(4),
   //     organization: organization.id,
   //     scm_type: 'git', // Only projects with scm_type and scm_url can be synced
-  //     scm_url: 'foo',
+  //     scm_url: 'https://github.com/ansible/ansible-ui',
   //   }).then((testProject) => {
   //     cy.navigateTo('awx', 'projects');
   //     cy.filterTableByText(testProject.name);
@@ -197,7 +197,7 @@ describe('projects', () => {
       name: 'E2E Project ' + randomString(4),
       organization: organization.id,
       scm_type: 'git', // Only projects with scm_type and scm_url can be synced
-      scm_url: 'foo',
+      scm_url: 'https://github.com/ansible/ansible-ui',
     }).then((testProject) => {
       cy.navigateTo('awx', 'projects');
       cy.clickTableRowKebabAction(testProject.name, /^Copy project$/);
@@ -265,7 +265,7 @@ describe('projects', () => {
   //     name: 'E2E Project ' + randomString(4),
   //     organization: organization.id,
   //     scm_type: 'git', // Only projects with scm_type and scm_url can be synced
-  //     scm_url: 'foo',
+  //     scm_url: 'https://github.com/ansible/ansible-ui',
   //   }).then((testProject) => {
   //     cy.navigateTo('awx', 'projects');
   //     cy.selectTableRow(testProject.name);
