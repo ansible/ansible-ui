@@ -83,11 +83,13 @@ export interface IPageActionButtonMultiple<T extends object> extends IPageAction
 export interface IPageActionLink extends IPageActionNoneCommon {
   type: PageActionType.Link;
   href: string;
+  variant?: ButtonVariant;
 }
 
 export interface IPageActionLinkSingle<T extends object> extends IPageActionSingleCommon<T> {
   type: PageActionType.Link;
   href: (item: T) => string;
+  variant?: ButtonVariant;
 }
 
 export interface IPageActionSwitch extends IPageActionNoneCommon {

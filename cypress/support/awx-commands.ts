@@ -678,19 +678,26 @@ Cypress.Commands.add('getAwxJobTemplateByName', (awxJobTemplateName: string) => 
 Cypress.Commands.add(
   'deleteAwxJobTemplate',
   (
-    jobTemplate: JobTemplate,
+    jobTemplate: JobTemplate | WorkflowJobTemplate,
     options?: {
       /** Whether to fail on response codes other than 2xx and 3xx */
       failOnStatusCode?: boolean;
     }
   ) => {
-    const projectId = jobTemplate.project;
+    let projectId;
+    if (jobTemplate.type === 'job_template' && 'project' in jobTemplate)
+      projectId = jobTemplate.project;
 
     if (jobTemplate.id) {
       const templateId = typeof jobTemplate.id === 'number' ? jobTemplate.id.toString() : '';
-      cy.awxRequestDelete(`/api/v2/job_templates/${templateId}/`, options);
+      cy.awxRequestDelete(
+        `/api/v2/${
+          jobTemplate.type === 'workflow_job_template' ? 'workflow_job_templates' : 'job_templates'
+        }/${templateId}/`,
+        options
+      );
     }
-    if (projectId) {
+    if (jobTemplate.type === 'job_template') {
       cy.awxRequestGet<Project>(`/api/v2/projects/${projectId}/`).then((project) => {
         // This will take care of deleting the project and the associated org, inventory
         cy.deleteAwxProject(project);

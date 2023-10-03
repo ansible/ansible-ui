@@ -1,8 +1,14 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
-import { PageForm, PageFormSubmitHandler, PageHeader, PageLayout } from '../../../../framework';
+import {
+  PageForm,
+  PageFormSubmitHandler,
+  PageHeader,
+  PageLayout,
+  usePageNavigate,
+} from '../../../../framework';
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
 import { RouteObj } from '../../../common/Routes';
 import { postRequest, requestGet, requestPatch } from '../../../common/crud/Data';
@@ -20,10 +26,11 @@ import { Label } from '../../interfaces/Label';
 import { Organization } from '../../interfaces/Organization';
 import { WorkflowJobTemplateInputs } from './WorkflowJobTemplateInputs';
 import { parseStringToTagArray, stringifyTags } from './JobTemplateFormHelpers';
+import { AwxRoute } from '../../AwxRoutes';
 
 export function EditWorkflowJobTemplate() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const params = useParams<{ id?: string }>();
 
   const id = Number(params.id);
@@ -51,7 +58,7 @@ export function EditWorkflowJobTemplate() {
     (cache as unknown as { clear: () => void }).clear?.();
 
     await submitLabels(workflowJobTemplate as WorkflowJobTemplate, labels);
-    navigate(RouteObj.WorkflowJobTemplateDetails.replace(':id', `${id}`.toString()));
+    pageNavigate(AwxRoute.WorkflowJobTemplateDetails, { params: { id } });
   };
 
   const defaultValues = useMemo(() => {
@@ -100,7 +107,7 @@ export function EditWorkflowJobTemplate() {
       <PageForm<WorkflowJobTemplateForm>
         submitText={t('Save workflow job template')}
         onSubmit={onSubmit}
-        onCancel={() => navigate(-1)}
+        onCancel={() => pageNavigate(AwxRoute.WorkflowJobTemplateDetails, { params: { id } })}
         defaultValue={defaultValues}
       >
         <WorkflowJobTemplateInputs workflowJobTemplate={defaultValues} />
@@ -111,9 +118,8 @@ export function EditWorkflowJobTemplate() {
 
 export function CreateWorkflowJobTemplate() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const postRequest = usePostRequest<WorkflowJobTemplateCreate, WorkflowJobTemplate>();
-
   const onSubmit: PageFormSubmitHandler<WorkflowJobTemplateForm> = async (values) => {
     const { labels, webhook_credential, ...rest } = values;
 
@@ -125,10 +131,11 @@ export function CreateWorkflowJobTemplate() {
       skip_tags: stringifyTags(values.skip_tags || ''),
       webhook_credential: webhook_credential?.id ?? null,
     });
+    if (labels?.length > 0) {
+      await submitLabels(template, labels);
+    }
 
-    await submitLabels(template, labels);
-
-    navigate(RouteObj.WorkflowJobTemplateDetails.replace(':id', template.id.toString()));
+    pageNavigate(AwxRoute.WorkflowVisualizer, { params: { id: template.id } });
   };
 
   const defaultValues = useMemo(
@@ -152,7 +159,7 @@ export function CreateWorkflowJobTemplate() {
       <PageForm<WorkflowJobTemplateForm>
         submitText={t('Create workflow job template')}
         onSubmit={onSubmit}
-        onCancel={() => navigate(-1)}
+        onCancel={() => pageNavigate(AwxRoute.Templates)}
         defaultValue={defaultValues}
       >
         <WorkflowJobTemplateInputs />
