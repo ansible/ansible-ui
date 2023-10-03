@@ -1,5 +1,5 @@
-import { Button, Tooltip } from '@patternfly/react-core';
-import { ComponentClass, Fragment, FunctionComponent } from 'react';
+import { Button, ButtonVariant, Tooltip } from '@patternfly/react-core';
+import { ComponentClass, Fragment, FunctionComponent, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { useID } from '../hooks/useID';
@@ -36,6 +36,12 @@ export function PageActionLink<T extends object>(props: {
   const content = iconOnly && Icon ? <Icon /> : action.label;
 
   let to: string;
+  const variant = useMemo(() => {
+    if (action.variant) {
+      return action.variant;
+    }
+    return iconOnly ? ButtonVariant.plain : undefined;
+  }, [action.variant, iconOnly]);
 
   switch (action.selection) {
     case PageActionSelection.None:
@@ -69,7 +75,7 @@ export function PageActionLink<T extends object>(props: {
             <Link {...props} to={to} />
           </Tooltip>
         )}
-        variant={iconOnly ? 'plain' : undefined}
+        variant={variant}
         ouiaId={id}
         data-cy={id}
       >
