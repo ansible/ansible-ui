@@ -95,6 +95,9 @@ function CopyToRepositoryTable(props: { collection: CollectionVersionSearch }) {
       compact={true}
       isSelectMultiple={true}
       isSelected={(item) => (selectedRepositories.find((i) => i.name == item.name) ? true : false)}
+      isSelectionDisabled={(item) =>
+        fixedRepositories.find((i) => i.name == item.name) ? true : false
+      }
       selectItem={(item) => {
         const newItems = [...selectedRepositories, item];
         setSelectedRepositories(newItems);
