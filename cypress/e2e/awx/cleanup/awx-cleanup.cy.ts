@@ -42,7 +42,7 @@ describe('AWX Cleanup', () => {
 
   it('cleanup users', () => {
     cy.awxRequestGet<AwxItemsResponse<User>>(
-      `/api/v2/users?username__startswith=e2e&page=1&page_size=200&created__lt=${tenMinutesAgo}`
+      `/api/v2/users?username__startswith=e2e-&page=1&page_size=200&created__lt=${tenMinutesAgo}`
     ).then((result) => {
       for (const resource of result.results ?? []) {
         cy.deleteAwxUser(resource, { failOnStatusCode: false });
