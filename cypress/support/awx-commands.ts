@@ -16,6 +16,7 @@ import { Schedule } from '../../frontend/awx/interfaces/Schedule';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
 import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/generated-from-swagger/api';
+import { JobEvent } from '../../frontend/awx/interfaces/JobEvent';
 import './auth';
 import './commands';
 import './rest-commands';
@@ -77,7 +78,11 @@ Cypress.Commands.add(
 
 Cypress.Commands.add(
   'selectPromptOnLaunchByLabel',
-  (label: string | RegExp, isSelected?: boolean = true, text?: string) => {
+  (label: string | RegExp, isSelected?: boolean, text?: string) => {
+    if (isSelected === undefined) {
+      isSelected = true;
+    }
+
     if (isSelected) {
       cy.contains('.pf-c-form__label-text', label)
         .parent()
@@ -87,7 +92,7 @@ Cypress.Commands.add(
         .within(() => {
           cy.getCheckboxByLabel('Prompt on launch').click();
         });
-    } else {
+    } else if (text) {
       switch (label) {
         case 'Inventory':
           cy.get('input[placeholder="Select inventory"]')
@@ -106,7 +111,7 @@ Cypress.Commands.add(
             .within(() => {
               cy.get('button[aria-label="Options menu"]').click();
             });
-          cy.selectTableRowInDialog(text, true, 'radio').click();
+          cy.selectTableRowInDialog(text, true).click();
           cy.clickModalButton('Confirm');
           break;
         case 'Credentials':
@@ -115,7 +120,7 @@ Cypress.Commands.add(
             .within(() => {
               cy.get('button[aria-label="Options menu"]').click();
             });
-          cy.selectTableRowInDialog(text, true, 'checkbox').click();
+          cy.selectTableRowInDialog(text, true).click();
           cy.clickModalButton('Confirm');
           break;
       }
@@ -262,15 +267,27 @@ Cypress.Commands.add('getDialog', () => {
 });
 
 Cypress.Commands.add(
-  'selectTableRowInDialog',
-  (name: string | RegExp, filter?: boolean, inputType = 'checkbox') => {
-    cy.getDialog().within(() => {
-      cy.getTableRowByText(name, filter).within(() => {
-        cy.get('td[data-cy=checkbox-column-cell]').click();
+  'selectRowItemInFormGroupLookupModal',
+  (label: string | RegExp, rowItem: string) => {
+    cy.getFormGroupByLabel(label)
+      .within(() => {
+        cy.get('button[aria-label="Options menu"]').click();
+      })
+      .then(() => {
+        cy.selectTableRowInDialog(rowItem, true);
       });
-    });
+
+    cy.clickModalButton('Confirm');
   }
 );
+
+Cypress.Commands.add('selectTableRowInDialog', (name: string | RegExp, filter?: boolean) => {
+  cy.getDialog().within(() => {
+    cy.getTableRowByText(name, filter).within(() => {
+      cy.get('td[data-cy=checkbox-column-cell]').click();
+    });
+  });
+});
 
 Cypress.Commands.add('expandTableRow', (name: string | RegExp, filter?: boolean) => {
   cy.getTableRowByText(name, filter).within(() => {
@@ -843,14 +860,15 @@ after(() => {
   if (globalAwxToken) cy.deleteAwxToken(globalAwxToken, { failOnStatusCode: false });
 });
 
-Cypress.Commands.add('waitForTemplateStatus', (jobID: number) => {
-  cy.requestGet<AwxRecentJobsCard>(
+Cypress.Commands.add('waitForTemplateStatus', (jobID: string) => {
+  cy.requestGet<AwxItemsResponse<JobEvent>>(
     `api/v2/jobs/${jobID}/job_events/?order_by=counter&page=1&page_size=50`
   )
     .its('results')
-    .then((results: { summary_fields: { job: { status: string } } }[]) => {
+    .then((results) => {
       if (results.length > 0) {
-        return results[0].summary_fields.job.status;
+        const jobEvent: JobEvent = results[0];
+        return jobEvent.summary_fields.job.status;
       }
       return '';
     })

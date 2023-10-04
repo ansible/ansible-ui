@@ -4,11 +4,13 @@
 import '@4tw/cypress-drag-drop';
 import '@cypress/code-coverage/support';
 import { SetOptional, SetRequired } from 'type-fest';
+import { AwxItemsResponse } from '../../frontend/awx/common/AwxItemsResponse';
 import { AwxToken } from '../../frontend/awx/interfaces/AwxToken';
 import { Credential } from '../../frontend/awx/interfaces/Credential';
 import { ExecutionEnvironment } from '../../frontend/awx/interfaces/ExecutionEnvironment';
 import { InstanceGroup } from '../../frontend/awx/interfaces/InstanceGroup';
 import { Inventory } from '../../frontend/awx/interfaces/Inventory';
+import { JobEvent } from '../../frontend/awx/interfaces/JobEvent';
 import { JobTemplate } from '../../frontend/awx/interfaces/JobTemplate';
 import { Label } from '../../frontend/awx/interfaces/Label';
 import { Organization } from '../../frontend/awx/interfaces/Organization';
@@ -40,7 +42,6 @@ import './common-commands';
 import './eda-commands';
 import './hub-commands';
 import './rest-commands';
-import { AwxItemsResponse } from '../../frontend/awx/common/AwxItemsResponse';
 
 declare global {
   namespace Cypress {
@@ -79,8 +80,8 @@ declare global {
 
       /** Finds a dropdown/select component by its dropdownLabel and clicks on the option specified by dropdownOptionLabel.*/
       selectPromptOnLaunchByLabel(
-        dropdownLabel: string | RegExp,
-        isSelected?: boolean = true,
+        label: string | RegExp,
+        isSelected?: boolean,
         text?: string
       ): Chainable<void>;
 
@@ -215,11 +216,7 @@ declare global {
       assertModalSuccess(): Chainable<void>;
 
       /** Selects a table row in the active modal dialog, by clicking on the row checkbox. */
-      selectTableRowInDialog(
-        name: string | RegExp,
-        filter?: boolean,
-        inputType?: string
-      ): Chainable<void>;
+      selectTableRowInDialog(name: string | RegExp, filter?: boolean): Chainable<void>;
 
       // --- DETAILS COMMANDS ---
       /**Finds a button with a particular label and clicks it. */
@@ -489,7 +486,7 @@ declare global {
         organization: Organization
       ): Chainable<{ inventory: Inventory; host: Host; group: Group }>;
 
-      waitForTemplateStatus(jobID: number): Chainable<AwxItemsResponse>;
+      waitForTemplateStatus(jobID: string): Chainable<AwxItemsResponse<JobEvent>>;
 
       // --- EDA COMMANDS ---
 
