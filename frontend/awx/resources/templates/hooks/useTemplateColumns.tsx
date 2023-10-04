@@ -1,8 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { ITableColumn } from '../../../../../framework';
-import { RouteObj } from '../../../../common/Routes';
+import { ITableColumn, usePageNavigate } from '../../../../../framework';
 import {
   useCreatedColumn,
   useDescriptionColumn,
@@ -12,20 +10,21 @@ import {
 } from '../../../../common/columns';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
+import { AwxRoute } from '../../../AwxRoutes';
 
 export function useTemplateColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
-  const navigate = useNavigate();
   const { t } = useTranslation();
+  const pageNavigate = usePageNavigate();
   // TODO: URL should be dependant on template type
   const nameClick = useCallback(
     (template: JobTemplate | WorkflowJobTemplate) => {
       if (template.type === 'job_template') {
-        navigate(RouteObj.JobTemplateDetails.replace(':id', template.id.toString()));
+        pageNavigate(AwxRoute.JobTemplateDetails, { params: { id: template.id } });
         return;
       }
-      navigate(RouteObj.WorkflowJobTemplateDetails.replace(':id', template.id.toString()));
+      pageNavigate(AwxRoute.WorkflowJobTemplateDetails, { params: { id: template.id } });
     },
-    [navigate]
+    [pageNavigate]
   );
   const nameColumn = useNameColumn({
     ...options,

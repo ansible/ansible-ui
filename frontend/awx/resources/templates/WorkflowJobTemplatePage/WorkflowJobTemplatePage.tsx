@@ -37,9 +37,9 @@ export function WorkflowJobTemplatePage() {
     error: isNotifAdminError,
     refresh: refreshNotifAdmin,
     isLoading: isNotifAdminLoading,
-  } = useGet<AwxItemsResponse<Organization>>('/api/v2/organizations', {
-    role_level: 'notification_admin_role',
-  });
+  } = useGet<AwxItemsResponse<Organization>>(
+    '/api/v2/organizations/?role_level=notification_admin_role'
+  );
   const getPageUrl = useGetPageUrl();
   const pageNavigate = usePageNavigate();
   const itemActions = useTemplateActions({
