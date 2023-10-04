@@ -97,6 +97,7 @@ describe('organizations', () => {
   it('deletes an organization from the organizations list row item', () => {
     cy.createAwxOrganization().then((testOrganization) => {
       cy.navigateTo('awx', 'organizations');
+      cy.searchAndDisplayResource(testOrganization.name);
       cy.get(`[data-cy="row-id-${testOrganization.id}"]`).within(() => {
         cy.get('[data-cy="actions-dropdown"]').click();
         cy.get('[data-cy="delete-organization"]').click();
