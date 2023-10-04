@@ -1,5 +1,14 @@
 import '@cypress/code-coverage/support';
 
+Cypress.Commands.add('searchAndDisplayResource', (resourceName: string) => {
+  cy.get('[data-cy="text-input"]')
+    .find('input')
+    .type(resourceName)
+    .then(() => {
+      cy.get('[data-cy="apply-filter"]').click();
+    });
+});
+
 Cypress.Commands.add('getFiltersToolbarItem', () => {
   cy.get('#filter').parent().parent().parent().parent();
 });

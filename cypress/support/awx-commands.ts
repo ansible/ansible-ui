@@ -127,10 +127,8 @@ Cypress.Commands.add('clickButton', (label: string | RegExp) => {
 Cypress.Commands.add('navigateTo', (component: string, label: string) => {
   cy.get('[data-cy="page-navigation"]').then((nav) => {
     if (nav.is(':visible')) {
-      cy.log('BOO', nav);
       cy.get(`[data-cy="${component}-${label}"]`).click();
     } else {
-      cy.log('BAA', nav);
       cy.get('[data-cy="nav-toggle"]').click();
       cy.get(`[data-cy="${component}-${label}"]`).click();
     }
