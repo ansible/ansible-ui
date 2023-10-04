@@ -129,6 +129,7 @@ export function useCollectionActions(
       deleteCollectionsVersions,
       detail,
       deleteCollectionsVersionsFromRepository,
+      copyToRepository,
     ]
   );
 }

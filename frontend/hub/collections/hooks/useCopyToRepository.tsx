@@ -19,7 +19,6 @@ import { useHubContext, HubContext } from './../../useHubContext';
 import { SigningServiceResponse } from '../../api-schemas/generated/SigningServiceResponse';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { TaskResponse } from '../../tasks/Task';
-import { LoadingState } from '../../../../framework/components/LoadingState';
 
 export function useCopyToRepository() {
   const [_, setDialog] = usePageDialog();
@@ -99,7 +98,6 @@ function CopyToRepositoryModal(props: {
     } catch (error) {
       // TODO
       setIsLoading(false);
-    } finally {
     }
   };
 
@@ -125,6 +123,7 @@ function CopyToRepositoryModal(props: {
         // TODO - error handling
       }
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const view = usePulpView({
@@ -195,7 +194,7 @@ function CopyToRepositoryModal(props: {
           setSelectedRepositories(newItems);
         }}
         selectItems={(items) => {
-          let newItems = [...selectedRepositories];
+          const newItems = [...selectedRepositories];
           for (const item of items) {
             if (!selectedRepositories.find((item2) => item.name == item2.name)) {
               newItems.push(item);
