@@ -138,13 +138,17 @@ export enum AwxRoute {
 
   CredentialTypes = 'awx-credential-types',
   CredentialType = 'awx-credential-type',
+  CredentialTypeDetails = 'awx-credential-type-details',
 
-  Notifications = 'awx-notifications',
-  NotificationPage = 'awx-notification-page',
+  NotificationTemplates = 'awx-notification-templates',
+  NotificationTemplatePage = 'awx-notification-template-page',
+  NotificationTemplateDetails = 'awx-notification-template-details',
 
   ManagementJobs = 'awx-management-jobs',
   ManagementJobPage = 'awx-management-job-page',
   ManagementJobSchedules = 'awx-management-job-schedules',
+  ManagementJobNotifications = 'awx-management-job-notifications',
+
   ManagementJobSchedulePage = 'awx-management-job-schedule-page',
   ManagementJobScheduleDetails = 'awx-management-job-schedule-details',
   ManagementJobScheduleRrules = 'awx-management-job-schedule-rrules',
