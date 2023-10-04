@@ -11,7 +11,6 @@ import {
   usePageNavigate,
 } from '../../../../framework';
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
-import { RouteObj } from '../../../common/Routes';
 import { postRequest, requestGet, requestPatch } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
@@ -122,6 +121,7 @@ export function EditJobTemplate() {
 export function CreateJobTemplate() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const postRequest = usePostRequest<JobTemplateCreate, JobTemplate>();
   const defaultValues = useMemo(() => getJobTemplateDefaultValues(t, {} as JobTemplate), [t]);
 
@@ -153,7 +153,7 @@ export function CreateJobTemplate() {
       }
       if (promises.length > 0) await Promise.all(promises);
 
-      navigate(RouteObj.JobTemplateDetails.replace(':id', template.id.toString()));
+      pageNavigate(AwxRoute.JobTemplateDetails, { params: { id: template.id } });
     } catch (err) {
       setError(getAwxError(err));
     }
