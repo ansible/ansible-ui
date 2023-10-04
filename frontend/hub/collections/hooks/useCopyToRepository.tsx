@@ -19,7 +19,7 @@ import { useHubContext, HubContext } from './../../useHubContext';
 import { SigningServiceResponse } from '../../api-schemas/generated/SigningServiceResponse';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { TaskResponse } from '../../tasks/Task';
-import { LoadingPage } from '../../../../framework/components/LoadingPage';
+import { LoadingState } from '../../../../framework/components/LoadingState';
 
 export function useCopyToRepository() {
   const [_, setDialog] = usePageDialog();
@@ -154,9 +154,9 @@ function CopyToRepositoryModal(props: {
             copyToRepositories();
           }}
           isDisabled={selectedRepositories.length <= fixedRepositories.length}
+          isLoading={isLoading}
         >
           {t('Select')}
-          {isLoading && <LoadingPage />}
         </Button>,
         <Button
           key="cancel"
@@ -164,7 +164,9 @@ function CopyToRepositoryModal(props: {
           onClick={() => {
             props.onClose();
           }}
-        ></Button>,
+        >
+          {t('Cancel')}
+        </Button>,
       ]}
       hasNoBodyWrapper
     >
