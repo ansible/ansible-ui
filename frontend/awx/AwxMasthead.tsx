@@ -48,7 +48,10 @@ export function AwxMasthead() {
           <PageSettingsIcon />
         </ToolbarItem>
         <ToolbarItem>
-          <PageNotificationsIcon count={0} onClick={() => pageNavigate(AwxRoute.Notifications)} />
+          <PageNotificationsIcon
+            count={0}
+            onClick={() => pageNavigate(AwxRoute.WorkflowApprovals)}
+          />
         </ToolbarItem>
         <ToolbarItem>
           <PageMastheadDropdown id="help-menu" icon={<QuestionCircleIcon />}>
