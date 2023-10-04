@@ -15,18 +15,18 @@ import { OrganizationPage } from './access/organizations/OrganizationPage/Organi
 import { OrganizationTeams } from './access/organizations/OrganizationPage/OrganizationTeams';
 import { Organizations } from './access/organizations/Organizations';
 import { CreateTeam, EditTeam } from './access/teams/TeamForm';
-import { TeamPage } from './access/teams/TeamPage/TeamPage';
 import { TeamAccess } from './access/teams/TeamPage/TeamAccess';
 import { TeamDetails } from './access/teams/TeamPage/TeamDetails';
+import { TeamPage } from './access/teams/TeamPage/TeamPage';
 import { TeamRoles } from './access/teams/TeamPage/TeamRoles';
 import { Teams } from './access/teams/Teams';
 import { AddRolesToTeam } from './access/teams/components/AddRolesToTeam';
 import { CreateUser, EditUser } from './access/users/UserForm';
-import { UserPage } from './access/users/UserPage/UserPage';
 import { UserDetails } from './access/users/UserPage/UserDetails';
 import { UserOrganizations } from './access/users/UserPage/UserOrganizations';
-import { UserTeams } from './access/users/UserPage/UserTeams';
+import { UserPage } from './access/users/UserPage/UserPage';
 import { UserRoles } from './access/users/UserPage/UserRoles';
+import { UserTeams } from './access/users/UserPage/UserTeams';
 import { Users } from './access/users/Users';
 import { AddRolesToUser } from './access/users/components/AddRolesToUser';
 import { ApplicationPage } from './administration/applications/ApplicationPage/ApplicationPage';
@@ -46,40 +46,40 @@ import Reports from './analytics/Reports/Reports';
 import SubscriptionUsage from './analytics/subscription-usage/SubscriptionUsage';
 import { AwxDashboard } from './dashboard/AwxDashboard';
 import { CreateCredential, EditCredential } from './resources/credentials/CredentialForm';
-import { CredentialPage } from './resources/credentials/CredentialPage/CredentialPage';
 import { CredentialDetails } from './resources/credentials/CredentialPage/CredentialDetails';
+import { CredentialPage } from './resources/credentials/CredentialPage/CredentialPage';
 import { Credentials } from './resources/credentials/Credentials';
 import { HostPage } from './resources/hosts/HostPage/HostPage';
 import { Hosts } from './resources/hosts/Hosts';
 import { Inventories } from './resources/inventories/Inventories';
 import { CreateInventory, EditInventory } from './resources/inventories/InventoryForm';
-import { InventoryPage } from './resources/inventories/InventoryPage/InventoryPage';
 import { InventoryDetails } from './resources/inventories/InventoryPage/InventoryDetails';
+import { InventoryPage } from './resources/inventories/InventoryPage/InventoryPage';
+import { ProjectDetails } from './resources/projects/ProjectPage/ProjectDetails';
 import { CreateProject, EditProject } from './resources/projects/ProjectPage/ProjectForm';
 import { ProjectPage } from './resources/projects/ProjectPage/ProjectPage';
 import { Projects } from './resources/projects/Projects';
 import { CreateJobTemplate, EditJobTemplate } from './resources/templates/TemplateForm';
+import { TemplateDetails } from './resources/templates/TemplatePage/TemplateDetails';
 import { TemplatePage } from './resources/templates/TemplatePage/TemplatePage';
 import { Templates } from './resources/templates/Templates';
 import {
   CreateWorkflowJobTemplate,
   EditWorkflowJobTemplate,
 } from './resources/templates/WorkflowJobTemplateForm';
+import { WorkflowJobTemplateDetails } from './resources/templates/WorkflowJobTemplatePage/WorkflowJobTemplateDetails';
 import { WorkflowJobTemplatePage } from './resources/templates/WorkflowJobTemplatePage/WorkflowJobTemplatePage';
 import Settings from './settings/Settings';
 import HostMetrics from './views/jobs/HostMetrics';
-import Jobs from './views/jobs/Jobs';
-import { JobPage } from './views/jobs/JobPage';
-import { JobOutput } from './views/jobs/JobOutput/JobOutput';
 import { JobDetails } from './views/jobs/JobDetails';
+import { JobOutput } from './views/jobs/JobOutput/JobOutput';
+import { JobPage } from './views/jobs/JobPage';
+import Jobs from './views/jobs/Jobs';
 import { CreateSchedule } from './views/schedules/ScheduleForm';
-import { SchedulePage } from './views/schedules/SchedulePage/SchedulePage';
-import { Schedules } from './views/schedules/Schedules';
-import { WorkflowJobTemplateDetails } from './resources/templates/WorkflowJobTemplatePage/WorkflowJobTemplateDetails';
 import { ScheduleDetails } from './views/schedules/SchedulePage/ScheduleDetails';
+import { SchedulePage } from './views/schedules/SchedulePage/SchedulePage';
 import { ScheduleRules } from './views/schedules/SchedulePage/ScheduleRules';
-import { TemplateDetails } from './resources/templates/TemplatePage/TemplateDetails';
-import { ProjectDetails } from './resources/projects/ProjectPage/ProjectDetails';
+import { Schedules } from './views/schedules/Schedules';
 
 export function useAwxNavigation() {
   const { t } = useTranslation();
@@ -855,7 +855,7 @@ export function useAwxNavigation() {
               },
               {
                 id: AwxRoute.Notifications,
-                label: t('Notifictions'),
+                label: t('Notifications'),
                 path: 'notifications',
                 children: [
                   {

@@ -119,6 +119,8 @@ declare global {
        */
       openToolbarFilterTypeSelect(): Chainable<JQuery<HTMLElement>>;
 
+      searchAndDisplayResource(name: string): Chainable<void>;
+
       filterBySingleSelection(
         filterType: RegExp | string,
         selectLabel: RegExp | string
