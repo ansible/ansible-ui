@@ -16,8 +16,9 @@ describe('Workflow Job templates visualizer', () => {
     cy.get('[data-cy="Submit"]').click();
     // Navigate to the visuzlizer page
     cy.verifyPageTitle(jtName);
+    cy.contains('button:not(:disabled):not(:hidden)', 'Save').should('be.visible');
     cy.contains('button:not(:disabled):not(:hidden)', 'Add node').should('be.visible');
-    cy.contains('a:not(:disabled):not(:hidden)', 'Cancel').should('be.visible');
+    cy.contains('button:not(:disabled):not(:hidden)', 'Cancel').should('be.visible');
     // Clean up - delete workflow job template
     cy.clickPageAction(/^Delete template/);
     cy.get('#confirm').click();
@@ -36,9 +37,10 @@ describe('Workflow Job templates visualizer', () => {
     cy.get('[data-cy="Submit"]').click();
     // Navigate to the visuzlizer page
     cy.verifyPageTitle(jtName);
+    cy.contains('button:not(:disabled):not(:hidden)', 'Save').should('be.visible');
     cy.contains('button:not(:disabled):not(:hidden)', 'Add node').should('be.visible');
-    cy.contains('a:not(:disabled):not(:hidden)', 'Cancel').should('be.visible');
-    cy.contains('a:not(:disabled):not(:hidden)', 'Cancel').click();
+    cy.contains('button:not(:disabled):not(:hidden)', 'Cancel').should('be.visible');
+    cy.contains('button:not(:disabled):not(:hidden)', 'Cancel').click();
     // Clean up - delete workflow job template
     cy.clickPageAction(/^Delete template/);
     cy.get('#confirm').click();

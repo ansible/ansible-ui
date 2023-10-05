@@ -1,22 +1,36 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   PageToolbar,
-  useGetPageUrl,
+  usePageNavigate,
 } from '../../../../../framework';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { ButtonVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { PlusCircleIcon } from '@patternfly/react-icons';
+import { CheckCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { AwxRoute } from '../../../AwxRoutes';
 
-export function useWorkflowVisualizerToolbarActions(setIsOpen: (isOpen: boolean) => void) {
+export function useWorkflowVisualizerToolbarActions(
+  [_isSidePanelOpen, setIsSidePanelOpen]: [boolean, (isOpen: boolean) => void],
+  setToggleUnsaveChangesModal: (isOpen: boolean) => void,
+  visualizerHasUnsavedChanges: boolean
+) {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const getPageUrl = useGetPageUrl();
+  const pageNavigate = usePageNavigate();
+
+  const handleCancel = useCallback(() => {
+    if (visualizerHasUnsavedChanges) {
+      setToggleUnsaveChangesModal(true);
+      return;
+    }
+    pageNavigate(AwxRoute.WorkflowJobTemplateDetails, {
+      params: { id: params.id },
+    });
+  }, [visualizerHasUnsavedChanges, pageNavigate, params.id, setToggleUnsaveChangesModal]);
 
   const toolbarActions = useMemo<IPageAction<WorkflowJobTemplate>[]>(
     () => [
@@ -24,24 +38,35 @@ export function useWorkflowVisualizerToolbarActions(setIsOpen: (isOpen: boolean)
         type: PageActionType.Button,
         variant: ButtonVariant.primary,
         isPinned: true,
+
+        label: t('Save'),
+        selection: PageActionSelection.None,
+        icon: CheckCircleIcon,
+        onClick: () => {},
+      },
+      {
+        type: PageActionType.Button,
+        variant: ButtonVariant.secondary,
+        isPinned: true,
         label: t('Add node'),
         selection: PageActionSelection.None,
         icon: PlusCircleIcon,
         onClick: () => {
-          setIsOpen(true);
+          setIsSidePanelOpen(true);
         },
       },
       {
-        type: PageActionType.Link,
+        type: PageActionType.Button,
         selection: PageActionSelection.None,
         variant: ButtonVariant.link,
-        isPinned: true,
+        isPinned: false,
         label: t('Cancel'),
-        href: getPageUrl(AwxRoute.WorkflowJobTemplateDetails, { params: { id: params.id } }),
+        onClick: handleCancel,
       },
     ],
-    [t, setIsOpen, getPageUrl, params]
+    [t, setIsSidePanelOpen, handleCancel]
   );
+
   return (
     <PageToolbar
       disablePagination
