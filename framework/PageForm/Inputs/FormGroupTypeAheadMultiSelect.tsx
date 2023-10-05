@@ -50,7 +50,6 @@ export function FormGroupTypeAheadMultiSelect(props: FormGroupTypeAheadMultiSele
     onHandleClear,
     value,
     id,
-    name,
     options,
     placeholderText,
     isSubmitting,
@@ -90,7 +89,8 @@ export function FormGroupTypeAheadMultiSelect(props: FormGroupTypeAheadMultiSele
         isOpen={isOpen}
         isCreateOptionOnTop
         onClear={() => onHandleClear()}
-        id={id ?? name}
+        id={id ?? props.name}
+        ouiaId="menu-select"
         selections={value?.length ? value : undefined}
         onToggle={() => {
           setIsOpen(!isOpen);

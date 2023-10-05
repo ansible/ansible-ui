@@ -19,7 +19,9 @@ describe('Job templates form', () => {
 
   before(() => {
     cy.awxLogin();
+  });
 
+  beforeEach(() => {
     cy.createAwxOrganization().then((o) => {
       organization = o;
 
@@ -34,14 +36,6 @@ describe('Job templates form', () => {
       cy.createAwxExecutionEnvironment({ organization: organization.id }).then((ee) => {
         executionEnvironment = ee;
       });
-
-      // cy.createAWXCredential({
-      //   kind: 'github_token',
-      //   organization: organization.id,
-      //   credential_type: 11,
-      // }).then((cred) => {
-      //   githubTokenCrendential = cred;
-      // });
 
       cy.createAWXCredential({
         kind: 'machine',
@@ -99,7 +93,7 @@ describe('Job templates form', () => {
     cy.clickModalButton('Confirm');
 
     // Playbook
-    cy.selectDropdownOptionByLabel(/^Playbook$/, 'hello_world.yml');
+    cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
 
     // Execution Environment
     cy.get('input[placeholder="Add execution environment"]')
@@ -120,18 +114,14 @@ describe('Job templates form', () => {
     cy.clickModalButton('Confirm');
 
     // Labels
-    cy.selectDropdownOptionByLabel(/^Labels$/, label.name.toString(), true);
+    cy.selectDropdownOptionByResourceName('labels.select', label.name.toString());
 
     cy.get('[data-cy="forks"]').type('10');
     cy.get('[data-cy="limit"]').type('10');
     cy.get('[data-cy="verbosity"]').type('1');
     cy.get('[data-cy="job-slicing"]').type('10');
     cy.get('[data-cy="timeout"]').type('10');
-    cy.getFormGroupByLabel(/^Show changes$/)
-      .parent()
-      .within(() => {
-        cy.get('.pf-c-switch__toggle').click();
-      });
+    cy.get('[data-cy="show-changes-toggle"]').click();
 
     // Instance Groups
     cy.get('input[placeholder="Add instance groups"]')
@@ -194,7 +184,7 @@ describe('Job templates form', () => {
     cy.get('input#prevent_instance_group_fallback').click();
     cy.get('[data-cy="host-config-key"]').type('test config key');
 
-    // cy.selectDropdownOptionByLabel(/^Webhook service$/, 'GitHub');
+    // cy.selectDropdownOptionByResourceName('webhook-service', 'GitHub');
 
     // cy.get('input[placeholder="Add webhook credential"]')
     //   .parent()

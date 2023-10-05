@@ -17,13 +17,13 @@ describe('JobOutput.cy.tsx', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/jobs/26/job_events/children_summary',
+        url: '/api/v2/jobs/26/job_events/children_summary/',
         hostname: 'localhost',
       },
       {
         fixture: 'jobChildrenSummary.json',
       }
-    );
+    ).as('childrenSummary');
   });
 
   it('renders job output', () => {
@@ -35,6 +35,7 @@ describe('JobOutput.cy.tsx', () => {
   it('collapses play output', () => {
     cy.mount(<JobOutput job={job as unknown as Job} reloadJob={() => null} />);
     cy.get('.output-grid').find('.output-grid-row').should('have.length', 13);
+    cy.wait('@childrenSummary');
     cy.get('.output-grid').find('button > svg').first().click();
     cy.get('.output-grid').find('.output-grid-row').should('have.length', 5);
   });

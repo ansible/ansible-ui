@@ -95,6 +95,7 @@ function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
 
       <PageFormSelect<JobTemplateForm>
         name="playbook"
+        id="playbook"
         labelHelpTitle={t('Playbook')}
         labelHelp={t('Select the playbook to be executed by this job.')}
         placeholderText={t('Add a project, then select a playbook')}
