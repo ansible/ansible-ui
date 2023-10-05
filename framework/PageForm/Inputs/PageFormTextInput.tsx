@@ -247,7 +247,7 @@ export function PageFormTextInput<
             isRequired={isRequired}
             labelIcon={labelHelp ? <Help title={labelHelpTitle} help={labelHelp} /> : undefined}
             labelInfo={additionalControls}
-            data-cy={`${id ?? ''}-form-group`}
+            data-cy={`${label?.toLowerCase().split(' ').join('-')}-form-group`}
           >
             <InputGroup>
               <TextInput

@@ -56,6 +56,7 @@ export function PageFormSwitch<
           <FormGroup
             helperTextInvalid={!(validate && isValidating) && error?.message}
             fieldId={id}
+            data-cy={id + '-form-group'}
             label={formLabel}
             helperText={helperText}
             validated={error?.message ? 'error' : undefined}
@@ -63,6 +64,7 @@ export function PageFormSwitch<
             labelIcon={labelHelp ? <Help title={labelHelpTitle} help={labelHelp} /> : undefined}
           >
             <Switch
+              data-cy={id + '-toggle'}
               {...rest}
               isChecked={value}
               onChange={(e) => onChange(e)}

@@ -13,26 +13,25 @@ describe('inventories', () => {
 
   before(() => {
     cy.awxLogin();
+  });
 
+  beforeEach(() => {
     cy.createAwxOrganization().then((org) => {
       organization = org;
       cy.createAwxLabel({ organization: organization.id }).then((lbl) => {
         label = lbl;
       });
-    });
-
-    cy.createAwxInventory().then((inv) => {
-      inventory = inv;
-    });
-
-    cy.createAwxInstanceGroup().then((ig) => {
-      instanceGroup = ig;
+      cy.createAwxInventory({ organization: organization.id }).then((inv) => {
+        inventory = inv;
+      });
+      cy.createAwxInstanceGroup().then((ig) => {
+        instanceGroup = ig;
+      });
     });
   });
 
   after(() => {
     cy.deleteAwxInstanceGroup(instanceGroup);
-    cy.deleteAwxOrganization(organization);
     cy.deleteAwxInventory(inventory);
   });
 
@@ -47,7 +46,7 @@ describe('inventories', () => {
     cy.clickButton(/^Create inventory$/);
     cy.clickLink(/^Create inventory$/);
     cy.get('[data-cy="inventory-name"]').type(inventoryName);
-    cy.selectDropdownOptionByLabel(/^Organization$/, organization.name);
+    cy.selectDropdownOptionByResourceName('organization', organization.name);
     cy.getCheckboxByLabel('Prevent instance group fallback').click();
     cy.clickButton(/^Create inventory$/);
     cy.verifyPageTitle(inventoryName);
@@ -62,7 +61,10 @@ describe('inventories', () => {
 
   it('edits an inventory from the inventory list row item', () => {
     cy.navigateTo('awx', 'inventories');
-    cy.clickTableRowActionIcon(inventory?.name, 'Edit inventory');
+    cy.searchAndDisplayResource(inventory.name);
+    cy.get(`[data-cy="row-id-${inventory.id}"]`).within(() => {
+      cy.get('[data-cy="edit-inventory"]').click();
+    });
     cy.get('input[aria-label="Add instance groups"]')
       .parent()
       .within(() => {
@@ -83,7 +85,7 @@ describe('inventories', () => {
     cy.clickTableRow(inventory.name);
     cy.verifyPageTitle(inventory.name);
     cy.clickButton(/^Edit inventory/);
-    cy.selectDropdownOptionByLabel(/^Labels$/, label.name);
+    cy.selectDropdownOptionByResourceName('labels.results', label.name);
     cy.contains('button', 'Save inventory').click();
     cy.verifyPageTitle(inventory.name);
     cy.hasDetail(/^Labels$/, label.name);
@@ -98,9 +100,7 @@ describe('inventories', () => {
       cy.get('#confirm').click();
       cy.clickButton(/^Delete inventory/);
       cy.verifyPageTitle('Inventories');
-      cy.requestDelete(`/api/v2/organizations/${testInventory.organization}/`, {
-        failOnStatusCode: false,
-      });
+      cy.deleteAwxOrganization(organization);
     });
   });
 
@@ -125,9 +125,7 @@ describe('inventories', () => {
       cy.navigateTo('awx', 'inventories');
       cy.clickTableRowKebabAction(testInventory.name, /^Copy inventory$/, true);
       cy.hasAlert(`${testInventory.name.toString()} copied`);
-      cy.requestDelete(`/api/v2/inventories/${testInventory.id.toString()}/`, {
-        failOnStatusCode: false,
-      });
+      cy.deleteAwxInventory(testInventory);
     });
   });
 

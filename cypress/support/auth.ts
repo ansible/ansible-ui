@@ -18,18 +18,9 @@ Cypress.Commands.add('login', (server: string, username: string, password: strin
     retryOnStatusCodeFailure: true,
     retryOnNetworkFailure: true,
   });
-  cy.get('[data-cy="username"]').type(username);
+  cy.get('[data-cy="username"]').type(username, { delay: 100 });
   cy.get('[data-cy="password"]').type(password);
-  cy.get('button[type=submit]').click();
-});
-
-Cypress.Commands.add('edaLogout', () => {
-  cy.get('.pf-c-dropdown__toggle')
-    .eq(1)
-    .click()
-    .then(() => {
-      cy.get('ul>li>a').contains('Logout').click();
-    });
+  cy.get('[data-cy="Submit"]').click();
 });
 
 Cypress.Commands.add('awxLogin', () => {
@@ -43,13 +34,13 @@ Cypress.Commands.add('awxLogin', () => {
         Cypress.env('AWX_PASSWORD') as string
       );
       window.localStorage.setItem('hide-welcome-message', 'true');
-      cy.verifyPageTitle('Welcome to');
+      cy.get('[data-cy="nav-toggle"]').should('exist');
     },
     {
-      cacheAcrossSpecs: true,
       validate: () => {
-        cy.request({ method: 'GET', url: '/api/v2/me/' });
+        cy.request({ method: 'GET', url: '/api/v2/me' });
       },
+      cacheAcrossSpecs: true,
     }
   );
   cy.visit(`/ui_next`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true });
@@ -75,6 +66,15 @@ Cypress.Commands.add('edaLogin', () => {
     }
   );
   cy.visit(`/eda`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true });
+});
+
+Cypress.Commands.add('edaLogout', () => {
+  cy.get('.pf-c-dropdown__toggle')
+    .eq(1)
+    .click()
+    .then(() => {
+      cy.get('ul>li>a').contains('Logout').click();
+    });
 });
 
 Cypress.Commands.add('hubLogin', () => {

@@ -51,46 +51,15 @@ Cypress.Commands.add('getCheckboxByLabel', (label: string | RegExp) => {
     });
 });
 
-Cypress.Commands.add(
-  'selectDropdownOptionByLabel',
-  //adjust this command once the dropdown component has data-cy added
-  (label: string | RegExp, text: string, multiselect?: boolean) => {
-    // Used for Typeahead multiselect components
-    if (multiselect) {
-      cy.contains('.pf-c-form__label-text', label)
-        .parent()
-        .parent()
-        .parent()
-        .parent()
-        .within(() => {
-          cy.get('button[aria-label="Options menu"]').click();
-          cy.get('.pf-c-select__menu').within(() => {
-            cy.contains('button', text).click();
-          });
-        });
-      return;
-    }
-    cy.getFormGroupByLabel(label).within(() => {
-      // Click button once it is enabled. Async loading of select will make it disabled until loaded.
-      cy.get('button[aria-label="Options menu"]').click();
-
-      // If the select menu contains a search, then search for the text
-
-      cy.get('.pf-c-select__menu').then((selectMenu) => {
-        if (selectMenu.find('.pf-m-search').length > 0) {
-          cy.get('.pf-m-search:not(:disabled):not(:hidden)')
-            .should('not.have.attr', 'aria-disabled', 'true')
-            .clear()
-            .type(text, { delay: 0 });
-        }
+Cypress.Commands.add('selectDropdownOptionByResourceName', (resource: string, itemName: string) => {
+  cy.get(`[data-cy*="${resource}-form-group"]`).within(() => {
+    cy.get('[data-ouia-component-id="menu-select"] button')
+      .click()
+      .then(() => {
+        cy.contains('li', itemName).click();
       });
-
-      cy.get('.pf-c-select__menu').within(() => {
-        cy.contains('button', text).click();
-      });
-    });
-  }
-);
+  });
+});
 
 Cypress.Commands.add('setTablePageSize', (text: '10' | '20' | '50' | '100') => {
   cy.get('.pf-c-pagination')
@@ -215,18 +184,6 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add(
-  'clickTableRowActionIcon',
-  (name: string | RegExp, ariaLabel: string, filter?: boolean) => {
-    cy.getTableRowByText(name, filter).within(() => {
-      cy.get(`button[aria-label="${ariaLabel}"]`)
-        .should('not.be.disabled')
-        .should('not.have.attr', 'aria-disabled', 'true')
-        .click();
-    });
-  }
-);
-
 Cypress.Commands.add('tableHasRowWithSuccess', (name: string | RegExp, filter?: boolean) => {
   cy.getTableRowByText(name, filter).within(() => {
     cy.get('[data-label="Status"]').should('contain', 'Successful');
@@ -330,6 +287,22 @@ Cypress.Commands.add(
       name: 'E2E Credential ' + randomString(4),
       ...credential,
     });
+  }
+);
+
+Cypress.Commands.add(
+  'deleteAwxCredential',
+  (
+    credential: Credential,
+    options?: {
+      /** Whether to fail on response codes other than 2xx and 3xx */
+      failOnStatusCode?: boolean;
+    }
+  ) => {
+    // Delete organization created for this credential (this will also delete the credential)
+    if (credential?.organization) {
+      cy.awxRequestDelete(`/api/v2/organizations/${credential.organization.toString()}/`, options);
+    }
   }
 );
 
@@ -438,7 +411,9 @@ Cypress.Commands.add(
       failOnStatusCode?: boolean;
     }
   ) => {
-    cy.awxRequestDelete(`/api/v2/users/${user.id}/`, options);
+    if (user?.id) {
+      cy.awxRequestDelete(`/api/v2/users/${user.id}/`, options);
+    }
   }
 );
 
@@ -452,13 +427,31 @@ Cypress.Commands.add(
       ...project,
     }).then((project) => {
       if (!skipSync) {
-        waitForProjectToFinishSyncing(project.id);
+        cy.waitForProjectToFinishSyncing(project.id);
       } else {
         cy.wrap(project);
       }
     });
   }
 );
+
+Cypress.Commands.add('waitForProjectToFinishSyncing', (projectId: number) => {
+  let requestCount = 1;
+  cy.awxRequestGet<Project>(`/api/v2/projects/${projectId}`).then((project) => {
+    // Assuming that projects could take up to 5 min to sync if the instance is under load with other jobs
+    if (project.status === 'successful' || requestCount > 300) {
+      if (requestCount > 300) {
+        cy.log('Reached maximum number of requests for reading project status');
+      }
+      // Reset request count
+      requestCount = 1;
+      return;
+    }
+    requestCount++;
+    cy.wait(1000);
+    cy.waitForProjectToFinishSyncing(projectId);
+  });
+});
 
 Cypress.Commands.add(
   'createAwxExecutionEnvironment',
@@ -536,10 +529,9 @@ Cypress.Commands.add(
       failOnStatusCode?: boolean;
     }
   ) => {
-    const organizationId = inventory.organization;
     // Delete organization created for this inventory (this will also delete the inventory)
-    if (organizationId) {
-      cy.awxRequestDelete(`/api/v2/organizations/${organizationId.toString()}/`, options);
+    if (inventory?.organization) {
+      cy.awxRequestDelete(`/api/v2/organizations/${inventory.organization.toString()}/`, options);
     }
   }
 );
@@ -654,7 +646,7 @@ Cypress.Commands.add('getAwxJobTemplateByName', (awxJobTemplateName: string) => 
   cy.awxRequestGet<AwxItemsResponse<JobTemplate>>(
     `/api/v2/job_templates/?name=${awxJobTemplateName}`
   ).then((result) => {
-    cy.log('RESULT RESULT', result);
+    cy.log('Job Template', result);
     if (result && result.count === 0) {
       cy.createAwxOrganizationProjectInventoryJobTemplate();
     } else {
@@ -688,26 +680,6 @@ Cypress.Commands.add(
     }
   }
 );
-
-let requestCount = 1;
-
-// Polling to wait till a project is synced
-function waitForProjectToFinishSyncing(projectId: number) {
-  cy.awxRequestGet<Project>(`/api/v2/projects/${projectId}`).then((project) => {
-    // Assuming that projects could take up to 5 min to sync if the instance is under load with other jobs
-    if (project.status === 'successful' || requestCount > 300) {
-      if (requestCount > 300) {
-        cy.log('Reached maximum number of requests for reading project status');
-      }
-      // Reset request count
-      requestCount = 1;
-      return;
-    }
-    requestCount++;
-    cy.wait(1000);
-    waitForProjectToFinishSyncing(projectId);
-  });
-}
 
 Cypress.Commands.add(
   'createInventoryHostGroup',
@@ -778,9 +750,9 @@ Cypress.Commands.add(
       failOnStatusCode?: boolean;
     }
   ) => {
-    const instanceGroupId = instanceGroup.id;
-    if (instanceGroupId) {
-      cy.awxRequestDelete(`/api/v2/instance_groups/${instanceGroupId.toString()}/`, options);
+    // const instanceGroupId = instanceGroup.id;
+    if (instanceGroup?.id) {
+      cy.awxRequestDelete(`/api/v2/instance_groups/${instanceGroup.id.toString()}/`, options);
     }
   }
 );
