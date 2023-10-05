@@ -1,11 +1,22 @@
-import { EditIcon } from '@patternfly/react-icons';
+import { EditIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../framework';
 import { ExecutionEnvironment } from '../ExecutionEnvironment';
+import {
+  useDeleteExecutionEnvironments,
+  useSyncExecutionEnvironments,
+  useSignExecutionEnvironments,
+} from './useExecutionEnvironmentsActions';
+import { useHubContext } from '../../useHubContext';
 
 export function useExecutionEnvironmentActions() {
   const { t } = useTranslation();
+  const context = useHubContext();
+  const deleteExecutionEnvironments = useDeleteExecutionEnvironments();
+  const syncExecutionEnvironments = useSyncExecutionEnvironments();
+  const signExecutionEnvironment = useSignExecutionEnvironments();
+
   return useMemo<IPageAction<ExecutionEnvironment>[]>(
     () => [
       {
@@ -17,7 +28,40 @@ export function useExecutionEnvironmentActions() {
           /**/
         },
       },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: TrashIcon,
+        label: t('Delete environment'),
+        onClick: (ee) => deleteExecutionEnvironments([ee]),
+        isDanger: true,
+        isDisabled: context.hasPermission('container.delete_containerrepository')
+          ? ''
+          : t`You do not have rights to this operation`,
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        label: t('Sync selected environments'),
+        onClick: (ee) => syncExecutionEnvironments([ee]),
+        isDisabled:
+          context.hasPermission('container.change_containernamespace') &&
+          context.hasPermission('container.namespace_change_containerdistribution')
+            ? ''
+            : t`You do not have rights to this operation`,
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        label: t('Sign selected environments'),
+        onClick: (ee) => signExecutionEnvironment([ee]),
+        isDisabled:
+          context.hasPermission('container.change_containernamespace') &&
+          context.featureFlags.container_signing
+            ? ''
+            : t`You do not have rights to this operation`,
+      },
     ],
-    [t]
+    [t, context, deleteExecutionEnvironments, syncExecutionEnvironments, signExecutionEnvironment]
   );
 }
