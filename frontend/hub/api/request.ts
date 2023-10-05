@@ -1,7 +1,7 @@
 import { createRequestError } from '../../common/crud/RequestError';
 import { getCookie } from '../../common/crud/cookie';
 import { TaskResponse } from '../tasks/Task';
-import { parseTaskResponse } from './utils.tsx';
+import { parseTaskResponse } from './utils';
 // import { TaskResponse } from '../api-schemas/generated/TaskResponse';
 
 interface Options {
@@ -86,7 +86,7 @@ export async function hubPostRequestFile(
   });
 
   if (response.status === 202) {
-    await parseTaskResponse((await response.json()) as TaskResponse);
+    return parseTaskResponse((await response.json()) as TaskResponse);
   }
 
   if (!response.ok) {

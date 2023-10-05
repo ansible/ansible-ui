@@ -35,15 +35,18 @@ export function useApprovalActions(callback?: (collections: CollectionVersionSea
           pageNavigate(HubRoute.CollectionSignatureUpload, {
             params: { ...params },
             query: {
-              name: i.collection_version.name,
-              namespace: i.collection_version.namespace,
+              name: i?.collection_version?.name,
+              namespace: i?.collection_version?.namespace,
               repository: 'staging',
-              version: i.collection_version.version,
+              version: i?.collection_version?.version,
             },
           });
         },
         isDanger: false,
-        isDisabled: (collection) => can_upload_signatures || collection.is_signed,
+        isDisabled: (collection) =>
+          can_upload_signatures || collection.is_signed
+            ? t`You do not have rights to this operation`
+            : undefined,
       },
       {
         type: PageActionType.Button,
@@ -54,7 +57,9 @@ export function useApprovalActions(callback?: (collections: CollectionVersionSea
         onClick: (collection) => approveCollections([collection]),
         isDanger: false,
         isDisabled: (collection) =>
-          can_upload_signatures && require_upload_signatures && collection.is_signed ? true : false,
+          can_upload_signatures && require_upload_signatures && collection.is_signed
+            ? t`You do not have rights to this operation`
+            : undefined,
       },
       { type: PageActionType.Seperator },
       {

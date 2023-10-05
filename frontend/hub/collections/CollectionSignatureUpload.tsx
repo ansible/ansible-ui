@@ -6,9 +6,10 @@ import { useGet, useGetRequest } from '../../common/crud/useGet';
 import { hubAPI, pulpAPI } from '../api/utils';
 import { HubItemsResponse } from '../useHubView';
 import { CollectionVersionSearch } from './Collection';
+import { Repository } from '../repositories/Repository';
 import { HubRoute } from '../HubRoutes';
 import { useGetPageUrl } from '../../../framework';
-import { hubPostRequestFile } from '../api/request.ts';
+import { hubPostRequestFile } from '../api/request';
 import { usePageNavigate } from '../../../framework/PageNavigation/usePageNavigate';
 import { PulpItemsResponse } from '../usePulpView';
 
@@ -35,7 +36,7 @@ export function CollectionSignatureUpload() {
         title={t('Signature upload')}
         breadcrumbs={[
           { label: t('Collections'), to: getPageUrl(HubRoute.Collections) },
-          { label: collection?.collection_version.name },
+          { label: collection?.collection_version?.name },
         ]}
       />
       <UploadSignatureByFile />
@@ -57,7 +58,7 @@ export function UploadSignatureByFile() {
   if (data && data.data && data.data.length > 0) {
     collection = data.data[0];
   }
-  const collectionID = collection?.collection_version.pulp_href;
+  const collectionID = collection?.collection_version?.pulp_href;
 
   async function submitData(data: UploadData) {
     const repoRes = (await getRequest(

@@ -8,7 +8,7 @@ import { useHubContext } from './../../useHubContext';
 export function useApprovalsColumns(_options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
   const { featureFlags } = useHubContext();
-  const { can_upload_signatures, require_upload_signatures } = featureFlags;
+  const { can_upload_signatures, require_upload_signatures, display_signatures } = featureFlags;
   const tableColumns = useMemo<ITableColumn<CollectionVersionSearch>[]>(
     () => [
       {
@@ -50,7 +50,7 @@ export function useApprovalsColumns(_options?: { disableSort?: boolean; disableL
             );
           }
 
-          if (approval.repository.pulp_labels?.pipeline == 'approved') {
+          if (approval.repository?.pulp_labels?.pipeline == 'approved') {
             if (approval.is_signed && display_signatures) {
               return (
                 <TextCell
@@ -81,7 +81,7 @@ export function useApprovalsColumns(_options?: { disableSort?: boolean; disableL
         sort: 'pulp_created',
       },
     ],
-    [t, can_upload_signatures, require_upload_signatures]
+    [t, can_upload_signatures, require_upload_signatures, display_signatures]
   );
   return tableColumns;
 }
