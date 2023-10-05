@@ -40,10 +40,9 @@ describe('EDA rulebook activations- Create', () => {
     cy.get('h1').should('contain', 'Create Rulebook Activation');
     cy.get('[data-cy="name"]').type(name);
     cy.get('[data-cy="description"]').type('This is a new rulebook activation.');
-    cy.selectDropdownOptionByLabel(/^Project$/, edaProject.name);
-    cy.selectDropdownOptionByLabel(/^Rulebook$/, edaRuleBook.name);
-    cy.selectDropdownOptionByLabel(/^Decision environment$/, edaDecisionEnvironment.name);
-    cy.selectDropdownOptionByLabel(/^Restart policy$/, 'On failure');
+    cy.selectDropdownOptionByResourceName('project-id', edaProject.name);
+    cy.selectDropdownOptionByResourceName('rulebook', edaRuleBook.name);
+    cy.selectDropdownOptionByResourceName('decision-environment-id', edaDecisionEnvironment.name);
     cy.intercept('POST', '/api/eda/v1/activations/').as('edaRBA');
     cy.clickButton(/^Create rulebook activation$/);
     cy.wait('@edaRBA').then((edaRBA) => {
@@ -62,10 +61,10 @@ describe('EDA rulebook activations- Create', () => {
     cy.get('h1').should('contain', 'Create Rulebook Activation');
     cy.get('[data-cy="name"]').type(name);
     cy.get('[data-cy="description"]').type('This is a new rulebook activation.');
-    cy.selectDropdownOptionByLabel(/^Project$/, edaProject.name);
-    cy.selectDropdownOptionByLabel(/^Rulebook$/, edaRuleBook.name);
-    cy.selectDropdownOptionByLabel(/^Decision environment$/, edaDecisionEnvironment.name);
-    cy.selectDropdownOptionByLabel(/^Restart policy$/, 'Always');
+    cy.selectDropdownOptionByResourceName('project-id', edaProject.name);
+    cy.selectDropdownOptionByResourceName('rulebook', edaRuleBook.name);
+    cy.selectDropdownOptionByResourceName('decision-environment', edaDecisionEnvironment.name);
+    cy.selectDropdownOptionByResourceName('restart-policy', 'Always');
     cy.intercept('POST', '/api/eda/v1/activations/').as('edaRBA');
     cy.clickButton(/^Create rulebook activation$/);
     cy.wait('@edaRBA').then((edaRBA) => {

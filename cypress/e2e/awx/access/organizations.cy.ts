@@ -2,7 +2,6 @@
 /// <reference types="cypress" />
 
 import { randomString } from '../../../../framework/utils/random-string';
-import { AwxItemsResponse } from '../../../../frontend/awx/common/AwxItemsResponse';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 
 describe('organizations', () => {
@@ -13,23 +12,6 @@ describe('organizations', () => {
 
     cy.createAwxOrganization().then((org) => {
       organization = org;
-    });
-  });
-
-  after(() => {
-    cy.deleteAwxOrganization(organization);
-    // Sometimes if tests are stopped in the middle, we get left over organizations
-    // Cleanup E2E organizations older than 20 minutes
-    cy.requestGet<AwxItemsResponse<Organization>>(
-      `/api/v2/organizations/?page_size=100&created__lt=${new Date(
-        Date.now() - 20 * 60 * 1000
-      ).toISOString()}&name__startswith=E2E`
-    ).then((itemsResponse) => {
-      for (const organization of itemsResponse.results) {
-        cy.requestDelete(`/api/v2/organizations/${organization.id}/`, {
-          failOnStatusCode: false,
-        });
-      }
     });
   });
 
@@ -112,6 +94,7 @@ describe('organizations', () => {
   it('deletes an organization from the organizations list toolbar', () => {
     cy.createAwxOrganization().then((testOrganization) => {
       cy.navigateTo('awx', 'organizations');
+      // cy.searchAndDisplayResource(testOrganization.name);
       cy.selectTableRow(testOrganization.name);
       cy.clickToolbarKebabAction(/^Delete selected organizations$/);
       cy.get('#confirm').click();

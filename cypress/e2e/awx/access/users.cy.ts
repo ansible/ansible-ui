@@ -11,24 +11,20 @@ describe('Users List Actions', () => {
 
   before(() => {
     cy.awxLogin();
+  });
 
+  beforeEach(() => {
     cy.createAwxOrganization().then((org) => {
       organization = org;
+      cy.createAwxUser(organization).then((testUser) => {
+        user = testUser;
+      });
     });
   });
 
   after(() => {
-    cy.requestDelete(`/api/v2/organizations/${organization.id}/`, {
-      failOnStatusCode: false,
-    });
-  });
-
-  beforeEach(() => {
-    cy.createAwxUser(organization).then((testUser) => (user = testUser));
-  });
-
-  afterEach(() => {
     cy.deleteAwxUser(user);
+    cy.deleteAwxOrganization(organization);
   });
 
   it('renders the users list page', () => {
@@ -86,20 +82,19 @@ describe('Users Delete Actions', () => {
 
   before(() => {
     cy.awxLogin();
+  });
 
+  beforeEach(() => {
     cy.createAwxOrganization().then((org) => {
       organization = org;
+      cy.createAwxUser(organization).then((testUser) => {
+        user = testUser;
+      });
     });
   });
 
   after(() => {
-    cy.requestDelete(`/api/v2/organizations/${organization.id}/`, {
-      failOnStatusCode: false,
-    });
-  });
-
-  beforeEach(() => {
-    cy.createAwxUser(organization).then((testUser) => (user = testUser));
+    cy.deleteAwxOrganization(organization);
   });
 
   it('deletes a user from the details page', () => {
