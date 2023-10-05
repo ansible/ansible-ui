@@ -2,8 +2,8 @@ export interface ExecutionEnvironment {
   id: string;
   pulp_href: string;
   name: string;
-  pulp: {
-    repository: {
+  pulp?: {
+    repository?: {
       id: string;
       pulp_type: string;
       version: number;
@@ -27,7 +27,7 @@ export interface ExecutionEnvironment {
       };
       sign_state: 'unsigned' | 'signed';
     };
-    distribution: {
+    distribution?: {
       id: string;
       name: string;
       created_at: string;
@@ -36,7 +36,7 @@ export interface ExecutionEnvironment {
       pulp_labels: object;
     };
   };
-  namespace: {
+  namespace?: {
     id: string;
     pulp_href: string;
     name: string;
