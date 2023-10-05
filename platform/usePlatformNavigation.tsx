@@ -55,7 +55,7 @@ export function usePlatformNavigation() {
   const remoteRegistries = removeNavigationItemById(hub, HubRoute.RemoteRegistries);
   const tasks = removeNavigationItemById(hub, HubRoute.Tasks);
   const approvals = removeNavigationItemById(hub, HubRoute.Approvals);
-  const notifications = removeNavigationItemById(awx, AwxRoute.NotificationTemplates);
+  const notificationTemplates = removeNavigationItemById(awx, AwxRoute.NotificationTemplates);
   const managementJobs = removeNavigationItemById(awx, AwxRoute.ManagementJobs);
   const applications = removeNavigationItemById(awx, AwxRoute.Applications);
 
@@ -138,7 +138,7 @@ export function usePlatformNavigation() {
           remoteRegistries,
           tasks,
           approvals,
-          notifications,
+          notificationTemplates,
           managementJobs,
           applications,
         ],
@@ -162,7 +162,7 @@ export function usePlatformNavigation() {
     jobs,
     managementJobs,
     namespaces,
-    notifications,
+    notificationTemplates,
     organizations,
     projects,
     remoteRegistries,
