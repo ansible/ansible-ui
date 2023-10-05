@@ -171,7 +171,7 @@
     "@types/js-yaml": "4.0.7",
     "@typescript-eslint/eslint-plugin": "6.7.5",
     "@typescript-eslint/parser": "6.7.5",
-    "cypress": "12.17.4",
+    "cypress": "13.3.0",
     "cypress-react-selector": "3.0.0",
     "eslint": "8.51.0",
     "eslint-config-prettier": "9.0.0",
