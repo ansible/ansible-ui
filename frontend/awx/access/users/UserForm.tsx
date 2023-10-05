@@ -41,8 +41,8 @@ export function CreateUser() {
       } catch {
         throw new Error(t('Organization not found.'));
       }
-      user.is_superuser = userType === t('System administrator');
-      user.is_system_auditor = userType === t('System auditor');
+      user.is_superuser = userType === 'System administrator';
+      user.is_system_auditor = userType === 'System auditor';
       if (confirmPassword !== user.password) {
         setFieldError('confirmPassword', { message: t('Password does not match.') });
         return false;
