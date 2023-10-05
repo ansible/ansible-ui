@@ -104,6 +104,7 @@ export function PageFormAsyncSelect<
       render={({ field: { onChange, value }, fieldState: { error } }) => {
         return (
           <PageFormGroup
+            name={name}
             id={id}
             label={label}
             labelHelp={labelHelp}
@@ -128,7 +129,7 @@ export function PageFormAsyncSelect<
               limit={props.limit}
               openSelectDialog={openSelectDialog}
               loadingError={!!loadingError}
-              labeledBy={`${id ?? ''}-form-group`}
+              labeledBy={`${name}-form-group`}
             />
           </PageFormGroup>
         );
@@ -260,6 +261,7 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
     <InputGroup>
       <Select
         toggleId={id}
+        ouiaId="menu-select"
         aria-labelledby={labeledBy}
         variant={variant ? SelectVariant[`${variant}`] : SelectVariant.single}
         hasPlaceholderStyle

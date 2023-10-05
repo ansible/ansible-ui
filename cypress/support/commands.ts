@@ -71,11 +71,7 @@ declare global {
       getCheckboxByLabel(label: string | RegExp): Chainable<JQuery<HTMLElement>>;
 
       /** Finds a dropdown/select component by its dropdownLabel and clicks on the option specified by dropdownOptionLabel.*/
-      selectDropdownOptionByLabel(
-        dropdownLabel: string | RegExp,
-        dropdownOptionLabel: string,
-        multiselect?: boolean
-      ): Chainable<void>;
+      selectDropdownOptionByResourceName(resource: string, itemName: string): Chainable<void>;
 
       singleSelectShouldHaveSelectedOption(
         selector: string,
@@ -185,13 +181,6 @@ declare global {
       clickTableRowPinnedAction(
         name: string | RegExp,
         label: string,
-        filter?: boolean
-      ): Chainable<void>;
-
-      /** Finds a table row containing text and clicks action specified by the aria-label of the icon-only action button. */
-      clickTableRowActionIcon(
-        name: string | RegExp,
-        ariaLabel: string,
         filter?: boolean
       ): Chainable<void>;
 
@@ -325,6 +314,8 @@ declare global {
         skipSync?: boolean
       ): Chainable<Project>;
 
+      waitForProjectToFinishSyncing(projectId: number): Chainable<void>;
+
       /** Create an execution environment in AWX */
       createAwxExecutionEnvironment(
         executionEnvironment: Partial<Omit<ExecutionEnvironment, 'id'>>
@@ -401,6 +392,13 @@ declare global {
       ): Chainable<void>;
       deleteAwxProject(
         project: Project,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
+      ): Chainable<void>;
+      deleteAwxCredential(
+        credential: Credential,
         options?: {
           /** Whether to fail on response codes other than 2xx and 3xx */
           failOnStatusCode?: boolean;

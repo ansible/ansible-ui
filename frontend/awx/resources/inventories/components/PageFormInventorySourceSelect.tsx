@@ -3,9 +3,9 @@ import { FieldPath, FieldPathValue, FieldValues, Path } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { PageFormAsyncSelect } from '../../../../../framework/PageForm/Inputs/PageFormAsyncSelect';
 import { requestGet } from '../../../../common/crud/Data';
+import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { InventorySource } from '../../../interfaces/InventorySource';
 import { useSelectInventorySource } from '../hooks/useSelectInventorySource';
-import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 
 export function PageFormInventorySourceSelect<
   TFieldValues extends FieldValues = FieldValues,
@@ -26,6 +26,7 @@ export function PageFormInventorySourceSelect<
   return (
     <PageFormAsyncSelect<TFieldValues>
       name={props.name}
+      id="inventory-source-select"
       label={t('Inventory source')}
       query={query}
       valueToString={(value) => {

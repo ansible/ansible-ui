@@ -4,9 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { PageFormTextInput } from '../../../../../framework';
 import { PageFormMultiInput } from '../../../../../framework/PageForm/Inputs/PageFormMultiInput';
 import { requestGet } from '../../../../common/crud/Data';
+import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { Credential } from '../../../interfaces/Credential';
 import { useMultiSelectCredential, useSingleSelectCredential } from '../hooks/useSelectCredential';
-import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 
 export function PageFormCredentialSelect<
   TFieldValues extends FieldValues = FieldValues,
@@ -35,6 +35,7 @@ export function PageFormCredentialSelect<
       {...props}
       placeholder={props.placeholder ? props.placeholder : t('Add credentials')}
       name={props.name}
+      id="credential-select"
       label={props.label ? props.label : t('Credential')}
       selectTitle={props.selectTitle ? props.selectTitle : t('Select credentials')}
       selectOpen={multiSelectelectCredential}
@@ -62,6 +63,7 @@ export function PageFormCredentialSelect<
       {...props}
       placeholder={props.placeholder ? props.placeholder : t('Add credential')}
       name={props.name}
+      id="credential-select"
       label={props.label ? props.label : t('Credential')}
       selectTitle={props.selectTitle ? props.selectTitle : t('Select a credential')}
       selectOpen={singleSelectCredential}

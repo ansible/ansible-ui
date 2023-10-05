@@ -33,6 +33,7 @@ export function PageFormWorkflowJobTemplateSelect<
   return (
     <PageFormAsyncSelect<TFieldValues>
       name={props.name}
+      id="workflow-job-template-select"
       label={t('Job Template')}
       query={query}
       valueToString={(value) => {

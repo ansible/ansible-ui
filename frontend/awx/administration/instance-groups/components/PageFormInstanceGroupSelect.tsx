@@ -21,6 +21,7 @@ export function PageFormInstanceGroupSelect<
     <PageFormMultiInput<InstanceGroup, TFieldValues, TFieldName>
       {...props}
       name={props.name}
+      id="instance-group-select"
       placeholder={t('Add instance groups')}
       labelHelpTitle={t('Instance groups')}
       labelHelp={props.labelHelp}
