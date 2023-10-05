@@ -58,6 +58,7 @@ describe('projects', () => {
 
   it('can edit a project from the project list row action', () => {
     cy.navigateTo('awx', 'projects');
+    cy.searchAndDisplayResource(project.name);
     cy.get(`[data-cy="row-id-${project.id}"]`).within(() => {
       cy.get('[data-cy="edit-project"]').click();
     });
@@ -223,8 +224,12 @@ describe('projects', () => {
       cy.clickTableRow(testProject.name);
       cy.verifyPageTitle(testProject.name);
       cy.clickPageAction(/^Delete project/);
-      cy.get('#confirm').click();
-      cy.clickButton(/^Delete project/);
+      cy.get('[data-ouia-component-type="PF4/ModalContent"]').within(() => {
+        cy.intercept('DELETE', `/api/v2/projects/${testProject.id}/`).as('deleted');
+        cy.get('#confirm').click();
+        cy.clickButton(/^Delete project/);
+        cy.wait('@deleted');
+      });
       cy.getTableRowByText(testProject.name).should('not.exist');
       cy.verifyPageTitle('Projects');
     });
