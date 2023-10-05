@@ -45,10 +45,8 @@ export function useExecutionEnvironmentActions() {
         label: t('Sync selected environments'),
         onClick: (ee) => syncExecutionEnvironments([ee]),
         isDisabled:
-          context.hasPermission('container.container.change_containernamespace') &&
-          context.hasPermission(
-            'container.container.container.namespace_change_containerdistribution'
-          )
+          context.hasPermission('container.change_containernamespace') &&
+          context.hasPermission('container.namespace_change_containerdistribution')
             ? ''
             : t`You do not have rights to this operation`,
       },

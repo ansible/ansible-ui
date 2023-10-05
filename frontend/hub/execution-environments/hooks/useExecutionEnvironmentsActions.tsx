@@ -50,10 +50,8 @@ export function useExecutionEnvironmentsActions() {
         label: t('Sync selected environments'),
         onClick: syncExecutionEnvironments,
         isDisabled:
-          context.hasPermission('container.container.change_containernamespace') &&
-          context.hasPermission(
-            'container.container.container.namespace_change_containerdistribution'
-          )
+          context.hasPermission('container.change_containernamespace') &&
+          context.hasPermission('container.namespace_change_containerdistribution')
             ? ''
             : t`You do not have rights to this operation`,
       },
@@ -89,7 +87,7 @@ export function useDeleteExecutionEnvironments(onComplete?: (ees: ExecutionEnvir
           }
         ),
         actionButtonText: t('Delete collections', { count: ees.length }),
-        items: ees.sort((l, r) => compareStrings(l.name || '' + l.name, r.name || '' + l.name)),
+        items: ees.sort((l, r) => compareStrings(l.name || '', r.name || '')),
         keyFn: (item) => item.name,
         isDanger: true,
         confirmationColumns,
@@ -122,7 +120,7 @@ export function useSyncExecutionEnvironments(onComplete?: (ees: ExecutionEnviron
           }
         ),
         actionButtonText: t('Sync execution environments', { count: ees.length }),
-        items: ees.sort((l, r) => compareStrings(l.name || '' + l.name, r.name || '' + l.name)),
+        items: ees.sort((l, r) => compareStrings(l.name || '', r.name || '')),
         keyFn: (item) => item.name,
         confirmationColumns,
         actionColumns,
@@ -159,7 +157,7 @@ export function useSignExecutionEnvironments(onComplete?: (ees: ExecutionEnviron
           }
         ),
         actionButtonText: t('Sign execution environments', { count: ees.length }),
-        items: ees.sort((l, r) => compareStrings(l.name || '' + l.name, r.name || '' + l.name)),
+        items: ees.sort((l, r) => compareStrings(l.name || '', r.name || '')),
         keyFn: (item) => item.name,
         confirmationColumns,
         actionColumns,
