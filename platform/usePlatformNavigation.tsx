@@ -55,7 +55,7 @@ export function usePlatformNavigation() {
   const remoteRegistries = removeNavigationItemById(hub, HubRoute.RemoteRegistries);
   const tasks = removeNavigationItemById(hub, HubRoute.Tasks);
   const approvals = removeNavigationItemById(hub, HubRoute.Approvals);
-  const notifications = removeNavigationItemById(awx, AwxRoute.Notifications);
+  const notifications = removeNavigationItemById(awx, AwxRoute.NotificationTemplates);
   const managementJobs = removeNavigationItemById(awx, AwxRoute.ManagementJobs);
   const applications = removeNavigationItemById(awx, AwxRoute.Applications);
 
