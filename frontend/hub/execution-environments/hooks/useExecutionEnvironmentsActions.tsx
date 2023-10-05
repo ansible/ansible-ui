@@ -8,6 +8,8 @@ import { TrashIcon } from '@patternfly/react-icons';
 import { useHubContext } from '../../useHubContext';
 import { useExecutionEnvironmentsColumns } from './useExecutionEnvironmentsColumns';
 import { compareStrings, useBulkConfirmation } from '../../../../framework';
+import { requestDelete } from '../../../common/crud/Data';
+import { hubAPI } from '../../api/utils';
 
 export function useExecutionEnvironmentsActions() {
   const { t } = useTranslation();
@@ -70,13 +72,5 @@ export function useDeleteExecutionEnvironments(onComplete?: (ees: ExecutionEnvir
 }
 
 async function deleteExecutionEnvironment(ee: ExecutionEnvironment) {
-  return true;
-  /*const distro: PulpItemsResponse<Distribution> = await requestGet(
-    pulpAPI`/distributions/ansible/ansible/?repository=${collection?.repository?.pulp_href || ''}`
-  );
-  return requestDelete(
-    hubAPI`/v3/plugin/ansible/content/${distro.results[0].base_path}/collections/index/${
-      collection?.collection_version?.namespace || ''
-    }/${collection?.collection_version?.name || ''}/`
-  );*/
+  return requestDelete(hubAPI`/v3/plugin/execution-environments/repositories/${ee.name}/`);
 }
