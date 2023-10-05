@@ -83,8 +83,8 @@ export function usePlatformNavigation() {
         children: [jobs, templates, schedules, executionEnvironments],
       },
       {
-        label: t('Event Driven Automation'),
-        path: 'event-driven',
+        label: t('Automation Decisions'),
+        path: 'automation-decisions',
         children: [ruleAudits, rulebookActivations, decisionEnvironments],
       },
       {
