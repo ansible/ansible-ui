@@ -184,13 +184,6 @@ declare global {
         filter?: boolean
       ): Chainable<void>;
 
-      /** Finds a table row containing text and clicks action specified by the aria-label of the icon-only action button. */
-      clickTableRowActionIcon(
-        name: string | RegExp,
-        ariaLabel: string,
-        filter?: boolean
-      ): Chainable<void>;
-
       /** Check if the table row containing the specified text also has the text 'Successful'. */
       tableHasRowWithSuccess(name: string | RegExp, filter?: boolean): Chainable<void>;
 

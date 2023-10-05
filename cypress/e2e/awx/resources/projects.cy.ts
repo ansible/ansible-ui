@@ -58,7 +58,9 @@ describe('projects', () => {
 
   it('can edit a project from the project list row action', () => {
     cy.navigateTo('awx', 'projects');
-    cy.clickTableRowActionIcon(project.name, 'Edit project');
+    cy.get(`[data-cy="row-id-${project.id}"]`).within(() => {
+      cy.get('[data-cy="edit-project"]').click();
+    });
     cy.verifyPageTitle('Edit Project');
     cy.clickButton(/^Cancel$/);
     cy.verifyPageTitle('Projects');

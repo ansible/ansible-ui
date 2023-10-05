@@ -61,7 +61,10 @@ describe('inventories', () => {
 
   it('edits an inventory from the inventory list row item', () => {
     cy.navigateTo('awx', 'inventories');
-    cy.clickTableRowActionIcon(inventory.name, 'Edit inventory');
+    cy.searchAndDisplayResource(inventory.name);
+    cy.get(`[data-cy="row-id-${inventory.id}"]`).within(() => {
+      cy.get('[data-cy="edit-inventory"]').click();
+    });
     cy.get('input[aria-label="Add instance groups"]')
       .parent()
       .within(() => {

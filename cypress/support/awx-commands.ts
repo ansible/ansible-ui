@@ -184,15 +184,6 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add(
-  'clickTableRowActionIcon',
-  (name: string | RegExp, ariaLabel: string, filter?: boolean) => {
-    cy.getTableRowByText(name, filter).within(() => {
-      cy.get(`button[data-cy*="edit-"]`).click();
-    });
-  }
-);
-
 Cypress.Commands.add('tableHasRowWithSuccess', (name: string | RegExp, filter?: boolean) => {
   cy.getTableRowByText(name, filter).within(() => {
     cy.get('[data-label="Status"]').should('contain', 'Successful');
