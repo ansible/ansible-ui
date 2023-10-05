@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ITableColumn } from '../../../../framework';
+import { Label } from '@patternfly/react-core';
 
 import { ExecutionEnvironment } from '../ExecutionEnvironment';
 
@@ -43,6 +44,10 @@ export function useExecutionEnvironmentsColumns(_options?: {
         card: 'hidden',
         list: 'secondary',
         sort: 'updated_at',
+      },
+      {
+        header: t('Container registry type'),
+        cell: (ee) => <Label>{ee.pulp?.repository?.remote ? t`Remote` : t`Local`}</Label>,
       },
     ],
     [t]
