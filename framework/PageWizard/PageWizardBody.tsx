@@ -69,7 +69,10 @@ export default function PageWizardBody<T>(props: {
             {activeStep.inputs}
           </PageForm>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+          <div
+            data-cy={`wizard-section-${activeStep.id}`}
+            style={{ display: 'flex', flexDirection: 'column', height: '100%' }}
+          >
             <PageSection variant="light" isFilled hasOverflowScroll>
               {activeStep?.element}
             </PageSection>

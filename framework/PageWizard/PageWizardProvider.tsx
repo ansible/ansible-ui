@@ -10,10 +10,10 @@ export function PageWizardProvider<T extends object>(props: {
   defaultValue?: Record<string, object>;
 }) {
   const [isToggleExpanded, setToggleExpanded] = useState(false);
-  const [activeStep, setActiveStep] = useState<PageWizardStep | null>(null); // active step object
-  const [wizardData, setWizardData] = useState<Partial<T>>({}); // flat wizard data
-  const [stepData, setStepData] = useState<Record<string, object>>(props.defaultValue ?? {}); // wizard data by step id
-  const [stepError, setStepError] = useState<Record<string, object>>({}); // wizard error by step id
+  const [activeStep, setActiveStep] = useState<PageWizardStep | null>(null);
+  const [wizardData, setWizardData] = useState<Partial<T>>({});
+  const [stepData, setStepData] = useState<Record<string, object>>(props.defaultValue ?? {});
+  const [stepError, setStepError] = useState<Record<string, object>>({});
 
   const visibleSteps = useMemo(() => {
     function isVisible(step: PageWizardStep, values: Partial<T>) {

@@ -18,6 +18,7 @@ export default function PageWizardToggle() {
       className={css(styles.wizardToggle, isToggleExpanded && 'pf-m-expanded')}
       aria-label={t('Wizard toggle')}
       aria-expanded={isToggleExpanded}
+      data-cy="wizard-toggle"
     >
       <span className={css(styles.wizardToggleList)}>
         <span className={css(styles.wizardToggleListItem)}>
