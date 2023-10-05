@@ -19,4 +19,4 @@ For this reason, when interacting with the HUB backend, leveraging these functio
 
 ## GET actions
 
-For `GET` actions, it's recommended to utilize the hooks from the framework. These hooks, like `useGet`, are integrated with `swr` features. The `useGet` hook notably provides outputs such as `data`, `error`, and `refresh`, which seamlessly integrate with the existing components in the system.
+For `GET` actions, it's recommended to utilize the hooks from the framework. These hooks, like `useGet`, are integrated with `swr` features. The `useGet` hook notably provides outputs such as `data`, `error`, and `refresh`, which seamlessly integrate with the existing components in the system. For more information about swr, please refer to the [SWR documentation](https://swr.vercel.app/).
