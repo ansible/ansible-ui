@@ -1,11 +1,16 @@
-import { EditIcon } from '@patternfly/react-icons';
+import { EditIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../framework';
 import { ExecutionEnvironment } from '../ExecutionEnvironment';
+import { useDeleteExecutionEnvironments } from './useExecutionEnvironmentsActions';
+import { useHubContext } from '../../useHubContext';
 
 export function useExecutionEnvironmentActions() {
   const { t } = useTranslation();
+  const context = useHubContext();
+  const deleteExecutionEnvironments = useDeleteExecutionEnvironments();
+
   return useMemo<IPageAction<ExecutionEnvironment>[]>(
     () => [
       {
@@ -17,7 +22,18 @@ export function useExecutionEnvironmentActions() {
           /**/
         },
       },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: TrashIcon,
+        label: t('Delete environment'),
+        onClick: (ee) => deleteExecutionEnvironments([ee]),
+        isDanger: true,
+        isDisabled: context.hasPermission('container.delete_containerrepository')
+          ? ''
+          : t`You do not have rights to this operation`,
+      },
     ],
-    [t]
+    [t, context, deleteExecutionEnvironments]
   );
 }
