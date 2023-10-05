@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { PlusIcon } from '@patternfly/react-icons';
+import { PlusIcon, EditIcon } from '@patternfly/react-icons';
 import { useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../framework';
@@ -39,6 +39,21 @@ export function useExecutionEnvironmentsActions() {
         isDisabled: context.hasPermission('container.delete_containerrepository')
           ? ''
           : t`You do not have rights to this operation`,
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
+        icon: EditIcon,
+        label: t('Sync selected environments'),
+        onClick: () => {},
+        isDanger: true,
+        isDisabled:
+          context.hasPermission('container.container.change_containernamespace') &&
+          context.hasPermission(
+            'container.container.container.namespace_change_containerdistribution'
+          )
+            ? ''
+            : t`You do not have rights to this operation`,
       },
     ],
     [t, context, deleteExecutionEnvironments]
