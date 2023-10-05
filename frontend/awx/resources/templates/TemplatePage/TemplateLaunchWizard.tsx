@@ -18,7 +18,7 @@ import { PageFormExecutionEnvironmentSelect } from '../../../administration/exec
 import { PageFormInstanceGroupSelect } from '../../../administration/instance-groups/components/PageFormInstanceGroupSelect';
 import { PageFormInventorySelect } from '../../inventories/components/PageFormInventorySelect';
 import { useLabelPayload } from '../hooks/useLabelPayload';
-import { OtherPromptsStep, TemplateLaunchReviewStep } from './steps';
+import { CredentialPasswordsStep, OtherPromptsStep, TemplateLaunchReviewStep } from './steps';
 
 import type { JobTemplate } from '../../../interfaces/JobTemplate';
 import type { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
@@ -30,6 +30,7 @@ import type { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironm
 export interface TemplateLaunch {
   inventory: Inventory;
   credentials: Credential[];
+  credential_passwords: { [key: string]: string };
   instance_groups: { id: number; name: string }[];
   execution_environment: ExecutionEnvironment;
   diff_mode: boolean;
@@ -48,6 +49,7 @@ export interface TemplateLaunch {
 
 interface LaunchPayload {
   credentials: number[];
+  credential_passwords: { [key: string]: string };
   diff_mode: boolean;
   execution_environment: number;
   extra_vars: string;
@@ -89,6 +91,7 @@ export function TemplateLaunchWizard() {
       const {
         inventory,
         credentials,
+        credential_passwords,
         instance_groups,
         execution_environment,
         diff_mode,
@@ -116,6 +119,7 @@ export function TemplateLaunchWizard() {
         };
 
         setValue('credentials', credentials?.map((cred) => cred.id));
+        setValue('credential_passwords', credential_passwords);
         setValue('diff_mode', diff_mode);
         setValue('execution_environment', execution_environment?.id);
         setValue('extra_vars', extra_vars);
@@ -171,6 +175,40 @@ export function TemplateLaunchWizard() {
       ),
     },
     {
+      id: 'credential-passwords',
+      label: 'Credential Passwords',
+      hidden: (wizardValues: Partial<TemplateLaunch>) => {
+        const { credentials = [] } = 'credentials' in wizardValues ? wizardValues : config.defaults;
+
+        const launchConfigAsksCredentials = config.ask_credential_on_launch;
+        const launchConfigRequiresPasswords = config.passwords_needed_to_start?.length > 0;
+        if (!launchConfigAsksCredentials && launchConfigRequiresPasswords) {
+          // show step if the template requires passwords but doesn't prompt for credentials
+          return false;
+        }
+
+        const showCredentialPasswordsStep = credentials.some((credential) => {
+          if (!credential.inputs) {
+            const launchConfigCredential = config.defaults.credentials.find(
+              (defaultCred) => defaultCred.id === credential.id
+            );
+            return launchConfigCredential && launchConfigCredential?.passwords_needed?.length > 0;
+          }
+
+          const passwordInputs = [
+            'password',
+            'become_password',
+            'ssh_key_unlock',
+            'vault_password',
+          ];
+          return passwordInputs.some((inputName) => credential.inputs?.[inputName] === 'ASK');
+        });
+
+        return !showCredentialPasswordsStep;
+      },
+      inputs: <CredentialPasswordsStep config={config} />,
+    },
+    {
       id: 'execution-environment',
       label: 'Execution Environment',
       inputs: (
@@ -221,6 +259,7 @@ export function TemplateLaunchWizard() {
     credentials: {
       credentials: defaults.credentials,
     },
+    'credential-passwords': {},
     'execution-environment': {
       execution_environment: defaults.execution_environment,
     },
