@@ -68,11 +68,11 @@ export async function hubPostRequestFile(
 ): Promise<unknown> {
   const body = new FormData();
   body.append('file', file);
-  {
-    repository && body.append('repository', repository);
+  if (repository) {
+    body.append('repository', repository);
   }
-  {
-    signed_collection && body.append('signed_collection', signed_collection);
+  if (signed_collection) {
+    body.append('signed_collection', signed_collection);
   }
 
   const response = await fetch(url, {

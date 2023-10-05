@@ -50,8 +50,8 @@ export function useApprovalsColumns(_options?: { disableSort?: boolean; disableL
             );
           }
 
-          if (approval.repository.pulp_labels.pipeline == 'approved') {
-            if (approval.is_signed) {
+          if (approval.repository.pulp_labels?.pipeline == 'approved') {
+            if (approval.is_signed && display_signatures) {
               return (
                 <TextCell
                   icon={<ThumbsUpIcon />}
