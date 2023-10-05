@@ -10,7 +10,7 @@ export function useExecutionEnvironmentFilters() {
         key: 'name',
         label: t('Name'),
         type: ToolbarFilterType.Text,
-        query: 'name',
+        query: 'name__icontains',
         comparison: 'startsWith',
       },
     ],
