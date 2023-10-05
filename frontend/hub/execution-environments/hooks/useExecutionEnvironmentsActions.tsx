@@ -8,13 +8,14 @@ import { TrashIcon } from '@patternfly/react-icons';
 import { useHubContext } from '../../useHubContext';
 import { useExecutionEnvironmentsColumns } from './useExecutionEnvironmentsColumns';
 import { compareStrings, useBulkConfirmation } from '../../../../framework';
-import { requestDelete } from '../../../common/crud/Data';
+import { requestDelete, postRequest } from '../../../common/crud/Data';
 import { hubAPI } from '../../api/utils';
 
 export function useExecutionEnvironmentsActions() {
   const { t } = useTranslation();
   const context = useHubContext();
   const deleteExecutionEnvironments = useDeleteExecutionEnvironments();
+  const syncExecutionEnvironments = useSyncExecutionEnvironments();
 
   return useMemo<IPageAction<ExecutionEnvironment>[]>(
     () => [
@@ -45,7 +46,7 @@ export function useExecutionEnvironmentsActions() {
         selection: PageActionSelection.Multiple,
         icon: EditIcon,
         label: t('Sync selected environments'),
-        onClick: () => {},
+        onClick: syncExecutionEnvironments,
         isDanger: true,
         isDisabled:
           context.hasPermission('container.container.change_containernamespace') &&
@@ -56,7 +57,7 @@ export function useExecutionEnvironmentsActions() {
             : t`You do not have rights to this operation`,
       },
     ],
-    [t, context, deleteExecutionEnvironments]
+    [t, context, deleteExecutionEnvironments, syncExecutionEnvironments]
   );
 }
 
@@ -69,9 +70,12 @@ export function useDeleteExecutionEnvironments(onComplete?: (ees: ExecutionEnvir
     (ees: ExecutionEnvironment[]) => {
       bulkAction({
         title: t('Permanently delete execution environments', { count: ees.length }),
-        confirmText: t('Yes, I confirm that I want to delete these {{count}} collections.', {
-          count: ees.length,
-        }),
+        confirmText: t(
+          'Yes, I confirm that I want to delete these {{count}} execution environments.',
+          {
+            count: ees.length,
+          }
+        ),
         actionButtonText: t('Delete collections', { count: ees.length }),
         items: ees.sort((l, r) => compareStrings(l.name || '' + l.name, r.name || '' + l.name)),
         keyFn: (item) => item.name,
@@ -88,4 +92,40 @@ export function useDeleteExecutionEnvironments(onComplete?: (ees: ExecutionEnvir
 
 async function deleteExecutionEnvironment(ee: ExecutionEnvironment) {
   return requestDelete(hubAPI`/v3/plugin/execution-environments/repositories/${ee.name}/`);
+}
+
+export function useSyncExecutionEnvironments(onComplete?: (ees: ExecutionEnvironment[]) => void) {
+  const { t } = useTranslation();
+  const confirmationColumns = useExecutionEnvironmentsColumns();
+  const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
+  const bulkAction = useBulkConfirmation<ExecutionEnvironment>();
+  return useCallback(
+    (ees: ExecutionEnvironment[]) => {
+      bulkAction({
+        title: t('Sync environments', { count: ees.length }),
+        confirmText: t(
+          'Yes, I confirm that I want to sync these {{count}} execution environments.',
+          {
+            count: ees.length,
+          }
+        ),
+        actionButtonText: t('Delete collections', { count: ees.length }),
+        items: ees.sort((l, r) => compareStrings(l.name || '' + l.name, r.name || '' + l.name)),
+        keyFn: (item) => item.name,
+        isDanger: true,
+        confirmationColumns,
+        actionColumns,
+        onComplete,
+        actionFn: (ee: ExecutionEnvironment) => synExecutionEnvironment(ee),
+      });
+    },
+    [actionColumns, bulkAction, confirmationColumns, onComplete, t]
+  );
+}
+
+async function synExecutionEnvironment(ee: ExecutionEnvironment) {
+  return postRequest(
+    hubAPI`/v3/plugin/execution-environments/repositories/${ee.name}/_content/sync/`,
+    {}
+  );
 }

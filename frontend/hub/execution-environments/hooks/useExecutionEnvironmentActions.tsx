@@ -3,13 +3,17 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../framework';
 import { ExecutionEnvironment } from '../ExecutionEnvironment';
-import { useDeleteExecutionEnvironments } from './useExecutionEnvironmentsActions';
+import {
+  useDeleteExecutionEnvironments,
+  useSyncExecutionEnvironments,
+} from './useExecutionEnvironmentsActions';
 import { useHubContext } from '../../useHubContext';
 
 export function useExecutionEnvironmentActions() {
   const { t } = useTranslation();
   const context = useHubContext();
   const deleteExecutionEnvironments = useDeleteExecutionEnvironments();
+  const syncExecutionEnvironments = useSyncExecutionEnvironments();
 
   return useMemo<IPageAction<ExecutionEnvironment>[]>(
     () => [
@@ -38,7 +42,7 @@ export function useExecutionEnvironmentActions() {
         selection: PageActionSelection.Single,
         icon: EditIcon,
         label: t('Sync selected environments'),
-        onClick: () => {},
+        onClick: (ee) => syncExecutionEnvironments([ee]),
         isDisabled:
           context.hasPermission('container.container.change_containernamespace') &&
           context.hasPermission(
@@ -48,6 +52,6 @@ export function useExecutionEnvironmentActions() {
             : t`You do not have rights to this operation`,
       },
     ],
-    [t, context, deleteExecutionEnvironments]
+    [t, context, deleteExecutionEnvironments, syncExecutionEnvironments]
   );
 }
