@@ -1,15 +1,17 @@
 import { ButtonVariant } from '@patternfly/react-core';
 import { PlusIcon } from '@patternfly/react-icons';
 import { useMemo, useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, TFunction } from 'react-i18next';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../framework';
 import { ExecutionEnvironment } from '../ExecutionEnvironment';
 import { TrashIcon } from '@patternfly/react-icons';
-import { useHubContext } from '../../useHubContext';
+import { useHubContext, HubContext } from '../../useHubContext';
 import { useExecutionEnvironmentsColumns } from './useExecutionEnvironmentsColumns';
 import { compareStrings, useBulkConfirmation } from '../../../../framework';
-import { requestDelete, postRequest } from '../../../common/crud/Data';
-import { hubAPI } from '../../api/utils';
+import { requestDelete, postRequest, requestGet } from '../../../common/crud/Data';
+import { hubAPI, pulpAPI } from '../../api/utils';
+import { PulpItemsResponse } from '../../usePulpView';
+import { SigningServiceResponse } from '../../api-schemas/generated/SigningServiceResponse';
 
 export function useExecutionEnvironmentsActions() {
   const { t } = useTranslation();
@@ -144,6 +146,8 @@ export function useSignExecutionEnvironments(onComplete?: (ees: ExecutionEnviron
   const confirmationColumns = useExecutionEnvironmentsColumns();
   const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
   const bulkAction = useBulkConfirmation<ExecutionEnvironment>();
+  const context = useHubContext();
+
   return useCallback(
     (ees: ExecutionEnvironment[]) => {
       bulkAction({
@@ -160,16 +164,48 @@ export function useSignExecutionEnvironments(onComplete?: (ees: ExecutionEnviron
         confirmationColumns,
         actionColumns,
         onComplete,
-        actionFn: (ee: ExecutionEnvironment) => signExecutionEnvironment(ee),
+        actionFn: (ee: ExecutionEnvironment) => signExecutionEnvironment(ee, context, t),
       });
     },
-    [actionColumns, bulkAction, confirmationColumns, onComplete, t]
+    [actionColumns, bulkAction, confirmationColumns, onComplete, t, context]
   );
 }
 
-async function signExecutionEnvironment(ee: ExecutionEnvironment) {
-  /*return postRequest(
-    hubAPI`/v3/plugin/execution-environments/repositories/${ee.name}/_content/sync/`,
-    {}
-  );*/
+async function signExecutionEnvironment(
+  ee: ExecutionEnvironment,
+  context: HubContext,
+  t: TFunction<'translation', undefined>
+) {
+  if (
+    ee.pulp?.repository?.remote &&
+    Object.keys(ee.pulp?.repository?.remote?.last_sync_task || {}).length == 0
+  ) {
+    throw new Error(t`Container must be synchronized with remote repository first.`);
+  }
+
+  const signingServiceName = context.settings.GALAXY_CONTAINER_SIGNING_SERVICE;
+  const url = pulpAPI`/signing-services/?name=${signingServiceName}`;
+  const signingServiceList: PulpItemsResponse<SigningServiceResponse> = await requestGet(url);
+  const signingService = signingServiceList?.results?.[0].pulp_href;
+
+  const containerId = ee.pulp?.repository?.id || '';
+  const pulp_type = getContainerPulpType(ee);
+
+  const postObj: { future_base_path?: string; manifest_signing_service: string } = {
+    manifest_signing_service: signingService,
+  };
+  if (pulp_type == 'container') {
+    postObj.future_base_path = ee.pulp?.distribution?.base_path;
+  }
+
+  await postRequest(pulpAPI`/repositories/container/${pulp_type}/${containerId}/sign/`, postObj);
+}
+
+export function getContainerPulpType(item: ExecutionEnvironment) {
+  const pulp_types = item.pulp?.repository?.pulp_type.split('.');
+  if (pulp_types && pulp_types.length > 1) {
+    return pulp_types[1];
+  } else {
+    return '';
+  }
 }
