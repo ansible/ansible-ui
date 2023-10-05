@@ -9,9 +9,9 @@ import { Login } from '../common/Login';
 import { HubRoute } from './HubRoutes';
 import { Approvals } from './approvals/Approvals';
 import { CollectionDetails } from './collections/CollectionDetails';
+import { CollectionSignatureUpload } from './collections/CollectionSignatureUpload';
 import { Collections } from './collections/Collections';
 import { UploadCollection } from './collections/UploadCollection';
-import { CollectionSignatureUpload } from './collections/CollectionSignatureUpload';
 import { HubDashboard } from './dashboard/Dashboard';
 import { ExecutionEnvironments } from './execution-environments/ExecutionEnvironments';
 import { CreateHubNamespace, EditHubNamespace } from './namespaces/HubNamespaceForm';
@@ -19,6 +19,7 @@ import { HubNamespaceDetails } from './namespaces/HubNamespacePage/HubNamespaceD
 import { HubNamespacePage } from './namespaces/HubNamespacePage/HubNamespacePage';
 import { Namespaces } from './namespaces/HubNamespaces';
 import { RemoteRegistries } from './remote-registries/RemoteRegistries';
+import { CreateRemoteRegistry, EditRemoteRegistry } from './remote-registries/RemoteRegistryForm';
 import { RemoteDetails } from './remotes/RemoteDetails';
 import { CreateRemote, EditRemote } from './remotes/RemoteForm';
 import { Remotes } from './remotes/Remotes';
@@ -162,6 +163,11 @@ export function useHubNavigation() {
                     path: 'create',
                     id: HubRoute.CreateRemoteRegistry,
                     element: <CreateRemoteRegistry />,
+                  },
+                  {
+                    path: ':id/edit',
+                    id: HubRoute.EditRemoteRegistry,
+                    element: <EditRemoteRegistry />,
                   },
                 ],
               },
