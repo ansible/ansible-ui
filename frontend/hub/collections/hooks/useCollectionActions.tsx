@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { BanIcon, TrashIcon, UploadIcon } from '@patternfly/react-icons';
+import { BanIcon, TrashIcon, UploadIcon, CopyIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -109,7 +109,7 @@ export function useCollectionActions(
       {
         type: PageActionType.Button,
         selection : PageActionSelection.Single,
-        icon: UploadIcon,
+        icon: CopyIcon,
         label: t('Copy version to repositories'),
         onClick: (collection) => {
           copyToRepository(collection);

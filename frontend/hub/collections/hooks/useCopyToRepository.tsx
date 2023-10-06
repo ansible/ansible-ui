@@ -10,15 +10,13 @@ import {
 import { PageTable } from './../../../../framework/PageTable/PageTable';
 import { usePulpView } from '../../usePulpView';
 import { AnsibleAnsibleRepositoryResponse } from './../../api-schemas/generated/AnsibleAnsibleRepositoryResponse';
-import { pulpAPI, hubAPI } from '../../api/utils';
+import { pulpAPI, hubAPI, hubAPIPost } from '../../api/utils';
 import { useGetRequest } from './../../../common/crud/useGet';
 import { HubItemsResponse } from '../../useHubView';
 import { PulpItemsResponse } from '../../usePulpView';
-import { parsePulpIDFromURL, parseTaskResponse } from '../../api/utils';
+import { parsePulpIDFromURL } from '../../api/utils';
 import { useHubContext, HubContext } from './../../useHubContext';
 import { SigningServiceResponse } from '../../api-schemas/generated/SigningServiceResponse';
-import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { TaskResponse } from '../../tasks/Task';
 
 export function useCopyToRepository() {
   const [_, setDialog] = usePageDialog();
@@ -44,8 +42,6 @@ function CopyToRepositoryModal(props: {
   const { collection } = props;
   const request = useGetRequest<HubItemsResponse<CollectionVersionSearch>>();
   const pulpRequest = useGetRequest<PulpItemsResponse<SigningServiceResponse>>();
-  const postRequest = usePostRequest();
-
   const [selectedRepositories, setSelectedRepositories] = useState<Repository[]>([]);
 
   const [fixedRepositories, setFixedRepositories] = useState<Repository[]>([]);
@@ -69,7 +65,13 @@ function CopyToRepositoryModal(props: {
 
         const signingService = signingServiceList?.results?.[0].pulp_href;
 
-        const repoHrefs = selectedRepositories.map((repo) => repo.pulp_href);
+        const repoHrefs: string[] = [];
+
+        for (const repo of selectedRepositories) {
+          if (!fixedRepositories.find((item) => item.name == repo.name)) {
+            repoHrefs.push(repo.pulp_href);
+          }
+        }
 
         const params: {
           collection_versions: string[];
@@ -86,11 +88,10 @@ function CopyToRepositoryModal(props: {
           params.signing_service = signingService;
         }
 
-        const taskResponse = (await postRequest(
+        await hubAPIPost(
           pulpAPI`/repositories/ansible/ansible/${pulpId || ''}/copy_collection_version/`,
           params
-        )) as TaskResponse;
-        await parseTaskResponse(taskResponse);
+        );
 
         setIsLoading(false);
         props.onClose();
