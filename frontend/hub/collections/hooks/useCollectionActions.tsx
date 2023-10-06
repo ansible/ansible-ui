@@ -24,6 +24,10 @@ export function useCollectionActions(
   const deleteCollections = useDeleteCollections(callback);
   const deprecateCollections = useDeprecateCollections(callback);
   const deleteCollectionsFromRepository = useDeleteCollectionsFromRepository(callback);
+  const deleteCollectionsVersionsFromRepository = useDeleteCollectionsFromRepository(
+    callback,
+    true
+  );
   const deleteCollectionsVersions = useDeleteCollections(callback, true);
   const context = useHubContext();
 
@@ -54,7 +58,7 @@ export function useCollectionActions(
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: TrashIcon,
-        label: t('Delete collection from repository'),
+        label: t('Delete entire collection from repository'),
         onClick: (collection) => deleteCollectionsFromRepository([collection]),
         isDanger: true,
         isDisabled: context.hasPermission('ansible.delete_collection')
@@ -81,6 +85,17 @@ export function useCollectionActions(
         },
         isHidden: () => (detail ? false : true),
       },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: TrashIcon,
+        label: t('Delete version from repository'),
+        isDanger: true,
+        onClick: (collection) => {
+          deleteCollectionsVersionsFromRepository([collection]);
+        },
+        isHidden: () => (detail ? false : true),
+      },
     ],
     [
       t,
@@ -91,6 +106,7 @@ export function useCollectionActions(
       deprecateCollections,
       deleteCollectionsVersions,
       detail,
+      deleteCollectionsVersionsFromRepository
     ]
   );
 }
