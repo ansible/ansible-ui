@@ -20,7 +20,7 @@ export function useCollectionActions(callback?: (collections: CollectionVersionS
   const pageNavigate = usePageNavigate();
   const deleteCollections = useDeleteCollections(callback);
   const deprecateCollections = useDeprecateCollections(callback);
-  const deleteCollectionsFromRepository = useDeleteCollectionsFromRepository();
+  const deleteCollectionsFromRepository = useDeleteCollectionsFromRepository(callback);
   const context = useHubContext();
 
   return useMemo<IPageAction<CollectionVersionSearch>[]>(
