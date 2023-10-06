@@ -8,7 +8,8 @@ import { CollectionVersionSearch } from '../Collection';
 import { useCollectionColumns } from './useCollectionColumns';
 
 export function useDeleteCollections(
-  onComplete?: (collections: CollectionVersionSearch[]) => void
+  onComplete?: (collections: CollectionVersionSearch[]) => void,
+  version?: boolean
 ) {
   const { t } = useTranslation();
   const confirmationColumns = useCollectionColumns();
@@ -16,12 +17,25 @@ export function useDeleteCollections(
   const bulkAction = useBulkConfirmation<CollectionVersionSearch>();
   return useCallback(
     (collections: CollectionVersionSearch[]) => {
+      const confirmText = version
+        ? t('Yes, I confirm that I want to delete these {{count}} collections versions.', {
+            count: collections.length,
+          })
+        : t('Yes, I confirm that I want to delete these {{count}} collections.', {
+            count: collections.length,
+          });
+
+      const title = version
+        ? t('Permanently delete collections versions', { count: collections.length })
+        : t('Permanently delete collections', { count: collections.length });
+
+      const actionButtonText = version
+        ? t('Delete collections versions', { count: collections.length })
+        : t('Delete collections', { count: collections.length });
       bulkAction({
-        title: t('Permanently delete collections', { count: collections.length }),
-        confirmText: t('Yes, I confirm that I want to delete these {{count}} collections.', {
-          count: collections.length,
-        }),
-        actionButtonText: t('Delete collections', { count: collections.length }),
+        title,
+        confirmText,
+        actionButtonText,
         items: collections.sort((l, r) =>
           compareStrings(
             l.collection_version?.name || '' + l.repository?.name,
@@ -33,14 +47,14 @@ export function useDeleteCollections(
         confirmationColumns,
         actionColumns,
         onComplete,
-        actionFn: (collection: CollectionVersionSearch) => deleteCollection(collection),
+        actionFn: (collection: CollectionVersionSearch) => deleteCollection(collection, version),
       });
     },
-    [actionColumns, bulkAction, confirmationColumns, onComplete, t]
+    [actionColumns, bulkAction, confirmationColumns, onComplete, t, version]
   );
 }
 
-async function deleteCollection(collection: CollectionVersionSearch) {
+async function deleteCollection(collection: CollectionVersionSearch, version?: boolean) {
   const distro: PulpItemsResponse<Distribution> = await requestGet(
     pulpAPI`/distributions/ansible/ansible/?repository=${collection?.repository?.pulp_href || ''}`
   );

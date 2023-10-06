@@ -15,12 +15,16 @@ import { useDeleteCollections } from './useDeleteCollections';
 import { useDeleteCollectionsFromRepository } from './useDeleteCollectionsFromRepository';
 import { useDeprecateCollections } from './useDeprecateCollections';
 
-export function useCollectionActions(callback?: (collections: CollectionVersionSearch[]) => void) {
+export function useCollectionActions(
+  callback?: (collections: CollectionVersionSearch[]) => void,
+  detail?: boolean
+) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const deleteCollections = useDeleteCollections(callback);
   const deprecateCollections = useDeprecateCollections(callback);
   const deleteCollectionsFromRepository = useDeleteCollectionsFromRepository(callback);
+  const deleteCollectionsVersions = useDeleteCollections(callback, true);
   const context = useHubContext();
 
   return useMemo<IPageAction<CollectionVersionSearch>[]>(
@@ -66,6 +70,17 @@ export function useCollectionActions(callback?: (collections: CollectionVersionS
           deprecateCollections([collection]);
         },
       },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: TrashIcon,
+        label: t('Delete version'),
+        isDanger: true,
+        onClick: (collection) => {
+          deleteCollectionsVersions([collection]);
+        },
+        isHidden: () => (detail ? false : true),
+      },
     ],
     [
       t,
@@ -74,6 +89,8 @@ export function useCollectionActions(callback?: (collections: CollectionVersionS
       deleteCollections,
       deleteCollectionsFromRepository,
       deprecateCollections,
+      deleteCollectionsVersions,
+      detail,
     ]
   );
 }

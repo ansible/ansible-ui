@@ -64,7 +64,7 @@ import { useCollectionColumns } from './hooks/useCollectionColumns';
 export function CollectionDetails() {
   const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
-  const itemActions = useCollectionActions(() => void refresh());
+  const itemActions = useCollectionActions(() => void refresh(), true);
   const [collection, setCollection] = useState<CollectionVersionSearch | undefined>(undefined);
 
   let collectionError: JSX.Element | undefined = undefined;
