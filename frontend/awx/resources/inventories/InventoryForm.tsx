@@ -1,24 +1,22 @@
-import { FieldValues } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import {
   PageFormCheckbox,
   PageFormDataEditor,
   PageHeader,
   PageLayout,
   useGetPageUrl,
+  usePageNavigate,
 } from '../../../../framework';
 import { PageFormGroup } from '../../../../framework/PageForm/Inputs/PageFormGroup';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
-import { RouteObj } from '../../../common/Routes';
 import { postRequest, requestPatch } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { AwxPageForm } from '../../AwxPageForm';
 import { AwxRoute } from '../../AwxRoutes';
 import { PageFormSelectOrganization } from '../../access/organizations/components/PageFormOrganizationSelect';
-import { getOrganizationByName } from '../../access/organizations/utils/getOrganizationByName';
 import { PageFormInstanceGroupSelect } from '../../administration/instance-groups/components/PageFormInstanceGroupSelect';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { PageFormLabelSelect } from '../../common/PageFormLabelSelect';
@@ -26,46 +24,48 @@ import { getAddedAndRemoved } from '../../common/util/getAddedAndRemoved';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { Inventory } from '../../interfaces/Inventory';
 import { Label } from '../../interfaces/Label';
+import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 
-interface InventoryFields extends FieldValues {
-  inventory: Inventory;
-  instanceGroups?: InstanceGroup[];
-  id: number;
+export interface InventoryFields {
+  name: string;
+  description: string;
+  organization: { name: string; id: number };
+  instanceGroups: InstanceGroup[];
+  labels: Label[] | [];
+  variables: string;
+  prevent_instance_group_fallback: boolean;
+}
+export interface InventoryCreate {
+  organization: number;
+  name: string;
+  description: string;
+  variables: string;
+  prevent_instance_group_fallback: boolean;
 }
 
 export function CreateInventory() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
-  const postRequest = usePostRequest<{ id: number }, Inventory>();
+  const pageNavigate = usePageNavigate();
+  const postRequest = usePostRequest<InventoryCreate, Inventory>();
 
   const onSubmit: PageFormSubmitHandler<InventoryFields> = async (values) => {
-    const { inventory, instanceGroups } = values;
-    if (inventory.summary_fields.organization.name) {
-      try {
-        const organization = await getOrganizationByName(
-          inventory.summary_fields.organization.name
-        );
-        if (!organization) throw new Error(t('Organization not found.'));
-        inventory.organization = organization.id;
-      } catch {
-        throw new Error(t('Organization not found.'));
-      }
-    }
-    // Create new inventory
-    const newInventory = await postRequest('/api/v2/inventories/', inventory);
+    const { organization, labels, instanceGroups, ...rest } = values;
+
+    const newInventory = await postRequest('/api/v2/inventories/', {
+      ...rest,
+      organization: organization.id,
+    });
 
     // Update new inventory with selected instance groups
-    await submitInstanceGroups(newInventory, instanceGroups ?? [], []);
+    if (instanceGroups?.length > 0)
+      await submitInstanceGroups(newInventory, instanceGroups ?? [], []);
 
     // Update new inventory with selected labels
-    await submitLabels(newInventory, inventory.summary_fields.labels.results);
+    if (labels.length > 0) await submitLabels(newInventory, labels);
 
-    navigate(
-      RouteObj.InventoryDetails.replace(':inventory_type', 'inventory').replace(
-        ':id',
-        (newInventory.id ?? 0).toString()
-      )
-    );
+    pageNavigate(AwxRoute.InventoryDetails, {
+      params: { inventory_type: newInventory.type, id: newInventory.id },
+    });
   };
 
   const getPageUrl = useGetPageUrl();
@@ -82,7 +82,15 @@ export function CreateInventory() {
       <AwxPageForm
         submitText={t('Create inventory')}
         onSubmit={onSubmit}
-        onCancel={() => navigate(-1)}
+        onCancel={() => pageNavigate}
+        defaultValue={{
+          name: '',
+          description: '',
+          instanceGroups: [],
+          labels: [],
+          variables: '---\n',
+          prevent_instance_group_fallback: false,
+        }}
       >
         <InventoryInputs />
       </AwxPageForm>
@@ -92,7 +100,7 @@ export function CreateInventory() {
 
 export function EditInventory() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
   const { data: inventory } = useGet<Inventory>(`/api/v2/inventories/${id.toString()}/`);
@@ -100,37 +108,28 @@ export function EditInventory() {
     `/api/v2/inventories/${id.toString()}/instance_groups/`
   );
   // Fetch instance groups associated with the inventory
-  const instanceGroups = igResponse?.results;
+  const originalInstanceGroups = igResponse?.results;
   const onSubmit: PageFormSubmitHandler<InventoryFields> = async (values) => {
-    const { inventory: editedInventory } = values;
-    if (editedInventory.summary_fields.organization.name) {
-      try {
-        const organization = await getOrganizationByName(
-          editedInventory.summary_fields.organization.name
-        );
-        if (!organization) throw new Error(t('Organization not found.'));
-        editedInventory.organization = organization.id;
-      } catch {
-        throw new Error(t('Organization not found.'));
-      }
-    }
+    const { organization, labels, instanceGroups, ...rest } = values;
+
     // Update the inventory
     const updatedInventory = await requestPatch<Inventory>(
       `/api/v2/inventories/${id.toString()}/`,
-      editedInventory
+      { ...rest, organization: organization.id }
     );
 
     // Update inventory with selected instance groups
-    await submitInstanceGroups(updatedInventory, values.instanceGroups ?? [], instanceGroups ?? []);
+    await submitInstanceGroups(
+      updatedInventory,
+      instanceGroups ?? [],
+      originalInstanceGroups ?? []
+    );
 
     // Update inventory with selected labels
-    await submitLabels(updatedInventory, editedInventory.summary_fields.labels.results);
-    navigate(
-      RouteObj.InventoryDetails.replace(':inventory_type', 'inventory').replace(
-        ':id',
-        (updatedInventory.id ?? 0).toString()
-      )
-    );
+    await submitLabels(updatedInventory, inventory?.summary_fields.labels.results || []);
+    pageNavigate(AwxRoute.InventoryDetails, {
+      params: { id: updatedInventory.id, inventory_type: updatedInventory.type },
+    });
   };
 
   const getPageUrl = useGetPageUrl();
@@ -160,8 +159,20 @@ export function EditInventory() {
       <AwxPageForm
         submitText={t('Save inventory')}
         onSubmit={onSubmit}
-        onCancel={() => navigate(-1)}
-        defaultValue={{ inventory, instanceGroups }}
+        onCancel={() =>
+          pageNavigate(AwxRoute.InventoryDetails, {
+            params: { id, inventory_type: inventory.type },
+          })
+        }
+        defaultValue={{
+          name: inventory.name,
+          description: inventory.description ?? '',
+          instanceGroups: originalInstanceGroups,
+          organization: inventory.summary_fields.organization,
+          labels: inventory.summary_fields?.labels?.results ?? [],
+          variables: inventory.variables ?? '---\n',
+          prevent_instance_group_fallback: inventory.prevent_instance_group_fallback || false,
+        }}
       >
         <InventoryInputs />
       </AwxPageForm>
@@ -174,20 +185,19 @@ function InventoryInputs() {
   return (
     <>
       <PageFormTextInput
-        name="inventory.name"
+        data-cy="inventory-name"
+        name="name"
         label={t('Name')}
         placeholder={t('Enter name')}
         isRequired
       />
       <PageFormTextInput
+        data-cy="inventory-description"
         label={t('Description')}
-        name="inventory.description"
+        name="description"
         placeholder={t('Enter description')}
       />
-      <PageFormSelectOrganization<InventoryFields>
-        name="inventory.summary_fields.organization"
-        isRequired
-      />
+      <PageFormSelectOrganization<InventoryFields> name="organization" isRequired />
       <PageFormInstanceGroupSelect<InventoryFields>
         name="instanceGroups"
         labelHelp={t(`Select the instance groups for this inventory to run on.`)}
@@ -197,13 +207,15 @@ function InventoryInputs() {
         labelHelp={t(
           `Optional labels that describe this inventory, such as 'dev' or 'test'. Labels can be used to group and filter inventories and completed jobs.`
         )}
-        name="inventory.summary_fields.labels.results"
+        name="labels"
       />
-      <PageFormDataEditor
-        toggleLanguages={['yaml', 'json']}
-        name="inventory.variables"
-        label={t('Variables')}
-      />
+      <PageFormSection singleColumn>
+        <PageFormDataEditor<InventoryFields>
+          toggleLanguages={['yaml', 'json']}
+          name="variables"
+          label={t('Variables')}
+        />
+      </PageFormSection>
       <PageFormGroup
         label={t('Options')}
         labelHelp={t(
@@ -212,7 +224,7 @@ function InventoryInputs() {
       >
         <PageFormCheckbox
           label={t('Prevent instance group fallback')}
-          name="inventory.prevent_instance_group_fallback"
+          name="prevent_instance_group_fallback"
         />
       </PageFormGroup>
     </>
