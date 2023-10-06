@@ -21,14 +21,18 @@ export function useTaskActions(onComplete?: (tasks: Task[]) => void) {
         onClick: (task) => stopTask([task]),
         isDanger: true,
         isDisabled: (item: Task) => {
-          if (context.hasPermission('core.change_task') && item.state == 'running') {
+          const hasPermission = context.hasPermission('core.change_task');
+          const isStoppable = item.state == 'running' || item.state == 'waiting';
+
+          if (isStoppable && hasPermission) {
             return '';
-          } else {
-            if (item.state != 'running') {
-              return t`You can cancel only running tasks.`;
-            } else {
-              return t`You do not have rights to this operation`;
-            }
+          }
+          if (!isStoppable) {
+            return t`You can cancel only running or waiting tasks.`;
+          }
+
+          if (!hasPermission) {
+            return t`You do not have rights to this operation`;
           }
         },
       },
