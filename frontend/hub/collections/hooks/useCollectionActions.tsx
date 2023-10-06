@@ -17,18 +17,26 @@ import { useDeprecateCollections } from './useDeprecateCollections';
 
 export function useCollectionActions(
   callback?: (collections: CollectionVersionSearch[]) => void,
+  // determine if the menu item is rendered in list or in detail, which defines its redirections
   detail?: boolean
 ) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const deleteCollections = useDeleteCollections(callback);
   const deprecateCollections = useDeprecateCollections(callback);
-  const deleteCollectionsFromRepository = useDeleteCollectionsFromRepository(callback);
+
+  const deleteCollections = useDeleteCollections(callback, false, detail);
+  const deleteCollectionsFromRepository = useDeleteCollectionsFromRepository(
+    callback,
+    false,
+    detail
+  );
+
   const deleteCollectionsVersionsFromRepository = useDeleteCollectionsFromRepository(
     callback,
-    true
+    true,
+    detail
   );
-  const deleteCollectionsVersions = useDeleteCollections(callback, true);
+  const deleteCollectionsVersions = useDeleteCollections(callback, true, detail);
   const context = useHubContext();
 
   return useMemo<IPageAction<CollectionVersionSearch>[]>(
@@ -106,7 +114,7 @@ export function useCollectionActions(
       deprecateCollections,
       deleteCollectionsVersions,
       detail,
-      deleteCollectionsVersionsFromRepository
+      deleteCollectionsVersionsFromRepository,
     ]
   );
 }

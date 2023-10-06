@@ -7,15 +7,20 @@ import { CollectionVersionSearch } from '../Collection';
 import { useCollectionColumns } from './useCollectionColumns';
 import { hubAPI } from '../../api/utils';
 import { HubItemsResponse } from '../../useHubView';
+import { usePageNavigate } from '../../../../framework';
+import { HubRoute } from '../../HubRoutes';
 
 export function useDeleteCollectionsFromRepository(
   onComplete?: (collections: CollectionVersionSearch[]) => void,
-  version?: boolean
+  version?: boolean,
+  detail?: boolean
 ) {
   const { t } = useTranslation();
   const confirmationColumns = useCollectionColumns();
   const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
   const bulkAction = useBulkConfirmation<CollectionVersionSearch>();
+  const navigate = usePageNavigate();
+
   return useCallback(
     (collections: CollectionVersionSearch[]) => {
       const title = version
@@ -54,11 +59,16 @@ export function useDeleteCollectionsFromRepository(
         confirmationColumns,
         actionColumns,
         onComplete,
-        actionFn: (collection: CollectionVersionSearch) =>
-          deleteCollectionFromRepository(collection, version),
+        actionFn: (collection: CollectionVersionSearch) => {
+          return deleteCollectionFromRepository(collection, version).then(() => {
+            if (detail) {
+              return navigateAfterDelete(collection, version || false, navigate);
+            }
+          });
+        },
       });
     },
-    [actionColumns, bulkAction, confirmationColumns, onComplete, t, version]
+    [actionColumns, bulkAction, confirmationColumns, onComplete, t, version, navigate]
   );
 }
 
@@ -80,7 +90,7 @@ async function deleteCollectionFromRepository(
     itemsToDelete.push(collection.collection_version?.pulp_href || '');
   }
 
-  return postRequest(
+  await postRequest(
     pulpAPI`/repositories/ansible/ansible/${
       parsePulpIDFromURL(collection.repository?.pulp_href || '') || ''
     }/modify/`,
@@ -89,4 +99,21 @@ async function deleteCollectionFromRepository(
       base_version: collection.repository?.latest_version_href || '',
     }
   );
+}
+
+export async function navigateAfterDelete(
+  collection: CollectionVersionSearch,
+  version: boolean,
+  navigate: ReturnType<typeof usePageNavigate>
+) {
+  if (version) {
+    navigate(
+      HubRoute.CollectionPage +
+        `/?repository=${collection.repository?.name || ''}&name=${
+          collection.collection_version?.name || ''
+        }&namespace=${collection.collection_version?.namespace || ''}&redirectIfEmpty=true`
+    );
+  } else {
+    navigate(HubRoute.Collections);
+  }
 }

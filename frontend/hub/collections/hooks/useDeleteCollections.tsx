@@ -6,15 +6,20 @@ import { collectionKeyFn, hubAPI, pulpAPI } from '../../api/utils';
 import { PulpItemsResponse } from '../../usePulpView';
 import { CollectionVersionSearch } from '../Collection';
 import { useCollectionColumns } from './useCollectionColumns';
+import { usePageNavigate } from '../../../../framework';
+import { navigateAfterDelete } from './useDeleteCollectionsFromRepository';
 
 export function useDeleteCollections(
   onComplete?: (collections: CollectionVersionSearch[]) => void,
-  version?: boolean
+  version?: boolean,
+  detail?: boolean
 ) {
   const { t } = useTranslation();
   const confirmationColumns = useCollectionColumns();
   const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
   const bulkAction = useBulkConfirmation<CollectionVersionSearch>();
+  const navigate = usePageNavigate();
+
   return useCallback(
     (collections: CollectionVersionSearch[]) => {
       const confirmText = version
@@ -47,7 +52,13 @@ export function useDeleteCollections(
         confirmationColumns,
         actionColumns,
         onComplete,
-        actionFn: (collection: CollectionVersionSearch) => deleteCollection(collection, version),
+        actionFn: (collection: CollectionVersionSearch) => {
+          return deleteCollection(collection, version).then(() => {
+            if (detail) {
+              return navigateAfterDelete(collection, version || false, navigate);
+            }
+          });
+        },
       });
     },
     [actionColumns, bulkAction, confirmationColumns, onComplete, t, version]

@@ -60,12 +60,14 @@ import { PageSingleSelect } from './../../../framework/PageInputs/PageSingleSele
 import { CollectionVersionSearch } from './Collection';
 import { useCollectionActions } from './hooks/useCollectionActions';
 import { useCollectionColumns } from './hooks/useCollectionColumns';
+import { usePageNavigate } from '../../../framework';
 
 export function CollectionDetails() {
   const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const itemActions = useCollectionActions(() => void refresh(), true);
   const [collection, setCollection] = useState<CollectionVersionSearch | undefined>(undefined);
+  const navigate = usePageNavigate();
 
   let collectionError: JSX.Element | undefined = undefined;
 
@@ -90,9 +92,15 @@ export function CollectionDetails() {
       collectionsResult.data &&
       collectionsResult.data.data.length == 0)
   ) {
-    collectionError = (
-      <AwxError error={collectionsResult.error || { name: 'not found', message: t('Not Found') }} />
-    );
+    if (searchParams.get('redirectIfEmpty') == 'true') {
+      navigate(HubRoute.Collections);
+    } else {
+      collectionError = (
+        <AwxError
+          error={collectionsResult.error || { name: 'not found', message: t('Not Found') }}
+        />
+      );
+    }
   }
 
   const collections = collectionsResult.data ? collectionsResult.data.data : [];
