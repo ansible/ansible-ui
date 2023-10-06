@@ -10,12 +10,12 @@ import {
 } from './useExecutionEnvironmentsActions';
 import { useHubContext } from '../../useHubContext';
 
-export function useExecutionEnvironmentActions() {
+export function useExecutionEnvironmentActions(callback?: (ees: ExecutionEnvironment[]) => void) {
   const { t } = useTranslation();
   const context = useHubContext();
-  const deleteExecutionEnvironments = useDeleteExecutionEnvironments();
-  const syncExecutionEnvironments = useSyncExecutionEnvironments();
-  const signExecutionEnvironment = useSignExecutionEnvironments();
+  const deleteExecutionEnvironments = useDeleteExecutionEnvironments(callback);
+  const syncExecutionEnvironments = useSyncExecutionEnvironments(callback);
+  const signExecutionEnvironment = useSignExecutionEnvironments(callback);
 
   return useMemo<IPageAction<ExecutionEnvironment>[]>(
     () => [

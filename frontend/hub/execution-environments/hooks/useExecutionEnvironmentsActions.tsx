@@ -13,12 +13,12 @@ import { hubAPI, pulpAPI } from '../../api/utils';
 import { PulpItemsResponse } from '../../usePulpView';
 import { SigningServiceResponse } from '../../api-schemas/generated/SigningServiceResponse';
 
-export function useExecutionEnvironmentsActions() {
+export function useExecutionEnvironmentsActions(callback?: (ees: ExecutionEnvironment[]) => void) {
   const { t } = useTranslation();
   const context = useHubContext();
-  const deleteExecutionEnvironments = useDeleteExecutionEnvironments();
-  const syncExecutionEnvironments = useSyncExecutionEnvironments();
-  const signExecutionEnvironments = useSignExecutionEnvironments();
+  const deleteExecutionEnvironments = useDeleteExecutionEnvironments(callback);
+  const syncExecutionEnvironments = useSyncExecutionEnvironments(callback);
+  const signExecutionEnvironments = useSignExecutionEnvironments(callback);
 
   return useMemo<IPageAction<ExecutionEnvironment>[]>(
     () => [
