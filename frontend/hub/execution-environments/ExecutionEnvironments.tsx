@@ -19,8 +19,8 @@ export function ExecutionEnvironments() {
     toolbarFilters,
     tableColumns,
   });
-  const toolbarActions = useExecutionEnvironmentsActions();
-  const rowActions = useExecutionEnvironmentActions();
+  const toolbarActions = useExecutionEnvironmentsActions(view.unselectItemsAndRefresh);
+  const rowActions = useExecutionEnvironmentActions(view.unselectItemsAndRefresh);
   return (
     <PageLayout>
       <PageHeader
