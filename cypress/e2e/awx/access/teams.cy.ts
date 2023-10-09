@@ -60,6 +60,7 @@ describe('teams', () => {
       id: team.summary_fields.object_roles.member_role.id,
     });
     cy.navigateTo('awx', 'teams');
+    cy.searchAndDisplayResource(team.name);
     cy.get(`[data-cy="row-id-${team.id}"]`).within(() => {
       cy.get('[data-cy="actions-dropdown"]').click();
       cy.get('[data-cy="remove-users"]').click();
