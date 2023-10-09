@@ -26,14 +26,14 @@ export function BulkSelector<T extends object>(props: BulkSelectorProps<T>) {
   const isSmallOrLarger = useBreakpoint('sm');
   const [translations] = useFrameworkTranslations();
 
-  const { pageItems, selectedItems, selectItems, unselectAll, maxSelections } = props;
+  const { pageItems, selectedItems, selectItems, unselectAll, maxSelections, keyFn } = props;
 
   const allPageItemsSelected =
     props.itemCount !== undefined &&
     props.itemCount > 0 &&
     pageItems &&
     pageItems.length > 0 &&
-    (pageItems ?? []).every((item) => selectedItems?.includes(item));
+    (pageItems ?? []).every((item) => selectedItems?.find((item2) => keyFn(item2) == keyFn(item)));
 
   const onToggleCheckbox = useCallback(() => {
     if (allPageItemsSelected) {

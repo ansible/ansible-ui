@@ -104,10 +104,20 @@ export type PageTableProps<T extends object> = {
   isSelectionDisabled?: (item: T) => boolean;
   isSelected?: (item: T) => boolean;
   isSelectMultiple?: boolean;
+
+  /** Used for toolbars bulk selection*/
   selectedItems?: T[];
+
+  /** Selects one item */
   selectItem?: (item: T) => void;
+
+  /** Unselects one item */
   unselectItem?: (item: T) => void;
+
+  /** Select multiple items */
   selectItems?: (items: T[]) => void;
+
+  /** Unselect all */
   unselectAll?: () => void;
 
   /**

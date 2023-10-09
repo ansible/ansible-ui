@@ -183,6 +183,7 @@ function CopyToRepositoryModal(props: {
         defaultSubtitle={t('Repository')}
         showSelect={true}
         compact={true}
+        selectedItems={selectedRepositories as AnsibleAnsibleRepositoryResponse[]}
         isSelectMultiple={true}
         isSelected={(item) =>
           selectedRepositories.find((i) => i.name == item.name) ? true : false
