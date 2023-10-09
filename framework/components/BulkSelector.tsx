@@ -9,6 +9,7 @@ import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { useBreakpoint } from './useBreakPoint';
 
 export interface BulkSelectorProps<T> {
+  id?: string;
   itemCount?: number;
   pageItems?: T[];
   selectedItems?: T[];
@@ -58,8 +59,8 @@ export function BulkSelector<T extends object>(props: BulkSelectorProps<T>) {
   }, [isSmallOrLarger, selectedItems]);
 
   const unselectedPageItems = useMemo(
-    () => pageItems?.filter((item) => !selectedItems?.includes(item)),
-    [pageItems, selectedItems]
+    () => pageItems?.filter((item) => !selectedItems?.find((item2) => keyFn(item2) == keyFn(item))),
+    [pageItems, selectedItems, keyFn]
   );
 
   /** Disable bulk selection if max number of allowed selections has been specified and
@@ -84,7 +85,8 @@ export function BulkSelector<T extends object>(props: BulkSelectorProps<T>) {
       <DropdownToggle
         splitButtonItems={[
           <DropdownToggleCheckbox
-            id="select-all"
+            // concatenation with table id allows to use the dropdown correctly if there are more than one of them
+            id={'select-all-' + props.id}
             ouiaId={'select-all'}
             key="select-all"
             data-cy="select-all"
@@ -99,7 +101,14 @@ export function BulkSelector<T extends object>(props: BulkSelectorProps<T>) {
         isDisabled={disableBulkSelector}
       />
     );
-  }, [selectedItems, allPageItemsSelected, onToggleCheckbox, toggleText, disableBulkSelector]);
+  }, [
+    selectedItems,
+    allPageItemsSelected,
+    onToggleCheckbox,
+    toggleText,
+    disableBulkSelector,
+    props.id,
+  ]);
 
   const selectNoneDropdownItem = useMemo(() => {
     return (

@@ -38,6 +38,7 @@ const ToolbarContent = styled(PFToolbarContent)`
 `;
 
 export type PageToolbarProps<T extends object> = {
+  id?: string;
   localStorageKey?: string;
 
   openColumnModal?: () => void;
