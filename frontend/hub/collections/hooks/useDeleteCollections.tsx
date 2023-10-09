@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../framework';
 import { requestDelete, requestGet } from '../../../common/crud/Data';
-import { collectionKeyFn, hubAPI, pulpAPI } from '../../api/utils';
+import { collectionKeyFn, hubAPI, pulpAPI, waitForTask } from '../../api/utils';
 import { PulpItemsResponse } from '../../usePulpView';
 import { CollectionVersionSearch } from '../Collection';
 import { useCollectionColumns } from './useCollectionColumns';
@@ -74,7 +74,7 @@ async function deleteCollection(collection: CollectionVersionSearch, version?: b
   if (version) {
     versionQuery = 'versions/' + collection.collection_version?.version || '' + '/';
   }
-  return requestDelete(
+  await requestDelete(
     hubAPI`/v3/plugin/ansible/content/${distro.results[0].base_path}/collections/index/${
       collection?.collection_version?.namespace || ''
     }/${collection?.collection_version?.name || ''}/` + versionQuery

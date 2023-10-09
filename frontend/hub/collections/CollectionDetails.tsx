@@ -31,7 +31,7 @@ import {
 import { BarsIcon, CheckCircleIcon, ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { DateTime } from 'luxon';
-import { Dispatch, SetStateAction, useMemo, useState } from 'react';
+import { Dispatch, SetStateAction, useMemo, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import {
@@ -52,7 +52,7 @@ import { PageDetail } from '../../../framework/PageDetails/PageDetail';
 import { Scrollable } from '../../../framework/components/Scrollable';
 import { AwxError } from '../../awx/common/AwxError';
 import { StatusCell } from '../../common/Status';
-import { useGet } from '../../common/crud/useGet';
+import { useGetRequest, useGet } from '../../common/crud/useGet';
 import { HubRoute } from '../HubRoutes';
 import { hubAPI } from '../api/utils';
 import { HubItemsResponse } from '../useHubView';
@@ -67,9 +67,12 @@ export function CollectionDetails() {
   const [searchParams, setSearchParams] = useSearchParams();
   const itemActions = useCollectionActions(() => void refresh(), true);
   const [collection, setCollection] = useState<CollectionVersionSearch | undefined>(undefined);
-  const navigate = usePageNavigate();
+  const [collections, setCollections] = useState<CollectionVersionSearch[]>([]);
+  const [collectionError, setCollectionError] = useState<JSX.Element | undefined>(undefined);
+  const request = useGetRequest<HubItemsResponse<CollectionVersionSearch>>();
+  
 
-  let collectionError: JSX.Element | undefined = undefined;
+  const navigate = usePageNavigate();
 
   function setVersionParams(version: string) {
     setSearchParams((params) => {
@@ -77,8 +80,70 @@ export function CollectionDetails() {
       return params;
     });
   }
+
+  const name = searchParams.get('name') || '';
+  const namespace = searchParams.get('namespace') || '';
+  const repository = searchParams.get('repository') || '';
+  const redirectIfEmpty = searchParams.get('redirectIfEmpty') || '';
+
+  useEffect( () => {
+    if (!(name && namespace && repository))
+    {
+      setCollectionError(
+        <AwxError
+          error={{ name: 'not found', message: t('Not Found') }}
+        />
+      );
+    }
+  }, [name, namespace, repository, setCollectionError]);
+
+  useEffect( () => {
+    (async function() {
+      try
+      {
+        const res = await request(hubAPI`/v3/plugin/ansible/search/collection-versions/`,  
+        {
+          name, namespace, repository_name : repository
+        });  
+        if (res.data.length == 0)
+        {
+          if (redirectIfEmpty)
+          {
+            navigate(HubRoute.Collections);
+          }else
+          {
+            setCollectionError(
+              <AwxError
+                error={{ name: 'not found', message: t('Not Found') }}
+              />
+            );
+          }
+        }
+
+        if (redirectIfEmpty)
+        {
+          let newParams = new URLSearchParams(searchParams.toString());
+
+          // Set a new query parameter or update existing ones
+          newParams.set('redirectIfEmpty', '');
+      
+          setSearchParams(newParams);
+        }
+
+        setCollections(res.data);
+      }catch(error)
+      {
+        setCollectionError(
+          <AwxError
+            error={{ name: 'not found', message: t('Not Found') }}
+          />
+        );
+      }
+    })();
+  }, [name, namespace, repository, redirectIfEmpty])
+
   // load all collections versions belong to the repository
-  const collectionsResult = useGet<HubItemsResponse<CollectionVersionSearch>>(
+  /*const collectionsResult = useGet<HubItemsResponse<CollectionVersionSearch>>(
     hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${
       searchParams.get('name') || ''
     }&namespace=${searchParams.get('namespace') || ''}&repository_name=${
@@ -86,24 +151,24 @@ export function CollectionDetails() {
     }&order_by=-version`
   );
 
-  if (
+  if (searchParams.get('redirectIfEmpty') == 'true' && collectionsResult.data?.data && collectionsResult.data?.data.length <= 1) {
+      navigate(HubRoute.Collections);
+  }*/
+
+  /*if (
     collectionsResult.error ||
     (collectionsResult.isLoading == false &&
       collectionsResult.data &&
       collectionsResult.data.data.length == 0)
   ) {
-    if (searchParams.get('redirectIfEmpty') == 'true') {
-      navigate(HubRoute.Collections);
-    } else {
       collectionError = (
         <AwxError
           error={collectionsResult.error || { name: 'not found', message: t('Not Found') }}
         />
       );
-    }
-  }
+  }*/
 
-  const collections = collectionsResult.data ? collectionsResult.data.data : [];
+  //const collections = collectionsResult.data ? collectionsResult.data.data : [];
 
   // load collection by search params
   const version = searchParams.get('version');
