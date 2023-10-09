@@ -112,7 +112,6 @@ function CopyToRepositoryModal(props: {
 
       if (repos.data?.length > 0) {
         const reposMapped = repos.data.map((item) => item.repository || ({} as Repository));
-        setSelectedRepositories(reposMapped);
         setFixedRepositories(reposMapped);
       }
     }
@@ -153,7 +152,7 @@ function CopyToRepositoryModal(props: {
           onClick={() => {
             copyToRepositories();
           }}
-          isDisabled={selectedRepositories.length <= fixedRepositories.length}
+          isDisabled={selectedRepositories.length == 0}
           isLoading={isLoading}
         >
           {t('Select')}
@@ -186,7 +185,10 @@ function CopyToRepositoryModal(props: {
         selectedItems={selectedRepositories as AnsibleAnsibleRepositoryResponse[]}
         isSelectMultiple={true}
         isSelected={(item) =>
-          selectedRepositories.find((i) => i.name == item.name) ? true : false
+          selectedRepositories.find((i) => i.name == item.name) ||
+          fixedRepositories.find((i) => i.name == item.name)
+            ? true
+            : false
         }
         selectItem={(item) => {
           const newItems = [...selectedRepositories, item];
@@ -203,14 +205,10 @@ function CopyToRepositoryModal(props: {
           setSelectedRepositories(newItems);
         }}
         unselectItem={(item) => {
-          if (!fixedRepositories.find((item2) => item.name == item2.name)) {
-            setSelectedRepositories(
-              selectedRepositories.filter((item2) => item2.name != item.name)
-            );
-          }
+          setSelectedRepositories(selectedRepositories.filter((item2) => item2.name != item.name));
         }}
         unselectAll={() => {
-          setSelectedRepositories(fixedRepositories);
+          setSelectedRepositories([]);
         }}
       />
     </Modal>
