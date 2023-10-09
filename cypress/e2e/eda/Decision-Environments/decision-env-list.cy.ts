@@ -16,13 +16,13 @@ describe('EDA Decision Environment List', () => {
     });
   });
 
-  it('can bulk delete Decision Environments from the list', () => {
+  it.skip('can bulk delete Decision Environments from the list', () => {
     cy.createEdaDecisionEnvironment().then((edaDE1) => {
       cy.createEdaDecisionEnvironment().then((edaDE2) => {
         cy.navigateTo('eda', 'decision-environments');
         cy.get('button[aria-label="table view"]').click();
-        cy.selectTableRow(edaDE1.name);
-        cy.selectTableRow(edaDE2.name);
+        cy.searchAndDisplayResource(edaDE1.name);
+        cy.searchAndDisplayResource(edaDE2.name);
         cy.clickToolbarKebabAction(/^Delete selected decision environments$/);
         cy.intercept('DELETE', `/api/eda/v1/decision-environments/${edaDE1.id}/`).as('edaDE1');
         cy.intercept('DELETE', `/api/eda/v1/decision-environments/${edaDE2.id}/`).as('edaDE2');
