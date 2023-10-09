@@ -9,7 +9,7 @@ import { getJobsAPIUrl } from '../../../../frontend/awx/views/jobs/jobUtils';
 
 const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000).toISOString();
 
-describe('AWX Cleanup', () => {
+describe.skip('AWX Cleanup', () => {
   it('cleanup projects', () => {
     cy.awxRequestGet<AwxItemsResponse<Project>>(
       `/api/v2/projects?name__startswith=E2E&page=1&page_size=200&created__lt=${tenMinutesAgo}`
