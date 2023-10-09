@@ -1,7 +1,6 @@
 import { EditIcon, ProjectDiagramIcon, RocketIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import {
   IPageAction,
   PageActionSelection,
@@ -20,7 +19,6 @@ export function useTemplateActions(options: {
   onTemplatesDeleted: (templates: Template[]) => void;
 }) {
   const activeUser = useActiveUser();
-  const navigate = useNavigate();
   const { onTemplatesDeleted } = options;
   const { t } = useTranslation();
   const deleteTemplates = useDeleteTemplates(onTemplatesDeleted);

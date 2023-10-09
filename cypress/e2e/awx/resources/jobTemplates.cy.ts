@@ -1,9 +1,9 @@
 import { randomString } from '../../../../framework/utils/random-string';
-//import { Credential } from '../../../../frontend/awx/interfaces/Credential';
-//import { ExecutionEnvironment } from '../../../../frontend/awx/interfaces/ExecutionEnvironment';
-//import { InstanceGroup } from '../../../../frontend/awx/interfaces/InstanceGroup';
+// import { Credential } from '../../../../frontend/awx/interfaces/Credential';
+// import { ExecutionEnvironment } from '../../../../frontend/awx/interfaces/ExecutionEnvironment';
+// import { InstanceGroup } from '../../../../frontend/awx/interfaces/InstanceGroup';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
-//import { Label } from '../../../../frontend/awx/interfaces/Label';
+// import { Label } from '../../../../frontend/awx/interfaces/Label';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
 
@@ -17,9 +17,7 @@ describe('Job templates form Create, Edit, Delete', () => {
 
   before(() => {
     cy.awxLogin();
-  });
 
-  beforeEach(() => {
     cy.createAwxOrganization().then((o) => {
       organization = o;
 
@@ -33,14 +31,6 @@ describe('Job templates form Create, Edit, Delete', () => {
 
       // cy.createAwxExecutionEnvironment({ organization: organization.id }).then((ee) => {
       //   executionEnvironment = ee;
-      // });
-
-      // cy.createAWXCredential({
-      //   kind: 'github_token',
-      //   organization: organization.id,
-      //   credential_type: 11,
-      // }).then((cred) => {
-      //   githubTokenCredential = cred;
       // });
 
       // cy.createAWXCredential({
@@ -75,8 +65,8 @@ describe('Job templates form Create, Edit, Delete', () => {
     cy.get('[data-cy="name"]').type(jtName);
     cy.get('[data-cy="description"]').type('This is a JT description');
     cy.selectPromptOnLaunchByLabel('Inventory', false, inventory.name);
-    cy.selectDropdownOptionByLabel(/^Project$/, project.name);
-    cy.selectDropdownOptionByLabel(/^Playbook$/, 'hello_world.yml');
+    cy.selectDropdownOptionByResourceName('project', project.name);
+    cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
     cy.selectPromptOnLaunchByLabel('Execution environment', false, executionEnvironment);
     cy.selectPromptOnLaunchByLabel('Credentials', false, machineCredential);
     cy.clickButton(/^Create job template$/);
@@ -88,7 +78,10 @@ describe('Job templates form Create, Edit, Delete', () => {
         cy.navigateTo('awx', 'templates');
         cy.getTableRowByText(jtName).should('be.visible');
         cy.intercept('POST', `api/v2/job_templates/${id}/launch/`).as('postLaunch');
-        cy.clickTableRowActionIcon(jtName, 'Launch template');
+        cy.searchAndDisplayResource(jtName);
+        cy.get(`[data-cy="row-id-${id}"]`).within(() => {
+          cy.get('[data-cy="launch-template"]').click();
+        });
         cy.wait('@postLaunch')
           .its('response.body.id')
           .then((jobId: string) => {
@@ -118,8 +111,8 @@ describe('Job templates form Create, Edit, Delete', () => {
     cy.get('[data-cy="name"]').type(jtName);
     cy.get('[data-cy="description"]').type('This is a JT with POL wizard description');
     cy.selectPromptOnLaunchByLabel(/^Inventory$/);
-    cy.selectDropdownOptionByLabel(/^Project$/, project.name);
-    cy.selectDropdownOptionByLabel(/^Playbook$/, 'hello_world.yml');
+    cy.selectDropdownOptionByResourceName('project', project.name);
+    cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
     cy.selectPromptOnLaunchByLabel(/^Execution environment$/);
     cy.selectPromptOnLaunchByLabel(/^Credentials$/);
     cy.selectPromptOnLaunchByLabel(/^Instance group$/);
@@ -130,8 +123,11 @@ describe('Job templates form Create, Edit, Delete', () => {
         cy.verifyPageTitle(jtName);
         cy.navigateTo('awx', 'templates');
         cy.getTableRowByText(jtName).should('be.visible');
-        cy.clickTableRowActionIcon(jtName, 'Launch template');
-        cy.selectDropdownOptionByLabel(/^Inventory$/, inventory.name);
+        cy.searchAndDisplayResource(jtName);
+        cy.get(`[data-cy="row-id-${id}"]`).within(() => {
+          cy.get('[data-cy="launch-template"]').click();
+        });
+        cy.selectDropdownOptionByResourceName('inventory', inventory.name);
         cy.clickButton(/^Next/);
         cy.selectRowItemInFormGroupLookupModal(/^Credentials$/, machineCredential);
         cy.clickButton(/^Next/);
@@ -171,8 +167,8 @@ describe('Job templates form Create, Edit, Delete', () => {
     cy.get('[data-cy="name"]').type(jtName);
     cy.get('[data-cy="description"]').type('This is a JT with POL wizard description');
     cy.selectPromptOnLaunchByLabel(/^Inventory$/);
-    cy.selectDropdownOptionByLabel(/^Project$/, project.name);
-    cy.selectDropdownOptionByLabel(/^Playbook$/, 'hello_world.yml');
+    cy.selectDropdownOptionByResourceName('project', project.name);
+    cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
     cy.selectPromptOnLaunchByLabel(/^Execution environment$/);
     cy.selectPromptOnLaunchByLabel(/^Credentials$/);
     cy.selectPromptOnLaunchByLabel(/^Instance group$/);
@@ -182,7 +178,7 @@ describe('Job templates form Create, Edit, Delete', () => {
       .then((id: string) => {
         cy.verifyPageTitle(jtName);
         cy.clickButton(/^Launch template$/);
-        cy.selectDropdownOptionByLabel(/^Inventory$/, inventory.name);
+        cy.selectDropdownOptionByResourceName('inventory', inventory.name);
         cy.clickButton(/^Next/);
         cy.selectRowItemInFormGroupLookupModal(/^Credentials$/, machineCredential);
         cy.clickButton(/^Next/);
