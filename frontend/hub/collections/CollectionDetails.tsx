@@ -105,6 +105,7 @@ export function CollectionDetails() {
         {
           name, namespace, repository_name : repository
         });  
+
         if (res.data.length == 0)
         {
           if (redirectIfEmpty)

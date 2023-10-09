@@ -99,8 +99,7 @@ async function deleteCollectionFromRepository(
       base_version: collection.repository?.latest_version_href || '',
     }
   ) as { task : string};
-
-  await waitForTask(res.task);
+  await waitForTask(parsePulpIDFromURL(res.task));
 }
 
 export function navigateAfterDelete(
