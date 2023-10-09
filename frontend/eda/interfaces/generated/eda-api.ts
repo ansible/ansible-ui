@@ -140,6 +140,7 @@ export interface ActivationRead {
    * * `deleting` - deleting
    * * `completed` - completed
    * * `unresponsive` - unresponsive
+   * * `error` - error
    */
   status?: Status0E7Enum;
   project?: ProjectRef | null;
@@ -164,6 +165,7 @@ export interface ActivationRead {
   rulebook_name: string;
   rules_count: number;
   rules_fired_count: number;
+  status_message?: string;
   /** @format date-time */
   created_at: string;
   /** @format date-time */
