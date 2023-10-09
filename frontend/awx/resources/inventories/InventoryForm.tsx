@@ -82,7 +82,7 @@ export function CreateInventory() {
       <AwxPageForm
         submitText={t('Create inventory')}
         onSubmit={onSubmit}
-        onCancel={() => pageNavigate}
+        onCancel={() => pageNavigate(AwxRoute.Inventories)}
         defaultValue={{
           name: '',
           description: '',
@@ -117,16 +117,13 @@ export function EditInventory() {
       `/api/v2/inventories/${id.toString()}/`,
       { ...rest, organization: organization.id }
     );
-
+    const promises = [];
     // Update inventory with selected instance groups
-    await submitInstanceGroups(
-      updatedInventory,
-      instanceGroups ?? [],
-      originalInstanceGroups ?? []
+    promises.push(
+      submitInstanceGroups(updatedInventory, instanceGroups ?? [], originalInstanceGroups ?? [])
     );
-
-    // Update inventory with selected labels
-    await submitLabels(updatedInventory, inventory?.summary_fields.labels.results || []);
+    promises.push(submitLabels(inventory as Inventory, labels || []));
+    await Promise.all(promises);
     pageNavigate(AwxRoute.InventoryDetails, {
       params: { id: updatedInventory.id, inventory_type: updatedInventory.type },
     });
@@ -156,7 +153,7 @@ export function EditInventory() {
           { label: t('Edit Inventory') },
         ]}
       />
-      <AwxPageForm
+      <AwxPageForm<InventoryFields>
         submitText={t('Save inventory')}
         onSubmit={onSubmit}
         onCancel={() =>
@@ -184,15 +181,8 @@ function InventoryInputs() {
   const { t } = useTranslation();
   return (
     <>
+      <PageFormTextInput name="name" label={t('Name')} placeholder={t('Enter name')} isRequired />
       <PageFormTextInput
-        data-cy="inventory-name"
-        name="name"
-        label={t('Name')}
-        placeholder={t('Enter name')}
-        isRequired
-      />
-      <PageFormTextInput
-        data-cy="inventory-description"
         label={t('Description')}
         name="description"
         placeholder={t('Enter description')}
