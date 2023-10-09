@@ -86,7 +86,7 @@ export function useCollectionActions(
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: TrashIcon,
-        label: t('Delete version'),
+        label: t('Delete version from system'),
         isDanger: true,
         onClick: (collection) => {
           deleteCollectionsVersions([collection]);
