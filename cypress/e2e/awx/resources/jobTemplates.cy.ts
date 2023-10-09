@@ -323,7 +323,6 @@ describe('Job templates form Create, Edit, Delete', () => {
         cy.assertModalSuccess();
         cy.clickButton(/^Close$/);
         cy.clickButton(/^Clear all filters$/);
-        //adding a comment for deleting later
       });
     });
   });
