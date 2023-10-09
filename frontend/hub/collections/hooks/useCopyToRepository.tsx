@@ -88,7 +88,6 @@ function CopyToRepositoryModal(props: {
           params.signing_service = signingService;
         }
 
-        debugger;
         await hubAPIPost(
           pulpAPI`/repositories/ansible/ansible/${pulpId || ''}/copy_collection_version/`,
           params
