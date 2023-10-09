@@ -61,7 +61,7 @@ export function useDeleteCollections(
         },
       });
     },
-    [actionColumns, bulkAction, confirmationColumns, onComplete, t, version]
+    [actionColumns, bulkAction, confirmationColumns, onComplete, t, version, detail, navigate]
   );
 }
 

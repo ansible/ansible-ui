@@ -68,7 +68,7 @@ export function useDeleteCollectionsFromRepository(
         },
       });
     },
-    [actionColumns, bulkAction, confirmationColumns, onComplete, t, version, navigate]
+    [actionColumns, bulkAction, confirmationColumns, onComplete, t, version, navigate, detail]
   );
 }
 
@@ -101,7 +101,7 @@ async function deleteCollectionFromRepository(
   );
 }
 
-export async function navigateAfterDelete(
+export function navigateAfterDelete(
   collection: CollectionVersionSearch,
   version: boolean,
   navigate: ReturnType<typeof usePageNavigate>
