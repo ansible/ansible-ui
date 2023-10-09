@@ -101,7 +101,7 @@ describe('Job templates form Create, Edit, Delete', () => {
       });
   });
 
-  it.skip('creation of job template using the prompt on launch wizard', () => {
+  it('creation of job template using the prompt on launch wizard', () => {
     cy.intercept('POST', `/api/v2/job_templates`).as('createPOLJT');
     const jtName = 'E2E-POLJT ' + randomString(4);
 
@@ -157,7 +157,7 @@ describe('Job templates form Create, Edit, Delete', () => {
       });
   });
 
-  it.skip('launch a job template from the details page launch cta using the prompt on launch', () => {
+  it('launch a job template from the details page launch cta using the prompt on launch', () => {
     cy.intercept('POST', `/api/v2/job_templates`).as('createPOLJT');
     const jtName = 'E2E-POLJT ' + randomString(4);
 
@@ -207,7 +207,7 @@ describe('Job templates form Create, Edit, Delete', () => {
       });
   });
 
-  it.skip('should edit a job template using the kebab menu of the template list page page', () => {
+  it('should edit a job template using the kebab menu of the template list page page', () => {
     cy.createAwxJobTemplate({
       organization: organization.id,
       project: project.id,
@@ -239,7 +239,7 @@ describe('Job templates form Create, Edit, Delete', () => {
     });
   });
 
-  it.skip('should edit a job template using the edit template cta on details page', () => {
+  it('should edit a job template using the edit template cta on details page', () => {
     cy.createAwxJobTemplate({
       organization: organization.id,
       project: project.id,
@@ -273,7 +273,7 @@ describe('Job templates form Create, Edit, Delete', () => {
     });
   });
 
-  it.skip('should delete a job template from the details page', () => {
+  it('should delete a job template from the details page', () => {
     cy.createAwxJobTemplate({
       organization: organization.id,
       project: project.id,
@@ -293,7 +293,7 @@ describe('Job templates form Create, Edit, Delete', () => {
     });
   });
 
-  it.skip('should bulk delete job templates from the list page', () => {
+  it('should bulk delete job templates from the list page', () => {
     cy.createAwxJobTemplate({
       organization: organization.id,
       project: project.id,
