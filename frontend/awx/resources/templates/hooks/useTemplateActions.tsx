@@ -1,6 +1,7 @@
 import { EditIcon, ProjectDiagramIcon, RocketIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import {
   IPageAction,
   PageActionSelection,
@@ -14,12 +15,14 @@ import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { useDeleteTemplates } from '../hooks/useDeleteTemplates';
 import { AwxRoute } from '../../../AwxRoutes';
 import { useActiveUser } from '../../../../common/useActiveUser';
+import { getJobOutputUrl } from '../../../views/jobs/jobUtils';
 
 export function useTemplateActions(options: {
   onTemplatesDeleted: (templates: (JobTemplate | WorkflowJobTemplate)[]) => void;
 }) {
   const alertToaster = usePageAlertToaster();
   const activeUser = useActiveUser();
+  const navigate = useNavigate();
   const { onTemplatesDeleted } = options;
   const { t } = useTranslation();
   const deleteTemplates = useDeleteTemplates(onTemplatesDeleted);
@@ -65,9 +68,7 @@ export function useTemplateActions(options: {
           try {
             const job = await handleLaunch(template?.type, template?.id);
             if (job) {
-              getPageUrl(AwxRoute.JobPage, {
-                params: { id: job.id, job_type: job.type },
-              });
+              navigate(getJobOutputUrl(job));
             }
           } catch (err) {
             alertToaster.addAlert({
@@ -105,5 +106,5 @@ export function useTemplateActions(options: {
       },
     ];
     return itemActions;
-  }, [deleteTemplates, getPageUrl, activeUser?.is_system_auditor, alertToaster, t]);
+  }, [deleteTemplates, getPageUrl, navigate, activeUser?.is_system_auditor, alertToaster, t]);
 }
