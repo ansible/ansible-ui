@@ -101,23 +101,12 @@ export type PageTableProps<T extends object> = {
   /** Auto hide the pagination at the bottom of the table if there are less items than in a page. */
   autoHidePagination?: boolean;
 
-  isSelectionDisabled?: (item: T) => boolean;
   isSelected?: (item: T) => boolean;
   isSelectMultiple?: boolean;
-
-  /** Used for toolbars bulk selection*/
   selectedItems?: T[];
-
-  /** Selects one item */
   selectItem?: (item: T) => void;
-
-  /** Unselects one item */
   unselectItem?: (item: T) => void;
-
-  /** Select multiple items */
   selectItems?: (items: T[]) => void;
-
-  /** Unselect all */
   unselectAll?: () => void;
 
   /**
@@ -547,7 +536,6 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
                 disableLastRowBorder={props.disableLastRowBorder}
                 maxSelections={maxSelections}
                 selectedItems={props.selectedItems}
-                isSelectionDisabled={props.isSelectionDisabled}
               />
             ))}
           </Tbody>
@@ -719,7 +707,6 @@ function TableRow<T extends object>(props: {
   disableLastRowBorder?: boolean;
   maxSelections?: number;
   selectedItems?: T[];
-  isSelectionDisabled?: (item: T) => boolean;
 }) {
   const {
     columns,
@@ -737,7 +724,6 @@ function TableRow<T extends object>(props: {
     disableLastRowBorder,
     maxSelections,
     selectedItems,
-    isSelectionDisabled,
   } = props;
   const [expanded, setExpanded] = useState(false);
   const settings = useSettings();
@@ -794,9 +780,7 @@ function TableRow<T extends object>(props: {
                       }
                     },
                     isSelected: isItemSelected,
-                    isDisabled:
-                      isSelectionDisabled?.(item) ||
-                      (maxSelections && selectedItems ? disableRow(item) : false),
+                    isDisabled: maxSelections && selectedItems ? disableRow(item) : false,
                   }
                 : undefined
             }

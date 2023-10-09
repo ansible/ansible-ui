@@ -88,6 +88,7 @@ function CopyToRepositoryModal(props: {
           params.signing_service = signingService;
         }
 
+        debugger;
         await hubAPIPost(
           pulpAPI`/repositories/ansible/ansible/${pulpId || ''}/copy_collection_version/`,
           params
@@ -187,9 +188,6 @@ function CopyToRepositoryModal(props: {
         isSelectMultiple={true}
         isSelected={(item) =>
           selectedRepositories.find((i) => i.name == item.name) ? true : false
-        }
-        isSelectionDisabled={(item) =>
-          fixedRepositories.find((i) => i.name == item.name) ? true : false
         }
         selectItem={(item) => {
           const newItems = [...selectedRepositories, item];
