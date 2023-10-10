@@ -182,7 +182,9 @@ export function useView(options: ViewOptions): IView {
     if (disableQueryString) return;
     /** Cypress component tests add a specPath param that must be ignored */
     let search = location.location?.search;
-    if (search && search.includes('?specPath')) {
+    if (search && search.includes('?specPath=')) {
+      search = search.substring(0, search.indexOf('?specPath='));
+    } else if (search && search.includes('&specPath=')) {
       search = search.substring(0, search.indexOf('&specPath='));
     }
     const newSearchParams = new URLSearchParams(search ?? '/');
