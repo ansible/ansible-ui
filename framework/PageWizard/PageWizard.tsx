@@ -1,8 +1,9 @@
 import '@patternfly/patternfly/components/Wizard/wizard.css';
+import { ErrorAdapter } from '../PageForm/typesErrorAdapter';
 import PageWizardBody from './PageWizardBody';
 import PageWizardNavigation from './PageWizardNavigation';
-import PageWizardToggle from './PageWizardToggle';
 import { PageWizardProvider } from './PageWizardProvider';
+import PageWizardToggle from './PageWizardToggle';
 import type { PageWizardStep } from './types';
 
 export default function PageWizard<T extends object>(props: {
@@ -10,6 +11,7 @@ export default function PageWizard<T extends object>(props: {
   defaultValue?: Record<string, object>;
   onCancel?: () => void;
   onSubmit: (wizardData: T) => Promise<void>;
+  errorAdapter?: ErrorAdapter;
 }) {
   return (
     <PageWizardProvider<T> steps={props.steps} defaultValue={props.defaultValue}>
@@ -34,7 +36,11 @@ export default function PageWizard<T extends object>(props: {
           }}
         >
           <PageWizardNavigation />
-          <PageWizardBody<T> onCancel={props.onCancel} onSubmit={props.onSubmit} />
+          <PageWizardBody<T>
+            errorAdapter={props.errorAdapter}
+            onCancel={props.onCancel}
+            onSubmit={props.onSubmit}
+          />
         </div>
       </div>
     </PageWizardProvider>

@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
-  PageForm,
   PageFormSubmitHandler,
   PageFormTextInput,
   PageHeader,
@@ -15,6 +14,7 @@ import { usePostRequest } from '../../common/crud/usePostRequest';
 import { HubRoute } from '../HubRoutes';
 import { hubAPI } from '../api/utils';
 import { HubNamespace } from './HubNamespace';
+import { HubPageForm } from '../HubPageForm';
 
 export function CreateHubNamespace() {
   const { t } = useTranslation();
@@ -36,14 +36,14 @@ export function CreateHubNamespace() {
           { label: t('Create Namespace') },
         ]}
       />
-      <PageForm<HubNamespace>
+      <HubPageForm<HubNamespace>
         submitText={t('Create namespace')}
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
         defaultValue={{ groups: [] }}
       >
         <HubNamespaceInputs />
-      </PageForm>
+      </HubPageForm>
     </PageLayout>
   );
 }
@@ -83,14 +83,14 @@ export function EditHubNamespace() {
         ]}
       />
 
-      <PageForm<HubNamespace>
+      <HubPageForm<HubNamespace>
         submitText={t('Save namespace')}
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
         defaultValue={namespace}
       >
         <HubNamespaceInputs />
-      </PageForm>
+      </HubPageForm>
     </PageLayout>
   );
 }
