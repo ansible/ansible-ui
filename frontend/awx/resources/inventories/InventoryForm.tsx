@@ -4,11 +4,12 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { PageFormCheckbox, PageHeader, PageLayout, useGetPageUrl } from '../../../../framework';
 import { PageFormGroup } from '../../../../framework/PageForm/Inputs/PageFormGroup';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
-import { PageForm, PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
+import { PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
 import { RouteObj } from '../../../common/Routes';
 import { postRequest, requestPatch } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
+import { AwxPageForm } from '../../AwxPageForm';
 import { AwxRoute } from '../../AwxRoutes';
 import { PageFormSelectOrganization } from '../../access/organizations/components/PageFormOrganizationSelect';
 import { getOrganizationByName } from '../../access/organizations/utils/getOrganizationByName';
@@ -19,7 +20,6 @@ import { getAddedAndRemoved } from '../../common/util/getAddedAndRemoved';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { Inventory } from '../../interfaces/Inventory';
 import { Label } from '../../interfaces/Label';
-import { getAwxError } from '../../useAwxView';
 
 interface InventoryFields extends FieldValues {
   inventory: Inventory;
@@ -32,38 +32,34 @@ export function CreateInventory() {
   const navigate = useNavigate();
   const postRequest = usePostRequest<{ id: number }, Inventory>();
 
-  const onSubmit: PageFormSubmitHandler<InventoryFields> = async (values, setError) => {
+  const onSubmit: PageFormSubmitHandler<InventoryFields> = async (values) => {
     const { inventory, instanceGroups } = values;
-    try {
-      if (inventory.summary_fields.organization.name) {
-        try {
-          const organization = await getOrganizationByName(
-            inventory.summary_fields.organization.name
-          );
-          if (!organization) throw new Error(t('Organization not found.'));
-          inventory.organization = organization.id;
-        } catch {
-          throw new Error(t('Organization not found.'));
-        }
+    if (inventory.summary_fields.organization.name) {
+      try {
+        const organization = await getOrganizationByName(
+          inventory.summary_fields.organization.name
+        );
+        if (!organization) throw new Error(t('Organization not found.'));
+        inventory.organization = organization.id;
+      } catch {
+        throw new Error(t('Organization not found.'));
       }
-      // Create new inventory
-      const newInventory = await postRequest('/api/v2/inventories/', inventory);
-
-      // Update new inventory with selected instance groups
-      await submitInstanceGroups(newInventory, instanceGroups ?? [], []);
-
-      // Update new inventory with selected labels
-      await submitLabels(newInventory, inventory.summary_fields.labels.results);
-
-      navigate(
-        RouteObj.InventoryDetails.replace(':inventory_type', 'inventory').replace(
-          ':id',
-          (newInventory.id ?? 0).toString()
-        )
-      );
-    } catch (err) {
-      setError(getAwxError(err));
     }
+    // Create new inventory
+    const newInventory = await postRequest('/api/v2/inventories/', inventory);
+
+    // Update new inventory with selected instance groups
+    await submitInstanceGroups(newInventory, instanceGroups ?? [], []);
+
+    // Update new inventory with selected labels
+    await submitLabels(newInventory, inventory.summary_fields.labels.results);
+
+    navigate(
+      RouteObj.InventoryDetails.replace(':inventory_type', 'inventory').replace(
+        ':id',
+        (newInventory.id ?? 0).toString()
+      )
+    );
   };
 
   const getPageUrl = useGetPageUrl();
@@ -77,13 +73,13 @@ export function CreateInventory() {
           { label: t('Create Inventory') },
         ]}
       />
-      <PageForm
+      <AwxPageForm
         submitText={t('Create inventory')}
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
       >
         <InventoryInputs />
-      </PageForm>
+      </AwxPageForm>
     </PageLayout>
   );
 }
@@ -99,44 +95,36 @@ export function EditInventory() {
   );
   // Fetch instance groups associated with the inventory
   const instanceGroups = igResponse?.results;
-  const onSubmit: PageFormSubmitHandler<InventoryFields> = async (values, setError) => {
+  const onSubmit: PageFormSubmitHandler<InventoryFields> = async (values) => {
     const { inventory: editedInventory } = values;
-    try {
-      if (editedInventory.summary_fields.organization.name) {
-        try {
-          const organization = await getOrganizationByName(
-            editedInventory.summary_fields.organization.name
-          );
-          if (!organization) throw new Error(t('Organization not found.'));
-          editedInventory.organization = organization.id;
-        } catch {
-          throw new Error(t('Organization not found.'));
-        }
+    if (editedInventory.summary_fields.organization.name) {
+      try {
+        const organization = await getOrganizationByName(
+          editedInventory.summary_fields.organization.name
+        );
+        if (!organization) throw new Error(t('Organization not found.'));
+        editedInventory.organization = organization.id;
+      } catch {
+        throw new Error(t('Organization not found.'));
       }
-      // Update the inventory
-      const updatedInventory = await requestPatch<Inventory>(
-        `/api/v2/inventories/${id.toString()}/`,
-        editedInventory
-      );
-
-      // Update inventory with selected instance groups
-      await submitInstanceGroups(
-        updatedInventory,
-        values.instanceGroups ?? [],
-        instanceGroups ?? []
-      );
-
-      // Update inventory with selected labels
-      await submitLabels(updatedInventory, editedInventory.summary_fields.labels.results);
-      navigate(
-        RouteObj.InventoryDetails.replace(':inventory_type', 'inventory').replace(
-          ':id',
-          (updatedInventory.id ?? 0).toString()
-        )
-      );
-    } catch (err) {
-      setError(getAwxError(err));
     }
+    // Update the inventory
+    const updatedInventory = await requestPatch<Inventory>(
+      `/api/v2/inventories/${id.toString()}/`,
+      editedInventory
+    );
+
+    // Update inventory with selected instance groups
+    await submitInstanceGroups(updatedInventory, values.instanceGroups ?? [], instanceGroups ?? []);
+
+    // Update inventory with selected labels
+    await submitLabels(updatedInventory, editedInventory.summary_fields.labels.results);
+    navigate(
+      RouteObj.InventoryDetails.replace(':inventory_type', 'inventory').replace(
+        ':id',
+        (updatedInventory.id ?? 0).toString()
+      )
+    );
   };
 
   const getPageUrl = useGetPageUrl();
@@ -163,14 +151,14 @@ export function EditInventory() {
           { label: t('Edit Inventory') },
         ]}
       />
-      <PageForm
+      <AwxPageForm
         submitText={t('Save inventory')}
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
         defaultValue={{ inventory, instanceGroups }}
       >
         <InventoryInputs />
-      </PageForm>
+      </AwxPageForm>
     </PageLayout>
   );
 }

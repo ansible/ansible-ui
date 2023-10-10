@@ -3,7 +3,6 @@ import { FieldValues, useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
-  PageForm,
   PageFormSelect,
   PageFormSubmitHandler,
   PageFormTextInput,
@@ -16,6 +15,7 @@ import { requestPatch } from '../../../../common/crud/Data';
 import { useGet } from '../../../../common/crud/useGet';
 import { useOptions } from '../../../../common/crud/useOptions';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
+import { AwxPageForm } from '../../../AwxPageForm';
 import { AwxRoute } from '../../../AwxRoutes';
 import { PageFormSelectOrganization } from '../../../access/organizations/components/PageFormOrganizationSelect';
 import { getOrganizationByName } from '../../../access/organizations/utils/getOrganizationByName';
@@ -23,7 +23,6 @@ import { PageFormExecutionEnvironmentSelect } from '../../../administration/exec
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { Organization } from '../../../interfaces/Organization';
 import { Project, SCMType } from '../../../interfaces/Project';
-import { getAwxError } from '../../../useAwxView';
 import { PageFormCredentialSelect } from '../../credentials/components/PageFormCredentialSelect';
 import { ArchiveSubForm } from '../ProjectSubForms/ArchiveSubForm';
 import { GitSubForm } from '../ProjectSubForms/GitSubForm';
@@ -60,49 +59,43 @@ export function CreateProject() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const postRequest = usePostRequest<Project>();
-  const onSubmit: PageFormSubmitHandler<ProjectFields> = async (values, setError) => {
+  const onSubmit: PageFormSubmitHandler<ProjectFields> = async (values) => {
     const { project } = values;
 
-    try {
-      if (project.summary_fields.organization.name) {
-        try {
-          const organization = await getOrganizationByName(
-            project.summary_fields.organization.name
-          );
-          if (!organization) throw new Error(t('Organization not found.'));
-          project.organization = organization.id;
-        } catch {
-          throw new Error(t('Organization not found.'));
-        }
+    if (project.summary_fields.organization.name) {
+      try {
+        const organization = await getOrganizationByName(project.summary_fields.organization.name);
+        if (!organization) throw new Error(t('Organization not found.'));
+        project.organization = organization.id;
+      } catch {
+        throw new Error(t('Organization not found.'));
       }
-      if (project.scm_type === 'manual') {
-        project.scm_type = '';
-      }
-
-      // Depending on the permissions of the user submitting the form,
-      // the API might throw an unexpected error if our creation request
-      // has a zero-length string as its credential field. As a work-around,
-      // normalize falsey credential fields by deleting them.
-      if (!project.credential || !project.summary_fields.credential.name) {
-        project.credential = null;
-      }
-      if (
-        !project.signature_validation_credential ||
-        !project.summary_fields.signature_validation_credential.name
-      ) {
-        project.signature_validation_credential = null;
-      }
-      if (!project.summary_fields.default_environment.name) {
-        project.default_environment = null;
-      }
-
-      // Create new project
-      const newProject = await postRequest('/api/v2/projects/', project as Project);
-
-      navigate(RouteObj.ProjectDetails.replace(':id', newProject.id.toString()));
-    } catch (err) {
-      setError(getAwxError(err));
     }
+    if (project.scm_type === 'manual') {
+      project.scm_type = '';
+    }
+
+    // Depending on the permissions of the user submitting the form,
+    // the API might throw an unexpected error if our creation request
+    // has a zero-length string as its credential field. As a work-around,
+    // normalize falsey credential fields by deleting them.
+    if (!project.credential || !project.summary_fields.credential.name) {
+      project.credential = null;
+    }
+    if (
+      !project.signature_validation_credential ||
+      !project.summary_fields.signature_validation_credential.name
+    ) {
+      project.signature_validation_credential = null;
+    }
+    if (!project.summary_fields.default_environment.name) {
+      project.default_environment = null;
+    }
+
+    // Create new project
+    const newProject = await postRequest('/api/v2/projects/', project as Project);
+
+    navigate(RouteObj.ProjectDetails.replace(':id', newProject.id.toString()));
   };
 
   const getPageUrl = useGetPageUrl();
@@ -116,7 +109,7 @@ export function CreateProject() {
           { label: t('Create Project') },
         ]}
       />
-      <PageForm
+      <AwxPageForm
         submitText={t('Create project')}
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
@@ -125,7 +118,7 @@ export function CreateProject() {
         }}
       >
         <ProjectInputs />
-      </PageForm>
+      </AwxPageForm>
     </PageLayout>
   );
 }
@@ -141,52 +134,48 @@ export function EditProject() {
     project.scm_type = 'manual';
   }
 
-  const onSubmit: PageFormSubmitHandler<ProjectFields> = async (values, setError) => {
+  const onSubmit: PageFormSubmitHandler<ProjectFields> = async (values) => {
     const { project: editedProject } = values;
 
-    try {
-      if (editedProject.summary_fields.organization.name) {
-        try {
-          const organization = await getOrganizationByName(
-            editedProject.summary_fields.organization.name
-          );
-          if (!organization) throw new Error(t('Organization not found.'));
-          editedProject.organization = organization.id;
-        } catch {
-          throw new Error(t('Organization not found.'));
-        }
+    if (editedProject.summary_fields.organization.name) {
+      try {
+        const organization = await getOrganizationByName(
+          editedProject.summary_fields.organization.name
+        );
+        if (!organization) throw new Error(t('Organization not found.'));
+        editedProject.organization = organization.id;
+      } catch {
+        throw new Error(t('Organization not found.'));
       }
-      if (editedProject.scm_type === 'manual') {
-        editedProject.scm_type = '';
-      }
-
-      // Depending on the permissions of the user submitting the form,
-      // the API might throw an unexpected error if our creation request
-      // has a zero-length string as its credential field. As a work-around,
-      // normalize falsey credential fields by deleting them.
-      if (!editedProject.credential || !editedProject.summary_fields.credential.name) {
-        editedProject.credential = null;
-      }
-      if (
-        !editedProject.signature_validation_credential ||
-        !editedProject.summary_fields.signature_validation_credential.name
-      ) {
-        editedProject.signature_validation_credential = null;
-      }
-      if (!editedProject.summary_fields.default_environment.name) {
-        editedProject.default_environment = null;
-      }
-
-      // Update project
-      const updatedProject = await requestPatch<Project>(
-        `/api/v2/projects/${id.toString()}/`,
-        editedProject
-      );
-
-      navigate(RouteObj.ProjectDetails.replace(':id', updatedProject.id.toString()));
-    } catch (err) {
-      setError(getAwxError(err));
     }
+    if (editedProject.scm_type === 'manual') {
+      editedProject.scm_type = '';
+    }
+
+    // Depending on the permissions of the user submitting the form,
+    // the API might throw an unexpected error if our creation request
+    // has a zero-length string as its credential field. As a work-around,
+    // normalize falsey credential fields by deleting them.
+    if (!editedProject.credential || !editedProject.summary_fields.credential.name) {
+      editedProject.credential = null;
+    }
+    if (
+      !editedProject.signature_validation_credential ||
+      !editedProject.summary_fields.signature_validation_credential.name
+    ) {
+      editedProject.signature_validation_credential = null;
+    }
+    if (!editedProject.summary_fields.default_environment.name) {
+      editedProject.default_environment = null;
+    }
+
+    // Update project
+    const updatedProject = await requestPatch<Project>(
+      `/api/v2/projects/${id.toString()}/`,
+      editedProject
+    );
+
+    navigate(RouteObj.ProjectDetails.replace(':id', updatedProject.id.toString()));
   };
 
   const getPageUrl = useGetPageUrl();
@@ -213,7 +202,7 @@ export function EditProject() {
           { label: t('Edit Project') },
         ]}
       />
-      <PageForm<ProjectFields>
+      <AwxPageForm<ProjectFields>
         submitText={t('Save project')}
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
@@ -222,7 +211,7 @@ export function EditProject() {
         }}
       >
         <ProjectInputs project={project} />
-      </PageForm>
+      </AwxPageForm>
     </PageLayout>
   );
 }

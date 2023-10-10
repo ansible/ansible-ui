@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
 import {
-  PageForm,
   PageFormSubmitHandler,
   PageHeader,
   PageLayout,
@@ -14,6 +13,7 @@ import { LoadingPage } from '../../../../framework/components/LoadingPage';
 import { postRequest, requestGet, requestPatch } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
+import { AwxPageForm } from '../../AwxPageForm';
 import { AwxRoute } from '../../AwxRoutes';
 import { AwxError } from '../../common/AwxError';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
@@ -24,7 +24,6 @@ import { JobTemplate } from '../../interfaces/JobTemplate';
 import { JobTemplateCreate, JobTemplateForm } from '../../interfaces/JobTemplateForm';
 import { Label } from '../../interfaces/Label';
 import { Organization } from '../../interfaces/Organization';
-import { getAwxError } from '../../useAwxView';
 import { getJobTemplateDefaultValues, stringifyTags } from './JobTemplateFormHelpers';
 import JobTemplateInputs from './JobTemplateInputs';
 
@@ -53,10 +52,7 @@ export function EditJobTemplate() {
     [t, jobTemplate, instanceGroups]
   );
   const { cache } = useSWRConfig();
-  const onSubmit: PageFormSubmitHandler<JobTemplateForm> = async (
-    values: JobTemplateForm,
-    setError: (message: string) => void
-  ) => {
+  const onSubmit: PageFormSubmitHandler<JobTemplateForm> = async (values: JobTemplateForm) => {
     const { credentials, labels, instance_groups, webhook_key, webhook_url, ...rest } = values;
     const formValues = {
       ...rest,
@@ -68,22 +64,15 @@ export function EditJobTemplate() {
       webhook_credential: values.webhook_credential?.id || null,
     };
 
-    try {
-      await requestPatch<JobTemplateForm>(`/api/v2/job_templates/${id}/`, formValues);
-      (cache as unknown as { clear: () => void }).clear?.();
-      const promises = [];
+    await requestPatch<JobTemplateForm>(`/api/v2/job_templates/${id}/`, formValues);
+    (cache as unknown as { clear: () => void }).clear?.();
+    const promises = [];
 
-      promises.push(submitCredentials(jobTemplate as JobTemplate, credentials));
-      promises.push(submitLabels(jobTemplate as JobTemplate, labels));
-      promises.push(submitInstanceGroups(id, instance_groups));
-      pageNavigate(AwxRoute.JobTemplateDetails, { params: { id } });
-    } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError('TODO');
-      }
-    }
+    promises.push(submitCredentials(jobTemplate as JobTemplate, credentials));
+    promises.push(submitLabels(jobTemplate as JobTemplate, labels));
+    promises.push(submitInstanceGroups(id, instance_groups));
+    await Promise.all(promises);
+    pageNavigate(AwxRoute.JobTemplateDetails, { params: { id } });
   };
 
   const getPageUrl = useGetPageUrl();
@@ -107,14 +96,14 @@ export function EditJobTemplate() {
           { label: t('Edit Job Template') },
         ]}
       />
-      <PageForm<JobTemplateForm>
+      <AwxPageForm<JobTemplateForm>
         submitText={t('Save job template')}
         onSubmit={onSubmit}
         onCancel={() => pageNavigate(AwxRoute.JobTemplateDetails, { params: { id } })}
         defaultValue={defaultValues}
       >
         <JobTemplateInputs jobtemplate={defaultValues} />
-      </PageForm>
+      </AwxPageForm>
     </PageLayout>
   );
 }
@@ -125,7 +114,7 @@ export function CreateJobTemplate() {
   const postRequest = usePostRequest<JobTemplateCreate, JobTemplate>();
   const defaultValues = useMemo(() => getJobTemplateDefaultValues(t, {} as JobTemplate), [t]);
 
-  const onSubmit: PageFormSubmitHandler<JobTemplateForm> = async (values, setError) => {
+  const onSubmit: PageFormSubmitHandler<JobTemplateForm> = async (values) => {
     const { credentials, labels, instance_groups, webhook_key, webhook_url, ...rest } = values;
     const formValues = {
       ...rest,
@@ -139,24 +128,20 @@ export function CreateJobTemplate() {
       webhook_credential: values.webhook_credential?.id || null,
     };
 
-    try {
-      const template = await postRequest(`/api/v2/job_templates/`, formValues);
-      const promises = [];
-      if (credentials?.length > 0) {
-        promises.push(submitCredentials(template, credentials));
-      }
-      if (labels && labels?.length > 0) {
-        promises.push(submitLabels(template, labels));
-      }
-      if (instance_groups.length > 0) {
-        promises.push(submitInstanceGroups(template.id, instance_groups));
-      }
-      if (promises.length > 0) await Promise.all(promises);
-
-      pageNavigate(AwxRoute.JobTemplateDetails, { params: { id: template.id } });
-    } catch (err) {
-      setError(getAwxError(err));
+    const template = await postRequest(`/api/v2/job_templates/`, formValues);
+    const promises = [];
+    if (credentials?.length > 0) {
+      promises.push(submitCredentials(template, credentials));
     }
+    if (labels && labels?.length > 0) {
+      promises.push(submitLabels(template, labels));
+    }
+    if (instance_groups.length > 0) {
+      promises.push(submitInstanceGroups(template.id, instance_groups));
+    }
+    if (promises.length > 0) await Promise.all(promises);
+
+    pageNavigate(AwxRoute.JobTemplateDetails, { params: { id: template.id } });
   };
 
   const getPageUrl = useGetPageUrl();
@@ -170,14 +155,14 @@ export function CreateJobTemplate() {
           { label: t('Create Job Template') },
         ]}
       />
-      <PageForm<JobTemplateForm>
+      <AwxPageForm<JobTemplateForm>
         submitText={t('Create job template')}
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
         defaultValue={defaultValues}
       >
         <JobTemplateInputs />
-      </PageForm>
+      </AwxPageForm>
     </PageLayout>
   );
 }

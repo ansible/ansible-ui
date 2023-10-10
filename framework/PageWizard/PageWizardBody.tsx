@@ -1,17 +1,19 @@
-import { useCallback, useContext, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useFormState } from 'react-hook-form';
 import { PageSection } from '@patternfly/react-core';
+import { useCallback, useContext, useEffect } from 'react';
+import { useFormState } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 import { PageForm } from '../PageForm/PageForm';
-import { PageWizardContext } from './PageWizardProvider';
+import { ErrorAdapter } from '../PageForm/typesErrorAdapter';
 import PageWizardFooter from './PageWizardFooter';
+import { PageWizardContext } from './PageWizardProvider';
 
 export default function PageWizardBody<T>(props: {
   onCancel?: () => void;
   onSubmit: (wizardData: T) => Promise<void>;
+  errorAdapter?: ErrorAdapter;
 }) {
   const navigate = useNavigate();
-  const { onSubmit, onCancel } = props;
+  const { onSubmit, onCancel, errorAdapter } = props;
   const { activeStep, steps, stepData, wizardData, setWizardData, setStepData, setActiveStep } =
     useContext(PageWizardContext);
 
@@ -61,6 +63,7 @@ export default function PageWizardBody<T>(props: {
             footer={<PageWizardFooter onBack={onBack} onCancel={onClose} />}
             disableBody
             defaultValue={stepData[activeStep.id]}
+            errorAdapter={errorAdapter}
           >
             <StepErrors />
             {activeStep.inputs}

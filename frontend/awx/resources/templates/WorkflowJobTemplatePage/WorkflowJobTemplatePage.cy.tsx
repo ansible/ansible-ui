@@ -77,8 +77,9 @@ describe('WorflowJobTemplatePage', () => {
     ).as('getLaunchConfig');
 
     cy.intercept('POST', '/api/v2/workflow_job_templates/*/launch/', (req) => {
-      return req.reply({ statusCode: 400, body: { message: 'Could not launch job' } });
+      return req.reply({ statusCode: 404, body: { message: 'Could not launch job' } });
     }).as('launchJob');
+
     cy.mount(<WorkflowJobTemplatePage />, {
       path: RouteObj.WorkflowJobTemplatePage,
       initialEntries: [RouteObj.WorkflowJobTemplateDetails.replace(':id', '1')],

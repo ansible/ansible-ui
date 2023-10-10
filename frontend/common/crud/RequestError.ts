@@ -1,81 +1,74 @@
 import { stringify } from 'yaml';
 
 export async function createRequestError(response: Response) {
-  let message: string = response.statusText;
+  const message: string = response.statusText;
   let details: string | undefined = undefined;
   let body: string | object | undefined = undefined;
   let json: object | undefined = undefined;
 
-  if (response.headers.get('content-type')?.includes('application/json')) {
-    try {
-      body = (await response.json()) as object;
-    } catch {
-      // Do nothing
-    }
-  } else if (response.headers.get('content-type')?.includes('text/plain')) {
-    try {
-      body = await response.text();
-
-      try {
-        body = JSON.parse(body) as object;
-      } catch {
-        // Do nothing
-      }
-    } catch {
-      // Do nothing
-    }
+  const contentType = response.headers.get('content-type');
+  if (contentType?.includes('application/json')) {
+    body = await parseJSON(response);
+  } else if (contentType?.includes('text/plain')) {
+    body = await parseText(response);
   }
 
-  switch (typeof body) {
-    case 'object': {
-      if (body === null) break;
-      json = body;
-
-      // Handle AWX error __all__
-      if (
-        '__all__' in body &&
-        Array.isArray(body.__all__) &&
-        body.__all__.length > 0 &&
-        typeof body.__all__[0] === 'string'
-      ) {
-        message = body.__all__[0];
-        break;
-      }
-
-      const values = Object.values(body);
-      if (values.length === 1) {
-        if (typeof values[0] === 'string') {
-          message = values[0];
-          break;
-        }
-
-        if (
-          Array.isArray(values[0]) &&
-          values[0].length === 1 &&
-          typeof values[0][0] === 'string'
-        ) {
-          message = values[0][0];
-          break;
-        }
-      }
-
-      details = stringify(body);
-    }
+  if (typeof body === 'object' && body !== null) {
+    json = body;
+    details = stringify(body);
   }
 
   return new RequestError(message, details, response.status, body, json);
 }
 
+async function parseText(response: Response): Promise<string | object | undefined> {
+  try {
+    const text = await response.text();
+    return tryParseJSON(text) ?? text;
+  } catch {
+    return undefined;
+  }
+}
+
+async function parseJSON(response: Response) {
+  try {
+    return (await response.json()) as object;
+  } catch {
+    return undefined;
+  }
+}
+
+function tryParseJSON(value: string): Record<string, unknown> | undefined {
+  try {
+    return JSON.parse(value) as Record<string, unknown>;
+  } catch {
+    return undefined;
+  }
+}
+
 export class RequestError extends Error {
+  public readonly details: string | undefined;
+  public readonly statusCode: number;
+  public readonly body: string | object | undefined;
+  public readonly json: object | undefined;
+
   constructor(
     message: string,
-    public readonly details: string | undefined,
-    public readonly statusCode: number,
-    public readonly body: string | object | undefined,
-    public readonly json: object | undefined
+    details: string | undefined,
+    statusCode: number,
+    body: string | object | undefined,
+    json: object | undefined
   ) {
     super(message);
     Object.setPrototypeOf(this, RequestError.prototype);
     this.name = 'RequestError';
+    this.details = details;
+    this.statusCode = statusCode;
+    this.body = body;
+    this.json = json;
   }
+}
+
+export function isRequestError(error: unknown): error is RequestError {
+  return error instanceof RequestError;
 }
