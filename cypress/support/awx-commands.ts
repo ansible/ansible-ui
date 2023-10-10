@@ -22,10 +22,6 @@ import './rest-commands';
 
 //  AWX related custom command implementation
 
-Cypress.Commands.add('getFormGroupByLabel', (label: string | RegExp) => {
-  cy.contains('.pf-c-form__label-text', label).parent().parent().parent();
-});
-
 Cypress.Commands.add('getInputByLabel', (label: string | RegExp) => {
   cy.contains('.pf-c-form__label-text', label)
     .parent()
@@ -174,12 +170,11 @@ Cypress.Commands.add(
 
 Cypress.Commands.add(
   'clickTableRowPinnedAction',
-  (name: string | RegExp, label: string, filter?: boolean) => {
+  (name: string | RegExp, iconDataCy: string, filter?: boolean) => {
     cy.getTableRowByText(name, filter).within(() => {
-      cy.get(`#${label.toLowerCase().split(' ').join('-')}`)
-        .should('not.be.disabled')
-        .should('not.have.attr', 'aria-disabled', 'true')
-        .click();
+      cy.get('[data-cy="actions-column-cell"]').within(() => {
+        cy.get(`[data-cy="${iconDataCy}"]`).click();
+      });
     });
   }
 );
@@ -199,21 +194,6 @@ Cypress.Commands.add('selectTableRow', (name: string | RegExp, filter?: boolean)
 Cypress.Commands.add('getDialog', () => {
   cy.get('div[data-ouia-component-type="PF4/ModalContent"]');
 });
-
-Cypress.Commands.add(
-  'selectRowItemInFormGroupLookupModal',
-  (label: string | RegExp, rowItem: string) => {
-    cy.getFormGroupByLabel(label)
-      .within(() => {
-        cy.get('button[aria-label="Options menu"]').click();
-      })
-      .then(() => {
-        cy.selectTableRowInDialog(rowItem, true);
-      });
-
-    cy.clickModalButton('Confirm');
-  }
-);
 
 Cypress.Commands.add(
   'selectTableRowInDialog',
