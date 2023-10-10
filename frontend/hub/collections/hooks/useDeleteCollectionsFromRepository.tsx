@@ -90,7 +90,7 @@ async function deleteCollectionFromRepository(
     itemsToDelete.push(collection.collection_version?.pulp_href || '');
   }
 
-  const res = await postRequest(
+  const res: { task: string } = await postRequest(
     pulpAPI`/repositories/ansible/ansible/${
       parsePulpIDFromURL(collection.repository?.pulp_href || '') || ''
     }/modify/`,
@@ -98,7 +98,7 @@ async function deleteCollectionFromRepository(
       remove_content_units: itemsToDelete,
       base_version: collection.repository?.latest_version_href || '',
     }
-  ) as { task : string};
+  );
   await waitForTask(parsePulpIDFromURL(res.task));
 }
 
@@ -108,17 +108,14 @@ export function navigateAfterDelete(
   navigate: ReturnType<typeof usePageNavigate>
 ) {
   if (version) {
-    navigate(
-      HubRoute.CollectionPage,
-        {
-          query : {
-            repository : collection.repository?.name || '',
-            name :  collection.collection_version?.name || '',
-            namespace : collection.collection_version?.namespace || '',
-            redirectIfEmpty : 'true',
-          }
-        }
-    );
+    navigate(HubRoute.CollectionPage, {
+      query: {
+        repository: collection.repository?.name || '',
+        name: collection.collection_version?.name || '',
+        namespace: collection.collection_version?.namespace || '',
+        redirectIfEmpty: 'true',
+      },
+    });
   } else {
     navigate(HubRoute.Collections);
   }

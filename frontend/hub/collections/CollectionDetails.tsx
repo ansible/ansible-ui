@@ -70,7 +70,6 @@ export function CollectionDetails() {
   const [collections, setCollections] = useState<CollectionVersionSearch[]>([]);
   const [collectionError, setCollectionError] = useState<JSX.Element | undefined>(undefined);
   const request = useGetRequest<HubItemsResponse<CollectionVersionSearch>>();
-  
 
   const navigate = usePageNavigate();
 
@@ -86,62 +85,54 @@ export function CollectionDetails() {
   const repository = searchParams.get('repository') || '';
   const redirectIfEmpty = searchParams.get('redirectIfEmpty') || '';
 
-  useEffect( () => {
-    if (!(name && namespace && repository))
-    {
-      setCollectionError(
-        <AwxError
-          error={{ name: 'not found', message: t('Not Found') }}
-        />
-      );
+  useEffect(() => {
+    if (!(name && namespace && repository)) {
+      setCollectionError(<AwxError error={{ name: 'not found', message: t('Not Found') }} />);
     }
-  }, [name, namespace, repository, setCollectionError]);
+  }, [name, namespace, repository, setCollectionError, t]);
 
-  useEffect( () => {
-    (async function() {
-      try
-      {
-        const res = await request(hubAPI`/v3/plugin/ansible/search/collection-versions/`,  
-        {
-          name, namespace, repository_name : repository
-        });  
+  useEffect(() => {
+    try {
+      void (async function () {
+        const res = await request(hubAPI`/v3/plugin/ansible/search/collection-versions/`, {
+          name,
+          namespace,
+          repository_name: repository,
+        });
 
-        if (res.data.length == 0)
-        {
-          if (redirectIfEmpty)
-          {
+        if (res.data.length == 0) {
+          if (redirectIfEmpty) {
             navigate(HubRoute.Collections);
-          }else
-          {
-            setCollectionError(
-              <AwxError
-                error={{ name: 'not found', message: t('Not Found') }}
-              />
-            );
+          } else {
+            setCollectionError(<AwxError error={{ name: 'not found', message: t('Not Found') }} />);
           }
         }
 
-        if (redirectIfEmpty)
-        {
-          let newParams = new URLSearchParams(searchParams.toString());
+        if (redirectIfEmpty) {
+          const newParams = new URLSearchParams(searchParams.toString());
 
           // Set a new query parameter or update existing ones
           newParams.set('redirectIfEmpty', '');
-      
+
           setSearchParams(newParams);
         }
 
         setCollections(res.data);
-      }catch(error)
-      {
-        setCollectionError(
-          <AwxError
-            error={{ name: 'not found', message: t('Not Found') }}
-          />
-        );
-      }
-    })();
-  }, [name, namespace, repository, redirectIfEmpty])
+      })();
+    } catch (error) {
+      setCollectionError(<AwxError error={{ name: 'not found', message: t('Not Found') }} />);
+    }
+  }, [
+    name,
+    namespace,
+    repository,
+    redirectIfEmpty,
+    navigate,
+    request,
+    searchParams,
+    setSearchParams,
+    t,
+  ]);
 
   // load all collections versions belong to the repository
   /*const collectionsResult = useGet<HubItemsResponse<CollectionVersionSearch>>(
