@@ -675,7 +675,7 @@ Cypress.Commands.add(
     if (projectId) {
       cy.awxRequestGet<Project>(`/api/v2/projects/${projectId}/`).then((project) => {
         // This will take care of deleting the project and the associated org, inventory
-        cy.deleteAwxProject(project);
+        cy.deleteAwxProject(project, options);
       });
     }
   }
