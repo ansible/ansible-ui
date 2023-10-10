@@ -46,7 +46,7 @@ describe('inventories', () => {
     cy.clickButton(/^Create inventory$/);
     cy.clickLink(/^Create inventory$/);
     cy.get('[data-cy="inventory-name"]').type(inventoryName);
-    cy.selectItemFromLookupModal('organization', organization.name, organization.id);
+    cy.selectDropdownOptionByResourceName('organization', organization.name);
     cy.getCheckboxByLabel('Prevent instance group fallback').click();
     cy.clickButton(/^Create inventory$/);
     cy.verifyPageTitle(inventoryName);
@@ -80,7 +80,7 @@ describe('inventories', () => {
     }
   });
 
-  it.skip('edits an inventory from the inventory details page', () => {
+  it('edits an inventory from the inventory details page', () => {
     cy.navigateTo('awx', 'inventories');
     cy.clickTableRow(inventory.name);
     cy.verifyPageTitle(inventory.name);
