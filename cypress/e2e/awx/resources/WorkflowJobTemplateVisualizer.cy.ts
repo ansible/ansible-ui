@@ -18,7 +18,8 @@ describe('Workflow Job templates visualizer', () => {
     cy.verifyPageTitle(jtName);
     cy.contains('button:not(:disabled):not(:hidden)', 'Save').should('be.visible');
     cy.contains('button:not(:disabled):not(:hidden)', 'Add node').should('be.visible');
-    cy.contains('button:not(:disabled):not(:hidden)', 'Cancel').should('be.visible');
+    cy.get('[data-cy="workflowVisualizerToolbarNodes"]').should('have.text', 'Total nodes 0');
+    cy.get('button[data-cy="workflowVisualizerToolbarExpandCollapse"]').should('be.visible');
     // Clean up - delete workflow job template
     cy.clickPageAction(/^Delete template/);
     cy.get('#confirm').click();
@@ -39,8 +40,9 @@ describe('Workflow Job templates visualizer', () => {
     cy.verifyPageTitle(jtName);
     cy.contains('button:not(:disabled):not(:hidden)', 'Save').should('be.visible');
     cy.contains('button:not(:disabled):not(:hidden)', 'Add node').should('be.visible');
-    cy.contains('button:not(:disabled):not(:hidden)', 'Cancel').should('be.visible');
-    cy.contains('button:not(:disabled):not(:hidden)', 'Cancel').click();
+    cy.get('[data-cy="workflowVisualizerToolbarNodes"]').should('have.text', 'Total nodes 0');
+    cy.get('button[data-cy="workflowVisualizerToolbarExpandCollapse"]').should('be.visible');
+    cy.clickToolbarKebabAction('Cancel');
     // Clean up - delete workflow job template
     cy.clickPageAction(/^Delete template/);
     cy.get('#confirm').click();
