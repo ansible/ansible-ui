@@ -52,6 +52,10 @@ export function useStopTasks(onComplete?: (tasks: Task[]) => void) {
         actionColumns,
         onComplete,
         actionFn: (task: Task) => stopRunningTask(task),
+        isItemNonActionable: (task: Task) =>
+          task.state == 'running' || task.state == 'waiting'
+            ? ''
+            : 'Can only cancel running or waiting tasks',
       });
     },
     [actionColumns, bulkAction, confirmationColumns, onComplete, t]
