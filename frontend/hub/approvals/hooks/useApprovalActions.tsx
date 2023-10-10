@@ -45,7 +45,7 @@ export function useApprovalActions(callback?: (collections: CollectionVersionSea
         isDanger: false,
         isDisabled: (collection) =>
           can_upload_signatures || collection.is_signed
-            ? t`You do not have rights to this operation`
+            ? t('You do not have rights to this operation')
             : undefined,
       },
       {
