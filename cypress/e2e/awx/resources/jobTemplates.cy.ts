@@ -13,7 +13,7 @@ describe('Job templates form Create, Edit, Delete', () => {
   let inventory: Inventory;
   const executionEnvironment = 'Control Plane Execution Environment';
   const machineCredential = 'Demo Credential';
-  const instanceGroup = 'controlplane';
+  const instanceGroup = 'default';
 
   before(() => {
     cy.awxLogin();
