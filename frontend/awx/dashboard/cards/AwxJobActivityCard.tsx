@@ -1,16 +1,16 @@
 import { CardBody, Flex, FlexItem } from '@patternfly/react-core';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FormGroupSelectOption } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
+import { PageSingleSelect } from '../../../../framework/PageInputs/PageSingleSelect';
 import { useGetPageUrl } from '../../../../framework/PageNavigation/useGetPageUrl';
 import { AwxRoute } from '../../AwxRoutes';
 import { DashboardJobPeriod, DashboardJobType, JobsChart } from '../charts/JobsChart';
 
 export function AwxJobActivityCard() {
   const { t } = useTranslation();
-  const [period, setPeriod] = useState<DashboardJobPeriod | undefined>('month');
-  const [jobType, setJobType] = useState<DashboardJobType | undefined>('all');
+  const [period, setPeriod] = useState<DashboardJobPeriod>('month');
+  const [jobType, setJobType] = useState<DashboardJobType>('all');
   const getPageUrl = useGetPageUrl();
   return (
     <PageDashboardCard
@@ -22,13 +22,10 @@ export function AwxJobActivityCard() {
       headerControls={
         <Flex spaceItems={{ default: 'spaceItemsNone' }} style={{ gap: 8 }}>
           <FlexItem>
-            <FormGroupSelectOption<DashboardJobPeriod>
-              placeholderText={t('Select period')}
+            <PageSingleSelect<DashboardJobPeriod>
+              placeholder={t('Select period')}
               value={period}
-              onSelect={(e, v) => {
-                e.stopPropagation();
-                setPeriod(v as DashboardJobPeriod);
-              }}
+              onSelect={setPeriod}
               options={[
                 { label: t('Past month'), value: 'month' },
                 { label: t('Past two weeks'), value: 'two_weeks' },
@@ -38,13 +35,10 @@ export function AwxJobActivityCard() {
             />
           </FlexItem>
           <FlexItem>
-            <FormGroupSelectOption<DashboardJobType>
-              placeholderText={t('Select job types')}
+            <PageSingleSelect<DashboardJobType>
+              placeholder={t('Select job types')}
               value={jobType}
-              onSelect={(e, v) => {
-                e.stopPropagation();
-                setJobType(v as DashboardJobType);
-              }}
+              onSelect={setJobType}
               options={[
                 { label: t('All job types'), value: 'all' },
                 { label: t('Inventory sync'), value: 'inv_sync' },

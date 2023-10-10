@@ -17,7 +17,7 @@ import { PageDetail } from '../../../framework/PageDetails/PageDetail';
 import { PageFormFileUpload } from '../../../framework/PageForm/Inputs/PageFormFileUpload';
 import { PageFormWatch } from '../../../framework/PageForm/Utils/PageFormWatch';
 import { LoadingPage } from '../../../framework/components/LoadingPage';
-import { postRequestFile } from '../../common/crud/Data';
+import { hubPostRequestFile } from '../api/request';
 import { useGetRequest } from '../../common/crud/useGet';
 import { hubAPI, pulpAPI } from '../api/utils';
 import { useHubNamespaces } from '../namespaces/hooks/useHubNamespaces';
@@ -166,7 +166,7 @@ export function UploadCollectionByFile() {
     );
     const base_path = list?.results[0]?.base_path;
 
-    return postRequestFile(
+    return hubPostRequestFile(
       hubAPI`/v3/plugin/ansible/content/${base_path}/collections/artifacts/`,
       data.file as Blob
     ).then(() => pageNavigate(HubRoute.Approvals));

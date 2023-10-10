@@ -1,6 +1,7 @@
 import { createRequestError } from '../../common/crud/RequestError';
 import { getCookie } from '../../common/crud/cookie';
 import { TaskResponse } from '../tasks/Task';
+import { parseTaskResponse } from './utils';
 
 interface Options {
   method: string;
@@ -55,6 +56,41 @@ async function hubRequestCommon<T extends object | TaskResponse>(
     statusCode,
     response: genericResponse,
   };
+}
+
+export async function hubPostRequestFile(
+  url: string,
+  file: Blob,
+  repository?: string,
+  signed_collection?: string,
+  signal?: AbortSignal
+): Promise<unknown> {
+  const body = new FormData();
+  body.append('file', file);
+  if (repository) {
+    body.append('repository', repository);
+  }
+  if (signed_collection) {
+    body.append('signed_collection', signed_collection);
+  }
+
+  const response = await fetch(url, {
+    method: 'POST',
+    body,
+    signal,
+    credentials: 'include',
+    headers: {
+      'X-CSRFToken': getCookie('csrftoken') ?? '',
+    },
+  });
+
+  if (response.status === 202) {
+    return parseTaskResponse((await response.json()) as TaskResponse);
+  }
+
+  if (!response.ok) {
+    throw await createRequestError(response);
+  }
 }
 
 export async function postHubRequest<
