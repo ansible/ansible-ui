@@ -26,7 +26,6 @@ export * from './PageDialogs/PageDialog';
 export * from './PageDialogs/useSelectDialog';
 export * from './PageForm/Inputs/FormGroupSelect';
 export * from './PageForm/Inputs/FormGroupSelectOption';
-export * from './PageForm/Inputs/FormGroupTextArea';
 export * from './PageForm/Inputs/FormGroupTextInput';
 export * from './PageForm/Inputs/PageFormCheckbox';
 export * from './PageForm/Inputs/PageFormDataEditor';
