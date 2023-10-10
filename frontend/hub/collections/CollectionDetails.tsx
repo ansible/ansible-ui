@@ -122,17 +122,8 @@ export function CollectionDetails() {
     } catch (error) {
       setCollectionError(<AwxError error={{ name: 'not found', message: t('Not Found') }} />);
     }
-  }, [
-    name,
-    namespace,
-    repository,
-    redirectIfEmpty,
-    navigate,
-    request,
-    searchParams,
-    setSearchParams,
-    t,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [name, namespace, repository, redirectIfEmpty, t]);
 
   // load all collections versions belong to the repository
   /*const collectionsResult = useGet<HubItemsResponse<CollectionVersionSearch>>(
