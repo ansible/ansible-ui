@@ -10,6 +10,7 @@ export enum HubRoute {
   NamespacePage = 'hub-namespace-page',
   NamespaceDetails = 'hub-namespace-details',
 
+  CollectionSignatureUpload = 'hub-signature-upload',
   Collections = 'hub-collections',
   UploadCollection = 'hub-create-collection',
   CollectionPage = 'hub-collection-page',

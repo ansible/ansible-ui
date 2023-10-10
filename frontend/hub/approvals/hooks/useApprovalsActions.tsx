@@ -5,11 +5,15 @@ import { IPageAction, PageActionSelection, PageActionType } from '../../../../fr
 import { useApproveCollections } from './useApproveCollections';
 import { useRejectCollections } from './useRejectCollections';
 import { CollectionVersionSearch } from '../Approval';
+import { useHubContext } from './../../useHubContext';
 
 export function useApprovalsActions(callback: (collections: CollectionVersionSearch[]) => void) {
   const { t } = useTranslation();
   const rejectCollections = useRejectCollections(callback);
   const approveCollections = useApproveCollections(callback);
+  const { featureFlags } = useHubContext();
+  const { collection_auto_sign, require_upload_signatures } = featureFlags;
+  const autoSign = collection_auto_sign && !require_upload_signatures;
 
   return useMemo<IPageAction<CollectionVersionSearch>[]>(
     () => [
@@ -26,11 +30,13 @@ export function useApprovalsActions(callback: (collections: CollectionVersionSea
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: ThumbsUpIcon,
-        label: t('Approve selected collections'),
+        label: autoSign
+          ? t('Sign and approve selected collections')
+          : t('Approve selected collections'),
         onClick: approveCollections,
         isDanger: false,
       },
     ],
-    [t, rejectCollections, approveCollections]
+    [t, rejectCollections, approveCollections, autoSign]
   );
 }

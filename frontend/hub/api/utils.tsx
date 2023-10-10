@@ -155,7 +155,7 @@ function handleError(error: unknown, defaultMessage: string) {
   }
 }
 
-async function parseTaskResponse(response: TaskResponse | undefined, signal?: AbortSignal) {
+export async function parseTaskResponse(response: TaskResponse | undefined, signal?: AbortSignal) {
   if (response?.task) {
     const taskHref = parsePulpIDFromURL(response.task);
     if (taskHref) {
