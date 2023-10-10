@@ -130,26 +130,3 @@ Cypress.Commands.add('selectMultiSelectOption', (selector: string, label: string
         });
     });
 });
-
-Cypress.Commands.add(
-  'addAndSelectItemFromMulitSelectDropdown',
-  (label: string | RegExp, itemText: string) => {
-    cy.getFormGroupByLabel(label)
-      .parent()
-      .within(() => {
-        cy.get('.pf-c-form__group-control').within(() => {
-          cy.get("input[type='text']")
-            .click()
-            .type(itemText)
-            .parent()
-            .parent()
-            .parent()
-            .within(() => {
-              cy.get('.pf-c-select__menu').within(() => {
-                cy.get('button').contains(itemText).click();
-              });
-            });
-        });
-      });
-  }
-);

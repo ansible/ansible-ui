@@ -91,7 +91,7 @@ describe('credentials', () => {
 
   it('credentials table row edit credential', () => {
     cy.navigateTo('awx', 'credentials');
-    cy.clickTableRowPinnedAction(credential.name, 'Edit credential');
+    cy.clickTableRowPinnedAction(credential.name, 'edit-credential');
     cy.verifyPageTitle('Edit Credential');
   });
 
