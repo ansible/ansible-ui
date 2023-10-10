@@ -2,7 +2,7 @@ import { DateTime } from 'luxon';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { PageForm, PageFormSubmitHandler, PageHeader, PageLayout } from '../../../../framework';
+import { PageFormSubmitHandler, PageHeader, PageLayout } from '../../../../framework';
 import { useGetPageUrl } from '../../../../framework/PageNavigation/useGetPageUrl';
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
 import { dateToInputDateTime } from '../../../../framework/utils/dateTimeHelpers';
@@ -13,9 +13,9 @@ import { AwxRoute } from '../../AwxRoutes';
 import { AwxError } from '../../common/AwxError';
 import { getAddedAndRemoved } from '../../common/util/getAddedAndRemoved';
 import { ScheduleFormFields } from '../../interfaces/ScheduleFormFields';
-import { getAwxError } from '../../useAwxView';
 import { ScheduleInputs } from './components/ScheduleInputs';
 import { buildScheduleContainer } from './hooks/scheduleHelpers';
+import { AwxPageForm } from '../../AwxPageForm';
 
 const routes: { [key: string]: string } = {
   inventory: RouteObj.InventorySourceScheduleDetails,
@@ -37,7 +37,7 @@ export function CreateSchedule() {
 
   const [currentDate, time]: string[] = dateToInputDateTime(closestQuarterHour.toISO() as string);
 
-  const onSubmit: PageFormSubmitHandler<ScheduleFormFields> = async (values, setError) => {
+  const onSubmit: PageFormSubmitHandler<ScheduleFormFields> = async (values) => {
     const {
       name,
       unified_job_template,
@@ -102,75 +102,71 @@ export function CreateSchedule() {
         .join(','),
     };
 
-    try {
-      const response = await postRequest<ScheduleFormFields>(
-        unified_job_template_object.related?.schedules,
-        requestData
-      );
+    const response = await postRequest<ScheduleFormFields>(
+      unified_job_template_object.related?.schedules,
+      requestData
+    );
 
-      await Promise.all(
-        removedLabels.map((label) =>
-          postRequest(`/api/v2/schedules/${response.id}/labels/`, {
-            id: label.id,
-            disassociate: true,
-          })
-        )
-      );
-      await Promise.all(
-        removedInstanceGroups.map((instanceGroup) =>
-          postRequest(`/api/v2/schedules/${response.id}/instance_groups/`, {
-            id: instanceGroup.id,
-            disassociate: true,
-          })
-        )
-      );
-      await Promise.all(
-        removedCredentials.map((credential) =>
-          postRequest(`/api/v2/schedules/${response.id}/credentials/`, {
-            id: credential.id,
-            disassociate: true,
-          })
-        )
-      );
+    await Promise.all(
+      removedLabels.map((label) =>
+        postRequest(`/api/v2/schedules/${response.id}/labels/`, {
+          id: label.id,
+          disassociate: true,
+        })
+      )
+    );
+    await Promise.all(
+      removedInstanceGroups.map((instanceGroup) =>
+        postRequest(`/api/v2/schedules/${response.id}/instance_groups/`, {
+          id: instanceGroup.id,
+          disassociate: true,
+        })
+      )
+    );
+    await Promise.all(
+      removedCredentials.map((credential) =>
+        postRequest(`/api/v2/schedules/${response.id}/credentials/`, {
+          id: credential.id,
+          disassociate: true,
+        })
+      )
+    );
 
-      await Promise.all(
-        addedLabels.map((label) =>
-          postRequest(`/api/v2/schedules/${response.id}/labels/`, {
-            id: label.id,
-          })
-        )
-      );
+    await Promise.all(
+      addedLabels.map((label) =>
+        postRequest(`/api/v2/schedules/${response.id}/labels/`, {
+          id: label.id,
+        })
+      )
+    );
 
-      await Promise.all(
-        addedInstanceGroups.map((instanceGroup) =>
-          postRequest(`/api/v2/schedules/${response.id}/instance_groups/`, {
-            id: instanceGroup.id,
-          })
-        )
-      );
+    await Promise.all(
+      addedInstanceGroups.map((instanceGroup) =>
+        postRequest(`/api/v2/schedules/${response.id}/instance_groups/`, {
+          id: instanceGroup.id,
+        })
+      )
+    );
 
-      await Promise.all(
-        addedCredentials.map((credential) =>
-          postRequest(`/api/v2/schedules/${response.id}/credentials/`, {
-            id: credential.id,
-          })
-        )
+    await Promise.all(
+      addedCredentials.map((credential) =>
+        postRequest(`/api/v2/schedules/${response.id}/credentials/`, {
+          id: credential.id,
+        })
+      )
+    );
+    if (resource_type === 'inventory_source' && inventory) {
+      navigate(
+        RouteObj.InventorySourceScheduleDetails.replace(':id', inventory.id.toString())
+          .replace(':source_id', unified_job_template.toString())
+          .replace(':schedule_id', response?.id?.toString())
       );
-      if (resource_type === 'inventory_source' && inventory) {
-        navigate(
-          RouteObj.InventorySourceScheduleDetails.replace(':id', inventory.id.toString())
-            .replace(':source_id', unified_job_template.toString())
-            .replace(':schedule_id', response?.id?.toString())
-        );
-      } else {
-        navigate(
-          routes[unified_job_template_object.type]
-            .replace(':id', unified_job_template.toString())
-            .replace(':schedule_id', response.id.toString())
-        );
-      }
-    } catch (err) {
-      setError(getAwxError(err));
+    } else {
+      navigate(
+        routes[unified_job_template_object.type]
+          .replace(':id', unified_job_template.toString())
+          .replace(':schedule_id', response.id.toString())
+      );
     }
   };
   const onCancel = () => navigate(-1);
@@ -204,7 +200,7 @@ export function CreateSchedule() {
           { label: t('Create Schedule') },
         ]}
       />
-      <PageForm<ScheduleFormFields>
+      <AwxPageForm<ScheduleFormFields>
         defaultValue={{
           resourceName: '',
           name: '',
@@ -232,7 +228,7 @@ export function CreateSchedule() {
           onError={(err) => setError(err)}
           zoneLinks={data?.links}
         />
-      </PageForm>
+      </AwxPageForm>
     </PageLayout>
   );
 }

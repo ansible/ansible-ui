@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { PageForm, PageFormSelect, useBulkActionDialog } from '../../../../framework';
+import { PageFormSelect, useBulkActionDialog } from '../../../../framework';
 import { PageFormCheckbox } from '../../../../framework/PageForm/Inputs/PageFormCheckbox';
 import { PageFormHidden } from '../../../../framework/PageForm/Utils/PageFormHidden';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
+import { AwxPageForm } from '../../AwxPageForm';
 import { Team } from '../../interfaces/Team';
 import { User } from '../../interfaces/User';
 import { PageFormCredentialSelect } from '../../resources/credentials/components/PageFormCredentialSelect';
@@ -40,7 +41,7 @@ export function AddRolesForm(props: { users?: User[]; teams?: Team[]; onClose?: 
   const openBulkActionDialog = useBulkActionDialog<AddRole>();
   const postRequest = usePostRequest();
   return (
-    <PageForm
+    <AwxPageForm
       onSubmit={(
         input: Record<string, boolean> & {
           resource: { summary_fields: { object_roles: Record<string, { id: number }> } };
@@ -117,7 +118,7 @@ export function AddRolesForm(props: { users?: User[]; teams?: Team[]; onClose?: 
       <UserInventoryRole />
       <UserProjectRole />
       <UserOrganizationRole />
-    </PageForm>
+    </AwxPageForm>
   );
 }
 

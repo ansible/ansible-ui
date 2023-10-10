@@ -1,6 +1,5 @@
 import {
   ActionGroup,
-  Alert,
   Button,
   Form,
   Grid,
@@ -8,7 +7,7 @@ import {
   PageSection,
   Tooltip,
 } from '@patternfly/react-core';
-import { BaseSyntheticEvent, CSSProperties, ReactNode, useContext, useState } from 'react';
+import React, { BaseSyntheticEvent, CSSProperties, ReactNode, useContext, useState } from 'react';
 import {
   DefaultValues,
   ErrorOption,
@@ -21,14 +20,16 @@ import {
   useFormState,
 } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { RequestError } from '../../frontend/common/crud/RequestError';
 import { Scrollable } from '../components/Scrollable';
 import { useBreakpoint } from '../components/useBreakPoint';
 import { PageBody } from '../PageBody';
 import { SettingsContext } from '../Settings';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
+import { ErrorAdapter } from './typesErrorAdapter';
+import { genericErrorAdapter } from './genericErrorAdapter';
+import { ErrorAlert } from './ErrorAlert';
 
-export function PageForm<T extends object>(props: {
+export interface PageFormProps<T extends object> {
   children?: ReactNode;
   submitText?: string;
   additionalActionText?: string;
@@ -45,7 +46,11 @@ export function PageForm<T extends object>(props: {
   disableGrid?: boolean;
   autoComplete?: string;
   footer?: ReactNode;
-}) {
+  errorAdapter?: ErrorAdapter;
+}
+
+export function PageForm<T extends object>(props: PageFormProps<T>) {
+  const { errorAdapter = genericErrorAdapter } = props;
   const form = useForm<T>({
     defaultValues: props.defaultValue ?? ({} as DefaultValues<T>),
   });
@@ -53,31 +58,28 @@ export function PageForm<T extends object>(props: {
   const [frameworkTranslations] = useFrameworkTranslations();
 
   const { handleSubmit, setError: setFieldError } = form;
-  const [error, setError] = useState<Error | null>(null);
+  const [error, setError] = useState<(string | ReactNode)[] | string | null>(null);
   const isMd = useBreakpoint('md');
   const [settings] = useContext(SettingsContext);
   const isHorizontal = props.isVertical ? false : settings.formLayout === 'horizontal';
 
   const handleSubmitError = (err: unknown) => {
-    err instanceof Error ? setError(err) : setError(new Error('Unknown error'));
-    if (
-      typeof err === 'object' &&
-      err !== null &&
-      'json' in err &&
-      typeof err.json === 'object' &&
-      err.json !== null
-    ) {
-      for (const key in err.json) {
-        let value = (err.json as Record<string, string>)[key];
-        if (typeof value === 'string') {
-          setFieldError(key as unknown as Path<T>, { message: value });
-        } else if (Array.isArray(value)) {
-          value = value[0];
-          if (typeof value === 'string') {
-            setFieldError(key as unknown as Path<T>, { message: value });
-          }
-        }
-      }
+    const { genericErrors, fieldErrors } = errorAdapter(err);
+
+    // Handle generic errors
+    if (genericErrors.length > 0) {
+      setError(genericErrors.map((error) => error.message));
+    } else {
+      setError(null);
+    }
+
+    // Handle field errors
+    if (fieldErrors.length > 0) {
+      fieldErrors.forEach((error) => {
+        setFieldError(error.name as unknown as Path<T>, {
+          message: typeof error.message === 'string' ? error.message : undefined,
+        });
+      });
     }
   };
 
@@ -109,7 +111,7 @@ export function PageForm<T extends object>(props: {
             try {
               await props.onSubmit(
                 data,
-                (error: string) => setError(new Error(error)),
+                (error) => setError(error),
                 setFieldError,
                 isSecondaryButton ? form : undefined
               );
@@ -130,17 +132,8 @@ export function PageForm<T extends object>(props: {
           gap: 0,
         }}
       >
-        {error && (
-          <Alert
-            variant="danger"
-            title={error.message ?? ''}
-            isInline
-            style={{ paddingLeft: isMd && props.onCancel ? 190 : undefined }}
-            isExpandable={error instanceof RequestError ? !!error.details : false}
-          >
-            {error instanceof RequestError ? error.details : undefined}
-          </Alert>
-        )}
+        {error && <ErrorAlert error={error} isMd={isMd} onCancel={props.onCancel} />}
+
         <Scrollable>
           <PageSection
             variant="light"
@@ -186,7 +179,7 @@ export type PageFormSubmitHandler<T extends FieldValues> = (
   data: T,
   setError: (error: string) => void,
   setFieldError: (fieldName: FieldPath<T>, error: ErrorOption) => void,
-  from: UseFormReturn<T> | undefined
+  form: UseFormReturn<T> | undefined
 ) => Promise<unknown>;
 
 export function PageFormGrid(props: {
@@ -215,11 +208,17 @@ export function PageFormGrid(props: {
 
 export function PageFormSubmitButton(props: { children: ReactNode; style?: CSSProperties }) {
   const { isSubmitting, errors } = useFormState();
+  const { clearErrors } = useForm();
   const { t } = useTranslation();
   const hasErrors = errors && Object.keys(errors).length > 0;
   return (
     <Tooltip content={t('Please fix errors')} trigger={hasErrors ? undefined : 'manual'}>
       <Button
+        onClick={() => {
+          if (hasErrors) {
+            clearErrors();
+          }
+        }}
         data-cy={'Submit'}
         type="submit"
         isDisabled={isSubmitting}

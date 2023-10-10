@@ -20,6 +20,7 @@ jobs:
       hub: ${{ steps.changed-hub.outputs.changed == 'true' }}
       eda: ${{ steps.changed-eda.outputs.changed == 'true' }}
       afw: ${{ steps.changed-afw.outputs.changed == 'true' }}
+      common: ${{ steps.changed-common.outputs.changed == 'true' }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -56,6 +57,10 @@ jobs:
         id: changed-afw
         with:
           paths: framework
+      - uses: marceloprado/has-changed-path@v1.0.1
+        id: changed-common
+        with:
+          paths: frontend/common framework cypress/support
 
   checks:
     name: ESLint - Prettier - TSC
@@ -279,6 +284,55 @@ jobs:
           parallel: true
           auto-cancel-after-failures: 1
           config-file: cypress.afw.config.ts
+        env:
+          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_AFW_CCT_PROJECT_ID }}
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_AFW_CCT_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  common-cct:
+    name: Common CCT
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    needs: packages
+    strategy:
+      fail-fast: false
+      matrix:
+        containers: [1]
+    steps:
+      - name: Checkout
+        if: needs.packages.outputs.common == 'true'
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+      - name: Setup Node
+        if: needs.packages.outputs.common == 'true'
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: PreCache
+        if: needs.packages.outputs.common == 'true'
+        run: npm version 0.0.0 --no-git-tag-version
+      - name: Cache dependencies
+        if: needs.packages.outputs.common == 'true'
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ./node_modules
+            /home/runner/.cache/Cypress
+          key: modules-${{ hashFiles('package-lock.json') }}
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true' && needs.packages.outputs.common == 'true'
+        run: npm ci
+      - name: Cypress
+        if: needs.packages.outputs.common == 'true'
+        uses: cypress-io/github-action@v5
+        with:
+          component: true
+          install: false
+          record: true
+          auto-cancel-after-failures: 1
+          config-file: cypress.common.config.ts
         env:
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_AFW_CCT_PROJECT_ID }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_AFW_CCT_RECORD_KEY }}

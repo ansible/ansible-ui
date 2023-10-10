@@ -9,6 +9,7 @@ import {
   useGetPageUrl,
   usePageAlertToaster,
 } from '../../../../../framework';
+import { RequestError } from '../../../../common/crud/RequestError';
 import { handleLaunch } from '../../../common/util/launchHandlers';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
@@ -74,7 +75,7 @@ export function useTemplateActions(options: {
             alertToaster.addAlert({
               variant: 'danger',
               title: t('Failed to launch job'),
-              children: err instanceof Error && err.message,
+              children: err instanceof RequestError ? err.details : t('Unknown error'),
             });
           }
         },
