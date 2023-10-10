@@ -125,34 +125,6 @@ export function CollectionDetails() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [name, namespace, repository, redirectIfEmpty, t]);
 
-  // load all collections versions belong to the repository
-  /*const collectionsResult = useGet<HubItemsResponse<CollectionVersionSearch>>(
-    hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${
-      searchParams.get('name') || ''
-    }&namespace=${searchParams.get('namespace') || ''}&repository_name=${
-      searchParams.get('repository') || ''
-    }&order_by=-version`
-  );
-
-  if (searchParams.get('redirectIfEmpty') == 'true' && collectionsResult.data?.data && collectionsResult.data?.data.length <= 1) {
-      navigate(HubRoute.Collections);
-  }*/
-
-  /*if (
-    collectionsResult.error ||
-    (collectionsResult.isLoading == false &&
-      collectionsResult.data &&
-      collectionsResult.data.data.length == 0)
-  ) {
-      collectionError = (
-        <AwxError
-          error={collectionsResult.error || { name: 'not found', message: t('Not Found') }}
-        />
-      );
-  }*/
-
-  //const collections = collectionsResult.data ? collectionsResult.data.data : [];
-
   // load collection by search params
   const version = searchParams.get('version');
 
