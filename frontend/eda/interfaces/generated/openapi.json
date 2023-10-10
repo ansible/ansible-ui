@@ -206,6 +206,22 @@
         "parameters": [
           {
             "in": "query",
+            "name": "credential_id",
+            "schema": {
+              "type": "number"
+            },
+            "description": "Filter by Credential ID."
+          },
+          {
+            "in": "query",
+            "name": "decision_environment_id",
+            "schema": {
+              "type": "number"
+            },
+            "description": "Filter by Decision Environment ID."
+          },
+          {
+            "in": "query",
             "name": "name",
             "schema": {
               "type": "string"
@@ -1130,6 +1146,14 @@
         "description": "Delete a credential by id",
         "parameters": [
           {
+            "in": "query",
+            "name": "force",
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Force deletion if there are dependent objects"
+          },
+          {
             "in": "path",
             "name": "id",
             "schema": {
@@ -1352,6 +1376,14 @@
         "description": "Delete a decision environment by id",
         "parameters": [
           {
+            "in": "query",
+            "name": "force",
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Force deletion if there are dependent objects"
+          },
+          {
             "in": "path",
             "name": "id",
             "schema": {
@@ -1373,6 +1405,9 @@
         "responses": {
           "204": {
             "description": "Delete successful."
+          },
+          "403": {
+            "description": "Decision Environment in use by Activations."
           }
         }
       }
@@ -1786,6 +1821,14 @@
         "operationId": "roles_list",
         "description": "List all roles",
         "parameters": [
+          {
+            "in": "query",
+            "name": "name",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter roles by name."
+          },
           {
             "name": "page",
             "required": false,
@@ -2384,6 +2427,14 @@
         "description": "List all users",
         "parameters": [
           {
+            "in": "query",
+            "name": "name",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by Username."
+          },
+          {
             "name": "page",
             "required": false,
             "in": "query",
@@ -2399,6 +2450,13 @@
             "description": "Number of results to return per page.",
             "schema": {
               "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "username",
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -2588,6 +2646,9 @@
         "responses": {
           "204": {
             "description": "The user has been deleted successful."
+          },
+          "403": {
+            "description": "Deleting your own account is not permitted."
           }
         }
       }
@@ -2846,10 +2907,6 @@
           "decision_environment_id": {
             "type": "integer"
           },
-          "project_id": {
-            "type": "integer",
-            "nullable": true
-          },
           "rulebook_id": {
             "type": "integer"
           },
@@ -2875,7 +2932,14 @@
             "type": "string"
           },
           "status": {
-            "$ref": "#/components/schemas/Status0e7Enum"
+            "$ref": "#/components/schemas/Status906Enum"
+          },
+          "git_hash": {
+            "type": "string"
+          },
+          "status_message": {
+            "type": "string",
+            "nullable": true
           },
           "activation_id": {
             "type": "integer",
@@ -2935,7 +2999,7 @@
             "type": "boolean"
           },
           "status": {
-            "$ref": "#/components/schemas/Status0e7Enum"
+            "$ref": "#/components/schemas/Status906Enum"
           },
           "decision_environment_id": {
             "type": "integer",
@@ -2969,6 +3033,10 @@
             "type": "string",
             "description": "Name of the referenced rulebook"
           },
+          "current_job_id": {
+            "type": "string",
+            "nullable": true
+          },
           "rules_count": {
             "type": "integer"
           },
@@ -2984,6 +3052,10 @@
             "type": "string",
             "format": "date-time",
             "readOnly": true
+          },
+          "status_message": {
+            "type": "string",
+            "nullable": true
           }
         },
         "required": [
@@ -3026,7 +3098,10 @@
             "nullable": true
           },
           "status": {
-            "$ref": "#/components/schemas/Status0e7Enum"
+            "$ref": "#/components/schemas/Status906Enum"
+          },
+          "git_hash": {
+            "type": "string"
           },
           "project": {
             "allOf": [
@@ -3037,7 +3112,12 @@
             "nullable": true
           },
           "rulebook": {
-            "$ref": "#/components/schemas/RulebookRef"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/RulebookRef"
+              }
+            ],
+            "nullable": true
           },
           "extra_var": {
             "allOf": [
@@ -3065,6 +3145,10 @@
             "type": "string",
             "description": "Name of the referenced rulebook"
           },
+          "current_job_id": {
+            "type": "string",
+            "nullable": true
+          },
           "rules_count": {
             "type": "integer"
           },
@@ -3085,6 +3169,10 @@
             "type": "string",
             "format": "date-time",
             "nullable": true
+          },
+          "status_message": {
+            "type": "string",
+            "nullable": true
           }
         },
         "required": [
@@ -3093,7 +3181,6 @@
           "instances",
           "modified_at",
           "name",
-          "rulebook",
           "rulebook_name",
           "rules_count",
           "rules_fired_count"
@@ -4796,7 +4883,7 @@
           "source_types"
         ]
       },
-      "Status0e7Enum": {
+      "Status906Enum": {
         "enum": [
           "starting",
           "running",
@@ -4806,10 +4893,11 @@
           "stopped",
           "deleting",
           "completed",
-          "unresponsive"
+          "unresponsive",
+          "error"
         ],
         "type": "string",
-        "description": "* `starting` - starting\n* `running` - running\n* `pending` - pending\n* `failed` - failed\n* `stopping` - stopping\n* `stopped` - stopped\n* `deleting` - deleting\n* `completed` - completed\n* `unresponsive` - unresponsive"
+        "description": "* `starting` - starting\n* `running` - running\n* `pending` - pending\n* `failed` - failed\n* `stopping` - stopping\n* `stopped` - stopped\n* `deleting` - deleting\n* `completed` - completed\n* `unresponsive` - unresponsive\n* `error` - error"
       },
       "Task": {
         "type": "object",
