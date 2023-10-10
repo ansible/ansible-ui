@@ -6,6 +6,7 @@ import { collectionKeyFn, parsePulpIDFromURL, pulpAPI, hubAPIPost } from '../../
 import { PulpItemsResponse } from '../../usePulpView';
 import { CollectionVersionSearch } from '../Approval';
 import { useApprovalsColumns } from './useApprovalsColumns';
+import { useHubContext } from './../../useHubContext';
 
 export function useApproveCollections(
   onComplete?: (collections: CollectionVersionSearch[]) => void
@@ -18,13 +19,23 @@ export function useApproveCollections(
 
   const getRequest = useGetRequest();
 
+  const { featureFlags } = useHubContext();
+  const { collection_auto_sign, require_upload_signatures } = featureFlags;
+  const autoSign = collection_auto_sign && !require_upload_signatures;
+
   return useCallback(
     (collections: CollectionVersionSearch[]) => {
       bulkAction({
-        title: t('Approve collections', { count: collections.length }),
-        confirmText: t('Yes, I confirm that I want to approve these {{count}} collections.', {
-          count: collections.length,
-        }),
+        title: autoSign
+          ? t('Approve and sign collections', { count: collections.length })
+          : t('Approve collections', { count: collections.length }),
+        confirmText: autoSign
+          ? t('Yes, I confirm that I want to approve and sign these {{count}} collections.', {
+              count: collections.length,
+            })
+          : t('Yes, I confirm that I want to approve these {{count}} collections.', {
+              count: collections.length,
+            }),
         actionButtonText: t('Approve collections', { count: collections.length }),
         items: collections.sort((l, r) =>
           compareStrings(
@@ -40,7 +51,7 @@ export function useApproveCollections(
           approveCollection(collection, getRequest),
       });
     },
-    [actionColumns, bulkAction, confirmationColumns, onComplete, t, getRequest]
+    [actionColumns, bulkAction, confirmationColumns, onComplete, t, getRequest, autoSign]
   );
 }
 

@@ -11,6 +11,7 @@ import { Approvals } from './approvals/Approvals';
 import { CollectionDetails } from './collections/CollectionDetails';
 import { Collections } from './collections/Collections';
 import { UploadCollection } from './collections/UploadCollection';
+import { CollectionSignatureUpload } from './collections/CollectionSignatureUpload';
 import { HubDashboard } from './dashboard/Dashboard';
 import { ExecutionEnvironments } from './execution-environments/ExecutionEnvironments';
 import { CreateHubNamespace, EditHubNamespace } from './namespaces/HubNamespaceForm';
@@ -91,6 +92,11 @@ export function useHubNavigation() {
                     id: HubRoute.UploadCollection,
                     path: 'upload',
                     element: <UploadCollection />,
+                  },
+                  {
+                    id: HubRoute.CollectionSignatureUpload,
+                    path: 'signature-upload',
+                    element: <CollectionSignatureUpload />,
                   },
                   {
                     id: HubRoute.CollectionPage,
