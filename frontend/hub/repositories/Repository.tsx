@@ -2,6 +2,7 @@ export interface Repository {
   pulp_id: string;
   name: string;
   base_path: string;
+  pulp_href: string;
   repository: {
     name: string;
     description?: string;

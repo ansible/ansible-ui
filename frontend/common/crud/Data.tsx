@@ -1,6 +1,5 @@
 /* eslint-disable no-console */
 import { SWRConfiguration } from 'swr';
-import { getCookie } from './cookie';
 import { createRequestError } from './RequestError';
 import { requestCommon } from './requestCommon';
 
@@ -30,31 +29,6 @@ export async function postRequest<ResponseBody, RequestBody = unknown>(
     signal,
   };
   return requestFactory<ResponseBody>(url, options);
-}
-
-export async function postRequestFile(
-  url: string,
-  file: Blob,
-  signal?: AbortSignal
-): Promise<unknown> {
-  const body = new FormData();
-  body.append('file', file);
-
-  const response = await fetch(url, {
-    method: 'POST',
-    body,
-    signal,
-    credentials: 'include',
-    headers: {
-      'X-CSRFToken': getCookie('csrftoken') ?? '',
-    },
-  });
-
-  if (!response.ok) {
-    throw await createRequestError(response);
-  }
-
-  return (await response.json()) as unknown;
 }
 
 export async function requestPatch<ResponseBody, RequestBody = unknown>(
