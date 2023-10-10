@@ -59,24 +59,6 @@ Cypress.Commands.add('selectDropdownOptionByResourceName', (resource: string, it
 });
 
 Cypress.Commands.add(
-  'selectItemFromLookupModal',
-  (resource: string, itemName: string, itemId: number) => {
-    cy.get(`[data-cy*="${resource}-form-group"]`).within(() => {
-      cy.get('[data-ouia-component-id="menu-select"] button').click();
-    });
-    cy.get('[data-ouia-component-type="PF4/ModalContent"]').within(() => {
-      cy.searchAndDisplayResource(itemName);
-      cy.get('[data-ouia-component-id="simple-table"] tbody').within(() => {
-        cy.get(`[data-cy="row-id-${itemId}"]`).within(() => {
-          cy.get('[data-cy="checkbox-column-cell"]').click();
-        });
-      });
-      cy.clickButton(/^Confirm/);
-    });
-  }
-);
-
-Cypress.Commands.add(
   'selectPromptOnLaunchByLabel',
   (label: string | RegExp, isSelected?: boolean, text?: string) => {
     if (isSelected === undefined) {

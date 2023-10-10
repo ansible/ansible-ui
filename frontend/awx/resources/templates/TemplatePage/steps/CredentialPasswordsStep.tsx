@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageFormTextInput, PageFormGrid } from '../../../../../../framework';
 import { PageWizardContext } from '../../../../../../framework/PageWizard/PageWizardProvider';
+import { ConditionalField } from './ConditionalField';
 import type { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
 import type { TemplateLaunch } from '../TemplateLaunchWizard';
 
@@ -121,14 +122,4 @@ export default function CredentialPasswordsStep(props: { config: LaunchConfigura
       })}
     </PageFormGrid>
   );
-}
-
-export function ConditionalField({
-  isHidden = false,
-  children,
-}: {
-  isHidden: boolean;
-  children: React.ReactNode;
-}) {
-  return isHidden ? null : <>{children}</>;
 }

@@ -19,6 +19,7 @@ import { PageFormInstanceGroupSelect } from '../../../administration/instance-gr
 import { PageFormInventorySelect } from '../../inventories/components/PageFormInventorySelect';
 import { useLabelPayload } from '../hooks/useLabelPayload';
 import { CredentialPasswordsStep, OtherPromptsStep, TemplateLaunchReviewStep } from './steps';
+import { parseStringToTagArray } from '../JobTemplateFormHelpers';
 
 import type { JobTemplate } from '../../../interfaces/JobTemplate';
 import type { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
@@ -143,7 +144,7 @@ export function TemplateLaunchWizard() {
       } catch (err) {
         alertToaster.addAlert({
           variant: 'danger',
-          title: 'Failure to launch',
+          title: t('Failure to launch'),
           children: err instanceof Error && err.message,
         });
       }
@@ -153,13 +154,13 @@ export function TemplateLaunchWizard() {
   const steps: PageWizardStep[] = [
     {
       id: 'inventory',
-      label: 'Inventory',
+      label: t('Inventory'),
       inputs: <PageFormInventorySelect<TemplateLaunch> name="inventory" isRequired />,
       hidden: () => !template.ask_inventory_on_launch,
     },
     {
       id: 'credentials',
-      label: 'Credentials',
+      label: t('Credentials'),
       hidden: () => !template.ask_credential_on_launch,
       inputs: (
         <PageFormCredentialSelect<TemplateLaunch>
@@ -176,7 +177,7 @@ export function TemplateLaunchWizard() {
     },
     {
       id: 'credential-passwords',
-      label: 'Credential Passwords',
+      label: t('Credential Passwords'),
       hidden: (wizardValues: Partial<TemplateLaunch>) => {
         const { credentials = [] } = 'credentials' in wizardValues ? wizardValues : config.defaults;
 
@@ -210,7 +211,7 @@ export function TemplateLaunchWizard() {
     },
     {
       id: 'execution-environment',
-      label: 'Execution Environment',
+      label: t('Execution Environment'),
       inputs: (
         <PageFormExecutionEnvironmentSelect<TemplateLaunch>
           name="execution_environment.name"
@@ -222,8 +223,8 @@ export function TemplateLaunchWizard() {
       hidden: () => !template.ask_execution_environment_on_launch,
     },
     {
-      label: 'Instance Groups',
       id: 'instance-groups',
+      label: t('Instance Groups'),
       hidden: () => !template.ask_instance_groups_on_launch,
       inputs: (
         <PageFormInstanceGroupSelect<TemplateLaunch>
@@ -233,14 +234,14 @@ export function TemplateLaunchWizard() {
       ),
     },
     {
-      label: 'Other prompts',
       id: 'other-prompts',
+      label: t('Other prompts'),
       hidden: () => !shouldShowOtherStep(config),
       inputs: <OtherPromptsStep config={config} template={template} />,
     },
     {
-      label: 'Review',
       id: 'review',
+      label: t('Review'),
       element: <TemplateLaunchReviewStep template={template} />,
     },
   ];
@@ -315,9 +316,4 @@ function shouldShowOtherStep(launchData: LaunchConfiguration) {
     launchData.ask_job_slice_count_on_launch ||
     launchData.ask_timeout_on_launch
   );
-}
-
-export function parseStringToTagArray(str: string) {
-  if (str === null || str.trim().length === 0) return [];
-  return str?.split(',')?.map((tag) => ({ name: tag, label: tag, value: tag }));
 }

@@ -8,15 +8,12 @@ import {
 } from '../../../../../../framework';
 import { PageFormCreatableSelect } from '../../../../../../framework/PageForm/Inputs/PageFormCreatableSelect';
 import { PageFormLabelSelect } from '../../../../common/PageFormLabelSelect';
+import { parseStringToTagArray } from '../../JobTemplateFormHelpers';
+import { ConditionalField } from './ConditionalField';
 import type { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
 import type { JobTemplate } from '../../../../interfaces/JobTemplate';
 import type { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
 import type { TemplateLaunch } from '../TemplateLaunchWizard';
-
-export function parseStringToTagArray(str: string) {
-  if (str === null || str.trim().length === 0) return [];
-  return str?.split(',')?.map((tag) => ({ name: tag, label: tag, value: tag }));
-}
 
 interface OtherPromptsStepProps {
   config: LaunchConfiguration;
@@ -185,14 +182,4 @@ export default function OtherPromptsStep(props: OtherPromptsStepProps) {
       </ConditionalField>
     </PageFormGrid>
   );
-}
-
-export function ConditionalField({
-  isHidden = false,
-  children,
-}: {
-  isHidden: boolean;
-  children: React.ReactNode;
-}) {
-  return isHidden ? null : <>{children}</>;
 }

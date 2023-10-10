@@ -50,6 +50,7 @@ export function useLaunchTemplate() {
         variant: 'danger',
         title: t('Failed to launch template'),
         children: error instanceof Error && error.message,
+        timeout: 5000,
       });
     }
   };

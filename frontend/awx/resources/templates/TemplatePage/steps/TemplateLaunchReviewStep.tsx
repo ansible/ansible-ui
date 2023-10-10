@@ -13,11 +13,6 @@ import type { Credential } from '../../../../interfaces/Credential';
 import type { JobTemplate } from '../../../../interfaces/JobTemplate';
 import type { TemplateLaunch } from '../TemplateLaunchWizard';
 
-export function parseStringToTagArray(str: string) {
-  if (str === null || str.trim().length === 0) return [];
-  return str?.split(',')?.map((tag) => ({ name: tag, label: tag, value: tag }));
-}
-
 export default function TemplateLaunchReviewStep(props: { template: JobTemplate }) {
   const { template } = props;
   const { t } = useTranslation();

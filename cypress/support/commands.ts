@@ -72,12 +72,6 @@ declare global {
       /** Finds a dropdown/select component by its dropdownLabel and clicks on the option specified by dropdownOptionLabel.*/
       selectDropdownOptionByResourceName(resource: string, itemName: string): Chainable<void>;
 
-      selectItemFromLookupModal(
-        resource: string,
-        itemName: string,
-        itemId: number
-      ): Chainable<void>;
-
       /** Finds a dropdown/select component by its dropdownLabel and clicks on the option specified by dropdownOptionLabel.*/
       selectPromptOnLaunchByLabel(
         label: string | RegExp,
