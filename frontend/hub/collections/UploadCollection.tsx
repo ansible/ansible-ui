@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 import {
   ITableColumn,
   PageDetails,
-  PageForm,
   PageHeader,
   PageLayout,
   PageTable,
@@ -17,8 +16,8 @@ import { PageDetail } from '../../../framework/PageDetails/PageDetail';
 import { PageFormFileUpload } from '../../../framework/PageForm/Inputs/PageFormFileUpload';
 import { PageFormWatch } from '../../../framework/PageForm/Utils/PageFormWatch';
 import { LoadingPage } from '../../../framework/components/LoadingPage';
-import { hubPostRequestFile } from '../api/request';
 import { useGetRequest } from '../../common/crud/useGet';
+import { hubPostRequestFile } from '../api/request';
 import { hubAPI, pulpAPI } from '../api/utils';
 import { useHubNamespaces } from '../namespaces/hooks/useHubNamespaces';
 import { useRepositories } from '../repositories/hooks/useRepositories';
@@ -28,6 +27,7 @@ import { IToolbarFilter } from '../../../framework';
 import { ToolbarFilterType } from '../../../framework/PageToolbar/PageToolbarFilter';
 import { useSearchParams } from '../../../framework/components/useSearchParams';
 import { nameKeyFn } from '../../common/utils/nameKeyFn';
+import { HubPageForm } from '../HubPageForm';
 import { HubRoute } from '../HubRoutes';
 import { usePulpView } from '../usePulpView';
 
@@ -177,7 +177,7 @@ export function UploadCollectionByFile() {
       {namespaces === undefined || repositories === undefined ? (
         <LoadingPage />
       ) : (
-        <PageForm<UploadData>
+        <HubPageForm<UploadData>
           submitText={t('Confirm')}
           cancelText={t('Cancel')}
           onCancel={onCancel}
@@ -231,7 +231,7 @@ export function UploadCollectionByFile() {
               );
             }}
           </PageFormWatch>
-        </PageForm>
+        </HubPageForm>
       )}
     </>
   );

@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import useSWR from 'swr';
 import {
-  PageForm,
   PageFormSelect,
   PageFormSubmitHandler,
   PageHeader,
@@ -18,9 +17,9 @@ import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { AwxRoute } from '../../AwxRoutes';
 import { Organization } from '../../interfaces/Organization';
 import { User } from '../../interfaces/User';
-import { getAwxError } from '../../useAwxView';
 import { PageFormOrganizationSelect } from '../organizations/components/PageFormOrganizationSelect';
 import { getOrganizationByName } from '../organizations/utils/getOrganizationByName';
+import { AwxPageForm } from '../../AwxPageForm';
 
 export function CreateUser() {
   const { t } = useTranslation();
@@ -32,29 +31,25 @@ export function CreateUser() {
     setFieldError
   ) => {
     const { user, userType, confirmPassword } = userInput;
+    let organization: Organization | undefined;
     try {
-      let organization: Organization | undefined;
-      try {
-        organization = await getOrganizationByName(user.summary_fields.organization.name);
-        if (!organization) throw new Error(t('Organization not found.'));
-        user.organization = organization.id;
-      } catch {
-        throw new Error(t('Organization not found.'));
-      }
-      user.is_superuser = userType === 'System administrator';
-      user.is_system_auditor = userType === 'System auditor';
-      if (confirmPassword !== user.password) {
-        setFieldError('confirmPassword', { message: t('Password does not match.') });
-        return false;
-      }
-      const newUser = await postRequest(
-        `/api/v2/organizations/${user.organization.toString()}/users/`,
-        user
-      );
-      navigate(RouteObj.UserDetails.replace(':id', newUser.id.toString()));
-    } catch (err) {
-      setError(getAwxError(err));
+      organization = await getOrganizationByName(user.summary_fields.organization.name);
+      if (!organization) throw new Error(t('Organization not found.'));
+      user.organization = organization.id;
+    } catch {
+      throw new Error(t('Organization not found.'));
     }
+    user.is_superuser = userType === 'System administrator';
+    user.is_system_auditor = userType === 'System auditor';
+    if (confirmPassword !== user.password) {
+      setFieldError('confirmPassword', { message: t('Password does not match.') });
+      return false;
+    }
+    const newUser = await postRequest(
+      `/api/v2/organizations/${user.organization.toString()}/users/`,
+      user
+    );
+    navigate(RouteObj.UserDetails.replace(':id', newUser.id.toString()));
   };
 
   const onCancel = () => navigate(-1);
@@ -69,7 +64,7 @@ export function CreateUser() {
           { label: t('Create User') },
         ]}
       />
-      <PageForm
+      <AwxPageForm
         submitText={t('Create user')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
@@ -77,7 +72,7 @@ export function CreateUser() {
         defaultValue={{ userType: 'Normal user' }}
       >
         <UserInputs mode="create" />
-      </PageForm>
+      </AwxPageForm>
     </>
   );
 }
@@ -95,20 +90,16 @@ export function EditUser() {
     setFieldError
   ) => {
     const { user, userType, confirmPassword } = userInput;
-    try {
-      user.is_superuser = userType === t('System administrator');
-      user.is_system_auditor = userType === t('System auditor');
-      if (user.password) {
-        if (confirmPassword !== user.password) {
-          setFieldError('confirmPassword', { message: t('Password does not match.') });
-          return false;
-        }
+    user.is_superuser = userType === t('System administrator');
+    user.is_system_auditor = userType === t('System auditor');
+    if (user.password) {
+      if (confirmPassword !== user.password) {
+        setFieldError('confirmPassword', { message: t('Password does not match.') });
+        return false;
       }
-      const newUser = await requestPatch<User>(`/api/v2/users/${id}/`, user);
-      navigate(RouteObj.UserDetails.replace(':id', newUser.id.toString()));
-    } catch (err) {
-      setError(getAwxError(err));
     }
+    const newUser = await requestPatch<User>(`/api/v2/users/${id}/`, user);
+    navigate(RouteObj.UserDetails.replace(':id', newUser.id.toString()));
   };
 
   const getPageUrl = useGetPageUrl();
@@ -146,7 +137,7 @@ export function EditUser() {
           { label: t('Edit User') },
         ]}
       />
-      <PageForm<IUserInput>
+      <AwxPageForm<IUserInput>
         submitText={t('Save user')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
@@ -154,7 +145,7 @@ export function EditUser() {
         defaultValue={defaultValue}
       >
         <UserInputs mode="edit" />
-      </PageForm>
+      </AwxPageForm>
     </PageLayout>
   );
 }
