@@ -9,7 +9,7 @@ import {
   ToolbarGroup,
   ToolbarItem,
 } from '@patternfly/react-core';
-import { Dispatch, Fragment, SetStateAction, useCallback } from 'react';
+import React, { Dispatch, Fragment, SetStateAction, useCallback } from 'react';
 import styled from 'styled-components';
 import { IPageAction, PageActionSelection } from '../PageActions/PageAction';
 import { PageActions } from '../PageActions/PageActions';
@@ -81,6 +81,8 @@ export type PageToolbarProps<T extends object> = {
   /** Optional: Max selections permitted in a table. The bulk selector within the toolbar is disabled based on this value.
    */
   maxSelections?: number;
+
+  toolbarContent?: React.ReactNode;
 };
 
 export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
@@ -199,6 +201,8 @@ export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
             setFilterState={setFilterState}
           />
         )}
+
+        {props.toolbarContent}
 
         {/* Actions */}
         <ToolbarGroup variant="button-group">
