@@ -1,8 +1,8 @@
 import '@patternfly/patternfly/patternfly-base.css';
 import '@patternfly/patternfly/patternfly-charts.css';
-
 import '@patternfly/patternfly/patternfly-charts-theme-dark.css';
 
+import { useMemo } from 'react';
 import { Outlet } from 'react-router-dom';
 import { PageApp } from '../framework/PageNavigation/PageApp';
 import { AwxConfigProvider } from '../frontend/awx/common/useAwxConfig';
@@ -13,9 +13,16 @@ import { PlatformLogin } from './PlatformLogin';
 import { PlatformMasthead } from './PlatformMasthead';
 import { ActivePlatformUserProvider } from './hooks/useActivePlatformUser';
 import { usePlatformNavigation } from './usePlatformNavigation';
+import type { Service } from './interfaces/Service';
+import { requestCommon } from '../frontend/common/crud/requestCommon';
+import { useAbortController } from '../frontend/common/crud/useAbortController';
+import useSWR from 'swr';
+import { createRequestError } from '../frontend/common/crud/RequestError';
 
 export default function PlatformMain() {
-  const navigation = usePlatformNavigation();
+  const { data: services } = useServices();
+  const navigation = usePlatformNavigation(services || []);
+
   return (
     <PageApp
       login={<PlatformLogin />}
@@ -38,4 +45,44 @@ export default function PlatformMain() {
       navigation={navigation}
     />
   );
+}
+
+type ServicesResponse = {
+  results: Service[];
+};
+
+function useServices() {
+  const abortController = useAbortController();
+  const getServices = async (
+    url: string,
+    query?: Record<string, string | number | boolean>,
+    signal?: AbortSignal
+  ) => {
+    const response = await requestCommon({
+      url,
+      method: 'GET',
+      signal: signal ?? abortController.signal,
+    });
+    if (!response.ok) {
+      throw await createRequestError(response);
+    }
+    return (await response.json()) as ServicesResponse;
+  };
+
+  const response = useSWR<ServicesResponse>('/api/gateway/v1/services', getServices, {
+    dedupingInterval: 0,
+  });
+
+  return useMemo(() => {
+    let error = response.error as Error;
+    if (error && !(error instanceof Error)) {
+      error = new Error('Unknown error');
+    }
+    return {
+      data: response.data?.results,
+      error: response.isLoading ? undefined : error,
+      refresh: () => void response.mutate(),
+      isLoading: response.isLoading,
+    };
+  }, [response]);
 }

@@ -11,12 +11,21 @@ import { useHubNavigation } from '../frontend/hub/useHubNavigation';
 import { PlatformRoute } from './PlatformRoutes';
 import { PlatformDashboard } from './dashboard/PlatformDashboard';
 import { Lightspeed } from './lightspeed/Lightspeed';
+import type { Service } from './interfaces/Service';
 
-export function usePlatformNavigation() {
+export function usePlatformNavigation(services: Service[]) {
   const { t } = useTranslation();
-  const awx = useAwxNavigation();
-  const hub = useHubNavigation();
-  const eda = useEdaNavigation();
+
+  const awxNav = useAwxNavigation();
+  const hubNav = useHubNavigation();
+  const edaNav = useEdaNavigation();
+
+  const hasController = services.some((service) => service.api_slug === 'controller');
+  const hasEda = services.some((service) => service.api_slug === 'eda');
+  const hasHub = services.some((service) => service.api_slug === 'hub');
+  const awx = hasController ? awxNav : [];
+  const hub = hasHub ? hubNav : [];
+  const eda = hasEda ? edaNav : [];
 
   // Inventories
   const inventories = removeNavigationItemById(awx, AwxRoute.Inventories);
@@ -30,7 +39,9 @@ export function usePlatformNavigation() {
 
   // Automation Analytics
   const analytics = removeNavigationItemById(awx, AwxRoute.Analytics);
-  analytics!.label = t('Automation Analytics');
+  if (analytics) {
+    analytics.label = t('Automation Analytics');
+  }
 
   // Content Discovery
   const namespaces = removeNavigationItemById(hub, HubRoute.Namespaces);
@@ -49,7 +60,7 @@ export function usePlatformNavigation() {
 
   // Utilities
   const activityStream = removeNavigationItemById(awx, AwxRoute.ActivityStream);
-  const signtureKeys = removeNavigationItemById(hub, HubRoute.SignatureKeys);
+  const signatureKeys = removeNavigationItemById(hub, HubRoute.SignatureKeys);
   const reposiitories = removeNavigationItemById(hub, HubRoute.Repositories);
   const remotes = removeNavigationItemById(hub, HubRoute.Remotes);
   const remoteRegistries = removeNavigationItemById(hub, HubRoute.RemoteRegistries);
@@ -132,7 +143,7 @@ export function usePlatformNavigation() {
         path: 'utilities',
         children: [
           activityStream,
-          signtureKeys,
+          signatureKeys,
           reposiitories,
           remotes,
           remoteRegistries,
@@ -171,7 +182,7 @@ export function usePlatformNavigation() {
     ruleAudits,
     rulebookActivations,
     schedules,
-    signtureKeys,
+    signatureKeys,
     t,
     tasks,
     teams,
