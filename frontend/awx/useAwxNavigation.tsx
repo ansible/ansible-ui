@@ -44,6 +44,7 @@ import { NotificationPage } from './administration/notifications/NotificationPag
 import { Notifications } from './administration/notifications/Notifications';
 import Reports from './analytics/Reports/Reports';
 import { Test } from './analytics/AnalyticsReportBuilder/Test';
+import ReportsList from './analytics/Reports/ReportsList';
 import SubscriptionUsage from './analytics/subscription-usage/SubscriptionUsage';
 import { AwxDashboard } from './dashboard/AwxDashboard';
 import { CreateCredential, EditCredential } from './resources/credentials/CredentialForm';
@@ -1041,6 +1042,12 @@ export function useAwxNavigation() {
                 id: AwxRoute.Reports,
                 label: t('Reports'),
                 path: 'reports',
+                element: <ReportsList />,
+              },
+              {
+                id: AwxRoute.AutomationCalculator,
+                label: t('Automation Calculator'),
+                path: 'automation-calculator',
                 element: <Reports />,
               },
               {
