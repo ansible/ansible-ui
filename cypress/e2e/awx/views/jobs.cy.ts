@@ -42,7 +42,6 @@ describe('jobs', () => {
   after(() => {
     const jobId = jobList?.id ? jobList?.id.toString() : '';
     cy.awxRequestDelete(`/api/v2/jobs/${jobId}/`, { failOnStatusCode: false });
-    cy.deleteAwxOrganization(organization);
   });
 
   it('renders jobs list', () => {
@@ -59,7 +58,7 @@ describe('jobs', () => {
     const jobId = jobList.id ? jobList.id.toString() : '';
     const jobName = jobList.name ? jobList.name : '';
     cy.filterTableByTypeAndText('ID', jobId);
-    cy.clickTableRowPinnedAction(jobName, 'Relaunch job', false);
+    cy.clickTableRowPinnedAction(jobName, 'relaunch-job', false);
     cy.verifyPageTitle(jobName);
     cy.contains('.pf-c-tabs a', 'Output').should('have.attr', 'aria-selected', 'true');
   });

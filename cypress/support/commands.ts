@@ -61,9 +61,6 @@ declare global {
 
       // --- INPUT COMMANDS ---
 
-      /** Get a FormGroup by it's label. A FormGroup is the PF component that wraps an input and provides a label. */
-      getFormGroupByLabel(label: string | RegExp): Chainable<JQuery<HTMLElement>>;
-
       /** Get an input by its label. */
       getInputByLabel(label: string | RegExp): Chainable<JQuery<HTMLElement>>;
 
@@ -89,10 +86,6 @@ declare global {
         label: string | RegExp
       ): Chainable<void>;
       selectMultiSelectOption(selector: string, label: string | RegExp): Chainable<void>;
-      addAndSelectItemFromMulitSelectDropdown(
-        label: string | RegExp,
-        itemText: string
-      ): Chainable<void>;
 
       // --- TABLE COMMANDS ---
 
@@ -180,7 +173,7 @@ declare global {
       /** Finds a table row containing text and clicks action specified by label. */
       clickTableRowPinnedAction(
         name: string | RegExp,
-        label: string,
+        iconDataCy: string,
         filter?: boolean
       ): Chainable<void>;
 
@@ -197,12 +190,6 @@ declare global {
 
       /** Get the active modal dialog. */
       getDialog(): Chainable<void>;
-
-      /** Opens a lookup dialaog and selects the desired row item **/
-      selectRowItemInFormGroupLookupModal: (
-        label: string | RegExp,
-        rowItem: string
-      ) => Chainable<void>;
 
       /** Clicks a button in the active modal dialog. */
       clickModalButton(label: string | RegExp): Chainable<void>;

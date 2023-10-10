@@ -225,7 +225,7 @@ describe('teams', () => {
 
   it('can navigate to the edit form from the team list row item', () => {
     cy.navigateTo('awx', 'teams');
-    cy.clickTableRowPinnedAction(team.name, 'Edit team');
+    cy.clickTableRowPinnedAction(team.name, 'edit-team');
     cy.verifyPageTitle('Edit Team');
   });
 
