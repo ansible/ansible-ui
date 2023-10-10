@@ -10,7 +10,8 @@ export function WorkflowJobTemplateVisualizer() {
   const toolbarActions = useWorkflowVisualizerToolbarActions(
     toggleSidePanel,
     setToggleUnsaveChangesModal,
-    visualizerHasUnsavedChanges
+    visualizerHasUnsavedChanges,
+    []
   );
 
   return (

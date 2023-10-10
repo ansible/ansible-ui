@@ -35,11 +35,12 @@ export type IPageAction<T extends object> =
 
 interface IPageActionCommon {
   icon?: ComponentClass;
-  label: string;
+  label?: string;
   tooltip?: string;
   isDanger?: boolean;
   ouiaId?: string;
   isPinned?: boolean;
+  alignRight?: boolean;
 }
 
 interface IPageActionNoneCommon extends IPageActionCommon {
@@ -131,4 +132,5 @@ export interface IPageActionDropdownMultiple<T extends object>
 
 export interface IPageActionSeperator {
   type: PageActionType.Seperator;
+  alignRight?: boolean;
 }

@@ -1,4 +1,4 @@
-import { DropdownPosition, Flex, FlexItem } from '@patternfly/react-core';
+import { DropdownPosition, Flex, FlexItem, Stack } from '@patternfly/react-core';
 import {
   ComponentClass,
   FunctionComponent,
@@ -91,17 +91,17 @@ export function PageActions<T extends object>(props: PageActionProps<T>) {
 
   return (
     <Flex
-      flexWrap={{ default: 'nowrap' }}
-      spaceItems={{ default: iconOnly ? 'spaceItemsNone' : 'spaceItemsMd' }}
-      justifyContent={{ default: 'justifyContentFlexEnd' }}
+    // flexWrap={{ default: 'nowrap' }}
+    // spaceItems={{ default: iconOnly ? 'spaceItemsNone' : 'spaceItemsMd' }}
+    // justifyContent={{ default: 'justifyContentFlexEnd' }}
     >
       {pinnedActions !== undefined && pinnedActions.length > 0 && (
-        <FlexItem>
+        <FlexItem align={{ default: 'alignRight' }}>
           <PageActionsPinned {...props} actions={pinnedActions} onOpen={handleOnOpen} />
         </FlexItem>
       )}
       {dropdownActions.length > 0 && (
-        <FlexItem>
+        <FlexItem align={{ default: 'alignRight' }}>
           <PageActionDropdown {...props} actions={dropdownActions} onOpen={handleOnOpen} />
         </FlexItem>
       )}

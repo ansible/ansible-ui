@@ -55,6 +55,7 @@ export function PageActionButton<T extends object>(props: {
 
   const id = useID(action);
   const content = iconOnly && Icon ? <Icon /> : action.label;
+  console.log({ Wrapper, content });
 
   return (
     <Wrapper>

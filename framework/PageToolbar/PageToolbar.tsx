@@ -20,24 +20,27 @@ import './PageToolbar.css';
 import { IFilterState, IToolbarFilter, PageToolbarFilters } from './PageToolbarFilter';
 import { PageTableSortOption, PageToolbarSort } from './PageToolbarSort';
 import { PageToolbarView } from './PageToolbarView';
+import { IPageToolbarMiscellaneous } from '../PageActions/PageToolbarMiscellaneous';
 
 const FlexGrowDiv = styled.div`
   display: flex;
   flex-grow: 1;
   justify-content: end;
   flex-wrap: wrap;
+  margin-left: auto;
 `;
 
 const ToolbarContent = styled(PFToolbarContent)`
   & > .pf-c-toolbar__content-section {
     row-gap: 16px;
     justify-content: end;
+    flex-grow: 1;
   }
 `;
 
 export type PageToolbarProps<T extends object> = {
   localStorageKey?: string;
-
+  toolbarMiscellaneous?: IPageToolbarMiscellaneous[];
   openColumnModal?: () => void;
   keyFn: (item: T) => string | number;
 
@@ -102,6 +105,7 @@ export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
     setSortDirection,
     sortOptions,
     clearAllFilters: clearAllFiltersProp,
+    toolbarMiscellaneous,
   } = props;
 
   const clearAllFilters = useCallback(() => {
@@ -201,9 +205,17 @@ export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
         )}
 
         {/* Actions */}
+
         <ToolbarGroup variant="button-group">
           <PageActions
-            actions={toolbarActions}
+            actions={toolbarActions.filter((action) => !action.alignRight)}
+            selectedItems={selectedItems}
+            wrapper={ToolbarItem}
+          />
+        </ToolbarGroup>
+        <ToolbarGroup>
+          <PageActions
+            actions={toolbarActions.filter((action) => action.alignRight)}
             selectedItems={selectedItems}
             wrapper={ToolbarItem}
           />
@@ -249,6 +261,15 @@ export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
                 style={{ marginTop: -8, marginBottom: -8 }}
               />
             </ToolbarItem>
+          )}
+          {props.toolbarMiscellaneous?.length ? (
+            <ToolbarGroup alignment={{ default: 'alignRight' }}>
+              {props.toolbarMiscellaneous.map((misc) => (
+                <div key={misc.key}>{misc.element}</div>
+              ))}
+            </ToolbarGroup>
+          ) : (
+            <></>
           )}
         </FlexGrowDiv>
       </ToolbarContent>

@@ -8,15 +8,17 @@ import {
   usePageNavigate,
 } from '../../../../../framework';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
-import { ButtonVariant } from '@patternfly/react-core';
+import { Badge, Button, ButtonVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { CheckCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { CheckCircleIcon, ExpandAltIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { AwxRoute } from '../../../AwxRoutes';
+import { IPageToolbarMiscellaneous } from '../../../../../framework/PageActions/PageToolbarMiscellaneous';
 
 export function useWorkflowVisualizerToolbarActions(
   [_isSidePanelOpen, setIsSidePanelOpen]: [boolean, (isOpen: boolean) => void],
   setToggleUnsaveChangesModal: (isOpen: boolean) => void,
-  visualizerHasUnsavedChanges: boolean
+  visualizerHasUnsavedChanges: boolean,
+  nodes: WorkflowJobTemplate[] | []
 ) {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
@@ -67,10 +69,39 @@ export function useWorkflowVisualizerToolbarActions(
     [t, setIsSidePanelOpen, handleCancel]
   );
 
+  const toolbarMiscellaneous = useMemo<IPageToolbarMiscellaneous[]>(
+    () => [
+      {
+        key: 'totalNodes',
+        element: (
+          <div data-cy="workflowVisualizerToolbarNodes">
+            {t('Total nodes')} <Badge>{nodes.length || 0}</Badge>
+          </div>
+        ),
+      },
+      {
+        key: 'expand',
+        element: (
+          <Button
+            data-cy="workflowVisualizerToolbarExpandCollapse"
+            aria-label={t('Expand or collapse')}
+            onClick={() => {}}
+            variant="plain"
+          >
+            <ExpandAltIcon />
+          </Button>
+        ),
+        tooltip: t('Expand'),
+      },
+    ],
+    [t, nodes.length]
+  );
+
   return (
     <PageToolbar
       disablePagination
       itemCount={10}
+      toolbarMiscellaneous={toolbarMiscellaneous}
       toolbarActions={toolbarActions}
       keyFn={() => parseInt(params.id as string, 10)}
     />
