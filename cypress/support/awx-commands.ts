@@ -290,7 +290,9 @@ Cypress.Commands.add('assertModalSuccess', () => {
 });
 
 Cypress.Commands.add('clickPageAction', (label: string | RegExp) => {
-  cy.get('.toggle-kebab').click().get('.pf-c-dropdown__menu-item').contains(label).click();
+  cy.get('[data-cy="manage-view"]').within(() => {
+    cy.get('.toggle-kebab').click().get('.pf-c-dropdown__menu-item').contains(label).click();
+  });
 });
 
 // Resources for testing AWX
