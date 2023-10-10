@@ -16,7 +16,7 @@ describe('EDA Projects List', () => {
       cy.navigateTo('eda', 'projects');
       cy.clickTableRow(edaProject.name);
       cy.verifyPageTitle(edaProject.name);
-      cy.clickButton(/^Details$/);
+      cy.clickLink(/^Details$/);
       cy.get('#name').should('contain', edaProject.name);
       cy.deleteEdaProject(edaProject);
     });
