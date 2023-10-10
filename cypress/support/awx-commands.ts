@@ -847,10 +847,9 @@ Cypress.Commands.add('waitForTemplateStatus', (jobID: string) => {
     `api/v2/jobs/${jobID}/job_events/?order_by=counter&page=1&page_size=50`
   )
     .its('results')
-    .then((results) => {
+    .then((results: { summary_fields: { job: { status: string } } }[]) => {
       if (results.length > 0) {
-        const jobEvent: JobEvent = results[0];
-        return jobEvent.summary_fields.job.status;
+        return results[0].summary_fields.job.status;
       }
       return '';
     })
