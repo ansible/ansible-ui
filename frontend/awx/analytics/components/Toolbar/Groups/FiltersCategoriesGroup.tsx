@@ -1,10 +1,10 @@
-import React, { FunctionComponent, useState } from 'react';
 import { SelectOptionProps, ToolbarGroup } from '@patternfly/react-core';
+import { FunctionComponent, useState } from 'react';
 
+import { optionsForCategories } from '../constants';
+import { AttributeType, SetValues } from '../types';
 import CategoryDropdown from './CategoryDropdown';
 import ToolbarInput from './ToolbarInput';
-import { optionsForCategories } from '../constants';
-import { SetValues, AttributeType } from '../types';
 
 interface Props {
   filterCategories: Record<string, SelectOptionProps[]>;

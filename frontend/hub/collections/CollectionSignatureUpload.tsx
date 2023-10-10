@@ -1,17 +1,16 @@
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { PageForm, PageHeader, PageLayout, useGetPageUrl } from '../../../framework';
 import { PageFormFileUpload } from '../../../framework/PageForm/Inputs/PageFormFileUpload';
-import { PageHeader, PageLayout, PageForm } from '../../../framework';
-import { useGet, useGetRequest } from '../../common/crud/useGet';
-import { hubAPI, pulpAPI } from '../api/utils';
-import { HubItemsResponse } from '../useHubView';
-import { CollectionVersionSearch } from './Collection';
-import { Repository } from '../repositories/Repository';
-import { HubRoute } from '../HubRoutes';
-import { useGetPageUrl } from '../../../framework';
-import { hubPostRequestFile } from '../api/request';
 import { usePageNavigate } from '../../../framework/PageNavigation/usePageNavigate';
+import { useGet, useGetRequest } from '../../common/crud/useGet';
+import { HubRoute } from '../HubRoutes';
+import { hubPostRequestFile } from '../api/request';
+import { hubAPI, pulpAPI } from '../api/utils';
+import { Repository } from '../repositories/Repository';
+import { HubItemsResponse } from '../useHubView';
 import { PulpItemsResponse } from '../usePulpView';
+import { CollectionVersionSearch } from './Collection';
 
 interface UploadData {
   file: unknown;

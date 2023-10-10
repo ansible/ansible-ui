@@ -1,4 +1,4 @@
-import { Text, Label } from '@patternfly/react-core';
+import { Label, Text } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { User } from '../../../interfaces/User';
 

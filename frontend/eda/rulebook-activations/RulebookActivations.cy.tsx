@@ -1,5 +1,5 @@
-import { RulebookActivations } from './RulebookActivations';
 import { API_PREFIX } from '../constants';
+import { RulebookActivations } from './RulebookActivations';
 
 describe('RulebookActivations.cy.ts', () => {
   beforeEach(() => {

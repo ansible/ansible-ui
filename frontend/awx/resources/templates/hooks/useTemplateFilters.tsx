@@ -2,9 +2,9 @@ import { useMemo } from 'react';
 import { IToolbarFilter } from '../../../../../framework';
 import {
   useCreatedByToolbarFilter,
+  useDescriptionToolbarFilter,
   useModifiedByToolbarFilter,
   useNameToolbarFilter,
-  useDescriptionToolbarFilter,
 } from '../../../common/awx-toolbar-filters';
 
 export function useTemplateFilters() {

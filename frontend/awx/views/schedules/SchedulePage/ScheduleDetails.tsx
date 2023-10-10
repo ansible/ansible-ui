@@ -1,11 +1,11 @@
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { LoadingPage, PageDetail, PageDetails } from '../../../../../framework';
-import { UserDateDetail } from '../../../common/UserDateDetail';
-import { Schedule } from '../../../interfaces/Schedule';
 import { formatDateString } from '../../../../../framework/utils/formatDateString';
 import { useGetItem } from '../../../../common/crud/useGet';
-import { useParams } from 'react-router-dom';
 import { AwxError } from '../../../common/AwxError';
+import { UserDateDetail } from '../../../common/UserDateDetail';
+import { Schedule } from '../../../interfaces/Schedule';
 
 export function ScheduleDetails() {
   const { t } = useTranslation();

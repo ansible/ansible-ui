@@ -1,10 +1,10 @@
+import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ITableColumn, TextCell } from '../../../../../framework';
-import { EdaRuleAuditAction } from '../../../interfaces/EdaRuleAuditAction';
-import { StatusCell } from '../../../../common/Status';
 import { formatDateString } from '../../../../../framework/utils/formatDateString';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { StatusCell } from '../../../../common/Status';
+import { EdaRuleAuditAction } from '../../../interfaces/EdaRuleAuditAction';
 
 export function useRuleAuditActionsColumns() {
   const { t } = useTranslation();

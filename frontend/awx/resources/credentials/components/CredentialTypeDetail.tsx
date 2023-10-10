@@ -1,10 +1,10 @@
 import { ChipGroup } from '@patternfly/react-core';
 import React from 'react';
-import { PageDetail } from '../../../../../framework';
-import { CredentialInputSource } from '../../../interfaces/CredentialInputSource';
-import { CredentialLabel } from '../../../common/CredentialLabel';
 import { useTranslation } from 'react-i18next';
+import { PageDetail } from '../../../../../framework';
 import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
+import { CredentialLabel } from '../../../common/CredentialLabel';
+import { CredentialInputSource } from '../../../interfaces/CredentialInputSource';
 
 export function CredentialTypeDetail(props: {
   inputs: Record<string, string | number>;

@@ -6,31 +6,30 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
-import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { useGetRequest } from '../../../common/crud/useGet';
-import { useState, useEffect } from 'react';
-import {
-  useAnalyticsReportBuilderView,
-  IAnalyticsReportBuilderView,
-} from '../useAnalyticsReportBuilderView';
-import { PageTable } from '../../../../framework/PageTable/PageTable';
+import { useEffect, useState } from 'react';
 import { ITableColumn, ITableColumnTypeText } from '../../../../framework';
+import { PageTable } from '../../../../framework/PageTable/PageTable';
 import {
   IToolbarFilter,
   ToolbarFilterType,
 } from '../../../../framework/PageToolbar/PageToolbarFilter';
+import { useGetRequest } from '../../../common/crud/useGet';
+import { usePostRequest } from '../../../common/crud/usePostRequest';
 import Chart from '../components/Chart';
 import hydrateSchema from '../components/Chart/hydrateSchema';
+import {
+  IAnalyticsReportBuilderView,
+  useAnalyticsReportBuilderView,
+} from '../useAnalyticsReportBuilderView';
 
 import { ToggleGroup, ToggleGroupItem } from '@patternfly/react-core';
 
+import { useLocation } from 'react-router-dom';
 import { ColumnTableOption } from '../../../../framework/PageTable/PageTableColumn';
 import { IToolbarMultiSelectFilter } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarMultiSelectFilter';
-import { useLocation } from 'react-router-dom';
 import { useSearchParams } from '../../../../framework/components/useSearchParams';
 
-import { ChartFunctions } from '@ansible/react-json-chart-builder';
-import { ChartSchemaElement } from '@ansible/react-json-chart-builder';
+import { ChartFunctions, ChartSchemaElement } from '@ansible/react-json-chart-builder';
 
 type KeyValue = { key: string; value: string };
 

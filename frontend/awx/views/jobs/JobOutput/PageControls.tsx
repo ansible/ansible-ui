@@ -1,13 +1,12 @@
-import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Button } from '@patternfly/react-core';
 import {
-  AngleDoubleUpIcon,
   AngleDoubleDownIcon,
-  AngleUpIcon,
+  AngleDoubleUpIcon,
   AngleDownIcon,
   AngleRightIcon,
+  AngleUpIcon,
 } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 const ControllsWrapper = styled.div`

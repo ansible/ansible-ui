@@ -1,11 +1,11 @@
 import { Button, Modal, ModalVariant } from '@patternfly/react-core';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageDetail, PageDetails, Scrollable, usePageDialog } from '../../../../framework';
-import { PageDetailsSection } from '../../common/PageDetailSection';
-import { formatDateString } from '../../../../framework/utils/formatDateString';
-import { EdaRuleAuditEvent } from '../../interfaces/EdaRuleAuditEvent';
-import { useEffect, useState } from 'react';
 import { PageDetailCodeEditor } from '../../../../framework/PageDetails/PageDetailCodeEditor';
+import { formatDateString } from '../../../../framework/utils/formatDateString';
+import { PageDetailsSection } from '../../common/PageDetailSection';
+import { EdaRuleAuditEvent } from '../../interfaces/EdaRuleAuditEvent';
 
 export interface EventPayloadModalProps {
   event?: EdaRuleAuditEvent;

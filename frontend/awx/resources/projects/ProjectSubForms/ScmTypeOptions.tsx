@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { Help, PageFormCheckbox, PageFormTextInput } from '../../../../../framework';
+import { PageFormHidden } from '../../../../../framework/PageForm/Utils/PageFormHidden';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { ProjectFields } from '../ProjectPage/ProjectForm';
-import { PageFormHidden } from '../../../../../framework/PageForm/Utils/PageFormHidden';
 
 export function ScmTypeOptions(props: { hideAllowOverride?: boolean }) {
   const { t } = useTranslation();

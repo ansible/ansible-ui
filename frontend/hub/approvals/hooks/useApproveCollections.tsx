@@ -2,11 +2,11 @@ import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../framework';
 import { useGetRequest } from '../../../common/crud/useGet';
-import { collectionKeyFn, parsePulpIDFromURL, pulpAPI, hubAPIPost } from '../../api/utils';
+import { collectionKeyFn, hubAPIPost, parsePulpIDFromURL, pulpAPI } from '../../api/utils';
 import { PulpItemsResponse } from '../../usePulpView';
 import { CollectionVersionSearch } from '../Approval';
-import { useApprovalsColumns } from './useApprovalsColumns';
 import { useHubContext } from './../../useHubContext';
+import { useApprovalsColumns } from './useApprovalsColumns';
 
 export function useApproveCollections(
   onComplete?: (collections: CollectionVersionSearch[]) => void

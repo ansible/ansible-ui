@@ -1,5 +1,5 @@
-import React from 'react';
 import { LockIcon } from '@patternfly/react-icons';
+import React from 'react';
 import { EmptyStateCustom } from './EmptyStateCustom';
 
 export function EmptyStateUnauthorized(props: {

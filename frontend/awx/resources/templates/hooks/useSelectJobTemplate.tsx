@@ -1,11 +1,11 @@
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { usePageDialog } from '../../../../../framework';
 import { SelectSingleDialog } from '../../../../../framework/PageDialogs/SelectSingleDialog';
+import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { useAwxView } from '../../../useAwxView';
 import { useTemplateColumns } from './useTemplateColumns';
 import { useTemplateFilters } from './useTemplateFilters';
-import { usePageDialog } from '../../../../../framework';
-import { useCallback } from 'react';
-import { JobTemplate } from '../../../interfaces/JobTemplate';
 
 function SelectJobTemplate(props: { title: string; onSelect: (template: JobTemplate) => void }) {
   const toolbarFilters = useTemplateFilters();

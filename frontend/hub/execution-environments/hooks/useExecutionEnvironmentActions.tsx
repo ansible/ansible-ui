@@ -2,13 +2,13 @@ import { EditIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../framework';
+import { useHubContext } from '../../useHubContext';
 import { ExecutionEnvironment } from '../ExecutionEnvironment';
 import {
   useDeleteExecutionEnvironments,
-  useSyncExecutionEnvironments,
   useSignExecutionEnvironments,
+  useSyncExecutionEnvironments,
 } from './useExecutionEnvironmentsActions';
-import { useHubContext } from '../../useHubContext';
 
 export function useExecutionEnvironmentActions(callback?: (ees: ExecutionEnvironment[]) => void) {
   const { t } = useTranslation();

@@ -1,17 +1,17 @@
-import { useState, useMemo } from 'react';
 import { PageSection, Skeleton } from '@patternfly/react-core';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { IFilterState, ToolbarFilterType, type IToolbarFilter } from '../../../../../framework';
 import { Job } from '../../../interfaces/Job';
+import { useGetJob } from '../JobPage';
 import { HostStatusBar } from './HostStatusBar';
 import './JobOutput.css';
 import { JobOutputEvents } from './JobOutputEvents';
 import { JobOutputToolbar } from './JobOutputToolbar';
 import { JobStatusBar } from './JobStatusBar';
 import { isJobRunning } from './util';
-import { useGetJob } from '../JobPage';
 
 const Section = styled(PageSection)`
   display: flex;

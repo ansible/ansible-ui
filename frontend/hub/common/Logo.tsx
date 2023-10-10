@@ -1,6 +1,6 @@
+import { AnsibleTowerIcon } from '@patternfly/react-icons';
 import { useEffect, useState } from 'react';
 import { CSSProperties } from 'styled-components';
-import { AnsibleTowerIcon } from '@patternfly/react-icons';
 
 interface LogoProps {
   // size and width should be css length measurment: eg. '48px'

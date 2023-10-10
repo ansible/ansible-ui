@@ -1,14 +1,13 @@
-import { FormGroup, Switch } from '@patternfly/react-core';
+import { FormGroup, Switch, SwitchProps } from '@patternfly/react-core';
+import { ReactElement } from 'react';
 import {
   Controller,
   FieldPath,
   FieldValues,
-  useFormContext,
   Validate,
   ValidationRule,
+  useFormContext,
 } from 'react-hook-form';
-import { SwitchProps } from '@patternfly/react-core';
-import { ReactElement } from 'react';
 import { Help } from '../../components/Help';
 
 export type PageFormSwitchProps<

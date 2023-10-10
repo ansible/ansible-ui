@@ -1,4 +1,3 @@
-import React, { FunctionComponent, useState } from 'react';
 import {
   Button,
   ButtonVariant,
@@ -8,7 +7,8 @@ import {
   ModalVariant,
 } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
-import { useTranslation, Trans } from 'react-i18next';
+import { FunctionComponent, useState } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 
 const SavingsPerTemplateText: FunctionComponent<Record<string, never>> = () => {
   const { t } = useTranslation();

@@ -1,8 +1,8 @@
-import React, { FunctionComponent } from 'react';
+import { ChartLegendEntry } from '@ansible/react-json-chart-builder';
 import { TableComposable, TableVariant, Tbody, Th, Thead, Tr } from '@patternfly/react-table';
+import { FunctionComponent } from 'react';
 import { useTranslation } from 'react-i18next';
 import Row from './Row';
-import { ChartLegendEntry } from '@ansible/react-json-chart-builder';
 
 interface Props {
   data: ChartLegendEntry[];

@@ -1,5 +1,5 @@
-import { WorkflowNode } from '../../../interfaces/WorkflowNode';
 import { Organization } from '../../../interfaces/Organization';
+import { WorkflowNode } from '../../../interfaces/WorkflowNode';
 import {
   JobTemplate,
   UnifiedJobTemplate,

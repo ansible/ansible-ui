@@ -1,14 +1,14 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ITableColumn, IToolbarFilter, TextCell, ToolbarFilterType } from '../../../../framework';
-import { AnsibleAnsibleRepositoryResponse as Repository } from './../../api-schemas/generated/AnsibleAnsibleRepositoryResponse';
 import {
-  useAsyncSingleSelectFilterBuilder,
-  useAsyncMultiSelectFilterBuilder,
   AsyncSelectFilterBuilderProps,
+  useAsyncMultiSelectFilterBuilder,
+  useAsyncSingleSelectFilterBuilder,
 } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSelectFilterBuilder';
-import { usePulpView } from '../../usePulpView';
 import { pulpAPI } from '../../api/utils';
+import { usePulpView } from '../../usePulpView';
+import { AnsibleAnsibleRepositoryResponse as Repository } from './../../api-schemas/generated/AnsibleAnsibleRepositoryResponse';
 
 function useParameters(): AsyncSelectFilterBuilderProps<Repository> {
   const tableColumns = useRepositoryColumns();

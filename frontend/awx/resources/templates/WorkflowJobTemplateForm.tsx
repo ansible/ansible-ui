@@ -11,15 +11,15 @@ import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { AwxError } from '../../common/AwxError';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { getAddedAndRemoved } from '../../common/util/getAddedAndRemoved';
+import { Label } from '../../interfaces/Label';
+import { Organization } from '../../interfaces/Organization';
 import {
   WorkflowJobTemplate,
   WorkflowJobTemplateCreate,
   WorkflowJobTemplateForm,
 } from '../../interfaces/WorkflowJobTemplate';
-import { Label } from '../../interfaces/Label';
-import { Organization } from '../../interfaces/Organization';
-import { WorkflowJobTemplateInputs } from './WorkflowJobTemplateInputs';
 import { parseStringToTagArray, stringifyTags } from './JobTemplateFormHelpers';
+import { WorkflowJobTemplateInputs } from './WorkflowJobTemplateInputs';
 
 export function EditWorkflowJobTemplate() {
   const { t } = useTranslation();

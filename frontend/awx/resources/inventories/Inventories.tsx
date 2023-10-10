@@ -2,9 +2,11 @@ import { CubesIcon } from '@patternfly/react-icons';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
-import { useOptions } from '../../../common/crud/useOptions';
-import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
 import { usePersistentFilters } from '../../../common/PersistentFilters';
+import { useOptions } from '../../../common/crud/useOptions';
+import { useAwxConfig } from '../../common/useAwxConfig';
+import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
+import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
 import { type Inventory } from '../../interfaces/Inventory';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { useAwxView } from '../../useAwxView';
@@ -12,8 +14,6 @@ import { useInventoriesColumns } from './hooks/useInventoriesColumns';
 import { useInventoriesFilters } from './hooks/useInventoriesFilters';
 import { useInventoriesToolbarActions } from './hooks/useInventoriesToolbarActions';
 import { useInventoryActions } from './hooks/useInventoryActions';
-import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
-import { useAwxConfig } from '../../common/useAwxConfig';
 
 export type WebSocketInventory = {
   status: string;

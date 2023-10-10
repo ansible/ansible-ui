@@ -5,14 +5,14 @@ import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useParams } from 'react-router-dom';
 import { PageFormSelect, PageFormTextInput } from '../../../../../framework';
+import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { requestGet } from '../../../../common/crud/Data';
 import { useGet } from '../../../../common/crud/useGet';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { CredentialType } from '../../../interfaces/CredentialType';
 import { JobTemplateForm } from '../../../interfaces/JobTemplateForm';
-import { PageFormCredentialSelect } from '../../credentials/components/PageFormCredentialSelect';
-import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { WorkflowJobTemplateForm } from '../../../interfaces/WorkflowJobTemplate';
+import { PageFormCredentialSelect } from '../../credentials/components/PageFormCredentialSelect';
 
 export function WebhookSubForm() {
   const { t } = useTranslation();

@@ -11,6 +11,7 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
+import { PageFormMultiSelect } from '../../../../framework/PageForm/Inputs/PageFormMultiSelect';
 import { useGet } from '../../../common/crud/useGet';
 import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
@@ -19,7 +20,6 @@ import { API_PREFIX } from '../../constants';
 import { EdaResult } from '../../interfaces/EdaResult';
 import { EdaRole } from '../../interfaces/EdaRole';
 import { EdaCurrentUserUpdate, EdaUser, EdaUserCreateUpdate } from '../../interfaces/EdaUser';
-import { PageFormMultiSelect } from '../../../../framework/PageForm/Inputs/PageFormMultiSelect';
 
 type UserInput = Omit<EdaUserCreateUpdate, 'roles'> & {
   roles?: string[];

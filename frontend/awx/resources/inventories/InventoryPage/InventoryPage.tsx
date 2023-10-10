@@ -6,9 +6,9 @@ import { PageActions, PageHeader, PageLayout, useGetPageUrl } from '../../../../
 import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { RouteObj } from '../../../../common/Routes';
 import { useGet } from '../../../../common/crud/useGet';
+import { AwxRoute } from '../../../AwxRoutes';
 import { Inventory } from '../../../interfaces/Inventory';
 import { useInventoryActions } from '../hooks/useInventoryActions';
-import { AwxRoute } from '../../../AwxRoutes';
 
 export function InventoryPage() {
   const { t } = useTranslation();

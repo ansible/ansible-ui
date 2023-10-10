@@ -1,7 +1,7 @@
+import { AlertProps } from '@patternfly/react-core';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePageAlertToaster } from '../PageAlertToaster';
-import { AlertProps } from '@patternfly/react-core';
 
 type UseClipboardResult = {
   writeToClipboard: (text: string) => void;

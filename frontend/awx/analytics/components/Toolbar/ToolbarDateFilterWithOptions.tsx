@@ -5,8 +5,8 @@ import {
   ToolbarGroupVariant,
 } from '@patternfly/react-core';
 import { ToolbarFilterCommon } from '../../../../../framework/PageToolbar/PageToolbarFilters/ToolbarFilterCommon';
-import { ToolbarSelectFilterDeprecated } from './ToolbarSelectFilterDeprecated';
 import { ToolbarDateFilter } from './ToolbarDateFilter';
+import { ToolbarSelectFilterDeprecated } from './ToolbarSelectFilterDeprecated';
 
 export interface IToolbarDateFilter extends ToolbarFilterCommon {
   /** Filter for filtering by user text input. */

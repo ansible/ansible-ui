@@ -9,13 +9,13 @@ import {
   useGetPageUrl,
   usePageAlertToaster,
 } from '../../../../../framework';
+import { useActiveUser } from '../../../../common/useActiveUser';
+import { AwxRoute } from '../../../AwxRoutes';
 import { handleLaunch } from '../../../common/util/launchHandlers';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
-import { useDeleteTemplates } from '../hooks/useDeleteTemplates';
-import { AwxRoute } from '../../../AwxRoutes';
-import { useActiveUser } from '../../../../common/useActiveUser';
 import { getJobOutputUrl } from '../../../views/jobs/jobUtils';
+import { useDeleteTemplates } from '../hooks/useDeleteTemplates';
 
 export function useTemplateActions(options: {
   onTemplatesDeleted: (templates: (JobTemplate | WorkflowJobTemplate)[]) => void;

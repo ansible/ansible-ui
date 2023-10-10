@@ -1,6 +1,6 @@
 import { Credential as ControllerCredential } from '../../interfaces/Credential';
-import { Label as ControllerLabel } from '../../interfaces/Label';
 import { InstanceGroup as ControllerInstanceGroup } from '../../interfaces/InstanceGroup';
+import { Label as ControllerLabel } from '../../interfaces/Label';
 
 type Items =
   | Pick<ControllerCredential, 'id' | 'name'>

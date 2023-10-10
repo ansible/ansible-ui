@@ -1,9 +1,9 @@
 import { Button, Split, SplitItem } from '@patternfly/react-core';
 import { DateTime } from 'luxon';
 import { useEffect, useState } from 'react';
+import styled from 'styled-components';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { formatDateString } from '../utils/formatDateString';
-import styled from 'styled-components';
 
 export function DateCell(props: { value: number | string }) {
   const date = new Date(props.value);

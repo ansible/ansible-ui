@@ -3,13 +3,13 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { PageActions, PageHeader, PageLayout } from '../../../../../framework';
 import { useGetPageUrl } from '../../../../../framework/PageNavigation/useGetPageUrl';
+import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
 import { AwxError } from '../../../common/AwxError';
 import { Schedule } from '../../../interfaces/Schedule';
 import { useSchedulesActions } from '../hooks/useSchedulesActions';
-import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 
 export function SchedulePage(props: {
   tabs: { label: string; page: string }[];

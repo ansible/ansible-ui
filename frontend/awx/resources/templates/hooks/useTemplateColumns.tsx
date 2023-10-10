@@ -8,9 +8,9 @@ import {
   useNameColumn,
   useTypeColumn,
 } from '../../../../common/columns';
+import { AwxRoute } from '../../../AwxRoutes';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
-import { AwxRoute } from '../../../AwxRoutes';
 
 export function useTemplateColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();

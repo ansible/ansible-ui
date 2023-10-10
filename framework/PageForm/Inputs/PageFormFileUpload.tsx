@@ -1,8 +1,8 @@
-import React, { useCallback, useState } from 'react';
 import { FileUpload, FileUploadProps } from '@patternfly/react-core';
+import React, { useCallback, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
-import { PageFormGroup, PageFormGroupProps } from './PageFormGroup';
 import { useTranslation } from 'react-i18next';
+import { PageFormGroup, PageFormGroupProps } from './PageFormGroup';
 
 export type PageFormFileUploadProps = {
   name: string;

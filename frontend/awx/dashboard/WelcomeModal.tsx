@@ -1,8 +1,8 @@
 import { Button, Checkbox, Modal, ModalVariant, TextContent } from '@patternfly/react-core';
-import { useTranslation } from 'react-i18next';
-import { usePageDialog } from '../../../framework';
 import { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import { usePageDialog } from '../../../framework';
 
 const CheckboxDiv = styled.div`
   margin-left: 10px;

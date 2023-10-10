@@ -1,11 +1,11 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePageDialog, useSelectDialog } from '../../../../../framework';
+import { SelectSingleDialog } from '../../../../../framework/PageDialogs/SelectSingleDialog';
 import { Credential } from '../../../interfaces/Credential';
 import { useAwxView } from '../../../useAwxView';
 import { useCredentialsColumns } from './useCredentialsColumns';
 import { useCredentialsFilters } from './useCredentialsFilters';
-import { SelectSingleDialog } from '../../../../../framework/PageDialogs/SelectSingleDialog';
 
 export function useMultiSelectCredential(isLookup: boolean, credentialType?: number) {
   const { t } = useTranslation();

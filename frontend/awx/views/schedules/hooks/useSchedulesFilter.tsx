@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 import { IToolbarFilter } from '../../../../../framework';
 import {
-  useDescriptionToolbarFilter,
-  useNameToolbarFilter,
   useCreatedByToolbarFilter,
+  useDescriptionToolbarFilter,
   useModifiedByToolbarFilter,
+  useNameToolbarFilter,
 } from '../../../common/awx-toolbar-filters';
 
 export function useSchedulesFilter() {

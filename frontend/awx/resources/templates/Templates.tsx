@@ -19,9 +19,9 @@ import { JobTemplate } from '../../interfaces/JobTemplate';
 import { WorkflowJobTemplate } from '../../interfaces/WorkflowJobTemplate';
 import { useAwxView } from '../../useAwxView';
 import { useDeleteTemplates } from './hooks/useDeleteTemplates';
+import { useTemplateActions } from './hooks/useTemplateActions';
 import { useTemplateColumns } from './hooks/useTemplateColumns';
 import { useTemplateFilters } from './hooks/useTemplateFilters';
-import { useTemplateActions } from './hooks/useTemplateActions';
 
 export function Templates() {
   const { t } = useTranslation();

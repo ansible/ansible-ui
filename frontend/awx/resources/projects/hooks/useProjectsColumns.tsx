@@ -1,18 +1,18 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ColumnModalOption, CopyCell, ITableColumn } from '../../../../../framework';
-import { ScmType } from '../../../../common/scm';
 import {
   useCreatedColumn,
   useDescriptionColumn,
   useModifiedColumn,
   useOrganizationNameColumn,
 } from '../../../../common/columns';
-import { useProjectStatusColumn } from './useProjectStatusColumn';
-import { useLastUsedColumn } from './useLastUsedColumn';
-import { useExecutionEnvironmentColumn } from './useDefaultEnvironment';
+import { ScmType } from '../../../../common/scm';
 import { Project } from '../../../interfaces/Project';
+import { useExecutionEnvironmentColumn } from './useDefaultEnvironment';
+import { useLastUsedColumn } from './useLastUsedColumn';
 import { useProjectNameColumn } from './useProjectNameColumn';
+import { useProjectStatusColumn } from './useProjectStatusColumn';
 
 export function useProjectsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();

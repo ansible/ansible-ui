@@ -1,11 +1,11 @@
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { usePageDialog } from '../../../../../framework';
 import { SelectSingleDialog } from '../../../../../framework/PageDialogs/SelectSingleDialog';
+import { Inventory } from '../../../interfaces/Inventory';
 import { useAwxView } from '../../../useAwxView';
 import { useInventoriesColumns } from './useInventoriesColumns';
 import { useInventoriesFilters } from './useInventoriesFilters';
-import { Inventory } from '../../../interfaces/Inventory';
-import { usePageDialog } from '../../../../../framework';
-import { useCallback } from 'react';
 
 function SelectInventory(props: { title: string; onSelect: (inventory: Inventory) => void }) {
   const toolbarFilters = useInventoriesFilters();

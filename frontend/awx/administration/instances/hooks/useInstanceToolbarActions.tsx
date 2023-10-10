@@ -1,9 +1,9 @@
-import { useMemo } from 'react';
-import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
-import { Instance } from '../../../interfaces/Instance';
 import { ButtonVariant } from '@patternfly/react-core';
 import { HeartbeatIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
+import { Instance } from '../../../interfaces/Instance';
 import { IAwxView } from '../../../useAwxView';
 import { useRunHealthCheck } from './useRunHealthCheck';
 

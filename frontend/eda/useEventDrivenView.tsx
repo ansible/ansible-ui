@@ -4,8 +4,8 @@ import { ISelected, ITableColumn, IToolbarFilter, useSelected } from '../../fram
 import { IView, useView } from '../../framework/useView';
 import { AwxItemsResponse } from '../awx/common/AwxItemsResponse';
 import { getItemKey, swrOptions, useFetcher } from '../common/crud/Data';
-import { SWR_REFRESH_INTERVAL } from './constants';
 import { RequestError } from '../common/crud/RequestError';
+import { SWR_REFRESH_INTERVAL } from './constants';
 
 export type IEdaView<T extends { id: number | string }> = IView &
   ISelected<T> & {

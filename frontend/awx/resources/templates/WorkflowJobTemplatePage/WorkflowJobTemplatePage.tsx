@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { DropdownPosition } from '@patternfly/react-core';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
@@ -9,17 +10,16 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../../framework';
+import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { useGet, useGetItem } from '../../../../common/crud/useGet';
+import { useActiveUser } from '../../../../common/useActiveUser';
 import { AwxRoute } from '../../../AwxRoutes';
 import { AwxError } from '../../../common/AwxError';
+import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
+import { Organization } from '../../../interfaces/Organization';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { useTemplateActions } from '../hooks/useTemplateActions';
-import { Organization } from '../../../interfaces/Organization';
-import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
-import { useActiveUser } from '../../../../common/useActiveUser';
-import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
-import { useMemo } from 'react';
 
 export function WorkflowJobTemplatePage() {
   const { t } = useTranslation();

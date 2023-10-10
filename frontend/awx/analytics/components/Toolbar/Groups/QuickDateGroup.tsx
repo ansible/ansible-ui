@@ -1,16 +1,16 @@
-import React, { FunctionComponent } from 'react';
 import {
+  SelectOptionProps,
+  Split,
   SplitItem,
   ToolbarGroup,
-  Split,
-  SelectOptionProps,
   ToolbarGroupVariant,
 } from '@patternfly/react-core';
+import { FunctionComponent } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import ToolbarInput from './ToolbarInput';
 
-import { SetValues, AttributeType } from '../types';
+import { AttributeType, SetValues } from '../types';
 
 const today = (days = 0): Date => {
   const date = new Date();

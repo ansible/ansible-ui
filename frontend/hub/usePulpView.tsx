@@ -9,8 +9,8 @@ import {
   useView,
 } from '../../framework';
 import { useFetcher } from '../common/crud/Data';
-import { QueryParams, getQueryString, serverlessURL } from './api/utils';
 import { RequestError } from '../common/crud/RequestError';
+import { QueryParams, getQueryString, serverlessURL } from './api/utils';
 
 export interface PulpItemsResponse<T extends object> {
   count: number;

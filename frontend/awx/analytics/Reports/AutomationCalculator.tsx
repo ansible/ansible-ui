@@ -1,3 +1,4 @@
+import { ChartLegendEntry, ChartSchemaElement } from '@ansible/react-json-chart-builder';
 import {
   Card,
   CardBody,
@@ -13,7 +14,6 @@ import {
 } from '@patternfly/react-core';
 import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ChartLegendEntry, ChartSchemaElement } from '@ansible/react-json-chart-builder';
 import useSWR from 'swr';
 import {
   IFilterState,

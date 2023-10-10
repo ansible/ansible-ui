@@ -1,6 +1,6 @@
-import { JobTemplateForm } from '../../interfaces/JobTemplateForm';
-import { JobTemplate } from '../../interfaces/JobTemplate';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
+import { JobTemplate } from '../../interfaces/JobTemplate';
+import { JobTemplateForm } from '../../interfaces/JobTemplateForm';
 
 export function getJobTemplateDefaultValues(
   t: (string: string) => string,

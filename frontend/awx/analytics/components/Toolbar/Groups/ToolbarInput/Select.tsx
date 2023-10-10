@@ -1,19 +1,19 @@
 // TODO: The component converts all types to string.
 // It should be able to use the correct type in the future for example number and number[].
-import React, { FunctionComponent, useState } from 'react';
 import {
-  Tooltip,
-  ToolbarFilter,
   Select as PFSelect,
   SelectOption,
+  SelectOptionObject,
   SelectVariant,
   ToolbarChip,
-  SelectOptionObject,
+  ToolbarFilter,
+  Tooltip,
 } from '@patternfly/react-core';
+import { FunctionComponent, useState } from 'react';
 
-import { handleCheckboxChips, handleSingleChips } from './helpers';
-import { optionsForCategories } from '../../constants';
 import styled from 'styled-components';
+import { optionsForCategories } from '../../constants';
+import { handleCheckboxChips, handleSingleChips } from './helpers';
 
 import { AttributeType, SelectOptionProps, SetValue } from '../../types';
 

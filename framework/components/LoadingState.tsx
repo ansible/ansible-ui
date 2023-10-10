@@ -1,4 +1,3 @@
-import React from 'react';
 import { Bullseye, PageSection, Spinner } from '@patternfly/react-core';
 
 export function LoadingState() {

@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { DropdownPosition } from '@patternfly/react-core';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import {
   PageActions,
   PageHeader,
@@ -8,18 +10,16 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../../framework';
+import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { useGet, useGetItem } from '../../../../common/crud/useGet';
+import { useActiveUser } from '../../../../common/useActiveUser';
 import { AwxRoute } from '../../../AwxRoutes';
 import { AwxError } from '../../../common/AwxError';
-import { JobTemplate } from '../../../interfaces/JobTemplate';
-import { useTemplateActions } from '../hooks/useTemplateActions';
-import { useActiveUser } from '../../../../common/useActiveUser';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
+import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { Organization } from '../../../interfaces/Organization';
-import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
-import { useParams } from 'react-router-dom';
-import { useMemo } from 'react';
+import { useTemplateActions } from '../hooks/useTemplateActions';
 
 export function TemplatePage() {
   const { t } = useTranslation();

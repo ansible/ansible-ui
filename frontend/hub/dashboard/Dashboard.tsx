@@ -1,6 +1,7 @@
 /* eslint-disable i18next/no-literal-string */
 import { Bullseye, Button, ButtonVariant, DropdownPosition } from '@patternfly/react-core';
 import { CogIcon } from '@patternfly/react-icons';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   PageActionSelection,
@@ -10,12 +11,11 @@ import {
   PageHeader,
   PageLayout,
 } from '../../../framework';
-import { useManageHubDashboard } from './useManageHubDashboard';
-import { useState } from 'react';
+import { EmptyStateNoData } from '../../../framework/components/EmptyStateNoData';
+import { CollectionCategoryCarousel } from './CollectionCategories';
 import { CategorizedCollections } from './CollectionCategory';
 import { useCategorizeCollections } from './hooks/useCategorizeCollections';
-import { CollectionCategoryCarousel } from './CollectionCategories';
-import { EmptyStateNoData } from '../../../framework/components/EmptyStateNoData';
+import { useManageHubDashboard } from './useManageHubDashboard';
 
 export function HubDashboard() {
   const { t } = useTranslation();

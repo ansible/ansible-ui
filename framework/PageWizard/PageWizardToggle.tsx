@@ -1,8 +1,8 @@
-import { useCallback, useContext } from 'react';
-import { useTranslation } from 'react-i18next';
 import { CaretDownIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import styles from '@patternfly/react-styles/css/components/Wizard/wizard';
+import { useCallback, useContext } from 'react';
+import { useTranslation } from 'react-i18next';
 import { PageWizardContext } from './PageWizardProvider';
 
 export default function PageWizardToggle() {

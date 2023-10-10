@@ -1,5 +1,5 @@
-import React, { FunctionComponent, useState } from 'react';
-import { ToolbarItem, Select, SelectOption, SelectVariant } from '@patternfly/react-core';
+import { Select, SelectOption, SelectVariant, ToolbarItem } from '@patternfly/react-core';
+import { FunctionComponent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface Props {

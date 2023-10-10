@@ -1,5 +1,5 @@
-import { CreateRulebookActivation } from './RulebookActivationForm';
 import { API_PREFIX } from '../constants';
+import { CreateRulebookActivation } from './RulebookActivationForm';
 
 describe('Create rulebook activation ', () => {
   beforeEach(() => {

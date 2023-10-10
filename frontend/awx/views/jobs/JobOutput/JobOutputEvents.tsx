@@ -5,14 +5,14 @@ import { Job } from '../../../interfaces/Job';
 import './JobOutput.css';
 import { JobOutputLoadingRow } from './JobOutputLoadingRow';
 import { IJobOutputRow, JobOutputRow, jobEventToRows, tracebackToRows } from './JobOutputRow';
-import { useJobOutput } from './useJobOutput';
 import { PageControls } from './PageControls';
+import { useJobOutput } from './useJobOutput';
 import {
   IJobOutputChildrenSummary,
   useJobOutputChildrenSummary,
 } from './useJobOutputChildrenSummary';
-import { useVirtualizedList } from './useVirtualized';
 import { useScrollControls } from './useScrollControls';
+import { useVirtualizedList } from './useVirtualized';
 import { isJobRunning } from './util';
 
 export interface ICollapsed {

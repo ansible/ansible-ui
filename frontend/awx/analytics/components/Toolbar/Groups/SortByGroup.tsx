@@ -1,16 +1,16 @@
-import React, { FunctionComponent } from 'react';
 import {
-  ToolbarGroup,
   Button,
-  SelectOptionProps,
   ButtonVariant,
+  SelectOptionProps,
+  ToolbarGroup,
   ToolbarGroupVariant,
   ToolbarItem,
 } from '@patternfly/react-core';
 import { SortAmountDownIcon, SortAmountUpIcon } from '@patternfly/react-icons';
+import { FunctionComponent } from 'react';
 
+import { AttributeType, SetValues } from '../types';
 import ToolbarInput from './ToolbarInput';
-import { SetValues, AttributeType } from '../types';
 
 interface Props {
   filters: Record<string, AttributeType>;

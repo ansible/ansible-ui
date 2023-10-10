@@ -6,25 +6,25 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
-import { useMemo, useState, useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import {
+  IFilterState,
   ISelected,
   ITableColumn,
   IToolbarFilter,
   IView,
   useSelected,
   useView,
-  IFilterState,
 } from '../../../framework';
 import { postRequest } from '../../common/crud/Data';
 
 import { RequestError } from '../../common/crud/RequestError';
 import {
   AnalyticsReportBuilderBodyProps,
+  DefaultDataParams,
   computeMainFilterKeys,
 } from './AnalyticsReportBuilder/AnalyticsReportBuilder';
-import { DefaultDataParams } from './AnalyticsReportBuilder/AnalyticsReportBuilder';
 
 export interface AnalyticsItemsResponse<T extends object> {
   meta: { count: number; legend: T[] };

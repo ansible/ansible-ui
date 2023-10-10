@@ -1,11 +1,11 @@
+import { Button, Toolbar, ToolbarContent } from '@patternfly/react-core';
 import { Dispatch, SetStateAction } from 'react';
-import { Toolbar, ToolbarContent, Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { IToolbarFilter } from '../../../../../framework';
 import {
   IFilterState,
   PageToolbarFilters,
 } from '../../../../../framework/PageToolbar/PageToolbarFilter';
-import { IToolbarFilter } from '../../../../../framework';
 import { JobStatus, isJobRunning } from './util';
 
 interface IJobOutputToolbarProps {

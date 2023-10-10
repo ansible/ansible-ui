@@ -1,8 +1,8 @@
 // import { useGet } from '../../../common/crud/useGet';
 // import { HubItemsResponse } from '../../useHubView';
 // import { hubAPI } from '../../api';
-import { CollectionCategory } from '../CollectionCategory';
 import { useMemo } from 'react';
+import { CollectionCategory } from '../CollectionCategory';
 
 /**
  * Hook to retrieve the collection categories for the Hub Dashboard UI

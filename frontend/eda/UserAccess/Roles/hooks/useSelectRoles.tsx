@@ -1,10 +1,10 @@
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useEdaView } from '../../../useEventDrivenView';
-import { useRoleColumns } from './useRoleColumns';
+import { IToolbarFilter, useSelectDialog } from '../../../../../framework';
 import { API_PREFIX } from '../../../constants';
 import { EdaRole } from '../../../interfaces/EdaRole';
-import { IToolbarFilter, useSelectDialog } from '../../../../../framework';
+import { useEdaView } from '../../../useEventDrivenView';
+import { useRoleColumns } from './useRoleColumns';
 
 export function useSelectRoles() {
   const { t } = useTranslation();

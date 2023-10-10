@@ -1,6 +1,6 @@
+import { ChartSchemaElement } from '@ansible/react-json-chart-builder';
 import { Label, LabelGroup, Page, Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { useEffect, useState } from 'react';
-import { ChartSchemaElement } from '@ansible/react-json-chart-builder';
 import styled from 'styled-components';
 import useSWR from 'swr';
 import { PageHeader, PageLayout } from '../../../../framework';

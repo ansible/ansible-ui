@@ -12,11 +12,11 @@ import { LoadingPage, PageDetail, PageDetails } from '../../../../../framework';
 import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
 import { RouteObj } from '../../../../common/Routes';
 
+import { useGetItem } from '../../../../common/crud/useGet';
+import { AwxError } from '../../../common/AwxError';
 import { CredentialLabel } from '../../../common/CredentialLabel';
 import { UserDateDetail } from '../../../common/UserDateDetail';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
-import { useGetItem } from '../../../../common/crud/useGet';
-import { AwxError } from '../../../common/AwxError';
 
 export function WorkflowJobTemplateDetails() {
   const { t } = useTranslation();

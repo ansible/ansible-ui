@@ -1,7 +1,7 @@
+import { Label } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ITableColumn } from '../../../../framework';
-import { Label } from '@patternfly/react-core';
 
 import { ExecutionEnvironment } from '../ExecutionEnvironment';
 

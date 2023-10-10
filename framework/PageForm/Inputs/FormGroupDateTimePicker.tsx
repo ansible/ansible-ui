@@ -1,11 +1,11 @@
 import {
-  DatePickerProps,
   DatePicker,
-  isValidDate,
-  yyyyMMddFormat,
+  DatePickerProps,
+  InputGroup,
   TimePicker,
   TimePickerProps,
-  InputGroup,
+  isValidDate,
+  yyyyMMddFormat,
 } from '@patternfly/react-core';
 
 import React, { FormEvent } from 'react';

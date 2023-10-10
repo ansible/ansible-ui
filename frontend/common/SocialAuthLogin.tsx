@@ -1,5 +1,5 @@
 import { Button } from '@patternfly/react-core';
-import { AzureIcon, GoogleIcon, GithubIcon, UserCircleIcon } from '@patternfly/react-icons';
+import { AzureIcon, GithubIcon, GoogleIcon, UserCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 

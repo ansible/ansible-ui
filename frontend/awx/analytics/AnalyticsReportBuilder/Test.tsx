@@ -5,17 +5,17 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   AnalyticsReportBuilder,
   AnalyticsReportBuilderProps,
   AnyType,
 } from './AnalyticsReportBuilder';
-import { useLocation, useNavigate } from 'react-router-dom';
 
-import { useState } from 'react';
 import { Select, SelectOption, SelectOptionObject } from '@patternfly/react-core';
+import { useState } from 'react';
 
-import { reportDefaultParams, allDefaultParams } from './constants';
+import { allDefaultParams, reportDefaultParams } from './constants';
 
 export function Test() {
   const location = useLocation();

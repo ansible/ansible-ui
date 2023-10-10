@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageDetail, PageDetails, DateTimeCell } from '../../../../../framework';
-import { User } from '../../../interfaces/User';
+import { DateTimeCell, PageDetail, PageDetails } from '../../../../../framework';
 import { useGetItem } from '../../../../common/crud/useGet';
+import { User } from '../../../interfaces/User';
 import { AuthenticationType } from '../components/AuthenticationType';
 import { UserType } from '../components/UserType';
 

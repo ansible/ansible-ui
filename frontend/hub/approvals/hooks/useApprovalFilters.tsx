@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { IToolbarFilter, ToolbarFilterType } from '../../../../framework';
 import { toolbarSingleSelectBrowseAdapter } from './../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSingleSelectFilter';
 import { AnsibleAnsibleRepositoryResponse as Repository } from './../../api-schemas/generated/AnsibleAnsibleRepositoryResponse';
-import { useSelectRepositorySingle } from './../../repositories/hooks/useRepositorySelector';
 import { useRepoQueryOptions } from './../../repositories/hooks/useRepoQueryOptions';
+import { useSelectRepositorySingle } from './../../repositories/hooks/useRepositorySelector';
 
 export function useApprovalFilters() {
   const { t } = useTranslation();

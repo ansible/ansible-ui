@@ -1,5 +1,5 @@
 import { CollectionVersionSearch } from '../approvals/Approval';
-import { HubUser, HubContextProvider } from '../useHubContext';
+import { HubContextProvider, HubUser } from '../useHubContext';
 import { HubItemsResponse } from '../useHubView';
 import { CollectionCategoryCarousel } from './CollectionCategories';
 

@@ -1,10 +1,10 @@
-import { HubItemsResponse } from '../../useHubView';
-import { hubAPI } from '../../api/utils';
-import { CollectionVersionSearch } from '../../collections/Collection';
-import { CategorizedCollections, CollectionCategory } from '../CollectionCategory';
-import { requestGet } from '../../../common/crud/Data';
 import { SetStateAction, useCallback, useEffect } from 'react';
 import { errorToAlertProps, usePageAlertToaster } from '../../../../framework';
+import { requestGet } from '../../../common/crud/Data';
+import { hubAPI } from '../../api/utils';
+import { CollectionVersionSearch } from '../../collections/Collection';
+import { HubItemsResponse } from '../../useHubView';
+import { CategorizedCollections, CollectionCategory } from '../CollectionCategory';
 
 export const MAX_NUMBER_OF_COLLECTIONS = 12;
 

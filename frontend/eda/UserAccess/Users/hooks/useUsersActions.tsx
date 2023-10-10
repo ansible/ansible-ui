@@ -8,11 +8,11 @@ import {
   PageActionType,
   usePageNavigate,
 } from '../../../../../framework';
+import { useEdaActiveUser } from '../../../../common/useActiveUser';
 import { EdaRoute } from '../../../EdaRoutes';
 import { EdaUser } from '../../../interfaces/EdaUser';
 import { IEdaView } from '../../../useEventDrivenView';
 import { useDeleteUsers } from './useDeleteUser';
-import { useEdaActiveUser } from '../../../../common/useActiveUser';
 
 export function useUsersActions(view: IEdaView<EdaUser>) {
   const { t } = useTranslation();

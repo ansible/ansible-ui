@@ -1,11 +1,11 @@
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { usePageDialog } from '../../../../../framework';
 import { SelectSingleDialog } from '../../../../../framework/PageDialogs/SelectSingleDialog';
+import { InventorySource } from '../../../interfaces/InventorySource';
 import { useAwxView } from '../../../useAwxView';
 import { useInventorySourceColumns } from './useInventorySourceColumns';
 import { useInventorySourceFilters } from './useInventorySourceFilters';
-import { usePageDialog } from '../../../../../framework';
-import { useCallback } from 'react';
-import { InventorySource } from '../../../interfaces/InventorySource';
 
 function SelectInventorySource(props: {
   title: string;

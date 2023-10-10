@@ -1,11 +1,11 @@
-import { TrashIcon, ThumbsUpIcon } from '@patternfly/react-icons';
+import { ThumbsUpIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../framework';
-import { useApproveCollections } from './useApproveCollections';
-import { useRejectCollections } from './useRejectCollections';
 import { CollectionVersionSearch } from '../Approval';
 import { useHubContext } from './../../useHubContext';
+import { useApproveCollections } from './useApproveCollections';
+import { useRejectCollections } from './useRejectCollections';
 
 export function useApprovalsActions(callback: (collections: CollectionVersionSearch[]) => void) {
   const { t } = useTranslation();

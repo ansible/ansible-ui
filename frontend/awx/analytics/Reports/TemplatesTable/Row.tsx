@@ -1,20 +1,22 @@
-import React, { FunctionComponent, useState } from 'react';
 import {
   InputGroup,
   InputGroupText,
-  TextInput,
   InputGroupTextVariant,
   Switch,
+  TextInput,
 } from '@patternfly/react-core';
-import { Tr, Td } from '@patternfly/react-table';
-import { global_success_color_200 as globalSuccessColor200 } from '@patternfly/react-tokens';
-import { global_disabled_color_200 as globalDisabledColor200 } from '@patternfly/react-tokens';
+import { Td, Tr } from '@patternfly/react-table';
+import {
+  global_disabled_color_200 as globalDisabledColor200,
+  global_success_color_200 as globalSuccessColor200,
+} from '@patternfly/react-tokens';
+import { FunctionComponent, useState } from 'react';
 
+import { ChartLegendEntry } from '@ansible/react-json-chart-builder';
+import { useTranslation } from 'react-i18next';
 import currencyFormatter from '../../utilities/currencyFormatter';
 import numberFormatter from '../../utilities/numberFormatter';
-import { ChartLegendEntry } from '@ansible/react-json-chart-builder';
 import ExpandedRowContents from './ExpandedRowContents';
-import { useTranslation } from 'react-i18next';
 
 interface Props {
   template: ChartLegendEntry;

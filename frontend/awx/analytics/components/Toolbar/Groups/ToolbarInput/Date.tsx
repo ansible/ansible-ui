@@ -1,5 +1,5 @@
-import React, { FunctionComponent } from 'react';
 import { DatePicker } from '@patternfly/react-core';
+import React, { FunctionComponent } from 'react';
 import { optionsForCategories } from '../../constants';
 
 interface Props {

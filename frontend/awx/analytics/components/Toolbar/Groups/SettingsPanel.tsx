@@ -1,13 +1,21 @@
-import React, { FunctionComponent } from 'react';
-import { Button, Switch, Popover } from '@patternfly/react-core';
-import { Card, CardTitle, CardBody, CardActions, CardHeader } from '@patternfly/react-core';
+import {
+  Button,
+  Card,
+  CardActions,
+  CardBody,
+  CardHeader,
+  CardTitle,
+  Popover,
+  Switch,
+} from '@patternfly/react-core';
 import {
   OutlinedQuestionCircleIcon as PFOutlinedQuestionCircleIcon,
   TimesIcon,
 } from '@patternfly/react-icons';
-import { SetValues, AttributeType } from '../types';
-import styled from 'styled-components';
+import React, { FunctionComponent } from 'react';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
+import { AttributeType, SetValues } from '../types';
 
 const OutlinedQuestionCircleIcon = styled(PFOutlinedQuestionCircleIcon)`
   color: #151515;

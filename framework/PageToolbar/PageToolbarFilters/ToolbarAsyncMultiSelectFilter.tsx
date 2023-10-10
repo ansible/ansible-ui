@@ -1,5 +1,5 @@
-import { ToolbarFilterType } from '../PageToolbarFilter';
 import { PageAsyncMultiSelectOptionsFn } from '../../PageInputs/PageAsyncMultiSelect';
+import { ToolbarFilterType } from '../PageToolbarFilter';
 
 import { PageAsyncQueryErrorTextType } from '../../PageInputs/PageAsyncSingleSelect';
 

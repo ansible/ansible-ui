@@ -1,8 +1,8 @@
 import '@patternfly/patternfly/components/Wizard/wizard.css';
 import PageWizardBody from './PageWizardBody';
 import PageWizardNavigation from './PageWizardNavigation';
-import PageWizardToggle from './PageWizardToggle';
 import { PageWizardProvider } from './PageWizardProvider';
+import PageWizardToggle from './PageWizardToggle';
 import type { PageWizardStep } from './types';
 
 export default function PageWizard<T extends object>(props: {

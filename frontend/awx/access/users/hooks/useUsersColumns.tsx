@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ITableColumn, TextCell, useGetPageUrl } from '../../../../../framework';
-import { AwxRoute } from '../../../AwxRoutes';
 import { useCreatedColumn } from '../../../../common/columns';
+import { AwxRoute } from '../../../AwxRoutes';
 import { User } from '../../../interfaces/User';
 import { UserType } from '../components/UserType';
 

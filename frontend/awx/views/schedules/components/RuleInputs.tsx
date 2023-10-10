@@ -1,12 +1,12 @@
-import { useTranslation } from 'react-i18next';
-import { PageFormSelect, PageFormTextInput } from '../../../../../framework';
-import { Frequency } from 'rrule';
-import { useGetMonthOptions, useGetWeekdayOptions } from '../hooks/ruleHelpers';
 import { Banner, Divider, Tooltip } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+import { Frequency } from 'rrule';
+import { PageFormSelect, PageFormTextInput } from '../../../../../framework';
 import { PageFormDateTimePicker } from '../../../../../framework/PageForm/Inputs/PageFormDateTimePicker';
-import { RuleFormFields } from '../RuleForm';
-import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { PageFormMultiSelect } from '../../../../../framework/PageForm/Inputs/PageFormMultiSelect';
+import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
+import { RuleFormFields } from '../RuleForm';
+import { useGetMonthOptions, useGetWeekdayOptions } from '../hooks/ruleHelpers';
 
 export function RuleInputs() {
   const { t } = useTranslation();

@@ -1,7 +1,7 @@
 import { CardBody } from '@patternfly/react-core';
-import { PageDashboardCard, PageDashboardCardWidth } from './PageDashboardCard';
-import { PageCarousel } from '../PageCarousel/PageCarousel';
 import { ReactNode } from 'react';
+import { PageCarousel } from '../PageCarousel/PageCarousel';
+import { PageDashboardCard, PageDashboardCardWidth } from './PageDashboardCard';
 
 export function PageDashboardCarousel(props: {
   title: string;

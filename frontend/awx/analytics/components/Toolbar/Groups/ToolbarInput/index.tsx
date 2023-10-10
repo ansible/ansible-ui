@@ -1,10 +1,10 @@
+import { SelectOptionProps } from '@patternfly/react-core';
 import React, { FunctionComponent } from 'react';
-import Select from './Select';
-import DateInput from './Date';
-import Text from './Text';
 import { optionsForCategories } from '../../constants';
 import { AttributeType, SetValue } from '../../types';
-import { SelectOptionProps } from '@patternfly/react-core';
+import DateInput from './Date';
+import Select from './Select';
+import Text from './Text';
 
 // Todo: unify the interfaces better so we don't have to use any
 // and avoid accidentall wronglt passed props

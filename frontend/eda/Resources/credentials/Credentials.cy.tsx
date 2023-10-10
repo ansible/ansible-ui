@@ -1,5 +1,5 @@
-import { Credentials } from './Credentials';
 import { API_PREFIX } from '../../constants';
+import { Credentials } from './Credentials';
 
 describe('Credentials.cy.ts', () => {
   beforeEach(() => {

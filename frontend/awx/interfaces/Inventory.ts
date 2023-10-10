@@ -1,10 +1,10 @@
+import { Label } from './Label';
 import { Inventory as SwaggerInventory } from './generated-from-swagger/api';
 import {
   SummaryFieldsByUser,
   SummaryFieldsOrganization,
   SummeryFieldObjectRole,
 } from './summary-fields/summary-fields';
-import { Label } from './Label';
 
 export interface CommonInventory
   extends Omit<

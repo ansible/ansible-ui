@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout } from '../../../../framework';
-import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
-import { useAwxConfig } from '../../common/useAwxConfig';
 import { PageNotImplemented } from '../../../common/PageNotImplemented';
+import { useAwxConfig } from '../../common/useAwxConfig';
+import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
 
 export function Applications() {
   const { t } = useTranslation();

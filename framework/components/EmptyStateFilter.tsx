@@ -1,4 +1,3 @@
-import React from 'react';
 import { Button } from '@patternfly/react-core';
 import { SearchIcon } from '@patternfly/react-icons';
 import { EmptyStateCustom } from './EmptyStateCustom';

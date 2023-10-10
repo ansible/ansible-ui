@@ -8,8 +8,8 @@ import {
   PageActionSelection,
   PageActionType,
   PageTable,
-  usePageNavigate,
   useGetPageUrl,
+  usePageNavigate,
 } from '../../../../../framework';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';

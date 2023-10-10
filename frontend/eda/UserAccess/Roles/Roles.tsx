@@ -1,9 +1,9 @@
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
-import { EdaRole } from '../../interfaces/EdaRole';
-import { useRoleColumns } from './hooks/useRoleColumns';
 import { API_PREFIX } from '../../constants';
+import { EdaRole } from '../../interfaces/EdaRole';
 import { useEdaView } from '../../useEventDrivenView';
+import { useRoleColumns } from './hooks/useRoleColumns';
 
 export function Roles() {
   const { t } = useTranslation();

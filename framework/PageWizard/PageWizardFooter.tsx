@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageWizardContext } from './PageWizardProvider';
 import { PageFormSubmitButton } from '../PageForm/PageForm';
+import { PageWizardContext } from './PageWizardProvider';
 
 export default function PageWizardFooter(props: {
   onNext?: () => void;

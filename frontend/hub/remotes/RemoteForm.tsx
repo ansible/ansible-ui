@@ -13,6 +13,7 @@ import {
 import { PageFormFileUpload } from '../../../framework/PageForm/Inputs/PageFormFileUpload';
 import { PageFormGroup } from '../../../framework/PageForm/Inputs/PageFormGroup';
 import { PageFormExpandableSection } from '../../../framework/PageForm/PageFormExpandableSection';
+import { PageFormSection } from '../../../framework/PageForm/Utils/PageFormSection';
 import { LoadingPage } from '../../../framework/components/LoadingPage';
 import { AwxError } from '../../awx/common/AwxError';
 import { useGet } from '../../common/crud/useGet';
@@ -21,7 +22,6 @@ import { HubRoute } from '../HubRoutes';
 import { appendTrailingSlash, hubAPIPut, parsePulpIDFromURL, pulpAPI } from '../api/utils';
 import { PulpItemsResponse } from '../usePulpView';
 import { IRemotes } from './Remotes';
-import { PageFormSection } from '../../../framework/PageForm/Utils/PageFormSection';
 
 interface RemoteFormProps extends IRemotes {
   client_key?: string;

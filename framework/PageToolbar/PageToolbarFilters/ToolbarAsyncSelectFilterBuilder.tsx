@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { ITableColumn, IToolbarFilter, usePageDialog, ISelected } from '../../../framework';
+import { ISelected, ITableColumn, IToolbarFilter, usePageDialog } from '../../../framework';
 import { MultiSelectDialog } from '../../../framework/PageDialogs/MultiSelectDialog';
 import { SelectSingleDialog } from '../../../framework/PageDialogs/SelectSingleDialog';
 import { IView, ViewExtendedOptions } from '../../useView';

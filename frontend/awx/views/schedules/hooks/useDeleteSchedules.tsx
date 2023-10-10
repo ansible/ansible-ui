@@ -1,10 +1,10 @@
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { useNameColumn } from '../../../../common/columns';
 import { getItemKey, requestDelete } from '../../../../common/crud/Data';
 import { Schedule } from '../../../interfaces/Schedule';
 import { useSchedulesColumns } from './useSchedulesColumns';
-import { useMemo } from 'react';
 
 export function useDeleteSchedules(onComplete?: (schedules: Schedule[]) => void) {
   const { t } = useTranslation();

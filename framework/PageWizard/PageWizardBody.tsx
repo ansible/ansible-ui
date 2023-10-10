@@ -1,10 +1,10 @@
-import { useCallback, useContext, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useFormState } from 'react-hook-form';
 import { PageSection } from '@patternfly/react-core';
+import { useCallback, useContext, useEffect } from 'react';
+import { useFormState } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 import { PageForm } from '../PageForm/PageForm';
-import { PageWizardContext } from './PageWizardProvider';
 import PageWizardFooter from './PageWizardFooter';
+import { PageWizardContext } from './PageWizardProvider';
 
 export default function PageWizardBody<T>(props: {
   onCancel?: () => void;
