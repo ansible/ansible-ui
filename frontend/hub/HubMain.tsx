@@ -11,7 +11,7 @@ import { HubMasthead } from './HubMasthead';
 import { HubContextProvider } from './useHubContext';
 import { useHubNavigation } from './useHubNavigation';
 
-export default function AwxMain() {
+export default function HubMain() {
   const navigation = useHubNavigation();
   return (
     <PageApp
