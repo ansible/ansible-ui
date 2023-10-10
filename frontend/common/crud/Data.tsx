@@ -112,6 +112,10 @@ export function useFetcher() {
   return requestGet;
 }
 
+export function usePostFetcher() {
+  return postRequest;
+}
+
 export function getItemKey(item: { id: number | string }) {
   return item.id.toString();
 }

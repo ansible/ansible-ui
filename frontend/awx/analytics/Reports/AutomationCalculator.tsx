@@ -206,6 +206,7 @@ export function AutomationCalculator(props: { schema: ChartSchemaElement[] }) {
     }
     return [];
   }, [options]);
+
   const sortOption = useMemo(
     () => sortOptions.find((option) => option.value === sort),
     [sort, sortOptions]
