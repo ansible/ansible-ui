@@ -8,11 +8,11 @@ import {
   Validate,
   useFormContext,
 } from 'react-hook-form';
+import { PageSelectOption } from '../../PageInputs/PageSelectOption';
 import { Help } from '../../components/Help';
 import { getID, useID } from '../../hooks/useID';
 import { useFrameworkTranslations } from '../../useFrameworkTranslations';
 import { capitalizeFirstLetter } from '../../utils/strings';
-import { IFormGroupSelectOption } from './FormGroupSelectOption';
 
 export type PageFormSelectProps<
   TFieldValues extends FieldValues = FieldValues,
@@ -57,7 +57,7 @@ export type PageFormSelectProps<
    */
   placeholderText?: string;
 
-  options: IFormGroupSelectOption<TSelection>[];
+  options: PageSelectOption<TSelection>[];
 
   footer?: ReactNode;
 

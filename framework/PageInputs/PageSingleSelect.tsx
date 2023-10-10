@@ -1,4 +1,4 @@
-import { MenuToggle, MenuToggleElement, SearchInput } from '@patternfly/react-core';
+import { FormGroup, MenuToggle, MenuToggleElement, SearchInput } from '@patternfly/react-core';
 import { Select, SelectList, SelectOption } from '@patternfly/react-core/next';
 import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -36,6 +36,8 @@ export interface PageSingleSelectProps<ValueT> {
    * else the select will contain a clear button.
    */
   isRequired?: boolean;
+
+  label?: string;
 }
 
 /**
@@ -147,7 +149,7 @@ export function PageSingleSelect<
     [options, searchValue]
   );
 
-  return (
+  let selectComponent = (
     <div className="page-single-select">
       <Select
         selected={selectedOption?.label}
@@ -192,4 +194,14 @@ export function PageSingleSelect<
       </Select>
     </div>
   );
+
+  if (props.label) {
+    selectComponent = (
+      <FormGroup id={`${id ?? 'select'}-form-group`} fieldId={id} label={props.label}>
+        {selectComponent}
+      </FormGroup>
+    );
+  }
+
+  return selectComponent;
 }

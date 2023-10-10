@@ -1,9 +1,9 @@
 /* eslint-disable i18next/no-literal-string */
-import { Button, Form, Modal, ModalVariant, SelectOption } from '@patternfly/react-core';
+import { Button, Form, Modal, ModalVariant } from '@patternfly/react-core';
 import { ReactNode, createContext, useCallback, useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { usePageDialog } from './PageDialogs/PageDialog';
-import { FormGroupSelect } from './PageForm/Inputs/FormGroupSelect';
+import { PageSingleSelect } from './PageInputs/PageSingleSelect';
 import { useFrameworkTranslations } from './useFrameworkTranslations';
 
 const FormDiv = styled.div`
@@ -148,64 +148,68 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
     >
       <FormDiv>
         <Form isHorizontal={settings.formLayout === 'horizontal'} autoComplete="off">
-          <FormGroupSelect
+          <PageSingleSelect
             id="theme"
             label="Theme"
             value={settings.theme ?? 'system'}
-            onSelect={(_, theme) =>
+            onSelect={(theme) =>
               setSettings({ ...settings, theme: theme as 'system' | 'light' | 'dark' })
             }
-            placeholderText="Select theme"
-          >
-            <SelectOption value="system">{'System default'}</SelectOption>
-            <SelectOption value="light">{'Light'}</SelectOption>
-            <SelectOption value="dark">{'Dark'}</SelectOption>
-          </FormGroupSelect>
-          <FormGroupSelect
+            placeholder="Select theme"
+            options={[
+              { label: 'System default', value: 'system' },
+              { label: 'Light', value: 'light' },
+              { label: 'Dark', value: 'dark' },
+            ]}
+          />
+          <PageSingleSelect
             id="table-layout"
             label="Table Layout"
             value={settings.tableLayout ?? 'comfortable'}
-            onSelect={(_, tableLayout) =>
+            onSelect={(tableLayout) =>
               setSettings({
                 ...settings,
                 tableLayout: tableLayout as 'compact' | 'comfortable',
               })
             }
-            placeholderText="Select table layout"
-          >
-            <SelectOption value="comfortable">{'Comfortable'}</SelectOption>
-            <SelectOption value="compact">{'Compact'}</SelectOption>
-          </FormGroupSelect>
-          <FormGroupSelect
+            placeholder="Select table layout"
+            options={[
+              { label: 'Comfortable', value: 'comfortable' },
+              { label: 'Compact', value: 'compact' },
+            ]}
+          />
+          <PageSingleSelect
             id="form-columns"
             label="Form Columns"
             value={settings.formColumns ?? 'multiple'}
-            onSelect={(_, formColumns) =>
+            onSelect={(formColumns) =>
               setSettings({
                 ...settings,
                 formColumns: formColumns as 'multiple' | 'single',
               })
             }
-            placeholderText="Select form columns"
-          >
-            <SelectOption value="multiple">{'Multiple columns'}</SelectOption>
-            <SelectOption value="single">{'Single column'}</SelectOption>
-          </FormGroupSelect>
-          <FormGroupSelect
+            placeholder="Select form columns"
+            options={[
+              { label: 'Multiple columns', value: 'multiple' },
+              { label: 'Single column', value: 'single' },
+            ]}
+          />
+          <PageSingleSelect
             id="form-layout"
             label="Form Layout"
             value={settings.formLayout ?? 'vertical'}
-            onSelect={(_, formLayout) =>
+            onSelect={(formLayout) =>
               setSettings({
                 ...settings,
                 formLayout: formLayout as 'vertical' | 'horizontal',
               })
             }
-            placeholderText="Select form layout"
-          >
-            <SelectOption value="vertical">{'Vertical labels'}</SelectOption>
-            <SelectOption value="horizontal">{'Horizontal labels'}</SelectOption>
-          </FormGroupSelect>
+            placeholder="Select form layout"
+            options={[
+              { label: 'Vertical labels', value: 'vertical' },
+              { label: 'Horizontal labels', value: 'horizontal' },
+            ]}
+          />
         </Form>
       </FormDiv>
     </Modal>
