@@ -57,7 +57,7 @@ describe('WorflowJobTemplatePage', () => {
       initialEntries: [RouteObj.WorkflowJobTemplateDetails.replace(':id', '1')],
     });
 
-    cy.clickPageAction(/^Launch template$/);
+    cy.clickButton(/^Launch template$/);
 
     cy.wait('@getLaunchConfig');
     cy.wait('@launchJob');
@@ -85,7 +85,7 @@ describe('WorflowJobTemplatePage', () => {
       initialEntries: [RouteObj.WorkflowJobTemplateDetails.replace(':id', '1')],
     });
 
-    cy.clickPageAction(/^Launch template$/);
+    cy.clickButton(/^Launch template$/);
 
     cy.wait('@getLaunchConfig');
     cy.wait('@launchJob');
