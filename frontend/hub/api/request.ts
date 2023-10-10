@@ -2,7 +2,6 @@ import { createRequestError } from '../../common/crud/RequestError';
 import { getCookie } from '../../common/crud/cookie';
 import { TaskResponse } from '../tasks/Task';
 import { parseTaskResponse } from './utils';
-// import { TaskResponse } from '../api-schemas/generated/TaskResponse';
 
 interface Options {
   method: string;
