@@ -7,7 +7,7 @@ import {
   Tooltip,
 } from '@patternfly/react-core';
 import { AngleRightIcon, CopyIcon, DownloadIcon, UploadIcon } from '@patternfly/react-icons';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import {
   Controller,
@@ -20,7 +20,7 @@ import {
 } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { FormGroupTextInputProps, usePageAlertToaster } from '../..';
+import { usePageAlertToaster } from '../..';
 import { useClipboard } from '../../hooks/useClipboard';
 import { isJsonObject, isJsonString, jsonToYaml, yamlToJson } from '../../utils/codeEditorUtils';
 import { downloadTextFile } from '../../utils/download-file';
@@ -159,7 +159,16 @@ export type PageFormDataEditorInputProps<
   allowCopy?: boolean;
   allowDownload?: boolean;
   defaultExpanded?: boolean;
-} & Omit<FormGroupTextInputProps, 'onChange'>;
+
+  id?: string;
+  label?: string;
+  isReadOnly?: boolean;
+  isRequired?: boolean;
+
+  additionalControls?: ReactNode;
+  labelHelp?: ReactNode;
+  labelHelpTitle?: string;
+};
 
 export function PageFormDataEditor<
   TFieldValues extends FieldValues = FieldValues,

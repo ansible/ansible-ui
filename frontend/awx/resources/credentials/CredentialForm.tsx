@@ -9,20 +9,20 @@ import {
 } from '../../../../framework';
 import { PageFormTextArea } from '../../../../framework/PageForm/Inputs/PageFormTextArea';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
-import { PageForm, PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
+import { PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 import { RouteObj } from '../../../common/Routes';
 import { requestPatch } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { useActiveUser } from '../../../common/useActiveUser';
+import { AwxPageForm } from '../../AwxPageForm';
 import { AwxRoute } from '../../AwxRoutes';
 import { PageFormOrganizationSelect } from '../../access/organizations/components/PageFormOrganizationSelect';
 import { getOrganizationByName } from '../../access/organizations/utils/getOrganizationByName';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { Credential } from '../../interfaces/Credential';
 import { CredentialType } from '../../interfaces/CredentialType';
-import { getAwxError } from '../../useAwxView';
 
 interface CredentialForm extends Credential {
   user?: number;
@@ -34,26 +34,22 @@ export function CreateCredential() {
   const activeUser = useActiveUser();
   const postRequest = usePostRequest<Credential>();
   const getPageUrl = useGetPageUrl();
-  const onSubmit: PageFormSubmitHandler<CredentialForm> = async (credential, setError) => {
-    try {
-      if (credential.summary_fields.organization?.name) {
-        try {
-          const organization = await getOrganizationByName(
-            credential.summary_fields.organization.name
-          );
-          if (!organization) throw new Error(t('Organization not found.'));
-          credential.organization = organization.id;
-        } catch {
-          throw new Error(t('Organization not found.'));
-        }
-      } else {
-        credential.user = activeUser?.id;
+  const onSubmit: PageFormSubmitHandler<CredentialForm> = async (credential) => {
+    if (credential.summary_fields.organization?.name) {
+      try {
+        const organization = await getOrganizationByName(
+          credential.summary_fields.organization.name
+        );
+        if (!organization) throw new Error(t('Organization not found.'));
+        credential.organization = organization.id;
+      } catch {
+        throw new Error(t('Organization not found.'));
       }
-      const newCredential = await postRequest('/api/v2/credentials/', credential);
-      navigate(RouteObj.CredentialDetails.replace(':id', newCredential.id.toString()));
-    } catch (err) {
-      setError(getAwxError(err));
+    } else {
+      credential.user = activeUser?.id;
     }
+    const newCredential = await postRequest('/api/v2/credentials/', credential);
+    navigate(RouteObj.CredentialDetails.replace(':id', newCredential.id.toString()));
   };
   return (
     <PageLayout>
@@ -64,13 +60,13 @@ export function CreateCredential() {
           { label: t('Create Credential') },
         ]}
       />
-      <PageForm
+      <AwxPageForm
         submitText={t('Create credential')}
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
       >
         <CredentialInputs />
-      </PageForm>
+      </AwxPageForm>
     </PageLayout>
   );
 }
@@ -84,26 +80,22 @@ export function EditCredential() {
   const activeUser = useActiveUser();
   const getPageUrl = useGetPageUrl();
 
-  const onSubmit: PageFormSubmitHandler<CredentialForm> = async (editedCredential, setError) => {
-    try {
-      if (editedCredential.summary_fields.organization?.name) {
-        try {
-          const organization = await getOrganizationByName(
-            editedCredential.summary_fields.organization.name
-          );
-          if (!organization) throw new Error(t('Organization not found.'));
-          editedCredential.organization = organization.id;
-        } catch {
-          throw new Error(t('Organization not found.'));
-        }
-      } else {
-        editedCredential.user = activeUser?.id;
+  const onSubmit: PageFormSubmitHandler<CredentialForm> = async (editedCredential) => {
+    if (editedCredential.summary_fields.organization?.name) {
+      try {
+        const organization = await getOrganizationByName(
+          editedCredential.summary_fields.organization.name
+        );
+        if (!organization) throw new Error(t('Organization not found.'));
+        editedCredential.organization = organization.id;
+      } catch {
+        throw new Error(t('Organization not found.'));
       }
-      await requestPatch<Credential>(`/api/v2/credentials/${id}/`, editedCredential);
-      navigate(-1);
-    } catch (err) {
-      setError(getAwxError(err));
+    } else {
+      editedCredential.user = activeUser?.id;
     }
+    await requestPatch<Credential>(`/api/v2/credentials/${id}/`, editedCredential);
+    navigate(-1);
   };
   if (!credential) {
     return (
@@ -126,14 +118,14 @@ export function EditCredential() {
           { label: t('Edit Credential') },
         ]}
       />
-      <PageForm
+      <AwxPageForm
         submitText={t('Save credential')}
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
         defaultValue={credential}
       >
         <CredentialInputs />
-      </PageForm>
+      </AwxPageForm>
     </PageLayout>
   );
 }

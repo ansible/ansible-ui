@@ -17,7 +17,8 @@ import {
 } from './Resources/decision-environments/DecisionEnvironmentForm';
 import { DecisionEnvironments } from './Resources/decision-environments/DecisionEnvironments';
 import { CreateProject, EditProject } from './Resources/projects/EditProject';
-import { ProjectDetails } from './Resources/projects/ProjectDetails';
+import { ProjectDetails } from './Resources/projects/ProjectPage/ProjectDetails';
+import { ProjectPage } from './Resources/projects/ProjectPage/ProjectPage';
 import { Projects } from './Resources/projects/Projects';
 import { EditRole } from './UserAccess/Roles/EditRole';
 import { RoleDetails } from './UserAccess/Roles/RoleDetails';
@@ -158,7 +159,18 @@ export function useEdaNavigation() {
                   {
                     id: EdaRoute.ProjectPage,
                     path: 'details/:id',
-                    element: <ProjectDetails />,
+                    element: <ProjectPage />,
+                    children: [
+                      {
+                        id: EdaRoute.ProjectDetails,
+                        path: 'details',
+                        element: <ProjectDetails />,
+                      },
+                      {
+                        path: '',
+                        element: <Navigate to="details" />,
+                      },
+                    ],
                   },
                   {
                     path: '',

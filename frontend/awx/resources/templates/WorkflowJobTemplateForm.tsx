@@ -2,12 +2,13 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
-import { PageForm, PageFormSubmitHandler, PageHeader, PageLayout } from '../../../../framework';
+import { PageFormSubmitHandler, PageHeader, PageLayout } from '../../../../framework';
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
 import { RouteObj } from '../../../common/Routes';
 import { postRequest, requestGet, requestPatch } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
+import { AwxPageForm } from '../../AwxPageForm';
 import { AwxError } from '../../common/AwxError';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { getAddedAndRemoved } from '../../common/util/getAddedAndRemoved';
@@ -97,14 +98,14 @@ export function EditWorkflowJobTemplate() {
           { label: t('Edit Workflow Job Template') },
         ]}
       />
-      <PageForm<WorkflowJobTemplateForm>
+      <AwxPageForm<WorkflowJobTemplateForm>
         submitText={t('Save workflow job template')}
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
         defaultValue={defaultValues}
       >
         <WorkflowJobTemplateInputs workflowJobTemplate={defaultValues} />
-      </PageForm>
+      </AwxPageForm>
     </PageLayout>
   );
 }
@@ -149,14 +150,14 @@ export function CreateWorkflowJobTemplate() {
           { label: t('Create Workflow Job Template') },
         ]}
       />
-      <PageForm<WorkflowJobTemplateForm>
+      <AwxPageForm<WorkflowJobTemplateForm>
         submitText={t('Create workflow job template')}
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
         defaultValue={defaultValues}
       >
         <WorkflowJobTemplateInputs />
-      </PageForm>
+      </AwxPageForm>
     </PageLayout>
   );
 }

@@ -3,12 +3,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { PageHeader, PageLayout, useGetPageUrl } from '../../../../framework';
 import { PageFormTextArea } from '../../../../framework/PageForm/Inputs/PageFormTextArea';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
-import { PageForm, PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
+import { PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 import { RouteObj } from '../../../common/Routes';
 import { useGet } from '../../../common/crud/useGet';
 import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
+import { AwxPageForm } from '../../AwxPageForm';
 import { AwxRoute } from '../../AwxRoutes';
 import { Team } from '../../interfaces/Team';
 import { PageFormSelectOrganization } from '../organizations/components/PageFormOrganizationSelect';
@@ -32,9 +33,9 @@ export function CreateTeam() {
           { label: t('Create Team') },
         ]}
       />
-      <PageForm submitText={t('Create team')} onSubmit={onSubmit} onCancel={() => navigate(-1)}>
+      <AwxPageForm submitText={t('Create team')} onSubmit={onSubmit} onCancel={() => navigate(-1)}>
         <TeamInputs />
-      </PageForm>
+      </AwxPageForm>
     </PageLayout>
   );
 }
@@ -73,14 +74,14 @@ export function EditTeam() {
           { label: t('Edit Team') },
         ]}
       />
-      <PageForm
+      <AwxPageForm
         submitText={t('Save team')}
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
         defaultValue={team}
       >
         <TeamInputs />
-      </PageForm>
+      </AwxPageForm>
     </PageLayout>
   );
 }

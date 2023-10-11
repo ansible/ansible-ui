@@ -151,22 +151,3 @@ export function usePulpView<T extends object>({
     };
   }, [data, error, refresh, selection, view, unselectItemsAndRefresh]);
 }
-
-export function getAwxError(err: unknown) {
-  if (err instanceof RequestError) {
-    try {
-      const response = err.json as { __all__?: string[] };
-      if ('__all__' in response && Array.isArray(response.__all__)) {
-        return JSON.stringify(response.__all__[0]);
-      } else {
-        return JSON.stringify(response);
-      }
-    } catch {
-      return err.message;
-    }
-  } else if (err instanceof Error) {
-    return err.message;
-  } else {
-    return 'unknown error';
-  }
-}
