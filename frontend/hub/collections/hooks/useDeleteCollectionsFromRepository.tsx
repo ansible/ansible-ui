@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, TFunction } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../framework';
 import { postRequest, requestGet } from '../../../common/crud/Data';
 import { collectionKeyFn, parsePulpIDFromURL, pulpAPI } from '../../api/utils';
@@ -60,7 +60,7 @@ export function useDeleteCollectionsFromRepository(
         actionColumns,
         onComplete,
         actionFn: (collection: CollectionVersionSearch) => {
-          return deleteCollectionFromRepository(collection, version).then(() => {
+          return deleteCollectionFromRepository(collection, version, t).then(() => {
             if (detail) {
               return navigateAfterDelete(collection, version || false, navigate);
             }
@@ -74,9 +74,14 @@ export function useDeleteCollectionsFromRepository(
 
 async function deleteCollectionFromRepository(
   collection: CollectionVersionSearch,
-  version?: boolean
+  version?: boolean,
+  t?: TFunction<'translation', undefined>
 ) {
   let itemsToDelete: string[] = [];
+
+  if (!collection.repository) {
+    throw new Error(t?.('Collection is missing in the repositories'));
+  }
 
   if (!version) {
     // load all associated collection versions
