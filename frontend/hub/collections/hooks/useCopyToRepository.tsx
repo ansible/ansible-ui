@@ -49,8 +49,9 @@ function CopyToRepositoryModal(props: {
 
   const copyToRepositories = () => {
     setIsLoading(true);
-    try {
-      void (async () => {
+
+    void (async () => {
+      try {
         const { repository } = props.collection;
         if (!repository) {
           return;
@@ -95,11 +96,11 @@ function CopyToRepositoryModal(props: {
 
         setIsLoading(false);
         props.onClose();
-      })();
-    } catch (error) {
-      // TODO
-      setIsLoading(false);
-    }
+      } catch (error) {
+        // TODO
+        setIsLoading(false);
+      }
+    })();
   };
 
   useEffect(() => {
