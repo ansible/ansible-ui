@@ -132,7 +132,7 @@ jobs:
           install: false
           record: true
           parallel: true
-          auto-cancel-after-failures: 1
+          # auto-cancel-after-failures: 1
           config-file: cypress.awx.config.ts
         env:
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_AWX_CCT_PROJECT_ID }}
@@ -182,7 +182,7 @@ jobs:
           install: false
           record: true
           parallel: true
-          auto-cancel-after-failures: 1
+          # auto-cancel-after-failures: 1
           config-file: cypress.eda.config.ts
         env:
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_EDA_CCT_PROJECT_ID }}
@@ -232,7 +232,7 @@ jobs:
           install: false
           record: true
           parallel: true
-          auto-cancel-after-failures: 1
+          # auto-cancel-after-failures: 1
           config-file: cypress.hub.config.ts
         env:
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_HUB_CCT_PROJECT_ID }}
@@ -282,7 +282,7 @@ jobs:
           install: false
           record: true
           parallel: true
-          auto-cancel-after-failures: 1
+          # auto-cancel-after-failures: 1
           config-file: cypress.afw.config.ts
         env:
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_AFW_CCT_PROJECT_ID }}
@@ -433,7 +433,7 @@ jobs:
           wait-on: 'https://localhost:4101'
           record: true
           parallel: true
-          auto-cancel-after-failures: 1
+          # auto-cancel-after-failures: 1
           config-file: cypress.awx.config.ts
         env:
           AWX_SERVER: ${{ vars.AWX_SERVER }}
@@ -645,7 +645,7 @@ jobs:
           wait-on: 'https://localhost:4103'
           record: true
           parallel: true
-          auto-cancel-after-failures: 1
+          # auto-cancel-after-failures: 1
           config-file: cypress.eda.config.ts
         env:
           AWX_SERVER: ${{ vars.AWX_SERVER }}
