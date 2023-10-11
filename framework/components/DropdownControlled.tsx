@@ -1,7 +1,4 @@
-import {
-	Dropdown,
-	KebabToggle
-} from '@patternfly/react-core/deprecated';
+import { Dropdown, KebabToggle } from '@patternfly/react-core/deprecated';
 import { ReactNode, useCallback, useState } from 'react';
 
 export function DropdownControlled(props: { items: ReactNode[] }) {

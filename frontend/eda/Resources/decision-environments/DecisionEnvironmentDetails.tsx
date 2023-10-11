@@ -1,12 +1,5 @@
-import {
-	ButtonVariant,
-	PageSection,
-	Skeleton,
-	Stack
-} from '@patternfly/react-core';
-import {
-	DropdownPosition
-} from '@patternfly/react-core/deprecated';
+import { ButtonVariant, PageSection, Skeleton, Stack } from '@patternfly/react-core';
+import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';

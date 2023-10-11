@@ -1,35 +1,33 @@
 import {
-	Alert,
-	Breadcrumb,
-	BreadcrumbItem,
-	Button,
-	CodeBlock,
-	DescriptionList,
-	DescriptionListDescription,
-	DescriptionListGroup,
-	DescriptionListTerm,
-	Drawer,
-	DrawerActions,
-	DrawerCloseButton,
-	DrawerContent,
-	DrawerContentBody,
-	DrawerHead,
-	DrawerPanelBody,
-	DrawerPanelContent,
-	Label,
-	Nav,
-	NavExpandable,
-	NavItem,
-	NavList,
-	PageSection,
-	SearchInput,
-	Stack,
-	StackItem,
-	Title
+  Alert,
+  Breadcrumb,
+  BreadcrumbItem,
+  Button,
+  CodeBlock,
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  Drawer,
+  DrawerActions,
+  DrawerCloseButton,
+  DrawerContent,
+  DrawerContentBody,
+  DrawerHead,
+  DrawerPanelBody,
+  DrawerPanelContent,
+  Label,
+  Nav,
+  NavExpandable,
+  NavItem,
+  NavList,
+  PageSection,
+  SearchInput,
+  Stack,
+  StackItem,
+  Title,
 } from '@patternfly/react-core';
-import {
-	DropdownPosition
-} from '@patternfly/react-core/deprecated';
+import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { BarsIcon, CheckCircleIcon, ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { Table /* data-codemods */, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { DateTime } from 'luxon';
@@ -400,7 +398,7 @@ function CollectionDocumentationTabContent(props: {
   const { content, isDrawerOpen, setDrawerOpen } = props;
   return (
     <>
-      <PageSection variant="light" >
+      <PageSection variant="light">
         <Stack hasGutter>
           <Breadcrumb>
             {!isDrawerOpen && (

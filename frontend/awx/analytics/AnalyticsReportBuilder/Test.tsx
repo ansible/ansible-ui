@@ -13,11 +13,7 @@ import {
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { useState } from 'react';
-import {
-	Select,
-	SelectOption,
-	SelectOptionObject
-} from '@patternfly/react-core/deprecated';
+import { Select, SelectOption, SelectOptionObject } from '@patternfly/react-core/deprecated';
 
 import { reportDefaultParams, allDefaultParams } from './constants';
 

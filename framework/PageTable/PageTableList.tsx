@@ -1,23 +1,21 @@
 import {
-	DataList,
-	DataListAction,
-	DataListCell,
-	DataListCheck,
-	DataListItem,
-	DataListItemCells,
-	DataListItemRow,
-	DescriptionList,
-	DescriptionListDescription,
-	DescriptionListGroup,
-	DescriptionListTerm,
-	Flex,
-	Stack,
-	Text,
-	Title
+  DataList,
+  DataListAction,
+  DataListCell,
+  DataListCheck,
+  DataListItem,
+  DataListItemCells,
+  DataListItemRow,
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+  Flex,
+  Stack,
+  Text,
+  Title,
 } from '@patternfly/react-core';
-import {
-	DropdownPosition
-} from '@patternfly/react-core/deprecated';
+import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { ReactNode, useCallback, useMemo } from 'react';
 import { IPageAction } from '../PageActions/PageAction';
 import { PageActions } from '../PageActions/PageActions';

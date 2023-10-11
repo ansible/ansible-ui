@@ -1,13 +1,6 @@
 import React, { FunctionComponent } from 'react';
-import {
-	SplitItem,
-	ToolbarGroup,
-	Split,
-	ToolbarGroupVariant
-} from '@patternfly/react-core';
-import {
-	SelectOptionProps
-} from '@patternfly/react-core/deprecated';
+import { SplitItem, ToolbarGroup, Split, ToolbarGroupVariant } from '@patternfly/react-core';
+import { SelectOptionProps } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 
 import ToolbarInput from './ToolbarInput';

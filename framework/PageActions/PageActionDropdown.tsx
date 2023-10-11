@@ -1,14 +1,11 @@
+import { ButtonVariant, Tooltip } from '@patternfly/react-core';
 import {
-	ButtonVariant,
-	Tooltip
-} from '@patternfly/react-core';
-import {
-	Dropdown,
-	DropdownItem,
-	DropdownPosition,
-	DropdownSeparator,
-	DropdownToggle,
-	KebabToggle
+  Dropdown,
+  DropdownItem,
+  DropdownPosition,
+  DropdownSeparator,
+  DropdownToggle,
+  KebabToggle,
 } from '@patternfly/react-core/deprecated';
 import { CircleIcon } from '@patternfly/react-icons';
 import { ComponentClass, FunctionComponent, useEffect, useMemo, useState } from 'react';

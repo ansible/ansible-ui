@@ -1,10 +1,6 @@
 import React, { FunctionComponent, useState } from 'react';
-import {
-	ToolbarGroup
-} from '@patternfly/react-core';
-import {
-	SelectOptionProps
-} from '@patternfly/react-core/deprecated';
+import { ToolbarGroup } from '@patternfly/react-core';
+import { SelectOptionProps } from '@patternfly/react-core/deprecated';
 
 import CategoryDropdown from './CategoryDropdown';
 import ToolbarInput from './ToolbarInput';

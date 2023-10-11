@@ -1,11 +1,5 @@
-import {
-	ToolbarGroup,
-	ToolbarGroupVariant
-} from '@patternfly/react-core';
-import {
-	SelectOptionObject,
-	SelectVariant
-} from '@patternfly/react-core/deprecated';
+import { ToolbarGroup, ToolbarGroupVariant } from '@patternfly/react-core';
+import { SelectOptionObject, SelectVariant } from '@patternfly/react-core/deprecated';
 import { ToolbarFilterCommon } from '../../../../../framework/PageToolbar/PageToolbarFilters/ToolbarFilterCommon';
 import { ToolbarSelectFilterDeprecated } from './ToolbarSelectFilterDeprecated';
 import { ToolbarDateFilter } from './ToolbarDateFilter';

@@ -1,5 +1,12 @@
 import React, { FunctionComponent } from 'react';
-import { Table /* data-codemods */, TableVariant, Tbody, Th, Thead, Tr } from '@patternfly/react-table';
+import {
+  Table /* data-codemods */,
+  TableVariant,
+  Tbody,
+  Th,
+  Thead,
+  Tr,
+} from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import Row from './Row';
 import { ChartLegendEntry } from '@ansible/react-json-chart-builder';

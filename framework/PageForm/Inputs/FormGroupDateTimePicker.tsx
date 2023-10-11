@@ -5,7 +5,8 @@ import {
   yyyyMMddFormat,
   TimePicker,
   TimePickerProps,
-  InputGroup, InputGroupItem,
+  InputGroup,
+  InputGroupItem,
 } from '@patternfly/react-core';
 
 import React, { FormEvent } from 'react';
@@ -47,19 +48,23 @@ export function FormGroupDateTimePicker(props: FormGroupDateTimePickerProps) {
   return (
     <PageFormGroup {...props}>
       <InputGroup>
-        <InputGroupItem><DatePicker
-          isDisabled={props.isDisabled}
-          placeholder={datePlaceHolder}
-          value={dateValue}
-          onChange={handleDateChange}
-        /></InputGroupItem>
-        <InputGroupItem><TimePicker
-          isDisabled={props.isDisabled}
-          placeholder={timePlaceHolder}
-          time={timeValue}
-          inputProps={{ value: timeValue ?? '' }}
-          onChange={onTimeChange}
-        /></InputGroupItem>
+        <InputGroupItem>
+          <DatePicker
+            isDisabled={props.isDisabled}
+            placeholder={datePlaceHolder}
+            value={dateValue}
+            onChange={handleDateChange}
+          />
+        </InputGroupItem>
+        <InputGroupItem>
+          <TimePicker
+            isDisabled={props.isDisabled}
+            placeholder={timePlaceHolder}
+            time={timeValue}
+            inputProps={{ value: timeValue ?? '' }}
+            onChange={onTimeChange}
+          />
+        </InputGroupItem>
       </InputGroup>
     </PageFormGroup>
   );

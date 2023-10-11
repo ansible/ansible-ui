@@ -1,6 +1,4 @@
-import {
-	SelectOptionObject
-} from '@patternfly/react-core/deprecated';
+import { SelectOptionObject } from '@patternfly/react-core/deprecated';
 
 export type AttributeType = string | string[] | SelectOptionObject | SelectOptionObject[] | boolean;
 

@@ -1,9 +1,5 @@
-import {
-	ButtonVariant
-} from '@patternfly/react-core';
-import {
-	DropdownPosition
-} from '@patternfly/react-core/deprecated';
+import { ButtonVariant } from '@patternfly/react-core';
+import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { PencilAltIcon, SyncAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';

@@ -1,8 +1,8 @@
 import {
-	Select,
-	SelectOption,
-	SelectOptionObject,
-	SelectVariant
+  Select,
+  SelectOption,
+  SelectOptionObject,
+  SelectVariant,
 } from '@patternfly/react-core/deprecated';
 import { useEffect, useState } from 'react';
 
