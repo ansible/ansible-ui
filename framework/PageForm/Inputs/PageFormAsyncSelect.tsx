@@ -256,7 +256,7 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
   );
   return (
     <InputGroup>
-      <InputGroupItem>
+      <InputGroupItem isFill>
         <Select
           toggleId={id}
           ouiaId="menu-select"

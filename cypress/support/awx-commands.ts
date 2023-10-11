@@ -24,7 +24,7 @@ import './rest-commands';
 //  AWX related custom command implementation
 
 Cypress.Commands.add('getCheckboxByLabel', (label: string | RegExp) => {
-  cy.contains('.pf-c-check__label', label)
+  cy.contains('.pf-v5-c-check__label', label)
     .invoke('attr', 'for')
     .then((id: string | undefined) => {
       if (id) {
@@ -64,7 +64,7 @@ Cypress.Commands.add(
     }
 
     if (isSelected) {
-      cy.contains('.pf-c-form__label-text', label)
+      cy.contains('.pf-v5-c-form__label-text', label)
         .parent()
         .parent()
         .parent()
@@ -75,31 +75,25 @@ Cypress.Commands.add(
     } else if (text) {
       switch (label) {
         case 'Inventory':
-          cy.get('input[placeholder="Select inventory"]')
-            .parent()
-            .parent()
-            .within(() => {
-              cy.get('button[aria-label="Options menu"]').click();
+          cy.get('#inventory-form-group').within(() => {
+            cy.get('.pf-v5-c-select__toggle').click();
+            cy.get('.pf-v5-c-select__menu').within(() => {
+              cy.contains('.pf-v5-c-select__menu-item', text).click();
             });
-          cy.get('.pf-c-select__menu').within(() => {
-            cy.contains('button', text).click();
           });
+
           break;
         case 'Execution environment':
-          cy.get('input[placeholder="Add execution environment"]')
-            .parent()
-            .within(() => {
-              cy.get('button[aria-label="Options menu"]').click();
-            });
+          cy.get('#execution-environment-select-form-group').within(() => {
+            cy.get('button[aria-label="Options menu"]').click();
+          });
           cy.selectTableRowInDialog(text, true).click();
           cy.clickModalButton('Confirm');
           break;
         case 'Credentials':
-          cy.get('input[placeholder="Add credentials"]')
-            .parent()
-            .within(() => {
-              cy.get('button[aria-label="Options menu"]').click();
-            });
+          cy.get('#credential-select-form-group').within(() => {
+            cy.get('button[aria-label="Options menu"]').click();
+          });
           cy.selectTableRowInDialog(text, true).click();
           cy.clickModalButton('Confirm');
           break;

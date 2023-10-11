@@ -26,7 +26,7 @@ import './commands';
 /*  EDA related custom command implementation  */
 
 Cypress.Commands.add('selectEdaUserRoleByName', (roleName: string) => {
-  cy.contains('.pf-c-form__label-text', 'Role(s)')
+  cy.contains('.pf-v5-c-form__label-text', 'Role(s)')
     .parent()
     .parent()
     .parent()
@@ -73,7 +73,10 @@ Cypress.Commands.add('edaRuleBookActivationCheckbox', (rbaName: string) => {
 
 Cypress.Commands.add('edaRuleBookActivationActionsModal', (action: string, rbaName: string) => {
   cy.get('div[role="dialog"]').within(() => {
-    cy.get('.pf-c-check__label').should('contain', `Yes, I confirm that I want to ${action} these`);
+    cy.get('.pf-v5-c-check__label').should(
+      'contain',
+      `Yes, I confirm that I want to ${action} these`
+    );
     cy.get('a').should('contain', rbaName);
     cy.get('input[id="confirm"]').click();
   });

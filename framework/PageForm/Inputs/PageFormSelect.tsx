@@ -170,10 +170,9 @@ export function PageFormSelect<
           >
             <Select
               id={id}
-              label={undefined}
               placeholderText={placeholderText}
               variant="single"
-              aria-describedby={id ? `${id}-form-group` : undefined}
+              aria-describedby={`${id}-form-group`}
               selections={selected?.label}
               onSelect={onSelectHandler}
               isOpen={open}

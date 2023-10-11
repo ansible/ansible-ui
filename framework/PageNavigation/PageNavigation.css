@@ -1,11 +1,7 @@
-.side-nav .pf-c-nav__item ::before {
-  content: unset;
+.side-nav .pf-v5-c-nav__list {
+  padding: 0;
 }
 
-.side-nav .pf-c-nav__item.pf-m-expandable::before {
-  content: unset;
-}
-
-.side-nav.pf-c-nav > .pf-c-nav__list > .pf-c-nav__item {
+.side-nav.pf-v5-c-nav > .pf-v5-c-nav__list > .pf-v5-c-nav__item {
   border-bottom: 1px solid #fff3;
 }
