@@ -262,7 +262,7 @@ Cypress.Commands.add('createEdaCredential', () => {
 });
 
 Cypress.Commands.add('deleteEdaCredential', (credential: EdaCredential) => {
-  cy.requestDelete(`/api/eda/v1/credentials/${credential.id}/`, {
+  cy.requestDelete(`/api/eda/v1/credentials/${credential.id}/?force=true`, {
     failOnStatusCode: false,
   }).then(() => {
     Cypress.log({
@@ -465,7 +465,7 @@ Cypress.Commands.add(
   'deleteEdaDecisionEnvironment',
   (decisionEnvironment: EdaDecisionEnvironment) => {
     //cy.waitEdaDESync(decisionEnvironment);
-    cy.requestDelete(`/api/eda/v1/decision-environments/${decisionEnvironment.id}/`, {
+    cy.requestDelete(`/api/eda/v1/decision-environments/${decisionEnvironment.id}/?force=true`, {
       failOnStatusCode: false,
     }).then(() => {
       Cypress.log({

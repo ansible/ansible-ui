@@ -15,6 +15,7 @@ import { PageNavigationItem } from './PageNavigationItem';
 export function PageNavigation(props: { navigation: PageNavigationItem[] }) {
   const { navigation: navigationItems } = props;
   const navBar = usePageNavSideBar();
+
   return (
     <>
       <PageSidebar isSidebarOpen={navBar.isOpen} className="bg-lighten-2">
@@ -65,23 +66,11 @@ function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRout
   route = route.replace('//', '/');
   if (item.path === '/' && 'children' in item) {
     return <PageNavigationItems items={item.children} baseRoute={''} />;
-  } else if (
-    'children' in item &&
-    item.children.find((child) => child.label !== undefined) !== undefined
-  ) {
-    if (item.label === undefined) return <></>;
-    if (item.label === '') return <PageNavigationItems items={item.children} baseRoute={route} />;
-    return (
-      <NavExpandable
-        title={item.label}
-        isActive={location.pathname.startsWith(route)}
-        isExpanded={isExpanded}
-        onExpand={(_e, expanded: boolean) => setExpanded(expanded)}
-      >
-        <PageNavigationItems items={item.children} baseRoute={route} />
-      </NavExpandable>
-    );
-  } else if ('label' in item) {
+  }
+
+  const hasChildNavItems = 'children' in item && item.children?.find((child) => child.label);
+
+  if (!hasChildNavItems && 'label' in item) {
     const isActive = location.pathname.startsWith(route);
     return (
       <NavItem
@@ -96,5 +85,23 @@ function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRout
       </NavItem>
     );
   }
-  return <></>;
+
+  if (!hasChildNavItems || item.label === undefined) {
+    return null;
+  }
+
+  if (!item.label) {
+    return <PageNavigationItems items={item.children} baseRoute={route} />;
+  }
+
+  return (
+    <NavExpandable
+      title={item.label}
+      isActive={location.pathname.startsWith(route)}
+      isExpanded={isExpanded}
+      onExpand={(_e, expanded: boolean) => setExpanded(expanded)}
+    >
+      <PageNavigationItems items={item.children} baseRoute={route} />
+    </NavExpandable>
+  );
 }
