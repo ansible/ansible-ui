@@ -214,5 +214,5 @@ export interface JobTemplate
   webhook_url: string;
   webhook_key: string;
   webhook_service: 'github' | 'gitlab';
-  project: number;
+  project: number | null;
 }
