@@ -77,6 +77,11 @@ export interface WorkflowJobTemplate
         name: string;
         id: number;
       };
+      admin_role: {
+        description: string;
+        name: string;
+        id: number;
+      };
     };
     recent_jobs:
       | { id: number; status: string; finished: null; canceled_on: null; type: string }[]
