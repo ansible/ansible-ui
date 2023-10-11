@@ -1,10 +1,8 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { PageHeader, PageLayout, useGetPageUrl } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
-import { PageNotImplemented } from '../../../../common/PageNotImplemented';
-import { PageBackTab, RoutedTab, RoutedTabs } from '../../../../common/RoutedTabs';
+import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
 import { AwxError } from '../../../common/AwxError';
@@ -34,19 +32,18 @@ export function ApplicationPage() {
         ]}
         headerActions={[]}
       />
-      <RoutedTabs isLoading={!application} baseUrl={getPageUrl(AwxRoute.ApplicationPage)}>
-        <PageBackTab
-          label={t('Back to Applications')}
-          url={getPageUrl(AwxRoute.Applications)}
-          persistentFilterKey="applications"
-        />
-        <RoutedTab label={t('Details')} url={getPageUrl(AwxRoute.ApplicationPage) + 'details'}>
-          <PageNotImplemented />
-        </RoutedTab>
-        <RoutedTab label={t('Tokens')} url={getPageUrl(AwxRoute.ApplicationPage) + 'tokens'}>
-          <PageNotImplemented />
-        </RoutedTab>
-      </RoutedTabs>
+      <PageRoutedTabs
+        backTab={{
+          label: t('Back to Applications'),
+          page: AwxRoute.Applications,
+          persistentFilterKey: 'applications',
+        }}
+        tabs={[
+          { label: t('Details'), page: AwxRoute.ApplicationDetails },
+          { label: t('Tokens'), page: AwxRoute.ApplicationTokens },
+        ]}
+        params={{ id: application.id }}
+      />
     </PageLayout>
   );
 }

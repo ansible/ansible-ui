@@ -1016,8 +1016,20 @@ export function useAwxNavigation() {
                 children: [
                   {
                     id: AwxRoute.ApplicationPage,
-                    path: ':id/*',
+                    path: ':id',
                     element: <ApplicationPage />,
+                    children: [
+                      {
+                        id: AwxRoute.ApplicationDetails,
+                        path: 'details',
+                        element: <PageNotImplemented />,
+                      },
+                      {
+                        id: AwxRoute.ApplicationTokens,
+                        path: 'tokens',
+                        element: <PageNotImplemented />,
+                      },
+                    ],
                   },
                   {
                     path: '',

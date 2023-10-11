@@ -167,6 +167,8 @@ export enum AwxRoute {
 
   Applications = 'awx-applications',
   ApplicationPage = 'awx-application-page',
+  ApplicationDetails = 'awx-application-details',
+  ApplicationTokens = 'awx-application-tokens',
 
   ExecutionEnvironments = 'awx-execution-environments',
 
