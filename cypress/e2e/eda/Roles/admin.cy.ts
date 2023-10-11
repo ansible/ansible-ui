@@ -47,9 +47,9 @@ describe('Admin EDA Role - Resource types and permissions', () => {
     cy.contains('dd#description', 'Has all permissions').should('be.visible');
     cy.get('dd#permissions').within(() => {
       adminResourceTypes.forEach((resource) => {
-        cy.contains('dt span.pf-c-description-list__text', resource);
+        cy.contains('dt span.pf-v5-c-description-list__text', resource);
       });
-      cy.get('dt span.pf-c-description-list__text').should(
+      cy.get('dt span.pf-v5-c-description-list__text').should(
         'have.length',
         `${resourceAndActionsArray}`
       );

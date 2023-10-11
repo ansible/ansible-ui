@@ -137,7 +137,10 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
             'contain',
             'There are currently no jobs'
           );
-          cy.contains('div.pf-c-empty-state__body', 'Create a job by clicking the button below.');
+          cy.contains(
+            'div.pf-v5-c-empty-state__body',
+            'Create a job by clicking the button below.'
+          );
           cy.clickButton(/^Create job$/);
           cy.get('[data-cy="Create Job Template"]').should('contain', 'Create Job Template');
         } else if (results.count >= 1) {
@@ -169,7 +172,10 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
             'contain',
             'There are currently no projects'
           );
-          cy.contains('div.pf-c-empty-state__body', 'Create a job by clicking the button below.');
+          cy.contains(
+            'div.pf-v5-c-empty-state__body',
+            'Create a job by clicking the button below.'
+          );
           cy.clickButton(/^Create project$/);
           cy.verifyPageTitle('Create Project');
         } else if (results.count >= 1) {
@@ -205,7 +211,7 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
             'There are currently no inventories'
           );
           cy.contains(
-            'div.pf-c-empty-state__body',
+            'div.pf-v5-c-empty-state__body',
             'Create an inventory by clicking the button below.'
           );
           cy.clickButton(/^Create inventory$/);

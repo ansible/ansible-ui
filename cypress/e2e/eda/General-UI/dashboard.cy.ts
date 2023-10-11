@@ -67,7 +67,7 @@ describe('EDA Dashboard', () => {
         if (results.length === 0) {
           cy.verifyPageTitle('There are currently no projects');
           cy.contains(
-            'div.pf-c-empty-state__body',
+            'div.pf-v5-c-empty-state__body',
             'Create a project by clicking the button below.'
           );
           cy.clickButton(/^Create project$/);
@@ -92,7 +92,7 @@ describe('EDA Dashboard', () => {
           cy.contains('h3', 'Rulebook Activations').scrollIntoView();
           cy.verifyPageTitle('There are currently no rulebook activations');
           cy.contains(
-            'div.pf-c-empty-state__body',
+            'div.pf-v5-c-empty-state__body',
             'Create a rulebook activation by clicking the button below.'
           );
           cy.clickButton(/^Create rulebook activation$/);
@@ -117,7 +117,7 @@ describe('EDA Dashboard', () => {
         if (results.length === 0) {
           cy.verifyPageTitle('There are currently no decision environments');
           cy.contains(
-            'div.pf-c-empty-state__body',
+            'div.pf-v5-c-empty-state__body',
             'Create a decision environment by clicking the button below.'
           );
           cy.clickButton(/^Create decision environment$/);

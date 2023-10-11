@@ -290,7 +290,7 @@ Cypress.Commands.add('getEdaRoles', () => {
 
 Cypress.Commands.add('checkActionsofResource', (resourceType: string) => {
   return cy
-    .contains('dt.pf-c-description-list__term', resourceType)
+    .contains('dt.pf-v5-c-description-list__term', resourceType)
     .next()
     .then((result) => {
       cy.wrap(result);
@@ -299,7 +299,7 @@ Cypress.Commands.add('checkActionsofResource', (resourceType: string) => {
 
 Cypress.Commands.add('checkResourceNameAndAction', (resourceTypes: string[], actions: string[]) => {
   resourceTypes.forEach((resource) => {
-    cy.contains('dt.pf-c-description-list__term', resource)
+    cy.contains('dt.pf-v5-c-description-list__term', resource)
       .next()
       .within(() => {
         actions.forEach((action) => {

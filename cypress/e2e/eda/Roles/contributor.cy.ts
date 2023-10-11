@@ -49,9 +49,12 @@ describe('Contributor EDA Role - Resource types and permissions', () => {
 
     cy.get('dd#permissions').within(() => {
       contributorResourceTypes.forEach((resource) => {
-        cy.contains('dt span.pf-c-description-list__text', resource);
+        cy.contains('dt span.pf-v5-c-description-list__text', resource);
       });
-      cy.get('.pf-c-description-list__group').should('have.length', `${resourceAndActionsArray}`);
+      cy.get('.pf-v5-c-description-list__group').should(
+        'have.length',
+        `${resourceAndActionsArray}`
+      );
     });
     cy.checkActionsofResource('Activation').within(() => {
       cy.contains(contributorActions[0]);

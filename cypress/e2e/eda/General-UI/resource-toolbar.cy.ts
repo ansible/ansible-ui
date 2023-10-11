@@ -40,7 +40,7 @@ describe('EDA Resource Toolbar Functionality', () => {
     cy.get('.pf-c-nav__link').contains('Rulebook Activations').click();
     cy.get('h1').should('contain', 'Rulebook Activations');
     cy.get('.pf-c-page__main-section').then(($ele) => {
-      if ($ele.find('.pf-c-empty-state').length > 0) {
+      if ($ele.find('.pf-v5-c-empty-state').length > 0) {
         cy.contains('button', 'Create rulebook activation').should('exist');
       } else if ($ele.find('tbody').length > 0) {
         cy.contains('button', 'Create rulebook activation').should('exist');
