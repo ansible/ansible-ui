@@ -3,7 +3,7 @@ import { usePageWizard } from './PageWizardProvider';
 
 export default function PageWizardNavigation() {
   const { activeStep, steps, isToggleExpanded, setActiveStep, stepError } = usePageWizard();
-  const navClassName = isToggleExpanded ? 'pf-c-wizard__nav pf-m-expanded' : 'pf-c-wizard__nav';
+  const navClassName = isToggleExpanded ? 'pf-v5-c-wizard__nav pf-m-expanded' : 'pf-c-wizard__nav';
 
   const goToStepByIndex = (index: number) => {
     const step = steps[index];
@@ -16,19 +16,19 @@ export default function PageWizardNavigation() {
 
   return (
     <nav className={navClassName} aria-label="Steps" data-cy="wizard-nav">
-      <ol className="pf-c-wizard__nav-list">
+      <ol className="pf-v5-c-wizard__nav-list">
         {steps.map((step, index) => {
           const activeStepIndex = steps.findIndex((step) => step.id === activeStep.id);
           const isDisabled = index > activeStepIndex;
 
           const className =
-            'pf-c-wizard__nav-link' + // eslint-disable-line i18next/no-literal-string
+            'pf-v5-c-wizard__nav-link' + // eslint-disable-line i18next/no-literal-string
             (activeStep.id === step.id ? ' pf-m-current' : '') + // eslint-disable-line i18next/no-literal-string
             (isDisabled ? ' pf-m-disabled' : ''); // eslint-disable-line i18next/no-literal-string
 
           return (
             <li
-              className="pf-c-wizard__nav-item"
+              className="pf-v5-c-wizard__nav-item"
               data-cy={`wizard-nav-item-${step.id}`}
               key={step.id}
             >

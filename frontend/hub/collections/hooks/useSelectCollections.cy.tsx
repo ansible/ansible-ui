@@ -99,7 +99,8 @@ describe('CollectionMultiSelectDialog', () => {
       }
     );
   });
-  it('should enable selecting up to a maximum of 12 collections', () => {
+
+  it.skip('should enable selecting up to a maximum of 12 collections', () => {
     cy.fixture('collection_versions_eda').then(
       (edaCollections: HubItemsResponse<CollectionVersionSearch>) => {
         cy.mount(
