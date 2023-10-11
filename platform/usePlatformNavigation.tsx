@@ -61,7 +61,7 @@ export function usePlatformNavigation(services: Service[]) {
   // Utilities
   const activityStream = removeNavigationItemById(awx, AwxRoute.ActivityStream);
   const signatureKeys = removeNavigationItemById(hub, HubRoute.SignatureKeys);
-  const reposiitories = removeNavigationItemById(hub, HubRoute.Repositories);
+  const repositories = removeNavigationItemById(hub, HubRoute.Repositories);
   const remotes = removeNavigationItemById(hub, HubRoute.Remotes);
   const remoteRegistries = removeNavigationItemById(hub, HubRoute.RemoteRegistries);
   const tasks = removeNavigationItemById(hub, HubRoute.Tasks);
@@ -91,41 +91,42 @@ export function usePlatformNavigation(services: Service[]) {
       {
         label: t('Automation Execution'),
         path: 'execution',
-        children: [jobs, templates, schedules, executionEnvironments],
+        children: childRoutes([jobs, templates, schedules, executionEnvironments]),
       },
       {
         label: t('Automation Decisions'),
         path: 'automation-decisions',
-        children: [ruleAudits, rulebookActivations, decisionEnvironments],
+        children: childRoutes([ruleAudits, rulebookActivations, decisionEnvironments]),
       },
       {
         label: t('Automation Infrastructure'),
         path: 'mesh',
-        children: [topology, instanceGroups, instances, inventories, hosts],
+        children: childRoutes([topology, instanceGroups, instances, inventories, hosts]),
       },
       {
         label: t('Automation Content'),
         path: 'content',
-        children: [namespaces, collections],
+        children: childRoutes([namespaces, collections]),
       },
       analytics,
       {
         label: t('Automation Credentials'),
         path: 'keys',
-        children: [
+        children: childRoutes([
           credentials,
           credentialTypes,
           {
             id: 'API Tokens',
             label: 'API Tokens',
             path: 'tokens',
+            children: [],
           },
-        ],
+        ]),
       },
       {
         label: t('Access Management'),
         path: 'access',
-        children: [organizations, teams, users],
+        children: childRoutes([organizations, teams, users]),
       },
       {
         id: 'lightspeed',
@@ -141,10 +142,10 @@ export function usePlatformNavigation(services: Service[]) {
       {
         label: t('Utilities'),
         path: 'utilities',
-        children: [
+        children: childRoutes([
           activityStream,
           signatureKeys,
-          reposiitories,
+          repositories,
           remotes,
           remoteRegistries,
           tasks,
@@ -152,10 +153,10 @@ export function usePlatformNavigation(services: Service[]) {
           notificationTemplates,
           managementJobs,
           applications,
-        ],
+        ]),
       },
-    ];
-    return navigationItems.filter((item) => item !== undefined) as PageNavigationItem[];
+    ] as PageNavigationItem[];
+    return navigationItems.filter(filterItems);
   }, [
     activityStream,
     analytics,
@@ -178,7 +179,7 @@ export function usePlatformNavigation(services: Service[]) {
     projects,
     remoteRegistries,
     remotes,
-    reposiitories,
+    repositories,
     ruleAudits,
     rulebookActivations,
     schedules,
@@ -191,4 +192,18 @@ export function usePlatformNavigation(services: Service[]) {
     users,
   ]);
   return pageNavigationItems;
+}
+
+function childRoutes(items: (PageNavigationItem | undefined)[]) {
+  return items.filter((item) => item !== undefined);
+}
+
+function filterItems(item: PageNavigationItem | undefined) {
+  if (item === undefined) {
+    return false;
+  }
+  if ('children' in item && !item.children.length) {
+    return false;
+  }
+  return true;
 }
