@@ -58,6 +58,19 @@ Cypress.Commands.add('selectDropdownOptionByResourceName', (resource: string, it
   });
 });
 
+Cypress.Commands.add('selectItemFromLookupModal', (resource: string, itemName: string) => {
+  cy.get(`[data-cy*="${resource}-form-group"]`).within(() => {
+    cy.get('button').eq(1).click();
+  });
+  cy.get('[data-ouia-component-type="PF4/ModalContent"]').within(() => {
+    cy.searchAndDisplayResource(itemName);
+    cy.get('[data-ouia-component-id="simple-table"] tbody').within(() => {
+      cy.get('[data-cy="checkbox-column-cell"]').click();
+    });
+    cy.clickButton(/^Confirm/);
+  });
+});
+
 Cypress.Commands.add(
   'selectPromptOnLaunchByLabel',
   (label: string | RegExp, isSelected?: boolean, text?: string) => {
@@ -247,21 +260,6 @@ Cypress.Commands.add('selectTableRow', (name: string | RegExp, filter?: boolean)
 Cypress.Commands.add('getDialog', () => {
   cy.get('div[data-ouia-component-type="PF4/ModalContent"]');
 });
-
-Cypress.Commands.add(
-  'selectRowItemInFormGroupLookupModal',
-  (label: string | RegExp, rowItem: string) => {
-    cy.getFormGroupByLabel(label)
-      .within(() => {
-        cy.get('button[aria-label="Options menu"]').click();
-      })
-      .then(() => {
-        cy.selectTableRowInDialog(rowItem, true);
-      });
-
-    cy.clickModalButton('Confirm');
-  }
-);
 
 Cypress.Commands.add('selectTableRowInDialog', (name: string | RegExp, filter?: boolean) => {
   cy.getDialog().within(() => {

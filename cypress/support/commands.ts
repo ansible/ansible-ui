@@ -167,6 +167,8 @@ declare global {
         filter?: boolean
       ): Chainable<void>;
 
+      selectItemFromLookupModal(resource: string, itemName: string): Chainable<void>;
+
       /**
        * Finds a list card containing text and clicks action specified by label.
        * @param name
