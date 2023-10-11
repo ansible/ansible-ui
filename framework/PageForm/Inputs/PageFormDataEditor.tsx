@@ -34,11 +34,6 @@ const ToggleGroupItem = styled(PFToggleGroupItem)`
   }
 `;
 
-const ErrorWrapper = styled.p`
-  color: var(--pf-c-form__helper-text--m-error--Color);
-  font-size: var(--pf-c-form__helper-text--FontSize);
-`;
-
 function ActionsRow(props: {
   handleCopy: () => void;
   handleDownload: () => void;
