@@ -42,12 +42,15 @@ export interface LaunchConfiguration {
     diff_mode: false;
     job_type: 'run' | 'check';
     verbosity: '0' | '1' | '2' | '3' | '4' | '5';
-    credentials?: [
+    credentials: [
       {
         id: number;
         name: string;
         credential_type: number;
         passwords_needed: string[];
+        inputs: {
+          [key: string]: string;
+        };
       },
     ];
     execution_environment: { id: number; name: string } | undefined | null;
