@@ -66,14 +66,17 @@ declare global {
       /** Get a checkbox by its label. */
       getCheckboxByLabel(label: string | RegExp): Chainable<JQuery<HTMLElement>>;
 
-      /** Finds a dropdown/select component by its dropdownLabel and clicks on the option specified by dropdownOptionLabel.*/
-      selectDropdownOptionByResourceName(resource: string, itemName: string): Chainable<void>;
-
-      /** Finds a dropdown/select component by its dropdownLabel and clicks on the option specified by dropdownOptionLabel.*/
-      selectPromptOnLaunchByLabel(
-        label: string | RegExp,
-        isSelected?: boolean,
-        text?: string
+      /**
+       * @param {String} resource: The name of a resource. IE: credentials, execution-environments, etc.
+       * @param {String} itemName: The specific name of that resource.
+       * @param {Boolean} spyglass: This is an optional boolean value, and will default to false. Set as a third param
+       * to 'true' if the formgroup contains a spyglass to be clicked on.
+       * Finds a dropdown/select component by its data-cy form-group and clicks on the option
+       * specified.*/
+      selectDropdownOptionByResourceName(
+        resource: string,
+        itemName: string,
+        spyglass?: boolean
       ): Chainable<void>;
 
       singleSelectShouldHaveSelectedOption(

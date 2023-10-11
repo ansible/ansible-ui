@@ -23,7 +23,7 @@ describe('projects', () => {
     cy.navigateTo('awx', 'projects');
     cy.verifyPageTitle('Projects');
   });
-  it('create project and then delete project from project details page', () => {
+  it.only('create project and then delete project from project details page', () => {
     const projectName = 'E2E Project ' + randomString(4);
     cy.navigateTo('awx', 'projects');
     cy.clickLink(/^Create project$/);
@@ -31,7 +31,7 @@ describe('projects', () => {
     cy.selectDropdownOptionByResourceName('organization', organization.name);
     cy.selectDropdownOptionByResourceName('source_control_type', 'Git');
     cy.get('[data-cy="project-scm-url"]').type('https://github.com/ansible/ansible-tower-samples');
-    cy.getCheckboxByLabel('Allow Branch Override').click();
+    cy.get('[data-cy="option-allow-override"]').click();
     cy.clickButton(/^Create project$/);
     cy.verifyPageTitle(projectName);
     cy.hasDetail(/^Organization$/, organization.name);

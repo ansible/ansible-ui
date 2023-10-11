@@ -33,15 +33,29 @@ Cypress.Commands.add('getCheckboxByLabel', (label: string | RegExp) => {
     });
 });
 
-Cypress.Commands.add('selectDropdownOptionByResourceName', (resource: string, itemName: string) => {
-  cy.get(`[data-cy*="${resource}-form-group"]`).within(() => {
-    cy.get('[data-ouia-component-id="menu-select"] button')
-      .click()
-      .then(() => {
-        cy.contains('li', itemName).click();
+Cypress.Commands.add(
+  'selectDropdownOptionByResourceName',
+  (resource: string, itemName: string, spyglass?: false) => {
+    if (spyglass && spyglass === true) {
+      cy.get(`[data-cy*="${resource}-form-group"]`).within(() => {
+        cy.get('button').eq(1).click();
       });
-  });
-});
+      cy.get('[data-ouia-component-type="PF4/ModalContent"]').within(() => {
+        cy.searchAndDisplayResource(itemName);
+        cy.get('tbody tr input').click();
+        cy.clickButton('Confirm');
+      });
+    } else {
+      cy.get(`[data-cy*="${resource}-form-group"]`).within(() => {
+        cy.get('[data-ouia-component-id="menu-select"] button')
+          .click()
+          .then(() => {
+            cy.contains('li', itemName).click();
+          });
+      });
+    }
+  }
+);
 
 Cypress.Commands.add('selectItemFromLookupModal', (resource: string, itemName: string) => {
   cy.get(`[data-cy*="${resource}-form-group"]`).within(() => {
@@ -55,58 +69,6 @@ Cypress.Commands.add('selectItemFromLookupModal', (resource: string, itemName: s
     cy.clickButton(/^Confirm/);
   });
 });
-
-Cypress.Commands.add(
-  'selectPromptOnLaunchByLabel',
-  (label: string | RegExp, isSelected?: boolean, text?: string) => {
-    if (isSelected === undefined) {
-      isSelected = true;
-    }
-
-    if (isSelected) {
-      cy.contains('.pf-c-form__label-text', label)
-        .parent()
-        .parent()
-        .parent()
-        .parent()
-        .within(() => {
-          cy.getCheckboxByLabel('Prompt on launch').click();
-        });
-    } else if (text) {
-      switch (label) {
-        case 'Inventory':
-          cy.get('input[placeholder="Select inventory"]')
-            .parent()
-            .parent()
-            .within(() => {
-              cy.get('button[aria-label="Options menu"]').click();
-            });
-          cy.get('.pf-c-select__menu').within(() => {
-            cy.contains('button', text).click();
-          });
-          break;
-        case 'Execution environment':
-          cy.get('input[placeholder="Add execution environment"]')
-            .parent()
-            .within(() => {
-              cy.get('button[aria-label="Options menu"]').click();
-            });
-          cy.selectTableRowInDialog(text, true).click();
-          cy.clickModalButton('Confirm');
-          break;
-        case 'Credentials':
-          cy.get('input[placeholder="Add credentials"]')
-            .parent()
-            .within(() => {
-              cy.get('button[aria-label="Options menu"]').click();
-            });
-          cy.selectTableRowInDialog(text, true).click();
-          cy.clickModalButton('Confirm');
-          break;
-      }
-    }
-  }
-);
 
 Cypress.Commands.add('setTablePageSize', (text: '10' | '20' | '50' | '100') => {
   cy.get('.pf-c-pagination')
