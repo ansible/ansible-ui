@@ -8,6 +8,7 @@ import { Credential } from '../../frontend/awx/interfaces/Credential';
 import { ExecutionEnvironment } from '../../frontend/awx/interfaces/ExecutionEnvironment';
 import { InstanceGroup } from '../../frontend/awx/interfaces/InstanceGroup';
 import { Inventory } from '../../frontend/awx/interfaces/Inventory';
+import { JobEvent } from '../../frontend/awx/interfaces/JobEvent';
 import { JobTemplate } from '../../frontend/awx/interfaces/JobTemplate';
 import { Label } from '../../frontend/awx/interfaces/Label';
 import { Organization } from '../../frontend/awx/interfaces/Organization';
@@ -16,7 +17,6 @@ import { Schedule } from '../../frontend/awx/interfaces/Schedule';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
 import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/generated-from-swagger/api';
-import { JobEvent } from '../../frontend/awx/interfaces/JobEvent';
 import './auth';
 import './commands';
 import './rest-commands';
@@ -35,7 +35,10 @@ Cypress.Commands.add('getCheckboxByLabel', (label: string | RegExp) => {
 
 Cypress.Commands.add(
   'selectDropdownOptionByResourceName',
-  (resource: string, itemName: string, spyglass?: false) => {
+  (resource: string, itemName: string, spyglass?: boolean) => {
+    if (spyglass === undefined) {
+      spyglass === false;
+    }
     if (spyglass && spyglass === true) {
       cy.get(`[data-cy*="${resource}-form-group"]`).within(() => {
         cy.get('button').eq(1).click();
