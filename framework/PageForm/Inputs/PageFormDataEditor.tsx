@@ -6,8 +6,8 @@ import {
   ToggleGroup,
   Tooltip,
 } from '@patternfly/react-core';
-import { AngleRightIcon, CopyIcon, UploadIcon, DownloadIcon } from '@patternfly/react-icons';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { AngleRightIcon, CopyIcon, DownloadIcon, UploadIcon } from '@patternfly/react-icons';
+import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import {
   Controller,
@@ -20,13 +20,13 @@ import {
 } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { FormGroupTextInputProps, usePageAlertToaster } from '../..';
+import { usePageAlertToaster } from '../..';
+import { useClipboard } from '../../hooks/useClipboard';
 import { isJsonObject, isJsonString, jsonToYaml, yamlToJson } from '../../utils/codeEditorUtils';
+import { downloadTextFile } from '../../utils/download-file';
 import { capitalizeFirstLetter } from '../../utils/strings';
 import { DataEditor } from './DataEditor';
 import { PageFormGroup } from './PageFormGroup';
-import { downloadTextFile } from '../../utils/download-file';
-import { useClipboard } from '../../hooks/useClipboard';
 
 const ToggleGroupItem = styled(PFToggleGroupItem)`
   &&:first-child#copy-button {
@@ -159,7 +159,16 @@ export type PageFormDataEditorInputProps<
   allowCopy?: boolean;
   allowDownload?: boolean;
   defaultExpanded?: boolean;
-} & Omit<FormGroupTextInputProps, 'onChange'>;
+
+  id?: string;
+  label?: string;
+  isReadOnly?: boolean;
+  isRequired?: boolean;
+
+  additionalControls?: ReactNode;
+  labelHelp?: ReactNode;
+  labelHelpTitle?: string;
+};
 
 export function PageFormDataEditor<
   TFieldValues extends FieldValues = FieldValues,
