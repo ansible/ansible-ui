@@ -19,7 +19,7 @@ export default function PageWizardFooter(props: {
     : 'pf-v5-c-button pf-m-secondary';
 
   return (
-    <footer className="pf-c-wizard__footer border-top" data-cy="wizard-footer">
+    <footer className="pf-v5-c-wizard__footer border-top" data-cy="wizard-footer">
       {activeStep !== null && 'inputs' in activeStep ? (
         <PageFormSubmitButton style={{ minWidth: 10 }}>{nextButtonLabel}</PageFormSubmitButton>
       ) : (
@@ -41,7 +41,7 @@ export default function PageWizardFooter(props: {
       >
         {t('Back')}
       </button>
-      <div data-cy="wizard-cancel" className="pf-c-wizard__footer-cancel">
+      <div data-cy="wizard-cancel" className="pf-v5-c-wizard__footer-cancel">
         <button className="pf-v5-c-button pf-m-link" type="button" onClick={props.onCancel}>
           {t('Cancel')}
         </button>
