@@ -22,21 +22,6 @@ import './rest-commands';
 
 //  AWX related custom command implementation
 
-Cypress.Commands.add('getInputByLabel', (label: string | RegExp) => {
-  cy.contains('.pf-c-form__label-text', label)
-    .parent()
-    .invoke('attr', 'for')
-    .then((id: string | undefined) => {
-      if (id) {
-        cy.get('#' + id + ':not(:disabled):not(:hidden)').should(
-          'not.have.attr',
-          'aria-disabled',
-          'true'
-        );
-      }
-    });
-});
-
 Cypress.Commands.add('getCheckboxByLabel', (label: string | RegExp) => {
   cy.contains('.pf-c-check__label', label)
     .invoke('attr', 'for')

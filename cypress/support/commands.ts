@@ -61,9 +61,6 @@ declare global {
 
       // --- INPUT COMMANDS ---
 
-      /** Get an input by its label. */
-      getInputByLabel(label: string | RegExp): Chainable<JQuery<HTMLElement>>;
-
       /** Get a checkbox by its label. */
       getCheckboxByLabel(label: string | RegExp): Chainable<JQuery<HTMLElement>>;
 
