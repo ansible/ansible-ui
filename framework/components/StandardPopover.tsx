@@ -5,11 +5,11 @@ import styled from 'styled-components';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 
 const PopoverButton = styled.button`
-  padding: var(--pf-global--spacer--xs);
-  margin: -(var(--pf-global--spacer--xs));
-  font-size: var(--pf-global--FontSize--sm);
-  --pf-c-form__group-label-help--Color: var(--pf-global--Color--200);
-  --pf-c-form__group-label-help--hover--Color: var(--pf-global--Color--100);
+  padding: var(--pf-v5-global--spacer--xs);
+  margin: -(var(--pf-v5-global--spacer--xs));
+  font-size: var(--pf-v5-global--FontSize--sm);
+  --pf-c-form__group-label-help--Color: var(--pf-v5-global--Color--200);
+  --pf-c-form__group-label-help--hover--Color: var(--pf-v5-global--Color--100);
 `;
 
 function StandardPopover(props: {

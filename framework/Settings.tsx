@@ -7,7 +7,7 @@ import { PageSingleSelect } from './PageInputs/PageSingleSelect';
 import { useFrameworkTranslations } from './useFrameworkTranslations';
 
 const FormDiv = styled.div`
-  padding: var(--pf-global--spacer--lg);
+  padding: var(--pf-v5-global--spacer--lg);
 `;
 
 export interface Settings {

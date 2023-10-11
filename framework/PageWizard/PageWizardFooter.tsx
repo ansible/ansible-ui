@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageWizardContext } from './PageWizardProvider';
 import { PageFormSubmitButton } from '../PageForm/PageForm';
+import { PageWizardContext } from './PageWizardProvider';
 
 export default function PageWizardFooter(props: {
   onNext?: () => void;
@@ -20,7 +20,7 @@ export default function PageWizardFooter(props: {
   return (
     <footer
       className="pf-c-wizard__footer"
-      style={{ borderTop: 'thin solid var(--pf-global--BorderColor--100)' }}
+      style={{ borderTop: 'thin solid var(--pf-v5-global--BorderColor--100)' }}
     >
       {activeStep !== null && 'inputs' in activeStep ? (
         <PageFormSubmitButton style={{ minWidth: 10 }}>{nextButtonLabel}</PageFormSubmitButton>

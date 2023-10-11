@@ -10,7 +10,7 @@ import {
 import type { HostStatusCounts } from '../../../interfaces/Job';
 
 const BarWrapper = styled.div`
-  background-color: var(--pf-global--Color--light-300);
+  background-color: var(--pf-v5-global--Color--light-300);
   display: flex;
   min-height: 7px;
   margin-top: 16px;
@@ -37,7 +37,7 @@ const Legend = styled.div`
   display: flex;
   gap: 16px;
   justify-content: end;
-  font-size: var(--pf-global--FontSize--sm);
+  font-size: var(--pf-v5-global--FontSize--sm);
 `;
 const LegendBox = styled.span`
   display: inline-block;
@@ -76,7 +76,7 @@ export function HostStatusBar(props: { counts: HostStatusCounts }) {
       label: t`Failed`,
     },
     dark: {
-      color: 'var(--pf-global--danger-color--300)',
+      color: 'var(--pf-v5-global--danger-color--300)',
       label: t`Unreachable`,
     },
   };

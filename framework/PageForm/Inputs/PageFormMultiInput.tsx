@@ -25,7 +25,7 @@ import { PageFormGroup, PageFormGroupProps } from './PageFormGroup';
 const ChipHolder = styled.div<{ isDisabled?: boolean }>`
   --pf-c-form-control--Height: auto;
   background-color: ${(props: { isDisabled?: boolean }) =>
-    props.isDisabled ? 'var(--pf-global--disabled-color--300)' : null};
+    props.isDisabled ? 'var(--pf-v5-global--disabled-color--300)' : null};
 `;
 
 export type PageFormMultiInputProps<

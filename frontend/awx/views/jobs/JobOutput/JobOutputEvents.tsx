@@ -5,14 +5,14 @@ import { Job } from '../../../interfaces/Job';
 import './JobOutput.css';
 import { JobOutputLoadingRow } from './JobOutputLoadingRow';
 import { IJobOutputRow, JobOutputRow, jobEventToRows, tracebackToRows } from './JobOutputRow';
-import { useJobOutput } from './useJobOutput';
 import { PageControls } from './PageControls';
+import { useJobOutput } from './useJobOutput';
 import {
   IJobOutputChildrenSummary,
   useJobOutputChildrenSummary,
 } from './useJobOutputChildrenSummary';
-import { useVirtualizedList } from './useVirtualized';
 import { useScrollControls } from './useScrollControls';
+import { useVirtualizedList } from './useVirtualized';
 import { isJobRunning } from './util';
 
 export interface ICollapsed {
@@ -21,9 +21,9 @@ export interface ICollapsed {
 
 const ScrollContainer = styled.div`
   overflow: auto;
-  backgroundcolor: var(--pf-global--BackgroundColor--100);
-  font-size: var(--pf-global--FontSize--sm);
-  border-bottom: 1px solid var(--pf-global--BorderColor--100);
+  backgroundcolor: var(--pf-v5-global--BackgroundColor--100);
+  font-size: var(--pf-v5-global--FontSize--sm);
+  border-bottom: 1px solid var(--pf-v5-global--BorderColor--100);
 `;
 
 interface IJobOutputEventsProps {

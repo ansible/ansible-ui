@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components';
 const CardPageContainer = styled.div<{ visibleCardsPerPage: number }>`
   display: grid;
   gap: 30px;
-  margin-bottom: var(--pf-global--spacer--lg);
+  margin-bottom: var(--pf-v5-global--spacer--lg);
   padding-right: 8;
   flex: 0 0 100%;
   scroll-snap-align: start;

@@ -5,7 +5,7 @@ export function PageDetailsSection(props: { children?: ReactNode; disablePadding
   const { disablePadding } = props;
   const isCompact = false;
   return (
-    <PageSection padding={{ default: 'noPadding' }} className="dark-2">
+    <PageSection padding={{ default: 'noPadding' }}>
       <DescriptionList
         style={{ maxWidth: 1200, padding: disablePadding ? undefined : 24 }}
         isCompact={isCompact}

@@ -24,27 +24,7 @@
   border: thin solid #0003;
 }
 
-.light {
-  background-color: var(--pf-global--BackgroundColor--100);
-}
-
-:root:where(.pf-theme-dark) .dark-0 {
-  background-color: var(--pf-global--BackgroundColor--200);
-}
-
-:root:where(.pf-theme-dark) .dark-1 {
-  background-color: var(--pf-global--BackgroundColor--100);
-}
-
-:root:where(.pf-theme-dark) .dark-2 {
-  background-color: var(--pf-global--BackgroundColor--300);
-}
-
-:root:where(.pf-theme-dark) .dark-3 {
-  background-color: var(--pf-global--BackgroundColor--400);
-}
-
-.pf-c-truncate__start {
+/* .pf-c-truncate__start {
   min-width: unset;
 }
 
@@ -55,4 +35,4 @@
 
 .pf-c-page__sidebar-body {
   padding-top: 0;
-}
+} */

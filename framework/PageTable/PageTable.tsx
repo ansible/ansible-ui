@@ -286,7 +286,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
         variant="light"
         padding={{ default: 'noPadding' }}
         style={{
-          borderBottom: 'thin solid var(--pf-global--BorderColor--100)',
+          borderBottom: 'thin solid var(--pf-v5-global--BorderColor--100)',
         }}
       >
         {props.topContent}
@@ -549,7 +549,7 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
         ref={containerRef}
         onScroll={onScroll}
         style={{
-          backgroundColor: 'var(--pf-global--BackgroundColor--100)',
+          backgroundColor: 'var(--pf-v5-global--BackgroundColor--100)',
         }}
       >
         {returnElement}
@@ -610,7 +610,7 @@ function TableHead<T extends object>(props: {
 
   return (
     <Thead>
-      <Tr className="light dark-2">
+      <Tr>
         {expandedRow && <Th style={{ padding: 0, backgroundColor: 'inherit' }} />}
         {(showSelect || onSelect) && (
           <Th

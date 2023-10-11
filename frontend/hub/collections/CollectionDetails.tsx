@@ -356,7 +356,7 @@ function CollectionDocumentationTabPanel(props: {
           <DrawerCloseButton onClick={() => setDrawerOpen(false)} />
         </DrawerActions>
       </DrawerHead>
-      <DrawerPanelBody style={{ borderTop: 'thin solid var(--pf-global--BorderColor--100)' }}>
+      <DrawerPanelBody style={{ borderTop: 'thin solid var(--pf-v5-global--BorderColor--100)' }}>
         <Nav theme="light">
           <NavList>
             <NavExpandable key="documentation" title={t('Documentation')} isExpanded>
