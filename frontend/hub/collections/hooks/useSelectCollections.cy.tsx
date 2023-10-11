@@ -123,7 +123,7 @@ describe('CollectionMultiSelectDialog', () => {
          */
         cy.get('div.pf-m-bulk-select').should('contain', '10 selected');
         cy.get('div.pf-m-bulk-select').within(() => {
-          cy.get('div.pf-c-dropdown__toggle').should('have.class', 'pf-m-disabled');
+          cy.get('div.pf-v5-c-dropdown__toggle').should('have.class', 'pf-m-disabled');
         });
 
         // Select 12 collections

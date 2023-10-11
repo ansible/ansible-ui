@@ -7,20 +7,20 @@ describe('ErrorAlert', () => {
     cy.mount(<ErrorAlert error={error} isMd={true} onCancel={() => {}} />);
     cy.get('Alert').should('not.exist');
     cy.contains(error).should('be.visible');
-    cy.get('.pf-c-alert__title').should('exist');
+    cy.get('.pf-v5-c-alert__title').should('exist');
   });
 
   it('displays a ReactNode error', () => {
     const error = <span>Error as ReactNode</span>;
     cy.mount(<ErrorAlert error={error} isMd={true} onCancel={() => {}} />);
     cy.contains('Error as ReactNode').should('be.visible');
-    cy.get('.pf-c-alert__title').should('exist');
+    cy.get('.pf-v5-c-alert__title').should('exist');
   });
 
   it('does not render when error is null', () => {
     cy.mount(<ErrorAlert error={null} isMd={true} onCancel={() => {}} />);
     cy.get('Alert').should('not.exist');
-    cy.get('.pf-c-alert__title').should('not.exist');
+    cy.get('.pf-v5-c-alert__title').should('not.exist');
   });
 
   it('displays the expanded content when error is an array with more than one item', () => {
@@ -30,7 +30,7 @@ describe('ErrorAlert', () => {
     cy.contains(error[0]).should('be.visible');
     cy.contains(error[1]).should('be.visible');
     cy.contains(error[2]).should('be.visible');
-    cy.get('.pf-c-alert__title').should('exist');
+    cy.get('.pf-v5-c-alert__title').should('exist');
   });
 
   it('displays the correct padding when isMd is true and onCancel is provided', () => {
@@ -56,6 +56,6 @@ describe('ErrorAlert', () => {
     cy.mount(<ErrorAlert error={error} isMd={true} onCancel={() => {}} />);
     cy.get('.pf-c-alert__toggle').should('not.exist');
     cy.contains(error[0]).should('be.visible');
-    cy.get('.pf-c-alert__title').should('exist');
+    cy.get('.pf-v5-c-alert__title').should('exist');
   });
 });

@@ -30,7 +30,7 @@ export function PageFormInventorySelect<
   return (
     <PageFormAsyncSelect<TFieldValues>
       name={props.name}
-      id="inventory-select"
+      id="inventory"
       variant="typeahead"
       additionalControls={props.additionalControls}
       label={t('Inventory')}

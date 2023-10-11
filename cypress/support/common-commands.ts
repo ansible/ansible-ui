@@ -22,7 +22,7 @@ Cypress.Commands.add('getListRowByText', (name: string | RegExp, filter?: boolea
 
 Cypress.Commands.add('openToolbarFilterTypeSelect', () => {
   cy.getFiltersToolbarItem().within(() => {
-    cy.get('#filter').click().parent().get('.pf-c-menu');
+    cy.get('#filter').click().parent().get('.pf-v5-c-menu');
   });
 });
 
@@ -49,7 +49,7 @@ Cypress.Commands.add(
   (filterType: RegExp | string, selectLabel: RegExp | string) => {
     cy.selectToolbarFilterType(filterType);
     cy.getFiltersToolbarItem().within(() => {
-      cy.get('.pf-c-menu-toggle').eq(1).click();
+      cy.get('.pf-v5-c-menu-toggle').eq(1).click();
       cy.contains(selectLabel).click();
     });
   }
@@ -60,7 +60,7 @@ Cypress.Commands.add(
   (filterType: RegExp | string, selectLabel: RegExp | string) => {
     cy.selectToolbarFilterType(filterType);
     cy.getFiltersToolbarItem().within(() => {
-      cy.get('.pf-c-menu-toggle').eq(1).click();
+      cy.get('.pf-v5-c-menu-toggle').eq(1).click();
       cy.contains(selectLabel).click();
     });
     cy.get('tbody').click();
@@ -71,7 +71,7 @@ Cypress.Commands.add(
   'singleSelectShouldHaveSelectedOption',
   (selector: string, label: string | RegExp) => {
     cy.get(selector).within(() => {
-      cy.get('.pf-c-menu-toggle__text').should('have.text', label);
+      cy.get('.pf-v5-c-menu-toggle__text').should('have.text', label);
     });
   }
 );
@@ -100,9 +100,9 @@ Cypress.Commands.add(
     cy.get(selector).click();
     cy.get(selector)
       .parent()
-      .get('.pf-c-menu__content')
+      .get('.pf-v5-c-menu__content')
       .within(() => {
-        cy.contains('.pf-c-menu__item-text', label).should('contain.text', label);
+        cy.contains('.pf-v5-c-menu__item-text', label).should('contain.text', label);
       });
     cy.get(selector).click();
   }
@@ -112,18 +112,18 @@ Cypress.Commands.add('selectSingleSelectOption', (selector: string, label: strin
   cy.get(selector).click();
   cy.get(selector)
     .parent()
-    .get('.pf-c-menu__content')
+    .get('.pf-v5-c-menu__content')
     .within(() => {
-      cy.contains('.pf-c-menu__item-text', label).parent().click();
+      cy.contains('.pf-v5-c-menu__item-text', label).parent().click();
     });
 });
 
 Cypress.Commands.add('selectMultiSelectOption', (selector: string, label: string | RegExp) => {
   cy.get(selector)
     .parent()
-    .get('.pf-c-menu__content')
+    .get('.pf-v5-c-menu__content')
     .within(() => {
-      cy.contains('.pf-c-menu__item-text', label)
+      cy.contains('.pf-v5-c-menu__item-text', label)
         .parent()
         .within(() => {
           cy.get('input').click();

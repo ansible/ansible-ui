@@ -20,11 +20,11 @@ const IconSpan = styled.span`
   padding-right: 4px;
 `;
 const StyledDropdownItem = styled.div<{ hasSwitches: boolean; isDanger: boolean }>`
-  --pf-c-dropdown__menu-item-icon--Width: ${({ hasSwitches }) =>
+  --pf-v5-c-dropdown__menu-item-icon--Width: ${({ hasSwitches }) =>
     hasSwitches ? '40px' : undefined};
-  --pf-c-dropdown__menu-item-icon--MarginRight: ${({ hasSwitches }) =>
+  --pf-v5-c-dropdown__menu-item-icon--MarginRight: ${({ hasSwitches }) =>
     hasSwitches ? '16px' : undefined};
-  --pf-c-dropdown__menu-item--Color: ${({ isDanger }) =>
+  --pf-v5-c-dropdown__menu-item--Color: ${({ isDanger }) =>
     isDanger ? 'var(--pf-v5-global--danger-color--100)' : undefined};
 `;
 

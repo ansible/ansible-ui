@@ -8,6 +8,7 @@ import { Credential } from '../../frontend/awx/interfaces/Credential';
 import { ExecutionEnvironment } from '../../frontend/awx/interfaces/ExecutionEnvironment';
 import { InstanceGroup } from '../../frontend/awx/interfaces/InstanceGroup';
 import { Inventory } from '../../frontend/awx/interfaces/Inventory';
+import { JobEvent } from '../../frontend/awx/interfaces/JobEvent';
 import { JobTemplate } from '../../frontend/awx/interfaces/JobTemplate';
 import { Label } from '../../frontend/awx/interfaces/Label';
 import { Organization } from '../../frontend/awx/interfaces/Organization';
@@ -16,7 +17,6 @@ import { Schedule } from '../../frontend/awx/interfaces/Schedule';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
 import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/generated-from-swagger/api';
-import { JobEvent } from '../../frontend/awx/interfaces/JobEvent';
 import './auth';
 import './commands';
 import './rest-commands';
@@ -47,7 +47,7 @@ Cypress.Commands.add('selectItemFromLookupModal', (resource: string, itemName: s
   cy.get(`[data-cy*="${resource}-form-group"]`).within(() => {
     cy.get('button').eq(1).click();
   });
-  cy.get('[data-ouia-component-type="PF4/ModalContent"]').within(() => {
+  cy.get('.pf-v5-c-modal-box').within(() => {
     cy.searchAndDisplayResource(itemName);
     cy.get('[data-ouia-component-id="simple-table"] tbody').within(() => {
       cy.get('[data-cy="checkbox-column-cell"]').click();
@@ -157,16 +157,16 @@ Cypress.Commands.add('verifyPageTitle', (label: string) => {
 });
 
 Cypress.Commands.add('hasAlert', (label: string | RegExp) => {
-  cy.contains('.pf-c-alert__title', label);
+  cy.contains('.pf-v5-c-alert__title', label);
 });
 
 Cypress.Commands.add('hasTooltip', (label: string | RegExp) => {
-  cy.contains('.pf-c-tooltip__content', label);
+  cy.contains('.pf-v5-c-tooltip__content', label);
 });
 
 Cypress.Commands.add('clickToolbarKebabAction', (label: string | RegExp) => {
   cy.get('.page-table-toolbar').within(() => {
-    cy.get('.toggle-kebab').click().get('.pf-c-dropdown__menu-item').contains(label).click();
+    cy.get('.toggle-kebab').click().get('.pf-v5-c-dropdown__menu-item').contains(label).click();
   });
 });
 
@@ -198,7 +198,7 @@ Cypress.Commands.add(
   (name: string | RegExp, label: string | RegExp, filter?: boolean) => {
     cy.getTableRowByText(name, filter).within(() => {
       cy.get('[data-cy="actions-dropdown"]').click();
-      cy.contains('.pf-c-dropdown__menu-item', label)
+      cy.contains('.pf-v5-c-dropdown__menu-item', label)
         .should('not.be.disabled')
         .should('not.have.attr', 'aria-disabled', 'true')
         .click();
@@ -210,8 +210,8 @@ Cypress.Commands.add(
   'clickListCardKebabAction',
   (name: string | RegExp, label: string | RegExp, filter?: boolean) => {
     cy.getListCardByText(name, filter).within(() => {
-      cy.get('.pf-c-dropdown__toggle').click();
-      cy.contains('.pf-c-dropdown__menu-item', label)
+      cy.get('.pf-v5-c-dropdown__toggle').click();
+      cy.contains('.pf-v5-c-dropdown__menu-item', label)
         .should('not.be.disabled')
         .should('not.have.attr', 'aria-disabled', 'true')
         .click();
@@ -243,7 +243,7 @@ Cypress.Commands.add('selectTableRow', (name: string | RegExp, filter?: boolean)
 });
 
 Cypress.Commands.add('getDialog', () => {
-  cy.get('div[data-ouia-component-type="PF4/ModalContent"]');
+  cy.get('.pf-v5-c-modal-box');
 });
 
 Cypress.Commands.add('selectTableRowInDialog', (name: string | RegExp, filter?: boolean) => {
@@ -290,7 +290,7 @@ Cypress.Commands.add('assertModalSuccess', () => {
 });
 
 Cypress.Commands.add('clickPageAction', (label: string | RegExp) => {
-  cy.get('.toggle-kebab').click().get('.pf-c-dropdown__menu-item').contains(label).click();
+  cy.get('.toggle-kebab').click().get('.pf-v5-c-dropdown__menu-item').contains(label).click();
 });
 
 // Resources for testing AWX

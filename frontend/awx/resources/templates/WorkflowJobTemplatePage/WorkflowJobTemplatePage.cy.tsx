@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable i18next/no-literal-string */
-import { WorkflowJobTemplatePage } from './WorkflowJobTemplatePage';
 import { RouteObj } from '../../../../common/Routes';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { Organization } from '../../../interfaces/Organization';
+import { WorkflowJobTemplatePage } from './WorkflowJobTemplatePage';
 
 describe('WorflowJobTemplatePage', () => {
   beforeEach(() => {
@@ -89,7 +89,7 @@ describe('WorflowJobTemplatePage', () => {
 
     cy.wait('@getLaunchConfig');
     cy.wait('@launchJob');
-    cy.get('.pf-c-alert__title').contains('Failed to launch template');
+    cy.get('.pf-v5-c-alert__title').contains('Failed to launch template');
   });
   it('Should render the proper tabs for a super user', () => {
     cy.intercept(
@@ -113,7 +113,7 @@ describe('WorflowJobTemplatePage', () => {
       path: RouteObj.WorkflowJobTemplatePage,
       initialEntries: [RouteObj.WorkflowJobTemplateDetails.replace(':id', '1')],
     });
-    const tabs = cy.get('.pf-c-tabs__list');
+    const tabs = cy.get('.pf-v5-c-tabs__list');
     tabs.children().should('have.length', 7);
     tabs.children().each((tab, index) => {
       cy.wrap(tab).should('contain', tabNames[index]);
@@ -147,7 +147,7 @@ describe('WorflowJobTemplatePage', () => {
       },
       'activeUserSysAuditor'
     );
-    const allTabs = cy.get('.pf-c-tabs__list');
+    const allTabs = cy.get('.pf-v5-c-tabs__list');
     allTabs.children().should('have.length', 7);
     allTabs.children().each((tab, index) => {
       cy.wrap(tab).should('contain', tabNames[index]);
@@ -179,7 +179,7 @@ describe('WorflowJobTemplatePage', () => {
       initialEntries: [RouteObj.WorkflowJobTemplateDetails.replace(':id', '1')],
     });
     cy.wait('@getOrganizations');
-    const fewerTabs = cy.get('.pf-c-tabs__list');
+    const fewerTabs = cy.get('.pf-v5-c-tabs__list');
     fewerTabs.children().should('have.length', 6);
     fewerTabs.children().each((tab, index) => {
       cy.wrap(tab).should('have.text', tabNames[index]);
