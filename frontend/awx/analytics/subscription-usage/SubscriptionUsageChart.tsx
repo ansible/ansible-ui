@@ -25,25 +25,25 @@ export function SubscriptionUsageChart(props: { period: IFilterState }) {
     switch (props.period.dateRange?.[0]) {
       case 'year':
         date =
-          today.getMonth() < 10
+          today.getMonth() < 9
             ? `${today.getFullYear() - 1}-0${today.getMonth() + 1}-01`
             : `${today.getFullYear() - 1}-${today.getMonth() + 1}-01`;
         break;
       case 'two_years':
         date =
-          today.getMonth() < 10
+          today.getMonth() < 9
             ? `${today.getFullYear() - 2}-0${today.getMonth() + 1}-01`
             : `${today.getFullYear() - 2}-${today.getMonth() + 1}-01`;
         break;
       case 'three_years':
         date =
-          today.getMonth() < 10
+          today.getMonth() < 9
             ? `${today.getFullYear() - 3}-0${today.getMonth() + 1}-01`
             : `${today.getFullYear() - 3}-${today.getMonth() + 1}-01`;
         break;
       default:
         date =
-          today.getMonth() < 10
+          today.getMonth() < 9
             ? `${today.getFullYear() - 1}-0${today.getMonth() + 1}-01`
             : `${today.getFullYear() - 1}-${today.getMonth() + 1}-01`;
         break;
