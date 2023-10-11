@@ -80,8 +80,8 @@ describe('hub dashboard', () => {
         cy.contains('a', 'Go to collections').click();
       });
     cy.url().should('contain', 'tags=eda');
-    cy.get('div.pf-c-toolbar__group').contains('Tags').should('be.visible');
-    cy.get('div.pf-c-toolbar__group').contains('eda').should('be.visible');
+    cy.get('div.pf-v5-c-toolbar__group').contains('Tags').should('be.visible');
+    cy.get('div.pf-v5-c-toolbar__group').contains('eda').should('be.visible');
     cy.getListRowByText(collectionNames.eda.collection1).should('be.visible');
   });
   describe('Manage view modal', () => {
