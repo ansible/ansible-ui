@@ -166,7 +166,7 @@ export type PageFormDataEditorInputProps<
   isRequired?: boolean;
 
   additionalControls?: ReactNode;
-  labelHelp?: ReactNode;
+  labelHelp?: string | string[] | ReactNode;
   labelHelpTitle?: string;
 };
 
@@ -327,29 +327,22 @@ export function PageFormDataEditor<
         const disabled = value !== undefined && value !== null && value !== '';
         return (
           <PageFormGroup
+            fieldId={id}
             {...formGroupInputProps}
-            label={
+            icon={
               isExpandable ? (
-                <span style={{ alignItems: 'center' }}>
-                  <AngleRightIcon
-                    style={{
-                      transform: isCollapsed ? 'rotate(0deg)' : 'rotate(90deg)',
-                      transition: 'transform',
-                    }}
-                    onClick={() => setCollapsed((c) => !c)}
-                    aria-label={t('Expand or collapse extra variables')}
-                  />
-                  {props.label}
-                </span>
-              ) : (
-                props.label
-              )
+                <AngleRightIcon
+                  style={{
+                    transform: isCollapsed ? 'rotate(0deg)' : 'rotate(90deg)',
+                    transition: 'transform',
+                  }}
+                  onClick={() => setCollapsed((c) => !c)}
+                  aria-label={t('Expand or collapse extra variables')}
+                />
+              ) : undefined
             }
-            id={id}
-            helperTextInvalid={
-              !(validate && isValidating) &&
-              errorSet?.map((e) => <ErrorWrapper key={e}>{e}</ErrorWrapper>)
-            }
+            label={props.label}
+            helperTextInvalid={!(validate && isValidating) && errorSet}
           >
             {(!isExpandable || !isCollapsed) && (
               <>

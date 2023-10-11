@@ -2,14 +2,16 @@
 // It should be able to use the correct type in the future for example number and number[].
 import React, { FunctionComponent, useState } from 'react';
 import {
-  Tooltip,
-  ToolbarFilter,
-  Select as PFSelect,
-  SelectOption,
-  SelectVariant,
-  ToolbarChip,
-  SelectOptionObject,
+	Tooltip,
+	ToolbarFilter,
+	ToolbarChip
 } from '@patternfly/react-core';
+import {
+	Select as PFSelect,
+	SelectOption,
+	SelectVariant,
+	SelectOptionObject
+} from '@patternfly/react-core/deprecated';
 
 import { handleCheckboxChips, handleSingleChips } from './helpers';
 import { optionsForCategories } from '../../constants';

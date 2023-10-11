@@ -3,9 +3,8 @@ import {
   ButtonVariant,
   EmptyState,
   EmptyStateBody,
-  EmptyStateIcon,
-  Title,
-} from '@patternfly/react-core';
+  EmptyStateIcon, EmptyStateHeader,
+  } from '@patternfly/react-core';
 import { CubesIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -92,10 +91,7 @@ function UserRolesInternal(props: { user: User }) {
   if (isSysAdmin) {
     return (
       <EmptyState isFullHeight>
-        <EmptyStateIcon icon={CubesIcon} />
-        <Title headingLevel="h2" size="lg">
-          {t(`System Administrator`)}
-        </Title>
+        <EmptyStateHeader titleText={<>{t(`System Administrator`)}</>} icon={<EmptyStateIcon icon={CubesIcon} />} headingLevel="h2" />
         <EmptyStateBody>
           {t(`System administrators have unrestricted access to all resources.`)}
         </EmptyStateBody>

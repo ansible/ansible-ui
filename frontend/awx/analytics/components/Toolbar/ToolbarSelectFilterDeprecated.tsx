@@ -1,4 +1,9 @@
-import { Select, SelectOption, SelectOptionObject, SelectVariant } from '@patternfly/react-core';
+import {
+	Select,
+	SelectOption,
+	SelectOptionObject,
+	SelectVariant
+} from '@patternfly/react-core/deprecated';
 import { useEffect, useState } from 'react';
 
 /**
@@ -107,7 +112,7 @@ export function ToolbarSelectFilterDeprecated(props: {
     <Select
       variant={variant ? variant : SelectVariant.checkbox}
       isOpen={open}
-      onToggle={setOpen}
+      onToggle={(_event, val) => setOpen(val)}
       selections={selections}
       onSelect={onSelect}
       hasPlaceholderStyle

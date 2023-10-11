@@ -202,7 +202,7 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
                 ouiaId="confirm"
                 label={confirmText}
                 isChecked={confirmed}
-                onChange={setConfirmed}
+                onChange={(_event, val) => setConfirmed(val)}
               />
             </ConfirmBoxDiv>
           )}

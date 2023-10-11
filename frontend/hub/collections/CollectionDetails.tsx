@@ -1,35 +1,37 @@
 import {
-  Alert,
-  Breadcrumb,
-  BreadcrumbItem,
-  Button,
-  CodeBlock,
-  DescriptionList,
-  DescriptionListDescription,
-  DescriptionListGroup,
-  DescriptionListTerm,
-  Drawer,
-  DrawerActions,
-  DrawerCloseButton,
-  DrawerContent,
-  DrawerContentBody,
-  DrawerHead,
-  DrawerPanelBody,
-  DrawerPanelContent,
-  DropdownPosition,
-  Label,
-  Nav,
-  NavExpandable,
-  NavItem,
-  NavList,
-  PageSection,
-  SearchInput,
-  Stack,
-  StackItem,
-  Title,
+	Alert,
+	Breadcrumb,
+	BreadcrumbItem,
+	Button,
+	CodeBlock,
+	DescriptionList,
+	DescriptionListDescription,
+	DescriptionListGroup,
+	DescriptionListTerm,
+	Drawer,
+	DrawerActions,
+	DrawerCloseButton,
+	DrawerContent,
+	DrawerContentBody,
+	DrawerHead,
+	DrawerPanelBody,
+	DrawerPanelContent,
+	Label,
+	Nav,
+	NavExpandable,
+	NavItem,
+	NavList,
+	PageSection,
+	SearchInput,
+	Stack,
+	StackItem,
+	Title
 } from '@patternfly/react-core';
+import {
+	DropdownPosition
+} from '@patternfly/react-core/deprecated';
 import { BarsIcon, CheckCircleIcon, ExclamationTriangleIcon } from '@patternfly/react-icons';
-import { TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
+import { Table /* data-codemods */, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { DateTime } from 'luxon';
 import { Dispatch, SetStateAction, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -398,7 +400,7 @@ function CollectionDocumentationTabContent(props: {
   const { content, isDrawerOpen, setDrawerOpen } = props;
   return (
     <>
-      <PageSection variant="light" sticky="top">
+      <PageSection variant="light" >
         <Stack hasGutter>
           <Breadcrumb>
             {!isDrawerOpen && (
@@ -431,7 +433,7 @@ function CollectionDocumentationTabContent(props: {
             <Title headingLevel="h2">{t('Parameters')}</Title>
           </PageSection>
           <PageSection variant="light" style={{ paddingLeft: 0, paddingRight: 0, paddingTop: 0 }}>
-            <TableComposable variant="compact">
+            <Table variant="compact">
               <Thead>
                 <Tr>
                   <Th>{t('Parameter')}</Th>
@@ -451,7 +453,7 @@ function CollectionDocumentationTabContent(props: {
                   </Tr>
                 ))}
               </Tbody>
-            </TableComposable>
+            </Table>
           </PageSection>
         </>
       )}
@@ -490,7 +492,7 @@ function CollectionDocumentationTabContent(props: {
             <Title headingLevel="h2">{t('Returns')}</Title>
           </PageSection>
           <PageSection variant="light" style={{ paddingLeft: 0, paddingRight: 0, paddingTop: 0 }}>
-            <TableComposable variant="compact">
+            <Table variant="compact">
               <Thead>
                 <Tr>
                   <Th>{t('Key')}</Th>
@@ -510,7 +512,7 @@ function CollectionDocumentationTabContent(props: {
                   </Tr>
                 ))}
               </Tbody>
-            </TableComposable>
+            </Table>
           </PageSection>
         </>
       )}

@@ -4,7 +4,6 @@ import {
   Button,
   Flex,
   FlexItem,
-  PageNavigation,
   PageSection,
   PageSectionVariants,
   Popover,
@@ -19,7 +18,6 @@ import { ExternalLinkAltIcon, OutlinedQuestionCircleIcon } from '@patternfly/rea
 import { CSSProperties, Fragment, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './PageFramework.css';
-import { usePageNavSideBar } from './PageNavigation/PageNavSidebar';
 import { useBreakpoint } from './components/useBreakPoint';
 import { useFrameworkTranslations } from './useFrameworkTranslations';
 
@@ -109,145 +107,108 @@ export function PageHeader(props: PageHeaderProps) {
   const isLg = useBreakpoint('lg');
   const isXl = useBreakpoint('xl');
   const isMdOrLarger = useBreakpoint('md');
-  const navBar = usePageNavSideBar();
-  const navigation = navBar.isOpen && isXl ? undefined : props.navigation;
   const [translations] = useFrameworkTranslations();
   return (
-    <>
-      {navigation && (
-        <PageSection
-          variant={PageSectionVariants.light}
-          className="dark-1 border-bottom"
-          style={{ paddingLeft: 0, paddingTop: 0, paddingBottom: 0 }}
-        >
-          <Flex
-            direction={{ default: 'row' }}
-            flexWrap={{ default: 'nowrap' }}
-            style={{ maxWidth: '100%' }}
-          >
-            <PageNavigation style={{ paddingTop: 0, flexShrink: 1, flexGrow: 1 }}>
-              {navigation}
-            </PageNavigation>
-            {/* {!isMdOrLarger && props.titleDocLink && (
-                            <FlexItem>
-                                <Bullseye>
-                                    <Button
-                                        icon={<ExternalLinkAltIcon style={{ paddingRight: 4, paddingTop: 4 }} />}
-                                        variant="link"
-                                        onClick={() => window.open(props.titleDocLink, '_blank')}
-                                        isInline
-                                        style={{ whiteSpace: 'nowrap' }}
-                                    >
-                                        {isSmLarger ? <span>{t('Documentation')}</span> : <span>{'Docs'}</span>}
-                                    </Button>
-                                </Bullseye>
-                            </FlexItem>
-                        )} */}
-          </Flex>
-        </PageSection>
-      )}
-      <PageSection
-        variant={PageSectionVariants.light}
-        className="border-bottom dark-2"
-        style={{
-          paddingTop: breadcrumbs ? (isXl ? 16 : 12) : isXl ? 16 : 12,
-          paddingBottom: isXl ? 16 : 12,
-        }}
-      >
-        <Stack hasGutter>
-          <Flex flexWrap={{ default: 'nowrap' }} alignItems={{ default: 'alignItemsStretch' }}>
-            <FlexItem grow={{ default: 'grow' }}>
-              {breadcrumbs && (
-                <Breadcrumbs breadcrumbs={breadcrumbs} style={{ paddingBottom: isLg ? 6 : 4 }} />
-              )}
-              {title ? (
-                props.titleHelp ? (
-                  <Popover
-                    headerContent={props.titleHelpTitle}
-                    bodyContent={
-                      <Stack hasGutter>
-                        {typeof props.titleHelp === 'string' ? (
-                          <StackItem>{props.titleHelp}</StackItem>
-                        ) : (
-                          props.titleHelp.map((help, index) => (
-                            <StackItem key={index}>{help}</StackItem>
-                          ))
-                        )}
-                        {props.titleDocLink && (
-                          <StackItem>
-                            <Button
-                              icon={<ExternalLinkAltIcon />}
-                              variant="link"
-                              onClick={() => window.open(props.titleDocLink, '_blank')}
-                              isInline
-                            >
-                              {translations.documentation}
-                            </Button>
-                          </StackItem>
-                        )}
-                      </Stack>
-                    }
-                    position="bottom-start"
-                    removeFindDomNode
-                  >
-                    <Title data-cy="page-title" headingLevel="h1">
-                      {title}
-                      <Button
-                        variant="link"
-                        style={{
-                          padding: 0,
-                          marginTop: 1,
-                          marginLeft: 8,
-                          verticalAlign: 'top',
-                        }}
-                      >
-                        <OutlinedQuestionCircleIcon />
-                      </Button>
-                    </Title>
-                  </Popover>
-                ) : (
+    <PageSection
+      variant={PageSectionVariants.light}
+      className="border-bottom"
+      style={{
+        paddingTop: breadcrumbs ? (isXl ? 16 : 12) : isXl ? 16 : 12,
+        paddingBottom: isXl ? 16 : 12,
+      }}
+    >
+      <Stack hasGutter>
+        <Flex flexWrap={{ default: 'nowrap' }} alignItems={{ default: 'alignItemsStretch' }}>
+          <FlexItem grow={{ default: 'grow' }}>
+            {breadcrumbs && (
+              <Breadcrumbs breadcrumbs={breadcrumbs} style={{ paddingBottom: isLg ? 6 : 4 }} />
+            )}
+            {title ? (
+              props.titleHelp ? (
+                <Popover
+                  headerContent={props.titleHelpTitle}
+                  bodyContent={
+                    <Stack hasGutter>
+                      {typeof props.titleHelp === 'string' ? (
+                        <StackItem>{props.titleHelp}</StackItem>
+                      ) : (
+                        props.titleHelp.map((help, index) => (
+                          <StackItem key={index}>{help}</StackItem>
+                        ))
+                      )}
+                      {props.titleDocLink && (
+                        <StackItem>
+                          <Button
+                            icon={<ExternalLinkAltIcon />}
+                            variant="link"
+                            onClick={() => window.open(props.titleDocLink, '_blank')}
+                            isInline
+                          >
+                            {translations.documentation}
+                          </Button>
+                        </StackItem>
+                      )}
+                    </Stack>
+                  }
+                  position="bottom-start"
+                >
                   <Title data-cy="page-title" headingLevel="h1">
                     {title}
+                    <Button
+                      variant="link"
+                      style={{
+                        padding: 0,
+                        marginTop: 1,
+                        marginLeft: 8,
+                        verticalAlign: 'top',
+                      }}
+                    >
+                      <OutlinedQuestionCircleIcon />
+                    </Button>
                   </Title>
-                )
+                </Popover>
               ) : (
-                <Title headingLevel="h1">
-                  <Skeleton width="160px" />
+                <Title data-cy="page-title" headingLevel="h1">
+                  {title}
                 </Title>
-              )}
-              {isMdOrLarger && description && (
-                <Text
-                  data-cy="app-description"
-                  component="p"
-                  style={{ paddingTop: isXl ? 4 : 2, opacity: 0.8 }}
-                >
-                  {typeof description === 'string' ? (
-                    <Truncate content={description} />
-                  ) : (
-                    <Stack>
-                      {description.map((d) => (
-                        <StackItem key={d}>{d}</StackItem>
-                      ))}
-                    </Stack>
-                  )}
-                </Text>
-              )}
-            </FlexItem>
-            {title && (headerActions || controls) && (
-              <Flex
-                data-cy="manage-view"
-                direction={{ default: 'column' }}
-                spaceItems={{ default: 'spaceItemsSm', xl: 'spaceItemsMd' }}
-                justifyContent={{ default: 'justifyContentCenter' }}
-              >
-                {controls && <FlexItem grow={{ default: 'grow' }}>{controls}</FlexItem>}
-                {headerActions && <FlexItem>{headerActions}</FlexItem>}
-              </Flex>
+              )
+            ) : (
+              <Title headingLevel="h1">
+                <Skeleton width="160px" />
+              </Title>
             )}
-          </Flex>
-          {footer}
-        </Stack>
-      </PageSection>
-    </>
+            {isMdOrLarger && description && (
+              <Text
+                data-cy="app-description"
+                component="p"
+                style={{ paddingTop: isXl ? 4 : 2, opacity: 0.8 }}
+              >
+                {typeof description === 'string' ? (
+                  <Truncate content={description} />
+                ) : (
+                  <Stack>
+                    {description.map((d) => (
+                      <StackItem key={d}>{d}</StackItem>
+                    ))}
+                  </Stack>
+                )}
+              </Text>
+            )}
+          </FlexItem>
+          {title && (headerActions || controls) && (
+            <Flex
+              data-cy="manage-view"
+              direction={{ default: 'column' }}
+              spaceItems={{ default: 'spaceItemsSm', xl: 'spaceItemsMd' }}
+              justifyContent={{ default: 'justifyContentCenter' }}
+            >
+              {controls && <FlexItem grow={{ default: 'grow' }}>{controls}</FlexItem>}
+              {headerActions && <FlexItem>{headerActions}</FlexItem>}
+            </Flex>
+          )}
+        </Flex>
+        {footer}
+      </Stack>
+    </PageSection>
   );
 }

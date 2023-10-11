@@ -17,6 +17,7 @@ import {
   useFormContext,
 } from 'react-hook-form';
 import styled from 'styled-components';
+import { useID } from '../../hooks/useID';
 import { useFrameworkTranslations } from '../../useFrameworkTranslations';
 import { capitalizeFirstLetter } from '../../utils/strings';
 import { PageFormGroup, PageFormGroupProps } from './PageFormGroup';
@@ -62,6 +63,8 @@ export function PageFormMultiInput<
   } = useFormContext<TFieldValues>();
   const [translations] = useFrameworkTranslations();
 
+  const id = useID(props);
+
   return (
     <Controller<TFieldValues, TFieldName>
       name={name}
@@ -75,7 +78,7 @@ export function PageFormMultiInput<
         return (
           <PageFormGroup
             {...formGroupInputProps}
-            id={props.id ?? name.split('.').join('-')}
+            fieldId={id}
             helperTextInvalid={!(validate && isValidating) && error?.message}
           >
             <InputGroup>

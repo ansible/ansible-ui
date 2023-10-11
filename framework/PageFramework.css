@@ -5,15 +5,23 @@
 }
 
 .border-top {
-  border-top: thin solid var(--pf-global--BorderColor--100);
-}
-
-.border-left {
-  border-left: thin solid var(--pf-global--BorderColor--100);
+  border-top: thin solid #0003;
 }
 
 .border-bottom {
-  border-bottom: thin solid var(--pf-global--BorderColor--100);
+  border-bottom: thin solid #0003;
+}
+
+.border-left {
+  border-left: thin solid #0003;
+}
+
+.border-right {
+  border-right: thin solid #0003;
+}
+
+.border {
+  border: thin solid #0003;
 }
 
 .light {

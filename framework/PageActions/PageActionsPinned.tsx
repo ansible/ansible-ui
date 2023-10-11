@@ -1,4 +1,9 @@
-import { DropdownPosition, Split } from '@patternfly/react-core';
+import {
+	Split
+} from '@patternfly/react-core';
+import {
+	DropdownPosition
+} from '@patternfly/react-core/deprecated';
 import { ComponentClass, FunctionComponent } from 'react';
 import { IPageAction, PageActionType } from './PageAction';
 import { PageActionButton } from './PageActionButton';

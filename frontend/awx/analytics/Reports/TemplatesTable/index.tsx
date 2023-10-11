@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from 'react';
-import { TableComposable, TableVariant, Tbody, Th, Thead, Tr } from '@patternfly/react-table';
+import { Table /* data-codemods */, TableVariant, Tbody, Th, Thead, Tr } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import Row from './Row';
 import { ChartLegendEntry } from '@ansible/react-json-chart-builder';
@@ -29,7 +29,7 @@ const TopTemplates: FunctionComponent<Props> = ({
   const { t } = useTranslation();
 
   return (
-    <TableComposable data-cy={'table'} aria-label="ROI Table" variant={TableVariant.compact}>
+    <Table data-cy={'table'} aria-label="ROI Table" variant={TableVariant.compact}>
       <Thead>
         <Tr>
           <Th />
@@ -49,7 +49,7 @@ const TopTemplates: FunctionComponent<Props> = ({
           />
         ))}
       </Tbody>
-    </TableComposable>
+    </Table>
   );
 };
 

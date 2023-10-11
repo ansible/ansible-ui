@@ -1,9 +1,9 @@
 import {
-  Dropdown,
-  DropdownItem,
-  DropdownToggle,
-  DropdownToggleCheckbox,
-} from '@patternfly/react-core';
+	Dropdown,
+	DropdownItem,
+	DropdownToggle,
+	DropdownToggleCheckbox
+} from '@patternfly/react-core/deprecated';
 import { useCallback, useMemo, useState } from 'react';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { useBreakpoint } from './useBreakPoint';
@@ -95,7 +95,7 @@ export function BulkSelector<T extends object>(props: BulkSelectorProps<T>) {
             {toggleText}
           </DropdownToggleCheckbox>,
         ]}
-        onToggle={(isOpen) => setIsOpen(isOpen)}
+        onToggle={(_event, isOpen) => setIsOpen(isOpen)}
         isDisabled={disableBulkSelector}
       />
     );

@@ -1,4 +1,4 @@
-import { Nav, NavExpandable, NavItem, NavList, PageSidebar } from '@patternfly/react-core';
+import { Nav, NavExpandable, NavItem, NavList, PageSidebar, PageSidebarBody } from '@patternfly/react-core';
 import { useState } from 'react';
 import { usePageNavBarClick, usePageNavSideBar } from './PageNavSidebar';
 import './PageNavigation.css';
@@ -10,16 +10,17 @@ export function PageNavigation(props: { navigation: PageNavigationItem[] }) {
   const navBar = usePageNavSideBar();
   return (
     <>
-      <PageSidebar
-        isNavOpen={navBar.isOpen}
-        nav={
+      <PageSidebar isSidebarOpen={navBar.isOpen} >
+<PageSidebarBody>
+
           <Nav data-cy="page-navigation" className="side-nav">
             <NavList>
               <PageNavigationItems baseRoute={''} items={navigationItems} />
             </NavList>
           </Nav>
-        }
-      />
+        
+</PageSidebarBody>
+</PageSidebar>
     </>
   );
 }

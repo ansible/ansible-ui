@@ -1,4 +1,9 @@
-import { Dropdown, DropdownPosition, DropdownToggle, KebabToggle } from '@patternfly/react-core';
+import {
+	Dropdown,
+	DropdownPosition,
+	DropdownToggle,
+	KebabToggle
+} from '@patternfly/react-core/deprecated';
 import { ReactNode, useCallback, useMemo, useState } from 'react';
 
 export function BetterDropdown(props: {

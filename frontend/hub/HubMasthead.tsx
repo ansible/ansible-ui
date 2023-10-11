@@ -1,4 +1,5 @@
-import { DropdownItem, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
+import { ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
+import { DropdownItem } from '@patternfly/react-core/deprecated';
 import { QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -75,7 +76,7 @@ export function HubMasthead() {
         <ToolbarItem>
           <PageMastheadDropdown
             id="account-menu"
-            icon={<UserCircleIcon size="md" />}
+            icon={<UserCircleIcon />}
             label={activeUser?.username}
           >
             {/* <DropdownItem

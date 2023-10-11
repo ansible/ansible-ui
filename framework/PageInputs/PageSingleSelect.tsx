@@ -1,5 +1,13 @@
-import { FormGroup, MenuToggle, MenuToggleElement, SearchInput } from '@patternfly/react-core';
-import { Select, SelectList, SelectOption } from '@patternfly/react-core/next';
+import {
+	FormGroup,
+	MenuToggle,
+	MenuToggleElement,
+	SearchInput,
+	Select /* data-codemods */,
+	SelectList /* data-codemods */,
+	SelectOption /* data-codemods */
+} from '@patternfly/react-core';
+
 import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getID } from '../hooks/useID';
@@ -180,7 +188,7 @@ export function PageSingleSelect<
               return (
                 <SelectOption
                   key={option.key !== undefined ? option.key : option.label}
-                  itemId={option.key !== undefined ? option.key : option.label}
+                  value={option.key !== undefined ? option.key : option.label}
                   description={option.description}
                   data-cy={optionId}
                 >

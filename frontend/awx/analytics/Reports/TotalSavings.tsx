@@ -38,7 +38,7 @@ const TotalSavings: FunctionComponent<Props> = ({
             >
               {isLoading ? (
                 <SpinnerDiv>
-                  <Spinner data-cy={'spinner'} isSVG size="lg" />
+                  <Spinner data-cy={'spinner'}  size="lg" />
                 </SpinnerDiv>
               ) : (
                 currencyFormatter(index === 0 ? totalSavings : currentPageSavings)

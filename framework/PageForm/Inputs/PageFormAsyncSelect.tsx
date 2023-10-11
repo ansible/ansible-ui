@@ -1,13 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { Button, InputGroup, InputGroupItem, Spinner } from '@patternfly/react-core';
 import {
-  Button,
-  InputGroup,
   Select,
   SelectOption,
   SelectOptionObject,
   SelectVariant,
-  Spinner,
-} from '@patternfly/react-core';
+} from '@patternfly/react-core/deprecated';
 import { SearchIcon, SyncAltIcon } from '@patternfly/react-icons';
 import { ReactElement, ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { Controller, FieldPath, FieldValues, PathValue, useFormContext } from 'react-hook-form';
@@ -25,8 +23,8 @@ export interface PageFormAsyncSelectProps<
   name: TFieldName;
   variant?: 'single' | 'typeahead' | 'typeaheadMulti';
   label: string;
-  labelHelp?: string | ReactNode;
   labelHelpTitle?: string;
+  labelHelp?: string | string[] | ReactNode;
   placeholder: string;
   loadingPlaceholder: string;
   loadingErrorText: string;
@@ -104,8 +102,7 @@ export function PageFormAsyncSelect<
       render={({ field: { onChange, value }, fieldState: { error } }) => {
         return (
           <PageFormGroup
-            name={name}
-            id={id}
+            fieldId={id}
             label={label}
             labelHelp={labelHelp}
             labelHelpTitle={labelHelpTitle}
@@ -259,89 +256,91 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
   );
   return (
     <InputGroup>
-      <Select
-        toggleId={id}
-        ouiaId="menu-select"
-        aria-labelledby={labeledBy}
-        variant={variant ? SelectVariant[`${variant}`] : SelectVariant.single}
-        hasPlaceholderStyle
-        placeholderText={
-          loadingError
-            ? frameworkTranslations.clickToRefresh
-            : loadingPlaceholder
-            ? loading
-              ? loadingPlaceholder
+      <InputGroupItem>
+        <Select
+          toggleId={id}
+          ouiaId="menu-select"
+          aria-labelledby={labeledBy}
+          variant={variant ? SelectVariant[`${variant}`] : SelectVariant.single}
+          hasPlaceholderStyle
+          placeholderText={
+            loadingError
+              ? frameworkTranslations.clickToRefresh
+              : loadingPlaceholder
+              ? loading
+                ? loadingPlaceholder
+                : placeholder
               : placeholder
-            : placeholder
-        }
-        typeAheadAriaLabel={placeholder}
-        selections={value}
-        onSelect={(_, value) => {
-          if (typeof value === 'object' && 'option' in value && value.option) {
-            onSelect(value.option as SelectionType);
-            setOpen(false);
           }
-        }}
-        onClear={value && !props.isRequired ? () => onSelect(null) : undefined}
-        isOpen={open}
-        onToggle={(open) => {
-          if (loadingError) {
-            reload();
-            return;
-          }
-          if (open) {
-            if (useSelectDialog && props.openSelectDialog) {
-              props.openSelectDialog(onSelect, props.value);
+          typeAheadAriaLabel={placeholder}
+          selections={value}
+          onSelect={(_, value) => {
+            if (typeof value === 'object' && 'option' in value && value.option) {
+              onSelect(value.option as SelectionType);
+              setOpen(false);
+            }
+          }}
+          onClear={value && !props.isRequired ? () => onSelect(null) : undefined}
+          isOpen={open}
+          onToggle={(_event, open) => {
+            if (loadingError) {
+              reload();
+              return;
+            }
+            if (open) {
+              if (useSelectDialog && props.openSelectDialog) {
+                props.openSelectDialog(onSelect, props.value);
+              } else {
+                setOpen(true);
+              }
             } else {
-              setOpen(true);
+              setOpen(false);
             }
-          } else {
-            setOpen(false);
+          }}
+          toggleIndicator={
+            loading ? (
+              <Spinner size="md" style={{ margin: -1, marginBottom: -3 }} />
+            ) : loadingError ? (
+              <SyncAltIcon />
+            ) : useSelectDialog ? (
+              <SearchIcon />
+            ) : undefined
           }
-        }}
-        toggleIndicator={
-          loading ? (
-            <Spinner size="md" style={{ margin: -1, marginBottom: -3 }} />
-          ) : loadingError ? (
-            <SyncAltIcon />
-          ) : useSelectDialog ? (
-            <SearchIcon />
-          ) : undefined
-        }
-        validated={validated}
-        isDisabled={options === null || loading || isReadOnly}
-        onFilter={onFilter}
-        hasInlineFilter={options !== null && options.length > 10}
-        menuAppendTo="parent"
-        maxHeight={'45vh'}
-        footer={
-          props.openSelectDialog ? (
-            <Button
-              variant="link"
-              onClick={() => {
-                setOpen(false);
-                props.openSelectDialog?.(onSelect, props.value);
-              }}
+          validated={validated}
+          isDisabled={options === null || loading || isReadOnly}
+          onFilter={onFilter}
+          hasInlineFilter={options !== null && options.length > 10}
+          menuAppendTo="parent"
+          maxHeight={'45vh'}
+          footer={
+            props.openSelectDialog ? (
+              <Button
+                variant="link"
+                onClick={() => {
+                  setOpen(false);
+                  props.openSelectDialog?.(onSelect, props.value);
+                }}
+              >
+                Browse
+              </Button>
+            ) : undefined
+          }
+        >
+          {(options ?? []).map((option) => (
+            <SelectOption
+              key={option.toString()}
+              value={option}
+              description={
+                'option' in option && option.option
+                  ? valueToDescription?.(option.option as SelectionType)
+                  : undefined
+              }
             >
-              Browse
-            </Button>
-          ) : undefined
-        }
-      >
-        {(options ?? []).map((option) => (
-          <SelectOption
-            key={option.toString()}
-            value={option}
-            description={
-              'option' in option && option.option
-                ? valueToDescription?.(option.option as SelectionType)
-                : undefined
-            }
-          >
-            {option.toString()}
-          </SelectOption>
-        ))}
-      </Select>
+              {option.toString()}
+            </SelectOption>
+          ))}
+        </Select>
+      </InputGroupItem>
 
       {props.showRefreshButton && loading === false ? (
         <Button variant="control" onClick={reload}>

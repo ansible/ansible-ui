@@ -1,13 +1,20 @@
-import React, { FunctionComponent } from 'react';
-import { Button, Switch, Popover } from '@patternfly/react-core';
-import { Card, CardTitle, CardBody, CardActions, CardHeader } from '@patternfly/react-core';
+import {
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  CardTitle,
+  Popover,
+  Switch,
+} from '@patternfly/react-core';
 import {
   OutlinedQuestionCircleIcon as PFOutlinedQuestionCircleIcon,
   TimesIcon,
 } from '@patternfly/react-icons';
-import { SetValues, AttributeType } from '../types';
-import styled from 'styled-components';
+import React, { FunctionComponent } from 'react';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
+import { AttributeType, SetValues } from '../types';
 
 const OutlinedQuestionCircleIcon = styled(PFOutlinedQuestionCircleIcon)`
   color: #151515;
@@ -26,7 +33,7 @@ interface Props {
   label?: string;
   labelOff?: string;
   isChecked?: AttributeType;
-  onChange?: (checked: boolean, event: React.FormEvent<HTMLInputElement>) => void;
+  onChange?: (event: React.FormEvent<HTMLInputElement>, checked: boolean) => void;
   ariaLabel?: string;
   bodyContent?: string;
 }
@@ -45,12 +52,19 @@ const SettingsPanel: FunctionComponent<Props> = ({
   const { t } = useTranslation();
   return (
     <Card isFlat style={{ backgroundColor: '#EEEEEE' }}>
-      <CardHeader>
-        <CardActions>
-          <Button variant="plain" onClick={() => setSettingsExpanded(!settingsExpanded)}>
-            <TimesIcon />
-          </Button>
-        </CardActions>
+      <CardHeader
+        actions={{
+          actions: (
+            <>
+              <Button variant="plain" onClick={() => setSettingsExpanded(!settingsExpanded)}>
+                <TimesIcon />
+              </Button>
+            </>
+          ),
+          hasNoOffset: false,
+          className: undefined,
+        }}
+      >
         <CardTitle>{t('Settings')}</CardTitle>
       </CardHeader>
       <CardBody>

@@ -1,4 +1,11 @@
-import { Dropdown, DropdownToggle, Flex, FlexItem } from '@patternfly/react-core';
+import {
+	Flex,
+	FlexItem
+} from '@patternfly/react-core';
+import {
+	Dropdown,
+	DropdownToggle
+} from '@patternfly/react-core/deprecated';
 import { ReactNode, useCallback, useState } from 'react';
 import { useBreakpoint } from '../components/useBreakPoint';
 

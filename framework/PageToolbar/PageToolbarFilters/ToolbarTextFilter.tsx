@@ -3,7 +3,7 @@ import {
   InputGroup,
   TextInputGroup,
   TextInputGroupMain,
-  TextInputGroupUtilities,
+  TextInputGroupUtilities, InputGroupItem,
 } from '@patternfly/react-core';
 import { ArrowRightIcon, TimesIcon } from '@patternfly/react-icons';
 import { useState } from 'react';
@@ -50,7 +50,7 @@ export function ToolbarTextFilter(props: IToolbarTextFilterProps) {
 
   return (
     <InputGroup>
-      <TextInputGroup data-cy={'text-input'} style={{ minWidth: 220 }}>
+      <InputGroupItem><TextInputGroup data-cy={'text-input'} style={{ minWidth: 220 }}>
         <TextInputGroupMain
           id={props.id}
           value={value}
@@ -79,9 +79,9 @@ export function ToolbarTextFilter(props: IToolbarTextFilterProps) {
             </Button>
           </TextInputGroupUtilities>
         )}
-      </TextInputGroup>
+      </TextInputGroup></InputGroupItem>
 
-      <Button
+      <InputGroupItem><Button
         variant={value ? 'primary' : 'control'}
         data-cy="apply-filter"
         aria-label="apply filter"
@@ -93,7 +93,7 @@ export function ToolbarTextFilter(props: IToolbarTextFilterProps) {
         isDisabled={!value}
       >
         <ArrowRightIcon />
-      </Button>
+      </Button></InputGroupItem>
     </InputGroup>
   );
 }

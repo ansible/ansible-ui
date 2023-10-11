@@ -1,4 +1,6 @@
-import { DropdownPosition } from '@patternfly/react-core';
+import {
+	DropdownPosition
+} from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { PageActions, PageHeader, PageLayout } from '../../../../../framework';

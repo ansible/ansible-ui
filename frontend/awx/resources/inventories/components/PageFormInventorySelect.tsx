@@ -1,4 +1,4 @@
-import { ReactElement, useCallback } from 'react';
+import { ReactElement, ReactNode, useCallback } from 'react';
 import { FieldPath, FieldValues } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { PageFormAsyncSelect } from '../../../../../framework/PageForm/Inputs/PageFormAsyncSelect';
@@ -14,7 +14,7 @@ export function PageFormInventorySelect<
   name: TFieldName;
   isRequired?: boolean;
   additionalControls?: ReactElement;
-  labelHelp?: string;
+  labelHelp?: string | string[] | ReactNode;
 }) {
   const { t } = useTranslation();
   const openSelectDialog = useSelectInventory();

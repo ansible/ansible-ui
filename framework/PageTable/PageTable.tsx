@@ -1,27 +1,28 @@
 import {
   Button,
-  DropdownPosition,
   EmptyState,
+  EmptyStateActions,
   EmptyStateBody,
+  EmptyStateFooter,
+  EmptyStateHeader,
   EmptyStateIcon,
-  EmptyStateSecondaryActions,
   Flex,
   PageSection,
   Stack,
-  Title,
 } from '@patternfly/react-core';
+import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { SearchIcon } from '@patternfly/react-icons';
 import {
   CollapseColumn,
   SortByDirection,
-  TableComposable,
+  Table /* data-codemods */,
   Tbody,
   Td,
   Th,
   Thead,
   Tr,
 } from '@patternfly/react-table';
-import { ThSortType } from '@patternfly/react-table/dist/esm/components/Table/base';
+import { ThSortType } from '@patternfly/react-table/dist/esm/components/Table/base/types';
 import useResizeObserver from '@react-hook/resize-observer';
 import {
   Dispatch,
@@ -301,7 +302,6 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
         showSelect={showSelect}
         viewType={viewType}
         setViewType={setViewType}
-        bottomBorder
         sortOptions={sortOptions}
       />
       {viewType === PageTableViewTypeE.Table && (
@@ -474,7 +474,7 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
   } else {
     returnElement = (
       <>
-        <TableComposable
+        <Table
           aria-label="Simple table"
           ouiaId="simple-table"
           variant={
@@ -518,21 +518,24 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
               />
             ))}
           </Tbody>
-        </TableComposable>
+        </Table>
         {itemCount === 0 && (
           <EmptyState isFullHeight>
-            <EmptyStateIcon icon={SearchIcon} />
-            <Title headingLevel="h2" size="lg">
-              {translations.noResultsFound}
-            </Title>
+            <EmptyStateHeader
+              titleText={<>{translations.noResultsFound}</>}
+              icon={<EmptyStateIcon icon={SearchIcon} />}
+              headingLevel="h2"
+            />
             <EmptyStateBody>{translations.noResultsMatchCriteria}</EmptyStateBody>
-            {clearAllFilters && (
-              <EmptyStateSecondaryActions>
-                <Button variant="primary" onClick={clearAllFilters}>
-                  {translations.clearAllFilters}
-                </Button>
-              </EmptyStateSecondaryActions>
-            )}
+            <EmptyStateFooter>
+              {clearAllFilters && (
+                <EmptyStateActions>
+                  <Button variant="primary" onClick={clearAllFilters}>
+                    {translations.clearAllFilters}
+                  </Button>
+                </EmptyStateActions>
+              )}
+            </EmptyStateFooter>
           </EmptyState>
         )}
       </>
@@ -781,7 +784,7 @@ function TableRow<T extends object>(props: {
               },
               isSelected: isItemSelected ?? false,
               variant: isSelectMultiple ? 'checkbox' : 'radio',
-              disable: maxSelections && selectedItems ? disableRow(item) : false,
+              isDisabled: maxSelections && selectedItems ? disableRow(item) : false,
             }}
             isStickyColumn
             stickyMinWidth="0px"

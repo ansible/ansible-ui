@@ -41,7 +41,7 @@ function StandardPopover(props: {
         onClick={(e) => e.preventDefault()}
         type="button"
       >
-        <HelpIcon noVerticalAlign />
+        <HelpIcon />
       </PopoverButton>
     </Popover>
   );
