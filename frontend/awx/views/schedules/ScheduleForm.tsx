@@ -9,13 +9,13 @@ import { dateToInputDateTime } from '../../../../framework/utils/dateTimeHelpers
 import { RouteObj } from '../../../common/Routes';
 import { postRequest } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
+import { AwxPageForm } from '../../AwxPageForm';
 import { AwxRoute } from '../../AwxRoutes';
 import { AwxError } from '../../common/AwxError';
 import { getAddedAndRemoved } from '../../common/util/getAddedAndRemoved';
 import { ScheduleFormFields } from '../../interfaces/ScheduleFormFields';
 import { ScheduleInputs } from './components/ScheduleInputs';
 import { buildScheduleContainer } from './hooks/scheduleHelpers';
-import { AwxPageForm } from '../../AwxPageForm';
 
 const routes: { [key: string]: string } = {
   inventory: RouteObj.InventorySourceScheduleDetails,

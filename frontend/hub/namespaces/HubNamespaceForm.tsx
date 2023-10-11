@@ -11,10 +11,10 @@ import {
 import { useGet } from '../../common/crud/useGet';
 import { usePatchRequest } from '../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../common/crud/usePostRequest';
+import { HubPageForm } from '../HubPageForm';
 import { HubRoute } from '../HubRoutes';
 import { hubAPI } from '../api/utils';
 import { HubNamespace } from './HubNamespace';
-import { HubPageForm } from '../HubPageForm';
 
 export function CreateHubNamespace() {
   const { t } = useTranslation();

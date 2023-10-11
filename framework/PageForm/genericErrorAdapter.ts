@@ -1,5 +1,5 @@
 import { isRequestError } from '../../frontend/common/crud/RequestError';
-import { ErrorOutput, GenericErrorDetail, FieldErrorDetail } from './typesErrorAdapter';
+import { ErrorOutput, FieldErrorDetail, GenericErrorDetail } from './typesErrorAdapter';
 
 export const genericErrorAdapter = (error: unknown): ErrorOutput => {
   const genericErrors: GenericErrorDetail[] = [];

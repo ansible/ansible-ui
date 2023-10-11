@@ -14,12 +14,12 @@ import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSe
 import { RouteObj } from '../../../common/Routes';
 import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
+import { AwxPageForm } from '../../AwxPageForm';
 import { AwxRoute } from '../../AwxRoutes';
 import { Organization } from '../../interfaces/Organization';
 import { User } from '../../interfaces/User';
 import { PageFormOrganizationSelect } from '../organizations/components/PageFormOrganizationSelect';
 import { getOrganizationByName } from '../organizations/utils/getOrganizationByName';
-import { AwxPageForm } from '../../AwxPageForm';
 
 export function CreateUser() {
   const { t } = useTranslation();

@@ -1,10 +1,10 @@
-import { isRequestError } from '../../common/crud/RequestError';
 import {
   ErrorAdapter,
-  GenericErrorDetail,
   ErrorOutput,
   FieldErrorDetail,
+  GenericErrorDetail,
 } from '../../../framework/PageForm/typesErrorAdapter';
+import { isRequestError } from '../../common/crud/RequestError';
 
 export interface GalaxyError {
   code: string;
