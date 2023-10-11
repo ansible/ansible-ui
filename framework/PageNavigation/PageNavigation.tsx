@@ -17,7 +17,7 @@ export function PageNavigation(props: { navigation: PageNavigationItem[] }) {
   const navBar = usePageNavSideBar();
   return (
     <>
-      <PageSidebar isSidebarOpen={navBar.isOpen}>
+      <PageSidebar isSidebarOpen={navBar.isOpen} className="bg-lighten-2">
         <PageSidebarBody>
           <Nav data-cy="page-navigation" className="side-nav">
             <NavList>
@@ -82,11 +82,13 @@ function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRout
       </NavExpandable>
     );
   } else if ('label' in item) {
+    const isActive = location.pathname.startsWith(route);
     return (
       <NavItem
         id={id}
         href={route}
-        isActive={location.pathname.startsWith(route)}
+        isActive={isActive}
+        className={isActive ? 'bg-lighten-2' : undefined}
         onClick={() => onClickNavItem(route)}
         data-cy={id}
       >

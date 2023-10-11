@@ -610,7 +610,7 @@ function TableHead<T extends object>(props: {
 
   return (
     <Thead>
-      <Tr>
+      <Tr className="bg-lighten">
         {expandedRow && <Th style={{ padding: 0, backgroundColor: 'inherit' }} />}
         {(showSelect || onSelect) && (
           <Th

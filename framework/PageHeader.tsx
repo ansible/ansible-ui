@@ -111,7 +111,7 @@ export function PageHeader(props: PageHeaderProps) {
   return (
     <PageSection
       variant={PageSectionVariants.light}
-      className="border-bottom"
+      className="bg-lighten border-bottom"
       style={{
         paddingTop: breadcrumbs ? (isXl ? 16 : 12) : isXl ? 16 : 12,
         paddingBottom: isXl ? 16 : 12,

@@ -7,21 +7,44 @@
 .border-top {
   border-top: thin solid #0003;
 }
+:root:where(.pf-v5-theme-dark) .border-top {
+  border-top: thin solid #fff3;
+}
 
 .border-bottom {
   border-bottom: thin solid #0003;
+}
+:root:where(.pf-v5-theme-dark) .border-bottom {
+  border-bottom: thin solid #fff3;
 }
 
 .border-left {
   border-left: thin solid #0003;
 }
+:root:where(.pf-v5-theme-dark) .border-left {
+  border-left: thin solid #fff3;
+}
 
 .border-right {
   border-right: thin solid #0003;
 }
+:root:where(.pf-v5-theme-dark) .border-right {
+  border-right: thin solid #fff3;
+}
 
 .border {
   border: thin solid #0003;
+}
+:root:where(.pf-v5-theme-dark) .border {
+  border: thin solid #fff3;
+}
+
+:root:where(.pf-v5-theme-dark) .bg-lighten {
+  background-image: linear-gradient(#ffffff08, #ffffff08);
+}
+
+:root:where(.pf-v5-theme-dark) .bg-lighten-2 {
+  background-image: linear-gradient(#ffffff0c, #ffffff0c);
 }
 
 /* .pf-c-truncate__start {
