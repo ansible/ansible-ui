@@ -79,7 +79,7 @@ function useServices() {
       error = new Error('Unknown error');
     }
     return {
-      data: response.data?.results,
+      data: response.data?.results || [],
       error: response.isLoading ? undefined : error,
       refresh: () => void response.mutate(),
       isLoading: response.isLoading,
