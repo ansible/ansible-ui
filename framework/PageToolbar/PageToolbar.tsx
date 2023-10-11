@@ -29,7 +29,7 @@ const FlexGrowDiv = styled.div`
 `;
 
 const ToolbarContent = styled(PFToolbarContent)`
-  & > .pf-c-toolbar__content-section {
+  & > .pf-v5-c-toolbar__content-section {
     row-gap: 16px;
     justify-content: end;
   }

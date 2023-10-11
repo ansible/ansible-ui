@@ -7,6 +7,6 @@
 }
 
 /* This is a workaround to handle when the content of the toolbar wraps */
-.pf-c-toolbar__content-section {
+.pf-v5-c-toolbar__content-section {
   justify-content: start !important;
 }

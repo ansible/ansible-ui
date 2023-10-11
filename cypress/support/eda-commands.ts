@@ -49,7 +49,7 @@ Cypress.Commands.add('checkAnchorLinks', (anchorName: string) => {
 });
 
 Cypress.Commands.add('clickEdaPageAction', (label: string | RegExp) => {
-  cy.get('.pf-c-toolbar__content-section')
+  cy.get('.pf-v5-c-toolbar__content-section')
     .eq(1)
     .within(() => {
       cy.get('.toggle-kebab').click().get('.pf-v5-c-dropdown__menu-item').contains(label).click();
