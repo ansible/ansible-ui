@@ -34,7 +34,7 @@ describe('Templates', () => {
         { fixture: 'jobTemplateLaunch' }
       ).as('launchRequest');
       cy.mount(<Templates />);
-      cy.clickTableRowKebabAction('Demo Job Template', 'Launch template');
+      cy.clickTableRowPinnedAction('Demo Job Template', 'launch-template');
       cy.wait('@launchRequest');
     });
   });

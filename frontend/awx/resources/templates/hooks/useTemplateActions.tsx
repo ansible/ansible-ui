@@ -1,35 +1,32 @@
 import { EditIcon, ProjectDiagramIcon, RocketIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   useGetPageUrl,
-  usePageAlertToaster,
 } from '../../../../../framework';
-import { RequestError } from '../../../../common/crud/RequestError';
-import { handleLaunch } from '../../../common/util/launchHandlers';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { useDeleteTemplates } from '../hooks/useDeleteTemplates';
 import { AwxRoute } from '../../../AwxRoutes';
 import { useActiveUser } from '../../../../common/useActiveUser';
-import { getJobOutputUrl } from '../../../views/jobs/jobUtils';
+import { useLaunchTemplate } from './useLaunchTemplate';
 
+type Template = JobTemplate | WorkflowJobTemplate;
 export function useTemplateActions(options: {
-  onTemplatesDeleted: (templates: (JobTemplate | WorkflowJobTemplate)[]) => void;
+  onTemplatesDeleted: (templates: Template[]) => void;
 }) {
-  const alertToaster = usePageAlertToaster();
   const activeUser = useActiveUser();
-  const navigate = useNavigate();
   const { onTemplatesDeleted } = options;
   const { t } = useTranslation();
   const deleteTemplates = useDeleteTemplates(onTemplatesDeleted);
+  const launchTemplate = useLaunchTemplate();
   const getPageUrl = useGetPageUrl();
-  return useMemo<IPageAction<JobTemplate | WorkflowJobTemplate>[]>(() => {
-    const itemActions: IPageAction<JobTemplate | WorkflowJobTemplate>[] = [
+
+  return useMemo<IPageAction<Template>[]>(() => {
+    const itemActions: IPageAction<Template>[] = [
       {
         type: PageActionType.Link,
         isHidden: (template) =>
@@ -65,21 +62,8 @@ export function useTemplateActions(options: {
         selection: PageActionSelection.Single,
         icon: RocketIcon,
         label: t('Launch template'),
-        onClick: async (template) => {
-          try {
-            const job = await handleLaunch(template?.type, template?.id);
-            if (job) {
-              navigate(getJobOutputUrl(job));
-            }
-          } catch (err) {
-            alertToaster.addAlert({
-              variant: 'danger',
-              title: t('Failed to launch job'),
-              children: err instanceof RequestError ? err.details : t('Unknown error'),
-            });
-          }
-        },
-        isHidden: (template) =>
+        onClick: (template: Template) => void launchTemplate(template),
+        isHidden: (template: Template) =>
           !template?.summary_fields.user_capabilities.start && !activeUser?.is_system_auditor,
         isDisabled: () =>
           activeUser?.is_system_auditor
@@ -87,6 +71,7 @@ export function useTemplateActions(options: {
             : undefined,
         ouiaId: 'job-template-detail-launch-button',
         isDanger: false,
+        isPinned: true,
       },
       { type: PageActionType.Seperator },
       {
@@ -107,5 +92,5 @@ export function useTemplateActions(options: {
       },
     ];
     return itemActions;
-  }, [deleteTemplates, getPageUrl, navigate, activeUser?.is_system_auditor, alertToaster, t]);
+  }, [deleteTemplates, getPageUrl, launchTemplate, activeUser?.is_system_auditor, t]);
 }

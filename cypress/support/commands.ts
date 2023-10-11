@@ -4,11 +4,13 @@
 import '@4tw/cypress-drag-drop';
 import '@cypress/code-coverage/support';
 import { SetOptional, SetRequired } from 'type-fest';
+import { AwxItemsResponse } from '../../frontend/awx/common/AwxItemsResponse';
 import { AwxToken } from '../../frontend/awx/interfaces/AwxToken';
 import { Credential } from '../../frontend/awx/interfaces/Credential';
 import { ExecutionEnvironment } from '../../frontend/awx/interfaces/ExecutionEnvironment';
 import { InstanceGroup } from '../../frontend/awx/interfaces/InstanceGroup';
 import { Inventory } from '../../frontend/awx/interfaces/Inventory';
+import { JobEvent } from '../../frontend/awx/interfaces/JobEvent';
 import { JobTemplate } from '../../frontend/awx/interfaces/JobTemplate';
 import { Label } from '../../frontend/awx/interfaces/Label';
 import { Organization } from '../../frontend/awx/interfaces/Organization';
@@ -61,14 +63,18 @@ declare global {
 
       // --- INPUT COMMANDS ---
 
-      /** Get an input by its label. */
-      getInputByLabel(label: string | RegExp): Chainable<JQuery<HTMLElement>>;
-
       /** Get a checkbox by its label. */
       getCheckboxByLabel(label: string | RegExp): Chainable<JQuery<HTMLElement>>;
 
       /** Finds a dropdown/select component by its dropdownLabel and clicks on the option specified by dropdownOptionLabel.*/
       selectDropdownOptionByResourceName(resource: string, itemName: string): Chainable<void>;
+
+      /** Finds a dropdown/select component by its dropdownLabel and clicks on the option specified by dropdownOptionLabel.*/
+      selectPromptOnLaunchByLabel(
+        label: string | RegExp,
+        isSelected?: boolean,
+        text?: string
+      ): Chainable<void>;
 
       singleSelectShouldHaveSelectedOption(
         selector: string,
@@ -158,6 +164,8 @@ declare global {
         filter?: boolean
       ): Chainable<void>;
 
+      selectItemFromLookupModal(resource: string, itemName: string): Chainable<void>;
+
       /**
        * Finds a list card containing text and clicks action specified by label.
        * @param name
@@ -201,11 +209,7 @@ declare global {
       assertModalSuccess(): Chainable<void>;
 
       /** Selects a table row in the active modal dialog, by clicking on the row checkbox. */
-      selectTableRowInDialog(
-        name: string | RegExp,
-        filter?: boolean,
-        inputType?: string
-      ): Chainable<void>;
+      selectTableRowInDialog(name: string | RegExp, filter?: boolean): Chainable<void>;
 
       // --- DETAILS COMMANDS ---
       /**Finds a button with a particular label and clicks it. */
@@ -474,6 +478,8 @@ declare global {
       createInventoryHostGroup(
         organization: Organization
       ): Chainable<{ inventory: Inventory; host: Host; group: Group }>;
+
+      waitForTemplateStatus(jobID: string): Chainable<AwxItemsResponse<JobEvent>>;
 
       // --- EDA COMMANDS ---
 
