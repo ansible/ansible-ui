@@ -34,12 +34,12 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
     cy.get('.pf-c-modal-box__title-text').should('contain', 'Manage Dashboard');
     cy.contains('tr', 'Resource Counts').find('input').uncheck();
     cy.clickModalButton('Apply');
-    cy.contains('.pf-c-title', 'Hosts').should('not.exist');
+    cy.contains('.pf-v5-c-title', 'Hosts').should('not.exist');
     cy.clickButton('Manage view');
     cy.get('.pf-c-modal-box__title-text').should('contain', 'Manage Dashboard');
     cy.contains('tr', 'Resource Counts').find('input').check();
     cy.clickModalButton('Apply');
-    cy.contains('.pf-c-title', 'Hosts').should('be.visible');
+    cy.contains('.pf-v5-c-title', 'Hosts').should('be.visible');
   });
 
   it('within the Manage Dashboard modal, clicking the Cancel button should revert any changes', () => {
@@ -48,7 +48,7 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
     cy.get('.pf-c-modal-box__title-text').should('contain', 'Manage Dashboard');
     cy.contains('tr', 'Resource Counts').find('input').uncheck();
     cy.clickModalButton('Cancel');
-    cy.contains('.pf-c-title', 'Hosts').should('be.visible');
+    cy.contains('.pf-v5-c-title', 'Hosts').should('be.visible');
   });
 
   it('within the Manage Dashboard modal, clicking the Close button should revert any changes', () => {
@@ -57,7 +57,7 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
     cy.get('.pf-c-modal-box__title-text').should('contain', 'Manage Dashboard');
     cy.contains('tr', 'Resource Counts').find('input').uncheck();
     cy.get('[aria-label="Close"]').click();
-    cy.contains('.pf-c-title', 'Hosts').should('be.visible');
+    cy.contains('.pf-v5-c-title', 'Hosts').should('be.visible');
   });
 
   // Manage Dashboard modal table does not currently support keyboard input to reorder items, use drag & drop
@@ -158,7 +158,7 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
         } else if (results.count >= 1) {
           cy.log('non empty state check');
           cy.contains('h3', 'Jobs')
-            .parents('article.pf-v5-c-card')
+            .parents('.pf-v5-c-card')
             .within(() => {
               cy.get('tbody tr')
                 .should('have.lengthOf.at.least', 1)
@@ -196,7 +196,7 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
             .prev()
             .should('have.text', 'Projects')
             .scrollIntoView()
-            .parents('article.pf-v5-c-card')
+            .parents('.pf-v5-c-card')
             .within(() => {
               cy.get('tbody tr')
                 .should('have.lengthOf.at.least', 1)
@@ -231,7 +231,7 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
         } else if (results.count >= 1) {
           cy.log('non empty state check');
           cy.contains('h3', 'Inventories')
-            .parents('article.pf-v5-c-card')
+            .parents('.pf-v5-c-card')
             .within(() => {
               cy.get('tbody tr')
                 .should('have.lengthOf.at.least', 1)

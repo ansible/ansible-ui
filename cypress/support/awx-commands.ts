@@ -103,13 +103,11 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add('setTablePageSize', (text: '10' | '20' | '50' | '100') => {
-  cy.get('.pf-c-pagination')
+  cy.get('.pf-v5-c-pagination')
     .first()
     .within(() => {
-      cy.get('.pf-c-options-menu').within(() => {
-        cy.get('button').click();
-        cy.contains('button', `${text} per page`).click();
-      });
+      cy.get('.pf-v5-c-menu-toggle').click();
+      cy.contains('button', `${text} per page`).click();
     });
 });
 

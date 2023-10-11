@@ -37,7 +37,7 @@ describe('EDA Dashboard', () => {
 
   it('checks Ansible header title', () => {
     cy.navigateTo('eda', 'dashboard');
-    cy.get('.pf-c-title').should('contain', 'Welcome to');
+    cy.get('.pf-v5-c-title').should('contain', 'Welcome to');
   });
 
   // it('shows the user an RBA card with a list of RBAs visible including working links', () => {
@@ -74,7 +74,7 @@ describe('EDA Dashboard', () => {
           cy.verifyPageTitle('Create project');
         } else if (results.length >= 1) {
           cy.contains('h3', 'Projects')
-            .parents('article.pf-v5-c-card')
+            .parents('.pf-v5-c-card')
             .within(() => {
               cy.get('tbody tr').should('have.lengthOf.lessThan', 8);
             });
@@ -100,7 +100,7 @@ describe('EDA Dashboard', () => {
         } else if (results.length >= 1) {
           cy.contains('h3', 'Rulebook Activations')
             .scrollIntoView()
-            .parents('article.pf-v5-c-card')
+            .parents('.pf-v5-c-card')
             .within(() => {
               cy.get('tbody tr').should('have.lengthOf.lessThan', 8);
             });
@@ -124,7 +124,7 @@ describe('EDA Dashboard', () => {
           cy.verifyPageTitle('Create decision environment');
         } else if (results.length >= 1) {
           cy.contains('h3', 'Decision Environments')
-            .parents('article.pf-v5-c-card')
+            .parents('.pf-v5-c-card')
             .within(() => {
               cy.get('tbody tr').should('have.lengthOf.lessThan', 8);
             });

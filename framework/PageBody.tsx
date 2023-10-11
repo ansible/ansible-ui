@@ -19,7 +19,7 @@ export function PageBody(props: {
           height: '100%',
           maxHeight: '100%',
           overflow: 'hidden',
-          // backgroundColor: 'var(--pf-c-page__main-section--BackgroundColor)',
+          // backgroundColor: 'var(--pf-v5-c-page__main-section--BackgroundColor)',
           ...props.style,
         }}
       >

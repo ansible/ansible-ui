@@ -29,11 +29,11 @@ describe('hub dashboard', () => {
   });
   it('render the hub dashboard', () => {
     cy.navigateTo('hub', 'dashboard');
-    cy.get('.pf-c-title').contains(HubDashboard.title);
-    cy.get('section.pf-c-page__main-section')
+    cy.get('.pf-v5-c-title').contains(HubDashboard.title);
+    cy.get('section.pf-v5-c-page__main-section')
       .first()
       .within(() => {
-        cy.get('.pf-c-title').should('contain', HubDashboard.title);
+        cy.get('.pf-v5-c-title').should('contain', HubDashboard.title);
         cy.get('span.pf-v5-c-truncate__start').should('contain', HubDashboard.description);
       });
     cy.contains('button', 'Manage view').should('be.visible');
