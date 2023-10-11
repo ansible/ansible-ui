@@ -17,6 +17,7 @@ export default function PageWizard<T extends object>(props: {
     <PageWizardProvider<T> steps={props.steps} defaultValue={props.defaultValue}>
       <div
         className="pf-c-wizard"
+        data-cy="wizard"
         style={{
           display: 'flex',
           flexDirection: 'column',

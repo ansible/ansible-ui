@@ -16,6 +16,7 @@ import { Schedule } from '../../frontend/awx/interfaces/Schedule';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
 import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/generated-from-swagger/api';
+import { JobEvent } from '../../frontend/awx/interfaces/JobEvent';
 import './auth';
 import './commands';
 import './rest-commands';
@@ -41,6 +42,71 @@ Cypress.Commands.add('selectDropdownOptionByResourceName', (resource: string, it
       });
   });
 });
+
+Cypress.Commands.add('selectItemFromLookupModal', (resource: string, itemName: string) => {
+  cy.get(`[data-cy*="${resource}-form-group"]`).within(() => {
+    cy.get('button').eq(1).click();
+  });
+  cy.get('[data-ouia-component-type="PF4/ModalContent"]').within(() => {
+    cy.searchAndDisplayResource(itemName);
+    cy.get('[data-ouia-component-id="simple-table"] tbody').within(() => {
+      cy.get('[data-cy="checkbox-column-cell"]').click();
+    });
+    cy.clickButton(/^Confirm/);
+  });
+});
+
+Cypress.Commands.add(
+  'selectPromptOnLaunchByLabel',
+  (label: string | RegExp, isSelected?: boolean, text?: string) => {
+    if (isSelected === undefined) {
+      isSelected = true;
+    }
+
+    if (isSelected) {
+      cy.contains('.pf-c-form__label-text', label)
+        .parent()
+        .parent()
+        .parent()
+        .parent()
+        .within(() => {
+          cy.getCheckboxByLabel('Prompt on launch').click();
+        });
+    } else if (text) {
+      switch (label) {
+        case 'Inventory':
+          cy.get('input[placeholder="Select inventory"]')
+            .parent()
+            .parent()
+            .within(() => {
+              cy.get('button[aria-label="Options menu"]').click();
+            });
+          cy.get('.pf-c-select__menu').within(() => {
+            cy.contains('button', text).click();
+          });
+          break;
+        case 'Execution environment':
+          cy.get('input[placeholder="Add execution environment"]')
+            .parent()
+            .within(() => {
+              cy.get('button[aria-label="Options menu"]').click();
+            });
+          cy.selectTableRowInDialog(text, true).click();
+          cy.clickModalButton('Confirm');
+          break;
+        case 'Credentials':
+          cy.get('input[placeholder="Add credentials"]')
+            .parent()
+            .within(() => {
+              cy.get('button[aria-label="Options menu"]').click();
+            });
+          cy.selectTableRowInDialog(text, true).click();
+          cy.clickModalButton('Confirm');
+          break;
+      }
+    }
+  }
+);
 
 Cypress.Commands.add('setTablePageSize', (text: '10' | '20' | '50' | '100') => {
   cy.get('.pf-c-pagination')
@@ -180,16 +246,13 @@ Cypress.Commands.add('getDialog', () => {
   cy.get('div[data-ouia-component-type="PF4/ModalContent"]');
 });
 
-Cypress.Commands.add(
-  'selectTableRowInDialog',
-  (name: string | RegExp, filter?: boolean, inputType = 'checkbox') => {
-    cy.getDialog().within(() => {
-      cy.getTableRowByText(name, filter).within(() => {
-        cy.get(`input[type=${inputType}]`).click();
-      });
+Cypress.Commands.add('selectTableRowInDialog', (name: string | RegExp, filter?: boolean) => {
+  cy.getDialog().within(() => {
+    cy.getTableRowByText(name, filter).within(() => {
+      cy.get('td[data-cy=checkbox-column-cell]').click();
     });
-  }
-);
+  });
+});
 
 Cypress.Commands.add('expandTableRow', (name: string | RegExp, filter?: boolean) => {
   cy.getTableRowByText(name, filter).within(() => {
@@ -754,10 +817,35 @@ Cypress.Commands.add(
 );
 
 // Global variable to store the token for AWX
-// Created on demand when a cammand needs it
+// Created on demand when a command needs it
 let globalAwxToken: AwxToken | undefined;
 
 after(() => {
   // Delete the token if it was created
   if (globalAwxToken) cy.deleteAwxToken(globalAwxToken, { failOnStatusCode: false });
+});
+
+Cypress.Commands.add('waitForTemplateStatus', (jobID: string) => {
+  cy.requestGet<AwxItemsResponse<JobEvent>>(
+    `api/v2/jobs/${jobID}/job_events/?order_by=counter&page=1&page_size=50`
+  )
+    .its('results')
+    .then((results: { summary_fields: { job: { status: string } } }[]) => {
+      if (results.length > 0) {
+        return results[0].summary_fields.job.status;
+      }
+      return '';
+    })
+    .then((status: string) => {
+      cy.log(status);
+      switch (status) {
+        case 'failed':
+        case 'successful':
+          cy.wrap(status);
+          break;
+        default:
+          cy.wait(100).then(() => cy.waitForTemplateStatus(jobID));
+          break;
+      }
+    });
 });
