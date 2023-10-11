@@ -42,11 +42,12 @@ export function RulebookActivationDetails() {
   }
   return (
     <Scrollable>
-      {(rulebookActivation.status === Status906Enum.Failed ||
-        rulebookActivation.status === Status906Enum.Error) && (
+      {rulebookActivation.status === Status906Enum.Error && (
         <Alert
           variant="warning"
-          title={`${t('Rulebook Activation error: ')}${rulebookActivation?.status_message || ''}`}
+          title={`${t('Rulebook Activation create error: ')}${
+            rulebookActivation?.status_message || ''
+          }`}
         />
       )}
       <PageDetails>
