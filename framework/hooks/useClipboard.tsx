@@ -1,7 +1,9 @@
+import { AlertProps } from '@patternfly/react-core';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePageAlertToaster } from '../PageAlertToaster';
-import { AlertProps } from '@patternfly/react-core';
+
+type TimeoutType = AlertProps['timeout'];
 
 type UseClipboardResult = {
   writeToClipboard: (text: string) => void;
@@ -16,7 +18,7 @@ type UseClipboardResult = {
  * - copySuccess: A boolean indicating if the last copy attempt was
  * successful.
  */
-export function useClipboard(): UseClipboardResult {
+export function useClipboard(timeout: TimeoutType = true): UseClipboardResult {
   const { t } = useTranslation();
   const [copySuccess, setCopySuccess] = useState<boolean>(false);
   const alertToaster = usePageAlertToaster();
@@ -24,7 +26,7 @@ export function useClipboard(): UseClipboardResult {
   const alertSuccess: AlertProps = {
     variant: 'success',
     title: t('Copied to clipboard'),
-    timeout: true,
+    timeout: timeout,
   };
 
   const alertError: AlertProps = {
