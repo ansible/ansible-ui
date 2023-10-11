@@ -9,6 +9,18 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
     cy.awxLogin();
   });
 
+  it('verifies the tech preview banner title in the new UI and the working links to and from the old UI', () => {
+    cy.navigateTo('awx', 'dashboard');
+    cy.get('div.pf-c-banner.pf-m-info p')
+      .should(
+        'have.text',
+        ' You are currently viewing a tech preview of the new AWX user interface. To return to the original interface, click here.'
+      )
+      .should('be.visible');
+    cy.get('[data-cy="tech-preview"] a').should('contain', 'here').click();
+    cy.url().should('not.include', '/ui_next');
+  });
+
   it('clicking on Cog icon opens the Manage Dashboard modal', () => {
     cy.navigateTo('awx', 'dashboard');
     cy.clickButton('Manage view');
