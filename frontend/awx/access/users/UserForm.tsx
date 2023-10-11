@@ -21,6 +21,12 @@ import { PageFormOrganizationSelect } from '../organizations/components/PageForm
 import { getOrganizationByName } from '../organizations/utils/getOrganizationByName';
 import { AwxPageForm } from '../../AwxPageForm';
 
+const UserType = {
+  SystemAdministrator: 'System administrator',
+  SystemAuditor: 'System auditor',
+  NormalUser: 'Normal user',
+};
+
 export function CreateUser() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -39,8 +45,8 @@ export function CreateUser() {
     } catch {
       throw new Error(t('Organization not found.'));
     }
-    user.is_superuser = userType === 'System administrator';
-    user.is_system_auditor = userType === 'System auditor';
+    user.is_superuser = userType === UserType.SystemAdministrator;
+    user.is_system_auditor = userType === UserType.SystemAuditor;
     if (confirmPassword !== user.password) {
       setFieldError('confirmPassword', { message: t('Password does not match.') });
       return false;
@@ -69,7 +75,7 @@ export function CreateUser() {
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
-        defaultValue={{ userType: 'Normal user' }}
+        defaultValue={{ userType: UserType.NormalUser }}
       >
         <UserInputs mode="create" />
       </AwxPageForm>
@@ -90,8 +96,8 @@ export function EditUser() {
     setFieldError
   ) => {
     const { user, userType, confirmPassword } = userInput;
-    user.is_superuser = userType === t('System administrator');
-    user.is_system_auditor = userType === t('System auditor');
+    user.is_superuser = userType === UserType.SystemAdministrator;
+    user.is_system_auditor = userType === UserType.SystemAuditor;
     if (user.password) {
       if (confirmPassword !== user.password) {
         setFieldError('confirmPassword', { message: t('Password does not match.') });
@@ -123,10 +129,10 @@ export function EditUser() {
   const defaultValue: Partial<IUserInput> = {
     user: defaultUserValue,
     userType: user.is_superuser
-      ? 'System administrator'
+      ? UserType.SystemAdministrator
       : user.is_system_auditor
-      ? 'System auditor'
-      : 'Normal user',
+      ? UserType.SystemAuditor
+      : UserType.NormalUser,
   };
   return (
     <PageLayout>
@@ -185,21 +191,21 @@ function UserInputs(props: { mode: 'create' | 'edit' }) {
           {
             label: t('System administrator'),
             description: t('can edit, change, and update any inventory or automation definition'),
-            value: 'System administrator',
+            value: UserType.SystemAdministrator,
           },
           {
             label: t('System auditor'),
             description: t(
               'can see all aspects of the systems automation, but has no permission to run or change automation'
             ),
-            value: 'System auditor',
+            value: UserType.SystemAuditor,
           },
           {
             label: t('Normal user'),
             description: t(
               'has read and write access limited to the resources (such as inventory, projects, and job templates) for which that user has been granted the appropriate roles and privileges'
             ),
-            value: 'Normal user',
+            value: UserType.NormalUser,
           },
         ]}
         isRequired
