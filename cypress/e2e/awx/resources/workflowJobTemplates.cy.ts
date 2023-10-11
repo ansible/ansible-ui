@@ -41,7 +41,10 @@ describe('Workflow Job templates form', () => {
     cy.get('[data-cy="job_tags-form-group"]').find('input').eq(1).type('test job tag');
     cy.get('[data-cy="skip_tags-form-group"]').find('input').eq(1).type('test skip tag');
     cy.get('[data-cy="Submit"]').click();
-    cy.verifyPageTitle(jtName);
+    cy.contains('button:not(:disabled):not(:hidden)', 'Save').should('be.visible');
+    cy.contains('button:not(:disabled):not(:hidden)', 'Add node').should('be.visible');
+    cy.get('[data-cy="workflowVisualizerToolbarNodes"]').should('have.text', 'Total nodes 0');
+    cy.get('button[data-cy="workflowVisualizerToolbarExpandCollapse"]').should('be.visible');
   });
 
   it('Should edit a workflow job template', () => {

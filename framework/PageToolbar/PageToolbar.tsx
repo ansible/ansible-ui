@@ -20,6 +20,7 @@ import './PageToolbar.css';
 import { IFilterState, IToolbarFilter, PageToolbarFilters } from './PageToolbarFilter';
 import { PageTableSortOption, PageToolbarSort } from './PageToolbarSort';
 import { PageToolbarView } from './PageToolbarView';
+import { IPageCustomToolbarRightAligned } from '../PageActions/PageCustomToolbarRightAligned';
 
 const FlexGrowDiv = styled.div`
   display: flex;
@@ -38,6 +39,7 @@ const ToolbarContent = styled(PFToolbarContent)`
 export type PageToolbarProps<T extends object> = {
   localStorageKey?: string;
 
+  customToolbarRightAligned?: IPageCustomToolbarRightAligned[];
   openColumnModal?: () => void;
   keyFn: (item: T) => string | number;
 
@@ -104,6 +106,7 @@ export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
     setSortDirection,
     sortOptions,
     clearAllFilters: clearAllFiltersProp,
+    customToolbarRightAligned,
   } = props;
 
   const clearAllFilters = useCallback(() => {
@@ -170,6 +173,7 @@ export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
       clearAllFilters={clearAllFilters}
       className="page-table-toolbar"
       style={{
+        flex: '1',
         paddingBottom: sm ? undefined : 8,
         paddingTop: sm ? undefined : 8,
         borderBottom: bottomBorder ? 'thin solid var(--pf-global--BorderColor--100)' : undefined,
@@ -253,6 +257,15 @@ export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
                 style={{ marginTop: -8, marginBottom: -8 }}
               />
             </ToolbarItem>
+          )}
+          {customToolbarRightAligned?.length ? (
+            <ToolbarGroup>
+              {customToolbarRightAligned.map((misc) => (
+                <div key={misc.key}>{misc.element}</div>
+              ))}
+            </ToolbarGroup>
+          ) : (
+            <></>
           )}
         </FlexGrowDiv>
       </ToolbarContent>

@@ -1,23 +1,32 @@
-import { TopologyView } from '@patternfly/react-topology';
+import { TopologyView as PFTopologyView } from '@patternfly/react-topology';
 import { useWorkflowVisualizerToolbarActions } from '../hooks/useWorkflowVisualizerToolbarActions';
 import { useState } from 'react';
-import { UnsavedChangesAlertModal } from './UnsavedChangesAlertModal';
+import { ExitWarningModal } from './ExitWarningModal';
+import styled from 'styled-components';
+
+const TopologyView = styled(PFTopologyView)`
+  & .pf-topology-view__project-toolbar {
+    flex: 1;
+  }
+`;
 
 export function WorkflowJobTemplateVisualizer() {
   const toggleSidePanel = useState(false);
   const [visualizerHasUnsavedChanges, _setVisualizerHasUnsavedChanges] = useState(false);
-  const [isUnsaveChangesModalOpen, setToggleUnsaveChangesModal] = useState(false);
+  const [isExitWarningModalOpen, setToggleExitWarningModal] = useState(false);
   const toolbarActions = useWorkflowVisualizerToolbarActions(
     toggleSidePanel,
-    setToggleUnsaveChangesModal,
-    visualizerHasUnsavedChanges
+    setToggleExitWarningModal,
+    visualizerHasUnsavedChanges,
+    []
   );
 
   return (
     <TopologyView contextToolbar={toolbarActions}>
-      {isUnsaveChangesModalOpen && (
-        <UnsavedChangesAlertModal
-          modalState={[isUnsaveChangesModalOpen, setToggleUnsaveChangesModal]}
+      {isExitWarningModalOpen && (
+        <ExitWarningModal
+          hasUnsavedChanges={visualizerHasUnsavedChanges}
+          toggleModal={setToggleExitWarningModal}
         />
       )}
     </TopologyView>
