@@ -1,8 +1,11 @@
-import { createContext, ReactNode, useState, useMemo, useEffect } from 'react';
+import { createContext, ReactNode, useState, useMemo, useEffect, useContext } from 'react';
 
 import type { PageWizardStep, PageWizardState } from './types';
 
 export const PageWizardContext = createContext<PageWizardState>({} as PageWizardState);
+export function usePageWizard() {
+  return useContext(PageWizardContext);
+}
 
 export function PageWizardProvider<T extends object>(props: {
   children: ReactNode;

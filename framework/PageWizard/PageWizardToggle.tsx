@@ -1,13 +1,13 @@
-import { useCallback, useContext } from 'react';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CaretDownIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import styles from '@patternfly/react-styles/css/components/Wizard/wizard';
-import { PageWizardContext } from './PageWizardProvider';
+import { usePageWizard } from './PageWizardProvider';
 
 export default function PageWizardToggle() {
   const { t } = useTranslation();
-  const { activeStep, isToggleExpanded, setToggleExpanded } = useContext(PageWizardContext);
+  const { activeStep, isToggleExpanded, setToggleExpanded } = usePageWizard();
   const toggleNavExpanded = useCallback(
     () => setToggleExpanded((isNavExpanded) => !isNavExpanded),
     [setToggleExpanded]

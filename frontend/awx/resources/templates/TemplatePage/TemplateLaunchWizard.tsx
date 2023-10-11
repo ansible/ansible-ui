@@ -1,7 +1,9 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AwxRoute } from '../../../AwxRoutes';
+import { awxErrorAdapter } from '../../../adapters/awxErrorAdapter';
 import { getJobOutputUrl } from '../../../views/jobs/jobUtils';
+import { AwxError } from '../../../common/AwxError';
 import { useGet } from '../../../../common/crud/useGet';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import {
@@ -80,11 +82,20 @@ export function TemplateLaunchWizard() {
   const navigate = useNavigate();
   const params = useParams<{ id: string }>();
   const resourceId = params.id?.toString() ?? '';
-  const { data: template } = useGet<JobTemplate>(`/api/v2/job_templates/${resourceId}/`);
-  const { data: config } = useGet<LaunchConfiguration>(
-    `/api/v2/job_templates/${resourceId}/launch/`
-  );
+  const {
+    data: template,
+    error: getTemplateError,
+    refresh: getTemplateRefresh,
+  } = useGet<JobTemplate>(`/api/v2/job_templates/${resourceId}/`);
+  const {
+    data: config,
+    error: getLaunchError,
+    refresh: getLaunchRefresh,
+  } = useGet<LaunchConfiguration>(`/api/v2/job_templates/${resourceId}/launch/`);
+  const error = getTemplateError || getLaunchError;
+  const refresh = getTemplateRefresh || getLaunchRefresh;
 
+  if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!config || !template) return <LoadingPage breadcrumbs tabs />;
 
   const handleSubmit = async (formValues: TemplateLaunch) => {
@@ -296,6 +307,7 @@ export function TemplateLaunchWizard() {
         steps={steps}
         defaultValue={initialValues}
         onSubmit={handleSubmit}
+        errorAdapter={awxErrorAdapter}
       />
     </PageLayout>
   );

@@ -1,6 +1,5 @@
-import { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageWizardContext } from './PageWizardProvider';
+import { usePageWizard } from './PageWizardProvider';
 import { PageFormSubmitButton } from '../PageForm/PageForm';
 
 export default function PageWizardFooter(props: {
@@ -9,7 +8,7 @@ export default function PageWizardFooter(props: {
   onCancel: () => void;
 }) {
   const { t } = useTranslation();
-  const { activeStep, steps } = useContext(PageWizardContext);
+  const { activeStep, steps } = usePageWizard();
 
   const isLastStep = activeStep?.id === steps[steps.length - 1].id;
   const nextButtonLabel = isLastStep ? t('Finish') : t('Next');

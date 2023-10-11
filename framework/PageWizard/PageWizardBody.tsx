@@ -1,11 +1,11 @@
 import { PageSection } from '@patternfly/react-core';
-import { useCallback, useContext, useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useFormState } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { PageForm } from '../PageForm/PageForm';
 import { ErrorAdapter } from '../PageForm/typesErrorAdapter';
 import PageWizardFooter from './PageWizardFooter';
-import { PageWizardContext } from './PageWizardProvider';
+import { usePageWizard } from './PageWizardProvider';
 
 export default function PageWizardBody<T>(props: {
   onCancel?: () => void;
@@ -15,7 +15,7 @@ export default function PageWizardBody<T>(props: {
   const navigate = useNavigate();
   const { onSubmit, onCancel, errorAdapter } = props;
   const { activeStep, steps, stepData, wizardData, setWizardData, setStepData, setActiveStep } =
-    useContext(PageWizardContext);
+    usePageWizard();
 
   const onClose = useCallback((): void => {
     if (onCancel) {
@@ -84,7 +84,7 @@ export default function PageWizardBody<T>(props: {
 }
 
 function StepErrors() {
-  const { activeStep, setStepError } = useContext(PageWizardContext);
+  const { activeStep, setStepError } = usePageWizard();
   const { errors } = useFormState();
   const formErrors = JSON.stringify(errors);
 

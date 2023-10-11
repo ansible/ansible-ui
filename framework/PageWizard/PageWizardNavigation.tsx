@@ -1,10 +1,8 @@
-import { useContext } from 'react';
 import { ExclamationCircleIcon } from '@patternfly/react-icons';
-import { PageWizardContext } from './PageWizardProvider';
+import { usePageWizard } from './PageWizardProvider';
 
 export default function PageWizardNavigation() {
-  const { activeStep, steps, isToggleExpanded, setActiveStep, stepError } =
-    useContext(PageWizardContext);
+  const { activeStep, steps, isToggleExpanded, setActiveStep, stepError } = usePageWizard();
   const navClassName = isToggleExpanded ? 'pf-c-wizard__nav pf-m-expanded' : 'pf-c-wizard__nav';
 
   const goToStepByIndex = (index: number) => {

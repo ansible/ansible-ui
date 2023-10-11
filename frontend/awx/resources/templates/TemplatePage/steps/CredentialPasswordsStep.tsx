@@ -1,7 +1,6 @@
-import { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageFormTextInput, PageFormGrid } from '../../../../../../framework';
-import { PageWizardContext } from '../../../../../../framework/PageWizard/PageWizardProvider';
+import { usePageWizard } from '../../../../../../framework/PageWizard/PageWizardProvider';
 import { ConditionalField } from './ConditionalField';
 import type { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
 import type { TemplateLaunch } from '../TemplateLaunchWizard';
@@ -9,9 +8,8 @@ import type { TemplateLaunch } from '../TemplateLaunchWizard';
 export default function CredentialPasswordsStep(props: { config: LaunchConfiguration }) {
   const { config } = props;
   const { t } = useTranslation();
-  const { wizardData } = useContext(PageWizardContext);
+  const { wizardData } = usePageWizard();
   const { credentials } = wizardData as TemplateLaunch;
-
   const vaultsThatPrompt: string[] = [];
   let showCredentialPasswordSsh = false;
   let showCredentialPasswordPrivilegeEscalation = false;
