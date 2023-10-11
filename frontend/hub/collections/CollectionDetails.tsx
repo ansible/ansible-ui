@@ -92,8 +92,8 @@ export function CollectionDetails() {
   }, [name, namespace, repository, setCollectionError, t]);
 
   useEffect(() => {
-    try {
-      void (async function () {
+    void (async function () {
+      try {
         const res = await request(hubAPI`/v3/plugin/ansible/search/collection-versions/`, {
           name,
           namespace,
@@ -118,10 +118,11 @@ export function CollectionDetails() {
         }
 
         setCollections(res.data);
-      })();
-    } catch (error) {
-      setCollectionError(<AwxError error={{ name: 'not found', message: t('Not Found') }} />);
-    }
+      } catch (error) {
+        setCollectionError(<AwxError error={{ name: 'not found', message: t('Not Found') }} />);
+      }
+    })();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [name, namespace, repository, redirectIfEmpty, t]);
 
