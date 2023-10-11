@@ -80,7 +80,7 @@ Cypress.Commands.add(
   'multiSelectShouldHaveSelectedOption',
   (selector: string, label: string | RegExp) => {
     cy.get(selector).within(() => {
-      cy.contains('.pf-c-chip__text', label).should('have.text', label);
+      cy.contains('.pf-v5-c-chip__text', label).should('have.text', label);
     });
   }
 );
@@ -89,7 +89,7 @@ Cypress.Commands.add(
   'multiSelectShouldNotHaveSelectedOption',
   (selector: string, label: string | RegExp) => {
     cy.get(selector).within(() => {
-      cy.contains('.pf-c-chip__text', label).should('not.exist');
+      cy.contains('.pf-v5-c-chip__text', label).should('not.exist');
     });
   }
 );

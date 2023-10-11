@@ -11,7 +11,10 @@ describe('ProjectDetails', () => {
     cy.get('#organization').should('have.text', 'Default');
     cy.get('#last-job-status').invoke('text').as('Successful');
     cy.get('#source-control-type').should('have.text', 'Git');
-    cy.get('.pf-c-truncate__start').should('have.text', '347e44fea036c94d5f60e544de006453ee5c71ad');
+    cy.get('.pf-v5-c-truncate__start').should(
+      'have.text',
+      '347e44fea036c94d5f60e544de006453ee5c71ad'
+    );
     cy.get('#source-control-url').should(
       'have.text',
       'https://github.com/ansible/ansible-tower-samples'

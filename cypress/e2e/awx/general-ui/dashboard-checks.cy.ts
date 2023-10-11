@@ -54,14 +54,14 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
     let editedArray: string[];
     cy.navigateTo('awx', 'dashboard');
 
-    cy.get('.pf-c-card__header').then((headers) => {
+    cy.get('.pf-v5-c-card__header').then((headers) => {
       initialArray = Array.from(headers, (title) => title.innerText.split('\n')[0]);
       cy.clickButton('Manage view');
       cy.get('.pf-c-modal-box__title-text').should('contain', 'Manage Dashboard');
       cy.get('#draggable-row-recent_jobs').drag('#draggable-row-recent_job_activity');
       cy.clickModalButton('Apply');
     });
-    cy.get('.pf-c-card__header').then((headers) => {
+    cy.get('.pf-v5-c-card__header').then((headers) => {
       editedArray = Array.from(headers, (title) => title.innerText.split('\n')[0]);
       expect(initialArray).to.not.eql(editedArray);
     });
@@ -146,7 +146,7 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
         } else if (results.count >= 1) {
           cy.log('non empty state check');
           cy.contains('h3', 'Jobs')
-            .parents('article.pf-c-card')
+            .parents('article.pf-v5-c-card')
             .within(() => {
               cy.get('tbody tr')
                 .should('have.lengthOf.at.least', 1)
@@ -184,7 +184,7 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
             .prev()
             .should('have.text', 'Projects')
             .scrollIntoView()
-            .parents('article.pf-c-card')
+            .parents('article.pf-v5-c-card')
             .within(() => {
               cy.get('tbody tr')
                 .should('have.lengthOf.at.least', 1)
@@ -219,7 +219,7 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
         } else if (results.count >= 1) {
           cy.log('non empty state check');
           cy.contains('h3', 'Inventories')
-            .parents('article.pf-c-card')
+            .parents('article.pf-v5-c-card')
             .within(() => {
               cy.get('tbody tr')
                 .should('have.lengthOf.at.least', 1)

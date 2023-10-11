@@ -84,17 +84,17 @@ describe('CollectionMultiSelectDialog', () => {
           />
         );
         cy.contains('Selected')
-          .next('div.pf-c-label-group')
+          .next('div.pf-v5-c-label-group')
           .within(() => {
-            cy.get('li.pf-c-label-group__list-item').should('have.length', 4);
-            cy.get('li.pf-c-label-group__list-item').should('contain', 'test_collection10');
-            cy.get('li.pf-c-label-group__list-item').should('contain', 'test_collection9');
-            cy.get('li.pf-c-label-group__list-item').should('contain', 'test_collection8');
-            cy.get('li.pf-c-label-group__list-item').should('contain', '7 more');
+            cy.get('li.pf-v5-c-label-group__list-item').should('have.length', 4);
+            cy.get('li.pf-v5-c-label-group__list-item').should('contain', 'test_collection10');
+            cy.get('li.pf-v5-c-label-group__list-item').should('contain', 'test_collection9');
+            cy.get('li.pf-v5-c-label-group__list-item').should('contain', 'test_collection8');
+            cy.get('li.pf-v5-c-label-group__list-item').should('contain', '7 more');
             cy.get('button').contains('7 more').click();
-            cy.get('li.pf-c-label-group__list-item').should('have.length', 11);
+            cy.get('li.pf-v5-c-label-group__list-item').should('have.length', 11);
             cy.get('button').contains('Show Less').click();
-            cy.get('li.pf-c-label-group__list-item').should('have.length', 4);
+            cy.get('li.pf-v5-c-label-group__list-item').should('have.length', 4);
           });
       }
     );

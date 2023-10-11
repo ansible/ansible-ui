@@ -34,16 +34,16 @@ describe('hub dashboard', () => {
       .first()
       .within(() => {
         cy.get('.pf-c-title').should('contain', HubDashboard.title);
-        cy.get('span.pf-c-truncate__start').should('contain', HubDashboard.description);
+        cy.get('span.pf-v5-c-truncate__start').should('contain', HubDashboard.description);
       });
     cy.contains('button', 'Manage view').should('be.visible');
   });
   it('verify that EDA collections are displayed', () => {
     cy.visit(HubRoutes.dashboard);
-    cy.contains('div.pf-c-card__header', 'Event-Driven Ansible content')
+    cy.contains('div.pf-v5-c-card__header', 'Event-Driven Ansible content')
       .parent()
       .within(() => {
-        cy.get(`article.pf-c-card[id=${collectionNames.eda.collection1}]`).should('exist');
+        cy.get(`.pf-v5-c-card[id=${collectionNames.eda.collection1}]`).should('exist');
       });
   });
   it('verify that API request indicated a limit of 12 collections sorted by latest created timestamp', () => {
@@ -55,17 +55,17 @@ describe('hub dashboard', () => {
       }
     );
     cy.visit(HubRoutes.dashboard);
-    cy.contains('div.pf-c-card__header', 'Event-Driven Ansible content')
+    cy.contains('div.pf-v5-c-card__header', 'Event-Driven Ansible content')
       .parent()
       .within(() => {
-        cy.get(`article.pf-c-card[id=${collectionNames.eda.collection1}]`).should('exist');
+        cy.get(`.pf-v5-c-card[id=${collectionNames.eda.collection1}]`).should('exist');
       });
     // assert that a matching request has been made
     cy.wait('@latest12collections');
   });
   it('verify that collection name links to collection details', () => {
     cy.visit(HubRoutes.dashboard);
-    cy.contains('div.pf-c-card__header', 'Event-Driven Ansible content')
+    cy.contains('div.pf-v5-c-card__header', 'Event-Driven Ansible content')
       .parent()
       .within(() => {
         cy.contains('a', collectionNames.eda.collection1).click();
@@ -74,7 +74,7 @@ describe('hub dashboard', () => {
   });
   it('clicking on "Go to collections" opens collections UI filtered by EDA collections', () => {
     cy.visit(HubRoutes.dashboard);
-    cy.contains('div.pf-c-card__header', 'Event-Driven Ansible content')
+    cy.contains('div.pf-v5-c-card__header', 'Event-Driven Ansible content')
       .parent()
       .within(() => {
         cy.contains('a', 'Go to collections').click();
@@ -124,25 +124,25 @@ describe('hub dashboard', () => {
       cy.contains('tr', 'Storage collections').find('input').uncheck();
       cy.clickModalButton('Apply');
       cy.get('div.pf-c-backdrop').should('not.exist');
-      cy.get('div.pf-c-card__header').should('not.contain', 'Storage collections');
+      cy.get('div.pf-v5-c-card__header').should('not.contain', 'Storage collections');
       cy.clickButton(/^Manage view/);
       cy.contains('tr', 'Storage collections').find('input').check();
       cy.clickModalButton('Apply');
-      cy.contains('div.pf-c-card__header', 'Storage collections').should('be.visible');
+      cy.contains('div.pf-v5-c-card__header', 'Storage collections').should('be.visible');
     });
     it('reordering categories within the Manage View modal should be reflected in the dashboard', () => {
       let initialArray: string[];
       let editedArray: string[];
       cy.visit(HubRoutes.dashboard);
 
-      cy.get('.page-dashboard-card .pf-c-card__header').then((headers) => {
+      cy.get('.page-dashboard-card .pf-v5-c-card__header').then((headers) => {
         initialArray = Array.from(headers, (title) => title.innerText.split('\n')[0]);
         cy.clickButton('Manage view');
         cy.get('.pf-c-modal-box__title-text').should('contain', 'Manage Dashboard');
         cy.get('#draggable-row-storage').drag('#draggable-row-eda');
         cy.clickModalButton('Apply');
       });
-      cy.get('.page-dashboard-card .pf-c-card__header').then((headers) => {
+      cy.get('.page-dashboard-card .pf-v5-c-card__header').then((headers) => {
         editedArray = Array.from(headers, (title) => title.innerText.split('\n')[0]);
         expect(initialArray).to.not.eql(editedArray);
       });

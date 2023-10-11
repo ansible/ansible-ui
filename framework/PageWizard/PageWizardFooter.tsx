@@ -14,7 +14,9 @@ export default function PageWizardFooter(props: {
   const nextButtonLabel = isLastStep ? t('Finish') : t('Next');
 
   const isFirstStep = activeStep?.id === steps[0].id;
-  const backClassName = isFirstStep ? 'pf-c-button pf-m-disabled' : 'pf-c-button pf-m-secondary';
+  const backClassName = isFirstStep
+    ? 'pf-v5-c-button pf-m-disabled'
+    : 'pf-v5-c-button pf-m-secondary';
 
   return (
     <footer className="pf-c-wizard__footer border-top" data-cy="wizard-footer">
@@ -23,7 +25,7 @@ export default function PageWizardFooter(props: {
       ) : (
         <button
           data-cy="wizard-next"
-          className="pf-c-button pf-m-primary"
+          className="pf-v5-c-button pf-m-primary"
           type="submit"
           onClick={props.onNext}
         >
@@ -40,7 +42,7 @@ export default function PageWizardFooter(props: {
         {t('Back')}
       </button>
       <div data-cy="wizard-cancel" className="pf-c-wizard__footer-cancel">
-        <button className="pf-c-button pf-m-link" type="button" onClick={props.onCancel}>
+        <button className="pf-v5-c-button pf-m-link" type="button" onClick={props.onCancel}>
           {t('Cancel')}
         </button>
       </div>
