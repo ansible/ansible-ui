@@ -82,6 +82,7 @@ import { ScheduleDetails } from './views/schedules/SchedulePage/ScheduleDetails'
 import { SchedulePage } from './views/schedules/SchedulePage/SchedulePage';
 import { ScheduleRules } from './views/schedules/SchedulePage/ScheduleRules';
 import { Schedules } from './views/schedules/Schedules';
+import { TemplateLaunchWizard } from './resources/templates/TemplatePage/TemplateLaunchWizard';
 
 export function useAwxNavigation() {
   const { t } = useTranslation();
@@ -280,6 +281,11 @@ export function useAwxNavigation() {
                             element: <Navigate to="details" />,
                           },
                         ],
+                      },
+                      {
+                        id: AwxRoute.TemplateLaunchWizard,
+                        path: ':id/launch',
+                        element: <TemplateLaunchWizard />,
                       },
                     ],
                   },

@@ -49,7 +49,7 @@ describe('TemplatePage', () => {
 
     cy.mount(<TemplatePage />);
 
-    cy.clickPageAction(/^Launch template$/);
+    cy.clickButton(/^Launch template$/);
 
     cy.wait('@getLaunchConfig');
     cy.wait('@launchJob');
@@ -74,11 +74,11 @@ describe('TemplatePage', () => {
     }).as('launchJob');
     cy.mount(<TemplatePage />);
 
-    cy.clickPageAction(/^Launch template$/);
+    cy.clickButton(/^Launch template$/);
 
     cy.wait('@getLaunchConfig');
     cy.wait('@launchJob');
-    cy.get('div.pf-c-alert__description').contains('Could not launch job');
+    cy.get('.pf-c-alert__title').contains('Failed to launch template');
   });
   it('Should render the proper tabs for a super user', () => {
     cy.intercept(

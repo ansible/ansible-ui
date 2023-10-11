@@ -1,10 +1,8 @@
-import { useContext } from 'react';
 import { ExclamationCircleIcon } from '@patternfly/react-icons';
-import { PageWizardContext } from './PageWizardProvider';
+import { usePageWizard } from './PageWizardProvider';
 
 export default function PageWizardNavigation() {
-  const { activeStep, steps, isToggleExpanded, setActiveStep, stepError } =
-    useContext(PageWizardContext);
+  const { activeStep, steps, isToggleExpanded, setActiveStep, stepError } = usePageWizard();
   const navClassName = isToggleExpanded ? 'pf-c-wizard__nav pf-m-expanded' : 'pf-c-wizard__nav';
 
   const goToStepByIndex = (index: number) => {
@@ -17,7 +15,7 @@ export default function PageWizardNavigation() {
   if (!activeStep) return;
 
   return (
-    <nav className={navClassName} aria-label="Steps">
+    <nav className={navClassName} aria-label="Steps" data-cy="wizard-nav">
       <ol className="pf-c-wizard__nav-list">
         {steps.map((step, index) => {
           const activeStepIndex = steps.findIndex((step) => step.id === activeStep.id);
@@ -29,7 +27,11 @@ export default function PageWizardNavigation() {
             (isDisabled ? ' pf-m-disabled' : ''); // eslint-disable-line i18next/no-literal-string
 
           return (
-            <li className="pf-c-wizard__nav-item" key={step.id}>
+            <li
+              className="pf-c-wizard__nav-item"
+              data-cy={`wizard-nav-item-${step.id}`}
+              key={step.id}
+            >
               <button
                 className={className}
                 onClick={() => goToStepByIndex(index)}
