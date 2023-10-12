@@ -36,9 +36,9 @@ export function PagePagination(props: PagePaginationProps) {
         // marginTop: -1,
         paddingTop: compact ? 4 : 6,
         paddingBottom: compact ? 4 : 6,
-        borderTop: props.topBorder ? 'thin solid var(--pf-global--BorderColor--100)' : undefined,
+        // borderTop: props.topBorder ? 'thin solid var(--pf-v5-global--BorderColor--100)' : undefined,
       }}
-      className="dark-2"
+      className="border-top bg-lighten"
     />
   );
 }

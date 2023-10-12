@@ -1,10 +1,5 @@
-import {
-  ButtonVariant,
-  DropdownPosition,
-  PageSection,
-  Skeleton,
-  Tooltip,
-} from '@patternfly/react-core';
+import { ButtonVariant, PageSection, Skeleton, Tooltip } from '@patternfly/react-core';
+import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { EditIcon, HeartbeatIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';

@@ -1,16 +1,16 @@
 import { Button } from '@patternfly/react-core';
-import { AzureIcon, GoogleIcon, GithubIcon, UserCircleIcon } from '@patternfly/react-icons';
+import { AzureIcon, GithubIcon, GoogleIcon, UserCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 const Container = styled.div`
   margin-block-start: 40px;
   padding-block-start: 20px;
-  border-block-start: 1px solid var(--pf-global--BorderColor--light-100);
+  border-block-start: 1px solid var(--pf-v5-global--BorderColor--light-100);
 `;
 
 const Heading = styled.h2`
-  font-weight: var(--pf-global--FontWeight--bold);
+  font-weight: var(--pf-v5-global--FontWeight--bold);
   margin-block-end: 1em;
 `;
 

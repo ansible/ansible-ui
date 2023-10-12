@@ -120,7 +120,7 @@ export function UploadCollectionByFile() {
         <Radio
           isChecked={onlyStaging}
           name="radio-1"
-          onChange={(val) => {
+          onChange={(_event, val) => {
             setOnlyStaging(val);
           }}
           label={t`Staging Repos`}
@@ -129,7 +129,7 @@ export function UploadCollectionByFile() {
         <Radio
           isChecked={!onlyStaging}
           name="radio-2"
-          onChange={(val) => {
+          onChange={(_event, val) => {
             setOnlyStaging(!val);
           }}
           label={t`Repositories without pipeline`}

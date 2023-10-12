@@ -11,13 +11,13 @@ import { useAwxConfig } from './useAwxConfig';
 import getDocsBaseUrl from './util/getDocsBaseUrl';
 
 const ExclamationTriangleIcon = styled(PFExclamationTriangleIcon)`
-  color: var(--pf-global--warning-color--100);
+  color: var(--pf-v5-global--warning-color--100);
   margin-left: 18px;
   cursor: pointer;
 `;
 
 const ExclamationTrianglePopover = styled(PFExclamationTriangleIcon)`
-  color: var(--pf-global--warning-color--100);
+  color: var(--pf-v5-global--warning-color--100);
   margin-left: 18px;
   cursor: pointer;
 `;

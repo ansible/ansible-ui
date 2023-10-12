@@ -1,6 +1,6 @@
 import styles from '@patternfly/react-styles/css/components/Table/table';
 import {
-  TableComposable,
+  Table /* data-codemods */,
   Tbody,
   TbodyProps,
   Td,
@@ -173,7 +173,7 @@ export function ReorderItems<T extends object>(props: ReorderItemsProps<T>) {
   );
 
   return (
-    <TableComposable
+    <Table
       aria-label={t(`Table with draggable rows`)}
       className={isDragging ? styles.modifiers.dragOver : ''}
       variant="compact"
@@ -231,6 +231,6 @@ export function ReorderItems<T extends object>(props: ReorderItemsProps<T>) {
           );
         })}
       </Tbody>
-    </TableComposable>
+    </Table>
   );
 }

@@ -10,12 +10,12 @@ import {
   DescriptionListDescription,
   DescriptionListGroup,
   DescriptionListTerm,
-  DropdownPosition,
   Flex,
   Stack,
   Text,
   Title,
 } from '@patternfly/react-core';
+import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { ReactNode, useCallback, useMemo } from 'react';
 import { IPageAction } from '../PageActions/PageAction';
 import { PageActions } from '../PageActions/PageActions';

@@ -34,7 +34,7 @@ export function PageMasthead(props: {
     >
       <PageMastheadToggle />
       <MastheadMain>
-        <MastheadBrand>{props.icon}</MastheadBrand>
+        <MastheadBrand component="a">{props.icon}</MastheadBrand>
       </MastheadMain>
       <MastheadContent style={{ marginLeft: 0 }}>
         <Toolbar id="toolbar" data-cy="toolbar" inset={{ default: 'insetNone' }}>
