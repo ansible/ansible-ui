@@ -11,10 +11,10 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
 
   it('verifies the tech preview banner title in the new UI and the working links to and from the old UI', () => {
     cy.navigateTo('awx', 'dashboard');
-    cy.get('div.pf-c-banner.pf-m-info p')
+    cy.get('.pf-v5-c-banner')
       .should(
-        'have.text',
-        ' You are currently viewing a tech preview of the new AWX user interface. To return to the original interface, click here.'
+        'contain',
+        'You are currently viewing a tech preview of the new AWX user interface. To return to the original interface, click here.'
       )
       .should('be.visible');
     cy.get('[data-cy="tech-preview"] a').should('contain', 'here').click();
@@ -24,19 +24,19 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
   it('clicking on Cog icon opens the Manage Dashboard modal', () => {
     cy.navigateTo('awx', 'dashboard');
     cy.clickButton('Manage view');
-    cy.get('.pf-c-modal-box__title-text').should('contain', 'Manage Dashboard');
+    cy.get('.pf-v5-c-modal-box__title-text').should('contain', 'Manage Dashboard');
     cy.get('[aria-label="Close"]').click();
   });
 
   it('within the Manage Dashboard modal, unchecking a resource should hide the resource', () => {
     cy.navigateTo('awx', 'dashboard');
     cy.clickButton('Manage view');
-    cy.get('.pf-c-modal-box__title-text').should('contain', 'Manage Dashboard');
+    cy.get('.pf-v5-c-modal-box__title-text').should('contain', 'Manage Dashboard');
     cy.contains('tr', 'Resource Counts').find('input').uncheck();
     cy.clickModalButton('Apply');
     cy.contains('.pf-v5-c-title', 'Hosts').should('not.exist');
     cy.clickButton('Manage view');
-    cy.get('.pf-c-modal-box__title-text').should('contain', 'Manage Dashboard');
+    cy.get('.pf-v5-c-modal-box__title-text').should('contain', 'Manage Dashboard');
     cy.contains('tr', 'Resource Counts').find('input').check();
     cy.clickModalButton('Apply');
     cy.contains('.pf-v5-c-title', 'Hosts').should('be.visible');
@@ -45,7 +45,7 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
   it('within the Manage Dashboard modal, clicking the Cancel button should revert any changes', () => {
     cy.navigateTo('awx', 'dashboard');
     cy.clickButton('Manage view');
-    cy.get('.pf-c-modal-box__title-text').should('contain', 'Manage Dashboard');
+    cy.get('.pf-v5-c-modal-box__title-text').should('contain', 'Manage Dashboard');
     cy.contains('tr', 'Resource Counts').find('input').uncheck();
     cy.clickModalButton('Cancel');
     cy.contains('.pf-v5-c-title', 'Hosts').should('be.visible');
@@ -54,7 +54,7 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
   it('within the Manage Dashboard modal, clicking the Close button should revert any changes', () => {
     cy.navigateTo('awx', 'dashboard');
     cy.clickButton('Manage view');
-    cy.get('.pf-c-modal-box__title-text').should('contain', 'Manage Dashboard');
+    cy.get('.pf-v5-c-modal-box__title-text').should('contain', 'Manage Dashboard');
     cy.contains('tr', 'Resource Counts').find('input').uncheck();
     cy.get('[aria-label="Close"]').click();
     cy.contains('.pf-v5-c-title', 'Hosts').should('be.visible');
@@ -69,7 +69,7 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
     cy.get('.pf-v5-c-card__header').then((headers) => {
       initialArray = Array.from(headers, (title) => title.innerText.split('\n')[0]);
       cy.clickButton('Manage view');
-      cy.get('.pf-c-modal-box__title-text').should('contain', 'Manage Dashboard');
+      cy.get('.pf-v5-c-modal-box__title-text').should('contain', 'Manage Dashboard');
       cy.get('#draggable-row-recent_jobs').drag('#draggable-row-recent_job_activity');
       cy.clickModalButton('Apply');
     });

@@ -88,14 +88,14 @@ describe('hub dashboard', () => {
     it('clicking on Cog icon opens the Manage view modal', () => {
       cy.visit(HubRoutes.dashboard);
       cy.clickButton('Manage view');
-      cy.get('.pf-c-modal-box__title-text').should('contain', 'Manage Dashboard');
+      cy.get('.pf-v5-c-modal-box__title-text').should('contain', 'Manage Dashboard');
       cy.clickModalButton('Cancel');
       cy.get('div.pf-c-backdrop').should('not.exist');
     });
     it('unselecting all categories in the Manage results in an empty state UI on the dashboard', () => {
       cy.visit(HubRoutes.dashboard);
       cy.clickButton('Manage view');
-      cy.get('.pf-c-modal-box__title-text').should('contain', 'Manage Dashboard');
+      cy.get('.pf-v5-c-modal-box__title-text').should('contain', 'Manage Dashboard');
       cy.contains('tr', 'Cloud collections').find('input').uncheck();
       cy.contains('tr', 'Networking collections').find('input').uncheck();
       cy.contains('tr', 'Database collections').find('input').uncheck();
@@ -108,7 +108,7 @@ describe('hub dashboard', () => {
         cy.contains('button', 'Manage view').should('be.visible');
         cy.clickButton('Manage view');
       });
-      cy.get('.pf-c-modal-box__title-text').should('contain', 'Manage Dashboard');
+      cy.get('.pf-v5-c-modal-box__title-text').should('contain', 'Manage Dashboard');
       // Reset dashboard
       cy.contains('tr', 'Cloud collections').find('input').check();
       cy.contains('tr', 'Networking collections').find('input').check();
@@ -138,7 +138,7 @@ describe('hub dashboard', () => {
       cy.get('.page-dashboard-card .pf-v5-c-card__header').then((headers) => {
         initialArray = Array.from(headers, (title) => title.innerText.split('\n')[0]);
         cy.clickButton('Manage view');
-        cy.get('.pf-c-modal-box__title-text').should('contain', 'Manage Dashboard');
+        cy.get('.pf-v5-c-modal-box__title-text').should('contain', 'Manage Dashboard');
         cy.get('#draggable-row-storage').drag('#draggable-row-eda');
         cy.clickModalButton('Apply');
       });
