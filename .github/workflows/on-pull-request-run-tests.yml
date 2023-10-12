@@ -384,7 +384,7 @@ jobs:
   awx-e2e:
     name: AWX E2E
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     needs: awx-ui-image
     strategy:
       fail-fast: false
@@ -490,7 +490,7 @@ jobs:
   hub-e2e:
     name: HUB E2E
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     needs: hub-ui-image
     strategy:
       fail-fast: false
@@ -596,7 +596,7 @@ jobs:
   eda-e2e:
     name: EDA E2E
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     needs: eda-ui-image
     strategy:
       fail-fast: false
