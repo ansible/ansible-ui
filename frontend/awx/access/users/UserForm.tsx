@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import useSWR from 'swr';
 import {
-  PageForm,
   PageFormSelect,
   PageFormSubmitHandler,
   PageHeader,
@@ -18,9 +17,15 @@ import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { AwxRoute } from '../../AwxRoutes';
 import { Organization } from '../../interfaces/Organization';
 import { User } from '../../interfaces/User';
-import { getAwxError } from '../../useAwxView';
 import { PageFormOrganizationSelect } from '../organizations/components/PageFormOrganizationSelect';
 import { getOrganizationByName } from '../organizations/utils/getOrganizationByName';
+import { AwxPageForm } from '../../AwxPageForm';
+
+const UserType = {
+  SystemAdministrator: 'System administrator',
+  SystemAuditor: 'System auditor',
+  NormalUser: 'Normal user',
+};
 
 export function CreateUser() {
   const { t } = useTranslation();
@@ -32,29 +37,25 @@ export function CreateUser() {
     setFieldError
   ) => {
     const { user, userType, confirmPassword } = userInput;
+    let organization: Organization | undefined;
     try {
-      let organization: Organization | undefined;
-      try {
-        organization = await getOrganizationByName(user.summary_fields.organization.name);
-        if (!organization) throw new Error(t('Organization not found.'));
-        user.organization = organization.id;
-      } catch {
-        throw new Error(t('Organization not found.'));
-      }
-      user.is_superuser = userType === t('System administrator');
-      user.is_system_auditor = userType === t('System auditor');
-      if (confirmPassword !== user.password) {
-        setFieldError('confirmPassword', { message: t('Password does not match.') });
-        return false;
-      }
-      const newUser = await postRequest(
-        `/api/v2/organizations/${user.organization.toString()}/users/`,
-        user
-      );
-      navigate(RouteObj.UserDetails.replace(':id', newUser.id.toString()));
-    } catch (err) {
-      setError(getAwxError(err));
+      organization = await getOrganizationByName(user.summary_fields.organization.name);
+      if (!organization) throw new Error(t('Organization not found.'));
+      user.organization = organization.id;
+    } catch {
+      throw new Error(t('Organization not found.'));
     }
+    user.is_superuser = userType === UserType.SystemAdministrator;
+    user.is_system_auditor = userType === UserType.SystemAuditor;
+    if (confirmPassword !== user.password) {
+      setFieldError('confirmPassword', { message: t('Password does not match.') });
+      return false;
+    }
+    const newUser = await postRequest(
+      `/api/v2/organizations/${user.organization.toString()}/users/`,
+      user
+    );
+    navigate(RouteObj.UserDetails.replace(':id', newUser.id.toString()));
   };
 
   const onCancel = () => navigate(-1);
@@ -69,15 +70,15 @@ export function CreateUser() {
           { label: t('Create User') },
         ]}
       />
-      <PageForm
+      <AwxPageForm
         submitText={t('Create user')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
-        defaultValue={{ userType: 'Normal user' }}
+        defaultValue={{ userType: UserType.NormalUser }}
       >
         <UserInputs mode="create" />
-      </PageForm>
+      </AwxPageForm>
     </>
   );
 }
@@ -95,20 +96,16 @@ export function EditUser() {
     setFieldError
   ) => {
     const { user, userType, confirmPassword } = userInput;
-    try {
-      user.is_superuser = userType === t('System administrator');
-      user.is_system_auditor = userType === t('System auditor');
-      if (user.password) {
-        if (confirmPassword !== user.password) {
-          setFieldError('confirmPassword', { message: t('Password does not match.') });
-          return false;
-        }
+    user.is_superuser = userType === UserType.SystemAdministrator;
+    user.is_system_auditor = userType === UserType.SystemAuditor;
+    if (user.password) {
+      if (confirmPassword !== user.password) {
+        setFieldError('confirmPassword', { message: t('Password does not match.') });
+        return false;
       }
-      const newUser = await requestPatch<User>(`/api/v2/users/${id}/`, user);
-      navigate(RouteObj.UserDetails.replace(':id', newUser.id.toString()));
-    } catch (err) {
-      setError(getAwxError(err));
     }
+    const newUser = await requestPatch<User>(`/api/v2/users/${id}/`, user);
+    navigate(RouteObj.UserDetails.replace(':id', newUser.id.toString()));
   };
 
   const getPageUrl = useGetPageUrl();
@@ -132,10 +129,10 @@ export function EditUser() {
   const defaultValue: Partial<IUserInput> = {
     user: defaultUserValue,
     userType: user.is_superuser
-      ? 'System administrator'
+      ? UserType.SystemAdministrator
       : user.is_system_auditor
-      ? 'System auditor'
-      : 'Normal user',
+      ? UserType.SystemAuditor
+      : UserType.NormalUser,
   };
   return (
     <PageLayout>
@@ -146,7 +143,7 @@ export function EditUser() {
           { label: t('Edit User') },
         ]}
       />
-      <PageForm<IUserInput>
+      <AwxPageForm<IUserInput>
         submitText={t('Save user')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
@@ -154,7 +151,7 @@ export function EditUser() {
         defaultValue={defaultValue}
       >
         <UserInputs mode="edit" />
-      </PageForm>
+      </AwxPageForm>
     </PageLayout>
   );
 }
@@ -194,21 +191,21 @@ function UserInputs(props: { mode: 'create' | 'edit' }) {
           {
             label: t('System administrator'),
             description: t('can edit, change, and update any inventory or automation definition'),
-            value: 'System administrator',
+            value: UserType.SystemAdministrator,
           },
           {
             label: t('System auditor'),
             description: t(
               'can see all aspects of the systems automation, but has no permission to run or change automation'
             ),
-            value: 'System auditor',
+            value: UserType.SystemAuditor,
           },
           {
             label: t('Normal user'),
             description: t(
               'has read and write access limited to the resources (such as inventory, projects, and job templates) for which that user has been granted the appropriate roles and privileges'
             ),
-            value: 'Normal user',
+            value: UserType.NormalUser,
           },
         ]}
         isRequired

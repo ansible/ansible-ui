@@ -175,6 +175,8 @@ export type PageTableProps<T extends object> = {
    */
   topContent?: React.ReactNode;
 
+  toolbarContent?: React.ReactNode;
+
   /**
    * If topContent is set and this variable is set to true, topContent will be scrolled with table.
    */
@@ -474,6 +476,7 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
       <>
         <TableComposable
           aria-label="Simple table"
+          ouiaId="simple-table"
           variant={
             props.compact ? 'compact' : settings.tableLayout === 'compact' ? 'compact' : undefined
           }
@@ -837,6 +840,7 @@ function TableCells<T extends object>(props: {
 }) {
   const { columns, item, rowActions } = props;
   const [actionsExpanded, setActionsExpanded] = useState(false);
+
   return (
     <Fragment>
       {columns.map((column) => {

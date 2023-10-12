@@ -3,9 +3,12 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DateTimeCell, ITableColumn, PFColorE, TextCell } from '../../../../framework';
 import { CollectionVersionSearch } from '../Approval';
+import { useHubContext } from './../../useHubContext';
 
 export function useApprovalsColumns(_options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
+  const { featureFlags } = useHubContext();
+  const { can_upload_signatures, require_upload_signatures, display_signatures } = featureFlags;
   const tableColumns = useMemo<ITableColumn<CollectionVersionSearch>[]>(
     () => [
       {
@@ -37,16 +40,30 @@ export function useApprovalsColumns(_options?: { disableSort?: boolean; disableL
             return (
               <TextCell
                 icon={<ExclamationTriangleIcon />}
-                text={t('Needs review')}
+                text={
+                  approval.is_signed === false && can_upload_signatures && require_upload_signatures
+                    ? t`Needs signature and review`
+                    : t`Needs review`
+                }
                 color={PFColorE.Warning}
               />
             );
           }
 
           if (approval.repository?.pulp_labels?.pipeline == 'approved') {
-            return (
-              <TextCell icon={<ThumbsUpIcon />} text={t('Approved')} color={PFColorE.Success} />
-            );
+            if (approval.is_signed && display_signatures) {
+              return (
+                <TextCell
+                  icon={<ThumbsUpIcon />}
+                  text={t('Signed and Approved')}
+                  color={PFColorE.Success}
+                />
+              );
+            } else {
+              return (
+                <TextCell icon={<ThumbsUpIcon />} text={t('Approved')} color={PFColorE.Success} />
+              );
+            }
           }
 
           if (approval.repository?.pulp_labels?.pipeline == 'rejected') {
@@ -64,7 +81,7 @@ export function useApprovalsColumns(_options?: { disableSort?: boolean; disableL
         sort: 'pulp_created',
       },
     ],
-    [t]
+    [t, can_upload_signatures, require_upload_signatures, display_signatures]
   );
   return tableColumns;
 }

@@ -12,7 +12,9 @@ describe('jobs', () => {
 
   before(() => {
     cy.awxLogin();
+  });
 
+  beforeEach(() => {
     cy.createAwxOrganization().then((o) => {
       organization = o;
       cy.createAwxProject({ organization: organization.id }).then((project) => {
@@ -25,7 +27,7 @@ describe('jobs', () => {
             jobTemplate = jt;
 
             // Launch job to populate jobs list
-            cy.requestPost<UnifiedJobList>(
+            cy.awxRequestPost(
               `/api/v2/job_templates/${jobTemplate.id.toString()}/launch/`,
               {}
             ).then((jl) => {
@@ -38,15 +40,13 @@ describe('jobs', () => {
   });
 
   after(() => {
-    // Delete launched job
     const jobId = jobList?.id ? jobList?.id.toString() : '';
-    cy.requestDelete(`/api/v2/jobs/${jobId}/`, { failOnStatusCode: false });
-    cy.deleteAwxOrganization(organization);
+    cy.awxRequestDelete(`/api/v2/jobs/${jobId}/`, { failOnStatusCode: false });
   });
 
   it('renders jobs list', () => {
     cy.navigateTo('awx', 'jobs');
-    cy.hasTitle(/^Jobs$/);
+    cy.verifyPageTitle('Jobs');
     const jobId = jobList.id ? jobList.id.toString() : '';
     const jobName = jobList.name ? jobList.name : '';
     cy.filterTableByTypeAndText('ID', jobId);
@@ -58,8 +58,8 @@ describe('jobs', () => {
     const jobId = jobList.id ? jobList.id.toString() : '';
     const jobName = jobList.name ? jobList.name : '';
     cy.filterTableByTypeAndText('ID', jobId);
-    cy.clickTableRowPinnedAction(jobName, 'Relaunch job', false);
-    cy.hasTitle(jobName).should('be.visible');
+    cy.clickTableRowPinnedAction(jobName, 'relaunch-job', false);
+    cy.verifyPageTitle(jobName);
     cy.contains('.pf-c-tabs a', 'Output').should('have.attr', 'aria-selected', 'true');
   });
 

@@ -1,24 +1,24 @@
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Options, RRule, RRuleSet, Weekday } from 'rrule';
 import {
-  PageForm,
   PageFormSubmitHandler,
   PageHeader,
   PageLayout,
   usePageAlertToaster,
 } from '../../../../framework';
-import { RuleInputs } from './components/RuleInputs';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { scheduleRulesRoutes } from './hooks/ruleHelpers';
-import { useMemo, useState } from 'react';
+import { LoadingPage } from '../../../../framework/components/LoadingPage';
 import { requestGet, requestPatch } from '../../../common/crud/Data';
 import { Schedule } from '../../interfaces/Schedule';
-import { Options, RRule, RRuleSet, Weekday } from 'rrule';
-import { LoadingPage } from '../../../../framework/components/LoadingPage';
+import { RuleInputs } from './components/RuleInputs';
+import { scheduleRulesRoutes } from './hooks/ruleHelpers';
 
-import { buildDateTimeObj } from './hooks/scheduleHelpers';
-import { formatDateString } from '../../../../framework/utils/dateTimeHelpers';
 import { UseFormReturn } from 'react-hook-form';
+import { formatDateString } from '../../../../framework/utils/dateTimeHelpers';
+import { AwxPageForm } from '../../AwxPageForm';
 import { AwxError } from '../../common/AwxError';
+import { buildDateTimeObj } from './hooks/scheduleHelpers';
 
 export interface RuleFormFields {
   freq: number;
@@ -167,7 +167,7 @@ export function CreateScheduleRule() {
           { label: t('Create Rules') },
         ]}
       />
-      <PageForm<RuleFormFields>
+      <AwxPageForm<RuleFormFields>
         defaultValue={{
           interval: 1,
           freq: 0,
@@ -184,7 +184,7 @@ export function CreateScheduleRule() {
         onCancel={onCancel}
       >
         <RuleInputs />
-      </PageForm>
+      </AwxPageForm>
     </PageLayout>
   );
 }

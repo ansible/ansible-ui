@@ -3,9 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { PageHeader, PageLayout, useGetPageUrl } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
-import { PageNotImplemented } from '../../../../common/PageNotImplemented';
-import { PageBackTab, RoutedTab, RoutedTabs } from '../../../../common/RoutedTabs';
-import { RouteObj } from '../../../../common/Routes';
+import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
 import { AwxError } from '../../../common/AwxError';
@@ -16,35 +14,34 @@ export function NotificationPage() {
   const params = useParams<{ id: string }>();
   const {
     error,
-    data: notification_template,
+    data: notificationTemplate,
     refresh,
   } = useGetItem<NotificationTemplate>('/api/v2/notification_templates', params.id);
 
   const getPageUrl = useGetPageUrl();
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
-  if (!notification_template) return <LoadingPage breadcrumbs tabs />;
+  if (!notificationTemplate) return <LoadingPage breadcrumbs tabs />;
 
   return (
     <PageLayout>
       <PageHeader
-        title={notification_template?.name}
+        title={notificationTemplate?.name}
         breadcrumbs={[
-          { label: t('Notifications'), to: getPageUrl(AwxRoute.Notifications) },
-          { label: notification_template?.name },
+          { label: t('Notifications'), to: getPageUrl(AwxRoute.NotificationTemplates) },
+          { label: notificationTemplate?.name },
         ]}
         headerActions={[]}
       />
-      <RoutedTabs isLoading={!notification_template} baseUrl={RouteObj.NotificationPage}>
-        <PageBackTab
-          label={t('Back to Notifications')}
-          url={getPageUrl(AwxRoute.Notifications)}
-          persistentFilterKey="notifications"
-        />
-        <RoutedTab label={t('Details')} url={RouteObj.NotificationDetails}>
-          <PageNotImplemented />
-        </RoutedTab>
-      </RoutedTabs>
+      <PageRoutedTabs
+        backTab={{
+          label: t('Back to Credential Types'),
+          page: AwxRoute.NotificationTemplates,
+          persistentFilterKey: 'credential-types',
+        }}
+        tabs={[{ label: t('Details'), page: AwxRoute.NotificationTemplateDetails }]}
+        params={{ id: notificationTemplate.id }}
+      />
     </PageLayout>
   );
 }

@@ -9,16 +9,16 @@ export enum EdaRoute {
   RulebookActivations = 'eda-rulebook-activations',
   CreateRulebookActivation = 'eda-create-rulebook-activation',
   RulebookActivationPage = 'eda-rulebook-activation-page',
+  RulebookActivationDetails = 'eda-rulebook-activation-details',
   RulebookActivationHistory = 'eda-rulebook-activation-history',
-  RulebookActivationInstancesPage = 'eda-rulebook-activation-instances-page',
-
-  Rulebooks = 'eda-rulebooks',
-  RulebookPage = 'eda-rulebook-page',
+  RulebookActivationInstancePage = 'eda-rulebook-activation-instance-page',
+  RulebookActivationInstanceDetails = 'eda-rulebook-activation-instance-details',
 
   Projects = 'eda-projects',
   CreateProject = 'eda-create-project',
   EditProject = 'eda-edit-project',
   ProjectPage = 'eda-project-page',
+  ProjectDetails = 'eda-project-details',
 
   DecisionEnvironments = 'eda-decision-environments',
   CreateDecisionEnvironment = 'eda-create-decision-environment',
@@ -30,22 +30,12 @@ export enum EdaRoute {
   EditCredential = 'eda-edit-credential',
   CredentialPage = 'eda-credential-page',
 
-  Groups = 'eda-groups',
-  CreateGroup = 'eda-create-group',
-  EditGroup = 'eda-edit-group',
-  GroupPage = 'eda-group-page',
-
   Users = 'eda-users',
   CreateUser = 'eda-create-user',
   EditUser = 'eda-edit-user',
   EditCurrentUser = 'eda-edit-current-user',
   UserPage = 'eda-user-page',
   UserTokens = 'eda-user-tokens',
-
-  Rules = 'eda-rules',
-  CreateRule = 'eda-create-rule',
-  EditRule = 'eda-edit-rule',
-  RulePage = 'eda-rule-page',
 
   Roles = 'eda-roles',
   CreateRole = 'eda-create-role',

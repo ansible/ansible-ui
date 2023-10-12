@@ -42,7 +42,7 @@ describe('AWX Cleanup', () => {
 
   it('cleanup users', () => {
     cy.awxRequestGet<AwxItemsResponse<User>>(
-      `/api/v2/users?username__startswith=e2e&page=1&page_size=200&created__lt=${tenMinutesAgo}`
+      `/api/v2/users?username__startswith=e2e-&page=1&page_size=200&created__lt=${tenMinutesAgo}`
     ).then((result) => {
       for (const resource of result.results ?? []) {
         cy.deleteAwxUser(resource, { failOnStatusCode: false });
@@ -67,6 +67,16 @@ describe('AWX Cleanup', () => {
       for (const resource of result.results ?? []) {
         const url = getJobsAPIUrl(resource.job_type ?? '');
         cy.awxRequestDelete(`${url}${resource.id}/`, { failOnStatusCode: false });
+      }
+    });
+  });
+
+  it('cleanup instance groups', () => {
+    cy.awxRequestGet<AwxItemsResponse<Job>>(
+      `/api/v2/instance_groups/?name__startswith=E2E&page=1&page_size=200&created__lt=${tenMinutesAgo}`
+    ).then((result) => {
+      for (const resource of result.results ?? []) {
+        cy.awxRequestDelete(`/api/v2/instance_groups/${resource.id}/`, { failOnStatusCode: false });
       }
     });
   });

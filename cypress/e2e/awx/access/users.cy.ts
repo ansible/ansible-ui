@@ -11,29 +11,25 @@ describe('Users List Actions', () => {
 
   before(() => {
     cy.awxLogin();
+  });
 
+  beforeEach(() => {
     cy.createAwxOrganization().then((org) => {
       organization = org;
+      cy.createAwxUser(organization).then((testUser) => {
+        user = testUser;
+      });
     });
   });
 
   after(() => {
-    cy.requestDelete(`/api/v2/organizations/${organization.id}/`, {
-      failOnStatusCode: false,
-    });
-  });
-
-  beforeEach(() => {
-    cy.createAwxUser(organization).then((testUser) => (user = testUser));
-  });
-
-  afterEach(() => {
     cy.deleteAwxUser(user);
+    cy.deleteAwxOrganization(organization);
   });
 
   it('renders the users list page', () => {
     cy.navigateTo('awx', 'users');
-    cy.hasTitle(/^Users$/);
+    cy.verifyPageTitle('Users');
   });
 
   it('creates and then deletes a basic user', () => {
@@ -46,18 +42,18 @@ describe('Users List Actions', () => {
     cy.get('[data-cy="confirmpassword"]').type(password);
     cy.get('[data-cy="user-summary-fields-organization-name"]').type(organization.name);
     cy.clickButton(/^Create user$/);
-    cy.hasTitle(userName);
+    cy.verifyPageTitle(userName);
     // Clean up this user
     cy.clickPageAction(/^Delete user/);
     cy.get('#confirm').click();
     cy.clickButton(/^Delete user/);
-    cy.hasTitle(/^Users$/);
+    cy.verifyPageTitle('Users');
   });
 
   it('renders the user details page', () => {
     cy.navigateTo('awx', 'users');
     cy.clickTableRow(user.username);
-    cy.hasTitle(user.username);
+    cy.verifyPageTitle(user.username);
     cy.clickLink(/^Details$/);
     cy.contains('#username', user.username);
   });
@@ -65,18 +61,18 @@ describe('Users List Actions', () => {
   it('edits a user from the details page', () => {
     cy.navigateTo('awx', 'users');
     cy.clickTableRow(user.username);
-    cy.hasTitle(user.username);
+    cy.verifyPageTitle(user.username);
     cy.clickButton(/^Edit user$/);
-    cy.hasTitle(/^Edit User$/);
+    cy.verifyPageTitle('Edit User');
     cy.get('[data-cy="user-username"]').type(user.username + 'a');
     cy.clickButton(/^Save user$/);
-    cy.hasTitle(`${user.username}a`);
+    cy.verifyPageTitle(`${user.username}a`);
   });
 
   it('navigates to the edit form from the users list row item', () => {
     cy.navigateTo('awx', 'users');
-    cy.clickTableRowPinnedAction(user.username, 'Edit user');
-    cy.hasTitle(/^Edit User$/);
+    cy.clickTableRowPinnedAction(user.username, 'edit-user');
+    cy.verifyPageTitle('Edit User');
   });
 });
 
@@ -86,30 +82,29 @@ describe('Users Delete Actions', () => {
 
   before(() => {
     cy.awxLogin();
+  });
 
+  beforeEach(() => {
     cy.createAwxOrganization().then((org) => {
       organization = org;
+      cy.createAwxUser(organization).then((testUser) => {
+        user = testUser;
+      });
     });
   });
 
   after(() => {
-    cy.requestDelete(`/api/v2/organizations/${organization.id}/`, {
-      failOnStatusCode: false,
-    });
-  });
-
-  beforeEach(() => {
-    cy.createAwxUser(organization).then((testUser) => (user = testUser));
+    cy.deleteAwxOrganization(organization);
   });
 
   it('deletes a user from the details page', () => {
     cy.navigateTo('awx', 'users');
     cy.clickTableRow(user.username);
-    cy.hasTitle(user.username);
+    cy.verifyPageTitle(user.username);
     cy.clickPageAction(/^Delete user/);
     cy.get('#confirm').click();
     cy.clickButton(/^Delete user/);
-    cy.hasTitle(/^Users$/);
+    cy.verifyPageTitle('Users');
   });
 
   it('deletes a user from the users list row item', () => {

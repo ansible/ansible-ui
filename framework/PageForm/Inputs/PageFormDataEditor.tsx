@@ -6,8 +6,8 @@ import {
   ToggleGroup,
   Tooltip,
 } from '@patternfly/react-core';
-import { AngleRightIcon, CopyIcon, UploadIcon, DownloadIcon } from '@patternfly/react-icons';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { AngleRightIcon, CopyIcon, DownloadIcon, UploadIcon } from '@patternfly/react-icons';
+import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import {
   Controller,
@@ -20,13 +20,13 @@ import {
 } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { FormGroupTextInputProps, usePageAlertToaster } from '../..';
+import { usePageAlertToaster } from '../..';
+import { useClipboard } from '../../hooks/useClipboard';
 import { isJsonObject, isJsonString, jsonToYaml, yamlToJson } from '../../utils/codeEditorUtils';
+import { downloadTextFile } from '../../utils/download-file';
 import { capitalizeFirstLetter } from '../../utils/strings';
 import { DataEditor } from './DataEditor';
 import { PageFormGroup } from './PageFormGroup';
-import { downloadTextFile } from '../../utils/download-file';
-import { useClipboard } from '../../hooks/useClipboard';
 
 const ToggleGroupItem = styled(PFToggleGroupItem)`
   &&:first-child#copy-button {
@@ -75,6 +75,7 @@ function ActionsRow(props: {
         <ToggleGroupItem
           key="copy-button"
           id="copy-button"
+          data-cy="copy-button"
           aria-label={t('Copy to clipboard')}
           icon={<CopyIcon />}
           type="button"
@@ -90,6 +91,7 @@ function ActionsRow(props: {
         <ToggleGroupItem
           key="upload-button"
           id="upload-button"
+          data-cy="upload-button"
           aria-label={t('Upload from file')}
           icon={<UploadIcon />}
           type="button"
@@ -105,6 +107,7 @@ function ActionsRow(props: {
         <ToggleGroupItem
           key="download-button"
           id="download-button"
+          data-cy="download-button"
           aria-label={t('Download file')}
           icon={<DownloadIcon />}
           type="button"
@@ -119,6 +122,7 @@ function ActionsRow(props: {
       <ToggleGroupItem
         key={language}
         id={`toggle-${language}`}
+        data-cy={`toggle-${language}`}
         aria-label={t('Toggle to {{language}}', { language })}
         isSelected={selectedLanguage === language}
         isDisabled={Boolean(errors[name])}
@@ -155,7 +159,16 @@ export type PageFormDataEditorInputProps<
   allowCopy?: boolean;
   allowDownload?: boolean;
   defaultExpanded?: boolean;
-} & Omit<FormGroupTextInputProps, 'onChange'>;
+
+  id?: string;
+  label?: string;
+  isReadOnly?: boolean;
+  isRequired?: boolean;
+
+  additionalControls?: ReactNode;
+  labelHelp?: ReactNode;
+  labelHelpTitle?: string;
+};
 
 export function PageFormDataEditor<
   TFieldValues extends FieldValues = FieldValues,
@@ -317,7 +330,7 @@ export function PageFormDataEditor<
             {...formGroupInputProps}
             label={
               isExpandable ? (
-                <span style={{ alignItems: 'center' }}>
+                <span data-cy="expandable" style={{ alignItems: 'center' }}>
                   <AngleRightIcon
                     style={{
                       transform: isCollapsed ? 'rotate(0deg)' : 'rotate(90deg)',
@@ -368,6 +381,7 @@ export function PageFormDataEditor<
                     setError={setFormError}
                     clearErrors={clearErrors}
                     id={id}
+                    data-cy={id}
                     name={name}
                     language={selectedLanguage}
                     value={value}

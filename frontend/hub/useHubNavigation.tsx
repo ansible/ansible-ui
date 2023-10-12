@@ -11,10 +11,12 @@ import { Approvals } from './approvals/Approvals';
 import { CollectionDetails } from './collections/CollectionDetails';
 import { Collections } from './collections/Collections';
 import { UploadCollection } from './collections/UploadCollection';
+import { CollectionSignatureUpload } from './collections/CollectionSignatureUpload';
 import { HubDashboard } from './dashboard/Dashboard';
 import { ExecutionEnvironments } from './execution-environments/ExecutionEnvironments';
-import { NamespaceDetails } from './namespaces/HubNamespaceDetails';
 import { CreateHubNamespace, EditHubNamespace } from './namespaces/HubNamespaceForm';
+import { HubNamespaceDetails } from './namespaces/HubNamespacePage/HubNamespaceDetails';
+import { HubNamespacePage } from './namespaces/HubNamespacePage/HubNamespacePage';
 import { Namespaces } from './namespaces/HubNamespaces';
 import { RemoteRegistries } from './remote-registries/RemoteRegistries';
 import { RemoteDetails } from './remotes/RemoteDetails';
@@ -56,13 +58,24 @@ export function useHubNavigation() {
                   },
                   {
                     id: HubRoute.EditNamespace,
-                    path: ':id/edit',
+                    path: ':id',
                     element: <EditHubNamespace />,
                   },
                   {
                     id: HubRoute.NamespacePage,
-                    path: 'details/:id/*',
-                    element: <NamespaceDetails />,
+                    path: ':id',
+                    element: <HubNamespacePage />,
+                    children: [
+                      {
+                        id: HubRoute.NamespaceDetails,
+                        path: 'details',
+                        element: <HubNamespaceDetails />,
+                      },
+                      {
+                        path: '',
+                        element: <Navigate to="details" />,
+                      },
+                    ],
                   },
                   {
                     path: '',
@@ -79,6 +92,11 @@ export function useHubNavigation() {
                     id: HubRoute.UploadCollection,
                     path: 'upload',
                     element: <UploadCollection />,
+                  },
+                  {
+                    id: HubRoute.CollectionSignatureUpload,
+                    path: 'signature-upload',
+                    element: <CollectionSignatureUpload />,
                   },
                   {
                     id: HubRoute.CollectionPage,

@@ -44,26 +44,26 @@ describe('ProjectForm.cy.ts', () => {
       cy.contains('Name is required.').should('be.visible');
       cy.contains('Organization is required.').should('be.visible');
       cy.contains('Source control type is required.').should('be.visible');
-      cy.hasTitle(/^Create Project$/);
+      cy.verifyPageTitle('Create Project');
     });
     it('validates required field for source control types', () => {
       cy.mount(<CreateProject />);
-      cy.typeInputByLabel(/^Name$/, 'Test Project');
-      cy.selectDropdownOptionByLabel(/^Organization$/, 'Default');
+      cy.get('[data-cy="project-name"]').type('Test Project');
+      cy.selectDropdownOptionByResourceName('organization', 'Default');
       // Git
-      cy.selectDropdownOptionByLabel(/^Source Control Type$/, 'Git');
+      cy.selectDropdownOptionByResourceName('source_control_type', 'Git');
       cy.clickButton(/^Create project$/);
       cy.contains('Source control url is required.').should('be.visible');
       // Insights
-      cy.selectDropdownOptionByLabel(/^Source Control Type$/, 'Red Hat Insights');
+      cy.selectDropdownOptionByResourceName('source_control_type', 'Red Hat Insights');
       cy.clickButton(/^Create project$/);
       cy.contains('Insights credential is required.').should('be.visible');
       // Remote Archive
-      cy.selectDropdownOptionByLabel(/^Source Control Type$/, 'Remote Archive');
+      cy.selectDropdownOptionByResourceName('source_control_type', 'Remote Archive');
       cy.clickButton(/^Create project$/);
       cy.contains('Source control url is required.').should('be.visible');
       // SVN
-      cy.selectDropdownOptionByLabel(/^Source Control Type$/, 'Subversion');
+      cy.selectDropdownOptionByResourceName('source_control_type', 'Subversion');
       cy.clickButton(/^Create project$/);
       cy.contains('Source control url is required.').should('be.visible');
     });
@@ -81,10 +81,10 @@ describe('ProjectForm.cy.ts', () => {
         path: RouteObj.EditProject,
         initialEntries: [RouteObj.EditProject.replace(':id', '9')],
       });
-      cy.typeInputByLabel(/^Content Signature Validation Credential$/, 'XYZ');
+      cy.get('[data-cy="content-signature-validation-credential-form-group"]').type('XYZ');
       cy.clickButton(/^Save project$/);
       cy.contains('Credential not found.').should('be.visible');
-      cy.hasTitle(/^Edit Project$/);
+      cy.verifyPageTitle('Edit Project');
     });
     it('validates source control credential', () => {
       cy.intercept(
@@ -101,17 +101,17 @@ describe('ProjectForm.cy.ts', () => {
         initialEntries: [RouteObj.EditProject.replace(':id', '9')],
       });
       // Incorrect credential
-      cy.typeInputByLabel(/^Source Control Credential$/, 'XYZ');
+      cy.get('[data-cy="source-control-credential-form-group"]').type('XYZ');
       cy.clickButton(/^Save project$/);
       cy.contains('Credential not found.').should('be.visible');
-      cy.hasTitle(/^Edit Project$/);
+      cy.verifyPageTitle('Edit Project');
     });
   });
   it('displays warning if there are no available playbook directories (Manual source control type)', () => {
     cy.mount(<CreateProject />);
-    cy.typeInputByLabel(/^Name$/, 'Test Project');
-    cy.selectDropdownOptionByLabel(/^Organization$/, 'Default');
-    cy.selectDropdownOptionByLabel(/^Source Control Type$/, 'Manual');
+    cy.get('[data-cy="project-name"]').type('Test Project');
+    cy.selectDropdownOptionByResourceName('organization', 'Default');
+    cy.selectDropdownOptionByResourceName('source_control_type', 'Manual');
     cy.contains('WARNING:').should('be.visible');
     cy.contains('There are no available playbook directories').should('be.visible');
   });

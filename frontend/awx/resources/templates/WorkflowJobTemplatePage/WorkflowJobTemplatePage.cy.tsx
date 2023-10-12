@@ -2,6 +2,8 @@
 /* eslint-disable i18next/no-literal-string */
 import { WorkflowJobTemplatePage } from './WorkflowJobTemplatePage';
 import { RouteObj } from '../../../../common/Routes';
+import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
+import { Organization } from '../../../interfaces/Organization';
 
 describe('WorflowJobTemplatePage', () => {
   beforeEach(() => {
@@ -9,33 +11,34 @@ describe('WorflowJobTemplatePage', () => {
       { method: 'GET', url: '/api/v2/workflow_job_templates/*', hostname: 'localhost' },
       { fixture: 'workflowJobTemplate.json' }
     );
-  });
 
-  it('Component renders and displays jobTemplate', () => {
+    cy.fixture('organizations').then((organizations: AwxItemsResponse<Organization[]>) => {
+      cy.intercept(
+        'GET',
+        'api/v2/organizations/?role_level=notification_admin_role',
+        organizations
+      );
+    });
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/organizations?role_level=notification_admin_role',
+        url: '/api/v2/workflow_job_templates/1/instance_groups',
         hostname: 'localhost',
       },
-      { fixture: 'organizations.json' }
+      { fixture: 'instance_groups.json' }
     );
-    cy.mount(
-      <WorkflowJobTemplatePage />,
-      {
-        path: RouteObj.WorkflowJobTemplatePage,
-        initialEntries: [RouteObj.WorkflowJobTemplateDetails.replace(':id', '1')],
-      },
-      'activeUserSysAuditor'
-    );
-    cy.contains('dd#name>div', 'E2E 6GDe').should('exist');
+  });
+
+  it('Component renders and displays workflow job template', () => {
+    cy.mount(<WorkflowJobTemplatePage />);
+    cy.get('h1').should('have.text', 'E2E 6GDe');
   });
 
   it('Launches a job that does not need any prompting', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/organizations?role_level=notification_admin_role',
+        url: '/api/v2/organizations/?role_level=notification_admin_role',
         hostname: 'localhost',
       },
       { fixture: 'organizations.json' }
@@ -54,7 +57,7 @@ describe('WorflowJobTemplatePage', () => {
       initialEntries: [RouteObj.WorkflowJobTemplateDetails.replace(':id', '1')],
     });
 
-    cy.clickPageAction(/^Launch template$/);
+    cy.clickButton(/^Launch template$/);
 
     cy.wait('@getLaunchConfig');
     cy.wait('@launchJob');
@@ -63,7 +66,7 @@ describe('WorflowJobTemplatePage', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/organizations?role_level=notification_admin_role',
+        url: '/api/v2/organizations/?role_level=notification_admin_role',
         hostname: 'localhost',
       },
       { fixture: 'organizations.json' }
@@ -74,24 +77,25 @@ describe('WorflowJobTemplatePage', () => {
     ).as('getLaunchConfig');
 
     cy.intercept('POST', '/api/v2/workflow_job_templates/*/launch/', (req) => {
-      return req.reply({ statusCode: 400, body: { message: 'Could not launch job' } });
+      return req.reply({ statusCode: 404, body: { message: 'Could not launch job' } });
     }).as('launchJob');
+
     cy.mount(<WorkflowJobTemplatePage />, {
       path: RouteObj.WorkflowJobTemplatePage,
       initialEntries: [RouteObj.WorkflowJobTemplateDetails.replace(':id', '1')],
     });
 
-    cy.clickPageAction(/^Launch template$/);
+    cy.clickButton(/^Launch template$/);
 
     cy.wait('@getLaunchConfig');
     cy.wait('@launchJob');
-    cy.get('div.pf-c-alert__description').contains('Could not launch job');
+    cy.get('.pf-c-alert__title').contains('Failed to launch template');
   });
   it('Should render the proper tabs for a super user', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/organizations?role_level=notification_admin_role',
+        url: '/api/v2/organizations/?role_level=notification_admin_role',
         hostname: 'localhost',
       },
       { fixture: 'organizations.json' }
@@ -100,18 +104,17 @@ describe('WorflowJobTemplatePage', () => {
       'Back to Templates',
       'Details',
       'Access',
-      'Notifications',
       'Schedules',
       'Jobs',
       'Survey',
-      'Visualizer',
+      'Notifications',
     ];
     cy.mount(<WorkflowJobTemplatePage />, {
       path: RouteObj.WorkflowJobTemplatePage,
       initialEntries: [RouteObj.WorkflowJobTemplateDetails.replace(':id', '1')],
     });
     const tabs = cy.get('.pf-c-tabs__list');
-    tabs.children().should('have.length', 8);
+    tabs.children().should('have.length', 7);
     tabs.children().each((tab, index) => {
       cy.wrap(tab).should('contain', tabNames[index]);
     });
@@ -123,7 +126,7 @@ describe('WorflowJobTemplatePage', () => {
 
       cy.intercept(
         'GET',
-        '/api/v2/organizations?role_level=notification_admin_role',
+        '/api/v2/organizations/?role_level=notification_admin_role',
         organizations
       ).as('getOrganizations');
     });
@@ -131,11 +134,10 @@ describe('WorflowJobTemplatePage', () => {
       'Back to Templates',
       'Details',
       'Access',
-      'Notifications',
       'Schedules',
       'Jobs',
       'Survey',
-      'Visualizer',
+      'Notifications',
     ];
     cy.mount(
       <WorkflowJobTemplatePage />,
@@ -146,7 +148,7 @@ describe('WorflowJobTemplatePage', () => {
       'activeUserSysAuditor'
     );
     const allTabs = cy.get('.pf-c-tabs__list');
-    allTabs.children().should('have.length', 8);
+    allTabs.children().should('have.length', 7);
     allTabs.children().each((tab, index) => {
       cy.wrap(tab).should('contain', tabNames[index]);
     });
@@ -158,7 +160,7 @@ describe('WorflowJobTemplatePage', () => {
 
       cy.intercept(
         'GET',
-        '/api/v2/organizations?role_level=notification_admin_role',
+        '/api/v2/organizations/?role_level=notification_admin_role',
         organizations
       ).as('getOrganizations');
     });
@@ -170,7 +172,6 @@ describe('WorflowJobTemplatePage', () => {
       'Schedules',
       'Jobs',
       'Survey',
-      'Visualizer',
     ];
 
     cy.mount(<WorkflowJobTemplatePage />, {
@@ -179,7 +180,7 @@ describe('WorflowJobTemplatePage', () => {
     });
     cy.wait('@getOrganizations');
     const fewerTabs = cy.get('.pf-c-tabs__list');
-    fewerTabs.children().should('have.length', 7);
+    fewerTabs.children().should('have.length', 6);
     fewerTabs.children().each((tab, index) => {
       cy.wrap(tab).should('have.text', tabNames[index]);
     });

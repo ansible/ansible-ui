@@ -92,12 +92,12 @@ describe('Create job template ', () => {
   });
   it('Create Template - Displays error message on internal server error', () => {
     cy.mount(<CreateJobTemplate />);
-    cy.typeInputByLabel(/^Name$/, 'Test');
+    cy.get('[data-cy="name"]').type('Test');
   });
 
   it('Component renders', () => {
     cy.mount(<CreateJobTemplate />);
-    cy.hasTitle(/^Create Job Template$/);
+    cy.verifyPageTitle('Create Job Template');
   });
   it('Validates properly', () => {
     cy.mount(<CreateJobTemplate />);
@@ -108,12 +108,12 @@ describe('Create job template ', () => {
   });
   it('Should update fields properly', () => {
     cy.mount(<CreateJobTemplate />);
-    cy.typeInputByLabel(/^Name$/, 'Test');
+    cy.get('[data-cy="name"]').type('Test');
     cy.get('button[aria-describedby="job_type-form-group"]').click();
     cy.clickButton(/^Check$/);
-    cy.selectDropdownOptionByLabel(/^Inventory$/, 'Demo Inventory', true);
-    cy.selectDropdownOptionByLabel(/^Project$/, 'Demo Project').as('ProjectInput');
-    cy.selectDropdownOptionByLabel(/^Playbook$/, 'hello_world.yml', false);
+    cy.selectDropdownOptionByResourceName('inventory', 'Demo Inventory');
+    cy.selectDropdownOptionByResourceName('project', 'Demo Project').as('ProjectInput');
+    cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
     cy.clickButton('Create job template');
 
     cy.intercept('POST', '/api/v2/job_templates/', (req) => {

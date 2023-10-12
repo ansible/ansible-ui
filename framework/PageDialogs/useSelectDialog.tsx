@@ -120,6 +120,7 @@ export function SelectDialog<
     <Modal
       title={title}
       aria-label={title}
+      ouiaId={title}
       isOpen={open}
       onClose={onClose}
       variant={ModalVariant.medium}

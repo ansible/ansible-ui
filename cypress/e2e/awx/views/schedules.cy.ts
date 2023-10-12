@@ -15,7 +15,7 @@ describe('schedules', () => {
 
   it('renders schedules list', () => {
     cy.navigateTo('awx', 'schedules');
-    cy.hasTitle(/^Schedules$/);
+    cy.verifyPageTitle('Schedules');
     cy.getTableRowByText(schedule.name);
     cy.deleteAWXSchedule(schedule);
   });

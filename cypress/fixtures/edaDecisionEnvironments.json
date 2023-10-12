@@ -1,0 +1,99 @@
+{
+  "count": 12,
+  "next": "/api/eda/v1/decision-environments/?page=2&page_size=10",
+  "previous": null,
+  "page_size": 10,
+  "page": 1,
+  "results": [
+    {
+      "name": "EDA Decision Environment 1",
+      "description": "This is decision environment 1",
+      "image_url": "quay.io/ansible/ansible-rulebook:main",
+      "credential_id": null,
+      "id": 1,
+      "created_at": "2023-09-22T14:47:22.653364Z",
+      "modified_at": "2023-09-22T14:47:22.653377Z"
+    },
+    {
+      "name": "EDA Decision Environment 2",
+      "description": "This is decision environment 2",
+      "image_url": "quay.io/ansible/ansible-rulebook:main",
+      "credential_id": null,
+      "id": 2,
+      "created_at": "2023-09-22T14:47:22.653364Z",
+      "modified_at": "2023-09-22T14:47:22.653377Z"
+    },
+    {
+      "name": "EDA Decision Environment 3",
+      "description": "This is decision environment 3",
+      "image_url": "quay.io/ansible/ansible-rulebook:main",
+      "credential_id": null,
+      "id": 3,
+      "created_at": "2023-09-22T14:47:22.653364Z",
+      "modified_at": "2023-09-22T14:47:22.653377Z"
+    },
+    {
+      "name": "EDA Decision Environment 4",
+      "description": "This is decision environment 4",
+      "image_url": "quay.io/ansible/ansible-rulebook:main",
+      "credential_id": null,
+      "id": 4,
+      "created_at": "2023-09-22T14:47:22.653364Z",
+      "modified_at": "2023-09-22T14:47:22.653377Z"
+    },
+    {
+      "name": "EDA Decision Environment 5",
+      "description": "This is decision environment 5",
+      "image_url": "quay.io/ansible/ansible-rulebook:main",
+      "credential_id": null,
+      "id": 5,
+      "created_at": "2023-09-22T14:47:22.653364Z",
+      "modified_at": "2023-09-22T14:47:22.653377Z"
+    },
+    {
+      "name": "EDA Decision Environment 6",
+      "description": "This is decision environment 6",
+      "image_url": "quay.io/ansible/ansible-rulebook:main",
+      "credential_id": null,
+      "id": 6,
+      "created_at": "2023-09-22T14:47:22.653364Z",
+      "modified_at": "2023-09-22T14:47:22.653377Z"
+    },
+    {
+      "name": "EDA Decision Environment 7",
+      "description": "This is decision environment 7",
+      "image_url": "quay.io/ansible/ansible-rulebook:main",
+      "credential_id": null,
+      "id": 7,
+      "created_at": "2023-09-22T14:47:22.653364Z",
+      "modified_at": "2023-09-22T14:47:22.653377Z"
+    },
+    {
+      "name": "EDA Decision Environment 8",
+      "description": "This is decision environment 8",
+      "image_url": "quay.io/ansible/ansible-rulebook:main",
+      "credential_id": null,
+      "id": 8,
+      "created_at": "2023-09-22T14:47:22.653364Z",
+      "modified_at": "2023-09-22T14:47:22.653377Z"
+    },
+    {
+      "name": "EDA Decision Environment 9",
+      "description": "This is decision environment 9",
+      "image_url": "quay.io/ansible/ansible-rulebook:main",
+      "credential_id": null,
+      "id": 9,
+      "created_at": "2023-09-22T14:47:22.653364Z",
+      "modified_at": "2023-09-22T14:47:22.653377Z"
+    },
+    {
+      "name": "EDA Decision Environment 10",
+      "description": "This is decision environment 10",
+      "image_url": "quay.io/ansible/ansible-rulebook:main",
+      "credential_id": null,
+      "id": 10,
+      "created_at": "2023-09-22T14:47:22.653364Z",
+      "modified_at": "2023-09-22T14:47:22.653377Z"
+    }
+  ]
+}

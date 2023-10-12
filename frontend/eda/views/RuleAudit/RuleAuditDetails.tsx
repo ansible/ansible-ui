@@ -15,7 +15,6 @@ import {
   useGetPageUrl,
 } from '../../../../framework';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
-import { RouteObj } from '../../../common/Routes';
 import { StatusCell } from '../../../common/Status';
 import { useGet } from '../../../common/crud/useGet';
 import { EdaRoute } from '../../EdaRoutes';
@@ -32,6 +31,7 @@ import { useRuleAuditEventsFilters } from './hooks/useRuleAuditEventsFilters';
 export function RuleAuditDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
+  const getPageUrl = useGetPageUrl();
 
   const { data: ruleAudit } = useGet<EdaRuleAudit>(
     `${API_PREFIX}/audit-rules/${params.id ?? ''}/`,
@@ -53,10 +53,9 @@ export function RuleAuditDetails() {
           >
             {ruleAudit && ruleAudit.activation_instance?.id ? (
               <Link
-                to={RouteObj.ActivationInstancePage.replace(
-                  ':id',
-                  `${ruleAudit.activation_instance?.id || ''}`
-                )}
+                to={getPageUrl(EdaRoute.RulebookActivationInstancePage, {
+                  params: { id: ruleAudit.id, instanceId: ruleAudit.activation_instance?.id },
+                })}
               >
                 {ruleAudit?.activation_instance?.name}
               </Link>
@@ -131,8 +130,6 @@ export function RuleAuditDetails() {
       </PageLayout>
     );
   }
-
-  const getPageUrl = useGetPageUrl();
 
   return (
     <PageLayout>

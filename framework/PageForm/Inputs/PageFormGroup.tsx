@@ -7,6 +7,7 @@ export type PageFormGroupProps = Pick<
   'children' | 'helperText' | 'helperTextInvalid' | 'isRequired' | 'label' | 'labelIcon'
 > & {
   id?: string;
+  name?: string;
   labelHelpTitle?: string;
   labelHelp?: string | ReactNode;
   additionalControls?: ReactNode;
@@ -14,12 +15,21 @@ export type PageFormGroupProps = Pick<
 
 /** Wrapper over the PatternFly FormGroup making it optional based on if label is given. */
 export function PageFormGroup(props: PageFormGroupProps) {
-  const { children, helperText, helperTextInvalid, isRequired, labelHelp, labelHelpTitle, label } =
-    props;
+  const {
+    name,
+    children,
+    helperText,
+    helperTextInvalid,
+    isRequired,
+    labelHelp,
+    labelHelpTitle,
+    label,
+  } = props;
 
   return (
     <FormGroup
       id={`${props.id ?? ''}-form-group`}
+      data-cy={name + '-form-group'}
       fieldId={props.id}
       label={label}
       helperText={helperText}

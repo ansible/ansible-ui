@@ -20,7 +20,7 @@ export function useCollectionActions(callback?: (collections: CollectionVersionS
   const pageNavigate = usePageNavigate();
   const deleteCollections = useDeleteCollections(callback);
   const deprecateCollections = useDeprecateCollections(callback);
-  const deleteCollectionsFromRepository = useDeleteCollectionsFromRepository();
+  const deleteCollectionsFromRepository = useDeleteCollectionsFromRepository(callback);
   const context = useHubContext();
 
   return useMemo<IPageAction<CollectionVersionSearch>[]>(
@@ -44,7 +44,7 @@ export function useCollectionActions(callback?: (collections: CollectionVersionS
         isDanger: true,
         isDisabled: context.hasPermission('ansible.delete_collection')
           ? ''
-          : t`You do not have rights to this operation`,
+          : t('You do not have rights to this operation'),
       },
       {
         type: PageActionType.Button,
@@ -55,7 +55,7 @@ export function useCollectionActions(callback?: (collections: CollectionVersionS
         isDanger: true,
         isDisabled: context.hasPermission('ansible.delete_collection')
           ? ''
-          : t`You do not have rights to this operation`,
+          : t('You do not have rights to this operation'),
       },
       {
         type: PageActionType.Button,

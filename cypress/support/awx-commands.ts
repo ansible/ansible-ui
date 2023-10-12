@@ -8,6 +8,7 @@ import { Credential } from '../../frontend/awx/interfaces/Credential';
 import { ExecutionEnvironment } from '../../frontend/awx/interfaces/ExecutionEnvironment';
 import { InstanceGroup } from '../../frontend/awx/interfaces/InstanceGroup';
 import { Inventory } from '../../frontend/awx/interfaces/Inventory';
+import { JobEvent } from '../../frontend/awx/interfaces/JobEvent';
 import { JobTemplate } from '../../frontend/awx/interfaces/JobTemplate';
 import { Label } from '../../frontend/awx/interfaces/Label';
 import { Organization } from '../../frontend/awx/interfaces/Organization';
@@ -15,31 +16,12 @@ import { Project } from '../../frontend/awx/interfaces/Project';
 import { Schedule } from '../../frontend/awx/interfaces/Schedule';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
+import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/generated-from-swagger/api';
 import './auth';
 import './commands';
 import './rest-commands';
-import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/generated-from-swagger/api';
 
 //  AWX related custom command implementation
-
-Cypress.Commands.add('getFormGroupByLabel', (label: string | RegExp) => {
-  cy.contains('.pf-c-form__label-text', label).parent().parent().parent();
-});
-
-Cypress.Commands.add('getInputByLabel', (label: string | RegExp) => {
-  cy.contains('.pf-c-form__label-text', label)
-    .parent()
-    .invoke('attr', 'for')
-    .then((id: string | undefined) => {
-      if (id) {
-        cy.get('#' + id + ':not(:disabled):not(:hidden)').should(
-          'not.have.attr',
-          'aria-disabled',
-          'true'
-        );
-      }
-    });
-});
 
 Cypress.Commands.add('getCheckboxByLabel', (label: string | RegExp) => {
   cy.contains('.pf-c-check__label', label)
@@ -51,51 +33,49 @@ Cypress.Commands.add('getCheckboxByLabel', (label: string | RegExp) => {
     });
 });
 
-Cypress.Commands.add('typeInputByLabel', (label: string | RegExp, text: string) => {
-  cy.getInputByLabel(label).clear();
-  cy.getInputByLabel(label).type(text, { delay: 0 });
+Cypress.Commands.add('selectPromptOnLaunch', (resourceName: string) => {
+  cy.get(`[data-cy="ask_${resourceName}_on_launch"]`).click();
 });
 
 Cypress.Commands.add(
-  'selectDropdownOptionByLabel',
-  //adjust this command once the dropdown component has data-cy added
-  (label: string | RegExp, text: string, multiselect?: boolean) => {
-    // Used for Typeahead multiselect components
-    if (multiselect) {
-      cy.contains('.pf-c-form__label-text', label)
-        .parent()
-        .parent()
-        .parent()
-        .parent()
-        .within(() => {
-          cy.get('button[aria-label="Options menu"]').click();
-          cy.get('.pf-c-select__menu').within(() => {
-            cy.contains('button', text).click();
-          });
-        });
-      return;
+  'selectDropdownOptionByResourceName',
+  (resource: string, itemName: string, spyglass?: boolean) => {
+    if (spyglass === undefined) {
+      spyglass === false;
     }
-    cy.getFormGroupByLabel(label).within(() => {
-      // Click button once it is enabled. Async loading of select will make it disabled until loaded.
-      cy.get('button[aria-label="Options menu"]').click();
-
-      // If the select menu contains a search, then search for the text
-
-      cy.get('.pf-c-select__menu').then((selectMenu) => {
-        if (selectMenu.find('.pf-m-search').length > 0) {
-          cy.get('.pf-m-search:not(:disabled):not(:hidden)')
-            .should('not.have.attr', 'aria-disabled', 'true')
-            .clear()
-            .type(text, { delay: 0 });
-        }
+    if (spyglass) {
+      cy.get(`[data-cy*="${resource}-form-group"]`).within(() => {
+        cy.get('button').eq(1).click();
       });
-
-      cy.get('.pf-c-select__menu').within(() => {
-        cy.contains('button', text).click();
+      cy.get('[data-ouia-component-type="PF4/ModalContent"]').within(() => {
+        cy.searchAndDisplayResource(itemName);
+        cy.get('tbody tr input').click();
+        cy.clickButton('Confirm');
       });
-    });
+    } else {
+      cy.get(`[data-cy*="${resource}-form-group"]`).within(() => {
+        cy.get('[data-ouia-component-id="menu-select"] button')
+          .click()
+          .then(() => {
+            cy.contains('li', itemName).click();
+          });
+      });
+    }
   }
 );
+
+Cypress.Commands.add('selectItemFromLookupModal', (resource: string, itemName: string) => {
+  cy.get(`[data-cy*="${resource}-form-group"]`).within(() => {
+    cy.get('button').eq(1).click();
+  });
+  cy.get('[data-ouia-component-type="PF4/ModalContent"]').within(() => {
+    cy.searchAndDisplayResource(itemName);
+    cy.get('[data-ouia-component-id="simple-table"] tbody').within(() => {
+      cy.get('[data-cy="checkbox-column-cell"]').click();
+    });
+    cy.clickButton(/^Confirm/);
+  });
+});
 
 Cypress.Commands.add('setTablePageSize', (text: '10' | '20' | '50' | '100') => {
   cy.get('.pf-c-pagination')
@@ -130,22 +110,19 @@ Cypress.Commands.add('clickButton', (label: string | RegExp) => {
 });
 
 Cypress.Commands.add('navigateTo', (component: string, label: string) => {
-  cy.get('#page-sidebar').then((c) => {
-    if (c.hasClass('pf-m-collapsed')) {
-      cy.get('#nav-toggle').click();
+  cy.get('[data-cy="page-navigation"]').then((nav) => {
+    if (nav.is(':visible')) {
+      cy.get(`[data-cy="${component}-${label}"]`).click();
+    } else {
+      cy.get('[data-cy="nav-toggle"]').click();
+      cy.get(`[data-cy="${component}-${label}"]`).click();
     }
   });
-  cy.get(`[data-cy="${component}-${label}"]`).click();
-  cy.get('#page-sidebar').then((c) => {
-    if (!c.hasClass('pf-m-collapsed')) {
-      cy.get('#nav-toggle').click();
-    }
-  });
-  cy.get('#refresh').click();
+  cy.get('[data-cy="refresh"]').click();
 });
 
-Cypress.Commands.add('hasTitle', (label: string | RegExp) => {
-  cy.contains('.pf-c-title', label);
+Cypress.Commands.add('verifyPageTitle', (label: string) => {
+  cy.get(`[data-cy="page-title"]`).should('contain', label);
 });
 
 Cypress.Commands.add('hasAlert', (label: string | RegExp) => {
@@ -213,24 +190,11 @@ Cypress.Commands.add(
 
 Cypress.Commands.add(
   'clickTableRowPinnedAction',
-  (name: string | RegExp, label: string, filter?: boolean) => {
+  (name: string | RegExp, iconDataCy: string, filter?: boolean) => {
     cy.getTableRowByText(name, filter).within(() => {
-      cy.get(`#${label.toLowerCase().split(' ').join('-')}`)
-        .should('not.be.disabled')
-        .should('not.have.attr', 'aria-disabled', 'true')
-        .click();
-    });
-  }
-);
-
-Cypress.Commands.add(
-  'clickTableRowActionIcon',
-  (name: string | RegExp, ariaLabel: string, filter?: boolean) => {
-    cy.getTableRowByText(name, filter).within(() => {
-      cy.get(`button[aria-label="${ariaLabel}"]`)
-        .should('not.be.disabled')
-        .should('not.have.attr', 'aria-disabled', 'true')
-        .click();
+      cy.get('[data-cy="actions-column-cell"]').within(() => {
+        cy.get(`[data-cy="${iconDataCy}"]`).click();
+      });
     });
   }
 );
@@ -251,31 +215,13 @@ Cypress.Commands.add('getDialog', () => {
   cy.get('div[data-ouia-component-type="PF4/ModalContent"]');
 });
 
-Cypress.Commands.add(
-  'selectRowItemInFormGroupLookupModal',
-  (label: string | RegExp, rowItem: string) => {
-    cy.getFormGroupByLabel(label)
-      .within(() => {
-        cy.get('button[aria-label="Options menu"]').click();
-      })
-      .then(() => {
-        cy.selectTableRowInDialog(rowItem, true);
-      });
-
-    cy.clickModalButton('Confirm');
-  }
-);
-
-Cypress.Commands.add(
-  'selectTableRowInDialog',
-  (name: string | RegExp, filter?: boolean, inputType = 'checkbox') => {
-    cy.getDialog().within(() => {
-      cy.getTableRowByText(name, filter).within(() => {
-        cy.get(`input[type=${inputType}]`).click();
-      });
+Cypress.Commands.add('selectTableRowInDialog', (name: string | RegExp, filter?: boolean) => {
+  cy.getDialog().within(() => {
+    cy.getTableRowByText(name, filter).within(() => {
+      cy.get('td[data-cy=checkbox-column-cell]').click();
     });
-  }
-);
+  });
+});
 
 Cypress.Commands.add('expandTableRow', (name: string | RegExp, filter?: boolean) => {
   cy.getTableRowByText(name, filter).within(() => {
@@ -342,6 +288,22 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add(
+  'deleteAwxCredential',
+  (
+    credential: Credential,
+    options?: {
+      /** Whether to fail on response codes other than 2xx and 3xx */
+      failOnStatusCode?: boolean;
+    }
+  ) => {
+    // Delete organization created for this credential (this will also delete the credential)
+    if (credential?.organization) {
+      cy.awxRequestDelete(`/api/v2/organizations/${credential.organization.toString()}/`, options);
+    }
+  }
+);
+
+Cypress.Commands.add(
   'awxRequest',
   function awxRequest<T>(
     method: string,
@@ -397,7 +359,8 @@ Cypress.Commands.add(
       failOnStatusCode?: boolean;
     }
   ) => {
-    cy.awxRequestDelete(`/api/v2/organizations/${organization.id}/`, options);
+    if (!organization?.id) return;
+    cy.awxRequestDelete(`/api/v2/organizations/${organization?.id}/`, options);
   }
 );
 
@@ -445,7 +408,7 @@ Cypress.Commands.add(
       failOnStatusCode?: boolean;
     }
   ) => {
-    if (user.id) {
+    if (user?.id) {
       cy.awxRequestDelete(`/api/v2/users/${user.id}/`, options);
     }
   }
@@ -461,13 +424,31 @@ Cypress.Commands.add(
       ...project,
     }).then((project) => {
       if (!skipSync) {
-        waitForProjectToFinishSyncing(project.id);
+        cy.waitForProjectToFinishSyncing(project.id);
       } else {
         cy.wrap(project);
       }
     });
   }
 );
+
+Cypress.Commands.add('waitForProjectToFinishSyncing', (projectId: number) => {
+  let requestCount = 1;
+  cy.awxRequestGet<Project>(`/api/v2/projects/${projectId}`).then((project) => {
+    // Assuming that projects could take up to 5 min to sync if the instance is under load with other jobs
+    if (project.status === 'successful' || requestCount > 300) {
+      if (requestCount > 300) {
+        cy.log('Reached maximum number of requests for reading project status');
+      }
+      // Reset request count
+      requestCount = 1;
+      return;
+    }
+    requestCount++;
+    cy.wait(1000);
+    cy.waitForProjectToFinishSyncing(projectId);
+  });
+});
 
 Cypress.Commands.add(
   'createAwxExecutionEnvironment',
@@ -545,10 +526,9 @@ Cypress.Commands.add(
       failOnStatusCode?: boolean;
     }
   ) => {
-    const organizationId = inventory.organization;
     // Delete organization created for this inventory (this will also delete the inventory)
-    if (organizationId) {
-      cy.awxRequestDelete(`/api/v2/organizations/${organizationId.toString()}/`, options);
+    if (inventory?.organization) {
+      cy.awxRequestDelete(`/api/v2/organizations/${inventory.organization.toString()}/`, options);
     }
   }
 );
@@ -663,7 +643,7 @@ Cypress.Commands.add('getAwxJobTemplateByName', (awxJobTemplateName: string) => 
   cy.awxRequestGet<AwxItemsResponse<JobTemplate>>(
     `/api/v2/job_templates/?name=${awxJobTemplateName}`
   ).then((result) => {
-    cy.log('RESULT RESULT', result);
+    cy.log('Job Template', result);
     if (result && result.count === 0) {
       cy.createAwxOrganizationProjectInventoryJobTemplate();
     } else {
@@ -689,34 +669,14 @@ Cypress.Commands.add(
       const templateId = typeof jobTemplate.id === 'number' ? jobTemplate.id.toString() : '';
       cy.awxRequestDelete(`/api/v2/job_templates/${templateId}/`, options);
     }
-    if (projectId) {
+    if (typeof projectId === 'number') {
       cy.awxRequestGet<Project>(`/api/v2/projects/${projectId}/`).then((project) => {
         // This will take care of deleting the project and the associated org, inventory
-        cy.deleteAwxProject(project);
+        cy.deleteAwxProject(project, options);
       });
     }
   }
 );
-
-let requestCount = 1;
-
-// Polling to wait till a project is synced
-function waitForProjectToFinishSyncing(projectId: number) {
-  cy.awxRequestGet<Project>(`/api/v2/projects/${projectId}`).then((project) => {
-    // Assuming that projects could take up to 5 min to sync if the instance is under load with other jobs
-    if (project.status === 'successful' || requestCount > 300) {
-      if (requestCount > 300) {
-        cy.log('Reached maximum number of requests for reading project status');
-      }
-      // Reset request count
-      requestCount = 1;
-      return;
-    }
-    requestCount++;
-    cy.wait(1000);
-    waitForProjectToFinishSyncing(projectId);
-  });
-}
 
 Cypress.Commands.add(
   'createInventoryHostGroup',
@@ -787,9 +747,9 @@ Cypress.Commands.add(
       failOnStatusCode?: boolean;
     }
   ) => {
-    const instanceGroupId = instanceGroup.id;
-    if (instanceGroupId) {
-      cy.awxRequestDelete(`/api/v2/instance_groups/${instanceGroupId.toString()}/`, options);
+    // const instanceGroupId = instanceGroup.id;
+    if (instanceGroup?.id) {
+      cy.awxRequestDelete(`/api/v2/instance_groups/${instanceGroup.id.toString()}/`, options);
     }
   }
 );
@@ -826,10 +786,35 @@ Cypress.Commands.add(
 );
 
 // Global variable to store the token for AWX
-// Created on demand when a cammand needs it
+// Created on demand when a command needs it
 let globalAwxToken: AwxToken | undefined;
 
 after(() => {
   // Delete the token if it was created
   if (globalAwxToken) cy.deleteAwxToken(globalAwxToken, { failOnStatusCode: false });
+});
+
+Cypress.Commands.add('waitForTemplateStatus', (jobID: string) => {
+  cy.requestGet<AwxItemsResponse<JobEvent>>(
+    `api/v2/jobs/${jobID}/job_events/?order_by=counter&page=1&page_size=50`
+  )
+    .its('results')
+    .then((results: { summary_fields: { job: { status: string } } }[]) => {
+      if (results.length > 0) {
+        return results[0].summary_fields.job.status;
+      }
+      return '';
+    })
+    .then((status: string) => {
+      cy.log(status);
+      switch (status) {
+        case 'failed':
+        case 'successful':
+          cy.wrap(status);
+          break;
+        default:
+          cy.wait(100).then(() => cy.waitForTemplateStatus(jobID));
+          break;
+      }
+    });
 });

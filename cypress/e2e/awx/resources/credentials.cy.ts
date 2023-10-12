@@ -35,60 +35,68 @@ describe('credentials', () => {
   });
 
   it('credentials page', () => {
-    cy.hasTitle(/^Credentials$/);
+    cy.navigateTo('awx', 'credentials');
+    cy.verifyPageTitle('Credentials');
   });
 
   it('create credential', () => {
     const credentialName = 'E2E Credential ' + randomString(4);
+    cy.navigateTo('awx', 'credentials');
     cy.clickButton(/^Create credential$/);
     cy.get('[data-cy="name"]').type(credentialName);
     cy.get('[data-cy="summary-fields-organization-name"]').type(organization.name);
-    cy.selectDropdownOptionByLabel(/^Credential type$/, 'Amazon Web Services');
+    cy.selectDropdownOptionByResourceName('credential-type', 'Amazon Web Services');
     cy.clickButton(/^Create credential$/);
-    cy.hasTitle(credentialName);
+    cy.verifyPageTitle(credentialName);
   });
 
   it('edit credential', () => {
+    cy.navigateTo('awx', 'credentials');
     cy.clickTableRow(credential.name);
     cy.clickButton(/^Edit credential$/);
-    cy.hasTitle(/^Edit Credential$/);
+    cy.verifyPageTitle('Edit Credential');
     cy.get('[data-cy="name"]').type(credential.name + 'a');
     cy.clickButton(/^Save credential$/);
-    cy.hasTitle(`${credential.name}a`);
+    cy.verifyPageTitle(`${credential.name}a`);
   });
 
   it('credential details', () => {
+    cy.navigateTo('awx', 'credentials');
     cy.clickTableRow(credential.name);
-    cy.hasTitle(credential.name);
+    cy.verifyPageTitle(credential.name);
     cy.clickLink(/^Details$/);
     cy.contains('#name', credential.name);
   });
 
   it('credential details edit credential', () => {
+    cy.navigateTo('awx', 'credentials');
     cy.clickTableRow(credential.name);
-    cy.hasTitle(credential.name);
+    cy.verifyPageTitle(credential.name);
     cy.clickButton(/^Edit credential$/);
-    cy.hasTitle(/^Edit Credential$/);
+    cy.verifyPageTitle('Edit Credential');
     cy.get('[data-cy="name"]').type(credential.name + 'a');
     cy.clickButton(/^Save credential$/);
-    cy.hasTitle(`${credential.name}a`);
+    cy.verifyPageTitle(`${credential.name}a`);
   });
 
   it('credential details delete credential', () => {
+    cy.navigateTo('awx', 'credentials');
     cy.clickTableRow(credential.name);
-    cy.hasTitle(credential.name);
+    cy.verifyPageTitle(credential.name);
     cy.clickPageAction(/^Delete credential/);
     cy.get('#confirm').click();
     cy.clickButton(/^Delete credential/);
-    cy.hasTitle(/^Credentials$/);
+    cy.verifyPageTitle('Credentials');
   });
 
   it('credentials table row edit credential', () => {
-    cy.clickTableRowPinnedAction(credential.name, 'Edit credential');
-    cy.hasTitle(/^Edit Credential$/);
+    cy.navigateTo('awx', 'credentials');
+    cy.clickTableRowPinnedAction(credential.name, 'edit-credential');
+    cy.verifyPageTitle('Edit Credential');
   });
 
   it('credentials table row delete credential', () => {
+    cy.navigateTo('awx', 'credentials');
     cy.clickTableRowKebabAction(credential.name, /^Delete credential$/);
     cy.get('#confirm').click();
     cy.clickButton(/^Delete credential/);
@@ -98,6 +106,7 @@ describe('credentials', () => {
   });
 
   it('credentials toolbar delete credentials', () => {
+    cy.navigateTo('awx', 'credentials');
     cy.selectTableRow(credential.name);
     cy.clickToolbarKebabAction(/^Delete selected credentials$/);
     cy.get('#confirm').click();

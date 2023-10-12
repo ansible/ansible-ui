@@ -1,6 +1,6 @@
 /* eslint-disable i18next/no-literal-string */
 import { Inventory } from '../../../interfaces/Inventory';
-import { InventoryDetails } from './InventoryDetails';
+import { InventoryDetailsInner as InventoryDetails } from './InventoryDetails';
 
 describe('InventoryDetails', () => {
   it('Component renders and displays inventory', () => {

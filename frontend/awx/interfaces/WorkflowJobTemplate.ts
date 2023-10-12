@@ -15,6 +15,7 @@ export interface WorkflowJobTemplate
     | 'last_job_run'
     | 'next_job_run'
     | 'last_job_failed'
+    | 'user_capabilities'
   > {
   id: number;
   organization: number | null;
@@ -76,12 +77,24 @@ export interface WorkflowJobTemplate
         name: string;
         id: number;
       };
+      admin_role: {
+        description: string;
+        name: string;
+        id: number;
+      };
     };
     recent_jobs:
       | { id: number; status: string; finished: null; canceled_on: null; type: string }[]
       | [];
     created_by: SummaryFieldsByUser;
     modified_by: SummaryFieldsByUser;
+    user_capabilities: {
+      edit: boolean;
+      delete: boolean;
+      start: boolean;
+      schedule: boolean;
+      copy: boolean;
+    };
   };
 }
 

@@ -26,12 +26,12 @@ describe('Create job template ', () => {
   });
   it('Create Workflow Job Template - Displays error message on internal server error', () => {
     cy.mount(<CreateWorkflowJobTemplate />);
-    cy.typeInputByLabel(/^Name$/, 'Test');
+    cy.get('[data-cy="name"]').type('Test');
   });
 
   it('Component renders', () => {
     cy.mount(<CreateWorkflowJobTemplate />);
-    cy.hasTitle(/^Create Workflow Job Template$/);
+    cy.verifyPageTitle('Create Workflow Job Template');
   });
   it('Validates properly', () => {
     cy.mount(<CreateWorkflowJobTemplate />);
@@ -40,9 +40,9 @@ describe('Create job template ', () => {
   });
   it('Should update fields properly', () => {
     cy.mount(<CreateWorkflowJobTemplate />);
-    cy.typeInputByLabel(/^Name$/, 'Test');
+    cy.get('[data-cy="name"]').type('Test');
 
-    cy.selectDropdownOptionByLabel(/^Inventory$/, 'Demo Inventory', true);
+    cy.selectDropdownOptionByResourceName('inventory', 'Demo Inventory');
 
     cy.clickButton('Create workflow job template');
 

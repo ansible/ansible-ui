@@ -3,9 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { PageHeader, PageLayout, useGetPageUrl } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
-import { PageNotImplemented } from '../../../../common/PageNotImplemented';
-import { PageBackTab, RoutedTab, RoutedTabs } from '../../../../common/RoutedTabs';
-import { RouteObj } from '../../../../common/Routes';
+import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
 import { AwxError } from '../../../common/AwxError';
@@ -16,35 +14,34 @@ export function CredentialTypePage() {
   const params = useParams<{ id: string }>();
   const {
     error,
-    data: credential_type,
+    data: credentialType,
     refresh,
   } = useGetItem<CredentialType>('/api/v2/credential_types', params.id);
 
   const getPageUrl = useGetPageUrl();
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
-  if (!credential_type) return <LoadingPage breadcrumbs tabs />;
+  if (!credentialType) return <LoadingPage breadcrumbs tabs />;
 
   return (
     <PageLayout>
       <PageHeader
-        title={credential_type?.name}
+        title={credentialType?.name}
         breadcrumbs={[
           { label: t('Credential Types'), to: getPageUrl(AwxRoute.CredentialTypes) },
-          { label: credential_type?.name },
+          { label: credentialType?.name },
         ]}
         headerActions={[]}
       />
-      <RoutedTabs isLoading={!credential_type} baseUrl={RouteObj.CredentialTypePage}>
-        <PageBackTab
-          label={t('Back to Credential Types')}
-          url={RouteObj.CredentialTypes}
-          persistentFilterKey="credential_types"
-        />
-        <RoutedTab label={t('Details')} url={RouteObj.CredentialTypeDetails}>
-          <PageNotImplemented />
-        </RoutedTab>
-      </RoutedTabs>
+      <PageRoutedTabs
+        backTab={{
+          label: t('Back to Credential Types'),
+          page: AwxRoute.CredentialTypes,
+          persistentFilterKey: 'credential-types',
+        }}
+        tabs={[{ label: t('Details'), page: AwxRoute.CredentialTypeDetails }]}
+        params={{ id: credentialType.id }}
+      />
     </PageLayout>
   );
 }

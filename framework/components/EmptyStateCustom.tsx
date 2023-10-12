@@ -22,10 +22,10 @@ export function EmptyStateCustom(props: {
   return (
     <EmptyState variant={variant || EmptyStateVariant.full} style={style} isFullHeight>
       {icon && <EmptyStateIcon icon={icon} />}
-      <Title headingLevel="h4" size="lg">
+      <Title data-cy={props.title} headingLevel="h4" size="lg">
         {title}
       </Title>
-      <EmptyStateBody>{description}</EmptyStateBody>
+      <EmptyStateBody data-cy={props.description}>{description}</EmptyStateBody>
       {button && <EmptyStatePrimary>{button}</EmptyStatePrimary>}
       {image && (
         <>

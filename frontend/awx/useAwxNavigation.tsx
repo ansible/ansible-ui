@@ -15,15 +15,18 @@ import { OrganizationPage } from './access/organizations/OrganizationPage/Organi
 import { OrganizationTeams } from './access/organizations/OrganizationPage/OrganizationTeams';
 import { Organizations } from './access/organizations/Organizations';
 import { CreateTeam, EditTeam } from './access/teams/TeamForm';
+import { TeamAccess } from './access/teams/TeamPage/TeamAccess';
+import { TeamDetails } from './access/teams/TeamPage/TeamDetails';
 import { TeamPage } from './access/teams/TeamPage/TeamPage';
+import { TeamRoles } from './access/teams/TeamPage/TeamRoles';
 import { Teams } from './access/teams/Teams';
 import { AddRolesToTeam } from './access/teams/components/AddRolesToTeam';
 import { CreateUser, EditUser } from './access/users/UserForm';
-import { UserPage } from './access/users/UserPage/UserPage';
 import { UserDetails } from './access/users/UserPage/UserDetails';
 import { UserOrganizations } from './access/users/UserPage/UserOrganizations';
-import { UserTeams } from './access/users/UserPage/UserTeams';
+import { UserPage } from './access/users/UserPage/UserPage';
 import { UserRoles } from './access/users/UserPage/UserRoles';
+import { UserTeams } from './access/users/UserPage/UserTeams';
 import { Users } from './access/users/Users';
 import { AddRolesToUser } from './access/users/components/AddRolesToUser';
 import { ApplicationPage } from './administration/applications/ApplicationPage/ApplicationPage';
@@ -40,34 +43,46 @@ import { ManagementJobs } from './administration/management-jobs/ManagementJobs'
 import { NotificationPage } from './administration/notifications/NotificationPage/NotificationPage';
 import { Notifications } from './administration/notifications/Notifications';
 import Reports from './analytics/Reports/Reports';
+import { Test } from './analytics/AnalyticsReportBuilder/Test';
+import ReportsList from './analytics/Reports/ReportsList';
 import SubscriptionUsage from './analytics/subscription-usage/SubscriptionUsage';
 import { AwxDashboard } from './dashboard/AwxDashboard';
 import { CreateCredential, EditCredential } from './resources/credentials/CredentialForm';
+import { CredentialDetails } from './resources/credentials/CredentialPage/CredentialDetails';
 import { CredentialPage } from './resources/credentials/CredentialPage/CredentialPage';
 import { Credentials } from './resources/credentials/Credentials';
 import { HostPage } from './resources/hosts/HostPage/HostPage';
 import { Hosts } from './resources/hosts/Hosts';
 import { Inventories } from './resources/inventories/Inventories';
 import { CreateInventory, EditInventory } from './resources/inventories/InventoryForm';
+import { InventoryDetails } from './resources/inventories/InventoryPage/InventoryDetails';
 import { InventoryPage } from './resources/inventories/InventoryPage/InventoryPage';
+import { ProjectDetails } from './resources/projects/ProjectPage/ProjectDetails';
 import { CreateProject, EditProject } from './resources/projects/ProjectPage/ProjectForm';
 import { ProjectPage } from './resources/projects/ProjectPage/ProjectPage';
 import { Projects } from './resources/projects/Projects';
 import { CreateJobTemplate, EditJobTemplate } from './resources/templates/TemplateForm';
+import { TemplateDetails } from './resources/templates/TemplatePage/TemplateDetails';
 import { TemplatePage } from './resources/templates/TemplatePage/TemplatePage';
 import { Templates } from './resources/templates/Templates';
 import {
   CreateWorkflowJobTemplate,
   EditWorkflowJobTemplate,
 } from './resources/templates/WorkflowJobTemplateForm';
+import { WorkflowJobTemplateDetails } from './resources/templates/WorkflowJobTemplatePage/WorkflowJobTemplateDetails';
 import { WorkflowJobTemplatePage } from './resources/templates/WorkflowJobTemplatePage/WorkflowJobTemplatePage';
 import Settings from './settings/Settings';
 import HostMetrics from './views/jobs/HostMetrics';
+import { JobDetails } from './views/jobs/JobDetails';
+import { JobOutput } from './views/jobs/JobOutput/JobOutput';
 import { JobPage } from './views/jobs/JobPage';
 import Jobs from './views/jobs/Jobs';
 import { CreateSchedule } from './views/schedules/ScheduleForm';
+import { ScheduleDetails } from './views/schedules/SchedulePage/ScheduleDetails';
 import { SchedulePage } from './views/schedules/SchedulePage/SchedulePage';
+import { ScheduleRules } from './views/schedules/SchedulePage/ScheduleRules';
 import { Schedules } from './views/schedules/Schedules';
+import { TemplateLaunchWizard } from './resources/templates/TemplatePage/TemplateLaunchWizard';
 
 export function useAwxNavigation() {
   const { t } = useTranslation();
@@ -99,8 +114,20 @@ export function useAwxNavigation() {
                 children: [
                   {
                     id: AwxRoute.JobPage,
-                    path: ':job_type/:id/*',
+                    path: ':job_type/:id',
                     element: <JobPage />,
+                    children: [
+                      {
+                        id: AwxRoute.JobOutput,
+                        path: 'output',
+                        element: <JobOutput />,
+                      },
+                      {
+                        id: AwxRoute.JobDetails,
+                        path: 'details',
+                        element: <JobDetails />,
+                      },
+                    ],
                   },
                   {
                     path: '',
@@ -117,11 +144,6 @@ export function useAwxNavigation() {
                     id: AwxRoute.CreateSchedule,
                     path: 'create',
                     element: <CreateSchedule />,
-                  },
-                  {
-                    id: AwxRoute.EditSchedule,
-                    path: ':resource_type/:resource_id/:schedule_id/edit',
-                    element: <SchedulePage />,
                   },
                   {
                     path: '',
@@ -170,19 +192,100 @@ export function useAwxNavigation() {
                         element: <CreateJobTemplate />,
                       },
                       {
-                        id: AwxRoute.EditTemplate,
+                        id: AwxRoute.EditJobTemplate,
                         path: ':id/edit',
                         element: <EditJobTemplate />,
                       },
                       {
-                        id: AwxRoute.TemplateSchedulePage,
-                        path: ':id/schedules/:schedule_id/*',
-                        element: <SchedulePage />,
+                        id: AwxRoute.JobTemplateScheduleCreate,
+                        path: ':id/schedules/create',
+                        element: <CreateSchedule />,
                       },
                       {
-                        id: AwxRoute.TemplatePage,
-                        path: ':id/*',
+                        id: AwxRoute.JobTemplateEditSchedule,
+                        path: ':id/schedules/:schedule_id/edit',
+                        element: <PageNotImplemented />,
+                      },
+                      {
+                        id: AwxRoute.JobTemplateSchedulePage,
+                        path: ':id/schedules/:schedule_id',
+                        element: (
+                          <SchedulePage
+                            backTab={{
+                              label: t('Back to Templates'),
+                              page: AwxRoute.Templates,
+                              persistentFilterKey: 'job_template-schedules',
+                            }}
+                            tabs={[
+                              {
+                                label: t('Details'),
+                                page: AwxRoute.JobTemplateScheduleDetails,
+                              },
+                              {
+                                label: t('Rules'),
+                                page: AwxRoute.JobTemplateScheduleRrules,
+                              },
+                            ]}
+                          />
+                        ),
+                        children: [
+                          {
+                            id: AwxRoute.JobTemplateScheduleDetails,
+                            path: 'details',
+                            element: <ScheduleDetails />,
+                          },
+                          {
+                            id: AwxRoute.JobTemplateScheduleRrules,
+                            path: 'rrules',
+                            element: <ScheduleRules />,
+                          },
+                        ],
+                      },
+                      {
+                        id: AwxRoute.JobTemplatePage,
+                        path: ':id',
                         element: <TemplatePage />,
+                        children: [
+                          {
+                            id: AwxRoute.JobTemplateDetails,
+                            path: 'details',
+                            element: <TemplateDetails />,
+                          },
+                          {
+                            id: AwxRoute.JobTemplateAccess,
+                            path: 'access',
+                            element: <PageNotImplemented />,
+                          },
+                          {
+                            id: AwxRoute.JobTemplateJobs,
+                            path: 'job',
+                            element: <PageNotImplemented />,
+                          },
+                          {
+                            id: AwxRoute.JobTemplateNotifications,
+                            path: 'notifications',
+                            element: <PageNotImplemented />,
+                          },
+                          {
+                            id: AwxRoute.JobTemplateSurvey,
+                            path: 'survey',
+                            element: <PageNotImplemented />,
+                          },
+                          {
+                            id: AwxRoute.JobTemplateSchedules,
+                            path: 'schedules',
+                            element: <Schedules sublistEndpoint={`/api/v2/job_templates`} />,
+                          },
+                          {
+                            path: '',
+                            element: <Navigate to="details" />,
+                          },
+                        ],
+                      },
+                      {
+                        id: AwxRoute.TemplateLaunchWizard,
+                        path: ':id/launch',
+                        element: <TemplateLaunchWizard />,
                       },
                     ],
                   },
@@ -195,19 +298,102 @@ export function useAwxNavigation() {
                         element: <CreateWorkflowJobTemplate />,
                       },
                       {
-                        id: AwxRoute.WorkflowJobTemplateSchedulePage,
-                        path: ':id/schedules/:schedule_id/*',
-                        element: <SchedulePage />,
-                      },
-                      {
-                        id: AwxRoute.WorkflowJobTemplatePage,
-                        path: ':id/*',
-                        element: <WorkflowJobTemplatePage />,
-                      },
-                      {
                         id: AwxRoute.EditWorkflowJobTemplate,
                         path: ':id/edit',
                         element: <EditWorkflowJobTemplate />,
+                      },
+                      {
+                        id: AwxRoute.WorkflowJobTemplateScheduleCreate,
+                        path: ':id/schedules/create',
+                        element: <CreateSchedule />,
+                      },
+                      {
+                        id: AwxRoute.WorkflowJobTemplateEditSchedule,
+                        path: ':id/schedules/:schedule_id/edit',
+                        element: <PageNotImplemented />,
+                      },
+                      {
+                        id: AwxRoute.WorkflowJobTemplateSchedulePage,
+                        path: ':id/schedules/:schedule_id',
+                        element: (
+                          <SchedulePage
+                            backTab={{
+                              label: t('Back to Schedules'),
+                              page: AwxRoute.WorkflowJobTemplateSchedules,
+                              persistentFilterKey: 'workflow_job_template-schedules',
+                            }}
+                            tabs={[
+                              {
+                                label: t('Details'),
+                                page: AwxRoute.WorkflowJobTemplateScheduleDetails,
+                              },
+                              {
+                                label: t('Rules'),
+                                page: AwxRoute.WorkflowJobTemplateScheduleRrules,
+                              },
+                            ]}
+                          />
+                        ),
+                        children: [
+                          {
+                            id: AwxRoute.WorkflowJobTemplateScheduleDetails,
+                            path: 'details',
+                            element: <ScheduleDetails />,
+                          },
+                          {
+                            id: AwxRoute.WorkflowJobTemplateScheduleRrules,
+                            path: 'rrules',
+                            element: <ScheduleRules />,
+                          },
+                        ],
+                      },
+                      {
+                        id: AwxRoute.WorkflowJobTemplatePage,
+                        path: ':id',
+                        element: <WorkflowJobTemplatePage />,
+                        children: [
+                          {
+                            id: AwxRoute.WorkflowJobTemplateDetails,
+                            path: 'details',
+                            element: <WorkflowJobTemplateDetails />,
+                          },
+                          {
+                            id: AwxRoute.WorkflowJobTemplateAccess,
+                            path: 'access',
+                            element: <PageNotImplemented />,
+                          },
+                          {
+                            id: AwxRoute.WorkflowJobTemplateJobs,
+                            path: 'workflow_jobs',
+                            element: <PageNotImplemented />,
+                          },
+                          {
+                            id: AwxRoute.WorkflowJobTemplateSurvey,
+                            path: 'survey',
+                            element: <PageNotImplemented />,
+                          },
+                          {
+                            id: AwxRoute.WorkflowVisualizer,
+                            path: 'visualizer',
+                            element: <PageNotImplemented />,
+                          },
+                          {
+                            id: AwxRoute.WorkflowJobTemplateSchedules,
+                            path: 'schedules',
+                            element: (
+                              <Schedules sublistEndpoint={`/api/v2/workflow_job_templates`} />
+                            ),
+                          },
+                          {
+                            id: AwxRoute.WorkflowJobTemplateNotifications,
+                            path: 'notifications',
+                            element: <PageNotImplemented />,
+                          },
+                          {
+                            path: '',
+                            element: <Navigate to="details" />,
+                          },
+                        ],
                       },
                     ],
                   },
@@ -235,8 +421,20 @@ export function useAwxNavigation() {
                   },
                   {
                     id: AwxRoute.CredentialPage,
-                    path: ':id/*',
+                    path: ':id',
                     element: <CredentialPage />,
+                    children: [
+                      {
+                        id: AwxRoute.CredentialDetails,
+                        path: 'details',
+                        element: <CredentialDetails />,
+                      },
+                      {
+                        id: AwxRoute.CredentialAccess,
+                        path: 'access',
+                        element: <PageNotImplemented />,
+                      },
+                    ],
                   },
                   {
                     path: '',
@@ -260,14 +458,87 @@ export function useAwxNavigation() {
                     element: <EditProject />,
                   },
                   {
-                    id: AwxRoute.ProjectSchedules,
-                    path: ':id/schedules/:schedule_id/*',
-                    element: <SchedulePage />,
+                    id: AwxRoute.ProjectScheduleCreate,
+                    path: ':id/schedules/create',
+                    element: <CreateSchedule />,
                   },
                   {
+                    id: AwxRoute.ProjectScheduleEdit,
+                    path: ':id/schedules/:schedule_id/edit',
+                    element: <PageNotImplemented />,
+                  },
+                  {
+                    id: AwxRoute.ProjectSchedulePage,
+                    path: ':id/schedules/:schedule_id',
+                    element: (
+                      <SchedulePage
+                        backTab={{
+                          label: t('Back to Schedules'),
+                          page: AwxRoute.ProjectSchedules,
+                          persistentFilterKey: 'project-schedules',
+                        }}
+                        tabs={[
+                          {
+                            label: t('Details'),
+                            page: AwxRoute.ProjectScheduleDetails,
+                          },
+                          {
+                            label: t('Rules'),
+                            page: AwxRoute.ProjectScheduleRrules,
+                          },
+                        ]}
+                      />
+                    ),
+                    children: [
+                      {
+                        id: AwxRoute.ProjectScheduleDetails,
+                        path: 'details',
+                        element: <ScheduleDetails />,
+                      },
+                      {
+                        id: AwxRoute.ProjectScheduleRrules,
+                        path: 'rrules',
+                        element: <ScheduleRules />,
+                      },
+                    ],
+                  },
+
+                  {
                     id: AwxRoute.ProjectPage,
-                    path: ':id/*',
+                    path: ':id',
                     element: <ProjectPage />,
+                    children: [
+                      { id: AwxRoute.ProjectDetails, path: 'details', element: <ProjectDetails /> },
+                      {
+                        id: AwxRoute.ProjectAccess,
+                        path: 'access',
+                        element: <PageNotImplemented />,
+                      },
+                      {
+                        id: AwxRoute.ProjectJobTemplates,
+                        path: 'job_templates',
+                        element: <PageNotImplemented />,
+                      },
+                      {
+                        id: AwxRoute.ProjectNotifications,
+                        path: 'notifications',
+                        element: <PageNotImplemented />,
+                      },
+                      {
+                        id: AwxRoute.ProjectSurvey,
+                        path: 'survey',
+                        element: <PageNotImplemented />,
+                      },
+                      {
+                        id: AwxRoute.ProjectSchedules,
+                        path: 'schedules',
+                        element: <Schedules sublistEndpoint={`/api/v2/projects`} />,
+                      },
+                      {
+                        path: '',
+                        element: <Navigate to="details" />,
+                      },
+                    ],
                   },
                   {
                     path: '',
@@ -286,19 +557,96 @@ export function useAwxNavigation() {
                     element: <CreateInventory />,
                   },
                   {
+                    id: AwxRoute.InventorySourceScheduleCreate,
+                    path: ':id/sources/:source_id/schedules/create',
+                    element: <CreateSchedule />,
+                  },
+                  {
+                    id: AwxRoute.InventorySourceScheduleEdit,
+                    path: ':id/sources/:source_id/schedules/edit',
+                    element: <PageNotImplemented />,
+                  },
+                  {
+                    id: AwxRoute.InventorySourceSchedulePage,
+                    path: ':id/inventory_source/:source_id/schedules/:schedule_id/*',
+                    element: (
+                      <SchedulePage
+                        backTab={{
+                          label: t('Back to Schedules'),
+                          page: AwxRoute.InventorySourceSchedules,
+                          persistentFilterKey: 'inventory-schedules',
+                        }}
+                        tabs={[
+                          {
+                            label: t('Details'),
+                            page: AwxRoute.InventorySourceScheduleDetails,
+                          },
+                          {
+                            label: t('Rules'),
+                            page: AwxRoute.InventorySourceScheduleRrules,
+                          },
+                        ]}
+                      />
+                    ),
+                    children: [
+                      {
+                        id: AwxRoute.InventorySourceScheduleDetails,
+                        path: 'details',
+                        element: <ScheduleDetails />,
+                      },
+                      {
+                        id: AwxRoute.InventorySourceScheduleRrules,
+                        path: 'rrules',
+                        element: <ScheduleRules />,
+                      },
+                    ],
+                  },
+                  {
                     id: AwxRoute.EditInventory,
                     path: ':id/edit',
                     element: <EditInventory />,
                   },
                   {
-                    id: AwxRoute.InventorySchedules,
-                    path: ':inventory_type/:id/schedules/:schedule_id/*',
-                    element: <SchedulePage />,
-                  },
-                  {
                     id: AwxRoute.InventoryPage,
-                    path: ':inventory_type/:id/*',
+                    path: ':inventory_type/:id/',
                     element: <InventoryPage />,
+                    children: [
+                      {
+                        id: AwxRoute.InventoryDetails,
+                        path: 'details',
+                        element: <InventoryDetails />,
+                      },
+                      {
+                        id: AwxRoute.InventoryAccess,
+                        path: 'access',
+                        element: <PageNotImplemented />,
+                      },
+                      {
+                        id: AwxRoute.InventoryGroups,
+                        path: 'groups',
+                        element: <PageNotImplemented />,
+                      },
+                      {
+                        id: AwxRoute.InventoryHosts,
+                        path: 'hosts',
+                        element: <PageNotImplemented />,
+                      },
+                      {
+                        id: AwxRoute.InventorySources,
+                        path: 'sources',
+                        element: <PageNotImplemented />,
+                      },
+                      {
+                        id: AwxRoute.InventoryJobs,
+                        path: 'jobs',
+                        element: <PageNotImplemented />,
+                      },
+                      {
+                        id: AwxRoute.InventoryJobTemplates,
+                        path: 'templates',
+                        element: <PageNotImplemented />,
+                      },
+                    ],
                   },
                   {
                     path: '',
@@ -407,8 +755,29 @@ export function useAwxNavigation() {
                   },
                   {
                     id: AwxRoute.TeamPage,
-                    path: ':id/*',
+                    path: ':id',
                     element: <TeamPage />,
+                    children: [
+                      {
+                        id: AwxRoute.TeamDetails,
+                        path: 'details',
+                        element: <TeamDetails />,
+                      },
+                      {
+                        id: AwxRoute.TeamAccess,
+                        path: 'access',
+                        element: <TeamAccess />,
+                      },
+                      {
+                        id: AwxRoute.TeamRoles,
+                        path: 'roles',
+                        element: <TeamRoles />,
+                      },
+                      {
+                        path: '',
+                        element: <Navigate to="details" />,
+                      },
+                    ],
                   },
                   {
                     path: '',
@@ -461,6 +830,10 @@ export function useAwxNavigation() {
                         path: 'roles',
                         element: <UserRoles />,
                       },
+                      {
+                        path: '',
+                        element: <Navigate to="details" />,
+                      },
                     ],
                   },
                   {
@@ -482,8 +855,19 @@ export function useAwxNavigation() {
                 children: [
                   {
                     id: AwxRoute.CredentialType,
-                    path: ':id/*',
+                    path: ':id/',
                     element: <CredentialTypePage />,
+                    children: [
+                      {
+                        id: AwxRoute.CredentialTypeDetails,
+                        path: 'details',
+                        element: <PageNotImplemented />,
+                      },
+                      {
+                        path: '',
+                        element: <Navigate to="details" />,
+                      },
+                    ],
                   },
                   {
                     path: '',
@@ -492,14 +876,25 @@ export function useAwxNavigation() {
                 ],
               },
               {
-                id: AwxRoute.Notifications,
-                label: t('Notifictions'),
+                id: AwxRoute.NotificationTemplates,
+                label: t('Notifications'),
                 path: 'notifications',
                 children: [
                   {
-                    id: AwxRoute.NotificationPage,
+                    id: AwxRoute.NotificationTemplatePage,
                     path: ':id/*',
                     element: <NotificationPage />,
+                    children: [
+                      {
+                        id: AwxRoute.NotificationTemplateDetails,
+                        path: 'details',
+                        element: <PageNotImplemented />,
+                      },
+                      {
+                        path: '',
+                        element: <Navigate to="details" />,
+                      },
+                    ],
                   },
                   {
                     path: '',
@@ -513,14 +908,53 @@ export function useAwxNavigation() {
                 path: 'management-jobs',
                 children: [
                   {
-                    id: AwxRoute.ManagementJobSchedules,
-                    path: ':resource_id/schedules/:schedule_id/details',
-                    element: <SchedulePage />,
+                    id: AwxRoute.ManagementJobSchedulePage,
+                    path: ':id/schedules/:schedule_id',
+                    element: (
+                      <SchedulePage
+                        backTab={{
+                          label: t('Back to Schedules'),
+                          page: AwxRoute.ManagementJobSchedules,
+                          persistentFilterKey: 'management-jobs-schedules',
+                        }}
+                        tabs={[
+                          {
+                            label: t('Details'),
+                            page: AwxRoute.ManagementJobScheduleDetails,
+                          },
+                          {
+                            label: t('Rules'),
+                            page: AwxRoute.ManagementJobScheduleRrules,
+                          },
+                        ]}
+                      />
+                    ),
+                  },
+                  {
+                    id: AwxRoute.ManagementJobEditSchedule,
+                    path: ':id/schedules/:schedule_id/edit',
+                    element: <PageNotImplemented />,
                   },
                   {
                     id: AwxRoute.ManagementJobPage,
-                    path: ':id/*',
+                    path: ':id',
                     element: <ManagementJobPage />,
+                    children: [
+                      {
+                        id: AwxRoute.ManagementJobSchedules,
+                        path: 'schedules',
+                        element: <Schedules sublistEndpoint={`/api/v2/system_job_templates`} />,
+                      },
+                      {
+                        id: AwxRoute.ManagementJobNotifications,
+                        path: 'notifications',
+                        element: <PageNotImplemented />,
+                      },
+                      {
+                        path: '',
+                        element: <Navigate to="schedules" />,
+                      },
+                    ],
                   },
                   {
                     path: '',
@@ -614,7 +1048,19 @@ export function useAwxNavigation() {
                 id: AwxRoute.Reports,
                 label: t('Reports'),
                 path: 'reports',
+                element: <ReportsList />,
+              },
+              {
+                id: AwxRoute.AutomationCalculator,
+                label: t('Automation Calculator'),
+                path: 'automation-calculator',
                 element: <Reports />,
+              },
+              {
+                id: 'TestAnalyticsBuilder',
+                label: t('Analytics builder'),
+                path: 'builder',
+                element: <Test />,
               },
               {
                 id: AwxRoute.HostMetrics,

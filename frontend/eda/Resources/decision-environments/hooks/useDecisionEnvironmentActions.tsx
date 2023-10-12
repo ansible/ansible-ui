@@ -32,6 +32,9 @@ export function useDecisionEnvironmentActions(view: IEdaView<EdaDecisionEnvironm
           }),
       },
       {
+        type: PageActionType.Seperator,
+      },
+      {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: TrashIcon,

@@ -1,5 +1,14 @@
 import '@cypress/code-coverage/support';
 
+Cypress.Commands.add('searchAndDisplayResource', (resourceName: string) => {
+  cy.get('[data-cy="text-input"]')
+    .find('input')
+    .type(resourceName)
+    .then(() => {
+      cy.get('[data-cy="apply-filter"]').click();
+    });
+});
+
 Cypress.Commands.add('getFiltersToolbarItem', () => {
   cy.get('#filter').parent().parent().parent().parent();
 });
@@ -24,10 +33,10 @@ Cypress.Commands.add('selectToolbarFilterType', (text: string | RegExp) => {
 });
 
 Cypress.Commands.add('filterTableByText', (text: string) => {
-  cy.get('#filter-input').within(() => {
+  cy.get('[data-cy="text-input"]').within(() => {
     cy.get('input').clear().type(text, { delay: 0 });
   });
-  cy.get('[aria-label="apply filter"]').click();
+  cy.get('[data-cy="apply-filter"]').click();
 });
 
 Cypress.Commands.add('filterTableByTypeAndText', (filterLabel: string | RegExp, text: string) => {
@@ -121,26 +130,3 @@ Cypress.Commands.add('selectMultiSelectOption', (selector: string, label: string
         });
     });
 });
-
-Cypress.Commands.add(
-  'addAndSelectItemFromMulitSelectDropdown',
-  (label: string | RegExp, itemText: string) => {
-    cy.getFormGroupByLabel(label)
-      .parent()
-      .within(() => {
-        cy.get('.pf-c-form__group-control').within(() => {
-          cy.get("input[type='text']")
-            .click()
-            .type(itemText)
-            .parent()
-            .parent()
-            .parent()
-            .within(() => {
-              cy.get('.pf-c-select__menu').within(() => {
-                cy.get('button').contains(itemText).click();
-              });
-            });
-        });
-      });
-  }
-);

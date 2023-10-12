@@ -1,7 +1,6 @@
 import { Trans, useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
-  PageForm,
   PageFormCheckbox,
   PageFormDataEditor,
   PageFormSubmitHandler,
@@ -22,6 +21,7 @@ import { appendTrailingSlash, hubAPIPut, parsePulpIDFromURL, pulpAPI } from '../
 import { PulpItemsResponse } from '../usePulpView';
 import { IRemotes } from './Remotes';
 import { PageFormSection } from '../../../framework/PageForm/Utils/PageFormSection';
+import { HubPageForm } from '../HubPageForm';
 
 interface RemoteFormProps extends IRemotes {
   client_key?: string;
@@ -43,10 +43,13 @@ export function CreateRemote() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const postRequest = usePostRequest<IRemotes>();
-  const onSubmit: PageFormSubmitHandler<IRemotes> = async (remote) => {
+  const onSubmit: PageFormSubmitHandler<RemoteFormProps> = async (remote) => {
     const url: string = appendTrailingSlash(remote.url);
     if (remote?.requirements_file === yamlRequirementsTemplate) {
       delete remote.requirements_file;
+    }
+    if (remote?.proxy_username === '') {
+      delete remote.proxy_username;
     }
 
     await postRequest(pulpAPI`/remotes/ansible/collection/`, {
@@ -65,7 +68,7 @@ export function CreateRemote() {
           { label: t('Create Remote') },
         ]}
       />
-      <PageForm<IRemotes>
+      <HubPageForm<IRemotes>
         submitText={t('Create remote')}
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
@@ -80,7 +83,7 @@ export function CreateRemote() {
             <RequirementsFile />
           </PageFormExpandableSection>
         </>
-      </PageForm>
+      </HubPageForm>
     </PageLayout>
   );
 }
@@ -216,7 +219,7 @@ export function EditRemote() {
           { label: t(' Remote') },
         ]}
       />
-      <PageForm<RemoteFormProps>
+      <HubPageForm<RemoteFormProps>
         submitText={t('Edit remote')}
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
@@ -229,7 +232,7 @@ export function EditRemote() {
           <MiscAdvancedRemoteInputs />
           <RequirementsFile />
         </PageFormExpandableSection>
-      </PageForm>
+      </HubPageForm>
     </PageLayout>
   );
 }

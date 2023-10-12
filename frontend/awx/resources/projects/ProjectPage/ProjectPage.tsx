@@ -4,28 +4,56 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { PageActions, PageHeader, PageLayout, useGetPageUrl } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
-import { PageNotImplemented } from '../../../../common/PageNotImplemented';
-import { PageBackTab, RoutedTab, RoutedTabs } from '../../../../common/RoutedTabs';
 import { RouteObj } from '../../../../common/Routes';
 import { useGet } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
 import { AwxError } from '../../../common/AwxError';
 import { Project } from '../../../interfaces/Project';
-import { Schedules } from '../../../views/schedules/Schedules';
 import { useProjectActions } from '../hooks/useProjectActions';
-import { ProjectDetails } from './ProjectDetails';
+import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
+import { useMemo } from 'react';
+import { useActiveUser } from '../../../../common/useActiveUser';
+import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
+import { Organization } from '../../../interfaces/Organization';
 
 export function ProjectPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { error, data: project, refresh } = useGet<Project>(`/api/v2/projects/${params.id ?? ''}/`);
+  const {
+    error: projectError,
+    data: project,
+    refresh: projectRefresh,
+    isLoading: isProjectLoading,
+  } = useGet<Project>(`/api/v2/projects/${params.id ?? ''}/`);
   const navigate = useNavigate();
   const itemActions = useProjectActions(() => navigate(RouteObj.Projects));
-
+  const currentUser = useActiveUser();
+  const {
+    data: isNotifAdmin,
+    error: isNotifAdminError,
+    refresh: refreshNotifAdmin,
+    isLoading: isNotifAdminLoading,
+  } = useGet<AwxItemsResponse<Organization>>('/api/v2/organizations/', {
+    role_level: 'notification_admin_role',
+  });
+  const error = isNotifAdminError || projectError;
   const getPageUrl = useGetPageUrl();
-
-  if (error) return <AwxError error={error} handleRefresh={refresh} />;
-  if (!project) return <LoadingPage breadcrumbs tabs />;
+  const tabs: { label: string; page: string }[] = useMemo(() => {
+    const tabs = [
+      { label: t('Details'), page: AwxRoute.ProjectDetails },
+      { label: t('Access'), page: AwxRoute.ProjectAccess },
+      { label: t('Schedules'), page: AwxRoute.ProjectSchedules },
+      { label: t('Jobs'), page: AwxRoute.ProjectNotifications },
+      { label: t('Job templates'), page: AwxRoute.ProjectJobTemplates },
+      { label: t('Survey'), page: AwxRoute.ProjectSurvey },
+    ];
+    if (currentUser?.is_system_auditor || (isNotifAdmin && isNotifAdmin.results.length > 0)) {
+      tabs.push({ label: t('Notifications'), page: AwxRoute.WorkflowJobTemplateNotifications });
+    }
+    return tabs;
+  }, [t, currentUser, isNotifAdmin]);
+  if (error) return <AwxError error={error} handleRefresh={projectRefresh || refreshNotifAdmin} />;
+  if (!project || isProjectLoading || isNotifAdminLoading) return <LoadingPage breadcrumbs tabs />;
 
   return (
     <PageLayout>
@@ -43,28 +71,16 @@ export function ProjectPage() {
           />
         }
       />
-      <RoutedTabs isLoading={!project} baseUrl={RouteObj.ProjectPage}>
-        <PageBackTab
-          label={t('Back to Projects')}
-          url={RouteObj.Projects}
-          persistentFilterKey="projects"
-        />
-        <RoutedTab label={t('Details')} url={RouteObj.ProjectDetails}>
-          <ProjectDetails project={project} />
-        </RoutedTab>
-        <RoutedTab label={t('Access')} url={RouteObj.ProjectAccess}>
-          <PageNotImplemented />
-        </RoutedTab>
-        <RoutedTab label={t('Job templates')} url={RouteObj.ProjectTemplates}>
-          <PageNotImplemented />
-        </RoutedTab>
-        <RoutedTab label={t('Notifications')} url={RouteObj.ProjectNotifications}>
-          <PageNotImplemented />
-        </RoutedTab>
-        <RoutedTab label={t('Schedules')} url={RouteObj.ProjectSchedules}>
-          <Schedules sublistEndpoint={`/api/v2/projects/${project.id}/schedules/`} />
-        </RoutedTab>
-      </RoutedTabs>
+
+      <PageRoutedTabs
+        backTab={{
+          label: t('Back to Templates'),
+          page: AwxRoute.Templates,
+          persistentFilterKey: 'templates',
+        }}
+        tabs={tabs}
+        params={{ id: project.id }}
+      />
     </PageLayout>
   );
 }
