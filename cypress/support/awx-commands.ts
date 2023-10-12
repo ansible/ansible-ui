@@ -38,7 +38,7 @@ Cypress.Commands.add('selectDropdownOptionByResourceName', (resource: string, it
     cy.get('[data-ouia-component-id="menu-select"] button')
       .click()
       .then(() => {
-        cy.contains('li', itemName).click();
+        cy.contains('li', itemName).scrollIntoView().click();
       });
   });
 });
