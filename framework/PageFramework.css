@@ -44,7 +44,7 @@
 }
 
 :root:where(.pf-v5-theme-dark) .bg-lighten-2 {
-  background-image: linear-gradient(#ffffff0c, #ffffff0c);
+  background-image: linear-gradient(#ffffff10, #ffffff10);
 }
 
 /* .pf-v5-c-truncate__start {

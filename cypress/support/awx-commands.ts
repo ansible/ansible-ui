@@ -57,7 +57,7 @@ Cypress.Commands.add(
       cy.get(`[data-cy*="${resource}-form-group"]`).within(() => {
         cy.get('button').eq(1).click();
       });
-      cy.get('[data-ouia-component-type="PF4/ModalContent"]').within(() => {
+      cy.get('.pf-v5-c-modal-box').within(() => {
         cy.searchAndDisplayResource(itemName);
         cy.get('tbody tr input').click();
         cy.clickButton('Confirm');

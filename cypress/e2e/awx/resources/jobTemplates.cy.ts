@@ -67,8 +67,12 @@ describe('Job templates form Create, Edit, Delete', () => {
     cy.selectDropdownOptionByResourceName('inventory', inventory.name);
     cy.selectDropdownOptionByResourceName('project', project.name);
     cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
-    cy.selectDropdownOptionByResourceName('execution-environment', executionEnvironment, true);
-    cy.selectDropdownOptionByResourceName('credentials', machineCredential, true);
+    cy.selectDropdownOptionByResourceName(
+      'execution-environment-select',
+      executionEnvironment,
+      true
+    );
+    cy.selectDropdownOptionByResourceName('credential-select', machineCredential, true);
     cy.clickButton(/^Create job template$/);
     cy.wait('@createJT')
       .its('response.body.id')
