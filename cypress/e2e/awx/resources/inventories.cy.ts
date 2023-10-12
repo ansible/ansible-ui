@@ -47,7 +47,7 @@ describe('inventories', () => {
     cy.clickLink(/^Create inventory$/);
     cy.get('[data-cy="inventory-name"]').type(inventoryName);
     cy.selectDropdownOptionByResourceName('organization', organization.name);
-    cy.getCheckboxByLabel('Prevent instance group fallback').click();
+    cy.get('[data-cy="inventory-prevent_instance_group_fallback"]').click();
     cy.clickButton(/^Create inventory$/);
     cy.verifyPageTitle(inventoryName);
     cy.hasDetail(/^Organization$/, organization.name);
