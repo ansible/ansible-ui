@@ -64,11 +64,11 @@ describe('Job templates form Create, Edit, Delete', () => {
     cy.clickLink(/^Create job template$/);
     cy.get('[data-cy="name"]').type(jtName);
     cy.get('[data-cy="description"]').type('This is a JT description');
-    cy.selectPromptOnLaunchByLabel('Inventory', false, inventory.name);
+    cy.selectDropdownOptionByResourceName('inventory', inventory.name);
     cy.selectDropdownOptionByResourceName('project', project.name);
     cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
-    cy.selectPromptOnLaunchByLabel('Execution environment', false, executionEnvironment);
-    cy.selectPromptOnLaunchByLabel('Credentials', false, machineCredential);
+    cy.selectDropdownOptionByResourceName('execution-environment', executionEnvironment, true);
+    cy.selectDropdownOptionByResourceName('credentials', machineCredential, true);
     cy.clickButton(/^Create job template$/);
     cy.wait('@createJT')
       .its('response.body.id')
@@ -110,12 +110,12 @@ describe('Job templates form Create, Edit, Delete', () => {
     cy.clickLink(/^Create job template$/);
     cy.get('[data-cy="name"]').type(jtName);
     cy.get('[data-cy="description"]').type('This is a JT with POL wizard description');
-    cy.selectPromptOnLaunchByLabel(/^Inventory$/);
+    cy.selectPromptOnLaunch('inventory');
     cy.selectDropdownOptionByResourceName('project', project.name);
     cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
-    cy.selectPromptOnLaunchByLabel(/^Execution environment$/);
-    cy.selectPromptOnLaunchByLabel(/^Credentials$/);
-    cy.selectPromptOnLaunchByLabel(/^Instance group$/);
+    cy.selectPromptOnLaunch('execution_environment');
+    cy.selectPromptOnLaunch('credential');
+    cy.selectPromptOnLaunch('instance_groups');
     cy.clickButton(/^Create job template$/);
     cy.wait('@createPOLJT')
       .its('response.body.id')
@@ -166,12 +166,12 @@ describe('Job templates form Create, Edit, Delete', () => {
     cy.clickLink(/^Create job template$/);
     cy.get('[data-cy="name"]').type(jtName);
     cy.get('[data-cy="description"]').type('This is a JT with POL wizard description');
-    cy.selectPromptOnLaunchByLabel(/^Inventory$/);
+    cy.selectPromptOnLaunch('inventory');
     cy.selectDropdownOptionByResourceName('project', project.name);
     cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
-    cy.selectPromptOnLaunchByLabel(/^Execution environment$/);
-    cy.selectPromptOnLaunchByLabel(/^Credentials$/);
-    cy.selectPromptOnLaunchByLabel(/^Instance group$/);
+    cy.selectPromptOnLaunch('execution_environment');
+    cy.selectPromptOnLaunch('credential');
+    cy.selectPromptOnLaunch('instance_groups');
     cy.clickButton(/^Create job template$/);
     cy.wait('@createPOLJT')
       .its('response.body.id')

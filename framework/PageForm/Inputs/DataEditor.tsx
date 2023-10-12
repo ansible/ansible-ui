@@ -179,7 +179,7 @@ export function DataEditor<
       style={{ backgroundPosition: 'calc(100% - 1.2em) .5em', padding: 0 }}
       aria-invalid={props.invalid ? 'true' : undefined}
     >
-      <div id={props.id} ref={divEl} style={{ height: '100%' }}></div>
+      <div id={props.id} data-cy={props.id} ref={divEl} style={{ height: '100%' }}></div>
     </div>
   );
 }

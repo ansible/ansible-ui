@@ -330,7 +330,7 @@ export function PageFormDataEditor<
             {...formGroupInputProps}
             label={
               isExpandable ? (
-                <span style={{ alignItems: 'center' }}>
+                <span data-cy="expandable" style={{ alignItems: 'center' }}>
                   <AngleRightIcon
                     style={{
                       transform: isCollapsed ? 'rotate(0deg)' : 'rotate(90deg)',
