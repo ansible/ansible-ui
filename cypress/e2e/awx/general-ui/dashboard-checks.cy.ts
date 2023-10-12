@@ -248,18 +248,9 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
     cy.intercept({ method: 'GET', url: '/api/v2/inventories/*' }, { fixture: 'emptyList.json' });
     cy.intercept({ method: 'GET', url: '/api/v2/unified_jobs/*' }, { fixture: 'emptyList.json' });
     cy.reload();
-    cy.get('[data-cy="There are currently no jobs"]').should(
-      'contain',
-      'There are currently no jobs'
-    );
-    cy.get('[data-cy="There are currently no projects"]').should(
-      'contain',
-      'There are currently no projects'
-    );
-    cy.get('[data-cy="There are currently no inventories"]').should(
-      'contain',
-      'There are currently no inventories'
-    );
+    cy.contains('There are currently no jobs').should('exist');
+    cy.contains('There are currently no projects').should('exist');
+    cy.contains('There are currently no inventories').should('exist');
     cy.contains('button', 'Create job').should('exist');
     cy.contains('button', 'Create project').should('exist');
     cy.contains('button', 'Create inventory').should('exist');
