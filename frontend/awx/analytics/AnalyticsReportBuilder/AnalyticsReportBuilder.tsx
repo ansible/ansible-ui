@@ -123,6 +123,9 @@ export interface AnalyticsReportBuilderProps {
   // url of the main data
   main_url: string;
 
+  // hides table
+  previewMode?: boolean;
+
   // used for processing and adding, or modyfying some data that came from the server and are not complete
   // developer can pass this method and change those props inside
   // notice that those props are copy of component original props, so they can be modified
@@ -395,6 +398,7 @@ function AnalyticsReportBuilderTable(props: AnalyticsTableProps) {
       tableColumns={props.tableColumns || []}
       toolbarFilters={props.toolbarFilters}
       scrollTopContent={true}
+      hideTable={props.previewMode}
       topContent={
         props.view.originalData && (
           <Chart

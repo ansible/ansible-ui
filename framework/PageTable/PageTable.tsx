@@ -145,6 +145,9 @@ export type PageTableProps<T extends object> = {
   // TODO remember user setting so that when they return to this table it uses their last setting
   defaultTableView?: PageTableViewType;
 
+  // hides table - useful for Analytics, where there is preview mode which shows toolbar and chart (as topContent props), but no table
+  hideTable?: boolean;
+
   /**
    * Disables the padding that shows up on large screens around the table.
    * Used in modals and other places.
@@ -311,12 +314,12 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
           {props.scrollTopContent ? (
             <Scrollable>
               {topContent}
-              <PageTableView {...props} tableColumns={managedColumns} />
+              {!props.hideTable && <PageTableView {...props} tableColumns={managedColumns} />}
             </Scrollable>
           ) : (
             <>
               {topContent}
-              <PageTableView {...props} tableColumns={managedColumns} />
+              {!props.hideTable && <PageTableView {...props} tableColumns={managedColumns} />}
             </>
           )}
         </>
@@ -327,7 +330,9 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
             <Scrollable>
               {topContent}
               <PageSection padding={{ default: 'noPadding' }}>
-                <PageTableList {...props} showSelect={showSelect} tableColumns={managedColumns} />
+                {!props.hideTable && (
+                  <PageTableList {...props} showSelect={showSelect} tableColumns={managedColumns} />
+                )}
               </PageSection>
             </Scrollable>
           ) : (
@@ -335,7 +340,13 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
               {topContent}
               <Scrollable>
                 <PageSection padding={{ default: 'noPadding' }}>
-                  <PageTableList {...props} showSelect={showSelect} tableColumns={managedColumns} />
+                  {!props.hideTable && (
+                    <PageTableList
+                      {...props}
+                      showSelect={showSelect}
+                      tableColumns={managedColumns}
+                    />
+                  )}
                 </PageSection>
               </Scrollable>
             </>
@@ -347,13 +358,21 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
           {props.scrollTopContent ? (
             <Scrollable>
               {topContent}
-              <PageTableCards {...props} showSelect={showSelect} tableColumns={managedColumns} />
+              {!props.hideTable && (
+                <PageTableCards {...props} showSelect={showSelect} tableColumns={managedColumns} />
+              )}
             </Scrollable>
           ) : (
             <>
               {topContent}
               <Scrollable>
-                <PageTableCards {...props} showSelect={showSelect} tableColumns={managedColumns} />
+                {!props.hideTable && (
+                  <PageTableCards
+                    {...props}
+                    showSelect={showSelect}
+                    tableColumns={managedColumns}
+                  />
+                )}
               </Scrollable>
             </>
           )}
