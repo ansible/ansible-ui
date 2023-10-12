@@ -6,6 +6,44 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
+/*
+
+Report builder allows to create standardized reports that will contains:
+
+Toolbar
+Chart
+Table
+
+Toolbar and Table is from framework, Graph uses standard graph component of legacy analytics.
+Many UI things are generated from API responses, because API returns quite a lots of metadata - information
+about returned data such as information about the table columns and also info about the filters.
+
+There are three requests:
+
+1) Main request 
+It returns basic info and also URL to options and data request. Main request is send only first time. It uses GET method.
+
+Main request data structure is defined in MainDataDefinition type.
+
+2) Options request 
+Options are used as info for filters, they have to be sometimes reloaded, when some filter selection changes - for example granularity.
+It uses POST method filled with parameters, that are now red from constants.ts file. But those parameters are sometimes modified
+based on what user selected in filters.
+
+Options request data structure is defined in OptionsDefinition type.
+
+3) Data request
+Returns data for graph and table, it is classic paginated request, but data structure is not that straightforward. It uses useAnalyticsReportBuilderView,
+which uses POST method with the same parameters as options request. 
+
+Data request data structure is defined in AnalyticsItemsResponse type.
+
+Based on this data, AnalyticsReportBuilder creates PageTable with columns and filters and also graph, everythings is done based on data from API
+and constants file. But it is also configurable. There are some callbacks in props that can change those data - add/modify/delete table columns,
+modify filters, add some new columns contents into the table. If more flexibility is needed, it can be added in the future.
+
+*/
+
 import { PerPageOptions } from '@patternfly/react-core';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { useGetRequest } from '../../../common/crud/useGet';
@@ -35,16 +73,23 @@ import { ChartSchemaElement } from '@ansible/react-json-chart-builder';
 
 type KeyValue = { key: string; value: string };
 
+// definition of main data returned from main request
 export interface MainDataDefinition {
   report: {
+    // info about the tables
     tableHeaders: [{ key: string; value: string }];
 
     layoutProps: {
       // TODO - fix in API
+      // path to data request
       dataEndpoint: string;
+      // path to options request
       optionsEndpoint: string;
 
+      // some info for chart
       schema: ChartSchemaElement[];
+
+      // available chart types like bar or line
       availableChartTypes?: string[];
     };
   };
@@ -52,6 +97,7 @@ export interface MainDataDefinition {
 
 export type AnyType = any;
 
+// definition of options returned from options request
 export interface OptionsDefinition {
   sort_options: KeyValue[];
   group_by: KeyValue[];
@@ -60,6 +106,7 @@ export interface OptionsDefinition {
   [key: string]: AnyType;
 }
 
+// definition of object that is passed as payload to options and data POST request
 export interface DefaultDataParams {
   sort_options?: string;
   quick_date_range?: string;
@@ -68,11 +115,17 @@ export interface DefaultDataParams {
   [key: string]: AnyType;
 }
 
+// Props of whole builder component
 export interface AnalyticsReportBuilderProps {
-  graph_name: string;
+  // name of the report
+  report_name: string;
+
+  // url of the main data
   main_url: string;
 
   // used for processing and adding, or modyfying some data that came from the server and are not complete
+  // developer can pass this method and change those props inside
+  // notice that those props are copy of component original props, so they can be modified
   processMainData?: (props: AnalyticsReportBuilderProps, mainData: MainDataDefinition) => void;
   processOptions?: (props: AnalyticsReportBuilderProps, options: OptionsDefinition) => void;
 
@@ -86,6 +139,7 @@ export interface AnalyticsReportBuilderProps {
   processDataRequestPayload?: (props: AnalyticsReportBuilderProps, data: AnyType) => void;
 
   // used for final modifying of columns before they are passed into the table and view
+  // can modify columns - modify content, add content, add new columns, delete columns, reorder columns
   processTableColumns?: (
     props: AnalyticsReportBuilderBodyProps,
     columns: ITableColumn<AnyType>[]
@@ -95,21 +149,27 @@ export interface AnalyticsReportBuilderProps {
   rowKeyFn?: (item: AnyType) => string | number;
 }
 
+// Extended props for body component, it also contains mainData and options from API
+// Body component is rendered after mainData and options returned from API
 export interface AnalyticsReportBuilderBodyProps extends AnalyticsReportBuilderProps {
   mainData?: MainDataDefinition;
   options?: OptionsDefinition;
 }
 
+// extended props for table, it contains tableColumns, view and filters
 export interface AnalyticsTableProps extends AnalyticsReportBuilderBodyProps {
   tableColumns: ITableColumn<AnyType>[];
   view: IAnalyticsReportBuilderView<AnyType>;
   toolbarFilters: IToolbarFilter[];
 }
 
+// props for function that creates framework table columns from API data
 interface AnalyticsReportColumnBuilderProps extends AnalyticsReportBuilderBodyProps {
   view: IAnalyticsReportBuilderView<AnyType>;
 }
 
+// function dat fills some default props, can be used externaly when using AnalyticsReportBuilder component
+// for example, this creates item.id as default identifier, but in some cases, this can be different
 export function FillDefaultProps(props: AnalyticsReportBuilderProps) {
   // set id function as default
   if (!props.rowKeyFn) {
@@ -148,11 +208,13 @@ function transformEndpoint(url: string) {
   return urls.join('/');
 }
 
+// main component, handles main and options request
 export function AnalyticsReportBuilder(props: AnalyticsReportBuilderProps) {
   const [mainData, setMainData] = useState<MainDataDefinition | undefined>(undefined);
   const [options, setOptions] = useState<OptionsDefinition | undefined>(undefined);
   const [error, setError] = useState<unknown>(undefined);
 
+  // create copy of initial props so we can modify them if needed
   const parameters: AnalyticsReportBuilderBodyProps = { ...props, mainData, options };
 
   const post = usePostRequest();
@@ -162,9 +224,13 @@ export function AnalyticsReportBuilder(props: AnalyticsReportBuilderProps) {
   const granularityParam =
     searchParams.get('granularity') || parameters.defaultDataParams?.granularity || '';
 
-  async function readData() {
+  // reads main data
+  async function readMainData() {
     try {
       const result = (await get(parameters.main_url, {})) as MainDataDefinition;
+
+      // transforms URL to valid urls, this behvaior can be changed in processMainData callback
+      // by rewriting the path - for example to pass correct path, if needed
       result.report.layoutProps.dataEndpoint = transformEndpoint(
         result.report.layoutProps.dataEndpoint
       );
@@ -172,6 +238,7 @@ export function AnalyticsReportBuilder(props: AnalyticsReportBuilderProps) {
         result.report.layoutProps.optionsEndpoint
       );
 
+      // callback that is passed as props, change any main data if needed
       parameters.processMainData?.(parameters, result);
       setMainData(result);
 
@@ -181,15 +248,19 @@ export function AnalyticsReportBuilder(props: AnalyticsReportBuilderProps) {
     }
   }
 
+  // reads options
   async function readOptions(mainData?: MainDataDefinition) {
     try {
       if (!mainData) {
         return;
       }
 
+      // default data params are usualy from constants.ts, TODO - may be handled in the component itself and not as props
       const optionsPayload = parameters.defaultDataParams || {};
-      // ensure that granularity is up to date
+      // ensure that granularity is up to date, param is from URL
       optionsPayload.granularity = granularityParam;
+
+      // modify payload if needed
       parameters.processOptionsRequestPayload?.(parameters, optionsPayload);
 
       const result2 = (await post(
@@ -203,18 +274,21 @@ export function AnalyticsReportBuilder(props: AnalyticsReportBuilderProps) {
     }
   }
 
+  // read main data if it is empty
   useEffect(() => {
     if (mainData) {
       return;
     }
 
     void (async () => {
-      await readData();
+      await readMainData();
     })();
   });
 
+  // granularity - for example monthly, yearly, daily
   const [granularity, setGranularity] = useState<string>(granularityParam || '');
 
+  // if granularity param changes, we have to load options again, because it will return new filter options for new granularity
   if (granularityParam !== granularity) {
     setGranularity(granularityParam);
     void (async () => {
@@ -222,10 +296,13 @@ export function AnalyticsReportBuilder(props: AnalyticsReportBuilderProps) {
     })();
   }
 
+  // which columns are sortable
   const sortableColumns = getAvailableSortingKeys(parameters);
 
+  // build filters for toolbar
   const filters = buildTableFilters(parameters);
 
+  // view that reads the data
   const view = useAnalyticsReportBuilderView<AnyType>({
     url: parameters.mainData?.report.layoutProps.dataEndpoint || '',
     keyFn: parameters.rowKeyFn ? parameters.rowKeyFn : () => 0,
@@ -237,8 +314,10 @@ export function AnalyticsReportBuilder(props: AnalyticsReportBuilderProps) {
 
   const newProps = { ...parameters, view };
 
+  // build the table columns
   const columns = buildTableColumns({ ...newProps });
 
+  // and finaly, render the table with chart and filters
   return (
     <>
       {error}
@@ -253,6 +332,7 @@ export function AnalyticsReportBuilder(props: AnalyticsReportBuilderProps) {
   );
 }
 
+// render the table with chart and filters
 function AnalyticsReportBuilderTable(props: AnalyticsTableProps) {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -273,6 +353,7 @@ function AnalyticsReportBuilderTable(props: AnalyticsTableProps) {
     sortOption = props.defaultDataParams?.sort_options || '';
   }
 
+  // some function for chart
   const customTooltipFormatting = ({ datum }: { datum: Record<string, AnyType> }) => {
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     const tooltip = `${sortOption} for ${datum.name || ''}: ${
@@ -282,6 +363,7 @@ function AnalyticsReportBuilderTable(props: AnalyticsTableProps) {
     return tooltip;
   };
 
+  // some functions for chart
   const specificFunctions: ChartFunctions = {
     labelFormat: { customTooltipFormatting },
     onClick: { handleClick: () => {} },
@@ -292,7 +374,8 @@ function AnalyticsReportBuilderTable(props: AnalyticsTableProps) {
 
   let perPageOptions: PerPageOptions[] = [];
 
-  if (props.graph_name == 'automation_calculator') {
+  // set page options that are different from framework defaults (in fact, those defaults are from patternfly component itself)
+  if (props.report_name == 'automation_calculator') {
     perPageOptions = [4, 6, 8, 10, 15, 20, 25].map((item) => {
       return { title: item, value: item };
     });
@@ -302,6 +385,7 @@ function AnalyticsReportBuilderTable(props: AnalyticsTableProps) {
     });
   }
 
+  // render the table and chart
   return (
     <PageTable<AnyType>
       {...props.view}
@@ -373,9 +457,13 @@ function getAvailableSortingKeys(params: AnalyticsReportBuilderBodyProps) {
   return sortKeys;
 }
 
+// builds filters
 function buildTableFilters(params: AnalyticsReportBuilderBodyProps) {
   const filters: IToolbarFilter[] = [];
 
+  // main filters - those are the leftmost filters. That will create two filters - one (leftmost) that switches between
+  // filter types and second is the currently selected filter
+  // granularity and date range selections are added separately. This is distinguished by isPinned : true
   const mainFilters = computeMainFilterKeys(params);
 
   for (const mainFilter of mainFilters) {
@@ -441,6 +529,7 @@ function buildTableFilters(params: AnalyticsReportBuilderBodyProps) {
   return filters;
 }
 
+// this will return main filters created based on options data returned from options API
 export function computeMainFilterKeys(params: AnalyticsReportBuilderBodyProps) {
   let items: { key: string; value: string }[] = [];
 
@@ -469,6 +558,7 @@ export function computeMainFilterKeys(params: AnalyticsReportBuilderBodyProps) {
   return items;
 }
 
+// build table columns from main data
 function buildTableColumns(params: AnalyticsReportColumnBuilderProps) {
   const columns: ITableColumn<AnyType>[] = [];
 
@@ -486,7 +576,7 @@ function buildTableColumns(params: AnalyticsReportColumnBuilderProps) {
     }
   }
 
-  // create columns initialy by incomming data
+  // create columns initialy by incomming data. Those columns will be in expandable rows if not found in the table headers definition from main data
   if (params.view.pageItems.length > 0) {
     const obj = params.view?.pageItems?.[0];
 
@@ -556,6 +646,7 @@ function buildTableColumns(params: AnalyticsReportColumnBuilderProps) {
   return columns;
 }
 
+// another function for chart
 const formattedValue = (key: string, value: number) => {
   let val;
   switch (key) {
@@ -576,6 +667,7 @@ const formattedValue = (key: string, value: number) => {
   return val;
 };
 
+// another function for chart
 const currencyFormatter = (n: number): string => {
   const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -585,6 +677,7 @@ const currencyFormatter = (n: number): string => {
   return formatter.format(n); /* $2,500.00 */
 };
 
+// another function for chart
 const getDateFormatByGranularity = (granularity: string): string => {
   if (granularity === 'yearly') return 'formatAsYear';
   if (granularity === 'monthly') return 'formatAsMonth';
