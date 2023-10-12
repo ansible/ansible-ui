@@ -3,9 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { PageHeader, PageLayout, useGetPageUrl } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
-import { PageNotImplemented } from '../../../../common/PageNotImplemented';
-import { PageBackTab, RoutedTab, RoutedTabs } from '../../../../common/RoutedTabs';
-import { RouteObj } from '../../../../common/Routes';
+import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
 import { AwxError } from '../../../common/AwxError';
@@ -28,25 +26,20 @@ export function HostPage() {
         breadcrumbs={[{ label: t('Hosts'), to: getPageUrl(AwxRoute.Hosts) }, { label: host?.name }]}
         headerActions={[]}
       />
-      <RoutedTabs isLoading={!host} baseUrl={RouteObj.HostPage}>
-        <PageBackTab
-          label={t('Back to Hosts')}
-          url={getPageUrl(AwxRoute.Hosts)}
-          persistentFilterKey="hosts"
-        />
-        <RoutedTab label={t('Details')} url={RouteObj.HostDetails}>
-          <PageNotImplemented />
-        </RoutedTab>
-        <RoutedTab label={t('Facts')} url={RouteObj.HostFacts}>
-          <PageNotImplemented />
-        </RoutedTab>
-        <RoutedTab label={t('Groups')} url={RouteObj.HostGroups}>
-          <PageNotImplemented />
-        </RoutedTab>
-        <RoutedTab label={t('Jobs')} url={RouteObj.HostJobs}>
-          <PageNotImplemented />
-        </RoutedTab>
-      </RoutedTabs>
+      <PageRoutedTabs
+        backTab={{
+          label: t('Back to Hosts'),
+          page: AwxRoute.Hosts,
+          persistentFilterKey: 'hosts',
+        }}
+        tabs={[
+          { label: t('Details'), page: AwxRoute.HostDetails },
+          { label: t('Facts'), page: AwxRoute.HostFacts },
+          { label: t('Groups'), page: AwxRoute.HostGroups },
+          { label: t('Jobs'), page: AwxRoute.HostJobs },
+        ]}
+        params={{ id: host.id }}
+      />
     </PageLayout>
   );
 }

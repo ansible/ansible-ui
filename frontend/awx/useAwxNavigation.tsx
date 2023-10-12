@@ -661,8 +661,30 @@ export function useAwxNavigation() {
                 children: [
                   {
                     id: AwxRoute.HostPage,
-                    path: ':id/*',
+                    path: ':id',
                     element: <HostPage />,
+                    children: [
+                      {
+                        id: AwxRoute.HostDetails,
+                        path: 'details',
+                        element: <PageNotImplemented />,
+                      },
+                      {
+                        id: AwxRoute.HostFacts,
+                        path: 'facts',
+                        element: <PageNotImplemented />,
+                      },
+                      {
+                        id: AwxRoute.HostGroups,
+                        path: 'groups',
+                        element: <PageNotImplemented />,
+                      },
+                      {
+                        id: AwxRoute.HostJobs,
+                        path: 'jobs',
+                        element: <PageNotImplemented />,
+                      },
+                    ],
                   },
                   {
                     path: '',
