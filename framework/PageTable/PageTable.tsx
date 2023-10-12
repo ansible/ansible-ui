@@ -1,3 +1,4 @@
+import { PerPageOptions } from '@patternfly/react-core';
 import {
   Button,
   DropdownPosition,
@@ -90,6 +91,7 @@ export type PageTableProps<T extends object> = {
   perPage: number;
   setPage: (page: number) => void;
   setPerPage: (perPage: number) => void;
+  perPageOptions?: PerPageOptions[];
   sort?: string;
   setSort?: (sort: string) => void;
   sortDirection?: 'asc' | 'desc';
