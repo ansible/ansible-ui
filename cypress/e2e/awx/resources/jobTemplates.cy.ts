@@ -101,7 +101,7 @@ describe('Job templates form Create, Edit, Delete', () => {
       });
   });
 
-  it.only('creation of job template using the prompt on launch wizard', () => {
+  it('creation of job template using the prompt on launch wizard', () => {
     cy.intercept('POST', `/api/v2/job_templates`).as('createPOLJT');
     const jtName = 'E2E-POLJT ' + randomString(4);
 
