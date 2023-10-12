@@ -161,7 +161,7 @@ export function PageDashboardCard(props: {
     >
       {(props.title || props.linkText) && (
         <CardHeader>
-          <Stack style={{ width: '100%' }}>
+          <FlexColumn fullWidth>
             <Flex
               fullWidth={{ default: 'fullWidth' }}
               spaceItems={{ default: 'spaceItemsNone' }}
