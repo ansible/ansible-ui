@@ -21,7 +21,6 @@ import './PageToolbar.css';
 import { IFilterState, IToolbarFilter, PageToolbarFilters } from './PageToolbarFilter';
 import { PageTableSortOption, PageToolbarSort } from './PageToolbarSort';
 import { PageToolbarView } from './PageToolbarView';
-import { IPageCustomToolbarRightAligned } from '../PageActions/IPageCustomToolbarRightAligned';
 
 const FlexGrowDiv = styled.div`
   display: flex;
@@ -40,7 +39,6 @@ const ToolbarContent = styled(PFToolbarContent)`
 export type PageToolbarProps<T extends object> = {
   localStorageKey?: string;
 
-  customToolbarRightAligned?: IPageCustomToolbarRightAligned[];
   openColumnModal?: () => void;
   keyFn: (item: T) => string | number;
 

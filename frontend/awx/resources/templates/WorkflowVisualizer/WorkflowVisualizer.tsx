@@ -8,7 +8,7 @@ const TopologyView = styled(PFTopologyView)`
   }
 `;
 
-export function WorkflowJobTemplateVisualizer() {
+export function WorkflowVisualizer() {
   const toolbarActions = useWorkflowVisualizerToolbarActions();
 
   return <TopologyView contextToolbar={toolbarActions} />;

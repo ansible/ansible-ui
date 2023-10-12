@@ -83,7 +83,7 @@ import { SchedulePage } from './views/schedules/SchedulePage/SchedulePage';
 import { ScheduleRules } from './views/schedules/SchedulePage/ScheduleRules';
 import { Schedules } from './views/schedules/Schedules';
 import { TemplateLaunchWizard } from './resources/templates/TemplatePage/TemplateLaunchWizard';
-import { WorkflowJobTemplateVisualizer } from './resources/templates/WorkflowVisualizer/WorkflowVisualizer';
+import { WorkflowVisualizer } from './resources/templates/WorkflowVisualizer/WorkflowVisualizer';
 
 export function useAwxNavigation() {
   const { t } = useTranslation();
@@ -306,7 +306,7 @@ export function useAwxNavigation() {
                       {
                         id: AwxRoute.WorkflowVisualizer,
                         path: ':id/visualizer',
-                        element: <WorkflowJobTemplateVisualizer />,
+                        element: <WorkflowVisualizer />,
                       },
                       {
                         id: AwxRoute.WorkflowJobTemplateScheduleCreate,
