@@ -18,6 +18,8 @@ import { HubRoute } from '../HubRoutes';
 import { parsePulpIDFromURL, pulpAPI, pulpHrefKeyFn } from '../api/utils';
 import { usePulpView } from '../usePulpView';
 import { Task } from './Task';
+import { useTasksActions } from './hooks/useTasksActions';
+import { useTaskActions } from './hooks/useTaskActions';
 
 export function Tasks() {
   const { t } = useTranslation();
@@ -30,6 +32,9 @@ export function Tasks() {
     tableColumns,
   });
 
+  const toolbarActions = useTasksActions(view.unselectItemsAndRefresh);
+  const rowActions = useTaskActions(view.unselectItemsAndRefresh);
+
   return (
     <PageLayout>
       <PageHeader title={t('Tasks')} />
@@ -41,6 +46,8 @@ export function Tasks() {
         emptyStateTitle={t('No tasks yet')}
         {...view}
         defaultSubtitle={t('Task')}
+        rowActions={rowActions}
+        toolbarActions={toolbarActions}
       />
     </PageLayout>
   );

@@ -4,7 +4,7 @@ export interface Task {
   pulp_created: string;
   started_at: string;
   finished_at: string;
-  state: 'completed' | 'failed';
+  state: 'completed' | 'failed' | 'running' | 'waiting';
   error?: TaskError;
 }
 
