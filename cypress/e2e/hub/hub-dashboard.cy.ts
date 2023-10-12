@@ -90,7 +90,7 @@ describe('hub dashboard', () => {
       cy.clickButton('Manage view');
       cy.get('.pf-v5-c-modal-box__title-text').should('contain', 'Manage Dashboard');
       cy.clickModalButton('Cancel');
-      cy.get('div.pf-c-backdrop').should('not.exist');
+      cy.get('div.pf-v5-c-backdrop').should('not.exist');
     });
     it('unselecting all categories in the Manage results in an empty state UI on the dashboard', () => {
       cy.visit(HubRoutes.dashboard);
@@ -123,7 +123,7 @@ describe('hub dashboard', () => {
       cy.clickButton('Manage view');
       cy.contains('tr', 'Storage collections').find('input').uncheck();
       cy.clickModalButton('Apply');
-      cy.get('div.pf-c-backdrop').should('not.exist');
+      cy.get('div.pf-v5-c-backdrop').should('not.exist');
       cy.get('div.pf-v5-c-card__header').should('not.contain', 'Storage collections');
       cy.clickButton(/^Manage view/);
       cy.contains('tr', 'Storage collections').find('input').check();

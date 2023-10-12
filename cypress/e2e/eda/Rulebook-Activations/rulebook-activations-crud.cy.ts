@@ -70,7 +70,7 @@ describe('EDA rulebook activations- Create', () => {
     cy.wait('@edaRBA').then((edaRBA) => {
       const rbaToBeDeleted = edaRBA?.response?.body as ActivationRead;
       cy.get('h1').should('contain', name);
-      cy.get('.pf-c-breadcrumb a').should('contain', 'Rulebook Activations').click();
+      cy.get('.pf-v5-c-breadcrumb a').should('contain', 'Rulebook Activations').click();
       cy.filterTableByText(rbaToBeDeleted.name);
       cy.contains('[data-label="Activation status"]', 'Completed', { timeout: 60000 });
       cy.get('tbody tr').then(() => {

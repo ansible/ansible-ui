@@ -51,11 +51,11 @@
   min-width: unset;
 }
 
-.pf-c-toolbar .pf-c-toolbar__content {
+.pf-v5-c-toolbar .pf-v5-c-toolbar__content {
   flex-wrap: wrap;
   row-gap: 8px;
 }
 
-.pf-c-page__sidebar-body {
+.pf-v5-c-page__sidebar-body {
   padding-top: 0;
 } */

@@ -50,7 +50,7 @@ export function PageRoutedTabs(props: {
         inset={{ default: 'insetSm' }}
         isBox
         activeKey={activeTab ? activeTab.page : undefined}
-        style={{ backgroundColor: 'var(--pf-c-tabs__link--BackgroundColor)' }}
+        style={{ backgroundColor: 'var(--pf-v5-c-tabs__link--BackgroundColor)' }}
       >
         {props.backTab && (
           <Tab

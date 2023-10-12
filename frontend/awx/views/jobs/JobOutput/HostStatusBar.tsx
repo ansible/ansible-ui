@@ -28,7 +28,7 @@ const TooltipContent = styled.div`
   align-items: center;
   display: flex;
 
-  span.pf-c-badge {
+  span.pf-v5-c-badge {
     margin-left: 10px;
   }
 `;

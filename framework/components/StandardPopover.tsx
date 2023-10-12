@@ -8,8 +8,8 @@ const PopoverButton = styled.button`
   padding: var(--pf-v5-global--spacer--xs);
   margin: -(var(--pf-v5-global--spacer--xs));
   font-size: var(--pf-v5-global--FontSize--sm);
-  --pf-c-form__group-label-help--Color: var(--pf-v5-global--Color--200);
-  --pf-c-form__group-label-help--hover--Color: var(--pf-v5-global--Color--100);
+  --pf-v5-c-form__group-label-help--Color: var(--pf-v5-global--Color--200);
+  --pf-v5-c-form__group-label-help--hover--Color: var(--pf-v5-global--Color--100);
 `;
 
 function StandardPopover(props: {
@@ -37,7 +37,7 @@ function StandardPopover(props: {
       <PopoverButton
         aria-label={ariaLabel ?? translations.moreInformation}
         aria-haspopup="true"
-        className="pf-c-form__group-label-help"
+        className="pf-v5-c-form__group-label-help"
         onClick={(e) => e.preventDefault()}
         type="button"
       >

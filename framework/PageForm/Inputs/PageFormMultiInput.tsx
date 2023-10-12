@@ -23,7 +23,7 @@ import { capitalizeFirstLetter } from '../../utils/strings';
 import { PageFormGroup, PageFormGroupProps } from './PageFormGroup';
 
 const ChipHolder = styled.div<{ isDisabled?: boolean }>`
-  --pf-c-form-control--Height: auto;
+  --pf-v5-c-form-control--Height: auto;
   background-color: ${(props: { isDisabled?: boolean }) =>
     props.isDisabled ? 'var(--pf-v5-global--disabled-color--300)' : null};
 `;
@@ -83,7 +83,10 @@ export function PageFormMultiInput<
           >
             <InputGroup>
               {value?.length ? (
-                <ChipHolder isDisabled={isSubmitting || isDisabled} className="pf-c-form-control">
+                <ChipHolder
+                  isDisabled={isSubmitting || isDisabled}
+                  className="pf-v5-c-form-control"
+                >
                   <ChipGroup
                     numChips={5}
                     expandedText={translations.showLess}

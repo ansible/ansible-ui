@@ -545,7 +545,7 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
   if (!props.scrollTopContent) {
     returnElement = (
       <ScrollDiv
-        className="pf-c-scroll-inner-wrapper"
+        className="pf-v5-c-scroll-inner-wrapper"
         ref={containerRef}
         onScroll={onScroll}
         style={{

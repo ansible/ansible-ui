@@ -188,7 +188,7 @@ describe('dashboard checks when resources before any resources are created', () 
   //   const resources = ['Project', 'Decision Environment', 'Rulebook Activation'];
   //   cy.navigateTo('eda', 'dashboard');
   //   cy.verifyPageTitle('Getting Started');
-  //   cy.get('ol.pf-c-progress-stepper').within(() => {
+  //   cy.get('ol.pf-v5-c-progress-stepper').within(() => {
   //     resources.forEach((resource) => {
   //       cy.checkAnchorLinks(resource);
   //     });

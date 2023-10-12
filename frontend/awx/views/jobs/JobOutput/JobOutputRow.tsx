@@ -20,7 +20,7 @@ const LineNumberGutter = styled.div`
   background-color: var(--pf-v5-global--BackgroundColor--200);
   z-index: 1;
 
-  .pf-theme-dark & {
+  .pf-v5-theme-dark & {
     background-color: var(--pf-v5-global--BackgroundColor--100);
   }
 `;
