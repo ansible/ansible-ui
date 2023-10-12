@@ -75,4 +75,21 @@ describe('hubErrorAdapter Unit Tests', () => {
 
     expect(hubErrorAdapter(error)).to.deep.equal(expectedOutput);
   });
+
+  it('should handle CSRF errors correctly', () => {
+    const error = new RequestError(
+      'Test message',
+      undefined,
+      403,
+      { detail: 'CSRF Failed: CSRF cookie not set.' },
+      { detail: 'CSRF Failed: CSRF cookie not set.' }
+    );
+
+    const expectedOutput = {
+      genericErrors: [{ message: 'CSRF Failed: CSRF cookie not set.' }],
+      fieldErrors: [],
+    };
+
+    expect(hubErrorAdapter(error)).to.deep.equal(expectedOutput);
+  });
 });
