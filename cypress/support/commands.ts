@@ -79,6 +79,8 @@ declare global {
         spyglass?: boolean
       ): Chainable<void>;
 
+      selectPromptOnLaunch(resourceName: string): Chainable<void>;
+
       singleSelectShouldHaveSelectedOption(
         selector: string,
         label: string | RegExp

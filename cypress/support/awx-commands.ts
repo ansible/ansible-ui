@@ -33,13 +33,17 @@ Cypress.Commands.add('getCheckboxByLabel', (label: string | RegExp) => {
     });
 });
 
+Cypress.Commands.add('selectPromptOnLaunch', (resourceName: string) => {
+  cy.get(`[data-cy="ask_${resourceName}_on_launch"]`).click();
+});
+
 Cypress.Commands.add(
   'selectDropdownOptionByResourceName',
   (resource: string, itemName: string, spyglass?: boolean) => {
     if (spyglass === undefined) {
       spyglass === false;
     }
-    if (spyglass && spyglass === true) {
+    if (spyglass) {
       cy.get(`[data-cy*="${resource}-form-group"]`).within(() => {
         cy.get('button').eq(1).click();
       });

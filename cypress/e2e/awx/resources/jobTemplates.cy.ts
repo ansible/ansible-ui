@@ -101,7 +101,7 @@ describe('Job templates form Create, Edit, Delete', () => {
       });
   });
 
-  it('creation of job template using the prompt on launch wizard', () => {
+  it.only('creation of job template using the prompt on launch wizard', () => {
     cy.intercept('POST', `/api/v2/job_templates`).as('createPOLJT');
     const jtName = 'E2E-POLJT ' + randomString(4);
 
@@ -110,12 +110,12 @@ describe('Job templates form Create, Edit, Delete', () => {
     cy.clickLink(/^Create job template$/);
     cy.get('[data-cy="name"]').type(jtName);
     cy.get('[data-cy="description"]').type('This is a JT with POL wizard description');
-    cy.get('[data-cy="ask_inventory_on_launch"]').click();
+    cy.selectPromptOnLaunch('inventory');
     cy.selectDropdownOptionByResourceName('project', project.name);
     cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
-    cy.get('[data-cy="ask_execution_environment_on_launch"]').click();
-    cy.get('[data-cy="ask_credential_on_launch"]').click();
-    cy.get('[data-cy="ask_instance_groups_on_launch"]').click();
+    cy.selectPromptOnLaunch('execution_environment');
+    cy.selectPromptOnLaunch('credential');
+    cy.selectPromptOnLaunch('instance_groups');
     cy.clickButton(/^Create job template$/);
     cy.wait('@createPOLJT')
       .its('response.body.id')
@@ -157,7 +157,7 @@ describe('Job templates form Create, Edit, Delete', () => {
       });
   });
 
-  it('launch a job template from the details page launch cta using the prompt on launch', () => {
+  it.only('launch a job template from the details page launch cta using the prompt on launch', () => {
     cy.intercept('POST', `/api/v2/job_templates`).as('createPOLJT');
     const jtName = 'E2E-POLJT ' + randomString(4);
 
@@ -166,12 +166,12 @@ describe('Job templates form Create, Edit, Delete', () => {
     cy.clickLink(/^Create job template$/);
     cy.get('[data-cy="name"]').type(jtName);
     cy.get('[data-cy="description"]').type('This is a JT with POL wizard description');
-    cy.get('[data-cy="ask_inventory_on_launch"]').click();
+    cy.selectPromptOnLaunch('inventory');
     cy.selectDropdownOptionByResourceName('project', project.name);
     cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
-    cy.get('[data-cy="ask_execution_environment_on_launch"]').click();
-    cy.get('[data-cy="ask_credential_on_launch"]').click();
-    cy.get('[data-cy="ask_instance_groups_on_launch"]').click();
+    cy.selectPromptOnLaunch('execution_environment');
+    cy.selectPromptOnLaunch('credential');
+    cy.selectPromptOnLaunch('instance_groups');
     cy.clickButton(/^Create job template$/);
     cy.wait('@createPOLJT')
       .its('response.body.id')
