@@ -23,6 +23,11 @@ export const hubErrorAdapter: ErrorAdapter = (error): ErrorOutput => {
   if (isRequestError(error) && error.json && typeof error.json === 'object') {
     const data = error.json;
 
+    if ('detail' in data && typeof data['detail'] === 'string') {
+      genericErrors.push({ message: data.detail });
+      return { genericErrors, fieldErrors };
+    }
+
     if ('non_field_errors' in data && Array.isArray(data['non_field_errors'])) {
       data.non_field_errors.forEach((message) => {
         if (typeof message === 'string') {
