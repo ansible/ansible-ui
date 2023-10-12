@@ -59,12 +59,15 @@ function CopyToRepositoryModal(props: {
 
         const pulpId = parsePulpIDFromURL(repository?.pulp_href);
 
-        const signingServiceName = props.context.settings.GALAXY_COLLECTION_SIGNING_SERVICE;
+        let signingService = '';
+        if (props.context.settings.GALAXY_AUTO_SIGN_COLLECTIONS == true) {
+          const signingServiceName = props.context.settings.GALAXY_COLLECTION_SIGNING_SERVICE;
 
-        const url = pulpAPI`/signing-services/?name=${signingServiceName}`;
-        const signingServiceList = await pulpRequest(url);
+          const url = pulpAPI`/signing-services/?name=${signingServiceName}`;
+          const signingServiceList = await pulpRequest(url);
 
-        const signingService = signingServiceList?.results?.[0].pulp_href;
+          signingService = signingServiceList?.results?.[0].pulp_href;
+        }
 
         const repoHrefs: string[] = [];
 
@@ -198,11 +201,13 @@ function CopyToRepositoryModal(props: {
         selectItems={(items) => {
           const newItems = [...selectedRepositories];
           for (const item of items) {
-            if (!selectedRepositories.find((item2) => item.name == item2.name)) {
+            if (
+              !selectedRepositories.find((item2) => item.name == item2.name) &&
+              !fixedRepositories.find((item2) => item2.name != item.name)
+            ) {
               newItems.push(item);
             }
           }
-
           setSelectedRepositories(newItems);
         }}
         unselectItem={(item) => {
