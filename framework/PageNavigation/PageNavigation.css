@@ -1,3 +1,11 @@
+.side-nav .pf-v5-c-nav__item ::before {
+  content: unset;
+}
+
+.side-nav .pf-v5-c-nav__item.pf-m-expandable::before {
+  content: unset;
+}
+
 .side-nav .pf-v5-c-nav__list {
   padding: 0;
 }

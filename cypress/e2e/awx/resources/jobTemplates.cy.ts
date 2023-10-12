@@ -180,11 +180,11 @@ describe('Job templates form Create, Edit, Delete', () => {
         cy.clickButton(/^Launch template$/);
         cy.selectDropdownOptionByResourceName('inventory', inventory.name);
         cy.clickButton(/^Next/);
-        cy.selectItemFromLookupModal('credentials', machineCredential);
+        cy.selectItemFromLookupModal('credential-select', machineCredential);
         cy.clickButton(/^Next/);
-        cy.selectItemFromLookupModal('execution-environment', executionEnvironment);
+        cy.selectItemFromLookupModal('execution-environment-select', executionEnvironment);
         cy.clickButton(/^Next/);
-        cy.selectItemFromLookupModal('instance_groups', instanceGroup);
+        cy.selectItemFromLookupModal('instance-group-select', instanceGroup);
         cy.clickButton(/^Next/);
         cy.intercept('POST', `api/v2/job_templates/${id}/launch/`).as('postLaunch');
         cy.clickButton(/^Finish/);
