@@ -54,6 +54,7 @@ function fillReportTypes() {
 
 function fillReports(props: AnalyticsReportBuilderProps, name: string) {
   props.main_url = `/api/v2/analytics/report/${name}/`;
+  props.graph_name = name;
   const defaultParams = reportDefaultParams(name);
 
   props.defaultDataParams = defaultParams;

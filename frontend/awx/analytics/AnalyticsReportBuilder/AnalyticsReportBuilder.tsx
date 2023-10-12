@@ -6,6 +6,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
+import { PerPageOptions } from '@patternfly/react-core';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { useGetRequest } from '../../../common/crud/useGet';
 import { useState, useEffect } from 'react';
@@ -68,6 +69,7 @@ export interface DefaultDataParams {
 }
 
 export interface AnalyticsReportBuilderProps {
+  graph_name: string;
   main_url: string;
 
   // used for processing and adding, or modyfying some data that came from the server and are not complete
@@ -288,9 +290,22 @@ function AnalyticsReportBuilderTable(props: AnalyticsTableProps) {
     dataComponent: {},
   };
 
+  let perPageOptions: PerPageOptions[] = [];
+
+  if (props.graph_name == 'automation_calculator') {
+    perPageOptions = [4, 6, 8, 10, 15, 20, 25].map((item) => {
+      return { title: item, value: item };
+    });
+  } else {
+    perPageOptions = [4, 6, 8, 10].map((item) => {
+      return { title: item, value: item };
+    });
+  }
+
   return (
     <PageTable<AnyType>
       {...props.view}
+      perPageOptions={perPageOptions}
       errorStateTitle="some error title"
       emptyStateTitle="empty state title"
       tableColumns={props.tableColumns || []}
