@@ -1,4 +1,5 @@
 import { specificReportDefaultParams } from './constants';
+import { Tooltip } from '@patternfly/react-core';
 
 // another function for chart
 export const formattedValue = (key: string, value: number) => {
@@ -43,9 +44,6 @@ export const formattedValue = (key: string, value: number) => {
     item: Record<string, string | number>,
     key: string
   ) => {
-    const { queryParams } = useQueryParams(
-      specificReportDefaultParams('templates_by_organization')
-    );
 
     const countMapper: { [key: string]: string } = {
       host_task_count: 'module_usage_by_task',
@@ -74,7 +72,6 @@ export const formattedValue = (key: string, value: number) => {
               navigateToTemplatesExplorer(
                 countMapper[key],
                 item.org_id,
-                queryParams
               )
             }
           >{`${item[key]}`}</a>
@@ -86,44 +83,36 @@ export const formattedValue = (key: string, value: number) => {
 
   const navigateToModuleBy = (slug: string, moduleId: any) => {
     const initialQueryParams = {
-      [DEFAULT_NAMESPACE]: {
+      
         ...specificReportDefaultParams(slug),
         task_action_id: [moduleId],
-      },
     };
-    navigate(
+    /*navigate(
       createUrl(
         'reports/' + paths.getDetails(slug).replace('/', ''),
         true,
         initialQueryParams
       )
-    );
+    );*/
   };
+
   const navigateToTemplatesExplorer = (
     slug: string,
     org_id: any,
-    queryParams: QueryParams
   ) => {
     const initialQueryParams = {
       [DEFAULT_NAMESPACE]: {
         ...specificReportDefaultParams(slug),
         org_id: [org_id],
-        template_id: queryParams.template_id,
-        cluster_id: queryParams.cluster_id,
-        inventory_id: queryParams.inventory_id,
-        status: queryParams.status,
-        limit: queryParams.limit,
-        granularity: queryParams.granularity,
-        quick_date_range: queryParams.quick_date_range,
       },
     };
-    navigate(
+    /*navigate(
       createUrl(
         'reports/' + paths.getDetails(slug).replace('/', ''),
         true,
         initialQueryParams
       )
-    );
+    );*/
   };
 
 export const isOther = (item: Record<string, string | number>, key: string) =>
@@ -142,4 +131,8 @@ const costFields: string[] = [];
 
 export const formatTotalTime = (elapsed: number): string =>
   new Date(elapsed * 1000).toISOString().substr(11, 8);
+
+export const paths = {
+    getDetails: (slug: string): string => `${slug}`,
+};
   
