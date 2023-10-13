@@ -5,7 +5,6 @@ import {
   CardHeader,
   Flex,
   FlexItem,
-  Stack,
   Text,
   Title,
 } from '@patternfly/react-core';
@@ -62,81 +61,40 @@ export function PageDashboardCard(props: {
 }) {
   const dashboardContext = useContext(PageDashboardContext);
 
-  let colSpan = 8;
-  switch (props.width) {
-    case 'xxs':
-      colSpan = 3;
-      break;
-    case 'xs':
-      colSpan = 4;
-      break;
-    case 'sm':
-      colSpan = 6;
-      break;
-    case 'md':
-      colSpan = 8;
-      break;
-    case 'lg':
-      colSpan = 12;
-      break;
-    case 'xl':
-      colSpan = 16;
-      break;
-    case 'xxl':
-      colSpan = 24;
-      break;
-  }
-
+  let colSpan = {
+    xxs: 3,
+    xs: 4,
+    sm: 6,
+    md: 8,
+    lg: 12,
+    xl: 16,
+    xxl: 24,
+  }[props.width || 'md'];
   if (colSpan > dashboardContext.columns) {
     colSpan = dashboardContext.columns;
   }
 
-  let heightSpan = undefined;
-  switch (props.maxHeight) {
-    case 'xs':
-      heightSpan = 2;
-      break;
-    case 'sm':
-      heightSpan = 3;
-      break;
-    case 'md':
-      heightSpan = 4;
-      break;
-    case 'lg':
-      heightSpan = 6;
-      break;
-    case 'xl':
-      heightSpan = 8;
-      break;
-    case 'xxl':
-      heightSpan = 12;
-      break;
-  }
+  const heightSpan = {
+    xs: 2,
+    sm: 3,
+    md: 4,
+    lg: 6,
+    xl: 8,
+    xxl: 12,
+    none: undefined,
+  }[props.height || 'none'];
 
   const height = heightSpan ? heightUnit * heightSpan + 16 * (heightSpan - 1) : undefined;
 
-  let rowSpan = heightSpan;
-
-  switch (props.height) {
-    case 'xs':
-      rowSpan = 2;
-      break;
-    case 'sm':
-      rowSpan = 3;
-      break;
-    case 'md':
-      rowSpan = 4;
-      break;
-    case 'lg':
-      rowSpan = 6;
-      break;
-    case 'xl':
-      rowSpan = 8;
-      break;
-    case 'xxl':
-      rowSpan = 12;
-      break;
-  }
+  const rowSpan = {
+    xs: 2,
+    sm: 3,
+    md: 4,
+    lg: 6,
+    xl: 8,
+    xxl: 12,
+    none: heightSpan,
+  }[props.height || 'none'];
 
   const minHeight = rowSpan ? heightUnit * rowSpan + 16 * (rowSpan - 1) : undefined;
 
@@ -159,81 +117,58 @@ export function PageDashboardCard(props: {
     >
       {(props.title || props.linkText) && (
         <CardHeader>
-          <Stack style={{ width: '100%' }}>
-            <Flex
-              fullWidth={{ default: 'fullWidth' }}
-              spaceItems={{ default: 'spaceItemsNone' }}
-              alignItems={{ default: 'alignItemsFlexStart' }}
-              justifyContent={{ default: 'justifyContentFlexEnd' }}
-              style={{ columnGap: 24, rowGap: 8 }}
-            >
-              <FlexItem grow={{ default: 'grow' }}>
-                <Flex spaceItems={{ default: 'spaceItemsNone' }}>
-                  <FlexItem>
-                    <Stack>
-                      {props.supertitle && (
-                        <Text data-cy={props.supertitle} component="small" style={{ opacity: 0.8 }}>
-                          {props.supertitle}
-                        </Text>
-                      )}
-                      <Flex spaceItems={{ default: 'spaceItemsNone' }}>
-                        <Title data-cy={props.title} headingLevel="h3" size="xl">
-                          {props.title}
-                        </Title>
-                        <FlexItem alignSelf={{ default: 'alignSelfFlexStart' }}>
-                          <Help
-                            help={props.help}
-                            title={props.helpTitle}
-                            docLink={props.helpDocLink}
-                          />
-                        </FlexItem>
-                      </Flex>
-                      {props.subtitle && (
-                        <Text data-cy={props.subtitle} component="small" style={{ opacity: 0.8 }}>
-                          {props.subtitle}
-                        </Text>
-                      )}
-                    </Stack>
-                  </FlexItem>
-                </Flex>
-              </FlexItem>
-              {props.headerControls && <FlexItem>{props.headerControls}</FlexItem>}
-              <FlexItem>
-                <Text data-cy={props.linkText} component="small">
-                  {props.linkText && <Link to={props.to as string}>{props.linkText}</Link>}
+          <Flex
+            spaceItems={{ default: 'spaceItemsLg' }}
+            alignItems={{ default: 'alignItemsFlexStart' }}
+            justifyContent={{ default: 'justifyContentFlexEnd' }}
+          >
+            <FlexItem grow={{ default: 'grow' }}>
+              {props.supertitle && (
+                <Text data-cy={props.supertitle} component="small" style={{ opacity: 0.8 }}>
+                  {props.supertitle}
                 </Text>
-              </FlexItem>
-            </Flex>
-            {props.description && (
-              <span style={{ opacity: 0.8, paddingTop: 6 }}>{props.description}</span>
-            )}
-          </Stack>
+              )}
+              <div>
+                <Title
+                  data-cy={props.title}
+                  headingLevel="h3"
+                  size="xl"
+                  style={{ display: 'inline-block', verticalAlign: '-0.15em', lineHeight: '1.2' }}
+                >
+                  {props.title}
+                </Title>
+                <Help help={props.help} title={props.helpTitle} docLink={props.helpDocLink} />
+              </div>
+              {props.subtitle && (
+                <Text data-cy={props.subtitle} component="small" style={{ opacity: 0.8 }}>
+                  {props.subtitle}
+                </Text>
+              )}
+            </FlexItem>
+            {props.headerControls && <FlexItem>{props.headerControls}</FlexItem>}
+            <FlexItem>
+              <Text data-cy={props.linkText} component="small">
+                {props.linkText && <Link to={props.to as string}>{props.linkText}</Link>}
+              </Text>
+            </FlexItem>
+          </Flex>
+          {props.description && (
+            <span style={{ opacity: 0.8, paddingTop: 6 }}>{props.description}</span>
+          )}
         </CardHeader>
       )}
       {props.children}
       {props.footerActionButton && (
-        <CardFooter>
-          <Stack style={{ width: '100%' }}>
-            <Flex
-              fullWidth={{ default: 'fullWidth' }}
-              spaceItems={{ default: 'spaceItemsNone' }}
-              alignItems={{ default: 'alignItemsFlexStart' }}
-              justifyContent={{ default: 'justifyContentFlexEnd' }}
-              style={{ columnGap: 24, rowGap: 8 }}
-            >
-              <FlexItem>
-                <Button
-                  variant="link"
-                  icon={props.footerActionButton.icon ? props.footerActionButton.icon : null}
-                  onClick={() => {
-                    void props.footerActionButton?.onClick();
-                  }}
-                >
-                  {props.footerActionButton.title}
-                </Button>
-              </FlexItem>
-            </Flex>
-          </Stack>
+        <CardFooter style={{ textAlign: 'end' }}>
+          <Button
+            variant="link"
+            icon={props.footerActionButton.icon ? props.footerActionButton.icon : null}
+            onClick={() => {
+              void props.footerActionButton?.onClick();
+            }}
+          >
+            {props.footerActionButton.title}
+          </Button>
         </CardFooter>
       )}
     </Card>
