@@ -1,3 +1,5 @@
+import { specificReportDefaultParams } from './constants';
+
 // another function for chart
 export const formattedValue = (key: string, value: number) => {
     let val;
@@ -36,4 +38,108 @@ export const formattedValue = (key: string, value: number) => {
     if (granularity === 'daily') return 'formatDateAsDayMonth';
     return '';
   };
+
+  export const getClickableText = (
+    item: Record<string, string | number>,
+    key: string
+  ) => {
+    const { queryParams } = useQueryParams(
+      specificReportDefaultParams('templates_by_organization')
+    );
+
+    const countMapper: { [key: string]: string } = {
+      host_task_count: 'module_usage_by_task',
+      total_org_count: 'module_usage_by_organization',
+      total_template_count: 'module_usage_by_job_template',
+      total_templates_per_org: 'templates_explorer',
+    };
+    if (isNoName(item, key)) return '-';
+    if (isOther(item, key)) return '-';
+    if (timeFields.includes(key)) return formatTotalTime(+item[key]);
+    if (costFields.includes(key)) return currencyFormatter(+item[key]);
+    if (Object.keys(countMapper).includes(key) && item.id != -1 && item.name) {
+      return (
+        <Tooltip content={`View ${item.name} usage`}>
+          <a
+            onClick={() => navigateToModuleBy(countMapper[key], item.id)}
+          >{`${item[key]}`}</a>
+        </Tooltip>
+      );
+    }
+    if (Object.keys(countMapper).includes(key) && item.org_id) {
+      return (
+        <Tooltip content={`View ${item.org_name} usage`}>
+          <a
+            onClick={() =>
+              navigateToTemplatesExplorer(
+                countMapper[key],
+                item.org_id,
+                queryParams
+              )
+            }
+          >{`${item[key]}`}</a>
+        </Tooltip>
+      );
+    }
+    return `${item[key]}`;
+  };
+
+  const navigateToModuleBy = (slug: string, moduleId: any) => {
+    const initialQueryParams = {
+      [DEFAULT_NAMESPACE]: {
+        ...specificReportDefaultParams(slug),
+        task_action_id: [moduleId],
+      },
+    };
+    navigate(
+      createUrl(
+        'reports/' + paths.getDetails(slug).replace('/', ''),
+        true,
+        initialQueryParams
+      )
+    );
+  };
+  const navigateToTemplatesExplorer = (
+    slug: string,
+    org_id: any,
+    queryParams: QueryParams
+  ) => {
+    const initialQueryParams = {
+      [DEFAULT_NAMESPACE]: {
+        ...specificReportDefaultParams(slug),
+        org_id: [org_id],
+        template_id: queryParams.template_id,
+        cluster_id: queryParams.cluster_id,
+        inventory_id: queryParams.inventory_id,
+        status: queryParams.status,
+        limit: queryParams.limit,
+        granularity: queryParams.granularity,
+        quick_date_range: queryParams.quick_date_range,
+      },
+    };
+    navigate(
+      createUrl(
+        'reports/' + paths.getDetails(slug).replace('/', ''),
+        true,
+        initialQueryParams
+      )
+    );
+  };
+
+export const isOther = (item: Record<string, string | number>, key: string) =>
+  key === 'id' && item[key] === -1;
+
+export const isNoName = (item: Record<string, string | number>, key: string) =>
+  key === 'id' && item[key] === -2;
+
+export const isAvgDuration = (item: Record<string, string | number>, key: string) =>
+  key === 'average_duration_per_task';
+
+export const DEFAULT_NAMESPACE = 'default';
+
+const timeFields: string[] = ['elapsed'];
+const costFields: string[] = [];
+
+export const formatTotalTime = (elapsed: number): string =>
+  new Date(elapsed * 1000).toISOString().substr(11, 8);
   
