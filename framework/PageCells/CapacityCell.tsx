@@ -10,10 +10,10 @@ export function CapacityCell(props: { format?: string; used: number; capacity: n
   if (props.capacity === 0) return <></>;
   const base =
     ratio >= 0.8
-      ? 'var(--pf-global--palette--red'
+      ? 'var(--pf-v5-global--palette--red'
       : ratio >= 0.5
-      ? 'var(--pf-global--palette--gold'
-      : 'var(--pf-global--palette--green';
+      ? 'var(--pf-v5-global--palette--gold'
+      : 'var(--pf-v5-global--palette--green';
   const color1 = settings.activeTheme === 'light' ? `${base}-100)` : `${base}-600)`;
   const color2 = settings.activeTheme === 'light' ? `${base}-400)` : `${base}-200)`;
   const borderColor = settings.activeTheme === 'light' ? `#0002` : `#fff2`;

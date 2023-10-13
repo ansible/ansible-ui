@@ -211,9 +211,7 @@ export function RulebookActivationInputs() {
       <PageFormSwitch<IEdaRulebookActivationInputs>
         id="rulebook-activation"
         name="is_enabled"
-        formLabel={t('Rulebook activation enabled?')}
-        label={t('Enabled')}
-        labelOff={t('Disabled')}
+        label={t('Rulebook activation enabled?')}
         labelHelp={t('Automatically enable this rulebook activation to run.')}
         labelHelpTitle={t('Rulebook activation enabled')}
       />

@@ -38,8 +38,14 @@ describe('Workflow Job templates form', () => {
     cy.get('[data-cy="name"]').type(jtName);
     cy.get('[data-cy="description"]').type('this is a description');
     cy.selectDropdownOptionByResourceName('labels', label.name.toString());
-    cy.get('[data-cy="job_tags-form-group"]').find('input').eq(1).type('test job tag');
-    cy.get('[data-cy="skip_tags-form-group"]').find('input').eq(1).type('test skip tag');
+    cy.get('[data-cy="job_tags-form-group"]').within(() => {
+      cy.get('input').type('test job tag');
+      cy.contains('Create "test job tag"').click();
+    });
+    cy.get('[data-cy="skip_tags-form-group"]').within(() => {
+      cy.get('input').type('test skip tag');
+      cy.contains('Create "test skip tag"').click();
+    });
     cy.get('[data-cy="Submit"]').click();
     cy.verifyPageTitle(jtName);
   });

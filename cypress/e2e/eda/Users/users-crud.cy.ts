@@ -103,7 +103,7 @@ describe('EDA Users- Create, Edit, Delete', () => {
     cy.contains('h1', 'Users');
     cy.setTablePageSize('100');
     cy.clickButton(/^Create user$/);
-    cy.contains('.pf-c-form__label-text', 'Role(s)')
+    cy.contains('.pf-v5-c-form__label-text', 'Role(s)')
       .parent()
       .parent()
       .parent()

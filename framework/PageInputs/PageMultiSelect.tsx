@@ -4,8 +4,11 @@ import {
   MenuToggle,
   MenuToggleElement,
   SearchInput,
+  Select /* data-codemods */,
+  SelectList /* data-codemods */,
+  SelectOption /* data-codemods */,
 } from '@patternfly/react-core';
-import { Select, SelectList, SelectOption } from '@patternfly/react-core/next';
+
 import { TimesIcon } from '@patternfly/react-icons';
 import { ReactNode, Ref, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -142,7 +145,6 @@ export function PageMultiSelect<
                     aria-hidden
                     onClick={() => onSelect(() => [])}
                     style={{ verticalAlign: 'middle', marginLeft: 8 }}
-                    size="sm"
                   />
                 )}
               </>
@@ -227,13 +229,13 @@ export function PageMultiSelect<
               return (
                 <SelectOption
                   key={option.key !== undefined ? option.key : option.label}
-                  itemId={option.key !== undefined ? option.key : option.label}
+                  value={option.key !== undefined ? option.key : option.label}
                   description={
                     option.description ? (
                       <div style={{ maxWidth: 300 }}>{option.description}</div>
                     ) : undefined
                   }
-                  hasCheck
+                  hasCheckbox
                   isSelected={selectedOptions.includes(option)}
                   data-cy={optionId}
                 >

@@ -1,19 +1,19 @@
 import { useTranslation } from 'react-i18next';
 import {
-  PageFormTextInput,
-  PageFormSelect,
-  PageFormGrid,
-  PageFormSwitch,
   PageFormDataEditor,
+  PageFormGrid,
+  PageFormSelect,
+  PageFormSwitch,
+  PageFormTextInput,
 } from '../../../../../../framework';
 import { PageFormCreatableSelect } from '../../../../../../framework/PageForm/Inputs/PageFormCreatableSelect';
 import { PageFormLabelSelect } from '../../../../common/PageFormLabelSelect';
-import { parseStringToTagArray } from '../../JobTemplateFormHelpers';
-import { ConditionalField } from './ConditionalField';
-import type { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
 import type { JobTemplate } from '../../../../interfaces/JobTemplate';
+import type { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
 import type { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
+import { parseStringToTagArray } from '../../JobTemplateFormHelpers';
 import type { TemplateLaunch } from '../TemplateLaunchWizard';
+import { ConditionalField } from './ConditionalField';
 
 interface OtherPromptsStepProps {
   config: LaunchConfiguration;
@@ -135,9 +135,7 @@ export default function OtherPromptsStep(props: OtherPromptsStepProps) {
       <ConditionalField isHidden={!config.ask_diff_mode_on_launch}>
         <PageFormSwitch<TemplateLaunch>
           id="diff_mode"
-          label={t('On')}
-          labelOff={t('Off')}
-          formLabel={t('Show changes')}
+          label={t('Show changes')}
           labelHelpTitle={t('Show changes')}
           labelHelp={t(
             `If enabled, show the changes made by Ansible tasks, where supported. This is equivalent to Ansible's --diff mode.`

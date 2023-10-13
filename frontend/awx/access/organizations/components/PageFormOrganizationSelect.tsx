@@ -63,7 +63,7 @@ export function PageFormSelectOrganization<
   return (
     <PageFormAsyncSelect<TFieldValues>
       name={props.name}
-      id="organization-select"
+      id="organization"
       label={t('Organization')}
       query={query}
       valueToString={(value) => (value as Organization)?.name ?? ''}

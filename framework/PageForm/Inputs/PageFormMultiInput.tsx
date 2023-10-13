@@ -17,14 +17,15 @@ import {
   useFormContext,
 } from 'react-hook-form';
 import styled from 'styled-components';
+import { useID } from '../../hooks/useID';
 import { useFrameworkTranslations } from '../../useFrameworkTranslations';
 import { capitalizeFirstLetter } from '../../utils/strings';
 import { PageFormGroup, PageFormGroupProps } from './PageFormGroup';
 
 const ChipHolder = styled.div<{ isDisabled?: boolean }>`
-  --pf-c-form-control--Height: auto;
+  --pf-v5-c-form-control--Height: auto;
   background-color: ${(props: { isDisabled?: boolean }) =>
-    props.isDisabled ? 'var(--pf-global--disabled-color--300)' : null};
+    props.isDisabled ? 'var(--pf-v5-global--disabled-color--300)' : null};
 `;
 
 export type PageFormMultiInputProps<
@@ -62,6 +63,8 @@ export function PageFormMultiInput<
   } = useFormContext<TFieldValues>();
   const [translations] = useFrameworkTranslations();
 
+  const id = useID(props);
+
   return (
     <Controller<TFieldValues, TFieldName>
       name={name}
@@ -75,12 +78,15 @@ export function PageFormMultiInput<
         return (
           <PageFormGroup
             {...formGroupInputProps}
-            id={props.id ?? name.split('.').join('-')}
+            fieldId={id}
             helperTextInvalid={!(validate && isValidating) && error?.message}
           >
             <InputGroup>
               {value?.length ? (
-                <ChipHolder isDisabled={isSubmitting || isDisabled} className="pf-c-form-control">
+                <ChipHolder
+                  isDisabled={isSubmitting || isDisabled}
+                  className="pf-v5-c-form-control"
+                >
                   <ChipGroup
                     numChips={5}
                     expandedText={translations.showLess}

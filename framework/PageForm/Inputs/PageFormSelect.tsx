@@ -1,4 +1,4 @@
-import { FormGroup, Select, SelectOption, SelectOptionObject } from '@patternfly/react-core';
+import { Select, SelectOption, SelectOptionObject } from '@patternfly/react-core/deprecated';
 import { ChangeEvent, ReactNode, useCallback, useState } from 'react';
 import {
   Controller,
@@ -9,10 +9,10 @@ import {
   useFormContext,
 } from 'react-hook-form';
 import { PageSelectOption } from '../../PageInputs/PageSelectOption';
-import { Help } from '../../components/Help';
 import { getID, useID } from '../../hooks/useID';
 import { useFrameworkTranslations } from '../../useFrameworkTranslations';
 import { capitalizeFirstLetter } from '../../utils/strings';
+import { PageFormGroup } from './PageFormGroup';
 
 export type PageFormSelectProps<
   TFieldValues extends FieldValues = FieldValues,
@@ -43,7 +43,7 @@ export type PageFormSelectProps<
   label?: string;
 
   labelHelpTitle?: string;
-  labelHelp?: ReactNode;
+  labelHelp?: string | string[] | ReactNode;
 
   // Additional label information displayed after the label.
   additionalControls?: ReactNode;
@@ -158,24 +158,21 @@ export function PageFormSelect<
         const selected = options.find((option) => option.value === value);
 
         return (
-          <FormGroup
-            id={`${id ?? ''}-form-group`}
+          <PageFormGroup
             fieldId={id}
             label={label}
-            labelIcon={labelHelp ? <Help title={labelHelpTitle} help={labelHelp} /> : undefined}
-            labelInfo={additionalControls}
+            labelHelpTitle={labelHelpTitle}
+            labelHelp={labelHelp}
+            additionalControls={additionalControls}
             helperText={helperText}
             helperTextInvalid={helperTextInvalid}
-            validated={helperTextInvalid ? 'error' : undefined}
             isRequired={isRequired}
-            data-cy={`${id ?? ''}-form-group`}
           >
             <Select
               id={id}
-              label={undefined}
               placeholderText={placeholderText}
               variant="single"
-              aria-describedby={id ? `${id}-form-group` : undefined}
+              aria-describedby={`${id}-form-group`}
               selections={selected?.label}
               onSelect={onSelectHandler}
               isOpen={open}
@@ -212,7 +209,7 @@ export function PageFormSelect<
                 );
               })}
             </Select>
-          </FormGroup>
+          </PageFormGroup>
         );
       }}
       rules={{

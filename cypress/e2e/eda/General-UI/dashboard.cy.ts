@@ -37,7 +37,7 @@ describe('EDA Dashboard', () => {
 
   it('checks Ansible header title', () => {
     cy.navigateTo('eda', 'dashboard');
-    cy.get('.pf-c-title').should('contain', 'Welcome to');
+    cy.get('.pf-v5-c-title').should('contain', 'Welcome to');
   });
 
   // it('shows the user an RBA card with a list of RBAs visible including working links', () => {
@@ -67,14 +67,14 @@ describe('EDA Dashboard', () => {
         if (results.length === 0) {
           cy.verifyPageTitle('There are currently no projects');
           cy.contains(
-            'div.pf-c-empty-state__body',
+            'div.pf-v5-c-empty-state__body',
             'Create a project by clicking the button below.'
           );
           cy.clickButton(/^Create project$/);
           cy.verifyPageTitle('Create project');
         } else if (results.length >= 1) {
           cy.contains('h3', 'Projects')
-            .parents('article.pf-c-card')
+            .parents('.pf-v5-c-card')
             .within(() => {
               cy.get('tbody tr').should('have.lengthOf.lessThan', 8);
             });
@@ -92,7 +92,7 @@ describe('EDA Dashboard', () => {
           cy.contains('h3', 'Rulebook Activations').scrollIntoView();
           cy.verifyPageTitle('There are currently no rulebook activations');
           cy.contains(
-            'div.pf-c-empty-state__body',
+            'div.pf-v5-c-empty-state__body',
             'Create a rulebook activation by clicking the button below.'
           );
           cy.clickButton(/^Create rulebook activation$/);
@@ -100,7 +100,7 @@ describe('EDA Dashboard', () => {
         } else if (results.length >= 1) {
           cy.contains('h3', 'Rulebook Activations')
             .scrollIntoView()
-            .parents('article.pf-c-card')
+            .parents('.pf-v5-c-card')
             .within(() => {
               cy.get('tbody tr').should('have.lengthOf.lessThan', 8);
             });
@@ -117,14 +117,14 @@ describe('EDA Dashboard', () => {
         if (results.length === 0) {
           cy.verifyPageTitle('There are currently no decision environments');
           cy.contains(
-            'div.pf-c-empty-state__body',
+            'div.pf-v5-c-empty-state__body',
             'Create a decision environment by clicking the button below.'
           );
           cy.clickButton(/^Create decision environment$/);
           cy.verifyPageTitle('Create decision environment');
         } else if (results.length >= 1) {
           cy.contains('h3', 'Decision Environments')
-            .parents('article.pf-c-card')
+            .parents('.pf-v5-c-card')
             .within(() => {
               cy.get('tbody tr').should('have.lengthOf.lessThan', 8);
             });
@@ -188,7 +188,7 @@ describe('dashboard checks when resources before any resources are created', () 
   //   const resources = ['Project', 'Decision Environment', 'Rulebook Activation'];
   //   cy.navigateTo('eda', 'dashboard');
   //   cy.verifyPageTitle('Getting Started');
-  //   cy.get('ol.pf-c-progress-stepper').within(() => {
+  //   cy.get('ol.pf-v5-c-progress-stepper').within(() => {
   //     resources.forEach((resource) => {
   //       cy.checkAnchorLinks(resource);
   //     });

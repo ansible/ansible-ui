@@ -50,12 +50,12 @@ export function getPatternflyColor(color: PFColor) {
   }
 }
 
-export const pfSuccess = 'var(--pf-global--success-color--100)';
-export const pfDanger = 'var(--pf-global--danger-color--100)';
-export const pfWarning = 'var(--pf-global--warning-color--100)';
-export const pfInfo = 'var(--pf-global--info-color--100)';
-export const pfDisabled = 'var(--pf-global--disabled-color--100)';
-export const pfLink = 'var(--pf-global--link--Color)';
+export const pfSuccess = 'var(--pf-v5-global--success-color--100)';
+export const pfDanger = 'var(--pf-v5-global--danger-color--100)';
+export const pfWarning = 'var(--pf-v5-global--warning-color--100)';
+export const pfInfo = 'var(--pf-v5-global--info-color--100)';
+export const pfDisabled = 'var(--pf-v5-global--disabled-color--100)';
+export const pfLink = 'var(--pf-v5-global--link--Color)';
 
 export enum LabelColorE {
   blue = 'blue',

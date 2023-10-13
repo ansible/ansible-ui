@@ -5,8 +5,6 @@ export function PageFormSlider(props: {
   id?: string;
   label: string;
   name: string;
-  helperText?: string;
-  required?: boolean;
   autoFocus?: boolean;
   min?: number;
   max?: number;
@@ -15,8 +13,8 @@ export function PageFormSlider(props: {
   const {
     formState: { isSubmitting },
   } = useFormContext();
-  const { field, fieldState } = useController({ name: props.name });
-  const error = fieldState.error;
+  const { field } = useController({ name: props.name });
+  // const error = fieldState.error;
   const id = props.id ?? props.name;
   const max = props.max ?? 100;
   const min = props.min ?? 1;
@@ -27,10 +25,6 @@ export function PageFormSlider(props: {
       data-cy={`${id}-form-group`}
       fieldId={id}
       label={props.label}
-      helperText={props.helperText}
-      isRequired={props.required}
-      validated={error?.message ? 'error' : undefined}
-      helperTextInvalid={error?.message}
     >
       <Flex alignItems={{ default: 'alignItemsFlexStart' }}>
         <Flex
@@ -53,7 +47,7 @@ export function PageFormSlider(props: {
             autoFocus={props.autoFocus}
             // {...registration}
             value={(max - min) * value + min}
-            onChange={(v) => field.onChange((v - min) / (max - min))}
+            onChange={(_event, v) => field.onChange((v - min) / (max - min))}
             max={max}
             min={min}
             // innerRef={registration.ref}

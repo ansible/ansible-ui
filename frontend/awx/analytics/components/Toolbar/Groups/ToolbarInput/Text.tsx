@@ -1,6 +1,12 @@
 import React, { useState, useEffect, FunctionComponent } from 'react';
 import PropTypes from 'prop-types';
-import { ToolbarFilter, TextInput, InputGroup, Button } from '@patternfly/react-core';
+import {
+  ToolbarFilter,
+  TextInput,
+  InputGroup,
+  Button,
+  InputGroupItem,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
 import { SearchIcon } from '@patternfly/react-icons';
@@ -48,27 +54,31 @@ const Text: FunctionComponent<Props> = ({
       deleteChip={options.hasChips ? onDelete : undefined}
     >
       <InputGroup>
-        <TextInput
-          type="search"
-          aria-label={options.name}
-          value={searchVal}
-          onChange={setSearchVal}
-          onKeyDown={(e) => {
-            if (e.key && e.key === 'Enter') {
-              e.preventDefault();
+        <InputGroupItem isFill>
+          <TextInput
+            type="search"
+            aria-label={options.name}
+            value={searchVal}
+            onChange={(_event, val) => setSearchVal(val)}
+            onKeyDown={(e) => {
+              if (e.key && e.key === 'Enter') {
+                e.preventDefault();
+                setValue(searchVal);
+              }
+            }}
+          />
+        </InputGroupItem>
+        <InputGroupItem>
+          <Button
+            variant="control"
+            aria-label={t(`Search button for ${options.name}`)}
+            onClick={() => {
               setValue(searchVal);
-            }
-          }}
-        />
-        <Button
-          variant="control"
-          aria-label={t(`Search button for ${options.name}`)}
-          onClick={() => {
-            setValue(searchVal);
-          }}
-        >
-          <SearchIcon />
-        </Button>
+            }}
+          >
+            <SearchIcon />
+          </Button>
+        </InputGroupItem>
       </InputGroup>
     </ToolbarFilter>
   );

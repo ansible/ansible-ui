@@ -64,7 +64,7 @@ describe('Inventories.cy.ts', () => {
 
           cy.contains('tr', (inventory as Inventory).name).within(() => {
             cy.get('button.toggle-kebab').click();
-            cy.get('a[data-ouia-component-type="PF4/DropdownItem"]')
+            cy.get('.pf-v5-c-dropdown__menu-item')
               .contains(/^Delete inventory$/)
               .as('deleteButton');
           });
@@ -100,7 +100,7 @@ describe('Inventories.cy.ts', () => {
 
           cy.contains('tr', (inventory as Inventory).name).within(() => {
             cy.get('button.toggle-kebab').click();
-            cy.get('a[data-ouia-component-type="PF4/DropdownItem"]')
+            cy.get('.pf-v5-c-dropdown__menu-item')
               .contains(/^Copy inventory$/)
               .as('copyButton');
           });
@@ -120,7 +120,7 @@ describe('Inventories.cy.ts', () => {
           const inventory = results.find((i) => i.id === 1);
           cy.contains('tr', (inventory as Inventory).name).within(() => {
             cy.get('button.toggle-kebab').click();
-            cy.get('a[data-ouia-component-type="PF4/DropdownItem"]')
+            cy.get('.pf-v5-c-dropdown__menu-item')
               .contains(/^Copy inventory$/)
               .as('copyButton');
           });
@@ -165,13 +165,13 @@ describe('Inventories.cy.ts', () => {
       cy.contains(/^Please create an inventory by using the button below.$/);
       cy.contains('button', /^Create inventory$/).should('be.visible');
       cy.contains('button', /^Create inventory$/).click();
-      cy.get('.pf-c-dropdown__menu-item')
+      cy.get('.pf-v5-c-dropdown__menu-item')
         .contains(/^Create inventory$/)
         .should('exist');
-      cy.get('.pf-c-dropdown__menu-item')
+      cy.get('.pf-v5-c-dropdown__menu-item')
         .contains(/^Create smart inventory$/)
         .should('exist');
-      cy.get('.pf-c-dropdown__menu-item')
+      cy.get('.pf-v5-c-dropdown__menu-item')
         .contains(/^Create constructed inventory$/)
         .should('exist');
     });

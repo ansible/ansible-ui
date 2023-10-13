@@ -1,4 +1,4 @@
-import { PageSection, Skeleton, Tab, Tabs } from '@patternfly/react-core';
+import { PageSection, Skeleton, Tab, TabProps, Tabs } from '@patternfly/react-core';
 import { Children, ReactNode, isValidElement, useCallback, useState } from 'react';
 
 export function PageTabs(props: {
@@ -49,9 +49,9 @@ export function PageTabs(props: {
         onSelect={onSelect}
         inset={{ default: 'insetSm' }}
         isBox
-        style={{ backgroundColor: 'var(--pf-c-tabs__link--BackgroundColor)' }}
+        style={{ backgroundColor: 'var(--pf-v5-c-tabs__link--BackgroundColor)' }}
       >
-        {tabs}
+        {tabs as unknown as TabsChild}
       </Tabs>
       {content}
     </>
@@ -61,3 +61,6 @@ export function PageTabs(props: {
 export function PageTab(props: { label?: string; children: ReactNode }) {
   return <>{props.children}</>;
 }
+
+type TabElement = React.ReactElement<TabProps, React.JSXElementConstructor<TabProps>>;
+type TabsChild = TabElement | boolean | null | undefined;
