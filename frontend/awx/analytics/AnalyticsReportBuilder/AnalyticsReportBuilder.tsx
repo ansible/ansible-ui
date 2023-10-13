@@ -158,6 +158,9 @@ export interface AnalyticsReportBuilderProps {
 
   // default item.id
   rowKeyFn?: (item: AnyType) => string | number;
+
+  // navigation
+  navigate: ReturnType<typeof usePageNavigate>;
 }
 
 // Extended props for body component, it also contains mainData and options from API
@@ -236,7 +239,7 @@ export function AnalyticsReportBuilder(props: AnalyticsReportBuilderProps) {
   const get = useGetRequest();
 
   const navigate = usePageNavigate();
-  const location = useLocation();
+  parameters.navigate = navigate;
 
   const [searchParams] = useSearchParams();
   const granularityParam =
@@ -333,7 +336,7 @@ export function AnalyticsReportBuilder(props: AnalyticsReportBuilderProps) {
   const newProps = { ...parameters, view };
 
   // build the table columns
-  const columns = buildTableColumns({ ...newProps }, navigate, location);
+  const columns = buildTableColumns({ ...newProps });
 
   // and finaly, render the table with chart and filters
   return (
@@ -579,10 +582,7 @@ export function computeMainFilterKeys(params: AnalyticsReportBuilderBodyProps) {
 }
 
 // build table columns from main data
-function buildTableColumns(
-  params: AnalyticsReportColumnBuilderProps,
-  navigate: ReturnType<typeof usePageNavigate>
-) {
+function buildTableColumns(params: AnalyticsReportColumnBuilderProps) {
   const columns: ITableColumn<AnyType>[] = [];
 
   if (!params.view?.pageItems) {
@@ -620,7 +620,7 @@ function buildTableColumns(
       column.value = (item) => {
         let value = item[key] as string;
         if (params.mainData?.report.layoutProps.clickableLinking) {
-          value = getClickableText(item as Record<string, string | number>, key, navigate);
+          value = getClickableText(item as Record<string, string | number>, key, params);
         }
 
         return value;

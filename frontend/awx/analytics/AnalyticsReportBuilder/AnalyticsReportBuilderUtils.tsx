@@ -1,7 +1,6 @@
 import { specificReportDefaultParams } from './constants';
 import { Tooltip, Button } from '@patternfly/react-core';
-
-import { usePageNavigate } from '../../../../framework';
+import { AnalyticsReportBuilderBodyProps } from './AnalyticsReportBuilder';
 
 // another function for chart
 export const formattedValue = (key: string, value: number) => {
@@ -45,7 +44,7 @@ export const getDateFormatByGranularity = (granularity: string): string => {
 export const getClickableText = (
   item: Record<string, string | number>,
   key: string,
-  navigate: ReturnType<typeof usePageNavigate>
+  params: AnalyticsReportBuilderBodyProps
 ) => {
   const countMapper: { [key: string]: string } = {
     host_task_count: 'module_usage_by_task',
@@ -61,7 +60,7 @@ export const getClickableText = (
     return (
       <Tooltip content={`View ${item.name} usage`}>
         <Button
-          onClick={() => navigateToModuleBy(countMapper[key], item.id, navigate)}
+          onClick={() => navigateToModuleBy(countMapper[key], item.id, params)}
           variant="link"
         >{`${item[key]}`}</Button>
       </Tooltip>
@@ -71,7 +70,7 @@ export const getClickableText = (
     return (
       <Tooltip content={`View ${item.org_name} usage`}>
         <Button
-          onClick={() => navigateToTemplatesExplorer(countMapper[key], item.org_id, navigate)}
+          onClick={() => navigateToTemplatesExplorer(countMapper[key], item.org_id, params)}
           variant="link"
         >{`${item[key]}`}</Button>
       </Tooltip>
@@ -83,28 +82,24 @@ export const getClickableText = (
 const navigateToModuleBy = (
   slug: string,
   moduleId: number | string,
-  navigate: ReturnType<typeof usePageNavigate>
+  params: AnalyticsReportBuilderBodyProps
 ) => {
   const initialQueryParams = {
     ...specificReportDefaultParams(slug),
     task_action_id: [moduleId],
   };
-  navigateToChart(slug, initialQueryParams, navigate);
+  navigateToChart(slug, initialQueryParams, params);
 };
 
-const navigateToChart = (
-  slug: string,
-  params: object,
-  navigate: ReturnType<typeof usePageNavigate>
-) => {
+const navigateToChart = (slug: string, query: object, params: AnalyticsReportBuilderBodyProps) => {
   // TODO - the address
-  navigate('TestAnalyticsBuilder', { query: { reportName: slug, ...params } });
+  params.navigate('TestAnalyticsBuilder', { query: { reportName: slug, ...query } });
 };
 
 const navigateToTemplatesExplorer = (
   slug: string,
   org_id: number | string,
-  navigate: ReturnType<typeof usePageNavigate>
+  params: AnalyticsReportBuilderBodyProps
 ) => {
   const initialQueryParams = {
     [DEFAULT_NAMESPACE]: {
@@ -113,7 +108,7 @@ const navigateToTemplatesExplorer = (
     },
   };
 
-  navigateToChart(slug, initialQueryParams, navigate);
+  navigateToChart(slug, initialQueryParams, params);
 };
 
 export const isOther = (item: Record<string, string | number>, key: string) =>
