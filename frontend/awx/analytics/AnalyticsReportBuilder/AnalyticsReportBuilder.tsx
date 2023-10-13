@@ -71,7 +71,7 @@ import { useSearchParams } from '../../../../framework/components/useSearchParam
 import { ChartFunctions } from '@ansible/react-json-chart-builder';
 import { ChartSchemaElement } from '@ansible/react-json-chart-builder';
 
-import { getDateFormatByGranularity, formattedValue } from './AnalyticsReportBuilderUtils';
+import { getDateFormatByGranularity, formattedValue, getClickableText } from './AnalyticsReportBuilderUtils';
 
 type KeyValue = { key: string; value: string };
 
@@ -93,6 +93,8 @@ export interface MainDataDefinition {
 
       // available chart types like bar or line
       availableChartTypes?: string[];
+
+      clickableLinking : boolean;
     };
   };
 }
@@ -599,7 +601,18 @@ function buildTableColumns(params: AnalyticsReportColumnBuilderProps) {
       if (!column.header) {
         column.header = key;
       }
-      column.value = (item) => item[key] as string;
+      
+      column.value = (item) => {
+
+        let value = item[key] as string;;
+        if (params.mainData?.report.layoutProps.clickableLinking)
+        {
+          value = getClickableText(item, key);   
+        }
+        
+        return value;
+      }
+      
       column.id = key;
 
       if (!alreadyExist) {
