@@ -7,7 +7,6 @@ import { usePlatformView } from '../../../hooks/usePlatformView';
 import { CubesIcon } from '@patternfly/react-icons';
 import { PlatformRoute } from '../../../PlatformRoutes';
 import { useUserRowActions, useUserToolbarActions } from '../hooks/useUserActions';
-import { useEffect } from 'react';
 
 export function UsersList() {
   const { t } = useTranslation();
@@ -25,12 +24,6 @@ export function UsersList() {
   const canCreateUser = true;
   const toolbarActions = useUserToolbarActions(view);
   const rowActions = useUserRowActions(view);
-
-  console.log('abc');
-
-  useEffect(() => console.log('useEffect: view changed'), [view]);
-  useEffect(() => console.log('useEffect: tableColumns changed'), [tableColumns]);
-  useEffect(() => console.log('useEffect: toolbarFilters changed'), [toolbarFilters]);
 
   return (
     <PageLayout>

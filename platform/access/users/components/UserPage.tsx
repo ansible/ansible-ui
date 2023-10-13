@@ -22,7 +22,7 @@ import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
 export function UserPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { error, data: user, refresh } = useGetItem<User>('/api/v2/users', params.id);
+  const { error, data: user, refresh } = useGetItem<User>('/api/gateway/v1/users', params.id);
   const getPageUrl = useGetPageUrl();
 
   const itemActions: IPageAction<User>[] = useMemo(() => {
@@ -76,7 +76,10 @@ export function UserPage() {
           page: PlatformRoute.Users,
           persistentFilterKey: 'users',
         }}
-        tabs={[{ label: t('Details'), page: PlatformRoute.UserDetails }]}
+        tabs={[
+          { label: t('Details'), page: PlatformRoute.UserDetails },
+          { label: t('Teams'), page: PlatformRoute.UserTeams },
+        ]}
         params={{ id: user.id }}
       />
     </PageLayout>

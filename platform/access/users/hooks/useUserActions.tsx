@@ -8,7 +8,7 @@ import {
 } from '../../../../framework';
 import { User } from '../../../interfaces/User';
 import { ButtonVariant } from '@patternfly/react-core';
-import { EditIcon, PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { PlatformRoute } from '../../../PlatformRoutes';
 import { useDeleteUsers } from './useDeleteUsers';
