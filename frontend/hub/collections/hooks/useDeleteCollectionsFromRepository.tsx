@@ -88,7 +88,7 @@ async function deleteCollectionFromRepository(
     const results = await requestGet<HubItemsResponse<CollectionVersionSearch>>(
       hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${
         collection.collection_version?.name || ''
-      }&repository_name=${collection.repository?.name || ''}`
+      }&repository_name=${collection.repository.name}`
     );
     itemsToDelete = results.data?.map((item) => item.collection_version?.pulp_href || '');
   } else {
@@ -97,11 +97,11 @@ async function deleteCollectionFromRepository(
 
   const res: { task: string } = await postRequest(
     pulpAPI`/repositories/ansible/ansible/${
-      parsePulpIDFromURL(collection.repository?.pulp_href || '') || ''
+      parsePulpIDFromURL(collection.repository.pulp_href) || ''
     }/modify/`,
     {
       remove_content_units: itemsToDelete,
-      base_version: collection.repository?.latest_version_href || '',
+      base_version: collection.repository.latest_version_href,
     }
   );
   await waitForTask(parsePulpIDFromURL(res.task));
