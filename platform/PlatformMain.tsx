@@ -18,6 +18,7 @@ import { requestCommon } from '../frontend/common/crud/requestCommon';
 import { useAbortController } from '../frontend/common/crud/useAbortController';
 import useSWR from 'swr';
 import { createRequestError } from '../frontend/common/crud/RequestError';
+import '../frontend/common/i18n';
 
 export default function PlatformMain() {
   const { data: services } = useServices();

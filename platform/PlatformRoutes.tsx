@@ -10,4 +10,5 @@ export enum PlatformRoute {
   UserDetails = 'platform-user-details',
   CreateUser = 'platform-create-user',
   EditUser = 'platform-edit-user',
+  UserTeams = 'platform-user-teams',
 }

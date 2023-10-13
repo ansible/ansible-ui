@@ -15,7 +15,7 @@ export function useUsersColumns() {
         cell: (user) => (
           <TextCell
             text={user.username}
-            to={getPageUrl(PlatformRoute.UserPage, { params: { id: user.id } })}
+            to={getPageUrl(PlatformRoute.UserDetails, { params: { id: user.id } })}
           />
         ),
         card: 'name',
