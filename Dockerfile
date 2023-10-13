@@ -20,6 +20,7 @@ COPY --from=certificate /etc/ssl/nginx-selfsigned.key /etc/ssl/nginx-selfsigned.
 RUN chmod g+rwx /etc/nginx/nginx.conf /etc/nginx/conf.d /etc/nginx/conf.d/default.conf /var/cache/nginx /var/run /var/log/nginx /etc/ssl
 COPY /nginx/nginx.conf /etc/nginx/nginx.conf
 EXPOSE 443
+CMD ["nginx", "-g", "daemon off;"] 
 
 # awx-ui
 FROM base as awx-ui
