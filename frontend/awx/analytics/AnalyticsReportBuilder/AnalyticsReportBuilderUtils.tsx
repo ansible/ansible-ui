@@ -1,6 +1,9 @@
 import { specificReportDefaultParams } from './constants';
 import { Tooltip } from '@patternfly/react-core';
 
+import { usePageNavigate } from '../../../../framework';
+import { useLocation } from 'react-router-dom';
+
 // another function for chart
 export const formattedValue = (key: string, value: number) => {
     let val;
@@ -42,7 +45,8 @@ export const formattedValue = (key: string, value: number) => {
 
   export const getClickableText = (
     item: Record<string, string | number>,
-    key: string
+    key: string,
+    navigate : ReturnType<typeof usePageNavigate>, location : ReturnType<typeof useLocation>
   ) => {
 
     const countMapper: { [key: string]: string } = {
@@ -59,7 +63,7 @@ export const formattedValue = (key: string, value: number) => {
       return (
         <Tooltip content={`View ${item.name} usage`}>
           <a
-            onClick={() => navigateToModuleBy(countMapper[key], item.id)}
+            onClick={() => navigateToModuleBy(countMapper[key], item.id, navigate)}
           >{`${item[key]}`}</a>
         </Tooltip>
       );
@@ -72,6 +76,7 @@ export const formattedValue = (key: string, value: number) => {
               navigateToTemplatesExplorer(
                 countMapper[key],
                 item.org_id,
+                navigate, 
               )
             }
           >{`${item[key]}`}</a>
@@ -81,24 +86,33 @@ export const formattedValue = (key: string, value: number) => {
     return `${item[key]}`;
   };
 
-  const navigateToModuleBy = (slug: string, moduleId: any) => {
+  const navigateToModuleBy = (slug: string, moduleId: any,  navigate : ReturnType<typeof usePageNavigate>) => {
     const initialQueryParams = {
       
         ...specificReportDefaultParams(slug),
         task_action_id: [moduleId],
     };
-    /*navigate(
-      createUrl(
+    navigateToChart(slug, initialQueryParams, navigate);
+    /*createUrl(
         'reports/' + paths.getDetails(slug).replace('/', ''),
         true,
         initialQueryParams
       )
+    navigate(
+     
     );*/
   };
+
+  const navigateToChart = (slug : string, params : {},  navigate : ReturnType<typeof usePageNavigate>) =>
+  {
+    // TODO - the address
+    navigate('TestAnalyticsBuilder', { query : {reportName : slug, ...params}});
+  }
 
   const navigateToTemplatesExplorer = (
     slug: string,
     org_id: any,
+    navigate : ReturnType<typeof usePageNavigate>
   ) => {
     const initialQueryParams = {
       [DEFAULT_NAMESPACE]: {
@@ -106,6 +120,8 @@ export const formattedValue = (key: string, value: number) => {
         org_id: [org_id],
       },
     };
+
+    navigateToChart(slug, initialQueryParams, navigate);
     /*navigate(
       createUrl(
         'reports/' + paths.getDetails(slug).replace('/', ''),

@@ -66,6 +66,9 @@ import { ToggleGroup, ToggleGroupItem } from '@patternfly/react-core';
 import { ColumnTableOption } from '../../../../framework/PageTable/PageTableColumn';
 import { IToolbarMultiSelectFilter } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarMultiSelectFilter';
 import { useLocation } from 'react-router-dom';
+import {
+  usePageNavigate,
+} from '../../../../framework';
 import { useSearchParams } from '../../../../framework/components/useSearchParams';
 
 import { ChartFunctions } from '@ansible/react-json-chart-builder';
@@ -227,6 +230,9 @@ export function AnalyticsReportBuilder(props: AnalyticsReportBuilderProps) {
   const post = usePostRequest();
   const get = useGetRequest();
 
+  const navigate = usePageNavigate();
+  const location = useLocation();
+
   const [searchParams] = useSearchParams();
   const granularityParam =
     searchParams.get('granularity') || parameters.defaultDataParams?.granularity || '';
@@ -322,7 +328,7 @@ export function AnalyticsReportBuilder(props: AnalyticsReportBuilderProps) {
   const newProps = { ...parameters, view };
 
   // build the table columns
-  const columns = buildTableColumns({ ...newProps });
+  const columns = buildTableColumns({ ...newProps }, navigate, location);
 
   // and finaly, render the table with chart and filters
   return (
@@ -342,6 +348,7 @@ export function AnalyticsReportBuilder(props: AnalyticsReportBuilderProps) {
 // render the table with chart and filters
 function AnalyticsReportBuilderTable(props: AnalyticsTableProps) {
   const location = useLocation();
+
   const queryParams = new URLSearchParams(location.search);
 
   const availableChartTypes = props.mainData?.report?.layoutProps.availableChartTypes;
@@ -567,7 +574,7 @@ export function computeMainFilterKeys(params: AnalyticsReportBuilderBodyProps) {
 }
 
 // build table columns from main data
-function buildTableColumns(params: AnalyticsReportColumnBuilderProps) {
+function buildTableColumns(params: AnalyticsReportColumnBuilderProps, navigate : ReturnType<typeof usePageNavigate>) {
   const columns: ITableColumn<AnyType>[] = [];
 
   if (!params.view?.pageItems) {
@@ -607,7 +614,7 @@ function buildTableColumns(params: AnalyticsReportColumnBuilderProps) {
         let value = item[key] as string;;
         if (params.mainData?.report.layoutProps.clickableLinking)
         {
-          value = getClickableText(item, key);   
+          value = getClickableText(item, key, navigate, location);   
         }
         
         return value;
