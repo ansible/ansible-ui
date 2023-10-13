@@ -13,8 +13,8 @@ import {
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { useState } from 'react';
-import { Select, SelectOption, SelectOptionObject } from '@patternfly/react-core/deprecated';
 
+import { Select, SelectOption, SelectOptionObject, NavItemSeparator } from '@patternfly/react-core/deprecated';
 import { reportDefaultParams, allDefaultParams } from './constants';
 
 export function Test() {
@@ -38,7 +38,7 @@ export function Test() {
 
   return (
     <>
-      <MySelectDropdown items={items} onChange={(item) => selectionChange(item)} />
+      <MySelectDropdown items={items} onChange={(item) => selectionChange(item)} selected={reportName}/>
       {reportName && <AnalyticsReportBuilder {...props} key={reportName}></AnalyticsReportBuilder>}
     </>
   );
@@ -64,16 +64,14 @@ function fillDefaultProps(props: AnalyticsReportBuilderProps) {
   props.rowKeyFn = (item) => item.id;
 }
 
-const MySelectDropdown = (props: { items: string[]; onChange: (item: string) => void }) => {
+const MySelectDropdown = (props: { items: string[]; onChange: (item: string) => void , selected : string}) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selected, setSelected] = useState<string>('');
 
   const onToggle = (isOpen: boolean) => {
     setIsOpen(isOpen);
   };
 
   const onSelect = (event: AnyType, selection: SelectOptionObject) => {
-    setSelected(selection.toString());
     setIsOpen(!isOpen);
     props.onChange(selection.toString());
   };
@@ -81,8 +79,8 @@ const MySelectDropdown = (props: { items: string[]; onChange: (item: string) => 
   return (
     <Select
       isOpen={isOpen}
-      selections={selected}
       onToggle={(_event, isOpen: boolean) => onToggle(isOpen)}
+      selections={props.items.find( (item) => item == props.selected)}
       onSelect={onSelect}
       placeholderText=""
     >
