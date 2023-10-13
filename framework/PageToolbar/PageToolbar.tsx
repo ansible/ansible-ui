@@ -8,6 +8,7 @@ import {
   Toolbar,
   ToolbarGroup,
   ToolbarItem,
+  PerPageOptions,
 } from '@patternfly/react-core';
 import React, { Dispatch, Fragment, SetStateAction, useCallback } from 'react';
 import styled from 'styled-components';
@@ -54,6 +55,7 @@ export type PageToolbarProps<T extends object> = {
   perPage?: number;
   setPage?: (page: number) => void;
   setPerPage?: (perPage: number) => void;
+  perPageOptions?: PerPageOptions[];
 
   isSelected?: (item: T) => boolean;
   selectedItems?: T[];
@@ -104,6 +106,7 @@ export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
     setSortDirection,
     sortOptions,
     clearAllFilters: clearAllFiltersProp,
+    perPageOptions,
   } = props;
 
   const clearAllFilters = useCallback(() => {
@@ -250,6 +253,7 @@ export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
                 page={page}
                 onSetPage={onSetPage}
                 onPerPageSelect={onPerPageSelect}
+                perPageOptions={perPageOptions}
                 style={{ marginTop: -8, marginBottom: -8 }}
               />
             </ToolbarItem>
