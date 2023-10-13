@@ -13,7 +13,6 @@ import {
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { useState } from 'react';
-
 import { Select, SelectOption, SelectOptionObject, NavItemSeparator } from '@patternfly/react-core/deprecated';
 import { reportDefaultParams, allDefaultParams } from './constants';
 
@@ -38,7 +37,11 @@ export function Test() {
 
   return (
     <>
-      <MySelectDropdown items={items} onChange={(item) => selectionChange(item)} selected={reportName}/>
+      <MySelectDropdown
+        items={items}
+        onChange={(item) => selectionChange(item)}
+        selected={reportName}
+      />
       {reportName && <AnalyticsReportBuilder {...props} key={reportName}></AnalyticsReportBuilder>}
     </>
   );
@@ -64,7 +67,11 @@ function fillDefaultProps(props: AnalyticsReportBuilderProps) {
   props.rowKeyFn = (item) => item.id;
 }
 
-const MySelectDropdown = (props: { items: string[]; onChange: (item: string) => void , selected : string}) => {
+const MySelectDropdown = (props: {
+  items: string[];
+  onChange: (item: string) => void;
+  selected: string;
+}) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const onToggle = (isOpen: boolean) => {

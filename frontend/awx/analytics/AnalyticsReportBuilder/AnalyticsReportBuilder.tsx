@@ -66,15 +66,17 @@ import { ToggleGroup, ToggleGroupItem } from '@patternfly/react-core';
 import { ColumnTableOption } from '../../../../framework/PageTable/PageTableColumn';
 import { IToolbarMultiSelectFilter } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarMultiSelectFilter';
 import { useLocation } from 'react-router-dom';
-import {
-  usePageNavigate,
-} from '../../../../framework';
+import { usePageNavigate } from '../../../../framework';
 import { useSearchParams } from '../../../../framework/components/useSearchParams';
 
 import { ChartFunctions } from '@ansible/react-json-chart-builder';
 import { ChartSchemaElement } from '@ansible/react-json-chart-builder';
 
-import { getDateFormatByGranularity, formattedValue, getClickableText } from './AnalyticsReportBuilderUtils';
+import {
+  getDateFormatByGranularity,
+  formattedValue,
+  getClickableText,
+} from './AnalyticsReportBuilderUtils';
 
 type KeyValue = { key: string; value: string };
 
@@ -97,7 +99,7 @@ export interface MainDataDefinition {
       // available chart types like bar or line
       availableChartTypes?: string[];
 
-      clickableLinking : boolean;
+      clickableLinking: boolean;
     };
   };
 }
@@ -574,7 +576,10 @@ export function computeMainFilterKeys(params: AnalyticsReportBuilderBodyProps) {
 }
 
 // build table columns from main data
-function buildTableColumns(params: AnalyticsReportColumnBuilderProps, navigate : ReturnType<typeof usePageNavigate>) {
+function buildTableColumns(
+  params: AnalyticsReportColumnBuilderProps,
+  navigate: ReturnType<typeof usePageNavigate>
+) {
   const columns: ITableColumn<AnyType>[] = [];
 
   if (!params.view?.pageItems) {
@@ -608,18 +613,16 @@ function buildTableColumns(params: AnalyticsReportColumnBuilderProps, navigate :
       if (!column.header) {
         column.header = key;
       }
-      
-      column.value = (item) => {
 
-        let value = item[key] as string;;
-        if (params.mainData?.report.layoutProps.clickableLinking)
-        {
-          value = getClickableText(item, key, navigate, location);   
+      column.value = (item) => {
+        let value = item[key] as string;
+        if (params.mainData?.report.layoutProps.clickableLinking) {
+          value = getClickableText(item as Record<string, string | number>, key, navigate);
         }
-        
+
         return value;
-      }
-      
+      };
+
       column.id = key;
 
       if (!alreadyExist) {
@@ -671,4 +674,3 @@ function buildTableColumns(params: AnalyticsReportColumnBuilderProps, navigate :
 
   return columns;
 }
-
