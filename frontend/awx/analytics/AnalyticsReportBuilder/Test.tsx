@@ -13,6 +13,7 @@ import {
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { useState } from 'react';
+
 import { Select, SelectOption, SelectOptionObject, NavItemSeparator } from '@patternfly/react-core/deprecated';
 import { reportDefaultParams, allDefaultParams } from './constants';
 
@@ -57,10 +58,7 @@ function fillReportTypes() {
 
 function fillReports(props: AnalyticsReportBuilderProps, name: string) {
   props.main_url = `/api/v2/analytics/report/${name}/`;
-  props.graph_name = name;
-  const defaultParams = reportDefaultParams(name);
-
-  props.defaultDataParams = defaultParams;
+  props.report_name = name;
 }
 
 function fillDefaultProps(props: AnalyticsReportBuilderProps) {

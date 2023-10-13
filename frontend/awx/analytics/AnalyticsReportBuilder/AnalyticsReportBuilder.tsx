@@ -72,6 +72,8 @@ import { useSearchParams } from '../../../../framework/components/useSearchParam
 import { ChartFunctions } from '@ansible/react-json-chart-builder';
 import { ChartSchemaElement } from '@ansible/react-json-chart-builder';
 
+import { reportDefaultParams } from './constants';
+
 import {
   getDateFormatByGranularity,
   formattedValue,
@@ -144,9 +146,6 @@ export interface AnalyticsReportBuilderProps {
   // on the fly postprocessing of default params
   processOptionsRequestPayload?: (props: AnalyticsReportBuilderProps, data: AnyType) => void;
 
-  // default post data params
-  defaultDataParams?: DefaultDataParams;
-
   // on the fly postprocessing of default params
   processDataRequestPayload?: (props: AnalyticsReportBuilderProps, data: AnyType) => void;
 
@@ -166,6 +165,9 @@ export interface AnalyticsReportBuilderProps {
 export interface AnalyticsReportBuilderBodyProps extends AnalyticsReportBuilderProps {
   mainData?: MainDataDefinition;
   options?: OptionsDefinition;
+
+  // default post data params
+  defaultDataParams?: DefaultDataParams;
 }
 
 // extended props for table, it contains tableColumns, view and filters
@@ -228,6 +230,7 @@ export function AnalyticsReportBuilder(props: AnalyticsReportBuilderProps) {
 
   // create copy of initial props so we can modify them if needed
   const parameters: AnalyticsReportBuilderBodyProps = { ...props, mainData, options };
+  parameters.defaultDataParams = reportDefaultParams(props.report_name);
 
   const post = usePostRequest();
   const get = useGetRequest();
