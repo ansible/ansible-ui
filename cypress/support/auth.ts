@@ -69,7 +69,7 @@ Cypress.Commands.add('edaLogin', () => {
 });
 
 Cypress.Commands.add('edaLogout', () => {
-  cy.get('.pf-c-dropdown__toggle')
+  cy.get('.pf-v5-c-dropdown__toggle')
     .eq(1)
     .click()
     .then(() => {

@@ -81,7 +81,7 @@ describe('schedules .cy.ts', () => {
       cy.contains('td', 'Job Template Schedule 1')
         .parent()
         .within(() => {
-          cy.get('input.pf-c-switch__input').should(
+          cy.get('input.pf-v5-c-switch__input').should(
             'have.attr',
             'aria-label',
             'Click to enable schedule'
@@ -128,9 +128,9 @@ describe('schedules .cy.ts', () => {
       cy.contains('td', 'Cleanup Expired OAuth 2 Tokens')
         .parent()
         .within(() => {
-          cy.get('input.pf-c-switch__input').should('have.attr', 'disabled');
-          cy.get('.pf-c-dropdown__toggle').click();
-          cy.get('.pf-c-dropdown__menu-item')
+          cy.get('input.pf-v5-c-switch__input').should('have.attr', 'disabled');
+          cy.get('.pf-v5-c-dropdown__toggle').click();
+          cy.get('.pf-v5-c-dropdown__menu-item')
             .contains(/^Delete schedule$/)
             .should('have.attr', 'aria-disabled', 'true');
         });

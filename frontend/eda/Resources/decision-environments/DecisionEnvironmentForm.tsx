@@ -62,8 +62,8 @@ function DecisionEnvironmentInputs() {
         placeholder={t('Enter image name')}
         maxLength={150}
         isRequired
-        labelHelp={imageHelpBlock}
         labelHelpTitle={t('Image')}
+        labelHelp={imageHelpBlock}
       />
       <PageFormSelect
         name={'credential_id'}

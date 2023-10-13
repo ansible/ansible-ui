@@ -27,7 +27,6 @@ import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { User } from '../../interfaces/User';
 import { useAwxView } from '../../useAwxView';
-import { AccessNav } from '../common/AccessNav';
 import { useSelectOrganizationsAddUsers } from '../organizations/hooks/useSelectOrganizationsAddUsers';
 import { useSelectOrganizationsRemoveUsers } from '../organizations/hooks/useSelectOrganizationsRemoveUsers';
 import { useSelectTeamsAddUsers } from '../teams/hooks/useSelectTeamsAddUsers';
@@ -215,7 +214,6 @@ export function Users() {
           `A user is someone who has access to {{product}} with associated permissions and credentials.`,
           { product }
         )}
-        navigation={<AccessNav active="users" />}
       />
       <PageTable<User>
         id="awx-users-table"

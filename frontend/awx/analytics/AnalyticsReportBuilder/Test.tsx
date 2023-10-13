@@ -13,7 +13,7 @@ import {
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { useState } from 'react';
-import { Select, SelectOption, SelectOptionObject } from '@patternfly/react-core';
+import { Select, SelectOption, SelectOptionObject } from '@patternfly/react-core/deprecated';
 
 import { reportDefaultParams, allDefaultParams } from './constants';
 
@@ -82,7 +82,7 @@ const MySelectDropdown = (props: { items: string[]; onChange: (item: string) => 
     <Select
       isOpen={isOpen}
       selections={selected}
-      onToggle={onToggle}
+      onToggle={(_event, isOpen: boolean) => onToggle(isOpen)}
       onSelect={onSelect}
       placeholderText=""
     >

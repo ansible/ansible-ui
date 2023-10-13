@@ -1,4 +1,4 @@
-import { ReactElement } from 'react';
+import { ReactElement, ReactNode } from 'react';
 import { FieldPath, FieldValues, useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { PageFormTextInput } from '../../../../../framework';
@@ -19,7 +19,7 @@ export function PageFormCredentialSelect<
   isRequired?: boolean;
   label?: string;
   labelHelpTitle?: string;
-  labelHelp?: string;
+  labelHelp?: string | string[] | ReactNode;
   placeholder?: string;
   selectTitle?: string;
   isMultiple?: boolean;

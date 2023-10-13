@@ -34,11 +34,11 @@ const TotalSavings: FunctionComponent<Props> = ({
             <Title
               headingLevel="h3"
               size={index === 0 ? '4xl' : 'xl'}
-              style={{ color: 'var(--pf-global--success-color--100)' }}
+              style={{ color: 'var(--pf-v5-global--success-color--100)' }}
             >
               {isLoading ? (
                 <SpinnerDiv>
-                  <Spinner data-cy={'spinner'} isSVG size="lg" />
+                  <Spinner data-cy={'spinner'} size="lg" />
                 </SpinnerDiv>
               ) : (
                 currencyFormatter(index === 0 ? totalSavings : currentPageSavings)

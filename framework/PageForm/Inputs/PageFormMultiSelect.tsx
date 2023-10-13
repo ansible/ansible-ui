@@ -1,4 +1,3 @@
-import { FormGroup } from '@patternfly/react-core';
 import { ReactNode } from 'react';
 import {
   Controller,
@@ -10,9 +9,9 @@ import {
 } from 'react-hook-form';
 import { PageMultiSelect } from '../../PageInputs/PageMultiSelect';
 import { PageSelectOption } from '../../PageInputs/PageSelectOption';
-import { Help } from '../../components/Help';
 import { useFrameworkTranslations } from '../../useFrameworkTranslations';
 import { capitalizeFirstLetter } from '../../utils/strings';
+import { PageFormGroup } from './PageFormGroup';
 
 export type PageFormMultiSelectProps<
   TFieldValues extends FieldValues = FieldValues,
@@ -42,7 +41,7 @@ export type PageFormMultiSelectProps<
    */
   label?: string;
   labelHelpTitle?: string;
-  labelHelp?: ReactNode;
+  labelHelp?: string | string[] | ReactNode;
 
   /**
    * The placeholder attribute specifies a short hint that describes the expected value of an input field (e.g. a sample value or a short description of the expected format).
@@ -127,14 +126,13 @@ export function PageFormMultiSelect<
           : undefined;
 
         return (
-          <FormGroup
-            id={`${id ?? 'select'}-form-group`}
+          <PageFormGroup
             fieldId={id}
             label={label}
-            labelIcon={labelHelp ? <Help title={labelHelpTitle} help={labelHelp} /> : undefined}
+            labelHelpTitle={labelHelpTitle}
+            labelHelp={labelHelp}
             helperText={helperText}
             helperTextInvalid={helperTextInvalid}
-            validated={helperTextInvalid ? 'error' : undefined}
             isRequired={isRequired}
           >
             <PageMultiSelect
@@ -147,7 +145,7 @@ export function PageFormMultiSelect<
               onSelect={(getNewValues) => onChange(getNewValues(value))}
               isDisabled={isDisabled || isReadOnly || isSubmitting}
             />
-          </FormGroup>
+          </PageFormGroup>
         );
       }}
       rules={{

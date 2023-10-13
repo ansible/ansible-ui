@@ -11,13 +11,13 @@ describe('CollectionCard.cy.tsx', () => {
         // Icon
         cy.get('svg').should('be.visible');
         // Title
-        cy.get('div.pf-c-card__title').should('contain', collection.collection_version?.name);
+        cy.get('div.pf-v5-c-card__title').should('contain', collection.collection_version?.name);
         // Description
         cy.contains('Downloads resources from the Red Hat Customer Portal.').should('be.visible');
         // Namespace
         cy.contains(`Provided by ${collection.collection_version?.namespace}`).should('be.visible');
         // Version
-        cy.get('div.pf-c-card__body').should(
+        cy.get('div.pf-v5-c-card__body').should(
           'contain',
           `v${collection.collection_version?.version}`
         );
@@ -27,7 +27,7 @@ describe('CollectionCard.cy.tsx', () => {
         cy.contains('dt', 'Plugins').parent().siblings('dd').should('contain', 0);
         cy.contains('dt', 'Dependencies').parent().siblings('dd').should('contain', 0);
         // Signed
-        cy.get('.pf-m-green .pf-c-label__content').should('contain', 'Signed');
+        cy.get('.pf-m-green .pf-v5-c-label__content').should('contain', 'Signed');
       }
     );
   });

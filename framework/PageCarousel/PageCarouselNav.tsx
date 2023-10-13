@@ -1,7 +1,6 @@
 import { Bullseye, Button, ButtonVariant } from '@patternfly/react-core';
 import { AngleLeftIcon, AngleRightIcon } from '@patternfly/react-icons';
-import { useEffect } from 'react';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
@@ -17,10 +16,10 @@ const PageNavDotButton = styled(Button)<{ isCurrentPage: boolean }>`
     ${(props: { isCurrentPage: boolean }) =>
       props.isCurrentPage
         ? css`
-            background-color: var(--pf-global--primary-color--100);
+            background-color: var(--pf-v5-global--primary-color--100);
           `
         : css`
-            background-color: var(--pf-global--disabled-color--200);
+            background-color: var(--pf-v5-global--disabled-color--200);
           `}
   }
 `;

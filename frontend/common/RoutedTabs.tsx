@@ -146,7 +146,7 @@ export function RoutedTabs(props: {
             grow={{ default: 'grow' }}
             className="border-left border-bottom"
             style={{
-              backgroundColor: 'var(--pf-global--BackgroundColor--200)',
+              backgroundColor: 'var(--pf-v5-global--BackgroundColor--200)',
               alignSelf: 'normal',
             }}
           />

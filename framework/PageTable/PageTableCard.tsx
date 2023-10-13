@@ -3,14 +3,12 @@
 import {
   Alert,
   Card,
-  CardActions,
   CardBody,
   CardFooter,
   CardHeader,
   CardTitle,
   Checkbox,
   DescriptionList,
-  DropdownPosition,
   FlexItem,
   Label,
   LabelGroup,
@@ -18,6 +16,7 @@ import {
   Text,
   Truncate,
 } from '@patternfly/react-core';
+import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { ReactNode, useCallback, useMemo } from 'react';
 import styled from 'styled-components';
 import { IPageAction } from '../PageActions/PageAction';
@@ -54,7 +53,7 @@ export interface IPageTableCard {
   badgeTooltipTitle?: string;
   alertTitle?: string;
   alertContent?: ReactNode;
-  alertVariant?: 'success' | 'danger' | 'warning' | 'info' | 'default';
+  alertVariant?: 'success' | 'danger' | 'warning' | 'info' | 'custom';
 }
 
 const CardHeaderDiv = styled.div`
@@ -155,7 +154,37 @@ export function PageTableCard<T extends object>(props: {
         maxWidth: '100%',
       }}
     >
-      <CardHeader style={{ display: 'flex', flexWrap: 'nowrap', maxWidth: '100%' }}>
+      <CardHeader
+        {...(showActions && {
+          actions: {
+            actions: (
+              <>
+                {itemActions && itemActions.length && (
+                  <PageActions
+                    actions={itemActions}
+                    position={DropdownPosition.right}
+                    selectedItem={item}
+                    iconOnly
+                    collapse="always"
+                  />
+                )}
+                {showSelect && (
+                  <Checkbox
+                    isChecked={isSelected?.(item)}
+                    onChange={onSelectClick}
+                    // aria-label="card checkbox example"
+                    id="check-1"
+                    // name="check1"
+                  />
+                )}
+              </>
+            ),
+            hasNoOffset: false,
+            className: undefined,
+          },
+        })}
+        style={{ display: 'flex', flexWrap: 'nowrap', maxWidth: '100%' }}
+      >
         <CardHeaderDiv>
           <CardTopDiv>
             {card.iconAboveTitle
@@ -187,11 +216,7 @@ export function PageTableCard<T extends object>(props: {
             <FlexItem>
               {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
               <div onClick={(e) => e.stopPropagation()}>
-                <Popover
-                  headerContent={card.badgeTooltipTitle}
-                  bodyContent={card.badgeTooltip}
-                  removeFindDomNode
-                >
+                <Popover headerContent={card.badgeTooltipTitle} bodyContent={card.badgeTooltip}>
                   <Label color={card.badgeColor}>{card.badge}</Label>
                 </Popover>
               </div>
@@ -203,28 +228,6 @@ export function PageTableCard<T extends object>(props: {
             </FlexItem>
           )}
         </CardHeaderDiv>
-        {showActions && (
-          <CardActions>
-            {itemActions && itemActions.length && (
-              <PageActions
-                actions={itemActions}
-                position={DropdownPosition.right}
-                selectedItem={item}
-                iconOnly
-                collapse="always"
-              />
-            )}
-            {showSelect && (
-              <Checkbox
-                isChecked={isSelected?.(item)}
-                onChange={onSelectClick}
-                // aria-label="card checkbox example"
-                id="check-1"
-                // name="check1"
-              />
-            )}
-          </CardActions>
-        )}
       </CardHeader>
       {card.cardBody}
       {card.labels && (

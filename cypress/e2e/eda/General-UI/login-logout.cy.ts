@@ -18,7 +18,7 @@ describe('EDA Login / Logoff', () => {
         cy.get('[data-cy="username"]').type(edaUser.username);
         cy.get('[data-cy="password"]').type(Cypress.env('EDA_PASSWORD') as string);
         cy.clickModalButton('Log in');
-        cy.get('.pf-c-dropdown__toggle').eq(1).should('contain', edaUser.username);
+        cy.get('.pf-v5-c-dropdown__toggle').eq(1).should('contain', edaUser.username);
       }
     });
   });
@@ -53,6 +53,6 @@ describe('EDA Login / Logoff', () => {
     cy.get('[data-cy="username"]').type(userDetails.Username);
     cy.get('[data-cy="password"]').type(userDetails.Password);
     cy.clickModalButton('Log in');
-    cy.get('.pf-c-dropdown__toggle').eq(1).should('contain', userDetails.Username);
+    cy.get('.pf-v5-c-dropdown__toggle').eq(1).should('contain', userDetails.Username);
   });
 });

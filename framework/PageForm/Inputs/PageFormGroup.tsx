@@ -1,45 +1,64 @@
-import { FormGroup, FormGroupProps } from '@patternfly/react-core';
+import {
+  FormGroup,
+  FormHelperText,
+  HelperText,
+  HelperTextItem,
+  Split,
+} from '@patternfly/react-core';
 import { ReactNode } from 'react';
 import { Help } from '../../components/Help';
 
-export type PageFormGroupProps = Pick<
-  FormGroupProps,
-  'children' | 'helperText' | 'helperTextInvalid' | 'isRequired' | 'label' | 'labelIcon'
-> & {
-  id?: string;
-  name?: string;
+export interface PageFormGroupProps {
+  fieldId?: string;
+
+  icon?: ReactNode;
+  label?: string;
+  labelHelp?: string | string[] | ReactNode;
   labelHelpTitle?: string;
-  labelHelp?: string | ReactNode;
+  isRequired?: boolean;
+
   additionalControls?: ReactNode;
-};
+
+  children?: ReactNode;
+
+  helperText?: string;
+  helperTextInvalid?: string | string[] | false;
+}
 
 /** Wrapper over the PatternFly FormGroup making it optional based on if label is given. */
 export function PageFormGroup(props: PageFormGroupProps) {
-  const {
-    name,
-    children,
-    helperText,
-    helperTextInvalid,
-    isRequired,
-    labelHelp,
-    labelHelpTitle,
-    label,
-  } = props;
+  const { children, helperText, helperTextInvalid, isRequired, labelHelp, labelHelpTitle, label } =
+    props;
 
   return (
     <FormGroup
-      id={`${props.id ?? ''}-form-group`}
-      data-cy={name + '-form-group'}
-      fieldId={props.id}
-      label={label}
-      helperText={helperText}
-      helperTextInvalid={helperTextInvalid}
-      validated={helperTextInvalid ? 'error' : undefined}
-      isRequired={isRequired}
-      labelInfo={props.additionalControls}
+      id={`${props.fieldId}-form-group`}
+      fieldId={props.fieldId}
+      label={
+        props.icon ? (
+          <Split hasGutter>
+            {props.icon}
+            {label}
+          </Split>
+        ) : (
+          label
+        )
+      }
       labelIcon={labelHelp ? <Help title={labelHelpTitle} help={labelHelp} /> : undefined}
+      labelInfo={props.additionalControls}
+      isRequired={isRequired}
+      data-cy={`${props.fieldId}-form-group`}
     >
       {children}
+      {(helperText || helperTextInvalid) && (
+        <FormHelperText>
+          <HelperText>
+            <HelperTextItem variant={helperTextInvalid ? 'error' : undefined}>
+              {helperTextInvalid ? helperTextInvalid : helperText}
+            </HelperTextItem>
+          </HelperText>
+        </FormHelperText>
+      )}
     </FormGroup>
   );
 }

@@ -1,13 +1,12 @@
+import { ButtonVariant, Tooltip } from '@patternfly/react-core';
 import {
-  ButtonVariant,
   Dropdown,
   DropdownItem,
   DropdownPosition,
   DropdownSeparator,
   DropdownToggle,
   KebabToggle,
-  Tooltip,
-} from '@patternfly/react-core';
+} from '@patternfly/react-core/deprecated';
 import { CircleIcon } from '@patternfly/react-icons';
 import { ComponentClass, FunctionComponent, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -21,12 +20,12 @@ const IconSpan = styled.span`
   padding-right: 4px;
 `;
 const StyledDropdownItem = styled.div<{ hasSwitches: boolean; isDanger: boolean }>`
-  --pf-c-dropdown__menu-item-icon--Width: ${({ hasSwitches }) =>
+  --pf-v5-c-dropdown__menu-item-icon--Width: ${({ hasSwitches }) =>
     hasSwitches ? '40px' : undefined};
-  --pf-c-dropdown__menu-item-icon--MarginRight: ${({ hasSwitches }) =>
+  --pf-v5-c-dropdown__menu-item-icon--MarginRight: ${({ hasSwitches }) =>
     hasSwitches ? '16px' : undefined};
-  --pf-c-dropdown__menu-item--Color: ${({ isDanger }) =>
-    isDanger ? 'var(--pf-global--danger-color--100)' : undefined};
+  --pf-v5-c-dropdown__menu-item--Color: ${({ isDanger }) =>
+    isDanger ? 'var(--pf-v5-global--danger-color--100)' : undefined};
 `;
 
 const ActionSwitchDiv = styled.div`
@@ -113,7 +112,7 @@ export function PageActionDropdown<T extends object>(props: PageActionDropdownPr
         onToggle={() => setDropdownOpen(!dropdownOpen)}
         toggleVariant={isSecondary ? 'secondary' : isPrimary ? 'primary' : undefined}
         toggleIndicator={Icon && iconOnly ? null : undefined}
-        style={isPrimary && !label ? { color: 'var(--pf-global--Color--light-100)' } : {}}
+        style={isPrimary && !label ? { color: 'var(--pf-v5-global--Color--light-100)' } : {}}
         icon={
           Icon ? (
             <div>
@@ -132,7 +131,7 @@ export function PageActionDropdown<T extends object>(props: PageActionDropdownPr
         isDisabled={!!isDisabled}
         onToggle={() => setDropdownOpen(!dropdownOpen)}
         toggleVariant={isPrimary ? 'primary' : undefined}
-        style={isPrimary && !label ? { color: 'var(--pf-global--Color--light-100)' } : {}}
+        style={isPrimary && !label ? { color: 'var(--pf-v5-global--Color--light-100)' } : {}}
         ouiaId={id}
         data-cy={id}
       >
@@ -264,7 +263,7 @@ function PageDropdownActionItem<T extends object>(props: {
               style={{
                 color:
                   action.isDanger && !isDisabled
-                    ? 'var(--pf-global--danger-color--100)'
+                    ? 'var(--pf-v5-global--danger-color--100)'
                     : undefined,
               }}
             >

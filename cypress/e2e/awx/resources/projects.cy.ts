@@ -224,7 +224,7 @@ describe('projects', () => {
       cy.clickTableRow(testProject.name);
       cy.verifyPageTitle(testProject.name);
       cy.clickPageAction(/^Delete project/);
-      cy.get('[data-ouia-component-type="PF4/ModalContent"]').within(() => {
+      cy.get('.pf-v5-c-modal-box').within(() => {
         cy.intercept('DELETE', `/api/v2/projects/${testProject.id}/`).as('deleted');
         cy.get('#confirm').click();
         cy.clickButton(/^Delete project/);

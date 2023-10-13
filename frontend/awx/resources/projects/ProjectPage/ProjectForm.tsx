@@ -292,9 +292,9 @@ function ProjectInputs(props: { project?: Project }) {
         label={t('Execution environment')}
         executionEnvironmentIdPath="project.default_environment"
         isDisabled={!org}
-        tooltip={
-          org ? '' : t(`Select an organization before editing the default execution environment.`)
-        }
+        // tooltip={
+        //   org ? '' : t(`Select an organization before editing the default execution environment.`)
+        // }
       />
       <PageFormSelect<ProjectFields>
         isRequired

@@ -41,7 +41,7 @@ export function PageDashboardCountBar(props: PageDashboardCountBarProps) {
                 key={index}
                 style={{ display: 'flex', gap: 12, alignItems: 'center' }}
               >
-                <Link to={item.to} style={{ color: 'var(--pf-global--text--Color)' }}>
+                <Link to={item.to} style={{ color: 'var(--pf-v5-global--text--Color)' }}>
                   <Title
                     headingLevel="h3"
                     size="xl"
@@ -98,8 +98,8 @@ function PageChartLabel(props: ChartLabelProps & { to?: string }) {
           style={
             {
               ...props.style,
-              fill: 'var(--pf-global--link--Color)',
-              stroke: 'var(--pf-global--link--Color)',
+              fill: 'var(--pf-v5-global--link--Color)',
+              stroke: 'var(--pf-v5-global--link--Color)',
             } as CSSProperties
           }
         />
@@ -112,8 +112,8 @@ function PageChartLabel(props: ChartLabelProps & { to?: string }) {
       style={
         {
           ...props.style,
-          fill: 'var(--pf-global--text--Color)',
-          stroke: 'var(--pf-global--text--Color)',
+          fill: 'var(--pf-v5-global--text--Color)',
+          stroke: 'var(--pf-v5-global--text--Color)',
         } as CSSProperties
       }
     />

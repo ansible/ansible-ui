@@ -1,15 +1,15 @@
-import React, { FunctionComponent } from 'react';
+import { FunctionComponent } from 'react';
 
 import {
   Card,
   CardBody,
-  InputGroup as PFInputGroup,
   InputGroupText,
+  InputGroup as PFInputGroup,
   TextInput,
 } from '@patternfly/react-core';
 import { DollarSignIcon } from '@patternfly/react-icons';
-import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
 const InputGroup = styled(PFInputGroup)`
   width: 170px;
@@ -38,7 +38,7 @@ const CalculationCost: FunctionComponent<Props> = ({
           {t('Manual cost of automation')}
           <span
             style={{
-              color: 'var(--pf-global--Color--dark-200)',
+              // color: 'var(--pf-v5-global--Color--dark-200)',
               fontSize: '0.8em',
               display: 'block',
             }}

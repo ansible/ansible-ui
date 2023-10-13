@@ -145,7 +145,7 @@ export function PageAsyncSingleSelect<
                   e.stopPropagation();
                   setPage((page) => page + 1);
                 }}
-                isSmall
+                size="sm"
               >
                 {t('Load more')}
               </Button>

@@ -153,18 +153,18 @@ describe('projects.cy.ts', () => {
       cy.get('.page-table-toolbar').within(() => {
         cy.get('.toggle-kebab')
           .click()
-          .get('.pf-c-dropdown__menu-item')
+          .get('.pf-v5-c-dropdown__menu-item')
           .contains('a', 'Cancel selected projects')
           .click();
       });
-      cy.get('div[data-ouia-component-type="PF4/ModalContent"]').within(() => {
+      cy.get('.pf-v5-c-modal-box').within(() => {
         cy.hasAlert(
           '1 of the selected project sync jobs cannot be canceled because they are not running.'
         ).should('exist');
         cy.contains('td', ' Project 1 Org 0')
           .parent()
           .within(() => {
-            cy.get('span.pf-c-icon span.pf-m-warning').should('exist');
+            cy.get('span.pf-v5-c-icon span.pf-m-warning').should('exist');
           });
         cy.clickButton(/^Cancel$/);
       });
@@ -177,18 +177,18 @@ describe('projects.cy.ts', () => {
       cy.get('.page-table-toolbar').within(() => {
         cy.get('.toggle-kebab')
           .click()
-          .get('.pf-c-dropdown__menu-item')
+          .get('.pf-v5-c-dropdown__menu-item')
           .contains('a', 'Cancel selected projects')
           .click();
       });
-      cy.get('div[data-ouia-component-type="PF4/ModalContent"]').within(() => {
+      cy.get('.pf-v5-c-modal-box').within(() => {
         cy.hasAlert(
           '1 of the selected project sync jobs cannot be cancelled due to insufficient permissions.'
         ).should('exist');
         cy.contains('td', ' Project 2 Org 0')
           .parent()
           .within(() => {
-            cy.get('span.pf-c-icon span.pf-m-warning').should('exist');
+            cy.get('span.pf-v5-c-icon span.pf-m-warning').should('exist');
           });
         cy.clickButton(/^Cancel$/);
       });
@@ -201,11 +201,11 @@ describe('projects.cy.ts', () => {
         .parent()
         .within(() => {
           cy.get('#sync-project').should('have.attr', 'aria-disabled', 'true');
-          cy.get('.pf-c-dropdown__toggle').click();
-          cy.get('.pf-c-dropdown__menu-item')
+          cy.get('.pf-v5-c-dropdown__toggle').click();
+          cy.get('.pf-v5-c-dropdown__menu-item')
             .contains(/^Copy project$/)
             .should('have.attr', 'aria-disabled', 'true');
-          cy.get('.pf-c-dropdown__menu-item')
+          cy.get('.pf-v5-c-dropdown__menu-item')
             .contains(/^Delete project$/)
             .should('have.attr', 'aria-disabled', 'true');
         });
@@ -219,7 +219,7 @@ describe('projects.cy.ts', () => {
           cy.get('#sync-project').trigger('mouseenter');
           cy.get('#sync-project').should('have.attr', 'aria-disabled', 'true');
         });
-      cy.get('.pf-c-tooltip')
+      cy.get('.pf-v5-c-tooltip')
         .contains(/^The project cannot be synced because a sync job is currently running$/)
         .should('be.visible');
     });
@@ -249,7 +249,7 @@ describe('projects.cy.ts', () => {
           cy.get('#cancel-project-sync').trigger('mouseenter');
           cy.get('#cancel-project-sync').should('have.attr', 'aria-disabled', 'true');
         });
-      cy.get('.pf-c-tooltip')
+      cy.get('.pf-v5-c-tooltip')
         .contains(/^The project sync cannot be canceled due to insufficient permission$/)
         .should('be.visible');
     });

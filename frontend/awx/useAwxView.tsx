@@ -3,8 +3,8 @@ import useSWR from 'swr';
 import { ISelected, ITableColumn, IToolbarFilter, useSelected } from '../../framework';
 import { IView, useView } from '../../framework/useView';
 import { getItemKey, swrOptions, useFetcher } from '../common/crud/Data';
-import { AwxItemsResponse } from './common/AwxItemsResponse';
 import { RequestError } from '../common/crud/RequestError';
+import { AwxItemsResponse } from './common/AwxItemsResponse';
 
 export type IAwxView<T extends { id: number }> = IView &
   ISelected<T> & {

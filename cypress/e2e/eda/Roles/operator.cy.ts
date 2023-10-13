@@ -52,12 +52,15 @@ describe('Operator EDA Role - Resource types and permissions', () => {
     ).should('be.visible');
     cy.get('dd#permissions').within(() => {
       operatorResourceTypes.forEach((resource) => {
-        cy.contains('dt span.pf-c-description-list__text', resource);
+        cy.contains('dt span.pf-v5-c-description-list__text', resource);
       });
-      cy.get('.pf-c-description-list__group').should('have.length', `${resourceAndActionsArray}`);
+      cy.get('.pf-v5-c-description-list__group').should(
+        'have.length',
+        `${resourceAndActionsArray}`
+      );
     });
     cy.get('dd#permissions').within(() => {
-      cy.contains('dt.pf-c-description-list__term', 'Activation')
+      cy.contains('dt.pf-v5-c-description-list__term', 'Activation')
         .next()
         .within(() => {
           cy.contains('read');

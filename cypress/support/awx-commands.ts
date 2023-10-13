@@ -24,13 +24,23 @@ import './rest-commands';
 //  AWX related custom command implementation
 
 Cypress.Commands.add('getCheckboxByLabel', (label: string | RegExp) => {
-  cy.contains('.pf-c-check__label', label)
+  cy.contains('.pf-v5-c-check__label', label)
     .invoke('attr', 'for')
     .then((id: string | undefined) => {
       if (id) {
         cy.get('#' + id);
       }
     });
+});
+
+Cypress.Commands.add('selectDropdownOptionByResourceName', (resource: string, itemName: string) => {
+  cy.get(`[data-cy*="${resource}-form-group"]`).within(() => {
+    cy.get('[data-ouia-component-id="menu-select"] button')
+      .click()
+      .then(() => {
+        cy.contains('li', itemName).scrollIntoView().click();
+      });
+  });
 });
 
 Cypress.Commands.add('selectPromptOnLaunch', (resourceName: string) => {
@@ -47,7 +57,7 @@ Cypress.Commands.add(
       cy.get(`[data-cy*="${resource}-form-group"]`).within(() => {
         cy.get('button').eq(1).click();
       });
-      cy.get('[data-ouia-component-type="PF4/ModalContent"]').within(() => {
+      cy.get('.pf-v5-c-modal-box').within(() => {
         cy.searchAndDisplayResource(itemName);
         cy.get('tbody tr input').click();
         cy.clickButton('Confirm');
@@ -68,7 +78,7 @@ Cypress.Commands.add('selectItemFromLookupModal', (resource: string, itemName: s
   cy.get(`[data-cy*="${resource}-form-group"]`).within(() => {
     cy.get('button').eq(1).click();
   });
-  cy.get('[data-ouia-component-type="PF4/ModalContent"]').within(() => {
+  cy.get('.pf-v5-c-modal-box').within(() => {
     cy.searchAndDisplayResource(itemName);
     cy.get('[data-ouia-component-id="simple-table"] tbody').within(() => {
       cy.get('[data-cy="checkbox-column-cell"]').click();
@@ -78,13 +88,11 @@ Cypress.Commands.add('selectItemFromLookupModal', (resource: string, itemName: s
 });
 
 Cypress.Commands.add('setTablePageSize', (text: '10' | '20' | '50' | '100') => {
-  cy.get('.pf-c-pagination')
+  cy.get('.pf-v5-c-pagination')
     .first()
     .within(() => {
-      cy.get('.pf-c-options-menu').within(() => {
-        cy.get('button').click();
-        cy.contains('button', `${text} per page`).click();
-      });
+      cy.get('.pf-v5-c-menu-toggle').click();
+      cy.contains('button', `${text} per page`).click();
     });
 });
 
@@ -126,16 +134,16 @@ Cypress.Commands.add('verifyPageTitle', (label: string) => {
 });
 
 Cypress.Commands.add('hasAlert', (label: string | RegExp) => {
-  cy.contains('.pf-c-alert__title', label);
+  cy.contains('.pf-v5-c-alert__title', label);
 });
 
 Cypress.Commands.add('hasTooltip', (label: string | RegExp) => {
-  cy.contains('.pf-c-tooltip__content', label);
+  cy.contains('.pf-v5-c-tooltip__content', label);
 });
 
 Cypress.Commands.add('clickToolbarKebabAction', (label: string | RegExp) => {
   cy.get('.page-table-toolbar').within(() => {
-    cy.get('.toggle-kebab').click().get('.pf-c-dropdown__menu-item').contains(label).click();
+    cy.get('.toggle-kebab').click().get('.pf-v5-c-dropdown__menu-item').contains(label).click();
   });
 });
 
@@ -167,7 +175,7 @@ Cypress.Commands.add(
   (name: string | RegExp, label: string | RegExp, filter?: boolean) => {
     cy.getTableRowByText(name, filter).within(() => {
       cy.get('[data-cy="actions-dropdown"]').click();
-      cy.contains('.pf-c-dropdown__menu-item', label)
+      cy.contains('.pf-v5-c-dropdown__menu-item', label)
         .should('not.be.disabled')
         .should('not.have.attr', 'aria-disabled', 'true')
         .click();
@@ -179,8 +187,8 @@ Cypress.Commands.add(
   'clickListCardKebabAction',
   (name: string | RegExp, label: string | RegExp, filter?: boolean) => {
     cy.getListCardByText(name, filter).within(() => {
-      cy.get('.pf-c-dropdown__toggle').click();
-      cy.contains('.pf-c-dropdown__menu-item', label)
+      cy.get('.pf-v5-c-dropdown__toggle').click();
+      cy.contains('.pf-v5-c-dropdown__menu-item', label)
         .should('not.be.disabled')
         .should('not.have.attr', 'aria-disabled', 'true')
         .click();
@@ -212,7 +220,7 @@ Cypress.Commands.add('selectTableRow', (name: string | RegExp, filter?: boolean)
 });
 
 Cypress.Commands.add('getDialog', () => {
-  cy.get('div[data-ouia-component-type="PF4/ModalContent"]');
+  cy.get('.pf-v5-c-modal-box');
 });
 
 Cypress.Commands.add('selectTableRowInDialog', (name: string | RegExp, filter?: boolean) => {
@@ -259,7 +267,7 @@ Cypress.Commands.add('assertModalSuccess', () => {
 });
 
 Cypress.Commands.add('clickPageAction', (label: string | RegExp) => {
-  cy.get('.toggle-kebab').click().get('.pf-c-dropdown__menu-item').contains(label).click();
+  cy.get('.toggle-kebab').click().get('.pf-v5-c-dropdown__menu-item').contains(label).click();
 });
 
 // Resources for testing AWX

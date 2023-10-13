@@ -1,76 +1,69 @@
-import { FormGroup, Switch } from '@patternfly/react-core';
+import { Switch } from '@patternfly/react-core';
+import { ReactElement, ReactNode } from 'react';
 import {
   Controller,
   FieldPath,
   FieldValues,
-  useFormContext,
   Validate,
   ValidationRule,
+  useFormContext,
 } from 'react-hook-form';
-import { SwitchProps } from '@patternfly/react-core';
-import { ReactElement } from 'react';
-import { Help } from '../../components/Help';
+import { useID } from '../../hooks/useID';
+import { PageFormGroup } from './PageFormGroup';
 
 export type PageFormSwitchProps<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 > = {
+  id?: string;
   name: TFieldName;
-  helperText?: string;
+  label?: string;
+  labelHelpTitle?: string;
+  labelHelp?: string | string[] | ReactNode;
   isRequired?: boolean;
+  additionalControls?: ReactElement;
+  helperText?: string;
   pattern?: ValidationRule<RegExp>;
   validate?: Validate<string, TFieldValues> | Record<string, Validate<string, TFieldValues>>;
   autoFocus?: boolean;
-  additionalControls?: ReactElement;
-  formLabel?: string;
-  labelHelp?: string;
-  labelHelpTitle?: string;
-} & Omit<SwitchProps, 'onChange' | 'ref' | 'instance'>;
+};
 
 export function PageFormSwitch<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >(props: PageFormSwitchProps<TFieldValues, TFieldName>) {
-  const {
-    name,
-    id,
-    helperText,
-    validate,
-    additionalControls,
-    formLabel,
-    labelHelp,
-    labelHelpTitle,
-    ...rest
-  } = props;
+  const { name, helperText, validate, additionalControls, label, labelHelp, labelHelpTitle } =
+    props;
   const {
     control,
     formState: { isSubmitting, isValidating },
   } = useFormContext<TFieldValues>();
+  const id = useID(props);
   return (
     <Controller<TFieldValues, TFieldName>
       name={name}
       control={control}
       shouldUnregister
       render={({ field: { onChange, value }, fieldState: { error } }) => {
+        const helperTextInvalid = !(validate && isValidating) ? error?.message : undefined;
         return (
-          <FormGroup
-            helperTextInvalid={!(validate && isValidating) && error?.message}
+          <PageFormGroup
             fieldId={id}
             data-cy={id + '-form-group'}
-            label={formLabel}
+            label={label}
+            labelHelpTitle={labelHelpTitle}
+            labelHelp={labelHelp}
             helperText={helperText}
-            validated={error?.message ? 'error' : undefined}
-            labelInfo={additionalControls}
-            labelIcon={labelHelp ? <Help title={labelHelpTitle} help={labelHelp} /> : undefined}
+            helperTextInvalid={helperTextInvalid}
+            additionalControls={additionalControls}
           >
             <Switch
               data-cy={id + '-toggle'}
-              {...rest}
               isChecked={value}
               onChange={(e) => onChange(e)}
               isDisabled={isSubmitting}
             />
-          </FormGroup>
+          </PageFormGroup>
         );
       }}
     />

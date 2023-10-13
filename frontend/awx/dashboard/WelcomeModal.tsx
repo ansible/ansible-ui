@@ -52,7 +52,7 @@ export function WelcomeModal() {
         <Checkbox
           label={t(`Do not show this message again.`)}
           isChecked={isChecked}
-          onChange={handleChange}
+          onChange={(_event, checked: boolean) => handleChange(checked)}
           name="do-not-show-welcome-modal"
           id="welcome-modal-checkbox"
         />

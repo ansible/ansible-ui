@@ -43,7 +43,7 @@ describe('Jobs.cy.ts', () => {
         const job = results[5]; // job with status "running"
         cy.contains('tr', job.id).within(() => {
           cy.get('button.toggle-kebab').click();
-          cy.contains('a[data-ouia-component-type="PF4/DropdownItem"]', /^Delete job$/).should(
+          cy.contains('.pf-v5-c-dropdown__menu-item', /^Delete job$/).should(
             'have.attr',
             'aria-disabled',
             'true'
@@ -60,7 +60,7 @@ describe('Jobs.cy.ts', () => {
         const job = results[4]; // job with summary_fields.user_capabilities.delete: false
         cy.contains('tr', job.id).within(() => {
           cy.get('button.toggle-kebab').click();
-          cy.contains('a[data-ouia-component-type="PF4/DropdownItem"]', /^Delete job$/).should(
+          cy.contains('.pf-v5-c-dropdown__menu-item', /^Delete job$/).should(
             'have.attr',
             'aria-disabled',
             'true'
@@ -92,7 +92,7 @@ describe('Jobs.cy.ts', () => {
         const job = results[4]; // job with status "successful"
         cy.contains('tr', job.id).within(() => {
           cy.get('button.toggle-kebab').click();
-          cy.contains('a[data-ouia-component-type="PF4/DropdownItem"]', /^Cancel job$/).should(
+          cy.contains('.pf-v5-c-dropdown__menu-item', /^Cancel job$/).should(
             'have.attr',
             'aria-disabled',
             'true'
@@ -109,7 +109,7 @@ describe('Jobs.cy.ts', () => {
         const job = results[5]; // job with summary_fields.user_capabilities.start: false
         cy.contains('tr', job.id).within(() => {
           cy.get('button.toggle-kebab').click();
-          cy.contains('a[data-ouia-component-type="PF4/DropdownItem"]', /^Cancel job$/).should(
+          cy.contains('.pf-v5-c-dropdown__menu-item', /^Cancel job$/).should(
             'have.attr',
             'aria-disabled',
             'true'

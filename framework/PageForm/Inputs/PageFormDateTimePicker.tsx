@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import { Controller, FieldPath, FieldValues, useFormContext } from 'react-hook-form';
 import { FormGroupDateTimePicker } from './FormGroupDateTimePicker';
 
@@ -9,7 +10,7 @@ export type PageFormDateTimePickerProps<
   datePlaceHolder?: string;
   timePlaceHolder?: string;
   label: string;
-  labelHelp?: string;
+  labelHelp?: string | string[] | ReactNode;
   labelHelpTitle?: string;
   isDisabled?: boolean;
 };

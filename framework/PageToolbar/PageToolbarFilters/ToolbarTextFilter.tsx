@@ -4,6 +4,7 @@ import {
   TextInputGroup,
   TextInputGroupMain,
   TextInputGroupUtilities,
+  InputGroupItem,
 } from '@patternfly/react-core';
 import { ArrowRightIcon, TimesIcon } from '@patternfly/react-icons';
 import { useState } from 'react';
@@ -50,50 +51,54 @@ export function ToolbarTextFilter(props: IToolbarTextFilterProps) {
 
   return (
     <InputGroup>
-      <TextInputGroup data-cy={'text-input'} style={{ minWidth: 220 }}>
-        <TextInputGroupMain
-          id={props.id}
-          value={value}
-          onChange={(e, v) => {
-            if (typeof e === 'string') setValue(e);
-            else setValue(v);
-          }}
-          onKeyUp={(event) => {
-            if (value && event.key === 'Enter') {
-              props.addFilter(value);
-              setValue('');
-            }
-          }}
-          placeholder={placeholder}
-        />
-        {value !== '' && (
-          <TextInputGroupUtilities>
-            <Button
-              variant="plain"
-              aria-label="clear filter"
-              onClick={() => setValue('')}
-              style={{ opacity: value ? undefined : 0 }}
-              tabIndex={-1}
-            >
-              <TimesIcon />
-            </Button>
-          </TextInputGroupUtilities>
-        )}
-      </TextInputGroup>
+      <InputGroupItem>
+        <TextInputGroup data-cy={'text-input'} style={{ minWidth: 220 }}>
+          <TextInputGroupMain
+            id={props.id}
+            value={value}
+            onChange={(e, v) => {
+              if (typeof e === 'string') setValue(e);
+              else setValue(v);
+            }}
+            onKeyUp={(event) => {
+              if (value && event.key === 'Enter') {
+                props.addFilter(value);
+                setValue('');
+              }
+            }}
+            placeholder={placeholder}
+          />
+          {value !== '' && (
+            <TextInputGroupUtilities>
+              <Button
+                variant="plain"
+                aria-label="clear filter"
+                onClick={() => setValue('')}
+                style={{ opacity: value ? undefined : 0 }}
+                tabIndex={-1}
+              >
+                <TimesIcon />
+              </Button>
+            </TextInputGroupUtilities>
+          )}
+        </TextInputGroup>
+      </InputGroupItem>
 
-      <Button
-        variant={value ? 'primary' : 'control'}
-        data-cy="apply-filter"
-        aria-label="apply filter"
-        onClick={() => {
-          props.addFilter(value);
-          setValue('');
-        }}
-        tabIndex={-1}
-        isDisabled={!value}
-      >
-        <ArrowRightIcon />
-      </Button>
+      <InputGroupItem>
+        <Button
+          variant={value ? 'primary' : 'control'}
+          data-cy="apply-filter"
+          aria-label="apply filter"
+          onClick={() => {
+            props.addFilter(value);
+            setValue('');
+          }}
+          tabIndex={-1}
+          isDisabled={!value}
+        >
+          <ArrowRightIcon />
+        </Button>
+      </InputGroupItem>
     </InputGroup>
   );
 }
