@@ -54,9 +54,7 @@ export function PageRefreshIcon() {
   return (
     <Tooltip content="Refresh" position="bottom" entryDelay={1000}>
       <Button id="refresh" data-cy="refresh" onClick={refresh} variant="plain">
-        <div style={{ marginTop: 2, marginBottom: -2 }}>
-          <RedoAltIcon style={{ transform: `rotateZ(${rotation}deg)` }} />
-        </div>
+        <RedoAltIcon style={{ transform: `rotateZ(${rotation}deg)` }} />
       </Button>
     </Tooltip>
   );

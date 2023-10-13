@@ -3,8 +3,8 @@ import {
   InputGroup,
   InputGroupText,
   TextInput,
-  InputGroupTextVariant,
   Switch,
+  InputGroupItem,
 } from '@patternfly/react-core';
 import { Tr, Td } from '@patternfly/react-table';
 import { global_success_color_200 as globalSuccessColor200 } from '@patternfly/react-tokens';
@@ -66,23 +66,23 @@ const Row: FunctionComponent<Props> = ({ template, readOnly = true, variableRow 
         {variableRow && <Td>{setLabeledValue(variableRow.key, +template[variableRow.key])}</Td>}
         <Td>
           <InputGroup>
-            <TextInput
-              autoFocus={
-                window.localStorage.getItem('focused') === 'manual-time-' + template.id.toString()
-              }
-              id={'manual-time-' + template.id.toString()}
-              data-cy={'manual-time'}
-              style={{ maxWidth: '150px' }}
-              type="number"
-              aria-label="time run manually"
-              value={template.manual_effort_minutes || 60}
-              onBlur={() => window.localStorage.setItem('focused', '')}
-              isDisabled={readOnly}
-            />
+            <InputGroupItem isFill>
+              <TextInput
+                autoFocus={
+                  window.localStorage.getItem('focused') === 'manual-time-' + template.id.toString()
+                }
+                id={'manual-time-' + template.id.toString()}
+                data-cy={'manual-time'}
+                style={{ maxWidth: '150px' }}
+                type="number"
+                aria-label="time run manually"
+                value={template.manual_effort_minutes || 60}
+                onBlur={() => window.localStorage.setItem('focused', '')}
+                isDisabled={readOnly}
+              />
+            </InputGroupItem>
             <InputGroupText>{t('min')}</InputGroupText>
-            <InputGroupText variant={InputGroupTextVariant.plain}>
-              {t(`x ${template.successful_hosts_total} host runs`)}
-            </InputGroupText>
+            <InputGroupText>{t(`x ${template.successful_hosts_total} host runs`)}</InputGroupText>
           </InputGroup>
         </Td>
         <Td

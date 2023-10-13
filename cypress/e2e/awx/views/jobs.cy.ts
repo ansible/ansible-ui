@@ -60,13 +60,13 @@ describe('jobs', () => {
     cy.filterTableByTypeAndText('ID', jobId);
     cy.clickTableRowPinnedAction(jobName, 'relaunch-job', false);
     cy.verifyPageTitle(jobName);
-    cy.contains('.pf-c-tabs a', 'Output').should('have.attr', 'aria-selected', 'true');
+    cy.contains('.pf-v5-c-tabs a', 'Output').should('have.attr', 'aria-selected', 'true');
   });
 
   it('renders the toolbar and row actions', () => {
     cy.navigateTo('awx', 'jobs');
-    cy.get('.pf-c-toolbar__group button.toggle-kebab').click();
-    cy.get('.pf-c-dropdown__menu').within(() => {
+    cy.get('.pf-v5-c-toolbar__group button.toggle-kebab').click();
+    cy.get('.pf-v5-c-dropdown__menu').within(() => {
       cy.contains(/^Delete selected jobs$/).should('exist');
       cy.contains(/^Cancel selected jobs$/).should('exist');
     });
@@ -77,8 +77,8 @@ describe('jobs', () => {
       .within(() => {
         // Relaunch job
         cy.get('#relaunch-job').should('exist');
-        cy.get('.pf-c-dropdown__toggle').click();
-        cy.contains('.pf-c-dropdown__menu-item', /^Delete job$/).should('exist');
+        cy.get('.pf-v5-c-dropdown__toggle').click();
+        cy.contains('.pf-v5-c-dropdown__menu-item', /^Delete job$/).should('exist');
       });
   });
 

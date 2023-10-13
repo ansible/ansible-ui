@@ -11,14 +11,13 @@ describe('InventoryDetails', () => {
       cy.get('#organization').should('have.text', 'Default');
       cy.get('#total-hosts').should('have.text', '1');
       cy.get('#labels').should('have.text', 'test label');
-      cy.get('#created > .pf-c-description-list__text > .date-time > .pf-c-button').should(
+      cy.get('#created > .pf-v5-c-description-list__text > .date-time > .pf-v5-c-button').should(
         'have.text',
         'awx'
       );
-      cy.get('#last-modified > .pf-c-description-list__text > .date-time > .pf-c-button').should(
-        'have.text',
-        'awx'
-      );
+      cy.get(
+        '#last-modified > .pf-v5-c-description-list__text > .date-time > .pf-v5-c-button'
+      ).should('have.text', 'awx');
     });
   });
 });

@@ -25,7 +25,7 @@ export function PageLayout(props: { children?: ReactNode }) {
           flexDirection: 'column',
           height: '100%',
           maxHeight: '100%',
-          backgroundColor: 'var(--pf-global--BackgroundColor--100)',
+          backgroundColor: 'var(--pf-v5-global--BackgroundColor--100)',
         }}
       >
         {props.children}

@@ -24,7 +24,7 @@ const ModalBodyDiv = styled.div`
   flex-direction: column;
   max-height: 560px;
   overflow: hidden;
-  border-top: thin solid var(--pf-global--BorderColor--100);
+  border-top: thin solid var(--pf-v5-global--BorderColor--100);
 `;
 const ConfirmBoxDiv = styled.div`
   margin-left: 32px;
@@ -202,7 +202,7 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
                 ouiaId="confirm"
                 label={confirmText}
                 isChecked={confirmed}
-                onChange={setConfirmed}
+                onChange={(_event, val) => setConfirmed(val)}
               />
             </ConfirmBoxDiv>
           )}

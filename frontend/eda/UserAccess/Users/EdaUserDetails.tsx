@@ -1,13 +1,13 @@
 /* eslint-disable react/prop-types */
 import {
   ButtonVariant,
-  DropdownPosition,
   Label,
   LabelGroup,
   PageSection,
   Skeleton,
   Stack,
 } from '@patternfly/react-core';
+import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';

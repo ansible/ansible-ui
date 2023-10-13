@@ -216,18 +216,16 @@ function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
         label={t('Timeout')}
       />
       <PageFormSwitch<JobTemplateForm>
+        id="show-changes"
+        name="diff_mode"
+        label={t('Show changes')}
         labelHelpTitle={t('Show changes')}
         labelHelp={t(
           `If enabled, show the changes made by Ansible tasks, where supported. This is equivalent to Ansible's --diff mode.`
         )}
-        labelOff={t('Off')}
-        id="show-changes"
-        label={t('On')}
-        name="diff_mode"
         additionalControls={
           <PageFormCheckbox label={t('Prompt on launch')} name="ask_diff_mode_on_launch" />
         }
-        formLabel={t('Show changes')}
       />
       <PageFormInstanceGroupSelect<{ instanceGroups: string; id: number }>
         additionalControls={

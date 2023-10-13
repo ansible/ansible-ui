@@ -235,11 +235,9 @@ export function useGetPromptOnLaunchFields(
             labelHelp={t(
               `If enabled, show the changes made by Ansible tasks, where supported. This is equivalent to Ansible's --diff mode.`
             )}
-            labelOff={t('Off')}
             id="show-changes"
-            label={t('On')}
             name="diff_mode"
-            formLabel={t('Show changes')}
+            label={t('Show changes')}
           />
         );
         break;

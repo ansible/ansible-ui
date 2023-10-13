@@ -1,4 +1,11 @@
-import { Nav, NavExpandable, NavItem, NavList, PageSidebar } from '@patternfly/react-core';
+import {
+  Nav,
+  NavExpandable,
+  NavItem,
+  NavList,
+  PageSidebar,
+  PageSidebarBody,
+} from '@patternfly/react-core';
 import { useState } from 'react';
 import { usePageNavBarClick, usePageNavSideBar } from './PageNavSidebar';
 import './PageNavigation.css';
@@ -11,16 +18,15 @@ export function PageNavigation(props: { navigation: PageNavigationItem[] }) {
 
   return (
     <>
-      <PageSidebar
-        isNavOpen={navBar.isOpen}
-        nav={
+      <PageSidebar isSidebarOpen={navBar.isOpen} className="bg-lighten-2">
+        <PageSidebarBody>
           <Nav data-cy="page-navigation" className="side-nav">
             <NavList>
               <PageNavigationItems baseRoute={''} items={navigationItems} />
             </NavList>
           </Nav>
-        }
-      />
+        </PageSidebarBody>
+      </PageSidebar>
     </>
   );
 }
@@ -65,11 +71,13 @@ function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRout
   const hasChildNavItems = 'children' in item && item.children?.find((child) => child.label);
 
   if (!hasChildNavItems && 'label' in item) {
+    const isActive = location.pathname.startsWith(route);
     return (
       <NavItem
         id={id}
         href={route}
-        isActive={location.pathname.startsWith(route)}
+        isActive={isActive}
+        className={isActive ? 'bg-lighten-2' : undefined}
         onClick={() => onClickNavItem(route)}
         data-cy={id}
       >

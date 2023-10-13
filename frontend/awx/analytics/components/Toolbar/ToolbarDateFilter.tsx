@@ -1,4 +1,5 @@
-import { SelectOptionObject, Split, SplitItem, ToolbarGroup } from '@patternfly/react-core';
+import { Split, SplitItem, ToolbarGroup } from '@patternfly/react-core';
+import { SelectOptionObject } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import DateInput from './Date';
 

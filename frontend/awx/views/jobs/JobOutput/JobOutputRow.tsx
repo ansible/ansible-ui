@@ -16,12 +16,12 @@ const LineNumberGutter = styled.div`
   gap: 8px;
   padding-block: 2px;
   padding-inline: 8px;
-  border-right: 1px solid var(--pf-global--BorderColor--100);
-  background-color: var(--pf-global--BackgroundColor--200);
+  border-right: 1px solid var(--pf-v5-global--BorderColor--100);
+  background-color: var(--pf-v5-global--BackgroundColor--200);
   z-index: 1;
 
-  .pf-theme-dark & {
-    background-color: var(--pf-global--BackgroundColor--100);
+  .pf-v5-theme-dark & {
+    background-color: var(--pf-v5-global--BackgroundColor--100);
   }
 `;
 const ExpandButton = styled.button`

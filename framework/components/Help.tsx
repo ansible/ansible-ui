@@ -4,8 +4,8 @@ import { ReactNode } from 'react';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 
 export function Help(props: {
-  help?: ReactNode | string | string[];
   title?: string;
+  help?: string | string[] | ReactNode;
   docLink?: string;
 }) {
   const { help, title, docLink } = props;
@@ -35,7 +35,6 @@ export function Help(props: {
           )}
         </Stack>
       }
-      removeFindDomNode
     >
       <Button variant="plain" style={{ padding: 0, marginLeft: '8px', verticalAlign: 'middle' }}>
         <OutlinedQuestionCircleIcon />

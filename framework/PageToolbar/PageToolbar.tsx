@@ -30,7 +30,7 @@ const FlexGrowDiv = styled.div`
 `;
 
 const ToolbarContent = styled(PFToolbarContent)`
-  & > .pf-c-toolbar__content-section {
+  & > .pf-v5-c-toolbar__content-section {
     row-gap: 16px;
     justify-content: end;
   }
@@ -78,7 +78,6 @@ export type PageToolbarProps<T extends object> = {
   disableListView?: boolean;
   disableCardView?: boolean;
   disablePagination?: boolean;
-  bottomBorder?: boolean;
   sortOptions?: PageTableSortOption[];
   /** Optional: Max selections permitted in a table. The bulk selector within the toolbar is disabled based on this value.
    */
@@ -99,7 +98,6 @@ export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
     filterState,
     setFilterState,
     openColumnModal,
-    bottomBorder,
     sort,
     setSort,
     sortDirection,
@@ -152,12 +150,8 @@ export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
   if (itemCount === undefined) {
     return (
       <Toolbar
-        className="page-table-toolbar"
-        style={{
-          paddingBottom: sm ? undefined : 8,
-          paddingTop: sm ? undefined : 8,
-          borderBottom: bottomBorder ? 'thin solid var(--pf-global--BorderColor--100)' : undefined,
-        }}
+        className="page-table-toolbar border-bottom"
+        style={{ paddingBottom: sm ? undefined : 8, paddingTop: sm ? undefined : 8 }}
       >
         <ToolbarContent>
           <ToolbarItem style={{ width: '100%' }}>
@@ -171,12 +165,8 @@ export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
   return (
     <Toolbar
       clearAllFilters={clearAllFilters}
-      className="page-table-toolbar"
-      style={{
-        paddingBottom: sm ? undefined : 8,
-        paddingTop: sm ? undefined : 8,
-        borderBottom: bottomBorder ? 'thin solid var(--pf-global--BorderColor--100)' : undefined,
-      }}
+      className="page-table-toolbar border-bottom"
+      style={{ paddingBottom: sm ? undefined : 8, paddingTop: sm ? undefined : 8 }}
       inset={{
         default: 'insetMd',
         sm: 'insetMd',

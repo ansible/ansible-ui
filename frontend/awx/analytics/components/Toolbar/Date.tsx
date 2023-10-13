@@ -1,5 +1,5 @@
-import React, { FunctionComponent } from 'react';
 import { DatePicker } from '@patternfly/react-core';
+import React, { FunctionComponent } from 'react';
 
 interface Props {
   categoryKey: string;
@@ -45,9 +45,10 @@ const DateInput: FunctionComponent<Props> = ({
       aria-label={options.name}
       value={value}
       onChange={setValue}
-      inputProps={{
-        isReadOnly: true,
-      }}
+      // PF5 Upgrade - disabled as not supported in PF5
+      // inputProps={{
+      //   isReadOnly: true,
+      // }}
       {...validators}
     />
   );

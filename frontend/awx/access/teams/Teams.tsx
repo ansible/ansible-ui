@@ -9,7 +9,6 @@ import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { Team } from '../../interfaces/Team';
 import { useAwxView } from '../../useAwxView';
-import { AccessNav } from '../common/AccessNav';
 import { useTeamActions } from './hooks/useTeamActions';
 import { useTeamToolbarActions } from './hooks/useTeamToolbarActions';
 import { useTeamsColumns } from './hooks/useTeamsColumns';
@@ -48,7 +47,6 @@ export function Teams() {
         description={t(
           'A Team is a subdivision of an organization with associated users, projects, credentials, and permissions.'
         )}
-        navigation={<AccessNav active="teams" />}
       />
       <PageTable<Team>
         id="awx-teams-table"

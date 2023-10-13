@@ -1,60 +1,51 @@
+import { Chip, ChipGroup } from '@patternfly/react-core';
 import {
-  Chip,
-  ChipGroup,
-  FormGroupProps,
   Select,
   SelectOption,
   SelectOptionObject,
-  SelectProps,
   SelectVariant,
-} from '@patternfly/react-core';
+} from '@patternfly/react-core/deprecated';
 import React, { useState } from 'react';
-import { getID } from '../../hooks/useID';
+import { getID, useID } from '../../hooks/useID';
 import { PageFormGroup } from './PageFormGroup';
 
-export type FormGroupTypeAheadMultiSelectProps = Pick<
-  FormGroupProps,
-  'helperTextInvalid' | 'children'
-> &
-  Pick<
-    SelectProps,
-    | 'footer'
-    | 'isCreatable'
-    | 'isGrouped'
-    | 'placeholderText'
-    | 'value'
-    | 'isDisabled'
-    | 'children'
-    | 'onSelect'
-  > & {
-    isReadOnly?: boolean;
-    placeholderText?: string | React.ReactNode;
-    name: string;
-    options: { value: string | { name: string }; label: string }[];
-    id?: string;
-    onSelect?: (
-      event: React.MouseEvent | React.ChangeEvent,
-      value: string | SelectOptionObject,
-      isPlaceholder?: boolean
-    ) => void;
-    onHandleSelection: (value: string | SelectOptionObject | { name: string }) => void;
-    isSubmitting: boolean;
-    value: Partial<{ name: string }>[];
-    onHandleClear: (chip?: string) => void;
-  };
+export type FormGroupTypeAheadMultiSelectProps = {
+  id?: string;
+
+  label: string;
+  labelHelp?: string | string[] | React.ReactNode;
+  labelHelpTitle?: string;
+
+  helperText?: string;
+  helperTextInvalid?: string;
+
+  isReadOnly?: boolean;
+  placeholderText?: string | React.ReactNode;
+  options: { value: string | { name: string }; label: string }[];
+  onSelect?: (
+    event: React.MouseEvent | React.ChangeEvent,
+    value: string | SelectOptionObject,
+    isPlaceholder?: boolean
+  ) => void;
+  onHandleSelection: (value: string | SelectOptionObject | { name: string }) => void;
+  isSubmitting: boolean;
+  value: Partial<{ name: string }>[];
+  onHandleClear: (chip?: string) => void;
+};
 
 /** A PatternFly FormGroup with a PatternFly Select */
 export function FormGroupTypeAheadMultiSelect(props: FormGroupTypeAheadMultiSelectProps) {
   const {
+    label,
+    labelHelp,
+    labelHelpTitle,
     onHandleSelection,
     onHandleClear,
     value,
-    id,
     options,
     placeholderText,
     isSubmitting,
     isReadOnly,
-    ...rest
   } = props;
 
   const [isOpen, setIsOpen] = useState(false);
@@ -79,8 +70,11 @@ export function FormGroupTypeAheadMultiSelect(props: FormGroupTypeAheadMultiSele
       </ChipGroup>
     );
   };
+
+  const id = useID(props);
+
   return (
-    <PageFormGroup {...rest}>
+    <PageFormGroup fieldId={id} label={label} labelHelp={labelHelp} labelHelpTitle={labelHelpTitle}>
       <Select
         chipGroupComponent={chipGroupComponent()}
         variant={SelectVariant.typeaheadMulti}
@@ -89,7 +83,7 @@ export function FormGroupTypeAheadMultiSelect(props: FormGroupTypeAheadMultiSele
         isOpen={isOpen}
         isCreateOptionOnTop
         onClear={() => onHandleClear()}
-        id={id ?? props.name}
+        id={id}
         ouiaId="menu-select"
         selections={value?.length ? value : undefined}
         onToggle={() => {
@@ -104,11 +98,7 @@ export function FormGroupTypeAheadMultiSelect(props: FormGroupTypeAheadMultiSele
         {options.map((option) => {
           const optionId = getID(option);
           return (
-            <SelectOption
-              key={`${option.label}-${props.name}`}
-              value={option.value}
-              data-cy={optionId}
-            >
+            <SelectOption key={`${option.label}`} value={option.value} data-cy={optionId}>
               {option.label}
             </SelectOption>
           );

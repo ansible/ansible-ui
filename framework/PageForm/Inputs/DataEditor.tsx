@@ -174,7 +174,7 @@ export function DataEditor<
 
   return (
     <div
-      className={`pf-c-form-control`}
+      className={`pf-v5-c-form-control`}
       id={idDataEditorElement}
       style={{ backgroundPosition: 'calc(100% - 1.2em) .5em', padding: 0 }}
       aria-invalid={props.invalid ? 'true' : undefined}

@@ -81,7 +81,7 @@ describe('ProjectForm.cy.ts', () => {
         path: RouteObj.EditProject,
         initialEntries: [RouteObj.EditProject.replace(':id', '9')],
       });
-      cy.get('[data-cy="content-signature-validation-credential-form-group"]').type('XYZ');
+      cy.get('#credential-select').type('XYZ');
       cy.clickButton(/^Save project$/);
       cy.contains('Credential not found.').should('be.visible');
       cy.verifyPageTitle('Edit Project');
@@ -101,7 +101,7 @@ describe('ProjectForm.cy.ts', () => {
         initialEntries: [RouteObj.EditProject.replace(':id', '9')],
       });
       // Incorrect credential
-      cy.get('[data-cy="source-control-credential-form-group"]').type('XYZ');
+      cy.get('#credential-select').type('XYZ');
       cy.clickButton(/^Save project$/);
       cy.contains('Credential not found.').should('be.visible');
       cy.verifyPageTitle('Edit Project');
