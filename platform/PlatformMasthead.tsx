@@ -70,7 +70,7 @@ export function PlatformMasthead() {
         <ToolbarItem>
           <PageMastheadDropdown
             id="account-menu"
-            icon={<UserCircleIcon size="md" />}
+            icon={<UserCircleIcon />}
             label={activeUser?.username}
           >
             {/* <DropdownItem
