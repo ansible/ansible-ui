@@ -3,9 +3,10 @@ import {
   EmptyState,
   EmptyStateBody,
   EmptyStateIcon,
-  EmptyStateSecondaryActions,
   Stack,
-  Title,
+  EmptyStateActions,
+  EmptyStateHeader,
+  EmptyStateFooter,
 } from '@patternfly/react-core';
 import { WrenchIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
@@ -16,19 +17,22 @@ export function PageNotImplemented() {
   const navigate = useNavigate();
   return (
     <EmptyState isFullHeight>
-      <EmptyStateIcon icon={WrenchIcon} />
-      <Title headingLevel="h2" size="lg">
-        {t('Under Development')}
-      </Title>
+      <EmptyStateHeader
+        titleText={<>{t('Under Development')}</>}
+        icon={<EmptyStateIcon icon={WrenchIcon} />}
+        headingLevel="h2"
+      />
       <EmptyStateBody>{t('This page is not yet available in the tech preview.')}</EmptyStateBody>
-      <EmptyStateSecondaryActions>
-        <Stack hasGutter>
-          <Button onClick={() => navigate(-1)}>{t('Return to previous page')}</Button>
-          <Button component={(props) => <Link to={'/'} {...props} />}>
-            {t('Return to dashboard')}
-          </Button>
-        </Stack>
-      </EmptyStateSecondaryActions>
+      <EmptyStateFooter>
+        <EmptyStateActions>
+          <Stack hasGutter>
+            <Button onClick={() => navigate(-1)}>{t('Return to previous page')}</Button>
+            <Button component={(props) => <Link to={'/'} {...props} />}>
+              {t('Return to dashboard')}
+            </Button>
+          </Stack>
+        </EmptyStateActions>
+      </EmptyStateFooter>
     </EmptyState>
   );
 }

@@ -1,4 +1,5 @@
-import { DropdownPosition, Flex, FlexItem } from '@patternfly/react-core';
+import { Flex, FlexItem } from '@patternfly/react-core';
+import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import {
   ComponentClass,
   FunctionComponent,

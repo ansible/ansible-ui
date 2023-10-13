@@ -136,7 +136,7 @@ describe('PageFormCodeEditor', () => {
   //       />
   //     </PageForm>
   //   );
-  //   cy.get('div#toggle-json').get('button.pf-c-toggle-group__button').should('be.disabled');
-  //   cy.get('div#toggle-yaml').get('button.pf-c-toggle-group__button').should('be.disabled');
+  //   cy.get('div#toggle-json').get('button.pf-v5-c-toggle-group__button').should('be.disabled');
+  //   cy.get('div#toggle-yaml').get('button.pf-v5-c-toggle-group__button').should('be.disabled');
   // });
 });

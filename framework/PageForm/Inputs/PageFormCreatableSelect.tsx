@@ -1,11 +1,11 @@
-import { ReactElement } from 'react';
+import { ReactElement, ReactNode } from 'react';
 import {
   Controller,
   FieldPath,
   FieldPathValue,
   FieldValues,
-  useFormContext,
   Validate,
+  useFormContext,
 } from 'react-hook-form';
 import { capitalizeFirstLetter } from '../../utils/strings';
 import { FormGroupTypeAheadMultiSelect } from './FormGroupTypeAheadMultiSelect';
@@ -14,21 +14,20 @@ export type PageFormCreatableSelectProps<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 > = {
-  name: TFieldName;
   id?: string;
-  options: { value: string | { name: string }; label: string }[];
-  isRequired?: boolean;
+  name: TFieldName;
   label: string;
+  labelHelp?: string | string[] | ReactNode;
+  labelHelpTitle?: string;
   additionalControls?: ReactElement;
   placeholderText?: string;
-  labelHelp?: string;
-  labelHelpTitle?: string;
+  options: { value: string | { name: string }; label: string }[];
+  isRequired?: boolean;
   validate?:
     | Validate<FieldPathValue<TFieldValues, TFieldName>, TFieldValues>
     | Record<string, Validate<FieldPathValue<TFieldValues, TFieldName>, TFieldValues>>;
 };
 
-/**  Select wrapper for use with react-hook-form */
 export function PageFormCreatableSelect<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,

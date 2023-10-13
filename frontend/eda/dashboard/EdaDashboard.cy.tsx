@@ -65,27 +65,25 @@ describe('EdaDashboard.cy.ts', () => {
 
   it('Dashboard renders all components cards', () => {
     cy.contains('h3', 'Rulebook Activations').scrollIntoView();
-    cy.get('[data-cy="There are currently no rulebook activations"]')
+    cy.contains('There are currently no rulebook activations')
       .scrollIntoView()
       .should('be.visible');
     cy.contains(
-      'div.pf-c-empty-state__body',
+      'div.pf-v5-c-empty-state__body',
       'Create a rulebook activation by clicking the button below.'
     );
     cy.contains('h3', 'Decision Environments').scrollIntoView();
-    cy.get('[data-cy="There are currently no decision environments"]')
+    cy.contains('There are currently no decision environments')
       .scrollIntoView()
       .should('be.visible');
     cy.contains(
-      'div.pf-c-empty-state__body',
+      'div.pf-v5-c-empty-state__body',
       'Create a decision environment by clicking the button below.'
     );
     cy.contains('h3', 'Rule Audit').scrollIntoView();
-    cy.get('[data-cy="There are currently no rule audit records"]')
-      .scrollIntoView()
-      .should('be.visible');
+    cy.contains('There are currently no rule audit records').scrollIntoView().should('be.visible');
     cy.contains('h3', 'Projects').scrollIntoView();
-    cy.get('[data-cy="There are currently no projects"]').scrollIntoView().should('be.visible');
-    cy.contains('div.pf-c-empty-state__body', 'Create a project by clicking the button below.');
+    cy.contains('There are currently no projects').scrollIntoView().should('be.visible');
+    cy.contains('div.pf-v5-c-empty-state__body', 'Create a project by clicking the button below.');
   });
 });

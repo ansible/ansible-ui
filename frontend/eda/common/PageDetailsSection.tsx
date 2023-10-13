@@ -12,8 +12,8 @@ export function PageDetailsSection(props: { children?: ReactNode; disablePadding
       style={{
         backgroundColor:
           settings.theme === 'dark'
-            ? 'var(--pf-global--BackgroundColor--300)'
-            : 'var(--pf-global--BackgroundColor--100)',
+            ? 'var(--pf-v5-global--BackgroundColor--300)'
+            : 'var(--pf-v5-global--BackgroundColor--100)',
       }}
     >
       <DescriptionList

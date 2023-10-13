@@ -1,28 +1,29 @@
 import { PerPageOptions } from '@patternfly/react-core';
 import {
   Button,
-  DropdownPosition,
   EmptyState,
+  EmptyStateActions,
   EmptyStateBody,
+  EmptyStateFooter,
+  EmptyStateHeader,
   EmptyStateIcon,
-  EmptyStateSecondaryActions,
   Flex,
   PageSection,
   Stack,
-  Title,
 } from '@patternfly/react-core';
+import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { SearchIcon } from '@patternfly/react-icons';
 import {
   CollapseColumn,
   SortByDirection,
-  TableComposable,
+  Table /* data-codemods */,
   Tbody,
   Td,
   Th,
   Thead,
   Tr,
 } from '@patternfly/react-table';
-import { ThSortType } from '@patternfly/react-table/dist/esm/components/Table/base';
+import { ThSortType } from '@patternfly/react-table/dist/esm/components/Table/base/types';
 import useResizeObserver from '@react-hook/resize-observer';
 import {
   Dispatch,
@@ -290,7 +291,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
         variant="light"
         padding={{ default: 'noPadding' }}
         style={{
-          borderBottom: 'thin solid var(--pf-global--BorderColor--100)',
+          borderBottom: 'thin solid var(--pf-v5-global--BorderColor--100)',
         }}
       >
         {props.topContent}
@@ -306,7 +307,6 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
         showSelect={showSelect}
         viewType={viewType}
         setViewType={setViewType}
-        bottomBorder
         sortOptions={sortOptions}
       />
       {viewType === PageTableViewTypeE.Table && (
@@ -495,7 +495,7 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
   } else {
     returnElement = (
       <>
-        <TableComposable
+        <Table
           aria-label="Simple table"
           ouiaId="simple-table"
           variant={
@@ -539,21 +539,24 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
               />
             ))}
           </Tbody>
-        </TableComposable>
+        </Table>
         {itemCount === 0 && (
           <EmptyState isFullHeight>
-            <EmptyStateIcon icon={SearchIcon} />
-            <Title headingLevel="h2" size="lg">
-              {translations.noResultsFound}
-            </Title>
+            <EmptyStateHeader
+              titleText={<>{translations.noResultsFound}</>}
+              icon={<EmptyStateIcon icon={SearchIcon} />}
+              headingLevel="h2"
+            />
             <EmptyStateBody>{translations.noResultsMatchCriteria}</EmptyStateBody>
-            {clearAllFilters && (
-              <EmptyStateSecondaryActions>
-                <Button variant="primary" onClick={clearAllFilters}>
-                  {translations.clearAllFilters}
-                </Button>
-              </EmptyStateSecondaryActions>
-            )}
+            <EmptyStateFooter>
+              {clearAllFilters && (
+                <EmptyStateActions>
+                  <Button variant="primary" onClick={clearAllFilters}>
+                    {translations.clearAllFilters}
+                  </Button>
+                </EmptyStateActions>
+              )}
+            </EmptyStateFooter>
           </EmptyState>
         )}
       </>
@@ -563,11 +566,11 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
   if (!props.scrollTopContent) {
     returnElement = (
       <ScrollDiv
-        className="pf-c-scroll-inner-wrapper"
+        className="pf-v5-c-scroll-inner-wrapper"
         ref={containerRef}
         onScroll={onScroll}
         style={{
-          backgroundColor: 'var(--pf-global--BackgroundColor--100)',
+          backgroundColor: 'var(--pf-v5-global--BackgroundColor--100)',
         }}
       >
         {returnElement}
@@ -628,7 +631,7 @@ function TableHead<T extends object>(props: {
 
   return (
     <Thead>
-      <Tr className="light dark-2">
+      <Tr className="bg-lighten">
         {expandedRow && <Th style={{ padding: 0, backgroundColor: 'inherit' }} />}
         {(showSelect || onSelect) && (
           <Th
@@ -802,7 +805,7 @@ function TableRow<T extends object>(props: {
               },
               isSelected: isItemSelected ?? false,
               variant: isSelectMultiple ? 'checkbox' : 'radio',
-              disable: maxSelections && selectedItems ? disableRow(item) : false,
+              isDisabled: maxSelections && selectedItems ? disableRow(item) : false,
             }}
             isStickyColumn
             stickyMinWidth="0px"

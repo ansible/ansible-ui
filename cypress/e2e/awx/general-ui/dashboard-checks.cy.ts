@@ -11,10 +11,10 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
 
   it('verifies the tech preview banner title in the new UI and the working links to and from the old UI', () => {
     cy.navigateTo('awx', 'dashboard');
-    cy.get('div.pf-c-banner.pf-m-info p')
+    cy.get('.pf-v5-c-banner')
       .should(
-        'have.text',
-        ' You are currently viewing a tech preview of the new AWX user interface. To return to the original interface, click here.'
+        'contain',
+        'You are currently viewing a tech preview of the new AWX user interface. To return to the original interface, click here.'
       )
       .should('be.visible');
     cy.get('[data-cy="tech-preview"] a').should('contain', 'here').click();
@@ -24,40 +24,40 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
   it('clicking on Cog icon opens the Manage Dashboard modal', () => {
     cy.navigateTo('awx', 'dashboard');
     cy.clickButton('Manage view');
-    cy.get('.pf-c-modal-box__title-text').should('contain', 'Manage Dashboard');
+    cy.get('.pf-v5-c-modal-box__title-text').should('contain', 'Manage Dashboard');
     cy.get('[aria-label="Close"]').click();
   });
 
   it('within the Manage Dashboard modal, unchecking a resource should hide the resource', () => {
     cy.navigateTo('awx', 'dashboard');
     cy.clickButton('Manage view');
-    cy.get('.pf-c-modal-box__title-text').should('contain', 'Manage Dashboard');
+    cy.get('.pf-v5-c-modal-box__title-text').should('contain', 'Manage Dashboard');
     cy.contains('tr', 'Resource Counts').find('input').uncheck();
     cy.clickModalButton('Apply');
-    cy.contains('.pf-c-title', 'Hosts').should('not.exist');
+    cy.contains('.pf-v5-c-title', 'Hosts').should('not.exist');
     cy.clickButton('Manage view');
-    cy.get('.pf-c-modal-box__title-text').should('contain', 'Manage Dashboard');
+    cy.get('.pf-v5-c-modal-box__title-text').should('contain', 'Manage Dashboard');
     cy.contains('tr', 'Resource Counts').find('input').check();
     cy.clickModalButton('Apply');
-    cy.contains('.pf-c-title', 'Hosts').should('be.visible');
+    cy.contains('.pf-v5-c-title', 'Hosts').should('be.visible');
   });
 
   it('within the Manage Dashboard modal, clicking the Cancel button should revert any changes', () => {
     cy.navigateTo('awx', 'dashboard');
     cy.clickButton('Manage view');
-    cy.get('.pf-c-modal-box__title-text').should('contain', 'Manage Dashboard');
+    cy.get('.pf-v5-c-modal-box__title-text').should('contain', 'Manage Dashboard');
     cy.contains('tr', 'Resource Counts').find('input').uncheck();
     cy.clickModalButton('Cancel');
-    cy.contains('.pf-c-title', 'Hosts').should('be.visible');
+    cy.contains('.pf-v5-c-title', 'Hosts').should('be.visible');
   });
 
   it('within the Manage Dashboard modal, clicking the Close button should revert any changes', () => {
     cy.navigateTo('awx', 'dashboard');
     cy.clickButton('Manage view');
-    cy.get('.pf-c-modal-box__title-text').should('contain', 'Manage Dashboard');
+    cy.get('.pf-v5-c-modal-box__title-text').should('contain', 'Manage Dashboard');
     cy.contains('tr', 'Resource Counts').find('input').uncheck();
     cy.get('[aria-label="Close"]').click();
-    cy.contains('.pf-c-title', 'Hosts').should('be.visible');
+    cy.contains('.pf-v5-c-title', 'Hosts').should('be.visible');
   });
 
   // Manage Dashboard modal table does not currently support keyboard input to reorder items, use drag & drop
@@ -66,14 +66,14 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
     let editedArray: string[];
     cy.navigateTo('awx', 'dashboard');
 
-    cy.get('.pf-c-card__header').then((headers) => {
+    cy.get('.pf-v5-c-card__header').then((headers) => {
       initialArray = Array.from(headers, (title) => title.innerText.split('\n')[0]);
       cy.clickButton('Manage view');
-      cy.get('.pf-c-modal-box__title-text').should('contain', 'Manage Dashboard');
+      cy.get('.pf-v5-c-modal-box__title-text').should('contain', 'Manage Dashboard');
       cy.get('#draggable-row-recent_jobs').drag('#draggable-row-recent_job_activity');
       cy.clickModalButton('Apply');
     });
-    cy.get('.pf-c-card__header').then((headers) => {
+    cy.get('.pf-v5-c-card__header').then((headers) => {
       editedArray = Array.from(headers, (title) => title.innerText.split('\n')[0]);
       expect(initialArray).to.not.eql(editedArray);
     });
@@ -149,13 +149,16 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
             'contain',
             'There are currently no jobs'
           );
-          cy.contains('div.pf-c-empty-state__body', 'Create a job by clicking the button below.');
+          cy.contains(
+            'div.pf-v5-c-empty-state__body',
+            'Create a job by clicking the button below.'
+          );
           cy.clickButton(/^Create job$/);
           cy.get('[data-cy="Create Job Template"]').should('contain', 'Create Job Template');
         } else if (results.count >= 1) {
           cy.log('non empty state check');
           cy.contains('h3', 'Jobs')
-            .parents('article.pf-c-card')
+            .parents('.pf-v5-c-card')
             .within(() => {
               cy.get('tbody tr')
                 .should('have.lengthOf.at.least', 1)
@@ -181,7 +184,10 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
             'contain',
             'There are currently no projects'
           );
-          cy.contains('div.pf-c-empty-state__body', 'Create a job by clicking the button below.');
+          cy.contains(
+            'div.pf-v5-c-empty-state__body',
+            'Create a job by clicking the button below.'
+          );
           cy.clickButton(/^Create project$/);
           cy.verifyPageTitle('Create Project');
         } else if (results.count >= 1) {
@@ -190,7 +196,7 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
             .prev()
             .should('have.text', 'Projects')
             .scrollIntoView()
-            .parents('article.pf-c-card')
+            .parents('.pf-v5-c-card')
             .within(() => {
               cy.get('tbody tr')
                 .should('have.lengthOf.at.least', 1)
@@ -217,7 +223,7 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
             'There are currently no inventories'
           );
           cy.contains(
-            'div.pf-c-empty-state__body',
+            'div.pf-v5-c-empty-state__body',
             'Create an inventory by clicking the button below.'
           );
           cy.clickButton(/^Create inventory$/);
@@ -225,7 +231,7 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
         } else if (results.count >= 1) {
           cy.log('non empty state check');
           cy.contains('h3', 'Inventories')
-            .parents('article.pf-c-card')
+            .parents('.pf-v5-c-card')
             .within(() => {
               cy.get('tbody tr')
                 .should('have.lengthOf.at.least', 1)
@@ -242,18 +248,9 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
     cy.intercept({ method: 'GET', url: '/api/v2/inventories/*' }, { fixture: 'emptyList.json' });
     cy.intercept({ method: 'GET', url: '/api/v2/unified_jobs/*' }, { fixture: 'emptyList.json' });
     cy.reload();
-    cy.get('[data-cy="There are currently no jobs"]').should(
-      'contain',
-      'There are currently no jobs'
-    );
-    cy.get('[data-cy="There are currently no projects"]').should(
-      'contain',
-      'There are currently no projects'
-    );
-    cy.get('[data-cy="There are currently no inventories"]').should(
-      'contain',
-      'There are currently no inventories'
-    );
+    cy.contains('There are currently no jobs').should('exist');
+    cy.contains('There are currently no projects').should('exist');
+    cy.contains('There are currently no inventories').should('exist');
     cy.contains('button', 'Create job').should('exist');
     cy.contains('button', 'Create project').should('exist');
     cy.contains('button', 'Create inventory').should('exist');

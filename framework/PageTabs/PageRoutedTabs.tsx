@@ -1,4 +1,4 @@
-import { PageSection, Tab, TabTitleText, Tabs } from '@patternfly/react-core';
+import { PageSection, Tab, TabProps, TabTitleText, Tabs } from '@patternfly/react-core';
 import { CaretLeftIcon } from '@patternfly/react-icons';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useGetPageUrl, usePageNavigate } from '..';
@@ -30,6 +30,19 @@ export function PageRoutedTabs(props: {
     }
   };
 
+  const tabs = props.tabs
+    .filter((tab) => !!tab)
+    .map((tab) =>
+      tab ? (
+        <Tab
+          key={tab.page}
+          eventKey={tab.page}
+          title={tab.label}
+          href={getPageUrl(tab.page, { params: props.params })}
+        />
+      ) : null
+    ) as unknown as TabsChild;
+
   return (
     <>
       <Tabs
@@ -37,7 +50,7 @@ export function PageRoutedTabs(props: {
         inset={{ default: 'insetSm' }}
         isBox
         activeKey={activeTab ? activeTab.page : undefined}
-        style={{ backgroundColor: 'var(--pf-c-tabs__link--BackgroundColor)' }}
+        style={{ backgroundColor: 'var(--pf-v5-c-tabs__link--BackgroundColor)' }}
       >
         {props.backTab && (
           <Tab
@@ -52,16 +65,7 @@ export function PageRoutedTabs(props: {
             href={getPageUrl(props.backTab.page, { params: props.params, query })}
           />
         )}
-        {props.tabs.map((tab) =>
-          tab ? (
-            <Tab
-              key={tab.page}
-              eventKey={tab.page}
-              title={tab.label}
-              href={getPageUrl(tab.page, { params: props.params })}
-            />
-          ) : null
-        )}
+        {tabs}
       </Tabs>
       <PageSection variant="light" isFilled padding={{ default: 'noPadding' }}>
         <Outlet />
@@ -82,3 +86,6 @@ function parseQuery(queryString: string) {
   }
   return query;
 }
+
+type TabElement = React.ReactElement<TabProps, React.JSXElementConstructor<TabProps>>;
+type TabsChild = TabElement | boolean | null | undefined;

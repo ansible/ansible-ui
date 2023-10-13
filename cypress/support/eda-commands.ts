@@ -26,7 +26,7 @@ import './commands';
 /*  EDA related custom command implementation  */
 
 Cypress.Commands.add('selectEdaUserRoleByName', (roleName: string) => {
-  cy.contains('.pf-c-form__label-text', 'Role(s)')
+  cy.contains('.pf-v5-c-form__label-text', 'Role(s)')
     .parent()
     .parent()
     .parent()
@@ -49,10 +49,10 @@ Cypress.Commands.add('checkAnchorLinks', (anchorName: string) => {
 });
 
 Cypress.Commands.add('clickEdaPageAction', (label: string | RegExp) => {
-  cy.get('.pf-c-toolbar__content-section')
+  cy.get('.pf-v5-c-toolbar__content-section')
     .eq(1)
     .within(() => {
-      cy.get('.toggle-kebab').click().get('.pf-c-dropdown__menu-item').contains(label).click();
+      cy.get('.toggle-kebab').click().get('.pf-v5-c-dropdown__menu-item').contains(label).click();
     });
 });
 
@@ -73,7 +73,10 @@ Cypress.Commands.add('edaRuleBookActivationCheckbox', (rbaName: string) => {
 
 Cypress.Commands.add('edaRuleBookActivationActionsModal', (action: string, rbaName: string) => {
   cy.get('div[role="dialog"]').within(() => {
-    cy.get('.pf-c-check__label').should('contain', `Yes, I confirm that I want to ${action} these`);
+    cy.get('.pf-v5-c-check__label').should(
+      'contain',
+      `Yes, I confirm that I want to ${action} these`
+    );
     cy.get('a').should('contain', rbaName);
     cy.get('input[id="confirm"]').click();
   });
@@ -290,7 +293,7 @@ Cypress.Commands.add('getEdaRoles', () => {
 
 Cypress.Commands.add('checkActionsofResource', (resourceType: string) => {
   return cy
-    .contains('dt.pf-c-description-list__term', resourceType)
+    .contains('dt.pf-v5-c-description-list__term', resourceType)
     .next()
     .then((result) => {
       cy.wrap(result);
@@ -299,7 +302,7 @@ Cypress.Commands.add('checkActionsofResource', (resourceType: string) => {
 
 Cypress.Commands.add('checkResourceNameAndAction', (resourceTypes: string[], actions: string[]) => {
   resourceTypes.forEach((resource) => {
-    cy.contains('dt.pf-c-description-list__term', resource)
+    cy.contains('dt.pf-v5-c-description-list__term', resource)
       .next()
       .within(() => {
         actions.forEach((action) => {

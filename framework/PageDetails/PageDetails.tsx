@@ -13,7 +13,7 @@ export function PageDetails(props: {
   const numberOfColumns = props.numberOfColumns ? props.numberOfColumns : settings.formColumns;
   const isCompact = false;
   return (
-    <PageSection variant="light" padding={{ default: 'noPadding' }} className="dark-1">
+    <PageSection variant="light" padding={{ default: 'noPadding' }}>
       <DescriptionList
         orientation={{
           sm: orientation,

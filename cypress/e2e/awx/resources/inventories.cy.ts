@@ -65,11 +65,9 @@ describe('inventories', () => {
     cy.get(`[data-cy="row-id-${inventory.id}"]`).within(() => {
       cy.get('[data-cy="edit-inventory"]').click();
     });
-    cy.get('input[aria-label="Add instance groups"]')
-      .parent()
-      .within(() => {
-        cy.get('button[aria-label="Options menu"]').click();
-      });
+    cy.get('#instance-group-select-form-group').within(() => {
+      cy.get('button[aria-label="Options menu"]').click();
+    });
     const igName = instanceGroup?.name;
     if (igName) {
       cy.selectTableRowInDialog(igName);

@@ -16,7 +16,7 @@ export default function PageWizard<T extends object>(props: {
   return (
     <PageWizardProvider<T> steps={props.steps} defaultValue={props.defaultValue}>
       <div
-        className="pf-c-wizard"
+        className="pf-v5-c-wizard"
         data-cy="wizard"
         style={{
           display: 'flex',
@@ -28,7 +28,7 @@ export default function PageWizard<T extends object>(props: {
       >
         <PageWizardToggle />
         <div
-          className="pf-c-wizard__outer-wrap"
+          className="pf-v5-c-wizard__outer-wrap"
           style={{
             display: 'flex',
             flexDirection: 'column',

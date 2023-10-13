@@ -55,7 +55,7 @@
 //   //       cy.navigateTo('eda', 'users');
 //   //       cy.clickLink(activeUser?.username);
 //   //       cy.clickButton('Controller Tokens');
-//   //       cy.get('.pf-c-toggle-group__button').eq(2).click();
+//   //       cy.get('.pf-v5-c-toggle-group__button').eq(2).click();
 //   //       cy.get(`#${activeUserToken.id}`).within(() => {
 //   //         cy.get('.toggle-kebab')
 //   //           .click()

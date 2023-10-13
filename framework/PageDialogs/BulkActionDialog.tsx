@@ -194,7 +194,7 @@ function BulkActionDialog<T extends object>(props: BulkActionDialogProps<T>) {
             flexDirection: 'column',
             maxHeight: 560,
             overflow: 'hidden',
-            borderTop: 'thin solid var(--pf-global--BorderColor--100)',
+            borderTop: 'thin solid var(--pf-v5-global--BorderColor--100)',
           }}
         >
           <PageTable<T>

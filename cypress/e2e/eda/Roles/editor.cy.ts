@@ -44,9 +44,9 @@ describe('Editor EDA Role - Resource types and permissions', () => {
     cy.contains('dd#description', 'Has create and edit permissions').should('be.visible');
     cy.get('dd#permissions').within(() => {
       editorResourceTypes.forEach((resource) => {
-        cy.contains('dt span.pf-c-description-list__text', resource);
+        cy.contains('dt span.pf-v5-c-description-list__text', resource);
       });
-      cy.get('dt span.pf-c-description-list__text').should(
+      cy.get('dt span.pf-v5-c-description-list__text').should(
         'have.length',
         `${resourceAndActionsArray}`
       );

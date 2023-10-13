@@ -1,4 +1,4 @@
-import { Button, FormGroup, InputGroup, TextInput } from '@patternfly/react-core';
+import { Button, InputGroup, InputGroupItem, TextInput } from '@patternfly/react-core';
 import { EyeIcon, EyeSlashIcon, SearchIcon } from '@patternfly/react-icons';
 import { ReactNode, useState } from 'react';
 import {
@@ -11,10 +11,10 @@ import {
   ValidationRule,
   useFormContext,
 } from 'react-hook-form';
-import { Help } from '../../components/Help';
 import { useID } from '../../hooks/useID';
 import { useFrameworkTranslations } from '../../useFrameworkTranslations';
 import { capitalizeFirstLetter } from '../../utils/strings';
+import { PageFormGroup } from './PageFormGroup';
 
 export type PageFormTextInputProps<
   TFieldValues extends FieldValues = FieldValues,
@@ -63,7 +63,7 @@ export type PageFormTextInputProps<
   label?: string;
 
   labelHelpTitle?: string;
-  labelHelp?: ReactNode;
+  labelHelp?: string | string[] | ReactNode;
 
   // Additional label information displayed after the label.
   additionalControls?: ReactNode;
@@ -237,33 +237,33 @@ export function PageFormTextInput<
           onChange(value.trimStart());
         }
         return (
-          <FormGroup
-            id={`${id ?? ''}-form-group`}
+          <PageFormGroup
             fieldId={id}
             label={label}
+            labelHelpTitle={labelHelpTitle}
+            labelHelp={labelHelp}
+            additionalControls={additionalControls}
             helperText={helperText}
             helperTextInvalid={helperTextInvalid}
-            validated={helperTextInvalid ? 'error' : undefined}
             isRequired={isRequired}
-            labelIcon={labelHelp ? <Help title={labelHelpTitle} help={labelHelp} /> : undefined}
-            labelInfo={additionalControls}
-            data-cy={`${label?.toLowerCase().split(' ').join('-')}-form-group`}
           >
             <InputGroup>
-              <TextInput
-                id={id}
-                placeholder={placeholder}
-                onChange={onChangeHandler}
-                value={value ?? ''}
-                aria-describedby={id ? `${id}-form-group` : undefined}
-                validated={helperTextInvalid ? 'error' : undefined}
-                type={type === 'password' ? (showSecret ? 'text' : 'password') : type}
-                readOnlyVariant={isReadOnly ? 'default' : undefined}
-                isDisabled={isDisabled}
-                autoFocus={autoFocus}
-                autoComplete={autoComplete || 'off'}
-                data-cy={id}
-              />
+              <InputGroupItem isFill>
+                <TextInput
+                  id={id}
+                  placeholder={placeholder}
+                  onChange={(_event, value: string) => onChangeHandler(value)}
+                  value={value ?? ''}
+                  aria-describedby={id ? `${id}-form-group` : undefined}
+                  validated={helperTextInvalid ? 'error' : undefined}
+                  type={type === 'password' ? (showSecret ? 'text' : 'password') : type}
+                  readOnlyVariant={isReadOnly ? 'default' : undefined}
+                  isDisabled={isDisabled}
+                  autoFocus={autoFocus}
+                  autoComplete={autoComplete || 'off'}
+                  data-cy={id}
+                />
+              </InputGroupItem>
               {type === 'password' && (
                 <Button
                   variant="control"
@@ -295,7 +295,7 @@ export function PageFormTextInput<
               )}
               {button && button}
             </InputGroup>
-          </FormGroup>
+          </PageFormGroup>
         );
       }}
       rules={{

@@ -51,7 +51,7 @@ export function RuleInputs() {
           </b>
         }
       >
-        <Banner variant="info" title={t('Schedule rules')} className="pf-m-12-col">
+        <Banner variant="blue" title={t('Schedule rules')} className="pf-m-12-col">
           <b>
             {t(
               'The Start date/time and Timezone are global properties for this schedule and are shown for reference only.'

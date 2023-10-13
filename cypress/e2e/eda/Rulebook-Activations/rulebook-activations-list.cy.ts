@@ -49,7 +49,10 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
     cy.edaRuleBookActivationCheckbox(edaRBA.name);
     cy.clickEdaPageAction('Disable selected activations');
     cy.get('div[role="dialog"]').within(() => {
-      cy.get('.pf-c-check__label').should('contain', `Yes, I confirm that I want to disable these`);
+      cy.get('.pf-v5-c-check__label').should(
+        'contain',
+        `Yes, I confirm that I want to disable these`
+      );
       cy.get('a').should('contain', edaRBA.name);
       cy.get('input[id="confirm"]').click();
       cy.get('button').contains('Disable rulebook activations').click();
@@ -62,7 +65,10 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
     cy.edaRuleBookActivationCheckbox(edaRBA.name);
     cy.clickEdaPageAction('Delete selected activations');
     cy.get('div[role="dialog"]').within(() => {
-      cy.get('.pf-c-check__label').should('contain', `Yes, I confirm that I want to delete these`);
+      cy.get('.pf-v5-c-check__label').should(
+        'contain',
+        `Yes, I confirm that I want to delete these`
+      );
       cy.get('a').should('contain', edaRBA.name);
       cy.get('input[id="confirm"]').click();
       cy.get('button').contains('Delete rulebook activations').click();

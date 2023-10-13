@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Badge, Flex, FlexItem, Split, SplitItem } from '@patternfly/react-core';
 import { DateTime, Duration } from 'luxon';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { Split, SplitItem, Flex, FlexItem, Badge } from '@patternfly/react-core';
-import { Job } from '../../../interfaces/Job';
 import { StatusLabel } from '../../../../common/Status';
+import { Job } from '../../../interfaces/Job';
 
 const HeaderTitle = styled.div`
   display: inline-flex;
@@ -12,7 +12,7 @@ const HeaderTitle = styled.div`
   gap: 10px;
 
   h1 {
-    font-weight: var(--pf-global--FontWeight--bold);
+    font-weight: var(--pf-v5-global--FontWeight--bold);
   }
 `;
 

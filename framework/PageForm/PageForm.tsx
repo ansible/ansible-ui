@@ -7,7 +7,7 @@ import {
   PageSection,
   Tooltip,
 } from '@patternfly/react-core';
-import React, { BaseSyntheticEvent, CSSProperties, ReactNode, useContext, useState } from 'react';
+import { BaseSyntheticEvent, CSSProperties, ReactNode, useContext, useState } from 'react';
 import {
   DefaultValues,
   ErrorOption,
@@ -22,12 +22,11 @@ import {
 import { useTranslation } from 'react-i18next';
 import { Scrollable } from '../components/Scrollable';
 import { useBreakpoint } from '../components/useBreakPoint';
-import { PageBody } from '../PageBody';
 import { SettingsContext } from '../Settings';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
-import { ErrorAdapter } from './typesErrorAdapter';
-import { genericErrorAdapter } from './genericErrorAdapter';
 import { ErrorAlert } from './ErrorAlert';
+import { genericErrorAdapter } from './genericErrorAdapter';
+import { ErrorAdapter } from './typesErrorAdapter';
 
 export interface PageFormProps<T extends object> {
   children?: ReactNode;
@@ -92,7 +91,7 @@ export function PageForm<T extends object>(props: PageFormProps<T>) {
     );
   }
 
-  let Component = (
+  const Component = (
     <FormProvider {...form}>
       <Form
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
@@ -168,9 +167,9 @@ export function PageForm<T extends object>(props: PageFormProps<T>) {
     </FormProvider>
   );
 
-  if (!props.disableBody) {
-    Component = <PageBody>{Component}</PageBody>;
-  }
+  // if (!props.disableBody) {
+  //   Component = <PageBody>{Component}</PageBody>;
+  // }
 
   return Component;
 }

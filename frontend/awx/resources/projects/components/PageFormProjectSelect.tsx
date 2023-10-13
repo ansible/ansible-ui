@@ -25,7 +25,7 @@ export function PageFormProjectSelect<
   return (
     <PageFormAsyncSelect<TFieldValues, TFieldName>
       name={props.name}
-      id="project-select"
+      id="project"
       label={t('Project')}
       query={query}
       valueToString={(value) => {

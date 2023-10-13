@@ -19,7 +19,7 @@ export function PageBody(props: {
           height: '100%',
           maxHeight: '100%',
           overflow: 'hidden',
-          backgroundColor: 'var(--pf-c-page__main-section--BackgroundColor)',
+          // backgroundColor: 'var(--pf-v5-c-page__main-section--BackgroundColor)',
           ...props.style,
         }}
       >
@@ -31,9 +31,9 @@ export function PageBody(props: {
             maxHeight: '100%',
             margin: usePadding ? 24 : 0,
             overflow: 'hidden',
-            border: usePadding ? 'thin solid var(--pf-global--BorderColor--100)' : undefined,
-            backgroundColor: 'var(--pf-global--BackgroundColor--100)',
+            // backgroundColor: 'var(--pf-v5-global--BackgroundColor--100)',
           }}
+          className={usePadding ? 'border' : undefined}
         >
           {props.children}
         </div>

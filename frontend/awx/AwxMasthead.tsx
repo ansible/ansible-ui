@@ -1,4 +1,5 @@
-import { DropdownItem, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
+import { ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
+import { DropdownItem } from '@patternfly/react-core/deprecated';
 import { ExternalLinkAltIcon, QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -77,7 +78,7 @@ export function AwxMasthead() {
         <ToolbarItem>
           <PageMastheadDropdown
             id="account-menu"
-            icon={<UserCircleIcon size="md" />}
+            icon={<UserCircleIcon />}
             label={activeUser?.username}
           >
             <DropdownItem

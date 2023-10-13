@@ -4,7 +4,6 @@ import {
   CardBody,
   CardFooter,
   CardHeader,
-  CardHeaderMain,
   CardTitle,
   Grid,
   GridItem,
@@ -41,9 +40,7 @@ export function FeaturedCollections() {
                     <Stack hasGutter style={{ width: '100%' }}>
                       <Split hasGutter>
                         <SplitItem isFilled>
-                          <CardHeaderMain>
-                            <RedhatIcon size="xl" />
-                          </CardHeaderMain>
+                          <RedhatIcon />
                         </SplitItem>
                         <SplitItem>
                           <Button variant="secondary">{t('Sync')}</Button>

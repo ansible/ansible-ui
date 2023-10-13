@@ -63,10 +63,10 @@ export function PageFormFileUpload(props: PageFormFileUploadProps) {
               filename={isLoading ? t('loading...') : filename}
               filenamePlaceholder={props.placeholder}
               onFileInputChange={handleFileInputChange}
-              onDataChange={handleTextOrDataChange}
+              onDataChange={(_event, value: string) => handleTextOrDataChange(value)}
               // onTextChange={handleTextOrDataChange}
-              onReadStarted={handleFileReadStarted}
-              onReadFinished={handleFileReadFinished}
+              onReadStarted={(_event, _fileHandle: File) => handleFileReadStarted(_fileHandle)}
+              onReadFinished={(_event, _fileHandle: File) => handleFileReadFinished(_fileHandle)}
               onClearClick={handleClear}
               // isLoading={isLoading}
               allowEditingUploadedText={false}
