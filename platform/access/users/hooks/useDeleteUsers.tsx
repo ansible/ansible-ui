@@ -22,7 +22,7 @@ export function useDeleteUsers(onComplete: (users: User[]) => void) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const cannotDeleteUser = (user: User) => {
     // eslint-disable-next-line no-constant-condition
-    return false //user?.summary_fields?.user_capabilities?.delete
+    return true //user?.summary_fields?.user_capabilities?.delete
       ? undefined
       : t('The user cannot be deleted due to insufficient permissions.');
   };
@@ -54,7 +54,7 @@ export function useDeleteUsers(onComplete: (users: User[]) => void) {
       confirmationColumns,
       actionColumns,
       onComplete,
-      actionFn: (user: User) => requestDelete(`/api/gateway/users/${user.id}/`),
+      actionFn: (user: User) => requestDelete(`/api/gateway/v1/users/${user.id}/`),
     });
   };
   return deleteUsers;
