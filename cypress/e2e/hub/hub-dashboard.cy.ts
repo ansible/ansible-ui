@@ -70,7 +70,9 @@ describe('hub dashboard', () => {
       .within(() => {
         cy.contains('a', collectionNames.eda.collection1).click();
       });
-    cy.url().should('contain', `collections/details/?name=${collectionNames.eda.collection1}`);
+    cy.url()
+      .should('include', '/collections/')
+      .should('include', `?name=${collectionNames.eda.collection1}`);
   });
   it('clicking on "Go to collections" opens collections UI filtered by EDA collections', () => {
     cy.visit(HubRoutes.dashboard);
@@ -104,7 +106,10 @@ describe('hub dashboard', () => {
       cy.contains('tr', 'Event-Driven Ansible content').find('input').uncheck();
       cy.clickModalButton('Apply');
       cy.get('div.pf-v5-c-empty-state__content').within(() => {
-        cy.verifyPageTitle('There is currently no content selected to be shown on the dashboard.');
+        cy.get(`[data-cy="empty-state-title"]`).should(
+          'contain',
+          'There is currently no content selected to be shown on the dashboard.'
+        );
         cy.contains('button', 'Manage view').should('be.visible');
         cy.clickButton('Manage view');
       });
