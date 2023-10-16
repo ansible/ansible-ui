@@ -18,7 +18,7 @@ export function PageNavigation(props: { navigation: PageNavigationItem[] }) {
 
   return (
     <>
-      <PageSidebar isSidebarOpen={navBar.isOpen} className="bg-lighten-2">
+      <PageSidebar isSidebarOpen={navBar.isOpen} className="bg-lighten">
         <PageSidebarBody>
           <Nav data-cy="page-navigation" className="side-nav">
             <NavList>
@@ -77,7 +77,7 @@ function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRout
         id={id}
         href={route}
         isActive={isActive}
-        className={isActive ? 'bg-lighten-2' : undefined}
+        className={isActive ? 'bg-lighten' : undefined}
         onClick={() => onClickNavItem(route)}
         data-cy={id}
       >
