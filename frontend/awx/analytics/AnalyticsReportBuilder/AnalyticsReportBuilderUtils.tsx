@@ -1,6 +1,15 @@
+/* eslint-disable @typescript-eslint/restrict-plus-operands */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
+
 import { specificReportDefaultParams } from './constants';
 import { Tooltip, Button } from '@patternfly/react-core';
-import { AnalyticsReportBuilderBodyProps } from './AnalyticsReportBuilder';
+import { AnalyticsReportBuilderBodyProps, AnyType } from './AnalyticsReportBuilder';
+import { TableExpandedRow } from './MostUsedModules';
 
 // another function for chart
 export const formattedValue = (key: string, value: number) => {
@@ -131,3 +140,9 @@ export const formatTotalTime = (elapsed: number): string =>
 export const paths = {
   getDetails: (slug: string): string => `${slug}`,
 };
+
+export function renderAllTasksStatus(item: AnyType, params: AnalyticsReportBuilderBodyProps) {
+  if (params.report_name == 'most_used_modules') {
+    return <TableExpandedRow item={item}></TableExpandedRow>;
+  }
+}

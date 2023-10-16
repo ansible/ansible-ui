@@ -78,6 +78,7 @@ import {
   getDateFormatByGranularity,
   formattedValue,
   getClickableText,
+  renderAllTasksStatus,
 } from './AnalyticsReportBuilderUtils';
 
 type KeyValue = { key: string; value: string };
@@ -411,6 +412,7 @@ function AnalyticsReportBuilderTable(props: AnalyticsTableProps) {
   return (
     <PageTable<AnyType>
       {...props.view}
+      expandedRow={(item) => renderAllTasksStatus(item, props)}
       perPageOptions={perPageOptions}
       errorStateTitle="some error title"
       emptyStateTitle="empty state title"
@@ -612,6 +614,7 @@ function buildTableColumns(params: AnalyticsReportColumnBuilderProps) {
       if (alreadyExist) {
         column = alreadyExist;
       }
+
       column.type = 'text';
       if (!column.header) {
         column.header = key;
@@ -619,6 +622,7 @@ function buildTableColumns(params: AnalyticsReportColumnBuilderProps) {
 
       column.value = (item) => {
         let value = item[key] as string;
+        // hyperlinks
         if (params.mainData?.report.layoutProps.clickableLinking) {
           value = getClickableText(item as Record<string, string | number>, key, params);
         }
