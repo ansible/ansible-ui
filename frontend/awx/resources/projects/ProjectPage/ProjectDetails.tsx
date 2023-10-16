@@ -16,27 +16,29 @@ import {
   PageDetail,
   PageDetails,
   TextCell,
+  useGetPageUrl,
 } from '../../../../../framework';
 import { StandardPopover } from '../../../../../framework/components/StandardPopover';
 import { RouteObj } from '../../../../common/Routes';
 import { StatusCell } from '../../../../common/Status';
 import { useGet } from '../../../../common/crud/useGet';
 import { ScmType } from '../../../../common/scm';
+import { AwxRoute } from '../../../AwxRoutes';
+import { AwxError } from '../../../common/AwxError';
 import { CredentialLabel } from '../../../common/CredentialLabel';
 import { ExecutionEnvironmentDetail } from '../../../common/ExecutionEnvironmentDetail';
 import { useAwxConfig } from '../../../common/useAwxConfig';
 import { useAwxWebSocketSubscription } from '../../../common/useAwxWebSocket';
 import getDocsBaseUrl from '../../../common/util/getDocsBaseUrl';
 import { Project } from '../../../interfaces/Project';
-import { AwxError } from '../../../common/AwxError';
 
 export function ProjectDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-
   const { error, data: project, refresh } = useGet<Project>(`/api/v2/projects/${params.id ?? ''}/`);
   const history = useNavigate();
   const config = useAwxConfig();
+  const getPageUrl = useGetPageUrl();
 
   const handleWebSocketMessage = useCallback(
     (message?: { group_name?: string; type?: string }) => {
@@ -211,10 +213,9 @@ export function ProjectDetails() {
         <PageDetail label={t('Organization')}>
           <TextCell
             text={project.summary_fields?.organization?.name}
-            to={RouteObj.OrganizationDetails.replace(
-              ':id',
-              (project.summary_fields?.organization?.id ?? '').toString()
-            )}
+            to={getPageUrl(AwxRoute.OrganizationDetails, {
+              params: { id: project.summary_fields?.organization?.id },
+            })}
           />
         </PageDetail>
       )}

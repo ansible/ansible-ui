@@ -7,7 +7,9 @@ import {
   DateTimeCell,
   ITableColumn,
   TextCell,
+  useGetPageUrl,
 } from '../../framework';
+import { AwxRoute } from '../awx/AwxRoutes';
 import { RouteObj } from './Routes';
 
 export function useIdColumn<T extends { name: string; id: number }>() {
@@ -173,6 +175,7 @@ export function useOrganizationNameColumn(options?: {
   disableSort?: boolean;
 }) {
   const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
   const column: ITableColumn<{
     summary_fields?: {
       organization?: {
@@ -186,17 +189,16 @@ export function useOrganizationNameColumn(options?: {
       cell: (item) => (
         <TextCell
           text={item.summary_fields?.organization?.name}
-          to={RouteObj.OrganizationDetails.replace(
-            ':id',
-            (item.summary_fields?.organization?.id ?? '').toString()
-          )}
+          to={getPageUrl(AwxRoute.OrganizationDetails, {
+            params: { id: item.summary_fields?.organization?.id },
+          })}
           disableLinks={options?.disableLinks}
         />
       ),
       value: (item) => item.summary_fields?.organization?.name,
       sort: options?.disableSort ? undefined : 'organization',
     }),
-    [options?.disableLinks, options?.disableSort, t]
+    [getPageUrl, options?.disableLinks, options?.disableSort, t]
   );
   return column;
 }

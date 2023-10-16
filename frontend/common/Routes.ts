@@ -61,10 +61,8 @@ export const RouteObj = {
   HostDetails: `${awxRoutePrefix}/resources/hosts/:id/details`,
 
   // Access
-  OrganizationDetails: `${awxRoutePrefix}/access/organizations/:id/details`,
   TeamPage: `${awxRoutePrefix}/access/teams/:id/*`,
   TeamDetails: `${awxRoutePrefix}/access/teams/:id/details`,
-  UserPage: `${awxRoutePrefix}/access/users/:id/*`,
   UserDetails: `${awxRoutePrefix}/access/users/:id/details`,
 
   // Administration

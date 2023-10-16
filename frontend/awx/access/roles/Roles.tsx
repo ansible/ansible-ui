@@ -1,7 +1,13 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, IToolbarFilter, TextCell, ToolbarFilterType } from '../../../../framework';
-import { RouteObj } from '../../../common/Routes';
+import {
+  ITableColumn,
+  IToolbarFilter,
+  TextCell,
+  ToolbarFilterType,
+  useGetPageUrl,
+} from '../../../../framework';
+import { AwxRoute } from '../../AwxRoutes';
 import { Role } from '../../interfaces/Role';
 import { IRoles, useRolesMetadata } from './useRoleMetadata';
 
@@ -25,6 +31,7 @@ export function useRolesFilters() {
 export function useRolesColumns() {
   const { t } = useTranslation();
   const rolesMetadata = useRolesMetadata();
+  const getPageUrl = useGetPageUrl();
 
   const tableColumns = useMemo<ITableColumn<Role>[]>(
     () => [
@@ -36,10 +43,9 @@ export function useRolesColumns() {
             to={
               role.summary_fields.resource_id &&
               role.summary_fields.resource_type === 'organization'
-                ? RouteObj.OrganizationDetails.replace(
-                    ':id',
-                    role.summary_fields.resource_id.toString()
-                  )
+                ? getPageUrl(AwxRoute.OrganizationDetails, {
+                    params: { id: role.summary_fields.resource_id },
+                  })
                 : undefined
             }
           />
