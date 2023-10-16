@@ -85,7 +85,7 @@ export function useRolesColumns() {
         list: 'description',
       },
     ],
-    [rolesMetadata, t]
+    [getPageUrl, rolesMetadata, t]
   );
   return tableColumns;
 }
