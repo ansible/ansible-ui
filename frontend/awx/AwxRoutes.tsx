@@ -104,6 +104,10 @@ export enum AwxRoute {
   CreateHost = 'awx-create-host',
   EditHost = 'awx-edit-host',
   HostPage = 'awx-host-page',
+  HostDetails = 'awx-host-details',
+  HostFacts = 'awx-host-facts',
+  HostGroups = 'awx-host-groups',
+  HostJobs = 'awx-host-jobs',
 
   // Access
 
@@ -167,6 +171,8 @@ export enum AwxRoute {
 
   Applications = 'awx-applications',
   ApplicationPage = 'awx-application-page',
+  ApplicationDetails = 'awx-application-details',
+  ApplicationTokens = 'awx-application-tokens',
 
   ExecutionEnvironments = 'awx-execution-environments',
 
