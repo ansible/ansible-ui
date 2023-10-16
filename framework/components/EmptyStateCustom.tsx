@@ -23,7 +23,7 @@ export function EmptyStateCustom(props: {
   return (
     <EmptyState variant={variant || EmptyStateVariant.full} style={style} isFullHeight>
       {icon && <EmptyStateIcon icon={icon} />}
-      <EmptyStateHeader titleText={<>{title}</>} headingLevel="h4" />
+      <EmptyStateHeader titleText={<>{title}</>} headingLevel="h4" data-cy="empty-state-title" />
       <EmptyStateBody data-cy={props.description}>{description}</EmptyStateBody>
       <EmptyStateFooter>
         {button && <EmptyStateActions>{button}</EmptyStateActions>}
