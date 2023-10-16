@@ -52,19 +52,6 @@ export function CredentialPage() {
         ]}
         params={{ id: params.id || 0 }}
       />
-      {/* <RoutedTabs isLoading={!credential} baseUrl={getPageUrl(AwxRoute.CredentialPage)}>
-        <PageBackTab
-          label={t('Back to Credentials')}
-          url={getPageUrl(AwxRoute.Credentials)}
-          persistentFilterKey="credentials"
-        />
-        <RoutedTab label={t('Details')} url={getPageUrl(AwxRoute.CredentialPage)}>
-          <CredentialDetails credential={credential!} />
-        </RoutedTab>
-        <RoutedTab label={t('Access')} url={RouteObj.CredentialAccess}>
-          <PageNotImplemented />
-        </RoutedTab>
-      </RoutedTabs> */}
     </PageLayout>
   );
 }
