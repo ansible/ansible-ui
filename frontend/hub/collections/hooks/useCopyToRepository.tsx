@@ -24,7 +24,7 @@ export function useCopyToRepository() {
   const context = useHubContext();
   const onClose = useCallback(() => setDialog(undefined), [setDialog]);
 
-  return (collection: CollectionVersionSearch) => {
+  return (collection: CollectionVersionSearch, operation: string) => {
     setDialog(
       <CopyToRepositoryModal collection={collection} context={context} onClose={onClose} />
     );
@@ -47,6 +47,9 @@ function CopyToRepositoryModal(props: {
   const [fixedRepositories, setFixedRepositories] = useState<Repository[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
+  const { collection_auto_sign, require_upload_signatures } = props.context.featureFlags;
+  const autoSign = collection_auto_sign && !require_upload_signatures;
+
   const copyToRepositories = () => {
     setIsLoading(true);
 
@@ -60,7 +63,8 @@ function CopyToRepositoryModal(props: {
         const pulpId = parsePulpIDFromURL(repository?.pulp_href);
 
         let signingService = '';
-        if (props.context.settings.GALAXY_AUTO_SIGN_COLLECTIONS == true) {
+
+        if (autoSign) {
           const signingServiceName = props.context.settings.GALAXY_COLLECTION_SIGNING_SERVICE;
 
           const url = pulpAPI`/signing-services/?name=${signingServiceName}`;

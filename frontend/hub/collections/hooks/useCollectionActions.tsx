@@ -112,7 +112,7 @@ export function useCollectionActions(
         icon: CopyIcon,
         label: t('Copy version to repositories'),
         onClick: (collection) => {
-          copyToRepository(collection);
+          copyToRepository(collection, 'copy');
         },
         isDisabled: context.featureFlags.display_repositories
           ? ''
