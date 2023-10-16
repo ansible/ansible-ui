@@ -23,6 +23,95 @@ import './rest-commands';
 
 //  AWX related custom command implementation
 
+const GLOBAL_PROJECT_NAME = 'Global Project for E2E tests';
+const GLOBAL_PROJECT_DESCRIPTION = 'Global Read Only Project for E2E tests';
+const GLOBAL_PROJECT_SCM_URL = 'https://github.com/ansible/test-playbooks.git';
+
+// cy.requestGet<AwxItemsResponse<JobEvent>>(
+//   `api/v2/jobs/${jobID}/job_events/?order_by=counter&page=1&page_size=50`
+// )
+//   .its('results')
+//   .then((results: { summary_fields: { job: { status: string } } }[]) => {
+//     if (results.length > 0) {
+//       return results[0].summary_fields.job.status;
+//     }
+//     return '';
+//   })
+//   .then((status: string) => {
+//     cy.log(status);
+//     switch (status) {
+//       case 'failed':
+//       case 'successful':
+//         cy.wrap(status);
+//         break;
+//       default:
+//         cy.wait(100).then(() => cy.waitForTemplateStatus(jobID));
+//         break;
+//     }
+//   });
+
+function checkIfGlobalProjectExists() {
+  return cy
+    .awxRequestGet<AwxItemsResponse<Project>>(`/api/v2/projects?name__startswith=Global&page=1`)
+    .its('results')
+    .then((results: Project[]) => {
+      if (results.length === 0) {
+        // cy.log('ZERO', results);
+        return false;
+      } else {
+        // cy.log('PROJECT IS HERE', results);
+        expect(results[0].name).to.equal(GLOBAL_PROJECT_NAME);
+        expect(results[0].description).to.equal(GLOBAL_PROJECT_DESCRIPTION);
+        expect(results[0].scm_url).to.equal(GLOBAL_PROJECT_SCM_URL);
+      }
+      return results[0];
+    });
+}
+
+// function checkIfGlobalProjectExists(checkData = true) {
+//   return cy
+//     .awxRequestGet<Project>(`/api/v2/projects/?name=${GLOBAL_PROJECT_NAME}`)
+//     .then((globalProject) => {
+//       cy.log('PROJECT', typeof globalProject);
+//       if (Object.keys(globalProject).length === 0) {
+//         cy.log('ZERO', globalProject);
+//         return false;
+//       }
+//       if (checkData) {
+//         cy.log('PROJECT IS HERE', globalProject);
+//         expect(globalProject.name).to.equal(GLOBAL_PROJECT_NAME);
+//         expect(globalProject.description).to.equal(GLOBAL_PROJECT_DESCRIPTION);
+//         expect(globalProject.scm_url).to.equal(GLOBAL_PROJECT_SCM_URL);
+//       }
+//       return globalProject;
+//     });
+// }
+
+Cypress.Commands.add('createGlobalProject', () => {
+  cy.log('🔎 Checking if global project exists before creating it');
+
+  checkIfGlobalProjectExists().then((globalProject: boolean | Project) => {
+    if (globalProject) {
+      cy.log(
+        '✅ Global project exists, access it via this.globalProject in the tests',
+        globalProject
+      );
+      return cy.wrap(globalProject).as('globalProject');
+    } else {
+      cy.log('🤷 Global project does not exist, creating it...');
+      cy.awxRequestPost<Partial<Project>, Project>('/api/v2/projects/', {
+        name: GLOBAL_PROJECT_NAME,
+        description: GLOBAL_PROJECT_DESCRIPTION,
+        scm_type: 'git',
+        scm_url: GLOBAL_PROJECT_SCM_URL,
+      }).then((globalProject) => {
+        cy.log('✅ Global project created, access it via this.globalProject in the tests');
+        return cy.wrap(globalProject).as('globalProject');
+      });
+    }
+  });
+});
+
 Cypress.Commands.add('getCheckboxByLabel', (label: string | RegExp) => {
   cy.contains('.pf-v5-c-check__label', label)
     .invoke('attr', 'for')

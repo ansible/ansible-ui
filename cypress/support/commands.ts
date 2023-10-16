@@ -54,7 +54,7 @@ declare global {
       requiredVariablesAreSet(requiredVariables: string[]): Chainable<void>;
 
       // --- NAVIGATION COMMANDS ---
-
+      createGlobalProject(): Chainable<Project>;
       /**Navigates to a page of the UI using using the links on the page sidebar. Intended as an alternative to cy.visit(). */
       navigateTo(component: 'awx' | 'eda' | 'hub', label: string): Chainable<void>;
 
