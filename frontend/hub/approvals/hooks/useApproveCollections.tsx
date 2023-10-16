@@ -55,7 +55,16 @@ export function useApproveCollections(
           approveCollection(collection, getRequest, collections.length > 1, t, copyToRepository),
       });
     },
-    [actionColumns, bulkAction, confirmationColumns, onComplete, t, getRequest, autoSign, copyToRepository]
+    [
+      actionColumns,
+      bulkAction,
+      confirmationColumns,
+      onComplete,
+      t,
+      getRequest,
+      autoSign,
+      copyToRepository,
+    ]
   );
 }
 

@@ -26,7 +26,12 @@ export function useCopyToRepository() {
 
   return (collection: CollectionVersionSearch, operation: string) => {
     setDialog(
-      <CopyToRepositoryModal collection={collection} context={context} onClose={onClose} />
+      <CopyToRepositoryModal
+        collection={collection}
+        context={context}
+        onClose={onClose}
+        operation={operation}
+      />
     );
   };
 }
@@ -35,6 +40,7 @@ function CopyToRepositoryModal(props: {
   collection: CollectionVersionSearch;
   context: HubContext;
   onClose: () => void;
+  operation: string;
 }) {
   const toolbarFilters = useRepositoryFilters();
   const tableColumns = useRepositoryColumns();
@@ -49,6 +55,8 @@ function CopyToRepositoryModal(props: {
 
   const { collection_auto_sign, require_upload_signatures } = props.context.featureFlags;
   const autoSign = collection_auto_sign && !require_upload_signatures;
+
+  const operation = props.operation;
 
   const copyToRepositories = () => {
     setIsLoading(true);
@@ -96,8 +104,13 @@ function CopyToRepositoryModal(props: {
           params.signing_service = signingService;
         }
 
+        let api_op = operation;
+        if (operation == 'approve') {
+          api_op = 'move';
+        }
+
         await hubAPIPost(
-          pulpAPI`/repositories/ansible/ansible/${pulpId || ''}/copy_collection_version/`,
+          pulpAPI`/repositories/ansible/ansible/${pulpId || ''}/${api_op}_collection_version/`,
           params
         );
 
@@ -134,12 +147,18 @@ function CopyToRepositoryModal(props: {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  let queryParams = undefined;
+  if (operation == 'approve') {
+    queryParams = { pulp_label_select: 'pipeline=approved' };
+  }
+
   const view = usePulpView({
     url: pulpAPI`/repositories/ansible/ansible/`,
     toolbarFilters,
     tableColumns,
     disableQueryString: true,
     keyFn: (item) => item.name,
+    queryParams,
   });
 
   return (
