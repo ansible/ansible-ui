@@ -1,8 +1,8 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 import useSWR from 'swr';
 import { ISelected, ITableColumn, IToolbarFilter, useSelected } from '../../framework';
-import { IView, useView } from '../../framework/useView';
-import { AwxItemsResponse } from '../awx/common/AwxItemsResponse';
+import { IView, useView } from '../../framework';
+import { EdaItemsResponse } from './common/EdaItemsResponse';
 import { getItemKey, swrOptions, useFetcher } from '../common/crud/Data';
 import { SWR_REFRESH_INTERVAL } from './constants';
 import { RequestError } from '../common/crud/RequestError';
@@ -95,7 +95,7 @@ export function useEdaView<T extends { id: number | string }>(options: {
 
   url += queryString;
   const fetcher = useFetcher();
-  const response = useSWR<AwxItemsResponse<T>>(url, fetcher, {
+  const response = useSWR<EdaItemsResponse<T>>(url, fetcher, {
     ...swrOptions,
     refreshInterval: SWR_REFRESH_INTERVAL,
   });
@@ -108,7 +108,7 @@ export function useEdaView<T extends { id: number | string }>(options: {
     });
   }, [mutate]);
 
-  useSWR<AwxItemsResponse<T>>(data?.next, fetcher, swrOptions);
+  useSWR<EdaItemsResponse<T>>(data?.next, fetcher, swrOptions);
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   let error: Error | undefined = response.error;
