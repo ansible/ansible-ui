@@ -327,10 +327,7 @@ export function PageFormDataEditor<
             icon={
               isExpandable ? (
                 <AngleRightIcon
-<<<<<<< HEAD
-=======
                   data-cy="expandable"
->>>>>>> a119a6a5 (add new command to type in text field)
                   style={{
                     transform: isCollapsed ? 'rotate(0deg)' : 'rotate(90deg)',
                     transition: 'transform',
