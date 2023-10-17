@@ -189,6 +189,7 @@ export function EditRemote() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const name = params.id;
+
   const { data, error, refresh } = useGet<PulpItemsResponse<RemoteFormProps>>(
     pulpAPI`/remotes/ansible/collection/?name=${name ?? ''}`
   );

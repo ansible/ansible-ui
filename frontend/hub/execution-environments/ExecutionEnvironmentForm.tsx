@@ -1,4 +1,4 @@
-import { Trans, useTranslation } from 'react-i18next';
+import { Trans, useTranslation, TFunction } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   PageFormCheckbox,
@@ -37,8 +37,10 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
   );
   const [error, setError] = useState<string>('');
   const params = useParams<{ id?: string }>();
+  const mode = props.mode;
 
   const notFound = t('Execution environment not found');
+  const isLoading = Object.keys(executionEnvironment).length === 0 && mode == 'edit';
 
   useEffect(() => {
     if (props.mode == 'add') {
@@ -77,22 +79,53 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
       />
 
       {error && <AwxError error={new Error(notFound)} />}
-      {!error && (
+      {!error && !isLoading && (
         <HubPageForm<ExecutionEnvironment>
           submitText={
             props.mode == 'edit' ? t('Edit Execution Environment') : t('Add Execution Environment')
           }
           onCancel={() => navigate(-1)}
           onSubmit={() => {}}
+          defaultValue={executionEnvironment}
         >
-          <EEInputs />
+          <EEInputs mode={props.mode} />
         </HubPageForm>
       )}
     </PageLayout>
   );
 }
 
-function EEInputs() {
+function EEInputs(props: { mode: 'add' | 'edit' }) {
   const { t } = useTranslation();
-  return <></>;
+  const mode = props.mode;
+  return (
+    <>
+      <PageFormTextInput<ExecutionEnvironment>
+        name="name"
+        label={t('Remote name')}
+        placeholder={t('Enter a remote name')}
+        isRequired
+        isDisabled={mode == 'edit'}
+        validate={(name: string) => validateName(name, t)}
+      />
+
+      <PageFormTextInput<ExecutionEnvironment>
+        name="pulp.repository.remote.upstream_name"
+        label={t('Upstream name')}
+        placeholder={t('Enter a upstream name')}
+        isRequired
+      />
+    </>
+  );
+}
+
+function validateName(name: string, t: TFunction<'translation', undefined>) {
+  const regex = /^([0-9A-Za-z._-]+\/)?[0-9A-Za-z._-]+$/;
+  if (regex.test(name)) {
+    return undefined;
+  } else {
+    return t(
+      `Container names can only contain alphanumeric characters, ".", "_", "-" and a up to one "/".`
+    );
+  }
 }
