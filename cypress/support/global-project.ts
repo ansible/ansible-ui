@@ -46,7 +46,7 @@ export function createGlobalProject() {
       }
       return results[0];
     })
-    .then((globalProject: Project) => {
+    .then((globalProject) => {
       if (globalProject) {
         cy.log(
           '✅ Global project exists, access it via this.globalProject in the tests',
