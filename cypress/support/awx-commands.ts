@@ -541,6 +541,19 @@ Cypress.Commands.add('createAwxInventory', (inventory?: Partial<Omit<Inventory, 
     });
   }
 });
+Cypress.Commands.add(
+  'createAwxInventorySource',
+  (inventory: Partial<Pick<Inventory, 'id'>>, project: Partial<Pick<Project, 'id'>>) => {
+    cy.requestPost('/api/v2/inventory_sources/', {
+      name: 'E2E Inventory Source ' + randomString(4),
+      descriptiom: 'This is a description',
+      source: 'scm',
+      source_project: project.id,
+      source_path: '',
+      inventory: inventory.id,
+    });
+  }
+);
 
 Cypress.Commands.add(
   'deleteAwxInventory',
