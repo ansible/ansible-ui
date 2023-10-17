@@ -2,10 +2,17 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { DateTimeCell, PageDetail, PageDetails, TextCell } from '../../../../../framework';
+import {
+  DateTimeCell,
+  PageDetail,
+  PageDetails,
+  TextCell,
+  useGetPageUrl,
+} from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { RouteObj } from '../../../../common/Routes';
 import { useGetItem } from '../../../../common/crud/useGet';
+import { AwxRoute } from '../../../AwxRoutes';
 import { AwxError } from '../../../common/AwxError';
 import { useAwxGetAllPages } from '../../../common/useAwxGetAllPages';
 import { Credential } from '../../../interfaces/Credential';
@@ -31,7 +38,8 @@ export function CredentialDetails() {
 export function CredentialDetailsInner(props: { credential: Credential }) {
   const { t } = useTranslation();
   const { credential } = props;
-  const history = useNavigate();
+  const navigate = useNavigate();
+  const getPageUrl = useGetPageUrl();
 
   const { summary_fields, inputs: credentialInputs } = credential;
 
@@ -94,10 +102,9 @@ export function CredentialDetailsInner(props: { credential: Credential }) {
         {credential.summary_fields.organization && (
           <TextCell
             text={credential.summary_fields?.organization?.name}
-            to={RouteObj.OrganizationDetails.replace(
-              ':id',
-              (credential.summary_fields?.organization?.id ?? '').toString()
-            )}
+            to={getPageUrl(AwxRoute.OrganizationPage, {
+              params: { id: credential.summary_fields?.organization?.id },
+            })}
           />
         )}
       </PageDetail>
@@ -120,7 +127,7 @@ export function CredentialDetailsInner(props: { credential: Credential }) {
           value={credential.created}
           author={credential.summary_fields?.created_by?.username}
           onClick={() =>
-            history(
+            navigate(
               RouteObj.UserDetails.replace(
                 ':id',
                 (credential.summary_fields?.created_by?.id ?? 0).toString()
@@ -135,7 +142,7 @@ export function CredentialDetailsInner(props: { credential: Credential }) {
           value={credential.modified}
           author={credential.summary_fields?.modified_by?.username}
           onClick={() =>
-            history(
+            navigate(
               RouteObj.UserDetails.replace(
                 ':id',
                 (credential.summary_fields?.modified_by?.id ?? 0).toString()

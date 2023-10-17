@@ -1,13 +1,14 @@
-import { Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import { Label, LabelGroup } from '@patternfly/react-core';
-import { RouteObj } from '../../../../../common/Routes';
-import { PageDetail, PageDetails } from '../../../../../../framework';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
+import { PageDetail, PageDetails, useGetPageUrl } from '../../../../../../framework';
 import { PageDetailCodeEditor } from '../../../../../../framework/PageDetails/PageDetailCodeEditor';
-import { CredentialLabel } from '../../../../common/CredentialLabel';
-import { useGet } from '../../../../../common/crud/useGet';
-import { useVerbosityString } from '../../../../common/useVerbosityString';
 import { usePageWizard } from '../../../../../../framework/PageWizard/PageWizardProvider';
+import { RouteObj } from '../../../../../common/Routes';
+import { useGet } from '../../../../../common/crud/useGet';
+import { AwxRoute } from '../../../../AwxRoutes';
+import { CredentialLabel } from '../../../../common/CredentialLabel';
+import { useVerbosityString } from '../../../../common/useVerbosityString';
 import type { Credential } from '../../../../interfaces/Credential';
 import type { JobTemplate } from '../../../../interfaces/JobTemplate';
 import type { TemplateLaunch } from '../TemplateLaunchWizard';
@@ -16,6 +17,7 @@ export default function TemplateLaunchReviewStep(props: { template: JobTemplate 
   const { template } = props;
   const { t } = useTranslation();
   const { wizardData } = usePageWizard();
+  const getPageUrl = useGetPageUrl();
 
   const {
     inventory,
@@ -50,20 +52,18 @@ export default function TemplateLaunchReviewStep(props: { template: JobTemplate 
       <PageDetail label={t('Job type')}>{job_type}</PageDetail>
       <PageDetail label={t('Organization')} isEmpty={!template.summary_fields.organization}>
         <Link
-          to={RouteObj.OrganizationDetails.replace(
-            ':id',
-            template.summary_fields?.organization?.id?.toString() ?? ''
-          )}
+          to={getPageUrl(AwxRoute.OrganizationPage, {
+            params: { id: template.summary_fields?.organization?.id },
+          })}
         >
           {template.summary_fields?.organization?.name}
         </Link>
       </PageDetail>
       <PageDetail label={t`Inventory`} isEmpty={!inventory?.id}>
         <Link
-          to={RouteObj.InventoryDetails.replace(
-            ':inventory_type',
-            inventoryUrlPaths[inventory?.kind]
-          ).replace(':id', inventory?.id?.toString() ?? '')}
+          to={getPageUrl(AwxRoute.InventoryPage, {
+            params: { id: inventory?.id, inventory_type: inventoryUrlPaths[inventory?.kind] },
+          })}
         >
           {inventory?.name}
         </Link>
@@ -71,10 +71,9 @@ export default function TemplateLaunchReviewStep(props: { template: JobTemplate 
       {template.type === 'job_template' && (
         <PageDetail label={t`Project`} isEmpty={!template.summary_fields.project}>
           <Link
-            to={RouteObj.ProjectDetails.replace(
-              ':id',
-              template.summary_fields?.project?.id.toString() ?? ''
-            )}
+            to={getPageUrl(AwxRoute.ProjectPage, {
+              params: { id: template.summary_fields?.project?.id },
+            })}
           >
             {template.summary_fields.project?.name}
           </Link>

@@ -8,15 +8,14 @@ import {
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
-import { LoadingPage, PageDetail, PageDetails } from '../../../../../framework';
+import { LoadingPage, PageDetail, PageDetails, useGetPageUrl } from '../../../../../framework';
 import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
-import { RouteObj } from '../../../../common/Routes';
-
+import { useGetItem } from '../../../../common/crud/useGet';
+import { AwxRoute } from '../../../AwxRoutes';
+import { AwxError } from '../../../common/AwxError';
 import { CredentialLabel } from '../../../common/CredentialLabel';
 import { UserDateDetail } from '../../../common/UserDateDetail';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
-import { useGetItem } from '../../../../common/crud/useGet';
-import { AwxError } from '../../../common/AwxError';
 
 export function WorkflowJobTemplateDetails() {
   const { t } = useTranslation();
@@ -26,6 +25,7 @@ export function WorkflowJobTemplateDetails() {
     error,
     refresh,
   } = useGetItem<WorkflowJobTemplate>('/api/v2/workflow_job_templates/', params.id);
+  const getPageUrl = useGetPageUrl();
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!template) return <LoadingPage breadcrumbs tabs />;
 
@@ -45,10 +45,9 @@ export function WorkflowJobTemplateDetails() {
       <PageDetail label={t('Description')}>{template.description}</PageDetail>
       <PageDetail label={t('Organization')} isEmpty={!summaryFields.organization}>
         <Link
-          to={RouteObj.OrganizationDetails.replace(
-            ':id',
-            summaryFields.organization?.id.toString() ?? ''
-          )}
+          to={getPageUrl(AwxRoute.OrganizationPage, {
+            params: { id: summaryFields.organization?.id },
+          })}
         >
           {summaryFields.organization?.name}
         </Link>
@@ -56,10 +55,12 @@ export function WorkflowJobTemplateDetails() {
       <PageDetail label={t('Inventory')} isEmpty={!summaryFields.inventory}>
         {summaryFields.inventory ? (
           <Link
-            to={RouteObj.InventoryDetails.replace(
-              ':inventory_type',
-              inventoryUrlPaths[summaryFields.inventory.kind]
-            ).replace(':id', summaryFields.inventory?.id.toString() ?? '')}
+            to={getPageUrl(AwxRoute.InventoryPage, {
+              params: {
+                id: summaryFields.inventory?.id,
+                inventory_type: inventoryUrlPaths[summaryFields.inventory.kind],
+              },
+            })}
           >
             {summaryFields.inventory?.name}
           </Link>

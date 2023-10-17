@@ -9,9 +9,16 @@ import {
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { DateTimeCell, PageDetail, PageDetails, TextCell } from '../../../../../framework';
+import {
+  DateTimeCell,
+  PageDetail,
+  PageDetails,
+  TextCell,
+  useGetPageUrl,
+} from '../../../../../framework';
 import { RouteObj } from '../../../../common/Routes';
 import { useGet } from '../../../../common/crud/useGet';
+import { AwxRoute } from '../../../AwxRoutes';
 import { useVerbosityString } from '../../../common/useVerbosityString';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { Inventory } from '../../../interfaces/Inventory';
@@ -38,10 +45,11 @@ export function InventoryDetails() {
 export function InventoryDetailsInner(props: { inventory: Inventory }) {
   const { t } = useTranslation();
   const { inventory } = props;
-  const history = useNavigate();
+  const navigate = useNavigate();
   const params = useParams<{ id: string }>();
   const instanceGroups = useInstanceGroups(params.id || '0');
   const verbosityString = useVerbosityString(inventory.verbosity);
+  const getPageUrl = useGetPageUrl();
 
   const { data: inputInventories, error: inputInventoriesError } = useGet<{ results: Inventory[] }>(
     inventory.kind === 'constructed'
@@ -69,10 +77,9 @@ export function InventoryDetailsInner(props: { inventory: Inventory }) {
       <PageDetail label={t('Organization')}>
         <TextCell
           text={inventory.summary_fields?.organization?.name}
-          to={RouteObj.OrganizationDetails.replace(
-            ':id',
-            (inventory.summary_fields?.organization?.id ?? '').toString()
-          )}
+          to={getPageUrl(AwxRoute.OrganizationPage, {
+            params: { id: inventory.summary_fields?.organization?.id },
+          })}
         />
       </PageDetail>
       <PageDetail label={t('Smart host filter')} isEmpty={inventory.kind !== 'smart'}>
@@ -152,7 +159,7 @@ export function InventoryDetailsInner(props: { inventory: Inventory }) {
           value={inventory.created}
           author={inventory.summary_fields?.created_by?.username}
           onClick={() =>
-            history(
+            navigate(
               RouteObj.UserDetails.replace(
                 ':id',
                 (inventory.summary_fields?.created_by?.id ?? 0).toString()
@@ -167,7 +174,7 @@ export function InventoryDetailsInner(props: { inventory: Inventory }) {
           value={inventory.modified}
           author={inventory.summary_fields?.modified_by?.username}
           onClick={() =>
-            history(
+            navigate(
               RouteObj.UserDetails.replace(
                 ':id',
                 (inventory.summary_fields?.modified_by?.id ?? 0).toString()

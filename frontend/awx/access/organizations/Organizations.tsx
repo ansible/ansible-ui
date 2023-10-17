@@ -8,7 +8,6 @@ import {
 } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import {
   IPageAction,
   ITableColumn,
@@ -22,7 +21,6 @@ import {
   usePageNavigate,
 } from '../../../../framework';
 import { usePersistentFilters } from '../../../common/PersistentFilters';
-import { RouteObj } from '../../../common/Routes';
 import {
   useCreatedColumn,
   useDescriptionColumn,
@@ -215,12 +213,12 @@ export function useOrganizationsColumns(options?: {
   disableLinks?: boolean;
 }) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const idColumn = useIdColumn();
   const nameClick = useCallback(
     (organization: Organization) =>
-      navigate(RouteObj.OrganizationDetails.replace(':id', organization.id.toString())),
-    [navigate]
+      pageNavigate(AwxRoute.OrganizationDetails, { params: { id: organization.id } }),
+    [pageNavigate]
   );
   const descriptionColumn = useDescriptionColumn();
   const nameColumn = useNameColumn({
