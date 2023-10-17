@@ -32,6 +32,7 @@ import { AddRolesToUser } from './access/users/components/AddRolesToUser';
 import { ApplicationPage } from './administration/applications/ApplicationPage/ApplicationPage';
 import { Applications } from './administration/applications/Applications';
 import { CredentialTypePage } from './administration/credential-types/CredentialTypePage/CredentialTypePage';
+import { CredentialTypeCredentials } from './administration/credential-types/CredentialTypePage/CredentialTypeCredentials';
 import { CredentialTypes } from './administration/credential-types/CredentialTypes';
 import { ExecutionEnvironments } from './administration/execution-environments/ExecutionEnvironments';
 import { InstanceGroups } from './administration/instance-groups/InstanceGroups';
@@ -888,7 +889,7 @@ export function useAwxNavigation() {
                       {
                         id: AwxRoute.CredentialTypeCredentials,
                         path: 'credentials',
-                        element: <PageNotImplemented />,
+                        element: <CredentialTypeCredentials />,
                       },
                       {
                         path: '',

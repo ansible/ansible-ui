@@ -39,7 +39,10 @@ export function CredentialTypePage() {
           page: AwxRoute.CredentialTypes,
           persistentFilterKey: 'credential-types',
         }}
-        tabs={[{ label: t('Details'), page: AwxRoute.CredentialTypeDetails }]}
+        tabs={[
+          { label: t('Details'), page: AwxRoute.CredentialTypeDetails },
+          { label: t('Credentials'), page: AwxRoute.CredentialTypeCredentials },
+        ]}
         params={{ id: credentialType.id }}
       />
     </PageLayout>
