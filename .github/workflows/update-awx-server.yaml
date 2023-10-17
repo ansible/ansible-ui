@@ -1,0 +1,17 @@
+name: update-awx-server
+
+on:
+  workflow_dispatch:
+    inputs:
+      AWX_SERVER:
+        type: string
+        required: true
+        description: 'AWX Server to update'
+
+jobs:
+  awx-e2e:
+    uses: ansible/ansible-ui/.github/workflows/awx-e2e.yml@main
+    with:
+      AWX_SERVER: ${{ inputs.AWX_SERVER }}
+
+  
