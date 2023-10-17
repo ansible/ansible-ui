@@ -1,4 +1,4 @@
-import { Alert, PageSection } from '@patternfly/react-core';
+import { PageSection } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import {
