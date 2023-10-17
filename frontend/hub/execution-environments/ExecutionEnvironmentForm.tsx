@@ -8,6 +8,7 @@ import {
   PageHeader,
   PageLayout,
   useGetPageUrl,
+  PageFormTextArea,
 } from '../../../framework';
 import { PageFormFileUpload } from '../../../framework/PageForm/Inputs/PageFormFileUpload';
 import { PageFormGroup } from '../../../framework/PageForm/Inputs/PageFormGroup';
@@ -32,8 +33,8 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
   const getPageUrl = useGetPageUrl();
   const getRequest = useGetRequest<ExecutionEnvironment>();
 
-  const [executionEnvironment, setExecutionEnvironment] = useState<ExecutionEnvironment>(
-    {} as ExecutionEnvironment
+  const [executionEnvironment, setExecutionEnvironment] = useState<ExecutionEnvironmentFormProps>(
+    {} as ExecutionEnvironmentFormProps
   );
   const [error, setError] = useState<string>('');
   const params = useParams<{ id?: string }>();
@@ -57,7 +58,13 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
         if (!res) {
           throw new Error(notFound);
         }
-        setExecutionEnvironment(res);
+
+        const ee = {
+          name: res.name,
+          upstream_name: res.pulp?.repository?.remote?.upstream_name,
+          description: res.description,
+        } as ExecutionEnvironmentFormProps;
+        setExecutionEnvironment(ee);
       } catch (error) {
         if (error) {
           setError(error.toString());
@@ -80,7 +87,7 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
 
       {error && <AwxError error={new Error(notFound)} />}
       {!error && !isLoading && (
-        <HubPageForm<ExecutionEnvironment>
+        <HubPageForm<ExecutionEnvironmentFormProps>
           submitText={
             props.mode == 'edit' ? t('Edit Execution Environment') : t('Add Execution Environment')
           }
@@ -100,7 +107,7 @@ function EEInputs(props: { mode: 'add' | 'edit' }) {
   const mode = props.mode;
   return (
     <>
-      <PageFormTextInput<ExecutionEnvironment>
+      <PageFormTextInput<ExecutionEnvironmentFormProps>
         name="name"
         label={t('Remote name')}
         placeholder={t('Enter a remote name')}
@@ -109,11 +116,17 @@ function EEInputs(props: { mode: 'add' | 'edit' }) {
         validate={(name: string) => validateName(name, t)}
       />
 
-      <PageFormTextInput<ExecutionEnvironment>
-        name="pulp.repository.remote.upstream_name"
+      <PageFormTextInput<ExecutionEnvironmentFormProps>
+        name="upstream_name"
         label={t('Upstream name')}
         placeholder={t('Enter a upstream name')}
         isRequired
+      />
+
+      <PageFormTextArea<ExecutionEnvironmentFormProps>
+        name="description"
+        label={t('Description')}
+        placeholder={t('Enter a description')}
       />
     </>
   );
@@ -129,3 +142,9 @@ function validateName(name: string, t: TFunction<'translation', undefined>) {
     );
   }
 }
+
+type ExecutionEnvironmentFormProps = {
+  name: string;
+  upstream_name: string;
+  description: string;
+};
