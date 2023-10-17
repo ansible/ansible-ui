@@ -1,10 +1,19 @@
-name: AWX E2E
+name: awx-e2e
 
 on:
   workflow_call:
     inputs:
       AWX_SERVER:
         type: string
+        required: true
+    secrets:
+      AWX_PASSWORD:
+        required: true
+      CYPRESS_AUI_AWX_E2E_PROJECT_ID:
+        required: true
+      CYPRESS_AUI_AWX_E2E_RECORD_KEY:
+        required: true
+      GITHUB_TOKEN:
         required: true
 
 jobs:
@@ -87,7 +96,7 @@ jobs:
           config-file: cypress.awx.config.ts
         env:
           AWX_SERVER:  ${{ inputs.AWX_SERVER }} 
-          AWX_USERNAME: ${{ vars.AWX_USERNAME }}
+          AWX_USERNAME: e2e
           AWX_PASSWORD: ${{ secrets.AWX_PASSWORD }}
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_AWX_E2E_PROJECT_ID }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_AWX_E2E_RECORD_KEY }}
