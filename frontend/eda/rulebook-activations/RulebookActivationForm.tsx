@@ -233,5 +233,6 @@ export function RulebookActivationInputs() {
 
 type IEdaRulebookActivationInputs = EdaRulebookActivationCreate & {
   rulebook: EdaRulebook;
+  project_id: string;
   variables: string;
 };

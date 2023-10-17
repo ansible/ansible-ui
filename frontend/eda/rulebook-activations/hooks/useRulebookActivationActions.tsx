@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../framework';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
-import { Status0E7Enum } from '../../interfaces/generated/eda-api';
+import { Status906Enum } from '../../interfaces/generated/eda-api';
 import { IEdaView } from '../../useEventDrivenView';
 import {
   useDisableRulebookActivations,
@@ -34,9 +34,9 @@ export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivatio
         },
         isSwitchOn: (activation: EdaRulebookActivation) => activation.is_enabled ?? false,
         isHidden: (activation: EdaRulebookActivation) =>
-          activation?.status === Status0E7Enum.Deleting,
+          activation?.status === Status906Enum.Deleting,
         isDisabled: (activation: EdaRulebookActivation) =>
-          activation.status === Status0E7Enum.Stopping
+          activation.status === Status906Enum.Stopping
             ? t('Cannot change activation status while stopping')
             : undefined,
       },
@@ -46,7 +46,7 @@ export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivatio
         icon: RedoIcon,
         label: t('Restart rulebook activation'),
         isHidden: (activation: EdaRulebookActivation) =>
-          !activation.is_enabled || activation?.status === Status0E7Enum.Deleting,
+          !activation.is_enabled || activation?.status === Status906Enum.Deleting,
         onClick: (activation: EdaRulebookActivation) => restartActivations([activation]),
       },
       {
@@ -58,7 +58,7 @@ export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivatio
         icon: TrashIcon,
         label: t('Delete rulebook activation'),
         isHidden: (activation: EdaRulebookActivation) =>
-          activation?.status === Status0E7Enum.Deleting,
+          activation?.status === Status906Enum.Deleting,
         onClick: (rulebookActivation: EdaRulebookActivation) =>
           deleteRulebookActivations([rulebookActivation]),
         isDanger: true,
