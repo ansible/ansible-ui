@@ -876,13 +876,18 @@ export function useAwxNavigation() {
                 path: 'credential-types',
                 children: [
                   {
-                    id: AwxRoute.CredentialType,
+                    id: AwxRoute.CredentialTypePage,
                     path: ':id/',
                     element: <CredentialTypePage />,
                     children: [
                       {
                         id: AwxRoute.CredentialTypeDetails,
                         path: 'details',
+                        element: <PageNotImplemented />,
+                      },
+                      {
+                        id: AwxRoute.CredentialTypeCredentials,
+                        path: 'credentials',
                         element: <PageNotImplemented />,
                       },
                       {
