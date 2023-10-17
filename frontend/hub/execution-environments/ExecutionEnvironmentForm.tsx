@@ -19,13 +19,22 @@ import { useGet } from '../../common/crud/useGet';
 import { useGetRequest } from '../../common/crud/useGet';
 import { usePostRequest } from '../../common/crud/usePostRequest';
 import { HubRoute } from '../HubRoutes';
-import { appendTrailingSlash, hubAPIPut, parsePulpIDFromURL, hubAPI } from '../api/utils';
+import {
+  appendTrailingSlash,
+  hubAPIPut,
+  parsePulpIDFromURL,
+  hubAPI,
+  hubAPIPost,
+} from '../api/utils';
 import { PulpItemsResponse } from '../usePulpView';
 import { ExecutionEnvironment } from './ExecutionEnvironment';
 import { PageFormSection } from '../../../framework/PageForm/Utils/PageFormSection';
 import { HubPageForm } from '../HubPageForm';
 import { HubItemsResponse } from '../useHubView';
 import { useState, useEffect } from 'react';
+
+import { putHubRequest } from './../api/request';
+import { postHubRequest } from '../api/request';
 
 export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
   const { t } = useTranslation();
@@ -36,12 +45,38 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
   const [executionEnvironment, setExecutionEnvironment] = useState<ExecutionEnvironmentFormProps>(
     {} as ExecutionEnvironmentFormProps
   );
+
+  const [originalData, setOriginalData] = useState<ExecutionEnvironment>(
+    {} as ExecutionEnvironment
+  );
+
   const [error, setError] = useState<string>('');
   const params = useParams<{ id?: string }>();
   const mode = props.mode;
 
   const notFound = t('Execution environment not found');
   const isLoading = Object.keys(executionEnvironment).length === 0 && mode == 'edit';
+
+  const onSubmit: PageFormSubmitHandler<ExecutionEnvironmentFormProps> = async (
+    data: ExecutionEnvironmentFormProps
+  ) => {
+    // TODO - handle distribution
+    if (mode == 'add') {
+      await hubAPIPost<ExecutionEnvironmentFormProps>(
+        hubAPI`/_ui/v1/execution-environments/remotes/`,
+        data
+      );
+    } else {
+      await postHubRequest(
+        hubAPI`/_ui/v1/execution-environments/remotes/${
+          originalData.pulp?.repository?.remote?.id || ''
+        }`,
+        data
+      );
+    }
+
+    navigate(-1);
+  };
 
   useEffect(() => {
     if (props.mode == 'add') {
@@ -64,6 +99,7 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
           upstream_name: res.pulp?.repository?.remote?.upstream_name,
           description: res.description,
         } as ExecutionEnvironmentFormProps;
+        setOriginalData(res);
         setExecutionEnvironment(ee);
       } catch (error) {
         if (error) {
@@ -92,7 +128,9 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
             props.mode == 'edit' ? t('Edit Execution Environment') : t('Add Execution Environment')
           }
           onCancel={() => navigate(-1)}
-          onSubmit={() => {}}
+          onSubmit={(data) => {
+            onSubmit(data);
+          }}
           defaultValue={executionEnvironment}
         >
           <EEInputs mode={props.mode} />
