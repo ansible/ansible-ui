@@ -8,13 +8,13 @@ import {
   useState,
 } from 'react';
 import useReactWebSocket, { ReadyState } from 'react-use-websocket';
-import { JsonValue, WebSocketHook } from 'react-use-websocket/dist/lib/types';
+import { WebSocketHook } from 'react-use-websocket/dist/lib/types';
 import { getCookie } from '../../common/crud/cookie';
 
 interface Subscriptions {
   [group: string]: { [event: string]: number };
 }
-type IWebSocket = WebSocketHook<JsonValue | null, MessageEvent<unknown> | null> & {
+type IWebSocket = WebSocketHook<unknown, MessageEvent<unknown> | null> & {
   setSubscriptions: Dispatch<SetStateAction<Subscriptions>>;
 };
 

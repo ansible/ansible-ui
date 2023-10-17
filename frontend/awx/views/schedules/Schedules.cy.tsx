@@ -1,7 +1,8 @@
 /* eslint-disable i18next/no-literal-string */
-import * as mockSchedulesList from '../../../../cypress/fixtures/schedules.json';
 import { ToolbarFilterType } from '../../../../framework';
 import * as useOptions from '../../../common/crud/useOptions';
+import { AwxItemsResponse } from '../../common/AwxItemsResponse';
+import { Schedule } from '../../interfaces/Schedule';
 import { Schedules } from './Schedules';
 
 describe('schedules .cy.ts', () => {
@@ -72,68 +73,72 @@ describe('schedules .cy.ts', () => {
       cy.clickButton(/^Clear all filters$/);
     });
     it('Disabled schedule renders switch properly, with proper aria-label', () => {
-      mockSchedulesList.results[2].enabled = false;
-      cy.intercept('GET', '/api/v2/schedules/*', {
-        statusCode: 200,
-        body: mockSchedulesList,
-      }).as('scheduleList');
-      cy.mount(<Schedules />);
-      cy.contains('td', 'Job Template Schedule 1')
-        .parent()
-        .within(() => {
-          cy.get('input.pf-v5-c-switch__input').should(
-            'have.attr',
-            'aria-label',
-            'Click to enable schedule'
-          );
-        });
-    });
-    it('Create Schedule button is disabled if the user does not have permission to create schedules ', () => {
-      cy.stub(useOptions, 'useOptions').callsFake(() => ({
-        data: {
-          actions: {
-            GET: {
-              name: {
-                type: ToolbarFilterType.Text,
-                required: true,
-                label: 'Name',
-                max_length: 512,
-                help_text: 'Name of this schedule.',
-                filterable: true,
+      cy.fixture('schedules.json').then((mockSchedulesList: AwxItemsResponse<Schedule>) => {
+        mockSchedulesList.results[2].enabled = false;
+        cy.intercept('GET', '/api/v2/schedules/*', {
+          statusCode: 200,
+          body: mockSchedulesList,
+        }).as('scheduleList');
+        cy.mount(<Schedules />);
+        cy.contains('td', 'Job Template Schedule 1')
+          .parent()
+          .within(() => {
+            cy.get('input.pf-v5-c-switch__input').should(
+              'have.attr',
+              'aria-label',
+              'Click to enable schedule'
+            );
+          });
+      });
+      it('Create Schedule button is disabled if the user does not have permission to create schedules ', () => {
+        cy.stub(useOptions, 'useOptions').callsFake(() => ({
+          data: {
+            actions: {
+              GET: {
+                name: {
+                  type: ToolbarFilterType.Text,
+                  required: true,
+                  label: 'Name',
+                  max_length: 512,
+                  help_text: 'Name of this schedule.',
+                  filterable: true,
+                },
               },
             },
           },
-        },
-      }));
+        }));
 
-      cy.mount(<Schedules />);
-      cy.contains('a', /^Create schedule$/).should('have.attr', 'aria-disabled', 'true');
+        cy.mount(<Schedules />);
+        cy.contains('a', /^Create schedule$/).should('have.attr', 'aria-disabled', 'true');
+      });
     });
     it('Delete Schedule button is disabled if the user does not have permission(s)', () => {
-      mockSchedulesList.results[1].summary_fields.user_capabilities.edit = false;
-      mockSchedulesList.results[1].summary_fields.user_capabilities.delete = false;
-      mockSchedulesList.results[2].enabled = true;
+      cy.fixture('schedules.json').then((mockSchedulesList: AwxItemsResponse<Schedule>) => {
+        mockSchedulesList.results[1].summary_fields.user_capabilities.edit = false;
+        mockSchedulesList.results[1].summary_fields.user_capabilities.delete = false;
+        mockSchedulesList.results[2].enabled = true;
 
-      cy.intercept('GET', '/api/v2/schedules/*', {
-        statusCode: 200,
-        body: mockSchedulesList,
-      }).as('scheduleList');
-      cy.intercept('OPTIONS', '/api/v2/schedules/*', {
-        actions: {
-          GET: {},
-          POST: {},
-        },
-      });
-      cy.mount(<Schedules />);
-      cy.contains('td', 'Cleanup Expired OAuth 2 Tokens')
-        .parent()
-        .within(() => {
-          cy.get('input.pf-v5-c-switch__input').should('have.attr', 'disabled');
-          cy.get('.pf-v5-c-dropdown__toggle').click();
-          cy.get('.pf-v5-c-dropdown__menu-item')
-            .contains(/^Delete schedule$/)
-            .should('have.attr', 'aria-disabled', 'true');
+        cy.intercept('GET', '/api/v2/schedules/*', {
+          statusCode: 200,
+          body: mockSchedulesList,
+        }).as('scheduleList');
+        cy.intercept('OPTIONS', '/api/v2/schedules/*', {
+          actions: {
+            GET: {},
+            POST: {},
+          },
         });
+        cy.mount(<Schedules />);
+        cy.contains('td', 'Cleanup Expired OAuth 2 Tokens')
+          .parent()
+          .within(() => {
+            cy.get('input.pf-v5-c-switch__input').should('have.attr', 'disabled');
+            cy.get('.pf-v5-c-dropdown__toggle').click();
+            cy.get('.pf-v5-c-dropdown__menu-item')
+              .contains(/^Delete schedule$/)
+              .should('have.attr', 'aria-disabled', 'true');
+          });
+      });
     });
 
     it('Create Schedule button is enabled if the user has permission to create schedules ', () => {
