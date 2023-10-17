@@ -17,6 +17,7 @@ import { PulpItemsResponse } from '../../usePulpView';
 import { parsePulpIDFromURL } from '../../api/utils';
 import { useHubContext, HubContext } from './../../useHubContext';
 import { SigningServiceResponse } from '../../api-schemas/generated/SigningServiceResponse';
+import { AwxError } from '../../../awx/common/AwxError';
 
 export function useCopyToRepository() {
   const [_, setDialog] = usePageDialog();
@@ -24,7 +25,7 @@ export function useCopyToRepository() {
   const context = useHubContext();
   const onClose = useCallback(() => setDialog(undefined), [setDialog]);
 
-  return (collection: CollectionVersionSearch, operation: string) => {
+  return (collection: CollectionVersionSearch, operation: 'approve' | 'copy') => {
     setDialog(
       <CopyToRepositoryModal
         collection={collection}
@@ -40,7 +41,7 @@ function CopyToRepositoryModal(props: {
   collection: CollectionVersionSearch;
   context: HubContext;
   onClose: () => void;
-  operation: string;
+  operation: 'approve' | 'copy';
 }) {
   const toolbarFilters = useRepositoryFilters();
   const tableColumns = useRepositoryColumns();
@@ -48,79 +49,81 @@ function CopyToRepositoryModal(props: {
   const { collection } = props;
   const request = useGetRequest<HubItemsResponse<CollectionVersionSearch>>();
   const pulpRequest = useGetRequest<PulpItemsResponse<SigningServiceResponse>>();
-  const [selectedRepositories, setSelectedRepositories] = useState<Repository[]>([]);
 
+  const [selectedRepositories, setSelectedRepositories] = useState<Repository[]>([]);
   const [fixedRepositories, setFixedRepositories] = useState<Repository[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
 
   const { collection_auto_sign, require_upload_signatures } = props.context.featureFlags;
   const autoSign = collection_auto_sign && !require_upload_signatures;
 
   const operation = props.operation;
 
-  const copyToRepositories = () => {
-    setIsLoading(true);
+  const copyToRepositories = async () => {
+    try {
+      setIsLoading(true);
 
-    void (async () => {
-      try {
-        const { repository } = props.collection;
-        if (!repository) {
-          return;
-        }
-
-        const pulpId = parsePulpIDFromURL(repository?.pulp_href);
-
-        let signingService = '';
-
-        if (autoSign) {
-          const signingServiceName = props.context.settings.GALAXY_COLLECTION_SIGNING_SERVICE;
-
-          const url = pulpAPI`/signing-services/?name=${signingServiceName}`;
-          const signingServiceList = await pulpRequest(url);
-
-          signingService = signingServiceList?.results?.[0].pulp_href;
-        }
-
-        const repoHrefs: string[] = [];
-
-        for (const repo of selectedRepositories) {
-          if (!fixedRepositories.find((item) => item.name == repo.name)) {
-            repoHrefs.push(repo.pulp_href);
-          }
-        }
-
-        const params: {
-          collection_versions: string[];
-          destination_repositories: string[];
-          signing_service?: string;
-        } = {
-          collection_versions: collection.collection_version?.pulp_href
-            ? [collection.collection_version?.pulp_href]
-            : [],
-          destination_repositories: repoHrefs,
-        };
-
-        if (signingService) {
-          params.signing_service = signingService;
-        }
-
-        let api_op = operation;
-        if (operation == 'approve') {
-          api_op = 'move';
-        }
-
-        await hubAPIPost(
-          pulpAPI`/repositories/ansible/ansible/${pulpId || ''}/${api_op}_collection_version/`,
-          params
-        );
-
-        setIsLoading(false);
-        props.onClose();
-      } catch (error) {
-        // TODO
-        setIsLoading(false);
+      const { repository } = props.collection;
+      if (!repository) {
+        return;
       }
-    })();
+
+      const pulpId = parsePulpIDFromURL(repository?.pulp_href);
+
+      let signingService = '';
+
+      if (autoSign) {
+        const signingServiceName = props.context.settings.GALAXY_COLLECTION_SIGNING_SERVICE;
+
+        const url = pulpAPI`/signing-services/?name=${signingServiceName}`;
+        const signingServiceList = await pulpRequest(url);
+
+        signingService = signingServiceList?.results?.[0].pulp_href;
+      }
+
+      const repoHrefs: string[] = [];
+
+      for (const repo of selectedRepositories) {
+        if (!fixedRepositories.find((item) => item.name == repo.name)) {
+          repoHrefs.push(repo.pulp_href);
+        }
+      }
+
+      const params: {
+        collection_versions: string[];
+        destination_repositories: string[];
+        signing_service?: string;
+      } = {
+        collection_versions: collection.collection_version?.pulp_href
+          ? [collection.collection_version?.pulp_href]
+          : [],
+        destination_repositories: repoHrefs,
+      };
+
+      if (signingService) {
+        params.signing_service = signingService;
+      }
+
+      let api_op = operation as string;
+      if (operation == 'approve') {
+        api_op = 'move';
+      }
+
+      // TODO test errors
+      await hubAPIPost(
+        pulpAPI`/repositories/ansible/ansible/${pulpId || ''}/${api_op}_collection_version/`,
+        params
+      );
+
+      setIsLoading(false);
+      props.onClose();
+    } catch (error) {
+      setError(
+        operation == 'approve' ? t('Can not approve collection.') : t('Can not copy collection')
+      );
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -138,12 +141,8 @@ function CopyToRepositoryModal(props: {
     }
 
     void (async () => {
-      try {
-        await getSelected();
-      } catch (error) {
-        // TODO - error handling
-      }
-    })();
+      await getSelected();
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -177,7 +176,9 @@ function CopyToRepositoryModal(props: {
           variant="primary"
           id="select"
           onClick={() => {
-            copyToRepositories();
+            void (async () => {
+              await copyToRepositories();
+            })();
           }}
           isDisabled={selectedRepositories.length == 0}
           isLoading={isLoading}
@@ -240,6 +241,7 @@ function CopyToRepositoryModal(props: {
           setSelectedRepositories([]);
         }}
       />
+      {error && <AwxError error={{ name: t('Error'), message: error }}></AwxError>}
     </Modal>
   );
 }
