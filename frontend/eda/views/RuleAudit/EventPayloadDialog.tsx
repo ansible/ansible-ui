@@ -1,7 +1,6 @@
 import { Button, Modal, ModalVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { PageDetail, PageDetails, Scrollable, usePageDialog } from '../../../../framework';
-import { PageDetailsSection } from '../../common/PageDetailSection';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { EdaRuleAuditEvent } from '../../interfaces/EdaRuleAuditEvent';
 import { useEffect, useState } from 'react';
@@ -40,13 +39,13 @@ export function EventPayloadDialog(props: EventPayloadModalProps) {
           </PageDetail>
         </PageDetails>
         {props?.event?.payload && (
-          <PageDetailsSection>
+          <PageDetails numberOfColumns="single">
             <PageDetailCodeEditor
               label={t('Event log')}
               value={JSON.stringify(props?.event?.payload)}
               showCopyToClipboard={true}
             />
-          </PageDetailsSection>
+          </PageDetails>
         )}
       </Scrollable>
     </Modal>
