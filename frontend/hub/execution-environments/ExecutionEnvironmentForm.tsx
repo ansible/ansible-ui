@@ -31,10 +31,12 @@ import { ExecutionEnvironment } from './ExecutionEnvironment';
 import { PageFormSection } from '../../../framework/PageForm/Utils/PageFormSection';
 import { HubPageForm } from '../HubPageForm';
 import { HubItemsResponse } from '../useHubView';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 import { putHubRequest } from './../api/request';
 import { postHubRequest } from '../api/request';
+import { PageFormAsyncSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncSelect';
+import { string } from 'yaml/dist/schema/common/string';
 
 export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
   const { t } = useTranslation();
@@ -60,18 +62,27 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
   const onSubmit: PageFormSubmitHandler<ExecutionEnvironmentFormProps> = async (
     data: ExecutionEnvironmentFormProps
   ) => {
+    const payload = { ...data };
+
+    const registry = data.registry as Registry;
+    payload.registry = registry?.id;
+
+    if (mode == 'add') {
+      delete data.description;
+    }
+
     // TODO - handle distribution
     if (mode == 'add') {
       await hubAPIPost<ExecutionEnvironmentFormProps>(
         hubAPI`/_ui/v1/execution-environments/remotes/`,
-        data
+        payload
       );
     } else {
       await postHubRequest(
         hubAPI`/_ui/v1/execution-environments/remotes/${
           originalData.pulp?.repository?.remote?.id || ''
         }`,
-        data
+        payload
       );
     }
 
@@ -143,12 +154,25 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
 function EEInputs(props: { mode: 'add' | 'edit' }) {
   const { t } = useTranslation();
   const mode = props.mode;
+  const getRequest = useGetRequest<HubItemsResponse<Registry>>();
+
+  const query = useCallback(async () => {
+    const response = await getRequest(
+      hubAPI`/_ui/v1/execution-environments/registries?page_size=50`
+    );
+
+    return Promise.resolve({
+      total: response.meta.count,
+      values: response.data,
+    });
+  }, []);
+
   return (
     <>
       <PageFormTextInput<ExecutionEnvironmentFormProps>
         name="name"
-        label={t('Remote name')}
-        placeholder={t('Enter a remote name')}
+        label={t('Name')}
+        placeholder={t('Enter a execution environment name')}
         isRequired
         isDisabled={mode == 'edit'}
         validate={(name: string) => validateName(name, t)}
@@ -161,10 +185,22 @@ function EEInputs(props: { mode: 'add' | 'edit' }) {
         isRequired
       />
 
+      <PageFormAsyncSelect
+        name="registry"
+        label={t('Registry')}
+        placeholder={t('Select registry')}
+        query={query}
+        loadingPlaceholder={t('Loading registry...')}
+        loadingErrorText={t('Error loading registry')}
+        limit={100}
+        valueToString={(value) => (value as Registry)?.name ?? ''}
+      />
+
       <PageFormTextArea<ExecutionEnvironmentFormProps>
         name="description"
         label={t('Description')}
         placeholder={t('Enter a description')}
+        isDisabled={mode == 'add'}
       />
     </>
   );
@@ -184,5 +220,13 @@ function validateName(name: string, t: TFunction<'translation', undefined>) {
 type ExecutionEnvironmentFormProps = {
   name: string;
   upstream_name: string;
-  description: string;
+  description?: string;
+  registry: string | Registry;
 };
+
+type Registry = {
+  id: string;
+  name: string;
+};
+
+// TODO add Registry -
