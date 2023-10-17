@@ -18,7 +18,13 @@ export function PageDetails(props: {
       {alertPrompts &&
         alertPrompts.length > 0 &&
         alertPrompts.map((alertPrompt, i) => (
-          <Alert isInline title={alertPrompt} variant="warning" key={i}></Alert>
+          <Alert
+            isInline
+            title={alertPrompt}
+            variant="warning"
+            key={i}
+            data-cy={alertPrompt}
+          ></Alert>
         ))}
       <DescriptionList
         orientation={{
