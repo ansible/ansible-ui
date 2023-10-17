@@ -1,4 +1,4 @@
-import { PageSection } from '@patternfly/react-core';
+import { Alert, PageSection } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import {
@@ -16,7 +16,7 @@ import { useGetItem } from '../../../common/crud/useGet';
 import { EdaRoute } from '../../EdaRoutes';
 import { API_PREFIX } from '../../constants';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
-import { RestartPolicyEnum } from '../../interfaces/generated/eda-api';
+import { RestartPolicyEnum, Status906Enum } from '../../interfaces/generated/eda-api';
 import { EdaExtraVarsCell } from '../components/EdaExtraVarCell';
 
 export function RulebookActivationDetails() {
@@ -42,6 +42,14 @@ export function RulebookActivationDetails() {
   }
   return (
     <Scrollable>
+      {rulebookActivation.status === Status906Enum.Error && (
+        <Alert
+          variant="warning"
+          title={`${t('Rulebook Activation create error: ')}${
+            rulebookActivation?.status_message || ''
+          }`}
+        />
+      )}
       <PageDetails>
         <PageDetail label={t('Activation ID')}>{rulebookActivation?.id || ''}</PageDetail>
         <PageDetail label={t('Name')}>{rulebookActivation?.name || ''}</PageDetail>

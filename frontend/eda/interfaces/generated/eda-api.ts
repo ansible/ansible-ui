@@ -34,7 +34,6 @@ export interface ActivationCreate {
   description?: string;
   is_enabled?: boolean;
   decision_environment_id: number;
-  project_id?: number | null;
   rulebook_id: number;
   extra_var_id?: number | null;
   /**
@@ -59,8 +58,11 @@ export interface ActivationInstance {
    * * `deleting` - deleting
    * * `completed` - completed
    * * `unresponsive` - unresponsive
+   * * `error` - error
    */
-  status?: Status0E7Enum;
+  status?: Status906Enum;
+  git_hash?: string;
+  status_message?: string | null;
   activation_id: number;
   /** @format date-time */
   started_at: string;
@@ -96,8 +98,9 @@ export interface ActivationList {
    * * `deleting` - deleting
    * * `completed` - completed
    * * `unresponsive` - unresponsive
+   * * `error` - error
    */
-  status?: Status0E7Enum;
+  status?: Status906Enum;
   decision_environment_id: number | null;
   project_id: number | null;
   rulebook_id: number | null;
@@ -115,12 +118,14 @@ export interface ActivationList {
   restart_count?: number;
   /** Name of the referenced rulebook */
   rulebook_name: string;
+  current_job_id?: string | null;
   rules_count: number;
   rules_fired_count: number;
   /** @format date-time */
   created_at: string;
   /** @format date-time */
   modified_at: string;
+  status_message?: string | null;
 }
 
 /** Serializer for reading the Activation with related objects info. */
@@ -140,13 +145,12 @@ export interface ActivationRead {
    * * `deleting` - deleting
    * * `completed` - completed
    * * `unresponsive` - unresponsive
+   * * `error` - error
    */
-  status?: Status0E7Enum;
-  project?: ProjectRef | null;
-  /** Git hash of the project that rulebook is part of */
+  status?: Status906Enum;
   git_hash?: string;
-  /** Serializer for Rulebook reference. */
-  rulebook: RulebookRef;
+  project?: ProjectRef | null;
+  rulebook?: RulebookRef | null;
   extra_var?: ExtraVarRef | null;
   instances: ActivationInstance[];
   /**
@@ -162,6 +166,7 @@ export interface ActivationRead {
   restart_count?: number;
   /** Name of the referenced rulebook */
   rulebook_name: string;
+  current_job_id?: string | null;
   rules_count: number;
   rules_fired_count: number;
   /** @format date-time */
@@ -170,6 +175,7 @@ export interface ActivationRead {
   modified_at: string;
   /** @format date-time */
   restarted_at?: string | null;
+  status_message?: string | null;
 }
 
 export interface AuditAction {
@@ -1040,8 +1046,9 @@ export interface RulesetOut {
  * * `deleting` - deleting
  * * `completed` - completed
  * * `unresponsive` - unresponsive
+ * * `error` - error
  */
-export enum Status0E7Enum {
+export enum Status906Enum {
   Starting = 'starting',
   Running = 'running',
   Pending = 'pending',
@@ -1051,6 +1058,7 @@ export enum Status0E7Enum {
   Deleting = 'deleting',
   Completed = 'completed',
   Unresponsive = 'unresponsive',
+  Error = 'error',
 }
 
 export interface Task {
@@ -1478,6 +1486,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      */
     activationsList: (
       query?: {
+        /** Filter by Credential ID. */
+        credential_id?: number;
+        /** Filter by Decision Environment ID. */
+        decision_environment_id?: number;
         /** Filter by activation name. */
         name?: string;
         /** A page number within the paginated result set. */
@@ -1926,10 +1938,18 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request DELETE:/credentials/{id}/
      * @secure
      */
-    credentialsDestroy: (id: number, params: RequestParams = {}) =>
+    credentialsDestroy: (
+      id: number,
+      query?: {
+        /** Force deletion if there are dependent objects */
+        force?: boolean;
+      },
+      params: RequestParams = {}
+    ) =>
       this.request<void, any>({
         path: `/credentials/${id}/`,
         method: 'DELETE',
+        query: query,
         secure: true,
         ...params,
       }),
@@ -2030,10 +2050,18 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request DELETE:/decision-environments/{id}/
      * @secure
      */
-    decisionEnvironmentsDestroy: (id: number, params: RequestParams = {}) =>
-      this.request<void, any>({
+    decisionEnvironmentsDestroy: (
+      id: number,
+      query?: {
+        /** Force deletion if there are dependent objects */
+        force?: boolean;
+      },
+      params: RequestParams = {}
+    ) =>
+      this.request<void, void>({
         path: `/decision-environments/${id}/`,
         method: 'DELETE',
+        query: query,
         secure: true,
         ...params,
       }),
@@ -2235,6 +2263,8 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      */
     rolesList: (
       query?: {
+        /** Filter roles by name. */
+        name?: string;
         /** A page number within the paginated result set. */
         page?: number;
         /** Number of results to return per page. */
@@ -2527,10 +2557,13 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      */
     usersList: (
       query?: {
+        /** Filter by Username. */
+        name?: string;
         /** A page number within the paginated result set. */
         page?: number;
         /** Number of results to return per page. */
         page_size?: number;
+        username?: string;
       },
       params: RequestParams = {}
     ) =>
@@ -2607,7 +2640,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @secure
      */
     usersDestroy: (id: number, params: RequestParams = {}) =>
-      this.request<void, any>({
+      this.request<void, void>({
         path: `/users/${id}/`,
         method: 'DELETE',
         secure: true,

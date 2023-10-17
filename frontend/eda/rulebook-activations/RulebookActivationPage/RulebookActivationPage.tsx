@@ -18,7 +18,7 @@ import { useGetItem } from '../../../common/crud/useGet';
 import { EdaRoute } from '../../EdaRoutes';
 import { API_PREFIX } from '../../constants';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
-import { Status0E7Enum } from '../../interfaces/generated/eda-api';
+import { Status906Enum } from '../../interfaces/generated/eda-api';
 import {
   useDisableRulebookActivations,
   useEnableRulebookActivations,
@@ -75,7 +75,7 @@ export function RulebookActivationPage() {
         },
         isSwitchOn: (activation: EdaRulebookActivation) => activation.is_enabled ?? false,
         isDisabled: (activation: EdaRulebookActivation) =>
-          activation.status === Status0E7Enum.Stopping
+          activation.status === Status906Enum.Stopping
             ? t('Cannot change activation status while stopping')
             : undefined,
       },
