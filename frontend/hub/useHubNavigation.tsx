@@ -14,6 +14,7 @@ import { Collections } from './collections/Collections';
 import { UploadCollection } from './collections/UploadCollection';
 import { HubDashboard } from './dashboard/Dashboard';
 import { ExecutionEnvironments } from './execution-environments/ExecutionEnvironments';
+import { ExecutionEnvironmentForm } from './execution-environments/ExecutionEnvironmentForm';
 import { CreateHubNamespace, EditHubNamespace } from './namespaces/HubNamespaceForm';
 import { HubNamespaceDetails } from './namespaces/HubNamespacePage/HubNamespaceDetails';
 import { HubNamespacePage } from './namespaces/HubNamespacePage/HubNamespacePage';
@@ -116,6 +117,16 @@ export function useHubNavigation() {
                 label: t('Execution Environments'),
                 path: 'execution-environments',
                 children: [
+                  {
+                    id: HubRoute.CreateExecutionEnvironment,
+                    path: 'create',
+                    element: <ExecutionEnvironmentForm mode="add" />,
+                  },
+                  {
+                    id: HubRoute.EditExecutionEnvironment,
+                    path: ':id/edit',
+                    element: <ExecutionEnvironmentForm mode="edit" />,
+                  },
                   {
                     path: '',
                     element: <ExecutionEnvironments />,
