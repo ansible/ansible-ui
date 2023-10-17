@@ -19,6 +19,7 @@ jobs:
       CYPRESS_AUI_AWX_E2E_RECORD_KEY: ${{ secrets.CYPRESS_AUI_AWX_E2E_RECORD_KEY }}
 
   awx-update-server:
+    needs: awx-e2e
     runs-on: ubuntu-latest
     steps:
       - run: |
