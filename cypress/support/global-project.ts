@@ -40,7 +40,7 @@ function checkIfGlobalProjectExists() {
 export function createGlobalProject() {
   cy.log('🔎 Checking if global project exists before creating it');
 
-  checkIfGlobalProjectExists().then((globalProject) => {
+  checkIfGlobalProjectExists().then((globalProject: Project) => {
     if (globalProject) {
       cy.log(
         '✅ Global project exists, access it via this.globalProject in the tests',
