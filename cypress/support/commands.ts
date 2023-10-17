@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-namespace */
 /// <reference types="cypress" />
+import './e2e';
+import './global-project';
 import '@4tw/cypress-drag-drop';
 import '@cypress/code-coverage/support';
 import { SetOptional, SetRequired } from 'type-fest';
@@ -119,7 +121,7 @@ declare global {
        */
       openToolbarFilterTypeSelect(): Chainable<JQuery<HTMLElement>>;
 
-      searchAndDisplayResource(name: string): Chainable<void>;
+      searchAndDisplayResource(resourceName: string): Chainable<void>;
 
       filterBySingleSelection(
         filterType: RegExp | string,

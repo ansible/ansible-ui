@@ -10,7 +10,7 @@ const GLOBAL_PROJECT_SCM_URL = 'https://github.com/ansible/test-playbooks.git';
  * @param {Boolean} checkData if true, check if the global project was not modified by any tests
  * @returns {Promise<Object>} the global project
  */
-export function checkIfGlobalProjectExists() {
+function checkIfGlobalProjectExists() {
   return cy
     .awxRequestGet<AwxItemsResponse<Project>>(`/api/v2/projects?name__startswith=Global&page=1`)
     .its('results')
@@ -61,3 +61,7 @@ export function createGlobalProject() {
     }
   });
 }
+
+module.exports = {
+  createGlobalProject,
+};

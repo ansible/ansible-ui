@@ -1,17 +1,13 @@
 import { Project } from '../../../../frontend/awx/interfaces/Project';
-let Project: Project;
 
-describe('credentials', () => {
+describe('global project', function () {
   before(() => {
     cy.awxLogin();
   });
 
-  it('can create a global project', () => {
-    cy.get('@globalProject').then((globalProject) => {
-      cy.log('WOOHOO', globalProject);
-      cy.navigateTo('awx', 'projects');
-      cy.searchAndDisplayResource(globalProject.name);
-      cy.verifyPageTitle('Projects');
-    });
+  it('can create a global project', function () {
+    cy.navigateTo('awx', 'projects');
+    cy.searchAndDisplayResource(`${(this.globalProject as Project).name}`);
+    cy.verifyPageTitle('Projects');
   });
 });
