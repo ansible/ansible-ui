@@ -12,6 +12,7 @@ import {
   useDecisionEnvironmentColumns,
   useDecisionEnvironmentsColumns,
 } from './useDecisionEnvironmentColumns';
+import { InUseResources } from '../../../common/EdaResourcesComon';
 
 export function useDeleteDecisionEnvironments(
   onComplete: (decisionEnvironments: EdaDecisionEnvironment[]) => void
@@ -21,7 +22,17 @@ export function useDeleteDecisionEnvironments(
   const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
   const bulkAction = useBulkConfirmation<EdaDecisionEnvironment>();
   return useCallback(
-    (decisionEnvironments: EdaDecisionEnvironment[]) => {
+    async (decisionEnvironments: EdaDecisionEnvironment[]) => {
+      const inUseDes = await InUseResources(
+        decisionEnvironments,
+        `${API_PREFIX}/activations/?decision_environment_id=`
+      );
+      const inUseMessage =
+        inUseDes && inUseDes.length > 0
+          ? [t(`The following decision environments are in use: ${inUseDes.join()}`)]
+          : [];
+      const forceParameter = inUseMessage.length > 0 ? '?force=true' : '';
+
       bulkAction({
         title: t('Permanently delete decision environments', {
           count: decisionEnvironments.length,
@@ -39,8 +50,11 @@ export function useDeleteDecisionEnvironments(
         confirmationColumns,
         actionColumns,
         onComplete,
+        alertPrompts: inUseMessage,
         actionFn: (decisionEnvironment: EdaDecisionEnvironmentRead) =>
-          requestDelete(`${API_PREFIX}/decision-environments/${decisionEnvironment.id}/`),
+          requestDelete(
+            `${API_PREFIX}/decision-environments/${decisionEnvironment.id}/${forceParameter}`
+          ),
       });
     },
     [actionColumns, bulkAction, confirmationColumns, onComplete, t]
@@ -55,7 +69,17 @@ export function useDeleteDecisionEnvironment(
   const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
   const bulkAction = useBulkConfirmation<EdaDecisionEnvironmentRead>();
   return useCallback(
-    (decisionEnvironments: EdaDecisionEnvironmentRead[]) => {
+    async (decisionEnvironments: EdaDecisionEnvironmentRead[]) => {
+      const inUseDes = await InUseResources(
+        decisionEnvironments,
+        `${API_PREFIX}/activations/?decision_environment_id=`
+      );
+      const inUseMessage =
+        inUseDes && inUseDes.length > 0
+          ? [t(`The following decision environments are in use: ${inUseDes.join()}`)]
+          : [];
+      const forceParameter = inUseMessage.length > 0 ? '?force=true' : '';
+
       bulkAction({
         title: t('Permanently delete decision environments', {
           count: decisionEnvironments.length,
@@ -73,8 +97,11 @@ export function useDeleteDecisionEnvironment(
         confirmationColumns,
         actionColumns,
         onComplete,
+        alertPrompts: inUseMessage,
         actionFn: (decisionEnvironment: EdaDecisionEnvironmentRead) =>
-          requestDelete(`${API_PREFIX}/decision-environments/${decisionEnvironment.id}/`),
+          requestDelete(
+            `${API_PREFIX}/decision-environments/${decisionEnvironment.id}/${forceParameter}`
+          ),
       });
     },
     [actionColumns, bulkAction, confirmationColumns, onComplete, t]
