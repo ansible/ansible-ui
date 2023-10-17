@@ -1,0 +1,25 @@
+name: awx-update-server
+
+on:
+  workflow_dispatch:
+    inputs:
+      AWX_SERVER:
+        type: string
+        required: true
+        description: 'AWX Server to update'
+
+jobs:
+  awx-e2e:
+    uses: ansible/ansible-ui/.github/workflows/awx-e2e.yml@main
+    with:
+      AWX_SERVER: ${{ inputs.AWX_SERVER }}
+
+  # awx-update-server:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - run: |
+  #         curl -L -X PATCH -H "Accept: application/vnd.github+json" \
+  #         -H "Authorization: Bearer ${{ secrets.GH_TOKEN }} \
+  #         -H "X-GitHub-Api-Version: 2022-11-28" \
+  #         https://api.github.com/repos/ansible/ansible-ui/actions/variables/AWX_SERVER \
+  #         -d '{"name":"AWX_SERVER","value":"${{ inputs.AWX_SERVER }}"}'          
