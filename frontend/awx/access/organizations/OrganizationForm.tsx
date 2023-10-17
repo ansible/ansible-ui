@@ -7,9 +7,9 @@ import {
   PageHeader,
   PageLayout,
   useGetPageUrl,
+  usePageNavigate,
 } from '../../../../framework';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
-import { RouteObj } from '../../../common/Routes';
 import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { useInvalidateCacheOnUnmount } from '../../../common/useInvalidateCache';
@@ -29,6 +29,7 @@ interface OrganizationFields extends FieldValues {
 export function CreateOrganization() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   useInvalidateCacheOnUnmount();
 
   const postRequest = usePostRequest<{ id: number }, Organization>();
@@ -44,7 +45,7 @@ export function CreateOrganization() {
       );
     }
     await Promise.all(igRequests);
-    navigate(RouteObj.OrganizationDetails.replace(':id', organization.id.toString()));
+    pageNavigate(AwxRoute.OrganizationDetails, { params: { id: organization.id } });
   };
   const onCancel = () => navigate(-1);
   const getPageUrl = useGetPageUrl();
@@ -67,6 +68,7 @@ export function CreateOrganization() {
 export function EditOrganization() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
 
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
@@ -110,7 +112,7 @@ export function EditOrganization() {
       );
     }
     await Promise.all(igRequests);
-    navigate(RouteObj.OrganizationDetails.replace(':id', organization.id.toString()));
+    pageNavigate(AwxRoute.OrganizationDetails, { params: { id: organization.id } });
   };
   const onCancel = () => navigate(-1);
   const getPageUrl = useGetPageUrl();
