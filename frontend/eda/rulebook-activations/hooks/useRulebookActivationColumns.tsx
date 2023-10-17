@@ -10,7 +10,7 @@ import {
 import { StatusCell } from '../../../common/Status';
 import { EdaRoute } from '../../EdaRoutes';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
-import { Status0E7Enum } from '../../interfaces/generated/eda-api';
+import { Status906Enum } from '../../interfaces/generated/eda-api';
 import { Label } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
 
@@ -28,7 +28,7 @@ export function useRulebookActivationColumns() {
       {
         header: t('Name'),
         cell: (rulebookActivation) =>
-          rulebookActivation?.status !== Status0E7Enum.Deleting ? (
+          rulebookActivation?.status !== Status906Enum.Deleting ? (
             <TextCell
               text={rulebookActivation.name}
               to={getPageUrl(EdaRoute.RulebookActivationPage, {
@@ -53,7 +53,7 @@ export function useRulebookActivationColumns() {
       {
         header: t('Activation status'),
         cell: (activation) =>
-          activation?.status === Status0E7Enum.Deleting ? (
+          activation?.status === Status906Enum.Deleting ? (
             <Label color="red" icon={<InfoCircleIcon />}>
               {t('Pending delete')}
             </Label>
