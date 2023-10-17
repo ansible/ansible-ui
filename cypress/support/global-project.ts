@@ -52,7 +52,7 @@ export function createGlobalProject() {
         description: GLOBAL_PROJECT_DESCRIPTION,
         scm_type: 'git',
         scm_url: GLOBAL_PROJECT_SCM_URL,
-      }).then((globalProject) => {
+      }).then((globalProject: Project) => {
         cy.log('✅ Global project created, access it via this.globalProject in the tests');
         return cy.wrap(globalProject).as('globalProject');
       });
