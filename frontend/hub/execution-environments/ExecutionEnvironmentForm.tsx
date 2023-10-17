@@ -15,55 +15,54 @@ import { PageFormExpandableSection } from '../../../framework/PageForm/PageFormE
 import { LoadingPage } from '../../../framework/components/LoadingPage';
 import { AwxError } from '../../awx/common/AwxError';
 import { useGet } from '../../common/crud/useGet';
+import { useGetRequest } from '../../common/crud/useGet';
 import { usePostRequest } from '../../common/crud/usePostRequest';
 import { HubRoute } from '../HubRoutes';
-import { appendTrailingSlash, hubAPIPut, parsePulpIDFromURL, pulpAPI } from '../api/utils';
+import { appendTrailingSlash, hubAPIPut, parsePulpIDFromURL, hubAPI } from '../api/utils';
 import { PulpItemsResponse } from '../usePulpView';
 import { ExecutionEnvironment } from './ExecutionEnvironment';
 import { PageFormSection } from '../../../framework/PageForm/Utils/PageFormSection';
 import { HubPageForm } from '../HubPageForm';
+import { HubItemsResponse } from '../useHubView';
+import { useState, useEffect } from 'react';
 
 export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
-
   const getPageUrl = useGetPageUrl();
+  const getRequest = useGetRequest<ExecutionEnvironment>();
 
-  /*
-  const params = useParams<{ id?: string }>();
-  const name = params.id;
-  const { data, error, refresh } = useGet<PulpItemsResponse<RemoteFormProps>>(
-    pulpAPI`/remotes/ansible/collection/?name=${name ?? ''}`
+  const [executionEnvironment, setExecutionEnvironment] = useState<ExecutionEnvironment>(
+    {} as ExecutionEnvironment
   );
+  const [error, setError] = useState<string>('');
+  const params = useParams<{ id?: string }>();
 
+  const notFound = t('Execution environment not found');
 
-  if (error) return <AwxError error={error} handleRefresh={refresh} />;
-  if (!data) return <LoadingPage breadcrumbs tabs />;
-
-  const remote = data.results[0];
-*/
-  /*
-  const handleRefresh = () => {
-    // Navigate back when remote is not found
-    if (!error && !remote) {
-      navigate(-1);
+  useEffect(() => {
+    if (props.mode == 'add') {
+      return;
     }
-  };*/
 
-  /*
-  if (data && data.count === 0 && !error && !remote) {
-    return (
-      <PageLayout>
-        <PageHeader
-          breadcrumbs={[
-            { label: t('Remotes'), to: getPageUrl(HubRoute.Remotes) },
-            { label: t('Edit Remote') },
-          ]}
-        />
-        <AwxError error={new Error(t('Remote not found'))} handleRefresh={handleRefresh} />
-      </PageLayout>
-    );
-  }*/
+    void (async () => {
+      try {
+        const name = params.id;
+
+        const res = await getRequest(
+          hubAPI`/v3/plugin/execution-environments/repositories/${name ?? ''}/`
+        );
+        if (!res) {
+          throw new Error(notFound);
+        }
+        setExecutionEnvironment(res);
+      } catch (error) {
+        if (error) {
+          setError(error.toString());
+        }
+      }
+    })();
+  }, []);
 
   return (
     <PageLayout>
@@ -76,15 +75,19 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
           { label: t(' Execution Environment') },
         ]}
       />
-      <HubPageForm<ExecutionEnvironment>
-        submitText={
-          props.mode == 'edit' ? t('Edit Execution Environment') : t('Add Execution Environment')
-        }
-        onCancel={() => navigate(-1)}
-        onSubmit={() => {}}
-      >
-        <EEInputs />
-      </HubPageForm>
+
+      {error && <AwxError error={new Error(notFound)} />}
+      {!error && (
+        <HubPageForm<ExecutionEnvironment>
+          submitText={
+            props.mode == 'edit' ? t('Edit Execution Environment') : t('Add Execution Environment')
+          }
+          onCancel={() => navigate(-1)}
+          onSubmit={() => {}}
+        >
+          <EEInputs />
+        </HubPageForm>
+      )}
     </PageLayout>
   );
 }
