@@ -6,8 +6,6 @@ const GLOBAL_PROJECT_DESCRIPTION = 'Global Read Only Project for E2E tests';
 const GLOBAL_PROJECT_SCM_URL = 'https://github.com/ansible/test-playbooks.git';
 
 /**
- *
- * @param {Boolean} checkData if true, check if the global project was not modified by any tests
  * @returns {Promise<Object>} the global project
  */
 export function checkIfGlobalProjectExists() {
