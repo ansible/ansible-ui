@@ -19,22 +19,6 @@ export function createGlobalProject() {
     .its('results')
     .then((results: Project[]) => {
       if (results.length === 0) {
-        return null;
-      } else {
-        expect(results[0].name).to.equal(GLOBAL_PROJECT_NAME);
-        expect(results[0].description).to.equal(GLOBAL_PROJECT_DESCRIPTION);
-        expect(results[0].scm_url).to.equal(GLOBAL_PROJECT_SCM_URL);
-      }
-      return results[0];
-    })
-    .then((globalProject) => {
-      if (globalProject) {
-        cy.log(
-          '✅ Global project exists, access it via this.globalProject in the tests',
-          globalProject
-        );
-        return cy.wrap(globalProject).as('globalProject');
-      } else {
         cy.log('🤷 Global project does not exist, creating it...');
         cy.awxRequestPost<Partial<Project>, Project>('/api/v2/projects/', {
           name: GLOBAL_PROJECT_NAME,
@@ -45,6 +29,15 @@ export function createGlobalProject() {
           cy.log('✅ Global project created, access it via this.globalProject in the tests');
           return cy.wrap(globalProject).as('globalProject');
         });
+      } else {
+        expect(results[0].name).to.equal(GLOBAL_PROJECT_NAME);
+        expect(results[0].description).to.equal(GLOBAL_PROJECT_DESCRIPTION);
+        expect(results[0].scm_url).to.equal(GLOBAL_PROJECT_SCM_URL);
+        cy.log(
+          '✅ Global project exists, access it via this.globalProject in the tests',
+          results[0]
+        );
+        return cy.wrap(results[0]).as('globalProject');
       }
     });
 }
