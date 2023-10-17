@@ -180,6 +180,7 @@ export function useAwxNavigation() {
             path: 'resources',
             children: [
               {
+                id: AwxRoute.Templates,
                 label: t('Templates'),
                 path: 'templates',
                 children: [
@@ -398,7 +399,6 @@ export function useAwxNavigation() {
                     ],
                   },
                   {
-                    id: AwxRoute.Templates,
                     path: '',
                     element: <Templates />,
                   },
