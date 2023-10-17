@@ -19,6 +19,7 @@ export function PageDetails(props: {
         alertPrompts.length > 0 &&
         alertPrompts.map((alertPrompt, i) => (
           <Alert
+            style={{ margin: 12 }}
             isInline
             title={alertPrompt}
             variant="warning"
