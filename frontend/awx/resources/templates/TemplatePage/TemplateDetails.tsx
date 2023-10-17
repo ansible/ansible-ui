@@ -8,16 +8,17 @@ import {
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
-import { LoadingPage, PageDetail, PageDetails } from '../../../../../framework';
+import { LoadingPage, PageDetail, PageDetails, useGetPageUrl } from '../../../../../framework';
 import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
 import { RouteObj } from '../../../../common/Routes';
 import { useGet, useGetItem } from '../../../../common/crud/useGet';
+import { AwxRoute } from '../../../AwxRoutes';
+import { AwxError } from '../../../common/AwxError';
 import { CredentialLabel } from '../../../common/CredentialLabel';
 import { UserDateDetail } from '../../../common/UserDateDetail';
 import { useVerbosityString } from '../../../common/useVerbosityString';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
-import { AwxError } from '../../../common/AwxError';
 
 function useInstanceGroups(templateId: string) {
   const { data } = useGet<{ results: InstanceGroup[] }>(
@@ -35,6 +36,7 @@ export function TemplateDetails() {
     refresh,
   } = useGetItem<JobTemplate>('/api/v2/job_templates', params.id);
   const instanceGroups = useInstanceGroups(params.id || '0');
+  const getPageUrl = useGetPageUrl();
 
   const verbosity: string = useVerbosityString(template?.verbosity);
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
@@ -62,10 +64,9 @@ export function TemplateDetails() {
       <PageDetail label={t('Job type')}>{template.job_type}</PageDetail>
       <PageDetail label={t('Organization')} isEmpty={!summaryFields.organization}>
         <Link
-          to={RouteObj.OrganizationDetails.replace(
-            ':id',
-            summaryFields.organization?.id.toString() ?? ''
-          )}
+          to={getPageUrl(AwxRoute.OrganizationPage, {
+            params: { id: template.summary_fields?.organization?.id },
+          })}
         >
           {summaryFields.organization?.name}
         </Link>
@@ -73,19 +74,19 @@ export function TemplateDetails() {
       <PageDetail label={t('Inventory')} isEmpty={!summaryFields.inventory}>
         {summaryFields.inventory ? (
           <Link
-            to={RouteObj.InventoryDetails.replace(
-              ':inventory_type',
-              inventoryUrlPaths[summaryFields.inventory.kind]
-            ).replace(':id', summaryFields.inventory?.id.toString() ?? '')}
+            to={getPageUrl(AwxRoute.InventoryPage, {
+              params: {
+                id: summaryFields.inventory?.id,
+                inventory_type: inventoryUrlPaths[summaryFields.inventory?.kind],
+              },
+            })}
           >
             {summaryFields.inventory?.name}
           </Link>
         ) : null}
       </PageDetail>
       <PageDetail label={t`Project`} isEmpty={!summaryFields.project}>
-        <Link
-          to={RouteObj.ProjectDetails.replace(':id', summaryFields.project?.id.toString() ?? '')}
-        >
+        <Link to={getPageUrl(AwxRoute.ProjectPage, { params: { id: summaryFields.project?.id } })}>
           {summaryFields.project?.name}
         </Link>
       </PageDetail>
