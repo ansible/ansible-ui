@@ -28,7 +28,7 @@ const GLOBAL_PROJECT_SCM_URL = 'https://github.com/ansible/test-playbooks.git';
  * Check if the Global Project exists in controller
  * return it if it exists or create it if it doesn't.
  *
- * @returns {Promise<void>} The promise resolves when the project is created
+// The promise resolves when the project is created
  * or already exists and it's saved as a global alias in Cypress that can be
  * used in the tests by using this.globalProject.
  */
