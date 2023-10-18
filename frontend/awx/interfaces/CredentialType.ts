@@ -2,7 +2,7 @@ import { CredentialType as SwaggerCredentialType } from './generated-from-swagge
 import { SummaryFieldsByUser } from './summary-fields/summary-fields';
 
 export interface CredentialType
-  extends Omit<SwaggerCredentialType, 'id' | 'name' | 'managed' | 'summary_fields'> {
+  extends Omit<SwaggerCredentialType, 'id' | 'name' | 'managed' | 'related' | 'summary_fields'> {
   id: number;
   name: string;
   description: string;
@@ -23,7 +23,11 @@ export interface CredentialType
       label: string;
       type: string;
       help_text: string;
-      ask_at_runtime: boolean;
+      ask_at_runtime?: boolean;
     }[];
+  };
+  related: {
+    credentials: string;
+    activity_stream: string;
   };
 }
