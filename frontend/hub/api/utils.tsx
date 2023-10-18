@@ -9,44 +9,50 @@ import {
 } from './request';
 import { useTranslation } from 'react-i18next';
 import { requestGet } from '../../common/crud/Data';
+import { AnsibleAnsibleRepositoryResponse as Repository } from '../api-schemas/generated/AnsibleAnsibleRepositoryResponse';
+import { AnsibleAnsibleDistributionResponse as Distribution } from '../api-schemas/generated/AnsibleAnsibleDistributionResponse';
 
 function getBaseAPIPath() {
   return process.env.HUB_API_PREFIX;
 }
 
-export function useRepositoryBasePath(name: string, pulp_href?: string): Promise<unknown> {
+type Results = { data: { results: Repository[] | Distribution[] } };
+
+export function useRepositoryBasePath(name: string, pulp_href?: string): Promise<string> {
   const { t } = useTranslation();
-  return Promise.all([
-    pulp_href
-      ? Promise.resolve({ name, pulp_href })
-      : requestGet<{ data: { results: unknown } }>(
-          pulpAPI`/repositories/ansible/ansible/?name=${name}&limit=1`
-        ).then(firstResult),
-    requestGet<{ data: { results: unknown } }>(
-      pulpAPI`/distributions/ansible/ansible/?name=${name}&limit=1`
-    ).then(firstResult),
-  ]).then(async ([repository, distribution]) => {
+
+  const repoRequest = pulp_href
+    ? Promise.resolve({ name, pulp_href } as Repository)
+    : requestGet<Results>(pulpAPI`/repositories/ansible/ansible/?name=${name}&limit=1`).then(
+        firstResult
+      );
+
+  const distroRequest = requestGet<Results>(
+    pulpAPI`/distributions/ansible/ansible/?name=${name}&limit=1`
+  ).then(firstResult);
+
+  return Promise.all(repoRequest, distroRequest).then(async ([repository, distribution]) => {
     if (!repository) {
-      return Promise.reject(t`Failed to find repository ${name}`);
+      throw new Error(t`Failed to find repository ${name}`);
     }
 
     if (distribution && distribution.repository === repository.pulp_href) {
       return distribution.base_path;
     }
 
-    distribution = await requestGet(
+    distribution = await requestGet<Results>(
       pulpAPI`/distributions/ansible/ansible/?repository=${repository.pulp_href}&ordering=pulp_created&limit=1`
     ).then(firstResult);
 
     if (!distribution) {
-      return Promise.reject(t`Failed to find a distribution for repository ${name}`);
+      throw new Error(t`Failed to find a distribution for repository ${name}`);
     }
 
     return distribution.base_path;
   });
 }
 
-function firstResult({ data: { results } }) {
+function firstResult({ data: { results } }: Results) {
   return results[0];
 }
 
