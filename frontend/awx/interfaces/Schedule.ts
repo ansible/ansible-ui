@@ -7,7 +7,7 @@ export interface Schedule
     'summary_fields' | 'id' | 'name' | 'related' | 'enabled' | 'next_run' | 'rrule'
   > {
   id: number;
-  next_run: string;
+  next_run?: string;
   rrule: string;
   name: string;
   dtstart: string;
