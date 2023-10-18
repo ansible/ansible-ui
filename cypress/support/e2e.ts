@@ -9,7 +9,7 @@ before(() => {
   cy.log('PORT', devBaseUrl);
   if (
     devBaseUrl &&
-    (devBaseUrl === '4201' ||
+    (devBaseUrl === '4200' ||
       devBaseUrl === '4201' ||
       devBaseUrl === '4202' ||
       devBaseUrl === '4203')
