@@ -10,6 +10,16 @@ import {
   useGetPageUrl,
   PageFormTextArea,
 } from '../../../framework';
+import { TagIcon } from '@patternfly/react-icons';
+import {
+  Button,
+  InputGroup,
+  Label,
+  LabelGroup,
+  Modal,
+  Spinner,
+  TextInput,
+} from '@patternfly/react-core';
 import { PageFormFileUpload } from '../../../framework/PageForm/Inputs/PageFormFileUpload';
 import { PageFormGroup } from '../../../framework/PageForm/Inputs/PageFormGroup';
 import { PageFormExpandableSection } from '../../../framework/PageForm/PageFormExpandableSection';
@@ -50,12 +60,13 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
   const [executionEnvironment, setExecutionEnvironment] = useState<ExecutionEnvironmentFormProps>(
     {} as ExecutionEnvironmentFormProps
   );
-
   const [originalData, setOriginalData] = useState<ExecutionEnvironment>(
     {} as ExecutionEnvironment
   );
-
   const [error, setError] = useState<string>('');
+  const [tagsToInclude, setTagsToInclude] = useState<string[]>([]);
+  const [tagsToExclude, setTagsToExclude] = useState<string[]>([]);
+
   const params = useParams<{ id?: string }>();
   const mode = props.mode;
 
@@ -193,6 +204,10 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
             isRequired
           />
 
+          <TagsSelector tags={tagsToInclude} setTags={setTagsToInclude} mode={'include'} />
+
+          <TagsSelector tags={tagsToExclude} setTags={setTagsToExclude} mode={'exclude'} />
+
           <PageFormTextArea<ExecutionEnvironmentFormProps>
             name="description"
             label={t('Description')}
@@ -228,8 +243,65 @@ type Registry = {
   name: string;
 };
 
-function tagsSelector(
-  tags: string[],
-  setTags: (tags: string[]) => void,
-  mode: 'exclude' | 'include'
-) {}
+function TagsSelector(props: {
+  tags: string[];
+  setTags: (tags: string[]) => void;
+  mode: 'exclude' | 'include';
+}) {
+  const [tagsText, setTagsText] = useState<string>('');
+  const { tags, setTags, mode } = props;
+  const { t } = useTranslation();
+
+  const label = mode == 'exclude' ? t('Add tag(s) to exclude') : t('Add tag(s) to include');
+  const label2 = mode == 'exclude' ? t('Currently excluded tags') : t('Currently included tags');
+
+  const chipGroupProps = () => {
+    const count = '${remaining}'; // pf templating
+    return {
+      collapsedText: t(`{{count}} more`, count.toString()),
+      expandedText: t(`Show Less`),
+    };
+  };
+
+  return (
+    <PageFormGroup label={label}>
+      <InputGroup>
+        <TextInput
+          type="text"
+          id={`addTags-${mode}`}
+          value={tagsText}
+          onChange={(val) => {
+            setTagsText(val?.currentTarget?.value || '');
+          }}
+          onKeyUp={(e) => {
+            // l10n: don't translate
+            /*if (e.key === 'Enter') {
+                        this.addTags(addTagsInclude, 'includeTags');
+                      }*/
+          }}
+        />
+        <Button
+          variant="secondary"
+          onClick={() => {
+            const tagsArray = tagsText.split(',');
+            const uniqueArray = [...new Set([...tags, ...tagsArray])];
+
+            setTags(uniqueArray);
+            setTagsText('');
+          }}
+        >
+          {t`Add`}
+        </Button>
+      </InputGroup>
+
+      {label2}
+      <LabelGroup {...chipGroupProps()} id={`remove-tag-${mode}`} defaultIsOpen={true}>
+        {tags.map((tag) => (
+          <Label icon={<TagIcon />} onClose={() => setTags(tags.filter((t) => t != tag))} key={tag}>
+            {tag}
+          </Label>
+        ))}
+      </LabelGroup>
+    </PageFormGroup>
+  );
+}
