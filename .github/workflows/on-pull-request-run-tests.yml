@@ -340,6 +340,7 @@ jobs:
 
   awx-e2e:
     name: AWX E2E
+    needs: packages
     uses: ansible/ansible-ui/.github/workflows/awx-e2e.yml@main
     with:
       AWX_SERVER: ${{ vars.AWX_SERVER }}
