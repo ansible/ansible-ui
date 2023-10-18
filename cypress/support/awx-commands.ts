@@ -23,6 +23,63 @@ import './rest-commands';
 
 //  AWX related custom command implementation
 
+// const GLOBAL_PROJECT_NAME = 'Global Project for E2E tests';
+// const GLOBAL_PROJECT_DESCRIPTION = 'Global Read Only Project for E2E tests';
+// const GLOBAL_PROJECT_SCM_URL = 'https://github.com/ansible/test-playbooks.git';
+
+// function checkIfGlobalProjectExists() {
+//   return cy
+//     .awxRequestGet<AwxItemsResponse<Project>>(`/api/v2/projects?name__startswith=Global&page=1`)
+//     .its('results')
+//     .then((results: Project[]) => {
+//       if (results.length === 0) {
+//         // cy.log('ZERO', results);
+//         return null;
+//       } else {
+//         // cy.log('PROJECT IS HERE', results);
+//         expect(results[0].name).to.equal(GLOBAL_PROJECT_NAME);
+//         expect(results[0].description).to.equal(GLOBAL_PROJECT_DESCRIPTION);
+//         expect(results[0].scm_url).to.equal(GLOBAL_PROJECT_SCM_URL);
+//       }
+//       return results[0];
+//     });
+// }
+
+// Cypress.Commands.add('createGlobalProject', () => {
+//   cy.log('🔎 Checking if global project exists before creating it');
+
+//   checkIfGlobalProjectExists().then((globalProject) => {
+//     if (globalProject) {
+//       cy.log(
+//         '✅ Global project exists, access it via this.globalProject in the tests',
+//         globalProject
+//       );
+//       return cy.wrap(globalProject).as('globalProject');
+//     } else {
+//       cy.log('🤷 Global project does not exist, creating it...');
+//       cy.awxRequestPost<Pick<Project, 'name' | 'description' | 'scm_type' | 'scm_url'>, Project>(
+//         '/api/v2/projects/',
+//         {
+//           name: GLOBAL_PROJECT_NAME,
+//           description: GLOBAL_PROJECT_DESCRIPTION,
+//           scm_type: 'git',
+//           scm_url: GLOBAL_PROJECT_SCM_URL,
+//         }
+//       ).then(() => {
+//         cy.log('✅ Global project created, access it via this.globalProject in the tests');
+//       });
+//     }
+//   });
+// });
+
+Cypress.Commands.add('typeMonacoTextField', (textString: string) => {
+  cy.get('[data-cy="expandable"]')
+    .click()
+    .then(() => {
+      cy.get('[class*="monaco-scrollable-element"]').type(`${textString}{esc}`);
+    });
+});
+
 Cypress.Commands.add('getCheckboxByLabel', (label: string | RegExp) => {
   cy.contains('.pf-v5-c-check__label', label)
     .invoke('attr', 'for')
