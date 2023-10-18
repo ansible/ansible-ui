@@ -1,7 +1,6 @@
 import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useState } from 'react';
 
 export const DialogContext = createContext<ReactNode | undefined>(undefined);
-export const SetDialogContext = createContext<(dialog?: ReactNode) => void>(() => null);
 
 const PageDialogContext = createContext<
   [dialog: ReactNode | undefined, setDialog: Dispatch<SetStateAction<ReactNode | undefined>>]
