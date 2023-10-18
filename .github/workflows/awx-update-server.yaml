@@ -10,6 +10,7 @@ on:
 
 jobs:
   awx-e2e:
+    name: AWX E2E
     uses: ansible/ansible-ui/.github/workflows/awx-e2e.yml@main
     with:
       AWX_SERVER: ${{ inputs.AWX_SERVER }}
@@ -19,6 +20,7 @@ jobs:
       CYPRESS_AUI_AWX_E2E_RECORD_KEY: ${{ secrets.CYPRESS_AUI_AWX_E2E_RECORD_KEY }}
 
   awx-update-server:
+    name: AWX Update Server
     needs: awx-e2e
     runs-on: ubuntu-latest
     steps:
