@@ -140,7 +140,12 @@ describe('jobs', () => {
       const jobId = jobList.id ? jobList.id.toString() : '';
       cy.filterTableByTypeAndText('ID', jobId);
       const jobName = jobList.name ? jobList.name : '';
+      cy.intercept(
+        'GET',
+        `/api/v2/unified_jobs/?not__launch_type=sync&id=${jobId}&order_by=-finished&page=1&page_size=10`
+      ).as('jobRun');
       cy.getTableRowByText(jobName, false).within(() => {
+        cy.wait('@jobRun');
         cy.get('[data-label="Status"]', { timeout: 120 * 1000 }).should('not.contain', 'New');
         cy.get('[data-label="Status"]', { timeout: 120 * 1000 }).should('not.contain', 'Waiting');
         cy.get('[data-label="Status"]', { timeout: 120 * 1000 }).should('not.contain', 'Pending');
