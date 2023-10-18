@@ -29,7 +29,7 @@ export function useDeleteCredentialTypes(onComplete: (users: CredentialType[]) =
       : '';
 
   const bulkAction = useBulkConfirmation<CredentialType>();
-  const deleteUsers = (credentialTypes: CredentialType[]) => {
+  const deleteCredentialTypes = (credentialTypes: CredentialType[]) => {
     const undeletableManagedCredentialTypes: CredentialType[] = credentialTypes.filter(
       (credentialType) => credentialType.managed
     );
@@ -88,5 +88,5 @@ export function useDeleteCredentialTypes(onComplete: (users: CredentialType[]) =
         requestDelete(`/api/v2/credential_types/${credentialType.id}/`),
     });
   };
-  return deleteUsers;
+  return deleteCredentialTypes;
 }
