@@ -21,7 +21,6 @@ jobs:
   awx-ui-image:
     name: AWX UI Image
     runs-on: ubuntu-latest
-    needs: packages
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v3
