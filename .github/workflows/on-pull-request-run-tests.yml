@@ -344,7 +344,7 @@ jobs:
     uses: ansible/ansible-ui/.github/workflows/awx-e2e.yml@main
     with:
       AWX_SERVER: ${{ vars.AWX_SERVER }}
-      SKIP: ${{ needs.packages.outputs.awx }} != 'true'
+      SKIP: needs.packages.outputs.awx != 'true'
     secrets:
       AWX_PASSWORD: ${{ secrets.AWX_PASSWORD }}
       CYPRESS_AUI_AWX_E2E_PROJECT_ID: ${{ secrets.CYPRESS_AUI_AWX_E2E_PROJECT_ID }}
