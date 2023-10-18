@@ -797,7 +797,7 @@ Cypress.Commands.add(
       '/api/v2/instance_groups/',
       {
         name: 'E2E Instance Group ' + randomString(4),
-        percent_capacity_remaining: 100,
+        percent_capacity_remaining: '100',
         policy_instance_minimum: 100,
         ...instanceGroup,
       }
