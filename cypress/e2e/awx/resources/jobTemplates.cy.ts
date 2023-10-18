@@ -1,7 +1,7 @@
 import { randomString } from '../../../../framework/utils/random-string';
-// import { Credential } from '../../../../frontend/awx/interfaces/Credential';
-// import { ExecutionEnvironment } from '../../../../frontend/awx/interfaces/ExecutionEnvironment';
-// import { InstanceGroup } from '../../../../frontend/awx/interfaces/InstanceGroup';
+import { Credential } from '../../../../frontend/awx/interfaces/Credential';
+//import { ExecutionEnvironment } from '../../../../frontend/awx/interfaces/ExecutionEnvironment';
+import { InstanceGroup } from '../../../../frontend/awx/interfaces/InstanceGroup';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 // import { Label } from '../../../../frontend/awx/interfaces/Label';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
@@ -11,9 +11,10 @@ describe('Job templates form Create, Edit, Delete', () => {
   let organization: Organization;
   let project: Project;
   let inventory: Inventory;
+  let instanceGroup: InstanceGroup;
+  //let executionEnvironment: ExecutionEnvironment;
   const executionEnvironment = 'Control Plane Execution Environment';
-  const machineCredential = 'Demo Credential';
-  const instanceGroup = 'default';
+  const machineCredential: Credential;
 
   before(() => {
     cy.awxLogin();
@@ -33,17 +34,17 @@ describe('Job templates form Create, Edit, Delete', () => {
       //   executionEnvironment = ee;
       // });
 
-      // cy.createAWXCredential({
-      //   kind: 'machine',
-      //   organization: organization.id,
-      //   credential_type: 1,
-      // }).then((cred) => {
-      //   machineCredential = cred;
-      // });
+      cy.createAWXCredential({
+        kind: 'machine',
+        organization: organization.id,
+        credential_type: 1,
+      }).then((cred) => {
+        machineCredential = cred;
+      });
 
-      // cy.createAwxInstanceGroup().then((ig) => {
-      //   instanceGroup = ig;
-      // });
+      cy.createAwxInstanceGroup().then((ig) => {
+        instanceGroup = ig;
+      });
 
       // cy.createAwxLabel({ organization: organization.id }).then((l) => {
       //   label = l;
@@ -53,7 +54,7 @@ describe('Job templates form Create, Edit, Delete', () => {
 
   after(() => {
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
-    // cy.deleteAwxInstanceGroup(instanceGroup);
+    cy.deleteAwxInstanceGroup(instanceGroup);
   });
 
   it('should create a job template with all fields without prompt on launch option', () => {
@@ -72,12 +73,11 @@ describe('Job templates form Create, Edit, Delete', () => {
       executionEnvironment,
       true
     );
-    cy.selectDropdownOptionByResourceName('credential-select', machineCredential, true);
+    cy.selectDropdownOptionByResourceName('credential-select', machineCredential.name, true);
     cy.clickButton(/^Create job template$/);
     cy.wait('@createJT')
       .its('response.body.id')
       .then((id: string) => {
-        cy.log(id);
         cy.verifyPageTitle(jtName);
         cy.navigateTo('awx', 'templates');
         cy.getTableRowByText(jtName).should('be.visible');
@@ -133,18 +133,17 @@ describe('Job templates form Create, Edit, Delete', () => {
         });
         cy.selectDropdownOptionByResourceName('inventory', inventory.name);
         cy.clickButton(/^Next/);
-        cy.selectItemFromLookupModal('credential-select', machineCredential);
+        cy.selectItemFromLookupModal('credential-select', machineCredential.name);
         cy.clickButton(/^Next/);
         cy.selectItemFromLookupModal('execution-environment-select', executionEnvironment);
         cy.clickButton(/^Next/);
-        cy.selectItemFromLookupModal('instance-group-select', instanceGroup);
+        cy.selectItemFromLookupModal('instance-group-select', instanceGroup.name);
         cy.clickButton(/^Next/);
         cy.intercept('POST', `api/v2/job_templates/${id}/launch/`).as('postLaunch');
         cy.clickButton(/^Finish/);
         cy.wait('@postLaunch')
           .its('response.body.id')
           .then((jobId: string) => {
-            cy.log(jobId);
             cy.waitForTemplateStatus(jobId);
           });
         cy.navigateTo('awx', 'templates');
@@ -184,11 +183,11 @@ describe('Job templates form Create, Edit, Delete', () => {
         cy.clickButton(/^Launch template$/);
         cy.selectDropdownOptionByResourceName('inventory', inventory.name);
         cy.clickButton(/^Next/);
-        cy.selectItemFromLookupModal('credential-select', machineCredential);
+        cy.selectItemFromLookupModal('credential-select', machineCredential.name);
         cy.clickButton(/^Next/);
         cy.selectItemFromLookupModal('execution-environment-select', executionEnvironment);
         cy.clickButton(/^Next/);
-        cy.selectItemFromLookupModal('instance-group-select', instanceGroup);
+        cy.selectItemFromLookupModal('instance-group-select', instanceGroup.name);
         cy.clickButton(/^Next/);
         cy.intercept('POST', `api/v2/job_templates/${id}/launch/`).as('postLaunch');
         cy.clickButton(/^Finish/);
