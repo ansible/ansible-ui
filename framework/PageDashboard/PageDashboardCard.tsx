@@ -113,7 +113,7 @@ export function PageDashboardCard(props: {
       }}
       isCompact={props.isCompact}
       className="page-dashboard-card"
-      data-cy={props.supertitle}
+      data-cy={`${props.title?.toLowerCase().split(' ').join('-')}`}
     >
       {(props.title || props.linkText) && (
         <CardHeader>
@@ -124,13 +124,13 @@ export function PageDashboardCard(props: {
           >
             <FlexItem grow={{ default: 'grow' }}>
               {props.supertitle && (
-                <Text data-cy={props.supertitle} component="small" style={{ opacity: 0.8 }}>
+                <Text data-cy="card-main" component="small" style={{ opacity: 0.8 }}>
                   {props.supertitle}
                 </Text>
               )}
               <div>
                 <Title
-                  data-cy={props.title}
+                  data-cy="card-title"
                   headingLevel="h3"
                   size="xl"
                   style={{ display: 'inline-block', verticalAlign: '-0.15em', lineHeight: '1.2' }}
@@ -140,14 +140,14 @@ export function PageDashboardCard(props: {
                 <Help help={props.help} title={props.helpTitle} docLink={props.helpDocLink} />
               </div>
               {props.subtitle && (
-                <Text data-cy={props.subtitle} component="small" style={{ opacity: 0.8 }}>
+                <Text data-cy="card-subtitle" component="small" style={{ opacity: 0.8 }}>
                   {props.subtitle}
                 </Text>
               )}
             </FlexItem>
             {props.headerControls && <FlexItem>{props.headerControls}</FlexItem>}
             <FlexItem>
-              <Text data-cy={props.linkText} component="small">
+              <Text data-cy="card-link-text" component="small">
                 {props.linkText && <Link to={props.to as string}>{props.linkText}</Link>}
               </Text>
             </FlexItem>

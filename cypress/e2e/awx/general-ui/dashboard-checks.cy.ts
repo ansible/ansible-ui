@@ -138,7 +138,7 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
       'getJobs'
     );
     cy.navigateTo('awx', 'dashboard');
-    cy.get('[data-cy="Recent Jobs"]').should('contain', 'Recent Jobs');
+    cy.get('[data-cy="recent-jobs"]').should('contain', 'Recent Jobs');
     cy.checkAnchorLinks('Go to Jobs');
     cy.wait('@getJobs')
       .its('response.body.results')
@@ -173,7 +173,7 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
       'getProjects'
     );
     cy.navigateTo('awx', 'dashboard');
-    cy.get('[data-cy="Recent Projects"]').should('contain', 'Recent Projects');
+    cy.get('[data-cy="recent-projects"]').should('contain', 'Recent Projects');
     cy.checkAnchorLinks('Go to Projects');
     cy.wait('@getProjects')
       .its('response.body.results')
@@ -211,7 +211,7 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
       'getInventories'
     );
     cy.navigateTo('awx', 'dashboard');
-    cy.get('[data-cy="Recent Inventories"]').should('contain', 'Recent Inventories');
+    cy.get('[data-cy="recent-inventories"]').should('contain', 'Recent Inventories');
     cy.checkAnchorLinks('Go to Inventories');
     cy.wait('@getInventories')
       .its('response.body.results')
