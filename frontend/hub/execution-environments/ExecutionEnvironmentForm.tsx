@@ -45,6 +45,7 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
   const navigate = useNavigate();
   const getPageUrl = useGetPageUrl();
   const getRequest = useGetRequest<ExecutionEnvironment>();
+  const registryGetRequest = useGetRequest<HubItemsResponse<Registry>>();
 
   const [executionEnvironment, setExecutionEnvironment] = useState<ExecutionEnvironmentFormProps>(
     {} as ExecutionEnvironmentFormProps
@@ -60,6 +61,23 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
 
   const notFound = t('Execution environment not found');
   const isLoading = Object.keys(executionEnvironment).length === 0 && mode == 'edit';
+
+  const selectRegistrySingle = useSelectRegistrySingle();
+
+  const registrySelector = selectRegistrySingle.onBrowse;
+
+  const page_size = 50;
+
+  const query = useCallback(async () => {
+    const response = await registryGetRequest(
+      hubAPI`/_ui/v1/execution-environments/registries?page_size=${page_size.toString()}`
+    );
+
+    return Promise.resolve({
+      total: response.meta.count,
+      values: response.data,
+    });
+  }, []);
 
   const onSubmit: PageFormSubmitHandler<ExecutionEnvironmentFormProps> = async (
     data: ExecutionEnvironmentFormProps
@@ -146,73 +164,44 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
           }}
           defaultValue={executionEnvironment}
         >
-          <EEInputs mode={props.mode} />
+          <PageFormTextInput<ExecutionEnvironmentFormProps>
+            name="name"
+            label={t('Name')}
+            placeholder={t('Enter a execution environment name')}
+            isRequired
+            isDisabled={mode == 'edit'}
+            validate={(name: string) => validateName(name, t)}
+          />
+
+          <PageFormTextInput<ExecutionEnvironmentFormProps>
+            name="upstream_name"
+            label={t('Upstream name')}
+            placeholder={t('Enter a upstream name')}
+            isRequired
+          />
+
+          <PageFormAsyncSelect<ExecutionEnvironmentFormProps>
+            name="registry"
+            label={t('Registry')}
+            placeholder={t('Select registry')}
+            query={query}
+            loadingPlaceholder={t('Loading registry...')}
+            loadingErrorText={t('Error loading registry')}
+            limit={page_size}
+            valueToString={(value) => value.name}
+            openSelectDialog={registrySelector}
+            isRequired
+          />
+
+          <PageFormTextArea<ExecutionEnvironmentFormProps>
+            name="description"
+            label={t('Description')}
+            placeholder={t('Enter a description')}
+            isDisabled={mode == 'add'}
+          />
         </HubPageForm>
       )}
     </PageLayout>
-  );
-}
-
-function EEInputs(props: { mode: 'add' | 'edit' }) {
-  const { t } = useTranslation();
-  const mode = props.mode;
-  const getRequest = useGetRequest<HubItemsResponse<Registry>>();
-
-  const selectRegistrySingle = useSelectRegistrySingle();
-
-  const registrySelector = selectRegistrySingle.onBrowse;
-
-  const page_size = 50;
-
-  const query = useCallback(async () => {
-    const response = await getRequest(
-      hubAPI`/_ui/v1/execution-environments/registries?page_size=${page_size.toString()}`
-    );
-
-    return Promise.resolve({
-      total: response.meta.count,
-      values: response.data,
-    });
-  }, []);
-
-  return (
-    <>
-      <PageFormTextInput<ExecutionEnvironmentFormProps>
-        name="name"
-        label={t('Name')}
-        placeholder={t('Enter a execution environment name')}
-        isRequired
-        isDisabled={mode == 'edit'}
-        validate={(name: string) => validateName(name, t)}
-      />
-
-      <PageFormTextInput<ExecutionEnvironmentFormProps>
-        name="upstream_name"
-        label={t('Upstream name')}
-        placeholder={t('Enter a upstream name')}
-        isRequired
-      />
-
-      <PageFormAsyncSelect<ExecutionEnvironmentFormProps>
-        name="registry"
-        label={t('Registry')}
-        placeholder={t('Select registry')}
-        query={query}
-        loadingPlaceholder={t('Loading registry...')}
-        loadingErrorText={t('Error loading registry')}
-        limit={page_size}
-        valueToString={(value) => value.name}
-        openSelectDialog={registrySelector}
-        isRequired
-      />
-
-      <PageFormTextArea<ExecutionEnvironmentFormProps>
-        name="description"
-        label={t('Description')}
-        placeholder={t('Enter a description')}
-        isDisabled={mode == 'add'}
-      />
-    </>
   );
 }
 
@@ -238,3 +227,9 @@ type Registry = {
   id: string;
   name: string;
 };
+
+function tagsSelector(
+  tags: string[],
+  setTags: (tags: string[]) => void,
+  mode: 'exclude' | 'include'
+) {}
