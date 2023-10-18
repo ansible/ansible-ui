@@ -39,7 +39,9 @@ import './auth';
 import './awx-commands';
 import { IAwxResources } from './awx-commands';
 import './common-commands';
+import './e2e';
 import './eda-commands';
+import './global-project';
 import './hub-commands';
 import './rest-commands';
 
@@ -54,7 +56,7 @@ declare global {
       requiredVariablesAreSet(requiredVariables: string[]): Chainable<void>;
 
       // --- NAVIGATION COMMANDS ---
-
+      // createGlobalProject(): Chainable<Project>;
       /**Navigates to a page of the UI using using the links on the page sidebar. Intended as an alternative to cy.visit(). */
       navigateTo(component: 'awx' | 'eda' | 'hub', label: string): Chainable<void>;
 
@@ -121,7 +123,7 @@ declare global {
        */
       openToolbarFilterTypeSelect(): Chainable<JQuery<HTMLElement>>;
 
-      searchAndDisplayResource(name: string): Chainable<void>;
+      searchAndDisplayResource(resourceName: string): Chainable<void>;
 
       filterBySingleSelection(
         filterType: RegExp | string,
