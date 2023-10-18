@@ -19,6 +19,7 @@ export function PageDashboardCountBar(props: PageDashboardCountBarProps) {
     <PageDashboardCard width="xxl" isCompact>
       <CardBody>
         <div
+          data-cy="resource-count-bar"
           style={{
             display: 'flex',
             flexWrap: 'wrap',

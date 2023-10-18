@@ -327,6 +327,7 @@ export function PageFormDataEditor<
             icon={
               isExpandable ? (
                 <AngleRightIcon
+                  data-cy="expandable"
                   style={{
                     transform: isCollapsed ? 'rotate(0deg)' : 'rotate(90deg)',
                     transition: 'transform',
