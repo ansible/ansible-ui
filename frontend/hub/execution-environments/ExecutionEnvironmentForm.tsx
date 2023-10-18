@@ -37,6 +37,8 @@ import { putHubRequest } from './../api/request';
 import { postHubRequest } from '../api/request';
 import { PageFormAsyncSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncSelect';
 import { string } from 'yaml/dist/schema/common/string';
+import { useSelectRegistrySingle } from './hooks/useRegistrySelector';
+import { toolbarSingleSelectBrowseAdapter } from '../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSingleSelectFilter';
 
 export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
   const { t } = useTranslation();
@@ -156,9 +158,21 @@ function EEInputs(props: { mode: 'add' | 'edit' }) {
   const mode = props.mode;
   const getRequest = useGetRequest<HubItemsResponse<Registry>>();
 
+  const selectRegistrySingle = useSelectRegistrySingle();
+
+  const registrySelector = toolbarSingleSelectBrowseAdapter<Registry>(
+    selectRegistrySingle.onBrowse,
+    (item) => item.name,
+    (name) => {
+      return { name };
+    }
+  );
+
+  const page_size = 50;
+
   const query = useCallback(async () => {
     const response = await getRequest(
-      hubAPI`/_ui/v1/execution-environments/registries?page_size=50`
+      hubAPI`/_ui/v1/execution-environments/registries?page_size=${page_size.toString()}`
     );
 
     return Promise.resolve({
@@ -185,15 +199,17 @@ function EEInputs(props: { mode: 'add' | 'edit' }) {
         isRequired
       />
 
-      <PageFormAsyncSelect
+      <PageFormAsyncSelect<ExecutionEnvironmentFormProps>
         name="registry"
         label={t('Registry')}
         placeholder={t('Select registry')}
         query={query}
         loadingPlaceholder={t('Loading registry...')}
         loadingErrorText={t('Error loading registry')}
-        limit={100}
-        valueToString={(value) => (value as Registry)?.name ?? ''}
+        limit={page_size}
+        valueToString={(value) => value.name}
+        openSelectDialog={registrySelector}
+        isRequired
       />
 
       <PageFormTextArea<ExecutionEnvironmentFormProps>
@@ -228,5 +244,3 @@ type Registry = {
   id: string;
   name: string;
 };
-
-// TODO add Registry -
