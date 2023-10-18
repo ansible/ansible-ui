@@ -93,35 +93,43 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
   const onSubmit: PageFormSubmitHandler<ExecutionEnvironmentFormProps> = async (
     data: ExecutionEnvironmentFormProps
   ) => {
-    const payload: PayloadDataType = {
-      ...data,
-      exclude_tags: tagsToExclude,
-      include_tags: tagsToInclude,
-    };
+    try {
+      const payload: PayloadDataType = {
+        ...data,
+        exclude_tags: tagsToExclude,
+        include_tags: tagsToInclude,
+      };
 
-    const registry = data.registry as Registry;
-    payload.registry = registry?.id;
+      const registry = data.registry as Registry;
+      payload.registry = registry?.id;
 
-    if (mode == 'add') {
-      delete data.description;
+      if (mode == 'add') {
+        delete data.description;
+      }
+
+      // TODO - handle distribution
+      if (mode == 'add') {
+        await hubAPIPost<ExecutionEnvironmentFormProps>(
+          hubAPI`/_ui/v1/execution-environments/remotes/`,
+          payload
+        );
+      } else {
+        await postHubRequest(
+          hubAPI`/_ui/v1/execution-environments/remotes/${
+            originalData.pulp?.repository?.remote?.id || ''
+          }`,
+          payload
+        );
+      }
+
+      navigate(-1);
+    } catch (error) {
+      const text =
+        mode == 'add'
+          ? t('Error when adding execution environment.')
+          : t('Error when saving execution environment.');
+      setError(text);
     }
-
-    // TODO - handle distribution
-    if (mode == 'add') {
-      await hubAPIPost<ExecutionEnvironmentFormProps>(
-        hubAPI`/_ui/v1/execution-environments/remotes/`,
-        payload
-      );
-    } else {
-      await postHubRequest(
-        hubAPI`/_ui/v1/execution-environments/remotes/${
-          originalData.pulp?.repository?.remote?.id || ''
-        }`,
-        payload
-      );
-    }
-
-    navigate(-1);
   };
 
   useEffect(() => {
@@ -149,7 +157,7 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
         setExecutionEnvironment(ee);
       } catch (error) {
         if (error) {
-          setError(error.toString());
+          setError(notFound);
         }
       }
     })();
@@ -167,8 +175,7 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
         ]}
       />
 
-      {error && <AwxError error={new Error(notFound)} />}
-      {!error && !isLoading && (
+      {!isLoading && (
         <HubPageForm<ExecutionEnvironmentFormProps>
           submitText={
             props.mode == 'edit' ? t('Edit Execution Environment') : t('Add Execution Environment')
@@ -178,6 +185,7 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
             onSubmit(data);
           }}
           defaultValue={executionEnvironment}
+          singleColumn={true}
         >
           <PageFormTextInput<ExecutionEnvironmentFormProps>
             name="name"
@@ -209,7 +217,6 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
           />
 
           <TagsSelector tags={tagsToInclude} setTags={setTagsToInclude} mode={'include'} />
-
           <TagsSelector tags={tagsToExclude} setTags={setTagsToExclude} mode={'exclude'} />
 
           <PageFormTextArea<ExecutionEnvironmentFormProps>
@@ -218,6 +225,8 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
             placeholder={t('Enter a description')}
             isDisabled={mode == 'add'}
           />
+
+          {error && <AwxError error={new Error(error)} />}
         </HubPageForm>
       )}
     </PageLayout>
@@ -292,6 +301,9 @@ function TagsSelector(props: {
         <Button
           variant="secondary"
           onClick={() => {
+            if (tagsText == '') {
+              return;
+            }
             const tagsArray = tagsText.split(',');
             const uniqueArray = [...new Set([...tags, ...tagsArray])];
             setTags(uniqueArray);
