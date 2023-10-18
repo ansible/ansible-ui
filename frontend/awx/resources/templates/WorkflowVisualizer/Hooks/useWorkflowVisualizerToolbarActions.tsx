@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import { Button, ToolbarItem } from '@patternfly/react-core';
+import { Button, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { CloseIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { CheckCircleIcon, CloseIcon, PlusCircleIcon } from '@patternfly/react-icons';
 
 import { usePageNavigate } from '../../../../../../framework';
 import { AwxRoute } from '../../../../AwxRoutes';
@@ -18,11 +18,23 @@ export function useWorkflowVisualizerToolbarActions() {
 
   return (
     <>
-      <ToolbarItem>
-        <Button icon={<PlusCircleIcon />} label={t('Add node')} onClick={() => {}}>
-          {t('Add node')}
-        </Button>
-      </ToolbarItem>
+      <ToolbarGroup>
+        <ToolbarItem>
+          <Button icon={<CheckCircleIcon />} label={t('Save')} onClick={() => {}}>
+            {t('Save')}
+          </Button>
+        </ToolbarItem>
+        <ToolbarItem>
+          <Button
+            icon={<PlusCircleIcon />}
+            variant="secondary"
+            label={t('Add node')}
+            onClick={() => {}}
+          >
+            {t('Add node')}
+          </Button>
+        </ToolbarItem>
+      </ToolbarGroup>
       <ToolbarItem align={{ default: 'alignRight' }}>
         <Button
           data-cy="workflow-visualizer-toolbar-close"
