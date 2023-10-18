@@ -49,7 +49,7 @@ export function useCredentialTypesColumns() {
         modal: ColumnModalOption.Hidden,
       },
     ],
-    [getPageUrl, t]
+    [descriptionColumn, getPageUrl, t]
   );
   return tableColumns;
 }
