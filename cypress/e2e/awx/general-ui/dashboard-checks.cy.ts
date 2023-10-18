@@ -91,7 +91,7 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
           cy.get('#inventories-legend-synced-count').should('contain', readyCount);
         }
         if (data.inventories.inventory_failed > 0) {
-          cy.get('#inventories-legend-failed-count').should(
+          cy.get('#inventories-legend-synced-failures-count').should(
             'contain',
             data.inventories.inventory_failed
           );
