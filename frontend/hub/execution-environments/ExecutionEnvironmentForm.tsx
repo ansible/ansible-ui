@@ -119,7 +119,7 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
         await putHubRequest(
           hubAPI`/_ui/v1/execution-environments/remotes/${
             originalData.pulp?.repository?.remote?.id || ''
-          }`,
+          }/`,
           payload
         );
 
@@ -158,9 +158,13 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
           name: res.name,
           upstream_name: res.pulp?.repository?.remote?.upstream_name,
           description: res.description,
+          // TODO - registry initial selection not working
         } as ExecutionEnvironmentFormProps;
         setOriginalData(res);
         setExecutionEnvironment(ee);
+
+        setTagsToExclude(res.pulp?.repository?.remote?.exclude_tags || []);
+        setTagsToInclude(res.pulp?.repository?.remote?.include_tags || []);
       } catch (error) {
         if (error) {
           setError(notFound);
