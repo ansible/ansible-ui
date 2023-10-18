@@ -1,0 +1,40 @@
+name: eda-update-server
+
+on:
+  workflow_dispatch:
+    inputs:
+      EDA_SERVER:
+        type: string
+        required: true
+        description: 'EDA Server'
+
+jobs:
+  eda-e2e:
+    name: EDA E2E
+    uses: ./.github/workflows/eda-e2e.yml
+    with:
+      EDA_SERVER: ${{ inputs.EDA_SERVER }}
+    secrets:
+      EDA_PASSWORD: ${{ secrets.EDA_PASSWORD }}
+      CYPRESS_AUI_EDA_E2E_PROJECT_ID: ${{ secrets.CYPRESS_AUI_EDA_E2E_PROJECT_ID }}
+      CYPRESS_AUI_EDA_E2E_RECORD_KEY: ${{ secrets.CYPRESS_AUI_EDA_E2E_RECORD_KEY }}
+
+  eda-update-server:
+    name: EDA Update Server
+    needs: eda-e2e
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          curl -L -X PATCH -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          "https://api.github.com/repos/ansible/ansible-ui/actions/variables/EDA_SERVER" \
+          -d '{"name":"EDA_SERVER","value":"${{ inputs.EDA_SERVER }}"}'
+
+      # - name: Slack Notification
+      #   uses: slackapi/slack-github-action@v1.24.0
+      #   with:
+      #     channel-id: ${{ secrets.AAP_UI_CHANNEL_ID }}
+      #     slack-message: EDA_SERVER=${{ inputs.EDA_SERVER }}
+      #   env:
+      #     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
