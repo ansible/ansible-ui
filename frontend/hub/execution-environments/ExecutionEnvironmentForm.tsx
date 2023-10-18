@@ -99,27 +99,33 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
         exclude_tags: tagsToExclude,
         include_tags: tagsToInclude,
       };
+      // description is modified elsewhere
+      delete payload.description;
 
       const registry = data.registry as Registry;
       payload.registry = registry?.id;
 
-      if (mode == 'add') {
-        delete data.description;
-      }
+      const isRemote = originalData.pulp?.repository
+        ? !!originalData.pulp?.repository?.remote
+        : true;
 
       // TODO - handle distribution
-      if (mode == 'add') {
+      if (mode == 'add' && isRemote) {
         await hubAPIPost<ExecutionEnvironmentFormProps>(
           hubAPI`/_ui/v1/execution-environments/remotes/`,
           payload
         );
       } else {
-        await postHubRequest(
+        await putHubRequest(
           hubAPI`/_ui/v1/execution-environments/remotes/${
             originalData.pulp?.repository?.remote?.id || ''
           }`,
           payload
         );
+
+        if (data.description != originalData.description) {
+          // TODO - send request to modify description
+        }
       }
 
       navigate(-1);
