@@ -48,7 +48,7 @@ export function CredentialTypes() {
         titleDocLink={`${getDocsBaseUrl(config)}/html/userguide/credential_types.html`}
       />
       <PageTable<CredentialType>
-        id="platform-users-table"
+        id="awx-credential-types"
         toolbarFilters={toolbarFilters}
         toolbarActions={toolbarActions}
         tableColumns={tableColumns}
