@@ -223,7 +223,8 @@ Cypress.Commands.add('getEdaProjectByName', (edaProjectName: string) => {
 });
 
 Cypress.Commands.add('deleteEdaProject', (project: EdaProject) => {
-  cy.waitEdaProjectSync(project);
+  // this is just cleanup, so we don't care if the sync fails
+  // cy.waitEdaProjectSync(project);
   cy.requestDelete(`/api/eda/v1/projects/${project.id}/`, {
     failOnStatusCode: false,
   }).then(() => {

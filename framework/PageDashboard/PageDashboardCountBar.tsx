@@ -78,7 +78,9 @@ export function PageDashboardCountBar(props: PageDashboardCountBarProps) {
                   </>
                 ) : (
                   // This renders the total if there are no counts or total is zero
-                  <span style={{ fontSize: 'xx-large', lineHeight: 1 }}>{total}</span>
+                  <span id={`${id}-chart`} style={{ fontSize: 'xx-large', lineHeight: 1 }}>
+                    {total}
+                  </span>
                 )}
               </div>
             );
