@@ -4,7 +4,7 @@ import '@cypress/code-coverage/support';
 import './commands';
 import { createGlobalProject } from './global-project';
 
-before(() => {
+before(function () {
   const devBaseUrl = Cypress.config().baseUrl?.split(':').slice(-1).toString();
   if (
     devBaseUrl &&
@@ -20,7 +20,3 @@ before(() => {
     createGlobalProject();
   }
 });
-
-// afterEach(() => {
-//   // cy.checkA11y()
-// });
