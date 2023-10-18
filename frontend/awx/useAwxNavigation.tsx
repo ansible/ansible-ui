@@ -31,6 +31,10 @@ import { Users } from './access/users/Users';
 import { AddRolesToUser } from './access/users/components/AddRolesToUser';
 import { ApplicationPage } from './administration/applications/ApplicationPage/ApplicationPage';
 import { Applications } from './administration/applications/Applications';
+import {
+  CreateCredentialType,
+  EditCredentialType,
+} from './administration/credential-types/CredentialTypeForm';
 import { CredentialTypePage } from './administration/credential-types/CredentialTypePage/CredentialTypePage';
 import { CredentialTypes } from './administration/credential-types/CredentialTypes';
 import { ExecutionEnvironments } from './administration/execution-environments/ExecutionEnvironments';
@@ -875,6 +879,16 @@ export function useAwxNavigation() {
                 label: t('Credential Types'),
                 path: 'credential-types',
                 children: [
+                  {
+                    id: AwxRoute.CreateCredentialType,
+                    path: 'create',
+                    element: <CreateCredentialType />,
+                  },
+                  {
+                    id: AwxRoute.EditCredentialType,
+                    path: ':id/edit',
+                    element: <EditCredentialType />,
+                  },
                   {
                     id: AwxRoute.CredentialTypePage,
                     path: ':id/',
