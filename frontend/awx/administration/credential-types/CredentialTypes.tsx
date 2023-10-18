@@ -67,7 +67,7 @@ export function CredentialTypes() {
               )
         }
         emptyStateIcon={canCreateCredentialType ? undefined : CubesIcon}
-        emptyStateButtonText={canCreateCredentialType ? t('Create user') : undefined}
+        emptyStateButtonText={canCreateCredentialType ? t('Create credential type') : undefined}
         emptyStateButtonClick={
           canCreateCredentialType ? () => pageNavigate(AwxRoute.CreateCredentialType) : undefined
         }

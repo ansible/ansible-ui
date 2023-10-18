@@ -70,7 +70,11 @@ export function useCredentialTypeRowActions(view: IAwxView<CredentialType>) {
       credentialType.managed
         ? t(`The credential type cannot be deleted because it is read-only.`)
         : '';
-    const cannotEditCredentialType = (credentialType: CredentialType) =>
+    const cannotEditManagedCredentialType = (credentialType: CredentialType) =>
+      credentialType.managed
+        ? t(`The credential type cannot be edited because it is read-only.`)
+        : '';
+    const cannotEditCredentialTypeDueToPermissions = (credentialType: CredentialType) =>
       credentialType.summary_fields?.user_capabilities?.edit
         ? ''
         : t(`The credential type cannot be edited due to insufficient permissions.`);
@@ -82,8 +86,11 @@ export function useCredentialTypeRowActions(view: IAwxView<CredentialType>) {
         // variant: ButtonVariant.primary,
         isPinned: true,
         icon: PencilAltIcon,
-        label: t('Edit credentialType'),
-        isDisabled: (credentialType: CredentialType) => cannotEditCredentialType(credentialType),
+        label: t('Edit credential type'),
+        isDisabled: (credentialType: CredentialType) =>
+          cannotEditManagedCredentialType(credentialType)
+            ? cannotEditManagedCredentialType(credentialType)
+            : cannotEditCredentialTypeDueToPermissions(credentialType),
         onClick: (credentialType) =>
           pageNavigate(AwxRoute.EditCredentialType, { params: { id: credentialType.id } }),
       },
@@ -92,7 +99,7 @@ export function useCredentialTypeRowActions(view: IAwxView<CredentialType>) {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: TrashIcon,
-        label: t('Delete credentialType'),
+        label: t('Delete credential type'),
         isDisabled: (credentialType: CredentialType) =>
           cannotDeleteManagedCredentialType(credentialType)
             ? cannotDeleteManagedCredentialType(credentialType)

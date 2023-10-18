@@ -22,10 +22,10 @@ export function useDeleteCredentialTypes(onComplete: (users: CredentialType[]) =
   const cannotDeleteCredentialTypeDueToPermissions = (credentialType: CredentialType) =>
     credentialType.summary_fields?.user_capabilities?.delete
       ? ''
-      : t(`The credentialType cannot be deleted due to insufficient permissions.`);
+      : t(`The credential type cannot be deleted due to insufficient permissions.`);
   const cannotDeleteManagedCredentialType = (credentialType: CredentialType) =>
     credentialType.managed
-      ? t(`The credentialType is provided by the system and is read-only.`)
+      ? t(`The credential type is provided by the system and is read-only.`)
       : '';
 
   const bulkAction = useBulkConfirmation<CredentialType>();
@@ -36,7 +36,7 @@ export function useDeleteCredentialTypes(onComplete: (users: CredentialType[]) =
     const customCredentialTypes: CredentialType[] = credentialTypes.filter(
       (credentialType) => !credentialType.managed
     );
-    const undeletableDeleteCredentialTypesDueToPermissions: CredentialType[] =
+    const undeletableCustomCredentialTypesDueToPermissions: CredentialType[] =
       customCredentialTypes.filter(cannotDeleteCredentialTypeDueToPermissions);
 
     bulkAction({
@@ -45,13 +45,13 @@ export function useDeleteCredentialTypes(onComplete: (users: CredentialType[]) =
         count:
           credentialTypes.length -
           undeletableManagedCredentialTypes.length -
-          undeletableDeleteCredentialTypesDueToPermissions.length,
+          undeletableCustomCredentialTypesDueToPermissions.length,
       }),
       actionButtonText: t('Delete credential types', { count: credentialTypes.length }),
       items: credentialTypes.sort((l, r) => compareStrings(l.name, r.name)),
       alertPrompts:
         undeletableManagedCredentialTypes.length ||
-        undeletableDeleteCredentialTypesDueToPermissions.length
+        undeletableCustomCredentialTypesDueToPermissions.length
           ? [
               ...(undeletableManagedCredentialTypes.length
                 ? [
@@ -63,12 +63,12 @@ export function useDeleteCredentialTypes(onComplete: (users: CredentialType[]) =
                     ),
                   ]
                 : []),
-              ...(undeletableDeleteCredentialTypesDueToPermissions.length
+              ...(undeletableCustomCredentialTypesDueToPermissions.length
                 ? [
                     t(
                       '{{count}} of the selected credential types cannot be deleted due to insufficient permissions.',
                       {
-                        count: undeletableDeleteCredentialTypesDueToPermissions.length,
+                        count: undeletableCustomCredentialTypesDueToPermissions.length,
                       }
                     ),
                   ]
