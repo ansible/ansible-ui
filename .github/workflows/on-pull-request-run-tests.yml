@@ -338,112 +338,17 @@ jobs:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_AFW_CCT_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  awx-ui-image:
-    name: AWX UI Image
-    runs-on: ubuntu-latest
-    needs: packages
-    timeout-minutes: 10
-    outputs:
-      awx: ${{ needs.packages.outputs.awx == 'true' }}
-    steps:
-      - uses: actions/checkout@v3
-        if: needs.packages.outputs.awx == 'true'
-        with:
-          fetch-depth: 1
-      - name: PreCache
-        if: needs.packages.outputs.awx == 'true'
-        run: npm version 0.0.0 --no-git-tag-version
-      - name: Cache dependencies
-        if: needs.packages.outputs.awx == 'true'
-        id: cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            ./node_modules
-            /home/runner/.cache/Cypress
-          key: modules-${{ hashFiles('package-lock.json') }}
-      - name: Install dependencies
-        if: steps.cache.outputs.cache-hit != 'true' && needs.packages.outputs.awx == 'true'
-        run: npm ci
-      - name: NPM Build
-        if: needs.packages.outputs.awx == 'true'
-        run: npm run build:awx
-      - name: Build Image
-        if: needs.packages.outputs.awx == 'true'
-        run: npm run docker:build:awx
-      - name: Save Image
-        if: needs.packages.outputs.awx == 'true'
-        run: docker save awx-ui > awx-ui.tar
-      - name: Upload Image
-        if: needs.packages.outputs.awx == 'true'
-        uses: actions/upload-artifact@v3
-        with:
-          name: awx-ui.tar
-          path: awx-ui.tar
-
   awx-e2e:
     name: AWX E2E
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    needs: awx-ui-image
-    strategy:
-      fail-fast: false
-      matrix:
-        containers: [1, 2, 3]
-    steps:
-      - name: Download container image
-        if: needs.awx-ui-image.outputs.awx == 'true'
-        uses: actions/download-artifact@v3
-        with:
-          name: awx-ui.tar
-      - name: Load container image
-        if: needs.awx-ui-image.outputs.awx == 'true'
-        run: docker load --input awx-ui.tar
-      - name: Checkout
-        if: needs.awx-ui-image.outputs.awx == 'true'
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 1
-      - name: Setup node
-        if: needs.awx-ui-image.outputs.awx == 'true'
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-      - name: PreCache
-        if: needs.awx-ui-image.outputs.awx == 'true'
-        run: npm version 0.0.0 --no-git-tag-version
-      - name: Cache dependencies
-        if: needs.awx-ui-image.outputs.awx == 'true'
-        id: cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            ./node_modules
-            /home/runner/.cache/Cypress
-          key: modules-${{ hashFiles('package-lock.json') }}
-      - name: Install dependencies
-        if: steps.cache.outputs.cache-hit != 'true' && needs.awx-ui-image.outputs.awx == 'true'
-        run: npm ci
-      - name: Cypress
-        if: needs.awx-ui-image.outputs.awx == 'true'
-        uses: cypress-io/github-action@v5
-        with:
-          install: false
-          start: npm run docker:run:awx
-          wait-on: 'https://localhost:4101'
-          record: true
-          parallel: true
-          # auto-cancel-after-failures: 1
-          config-file: cypress.awx.config.ts
-        env:
-          AWX_SERVER: ${{ vars.AWX_SERVER }}
-          AWX_USERNAME: ${{ vars.AWX_USERNAME }}
-          AWX_PASSWORD: ${{ secrets.AWX_PASSWORD }}
-          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_AWX_E2E_PROJECT_ID }}
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_AWX_E2E_RECORD_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NODE_TLS_REJECT_UNAUTHORIZED: 0
-
+    uses: ansible/ansible-ui/.github/workflows/awx-e2e.yml@main
+    with:
+      AWX_SERVER: ${{ secrets.AWX_SERVER }}
+      SKIP: ${{ needs.packages.outputs.awx !== 'true' }}
+    secrets:
+      AWX_PASSWORD: ${{ secrets.AWX_PASSWORD }}
+      CYPRESS_AUI_AWX_E2E_PROJECT_ID: ${{ secrets.CYPRESS_AUI_AWX_E2E_PROJECT_ID }}
+      CYPRESS_AUI_AWX_E2E_RECORD_KEY: ${{ secrets.CYPRESS_AUI_AWX_E2E_RECORD_KEY }}
+      
   hub-ui-image:
     name: HUB UI Image
     runs-on: ubuntu-latest
