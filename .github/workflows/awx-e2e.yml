@@ -43,7 +43,7 @@ jobs:
             /home/runner/.cache/Cypress
           key: modules-${{ hashFiles('package-lock.json') }}
       - name: Install dependencies
-        if: steps.cache.outputs.cache-hit != 'true' && ${{ !inputs.SKIP_JOB }}
+        if: steps.cache.outputs.cache-hit != 'true' && !inputs.SKIP_JOB
         run: npm ci
       - name: NPM Build
         if: ${{ !inputs.SKIP_JOB }}
@@ -102,7 +102,7 @@ jobs:
             /home/runner/.cache/Cypress
           key: modules-${{ hashFiles('package-lock.json') }}
       - name: Install dependencies
-        if: steps.cache.outputs.cache-hit != 'true' && ${{ !inputs.SKIP_JOB }}
+        if: steps.cache.outputs.cache-hit != 'true' && !inputs.SKIP_JOB
         run: npm ci
       - name: Cypress
         if: ${{ !inputs.SKIP_JOB }}
