@@ -11,7 +11,7 @@ on:
 jobs:
   awx-e2e:
     name: AWX E2E
-    uses: ansible/ansible-ui/.github/workflows/awx-e2e.yml@main
+    uses: ./.github/workflows/awx-e2e.yml@main
     with:
       AWX_SERVER: ${{ inputs.AWX_SERVER }}
     secrets:
