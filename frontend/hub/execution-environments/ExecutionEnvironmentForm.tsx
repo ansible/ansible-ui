@@ -93,7 +93,11 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
   const onSubmit: PageFormSubmitHandler<ExecutionEnvironmentFormProps> = async (
     data: ExecutionEnvironmentFormProps
   ) => {
-    const payload = { ...data };
+    const payload: PayloadDataType = {
+      ...data,
+      exclude_tags: tagsToExclude,
+      include_tags: tagsToInclude,
+    };
 
     const registry = data.registry as Registry;
     payload.registry = registry?.id;
@@ -238,6 +242,11 @@ type ExecutionEnvironmentFormProps = {
   registry: string | Registry;
 };
 
+type PayloadDataType = ExecutionEnvironmentFormProps & {
+  include_tags?: string[];
+  exclude_tags?: string[];
+};
+
 type Registry = {
   id: string;
   name: string;
@@ -285,7 +294,6 @@ function TagsSelector(props: {
           onClick={() => {
             const tagsArray = tagsText.split(',');
             const uniqueArray = [...new Set([...tags, ...tagsArray])];
-
             setTags(uniqueArray);
             setTagsText('');
           }}
