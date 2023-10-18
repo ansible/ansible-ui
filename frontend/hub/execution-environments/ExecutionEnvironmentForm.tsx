@@ -160,13 +160,7 @@ function EEInputs(props: { mode: 'add' | 'edit' }) {
 
   const selectRegistrySingle = useSelectRegistrySingle();
 
-  const registrySelector = toolbarSingleSelectBrowseAdapter<Registry>(
-    selectRegistrySingle.onBrowse,
-    (item) => item.name,
-    (name) => {
-      return { name };
-    }
-  );
+  const registrySelector = selectRegistrySingle.onBrowse;
 
   const page_size = 50;
 
