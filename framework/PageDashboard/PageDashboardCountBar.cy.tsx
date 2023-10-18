@@ -22,7 +22,7 @@ describe('PageDashboardCountBar', () => {
     ];
     cy.mount(<PageDashboardCountBar counts={counts} />);
 
-    cy.get('#inventories-chart').should('contain', 13);
+    cy.get('#inventories a').should('contain', '13 Inventories');
     cy.get('#inventories-legend-synced-count').should('contain', 11);
     cy.get('#inventories-legend-synced-failures-count').should('contain', 2);
   });
@@ -48,7 +48,7 @@ describe('PageDashboardCountBar', () => {
     ];
     cy.mount(<PageDashboardCountBar counts={counts} />);
 
-    cy.get('#hosts-chart').should('contain', 113);
+    cy.get('#hosts a').should('contain', '113 Hosts');
     cy.get('#hosts-legend-ready-count').should('contain', 100);
     cy.get('#hosts-legend-failed-count').should('contain', 13);
   });
@@ -74,7 +74,7 @@ describe('PageDashboardCountBar', () => {
     ];
     cy.mount(<PageDashboardCountBar counts={counts} />);
 
-    cy.get('#projects-chart').should('contain', 13);
+    cy.get('#projects a').should('contain', '13 Projects');
     cy.get('#projects-legend-synced-count').should('contain', 11);
     cy.get('#projects-legend-synced-failures-count').should('contain', 2);
   });
