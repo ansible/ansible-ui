@@ -24,14 +24,14 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v3
-        if: inputs.SKIP == false
+        if: ${{ inputs.SKIP == 'false' }}
         with:
           fetch-depth: 1
       - name: PreCache
-        if: inputs.SKIP == false
+        if: ${{ inputs.SKIP == 'false' }}
         run: npm version 0.0.0 --no-git-tag-version
       - name: Cache dependencies
-        if: inputs.SKIP == false
+        if: ${{ inputs.SKIP == 'false' }}
         id: cache
         uses: actions/cache@v3
         with:
@@ -40,19 +40,19 @@ jobs:
             /home/runner/.cache/Cypress
           key: modules-${{ hashFiles('package-lock.json') }}
       - name: Install dependencies
-        if: steps.cache.outputs.cache-hit != 'true' && inputs.SKIP == false
+        if: steps.cache.outputs.cache-hit != 'true' && ${{ inputs.SKIP == 'false' }}
         run: npm ci
       - name: NPM Build
-        if: inputs.SKIP == false
+        if: ${{ inputs.SKIP == 'false' }}
         run: npm run build:awx
       - name: Build Image
-        if: inputs.SKIP == false
+        if: ${{ inputs.SKIP == 'false' }}
         run: npm run docker:build:awx
       - name: Save Image
-        if: inputs.SKIP == false
+        if: ${{ inputs.SKIP == 'false' }}
         run: docker save awx-ui > awx-ui.tar
       - name: Upload Image
-        if: inputs.SKIP == false
+        if: ${{ inputs.SKIP == 'false' }}
         uses: actions/upload-artifact@v3
         with:
           name: awx-ui.tar
@@ -69,28 +69,28 @@ jobs:
         containers: [1, 2, 3]
     steps:
       - name: Download container image
-        if: inputs.SKIP == false
+        if: ${{ inputs.SKIP == 'false' }}
         uses: actions/download-artifact@v3
         with:
           name: awx-ui.tar
       - name: Load container image
-        if: inputs.SKIP == false
+        if: ${{ inputs.SKIP == 'false' }}
         run: docker load --input awx-ui.tar
       - name: Checkout
-        if: inputs.SKIP == false
+        if: ${{ inputs.SKIP == 'false' }}
         uses: actions/checkout@v3
         with:
           fetch-depth: 1
       - name: Setup node
-        if: inputs.SKIP == false
+        if: ${{ inputs.SKIP == 'false' }}
         uses: actions/setup-node@v3
         with:
           node-version: 18
       - name: PreCache
-        if: inputs.SKIP == false
+        if: ${{ inputs.SKIP == 'false' }}
         run: npm version 0.0.0 --no-git-tag-version
       - name: Cache dependencies
-        if: inputs.SKIP == false
+        if: ${{ inputs.SKIP == 'false' }}
         id: cache
         uses: actions/cache@v3
         with:
@@ -99,10 +99,10 @@ jobs:
             /home/runner/.cache/Cypress
           key: modules-${{ hashFiles('package-lock.json') }}
       - name: Install dependencies
-        if: steps.cache.outputs.cache-hit != 'true' && inputs.SKIP == false
+        if: steps.cache.outputs.cache-hit != 'true' && ${{ inputs.SKIP == 'false' }}
         run: npm ci
       - name: Cypress
-        if: inputs.SKIP == false
+        if: ${{ inputs.SKIP == 'false' }}
         uses: cypress-io/github-action@v5
         with:
           install: false
