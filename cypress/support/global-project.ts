@@ -11,7 +11,16 @@ const GLOBAL_PROJECT_SCM_URL = 'https://github.com/ansible/test-playbooks.git';
  *
  * @returns {Promise<void>} The promise resolves when the project is created
  * or already exists, and it's saved as a global alias in Cypress that can be
- * used in the tests by using this.globalProject.
+ * accessed in the tests using this.globalProject.
+ *
+ * Example usage:
+ * To filter by the name of the global project:
+ * cy.searchAndDisplayResource(`${(this.globalProject as Project).name}`);
+ *
+ * Note: Project component must be imported in the spec file where global project is utilized.
+ * import { Project } from '../../../../frontend/awx/interfaces/Project';
+ *
+ * The above code is TypeScript compliant.
  */
 
 export function createGlobalProject() {
@@ -26,6 +35,7 @@ export function createGlobalProject() {
           scm_type: 'git',
           scm_url: GLOBAL_PROJECT_SCM_URL,
         }).then((globalProject: Project) => {
+          cy.waitForProjectToFinishSyncing(globalProject.id);
           cy.log('✅ Global project created, access it via this.globalProject in the tests');
           return cy.wrap(globalProject).as('globalProject');
         });
