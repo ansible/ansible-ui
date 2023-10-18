@@ -72,6 +72,14 @@ import './rest-commands';
 //   });
 // });
 
+Cypress.Commands.add('typeMonacoTextField', (textString: string) => {
+  cy.get('[data-cy="expandable"]')
+    .click()
+    .then(() => {
+      cy.get('[class*="monaco-scrollable-element"]').type(`${textString}{esc}`);
+    });
+});
+
 Cypress.Commands.add('getCheckboxByLabel', (label: string | RegExp) => {
   cy.contains('.pf-v5-c-check__label', label)
     .invoke('attr', 'for')
