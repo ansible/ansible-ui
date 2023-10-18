@@ -32,7 +32,7 @@ export function useCredentialTypeToolbarActions(view: IAwxView<CredentialType>) 
         // variant: ButtonVariant.primary,
         isPinned: true,
         icon: PlusCircleIcon,
-        label: t('Create credentialType'),
+        label: t('Create credential type'),
         isDisabled: canCreateCredentialType
           ? undefined
           : t(
