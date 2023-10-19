@@ -22,7 +22,7 @@ describe('Credential types', () => {
 
   it('navigate to the details page for a credential type', () => {
     cy.navigateTo('awx', 'credential-types');
-    cy.clickTableRow(credentialType.name);
+    cy.clickTableRow(credentialType.name as string);
     cy.url().then((currentUrl) => {
       expect(currentUrl.includes('details')).to.be.true;
     });
@@ -44,7 +44,7 @@ describe('Credential types', () => {
   it('edit a credential type from the list row action', () => {
     cy.navigateTo('awx', 'credential-types');
     // Verify navigation to the Edit Credential UI
-    cy.clickTableRowPinnedAction(credentialType.name, 'edit-credential-type');
+    cy.clickTableRowPinnedAction(credentialType.name as string, 'edit-credential-type');
     cy.verifyPageTitle('Edit Credential Type');
     cy.url().then((currentUrl) => {
       expect(currentUrl.includes('edit')).to.be.true;
@@ -70,7 +70,7 @@ describe('Credential types', () => {
   it('delete a credential type from the list row action', () => {
     cy.navigateTo('awx', 'credential-types');
     cy.createAwxCredentialType().then((credType: CredentialType) => {
-      cy.clickTableRowKebabAction(credType.name, /^Delete credential type$/);
+      cy.clickTableRowKebabAction(credType.name as string, /^Delete credential type$/);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete credential type/);
       cy.contains(/^Success$/);
