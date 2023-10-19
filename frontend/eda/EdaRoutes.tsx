@@ -24,6 +24,7 @@ export enum EdaRoute {
   CreateDecisionEnvironment = 'eda-create-decision-environment',
   EditDecisionEnvironment = 'eda-edit-decision-environment',
   DecisionEnvironmentPage = 'eda-decision-environment-page',
+  DecisionEnvironmentDetails = 'eda-decision-environment-details',
 
   Credentials = 'eda-credentials',
   CreateCredential = 'eda-create-credential',
