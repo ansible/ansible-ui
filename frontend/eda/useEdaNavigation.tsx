@@ -7,8 +7,9 @@ import {
 } from '../../framework/PageNavigation/PageNavigationItem';
 import { Login } from '../common/Login';
 import { EdaRoute } from './EdaRoutes';
-import { CredentialDetails } from './Resources/credentials/CredentialDetails';
+import { CredentialDetails } from './Resources/credentials/CredentialPage/CredentialDetails';
 import { Credentials } from './Resources/credentials/Credentials';
+import { CredentialPage } from './Resources/credentials/CredentialPage/CredentialPage';
 import { CreateCredential, EditCredential } from './Resources/credentials/EditCredential';
 import { DecisionEnvironmentDetails } from './Resources/decision-environments/DecisionEnvironmentDetails';
 import {
@@ -222,7 +223,18 @@ export function useEdaNavigation() {
                   {
                     id: EdaRoute.CredentialPage,
                     path: 'details/:id',
-                    element: <CredentialDetails />,
+                    element: <CredentialPage />,
+                    children: [
+                      {
+                        id: EdaRoute.CredentialDetails,
+                        path: 'details',
+                        element: <CredentialDetails />,
+                      },
+                      {
+                        path: '',
+                        element: <Navigate to="details" />,
+                      },
+                    ],
                   },
                   {
                     path: '',
