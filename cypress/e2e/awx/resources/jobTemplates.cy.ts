@@ -1,17 +1,18 @@
 import { randomString } from '../../../../framework/utils/random-string';
-// import { Credential } from '../../../../frontend/awx/interfaces/Credential';
+import { Credential } from '../../../../frontend/awx/interfaces/Credential';
 // import { ExecutionEnvironment } from '../../../../frontend/awx/interfaces/ExecutionEnvironment';
 // import { InstanceGroup } from '../../../../frontend/awx/interfaces/InstanceGroup';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 // import { Label } from '../../../../frontend/awx/interfaces/Label';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
+import { InstanceGroup } from '../../../../frontend/awx/interfaces/generated-from-swagger/api';
 
 describe('Job templates form Create, Edit, Delete', function () {
   let inventory: Inventory;
+  let machineCredential: Credential;
+  let instanceGroup: InstanceGroup;
   const executionEnvironment = 'Control Plane Execution Environment';
-  const machineCredential = 'Demo Credential';
-  const instanceGroup = 'default';
 
   before(function () {
     cy.awxLogin();
@@ -21,6 +22,26 @@ describe('Job templates form Create, Edit, Delete', function () {
         inventory = inv;
       }
     );
+
+    cy.createAWXCredential({
+      kind: 'machine',
+      organization: (this.globalProjectOrg as Organization).id,
+      credential_type: 1,
+    }).then((cred) => {
+      machineCredential = cred;
+    });
+
+    cy.createAwxInstanceGroup().then((ig) => {
+      instanceGroup = ig;
+    });
+
+    // cy.createAwxLabel({ organization: organization.id }).then((l) => {
+    //   label = l;
+    // });
+  });
+
+  after(() => {
+    cy.deleteAwxInstanceGroup(instanceGroup);
   });
 
   it('should create a job template with all fields without prompt on launch option', function () {
@@ -39,7 +60,7 @@ describe('Job templates form Create, Edit, Delete', function () {
       executionEnvironment,
       true
     );
-    cy.selectDropdownOptionByResourceName('credential-select', machineCredential, true);
+    cy.selectDropdownOptionByResourceName('credential-select', machineCredential.name, true);
     cy.clickButton(/^Create job template$/);
     cy.wait('@createJT')
       .its('response.body.id')
@@ -100,11 +121,11 @@ describe('Job templates form Create, Edit, Delete', function () {
         });
         cy.selectDropdownOptionByResourceName('inventory', inventory.name);
         cy.clickButton(/^Next/);
-        cy.selectItemFromLookupModal('credential-select', machineCredential);
+        cy.selectItemFromLookupModal('credential-select', machineCredential.name);
         cy.clickButton(/^Next/);
         cy.selectItemFromLookupModal('execution-environment-select', executionEnvironment);
         cy.clickButton(/^Next/);
-        cy.selectItemFromLookupModal('instance-group-select', instanceGroup);
+        cy.selectItemFromLookupModal('instance-group-select', instanceGroup.name);
         cy.clickButton(/^Next/);
         cy.intercept('POST', `api/v2/job_templates/${id}/launch/`).as('postLaunch');
         cy.clickButton(/^Finish/);
@@ -151,11 +172,11 @@ describe('Job templates form Create, Edit, Delete', function () {
         cy.clickButton(/^Launch template$/);
         cy.selectDropdownOptionByResourceName('inventory', inventory.name);
         cy.clickButton(/^Next/);
-        cy.selectItemFromLookupModal('credential-select', machineCredential);
+        cy.selectItemFromLookupModal('credential-select', machineCredential.name);
         cy.clickButton(/^Next/);
         cy.selectItemFromLookupModal('execution-environment-select', executionEnvironment);
         cy.clickButton(/^Next/);
-        cy.selectItemFromLookupModal('instance-group-select', instanceGroup);
+        cy.selectItemFromLookupModal('instance-group-select', instanceGroup.name);
         cy.clickButton(/^Next/);
         cy.intercept('POST', `api/v2/job_templates/${id}/launch/`).as('postLaunch');
         cy.clickButton(/^Finish/);
