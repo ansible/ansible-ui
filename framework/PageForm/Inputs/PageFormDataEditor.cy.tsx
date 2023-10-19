@@ -2,7 +2,7 @@
 import { PageForm } from '../PageForm';
 import { PageFormDataEditor } from './PageFormDataEditor';
 
-describe('PageFormCodeEditor', () => {
+describe('PageFormDataEditor', () => {
   interface CodeEditor {
     extra_vars: string;
   }
@@ -31,7 +31,7 @@ describe('PageFormCodeEditor', () => {
       </PageForm>
     );
     expect(cy.get('label').contains('Extra Variables'));
-    expect(cy.get('div#data-editor').should('not.exist'));
+    expect(cy.get('div#data-editor-extra_vars').should('not.exist'));
   });
 
   it('should mount expanded, upload, download, and copy button and 2 toggle language buttons', () => {
@@ -48,6 +48,7 @@ describe('PageFormCodeEditor', () => {
           defaultExpanded
           toggleLanguages={['json', 'yaml']}
           isExpandable
+          allowUpload
         />
       </PageForm>
     );
@@ -56,7 +57,7 @@ describe('PageFormCodeEditor', () => {
     expect(cy.get('div#download-button').should('be.visible'));
     expect(cy.get('div#toggle-json').should('be.visible'));
     expect(cy.get('div#toggle-yaml').should('be.visible'));
-    expect(cy.get('div#data-editor').should('be.visible'));
+    expect(cy.get('div#data-editor-extra_vars').should('be.visible'));
   });
 
   it('it should allow to upload a file', () => {
@@ -73,6 +74,7 @@ describe('PageFormCodeEditor', () => {
           defaultExpanded
           toggleLanguages={['json', 'yaml']}
           isExpandable
+          allowUpload
         />
       </PageForm>
     );
@@ -82,7 +84,7 @@ describe('PageFormCodeEditor', () => {
     cy.get('input[type="file"]')
       .selectFile('@yamlFixture', { force: true })
       .then(() => {
-        cy.get('#data-editor').find('textarea').should('have.value', yamlContent);
+        cy.get('#data-editor-extra_vars').find('textarea').should('have.value', yamlContent);
       });
   });
 
@@ -100,6 +102,7 @@ describe('PageFormCodeEditor', () => {
           defaultExpanded
           toggleLanguages={['json', 'yaml']}
           isExpandable
+          allowUpload
         />
       </PageForm>
     );
@@ -109,7 +112,7 @@ describe('PageFormCodeEditor', () => {
     cy.get('input[type="file"]')
       .selectFile('@yamlFixture', { force: true, action: 'drag-drop' })
       .then(() => {
-        cy.get('#data-editor').find('textarea').should('have.value', yamlContent);
+        cy.get('#data-editor-extra_vars').find('textarea').should('have.value', yamlContent);
       });
   });
 
