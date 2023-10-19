@@ -24,7 +24,7 @@ const GLOBAL_PROJECT_SCM_URL = 'https://github.com/ansible/test-playbooks.git';
  */
 
 export function createGlobalProject() {
-  cy.awxRequestGet<AwxItemsResponse<Project>>(`/api/v2/projects?name__startswith=Global&page=1`)
+  cy.awxRequestGet<AwxItemsResponse<Project>>(`/api/v2/projects?name=${GLOBAL_PROJECT_NAME}&page=1`)
     .its('results')
     .then((results: Project[]) => {
       if (results.length === 0) {
