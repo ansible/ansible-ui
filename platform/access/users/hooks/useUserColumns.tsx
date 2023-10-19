@@ -1,6 +1,12 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ColumnModalOption, ITableColumn, TextCell, useGetPageUrl } from '../../../../framework';
+import {
+  ColumnModalOption,
+  ColumnTableOption,
+  ITableColumn,
+  TextCell,
+  useGetPageUrl,
+} from '../../../../framework';
 import { User } from '../../../interfaces/User';
 import { PlatformRoute } from '../../../PlatformRoutes';
 
@@ -40,16 +46,18 @@ export function useUsersColumns() {
         header: t('Created'),
         type: 'datetime',
         value: (user) => user.created_on,
+        table: ColumnTableOption.Hidden,
         card: 'hidden',
-        list: 'secondary',
+        list: 'hidden',
         modal: ColumnModalOption.Hidden,
       },
       {
         header: t('Last modified'),
         type: 'datetime',
         value: (user) => user.modified_on,
+        table: ColumnTableOption.Hidden,
         card: 'hidden',
-        list: 'secondary',
+        list: 'hidden',
         modal: ColumnModalOption.Hidden,
       },
     ],
