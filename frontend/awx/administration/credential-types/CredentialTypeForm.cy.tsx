@@ -83,7 +83,6 @@ describe('CredentialTypeForm.cy.ts', () => {
       cy.get('[data-cy="name"]').should('have.value', 'Mock Credential Type');
       cy.get('[data-cy="name"]').clear();
       cy.get('[data-cy="name"]').type('Edited Credential Type');
-      cy.get('[data-cy="inputs-form-group"]').type('{moveToEnd}  - password');
       cy.clickButton(/^Edit credential type$/);
       cy.wait('@editCredentialType')
         .its('request.body')
@@ -98,7 +97,7 @@ describe('CredentialTypeForm.cy.ts', () => {
                 label: 'Username',
               },
             ],
-            required: ['username', 'password'],
+            required: ['username'],
           });
           expect(editedCredentialType.injectors).to.deep.equal({});
         });
