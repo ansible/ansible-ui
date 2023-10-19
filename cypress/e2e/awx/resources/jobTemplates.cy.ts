@@ -7,23 +7,56 @@ import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
 
-describe('Job templates form Create, Edit, Delete', function () {
+describe('Job templates form Create, Edit, Delete', () => {
+  let organization: Organization;
+  let project: Project;
   let inventory: Inventory;
   const executionEnvironment = 'Control Plane Execution Environment';
   const machineCredential = 'Demo Credential';
   const instanceGroup = 'default';
 
-  before(function () {
+  before(() => {
     cy.awxLogin();
 
-    cy.createAwxInventory({ organization: (this.globalProjectOrg as Organization).id }).then(
-      (inv) => {
-        inventory = inv;
-      }
-    );
+    cy.createAwxOrganization().then((o) => {
+      organization = o;
+
+      cy.createAwxProject({ organization: organization.id }).then((p) => {
+        project = p;
+      });
+
+      cy.createAwxInventory({ organization: organization.id }).then((i) => {
+        inventory = i;
+      });
+
+      // cy.createAwxExecutionEnvironment({ organization: organization.id }).then((ee) => {
+      //   executionEnvironment = ee;
+      // });
+
+      // cy.createAWXCredential({
+      //   kind: 'machine',
+      //   organization: organization.id,
+      //   credential_type: 1,
+      // }).then((cred) => {
+      //   machineCredential = cred;
+      // });
+
+      // cy.createAwxInstanceGroup().then((ig) => {
+      //   instanceGroup = ig;
+      // });
+
+      // cy.createAwxLabel({ organization: organization.id }).then((l) => {
+      //   label = l;
+      // });
+    });
   });
 
-  it('should create a job template with all fields without prompt on launch option', function () {
+  after(() => {
+    cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
+    // cy.deleteAwxInstanceGroup(instanceGroup);
+  });
+
+  it('should create a job template with all fields without prompt on launch option', () => {
     cy.intercept('POST', `/api/v2/job_templates`).as('createJT');
     const jtName = 'E2E-JT ' + randomString(4);
     cy.navigateTo('awx', 'templates');
@@ -32,7 +65,7 @@ describe('Job templates form Create, Edit, Delete', function () {
     cy.get('[data-cy="name"]').type(jtName);
     cy.get('[data-cy="description"]').type('This is a JT description');
     cy.selectDropdownOptionByResourceName('inventory', inventory.name);
-    cy.selectDropdownOptionByResourceName('project', `${(this.globalProject as Project).name}`);
+    cy.selectDropdownOptionByResourceName('project', project.name);
     cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
     cy.selectDropdownOptionByResourceName(
       'execution-environment-select',
@@ -72,7 +105,7 @@ describe('Job templates form Create, Edit, Delete', function () {
       });
   });
 
-  it('creation of job template using the prompt on launch wizard', function () {
+  it('creation of job template using the prompt on launch wizard', () => {
     cy.intercept('POST', `/api/v2/job_templates`).as('createPOLJT');
     const jtName = 'E2E-POLJT ' + randomString(4);
 
@@ -82,7 +115,7 @@ describe('Job templates form Create, Edit, Delete', function () {
     cy.get('[data-cy="name"]').type(jtName);
     cy.get('[data-cy="description"]').type('This is a JT with POL wizard description');
     cy.selectPromptOnLaunch('inventory');
-    cy.selectDropdownOptionByResourceName('project', `${(this.globalProject as Project).name}`);
+    cy.selectDropdownOptionByResourceName('project', project.name);
     cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
     cy.selectPromptOnLaunch('execution_environment');
     cy.selectPromptOnLaunch('credential');
@@ -128,7 +161,7 @@ describe('Job templates form Create, Edit, Delete', function () {
       });
   });
 
-  it('launch a job template from the details page launch cta using the prompt on launch', function () {
+  it('launch a job template from the details page launch cta using the prompt on launch', () => {
     cy.intercept('POST', `/api/v2/job_templates`).as('createPOLJT');
     const jtName = 'E2E-POLJT ' + randomString(4);
 
@@ -138,7 +171,7 @@ describe('Job templates form Create, Edit, Delete', function () {
     cy.get('[data-cy="name"]').type(jtName);
     cy.get('[data-cy="description"]').type('This is a JT with POL wizard description');
     cy.selectPromptOnLaunch('inventory');
-    cy.selectDropdownOptionByResourceName('project', `${(this.globalProject as Project).name}`);
+    cy.selectDropdownOptionByResourceName('project', project.name);
     cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
     cy.selectPromptOnLaunch('execution_environment');
     cy.selectPromptOnLaunch('credential');
@@ -178,10 +211,10 @@ describe('Job templates form Create, Edit, Delete', function () {
       });
   });
 
-  it('should edit a job template using the kebab menu of the template list page page', function () {
+  it('should edit a job template using the kebab menu of the template list page page', () => {
     cy.createAwxJobTemplate({
-      organization: (this.globalProjectOrg as Organization).id,
-      project: (this.globalProject as Project).id,
+      organization: organization.id,
+      project: project.id,
       inventory: inventory.id,
     }).then((jobTemplate) => {
       cy.navigateTo('awx', 'templates');
@@ -210,10 +243,10 @@ describe('Job templates form Create, Edit, Delete', function () {
     });
   });
 
-  it('should edit a job template using the edit template cta on details page', function () {
+  it('should edit a job template using the edit template cta on details page', () => {
     cy.createAwxJobTemplate({
-      organization: (this.globalProjectOrg as Organization).id,
-      project: (this.globalProject as Project).id,
+      organization: organization.id,
+      project: project.id,
       inventory: inventory.id,
     }).then((jobTemplate) => {
       cy.navigateTo('awx', 'templates');
@@ -244,10 +277,10 @@ describe('Job templates form Create, Edit, Delete', function () {
     });
   });
 
-  it('should delete a job template from the details page', function () {
+  it('should delete a job template from the details page', () => {
     cy.createAwxJobTemplate({
-      organization: (this.globalProjectOrg as Organization).id,
-      project: (this.globalProject as Project).id,
+      organization: organization.id,
+      project: project.id,
       inventory: inventory.id,
     }).then((jobTemplate) => {
       cy.navigateTo('awx', 'templates');
@@ -264,15 +297,15 @@ describe('Job templates form Create, Edit, Delete', function () {
     });
   });
 
-  it('should bulk delete job templates from the list page', function () {
+  it('should bulk delete job templates from the list page', () => {
     cy.createAwxJobTemplate({
-      organization: (this.globalProjectOrg as Organization).id,
-      project: (this.globalProject as Project).id,
+      organization: organization.id,
+      project: project.id,
       inventory: inventory.id,
     }).then((jobTemplate1) => {
       cy.createAwxJobTemplate({
-        organization: (this.globalProjectOrg as Organization).id,
-        project: (this.globalProject as Project).id,
+        organization: organization.id,
+        project: project.id,
         inventory: inventory.id,
       }).then((jobTemplate2) => {
         cy.navigateTo('awx', 'templates');
