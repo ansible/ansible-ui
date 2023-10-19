@@ -36,6 +36,7 @@ import {
   EditCredentialType,
 } from './administration/credential-types/CredentialTypeForm';
 import { CredentialTypePage } from './administration/credential-types/CredentialTypePage/CredentialTypePage';
+import { CredentialTypeCredentials } from './administration/credential-types/CredentialTypePage/CredentialTypeCredentials';
 import { CredentialTypes } from './administration/credential-types/CredentialTypes';
 import { ExecutionEnvironments } from './administration/execution-environments/ExecutionEnvironments';
 import { InstanceGroups } from './administration/instance-groups/InstanceGroups';
@@ -902,7 +903,7 @@ export function useAwxNavigation() {
                       {
                         id: AwxRoute.CredentialTypeCredentials,
                         path: 'credentials',
-                        element: <PageNotImplemented />,
+                        element: <CredentialTypeCredentials />,
                       },
                       {
                         path: '',

@@ -1,30 +1,15 @@
 import { useTranslation } from 'react-i18next';
-import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../../framework';
+import { PageHeader, PageLayout } from '../../../../framework';
 import { usePersistentFilters } from '../../../common/PersistentFilters';
-import { AwxRoute } from '../../AwxRoutes';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
-import { Credential } from '../../interfaces/Credential';
-import { useAwxView } from '../../useAwxView';
-import { useCredentialActions } from './hooks/useCredentialActions';
-import { useCredentialToolbarActions } from './hooks/useCredentialToolbarActions';
-import { useCredentialsColumns } from './hooks/useCredentialsColumns';
-import { useCredentialsFilters } from './hooks/useCredentialsFilters';
+import { CredentialsList } from '../../resources/common/CredentialsList';
+import { awxAPI } from '../../api/awx-utils';
 
 export function Credentials() {
   const { t } = useTranslation();
   const product: string = process.env.PRODUCT ?? t('AWX');
-  const pageNavigate = usePageNavigate();
   usePersistentFilters('credentials');
-  const toolbarFilters = useCredentialsFilters();
-  const tableColumns = useCredentialsColumns();
-  const view = useAwxView<Credential>({
-    url: '/api/v2/credentials/',
-    toolbarFilters,
-    tableColumns,
-  });
-  const toolbarActions = useCredentialToolbarActions(view);
-  const rowActions = useCredentialActions({ onDeleted: () => void view.refresh() });
   const config = useAwxConfig();
 
   return (
@@ -42,20 +27,7 @@ export function Credentials() {
           { product }
         )}
       />
-      <PageTable<Credential>
-        id="awx-credentials-table"
-        toolbarFilters={toolbarFilters}
-        toolbarActions={toolbarActions}
-        tableColumns={tableColumns}
-        rowActions={rowActions}
-        errorStateTitle={t('Error loading credentials')}
-        emptyStateTitle={t('No credentials yet')}
-        emptyStateDescription={t('To get started, create an credential.')}
-        emptyStateButtonText={t('Create credential')}
-        emptyStateButtonClick={() => pageNavigate(AwxRoute.CreateCredential)}
-        {...view}
-        defaultSubtitle={t('Credential')}
-      />
+      <CredentialsList url={awxAPI`/credentials/`} />
     </PageLayout>
   );
 }
