@@ -4,23 +4,17 @@
 import { randomString } from '../../../../framework/utils/random-string';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 
-describe('organizations', () => {
-  let organization: Organization;
-
-  before(() => {
+describe('organizations', function () {
+  before(function () {
     cy.awxLogin();
-
-    cy.createAwxOrganization().then((org) => {
-      organization = org;
-    });
   });
 
-  it('renders the organizations list page', () => {
+  it('renders the organizations list page', function () {
     cy.navigateTo('awx', 'organizations');
     cy.verifyPageTitle('Organizations');
   });
 
-  it('creates and then deletes a basic organization', () => {
+  it('creates and then deletes a basic organization', function () {
     const organizationName = 'E2E Organization ' + randomString(4);
     cy.navigateTo('awx', 'organizations');
     cy.clickLink(/^Create organization$/);
@@ -35,26 +29,28 @@ describe('organizations', () => {
     cy.verifyPageTitle('Organizations');
   });
 
-  it('renders the organization details page', () => {
+  it('renders the organization details page', function () {
     cy.navigateTo('awx', 'organizations');
-    cy.clickTableRow(organization.name);
-    cy.verifyPageTitle(organization.name);
+    cy.clickTableRow(`${(this.globalProjectOrg as Organization).name}`);
+    cy.verifyPageTitle(`${(this.globalProjectOrg as Organization).name}`);
     cy.clickLink(/^Details$/);
-    cy.contains('#name', organization.name);
+    cy.contains('#name', `${(this.globalProjectOrg as Organization).name}`);
   });
 
-  it('edits an organization from the details page', () => {
+  it('edits an organization from the details page', function () {
     cy.navigateTo('awx', 'organizations');
-    cy.clickTableRow(organization.name);
-    cy.verifyPageTitle(organization.name);
+    cy.clickTableRow(`${(this.globalProjectOrg as Organization).name}`);
+    cy.verifyPageTitle(`${(this.globalProjectOrg as Organization).name}`);
     cy.clickButton(/^Edit organization$/);
     cy.verifyPageTitle('Edit Organization');
-    cy.get('[data-cy="organization-name"]').type(organization.name + 'a');
+    cy.get('[data-cy="organization-name"]').type(
+      `${(this.globalProjectOrg as Organization).name}` + 'a'
+    );
     cy.clickButton(/^Save organization$/);
-    cy.verifyPageTitle(`${organization.name}a`);
+    cy.verifyPageTitle(`${(this.globalProjectOrg as Organization).name}a`);
   });
 
-  it('deletes an organization from the details page', () => {
+  it('deletes an organization from the details page', function () {
     cy.createAwxOrganization().then((testOrganization) => {
       cy.navigateTo('awx', 'organizations');
       cy.clickTableRow(testOrganization.name);
@@ -68,15 +64,15 @@ describe('organizations', () => {
     });
   });
 
-  it('navigates to the edit form from the organizations list row item', () => {
+  it('navigates to the edit form from the organizations list row item', function () {
     cy.navigateTo('awx', 'organizations');
-    cy.getTableRowByText(organization.name).within(() => {
+    cy.getTableRowByText(`${(this.globalProjectOrg as Organization).name}`).within(() => {
       cy.get('#edit-organization').click();
     });
     cy.verifyPageTitle('Edit Organization');
   });
 
-  it('deletes an organization from the organizations list row item', () => {
+  it('deletes an organization from the organizations list row item', function () {
     cy.createAwxOrganization().then((testOrganization) => {
       cy.navigateTo('awx', 'organizations');
       cy.searchAndDisplayResource(testOrganization.name);
@@ -91,7 +87,7 @@ describe('organizations', () => {
     });
   });
 
-  it('deletes an organization from the organizations list toolbar', () => {
+  it('deletes an organization from the organizations list toolbar', function () {
     cy.createAwxOrganization().then((testOrganization) => {
       cy.navigateTo('awx', 'organizations');
       // cy.searchAndDisplayResource(testOrganization.name);
