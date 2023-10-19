@@ -372,11 +372,12 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add('createAwxCredentialType', () => {
-  cy.awxRequestPost<Pick<CredentialType, 'name' | 'description'>, CredentialType>(
+  cy.awxRequestPost<Pick<CredentialType, 'name' | 'description' | 'kind'>, CredentialType>(
     '/api/v2/credential_types/',
     {
       name: 'E2E Credential Type ' + randomString(4),
       description: 'E2E Credential Type Description',
+      kind: 'cloud',
     }
   );
 });
@@ -391,7 +392,7 @@ Cypress.Commands.add(
     }
   ) => {
     if (credentialType?.id) {
-      cy.awxRequestDelete(`/api/v2/credential_types/${credentialType.id.toString()}/`, options);
+      cy.awxRequestDelete(`/api/v2/credential_types/${credentialType.id.toString()}`, options);
     }
   }
 );
