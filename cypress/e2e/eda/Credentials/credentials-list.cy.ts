@@ -15,7 +15,7 @@ describe('EDA Credentials List', () => {
       cy.navigateTo('eda', 'credentials');
       cy.clickTableRow(edaCredential.name);
       cy.verifyPageTitle(edaCredential.name);
-      cy.clickButton(/^Details$/);
+      cy.clickLink(/^Details$/);
       cy.get('[data-cy="name"]').should('contain', edaCredential.name);
       cy.deleteEdaCredential(edaCredential);
     });
