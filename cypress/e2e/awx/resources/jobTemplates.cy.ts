@@ -29,10 +29,13 @@ describe('Job templates form Create, Edit, Delete', function () {
       machineCredential = cred;
     });
 
+<<<<<<< HEAD
     // cy.createAwxInstanceGroup().then((ig) => {
     //   instanceGroup = ig;
     // });
 
+=======
+>>>>>>> 069f6701 (adds credentials and instance groups coverage to JT)
     // cy.createAwxLabel({ organization: organization.id }).then((l) => {
     //   label = l;
     // });
