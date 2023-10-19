@@ -65,11 +65,12 @@ describe('Credential types', () => {
     cy.contains(
       'of the selected credential types cannot be deleted because they are read-only.'
     ).should('be.visible');
+    cy.contains('button', 'Cancel').click();
   });
 
   it('delete a credential type from the list row action', () => {
-    cy.navigateTo('awx', 'credential-types');
     cy.createAwxCredentialType().then((credType: CredentialType) => {
+      cy.navigateTo('awx', 'credential-types');
       cy.clickTableRowKebabAction(credType.name as string, /^Delete credential type$/);
       cy.get('#confirm').click();
       cy.clickButton(/^Delete credential type/);
