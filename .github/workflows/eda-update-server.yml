@@ -6,7 +6,7 @@ on:
       EDA_SERVER:
         type: string
         required: true
-        description: 'EDA Server'
+        description: 'Update EDA E2E Test Server'
 
 jobs:
   eda-e2e:
