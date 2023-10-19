@@ -79,7 +79,9 @@ function ProjectCreateInputs() {
       />
       <PageFormGroup
         label={t('Options')}
-        labelHelp={t('Verify SSL before synchronize project over HTTPS.')}
+        labelHelp={t(
+          'Enabling this option verifies the SSL with HTTPS when the project is imported.'
+        )}
       >
         <PageFormCheckbox<EdaProjectCreate> label={t('Verify SSL')} name="verify_ssl" />
       </PageFormGroup>
@@ -134,7 +136,9 @@ function ProjectEditInputs() {
       />
       <PageFormGroup
         label={t('Options')}
-        labelHelp={t('Verify SSL before synchronize project over HTTPS.')}
+        labelHelp={t(
+          'Enabling this option verifies the SSL with HTTPS when the project is imported.'
+        )}
       >
         <PageFormCheckbox label={t('Verify SSL')} name="verify_ssl" />
       </PageFormGroup>
