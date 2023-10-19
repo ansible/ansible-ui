@@ -1,0 +1,6 @@
+fields:
+  - id: username
+    type: string
+    label: Username
+required:
+  - username

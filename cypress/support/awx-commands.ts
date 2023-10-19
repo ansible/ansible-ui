@@ -16,7 +16,10 @@ import { Project } from '../../frontend/awx/interfaces/Project';
 import { Schedule } from '../../frontend/awx/interfaces/Schedule';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
-import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/generated-from-swagger/api';
+import {
+  CredentialType,
+  WorkflowJobTemplate,
+} from '../../frontend/awx/interfaces/generated-from-swagger/api';
 import './auth';
 import './commands';
 import './rest-commands';
@@ -315,6 +318,32 @@ Cypress.Commands.add(
     // Delete organization created for this credential (this will also delete the credential)
     if (credential?.organization) {
       cy.awxRequestDelete(`/api/v2/organizations/${credential.organization.toString()}/`, options);
+    }
+  }
+);
+
+Cypress.Commands.add('createAwxCredentialType', () => {
+  cy.awxRequestPost<Pick<CredentialType, 'name' | 'description' | 'kind'>, CredentialType>(
+    '/api/v2/credential_types/',
+    {
+      name: 'E2E Credential Type ' + randomString(4),
+      description: 'E2E Credential Type Description',
+      kind: 'cloud',
+    }
+  );
+});
+
+Cypress.Commands.add(
+  'deleteAwxCredentialType',
+  (
+    credentialType: CredentialType,
+    options?: {
+      /** Whether to fail on response codes other than 2xx and 3xx */
+      failOnStatusCode?: boolean;
+    }
+  ) => {
+    if (credentialType?.id) {
+      cy.awxRequestDelete(`/api/v2/credential_types/${credentialType.id.toString()}`, options);
     }
   }
 );
