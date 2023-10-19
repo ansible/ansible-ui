@@ -1,10 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { CredentialType } from '../../../interfaces/CredentialType';
 import { IAwxView } from '../../../useAwxView';
-// import { ButtonVariant } from '@patternfly/react-core';
-// import { EditIcon, TrashIcon } from '@patternfly/react-icons';
-// import { useMemo } from 'react';
-// import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
   PageActionSelection,

@@ -11,7 +11,7 @@ describe('CredentialDetails', () => {
   });
   it('Renders name, input config, injector config, created, and modified by fields', () => {
     cy.mount(<CredentialTypeDetails credentialType={mockCredentialType as CredentialType} />);
-    cy.get('[data-cy="name"]').should('have.text', 'Amazon Web ServicesRead only');
+    cy.get('[data-cy="name"]').should('have.text', 'Amazon Web ServicesRead-only');
     cy.get('[data-cy="input-configuration"]').should('exist');
     cy.get('[data-cy="injector-configuration"]').should('exist');
     cy.get('[data-cy="created"]').should(

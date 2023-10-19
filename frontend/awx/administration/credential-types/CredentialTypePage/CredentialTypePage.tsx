@@ -1,22 +1,15 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import {
-  PageActions,
-  PageHeader,
-  PageLayout,
-  useGetPageUrl,
-  usePageNavigate,
-} from '../../../../../framework';
+import { PageActions, PageHeader, PageLayout, useGetPageUrl } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
 import { AwxError } from '../../../common/AwxError';
 import { CredentialType } from '../../../interfaces/CredentialType';
-// import { useCredentialActions } from '../hooks/useCredentialTypeActions';
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
-import { useCredentialTypeToolbarActions } from '../hooks/useCredentialTypeActions';
+import { useCredentialTypeRowActions } from '../hooks/useCredentialTypeActions';
 import { useAwxView } from '../../../useAwxView';
 import { useCredentialTypesFilters } from '../hooks/useCredentialTypesFilters';
 import { useCredentialTypesColumns } from '../hooks/useCredentialTypesColumns';
@@ -29,7 +22,6 @@ export function CredentialTypePage() {
     data: credentialType,
     refresh,
   } = useGetItem<CredentialType>('/api/v2/credential_types', params.id);
-  // const pageNavigate = usePageNavigate();
   const toolbarFilters = useCredentialTypesFilters();
   const tableColumns = useCredentialTypesColumns();
   const view = useAwxView<CredentialType>({
@@ -37,7 +29,7 @@ export function CredentialTypePage() {
     toolbarFilters,
     tableColumns,
   });
-  const actions = useCredentialTypeToolbarActions(view);
+  const actions = useCredentialTypeRowActions(view);
 
   const getPageUrl = useGetPageUrl();
 

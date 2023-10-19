@@ -17,34 +17,36 @@ export function CredentialTypeDetails() {
   return credentialType ? <CredentialTypeDetailInner credentialType={credentialType} /> : null;
 }
 
-function renderCredentialTypeName(credentialType: CredentialType) {
-  if (credentialType.managed) {
-    return (
-      <>
-        {credentialType.name}
-        <Label disabled style={{ marginLeft: '10px' }}>
-          Read only
-        </Label>
-      </>
-    );
-  } else {
-    return <>{credentialType.name}</>;
-  }
-}
 export function CredentialTypeDetailInner(props: { credentialType: CredentialType }) {
   const { t } = useTranslation();
   const history = useNavigate();
   const getPageUrl = useGetPageUrl();
+  function renderCredentialTypeName(credentialType: CredentialType) {
+    if (credentialType.managed) {
+      return (
+        <>
+          {credentialType.name}
+          <Label style={{ marginLeft: '10px' }}>{t('Read-only')}</Label>
+        </>
+      );
+    } else {
+      return <>{credentialType.name}</>;
+    }
+  }
 
   return (
     <PageDetails>
       <PageDetail label={t('Name')}>{renderCredentialTypeName(props.credentialType)}</PageDetail>
       <PageDetail label={t('Description')}>{props.credentialType.description}</PageDetail>
       <PageDetailCodeEditor
+        helpText={t('Input schema which defines a set of ordered fields for that type.')}
         label={t('Input configuration')}
         value={jsonToYaml(JSON.stringify(props.credentialType.inputs))}
       />
       <PageDetailCodeEditor
+        helpText={t(
+          'Environment variables or extra variables that specify the values a credential type can inject.'
+        )}
         label={t('Injector configuration')}
         value={jsonToYaml(JSON.stringify(props.credentialType.injectors))}
       />
