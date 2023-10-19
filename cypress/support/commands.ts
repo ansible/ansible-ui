@@ -302,7 +302,7 @@ declare global {
         }
       ): Chainable<void>;
 
-      createAwxOrganization(): Chainable<Organization>;
+      createAwxOrganization(orgName?: string): Chainable<Organization>;
 
       /**
        * `createAwxProject` creates an AWX Project via API,
