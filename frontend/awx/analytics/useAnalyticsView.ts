@@ -81,6 +81,7 @@ export function useAnalyticsView<T extends object, DataType extends object = Any
   disableLoading,
   getItems,
   getItemsCount,
+  requestMethod,
 }: {
   // url of request
   url: string;
@@ -211,11 +212,11 @@ export function useAnalyticsView<T extends object, DataType extends object = Any
       try {
         let data = null;
 
-        if (method == 'post') {
+        if (requestMethod == 'post') {
           data = await postRequest(url, payloadData);
         }
 
-        if (method == 'get') {
+        if (requestMethod == 'get') {
           data = await requestGet(url);
         }
 

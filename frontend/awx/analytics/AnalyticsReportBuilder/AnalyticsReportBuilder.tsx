@@ -339,8 +339,6 @@ export function AnalyticsReportBuilder(props: AnalyticsReportBuilderProps) {
   // build the table columns
   const columns = buildTableColumns({ ...newProps });
 
-  return <></>;
-
   // and finaly, render the table with chart and filters
   return (
     <>
