@@ -31,7 +31,13 @@ import { Users } from './access/users/Users';
 import { AddRolesToUser } from './access/users/components/AddRolesToUser';
 import { ApplicationPage } from './administration/applications/ApplicationPage/ApplicationPage';
 import { Applications } from './administration/applications/Applications';
+import {
+  CreateCredentialType,
+  EditCredentialType,
+} from './administration/credential-types/CredentialTypeForm';
 import { CredentialTypePage } from './administration/credential-types/CredentialTypePage/CredentialTypePage';
+import { CredentialTypeCredentials } from './administration/credential-types/CredentialTypePage/CredentialTypeCredentials';
+import { CredentialTypeDetails } from './administration/credential-types/CredentialTypePage/CredentialTypeDetails';
 import { CredentialTypes } from './administration/credential-types/CredentialTypes';
 import { ExecutionEnvironments } from './administration/execution-environments/ExecutionEnvironments';
 import { InstanceGroups } from './administration/instance-groups/InstanceGroups';
@@ -876,14 +882,29 @@ export function useAwxNavigation() {
                 path: 'credential-types',
                 children: [
                   {
-                    id: AwxRoute.CredentialType,
+                    id: AwxRoute.CreateCredentialType,
+                    path: 'create',
+                    element: <CreateCredentialType />,
+                  },
+                  {
+                    id: AwxRoute.EditCredentialType,
+                    path: ':id/edit',
+                    element: <EditCredentialType />,
+                  },
+                  {
+                    id: AwxRoute.CredentialTypePage,
                     path: ':id/',
                     element: <CredentialTypePage />,
                     children: [
                       {
                         id: AwxRoute.CredentialTypeDetails,
                         path: 'details',
-                        element: <PageNotImplemented />,
+                        element: <CredentialTypeDetails />,
+                      },
+                      {
+                        id: AwxRoute.CredentialTypeCredentials,
+                        path: 'credentials',
+                        element: <CredentialTypeCredentials />,
                       },
                       {
                         path: '',

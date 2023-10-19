@@ -20,7 +20,7 @@ export function DataEditor<
   onChange: (value: string) => void;
 }) {
   const { onChange, language, setError, name, clearErrors } = props;
-  const idDataEditorElement = 'data-editor';
+  const idDataEditorElement = `data-editor-${name}`;
 
   const divEl = useRef<HTMLDivElement>(null);
 
@@ -143,7 +143,7 @@ export function DataEditor<
       element.style.minHeight = '75px';
       element.style.height = `${(valueArray.length + 3) * 19}` + 'px';
     }
-  }, [props.value, language, onChange]);
+  }, [props.value, language, onChange, idDataEditorElement]);
 
   useResizeObserver(divEl, () => {
     if (editorRef.current?.editor) {
