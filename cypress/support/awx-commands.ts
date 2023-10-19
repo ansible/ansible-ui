@@ -328,9 +328,9 @@ Cypress.Commands.add('clickPageAction', (label: string | RegExp) => {
 });
 
 // Resources for testing AWX
-Cypress.Commands.add('createAwxOrganization', () => {
+Cypress.Commands.add('createAwxOrganization', (orgName?: string) => {
   cy.awxRequestPost<Pick<Organization, 'name'>, Organization>('/api/v2/organizations/', {
-    name: 'E2E Organization ' + randomString(4),
+    name: orgName ? orgName : 'E2E Organization ' + randomString(4),
   });
 });
 
@@ -509,6 +509,10 @@ Cypress.Commands.add('waitForProjectToFinishSyncing', (projectId: number) => {
       requestCount = 1;
       return;
     }
+    Cypress.log({
+      displayName: 'PROJECT SYNC:',
+      message: [`🕓WAITING FOR PROJECT TO SYNC...🕓`],
+    });
     requestCount++;
     cy.wait(1000);
     cy.waitForProjectToFinishSyncing(projectId);
@@ -564,6 +568,12 @@ Cypress.Commands.add(
     }
   }
 );
+
+// Cypress.Commands.add('createAwxOrganization', (orgName?: string) => {
+//   cy.awxRequestPost<Pick<Organization, 'name'>, Organization>('/api/v2/organizations/', {
+//     name: orgName ? orgName : 'E2E Organization ' + randomString(4),
+//   });
+// });
 
 Cypress.Commands.add('createAwxInventory', (inventory?: Partial<Omit<Inventory, 'id'>>) => {
   if (inventory?.organization !== undefined) {
