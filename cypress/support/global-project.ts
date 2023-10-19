@@ -26,7 +26,7 @@ const GLOBAL_PROJECT_SCM_URL = 'https://github.com/ansible/ansible-ui';
 
 export function createGlobalProject() {
   cy.log('👀<<CHECKING EXISTENCE OF GLOBAL PROJECT>>👀');
-  cy.awxRequestGet<AwxItemsResponse<Project>>(`/api/v2/projects?name__startswith=Global&page=1`)
+  cy.awxRequestGet<AwxItemsResponse<Project>>(`/api/v2/projects?name__startswith=Global&page=1`);
   cy.awxRequestGet<AwxItemsResponse<Project>>(`/api/v2/projects?name=${GLOBAL_PROJECT_NAME}&page=1`)
     .its('results')
     .then((results: Project[]) => {
