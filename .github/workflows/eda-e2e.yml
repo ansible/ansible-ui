@@ -1,0 +1,123 @@
+name: eda-e2e
+
+on:
+  workflow_call:
+    inputs:
+      EDA_SERVER:
+        type: string
+        required: true
+      SKIP_JOB:
+        type: boolean
+        required: false
+        default: false
+    secrets:
+      EDA_PASSWORD:
+        required: true
+      CYPRESS_AUI_EDA_E2E_PROJECT_ID:
+        required: true
+      CYPRESS_AUI_EDA_E2E_RECORD_KEY:
+        required: true
+
+jobs:
+  eda-ui-image:
+    name: EDA UI Image
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v3
+        if: ${{ !inputs.SKIP_JOB }}
+        with:
+          fetch-depth: 1
+      - name: PreCache
+        if: ${{ !inputs.SKIP_JOB }}
+        run: npm version 0.0.0 --no-git-tag-version
+      - name: Cache dependencies
+        if: ${{ !inputs.SKIP_JOB }}
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ./node_modules
+            /home/runner/.cache/Cypress
+          key: modules-${{ hashFiles('package-lock.json') }}
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true' && !inputs.SKIP_JOB
+        run: npm ci
+      - name: NPM Build
+        if: ${{ !inputs.SKIP_JOB }}
+        run: npm run build:eda
+      - name: Build Image
+        if: ${{ !inputs.SKIP_JOB }}
+        run: npm run docker:build:eda
+      - name: Save Image
+        if: ${{ !inputs.SKIP_JOB }}
+        run: docker save eda-ui > eda-ui.tar
+      - name: Upload Image
+        if: ${{ !inputs.SKIP_JOB }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: eda-ui.tar
+          path: eda-ui.tar
+
+  eda-e2e:
+    name: EDA E2E
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: eda-ui-image
+    strategy:
+      fail-fast: false
+      matrix:
+        containers: [1, 2]
+    steps:
+      - name: Checkout
+        if: ${{ !inputs.SKIP_JOB }}
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+      - name: Download container image
+        if: ${{ !inputs.SKIP_JOB }}
+        uses: actions/download-artifact@v3
+        with:
+          name: eda-ui.tar
+      - name: Load container image
+        if: ${{ !inputs.SKIP_JOB }}
+        run: docker load --input eda-ui.tar
+      - name: Setup Node
+        if: ${{ !inputs.SKIP_JOB }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: PreCache
+        if: ${{ !inputs.SKIP_JOB }}
+        run: npm version 0.0.0 --no-git-tag-version
+      - name: Cache dependencies
+        if: ${{ !inputs.SKIP_JOB }}
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ./node_modules
+            /home/runner/.cache/Cypress
+          key: modules-${{ hashFiles('package-lock.json') }}
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true' && !inputs.SKIP_JOB
+        run: npm ci
+      - name: Cypress
+        if: ${{ !inputs.SKIP_JOB }}
+        uses: cypress-io/github-action@v5
+        with:
+          install: false
+          start: npm run docker:run:eda
+          wait-on: 'https://localhost:4103'
+          record: true
+          parallel: true
+          # auto-cancel-after-failures: 1
+          config-file: cypress.eda.config.ts
+        env:
+          EDA_SERVER: ${{ inputs.EDA_SERVER }}
+          EDA_USERNAME: e2e
+          EDA_PASSWORD: ${{ secrets.EDA_PASSWORD }}
+          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_EDA_E2E_PROJECT_ID }}
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_EDA_E2E_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_TLS_REJECT_UNAUTHORIZED: 0
