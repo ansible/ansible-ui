@@ -6,7 +6,7 @@ on:
       AWX_SERVER:
         type: string
         required: true
-        description: 'AWX Server to update'
+        description: 'Update AWX E2E Test Server'
 
 jobs:
   awx-e2e:
@@ -31,15 +31,10 @@ jobs:
           "https://api.github.com/repos/ansible/ansible-ui/actions/variables/AWX_SERVER" \
           -d '{"name":"AWX_SERVER","value":"${{ inputs.AWX_SERVER }}"}'
 
-      # - name: Post to a Slack channel
-      #   id: slack
+      # - name: Slack Notification
       #   uses: slackapi/slack-github-action@v1.24.0
       #   with:
-      #     # Slack channel id, channel name, or user id to post message.
-      #     # See also: https://api.slack.com/methods/chat.postMessage#channels
-      #     # You can pass in multiple channels to post to by providing a comma-delimited list of channel IDs.
-      #     channel-id: 'CHANNEL_ID,ANOTHER_CHANNEL_ID'
-      #     # For posting a simple plain text message
-      #     slack-message: "AWX_SERVER: ${{ inputs.AWX_SERVER }}"
+      #     channel-id: ${{ secrets.AAP_UI_CHANNEL_ID }}
+      #     slack-message: AWX_SERVER=${{ inputs.AWX_SERVER }}
       #   env:
       #     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
