@@ -15,11 +15,16 @@ describe('Job templates form Create, Edit, Delete', function () {
   before(function () {
     cy.awxLogin();
 
-    cy.createAwxInventory({ organization: (this.globalProjectOrg as Organization).id }).then(
-      (inv) => {
-        inventory = inv;
-      }
-    );
+    cy.createAwxOrganization().then((o) => {
+      organization = o;
+
+      cy.createAwxProject({ organization: organization.id }).then((p) => {
+        project = p;
+      });
+
+      cy.createAwxInventory({ organization: organization.id }).then((i) => {
+        inventory = i;
+      });
 
     cy.createAWXCredential({
       kind: 'machine',
