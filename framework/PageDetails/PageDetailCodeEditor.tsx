@@ -15,6 +15,7 @@ export function PageDetailCodeEditor(props: {
   value: string;
   helpText?: string;
   showCopyToClipboard?: boolean;
+  toggleLanguage?: boolean;
 }) {
   const { value, label, helpText } = props;
   const { id } = useParams();

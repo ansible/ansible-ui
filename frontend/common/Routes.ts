@@ -38,6 +38,9 @@ export const RouteObj = {
   CredentialPage: `${awxRoutePrefix}/resources/credentials/:id/*`,
   CredentialDetails: `${awxRoutePrefix}/resources/credentials/:id/details`,
 
+  CredentialTypePage: `${awxRoutePrefix}/resources/credential-types/:id/*`,
+  CredentialTypeDetails: `${awxRoutePrefix}/resources/credential-types/:id/details`,
+
   Projects: `${awxRoutePrefix}/resources/projects`,
   ProjectDetails: `${awxRoutePrefix}/resources/projects/:id/details`,
   ProjectSchedules: `${awxRoutePrefix}/resources/projects/:id/schedules`,

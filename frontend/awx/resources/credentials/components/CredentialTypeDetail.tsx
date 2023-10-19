@@ -8,7 +8,7 @@ import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageD
 
 export function CredentialTypeDetail(props: {
   inputs: Record<string, string | number>;
-  field: { id: string; label: string; type: string; ask_at_runtime: boolean; help_text: string };
+  field: { id: string; label: string; type: string; ask_at_runtime?: boolean; help_text: string };
   inputSources?: Record<string, CredentialInputSource>;
 }) {
   const { inputs, field, inputSources } = props;
