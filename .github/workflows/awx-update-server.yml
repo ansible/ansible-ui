@@ -6,7 +6,7 @@ on:
       AWX_SERVER:
         type: string
         required: true
-        description: 'AWX Server'
+        description: 'Update AWX E2E Test Server'
 
 jobs:
   awx-e2e:

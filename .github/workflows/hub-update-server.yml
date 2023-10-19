@@ -6,7 +6,7 @@ on:
       HUB_SERVER:
         type: string
         required: true
-        description: 'HUB Server'
+        description: 'Update HUB E2E Test Server'
 
 jobs:
   hub-e2e:
