@@ -19,6 +19,7 @@ import { Schedule } from '../../frontend/awx/interfaces/Schedule';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
 import {
+  CredentialType,
   Group,
   Host,
   WorkflowJobTemplate,
@@ -328,6 +329,8 @@ declare global {
           'organization' | 'kind' | 'credential_type'
         >
       ): Chainable<Credential>;
+      /** Creates a credential type in AWX */
+      createAwxCredentialType(): Chainable<CredentialType>;
       /**
        * Creates a project in AWX that is specific to being utilized in an EDA test.
        */
@@ -399,6 +402,13 @@ declare global {
       ): Chainable<void>;
       deleteAwxCredential(
         credential: Credential,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
+      ): Chainable<void>;
+      deleteAwxCredentialType(
+        credentialType: CredentialType,
         options?: {
           /** Whether to fail on response codes other than 2xx and 3xx */
           failOnStatusCode?: boolean;
