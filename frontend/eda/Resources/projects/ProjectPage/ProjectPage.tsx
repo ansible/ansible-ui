@@ -114,6 +114,11 @@ export function ProjectPage() {
         }
       />
       <PageRoutedTabs
+        backTab={{
+          label: t('Back to Projects'),
+          page: EdaRoute.Projects,
+          persistentFilterKey: 'projects',
+        }}
         tabs={[{ label: t('Details'), page: EdaRoute.ProjectDetails }]}
         params={{ id: project?.id }}
       />

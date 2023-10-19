@@ -29,6 +29,7 @@ export enum EdaRoute {
   CreateCredential = 'eda-create-credential',
   EditCredential = 'eda-edit-credential',
   CredentialPage = 'eda-credential-page',
+  CredentialDetails = 'eda-credential-details',
 
   Users = 'eda-users',
   CreateUser = 'eda-create-user',
