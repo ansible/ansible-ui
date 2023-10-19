@@ -1,4 +1,4 @@
-import { Alert, PageSection } from '@patternfly/react-core';
+import { PageSection } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import {
@@ -42,15 +42,17 @@ export function RulebookActivationDetails() {
   }
   return (
     <Scrollable>
-      {rulebookActivation.status === Status906Enum.Error && (
-        <Alert
-          variant="warning"
-          title={`${t('Rulebook Activation create error: ')}${
-            rulebookActivation?.status_message || ''
-          }`}
-        />
-      )}
-      <PageDetails>
+      <PageDetails
+        alertPrompts={
+          rulebookActivation.status === Status906Enum.Error
+            ? [
+                `${t('Rulebook Activation create error: ')}${
+                  rulebookActivation?.status_message || ''
+                }`,
+              ]
+            : []
+        }
+      >
         <PageDetail label={t('Activation ID')}>{rulebookActivation?.id || ''}</PageDetail>
         <PageDetail label={t('Name')}>{rulebookActivation?.name || ''}</PageDetail>
         <PageDetail label={t('Description')}>{rulebookActivation?.description || ''}</PageDetail>
