@@ -108,11 +108,9 @@ Cypress.Commands.add('setTablePageSize', (text: '10' | '20' | '50' | '100') => {
 });
 
 Cypress.Commands.add('clickLink', (label: string | RegExp) => {
-  cy.contains('a:not(:disabled):not(:hidden)', label).should(
-    'not.have.attr',
-    'aria-disabled',
-    'true'
-  );
+  cy.contains('a:not(:disabled):not(:hidden)', label)
+    .should('not.have.attr', 'aria-disabled', 'true')
+    .should('be.visible');
   cy.contains('a:not(:disabled):not(:hidden)', label).click();
 });
 
@@ -131,9 +129,12 @@ Cypress.Commands.add('clickButton', (label: string | RegExp) => {
 Cypress.Commands.add('navigateTo', (component: string, label: string) => {
   cy.get('[data-cy="page-navigation"]').then((nav) => {
     if (nav.is(':visible')) {
-      cy.get(`[data-cy="${component}-${label}"]`).invoke('show').should('be.visible').click();
+      cy.get(`[data-cy="${component}-${label}"]`)
+        .invoke('show', { force: true })
+        .should('be.visible')
+        .click();
     } else {
-      cy.get('[data-cy="nav-toggle"]').invoke('show').should('be.visible').click();
+      cy.get('[data-cy="nav-toggle"]').invoke('show', { force: true }).should('be.visible').click();
       cy.get(`[data-cy="${component}-${label}"]`).click();
     }
   });
