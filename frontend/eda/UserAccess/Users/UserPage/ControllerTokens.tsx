@@ -1,12 +1,12 @@
 import { useTranslation } from 'react-i18next';
-import { PageLayout, PageTable, usePageNavigate } from '../../../../framework';
-import { PageTableViewTypeE } from '../../../../framework/PageToolbar/PageTableViewType';
-import { EdaRoute } from '../../EdaRoutes';
-import { API_PREFIX } from '../../constants';
-import { EdaControllerToken } from '../../interfaces/EdaControllerToken';
-import { useEdaView } from '../../useEventDrivenView';
-import { useControllerTokenActions } from './hooks/useControllerTokenActions';
-import { useControllerTokensColumns } from './hooks/useControllerTokensColumns';
+import { PageLayout, PageTable, usePageNavigate } from '../../../../../framework';
+import { PageTableViewTypeE } from '../../../../../framework/PageToolbar/PageTableViewType';
+import { EdaRoute } from '../../../EdaRoutes';
+import { API_PREFIX } from '../../../constants';
+import { EdaControllerToken } from '../../../interfaces/EdaControllerToken';
+import { useEdaView } from '../../../useEventDrivenView';
+import { useControllerTokenActions } from '../hooks/useControllerTokenActions';
+import { useControllerTokensColumns } from '../hooks/useControllerTokensColumns';
 
 export function ControllerTokens() {
   const { t } = useTranslation();
