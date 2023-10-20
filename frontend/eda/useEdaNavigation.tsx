@@ -11,7 +11,7 @@ import { CredentialDetails } from './Resources/credentials/CredentialPage/Creden
 import { Credentials } from './Resources/credentials/Credentials';
 import { CredentialPage } from './Resources/credentials/CredentialPage/CredentialPage';
 import { CreateCredential, EditCredential } from './Resources/credentials/EditCredential';
-import { DecisionEnvironmentDetails } from './Resources/decision-environments/DecisionEnvironmentDetails';
+import { DecisionEnvironmentDetails } from './Resources/decision-environments/DecisionEnvironmentPage/DecisionEnvironmentDetails';
 import {
   CreateDecisionEnvironment,
   EditDecisionEnvironment,
@@ -38,6 +38,7 @@ import { RulebookActivationPage } from './rulebook-activations/RulebookActivatio
 import { RulebookActivations } from './rulebook-activations/RulebookActivations';
 import { RuleAudit } from './views/RuleAudit/RuleAudit';
 import { RuleAuditDetails } from './views/RuleAudit/RuleAuditDetails';
+import { DecisionEnvironmentPage } from './Resources/decision-environments/DecisionEnvironmentPage/DecisionEnvironmentPage';
 
 export function useEdaNavigation() {
   const { t } = useTranslation();
@@ -197,7 +198,18 @@ export function useEdaNavigation() {
                   {
                     id: EdaRoute.DecisionEnvironmentPage,
                     path: 'details/:id',
-                    element: <DecisionEnvironmentDetails />,
+                    element: <DecisionEnvironmentPage />,
+                    children: [
+                      {
+                        id: EdaRoute.DecisionEnvironmentDetails,
+                        path: 'details',
+                        element: <DecisionEnvironmentDetails />,
+                      },
+                      {
+                        path: '',
+                        element: <Navigate to="details" />,
+                      },
+                    ],
                   },
                   {
                     path: '',

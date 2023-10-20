@@ -124,6 +124,11 @@ export function RulebookActivationPage() {
         }
       />
       <PageRoutedTabs
+        backTab={{
+          label: t('Back to Rulebook Activations'),
+          page: EdaRoute.RulebookActivations,
+          persistentFilterKey: 'rulebook-activations',
+        }}
         tabs={[
           { label: t('Details'), page: EdaRoute.RulebookActivationDetails },
           { label: t('History'), page: EdaRoute.RulebookActivationHistory },
