@@ -20,6 +20,7 @@ import { TemplateLaunchWizard } from './resources/templates/TemplatePage/Templat
 import { TemplateDetails } from './resources/templates/TemplatePage/TemplateDetails';
 import { TemplatePage } from './resources/templates/TemplatePage/TemplatePage';
 import { CreateJobTemplate, EditJobTemplate } from './resources/templates/TemplateForm';
+import { WorkflowVisualizer } from './resources/templates/WorkflowVisualizer/WorkflowVisualizer';
 
 export function useGetAwxTemplateRoutes() {
   const { t } = useTranslation();
@@ -220,7 +221,7 @@ export function useGetAwxTemplateRoutes() {
                 {
                   id: AwxRoute.WorkflowVisualizer,
                   path: 'visualizer',
-                  element: <PageNotImplemented />,
+                  element: <WorkflowVisualizer />,
                 },
                 {
                   id: AwxRoute.WorkflowJobTemplateSchedules,
