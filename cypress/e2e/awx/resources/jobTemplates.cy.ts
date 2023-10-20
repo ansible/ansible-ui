@@ -18,24 +18,18 @@ describe('Job templates form Create, Edit, Delete', () => {
   before(() => {
     cy.awxLogin();
 
-    cy.createAwxOrganization().then((o) => {
-      organization = o;
+    cy.createAwxInventory({ organization: (this.globalProjectOrg as Organization).id }).then(
+      (inv) => {
+        inventory = inv;
+      }
+    );
 
-      cy.createAwxProject({ organization: organization.id }).then((p) => {
-        project = p;
-      });
-
-      cy.createAwxInventory({ organization: organization.id }).then((i) => {
-        inventory = i;
-      });
-
-      cy.createAWXCredential({
-        kind: 'machine',
-        organization: organization.id,
-        credential_type: 1,
-      }).then((cred) => {
-        machineCredential = cred;
-      });
+    cy.createAWXCredential({
+      kind: 'machine',
+      organization: (this.globalProjectOrg as Organization).id,
+      credential_type: 1,
+    }).then((cred) => {
+      machineCredential = cred;
     });
 
     cy.createAwxInstanceGroup().then((ig) => {
@@ -48,7 +42,6 @@ describe('Job templates form Create, Edit, Delete', () => {
   });
 
   after(() => {
-    cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
     cy.deleteAwxInstanceGroup(instanceGroup);
   });
 
