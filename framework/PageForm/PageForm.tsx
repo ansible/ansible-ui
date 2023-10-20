@@ -5,9 +5,8 @@ import {
   Grid,
   gridItemSpanValueShape,
   PageSection,
-  // Tooltip,
 } from '@patternfly/react-core';
-import { BaseSyntheticEvent, CSSProperties, ReactNode, useContext, useState } from 'react';
+import { BaseSyntheticEvent, ReactNode, useContext, useState } from 'react';
 import {
   DefaultValues,
   ErrorOption,
@@ -17,9 +16,7 @@ import {
   Path,
   useForm,
   UseFormReturn,
-  useFormState,
 } from 'react-hook-form';
-// import { useTranslation } from 'react-i18next';
 import { Scrollable } from '../components/Scrollable';
 import { useBreakpoint } from '../components/useBreakPoint';
 import { SettingsContext } from '../Settings';
@@ -27,6 +24,7 @@ import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { ErrorAlert } from './ErrorAlert';
 import { genericErrorAdapter } from './genericErrorAdapter';
 import { ErrorAdapter } from './typesErrorAdapter';
+import { PageFormSubmitButton, PageFormCancelButton } from './PageFormButtons';
 import styled from 'styled-components';
 
 const FormContainer = styled(PageSection)`
@@ -50,28 +48,23 @@ export interface PageFormProps<T extends object> {
   defaultValue?: DefaultValues<T>;
   isVertical?: boolean;
   singleColumn?: boolean;
-  disableScrolling?: boolean;
-  disableBody?: boolean;
   disablePadding?: boolean;
   disableGrid?: boolean;
-  autoComplete?: string;
+  autoComplete?: 'on' | 'off';
   footer?: ReactNode;
   errorAdapter?: ErrorAdapter;
 }
 
-export function PageForm<T extends object>(props: PageFormProps<T>) {
-  const { errorAdapter = genericErrorAdapter } = props;
+export function useFormErrors<T extends object>(
+  defaultValue: DefaultValues<T> | undefined,
+  errorAdapter: ErrorAdapter
+) {
   const form = useForm<T>({
-    defaultValues: props.defaultValue ?? ({} as DefaultValues<T>),
+    defaultValues: defaultValue ?? ({} as DefaultValues<T>),
   });
-
-  const [frameworkTranslations] = useFrameworkTranslations();
 
   const { handleSubmit, setError: setFieldError } = form;
   const [error, setError] = useState<(string | ReactNode)[] | string | null>(null);
-  const isMd = useBreakpoint('md');
-  const [settings] = useContext(SettingsContext);
-  const isHorizontal = props.isVertical ? false : settings.formLayout === 'horizontal';
 
   const handleSubmitError = (err: unknown) => {
     const { genericErrors, fieldErrors } = errorAdapter(err);
@@ -93,6 +86,19 @@ export function PageForm<T extends object>(props: PageFormProps<T>) {
     }
   };
 
+  return { form, handleSubmit, error, setError, handleSubmitError, setFieldError };
+}
+
+export function PageForm<T extends object>(props: PageFormProps<T>) {
+  const { errorAdapter = genericErrorAdapter } = props;
+
+  const { form, handleSubmit, error, setError, handleSubmitError, setFieldError } =
+    useFormErrors<T>(props.defaultValue, errorAdapter);
+  const [settings] = useContext(SettingsContext);
+  const [frameworkTranslations] = useFrameworkTranslations();
+  const isMd = useBreakpoint('md');
+  const isHorizontal = props.isVertical ? false : settings.formLayout === 'horizontal';
+
   let children = props.children;
   if (props.disableGrid !== true) {
     children = (
@@ -102,7 +108,7 @@ export function PageForm<T extends object>(props: PageFormProps<T>) {
     );
   }
 
-  const Component = (
+  return (
     <FormProvider {...form}>
       <Form
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
@@ -131,7 +137,7 @@ export function PageForm<T extends object>(props: PageFormProps<T>) {
           }
         )}
         isHorizontal={isHorizontal}
-        autoComplete="off"
+        autoComplete={props.autoComplete}
         style={{
           display: 'flex',
           flexDirection: 'column',
@@ -150,7 +156,6 @@ export function PageForm<T extends object>(props: PageFormProps<T>) {
             isFilled
             isWidthLimited
             padding={{ default: props.disablePadding ? 'noPadding' : 'padding' }}
-            // hasOverflowScroll
           >
             {children}
           </FormContainer>
@@ -177,12 +182,6 @@ export function PageForm<T extends object>(props: PageFormProps<T>) {
       </Form>
     </FormProvider>
   );
-
-  // if (!props.disableBody) {
-  //   Component = <PageBody>{Component}</PageBody>;
-  // }
-
-  return Component;
 }
 
 export type PageFormSubmitHandler<T extends FieldValues> = (
@@ -214,39 +213,4 @@ export function PageFormGrid(props: {
   );
 
   return Component;
-}
-
-export function PageFormSubmitButton(props: { children: ReactNode; style?: CSSProperties }) {
-  const { isSubmitting, errors } = useFormState();
-  const { clearErrors } = useForm();
-  // const { t } = useTranslation();
-  const hasErrors = errors && Object.keys(errors).length > 0;
-  return (
-    // <Tooltip content={t('Please fix errors')} trigger={hasErrors ? undefined : 'manual'}>
-    <Button
-      onClick={() => {
-        if (hasErrors) {
-          clearErrors();
-        }
-      }}
-      data-cy={'Submit'}
-      type="submit"
-      isDisabled={isSubmitting}
-      isLoading={isSubmitting}
-      isDanger={hasErrors}
-      variant={hasErrors ? 'secondary' : undefined}
-      style={props.style}
-    >
-      {props.children}
-    </Button>
-    // </Tooltip>
-  );
-}
-
-export function PageFormCancelButton(props: { onCancel: () => void; children: ReactNode }) {
-  return (
-    <Button data-cy={'Cancel'} type="button" variant="link" onClick={props.onCancel}>
-      {props.children}
-    </Button>
-  );
 }
