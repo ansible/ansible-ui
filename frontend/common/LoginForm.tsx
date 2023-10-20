@@ -1,7 +1,11 @@
-import { useCallback } from 'react';
+import { useState, useCallback, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { useForm, FormProvider } from 'react-hook-form';
+import { Form, ActionGroup, Button } from '@patternfly/react-core';
 import { PageForm, PageFormSubmitHandler } from '../../framework';
+import { ErrorAlert } from '../../framework/PageForm/ErrorAlert';
+import { PageFormSubmitButton } from '../../framework/PageForm/PageForm';
 import { PageFormTextInput } from '../../framework/PageForm/Inputs/PageFormTextInput';
 import { usePageNavigate } from '../../framework/PageNavigation/usePageNavigate';
 import { hubAPI } from '../hub/api/utils';
@@ -25,6 +29,12 @@ export function LoginForm(props: LoginFormProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
+  const [error, setError] = useState<(string | ReactNode)[] | string | null>(null);
+
+  const form = useForm({
+    defaultValues: {},
+  });
+  const { handleSubmit, setError: setFieldError } = form;
 
   useInvalidateCacheOnUnmount();
 
@@ -136,9 +146,61 @@ export function LoginForm(props: LoginFormProps) {
     [pageNavigate, navigate, props, t]
   );
 
+  const handleSubmitError = (err: unknown) => {
+    const { genericErrors, fieldErrors } = errorAdapter(err);
+
+    // Handle generic errors
+    if (genericErrors.length > 0) {
+      setError(genericErrors.map((error) => error.message));
+    } else {
+      setError(null);
+    }
+
+    // Handle field errors
+    if (fieldErrors.length > 0) {
+      fieldErrors.forEach((error) => {
+        setFieldError(error.name as unknown as Path<T>, {
+          message: typeof error.message === 'string' ? error.message : undefined,
+        });
+      });
+    }
+  };
+
   return (
-    <div>
-      <PageForm
+    <FormProvider {...form}>
+      <Form
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+        onSubmit={handleSubmit(async (data) => {
+          setError(null);
+          try {
+            await onSubmit(data, (error) => setError(error), setFieldError, undefined);
+          } catch (err) {
+            handleSubmitError(err);
+          }
+        })}
+      >
+        {error && <ErrorAlert error={error} isMd />}
+        <PageFormTextInput
+          name="username"
+          label={t('Username')}
+          placeholder={t('Enter username')}
+          autoComplete={process.env.NODE_ENV === 'development' ? 'on' : 'off'}
+          isRequired
+          autoFocus
+        />
+        <PageFormTextInput
+          name="password"
+          label={t('Password')}
+          placeholder={t('Enter password')}
+          type="password"
+          autoComplete={process.env.NODE_ENV === 'development' ? 'on' : 'off'}
+          isRequired
+        />
+        <ActionGroup>
+          <PageFormSubmitButton>{t('Log in')}</PageFormSubmitButton>
+        </ActionGroup>
+      </Form>
+      {/* <PageForm
         submitText={t('Log in')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
@@ -164,8 +226,8 @@ export function LoginForm(props: LoginFormProps) {
           autoComplete={process.env.NODE_ENV === 'development' ? 'on' : 'off'}
           isRequired
         />
-      </PageForm>
+      </PageForm> */}
       <SocialAuthLogin options={authOptions} />
-    </div>
+    </FormProvider>
   );
 }

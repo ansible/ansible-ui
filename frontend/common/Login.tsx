@@ -2,6 +2,8 @@ import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Title, TitleSizes } from '@patternfly/react-core';
 import background from '../../node_modules/@patternfly/patternfly/assets/images/pfbg_1200.jpg';
+import { useFrameworkTranslations } from '../../framework/useFrameworkTranslations';
+import ErrorBoundary from '../../framework/components/ErrorBoundary';
 import { LoginForm } from './LoginForm';
 import type { AuthOptions } from './SocialAuthLogin';
 import styled from 'styled-components';
@@ -19,7 +21,7 @@ const Wrapper = styled.div`
 const Inner = styled.div`
   max-inline-size: 550px;
   margin-inline: auto;
-  padding: 3.5rem;
+  padding: 3rem 3.5rem;
   background-color: var(--pf-v5-global--BackgroundColor--100);
 
   .pf-v5-theme-dark & {
@@ -46,19 +48,22 @@ export function Login(props: LoginProps) {
 
   const productName = process.env.PRODUCT ?? 'Ansible';
 
+  const [translations] = useFrameworkTranslations();
   return (
-    <Wrapper>
-      <Inner>
-        <Heading headingLevel="h1" size={TitleSizes['2xl']}>
-          {t('Welcome to {{productName}}', { productName })}
-        </Heading>
-        <LoginForm
-          apiUrl={props.apiUrl}
-          authOptions={props.authOptions}
-          onLoginUrl={props.onLoginUrl}
-          onLogin={navigateBack}
-        />
-      </Inner>
-    </Wrapper>
+    <ErrorBoundary message={translations.errorText}>
+      <Wrapper>
+        <Inner>
+          <Heading headingLevel="h1" size={TitleSizes['2xl']}>
+            {t('Welcome to {{productName}}', { productName })}
+          </Heading>
+          <LoginForm
+            apiUrl={props.apiUrl}
+            authOptions={props.authOptions}
+            onLoginUrl={props.onLoginUrl}
+            onLogin={navigateBack}
+          />
+        </Inner>
+      </Wrapper>
+    </ErrorBoundary>
   );
 }

@@ -5,7 +5,7 @@ import {
   Grid,
   gridItemSpanValueShape,
   PageSection,
-  Tooltip,
+  // Tooltip,
 } from '@patternfly/react-core';
 import { BaseSyntheticEvent, CSSProperties, ReactNode, useContext, useState } from 'react';
 import {
@@ -19,7 +19,7 @@ import {
   UseFormReturn,
   useFormState,
 } from 'react-hook-form';
-import { useTranslation } from 'react-i18next';
+// import { useTranslation } from 'react-i18next';
 import { Scrollable } from '../components/Scrollable';
 import { useBreakpoint } from '../components/useBreakPoint';
 import { SettingsContext } from '../Settings';
@@ -27,6 +27,17 @@ import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { ErrorAlert } from './ErrorAlert';
 import { genericErrorAdapter } from './genericErrorAdapter';
 import { ErrorAdapter } from './typesErrorAdapter';
+import styled from 'styled-components';
+
+const FormContainer = styled(PageSection)`
+  margin-block-end: var(--pf-v5-c-form__group--m-action--MarginTop);
+`;
+
+const FormActionGroup = styled(ActionGroup)`
+  && {
+    margin-block-start: unset;
+  }
+`;
 
 export interface PageFormProps<T extends object> {
   children?: ReactNode;
@@ -134,7 +145,7 @@ export function PageForm<T extends object>(props: PageFormProps<T>) {
         {error && <ErrorAlert error={error} isMd={isMd} onCancel={props.onCancel} />}
 
         <Scrollable>
-          <PageSection
+          <FormContainer
             variant="light"
             isFilled
             isWidthLimited
@@ -142,13 +153,13 @@ export function PageForm<T extends object>(props: PageFormProps<T>) {
             // hasOverflowScroll
           >
             {children}
-          </PageSection>
+          </FormContainer>
         </Scrollable>
         {props.footer ? (
           props.footer
         ) : (
           <PageSection variant="light" isFilled={false}>
-            <ActionGroup>
+            <FormActionGroup>
               <PageFormSubmitButton>{props.submitText}</PageFormSubmitButton>
               {props.additionalActionText ? (
                 <Button aria-label={props.additionalActionText} type="submit" variant="secondary">
@@ -160,7 +171,7 @@ export function PageForm<T extends object>(props: PageFormProps<T>) {
                   {props.cancelText ?? frameworkTranslations.cancelText}
                 </PageFormCancelButton>
               )}
-            </ActionGroup>
+            </FormActionGroup>
           </PageSection>
         )}
       </Form>
@@ -208,27 +219,27 @@ export function PageFormGrid(props: {
 export function PageFormSubmitButton(props: { children: ReactNode; style?: CSSProperties }) {
   const { isSubmitting, errors } = useFormState();
   const { clearErrors } = useForm();
-  const { t } = useTranslation();
+  // const { t } = useTranslation();
   const hasErrors = errors && Object.keys(errors).length > 0;
   return (
-    <Tooltip content={t('Please fix errors')} trigger={hasErrors ? undefined : 'manual'}>
-      <Button
-        onClick={() => {
-          if (hasErrors) {
-            clearErrors();
-          }
-        }}
-        data-cy={'Submit'}
-        type="submit"
-        isDisabled={isSubmitting}
-        isLoading={isSubmitting}
-        isDanger={hasErrors}
-        variant={hasErrors ? 'secondary' : undefined}
-        style={props.style}
-      >
-        {props.children}
-      </Button>
-    </Tooltip>
+    // <Tooltip content={t('Please fix errors')} trigger={hasErrors ? undefined : 'manual'}>
+    <Button
+      onClick={() => {
+        if (hasErrors) {
+          clearErrors();
+        }
+      }}
+      data-cy={'Submit'}
+      type="submit"
+      isDisabled={isSubmitting}
+      isLoading={isSubmitting}
+      isDanger={hasErrors}
+      variant={hasErrors ? 'secondary' : undefined}
+      style={props.style}
+    >
+      {props.children}
+    </Button>
+    // </Tooltip>
   );
 }
 
