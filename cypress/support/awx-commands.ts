@@ -133,7 +133,7 @@ Cypress.Commands.add('navigateTo', (component: string, label: string) => {
     if (nav.is(':visible')) {
       cy.get(`[data-cy="${component}-${label}"]`).click();
     } else {
-      cy.get('[data-cy="nav-toggle"]').click();
+      cy.get('[data-cy="nav-toggle"]').invoke('show').click();
       cy.get(`[data-cy="${component}-${label}"]`).click();
     }
   });
