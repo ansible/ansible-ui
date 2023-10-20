@@ -5,11 +5,10 @@ import { errorToAlertProps, useGetPageUrl, usePageAlertToaster } from '../../../
 import { PageDashboardCarousel } from '../../../framework/PageDashboard/PageDashboardCarousel';
 import { HubRoute } from '../HubRoutes';
 import { postHubRequest } from '../api/request';
-import { hubAPI } from '../api/utils';
+import { hubAPI, parsePulpIDFromURL } from '../api/utils';
 import { CollectionVersionSearch } from '../collections/Collection';
 import { useSelectCollectionsDialog } from '../collections/hooks/useSelectCollections';
 import { getAddedAndRemovedCollections } from '../common/utils/getAddedAndRemovedCollections';
-import { parsePulpIDFromURL } from '../common/utils/parsePulpIDFromURL';
 import { useHubContext } from '../useHubContext';
 import { CollectionCard } from './CollectionCard';
 import { useCategoryName } from './hooks/useCategoryName';
