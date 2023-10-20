@@ -105,16 +105,12 @@ function CopyToRepositoryModal(props: {
         params.signing_service = signingService;
       }
 
-      let api_op = operation as string;
-      if (operation == 'approve') {
-        api_op = 'move';
-      }
+      const api_op = {
+        approve: 'move_collection_version',
+        copy: 'copy_collection_version',
+      }[operation];
 
-      // TODO test errors
-      await hubAPIPost(
-        pulpAPI`/repositories/ansible/ansible/${pulpId || ''}/${api_op}_collection_version/`,
-        params
-      );
+      await hubAPIPost(pulpAPI`/repositories/ansible/ansible/${pulpId || ''}/${api_op}/`, params);
 
       setIsLoading(false);
       props.onClose();
@@ -131,7 +127,7 @@ function CopyToRepositoryModal(props: {
       const repos = await request(
         hubAPI`/v3/plugin/ansible/search/collection-versions?limit=100000&name=${
           collection.collection_version?.name || ''
-        } &&version=${collection.collection_version?.version || ''}`
+        }&version=${collection.collection_version?.version || ''}`
       );
 
       if (repos.data?.length > 0) {
@@ -142,7 +138,7 @@ function CopyToRepositoryModal(props: {
 
     void (async () => {
       await getSelected();
-    });
+    })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -227,7 +223,7 @@ function CopyToRepositoryModal(props: {
           for (const item of items) {
             if (
               !selectedRepositories.find((item2) => item.name == item2.name) &&
-              !fixedRepositories.find((item2) => item2.name != item.name)
+              !fixedRepositories.find((item2) => item2.name == item.name)
             ) {
               newItems.push(item);
             }
