@@ -134,7 +134,7 @@ describe('projects', () => {
     cy.wait('@copiedProject')
       .its('response')
       .then((response) => {
-        expect(response.statusCode).to.eq(201);
+        expect(response?.statusCode).to.eq(201);
         cy.get('[data-cy="Projects"]').eq(1).click();
         cy.intercept(
           'GET',
@@ -179,7 +179,7 @@ describe('projects', () => {
     cy.wait('@copiedProject')
       .its('response')
       .then((response) => {
-        expect(response.statusCode).to.eq(201);
+        expect(response?.statusCode).to.eq(201);
         cy.intercept(
           'GET',
           `/api/v2/projects/?or__name__icontains=${endOfProject}&or__name__icontains=${endOfProject}&order_by=name&page=1&page_size=10`
