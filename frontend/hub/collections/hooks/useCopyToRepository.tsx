@@ -72,13 +72,10 @@ function CopyToRepositoryModal(props: {
       const pulpId = parsePulpIDFromURL(repository?.pulp_href);
 
       let signingService = '';
-
-      if (autoSign) {
-        const signingServiceName = props.context.settings.GALAXY_COLLECTION_SIGNING_SERVICE;
-
+      const signingServiceName = props.context?.settings?.GALAXY_COLLECTION_SIGNING_SERVICE;
+      if (((operation === 'approve' && autoSign) || operation === 'copy') && signingServiceName) {
         const url = pulpAPI`/signing-services/?name=${signingServiceName}`;
         const signingServiceList = await pulpRequest(url);
-
         signingService = signingServiceList?.results?.[0].pulp_href;
       }
 
