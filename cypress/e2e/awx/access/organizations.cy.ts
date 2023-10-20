@@ -121,7 +121,6 @@ describe('organizations', function () {
 
   it('deletes an organization from the organizations list toolbar', function () {
     const endOfName = organization.name.split(' ').slice(-1).toString();
-    cy.log('STRING', typeof endOfName);
     cy.navigateTo('awx', 'organizations');
     cy.intercept(
       'GET',

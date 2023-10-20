@@ -71,8 +71,11 @@ declare global {
       getCheckboxByLabel(label: string | RegExp): Chainable<JQuery<HTMLElement>>;
 
       /**
-       * @param {String} resource: The name of a resource. IE: credentials, execution-environments, etc.
-       * @param {String} itemName: The specific name of that resource.
+       * This command works for a form field that can show up either as a drop down
+       * or as a spyglass lookup.
+       *
+       * @param {String} resource: The name of a resource entered as a string. IE: credentials, execution-environments, etc.
+       * @param {String} itemName: The specific name of that resource entered as a string.
        * @param {Boolean} spyglass: This is an optional boolean value, and will default to false. Set as a third param
        * to 'true' if the formgroup contains a spyglass to be clicked on.
        * Finds a dropdown/select component by its data-cy form-group and clicks on the option
@@ -172,8 +175,6 @@ declare global {
         label: string | RegExp,
         filter?: boolean
       ): Chainable<void>;
-
-      selectItemFromLookupModal(resource: string, itemName: string): Chainable<void>;
 
       /**
        * Finds a list card containing text and clicks action specified by label.
