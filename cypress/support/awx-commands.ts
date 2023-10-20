@@ -131,9 +131,9 @@ Cypress.Commands.add('clickButton', (label: string | RegExp) => {
 Cypress.Commands.add('navigateTo', (component: string, label: string) => {
   cy.get('[data-cy="page-navigation"]').then((nav) => {
     if (nav.is(':visible')) {
-      cy.get(`[data-cy="${component}-${label}"]`).click();
+      cy.get(`[data-cy="${component}-${label}"]`).invoke('show').should('be.visible').click();
     } else {
-      cy.get('[data-cy="nav-toggle"]').invoke('show').click();
+      cy.get('[data-cy="nav-toggle"]').invoke('show').should('be.visible').click();
       cy.get(`[data-cy="${component}-${label}"]`).click();
     }
   });
