@@ -102,21 +102,6 @@ describe('projects', () => {
     cy.verifyPageTitle(project.name);
   });
 
-  it('can navigate to project details tab', function () {
-    cy.navigateTo('awx', 'projects');
-    cy.clickTableRow(`${(this.globalProject as Project).name}`);
-    cy.verifyPageTitle(`${(this.globalProject as Project).name}`);
-    cy.clickLink(/^Details$/);
-    cy.get('#name').should('contain', `${(this.globalProject as Project).name}`);
-  });
-
-  it('can navigate to project access tab', function () {
-    cy.navigateTo('awx', 'projects');
-    cy.clickTableRow(`${(this.globalProject as Project).name}`);
-    cy.verifyPageTitle(`${(this.globalProject as Project).name}`);
-    cy.clickTab(/^Access$/, true);
-  });
-
   it('can copy project from project details page', function () {
     const endOfProject = project.name.split(' ').slice(-1).toString();
     cy.navigateTo('awx', 'projects');
@@ -150,18 +135,19 @@ describe('projects', () => {
       });
   });
 
-  it('can navigate to project job templates tab', function () {
+  it('can navigate to project details tab', function () {
     cy.navigateTo('awx', 'projects');
     cy.clickTableRow(`${(this.globalProject as Project).name}`);
     cy.verifyPageTitle(`${(this.globalProject as Project).name}`);
-    cy.clickTab(/^Job templates$/, true);
+    cy.clickLink(/^Details$/);
+    cy.get('#name').should('contain', `${(this.globalProject as Project).name}`);
   });
 
-  it('can navigate to project notifications tab', function () {
+  it('can navigate to project access tab', function () {
     cy.navigateTo('awx', 'projects');
     cy.clickTableRow(`${(this.globalProject as Project).name}`);
     cy.verifyPageTitle(`${(this.globalProject as Project).name}`);
-    cy.clickTab(/^Notifications$/, true);
+    cy.clickTab(/^Access$/, true);
   });
 
   it('can copy project from projects list table row kebab menu', function () {
@@ -192,6 +178,20 @@ describe('projects', () => {
           });
         cy.clickButton(/^Clear all filters$/);
       });
+  });
+
+  it('can navigate to project job templates tab', function () {
+    cy.navigateTo('awx', 'projects');
+    cy.clickTableRow(`${(this.globalProject as Project).name}`);
+    cy.verifyPageTitle(`${(this.globalProject as Project).name}`);
+    cy.clickTab(/^Job templates$/, true);
+  });
+
+  it('can navigate to project notifications tab', function () {
+    cy.navigateTo('awx', 'projects');
+    cy.clickTableRow(`${(this.globalProject as Project).name}`);
+    cy.verifyPageTitle(`${(this.globalProject as Project).name}`);
+    cy.clickTab(/^Notifications$/, true);
   });
 
   it('can navigate to project schedules tab', function () {

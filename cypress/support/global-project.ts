@@ -151,7 +151,3 @@ export function createGlobalProject() {
       }
     });
 }
-
-module.exports = {
-  createGlobalProject,
-};
