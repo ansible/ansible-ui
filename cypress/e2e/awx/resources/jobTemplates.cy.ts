@@ -139,7 +139,11 @@ describe('Job templates form Create, Edit, Delete', () => {
           true
         );
         cy.clickButton(/^Next/);
+<<<<<<< HEAD
         cy.selectDropdownOptionByResourceName('instance-group-select', instanceGroup, true);
+=======
+        cy.selectDropdownOptionByResourceName('instance-group-select', instanceGroup.name);
+>>>>>>> fe08bd80 (fixes)
         cy.clickButton(/^Next/);
         cy.intercept('POST', `api/v2/job_templates/${id}/launch/`).as('postLaunch');
         cy.clickButton(/^Finish/);
@@ -196,7 +200,11 @@ describe('Job templates form Create, Edit, Delete', () => {
           true
         );
         cy.clickButton(/^Next/);
+<<<<<<< HEAD
         cy.selectDropdownOptionByResourceName('instance-group-select', instanceGroup, true);
+=======
+        cy.selectDropdownOptionByResourceName('instance-group-select', instanceGroup.name, true);
+>>>>>>> fe08bd80 (fixes)
         cy.clickButton(/^Next/);
         cy.intercept('POST', `api/v2/job_templates/${id}/launch/`).as('postLaunch');
         cy.clickButton(/^Finish/);
