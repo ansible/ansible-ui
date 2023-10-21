@@ -37,7 +37,7 @@ describe('EDA Users List', () => {
       cy.clickTableRow(edaUser.username, false);
       cy.contains(edaUser.username).click();
       cy.verifyPageTitle(edaUser.username);
-      cy.clickButton(/^Details$/);
+      cy.clickLink(/^Details$/);
       cy.get('dd#username').should('contain', edaUser.username);
       cy.deleteEdaUser(edaUser);
     });
