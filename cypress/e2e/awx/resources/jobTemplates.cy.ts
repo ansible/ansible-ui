@@ -119,7 +119,7 @@ describe('Job templates form Create, Edit, Delete', function () {
         });
         cy.selectDropdownOptionByResourceName('inventory', inventory.name);
         cy.clickButton(/^Next/);
-        cy.selectItemFromLookupModal('credential-select', machineCredential.name, true);
+        cy.selectDropdownOptionByResourceName('credential-select', machineCredential.name, true);
         cy.clickButton(/^Next/);
         cy.selectDropdownOptionByResourceName(
           'execution-environment-select',
@@ -127,7 +127,7 @@ describe('Job templates form Create, Edit, Delete', function () {
           true
         );
         cy.clickButton(/^Next/);
-        cy.selectItemFromLookupModal('instance-group-select', instanceGroup.name);
+        cy.selectDropdownOptionByResourceName('instance-group-select', instanceGroup.name);
         cy.clickButton(/^Next/);
         cy.intercept('POST', `api/v2/job_templates/${id}/launch/`).as('postLaunch');
         cy.clickButton(/^Finish/);
@@ -174,7 +174,7 @@ describe('Job templates form Create, Edit, Delete', function () {
         cy.clickButton(/^Launch template$/);
         cy.selectDropdownOptionByResourceName('inventory', inventory.name);
         cy.clickButton(/^Next/);
-        cy.selectItemFromLookupModal('credential-select', machineCredential.name, true);
+        cy.selectDropdownOptionByResourceName('credential-select', machineCredential.name, true);
         cy.clickButton(/^Next/);
         cy.selectDropdownOptionByResourceName(
           'execution-environment-select',
@@ -182,7 +182,7 @@ describe('Job templates form Create, Edit, Delete', function () {
           true
         );
         cy.clickButton(/^Next/);
-        cy.selectItemFromLookupModal('instance-group-select', instanceGroup.name, true);
+        cy.selectDropdownOptionByResourceName('instance-group-select', instanceGroup.name, true);
         cy.clickButton(/^Next/);
         cy.intercept('POST', `api/v2/job_templates/${id}/launch/`).as('postLaunch');
         cy.clickButton(/^Finish/);
