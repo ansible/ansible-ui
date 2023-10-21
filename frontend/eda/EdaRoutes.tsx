@@ -24,6 +24,7 @@ export enum EdaRoute {
   CreateDecisionEnvironment = 'eda-create-decision-environment',
   EditDecisionEnvironment = 'eda-edit-decision-environment',
   DecisionEnvironmentPage = 'eda-decision-environment-page',
+  DecisionEnvironmentDetails = 'eda-decision-environment-details',
 
   Credentials = 'eda-credentials',
   CreateCredential = 'eda-create-credential',
@@ -36,15 +37,16 @@ export enum EdaRoute {
   EditUser = 'eda-edit-user',
   EditCurrentUser = 'eda-edit-current-user',
   UserPage = 'eda-user-page',
+  MyPage = 'eda-me-page',
+  MyDetails = 'eda-my-details',
+  MyTokens = 'eda-my-tokens',
+  UserDetails = 'eda-user-details',
   UserTokens = 'eda-user-tokens',
 
   Roles = 'eda-roles',
   CreateRole = 'eda-create-role',
   EditRole = 'eda-edit-role',
   RolePage = 'eda-role-page',
-
-  MyPage = 'eda-my-page',
-  MyTokens = 'eda-my-tokens',
 
   CreateControllerToken = 'eda-create-controller-token',
 

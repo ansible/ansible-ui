@@ -3,11 +3,10 @@ import { Credential } from '../../../../frontend/awx/interfaces/Credential';
 // import { ExecutionEnvironment } from '../../../../frontend/awx/interfaces/ExecutionEnvironment';
 import { InstanceGroup } from '../../../../frontend/awx/interfaces/InstanceGroup';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
-// import { Label } from '../../../../frontend/awx/interfaces/Label';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
 
-describe('Job templates form Create, Edit, Delete', () => {
+describe('Job templates form Create, Edit, Delete', function () {
   let inventory: Inventory;
   let machineCredential: Credential;
   let instanceGroup: InstanceGroup;
@@ -52,7 +51,7 @@ describe('Job templates form Create, Edit, Delete', () => {
     cy.get('[data-cy="name"]').type(jtName);
     cy.get('[data-cy="description"]').type('This is a JT description');
     cy.selectDropdownOptionByResourceName('inventory', inventory.name);
-    cy.selectDropdownOptionByResourceName('project', (this.globalProject as Project).name);
+    cy.selectDropdownOptionByResourceName('project', `${(this.globalProject as Project).name}`);
     cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
     cy.selectDropdownOptionByResourceName(
       'execution-environment-select',
@@ -102,7 +101,7 @@ describe('Job templates form Create, Edit, Delete', () => {
     cy.get('[data-cy="name"]').type(jtName);
     cy.get('[data-cy="description"]').type('This is a JT with POL wizard description');
     cy.selectPromptOnLaunch('inventory');
-    cy.selectDropdownOptionByResourceName('project', (this.globalProject as Project).name);
+    cy.selectDropdownOptionByResourceName('project', `${(this.globalProject as Project).name}`);
     cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
     cy.selectPromptOnLaunch('execution_environment');
     cy.selectPromptOnLaunch('credential');
@@ -120,9 +119,13 @@ describe('Job templates form Create, Edit, Delete', () => {
         });
         cy.selectDropdownOptionByResourceName('inventory', inventory.name);
         cy.clickButton(/^Next/);
-        cy.selectItemFromLookupModal('credential-select', machineCredential.name);
+        cy.selectItemFromLookupModal('credential-select', machineCredential.name, true);
         cy.clickButton(/^Next/);
-        cy.selectItemFromLookupModal('execution-environment-select', executionEnvironment);
+        cy.selectDropdownOptionByResourceName(
+          'execution-environment-select',
+          executionEnvironment,
+          true
+        );
         cy.clickButton(/^Next/);
         cy.selectItemFromLookupModal('instance-group-select', instanceGroup.name);
         cy.clickButton(/^Next/);
@@ -158,7 +161,7 @@ describe('Job templates form Create, Edit, Delete', () => {
     cy.get('[data-cy="name"]').type(jtName);
     cy.get('[data-cy="description"]').type('This is a JT with POL wizard description');
     cy.selectPromptOnLaunch('inventory');
-    cy.selectDropdownOptionByResourceName('project', (this.globalProject as Project).name);
+    cy.selectDropdownOptionByResourceName('project', `${(this.globalProject as Project).name}`);
     cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
     cy.selectPromptOnLaunch('execution_environment');
     cy.selectPromptOnLaunch('credential');
@@ -171,11 +174,15 @@ describe('Job templates form Create, Edit, Delete', () => {
         cy.clickButton(/^Launch template$/);
         cy.selectDropdownOptionByResourceName('inventory', inventory.name);
         cy.clickButton(/^Next/);
-        cy.selectItemFromLookupModal('credential-select', machineCredential.name);
+        cy.selectItemFromLookupModal('credential-select', machineCredential.name, true);
         cy.clickButton(/^Next/);
-        cy.selectItemFromLookupModal('execution-environment-select', executionEnvironment);
+        cy.selectDropdownOptionByResourceName(
+          'execution-environment-select',
+          executionEnvironment,
+          true
+        );
         cy.clickButton(/^Next/);
-        cy.selectItemFromLookupModal('instance-group-select', instanceGroup.name);
+        cy.selectItemFromLookupModal('instance-group-select', instanceGroup.name, true);
         cy.clickButton(/^Next/);
         cy.intercept('POST', `api/v2/job_templates/${id}/launch/`).as('postLaunch');
         cy.clickButton(/^Finish/);

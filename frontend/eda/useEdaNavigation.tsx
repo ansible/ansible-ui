@@ -11,7 +11,7 @@ import { CredentialDetails } from './Resources/credentials/CredentialPage/Creden
 import { Credentials } from './Resources/credentials/Credentials';
 import { CredentialPage } from './Resources/credentials/CredentialPage/CredentialPage';
 import { CreateCredential, EditCredential } from './Resources/credentials/EditCredential';
-import { DecisionEnvironmentDetails } from './Resources/decision-environments/DecisionEnvironmentDetails';
+import { DecisionEnvironmentDetails } from './Resources/decision-environments/DecisionEnvironmentPage/DecisionEnvironmentDetails';
 import {
   CreateDecisionEnvironment,
   EditDecisionEnvironment,
@@ -25,7 +25,6 @@ import { EditRole } from './UserAccess/Roles/EditRole';
 import { RoleDetails } from './UserAccess/Roles/RoleDetails';
 import { Roles } from './UserAccess/Roles/Roles';
 import { CreateControllerToken } from './UserAccess/Users/CreateControllerToken';
-import { EdaMyDetails, EdaUserDetails } from './UserAccess/Users/EdaUserDetails';
 import { CreateUser, EditCurrentUser, EditUser } from './UserAccess/Users/EditUser';
 import { Users } from './UserAccess/Users/Users';
 import { EdaDashboard } from './dashboard/EdaDashboard';
@@ -38,6 +37,12 @@ import { RulebookActivationPage } from './rulebook-activations/RulebookActivatio
 import { RulebookActivations } from './rulebook-activations/RulebookActivations';
 import { RuleAudit } from './views/RuleAudit/RuleAudit';
 import { RuleAuditDetails } from './views/RuleAudit/RuleAuditDetails';
+import { DecisionEnvironmentPage } from './Resources/decision-environments/DecisionEnvironmentPage/DecisionEnvironmentPage';
+import { ControllerTokens } from './UserAccess/Users/UserPage/ControllerTokens';
+import { UserPage } from './UserAccess/Users/UserPage/UserPage';
+import { MyPage } from './UserAccess/Users/UserPage/MyPage';
+import { MyDetails } from './UserAccess/Users/UserPage/MyDetails';
+import { UserDetails } from './UserAccess/Users/UserPage/UserDetails';
 
 export function useEdaNavigation() {
   const { t } = useTranslation();
@@ -120,16 +125,6 @@ export function useEdaNavigation() {
                       },
                     ],
                   },
-                  // {
-                  //   id: EdaRoute.RulebookActivationPage,
-                  //   path: 'details/:id',
-                  //   element: <RulebookActivationPage initialTabIndex={0} />,
-                  // },
-                  // {
-                  //   id: EdaRoute.RulebookActivationHistory,
-                  //   path: 'details/:id/history',
-                  //   element: <RulebookActivationPage initialTabIndex={1} />,
-                  // },
                   {
                     path: '',
                     element: <RulebookActivations />,
@@ -197,7 +192,18 @@ export function useEdaNavigation() {
                   {
                     id: EdaRoute.DecisionEnvironmentPage,
                     path: 'details/:id',
-                    element: <DecisionEnvironmentDetails />,
+                    element: <DecisionEnvironmentPage />,
+                    children: [
+                      {
+                        id: EdaRoute.DecisionEnvironmentDetails,
+                        path: 'details',
+                        element: <DecisionEnvironmentDetails />,
+                      },
+                      {
+                        path: '',
+                        element: <Navigate to="details" />,
+                      },
+                    ],
                   },
                   {
                     path: '',
@@ -255,16 +261,22 @@ export function useEdaNavigation() {
                 children: [
                   {
                     path: 'me',
+                    element: <MyPage />,
+                    id: EdaRoute.MyPage,
                     children: [
+                      {
+                        id: EdaRoute.MyDetails,
+                        path: 'details',
+                        element: <MyDetails />,
+                      },
                       {
                         id: EdaRoute.MyTokens,
                         path: 'tokens',
-                        element: <EdaMyDetails initialTabIndex={1} />,
+                        element: <ControllerTokens />,
                       },
                       {
-                        id: EdaRoute.MyPage,
                         path: '',
-                        element: <EdaMyDetails initialTabIndex={0} />,
+                        element: <Navigate to="details" />,
                       },
                     ],
                   },
@@ -285,16 +297,22 @@ export function useEdaNavigation() {
                   },
                   {
                     id: EdaRoute.UserPage,
+                    element: <UserPage />,
                     path: 'details/:id',
                     children: [
                       {
+                        id: EdaRoute.UserDetails,
+                        path: 'details',
+                        element: <UserDetails />,
+                      },
+                      {
                         id: EdaRoute.UserTokens,
                         path: 'tokens',
-                        element: <EdaUserDetails initialTabIndex={1} />,
+                        element: <ControllerTokens />,
                       },
                       {
                         path: '',
-                        element: <EdaUserDetails initialTabIndex={0} />,
+                        element: <Navigate to="details" />,
                       },
                     ],
                   },
