@@ -44,16 +44,6 @@ Cypress.Commands.add('getCheckboxByLabel', (label: string | RegExp) => {
     });
 });
 
-Cypress.Commands.add('selectDropdownOptionByResourceName', (resource: string, itemName: string) => {
-  cy.get(`[data-cy*="${resource}-form-group"]`).within(() => {
-    cy.get('[data-ouia-component-id="menu-select"] button')
-      .click()
-      .then(() => {
-        cy.contains('li', itemName).scrollIntoView().click();
-      });
-  });
-});
-
 Cypress.Commands.add('selectPromptOnLaunch', (resourceName: string) => {
   cy.get(`[data-cy="ask_${resourceName}_on_launch"]`).click();
 });
@@ -84,19 +74,6 @@ Cypress.Commands.add(
     }
   }
 );
-
-Cypress.Commands.add('selectItemFromLookupModal', (resource: string, itemName: string) => {
-  cy.get(`[data-cy*="${resource}-form-group"]`).within(() => {
-    cy.get('button').eq(1).click();
-  });
-  cy.get('.pf-v5-c-modal-box').within(() => {
-    cy.searchAndDisplayResource(itemName);
-    cy.get('[data-ouia-component-id="simple-table"] tbody').within(() => {
-      cy.get('[data-cy="checkbox-column-cell"]').click();
-    });
-    cy.clickButton(/^Confirm/);
-  });
-});
 
 Cypress.Commands.add('setTablePageSize', (text: '10' | '20' | '50' | '100') => {
   cy.get('.pf-v5-c-pagination')
