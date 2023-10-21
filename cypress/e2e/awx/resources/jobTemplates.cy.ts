@@ -1,7 +1,7 @@
 import { randomString } from '../../../../framework/utils/random-string';
 import { Credential } from '../../../../frontend/awx/interfaces/Credential';
 // import { ExecutionEnvironment } from '../../../../frontend/awx/interfaces/ExecutionEnvironment';
-import { InstanceGroup } from '../../../../frontend/awx/interfaces/InstanceGroup';
+//import { InstanceGroup } from '../../../../frontend/awx/interfaces/InstanceGroup';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
@@ -9,7 +9,7 @@ import { Project } from '../../../../frontend/awx/interfaces/Project';
 describe('Job templates form Create, Edit, Delete', function () {
   let inventory: Inventory;
   let machineCredential: Credential;
-  let instanceGroup: InstanceGroup;
+  const instanceGroup = 'default';
   const executionEnvironment = 'Control Plane Execution Environment';
 
   before(function () {
@@ -29,18 +29,18 @@ describe('Job templates form Create, Edit, Delete', function () {
       machineCredential = cred;
     });
 
-    cy.createAwxInstanceGroup().then((ig) => {
-      instanceGroup = ig;
-    });
+    // cy.createAwxInstanceGroup().then((ig) => {
+    //   instanceGroup = ig;
+    // });
 
     // cy.createAwxLabel({ organization: organization.id }).then((l) => {
     //   label = l;
     // });
   });
 
-  after(() => {
-    cy.deleteAwxInstanceGroup(instanceGroup);
-  });
+  // after(() => {
+  //   cy.deleteAwxInstanceGroup(instanceGroup);
+  // });
 
   it('should create a job template with all fields without prompt on launch option', function () {
     cy.intercept('POST', `/api/v2/job_templates`).as('createJT');
@@ -127,7 +127,7 @@ describe('Job templates form Create, Edit, Delete', function () {
           true
         );
         cy.clickButton(/^Next/);
-        cy.selectDropdownOptionByResourceName('instance-group-select', instanceGroup.name);
+        cy.selectDropdownOptionByResourceName('instance-group-select', instanceGroup);
         cy.clickButton(/^Next/);
         cy.intercept('POST', `api/v2/job_templates/${id}/launch/`).as('postLaunch');
         cy.clickButton(/^Finish/);
@@ -182,7 +182,7 @@ describe('Job templates form Create, Edit, Delete', function () {
           true
         );
         cy.clickButton(/^Next/);
-        cy.selectDropdownOptionByResourceName('instance-group-select', instanceGroup.name, true);
+        cy.selectDropdownOptionByResourceName('instance-group-select', instanceGroup, true);
         cy.clickButton(/^Next/);
         cy.intercept('POST', `api/v2/job_templates/${id}/launch/`).as('postLaunch');
         cy.clickButton(/^Finish/);
