@@ -63,7 +63,7 @@ export function useFormErrors<T extends object>(
   const form = useForm<T>({
     defaultValues: defaultValue ?? ({} as DefaultValues<T>),
   });
-
+  const [frameworkTranslations] = useFrameworkTranslations();
   const { handleSubmit, setError: setFieldError } = form;
   const [error, setError] = useState<(string | ReactNode)[] | string | null>(null);
 

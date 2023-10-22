@@ -106,7 +106,6 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
         registry: formData.registry?.id || '',
       };
 
-      // TODO - handle distribution
       if (isRemote && isNew) {
         await hubAPIPost<ExecutionEnvironmentFormProps>(
           hubAPI`/_ui/v1/execution-environments/remotes/`,
@@ -123,7 +122,7 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
               payload
             ),
 
-            formData.description != originalData.description &&
+          formData.description != originalData.description &&
             patchHubRequest(
               pulpAPI`/distributions/container/container/${
                 originalData.pulp?.distribution?.id || ''
@@ -164,7 +163,9 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
           upstream_name: res.pulp?.repository?.remote?.upstream_name,
           description: res.description,
           // TODO - registry initial selection not working
+          registry: { id: res.pulp?.repository?.remote?.registry },
         } as ExecutionEnvironmentFormProps;
+
         setOriginalData(res);
         setExecutionEnvironment(ee);
 

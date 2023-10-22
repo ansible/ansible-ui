@@ -100,6 +100,7 @@ export function PageFormAsyncSelect<
       control={control}
       shouldUnregister
       render={({ field: { onChange, value }, fieldState: { error } }) => {
+        console.log(value);
         return (
           <PageFormGroup
             fieldId={id}
