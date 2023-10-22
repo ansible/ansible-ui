@@ -164,6 +164,7 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
           description: res.description,
           // TODO - registry initial selection not working
           registry: { id: res.pulp?.repository?.remote?.registry },
+          namespace: res.namespace,
         } as ExecutionEnvironmentFormProps;
 
         setOriginalData(res);
@@ -209,39 +210,54 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
             label={t('Name')}
             placeholder={t('Enter a execution environment name')}
             isRequired
-            isDisabled={mode == 'edit'}
+            isDisabled={mode == 'edit' || !isRemote}
             validate={(name: string) => validateName(name, t)}
           />
 
-          <PageFormTextInput<ExecutionEnvironmentFormProps>
-            name="upstream_name"
-            label={t('Upstream name')}
-            placeholder={t('Enter a upstream name')}
-            isRequired
-          />
+          {!isRemote && (
+            <PageFormTextInput<ExecutionEnvironmentFormProps>
+              name="namespace"
+              label={t('Namespace')}
+              placeholder={t('Enter a namespace name')}
+              isRequired
+              isDisabled
+              validate={(name: string) => validateName(name, t)}
+            />
+          )}
 
-          <PageFormAsyncSelect<ExecutionEnvironmentFormProps>
-            name="registry"
-            label={t('Registry')}
-            placeholder={t('Select registry')}
-            query={query}
-            loadingPlaceholder={t('Loading registry...')}
-            loadingErrorText={t('Error loading registry')}
-            limit={page_size}
-            valueToString={(value) => value.name}
-            openSelectDialog={registrySelector}
-            isRequired
-          />
+          {isRemote && (
+            <>
+              <PageFormTextInput<ExecutionEnvironmentFormProps>
+                name="upstream_name"
+                label={t('Upstream name')}
+                placeholder={t('Enter a upstream name')}
+                isRequired
+              />
 
-          <TagsSelector tags={tagsToInclude} setTags={setTagsToInclude} mode={'include'} />
-          <TagsSelector tags={tagsToExclude} setTags={setTagsToExclude} mode={'exclude'} />
+              <PageFormAsyncSelect<ExecutionEnvironmentFormProps>
+                name="registry"
+                label={t('Registry')}
+                placeholder={t('Select registry')}
+                query={query}
+                loadingPlaceholder={t('Loading registry...')}
+                loadingErrorText={t('Error loading registry')}
+                limit={page_size}
+                valueToString={(value) => value.name}
+                openSelectDialog={registrySelector}
+                isRequired
+              />
 
-          <PageFormTextArea<ExecutionEnvironmentFormProps>
-            name="description"
-            label={t('Description')}
-            placeholder={t('Enter a description')}
-            isDisabled={mode == 'add'}
-          />
+              <TagsSelector tags={tagsToInclude} setTags={setTagsToInclude} mode={'include'} />
+              <TagsSelector tags={tagsToExclude} setTags={setTagsToExclude} mode={'exclude'} />
+
+              <PageFormTextArea<ExecutionEnvironmentFormProps>
+                name="description"
+                label={t('Description')}
+                placeholder={t('Enter a description')}
+                isDisabled={mode == 'add'}
+              />
+            </>
+          )}
 
           {error && <AwxError error={new Error(error)} />}
         </HubPageForm>
@@ -266,6 +282,7 @@ type ExecutionEnvironmentFormProps = {
   upstream_name: string;
   description?: string;
   registry: Registry;
+  namespace?: string;
 };
 
 type PayloadDataType = {
