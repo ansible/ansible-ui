@@ -35,6 +35,7 @@ import {
   parsePulpIDFromURL,
   hubAPI,
   hubAPIPost,
+  pulpAPI,
 } from '../api/utils';
 import { PulpItemsResponse } from '../usePulpView';
 import { ExecutionEnvironment } from './ExecutionEnvironment';
@@ -43,7 +44,7 @@ import { HubPageForm } from '../HubPageForm';
 import { HubItemsResponse } from '../useHubView';
 import { useState, useEffect, useCallback } from 'react';
 
-import { putHubRequest } from './../api/request';
+import { patchHubRequest, putHubRequest } from './../api/request';
 import { postHubRequest } from '../api/request';
 import { PageFormAsyncSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncSelect';
 import { string } from 'yaml/dist/schema/common/string';
@@ -79,6 +80,9 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
 
   const page_size = 50;
 
+  const isNew = !originalData?.pulp?.repository;
+  const isRemote = originalData.pulp?.repository ? !!originalData.pulp?.repository?.remote : true;
+
   const query = useCallback(async () => {
     const response = await registryGetRequest(
       hubAPI`/_ui/v1/execution-environments/registries?page_size=${page_size.toString()}`
@@ -95,37 +99,38 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
   ) => {
     try {
       const payload: PayloadDataType = {
-        ...data,
         exclude_tags: tagsToExclude,
         include_tags: tagsToInclude,
+        name: data.name,
+        upstream_name: data.upstream_name,
+        registry: data.registry?.id || '',
       };
-      // description is modified elsewhere
-      delete payload.description;
-
-      const registry = data.registry as Registry;
-      payload.registry = registry?.id;
-
-      const isRemote = originalData.pulp?.repository
-        ? !!originalData.pulp?.repository?.remote
-        : true;
 
       // TODO - handle distribution
-      if (mode == 'add' && isRemote) {
+      if (isRemote && isNew) {
         await hubAPIPost<ExecutionEnvironmentFormProps>(
           hubAPI`/_ui/v1/execution-environments/remotes/`,
           payload
         );
       } else {
-        await putHubRequest(
-          hubAPI`/_ui/v1/execution-environments/remotes/${
-            originalData.pulp?.repository?.remote?.id || ''
-          }/`,
-          payload
-        );
+        await Promise.all([
+          isRemote &&
+            !isNew &&
+            putHubRequest(
+              hubAPI`/_ui/v1/execution-environments/remotes/${
+                originalData.pulp?.repository?.remote?.id || ''
+              }/`,
+              payload
+            ),
 
-        if (data.description != originalData.description) {
-          // TODO - send request to modify description
-        }
+          data.description != originalData.description &&
+            patchHubRequest(
+              pulpAPI`/distributions/container/container/${
+                originalData.pulp?.distribution?.id || ''
+              }/`,
+              { description: data.description }
+            ),
+        ]);
       }
 
       navigate(-1);
@@ -259,12 +264,15 @@ type ExecutionEnvironmentFormProps = {
   name: string;
   upstream_name: string;
   description?: string;
-  registry: string | Registry;
+  registry: Registry;
 };
 
-type PayloadDataType = ExecutionEnvironmentFormProps & {
+type PayloadDataType = {
   include_tags?: string[];
   exclude_tags?: string[];
+  name: string;
+  upstream_name: string;
+  registry: string;
 };
 
 type Registry = {
