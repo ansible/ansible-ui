@@ -127,7 +127,7 @@ describe('Job templates form Create, Edit, Delete', function () {
           true
         );
         cy.clickButton(/^Next/);
-        cy.selectDropdownOptionByResourceName('instance-group-select', instanceGroup);
+        cy.selectDropdownOptionByResourceName('instance-group-select', instanceGroup, true);
         cy.clickButton(/^Next/);
         cy.intercept('POST', `api/v2/job_templates/${id}/launch/`).as('postLaunch');
         cy.clickButton(/^Finish/);
