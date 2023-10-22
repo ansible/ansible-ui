@@ -95,15 +95,15 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
   }, []);
 
   const onSubmit: PageFormSubmitHandler<ExecutionEnvironmentFormProps> = async (
-    data: ExecutionEnvironmentFormProps
+    formData: ExecutionEnvironmentFormProps
   ) => {
     try {
       const payload: PayloadDataType = {
         exclude_tags: tagsToExclude,
         include_tags: tagsToInclude,
-        name: data.name,
-        upstream_name: data.upstream_name,
-        registry: data.registry?.id || '',
+        name: formData.name,
+        upstream_name: formData.upstream_name,
+        registry: formData.registry?.id || '',
       };
 
       // TODO - handle distribution
@@ -123,12 +123,12 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
               payload
             ),
 
-          data.description != originalData.description &&
+            formData.description != originalData.description &&
             patchHubRequest(
               pulpAPI`/distributions/container/container/${
                 originalData.pulp?.distribution?.id || ''
               }/`,
-              { description: data.description }
+              { description: formData.description }
             ),
         ]);
       }
