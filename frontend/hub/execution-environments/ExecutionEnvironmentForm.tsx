@@ -291,6 +291,17 @@ function TagsSelector(props: {
     };
   };
 
+  const addTags = () =>
+  {
+    if (tagsText == '') {
+      return;
+    }
+    const tagsArray = tagsText.split(',');
+    const uniqueArray = [...new Set([...tags, ...tagsArray])];
+    setTags(uniqueArray);
+    setTagsText('');
+  };
+
   return (
     <PageFormGroup label={label}>
       <InputGroup>
@@ -303,21 +314,15 @@ function TagsSelector(props: {
           }}
           onKeyUp={(e) => {
             // l10n: don't translate
-            /*if (e.key === 'Enter') {
-                        this.addTags(addTagsInclude, 'includeTags');
-                      }*/
+            if (e.key === 'Enter') {
+                        addTags();
+            }
           }}
         />
         <Button
           variant="secondary"
           onClick={() => {
-            if (tagsText == '') {
-              return;
-            }
-            const tagsArray = tagsText.split(',');
-            const uniqueArray = [...new Set([...tags, ...tagsArray])];
-            setTags(uniqueArray);
-            setTagsText('');
+            addTags();
           }}
         >
           {t`Add`}
