@@ -53,6 +53,7 @@ export interface PageFormProps<T extends object> {
   autoComplete?: 'on' | 'off';
   footer?: ReactNode;
   errorAdapter?: ErrorAdapter;
+  disableSubmitOnEnter?: boolean;
 }
 
 export function useFormErrors<T extends object>(
@@ -111,6 +112,13 @@ export function PageForm<T extends object>(props: PageFormProps<T>) {
   return (
     <FormProvider {...form}>
       <Form
+        onKeyDown={(event) => {
+          if (event.key === 'Enter') {
+            if (props.disableSubmitOnEnter) {
+              event.preventDefault();
+            }
+          }
+        }}
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
         onSubmit={handleSubmit(
           async (

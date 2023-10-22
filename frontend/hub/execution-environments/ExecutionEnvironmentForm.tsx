@@ -196,6 +196,7 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
           }}
           defaultValue={executionEnvironment}
           singleColumn={true}
+          disableSubmitOnEnter={true}
         >
           <PageFormTextInput<ExecutionEnvironmentFormProps>
             name="name"
@@ -291,8 +292,7 @@ function TagsSelector(props: {
     };
   };
 
-  const addTags = () =>
-  {
+  const addTags = () => {
     if (tagsText == '') {
       return;
     }
@@ -315,7 +315,7 @@ function TagsSelector(props: {
           onKeyUp={(e) => {
             // l10n: don't translate
             if (e.key === 'Enter') {
-                        addTags();
+              addTags();
             }
           }}
         />
