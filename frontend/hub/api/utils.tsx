@@ -81,10 +81,16 @@ export function pulpHrefKeyFn(item: { pulp_href: string }) {
 }
 
 export function collectionKeyFn(item: {
-  collection_version?: { pulp_href: string };
+  collection_version?: { pulp_href: string; version?: string };
   repository?: { name: string };
 }) {
-  return item.collection_version?.pulp_href + '_' + item.repository?.name;
+  return (
+    item.collection_version?.pulp_href +
+    '_' +
+    item.repository?.name +
+    '_' +
+    item.collection_version?.version
+  );
 }
 
 export function appendTrailingSlash(url: string) {
