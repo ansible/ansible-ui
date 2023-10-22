@@ -249,15 +249,15 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
 
               <TagsSelector tags={tagsToInclude} setTags={setTagsToInclude} mode={'include'} />
               <TagsSelector tags={tagsToExclude} setTags={setTagsToExclude} mode={'exclude'} />
-
-              <PageFormTextArea<ExecutionEnvironmentFormProps>
-                name="description"
-                label={t('Description')}
-                placeholder={t('Enter a description')}
-                isDisabled={mode == 'add'}
-              />
             </>
           )}
+
+          <PageFormTextArea<ExecutionEnvironmentFormProps>
+            name="description"
+            label={t('Description')}
+            placeholder={t('Enter a description')}
+            isDisabled={mode == 'add'}
+          />
 
           {error && <AwxError error={new Error(error)} />}
         </HubPageForm>
