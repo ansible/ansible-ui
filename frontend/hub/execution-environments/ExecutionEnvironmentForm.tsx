@@ -324,7 +324,7 @@ function TagsSelector(props: {
         </Button>
       </InputGroup>
 
-      {label2}
+      <div>{label2}</div>
       <LabelGroup {...chipGroupProps()} id={`remove-tag-${mode}`} defaultIsOpen={true}>
         {tags.map((tag) => (
           <Label icon={<TagIcon />} onClose={() => setTags(tags.filter((t) => t != tag))} key={tag}>
