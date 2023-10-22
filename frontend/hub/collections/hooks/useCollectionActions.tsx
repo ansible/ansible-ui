@@ -15,12 +15,28 @@ import { useDeleteCollections } from './useDeleteCollections';
 import { useDeleteCollectionsFromRepository } from './useDeleteCollectionsFromRepository';
 import { useDeprecateCollections } from './useDeprecateCollections';
 
-export function useCollectionActions(callback?: (collections: CollectionVersionSearch[]) => void) {
+export function useCollectionActions(
+  callback?: (collections: CollectionVersionSearch[]) => void,
+  // determine if the menu item is rendered in list or in detail, which defines its redirections
+  detail?: boolean
+) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const deleteCollections = useDeleteCollections(callback);
   const deprecateCollections = useDeprecateCollections(callback);
-  const deleteCollectionsFromRepository = useDeleteCollectionsFromRepository(callback);
+
+  const deleteCollections = useDeleteCollections(callback, false, detail);
+  const deleteCollectionsFromRepository = useDeleteCollectionsFromRepository(
+    callback,
+    false,
+    detail
+  );
+
+  const deleteCollectionsVersionsFromRepository = useDeleteCollectionsFromRepository(
+    callback,
+    true,
+    detail
+  );
+  const deleteCollectionsVersions = useDeleteCollections(callback, true, detail);
   const context = useHubContext();
 
   return useMemo<IPageAction<CollectionVersionSearch>[]>(
@@ -50,7 +66,7 @@ export function useCollectionActions(callback?: (collections: CollectionVersionS
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: TrashIcon,
-        label: t('Delete collection from repository'),
+        label: t('Delete entire collection from repository'),
         onClick: (collection) => deleteCollectionsFromRepository([collection]),
         isDanger: true,
         isDisabled: context.hasPermission('ansible.delete_collection')
@@ -66,6 +82,28 @@ export function useCollectionActions(callback?: (collections: CollectionVersionS
           deprecateCollections([collection]);
         },
       },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: TrashIcon,
+        label: t('Delete version from system'),
+        isDanger: true,
+        onClick: (collection) => {
+          deleteCollectionsVersions([collection]);
+        },
+        isHidden: () => (detail ? false : true),
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: TrashIcon,
+        label: t('Delete version from repository'),
+        isDanger: true,
+        onClick: (collection) => {
+          deleteCollectionsVersionsFromRepository([collection]);
+        },
+        isHidden: () => (detail ? false : true),
+      },
     ],
     [
       t,
@@ -74,6 +112,9 @@ export function useCollectionActions(callback?: (collections: CollectionVersionS
       deleteCollections,
       deleteCollectionsFromRepository,
       deprecateCollections,
+      deleteCollectionsVersions,
+      detail,
+      deleteCollectionsVersionsFromRepository,
     ]
   );
 }

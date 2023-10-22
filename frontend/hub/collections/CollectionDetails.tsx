@@ -31,7 +31,7 @@ import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { BarsIcon, CheckCircleIcon, ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { Table /* data-codemods */, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { DateTime } from 'luxon';
-import { Dispatch, SetStateAction, useMemo, useState } from 'react';
+import { Dispatch, SetStateAction, useMemo, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import {
@@ -52,7 +52,7 @@ import { PageDetail } from '../../../framework/PageDetails/PageDetail';
 import { Scrollable } from '../../../framework/components/Scrollable';
 import { AwxError } from '../../awx/common/AwxError';
 import { StatusCell } from '../../common/Status';
-import { useGet } from '../../common/crud/useGet';
+import { useGetRequest, useGet } from '../../common/crud/useGet';
 import { HubRoute } from '../HubRoutes';
 import { hubAPI } from '../api/utils';
 import { HubItemsResponse } from '../useHubView';
@@ -60,14 +60,18 @@ import { PageSingleSelect } from './../../../framework/PageInputs/PageSingleSele
 import { CollectionVersionSearch } from './Collection';
 import { useCollectionActions } from './hooks/useCollectionActions';
 import { useCollectionColumns } from './hooks/useCollectionColumns';
+import { usePageNavigate } from '../../../framework';
 
 export function CollectionDetails() {
   const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
-  const itemActions = useCollectionActions(() => void refresh());
+  const itemActions = useCollectionActions(() => void refresh(), true);
   const [collection, setCollection] = useState<CollectionVersionSearch | undefined>(undefined);
+  const [collections, setCollections] = useState<CollectionVersionSearch[]>([]);
+  const [collectionError, setCollectionError] = useState<JSX.Element | undefined>(undefined);
+  const request = useGetRequest<HubItemsResponse<CollectionVersionSearch>>();
 
-  let collectionError: JSX.Element | undefined = undefined;
+  const navigate = usePageNavigate();
 
   function setVersionParams(version: string) {
     setSearchParams((params) => {
@@ -75,27 +79,52 @@ export function CollectionDetails() {
       return params;
     });
   }
-  // load all collections versions belong to the repository
-  const collectionsResult = useGet<HubItemsResponse<CollectionVersionSearch>>(
-    hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${
-      searchParams.get('name') || ''
-    }&namespace=${searchParams.get('namespace') || ''}&repository_name=${
-      searchParams.get('repository') || ''
-    }&order_by=-version`
-  );
 
-  if (
-    collectionsResult.error ||
-    (collectionsResult.isLoading == false &&
-      collectionsResult.data &&
-      collectionsResult.data.data.length == 0)
-  ) {
-    collectionError = (
-      <AwxError error={collectionsResult.error || { name: 'not found', message: t('Not Found') }} />
-    );
-  }
+  const name = searchParams.get('name') || '';
+  const namespace = searchParams.get('namespace') || '';
+  const repository = searchParams.get('repository') || '';
+  const redirectIfEmpty = searchParams.get('redirectIfEmpty') || '';
 
-  const collections = collectionsResult.data ? collectionsResult.data.data : [];
+  useEffect(() => {
+    if (!(name && namespace && repository)) {
+      setCollectionError(<AwxError error={{ name: 'not found', message: t('Not Found') }} />);
+    }
+  }, [name, namespace, repository, setCollectionError, t]);
+
+  useEffect(() => {
+    void (async function () {
+      try {
+        const res = await request(hubAPI`/v3/plugin/ansible/search/collection-versions/`, {
+          name,
+          namespace,
+          repository_name: repository,
+        });
+
+        if (res.data.length == 0) {
+          if (redirectIfEmpty) {
+            navigate(HubRoute.Collections);
+          } else {
+            setCollectionError(<AwxError error={{ name: 'not found', message: t('Not Found') }} />);
+          }
+        }
+
+        if (redirectIfEmpty) {
+          const newParams = new URLSearchParams(searchParams.toString());
+
+          // Set a new query parameter or update existing ones
+          newParams.set('redirectIfEmpty', '');
+
+          setSearchParams(newParams);
+        }
+
+        setCollections(res.data);
+      } catch (error) {
+        setCollectionError(<AwxError error={{ name: 'not found', message: t('Not Found') }} />);
+      }
+    })();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [name, namespace, repository, redirectIfEmpty, t]);
 
   // load collection by search params
   const version = searchParams.get('version');

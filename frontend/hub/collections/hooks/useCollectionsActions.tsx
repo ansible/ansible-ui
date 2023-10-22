@@ -50,7 +50,7 @@ export function useCollectionsActions(callback: (collections: CollectionVersionS
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Delete selected collections from repository'),
+        label: t('Delete selected entire collections from repository'),
         onClick: deleteCollectionsFromRepository,
         isDanger: true,
         isDisabled: context.hasPermission('ansible.delete_collection')
