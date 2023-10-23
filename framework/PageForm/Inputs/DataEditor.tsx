@@ -1,5 +1,5 @@
 import useResizeObserver from '@react-hook/resize-observer';
-import monaco from 'monaco-editor';
+import * as monaco from 'monaco-editor';
 import { configureMonacoYaml } from 'monaco-yaml';
 import { useEffect, useRef } from 'react';
 import { FieldPath, FieldValues, UseFormClearErrors, UseFormSetError } from 'react-hook-form';
