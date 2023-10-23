@@ -242,6 +242,7 @@ export function PageMultiSelect<
             const optionId = getID(option);
             return (
               <SelectOption
+                id={optionId}
                 key={option.key !== undefined ? option.key : option.label}
                 value={option.key !== undefined ? option.key : option.label}
                 description={

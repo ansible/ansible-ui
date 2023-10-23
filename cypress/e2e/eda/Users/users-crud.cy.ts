@@ -103,16 +103,11 @@ describe('EDA Users- Create, Edit, Delete', () => {
     cy.contains('h1', 'Users');
     cy.setTablePageSize('100');
     cy.clickButton(/^Create user$/);
-    cy.contains('.pf-v5-c-form__label-text', 'Role(s)')
-      .parent()
-      .parent()
-      .parent()
-      .parent()
-      .within(() => {
-        cy.get('button[data-cy="roles"]').click();
-        userRoles.forEach((role) => {
-          cy.get(`[data-cy="${role.toLowerCase()}"]`).click();
-        });
+    cy.get('button#roles:not(:disabled):not(:hidden)').click();
+    cy.get('#roles-select').within(() => {
+      userRoles.forEach((role) => {
+        cy.get(`[data-cy="${role.toLowerCase()}"]`).should('be.visible');
       });
+    });
   });
 });
