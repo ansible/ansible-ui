@@ -81,6 +81,8 @@ export type PageFormMultiSelectProps<
    */
   isRequired?: boolean;
 
+  footer?: ReactNode;
+
   validate?:
     | Validate<FieldPathValue<TFieldValues, TFieldName>, TFieldValues>
     | Record<string, Validate<FieldPathValue<TFieldValues, TFieldName>, TFieldValues>>;
@@ -144,6 +146,7 @@ export function PageFormMultiSelect<
               values={value}
               onSelect={(getNewValues) => onChange(getNewValues(value))}
               isDisabled={isDisabled || isReadOnly || isSubmitting}
+              footer={props.footer}
             />
           </PageFormGroup>
         );
