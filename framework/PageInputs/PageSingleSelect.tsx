@@ -161,6 +161,7 @@ export function PageSingleSelect<
       isOpen={isOpen}
       onOpenChange={setIsOpen}
       toggle={Toggle}
+      popperProps={{ appendTo: () => document.body }}
     >
       <MenuSearch>
         <MenuSearchInput>

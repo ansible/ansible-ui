@@ -212,6 +212,7 @@ export function PageMultiSelect<
       isOpen={isOpen}
       onOpenChange={setIsOpen}
       toggle={Toggle}
+      popperProps={{ appendTo: () => document.body }}
     >
       <MenuSearch>
         <MenuSearchInput>
