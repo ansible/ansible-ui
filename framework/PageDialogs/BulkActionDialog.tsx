@@ -66,7 +66,7 @@ export interface BulkActionDialogProps<T extends object> {
  * @param {string=} processingText - The text to show for each item when the action is happening.
  * @param {boolean=} isDanger - Indicates if this is a destructive operation.
  */
-function BulkActionDialog<T extends object>(props: BulkActionDialogProps<T>) {
+export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<T>) {
   const {
     title,
     items,
@@ -243,6 +243,7 @@ function BulkActionDialog<T extends object>(props: BulkActionDialogProps<T>) {
       </ModalBoxBody>
       <ModalBoxBody style={{ paddingTop: 0 }}>
         <Progress
+          data-cy="progress"
           value={(progress / items.length) * 100}
           title={
             abortController.signal.aborted
