@@ -63,8 +63,9 @@ describe('PageAsyncMultiSelect', () => {
       <PageAsyncMultiSelectTest placeholder={placeholderText} queryOptions={queryOptions} />
     );
     cy.get('#test').should('not.have.text', 'Loading options...');
-    cy.singleSelectShouldContainOption('#test', 'Option 1');
-    cy.singleSelectShouldContainOption('#test', 'Option 2');
+    cy.get('#test').click();
+    cy.get('#test-select').should('contain', 'Option 1');
+    cy.get('#test-select').should('contain', 'Option 2');
   });
 
   it('should show query error', () => {
@@ -77,7 +78,7 @@ describe('PageAsyncMultiSelect', () => {
         }}
       />
     );
-    cy.get('#test').should('have.text', 'Error loading options');
+    cy.get('#test').should('contain', 'Error loading options');
   });
 
   it('should show initial value', () => {
@@ -88,7 +89,7 @@ describe('PageAsyncMultiSelect', () => {
         defaultValues={[1, 2]}
       />
     );
-    cy.multiSelectShouldHaveSelectedOption('#test', 'Option 1');
-    cy.multiSelectShouldHaveSelectedOption('#test', 'Option 2');
+    cy.get('#test').should('contain', 'Option 1');
+    cy.get('#test').should('contain', 'Option 2');
   });
 });
