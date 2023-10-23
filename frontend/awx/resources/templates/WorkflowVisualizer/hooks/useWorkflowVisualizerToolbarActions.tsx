@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom';
 import { Button, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { CheckCircleIcon, CloseIcon, PlusCircleIcon } from '@patternfly/react-icons';
-
 import { usePageNavigate } from '../../../../../../framework';
 import { AwxRoute } from '../../../../AwxRoutes';
 
