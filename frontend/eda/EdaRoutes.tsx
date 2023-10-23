@@ -5,6 +5,9 @@ export enum EdaRoute {
 
   RuleAudits = 'eda-rule-audits',
   RuleAuditPage = 'eda-rule-audit-page',
+  RuleAuditDetails = 'eda-rule-audit-details',
+  RuleAuditActions = 'eda-rule-audit-actions',
+  RuleAuditEvents = 'eda-rule-audit-events',
 
   RulebookActivations = 'eda-rulebook-activations',
   CreateRulebookActivation = 'eda-create-rulebook-activation',
