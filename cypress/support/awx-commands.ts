@@ -34,16 +34,6 @@ Cypress.Commands.add('typeMonacoTextField', (textString: string) => {
     });
 });
 
-Cypress.Commands.add('getCheckboxByLabel', (label: string | RegExp) => {
-  cy.contains('.pf-v5-c-check__label', label)
-    .invoke('attr', 'for')
-    .then((id: string | undefined) => {
-      if (id) {
-        cy.get('#' + id);
-      }
-    });
-});
-
 Cypress.Commands.add('selectPromptOnLaunch', (resourceName: string) => {
   cy.get(`[data-cy="ask_${resourceName}_on_launch"]`).click();
 });
