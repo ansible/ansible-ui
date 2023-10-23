@@ -208,6 +208,7 @@ export function PageMultiSelect<
 
   return (
     <Select
+      id={`${id}-select`}
       selected={selected}
       onSelect={onSelectHandler}
       isOpen={isOpen}
@@ -218,7 +219,7 @@ export function PageMultiSelect<
       <MenuSearch>
         <MenuSearchInput>
           <SearchInput
-            id={id ? `${id}-search` : undefined}
+            id={`${id}-search`}
             ref={searchRef}
             value={searchValue}
             onChange={(_, value: string) => setSearchValue(value)}

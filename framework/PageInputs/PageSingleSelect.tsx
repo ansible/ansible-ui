@@ -157,6 +157,7 @@ export function PageSingleSelect<
 
   return (
     <Select
+      id={`${id}-select`}
       selected={selectedOption?.label}
       onSelect={onSelectHandler}
       isOpen={isOpen}
@@ -167,7 +168,7 @@ export function PageSingleSelect<
       <MenuSearch>
         <MenuSearchInput>
           <SearchInput
-            id={id ? `${id}-search` : undefined}
+            id={`${id}-search`}
             ref={searchRef}
             value={searchValue}
             onChange={(_, value: string) => setSearchValue(value)}
