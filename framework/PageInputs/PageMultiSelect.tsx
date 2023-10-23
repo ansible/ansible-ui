@@ -126,6 +126,7 @@ export function PageMultiSelect<
         }}
         data-cy={id}
         icon={icon}
+        isDisabled={props.isDisabled}
       >
         {selectedOptions.length > 0 ? (
           <>

@@ -7,14 +7,14 @@ import {
   Validate,
   useFormContext,
 } from 'react-hook-form';
-import { PageMultiSelect } from '../../PageInputs/PageMultiSelect';
 import { PageSelectOption } from '../../PageInputs/PageSelectOption';
+import { PageSingleSelect } from '../../PageInputs/PageSingleSelect';
 import { useID } from '../../hooks/useID';
 import { useFrameworkTranslations } from '../../useFrameworkTranslations';
 import { capitalizeFirstLetter } from '../../utils/strings';
 import { PageFormGroup } from './PageFormGroup';
 
-export type PageFormMultiSelectProps<
+export type PageFormSingleSelectProps<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
   ValueT = FieldPathValue<TFieldValues, TFieldName>,
@@ -89,10 +89,10 @@ export type PageFormMultiSelectProps<
     | Record<string, Validate<FieldPathValue<TFieldValues, TFieldName>, TFieldValues>>;
 };
 
-export function PageFormMultiSelect<
+export function PageFormSingleSelect<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
->(props: PageFormMultiSelectProps<TFieldValues, TFieldName>) {
+>(props: PageFormSingleSelectProps<TFieldValues, TFieldName>) {
   const {
     name,
     label,
@@ -136,14 +136,14 @@ export function PageFormMultiSelect<
             helperTextInvalid={helperTextInvalid}
             isRequired={isRequired}
           >
-            <PageMultiSelect
+            <PageSingleSelect
               id={id}
               data-cy={id ?? name}
               placeholder={placeholderText}
               options={options}
               aria-describedby={id ? `${id}-form-group` : undefined}
-              values={value}
-              onSelect={(getNewValues) => onChange(getNewValues(value))}
+              value={value}
+              onSelect={onChange}
               isDisabled={isDisabled || isReadOnly || isSubmitting}
               footer={props.footer}
             />

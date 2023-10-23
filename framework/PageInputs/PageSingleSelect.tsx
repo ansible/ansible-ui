@@ -1,6 +1,5 @@
 import {
   Divider,
-  FormGroup,
   MenuFooter,
   MenuSearch,
   MenuSearchInput,
@@ -24,7 +23,7 @@ export interface PageSingleSelectProps<ValueT> {
   icon?: ReactNode;
 
   /** The placeholder to show when no value is selected. */
-  placeholder: string;
+  placeholder: ReactNode;
 
   /** The selected value. */
   value: ValueT;
@@ -46,7 +45,8 @@ export interface PageSingleSelectProps<ValueT> {
    */
   isRequired?: boolean;
 
-  label?: string;
+  /** Disables the toggle to open and close the menu */
+  isDisabled?: boolean;
 }
 
 /**
@@ -111,6 +111,7 @@ export function PageSingleSelect<
       }}
       data-cy={id}
       icon={icon}
+      isDisabled={props.isDisabled}
     >
       {selectedOption ? selectedOption.label : <span style={{ opacity: 0.7 }}>{placeholder}</span>}
     </MenuToggle>
@@ -154,7 +155,7 @@ export function PageSingleSelect<
     [options, searchValue]
   );
 
-  let selectComponent = (
+  return (
     <Select
       selected={selectedOption?.label}
       onSelect={onSelectHandler}
@@ -203,14 +204,4 @@ export function PageSingleSelect<
       {props.footer && <MenuFooter>{props.footer}</MenuFooter>}
     </Select>
   );
-
-  if (props.label) {
-    selectComponent = (
-      <FormGroup id={`${id ?? 'select'}-form-group`} fieldId={id} label={props.label}>
-        {selectComponent}
-      </FormGroup>
-    );
-  }
-
-  return selectComponent;
 }

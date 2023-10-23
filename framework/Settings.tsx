@@ -3,6 +3,7 @@ import { Button, Form, Modal, ModalVariant } from '@patternfly/react-core';
 import { ReactNode, createContext, useCallback, useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { usePageDialog } from './PageDialogs/PageDialog';
+import { PageFormGroup } from './PageForm/Inputs/PageFormGroup';
 import { PageSingleSelect } from './PageInputs/PageSingleSelect';
 import { useFrameworkTranslations } from './useFrameworkTranslations';
 
@@ -148,68 +149,72 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
     >
       <FormDiv>
         <Form isHorizontal={settings.formLayout === 'horizontal'} autoComplete="off">
-          <PageSingleSelect
-            id="theme"
-            label="Theme"
-            value={settings.theme ?? 'system'}
-            onSelect={(theme) =>
-              setSettings({ ...settings, theme: theme as 'system' | 'light' | 'dark' })
-            }
-            placeholder="Select theme"
-            options={[
-              { label: 'System default', value: 'system' },
-              { label: 'Light', value: 'light' },
-              { label: 'Dark', value: 'dark' },
-            ]}
-          />
-          <PageSingleSelect
-            id="table-layout"
-            label="Table Layout"
-            value={settings.tableLayout ?? 'comfortable'}
-            onSelect={(tableLayout) =>
-              setSettings({
-                ...settings,
-                tableLayout: tableLayout as 'compact' | 'comfortable',
-              })
-            }
-            placeholder="Select table layout"
-            options={[
-              { label: 'Comfortable', value: 'comfortable' },
-              { label: 'Compact', value: 'compact' },
-            ]}
-          />
-          <PageSingleSelect
-            id="form-columns"
-            label="Form Columns"
-            value={settings.formColumns ?? 'multiple'}
-            onSelect={(formColumns) =>
-              setSettings({
-                ...settings,
-                formColumns: formColumns as 'multiple' | 'single',
-              })
-            }
-            placeholder="Select form columns"
-            options={[
-              { label: 'Multiple columns', value: 'multiple' },
-              { label: 'Single column', value: 'single' },
-            ]}
-          />
-          <PageSingleSelect
-            id="form-layout"
-            label="Form Layout"
-            value={settings.formLayout ?? 'vertical'}
-            onSelect={(formLayout) =>
-              setSettings({
-                ...settings,
-                formLayout: formLayout as 'vertical' | 'horizontal',
-              })
-            }
-            placeholder="Select form layout"
-            options={[
-              { label: 'Vertical labels', value: 'vertical' },
-              { label: 'Horizontal labels', value: 'horizontal' },
-            ]}
-          />
+          <PageFormGroup label="Theme" fieldId="theme">
+            <PageSingleSelect
+              id="theme"
+              value={settings.theme ?? 'system'}
+              onSelect={(theme) =>
+                setSettings({ ...settings, theme: theme as 'system' | 'light' | 'dark' })
+              }
+              placeholder="Select theme"
+              options={[
+                { label: 'System default', value: 'system' },
+                { label: 'Light', value: 'light' },
+                { label: 'Dark', value: 'dark' },
+              ]}
+            />
+          </PageFormGroup>
+          <PageFormGroup label="Table Layout" fieldId="table-layout">
+            <PageSingleSelect
+              id="table-layout"
+              value={settings.tableLayout ?? 'comfortable'}
+              onSelect={(tableLayout) =>
+                setSettings({
+                  ...settings,
+                  tableLayout: tableLayout as 'compact' | 'comfortable',
+                })
+              }
+              placeholder="Select table layout"
+              options={[
+                { label: 'Comfortable', value: 'comfortable' },
+                { label: 'Compact', value: 'compact' },
+              ]}
+            />
+          </PageFormGroup>
+          <PageFormGroup label="Form Columns" fieldId="form-columns">
+            <PageSingleSelect
+              id="form-columns"
+              value={settings.formColumns ?? 'multiple'}
+              onSelect={(formColumns) =>
+                setSettings({
+                  ...settings,
+                  formColumns: formColumns as 'multiple' | 'single',
+                })
+              }
+              placeholder="Select form columns"
+              options={[
+                { label: 'Multiple columns', value: 'multiple' },
+                { label: 'Single column', value: 'single' },
+              ]}
+            />
+          </PageFormGroup>
+          <PageFormGroup label="Form Layout" fieldId="form-layout">
+            <PageSingleSelect
+              id="form-layout"
+              value={settings.formLayout ?? 'vertical'}
+              onSelect={(formLayout) =>
+                setSettings({
+                  ...settings,
+                  formLayout: formLayout as 'vertical' | 'horizontal',
+                })
+              }
+              placeholder="Select form layout"
+              options={[
+                { label: 'Vertical labels', value: 'vertical' },
+                { label: 'Horizontal labels', value: 'horizontal' },
+              ]}
+            />
+          </PageFormGroup>
         </Form>
       </FormDiv>
     </Modal>
