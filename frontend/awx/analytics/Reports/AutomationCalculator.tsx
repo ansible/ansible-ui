@@ -1,3 +1,4 @@
+import { ChartLegendEntry, ChartSchemaElement } from '@ansible/react-json-chart-builder';
 import {
   Card,
   CardBody,
@@ -13,7 +14,6 @@ import {
 } from '@patternfly/react-core';
 import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ChartLegendEntry, ChartSchemaElement } from '@ansible/react-json-chart-builder';
 import useSWR from 'swr';
 import {
   IFilterState,
@@ -81,7 +81,9 @@ export function AutomationCalculator(props: { schema: ChartSchemaElement[] }) {
     data: options,
     isLoading,
     error,
-  } = useSWR<ApiOptionsType, Error>(`/api/v2/analytics/roi_templates_options/`, requestPost);
+  } = useSWR<ApiOptionsType, Error>(`/api/v2/analytics/roi_templates_options/`, (url: string) =>
+    requestPost<ApiOptionsType, unknown>(url, undefined)
+  );
 
   const keyFn = useCallback(() => {
     return '';
