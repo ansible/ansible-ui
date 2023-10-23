@@ -91,7 +91,7 @@ export function RuleInputs() {
           options={monthOptions}
           labelHelpTitle={t('Months')}
           labelHelp={t(
-            'This is the bymonth field.  This field is used to declare which months of the year the schedule should run.'
+            'This is the bymonth field. This field is used to declare which months of the year the schedule should run.'
           )}
           placeholder={t('Select days of the week on which to run the schedule')}
         />
@@ -101,7 +101,7 @@ export function RuleInputs() {
           placeholder={t('Select weeks of the year on which to run the schedule')}
           label={t('Annual week(s) number')}
           labelHelp={t(
-            'This is the byweekno field.  This field is used to declare numbered weeks of the year the schedule should run.'
+            'This is the byweekno field. This field is used to declare numbered weeks of the year the schedule should run.'
           )}
           labelHelpTitle={t('Annual weeks(s) number')}
         />
@@ -111,7 +111,7 @@ export function RuleInputs() {
           options={minutesOfHour}
           label={t('Minute(s) of hour')}
           labelHelp={t(
-            'This is the byhour field.  This field is used to declare minute(s) of the hour the schedule should run.'
+            'This is the byhour field. This field is used to declare minute(s) of the hour the schedule should run.'
           )}
           labelHelpTitle={t('Minute(s) of hour')}
         />
@@ -121,7 +121,7 @@ export function RuleInputs() {
           options={hoursOfDay}
           label={t('Hour of day')}
           labelHelp={t(
-            'This is the byhour field.  This field is used to declare hours of day the schedule should run.'
+            'This is the byhour field. This field is used to declare hours of day the schedule should run.'
           )}
           labelHelpTitle={t('Hour of day')}
         />
@@ -131,7 +131,7 @@ export function RuleInputs() {
           options={daysOfMonth}
           label={t('Monthly day(s) number')}
           labelHelp={t(
-            'This is the bymonthday field.  This field is used to declare numbered days of the month the schedule should run.'
+            'This is the bymonthday field. This field is used to declare numbered days of the month the schedule should run.'
           )}
           labelHelpTitle={t('Monthly day(s) number')}
         />
@@ -141,15 +141,16 @@ export function RuleInputs() {
           options={daysOfYear}
           label={t('Annual day(s) number')}
           labelHelp={t(
-            'This is the byyearday field.  This field is used to declare numbered days of the year the schedule should run.'
+            'This is the byyearday field. This field is used to declare numbered days of the year the schedule should run.'
           )}
           labelHelpTitle={t('Annual day(s) number')}
         />
         <PageFormMultiSelect<RuleFormFields>
+          placeholder={t('Select days')}
           options={daysOfYear}
           name="bysetpos"
           labelHelp={t(
-            'Use this field to filter down indexed occurances based on those declared using the form fields in the Define occurances section.  See the iCalendar RFC for bysetpos field more information.'
+            'Use this field to filter down indexed occurances based on those declared using the form fields in the Define occurances section. See the iCalendar RFC for bysetpos field more information.'
           )}
           labelHelpTitle={t('Occurance position')}
           label={t('Occurances')}
