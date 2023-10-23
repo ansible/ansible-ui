@@ -68,21 +68,18 @@ declare global {
 
       typeMonacoTextField(textString: string): Chainable<void>;
 
+      /** This command works for a form field to look up item from table
+       * (used for components that do not utilize the PageFormAsyncSelect component yet) */
+      selectItemFromLookupModal(resource: string, itemName: string): Chainable<void>;
+
       /**
        * This command works for a form field that can show up either as a drop down
        * or as a spyglass lookup.
        *
        * @param {String} resource: The name of a resource entered as a string. IE: credentials, execution-environments, etc.
-       * @param {String} itemName: The specific name of that resource entered as a string.
-       * @param {Boolean} spyglass: This is an optional boolean value, and will default to false. Set as a third param
-       * to 'true' if the formgroup contains a spyglass to be clicked on.
-       * Finds a dropdown/select component by its data-cy form-group and clicks on the option
-       * specified.*/
-      selectDropdownOptionByResourceName(
-        resource: string,
-        itemName: string,
-        spyglass?: boolean
-      ): Chainable<void>;
+       * @param {String} itemName: The specific name of that resource entered as a string. Set as a third param
+       * */
+      selectDropdownOptionByResourceName(resource: string, itemName: string): Chainable<void>;
 
       selectPromptOnLaunch(resourceName: string): Chainable<void>;
 
