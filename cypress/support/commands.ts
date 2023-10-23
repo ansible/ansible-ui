@@ -68,9 +68,6 @@ declare global {
 
       typeMonacoTextField(textString: string): Chainable<void>;
 
-      /** Get a checkbox by its label. */
-      getCheckboxByLabel(label: string | RegExp): Chainable<JQuery<HTMLElement>>;
-
       /**
        * This command works for a form field that can show up either as a drop down
        * or as a spyglass lookup.
