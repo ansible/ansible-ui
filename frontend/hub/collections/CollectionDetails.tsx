@@ -28,7 +28,12 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
-import { BarsIcon, CheckCircleIcon, ExclamationTriangleIcon } from '@patternfly/react-icons';
+import {
+  BarsIcon,
+  CheckCircleIcon,
+  ExclamationTriangleIcon,
+  DownloadIcon,
+} from '@patternfly/react-icons';
 import { Table /* data-codemods */, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { DateTime } from 'luxon';
 import { Dispatch, SetStateAction, useMemo, useState, useEffect } from 'react';
@@ -61,6 +66,7 @@ import { CollectionVersionSearch } from './Collection';
 import { useCollectionActions } from './hooks/useCollectionActions';
 import { useCollectionColumns } from './hooks/useCollectionColumns';
 import { usePageNavigate } from '../../../framework';
+import { useRepositoryBasePath } from '../api/utils';
 
 export function CollectionDetails() {
   const { t } = useTranslation();
@@ -281,6 +287,14 @@ function CollectionDetailsTab(props: { collection?: CollectionVersionSearch }) {
 function CollectionInstallTab(props: { collection?: CollectionVersionSearch }) {
   const { t } = useTranslation();
   const { collection } = props;
+  let distroBasePath = '';
+  useRepositoryBasePath(collection?.repository?.name, collection?.repository?.pulp_href).then(
+    (res) => {
+      distroBasePath = res;
+      console.log(distroBasePath, 'distrobasePath inside then')
+    }
+  );
+
   return (
     <Scrollable>
       <PageSection variant="light">
@@ -297,6 +311,23 @@ function CollectionInstallTab(props: { collection?: CollectionVersionSearch }) {
                 collection?.collection_version?.namespace ?? ''
               }.${collection?.collection_version?.name ?? ''}`}
             />
+            <PageDetail>
+              {t(`Note Installing collecion with ansible-galaxy is only supported in ansible 2.9+`)}
+            </PageDetail>
+            <Button
+              variant="link"
+              icon={<DownloadIcon />}
+              onClick={() => {
+                Download(
+                  collection?.repository,
+                  collection?.collection_version?.namespace,
+                  collection?.collection_version?.name,
+                  collection?.collection_version?.version
+                );
+              }}
+            >
+              {t(`Download tarball`)}
+            </Button>
           </PageDetail>
           <PageDetail label={t('Requires')}>
             {collection?.collection_version?.require_ansible &&
@@ -306,6 +337,18 @@ function CollectionInstallTab(props: { collection?: CollectionVersionSearch }) {
       </PageSection>
     </Scrollable>
   );
+}
+
+function Download(
+  repository: unknown,
+  namespace: string | undefined,
+  name: string | undefined,
+  version: string | undefined
+) {
+  console.log('repo: ', repository);
+  console.log('nspace', namespace);
+  console.log('name: ', name);
+  console.log('version: ', version);
 }
 
 function CollectionDocumentationTab(props: { collection?: CollectionVersionSearch }) {

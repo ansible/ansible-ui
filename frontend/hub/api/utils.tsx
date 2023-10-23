@@ -18,7 +18,10 @@ function getBaseAPIPath() {
 
 type Results = { data: { results: Repository[] | Distribution[] } };
 
-export function useRepositoryBasePath(name: string, pulp_href?: string): Promise<string> {
+export function useRepositoryBasePath(
+  name: string,
+  pulp_href?: string | undefined
+): Promise<string> {
   const { t } = useTranslation();
 
   const repoRequest = pulp_href
@@ -31,7 +34,7 @@ export function useRepositoryBasePath(name: string, pulp_href?: string): Promise
     pulpAPI`/distributions/ansible/ansible/?name=${name}&limit=1`
   ).then(firstResult);
 
-  return Promise.all(repoRequest, distroRequest).then(async ([repository, distribution]) => {
+  return Promise.all([repoRequest, distroRequest]).then(async ([repository, distribution]) => {
     if (!repository) {
       throw new Error(t`Failed to find repository ${name}`);
     }
@@ -48,12 +51,11 @@ export function useRepositoryBasePath(name: string, pulp_href?: string): Promise
       throw new Error(t`Failed to find a distribution for repository ${name}`);
     }
 
-    return distribution.base_path;
+    return distribution;
   });
 }
-
-function firstResult({ data: { results } }: Results) {
-  return results[0];
+function firstResult(results: Results) {
+  return results.results[0].base_path;
 }
 
 export function apiTag(strings: TemplateStringsArray, ...values: string[]) {
