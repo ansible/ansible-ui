@@ -6,13 +6,13 @@ import {
   Validate,
   useFormContext,
 } from 'react-hook-form';
-import { PageMultiSelect, PageMultiSelectProps } from '../../PageInputs/PageMultiSelect';
+import { PageSingleSelect, PageSingleSelectProps } from '../../PageInputs/PageSingleSelect';
 import { useID } from '../../hooks/useID';
 import { useFrameworkTranslations } from '../../useFrameworkTranslations';
 import { capitalizeFirstLetter } from '../../utils/strings';
 import { PageFormGroup, PageFormGroupProps } from './PageFormGroup';
 
-export type PageFormMultiSelectProps<
+export type PageFormSingleSelectProps<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
   ValueT = FieldPathValue<TFieldValues, TFieldName>,
@@ -22,16 +22,19 @@ export type PageFormMultiSelectProps<
     | Validate<FieldPathValue<TFieldValues, TFieldName>, TFieldValues>
     | Record<string, Validate<FieldPathValue<TFieldValues, TFieldName>, TFieldValues>>;
   isReadOnly?: boolean;
-} & Pick<PageMultiSelectProps<ValueT>, 'id' | 'placeholder' | 'options' | 'footer' | 'isDisabled'> &
+} & Pick<
+  PageSingleSelectProps<ValueT>,
+  'id' | 'placeholder' | 'options' | 'footer' | 'isDisabled' | 'isRequired'
+> &
   Pick<
     PageFormGroupProps,
     'label' | 'labelHelp' | 'labelHelpTitle' | 'additionalControls' | 'isRequired' | 'helperText'
   >;
 
-export function PageFormMultiSelect<
+export function PageFormSingleSelect<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
->(props: PageFormMultiSelectProps<TFieldValues, TFieldName>) {
+>(props: PageFormSingleSelectProps<TFieldValues, TFieldName>) {
   const id = useID(props);
 
   const { control, formState } = useFormContext<TFieldValues>();
@@ -61,14 +64,14 @@ export function PageFormMultiSelect<
             helperTextInvalid={helperTextInvalid}
             isRequired={props.isRequired}
           >
-            <PageMultiSelect
+            <PageSingleSelect
               id={id}
               data-cy={id ?? name}
               placeholder={props.placeholder}
               options={props.options}
               aria-describedby={id ? `${id}-form-group` : undefined}
-              values={value}
-              onSelect={(getNewValues) => onChange(getNewValues(value))}
+              value={value}
+              onSelect={onChange}
               isDisabled={props.isDisabled || props.isReadOnly || isSubmitting}
               footer={props.footer}
             />

@@ -1,19 +1,19 @@
 import {
-  FormGroup,
+  Divider,
+  MenuFooter,
+  MenuSearch,
+  MenuSearchInput,
   MenuToggle,
   MenuToggleElement,
   SearchInput,
-  Select /* data-codemods */,
-  SelectList /* data-codemods */,
-  SelectOption /* data-codemods */,
+  Select,
+  SelectList,
+  SelectOption,
 } from '@patternfly/react-core';
-
 import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getID } from '../hooks/useID';
-import './PageSelect.css';
 import { PageSelectOption } from './PageSelectOption';
-import './PageSingleSelect.css';
 
 export interface PageSingleSelectProps<ValueT> {
   /** The ID of the select component. */
@@ -23,7 +23,7 @@ export interface PageSingleSelectProps<ValueT> {
   icon?: ReactNode;
 
   /** The placeholder to show when no value is selected. */
-  placeholder: string;
+  placeholder: ReactNode;
 
   /** The selected value. */
   value: ValueT;
@@ -45,7 +45,8 @@ export interface PageSingleSelectProps<ValueT> {
    */
   isRequired?: boolean;
 
-  label?: string;
+  /** Disables the toggle to open and close the menu */
+  isDisabled?: boolean;
 }
 
 /**
@@ -109,13 +110,10 @@ export function PageSingleSelect<
         }
       }}
       data-cy={id}
+      icon={icon}
+      isDisabled={props.isDisabled}
     >
-      {icon && <span style={{ paddingLeft: 4, paddingRight: 12 }}>{icon}</span>}
-      {selectedOption ? (
-        selectedOption.label
-      ) : (
-        <span className="page-select-placeholder">{placeholder}</span>
-      )}
+      {selectedOption ? selectedOption.label : <span style={{ opacity: 0.7 }}>{placeholder}</span>}
     </MenuToggle>
   );
 
@@ -157,19 +155,20 @@ export function PageSingleSelect<
     [options, searchValue]
   );
 
-  let selectComponent = (
-    <div className="page-single-select">
-      <Select
-        selected={selectedOption?.label}
-        onSelect={onSelectHandler}
-        isOpen={isOpen}
-        onOpenChange={setIsOpen}
-        toggle={Toggle}
-        style={{ zIndex: isOpen ? 9999 : undefined }}
-      >
-        <div className="page-select-header">
+  return (
+    <Select
+      id={`${id}-select`}
+      selected={selectedOption?.label}
+      onSelect={onSelectHandler}
+      isOpen={isOpen}
+      onOpenChange={setIsOpen}
+      toggle={Toggle}
+      popperProps={{ appendTo: () => document.body }}
+    >
+      <MenuSearch>
+        <MenuSearchInput>
           <SearchInput
-            id={id ? `${id}-search` : undefined}
+            id={`${id}-search`}
             ref={searchRef}
             value={searchValue}
             onChange={(_, value: string) => setSearchValue(value)}
@@ -177,39 +176,33 @@ export function PageSingleSelect<
               event.stopPropagation();
               setSearchValue('');
             }}
+            resultsCount={`${visibleOptions.length} / ${options.length}`}
           />
-        </div>
-        {visibleOptions.length === 0 ? (
-          <div style={{ margin: 16 }}>{t('No results found')}</div>
-        ) : (
-          <SelectList className="page-select-list">
-            {visibleOptions.map((option) => {
-              const optionId = getID(option);
-              return (
-                <SelectOption
-                  key={option.key !== undefined ? option.key : option.label}
-                  value={option.key !== undefined ? option.key : option.label}
-                  description={option.description}
-                  data-cy={optionId}
-                >
-                  {option.label}
-                </SelectOption>
-              );
-            })}
-          </SelectList>
-        )}
-        {props.footer && <div className="page-select-footer">{props.footer}</div>}
-      </Select>
-    </div>
+        </MenuSearchInput>
+      </MenuSearch>
+      <Divider />
+      {visibleOptions.length === 0 ? (
+        <SelectOption isDisabled key="no result">
+          {t('No results found')}
+        </SelectOption>
+      ) : (
+        <SelectList style={{ maxHeight: '40vh', overflowY: 'auto' }}>
+          {visibleOptions.map((option) => {
+            const optionId = getID(option);
+            return (
+              <SelectOption
+                key={option.key !== undefined ? option.key : option.label}
+                value={option.key !== undefined ? option.key : option.label}
+                description={option.description}
+                data-cy={optionId}
+              >
+                {option.label}
+              </SelectOption>
+            );
+          })}
+        </SelectList>
+      )}
+      {props.footer && <MenuFooter>{props.footer}</MenuFooter>}
+    </Select>
   );
-
-  if (props.label) {
-    selectComponent = (
-      <FormGroup id={`${id ?? 'select'}-form-group`} fieldId={id} label={props.label}>
-        {selectComponent}
-      </FormGroup>
-    );
-  }
-
-  return selectComponent;
 }

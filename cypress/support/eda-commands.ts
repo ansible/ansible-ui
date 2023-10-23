@@ -26,15 +26,10 @@ import './commands';
 /*  EDA related custom command implementation  */
 
 Cypress.Commands.add('selectEdaUserRoleByName', (roleName: string) => {
-  cy.contains('.pf-v5-c-form__label-text', 'Role(s)')
-    .parent()
-    .parent()
-    .parent()
-    .parent()
-    .within(() => {
-      cy.get('button[data-cy="roles"]').click();
-      cy.get(`[data-cy="${roleName.toLowerCase()}"]`).click();
-    });
+  cy.get('button#roles:not(:disabled):not(:hidden)').click();
+  cy.get('#roles-select').within(() => {
+    cy.get(`[data-cy="${roleName.toLowerCase()}"]`).click();
+  });
 });
 
 Cypress.Commands.add('checkAnchorLinks', (anchorName: string) => {

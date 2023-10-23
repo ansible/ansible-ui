@@ -96,9 +96,9 @@ describe('PageMultiSelect', () => {
     cy.mount(<PageMultiSelectTest placeholder={placeholderText} options={options} />);
     cy.get('#test').click();
     cy.get('#test-search').type('Option 1');
-    cy.get('#test-search').parent().parent().should('contain', 'Option 1');
-    cy.get('#test-search').parent().parent().should('contain', 'Option 10');
-    cy.get('#test-search').parent().parent().should('not.contain', 'Option 2');
+    cy.get('#test-select').should('contain', 'Option 1');
+    cy.get('#test-select').should('contain', 'Option 10');
+    cy.get('#test-select').should('not.contain', 'Option 2');
   });
 
   it('should show footer', () => {

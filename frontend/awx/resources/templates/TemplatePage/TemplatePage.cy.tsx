@@ -103,10 +103,12 @@ describe('TemplatePage', () => {
       'Notifications',
     ];
     cy.mount(<TemplatePage />);
-    const tabs = cy.get('.pf-v5-c-tabs__list');
-    tabs.children().should('have.length', 7);
-    tabs.children().each((tab, index) => {
-      cy.wrap(tab).should('contain', tabNames[index]);
+
+    cy.get('.pf-v5-c-tabs__list').within(() => {
+      cy.get('.pf-v5-c-tabs__item').should('have.length', 7);
+      cy.get('.pf-v5-c-tabs__item').each((tab, index) => {
+        cy.wrap(tab).should('contain', tabNames[index]);
+      });
     });
   });
   it('Should show all tabs because user is system auditor', () => {
@@ -141,10 +143,12 @@ describe('TemplatePage', () => {
       },
       'activeUserSysAuditor'
     );
-    const allTabs = cy.get('.pf-v5-c-tabs__list');
-    allTabs.children().should('have.length', 6);
-    allTabs.children().each((tab, index) => {
-      cy.wrap(tab).should('contain', tabNames[index]);
+
+    cy.get('.pf-v5-c-tabs__list').within(() => {
+      cy.get('.pf-v5-c-tabs__item').should('have.length', 6);
+      cy.get('.pf-v5-c-tabs__item').each((tab, index) => {
+        cy.wrap(tab).should('contain', tabNames[index]);
+      });
     });
   });
   it('Should not show notifications tab, because of RBAC', () => {
@@ -176,10 +180,12 @@ describe('TemplatePage', () => {
       initialEntries: [RouteObj.WorkflowJobTemplateDetails.replace(':id', '1')],
     });
     cy.wait('@getOrganizations');
-    const fewerTabs = cy.get('.pf-v5-c-tabs__list');
-    fewerTabs.children().should('have.length', 6);
-    fewerTabs.children().each((tab, index) => {
-      cy.wrap(tab).should('have.text', tabNames[index]);
+
+    cy.get('.pf-v5-c-tabs__list').within(() => {
+      cy.get('.pf-v5-c-tabs__item').should('have.length', 6);
+      cy.get('.pf-v5-c-tabs__item').each((tab, index) => {
+        cy.wrap(tab).should('contain', tabNames[index]);
+      });
     });
   });
 });
