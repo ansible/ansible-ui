@@ -21,9 +21,8 @@ Cypress.Commands.add('getListRowByText', (name: string | RegExp, filter?: boolea
 });
 
 Cypress.Commands.add('openToolbarFilterTypeSelect', () => {
-  cy.getFiltersToolbarItem().within(() => {
-    cy.get('#filter').click().parent().get('.pf-v5-c-menu');
-  });
+  cy.get('#filter').click();
+  cy.get('#filter-select');
 });
 
 Cypress.Commands.add('selectToolbarFilterType', (text: string | RegExp) => {
@@ -48,8 +47,8 @@ Cypress.Commands.add(
   'filterBySingleSelection',
   (filterType: RegExp | string, selectLabel: RegExp | string) => {
     cy.selectToolbarFilterType(filterType);
-    cy.getFiltersToolbarItem().within(() => {
-      cy.get('.pf-v5-c-menu-toggle').eq(1).click();
+    cy.get('#filter-input').click();
+    cy.get('#filter-input-select').within(() => {
       cy.contains(selectLabel).click();
     });
   }
@@ -59,8 +58,8 @@ Cypress.Commands.add(
   'filterByMultiSelection',
   (filterType: RegExp | string, selectLabel: RegExp | string) => {
     cy.selectToolbarFilterType(filterType);
-    cy.getFiltersToolbarItem().within(() => {
-      cy.get('.pf-v5-c-menu-toggle').eq(1).click();
+    cy.get('#filter-input').click();
+    cy.get('#filter-input-select').within(() => {
       cy.contains(selectLabel).click();
     });
     cy.get('tbody').click();
