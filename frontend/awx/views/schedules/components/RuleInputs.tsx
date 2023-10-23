@@ -1,12 +1,12 @@
-import { useTranslation } from 'react-i18next';
-import { PageFormSelect, PageFormTextInput } from '../../../../../framework';
-import { Frequency } from 'rrule';
-import { useGetMonthOptions, useGetWeekdayOptions } from '../hooks/ruleHelpers';
 import { Banner, Divider, Tooltip } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+import { Frequency } from 'rrule';
+import { PageFormSelect, PageFormTextInput } from '../../../../../framework';
 import { PageFormDateTimePicker } from '../../../../../framework/PageForm/Inputs/PageFormDateTimePicker';
-import { RuleFormFields } from '../RuleForm';
-import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { PageFormMultiSelect } from '../../../../../framework/PageForm/Inputs/PageFormMultiSelect';
+import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
+import { RuleFormFields } from '../RuleForm';
+import { useGetMonthOptions, useGetWeekdayOptions } from '../hooks/ruleHelpers';
 
 export function RuleInputs() {
   const { t } = useTranslation();
@@ -83,7 +83,7 @@ export function RuleInputs() {
           label={t('Weekdays')}
           name="byweekday"
           options={weekdayOptions}
-          placeholderText={t('Select days of the week on which to run the schedule')}
+          placeholder={t('Select days of the week on which to run the schedule')}
         />
         <PageFormMultiSelect<RuleFormFields>
           name="bymonth"
@@ -93,12 +93,12 @@ export function RuleInputs() {
           labelHelp={t(
             'This is the bymonth field.  This field is used to declare which months of the year the schedule should run.'
           )}
-          placeholderText={t('Select days of the week on which to run the schedule')}
+          placeholder={t('Select days of the week on which to run the schedule')}
         />
         <PageFormMultiSelect<RuleFormFields>
           name="byweekno"
           options={weeksOfYear}
-          placeholderText={t('Select weeks of the year on which to run the schedule')}
+          placeholder={t('Select weeks of the year on which to run the schedule')}
           label={t('Annual week(s) number')}
           labelHelp={t(
             'This is the byweekno field.  This field is used to declare numbered weeks of the year the schedule should run.'
@@ -107,7 +107,7 @@ export function RuleInputs() {
         />
         <PageFormMultiSelect<RuleFormFields>
           name="byminute"
-          placeholderText={t('Select minutes of the hour on which to run the schedule')}
+          placeholder={t('Select minutes of the hour on which to run the schedule')}
           options={minutesOfHour}
           label={t('Minute(s) of hour')}
           labelHelp={t(
@@ -117,7 +117,7 @@ export function RuleInputs() {
         />
         <PageFormMultiSelect<RuleFormFields>
           name="byhour"
-          placeholderText={t('Select hour of day on which to run the schedule')}
+          placeholder={t('Select hour of day on which to run the schedule')}
           options={hoursOfDay}
           label={t('Hour of day')}
           labelHelp={t(
@@ -127,7 +127,7 @@ export function RuleInputs() {
         />
         <PageFormMultiSelect<RuleFormFields>
           name="bymonthday"
-          placeholderText={t('Select days of the month on which to run the schedule')}
+          placeholder={t('Select days of the month on which to run the schedule')}
           options={daysOfMonth}
           label={t('Monthly day(s) number')}
           labelHelp={t(
@@ -137,7 +137,7 @@ export function RuleInputs() {
         />
         <PageFormMultiSelect<RuleFormFields>
           name="byyearday"
-          placeholderText={t('Select days of the year on which to run the schedule')}
+          placeholder={t('Select days of the year on which to run the schedule')}
           options={daysOfYear}
           label={t('Annual day(s) number')}
           labelHelp={t(
