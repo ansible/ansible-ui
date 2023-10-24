@@ -85,10 +85,20 @@ export function AddRolesForm(props: { users?: User[]; teams?: Team[]; onClose?: 
             { header: t('Resource'), cell: (addRole) => addRole.resource.name },
             { header: t('Role'), cell: (addRole) => addRole.roleName },
           ],
-          actionFn: (addRole) => {
+          actionFn: async (addRole, signal: AbortSignal) => {
             return 'user' in addRole
-              ? postRequest(`/api/v2/users/${addRole.user.id}/roles/`, { id: addRole.roleId })
-              : postRequest(`/api/v2/teams/${addRole.team.id}/roles/`, { id: addRole.roleId });
+              ? await postRequest(
+                  `/api/v2/users/${addRole.user.id}/roles/`,
+                  { id: addRole.roleId },
+                  signal
+                )
+              : await postRequest(
+                  `/api/v2/teams/${addRole.team.id}/roles/`,
+                  {
+                    id: addRole.roleId,
+                  },
+                  signal
+                );
           },
           onClose: props.onClose,
         });

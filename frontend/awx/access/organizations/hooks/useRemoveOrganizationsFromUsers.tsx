@@ -22,7 +22,7 @@ export function useRemoveOrganizationsFromUsers() {
         keyFn: (organization: Organization) => organization.id,
         items: organizations,
         actionColumns: [
-          { header: 'Organization', cell: (organization: Organization) => organization.name },
+          { header: t('Organization'), cell: (organization: Organization) => organization.name },
         ],
         actionFn: async (organization: Organization, signal: AbortSignal) => {
           for (const user of users) {
