@@ -202,30 +202,14 @@ describe('projects', () => {
   });
 
   it('can delete project from projects list table row kebab menu', function () {
-    const endOfProject = project.name.split(' ').slice(-1).toString();
     cy.navigateTo('awx', 'projects');
-    cy.searchAndDisplayResource(endOfProject);
-    cy.get('[data-cy="checkbox-column-cell"]').eq(0).click();
-    cy.get('[data-cy="checkbox-column-cell"]').eq(1).click();
-    cy.get('[data-cy="checkbox-column-cell"]').eq(2).click();
-    cy.get('[data-cy="actions-dropdown"]')
-      .eq(0)
-      .click()
-      .then(() => {
-        cy.get('[data-cy="delete-selected-projects"]').click();
-      });
-    cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-      cy.get('[data-ouia-component-id="confirm"]').click();
-      cy.get('[data-ouia-component-id="submit"]').click();
-      // Commenting out flaky tests for now (in some cases there is a 409 conflict error)
-      // cy.get('[data-cy="status-column-cell"]').eq(0).should('contain', 'Success');
-      // cy.get('[data-cy="status-column-cell"]').eq(1).should('contain', 'Success');
-      // cy.get('[data-cy="status-column-cell"]').eq(2).should('contain', 'Success');
-      cy.clickButton('Close');
-    });
+    cy.clickTableRowKebabAction(`${project.name}`, /^Delete project$/);
+    cy.get('#confirm').click();
+    cy.clickButton(/^Delete project/);
+    cy.contains(/^Success$/);
+    cy.clickButton(/^Close$/);
     cy.clickButton(/^Clear all filters$/);
-    cy.searchAndDisplayResource(endOfProject);
-    cy.contains('h2', 'No results found').should('be.visible');
+    cy.getTableRowByText(`${project.name}`).should('not.exist');
     cy.clickButton(/^Clear all filters$/);
   });
 
@@ -295,15 +279,16 @@ describe('projects', () => {
   });
 
   it('can delete project from projects list toolbar ', function () {
+    const endOfProject = project.name.split(' ').slice(-1).toString();
     cy.navigateTo('awx', 'projects');
     cy.selectTableRow(`${project.name}`);
     cy.clickToolbarKebabAction(/^Delete selected projects$/);
     cy.get('#confirm').click();
-    cy.clickButton(/^Delete project/);
+    cy.get('button[data-ouia-component-id="submit"]').click();
     cy.contains(/^Success$/);
     cy.clickButton(/^Close$/);
     cy.clickButton(/^Clear all filters$/);
-    cy.getTableRowByText(`${project.name}`).should('not.exist');
+    cy.getTableRowByText(`${endOfProject}`).should('not.exist');
     cy.clickButton(/^Clear all filters$/);
   });
 
