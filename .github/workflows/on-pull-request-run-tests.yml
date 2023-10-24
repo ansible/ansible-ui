@@ -44,15 +44,15 @@ jobs:
       - uses: marceloprado/has-changed-path@v1.0.1
         id: changed-awx
         with:
-          paths: frontend/awx frontend/common cypress/e2e/awx framework cypress/support
+          paths: frontend/awx frontend/common cypress/e2e/awx framework cypress/support package.json
       - uses: marceloprado/has-changed-path@v1.0.1
         id: changed-hub
         with:
-          paths: frontend/hub frontend/common cypress/e2e/hub framework cypress/support
+          paths: frontend/hub frontend/common cypress/e2e/hub framework cypress/support package.json
       - uses: marceloprado/has-changed-path@v1.0.1
         id: changed-eda
         with:
-          paths: frontend/eda frontend/common cypress/e2e/eda framework cypress/support
+          paths: frontend/eda frontend/common cypress/e2e/eda framework cypress/support package.json
       - uses: marceloprado/has-changed-path@v1.0.1
         id: changed-afw
         with:
@@ -60,7 +60,7 @@ jobs:
       - uses: marceloprado/has-changed-path@v1.0.1
         id: changed-common
         with:
-          paths: frontend/common framework cypress/support
+          paths: frontend/common framework cypress/support package.json
 
   checks:
     name: ESLint - Prettier - TSC

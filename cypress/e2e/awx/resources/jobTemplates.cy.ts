@@ -30,12 +30,8 @@ describe('Job templates form Create, Edit, Delete', function () {
     cy.selectDropdownOptionByResourceName('inventory', inventory.name);
     cy.selectDropdownOptionByResourceName('project', `${(this.globalProject as Project).name}`);
     cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
-    cy.selectDropdownOptionByResourceName(
-      'execution-environment-select',
-      executionEnvironment,
-      true
-    );
-    cy.selectDropdownOptionByResourceName('credential-select', machineCredential, true);
+    cy.selectItemFromLookupModal('execution-environment-select', executionEnvironment);
+    cy.selectItemFromLookupModal('credential-select', machineCredential);
     cy.clickButton(/^Create job template$/);
     cy.wait('@createJT')
       .its('response.body.id')
@@ -96,15 +92,11 @@ describe('Job templates form Create, Edit, Delete', function () {
         });
         cy.selectDropdownOptionByResourceName('inventory', inventory.name);
         cy.clickButton(/^Next/);
-        cy.selectDropdownOptionByResourceName('credential-select', machineCredential, true);
+        cy.selectItemFromLookupModal('credential-select', machineCredential);
         cy.clickButton(/^Next/);
-        cy.selectDropdownOptionByResourceName(
-          'execution-environment-select',
-          executionEnvironment,
-          true
-        );
+        cy.selectItemFromLookupModal('execution-environment-select', executionEnvironment);
         cy.clickButton(/^Next/);
-        cy.selectDropdownOptionByResourceName('instance-group-select', instanceGroup, true);
+        cy.selectItemFromLookupModal('instance-group-select', instanceGroup);
         cy.clickButton(/^Next/);
         cy.intercept('POST', `api/v2/job_templates/${id}/launch/`).as('postLaunch');
         cy.clickButton(/^Finish/);
@@ -151,15 +143,11 @@ describe('Job templates form Create, Edit, Delete', function () {
         cy.clickButton(/^Launch template$/);
         cy.selectDropdownOptionByResourceName('inventory', inventory.name);
         cy.clickButton(/^Next/);
-        cy.selectDropdownOptionByResourceName('credential-select', machineCredential, true);
+        cy.selectItemFromLookupModal('credential-select', machineCredential);
         cy.clickButton(/^Next/);
-        cy.selectDropdownOptionByResourceName(
-          'execution-environment-select',
-          executionEnvironment,
-          true
-        );
+        cy.selectItemFromLookupModal('execution-environment-select', executionEnvironment);
         cy.clickButton(/^Next/);
-        cy.selectDropdownOptionByResourceName('instance-group-select', instanceGroup, true);
+        cy.selectItemFromLookupModal('instance-group-select', instanceGroup);
         cy.clickButton(/^Next/);
         cy.intercept('POST', `api/v2/job_templates/${id}/launch/`).as('postLaunch');
         cy.clickButton(/^Finish/);
