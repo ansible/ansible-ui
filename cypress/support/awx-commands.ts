@@ -86,11 +86,9 @@ Cypress.Commands.add('setTablePageSize', (text: '10' | '20' | '50' | '100') => {
 });
 
 Cypress.Commands.add('clickLink', (label: string | RegExp) => {
-  cy.contains('a:not(:disabled):not(:hidden)', label).should(
-    'not.have.attr',
-    'aria-disabled',
-    'true'
-  );
+  cy.contains('a:not(:disabled):not(:hidden)', label)
+    .should('not.have.attr', 'aria-disabled', 'true')
+    .should('be.visible');
   cy.contains('a:not(:disabled):not(:hidden)', label).click();
 });
 
@@ -759,6 +757,8 @@ Cypress.Commands.add(
       '/api/v2/instance_groups/',
       {
         name: 'E2E Instance Group ' + randomString(4),
+        percent_capacity_remaining: '100',
+        policy_instance_minimum: 100,
         ...instanceGroup,
       }
     );
