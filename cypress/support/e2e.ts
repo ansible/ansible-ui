@@ -2,7 +2,7 @@
 // import 'cypress-axe';
 import '@cypress/code-coverage/support';
 import './commands';
-import { createGlobalProject } from './global-project';
+import { createGlobalOrganization, createGlobalProject } from './global-project';
 
 before(function () {
   const devBaseUrl = Cypress.config().baseUrl?.split(':').slice(-1).toString();
@@ -17,6 +17,7 @@ before(function () {
   ) {
     return;
   } else {
+    createGlobalOrganization();
     createGlobalProject();
   }
 });
