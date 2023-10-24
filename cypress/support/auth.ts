@@ -18,8 +18,8 @@ Cypress.Commands.add('login', (server: string, username: string, password: strin
     retryOnStatusCodeFailure: true,
     retryOnNetworkFailure: true,
   });
-  cy.get('[data-cy="username"]').type(username, { delay: 100 });
-  cy.get('[data-cy="password"]').type(password);
+  cy.get('[data-cy="username"]').type(username, { log: false, delay: 100 });
+  cy.get('[data-cy="password"]').type(password, { log: false });
   cy.get('[data-cy="Submit"]').click();
 });
 
