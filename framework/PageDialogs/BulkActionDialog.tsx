@@ -10,6 +10,8 @@ import {
 import { CheckCircleIcon, ExclamationCircleIcon, PendingIcon } from '@patternfly/react-icons';
 import pLimit from 'p-limit';
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useAbortController } from '../../frontend/common/crud/useAbortController';
 import { PageTable } from '../PageTable/PageTable';
 import { ITableColumn, useVisibleModalColumns } from '../PageTable/PageTableColumn';
 import { usePaged } from '../PageTable/useTableItems';
@@ -78,13 +80,14 @@ export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<
     processingText,
     isDanger,
   } = props;
+  const { t } = useTranslation();
   const [translations] = useFrameworkTranslations();
   const [isProcessing, setProcessing] = useState(true);
   const [isCanceled, setCanceled] = useState(false);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState('');
   const [statuses, setStatuses] = useState<Record<string | number, string | null | undefined>>();
-  const [abortController] = useState(() => new AbortController());
+  const abortController = useAbortController();
   const [_, setDialog] = usePageDialog();
 
   const onCancelClicked = useCallback(() => {
@@ -96,12 +99,12 @@ export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<
       for (const item of items) {
         const key = keyFn(item);
         if (newStatuses[key] === undefined) {
-          newStatuses[key] = 'Cancelled';
+          newStatuses[key] = t('Cancelled');
         }
       }
       return newStatuses;
     });
-  }, [abortController, items, keyFn]);
+  }, [abortController, items, keyFn, t]);
 
   const onCloseClicked = useCallback(() => {
     setDialog(undefined);
@@ -135,7 +138,7 @@ export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<
                 } else {
                   setStatuses((statuses) => ({
                     ...(statuses ?? {}),
-                    [key]: `Unknown error`,
+                    [key]: t(`Unknown error`),
                   }));
                 }
                 setError(translations.errorText);
@@ -154,7 +157,7 @@ export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<
       onComplete?.(successfulItems);
     }
     void process();
-  }, [abortController, actionFn, items, keyFn, onComplete, translations.errorText]);
+  }, [abortController, actionFn, items, keyFn, onComplete, translations.errorText, t]);
 
   const pagination = usePaged(items);
 
@@ -204,7 +207,7 @@ export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<
             tableColumns={[
               ...modalColumns,
               {
-                header: 'Status',
+                header: t(`Status`),
                 cell: (item) => {
                   const key = keyFn(item);
                   const status = statuses?.[key];
@@ -234,7 +237,7 @@ export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<
             // pagination={pagination}
             compact
             errorStateTitle=""
-            emptyStateTitle="No items"
+            emptyStateTitle={t('No items')}
             autoHidePagination={true}
             disableBodyPadding
             {...pagination}
