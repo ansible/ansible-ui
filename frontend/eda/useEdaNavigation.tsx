@@ -36,13 +36,16 @@ import { RulebookActivationHistory } from './rulebook-activations/RulebookActiva
 import { RulebookActivationPage } from './rulebook-activations/RulebookActivationPage/RulebookActivationPage';
 import { RulebookActivations } from './rulebook-activations/RulebookActivations';
 import { RuleAudit } from './views/RuleAudit/RuleAudit';
-import { RuleAuditDetails } from './views/RuleAudit/RuleAuditDetails';
+import { RuleAuditDetails } from './views/RuleAudit/RuleAuditPage/RuleAuditDetails';
 import { DecisionEnvironmentPage } from './Resources/decision-environments/DecisionEnvironmentPage/DecisionEnvironmentPage';
 import { ControllerTokens } from './UserAccess/Users/UserPage/ControllerTokens';
 import { UserPage } from './UserAccess/Users/UserPage/UserPage';
 import { MyPage } from './UserAccess/Users/UserPage/MyPage';
 import { MyDetails } from './UserAccess/Users/UserPage/MyDetails';
 import { UserDetails } from './UserAccess/Users/UserPage/UserDetails';
+import { RuleAuditPage } from './views/RuleAudit/RuleAuditPage/RuleAuditPage';
+import { RuleAuditActions } from './views/RuleAudit/RuleAuditPage/RuleAuditActions';
+import { RuleAuditEvents } from './views/RuleAudit/RuleAuditPage/RuleAuditEvents';
 
 export function useEdaNavigation() {
   const { t } = useTranslation();
@@ -69,8 +72,29 @@ export function useEdaNavigation() {
                 children: [
                   {
                     id: EdaRoute.RuleAuditPage,
-                    path: ':id/*',
-                    element: <RuleAuditDetails />,
+                    path: 'details/:id',
+                    element: <RuleAuditPage />,
+                    children: [
+                      {
+                        id: EdaRoute.RuleAuditDetails,
+                        path: 'details',
+                        element: <RuleAuditDetails />,
+                      },
+                      {
+                        id: EdaRoute.RuleAuditActions,
+                        path: 'actions',
+                        element: <RuleAuditActions />,
+                      },
+                      {
+                        id: EdaRoute.RuleAuditEvents,
+                        path: 'events',
+                        element: <RuleAuditEvents />,
+                      },
+                      {
+                        path: '',
+                        element: <Navigate to="details" />,
+                      },
+                    ],
                   },
                   {
                     path: '',
