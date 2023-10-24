@@ -36,49 +36,9 @@ describe('organizations', () => {
     cy.clickLink(/^Details$/);
     cy.contains('#name', `${(this.globalProjectOrg as Organization).name}`);
   });
-
-  it('edits an organization from the list view', function () {
-    const stringRandom = randomString(4);
-    cy.navigateTo('awx', 'organizations');
-    cy.getTableRowByText(`${(this.globalProjectOrg as Organization).name}`).within(() => {
-      cy.get('#edit-organization').click();
-    });
-    cy.verifyPageTitle('Edit Organization');
-    cy.get('[data-cy="organization-name"]')
-      .clear()
-      .type('now-edited ' + `${stringRandom}`);
-    cy.clickButton(/^Save organization$/);
-    cy.verifyPageTitle('now-edited ' + `${stringRandom}`);
-    cy.get('[data-cy="edit-organization"]').click();
-    cy.get('[data-cy="organization-name"]')
-      .clear()
-      .type(`${(this.globalProjectOrg as Organization).name}`);
-    cy.clickButton(/^Save organization$/);
-    cy.verifyPageTitle(`${(this.globalProjectOrg as Organization).name}`);
-  });
-
-  it('edits an organization from the details page', function () {
-    const stringRandom = randomString(4);
-    cy.navigateTo('awx', 'organizations');
-    cy.clickTableRow(`${(this.globalProjectOrg as Organization).name}`);
-    cy.verifyPageTitle(`${(this.globalProjectOrg as Organization).name}`);
-    cy.clickButton(/^Edit organization$/);
-    cy.verifyPageTitle('Edit Organization');
-    cy.get('[data-cy="organization-name"]')
-      .clear()
-      .type('now-edited ' + `${stringRandom}`);
-    cy.clickButton(/^Save organization$/);
-    cy.verifyPageTitle('now-edited ' + `${stringRandom}`);
-    cy.get('[data-cy="edit-organization"]').click();
-    cy.get('[data-cy="organization-name"]')
-      .clear()
-      .type(`${(this.globalProjectOrg as Organization).name}`);
-    cy.clickButton(/^Save organization$/);
-    cy.verifyPageTitle(`${(this.globalProjectOrg as Organization).name}`);
-  });
 });
 
-describe('organizations', function () {
+describe('organizations edit and delete', function () {
   let organization: Organization;
 
   before(function () {
@@ -91,6 +51,46 @@ describe('organizations', function () {
     cy.createAwxOrganization(orgName).then((testOrganization) => {
       organization = testOrganization;
     });
+  });
+
+  afterEach(function () {
+    cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
+  });
+
+  it('edits an organization from the list view', function () {
+    const stringRandom = randomString(4);
+    cy.navigateTo('awx', 'organizations');
+    cy.getTableRowByText(`${organization.name}`).within(() => {
+      cy.get('#edit-organization').click();
+    });
+    cy.verifyPageTitle('Edit Organization');
+    cy.get('[data-cy="organization-name"]')
+      .clear()
+      .type('now-edited ' + `${stringRandom}`);
+    cy.clickButton(/^Save organization$/);
+    cy.verifyPageTitle('now-edited ' + `${stringRandom}`);
+    cy.get('[data-cy="edit-organization"]').click();
+    cy.get('[data-cy="organization-name"]').clear().type(`${organization.name}`);
+    cy.clickButton(/^Save organization$/);
+    cy.verifyPageTitle(`${organization.name}`);
+  });
+
+  it('edits an organization from the details page', function () {
+    const stringRandom = randomString(4);
+    cy.navigateTo('awx', 'organizations');
+    cy.clickTableRow(`${organization.name}`);
+    cy.verifyPageTitle(`${organization.name}`);
+    cy.clickButton(/^Edit organization$/);
+    cy.verifyPageTitle('Edit Organization');
+    cy.get('[data-cy="organization-name"]')
+      .clear()
+      .type('now-edited ' + `${stringRandom}`);
+    cy.clickButton(/^Save organization$/);
+    cy.verifyPageTitle('now-edited ' + `${stringRandom}`);
+    cy.get('[data-cy="edit-organization"]').click();
+    cy.get('[data-cy="organization-name"]').clear().type(`${organization.name}`);
+    cy.clickButton(/^Save organization$/);
+    cy.verifyPageTitle(`${organization.name}`);
   });
 
   it('deletes an organization from the details page', function () {

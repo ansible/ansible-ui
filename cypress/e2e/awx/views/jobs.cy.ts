@@ -2,11 +2,13 @@
 /// <reference types="cypress" />
 
 import { UnifiedJobList } from '../../../../frontend/awx/interfaces/generated-from-swagger/api';
+import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { JobTemplate } from '../../../../frontend/awx/interfaces/JobTemplate';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
+import { Project } from '../../../../frontend/awx/interfaces/Project';
 
 describe('jobs', () => {
-  let organization: Organization;
+  let inventory: Inventory;
   let jobTemplate: JobTemplate;
   let jobList: UnifiedJobList;
 
@@ -14,27 +16,24 @@ describe('jobs', () => {
     cy.awxLogin();
   });
 
-  beforeEach(() => {
-    cy.createAwxOrganization().then((o) => {
-      organization = o;
-      cy.createAwxProject({ organization: organization.id }).then((project) => {
-        cy.createAwxInventory({ organization: organization.id }).then((inventory) => {
-          cy.createAwxJobTemplate({
-            organization: organization.id,
-            project: project.id,
-            inventory: inventory.id,
-          }).then((jt) => {
-            jobTemplate = jt;
+  before(function () {
+    const globalOrganization = this.globalProjectOrg as Organization;
+    const globalProject = this.globalProject as Project;
+    cy.createAwxInventory({ organization: globalOrganization.id }).then((inv) => {
+      inventory = inv;
+      cy.createAwxJobTemplate({
+        organization: globalOrganization.id,
+        project: globalProject.id,
+        inventory: inv.id,
+      }).then((jt) => {
+        jobTemplate = jt;
 
-            // Launch job to populate jobs list
-            cy.awxRequestPost(
-              `/api/v2/job_templates/${jobTemplate.id.toString()}/launch/`,
-              {}
-            ).then((jl) => {
-              jobList = jl;
-            });
-          });
-        });
+        // Launch job to populate jobs list
+        cy.awxRequestPost(`/api/v2/job_templates/${jobTemplate.id.toString()}/launch/`, {}).then(
+          (jl) => {
+            jobList = jl;
+          }
+        );
       });
     });
   });
@@ -42,6 +41,8 @@ describe('jobs', () => {
   after(() => {
     const jobId = jobList?.id ? jobList?.id.toString() : '';
     cy.awxRequestDelete(`/api/v2/jobs/${jobId}/`, { failOnStatusCode: false });
+    cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
+    cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
   });
 
   it('renders jobs list', () => {
@@ -108,6 +109,45 @@ describe('jobs', () => {
     }
     cy.clickButton(/^Clear all filters$/);
   });
+});
+
+describe('job delete', () => {
+  let inventory: Inventory;
+  let jobTemplate: JobTemplate;
+  let jobList: UnifiedJobList;
+
+  before(() => {
+    cy.awxLogin();
+  });
+
+  beforeEach(function () {
+    const globalOrganization = this.globalProjectOrg as Organization;
+    const globalProject = this.globalProject as Project;
+    cy.createAwxInventory({ organization: globalOrganization.id }).then((inv) => {
+      inventory = inv;
+      cy.createAwxJobTemplate({
+        organization: globalOrganization.id,
+        project: globalProject.id,
+        inventory: inv.id,
+      }).then((jt) => {
+        jobTemplate = jt;
+
+        // Launch job to populate jobs list
+        cy.awxRequestPost(`/api/v2/job_templates/${jobTemplate.id.toString()}/launch/`, {}).then(
+          (jl) => {
+            jobList = jl;
+          }
+        );
+      });
+    });
+  });
+
+  afterEach(() => {
+    const jobId = jobList?.id ? jobList?.id.toString() : '';
+    cy.awxRequestDelete(`/api/v2/jobs/${jobId}/`, { failOnStatusCode: false });
+    cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
+    cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
+  });
 
   it('deletes a job from the jobs list row', () => {
     const jobTemplateId = jobTemplate.id ? jobTemplate.id.toString() : '';
@@ -118,10 +158,11 @@ describe('jobs', () => {
         cy.filterTableByTypeAndText('ID', jobId);
         const jobName = testJob.name ? testJob.name : '';
         cy.getTableRowByText(jobName, false).within(() => {
-          cy.get('[data-label="Status"]', { timeout: 120 * 1000 }).should('not.contain', 'New');
-          cy.get('[data-label="Status"]', { timeout: 120 * 1000 }).should('not.contain', 'Waiting');
-          cy.get('[data-label="Status"]', { timeout: 120 * 1000 }).should('not.contain', 'Pending');
-          cy.get('[data-label="Status"]', { timeout: 120 * 1000 }).should('not.contain', 'Running');
+          cy.get('[data-label="Status"]', { timeout: 120 * 1000 })
+            .should('not.contain', 'New')
+            .should('not.contain', 'Waiting')
+            .should('not.contain', 'Pending')
+            .should('not.contain', 'Running');
         });
         cy.clickTableRowKebabAction(jobName, /^Delete job$/, false);
         cy.get('#confirm').click();
@@ -149,10 +190,11 @@ describe('jobs', () => {
       ).as('jobRun');
       cy.getTableRowByText(jobName, false).within(() => {
         cy.wait('@jobRun');
-        cy.get('[data-label="Status"]', { timeout: 120 * 1000 }).should('not.contain', 'New');
-        cy.get('[data-label="Status"]', { timeout: 120 * 1000 }).should('not.contain', 'Waiting');
-        cy.get('[data-label="Status"]', { timeout: 120 * 1000 }).should('not.contain', 'Pending');
-        cy.get('[data-label="Status"]', { timeout: 120 * 1000 }).should('not.contain', 'Running');
+        cy.get('[data-label="Status"]', { timeout: 120 * 1000 })
+          .should('not.contain', 'New')
+          .should('not.contain', 'Waiting')
+          .should('not.contain', 'Pending')
+          .should('not.contain', 'Running');
       });
       cy.selectTableRow(jobName, false);
       cy.clickToolbarKebabAction(/^Delete selected jobs$/);
