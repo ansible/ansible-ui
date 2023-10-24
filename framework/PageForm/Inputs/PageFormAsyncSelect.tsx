@@ -299,11 +299,15 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
           }}
           toggleIndicator={
             loading ? (
-              <Spinner size="md" style={{ margin: -1, marginBottom: -3 }} />
+              <Spinner
+                size="md"
+                style={{ margin: -1, marginBottom: -3 }}
+                data-cy="loading-spinner"
+              />
             ) : loadingError ? (
               <SyncAltIcon />
             ) : useSelectDialog ? (
-              <SearchIcon />
+              <SearchIcon data-cy="lookup-button" />
             ) : undefined
           }
           validated={validated}
