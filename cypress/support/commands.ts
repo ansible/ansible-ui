@@ -18,6 +18,7 @@ import { Project } from '../../frontend/awx/interfaces/Project';
 import { Schedule } from '../../frontend/awx/interfaces/Schedule';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
+import { InventorySource } from '../../frontend/awx/interfaces/InventorySource';
 import {
   CredentialType,
   Group,
@@ -336,6 +337,11 @@ declare global {
       }): Chainable<Project>;
 
       createAwxInventory(inventory?: Partial<Omit<Inventory, 'id'>>): Chainable<Inventory>;
+
+      createAwxInventorySource(
+        inventory: Partial<Pick<Inventory, 'id'>>,
+        project: Partial<Pick<Project, 'id'>>
+      ): Chainable<InventorySource>;
 
       /**
        * Creates an organization, project, inventory, and job template that are all linked to each other in AWX.
