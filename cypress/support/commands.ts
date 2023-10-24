@@ -139,6 +139,8 @@ declare global {
       /** Filter the table using specified filter and text. */
       filterTableByTypeAndText(filterLabel: string | RegExp, text: string): Chainable<void>;
 
+      selectDetailsPageKebabAction(dataCy: string): Chainable<void>;
+
       /** Click an action in the table toolbar kebab dropdown actions menu. */
       clickToolbarKebabAction(label: string | RegExp): Chainable<void>;
 
