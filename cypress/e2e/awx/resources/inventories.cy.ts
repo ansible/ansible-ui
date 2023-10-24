@@ -30,9 +30,11 @@ describe('inventories', () => {
     });
   });
 
-  after(() => {
-    cy.deleteAwxInstanceGroup(instanceGroup);
-    cy.deleteAwxInventory(inventory);
+  afterEach(() => {
+    cy.deleteAwxLabel(label, { failOnStatusCode: false });
+    cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
+    cy.deleteAwxInstanceGroup(instanceGroup, { failOnStatusCode: false });
+    cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
 
   it('can render the inventories list page', () => {
@@ -90,16 +92,13 @@ describe('inventories', () => {
   });
 
   it('deletes an inventory from the details page', () => {
-    cy.createAwxInventory().then((testInventory) => {
-      cy.navigateTo('awx', 'inventories');
-      cy.clickTableRow(testInventory.name);
-      cy.verifyPageTitle(testInventory.name);
-      cy.clickPageAction(/^Delete inventory/);
-      cy.get('#confirm').click();
-      cy.clickButton(/^Delete inventory/);
-      cy.verifyPageTitle('Inventories');
-      cy.deleteAwxOrganization(organization);
-    });
+    cy.navigateTo('awx', 'inventories');
+    cy.clickTableRow(inventory.name);
+    cy.verifyPageTitle(inventory.name);
+    cy.clickPageAction(/^Delete inventory/);
+    cy.get('#confirm').click();
+    cy.clickButton(/^Delete inventory/);
+    cy.verifyPageTitle('Inventories');
   });
 
   it('copies an inventory from the details page', () => {
@@ -115,40 +114,35 @@ describe('inventories', () => {
       const { inventory, host, group } = result;
       expect(host.inventory).to.eq(inventory.id);
       expect(group.inventory).to.eq(inventory.id);
+      cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
     });
   });
 
   it('can copy an inventory from the inventory list row item', () => {
-    cy.createAwxInventory().then((testInventory) => {
-      cy.navigateTo('awx', 'inventories');
-      cy.clickTableRowKebabAction(testInventory.name, /^Copy inventory$/, true);
-      cy.hasAlert(`${testInventory.name.toString()} copied`);
-      cy.deleteAwxInventory(testInventory);
-    });
+    cy.navigateTo('awx', 'inventories');
+    cy.clickTableRowKebabAction(inventory.name, /^Copy inventory$/, true);
+    cy.hasAlert(`${inventory.name.toString()} copied`);
+    cy.deleteAwxInventory(inventory);
   });
 
   it('can delete an inventory from the inventory list row item', () => {
-    cy.createAwxInventory().then((testInventory) => {
-      cy.navigateTo('awx', 'inventories');
-      cy.clickTableRowKebabAction(testInventory.name, /^Delete inventory$/, true);
-      cy.get('#confirm').click();
-      cy.clickButton(/^Delete inventory/);
-      cy.contains(/^Success$/);
-      cy.clickButton(/^Close$/);
-      cy.clickButton(/^Clear all filters$/);
-    });
+    cy.navigateTo('awx', 'inventories');
+    cy.clickTableRowKebabAction(inventory.name, /^Delete inventory$/, true);
+    cy.get('#confirm').click();
+    cy.clickButton(/^Delete inventory/);
+    cy.contains(/^Success$/);
+    cy.clickButton(/^Close$/);
+    cy.clickButton(/^Clear all filters$/);
   });
 
   it('can delete an inventory from the inventory list toolbar', () => {
-    cy.createAwxInventory().then((testInventory) => {
-      cy.navigateTo('awx', 'inventories');
-      cy.selectTableRow(testInventory.name, true);
-      cy.clickToolbarKebabAction(/^Delete selected inventories$/);
-      cy.get('#confirm').click();
-      cy.clickButton(/^Delete inventory/);
-      cy.contains(/^Success$/);
-      cy.clickButton(/^Close$/);
-      cy.clickButton(/^Clear all filters$/);
-    });
+    cy.navigateTo('awx', 'inventories');
+    cy.selectTableRow(inventory.name, true);
+    cy.clickToolbarKebabAction(/^Delete selected inventories$/);
+    cy.get('#confirm').click();
+    cy.clickButton(/^Delete inventory/);
+    cy.contains(/^Success$/);
+    cy.clickButton(/^Close$/);
+    cy.clickButton(/^Clear all filters$/);
   });
 });
