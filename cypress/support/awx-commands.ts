@@ -157,6 +157,18 @@ Cypress.Commands.add('getListCardByText', (name: string | RegExp, filter?: boole
   cy.contains('article', name);
 });
 
+Cypress.Commands.add('selectDetailsPageKebabAction', (dataCy: string) => {
+  cy.get('[data-cy="actions-dropdown"]')
+    .click()
+    .then(() => {
+      cy.get(`[data-cy="${dataCy}"]`).click();
+      cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+        cy.get('[data-ouia-component-id="confirm"]').click();
+        cy.get('[data-ouia-component-id="submit"]').click();
+      });
+    });
+});
+
 Cypress.Commands.add(
   'clickTableRowKebabAction',
   (name: string | RegExp, label: string | RegExp, filter?: boolean) => {
