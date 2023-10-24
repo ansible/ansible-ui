@@ -5,19 +5,13 @@ import { IPageAction, PageActionSelection, PageActionType } from '../../../../fr
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { Status906Enum } from '../../interfaces/generated/eda-api';
 import { IEdaView } from '../../useEventDrivenView';
-import {
-  useDisableRulebookActivations,
-  useEnableRulebookActivations,
-  useRestartRulebookActivations,
-} from './useControlRulebookActivations';
+import { useRestartRulebookActivations } from './useControlRulebookActivations';
 import { useDeleteRulebookActivations } from './useDeleteRulebookActivations';
 import { postRequest } from '../../../common/crud/Data';
 import { API_PREFIX } from '../../constants';
 
 export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivation>) {
   const { t } = useTranslation();
-  const enableActivations = useEnableRulebookActivations(view.unselectItemsAndRefresh);
-  const disableActivations = useDisableRulebookActivations(view.unselectItemsAndRefresh);
   const restartActivations = useRestartRulebookActivations(view.unselectItemsAndRefresh);
   const deleteRulebookActivations = useDeleteRulebookActivations(view.unselectItemsAndRefresh);
 
@@ -78,5 +72,5 @@ export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivatio
       },
     ];
     return actions;
-  }, [t, restartActivations, enableActivations, disableActivations, deleteRulebookActivations]);
+  }, [t, restartActivations, deleteRulebookActivations, handleToggle]);
 }
