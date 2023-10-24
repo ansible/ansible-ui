@@ -2,11 +2,15 @@
 /// <reference types="cypress" />
 
 import { UnifiedJobList } from '../../../../frontend/awx/interfaces/generated-from-swagger/api';
+import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { JobTemplate } from '../../../../frontend/awx/interfaces/JobTemplate';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
+import { Project } from '../../../../frontend/awx/interfaces/Project';
 
 describe('jobs', () => {
   let organization: Organization;
+  let project: Project;
+  let inventory: Inventory;
   let jobTemplate: JobTemplate;
   let jobList: UnifiedJobList;
 
@@ -17,12 +21,14 @@ describe('jobs', () => {
   beforeEach(() => {
     cy.createAwxOrganization().then((o) => {
       organization = o;
-      cy.createAwxProject({ organization: organization.id }).then((project) => {
-        cy.createAwxInventory({ organization: organization.id }).then((inventory) => {
+      cy.createAwxProject({ organization: organization.id }).then((proj) => {
+        project = proj;
+        cy.createAwxInventory({ organization: organization.id }).then((inv) => {
+          inventory = inv;
           cy.createAwxJobTemplate({
             organization: organization.id,
-            project: project.id,
-            inventory: inventory.id,
+            project: proj.id,
+            inventory: inv.id,
           }).then((jt) => {
             jobTemplate = jt;
 
@@ -39,9 +45,13 @@ describe('jobs', () => {
     });
   });
 
-  after(() => {
+  afterEach(() => {
     const jobId = jobList?.id ? jobList?.id.toString() : '';
     cy.awxRequestDelete(`/api/v2/jobs/${jobId}/`, { failOnStatusCode: false });
+    cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
+    cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
+    cy.deleteAwxProject(project, { failOnStatusCode: false });
+    cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
 
   it('renders jobs list', () => {
