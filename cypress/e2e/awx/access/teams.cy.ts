@@ -57,7 +57,7 @@ describe('teams', function () {
         cy.wait('@deleted')
           .its('response')
           .then((response) => {
-            expect(response.statusCode).to.eql(204);
+            expect(response?.statusCode).to.eql(204);
           });
       });
   });
@@ -235,7 +235,7 @@ describe('teams', function () {
     cy.wait('@deleted')
       .its('response')
       .then((response) => {
-        expect(response.statusCode).to.eql(204);
+        expect(response?.statusCode).to.eql(204);
         cy.verifyPageTitle('Teams');
       });
   });
@@ -256,7 +256,7 @@ describe('teams', function () {
       cy.wait('@deleted')
         .its('response')
         .then((response) => {
-          expect(response.statusCode).to.eql(204);
+          expect(response?.statusCode).to.eql(204);
           cy.contains(/^Success$/);
           cy.clickButton(/^Close$/);
           cy.clickButton(/^Clear all filters$/);
@@ -275,7 +275,7 @@ describe('teams', function () {
       cy.wait('@deleted')
         .its('response')
         .then((response) => {
-          expect(response.statusCode).to.eql(204);
+          expect(response?.statusCode).to.eql(204);
           cy.contains(/^Success$/);
           cy.clickButton(/^Close$/);
           cy.clickButton(/^Clear all filters$/);
