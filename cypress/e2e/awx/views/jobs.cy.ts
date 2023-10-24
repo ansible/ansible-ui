@@ -51,6 +51,7 @@ describe('jobs', () => {
     const jobName = jobList.name ? jobList.name : '';
     cy.filterTableByTypeAndText('ID', jobId);
     cy.contains(jobName);
+    cy.clickButton(/^Clear all filters$/);
   });
 
   it('relaunches job and navigates to job output', () => {
@@ -80,6 +81,7 @@ describe('jobs', () => {
         cy.get('.pf-v5-c-dropdown__toggle').click();
         cy.contains('.pf-v5-c-dropdown__menu-item', /^Delete job$/).should('exist');
       });
+    cy.clickButton(/^Clear all filters$/);
   });
 
   it('renders additional details on expanding job row', () => {
@@ -91,6 +93,7 @@ describe('jobs', () => {
     cy.hasDetail('Project', 'Project');
     // cy.hasDetail('Launched by', 'admin'); // not always admin
     cy.hasDetail('Job slice', '0/1');
+    cy.clickButton(/^Clear all filters$/);
   });
 
   it('filters jobs by id', () => {
