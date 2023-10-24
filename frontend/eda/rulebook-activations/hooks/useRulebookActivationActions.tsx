@@ -1,5 +1,5 @@
 import { RedoIcon, TrashIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../framework';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
@@ -11,6 +11,8 @@ import {
   useRestartRulebookActivations,
 } from './useControlRulebookActivations';
 import { useDeleteRulebookActivations } from './useDeleteRulebookActivations';
+import { postRequest } from '../../../common/crud/Data';
+import { API_PREFIX } from '../../constants';
 
 export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivation>) {
   const { t } = useTranslation();
@@ -18,6 +20,19 @@ export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivatio
   const disableActivations = useDisableRulebookActivations(view.unselectItemsAndRefresh);
   const restartActivations = useRestartRulebookActivations(view.unselectItemsAndRefresh);
   const deleteRulebookActivations = useDeleteRulebookActivations(view.unselectItemsAndRefresh);
+
+  const handleToggle: (activation: EdaRulebookActivation, enabled: boolean) => Promise<void> =
+    useCallback(
+      async (activation, enabled) => {
+        await postRequest(
+          `${API_PREFIX}/activations/${activation.id}/${enabled ? 'enable/' : 'disable/'}`,
+          undefined
+        );
+        view.unselectItemsAndRefresh([activation]);
+      },
+      [view]
+    );
+
   return useMemo<IPageAction<EdaRulebookActivation>[]>(() => {
     const actions: IPageAction<EdaRulebookActivation>[] = [
       {
@@ -28,10 +43,8 @@ export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivatio
         isPinned: true,
         label: t('Rulebook activation enabled'),
         labelOff: t('Rulebook activation disabled'),
-        onToggle: (activation: EdaRulebookActivation, activate: boolean) => {
-          if (activate) void enableActivations([activation]);
-          else void disableActivations([activation]);
-        },
+        onToggle: (activation: EdaRulebookActivation, activate: boolean) =>
+          handleToggle(activation, activate),
         isSwitchOn: (activation: EdaRulebookActivation) => activation.is_enabled ?? false,
         isHidden: (activation: EdaRulebookActivation) =>
           activation?.status === Status906Enum.Deleting,
