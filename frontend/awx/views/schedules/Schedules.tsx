@@ -16,12 +16,13 @@ import { usePersistentFilters } from '../../../common/PersistentFilters';
 export function Schedules(props: { sublistEndpoint?: string }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const params = useParams<{ id: string }>();
+  const params = useParams<{ id: string; source_id?: string }>();
   const location = useLocation();
   const toolbarFilters = useSchedulesFilter();
   const tableColumns = useSchedulesColumns();
+  const resourceId = params.source_id ?? params.id;
   const apiEndPoint: string | undefined = props.sublistEndpoint
-    ? `${props.sublistEndpoint}/${params.id}/schedules/`
+    ? `${props.sublistEndpoint}/${resourceId}/schedules/`
     : undefined;
 
   const view = useAwxView<Schedule>({

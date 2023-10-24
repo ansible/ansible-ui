@@ -11,6 +11,9 @@ import { InventoryDetails } from './resources/inventories/InventoryPage/Inventor
 import { Inventories } from './resources/inventories/Inventories';
 import { useMemo } from 'react';
 import { PageNavigationItem } from '../../framework';
+import { InventorySourcePage } from './resources/inventories/inventorySources/InventorySourcePage';
+import { InventorySourceDetails } from './resources/inventories/inventorySources/InventorySourceDetails';
+import { Schedules } from './views/schedules/Schedules';
 
 export function useGetAwxInventoryRoutes() {
   const { t } = useTranslation();
@@ -22,7 +25,7 @@ export function useGetAwxInventoryRoutes() {
       children: [
         {
           id: AwxRoute.InventorySourceSchedulePage,
-          path: ':id/sources/:source_id/schedules/:schedule_id/*',
+          path: ':inventory_type/:id/sources/:source_id/schedules/:schedule_id/*',
           element: (
             <SchedulePage
               backTab={{
@@ -56,9 +59,36 @@ export function useGetAwxInventoryRoutes() {
           ],
         },
         {
-          id: AwxRoute.EditInventory,
-          path: ':id/edit',
-          element: <EditInventory />,
+          id: AwxRoute.InventorySourceScheduleCreate,
+          path: ':inventory_type/:id/sources/:source_id/schedules/create',
+          element: <CreateSchedule />,
+        },
+        {
+          id: AwxRoute.InventorySourceScheduleEdit,
+          path: ':inventory_type/:id/sources/:source_id/schedules/edit',
+          element: <PageNotImplemented />,
+        },
+        {
+          id: AwxRoute.InventorySourcePage,
+          path: ':inventory_type/:id/sources/:source_id',
+          element: <InventorySourcePage />,
+          children: [
+            {
+              id: AwxRoute.InventorySourceDetail,
+              path: 'details',
+              element: <InventorySourceDetails />,
+            },
+            {
+              id: AwxRoute.InventorySourceNotifications,
+              path: 'notifications',
+              element: <PageNotImplemented />,
+            },
+            {
+              id: AwxRoute.InventorySourceSchedules,
+              path: 'schedules',
+              element: <Schedules sublistEndpoint="/api/v2/inventory_sources" />,
+            },
+          ],
         },
         {
           id: AwxRoute.InventoryPage,
@@ -102,20 +132,16 @@ export function useGetAwxInventoryRoutes() {
             },
           ],
         },
+
+        {
+          id: AwxRoute.EditInventory,
+          path: ':id/edit',
+          element: <EditInventory />,
+        },
         {
           id: AwxRoute.CreateInventory,
           path: 'create',
           element: <CreateInventory />,
-        },
-        {
-          id: AwxRoute.InventorySourceScheduleCreate,
-          path: ':id/sources/:source_id/schedules/create',
-          element: <CreateSchedule />,
-        },
-        {
-          id: AwxRoute.InventorySourceScheduleEdit,
-          path: ':id/sources/:source_id/schedules/edit',
-          element: <PageNotImplemented />,
         },
         {
           path: '',
