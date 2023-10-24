@@ -1,5 +1,5 @@
 import { Team } from '../../../interfaces/Team';
-import { User } from '../../../interfaces/User';
+
 import { TeamAccessInner as TeamAccess } from './TeamAccess';
 
 describe('TeamAccess', () => {
@@ -16,23 +16,13 @@ describe('TeamAccess', () => {
     );
   });
   it('Add users toolbar button is disabled due to lack of permissions', () => {
-    cy.fixture('activeUser').then((activeUser: User) => {
-      cy.intercept(
-        {
-          method: 'GET',
-          url: '/api/v2/me/',
-          hostname: 'localhost',
-        },
-        {
-          ...activeUser,
-          is_superuser: false,
-        }
-      );
-    });
-
     cy.fixture('team').then((team: Team) => {
       team.summary_fields.user_capabilities.edit = false;
-      cy.mount(<TeamAccess team={team} />);
+      cy.mount(
+        <TeamAccess team={team} />,
+        {} as { path: string; initialEntries: string[] },
+        'activeUserSysAuditor.json'
+      );
       cy.contains('button[id="add-users"]', 'Add users').should(
         'have.attr',
         'aria-disabled',
@@ -41,23 +31,13 @@ describe('TeamAccess', () => {
     });
   });
   it('Remove user row action is disabled due to lack of permissions', () => {
-    cy.fixture('activeUser').then((activeUser: User) => {
-      cy.intercept(
-        {
-          method: 'GET',
-          url: '/api/v2/me/',
-          hostname: 'localhost',
-        },
-        {
-          ...activeUser,
-          is_superuser: false,
-        }
-      );
-    });
-
     cy.fixture('team').then((team: Team) => {
       team.summary_fields.user_capabilities.edit = false;
-      cy.mount(<TeamAccess team={team} />);
+      cy.mount(
+        <TeamAccess team={team} />,
+        {} as { path: string; initialEntries: string[] },
+        'activeUserSysAuditor.json'
+      );
       cy.contains('td', 'user-2')
         .parent()
         .within(() => {
@@ -69,19 +49,6 @@ describe('TeamAccess', () => {
     });
   });
   it('Attempting to delete member access brings up confirmation modal', () => {
-    cy.fixture('activeUser').then((activeUser: User) => {
-      cy.intercept(
-        {
-          method: 'GET',
-          url: '/api/v2/me/',
-          hostname: 'localhost',
-        },
-        {
-          activeUser,
-        }
-      );
-    });
-
     cy.fixture('team').then((team: Team) => {
       team.summary_fields.user_capabilities.edit = false;
       cy.mount(<TeamAccess team={team} />);
@@ -96,19 +63,6 @@ describe('TeamAccess', () => {
     });
   });
   it('Attempting to delete a team role brings up confirmation modal with a warning', () => {
-    cy.fixture('activeUser').then((activeUser: User) => {
-      cy.intercept(
-        {
-          method: 'GET',
-          url: '/api/v2/me/',
-          hostname: 'localhost',
-        },
-        {
-          activeUser,
-        }
-      );
-    });
-
     cy.fixture('team').then((team: Team) => {
       team.summary_fields.user_capabilities.edit = false;
       cy.mount(<TeamAccess team={team} />);
@@ -123,18 +77,6 @@ describe('TeamAccess', () => {
     });
   });
   it('If one/more selected users cannot be deleted, bulk confirmation dialog highlights this with a warning', () => {
-    cy.fixture('activeUser').then((activeUser: User) => {
-      cy.intercept(
-        {
-          method: 'GET',
-          url: '/api/v2/me/',
-          hostname: 'localhost',
-        },
-        {
-          activeUser,
-        }
-      );
-    });
     cy.intercept('POST', '/api/v2/users/**/roles/', cy.spy().as('removeUser'));
 
     cy.fixture('team').then((team: Team) => {

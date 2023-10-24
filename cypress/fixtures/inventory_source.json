@@ -1,0 +1,123 @@
+{
+  "id": 6059,
+  "type": "inventory_source",
+  "url": "/api/v2/inventory_sources/6059/",
+  "related": {
+    "named_url": "/api/v2/inventory_sources/alex inv sour++Alex Inv++Default/",
+    "created_by": "/api/v2/users/3/",
+    "modified_by": "/api/v2/users/3/",
+    "last_job": "/api/v2/inventory_updates/6013/",
+    "update": "/api/v2/inventory_sources/6059/update/",
+    "inventory_updates": "/api/v2/inventory_sources/6059/inventory_updates/",
+    "schedules": "/api/v2/inventory_sources/6059/schedules/",
+    "activity_stream": "/api/v2/inventory_sources/6059/activity_stream/",
+    "hosts": "/api/v2/inventory_sources/6059/hosts/",
+    "groups": "/api/v2/inventory_sources/6059/groups/",
+    "notification_templates_started": "/api/v2/inventory_sources/6059/notification_templates_started/",
+    "notification_templates_success": "/api/v2/inventory_sources/6059/notification_templates_success/",
+    "notification_templates_error": "/api/v2/inventory_sources/6059/notification_templates_error/",
+    "inventory": "/api/v2/inventories/4727/",
+    "source_project": "/api/v2/projects/6/",
+    "last_update": "/api/v2/inventory_updates/6013/"
+  },
+  "summary_fields": {
+    "organization": {
+      "id": 1,
+      "name": "Default",
+      "description": ""
+    },
+    "inventory": {
+      "id": 4727,
+      "name": "Demo Inventory",
+      "description": "",
+      "has_active_failures": false,
+      "total_hosts": 0,
+      "hosts_with_active_failures": 0,
+      "total_groups": 0,
+      "has_inventory_sources": true,
+      "total_inventory_sources": 1,
+      "inventory_sources_with_failures": 1,
+      "organization_id": 1,
+      "kind": ""
+    },
+    "source_project": {
+      "id": 6,
+      "name": "Demo Project",
+      "description": "",
+      "status": "successful",
+      "scm_type": "git",
+      "allow_override": false
+    },
+    "last_job": {
+      "id": 6013,
+      "name": "Alex Inv - alex inv sour",
+      "description": "",
+      "finished": "2023-10-16T19:56:10.058527Z",
+      "status": "failed",
+      "failed": true,
+      "license_error": false
+    },
+    "last_update": {
+      "id": 6013,
+      "name": "Alex Inv - alex inv sour",
+      "description": "",
+      "status": "failed",
+      "failed": true,
+      "license_error": false
+    },
+    "created_by": {
+      "id": 3,
+      "username": "dev",
+      "first_name": "",
+      "last_name": ""
+    },
+    "modified_by": {
+      "id": 3,
+      "username": "dev",
+      "first_name": "",
+      "last_name": ""
+    },
+    "user_capabilities": {
+      "edit": true,
+      "delete": true,
+      "start": true,
+      "schedule": true
+    },
+    "credentials": [],
+    "resolved_environment": {
+      "id": 1,
+      "name": "quay.io/ansible/awx-ee (latest)",
+      "description": "",
+      "image": "quay.io/ansible/awx-ee:latest"
+    }
+  },
+  "created": "2023-10-16T19:50:41.392125Z",
+  "modified": "2023-10-16T19:50:41.392136Z",
+  "name": "Demo Inventory Source",
+  "description": "",
+  "source": "scm",
+  "source_path": "",
+  "source_vars": "---",
+  "scm_branch": "",
+  "credential": null,
+  "enabled_var": "",
+  "enabled_value": "",
+  "host_filter": "",
+  "overwrite": false,
+  "overwrite_vars": false,
+  "custom_virtualenv": null,
+  "timeout": 0,
+  "verbosity": 1,
+  "limit": "",
+  "last_job_run": "2023-10-16T19:56:10.058527Z",
+  "last_job_failed": true,
+  "next_job_run": null,
+  "status": "failed",
+  "execution_environment": null,
+  "inventory": 4727,
+  "update_on_launch": false,
+  "update_cache_timeout": 0,
+  "source_project": 6,
+  "last_update_failed": true,
+  "last_updated": "2023-10-16T19:56:10.058527Z"
+}
