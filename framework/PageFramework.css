@@ -1,5 +1,7 @@
 #app {
-  min-block-size: 100dvh;
+  position: fixed;
+  height: 100%;
+  width: 100%;
 }
 
 .border-top {

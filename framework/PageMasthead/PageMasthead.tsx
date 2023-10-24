@@ -25,13 +25,11 @@ export function PageMasthead(props: {
   children?: ReactNode;
 }) {
   const isSmallOrLarger = useBreakpoint('sm');
-  // TODO: Determine mobile treatment when icons overflow the width
   return (
     <Masthead
       display={{ default: 'inline' }}
       style={{
         borderBottom: '1px solid #fff4',
-        overflowY: 'auto',
       }}
     >
       <PageMastheadToggle />
