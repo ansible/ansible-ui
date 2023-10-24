@@ -14,8 +14,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import { useState } from 'react';
 
-import { Select, SelectOption, SelectOptionObject, NavItemSeparator } from '@patternfly/react-core/deprecated';
-import { reportDefaultParams, allDefaultParams } from './constants';
+import { Select, SelectOption, SelectOptionObject } from '@patternfly/react-core/deprecated';
+import { allDefaultParams } from './constants';
 
 export function Test() {
   const location = useLocation();
@@ -85,7 +85,7 @@ const MySelectDropdown = (props: {
     <Select
       isOpen={isOpen}
       onToggle={(_event, isOpen: boolean) => onToggle(isOpen)}
-      selections={props.items.find( (item) => item == props.selected)}
+      selections={props.items.find((item) => item == props.selected)}
       onSelect={onSelect}
       placeholderText=""
     >
