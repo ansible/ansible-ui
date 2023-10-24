@@ -17,7 +17,7 @@ export function useRemoveUsersFromTeams() {
         }),
         keyFn: (user: User) => user.id,
         items: users,
-        actionColumns: [{ header: 'User', cell: (user: User) => user.username }],
+        actionColumns: [{ header: t('User'), cell: (user: User) => user.username }],
         actionFn: async (user: User, signal: AbortSignal) => {
           for (const team of teams) {
             await postRequest(
