@@ -273,6 +273,7 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
               : placeholder
           }
           typeAheadAriaLabel={placeholder}
+          data-cy="dropdown-menu"
           selections={value}
           onSelect={(_, value) => {
             if (typeof value === 'object' && 'option' in value && value.option) {
@@ -319,6 +320,7 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
           footer={
             props.openSelectDialog ? (
               <Button
+                data-cy="browse-button"
                 variant="link"
                 onClick={() => {
                   setOpen(false);
