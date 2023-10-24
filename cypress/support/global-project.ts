@@ -137,6 +137,7 @@ export function createGlobalProject() {
                     '🎉GLOBAL PROJECT FOUND🎉....ACCESS IT USING this.globalProject IN THE TESTS.',
                     projectResults[0]
                   );
+                  cy.waitForProjectToFinishSyncing(projectResults[0].id);
                   //assert properties of the global org and global project
                   expect(orgResults[0].name).to.equal(GLOBAL_ORG_NAME);
                   expect(projectResults[0].name).to.equal(GLOBAL_PROJECT_NAME);
