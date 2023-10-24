@@ -53,11 +53,6 @@ describe('Job templates form Create, Edit, Delete', function () {
     cy.selectDropdownOptionByResourceName('inventory', inventory.name);
     cy.selectDropdownOptionByResourceName('project', `${(this.globalProject as Project).name}`);
     cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
-    cy.selectDropdownOptionByResourceName(
-      'execution-environment-select',
-      executionEnvironment,
-      true
-    );
     cy.selectItemFromLookupModal('execution-environment-select', executionEnvironment);
     cy.selectItemFromLookupModal('credential-select', machineCredential.name);
     cy.clickButton(/^Create job template$/);
