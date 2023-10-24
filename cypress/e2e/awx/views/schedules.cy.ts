@@ -13,6 +13,10 @@ describe('schedules', () => {
     cy.createAWXSchedule().then((sched: Schedule) => (schedule = sched));
   });
 
+  afterEach(() => {
+    cy.deleteAWXSchedule(schedule, { failOnStatusCode: false });
+  });
+
   it('renders schedules list', () => {
     cy.navigateTo('awx', 'schedules');
     cy.verifyPageTitle('Schedules');
