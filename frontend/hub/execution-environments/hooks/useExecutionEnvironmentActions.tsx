@@ -70,6 +70,13 @@ export function useExecutionEnvironmentActions(callback?: (ees: ExecutionEnviron
             : t`You do not have rights to this operation`,
       },
     ],
-    [t, context, deleteExecutionEnvironments, syncExecutionEnvironments, signExecutionEnvironment]
+    [
+      t,
+      context,
+      deleteExecutionEnvironments,
+      syncExecutionEnvironments,
+      signExecutionEnvironment,
+      pageNavigate,
+    ]
   );
 }

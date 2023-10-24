@@ -1,8 +1,6 @@
-import { Trans, useTranslation, TFunction } from 'react-i18next';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useTranslation, TFunction } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
-  PageFormCheckbox,
-  PageFormDataEditor,
   PageFormSubmitHandler,
   PageFormTextInput,
   PageHeader,
@@ -11,45 +9,20 @@ import {
   PageFormTextArea,
 } from '../../../framework';
 import { TagIcon } from '@patternfly/react-icons';
-import {
-  Button,
-  InputGroup,
-  Label,
-  LabelGroup,
-  Modal,
-  Spinner,
-  TextInput,
-} from '@patternfly/react-core';
-import { PageFormFileUpload } from '../../../framework/PageForm/Inputs/PageFormFileUpload';
+import { Button, InputGroup, Label, LabelGroup, TextInput } from '@patternfly/react-core';
 import { PageFormGroup } from '../../../framework/PageForm/Inputs/PageFormGroup';
-import { PageFormExpandableSection } from '../../../framework/PageForm/PageFormExpandableSection';
-import { LoadingPage } from '../../../framework/components/LoadingPage';
 import { AwxError } from '../../awx/common/AwxError';
-import { useGet } from '../../common/crud/useGet';
 import { useGetRequest } from '../../common/crud/useGet';
-import { usePostRequest } from '../../common/crud/usePostRequest';
 import { HubRoute } from '../HubRoutes';
-import {
-  appendTrailingSlash,
-  hubAPIPut,
-  parsePulpIDFromURL,
-  hubAPI,
-  hubAPIPost,
-  pulpAPI,
-} from '../api/utils';
-import { PulpItemsResponse } from '../usePulpView';
+import { hubAPI, hubAPIPost, pulpAPI } from '../api/utils';
 import { ExecutionEnvironment } from './ExecutionEnvironment';
-import { PageFormSection } from '../../../framework/PageForm/Utils/PageFormSection';
 import { HubPageForm } from '../HubPageForm';
 import { HubItemsResponse } from '../useHubView';
 import { useState, useEffect, useCallback } from 'react';
 
 import { patchHubRequest, putHubRequest } from './../api/request';
-import { postHubRequest } from '../api/request';
 import { PageFormAsyncSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncSelect';
-import { string } from 'yaml/dist/schema/common/string';
 import { useSelectRegistrySingle } from './hooks/useRegistrySelector';
-import { toolbarSingleSelectBrowseAdapter } from '../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSingleSelectFilter';
 
 export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
   const { t } = useTranslation();
@@ -93,6 +66,7 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
       total: response.meta.count,
       values: response.data,
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onSubmit: PageFormSubmitHandler<ExecutionEnvironmentFormProps> = async (
@@ -185,6 +159,7 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
         }
       }
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -205,9 +180,7 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
             props.mode == 'edit' ? t('Edit Execution Environment') : t('Add Execution Environment')
           }
           onCancel={() => navigate(-1)}
-          onSubmit={(data) => {
-            onSubmit(data);
-          }}
+          onSubmit={onSubmit}
           defaultValue={executionEnvironment}
           singleColumn={true}
           disableSubmitOnEnter={true}
@@ -249,7 +222,7 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
                 loadingPlaceholder={t('Loading registry...')}
                 loadingErrorText={t('Error loading registry')}
                 limit={page_size}
-                valueToString={(value) => value.name}
+                valueToString={(value: ExecutionEnvironment) => value.name}
                 openSelectDialog={registrySelector}
                 isRequired
               />
