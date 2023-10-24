@@ -57,6 +57,7 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
   const getPageUrl = useGetPageUrl();
   const getRequest = useGetRequest<ExecutionEnvironment>();
   const registryGetRequest = useGetRequest<HubItemsResponse<Registry>>();
+  const singleRegistryGetRequest = useGetRequest<Registry>();
 
   const [executionEnvironment, setExecutionEnvironment] = useState<ExecutionEnvironmentFormProps>(
     {} as ExecutionEnvironmentFormProps
@@ -158,12 +159,18 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
           throw new Error(notFound);
         }
 
+        const registry = await singleRegistryGetRequest(
+          hubAPI`/_ui/v1/execution-environments/registries/${
+            res.pulp?.repository?.remote?.registry || ''
+          }/`
+        );
+
         const ee = {
           name: res.name,
           upstream_name: res.pulp?.repository?.remote?.upstream_name,
           description: res.description,
           // TODO - registry initial selection not working
-          registry: { id: res.pulp?.repository?.remote?.registry },
+          registry: { id: registry?.id, name: registry?.name },
           namespace: res.namespace,
         } as ExecutionEnvironmentFormProps;
 
