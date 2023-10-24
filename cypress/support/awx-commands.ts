@@ -707,17 +707,9 @@ Cypress.Commands.add(
       failOnStatusCode?: boolean;
     }
   ) => {
-    const projectId = jobTemplate.project;
-
     if (jobTemplate.id) {
       const templateId = typeof jobTemplate.id === 'number' ? jobTemplate.id.toString() : '';
       cy.awxRequestDelete(`/api/v2/job_templates/${templateId}/`, options);
-    }
-    if (typeof projectId === 'number') {
-      cy.awxRequestGet<Project>(`/api/v2/projects/${projectId}/`).then((project) => {
-        // This will take care of deleting the project and the associated org, inventory
-        cy.deleteAwxProject(project, options);
-      });
     }
   }
 );
