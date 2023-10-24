@@ -56,12 +56,12 @@ module.exports = function (env, argv) {
     resolve: {
       extensions: ['.ts', '.tsx', '.js', '.jsx'],
       fallback: {
-        fs: require.resolve('browserify-fs'),
-        os: require.resolve('os-browserify/browser'),
-        path: require.resolve('path-browserify'),
-        util: require.resolve('node-util'),
-        module: require.resolve('node-util'),
-        stream: require.resolve('stream-browserify'),
+        // fs: require.resolve('browserify-fs'),
+        // os: require.resolve('os-browserify/browser'),
+        // path: require.resolve('path-browserify'),
+        // util: require.resolve('node-util'),
+        // module: require.resolve('node-util'),
+        // stream: require.resolve('stream-browserify'),
         module: false,
       },
     },
