@@ -40,3 +40,16 @@
 :root:where(.pf-v5-theme-dark) .bg-lighten {
   background-image: linear-gradient(#ffffff08, #ffffff08);
 }
+
+/* .pf-v5-c-truncate__start {
+  min-width: unset;
+}
+
+.pf-v5-c-toolbar .pf-v5-c-toolbar__content {
+  flex-wrap: wrap;
+  row-gap: 8px;
+}
+
+.pf-v5-c-page__sidebar-body {
+  padding-top: 0;
+} */
