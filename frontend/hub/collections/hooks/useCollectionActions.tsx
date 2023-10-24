@@ -108,7 +108,7 @@ export function useCollectionActions(
       },
       {
         type: PageActionType.Button,
-        selection : PageActionSelection.Single,
+        selection: PageActionSelection.Single,
         icon: CopyIcon,
         label: t('Copy version to repositories'),
         onClick: (collection) => {
