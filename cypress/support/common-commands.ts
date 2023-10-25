@@ -43,6 +43,17 @@ Cypress.Commands.add('filterTableByTypeAndText', (filterLabel: string | RegExp, 
   cy.filterTableByText(text);
 });
 
+Cypress.Commands.add('clearAllFilters', () => {
+  cy.get('button').then((buttons) => {
+    for (let i = 0; i <= buttons.length; i++) {
+      const button = buttons[i];
+      if (button?.innerText === 'Clear all filters') {
+        cy.wrap(button).click();
+      }
+    }
+  });
+});
+
 Cypress.Commands.add(
   'filterBySingleSelection',
   (filterType: RegExp | string, selectLabel: RegExp | string) => {

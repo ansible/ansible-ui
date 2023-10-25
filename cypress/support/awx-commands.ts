@@ -113,6 +113,7 @@ Cypress.Commands.add('navigateTo', (component: string, label: string) => {
       cy.get(`[data-cy="${component}-${label}"]`).click();
     }
   });
+  cy.clearAllFilters();
   cy.get('[data-cy="refresh"]').click();
 });
 
