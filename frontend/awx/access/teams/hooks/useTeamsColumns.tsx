@@ -12,6 +12,7 @@ import {
   useOrganizationNameColumn,
 } from '../../../../common/columns';
 import { Team } from '../../../interfaces/Team';
+import { AwxRoute } from '../../../AwxRoutes';
 
 export function useTeamsColumns(options?: { disableLinks?: boolean; disableSort?: boolean }) {
   const { t } = useTranslation();
@@ -24,7 +25,7 @@ export function useTeamsColumns(options?: { disableLinks?: boolean; disableSort?
   const nameColumn = useNameColumn({ header: t('Team'), ...options, onClick: nameColumnClick });
   const descriptionColumn = useDescriptionColumn();
 
-  const organizationColumn = useOrganizationNameColumn(options);
+  const organizationColumn = useOrganizationNameColumn(AwxRoute.OrganizationDetails, options);
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);
   const tableColumns = useMemo<ITableColumn<Team>[]>(
