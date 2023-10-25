@@ -1,6 +1,5 @@
 import { useCallback, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Button, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import {
   CheckCircleIcon,
@@ -9,13 +8,14 @@ import {
   ExpandAltIcon,
   PlusCircleIcon,
 } from '@patternfly/react-icons';
-
+import { Badge, Button, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
+import { WorkflowNode } from '../../../../interfaces/WorkflowNode';
 import { usePageNavigate } from '../../../../../../framework';
 import { AwxRoute } from '../../../../AwxRoutes';
 
-export function useWorkflowVisualizerToolbarActions() {
-  const [isExpanded, setIsExpanded] = useState<boolean>(false);
+export function useWorkflowVisualizerToolbarActions(nodes: WorkflowNode[]) {
   const { t } = useTranslation();
+  const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const pageNavigate = usePageNavigate();
   const params = useParams<{ id: string }>();
 
@@ -43,6 +43,11 @@ export function useWorkflowVisualizerToolbarActions() {
         </ToolbarItem>
       </ToolbarGroup>
       <ToolbarGroup align={{ default: 'alignRight' }}>
+        <ToolbarItem style={{ alignSelf: 'center' }}>
+          <div data-cy="workflow-visualizer-toolbar-total-nodes">
+            {t('Total nodes')} <Badge isRead>{nodes?.length || 0}</Badge>
+          </div>
+        </ToolbarItem>
         <ToolbarItem>
           <Button
             data-cy="workflow-visualizer-toolbar-expand-compress"
