@@ -48,7 +48,7 @@ Cypress.Commands.add('clearAllFilters', () => {
     for (let i = 0; i <= buttons.length; i++) {
       const button = buttons[i];
       if (button?.innerText === 'Clear all filters') {
-        cy.wrap(button).click();
+        button.click();
       }
     }
   });
