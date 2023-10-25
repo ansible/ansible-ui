@@ -87,21 +87,24 @@ export function useCreatedColumn(options?: {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const column: ITableColumn<
-    | { created?: string; created_on?: string }
+    | { created?: string; created_on?: string; date_joined?: string }
     | {
         created?: string;
         created_on?: string;
+        date_joined?: string;
         summary_fields?: { created_by?: { id?: number; username?: string } };
       }
   > = useMemo(
     () => ({
       header: t('Created'),
       cell: (item) => {
-        if (!item.created && !item.created_on) return <></>;
+        if (!item.created && !item.created_on && !item.date_joined) return <></>;
         return (
           <DateTimeCell
             format="since"
-            value={item.created ? item.created : item.created_on}
+            value={
+              item.created ? item.created : item.created_on ? item.created_on : item.date_joined
+            }
             author={
               'summary_fields' in item ? item.summary_fields?.created_by?.username : undefined
             }
