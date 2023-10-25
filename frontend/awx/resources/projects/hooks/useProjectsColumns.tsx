@@ -13,12 +13,13 @@ import { useLastUsedColumn } from './useLastUsedColumn';
 import { useExecutionEnvironmentColumn } from './useDefaultEnvironment';
 import { Project } from '../../../interfaces/Project';
 import { useProjectNameColumn } from './useProjectNameColumn';
+import { AwxRoute } from '../../../AwxRoutes';
 
 export function useProjectsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
   const nameColumn = useProjectNameColumn({ disableLinks: options?.disableLinks });
   const descriptionColumn = useDescriptionColumn();
-  const organizationColumn = useOrganizationNameColumn(options);
+  const organizationColumn = useOrganizationNameColumn(AwxRoute.OrganizationDetails, options);
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);
   const statusColumn = useProjectStatusColumn({

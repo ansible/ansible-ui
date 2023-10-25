@@ -5,12 +5,13 @@ import { useNameColumn, useOrganizationNameColumn } from '../../../../common/col
 import { getItemKey, requestDelete } from '../../../../common/crud/Data';
 import { Team } from '../../../interfaces/Team';
 import { useTeamsColumns } from './useTeamsColumns';
+import { AwxRoute } from '../../../AwxRoutes';
 
 export function useDeleteTeams(onComplete: (teams: Team[]) => void) {
   const { t } = useTranslation();
   const confirmationColumns = useTeamsColumns({ disableLinks: true, disableSort: true });
   const deleteActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true });
-  const deleteActionOrganizationColumn = useOrganizationNameColumn({
+  const deleteActionOrganizationColumn = useOrganizationNameColumn(AwxRoute.OrganizationDetails, {
     disableLinks: true,
     disableSort: true,
   });
