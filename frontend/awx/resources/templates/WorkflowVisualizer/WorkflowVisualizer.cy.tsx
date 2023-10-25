@@ -29,5 +29,9 @@ describe('WorkflowVisualizer', () => {
   it('Should show the visualizer screen', () => {
     cy.mount(<WorkflowVisualizer />);
     cy.get('[data-cy="workflow-visualizer"]').should('be.visible');
+    cy.get('[data-cy="workflow-visualizer-toolbar-total-nodes"]').should(
+      'have.text',
+      'Total nodes 0'
+    );
   });
 });
