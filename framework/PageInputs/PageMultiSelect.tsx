@@ -243,6 +243,7 @@ export function PageMultiSelect<
             return (
               <SelectOption
                 id={optionId}
+                icon={option.icon}
                 key={option.key !== undefined ? option.key : option.label}
                 value={option.key !== undefined ? option.key : option.label}
                 description={
