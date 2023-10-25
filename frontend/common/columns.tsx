@@ -9,7 +9,6 @@ import {
   TextCell,
   useGetPageUrl,
 } from '../../framework';
-import { AwxRoute } from '../awx/AwxRoutes';
 import { RouteObj } from './Routes';
 
 export function useIdColumn<T extends { name: string; id: number }>() {
@@ -79,21 +78,30 @@ export function useDescriptionColumn<T extends { description?: string | null | u
   return column;
 }
 
-export function useCreatedColumn(options?: { disableSort?: boolean; disableLinks?: boolean }) {
+export function useCreatedColumn(options?: {
+  disableSort?: boolean;
+  disableLinks?: boolean;
+  sortKey?: string;
+  hideByDefaultInTableView?: boolean;
+}) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const column: ITableColumn<
-    | { created?: string }
-    | { created?: string; summary_fields?: { created_by?: { id?: number; username?: string } } }
+    | { created?: string; created_on?: string }
+    | {
+        created?: string;
+        created_on?: string;
+        summary_fields?: { created_by?: { id?: number; username?: string } };
+      }
   > = useMemo(
     () => ({
       header: t('Created'),
       cell: (item) => {
-        if (!item.created) return <></>;
+        if (!item.created && !item.created_on) return <></>;
         return (
           <DateTimeCell
             format="since"
-            value={item.created}
+            value={item.created ? item.created : item.created_on}
             author={
               'summary_fields' in item ? item.summary_fields?.created_by?.username : undefined
             }
@@ -111,36 +119,51 @@ export function useCreatedColumn(options?: { disableSort?: boolean; disableLinks
           />
         );
       },
-      sort: options?.disableSort ? undefined : 'created',
+      sort: options?.disableSort ? undefined : options?.sortKey ?? 'created',
       defaultSortDirection: 'desc',
-      table: ColumnTableOption.Expanded,
+      table: options?.hideByDefaultInTableView
+        ? ColumnTableOption.Hidden
+        : ColumnTableOption.Expanded,
       card: 'hidden',
       list: 'secondary',
       modal: ColumnModalOption.Hidden,
     }),
-    [navigate, options?.disableLinks, options?.disableSort, t]
+    [
+      navigate,
+      options?.disableLinks,
+      options?.disableSort,
+      options?.hideByDefaultInTableView,
+      options?.sortKey,
+      t,
+    ]
   );
   return column;
 }
 
-export function useModifiedColumn(options?: { disableSort?: boolean; disableLinks?: boolean }) {
+export function useModifiedColumn(options?: {
+  disableSort?: boolean;
+  disableLinks?: boolean;
+  sortKey?: string;
+  hideByDefaultInTableView?: boolean;
+}) {
   const { t } = useTranslation();
   const history = useNavigate();
   const column: ITableColumn<
-    | { modified?: string }
+    | { modified?: string; modified_on?: string }
     | {
         modified?: string;
+        modified_on?: string;
         summary_fields?: { modified_by?: { id?: number; username?: string } };
       }
   > = useMemo(
     () => ({
       header: t('Modified'),
       cell: (item) => {
-        if (!item.modified) return <></>;
+        if (!item.modified && !item.modified_on) return <></>;
         return (
           <DateTimeCell
             format="since"
-            value={item.modified}
+            value={item.modified ? item.modified : item.modified_on}
             author={
               'summary_fields' in item ? item.summary_fields?.modified_by?.username : undefined
             }
@@ -158,22 +181,34 @@ export function useModifiedColumn(options?: { disableSort?: boolean; disableLink
           />
         );
       },
-      sort: options?.disableSort ? undefined : 'modified',
+      sort: options?.disableSort ? undefined : options?.sortKey ?? 'modified',
       defaultSortDirection: 'desc',
-      table: ColumnTableOption.Expanded,
+      table: options?.hideByDefaultInTableView
+        ? ColumnTableOption.Hidden
+        : ColumnTableOption.Expanded,
       card: 'hidden',
       list: 'secondary',
       modal: ColumnModalOption.Hidden,
     }),
-    [history, options?.disableLinks, options?.disableSort, t]
+    [
+      history,
+      options?.disableLinks,
+      options?.disableSort,
+      options?.hideByDefaultInTableView,
+      options?.sortKey,
+      t,
+    ]
   );
   return column;
 }
 
-export function useOrganizationNameColumn(options?: {
-  disableLinks?: boolean;
-  disableSort?: boolean;
-}) {
+export function useOrganizationNameColumn(
+  orgDetailsRoute: string,
+  options?: {
+    disableLinks?: boolean;
+    disableSort?: boolean;
+  }
+) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const column: ITableColumn<{
@@ -189,7 +224,7 @@ export function useOrganizationNameColumn(options?: {
       cell: (item) => (
         <TextCell
           text={item.summary_fields?.organization?.name}
-          to={getPageUrl(AwxRoute.OrganizationDetails, {
+          to={getPageUrl(orgDetailsRoute, {
             params: { id: item.summary_fields?.organization?.id },
           })}
           disableLinks={options?.disableLinks}
@@ -198,7 +233,7 @@ export function useOrganizationNameColumn(options?: {
       value: (item) => item.summary_fields?.organization?.name,
       sort: options?.disableSort ? undefined : 'organization',
     }),
-    [getPageUrl, options?.disableLinks, options?.disableSort, t]
+    [getPageUrl, options?.disableLinks, options?.disableSort, orgDetailsRoute, t]
   );
   return column;
 }
