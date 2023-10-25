@@ -1,76 +1,34 @@
-import { useTranslation } from 'react-i18next';
-import { IToolbarFilter, ToolbarFilterType } from '../../../../framework';
+import { IToolbarFilter } from '../../../../framework';
 import { useMemo } from 'react';
+import {
+  useCreatedByToolbarFilter,
+  useDescriptionToolbarFilter,
+  useModifiedByToolbarFilter,
+  useNameToolbarFilter,
+  useOrganizationToolbarFilter,
+} from '../../../../frontend/awx/common/awx-toolbar-filters';
 
-export function useUsernameToolbarFilter() {
-  const { t } = useTranslation();
-  return useMemo<IToolbarFilter>(
-    () => ({
-      key: 'username',
-      label: t('Username'),
-      type: ToolbarFilterType.Text,
-      query: 'username__contains',
-      comparison: 'contains',
-    }),
-    [t]
-  );
-}
-
-export function useFirstNameToolbarFilter() {
-  const { t } = useTranslation();
-  return useMemo<IToolbarFilter>(
-    () => ({
-      key: 'firstname',
-      label: t('First name'),
-      type: ToolbarFilterType.Text,
-      query: 'first_name__contains',
-      comparison: 'contains',
-    }),
-    [t]
-  );
-}
-
-export function useLastNameToolbarFilter() {
-  const { t } = useTranslation();
-  return useMemo<IToolbarFilter>(
-    () => ({
-      key: 'lastname',
-      label: t('Last name'),
-      type: ToolbarFilterType.Text,
-      query: 'last_name__contains',
-      comparison: 'contains',
-    }),
-    [t]
-  );
-}
-
-export function useEmailToolbarFilter() {
-  const { t } = useTranslation();
-  return useMemo<IToolbarFilter>(
-    () => ({
-      key: 'email',
-      label: t('Email'),
-      type: ToolbarFilterType.Text,
-      query: 'email__contains',
-      comparison: 'contains',
-    }),
-    [t]
-  );
-}
-
-export function useUsersFilters() {
-  const usernameToolbarFilter = useUsernameToolbarFilter();
-  const firstnameByToolbarFilter = useFirstNameToolbarFilter();
-  const lastnameToolbarFilter = useLastNameToolbarFilter();
-  const emailToolbarFilter = useEmailToolbarFilter();
+export function useTeamFilters() {
+  const nameToolbarFilter = useNameToolbarFilter();
+  const descriptionToolbarFilter = useDescriptionToolbarFilter();
+  const organizationToolbarFilter = useOrganizationToolbarFilter();
+  const createdByToolbarFilter = useCreatedByToolbarFilter();
+  const modifiedByToolbarFilter = useModifiedByToolbarFilter();
   const toolbarFilters = useMemo<IToolbarFilter[]>(
     () => [
-      usernameToolbarFilter,
-      firstnameByToolbarFilter,
-      lastnameToolbarFilter,
-      emailToolbarFilter,
+      nameToolbarFilter,
+      descriptionToolbarFilter,
+      organizationToolbarFilter,
+      createdByToolbarFilter,
+      modifiedByToolbarFilter,
     ],
-    [usernameToolbarFilter, firstnameByToolbarFilter, lastnameToolbarFilter, emailToolbarFilter]
+    [
+      nameToolbarFilter,
+      descriptionToolbarFilter,
+      organizationToolbarFilter,
+      createdByToolbarFilter,
+      modifiedByToolbarFilter,
+    ]
   );
   return toolbarFilters;
 }

@@ -1,61 +1,58 @@
 import { useTranslation } from 'react-i18next';
 import { useMemo } from 'react';
-import { User } from '../../../interfaces/User';
-import { TextCell, compareStrings, useBulkConfirmation } from '../../../../framework';
+import { Team } from '../../../interfaces/Team';
+import { compareStrings, useBulkConfirmation } from '../../../../framework';
 import { getItemKey, requestDelete } from '../../../../frontend/common/crud/Data';
-import { useUsersColumns } from './useUserColumns';
+import { useTeamColumns } from './useTeamColumns';
+import { useNameColumn } from '../../../../frontend/common/columns';
 
-export function useDeleteUsers(onComplete: (users: User[]) => void) {
+export function useDeleteTeams(onComplete: (teams: Team[]) => void) {
   const { t } = useTranslation();
-  const confirmationColumns = useUsersColumns();
-  const deleteActionNameColumn = useMemo(
-    () => ({
-      header: t('Username'),
-      cell: (user: User) => <TextCell text={user.username} />,
-      sort: 'username',
-      maxWidth: 200,
-    }),
-    [t]
-  );
+  const confirmationColumns = useTeamColumns({ disableLinks: true, disableSort: true });
+  const deleteActionNameColumn = useNameColumn({
+    header: t('Team'),
+    disableLinks: true,
+    disableSort: true,
+  });
   const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn]);
-  // TODO: Update based on RBAC information from Users API
+  // TODO: Update based on RBAC information from Teams API
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const cannotDeleteUser = (user: User) => {
+  const cannotDeleteTeam = (team: Team) => {
     // eslint-disable-next-line no-constant-condition
-    return true //user?.summary_fields?.user_capabilities?.delete
+    return true //team?.summary_fields?.user_capabilities?.delete
       ? undefined
-      : t('The user cannot be deleted due to insufficient permissions.');
+      : t('The team cannot be deleted due to insufficient permissions.');
   };
-  const bulkAction = useBulkConfirmation<User>();
-  const deleteUsers = (users: User[]) => {
-    const undeletableUsers = users.filter(cannotDeleteUser);
+  const bulkAction = useBulkConfirmation<Team>();
+  const deleteTeams = (teams: Team[]) => {
+    const undeletableTeams = teams.filter(cannotDeleteTeam);
 
     bulkAction({
-      title: t('Permanently delete users', { count: users.length }),
-      confirmText: t('Yes, I confirm that I want to delete these {{count}} users.', {
-        count: users.length - undeletableUsers.length,
+      title: t('Permanently delete teams', { count: teams.length }),
+      confirmText: t('Yes, I confirm that I want to delete these {{count}} teams.', {
+        count: teams.length - undeletableTeams.length,
       }),
-      actionButtonText: t('Delete users', { count: users.length }),
-      items: users.sort((l, r) => compareStrings(l.username, r.username)),
+      actionButtonText: t('Delete teams', { count: teams.length }),
+      items: teams.sort((l, r) => compareStrings(l.name, r.name)),
       alertPrompts:
-        undeletableUsers.length > 0
+        undeletableTeams.length > 0
           ? [
               t(
-                '{{count}} of the selected users cannot be deleted due to insufficient permissions.',
+                '{{count}} of the selected teams cannot be deleted due to insufficient permissions.',
                 {
-                  count: undeletableUsers.length,
+                  count: undeletableTeams.length,
                 }
               ),
             ]
           : undefined,
-      isItemNonActionable: cannotDeleteUser,
+      isItemNonActionable: cannotDeleteTeam,
       keyFn: getItemKey,
       isDanger: true,
       confirmationColumns,
       actionColumns,
       onComplete,
-      actionFn: (user: User) => requestDelete(`/api/gateway/v1/users/${user.id}/`),
+      actionFn: (team: Team) => requestDelete(`/api/gateway/v1/teams/${team.id}/`),
     });
   };
-  return deleteUsers;
+  return deleteTeams;
 }

@@ -20,6 +20,13 @@ import { TeamDetails } from './access/teams/components/TeamDetails';
 import { TeamList } from './access/teams/components/TeamList';
 import { CreateTeam, EditTeam } from './access/teams/components/TeamForm';
 import { TeamPage } from './access/teams/components/TeamPage';
+import {
+  CreateOrganization,
+  EditOrganization,
+} from './access/organizations/components/OrganizationForm';
+import { OrganizationPage } from './access/organizations/components/OrganizationPage';
+import { OrganizationDetails } from './access/organizations/components/OrganizationDetails';
+import { OrganizationList } from './access/organizations/components/OrganizationList';
 
 export function usePlatformNavigation(services: Service[]) {
   const { t } = useTranslation();
@@ -79,7 +86,43 @@ export function usePlatformNavigation(services: Service[]) {
   const applications = removeNavigationItemById(awx, AwxRoute.Applications);
 
   // Access
-  const organizations = removeNavigationItemById(awx, AwxRoute.Organizations);
+  // const organizations = removeNavigationItemById(awx, AwxRoute.Organizations);
+  const organizations = useMemo<PageNavigationItem>(
+    () => ({
+      id: PlatformRoute.Organizations,
+      label: t('Organizations'),
+      path: 'organizations',
+      children: [
+        {
+          id: PlatformRoute.CreateOrganization,
+          path: 'create',
+          element: <CreateOrganization />,
+        },
+        {
+          id: PlatformRoute.EditOrganization,
+          path: ':id/edit',
+          element: <EditOrganization />,
+        },
+        {
+          id: PlatformRoute.OrganizationPage,
+          path: ':id',
+          element: <OrganizationPage />,
+          children: [
+            {
+              id: PlatformRoute.OrganizationDetails,
+              path: 'details',
+              element: <OrganizationDetails />,
+            },
+          ],
+        },
+        {
+          path: '',
+          element: <OrganizationList />,
+        },
+      ],
+    }),
+    [t]
+  );
   const teams = useMemo<PageNavigationItem>(
     () => ({
       id: PlatformRoute.Teams,
