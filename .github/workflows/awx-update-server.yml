@@ -11,7 +11,7 @@ on:
         type: boolean
         required: true
         default: false
-        description: 'Update server on success?'
+        description: 'Update server on success'
 jobs:
   awx-e2e:
     name: AWX E2E
