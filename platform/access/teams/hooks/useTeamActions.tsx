@@ -6,22 +6,22 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
-import { User } from '../../../interfaces/User';
+import { Team } from '../../../interfaces/Team';
 import { ButtonVariant } from '@patternfly/react-core';
 import { PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { PlatformRoute } from '../../../PlatformRoutes';
-import { useDeleteUsers } from './useDeleteUsers';
+import { useDeleteTeams } from './useDeleteTeams';
 import { IPlatformView } from '../../../hooks/usePlatformView';
 
-export function useUserToolbarActions(view: IPlatformView<User>) {
+export function useTeamToolbarActions(view: IPlatformView<Team>) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
-  // TODO: Update based on RBAC information from Users API
-  const canCreateUser = true;
-  const deleteUsers = useDeleteUsers(view.unselectItemsAndRefresh);
+  // TODO: Update based on RBAC information from Teams API
+  const canCreateTeam = true;
+  const deleteTeams = useDeleteTeams(view.unselectItemsAndRefresh);
 
-  const toolbarActions = useMemo<IPageAction<User>[]>(
+  const toolbarActions = useMemo<IPageAction<Team>[]>(
     () => [
       {
         type: PageActionType.Link,
@@ -29,46 +29,46 @@ export function useUserToolbarActions(view: IPlatformView<User>) {
         variant: ButtonVariant.primary,
         isPinned: true,
         icon: PlusCircleIcon,
-        label: t('Create user'),
-        isDisabled: canCreateUser
+        label: t('Create team'),
+        isDisabled: canCreateTeam
           ? undefined
           : t(
-              'You do not have permission to create a user. Please contact your system administrator if there is an issue with your access.'
+              'You do not have permission to create a team. Please contact your system administrator if there is an issue with your access.'
             ),
-        href: getPageUrl(PlatformRoute.CreateUser),
+        href: getPageUrl(PlatformRoute.CreateTeam),
       },
       { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Delete selected users'),
-        onClick: deleteUsers,
+        label: t('Delete selected teams'),
+        onClick: deleteTeams,
         isDanger: true,
       },
     ],
-    [t, canCreateUser, getPageUrl, deleteUsers]
+    [t, canCreateTeam, getPageUrl, deleteTeams]
   );
 
   return toolbarActions;
 }
 
-export function useUserRowActions(view: IPlatformView<User>) {
+export function useTeamRowActions(view: IPlatformView<Team>) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const deleteUsers = useDeleteUsers(view.unselectItemsAndRefresh);
+  const deleteTeams = useDeleteTeams(view.unselectItemsAndRefresh);
 
-  const rowActions = useMemo<IPageAction<User>[]>(() => {
-    // TODO: Update based on RBAC information from Users API
+  const rowActions = useMemo<IPageAction<Team>[]>(() => {
+    // TODO: Update based on RBAC information from Teams API
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const cannotDeleteUser = (user: User) =>
+    const cannotDeleteTeam = (team: Team) =>
       // eslint-disable-next-line no-constant-condition
-      true ? '' : t(`The user cannot be deleted due to insufficient permissions.`);
-    // TODO: Update based on RBAC information from Users API
+      true ? '' : t(`The team cannot be deleted due to insufficient permissions.`);
+    // TODO: Update based on RBAC information from Teams API
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const cannotEditUser = (user: User) =>
+    const cannotEditTeam = (team: Team) =>
       // eslint-disable-next-line no-constant-condition
-      true ? '' : t(`The user cannot be edited due to insufficient permissions.`);
+      true ? '' : t(`The team cannot be edited due to insufficient permissions.`);
 
     return [
       {
@@ -77,22 +77,22 @@ export function useUserRowActions(view: IPlatformView<User>) {
         // variant: ButtonVariant.primary,
         isPinned: true,
         icon: PencilAltIcon,
-        label: t('Edit user'),
-        isDisabled: (user: User) => cannotEditUser(user),
-        onClick: (user) => pageNavigate(PlatformRoute.EditUser, { params: { id: user.id } }),
+        label: t('Edit team'),
+        isDisabled: (team: Team) => cannotEditTeam(team),
+        onClick: (team) => pageNavigate(PlatformRoute.EditTeam, { params: { id: team.id } }),
       },
       { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: TrashIcon,
-        label: t('Delete user'),
-        isDisabled: (user: User) => cannotDeleteUser(user),
-        onClick: (user) => deleteUsers([user]),
+        label: t('Delete team'),
+        isDisabled: (team: Team) => cannotDeleteTeam(team),
+        onClick: (team) => deleteTeams([team]),
         isDanger: true,
       },
     ];
-  }, [deleteUsers, pageNavigate, t]);
+  }, [deleteTeams, pageNavigate, t]);
 
   return rowActions;
 }
