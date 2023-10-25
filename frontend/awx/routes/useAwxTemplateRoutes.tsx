@@ -194,6 +194,11 @@ export function useAwxTemplateRoutes() {
               ],
             },
             {
+              id: AwxRoute.WorkflowVisualizer,
+              path: ':id/visualizer',
+              element: <WorkflowVisualizer />,
+            },
+            {
               id: AwxRoute.WorkflowJobTemplatePage,
               path: ':id',
               element: <WorkflowJobTemplatePage />,
@@ -217,11 +222,6 @@ export function useAwxTemplateRoutes() {
                   id: AwxRoute.WorkflowJobTemplateSurvey,
                   path: 'survey',
                   element: <PageNotImplemented />,
-                },
-                {
-                  id: AwxRoute.WorkflowVisualizer,
-                  path: 'visualizer',
-                  element: <WorkflowVisualizer />,
                 },
                 {
                   id: AwxRoute.WorkflowJobTemplateSchedules,
