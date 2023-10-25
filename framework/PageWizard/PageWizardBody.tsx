@@ -61,7 +61,6 @@ export default function PageWizardBody<T>(props: {
             key={activeStep.id}
             onSubmit={onNext}
             footer={<PageWizardFooter onBack={onBack} onCancel={onClose} />}
-            disableBody
             defaultValue={stepData[activeStep.id]}
             errorAdapter={errorAdapter}
           >
