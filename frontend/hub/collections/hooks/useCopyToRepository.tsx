@@ -169,9 +169,7 @@ function CopyToRepositoryModal(props: {
           variant="primary"
           id="select"
           onClick={() => {
-            void (async () => {
-              await copyToRepositories();
-            })();
+            void copyToRepositories();
           }}
           isDisabled={selectedRepositories.length == 0}
           isLoading={isLoading}
