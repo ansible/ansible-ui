@@ -1,6 +1,6 @@
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { RedoIcon, TrashIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
@@ -12,41 +12,30 @@ import {
   PageLayout,
   useGetPageUrl,
   usePageNavigate,
+  usePageAlertToaster,
 } from '../../../../framework';
 import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
-import { useGetItem } from '../../../common/crud/useGet';
+import { useGet } from '../../../common/crud/useGet';
 import { EdaRoute } from '../../EdaRoutes';
-import { API_PREFIX } from '../../constants';
+import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { Status906Enum } from '../../interfaces/generated/eda-api';
-import {
-  useDisableRulebookActivations,
-  useEnableRulebookActivations,
-  useRestartRulebookActivations,
-} from '../hooks/useControlRulebookActivations';
+import { useRestartRulebookActivations } from '../hooks/useControlRulebookActivations';
 import { useDeleteRulebookActivations } from '../hooks/useDeleteRulebookActivations';
+import { postRequest } from '../../../common/crud/Data';
+import { AlertProps } from '@patternfly/react-core';
 
 export function RulebookActivationPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const pageNavigate = usePageNavigate();
   const getPageUrl = useGetPageUrl();
-  const { data: rulebookActivation, refresh } = useGetItem<EdaRulebookActivation>(
-    `${API_PREFIX}/activations/`,
-    params.id
+  const alertToaster = usePageAlertToaster();
+  const { data: rulebookActivation, refresh } = useGet<EdaRulebookActivation>(
+    `${API_PREFIX}/activations/${params.id}/`,
+    undefined,
+    { refreshInterval: SWR_REFRESH_INTERVAL }
   );
-
-  const enableRulebookActivation = useEnableRulebookActivations((enabled) => {
-    if (enabled.length > 0) {
-      refresh();
-    }
-  });
-
-  const disableRulebookActivation = useDisableRulebookActivations((disabled) => {
-    if (disabled.length > 0) {
-      refresh();
-    }
-  });
 
   const restartRulebookActivation = useRestartRulebookActivations((restarted) => {
     if (restarted.length > 0) {
@@ -59,6 +48,34 @@ export function RulebookActivationPage() {
       pageNavigate(EdaRoute.RulebookActivations);
     }
   });
+
+  const handleToggle: (activation: EdaRulebookActivation, enabled: boolean) => Promise<void> =
+    useCallback(
+      async (activation, enabled) => {
+        const alert: AlertProps = {
+          variant: 'success',
+          title: `${activation.name} ${enabled ? t('enabled') : t('disabled')}.`,
+          timeout: 5000,
+        };
+        await postRequest(
+          `${API_PREFIX}/activations/${activation.id}/${enabled ? 'enable/' : 'disable/'}`,
+          undefined
+        )
+          .then(() => alertToaster.addAlert(alert))
+          .catch(() => {
+            alertToaster.addAlert({
+              variant: 'danger',
+              title: `${t('Failed to ')} ${enabled ? t('enable') : t('disable')} ${
+                activation.name
+              }`,
+              timeout: 5000,
+            });
+          });
+        refresh();
+      },
+      [alertToaster, refresh, t]
+    );
+
   const itemActions = useMemo<IPageAction<EdaRulebookActivation>[]>(() => {
     const actions: IPageAction<EdaRulebookActivation>[] = [
       {
@@ -69,10 +86,8 @@ export function RulebookActivationPage() {
         isPinned: true,
         label: t('Rulebook activation enabled'),
         labelOff: t('Rulebook activation disabled'),
-        onToggle: (activation: EdaRulebookActivation, activate: boolean) => {
-          if (activate) void enableRulebookActivation([activation]);
-          else void disableRulebookActivation([activation]);
-        },
+        onToggle: (activation: EdaRulebookActivation, activate: boolean) =>
+          handleToggle(activation, activate),
         isSwitchOn: (activation: EdaRulebookActivation) => activation.is_enabled ?? false,
         isDisabled: (activation: EdaRulebookActivation) =>
           activation.status === Status906Enum.Stopping
@@ -99,13 +114,7 @@ export function RulebookActivationPage() {
       },
     ];
     return actions;
-  }, [
-    enableRulebookActivation,
-    disableRulebookActivation,
-    restartRulebookActivation,
-    deleteRulebookActivations,
-    t,
-  ]);
+  }, [handleToggle, restartRulebookActivation, deleteRulebookActivations, t]);
 
   return (
     <PageLayout>
