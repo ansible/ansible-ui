@@ -182,12 +182,12 @@ describe('job delete', () => {
     ).then((jobList) => {
       cy.navigateTo('awx', 'jobs');
       const jobId = jobList.id ? jobList.id.toString() : '';
-      cy.filterTableByTypeAndText('ID', jobId);
-      const jobName = jobList.name ? jobList.name : '';
       cy.intercept(
         'GET',
         `/api/v2/unified_jobs/?not__launch_type=sync&id=${jobId}&order_by=-finished&page=1&page_size=10`
       ).as('jobRun');
+      cy.filterTableByTypeAndText('ID', jobId);
+      const jobName = jobList.name ? jobList.name : '';
       cy.getTableRowByText(jobName, false).within(() => {
         cy.wait('@jobRun');
         cy.get('[data-label="Status"]', { timeout: 120 * 1000 })
