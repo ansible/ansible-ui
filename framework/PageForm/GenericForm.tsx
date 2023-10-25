@@ -1,4 +1,4 @@
-import { useContext, ReactNode, BaseSyntheticEvent } from 'react';
+import { useContext, ReactNode } from 'react';
 import { FormProvider, DefaultValues } from 'react-hook-form';
 import { Form } from '@patternfly/react-core';
 import { useBreakpoint } from '../components/useBreakPoint';
@@ -10,11 +10,7 @@ import { useFormErrors, PageFormSubmitHandler } from './PageForm';
 
 export interface GenericFormProps<T extends object> {
   children?: ReactNode;
-  submitText?: string;
-  additionalActionText?: string;
-  onClickAdditionalAction?: PageFormSubmitHandler<T>;
   onSubmit: PageFormSubmitHandler<T>;
-  cancelText?: string;
   onCancel?: () => void;
   defaultValue?: DefaultValues<T>;
   isVertical?: boolean;
@@ -35,30 +31,14 @@ export function GenericForm<T extends object>(props: GenericFormProps<T>) {
     <FormProvider {...form}>
       <Form
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        onSubmit={handleSubmit(
-          async (
-            data,
-            event?: BaseSyntheticEvent & { nativeEvent: { submitter?: { innerHTML: string } } }
-          ) => {
-            setError(null);
-            let isSecondaryButton = false;
-
-            if (event !== undefined && event?.nativeEvent?.submitter) {
-              isSecondaryButton =
-                event.nativeEvent.submitter?.innerHTML === props.additionalActionText;
-            }
-            try {
-              await props.onSubmit(
-                data,
-                (error) => setError(error),
-                setFieldError,
-                isSecondaryButton ? form : undefined
-              );
-            } catch (err) {
-              handleSubmitError(err);
-            }
+        onSubmit={handleSubmit(async (data) => {
+          setError(null);
+          try {
+            await props.onSubmit(data, (error) => setError(error), setFieldError, undefined);
+          } catch (err) {
+            handleSubmitError(err);
           }
-        )}
+        })}
         isHorizontal={isHorizontal}
         autoComplete={props.autoComplete}
       >
