@@ -25,21 +25,30 @@ export function PageMasthead(props: {
   children?: ReactNode;
 }) {
   const isSmallOrLarger = useBreakpoint('sm');
+  const isMdOrLarger = useBreakpoint('md');
   return (
     <Masthead
       display={{ default: 'inline' }}
       style={{
         borderBottom: '1px solid #fff4',
+        paddingRight: 0,
       }}
     >
       <PageMastheadToggle />
-      <MastheadMain>
-        <MastheadBrand component="a">{props.icon}</MastheadBrand>
-      </MastheadMain>
-      <MastheadContent style={{ marginLeft: 0 }}>
-        <Toolbar id="toolbar" data-cy="toolbar" inset={{ default: 'insetNone' }}>
+      {isSmallOrLarger && (
+        <MastheadMain>
+          <MastheadBrand component="a">{props.icon}</MastheadBrand>
+        </MastheadMain>
+      )}
+      <MastheadContent style={{ marginLeft: 0, minHeight: 0 }}>
+        <Toolbar
+          id="toolbar"
+          data-cy="toolbar"
+          inset={{ default: 'insetNone' }}
+          style={{ padding: 0 }}
+        >
           <ToolbarContent>
-            {isSmallOrLarger && (
+            {isMdOrLarger && (
               <ToolbarItem>
                 <Stack
                   style={{ color: 'white', cursor: 'default', marginTop: -2, marginBottom: -2 }}
