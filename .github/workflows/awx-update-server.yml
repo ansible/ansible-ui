@@ -6,8 +6,12 @@ on:
       AWX_SERVER:
         type: string
         required: true
-        description: 'Update AWX E2E Test Server'
-
+        description: 'AWX Server'
+      UPDATE_SERVER:
+        type: boolean
+        required: true
+        default: false
+        description: 'Update server on success?'
 jobs:
   awx-e2e:
     name: AWX E2E
@@ -19,17 +23,18 @@ jobs:
       CYPRESS_AUI_AWX_E2E_PROJECT_ID: ${{ secrets.CYPRESS_AUI_AWX_E2E_PROJECT_ID }}
       CYPRESS_AUI_AWX_E2E_RECORD_KEY: ${{ secrets.CYPRESS_AUI_AWX_E2E_RECORD_KEY }}
 
-  # awx-update-server:
-  #   name: AWX Update Server
-  #   needs: awx-e2e
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - run: |
-  #         curl -L -X PATCH -H "Accept: application/vnd.github+json" \
-  #         -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" \
-  #         -H "X-GitHub-Api-Version: 2022-11-28" \
-  #         "https://api.github.com/repos/ansible/ansible-ui/actions/variables/AWX_SERVER" \
-  #         -d '{"name":"AWX_SERVER","value":"${{ inputs.AWX_SERVER }}"}'
+  awx-update-server:
+    name: AWX Update Server
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.UPDATE_SERVER == 'true' }}
+    needs: awx-e2e
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          curl -L -X PATCH -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          "https://api.github.com/repos/ansible/ansible-ui/actions/variables/AWX_SERVER" \
+          -d '{"name":"AWX_SERVER","value":"${{ inputs.AWX_SERVER }}"}'
 
       # - name: Slack Notification
       #   uses: slackapi/slack-github-action@v1.24.0
