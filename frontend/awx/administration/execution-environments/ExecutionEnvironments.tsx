@@ -35,6 +35,7 @@ import { useAwxView } from '../../useAwxView';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
 import { useDeleteExecutionEnvironments } from './hooks/useDeleteExecutionEnvironments';
+import { AwxRoute } from '../../AwxRoutes';
 
 export function ExecutionEnvironments() {
   const { t } = useTranslation();
@@ -174,7 +175,7 @@ export function useExecutionEnvironmentsColumns(options?: {
   });
   const idColumn = useIdColumn<ExecutionEnvironment>();
   const descriptionColumn = useDescriptionColumn();
-  const organizationColumn = useOrganizationNameColumn(options);
+  const organizationColumn = useOrganizationNameColumn(AwxRoute.OrganizationDetails, options);
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);
   const tableColumns = useMemo<ITableColumn<ExecutionEnvironment>[]>(
