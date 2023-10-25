@@ -14,7 +14,7 @@ const TopologyView = styled(PFTopologyView)`
 `;
 
 export function WorkflowVisualizer() {
-  const toolbarActions = useWorkflowVisualizerToolbarActions();
+  const toolbarActions = useWorkflowVisualizerToolbarActions([] as WorkflowNode[]); // The argument for this function will need to be the number of nodes.
 
   const { id } = useParams<{ id?: string }>();
   const { data: wfNodes } = useGet<AwxItemsResponse<WorkflowNode>>(
