@@ -12,6 +12,7 @@ import {
   PageLayout,
   useGetPageUrl,
   usePageNavigate,
+  usePageAlertToaster,
 } from '../../../../framework';
 import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
 import { useGet } from '../../../common/crud/useGet';
@@ -22,12 +23,14 @@ import { Status906Enum } from '../../interfaces/generated/eda-api';
 import { useRestartRulebookActivations } from '../hooks/useControlRulebookActivations';
 import { useDeleteRulebookActivations } from '../hooks/useDeleteRulebookActivations';
 import { postRequest } from '../../../common/crud/Data';
+import { AlertProps } from '@patternfly/react-core';
 
 export function RulebookActivationPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const pageNavigate = usePageNavigate();
   const getPageUrl = useGetPageUrl();
+  const alertToaster = usePageAlertToaster();
   const { data: rulebookActivation, refresh } = useGet<EdaRulebookActivation>(
     `${API_PREFIX}/activations/${params.id}/`,
     undefined,
@@ -49,13 +52,28 @@ export function RulebookActivationPage() {
   const handleToggle: (activation: EdaRulebookActivation, enabled: boolean) => Promise<void> =
     useCallback(
       async (activation, enabled) => {
+        const alert: AlertProps = {
+          variant: 'success',
+          title: `${activation.name} ${enabled ? t('enabled') : t('disabled')}.`,
+          timeout: 5000,
+        };
         await postRequest(
           `${API_PREFIX}/activations/${activation.id}/${enabled ? 'enable/' : 'disable/'}`,
           undefined
-        );
+        )
+          .then(() => alertToaster.addAlert(alert))
+          .catch(() => {
+            alertToaster.addAlert({
+              variant: 'danger',
+              title: `${t('Failed to ')} ${enabled ? t('enable') : t('disable')} ${
+                activation.name
+              }`,
+              timeout: 5000,
+            });
+          });
         refresh();
       },
-      [refresh]
+      [alertToaster, refresh, t]
     );
 
   const itemActions = useMemo<IPageAction<EdaRulebookActivation>[]>(() => {
