@@ -110,7 +110,7 @@ export function PageSingleSelect<
         }
       }}
       data-cy={id}
-      icon={icon}
+      icon={icon ?? selectedOption?.icon}
       isDisabled={props.isDisabled}
     >
       {selectedOption ? selectedOption.label : <span style={{ opacity: 0.7 }}>{placeholder}</span>}
@@ -191,6 +191,8 @@ export function PageSingleSelect<
             const optionId = getID(option);
             return (
               <SelectOption
+                id={optionId}
+                icon={option.icon}
                 key={option.key !== undefined ? option.key : option.label}
                 value={option.key !== undefined ? option.key : option.label}
                 description={option.description}
