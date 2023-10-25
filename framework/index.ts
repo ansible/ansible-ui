@@ -31,6 +31,8 @@ export * from './PageForm/Inputs/PageFormSwitch';
 export * from './PageForm/Inputs/PageFormTextArea';
 export * from './PageForm/Inputs/PageFormTextInput';
 export * from './PageForm/PageForm';
+export * from './PageForm/GenericForm';
+export * from './PageForm/PageFormButtons';
 export * from './PageFramework';
 export * from './PageHeader';
 export * from './PageLayout';

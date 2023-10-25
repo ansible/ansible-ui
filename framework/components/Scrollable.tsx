@@ -5,6 +5,7 @@ export function Scrollable(props: {
   children?: ReactNode;
   borderTop?: boolean;
   borderBottom?: boolean;
+  className?: string;
   style?: CSSProperties;
 }) {
   const divEl = useRef<HTMLDivElement>(null);
@@ -39,6 +40,7 @@ export function Scrollable(props: {
 
   return (
     <div
+      className={props.className}
       style={{
         ...props.style,
         display: 'flex',
