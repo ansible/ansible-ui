@@ -1,96 +1,22 @@
-import { Modal, ModalVariant, Stack, Title, TitleSizes } from '@patternfly/react-core';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
-import { PageForm, PageFormSubmitHandler, usePageDialog } from '../../framework';
-import { PageFormTextInput } from '../../framework/PageForm/Inputs/PageFormTextInput';
-import { usePageNavigate } from '../../framework/PageNavigation/usePageNavigate';
+import { ActionGroup } from '@patternfly/react-core';
+import {
+  GenericForm,
+  PageFormSubmitHandler,
+  PageFormSubmitButton,
+  PageFormTextInput,
+  usePageNavigate,
+} from '../../framework';
+import { hubAPI } from '../hub/api/utils';
 import { AwxRoute } from '../awx/AwxRoutes';
 import { EdaRoute } from '../eda/EdaRoutes';
 import { HubRoute } from '../hub/HubRoutes';
-import { hubAPI } from '../hub/api/utils';
-import { AuthOptions, SocialAuthLogin } from './SocialAuthLogin';
 import { RequestError, createRequestError } from './crud/RequestError';
 import { setCookie } from './crud/cookie';
 import { useInvalidateCacheOnUnmount } from './useInvalidateCache';
-
-const LoginModalDiv = styled.div`
-  padding: 24px;
-`;
-
-type LoginModalProps = {
-  authOptions?: AuthOptions;
-  apiUrl?: string;
-  onLoginUrl?: string;
-  onLogin?: () => void;
-};
-
-export function LoginModal(props: LoginModalProps) {
-  const { t } = useTranslation();
-  const [_, setDialog] = usePageDialog();
-  const navigate = useNavigate();
-  const onClose = () => {
-    if (process.env.UI_MODE === 'EDA') {
-      navigate(-1);
-    }
-    setDialog(undefined);
-  };
-  return (
-    <Modal
-      header={
-        <Stack style={{ paddingBottom: 8 }}>
-          {t('Welcome to')}
-          <Title headingLevel="h1" size={TitleSizes['2xl']}>
-            {process.env.PRODUCT ?? t('Ansible')}
-          </Title>
-        </Stack>
-      }
-      isOpen
-      title={t('Login')}
-      aria-label={t('Login')}
-      onClose={onClose}
-      showClose={!process.env.UI_MODE}
-      variant={ModalVariant.small}
-      hasNoBodyWrapper
-    >
-      <LoginModalDiv>
-        <LoginForm
-          apiUrl={props.apiUrl}
-          authOptions={props.authOptions}
-          onLoginUrl={props.onLoginUrl}
-          onLogin={props.onLogin}
-        />
-      </LoginModalDiv>
-    </Modal>
-  );
-}
-
-export function useLoginModal(args: {
-  authOptions?: AuthOptions;
-  apiUrl?: string;
-  onLoginUrl?: string;
-  onLogin?: () => void;
-}) {
-  const { authOptions, apiUrl, onLoginUrl, onLogin } = args;
-  const [_, setDialog] = usePageDialog();
-  const onLoginHandler = useCallback(() => onLogin?.(), [onLogin]);
-  return useCallback(
-    () =>
-      setDialog(
-        <LoginModal
-          authOptions={authOptions}
-          apiUrl={apiUrl}
-          onLoginUrl={onLoginUrl}
-          onLogin={() => {
-            setDialog(undefined);
-            onLoginHandler();
-          }}
-        />
-      ),
-    [onLoginHandler, setDialog, authOptions, apiUrl, onLoginUrl]
-  );
-}
+import { AuthOptions, SocialAuthLogin } from './SocialAuthLogin';
 
 type LoginFormProps = {
   apiUrl?: string;
@@ -99,7 +25,7 @@ type LoginFormProps = {
   onLogin?: () => void;
 };
 
-function LoginForm(props: LoginFormProps) {
+export function LoginForm(props: LoginFormProps) {
   const { authOptions } = props;
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -178,11 +104,9 @@ function LoginForm(props: LoginFormProps) {
           if (!(err instanceof RequestError)) {
             throw err;
           }
-          if (err.statusCode === 0) {
-            // Do nothing
-          } else if (err.statusCode === 401 || err.statusCode === 403) {
+          if (err.statusCode === 401 || err.statusCode === 403) {
             throw new Error('Invalid username or password. Please try again.');
-          } else {
+          } else if (err.statusCode !== 0) {
             throw err;
           }
         }
@@ -216,35 +140,27 @@ function LoginForm(props: LoginFormProps) {
   );
 
   return (
-    <div>
-      <PageForm
-        submitText={t('Log in')}
-        onSubmit={onSubmit}
-        cancelText={t('Cancel')}
-        isVertical
-        singleColumn
-        disableBody
-        disablePadding
-        disableScrolling
-      >
-        <PageFormTextInput
-          name="username"
-          label={t('Username')}
-          placeholder={t('Enter username')}
-          autoComplete={process.env.NODE_ENV === 'development' ? 'on' : 'off'}
-          isRequired
-          autoFocus
-        />
-        <PageFormTextInput
-          name="password"
-          label={t('Password')}
-          placeholder={t('Enter password')}
-          type="password"
-          autoComplete={process.env.NODE_ENV === 'development' ? 'on' : 'off'}
-          isRequired
-        />
-      </PageForm>
+    <GenericForm onSubmit={onSubmit}>
+      <PageFormTextInput
+        name="username"
+        label={t('Username')}
+        placeholder={t('Enter username')}
+        autoComplete={process.env.NODE_ENV === 'development' ? 'on' : 'off'}
+        isRequired
+        autoFocus
+      />
+      <PageFormTextInput
+        name="password"
+        label={t('Password')}
+        placeholder={t('Enter password')}
+        type="password"
+        autoComplete={process.env.NODE_ENV === 'development' ? 'on' : 'off'}
+        isRequired
+      />
+      <ActionGroup>
+        <PageFormSubmitButton>{t('Log in')}</PageFormSubmitButton>
+      </ActionGroup>
       <SocialAuthLogin options={authOptions} />
-    </div>
+    </GenericForm>
   );
 }
