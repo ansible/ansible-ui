@@ -1,6 +1,5 @@
-import { ChartDonut, ChartLabel, ChartLabelProps } from '@patternfly/react-charts';
+import { ChartPie } from '@patternfly/react-charts';
 import { CardBody, Title } from '@patternfly/react-core';
-import { CSSProperties } from 'react';
 import { Link } from 'react-router-dom';
 import { PageChartLegend } from './PageChartLegend';
 import { PageDashboardCard } from './PageDashboardCard';
@@ -48,7 +47,7 @@ export function PageDashboardCountBar(props: PageDashboardCountBarProps) {
                     size="xl"
                     style={{ whiteSpace: 'nowrap', textDecoration: 'none' }}
                   >
-                    {item.title}
+                    {total} {item.title}
                   </Title>
                 </Link>
 
@@ -61,11 +60,7 @@ export function PageDashboardCountBar(props: PageDashboardCountBarProps) {
                       id={`${id}-chart`}
                       style={{ maxHeight: 64, marginTop: -4, marginBottom: -4 }}
                     >
-                      <ChartDonut
-                        title={item.counts
-                          .reduce<number>((acc, curr) => acc + curr.count, 0)
-                          .toString()}
-                        titleComponent={<PageChartLabel to={item.to} />}
+                      <ChartPie
                         padding={{ top: 0, left: 0, right: 0, bottom: 0 }}
                         width={64}
                         height={64}
@@ -89,36 +84,5 @@ export function PageDashboardCountBar(props: PageDashboardCountBarProps) {
         </div>
       </CardBody>
     </PageDashboardCard>
-  );
-}
-
-function PageChartLabel(props: ChartLabelProps & { to?: string }) {
-  if (props.to) {
-    return (
-      <Link to={props.to} style={{ textDecoration: 'none' }}>
-        <ChartLabel
-          {...props}
-          style={
-            {
-              ...props.style,
-              fill: 'var(--pf-v5-global--link--Color)',
-              stroke: 'var(--pf-v5-global--link--Color)',
-            } as CSSProperties
-          }
-        />
-      </Link>
-    );
-  }
-  return (
-    <ChartLabel
-      {...props}
-      style={
-        {
-          ...props.style,
-          fill: 'var(--pf-v5-global--text--Color)',
-          stroke: 'var(--pf-v5-global--text--Color)',
-        } as CSSProperties
-      }
-    />
   );
 }
