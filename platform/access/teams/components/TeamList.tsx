@@ -1,5 +1,5 @@
 import { PageNotImplemented } from '../../../../frontend/common/PageNotImplemented';
 
-export function UserDetails() {
+export function TeamList() {
   return <PageNotImplemented />;
 }
