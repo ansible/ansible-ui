@@ -1,4 +1,4 @@
-import { ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
+import { Icon, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import { DropdownItem } from '@patternfly/react-core/deprecated';
 import { ExternalLinkAltIcon, QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
 import { useCallback } from 'react';
@@ -33,7 +33,7 @@ export function AwxMasthead() {
   }, [cache, pageNavigate]);
   return (
     <PageMasthead
-      icon={<AwxIcon style={{ height: 64 }} />}
+      icon={<AwxIcon style={{ height: 60 }} />}
       title={process.env.PRODUCT}
       brand={process.env.BRAND}
     >
@@ -78,7 +78,11 @@ export function AwxMasthead() {
         <ToolbarItem>
           <PageMastheadDropdown
             id="account-menu"
-            icon={<UserCircleIcon />}
+            icon={
+              <Icon size="lg">
+                <UserCircleIcon />
+              </Icon>
+            }
             label={activeUser?.username}
           >
             <DropdownItem
