@@ -31,7 +31,7 @@ describe('Users list', () => {
       cy.get('.page-table-toolbar').within(() => {
         cy.get('.toggle-kebab')
           .click()
-          .get('.pf-c-dropdown__menu-item')
+          .get('.pf-v5-c-dropdown__menu-item')
           .contains('Delete selected users')
           .should('be.visible');
       });
@@ -53,6 +53,13 @@ describe('Users list', () => {
       cy.mount(<UsersList />);
       cy.contains(/^There are currently no users added.$/);
       cy.contains(/^Please create a user by using the button below.$/);
+    });
+  });
+  describe('Error retrieving list', () => {
+    it('Displays error loading users', () => {
+      cy.intercept({ method: 'GET', url: '/api/gateway/v1/users/*' }, { statusCode: 500 });
+      cy.mount(<UsersList />);
+      cy.contains('Error loading users');
     });
   });
 });

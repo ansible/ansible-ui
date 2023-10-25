@@ -25,13 +25,13 @@ describe('Teams list', () => {
     it('Teams list renders', () => {
       cy.mount(<TeamList />);
       cy.verifyPageTitle('Teams');
-      cy.get('tbody').find('tr').should('have.length', 4);
+      cy.get('tbody').find('tr').should('have.length', 3);
       // Toolbar actions are visible
       cy.get(`[data-cy="create-team"]`).should('be.visible');
       cy.get('.page-table-toolbar').within(() => {
         cy.get('.toggle-kebab')
           .click()
-          .get('.pf-c-dropdown__menu-item')
+          .get('.pf-v5-c-dropdown__menu-item')
           .contains('Delete selected teams')
           .should('be.visible');
       });
@@ -53,6 +53,13 @@ describe('Teams list', () => {
       cy.mount(<TeamList />);
       cy.contains(/^There are currently no teams added.$/);
       cy.contains(/^Please create a team by using the button below.$/);
+    });
+  });
+  describe('Error retrieving list', () => {
+    it('Displays error loading teams', () => {
+      cy.intercept({ method: 'GET', url: '/api/gateway/v1/teams/*' }, { statusCode: 500 });
+      cy.mount(<TeamList />);
+      cy.contains('Error loading teams');
     });
   });
 });
