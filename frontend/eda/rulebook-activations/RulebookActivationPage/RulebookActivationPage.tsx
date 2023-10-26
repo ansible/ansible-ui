@@ -75,46 +75,50 @@ export function RulebookActivationPage() {
       },
       [alertToaster, refresh, t]
     );
-
+  const isActionTab =
+    location.pathname ===
+    getPageUrl(EdaRoute.RulebookActivationDetails, { params: { id: rulebookActivation?.id } });
   const itemActions = useMemo<IPageAction<EdaRulebookActivation>[]>(() => {
-    const actions: IPageAction<EdaRulebookActivation>[] = [
-      {
-        type: PageActionType.Switch,
-        selection: PageActionSelection.Single,
-        ariaLabel: (isEnabled) =>
-          isEnabled ? t('Click to disable instance') : t('Click to enable instance'),
-        isPinned: true,
-        label: t('Rulebook activation enabled'),
-        labelOff: t('Rulebook activation disabled'),
-        onToggle: (activation: EdaRulebookActivation, activate: boolean) =>
-          handleToggle(activation, activate),
-        isSwitchOn: (activation: EdaRulebookActivation) => activation.is_enabled ?? false,
-        isDisabled: (activation: EdaRulebookActivation) =>
-          activation.status === Status906Enum.Stopping
-            ? t('Cannot change activation status while stopping')
-            : undefined,
-      },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Single,
-        icon: RedoIcon,
-        label: t('Restart rulebook activation'),
-        isDanger: false,
-        isHidden: (activation: EdaRulebookActivation) => !activation.is_enabled,
-        onClick: (activation: EdaRulebookActivation) => restartRulebookActivation([activation]),
-      },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Single,
-        icon: TrashIcon,
-        label: t('Delete rulebook activation'),
-        onClick: (rulebookActivation: EdaRulebookActivation) =>
-          deleteRulebookActivations([rulebookActivation]),
-        isDanger: true,
-      },
-    ];
+    const actions: IPageAction<EdaRulebookActivation>[] = isActionTab
+      ? [
+          {
+            type: PageActionType.Switch,
+            selection: PageActionSelection.Single,
+            ariaLabel: (isEnabled) =>
+              isEnabled ? t('Click to disable instance') : t('Click to enable instance'),
+            isPinned: true,
+            label: t('Rulebook activation enabled'),
+            labelOff: t('Rulebook activation disabled'),
+            onToggle: (activation: EdaRulebookActivation, activate: boolean) =>
+              handleToggle(activation, activate),
+            isSwitchOn: (activation: EdaRulebookActivation) => activation.is_enabled ?? false,
+            isDisabled: (activation: EdaRulebookActivation) =>
+              activation.status === Status906Enum.Stopping
+                ? t('Cannot change activation status while stopping')
+                : undefined,
+          },
+          {
+            type: PageActionType.Button,
+            selection: PageActionSelection.Single,
+            icon: RedoIcon,
+            label: t('Restart rulebook activation'),
+            isDanger: false,
+            isHidden: (activation: EdaRulebookActivation) => !activation.is_enabled,
+            onClick: (activation: EdaRulebookActivation) => restartRulebookActivation([activation]),
+          },
+          {
+            type: PageActionType.Button,
+            selection: PageActionSelection.Single,
+            icon: TrashIcon,
+            label: t('Delete rulebook activation'),
+            onClick: (rulebookActivation: EdaRulebookActivation) =>
+              deleteRulebookActivations([rulebookActivation]),
+            isDanger: true,
+          },
+        ]
+      : [];
     return actions;
-  }, [handleToggle, restartRulebookActivation, deleteRulebookActivations, t]);
+  }, [handleToggle, isActionTab, restartRulebookActivation, deleteRulebookActivations, t]);
 
   return (
     <PageLayout>
