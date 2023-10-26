@@ -47,45 +47,50 @@ export function UserPage() {
     activeUser?.is_superuser ||
     activeUser?.roles.some((role) => role.name === 'Admin' || role.name === 'Auditor');
 
+  const isActionTab =
+    location.pathname === getPageUrl(EdaRoute.UserDetails, { params: { id: user?.id } });
   const itemActions = useMemo<IPageAction<EdaUser>[]>(
-    () => [
-      {
-        type: PageActionType.Button,
-        variant: ButtonVariant.primary,
-        selection: PageActionSelection.Single,
-        icon: PencilAltIcon,
-        isPinned: true,
-        label: t('Edit user'),
-        isHidden: (_user: EdaUser) => !canEditUser,
-        onClick: (user: EdaUser) => pageNavigate(EdaRoute.EditUser, { params: { id: user.id } }),
-      },
-      {
-        type: PageActionType.Button,
-        variant: ButtonVariant.primary,
-        selection: PageActionSelection.Single,
-        icon: PencilAltIcon,
-        isPinned: true,
-        isHidden: (_user: EdaUser) => canEditUser || !isViewingSelf,
-        label: t('Edit user'),
-        onClick: () => pageNavigate(EdaRoute.EditCurrentUser),
-      },
-      {
-        type: PageActionType.Seperator,
-      },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Single,
-        icon: TrashIcon,
-        label: t('Delete user'),
-        isHidden: (_user: EdaUser) => isViewingSelf,
-        onClick: (user: EdaUser) => deleteUsers([user]),
-        isDanger: true,
-      },
-    ],
-    [canEditUser, deleteUsers, isViewingSelf, pageNavigate, t]
+    () =>
+      isActionTab
+        ? [
+            {
+              type: PageActionType.Button,
+              variant: ButtonVariant.primary,
+              selection: PageActionSelection.Single,
+              icon: PencilAltIcon,
+              isPinned: true,
+              label: t('Edit user'),
+              isHidden: (_user: EdaUser) => !canEditUser,
+              onClick: (user: EdaUser) =>
+                pageNavigate(EdaRoute.EditUser, { params: { id: user.id } }),
+            },
+            {
+              type: PageActionType.Button,
+              variant: ButtonVariant.primary,
+              selection: PageActionSelection.Single,
+              icon: PencilAltIcon,
+              isPinned: true,
+              isHidden: (_user: EdaUser) => canEditUser || !isViewingSelf,
+              label: t('Edit user'),
+              onClick: () => pageNavigate(EdaRoute.EditCurrentUser),
+            },
+            {
+              type: PageActionType.Seperator,
+            },
+            {
+              type: PageActionType.Button,
+              selection: PageActionSelection.Single,
+              icon: TrashIcon,
+              label: t('Delete user'),
+              isHidden: (_user: EdaUser) => isViewingSelf,
+              onClick: (user: EdaUser) => deleteUsers([user]),
+              isDanger: true,
+            },
+          ]
+        : [],
+    [canEditUser, deleteUsers, isActionTab, isViewingSelf, pageNavigate, t]
   );
   if (!activeUser) return <LoadingPage breadcrumbs tabs />;
-  console.log('Debug - location: ', location);
   const tabs = isViewingSelf
     ? [
         { label: t('Details'), page: EdaRoute.UserDetails },
