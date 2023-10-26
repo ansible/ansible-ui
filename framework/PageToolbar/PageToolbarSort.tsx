@@ -69,7 +69,7 @@ export function PageToolbarSort(props: PageToolbarSortProps) {
   if (!sortOptions || sortOptions.length <= 0) return <></>;
 
   return (
-    <PageToolbarToggleGroup breakpoint="2xl" toggleIcon={sortDirectionIcon}>
+    <PageToolbarToggleGroup breakpoint="2xl" toggleIcon={sortDirectionIcon} id="sort">
       <ToolbarGroup variant="filter-group" style={{ flexWrap: 'wrap', gap: 8 }}>
         <ToolbarItem variant="label">{translations.sort}</ToolbarItem>
         <ToolbarItem>

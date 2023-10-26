@@ -144,7 +144,7 @@ export function PageToolbarFilters(props: PageToolbarFiltersProps) {
   });
 
   return (
-    <PageToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md">
+    <PageToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md" id="filters">
       <ToolbarGroup variant="filter-group" style={{ flexWrap: 'wrap', gap: 8 }}>
         {showFilterLabel && <ToolbarItem variant="label">{translations.filter}</ToolbarItem>}
         <FiltersToolbarItem

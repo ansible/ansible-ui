@@ -10,7 +10,7 @@ import {
   ToolbarGroup,
   ToolbarItem,
 } from '@patternfly/react-core';
-import React, { Dispatch, Fragment, SetStateAction, useCallback } from 'react';
+import React, { Dispatch, Fragment, SetStateAction, useCallback, useState } from 'react';
 import styled from 'styled-components';
 import { IPageAction, PageActionSelection } from '../PageActions/PageAction';
 import { PageActions } from '../PageActions/PageActions';
@@ -20,6 +20,7 @@ import { PageTableViewType } from './PageTableViewType';
 import './PageToolbar.css';
 import { IFilterState, IToolbarFilter, PageToolbarFilters } from './PageToolbarFilter';
 import { PageTableSortOption, PageToolbarSort } from './PageToolbarSort';
+import { PageToolbarToggleGroupContext } from './PageToolbarToggleGroup';
 import { PageToolbarView } from './PageToolbarView';
 
 const FlexGrowDiv = styled.div`
@@ -122,6 +123,8 @@ export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
   let { toolbarActions } = props;
   toolbarActions = toolbarActions ?? [];
 
+  const [activeGroup, setActiveGroup] = useState('');
+
   const onSetPage = useCallback<OnSetPage>(
     (_event, page) => (setPage ? setPage(page) : null),
     [setPage]
@@ -167,96 +170,98 @@ export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
   }
 
   return (
-    <Toolbar
-      clearAllFilters={clearAllFilters}
-      className="page-table-toolbar border-bottom"
-      style={{
-        paddingBottom: isMdOrLarger ? undefined : 8,
-        paddingTop: isMdOrLarger ? undefined : 8,
-      }}
-      inset={{
-        default: 'insetMd',
-        sm: 'insetMd',
-        md: 'insetMd',
-        lg: 'insetMd',
-        xl: 'insetLg',
-        '2xl': 'insetLg',
-      }}
-    >
-      <ToolbarContent style={{ paddingRight: isXxlOrLarger ? 12 : 4 }}>
-        {/* Selection */}
-        {showSelect && (
-          <ToolbarGroup>
-            <ToolbarItem variant="bulk-select">
-              <BulkSelector {...props} />
-            </ToolbarItem>
-          </ToolbarGroup>
-        )}
+    <PageToolbarToggleGroupContext.Provider value={{ activeGroup, setActiveGroup }}>
+      <Toolbar
+        clearAllFilters={clearAllFilters}
+        className="page-table-toolbar border-bottom"
+        style={{
+          paddingBottom: isMdOrLarger ? undefined : 8,
+          paddingTop: isMdOrLarger ? undefined : 8,
+        }}
+        inset={{
+          default: 'insetMd',
+          sm: 'insetMd',
+          md: 'insetMd',
+          lg: 'insetMd',
+          xl: 'insetLg',
+          '2xl': 'insetLg',
+        }}
+      >
+        <ToolbarContent style={{ paddingRight: isXxlOrLarger ? 12 : 4 }}>
+          {/* Selection */}
+          {showSelect && (
+            <ToolbarGroup>
+              <ToolbarItem variant="bulk-select">
+                <BulkSelector {...props} />
+              </ToolbarItem>
+            </ToolbarGroup>
+          )}
 
-        {/* Filters */}
-        {filterState && setFilterState && (
-          <PageToolbarFilters
-            toolbarFilters={toolbarFilters}
-            filterState={filterState}
-            setFilterState={setFilterState}
-          />
-        )}
-
-        {props.toolbarContent}
-
-        {/* Actions */}
-        <ToolbarGroup variant="button-group">
-          <PageActions
-            actions={toolbarActions}
-            selectedItems={selectedItems}
-            wrapper={ToolbarItem}
-          />
-        </ToolbarGroup>
-
-        {/* The flex below is needed to make the toolbar wrap elements properly */}
-        <FlexGrowDiv>
-          {/* Sort */}
-          <PageToolbarSort
-            sort={sort}
-            setSort={setSort}
-            sortDirection={sortDirection}
-            setSortDirection={setSortDirection}
-            sortOptions={sortOptions}
-          />
-
-          {/* View */}
-          {viewType && setViewType && (
-            <PageToolbarView
-              disableTableView={props.disableTableView}
-              disableListView={props.disableListView}
-              disableCardView={props.disableCardView}
-              viewType={viewType}
-              setViewType={setViewType}
-              openColumnModal={openColumnModal}
+          {/* Filters */}
+          {filterState && setFilterState && (
+            <PageToolbarFilters
+              toolbarFilters={toolbarFilters}
+              filterState={filterState}
+              setFilterState={setFilterState}
             />
           )}
 
-          {/* Pagination */}
-          {!props.disablePagination && isXxlOrLarger && (
-            <ToolbarItem
-              visibility={{ default: 'hidden', '2xl': 'visible' }}
-              style={{ marginLeft: 24, alignSelf: 'center' }}
-            >
-              <Pagination
-                variant={PaginationVariant.top}
-                isCompact
-                itemCount={itemCount}
-                perPage={perPage}
-                page={page}
-                onSetPage={onSetPage}
-                onPerPageSelect={onPerPageSelect}
-                perPageOptions={perPageOptions}
-                style={{ marginTop: -8, marginBottom: -8 }}
+          {props.toolbarContent}
+
+          {/* Actions */}
+          <ToolbarGroup variant="button-group">
+            <PageActions
+              actions={toolbarActions}
+              selectedItems={selectedItems}
+              wrapper={ToolbarItem}
+            />
+          </ToolbarGroup>
+
+          {/* The flex below is needed to make the toolbar wrap elements properly */}
+          <FlexGrowDiv>
+            {/* Sort */}
+            <PageToolbarSort
+              sort={sort}
+              setSort={setSort}
+              sortDirection={sortDirection}
+              setSortDirection={setSortDirection}
+              sortOptions={sortOptions}
+            />
+
+            {/* View */}
+            {viewType && setViewType && (
+              <PageToolbarView
+                disableTableView={props.disableTableView}
+                disableListView={props.disableListView}
+                disableCardView={props.disableCardView}
+                viewType={viewType}
+                setViewType={setViewType}
+                openColumnModal={openColumnModal}
               />
-            </ToolbarItem>
-          )}
-        </FlexGrowDiv>
-      </ToolbarContent>
-    </Toolbar>
+            )}
+
+            {/* Pagination */}
+            {!props.disablePagination && isXxlOrLarger && (
+              <ToolbarItem
+                visibility={{ default: 'hidden', '2xl': 'visible' }}
+                style={{ marginLeft: 24, alignSelf: 'center' }}
+              >
+                <Pagination
+                  variant={PaginationVariant.top}
+                  isCompact
+                  itemCount={itemCount}
+                  perPage={perPage}
+                  page={page}
+                  onSetPage={onSetPage}
+                  onPerPageSelect={onPerPageSelect}
+                  perPageOptions={perPageOptions}
+                  style={{ marginTop: -8, marginBottom: -8 }}
+                />
+              </ToolbarItem>
+            )}
+          </FlexGrowDiv>
+        </ToolbarContent>
+      </Toolbar>
+    </PageToolbarToggleGroupContext.Provider>
   );
 }

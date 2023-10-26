@@ -38,7 +38,7 @@ export function PageToolbarView(props: PageToolbarViewProps) {
   if (viewType === PageTableViewTypeE.List) icon = <ListIcon />;
 
   return (
-    <PageToolbarToggleGroup breakpoint="md" toggleIcon={icon}>
+    <PageToolbarToggleGroup breakpoint="md" toggleIcon={icon} id="view">
       <ToolbarGroup variant="button-group" style={{ justifyContent: 'end', marginRight: 0 }}>
         <ToolbarItem>
           <Split hasGutter>
