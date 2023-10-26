@@ -8,7 +8,7 @@ import {
   ToolbarItem,
   Tooltip,
 } from '@patternfly/react-core';
-import { CogIcon, ColumnsIcon, ListIcon, TableIcon, ThLargeIcon } from '@patternfly/react-icons';
+import { ColumnsIcon, ListIcon, TableIcon, ThLargeIcon } from '@patternfly/react-icons';
 import { useRef } from 'react';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { PageTableViewType, PageTableViewTypeE } from './PageTableViewType';
@@ -33,8 +33,12 @@ export function PageToolbarView(props: PageToolbarViewProps) {
   if (!props.disableCardView) viewTypeCount++;
   if (!props.disableListView) viewTypeCount++;
 
+  let icon = <TableIcon />;
+  if (viewType === PageTableViewTypeE.Cards) icon = <ThLargeIcon />;
+  if (viewType === PageTableViewTypeE.List) icon = <ListIcon />;
+
   return (
-    <PageToolbarToggleGroup breakpoint="md" toggleIcon={<CogIcon />}>
+    <PageToolbarToggleGroup breakpoint="md" toggleIcon={icon}>
       <ToolbarGroup variant="button-group" style={{ justifyContent: 'end', marginRight: 0 }}>
         <ToolbarItem>
           <Split hasGutter>
