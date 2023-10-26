@@ -92,7 +92,6 @@ export function UserPage() {
     [canEditUser, deleteUsers, isActionTab, isViewingSelf, pageNavigate, t]
   );
   if (!activeUser) return <LoadingPage breadcrumbs tabs />;
-  console.log('Debug - location: ', location);
   const tabs = isViewingSelf
     ? [
         { label: t('Details'), page: EdaRoute.UserDetails },
