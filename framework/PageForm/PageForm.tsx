@@ -17,18 +17,18 @@ import {
   useForm,
   UseFormReturn,
 } from 'react-hook-form';
+import styled from 'styled-components';
 import { Scrollable } from '../components/Scrollable';
 import { useBreakpoint } from '../components/useBreakPoint';
 import { SettingsContext } from '../Settings';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { ErrorAlert } from './ErrorAlert';
 import { genericErrorAdapter } from './genericErrorAdapter';
+import { PageFormCancelButton, PageFormSubmitButton } from './PageFormButtons';
 import { ErrorAdapter } from './typesErrorAdapter';
-import { PageFormSubmitButton, PageFormCancelButton } from './PageFormButtons';
-import styled from 'styled-components';
 
 const FormContainer = styled(PageSection)`
-  margin-block-end: var(--pf-v5-global--spacer--xl);
+  margin-block-end: var(--pf-v5-global--spacer--sm);
 `;
 
 const FormActionGroup = styled(ActionGroup)`
