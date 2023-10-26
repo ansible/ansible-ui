@@ -4,11 +4,11 @@ import {
   ToolbarContent as PFToolbarContent,
   Pagination,
   PaginationVariant,
+  PerPageOptions,
   Skeleton,
   Toolbar,
   ToolbarGroup,
   ToolbarItem,
-  PerPageOptions,
 } from '@patternfly/react-core';
 import React, { Dispatch, Fragment, SetStateAction, useCallback } from 'react';
 import styled from 'styled-components';
@@ -115,7 +115,8 @@ export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
     }
   }, [setFilterState, clearAllFiltersProp]);
 
-  const sm = useBreakpoint('md');
+  const isMdOrLarger = useBreakpoint('md');
+  const isXxlOrLarger = useBreakpoint('xxl');
 
   const { viewType, setViewType } = props;
   let { toolbarActions } = props;
@@ -151,7 +152,10 @@ export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
     return (
       <Toolbar
         className="page-table-toolbar border-bottom"
-        style={{ paddingBottom: sm ? undefined : 8, paddingTop: sm ? undefined : 8 }}
+        style={{
+          paddingBottom: isMdOrLarger ? undefined : 8,
+          paddingTop: isMdOrLarger ? undefined : 8,
+        }}
       >
         <ToolbarContent>
           <ToolbarItem style={{ width: '100%' }}>
@@ -166,7 +170,10 @@ export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
     <Toolbar
       clearAllFilters={clearAllFilters}
       className="page-table-toolbar border-bottom"
-      style={{ paddingBottom: sm ? undefined : 8, paddingTop: sm ? undefined : 8 }}
+      style={{
+        paddingBottom: isMdOrLarger ? undefined : 8,
+        paddingTop: isMdOrLarger ? undefined : 8,
+      }}
       inset={{
         default: 'insetMd',
         sm: 'insetMd',
@@ -176,7 +183,7 @@ export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
         '2xl': 'insetLg',
       }}
     >
-      <ToolbarContent>
+      <ToolbarContent style={{ paddingRight: isXxlOrLarger ? 12 : 4 }}>
         {/* Selection */}
         {showSelect && (
           <ToolbarGroup>
@@ -230,7 +237,7 @@ export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
           )}
 
           {/* Pagination */}
-          {!props.disablePagination && (
+          {!props.disablePagination && isXxlOrLarger && (
             <ToolbarItem
               visibility={{ default: 'hidden', '2xl': 'visible' }}
               style={{ marginLeft: 24, alignSelf: 'center' }}

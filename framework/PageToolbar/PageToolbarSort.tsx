@@ -1,10 +1,4 @@
-import {
-  Button,
-  Split,
-  ToolbarGroup,
-  ToolbarItem,
-  ToolbarToggleGroup,
-} from '@patternfly/react-core';
+import { Button, Split, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import {
   SortAlphaDownAltIcon,
   SortAlphaUpIcon,
@@ -17,6 +11,7 @@ import { useCallback, useMemo } from 'react';
 import { PageSingleSelect } from '../PageInputs/PageSingleSelect';
 import { ITableColumn } from '../PageTable/PageTableColumn';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
+import { PageToolbarToggleGroup } from './PageToolbarToggleGroup';
 
 export type PageToolbarSortProps = {
   sort?: string;
@@ -74,8 +69,8 @@ export function PageToolbarSort(props: PageToolbarSortProps) {
   if (!sortOptions || sortOptions.length <= 0) return <></>;
 
   return (
-    <ToolbarToggleGroup breakpoint="md" toggleIcon={undefined}>
-      <ToolbarGroup variant="filter-group">
+    <PageToolbarToggleGroup breakpoint="2xl" toggleIcon={sortDirectionIcon}>
+      <ToolbarGroup variant="filter-group" style={{ flexWrap: 'wrap', gap: 8 }}>
         <ToolbarItem variant="label">{translations.sort}</ToolbarItem>
         <ToolbarItem>
           <Split>
@@ -96,7 +91,7 @@ export function PageToolbarSort(props: PageToolbarSortProps) {
           </Split>
         </ToolbarItem>
       </ToolbarGroup>
-    </ToolbarToggleGroup>
+    </PageToolbarToggleGroup>
   );
 }
 
