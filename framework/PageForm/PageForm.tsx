@@ -17,15 +17,15 @@ import {
   useForm,
   UseFormReturn,
 } from 'react-hook-form';
+import styled from 'styled-components';
 import { Scrollable } from '../components/Scrollable';
 import { useBreakpoint } from '../components/useBreakPoint';
 import { SettingsContext } from '../Settings';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { ErrorAlert } from './ErrorAlert';
 import { genericErrorAdapter } from './genericErrorAdapter';
+import { PageFormCancelButton, PageFormSubmitButton } from './PageFormButtons';
 import { ErrorAdapter } from './typesErrorAdapter';
-import { PageFormSubmitButton, PageFormCancelButton } from './PageFormButtons';
-import styled from 'styled-components';
 
 const FormContainer = styled(PageSection)`
   margin-block-end: var(--pf-v5-global--spacer--xl);
@@ -163,7 +163,7 @@ export function PageForm<T extends object>(props: PageFormProps<T>) {
         {props.footer ? (
           props.footer
         ) : (
-          <PageSection variant="light" isFilled={false}>
+          <PageSection variant="light" isFilled={false} className="bg-lighten border-top">
             <FormActionGroup>
               <PageFormSubmitButton>{props.submitText}</PageFormSubmitButton>
               {props.additionalActionText ? (
