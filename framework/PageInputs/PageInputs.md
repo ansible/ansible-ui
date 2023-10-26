@@ -125,3 +125,39 @@ The toolbar filters define interfaces for filtering. When those interfaces are r
 
 - `IToolbarAsyncSingleSelect` uses `PageAsyncSingleSelect`
 - `IToolbarAsyncMultiSelect` uses `PageAsyncMultiSelect`
+
+### `PageHiddenInput`
+
+A component that conditionally renders a masked (password-type) input field based on the `shouldHideField` prop. If `shouldHideField` is `true`, a masked input with a "Clear" button is displayed. Otherwise, the children are rendered.
+
+Usage:
+
+```tsx
+import { PageHiddenInput } from './path-to-your-file';
+
+function SomeComponent() {
+  const handleClear = () => {
+    console.log('Clear button clicked!');
+  };
+
+  return (
+    <div>
+      {/* Hidden input */}
+      <PageHiddenInput shouldHideField={true} onClear={handleClear}>
+        {/* This will not be shown when shouldHideField is true */}
+        <input type="text" placeholder="Enter something..." />
+      </PageHiddenInput>
+
+      {/* Visible input */}
+      <PageHiddenInput shouldHideField={false} onClear={handleClear}>
+        <input
+          type="text"
+          placeholder="Enter something..."
+          label="Some Label"
+          labelHelp="Some helpful text"
+        />
+      </PageHiddenInput>
+    </div>
+  );
+}
+```
