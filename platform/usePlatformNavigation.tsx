@@ -12,21 +12,9 @@ import { PlatformRoute } from './PlatformRoutes';
 import { PlatformDashboard } from './dashboard/PlatformDashboard';
 import { Lightspeed } from './lightspeed/Lightspeed';
 import type { Service } from './interfaces/Service';
-import { UsersList } from './access/users/components/UsersList';
-import { UserPage } from './access/users/components/UserPage';
-import { UserDetails } from './access/users/components/UserDetails';
-import { CreateUser, EditUser } from './access/users/components/UserForm';
-import { TeamDetails } from './access/teams/components/TeamDetails';
-import { TeamList } from './access/teams/components/TeamList';
-import { CreateTeam, EditTeam } from './access/teams/components/TeamForm';
-import { TeamPage } from './access/teams/components/TeamPage';
-import {
-  CreateOrganization,
-  EditOrganization,
-} from './access/organizations/components/OrganizationForm';
-import { OrganizationPage } from './access/organizations/components/OrganizationPage';
-import { OrganizationDetails } from './access/organizations/components/OrganizationDetails';
-import { OrganizationList } from './access/organizations/components/OrganizationList';
+import { useGetPlatformTeamsRoutes } from './routes/useGetPlatformTeamsRoutes';
+import { useGetPlatformUsersRoutes } from './routes/useGetPlatformUsersRoutes';
+import { useGetPlatformOrganizationsRoutes } from './routes/useGetPlatformOrganizationsRoutes';
 
 export function usePlatformNavigation(services: Service[]) {
   const { t } = useTranslation();
@@ -87,114 +75,9 @@ export function usePlatformNavigation(services: Service[]) {
 
   // Access
   // const organizations = removeNavigationItemById(awx, AwxRoute.Organizations);
-  const organizations = useMemo<PageNavigationItem>(
-    () => ({
-      id: PlatformRoute.Organizations,
-      label: t('Organizations'),
-      path: 'organizations',
-      children: [
-        {
-          id: PlatformRoute.CreateOrganization,
-          path: 'create',
-          element: <CreateOrganization />,
-        },
-        {
-          id: PlatformRoute.EditOrganization,
-          path: ':id/edit',
-          element: <EditOrganization />,
-        },
-        {
-          id: PlatformRoute.OrganizationPage,
-          path: ':id',
-          element: <OrganizationPage />,
-          children: [
-            {
-              id: PlatformRoute.OrganizationDetails,
-              path: 'details',
-              element: <OrganizationDetails />,
-            },
-          ],
-        },
-        {
-          path: '',
-          element: <OrganizationList />,
-        },
-      ],
-    }),
-    [t]
-  );
-  const teams = useMemo<PageNavigationItem>(
-    () => ({
-      id: PlatformRoute.Teams,
-      label: t('Teams'),
-      path: 'teams',
-      children: [
-        {
-          id: PlatformRoute.CreateTeam,
-          path: 'create',
-          element: <CreateTeam />,
-        },
-        {
-          id: PlatformRoute.EditTeam,
-          path: ':id/edit',
-          element: <EditTeam />,
-        },
-        {
-          id: PlatformRoute.TeamPage,
-          path: ':id',
-          element: <TeamPage />,
-          children: [
-            {
-              id: PlatformRoute.TeamDetails,
-              path: 'details',
-              element: <TeamDetails />,
-            },
-          ],
-        },
-        {
-          path: '',
-          element: <TeamList />,
-        },
-      ],
-    }),
-    [t]
-  );
-  const users = useMemo<PageNavigationItem>(
-    () => ({
-      id: PlatformRoute.Users,
-      label: t('Users'),
-      path: 'users',
-      children: [
-        {
-          id: PlatformRoute.CreateUser,
-          path: 'create',
-          element: <CreateUser />,
-        },
-        {
-          id: PlatformRoute.EditUser,
-          path: ':id/edit',
-          element: <EditUser />,
-        },
-        {
-          id: PlatformRoute.UserPage,
-          path: ':id',
-          element: <UserPage />,
-          children: [
-            {
-              id: PlatformRoute.UserDetails,
-              path: 'details',
-              element: <UserDetails />,
-            },
-          ],
-        },
-        {
-          path: '',
-          element: <UsersList />,
-        },
-      ],
-    }),
-    [t]
-  );
+  const organizations = useGetPlatformOrganizationsRoutes();
+  const teams = useGetPlatformTeamsRoutes();
+  const users = useGetPlatformUsersRoutes();
 
   // Adminsitration
   const credentials = removeNavigationItemById(awx, AwxRoute.Credentials);
