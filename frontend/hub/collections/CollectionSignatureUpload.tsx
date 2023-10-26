@@ -1,17 +1,17 @@
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { PageHeader, PageLayout, useGetPageUrl } from '../../../framework';
 import { PageFormFileUpload } from '../../../framework/PageForm/Inputs/PageFormFileUpload';
-import { PageHeader, PageLayout, PageForm } from '../../../framework';
-import { useGet, useGetRequest } from '../../common/crud/useGet';
-import { hubAPI, pulpAPI } from '../api/utils';
-import { HubItemsResponse } from '../useHubView';
-import { CollectionVersionSearch } from './Collection';
-import { Repository } from '../repositories/Repository';
-import { HubRoute } from '../HubRoutes';
-import { useGetPageUrl } from '../../../framework';
-import { hubPostRequestFile } from '../api/request';
 import { usePageNavigate } from '../../../framework/PageNavigation/usePageNavigate';
+import { useGet, useGetRequest } from '../../common/crud/useGet';
+import { HubPageForm } from '../HubPageForm';
+import { HubRoute } from '../HubRoutes';
+import { hubPostRequestFile } from '../api/request';
+import { hubAPI, pulpAPI } from '../api/utils';
+import { Repository } from '../repositories/Repository';
+import { HubItemsResponse } from '../useHubView';
 import { PulpItemsResponse } from '../usePulpView';
+import { CollectionVersionSearch } from './Collection';
 
 interface UploadData {
   file: unknown;
@@ -78,7 +78,7 @@ export function UploadSignatureByFile() {
 
   return (
     <>
-      <PageForm<UploadData>
+      <HubPageForm<UploadData>
         submitText={t('Confirm')}
         cancelText={t('Cancel')}
         onCancel={onCancel}
@@ -88,7 +88,7 @@ export function UploadSignatureByFile() {
         singleColumn={true}
       >
         <PageFormFileUpload label={t('Signature file')} name="file" isRequired />
-      </PageForm>
+      </HubPageForm>
     </>
   );
 }
