@@ -25,7 +25,7 @@ jobs:
 
   awx-update-server:
     name: AWX Update Server
-    if: ${{ github.event_name == 'workflow_dispatch' && inputs.UPDATE_SERVER == 'true' }}
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.UPDATE_SERVER == true }}
     needs: awx-e2e
     runs-on: ubuntu-latest
     steps:
