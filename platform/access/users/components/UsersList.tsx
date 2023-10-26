@@ -7,6 +7,11 @@ import { usePlatformView } from '../../../hooks/usePlatformView';
 import { CubesIcon } from '@patternfly/react-icons';
 import { PlatformRoute } from '../../../PlatformRoutes';
 import { useUserRowActions, useUserToolbarActions } from '../hooks/useUserActions';
+import { useOptions } from '../../../../frontend/common/crud/useOptions';
+import {
+  ActionsResponse,
+  OptionsResponse,
+} from '../../../../frontend/awx/interfaces/OptionsResponse';
 
 export function UsersList() {
   const { t } = useTranslation();
@@ -20,8 +25,8 @@ export function UsersList() {
     tableColumns,
   });
 
-  // TODO: To be updated when API provides RBAC information
-  const canCreateUser = true;
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/gateway/v1/users');
+  const canCreateUser = Boolean(data && data.actions && data.actions['POST']);
   const toolbarActions = useUserToolbarActions(view);
   const rowActions = useUserRowActions(view);
 
