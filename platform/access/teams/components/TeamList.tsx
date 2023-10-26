@@ -7,6 +7,11 @@ import { usePlatformView } from '../../../hooks/usePlatformView';
 import { CubesIcon } from '@patternfly/react-icons';
 import { PlatformRoute } from '../../../PlatformRoutes';
 import { useTeamRowActions, useTeamToolbarActions } from '../hooks/useTeamActions';
+import {
+  ActionsResponse,
+  OptionsResponse,
+} from '../../../../frontend/awx/interfaces/OptionsResponse';
+import { useOptions } from '../../../../frontend/common/crud/useOptions';
 
 export function TeamList() {
   const { t } = useTranslation();
@@ -20,8 +25,8 @@ export function TeamList() {
     tableColumns,
   });
 
-  // TODO: To be updated when API provides RBAC information
-  const canCreateTeam = true;
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/gateway/v1/teams');
+  const canCreateTeam = Boolean(data && data.actions && data.actions['POST']);
   const toolbarActions = useTeamToolbarActions(view);
   const rowActions = useTeamRowActions(view);
 

@@ -1,48 +1,48 @@
 /*
-Users list test cases
-1. User list loads
-2. Filter by username, first name, last name, email - TODO
-3. RBAC enable/disable user Create
+Organizations list test cases
+1. Organization list loads
+2. Filter by name, description, organization, created, modified - TODO
+3. RBAC enable/disable organization Create
 4. RBAC for Edit, Delete - TODO
-5. Handle 500 error state
-6. Handle empty state
+4. Handle 500 error state
+5. Handle empty state
 */
 
-import { UsersList } from './UsersList';
+import { OrganizationList } from './OrganizationList';
 import * as useOptions from '../../../../frontend/common/crud/useOptions';
 
-describe('Users list', () => {
+describe('Organizations list', () => {
   describe('Non-empty list', () => {
     beforeEach(() => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/gateway/v1/users*',
+          url: '/api/gateway/v1/organizations*',
         },
         {
-          fixture: 'platformUsers.json',
+          fixture: 'platformOrganizations.json',
         }
-      ).as('usersList');
+      ).as('organizationsList');
     });
-    it('Users list renders', () => {
-      cy.mount(<UsersList />);
-      cy.verifyPageTitle('Users');
-      cy.get('tbody').find('tr').should('have.length', 4);
+    it('Organizations list renders', () => {
+      cy.mount(<OrganizationList />);
+      cy.verifyPageTitle('Organizations');
+      cy.get('tbody').find('tr').should('have.length', 3);
       // Toolbar actions are visible
-      cy.get(`[data-cy="create-user"]`).should('be.visible');
+      cy.get(`[data-cy="create-organization"]`).should('be.visible');
       cy.get('.page-table-toolbar').within(() => {
         cy.get('.toggle-kebab')
           .click()
           .get('.pf-v5-c-dropdown__menu-item')
-          .contains('Delete selected users')
+          .contains('Delete selected organizations')
           .should('be.visible');
       });
     });
-    it('Create User button is disabled if the user does not have permission to create users', () => {
-      cy.mount(<UsersList />);
-      cy.get('a[data-cy="create-user"]').should('have.attr', 'aria-disabled', 'true');
+    it('Create Organization button is disabled if the user does not have permission to create organizations', () => {
+      cy.mount(<OrganizationList />);
+      cy.get('a[data-cy="create-organization"]').should('have.attr', 'aria-disabled', 'true');
     });
-    it('Create User button is enabled if the user has permission to create users', () => {
+    it('Create Organization button is enabled if the user has permission to create organizations', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({
         data: {
           actions: {
@@ -59,8 +59,8 @@ describe('Users list', () => {
           },
         },
       }));
-      cy.mount(<UsersList />);
-      cy.get('a[data-cy="create-user"]').should('have.attr', 'aria-disabled', 'false');
+      cy.mount(<OrganizationList />);
+      cy.get('a[data-cy="create-organization"]').should('have.attr', 'aria-disabled', 'false');
     });
   });
   describe('Empty list', () => {
@@ -68,14 +68,14 @@ describe('Users list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/gateway/v1/users*',
+          url: '/api/gateway/v1/organizations*',
         },
         {
           fixture: 'emptyList.json',
         }
       ).as('emptyList');
     });
-    it('Empty state is displayed', () => {
+    it('Empty state is displayed correctly for user with permission to create organization', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({
         data: {
           actions: {
@@ -92,9 +92,9 @@ describe('Users list', () => {
           },
         },
       }));
-      cy.mount(<UsersList />);
-      cy.contains(/^There are currently no users added.$/);
-      cy.contains(/^Please create a user by using the button below.$/);
+      cy.mount(<OrganizationList />);
+      cy.contains(/^There are currently no organizations added.$/);
+      cy.contains(/^Please create an organization by using the button below.$/);
     });
     it('Empty state is displayed correctly for user without permission to create teams', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({
@@ -102,18 +102,18 @@ describe('Users list', () => {
           actions: {},
         },
       }));
-      cy.mount(<UsersList />);
-      cy.contains(/^You do not have permission to create a user/);
+      cy.mount(<OrganizationList />);
+      cy.contains(/^You do not have permission to create an organization/);
       cy.contains(
         /^Please contact your organization administrator if there is an issue with your access.$/
       );
     });
   });
   describe('Error retrieving list', () => {
-    it('Displays error loading users', () => {
-      cy.intercept({ method: 'GET', url: '/api/gateway/v1/users/*' }, { statusCode: 500 });
-      cy.mount(<UsersList />);
-      cy.contains('Error loading users');
+    it('Displays error loading organizations', () => {
+      cy.intercept({ method: 'GET', url: '/api/gateway/v1/organizations/*' }, { statusCode: 500 });
+      cy.mount(<OrganizationList />);
+      cy.contains('Error loading organizations');
     });
   });
 });
