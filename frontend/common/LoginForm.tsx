@@ -16,11 +16,11 @@ import { HubRoute } from '../hub/HubRoutes';
 import { RequestError, createRequestError } from './crud/RequestError';
 import { setCookie } from './crud/cookie';
 import { useInvalidateCacheOnUnmount } from './useInvalidateCache';
-import { AuthOptions, SocialAuthLogin } from './SocialAuthLogin';
+import { AuthOption, SocialAuthLogin } from './SocialAuthLogin';
 
 type LoginFormProps = {
   apiUrl?: string;
-  authOptions?: AuthOptions;
+  authOptions?: AuthOption[];
   onLoginUrl?: string;
   onLogin?: () => void;
 };
