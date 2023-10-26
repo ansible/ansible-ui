@@ -6,7 +6,12 @@ on:
       EDA_SERVER:
         type: string
         required: true
-        description: 'Update EDA E2E Test Server'
+        description: 'EDA Server'
+      UPDATE_SERVER:
+        type: boolean
+        required: true
+        default: false
+        description: 'Update server on success'
 
 jobs:
   eda-e2e:
@@ -21,6 +26,7 @@ jobs:
 
   eda-update-server:
     name: EDA Update Server
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.UPDATE_SERVER == true }}
     needs: eda-e2e
     runs-on: ubuntu-latest
     steps:
