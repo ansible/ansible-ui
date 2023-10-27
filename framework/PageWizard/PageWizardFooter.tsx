@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { PageFormSubmitButton } from '../PageForm/PageForm';
+import { PageFormSubmitButton } from '../PageForm/PageFormButtons';
 import { usePageWizard } from './PageWizardProvider';
 
 export default function PageWizardFooter(props: {

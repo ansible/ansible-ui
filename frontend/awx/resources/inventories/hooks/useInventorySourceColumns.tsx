@@ -1,7 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { ITableColumn } from '../../../../../framework';
+import { ITableColumn, usePageNavigate } from '../../../../../framework';
 import { RouteObj } from '../../../../common/Routes';
 import { StatusCell } from '../../../../common/Status';
 import { useDescriptionColumn, useNameColumn } from '../../../../common/columns';
@@ -14,21 +13,18 @@ export function useInventorySourceColumns(options?: {
   disableSort?: boolean;
   disableLinks?: boolean;
 }) {
-  const navigate = useNavigate();
   const { t } = useTranslation();
   const { data, error, isLoading } = useOptions<OptionsResponse<ActionsResponse>>(
     '/api/v2/inventory_sources/'
   );
+  const pageNavigate = usePageNavigate();
   const nameClick = useCallback(
     (inventorySource: InventorySource) => {
-      return navigate(
-        RouteObj.InventoryDetails.replace(':id', inventorySource.inventory.toString()).replace(
-          ':source_id',
-          inventorySource.id.toString()
-        )
-      );
+      return pageNavigate(RouteObj.InventoryDetails, {
+        params: { id: inventorySource.inventory.toString(), source_id: inventorySource.id },
+      });
     },
-    [navigate]
+    [pageNavigate]
   );
   const sourceChoices: [string, string][] | undefined = data?.actions?.GET?.source?.choices;
   const nameColumn = useNameColumn({ ...options, onClick: nameClick });

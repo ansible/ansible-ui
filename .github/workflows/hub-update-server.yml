@@ -6,7 +6,12 @@ on:
       HUB_SERVER:
         type: string
         required: true
-        description: 'Update HUB E2E Test Server'
+        description: 'HUB Server'
+      UPDATE_SERVER:
+        type: boolean
+        required: true
+        default: false
+        description: 'Update server on success'
 
 jobs:
   hub-e2e:
@@ -21,6 +26,7 @@ jobs:
 
   hub-update-server:
     name: HUB Update Server
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.UPDATE_SERVER == true }}
     needs: hub-e2e
     runs-on: ubuntu-latest
     steps:

@@ -5,16 +5,10 @@ import { randomString } from '../../../../framework/utils/random-string';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
 
+// These tests do not modify the project, thus can use the globalProject
 describe('projects', () => {
-  let project: Project;
-
   before(function () {
     cy.awxLogin();
-    cy.createAwxProject({ organization: (this.globalProjectOrg as Organization).id }).then(
-      (proj) => {
-        project = proj;
-      }
-    );
   });
 
   it('can render the projects list page', function () {
@@ -45,13 +39,70 @@ describe('projects', () => {
     cy.verifyPageTitle('Projects');
   });
 
-  it('can sync project from project details page', function () {
+  it('can navigate to project details tab', function () {
     cy.navigateTo('awx', 'projects');
     cy.clickTableRow(`${(this.globalProject as Project).name}`);
     cy.verifyPageTitle(`${(this.globalProject as Project).name}`);
-    cy.intercept(`api/v2/projects/${(this.globalProject as Project).id}/update/`).as(
-      'projectUpdateRequest'
-    );
+    cy.clickLink(/^Details$/);
+    cy.get('#name').should('contain', `${(this.globalProject as Project).name}`);
+  });
+
+  it('can navigate to project access tab', function () {
+    cy.navigateTo('awx', 'projects');
+    cy.clickTableRow(`${(this.globalProject as Project).name}`);
+    cy.verifyPageTitle(`${(this.globalProject as Project).name}`);
+    cy.clickTab(/^Access$/, true);
+  });
+
+  it('can navigate to project job templates tab', function () {
+    cy.navigateTo('awx', 'projects');
+    cy.clickTableRow(`${(this.globalProject as Project).name}`);
+    cy.verifyPageTitle(`${(this.globalProject as Project).name}`);
+    cy.clickTab(/^Job templates$/, true);
+  });
+
+  it('can navigate to project notifications tab', function () {
+    cy.navigateTo('awx', 'projects');
+    cy.clickTableRow(`${(this.globalProject as Project).name}`);
+    cy.verifyPageTitle(`${(this.globalProject as Project).name}`);
+    cy.clickTab(/^Notifications$/, true);
+  });
+
+  it('can navigate to project schedules tab', function () {
+    cy.navigateTo('awx', 'projects');
+    cy.clickTableRow(`${(this.globalProject as Project).name}`);
+    cy.verifyPageTitle(`${(this.globalProject as Project).name}`);
+    cy.clickTab(/^Schedules$/, true);
+  });
+});
+
+describe('project edit and delete tests', () => {
+  let project: Project;
+  let organization: Organization;
+
+  before(function () {
+    cy.awxLogin();
+  });
+
+  beforeEach(() => {
+    cy.createAwxOrganization().then((org) => {
+      organization = org;
+      cy.createAwxProject({ organization: organization.id }).then((proj) => {
+        project = proj;
+      });
+    });
+  });
+
+  afterEach(() => {
+    cy.deleteAwxProject(project, { failOnStatusCode: false });
+    cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
+  });
+
+  it('can sync project from project details page', function () {
+    cy.navigateTo('awx', 'projects');
+    cy.clickTableRow(`${project.name}`);
+    cy.verifyPageTitle(`${project.name}`);
+    cy.intercept(`api/v2/projects/${project.id}/update/`).as('projectUpdateRequest');
     cy.clickButton(/^Sync project$/);
     cy.wait('@projectUpdateRequest');
   });
@@ -73,16 +124,14 @@ describe('projects', () => {
 
   it('can sync project from projects list table row kebab menu', function () {
     cy.navigateTo('awx', 'projects');
-    cy.filterTableByText(`${(this.globalProject as Project).name}`);
-    cy.intercept(`api/v2/projects/${(this.globalProject as Project).id}/update/`).as(
-      'projectUpdateRequest'
-    );
-    cy.contains('td', `${(this.globalProject as Project).name}`)
+    cy.filterTableByText(`${project.name}`);
+    cy.intercept(`api/v2/projects/${project.id}/update/`).as('projectUpdateRequest');
+    cy.contains('td', `${project.name}`)
       .parent()
       .within(() => {
         cy.get('#sync-project').click();
       });
-    cy.hasAlert(`Syncing ${(this.globalProject as Project).name}`).should('be.visible');
+    cy.hasAlert(`Syncing ${project.name}`).should('be.visible');
     cy.wait('@projectUpdateRequest');
   });
 
@@ -135,21 +184,6 @@ describe('projects', () => {
       });
   });
 
-  it('can navigate to project details tab', function () {
-    cy.navigateTo('awx', 'projects');
-    cy.clickTableRow(`${(this.globalProject as Project).name}`);
-    cy.verifyPageTitle(`${(this.globalProject as Project).name}`);
-    cy.clickLink(/^Details$/);
-    cy.get('#name').should('contain', `${(this.globalProject as Project).name}`);
-  });
-
-  it('can navigate to project access tab', function () {
-    cy.navigateTo('awx', 'projects');
-    cy.clickTableRow(`${(this.globalProject as Project).name}`);
-    cy.verifyPageTitle(`${(this.globalProject as Project).name}`);
-    cy.clickTab(/^Access$/, true);
-  });
-
   it('can copy project from projects list table row kebab menu', function () {
     const endOfProject = project.name.split(' ').slice(-1).toString();
     cy.navigateTo('awx', 'projects');
@@ -174,31 +208,10 @@ describe('projects', () => {
         cy.wait('@searchResults')
           .its('response.body.count')
           .then((response) => {
-            expect(response).to.equal(3);
+            expect(response).to.equal(2);
           });
         cy.clickButton(/^Clear all filters$/);
       });
-  });
-
-  it('can navigate to project job templates tab', function () {
-    cy.navigateTo('awx', 'projects');
-    cy.clickTableRow(`${(this.globalProject as Project).name}`);
-    cy.verifyPageTitle(`${(this.globalProject as Project).name}`);
-    cy.clickTab(/^Job templates$/, true);
-  });
-
-  it('can navigate to project notifications tab', function () {
-    cy.navigateTo('awx', 'projects');
-    cy.clickTableRow(`${(this.globalProject as Project).name}`);
-    cy.verifyPageTitle(`${(this.globalProject as Project).name}`);
-    cy.clickTab(/^Notifications$/, true);
-  });
-
-  it('can navigate to project schedules tab', function () {
-    cy.navigateTo('awx', 'projects');
-    cy.clickTableRow(`${(this.globalProject as Project).name}`);
-    cy.verifyPageTitle(`${(this.globalProject as Project).name}`);
-    cy.clickTab(/^Schedules$/, true);
   });
 
   it('can delete project from projects list table row kebab menu', function () {
@@ -259,24 +272,6 @@ describe('projects', () => {
   //     cy.clickButton(/^Clear all filters$/);
   //   });
   // });
-});
-
-describe('projects', () => {
-  let organization: Organization;
-  let project: Project;
-
-  before(() => {
-    cy.awxLogin();
-  });
-
-  beforeEach(() => {
-    cy.createAwxOrganization().then((org) => {
-      organization = org;
-      cy.createAwxProject({ organization: organization.id }).then((proj) => {
-        project = proj;
-      });
-    });
-  });
 
   it('can delete project from projects list toolbar ', function () {
     const endOfProject = project.name.split(' ').slice(-1).toString();

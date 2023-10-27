@@ -111,6 +111,7 @@ Cypress.Commands.add('navigateTo', (component: string, label: string) => {
       cy.get(`[data-cy="${component}-${label}"]`).click();
     }
   });
+  cy.clearAllFilters();
   cy.get('[data-cy="refresh"]').click();
 });
 
@@ -301,10 +302,7 @@ Cypress.Commands.add(
       failOnStatusCode?: boolean;
     }
   ) => {
-    // Delete organization created for this credential (this will also delete the credential)
-    if (credential?.organization) {
-      cy.awxRequestDelete(`/api/v2/organizations/${credential.organization.toString()}/`, options);
-    }
+    cy.awxRequestDelete(`/api/v2/credentials/${credential.id}/`, options);
   }
 );
 
@@ -551,6 +549,19 @@ Cypress.Commands.add('createAwxInventory', (inventory?: Partial<Omit<Inventory, 
     });
   }
 });
+Cypress.Commands.add(
+  'createAwxInventorySource',
+  (inventory: Partial<Pick<Inventory, 'id'>>, project: Partial<Pick<Project, 'id'>>) => {
+    cy.requestPost('/api/v2/inventory_sources/', {
+      name: 'E2E Inventory Source ' + randomString(4),
+      descriptiom: 'This is a description',
+      source: 'scm',
+      source_project: project.id,
+      source_path: '',
+      inventory: inventory.id,
+    });
+  }
+);
 
 Cypress.Commands.add(
   'deleteAwxInventory',
@@ -561,10 +572,7 @@ Cypress.Commands.add(
       failOnStatusCode?: boolean;
     }
   ) => {
-    // Delete organization created for this inventory (this will also delete the inventory)
-    if (inventory?.organization) {
-      cy.awxRequestDelete(`/api/v2/organizations/${inventory.organization.toString()}/`, options);
-    }
+    cy.awxRequestDelete(`/api/v2/inventories/${inventory.id}/`, options);
   }
 );
 
@@ -698,17 +706,9 @@ Cypress.Commands.add(
       failOnStatusCode?: boolean;
     }
   ) => {
-    const projectId = jobTemplate.project;
-
     if (jobTemplate.id) {
       const templateId = typeof jobTemplate.id === 'number' ? jobTemplate.id.toString() : '';
       cy.awxRequestDelete(`/api/v2/job_templates/${templateId}/`, options);
-    }
-    if (typeof projectId === 'number') {
-      cy.awxRequestGet<Project>(`/api/v2/projects/${projectId}/`).then((project) => {
-        // This will take care of deleting the project and the associated org, inventory
-        cy.deleteAwxProject(project, options);
-      });
     }
   }
 );

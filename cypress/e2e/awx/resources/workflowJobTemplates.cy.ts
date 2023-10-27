@@ -25,8 +25,10 @@ describe('Workflow Job templates form', () => {
     });
   });
 
-  after(() => {
-    cy.deleteAwxOrganization(organization);
+  afterEach(() => {
+    cy.deleteAwxLabel(label, { failOnStatusCode: false });
+    cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
+    cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
 
   it('Should create job template with all fields except for prompt on launch values', () => {

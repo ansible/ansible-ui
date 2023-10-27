@@ -10,6 +10,7 @@ import { Credential } from '../../frontend/awx/interfaces/Credential';
 import { ExecutionEnvironment } from '../../frontend/awx/interfaces/ExecutionEnvironment';
 import { InstanceGroup } from '../../frontend/awx/interfaces/InstanceGroup';
 import { Inventory } from '../../frontend/awx/interfaces/Inventory';
+import { InventorySource } from '../../frontend/awx/interfaces/InventorySource';
 import { JobEvent } from '../../frontend/awx/interfaces/JobEvent';
 import { JobTemplate } from '../../frontend/awx/interfaces/JobTemplate';
 import { Label } from '../../frontend/awx/interfaces/Label';
@@ -138,6 +139,8 @@ declare global {
 
       /** Filter the table using specified filter and text. */
       filterTableByTypeAndText(filterLabel: string | RegExp, text: string): Chainable<void>;
+
+      clearAllFilters(): Chainable<void>;
 
       selectDetailsPageKebabAction(dataCy: string): Chainable<void>;
 
@@ -336,6 +339,11 @@ declare global {
       }): Chainable<Project>;
 
       createAwxInventory(inventory?: Partial<Omit<Inventory, 'id'>>): Chainable<Inventory>;
+
+      createAwxInventorySource(
+        inventory: Partial<Pick<Inventory, 'id'>>,
+        project: Partial<Pick<Project, 'id'>>
+      ): Chainable<InventorySource>;
 
       /**
        * Creates an organization, project, inventory, and job template that are all linked to each other in AWX.

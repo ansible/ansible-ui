@@ -1,8 +1,37 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Title, TitleSizes } from '@patternfly/react-core';
 import background from '../../node_modules/@patternfly/patternfly/assets/images/pfbg_1200.jpg';
-import { useLoginModal } from './LoginModal';
+import { useFrameworkTranslations } from '../../framework/useFrameworkTranslations';
+import ErrorBoundary from '../../framework/components/ErrorBoundary';
+import { LoginForm } from './LoginForm';
 import type { AuthOptions } from './SocialAuthLogin';
+import styled from 'styled-components';
+import { useTranslation } from 'react-i18next';
+
+const Wrapper = styled.div`
+  min-height: 100dvh;
+  padding-block: 50px;
+  background-color: #444;
+  background-image: url(${background});
+  background-position: center;
+  background-size: cover;
+`;
+
+const Inner = styled.div`
+  max-inline-size: 550px;
+  margin-inline: auto;
+  padding: 3rem 3.5rem;
+  background-color: var(--pf-v5-global--BackgroundColor--100);
+
+  .pf-v5-theme-dark & {
+    background-color: var(--pf-v5-global--BackgroundColor--300);
+  }
+`;
+
+const Heading = styled(Title)`
+  margin-block-end: 2.5rem;
+`;
 
 type LoginProps = {
   authOptions?: AuthOptions;
@@ -11,32 +40,30 @@ type LoginProps = {
 };
 
 export function Login(props: LoginProps) {
-  const { authOptions, apiUrl, onLoginUrl } = props;
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const navigateBack = useCallback(() => {
     navigate('/');
   }, [navigate]);
-  const openLoginModal = useLoginModal({
-    authOptions,
-    apiUrl,
-    onLoginUrl,
-    onLogin: navigateBack,
-  });
-  useEffect(() => openLoginModal(), [openLoginModal]);
 
+  const productName = process.env.PRODUCT ?? 'Ansible';
+
+  const [translations] = useFrameworkTranslations();
   return (
-    <div
-      style={{
-        minWidth: '100%',
-        minHeight: '100%',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#444',
-        backgroundImage: `url(${background})`,
-        backgroundPosition: 'center',
-        backgroundSize: 'cover',
-      }}
-    />
+    <ErrorBoundary message={translations.errorText}>
+      <Wrapper>
+        <Inner>
+          <Heading headingLevel="h1" size={TitleSizes['2xl']}>
+            {t('Welcome to {{productName}}', { productName })}
+          </Heading>
+          <LoginForm
+            apiUrl={props.apiUrl}
+            authOptions={props.authOptions}
+            onLoginUrl={props.onLoginUrl}
+            onLogin={navigateBack}
+          />
+        </Inner>
+      </Wrapper>
+    </ErrorBoundary>
   );
 }

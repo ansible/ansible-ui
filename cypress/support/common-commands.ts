@@ -5,7 +5,7 @@ Cypress.Commands.add('searchAndDisplayResource', (resourceName: string) => {
     .find('input')
     .type(resourceName)
     .then(() => {
-      cy.get('[data-cy="apply-filter"]').click();
+      cy.get('[data-cy="apply-filter"]:not(:disabled):not(:hidden)').click();
     });
 });
 
@@ -35,12 +35,23 @@ Cypress.Commands.add('filterTableByText', (text: string) => {
   cy.get('[data-cy="text-input"]').within(() => {
     cy.get('input').clear().type(text, { delay: 0 });
   });
-  cy.get('[data-cy="apply-filter"]').click();
+  cy.get('[data-cy="apply-filter"]:not(:disabled):not(:hidden)').click();
 });
 
 Cypress.Commands.add('filterTableByTypeAndText', (filterLabel: string | RegExp, text: string) => {
   cy.selectToolbarFilterType(filterLabel);
   cy.filterTableByText(text);
+});
+
+Cypress.Commands.add('clearAllFilters', () => {
+  cy.get('button').then((buttons) => {
+    for (let i = 0; i <= buttons.length; i++) {
+      const button = buttons[i];
+      if (button?.innerText === 'Clear all filters') {
+        button.click();
+      }
+    }
+  });
 });
 
 Cypress.Commands.add(

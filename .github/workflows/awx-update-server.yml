@@ -6,8 +6,12 @@ on:
       AWX_SERVER:
         type: string
         required: true
-        description: 'Update AWX E2E Test Server'
-
+        description: 'AWX Server'
+      UPDATE_SERVER:
+        type: boolean
+        required: true
+        default: false
+        description: 'Update server on success'
 jobs:
   awx-e2e:
     name: AWX E2E
@@ -21,6 +25,7 @@ jobs:
 
   awx-update-server:
     name: AWX Update Server
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.UPDATE_SERVER == true }}
     needs: awx-e2e
     runs-on: ubuntu-latest
     steps:
