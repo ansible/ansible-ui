@@ -90,7 +90,10 @@ const RuleAuditChart = () => {
           date <= lastDate;
           date = new Date(date.valueOf() + 24 * 60 * 60 * 1000)
         ) {
-          const label = `${date.getMonth() + 1}/${date.getDate()}`;
+          const label = `${String(date.getMonth() + 1).padStart(2, '0')}/${String(
+            date.getDate()
+          ).padStart(2, '0')}`;
+          //const label = date;
           const successfulRun = successfulRunMap[label];
           if (!successfulRun) successfulRunMap[label] = { label, value: 0 };
           const failedRun = failedRunMap[label];
