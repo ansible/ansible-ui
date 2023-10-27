@@ -16,10 +16,8 @@ import { Project } from '../../frontend/awx/interfaces/Project';
 import { Schedule } from '../../frontend/awx/interfaces/Schedule';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
-import {
-  CredentialType,
-  WorkflowJobTemplate,
-} from '../../frontend/awx/interfaces/generated-from-swagger/api';
+import { CredentialType } from '../../frontend/awx/interfaces/CredentialType';
+import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/generated-from-swagger/api';
 import './auth';
 import './commands';
 import './rest-commands';
