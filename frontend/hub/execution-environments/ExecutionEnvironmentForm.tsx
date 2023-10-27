@@ -24,7 +24,15 @@ import { PageFormAsyncSelect } from '../../../framework/PageForm/Inputs/PageForm
 import { useSelectRegistrySingle } from './hooks/useRegistrySelector';
 import { usePageNavigate } from '../../../framework';
 
-export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
+export function CreateExecutionEnvironment() {
+  return <ExecutionEnvironmentForm mode="add" />;
+}
+
+export function EditExecutionEnvironment() {
+  return <ExecutionEnvironmentForm mode="edit" />;
+}
+
+function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
   const page_size = 50;
   const { t } = useTranslation();
   const navigate = usePageNavigate();
