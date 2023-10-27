@@ -1,4 +1,3 @@
-import { AlertProps } from '@patternfly/react-core';
 import { RedoIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -8,45 +7,44 @@ import {
   PageActionType,
   usePageAlertToaster,
 } from '../../../../framework';
-import { postRequest } from '../../../common/crud/Data';
 import { edaAPI } from '../../api/eda-utils';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { Status906Enum } from '../../interfaces/generated/eda-api';
 import { IEdaView } from '../../useEventDrivenView';
-import { useRestartRulebookActivations } from './useControlRulebookActivations';
+import {
+  useDisableRulebookActivations,
+  useRestartRulebookActivations,
+} from './useControlRulebookActivations';
 import { useDeleteRulebookActivations } from './useDeleteRulebookActivations';
+import { postRequest } from '../../../common/crud/Data';
+import { AlertProps } from '@patternfly/react-core';
 
 export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivation>) {
   const { t } = useTranslation();
+  const disableActivations = useDisableRulebookActivations(view.unselectItemsAndRefresh);
   const restartActivations = useRestartRulebookActivations(view.unselectItemsAndRefresh);
   const deleteRulebookActivations = useDeleteRulebookActivations(view.unselectItemsAndRefresh);
   const alertToaster = usePageAlertToaster();
-  const handleToggle: (activation: EdaRulebookActivation, enabled: boolean) => Promise<void> =
-    useCallback(
-      async (activation, enabled) => {
-        const alert: AlertProps = {
-          variant: 'success',
-          title: `${activation.name} ${enabled ? t('enabled') : t('disabled')}.`,
-          timeout: 5000,
-        };
-        await postRequest(
-          edaAPI`/activations/${activation.id.toString()}/${enabled ? 'enable/' : 'disable/'}`,
-          undefined
-        )
-          .then(() => alertToaster.addAlert(alert))
-          .catch(() => {
-            alertToaster.addAlert({
-              variant: 'danger',
-              title: `${t('Failed to ')} ${enabled ? t('enable') : t('disable')} ${
-                activation.name
-              }`,
-              timeout: 5000,
-            });
+  const enableActivation: (activation: EdaRulebookActivation) => Promise<void> = useCallback(
+    async (activation) => {
+      const alert: AlertProps = {
+        variant: 'success',
+        title: `${activation.name} ${t('enabled')}.`,
+        timeout: 5000,
+      };
+      await postRequest(edaApi`/activations/${activation.id}/${'enable/'}`, undefined)
+        .then(() => alertToaster.addAlert(alert))
+        .catch(() => {
+          alertToaster.addAlert({
+            variant: 'danger',
+            title: `${t('Failed to enable')} ${activation.name}`,
+            timeout: 5000,
           });
-        view.unselectItemsAndRefresh([activation]);
-      },
-      [view, alertToaster, t]
-    );
+        });
+      view.unselectItemsAndRefresh([activation]);
+    },
+    [view, alertToaster, t]
+  );
 
   return useMemo<IPageAction<EdaRulebookActivation>[]>(() => {
     const actions: IPageAction<EdaRulebookActivation>[] = [
@@ -58,8 +56,10 @@ export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivatio
         isPinned: true,
         label: t('Rulebook activation enabled'),
         labelOff: t('Rulebook activation disabled'),
-        onToggle: (activation: EdaRulebookActivation, activate: boolean) =>
-          handleToggle(activation, activate),
+        onToggle: (activation: EdaRulebookActivation, activate: boolean) => {
+          if (activate) void enableActivation(activation);
+          else void disableActivations([activation]);
+        },
         isSwitchOn: (activation: EdaRulebookActivation) => activation.is_enabled ?? false,
         isHidden: (activation: EdaRulebookActivation) =>
           activation?.status === Status906Enum.Deleting,
@@ -93,5 +93,5 @@ export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivatio
       },
     ];
     return actions;
-  }, [t, restartActivations, deleteRulebookActivations, handleToggle]);
+  }, [t, restartActivations, deleteRulebookActivations, disableActivations, enableActivation]);
 }

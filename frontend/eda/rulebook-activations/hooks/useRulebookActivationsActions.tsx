@@ -1,28 +1,52 @@
-import { ButtonVariant } from '@patternfly/react-core';
+import { AlertProps, ButtonVariant } from '@patternfly/react-core';
 import { MinusCircleIcon, PlusCircleIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
+  usePageAlertToaster,
   usePageNavigate,
 } from '../../../../framework';
 import { EdaRoute } from '../../EdaRoutes';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { IEdaView } from '../../useEventDrivenView';
-import {
-  useDisableRulebookActivations,
-  useEnableRulebookActivations,
-} from './useControlRulebookActivations';
+import { useDisableRulebookActivations } from './useControlRulebookActivations';
 import { useDeleteRulebookActivations } from './useDeleteRulebookActivations';
+import { postRequest } from '../../../common/crud/Data';
+import { API_PREFIX } from '../../constants';
 
 export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivation>) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const deleteRulebookActivations = useDeleteRulebookActivations(view.unselectItemsAndRefresh);
-  const enableRulebookActivations = useEnableRulebookActivations(view.unselectItemsAndRefresh);
   const disableRulebookActivations = useDisableRulebookActivations(view.unselectItemsAndRefresh);
+  const alertToaster = usePageAlertToaster();
+
+  const enableRulebookActivation: (activation: EdaRulebookActivation) => Promise<void> =
+    useCallback(
+      async (activation) => {
+        const alert: AlertProps = {
+          variant: 'success',
+          title: `${activation.name} ${t('enabled')}.`,
+          timeout: 5000,
+        };
+        await postRequest(`${API_PREFIX}/activations/${activation.id}/enable/`, undefined)
+          .then(() => alertToaster.addAlert(alert))
+          .catch(() => {
+            alertToaster.addAlert({
+              variant: 'danger',
+              title: `${t('Failed to enable')} ${activation.name}`,
+              timeout: 5000,
+            });
+          });
+      },
+      [alertToaster, t]
+    );
+  const enableRulebookActivations = (activations: EdaRulebookActivation[]) =>
+    activations.map((activation) => enableRulebookActivation(activation));
+
   return useMemo<IPageAction<EdaRulebookActivation>[]>(() => {
     const actions: IPageAction<EdaRulebookActivation>[] = [
       {
