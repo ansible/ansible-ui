@@ -39,17 +39,6 @@ describe('projects', () => {
     cy.verifyPageTitle('Projects');
   });
 
-  it('can sync project from project details page', function () {
-    cy.navigateTo('awx', 'projects');
-    cy.clickTableRow(`${(this.globalProject as Project).name}`);
-    cy.verifyPageTitle(`${(this.globalProject as Project).name}`);
-    cy.intercept(`api/v2/projects/${(this.globalProject as Project).id}/update/`).as(
-      'projectUpdateRequest'
-    );
-    cy.clickButton(/^Sync project$/);
-    cy.wait('@projectUpdateRequest');
-  });
-
   it('can navigate to project details tab', function () {
     cy.navigateTo('awx', 'projects');
     cy.clickTableRow(`${(this.globalProject as Project).name}`);
@@ -107,6 +96,15 @@ describe('project edit and delete tests', () => {
   afterEach(() => {
     cy.deleteAwxProject(project, { failOnStatusCode: false });
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
+  });
+
+  it('can sync project from project details page', function () {
+    cy.navigateTo('awx', 'projects');
+    cy.clickTableRow(`${project.name}`);
+    cy.verifyPageTitle(`${project.name}`);
+    cy.intercept(`api/v2/projects/${project.id}/update/`).as('projectUpdateRequest');
+    cy.clickButton(/^Sync project$/);
+    cy.wait('@projectUpdateRequest');
   });
 
   it('can edit a project from the project details tab', () => {
