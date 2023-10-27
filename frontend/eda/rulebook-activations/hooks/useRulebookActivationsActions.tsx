@@ -44,8 +44,12 @@ export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivati
       },
       [alertToaster, t]
     );
-  const enableRulebookActivations = (activations: EdaRulebookActivation[]) =>
-    activations.map((activation) => enableRulebookActivation(activation));
+  const enableRulebookActivations: (activations: EdaRulebookActivation[]) => void = useCallback(
+    (activations) => {
+      activations.map((activation) => enableRulebookActivation(activation));
+    },
+    [enableRulebookActivation]
+  );
 
   return useMemo<IPageAction<EdaRulebookActivation>[]>(() => {
     const actions: IPageAction<EdaRulebookActivation>[] = [
