@@ -11,8 +11,10 @@ export function useGet<T>(
   url: string | undefined,
   query?: Record<string, string | number | boolean>,
   swrConfiguration: SWRConfiguration = {}
+  // disables running the request, useful when you dont want to actualy run the hook in certain conditions
 ) {
   const getRequest = useGetRequest<T>();
+
   url += normalizeQueryString(query);
   const response = useSWR<T>(url, getRequest, {
     dedupingInterval: 0,

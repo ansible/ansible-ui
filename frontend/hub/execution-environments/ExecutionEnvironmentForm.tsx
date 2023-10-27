@@ -1,5 +1,5 @@
 import { useTranslation, TFunction } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import {
   PageFormSubmitHandler,
   PageFormTextInput,
@@ -11,8 +11,7 @@ import {
 import { TagIcon } from '@patternfly/react-icons';
 import { Button, InputGroup, Label, LabelGroup, TextInput } from '@patternfly/react-core';
 import { PageFormGroup } from '../../../framework/PageForm/Inputs/PageFormGroup';
-import { AwxError } from '../../awx/common/AwxError';
-import { useGetRequest } from '../../common/crud/useGet';
+import { useGetRequest, useGet } from '../../common/crud/useGet';
 import { HubRoute } from '../HubRoutes';
 import { hubAPI, hubAPIPost, pulpAPI } from '../api/utils';
 import { ExecutionEnvironment } from './ExecutionEnvironment';
@@ -23,10 +22,11 @@ import { useState, useEffect, useCallback } from 'react';
 import { patchHubRequest, putHubRequest } from './../api/request';
 import { PageFormAsyncSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncSelect';
 import { useSelectRegistrySingle } from './hooks/useRegistrySelector';
+import { usePageNavigate } from '../../../framework';
 
 export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const navigate = usePageNavigate();
   const getPageUrl = useGetPageUrl();
   const getRequest = useGetRequest<ExecutionEnvironment>();
   const registryGetRequest = useGetRequest<HubItemsResponse<Registry>>();
@@ -38,7 +38,7 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
   const [originalData, setOriginalData] = useState<ExecutionEnvironment>(
     {} as ExecutionEnvironment
   );
-  const [error, setError] = useState<string>('');
+
   const [tagsToInclude, setTagsToInclude] = useState<string[]>([]);
   const [tagsToExclude, setTagsToExclude] = useState<string[]>([]);
 
@@ -72,49 +72,41 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
   const onSubmit: PageFormSubmitHandler<ExecutionEnvironmentFormProps> = async (
     formData: ExecutionEnvironmentFormProps
   ) => {
-    try {
-      const payload: PayloadDataType = {
-        exclude_tags: tagsToExclude,
-        include_tags: tagsToInclude,
-        name: formData.name,
-        upstream_name: formData.upstream_name,
-        registry: formData.registry?.id || '',
-      };
+    const payload: PayloadDataType = {
+      exclude_tags: tagsToExclude,
+      include_tags: tagsToInclude,
+      name: formData.name,
+      upstream_name: formData.upstream_name,
+      registry: formData.registry?.id || '',
+    };
 
-      if (isRemote && isNew) {
-        await hubAPIPost<ExecutionEnvironmentFormProps>(
-          hubAPI`/_ui/v1/execution-environments/remotes/`,
-          payload
-        );
-      } else {
-        await Promise.all([
-          isRemote &&
-            !isNew &&
-            putHubRequest(
-              hubAPI`/_ui/v1/execution-environments/remotes/${
-                originalData.pulp?.repository?.remote?.id || ''
-              }/`,
-              payload
-            ),
+    if (isRemote && isNew) {
+      await hubAPIPost<ExecutionEnvironmentFormProps>(
+        hubAPI`/_ui/v1/execution-environments/remotes/`,
+        payload
+      );
+    } else {
+      await Promise.all([
+        isRemote &&
+          !isNew &&
+          putHubRequest(
+            hubAPI`/_ui/v1/execution-environments/remotes/${
+              originalData.pulp?.repository?.remote?.id || ''
+            }/`,
+            payload
+          ),
 
-          formData.description != originalData.description &&
-            patchHubRequest(
-              pulpAPI`/distributions/container/container/${
-                originalData.pulp?.distribution?.id || ''
-              }/`,
-              { description: formData.description }
-            ),
-        ]);
-      }
-
-      navigate(-1);
-    } catch (error) {
-      const text =
-        mode == 'add'
-          ? t('Error when adding execution environment.')
-          : t('Error when saving execution environment.');
-      setError(text);
+        formData.description != originalData.description &&
+          patchHubRequest(
+            pulpAPI`/distributions/container/container/${
+              originalData.pulp?.distribution?.id || ''
+            }/`,
+            { description: formData.description }
+          ),
+      ]);
     }
+
+    navigate(HubRoute.ExecutionEnvironments);
   };
 
   useEffect(() => {
@@ -123,40 +115,34 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
     }
 
     void (async () => {
-      try {
-        const name = params.id;
+      const name = params.id;
 
-        const res = await getRequest(
-          hubAPI`/v3/plugin/execution-environments/repositories/${name ?? ''}/`
-        );
-        if (!res) {
-          throw new Error(notFound);
-        }
-
-        const registry = await singleRegistryGetRequest(
-          hubAPI`/_ui/v1/execution-environments/registries/${
-            res.pulp?.repository?.remote?.registry || ''
-          }/`
-        );
-
-        const ee = {
-          name: res.name,
-          upstream_name: res.pulp?.repository?.remote?.upstream_name,
-          description: res.description,
-          registry: { id: registry?.id, name: registry?.name },
-          namespace: res.namespace,
-        } as ExecutionEnvironmentFormProps;
-
-        setOriginalData(res);
-        setExecutionEnvironment(ee);
-
-        setTagsToExclude(res.pulp?.repository?.remote?.exclude_tags || []);
-        setTagsToInclude(res.pulp?.repository?.remote?.include_tags || []);
-      } catch (error) {
-        if (error) {
-          setError(notFound);
-        }
+      const res = await getRequest(
+        hubAPI`/v3/plugin/execution-environments/repositories/${name ?? ''}/`
+      );
+      if (!res) {
+        throw new Error(notFound);
       }
+
+      const registry = await singleRegistryGetRequest(
+        hubAPI`/_ui/v1/execution-environments/registries/${
+          res.pulp?.repository?.remote?.registry || ''
+        }/`
+      );
+
+      const ee = {
+        name: res.name,
+        upstream_name: res.pulp?.repository?.remote?.upstream_name,
+        description: res.description,
+        registry: { id: registry?.id, name: registry?.name },
+        namespace: res.namespace,
+      } as ExecutionEnvironmentFormProps;
+
+      setOriginalData(res);
+      setExecutionEnvironment(ee);
+
+      setTagsToExclude(res.pulp?.repository?.remote?.exclude_tags || []);
+      setTagsToInclude(res.pulp?.repository?.remote?.include_tags || []);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -178,7 +164,7 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
           submitText={
             props.mode == 'edit' ? t('Edit Execution Environment') : t('Add Execution Environment')
           }
-          onCancel={() => navigate(-1)}
+          onCancel={() => navigate(HubRoute.ExecutionEnvironments)}
           onSubmit={onSubmit}
           defaultValue={executionEnvironment}
           singleColumn={true}
@@ -236,8 +222,6 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
             placeholder={t('Enter a description')}
             isDisabled={mode == 'add'}
           />
-
-          {error && <AwxError error={new Error(error)} />}
         </HubPageForm>
       )}
     </PageLayout>
