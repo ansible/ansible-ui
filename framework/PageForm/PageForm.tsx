@@ -63,7 +63,6 @@ export function useFormErrors<T extends object>(
   const form = useForm<T>({
     defaultValues: defaultValue ?? ({} as DefaultValues<T>),
   });
-  const [frameworkTranslations] = useFrameworkTranslations();
   const { handleSubmit, setError: setFieldError } = form;
   const [error, setError] = useState<(string | ReactNode)[] | string | null>(null);
 
@@ -113,10 +112,8 @@ export function PageForm<T extends object>(props: PageFormProps<T>) {
     <FormProvider {...form}>
       <Form
         onKeyDown={(event) => {
-          if (event.key === 'Enter') {
-            if (props.disableSubmitOnEnter) {
-              event.preventDefault();
-            }
+          if (event.key === 'Enter' && props.disableSubmitOnEnter) {
+            event.preventDefault();
           }
         }}
         // eslint-disable-next-line @typescript-eslint/no-misused-promises

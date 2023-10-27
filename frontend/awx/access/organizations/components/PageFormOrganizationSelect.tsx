@@ -61,7 +61,6 @@ export function PageFormSelectOrganization<
       values: response.results as FieldPathValue<TFieldValues, Path<TFieldValues>>[],
     });
   }, []);
-
   return (
     <PageFormAsyncSelect<TFieldValues>
       name={props.name}

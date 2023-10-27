@@ -143,7 +143,6 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
           name: res.name,
           upstream_name: res.pulp?.repository?.remote?.upstream_name,
           description: res.description,
-          // TODO - registry initial selection not working
           registry: { id: registry?.id, name: registry?.name },
           namespace: res.namespace,
         } as ExecutionEnvironmentFormProps;
@@ -196,12 +195,11 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
 
           {!isRemote && (
             <PageFormTextInput<ExecutionEnvironmentFormProps>
-              name="namespace"
+              name="namespace.name"
               label={t('Namespace')}
               placeholder={t('Enter a namespace name')}
               isRequired
               isDisabled
-              validate={(name: string) => validateName(name, t)}
             />
           )}
 
@@ -262,7 +260,7 @@ type ExecutionEnvironmentFormProps = {
   upstream_name: string;
   description?: string;
   registry: Registry;
-  namespace?: string;
+  namespace?: { name: string };
 };
 
 type PayloadDataType = {
