@@ -11,13 +11,13 @@ import {
 import { TagIcon } from '@patternfly/react-icons';
 import { Button, InputGroup, Label, LabelGroup, TextInput } from '@patternfly/react-core';
 import { PageFormGroup } from '../../../framework/PageForm/Inputs/PageFormGroup';
-import { useGetRequest, useGet } from '../../common/crud/useGet';
+import { useGet } from '../../common/crud/useGet';
 import { HubRoute } from '../HubRoutes';
 import { hubAPI, hubAPIPost, pulpAPI } from '../api/utils';
 import { ExecutionEnvironment } from './ExecutionEnvironment';
 import { HubPageForm } from '../HubPageForm';
 import { HubItemsResponse } from '../useHubView';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 
 import { patchHubRequest, putHubRequest } from './../api/request';
 import { PageFormAsyncSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncSelect';
@@ -29,37 +29,54 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
   const { t } = useTranslation();
   const navigate = usePageNavigate();
   const getPageUrl = useGetPageUrl();
-  const getRequest = useGetRequest<ExecutionEnvironment>();
+  const mode = props.mode;
+  const params = useParams<{ id?: string }>();
+
+  const [tagsToInclude, setTagsToInclude] = useState<string[]>([]);
+  const [tagsToExclude, setTagsToExclude] = useState<string[]>([]);
+  const [tagsSet, setTagsSet] = useState<boolean>(false);
 
   const registry = useGet<HubItemsResponse<Registry>>(
     hubAPI`/_ui/v1/execution-environments/registries?page_size=${page_size.toString()}`
   );
 
-  const singleRegistryGetRequest = useGetRequest<Registry>();
-
-  const [executionEnvironment, setExecutionEnvironment] = useState<ExecutionEnvironmentFormProps>(
-    {} as ExecutionEnvironmentFormProps
+  const eeUrl = useMemo(
+    () =>
+      mode == 'edit'
+        ? hubAPI`/v3/plugin/execution-environments/repositories/${params?.id || ''}/`
+        : '',
+    [mode, params?.id]
   );
 
-  const [originalData, setOriginalData] = useState<ExecutionEnvironment>(
-    {} as ExecutionEnvironment
+  const executionEnvironment = useGet<ExecutionEnvironment>(eeUrl);
+
+  const singleRegistryUrl = useMemo(
+    () =>
+      mode == 'edit' && executionEnvironment.data
+        ? hubAPI`/_ui/v1/execution-environments/registries/${
+            executionEnvironment.data?.pulp?.repository?.remote?.registry || ''
+          }/`
+        : '',
+    [mode, executionEnvironment.data]
   );
 
-  const [tagsToInclude, setTagsToInclude] = useState<string[]>([]);
-  const [tagsToExclude, setTagsToExclude] = useState<string[]>([]);
+  const singleRegistry = useGet<Registry>(singleRegistryUrl);
+  const isLoading = (!executionEnvironment.data || !singleRegistry.data) && mode == 'edit';
 
-  const params = useParams<{ id?: string }>();
-  const mode = props.mode;
-
-  const notFound = t('Execution environment not found');
-  const isLoading = Object.keys(executionEnvironment).length === 0 && mode == 'edit';
+  if (mode == 'edit' && !tagsSet && isLoading == false) {
+    setTagsSet(true);
+    setTagsToExclude(executionEnvironment.data?.pulp?.repository?.remote?.exclude_tags || []);
+    setTagsToInclude(executionEnvironment.data?.pulp?.repository?.remote?.include_tags || []);
+  }
 
   const selectRegistrySingle = useSelectRegistrySingle();
 
   const registrySelector = selectRegistrySingle.onBrowse;
 
-  const isNew = !originalData?.pulp?.repository;
-  const isRemote = originalData.pulp?.repository ? !!originalData.pulp?.repository?.remote : true;
+  const isNew = !executionEnvironment.data?.pulp?.repository;
+  const isRemote = executionEnvironment.data?.pulp?.repository
+    ? !!executionEnvironment.data?.pulp?.repository?.remote
+    : true;
 
   const query = useCallback(async () => {
     return Promise.resolve({
@@ -91,15 +108,15 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
           !isNew &&
           putHubRequest(
             hubAPI`/_ui/v1/execution-environments/remotes/${
-              originalData.pulp?.repository?.remote?.id || ''
+              executionEnvironment.data?.pulp?.repository?.remote?.id || ''
             }/`,
             payload
           ),
 
-        formData.description != originalData.description &&
+        formData.description != executionEnvironment.data?.description &&
           patchHubRequest(
             pulpAPI`/distributions/container/container/${
-              originalData.pulp?.distribution?.id || ''
+              executionEnvironment.data?.pulp?.distribution?.id || ''
             }/`,
             { description: formData.description }
           ),
@@ -109,43 +126,13 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
     navigate(HubRoute.ExecutionEnvironments);
   };
 
-  useEffect(() => {
-    if (props.mode == 'add') {
-      return;
-    }
-
-    void (async () => {
-      const name = params.id;
-
-      const res = await getRequest(
-        hubAPI`/v3/plugin/execution-environments/repositories/${name ?? ''}/`
-      );
-      if (!res) {
-        throw new Error(notFound);
-      }
-
-      const registry = await singleRegistryGetRequest(
-        hubAPI`/_ui/v1/execution-environments/registries/${
-          res.pulp?.repository?.remote?.registry || ''
-        }/`
-      );
-
-      const ee = {
-        name: res.name,
-        upstream_name: res.pulp?.repository?.remote?.upstream_name,
-        description: res.description,
-        registry: { id: registry?.id, name: registry?.name },
-        namespace: res.namespace,
-      } as ExecutionEnvironmentFormProps;
-
-      setOriginalData(res);
-      setExecutionEnvironment(ee);
-
-      setTagsToExclude(res.pulp?.repository?.remote?.exclude_tags || []);
-      setTagsToInclude(res.pulp?.repository?.remote?.include_tags || []);
-    })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const defaultFormValue = {
+    name: executionEnvironment.data?.name,
+    upstream_name: executionEnvironment.data?.pulp?.repository?.remote?.upstream_name,
+    description: executionEnvironment.data?.description,
+    registry: { id: singleRegistry.data?.id, name: singleRegistry.data?.name },
+    namespace: executionEnvironment.data?.namespace,
+  };
 
   return (
     <PageLayout>
@@ -166,7 +153,7 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
           }
           onCancel={() => navigate(HubRoute.ExecutionEnvironments)}
           onSubmit={onSubmit}
-          defaultValue={executionEnvironment}
+          defaultValue={defaultFormValue}
           singleColumn={true}
           disableSubmitOnEnter={true}
         >
@@ -184,7 +171,6 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
               name="namespace.name"
               label={t('Namespace')}
               placeholder={t('Enter a namespace name')}
-              isRequired
               isDisabled
             />
           )}
@@ -281,7 +267,7 @@ function TagsSelector(props: {
   };
 
   const addTags = () => {
-    if (tagsText == '') {
+    if (tagsText == '' || !tagsText.trim().length) {
       return;
     }
     const tagsArray = tagsText.split(',');
@@ -318,7 +304,12 @@ function TagsSelector(props: {
       </InputGroup>
 
       <div>{label2}</div>
-      <LabelGroup {...chipGroupProps()} id={`remove-tag-${mode}`} defaultIsOpen={true}>
+      <LabelGroup
+        {...chipGroupProps()}
+        id={`remove-tag-${mode}`}
+        defaultIsOpen={true}
+        numLabels={5}
+      >
         {tags.map((tag) => (
           <Label icon={<TagIcon />} onClose={() => setTags(tags.filter((t) => t != tag))} key={tag}>
             {tag}
