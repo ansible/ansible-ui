@@ -25,16 +25,22 @@ import { useSelectRegistrySingle } from './hooks/useRegistrySelector';
 import { usePageNavigate } from '../../../framework';
 
 export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
+  const page_size = 50;
   const { t } = useTranslation();
   const navigate = usePageNavigate();
   const getPageUrl = useGetPageUrl();
   const getRequest = useGetRequest<ExecutionEnvironment>();
-  const registryGetRequest = useGetRequest<HubItemsResponse<Registry>>();
+
+  const registry = useGet<HubItemsResponse<Registry>>(
+    hubAPI`/_ui/v1/execution-environments/registries?page_size=${page_size.toString()}`
+  );
+
   const singleRegistryGetRequest = useGetRequest<Registry>();
 
   const [executionEnvironment, setExecutionEnvironment] = useState<ExecutionEnvironmentFormProps>(
     {} as ExecutionEnvironmentFormProps
   );
+
   const [originalData, setOriginalData] = useState<ExecutionEnvironment>(
     {} as ExecutionEnvironment
   );
@@ -52,22 +58,16 @@ export function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
 
   const registrySelector = selectRegistrySingle.onBrowse;
 
-  const page_size = 50;
-
   const isNew = !originalData?.pulp?.repository;
   const isRemote = originalData.pulp?.repository ? !!originalData.pulp?.repository?.remote : true;
 
   const query = useCallback(async () => {
-    const response = await registryGetRequest(
-      hubAPI`/_ui/v1/execution-environments/registries?page_size=${page_size.toString()}`
-    );
-
     return Promise.resolve({
-      total: response.meta.count,
-      values: response.data,
+      total: registry?.data?.meta?.count || 0,
+      values: registry?.data?.data || [],
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [registry.data]);
 
   const onSubmit: PageFormSubmitHandler<ExecutionEnvironmentFormProps> = async (
     formData: ExecutionEnvironmentFormProps
