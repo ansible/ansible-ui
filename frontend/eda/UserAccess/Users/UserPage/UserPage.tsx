@@ -82,7 +82,8 @@ export function UserPage() {
               selection: PageActionSelection.Single,
               icon: TrashIcon,
               label: t('Delete user'),
-              isHidden: (_user: EdaUser) => isViewingSelf,
+              isDisabled: (_user: EdaUser) =>
+                isViewingSelf ? t('Current user cannot be deleted') : undefined,
               onClick: (user: EdaUser) => deleteUsers([user]),
               isDanger: true,
             },
