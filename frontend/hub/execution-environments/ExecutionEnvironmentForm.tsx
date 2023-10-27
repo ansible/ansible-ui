@@ -111,24 +111,28 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
         payload
       );
     } else {
-      await Promise.all([
-        isRemote &&
-          !isNew &&
-          putHubRequest(
-            hubAPI`/_ui/v1/execution-environments/remotes/${
-              executionEnvironment.data?.pulp?.repository?.remote?.id || ''
-            }/`,
-            payload
-          ),
+      const promises = [];
 
-        formData.description != executionEnvironment.data?.description &&
+      promises.push(
+        putHubRequest(
+          hubAPI`/_ui/v1/execution-environments/remotes/${
+            executionEnvironment.data?.pulp?.repository?.remote?.id || ''
+          }/`,
+          payload
+        )
+      );
+
+      if (formData.description !== executionEnvironment.data?.description) {
+        promises.push(
           patchHubRequest(
             pulpAPI`/distributions/container/container/${
               executionEnvironment.data?.pulp?.distribution?.id || ''
             }/`,
             { description: formData.description }
-          ),
-      ]);
+          )
+        );
+      }
+      await Promise.all([promises]);
     }
 
     navigate(HubRoute.ExecutionEnvironments);
@@ -267,7 +271,7 @@ function TagsSelector(props: {
   const label2 = mode == 'exclude' ? t('Currently excluded tags') : t('Currently included tags');
 
   const chipGroupProps = () => {
-    const count = '${remaining}'; // pf templating
+    const count = '${remaining}';
     return {
       collapsedText: t(`{{count}} more`, count.toString()),
       expandedText: t(`Show Less`),
