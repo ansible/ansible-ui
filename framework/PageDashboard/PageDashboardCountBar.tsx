@@ -58,7 +58,12 @@ export function PageDashboardCountBar(props: PageDashboardCountBarProps) {
                   <>
                     <div
                       id={`${id}-chart`}
-                      style={{ maxHeight: 64, marginTop: -4, marginBottom: -4 }}
+                      style={{
+                        maxHeight: 64,
+                        marginTop: -4,
+                        marginBottom: -4,
+                        transform: 'rotate(0.002deg)',
+                      }}
                     >
                       <ChartPie
                         padding={{ top: 0, left: 0, right: 0, bottom: 0 }}
