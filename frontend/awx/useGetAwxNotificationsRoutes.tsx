@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageNavigationItem } from '../../framework';
-import { AwxRoute } from './AwxRoutes';
-import { PageNotImplemented } from '../common/PageNotImplemented';
-import { NotificationPage } from './administration/notifications/NotificationPage/NotificationPage';
 import { Navigate } from 'react-router-dom';
+import { PageNavigationItem } from '../../framework';
+import { PageNotImplemented } from '../../framework/PageEmptyStates/PageNotImplemented';
+import { AwxRoute } from './AwxRoutes';
+import { NotificationPage } from './administration/notifications/NotificationPage/NotificationPage';
 import { Notifications } from './administration/notifications/Notifications';
 
 export function useGetAwxNotificationsRoutes() {
