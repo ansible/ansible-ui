@@ -10,7 +10,7 @@ import { RouteObj } from '../../../common/Routes';
 import { postRequest } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
 import { AwxRoute } from '../../AwxRoutes';
-import { AwxError } from '../../common/AwxError';
+import { PageErrorState } from '../../../../framework/components/PageErrorState';
 import { getAddedAndRemoved } from '../../common/util/getAddedAndRemoved';
 import { ScheduleFormFields } from '../../interfaces/ScheduleFormFields';
 import { ScheduleInputs } from './components/ScheduleInputs';
@@ -188,7 +188,7 @@ export function CreateSchedule() {
     return <LoadingPage />;
   }
   if (error) {
-    return <AwxError error={error} />;
+    return <PageErrorState error={error} />;
   }
 
   return (

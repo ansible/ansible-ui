@@ -5,7 +5,7 @@ import { Schedule } from '../../../interfaces/Schedule';
 import { formatDateString } from '../../../../../framework/utils/formatDateString';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { useParams } from 'react-router-dom';
-import { AwxError } from '../../../common/AwxError';
+import { PageErrorState } from '../../../../../framework/components/PageErrorState';
 
 export function ScheduleDetails() {
   const { t } = useTranslation();
@@ -15,7 +15,7 @@ export function ScheduleDetails() {
     error,
     refresh,
   } = useGetItem<Schedule>('/api/v2/schedules/', params.schedule_id);
-  if (error) return <AwxError error={error} handleRefresh={refresh} />;
+  if (error) return <PageErrorState error={error} handleRefresh={refresh} />;
   if (!schedule) return <LoadingPage breadcrumbs tabs />;
   return (
     <PageDetails>

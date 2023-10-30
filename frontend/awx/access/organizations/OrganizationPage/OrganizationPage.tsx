@@ -19,7 +19,7 @@ import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
-import { AwxError } from '../../../common/AwxError';
+import { PageErrorState } from '../../../../../framework/components/PageErrorState';
 import { Organization } from '../../../interfaces/Organization';
 import { useDeleteOrganizations } from '../hooks/useDeleteOrganizations';
 
@@ -69,7 +69,7 @@ export function OrganizationPage() {
 
   const getPageUrl = useGetPageUrl();
 
-  if (error) return <AwxError error={error} handleRefresh={refresh} />;
+  if (error) return <PageErrorState error={error} handleRefresh={refresh} />;
   if (!organization) return <LoadingPage breadcrumbs tabs />;
 
   return (

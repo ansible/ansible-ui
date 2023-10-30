@@ -24,7 +24,7 @@ import { StatusCell } from '../../../../common/Status';
 import { useGet } from '../../../../common/crud/useGet';
 import { ScmType } from '../../../../common/scm';
 import { AwxRoute } from '../../../AwxRoutes';
-import { AwxError } from '../../../common/AwxError';
+import { PageErrorState } from '../../../../../framework/components/PageErrorState';
 import { CredentialLabel } from '../../../common/CredentialLabel';
 import { ExecutionEnvironmentDetail } from '../../../common/ExecutionEnvironmentDetail';
 import { useAwxConfig } from '../../../common/useAwxConfig';
@@ -203,7 +203,7 @@ export function ProjectDetails() {
       )}
     </TextList>
   );
-  if (error) return <AwxError error={error} handleRefresh={refresh} />;
+  if (error) return <PageErrorState error={error} handleRefresh={refresh} />;
   if (!project) return <LoadingPage breadcrumbs tabs />;
   return (
     <PageDetails>

@@ -50,7 +50,7 @@ import {
 } from '../../../framework';
 import { PageDetail } from '../../../framework/PageDetails/PageDetail';
 import { Scrollable } from '../../../framework/components/Scrollable';
-import { AwxError } from '../../awx/common/AwxError';
+import { PageErrorState } from '../../../framework/components/PageErrorState';
 import { StatusCell } from '../../common/Status';
 import { useGetRequest, useGet } from '../../common/crud/useGet';
 import { HubRoute } from '../HubRoutes';
@@ -87,7 +87,7 @@ export function CollectionDetails() {
 
   useEffect(() => {
     if (!(name && namespace && repository)) {
-      setCollectionError(<AwxError error={{ name: 'not found', message: t('Not Found') }} />);
+      setCollectionError(<PageErrorState error={{ name: 'not found', message: t('Not Found') }} />);
     }
   }, [name, namespace, repository, setCollectionError, t]);
 
@@ -104,7 +104,9 @@ export function CollectionDetails() {
           if (redirectIfEmpty) {
             navigate(HubRoute.Collections);
           } else {
-            setCollectionError(<AwxError error={{ name: 'not found', message: t('Not Found') }} />);
+            setCollectionError(
+              <PageErrorState error={{ name: 'not found', message: t('Not Found') }} />
+            );
           }
         }
 
@@ -119,7 +121,9 @@ export function CollectionDetails() {
 
         setCollections(res.data);
       } catch (error) {
-        setCollectionError(<AwxError error={{ name: 'not found', message: t('Not Found') }} />);
+        setCollectionError(
+          <PageErrorState error={{ name: 'not found', message: t('Not Found') }} />
+        );
       }
     })();
 
@@ -163,7 +167,7 @@ export function CollectionDetails() {
 
   if (error || (isLoading == false && data && data.data.length == 0)) {
     return (
-      <AwxError
+      <PageErrorState
         error={error || { name: 'not found', message: t('Not Found') }}
         handleRefresh={refresh}
       />

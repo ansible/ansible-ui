@@ -17,7 +17,7 @@ import { scheduleRulesRoutes } from './hooks/ruleHelpers';
 import { UseFormReturn } from 'react-hook-form';
 import { formatDateString } from '../../../../framework/utils/dateTimeHelpers';
 import { AwxPageForm } from '../../AwxPageForm';
-import { AwxError } from '../../common/AwxError';
+import { PageErrorState } from '../../../../framework/components/PageErrorState';
 import { buildDateTimeObj } from './hooks/scheduleHelpers';
 
 export interface RuleFormFields {
@@ -153,7 +153,7 @@ export function CreateScheduleRule() {
     return <LoadingPage />;
   }
   if (error) {
-    return <AwxError error={error} />;
+    return <PageErrorState error={error} />;
   }
 
   const dtstart = formatDateString(scheduleContainer.dtstart, scheduleContainer.timezone);

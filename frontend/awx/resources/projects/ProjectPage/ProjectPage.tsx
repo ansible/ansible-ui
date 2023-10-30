@@ -7,7 +7,7 @@ import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { RouteObj } from '../../../../common/Routes';
 import { useGet } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
-import { AwxError } from '../../../common/AwxError';
+import { PageErrorState } from '../../../../../framework/components/PageErrorState';
 import { Project } from '../../../interfaces/Project';
 import { useProjectActions } from '../hooks/useProjectActions';
 import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
@@ -52,7 +52,8 @@ export function ProjectPage() {
     }
     return tabs;
   }, [t, currentUser, isNotifAdmin]);
-  if (error) return <AwxError error={error} handleRefresh={projectRefresh || refreshNotifAdmin} />;
+  if (error)
+    return <PageErrorState error={error} handleRefresh={projectRefresh || refreshNotifAdmin} />;
   if (!project || isProjectLoading || isNotifAdminLoading) return <LoadingPage breadcrumbs tabs />;
 
   return (

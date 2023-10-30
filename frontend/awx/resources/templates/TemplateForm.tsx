@@ -15,7 +15,7 @@ import { useGet } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { AwxPageForm } from '../../AwxPageForm';
 import { AwxRoute } from '../../AwxRoutes';
-import { AwxError } from '../../common/AwxError';
+import { PageErrorState } from '../../../../framework/components/PageErrorState';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { getAddedAndRemoved } from '../../common/util/getAddedAndRemoved';
 import { Credential } from '../../interfaces/Credential';
@@ -80,7 +80,7 @@ export function EditJobTemplate() {
   const jobTemplateFormError = jobTemplateError || instanceGroupsError;
   if (jobTemplateFormError instanceof Error) {
     return (
-      <AwxError
+      <PageErrorState
         error={jobTemplateFormError}
         handleRefresh={jobTemplateError ? jobTemplateRefresh : instanceGroupRefresh}
       />

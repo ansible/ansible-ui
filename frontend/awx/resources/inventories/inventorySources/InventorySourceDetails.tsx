@@ -28,7 +28,7 @@ import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsRes
 import { ExecutionEnvironmentDetail } from '../../../common/ExecutionEnvironmentDetail';
 import { formatDateString } from '../../../../../framework/utils/dateTimeHelpers';
 import { CredentialLabel } from '../../../common/CredentialLabel';
-import { AwxError } from '../../../common/AwxError';
+import { PageErrorState } from '../../../../../framework/components/PageErrorState';
 import { useCallback } from 'react';
 import { useAwxWebSocketSubscription } from '../../../common/useAwxWebSocket';
 
@@ -76,7 +76,7 @@ export function InventorySourceDetails() {
   }
 
   const verbosityString = useVerbosityString(inventorySource?.verbosity);
-  if (error) return <AwxError error={error} handleRefresh={refresh} />;
+  if (error) return <PageErrorState error={error} handleRefresh={refresh} />;
   if (!inventorySource) return <LoadingPage breadcrumbs tabs />;
   const { summary_fields, overwrite, overwrite_vars, update_on_launch, source } = inventorySource;
   let optionsList = null;

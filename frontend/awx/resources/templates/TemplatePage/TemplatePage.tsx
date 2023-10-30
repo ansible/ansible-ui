@@ -11,7 +11,7 @@ import {
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { useGet, useGetItem } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
-import { AwxError } from '../../../common/AwxError';
+import { PageErrorState } from '../../../../../framework/components/PageErrorState';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { useTemplateActions } from '../hooks/useTemplateActions';
 import { useActiveUser } from '../../../../common/useActiveUser';
@@ -59,7 +59,7 @@ export function TemplatePage() {
     }
     return tabs;
   }, [t, currentUser, isNotifAdmin]);
-  if (error) return <AwxError error={error} handleRefresh={refresh || refreshNotifAdmin} />;
+  if (error) return <PageErrorState error={error} handleRefresh={refresh || refreshNotifAdmin} />;
   if (isTemplateLoading || isNotifAdminLoading) return <LoadingPage breadcrumbs tabs />;
 
   return (

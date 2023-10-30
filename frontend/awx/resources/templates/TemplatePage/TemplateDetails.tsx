@@ -13,7 +13,7 @@ import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageD
 import { RouteObj } from '../../../../common/Routes';
 import { useGet, useGetItem } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
-import { AwxError } from '../../../common/AwxError';
+import { PageErrorState } from '../../../../../framework/components/PageErrorState';
 import { CredentialLabel } from '../../../common/CredentialLabel';
 import { UserDateDetail } from '../../../common/UserDateDetail';
 import { useVerbosityString } from '../../../common/useVerbosityString';
@@ -39,7 +39,7 @@ export function TemplateDetails() {
   const getPageUrl = useGetPageUrl();
 
   const verbosity: string = useVerbosityString(template?.verbosity);
-  if (error) return <AwxError error={error} handleRefresh={refresh} />;
+  if (error) return <PageErrorState error={error} handleRefresh={refresh} />;
   if (!template) return <LoadingPage breadcrumbs tabs />;
   const { summary_fields: summaryFields } = template;
 

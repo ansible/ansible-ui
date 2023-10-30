@@ -9,7 +9,7 @@ import { postRequest, requestGet, requestPatch } from '../../../common/crud/Data
 import { useGet } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { AwxPageForm } from '../../AwxPageForm';
-import { AwxError } from '../../common/AwxError';
+import { PageErrorState } from '../../../../framework/components/PageErrorState';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { getAddedAndRemoved } from '../../common/util/getAddedAndRemoved';
 import { Label } from '../../interfaces/Label';
@@ -86,7 +86,7 @@ export function EditWorkflowJobTemplate() {
   const { cache } = useSWRConfig();
 
   if (error instanceof Error) {
-    return <AwxError error={error} handleRefresh={refresh} />;
+    return <PageErrorState error={error} handleRefresh={refresh} />;
   }
   if (isLoading) return <LoadingPage />;
   return (

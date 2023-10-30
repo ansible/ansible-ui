@@ -14,7 +14,7 @@ import { AwxRoute } from '../../../AwxRoutes';
 import { InventorySource } from '../../../interfaces/InventorySource';
 import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
-import { AwxError } from '../../../common/AwxError';
+import { PageErrorState } from '../../../../../framework/components/PageErrorState';
 
 export function InventorySourcePage() {
   const { t } = useTranslation();
@@ -32,7 +32,7 @@ export function InventorySourcePage() {
         params: { id: params.id, inventory_type: params.inventory_type },
       }),
   });
-  if (error) return <AwxError error={error} handleRefresh={refresh} />;
+  if (error) return <PageErrorState error={error} handleRefresh={refresh} />;
   if (!inventorySource) return <LoadingPage breadcrumbs tabs />;
   return (
     <PageLayout>

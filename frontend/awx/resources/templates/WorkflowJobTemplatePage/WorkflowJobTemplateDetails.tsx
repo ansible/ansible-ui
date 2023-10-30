@@ -12,7 +12,7 @@ import { LoadingPage, PageDetail, PageDetails, useGetPageUrl } from '../../../..
 import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
-import { AwxError } from '../../../common/AwxError';
+import { PageErrorState } from '../../../../../framework/components/PageErrorState';
 import { CredentialLabel } from '../../../common/CredentialLabel';
 import { UserDateDetail } from '../../../common/UserDateDetail';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
@@ -26,7 +26,7 @@ export function WorkflowJobTemplateDetails() {
     refresh,
   } = useGetItem<WorkflowJobTemplate>('/api/v2/workflow_job_templates/', params.id);
   const getPageUrl = useGetPageUrl();
-  if (error) return <AwxError error={error} handleRefresh={refresh} />;
+  if (error) return <PageErrorState error={error} handleRefresh={refresh} />;
   if (!template) return <LoadingPage breadcrumbs tabs />;
 
   const { summary_fields: summaryFields } = template;

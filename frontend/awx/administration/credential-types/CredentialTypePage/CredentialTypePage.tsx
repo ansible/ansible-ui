@@ -6,7 +6,7 @@ import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
-import { AwxError } from '../../../common/AwxError';
+import { PageErrorState } from '../../../../../framework/components/PageErrorState';
 import { CredentialType } from '../../../interfaces/CredentialType';
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { useCredentialTypeRowActions } from '../hooks/useCredentialTypeActions';
@@ -33,7 +33,7 @@ export function CredentialTypePage() {
 
   const getPageUrl = useGetPageUrl();
 
-  if (error) return <AwxError error={error} handleRefresh={refresh} />;
+  if (error) return <PageErrorState error={error} handleRefresh={refresh} />;
   if (!credentialType) return <LoadingPage breadcrumbs tabs />;
 
   return (

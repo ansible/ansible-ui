@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { AwxRoute } from '../../../AwxRoutes';
 import { awxErrorAdapter } from '../../../adapters/awxErrorAdapter';
 import { getJobOutputUrl } from '../../../views/jobs/jobUtils';
-import { AwxError } from '../../../common/AwxError';
+import { PageErrorState } from '../../../../../framework/components/PageErrorState';
 import { useGet } from '../../../../common/crud/useGet';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import {
@@ -95,7 +95,7 @@ export function TemplateLaunchWizard() {
   const error = getTemplateError || getLaunchError;
   const refresh = getTemplateRefresh || getLaunchRefresh;
 
-  if (error) return <AwxError error={error} handleRefresh={refresh} />;
+  if (error) return <PageErrorState error={error} handleRefresh={refresh} />;
   if (!config || !template) return <LoadingPage breadcrumbs tabs />;
 
   const handleSubmit = async (formValues: TemplateLaunch) => {

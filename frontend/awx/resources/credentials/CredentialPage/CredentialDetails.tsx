@@ -13,7 +13,7 @@ import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { RouteObj } from '../../../../common/Routes';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
-import { AwxError } from '../../../common/AwxError';
+import { PageErrorState } from '../../../../../framework/components/PageErrorState';
 import { useAwxGetAllPages } from '../../../common/useAwxGetAllPages';
 import { Credential } from '../../../interfaces/Credential';
 import { CredentialInputSource } from '../../../interfaces/CredentialInputSource';
@@ -88,7 +88,7 @@ export function CredentialDetailsInner(props: { credential: Credential }) {
 
   if (error)
     return (
-      <AwxError
+      <PageErrorState
         error={error || inputSourcesError}
         handleRefresh={error ? refresh : refreshInputSources}
       />

@@ -13,7 +13,7 @@ import { PageFormFileUpload } from '../../../framework/PageForm/Inputs/PageFormF
 import { PageFormGroup } from '../../../framework/PageForm/Inputs/PageFormGroup';
 import { PageFormExpandableSection } from '../../../framework/PageForm/PageFormExpandableSection';
 import { LoadingPage } from '../../../framework/components/LoadingPage';
-import { AwxError } from '../../awx/common/AwxError';
+import { PageErrorState } from '../../../framework/components/PageErrorState';
 import { useGet } from '../../common/crud/useGet';
 import { usePostRequest } from '../../common/crud/usePostRequest';
 import { HubRoute } from '../HubRoutes';
@@ -157,7 +157,7 @@ export function EditRemote() {
 
   const getPageUrl = useGetPageUrl();
 
-  if (error) return <AwxError error={error} handleRefresh={refresh} />;
+  if (error) return <PageErrorState error={error} handleRefresh={refresh} />;
   if (!data) return <LoadingPage breadcrumbs tabs />;
 
   const remote = data.results[0];
@@ -190,7 +190,7 @@ export function EditRemote() {
             { label: t('Edit Remote') },
           ]}
         />
-        <AwxError error={new Error(t('Remote not found'))} handleRefresh={handleRefresh} />
+        <PageErrorState error={new Error(t('Remote not found'))} handleRefresh={handleRefresh} />
       </PageLayout>
     );
   }

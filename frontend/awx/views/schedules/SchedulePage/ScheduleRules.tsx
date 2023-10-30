@@ -16,7 +16,7 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { EditIcon, PlusIcon } from '@patternfly/react-icons';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { Schedule } from '../../../interfaces/Schedule';
-import { AwxError } from '../../../common/AwxError';
+import { PageErrorState } from '../../../../../framework/components/PageErrorState';
 
 export function ScheduleRules() {
   const { t } = useTranslation();
@@ -65,7 +65,7 @@ export function ScheduleRules() {
     []
   );
 
-  if (error) return <AwxError error={error} handleRefresh={refresh} />;
+  if (error) return <PageErrorState error={error} handleRefresh={refresh} />;
   if (!schedule) return <LoadingPage breadcrumbs tabs />;
 
   const [_dtstart, ...rules] = schedule.rrule.split(' ');

@@ -6,7 +6,7 @@ import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
-import { AwxError } from '../../../common/AwxError';
+import { PageErrorState } from '../../../../../framework/components/PageErrorState';
 import { NotificationTemplate } from '../../../interfaces/NotificationTemplate';
 
 export function NotificationPage() {
@@ -20,7 +20,7 @@ export function NotificationPage() {
 
   const getPageUrl = useGetPageUrl();
 
-  if (error) return <AwxError error={error} handleRefresh={refresh} />;
+  if (error) return <PageErrorState error={error} handleRefresh={refresh} />;
   if (!notificationTemplate) return <LoadingPage breadcrumbs tabs />;
 
   return (

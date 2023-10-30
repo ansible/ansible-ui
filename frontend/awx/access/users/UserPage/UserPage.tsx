@@ -18,7 +18,7 @@ import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
-import { AwxError } from '../../../common/AwxError';
+import { PageErrorState } from '../../../../../framework/components/PageErrorState';
 import { User } from '../../../interfaces/User';
 import { useDeleteUsers } from '../hooks/useDeleteUsers';
 
@@ -60,7 +60,7 @@ export function UserPage() {
 
   const getPageUrl = useGetPageUrl();
 
-  if (error) return <AwxError error={error} handleRefresh={refresh} />;
+  if (error) return <PageErrorState error={error} handleRefresh={refresh} />;
   if (!user) return <LoadingPage breadcrumbs tabs />;
 
   return (

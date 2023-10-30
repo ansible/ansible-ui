@@ -13,7 +13,7 @@ import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { useGet, useGetItem } from '../../../../common/crud/useGet';
 import { useActiveUser } from '../../../../common/useActiveUser';
 import { AwxRoute } from '../../../AwxRoutes';
-import { AwxError } from '../../../common/AwxError';
+import { PageErrorState } from '../../../../../framework/components/PageErrorState';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { Organization } from '../../../interfaces/Organization';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
@@ -62,7 +62,7 @@ export function WorkflowJobTemplatePage() {
     [t, currentUser, isNotifAdmin]
   );
 
-  if (error) return <AwxError error={error} handleRefresh={refresh || refreshNotifAdmin} />;
+  if (error) return <PageErrorState error={error} handleRefresh={refresh || refreshNotifAdmin} />;
   if (!template || isTemplateLoading || isNotifAdminLoading)
     return <LoadingPage breadcrumbs tabs />;
 

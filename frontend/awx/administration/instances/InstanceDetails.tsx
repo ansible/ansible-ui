@@ -23,7 +23,7 @@ import { LoadingPage } from '../../../../framework/components/LoadingPage';
 import { StatusCell } from '../../../common/Status';
 import { useGetItem } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { AwxError } from '../../common/AwxError';
+import { PageErrorState } from '../../../../framework/components/PageErrorState';
 import { Instance } from '../../interfaces/Instance';
 
 import { Dotted } from '../../../../framework/components/Dotted';
@@ -65,7 +65,7 @@ export function InstanceDetails() {
 
   const getPageUrl = useGetPageUrl();
 
-  if (error) return <AwxError error={error} handleRefresh={refresh} />;
+  if (error) return <PageErrorState error={error} handleRefresh={refresh} />;
   if (!instance) return <LoadingPage breadcrumbs tabs />;
 
   return (
