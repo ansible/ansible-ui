@@ -34,6 +34,7 @@ const Heading = styled(Title)`
 `;
 
 type LoginProps = {
+  hideInputs?: boolean;
   authOptions?: AuthOption[];
   apiUrl?: string;
   onLoginUrl?: string;
@@ -61,6 +62,7 @@ export function Login(props: LoginProps) {
             authOptions={props.authOptions}
             onLoginUrl={props.onLoginUrl}
             onLogin={navigateBack}
+            hideInputs={props.hideInputs}
           />
         </Inner>
       </Wrapper>
