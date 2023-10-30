@@ -1776,7 +1776,7 @@
   "Yes, I confirm that I want to delete these {{count}} jobs._other": "Yes, I confirm that I want to delete these {{count}} jobs.",
   "Yes, I confirm that I want to delete these {{count}} namespaces._one": "Yes, I confirm that I want to delete these {{count}} namespaces.",
   "Yes, I confirm that I want to delete these {{count}} namespaces._other": "Yes, I confirm that I want to delete these {{count}} namespaces.",
-  "Yes, I confirm that I want to delete these {{count}} organizations._one": "Yes, I confirm that I want to delete these {{count}} organizations.",
+  "Yes, I confirm that I want to delete these {{count}} organizations._one": "Yes, I confirm that I want to delete this organization.",
   "Yes, I confirm that I want to delete these {{count}} organizations._other": "Yes, I confirm that I want to delete these {{count}} organizations.",
   "Yes, I confirm that I want to delete these {{count}} projects._one": "Yes, I confirm that I want to delete these {{count}} projects.",
   "Yes, I confirm that I want to delete these {{count}} projects._other": "Yes, I confirm that I want to delete these {{count}} projects.",
