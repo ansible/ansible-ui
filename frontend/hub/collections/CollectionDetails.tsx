@@ -309,7 +309,7 @@ function CollectionInstallTab(props: { collection?: CollectionVersionSearch }) {
     )
   );
 
-  console.log('down: ', downloadURL);
+  console.log('downURL: ', downloadURL);
   return (
     <Scrollable>
       <PageSection variant="light">
@@ -333,8 +333,7 @@ function CollectionInstallTab(props: { collection?: CollectionVersionSearch }) {
               variant="link"
               icon={<DownloadIcon />}
               onClick={() => {
-                // Download(distroBasePath, downloadURL);
-                console.log('hallo');
+                Download(distroBasePath, downloadURL);
               }}
             >
               {t(`Download tarball`)}
@@ -350,10 +349,10 @@ function CollectionInstallTab(props: { collection?: CollectionVersionSearch }) {
   );
 }
 
-// function Download(downloadURL: string, distroBasePath: unknown) {
-//   console.log('downloadURL: ', downloadURL);
-//   console.log('distroBasePath: ', distroBasePath);
-// }
+function Download(downloadURL: string, distroBasePath: unknown) {
+  console.log('downloadURL: ', downloadURL);
+  console.log('distroBasePath: ', distroBasePath);
+}
 
 function CollectionDocumentationTab(props: { collection?: CollectionVersionSearch }) {
   const { collection } = props;

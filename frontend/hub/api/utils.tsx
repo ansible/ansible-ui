@@ -23,11 +23,12 @@ export function useRepositoryBasePath(name: string | undefined, pulp_href?: stri
   console.log(name, pulp_href, 'useRepositoryBasePath');
   const { t } = useTranslation();
 
-  const [basePath, setBasePath] = useState<string | null>(null);
+  const [basePath, setBasePath] = useState<string | null>('blahahhh');
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    setLoading(true);
     const fetchRepositoryBasePath = async () => {
       try {
         let repository: Repository | undefined | { name: string; pulp_href: string };
@@ -40,7 +41,6 @@ export function useRepositoryBasePath(name: string | undefined, pulp_href?: stri
           );
           repository = firstResult(repositoryResponse) as Repository;
         }
-
         if (!repository) {
           throw new Error(t`Failed to find repository ${name}`);
         }
@@ -48,7 +48,6 @@ export function useRepositoryBasePath(name: string | undefined, pulp_href?: stri
           pulpAPI`/distributions/ansible/ansible/?name=${name}&limit=1`
         );
         let distribution: Distribution = firstResult(distributionResponse) as Distribution;
-
         if (distribution && distribution.repository === repository.pulp_href) {
           setBasePath(distribution.base_path);
         } else {
@@ -73,7 +72,7 @@ export function useRepositoryBasePath(name: string | undefined, pulp_href?: stri
     };
 
     void fetchRepositoryBasePath();
-  }, [name, pulp_href, t]);
+  }, []);
 
   const x = { basePath, loading, error };
   console.log(x, 'useRepositoryBasePath result');
@@ -81,7 +80,7 @@ export function useRepositoryBasePath(name: string | undefined, pulp_href?: stri
 }
 
 function firstResult(results: Results) {
-  return results.results[0].base_path;
+  return results.results[0];
 }
 
 export function apiTag(strings: TemplateStringsArray, ...values: string[]) {
