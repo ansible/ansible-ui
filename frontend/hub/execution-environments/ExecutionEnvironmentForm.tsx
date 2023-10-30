@@ -113,14 +113,16 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
     } else {
       const promises = [];
 
-      promises.push(
-        putHubRequest(
-          hubAPI`/_ui/v1/execution-environments/remotes/${
-            executionEnvironment.data?.pulp?.repository?.remote?.id || ''
-          }/`,
-          payload
-        )
-      );
+      if (isRemote && !isNew) {
+        promises.push(
+          putHubRequest(
+            hubAPI`/_ui/v1/execution-environments/remotes/${
+              executionEnvironment.data?.pulp?.repository?.remote?.id || ''
+            }/`,
+            payload
+          )
+        );
+      }
 
       if (formData.description !== executionEnvironment.data?.description) {
         promises.push(
