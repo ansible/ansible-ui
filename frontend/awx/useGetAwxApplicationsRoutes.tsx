@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageNavigationItem } from '../../framework';
+import { PageNotImplemented } from '../../framework/PageEmptyStates/PageNotImplemented';
 import { AwxRoute } from './AwxRoutes';
-import { PageNotImplemented } from '../common/PageNotImplemented';
 import { ApplicationPage } from './administration/applications/ApplicationPage/ApplicationPage';
 import { Applications } from './administration/applications/Applications';
 

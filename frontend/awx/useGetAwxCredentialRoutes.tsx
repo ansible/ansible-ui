@@ -1,12 +1,12 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageNavigationItem } from '../../framework';
+import { PageNotImplemented } from '../../framework/PageEmptyStates/PageNotImplemented';
 import { AwxRoute } from './AwxRoutes';
-import { PageNotImplemented } from '../common/PageNotImplemented';
-import { Credentials } from './resources/credentials/Credentials';
+import { CreateCredential, EditCredential } from './resources/credentials/CredentialForm';
 import { CredentialDetails } from './resources/credentials/CredentialPage/CredentialDetails';
 import { CredentialPage } from './resources/credentials/CredentialPage/CredentialPage';
-import { CreateCredential, EditCredential } from './resources/credentials/CredentialForm';
+import { Credentials } from './resources/credentials/Credentials';
 
 export function useGetAwxCredentialRoutes() {
   const { t } = useTranslation();
