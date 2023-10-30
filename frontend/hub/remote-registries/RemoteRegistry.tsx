@@ -19,7 +19,7 @@ export interface RemoteRegistry {
   download_concurrency: number | null;
   proxy_url: string | null;
   write_only_fields: {
-    name: 'client_key' | 'username' | 'password' | 'proxy_username';
+    name: 'client_key' | 'username' | 'password' | 'proxy_username' | 'proxy_password';
     is_set: boolean;
   }[];
   rate_limit: null;

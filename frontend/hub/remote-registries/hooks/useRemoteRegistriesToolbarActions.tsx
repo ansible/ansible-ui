@@ -1,6 +1,3 @@
-import { ButtonVariant } from '@patternfly/react-core';
-import { PlusIcon, TrashIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
@@ -8,23 +5,24 @@ import {
   PageActionType,
   usePageNavigate,
 } from '../../../../framework';
+import { useMemo } from 'react';
+import { RemoteRegistry } from '../RemoteRegistry';
+import { PlusIcon, TrashIcon } from '@patternfly/react-icons';
 import { HubRoute } from '../../HubRoutes';
-import { IPulpView } from '../../usePulpView';
-import { IRemotes } from '../Remotes';
-import { useDeleteRemotes } from './useDeleteRemotes';
+import { ButtonVariant } from '@patternfly/react-core';
 
-export function useRemoteToolbarActions(view: IPulpView<IRemotes>) {
+export function useRemoteRegistriesToolbarActions() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const deleteRemotes = useDeleteRemotes(view.unselectItemsAndRefresh);
 
-  const actions = useMemo<IPageAction<IRemotes>[]>(
+  // delete remote registries
+  const actions = useMemo<IPageAction<RemoteRegistry>[]>(
     () => [
       {
         icon: PlusIcon,
         isPinned: true,
-        label: t('Create remote'),
-        onClick: () => pageNavigate(HubRoute.CreateRemote),
+        label: t('Create remote registry'),
+        onClick: () => pageNavigate(HubRoute.CreateRemoteRegistry),
         selection: PageActionSelection.None,
         type: PageActionType.Button,
         variant: ButtonVariant.primary,
@@ -34,12 +32,12 @@ export function useRemoteToolbarActions(view: IPulpView<IRemotes>) {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Delete selected remotes'),
-        onClick: deleteRemotes,
+        label: t('Delete selected remote registries'),
+        onClick: () => {},
         isDanger: true,
       },
     ],
-    [t, deleteRemotes, pageNavigate]
+    [t, pageNavigate]
   );
 
   return actions;
