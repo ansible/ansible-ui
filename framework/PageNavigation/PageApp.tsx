@@ -1,7 +1,7 @@
 import { Page } from '@patternfly/react-core';
 import { ReactNode, useMemo } from 'react';
 import { Outlet, RouterProvider, createBrowserRouter } from 'react-router-dom';
-import { PageNotFound } from '../../frontend/common/PageNotFound';
+import { PageNotFound } from '../PageEmptyStates/PageNotFound';
 import { PageFramework } from '../PageFramework';
 import { PageLayout } from '../PageLayout';
 import { PageNavigation } from './PageNavigation';

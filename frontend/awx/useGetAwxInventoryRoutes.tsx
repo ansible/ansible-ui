@@ -1,18 +1,18 @@
-import { useTranslation } from 'react-i18next';
-import { AwxRoute } from './AwxRoutes';
-import { CreateInventory, EditInventory } from './resources/inventories/InventoryForm';
-import { CreateSchedule } from './views/schedules/ScheduleForm';
-import { PageNotImplemented } from '../common/PageNotImplemented';
-import { SchedulePage } from './views/schedules/SchedulePage/SchedulePage';
-import { ScheduleDetails } from './views/schedules/SchedulePage/ScheduleDetails';
-import { ScheduleRules } from './views/schedules/SchedulePage/ScheduleRules';
-import { InventoryPage } from './resources/inventories/InventoryPage/InventoryPage';
-import { InventoryDetails } from './resources/inventories/InventoryPage/InventoryDetails';
-import { Inventories } from './resources/inventories/Inventories';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { PageNavigationItem } from '../../framework';
-import { InventorySourcePage } from './resources/inventories/inventorySources/InventorySourcePage';
+import { PageNotImplemented } from '../../framework/PageEmptyStates/PageNotImplemented';
+import { AwxRoute } from './AwxRoutes';
+import { Inventories } from './resources/inventories/Inventories';
+import { CreateInventory, EditInventory } from './resources/inventories/InventoryForm';
+import { InventoryDetails } from './resources/inventories/InventoryPage/InventoryDetails';
+import { InventoryPage } from './resources/inventories/InventoryPage/InventoryPage';
 import { InventorySourceDetails } from './resources/inventories/inventorySources/InventorySourceDetails';
+import { InventorySourcePage } from './resources/inventories/inventorySources/InventorySourcePage';
+import { CreateSchedule } from './views/schedules/ScheduleForm';
+import { ScheduleDetails } from './views/schedules/SchedulePage/ScheduleDetails';
+import { SchedulePage } from './views/schedules/SchedulePage/SchedulePage';
+import { ScheduleRules } from './views/schedules/SchedulePage/ScheduleRules';
 import { Schedules } from './views/schedules/Schedules';
 
 export function useGetAwxInventoryRoutes() {
