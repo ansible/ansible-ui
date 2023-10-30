@@ -25,6 +25,7 @@ export interface WorkflowNode {
       name: string;
       description: string;
       unified_job_type: string;
+      timeout: number;
     };
   };
   created: string;
@@ -41,7 +42,7 @@ export interface WorkflowNode {
   execution_environment: null;
   forks: null;
   job_slice_count: null;
-  timeout: null;
+  timeout: string | null;
   workflow_job_template: number;
   unified_job_template: number;
   success_nodes: number[];
@@ -49,4 +50,12 @@ export interface WorkflowNode {
   always_nodes: number[];
   all_parents_must_converge: boolean;
   identifier: string;
+}
+
+export interface WorkflowApprovalNode {
+  name: string;
+  type: 'Workflow Approval';
+  convergence: string;
+  description?: string;
+  timeout?: string;
 }
