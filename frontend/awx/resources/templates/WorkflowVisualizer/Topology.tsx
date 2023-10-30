@@ -17,6 +17,8 @@ import {
   getEdgesFromNodes,
   withPanZoom,
   DefaultEdge,
+  SELECTION_EVENT,
+  withSelection,
 } from '@patternfly/react-topology';
 import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
 import type { AwxItemsResponse } from '../../../common/AwxItemsResponse';
@@ -29,9 +31,9 @@ const baselineComponentFactory: ComponentFactory = (kind: ModelKind, type: strin
     default:
       switch (kind) {
         case ModelKind.graph:
-          return withPanZoom()(GraphComponent);
+          return withPanZoom()(withSelection()(GraphComponent));
         case ModelKind.node:
-          return DefaultNode;
+          return withSelection()(DefaultNode);
         case ModelKind.edge:
           return DefaultEdge;
         default:
@@ -44,8 +46,14 @@ const NODE_DIAMETER = 50;
 
 interface TopologyProps {
   data: AwxItemsResponse<WorkflowNode>;
+  selectedNode: WorkflowNode | undefined;
+  handleSelectedNode: (clickedNodeIdentifier: string[]) => void;
 }
-export const Topology = ({ data: { results = [] } }: TopologyProps) => {
+export const Topology = ({
+  data: { results = [] },
+  selectedNode,
+  handleSelectedNode,
+}: TopologyProps) => {
   const controllerRef = useRef<Controller>();
   const controller = controllerRef.current;
 
@@ -69,6 +77,7 @@ export const Topology = ({ data: { results = [] } }: TopologyProps) => {
     newController.registerLayoutFactory(
       (type: string, graph: Graph) => new DagreLayout(graph, { rankdir: 'LR' })
     );
+    newController.addEventListener(SELECTION_EVENT, handleSelectedNode);
 
     const model: Model = {
       nodes: [],
@@ -83,7 +92,7 @@ export const Topology = ({ data: { results = [] } }: TopologyProps) => {
     newController.fromModel(model, false);
 
     controllerRef.current = newController;
-  }, []);
+  }, [handleSelectedNode]);
 
   useEffect(() => {
     const nodes: GraphNode[] = layout.map((n) => {
@@ -146,7 +155,7 @@ export const Topology = ({ data: { results = [] } }: TopologyProps) => {
   }
   return (
     <VisualizationProvider controller={controller}>
-      <VisualizationSurface />
+      <VisualizationSurface state={selectedNode} />
     </VisualizationProvider>
   );
 };
