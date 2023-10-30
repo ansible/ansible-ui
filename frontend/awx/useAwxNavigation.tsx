@@ -1,39 +1,39 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
+import { PageNotImplemented } from '../../framework/PageEmptyStates/PageNotImplemented';
 import {
   PageNavigationItem,
   removeLeadingSlash,
 } from '../../framework/PageNavigation/PageNavigationItem';
-import { PageNotImplemented } from '../common/PageNotImplemented';
 import { AwxLogin } from './AwxLogin';
 import { AwxRoute } from './AwxRoutes';
-import Reports from './analytics/Reports/Reports';
 import { Test } from './analytics/AnalyticsReportBuilder/Test';
+import Reports from './analytics/Reports/Reports';
 import ReportsList from './analytics/Reports/ReportsList';
 import SubscriptionUsage from './analytics/subscription-usage/SubscriptionUsage';
 import { AwxDashboard } from './dashboard/AwxDashboard';
 import Settings from './settings/Settings';
-import HostMetrics from './views/jobs/HostMetrics';
-import { useGetAwxInventoryRoutes } from './useGetAwxInventoryRoutes';
-import { useGetAwxHostRoutes } from './useGetAwxHostRoutes';
-import { useGetAwxProjectRoutes } from './useGetAwxProjectRoutes';
-import { useGetAwxCredentialRoutes } from './useGetAwxCredentialRoutes';
-import { useGetAwxTemplateRoutes } from './useGetAwxTemplateRoutes';
-import { useGetAwxWorkflowApprovalRoutes } from './useGetAwxWorkflowApprovalRoutes';
-import { useGetAwxJobsRoutes } from './useGetAwxJobsRoutes';
-import { useGetAwxSchedulesRoutes } from './useGetAwxSchedulesRoutes';
 import { useGetAwxActivityStreamRoutes } from './useGetAwxActivityStream';
-import { useGetAwxOrganizationRoutes } from './useGetAwxOrganizationsRoutes';
-import { useGetAwxTeamsRoutes } from './useGetAwxTeamsRoutes';
-import { useGetAwxUsersRoutes } from './useGetAwxUsersRoutes';
-import { useGetAwxNotificationsRoutes } from './useGetAwxNotificationsRoutes';
-import { useGetAwxManagementJobsRoutes } from './useGetAwxManagementJobsRoutes';
+import { useGetAwxApplicationsRoutes } from './useGetAwxApplicationsRoutes';
+import { useGetAwxCredentialRoutes } from './useGetAwxCredentialRoutes';
+import { useGetAwxCredentialTypesRoutes } from './useGetAwxCredentialTypesRoutes';
+import { useGetAwxExecutionEnvironmentRoutes } from './useGetAwxExecutionEnironmentRoutes';
+import { useGetAwxHostRoutes } from './useGetAwxHostRoutes';
 import { useGetAwxInstanceGroupsRoutes } from './useGetAwxInstanceGroupsRoutes';
 import { useGetAwxInstancesRoutes } from './useGetAwxInstancesRoutes';
-import { useGetAwxApplicationsRoutes } from './useGetAwxApplicationsRoutes';
-import { useGetAwxExecutionEnvironmentRoutes } from './useGetAwxExecutionEnironmentRoutes';
-import { useGetAwxCredentialTypesRoutes } from './useGetAwxCredentialTypesRoutes';
+import { useGetAwxInventoryRoutes } from './useGetAwxInventoryRoutes';
+import { useGetAwxJobsRoutes } from './useGetAwxJobsRoutes';
+import { useGetAwxManagementJobsRoutes } from './useGetAwxManagementJobsRoutes';
+import { useGetAwxNotificationsRoutes } from './useGetAwxNotificationsRoutes';
+import { useGetAwxOrganizationRoutes } from './useGetAwxOrganizationsRoutes';
+import { useGetAwxProjectRoutes } from './useGetAwxProjectRoutes';
+import { useGetAwxSchedulesRoutes } from './useGetAwxSchedulesRoutes';
+import { useGetAwxTeamsRoutes } from './useGetAwxTeamsRoutes';
+import { useGetAwxTemplateRoutes } from './useGetAwxTemplateRoutes';
+import { useGetAwxUsersRoutes } from './useGetAwxUsersRoutes';
+import { useGetAwxWorkflowApprovalRoutes } from './useGetAwxWorkflowApprovalRoutes';
+import HostMetrics from './views/jobs/HostMetrics';
 
 export function useAwxNavigation() {
   const { t } = useTranslation();

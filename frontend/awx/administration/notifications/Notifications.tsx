@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout } from '../../../../framework';
-import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
+import { PageNotImplemented } from '../../../../framework/PageEmptyStates/PageNotImplemented';
 import { useAwxConfig } from '../../common/useAwxConfig';
-import { PageNotImplemented } from '../../../common/PageNotImplemented';
+import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
 
 export function Notifications() {
   const { t } = useTranslation();
