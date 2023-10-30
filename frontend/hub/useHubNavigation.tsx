@@ -27,6 +27,7 @@ import { SignatureKeys } from './signature-keys/SignatureKeys';
 import { TaskDetails } from './tasks/TaskDetails';
 import { Tasks } from './tasks/Tasks';
 import { Token } from './token/Token';
+import { CreateRemoteRegistry } from './remote-registries/RemoteRegistryForm';
 
 export function useHubNavigation() {
   const { t } = useTranslation();
@@ -156,6 +157,11 @@ export function useHubNavigation() {
                   {
                     path: '',
                     element: <RemoteRegistries />,
+                  },
+                  {
+                    path: 'create',
+                    id: HubRoute.CreateRemoteRegistry,
+                    element: <CreateRemoteRegistry />,
                   },
                 ],
               },
