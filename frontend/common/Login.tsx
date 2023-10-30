@@ -5,7 +5,7 @@ import background from '../../node_modules/@patternfly/patternfly/assets/images/
 import { useFrameworkTranslations } from '../../framework/useFrameworkTranslations';
 import ErrorBoundary from '../../framework/components/ErrorBoundary';
 import { LoginForm } from './LoginForm';
-import type { AuthOptions } from './SocialAuthLogin';
+import type { AuthOption } from './SocialAuthLogin';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
@@ -34,7 +34,8 @@ const Heading = styled(Title)`
 `;
 
 type LoginProps = {
-  authOptions?: AuthOptions;
+  hideInputs?: boolean;
+  authOptions?: AuthOption[];
   apiUrl?: string;
   onLoginUrl?: string;
 };
@@ -61,6 +62,7 @@ export function Login(props: LoginProps) {
             authOptions={props.authOptions}
             onLoginUrl={props.onLoginUrl}
             onLogin={navigateBack}
+            hideInputs={props.hideInputs}
           />
         </Inner>
       </Wrapper>

@@ -20,14 +20,14 @@ const Grid = styled.div`
   gap: 30px 50px;
 `;
 
-export type AuthOptions = {
-  [key: string]: {
-    login_url: string;
-  };
+export type AuthOption = {
+  name?: string;
+  login_url: string;
+  type: string;
 };
 
 type SocialAuthLoginProps = {
-  options?: AuthOptions;
+  options?: AuthOption[];
 };
 
 export function SocialAuthLogin(props: SocialAuthLoginProps) {
@@ -42,8 +42,8 @@ export function SocialAuthLogin(props: SocialAuthLoginProps) {
     <Container>
       <Heading>{t`Log in with`}</Heading>
       <Grid>
-        {Object.keys(options).map((key) => (
-          <SocialAuthLink key={key} authKey={key} options={options[key]} />
+        {options.map((option) => (
+          <SocialAuthLink key={option.login_url} option={option} />
         ))}
       </Grid>
     </Container>
@@ -63,8 +63,8 @@ const icons: { [key: string]: typeof GithubIcon } = {
   saml: UserCircleIcon,
 };
 
-function SocialAuthLink(props: { authKey: string; options: { login_url: string } }) {
-  const { options } = props;
+function SocialAuthLink(props: { option: AuthOption }) {
+  const { option } = props;
   const { t } = useTranslation();
 
   const labels: { [key: string]: string } = {
@@ -80,17 +80,17 @@ function SocialAuthLink(props: { authKey: string; options: { login_url: string }
     saml: t('SAML'),
   };
 
-  const Icon = icons[props.authKey] ?? UserCircleIcon;
+  const Icon = icons[option.type] ?? UserCircleIcon;
 
   return (
     <Button
-      data-cy={`social-auth-${props.authKey}`}
+      data-cy={`social-auth-${option.type}`}
       component="a"
-      href={options.login_url}
+      href={option.login_url}
       variant="secondary"
     >
       <Icon height="20" width="20" style={{ verticalAlign: '-0.25em', marginRight: '0.5em' }} />
-      {labels[props.authKey] ?? ''}
+      {option.name || labels[option.type] || ''}
     </Button>
   );
 }
