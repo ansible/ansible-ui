@@ -19,7 +19,7 @@
     "build:hub": "rm -rf build/hub && UI_MODE=HUB webpack --mode production --config ./webpack/webpack.hub.cjs --output-path build/hub",
     "build:eda": "rm -rf build/eda && UI_MODE=EDA webpack --mode production --config ./webpack/webpack.eda.cjs --output-path build/eda",
     "clean": "rm -rf dist build coverage .nyc_output cypress/coverage cypress/.nyc_output",
-    "test": "concurrently --kill-others-on-fail npm:tsc npm:eslint npm:prettier npm:component:afw npm:component:common npm:component:awx npm:component:eda npm:component:hub -c auto",
+    "test": "concurrently --kill-others-on-fail npm:tsc npm:eslint npm:prettier npm:component:run -c auto",
     "tsc": "tsc --noEmit",
     "eslint": "eslint --max-warnings=0 frontend framework cypress",
     "eslint:fix": "eslint --fix frontend framework cypress",
