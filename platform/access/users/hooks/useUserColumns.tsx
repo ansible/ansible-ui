@@ -9,10 +9,19 @@ import {
 } from '../../../../framework';
 import { User } from '../../../interfaces/User';
 import { PlatformRoute } from '../../../PlatformRoutes';
+import { useCreatedColumn, useModifiedColumn } from '../../../../frontend/common/columns';
 
 export function useUsersColumns() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
+  const createdColumn = useCreatedColumn({
+    sortKey: 'created_on',
+    hideByDefaultInTableView: true,
+  });
+  const modifiedColumn = useModifiedColumn({
+    sortKey: 'modified_on',
+    hideByDefaultInTableView: true,
+  });
 
   const tableColumns = useMemo<ITableColumn<User>[]>(
     () => [
@@ -42,24 +51,8 @@ export function useUsersColumns() {
         sort: 'last_name',
       },
       //TODO: Column to display teams. Currently not returned in the API.
-      {
-        header: t('Created'),
-        type: 'datetime',
-        value: (user) => user.created_on,
-        table: ColumnTableOption.Hidden,
-        card: 'hidden',
-        list: 'hidden',
-        modal: ColumnModalOption.Hidden,
-      },
-      {
-        header: t('Last modified'),
-        type: 'datetime',
-        value: (user) => user.modified_on,
-        table: ColumnTableOption.Hidden,
-        card: 'hidden',
-        list: 'hidden',
-        modal: ColumnModalOption.Hidden,
-      },
+      createdColumn,
+      modifiedColumn,
     ],
     [getPageUrl, t]
   );
