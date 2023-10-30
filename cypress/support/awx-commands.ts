@@ -21,8 +21,78 @@ import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/generated-fro
 import './auth';
 import './commands';
 import './rest-commands';
+//import { Credential } from '../../frontend/eda/interfaces/generated/eda-api';
 
 //  AWX related custom command implementation
+
+/**@param
+ *
+ */
+
+Cypress.Commands.add('inputCustomCredTypeConfig', (configType: string, credentialType: string) => {
+  cy.get(`[data-cy="${configType}"]`)
+    .find('textarea')
+    .focus()
+    .clear({ force: true })
+    .type('{selectAll}{backspace}', { force: true })
+    .type(`${credentialType}`, {
+      force: true,
+      delay: 100,
+      parseSpecialCharSequences: false,
+    })
+    .type('{esc}', { force: true });
+});
+
+/**@param
+ * createAWXCredentialTypeUI
+ */
+
+Cypress.Commands.add(
+  'createAndDeleteCustomAWXCredentialTypeUI',
+  (
+    customCredTypeName: string,
+    inputConfig?: string,
+    injectorConfig?: string,
+    defaultFormat?: string
+  ) => {
+    const credentialTypeDesc = 'This is a custom credential type that is not managed';
+    cy.navigateTo('awx', 'credential-types');
+    cy.get('a[data-cy="create-credential-type"').click();
+    cy.verifyPageTitle('Create Credential Type');
+    cy.url().then((currentUrl) => {
+      expect(currentUrl.includes('/credential-types/create')).to.be.true;
+    });
+    cy.get('[data-cy="name"]').type(`${customCredTypeName}`);
+    cy.get('[data-cy="description"]').type(`${credentialTypeDesc}`);
+    if (inputConfig && injectorConfig) {
+      if (defaultFormat === 'json') {
+        cy.configFormatToggle('inputs');
+      }
+      cy.inputCustomCredTypeConfig('inputs', inputConfig);
+      if (defaultFormat === 'json') {
+        cy.configFormatToggle('injectors');
+      }
+      cy.inputCustomCredTypeConfig('injectors', injectorConfig);
+    }
+    cy.clickButton(/^Create credential type$/);
+    cy.verifyPageTitle(customCredTypeName);
+    cy.hasDetail(/^Name$/, `${customCredTypeName}`);
+    cy.hasDetail(/^Description$/, `${credentialTypeDesc}`);
+    cy.clickPageAction(/^Delete credential type/);
+    cy.get('#confirm').click();
+    cy.clickButton(/^Delete credential type/);
+    cy.clickButton(/^Close/);
+  }
+);
+
+/** @param
+ * Configuration format YAML-JSON and JSON-YAML toggle switch
+ *
+ */
+
+Cypress.Commands.add('configFormatToggle', (configType: string) => {
+  cy.get(`[data-cy="${configType}-form-group"] [data-cy=toggle-json]`).click();
+});
 
 Cypress.Commands.add('typeMonacoTextField', (textString: string) => {
   cy.get('[data-cy="expandable"]')
@@ -310,8 +380,8 @@ Cypress.Commands.add('createAwxCredentialType', () => {
   cy.awxRequestPost<Pick<CredentialType, 'name' | 'description' | 'kind'>, CredentialType>(
     '/api/v2/credential_types/',
     {
-      name: 'E2E Credential Type ' + randomString(4),
-      description: 'E2E Credential Type Description',
+      name: 'E2E Custom Credential Type ' + randomString(4),
+      description: 'E2E Custom Credential Type Description',
       kind: 'cloud',
     }
   );

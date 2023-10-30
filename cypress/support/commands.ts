@@ -65,7 +65,19 @@ declare global {
       /**Locates a title using its label. No assertion is made. */
       verifyPageTitle(label: string): Chainable<void>;
 
+      // ---- UI COMMANDS ---
+      createAndDeleteCustomAWXCredentialTypeUI(
+        customCredentialTypeName: string,
+        inputConfig?: string,
+        injectorConfig?: string,
+        defaultConfig?: string
+      ): Chainable<void>;
+
       // --- INPUT COMMANDS ---
+
+      inputCustomCredTypeConfig(configType: string, credType: string): Chainable<void>;
+
+      configFormatToggle(configType: string): Chainable<void>;
 
       typeMonacoTextField(textString: string): Chainable<void>;
 

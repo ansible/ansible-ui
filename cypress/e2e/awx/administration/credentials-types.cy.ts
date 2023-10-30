@@ -3,12 +3,22 @@ import { randomString } from '../../../../framework/utils/random-string';
 
 describe('Credential Types', () => {
   let credentialType: CredentialType;
+  let inputCredType: string;
+  let injectorCredType: string;
 
   before(() => {
     cy.awxLogin();
 
     cy.createAwxCredentialType().then((credType: CredentialType) => {
       credentialType = credType;
+    });
+
+    cy.fixture('credTypes-input-config').then((credentialType: CredentialType) => {
+      inputCredType = JSON.stringify(credentialType);
+    });
+
+    cy.fixture('credTypes-injector-config').then((credentialType: CredentialType) => {
+      injectorCredType = JSON.stringify(credentialType);
     });
   });
 
@@ -37,26 +47,34 @@ describe('Credential Types', () => {
     });
   });
 
-  it('create a new credential type', () => {
-    const credentialTypeName = 'E2E Credential Type' + randomString(4);
-    const credentialTypeDesc = 'This is a custom credential type that is not managed';
-    cy.navigateTo('awx', 'credential-types');
-    // Verify navigation to the Create Credential UI
-    cy.get('a[data-cy="create-credential-type"').click();
-    cy.verifyPageTitle('Create Credential Type');
-    cy.url().then((currentUrl) => {
-      expect(currentUrl.includes('/credential-types/create')).to.be.true;
-    });
-    cy.get('[data-cy="name"]').type(`${credentialTypeName}`);
-    cy.get('[data-cy="description"]').type(`${credentialTypeDesc}`);
-    cy.clickButton(/^Create credential type$/);
-    cy.verifyPageTitle(credentialTypeName);
-    cy.hasDetail(/^Name$/, `${credentialTypeName}`);
-    cy.hasDetail(/^Description$/, `${credentialTypeDesc}`);
-    cy.clickPageAction(/^Delete credential type/);
-    cy.get('#confirm').click();
-    cy.clickButton(/^Delete credential type/);
-    cy.clickButton(/^Close/);
+  it('create a new credential type with no configs', () => {
+    const customCredentialTypeName = 'E2E Custom Credential Type' + randomString(4);
+    cy.createAndDeleteCustomAWXCredentialTypeUI(customCredentialTypeName);
+    // uncomment below after it is fixed
+    //Assert page redirects to list page
+    //cy.verifyPageTitle('Credential Types');
+  });
+
+  it('creates a custom credential type with input and injector configurations in JSON format in the Monaco editor', () => {
+    const customCredentialTypeName = 'E2E Custom Credential Type' + randomString(4);
+    cy.createAndDeleteCustomAWXCredentialTypeUI(
+      customCredentialTypeName,
+      inputCredType,
+      injectorCredType,
+      'json'
+    );
+    // uncomment below after it is fixed
+    //Assert page redirects to list page
+    //cy.verifyPageTitle('Credential Types');
+  });
+
+  it('creates a custom credential type with input and injector configurations in YAML format in the Monaco editor', () => {
+    const customCredentialTypeName = 'E2E Custom Credential Type' + randomString(4);
+    cy.createAndDeleteCustomAWXCredentialTypeUI(
+      customCredentialTypeName,
+      inputCredType,
+      injectorCredType
+    );
     // uncomment below after it is fixed
     //Assert page redirects to list page
     //cy.verifyPageTitle('Credential Types');
@@ -172,5 +190,13 @@ describe('Credential Types', () => {
         cy.clickButton(/^Clear all filters$/);
       });
     });
+  });
+
+  it('checks that deleting a custom credential type which is being used by a credential is not allowed', () => {
+    //Error received from API - "Credential types that are in use cannot be deleted"
+  });
+
+  it('checks that editing a custom credential type which is being used by a credential and trying to add input/injector configs is not allowed ', () => {
+    //Error received from API - "Modifications to inputs are not allowed  for credential types that are in use"
   });
 });
