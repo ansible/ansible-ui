@@ -59,7 +59,7 @@ import { AwxError } from '../../awx/common/AwxError';
 import { StatusCell } from '../../common/Status';
 import { useGetRequest, useGet } from '../../common/crud/useGet';
 import { HubRoute } from '../HubRoutes';
-import { hubAPI } from '../api/utils';
+import { hubAPI, pulpAPI } from '../api/utils';
 import { HubItemsResponse } from '../useHubView';
 import { PageSingleSelect } from './../../../framework/PageInputs/PageSingleSelect';
 import { CollectionVersionSearch } from './Collection';
@@ -67,6 +67,7 @@ import { useCollectionActions } from './hooks/useCollectionActions';
 import { useCollectionColumns } from './hooks/useCollectionColumns';
 import { usePageNavigate } from '../../../framework';
 import { useRepositoryBasePath } from '../api/utils';
+import { requestGet } from '../../common/crud/Data';
 
 export function CollectionDetails() {
   const { t } = useTranslation();
@@ -287,14 +288,28 @@ function CollectionDetailsTab(props: { collection?: CollectionVersionSearch }) {
 function CollectionInstallTab(props: { collection?: CollectionVersionSearch }) {
   const { t } = useTranslation();
   const { collection } = props;
-  let distroBasePath = '';
-  useRepositoryBasePath(collection?.repository?.name, collection?.repository?.pulp_href).then(
-    (res) => {
-      distroBasePath = res;
-      console.log(distroBasePath, 'distrobasePath inside then')
-    }
+  const { basePath, error, loading } = useRepositoryBasePath(
+    collection?.repository?.name,
+    collection?.repository?.pulp_href
   );
 
+  if (loading) {
+    return <>{loading}</>;
+  }
+  if (error) {
+    return <>{error}</>;
+  }
+
+  console.log(collection?.repository?.name, collection?.repository?.pulp_href, 'name & href');
+  console.log('distroB: ', basePath);
+
+  const downloadURL = requestGet<unknown>(
+    hubAPI(
+      `v3/plugin/ansible/content/${basePath}/collections/index/${collection?.collection_version?.namespace}/${collection?.collection_version?.name}/versions/${collection?.collection_version?.version}/`
+    )
+  );
+
+  console.log('down: ', downloadURL);
   return (
     <Scrollable>
       <PageSection variant="light">
@@ -318,12 +333,8 @@ function CollectionInstallTab(props: { collection?: CollectionVersionSearch }) {
               variant="link"
               icon={<DownloadIcon />}
               onClick={() => {
-                Download(
-                  collection?.repository,
-                  collection?.collection_version?.namespace,
-                  collection?.collection_version?.name,
-                  collection?.collection_version?.version
-                );
+                // Download(distroBasePath, downloadURL);
+                console.log('hallo');
               }}
             >
               {t(`Download tarball`)}
@@ -339,17 +350,10 @@ function CollectionInstallTab(props: { collection?: CollectionVersionSearch }) {
   );
 }
 
-function Download(
-  repository: unknown,
-  namespace: string | undefined,
-  name: string | undefined,
-  version: string | undefined
-) {
-  console.log('repo: ', repository);
-  console.log('nspace', namespace);
-  console.log('name: ', name);
-  console.log('version: ', version);
-}
+// function Download(downloadURL: string, distroBasePath: unknown) {
+//   console.log('downloadURL: ', downloadURL);
+//   console.log('distroBasePath: ', distroBasePath);
+// }
 
 function CollectionDocumentationTab(props: { collection?: CollectionVersionSearch }) {
   const { collection } = props;
