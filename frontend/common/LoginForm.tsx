@@ -16,13 +16,14 @@ import { HubRoute } from '../hub/HubRoutes';
 import { RequestError, createRequestError } from './crud/RequestError';
 import { setCookie } from './crud/cookie';
 import { useInvalidateCacheOnUnmount } from './useInvalidateCache';
-import { AuthOptions, SocialAuthLogin } from './SocialAuthLogin';
+import { AuthOption, SocialAuthLogin } from './SocialAuthLogin';
 
 type LoginFormProps = {
   apiUrl?: string;
-  authOptions?: AuthOptions;
+  authOptions?: AuthOption[];
   onLoginUrl?: string;
   onLogin?: () => void;
+  hideInputs?: boolean;
 };
 
 export function LoginForm(props: LoginFormProps) {
@@ -138,6 +139,10 @@ export function LoginForm(props: LoginFormProps) {
     },
     [pageNavigate, navigate, props, t]
   );
+
+  if (props.hideInputs) {
+    return <SocialAuthLogin options={authOptions} />;
+  }
 
   return (
     <GenericForm onSubmit={onSubmit}>

@@ -1,13 +1,30 @@
 import { useGetPageUrl } from '../../framework/PageNavigation/useGetPageUrl';
 import { Login } from '../common/Login';
-import type { AuthOptions } from '../common/SocialAuthLogin';
+import type { AuthOption } from '../common/SocialAuthLogin';
 import { useGet } from '../common/crud/useGet';
 import { AwxRoute } from './AwxRoutes';
 
+type AwxAuthOptions = {
+  [key: string]: {
+    login_url: string;
+  };
+};
+
 export function AwxLogin() {
-  const { data: options } = useGet<AuthOptions>('/api/v2/auth/');
+  const { data: options } = useGet<AwxAuthOptions>('/api/v2/auth/');
   const getPageUrl = useGetPageUrl();
+
+  const authOptions: AuthOption[] = [];
+  if (options) {
+    Object.keys(options).forEach((key) => {
+      authOptions.push({
+        login_url: options[key].login_url,
+        type: key,
+      });
+    });
+  }
+
   return (
-    <Login authOptions={options} apiUrl="/api/login/" onLoginUrl={getPageUrl(AwxRoute.Login)} />
+    <Login authOptions={authOptions} apiUrl="/api/login/" onLoginUrl={getPageUrl(AwxRoute.Login)} />
   );
 }
