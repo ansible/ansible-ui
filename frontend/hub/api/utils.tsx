@@ -19,13 +19,12 @@ function getBaseAPIPath() {
 }
 
 type Results = { data: { results: Repository[] | Distribution[] } };
-export function useRepositoryBasePath(name: string | undefined, pulp_href?: string | undefined) {
-  console.log(name, pulp_href, 'useRepositoryBasePath');
+export function useRepositoryBasePath(name: string, pulp_href?: string | undefined) {
   const { t } = useTranslation();
 
-  const [basePath, setBasePath] = useState<string | null>('blahahhh');
+  const [basePath, setBasePath] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string>('');
 
   useEffect(() => {
     setLoading(true);
@@ -75,7 +74,6 @@ export function useRepositoryBasePath(name: string | undefined, pulp_href?: stri
   }, []);
 
   const x = { basePath, loading, error };
-  console.log(x, 'useRepositoryBasePath result');
   return x;
 }
 

@@ -27,6 +27,7 @@ import {
   StackItem,
   Title,
 } from '@patternfly/react-core';
+import React from 'react';
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import {
   BarsIcon,
@@ -59,7 +60,7 @@ import { AwxError } from '../../awx/common/AwxError';
 import { StatusCell } from '../../common/Status';
 import { useGetRequest, useGet } from '../../common/crud/useGet';
 import { HubRoute } from '../HubRoutes';
-import { hubAPI, pulpAPI } from '../api/utils';
+import { hubAPI } from '../api/utils';
 import { HubItemsResponse } from '../useHubView';
 import { PageSingleSelect } from './../../../framework/PageInputs/PageSingleSelect';
 import { CollectionVersionSearch } from './Collection';
@@ -279,7 +280,7 @@ export function CollectionDetails() {
   );
 }
 
-function CollectionDetailsTab(props: { collection?: CollectionVersionSearch }) {
+function CollectionDetailsTab(props: { collection?: CollectionVersionSearch | undefined }) {
   const { collection } = props;
   const tableColumns = useCollectionColumns();
   return <PageDetailsFromColumns item={collection} columns={tableColumns} />;
@@ -287,6 +288,7 @@ function CollectionDetailsTab(props: { collection?: CollectionVersionSearch }) {
 
 function CollectionInstallTab(props: { collection?: CollectionVersionSearch }) {
   const { t } = useTranslation();
+  const downloadLinkRef = React.useRef<HTMLAnchorElement>(null);
   const { collection } = props;
   const { basePath, error, loading } = useRepositoryBasePath(
     collection?.repository?.name,
@@ -300,16 +302,6 @@ function CollectionInstallTab(props: { collection?: CollectionVersionSearch }) {
     return <>{error}</>;
   }
 
-  console.log(collection?.repository?.name, collection?.repository?.pulp_href, 'name & href');
-  console.log('distroB: ', basePath);
-
-  const downloadURL = requestGet<unknown>(
-    hubAPI(
-      `v3/plugin/ansible/content/${basePath}/collections/index/${collection?.collection_version?.namespace}/${collection?.collection_version?.name}/versions/${collection?.collection_version?.version}/`
-    )
-  );
-
-  console.log('downURL: ', downloadURL);
   return (
     <Scrollable>
       <PageSection variant="light">
@@ -329,11 +321,12 @@ function CollectionInstallTab(props: { collection?: CollectionVersionSearch }) {
             <PageDetail>
               {t(`Note Installing collecion with ansible-galaxy is only supported in ansible 2.9+`)}
             </PageDetail>
+            <a ref={downloadLinkRef} style={{ display: 'none' }} />
             <Button
               variant="link"
               icon={<DownloadIcon />}
               onClick={() => {
-                Download(distroBasePath, downloadURL);
+                void Download(basePath, collection, downloadLinkRef);
               }}
             >
               {t(`Download tarball`)}
@@ -349,9 +342,20 @@ function CollectionInstallTab(props: { collection?: CollectionVersionSearch }) {
   );
 }
 
-function Download(downloadURL: string, distroBasePath: unknown) {
-  console.log('downloadURL: ', downloadURL);
-  console.log('distroBasePath: ', distroBasePath);
+async function Download(
+  basePath: string,
+  collection: CollectionVersionSearch | undefined,
+  downloadLinkRef: unknown
+) {
+  const downloadURL = await requestGet<{ download_url: string }>(
+    hubAPI`/v3/plugin/ansible/content/${basePath}/collections/index/${
+      collection?.collection_version?.namespace || ''
+    }/${collection?.collection_version?.name || ''}/versions/${
+      collection?.collection_version?.version || ''
+    }/`
+  );
+  downloadLinkRef.current.href = downloadURL.download_url;
+  downloadLinkRef.current.click();
 }
 
 function CollectionDocumentationTab(props: { collection?: CollectionVersionSearch }) {
