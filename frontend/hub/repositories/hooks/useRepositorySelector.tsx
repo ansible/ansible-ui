@@ -25,7 +25,7 @@ function useParameters(): AsyncSelectFilterBuilderProps<Repository> {
       toolbarFilters,
       tableColumns,
       disableQueryString: true,
-      keyFn: (item) => item.name,
+      keyFn: (item) => item?.name,
     },
   };
 }
