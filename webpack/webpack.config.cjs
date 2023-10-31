@@ -52,7 +52,6 @@ module.exports = function (env, argv) {
   var isProduction = argv.mode === 'production' || argv.mode === undefined;
   var isDevelopment = !isProduction;
   var config = {
-    entry: './frontend',
     resolve: {
       extensions: ['.ts', '.tsx', '.js', '.jsx'],
       fallback: {
@@ -128,19 +127,6 @@ module.exports = function (env, argv) {
       }),
       new CopyPlugin({
         patterns: [{ from: 'frontend/icons', to: 'static/media' }],
-      }),
-      new MonacoWebpackPlugin({
-        languages: ['json', 'yaml', 'shell'],
-        customLanguages: [
-          {
-            label: 'yaml',
-            entry: 'monaco-yaml',
-            worker: {
-              id: 'monaco-yaml/yamlWorker',
-              entry: 'monaco-yaml/yaml.worker',
-            },
-          },
-        ],
       }),
       new CompressionPlugin(),
     ].filter(Boolean),
