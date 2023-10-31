@@ -1,4 +1,4 @@
-import { PageNotImplemented } from '../../../../frontend/common/PageNotImplemented';
+import { PageNotImplemented } from '../../../../framework';
 
 export function TeamDetails() {
   return <PageNotImplemented />;
