@@ -48,10 +48,7 @@ import { PerPageOptions } from '@patternfly/react-core';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { useGetRequest } from '../../../common/crud/useGet';
 import { useState, useEffect } from 'react';
-import {
-  useAnalyticsReportBuilderView,
-  IAnalyticsReportBuilderView,
-} from '../useAnalyticsReportBuilderView';
+import { useAnalyticsView, IAnalyticsView } from '../useAnalyticsView';
 import { PageTable } from '../../../../framework/PageTable/PageTable';
 import { ITableColumn, ITableColumnTypeText } from '../../../../framework';
 import {
@@ -177,7 +174,7 @@ export interface AnalyticsReportBuilderBodyProps extends AnalyticsReportBuilderP
 // extended props for table, it contains tableColumns, view and filters
 export interface AnalyticsTableProps extends AnalyticsReportBuilderBodyProps {
   tableColumns: ITableColumn<AnyType>[];
-  view: IAnalyticsReportBuilderView<AnyType>;
+  view: IAnalyticsView<AnyType>;
   toolbarFilters: IToolbarFilter[];
 }
 
@@ -325,13 +322,16 @@ export function AnalyticsReportBuilder(props: AnalyticsReportBuilderProps) {
   const filters = buildTableFilters(parameters);
 
   // view that reads the data
-  const view = useAnalyticsReportBuilderView<AnyType>({
+  const view = useAnalyticsView<AnyType>({
     url: parameters.mainData?.report.layoutProps.dataEndpoint || '',
     keyFn: parameters.rowKeyFn ? parameters.rowKeyFn : () => 0,
     builderProps: parameters,
     sortableColumns,
     toolbarFilters: filters,
     disableLoading: !(options && mainData),
+    requestMethod: 'post',
+    getItemsCount: (data) => data?.meta.count,
+    getItems: (data) => data?.meta.legend,
   });
 
   const newProps = { ...parameters, view };
@@ -343,7 +343,7 @@ export function AnalyticsReportBuilder(props: AnalyticsReportBuilderProps) {
   return (
     <>
       {error}
-      {mainData && options && (
+      {mainData && options && view.pageItems?.length > 0 && (
         <AnalyticsReportBuilderTable
           {...newProps}
           tableColumns={columns}
