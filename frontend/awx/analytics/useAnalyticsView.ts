@@ -3,6 +3,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable react-hooks/exhaustive-deps */
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
@@ -17,7 +19,7 @@ import {
   useView,
   IFilterState,
 } from '../../../framework';
-import { postRequest } from '../../common/crud/Data';
+import { postRequest, requestGet } from '../../common/crud/Data';
 
 import { RequestError } from '../../common/crud/RequestError';
 import {
@@ -25,6 +27,7 @@ import {
   computeMainFilterKeys,
 } from './AnalyticsReportBuilder/AnalyticsReportBuilder';
 import { DefaultDataParams } from './AnalyticsReportBuilder/AnalyticsReportBuilder';
+import { AnyType } from './AnalyticsReportBuilder/AnalyticsReportBuilder';
 
 export interface AnalyticsItemsResponse<T extends object> {
   meta: { count: number; legend: T[] };
@@ -34,11 +37,18 @@ export type QueryParams = {
   [key: string]: string;
 };
 
-export type IAnalyticsReportBuilderView<T extends object> = IView &
+export type IAnalyticsReportBuilderView<
+  T extends object,
+  DataType extends object = AnyType,
+> = IView &
   ISelected<T> & {
+    // max number of items in db - important for paging
     itemCount: number | undefined;
+    // actual items returned for table
     pageItems: T[] | undefined;
-    originalData: undefined;
+
+    // original data returned from request
+    originalData: DataType;
   };
 
 export function getQueryString(queryParams: QueryParams) {
@@ -46,8 +56,15 @@ export function getQueryString(queryParams: QueryParams) {
     .map(([key, value = '']) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
     .join('&');
 }
+/*
+ T is type of actual array T[] that is returned and serves as data for PageTable
+ DataType is type that is returned from the request - inside of it is list of actual items returned
+ but every request has it differently.
 
-export function useAnalyticsReportBuilderView<T extends object>({
+ There are callback functions like getItems, you pass a function that has input the data returned from request
+ and returns array T[] that is actual list of items for Page Table. The same is for getItemsCount 
+*/
+export function useAnalyticsView<T extends object, DataType extends object = AnyType>({
   url,
   keyFn,
   toolbarFilters,
@@ -62,11 +79,22 @@ export function useAnalyticsReportBuilderView<T extends object>({
   builderProps,
   sortableColumns,
   disableLoading,
+  getItems,
+  getItemsCount,
+  requestMethod,
 }: {
+  // url of request
   url: string;
+
+  // unique key of each row,
   keyFn: (item: T) => string | number;
+
+  // pass the same toolbarFilters object that is passed to pageTable
   toolbarFilters?: IToolbarFilter[];
+
+  // pass the same tableColumns object that is passed to pageTable
   tableColumns?: ITableColumn<T>[];
+
   disableQueryString?: boolean;
   queryParams?: QueryParams;
   sortKey?: string;
@@ -74,28 +102,51 @@ export function useAnalyticsReportBuilderView<T extends object>({
   defaultSort?: string | undefined;
   defaultSortDirection?: 'asc' | 'desc' | undefined;
   defaultSelection?: T[];
+
+  // this is unique for AnalyticsReportBuilder
   builderProps?: AnalyticsReportBuilderBodyProps;
+
+  // which columns are sortable
   sortableColumns?: string[];
   disableLoading?: boolean;
+
+  // for requests that needs payload data such as post
+  payloadData?: AnyType;
+
+  // which request will be used, in future, we may add another if needed
+  requestMethod: 'post' | 'get';
+
+  /*  returns list of items - every request can have it differently
+      
+      for example (also getItemsCount described below)
+      this is valid for ReportBuilder request:
+      
+      getItemsCount : (data) => data?.meta.count,
+      getItems : (data) => data?.meta.legend,
+  */
+  getItems: (data: DataType) => T[];
+
+  // returns count of all items in database for the request, that servers for paging
+  getItemsCount: (data: DataType) => number;
 }): IAnalyticsReportBuilderView<T> {
   const [data, setData] = useState<AnalyticsItemsResponse<T> | undefined>(undefined);
   const [error, setError] = useState<any>(undefined);
 
-  const postData = builderProps?.defaultDataParams || {};
+  const payloadData = builderProps?.defaultDataParams || props.payloadData || {};
 
-  // clear all params that are not in filters
+  // clear all params that are not in filters, usage for ReportBuilder
   if (builderProps) {
     const availableFilterKeys = computeMainFilterKeys(builderProps).map((item) => item.key);
     for (const key of availableFilterKeys) {
-      if (postData[key]) {
-        if (Array.isArray(postData[key])) {
-          postData[key] = [];
+      if (payloadData[key]) {
+        if (Array.isArray(payloadData[key])) {
+          payloadData[key] = [];
         }
       }
     }
   }
 
-  builderProps?.processDataRequestPayload?.(builderProps, postData);
+  builderProps?.processDataRequestPayload?.(builderProps, payloadData);
 
   let defaultSort: string | undefined = initialDefaultSort;
   let defaultSortDirection: 'asc' | 'desc' | undefined = initialDefaultSortDirection;
@@ -142,7 +193,7 @@ export function useAnalyticsReportBuilderView<T extends object>({
     }
   }
 
-  fillFilters(postData, filterState, toolbarFilters || []);
+  fillFilters(payloadData, filterState, toolbarFilters || []);
 
   queryString ? (queryString += '&') : (queryString += '?');
   queryString += `offset=${(page - 1) * perPage}`;
@@ -152,14 +203,23 @@ export function useAnalyticsReportBuilderView<T extends object>({
 
   url += queryString;
 
-  // we cant only run fetch when url changes, but also when something in postData changes
-  const postDataJson = JSON.stringify(postData);
-  const changed = url + postDataJson;
+  // we cant only run fetch when url changes, but also when something in payloadData changes
+  const payloadDataJson = JSON.stringify(payloadData || {});
+  const changed = url + payloadDataJson;
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const data = await postRequest(url, postData);
+        let data = null;
+
+        if (requestMethod == 'post') {
+          data = await postRequest(url, payloadData);
+        }
+
+        if (requestMethod == 'get') {
+          data = await requestGet(url);
+        }
+
         setData(data);
       } catch (error) {
         setError(error);
@@ -186,8 +246,8 @@ export function useAnalyticsReportBuilderView<T extends object>({
 
   return useMemo(() => {
     return {
-      itemCount: data?.meta.count,
-      pageItems: data?.meta.legend,
+      itemCount: data ? getItemsCount(data) : 0,
+      pageItems: data ? getItems(data) : [],
       error,
       ...view,
       ...selection,
@@ -197,7 +257,7 @@ export function useAnalyticsReportBuilderView<T extends object>({
 }
 
 export function fillFilters(
-  postData: DefaultDataParams,
+  payloadData: DefaultDataParams,
   filterState: IFilterState,
   toolbarFilters: IToolbarFilter[]
 ) {
@@ -211,13 +271,13 @@ export function fillFilters(
           continue;
         }
 
-        if (!Array.isArray(postData[key])) {
-          postData[key] = values[0];
+        if (!Array.isArray(payloadData[key])) {
+          payloadData[key] = values[0];
         } else {
           for (const value of values) {
-            if (postData && postData[key] && Array.isArray(postData[key])) {
+            if (payloadData && payloadData[key] && Array.isArray(payloadData[key])) {
               // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-              postData[key].push(value);
+              payloadData[key].push(value);
             }
           }
         }
