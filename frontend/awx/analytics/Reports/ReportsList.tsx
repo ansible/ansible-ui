@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout } from '../../../../framework';
-import { PageNotImplemented } from '../../../common/PageNotImplemented';
+import { PageNotImplemented } from '../../../../framework/PageEmptyStates/PageNotImplemented';
 
 export default function ReportsList() {
   const { t } = useTranslation();

@@ -86,7 +86,7 @@ export function useDeleteExecutionEnvironments(onComplete?: (ees: ExecutionEnvir
             count: ees.length,
           }
         ),
-        actionButtonText: t('Delete collections', { count: ees.length }),
+        actionButtonText: t('Delete execution environments', { count: ees.length }),
         items: ees.sort((l, r) => compareStrings(l.name || '', r.name || '')),
         keyFn: (item) => item.name,
         isDanger: true,

@@ -72,7 +72,7 @@ export function useEdaNavigation() {
                 children: [
                   {
                     id: EdaRoute.RuleAuditPage,
-                    path: 'details/:id',
+                    path: ':id',
                     element: <RuleAuditPage />,
                     children: [
                       {
@@ -178,7 +178,7 @@ export function useEdaNavigation() {
                   },
                   {
                     id: EdaRoute.ProjectPage,
-                    path: 'details/:id',
+                    path: ':id',
                     element: <ProjectPage />,
                     children: [
                       {
@@ -215,7 +215,7 @@ export function useEdaNavigation() {
                   },
                   {
                     id: EdaRoute.DecisionEnvironmentPage,
-                    path: 'details/:id',
+                    path: ':id',
                     element: <DecisionEnvironmentPage />,
                     children: [
                       {
@@ -252,7 +252,7 @@ export function useEdaNavigation() {
                   },
                   {
                     id: EdaRoute.CredentialPage,
-                    path: 'details/:id',
+                    path: ':id',
                     element: <CredentialPage />,
                     children: [
                       {
@@ -322,7 +322,7 @@ export function useEdaNavigation() {
                   {
                     id: EdaRoute.UserPage,
                     element: <UserPage />,
-                    path: 'details/:id',
+                    path: ':id',
                     children: [
                       {
                         id: EdaRoute.UserDetails,
@@ -373,7 +373,7 @@ export function useEdaNavigation() {
                   },
                   {
                     id: EdaRoute.RolePage,
-                    path: 'details/:id',
+                    path: ':id',
                     element: <RoleDetails />,
                   },
                   {
