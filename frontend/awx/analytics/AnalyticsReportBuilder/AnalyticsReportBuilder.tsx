@@ -66,10 +66,20 @@ import { ToggleGroup, ToggleGroupItem } from '@patternfly/react-core';
 import { ColumnTableOption } from '../../../../framework/PageTable/PageTableColumn';
 import { IToolbarMultiSelectFilter } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarMultiSelectFilter';
 import { useLocation } from 'react-router-dom';
+import { usePageNavigate } from '../../../../framework';
 import { useSearchParams } from '../../../../framework/components/useSearchParams';
 
 import { ChartFunctions } from '@ansible/react-json-chart-builder';
 import { ChartSchemaElement } from '@ansible/react-json-chart-builder';
+
+import { reportDefaultParams } from './constants';
+
+import {
+  getDateFormatByGranularity,
+  formattedValue,
+  getClickableText,
+  renderAllTasksStatus,
+} from './AnalyticsReportBuilderUtils';
 
 type KeyValue = { key: string; value: string };
 
@@ -91,6 +101,8 @@ export interface MainDataDefinition {
 
       // available chart types like bar or line
       availableChartTypes?: string[];
+
+      clickableLinking: boolean;
     };
   };
 }
@@ -135,9 +147,6 @@ export interface AnalyticsReportBuilderProps {
   // on the fly postprocessing of default params
   processOptionsRequestPayload?: (props: AnalyticsReportBuilderProps, data: AnyType) => void;
 
-  // default post data params
-  defaultDataParams?: DefaultDataParams;
-
   // on the fly postprocessing of default params
   processDataRequestPayload?: (props: AnalyticsReportBuilderProps, data: AnyType) => void;
 
@@ -150,6 +159,9 @@ export interface AnalyticsReportBuilderProps {
 
   // default item.id
   rowKeyFn?: (item: AnyType) => string | number;
+
+  // navigation
+  navigate: ReturnType<typeof usePageNavigate>;
 }
 
 // Extended props for body component, it also contains mainData and options from API
@@ -157,6 +169,9 @@ export interface AnalyticsReportBuilderProps {
 export interface AnalyticsReportBuilderBodyProps extends AnalyticsReportBuilderProps {
   mainData?: MainDataDefinition;
   options?: OptionsDefinition;
+
+  // default post data params
+  defaultDataParams?: DefaultDataParams;
 }
 
 // extended props for table, it contains tableColumns, view and filters
@@ -219,9 +234,13 @@ export function AnalyticsReportBuilder(props: AnalyticsReportBuilderProps) {
 
   // create copy of initial props so we can modify them if needed
   const parameters: AnalyticsReportBuilderBodyProps = { ...props, mainData, options };
+  parameters.defaultDataParams = reportDefaultParams(props.report_name);
 
   const post = usePostRequest();
   const get = useGetRequest();
+
+  const navigate = usePageNavigate();
+  parameters.navigate = navigate;
 
   const [searchParams] = useSearchParams();
   const granularityParam =
@@ -338,6 +357,7 @@ export function AnalyticsReportBuilder(props: AnalyticsReportBuilderProps) {
 // render the table with chart and filters
 function AnalyticsReportBuilderTable(props: AnalyticsTableProps) {
   const location = useLocation();
+
   const queryParams = new URLSearchParams(location.search);
 
   const availableChartTypes = props.mainData?.report?.layoutProps.availableChartTypes;
@@ -392,6 +412,7 @@ function AnalyticsReportBuilderTable(props: AnalyticsTableProps) {
   return (
     <PageTable<AnyType>
       {...props.view}
+      expandedRow={(item) => renderAllTasksStatus(item, props)}
       perPageOptions={perPageOptions}
       errorStateTitle="some error title"
       emptyStateTitle="empty state title"
@@ -593,11 +614,22 @@ function buildTableColumns(params: AnalyticsReportColumnBuilderProps) {
       if (alreadyExist) {
         column = alreadyExist;
       }
+
       column.type = 'text';
       if (!column.header) {
         column.header = key;
       }
-      column.value = (item) => item[key] as string;
+
+      column.value = (item) => {
+        let value = item[key] as string;
+        // hyperlinks
+        if (params.mainData?.report.layoutProps.clickableLinking) {
+          value = getClickableText(item as Record<string, string | number>, key, params);
+        }
+
+        return value;
+      };
+
       column.id = key;
 
       if (!alreadyExist) {
@@ -649,42 +681,3 @@ function buildTableColumns(params: AnalyticsReportColumnBuilderProps) {
 
   return columns;
 }
-
-// another function for chart
-const formattedValue = (key: string, value: number) => {
-  let val;
-  switch (key) {
-    case 'elapsed':
-      val = value.toFixed(2) + ' seconds';
-      break;
-    case 'template_automation_percentage':
-      val = value.toFixed(2) + '%';
-      break;
-    case 'successful_hosts_savings':
-    case 'failed_hosts_costs':
-    case 'monetary_gain':
-      val = currencyFormatter(value);
-      break;
-    default:
-      val = value.toFixed(2);
-  }
-  return val;
-};
-
-// another function for chart
-const currencyFormatter = (n: number): string => {
-  const formatter = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-  });
-
-  return formatter.format(n); /* $2,500.00 */
-};
-
-// another function for chart
-const getDateFormatByGranularity = (granularity: string): string => {
-  if (granularity === 'yearly') return 'formatAsYear';
-  if (granularity === 'monthly') return 'formatAsMonth';
-  if (granularity === 'daily') return 'formatDateAsDayMonth';
-  return '';
-};
