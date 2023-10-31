@@ -120,7 +120,6 @@ export function PageActionDropdown<T extends object>(props: PageActionDropdownPr
             </div>
           ) : undefined
         }
-        ouiaId={id}
         data-cy={id}
       >
         {iconOnly ? undefined : label}
@@ -132,7 +131,6 @@ export function PageActionDropdown<T extends object>(props: PageActionDropdownPr
         onToggle={() => setDropdownOpen(!dropdownOpen)}
         toggleVariant={isPrimary ? 'primary' : undefined}
         style={isPrimary && !label ? { color: 'var(--pf-v5-global--Color--light-100)' } : {}}
-        ouiaId={id}
         data-cy={id}
       >
         {toggleIcon}
@@ -218,7 +216,6 @@ function PageDropdownActionItem<T extends object>(props: {
               }}
               isAriaDisabled={isButtonDisabled}
               id={getID(action)}
-              ouiaId={getID(action)}
               data-cy={getID(action)}
             >
               {action.label}
