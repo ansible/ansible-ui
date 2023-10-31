@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
+  LoadingPage,
   PageFormCheckbox,
   PageFormSubmitHandler,
   PageFormTextInput,
@@ -14,17 +15,18 @@ import { PageFormExpandableSection } from '../../../framework/PageForm/PageFormE
 import { usePostRequest } from '../../common/crud/usePostRequest';
 import { HubPageForm } from '../HubPageForm';
 import { HubRoute } from '../HubRoutes';
-import { appendTrailingSlash, hubAPI } from '../api/utils';
+import { appendTrailingSlash, hubAPI, hubAPIPut, parsePulpIDFromURL } from '../api/utils';
 import { RemoteRegistry } from './RemoteRegistry';
+import { AwxError } from '../../awx/common/AwxError';
+import { useGet } from '../../common/crud/useGet';
+import { HubItemsResponse } from '../useHubView';
 
 interface RemoteRegistryProps extends RemoteRegistry {
   client_key?: string;
   password?: string;
   proxy_password?: string;
   proxy_username?: string;
-  token?: string;
   username?: string;
-  [key: string]: unknown;
 }
 
 export function CreateRemoteRegistry() {
@@ -64,6 +66,75 @@ export function CreateRemoteRegistry() {
             <MiscAdvancedRemoteInputs />
           </PageFormExpandableSection>
         </>
+      </HubPageForm>
+    </PageLayout>
+  );
+}
+
+export function EditRemoteRegistry() {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const params = useParams<{ id: string }>();
+  const name = params.id;
+  const { data, error, refresh } = useGet<HubItemsResponse<RemoteRegistryProps>>(
+    hubAPI`/_ui/v1/execution-environments/registries/?name=${name ?? ''}`
+  );
+  const getPageUrl = useGetPageUrl();
+  if (error) return <AwxError error={error} handleRefresh={refresh} />;
+  if (!data) return <LoadingPage breadcrumbs tabs />;
+
+  const remoteRegistry = data?.data[0];
+
+  const handleRefresh = () => {
+    if (!error && !remoteRegistry) {
+      navigate(-1);
+    }
+  };
+
+  if (data && data.data.length === 0 && !error && !remoteRegistry) {
+    return (
+      <PageLayout>
+        <PageHeader
+          breadcrumbs={[
+            { label: t('Remote registries'), to: getPageUrl(HubRoute.RemoteRegistries) },
+            { label: t('Edit remote registry') },
+          ]}
+        />
+        <AwxError error={new Error(t('Remote registry not found'))} handleRefresh={handleRefresh} />
+      </PageLayout>
+    );
+  }
+
+  const onSubmit: PageFormSubmitHandler<RemoteRegistryProps> = async (remoteRegistry) => {
+    const remoteRegistryId = parsePulpIDFromURL(remoteRegistry.pulp_href) ?? '';
+    await hubAPIPut<RemoteRegistryProps>(
+      hubAPI`/_ui/v1/execution-environments/registries/${remoteRegistryId}/`,
+      remoteRegistry
+    );
+    navigate(-1);
+  };
+
+  return (
+    <PageLayout>
+      <PageHeader
+        title={t('Edit remote registry ')}
+        breadcrumbs={[
+          { label: t('Remote registries'), to: getPageUrl(HubRoute.RemoteRegistries) },
+          { label: t('Remote registry') },
+        ]}
+      />
+      <HubPageForm<RemoteRegistryProps>
+        submitText={t('Edit remote registry')}
+        onSubmit={onSubmit}
+        onCancel={() => navigate(-1)}
+        defaultValue={remoteRegistry}
+      >
+        <RemoteInputs />
+        <PageFormExpandableSection singleColumn>
+          <ProxyAdvancedRemoteInputs />
+          <CertificatesAdvancedRemoteInputs />
+          <MiscAdvancedRemoteInputs />
+        </PageFormExpandableSection>
       </HubPageForm>
     </PageLayout>
   );
@@ -170,25 +241,14 @@ function RemoteInputs() {
         name="username"
         label={t('Username')}
         placeholder={t('Enter a username')}
-        labelHelp={t(
-          'The username to be used for authentication when syncing. This is not required when using a token.'
-        )}
+        labelHelp={t('The username to be used for authentication when syncing.')}
       />
       <PageFormTextInput<RemoteRegistryProps>
         type="password"
         name="password"
         label={t('Password')}
         placeholder={t('Enter a password')}
-        labelHelp={t(
-          'The password to be used for authentication when syncing. This is not required when using a token.'
-        )}
-      />
-      <PageFormTextInput<RemoteRegistryProps>
-        name="token"
-        type="password"
-        label={t('Token')}
-        placeholder={t('Enter a token')}
-        labelHelp={t('Token for authenticating to the server URL.')}
+        labelHelp={t('The password to be used for authentication when syncing.')}
       />
     </>
   );
