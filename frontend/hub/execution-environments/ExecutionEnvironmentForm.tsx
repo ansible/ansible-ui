@@ -63,6 +63,7 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
       : '';
 
   const singleRegistry = useGet<Registry>(singleRegistryUrl);
+
   const isLoading = (!executionEnvironment.data || !singleRegistry.data) && mode == 'edit';
 
   if (mode == 'edit' && !tagsSet && isLoading == false) {
@@ -72,7 +73,6 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
   }
 
   const selectRegistrySingle = useSelectRegistrySingle();
-
   const registrySelector = selectRegistrySingle.onBrowse;
 
   const isNew = !executionEnvironment.data?.pulp?.repository;
@@ -141,6 +141,15 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
     registry: { id: singleRegistry.data?.id, name: singleRegistry.data?.name },
     namespace: executionEnvironment.data?.namespace,
   };
+
+  const errorOrLoading =
+    registry.renderErrorOrLoading ||
+    executionEnvironment.renderErrorOrLoading ||
+    singleRegistry.renderErrorOrLoading ||
+    undefined;
+  if (errorOrLoading) {
+    return errorOrLoading;
+  }
 
   return (
     <PageLayout>

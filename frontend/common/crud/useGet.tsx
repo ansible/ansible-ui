@@ -7,6 +7,9 @@ import { normalizeQueryString } from './normalizeQueryString';
 import { requestCommon } from './requestCommon';
 import { useAbortController } from './useAbortController';
 
+import { LoadingPage } from '../../../framework/components/LoadingPage';
+import { AwxError } from '../../awx/common/AwxError';
+
 export function useGet<T>(
   url: string | undefined,
   query?: Record<string, string | number | boolean>,
@@ -24,12 +27,21 @@ export function useGet<T>(
   if (error && !(error instanceof Error)) {
     error = new Error('Unknown error');
   }
+
   return useMemo(
     () => ({
       data: response.data,
       error: response.isLoading ? undefined : error,
       refresh,
       isLoading: response.isLoading,
+      /**
+       * Renders error or loading element, can be used to simplify loading and error logic in application.
+       */
+      renderErrorOrLoading: error ? (
+        <AwxError error={error} handleRefresh={refresh} />
+      ) : response.isLoading ? (
+        <LoadingPage breadcrumbs tabs />
+      ) : null,
     }),
     [response.data, response.isLoading, error, refresh]
   );
