@@ -1,8 +1,12 @@
 import { Text, Label } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { User } from '../../../interfaces/User';
 
-export function UserType(props: { user: User }) {
+export function UserType<
+  T extends {
+    is_superuser?: boolean | null;
+    is_system_auditor?: boolean | null;
+  },
+>(props: { user: T }) {
   const { user } = props;
   const { t } = useTranslation();
   if (user.is_superuser) {
