@@ -1,4 +1,3 @@
-import codeCoverage from '@cypress/code-coverage/task';
 import pkg from 'webpack';
 import env from './webpack/environment.cjs';
 const { DefinePlugin } = pkg;
@@ -13,7 +12,7 @@ export const baseConfig: Cypress.ConfigOptions = {
     testIsolation: false,
     setupNodeEvents(on, config) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-var-requires
-      codeCoverage(on, config);
+      // codeCoverage(on, config);
       return config;
     },
     retries: { runMode: 2, openMode: 0 },
@@ -23,7 +22,7 @@ export const baseConfig: Cypress.ConfigOptions = {
     setupNodeEvents(on, config) {
       // implement node event listeners here
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-var-requires
-      codeCoverage(on, config);
+      // codeCoverage(on, config);
       return config;
     },
     retries: { runMode: 2, openMode: 0 },
