@@ -1,6 +1,5 @@
 import { Skeleton } from '@patternfly/react-core';
 import { Table /* data-codemods */, Tbody, Td, Tr } from '@patternfly/react-table';
-import './PageTable.css';
 
 export function PageLoadingTable() {
   return (
