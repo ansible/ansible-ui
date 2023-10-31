@@ -131,7 +131,6 @@ module.exports = function (env, argv) {
     ].filter(Boolean),
     output: {
       clean: true,
-      filename: isProduction ? '[contenthash].js' : undefined,
       path: path.resolve(__dirname, '../build/public'),
       publicPath: process.env.PUBLIC_PATH || '/',
     },
