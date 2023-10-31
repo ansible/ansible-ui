@@ -13,12 +13,18 @@ import { useTranslation } from 'react-i18next';
 import { PlatformRoute } from '../../../PlatformRoutes';
 import { useDeleteUsers } from './useDeleteUsers';
 import { IPlatformView } from '../../../hooks/usePlatformView';
+import { useOptions } from '../../../../frontend/common/crud/useOptions';
+import {
+  ActionsResponse,
+  OptionsResponse,
+} from '../../../../frontend/awx/interfaces/OptionsResponse';
 
 export function useUserToolbarActions(view: IPlatformView<User>) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
-  // TODO: Update based on RBAC information from Users API
-  const canCreateUser = true;
+
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/gateway/v1/users');
+  const canCreateUser = Boolean(data && data.actions && data.actions['POST']);
   const deleteUsers = useDeleteUsers(view.unselectItemsAndRefresh);
 
   const toolbarActions = useMemo<IPageAction<User>[]>(

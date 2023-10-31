@@ -13,12 +13,18 @@ import { useTranslation } from 'react-i18next';
 import { PlatformRoute } from '../../../PlatformRoutes';
 import { useDeleteTeams } from './useDeleteTeams';
 import { IPlatformView } from '../../../hooks/usePlatformView';
+import {
+  ActionsResponse,
+  OptionsResponse,
+} from '../../../../frontend/awx/interfaces/OptionsResponse';
+import { useOptions } from '../../../../frontend/common/crud/useOptions';
 
 export function useTeamToolbarActions(view: IPlatformView<Team>) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
-  // TODO: Update based on RBAC information from Teams API
-  const canCreateTeam = true;
+
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/gateway/v1/teams');
+  const canCreateTeam = Boolean(data && data.actions && data.actions['POST']);
   const deleteTeams = useDeleteTeams(view.unselectItemsAndRefresh);
 
   const toolbarActions = useMemo<IPageAction<Team>[]>(
