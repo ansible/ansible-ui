@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
 import { TopologyView as PFTopologyView } from '@patternfly/react-topology';
-import { TopologyPipeline } from './TopologyPipeline';
+import { Topology } from './Topology';
 import { useGet } from '../../../../common/crud/useGet';
 import { useWorkflowVisualizerToolbarActions } from './hooks/useWorkflowVisualizerToolbarActions';
 import type { AwxItemsResponse } from '../../../common/AwxItemsResponse';
@@ -27,7 +27,7 @@ export function WorkflowVisualizer() {
   } else if (wfNodes?.results?.length === 0) {
     topologyScreen = <div>EMPTY</div>;
   } else {
-    topologyScreen = <TopologyPipeline data={wfNodes} />;
+    topologyScreen = <Topology data={wfNodes} />;
   }
 
   return (
