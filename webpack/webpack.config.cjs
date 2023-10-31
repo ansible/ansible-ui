@@ -131,6 +131,12 @@ module.exports = function (env, argv) {
     ].filter(Boolean),
     output: {
       clean: true,
+      filename: (pathData, _assetInfo) => {
+        if (pathData.chunk.name === 'app') return '[contenthash].js';
+        return '[name].js';
+      },
+      chunkFilename: '[contenthash].js',
+      assetModuleFilename: '[contenthash][ext][query]',
       path: path.resolve(__dirname, '../build/public'),
       publicPath: process.env.PUBLIC_PATH || '/',
     },
