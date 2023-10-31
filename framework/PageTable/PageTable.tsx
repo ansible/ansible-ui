@@ -810,7 +810,7 @@ function TableRow<T extends object>(props: {
             stickyMinWidth="0px"
             hasRightBorder={props.scrollLeft}
             data-cy={'checkbox-column-cell'}
-            className={props.scrollLeft ? 'bg-lighten border-left' : undefined}
+            className={props.scrollLeft ? 'bg-lighten' : undefined}
           />
         )}
         <TableCells
