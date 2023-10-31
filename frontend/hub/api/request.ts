@@ -12,7 +12,7 @@ interface Options {
 
 interface Response<T> {
   statusCode: number;
-  response: T;
+  response: T | null;
 }
 /**
  * Certain HTTP actions from the Pulp API returns a 202, requiring us to parse the task system to verify the task status.
@@ -51,7 +51,15 @@ async function hubRequestCommon<T extends object | TaskResponse>(
     };
   }
 
+  if (statusCode === 204) {
+    return {
+      statusCode,
+      response: null,
+    };
+  }
+
   const genericResponse = (await receivedResponse.json()) as T;
+
   return {
     statusCode,
     response: genericResponse,
