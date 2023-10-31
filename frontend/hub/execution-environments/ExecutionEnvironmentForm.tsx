@@ -17,7 +17,7 @@ import { hubAPI, hubAPIPost, pulpAPI } from '../api/utils';
 import { ExecutionEnvironment } from './ExecutionEnvironment';
 import { HubPageForm } from '../HubPageForm';
 import { HubItemsResponse } from '../useHubView';
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback } from 'react';
 
 import { patchHubRequest, putHubRequest } from './../api/request';
 import { PageFormAsyncSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncSelect';
@@ -48,25 +48,19 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
     hubAPI`/_ui/v1/execution-environments/registries?page_size=${page_size.toString()}`
   );
 
-  const eeUrl = useMemo(
-    () =>
-      mode == 'edit'
-        ? hubAPI`/v3/plugin/execution-environments/repositories/${params?.id || ''}/`
-        : '',
-    [mode, params?.id]
-  );
+  const eeUrl =
+    mode == 'edit' && params?.id
+      ? hubAPI`/v3/plugin/execution-environments/repositories/${params?.id}/`
+      : '';
 
   const executionEnvironment = useGet<ExecutionEnvironment>(eeUrl);
 
-  const singleRegistryUrl = useMemo(
-    () =>
-      mode == 'edit' && executionEnvironment.data
-        ? hubAPI`/_ui/v1/execution-environments/registries/${
-            executionEnvironment.data?.pulp?.repository?.remote?.registry || ''
-          }/`
-        : '',
-    [mode, executionEnvironment.data]
-  );
+  const singleRegistryUrl =
+    mode == 'edit' &&
+    executionEnvironment.data &&
+    executionEnvironment.data?.pulp?.repository?.remote?.registry
+      ? hubAPI`/_ui/v1/execution-environments/registries/${executionEnvironment.data?.pulp?.repository?.remote?.registry}/`
+      : '';
 
   const singleRegistry = useGet<Registry>(singleRegistryUrl);
   const isLoading = (!executionEnvironment.data || !singleRegistry.data) && mode == 'edit';
@@ -86,7 +80,7 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
     ? !!executionEnvironment.data?.pulp?.repository?.remote
     : true;
 
-  const query = useCallback(async () => {
+  const query = useCallback(() => {
     return Promise.resolve({
       total: registry?.data?.meta?.count || 0,
       values: registry?.data?.data || [],
@@ -234,7 +228,7 @@ function validateName(name: string, t: TFunction<'translation', undefined>) {
     return undefined;
   } else {
     return t(
-      `Container names can only contain alphanumeric characters, ".", "_", "-" and a up to one "/".`
+      `Container names can only contain alphanumeric characters, ".", "_", "-" and up to one "/".`
     );
   }
 }
@@ -273,7 +267,7 @@ function TagsSelector(props: {
   const label2 = mode == 'exclude' ? t('Currently excluded tags') : t('Currently included tags');
 
   const chipGroupProps = () => {
-    const count = '${remaining}';
+    const count = '${remaining}'; // pf templating
     return {
       collapsedText: t(`{{count}} more`, count.toString()),
       expandedText: t(`Show Less`),
@@ -284,7 +278,7 @@ function TagsSelector(props: {
     if (tagsText == '' || !tagsText.trim().length) {
       return;
     }
-    const tagsArray = tagsText.split(',');
+    const tagsArray = tagsText.split(/\s+|\s*,\s*/).filter(Boolean);
     const uniqueArray = [...new Set([...tags, ...tagsArray])];
     setTags(uniqueArray);
     setTagsText('');
