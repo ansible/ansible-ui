@@ -18,7 +18,7 @@ function getBaseAPIPath() {
   return process.env.HUB_API_PREFIX;
 }
 
-type Results = { data: { results: Repository[] | Distribution[] } };
+type Results = { results: Repository[] | Distribution[] };
 export function useRepositoryBasePath(name: string, pulp_href?: string | undefined) {
   const { t } = useTranslation();
 
