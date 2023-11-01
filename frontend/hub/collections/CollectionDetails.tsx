@@ -286,13 +286,13 @@ function CollectionDetailsTab(props: { collection?: CollectionVersionSearch | un
   return <PageDetailsFromColumns item={collection} columns={tableColumns} />;
 }
 
-function CollectionInstallTab(props: { collection?: CollectionVersionSearch }) {
+function CollectionInstallTab(props: { collection: CollectionVersionSearch }) {
   const { t } = useTranslation();
   const downloadLinkRef = React.useRef<HTMLAnchorElement>(null);
   const { collection } = props;
   const { basePath, error, loading } = useRepositoryBasePath(
-    collection?.repository?.name,
-    collection?.repository?.pulp_href
+    collection.repository?.name ?? '',
+    collection.repository?.pulp_href
   );
 
   if (loading) {
@@ -345,7 +345,7 @@ function CollectionInstallTab(props: { collection?: CollectionVersionSearch }) {
 async function Download(
   basePath: string,
   collection: CollectionVersionSearch | undefined,
-  downloadLinkRef: unknown
+  downloadLinkRef: React.RefObject<HTMLAnchorElement>
 ) {
   const downloadURL = await requestGet<{ download_url: string }>(
     hubAPI`/v3/plugin/ansible/content/${basePath}/collections/index/${
@@ -354,8 +354,10 @@ async function Download(
       collection?.collection_version?.version || ''
     }/`
   );
-  downloadLinkRef.current.href = downloadURL.download_url;
-  downloadLinkRef.current.click();
+  if (downloadLinkRef.current) {
+    downloadLinkRef.current.href = downloadURL.download_url;
+    downloadLinkRef.current.click();
+  }
 }
 
 function CollectionDocumentationTab(props: { collection?: CollectionVersionSearch }) {

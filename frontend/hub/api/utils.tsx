@@ -61,7 +61,7 @@ export function useRepositoryBasePath(name: string, pulp_href?: string | undefin
         }
       } catch (error) {
         if (isRequestError(error)) {
-          setError(error.message);
+          setError(error?.message);
         } else {
           setError(t`Failed to find repository base path`);
         }
@@ -71,7 +71,7 @@ export function useRepositoryBasePath(name: string, pulp_href?: string | undefin
     };
 
     void fetchRepositoryBasePath();
-  }, []);
+  }, [name, pulp_href, t]);
 
   const x = { basePath, loading, error };
   return x;
