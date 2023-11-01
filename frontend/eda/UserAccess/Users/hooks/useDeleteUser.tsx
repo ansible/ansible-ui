@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { requestDelete } from '../../../../common/crud/Data';
 import { idKeyFn } from '../../../../common/utils/nameKeyFn';
-import { API_PREFIX } from '../../../constants';
+import { edaAPI } from '../../../api/eda-utils';
 import { EdaUser } from '../../../interfaces/EdaUser';
 import { useUserColumns } from './useUserColumns';
 
@@ -26,7 +26,7 @@ export function useDeleteUsers(onComplete: (users: EdaUser[]) => void) {
         confirmationColumns,
         actionColumns,
         onComplete,
-        actionFn: (user: EdaUser) => requestDelete(`${API_PREFIX}/users/${user.id}/`),
+        actionFn: (user: EdaUser) => requestDelete(edaAPI`/users/${user.id.toString()}/`),
       });
     },
     [actionColumns, bulkAction, confirmationColumns, onComplete, t]

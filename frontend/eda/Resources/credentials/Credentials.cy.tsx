@@ -1,17 +1,17 @@
+import { edaAPI } from '../../api/eda-utils';
 import { Credentials } from './Credentials';
-import { API_PREFIX } from '../../constants';
 
 describe('Credentials.cy.ts', () => {
   beforeEach(() => {
     cy.intercept(
-      { method: 'GET', url: `${API_PREFIX}/credentials/?page=1&page_size=10` },
+      { method: 'GET', url: edaAPI`/credentials/?page=1&page_size=10` },
       {
         fixture: 'edaCredentials.json',
       }
     );
 
     cy.intercept(
-      { method: 'GET', url: `${API_PREFIX}/credentials/?page=2&page_size=10` },
+      { method: 'GET', url: edaAPI`/credentials/?page=2&page_size=10` },
       {
         count: 5,
         next: null,

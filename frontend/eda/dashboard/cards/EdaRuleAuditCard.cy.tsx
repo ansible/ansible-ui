@@ -1,10 +1,10 @@
-import { API_PREFIX } from '../../constants';
+import { edaAPI } from '../../api/eda-utils';
 import { EdaDashboard } from '../EdaDashboard';
 
 describe('EdaRuleAuditCard.cy.ts', () => {
   beforeEach(() => {
     cy.intercept(
-      { method: 'GET', url: `${API_PREFIX}/projects/*` },
+      { method: 'GET', url: edaAPI`/projects/*` },
       {
         count: 1,
         next: null,
@@ -30,21 +30,21 @@ describe('EdaRuleAuditCard.cy.ts', () => {
     );
 
     cy.intercept(
-      { method: 'GET', url: `${API_PREFIX}/activations/*` },
+      { method: 'GET', url: edaAPI`/activations/*` },
       {
         count: 0,
         results: [],
       }
     );
     cy.intercept(
-      { method: 'GET', url: `${API_PREFIX}/decision-environments/*` },
+      { method: 'GET', url: edaAPI`/decision-environments/*` },
       {
         count: 0,
         results: [],
       }
     );
     cy.intercept(
-      { method: 'GET', url: `${API_PREFIX}/audit-rules/*` },
+      { method: 'GET', url: edaAPI`/audit-rules/*` },
       {
         count: 1,
         next: '/api/eda/v1/audit-rules/?page=2&page_size=10&page_size=10',
@@ -67,7 +67,7 @@ describe('EdaRuleAuditCard.cy.ts', () => {
     );
 
     cy.intercept(
-      { method: 'GET', url: `${API_PREFIX}/audit-rules/` },
+      { method: 'GET', url: edaAPI`/audit-rules/` },
       {
         count: 1,
         next: '/api/eda/v1/audit-rules/?page=2&page_size=10&page_size=10',

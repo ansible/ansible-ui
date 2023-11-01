@@ -1,17 +1,17 @@
+import { edaAPI } from '../api/eda-utils';
 import { RulebookActivations } from './RulebookActivations';
-import { API_PREFIX } from '../constants';
 
 describe('RulebookActivations.cy.ts', () => {
   beforeEach(() => {
     cy.intercept(
-      { method: 'GET', url: `${API_PREFIX}/activations/?page=1&page_size=10` },
+      { method: 'GET', url: edaAPI`/activations/?page=1&page_size=10` },
       {
         fixture: 'edaRulebookActivations.json',
       }
     );
 
     cy.intercept(
-      { method: 'GET', url: `${API_PREFIX}/activations/?page=2&page_size=10` },
+      { method: 'GET', url: edaAPI`/activations/?page=2&page_size=10` },
       {
         count: 5,
         next: null,
@@ -121,7 +121,7 @@ describe('Empty list', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: `${API_PREFIX}/activations/*`,
+        url: edaAPI`/activations/*`,
       },
       {
         fixture: 'emptyList.json',

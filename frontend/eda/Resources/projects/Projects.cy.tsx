@@ -1,16 +1,16 @@
-import { API_PREFIX } from '../../constants';
+import { edaAPI } from '../../api/eda-utils';
 import { Projects } from './Projects';
 
 describe('Projects.cy.ts', () => {
   beforeEach(() => {
     cy.intercept(
-      { method: 'GET', url: `${API_PREFIX}/projects/?page=1&page_size=10` },
+      { method: 'GET', url: edaAPI`/projects/?page=1&page_size=10` },
       {
         fixture: 'edaProjects.json',
       }
     );
     cy.intercept(
-      { method: 'GET', url: `${API_PREFIX}/projects/?page=2&page_size=10` },
+      { method: 'GET', url: edaAPI`/projects/?page=2&page_size=10` },
       {
         count: 12,
         next: null,

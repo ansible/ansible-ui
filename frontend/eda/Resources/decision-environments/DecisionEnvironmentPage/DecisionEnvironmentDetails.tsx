@@ -3,7 +3,8 @@ import { Link, useParams } from 'react-router-dom';
 import { DateTimeCell, PageDetail, PageDetails, useGetPageUrl } from '../../../../../framework';
 import { useGet } from '../../../../common/crud/useGet';
 import { EdaRoute } from '../../../EdaRoutes';
-import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../../constants';
+import { edaAPI } from '../../../api/eda-utils';
+import { SWR_REFRESH_INTERVAL } from '../../../constants';
 import { EdaCredential } from '../../../interfaces/EdaCredential';
 import { EdaDecisionEnvironmentRead } from '../../../interfaces/EdaDecisionEnvironment';
 
@@ -26,13 +27,13 @@ export function DecisionEnvironmentDetails() {
     </>
   );
   const { data: decisionEnvironment } = useGet<EdaDecisionEnvironmentRead>(
-    `${API_PREFIX}/decision-environments/${params.id ?? ''}/`,
+    edaAPI`/decision-environments/${params.id ?? ''}/`,
     undefined,
     { refreshInterval: SWR_REFRESH_INTERVAL }
   );
 
   const { data: credential } = useGet<EdaCredential>(
-    `${API_PREFIX}/credentials/${decisionEnvironment?.credential?.id ?? ''}/`
+    edaAPI`/credentials/${decisionEnvironment?.credential?.id.toString() ?? ''}/`
   );
 
   const getPageUrl = useGetPageUrl();
