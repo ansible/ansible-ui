@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import {
   ComponentFactory,
   Controller,
-  DEFAULT_SPACER_NODE_TYPE,
+  DagreLayout,
+  DefaultEdge,
   DefaultGroup,
   DefaultNode,
   Graph,
@@ -10,19 +11,23 @@ import {
   Model,
   ModelKind,
   NodeShape,
-  DagreLayout,
+  NodeStatus,
+  SELECTION_EVENT,
   Visualization,
   VisualizationProvider,
   VisualizationSurface,
-  getEdgesFromNodes,
   withPanZoom,
-  DefaultEdge,
-  SELECTION_EVENT,
   withSelection,
 } from '@patternfly/react-topology';
 import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
 import type { AwxItemsResponse } from '../../../common/AwxItemsResponse';
-import type { LayoutNode, GraphNode } from './types';
+import type { CustomEdgeProps, LayoutNode, GraphNode } from './types';
+import { useTranslation } from 'react-i18next';
+
+const CustomEdge: React.FunctionComponent<CustomEdgeProps> = ({ element }: CustomEdgeProps) => {
+  const data = element.getData();
+  return <DefaultEdge element={element} {...data} />;
+};
 
 const baselineComponentFactory: ComponentFactory = (kind: ModelKind, type: string) => {
   switch (type) {
@@ -35,7 +40,7 @@ const baselineComponentFactory: ComponentFactory = (kind: ModelKind, type: strin
         case ModelKind.node:
           return withSelection()(DefaultNode);
         case ModelKind.edge:
-          return DefaultEdge;
+          return CustomEdge;
         default:
           return undefined;
       }
@@ -54,6 +59,7 @@ export const Topology = ({
   selectedNode,
   handleSelectedNode,
 }: TopologyProps) => {
+  const { t } = useTranslation();
   const controllerRef = useRef<Controller>();
   const controller = controllerRef.current;
 
@@ -131,7 +137,41 @@ export const Topology = ({
       return node;
     });
 
-    const edges = getEdgesFromNodes(nodes, DEFAULT_SPACER_NODE_TYPE, 'edge');
+    const edges = nodes.flatMap((targetNode) => {
+      if (!targetNode.runAfterTasks) return [];
+
+      return targetNode.runAfterTasks.map((sourceNodeId) => {
+        const tagLabel = {
+          [NodeStatus.success]: t('On success'),
+          [NodeStatus.danger]: t('On fail'),
+          [NodeStatus.info]: t('On always'),
+        };
+
+        const sourceNode = layout.find((node) => node.id === Number(sourceNodeId));
+        const targetNodeId = targetNode.id;
+
+        let status = NodeStatus.info;
+        if (sourceNode) {
+          if (sourceNode.success_nodes?.includes(Number(targetNodeId))) {
+            status = NodeStatus.success;
+          } else if (sourceNode.failure_nodes?.includes(Number(targetNodeId))) {
+            status = NodeStatus.danger;
+          }
+        }
+
+        return {
+          id: `${sourceNodeId}-${targetNodeId}`,
+          type: 'edge',
+          source: sourceNodeId,
+          target: targetNodeId,
+          data: {
+            tag: tagLabel[status],
+            tagStatus: status,
+            endTerminalStatus: status,
+          },
+        };
+      });
+    });
 
     const model: Model = {
       edges,
@@ -148,7 +188,7 @@ export const Topology = ({
     }
 
     controller.fromModel(model, true);
-  }, [layout, controller]);
+  }, [t, layout, controller]);
 
   if (!controller) {
     return null;
