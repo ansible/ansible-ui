@@ -47,7 +47,7 @@ describe('EdaRuleAuditCard.cy.ts', () => {
       { method: 'GET', url: edaAPI`/audit-rules/*` },
       {
         count: 1,
-        next: '/api/eda/v1/audit-rules/?page=2&page_size=10&page_size=10',
+        next: edaAPI`/audit-rules/?page=2&page_size=10&page_size=10`,
         previous: null,
         page_size: 10,
         page: 1,
@@ -70,7 +70,7 @@ describe('EdaRuleAuditCard.cy.ts', () => {
       { method: 'GET', url: edaAPI`/audit-rules/` },
       {
         count: 1,
-        next: '/api/eda/v1/audit-rules/?page=2&page_size=10&page_size=10',
+        next: edaAPI`/audit-rules/?page=2&page_size=10&page_size=10`,
         previous: null,
         page_size: 10,
         page: 1,

@@ -14,7 +14,7 @@ describe('Projects.cy.ts', () => {
       {
         count: 12,
         next: null,
-        previous: '/api/eda/v1/projects/?page=1&page_size=10',
+        previous: edaAPI`/projects/?page=1&page_size=10`,
         page_size: 10,
         page: 2,
         results: [
@@ -65,7 +65,7 @@ describe('Empty list', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/eda/v1/projects/*',
+        url: edaAPI`/projects/*`,
       },
       {
         fixture: 'emptyList.json',

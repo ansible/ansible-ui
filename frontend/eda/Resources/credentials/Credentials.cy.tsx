@@ -86,7 +86,7 @@ describe('Empty list', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/eda/v1/credentials/*',
+        url: edaAPI`/credentials/*`,
       },
       {
         fixture: 'emptyList.json',
