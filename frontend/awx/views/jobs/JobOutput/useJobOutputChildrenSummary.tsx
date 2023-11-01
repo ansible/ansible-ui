@@ -1,5 +1,4 @@
 import { useGet } from '../../../../common/crud/useGet';
-import { awxAPI } from '../../../api/awx-utils';
 import { Job } from '../../../interfaces/Job';
 
 export interface IJobOutputChildrenSummary {
@@ -13,7 +12,7 @@ export function useJobOutputChildrenSummary(job: Job, forceFlatMode: boolean) {
   let isFlatMode = forceFlatMode || job.type !== 'job';
 
   const response = useGet<IJobOutputChildrenSummary>(
-    awxAPI`/jobs/${job.id.toString()}/job_events/children_summary/`
+    `/api/v2/jobs/${job.id}/job_events/children_summary/`
   );
   const { data, error } = response;
 
