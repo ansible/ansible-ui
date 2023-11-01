@@ -200,8 +200,10 @@ export async function hubAPIPost<T extends object, RequestBody = unknown>(
   try {
     const { response, statusCode } = await postHubRequest<T>(url, data, signal);
     if (statusCode === 202) {
-      await parseTaskResponse(response as TaskResponse, signal);
+      const taskResponse = await parseTaskResponse(response as TaskResponse, signal);
+      return taskResponse;
     }
+    return response;
   } catch (error) {
     handleError(error, 'Error creating item');
   }
@@ -219,7 +221,7 @@ export async function parseTaskResponse(response: TaskResponse | undefined, sign
   if (response?.task) {
     const taskHref = parsePulpIDFromURL(response.task);
     if (taskHref) {
-      await waitForTask(taskHref, signal);
+      return await waitForTask(taskHref, signal);
     }
   }
 }
@@ -262,7 +264,7 @@ export async function waitForTask(
       const task = response as Task;
 
       if (task && successStatus.includes(task.state)) {
-        break;
+        return response as TaskResponse;
       }
 
       if (task && failingStatus.includes(task.state)) {
