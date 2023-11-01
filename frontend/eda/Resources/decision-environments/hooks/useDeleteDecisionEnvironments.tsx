@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { requestDelete } from '../../../../common/crud/Data';
 import { idKeyFn } from '../../../../common/utils/nameKeyFn';
+import { InUseResources } from '../../../common/EdaResourcesComon';
 import { API_PREFIX } from '../../../constants';
 import {
   EdaDecisionEnvironment,
@@ -12,7 +13,6 @@ import {
   useDecisionEnvironmentColumns,
   useDecisionEnvironmentsColumns,
 } from './useDecisionEnvironmentColumns';
-import { InUseResources } from '../../../common/EdaResourcesComon';
 
 export function useDeleteDecisionEnvironments(
   onComplete: (decisionEnvironments: EdaDecisionEnvironment[]) => void
@@ -51,9 +51,10 @@ export function useDeleteDecisionEnvironments(
         actionColumns,
         onComplete,
         alertPrompts: inUseMessage,
-        actionFn: (decisionEnvironment: EdaDecisionEnvironmentRead) =>
+        actionFn: (decisionEnvironment, signal) =>
           requestDelete(
-            `${API_PREFIX}/decision-environments/${decisionEnvironment.id}/${forceParameter}`
+            `${API_PREFIX}/decision-environments/${decisionEnvironment.id}/${forceParameter}`,
+            signal
           ),
       });
     },
@@ -98,9 +99,10 @@ export function useDeleteDecisionEnvironment(
         actionColumns,
         onComplete,
         alertPrompts: inUseMessage,
-        actionFn: (decisionEnvironment: EdaDecisionEnvironmentRead) =>
+        actionFn: (decisionEnvironment, signal) =>
           requestDelete(
-            `${API_PREFIX}/decision-environments/${decisionEnvironment.id}/${forceParameter}`
+            `${API_PREFIX}/decision-environments/${decisionEnvironment.id}/${forceParameter}`,
+            signal
           ),
       });
     },

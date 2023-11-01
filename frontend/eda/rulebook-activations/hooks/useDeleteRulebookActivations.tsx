@@ -30,8 +30,8 @@ export function useDeleteRulebookActivations(
         confirmationColumns,
         actionColumns,
         onComplete,
-        actionFn: (rulebookActivation: EdaRulebookActivation) =>
-          requestDelete(`${API_PREFIX}/activations/${rulebookActivation.id}/`),
+        actionFn: (rulebookActivation, signal) =>
+          requestDelete(`${API_PREFIX}/activations/${rulebookActivation.id}/`, signal),
       });
     },
     [actionColumns, bulkAction, confirmationColumns, onComplete, t]

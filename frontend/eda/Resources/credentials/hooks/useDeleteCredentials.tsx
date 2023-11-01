@@ -1,13 +1,13 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../../framework';
+import { useNameColumn } from '../../../../common/columns';
 import { requestDelete } from '../../../../common/crud/Data';
 import { idKeyFn } from '../../../../common/utils/nameKeyFn';
+import { InUseResources } from '../../../common/EdaResourcesComon';
 import { API_PREFIX } from '../../../constants';
 import { EdaCredential } from '../../../interfaces/EdaCredential';
 import { useCredentialColumns } from './useCredentialColumns';
-import { useNameColumn } from '../../../../common/columns';
-import { InUseResources } from '../../../common/EdaResourcesComon';
 
 export function useDeleteCredentials(onComplete?: (credentials: EdaCredential[]) => void) {
   const { t } = useTranslation();
@@ -43,8 +43,8 @@ export function useDeleteCredentials(onComplete?: (credentials: EdaCredential[])
         actionColumns,
         onComplete,
         alertPrompts: inUseMessage,
-        actionFn: (credential: EdaCredential) =>
-          requestDelete(`${API_PREFIX}/credentials/${credential.id}/${forceParameter}`),
+        actionFn: (credential, signal) =>
+          requestDelete(`${API_PREFIX}/credentials/${credential.id}/${forceParameter}`, signal),
       });
     },
     [actionColumns, bulkAction, confirmationColumns, onComplete, t]
