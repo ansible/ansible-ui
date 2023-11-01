@@ -1,3 +1,5 @@
+import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
+import { WorkflowNode } from '../../../interfaces/WorkflowNode';
 import { WorkflowVisualizer } from './WorkflowVisualizer';
 
 describe('WorkflowVisualizer', () => {
@@ -27,11 +29,33 @@ describe('WorkflowVisualizer', () => {
   });
 
   it('Should show the visualizer screen', () => {
+    cy.fixture('workflow_nodes.json').then((workflowNodes: AwxItemsResponse<WorkflowNode>) => {
+      workflowNodes.count = 3;
+      cy.intercept(
+        { method: 'GET', url: '/api/v2/workflow_job_templates/*/workflow_nodes/' },
+        workflowNodes
+      );
+    });
+
     cy.mount(<WorkflowVisualizer />);
     cy.get('[data-cy="workflow-visualizer"]').should('be.visible');
     cy.get('[data-cy="workflow-visualizer-toolbar-total-nodes"]').should(
       'have.text',
-      'Total nodes 0'
+      'Total nodes 3'
     );
+  });
+
+  it('Should show Delete all nodes button', () => {
+    cy.intercept(
+      { method: 'GET', url: '/api/v2/workflow_job_templates/*/workflow_nodes/' },
+      { fixture: 'workflow_nodes.json' }
+    );
+
+    cy.mount(<WorkflowVisualizer />);
+    cy.get('.toggle-kebab')
+      .click()
+      .get('.pf-v5-c-menu__item-text')
+      .contains('Remove all nodes')
+      .should('be.visible');
   });
 });
