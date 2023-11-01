@@ -1,11 +1,12 @@
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageDetail, PageDetails, LoadingPage } from '../../../../../framework';
+import { LoadingPage, PageDetail, PageDetails } from '../../../../../framework';
 import { formatDateString } from '../../../../../framework/utils/formatDateString';
 import { useGet } from '../../../../common/crud/useGet';
-import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../../constants';
+import { SWR_REFRESH_INTERVAL } from '../../../constants';
 import { EdaCredential } from '../../../interfaces/EdaCredential';
 import { CredentialOptions } from '../EditCredential';
+import { edaAPI } from '../../../api/eda-utils';
 
 export function CredentialDetails() {
   const { t } = useTranslation();
@@ -21,7 +22,7 @@ export function CredentialDetails() {
   );
   const params = useParams<{ id: string }>();
   const { data: credential } = useGet<EdaCredential>(
-    `${API_PREFIX}/credentials/${params.id ?? ''}/`,
+    edaAPI`/credentials/${params.id ?? ''}/`,
     undefined,
     { refreshInterval: SWR_REFRESH_INTERVAL }
   );

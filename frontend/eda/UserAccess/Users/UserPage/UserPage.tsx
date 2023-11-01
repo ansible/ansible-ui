@@ -15,19 +15,20 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../../framework';
+import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { useGet } from '../../../../common/crud/useGet';
 import { useEdaActiveUser } from '../../../../common/useActiveUser';
 import { EdaRoute } from '../../../EdaRoutes';
-import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../../constants';
+import { SWR_REFRESH_INTERVAL } from '../../../constants';
 import { EdaUser } from '../../../interfaces/EdaUser';
 import { useDeleteUsers } from '../hooks/useDeleteUser';
-import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
+import { edaAPI } from '../../../api/eda-utils';
 
 export function UserPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { data: user } = useGet<EdaUser>(`${API_PREFIX}/users/${params.id ?? ''}/`, undefined, {
+  const { data: user } = useGet<EdaUser>(edaAPI`/users/${params.id ?? ''}/`, undefined, {
     refreshInterval: SWR_REFRESH_INTERVAL,
   });
   const pageNavigate = usePageNavigate();

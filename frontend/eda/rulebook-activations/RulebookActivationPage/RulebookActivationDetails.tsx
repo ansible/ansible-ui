@@ -14,16 +14,16 @@ import { capitalizeFirstLetter } from '../../../../framework/utils/strings';
 import { StatusCell } from '../../../common/Status';
 import { useGetItem } from '../../../common/crud/useGet';
 import { EdaRoute } from '../../EdaRoutes';
-import { API_PREFIX } from '../../constants';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { RestartPolicyEnum, Status906Enum } from '../../interfaces/generated/eda-api';
 import { EdaExtraVarsCell } from '../components/EdaExtraVarCell';
+import { edaAPI } from '../../api/eda-utils';
 
 export function RulebookActivationDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const { data: rulebookActivation } = useGetItem<EdaRulebookActivation>(
-    `${API_PREFIX}/activations/`,
+    edaAPI`/activations/`,
     params.id
   );
   const getPageUrl = useGetPageUrl();

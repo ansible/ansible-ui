@@ -14,12 +14,13 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../../framework';
+import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { useGet } from '../../../../common/crud/useGet';
 import { EdaRoute } from '../../../EdaRoutes';
-import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../../constants';
+import { SWR_REFRESH_INTERVAL } from '../../../constants';
 import { EdaDecisionEnvironmentRead } from '../../../interfaces/EdaDecisionEnvironment';
 import { useDeleteDecisionEnvironment } from '../hooks/useDeleteDecisionEnvironments';
-import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
+import { edaAPI } from '../../../api/eda-utils';
 
 export function DecisionEnvironmentPage() {
   const { t } = useTranslation();
@@ -27,7 +28,7 @@ export function DecisionEnvironmentPage() {
   const pageNavigate = usePageNavigate();
 
   const { data: decisionEnvironment } = useGet<EdaDecisionEnvironmentRead>(
-    `${API_PREFIX}/decision-environments/${params.id ?? ''}/`,
+    edaAPI`/decision-environments/${params.id ?? ''}/`,
     undefined,
     { refreshInterval: SWR_REFRESH_INTERVAL }
   );

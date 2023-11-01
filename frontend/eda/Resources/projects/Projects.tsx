@@ -1,13 +1,13 @@
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../../framework';
 import { EdaRoute } from '../../EdaRoutes';
-import { API_PREFIX } from '../../constants';
 import { EdaProject } from '../../interfaces/EdaProject';
 import { useEdaView } from '../../useEventDrivenView';
 import { useProjectActions } from './hooks/useProjectActions';
 import { useProjectColumns } from './hooks/useProjectColumns';
 import { useProjectFilters } from './hooks/useProjectFilters';
 import { useProjectsActions } from './hooks/useProjectsActions';
+import { edaAPI } from '../../api/eda-utils';
 
 export function Projects() {
   const { t } = useTranslation();
@@ -15,7 +15,7 @@ export function Projects() {
   const toolbarFilters = useProjectFilters();
   const tableColumns = useProjectColumns();
   const view = useEdaView<EdaProject>({
-    url: `${API_PREFIX}/projects/`,
+    url: edaAPI`/projects/`,
     toolbarFilters,
     tableColumns,
   });

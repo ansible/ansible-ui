@@ -2,11 +2,11 @@ import { CubesIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { PageLayout, PageTable } from '../../../../../framework';
-import { API_PREFIX } from '../../../constants';
 import { EdaRuleAuditEvent } from '../../../interfaces/EdaRuleAuditEvent';
 import { useEdaView } from '../../../useEventDrivenView';
 import { useRuleAuditEventsColumns } from '../hooks/useRuleAuditEventsColumns';
 import { useRuleAuditEventsFilters } from '../hooks/useRuleAuditEventsFilters';
+import { edaAPI } from '../../../api/eda-utils';
 
 export function RuleAuditEvents() {
   const params = useParams<{ id: string }>();
@@ -14,7 +14,7 @@ export function RuleAuditEvents() {
   const toolbarFilters = useRuleAuditEventsFilters();
   const tableColumns = useRuleAuditEventsColumns();
   const view = useEdaView<EdaRuleAuditEvent>({
-    url: `${API_PREFIX}/audit-rules/${params?.id || ''}/events/`,
+    url: edaAPI`/audit-rules/${params?.id || ''}/events/`,
     tableColumns,
     toolbarFilters,
   });

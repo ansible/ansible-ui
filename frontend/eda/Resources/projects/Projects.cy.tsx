@@ -1,20 +1,20 @@
-import { API_PREFIX } from '../../constants';
+import { edaAPI } from '../../api/eda-utils';
 import { Projects } from './Projects';
 
 describe('Projects.cy.ts', () => {
   beforeEach(() => {
     cy.intercept(
-      { method: 'GET', url: `${API_PREFIX}/projects/?page=1&page_size=10` },
+      { method: 'GET', url: edaAPI`/projects/?page=1&page_size=10` },
       {
         fixture: 'edaProjects.json',
       }
     );
     cy.intercept(
-      { method: 'GET', url: `${API_PREFIX}/projects/?page=2&page_size=10` },
+      { method: 'GET', url: edaAPI`/projects/?page=2&page_size=10` },
       {
         count: 12,
         next: null,
-        previous: '/api/eda/v1/projects/?page=1&page_size=10',
+        previous: edaAPI`/projects/?page=1&page_size=10`,
         page_size: 10,
         page: 2,
         results: [
@@ -65,7 +65,7 @@ describe('Empty list', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/eda/v1/projects/*',
+        url: edaAPI`/projects/*`,
       },
       {
         fixture: 'emptyList.json',

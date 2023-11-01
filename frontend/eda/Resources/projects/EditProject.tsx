@@ -18,14 +18,14 @@ import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { useIsValidUrl } from '../../../common/validation/useIsValidUrl';
 import { EdaRoute } from '../../EdaRoutes';
-import { API_PREFIX } from '../../constants';
+import { edaAPI } from '../../api/eda-utils';
 import { EdaCredential } from '../../interfaces/EdaCredential';
 import { EdaProject, EdaProjectCreate, EdaProjectRead } from '../../interfaces/EdaProject';
 import { EdaResult } from '../../interfaces/EdaResult';
 
 function ProjectCreateInputs() {
   const { t } = useTranslation();
-  const { data: credentials } = useGet<EdaResult<EdaCredential>>(`${API_PREFIX}/credentials/`);
+  const { data: credentials } = useGet<EdaResult<EdaCredential>>(edaAPI`/credentials/`);
   const isValidUrl = useIsValidUrl();
   const getPageUrl = useGetPageUrl();
   return (
@@ -92,7 +92,7 @@ function ProjectCreateInputs() {
 function ProjectEditInputs() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
-  const { data: credentials } = useGet<EdaResult<EdaCredential>>(`${API_PREFIX}/credentials/`);
+  const { data: credentials } = useGet<EdaResult<EdaCredential>>(edaAPI`/credentials/`);
   return (
     <>
       <PageFormTextInput<EdaProjectCreate>
@@ -157,7 +157,7 @@ export function CreateProject() {
   const postRequest = usePostRequest<EdaProjectCreate, EdaProject>();
 
   const onSubmit: PageFormSubmitHandler<EdaProjectCreate> = async (project) => {
-    const newProject = await postRequest(`${API_PREFIX}/projects/`, project);
+    const newProject = await postRequest(edaAPI`/projects/`, project);
     (cache as unknown as { clear: () => void }).clear?.();
     pageNavigate(EdaRoute.ProjectPage, { params: { id: newProject.id } });
   };
@@ -192,13 +192,13 @@ export function EditProject() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const { data: project } = useGet<EdaProjectRead>(`${API_PREFIX}/projects/${id.toString()}/`);
+  const { data: project } = useGet<EdaProjectRead>(edaAPI`/projects/${id.toString()}/`);
 
   const { cache } = useSWRConfig();
   const patchRequest = usePatchRequest<EdaProjectCreate, EdaProjectCreate>();
 
   const onSubmit: PageFormSubmitHandler<EdaProjectCreate> = async (project) => {
-    await patchRequest(`${API_PREFIX}/projects/${id}/`, project);
+    await patchRequest(edaAPI`/projects/${id.toString()}/`, project);
     (cache as unknown as { clear: () => void }).clear?.();
     navigate(-1);
   };

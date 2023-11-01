@@ -2,11 +2,11 @@
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { UserDetailsBase, UserDetailsType } from '../../../../common/access/UserDetailsBase';
 import { useGet } from '../../../../common/crud/useGet';
-import { API_PREFIX } from '../../../constants';
+import { edaAPI } from '../../../api/eda-utils';
 import { EdaUser } from '../../../interfaces/EdaUser';
 
 export function MyDetails() {
-  const { data: user } = useGet<EdaUser>(`${API_PREFIX}/users/me/`);
+  const { data: user } = useGet<EdaUser>(edaAPI`/users/me/`);
 
   if (!user) return <LoadingPage breadcrumbs tabs />;
 
