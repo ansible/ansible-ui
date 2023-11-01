@@ -50,7 +50,7 @@ import { useGetRequest } from '../../../common/crud/useGet';
 import { useState, useEffect } from 'react';
 import { useAnalyticsView, IAnalyticsView } from '../useAnalyticsView';
 import { PageTable } from '../../../../framework/PageTable/PageTable';
-import { ITableColumn, ITableColumnTypeText } from '../../../../framework';
+import { ITableColumn, ITableColumnTypeText, LoadingPage } from '../../../../framework';
 import {
   IToolbarFilter,
   ToolbarFilterType,
@@ -355,6 +355,7 @@ export function AnalyticsReportBuilder(props: AnalyticsReportBuilderProps) {
           toolbarFilters={filters}
         ></AnalyticsReportBuilderTable>
       )}
+      {(!mainData || !options) && view.pageItems?.length === 0 && <LoadingPage />}
     </>
   );
 }
