@@ -32,7 +32,7 @@ export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivatio
         title: `${activation.name} ${t('enabled')}.`,
         timeout: 5000,
       };
-      await postRequest(edaApi`/activations/${activation.id}/${'enable/'}`, undefined)
+      await postRequest(edaAPI`/activations/${activation.id.toString()}/${'enable/'}`, undefined)
         .then(() => alertToaster.addAlert(alert))
         .catch(() => {
           alertToaster.addAlert({

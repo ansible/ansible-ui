@@ -15,7 +15,7 @@ import { IEdaView } from '../../useEventDrivenView';
 import { useDisableRulebookActivations } from './useControlRulebookActivations';
 import { useDeleteRulebookActivations } from './useDeleteRulebookActivations';
 import { postRequest } from '../../../common/crud/Data';
-import { API_PREFIX } from '../../constants';
+import { edaAPI } from '../../api/eda-utils';
 
 export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivation>) {
   const { t } = useTranslation();
@@ -32,7 +32,7 @@ export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivati
           title: `${activation.name} ${t('enabled')}.`,
           timeout: 5000,
         };
-        await postRequest(`${API_PREFIX}/activations/${activation.id}/enable/`, undefined)
+        await postRequest(edaAPI`/activations/${activation.id.toString()}/enable/`, undefined)
           .then(() => alertToaster.addAlert(alert))
           .catch(() => {
             alertToaster.addAlert({
