@@ -1,12 +1,13 @@
 import { useTranslation } from 'react-i18next';
-import { PageHeader, PageLayout, PageTable } from '../../../framework';
+import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../framework';
+import { HubRoute } from '../HubRoutes';
+import { hubAPI, pulpHrefKeyFn } from '../api/utils';
 import { useHubView } from '../useHubView';
 import { RemoteRegistry } from './RemoteRegistry';
 import { useRemoteRegistriesColumns } from './hooks/useRemoteRegistriesColumns';
+import { useRemoteRegistriesToolbarActions } from './hooks/useRemoteRegistriesToolbarActions';
 import { useRemoteRegistryActions } from './hooks/useRemoteRegistryActions';
 import { useRemoteRegistryFilters } from './hooks/useRemoteRegistryFilters';
-import { hubAPI, pulpHrefKeyFn } from '../api/utils';
-import { useRemoteRegistriesToolbarActions } from './hooks/useRemoteRegistriesToolbarActions';
 
 export function RemoteRegistries() {
   const { t } = useTranslation();
@@ -20,6 +21,7 @@ export function RemoteRegistries() {
   });
   const toolbarActions = useRemoteRegistriesToolbarActions();
   const rowActions = useRemoteRegistryActions();
+  const pageNavigate = usePageNavigate();
   return (
     <PageLayout>
       <PageHeader
@@ -30,14 +32,18 @@ export function RemoteRegistries() {
       />
       <PageTable<RemoteRegistry>
         id="hub-remote-registries-table"
-        toolbarFilters={toolbarFilters}
+        defaultSubtitle={t('Remote Registry')}
+        emptyStateButtonClick={() => {
+          pageNavigate(HubRoute.CreateRemoteRegistry);
+        }}
+        emptyStateButtonText={t('Create remote registry')}
+        emptyStateTitle={t('No remote registries yet')}
+        errorStateTitle={t('Error loading remote registries')}
+        rowActions={rowActions}
         tableColumns={tableColumns}
         toolbarActions={toolbarActions}
-        rowActions={rowActions}
-        errorStateTitle={t('Error loading remote registries')}
-        emptyStateTitle={t('No remote registries yet')}
+        toolbarFilters={toolbarFilters}
         {...view}
-        defaultSubtitle={t('Remote Registry')}
       />
     </PageLayout>
   );
