@@ -50,7 +50,13 @@ import { useGetRequest } from '../../../common/crud/useGet';
 import { useState, useEffect } from 'react';
 import { useAnalyticsView, IAnalyticsView } from '../useAnalyticsView';
 import { PageTable } from '../../../../framework/PageTable/PageTable';
-import { ITableColumn, ITableColumnTypeText, LoadingPage } from '../../../../framework';
+import {
+  ITableColumn,
+  ITableColumnTypeText,
+  LoadingPage,
+  PageHeader,
+  PageLayout,
+} from '../../../../framework';
 import {
   IToolbarFilter,
   ToolbarFilterType,
@@ -349,11 +355,17 @@ export function AnalyticsReportBuilder(props: AnalyticsReportBuilderProps) {
   return (
     <>
       {mainData && options && view.pageItems?.length > 0 && (
-        <AnalyticsReportBuilderTable
-          {...newProps}
-          tableColumns={columns}
-          toolbarFilters={filters}
-        ></AnalyticsReportBuilderTable>
+        <PageLayout>
+          <PageHeader
+            title={mainData?.report?.name || ''}
+            description={mainData?.report?.description || ''}
+          />
+          <AnalyticsReportBuilderTable
+            {...newProps}
+            tableColumns={columns}
+            toolbarFilters={filters}
+          ></AnalyticsReportBuilderTable>
+        </PageLayout>
       )}
       {(!mainData || !options) && view.pageItems?.length === 0 && <LoadingPage />}
     </>
