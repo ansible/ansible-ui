@@ -50,7 +50,9 @@
   background-image: linear-gradient(#ffffff0f, #ffffff0f) !important;
 }
 
-/* .pf-v5-c-truncate__start {
+/* Leaving these here until until we make sure the PF5 upgrade has handled these
+
+.pf-v5-c-truncate__start {
   min-width: unset;
 }
 
@@ -59,10 +61,4 @@
   row-gap: 8px;
 }
 
-.pf-v5-c-page__sidebar-body {
-  padding-top: 0;
-} */
-
-.container {
-  container-type: inline-size;
-}
+*/
