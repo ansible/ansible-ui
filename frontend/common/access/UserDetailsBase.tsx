@@ -52,8 +52,8 @@ export function UserDetailsBase<T extends UserDetailsType>(props: {
         <PageDetail label={t('Email')}>{user.email}</PageDetail>
         <PageDetail label={t('Username')}>{user.username}</PageDetail>
         {organizations && organizations.length > 0 && (
-          <PageDetail label={t('Organization(s)')}>
-            <LabelsCell labels={organizations} />
+          <PageDetail label={t('Organization', { count: organizations.length })}>
+            <LabelsCell labelsWithLinks={organizations} />
           </PageDetail>
         )}
         {user.last_login && (

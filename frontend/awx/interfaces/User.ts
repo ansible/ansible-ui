@@ -23,7 +23,7 @@ export interface User extends Omit<SwaggerUser, 'id' | 'username' | 'summary_fie
   user_type?: 'normal' | 'administrator' | 'auditor';
   disassociate?: boolean;
   organization?: number;
-  related: Partial<{
+  related?: Partial<{
     named_url: string;
     teams: string;
     organizations: string;
