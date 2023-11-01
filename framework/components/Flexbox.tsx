@@ -115,22 +115,22 @@ export function Flexbox(
   return <div className={className}>{props.children}</div>;
 }
 
-export function FlexboxExample() {
-  return (
-    <Flexbox direction="row" alignItems="baseline">
-      <Flexbox direction="column">Content</Flexbox>
-    </Flexbox>
-  );
-}
+// export function FlexboxExample() {
+//   return (
+//     <Flexbox direction="row" alignItems="baseline">
+//       <Flexbox direction="column">Content</Flexbox>
+//     </Flexbox>
+//   );
+// }
 
-export function FlexboxResponsiveExample() {
-  return (
-    <Flexbox
-      direction="row"
-      alignItems="baseline"
-      xs={{ direction: 'column', alignItems: 'center' }}
-    >
-      Content
-    </Flexbox>
-  );
-}
+// export function FlexboxResponsiveExample() {
+//   return (
+//     <Flexbox
+//       direction="row"
+//       alignItems="baseline"
+//       xs={{ direction: 'column', alignItems: 'center' }}
+//     >
+//       Content
+//     </Flexbox>
+//   );
+// }
