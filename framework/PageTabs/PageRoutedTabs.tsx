@@ -73,7 +73,7 @@ export function PageRoutedTabs(props: {
 
       {/* This div is needed to flex grow to fill the page space. */}
       <div style={{ flexGrow: 1, overflow: 'hidden' }}>
-        {/* This div now sets thit max height to 100% which is 100% of the div above */}
+        {/* PageLayout now sets its max height to 100% which is 100% of the div above, which allows it's contents to scroll. */}
         <PageLayout>
           <Outlet />
         </PageLayout>
