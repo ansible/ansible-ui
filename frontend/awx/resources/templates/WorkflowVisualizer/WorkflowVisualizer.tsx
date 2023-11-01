@@ -16,13 +16,13 @@ const TopologyView = styled(PFTopologyView)`
 `;
 
 export function WorkflowVisualizer() {
-  const toolbarActions = useWorkflowVisualizerToolbarActions([] as WorkflowNode[]); // The argument for this function will need to be the number of nodes.
-
-  const [selectedNode, setSelectedNode] = useState<WorkflowNode | undefined>(undefined);
   const { id } = useParams<{ id?: string }>();
+  const [selectedNode, setSelectedNode] = useState<WorkflowNode | undefined>(undefined);
   const { data: wfNodes } = useGet<AwxItemsResponse<WorkflowNode>>(
     `/api/v2/workflow_job_templates/${Number(id).toString()}/workflow_nodes/`
   );
+
+  const toolbarActions = useWorkflowVisualizerToolbarActions(wfNodes?.results ?? []); // The argument for this function will need to be the number of nodes.
   let topologyScreen;
   if (!wfNodes) {
     topologyScreen = <div>Loading...</div>;
