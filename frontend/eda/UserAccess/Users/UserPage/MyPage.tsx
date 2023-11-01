@@ -14,16 +14,16 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../../framework';
+import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { useGet } from '../../../../common/crud/useGet';
 import { useEdaActiveUser } from '../../../../common/useActiveUser';
 import { EdaRoute } from '../../../EdaRoutes';
-import { API_PREFIX } from '../../../constants';
+import { edaAPI } from '../../../api/eda-utils';
 import { EdaUser } from '../../../interfaces/EdaUser';
-import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 
 export function MyPage() {
-  const { data: user } = useGet<EdaUser>(`${API_PREFIX}/users/me/`);
+  const { data: user } = useGet<EdaUser>(edaAPI`/users/me/`);
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
 

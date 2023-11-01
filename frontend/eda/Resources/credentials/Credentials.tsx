@@ -1,13 +1,13 @@
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../../framework';
 import { EdaRoute } from '../../EdaRoutes';
-import { API_PREFIX } from '../../constants';
 import { EdaCredential } from '../../interfaces/EdaCredential';
 import { useEdaView } from '../../useEventDrivenView';
 import { useCredentialActions } from './hooks/useCredentialActions';
 import { useCredentialColumns } from './hooks/useCredentialColumns';
 import { useCredentialFilters } from './hooks/useCredentialFilters';
 import { useCredentialsActions } from './hooks/useCredentialsActions';
+import { edaAPI } from '../../api/eda-utils';
 
 export function Credentials() {
   const { t } = useTranslation();
@@ -15,7 +15,7 @@ export function Credentials() {
   const toolbarFilters = useCredentialFilters();
   const tableColumns = useCredentialColumns();
   const view = useEdaView<EdaCredential>({
-    url: `${API_PREFIX}/credentials/`,
+    url: edaAPI`/credentials/`,
     toolbarFilters,
     tableColumns,
   });

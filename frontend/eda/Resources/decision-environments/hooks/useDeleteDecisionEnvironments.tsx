@@ -3,7 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { requestDelete } from '../../../../common/crud/Data';
 import { idKeyFn } from '../../../../common/utils/nameKeyFn';
-import { API_PREFIX } from '../../../constants';
+import { edaAPI } from '../../../api/eda-utils';
+import { InUseResources } from '../../../common/EdaResourcesComon';
 import {
   EdaDecisionEnvironment,
   EdaDecisionEnvironmentRead,
@@ -12,7 +13,6 @@ import {
   useDecisionEnvironmentColumns,
   useDecisionEnvironmentsColumns,
 } from './useDecisionEnvironmentColumns';
-import { InUseResources } from '../../../common/EdaResourcesComon';
 
 export function useDeleteDecisionEnvironments(
   onComplete: (decisionEnvironments: EdaDecisionEnvironment[]) => void
@@ -25,7 +25,7 @@ export function useDeleteDecisionEnvironments(
     async (decisionEnvironments: EdaDecisionEnvironment[]) => {
       const inUseDes = await InUseResources(
         decisionEnvironments,
-        `${API_PREFIX}/activations/?decision_environment_id=`
+        edaAPI`/activations/?decision_environment_id=`
       );
       const inUseMessage =
         inUseDes && inUseDes.length > 0
@@ -53,7 +53,7 @@ export function useDeleteDecisionEnvironments(
         alertPrompts: inUseMessage,
         actionFn: (decisionEnvironment: EdaDecisionEnvironmentRead) =>
           requestDelete(
-            `${API_PREFIX}/decision-environments/${decisionEnvironment.id}/${forceParameter}`
+            edaAPI`/decision-environments/${decisionEnvironment.id.toString()}/${forceParameter}`
           ),
       });
     },
@@ -72,7 +72,7 @@ export function useDeleteDecisionEnvironment(
     async (decisionEnvironments: EdaDecisionEnvironmentRead[]) => {
       const inUseDes = await InUseResources(
         decisionEnvironments,
-        `${API_PREFIX}/activations/?decision_environment_id=`
+        edaAPI`/activations/?decision_environment_id=`
       );
       const inUseMessage =
         inUseDes && inUseDes.length > 0
@@ -100,7 +100,7 @@ export function useDeleteDecisionEnvironment(
         alertPrompts: inUseMessage,
         actionFn: (decisionEnvironment: EdaDecisionEnvironmentRead) =>
           requestDelete(
-            `${API_PREFIX}/decision-environments/${decisionEnvironment.id}/${forceParameter}`
+            edaAPI`/decision-environments/${decisionEnvironment.id.toString()}/${forceParameter}`
           ),
       });
     },

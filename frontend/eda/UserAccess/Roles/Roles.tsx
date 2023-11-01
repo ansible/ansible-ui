@@ -1,15 +1,15 @@
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 import { EdaRole } from '../../interfaces/EdaRole';
-import { useRoleColumns } from './hooks/useRoleColumns';
-import { API_PREFIX } from '../../constants';
 import { useEdaView } from '../../useEventDrivenView';
+import { useRoleColumns } from './hooks/useRoleColumns';
+import { edaAPI } from '../../api/eda-utils';
 
 export function Roles() {
   const { t } = useTranslation();
   const tableColumns = useRoleColumns(true);
   const view = useEdaView<EdaRole>({
-    url: `${API_PREFIX}/roles/`,
+    url: edaAPI`/roles/`,
     tableColumns,
   });
   return (

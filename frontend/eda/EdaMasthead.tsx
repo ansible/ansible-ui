@@ -13,8 +13,8 @@ import { PageRefreshIcon } from '../common/PageRefreshIcon';
 import { postRequest } from '../common/crud/Data';
 import { useActiveUser } from '../common/useActiveUser';
 import { EdaRoute } from './EdaRoutes';
-import { API_PREFIX } from './constants';
 import EdaIcon from './eda-logo.svg';
+import { edaAPI } from './api/eda-utils';
 
 export function EdaMasthead() {
   const { t } = useTranslation();
@@ -23,7 +23,7 @@ export function EdaMasthead() {
   const activeUser = useActiveUser();
   const { cache } = useSWRConfig();
   const logout = useCallback(async () => {
-    await postRequest(`${API_PREFIX}/auth/session/logout/`, {});
+    await postRequest(edaAPI`/auth/session/logout/`, {});
     for (const key of cache.keys()) {
       cache.delete(key);
     }

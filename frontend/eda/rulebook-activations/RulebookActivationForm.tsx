@@ -22,7 +22,7 @@ import { useGet } from '../../common/crud/useGet';
 import { usePostRequest } from '../../common/crud/usePostRequest';
 import { EdaRoute } from '../EdaRoutes';
 import { EdaProjectCell } from '../Resources/projects/components/EdaProjectCell';
-import { API_PREFIX } from '../constants';
+import { edaAPI } from '../api/eda-utils';
 import { EdaDecisionEnvironment } from '../interfaces/EdaDecisionEnvironment';
 import { EdaExtraVars } from '../interfaces/EdaExtraVars';
 import { EdaProject } from '../interfaces/EdaProject';
@@ -49,14 +49,14 @@ export function CreateRulebookActivation() {
   }) => {
     let extra_var: { id: number } | undefined;
     if (variables && variables.trim().length > 0) {
-      extra_var = await postEdaExtraVars(`${API_PREFIX}/extra-vars/`, {
+      extra_var = await postEdaExtraVars(edaAPI`/extra-vars/`, {
         extra_var: variables,
       });
     }
     rulebookActivation.extra_var_id = extra_var?.id;
     rulebookActivation.rulebook_id = rulebook?.id;
     const newRulebookActivation = await postEdaRulebookActivation(
-      `${API_PREFIX}/activations/`,
+      edaAPI`/activations/`,
       rulebookActivation
     );
     pageNavigate(EdaRoute.RulebookActivationPage, { params: { id: newRulebookActivation.id } });
@@ -103,11 +103,9 @@ export function RulebookActivationInputs() {
       <p>{t('On failure: only restarts when it fails.')}</p>
     </>
   );
-  const { data: projects } = useGet<EdaResult<EdaProject>>(
-    `${API_PREFIX}/projects/?page=1&page_size=200`
-  );
+  const { data: projects } = useGet<EdaResult<EdaProject>>(edaAPI`/projects/?page=1&page_size=200`);
   const { data: environments } = useGet<EdaResult<EdaDecisionEnvironment>>(
-    `${API_PREFIX}/decision-environments/?page=1&page_size=200`
+    edaAPI`/decision-environments/?page=1&page_size=200`
   );
 
   const RESTART_OPTIONS = [
@@ -123,8 +121,8 @@ export function RulebookActivationInputs() {
   const query = useCallback(async () => {
     const response = await requestGet<EdaResult<EdaRulebook>>(
       projectId !== undefined
-        ? `${API_PREFIX}/rulebooks/?project_id=${projectId}&page=1&page_size=200`
-        : `${API_PREFIX}/rulebooks/?page=1&page_size=200`
+        ? edaAPI`/rulebooks/?project_id=${projectId.toString()}&page=1&page_size=200`
+        : edaAPI`/rulebooks/?page=1&page_size=200`
     );
     return Promise.resolve({
       total: response.count,

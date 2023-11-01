@@ -1,11 +1,12 @@
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { PageHeader, PageLayout, useGetPageUrl } from '../../../../../framework';
+import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { useGet } from '../../../../common/crud/useGet';
 import { EdaRoute } from '../../../EdaRoutes';
-import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../../constants';
+import { SWR_REFRESH_INTERVAL } from '../../../constants';
 import { EdaRuleAudit } from '../../../interfaces/EdaRuleAudit';
-import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
+import { edaAPI } from '../../../api/eda-utils';
 
 export function RuleAuditPage() {
   const { t } = useTranslation();
@@ -13,7 +14,7 @@ export function RuleAuditPage() {
   const getPageUrl = useGetPageUrl();
 
   const { data: ruleAudit } = useGet<EdaRuleAudit>(
-    `${API_PREFIX}/audit-rules/${params.id ?? ''}/`,
+    edaAPI`/audit-rules/${params.id ?? ''}/`,
     undefined,
     { refreshInterval: SWR_REFRESH_INTERVAL }
   );
