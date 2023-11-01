@@ -1,5 +1,6 @@
 import { useParams } from 'react-router-dom';
 import { useGetItem } from '../../../../common/crud/useGet';
+import { awxAPI } from '../../../api/awx-utils';
 import { Team } from '../../../interfaces/Team';
 import { ResourceAccessList } from '../../common/ResourceAccessList';
 
@@ -13,5 +14,7 @@ export function TeamAccess() {
 export function TeamAccessInner(props: { team: Team }) {
   const { team } = props;
 
-  return <ResourceAccessList url={`/api/v2/teams/${team.id}/access_list/`} resource={team} />;
+  return (
+    <ResourceAccessList url={awxAPI`/teams/${team.id.toString()}/access_list/`} resource={team} />
+  );
 }

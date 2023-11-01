@@ -29,6 +29,7 @@ import { Instance } from '../../interfaces/Instance';
 import { Dotted } from '../../../../framework/components/Dotted';
 import { capitalizeFirstLetter } from '../../../../framework/utils/strings';
 import { AwxRoute } from '../../AwxRoutes';
+import { awxAPI } from '../../api/awx-utils';
 import { useNodeTypeTooltip } from './hooks/useNodeTypeTooltip';
 
 export function InstanceDetails() {
@@ -56,7 +57,7 @@ export function InstanceDetails() {
         isPinned: true,
         label: t('Run health check'),
         onClick: () => {
-          void postRequest(`/api/v2/instances/${instance?.id ?? 0}/health_check/`, {});
+          void postRequest(awxAPI`/instances/${instance?.id.toString() ?? ''}/health_check/`, {});
         },
       },
     ];

@@ -5,6 +5,7 @@ import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { useAwxWebSocketSubscription } from '../../../common/useAwxWebSocket';
 import { Job } from '../../../interfaces/Job';
 import { JobEvent } from '../../../interfaces/JobEvent';
+import { awxAPI } from '../../../api/awx-utils';
 
 type WebSocketMessage = {
   group_name?: string;
@@ -41,7 +42,7 @@ export function useJobOutput(
       isQuerying.current.querying = true;
 
       void requestGet<AwxItemsResponse<JobEvent>>(
-        `/api/v2/${job.type}s/${job.id.toString()}/${eventsSlug}/?${qsParts.join('&')}`
+        awxAPI`/${job.type}s/${job.id.toString()}/${eventsSlug}/?${qsParts.join('&')}`
       )
         .then((itemsResponse) => {
           if (!isJobRunning) {

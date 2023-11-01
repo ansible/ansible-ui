@@ -4,6 +4,7 @@ import { Navigate } from 'react-router-dom';
 import { PageNavigationItem } from '../../framework';
 import { PageNotImplemented } from '../../framework/PageEmptyStates/PageNotImplemented';
 import { AwxRoute } from './AwxRoutes';
+import { awxAPI } from './api/awx-utils';
 import { ProjectDetails } from './resources/projects/ProjectPage/ProjectDetails';
 import { CreateProject, EditProject } from './resources/projects/ProjectPage/ProjectForm';
 import { ProjectPage } from './resources/projects/ProjectPage/ProjectPage';
@@ -107,7 +108,7 @@ export function useGetAwxProjectRoutes() {
             {
               id: AwxRoute.ProjectSchedules,
               path: 'schedules',
-              element: <Schedules sublistEndpoint={`/api/v2/projects`} />,
+              element: <Schedules sublistEndpoint={awxAPI`/projects`} />,
             },
             {
               path: '',

@@ -20,6 +20,7 @@ import { ScheduleDetails } from './views/schedules/SchedulePage/ScheduleDetails'
 import { SchedulePage } from './views/schedules/SchedulePage/SchedulePage';
 import { ScheduleRules } from './views/schedules/SchedulePage/ScheduleRules';
 import { Schedules } from './views/schedules/Schedules';
+import { awxAPI } from './api/awx-utils';
 
 export function useGetAwxTemplateRoutes() {
   const { t } = useTranslation();
@@ -119,7 +120,7 @@ export function useGetAwxTemplateRoutes() {
                 {
                   id: AwxRoute.JobTemplateSchedules,
                   path: 'schedules',
-                  element: <Schedules sublistEndpoint={`/api/v2/job_templates`} />,
+                  element: <Schedules sublistEndpoint={awxAPI`/job_templates`} />,
                 },
                 {
                   path: '',
@@ -225,7 +226,7 @@ export function useGetAwxTemplateRoutes() {
                 {
                   id: AwxRoute.WorkflowJobTemplateSchedules,
                   path: 'schedules',
-                  element: <Schedules sublistEndpoint={`/api/v2/workflow_job_templates`} />,
+                  element: <Schedules sublistEndpoint={awxAPI`/workflow_job_templates`} />,
                 },
                 {
                   id: AwxRoute.WorkflowJobTemplateNotifications,

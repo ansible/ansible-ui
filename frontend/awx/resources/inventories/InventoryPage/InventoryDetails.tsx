@@ -23,10 +23,11 @@ import { useVerbosityString } from '../../../common/useVerbosityString';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { Inventory } from '../../../interfaces/Inventory';
 import { useGetInventory } from './InventoryPage';
+import { awxAPI } from '../../../api/awx-utils';
 
 function useInstanceGroups(inventoryId: string) {
   const { data } = useGet<{ results: InstanceGroup[] }>(
-    `/api/v2/inventories/${inventoryId}/instance_groups/`
+    awxAPI`/inventories/${inventoryId}/instance_groups/`
   );
   return data?.results ?? [];
 }
@@ -53,7 +54,7 @@ export function InventoryDetailsInner(props: { inventory: Inventory }) {
 
   const { data: inputInventories, error: inputInventoriesError } = useGet<{ results: Inventory[] }>(
     inventory.kind === 'constructed'
-      ? `/api/v2/inventories/${inventory.id}/input_inventories/`
+      ? awxAPI`/inventories/${inventory.id.toString()}/input_inventories/`
       : undefined
   );
 

@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { PageFormCreatableSelect } from '../../../framework/PageForm/Inputs/PageFormCreatableSelect';
 import { Label } from '../interfaces/Label';
 import { useAwxGetAllPages } from './useAwxGetAllPages';
+import { awxAPI } from '../api/awx-utils';
 
 /**
  * Component to select and/or create labels in a form
@@ -22,7 +23,7 @@ export function PageFormLabelSelect<
   const { t } = useTranslation();
 
   const { items, isLoading } = useAwxGetAllPages<Label>(
-    `/api/v2/labels/?order_by=name&page=1&page_size=200`
+    awxAPI`/labels/?order_by=name&page=1&page_size=200`
   );
   const options = isLoading ? [{ name: '' }] : items;
   return (

@@ -5,6 +5,7 @@ import { PageFormSelect, PageFormTextInput } from '../../../../../framework';
 import { PageFormHidden } from '../../../../../framework/PageForm/Utils/PageFormHidden';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { ProjectFields } from '../ProjectPage/ProjectForm';
+import { awxAPI } from '../../../api/awx-utils';
 
 interface IConfigData {
   project_base_dir: string | null;
@@ -13,7 +14,7 @@ interface IConfigData {
 
 export function ManualSubForm(props: { localPath?: string }) {
   const { t } = useTranslation();
-  const { data: config } = useSWR<IConfigData>(`/api/v2/config/`, (url: string) =>
+  const { data: config } = useSWR<IConfigData>(awxAPI`/config/`, (url: string) =>
     fetch(url).then((r) => r.json())
   );
   const brand: string = process.env.BRAND ?? 'AWX';

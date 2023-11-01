@@ -7,6 +7,7 @@ import { requestGet } from '../../../../common/crud/Data';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { Credential } from '../../../interfaces/Credential';
 import { useMultiSelectCredential, useSingleSelectCredential } from '../hooks/useSelectCredential';
+import { awxAPI } from '../../../api/awx-utils';
 
 export function PageFormCredentialSelect<
   TFieldValues extends FieldValues = FieldValues,
@@ -45,7 +46,7 @@ export function PageFormCredentialSelect<
         }
         try {
           const itemsResponse = await requestGet<AwxItemsResponse<Credential>>(
-            `/api/v2/credentials/?name=${credentials[0].name}`
+            awxAPI`/credentials/?name=${credentials[0].name}`
           );
           if (itemsResponse.results.length === 0) return t('Credential not found.');
           if (props.credentialPath) setValue(props.credentialPath, itemsResponse.results[0]);
@@ -78,7 +79,7 @@ export function PageFormCredentialSelect<
         }
         try {
           const itemsResponse = await requestGet<AwxItemsResponse<Credential>>(
-            `/api/v2/credentials/?name=${credentialName}`
+            awxAPI`/credentials/?name=${credentialName}`
           );
           if (itemsResponse.results.length === 0) return t('Credential not found.');
           if (props.credentialPath) setValue(props.credentialPath, itemsResponse.results[0]);

@@ -5,12 +5,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   AnalyticsReportBuilder,
   AnalyticsReportBuilderProps,
   AnyType,
 } from './AnalyticsReportBuilder';
-import { useLocation, useNavigate } from 'react-router-dom';
 
 import { useState } from 'react';
 
@@ -57,7 +57,7 @@ function fillReportTypes() {
 }
 
 function fillReports(props: AnalyticsReportBuilderProps, name: string) {
-  props.main_url = `/api/v2/analytics/report/${name}/`;
+  props.main_url = awxAPI`/analytics/report/${name}/`;
   props.report_name = name;
 }
 

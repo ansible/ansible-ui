@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { useNameColumn } from '../../../../common/columns';
 import { getItemKey, requestDelete } from '../../../../common/crud/Data';
+import { awxAPI } from '../../../api/awx-utils';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { useInstanceGroupsColumns } from '../InstanceGroups';
 
@@ -29,7 +30,7 @@ export function useDeleteInstanceGroups(onComplete: (instanceGroups: InstanceGro
       actionColumns,
       onComplete,
       actionFn: (instanceGroup: InstanceGroup) =>
-        requestDelete(`/api/v2/instance-groups/${instanceGroup.id}/`),
+        requestDelete(awxAPI`/instance-groups/${instanceGroup.id.toString()}/`),
     });
   };
   return deleteInstanceGroups;

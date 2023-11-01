@@ -20,6 +20,7 @@ import { getAddedAndRemoved } from '../../common/util/getAddedAndRemoved';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { Inventory } from '../../interfaces/Inventory';
 import { Label } from '../../interfaces/Label';
+import { awxAPI } from '../../api/awx-utils';
 
 interface InventoryFields extends FieldValues {
   inventory: Inventory;
@@ -89,9 +90,9 @@ export function EditInventory() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const { data: inventory } = useGet<Inventory>(`/api/v2/inventories/${id.toString()}/`);
+  const { data: inventory } = useGet<Inventory>(awxAPI`/inventories/${id.toString()}/`);
   const { data: igResponse } = useGet<AwxItemsResponse<InstanceGroup>>(
-    `/api/v2/inventories/${id.toString()}/instance_groups/`
+    awxAPI`/inventories/${id.toString()}/instance_groups/`
   );
   // Fetch instance groups associated with the inventory
   const instanceGroups = igResponse?.results;
@@ -110,7 +111,7 @@ export function EditInventory() {
     }
     // Update the inventory
     const updatedInventory = await requestPatch<Inventory>(
-      `/api/v2/inventories/${id.toString()}/`,
+      awxAPI`/inventories/${id.toString()}/`,
       editedInventory
     );
 
@@ -215,13 +216,13 @@ async function submitLabels(inventory: Inventory, labels: Label[]) {
   );
 
   const disassociationPromises = removed.map((label: { id: number }) =>
-    postRequest(`/api/v2/inventories/${inventory.id.toString()}/labels/`, {
+    postRequest(awxAPI`/inventories/${inventory.id.toString()}/labels/`, {
       id: label.id,
       disassociate: true,
     })
   );
   const associationPromises = added.map((label: { name: string }) =>
-    postRequest(`/api/v2/inventories/${inventory.id.toString()}/labels/`, {
+    postRequest(awxAPI`/inventories/${inventory.id.toString()}/labels/`, {
       name: label.name,
       organization: inventory.organization,
     })
@@ -246,13 +247,13 @@ async function submitInstanceGroups(
   }
 
   const disassociationPromises = removed.map((instanceGroup: { id: number }) =>
-    postRequest(`/api/v2/inventories/${inventory.id.toString()}/instance_groups/`, {
+    postRequest(awxAPI`/inventories/${inventory.id.toString()}/instance_groups/`, {
       id: instanceGroup.id,
       disassociate: true,
     })
   );
   const associationPromises = added.map((instanceGroup: { id: number }) =>
-    postRequest(`/api/v2/inventories/${inventory.id.toString()}/instance_groups/`, {
+    postRequest(awxAPI`/inventories/${inventory.id.toString()}/instance_groups/`, {
       id: instanceGroup.id,
     })
   );

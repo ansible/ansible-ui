@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { useNameColumn } from '../../../../common/columns';
 import { getItemKey, requestDelete } from '../../../../common/crud/Data';
+import { awxAPI } from '../../../api/awx-utils';
 import { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
 import { useExecutionEnvironmentsColumns } from '../ExecutionEnvironments';
 
@@ -35,7 +36,7 @@ export function useDeleteExecutionEnvironments(
       actionColumns,
       onComplete,
       actionFn: (executionEnvironment: ExecutionEnvironment) =>
-        requestDelete(`/api/v2/executionEnvironments/${executionEnvironment.id}/`),
+        requestDelete(awxAPI`/executionEnvironments/${executionEnvironment.id.toString()}/`),
     });
   };
   return deleteExecutionEnvironments;

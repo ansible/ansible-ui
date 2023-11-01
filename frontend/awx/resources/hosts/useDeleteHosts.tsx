@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../framework';
 import { useNameColumn } from '../../../common/columns';
 import { getItemKey, requestDelete } from '../../../common/crud/Data';
+import { awxAPI } from '../../api/awx-utils';
 import { AwxHost } from '../../interfaces/AwxHost';
 import { useHostsColumns } from './Hosts';
 
@@ -25,7 +26,7 @@ export function useDeleteHosts(onComplete: (hosts: AwxHost[]) => void) {
       confirmationColumns,
       actionColumns,
       onComplete,
-      actionFn: (host: AwxHost) => requestDelete(`/api/v2/hosts/${host.id}/`),
+      actionFn: (host: AwxHost) => requestDelete(awxAPI`/hosts/${host.id.toString()}/`),
     });
   };
   return deleteHosts;

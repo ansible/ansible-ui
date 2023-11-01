@@ -8,6 +8,7 @@ import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data'
 import { AwxPageForm } from '../../AwxPageForm';
 import { AwxRoute } from '../../AwxRoutes';
 import { Instance } from '../../interfaces/Instance';
+import { awxAPI } from '../../api/awx-utils';
 
 export function EditInstance() {
   const { t } = useTranslation();
@@ -16,7 +17,7 @@ export function EditInstance() {
   const id = Number(params.id);
 
   const { data: instance } = useSWR<Instance>(
-    `/api/v2/instances/${id.toString()}/`,
+    awxAPI`/instances/${id.toString()}/`,
     requestGet,
     swrOptions
   );
@@ -27,7 +28,7 @@ export function EditInstance() {
     editedInstance.capacity_adjustment = (Math.round(
       (editedInstance.capacity_adjustment as unknown as number) * 100
     ) / 100) as unknown as string;
-    await requestPatch<Instance>(`/api/v2/instances/${id}/`, editedInstance);
+    await requestPatch<Instance>(awxAPI`/instances/${id.toString()}/`, editedInstance);
     (cache as unknown as { clear: () => void }).clear?.();
     navigate(-1);
   };

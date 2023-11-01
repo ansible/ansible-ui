@@ -24,6 +24,7 @@ import { StatusCell } from '../../../../common/Status';
 import { useGet } from '../../../../common/crud/useGet';
 import { ScmType } from '../../../../common/scm';
 import { AwxRoute } from '../../../AwxRoutes';
+import { awxAPI } from '../../../api/awx-utils';
 import { AwxError } from '../../../common/AwxError';
 import { CredentialLabel } from '../../../common/CredentialLabel';
 import { ExecutionEnvironmentDetail } from '../../../common/ExecutionEnvironmentDetail';
@@ -35,7 +36,7 @@ import { Project } from '../../../interfaces/Project';
 export function ProjectDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { error, data: project, refresh } = useGet<Project>(`/api/v2/projects/${params.id ?? ''}/`);
+  const { error, data: project, refresh } = useGet<Project>(awxAPI`/projects/${params.id ?? ''}/`);
   const history = useNavigate();
   const config = useAwxConfig();
   const getPageUrl = useGetPageUrl();

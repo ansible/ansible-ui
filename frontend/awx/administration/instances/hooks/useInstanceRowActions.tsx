@@ -10,6 +10,7 @@ import {
 } from '../../../../../framework';
 import { requestPatch } from '../../../../common/crud/Data';
 import { AwxRoute } from '../../../AwxRoutes';
+import { awxAPI } from '../../../api/awx-utils';
 import { Instance } from '../../../interfaces/Instance';
 import { useRunHealthCheck } from './useRunHealthCheck';
 
@@ -20,7 +21,7 @@ export function useInstanceRowActions(onComplete: (instances: Instance[]) => voi
   const runHealthCheck = useRunHealthCheck(onComplete);
   const handleToggleInstance: (instance: Instance, enabled: boolean) => Promise<void> = useCallback(
     async (instance, enabled) => {
-      await requestPatch(`/api/v2/instances/${instance.id}/`, { enabled });
+      await requestPatch(awxAPI`/instances/${instance.id.toString()}/`, { enabled });
       onComplete([instance]);
     },
     [onComplete]

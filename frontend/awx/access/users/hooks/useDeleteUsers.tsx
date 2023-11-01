@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { compareStrings, TextCell, useBulkConfirmation } from '../../../../../framework';
 import { getItemKey, requestDelete } from '../../../../common/crud/Data';
+import { awxAPI } from '../../../api/awx-utils';
 import { User } from '../../../interfaces/User';
 import { useUsersColumns } from './useUsersColumns';
 
@@ -51,7 +52,7 @@ export function useDeleteUsers(onComplete: (users: User[]) => void) {
       confirmationColumns,
       actionColumns,
       onComplete,
-      actionFn: (user: User) => requestDelete(`/api/v2/users/${user.id}/`),
+      actionFn: (user: User) => requestDelete(awxAPI`/users/${user.id.toString()}/`),
     });
   };
   return deleteUsers;
