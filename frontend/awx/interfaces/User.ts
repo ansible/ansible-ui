@@ -17,12 +17,26 @@ export type AccessRole = {
     unattach: boolean;
   };
 };
-export interface User extends Omit<SwaggerUser, 'id' | 'username' | 'summary_fields'> {
+export interface User extends Omit<SwaggerUser, 'id' | 'username' | 'summary_fields' | 'related'> {
   id: number;
   username: string;
   user_type?: 'normal' | 'administrator' | 'auditor';
   disassociate?: boolean;
   organization?: number;
+  related: Partial<{
+    named_url: string;
+    teams: string;
+    organizations: string;
+    admin_of_organizations: string;
+    projects: string;
+    credentials: string;
+    roles: string;
+    activity_stream: string;
+    access_list: string;
+    tokens: string;
+    authorized_tokens: string;
+    personal_tokens: string;
+  }>;
   summary_fields: {
     organization: SummaryFieldsOrganization;
     user_capabilities: {

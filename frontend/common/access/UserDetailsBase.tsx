@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { DateTimeCell, PageDetail, PageDetails } from '../../../framework';
+import { DateTimeCell, LabelsCell, PageDetail, PageDetails } from '../../../framework';
 import { UserType } from '../../awx/access/users/components/UserType';
 import { AuthenticationType } from '../../awx/access/users/components/AuthenticationType';
 import { RoleRef } from '../../eda/interfaces/generated/eda-api';
@@ -28,6 +28,12 @@ export type UserDetailsType = {
 
 export function UserDetailsBase<T extends UserDetailsType>(props: {
   user: T;
+  organizations?: {
+    // Organization name
+    name: string;
+    // Link (route) to organization details
+    link: string;
+  }[];
   options?: {
     // Shows the authentication type based on the last login
     showAuthType?: boolean;
@@ -36,7 +42,7 @@ export function UserDetailsBase<T extends UserDetailsType>(props: {
   };
 }) {
   const { t } = useTranslation();
-  const { user, options } = props;
+  const { user, organizations, options } = props;
 
   return (
     <>
@@ -45,19 +51,24 @@ export function UserDetailsBase<T extends UserDetailsType>(props: {
         <PageDetail label={t('Last name')}>{user.last_name}</PageDetail>
         <PageDetail label={t('Email')}>{user.email}</PageDetail>
         <PageDetail label={t('Username')}>{user.username}</PageDetail>
-        {options?.showUserType && (
-          <PageDetail label={t('User type')}>
-            <UserType user={user} />
+        {organizations && organizations.length > 0 && (
+          <PageDetail label={t('Organization(s)')}>
+            <LabelsCell labels={organizations} />
+          </PageDetail>
+        )}
+        {user.last_login && (
+          <PageDetail label={t('Last login')}>
+            <DateTimeCell format="since" value={user.last_login} />
           </PageDetail>
         )}
         {options?.showAuthType && (
           <PageDetail label={t('Authentication type')}>
             <AuthenticationType user={user} />
           </PageDetail>
-        )}
-        {user.last_login && (
-          <PageDetail label={t('Last login')}>
-            <DateTimeCell format="since" value={user.last_login} />
+        )}{' '}
+        {options?.showUserType && (
+          <PageDetail label={t('User type')}>
+            <UserType user={user} />
           </PageDetail>
         )}
         <PageDetail label={t('Created')}>
