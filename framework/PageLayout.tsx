@@ -19,15 +19,7 @@ export function PageLayout(props: { children?: ReactNode }) {
   const [translations] = useFrameworkTranslations();
   return (
     <ErrorBoundary message={translations.errorText}>
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          height: '100%',
-          maxHeight: '100%',
-          backgroundColor: 'var(--pf-v5-global--BackgroundColor--100)',
-        }}
-      >
+      <div style={{ display: 'flex', flexDirection: 'column', height: '100%', maxHeight: '100%' }}>
         {props.children}
       </div>
     </ErrorBoundary>
