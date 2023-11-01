@@ -1,16 +1,37 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageDetail, PageDetails, DateTimeCell } from '../../../../../framework';
 import { User } from '../../../interfaces/User';
-import { useGetItem } from '../../../../common/crud/useGet';
-import { AuthenticationType } from '../components/AuthenticationType';
-import { UserType } from '../components/UserType';
+import { useGet, useGetItem } from '../../../../common/crud/useGet';
+import { UserDetailsBase, UserDetailsType } from '../../../../common/access/UserDetailsBase';
+import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
+import { Organization } from '../../../interfaces/Organization';
+import { useMemo } from 'react';
+import { useGetPageUrl } from '../../../../../framework';
+import { AwxRoute } from '../../../AwxRoutes';
 
 export function UserDetails() {
-  const { t } = useTranslation();
   const params = useParams<{ id: string }>();
+  const getPageUrl = useGetPageUrl();
   const { data: user } = useGetItem<User>('/api/v2/users', params.id);
+  const itemsResponse = useGet<AwxItemsResponse<Organization>>(
+    user?.related?.organizations as string
+  );
+  const organizations = useMemo<
+    {
+      name: string;
+      link: string;
+    }[]
+  >(() => {
+    if (itemsResponse?.data?.results) {
+      return itemsResponse?.data?.results.map((organization: Organization) => ({
+        name: organization.name,
+        link: getPageUrl(AwxRoute.OrganizationDetails, {
+          params: { id: organization.id },
+        }),
+      }));
+    }
+    return [];
+  }, [getPageUrl, itemsResponse?.data?.results]);
 
   if (!user) {
     return null;
@@ -18,27 +39,11 @@ export function UserDetails() {
 
   return (
     <>
-      <PageDetails>
-        <PageDetail label={t('Username')}>{user.username}</PageDetail>
-        <PageDetail label={t('First name')}>{user.first_name}</PageDetail>
-        <PageDetail label={t('Last name')}>{user.last_name}</PageDetail>
-        <PageDetail label={t('Email')}>{user.email}</PageDetail>
-        <PageDetail label={t('User type')}>
-          <UserType user={user} />
-        </PageDetail>
-        <PageDetail label={t('Authentication type')}>
-          <AuthenticationType user={user} />
-        </PageDetail>
-        <PageDetail label={t('Created')}>
-          <DateTimeCell format="since" value={user.created} />
-        </PageDetail>
-        <PageDetail label={t('Modified')}>
-          <DateTimeCell format="since" value={user.modified} />
-        </PageDetail>
-        <PageDetail label={t('Last login')}>
-          <DateTimeCell format="since" value={user.last_login} />
-        </PageDetail>
-      </PageDetails>
+      <UserDetailsBase
+        user={user as UserDetailsType}
+        organizations={organizations}
+        options={{ showAuthType: true, showUserType: true }}
+      />
     </>
   );
 }
