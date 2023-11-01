@@ -1,0 +1,38 @@
+{
+  "id": 17923,
+  "type": "user",
+  "url": "/api/v2/users/17923/",
+  "related": {
+    "named_url": "/api/v2/users/org-admin/",
+    "teams": "/api/v2/users/17923/teams/",
+    "organizations": "/api/v2/users/17923/organizations/",
+    "admin_of_organizations": "/api/v2/users/17923/admin_of_organizations/",
+    "projects": "/api/v2/users/17923/projects/",
+    "credentials": "/api/v2/users/17923/credentials/",
+    "roles": "/api/v2/users/17923/roles/",
+    "activity_stream": "/api/v2/users/17923/activity_stream/",
+    "access_list": "/api/v2/users/17923/access_list/",
+    "tokens": "/api/v2/users/17923/tokens/",
+    "authorized_tokens": "/api/v2/users/17923/authorized_tokens/",
+    "personal_tokens": "/api/v2/users/17923/personal_tokens/"
+  },
+  "summary_fields": {
+    "user_capabilities": {
+      "edit": true,
+      "delete": true
+    }
+  },
+  "created": "2023-10-30T19:07:08.860908Z",
+  "modified": "2023-10-30T19:07:43.976429Z",
+  "username": "org-admin",
+  "first_name": "Org",
+  "last_name": "Admin",
+  "email": "firstname@lastname.com",
+  "is_superuser": false,
+  "is_system_auditor": false,
+  "password": "$encrypted$",
+  "ldap_dn": "",
+  "last_login": "2023-10-30T19:07:43.976429Z",
+  "external_account": null,
+  "auth": []
+}

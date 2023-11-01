@@ -58,7 +58,7 @@ export function UserDetailsBase<T extends UserDetailsType>(props: {
         )}
         {user.last_login && (
           <PageDetail label={t('Last login')}>
-            <DateTimeCell format="since" value={user.last_login} />
+            <DateTimeCell format="date-time" value={user.last_login} />
           </PageDetail>
         )}
         {options?.showAuthType && (
