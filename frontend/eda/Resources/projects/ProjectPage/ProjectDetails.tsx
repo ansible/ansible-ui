@@ -19,14 +19,14 @@ import { formatDateString } from '../../../../../framework/utils/formatDateStrin
 import { StatusCell } from '../../../../common/Status';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { EdaRoute } from '../../../EdaRoutes';
-import { API_PREFIX } from '../../../constants';
 import { EdaProjectRead } from '../../../interfaces/EdaProject';
+import { edaAPI } from '../../../api/eda-utils';
 
 export function ProjectDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const getPageUrl = useGetPageUrl();
-  const { data: project } = useGetItem<EdaProjectRead>(`${API_PREFIX}/projects/`, params.id);
+  const { data: project } = useGetItem<EdaProjectRead>(edaAPI`/projects/`, params.id);
   if (!project) {
     return <LoadingPage />;
   }

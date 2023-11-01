@@ -6,7 +6,8 @@ import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashb
 import { PageDashboardChart } from '../../../../framework/PageDashboard/PageDashboardChart';
 import { useGet } from '../../../common/crud/useGet';
 import { EdaRoute } from '../../EdaRoutes';
-import { API_PREFIX, EDA_MAX_PAGE_SIZE } from '../../constants';
+import { edaAPI } from '../../api/eda-utils';
+import { EDA_MAX_PAGE_SIZE } from '../../constants';
 import { EdaResult } from '../../interfaces/EdaResult';
 import { EdaRuleAuditItem } from '../../interfaces/EdaRuleAudit';
 
@@ -15,7 +16,7 @@ const RuleAuditChart = () => {
   const getPageUrl = useGetPageUrl();
 
   const { data } = useGet<EdaResult<EdaRuleAuditItem>>(
-    `${API_PREFIX}/audit-rules/?page_size=${EDA_MAX_PAGE_SIZE}`
+    edaAPI`/audit-rules/?page_size=${EDA_MAX_PAGE_SIZE.toString()}`
   );
 
   // Chart Test Code
