@@ -1,4 +1,4 @@
-import { Tab, TabTitleText, Tabs } from '@patternfly/react-core';
+import { Tab, TabProps, TabTitleText, Tabs } from '@patternfly/react-core';
 import { CaretLeftIcon } from '@patternfly/react-icons';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { PageLayout, useGetPageUrl, usePageNavigate } from '..';
