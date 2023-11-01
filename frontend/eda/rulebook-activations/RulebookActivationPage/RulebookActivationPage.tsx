@@ -80,9 +80,11 @@ export function RulebookActivationPage() {
       },
       [alertToaster, refresh, t]
     );
-  const isActionTab =
-    location.pathname ===
-    getPageUrl(EdaRoute.RulebookActivationDetails, { params: { id: rulebookActivation?.id } });
+
+  const isActionTab = location.href.includes(
+    getPageUrl(EdaRoute.RulebookActivationDetails, { params: { id: rulebookActivation?.id } })
+  );
+
   const itemActions = useMemo<IPageAction<EdaRulebookActivation>[]>(() => {
     const actions: IPageAction<EdaRulebookActivation>[] = isActionTab
       ? [
