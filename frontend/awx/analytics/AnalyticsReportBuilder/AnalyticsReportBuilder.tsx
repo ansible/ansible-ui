@@ -77,6 +77,7 @@ import {
   getClickableText,
   renderAllTasksStatus,
 } from './AnalyticsReportBuilderUtils';
+import { AnalyticsErrorState } from '../Reports/ErrorStates';
 
 type KeyValue = { key: string; value: string };
 
@@ -339,10 +340,14 @@ export function AnalyticsReportBuilder(props: AnalyticsReportBuilderProps) {
   // build the table columns
   const columns = buildTableColumns({ ...newProps });
 
+  // Render error state based on the error message
+  if (error) {
+    return <AnalyticsErrorState error={error?.body?.error?.keyword || 'unknown'} />;
+  }
+
   // and finaly, render the table with chart and filters
   return (
     <>
-      {error}
       {mainData && options && view.pageItems?.length > 0 && (
         <AnalyticsReportBuilderTable
           {...newProps}
