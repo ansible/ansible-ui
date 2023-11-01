@@ -42,7 +42,7 @@ describe('Job templates form Create, Edit, Delete', function () {
   //   cy.deleteAwxInstanceGroup(instanceGroup);
   // });
 
-  it.only('should create a job template with all fields without prompt on launch option', function () {
+  it('should create a job template with all fields without prompt on launch option', function () {
     cy.intercept('POST', `/api/v2/job_templates`).as('createJT');
     const jtName = 'E2E-JT ' + randomString(4);
     cy.navigateTo('awx', 'templates');
