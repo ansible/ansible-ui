@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { requestDelete } from '../../../../common/crud/Data';
 import { idKeyFn } from '../../../../common/utils/nameKeyFn';
-import { API_PREFIX } from '../../../constants';
+import { edaAPI } from '../../../api/eda-utils';
 import { EdaControllerToken } from '../../../interfaces/EdaControllerToken';
 import { useControllerTokensColumns } from './useControllerTokensColumns';
 
@@ -27,7 +27,7 @@ export function useDeleteControllerTokens(onComplete: (credentials: EdaControlle
         actionColumns,
         onComplete,
         actionFn: (token: EdaControllerToken) =>
-          requestDelete(`${API_PREFIX}/users/me/awx-tokens/${token.id}/`),
+          requestDelete(edaAPI`/users/me/awx-tokens/${token.id.toString()}/`),
       });
     },
     [actionColumns, bulkAction, confirmationColumns, onComplete, t]

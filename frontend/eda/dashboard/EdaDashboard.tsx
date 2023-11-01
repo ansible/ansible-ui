@@ -5,7 +5,6 @@ import { PageHeader, useGetPageUrl } from '../../../framework';
 import { PageDashboard } from '../../../framework/PageDashboard/PageDashboard';
 import { PageDashboardCard } from '../../../framework/PageDashboard/PageDashboardCard';
 import { EdaRoute } from '../EdaRoutes';
-import { API_PREFIX } from '../constants';
 import { EdaControllerToken } from '../interfaces/EdaControllerToken';
 import { EdaDecisionEnvironment } from '../interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../interfaces/EdaProject';
@@ -17,36 +16,37 @@ import { EdaRecentProjectsCard } from './cards/EdaProjectsCard';
 import { EdaRuleAuditCard } from './cards/EdaRuleAuditCard';
 import RuleAuditChart from './cards/EdaRuleAuditChartCard';
 import { EdaRulebookActivationsCard } from './cards/EdaRulebookActivationsCard';
+import { edaAPI } from '../api/eda-utils';
 
 export function EdaDashboard() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const edaProjectView = useEdaView<EdaProject>({
-    url: `${API_PREFIX}/projects/`,
+    url: edaAPI`/projects/`,
     queryParams: { page: '1', page_size: '10' },
     disableQueryString: true,
     defaultSort: 'modified_at',
     defaultSortDirection: 'desc',
   });
   const edaControllerTokenView = useEdaView<EdaControllerToken>({
-    url: `${API_PREFIX}/users/me/awx-tokens/`,
+    url: edaAPI`/users/me/awx-tokens/`,
     queryParams: { page: '1', page_size: '10' },
     disableQueryString: true,
     defaultSort: 'modified_at',
     defaultSortDirection: 'desc',
   });
   const edaDecisionEnvironmentView = useEdaView<EdaDecisionEnvironment>({
-    url: `${API_PREFIX}/decision-environments/`,
+    url: edaAPI`/decision-environments/`,
     queryParams: { page: '1', page_size: '10' },
     disableQueryString: true,
   });
   const edaRuleAuditView = useEdaView<EdaRuleAuditItem>({
-    url: `${API_PREFIX}/audit-rules/`,
+    url: edaAPI`/audit-rules/`,
     queryParams: { page: '1', page_size: '10' },
     disableQueryString: true,
   });
   const edaRulebookActivationView = useEdaView<EdaRulebookActivation>({
-    url: `${API_PREFIX}/activations/`,
+    url: edaAPI`/activations/`,
     queryParams: { page: '1', page_size: '10' },
     disableQueryString: true,
   });
