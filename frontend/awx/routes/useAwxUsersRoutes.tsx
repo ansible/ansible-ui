@@ -5,7 +5,7 @@ import { AwxRoute } from '../AwxRoutes';
 import { CreateUser, EditUser } from '../access/users/UserForm';
 import { AddRolesToUser } from '../access/users/components/AddRolesToUser';
 import { UserPage } from '../access/users/UserPage/UserPage';
-import { UserDetails } from '../access/users/UserPage/UserDetails';
+import { AwxUserDetails } from '../access/users/UserPage/AwxUserDetails';
 import { UserOrganizations } from '../access/users/UserPage/UserOrganizations';
 import { UserTeams } from '../access/users/UserPage/UserTeams';
 import { UserRoles } from '../access/users/UserPage/UserRoles';
@@ -43,7 +43,7 @@ export function useAwxUsersRoutes() {
             {
               id: AwxRoute.UserDetails,
               path: 'details',
-              element: <UserDetails />,
+              element: <AwxUserDetails />,
             },
             {
               id: AwxRoute.UserOrganizations,

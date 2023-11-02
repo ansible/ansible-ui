@@ -2,14 +2,14 @@
 import { useParams } from 'react-router-dom';
 import { User } from '../../../interfaces/User';
 import { useGet, useGetItem } from '../../../../common/crud/useGet';
-import { UserDetailsBase, UserDetailsType } from '../../../../common/access/UserDetailsBase';
+import { UserDetails, UserDetailsType } from '../../../../common/access/UserDetails';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { Organization } from '../../../interfaces/Organization';
 import { useMemo } from 'react';
 import { useGetPageUrl } from '../../../../../framework';
 import { AwxRoute } from '../../../AwxRoutes';
 
-export function UserDetails() {
+export function AwxUserDetails() {
   const params = useParams<{ id: string }>();
   const getPageUrl = useGetPageUrl();
   const { data: user } = useGetItem<User>('/api/v2/users', params.id);
@@ -39,7 +39,7 @@ export function UserDetails() {
 
   return (
     <>
-      <UserDetailsBase
+      <UserDetails
         user={user as UserDetailsType}
         organizations={organizations}
         options={{ showAuthType: true, showUserType: true }}
