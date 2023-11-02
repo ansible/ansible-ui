@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageNavigationItem } from '../../framework';
-import { AwxRoute } from './AwxRoutes';
-import { ExecutionEnvironments } from './administration/execution-environments/ExecutionEnvironments';
+import { PageNavigationItem } from '../../../framework';
+import { AwxRoute } from '../AwxRoutes';
+import { ExecutionEnvironments } from '../administration/execution-environments/ExecutionEnvironments';
 
-export function useGetAwxExecutionEnvironmentRoutes() {
+export function useAwxExecutionEnvironmentRoutes() {
   const { t } = useTranslation();
   const executionEnironmentRoutes = useMemo<PageNavigationItem>(
     () => ({

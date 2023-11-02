@@ -1,17 +1,17 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageNavigationItem } from '../../framework';
-import { AwxRoute } from './AwxRoutes';
-import { Teams } from './access/teams/Teams';
+import { PageNavigationItem } from '../../../framework';
+import { AwxRoute } from '../AwxRoutes';
+import { Teams } from '../access/teams/Teams';
 import { Navigate } from 'react-router-dom';
-import { TeamRoles } from './access/teams/TeamPage/TeamRoles';
-import { TeamAccess } from './access/teams/TeamPage/TeamAccess';
-import { TeamDetails } from './access/teams/TeamPage/TeamDetails';
-import { TeamPage } from './access/teams/TeamPage/TeamPage';
-import { AddRolesToTeam } from './access/teams/components/AddRolesToTeam';
-import { CreateTeam, EditTeam } from './access/teams/TeamForm';
+import { TeamRoles } from '../access/teams/TeamPage/TeamRoles';
+import { TeamAccess } from '../access/teams/TeamPage/TeamAccess';
+import { TeamDetails } from '../access/teams/TeamPage/TeamDetails';
+import { TeamPage } from '../access/teams/TeamPage/TeamPage';
+import { AddRolesToTeam } from '../access/teams/components/AddRolesToTeam';
+import { CreateTeam, EditTeam } from '../access/teams/TeamForm';
 
-export function useGetAwxTeamsRoutes() {
+export function useAwxTeamsRoutes() {
   const { t } = useTranslation();
   const teamsRoutes = useMemo<PageNavigationItem>(
     () => ({

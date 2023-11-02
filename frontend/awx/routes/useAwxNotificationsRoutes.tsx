@@ -1,13 +1,13 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
-import { PageNavigationItem } from '../../framework';
-import { PageNotImplemented } from '../../framework/PageEmptyStates/PageNotImplemented';
-import { AwxRoute } from './AwxRoutes';
-import { NotificationPage } from './administration/notifications/NotificationPage/NotificationPage';
-import { Notifications } from './administration/notifications/Notifications';
+import { PageNavigationItem } from '../../../framework';
+import { PageNotImplemented } from '../../../framework/PageEmptyStates/PageNotImplemented';
+import { AwxRoute } from '../AwxRoutes';
+import { NotificationPage } from '../administration/notifications/NotificationPage/NotificationPage';
+import { Notifications } from '../administration/notifications/Notifications';
 
-export function useGetAwxNotificationsRoutes() {
+export function useAwxNotificationsRoutes() {
   const { t } = useTranslation();
   const notificationsRoutes = useMemo<PageNavigationItem>(
     () => ({
@@ -17,7 +17,7 @@ export function useGetAwxNotificationsRoutes() {
       children: [
         {
           id: AwxRoute.NotificationTemplatePage,
-          path: ':id/*',
+          path: ':id/',
           element: <NotificationPage />,
           children: [
             {

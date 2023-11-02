@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageNavigationItem } from '../../framework';
-import { AwxRoute } from './AwxRoutes';
-import { CreateSchedule } from './views/schedules/ScheduleForm';
-import { Schedules } from './views/schedules/Schedules';
+import { PageNavigationItem } from '../../../framework';
+import { AwxRoute } from '../AwxRoutes';
+import { CreateSchedule } from '../views/schedules/ScheduleForm';
+import { Schedules } from '../views/schedules/Schedules';
 
-export function useGetAwxSchedulesRoutes() {
+export function useAwxSchedulesRoutes() {
   const { t } = useTranslation();
   const schedulesRoutes = useMemo<PageNavigationItem>(
     () => ({
