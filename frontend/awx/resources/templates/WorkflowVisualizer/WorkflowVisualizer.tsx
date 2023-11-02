@@ -8,6 +8,9 @@ import type { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
 import { WorkflowVisualizerNodeDetails } from './WorkflowVisualizerNodeDetails';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { EmptyStateNoData } from '../../../../../framework/components/EmptyStateNoData';
+import { AddNodeButton } from './components/AddNodeButton';
 
 const TopologyView = styled(PFTopologyView)`
   & .pf-topology-view__project-toolbar {
@@ -17,6 +20,8 @@ const TopologyView = styled(PFTopologyView)`
 
 export function WorkflowVisualizer() {
   const { id } = useParams<{ id?: string }>();
+  const { t } = useTranslation();
+
   const [selectedNode, setSelectedNode] = useState<WorkflowNode | undefined>(undefined);
   const { data: wfNodes } = useGet<AwxItemsResponse<WorkflowNode>>(
     `/api/v2/workflow_job_templates/${Number(id).toString()}/workflow_nodes/`
@@ -26,8 +31,14 @@ export function WorkflowVisualizer() {
   let topologyScreen;
   if (!wfNodes) {
     topologyScreen = <div>Loading...</div>;
-  } else if (wfNodes?.results?.length === 0) {
-    topologyScreen = <div>EMPTY</div>;
+  } else if (!wfNodes?.results?.length) {
+    topologyScreen = (
+      <EmptyStateNoData
+        button={<AddNodeButton variant="primary" />}
+        title={t('There are currently no nodes in this workflow')}
+        description={t('Add a node by clicking the button below')}
+      />
+    );
   } else {
     topologyScreen = (
       <Topology
