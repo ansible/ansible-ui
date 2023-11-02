@@ -64,12 +64,12 @@ jobs:
   awx-e2e:
     name: AWX E2E
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 15
     needs: awx-ui-image
     strategy:
       fail-fast: false
       matrix:
-        containers: [1]
+        containers: [1,2,3]
     steps:
       - name: Download container image
         if: ${{ !inputs.SKIP_JOB }}
