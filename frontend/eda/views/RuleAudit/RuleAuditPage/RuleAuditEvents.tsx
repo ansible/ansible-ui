@@ -1,12 +1,13 @@
 import { CubesIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageLayout, PageTable } from '../../../../../framework';
+import { PageTable } from '../../../../../framework';
 import { EdaRuleAuditEvent } from '../../../interfaces/EdaRuleAuditEvent';
 import { useEdaView } from '../../../useEventDrivenView';
 import { useRuleAuditEventsColumns } from '../hooks/useRuleAuditEventsColumns';
 import { useRuleAuditEventsFilters } from '../hooks/useRuleAuditEventsFilters';
 import { edaAPI } from '../../../api/eda-utils';
+import { Section } from '../../../common/PageDetailsSection';
 
 export function RuleAuditEvents() {
   const params = useParams<{ id: string }>();
@@ -19,7 +20,7 @@ export function RuleAuditEvents() {
     toolbarFilters,
   });
   return (
-    <PageLayout>
+    <Section padding={{ default: 'noPadding' }}>
       <PageTable
         tableColumns={tableColumns}
         toolbarFilters={toolbarFilters}
@@ -30,6 +31,6 @@ export function RuleAuditEvents() {
         {...view}
         defaultSubtitle={t('Rule Audit Event')}
       />
-    </PageLayout>
+    </Section>
   );
 }
