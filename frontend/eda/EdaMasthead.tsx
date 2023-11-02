@@ -35,9 +35,8 @@ export function EdaMasthead() {
       title={process.env.PRODUCT}
       brand={process.env.BRAND}
     >
-      <ToolbarItem style={{ flexGrow: 1 }} />
-      <ToolbarGroup variant="icon-button-group">
-        <ToolbarItem>
+      <ToolbarGroup variant="icon-button-group" style={{ flexGrow: 1 }}>
+        <ToolbarItem style={{ marginLeft: 'auto' }}>
           <PageRefreshIcon />
         </ToolbarItem>
         <ToolbarItem>
