@@ -68,6 +68,12 @@ describe('WorkflowVisualizer', () => {
       .contains('Documentation')
       .should('have.attr', 'href')
       .should('include', 'html/userguide/workflow_templates.html#ug-wf-editor');
+    cy.get('.toggle-kebab').click();
+    cy.get('.toggle-kebab')
+      .click()
+      .get('.pf-v5-c-menu__item-text')
+      .contains('Launch workflow')
+      .should('be.visible');
   });
 });
 
