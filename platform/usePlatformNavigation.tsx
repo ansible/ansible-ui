@@ -23,9 +23,15 @@ export function usePlatformNavigation(services: Service[]) {
   const hubNav = useHubNavigation();
   const edaNav = useEdaNavigation();
 
-  const hasController = services.some((service) => service.api_slug === 'v2');
-  const hasEda = services.some((service) => service.api_slug === 'eda');
-  const hasHub = services.some((service) => service.api_slug === 'hub');
+  const hasController = services.some(
+    (service) => service.summary_fields.service_cluster?.service_type === 'controller'
+  );
+  const hasEda = services.some(
+    (service) => service.summary_fields.service_cluster?.service_type === 'eda'
+  );
+  const hasHub = services.some(
+    (service) => service.summary_fields.service_cluster?.service_type === 'hub'
+  );
   const awx = hasController ? awxNav : [];
   const hub = hasHub ? hubNav : [];
   const eda = hasEda ? edaNav : [];
