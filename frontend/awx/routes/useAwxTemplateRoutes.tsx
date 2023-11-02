@@ -1,27 +1,27 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
-import { PageNavigationItem } from '../../framework';
-import { PageNotImplemented } from '../../framework/PageEmptyStates/PageNotImplemented';
-import { AwxRoute } from './AwxRoutes';
-import { CreateJobTemplate, EditJobTemplate } from './resources/templates/TemplateForm';
-import { TemplateDetails } from './resources/templates/TemplatePage/TemplateDetails';
-import { TemplateLaunchWizard } from './resources/templates/TemplatePage/TemplateLaunchWizard';
-import { TemplatePage } from './resources/templates/TemplatePage/TemplatePage';
-import { Templates } from './resources/templates/Templates';
+import { PageNavigationItem } from '../../../framework';
+import { PageNotImplemented } from '../../../framework/PageEmptyStates/PageNotImplemented';
+import { AwxRoute } from '../AwxRoutes';
+import { CreateJobTemplate, EditJobTemplate } from '../resources/templates/TemplateForm';
+import { TemplateDetails } from '../resources/templates/TemplatePage/TemplateDetails';
+import { TemplateLaunchWizard } from '../resources/templates/TemplatePage/TemplateLaunchWizard';
+import { TemplatePage } from '../resources/templates/TemplatePage/TemplatePage';
+import { Templates } from '../resources/templates/Templates';
 import {
   CreateWorkflowJobTemplate,
   EditWorkflowJobTemplate,
-} from './resources/templates/WorkflowJobTemplateForm';
-import { WorkflowJobTemplateDetails } from './resources/templates/WorkflowJobTemplatePage/WorkflowJobTemplateDetails';
-import { WorkflowJobTemplatePage } from './resources/templates/WorkflowJobTemplatePage/WorkflowJobTemplatePage';
-import { CreateSchedule } from './views/schedules/ScheduleForm';
-import { ScheduleDetails } from './views/schedules/SchedulePage/ScheduleDetails';
-import { SchedulePage } from './views/schedules/SchedulePage/SchedulePage';
-import { ScheduleRules } from './views/schedules/SchedulePage/ScheduleRules';
-import { Schedules } from './views/schedules/Schedules';
+} from '../resources/templates/WorkflowJobTemplateForm';
+import { WorkflowJobTemplateDetails } from '../resources/templates/WorkflowJobTemplatePage/WorkflowJobTemplateDetails';
+import { WorkflowJobTemplatePage } from '../resources/templates/WorkflowJobTemplatePage/WorkflowJobTemplatePage';
+import { CreateSchedule } from '../views/schedules/ScheduleForm';
+import { ScheduleDetails } from '../views/schedules/SchedulePage/ScheduleDetails';
+import { SchedulePage } from '../views/schedules/SchedulePage/SchedulePage';
+import { ScheduleRules } from '../views/schedules/SchedulePage/ScheduleRules';
+import { Schedules } from '../views/schedules/Schedules';
 
-export function useGetAwxTemplateRoutes() {
+export function useAwxTemplateRoutes() {
   const { t } = useTranslation();
   const templateRoutes = useMemo<PageNavigationItem>(
     () => ({

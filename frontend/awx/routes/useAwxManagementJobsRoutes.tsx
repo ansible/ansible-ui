@@ -1,15 +1,15 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
-import { PageNavigationItem } from '../../framework';
-import { PageNotImplemented } from '../../framework/PageEmptyStates/PageNotImplemented';
-import { AwxRoute } from './AwxRoutes';
-import { ManagementJobPage } from './administration/management-jobs/ManagementJobPage/ManagementJobPage';
-import { ManagementJobs } from './administration/management-jobs/ManagementJobs';
-import { SchedulePage } from './views/schedules/SchedulePage/SchedulePage';
-import { Schedules } from './views/schedules/Schedules';
+import { PageNavigationItem } from '../../../framework';
+import { PageNotImplemented } from '../../../framework/PageEmptyStates/PageNotImplemented';
+import { AwxRoute } from '../AwxRoutes';
+import { ManagementJobPage } from '../administration/management-jobs/ManagementJobPage/ManagementJobPage';
+import { ManagementJobs } from '../administration/management-jobs/ManagementJobs';
+import { SchedulePage } from '../views/schedules/SchedulePage/SchedulePage';
+import { Schedules } from '../views/schedules/Schedules';
 
-export function useGetAwxManagementJobsRoutes() {
+export function useAwxManagementJobsRoutes() {
   const { t } = useTranslation();
   const managementJobsRoutes = useMemo<PageNavigationItem>(
     () => ({

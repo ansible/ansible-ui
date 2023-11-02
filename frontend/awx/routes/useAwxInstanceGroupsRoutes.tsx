@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageNavigationItem } from '../../framework';
-import { PageNotImplemented } from '../../framework/PageEmptyStates/PageNotImplemented';
-import { AwxRoute } from './AwxRoutes';
-import { InstanceGroups } from './administration/instance-groups/InstanceGroups';
+import { PageNavigationItem } from '../../../framework';
+import { PageNotImplemented } from '../../../framework/PageEmptyStates/PageNotImplemented';
+import { AwxRoute } from '../AwxRoutes';
+import { InstanceGroups } from '../administration/instance-groups/InstanceGroups';
 
-export function useGetAwxInstanceGroupsRoutes() {
+export function useAwxInstanceGroupsRoutes() {
   const { t } = useTranslation();
   const instanceGroupsRoutes = useMemo<PageNavigationItem>(
     () => ({
@@ -25,7 +25,7 @@ export function useGetAwxInstanceGroupsRoutes() {
         },
         {
           id: AwxRoute.InstanceGroupPage,
-          path: ':id/*',
+          path: ':id/',
           element: <PageNotImplemented />,
         },
         {

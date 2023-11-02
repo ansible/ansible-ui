@@ -1,14 +1,14 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageNavigationItem } from '../../framework';
-import { PageNotImplemented } from '../../framework/PageEmptyStates/PageNotImplemented';
-import { AwxRoute } from './AwxRoutes';
-import { CreateCredential, EditCredential } from './resources/credentials/CredentialForm';
-import { CredentialDetails } from './resources/credentials/CredentialPage/CredentialDetails';
-import { CredentialPage } from './resources/credentials/CredentialPage/CredentialPage';
-import { Credentials } from './resources/credentials/Credentials';
+import { PageNavigationItem } from '../../../framework';
+import { PageNotImplemented } from '../../../framework/PageEmptyStates/PageNotImplemented';
+import { AwxRoute } from '../AwxRoutes';
+import { CreateCredential, EditCredential } from '../resources/credentials/CredentialForm';
+import { CredentialDetails } from '../resources/credentials/CredentialPage/CredentialDetails';
+import { CredentialPage } from '../resources/credentials/CredentialPage/CredentialPage';
+import { Credentials } from '../resources/credentials/Credentials';
 
-export function useGetAwxCredentialRoutes() {
+export function useAwxCredentialRoutes() {
   const { t } = useTranslation();
   const credentialRoutes = useMemo<PageNavigationItem>(
     () => ({

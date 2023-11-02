@@ -1,12 +1,12 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageNavigationItem } from '../../framework';
-import { AwxRoute } from './AwxRoutes';
-import { EditInstance } from './administration/instances/EditInstance';
-import { InstanceDetails } from './administration/instances/InstanceDetails';
-import { Instances } from './administration/instances/Instances';
+import { PageNavigationItem } from '../../../framework';
+import { AwxRoute } from '../AwxRoutes';
+import { EditInstance } from '../administration/instances/EditInstance';
+import { InstanceDetails } from '../administration/instances/InstanceDetails';
+import { Instances } from '../administration/instances/Instances';
 
-export function useGetAwxInstancesRoutes() {
+export function useAwxInstancesRoutes() {
   const { t } = useTranslation();
   const instancesRoutes = useMemo<PageNavigationItem>(
     () => ({
@@ -21,7 +21,7 @@ export function useGetAwxInstancesRoutes() {
         },
         {
           id: AwxRoute.InstancePage,
-          path: ':id/*',
+          path: ':id/',
           element: <InstanceDetails />,
         },
         {
