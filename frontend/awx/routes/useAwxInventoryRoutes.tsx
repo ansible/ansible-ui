@@ -1,21 +1,21 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageNavigationItem } from '../../framework';
-import { PageNotImplemented } from '../../framework/PageEmptyStates/PageNotImplemented';
-import { AwxRoute } from './AwxRoutes';
-import { Inventories } from './resources/inventories/Inventories';
-import { CreateInventory, EditInventory } from './resources/inventories/InventoryForm';
-import { InventoryDetails } from './resources/inventories/InventoryPage/InventoryDetails';
-import { InventoryPage } from './resources/inventories/InventoryPage/InventoryPage';
-import { InventorySourceDetails } from './resources/inventories/inventorySources/InventorySourceDetails';
-import { InventorySourcePage } from './resources/inventories/inventorySources/InventorySourcePage';
-import { CreateSchedule } from './views/schedules/ScheduleForm';
-import { ScheduleDetails } from './views/schedules/SchedulePage/ScheduleDetails';
-import { SchedulePage } from './views/schedules/SchedulePage/SchedulePage';
-import { ScheduleRules } from './views/schedules/SchedulePage/ScheduleRules';
-import { Schedules } from './views/schedules/Schedules';
+import { PageNavigationItem } from '../../../framework';
+import { PageNotImplemented } from '../../../framework/PageEmptyStates/PageNotImplemented';
+import { AwxRoute } from '../AwxRoutes';
+import { Inventories } from '../resources/inventories/Inventories';
+import { CreateInventory, EditInventory } from '../resources/inventories/InventoryForm';
+import { InventoryDetails } from '../resources/inventories/InventoryPage/InventoryDetails';
+import { InventoryPage } from '../resources/inventories/InventoryPage/InventoryPage';
+import { InventorySourceDetails } from '../resources/inventories/inventorySources/InventorySourceDetails';
+import { InventorySourcePage } from '../resources/inventories/inventorySources/InventorySourcePage';
+import { CreateSchedule } from '../views/schedules/ScheduleForm';
+import { ScheduleDetails } from '../views/schedules/SchedulePage/ScheduleDetails';
+import { SchedulePage } from '../views/schedules/SchedulePage/SchedulePage';
+import { ScheduleRules } from '../views/schedules/SchedulePage/ScheduleRules';
+import { Schedules } from '../views/schedules/Schedules';
 
-export function useGetAwxInventoryRoutes() {
+export function useAwxInventoryRoutes() {
   const { t } = useTranslation();
   const inventoryRoutes = useMemo<PageNavigationItem>(
     () => ({
@@ -25,7 +25,7 @@ export function useGetAwxInventoryRoutes() {
       children: [
         {
           id: AwxRoute.InventorySourceSchedulePage,
-          path: ':inventory_type/:id/sources/:source_id/schedules/:schedule_id/*',
+          path: ':inventory_type/:id/sources/:source_id/schedules/:schedule_id/',
           element: (
             <SchedulePage
               backTab={{
