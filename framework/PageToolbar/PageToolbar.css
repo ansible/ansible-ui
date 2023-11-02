@@ -1,12 +1,35 @@
-.pf-v5-c-toolbar__expandable-content.pf-m-expanded {
-  z-index: 400;
-}
-
+/*
 .pf-v5-c-options-menu__menu {
   z-index: 400;
-}
+} */
 
 /* This is a workaround to handle when the content of the toolbar wraps */
 .pf-v5-c-toolbar__content-section {
   justify-content: start !important;
+}
+
+.pf-v5-c-toolbar__expandable-content.pf-m-expanded {
+  z-index: 400;
+  inset-block-start: 100%;
+}
+
+.pf-v5-c-toolbar__expandable-content .pf-v5-c-toolbar__item.pf-m-label {
+  margin-block-end: unset;
+}
+
+.pf-v5-c-toolbar__expandable-content .pf-v5-c-toolbar__item {
+  flex-wrap: wrap;
+}
+
+.pf-v5-c-toolbar__expandable-content.pf-m-expanded {
+  padding-top: 8px;
+  flex-wrap: wrap;
+  border-bottom: thin solid #0003;
+}
+:root:where(.pf-v5-theme-dark) .pf-v5-c-toolbar__expandable-content.pf-m-expanded {
+  border-bottom: thin solid #fff3;
+}
+
+.pf-v5-c-toolbar__group .pf-m-toggle-group {
+  margin-inline-end: 0;
 }

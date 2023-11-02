@@ -1,10 +1,4 @@
-import {
-  Button,
-  ToolbarFilter,
-  ToolbarGroup,
-  ToolbarItem,
-  ToolbarToggleGroup,
-} from '@patternfly/react-core';
+import { Button, ToolbarFilter, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import { FilterIcon } from '@patternfly/react-icons';
 import { Dispatch, SetStateAction, useCallback, useState } from 'react';
 import { PageAsyncMultiSelect } from '../PageInputs/PageAsyncMultiSelect';
@@ -22,6 +16,7 @@ import {
 import { IToolbarMultiSelectFilter } from './PageToolbarFilters/ToolbarMultiSelectFilter';
 import { IToolbarSingleSelectFilter } from './PageToolbarFilters/ToolbarSingleSelectFilter';
 import { IToolbarTextFilter, ToolbarTextFilter } from './PageToolbarFilters/ToolbarTextFilter';
+import { PageToolbarToggleGroup } from './PageToolbarToggleGroup';
 
 /** Represents the types of filters that can be used in the toolbar */
 export enum ToolbarFilterType {
@@ -149,8 +144,8 @@ export function PageToolbarFilters(props: PageToolbarFiltersProps) {
   });
 
   return (
-    <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md">
-      <ToolbarGroup variant="filter-group" style={{ flexWrap: 'wrap', gap: 16 }}>
+    <PageToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md" id="filters">
+      <ToolbarGroup variant="filter-group" style={{ flexWrap: 'wrap', gap: 8 }}>
         {showFilterLabel && <ToolbarItem variant="label">{translations.filter}</ToolbarItem>}
         <FiltersToolbarItem
           toolbarFilters={groupedFilters}
@@ -225,7 +220,7 @@ export function PageToolbarFilters(props: PageToolbarFiltersProps) {
           );
         })}
       </ToolbarGroup>
-    </ToolbarToggleGroup>
+    </PageToolbarToggleGroup>
   );
 }
 
