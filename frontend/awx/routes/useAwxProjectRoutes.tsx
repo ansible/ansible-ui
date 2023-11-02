@@ -1,20 +1,20 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
-import { PageNavigationItem } from '../../framework';
-import { PageNotImplemented } from '../../framework/PageEmptyStates/PageNotImplemented';
-import { AwxRoute } from './AwxRoutes';
-import { ProjectDetails } from './resources/projects/ProjectPage/ProjectDetails';
-import { CreateProject, EditProject } from './resources/projects/ProjectPage/ProjectForm';
-import { ProjectPage } from './resources/projects/ProjectPage/ProjectPage';
-import { Projects } from './resources/projects/Projects';
-import { CreateSchedule } from './views/schedules/ScheduleForm';
-import { ScheduleDetails } from './views/schedules/SchedulePage/ScheduleDetails';
-import { SchedulePage } from './views/schedules/SchedulePage/SchedulePage';
-import { ScheduleRules } from './views/schedules/SchedulePage/ScheduleRules';
-import { Schedules } from './views/schedules/Schedules';
+import { PageNavigationItem } from '../../../framework';
+import { PageNotImplemented } from '../../../framework/PageEmptyStates/PageNotImplemented';
+import { AwxRoute } from '../AwxRoutes';
+import { ProjectDetails } from '../resources/projects/ProjectPage/ProjectDetails';
+import { CreateProject, EditProject } from '../resources/projects/ProjectPage/ProjectForm';
+import { ProjectPage } from '../resources/projects/ProjectPage/ProjectPage';
+import { Projects } from '../resources/projects/Projects';
+import { CreateSchedule } from '../views/schedules/ScheduleForm';
+import { ScheduleDetails } from '../views/schedules/SchedulePage/ScheduleDetails';
+import { SchedulePage } from '../views/schedules/SchedulePage/SchedulePage';
+import { ScheduleRules } from '../views/schedules/SchedulePage/ScheduleRules';
+import { Schedules } from '../views/schedules/Schedules';
 
-export function useGetAwxProjectRoutes() {
+export function useAwxProjectRoutes() {
   const { t } = useTranslation();
   const projectRoutes = useMemo<PageNavigationItem>(
     () => ({

@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageNavigationItem } from '../../framework';
-import { PageNotImplemented } from '../../framework/PageEmptyStates/PageNotImplemented';
-import { AwxRoute } from './AwxRoutes';
+import { PageNavigationItem } from '../../../framework';
+import { PageNotImplemented } from '../../../framework/PageEmptyStates/PageNotImplemented';
+import { AwxRoute } from '../AwxRoutes';
 
-export function useGetAwxActivityStreamRoutes() {
+export function useAwxActivityStreamRoutes() {
   const { t } = useTranslation();
   const activityStreamRoutes = useMemo<PageNavigationItem>(
     () => ({

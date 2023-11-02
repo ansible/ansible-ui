@@ -1,18 +1,18 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageNavigationItem } from '../../framework';
-import { AwxRoute } from './AwxRoutes';
-import { CreateUser, EditUser } from './access/users/UserForm';
-import { AddRolesToUser } from './access/users/components/AddRolesToUser';
-import { UserPage } from './access/users/UserPage/UserPage';
-import { UserDetails } from './access/users/UserPage/UserDetails';
-import { UserOrganizations } from './access/users/UserPage/UserOrganizations';
-import { UserTeams } from './access/users/UserPage/UserTeams';
-import { UserRoles } from './access/users/UserPage/UserRoles';
+import { PageNavigationItem } from '../../../framework';
+import { AwxRoute } from '../AwxRoutes';
+import { CreateUser, EditUser } from '../access/users/UserForm';
+import { AddRolesToUser } from '../access/users/components/AddRolesToUser';
+import { UserPage } from '../access/users/UserPage/UserPage';
+import { UserDetails } from '../access/users/UserPage/UserDetails';
+import { UserOrganizations } from '../access/users/UserPage/UserOrganizations';
+import { UserTeams } from '../access/users/UserPage/UserTeams';
+import { UserRoles } from '../access/users/UserPage/UserRoles';
 import { Navigate } from 'react-router-dom';
-import { Users } from './access/users/Users';
+import { Users } from '../access/users/Users';
 
-export function useGetAwxUsersRoutes() {
+export function useAwxUsersRoutes() {
   const { t } = useTranslation();
   const usersRoutes = useMemo<PageNavigationItem>(
     () => ({
