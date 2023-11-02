@@ -5,7 +5,7 @@ import { useGet } from '../../../../common/crud/useGet';
 import { edaAPI } from '../../../api/eda-utils';
 import { EdaUser } from '../../../interfaces/EdaUser';
 
-export function MyDetails() {
+export function EdaMyDetails() {
   const { data: user } = useGet<EdaUser>(edaAPI`/users/me/`);
 
   if (!user) return <LoadingPage breadcrumbs tabs />;
