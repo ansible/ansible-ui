@@ -1,12 +1,12 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageNavigationItem } from '../../framework';
-import { PageNotImplemented } from '../../framework/PageEmptyStates/PageNotImplemented';
-import { AwxRoute } from './AwxRoutes';
-import { HostPage } from './resources/hosts/HostPage/HostPage';
-import { Hosts } from './resources/hosts/Hosts';
+import { PageNavigationItem } from '../../../framework';
+import { PageNotImplemented } from '../../../framework/PageEmptyStates/PageNotImplemented';
+import { AwxRoute } from '../AwxRoutes';
+import { HostPage } from '../resources/hosts/HostPage/HostPage';
+import { Hosts } from '../resources/hosts/Hosts';
 
-export function useGetAwxHostRoutes() {
+export function useAwxHostRoutes() {
   const { t } = useTranslation();
   const hostRoutes = useMemo<PageNavigationItem>(
     () => ({
