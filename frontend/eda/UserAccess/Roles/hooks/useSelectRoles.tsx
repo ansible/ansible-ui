@@ -1,17 +1,17 @@
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { IToolbarFilter, useSelectDialog } from '../../../../../framework';
+import { EdaRole } from '../../../interfaces/EdaRole';
 import { useEdaView } from '../../../useEventDrivenView';
 import { useRoleColumns } from './useRoleColumns';
-import { API_PREFIX } from '../../../constants';
-import { EdaRole } from '../../../interfaces/EdaRole';
-import { IToolbarFilter, useSelectDialog } from '../../../../../framework';
+import { edaAPI } from '../../../api/eda-utils';
 
 export function useSelectRoles() {
   const { t } = useTranslation();
   const tableColumns = useRoleColumns(false);
   const toolbarFilters = useRef<IToolbarFilter[]>([]);
   const view = useEdaView<EdaRole>({
-    url: `${API_PREFIX}/roles/`,
+    url: edaAPI`/roles/`,
     tableColumns,
     disableQueryString: true,
   });

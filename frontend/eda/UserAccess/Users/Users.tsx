@@ -1,19 +1,19 @@
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../../framework';
 import { EdaRoute } from '../../EdaRoutes';
-import { API_PREFIX } from '../../constants';
 import { EdaUser } from '../../interfaces/EdaUser';
 import { useEdaView } from '../../useEventDrivenView';
 import { useUserActions } from './hooks/useUserActions';
 import { useUserColumns } from './hooks/useUserColumns';
 import { useUsersActions } from './hooks/useUsersActions';
+import { edaAPI } from '../../api/eda-utils';
 
 export function Users() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const tableColumns = useUserColumns();
   const view = useEdaView<EdaUser>({
-    url: `${API_PREFIX}/users/`,
+    url: edaAPI`/users/`,
     tableColumns,
   });
   const toolbarActions = useUsersActions(view);

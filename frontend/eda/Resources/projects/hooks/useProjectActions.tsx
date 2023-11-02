@@ -12,7 +12,7 @@ import {
 } from '../../../../../framework';
 import { postRequest } from '../../../../common/crud/Data';
 import { EdaRoute } from '../../../EdaRoutes';
-import { API_PREFIX } from '../../../constants';
+import { edaAPI } from '../../../api/eda-utils';
 import { EdaProject } from '../../../interfaces/EdaProject';
 import { ImportStateEnum } from '../../../interfaces/generated/eda-api';
 import { IEdaView } from '../../../useEventDrivenView';
@@ -25,7 +25,7 @@ export function useProjectActions(view: IEdaView<EdaProject>) {
   const alertToaster = usePageAlertToaster();
   const syncProject = useCallback(
     (project: EdaProject) =>
-      postRequest(`${API_PREFIX}/projects/${project.id}/sync/`, undefined)
+      postRequest(edaAPI`/projects/${project.id.toString()}/sync/`, undefined)
         .then(() => {
           alertToaster.addAlert({
             title: `${t('Syncing')} ${project?.name || t('project')}`,

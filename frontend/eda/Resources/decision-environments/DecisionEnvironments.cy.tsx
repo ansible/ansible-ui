@@ -1,17 +1,17 @@
+import { edaAPI } from '../../api/eda-utils';
 import { DecisionEnvironments } from './DecisionEnvironments';
-import { API_PREFIX } from '../../constants';
 
 describe('DecisionEnvironments.cy.ts', () => {
   beforeEach(() => {
     cy.intercept(
-      { method: 'GET', url: `${API_PREFIX}/decision-environments/?page=1&page_size=10` },
+      { method: 'GET', url: edaAPI`/decision-environments/?page=1&page_size=10` },
       {
         fixture: 'edaDecisionEnvironments.json',
       }
     );
 
     cy.intercept(
-      { method: 'GET', url: `${API_PREFIX}/decision-environments/?page=2&page_size=10` },
+      { method: 'GET', url: edaAPI`/decision-environments/?page=2&page_size=10` },
       {
         count: 5,
         next: null,

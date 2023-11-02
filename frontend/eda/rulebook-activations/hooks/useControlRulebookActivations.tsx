@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../framework';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { API_PREFIX } from '../../constants';
+import { edaAPI } from '../../api/eda-utils';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { useRulebookActivationColumns } from './useRulebookActivationColumns';
 
@@ -31,7 +31,7 @@ export function useEnableRulebookActivations(
         actionColumns,
         onComplete,
         actionFn: (rulebookActivation: EdaRulebookActivation) =>
-          postRequest(`${API_PREFIX}/activations/${rulebookActivation.id}/enable/`, undefined),
+          postRequest(edaAPI`/activations/${rulebookActivation.id.toString()}/enable/`, undefined),
       });
     },
     [actionColumns, bulkAction, confirmationColumns, postRequest, onComplete, t]
@@ -64,7 +64,7 @@ export function useDisableRulebookActivations(
         actionColumns,
         onComplete,
         actionFn: (rulebookActivation: EdaRulebookActivation) =>
-          postRequest(`${API_PREFIX}/activations/${rulebookActivation.id}/disable/`, undefined),
+          postRequest(edaAPI`/activations/${rulebookActivation.id.toString()}/disable/`, undefined),
       });
     },
     [actionColumns, bulkAction, confirmationColumns, postRequest, onComplete, t]
@@ -96,7 +96,7 @@ export function useRestartRulebookActivations(
         actionColumns,
         onComplete,
         actionFn: (rulebookActivation: EdaRulebookActivation) =>
-          postRequest(`${API_PREFIX}/activations/${rulebookActivation.id}/restart/`, undefined),
+          postRequest(edaAPI`/activations/${rulebookActivation.id.toString()}/restart/`, undefined),
       });
     },
     [actionColumns, bulkAction, confirmationColumns, postRequest, onComplete, t]

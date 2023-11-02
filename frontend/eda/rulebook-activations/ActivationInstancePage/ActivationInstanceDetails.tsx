@@ -6,8 +6,9 @@ import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { AwxItemsResponse } from '../../../awx/common/AwxItemsResponse';
 import { StatusCell } from '../../../common/Status';
 import { useGet, useGetItem } from '../../../common/crud/useGet';
+import { edaAPI } from '../../api/eda-utils';
 import { PageDetailsSection } from '../../common/PageDetailsSection';
-import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
+import { SWR_REFRESH_INTERVAL } from '../../constants';
 import { EdaActivationInstance } from '../../interfaces/EdaActivationInstance';
 import { EdaActivationInstanceLog } from '../../interfaces/EdaActivationInstanceLog';
 
@@ -15,17 +16,17 @@ export function ActivationInstanceDetails() {
   const { t } = useTranslation();
   const params = useParams<{ instanceId: string }>();
   const { data: activationInstance } = useGetItem<EdaActivationInstance>(
-    `${API_PREFIX}/activation-instances/`,
+    edaAPI`/activation-instances/`,
     params.instanceId
   );
   const { data: activationInstanceLogInfo } = useGet<AwxItemsResponse<EdaActivationInstanceLog>>(
-    `${API_PREFIX}/activation-instances/${params.instanceId ?? ''}/logs/?page_size=1`,
+    edaAPI`/activation-instances/${params.instanceId ?? ''}/logs/?page_size=1`,
     undefined,
     { refreshInterval: SWR_REFRESH_INTERVAL }
   );
   const { data: activationInstanceLog } = useGet<AwxItemsResponse<EdaActivationInstanceLog>>(
-    `${API_PREFIX}/activation-instances/${params.instanceId ?? ''}/logs/?page_size=${
-      activationInstanceLogInfo?.count || 10
+    edaAPI`/activation-instances/${params.instanceId ?? ''}/logs/?page_size=${
+      activationInstanceLogInfo?.count.toString() || '10'
     }`,
     undefined,
     { refreshInterval: SWR_REFRESH_INTERVAL }

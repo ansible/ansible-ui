@@ -5,7 +5,12 @@ const proxyUrl = new URL(EDA_SERVER);
 module.exports = function (env, argv) {
   const config = webpackConfig(env, argv);
 
-  config.entry = './frontend/eda/Eda.tsx';
+  config.entry = {
+    app: './frontend/eda/Eda.tsx',
+    'editor.worker': 'monaco-editor/esm/vs/editor/editor.worker',
+    'json.worker': 'monaco-editor/esm/vs/language/json/json.worker',
+    'yaml.worker': 'monaco-yaml/yaml.worker',
+  };
 
   config.devServer.proxy = {
     '/api': {
