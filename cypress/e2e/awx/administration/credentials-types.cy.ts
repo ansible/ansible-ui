@@ -192,11 +192,11 @@ describe('Credential Types', () => {
     });
   });
 
-  it('checks that deleting a custom credential type which is being used by a credential is not allowed', () => {
+  it.skip('checks that deleting a custom credential type which is being used by a credential is not allowed', () => {
     //Error received from API - "Credential types that are in use cannot be deleted"
   });
 
-  it('checks that editing a custom credential type which is being used by a credential and trying to add input/injector configs is not allowed ', () => {
+  it.skip('checks that editing a custom credential type which is being used by a credential and trying to add input/injector configs is not allowed ', () => {
     //Error received from API - "Modifications to inputs are not allowed  for credential types that are in use"
   });
 });
