@@ -83,7 +83,9 @@ export function MultiSelectDialog<T extends object>(props: MultiSelectDialogProp
     >
       <ModalBoxBody style={{ overflow: 'hidden' }}>
         <Split hasGutter>
-          <SplitItem style={{ fontWeight: 'bold' }}>{translations.selectedText}</SplitItem>
+          <SplitItem style={{ fontWeight: 'bold', whiteSpace: 'nowrap' }}>
+            {translations.selectedText}
+          </SplitItem>
           {view.selectedItems.length > 0 ? (
             <LabelGroup>
               {view.selectedItems.map((item, i) => {
