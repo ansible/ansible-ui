@@ -59,3 +59,28 @@ describe('WorkflowVisualizer', () => {
       .should('be.visible');
   });
 });
+
+describe('Workflow visuazlier empty state', () => {
+  it('Should mount with empty state', () => {
+    cy.fixture('workflow_nodes.json').then((workflow_nodes: AwxItemsResponse<WorkflowNode>) => {
+      workflow_nodes.count = 0;
+      workflow_nodes.results = [];
+      cy.intercept(
+        {
+          method: 'GET',
+          url: '/api/v2/workflow_job_templates/*/workflow_nodes/',
+          hostname: 'localhost',
+        },
+        { workflow_nodes }
+      );
+    });
+    cy.mount(<WorkflowVisualizer />);
+    cy.get('h4.pf-v5-c-empty-state__title-text').should(
+      'have.text',
+      'There are currently no nodes in this workflow'
+    );
+    cy.get('div.pf-v5-c-empty-state__actions').within(() => {
+      cy.get('[data-cy="add-node-button"]').should('be.visible');
+    });
+  });
+});
