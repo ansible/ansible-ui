@@ -57,6 +57,13 @@ describe('WorkflowVisualizer', () => {
       .get('.pf-v5-c-menu__item-text')
       .contains('Remove all nodes')
       .should('be.visible');
+    cy.get('.toggle-kebab').click();
+    cy.get('.toggle-kebab')
+      .click()
+      .get('[data-cy="workflow-documentation"]')
+      .contains('Documentation')
+      .should('have.attr', 'href')
+      .should('include', 'html/userguide/workflow_templates.html#ug-wf-editor');
   });
 });
 
