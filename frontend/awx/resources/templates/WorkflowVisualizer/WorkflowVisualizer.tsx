@@ -14,6 +14,9 @@ import { AddNodeButton } from './components/AddNodeButton';
 import { PageSection, PageSectionVariants, Title } from '@patternfly/react-core';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { AwxError } from '../../../common/AwxError';
+import { EmptyState, EmptyStateHeader, Icon, Spinner } from '@patternfly/react-core';
+import { ShareAltIcon } from '@patternfly/react-icons';
+import { getPatternflyColor } from '../../../../../framework';
 
 const TopologyView = styled(PFTopologyView)`
   & .pf-topology-view__project-toolbar {
@@ -48,7 +51,27 @@ export function WorkflowVisualizer() {
 
   let topologyScreen;
   if (!wfNodes || !workflowJobTemplate) {
-    topologyScreen = <div>Loading...</div>;
+    topologyScreen = (
+      <EmptyState>
+        <EmptyStateHeader
+          titleText={t('Please wait until the Workflow Visualizer is populated.')}
+          headingLevel="h4"
+          icon={
+            <Icon
+              size="xl"
+              style={{
+                paddingBottom: '40px',
+                color: getPatternflyColor('grey'),
+              }}
+            >
+              <ShareAltIcon />
+            </Icon>
+          }
+        >
+          <Spinner />
+        </EmptyStateHeader>
+      </EmptyState>
+    );
   } else if (!wfNodes?.results?.length) {
     topologyScreen = (
       <EmptyStateNoData
