@@ -5,7 +5,7 @@ import { requestGet, requestPatch } from '../../../../common/crud/Data';
 import { debounce } from 'debounce';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 
-export function useInstanceActions(instanceId: number) {
+export function useInstanceActions(instanceId: string) {
   const [instance, setInstance] = useState<Instance>();
   const [instanceGroups, setInstanceGroups] = useState<AwxItemsResponse<InstanceGroup>>();
   const [instanceForks, setInstanceForks] = useState(0);

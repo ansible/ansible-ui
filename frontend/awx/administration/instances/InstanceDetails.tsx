@@ -50,7 +50,7 @@ export function InstanceDetails() {
   const params = useParams<{ id: string }>();
   const { error, data: instance, refresh } = useGetItem<Instance>('/api/v2/instances', params.id);
   const { instanceGroups, instanceForks, handleToggleInstance, handleInstanceForksSlider } =
-    useInstanceActions(instance!.id);
+    useInstanceActions(params.id as string);
   const pageNavigate = usePageNavigate();
   const postRequest = usePostRequest();
   const itemActions: IPageAction<Instance>[] = useMemo(() => {

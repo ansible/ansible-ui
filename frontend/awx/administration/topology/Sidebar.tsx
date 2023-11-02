@@ -29,7 +29,7 @@ export function InstanceDetailInner(props: {
   );
 }
 
-export function InstanceDetailSidebar(props: { selectedId: number }) {
+export function InstanceDetailSidebar(props: { selectedId: string }) {
   const { selectedId } = props;
   const {
     instance,

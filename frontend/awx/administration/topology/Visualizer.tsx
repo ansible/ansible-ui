@@ -277,7 +277,7 @@ export const TopologyViewLayer = (props: { mesh: MeshVisualizer }) => {
           show={selectedIds.length > 0}
           onClose={() => setSelectedIds([])}
         >
-          <InstanceDetailSidebar selectedId={parseInt(selectedIds[0])}></InstanceDetailSidebar>
+          <InstanceDetailSidebar selectedId={selectedIds[0]}></InstanceDetailSidebar>
         </TopologySideBar>
       }
       controlBar={
