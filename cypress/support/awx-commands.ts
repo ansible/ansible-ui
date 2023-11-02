@@ -29,18 +29,17 @@ import './rest-commands';
  *
  */
 
-Cypress.Commands.add('inputCustomCredTypeConfig', (configType: string, credentialType: string) => {
+Cypress.Commands.add('inputCustomCredTypeConfig', (configType: string, config: string) => {
   cy.get(`[data-cy="${configType}"]`)
-    .find('textarea')
+    .find('textarea:not(:disabled)')
     .focus()
-    .clear({ force: true })
-    .type('{selectAll}{backspace}', { force: true })
-    .type(`${credentialType}`, {
-      force: true,
-      delay: 100,
+    .clear()
+    .type('{selectAll}{backspace}')
+    .type(`${config}`, {
+      delay: 0,
       parseSpecialCharSequences: false,
     })
-    .type('{esc}', { force: true });
+    .type('{esc}');
 });
 
 /**@param

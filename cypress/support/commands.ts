@@ -75,7 +75,7 @@ declare global {
 
       // --- INPUT COMMANDS ---
 
-      inputCustomCredTypeConfig(configType: string, credType: string): Chainable<void>;
+      inputCustomCredTypeConfig(configType: string, config: string): Chainable<void>;
 
       configFormatToggle(configType: string): Chainable<void>;
 
