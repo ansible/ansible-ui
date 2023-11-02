@@ -8,6 +8,7 @@ export function PageRoutedTabs(props: {
   backTab?: { label: string; page: string; persistentFilterKey: string };
   tabs: ({ label: string; page: string } | false)[];
   params?: { [key: string]: string | number | undefined };
+  hasOverflowScroll?: boolean;
 }) {
   const pageNavigate = usePageNavigate();
   const navigate = useNavigate();
@@ -70,7 +71,12 @@ export function PageRoutedTabs(props: {
         )}
         {tabs}
       </Tabs>
-      <PageSection variant="light" isFilled padding={{ default: 'noPadding' }}>
+      <PageSection
+        variant="light"
+        isFilled
+        hasOverflowScroll={props?.hasOverflowScroll === true}
+        padding={{ default: 'noPadding' }}
+      >
         <Outlet />
       </PageSection>
     </>

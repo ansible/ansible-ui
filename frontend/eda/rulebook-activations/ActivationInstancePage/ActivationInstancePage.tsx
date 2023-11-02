@@ -47,6 +47,7 @@ export function ActivationInstancePage() {
       <PageRoutedTabs
         tabs={[{ label: t('Details'), page: EdaRoute.RulebookActivationInstanceDetails }]}
         params={{ id: activationInstance?.activation_id, instanceId: params.instanceId }}
+        hasOverflowScroll
       />
     </PageLayout>
   );

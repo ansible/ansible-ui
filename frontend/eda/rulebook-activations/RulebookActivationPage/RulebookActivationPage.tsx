@@ -148,6 +148,7 @@ export function RulebookActivationPage() {
           { label: t('History'), page: EdaRoute.RulebookActivationHistory },
         ]}
         params={{ id: params.id }}
+        hasOverflowScroll
       />
     </PageLayout>
   );
