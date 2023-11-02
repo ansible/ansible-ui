@@ -741,7 +741,7 @@ function TableRow<T extends object>(props: {
   return (
     <>
       <Tr
-        isRowSelected={expanded}
+        isRowSelected={isItemSelected}
         style={{
           boxShadow: 'unset',
           borderBottom: expanded || (props.isLastRow && disableLastRowBorder) ? 'unset' : undefined,
@@ -822,7 +822,7 @@ function TableRow<T extends object>(props: {
         />
       </Tr>
       {expandedRow && expanded && expandedContent && (
-        <Tr isExpanded={expanded} style={{ boxShadow: 'unset' }}>
+        <Tr isRowSelected={isItemSelected} isExpanded={expanded} style={{ boxShadow: 'unset' }}>
           <Td />
           {showSelect && (
             <Th isStickyColumn stickyMinWidth="0px" hasRightBorder={props.scrollLeft} />
