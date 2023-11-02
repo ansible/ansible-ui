@@ -7,7 +7,7 @@ import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { User } from '../../../../frontend/awx/interfaces/User';
 import { getJobsAPIUrl } from '../../../../frontend/awx/views/jobs/jobUtils';
 
-const tenMinutesAgo = new Date(Date.now() - 40 * 60 * 1000).toISOString();
+const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000).toISOString();
 
 describe('AWX Cleanup', () => {
   it('cleanup projects', () => {
