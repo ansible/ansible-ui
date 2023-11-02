@@ -16,6 +16,14 @@ describe('Workflow Job templates visualizer', () => {
     cy.get('[data-cy="Submit"]').click();
 
     cy.get('[data-cy="workflow-visualizer"]').should('be.visible');
+    cy.get('h4.pf-v5-c-empty-state__title-text').should(
+      'have.text',
+      'There are currently no nodes in this workflow'
+    );
+    cy.get('div.pf-v5-c-empty-state__actions').within(() => {
+      cy.get('[data-cy="add-node-button"]').should('be.visible');
+    });
+
     cy.get('button[data-cy="workflow-visualizer-toolbar-close"]').click();
 
     // Clean up - delete workflow job template

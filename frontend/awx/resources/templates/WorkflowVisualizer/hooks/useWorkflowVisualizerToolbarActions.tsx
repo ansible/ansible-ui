@@ -7,7 +7,6 @@ import {
   CompressAltIcon,
   EllipsisVIcon,
   ExpandAltIcon,
-  PlusCircleIcon,
   TrashIcon,
 } from '@patternfly/react-icons';
 import {
@@ -25,6 +24,7 @@ import { useBulkConfirmation, usePageNavigate } from '../../../../../../framewor
 import { AwxRoute } from '../../../../AwxRoutes';
 import { getItemKey } from '../../../../../common/crud/Data';
 import { stringIsUUID } from '../../../../common/util/strings';
+import { AddNodeButton } from '../components/AddNodeButton';
 
 export function useWorkflowVisualizerToolbarActions(nodes: WorkflowNode[]) {
   const { t } = useTranslation();
@@ -84,14 +84,7 @@ export function useWorkflowVisualizerToolbarActions(nodes: WorkflowNode[]) {
           </Button>
         </ToolbarItem>
         <ToolbarItem>
-          <Button
-            icon={<PlusCircleIcon />}
-            variant="secondary"
-            label={t('Add node')}
-            onClick={() => {}}
-          >
-            {t('Add node')}
-          </Button>
+          <AddNodeButton />
         </ToolbarItem>
         <ToolbarItem>
           <Dropdown
