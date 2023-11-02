@@ -1,11 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   ComponentFactory,
   Controller,
   DagreLayout,
-  DefaultEdge,
   DefaultGroup,
-  DefaultNode,
   Graph,
   GraphComponent,
   Model,
@@ -19,15 +18,10 @@ import {
   withPanZoom,
   withSelection,
 } from '@patternfly/react-topology';
+import { CustomEdge, CustomNode } from './components';
+import type { LayoutNode, GraphNode } from './types';
 import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
 import type { AwxItemsResponse } from '../../../common/AwxItemsResponse';
-import type { CustomEdgeProps, LayoutNode, GraphNode } from './types';
-import { useTranslation } from 'react-i18next';
-
-const CustomEdge: React.FunctionComponent<CustomEdgeProps> = ({ element }: CustomEdgeProps) => {
-  const data = element.getData();
-  return <DefaultEdge element={element} {...data} />;
-};
 
 const baselineComponentFactory: ComponentFactory = (kind: ModelKind, type: string) => {
   switch (type) {
@@ -38,7 +32,7 @@ const baselineComponentFactory: ComponentFactory = (kind: ModelKind, type: strin
         case ModelKind.graph:
           return withPanZoom()(withSelection()(GraphComponent));
         case ModelKind.node:
-          return withSelection()(DefaultNode);
+          return withSelection()(CustomNode);
         case ModelKind.edge:
           return CustomEdge;
         default:
@@ -81,7 +75,12 @@ export const Topology = ({
     newController.setFitToScreenOnLayout(true);
     newController.registerComponentFactory(baselineComponentFactory);
     newController.registerLayoutFactory(
-      (type: string, graph: Graph) => new DagreLayout(graph, { rankdir: 'LR' })
+      (type: string, graph: Graph) =>
+        new DagreLayout(graph, {
+          rankdir: 'LR',
+          ranker: 'network-simplex',
+          ranksep: 100,
+        })
     );
     newController.addEventListener(SELECTION_EVENT, handleSelectedNode);
 
@@ -132,6 +131,9 @@ export const Topology = ({
         height: NODE_DIAMETER,
         shape: NodeShape.ellipse,
         runAfterTasks: n.runAfterTasks,
+        data: {
+          jobType: n.summary_fields?.unified_job_template?.unified_job_type,
+        },
       };
 
       return node;
