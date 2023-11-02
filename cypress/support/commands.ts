@@ -19,8 +19,8 @@ import { Project } from '../../frontend/awx/interfaces/Project';
 import { Schedule } from '../../frontend/awx/interfaces/Schedule';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
+import { CredentialType } from '../../frontend/awx/interfaces/CredentialType';
 import {
-  CredentialType,
   Group,
   Host,
   WorkflowJobTemplate,
@@ -65,7 +65,19 @@ declare global {
       /**Locates a title using its label. No assertion is made. */
       verifyPageTitle(label: string): Chainable<void>;
 
+      // ---- UI COMMANDS ---
+      createAndDeleteCustomAWXCredentialTypeUI(
+        customCredentialTypeName: string,
+        inputConfig?: string,
+        injectorConfig?: string,
+        defaultConfig?: string
+      ): Chainable<void>;
+
       // --- INPUT COMMANDS ---
+
+      inputCustomCredTypeConfig(configType: string, config: string): Chainable<void>;
+
+      configFormatToggle(configType: string): Chainable<void>;
 
       typeMonacoTextField(textString: string): Chainable<void>;
 

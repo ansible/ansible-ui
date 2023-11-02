@@ -83,7 +83,7 @@ describe('CredentialTypeForm.cy.ts', () => {
       cy.get('[data-cy="name"]').should('have.value', 'Mock Credential Type');
       cy.get('[data-cy="name"]').clear();
       cy.get('[data-cy="name"]').type('Edited Credential Type');
-      cy.clickButton(/^Edit credential type$/);
+      cy.clickButton(/^Save credential type$/);
       cy.wait('@editCredentialType')
         .its('request.body')
         .then((editedCredentialType: CredentialTypeForm) => {

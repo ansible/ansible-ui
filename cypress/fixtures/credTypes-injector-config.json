@@ -1,0 +1,11 @@
+{
+  "file": {
+    "template": "[mycloud]\ntoken={{ 123000 }}"
+  },
+  "env": {
+    "THIRD_PARTY_CLOUD_API_TOKEN": "{{ 456000 }}"
+  },
+  "extra_vars": {
+    "some_extra_var": "{{ username }}:{{ password }}"
+  }
+}

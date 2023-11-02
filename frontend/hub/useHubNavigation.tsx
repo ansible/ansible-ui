@@ -163,6 +163,7 @@ export function useHubNavigation() {
                     id: HubRoute.CreateRemoteRegistry,
                     element: <CreateRemoteRegistry />,
                   },
+
                   {
                     path: ':id/edit',
                     id: HubRoute.EditRemoteRegistry,

@@ -1,0 +1,39 @@
+{
+  "fields": [
+    {
+      "id": "username",
+      "type": "string",
+      "label": "Username"
+    },
+    {
+      "id": "password",
+      "type": "string",
+      "label": "Password",
+      "secret": true
+    },
+    {
+      "id": "multi_choice",
+      "type": "string",
+      "label": "Multiple Choice",
+      "choices": ["a", "b", "c"]
+    },
+    {
+      "id": "bool",
+      "type": "boolean",
+      "label": "Bool"
+    },
+    {
+      "id": "ssh_key",
+      "type": "string",
+      "label": "SSH Key",
+      "format": "ssh_private_key"
+    },
+    {
+      "id": "ssh_key_test",
+      "type": "string",
+      "label": "SSH Key",
+      "multiline": true
+    }
+  ],
+  "required": ["username", "password"]
+}
