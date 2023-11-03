@@ -7,11 +7,13 @@ import {
   CompressAltIcon,
   EllipsisVIcon,
   ExpandAltIcon,
+  ExternalLinkAltIcon,
   TrashIcon,
 } from '@patternfly/react-icons';
 import {
   Badge,
   Button,
+  Divider,
   Dropdown,
   DropdownItem,
   DropdownList,
@@ -25,12 +27,15 @@ import { AwxRoute } from '../../../../AwxRoutes';
 import { getItemKey } from '../../../../../common/crud/Data';
 import { stringIsUUID } from '../../../../common/util/strings';
 import { AddNodeButton } from '../components/AddNodeButton';
+import getDocsBaseUrl from '../../../../common/util/getDocsBaseUrl';
+import { useAwxConfig } from '../../../../common/useAwxConfig';
 
 export function useWorkflowVisualizerToolbarActions(nodes: WorkflowNode[]) {
   const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [isKebabOpen, setIsKebabOpen] = useState<boolean>(false);
   const pageNavigate = usePageNavigate();
+  const config = useAwxConfig();
   const params = useParams<{ id: string }>();
   const bulkAction = useBulkConfirmation<WorkflowNode>();
   const handleRemoveAllNodes = useCallback(
@@ -102,6 +107,15 @@ export function useWorkflowVisualizerToolbarActions(nodes: WorkflowNode[]) {
             )}
           >
             <DropdownList>
+              <DropdownItem
+                icon={<ExternalLinkAltIcon />}
+                data-cy="workflow-documentation"
+                to={`${getDocsBaseUrl(config)}/html/userguide/workflow_templates.html#ug-wf-editor`}
+                target="_blank"
+              >
+                {t('Documentation')}
+              </DropdownItem>
+              <Divider />
               <DropdownItem
                 data-cy="remove-all-nodes"
                 onClick={() => handleRemoveAllNodes(nodes)}
