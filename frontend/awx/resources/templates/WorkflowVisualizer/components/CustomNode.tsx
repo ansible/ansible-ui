@@ -1,7 +1,10 @@
 import { ComponentClass, FunctionComponent } from 'react';
-import { DefaultNode } from '@patternfly/react-topology';
-import { CustomNodeProps } from '../types';
-import type { SVGIconProps } from '@patternfly/react-icons/dist/js/createIcon';
+import {
+  DefaultNode,
+  LabelPosition,
+  WithDragNodeProps,
+  WithSelectionProps,
+} from '@patternfly/react-topology';
 import {
   ClipboardCheckIcon,
   ClockIcon,
@@ -10,6 +13,8 @@ import {
   ShareAltIcon,
   SyncAltIcon,
 } from '@patternfly/react-icons';
+import type { CustomNodeProps } from '../types';
+import type { SVGIconProps } from '@patternfly/react-icons/dist/js/createIcon';
 import type { UnifiedJobType } from '../../../../interfaces/WorkflowNode';
 
 const NodeIcon: Record<UnifiedJobType, ComponentClass<SVGIconProps>> = {
@@ -21,18 +26,25 @@ const NodeIcon: Record<UnifiedJobType, ComponentClass<SVGIconProps>> = {
   system_job: CogIcon,
 };
 
-export const CustomNode: FunctionComponent<CustomNodeProps> = ({ element }: CustomNodeProps) => {
+export const CustomNode: FunctionComponent<
+  CustomNodeProps & WithSelectionProps & WithDragNodeProps
+> = ({ element, selected, onSelect, ...rest }: CustomNodeProps) => {
   const data = element.getData();
-
   if (!data) return;
 
   const jobType = data.jobType;
   const Icon = NodeIcon[jobType];
-
   return (
-    <DefaultNode element={element}>
+    <DefaultNode
+      element={element}
+      showStatusDecorator
+      selected={selected}
+      onSelect={onSelect}
+      labelPosition={LabelPosition.right}
+      {...rest}
+    >
       <g transform={`translate(13, 13)`}>
-        {Icon && <Icon style={{ color: '#393F44' }} width={25} height={25} />}
+        <Icon style={{ color: '#393F44' }} width={25} height={25} />
       </g>
     </DefaultNode>
   );

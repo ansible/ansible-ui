@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+  CREATE_CONNECTOR_DROP_TYPE,
   ComponentFactory,
   Controller,
   DagreLayout,
@@ -15,6 +16,10 @@ import {
   Visualization,
   VisualizationProvider,
   VisualizationSurface,
+  nodeDragSourceSpec,
+  nodeDropTargetSpec,
+  withDndDrop,
+  withDragNode,
   withPanZoom,
   withSelection,
 } from '@patternfly/react-topology';
@@ -22,6 +27,9 @@ import { CustomEdge, CustomNode } from './components';
 import type { LayoutNode, GraphNode } from './types';
 import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
 import type { AwxItemsResponse } from '../../../common/AwxItemsResponse';
+
+const CONNECTOR_SOURCE_DROP = 'connector-src-drop';
+const CONNECTOR_TARGET_DROP = 'connector-target-drop';
 
 const baselineComponentFactory: ComponentFactory = (kind: ModelKind, type: string) => {
   switch (type) {
@@ -32,7 +40,13 @@ const baselineComponentFactory: ComponentFactory = (kind: ModelKind, type: strin
         case ModelKind.graph:
           return withPanZoom()(withSelection()(GraphComponent));
         case ModelKind.node:
-          return withSelection()(CustomNode);
+          return withDndDrop(
+            nodeDropTargetSpec([
+              CONNECTOR_SOURCE_DROP,
+              CONNECTOR_TARGET_DROP,
+              CREATE_CONNECTOR_DROP_TYPE,
+            ])
+          )(withDragNode(nodeDragSourceSpec('node', true, true))(withSelection()(CustomNode)));
         case ModelKind.edge:
           return CustomEdge;
         default:
