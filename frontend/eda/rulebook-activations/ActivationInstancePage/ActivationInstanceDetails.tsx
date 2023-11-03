@@ -7,7 +7,7 @@ import { AwxItemsResponse } from '../../../awx/common/AwxItemsResponse';
 import { StatusCell } from '../../../common/Status';
 import { useGet, useGetItem } from '../../../common/crud/useGet';
 import { edaAPI } from '../../api/eda-utils';
-import { PageDetailsSection, Section } from '../../common/PageDetailsSection';
+import { PageDetailsSection } from '../../common/PageDetailsSection';
 import { SWR_REFRESH_INTERVAL } from '../../constants';
 import { EdaActivationInstance } from '../../interfaces/EdaActivationInstance';
 import { EdaActivationInstanceLog } from '../../interfaces/EdaActivationInstanceLog';
@@ -35,32 +35,30 @@ export function ActivationInstanceDetails() {
     return <LoadingPage />;
   }
   return (
-    <Section padding={{ default: 'noPadding' }}>
-      <Scrollable>
-        <PageDetails>
-          <PageDetail label={t('Name')}>
-            {`${activationInstance?.id || ''} - ${activationInstance?.name || ''}`}
-          </PageDetail>
-          <PageDetail label={t('Status')}>
-            {<StatusCell status={activationInstance?.status || 'unknown'} />}
-          </PageDetail>
-          <PageDetail label={t('Start date')}>
-            {activationInstance?.started_at ? formatDateString(activationInstance?.started_at) : ''}
-          </PageDetail>
-          <PageDetail label={t('End date')}>
-            {activationInstance?.ended_at ? formatDateString(activationInstance?.ended_at) : ''}
-          </PageDetail>
-        </PageDetails>
-        <PageDetailsSection>
-          {activationInstanceLog?.results?.length ? (
-            <PageDetailCodeEditor
-              label={t('Output')}
-              value={activationInstanceLog?.results?.map((item) => item.log).join('\r\n')}
-              showCopyToClipboard={true}
-            />
-          ) : null}
-        </PageDetailsSection>
-      </Scrollable>
-    </Section>
+    <Scrollable>
+      <PageDetails>
+        <PageDetail label={t('Name')}>
+          {`${activationInstance?.id || ''} - ${activationInstance?.name || ''}`}
+        </PageDetail>
+        <PageDetail label={t('Status')}>
+          {<StatusCell status={activationInstance?.status || 'unknown'} />}
+        </PageDetail>
+        <PageDetail label={t('Start date')}>
+          {activationInstance?.started_at ? formatDateString(activationInstance?.started_at) : ''}
+        </PageDetail>
+        <PageDetail label={t('End date')}>
+          {activationInstance?.ended_at ? formatDateString(activationInstance?.ended_at) : ''}
+        </PageDetail>
+      </PageDetails>
+      <PageDetailsSection>
+        {activationInstanceLog?.results?.length ? (
+          <PageDetailCodeEditor
+            label={t('Output')}
+            value={activationInstanceLog?.results?.map((item) => item.log).join('\r\n')}
+            showCopyToClipboard={true}
+          />
+        ) : null}
+      </PageDetailsSection>
+    </Scrollable>
   );
 }

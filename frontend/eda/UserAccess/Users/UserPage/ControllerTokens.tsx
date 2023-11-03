@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { PageTable, usePageNavigate } from '../../../../../framework';
+import { PageLayout, PageTable, usePageNavigate } from '../../../../../framework';
 import { PageTableViewTypeE } from '../../../../../framework/PageToolbar/PageTableViewType';
 import { EdaRoute } from '../../../EdaRoutes';
 import { EdaControllerToken } from '../../../interfaces/EdaControllerToken';
@@ -7,7 +7,6 @@ import { useEdaView } from '../../../useEventDrivenView';
 import { useControllerTokenActions } from '../hooks/useControllerTokenActions';
 import { useControllerTokensColumns } from '../hooks/useControllerTokensColumns';
 import { edaAPI } from '../../../api/eda-utils';
-import { Section } from '../../../common/PageDetailsSection';
 
 export function ControllerTokens() {
   const { t } = useTranslation();
@@ -20,7 +19,7 @@ export function ControllerTokens() {
   });
   const rowActions = useControllerTokenActions(view);
   return (
-    <Section padding={{ default: 'noPadding' }}>
+    <PageLayout>
       <PageTable
         id="eda-controller-tokens-table"
         tableColumns={tableColumns}
@@ -36,6 +35,6 @@ export function ControllerTokens() {
         {...view}
         defaultSubtitle={t('Controller tokens')}
       />
-    </Section>
+    </PageLayout>
   );
 }

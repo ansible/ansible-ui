@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageHeader, useGetPageUrl } from '../../../../framework';
+import { PageHeader, PageLayout, useGetPageUrl } from '../../../../framework';
 import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
 import { useGet } from '../../../common/crud/useGet';
 import { EdaRoute } from '../../EdaRoutes';
@@ -8,7 +8,6 @@ import { edaAPI } from '../../api/eda-utils';
 import { SWR_REFRESH_INTERVAL } from '../../constants';
 import { EdaActivationInstance } from '../../interfaces/EdaActivationInstance';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
-import { Fragment } from 'react';
 
 export function ActivationInstancePage() {
   const { t } = useTranslation();
@@ -27,7 +26,7 @@ export function ActivationInstancePage() {
   const getPageUrl = useGetPageUrl();
 
   return (
-    <Fragment>
+    <PageLayout>
       <PageHeader
         title={`${activationInstance?.id || ''} - ${activationInstance?.name || ''}`}
         breadcrumbs={[
@@ -49,6 +48,6 @@ export function ActivationInstancePage() {
         tabs={[{ label: t('Details'), page: EdaRoute.RulebookActivationInstanceDetails }]}
         params={{ id: activationInstance?.activation_id, instanceId: params.instanceId }}
       />
-    </Fragment>
+    </PageLayout>
   );
 }

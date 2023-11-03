@@ -1,12 +1,11 @@
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageTable } from '../../../../../framework';
+import { PageLayout, PageTable } from '../../../../../framework';
 import { EdaRuleAuditAction } from '../../../interfaces/EdaRuleAuditAction';
 import { useEdaView } from '../../../useEventDrivenView';
 import { useRuleAuditActionsColumns } from '../hooks/useRuleAuditActionsColumns';
 import { useRuleAuditActionsFilters } from '../hooks/useRuleAuditActionsFilters';
 import { edaAPI } from '../../../api/eda-utils';
-import { Section } from '../../../common/PageDetailsSection';
 
 export function RuleAuditActions() {
   const params = useParams<{ id: string }>();
@@ -20,7 +19,7 @@ export function RuleAuditActions() {
     toolbarFilters,
   });
   return (
-    <Section padding={{ default: 'noPadding' }}>
+    <PageLayout>
       <PageTable
         tableColumns={tableColumns}
         toolbarFilters={toolbarFilters}
@@ -30,6 +29,6 @@ export function RuleAuditActions() {
         {...view}
         defaultSubtitle={t('Action')}
       />
-    </Section>
+    </PageLayout>
   );
 }
