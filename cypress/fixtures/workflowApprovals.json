@@ -1,0 +1,496 @@
+{
+  "count": 6,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 130,
+      "type": "workflow_approval",
+      "url": "/api/v2/workflow_approvals/130/",
+      "related": {
+        "created_by": "/api/v2/users/2/",
+        "unified_job_template": "/api/v2/workflow_approval_templates/10/",
+        "source_workflow_job": "/api/v2/workflow_jobs/129/",
+        "workflow_approval_template": "/api/v2/workflow_approval_templates/10/",
+        "approve": "/api/v2/workflow_approvals/130/approve/",
+        "deny": "/api/v2/workflow_approvals/130/deny/",
+        "approved_or_denied_by": "/api/v2/users/2/"
+      },
+      "summary_fields": {
+        "workflow_job_template": {
+          "id": 9,
+          "name": "test wf",
+          "description": ""
+        },
+        "workflow_job": {
+          "id": 129,
+          "name": "test wf",
+          "description": ""
+        },
+        "workflow_approval_template": {
+          "id": 10,
+          "name": "test approval",
+          "description": "",
+          "timeout": 0
+        },
+        "unified_job_template": {
+          "id": 10,
+          "name": "test approval",
+          "description": "",
+          "unified_job_type": "workflow_approval"
+        },
+        "approved_or_denied_by": {
+          "id": 2,
+          "username": "test",
+          "first_name": "",
+          "last_name": ""
+        },
+        "created_by": {
+          "id": 2,
+          "username": "test",
+          "first_name": "",
+          "last_name": ""
+        },
+        "user_capabilities": {
+          "delete": false,
+          "start": false
+        },
+        "source_workflow_job": {
+          "id": 129,
+          "name": "test wf",
+          "description": "",
+          "status": "failed",
+          "failed": true,
+          "elapsed": 26.803
+        }
+      },
+      "created": "2023-10-24T20:13:25.488787Z",
+      "modified": "2023-10-24T20:13:51.609468Z",
+      "name": "read only approval",
+      "description": "",
+      "unified_job_template": 10,
+      "launch_type": "workflow",
+      "status": "failed",
+      "execution_environment": null,
+      "failed": true,
+      "started": "2023-10-24T20:13:25.488787Z",
+      "finished": "2023-10-24T20:13:51.587179Z",
+      "canceled_on": null,
+      "elapsed": 26.098,
+      "job_explanation": "",
+      "launched_by": {
+        "id": 2,
+        "name": "test",
+        "type": "user",
+        "url": "/api/v2/users/2/"
+      },
+      "work_unit_id": null,
+      "can_approve_or_deny": false,
+      "approval_expiration": null,
+      "timed_out": false
+    },
+    {
+      "id": 131,
+      "type": "workflow_approval",
+      "url": "/api/v2/workflow_approvals/131/",
+      "related": {
+        "created_by": "/api/v2/users/2/",
+        "unified_job_template": "/api/v2/workflow_approval_templates/11/",
+        "source_workflow_job": "/api/v2/workflow_jobs/129/",
+        "workflow_approval_template": "/api/v2/workflow_approval_templates/11/",
+        "approve": "/api/v2/workflow_approvals/131/approve/",
+        "deny": "/api/v2/workflow_approvals/131/deny/",
+        "approved_or_denied_by": "/api/v2/users/2/"
+      },
+      "summary_fields": {
+        "workflow_job_template": {
+          "id": 9,
+          "name": "test wf",
+          "description": ""
+        },
+        "workflow_job": {
+          "id": 129,
+          "name": "test wf",
+          "description": ""
+        },
+        "workflow_approval_template": {
+          "id": 11,
+          "name": "approval with timeout",
+          "description": "",
+          "timeout": 300
+        },
+        "unified_job_template": {
+          "id": 11,
+          "name": "approval with timeout",
+          "description": "",
+          "unified_job_type": "workflow_approval"
+        },
+        "approved_or_denied_by": {
+          "id": 2,
+          "username": "test",
+          "first_name": "",
+          "last_name": ""
+        },
+        "created_by": {
+          "id": 2,
+          "username": "test",
+          "first_name": "",
+          "last_name": ""
+        },
+        "user_capabilities": {
+          "delete": true,
+          "start": true
+        },
+        "source_workflow_job": {
+          "id": 129,
+          "name": "test wf",
+          "description": "",
+          "status": "failed",
+          "failed": true,
+          "elapsed": 26.803
+        }
+      },
+      "created": "2023-10-24T20:13:25.667326Z",
+      "modified": "2023-10-24T20:13:45.318191Z",
+      "name": "can delete approval",
+      "description": "",
+      "unified_job_template": 11,
+      "launch_type": "workflow",
+      "status": "successful",
+      "execution_environment": null,
+      "failed": false,
+      "started": "2023-10-24T20:13:25.667326Z",
+      "finished": "2023-10-24T20:13:45.294238Z",
+      "canceled_on": null,
+      "elapsed": 19.627,
+      "job_explanation": "",
+      "launched_by": {
+        "id": 2,
+        "name": "test",
+        "type": "user",
+        "url": "/api/v2/users/2/"
+      },
+      "work_unit_id": null,
+      "can_approve_or_deny": false,
+      "approval_expiration": null,
+      "timed_out": false
+    },
+    {
+      "id": 133,
+      "type": "workflow_approval",
+      "url": "/api/v2/workflow_approvals/133/",
+      "related": {
+        "created_by": "/api/v2/users/2/",
+        "unified_job_template": "/api/v2/workflow_approval_templates/10/",
+        "source_workflow_job": "/api/v2/workflow_jobs/132/",
+        "workflow_approval_template": "/api/v2/workflow_approval_templates/10/",
+        "approve": "/api/v2/workflow_approvals/133/approve/",
+        "deny": "/api/v2/workflow_approvals/133/deny/"
+      },
+      "summary_fields": {
+        "workflow_job_template": {
+          "id": 9,
+          "name": "test wf",
+          "description": ""
+        },
+        "workflow_job": {
+          "id": 132,
+          "name": "test wf",
+          "description": ""
+        },
+        "workflow_approval_template": {
+          "id": 10,
+          "name": "test approval",
+          "description": "",
+          "timeout": 0
+        },
+        "unified_job_template": {
+          "id": 10,
+          "name": "test approval",
+          "description": "",
+          "unified_job_type": "workflow_approval"
+        },
+        "created_by": {
+          "id": 2,
+          "username": "test",
+          "first_name": "",
+          "last_name": ""
+        },
+        "user_capabilities": {
+          "delete": true,
+          "start": true
+        },
+        "source_workflow_job": {
+          "id": 132,
+          "name": "test wf",
+          "description": "",
+          "status": "canceled",
+          "failed": true,
+          "elapsed": 74.658,
+          "canceled_on": "2023-10-24T20:15:11.273631Z"
+        }
+      },
+      "created": "2023-10-24T20:14:05.026277Z",
+      "modified": "2023-10-24T20:14:05.026357Z",
+      "name": "test approval",
+      "description": "",
+      "unified_job_template": 10,
+      "launch_type": "workflow",
+      "status": "canceled",
+      "execution_environment": null,
+      "failed": true,
+      "started": "2023-10-24T20:14:05.026277Z",
+      "finished": "2023-10-24T20:15:11.470637Z",
+      "canceled_on": "2023-10-24T20:15:11.439260Z",
+      "elapsed": 66.444,
+      "job_explanation": "",
+      "launched_by": {
+        "id": 2,
+        "name": "test",
+        "type": "user",
+        "url": "/api/v2/users/2/"
+      },
+      "work_unit_id": null,
+      "can_approve_or_deny": false,
+      "approval_expiration": null,
+      "timed_out": false
+    },
+    {
+      "id": 138,
+      "type": "workflow_approval",
+      "url": "/api/v2/workflow_approvals/138/",
+      "related": {
+        "created_by": "/api/v2/users/2/",
+        "unified_job_template": "/api/v2/workflow_approval_templates/11/",
+        "source_workflow_job": "/api/v2/workflow_jobs/136/",
+        "workflow_approval_template": "/api/v2/workflow_approval_templates/11/",
+        "approve": "/api/v2/workflow_approvals/138/approve/",
+        "deny": "/api/v2/workflow_approvals/138/deny/"
+      },
+      "summary_fields": {
+        "workflow_job_template": {
+          "id": 9,
+          "name": "test wf",
+          "description": ""
+        },
+        "workflow_job": {
+          "id": 136,
+          "name": "test wf",
+          "description": ""
+        },
+        "workflow_approval_template": {
+          "id": 11,
+          "name": "approval with timeout",
+          "description": "",
+          "timeout": 300
+        },
+        "unified_job_template": {
+          "id": 11,
+          "name": "approval with timeout",
+          "description": "",
+          "unified_job_type": "workflow_approval"
+        },
+        "created_by": {
+          "id": 2,
+          "username": "test",
+          "first_name": "",
+          "last_name": ""
+        },
+        "user_capabilities": {
+          "delete": true,
+          "start": true
+        },
+        "source_workflow_job": {
+          "id": 136,
+          "name": "test wf",
+          "description": "",
+          "status": "failed",
+          "failed": true,
+          "elapsed": 87.747
+        }
+      },
+      "created": "2023-10-24T20:15:42.681191Z",
+      "modified": "2023-10-24T20:15:42.681243Z",
+      "name": "approval with timeout",
+      "description": "",
+      "unified_job_template": 11,
+      "launch_type": "workflow",
+      "status": "failed",
+      "execution_environment": null,
+      "failed": true,
+      "started": "2023-10-24T20:15:42.681191Z",
+      "finished": "2023-10-24T20:16:59.197451Z",
+      "canceled_on": null,
+      "elapsed": 76.516,
+      "job_explanation": "The approval node approval with timeout (138) has expired after 60 seconds.",
+      "launched_by": {
+        "id": 2,
+        "name": "test",
+        "type": "user",
+        "url": "/api/v2/users/2/"
+      },
+      "work_unit_id": null,
+      "can_approve_or_deny": false,
+      "approval_expiration": null,
+      "timed_out": true
+    },
+    {
+      "id": 140,
+      "type": "workflow_approval",
+      "url": "/api/v2/workflow_approvals/140/",
+      "related": {
+        "created_by": "/api/v2/users/2/",
+        "unified_job_template": "/api/v2/workflow_approval_templates/10/",
+        "source_workflow_job": "/api/v2/workflow_jobs/139/",
+        "workflow_approval_template": "/api/v2/workflow_approval_templates/10/",
+        "approve": "/api/v2/workflow_approvals/140/approve/",
+        "deny": "/api/v2/workflow_approvals/140/deny/"
+      },
+      "summary_fields": {
+        "workflow_job_template": {
+          "id": 9,
+          "name": "test wf",
+          "description": ""
+        },
+        "workflow_job": {
+          "id": 139,
+          "name": "test wf",
+          "description": ""
+        },
+        "workflow_approval_template": {
+          "id": 10,
+          "name": "test approval",
+          "description": "",
+          "timeout": 0
+        },
+        "unified_job_template": {
+          "id": 10,
+          "name": "test approval",
+          "description": "",
+          "unified_job_type": "workflow_approval"
+        },
+        "created_by": {
+          "id": 2,
+          "username": "test",
+          "first_name": "",
+          "last_name": ""
+        },
+        "user_capabilities": {
+          "delete": true,
+          "start": true
+        },
+        "source_workflow_job": {
+          "id": 139,
+          "name": "test wf",
+          "description": "",
+          "status": "running",
+          "failed": false,
+          "elapsed": 0.0
+        }
+      },
+      "created": "2023-10-24T20:17:43.019082Z",
+      "modified": "2023-10-24T20:17:43.019158Z",
+      "name": "cannot approve or deny",
+      "description": "",
+      "unified_job_template": 10,
+      "launch_type": "workflow",
+      "status": "pending",
+      "execution_environment": null,
+      "failed": false,
+      "started": "2023-10-24T20:17:43.019082Z",
+      "finished": null,
+      "canceled_on": null,
+      "elapsed": 7.428912,
+      "job_explanation": "",
+      "launched_by": {
+        "id": 2,
+        "name": "test",
+        "type": "user",
+        "url": "/api/v2/users/2/"
+      },
+      "work_unit_id": null,
+      "can_approve_or_deny": false,
+      "approval_expiration": null,
+      "timed_out": false
+    },
+    {
+      "id": 141,
+      "type": "workflow_approval",
+      "url": "/api/v2/workflow_approvals/141/",
+      "related": {
+        "created_by": "/api/v2/users/2/",
+        "unified_job_template": "/api/v2/workflow_approval_templates/11/",
+        "source_workflow_job": "/api/v2/workflow_jobs/139/",
+        "workflow_approval_template": "/api/v2/workflow_approval_templates/11/",
+        "approve": "/api/v2/workflow_approvals/141/approve/",
+        "deny": "/api/v2/workflow_approvals/141/deny/"
+      },
+      "summary_fields": {
+        "workflow_job_template": {
+          "id": 9,
+          "name": "test wf",
+          "description": ""
+        },
+        "workflow_job": {
+          "id": 139,
+          "name": "test wf",
+          "description": ""
+        },
+        "workflow_approval_template": {
+          "id": 11,
+          "name": "approval with timeout",
+          "description": "",
+          "timeout": 300
+        },
+        "unified_job_template": {
+          "id": 11,
+          "name": "approval with timeout",
+          "description": "",
+          "unified_job_type": "workflow_approval"
+        },
+        "created_by": {
+          "id": 2,
+          "username": "test",
+          "first_name": "",
+          "last_name": ""
+        },
+        "user_capabilities": {
+          "delete": true,
+          "start": true
+        },
+        "source_workflow_job": {
+          "id": 139,
+          "name": "test wf",
+          "description": "",
+          "status": "running",
+          "failed": false,
+          "elapsed": 0.0
+        }
+      },
+      "created": "2023-10-24T20:17:43.257815Z",
+      "modified": "2023-10-24T20:17:43.257868Z",
+      "name": "can approve or deny",
+      "description": "",
+      "unified_job_template": 11,
+      "launch_type": "workflow",
+      "status": "pending",
+      "execution_environment": null,
+      "failed": false,
+      "started": "2023-10-24T20:17:43.257815Z",
+      "finished": null,
+      "canceled_on": null,
+      "elapsed": 7.26841,
+      "job_explanation": "",
+      "launched_by": {
+        "id": 2,
+        "name": "test",
+        "type": "user",
+        "url": "/api/v2/users/2/"
+      },
+      "work_unit_id": null,
+      "can_approve_or_deny": true,
+      "approval_expiration": "2023-10-24T20:22:43.257815Z",
+      "timed_out": false
+    }
+  ]
+}

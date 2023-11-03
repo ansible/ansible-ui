@@ -113,6 +113,8 @@ declare global {
       ): Chainable<void>;
       selectMultiSelectOption(selector: string, label: string | RegExp): Chainable<void>;
 
+      clickTableHeader(name: string | RegExp): Chainable<void>;
+
       // --- TABLE COMMANDS ---
 
       /** Change the current filter type in the table toolbar. */
