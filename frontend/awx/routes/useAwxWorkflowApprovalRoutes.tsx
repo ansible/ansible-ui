@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { PageNavigationItem } from '../../../framework';
 import { PageNotImplemented } from '../../../framework/PageEmptyStates/PageNotImplemented';
 import { AwxRoute } from '../AwxRoutes';
+import { WorkflowApprovalPage } from '../views/workflow-approvals/WorkflowApprovalPage/WorkflowApprovalPage';
+import WorkflowApprovals from '../views/workflow-approvals/WorkflowApprovals';
 
 export function useAwxWorkflowApprovalRoutes() {
   const { t } = useTranslation();
@@ -15,11 +17,23 @@ export function useAwxWorkflowApprovalRoutes() {
         {
           id: AwxRoute.WorkflowApprovalPage,
           path: ':id/',
-          element: <PageNotImplemented />,
+          element: <WorkflowApprovalPage />,
+          children: [
+            {
+              id: AwxRoute.WorkflowApprovalDetails,
+              path: 'details',
+              element: <PageNotImplemented />,
+            },
+            {
+              id: AwxRoute.WorkflowApprovalWorkflowJobDetails,
+              path: 'workflow-job-details',
+              element: <PageNotImplemented />,
+            },
+          ],
         },
         {
           path: '',
-          element: <PageNotImplemented />,
+          element: <WorkflowApprovals />,
         },
       ],
     }),
