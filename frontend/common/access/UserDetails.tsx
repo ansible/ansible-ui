@@ -26,7 +26,7 @@ export type UserDetailsType = {
   roles: RoleRef[];
 }>;
 
-export function UserDetailsBase<T extends UserDetailsType>(props: {
+export function UserDetails<T extends UserDetailsType>(props: {
   user: T;
   organizations?: {
     // Organization name
