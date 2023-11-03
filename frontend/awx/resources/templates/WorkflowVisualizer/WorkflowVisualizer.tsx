@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
 import { TopologyView as PFTopologyView } from '@patternfly/react-topology';
 import { Topology } from './Topology';
-import { useGet } from '../../../../common/crud/useGet';
+import { useGet, useGetItem } from '../../../../common/crud/useGet';
 import { useWorkflowVisualizerToolbarActions } from './hooks/useWorkflowVisualizerToolbarActions';
 import type { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
@@ -11,6 +11,9 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { EmptyStateNoData } from '../../../../../framework/components/EmptyStateNoData';
 import { AddNodeButton } from './components/AddNodeButton';
+import { PageSection, PageSectionVariants, Title } from '@patternfly/react-core';
+import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
+import { AwxError } from '../../../common/AwxError';
 
 const TopologyView = styled(PFTopologyView)`
   & .pf-topology-view__project-toolbar {
@@ -23,13 +26,28 @@ export function WorkflowVisualizer() {
   const { t } = useTranslation();
 
   const [selectedNode, setSelectedNode] = useState<WorkflowNode | undefined>(undefined);
-  const { data: wfNodes } = useGet<AwxItemsResponse<WorkflowNode>>(
+  const {
+    data: wfNodes,
+    error: workflowNodeError,
+    refresh: workflowNodeRefresh,
+  } = useGet<AwxItemsResponse<WorkflowNode>>(
     `/api/v2/workflow_job_templates/${Number(id).toString()}/workflow_nodes/`
   );
+  const {
+    data: workflowJobTemplate,
+    error: workflowError,
+    refresh: workflowRefresh,
+  } = useGetItem<WorkflowJobTemplate>('/api/v2/workflow_job_templates/', id);
 
-  const toolbarActions = useWorkflowVisualizerToolbarActions(wfNodes?.results ?? []); // The argument for this function will need to be the number of nodes.
+  const error = workflowError || workflowNodeError;
+  const toolbarActions = useWorkflowVisualizerToolbarActions(wfNodes?.results ?? []);
+
+  if (error) {
+    return <AwxError error={error} handleRefresh={workflowRefresh || workflowNodeRefresh} />;
+  }
+
   let topologyScreen;
-  if (!wfNodes) {
+  if (!wfNodes || !workflowJobTemplate) {
     topologyScreen = <div>Loading...</div>;
   } else if (!wfNodes?.results?.length) {
     topologyScreen = (
@@ -55,21 +73,30 @@ export function WorkflowVisualizer() {
   }
 
   return (
-    <TopologyView
-      sideBarOpen={selectedNode !== undefined}
-      sideBarResizable
-      sideBar={
-        selectedNode ? (
-          <WorkflowVisualizerNodeDetails
-            setSelectedNode={setSelectedNode}
-            selectedNode={selectedNode}
-          />
-        ) : null
-      }
-      contextToolbar={toolbarActions}
-      data-cy="workflow-visualizer"
-    >
-      {topologyScreen}
-    </TopologyView>
+    <>
+      <PageSection
+        style={{ paddingBottom: '0px' }}
+        data-cy="workflow-job-template-name"
+        variant={PageSectionVariants.light}
+      >
+        <Title headingLevel="h1">{workflowJobTemplate?.name}</Title>
+      </PageSection>
+      <TopologyView
+        sideBarOpen={selectedNode !== undefined}
+        sideBarResizable
+        sideBar={
+          selectedNode ? (
+            <WorkflowVisualizerNodeDetails
+              setSelectedNode={setSelectedNode}
+              selectedNode={selectedNode}
+            />
+          ) : null
+        }
+        contextToolbar={toolbarActions}
+        data-cy="workflow-visualizer"
+      >
+        {topologyScreen}
+      </TopologyView>
+    </>
   );
 }
