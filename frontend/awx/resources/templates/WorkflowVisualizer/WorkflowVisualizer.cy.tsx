@@ -3,10 +3,14 @@ import { WorkflowNode } from '../../../interfaces/WorkflowNode';
 import { WorkflowVisualizer } from './WorkflowVisualizer';
 
 describe('WorkflowVisualizer', () => {
-  before(() => {
+  beforeEach(() => {
     cy.intercept(
       { method: 'GET', url: '/api/v2/workflow_job_templates/*/workflow_nodes/' },
       { fixture: 'workflow_nodes.json' }
+    );
+    cy.intercept(
+      { method: 'GET', url: '/api/v2/workflow_job_templates/*' },
+      { fixture: 'workflowJobTemplate.json' }
     );
   });
 
@@ -74,6 +78,10 @@ describe('Workflow visuazlier empty state', () => {
         { workflow_nodes }
       );
     });
+    cy.intercept(
+      { method: 'GET', url: '/api/v2/workflow_job_templates/*' },
+      { fixture: 'workflowJobTemplate.json' }
+    );
     cy.mount(<WorkflowVisualizer />);
     cy.get('h4.pf-v5-c-empty-state__title-text').should(
       'have.text',
