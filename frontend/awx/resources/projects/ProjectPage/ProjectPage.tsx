@@ -74,9 +74,9 @@ export function ProjectPage() {
 
       <PageRoutedTabs
         backTab={{
-          label: t('Back to Templates'),
-          page: AwxRoute.Templates,
-          persistentFilterKey: 'templates',
+          label: t('Back to Projects'),
+          page: AwxRoute.Projects,
+          persistentFilterKey: 'projects',
         }}
         tabs={tabs}
         params={{ id: project.id }}
