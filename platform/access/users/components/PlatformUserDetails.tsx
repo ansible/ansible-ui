@@ -1,17 +1,14 @@
 import { useParams } from 'react-router-dom';
 import { useGet, useGetItem } from '../../../../frontend/common/crud/useGet';
-import {
-  UserDetailsBase,
-  UserDetailsType,
-} from '../../../../frontend/common/access/UserDetailsBase';
+import { UserDetails, UserDetailsType } from '../../../../frontend/common/access/UserDetails';
 import { User } from '../../../interfaces/User';
 import { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
 import { Organization } from '../../../interfaces/Organization';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useGetPageUrl } from '../../../../framework';
 import { PlatformRoute } from '../../../PlatformRoutes';
 
-export function UserDetails() {
+export function PlatformUserDetails() {
   const params = useParams<{ id: string }>();
   const getPageUrl = useGetPageUrl();
   const { data: user } = useGetItem<User>('/api/gateway/v1/users', params.id);
@@ -40,7 +37,7 @@ export function UserDetails() {
   }
 
   return (
-    <UserDetailsBase
+    <UserDetails
       user={user as UserDetailsType}
       organizations={organizations}
       options={{ showUserType: true }}

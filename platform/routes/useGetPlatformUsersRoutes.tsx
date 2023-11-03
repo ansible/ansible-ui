@@ -3,7 +3,7 @@ import { PageNavigationItem } from '../../framework';
 import { PlatformRoute } from '../PlatformRoutes';
 import { CreateUser, EditUser } from '../access/users/components/UserForm';
 import { UserPage } from '../access/users/components/UserPage';
-import { UserDetails } from '../access/users/components/UserDetails';
+import { PlatformUserDetails } from '../access/users/components/PlatformUserDetails';
 import { UsersList } from '../access/users/components/UsersList';
 import { useTranslation } from 'react-i18next';
 
@@ -33,7 +33,7 @@ export function useGetPlatformUsersRoutes() {
             {
               id: PlatformRoute.UserDetails,
               path: 'details',
-              element: <UserDetails />,
+              element: <PlatformUserDetails />,
             },
           ],
         },
