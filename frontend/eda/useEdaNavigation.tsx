@@ -41,8 +41,8 @@ import { DecisionEnvironmentPage } from './Resources/decision-environments/Decis
 import { ControllerTokens } from './UserAccess/Users/UserPage/ControllerTokens';
 import { UserPage } from './UserAccess/Users/UserPage/UserPage';
 import { MyPage } from './UserAccess/Users/UserPage/MyPage';
-import { MyDetails } from './UserAccess/Users/UserPage/MyDetails';
-import { UserDetails } from './UserAccess/Users/UserPage/UserDetails';
+import { EdaMyDetails } from './UserAccess/Users/UserPage/EdaMyDetails';
+import { EdaUserDetails } from './UserAccess/Users/UserPage/EdaUserDetails';
 import { RuleAuditPage } from './views/RuleAudit/RuleAuditPage/RuleAuditPage';
 import { RuleAuditActions } from './views/RuleAudit/RuleAuditPage/RuleAuditActions';
 import { RuleAuditEvents } from './views/RuleAudit/RuleAuditPage/RuleAuditEvents';
@@ -291,7 +291,7 @@ export function useEdaNavigation() {
                       {
                         id: EdaRoute.MyDetails,
                         path: 'details',
-                        element: <MyDetails />,
+                        element: <EdaMyDetails />,
                       },
                       {
                         id: EdaRoute.MyTokens,
@@ -327,7 +327,7 @@ export function useEdaNavigation() {
                       {
                         id: EdaRoute.UserDetails,
                         path: 'details',
-                        element: <UserDetails />,
+                        element: <EdaUserDetails />,
                       },
                       {
                         id: EdaRoute.UserTokens,
