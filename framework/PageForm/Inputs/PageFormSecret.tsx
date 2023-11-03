@@ -1,7 +1,7 @@
 import { Button, InputGroup, TextInput } from '@patternfly/react-core';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageFormGroup } from '../PageForm/Inputs/PageFormGroup';
+import { PageFormGroup } from './PageFormGroup';
 
 interface ChildProps {
   labelHelp?: string;
@@ -9,7 +9,7 @@ interface ChildProps {
 }
 
 /**
- * Props for the PageHiddenInput component.
+ * Props for the PageFormSecret component.
  * @interface IProps
  */
 interface IProps {
@@ -18,7 +18,7 @@ interface IProps {
    * When true, the field value is masked and a clear button is displayed.
    * When false, children components are displayed for user interaction.
    */
-  shouldHideField: boolean;
+  shouldHideField: boolean | undefined;
 
   /**
    * Callback function triggered when the clear button is clicked.
@@ -45,7 +45,7 @@ interface IProps {
   label?: string;
 }
 
-export function PageHiddenInput({ onClear, shouldHideField, label, labelHelp, children }: IProps) {
+export function PageFormSecret({ onClear, shouldHideField, label, labelHelp, children }: IProps) {
   const { t } = useTranslation();
   const fieldLabel = label || children.props.label || '';
   const fieldLabelHelp = labelHelp || children.props.labelHelp || '';
