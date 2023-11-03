@@ -1,6 +1,13 @@
 import { DescriptionList, PageSection } from '@patternfly/react-core';
 import { ReactNode } from 'react';
 import { useSettings } from '../../../framework/Settings';
+import styled from 'styled-components';
+
+export const Section = styled(PageSection)`
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 204px);
+`;
 
 export function PageDetailsSection(props: { children?: ReactNode; disablePadding?: boolean }) {
   const { disablePadding } = props;

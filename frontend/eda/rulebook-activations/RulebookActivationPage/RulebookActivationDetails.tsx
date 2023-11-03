@@ -18,6 +18,7 @@ import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { RestartPolicyEnum, Status906Enum } from '../../interfaces/generated/eda-api';
 import { EdaExtraVarsCell } from '../components/EdaExtraVarCell';
 import { edaAPI } from '../../api/eda-utils';
+import { Section } from '../../common/PageDetailsSection';
 
 export function RulebookActivationDetails() {
   const { t } = useTranslation();
@@ -41,99 +42,107 @@ export function RulebookActivationDetails() {
     return <LoadingPage />;
   }
   return (
-    <Scrollable>
-      <PageDetails
-        alertPrompts={
-          rulebookActivation.status === Status906Enum.Error
-            ? [
-                `${t('Rulebook Activation create error: ')}${
-                  rulebookActivation?.status_message || ''
-                }`,
-              ]
-            : []
-        }
-      >
-        <PageDetail label={t('Activation ID')}>{rulebookActivation?.id || ''}</PageDetail>
-        <PageDetail label={t('Name')}>{rulebookActivation?.name || ''}</PageDetail>
-        <PageDetail label={t('Description')}>{rulebookActivation?.description || ''}</PageDetail>
-        <PageDetail
-          label={t('Project')}
-          helpText={t('Projects are a logical collection of rulebooks.')}
+    <Section padding={{ default: 'noPadding' }}>
+      <Scrollable>
+        <PageDetails
+          alertPrompts={
+            rulebookActivation.status === Status906Enum.Error
+              ? [
+                  `${t('Rulebook Activation create error: ')}${
+                    rulebookActivation?.status_message || ''
+                  }`,
+                ]
+              : []
+          }
         >
-          {rulebookActivation && rulebookActivation.project?.id ? (
-            <Link
-              to={getPageUrl(EdaRoute.ProjectPage, {
-                params: { id: rulebookActivation.project.id },
-              })}
-            >
-              {rulebookActivation?.project?.name}
-            </Link>
-          ) : (
-            rulebookActivation?.project?.name || ''
-          )}
-        </PageDetail>
-        <PageDetail
-          label={t('Rulebook')}
-          helpText={t('Rulebooks will be shown according to the project selected.')}
-        >
-          {rulebookActivation?.rulebook?.name || ''}
-        </PageDetail>
-        <PageDetail
-          label={t('Decision environment')}
-          helpText={t('Decision environments are a container image to run Ansible rulebooks.')}
-        >
-          {rulebookActivation && rulebookActivation?.decision_environment?.id ? (
-            <Link
-              to={getPageUrl(EdaRoute.DecisionEnvironmentPage, {
-                params: { id: rulebookActivation?.decision_environment?.id },
-              })}
-            >
-              {rulebookActivation?.decision_environment?.name}
-            </Link>
-          ) : (
-            rulebookActivation?.decision_environment?.name || ''
-          )}
-        </PageDetail>
-        <PageDetail label={t('Restart policy')} helpText={restartPolicyHelpBlock}>
-          {rulebookActivation?.restart_policy
-            ? restartPolicyName(rulebookActivation?.restart_policy, t)
-            : ''}
-        </PageDetail>
-        <PageDetail label={t('Activation status')}>
-          <StatusCell status={rulebookActivation?.status || ''} />
-        </PageDetail>
-        <PageDetail label={t('Project git hash')}>
-          <CopyCell text={rulebookActivation?.git_hash ?? ''} />
-        </PageDetail>
-        <PageDetail label={t('Number of rules')}>{rulebookActivation?.rules_count || 0}</PageDetail>
-        <PageDetail label={t('Fire count')}>
-          {rulebookActivation?.rules_fired_count || 0}
-        </PageDetail>
-        <PageDetail label={t('Last restarted')}>
-          {rulebookActivation?.restarted_at
-            ? formatDateString(rulebookActivation.restarted_at)
-            : ''}
-        </PageDetail>
-        <PageDetail label={t('Restart count')}>{rulebookActivation?.restart_count || 0}</PageDetail>
-        <PageDetail label={t('Created')}>
-          {rulebookActivation?.created_at ? formatDateString(rulebookActivation?.created_at) : ''}
-        </PageDetail>
-        <PageDetail label={t('Last modified')}>
-          {rulebookActivation?.modified_at ? formatDateString(rulebookActivation?.modified_at) : ''}
-        </PageDetail>
-      </PageDetails>
-      {rulebookActivation?.extra_var?.id && (
-        <PageSection variant="light">
-          <EdaExtraVarsCell
-            label={t('Variables')}
-            helpText={t(
-              `The variables for the rulebook are in a JSON or YAML format. The content would be equivalent to the file passed through the '--vars' flag of ansible-rulebook command.`
+          <PageDetail label={t('Activation ID')}>{rulebookActivation?.id || ''}</PageDetail>
+          <PageDetail label={t('Name')}>{rulebookActivation?.name || ''}</PageDetail>
+          <PageDetail label={t('Description')}>{rulebookActivation?.description || ''}</PageDetail>
+          <PageDetail
+            label={t('Project')}
+            helpText={t('Projects are a logical collection of rulebooks.')}
+          >
+            {rulebookActivation && rulebookActivation.project?.id ? (
+              <Link
+                to={getPageUrl(EdaRoute.ProjectPage, {
+                  params: { id: rulebookActivation.project.id },
+                })}
+              >
+                {rulebookActivation?.project?.name}
+              </Link>
+            ) : (
+              rulebookActivation?.project?.name || ''
             )}
-            id={rulebookActivation.extra_var.id}
-          />
-        </PageSection>
-      )}
-    </Scrollable>
+          </PageDetail>
+          <PageDetail
+            label={t('Rulebook')}
+            helpText={t('Rulebooks will be shown according to the project selected.')}
+          >
+            {rulebookActivation?.rulebook?.name || ''}
+          </PageDetail>
+          <PageDetail
+            label={t('Decision environment')}
+            helpText={t('Decision environments are a container image to run Ansible rulebooks.')}
+          >
+            {rulebookActivation && rulebookActivation?.decision_environment?.id ? (
+              <Link
+                to={getPageUrl(EdaRoute.DecisionEnvironmentPage, {
+                  params: { id: rulebookActivation?.decision_environment?.id },
+                })}
+              >
+                {rulebookActivation?.decision_environment?.name}
+              </Link>
+            ) : (
+              rulebookActivation?.decision_environment?.name || ''
+            )}
+          </PageDetail>
+          <PageDetail label={t('Restart policy')} helpText={restartPolicyHelpBlock}>
+            {rulebookActivation?.restart_policy
+              ? restartPolicyName(rulebookActivation?.restart_policy, t)
+              : ''}
+          </PageDetail>
+          <PageDetail label={t('Activation status')}>
+            <StatusCell status={rulebookActivation?.status || ''} />
+          </PageDetail>
+          <PageDetail label={t('Project git hash')}>
+            <CopyCell text={rulebookActivation?.git_hash ?? ''} />
+          </PageDetail>
+          <PageDetail label={t('Number of rules')}>
+            {rulebookActivation?.rules_count || 0}
+          </PageDetail>
+          <PageDetail label={t('Fire count')}>
+            {rulebookActivation?.rules_fired_count || 0}
+          </PageDetail>
+          <PageDetail label={t('Last restarted')}>
+            {rulebookActivation?.restarted_at
+              ? formatDateString(rulebookActivation.restarted_at)
+              : ''}
+          </PageDetail>
+          <PageDetail label={t('Restart count')}>
+            {rulebookActivation?.restart_count || 0}
+          </PageDetail>
+          <PageDetail label={t('Created')}>
+            {rulebookActivation?.created_at ? formatDateString(rulebookActivation?.created_at) : ''}
+          </PageDetail>
+          <PageDetail label={t('Last modified')}>
+            {rulebookActivation?.modified_at
+              ? formatDateString(rulebookActivation?.modified_at)
+              : ''}
+          </PageDetail>
+        </PageDetails>
+        {rulebookActivation?.extra_var?.id && (
+          <PageSection variant="light">
+            <EdaExtraVarsCell
+              label={t('Variables')}
+              helpText={t(
+                `The variables for the rulebook are in a JSON or YAML format. The content would be equivalent to the file passed through the '--vars' flag of ansible-rulebook command.`
+              )}
+              id={rulebookActivation.extra_var.id}
+            />
+          </PageSection>
+        )}
+      </Scrollable>
+    </Section>
   );
 }
 
