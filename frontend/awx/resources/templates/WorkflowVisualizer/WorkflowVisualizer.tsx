@@ -73,12 +73,14 @@ export function WorkflowVisualizer() {
   }
 
   return (
-    <PageSection
-      data-cy="workflow-job-template-name"
-      variant={PageSectionVariants.light}
-      className="bg-lighten border-bottom"
-    >
-      <Title headingLevel="h1">{workflowJobTemplate?.name}</Title>
+    <>
+      <PageSection
+        style={{ paddingBottom: '0px' }}
+        data-cy="workflow-job-template-name"
+        variant={PageSectionVariants.light}
+      >
+        <Title headingLevel="h1">{workflowJobTemplate?.name}</Title>
+      </PageSection>
       <TopologyView
         sideBarOpen={selectedNode !== undefined}
         sideBarResizable
@@ -95,6 +97,6 @@ export function WorkflowVisualizer() {
       >
         {topologyScreen}
       </TopologyView>
-    </PageSection>
+    </>
   );
 }
