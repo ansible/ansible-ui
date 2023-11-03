@@ -18,6 +18,7 @@ import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
 import { CredentialType } from '../../frontend/awx/interfaces/CredentialType';
 import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/generated-from-swagger/api';
+import { Job } from '../../frontend/awx/interfaces/Job';
 import './auth';
 import './commands';
 import './rest-commands';
@@ -923,4 +924,25 @@ Cypress.Commands.add('waitForTemplateStatus', (jobID: string) => {
           break;
       }
     });
+});
+
+Cypress.Commands.add('waitForJobToProcessEvents', (jobID: string) => {
+  const waitForJobToFinishProcessingEvents = (maxLoops: number) => {
+    if (maxLoops == 0) {
+      cy.log('Max loops reached while waiting for processing events.');
+      return;
+    }
+    cy.wait(500);
+
+    cy.requestGet<Job>(`api/v2/jobs/${jobID}/`).then((job) => {
+      if (job.event_processing_finished !== true) {
+        cy.log(`EVENT PROCESSING = ${job.event_processing_finished}`);
+        cy.log(`MAX LOOPS = ${maxLoops}`);
+        waitForJobToFinishProcessingEvents(maxLoops - 1);
+      } else {
+        cy.log('Event processed');
+      }
+    });
+  };
+  waitForJobToFinishProcessingEvents(80);
 });
