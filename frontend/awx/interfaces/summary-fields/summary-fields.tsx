@@ -57,6 +57,47 @@ export interface SummaryFieldInventory {
   total_inventory_sources: number;
 }
 
+export interface SummaryFieldWorkflowJob {
+  id: number;
+  name: string;
+  description: string;
+}
+
+export interface SummaryFieldWorkflowJobTemplate {
+  id: number;
+  name: string;
+  description: string;
+}
+
+export interface SummaryFieldWorkflowApprovalTemplate {
+  id: number;
+  name: string;
+  description: string;
+  timeout: number;
+}
+
+export interface SummaryFieldUnifiedJobTemplate {
+  id: number;
+  name: string;
+  description: string;
+  unified_job_type: string;
+}
+
+export interface SummaryFieldInventory {
+  id: number;
+  name: string;
+  description: string;
+  has_active_failures: boolean;
+  total_hosts: number;
+  hosts_with_active_failures: number;
+  total_groups: number;
+  has_inventory_sources: boolean;
+  total_inventory_sources: number;
+  inventory_sources_with_failures: number;
+  organization_id: number;
+  kind: string;
+}
+
 export interface JobSummaryFields {
   organization?: SummaryFieldsOrganization;
   inventory?: {
