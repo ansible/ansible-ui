@@ -1,13 +1,12 @@
 import { CubesIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageTable } from '../../../../framework';
+import { PageLayout, PageTable } from '../../../../framework';
 import { EdaActivationInstance } from '../../interfaces/EdaActivationInstance';
 import { useEdaView } from '../../useEventDrivenView';
 import { useActivationHistoryColumns } from '../hooks/useActivationHistoryColumns';
 import { useActivationHistoryFilters } from '../hooks/useActivationHistoryFilters';
 import { edaAPI } from '../../api/eda-utils';
-import { Section } from '../../common/PageDetailsSection';
 
 export function RulebookActivationHistory() {
   const params = useParams<{ id: string }>();
@@ -22,7 +21,7 @@ export function RulebookActivationHistory() {
     tableColumns,
   });
   return (
-    <Section padding={{ default: 'noPadding' }}>
+    <PageLayout>
       <PageTable
         tableColumns={tableColumns}
         toolbarFilters={toolbarFilters}
@@ -33,6 +32,6 @@ export function RulebookActivationHistory() {
         {...view}
         defaultSubtitle={t('Rulebook Activation History')}
       />
-    </Section>
+    </PageLayout>
   );
 }

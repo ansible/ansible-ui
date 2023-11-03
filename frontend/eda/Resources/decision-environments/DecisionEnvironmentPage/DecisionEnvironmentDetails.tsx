@@ -1,19 +1,12 @@
 import { Trans, useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
-import {
-  DateTimeCell,
-  PageDetail,
-  PageDetails,
-  Scrollable,
-  useGetPageUrl,
-} from '../../../../../framework';
+import { DateTimeCell, PageDetail, PageDetails, useGetPageUrl } from '../../../../../framework';
 import { useGet } from '../../../../common/crud/useGet';
 import { EdaRoute } from '../../../EdaRoutes';
 import { edaAPI } from '../../../api/eda-utils';
 import { SWR_REFRESH_INTERVAL } from '../../../constants';
 import { EdaCredential } from '../../../interfaces/EdaCredential';
 import { EdaDecisionEnvironmentRead } from '../../../interfaces/EdaDecisionEnvironment';
-import { Section } from '../../../common/PageDetailsSection';
 
 export function DecisionEnvironmentDetails() {
   const { t } = useTranslation();
@@ -46,38 +39,34 @@ export function DecisionEnvironmentDetails() {
   const getPageUrl = useGetPageUrl();
 
   return (
-    <Section padding={{ default: 'noPadding' }}>
-      <Scrollable>
-        <PageDetails>
-          <PageDetail label={t('Name')}>{decisionEnvironment?.name || ''}</PageDetail>
-          <PageDetail label={t('Description')}>{decisionEnvironment?.description || ''}</PageDetail>
-          <PageDetail label={t('Image')} helpText={imageHelpBlock}>
-            {decisionEnvironment?.image_url || ''}
-          </PageDetail>
-          <PageDetail
-            label={t('Credential')}
-            helpText={t('The token needed to utilize the Decision environment image.')}
+    <PageDetails>
+      <PageDetail label={t('Name')}>{decisionEnvironment?.name || ''}</PageDetail>
+      <PageDetail label={t('Description')}>{decisionEnvironment?.description || ''}</PageDetail>
+      <PageDetail label={t('Image')} helpText={imageHelpBlock}>
+        {decisionEnvironment?.image_url || ''}
+      </PageDetail>
+      <PageDetail
+        label={t('Credential')}
+        helpText={t('The token needed to utilize the Decision environment image.')}
+      >
+        {decisionEnvironment && decisionEnvironment.credential?.id ? (
+          <Link
+            to={getPageUrl(EdaRoute.CredentialPage, {
+              params: { id: decisionEnvironment?.credential?.id },
+            })}
           >
-            {decisionEnvironment && decisionEnvironment.credential?.id ? (
-              <Link
-                to={getPageUrl(EdaRoute.CredentialPage, {
-                  params: { id: decisionEnvironment?.credential?.id },
-                })}
-              >
-                {credential?.name}
-              </Link>
-            ) : (
-              credential?.name || ''
-            )}
-          </PageDetail>
-          <PageDetail label={t('Created')}>
-            <DateTimeCell format="date-time" value={decisionEnvironment?.created_at} />
-          </PageDetail>
-          <PageDetail label={t('Last modified')}>
-            <DateTimeCell format="date-time" value={decisionEnvironment?.modified_at} />
-          </PageDetail>
-        </PageDetails>
-      </Scrollable>
-    </Section>
+            {credential?.name}
+          </Link>
+        ) : (
+          credential?.name || ''
+        )}
+      </PageDetail>
+      <PageDetail label={t('Created')}>
+        <DateTimeCell format="date-time" value={decisionEnvironment?.created_at} />
+      </PageDetail>
+      <PageDetail label={t('Last modified')}>
+        <DateTimeCell format="date-time" value={decisionEnvironment?.modified_at} />
+      </PageDetail>
+    </PageDetails>
   );
 }
