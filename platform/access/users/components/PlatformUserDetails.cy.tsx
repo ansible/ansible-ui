@@ -1,5 +1,5 @@
 import { formatDateString } from '../../../../framework/utils/dateTimeHelpers';
-import { UserDetails } from './UserDetails';
+import { PlatformUserDetails } from './PlatformUserDetails';
 
 const mockUser = {
   id: 8,
@@ -23,7 +23,7 @@ const mockUser = {
 describe('User details', () => {
   it('Renders first & last name, username, email, last login, created & modified timestamps', () => {
     cy.intercept('/api/gateway/v1/users/*', mockUser);
-    cy.mount(<UserDetails />);
+    cy.mount(<PlatformUserDetails />);
     cy.get('[data-cy="first-name"]').should('have.text', 'New');
     cy.get('[data-cy="last-name"]').should('have.text', 'User');
     cy.get('[data-cy="email"]').should('have.text', 'new-user@sample.com');
