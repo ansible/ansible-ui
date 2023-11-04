@@ -937,12 +937,16 @@ Cypress.Commands.add('waitForJobToProcessEvents', (jobID: string) => {
     cy.requestGet<Job>(`api/v2/jobs/${jobID}/`).then((job) => {
       if (job.event_processing_finished !== true) {
         cy.log(`EVENT PROCESSING = ${job.event_processing_finished}`);
-        cy.log(`MAX LOOPS = ${maxLoops}`);
+        cy.log(`MAX LOOPS RAN = ${maxLoops}`);
         waitForJobToFinishProcessingEvents(maxLoops - 1);
       } else {
-        cy.log('Event processed');
+        cy.log(`EVENT PROCESSED = ${job.event_processing_finished}`);
       }
     });
   };
+  /*
+  reason the numbers chosen for wait is 500ms and maxLoops is 80,
+  as processing events takes ~30s, hence 80 * 500ms is chosen as the upper limit)
+  */
   waitForJobToFinishProcessingEvents(80);
 });
