@@ -44,7 +44,9 @@ const RuleAuditChart = () => {
         if (item.fired_at) {
           const firedAtDate = new Date(item.fired_at);
           if (!firstDate || firedAtDate < firstDate) firstDate = firedAtDate;
-          const label = `${firedAtDate.getMonth() + 1}/${firedAtDate.getDate()}`;
+          const label = `${String(firedAtDate.getMonth() + 1).padStart(2, '0')}/${String(
+            firedAtDate.getDate()
+          ).padStart(2, '0')}`;
           switch (item.status) {
             case 'successful':
               {
