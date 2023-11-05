@@ -26,36 +26,10 @@ import {
   VisualizationSurface,
   withSelection,
   withPanZoom,
-  GraphElement,
-  ElementModel,
 } from '@patternfly/react-topology';
 import { MeshVisualizer } from '../../interfaces/MeshVisualizer';
 import { InstanceDetailSidebar } from './Sidebar';
-export interface MeshNode {
-  id: string;
-  x: number;
-  y: number;
-  node_type: string;
-  hostname: string;
-  node_state: string;
-}
-
-export interface MeshLink {
-  source: {
-    id: string;
-    hostname: string;
-  };
-  target: {
-    id: string;
-    hostname: string;
-  };
-}
-
-interface WebWorkerResponse {
-  type: string;
-  nodes: MeshNode[];
-  links: MeshLink[];
-}
+import { CustomEdgeProps, CustomNodeProps, WebWorkerResponse } from './types';
 
 const baselineComponentFactory: ComponentFactory = (kind: ModelKind, type: string) => {
   switch (type) {
@@ -68,7 +42,7 @@ const baselineComponentFactory: ComponentFactory = (kind: ModelKind, type: strin
         case ModelKind.node:
           return withSelection()(CustomNode);
         case ModelKind.edge:
-          return withSelection()(DefaultEdge);
+          return CustomEdge;
         default:
           return undefined;
       }
@@ -92,17 +66,22 @@ function getNodeIcon(nodeType: string) {
   }
 }
 
-const CustomNode = (props: {
-  element: GraphElement<ElementModel, { nodeType: string }>;
-  onSelect: (e: React.MouseEvent) => void;
-  selected: boolean;
-}) => {
-  const { element, onSelect, selected } = props;
+const CustomNode: React.FC<CustomNodeProps> = ({
+  element,
+  onSelect,
+  selected,
+}: CustomNodeProps) => {
   const data = element.getData();
   const Icon = data && getNodeIcon(data.nodeType);
 
   return (
-    <DefaultNode element={element} showStatusDecorator onSelect={onSelect} selected={selected}>
+    <DefaultNode
+      element={element}
+      showStatusDecorator
+      onSelect={onSelect}
+      selected={selected}
+      onStatusDecoratorClick={onSelect}
+    >
       <g transform={`translate(13, 13)`}>
         {Icon && <Icon style={{ color: '#393F44' }} width={25} height={25} />}
       </g>
@@ -133,13 +112,39 @@ function getNodeStatus(nodeState: string) {
     case 'deprovisioning':
       return NodeStatus.default;
     case 'deprovision-fail':
-      return NodeStatus.danger;
     case 'provision-fail':
-      return NodeStatus.info;
+      return NodeStatus.danger;
     case 'unavailable':
       return NodeStatus.info;
     default:
       return NodeStatus.success;
+  }
+}
+const CustomEdge: React.FC<CustomEdgeProps> = ({ element }: CustomEdgeProps) => {
+  const data = element.getData();
+  return <DefaultEdge element={element} {...data} />;
+};
+function getEdgeStyle(edge: string) {
+  switch (edge) {
+    case 'established':
+      return EdgeStyle.default;
+    case 'adding':
+    case 'removing':
+      return EdgeStyle.dashed;
+    default:
+      return EdgeStyle.default;
+  }
+}
+function getEdgeStatus(edge: string) {
+  switch (edge) {
+    case 'established':
+      return NodeStatus.success;
+    case 'adding':
+      return NodeStatus.info;
+    case 'removing':
+      return NodeStatus.warning;
+    default:
+      return NodeStatus.default;
   }
 }
 
@@ -240,7 +245,11 @@ export const TopologyViewLayer = (props: { mesh: MeshVisualizer }) => {
         type: 'edge',
         source: l.source.id,
         target: l.target.id,
-        edgeStyle: EdgeStyle.default,
+        edgeStyle: getEdgeStyle(l.link_state),
+        data: {
+          endTerminalStatus: getEdgeStatus(l.link_state),
+          tagStatus: getEdgeStatus(l.link_state),
+        },
       };
     });
 
@@ -252,6 +261,7 @@ export const TopologyViewLayer = (props: { mesh: MeshVisualizer }) => {
       return;
     }
     controller.fromModel(model, true); // Merge in the changes
+    controller.getGraph().fit(80);
   }, [meshLayout, controller]);
 
   if (!controller) {

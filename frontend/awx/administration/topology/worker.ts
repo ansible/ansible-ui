@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { MeshNode } from './Visualizer';
+import { MeshNode } from './types';
 export const SELECTOR = '#topology';
 
 interface MeshLink extends d3.SimulationLinkDatum<MeshNode> {}
