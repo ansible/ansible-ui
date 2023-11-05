@@ -23,6 +23,7 @@ export interface MeshLink {
 
 export interface WebWorkerResponse {
   type: string;
+  progress: number;
   nodes: MeshNode[];
   links: MeshLink[];
 }

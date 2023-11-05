@@ -30,6 +30,15 @@ import {
 import { MeshVisualizer } from '../../interfaces/MeshVisualizer';
 import { InstanceDetailSidebar } from './Sidebar';
 import { CustomEdgeProps, CustomNodeProps, WebWorkerResponse } from './types';
+import Loader from './Loader';
+import styled from 'styled-components';
+
+const ContentLoading = styled(Loader)`
+  height: 100%;
+  position: absolute;
+  width: 100%;
+  background: white;
+`;
 
 const baselineComponentFactory: ComponentFactory = (kind: ModelKind, type: string) => {
   switch (type) {
@@ -155,12 +164,23 @@ export const TopologyViewLayer = (props: { mesh: MeshVisualizer }) => {
     type: '',
     nodes: [],
     links: [],
+    progress: 0,
   });
+  const [progress, setProgress] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const controllerRef = useRef<Visualization>();
   const controller = controllerRef.current;
 
   function handleMeshLayout(data: WebWorkerResponse) {
     setMeshLayout(() => ({ ...data }));
+  }
+
+  function handleProgress(progress: number) {
+    const calculatedPercent: number = Math.round(progress * 100);
+    setProgress(calculatedPercent);
+    setTimeout(() => {
+      return calculatedPercent === 100 ? setIsLoading(false) : setIsLoading(true);
+    }, 500);
   }
 
   const getData: Worker = useMemo(() => new Worker(new URL('./worker.ts', import.meta.url)), []);
@@ -191,9 +211,8 @@ export const TopologyViewLayer = (props: { mesh: MeshVisualizer }) => {
       getData.onmessage = function handleWorkerEvent(event: { data: WebWorkerResponse }) {
         switch (event.data.type) {
           case 'tick':
-            break;
-          // TODO: replace with loading progress bar
-          // return console.dir('tick', event.data);
+            // break;
+            return handleProgress(event.data.progress);
           case 'end':
             return handleMeshLayout(event.data);
           default:
@@ -281,30 +300,33 @@ export const TopologyViewLayer = (props: { mesh: MeshVisualizer }) => {
         </TopologySideBar>
       }
       controlBar={
-        <TopologyControlBar
-          controlButtons={createTopologyControlButtons({
-            ...defaultControlButtonsOptions,
-            zoomInCallback: action(() => {
-              controller.getGraph().scaleBy(4 / 3);
-            }),
-            zoomOutCallback: action(() => {
-              controller.getGraph().scaleBy(0.75);
-            }),
-            fitToScreenCallback: action(() => {
-              controller.getGraph().fit(80);
-            }),
-            resetViewCallback: action(() => {
-              controller.getGraph().reset();
-              controller.getGraph().layout();
-            }),
-            legend: true,
-          })}
-        />
+        !isLoading && (
+          <TopologyControlBar
+            controlButtons={createTopologyControlButtons({
+              ...defaultControlButtonsOptions,
+              zoomInCallback: action(() => {
+                controller.getGraph().scaleBy(4 / 3);
+              }),
+              zoomOutCallback: action(() => {
+                controller.getGraph().scaleBy(0.75);
+              }),
+              fitToScreenCallback: action(() => {
+                controller.getGraph().fit(80);
+              }),
+              resetViewCallback: action(() => {
+                controller.getGraph().reset();
+                controller.getGraph().layout();
+              }),
+              legend: true,
+            })}
+          />
+        )
       }
     >
       <VisualizationProvider controller={controller}>
         <VisualizationSurface state={{ selectedIds }} />
       </VisualizationProvider>
+      {isLoading && <ContentLoading className="mesh-content-loader" progress={progress} />}
     </TopologyView>
   );
 };

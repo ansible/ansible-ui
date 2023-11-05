@@ -3,6 +3,7 @@ import {
   ButtonVariant,
   Label,
   PageSection,
+  Progress,
   Skeleton,
   Slider,
   SliderOnChangeEvent,
@@ -187,7 +188,8 @@ export function InstanceDetailsTab(props: {
         <PageDetail label={t`Listener port`}>{instance.listener_port}</PageDetail>
       )}
       <PageDetail label={t('Used capacity')}>
-        <CapacityCell used={instance.consumed_capacity} capacity={instance.capacity} />
+        {/* <CapacityCell used={instance.consumed_capacity} capacity={instance.capacity} /> */}
+        <Progress value={33} title="Title" style={{ width: '50%' }} />
       </PageDetail>
       <PageDetail label={t('Running jobs')}>{instance.jobs_running.toString()}</PageDetail>
       <PageDetail label={t('Total jobs')}>{instance.jobs_total.toString()}</PageDetail>
