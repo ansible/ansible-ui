@@ -211,7 +211,6 @@ export const TopologyViewLayer = (props: { mesh: MeshVisualizer }) => {
       getData.onmessage = function handleWorkerEvent(event: { data: WebWorkerResponse }) {
         switch (event.data.type) {
           case 'tick':
-            // break;
             return handleProgress(event.data.progress);
           case 'end':
             return handleMeshLayout(event.data);

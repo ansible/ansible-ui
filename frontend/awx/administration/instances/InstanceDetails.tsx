@@ -17,7 +17,6 @@ import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   BytesCell,
-  CapacityCell,
   IPageAction,
   PageActionSelection,
   PageActionType,
@@ -188,8 +187,7 @@ export function InstanceDetailsTab(props: {
         <PageDetail label={t`Listener port`}>{instance.listener_port}</PageDetail>
       )}
       <PageDetail label={t('Used capacity')}>
-        {/* <CapacityCell used={instance.consumed_capacity} capacity={instance.capacity} /> */}
-        <Progress value={33} title="Title" style={{ width: '50%' }} />
+        <Progress value={Math.round(100 - instance.percent_capacity_remaining)} />
       </PageDetail>
       <PageDetail label={t('Running jobs')}>{instance.jobs_running.toString()}</PageDetail>
       <PageDetail label={t('Total jobs')}>{instance.jobs_total.toString()}</PageDetail>
