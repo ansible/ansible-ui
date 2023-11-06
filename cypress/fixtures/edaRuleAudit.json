@@ -1,0 +1,109 @@
+{
+  "count": 15,
+  "next": "/api/eda/v1/audit-rules/?page=2&page_size=10",
+  "previous": null,
+  "page_size": 10,
+  "page": 1,
+  "results": [
+    {
+      "id": 109,
+      "name": "Run JT at 8",
+      "status": "failed",
+      "activation_instance": {
+        "id": 66,
+        "name": "Activation 2"
+      },
+      "fired_at": "2023-11-06T20:20:37.156383Z"
+    },
+    {
+      "id": 108,
+      "name": "Run JT at 8",
+      "status": "failed",
+      "activation_instance": {
+        "id": 65,
+        "name": "Activation 7"
+      },
+      "fired_at": "2023-11-02T21:58:02.373946Z"
+    },
+    {
+      "id": 107,
+      "name": "Run JT at 8",
+      "status": "failed",
+      "activation_instance": {
+        "id": 64,
+        "name": "Activation 7"
+      },
+      "fired_at": "2023-11-02T21:57:48.715448Z"
+    },
+    {
+      "id": 106,
+      "name": "Run JT at 8",
+      "status": "failed",
+      "activation_instance": {
+        "id": 63,
+        "name": "Activation 6"
+      },
+      "fired_at": "2023-11-01T20:51:12.937185Z"
+    },
+    {
+      "id": 105,
+      "name": "Say Hello from ruleset 2",
+      "status": "successful",
+      "activation_instance": {
+        "id": null,
+        "name": "DELETED"
+      },
+      "fired_at": "2023-11-01T20:51:05.241839Z"
+    },
+    {
+      "id": 104,
+      "name": "Say Hello from ruleset 1",
+      "status": "successful",
+      "activation_instance": {
+        "id": null,
+        "name": "DELETED"
+      },
+      "fired_at": "2023-11-01T20:51:05.237074Z"
+    },
+    {
+      "id": 103,
+      "name": "Say Hello from ruleset 2",
+      "status": "successful",
+      "activation_instance": {
+        "id": 61,
+        "name": "Activation 4"
+      },
+      "fired_at": "2023-11-01T20:51:03.827509Z"
+    },
+    {
+      "id": 102,
+      "name": "Say Hello from ruleset 1",
+      "status": "successful",
+      "activation_instance": {
+        "id": 61,
+        "name": "Activation 4"
+      },
+      "fired_at": "2023-11-01T20:51:03.822878Z"
+    },
+    {
+      "id": 101,
+      "name": "Run JT at 8",
+      "status": "failed",
+      "activation_instance": {
+        "id": 60,
+        "name": "Activation 6"
+      },
+      "fired_at": "2023-10-31T13:45:43.223065Z"
+    },
+    {
+      "id": 100,
+      "name": "Say Hello from ruleset 2",
+      "status": "successful",
+      "activation_instance": {
+        "id": null,
+        "name": "DELETED"
+      },
+      "fired_at": "2023-10-31T13:45:31.580456Z"
+    }
+  ]
+}
