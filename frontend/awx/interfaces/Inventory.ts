@@ -41,6 +41,7 @@ export interface CommonInventory
   inventory_sources_with_failures: number;
   pending_deletion: boolean;
   total_inventory_sources: number;
+  variables: string;
 }
 
 export interface ConstructedInventory extends CommonInventory {
