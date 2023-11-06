@@ -321,7 +321,9 @@ function CollectionInstallTab(props: { collection: CollectionVersionSearch }) {
             <PageDetail>
               {t(`Note Installing collecion with ansible-galaxy is only supported in ansible 2.9+`)}
             </PageDetail>
-            <a ref={downloadLinkRef} style={{ display: 'none' }} />
+            <a href="/#" ref={downloadLinkRef} style={{ display: 'none' }}>
+              {t(`Link`)}
+            </a>
             <Button
               variant="link"
               icon={<DownloadIcon />}
