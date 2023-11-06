@@ -9,7 +9,7 @@ export function useAwxGetAllPages<T extends object>(url: string) {
     (pageIndex: number, previousPageData: AwxItemsResponse<T>) => {
       if (previousPageData && !previousPageData.next) return null;
 
-      return `${url}?page=${pageIndex + 1}&page_size=200`;
+      return `${url}?order_by=name&page=${pageIndex + 1}&page_size=200`;
     },
     [url]
   );
