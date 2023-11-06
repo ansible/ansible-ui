@@ -26,8 +26,8 @@ import './rest-commands';
 
 //  AWX related custom command implementation
 
-/**@param
- *
+/**
+ * cy.inputCustomCredTypeConfig(json/yml, input/injector config)
  */
 
 Cypress.Commands.add('inputCustomCredTypeConfig', (configType: string, config: string) => {
