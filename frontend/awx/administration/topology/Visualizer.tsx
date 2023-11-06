@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect, useRef } from 'react';
 import * as d3 from 'd3';
-import { RegionsIcon, AnsibeTowerIcon, EllipsisHIcon } from '@patternfly/react-icons';
+import { RegionsIcon, AnsibeTowerIcon, EllipsisHIcon, ServerIcon } from '@patternfly/react-icons';
 import {
   action,
   ComponentFactory,
@@ -30,8 +30,9 @@ import {
 import { MeshVisualizer } from '../../interfaces/MeshVisualizer';
 import { InstanceDetailSidebar } from './Sidebar';
 import { CustomEdgeProps, CustomNodeProps, WebWorkerResponse } from './types';
-import Loader from './Loader';
 import styled from 'styled-components';
+import Loader from './Loader';
+import Legend from './Legend';
 
 const ContentLoading = styled(Loader)`
   height: 100%;
@@ -63,7 +64,7 @@ const NODE_DIAMETER = 50;
 function getNodeIcon(nodeType: string) {
   switch (nodeType) {
     case 'hybrid':
-      return RegionsIcon;
+      return ServerIcon;
     case 'execution':
       return AnsibeTowerIcon;
     case 'control':
@@ -97,7 +98,6 @@ const CustomNode: React.FC<CustomNodeProps> = ({
     </DefaultNode>
   );
 };
-
 function getNodeShape(nodeType: string) {
   switch (nodeType) {
     case 'control':
@@ -147,9 +147,9 @@ function getEdgeStyle(edge: string) {
 function getEdgeStatus(edge: string) {
   switch (edge) {
     case 'established':
-      return NodeStatus.success;
+      return NodeStatus.default;
     case 'adding':
-      return NodeStatus.info;
+      return NodeStatus.success;
     case 'removing':
       return NodeStatus.warning;
     default:
@@ -168,13 +168,16 @@ export const TopologyViewLayer = (props: { mesh: MeshVisualizer }) => {
   });
   const [progress, setProgress] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [showLegend, setShowLegend] = useState<boolean>(false);
   const controllerRef = useRef<Visualization>();
   const controller = controllerRef.current;
 
   function handleMeshLayout(data: WebWorkerResponse) {
     setMeshLayout(() => ({ ...data }));
   }
-
+  function toggleLegend() {
+    setShowLegend(!showLegend);
+  }
   function handleProgress(progress: number) {
     const calculatedPercent: number = Math.round(progress * 100);
     setProgress(calculatedPercent);
@@ -317,6 +320,7 @@ export const TopologyViewLayer = (props: { mesh: MeshVisualizer }) => {
                 controller.getGraph().layout();
               }),
               legend: true,
+              legendCallback: toggleLegend,
             })}
           />
         )
@@ -326,6 +330,7 @@ export const TopologyViewLayer = (props: { mesh: MeshVisualizer }) => {
         <VisualizationSurface state={{ selectedIds }} />
       </VisualizationProvider>
       {isLoading && <ContentLoading className="mesh-content-loader" progress={progress} />}
+      {showLegend && <Legend />}
     </TopologyView>
   );
 };
