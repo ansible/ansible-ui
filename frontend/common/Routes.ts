@@ -78,4 +78,7 @@ export const RouteObj = {
 
   // EDA
   EdaUserDetailsTokens: `${edaRoutePrefix}/access/users/details/:id/tokens`,
+  EdaRulebookActivationPage: `${edaRoutePrefix}/views/rulebook-activations/:id/*`,
+  EdaRulebookActivationDetails: `${edaRoutePrefix}/views/rulebook-activations/:id/details`,
+  EdaRulebookActivationHistory: `${edaRoutePrefix}/views/rulebook-activations/:id/history`,
 };
