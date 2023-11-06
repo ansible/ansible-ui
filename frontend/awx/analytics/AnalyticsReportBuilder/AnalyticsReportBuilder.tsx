@@ -50,7 +50,13 @@ import { useGetRequest } from '../../../common/crud/useGet';
 import { useState, useEffect } from 'react';
 import { useAnalyticsView, IAnalyticsView } from '../useAnalyticsView';
 import { PageTable } from '../../../../framework/PageTable/PageTable';
-import { ITableColumn, ITableColumnTypeText } from '../../../../framework';
+import {
+  ITableColumn,
+  ITableColumnTypeText,
+  LoadingPage,
+  PageHeader,
+  PageLayout,
+} from '../../../../framework';
 import {
   IToolbarFilter,
   ToolbarFilterType,
@@ -77,6 +83,7 @@ import {
   getClickableText,
   renderAllTasksStatus,
 } from './AnalyticsReportBuilderUtils';
+import { AnalyticsErrorState } from '../Reports/ErrorStates';
 
 type KeyValue = { key: string; value: string };
 
@@ -339,17 +346,28 @@ export function AnalyticsReportBuilder(props: AnalyticsReportBuilderProps) {
   // build the table columns
   const columns = buildTableColumns({ ...newProps });
 
+  // Render error state based on the error message
+  if (error) {
+    return <AnalyticsErrorState error={error?.body?.error?.keyword || 'unknown'} />;
+  }
+
   // and finaly, render the table with chart and filters
   return (
     <>
-      {error}
       {mainData && options && view.pageItems?.length > 0 && (
-        <AnalyticsReportBuilderTable
-          {...newProps}
-          tableColumns={columns}
-          toolbarFilters={filters}
-        ></AnalyticsReportBuilderTable>
+        <PageLayout>
+          <PageHeader
+            title={mainData?.report?.name || ''}
+            description={mainData?.report?.description || ''}
+          />
+          <AnalyticsReportBuilderTable
+            {...newProps}
+            tableColumns={columns}
+            toolbarFilters={filters}
+          ></AnalyticsReportBuilderTable>
+        </PageLayout>
       )}
+      {(!mainData || !options) && view.pageItems?.length === 0 && <LoadingPage />}
     </>
   );
 }
