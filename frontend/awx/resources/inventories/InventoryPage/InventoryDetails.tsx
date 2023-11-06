@@ -23,6 +23,7 @@ import { useVerbosityString } from '../../../common/useVerbosityString';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { Inventory } from '../../../interfaces/Inventory';
 import { useGetInventory } from './InventoryPage';
+import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
 
 function useInstanceGroups(inventoryId: string) {
   const { data } = useGet<{ results: InstanceGroup[] }>(
@@ -192,6 +193,11 @@ export function InventoryDetailsInner(props: { inventory: Inventory }) {
           )}
         </TextList>
       </PageDetail>
+      <PageDetailCodeEditor
+        label={t('Variables')}
+        showCopyToClipboard
+        value={inventory.variables || '---'}
+      />
     </PageDetails>
   );
 }
