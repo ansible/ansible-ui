@@ -157,13 +157,7 @@ describe('job delete', () => {
         const jobId = testJob.id ? testJob.id.toString() : '';
         cy.filterTableByTypeAndText('ID', jobId);
         const jobName = testJob.name ? testJob.name : '';
-        cy.getTableRowByText(jobName, false).within(() => {
-          cy.get('[data-label="Status"]', { timeout: 120 * 1000 })
-            .should('not.contain', 'New')
-            .should('not.contain', 'Waiting')
-            .should('not.contain', 'Pending')
-            .should('not.contain', 'Running');
-        });
+        cy.waitForJobToProcessEvents(jobId);
         cy.clickTableRowKebabAction(jobName, /^Delete job$/, false);
         cy.get('#confirm').click();
         cy.clickButton(/^Delete job/);
@@ -188,14 +182,7 @@ describe('job delete', () => {
       ).as('jobRun');
       cy.filterTableByTypeAndText('ID', jobId);
       const jobName = jobList.name ? jobList.name : '';
-      cy.getTableRowByText(jobName, false).within(() => {
-        cy.wait('@jobRun');
-        cy.get('[data-label="Status"]', { timeout: 120 * 1000 })
-          .should('not.contain', 'New')
-          .should('not.contain', 'Waiting')
-          .should('not.contain', 'Pending')
-          .should('not.contain', 'Running');
-      });
+      cy.waitForJobToProcessEvents(jobId);
       cy.selectTableRow(jobName, false);
       cy.clickToolbarKebabAction(/^Delete selected jobs$/);
       cy.get('#confirm').click();

@@ -12,6 +12,7 @@ import { InstanceGroup } from '../../frontend/awx/interfaces/InstanceGroup';
 import { Inventory } from '../../frontend/awx/interfaces/Inventory';
 import { InventorySource } from '../../frontend/awx/interfaces/InventorySource';
 import { JobEvent } from '../../frontend/awx/interfaces/JobEvent';
+import { Job } from '../../frontend/awx/interfaces/Job';
 import { JobTemplate } from '../../frontend/awx/interfaces/JobTemplate';
 import { Label } from '../../frontend/awx/interfaces/Label';
 import { Organization } from '../../frontend/awx/interfaces/Organization';
@@ -518,6 +519,7 @@ declare global {
       ): Chainable<{ inventory: Inventory; host: Host; group: Group }>;
 
       waitForTemplateStatus(jobID: string): Chainable<AwxItemsResponse<JobEvent>>;
+      waitForJobToProcessEvents(jobID: string): Chainable<Job>;
 
       // --- EDA COMMANDS ---
 
