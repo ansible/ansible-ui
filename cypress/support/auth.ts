@@ -14,7 +14,7 @@ Cypress.Commands.add('login', (server: string, username: string, password: strin
   window.localStorage.setItem('theme', 'light');
   window.localStorage.setItem('disclaimer', 'true');
 
-  cy.visit(`/login`, {
+  cy.visit(`/ui_next/dashboard/`, {
     retryOnStatusCodeFailure: true,
     retryOnNetworkFailure: true,
   });
