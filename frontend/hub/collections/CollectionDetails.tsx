@@ -61,7 +61,7 @@ import { AwxError } from '../../awx/common/AwxError';
 import { StatusCell } from '../../common/Status';
 import { useGetRequest, useGet } from '../../common/crud/useGet';
 import { HubRoute } from '../HubRoutes';
-import { hubAPI } from '../api/formatPath';
+import { hubAPI, pulpAPI } from '../api/utils';
 import { HubItemsResponse } from '../useHubView';
 import { PageSingleSelect } from './../../../framework/PageInputs/PageSingleSelect';
 import { CollectionVersionSearch } from './Collection';
@@ -70,6 +70,7 @@ import { useCollectionColumns } from './hooks/useCollectionColumns';
 import { usePageNavigate } from '../../../framework';
 import { useRepositoryBasePath } from '../api/utils';
 import { requestGet } from '../../common/crud/Data';
+import { CollectionVersionListResponse } from '../api-schemas/generated/CollectionVersionListResponse';
 
 export function CollectionDetails() {
   const { t } = useTranslation();
@@ -368,15 +369,19 @@ function CollectionDocumentationTab(props: { collection?: CollectionVersionSearc
 
   const [content, setContent] = useState<IContents>();
 
-  const { data } = useGet<CollectionDocs>(
-    hubAPI`/_ui/v1/repo/published/${collection?.collection_version?.name || ''}/${
-      collection?.collection_version?.name || ''
-    }/?include_related=my_permissions`
+  const { data } = useGet<CollectionVersionListResponse>(
+    pulpAPI`/content/ansible/collection_versions/?namespace=${
+      collection?.collection_version?.namespace || ''
+    }&name=${collection?.collection_version?.name || ''}&version=${
+      collection?.collection_version?.version || ''
+    }&offset=0&limit=10`
   );
 
+  console.log('data: ', data);
   const groups = useMemo(() => {
     const groups: Record<string, { name: string; contents: IContents[] }> = {};
-    if (data?.latest_version.docs_blob.contents) {
+    if (data?.results[0].docs_blob.contents) {
+      console.log(data?.results[0].docs_blob.contents)
       for (const content of data.latest_version.docs_blob.contents) {
         let group = groups[content.content_type];
         if (!group) {
@@ -432,6 +437,7 @@ function CollectionDocumentationTabPanel(props: {
 }) {
   const { content, setContent, groups, setDrawerOpen } = props;
   const { t } = useTranslation();
+
   return (
     <DrawerPanelContent>
       <DrawerHead style={{ gap: 16 }}>
