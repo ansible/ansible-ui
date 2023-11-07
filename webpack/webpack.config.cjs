@@ -7,6 +7,7 @@ const CopyPlugin = require('copy-webpack-plugin');
 const MergeJsonWebpackPlugin = require('merge-jsons-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
 const path = require('path');
+const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 
 const {
   AWX_ROUTE_PREFIX,
@@ -90,6 +91,9 @@ module.exports = function (env, argv) {
       ],
     },
     plugins: [
+      new MonacoWebpackPlugin({
+        languages: ['yaml', 'json'],
+      }),
       new webpack.DefinePlugin({
         'process.env.NODE_ENV': isProduction
           ? JSON.stringify('production')
@@ -131,12 +135,7 @@ module.exports = function (env, argv) {
     ].filter(Boolean),
     output: {
       clean: true,
-      filename: (pathData, _assetInfo) => {
-        if (pathData.chunk.name === 'app') return '[contenthash].js';
-        return '[name].js';
-      },
-      chunkFilename: '[contenthash].js',
-      assetModuleFilename: '[contenthash][ext][query]',
+      filename: isProduction ? '[contenthash].js' : undefined,
       path: path.resolve(__dirname, '../build/public'),
       publicPath: process.env.PUBLIC_PATH || '/',
     },

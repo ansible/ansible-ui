@@ -87,16 +87,25 @@ export function DataEditor<
 
       editorRef.current.editor = editor;
     }
-
     window.MonacoEnvironment = {
-      getWorkerUrl(moduleId, label) {
+      getWorker(moduleId, label) {
         switch (label) {
+          case 'editorWorkerService':
+            return new Worker(
+              new URL('monaco-editor/esm/vs/editor/editor.worker', import.meta.url),
+              { type: 'module' }
+            );
           case 'json':
-            return '/json.worker.js';
+            return new Worker(
+              new URL('monaco-editor/esm/vs/language/json/json.worker', import.meta.url),
+              { type: 'module' }
+            );
           case 'yaml':
-            return '/yaml.worker.js';
+            return new Worker(new URL('monaco-yaml/yaml.worker', import.meta.url), {
+              type: 'module',
+            });
           default:
-            return '/editor.worker.js';
+            throw new Error(`Unknown label ${label}`);
         }
       },
     };
