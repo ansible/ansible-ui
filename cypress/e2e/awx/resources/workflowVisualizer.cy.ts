@@ -1,8 +1,34 @@
 import { randomString } from '../../../../framework/utils/random-string';
+import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
+import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 
 describe('Workflow Job templates visualizer', () => {
+  let organization: Organization;
+  let inventory: Inventory;
+
   before(() => {
     cy.awxLogin();
+  });
+
+  beforeEach(() => {
+    cy.createAwxOrganization().then((o) => {
+      organization = o;
+      cy.createAwxInventory({ organization: organization.id }).then((i) => {
+        inventory = i;
+      });
+    });
+  });
+
+  it.only('should render a workflow visualizer view with multiple nodes present', () => {
+    cy.createAwxWorkflowJobTemplate({
+      organization: organization.id,
+      inventory: inventory.id,
+    }).then((workflowJobTemplate) => {
+      cy.renderWorkflowVisualizerNodesFromFixtureFile(
+        `${workflowJobTemplate.name}`,
+        'wf_vis_testing_A.json'
+      );
+    });
   });
 
   it('Should create a workflow job template and then navigate to the visualizer, and then navigate to the details view after clicking cancel', () => {
