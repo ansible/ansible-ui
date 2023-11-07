@@ -22,7 +22,7 @@
 }
 :root:where(.pf-v5-theme-dark) .scrollable-shadow-top {
   height: 14px;
-  background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0));
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0));
 }
 
 .scrollable-shadow-bottom {
@@ -34,5 +34,5 @@
 }
 :root:where(.pf-v5-theme-dark) .scrollable-shadow-bottom {
   height: 14px;
-  background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.7));
+  background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5));
 }
