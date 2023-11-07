@@ -1,5 +1,5 @@
 import { TopologySideBar as PFTopologySideBar } from '@patternfly/react-topology';
-import { WorkflowNode } from '../../../interfaces/WorkflowNode';
+import { WorkflowVisualizerNode } from './types';
 import { useTranslation } from 'react-i18next';
 import { ActionList, Button, Title } from '@patternfly/react-core';
 import styled from 'styled-components';
@@ -10,8 +10,8 @@ const TopologySideBar = styled(PFTopologySideBar)`
   padding-left: 20px;
 `;
 export function WorkflowVisualizerNodeDetails(props: {
-  selectedNode: WorkflowNode;
-  setSelectedNode: (node: WorkflowNode | undefined) => void;
+  selectedNode: WorkflowVisualizerNode;
+  setSelectedNode: (node: WorkflowVisualizerNode | undefined) => void;
 }) {
   const { selectedNode, setSelectedNode } = props;
   const { t } = useTranslation();

@@ -7,7 +7,7 @@ import { useWorkflowVisualizerToolbarActions } from './hooks/useWorkflowVisualiz
 import type { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
 import { WorkflowVisualizerNodeDetails } from './WorkflowVisualizerNodeDetails';
-import { useState } from 'react';
+import { Reducer, useEffect, useReducer } from 'react';
 import { useTranslation } from 'react-i18next';
 import { EmptyStateNoData } from '../../../../../framework/components/EmptyStateNoData';
 import { AddNodeButton } from './components/AddNodeButton';
@@ -17,6 +17,8 @@ import { AwxError } from '../../../common/AwxError';
 import { EmptyState, EmptyStateHeader, Icon, Spinner } from '@patternfly/react-core';
 import { ShareAltIcon } from '@patternfly/react-icons';
 import { getPatternflyColor } from '../../../../../framework';
+import { WorkflowVisualizerAction, WorkflowVisualizerState } from './types';
+import { workflowVisualizerReducer } from './hooks/workflowReducer';
 
 const TopologyView = styled(PFTopologyView)`
   & .pf-topology-view__project-toolbar {
@@ -28,7 +30,20 @@ export function WorkflowVisualizer() {
   const { id } = useParams<{ id?: string }>();
   const { t } = useTranslation();
 
-  const [selectedNode, setSelectedNode] = useState<WorkflowNode | undefined>(undefined);
+  const [state, dispatch] = useReducer<Reducer<WorkflowVisualizerState, WorkflowVisualizerAction>>(
+    workflowVisualizerReducer,
+    {
+      showUnsavedChangesModal: false,
+      nodesToDelete: [], // could be used for delete all nodes also
+      unsavedChanges: false,
+      nodeToEdit: undefined,
+      nodeToView: undefined,
+      nodes: [],
+      showDeleteAllNodesModal: false,
+      isLoading: true,
+    }
+  );
+
   const {
     data: wfNodes,
     error: workflowNodeError,
@@ -42,15 +57,18 @@ export function WorkflowVisualizer() {
     refresh: workflowRefresh,
   } = useGetItem<WorkflowJobTemplate>('/api/v2/workflow_job_templates/', id);
 
+  useEffect(() => {
+    dispatch({ type: 'SET_NODES', value: wfNodes?.results ?? [] });
+  }, [wfNodes?.results]);
   const error = workflowError || workflowNodeError;
-  const toolbarActions = useWorkflowVisualizerToolbarActions(wfNodes?.results ?? []);
+  const toolbarActions = useWorkflowVisualizerToolbarActions(state, dispatch);
 
   if (error) {
     return <AwxError error={error} handleRefresh={workflowRefresh || workflowNodeRefresh} />;
   }
 
   let topologyScreen;
-  if (!wfNodes || !workflowJobTemplate) {
+  if (state.isLoading) {
     topologyScreen = (
       <EmptyState>
         <EmptyStateHeader
@@ -83,13 +101,13 @@ export function WorkflowVisualizer() {
   } else {
     topologyScreen = (
       <Topology
-        data={wfNodes}
-        selectedNode={selectedNode}
+        state={state}
         handleSelectedNode={(clickedNodeIdentifier: string[]) => {
           const clickedNodeData = wfNodes.results.find(
             (node) => node.id.toString() === clickedNodeIdentifier[0]
           );
-          setSelectedNode(clickedNodeData);
+          if (clickedNodeData === undefined) return;
+          dispatch({ type: 'SET_NODE_TO_VIEW', value: clickedNodeData });
         }}
       />
     );
@@ -105,13 +123,13 @@ export function WorkflowVisualizer() {
         <Title headingLevel="h1">{workflowJobTemplate?.name}</Title>
       </PageSection>
       <TopologyView
-        sideBarOpen={selectedNode !== undefined}
+        sideBarOpen={state.nodeToView !== undefined}
         sideBarResizable
         sideBar={
-          selectedNode ? (
+          state.nodeToView ? (
             <WorkflowVisualizerNodeDetails
-              setSelectedNode={setSelectedNode}
-              selectedNode={selectedNode}
+              setSelectedNode={() => dispatch({ type: 'SET_NODE_TO_VIEW', value: undefined })}
+              selectedNode={state.nodeToView}
             />
           ) : null
         }

@@ -46,3 +46,34 @@ export enum JobType {
   inventory_update = 'inventory_update',
   system_job = 'system_job',
 }
+
+export type WorkflowVisualizerNode = WorkflowNode & { isDeleted?: boolean };
+
+export type WorkflowVisualizerState = {
+  showUnsavedChangesModal: boolean;
+  nodesToDelete: WorkflowVisualizerNode[] | []; // could be used for delete all nodes also
+  unsavedChanges: boolean;
+  nodeToEdit: WorkflowVisualizerNode | undefined;
+  nodeToView: WorkflowVisualizerNode | undefined;
+  nodes: WorkflowVisualizerNode[] | [];
+  showDeleteAllNodesModal: boolean;
+  isLoading: boolean;
+};
+
+export type WorkflowVisualizerAction =
+  | { type: 'DELETE_ALL_NODES'; value: WorkflowVisualizerNode }
+  | { type: 'SET_NODES'; value: WorkflowVisualizerNode[] | [] }
+  | {
+      type: 'DELETE_NODE' | 'SET_NODE_TO_EDIT' | 'SET_NODE_TO_VIEW';
+      value: WorkflowVisualizerNode | undefined;
+    }
+  | {
+      type:
+        | 'SET_IS_LOADING'
+        | 'SET_SHOW_DELETE_ALL_NODES_MODAL'
+        | 'TOGGLE_DELETE_ALL_NODES_MODAL'
+        | 'TOGGLE_UNSAVED_CHANGES_MODAL';
+      value: boolean;
+    }
+  | { type: 'SET_NODES_TO_DELETE'; value: WorkflowVisualizerNode[] | [] }
+  | { type: string; value: never };

@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { Dispatch, useCallback, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
@@ -21,60 +21,24 @@ import {
   ToolbarGroup,
   ToolbarItem,
 } from '@patternfly/react-core';
-import { WorkflowNode } from '../../../../interfaces/WorkflowNode';
-import { useBulkConfirmation, usePageNavigate } from '../../../../../../framework';
+import { usePageNavigate } from '../../../../../../framework';
 import { AwxRoute } from '../../../../AwxRoutes';
-import { getItemKey } from '../../../../../common/crud/Data';
-import { stringIsUUID } from '../../../../common/util/strings';
 import { AddNodeButton } from '../components/AddNodeButton';
 import getDocsBaseUrl from '../../../../common/util/getDocsBaseUrl';
 import { useAwxConfig } from '../../../../common/useAwxConfig';
+import { WorkflowVisualizerAction, WorkflowVisualizerState } from '../types';
 
-export function useWorkflowVisualizerToolbarActions(nodes: WorkflowNode[]) {
+export function useWorkflowVisualizerToolbarActions(
+  state: WorkflowVisualizerState,
+  dispatch: Dispatch<WorkflowVisualizerAction>
+) {
+  const { nodes } = state;
   const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [isKebabOpen, setIsKebabOpen] = useState<boolean>(false);
   const pageNavigate = usePageNavigate();
   const config = useAwxConfig();
   const params = useParams<{ id: string }>();
-  const bulkAction = useBulkConfirmation<WorkflowNode>();
-  const handleRemoveAllNodes = useCallback(
-    (workflowNodes: WorkflowNode[]) => {
-      return bulkAction({
-        title: t('Remove all nodes'),
-        items: workflowNodes,
-        keyFn: getItemKey,
-        isDanger: true,
-        actionFn: async (_item: WorkflowNode, _signal: AbortSignal) => {
-          // Add your code here
-          return Promise.resolve();
-        },
-        confirmText: t('Yes, I confirm that I want to remove these {{count}} nodes.', {
-          count: workflowNodes.length,
-        }),
-        confirmationColumns: [
-          {
-            header: t('Name'),
-            cell: (node) =>
-              !stringIsUUID(node.identifier)
-                ? node.identifier
-                : node.summary_fields.unified_job_template.name,
-          },
-        ],
-        actionColumns: [
-          {
-            header: t('Name'),
-            cell: (node) =>
-              !stringIsUUID(node.identifier)
-                ? node.identifier
-                : node.summary_fields.unified_job_template.name,
-          },
-        ],
-        actionButtonText: t('Remove all nodes', { count: workflowNodes.length }),
-      });
-    },
-    [bulkAction, t]
-  );
 
   const handleCancel = useCallback(() => {
     pageNavigate(AwxRoute.WorkflowJobTemplateDetails, { params: { id: params.id } });
@@ -118,7 +82,7 @@ export function useWorkflowVisualizerToolbarActions(nodes: WorkflowNode[]) {
               <Divider />
               <DropdownItem
                 data-cy="remove-all-nodes"
-                onClick={() => handleRemoveAllNodes(nodes)}
+                onClick={() => dispatch({ type: 'SET_NODES_TO_DELETE', value: nodes })}
                 isDanger
                 icon={<TrashIcon />}
               >

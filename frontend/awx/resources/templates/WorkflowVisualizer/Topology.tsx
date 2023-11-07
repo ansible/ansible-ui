@@ -24,9 +24,7 @@ import {
   withSelection,
 } from '@patternfly/react-topology';
 import { CustomEdge, CustomNode } from './components';
-import type { LayoutNode, GraphNode } from './types';
-import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
-import type { AwxItemsResponse } from '../../../common/AwxItemsResponse';
+import type { LayoutNode, GraphNode, WorkflowVisualizerState } from './types';
 
 const CONNECTOR_SOURCE_DROP = 'connector-src-drop';
 const CONNECTOR_TARGET_DROP = 'connector-target-drop';
@@ -58,15 +56,11 @@ const baselineComponentFactory: ComponentFactory = (kind: ModelKind, type: strin
 const NODE_DIAMETER = 50;
 
 interface TopologyProps {
-  data: AwxItemsResponse<WorkflowNode>;
-  selectedNode: WorkflowNode | undefined;
+  state: WorkflowVisualizerState;
   handleSelectedNode: (clickedNodeIdentifier: string[]) => void;
 }
-export const Topology = ({
-  data: { results = [] },
-  selectedNode,
-  handleSelectedNode,
-}: TopologyProps) => {
+export const Topology = ({ state, handleSelectedNode }: TopologyProps) => {
+  const { nodes, nodeToView } = state;
   const { t } = useTranslation();
   const controllerRef = useRef<Controller>();
   const controller = controllerRef.current;
@@ -74,7 +68,7 @@ export const Topology = ({
   const [layout, setLayout] = useState<LayoutNode[]>([]);
 
   useEffect(() => {
-    const layoutNodes = results.map((node) => {
+    const layoutNodes = nodes.map((node) => {
       return {
         ...node,
         runAfterTasks: [],
@@ -82,7 +76,7 @@ export const Topology = ({
     });
 
     return setLayout(() => [...layoutNodes]);
-  }, [results]);
+  }, [nodes]);
 
   useEffect(() => {
     const newController = new Visualization();
@@ -211,7 +205,7 @@ export const Topology = ({
   }
   return (
     <VisualizationProvider controller={controller}>
-      <VisualizationSurface state={selectedNode} />
+      <VisualizationSurface state={nodeToView} />
     </VisualizationProvider>
   );
 };
