@@ -14,10 +14,17 @@ Cypress.Commands.add('login', (server: string, username: string, password: strin
   window.localStorage.setItem('theme', 'light');
   window.localStorage.setItem('disclaimer', 'true');
 
-  cy.visit(`/login`, {
-    retryOnStatusCodeFailure: true,
-    retryOnNetworkFailure: true,
-  });
+  if (server == 'AWX_SERVER') {
+    cy.visit(`/ui_next/dashboard/`, {
+      retryOnStatusCodeFailure: true,
+      retryOnNetworkFailure: true,
+    });
+  } else {
+    cy.visit(`login/`, {
+      retryOnStatusCodeFailure: true,
+      retryOnNetworkFailure: true,
+    });
+  }
   cy.get('[data-cy="username"]').type(username, { log: false, delay: 100 });
   cy.get('[data-cy="password"]').type(password, { log: false });
   cy.get('[data-cy="Submit"]').click();
