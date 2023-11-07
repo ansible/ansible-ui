@@ -1,9 +1,8 @@
-import { Tooltip } from '@patternfly/react-core';
+import { Progress, Tooltip } from '@patternfly/react-core';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   BytesCell,
-  CapacityCell,
   ColumnTableOption,
   DateTimeCell,
   ITableColumn,
@@ -82,10 +81,9 @@ export function useInstancesColumns(options?: { disableSort?: boolean; disableLi
       },
       {
         header: t('Used capacity'),
-        cell: (instance) =>
-          instance.capacity && (
-            <CapacityCell used={instance.consumed_capacity} capacity={instance.capacity} />
-          ),
+        cell: (instance) => (
+          <Progress value={Math.round(100 - instance.percent_capacity_remaining)} />
+        ),
         list: 'secondary',
         table: ColumnTableOption.Expanded,
       },

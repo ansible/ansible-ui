@@ -3,7 +3,6 @@ export * from './PageActions/PageActions';
 export * from './PageAlertToaster';
 export * from './PageBody';
 export * from './PageCells/BytesCell';
-export * from './PageCells/CapacityCell';
 export * from './PageCells/CopyCell';
 export * from './PageCells/DateTimeCell';
 export * from './PageCells/ElapsedTimeCell';

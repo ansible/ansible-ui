@@ -1,13 +1,13 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
-import { PageNotImplemented } from '../../framework/PageEmptyStates/PageNotImplemented';
 import {
   PageNavigationItem,
   removeLeadingSlash,
 } from '../../framework/PageNavigation/PageNavigationItem';
 import { AwxLogin } from './AwxLogin';
 import { AwxRoute } from './AwxRoutes';
+import { Topology } from './administration/topology/Topology';
 import { Test } from './analytics/AnalyticsReportBuilder/Test';
 import Reports from './analytics/Reports/Reports';
 import ReportsList from './analytics/Reports/ReportsList';
@@ -114,7 +114,7 @@ export function useAwxNavigation() {
                 id: AwxRoute.TopologyView,
                 label: 'Topology View',
                 path: 'topology',
-                element: <PageNotImplemented />,
+                element: <Topology />,
               },
             ],
           },
