@@ -74,7 +74,7 @@ describe('RuleAudit.cy.ts', () => {
     );
   });
 
-  it('Renders the correct ruleaudit columns', () => {
+  it('Renders the correct rule audit columns', () => {
     cy.mount(<RuleAudit />);
     cy.get('h1').should('contain', 'Rule Audit');
     cy.get('tbody').find('tr').should('have.length', 10);

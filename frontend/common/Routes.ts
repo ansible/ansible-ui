@@ -81,4 +81,9 @@ export const RouteObj = {
   EdaRulebookActivationPage: `${edaRoutePrefix}/views/rulebook-activations/:id/*`,
   EdaRulebookActivationDetails: `${edaRoutePrefix}/views/rulebook-activations/:id/details`,
   EdaRulebookActivationHistory: `${edaRoutePrefix}/views/rulebook-activations/:id/history`,
+
+  EdaRuleAuditPage: `${edaRoutePrefix}/views/rule-audits/:id/*`,
+  EdaRuleAuditDetails: `${edaRoutePrefix}/views/rule-audits/:id/details`,
+  EdaRuleAuditActions: `${edaRoutePrefix}/views/rule-audits/:id/actions`,
+  EdaRuleAuditEvents: `${edaRoutePrefix}/views/rule-audits/:id/events`,
 };
