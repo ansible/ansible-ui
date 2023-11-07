@@ -10,14 +10,14 @@ describe('TeamDetails', () => {
     cy.get('[data-cy="name"]').should('have.text', 'Team 2 Org 0');
     cy.get('[data-cy="description"]').should('have.text', 'test');
     cy.get('[data-cy="organization"]').should('contain', 'Organization 0');
-    cy.get('[data-cy="created"]').should('have.text', formatDateString(mockAwxTeam.created));
+    cy.get('[data-cy="created"]').should('contain', formatDateString(mockAwxTeam.created));
     cy.get('[data-cy="created"]').should(
-      'have.text',
+      'contain',
       mockAwxTeam.summary_fields?.created_by?.username
     );
-    cy.get('[data-cy="modified"]').should('have.text', formatDateString(mockAwxTeam.modified));
+    cy.get('[data-cy="modified"]').should('contain', formatDateString(mockAwxTeam.modified));
     cy.get('[data-cy="modified"]').should(
-      'have.text',
+      'contain',
       mockAwxTeam.summary_fields?.modified_by?.username
     );
   });
