@@ -1,14 +1,11 @@
-import { useMemo, useState, useEffect, useRef } from 'react';
+import { useMemo, useState, useEffect, useRef, ComponentType } from 'react';
 import * as d3 from 'd3';
-import { RegionsIcon, AnsibeTowerIcon, EllipsisHIcon, ServerIcon } from '@patternfly/react-icons';
 import {
   action,
   ComponentFactory,
   createTopologyControlButtons,
   defaultControlButtonsOptions,
-  DefaultEdge,
   DefaultGroup,
-  DefaultNode,
   EdgeModel,
   EdgeStyle,
   GraphComponent,
@@ -29,10 +26,12 @@ import {
 } from '@patternfly/react-topology';
 import { MeshVisualizer } from '../../interfaces/MeshVisualizer';
 import { InstanceDetailSidebar } from './Sidebar';
-import { CustomEdgeProps, CustomNodeProps, WebWorkerResponse } from './types';
+import { WebWorkerResponse } from './types';
 import styled from 'styled-components';
 import Loader from './Loader';
 import Legend from './Legend';
+import MeshEdge from './components/MeshEdge';
+import MeshNode from './components/MeshNode';
 
 const ContentLoading = styled(Loader)`
   height: 100%;
@@ -50,9 +49,9 @@ const baselineComponentFactory: ComponentFactory = (kind: ModelKind, type: strin
         case ModelKind.graph:
           return withPanZoom()(GraphComponent);
         case ModelKind.node:
-          return withSelection()(CustomNode);
+          return withSelection()(MeshNode as ComponentType);
         case ModelKind.edge:
-          return CustomEdge;
+          return MeshEdge;
         default:
           return undefined;
       }
@@ -61,78 +60,6 @@ const baselineComponentFactory: ComponentFactory = (kind: ModelKind, type: strin
 
 const NODE_DIAMETER = 50;
 
-function getNodeIcon(nodeType: string) {
-  switch (nodeType) {
-    case 'hybrid':
-      return ServerIcon;
-    case 'execution':
-      return AnsibeTowerIcon;
-    case 'control':
-      return RegionsIcon;
-    case 'hop':
-      return EllipsisHIcon;
-    default:
-      return AnsibeTowerIcon;
-  }
-}
-
-const CustomNode: React.FC<CustomNodeProps> = ({
-  element,
-  onSelect,
-  selected,
-}: CustomNodeProps) => {
-  const data = element.getData();
-  const Icon = data && getNodeIcon(data.nodeType);
-
-  return (
-    <DefaultNode
-      element={element}
-      showStatusDecorator
-      onSelect={onSelect}
-      selected={selected}
-      onStatusDecoratorClick={onSelect}
-    >
-      <g transform={`translate(13, 13)`}>
-        {Icon && <Icon style={{ color: '#393F44' }} width={25} height={25} />}
-      </g>
-    </DefaultNode>
-  );
-};
-function getNodeShape(nodeType: string) {
-  switch (nodeType) {
-    case 'control':
-      return NodeShape.ellipse;
-    case 'execution':
-      return NodeShape.rect;
-    case 'hybrid':
-      return NodeShape.rhombus;
-    case 'hop':
-      return NodeShape.hexagon;
-    default:
-      return NodeShape.ellipse;
-  }
-}
-function getNodeStatus(nodeState: string) {
-  switch (nodeState) {
-    case 'ready':
-      return NodeStatus.success;
-    case 'installed':
-    case 'provisioning':
-    case 'deprovisioning':
-      return NodeStatus.default;
-    case 'deprovision-fail':
-    case 'provision-fail':
-      return NodeStatus.danger;
-    case 'unavailable':
-      return NodeStatus.info;
-    default:
-      return NodeStatus.success;
-  }
-}
-const CustomEdge: React.FC<CustomEdgeProps> = ({ element }: CustomEdgeProps) => {
-  const data = element.getData();
-  return <DefaultEdge element={element} {...data} />;
-};
 function getEdgeStyle(edge: string) {
   switch (edge) {
     case 'established':
@@ -151,7 +78,7 @@ function getEdgeStatus(edge: string) {
     case 'adding':
       return NodeStatus.success;
     case 'removing':
-      return NodeStatus.warning;
+      return NodeStatus.danger;
     default:
       return NodeStatus.default;
   }
@@ -178,12 +105,13 @@ export const TopologyViewLayer = (props: { mesh: MeshVisualizer }) => {
   function toggleLegend() {
     setShowLegend(!showLegend);
   }
+
   function handleProgress(progress: number) {
     const calculatedPercent: number = Math.round(progress * 100);
     setProgress(calculatedPercent);
     setTimeout(() => {
       return calculatedPercent === 100 ? setIsLoading(false) : setIsLoading(true);
-    }, 500);
+    }, 100);
   }
 
   const getData: Worker = useMemo(() => new Worker(new URL('./worker.ts', import.meta.url)), []);
@@ -191,10 +119,12 @@ export const TopologyViewLayer = (props: { mesh: MeshVisualizer }) => {
     const selected = d3.select(selector).node();
     return selected ? (selected as HTMLElement).getBoundingClientRect().width : 1200;
   }
+
   function getHeight(selector: string) {
     const selected = d3.select(selector).node();
     return selected ? (selected as HTMLElement).getBoundingClientRect().height : 800;
   }
+
   useEffect(() => {
     const width = getWidth('#mesh-topology');
     const height = getHeight('#mesh-topology');
@@ -253,10 +183,10 @@ export const TopologyViewLayer = (props: { mesh: MeshVisualizer }) => {
         label: n.hostname,
         width: NODE_DIAMETER,
         height: NODE_DIAMETER,
-        shape: getNodeShape(n.node_type),
-        status: getNodeStatus(n.node_state),
+        shape: NodeShape.rect,
         data: {
           nodeType: n.node_type,
+          nodeStatus: n.node_state,
         },
       };
     });

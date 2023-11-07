@@ -1,4 +1,11 @@
-import { ElementModel, GraphElement, NodeStatus } from '@patternfly/react-topology';
+import {
+  Node,
+  EdgeModel,
+  NodeModel,
+  NodeStatus,
+  GraphElement,
+  WithSelectionProps,
+} from '@patternfly/react-topology';
 
 export interface MeshNode {
   id: string;
@@ -28,14 +35,13 @@ export interface WebWorkerResponse {
   links: MeshLink[];
 }
 
-export interface CustomNodeProps {
-  element: GraphElement<ElementModel, { nodeType: string }>;
-  onSelect: (e: React.MouseEvent) => void;
-  selected: boolean;
+export interface CustomNodeProps extends WithSelectionProps {
+  element: Node<NodeModel, { nodeType: string; nodeStatus: string }>;
 }
+
 export interface CustomEdgeProps {
   element: GraphElement<
-    ElementModel,
+    EdgeModel,
     {
       tagStatus: NodeStatus;
       endTerminalStatus: NodeStatus;
