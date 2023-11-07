@@ -14,7 +14,7 @@ Cypress.Commands.add('login', (server: string, username: string, password: strin
   window.localStorage.setItem('theme', 'light');
   window.localStorage.setItem('disclaimer', 'true');
 
-  if (server == 'AWX_SERVER') {
+  if (server === Cypress.env('AWX_SERVER')) {
     cy.visit(`/ui_next/dashboard/`, {
       retryOnStatusCodeFailure: true,
       retryOnNetworkFailure: true,
