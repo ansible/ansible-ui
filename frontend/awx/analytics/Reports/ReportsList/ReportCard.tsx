@@ -3,6 +3,7 @@ import { PageTable } from '../../../../../framework';
 import { useAnalyticsView } from '../../useAnalyticsView';
 import { ReportsList } from '../../../interfaces/ReportsList';
 import { useReportCardColumns } from './useReportCardColumns';
+import { useReportCardFilters } from './useReportCardFilters';
 
 export interface ReportCardProps {
   meta: { count: number; filtered_query_count: number };
@@ -18,17 +19,28 @@ export interface ReportCardPayloadData {
 
 export function ReportCard() {
   const { t } = useTranslation();
+  const toolbarFilters = useReportCardFilters();
   const tableColumns = useReportCardColumns();
 
   const view = useAnalyticsView<ReportsList>({
     url: '/api/v2/analytics/reports/',
     keyFn: (data) => data.id,
-    payload: (data: ReportCardPayloadData) => data,
+    payload: {
+      description: '',
+      limit: '20',
+      name: [],
+      offset: '0',
+      slug: [],
+      sort_options: 'name',
+      sort_order: 'asc',
+      tags: [],
+    },
     requestMethod: 'post',
     getItems: (data: ReportCardProps) => data.reports,
     getItemsCount: (data: ReportCardProps) => data.meta.count,
     itemsPerPage: 20,
-    disableQueryString: true,
+    toolbarFilters: toolbarFilters,
+    tableColumns: tableColumns,
   });
 
   return (
@@ -36,6 +48,7 @@ export function ReportCard() {
       disableListView
       disableTableView
       disablePagination
+      toolbarFilters={toolbarFilters}
       tableColumns={tableColumns}
       errorStateTitle={t('Error loading reports list')}
       emptyStateTitle={t('No reports found')}
