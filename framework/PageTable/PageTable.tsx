@@ -176,7 +176,8 @@ export type PageTableProps<T extends object> = {
   maxSelections?: number;
 
   /**
-   * This will render content between PageToolbar and table hader. Set scrollOutsideTable to true, if you want proper scrolling in table.
+   * This will render content between PageToolbar and table header. Set
+   * scrollOutsideTable to true, if you want proper scrolling in table.
    */
   topContent?: React.ReactNode;
 
@@ -741,7 +742,6 @@ function TableRow<T extends object>(props: {
   return (
     <>
       <Tr
-        isRowSelected={isItemSelected}
         style={{
           boxShadow: 'unset',
           borderBottom: expanded || (props.isLastRow && disableLastRowBorder) ? 'unset' : undefined,
@@ -822,7 +822,7 @@ function TableRow<T extends object>(props: {
         />
       </Tr>
       {expandedRow && expanded && expandedContent && (
-        <Tr isRowSelected={isItemSelected} isExpanded={expanded} style={{ boxShadow: 'unset' }}>
+        <Tr isExpanded={expanded} style={{ boxShadow: 'unset' }}>
           <Td />
           {showSelect && (
             <Th isStickyColumn stickyMinWidth="0px" hasRightBorder={props.scrollLeft} />
