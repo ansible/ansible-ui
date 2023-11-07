@@ -27,6 +27,7 @@ import {
   StackItem,
   Title,
 } from '@patternfly/react-core';
+import { LoadingPage } from '../../../framework';
 import React from 'react';
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import {
@@ -296,10 +297,10 @@ function CollectionInstallTab(props: { collection: CollectionVersionSearch }) {
   );
 
   if (loading) {
-    return <>{loading}</>;
+    <LoadingPage breadcrumbs tabs />;
   }
   if (error) {
-    return <>{error}</>;
+    return <AwxError error={new Error(error)} />;
   }
 
   return (
