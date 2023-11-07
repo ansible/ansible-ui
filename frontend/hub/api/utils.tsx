@@ -73,8 +73,7 @@ export function useRepositoryBasePath(name: string, pulp_href?: string | undefin
     void fetchRepositoryBasePath();
   }, [name, pulp_href, t]);
 
-  const x = { basePath, loading, error };
-  return x;
+  return { basePath, loading, error };
 }
 
 function firstResult(results: Results) {
