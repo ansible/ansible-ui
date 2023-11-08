@@ -51,9 +51,10 @@ export function useDeleteDecisionEnvironments(
         actionColumns,
         onComplete,
         alertPrompts: inUseMessage,
-        actionFn: (decisionEnvironment: EdaDecisionEnvironmentRead) =>
+        actionFn: (decisionEnvironment, signal) =>
           requestDelete(
-            edaAPI`/decision-environments/${decisionEnvironment.id.toString()}/${forceParameter}`
+            edaAPI`/decision-environments/${decisionEnvironment.id.toString()}/${forceParameter}`,
+            signal
           ),
       });
     },
@@ -98,9 +99,10 @@ export function useDeleteDecisionEnvironment(
         actionColumns,
         onComplete,
         alertPrompts: inUseMessage,
-        actionFn: (decisionEnvironment: EdaDecisionEnvironmentRead) =>
+        actionFn: (decisionEnvironment, signal) =>
           requestDelete(
-            edaAPI`/decision-environments/${decisionEnvironment.id.toString()}/${forceParameter}`
+            edaAPI`/decision-environments/${decisionEnvironment.id.toString()}/${forceParameter}`,
+            signal
           ),
       });
     },

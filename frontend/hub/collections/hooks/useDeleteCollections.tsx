@@ -1,12 +1,11 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings, useBulkConfirmation } from '../../../../framework';
+import { compareStrings, useBulkConfirmation, usePageNavigate } from '../../../../framework';
 import { requestDelete, requestGet } from '../../../common/crud/Data';
 import { collectionKeyFn, hubAPI, pulpAPI } from '../../api/utils';
 import { PulpItemsResponse } from '../../usePulpView';
 import { CollectionVersionSearch } from '../Collection';
 import { useCollectionColumns } from './useCollectionColumns';
-import { usePageNavigate } from '../../../../framework';
 import { navigateAfterDelete } from './useDeleteCollectionsFromRepository';
 
 export function useDeleteCollections(
@@ -52,8 +51,8 @@ export function useDeleteCollections(
         confirmationColumns,
         actionColumns,
         onComplete,
-        actionFn: (collection: CollectionVersionSearch) => {
-          return deleteCollection(collection, version).then(() => {
+        actionFn: (collection: CollectionVersionSearch, signal) => {
+          return deleteCollection(collection, version, signal).then(() => {
             if (detail) {
               return navigateAfterDelete(collection, version || false, navigate);
             }
@@ -65,7 +64,11 @@ export function useDeleteCollections(
   );
 }
 
-async function deleteCollection(collection: CollectionVersionSearch, version?: boolean) {
+async function deleteCollection(
+  collection: CollectionVersionSearch,
+  version: boolean | undefined,
+  signal: AbortSignal
+) {
   const distro: PulpItemsResponse<Distribution> = await requestGet(
     pulpAPI`/distributions/ansible/ansible/?repository=${collection?.repository?.pulp_href || ''}`
   );
@@ -77,7 +80,8 @@ async function deleteCollection(collection: CollectionVersionSearch, version?: b
   await requestDelete(
     hubAPI`/v3/plugin/ansible/content/${distro.results[0].base_path}/collections/index/${
       collection?.collection_version?.namespace || ''
-    }/${collection?.collection_version?.name || ''}/` + versionQuery
+    }/${collection?.collection_version?.name || ''}/` + versionQuery,
+    signal
   );
 }
 

@@ -28,8 +28,8 @@ export function useDeleteInstanceGroups(onComplete: (instanceGroups: InstanceGro
       confirmationColumns,
       actionColumns,
       onComplete,
-      actionFn: (instanceGroup: InstanceGroup) =>
-        requestDelete(`/api/v2/instance-groups/${instanceGroup.id}/`),
+      actionFn: (instanceGroup, signal) =>
+        requestDelete(`/api/v2/instance-groups/${instanceGroup.id}/`, signal),
     });
   };
   return deleteInstanceGroups;

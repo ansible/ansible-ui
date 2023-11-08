@@ -1,9 +1,9 @@
-import { useTranslation } from 'react-i18next';
-import { CredentialType } from '../../../interfaces/CredentialType';
-import { useCredentialTypesColumns } from './useCredentialTypesColumns';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { TextCell, compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { getItemKey, requestDelete } from '../../../../common/crud/Data';
+import { CredentialType } from '../../../interfaces/CredentialType';
+import { useCredentialTypesColumns } from './useCredentialTypesColumns';
 
 export function useDeleteCredentialTypes(onComplete: (users: CredentialType[]) => void) {
   const { t } = useTranslation();
@@ -84,8 +84,8 @@ export function useDeleteCredentialTypes(onComplete: (users: CredentialType[]) =
       confirmationColumns,
       actionColumns,
       onComplete,
-      actionFn: (credentialType: CredentialType) =>
-        requestDelete(`/api/v2/credential_types/${credentialType.id}/`),
+      actionFn: (credentialType, signal) =>
+        requestDelete(`/api/v2/credential_types/${credentialType.id}/`, signal),
     });
   };
   return deleteCredentialTypes;
