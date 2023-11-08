@@ -74,29 +74,6 @@ describe('Users List Actions', () => {
     cy.clickTableRowPinnedAction(user.username, 'edit-user');
     cy.verifyPageTitle('Edit User');
   });
-});
-
-describe('Users Delete Actions', () => {
-  let organization: Organization;
-  let user: User;
-
-  before(() => {
-    cy.awxLogin();
-  });
-
-  beforeEach(() => {
-    cy.createAwxOrganization().then((org) => {
-      organization = org;
-      cy.createAwxUser(organization).then((testUser) => {
-        user = testUser;
-      });
-    });
-  });
-
-  afterEach(() => {
-    cy.deleteAwxUser(user, { failOnStatusCode: false });
-    cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
-  });
 
   it('deletes a user from the details page', () => {
     cy.navigateTo('awx', 'users');

@@ -27,10 +27,10 @@ describe('teams', function () {
     });
   });
 
-  this.afterEach(function () {
+  afterEach(function () {
     cy.deleteAwxUser(user1, { failOnStatusCode: false });
     cy.deleteAwxUser(user2, { failOnStatusCode: false });
-    cy.deleteAwxTeam(team, { failOnStatusCode: false });
+    // cy.deleteAwxTeam(team, { failOnStatusCode: false });
   });
 
   it('can render the teams list page', function () {

@@ -1,5 +1,5 @@
-import { CredentialType } from '../../../../frontend/awx/interfaces/CredentialType';
 import { randomString } from '../../../../framework/utils/random-string';
+import { CredentialType } from '../../../../frontend/awx/interfaces/CredentialType';
 
 describe('Credential Types', () => {
   let credentialType: CredentialType;

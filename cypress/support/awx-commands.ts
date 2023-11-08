@@ -479,7 +479,7 @@ Cypress.Commands.add(
       failOnStatusCode?: boolean;
     }
   ) => {
-    if (team.id) {
+    if (team?.id) {
       cy.awxRequestDelete(`/api/v2/teams/${team.id.toString()}/`, options);
     }
   }

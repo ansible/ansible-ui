@@ -5,8 +5,19 @@ import './commands';
 import { createGlobalOrganization, createGlobalProject } from './global-project';
 
 before(function () {
+  let splitLocalhost;
   const devBaseUrlPort = Cypress.config().baseUrl?.split(':').slice(-1).toString();
-  if (devBaseUrlPort === '4101') {
+  const baseUrl = Cypress.config().baseUrl;
+  const splitUrl = baseUrl.split('.');
+  const localhost = splitUrl[splitUrl.length - 4];
+  if (localhost) {
+    splitLocalhost = localhost.split('/').slice(-1).toString();
+  }
+
+  cy.log('DEVBASEPORT', devBaseUrlPort);
+  cy.log('LOCALHOST', splitLocalhost);
+  if (devBaseUrlPort === '4101' || splitLocalhost !== 'localhost') {
+    //if port is 4101 or if localhost does not appear in baseurl
     createGlobalOrganization();
     createGlobalProject();
   }
