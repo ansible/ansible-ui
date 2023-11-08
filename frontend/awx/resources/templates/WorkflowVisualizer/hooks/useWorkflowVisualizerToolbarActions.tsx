@@ -8,7 +8,8 @@ import {
   EllipsisVIcon,
   ExpandAltIcon,
   ExternalLinkAltIcon,
-  TrashIcon,
+  MinusCircleIcon,
+  RocketIcon,
 } from '@patternfly/react-icons';
 import {
   Badge,
@@ -24,7 +25,7 @@ import {
 import { WorkflowNode } from '../../../../interfaces/WorkflowNode';
 import { useBulkConfirmation, usePageNavigate } from '../../../../../../framework';
 import { AwxRoute } from '../../../../AwxRoutes';
-import { getItemKey } from '../../../../../common/crud/Data';
+import { getItemKey, postRequest } from '../../../../../common/crud/Data';
 import { stringIsUUID } from '../../../../common/util/strings';
 import { AddNodeButton } from '../components/AddNodeButton';
 import getDocsBaseUrl from '../../../../common/util/getDocsBaseUrl';
@@ -32,12 +33,16 @@ import { useAwxConfig } from '../../../../common/useAwxConfig';
 
 export function useWorkflowVisualizerToolbarActions(nodes: WorkflowNode[]) {
   const { t } = useTranslation();
+  const params = useParams<{ id: string }>();
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [isKebabOpen, setIsKebabOpen] = useState<boolean>(false);
   const pageNavigate = usePageNavigate();
   const config = useAwxConfig();
-  const params = useParams<{ id: string }>();
   const bulkAction = useBulkConfirmation<WorkflowNode>();
+  const handleLaunchWorkflow = useCallback(async () => {
+    await postRequest(`/api/v2/workflow_job_templates/${Number(params.id).toString()}/launch/`, {});
+  }, [params.id]);
+
   const handleRemoveAllNodes = useCallback(
     (workflowNodes: WorkflowNode[]) => {
       return bulkAction({
@@ -46,7 +51,6 @@ export function useWorkflowVisualizerToolbarActions(nodes: WorkflowNode[]) {
         keyFn: getItemKey,
         isDanger: true,
         actionFn: async (_item: WorkflowNode, _signal: AbortSignal) => {
-          // Add your code here
           return Promise.resolve();
         },
         confirmText: t('Yes, I confirm that I want to remove these {{count}} nodes.', {
@@ -93,6 +97,7 @@ export function useWorkflowVisualizerToolbarActions(nodes: WorkflowNode[]) {
         </ToolbarItem>
         <ToolbarItem>
           <Dropdown
+            onOpenChange={(isOpen: boolean) => setIsKebabOpen(isOpen)}
             onSelect={() => setIsKebabOpen(!isKebabOpen)}
             isOpen={isKebabOpen}
             toggle={(toggleRef) => (
@@ -115,12 +120,19 @@ export function useWorkflowVisualizerToolbarActions(nodes: WorkflowNode[]) {
               >
                 {t('Documentation')}
               </DropdownItem>
+              <DropdownItem
+                data-cy="launch-workflow"
+                onClick={() => void handleLaunchWorkflow()}
+                icon={<RocketIcon />}
+              >
+                {t('Launch workflow')}
+              </DropdownItem>
               <Divider />
               <DropdownItem
                 data-cy="remove-all-nodes"
                 onClick={() => handleRemoveAllNodes(nodes)}
                 isDanger
-                icon={<TrashIcon />}
+                icon={<MinusCircleIcon />}
               >
                 {t('Remove all nodes')}
               </DropdownItem>
