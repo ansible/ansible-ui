@@ -9,24 +9,23 @@ export const edaErrorAdapter = (error: unknown): ErrorOutput => {
   const genericErrors: GenericErrorDetail[] = [];
   const fieldErrors: FieldErrorDetail[] = [];
 
-  if (isRequestError(error) && typeof error.json === 'object' && error.json !== null) {
+  if (isRequestError(error) && error.json && typeof error.json === 'object') {
     const data = error.json;
-    if ('errors' in data) {
-      if (Array.isArray(data['errors'])) {
-        genericErrors.push({ message: data['errors'][0] as string });
+    for (const key in data) {
+      const value = (data as Record<string, unknown>)[key];
+      // Check for non-field errors
+      if (key === 'non_field_errors' && Array.isArray(value)) {
+        value.forEach((message) => {
+          if (typeof message === 'string') {
+            genericErrors.push({ message });
+          }
+        });
+      } else if (Array.isArray(value)) {
+        const message = value.join(',');
+        fieldErrors.push({ name: key, message });
       } else {
-        genericErrors.push({ message: data['errors'] as string });
-      }
-    } else {
-      for (const key in data) {
-        let value = (data as Record<string, unknown>)[key];
-        if (typeof value === 'string') {
-          fieldErrors.push({ name: key, message: value });
-        } else if (Array.isArray(value)) {
-          value = value[0];
-          // Convert any value type to string
-          fieldErrors.push({ name: key, message: String(value) });
-        }
+        const message = String(value);
+        fieldErrors.push({ name: key, message });
       }
     }
   } else if (error instanceof Error) {

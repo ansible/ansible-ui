@@ -22,7 +22,10 @@ describe('edaErrorAdapter', () => {
       undefined,
       400,
       {},
-      { name: ['Name is required'], email: ['Email is invalid'] }
+      {
+        name: ['Name is required'],
+        email: ['Email is invalid'],
+      }
     );
     const result = edaErrorAdapter(error);
     expect(result.genericErrors.length).equal(0);
@@ -32,17 +35,19 @@ describe('edaErrorAdapter', () => {
     ]);
   });
 
-  it('should return field errors with the first value of an array', () => {
+  it('should return the field errors', () => {
     const error = new RequestError(
       'Validation failed',
       undefined,
       400,
       {},
-      { name: ['Name is required', 'Name is too short'] }
+      { name: ['activation with this name already exists.'] }
     );
     const result = edaErrorAdapter(error);
     expect(result.genericErrors.length).equal(0);
-    expect(result.fieldErrors).to.deep.equal([{ name: 'name', message: 'Name is required' }]);
+    expect(result.fieldErrors).to.deep.equal([
+      { name: 'name', message: 'activation with this name already exists.' },
+    ]);
   });
 
   it('should deal with "errors" errors as generic errors', () => {
@@ -51,15 +56,11 @@ describe('edaErrorAdapter', () => {
       undefined,
       400,
       {},
-      {
-        errors: "{'errors': 'No controller token specified'}",
-      }
+      { non_field_errors: ['No controller token specified'] }
     );
     const result = edaErrorAdapter(error);
     expect(result.genericErrors.length).equal(1);
     expect(result.fieldErrors.length).equal(0);
-    expect(result.genericErrors).to.deep.equal([
-      { message: "{'errors': 'No controller token specified'}" },
-    ]);
+    expect(result.genericErrors).to.deep.equal([{ message: 'No controller token specified' }]);
   });
 });
