@@ -7,9 +7,9 @@ import { createGlobalOrganization, createGlobalProject } from './global-project'
 before(function () {
   let splitLocalhost;
   const devBaseUrlPort = Cypress.config().baseUrl?.split(':').slice(-1).toString();
-  // const baseUrl = Cypress.config().baseUrl;
-  const baseUrl = Cypress.config().baseUrl; // Assuming baseUrl = "https://localhost.com"
+  const baseUrl = Cypress.config().baseUrl;
   let localhost;
+  // Assuming baseUrl = "https://localhost.com"
   if (baseUrl) {
     const splitUrl = baseUrl.split('.');
     if (splitUrl.length >= 4) {
@@ -21,14 +21,10 @@ before(function () {
   } else {
     cy.log('Base URL is not defined.');
   }
-  // const splitUrl = baseUrl?.split('.');
-  // const localhost = splitUrl[splitUrl?.length - 4];
   if (localhost) {
     splitLocalhost = localhost.split('/').slice(-1).toString();
   }
 
-  cy.log('DEVBASEPORT', devBaseUrlPort);
-  cy.log('LOCALHOST', splitLocalhost);
   if (devBaseUrlPort === '4101' || splitLocalhost !== 'localhost') {
     //if port is 4101 or if localhost does not appear in baseurl
     createGlobalOrganization();
