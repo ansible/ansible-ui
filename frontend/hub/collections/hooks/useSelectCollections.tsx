@@ -9,7 +9,8 @@ import {
   usePageDialog,
 } from '../../../../framework';
 import { CollectionVersionSearch } from '../Collection';
-import { collectionKeyFn, hubAPI } from '../../api/utils';
+import { collectionKeyFn } from '../../api/utils';
+import { hubAPI } from '../../api/formatPath';
 import { useHubView } from '../../useHubView';
 import { Label, Truncate } from '@patternfly/react-core';
 

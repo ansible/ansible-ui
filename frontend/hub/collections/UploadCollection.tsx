@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import {
   ITableColumn,
+  IToolbarFilter,
   PageDetails,
   PageHeader,
   PageLayout,
@@ -15,21 +16,18 @@ import {
 import { PageDetail } from '../../../framework/PageDetails/PageDetail';
 import { PageFormFileUpload } from '../../../framework/PageForm/Inputs/PageFormFileUpload';
 import { PageFormWatch } from '../../../framework/PageForm/Utils/PageFormWatch';
-import { LoadingPage } from '../../../framework/components/LoadingPage';
-import { useGetRequest } from '../../common/crud/useGet';
-import { hubPostRequestFile } from '../api/request';
-import { hubAPI, pulpAPI } from '../api/utils';
-import { useHubNamespaces } from '../namespaces/hooks/useHubNamespaces';
-import { useRepositories } from '../repositories/hooks/useRepositories';
-import { PulpItemsResponse } from '../usePulpView';
-
-import { IToolbarFilter } from '../../../framework';
 import { ToolbarFilterType } from '../../../framework/PageToolbar/PageToolbarFilter';
+import { LoadingPage } from '../../../framework/components/LoadingPage';
 import { useSearchParams } from '../../../framework/components/useSearchParams';
+import { useGetRequest } from '../../common/crud/useGet';
 import { nameKeyFn } from '../../common/utils/nameKeyFn';
 import { HubPageForm } from '../HubPageForm';
 import { HubRoute } from '../HubRoutes';
-import { usePulpView } from '../usePulpView';
+import { hubAPI, pulpAPI } from '../api/formatPath';
+import { hubPostRequestFile } from '../api/request';
+import { useHubNamespaces } from '../namespaces/hooks/useHubNamespaces';
+import { useRepositories } from '../repositories/hooks/useRepositories';
+import { PulpItemsResponse, usePulpView } from '../usePulpView';
 
 interface UploadData {
   file: unknown;

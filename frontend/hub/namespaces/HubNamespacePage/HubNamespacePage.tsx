@@ -5,10 +5,10 @@ import { PageActions, PageHeader, PageLayout, useGetPageUrl } from '../../../../
 import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
 import { useGet } from '../../../common/crud/useGet';
 import { HubRoute } from '../../HubRoutes';
-import { hubAPI } from '../../api/utils';
 import { HubItemsResponse } from '../../useHubView';
 import { HubNamespace } from '../HubNamespace';
 import { useHubNamespaceActions } from '../hooks/useHubNamespaceActions';
+import { hubAPI } from '../../api/formatPath';
 
 export function HubNamespacePage() {
   const { t } = useTranslation();
