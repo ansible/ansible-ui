@@ -5,7 +5,7 @@ import { PageFormGrid } from '../PageForm';
 /**
  * Renders a form section with an optional title and children components.
  *
- * This can also be used around an input such as testarea or data editor to ensure the input is rendered in a single column.
+ * This can also be used around an input such as textarea or data editor to ensure the input is rendered in a single column.
  *
  * @param {Object} props - The component props.
  * @param {string} [props.title] - The title of the form section.
