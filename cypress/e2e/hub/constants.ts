@@ -5,3 +5,11 @@ export const HubDashboard = {
 };
 
 export const HubRoutes = { dashboard: '/hub/dashboard' };
+
+export const Remotes = {
+  title: 'Remotes',
+  url: '/remotes',
+  urlCreate: '/remotes/create',
+  remoteURL: 'https://console.redhat.com/api/automation-hub/',
+  noResults: 'No results found',
+};

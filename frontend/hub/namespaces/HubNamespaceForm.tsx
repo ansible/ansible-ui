@@ -12,7 +12,7 @@ import { useGet } from '../../common/crud/useGet';
 import { usePatchRequest } from '../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../common/crud/usePostRequest';
 import { HubRoute } from '../HubRoutes';
-import { hubAPI } from '../api/utils';
+import { hubAPI } from '../api/formatPath';
 import { HubNamespace } from './HubNamespace';
 import { HubPageForm } from '../HubPageForm';
 

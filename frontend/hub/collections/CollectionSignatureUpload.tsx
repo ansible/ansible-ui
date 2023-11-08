@@ -1,13 +1,12 @@
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { PageHeader, PageLayout, useGetPageUrl } from '../../../framework';
+import { PageHeader, PageLayout, useGetPageUrl, usePageNavigate } from '../../../framework';
 import { PageFormFileUpload } from '../../../framework/PageForm/Inputs/PageFormFileUpload';
-import { usePageNavigate } from '../../../framework/PageNavigation/usePageNavigate';
 import { useGet, useGetRequest } from '../../common/crud/useGet';
 import { HubPageForm } from '../HubPageForm';
 import { HubRoute } from '../HubRoutes';
+import { hubAPI, pulpAPI } from '../api/formatPath';
 import { hubPostRequestFile } from '../api/request';
-import { hubAPI, pulpAPI } from '../api/utils';
 import { Repository } from '../repositories/Repository';
 import { HubItemsResponse } from '../useHubView';
 import { PulpItemsResponse } from '../usePulpView';

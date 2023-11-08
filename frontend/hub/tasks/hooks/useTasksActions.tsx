@@ -6,8 +6,9 @@ import { Task } from '../Task';
 import { useHubContext } from '../../useHubContext';
 import { compareStrings, useBulkConfirmation } from '../../../../framework';
 import { requestPatch } from '../../../common/crud/Data';
-import { pulpAPI, parsePulpIDFromURL } from '../../api/utils';
 import { useTasksColumns } from '../Tasks';
+import { pulpAPI } from '../../api/formatPath';
+import { parsePulpIDFromURL } from '../../api/utils';
 
 export function useTasksActions(onComplete?: (tasks: Task[]) => void) {
   const { t } = useTranslation();
