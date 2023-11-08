@@ -11,23 +11,28 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { EmptyStateNoData } from '../../../../../framework/components/EmptyStateNoData';
 import { AddNodeButton } from './components/AddNodeButton';
-import { PageSection, PageSectionVariants, Title } from '@patternfly/react-core';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { AwxError } from '../../../common/AwxError';
 import { EmptyState, EmptyStateHeader, Icon, Spinner } from '@patternfly/react-core';
 import { ShareAltIcon } from '@patternfly/react-icons';
 import { getPatternflyColor } from '../../../../../framework';
+import { VisualizerWrapper } from './components/VisualizerWrapper';
 
 const TopologyView = styled(PFTopologyView)`
   & .pf-topology-view__project-toolbar {
+    ${(props: { isExpanded: boolean }) => !props.isExpanded && 'flex-wrap: wrap;'}
     flex: 1;
+  }
+
+  & .pf-topology-view__project-toolbar > :first-child {
+    ${(props: { isExpanded: boolean }) => !props.isExpanded && 'flex: 100%; padding-bottom:20px'}
   }
 `;
 
 export function WorkflowVisualizer() {
   const { id } = useParams<{ id?: string }>();
   const { t } = useTranslation();
-
+  const expanded = useState<boolean>(false);
   const [selectedNode, setSelectedNode] = useState<WorkflowNode | undefined>(undefined);
   const {
     data: wfNodes,
@@ -43,7 +48,11 @@ export function WorkflowVisualizer() {
   } = useGetItem<WorkflowJobTemplate>('/api/v2/workflow_job_templates/', id);
 
   const error = workflowError || workflowNodeError;
-  const toolbarActions = useWorkflowVisualizerToolbarActions(wfNodes?.results ?? []);
+  const toolbarActions = useWorkflowVisualizerToolbarActions(
+    wfNodes?.results ?? [],
+    expanded,
+    workflowJobTemplate
+  );
 
   if (error) {
     return <AwxError error={error} handleRefresh={workflowRefresh || workflowNodeRefresh} />;
@@ -94,17 +103,12 @@ export function WorkflowVisualizer() {
       />
     );
   }
+  const [isExpanded] = expanded;
 
   return (
-    <>
-      <PageSection
-        style={{ paddingBottom: '0px' }}
-        data-cy="workflow-job-template-name"
-        variant={PageSectionVariants.light}
-      >
-        <Title headingLevel="h1">{workflowJobTemplate?.name}</Title>
-      </PageSection>
+    <VisualizerWrapper isExpanded={isExpanded}>
       <TopologyView
+        isExpanded={isExpanded}
         sideBarOpen={selectedNode !== undefined}
         sideBarResizable
         sideBar={
@@ -120,6 +124,6 @@ export function WorkflowVisualizer() {
       >
         {topologyScreen}
       </TopologyView>
-    </>
+    </VisualizerWrapper>
   );
 }
