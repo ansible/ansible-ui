@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { useNameColumn } from '../../../../common/columns';
 import { getItemKey, requestDelete } from '../../../../common/crud/Data';
+import { awxAPI } from '../../../api/awx-utils';
 import { Project } from '../../../interfaces/Project';
 import { useProjectsColumns } from './useProjectsColumns';
 
@@ -25,7 +26,8 @@ export function useDeleteProjects(onComplete: (projects: Project[]) => void) {
       confirmationColumns,
       actionColumns,
       onComplete,
-      actionFn: (project, signal) => requestDelete(`/api/v2/projects/${project.id}/`, signal),
+      actionFn: (project: Project, signal) =>
+        requestDelete(awxAPI`/projects/${project.id.toString()}/`, signal),
     });
   };
   return deleteProjects;

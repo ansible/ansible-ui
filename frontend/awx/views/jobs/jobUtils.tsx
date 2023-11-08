@@ -1,4 +1,5 @@
 import { RouteObj } from '../../../common/Routes';
+import { awxAPI } from '../../api/awx-utils';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
 
 /** Returns the jobs API endpoint based on the job type */
@@ -44,10 +45,10 @@ export function getRelaunchEndpoint(job: UnifiedJob) {
       return `${baseUrl}${job.id}/relaunch/`;
     case 'inventory_update':
       return job.inventory_source
-        ? `/api/v2/inventory_sources/${job.inventory_source}/update/`
+        ? awxAPI`/inventory_sources/${job.inventory_source}/update/`
         : undefined;
     case 'project_update':
-      return job.project ? `/api/v2/projects/${job.project}/update/` : undefined;
+      return job.project ? awxAPI`/projects/${job.project}/update/` : undefined;
   }
 }
 

@@ -20,6 +20,7 @@ import { AwxPageForm } from '../../AwxPageForm';
 import { AwxRoute } from '../../AwxRoutes';
 import { PageFormOrganizationSelect } from '../../access/organizations/components/PageFormOrganizationSelect';
 import { getOrganizationByName } from '../../access/organizations/utils/getOrganizationByName';
+import { awxAPI } from '../../api/awx-utils';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { Credential } from '../../interfaces/Credential';
 import { CredentialType } from '../../interfaces/CredentialType';
@@ -76,7 +77,7 @@ export function EditCredential() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const { data: credential } = useGet<Credential>(`/api/v2/credentials/${id.toString()}/`);
+  const { data: credential } = useGet<Credential>(awxAPI`/credentials/${id.toString()}/`);
   const activeUser = useActiveUser();
   const getPageUrl = useGetPageUrl();
 
@@ -94,7 +95,7 @@ export function EditCredential() {
     } else {
       editedCredential.user = activeUser?.id;
     }
-    await requestPatch<Credential>(`/api/v2/credentials/${id}/`, editedCredential);
+    await requestPatch<Credential>(awxAPI`/credentials/${id.toString()}/`, editedCredential);
     navigate(-1);
   };
   if (!credential) {

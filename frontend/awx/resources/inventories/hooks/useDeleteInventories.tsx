@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { useNameColumn } from '../../../../common/columns';
 import { getItemKey, requestDelete } from '../../../../common/crud/Data';
+import { awxAPI } from '../../../api/awx-utils';
 import { Inventory } from '../../../interfaces/Inventory';
 import { useInventoriesColumns } from './useInventoriesColumns';
 
@@ -33,8 +34,8 @@ export function useDeleteInventories(onComplete: (inventories: Inventory[]) => v
       confirmationColumns,
       actionColumns,
       onComplete,
-      actionFn: (inventory, signal) =>
-        requestDelete(`/api/v2/inventories/${inventory.id}/`, signal),
+      actionFn: (inventory: Inventory, signal) =>
+        requestDelete(awxAPI`/inventories/${inventory.id.toString()}/`, signal),
       alertPrompts:
         undeletableInventories.length > 0
           ? [

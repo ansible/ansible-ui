@@ -9,6 +9,7 @@ import { postRequest, requestGet, requestPatch } from '../../../common/crud/Data
 import { useGet } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { AwxPageForm } from '../../AwxPageForm';
+import { awxAPI } from '../../api/awx-utils';
 import { AwxError } from '../../common/AwxError';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { getAddedAndRemoved } from '../../common/util/getAddedAndRemoved';
@@ -33,14 +34,14 @@ export function EditWorkflowJobTemplate() {
     error,
     refresh,
     isLoading,
-  } = useGet<WorkflowJobTemplate>(`/api/v2/workflow_job_templates/${id.toString()}/`);
+  } = useGet<WorkflowJobTemplate>(awxAPI`/workflow_job_templates/${id.toString()}/`);
 
   const onSubmit: PageFormSubmitHandler<WorkflowJobTemplateForm> = async (
     values: WorkflowJobTemplateForm
   ) => {
     const { labels, ...rest } = values;
 
-    await requestPatch<WorkflowJobTemplateForm>(`/api/v2/workflow_job_templates/${id}/`, {
+    await requestPatch<WorkflowJobTemplateForm>(awxAPI`/workflow_job_templates/${id.toString()}/`, {
       ...rest,
       inventory: values.inventory?.id || null,
       job_tags: stringifyTags(values.job_tags) ?? '',
@@ -118,7 +119,7 @@ export function CreateWorkflowJobTemplate() {
   const onSubmit: PageFormSubmitHandler<WorkflowJobTemplateForm> = async (values) => {
     const { labels, webhook_credential, ...rest } = values;
 
-    const template = await postRequest(`/api/v2/workflow_job_templates/`, {
+    const template = await postRequest(awxAPI`/workflow_job_templates/`, {
       ...rest,
       inventory: values.inventory?.id,
       job_tags: stringifyTags(values.job_tags || ''),
@@ -182,13 +183,13 @@ async function submitLabels(
     }
   }
   const disassociationPromises = removed.map((label: { id: number }) =>
-    postRequest(`/api/v2/workflow_job_templates/${template.id.toString()}/labels/`, {
+    postRequest(awxAPI`/workflow_job_templates/${template.id.toString()}/labels/`, {
       id: label.id,
       disassociate: true,
     })
   );
   const associationPromises = added.map((label: { name: string }) =>
-    postRequest(`/api/v2/workflow_job_templates/${template.id.toString()}/labels/`, {
+    postRequest(awxAPI`/workflow_job_templates/${template.id.toString()}/labels/`, {
       name: label.name,
       organization: orgId,
     })

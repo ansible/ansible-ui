@@ -17,6 +17,7 @@ import { scheduleRulesRoutes } from './hooks/ruleHelpers';
 import { UseFormReturn } from 'react-hook-form';
 import { formatDateString } from '../../../../framework/utils/dateTimeHelpers';
 import { AwxPageForm } from '../../AwxPageForm';
+import { awxAPI } from '../../api/awx-utils';
 import { AwxError } from '../../common/AwxError';
 import { buildDateTimeObj } from './hooks/scheduleHelpers';
 
@@ -86,7 +87,7 @@ export function CreateScheduleRule() {
     const updatedRules = rules.filter((rule) => rule !== rruleObject.toString().split('\n')[1]);
     const dedupedRRuleString = [start, updatedRules[0], set.toString().split('\n')[1]].join(' ');
 
-    await requestPatch<Schedule>(`/api/v2/schedules/${scheduleContainer.id}/`, {
+    await requestPatch<Schedule>(awxAPI`/schedules/${scheduleContainer.id.toString()}/`, {
       rrule: dedupedRRuleString,
     })
       .then((res) => {
@@ -140,7 +141,7 @@ export function CreateScheduleRule() {
 
   useMemo(() => {
     if (!schedule_id) return;
-    void requestGet<Schedule>(`/api/v2/schedules/${schedule_id}`)
+    void requestGet<Schedule>(awxAPI`/schedules/${schedule_id}`)
       .then((res) => {
         setScheduleContainer(res);
       })

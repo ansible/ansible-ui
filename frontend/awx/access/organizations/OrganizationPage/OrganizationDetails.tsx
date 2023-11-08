@@ -4,24 +4,25 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { DateTimeCell, PageDetail, PageDetails, useGetPageUrl } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { RouteObj } from '../../../../common/Routes';
-import { AwxRoute } from '../../../AwxRoutes';
 import { useGet, useGetItem } from '../../../../common/crud/useGet';
+import { AwxRoute } from '../../../AwxRoutes';
 import { CredentialLabel } from '../../../common/CredentialLabel';
 import { ExecutionEnvironmentDetail } from '../../../common/ExecutionEnvironmentDetail';
 import { Credential } from '../../../interfaces/Credential';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { Organization } from '../../../interfaces/Organization';
+import { awxAPI } from '../../../api/awx-utils';
 
 function useGalaxyCredentials(orgId: string) {
   const { data } = useGet<{ results: Credential[] }>(
-    `/api/v2/organizations/${orgId}/galaxy_credentials/`
+    awxAPI`/organizations/${orgId}/galaxy_credentials/`
   );
   return data?.results ?? [];
 }
 
 function useInstanceGroups(orgId: string) {
   const { data } = useGet<{ results: InstanceGroup[] }>(
-    `/api/v2/organizations/${orgId}/instance_groups/`
+    awxAPI`/organizations/${orgId}/instance_groups/`
   );
   return data?.results ?? [];
 }

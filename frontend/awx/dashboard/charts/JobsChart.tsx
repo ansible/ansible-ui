@@ -5,6 +5,7 @@ import { PageDashboardChart } from '../../../../framework/PageDashboard/PageDash
 import { usePageChartColors } from '../../../../framework/PageDashboard/usePageChartColors';
 import { useGetPageUrl } from '../../../../framework/PageNavigation/useGetPageUrl';
 import { AwxRoute } from '../../AwxRoutes';
+import { awxAPI } from '../../api/awx-utils';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
 
 export type UnifiedJobSummary = Pick<UnifiedJob, 'id' | 'finished' | 'failed'>;
@@ -32,7 +33,7 @@ export function JobsChart(props: {
   const { period, jobType } = props;
 
   const { data, isLoading } = useSWR<IJobChartData>(
-    `/api/v2/dashboard/graphs/jobs/?job_type=${jobType ?? 'all'}&period=${period ?? 'month'}`,
+    awxAPI`/dashboard/graphs/jobs/?job_type=${jobType ?? 'all'}&period=${period ?? 'month'}`,
     (url: string) => fetch(url).then((r) => r.json())
   );
 
