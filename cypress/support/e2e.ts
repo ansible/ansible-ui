@@ -7,9 +7,22 @@ import { createGlobalOrganization, createGlobalProject } from './global-project'
 before(function () {
   let splitLocalhost;
   const devBaseUrlPort = Cypress.config().baseUrl?.split(':').slice(-1).toString();
-  const baseUrl = Cypress.config().baseUrl;
-  const splitUrl = baseUrl.split('.');
-  const localhost = splitUrl[splitUrl.length - 4];
+  // const baseUrl = Cypress.config().baseUrl;
+  const baseUrl = Cypress.config().baseUrl; // Assuming baseUrl = "https://localhost.com"
+  let localhost;
+  if (baseUrl) {
+    const splitUrl = baseUrl.split('.');
+    if (splitUrl.length >= 4) {
+      localhost = splitUrl[splitUrl.length - 4];
+      cy.log('LOCALHOST', localhost); // Output: "localhost"
+    } else {
+      cy.log('The URL might not contain the expected segments.');
+    }
+  } else {
+    cy.log('Base URL is not defined.');
+  }
+  // const splitUrl = baseUrl?.split('.');
+  // const localhost = splitUrl[splitUrl?.length - 4];
   if (localhost) {
     splitLocalhost = localhost.split('/').slice(-1).toString();
   }
