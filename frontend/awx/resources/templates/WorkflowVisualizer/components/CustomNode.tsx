@@ -1,10 +1,4 @@
-import { ComponentClass, FunctionComponent } from 'react';
-import {
-  DefaultNode,
-  LabelPosition,
-  WithDragNodeProps,
-  WithSelectionProps,
-} from '@patternfly/react-topology';
+import { ElementType, FC } from 'react';
 import {
   ClipboardCheckIcon,
   ClockIcon,
@@ -13,34 +7,45 @@ import {
   ShareAltIcon,
   SyncAltIcon,
 } from '@patternfly/react-icons';
+import {
+  DefaultNode,
+  LabelPosition,
+  WithContextMenuProps,
+  WithDragNodeProps,
+  WithSelectionProps,
+} from '@patternfly/react-topology';
 import type { CustomNodeProps } from '../types';
 import type { SVGIconProps } from '@patternfly/react-icons/dist/js/createIcon';
 import type { UnifiedJobType } from '../../../../interfaces/WorkflowNode';
 
-const NodeIcon: Record<UnifiedJobType, ComponentClass<SVGIconProps>> = {
-  job: ClipboardCheckIcon,
-  workflow_job: ShareAltIcon,
-  project_update: SyncAltIcon,
-  workflow_approval: ClockIcon,
+const NodeIcon: Record<UnifiedJobType, ElementType<SVGIconProps>> = {
   inventory_update: ProcessAutomationIcon,
+  job: ClipboardCheckIcon,
+  project_update: SyncAltIcon,
   system_job: CogIcon,
+  workflow_approval: ClockIcon,
+  workflow_job: ShareAltIcon,
 };
 
-export const CustomNode: FunctionComponent<
-  CustomNodeProps & WithSelectionProps & WithDragNodeProps
-> = ({ element, selected, onSelect, ...rest }: CustomNodeProps) => {
+export const CustomNode: FC<
+  CustomNodeProps & WithContextMenuProps & WithSelectionProps & WithDragNodeProps
+> = ({ element, contextMenuOpen, onContextMenu, onSelect, selected, ...rest }) => {
   const data = element.getData();
-  if (!data) return;
+
+  if (!data) return null;
 
   const jobType = data.jobType;
   const Icon = NodeIcon[jobType];
+
   return (
     <DefaultNode
       element={element}
-      showStatusDecorator
-      selected={selected}
-      onSelect={onSelect}
+      contextMenuOpen={contextMenuOpen}
       labelPosition={LabelPosition.right}
+      onContextMenu={onContextMenu}
+      onSelect={onSelect}
+      selected={selected}
+      showStatusDecorator
       {...rest}
     >
       <g transform={`translate(13, 13)`}>
