@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { useParams } from 'react-router-dom';
+import { awxAPI } from '../../../api/awx-utils';
 import { AccessTable } from '../../users/Users';
 
 /**
@@ -8,5 +9,5 @@ import { AccessTable } from '../../users/Users';
  */
 export function OrganizationAccess() {
   const params = useParams<{ id: string }>();
-  return <AccessTable url={`/api/v2/organizations/${params.id}/access_list/`} />;
+  return <AccessTable url={awxAPI`/organizations/${params.id ?? ''}/access_list/`} />;
 }

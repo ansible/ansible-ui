@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { useNameColumn } from '../../../../common/columns';
 import { getItemKey, requestDelete } from '../../../../common/crud/Data';
+import { awxAPI } from '../../../api/awx-utils';
 import { Schedule } from '../../../interfaces/Schedule';
 import { useSchedulesColumns } from './useSchedulesColumns';
 
@@ -26,7 +27,8 @@ export function useDeleteSchedules(onComplete?: (schedules: Schedule[]) => void)
       confirmationColumns,
       actionColumns: actionColumns,
       onComplete,
-      actionFn: (schedule, signal) => requestDelete(`/api/v2/schedules/${schedule.id}/`, signal),
+      actionFn: (schedule: Schedule, signal) =>
+        requestDelete(awxAPI`/schedules/${schedule.id.toString()}/`, signal),
     });
   };
   return deleteSchedules;

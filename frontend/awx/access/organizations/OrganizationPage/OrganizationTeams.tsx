@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { PageTable, usePageNavigate } from '../../../../../framework';
 import { AwxRoute } from '../../../AwxRoutes';
+import { awxAPI } from '../../../api/awx-utils';
 import { Team } from '../../../interfaces/Team';
 import { useAwxView } from '../../../useAwxView';
 import { useTeamsColumns } from '../../teams/hooks/useTeamsColumns';
@@ -15,7 +16,7 @@ export function OrganizationTeams() {
   const toolbarFilters = useTeamsFilters();
   const tableColumns = useTeamsColumns();
   const view = useAwxView<Team>({
-    url: `/api/v2/organizations/${params.id}/teams/`,
+    url: awxAPI`/organizations/${params.id ?? ''}/teams/`,
     toolbarFilters,
     tableColumns,
     disableQueryString: true,

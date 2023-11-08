@@ -7,6 +7,7 @@ import { requestGet } from '../../../../common/crud/Data';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { Organization } from '../../../interfaces/Organization';
 import { useSelectOrganization, useSelectOrganization2 } from '../hooks/useSelectOrganization';
+import { awxAPI } from '../../../api/awx-utils';
 
 export function PageFormOrganizationSelect<
   TFieldValues extends FieldValues = FieldValues,
@@ -27,7 +28,7 @@ export function PageFormOrganizationSelect<
         if (!props.isRequired && !organizationName) return;
         try {
           const itemsResponse = await requestGet<AwxItemsResponse<Organization>>(
-            `/api/v2/organizations/?name=${organizationName}`
+            awxAPI`/organizations/?name=${organizationName}`
           );
           if (itemsResponse.results.length === 0) return t('Organization not found.');
           if (props.organizationPath) setValue(props.organizationPath, itemsResponse.results[0]);
@@ -53,7 +54,7 @@ export function PageFormSelectOrganization<
   const openSelectDialog = useSelectOrganization2();
   const query = useCallback(async () => {
     const response = await requestGet<AwxItemsResponse<Organization>>(
-      `/api/v2/organizations/?page_size=200`
+      awxAPI`/organizations/?page_size=200`
     );
     return Promise.resolve({
       total: response.count,

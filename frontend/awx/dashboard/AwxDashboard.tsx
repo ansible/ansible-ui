@@ -14,6 +14,7 @@ import { AwxRecentInventoriesCard } from './cards/AwxRecentInventoriesCard';
 import { AwxRecentJobsCard } from './cards/AwxRecentJobsCard';
 import { AwxRecentProjectsCard } from './cards/AwxRecentProjectsCard';
 import { useManagedAwxDashboard } from './hooks/useManagedAwxDashboard';
+import { awxAPI } from '../api/awx-utils';
 
 const HIDE_WELCOME_MESSAGE = 'hide-welcome-message';
 type Resource = { id: string; name: string };
@@ -64,7 +65,7 @@ export function AwxDashboard() {
 
 function DashboardInternal(props: { managedResources: Resource[] }) {
   const { managedResources } = props;
-  const { data, isLoading } = useSWR<IAwxDashboardData>(`/api/v2/dashboard/`, (url: string) =>
+  const { data, isLoading } = useSWR<IAwxDashboardData>(awxAPI`/dashboard/`, (url: string) =>
     fetch(url).then((r) => r.json())
   );
   if (!data || isLoading) {

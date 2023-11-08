@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { useNameColumn } from '../../../../common/columns';
 import { getItemKey, requestDelete } from '../../../../common/crud/Data';
+import { awxAPI } from '../../../api/awx-utils';
 import { Organization } from '../../../interfaces/Organization';
 import { useOrganizationsColumns } from '../Organizations';
 
@@ -28,8 +29,8 @@ export function useDeleteOrganizations(onComplete: (organizations: Organization[
       confirmationColumns,
       actionColumns,
       onComplete,
-      actionFn: (organization, signal) =>
-        requestDelete(`/api/v2/organizations/${organization.id}/`, signal),
+      actionFn: (organization: Organization, signal) =>
+        requestDelete(awxAPI`/organizations/${organization.id.toString()}/`, signal),
     });
   };
   return deleteOrganizations;
