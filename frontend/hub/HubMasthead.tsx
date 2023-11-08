@@ -14,7 +14,7 @@ import { PageRefreshIcon } from '../common/PageRefreshIcon';
 import { postRequest } from '../common/crud/Data';
 import { useActiveUser } from '../common/useActiveUser';
 import { HubRoute } from './HubRoutes';
-import { hubAPI } from './api/utils';
+import { hubAPI } from './api/formatPath';
 import Logo from './galaxy-logo.svg';
 
 export function HubMasthead() {

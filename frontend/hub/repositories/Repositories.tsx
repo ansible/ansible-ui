@@ -16,7 +16,8 @@ import {
   usePageNavigate,
 } from '../../../framework';
 import { HubRoute } from '../HubRoutes';
-import { hubAPI, pulpHrefKeyFn, pulpIdKeyFn } from '../api/utils';
+import { pulpHrefKeyFn, pulpIdKeyFn } from '../api/utils';
+import { hubAPI } from '../api/formatPath';
 import { useHubView } from '../useHubView';
 import { RemoteRepository, Repository } from './Repository';
 

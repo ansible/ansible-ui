@@ -1,5 +1,5 @@
 import { HubItemsResponse } from '../../useHubView';
-import { hubAPI } from '../../api/utils';
+import { hubAPI } from '../../api/formatPath';
 import { CollectionVersionSearch } from '../../collections/Collection';
 import { CategorizedCollections, CollectionCategory } from '../CollectionCategory';
 import { requestGet } from '../../../common/crud/Data';

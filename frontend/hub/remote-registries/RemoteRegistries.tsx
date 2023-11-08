@@ -1,7 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../framework';
 import { HubRoute } from '../HubRoutes';
-import { hubAPI, pulpHrefKeyFn } from '../api/utils';
+import { hubAPI } from '../api/formatPath';
+import { pulpHrefKeyFn } from '../api/utils';
 import { useHubView } from '../useHubView';
 import { RemoteRegistry } from './RemoteRegistry';
 import { useRemoteRegistriesColumns } from './hooks/useRemoteRegistriesColumns';

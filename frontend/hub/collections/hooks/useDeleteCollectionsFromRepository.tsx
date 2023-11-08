@@ -1,14 +1,14 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation, TFunction } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../framework';
-import { postRequest, requestGet } from '../../../common/crud/Data';
-import { collectionKeyFn, parsePulpIDFromURL, pulpAPI } from '../../api/utils';
+import { collectionKeyFn, parsePulpIDFromURL, waitForTask } from '../../api/utils';
+import { hubAPI, pulpAPI } from '../../api/formatPath';
 import { CollectionVersionSearch } from '../Collection';
 import { useCollectionColumns } from './useCollectionColumns';
-import { hubAPI, waitForTask } from '../../api/utils';
 import { HubItemsResponse } from '../../useHubView';
 import { usePageNavigate } from '../../../../framework';
 import { HubRoute } from '../../HubRoutes';
+import { postRequest, requestGet } from '../../../common/crud/Data';
 
 export function useDeleteCollectionsFromRepository(
   onComplete?: (collections: CollectionVersionSearch[]) => void,
