@@ -1,11 +1,11 @@
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { PageLayout, PageTable } from '../../../../../framework';
-import { API_PREFIX } from '../../../constants';
 import { EdaRuleAuditAction } from '../../../interfaces/EdaRuleAuditAction';
 import { useEdaView } from '../../../useEventDrivenView';
 import { useRuleAuditActionsColumns } from '../hooks/useRuleAuditActionsColumns';
 import { useRuleAuditActionsFilters } from '../hooks/useRuleAuditActionsFilters';
+import { edaAPI } from '../../../api/eda-utils';
 
 export function RuleAuditActions() {
   const params = useParams<{ id: string }>();
@@ -14,7 +14,7 @@ export function RuleAuditActions() {
   const tableColumns = useRuleAuditActionsColumns();
 
   const view = useEdaView<EdaRuleAuditAction>({
-    url: `${API_PREFIX}/audit-rules/${params?.id || ''}/actions/`,
+    url: edaAPI`/audit-rules/${params?.id || ''}/actions/`,
     tableColumns,
     toolbarFilters,
   });

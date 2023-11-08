@@ -16,15 +16,83 @@ import { Project } from '../../frontend/awx/interfaces/Project';
 import { Schedule } from '../../frontend/awx/interfaces/Schedule';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
-import {
-  CredentialType,
-  WorkflowJobTemplate,
-} from '../../frontend/awx/interfaces/generated-from-swagger/api';
+import { CredentialType } from '../../frontend/awx/interfaces/CredentialType';
+import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/generated-from-swagger/api';
+import { Job } from '../../frontend/awx/interfaces/Job';
 import './auth';
 import './commands';
 import './rest-commands';
+//import { Credential } from '../../frontend/eda/interfaces/generated/eda-api';
 
 //  AWX related custom command implementation
+
+/**
+ * cy.inputCustomCredTypeConfig(json/yml, input/injector config)
+ */
+
+Cypress.Commands.add('inputCustomCredTypeConfig', (configType: string, config: string) => {
+  cy.get(`[data-cy="${configType}"]`)
+    .find('textarea:not(:disabled)')
+    .focus()
+    .clear()
+    .type('{selectAll}{backspace}')
+    .type(`${config}`, {
+      delay: 0,
+      parseSpecialCharSequences: false,
+    })
+    .type('{esc}');
+});
+
+/**@param
+ * createAWXCredentialTypeUI
+ */
+
+Cypress.Commands.add(
+  'createAndDeleteCustomAWXCredentialTypeUI',
+  (
+    customCredTypeName: string,
+    inputConfig?: string,
+    injectorConfig?: string,
+    defaultFormat?: string
+  ) => {
+    const credentialTypeDesc = 'This is a custom credential type that is not managed';
+    cy.navigateTo('awx', 'credential-types');
+    cy.get('a[data-cy="create-credential-type"').click();
+    cy.verifyPageTitle('Create Credential Type');
+    cy.url().then((currentUrl) => {
+      expect(currentUrl.includes('/credential-types/create')).to.be.true;
+    });
+    cy.get('[data-cy="name"]').type(`${customCredTypeName}`);
+    cy.get('[data-cy="description"]').type(`${credentialTypeDesc}`);
+    if (inputConfig && injectorConfig) {
+      if (defaultFormat === 'json') {
+        cy.configFormatToggle('inputs');
+      }
+      cy.inputCustomCredTypeConfig('inputs', inputConfig);
+      if (defaultFormat === 'json') {
+        cy.configFormatToggle('injectors');
+      }
+      cy.inputCustomCredTypeConfig('injectors', injectorConfig);
+    }
+    cy.clickButton(/^Create credential type$/);
+    cy.verifyPageTitle(customCredTypeName);
+    cy.hasDetail(/^Name$/, `${customCredTypeName}`);
+    cy.hasDetail(/^Description$/, `${credentialTypeDesc}`);
+    cy.clickPageAction(/^Delete credential type/);
+    cy.get('#confirm').click();
+    cy.clickButton(/^Delete credential type/);
+    cy.clickButton(/^Close/);
+  }
+);
+
+/** @param
+ * Configuration format YAML-JSON and JSON-YAML toggle switch
+ *
+ */
+
+Cypress.Commands.add('configFormatToggle', (configType: string) => {
+  cy.get(`[data-cy="${configType}-form-group"] [data-cy=toggle-json]`).click();
+});
 
 Cypress.Commands.add('typeMonacoTextField', (textString: string) => {
   cy.get('[data-cy="expandable"]')
@@ -312,8 +380,8 @@ Cypress.Commands.add('createAwxCredentialType', () => {
   cy.awxRequestPost<Pick<CredentialType, 'name' | 'description' | 'kind'>, CredentialType>(
     '/api/v2/credential_types/',
     {
-      name: 'E2E Credential Type ' + randomString(4),
-      description: 'E2E Credential Type Description',
+      name: 'E2E Custom Credential Type ' + randomString(4),
+      description: 'E2E Custom Credential Type Description',
       kind: 'cloud',
     }
   );
@@ -769,7 +837,7 @@ Cypress.Commands.add(
       '/api/v2/instance_groups/',
       {
         name: 'E2E Instance Group ' + randomString(4),
-        percent_capacity_remaining: '100',
+        percent_capacity_remaining: 100,
         policy_instance_minimum: 100,
         ...instanceGroup,
       }
@@ -856,4 +924,29 @@ Cypress.Commands.add('waitForTemplateStatus', (jobID: string) => {
           break;
       }
     });
+});
+
+Cypress.Commands.add('waitForJobToProcessEvents', (jobID: string) => {
+  const waitForJobToFinishProcessingEvents = (maxLoops: number) => {
+    if (maxLoops == 0) {
+      cy.log('Max loops reached while waiting for processing events.');
+      return;
+    }
+    cy.wait(500);
+
+    cy.requestGet<Job>(`api/v2/jobs/${jobID}/`).then((job) => {
+      if (job.event_processing_finished !== true) {
+        cy.log(`EVENT PROCESSING = ${job.event_processing_finished}`);
+        cy.log(`MAX LOOPS RAN = ${maxLoops}`);
+        waitForJobToFinishProcessingEvents(maxLoops - 1);
+      } else {
+        cy.log(`EVENT PROCESSED = ${job.event_processing_finished}`);
+      }
+    });
+  };
+  /*
+  reason the numbers chosen for wait is 500ms and maxLoops is 80,
+  as processing events takes ~30s, hence 80 * 500ms is chosen as the upper limit)
+  */
+  waitForJobToFinishProcessingEvents(80);
 });

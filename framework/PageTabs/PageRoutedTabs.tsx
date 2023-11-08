@@ -1,7 +1,7 @@
-import { PageSection, Tab, TabProps, TabTitleText, Tabs } from '@patternfly/react-core';
+import { Tab, TabProps, TabTitleText, Tabs } from '@patternfly/react-core';
 import { CaretLeftIcon } from '@patternfly/react-icons';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { useGetPageUrl, usePageNavigate } from '..';
+import { PageLayout, useGetPageUrl, usePageNavigate } from '..';
 import { getPersistentFilters } from '../../frontend/common/PersistentFilters';
 
 export function PageRoutedTabs(props: {
@@ -70,9 +70,14 @@ export function PageRoutedTabs(props: {
         )}
         {tabs}
       </Tabs>
-      <PageSection variant="light" isFilled padding={{ default: 'noPadding' }}>
-        <Outlet />
-      </PageSection>
+
+      {/* This div is needed to flex grow to fill the page space. */}
+      <div style={{ flexGrow: 1, overflow: 'hidden' }}>
+        {/* PageLayout now sets its max height to 100% which is 100% of the div above, which allows it's contents to scroll. */}
+        <PageLayout>
+          <Outlet />
+        </PageLayout>
+      </div>
     </>
   );
 }

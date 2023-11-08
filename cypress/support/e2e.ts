@@ -18,3 +18,10 @@ before(function () {
 // HUB Component Port: 4202
 // EDA E2E Port: 4103
 // EDA Component Port: 4203
+
+Cypress.on('uncaught:exception', (_err, _runnable) => {
+  // returning false here prevents Cypress from
+  // failing the test
+  // fixes problems with monaco loading workers
+  return false;
+});

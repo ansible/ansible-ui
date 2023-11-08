@@ -4,8 +4,8 @@ import { compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { useNameColumn } from '../../../../common/columns';
 import { requestDelete } from '../../../../common/crud/Data';
 import { idKeyFn } from '../../../../common/utils/nameKeyFn';
+import { edaAPI } from '../../../api/eda-utils';
 import { InUseResources } from '../../../common/EdaResourcesComon';
-import { API_PREFIX } from '../../../constants';
 import { EdaCredential } from '../../../interfaces/EdaCredential';
 import { useCredentialColumns } from './useCredentialColumns';
 
@@ -17,10 +17,7 @@ export function useDeleteCredentials(onComplete?: (credentials: EdaCredential[])
   const bulkAction = useBulkConfirmation<EdaCredential>();
   return useCallback(
     async (credentials: EdaCredential[]) => {
-      const inUseDes = await InUseResources(
-        credentials,
-        `${API_PREFIX}/activations/?credential_id=`
-      );
+      const inUseDes = await InUseResources(credentials, edaAPI`/activations/?credential_id=`);
       const inUseMessage =
         inUseDes && inUseDes.length > 0
           ? [t(`The following decision environments are in use: ${inUseDes.join()}`)]
@@ -43,8 +40,8 @@ export function useDeleteCredentials(onComplete?: (credentials: EdaCredential[])
         actionColumns,
         onComplete,
         alertPrompts: inUseMessage,
-        actionFn: (credential, signal) =>
-          requestDelete(`${API_PREFIX}/credentials/${credential.id}/${forceParameter}`, signal),
+        actionFn: (credential: EdaCredential, signal) =>
+          requestDelete(edaAPI`/credentials/${credential.id.toString()}/${forceParameter}`, signal),
       });
     },
     [actionColumns, bulkAction, confirmationColumns, onComplete, t]

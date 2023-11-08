@@ -18,6 +18,8 @@ export enum AwxRoute {
 
   WorkflowApprovals = 'awx-workflow-approvals',
   WorkflowApprovalPage = 'awx-workflow-approval-page',
+  WorkflowApprovalDetails = 'awx-workflow-approval-details',
+  WorkflowApprovalWorkflowJobDetails = 'awx-workflow-approval-workflow-job-details',
 
   // Resources
 

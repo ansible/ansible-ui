@@ -1,10 +1,10 @@
-import { API_PREFIX } from '../../constants';
+import { edaAPI } from '../../api/eda-utils';
 import EdaRuleAuditChartCard from './EdaRuleAuditChartCard';
 
 describe('EdaRuleAuditChart.cy.ts', () => {
   beforeEach(() => {
     cy.intercept(
-      { method: 'GET', url: `${API_PREFIX}/audit-rules/*` },
+      { method: 'GET', url: edaAPI`/audit-rules/*` },
       {
         count: 1,
         previous: null,
@@ -35,7 +35,7 @@ describe('EdaRuleAuditChart.cy.ts', () => {
 describe('EdaRuleAuditChart.cy.ts', () => {
   beforeEach(() => {
     cy.intercept(
-      { method: 'GET', url: `${API_PREFIX}/audit-rules/*` },
+      { method: 'GET', url: edaAPI`/audit-rules/*` },
       {
         count: 24,
         previous: null,

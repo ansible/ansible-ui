@@ -1,9 +1,8 @@
-import { ButtonVariant } from '@patternfly/react-core';
+import { ButtonVariant, Progress } from '@patternfly/react-core';
 import { EditIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  CapacityCell,
   IPageAction,
   ITableColumn,
   IToolbarFilter,
@@ -191,7 +190,7 @@ export function useInstanceGroupsColumns(options?: {
       {
         header: t('Used capacity'),
         cell: (instanceGroup) => (
-          <CapacityCell used={instanceGroup.consumed_capacity} capacity={instanceGroup.capacity} />
+          <Progress value={Math.round(100 - instanceGroup.percent_capacity_remaining)} />
         ),
         list: 'secondary',
       },

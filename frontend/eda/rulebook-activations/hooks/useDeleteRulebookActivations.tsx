@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../framework';
 import { requestDelete } from '../../../common/crud/Data';
-import { API_PREFIX } from '../../constants';
+import { edaAPI } from '../../api/eda-utils';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { useRulebookActivationColumns } from './useRulebookActivationColumns';
 
@@ -30,8 +30,8 @@ export function useDeleteRulebookActivations(
         confirmationColumns,
         actionColumns,
         onComplete,
-        actionFn: (rulebookActivation, signal) =>
-          requestDelete(`${API_PREFIX}/activations/${rulebookActivation.id}/`, signal),
+        actionFn: (rulebookActivation: EdaRulebookActivation, signal) =>
+          requestDelete(edaAPI`/activations/${rulebookActivation.id.toString()}/`, signal),
       });
     },
     [actionColumns, bulkAction, confirmationColumns, onComplete, t]

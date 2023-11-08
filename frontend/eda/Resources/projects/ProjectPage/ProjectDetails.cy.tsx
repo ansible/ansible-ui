@@ -1,4 +1,5 @@
 /* eslint-disable i18next/no-literal-string */
+import { edaAPI } from '../../../api/eda-utils';
 import { ProjectDetails } from './ProjectDetails';
 
 describe('ProjectDetails', () => {
@@ -6,7 +7,7 @@ describe('ProjectDetails', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/eda/v1/projects/1/',
+        url: edaAPI`/projects/1/`,
       },
       {
         fixture: 'edaProject.json',
