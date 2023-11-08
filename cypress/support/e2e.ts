@@ -5,27 +5,29 @@ import './commands';
 import { createGlobalOrganization, createGlobalProject } from './global-project';
 
 before(function () {
-  let splitLocalhost;
-  const devBaseUrlPort = Cypress.config().baseUrl?.split(':').slice(-1).toString();
-  const baseUrl = Cypress.config().baseUrl;
-  let localhost;
-  // Assuming baseUrl = "https://localhost.com"
-  if (baseUrl) {
-    const splitUrl = baseUrl.split('.');
-    if (splitUrl.length >= 4) {
-      localhost = splitUrl[splitUrl.length - 4];
-      cy.log('LOCALHOST', localhost); // Output: "localhost"
-    } else {
-      cy.log('The URL might not contain the expected segments.');
-    }
-  } else {
-    cy.log('Base URL is not defined.');
-  }
-  if (localhost) {
-    splitLocalhost = localhost.split('/').slice(-1).toString();
-  }
+  // cy.log('ENV', Cypress.env());
+  // let splitLocalhost;
+  // // const devBaseUrlPort = Cypress.config().baseUrl?.split(':').slice(-1).toString();
+  // const baseUrl = Cypress.config().baseUrl;
+  // let localhost;
+  // // Assuming baseUrl = "https://localhost.com"
+  // if (baseUrl) {
+  //   const splitUrl = baseUrl.split('.');
+  //   if (splitUrl.length >= 4) {
+  //     localhost = splitUrl[splitUrl.length - 4];
+  //     cy.log('LOCALHOST', localhost); // Output: "localhost"
+  //   } else {
+  //     cy.log('The URL might not contain the expected segments.');
+  //   }
+  // } else {
+  //   cy.log('Base URL is not defined.');
+  // }
+  // if (localhost) {
+  //   splitLocalhost = localhost.split('/').slice(-1).toString();
+  // }
 
-  if (devBaseUrlPort === '4101' || splitLocalhost !== 'localhost') {
+  // if (devBaseUrlPort === '4101' || splitLocalhost !== 'localhost') {
+  if (Cypress.env('AWX_SERVER')) {
     //if port is 4101 or if localhost does not appear in baseurl
     createGlobalOrganization();
     createGlobalProject();
