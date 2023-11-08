@@ -19,11 +19,12 @@ import {
   nodeDragSourceSpec,
   nodeDropTargetSpec,
   withDndDrop,
+  withContextMenu,
   withDragNode,
   withPanZoom,
   withSelection,
 } from '@patternfly/react-topology';
-import { CustomEdge, CustomNode } from './components';
+import { CustomEdge, CustomNode, NodeContextMenu } from './components';
 import type { LayoutNode, GraphNode } from './types';
 import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
 import type { AwxItemsResponse } from '../../../common/AwxItemsResponse';
@@ -32,6 +33,8 @@ const CONNECTOR_SOURCE_DROP = 'connector-src-drop';
 const CONNECTOR_TARGET_DROP = 'connector-target-drop';
 
 const baselineComponentFactory: ComponentFactory = (kind: ModelKind, type: string) => {
+  const nodeContextMenu = NodeContextMenu();
+
   switch (type) {
     case 'group':
       return DefaultGroup;
@@ -40,13 +43,15 @@ const baselineComponentFactory: ComponentFactory = (kind: ModelKind, type: strin
         case ModelKind.graph:
           return withPanZoom()(withSelection()(GraphComponent));
         case ModelKind.node:
-          return withDndDrop(
-            nodeDropTargetSpec([
-              CONNECTOR_SOURCE_DROP,
-              CONNECTOR_TARGET_DROP,
-              CREATE_CONNECTOR_DROP_TYPE,
-            ])
-          )(withDragNode(nodeDragSourceSpec('node', true, true))(withSelection()(CustomNode)));
+          return withContextMenu(() => nodeContextMenu)(
+            withDndDrop(
+              nodeDropTargetSpec([
+                CONNECTOR_SOURCE_DROP,
+                CONNECTOR_TARGET_DROP,
+                CREATE_CONNECTOR_DROP_TYPE,
+              ])
+            )(withDragNode(nodeDragSourceSpec('node', true, true))(withSelection()(CustomNode)))
+          );
         case ModelKind.edge:
           return CustomEdge;
         default:
