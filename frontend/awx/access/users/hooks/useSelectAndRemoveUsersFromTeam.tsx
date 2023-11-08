@@ -4,6 +4,7 @@ import { Team } from '../../../interfaces/Team';
 import { User } from '../../../interfaces/User';
 import { useRemoveUsersFromResource } from '../../common/useRemoveUserFromResource';
 import { useSelectUsers } from './useSelectUsers';
+import { awxAPI } from '../../../api/awx-utils';
 
 export function useSelectAndRemoveUsersFromTeam(onClose?: (users: User[]) => void) {
   const { t } = useTranslation();
@@ -18,7 +19,7 @@ export function useSelectAndRemoveUsersFromTeam(onClose?: (users: User[]) => voi
           removeUsersFromTeams(users, team, onClose);
         },
         t('Remove user(s)'),
-        `/api/v2/teams/${team.id}/access_list/`
+        awxAPI`/teams/${team.id.toString()}/access_list/`
       );
     },
     [removeUsersFromTeams, onClose, selectUsers, t]

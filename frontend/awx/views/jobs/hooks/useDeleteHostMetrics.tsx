@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { useNameColumn } from '../../../../common/columns';
 import { getItemKey, requestDelete } from '../../../../common/crud/Data';
+import { awxAPI } from '../../../api/awx-utils';
 import { HostMetric } from '../../../interfaces/HostMetric';
 import { useHostMetricsColumns } from './useHostMetricsColumns';
 
@@ -25,7 +26,8 @@ export function useDeleteHostMetrics(onComplete: (host: HostMetric[]) => void) {
       confirmationColumns,
       actionColumns,
       onComplete,
-      actionFn: (host, signal) => requestDelete(`/api/v2/host_metrics/${host.id}/`, signal),
+      actionFn: (host: HostMetric, signal) =>
+        requestDelete(awxAPI`/host_metrics/${host.id.toString()}/`, signal),
     });
   };
   return deleteHostMetrics;

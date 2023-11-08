@@ -1,21 +1,22 @@
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
+  PageFormDataEditor,
   PageHeader,
   PageLayout,
   useGetPageUrl,
   usePageNavigate,
-  PageFormDataEditor,
 } from '../../../../framework';
+import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
-import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { jsonToYaml, parseVariableField } from '../../../../framework/utils/codeEditorUtils';
+import { useGet } from '../../../common/crud/useGet';
 import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { useGet } from '../../../common/crud/useGet';
 import { AwxPageForm } from '../../AwxPageForm';
 import { AwxRoute } from '../../AwxRoutes';
+import { awxAPI } from '../../api/awx-utils';
 import type { CredentialType } from '../../interfaces/CredentialType';
 
 export interface CredentialTypeForm {
@@ -74,7 +75,7 @@ export function EditCredentialType() {
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
   const { data: credentialType } = useGet<CredentialType>(
-    `/api/v2/credential_types/${id.toString()}/`
+    awxAPI`/credential_types/${id.toString()}/`
   );
 
   const patchRequest = usePatchRequest<CredentialTypeForm, CredentialType>();
@@ -82,7 +83,7 @@ export function EditCredentialType() {
   const handleSubmit: PageFormSubmitHandler<CredentialTypeForm> = async (editedCredentialType) => {
     editedCredentialType.inputs = parseVariableField(editedCredentialType.inputs as string);
     editedCredentialType.injectors = parseVariableField(editedCredentialType.injectors as string);
-    await patchRequest(`/api/v2/credential_types/${id}/`, editedCredentialType);
+    await patchRequest(awxAPI`/credential_types/${id.toString()}/`, editedCredentialType);
     pageNavigate(AwxRoute.CredentialTypeDetails, { params: { id: id.toString() } });
   };
 

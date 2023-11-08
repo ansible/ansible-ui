@@ -1,6 +1,6 @@
+import { ChartSchemaElement } from '@ansible/react-json-chart-builder';
 import { Label, LabelGroup, Page, Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { useEffect, useState } from 'react';
-import { ChartSchemaElement } from '@ansible/react-json-chart-builder';
 import styled from 'styled-components';
 import useSWR from 'swr';
 import { PageHeader, PageLayout } from '../../../../framework';
@@ -9,6 +9,7 @@ import { useActiveUser } from '../../../common/useActiveUser';
 import { AutomationCalculator } from './AutomationCalculator';
 import { AnalyticsErrorState } from './ErrorStates';
 import { TAGS } from './constants';
+import { awxAPI } from '../../api/awx-utils';
 
 export interface ReportItemsResponse {
   report: {
@@ -24,7 +25,7 @@ export interface ReportItemsResponse {
 export default function Reports() {
   const activeUser = useActiveUser();
   const { data, error } = useSWR<ReportItemsResponse, Error>(
-    `/api/v2/analytics/report/automation_calculator/`,
+    awxAPI`/analytics/report/automation_calculator/`,
     requestGet
   );
   const [specificError, setSpecificError] = useState<string>('');

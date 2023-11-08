@@ -4,6 +4,7 @@ import { Navigate } from 'react-router-dom';
 import { PageNavigationItem } from '../../../framework';
 import { PageNotImplemented } from '../../../framework/PageEmptyStates/PageNotImplemented';
 import { AwxRoute } from '../AwxRoutes';
+import { awxAPI } from '../api/awx-utils';
 import { CreateJobTemplate, EditJobTemplate } from '../resources/templates/TemplateForm';
 import { TemplateDetails } from '../resources/templates/TemplatePage/TemplateDetails';
 import { TemplateLaunchWizard } from '../resources/templates/TemplatePage/TemplateLaunchWizard';
@@ -119,7 +120,7 @@ export function useAwxTemplateRoutes() {
                 {
                   id: AwxRoute.JobTemplateSchedules,
                   path: 'schedules',
-                  element: <Schedules sublistEndpoint={`/api/v2/job_templates`} />,
+                  element: <Schedules sublistEndpoint={awxAPI`/job_templates`} />,
                 },
                 {
                   path: '',
@@ -225,7 +226,7 @@ export function useAwxTemplateRoutes() {
                 {
                   id: AwxRoute.WorkflowJobTemplateSchedules,
                   path: 'schedules',
-                  element: <Schedules sublistEndpoint={`/api/v2/workflow_job_templates`} />,
+                  element: <Schedules sublistEndpoint={awxAPI`/workflow_job_templates`} />,
                 },
                 {
                   id: AwxRoute.WorkflowJobTemplateNotifications,

@@ -27,6 +27,7 @@ import { EmptyStateFilter } from '../../../../framework/components/EmptyStateFil
 import { LoadingState } from '../../../../framework/components/LoadingState';
 import { useSearchParams } from '../../../../framework/components/useSearchParams';
 import { postRequest as requestPost } from '../../../common/crud/Data';
+import { awxAPI } from '../../api/awx-utils';
 import Chart from '../components/Chart';
 import hydrateSchema from '../components/Chart/hydrateSchema';
 import { ApiOptionsType } from '../components/Toolbar/types';
@@ -81,7 +82,7 @@ export function AutomationCalculator(props: { schema: ChartSchemaElement[] }) {
     data: options,
     isLoading,
     error,
-  } = useSWR<ApiOptionsType, Error>(`/api/v2/analytics/roi_templates_options/`, (url: string) =>
+  } = useSWR<ApiOptionsType, Error>(awxAPI`/analytics/roi_templates_options/`, (url: string) =>
     requestPost<ApiOptionsType, unknown>(url, undefined)
   );
 
@@ -361,9 +362,10 @@ export function AutomationCalculatorInternal(props: {
     const abortController = new AbortController();
     setIsLoading(true);
     requestPost<ReportDataResponse>(
-      `/api/v2/analytics/roi_templates/?limit=${perPage}&offset=${
-        (page - 1) * perPage
-      }&sort_by=${sortOption?.value}${encodeURIComponent(`:${sortOrder}`)}`,
+      awxAPI`/analytics/roi_templates/?limit=${perPage.toString()}&offset=${(
+        (page - 1) *
+        perPage
+      ).toString()}&sort_by=${sortOption?.value}${encodeURIComponent(`:${sortOrder}`)}`,
       requestBody,
       abortController.signal
     )

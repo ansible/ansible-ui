@@ -1,14 +1,15 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { getJobOutputUrl } from '../../../views/jobs/jobUtils';
+import { usePageAlertToaster, usePageNavigate } from '../../../../../framework';
 import { requestGet } from '../../../../common/crud/Data';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
-import { usePageAlertToaster, usePageNavigate } from '../../../../../framework';
+import { AwxRoute } from '../../../AwxRoutes';
+import { awxAPI } from '../../../api/awx-utils';
 import type { JobTemplate } from '../../../interfaces/JobTemplate';
 import type { UnifiedJob } from '../../../interfaces/UnifiedJob';
 import type { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import type { JobLaunch, WorkflowJobLaunch } from '../../../interfaces/generated-from-swagger/api';
-import { AwxRoute } from '../../../AwxRoutes';
+import { getJobOutputUrl } from '../../../views/jobs/jobUtils';
 
 type Template = JobTemplate | WorkflowJobTemplate;
 type TemplateLaunch = JobLaunch & WorkflowJobLaunch;
@@ -83,9 +84,9 @@ export function canLaunchWithoutPrompt(launchData: TemplateLaunch) {
 
 export function getLaunchEndpoint(template: Template) {
   if (template.type === 'job_template') {
-    return `/api/v2/job_templates/${template.id}/launch/`;
+    return awxAPI`/job_templates/${template.id.toString()}/launch/`;
   } else if (template.type === 'workflow_job_template') {
-    return `/api/v2/workflow_job_templates/${template.id}/launch/`;
+    return awxAPI`/workflow_job_templates/${template.id.toString()}/launch/`;
   } else {
     return undefined;
   }

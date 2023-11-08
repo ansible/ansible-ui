@@ -6,6 +6,7 @@ import { requestGet } from '../../../../common/crud/Data';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
 import { useSelectExecutionEnvironments } from '../hooks/useSelectExecutionEnvironments';
+import { awxAPI } from '../../../api/awx-utils';
 
 export function PageFormExecutionEnvironmentSelect<
   TFieldValues extends FieldValues = FieldValues,
@@ -45,7 +46,7 @@ export function PageFormExecutionEnvironmentSelect<
         }
         try {
           const itemsResponse = await requestGet<AwxItemsResponse<ExecutionEnvironment>>(
-            `/api/v2/execution_environments/?name=${executionEnvironmentName}`
+            awxAPI`/execution_environments/?name=${executionEnvironmentName}`
           );
           if (itemsResponse.results.length === 0) return t('Execution environment not found.');
           if (executionEnvironmentPath)

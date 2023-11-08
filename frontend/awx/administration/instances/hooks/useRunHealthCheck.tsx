@@ -5,6 +5,7 @@ import { useNameColumn } from '../../../../common/columns';
 import { getItemKey, postRequest } from '../../../../common/crud/Data';
 import { Instance } from '../../../interfaces/Instance';
 import { useInstancesColumns } from './useInstancesColumns';
+import { awxAPI } from '../../../api/awx-utils';
 
 export function useRunHealthCheck(onComplete: (instances: Instance[]) => void) {
   const { t } = useTranslation();
@@ -55,7 +56,7 @@ export function useRunHealthCheck(onComplete: (instances: Instance[]) => void) {
       actionColumns,
       onComplete,
       actionFn: async (instance: Instance) =>
-        postRequest(`/api/v2/instances/${instance.id}/health_check`, {}),
+        postRequest(awxAPI`/instances/${instance.id.toString()}/health_check`, {}),
     });
   };
   return runHealthCheckOnInstances;

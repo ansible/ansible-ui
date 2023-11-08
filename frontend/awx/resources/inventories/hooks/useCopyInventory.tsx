@@ -2,6 +2,7 @@ import { AlertProps } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { usePageAlertToaster } from '../../../../../framework';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
+import { awxAPI } from '../../../api/awx-utils';
 import { Inventory } from '../../../interfaces/Inventory';
 
 export function useCopyInventory(onComplete: () => void) {
@@ -15,7 +16,7 @@ export function useCopyInventory(onComplete: () => void) {
       title: t(`${inventory.name} copied.`),
       timeout: 2000,
     };
-    postRequest(`/api/v2/inventories/${inventory.id}/copy/`, {
+    postRequest(awxAPI`/inventories/${inventory.id.toString()}/copy/`, {
       name: `${inventory.name} @ ${new Date()
         .toTimeString()
         .replace(/.*(\d{2}:\d{2}:\d{2}).*/, '$1')}`,
