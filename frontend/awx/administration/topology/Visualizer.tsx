@@ -99,9 +99,6 @@ export const TopologyViewLayer = (props: { mesh: MeshVisualizer }) => {
   const controllerRef = useRef<Visualization>();
   const controller = controllerRef.current;
 
-  function handleMeshLayout(data: WebWorkerResponse) {
-    setMeshLayout(() => ({ ...data }));
-  }
   function toggleLegend() {
     setShowLegend(!showLegend);
   }
@@ -140,6 +137,11 @@ export const TopologyViewLayer = (props: { mesh: MeshVisualizer }) => {
   }, []);
 
   useEffect(() => {
+    function handleMeshLayout(data: WebWorkerResponse) {
+      setMeshLayout(() => ({ ...data }));
+      // close the worker thread
+      getData.terminate();
+    }
     if (window.Worker) {
       getData.onmessage = function handleWorkerEvent(event: { data: WebWorkerResponse }) {
         switch (event.data.type) {
