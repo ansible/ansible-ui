@@ -6,9 +6,10 @@ import { PageActions, PageHeader, PageLayout, useGetPageUrl } from '../../../../
 import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { RouteObj } from '../../../../common/Routes';
 import { useGet } from '../../../../common/crud/useGet';
+import { AwxRoute } from '../../../AwxRoutes';
+import { awxAPI } from '../../../api/awx-utils';
 import { Inventory } from '../../../interfaces/Inventory';
 import { useInventoryActions } from '../hooks/useInventoryActions';
-import { AwxRoute } from '../../../AwxRoutes';
 
 export function InventoryPage() {
   const { t } = useTranslation();
@@ -61,6 +62,6 @@ export function InventoryPage() {
 export function useGetInventory(id?: string, inventory_type?: string) {
   const path =
     inventory_type === 'constructed_inventory' ? 'constructed_inventories' : 'inventories';
-  const { data: job } = useGet<Inventory>(id ? `/api/v2/${path}/${id}/` : '');
+  const { data: job } = useGet<Inventory>(id ? awxAPI`/${path}/${id}/` : '');
   return job;
 }

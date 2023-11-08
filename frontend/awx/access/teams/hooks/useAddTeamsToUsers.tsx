@@ -4,6 +4,7 @@ import { useBulkActionDialog } from '../../../../../framework';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { Team } from '../../../interfaces/Team';
 import { User } from '../../../interfaces/User';
+import { awxAPI } from '../../../api/awx-utils';
 
 export function useAddTeamsToUsers() {
   const { t } = useTranslation();
@@ -19,7 +20,7 @@ export function useAddTeamsToUsers() {
         actionFn: async (team: Team, signal: AbortSignal) => {
           for (const user of users) {
             await postRequest(
-              `/api/v2/users/${user.id.toString()}/roles/`,
+              awxAPI`/users/${user.id.toString()}/roles/`,
               { id: team.summary_fields.object_roles.member_role.id },
               signal
             );

@@ -16,18 +16,19 @@ import {
   TextCell,
   useGetPageUrl,
 } from '../../../../../framework';
+import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
 import { RouteObj } from '../../../../common/Routes';
 import { useGet } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
+import { awxAPI } from '../../../api/awx-utils';
 import { useVerbosityString } from '../../../common/useVerbosityString';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { Inventory } from '../../../interfaces/Inventory';
 import { useGetInventory } from './InventoryPage';
-import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
 
 function useInstanceGroups(inventoryId: string) {
   const { data } = useGet<{ results: InstanceGroup[] }>(
-    `/api/v2/inventories/${inventoryId}/instance_groups/`
+    awxAPI`/inventories/${inventoryId}/instance_groups/`
   );
   return data?.results ?? [];
 }
@@ -54,7 +55,7 @@ export function InventoryDetailsInner(props: { inventory: Inventory }) {
 
   const { data: inputInventories, error: inputInventoriesError } = useGet<{ results: Inventory[] }>(
     inventory.kind === 'constructed'
-      ? `/api/v2/inventories/${inventory.id}/input_inventories/`
+      ? awxAPI`/inventories/${inventory.id.toString()}/input_inventories/`
       : undefined
   );
 

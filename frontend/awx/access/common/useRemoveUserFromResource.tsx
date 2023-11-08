@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../framework';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { useActiveUser } from '../../../common/useActiveUser';
+import { awxAPI } from '../../api/awx-utils';
 import { User } from '../../interfaces/User';
 import { useUsersColumns } from '../users/hooks/useUsersColumns';
 import { ResourceType } from './ResourceAccessList';
@@ -67,7 +68,7 @@ export function useRemoveUsersFromResource() {
           if (user.user_roles) {
             for (const role of user.user_roles) {
               await postRequest(
-                `/api/v2/users/${user.id.toString()}/roles/`,
+                awxAPI`/users/${user.id.toString()}/roles/`,
                 {
                   id: role.id,
                   disassociate: true,

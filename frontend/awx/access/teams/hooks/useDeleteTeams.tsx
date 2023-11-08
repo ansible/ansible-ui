@@ -4,6 +4,7 @@ import { compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { useNameColumn, useOrganizationNameColumn } from '../../../../common/columns';
 import { getItemKey, requestDelete } from '../../../../common/crud/Data';
 import { AwxRoute } from '../../../AwxRoutes';
+import { awxAPI } from '../../../api/awx-utils';
 import { Team } from '../../../interfaces/Team';
 import { useTeamsColumns } from './useTeamsColumns';
 
@@ -55,7 +56,8 @@ export function useDeleteTeams(onComplete: (teams: Team[]) => void) {
       confirmationColumns,
       actionColumns,
       onComplete,
-      actionFn: (team, signal) => requestDelete(`/api/v2/teams/${team.id}/`, signal),
+      actionFn: (team: Team, signal) =>
+        requestDelete(awxAPI`/teams/${team.id.toString()}/`, signal),
     });
   };
   return deleteTeams;

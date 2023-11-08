@@ -13,6 +13,7 @@ import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageD
 import { RouteObj } from '../../../../common/Routes';
 import { useGet, useGetItem } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
+import { awxAPI } from '../../../api/awx-utils';
 import { AwxError } from '../../../common/AwxError';
 import { CredentialLabel } from '../../../common/CredentialLabel';
 import { UserDateDetail } from '../../../common/UserDateDetail';
@@ -22,7 +23,7 @@ import { JobTemplate } from '../../../interfaces/JobTemplate';
 
 function useInstanceGroups(templateId: string) {
   const { data } = useGet<{ results: InstanceGroup[] }>(
-    `/api/v2/job_templates/${templateId}/instance_groups/`
+    awxAPI`/job_templates/${templateId}/instance_groups/`
   );
   return data?.results ?? [];
 }

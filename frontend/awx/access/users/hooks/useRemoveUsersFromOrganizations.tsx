@@ -4,6 +4,7 @@ import { useBulkActionDialog } from '../../../../../framework';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { Organization } from '../../../interfaces/Organization';
 import { User } from '../../../interfaces/User';
+import { awxAPI } from '../../../api/awx-utils';
 
 export function useRemoveUsersFromOrganizations(onComplete?: (users: User[]) => void) {
   const { t } = useTranslation();
@@ -21,7 +22,7 @@ export function useRemoveUsersFromOrganizations(onComplete?: (users: User[]) => 
         actionFn: async (user: User, signal: AbortSignal) => {
           for (const organization of organizations) {
             await postRequest(
-              `/api/v2/users/${user.id.toString()}/roles/`,
+              awxAPI`/users/${user.id.toString()}/roles/`,
               { id: organization.summary_fields.object_roles.member_role.id, disassociate: true },
               signal
             );

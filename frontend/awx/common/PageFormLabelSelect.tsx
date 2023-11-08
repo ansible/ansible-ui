@@ -2,6 +2,7 @@ import { ReactElement } from 'react';
 import { FieldPath, FieldValues } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { PageFormCreatableSelect } from '../../../framework/PageForm/Inputs/PageFormCreatableSelect';
+import { awxAPI } from '../api/awx-utils';
 import { Label } from '../interfaces/Label';
 import { useAwxGetAllPages } from './useAwxGetAllPages';
 
@@ -21,7 +22,7 @@ export function PageFormLabelSelect<
   const { labelHelpTitle, labelHelp, name, placeholderText, additionalControls } = props;
   const { t } = useTranslation();
 
-  const { items, isLoading } = useAwxGetAllPages<Label>(`/api/v2/labels/`);
+  const { items, isLoading } = useAwxGetAllPages<Label>(awxAPI`/labels/`);
   const options = isLoading ? [{ name: '' }] : items;
   return (
     <PageFormCreatableSelect<TFieldValues, TFieldName>
