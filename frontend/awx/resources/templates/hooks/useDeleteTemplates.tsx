@@ -37,11 +37,11 @@ export function useDeleteTemplates(
       confirmationColumns,
       actionColumns,
       onComplete,
-      actionFn: (template: JobTemplate | WorkflowJobTemplate) => {
+      actionFn: (template: JobTemplate | WorkflowJobTemplate, signal) => {
         if (template.type === 'job_template') {
-          return requestDelete(`/api/v2/job_templates/${template.id}/`);
+          return requestDelete(`/api/v2/job_templates/${template.id}/`, signal);
         } else {
-          return requestDelete(`/api/v2/workflow_job_templates/${template.id}/`);
+          return requestDelete(`/api/v2/workflow_job_templates/${template.id}/`, signal);
         }
       },
     });

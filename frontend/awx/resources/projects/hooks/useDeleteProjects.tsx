@@ -25,7 +25,7 @@ export function useDeleteProjects(onComplete: (projects: Project[]) => void) {
       confirmationColumns,
       actionColumns,
       onComplete,
-      actionFn: (project: Project) => requestDelete(`/api/v2/projects/${project.id}/`),
+      actionFn: (project, signal) => requestDelete(`/api/v2/projects/${project.id}/`, signal),
     });
   };
   return deleteProjects;

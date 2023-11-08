@@ -26,8 +26,8 @@ export function useDeleteControllerTokens(onComplete: (credentials: EdaControlle
         confirmationColumns,
         actionColumns,
         onComplete,
-        actionFn: (token: EdaControllerToken) =>
-          requestDelete(edaAPI`/users/me/awx-tokens/${token.id.toString()}/`),
+        actionFn: (token: EdaControllerToken, signal) =>
+          requestDelete(edaAPI`/users/me/awx-tokens/${token.id.toString()}/`, signal),
       });
     },
     [actionColumns, bulkAction, confirmationColumns, onComplete, t]
