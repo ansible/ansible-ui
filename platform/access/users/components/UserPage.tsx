@@ -80,6 +80,8 @@ export function UserPage() {
         tabs={[
           { label: t('Details'), page: PlatformRoute.UserDetails },
           { label: t('Teams'), page: PlatformRoute.UserTeams },
+          { label: t('Roles'), page: PlatformRoute.UserRoles },
+          { label: t('Resource Access'), page: PlatformRoute.UserResourceAccess },
         ]}
         params={{ id: user.id }}
       />
