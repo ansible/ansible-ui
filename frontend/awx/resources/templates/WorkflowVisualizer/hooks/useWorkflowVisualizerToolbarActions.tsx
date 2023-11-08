@@ -18,7 +18,10 @@ import {
   Dropdown,
   DropdownItem,
   DropdownList,
+  Flex,
+  FlexItem,
   MenuToggle,
+  Title,
   ToolbarGroup,
   ToolbarItem,
 } from '@patternfly/react-core';
@@ -30,11 +33,16 @@ import { stringIsUUID } from '../../../../common/util/strings';
 import { AddNodeButton } from '../components/AddNodeButton';
 import getDocsBaseUrl from '../../../../common/util/getDocsBaseUrl';
 import { useAwxConfig } from '../../../../common/useAwxConfig';
+import { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
 
-export function useWorkflowVisualizerToolbarActions(nodes: WorkflowNode[]) {
-  const { t } = useTranslation();
+export function useWorkflowVisualizerToolbarActions(
+  nodes: WorkflowNode[],
+  expanded: [boolean, React.Dispatch<React.SetStateAction<boolean>>],
+  workflowJobTemplate: WorkflowJobTemplate | undefined
+) {
+  const [isExpanded, setIsExpanded] = expanded;
   const params = useParams<{ id: string }>();
-  const [isExpanded, setIsExpanded] = useState<boolean>(false);
+  const { t } = useTranslation();
   const [isKebabOpen, setIsKebabOpen] = useState<boolean>(false);
   const pageNavigate = usePageNavigate();
   const config = useAwxConfig();
@@ -84,8 +92,26 @@ export function useWorkflowVisualizerToolbarActions(nodes: WorkflowNode[]) {
     pageNavigate(AwxRoute.WorkflowJobTemplateDetails, { params: { id: params.id } });
   }, [pageNavigate, params.id]);
 
+  const header = (
+    <Title headingLevel="h1">
+      {
+        <Flex>
+          <FlexItem>{t('Workflow Visualizer')}</FlexItem>
+          <Divider
+            orientation={{
+              default: 'vertical',
+            }}
+          />
+          <FlexItem>{workflowJobTemplate?.name ?? ''}</FlexItem>
+        </Flex>
+      }
+    </Title>
+  );
   return (
     <>
+      <ToolbarGroup>
+        <ToolbarItem>{header}</ToolbarItem>
+      </ToolbarGroup>
       <ToolbarGroup>
         <ToolbarItem>
           <Button icon={<CheckCircleIcon />} label={t('Save')} onClick={() => {}}>
@@ -146,35 +172,29 @@ export function useWorkflowVisualizerToolbarActions(nodes: WorkflowNode[]) {
             {t('Total nodes')} <Badge isRead>{nodes?.length || 0}</Badge>
           </div>
         </ToolbarItem>
-        <ToolbarItem>
-          <Button
-            data-cy="workflow-visualizer-toolbar-expand-compress"
-            variant="plain"
-            aria-label={isExpanded ? t('Compress') : t('Expand')}
-            onClick={() => setIsExpanded(!isExpanded)}
-          >
-            {isExpanded ? (
-              <CompressAltIcon
-                data-cy="workflow-visualizer-toolbar-compress"
-                aria-label={t('Compress')}
-              />
-            ) : (
-              <ExpandAltIcon
-                data-cy="workflow-visualizer-toolbar-expand"
-                aria-label={t('Expand')}
-              />
-            )}
-          </Button>
-        </ToolbarItem>
-        <ToolbarItem>
-          <Button
-            data-cy="workflow-visualizer-toolbar-close"
-            variant="plain"
-            icon={<CloseIcon />}
-            aria-label={t('Close')}
-            onClick={handleCancel}
-          />
-        </ToolbarItem>
+        <Button
+          data-cy="workflow-visualizer-toolbar-expand-collapse"
+          variant="plain"
+          aria-label={isExpanded ? t('Collapse') : t('Expand')}
+          onClick={() => setIsExpanded(!isExpanded)}
+        >
+          {isExpanded ? (
+            <CompressAltIcon
+              data-cy="workflow-visualizer-toolbar-collapse"
+              aria-label={t('Collapse')}
+            />
+          ) : (
+            <ExpandAltIcon data-cy="workflow-visualizer-toolbar-expand" aria-label={t('Expand')} />
+          )}
+        </Button>
+
+        <Button
+          data-cy="workflow-visualizer-toolbar-close"
+          variant="plain"
+          icon={<CloseIcon />}
+          aria-label={t('Close')}
+          onClick={handleCancel}
+        />
       </ToolbarGroup>
     </>
   );
