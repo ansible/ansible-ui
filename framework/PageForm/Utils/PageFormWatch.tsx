@@ -10,6 +10,8 @@ import { useWatch } from 'react-hook-form';
  * @param {(value: T) => React.ReactNode} props.children A function that returns the ReactNode to render with the watched value.
  * @returns {JSX.Element} The JSX element representing the component.
  *
+ * @note You can also use `useWatch` directly in your component.
+ *
  * @example
  * <PageFormWatch<File | undefined> watch="file">
  *   {(file) => <div>{file?.name}</div>}
