@@ -1,6 +1,6 @@
 const webpackConfig = require('../webpack/webpack.config');
 
-const PLATFORM_SERVER = process.env.PLATFORM_SERVER || 'https://localhost:9080';
+const PLATFORM_SERVER = process.env.PLATFORM_SERVER || 'https://localhost:443';
 
 const proxyUrl = new URL(PLATFORM_SERVER);
 
