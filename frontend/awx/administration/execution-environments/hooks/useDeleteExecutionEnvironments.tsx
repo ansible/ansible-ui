@@ -34,8 +34,8 @@ export function useDeleteExecutionEnvironments(
       confirmationColumns,
       actionColumns,
       onComplete,
-      actionFn: (executionEnvironment: ExecutionEnvironment) =>
-        requestDelete(`/api/v2/executionEnvironments/${executionEnvironment.id}/`),
+      actionFn: (executionEnvironment, signal) =>
+        requestDelete(`/api/v2/executionEnvironments/${executionEnvironment.id}/`, signal),
     });
   };
   return deleteExecutionEnvironments;

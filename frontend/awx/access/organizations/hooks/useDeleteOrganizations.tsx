@@ -28,8 +28,8 @@ export function useDeleteOrganizations(onComplete: (organizations: Organization[
       confirmationColumns,
       actionColumns,
       onComplete,
-      actionFn: (organization: Organization) =>
-        requestDelete(`/api/v2/organizations/${organization.id}/`),
+      actionFn: (organization, signal) =>
+        requestDelete(`/api/v2/organizations/${organization.id}/`, signal),
     });
   };
   return deleteOrganizations;

@@ -53,8 +53,8 @@ export function useDeleteWorkflowApprovals(
       confirmationColumns,
       actionColumns,
       onComplete,
-      actionFn: (workflow_approval: WorkflowApproval) =>
-        requestDelete(`/api/v2/workflow_approvals/${workflow_approval.id}/`),
+      actionFn: (workflow_approval: WorkflowApproval, signal) =>
+        requestDelete(`/api/v2/workflow_approvals/${workflow_approval.id}/`, signal),
     });
   };
   return deleteWorkflowApprovals;

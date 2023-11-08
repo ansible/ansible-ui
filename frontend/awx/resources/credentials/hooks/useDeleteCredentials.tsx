@@ -28,7 +28,8 @@ export function useDeleteCredentials(onComplete?: (credentials: Credential[]) =>
       confirmationColumns,
       actionColumns,
       onComplete,
-      actionFn: (credential: Credential) => requestDelete(`/api/v2/credentials/${credential.id}/`),
+      actionFn: (credential, signal) =>
+        requestDelete(`/api/v2/credentials/${credential.id}/`, signal),
     });
   };
   return deleteCredentials;

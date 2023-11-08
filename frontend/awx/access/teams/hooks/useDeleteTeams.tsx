@@ -3,9 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { useNameColumn, useOrganizationNameColumn } from '../../../../common/columns';
 import { getItemKey, requestDelete } from '../../../../common/crud/Data';
+import { AwxRoute } from '../../../AwxRoutes';
 import { Team } from '../../../interfaces/Team';
 import { useTeamsColumns } from './useTeamsColumns';
-import { AwxRoute } from '../../../AwxRoutes';
 
 export function useDeleteTeams(onComplete: (teams: Team[]) => void) {
   const { t } = useTranslation();
@@ -55,7 +55,7 @@ export function useDeleteTeams(onComplete: (teams: Team[]) => void) {
       confirmationColumns,
       actionColumns,
       onComplete,
-      actionFn: (team: Team) => requestDelete(`/api/v2/teams/${team.id}/`),
+      actionFn: (team, signal) => requestDelete(`/api/v2/teams/${team.id}/`, signal),
     });
   };
   return deleteTeams;

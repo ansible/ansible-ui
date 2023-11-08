@@ -26,8 +26,8 @@ export function useDeleteProjects(onComplete: (projects: EdaProject[]) => void) 
         confirmationColumns,
         actionColumns,
         onComplete,
-        actionFn: (project: EdaProject) =>
-          requestDelete(edaAPI`/projects/${project.id.toString()}/`),
+        actionFn: (project: EdaProject, signal) =>
+          requestDelete(edaAPI`/projects/${project.id.toString()}/`, signal),
         alertPrompts: [t('Note: This will not delete any running activations in these projects.')],
       });
     },

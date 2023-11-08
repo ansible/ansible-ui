@@ -25,7 +25,7 @@ export function useDeleteHostMetrics(onComplete: (host: HostMetric[]) => void) {
       confirmationColumns,
       actionColumns,
       onComplete,
-      actionFn: (host: HostMetric) => requestDelete(`/api/v2/host_metrics/${host.id}/`),
+      actionFn: (host, signal) => requestDelete(`/api/v2/host_metrics/${host.id}/`, signal),
     });
   };
   return deleteHostMetrics;

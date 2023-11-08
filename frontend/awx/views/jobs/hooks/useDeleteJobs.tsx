@@ -72,7 +72,7 @@ export function useDeleteJobs(onComplete: (jobs: UnifiedJob[]) => void) {
       confirmationColumns,
       actionColumns,
       onComplete,
-      actionFn: (job: UnifiedJob) => requestDelete(`${getJobsAPIUrl(job.type)}${job.id}/`),
+      actionFn: (job, signal) => requestDelete(`${getJobsAPIUrl(job.type)}${job.id}/`, signal),
     });
   };
   return deleteUnifiedJobs;

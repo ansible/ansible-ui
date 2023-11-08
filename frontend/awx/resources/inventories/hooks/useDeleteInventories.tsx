@@ -33,7 +33,8 @@ export function useDeleteInventories(onComplete: (inventories: Inventory[]) => v
       confirmationColumns,
       actionColumns,
       onComplete,
-      actionFn: (inventory: Inventory) => requestDelete(`/api/v2/inventories/${inventory.id}/`),
+      actionFn: (inventory, signal) =>
+        requestDelete(`/api/v2/inventories/${inventory.id}/`, signal),
       alertPrompts:
         undeletableInventories.length > 0
           ? [
