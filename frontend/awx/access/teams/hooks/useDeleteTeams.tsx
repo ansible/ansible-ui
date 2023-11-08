@@ -56,7 +56,8 @@ export function useDeleteTeams(onComplete: (teams: Team[]) => void) {
       confirmationColumns,
       actionColumns,
       onComplete,
-      actionFn: (team: Team) => requestDelete(awxAPI`/teams/${team.id.toString()}/`),
+      actionFn: (team: Team, signal) =>
+        requestDelete(awxAPI`/teams/${team.id.toString()}/`, signal),
     });
   };
   return deleteTeams;

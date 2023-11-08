@@ -29,8 +29,8 @@ export function useDeleteOrganizations(onComplete: (organizations: Organization[
       confirmationColumns,
       actionColumns,
       onComplete,
-      actionFn: (organization: Organization) =>
-        requestDelete(awxAPI`/organizations/${organization.id.toString()}/`),
+      actionFn: (organization: Organization, signal) =>
+        requestDelete(awxAPI`/organizations/${organization.id.toString()}/`, signal),
     });
   };
   return deleteOrganizations;

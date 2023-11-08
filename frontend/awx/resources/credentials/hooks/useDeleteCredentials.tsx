@@ -29,8 +29,8 @@ export function useDeleteCredentials(onComplete?: (credentials: Credential[]) =>
       confirmationColumns,
       actionColumns,
       onComplete,
-      actionFn: (credential: Credential) =>
-        requestDelete(awxAPI`/credentials/${credential.id.toString()}/`),
+      actionFn: (credential: Credential, signal) =>
+        requestDelete(awxAPI`/credentials/${credential.id.toString()}/`, signal),
     });
   };
   return deleteCredentials;

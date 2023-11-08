@@ -29,8 +29,8 @@ export function useDeleteInstanceGroups(onComplete: (instanceGroups: InstanceGro
       confirmationColumns,
       actionColumns,
       onComplete,
-      actionFn: (instanceGroup: InstanceGroup) =>
-        requestDelete(awxAPI`/instance-groups/${instanceGroup.id.toString()}/`),
+      actionFn: (instanceGroup: InstanceGroup, signal) =>
+        requestDelete(awxAPI`/instance-groups/${instanceGroup.id.toString()}/`, signal),
     });
   };
   return deleteInstanceGroups;

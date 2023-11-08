@@ -27,8 +27,8 @@ export function useDeleteSchedules(onComplete?: (schedules: Schedule[]) => void)
       confirmationColumns,
       actionColumns: actionColumns,
       onComplete,
-      actionFn: (schedule: Schedule) =>
-        requestDelete(awxAPI`/schedules/${schedule.id.toString()}/`),
+      actionFn: (schedule: Schedule, signal) =>
+        requestDelete(awxAPI`/schedules/${schedule.id.toString()}/`, signal),
     });
   };
   return deleteSchedules;

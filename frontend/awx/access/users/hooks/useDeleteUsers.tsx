@@ -52,7 +52,8 @@ export function useDeleteUsers(onComplete: (users: User[]) => void) {
       confirmationColumns,
       actionColumns,
       onComplete,
-      actionFn: (user: User) => requestDelete(awxAPI`/users/${user.id.toString()}/`),
+      actionFn: (user: User, signal) =>
+        requestDelete(awxAPI`/users/${user.id.toString()}/`, signal),
     });
   };
   return deleteUsers;

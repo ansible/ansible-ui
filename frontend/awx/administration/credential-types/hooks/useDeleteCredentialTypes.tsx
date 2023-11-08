@@ -85,8 +85,8 @@ export function useDeleteCredentialTypes(onComplete: (users: CredentialType[]) =
       confirmationColumns,
       actionColumns,
       onComplete,
-      actionFn: (credentialType: CredentialType) =>
-        requestDelete(awxAPI`/credential_types/${credentialType.id.toString()}/`),
+      actionFn: (credentialType: CredentialType, signal) =>
+        requestDelete(awxAPI`/credential_types/${credentialType.id.toString()}/`, signal),
     });
   };
   return deleteCredentialTypes;

@@ -36,8 +36,8 @@ export function useDeleteInventorySources(
       confirmationColumns,
       actionColumns,
       onComplete,
-      actionFn: (inventorySource: InventorySource) =>
-        requestDelete(awxAPI`/inventory_sources/${inventorySource.id.toString()}/`),
+      actionFn: (inventorySource: InventorySource, signal) =>
+        requestDelete(awxAPI`/inventory_sources/${inventorySource.id.toString()}/`, signal),
       alertPrompts:
         undeletableInventorySources.length > 0
           ? [

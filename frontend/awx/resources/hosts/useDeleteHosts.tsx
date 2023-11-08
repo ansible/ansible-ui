@@ -26,7 +26,8 @@ export function useDeleteHosts(onComplete: (hosts: AwxHost[]) => void) {
       confirmationColumns,
       actionColumns,
       onComplete,
-      actionFn: (host: AwxHost) => requestDelete(awxAPI`/hosts/${host.id.toString()}/`),
+      actionFn: (host: AwxHost, signal) =>
+        requestDelete(awxAPI`/hosts/${host.id.toString()}/`, signal),
     });
   };
   return deleteHosts;

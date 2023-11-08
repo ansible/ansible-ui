@@ -35,8 +35,11 @@ export function useDeleteExecutionEnvironments(
       confirmationColumns,
       actionColumns,
       onComplete,
-      actionFn: (executionEnvironment: ExecutionEnvironment) =>
-        requestDelete(awxAPI`/executionEnvironments/${executionEnvironment.id.toString()}/`),
+      actionFn: (executionEnvironment: ExecutionEnvironment, signal) =>
+        requestDelete(
+          awxAPI`/executionEnvironments/${executionEnvironment.id.toString()}/`,
+          signal
+        ),
     });
   };
   return deleteExecutionEnvironments;
