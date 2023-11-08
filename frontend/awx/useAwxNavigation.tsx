@@ -1,61 +1,61 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
-import { PageNotImplemented } from '../../framework/PageEmptyStates/PageNotImplemented';
 import {
   PageNavigationItem,
   removeLeadingSlash,
 } from '../../framework/PageNavigation/PageNavigationItem';
 import { AwxLogin } from './AwxLogin';
 import { AwxRoute } from './AwxRoutes';
+import { Topology } from './administration/topology/Topology';
 import { Test } from './analytics/AnalyticsReportBuilder/Test';
 import Reports from './analytics/Reports/Reports';
 import ReportsList from './analytics/Reports/ReportsList';
 import SubscriptionUsage from './analytics/subscription-usage/SubscriptionUsage';
 import { AwxDashboard } from './dashboard/AwxDashboard';
 import Settings from './settings/Settings';
-import { useGetAwxActivityStreamRoutes } from './useGetAwxActivityStream';
-import { useGetAwxApplicationsRoutes } from './useGetAwxApplicationsRoutes';
-import { useGetAwxCredentialRoutes } from './useGetAwxCredentialRoutes';
-import { useGetAwxCredentialTypesRoutes } from './useGetAwxCredentialTypesRoutes';
-import { useGetAwxExecutionEnvironmentRoutes } from './useGetAwxExecutionEnironmentRoutes';
-import { useGetAwxHostRoutes } from './useGetAwxHostRoutes';
-import { useGetAwxInstanceGroupsRoutes } from './useGetAwxInstanceGroupsRoutes';
-import { useGetAwxInstancesRoutes } from './useGetAwxInstancesRoutes';
-import { useGetAwxInventoryRoutes } from './useGetAwxInventoryRoutes';
-import { useGetAwxJobsRoutes } from './useGetAwxJobsRoutes';
-import { useGetAwxManagementJobsRoutes } from './useGetAwxManagementJobsRoutes';
-import { useGetAwxNotificationsRoutes } from './useGetAwxNotificationsRoutes';
-import { useGetAwxOrganizationRoutes } from './useGetAwxOrganizationsRoutes';
-import { useGetAwxProjectRoutes } from './useGetAwxProjectRoutes';
-import { useGetAwxSchedulesRoutes } from './useGetAwxSchedulesRoutes';
-import { useGetAwxTeamsRoutes } from './useGetAwxTeamsRoutes';
-import { useGetAwxTemplateRoutes } from './useGetAwxTemplateRoutes';
-import { useGetAwxUsersRoutes } from './useGetAwxUsersRoutes';
-import { useGetAwxWorkflowApprovalRoutes } from './useGetAwxWorkflowApprovalRoutes';
+import { useAwxActivityStreamRoutes } from './routes/useAwxActivityStreamRoutes';
+import { useAwxApplicationsRoutes } from './routes/useAwxApplicationsRoutes';
+import { useAwxCredentialRoutes } from './routes/useAwxCredentialRoutes';
+import { useAwxCredentialTypesRoutes } from './routes/useAwxCredentialTypesRoutes';
+import { useAwxExecutionEnvironmentRoutes } from './routes/useAwxExecutionEnironmentRoutes';
+import { useAwxHostRoutes } from './routes/useAwxHostRoutes';
+import { useAwxInstanceGroupsRoutes } from './routes/useAwxInstanceGroupsRoutes';
+import { useAwxInstancesRoutes } from './routes/useAwxInstancesRoutes';
+import { useAwxInventoryRoutes } from './routes/useAwxInventoryRoutes';
+import { useAwxJobsRoutes } from './routes/useAwxJobsRoutes';
+import { useAwxManagementJobsRoutes } from './routes/useAwxManagementJobsRoutes';
+import { useAwxNotificationsRoutes } from './routes/useAwxNotificationsRoutes';
+import { useAwxOrganizationRoutes } from './routes/useAwxOrganizationsRoutes';
+import { useAwxProjectRoutes } from './routes/useAwxProjectRoutes';
+import { useAwxSchedulesRoutes } from './routes/useAwxSchedulesRoutes';
+import { useAwxTeamsRoutes } from './routes/useAwxTeamsRoutes';
+import { useAwxTemplateRoutes } from './routes/useAwxTemplateRoutes';
+import { useAwxUsersRoutes } from './routes/useAwxUsersRoutes';
+import { useAwxWorkflowApprovalRoutes } from './routes/useAwxWorkflowApprovalRoutes';
 import HostMetrics from './views/jobs/HostMetrics';
 
 export function useAwxNavigation() {
   const { t } = useTranslation();
-  const awxInventoryRoutes = useGetAwxInventoryRoutes();
-  const awxHostRoutes = useGetAwxHostRoutes();
-  const awxProjectRoutes = useGetAwxProjectRoutes();
-  const awxCredentialRoutes = useGetAwxCredentialRoutes();
-  const awxTemplateRoutes = useGetAwxTemplateRoutes();
-  const awxWorkflowApprovalRoutes = useGetAwxWorkflowApprovalRoutes();
-  const awxSchedulesRoutes = useGetAwxSchedulesRoutes();
-  const awxJobsRoutes = useGetAwxJobsRoutes();
-  const awxActivityStreamRoutes = useGetAwxActivityStreamRoutes();
-  const awxOrganizationRoutes = useGetAwxOrganizationRoutes();
-  const awxTeamsRoutes = useGetAwxTeamsRoutes();
-  const awxUsersRoutes = useGetAwxUsersRoutes();
-  const awxNotificationsRoutes = useGetAwxNotificationsRoutes();
-  const awxManagementJobsRoutes = useGetAwxManagementJobsRoutes();
-  const awxInstanceGroupsRoutes = useGetAwxInstanceGroupsRoutes();
-  const awxInstancesRoutes = useGetAwxInstancesRoutes();
-  const awxApplicationsRoutes = useGetAwxApplicationsRoutes();
-  const awxExecutionEnvironmentsRoutes = useGetAwxExecutionEnvironmentRoutes();
-  const awxCredentialTypesRoutes = useGetAwxCredentialTypesRoutes();
+  const awxInventoryRoutes = useAwxInventoryRoutes();
+  const awxHostRoutes = useAwxHostRoutes();
+  const awxProjectRoutes = useAwxProjectRoutes();
+  const awxCredentialRoutes = useAwxCredentialRoutes();
+  const awxTemplateRoutes = useAwxTemplateRoutes();
+  const awxWorkflowApprovalRoutes = useAwxWorkflowApprovalRoutes();
+  const awxSchedulesRoutes = useAwxSchedulesRoutes();
+  const awxJobsRoutes = useAwxJobsRoutes();
+  const awxActivityStreamRoutes = useAwxActivityStreamRoutes();
+  const awxOrganizationRoutes = useAwxOrganizationRoutes();
+  const awxTeamsRoutes = useAwxTeamsRoutes();
+  const awxUsersRoutes = useAwxUsersRoutes();
+  const awxNotificationsRoutes = useAwxNotificationsRoutes();
+  const awxManagementJobsRoutes = useAwxManagementJobsRoutes();
+  const awxInstanceGroupsRoutes = useAwxInstanceGroupsRoutes();
+  const awxInstancesRoutes = useAwxInstancesRoutes();
+  const awxApplicationsRoutes = useAwxApplicationsRoutes();
+  const awxExecutionEnvironmentsRoutes = useAwxExecutionEnvironmentRoutes();
+  const awxCredentialTypesRoutes = useAwxCredentialTypesRoutes();
   const pageNavigationItems = useMemo<PageNavigationItem[]>(() => {
     const navigationItems: PageNavigationItem[] = [
       {
@@ -114,7 +114,7 @@ export function useAwxNavigation() {
                 id: AwxRoute.TopologyView,
                 label: 'Topology View',
                 path: 'topology',
-                element: <PageNotImplemented />,
+                element: <Topology />,
               },
             ],
           },

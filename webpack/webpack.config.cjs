@@ -5,9 +5,9 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const webpack = require('webpack');
 const CopyPlugin = require('copy-webpack-plugin');
 const MergeJsonWebpackPlugin = require('merge-jsons-webpack-plugin');
-const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
 const path = require('path');
+const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 
 const {
   AWX_ROUTE_PREFIX,
@@ -52,7 +52,6 @@ module.exports = function (env, argv) {
   var isProduction = argv.mode === 'production' || argv.mode === undefined;
   var isDevelopment = !isProduction;
   var config = {
-    entry: './frontend',
     resolve: {
       extensions: ['.ts', '.tsx', '.js', '.jsx'],
       fallback: {
@@ -92,6 +91,9 @@ module.exports = function (env, argv) {
       ],
     },
     plugins: [
+      new MonacoWebpackPlugin({
+        languages: ['yaml', 'json'],
+      }),
       new webpack.DefinePlugin({
         'process.env.NODE_ENV': isProduction
           ? JSON.stringify('production')
@@ -128,19 +130,6 @@ module.exports = function (env, argv) {
       }),
       new CopyPlugin({
         patterns: [{ from: 'frontend/icons', to: 'static/media' }],
-      }),
-      new MonacoWebpackPlugin({
-        languages: ['json', 'yaml', 'shell'],
-        customLanguages: [
-          {
-            label: 'yaml',
-            entry: 'monaco-yaml',
-            worker: {
-              id: 'monaco-yaml/yamlWorker',
-              entry: 'monaco-yaml/yaml.worker',
-            },
-          },
-        ],
       }),
       new CompressionPlugin(),
     ].filter(Boolean),

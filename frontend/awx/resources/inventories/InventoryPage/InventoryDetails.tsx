@@ -16,14 +16,15 @@ import {
   TextCell,
   useGetPageUrl,
 } from '../../../../../framework';
+import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
 import { RouteObj } from '../../../../common/Routes';
 import { useGet } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
+import { awxAPI } from '../../../api/awx-utils';
 import { useVerbosityString } from '../../../common/useVerbosityString';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { Inventory } from '../../../interfaces/Inventory';
 import { useGetInventory } from './InventoryPage';
-import { awxAPI } from '../../../api/awx-utils';
 
 function useInstanceGroups(inventoryId: string) {
   const { data } = useGet<{ results: InstanceGroup[] }>(
@@ -193,6 +194,11 @@ export function InventoryDetailsInner(props: { inventory: Inventory }) {
           )}
         </TextList>
       </PageDetail>
+      <PageDetailCodeEditor
+        label={t('Variables')}
+        showCopyToClipboard
+        value={inventory.variables || '---'}
+      />
     </PageDetails>
   );
 }

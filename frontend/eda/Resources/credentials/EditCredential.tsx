@@ -15,7 +15,7 @@ import { useGet } from '../../../common/crud/useGet';
 import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { EdaRoute } from '../../EdaRoutes';
-import { API_PREFIX } from '../../constants';
+import { edaAPI } from '../../api/eda-utils';
 import { EdaCredential, EdaCredentialCreate } from '../../interfaces/EdaCredential';
 import { CredentialTypeEnum } from '../../interfaces/generated/eda-api';
 
@@ -102,7 +102,7 @@ export function CreateCredential() {
   const postRequest = usePostRequest<EdaCredentialCreate, EdaCredential>();
 
   const onSubmit: PageFormSubmitHandler<EdaCredentialCreate> = async (credential) => {
-    const newCredential = await postRequest(`${API_PREFIX}/credentials/`, credential);
+    const newCredential = await postRequest(edaAPI`/credentials/`, credential);
     (cache as unknown as { clear: () => void }).clear?.();
     pageNavigate(EdaRoute.CredentialPage, { params: { id: newCredential.id } });
   };
@@ -135,15 +135,13 @@ export function EditCredential() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const { data: credential } = useGet<EdaCredentialCreate>(
-    `${API_PREFIX}/credentials/${id.toString()}/`
-  );
+  const { data: credential } = useGet<EdaCredentialCreate>(edaAPI`/credentials/${id.toString()}/`);
 
   const { cache } = useSWRConfig();
   const patchRequest = usePatchRequest<EdaCredentialCreate, EdaCredential>();
 
   const onSubmit: PageFormSubmitHandler<EdaCredentialCreate> = async (credential) => {
-    await patchRequest(`${API_PREFIX}/credentials/${id}/`, credential);
+    await patchRequest(edaAPI`/credentials/${id.toString()}/`, credential);
     (cache as unknown as { clear: () => void }).clear?.();
     navigate(-1);
   };

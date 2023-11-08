@@ -2,9 +2,9 @@ import { ReactElement } from 'react';
 import { FieldPath, FieldValues } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { PageFormCreatableSelect } from '../../../framework/PageForm/Inputs/PageFormCreatableSelect';
+import { awxAPI } from '../api/awx-utils';
 import { Label } from '../interfaces/Label';
 import { useAwxGetAllPages } from './useAwxGetAllPages';
-import { awxAPI } from '../api/awx-utils';
 
 /**
  * Component to select and/or create labels in a form
@@ -22,9 +22,7 @@ export function PageFormLabelSelect<
   const { labelHelpTitle, labelHelp, name, placeholderText, additionalControls } = props;
   const { t } = useTranslation();
 
-  const { items, isLoading } = useAwxGetAllPages<Label>(
-    awxAPI`/labels/?order_by=name&page=1&page_size=200`
-  );
+  const { items, isLoading } = useAwxGetAllPages<Label>(awxAPI`/labels/`);
   const options = isLoading ? [{ name: '' }] : items;
   return (
     <PageFormCreatableSelect<TFieldValues, TFieldName>

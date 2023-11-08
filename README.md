@@ -2,11 +2,12 @@
 
 UI projects for [Ansible](https://www.ansible.com).
 
-- [Getting Started](#getting-started)
-- [Environment Variables](#environment-variables)
-- [NPM Scripts](#npm-scripts)
-- [Documentation](#documentation)
-- [Code of Conduct](#code-of-conduct)
+- [Ansible UI](#ansible-ui)
+  - [Getting Started](#getting-started)
+  - [Environment Variables](#environment-variables)
+  - [NPM Scripts](#npm-scripts)
+  - [Documentation](#documentation)
+  - [Code of Conduct](#code-of-conduct)
 
 ## Getting Started
 
@@ -19,13 +20,13 @@ UI projects for [Ansible](https://www.ansible.com).
 
 2. Clone Repository
 
-   ```
+   ```zsh
    git clone git@github.com:ansible/ansible-ui.git
    ```
 
 3. Install Package Dependencies
 
-   ```
+   ```zsh
    npm ci
    ```
 
@@ -99,6 +100,7 @@ export HUB_PASSWORD='my-password'
 
 - [Development](./docs/DEVELOPMENT.md)
 - [Framework](./framework/README.md) - A framework for building applications using [PatternFly](https://www.patternfly.org).
+- [Handling Errors in Forms](./framework/PageForm/README.md) - A component for handling forms and errors.
 
 ## Code of Conduct
 

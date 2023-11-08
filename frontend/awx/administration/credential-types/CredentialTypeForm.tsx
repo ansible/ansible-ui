@@ -100,7 +100,7 @@ export function EditCredentialType() {
       />
       {hasCredentialType && (
         <AwxPageForm<CredentialTypeForm>
-          submitText={t('Edit credential type')}
+          submitText={t('Save credential type')}
           onSubmit={handleSubmit}
           onCancel={() => pageNavigate(AwxRoute.CredentialTypeDetails, { params: { id } })}
           defaultValue={getInitialFormValues(credentialType)}
