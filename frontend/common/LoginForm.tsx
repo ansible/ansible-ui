@@ -1,22 +1,22 @@
+import { ActionGroup } from '@patternfly/react-core';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { ActionGroup } from '@patternfly/react-core';
 import {
   GenericForm,
-  PageFormSubmitHandler,
   PageFormSubmitButton,
+  PageFormSubmitHandler,
   PageFormTextInput,
   usePageNavigate,
 } from '../../framework';
-import { hubAPI } from '../hub/api/utils';
 import { AwxRoute } from '../awx/AwxRoutes';
 import { EdaRoute } from '../eda/EdaRoutes';
 import { HubRoute } from '../hub/HubRoutes';
+import { hubAPI } from '../hub/api/formatPath';
+import { AuthOption, SocialAuthLogin } from './SocialAuthLogin';
 import { RequestError, createRequestError } from './crud/RequestError';
 import { setCookie } from './crud/cookie';
 import { useInvalidateCacheOnUnmount } from './useInvalidateCache';
-import { AuthOption, SocialAuthLogin } from './SocialAuthLogin';
 
 type LoginFormProps = {
   apiUrl?: string;

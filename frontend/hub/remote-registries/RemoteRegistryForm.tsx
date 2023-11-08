@@ -12,14 +12,15 @@ import {
 import { PageFormFileUpload } from '../../../framework/PageForm/Inputs/PageFormFileUpload';
 import { PageFormGroup } from '../../../framework/PageForm/Inputs/PageFormGroup';
 import { PageFormExpandableSection } from '../../../framework/PageForm/PageFormExpandableSection';
+import { AwxError } from '../../awx/common/AwxError';
+import { useGet } from '../../common/crud/useGet';
 import { usePostRequest } from '../../common/crud/usePostRequest';
 import { HubPageForm } from '../HubPageForm';
 import { HubRoute } from '../HubRoutes';
-import { appendTrailingSlash, hubAPI, hubAPIPut, parsePulpIDFromURL } from '../api/utils';
-import { RemoteRegistry } from './RemoteRegistry';
-import { AwxError } from '../../awx/common/AwxError';
-import { useGet } from '../../common/crud/useGet';
+import { hubAPI } from '../api/formatPath';
+import { appendTrailingSlash, hubAPIPut, parsePulpIDFromURL } from '../api/utils';
 import { HubItemsResponse } from '../useHubView';
+import { RemoteRegistry } from './RemoteRegistry';
 
 interface RemoteRegistryProps extends RemoteRegistry {
   client_key?: string;

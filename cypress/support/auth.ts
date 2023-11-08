@@ -1,3 +1,5 @@
+import { hubAPI } from '../../frontend/hub/api/formatPath';
+
 Cypress.Commands.add('requiredVariablesAreSet', (requiredVariables: string[]) => {
   if (Cypress.env('IS_GITHUB_ACTION') || process.env.IS_GITHUB_ACTION) {
     cy.log('Skipping requiredVariablesAreSet check in GitHub Actions');
@@ -99,7 +101,7 @@ Cypress.Commands.add('hubLogin', () => {
     {
       cacheAcrossSpecs: true,
       validate: () => {
-        cy.request({ method: 'GET', url: 'api/automation-hub/_ui/v1/me/' });
+        cy.request({ method: 'GET', url: hubAPI`/_ui/v1/me/` });
       },
     }
   );
