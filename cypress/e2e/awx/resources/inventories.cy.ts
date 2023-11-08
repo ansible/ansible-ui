@@ -85,7 +85,7 @@ describe('inventories', () => {
     cy.clickTableRow(inventory.name);
     cy.verifyPageTitle(inventory.name);
     cy.clickButton(/^Edit inventory/);
-    cy.selectDropdownOptionByResourceName('labels.results', label.name);
+    cy.selectDropdownOptionByResourceName('labels', label.name);
     cy.contains('button', 'Save inventory').click();
     cy.verifyPageTitle(inventory.name);
     cy.hasDetail(/^Labels$/, label.name);
