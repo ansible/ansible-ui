@@ -1,3 +1,6 @@
+import { ButtonVariant } from '@patternfly/react-core';
+import { PlusIcon, TrashIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
@@ -5,17 +8,16 @@ import {
   PageActionType,
   usePageNavigate,
 } from '../../../../framework';
-import { useMemo } from 'react';
-import { RemoteRegistry } from '../RemoteRegistry';
-import { PlusIcon, TrashIcon } from '@patternfly/react-icons';
 import { HubRoute } from '../../HubRoutes';
-import { ButtonVariant } from '@patternfly/react-core';
+import { IPulpView } from '../../usePulpView';
+import { RemoteRegistry } from '../RemoteRegistry';
+import { useDeleteRemoteRegistries } from './useDeleteRemoteRegistries';
 
-export function useRemoteRegistriesToolbarActions() {
+export function useRemoteRegistriesToolbarActions(view: IPulpView<RemoteRegistry>) {
   const { t } = useTranslation();
+  const deleteRemoteRegistries = useDeleteRemoteRegistries(view.unselectItemsAndRefresh);
   const pageNavigate = usePageNavigate();
 
-  // delete remote registries
   const actions = useMemo<IPageAction<RemoteRegistry>[]>(
     () => [
       {
@@ -33,11 +35,11 @@ export function useRemoteRegistriesToolbarActions() {
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
         label: t('Delete selected remote registries'),
-        onClick: () => {},
+        onClick: deleteRemoteRegistries,
         isDanger: true,
       },
     ],
-    [t, pageNavigate]
+    [t, pageNavigate, deleteRemoteRegistries]
   );
 
   return actions;

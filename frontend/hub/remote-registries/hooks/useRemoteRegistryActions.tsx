@@ -7,10 +7,15 @@ import {
   PageActionType,
   usePageNavigate,
 } from '../../../../framework';
-import { RemoteRegistry } from '../RemoteRegistry';
 import { HubRoute } from '../../HubRoutes';
+import { RemoteRegistry } from '../RemoteRegistry';
+import { useDeleteRemoteRegistries } from './useDeleteRemoteRegistries';
 
-export function useRemoteRegistryActions() {
+export function useRemoteRegistryActions(options: {
+  onRemoteRegistryDeleted: (remoteRegistry: RemoteRegistry[]) => void;
+}) {
+  const { onRemoteRegistryDeleted } = options;
+  const deleteRemoteRegistries = useDeleteRemoteRegistries(onRemoteRegistryDeleted);
   const pageNavigate = usePageNavigate();
   const { t } = useTranslation();
   return useMemo<IPageAction<RemoteRegistry>[]>(
@@ -29,12 +34,12 @@ export function useRemoteRegistryActions() {
       {
         icon: TrashIcon,
         label: t('Delete remote registry'),
-        onClick: () => {},
+        onClick: (remoteRegistries) => deleteRemoteRegistries([remoteRegistries]),
         selection: PageActionSelection.Single,
         type: PageActionType.Button,
         isDanger: true,
       },
     ],
-    [t, pageNavigate]
+    [t, pageNavigate, deleteRemoteRegistries]
   );
 }
