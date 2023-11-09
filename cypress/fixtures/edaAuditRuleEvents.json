@@ -1,0 +1,20 @@
+{
+  "count": 1,
+  "next": null,
+  "previous": null,
+  "page_size": 10,
+  "page": 1,
+  "results": [
+    {
+      "id": "cf3d859f-b305-4c59-9088-3e802e5f80b9",
+      "source_name": "ansible.eda.range",
+      "source_type": "ansible.eda.range",
+      "received_at": "2023-11-07T16:23:29.137509Z",
+      "payload": {
+        "i": 9000
+      },
+      "rule_fired_at": "2023-11-07T16:23:29.139170Z",
+      "audit_actions": ["4152ddff-432f-410d-aae4-e63fecae1c43"]
+    }
+  ]
+}
