@@ -56,6 +56,7 @@ export function NodeContextMenu() {
 
     return (
       <ContextMenuItem
+        data-cy={item.key}
         key={item.key}
         icon={item.icon}
         isDanger={item.isDanger}

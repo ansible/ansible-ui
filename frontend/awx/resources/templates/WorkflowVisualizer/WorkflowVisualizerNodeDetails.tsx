@@ -20,13 +20,14 @@ export function WorkflowVisualizerNodeDetails(props: {
 
   return (
     <TopologySideBar
+      data-cy="workflow-topology-sidebar"
       show
       header={<Title headingLevel="h1">{t('Node details')}</Title>}
       resizable
       onClose={() => setSelectedNode(undefined)}
     >
       {getDetails}
-      <ActionList style={{ paddingBottom: '20px' }}>
+      <ActionList data-cy="workflow-topology-sidebar-actions" style={{ paddingBottom: '20px' }}>
         <Button variant="primary" onClick={() => {}}>
           {t('Edit')}
         </Button>

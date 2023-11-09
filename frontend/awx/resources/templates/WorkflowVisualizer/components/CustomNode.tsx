@@ -32,10 +32,9 @@ export const CustomNode: FC<
 > = ({ element, contextMenuOpen, onContextMenu, onSelect, selected, ...rest }) => {
   const data = element.getData();
 
-  if (!data) return null;
+  if (!data || !data.jobType) return null;
 
-  const jobType = data.jobType;
-  const Icon = NodeIcon[jobType];
+  const Icon = NodeIcon[data.jobType];
 
   return (
     <DefaultNode
