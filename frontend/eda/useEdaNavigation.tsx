@@ -67,7 +67,7 @@ export function useEdaNavigation() {
             children: [
               {
                 id: EdaRoute.RuleAudits,
-                label: t('Rule Audits'),
+                label: t('Rule Audit'),
                 path: 'rule-audits',
                 children: [
                   {
