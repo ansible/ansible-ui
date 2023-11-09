@@ -77,7 +77,7 @@ export function RulebookActivationDetails() {
           label={t('Rulebook')}
           helpText={t('Rulebooks will be shown according to the project selected.')}
         >
-          {rulebookActivation?.rulebook?.name || ''}
+          {rulebookActivation?.rulebook?.name || rulebookActivation?.rulebook_name || ''}
         </PageDetail>
         <PageDetail
           label={t('Decision environment')}
