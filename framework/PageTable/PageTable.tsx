@@ -639,7 +639,7 @@ function TableHead<T extends object>(props: {
             stickyMinWidth="0px"
             hasRightBorder={props.scrollLeft}
             data-cy={'selections-column-header'}
-            className={props.scrollLeft ? 'bg-lighten-2 border-left' : 'bg-lighten'}
+            className={props.scrollLeft ? 'bg-lighten-2' : 'bg-lighten'}
           >
             &nbsp;
           </Th>
@@ -825,7 +825,12 @@ function TableRow<T extends object>(props: {
         <Tr isExpanded={expanded} style={{ boxShadow: 'unset' }}>
           <Td />
           {showSelect && (
-            <Th isStickyColumn stickyMinWidth="0px" hasRightBorder={props.scrollLeft} />
+            <Th
+              isStickyColumn
+              stickyMinWidth="0px"
+              hasRightBorder={props.scrollLeft}
+              className={props.scrollLeft ? 'bg-lighten' : undefined}
+            />
           )}
           {onSelect && <Td isStickyColumn stickyMinWidth="0px" hasRightBorder={props.scrollLeft} />}
           <Td
