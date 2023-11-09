@@ -19,7 +19,7 @@ describe('Workflow Job templates visualizer', () => {
     });
   });
 
-  it.only('should render a workflow visualizer view with multiple nodes present', () => {
+  it('should render a workflow visualizer view with multiple nodes present', () => {
     cy.createAwxWorkflowJobTemplate({
       organization: organization.id,
       inventory: inventory.id,
