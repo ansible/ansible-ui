@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { useNameColumn } from '../../../../common/columns';
 import { getItemKey, requestDelete } from '../../../../common/crud/Data';
+import { awxAPI } from '../../../api/awx-utils';
 import { Credential } from '../../../interfaces/Credential';
 import { useCredentialsColumns } from './useCredentialsColumns';
 
@@ -28,7 +29,8 @@ export function useDeleteCredentials(onComplete?: (credentials: Credential[]) =>
       confirmationColumns,
       actionColumns,
       onComplete,
-      actionFn: (credential: Credential) => requestDelete(`/api/v2/credentials/${credential.id}/`),
+      actionFn: (credential: Credential, signal) =>
+        requestDelete(awxAPI`/credentials/${credential.id.toString()}/`, signal),
     });
   };
   return deleteCredentials;

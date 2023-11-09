@@ -1,17 +1,21 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { PlusIcon } from '@patternfly/react-icons';
-import { useMemo, useCallback } from 'react';
-import { useTranslation, TFunction } from 'react-i18next';
-import { IPageAction, PageActionSelection, PageActionType } from '../../../../framework';
-import { ExecutionEnvironment } from '../ExecutionEnvironment';
-import { TrashIcon } from '@patternfly/react-icons';
-import { useHubContext, HubContext } from '../../useHubContext';
-import { useExecutionEnvironmentsColumns } from './useExecutionEnvironmentsColumns';
-import { compareStrings, useBulkConfirmation } from '../../../../framework';
-import { requestDelete, postRequest, requestGet } from '../../../common/crud/Data';
-import { hubAPI, pulpAPI } from '../../api/utils';
-import { PulpItemsResponse } from '../../usePulpView';
+import { PlusIcon, TrashIcon } from '@patternfly/react-icons';
+import { useCallback, useMemo } from 'react';
+import { TFunction, useTranslation } from 'react-i18next';
+import {
+  IPageAction,
+  PageActionSelection,
+  PageActionType,
+  compareStrings,
+  useBulkConfirmation,
+} from '../../../../framework';
+import { postRequest, requestDelete, requestGet } from '../../../common/crud/Data';
 import { SigningServiceResponse } from '../../api-schemas/generated/SigningServiceResponse';
+import { hubAPI, pulpAPI } from '../../api/formatPath';
+import { HubContext, useHubContext } from '../../useHubContext';
+import { PulpItemsResponse } from '../../usePulpView';
+import { ExecutionEnvironment } from '../ExecutionEnvironment';
+import { useExecutionEnvironmentsColumns } from './useExecutionEnvironmentsColumns';
 
 export function useExecutionEnvironmentsActions(callback?: (ees: ExecutionEnvironment[]) => void) {
   const { t } = useTranslation();
@@ -93,15 +97,15 @@ export function useDeleteExecutionEnvironments(onComplete?: (ees: ExecutionEnvir
         confirmationColumns,
         actionColumns,
         onComplete,
-        actionFn: (ee: ExecutionEnvironment) => deleteExecutionEnvironment(ee),
+        actionFn: (ee, signal) => deleteExecutionEnvironment(ee, signal),
       });
     },
     [actionColumns, bulkAction, confirmationColumns, onComplete, t]
   );
 }
 
-async function deleteExecutionEnvironment(ee: ExecutionEnvironment) {
-  return requestDelete(hubAPI`/v3/plugin/execution-environments/repositories/${ee.name}/`);
+async function deleteExecutionEnvironment(ee: ExecutionEnvironment, signal: AbortSignal) {
+  return requestDelete(hubAPI`/v3/plugin/execution-environments/repositories/${ee.name}/`, signal);
 }
 
 export function useSyncExecutionEnvironments(onComplete?: (ees: ExecutionEnvironment[]) => void) {

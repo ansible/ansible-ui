@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { useNameColumn } from '../../../../common/columns';
 import { getItemKey, requestDelete } from '../../../../common/crud/Data';
+import { awxAPI } from '../../../api/awx-utils';
 import { InventorySource } from '../../../interfaces/InventorySource';
 import { useInventorySourceColumns } from './useInventorySourceColumns';
 
@@ -35,8 +36,8 @@ export function useDeleteInventorySources(
       confirmationColumns,
       actionColumns,
       onComplete,
-      actionFn: (inventorySource: InventorySource) =>
-        requestDelete(`/api/v2/inventory_sources/${inventorySource.id}/`),
+      actionFn: (inventorySource: InventorySource, signal) =>
+        requestDelete(awxAPI`/inventory_sources/${inventorySource.id.toString()}/`, signal),
       alertPrompts:
         undeletableInventorySources.length > 0
           ? [

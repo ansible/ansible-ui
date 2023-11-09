@@ -6,6 +6,7 @@ import { PageNotImplemented } from '../../../framework/PageEmptyStates/PageNotIm
 import { AwxRoute } from '../AwxRoutes';
 import { ManagementJobPage } from '../administration/management-jobs/ManagementJobPage/ManagementJobPage';
 import { ManagementJobs } from '../administration/management-jobs/ManagementJobs';
+import { awxAPI } from '../api/awx-utils';
 import { SchedulePage } from '../views/schedules/SchedulePage/SchedulePage';
 import { Schedules } from '../views/schedules/Schedules';
 
@@ -53,7 +54,7 @@ export function useAwxManagementJobsRoutes() {
             {
               id: AwxRoute.ManagementJobSchedules,
               path: 'schedules',
-              element: <Schedules sublistEndpoint={`/api/v2/system_job_templates`} />,
+              element: <Schedules sublistEndpoint={awxAPI`/system_job_templates`} />,
             },
             {
               id: AwxRoute.ManagementJobNotifications,

@@ -17,6 +17,7 @@ import { AwxPageForm } from '../../AwxPageForm';
 import { AwxRoute } from '../../AwxRoutes';
 import { PageFormExecutionEnvironmentSelect } from '../../administration/execution-environments/components/PageFormExecutionEnvironmentSelect';
 import { PageFormInstanceGroupSelect } from '../../administration/instance-groups/components/PageFormInstanceGroupSelect';
+import { awxAPI } from '../../api/awx-utils';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { Organization } from '../../interfaces/Organization';
 
@@ -39,7 +40,7 @@ export function CreateOrganization() {
     const igRequests = [];
     for (const ig of values.instanceGroups || []) {
       igRequests.push(
-        postRequest(`/api/v2/organizations/${organization.id}/instance_groups/`, {
+        postRequest(awxAPI`/organizations/${organization.id.toString()}/instance_groups/`, {
           id: ig.id,
         })
       );
@@ -75,12 +76,12 @@ export function EditOrganization() {
   const postRequest = usePostRequest();
 
   const { data: organization } = useSWR<Organization>(
-    `/api/v2/organizations/${id.toString()}/`,
+    awxAPI`/organizations/${id.toString()}/`,
     requestGet,
     swrOptions
   );
   const { data: igResponse } = useSWR<{ results: InstanceGroup[] }>(
-    `/api/v2/organizations/${id.toString()}/instance_groups/`,
+    awxAPI`/organizations/${id.toString()}/instance_groups/`,
     requestGet,
     swrOptions
   );
@@ -90,13 +91,13 @@ export function EditOrganization() {
 
   const onSubmit: PageFormSubmitHandler<OrganizationFields> = async (values) => {
     const organization = await requestPatch<Organization>(
-      `/api/v2/organizations/${id}/`,
+      awxAPI`/organizations/${id.toString()}/`,
       values.organization
     );
     const disassociateRequests = [];
     for (const ig of instanceGroups || []) {
       disassociateRequests.push(
-        postRequest(`/api/v2/organizations/${organization.id}/instance_groups/`, {
+        postRequest(awxAPI`/organizations/${organization.id.toString()}/instance_groups/`, {
           id: ig.id,
           disassociate: true,
         })
@@ -106,7 +107,7 @@ export function EditOrganization() {
     const igRequests = [];
     for (const ig of values.instanceGroups || []) {
       igRequests.push(
-        postRequest(`/api/v2/organizations/${organization.id}/instance_groups/`, {
+        postRequest(awxAPI`/organizations/${organization.id.toString()}/instance_groups/`, {
           id: ig.id,
         })
       );

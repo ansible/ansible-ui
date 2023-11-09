@@ -27,8 +27,15 @@ import {
   StackItem,
   Title,
 } from '@patternfly/react-core';
+import { LoadingPage } from '../../../framework';
+import React from 'react';
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
-import { BarsIcon, CheckCircleIcon, ExclamationTriangleIcon } from '@patternfly/react-icons';
+import {
+  BarsIcon,
+  CheckCircleIcon,
+  ExclamationTriangleIcon,
+  DownloadIcon,
+} from '@patternfly/react-icons';
 import { Table /* data-codemods */, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { DateTime } from 'luxon';
 import { Dispatch, SetStateAction, useMemo, useState, useEffect } from 'react';
@@ -54,13 +61,15 @@ import { AwxError } from '../../awx/common/AwxError';
 import { StatusCell } from '../../common/Status';
 import { useGetRequest, useGet } from '../../common/crud/useGet';
 import { HubRoute } from '../HubRoutes';
-import { hubAPI } from '../api/utils';
+import { hubAPI } from '../api/formatPath';
 import { HubItemsResponse } from '../useHubView';
 import { PageSingleSelect } from './../../../framework/PageInputs/PageSingleSelect';
 import { CollectionVersionSearch } from './Collection';
 import { useCollectionActions } from './hooks/useCollectionActions';
 import { useCollectionColumns } from './hooks/useCollectionColumns';
 import { usePageNavigate } from '../../../framework';
+import { useRepositoryBasePath } from '../api/utils';
+import { requestGet } from '../../common/crud/Data';
 
 export function CollectionDetails() {
   const { t } = useTranslation();
@@ -272,15 +281,28 @@ export function CollectionDetails() {
   );
 }
 
-function CollectionDetailsTab(props: { collection?: CollectionVersionSearch }) {
+function CollectionDetailsTab(props: { collection?: CollectionVersionSearch | undefined }) {
   const { collection } = props;
   const tableColumns = useCollectionColumns();
   return <PageDetailsFromColumns item={collection} columns={tableColumns} />;
 }
 
-function CollectionInstallTab(props: { collection?: CollectionVersionSearch }) {
+function CollectionInstallTab(props: { collection: CollectionVersionSearch }) {
   const { t } = useTranslation();
+  const downloadLinkRef = React.useRef<HTMLAnchorElement>(null);
   const { collection } = props;
+  const { basePath, error, loading } = useRepositoryBasePath(
+    collection.repository?.name ?? '',
+    collection.repository?.pulp_href
+  );
+
+  if (loading) {
+    <LoadingPage breadcrumbs tabs />;
+  }
+  if (error) {
+    return <AwxError error={new Error(error)} />;
+  }
+
   return (
     <Scrollable>
       <PageSection variant="light">
@@ -297,6 +319,21 @@ function CollectionInstallTab(props: { collection?: CollectionVersionSearch }) {
                 collection?.collection_version?.namespace ?? ''
               }.${collection?.collection_version?.name ?? ''}`}
             />
+            <PageDetail>
+              {t(`Note Installing collecion with ansible-galaxy is only supported in ansible 2.9+`)}
+            </PageDetail>
+            <a href="/#" ref={downloadLinkRef} style={{ display: 'none' }}>
+              {t(`Link`)}
+            </a>
+            <Button
+              variant="link"
+              icon={<DownloadIcon />}
+              onClick={() => {
+                void Download(basePath, collection, downloadLinkRef);
+              }}
+            >
+              {t(`Download tarball`)}
+            </Button>
           </PageDetail>
           <PageDetail label={t('Requires')}>
             {collection?.collection_version?.require_ansible &&
@@ -306,6 +343,24 @@ function CollectionInstallTab(props: { collection?: CollectionVersionSearch }) {
       </PageSection>
     </Scrollable>
   );
+}
+
+async function Download(
+  basePath: string,
+  collection: CollectionVersionSearch | undefined,
+  downloadLinkRef: React.RefObject<HTMLAnchorElement>
+) {
+  const downloadURL = await requestGet<{ download_url: string }>(
+    hubAPI`/v3/plugin/ansible/content/${basePath}/collections/index/${
+      collection?.collection_version?.namespace || ''
+    }/${collection?.collection_version?.name || ''}/versions/${
+      collection?.collection_version?.version || ''
+    }/`
+  );
+  if (downloadLinkRef.current) {
+    downloadLinkRef.current.href = downloadURL.download_url;
+    downloadLinkRef.current.click();
+  }
 }
 
 function CollectionDocumentationTab(props: { collection?: CollectionVersionSearch }) {

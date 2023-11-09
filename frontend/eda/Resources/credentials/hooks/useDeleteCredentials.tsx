@@ -40,8 +40,8 @@ export function useDeleteCredentials(onComplete?: (credentials: EdaCredential[])
         actionColumns,
         onComplete,
         alertPrompts: inUseMessage,
-        actionFn: (credential: EdaCredential) =>
-          requestDelete(edaAPI`/credentials/${credential.id.toString()}/${forceParameter}`),
+        actionFn: (credential: EdaCredential, signal) =>
+          requestDelete(edaAPI`/credentials/${credential.id.toString()}/${forceParameter}`, signal),
       });
     },
     [actionColumns, bulkAction, confirmationColumns, onComplete, t]

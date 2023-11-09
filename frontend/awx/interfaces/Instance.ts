@@ -15,6 +15,7 @@ export interface Instance {
     instance_groups: string;
     peers: string;
     health_check?: string;
+    install_bundle?: string;
   };
   summary_fields: {
     user_capabilities: {
@@ -27,7 +28,7 @@ export interface Instance {
   last_seen: string;
   health_check_started: null | string;
   health_check_pending: boolean;
-  last_health_check: null | string;
+  last_health_check: undefined | string;
   errors: string;
   capacity_adjustment: string;
   version: string;

@@ -11,6 +11,7 @@ import {
 import { PageFormGroup } from '../../../../framework/PageForm/Inputs/PageFormGroup';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
+import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 import { postRequest, requestPatch } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
@@ -18,13 +19,13 @@ import { AwxPageForm } from '../../AwxPageForm';
 import { AwxRoute } from '../../AwxRoutes';
 import { PageFormSelectOrganization } from '../../access/organizations/components/PageFormOrganizationSelect';
 import { PageFormInstanceGroupSelect } from '../../administration/instance-groups/components/PageFormInstanceGroupSelect';
+import { awxAPI } from '../../api/awx-utils';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { PageFormLabelSelect } from '../../common/PageFormLabelSelect';
 import { getAddedAndRemoved } from '../../common/util/getAddedAndRemoved';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { Inventory } from '../../interfaces/Inventory';
 import { Label } from '../../interfaces/Label';
-import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 
 export interface InventoryFields {
   name: string;
@@ -103,9 +104,9 @@ export function EditInventory() {
   const pageNavigate = usePageNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const { data: inventory } = useGet<Inventory>(`/api/v2/inventories/${id.toString()}/`);
+  const { data: inventory } = useGet<Inventory>(awxAPI`/inventories/${id.toString()}/`);
   const { data: igResponse } = useGet<AwxItemsResponse<InstanceGroup>>(
-    `/api/v2/inventories/${id.toString()}/instance_groups/`
+    awxAPI`/inventories/${id.toString()}/instance_groups/`
   );
   // Fetch instance groups associated with the inventory
   const originalInstanceGroups = igResponse?.results;
@@ -113,10 +114,10 @@ export function EditInventory() {
     const { organization, labels, instanceGroups, ...rest } = values;
 
     // Update the inventory
-    const updatedInventory = await requestPatch<Inventory>(
-      `/api/v2/inventories/${id.toString()}/`,
-      { ...rest, organization: organization.id }
-    );
+    const updatedInventory = await requestPatch<Inventory>(awxAPI`/inventories/${id.toString()}/`, {
+      ...rest,
+      organization: organization.id,
+    });
     const promises = [];
     // Update inventory with selected instance groups
     promises.push(
@@ -228,13 +229,13 @@ async function submitLabels(inventory: Inventory, labels: Label[]) {
   );
 
   const disassociationPromises = removed.map((label: { id: number }) =>
-    postRequest(`/api/v2/inventories/${inventory.id.toString()}/labels/`, {
+    postRequest(awxAPI`/inventories/${inventory.id.toString()}/labels/`, {
       id: label.id,
       disassociate: true,
     })
   );
   const associationPromises = added.map((label: { name: string }) =>
-    postRequest(`/api/v2/inventories/${inventory.id.toString()}/labels/`, {
+    postRequest(awxAPI`/inventories/${inventory.id.toString()}/labels/`, {
       name: label.name,
       organization: inventory.organization,
     })
@@ -259,13 +260,13 @@ async function submitInstanceGroups(
   }
 
   const disassociationPromises = removed.map((instanceGroup: { id: number }) =>
-    postRequest(`/api/v2/inventories/${inventory.id.toString()}/instance_groups/`, {
+    postRequest(awxAPI`/inventories/${inventory.id.toString()}/instance_groups/`, {
       id: instanceGroup.id,
       disassociate: true,
     })
   );
   const associationPromises = added.map((instanceGroup: { id: number }) =>
-    postRequest(`/api/v2/inventories/${inventory.id.toString()}/instance_groups/`, {
+    postRequest(awxAPI`/inventories/${inventory.id.toString()}/instance_groups/`, {
       id: instanceGroup.id,
     })
   );

@@ -6,6 +6,7 @@ import { requestGet } from '../../../../common/crud/Data';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { Inventory } from '../../../interfaces/Inventory';
 import { useSelectInventory } from '../hooks/useSelectInventory';
+import { awxAPI } from '../../../api/awx-utils';
 
 export function PageFormInventorySelect<
   TFieldValues extends FieldValues = FieldValues,
@@ -20,7 +21,7 @@ export function PageFormInventorySelect<
   const openSelectDialog = useSelectInventory();
   const query = useCallback(async () => {
     const response = await requestGet<AwxItemsResponse<Inventory>>(
-      `/api/v2/inventories/?page_size=200`
+      awxAPI`/inventories/?page_size=200`
     );
     return Promise.resolve({
       total: response.count,

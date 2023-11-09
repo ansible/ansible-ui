@@ -5,12 +5,7 @@ const proxyUrl = new URL(HUB_SERVER);
 module.exports = function (env, argv) {
   const config = webpackConfig(env, argv);
 
-  config.entry = {
-    app: './frontend/hub/Hub.tsx',
-    'editor.worker': 'monaco-editor/esm/vs/editor/editor.worker',
-    'json.worker': 'monaco-editor/esm/vs/language/json/json.worker',
-    'yaml.worker': 'monaco-yaml/yaml.worker',
-  };
+  config.entry = './frontend/hub/Hub.tsx';
 
   config.devServer.proxy = {
     '/api': {

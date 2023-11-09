@@ -7,6 +7,7 @@ import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
 import { useGet } from '../../../common/crud/useGet';
 import { AwxRoute } from '../../AwxRoutes';
 import { Job } from '../../interfaces/Job';
+import { awxAPI } from '../../api/awx-utils';
 
 export function JobPage() {
   const { t } = useTranslation();
@@ -47,7 +48,7 @@ export function useGetJob(id?: string, type?: string) {
   };
   const path = type ? apiPaths[type] : 'jobs';
   const { data: job, refresh: refreshJob } = useGet<Job>(
-    id ? `/api/v2/${path}/${id}/` : '',
+    id ? awxAPI`/${path}/${id}/` : '',
     undefined,
     { refreshInterval: 0 }
   );

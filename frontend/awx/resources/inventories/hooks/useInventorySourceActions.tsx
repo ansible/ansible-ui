@@ -9,11 +9,12 @@ import {
   usePageAlertToaster,
   usePageNavigate,
 } from '../../../../../framework';
+import { usePostRequest } from '../../../../common/crud/usePostRequest';
+import { useActiveUser } from '../../../../common/useActiveUser';
 import { AwxRoute } from '../../../AwxRoutes';
+import { awxAPI } from '../../../api/awx-utils';
 import { InventorySource } from '../../../interfaces/InventorySource';
 import { useDeleteInventorySources } from './useDeleteInventorySources';
-import { useActiveUser } from '../../../../common/useActiveUser';
-import { usePostRequest } from '../../../../common/crud/usePostRequest';
 
 type InventorySourceActionOptions = {
   onInventorySourcesDeleted: (inventorySources: InventorySource[]) => void;
@@ -33,7 +34,7 @@ export function useInventorySourceActions({
   const handleUpdate = useCallback(
     async (invSrc: InventorySource) => {
       try {
-        await postRequest(`/api/v2/inventory_sources/${invSrc.id}/update/`, {});
+        await postRequest(awxAPI`/inventory_sources/${invSrc.id.toString()}/update/`, {});
       } catch (error) {
         alertToaster.addAlert({
           variant: 'danger',

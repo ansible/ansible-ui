@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useGetRequest } from '../../../common/crud/useGet';
-import { pulpAPI } from '../../api/utils';
+import { pulpAPI } from '../../api/formatPath';
 import { PageAsyncSingleSelectOptionsFn } from './../../../../framework/PageInputs/PageAsyncSingleSelect';
 import { AnsibleAnsibleRepositoryResponse as Repository } from './../../api-schemas/generated/AnsibleAnsibleRepositoryResponse';
 import { PulpItemsResponse } from './../../usePulpView';
