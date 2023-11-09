@@ -20,9 +20,11 @@ export function RemoteRegistries() {
     toolbarFilters,
     tableColumns,
   });
-  const toolbarActions = useRemoteRegistriesToolbarActions();
-  const rowActions = useRemoteRegistryActions();
   const pageNavigate = usePageNavigate();
+  const toolbarActions = useRemoteRegistriesToolbarActions(view);
+  const rowActions = useRemoteRegistryActions({
+    onRemoteRegistryDeleted: view.unselectItemsAndRefresh,
+  });
   return (
     <PageLayout>
       <PageHeader
