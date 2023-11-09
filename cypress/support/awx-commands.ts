@@ -5,6 +5,7 @@ import { AwxItemsResponse } from '../../frontend/awx/common/AwxItemsResponse';
 import { AwxHost } from '../../frontend/awx/interfaces/AwxHost';
 import { AwxToken } from '../../frontend/awx/interfaces/AwxToken';
 import { Credential } from '../../frontend/awx/interfaces/Credential';
+import { CredentialType } from '../../frontend/awx/interfaces/CredentialType';
 import { ExecutionEnvironment } from '../../frontend/awx/interfaces/ExecutionEnvironment';
 import { InstanceGroup } from '../../frontend/awx/interfaces/InstanceGroup';
 import { Inventory } from '../../frontend/awx/interfaces/Inventory';
@@ -16,7 +17,6 @@ import { Project } from '../../frontend/awx/interfaces/Project';
 import { Schedule } from '../../frontend/awx/interfaces/Schedule';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
-import { CredentialType } from '../../frontend/awx/interfaces/CredentialType';
 import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/generated-from-swagger/api';
 import { Job } from '../../frontend/awx/interfaces/Job';
 import './auth';
@@ -733,10 +733,39 @@ Cypress.Commands.add(
 
 Cypress.Commands.add('createAwxWorkflowJobTemplate', (jobTemplate: WorkflowJobTemplate) => {
   cy.requestPost<WorkflowJobTemplate>('/api/v2/workflow_job_templates/', {
-    name: 'E2E Job Template ' + randomString(4),
+    name: 'E2E WorkflowJob Template ' + randomString(4),
     ...jobTemplate,
   });
 });
+
+Cypress.Commands.add('getAwxWorkflowJobTemplateByName', (awxWorkflowJobTemplateName: string) => {
+  cy.awxRequestGet<AwxItemsResponse<WorkflowJobTemplate>>(
+    `/api/v2/workflow_job_templates/?name=${awxWorkflowJobTemplateName}`
+  );
+});
+
+Cypress.Commands.add(
+  'renderWorkflowVisualizerNodesFromFixtureFile',
+  (workflowJobTemplateName: string, fixtureFile: string) => {
+    cy.getAwxWorkflowJobTemplateByName(workflowJobTemplateName)
+      .its('results[0]')
+      .then((results: WorkflowJobTemplate) => {
+        cy.log('THIS ONE THIS ONE', results.id);
+        cy.intercept(
+          {
+            method: 'GET',
+            url: `/api/v2/workflow_job_templates/${results.id}/workflow_nodes/`,
+          },
+          { fixture: fixtureFile }
+        )
+          .as('newVisualizerView')
+          .then(() => {
+            cy.visit(`/ui_next/resources/templates/workflow_job_template/${results.id}/visualizer`);
+            cy.wait('@newVisualizerView');
+          });
+      });
+  }
+);
 
 Cypress.Commands.add(
   'createEdaAwxJobTemplate',
