@@ -21,7 +21,7 @@ export function CreateTeam() {
   const postRequest = usePostRequest<Team>();
   const onSubmit: PageFormSubmitHandler<Team> = async (team) => {
     team.organization = team.summary_fields?.organization?.id;
-    const createdTeam = await postRequest('/api/v2/teams/', team);
+    const createdTeam = await postRequest(awxAPI`/teams/`, team);
     navigate(RouteObj.TeamDetails.replace(':id', createdTeam.id.toString()));
   };
   const getPageUrl = useGetPageUrl();

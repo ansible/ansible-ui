@@ -4,10 +4,11 @@ import { AwxRoute } from '../../../AwxRoutes';
 import { Team } from '../../../interfaces/Team';
 import { TeamDetails, TeamDetailsType } from '../../../../common/access/TeamDetails';
 import { useParams } from 'react-router-dom';
+import { awxAPI } from '../../../api/awx-utils';
 
 export function AwxTeamDetails() {
   const params = useParams<{ id: string }>();
-  const { data: team } = useGetItem<Team>('/api/v2/teams', params.id);
+  const { data: team } = useGetItem<Team>(awxAPI`/teams`, params.id);
   const getPageUrl = useGetPageUrl();
 
   return team ? (

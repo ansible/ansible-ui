@@ -21,7 +21,7 @@ import { useRolesColumns, useRolesFilters } from '../../roles/Roles';
 
 export function TeamRoles() {
   const params = useParams<{ id: string }>();
-  const { data: team } = useGetItem<Team>('/api/v2/teams', params.id);
+  const { data: team } = useGetItem<Team>(awxAPI`/teams`, params.id);
 
   return team ? <TeamRolesInner team={team} /> : null;
 }

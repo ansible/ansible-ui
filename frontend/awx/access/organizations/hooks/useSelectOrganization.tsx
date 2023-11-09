@@ -5,13 +5,14 @@ import { SelectSingleDialog } from '../../../../../framework/PageDialogs/SelectS
 import { Organization } from '../../../interfaces/Organization';
 import { useAwxView } from '../../../useAwxView';
 import { useOrganizationsColumns, useOrganizationsFilters } from '../Organizations';
+import { awxAPI } from '../../../api/awx-utils';
 
 export function useSelectOrganization() {
   const { t } = useTranslation();
   const toolbarFilters = useOrganizationsFilters();
   const tableColumns = useOrganizationsColumns({ disableLinks: true });
   const view = useAwxView<Organization>({
-    url: '/api/v2/organizations/',
+    url: awxAPI`/organizations/`,
     toolbarFilters,
     tableColumns,
     disableQueryString: true,
@@ -34,7 +35,7 @@ function SelectOrganization(props: {
   const toolbarFilters = useOrganizationsFilters();
   const tableColumns = useOrganizationsColumns({ disableLinks: true });
   const view = useAwxView<Organization>({
-    url: '/api/v2/organizations/',
+    url: awxAPI`/organizations/`,
     toolbarFilters,
     tableColumns,
     disableQueryString: true,

@@ -4,7 +4,6 @@ import { usePageAlertToaster } from '../../../../framework';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { awxAPI } from '../../api/awx-utils';
 import { AccessRole, User } from '../../interfaces/User';
-import { awxAPI } from '../../api/awx-utils';
 
 export function useDeleteAccessRole(onComplete?: () => void) {
   const { t } = useTranslation();
