@@ -82,9 +82,7 @@ function CopyToRepositoryModal(props: {
       const repoHrefs: string[] = [];
 
       for (const repo of selectedRepositories) {
-        if (!fixedRepositories.find((item) => item.name == repo.name)) {
-          repoHrefs.push(repo.pulp_href);
-        }
+        repoHrefs.push(repo.pulp_href);
       }
 
       const params: {
