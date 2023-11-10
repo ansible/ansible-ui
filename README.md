@@ -2,12 +2,11 @@
 
 UI projects for [Ansible](https://www.ansible.com).
 
-- [Ansible UI](#ansible-ui)
-  - [Getting Started](#getting-started)
-  - [Environment Variables](#environment-variables)
-  - [NPM Scripts](#npm-scripts)
-  - [Documentation](#documentation)
-  - [Code of Conduct](#code-of-conduct)
+- [Getting Started](#getting-started)
+- [Environment Variables](#environment-variables)
+- [NPM Scripts](#npm-scripts)
+- [Documentation](#documentation)
+- [Code of Conduct](#code-of-conduct)
 
 ## Getting Started
 
@@ -58,11 +57,11 @@ export AWX_SERVER=http://localhost:8043
 export AWX_USERNAME='my-user'
 export AWX_PASSWORD='my-password'
 
-export EDA_SERVER=http://localhost:5001
+export EDA_SERVER=http://localhost:8000
 export EDA_USERNAME='my-user'
 export EDA_PASSWORD='my-password'
 
-export HUB_SERVER=http://localhost:8000
+export HUB_SERVER=http://localhost:5001
 export HUB_USERNAME='my-user'
 export HUB_PASSWORD='my-password'
 ```
