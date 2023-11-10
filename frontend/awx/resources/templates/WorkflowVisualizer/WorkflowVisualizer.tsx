@@ -1,38 +1,37 @@
-import styled from 'styled-components';
-import { useParams } from 'react-router-dom';
-import { TopologyView as PFTopologyView } from '@patternfly/react-topology';
-import { Topology } from './Topology';
-import { useGet, useGetItem } from '../../../../common/crud/useGet';
-import { useWorkflowVisualizerToolbarActions } from './hooks/useWorkflowVisualizerToolbarActions';
-import type { AwxItemsResponse } from '../../../common/AwxItemsResponse';
-import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
-import { WorkflowVisualizerNodeDetails } from './WorkflowVisualizerNodeDetails';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { EmptyStateNoData } from '../../../../../framework/components/EmptyStateNoData';
-import { AddNodeButton } from './components/AddNodeButton';
-import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
-import { AwxError } from '../../../common/AwxError';
-import { EmptyState, EmptyStateHeader, Icon, Spinner } from '@patternfly/react-core';
+import { useParams } from 'react-router-dom';
 import { ShareAltIcon } from '@patternfly/react-icons';
+import { TopologyView as PFTopologyView } from '@patternfly/react-topology';
+import { EmptyState, EmptyStateHeader, Icon, Spinner } from '@patternfly/react-core';
+import { EmptyStateNoData } from '../../../../../framework/components/EmptyStateNoData';
 import { getPatternflyColor } from '../../../../../framework';
-import { VisualizerWrapper } from './components/VisualizerWrapper';
+import { useGet, useGetItem } from '../../../../common/crud/useGet';
+import { AwxError } from '../../../common/AwxError';
+import { useWorkflowVisualizerToolbarActions } from './hooks/useWorkflowVisualizerToolbarActions';
+import { WorkflowVisualizerNodeDetails } from './WorkflowVisualizerNodeDetails';
+import { AddNodeButton, VisualizerWrapper } from './components';
+import { Topology } from './Topology';
+import styled from 'styled-components';
+import type { AwxItemsResponse } from '../../../common/AwxItemsResponse';
+import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
+import type { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 
 const TopologyView = styled(PFTopologyView)`
   & .pf-topology-view__project-toolbar {
-    ${(props: { isExpanded: boolean }) => !props.isExpanded && 'flex-wrap: wrap;'}
+    ${(props: { $isExpanded: boolean }) => !props.$isExpanded && 'flex-wrap: wrap;'}
     flex: 1;
   }
 
   & .pf-topology-view__project-toolbar > :first-child {
-    ${(props: { isExpanded: boolean }) => !props.isExpanded && 'flex: 100%; padding-bottom:20px'}
+    ${(props: { $isExpanded: boolean }) => !props.$isExpanded && 'flex: 100%; padding-bottom:20px'}
   }
 `;
 
 export function WorkflowVisualizer() {
   const { id } = useParams<{ id?: string }>();
   const { t } = useTranslation();
-  const expanded = useState<boolean>(false);
+  const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [selectedNode, setSelectedNode] = useState<WorkflowNode | undefined>(undefined);
   const {
     data: wfNodes,
@@ -50,7 +49,7 @@ export function WorkflowVisualizer() {
   const error = workflowError || workflowNodeError;
   const toolbarActions = useWorkflowVisualizerToolbarActions(
     wfNodes?.results ?? [],
-    expanded,
+    [isExpanded, setIsExpanded],
     workflowJobTemplate
   );
 
@@ -103,12 +102,11 @@ export function WorkflowVisualizer() {
       />
     );
   }
-  const [isExpanded] = expanded;
 
   return (
     <VisualizerWrapper isExpanded={isExpanded}>
       <TopologyView
-        isExpanded={isExpanded}
+        $isExpanded={isExpanded}
         sideBarOpen={selectedNode !== undefined}
         sideBarResizable
         sideBar={

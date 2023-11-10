@@ -7,11 +7,43 @@ describe('WorkflowVisualizer', () => {
     cy.intercept(
       { method: 'GET', url: '/api/v2/workflow_job_templates/*/workflow_nodes/' },
       { fixture: 'workflow_nodes.json' }
-    );
+    ).as('getWorkflowNodes');
     cy.intercept(
       { method: 'GET', url: '/api/v2/workflow_job_templates/*' },
       { fixture: 'workflowJobTemplate.json' }
     );
+    cy.intercept('/api/v2/job_templates/*', { fixture: 'jobTemplate.json' });
+    cy.intercept('/api/v2/job_templates/*/instance_groups', { fixture: 'instance_groups.json' });
+  });
+
+  it('should render nodes and labels', () => {
+    cy.mount(<WorkflowVisualizer />);
+    cy.wait('@getWorkflowNodes')
+      .its('response.body.results')
+      .then((nodes: WorkflowNode[]) => {
+        nodes.forEach((node: WorkflowNode) => {
+          cy.get(`[data-id="${node.id}"]`).should('be.visible');
+          cy.get(`[data-id="${node.id}"] text`).should(
+            'have.text',
+            node.summary_fields.unified_job_template.name
+          );
+        });
+      });
+  });
+
+  it('Should show sidebar details when a node is selected', () => {
+    cy.mount(<WorkflowVisualizer />);
+    cy.get('[data-id="38"]').click();
+    cy.get('[data-cy="workflow-topology-sidebar"]').should('be.visible');
+  });
+
+  it('Node label kebab should open context menu dropdown', () => {
+    cy.mount(<WorkflowVisualizer />);
+    cy.get('[data-id="38"] .pf-topology__node__action-icon').click();
+    cy.get('li[data-cy="edit-node"]').should('be.visible');
+    cy.get('li[data-cy="add-link"]').should('be.visible');
+    cy.get('li[data-cy="add-node-and-link"]').should('be.visible');
+    cy.get('li[data-cy="remove-node"]').should('be.visible');
   });
 
   it('Should show the WorkflowVisualizer toolbar with Add and Cancel buttons', () => {
@@ -22,6 +54,7 @@ describe('WorkflowVisualizer', () => {
     cy.get('button[data-cy="workflow-visualizer-toolbar-expand-collapse"]').should('be.visible');
     cy.get('svg[data-cy="workflow-visualizer-toolbar-collapse"]').should('not.exist');
   });
+
   it('Should toggle the expand collapse button in the toolbar', () => {
     cy.mount(<WorkflowVisualizer />);
     cy.get('button[data-cy="workflow-visualizer-toolbar-expand-collapse"]').click();
@@ -77,7 +110,7 @@ describe('WorkflowVisualizer', () => {
   });
 });
 
-describe('Workflow visuazlier empty state', () => {
+describe('Workflow visualizer empty state', () => {
   it('Should mount with empty state', () => {
     cy.fixture('workflow_nodes.json').then((workflow_nodes: AwxItemsResponse<WorkflowNode>) => {
       workflow_nodes.count = 0;
