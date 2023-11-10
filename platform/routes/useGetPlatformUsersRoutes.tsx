@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { PageNavigationItem } from '../../framework';
+import { PageNavigationItem, PageNotImplemented } from '../../framework';
 import { PlatformRoute } from '../PlatformRoutes';
 import { CreateUser, EditUser } from '../access/users/components/UserForm';
 import { UserPage } from '../access/users/components/UserPage';
@@ -34,6 +34,21 @@ export function useGetPlatformUsersRoutes() {
               id: PlatformRoute.UserDetails,
               path: 'details',
               element: <PlatformUserDetails />,
+            },
+            {
+              id: PlatformRoute.UserTeams,
+              path: 'teams',
+              element: <PageNotImplemented />,
+            },
+            {
+              id: PlatformRoute.UserRoles,
+              path: 'roles',
+              element: <PageNotImplemented />,
+            },
+            {
+              id: PlatformRoute.UserResourceAccess,
+              path: 'resource-access',
+              element: <PageNotImplemented />,
             },
           ],
         },
