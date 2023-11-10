@@ -29,14 +29,12 @@ export function TeamPage() {
   const itemActions: IPageAction<Team>[] = useMemo(() => {
     const itemActions: IPageAction<Team>[] = [
       {
-        type: PageActionType.Button,
+        type: PageActionType.Link,
         selection: PageActionSelection.Single,
-        variant: ButtonVariant.primary,
         isPinned: true,
         icon: EditIcon,
         label: t('Edit team'),
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        onClick: (team) => alert('TODO'),
+        href: (team) => getPageUrl(PlatformRoute.EditTeam, { params: { id: team.id } }),
       },
       { type: PageActionType.Seperator },
       {
