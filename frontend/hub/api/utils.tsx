@@ -1,5 +1,11 @@
-import { RequestError } from '../../common/crud/RequestError';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { requestGet } from '../../common/crud/Data';
+import { RequestError, isRequestError } from '../../common/crud/RequestError';
+import { AnsibleAnsibleDistributionResponse as Distribution } from '../api-schemas/generated/AnsibleAnsibleDistributionResponse';
+import { AnsibleAnsibleRepositoryResponse as Repository } from '../api-schemas/generated/AnsibleAnsibleRepositoryResponse';
 import { Task, TaskResponse } from '../tasks/Task';
+import { pulpAPI } from './formatPath';
 import {
   deleteHubRequest,
   getHubRequest,
@@ -7,16 +13,6 @@ import {
   postHubRequest,
   putHubRequest,
 } from './request';
-import { useTranslation } from 'react-i18next';
-import { requestGet } from '../../common/crud/Data';
-import { AnsibleAnsibleRepositoryResponse as Repository } from '../api-schemas/generated/AnsibleAnsibleRepositoryResponse';
-import { AnsibleAnsibleDistributionResponse as Distribution } from '../api-schemas/generated/AnsibleAnsibleDistributionResponse';
-import { useEffect, useState } from 'react';
-import { isRequestError } from '../../common/crud/RequestError';
-
-function getBaseAPIPath() {
-  return process.env.HUB_API_PREFIX;
-}
 
 type Results = { results: Repository[] | Distribution[] };
 export function useRepositoryBasePath(name: string, pulp_href?: string | undefined) {
@@ -94,16 +90,6 @@ export function apiTag(strings: TemplateStringsArray, ...values: string[]) {
   });
 
   return url;
-}
-
-export function hubAPI(strings: TemplateStringsArray, ...values: string[]) {
-  const base = getBaseAPIPath();
-  return base + apiTag(strings, ...values);
-}
-
-export function pulpAPI(strings: TemplateStringsArray, ...values: string[]) {
-  const base = getBaseAPIPath();
-  return base + '/pulp/api/v3' + apiTag(strings, ...values);
 }
 
 export type QueryParams = {
