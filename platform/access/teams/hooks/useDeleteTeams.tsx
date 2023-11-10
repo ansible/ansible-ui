@@ -51,7 +51,7 @@ export function useDeleteTeams(onComplete: (teams: Team[]) => void) {
       confirmationColumns,
       actionColumns,
       onComplete,
-      actionFn: (team: Team) => requestDelete(`/api/gateway/v1/teams/${team.id}/`),
+      actionFn: (team: Team, signal) => requestDelete(`/api/gateway/v1/teams/${team.id}/`, signal),
     });
   };
   return deleteTeams;
