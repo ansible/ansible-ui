@@ -54,7 +54,7 @@ export function useDeleteUsers(onComplete: (users: User[]) => void) {
       confirmationColumns,
       actionColumns,
       onComplete,
-      actionFn: (user: User) => requestDelete(`/api/gateway/v1/users/${user.id}/`),
+      actionFn: (user: User, signal) => requestDelete(`/api/gateway/v1/users/${user.id}/`, signal),
     });
   };
   return deleteUsers;

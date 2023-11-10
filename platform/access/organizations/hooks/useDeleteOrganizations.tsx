@@ -62,8 +62,8 @@ export function useDeleteOrganizations(onComplete: (organizations: Organization[
       confirmationColumns,
       actionColumns,
       onComplete,
-      actionFn: (organization: Organization) =>
-        requestDelete(`/api/gateway/v1/organizations/${organization.id}/`),
+      actionFn: (organization: Organization, signal) =>
+        requestDelete(`/api/gateway/v1/organizations/${organization.id}/`, signal),
     });
   };
   return deleteOrganizations;

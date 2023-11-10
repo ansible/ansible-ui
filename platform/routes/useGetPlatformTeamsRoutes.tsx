@@ -1,10 +1,10 @@
 import { useTranslation } from 'react-i18next';
-import { PageNavigationItem } from '../../framework';
+import { PageNavigationItem, PageNotImplemented } from '../../framework';
 import { useMemo } from 'react';
 import { PlatformRoute } from '../PlatformRoutes';
 import { CreateTeam, EditTeam } from '../access/teams/components/TeamForm';
 import { TeamPage } from '../access/teams/components/TeamPage';
-import { TeamDetails } from '../access/teams/components/TeamDetails';
+import { PlatformTeamDetails } from '../access/teams/components/PlatformTeamDetails';
 import { TeamList } from '../access/teams/components/TeamList';
 
 export function useGetPlatformTeamsRoutes() {
@@ -33,7 +33,22 @@ export function useGetPlatformTeamsRoutes() {
             {
               id: PlatformRoute.TeamDetails,
               path: 'details',
-              element: <TeamDetails />,
+              element: <PlatformTeamDetails />,
+            },
+            {
+              id: PlatformRoute.TeamRoles,
+              path: 'roles',
+              element: <PageNotImplemented />,
+            },
+            {
+              id: PlatformRoute.TeamUsers,
+              path: 'users',
+              element: <PageNotImplemented />,
+            },
+            {
+              id: PlatformRoute.TeamResourceAccess,
+              path: 'resource-access',
+              element: <PageNotImplemented />,
             },
           ],
         },
