@@ -129,20 +129,24 @@ export function CollectionDetails() {
     // Set a new query parameter or update existing ones
     newParams.set('redirectIfEmpty', '');
 
-    if (collections?.length) {
+    if (collections && collections?.length == 0) {
       navigate(HubRoute.Collections);
+    } else {
+      navigate(HubRoute.CollectionPage, { query: { name, namespace, repository } });
     }
   }
 
-  /*
-  if (collections || collections.length == 0) {
-    return (
-      <AwxError
-        error={error || { name: 'not found', message: t('Not Found') }}
-        handleRefresh={refresh}
-      />
-    );
-  }*/
+  if (collectionsRequest.error || collections?.length == 0) {
+    return <AwxError error={collectionsRequest.error} handleRefresh={collectionsRequest.refresh} />;
+  }
+
+  if (collectionsRequest.error || collectionRequest.data?.data?.length == 0) {
+    return <AwxError error={collectionRequest.error} handleRefresh={collectionRequest.refresh} />;
+  }
+
+  if (!collectionsRequest.data || !collectionRequest.data) {
+    return <LoadingPage breadcrumbs tabs />;
+  }
 
   return (
     <PageLayout>
