@@ -56,6 +56,7 @@ flowchart TD
    gateway --- awx(Controller)
    gateway --- hub(Automation HUB)
    gateway --- eda(Event Driven Ansible)
+   awx --- aa(Ansible Analytics)
 ```
 
 ## Building for Production
