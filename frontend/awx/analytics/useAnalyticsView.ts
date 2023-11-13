@@ -77,11 +77,13 @@ export function useAnalyticsView<T extends object, DataType extends object = Any
   defaultSortDirection: initialDefaultSortDirection,
   defaultSelection,
   builderProps,
+  payload,
   sortableColumns,
   disableLoading,
   getItems,
   getItemsCount,
   requestMethod,
+  itemsPerPage,
 }: {
   // url of request
   url: string;
@@ -111,7 +113,7 @@ export function useAnalyticsView<T extends object, DataType extends object = Any
   disableLoading?: boolean;
 
   // for requests that needs payload data such as post
-  payloadData?: AnyType;
+  payload?: AnyType;
 
   // which request will be used, in future, we may add another if needed
   requestMethod: 'post' | 'get';
@@ -128,11 +130,12 @@ export function useAnalyticsView<T extends object, DataType extends object = Any
 
   // returns count of all items in database for the request, that servers for paging
   getItemsCount: (data: DataType) => number;
+  itemsPerPage?: number;
 }): IAnalyticsReportBuilderView<T> {
   const [data, setData] = useState<AnalyticsItemsResponse<T> | undefined>(undefined);
   const [error, setError] = useState<any>(undefined);
 
-  const payloadData = builderProps?.defaultDataParams || props.payloadData || {};
+  const payloadData = builderProps?.defaultDataParams || payload || {};
 
   // clear all params that are not in filters, usage for ReportBuilder
   if (builderProps) {
@@ -196,10 +199,12 @@ export function useAnalyticsView<T extends object, DataType extends object = Any
   fillFilters(payloadData, filterState, toolbarFilters || []);
 
   queryString ? (queryString += '&') : (queryString += '?');
-  queryString += `offset=${(page - 1) * perPage}`;
+  itemsPerPage
+    ? (queryString += `offset=${(page - 1) * itemsPerPage}`)
+    : (queryString += `offset=${(page - 1) * perPage}`);
 
   queryString ? (queryString += '&') : (queryString += '?');
-  queryString += `limit=${perPage}`;
+  itemsPerPage ? (queryString += `limit=${itemsPerPage}`) : (queryString += `limit=${perPage}`);
 
   url += queryString;
 

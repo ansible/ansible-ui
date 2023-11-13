@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import { PageHeader, PageLayout } from '../../../../framework';
-import { PageNotImplemented } from '../../../../framework/PageEmptyStates/PageNotImplemented';
+import { PageHeader, PageLayout } from '../../../../../framework';
+import { ReportCard } from './ReportCard';
 
 export default function ReportsList() {
   const { t } = useTranslation();
@@ -13,7 +13,7 @@ export default function ReportsList() {
         titleHelpTitle={t('Reports')}
         titleHelp={t('View various reports to gain insights into your automations.')}
       />
-      <PageNotImplemented />
+      <ReportCard />
     </PageLayout>
   );
 }

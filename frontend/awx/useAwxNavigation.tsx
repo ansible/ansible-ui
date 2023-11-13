@@ -10,7 +10,7 @@ import { AwxRoute } from './AwxRoutes';
 import { Topology } from './administration/topology/Topology';
 import { Test } from './analytics/AnalyticsReportBuilder/Test';
 import Reports from './analytics/Reports/Reports';
-import ReportsList from './analytics/Reports/ReportsList';
+import ReportsList from './analytics/Reports/ReportsList/ReportsList';
 import SubscriptionUsage from './analytics/subscription-usage/SubscriptionUsage';
 import { AwxDashboard } from './dashboard/AwxDashboard';
 import Settings from './settings/Settings';
