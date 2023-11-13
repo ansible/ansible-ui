@@ -34,7 +34,7 @@ The Platform UI has downstream pages for authentication, access management, sett
    |    `PLATFORM_SERVER` | The AWX server (protocol://host:port). |
 
    ```zsh
-   export PLATFORM_SERVER=http://localhost:8043
+   export PLATFORM_SERVER=http://localhost:443
    ```
 
 1. Run the Platform UI
