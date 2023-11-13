@@ -31,10 +31,10 @@ The Platform UI has downstream pages for authentication, access management, sett
 
    | Environment Variable | Description                            |
    | -------------------: | -------------------------------------- |
-   |    `PLATFORM_SERVER` | The AWX server (protocol://host:port). |
+   |    `PLATFORM_SERVER` | The AAP Gateway server (protocol://host:port). |
 
    ```zsh
-   export PLATFORM_SERVER=http://localhost:443
+   export PLATFORM_SERVER=https://localhost:443
    ```
 
 1. Run the Platform UI
