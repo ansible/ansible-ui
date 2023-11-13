@@ -20,12 +20,12 @@ about returned data such as information about the table columns and also info ab
 
 There are three requests:
 
-1) Main request 
+1) Main request
 It returns basic info and also URL to options and data request. Main request is send only first time. It uses GET method.
 
 Main request data structure is defined in MainDataDefinition type.
 
-2) Options request 
+2) Options request
 Options are used as info for filters, they have to be sometimes reloaded, when some filter selection changes - for example granularity.
 It uses POST method filled with parameters, that are now red from constants.ts file. But those parameters are sometimes modified
 based on what user selected in filters.
@@ -34,7 +34,7 @@ Options request data structure is defined in OptionsDefinition type.
 
 3) Data request
 Returns data for graph and table, it is classic paginated request, but data structure is not that straightforward. It uses useAnalyticsReportBuilderView,
-which uses POST method with the same parameters as options request. 
+which uses POST method with the same parameters as options request.
 
 Data request data structure is defined in AnalyticsItemsResponse type.
 

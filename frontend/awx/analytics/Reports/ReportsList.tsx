@@ -1,12 +1,15 @@
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout } from '../../../../framework';
 import { PageNotImplemented } from '../../../../framework/PageEmptyStates/PageNotImplemented';
+import NotificationsBanner from '../components/NotificationsBanner';
+import React from 'react';
 
 export default function ReportsList() {
   const { t } = useTranslation();
 
   return (
     <PageLayout>
+      <NotificationsBanner />
       <PageHeader
         title={t('Reports')}
         description={t('View various reports to gain insights into your automations.')}

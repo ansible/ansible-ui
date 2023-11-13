@@ -10,6 +10,7 @@ import { AutomationCalculator } from './AutomationCalculator';
 import { AnalyticsErrorState } from './ErrorStates';
 import { TAGS } from './constants';
 import { awxAPI } from '../../api/awx-utils';
+import NotificationsBanner from '../components/NotificationsBanner';
 
 export interface ReportItemsResponse {
   report: {
@@ -72,6 +73,7 @@ export default function Reports() {
   return (
     <Page>
       <PageLayout>
+        <NotificationsBanner />
         <PageHeader
           title={data?.report?.name || ''}
           description={data?.report?.description || ''}
