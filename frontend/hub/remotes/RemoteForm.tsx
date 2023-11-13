@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
@@ -12,26 +14,49 @@ import {
 import { PageFormFileUpload } from '../../../framework/PageForm/Inputs/PageFormFileUpload';
 import { PageFormGroup } from '../../../framework/PageForm/Inputs/PageFormGroup';
 import { PageFormExpandableSection } from '../../../framework/PageForm/PageFormExpandableSection';
+import { PageFormSection } from '../../../framework/PageForm/Utils/PageFormSection';
+import { PageFormSecret } from '../../../framework/PageForm/Inputs/PageFormSecret';
 import { LoadingPage } from '../../../framework/components/LoadingPage';
 import { AwxError } from '../../awx/common/AwxError';
 import { useGet } from '../../common/crud/useGet';
 import { usePostRequest } from '../../common/crud/usePostRequest';
+import { HubPageForm } from '../HubPageForm';
 import { HubRoute } from '../HubRoutes';
 import { appendTrailingSlash, hubAPIPut, parsePulpIDFromURL } from '../api/utils';
 import { pulpAPI } from '../api/formatPath';
 import { PulpItemsResponse } from '../usePulpView';
 import { IRemotes } from './Remotes';
-import { PageFormSection } from '../../../framework/PageForm/Utils/PageFormSection';
-import { HubPageForm } from '../HubPageForm';
+
+interface SecredInput {
+  onClear?: (name: string) => void;
+  shouldHideField?: (name: string) => boolean;
+}
 
 interface RemoteFormProps extends IRemotes {
-  client_key?: string;
-  password?: string;
-  proxy_password?: string;
-  proxy_username?: string;
-  token?: string;
-  username?: string;
+  client_key?: string | null;
+  password?: string | null;
+  proxy_password?: string | null;
+  proxy_username?: string | null;
+  token?: string | null;
+  username?: string | null;
 }
+type AllowedHiddenFields =
+  | 'password'
+  | 'token'
+  | 'username'
+  | 'client_key'
+  | 'proxy_username'
+  | 'proxy_password';
+
+const HiddenFields: AllowedHiddenFields[] = [
+  'client_key',
+  'password',
+  'proxy_password',
+  'proxy_username',
+  'token',
+  'username',
+];
+
 const yamlRequirementsTemplate = [
   '# Sample requirements.yaml',
   '',
@@ -101,16 +126,19 @@ const initialRemote: Partial<RemoteFormProps> = {
   requirements_file: '---',
   auth_url: null,
   signed_only: false,
+  client_key: null,
+  password: null,
+  proxy_password: null,
+  proxy_username: null,
+  token: null,
+  username: null,
 
-  hidden_fields: [
-    'client_key',
-    'proxy_username',
-    'proxy_password',
-    'username',
-    'password',
-    'token',
-  ].map((name) => ({ name, is_set: false })),
+  hidden_fields: HiddenFields.map((name) => ({ name, is_set: false })),
 };
+
+function isAllowedHiddenField(key: keyof RemoteFormProps): key is AllowedHiddenFields {
+  return !HiddenFields.includes(key as AllowedHiddenFields);
+}
 
 type RemoteFormPropsKey = keyof RemoteFormProps;
 function smartUpdate(modifiedRemote: RemoteFormProps, unmodifiedRemote: RemoteFormProps) {
@@ -124,9 +152,11 @@ function smartUpdate(modifiedRemote: RemoteFormProps, unmodifiedRemote: RemoteFo
   }
 
   Object.keys(modifiedRemote).forEach((key) => {
-    const propKey = key as keyof RemoteFormProps;
-    if (modifiedRemote[propKey] === '' || modifiedRemote[propKey] === null) {
-      delete modifiedRemote[propKey];
+    const propKey = key as RemoteFormPropsKey;
+    if (isAllowedHiddenField(propKey)) {
+      if (modifiedRemote[propKey] === '' || modifiedRemote[propKey] === null) {
+        delete modifiedRemote[propKey];
+      }
     }
   });
 
@@ -139,15 +169,19 @@ function smartUpdate(modifiedRemote: RemoteFormProps, unmodifiedRemote: RemoteFo
   }
   const keys = Object.keys(modifiedRemote) as RemoteFormPropsKey[];
   for (const field of keys) {
-    // API returns headers:null but doesn't accept it .. and we don't edit headers
-    if (modifiedRemote[field] === null && unmodifiedRemote[field] === null) {
-      delete modifiedRemote[field];
+    if (isAllowedHiddenField(field)) {
+      if (modifiedRemote[field] === null && unmodifiedRemote[field] === null) {
+        // API returns headers:null but doesn't accept it .. and we don't edit headers
+        delete modifiedRemote[field];
+      }
     }
   }
 
   return modifiedRemote;
 }
 export function EditRemote() {
+  const [clear, setClear] = useState(false);
+  const { resetField } = useForm();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
@@ -211,6 +245,23 @@ export function EditRemote() {
     ...updateRemoteRequirements(remote),
   };
 
+  const handleOnClear = (name: string) => {
+    resetField(name);
+    setClear(!clear);
+    if (!remoteDefaultValues.hidden_fields) return;
+    const index = remoteDefaultValues.hidden_fields?.findIndex((field) => field.name === name);
+    if (index !== undefined && index > -1) {
+      remoteDefaultValues.hidden_fields[index].is_set = false;
+    }
+  };
+
+  const shouldHideField = (name: string) => {
+    if (!remoteDefaultValues.hidden_fields) {
+      return false;
+    }
+    return !!remoteDefaultValues.hidden_fields.find((field) => field.name === name)?.is_set;
+  };
+
   return (
     <PageLayout>
       <PageHeader
@@ -226,10 +277,13 @@ export function EditRemote() {
         onCancel={() => navigate(-1)}
         defaultValue={remoteDefaultValues}
       >
-        <RemoteInputs />
+        <RemoteInputs onClear={handleOnClear} shouldHideField={shouldHideField} />
         <PageFormExpandableSection singleColumn>
-          <ProxyAdvancedRemoteInputs />
-          <CertificatesAdvancedRemoteInputs />
+          <ProxyAdvancedRemoteInputs onClear={handleOnClear} shouldHideField={shouldHideField} />
+          <CertificatesAdvancedRemoteInputs
+            onClear={handleOnClear}
+            shouldHideField={shouldHideField}
+          />
           <MiscAdvancedRemoteInputs />
           <RequirementsFile />
         </PageFormExpandableSection>
@@ -238,7 +292,7 @@ export function EditRemote() {
   );
 }
 
-function ProxyAdvancedRemoteInputs() {
+function ProxyAdvancedRemoteInputs({ onClear, shouldHideField }: SecredInput) {
   const { t } = useTranslation();
   return (
     <>
@@ -247,22 +301,36 @@ function ProxyAdvancedRemoteInputs() {
         label={t('Proxy URL')}
         placeholder={t('Enter a proxy URL')}
       />
-      <PageFormTextInput<RemoteFormProps>
-        name="proxy_username"
-        label={t('Proxy username')}
-        placeholder={t('Enter a proxy username')}
-      />
-      <PageFormTextInput<RemoteFormProps>
-        type="password"
-        name="proxy_password"
-        label={t('Proxy password')}
-        placeholder={t('Enter a proxy password')}
-      />
+      <PageFormSecret
+        onClear={() => {
+          onClear && onClear('proxy_username');
+        }}
+        shouldHideField={shouldHideField && shouldHideField('proxy_username')}
+      >
+        <PageFormTextInput<RemoteFormProps>
+          name="proxy_username"
+          label={t('Proxy username')}
+          placeholder={t('Enter a proxy username')}
+        />
+      </PageFormSecret>
+      <PageFormSecret
+        onClear={() => {
+          onClear && onClear('proxy_password');
+        }}
+        shouldHideField={shouldHideField && shouldHideField('proxy_password')}
+      >
+        <PageFormTextInput<RemoteFormProps>
+          type="password"
+          name="proxy_password"
+          label={t('Proxy password')}
+          placeholder={t('Enter a proxy password')}
+        />
+      </PageFormSecret>
     </>
   );
 }
 
-function CertificatesAdvancedRemoteInputs() {
+function CertificatesAdvancedRemoteInputs({ onClear, shouldHideField }: SecredInput) {
   const { t } = useTranslation();
   return (
     <>
@@ -272,13 +340,20 @@ function CertificatesAdvancedRemoteInputs() {
       >
         <PageFormCheckbox<RemoteFormProps> name="tls_validation" />
       </PageFormGroup>
-      <PageFormFileUpload
-        type="text"
-        hideDefaultPreview
-        label={t('Client key')}
-        name="client_key"
-        labelHelp={t('A PEM encoded private key used for authentication.')}
-      />
+      <PageFormSecret
+        onClear={() => {
+          onClear && onClear('client_key');
+        }}
+        shouldHideField={shouldHideField && shouldHideField('client_key')}
+      >
+        <PageFormFileUpload
+          type="text"
+          hideDefaultPreview
+          label={t('Client key')}
+          name="client_key"
+          labelHelp={t('A PEM encoded private key used for authentication.')}
+        />
+      </PageFormSecret>
       <PageFormFileUpload
         type="text"
         hideDefaultPreview
@@ -318,7 +393,7 @@ function MiscAdvancedRemoteInputs() {
   );
 }
 
-function RemoteInputs() {
+function RemoteInputs({ onClear, shouldHideField }: SecredInput) {
   const { t } = useTranslation();
   return (
     <>
@@ -335,30 +410,52 @@ function RemoteInputs() {
         labelHelp={t('The URL of an external content source.')}
         isRequired
       />
-      <PageFormTextInput<RemoteFormProps>
-        name="username"
-        label={t('Username')}
-        placeholder={t('Enter a username')}
-        labelHelp={t(
-          'The username to be used for authentication when syncing. This is not required when using a token.'
-        )}
-      />
-      <PageFormTextInput<RemoteFormProps>
-        type="password"
-        name="password"
-        label={t('Password')}
-        placeholder={t('Enter a password')}
-        labelHelp={t(
-          'The password to be used for authentication when syncing. This is not required when using a token.'
-        )}
-      />
-      <PageFormTextInput<RemoteFormProps>
-        name="token"
-        type="password"
-        label={t('Token')}
-        placeholder={t('Enter a token')}
-        labelHelp={t('Token for authenticating to the server URL.')}
-      />
+      <PageFormSecret
+        onClear={() => {
+          onClear && onClear('username');
+        }}
+        shouldHideField={shouldHideField && shouldHideField('username')}
+      >
+        <PageFormTextInput<RemoteFormProps>
+          name="username"
+          label={t('Username')}
+          placeholder={t('Enter a username')}
+          labelHelp={t(
+            'The username to be used for authentication when syncing. This is not required when using a token.'
+          )}
+        />
+      </PageFormSecret>
+      <PageFormSecret
+        onClear={() => {
+          onClear && onClear('password');
+        }}
+        shouldHideField={shouldHideField && shouldHideField('password')}
+      >
+        <PageFormTextInput<RemoteFormProps>
+          type="password"
+          name="password"
+          label={t('Password')}
+          placeholder={t('Enter a password')}
+          labelHelp={t(
+            'The password to be used for authentication when syncing. This is not required when using a token.'
+          )}
+        />
+      </PageFormSecret>
+
+      <PageFormSecret
+        onClear={() => {
+          onClear && onClear('token');
+        }}
+        shouldHideField={shouldHideField && shouldHideField('token')}
+      >
+        <PageFormTextInput<RemoteFormProps>
+          name="token"
+          type="password"
+          label={t('Token')}
+          placeholder={t('Enter a token')}
+          labelHelp={t('Token for authenticating to the server URL.')}
+        />
+      </PageFormSecret>
       <PageFormTextInput<RemoteFormProps>
         name="auth_url"
         label={t('SSO URL')}
