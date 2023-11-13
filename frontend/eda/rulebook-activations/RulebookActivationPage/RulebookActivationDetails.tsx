@@ -44,7 +44,8 @@ export function RulebookActivationDetails() {
     <Scrollable>
       <PageDetails
         alertPrompts={
-          rulebookActivation.status === Status906Enum.Error
+          rulebookActivation.status === Status906Enum.Error ||
+          rulebookActivation.status === Status906Enum.Failed
             ? [
                 `${t('Rulebook Activation create error: ')}${
                   rulebookActivation?.status_message || ''
@@ -76,7 +77,7 @@ export function RulebookActivationDetails() {
           label={t('Rulebook')}
           helpText={t('Rulebooks will be shown according to the project selected.')}
         >
-          {rulebookActivation?.rulebook?.name || ''}
+          {rulebookActivation?.rulebook?.name || rulebookActivation?.rulebook_name || ''}
         </PageDetail>
         <PageDetail
           label={t('Decision environment')}
@@ -102,6 +103,13 @@ export function RulebookActivationDetails() {
         <PageDetail label={t('Activation status')}>
           <StatusCell status={rulebookActivation?.status || ''} />
         </PageDetail>
+        {rulebookActivation.status !== Status906Enum.Error &&
+          rulebookActivation.status !== Status906Enum.Failed &&
+          !!rulebookActivation?.status_message && (
+            <PageDetail label={t('Status message')}>
+              {rulebookActivation?.status_message}
+            </PageDetail>
+          )}
         <PageDetail label={t('Project git hash')}>
           <CopyCell text={rulebookActivation?.git_hash ?? ''} />
         </PageDetail>
