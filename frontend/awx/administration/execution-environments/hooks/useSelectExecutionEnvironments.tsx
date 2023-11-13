@@ -6,6 +6,7 @@ import {
   useExecutionEnvironmentsColumns,
   useExecutionEnvironmentsFilters,
 } from '../ExecutionEnvironments';
+import { awxAPI } from '../../../api/awx-utils';
 
 export function useSelectExecutionEnvironments(organizationId?: string) {
   const { t } = useTranslation();
@@ -23,7 +24,7 @@ export function useSelectExecutionEnvironments(organizationId?: string) {
     defaultParams.or__organization__id = organizationId;
   }
   const view = useAwxView<ExecutionEnvironment>({
-    url: '/api/v2/execution_environments/',
+    url: awxAPI`/execution_environments/`,
     toolbarFilters,
     tableColumns,
     disableQueryString: true,

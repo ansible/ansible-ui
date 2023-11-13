@@ -35,7 +35,7 @@ export function TemplateDetails() {
     error,
     data: template,
     refresh,
-  } = useGetItem<JobTemplate>('/api/v2/job_templates', params.id);
+  } = useGetItem<JobTemplate>(awxAPI`/job_templates`, params.id);
   const instanceGroups = useInstanceGroups(params.id || '0');
   const getPageUrl = useGetPageUrl();
 

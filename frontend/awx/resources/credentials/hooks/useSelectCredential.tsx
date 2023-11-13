@@ -6,6 +6,7 @@ import { useAwxView } from '../../../useAwxView';
 import { useCredentialsColumns } from './useCredentialsColumns';
 import { useCredentialsFilters } from './useCredentialsFilters';
 import { SelectSingleDialog } from '../../../../../framework/PageDialogs/SelectSingleDialog';
+import { awxAPI } from '../../../api/awx-utils';
 
 export function useMultiSelectCredential(isLookup: boolean, credentialType?: number) {
   const { t } = useTranslation();
@@ -19,7 +20,7 @@ export function useMultiSelectCredential(isLookup: boolean, credentialType?: num
     [isLookup, tableColumns]
   );
   const view = useAwxView<Credential>({
-    url: '/api/v2/credentials/',
+    url: awxAPI`/credentials/`,
     toolbarFilters,
     tableColumns: columns,
     disableQueryString: true,
@@ -67,7 +68,7 @@ function SelectCredential(props: {
   const toolbarFilters = useCredentialsFilters();
   const tableColumns = useCredentialsColumns({ disableLinks: true });
   const view = useAwxView<Credential>({
-    url: '/api/v2/credentials/',
+    url: awxAPI`/credentials/`,
     toolbarFilters,
     tableColumns: tableColumns,
     disableQueryString: true,

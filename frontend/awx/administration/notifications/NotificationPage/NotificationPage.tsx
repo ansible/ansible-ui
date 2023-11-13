@@ -8,6 +8,7 @@ import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
 import { AwxError } from '../../../common/AwxError';
 import { NotificationTemplate } from '../../../interfaces/NotificationTemplate';
+import { awxAPI } from '../../../api/awx-utils';
 
 export function NotificationPage() {
   const { t } = useTranslation();
@@ -16,7 +17,7 @@ export function NotificationPage() {
     error,
     data: notificationTemplate,
     refresh,
-  } = useGetItem<NotificationTemplate>('/api/v2/notification_templates', params.id);
+  } = useGetItem<NotificationTemplate>(awxAPI`/notification_templates`, params.id);
 
   const getPageUrl = useGetPageUrl();
 

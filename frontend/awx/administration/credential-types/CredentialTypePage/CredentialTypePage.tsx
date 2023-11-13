@@ -13,6 +13,7 @@ import { useCredentialTypeRowActions } from '../hooks/useCredentialTypeActions';
 import { useAwxView } from '../../../useAwxView';
 import { useCredentialTypesFilters } from '../hooks/useCredentialTypesFilters';
 import { useCredentialTypesColumns } from '../hooks/useCredentialTypesColumns';
+import { awxAPI } from '../../../api/awx-utils';
 
 export function CredentialTypePage() {
   const { t } = useTranslation();
@@ -21,11 +22,11 @@ export function CredentialTypePage() {
     error,
     data: credentialType,
     refresh,
-  } = useGetItem<CredentialType>('/api/v2/credential_types', params.id);
+  } = useGetItem<CredentialType>(awxAPI`/credential_types`, params.id);
   const toolbarFilters = useCredentialTypesFilters();
   const tableColumns = useCredentialTypesColumns();
   const view = useAwxView<CredentialType>({
-    url: '/api/v2/credential_types/',
+    url: awxAPI`/credential_types/`,
     toolbarFilters,
     tableColumns,
   });

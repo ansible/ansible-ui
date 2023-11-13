@@ -7,11 +7,12 @@ import { AwxRoute } from '../../../AwxRoutes';
 import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
 import { Label } from '@patternfly/react-core';
 import { jsonToYaml } from '../../../../../framework/utils/codeEditorUtils';
+import { awxAPI } from '../../../api/awx-utils';
 
 export function CredentialTypeDetails() {
   const params = useParams<{ id: string }>();
   const { data: credentialType } = useGetItem<CredentialType>(
-    '/api/v2/credential_types/',
+    awxAPI`/credential_types/`,
     params.id
   );
   return credentialType ? <CredentialTypeDetailInner credentialType={credentialType} /> : null;

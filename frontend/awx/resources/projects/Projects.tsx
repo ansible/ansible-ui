@@ -11,6 +11,7 @@ import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { Project } from '../../interfaces/Project';
 import { useAwxView } from '../../useAwxView';
+import { awxAPI } from '../../api/awx-utils';
 import { useProjectActions } from './hooks/useProjectActions';
 import { useProjectToolbarActions } from './hooks/useProjectToolbarActions';
 import { useProjectsColumns } from './hooks/useProjectsColumns';
@@ -23,14 +24,14 @@ export function Projects() {
   const toolbarFilters = useProjectsFilters();
   const tableColumns = useProjectsColumns();
   const view = useAwxView<Project>({
-    url: '/api/v2/projects/',
+    url: awxAPI`/projects/`,
     toolbarFilters,
     tableColumns,
   });
   const showToastMessage = true;
   const toolbarActions = useProjectToolbarActions(view.unselectItemsAndRefresh);
   const rowActions = useProjectActions(view.unselectItemsAndRefresh, showToastMessage);
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/v2/projects/');
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/projects/`);
   const canCreateProject = Boolean(data && data.actions && data.actions['POST']);
   const { refresh } = view;
   usePersistentFilters('projects');

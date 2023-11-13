@@ -4,6 +4,7 @@ import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { requestGet, requestPatch } from '../../../../common/crud/Data';
 import { debounce } from 'debounce';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
+import { awxAPI } from '../../../api/awx-utils';
 
 export function useInstanceActions(instanceId: string) {
   const [instance, setInstance] = useState<Instance>();
@@ -23,9 +24,9 @@ export function useInstanceActions(instanceId: string) {
 
   useEffect(() => {
     const fetchInstanceDetails = async () => {
-      const instance = await requestGet<Instance>(`/api/v2/instances/${instanceId}/`);
+      const instance = await requestGet<Instance>(awxAPI`/instances/${instanceId}/`);
       const instanceGroups = await requestGet<AwxItemsResponse<InstanceGroup>>(
-        `/api/v2/instances/${instanceId}/instance_groups/`
+        awxAPI`/instances/${instanceId}/instance_groups/`
       );
       setInstance(instance);
       setInstanceGroups(instanceGroups);
@@ -42,7 +43,7 @@ export function useInstanceActions(instanceId: string) {
   }, [instanceId]);
 
   const handleToggleInstance = async (instance: Instance, enabled: boolean) => {
-    const response = await requestPatch<Instance>(`/api/v2/instances/${instance.id}/`, {
+    const response = await requestPatch<Instance>(awxAPI`/instances/${instance.id.toString()}/`, {
       enabled,
     });
     setInstance(response);
@@ -60,7 +61,7 @@ export function useInstanceActions(instanceId: string) {
   const handleInstanceForksSlider = debounce(async (instance: Instance, value: number) => {
     const computedVal =
       mapBetween(value, 0, 100, instance.mem_capacity, instance.cpu_capacity) / 100;
-    const response = await requestPatch<Instance>(`/api/v2/instances/${instance.id}/`, {
+    const response = await requestPatch<Instance>(awxAPI`/instances/${instance.id.toString()}/`, {
       capacity_adjustment: computedVal.toFixed(1),
     });
     setInstance(response);

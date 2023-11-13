@@ -36,6 +36,7 @@ import { useAwxConfig } from '../../common/useAwxConfig';
 import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
 import { useDeleteExecutionEnvironments } from './hooks/useDeleteExecutionEnvironments';
 import { AwxRoute } from '../../AwxRoutes';
+import { awxAPI } from '../../api/awx-utils';
 
 export function ExecutionEnvironments() {
   const { t } = useTranslation();
@@ -44,7 +45,7 @@ export function ExecutionEnvironments() {
   const toolbarFilters = useExecutionEnvironmentsFilters();
   const tableColumns = useExecutionEnvironmentsColumns();
   const view = useAwxView<ExecutionEnvironment>({
-    url: '/api/v2/execution_environments/',
+    url: awxAPI`/execution_environments/`,
     toolbarFilters,
     tableColumns,
   });

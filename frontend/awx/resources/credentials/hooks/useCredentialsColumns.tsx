@@ -14,6 +14,7 @@ import { useGet } from '../../../../common/crud/useGet';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { Credential } from '../../../interfaces/Credential';
 import { CredentialType } from '../../../interfaces/CredentialType';
+import { awxAPI } from '../../../api/awx-utils';
 
 export function useCredentialsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
@@ -29,7 +30,7 @@ export function useCredentialsColumns(options?: { disableSort?: boolean; disable
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);
   const itemsResponse = useGet<AwxItemsResponse<CredentialType>>(
-    '/api/v2/credential_types/?page=1&page_size=200'
+    awxAPI`/credential_types/?page=1&page_size=200`
   );
   const credentialTypesMap: { [id: number]: string } = useMemo(() => {
     if (itemsResponse?.data?.results) {
