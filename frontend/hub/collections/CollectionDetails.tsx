@@ -377,12 +377,16 @@ function CollectionDocumentationTab(props: { collection?: CollectionVersionSearc
     }&offset=0&limit=10`
   );
 
-  console.log('data: ', data);
+  const readme = useMemo(() => {
+    if (data) {
+      return data.results[0].docs_blob.collection_readme.html
+    }
+  }, [data]);
+
   const groups = useMemo(() => {
     const groups: Record<string, { name: string; contents: IContents[] }> = {};
-    if (data?.results[0].docs_blob.contents) {
-      console.log(data?.results[0].docs_blob.contents)
-      for (const content of data.latest_version.docs_blob.contents) {
+    if (data) {
+      for (const content of data.results[0].docs_blob.contents) {
         let group = groups[content.content_type];
         if (!group) {
           group = { name: content.content_type, contents: [] };
@@ -395,7 +399,7 @@ function CollectionDocumentationTab(props: { collection?: CollectionVersionSearc
       group.contents = group.contents.sort((l, r) => l.content_name.localeCompare(r.content_name));
     }
     return Object.values(groups);
-  }, [data?.latest_version.docs_blob.contents]);
+  }, [data]);
 
   const [isDrawerOpen, setDrawerOpen] = useState(true);
   const lg = useBreakpoint('lg');
