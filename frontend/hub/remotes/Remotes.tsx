@@ -25,7 +25,7 @@ export interface IRemotes {
   signed_only: boolean;
   hidden_fields?: {
     is_set: boolean;
-    name: string;
+    name: 'client_key' | 'password' | 'proxy_username' | 'proxy_password' | 'token' | 'username';
   }[];
   my_permissions?: string[];
 }

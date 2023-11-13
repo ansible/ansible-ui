@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
@@ -12,6 +14,7 @@ import {
 import { PageFormFileUpload } from '../../../framework/PageForm/Inputs/PageFormFileUpload';
 import { PageFormGroup } from '../../../framework/PageForm/Inputs/PageFormGroup';
 import { PageFormExpandableSection } from '../../../framework/PageForm/PageFormExpandableSection';
+import { PageFormSecret } from '../../../framework/PageForm/Inputs/PageFormSecret';
 import { AwxError } from '../../awx/common/AwxError';
 import { useGet } from '../../common/crud/useGet';
 import { usePostRequest } from '../../common/crud/usePostRequest';
@@ -22,13 +25,25 @@ import { appendTrailingSlash, hubAPIPut, parsePulpIDFromURL } from '../api/utils
 import { HubItemsResponse } from '../useHubView';
 import { RemoteRegistry } from './RemoteRegistry';
 
-interface RemoteRegistryProps extends RemoteRegistry {
-  client_key?: string;
-  password?: string;
-  proxy_password?: string;
-  proxy_username?: string;
-  username?: string;
+interface SecredInput {
+  onClear?: (name: string) => void;
+  shouldHideField?: (name: string) => boolean;
 }
+
+interface RemoteRegistryProps extends RemoteRegistry {
+  client_key?: string | null;
+  password?: string | null;
+  proxy_password?: string | null;
+  proxy_username?: string | null;
+  username?: string | null;
+}
+const WriteOnlyFields: (
+  | 'client_key'
+  | 'password'
+  | 'proxy_password'
+  | 'proxy_username'
+  | 'username'
+)[] = ['client_key', 'password', 'proxy_password', 'proxy_username', 'username'];
 
 export function CreateRemoteRegistry() {
   const { t } = useTranslation();
@@ -72,7 +87,22 @@ export function CreateRemoteRegistry() {
   );
 }
 
+const initialRemoteRegistry: Partial<RemoteRegistryProps> = {
+  client_key: null,
+  password: null,
+  proxy_password: null,
+  proxy_username: null,
+  username: null,
+
+  write_only_fields: WriteOnlyFields.map((key) => ({
+    name: key,
+    is_set: false,
+  })),
+};
+
 export function EditRemoteRegistry() {
+  const [clear, setClear] = useState(false);
+  const { resetField } = useForm();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const params = useParams<{ id: string }>();
@@ -115,6 +145,26 @@ export function EditRemoteRegistry() {
     navigate(-1);
   };
 
+  const handleOnClear = (name: string) => {
+    resetField(name);
+    setClear(!clear);
+    if (!remoteRegistry.write_only_fields) return;
+    const index = remoteRegistry.write_only_fields.findIndex((field) => field.name === name);
+    if (index !== undefined && index > -1) {
+      remoteRegistry.write_only_fields[index].is_set = false;
+    }
+  };
+
+  const shouldHideField = (name: string) => {
+    if (!remoteRegistry.write_only_fields) return false;
+    return !!remoteRegistry.write_only_fields.find((field) => field.name === name)?.is_set;
+  };
+
+  const remoteRegistryDefaultValues = {
+    ...initialRemoteRegistry,
+    ...remoteRegistry,
+  };
+
   return (
     <PageLayout>
       <PageHeader
@@ -128,12 +178,15 @@ export function EditRemoteRegistry() {
         submitText={t('Edit remote registry')}
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
-        defaultValue={remoteRegistry}
+        defaultValue={remoteRegistryDefaultValues}
       >
-        <RemoteInputs />
+        <RemoteInputs onClear={handleOnClear} shouldHideField={shouldHideField} />
         <PageFormExpandableSection singleColumn>
-          <ProxyAdvancedRemoteInputs />
-          <CertificatesAdvancedRemoteInputs />
+          <ProxyAdvancedRemoteInputs onClear={handleOnClear} shouldHideField={shouldHideField} />
+          <CertificatesAdvancedRemoteInputs
+            onClear={handleOnClear}
+            shouldHideField={shouldHideField}
+          />
           <MiscAdvancedRemoteInputs />
         </PageFormExpandableSection>
       </HubPageForm>
@@ -141,7 +194,7 @@ export function EditRemoteRegistry() {
   );
 }
 
-function ProxyAdvancedRemoteInputs() {
+function ProxyAdvancedRemoteInputs({ onClear, shouldHideField }: SecredInput) {
   const { t } = useTranslation();
   return (
     <>
@@ -150,22 +203,36 @@ function ProxyAdvancedRemoteInputs() {
         label={t('Proxy URL')}
         placeholder={t('Enter a proxy URL')}
       />
-      <PageFormTextInput<RemoteRegistryProps>
-        name="proxy_username"
-        label={t('Proxy username')}
-        placeholder={t('Enter a proxy username')}
-      />
-      <PageFormTextInput<RemoteRegistryProps>
-        type="password"
-        name="proxy_password"
-        label={t('Proxy password')}
-        placeholder={t('Enter a proxy password')}
-      />
+      <PageFormSecret
+        onClear={() => {
+          onClear && onClear('proxy_username');
+        }}
+        shouldHideField={shouldHideField && shouldHideField('proxy_username')}
+      >
+        <PageFormTextInput<RemoteRegistryProps>
+          name="proxy_username"
+          label={t('Proxy username')}
+          placeholder={t('Enter a proxy username')}
+        />
+      </PageFormSecret>
+      <PageFormSecret
+        onClear={() => {
+          onClear && onClear('proxy_password');
+        }}
+        shouldHideField={shouldHideField && shouldHideField('proxy_password')}
+      >
+        <PageFormTextInput<RemoteRegistryProps>
+          type="password"
+          name="proxy_password"
+          label={t('Proxy password')}
+          placeholder={t('Enter a proxy password')}
+        />
+      </PageFormSecret>
     </>
   );
 }
 
-function CertificatesAdvancedRemoteInputs() {
+function CertificatesAdvancedRemoteInputs({ onClear, shouldHideField }: SecredInput) {
   const { t } = useTranslation();
   return (
     <>
@@ -175,13 +242,20 @@ function CertificatesAdvancedRemoteInputs() {
       >
         <PageFormCheckbox<RemoteRegistryProps> name="tls_validation" />
       </PageFormGroup>
-      <PageFormFileUpload
-        type="text"
-        hideDefaultPreview
-        label={t('Client key')}
-        name="client_key"
-        labelHelp={t('A PEM encoded private key used for authentication.')}
-      />
+      <PageFormSecret
+        onClear={() => {
+          onClear && onClear('client_key');
+        }}
+        shouldHideField={shouldHideField && shouldHideField('client_key')}
+      >
+        <PageFormFileUpload
+          type="text"
+          hideDefaultPreview
+          label={t('Client key')}
+          name="client_key"
+          labelHelp={t('A PEM encoded private key used for authentication.')}
+        />
+      </PageFormSecret>
       <PageFormFileUpload
         type="text"
         hideDefaultPreview
@@ -221,7 +295,7 @@ function MiscAdvancedRemoteInputs() {
   );
 }
 
-function RemoteInputs() {
+function RemoteInputs({ onClear, shouldHideField }: SecredInput) {
   const { t } = useTranslation();
   return (
     <>
@@ -238,19 +312,33 @@ function RemoteInputs() {
         labelHelp={t('The URL of an external content source.')}
         isRequired
       />
-      <PageFormTextInput<RemoteRegistryProps>
-        name="username"
-        label={t('Username')}
-        placeholder={t('Enter a username')}
-        labelHelp={t('The username to be used for authentication when syncing.')}
-      />
-      <PageFormTextInput<RemoteRegistryProps>
-        type="password"
-        name="password"
-        label={t('Password')}
-        placeholder={t('Enter a password')}
-        labelHelp={t('The password to be used for authentication when syncing.')}
-      />
+      <PageFormSecret
+        onClear={() => {
+          onClear && onClear('username');
+        }}
+        shouldHideField={shouldHideField && shouldHideField('username')}
+      >
+        <PageFormTextInput<RemoteRegistryProps>
+          name="username"
+          label={t('Username')}
+          placeholder={t('Enter a username')}
+          labelHelp={t('The username to be used for authentication when syncing.')}
+        />
+      </PageFormSecret>
+      <PageFormSecret
+        onClear={() => {
+          onClear && onClear('password');
+        }}
+        shouldHideField={shouldHideField && shouldHideField('password')}
+      >
+        <PageFormTextInput<RemoteRegistryProps>
+          type="password"
+          name="password"
+          label={t('Password')}
+          placeholder={t('Enter a password')}
+          labelHelp={t('The password to be used for authentication when syncing.')}
+        />
+      </PageFormSecret>
     </>
   );
 }
