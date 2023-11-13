@@ -42,7 +42,7 @@ export function useJobOutput(
       isQuerying.current.querying = true;
 
       void requestGet<AwxItemsResponse<JobEvent>>(
-        awxAPI`/${job.type}s/${job.id.toString()}/${eventsSlug}/?${qsParts.join('&')}`
+        awxAPI`/${job.type}s/${job.id.toString()}/${eventsSlug}/`.concat(`?${qsParts.join('&')}`)
       )
         .then((itemsResponse) => {
           if (!isJobRunning) {

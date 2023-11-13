@@ -16,7 +16,9 @@ export function PageFormProjectSelect<
 
   const openSelectDialog = useSelectProject();
   const query = useCallback(async () => {
-    const response = await requestGet<AwxItemsResponse<Project>>(awxAPI`/projects/?page_size=200`);
+    const response = await requestGet<AwxItemsResponse<Project>>(
+      awxAPI`/projects/`.concat(`?page_size=200`)
+    );
     return Promise.resolve({
       total: response.count,
       values: response.results as FieldPathValue<TFieldValues, Path<TFieldValues>>[],

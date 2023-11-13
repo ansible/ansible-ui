@@ -30,7 +30,7 @@ export function useCredentialsColumns(options?: { disableSort?: boolean; disable
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);
   const itemsResponse = useGet<AwxItemsResponse<CredentialType>>(
-    awxAPI`/credential_types/?page=1&page_size=200`
+    awxAPI`/credential_types/`.concat(`?page=1&page_size=200`)
   );
   const credentialTypesMap: { [id: number]: string } = useMemo(() => {
     if (itemsResponse?.data?.results) {
