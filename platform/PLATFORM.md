@@ -2,6 +2,15 @@
 
 The Platform UI is the unified UI for the Ansible Automation Platform. It uses the [AAP Gateway](https://github.com/ansible/aap-gateway) as the backend. The gateway unifies the API for the AAP products such as AWX, HUB, and EDA. It also provided centralized authentication and access management.
 
+```mermaid
+flowchart TD
+   ui(Platform UI) --- gateway(AAP Gateway)
+   gateway --- awx(Controller)
+   gateway --- hub(Automation HUB)
+   gateway --- eda(Event Driven Ansible)
+   awx --- aa(Ansible Analytics)
+```
+
 The Platform UI has downstream pages for authentication, access management, settings, and dashboard. The Platform UI pulls in upstream pages from AWX, HUB, EDA, and Analytics. It uses the framework support for dynamically composing the navigation and pages to create a unified experience for the Ansible Automation Platform.
 
 ## Getting Started
@@ -47,17 +56,6 @@ The Platform UI has downstream pages for authentication, access management, sett
    This will start the Platform UI in development mode.
    It will be running on <https://localhost:4100>.
    The Platform UI will talk to the gateway using the `PLATFORM_SERVER` environment variable.
-
-## Architecture
-
-```mermaid
-flowchart TD
-   ui(Platform UI) --- gateway(AAP Gateway)
-   gateway --- awx(Controller)
-   gateway --- hub(Automation HUB)
-   gateway --- eda(Event Driven Ansible)
-   awx --- aa(Ansible Analytics)
-```
 
 ## Building for Production
 
