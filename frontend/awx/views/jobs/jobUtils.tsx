@@ -6,17 +6,17 @@ import { UnifiedJob } from '../../interfaces/UnifiedJob';
 export function getJobsAPIUrl(type: string) {
   switch (type) {
     case 'ad_hoc_command':
-      return '/api/v2/ad_hoc_commands/';
+      return awxAPI`/ad_hoc_commands/`;
     case 'inventory_update':
-      return '/api/v2/inventory_updates/';
+      return awxAPI`/inventory_updates/`;
     case 'project_update':
-      return '/api/v2/project_updates/';
+      return awxAPI`/project_updates/`;
     case 'system_job':
-      return '/api/v2/system_jobs/';
+      return awxAPI`/system_jobs/`;
     case 'workflow_job':
-      return '/api/v2/workflow_jobs/';
+      return awxAPI`/workflow_jobs/`;
     default:
-      return '/api/v2/jobs/';
+      return awxAPI`/jobs/`;
   }
 }
 

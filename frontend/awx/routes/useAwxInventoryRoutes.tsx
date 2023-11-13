@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { PageNavigationItem } from '../../../framework';
 import { PageNotImplemented } from '../../../framework/PageEmptyStates/PageNotImplemented';
 import { AwxRoute } from '../AwxRoutes';
+import { awxAPI } from '../api/awx-utils';
 import { Inventories } from '../resources/inventories/Inventories';
 import { CreateInventory, EditInventory } from '../resources/inventories/InventoryForm';
 import { InventoryDetails } from '../resources/inventories/InventoryPage/InventoryDetails';
@@ -86,7 +87,7 @@ export function useAwxInventoryRoutes() {
             {
               id: AwxRoute.InventorySourceSchedules,
               path: 'schedules',
-              element: <Schedules sublistEndpoint="/api/v2/inventory_sources" />,
+              element: <Schedules sublistEndpoint={awxAPI`/inventory_sources`} />,
             },
           ],
         },

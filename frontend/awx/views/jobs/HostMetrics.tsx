@@ -3,6 +3,7 @@ import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 import { useTranslation } from 'react-i18next';
 import { HostMetric } from '../../interfaces/HostMetric';
 import { useAwxView } from '../../useAwxView';
+import { awxAPI } from '../../api/awx-utils';
 import { useHostMetricsColumns } from './hooks/useHostMetricsColumns';
 import { useHostMetricsFilters } from './hooks/useHostMetricsFilters';
 import { useHostMetricsRowActions } from './hooks/useHostMetricsRowActions';
@@ -13,7 +14,7 @@ export default function HostMetrics() {
   const toolbarFilters = useHostMetricsFilters();
   const tableColumns = useHostMetricsColumns();
   const view = useAwxView<HostMetric>({
-    url: '/api/v2/host_metrics/',
+    url: awxAPI`/host_metrics/`,
     queryParams: {
       not__deleted: 'true',
     },
