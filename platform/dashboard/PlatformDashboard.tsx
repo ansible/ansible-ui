@@ -24,6 +24,7 @@ import AnsibleRulebookIcon from '../icons/ansible-rulebook.svg';
 import AutomationControllerIcon from '../icons/automation-controller.svg';
 import AutomationMeshIcon from '../icons/automation-mesh.svg';
 import ExecutionEnvironmentBuilderIcon from '../icons/execution-environment-builder.svg';
+import { quickStarts } from './quickstarts/quickstarts';
 // import EventDrivenControllerIcon from '../icons/event-driver-controller.svg';
 // import AutomationExentutionEnvironmnentIcon from '../icons//automation-execution-environment.svg';
 
@@ -44,6 +45,16 @@ export function PlatformDashboard() {
         >
           <CardBody>
             <Gallery hasGutter minWidths={{ default: '390px' }}>
+              {quickStarts.map((quickStart) => (
+                <GalleryCard key={quickStart.metadata.name}>
+                  <GalleryCardHeader
+                    icon={quickStart.spec.icon}
+                    title={quickStart.spec.displayName}
+                    subtitle={quickStart.spec.description}
+                  />
+                  <CardBody>{quickStart.spec.description}</CardBody>
+                </GalleryCard>
+              ))}
               <GalleryCard>
                 <GalleryCardHeader
                   icon={<AnsibleContentCollectionsIcon style={iconStyle} />}
