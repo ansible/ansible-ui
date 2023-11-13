@@ -61,7 +61,7 @@ import { AwxError } from '../../awx/common/AwxError';
 import { StatusCell } from '../../common/Status';
 import { useGetRequest, useGet } from '../../common/crud/useGet';
 import { HubRoute } from '../HubRoutes';
-import { hubAPI, pulpAPI } from '../api/utils';
+import { hubAPI, pulpAPI } from '../api/formatPath';
 import { HubItemsResponse } from '../useHubView';
 import { PageSingleSelect } from './../../../framework/PageInputs/PageSingleSelect';
 import { CollectionVersionSearch } from './Collection';
