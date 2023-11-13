@@ -38,8 +38,8 @@ The Platform UI has downstream pages for authentication, access management, sett
 
 1. Setup Environment Variables
 
-   | Environment Variable | Description                            |
-   | -------------------: | -------------------------------------- |
+   | Environment Variable | Description                                    |
+   | -------------------: | ---------------------------------------------- |
    |    `PLATFORM_SERVER` | The AAP Gateway server (protocol://host:port). |
 
    ```zsh
