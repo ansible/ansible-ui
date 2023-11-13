@@ -10,7 +10,7 @@ import {
 import { PageTable } from './../../../../framework/PageTable/PageTable';
 import { usePulpView } from '../../usePulpView';
 import { AnsibleAnsibleRepositoryResponse } from './../../api-schemas/generated/AnsibleAnsibleRepositoryResponse';
-import { pulpAPI, hubAPI, hubAPIPost } from '../../api/utils';
+import { hubAPIPost } from '../../api/utils';
 import { useGetRequest } from './../../../common/crud/useGet';
 import { HubItemsResponse } from '../../useHubView';
 import { PulpItemsResponse } from '../../usePulpView';
@@ -18,6 +18,7 @@ import { parsePulpIDFromURL } from '../../api/utils';
 import { useHubContext, HubContext } from './../../useHubContext';
 import { SigningServiceResponse } from '../../api-schemas/generated/SigningServiceResponse';
 import { AwxError } from '../../../awx/common/AwxError';
+import { hubAPI, pulpAPI } from '../../api/formatPath';
 
 export function useCopyToRepository() {
   const [_, setDialog] = usePageDialog();
