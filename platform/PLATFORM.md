@@ -1,6 +1,6 @@
 # Platform UI
 
-The Plaform UI is the unified UI for the Ansible Automation Platform. It uses the [AAP Gateway](https://github.com/ansible/aap-gateway) as the backend. The gateway unified the API for the AAP products such as AWX, UB, and EDA. It also provided centralized authentication and access menegement.
+The Plaform UI is the unified UI for the Ansible Automation Platform. It uses the [AAP Gateway](https://github.com/ansible/aap-gateway) as the backend. The gateway unified the API for the AAP products such as AWX, UB, and EDA. It also provided centralized authentication and access management.
 
 ## Getting Started
 
