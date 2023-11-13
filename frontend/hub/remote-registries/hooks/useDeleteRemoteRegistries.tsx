@@ -1,9 +1,10 @@
 import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../framework';
-import { hubAPI, hubAPIDelete, parsePulpIDFromURL } from '../../api/utils';
-import { useRemoteRegistriesColumns } from './useRemoteRegistriesColumns';
-import { RemoteRegistry } from '../RemoteRegistry';
 import { nameKeyFn } from '../../../common/utils/nameKeyFn';
+import { hubAPI } from '../../api/formatPath';
+import { hubAPIDelete, parsePulpIDFromURL } from '../../api/utils';
+import { RemoteRegistry } from '../RemoteRegistry';
+import { useRemoteRegistriesColumns } from './useRemoteRegistriesColumns';
 
 export function useDeleteRemoteRegistries(onComplete: (remoteRegistry: RemoteRegistry[]) => void) {
   const { t } = useTranslation();
