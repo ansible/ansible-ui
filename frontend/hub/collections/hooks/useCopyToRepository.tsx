@@ -54,6 +54,7 @@ function CopyToRepositoryModal(props: {
   const [fixedRepositories, setFixedRepositories] = useState<Repository[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
+  const [message, setMessage] = useState<string>('');
 
   const { collection_auto_sign, require_upload_signatures } = props.context.featureFlags;
   const autoSign = collection_auto_sign && !require_upload_signatures;
@@ -120,7 +121,7 @@ function CopyToRepositoryModal(props: {
   useEffect(() => {
     async function getSelected() {
       const repos = await request(
-        hubAPI`/v3/plugin/ansible/search/collection-versions?limit=100000&name=${
+        hubAPI`/v3/plugin/ansible/search/collection-versions?limit=100&name=${
           collection.collection_version?.name || ''
         }&version=${collection.collection_version?.version || ''}`
       );
@@ -128,6 +129,14 @@ function CopyToRepositoryModal(props: {
       if (repos.data?.length > 0) {
         const reposMapped = repos.data.map((item) => item.repository || ({} as Repository));
         setFixedRepositories(reposMapped);
+      }
+
+      if (repos.meta.count > 100) {
+        setMessage(
+          t(
+            'Warning - the collection is already in more than 100 repositories, not all repositories will be preselected.'
+          )
+        );
       }
     }
 
@@ -186,6 +195,7 @@ function CopyToRepositoryModal(props: {
       ]}
       hasNoBodyWrapper
     >
+      {message}
       <PageTable<AnsibleAnsibleRepositoryResponse>
         id="hub-copy-to-repository-table"
         toolbarFilters={toolbarFilters}
