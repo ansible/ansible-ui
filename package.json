@@ -73,6 +73,7 @@
     "@babel/preset-react": "7.22.15",
     "@babel/preset-typescript": "7.23.2",
     "@patternfly/patternfly": "5.1.0",
+    "@patternfly/quickstarts": "^5.0.0",
     "@patternfly/react-charts": "7.1.1",
     "@patternfly/react-core": "5.1.1",
     "@patternfly/react-icons": "5.1.1",
