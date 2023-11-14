@@ -48,16 +48,16 @@ export function WebhookSubForm() {
     if (!webhookService) return;
     setValue(
       'related.webhook_receiver',
-      pathname.endsWith('/add')
+      pathname.endsWith('/creat')
         ? t`a new webhook url will be generated on save.`.toUpperCase()
-        : `${document.location.origin}/api/v2/job_template/${
+        : `${document.location.origin}${awxAPI`/job_template/`}${
             params.id as string
           }/${webhookService}/`
     );
   }, [webhookService, setValue, pathname, params.id, t]);
 
   const isUpdateKeyDisabled =
-    pathname.endsWith('/add') || webhookKey === 'A NEW WEBHOOK KEY WILL BE GENERATED ON SAVE.';
+    pathname.endsWith('/create') || webhookKey === 'A NEW WEBHOOK KEY WILL BE GENERATED ON SAVE.';
   return (
     <PageFormSection title={t('Webhook details')}>
       <PageFormSelect<JobTemplateForm>

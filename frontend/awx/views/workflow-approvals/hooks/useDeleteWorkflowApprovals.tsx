@@ -5,6 +5,7 @@ import { useNameColumn } from '../../../../common/columns';
 import { getItemKey, requestDelete } from '../../../../common/crud/Data';
 import { WorkflowApproval } from '../../../interfaces/WorkflowApproval';
 import { useWorkflowApprovalsColumns } from './useWorkflowApprovalsColumns';
+import { awxAPI } from '../../../api/awx-utils';
 
 export function useDeleteWorkflowApprovals(
   onComplete: (workflow_approvals: WorkflowApproval[]) => void
@@ -54,7 +55,7 @@ export function useDeleteWorkflowApprovals(
       actionColumns,
       onComplete,
       actionFn: (workflow_approval: WorkflowApproval, signal) =>
-        requestDelete(`/api/v2/workflow_approvals/${workflow_approval.id}/`, signal),
+        requestDelete(awxAPI`/workflow_approvals/${workflow_approval.id.toString()}/`, signal),
     });
   };
   return deleteWorkflowApprovals;

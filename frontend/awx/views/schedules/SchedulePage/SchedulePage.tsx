@@ -7,6 +7,7 @@ import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
 import { AwxError } from '../../../common/AwxError';
+import { awxAPI } from '../../../api/awx-utils';
 import { Schedule } from '../../../interfaces/Schedule';
 import { useSchedulesActions } from '../hooks/useSchedulesActions';
 import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
@@ -22,7 +23,7 @@ export function SchedulePage(props: {
     error,
     data: schedule,
     refresh,
-  } = useGetItem<Schedule>('/api/v2/schedules', params.schedule_id);
+  } = useGetItem<Schedule>(awxAPI`/schedules`, params.schedule_id);
   const navigate = useNavigate();
 
   const itemActions = useSchedulesActions({

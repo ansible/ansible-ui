@@ -36,7 +36,7 @@ export function CreateOrganization() {
   const postRequest = usePostRequest<{ id: number }, Organization>();
 
   const onSubmit: PageFormSubmitHandler<OrganizationFields> = async (values) => {
-    const organization = await postRequest('/api/v2/organizations/', values.organization);
+    const organization = await postRequest(awxAPI`/organizations/`, values.organization);
     const igRequests = [];
     for (const ig of values.instanceGroups || []) {
       igRequests.push(

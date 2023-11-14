@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelectDialog } from '../../../../../framework';
 import { Project } from '../../../interfaces/Project';
 import { useAwxView } from '../../../useAwxView';
+import { awxAPI } from '../../../api/awx-utils';
 import { useProjectsColumns } from './useProjectsColumns';
 import { useProjectsFilters } from './useProjectsFilters';
 
@@ -10,7 +11,7 @@ export function useSelectProjects() {
   const toolbarFilters = useProjectsFilters();
   const tableColumns = useProjectsColumns({ disableLinks: true });
   const view = useAwxView<Project>({
-    url: '/api/v2/projects/',
+    url: awxAPI`/projects/`,
     toolbarFilters,
     tableColumns,
     disableQueryString: true,

@@ -49,7 +49,7 @@ import { useInstanceActions } from './hooks/useInstanceActions';
 export function InstanceDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { error, data: instance, refresh } = useGetItem<Instance>('/api/v2/instances', params.id);
+  const { error, data: instance, refresh } = useGetItem<Instance>(awxAPI`/instances`, params.id);
   const { instanceGroups, instanceForks, handleToggleInstance, handleInstanceForksSlider } =
     useInstanceActions(params.id as string);
   const pageNavigate = usePageNavigate();

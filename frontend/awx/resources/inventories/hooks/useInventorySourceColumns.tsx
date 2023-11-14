@@ -5,7 +5,7 @@ import { RouteObj } from '../../../../common/Routes';
 import { StatusCell } from '../../../../common/Status';
 import { useDescriptionColumn, useNameColumn } from '../../../../common/columns';
 import { InventorySource } from '../../../interfaces/InventorySource';
-
+import { awxAPI } from '../../../api/awx-utils';
 import { useOptions } from '../../../../common/crud/useOptions';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 
@@ -15,7 +15,7 @@ export function useInventorySourceColumns(options?: {
 }) {
   const { t } = useTranslation();
   const { data, error, isLoading } = useOptions<OptionsResponse<ActionsResponse>>(
-    '/api/v2/inventory_sources/'
+    awxAPI`/inventory_sources/`
   );
   const pageNavigate = usePageNavigate();
   const nameClick = useCallback(

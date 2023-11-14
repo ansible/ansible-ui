@@ -172,7 +172,7 @@ export function CreateSchedule() {
   };
   const onCancel = () => navigate(-1);
   const { data, isLoading } = useGet<{ zones: string[]; links: Record<string, string> }>(
-    '/api/v2/schedules/zoneinfo/'
+    awxAPI`/schedules/zoneinfo/`
   );
 
   const timeZones = useMemo(

@@ -5,12 +5,13 @@ import { Team } from '../../../interfaces/Team';
 import { useAwxView } from '../../../useAwxView';
 import { useTeamsColumns } from './useTeamsColumns';
 import { useTeamsFilters } from './useTeamsFilters';
+import { awxAPI } from '../../../api/awx-utils';
 
 function SelectTeams(props: { title: string; onSelect: (teams: Team[]) => void }) {
   const toolbarFilters = useTeamsFilters();
   const tableColumns = useTeamsColumns({ disableLinks: true });
   const view = useAwxView<Team>({
-    url: '/api/v2/teams/',
+    url: awxAPI`/teams/`,
     toolbarFilters,
     tableColumns,
     disableQueryString: true,
