@@ -34,6 +34,7 @@ import { useSelectTeamsRemoveUsers } from '../teams/hooks/useSelectTeamsRemoveUs
 import { useDeleteUsers } from './hooks/useDeleteUsers';
 import { useUsersColumns } from './hooks/useUsersColumns';
 import { useUsersFilters } from './hooks/useUsersFilters';
+import { awxAPI } from '../../api/awx-utils';
 
 export function Users() {
   const { t } = useTranslation();
@@ -47,7 +48,7 @@ export function Users() {
 
   const tableColumns = useUsersColumns();
 
-  const view = useAwxView<User>({ url: '/api/v2/users/', toolbarFilters, tableColumns });
+  const view = useAwxView<User>({ url: awxAPI`/users/`, toolbarFilters, tableColumns });
 
   const deleteUsers = useDeleteUsers(view.unselectItemsAndRefresh);
 
@@ -56,7 +57,7 @@ export function Users() {
   const selectOrganizationsRemoveUsers = useSelectOrganizationsRemoveUsers();
   const selectTeamsRemoveUsers = useSelectTeamsRemoveUsers();
 
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/v2/users/');
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/users/`);
   const canCreateUser = Boolean(data && data.actions && data.actions['POST']);
 
   const toolbarActions = useMemo<IPageAction<User>[]>(

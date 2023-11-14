@@ -5,14 +5,14 @@ import { useTranslation } from 'react-i18next';
 import { useOptions } from '../../../../common/crud/useOptions';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { useDeleteSchedules } from './useDeleteSchedules';
-
+import { awxAPI } from '../../../api/awx-utils';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
 import { Schedule } from '../../../interfaces/Schedule';
 import { useGetSchedulCreateUrl } from './scheduleHelpers';
 
 export function useScheduleToolbarActions(
   onComplete: (schedules: Schedule[]) => void,
-  sublistEndPoint = '/api/v2/schedules/'
+  sublistEndPoint = awxAPI`/schedules/`
 ) {
   const createUrl = useGetSchedulCreateUrl(sublistEndPoint);
 

@@ -6,11 +6,12 @@ import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxError } from '../../../common/AwxError';
 import { Team } from '../../../interfaces/Team';
 import { AddRolesForm } from '../../roles/AddRolesForm';
+import { awxAPI } from '../../../api/awx-utils';
 
 export function AddRolesToTeam() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { error, data: team, refresh } = useGetItem<Team>('/api/v2/teams', params.id);
+  const { error, data: team, refresh } = useGetItem<Team>(awxAPI`/teams`, params.id);
   const navigate = useNavigate();
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;

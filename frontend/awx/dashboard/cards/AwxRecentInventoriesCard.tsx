@@ -15,6 +15,7 @@ import { AwxRoute } from '../../AwxRoutes';
 import { Inventory } from '../../interfaces/Inventory';
 import { useInventoriesColumns } from '../../resources/inventories/hooks/useInventoriesColumns';
 import { useAwxView } from '../../useAwxView';
+import { awxAPI } from '../../api/awx-utils';
 
 export function AwxRecentInventoriesCard() {
   const { t } = useTranslation();
@@ -22,7 +23,7 @@ export function AwxRecentInventoriesCard() {
   const modifiedColumn = useModifiedColumn();
 
   const view = useAwxView<Inventory>({
-    url: '/api/v2/inventories/',
+    url: awxAPI`/inventories/`,
     disableQueryString: true,
     defaultSort: 'modified',
     defaultSortDirection: 'desc',

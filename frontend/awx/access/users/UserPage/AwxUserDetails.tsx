@@ -8,11 +8,12 @@ import { Organization } from '../../../interfaces/Organization';
 import { useMemo } from 'react';
 import { useGetPageUrl } from '../../../../../framework';
 import { AwxRoute } from '../../../AwxRoutes';
+import { awxAPI } from '../../../api/awx-utils';
 
 export function AwxUserDetails() {
   const params = useParams<{ id: string }>();
   const getPageUrl = useGetPageUrl();
-  const { data: user } = useGetItem<User>('/api/v2/users', params.id);
+  const { data: user } = useGetItem<User>(awxAPI`/users`, params.id);
   const itemsResponse = useGet<AwxItemsResponse<Organization>>(
     user?.related?.organizations as string
   );

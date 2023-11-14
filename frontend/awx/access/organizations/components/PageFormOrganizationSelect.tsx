@@ -54,7 +54,7 @@ export function PageFormSelectOrganization<
   const openSelectDialog = useSelectOrganization2();
   const query = useCallback(async () => {
     const response = await requestGet<AwxItemsResponse<Organization>>(
-      awxAPI`/organizations/?page_size=200`
+      awxAPI`/organizations/`.concat(`?page_size=200`)
     );
     return Promise.resolve({
       total: response.count,

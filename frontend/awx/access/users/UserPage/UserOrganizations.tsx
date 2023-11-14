@@ -25,7 +25,7 @@ import { useSelectOrganizationsAddUsers } from '../../organizations/hooks/useSel
 
 export function UserOrganizations() {
   const params = useParams<{ id: string }>();
-  const { data: user } = useGetItem<User>('/api/v2/users', params.id);
+  const { data: user } = useGetItem<User>(awxAPI`/users`, params.id);
 
   if (!user) {
     return null;

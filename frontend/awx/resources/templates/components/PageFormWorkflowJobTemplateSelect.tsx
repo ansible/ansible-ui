@@ -22,7 +22,7 @@ export function PageFormWorkflowJobTemplateSelect<
   const openSelectDialog = useSelectWorkflowJobTemplate();
   const query = useCallback(async () => {
     const response = await requestGet<AwxItemsResponse<WorkflowJobTemplate>>(
-      awxAPI`/workflow_job_templates/?page_size=200`
+      awxAPI`/workflow_job_templates/`.concat(`?page_size=200`)
     );
 
     return Promise.resolve({

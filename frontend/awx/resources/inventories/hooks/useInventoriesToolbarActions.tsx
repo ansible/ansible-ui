@@ -10,6 +10,7 @@ import {
 } from '../../../../../framework';
 import { useOptions } from '../../../../common/crud/useOptions';
 import { AwxRoute } from '../../../AwxRoutes';
+import { awxAPI } from '../../../api/awx-utils';
 import { Inventory } from '../../../interfaces/Inventory';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { IAwxView } from '../../../useAwxView';
@@ -19,7 +20,7 @@ export function useInventoriesToolbarActions(view: IAwxView<Inventory>) {
   const { t } = useTranslation();
   const paegNavigate = usePageNavigate();
   const deleteInventories = useDeleteInventories(view.unselectItemsAndRefresh);
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/v2/inventories/');
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/inventories/`);
   const canCreateInventory = Boolean(data && data.actions && data.actions['POST']);
 
   return useMemo<IPageAction<Inventory>[]>(() => {

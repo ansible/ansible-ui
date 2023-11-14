@@ -12,6 +12,7 @@ import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { useGet, useGetItem } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
 import { AwxError } from '../../../common/AwxError';
+import { awxAPI } from '../../../api/awx-utils';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { useTemplateActions } from '../hooks/useTemplateActions';
 import { useActiveUser } from '../../../../common/useActiveUser';
@@ -30,14 +31,14 @@ export function TemplatePage() {
     data: template,
     isLoading: isTemplateLoading,
     refresh,
-  } = useGetItem<JobTemplate>('/api/v2/job_templates', params.id);
+  } = useGetItem<JobTemplate>(awxAPI`/job_templates`, params.id);
   const {
     data: isNotifAdmin,
     error: isNotifAdminError,
     refresh: refreshNotifAdmin,
     isLoading: isNotifAdminLoading,
   } = useGet<AwxItemsResponse<Organization>>(
-    '/api/v2/organizations/?role_level=notification_admin_role'
+    awxAPI`/organizations/?role_level=notification_admin_role`
   );
   const getPageUrl = useGetPageUrl();
   const pageNavigate = usePageNavigate();

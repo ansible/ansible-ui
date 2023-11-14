@@ -25,7 +25,7 @@ import { useTeamsFilters } from '../../teams/hooks/useTeamsFilters';
 
 export function UserTeams() {
   const params = useParams<{ id: string }>();
-  const { data: user } = useGetItem<User>('/api/v2/users', params.id);
+  const { data: user } = useGetItem<User>(awxAPI`/users`, params.id);
 
   if (!user) {
     return null;
@@ -45,7 +45,7 @@ function UserTeamsInternal(props: { user: User }) {
   });
   const selectTeamsAddUsers = useSelectTeamsAddUsers(view.selectItemsAndRefresh);
   const removeTeamsFromUsers = useRemoveTeamsFromUsers(view.unselectItemsAndRefresh);
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/v2/users/');
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/users/`);
   const canAddUserToTeam = Boolean(data && data.actions && data.actions['POST']);
 
   const toolbarActions = useMemo<IPageAction<Team>[]>(

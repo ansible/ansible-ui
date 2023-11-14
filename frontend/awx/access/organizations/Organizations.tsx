@@ -38,6 +38,7 @@ import {
 import { useAwxConfig } from '../../common/useAwxConfig';
 import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
 import { Organization } from '../../interfaces/Organization';
+import { awxAPI } from '../../api/awx-utils';
 import { useAwxView } from '../../useAwxView';
 import { useSelectUsersAddOrganizations } from '../users/hooks/useSelectUsersAddOrganizations';
 import { useSelectUsersRemoveOrganizations } from '../users/hooks/useSelectUsersRemoveOrganizations';
@@ -56,7 +57,7 @@ export function Organizations() {
   const tableColumns = useOrganizationsColumns();
 
   const view = useAwxView<Organization>({
-    url: '/api/v2/organizations/',
+    url: awxAPI`/organizations/`,
     toolbarFilters,
     tableColumns,
   });

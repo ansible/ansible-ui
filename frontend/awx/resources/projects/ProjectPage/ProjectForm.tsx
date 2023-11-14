@@ -94,7 +94,7 @@ export function CreateProject() {
     }
 
     // Create new project
-    const newProject = await postRequest('/api/v2/projects/', project as Project);
+    const newProject = await postRequest(awxAPI`/projects/`, project as Project);
 
     navigate(RouteObj.ProjectDetails.replace(':id', newProject.id.toString()));
   };
@@ -235,7 +235,7 @@ const scmFormFieldDefaults: { [key: string]: any } = {
 function ProjectInputs(props: { project?: Project }) {
   const { t } = useTranslation();
   const org = useWatch({ name: 'project.summary_fields.organization' }) as Organization;
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/v2/projects/');
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/projects/`);
   const scmTypeOptions = data?.actions?.GET?.scm_type?.choices;
   const credentialTypeIDs = useGetCredentialTypeIDs();
   const scmType = useWatch({ name: 'project.scm_type' }) as SCMType;

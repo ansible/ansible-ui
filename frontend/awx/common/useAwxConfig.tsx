@@ -1,6 +1,7 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { useGet } from '../../common/crud/useGet';
 import { Config } from '../interfaces/Config';
+import { awxAPI } from '../api/awx-utils';
 
 const AwxConfigContext = createContext<Config | null | undefined>(undefined);
 
@@ -14,7 +15,7 @@ export function useAwxConfig() {
 
 export function AwxConfigProvider(props: { children?: ReactNode }) {
   const [config, setConfig] = useState<Config | null | undefined>(undefined);
-  const configResponse = useGet<Config>('/api/v2/config/');
+  const configResponse = useGet<Config>(awxAPI`/config/`);
   useEffect(() => {
     if (configResponse.data) {
       setConfig(configResponse.data ?? null);

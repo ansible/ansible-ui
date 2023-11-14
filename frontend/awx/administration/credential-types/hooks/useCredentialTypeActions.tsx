@@ -14,12 +14,13 @@ import { AwxRoute } from '../../../AwxRoutes';
 import { useOptions } from '../../../../common/crud/useOptions';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { useDeleteCredentialTypes } from './useDeleteCredentialTypes';
+import { awxAPI } from '../../../api/awx-utils';
 
 export function useCredentialTypeToolbarActions(view: IAwxView<CredentialType>) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
 
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/v2/credential_types/');
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/credential_types/`);
   const canCreateCredentialType = Boolean(data && data.actions && data.actions['POST']);
 
   const deleteCredentialTypes = useDeleteCredentialTypes(view.unselectItemsAndRefresh);

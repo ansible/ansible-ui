@@ -11,6 +11,7 @@ import { useAwxConfig } from '../../common/useAwxConfig';
 import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
 import { useCallback } from 'react';
 import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
+import { awxAPI } from '../../api/awx-utils';
 
 export default function WorkflowApprovals() {
   const { t } = useTranslation();
@@ -18,7 +19,7 @@ export default function WorkflowApprovals() {
   const toolbarFilters = useWorkflowApprovalsFilters();
   const tableColumns = useWorkflowApprovalsColumns();
   const view = useAwxView<WorkflowApproval>({
-    url: '/api/v2/workflow_approvals/',
+    url: awxAPI`/workflow_approvals/`,
     toolbarFilters,
     tableColumns,
   });

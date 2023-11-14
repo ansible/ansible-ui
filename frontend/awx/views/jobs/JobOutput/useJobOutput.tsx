@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { IFilterState, IToolbarFilter } from '../../../../../framework';
 import { requestGet } from '../../../../common/crud/Data';
+import { awxAPI } from '../../../api/awx-utils';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { useAwxWebSocketSubscription } from '../../../common/useAwxWebSocket';
 import { Job } from '../../../interfaces/Job';
@@ -41,7 +42,7 @@ export function useJobOutput(
       isQuerying.current.querying = true;
 
       void requestGet<AwxItemsResponse<JobEvent>>(
-        `/api/v2/${job.type}s/${job.id.toString()}/${eventsSlug}/?${qsParts.join('&')}`
+        awxAPI`/${job.type}s/${job.id.toString()}/${eventsSlug}/`.concat(`?${qsParts.join('&')}`)
       )
         .then((itemsResponse) => {
           if (!isJobRunning) {

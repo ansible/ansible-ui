@@ -6,6 +6,7 @@ import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { AwxRoute } from '../../../AwxRoutes';
 import { useGetItem } from '../../../../common/crud/useGet';
+import { awxAPI } from '../../../api/awx-utils';
 import { AwxError } from '../../../common/AwxError';
 import { WorkflowApproval } from '../../../interfaces/WorkflowApproval';
 
@@ -16,7 +17,7 @@ export function WorkflowApprovalPage() {
     error,
     data: workflow_approval,
     refresh,
-  } = useGetItem<WorkflowApproval>('/api/v2/workflow_approvals', params.id);
+  } = useGetItem<WorkflowApproval>(awxAPI`/workflow_approvals`, params.id);
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!workflow_approval) return <LoadingPage breadcrumbs tabs />;

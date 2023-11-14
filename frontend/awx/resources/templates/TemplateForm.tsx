@@ -204,7 +204,7 @@ async function submitLabels(template: JobTemplate, labels: Label[]) {
   if (!template.summary_fields?.organization?.id) {
     // eslint-disable-next-line no-useless-catch
     try {
-      const data = await requestGet<AwxItemsResponse<Organization>>('/api/v2/organizations/');
+      const data = await requestGet<AwxItemsResponse<Organization>>(awxAPI`/organizations/`);
       orgId = data.results[0].id;
     } catch (err) {
       throw err;

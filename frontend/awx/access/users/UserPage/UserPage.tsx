@@ -21,11 +21,12 @@ import { AwxRoute } from '../../../AwxRoutes';
 import { AwxError } from '../../../common/AwxError';
 import { User } from '../../../interfaces/User';
 import { useDeleteUsers } from '../hooks/useDeleteUsers';
+import { awxAPI } from '../../../api/awx-utils';
 
 export function UserPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { error, data: user, refresh } = useGetItem<User>('/api/v2/users', params.id);
+  const { error, data: user, refresh } = useGetItem<User>(awxAPI`/users`, params.id);
   const pageNavigate = usePageNavigate();
 
   const deleteUsers = useDeleteUsers((deleted: User[]) => {

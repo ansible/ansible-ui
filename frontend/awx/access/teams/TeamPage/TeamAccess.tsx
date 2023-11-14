@@ -6,7 +6,7 @@ import { ResourceAccessList } from '../../common/ResourceAccessList';
 
 export function TeamAccess() {
   const params = useParams<{ id: string }>();
-  const { data: team } = useGetItem<Team>('/api/v2/teams', params.id);
+  const { data: team } = useGetItem<Team>(awxAPI`/teams`, params.id);
 
   return team ? <TeamAccessInner team={team} /> : null;
 }

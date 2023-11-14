@@ -3,6 +3,7 @@ import { Login } from '../common/Login';
 import type { AuthOption } from '../common/SocialAuthLogin';
 import { useGet } from '../common/crud/useGet';
 import { AwxRoute } from './AwxRoutes';
+import { awxAPI } from './api/awx-utils';
 
 type AwxAuthOptions = {
   [key: string]: {
@@ -11,7 +12,7 @@ type AwxAuthOptions = {
 };
 
 export function AwxLogin() {
-  const { data: options } = useGet<AwxAuthOptions>('/api/v2/auth/');
+  const { data: options } = useGet<AwxAuthOptions>(awxAPI`/auth/`);
   const getPageUrl = useGetPageUrl();
 
   const authOptions: AuthOption[] = [];
