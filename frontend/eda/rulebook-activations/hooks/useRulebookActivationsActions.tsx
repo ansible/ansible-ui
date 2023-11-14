@@ -1,5 +1,11 @@
 import { AlertProps, ButtonVariant } from '@patternfly/react-core';
-import { MinusCircleIcon, PlusCircleIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons';
+import {
+  MinusCircleIcon,
+  PlusCircleIcon,
+  PlusIcon,
+  RedoIcon,
+  TrashIcon,
+} from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -13,6 +19,7 @@ import { EdaRoute } from '../../EdaRoutes';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { IEdaView } from '../../useEventDrivenView';
 import { useDisableRulebookActivations } from './useControlRulebookActivations';
+import { useRestartRulebookActivations } from './useControlRulebookActivations';
 import { useDeleteRulebookActivations } from './useDeleteRulebookActivations';
 import { postRequest } from '../../../common/crud/Data';
 import { edaAPI } from '../../api/eda-utils';
@@ -22,6 +29,7 @@ export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivati
   const pageNavigate = usePageNavigate();
   const deleteRulebookActivations = useDeleteRulebookActivations(view.unselectItemsAndRefresh);
   const disableRulebookActivations = useDisableRulebookActivations(view.unselectItemsAndRefresh);
+  const restartRulebookActivations = useRestartRulebookActivations(view.unselectItemsAndRefresh);
   const alertToaster = usePageAlertToaster();
 
   const enableRulebookActivation: (activation: EdaRulebookActivation) => Promise<void> =
@@ -79,6 +87,14 @@ export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivati
           disableRulebookActivations(rulebookActivations),
       },
       {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
+        icon: RedoIcon,
+        label: t('Restart selected activations'),
+        onClick: (rulebookActivations: EdaRulebookActivation[]) =>
+          restartRulebookActivations(rulebookActivations),
+      },
+      {
         type: PageActionType.Seperator,
       },
       {
@@ -96,6 +112,7 @@ export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivati
     deleteRulebookActivations,
     enableRulebookActivations,
     disableRulebookActivations,
+    restartRulebookActivations,
     pageNavigate,
     t,
   ]);
