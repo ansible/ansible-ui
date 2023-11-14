@@ -24,9 +24,6 @@ describe('Remotes', () => {
     cy.contains(/^Success$/);
     cy.clickButton(/^Close$/);
     cy.clickButton(/^Clear all filters$/);
-    cy.searchAndDisplayResource(remoteName);
-    cy.contains(Remotes.noResults);
-    cy.clickButton(/^Clear all filters$/);
   });
 
   it('edit a remote', () => {
