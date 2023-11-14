@@ -2,7 +2,6 @@ import { Trans, useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
 import {
-  PageForm,
   PageFormSelect,
   PageFormSubmitHandler,
   PageFormTextInput,
@@ -22,6 +21,7 @@ import {
   EdaDecisionEnvironmentRead,
 } from '../../interfaces/EdaDecisionEnvironment';
 import { EdaResult } from '../../interfaces/EdaResult';
+import { EdaPageForm } from '../../EdaPageForm';
 
 function DecisionEnvironmentInputs() {
   const { t } = useTranslation();
@@ -112,14 +112,14 @@ export function CreateDecisionEnvironment() {
           { label: t('Create Decision Environment') },
         ]}
       />
-      <PageForm
+      <EdaPageForm
         submitText={t('Create decision environment')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
       >
         <DecisionEnvironmentInputs />
-      </PageForm>
+      </EdaPageForm>
     </PageLayout>
   );
 }
@@ -164,7 +164,7 @@ export function EditDecisionEnvironment() {
             { label: `${t('Edit')} ${decisionEnvironment?.name || t('Decision Environment')}` },
           ]}
         />
-        <PageForm
+        <EdaPageForm
           submitText={t('Save decision environment')}
           onSubmit={onSubmit}
           cancelText={t('Cancel')}
@@ -175,7 +175,7 @@ export function EditDecisionEnvironment() {
           }}
         >
           <DecisionEnvironmentInputs />
-        </PageForm>
+        </EdaPageForm>
       </PageLayout>
     );
   }

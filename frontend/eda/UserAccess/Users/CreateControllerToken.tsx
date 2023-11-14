@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import {
-  PageForm,
   PageFormSubmitHandler,
   PageFormTextInput,
   PageHeader,
@@ -15,6 +14,7 @@ import { useEdaActiveUser } from '../../../common/useActiveUser';
 import { EdaRoute } from '../../EdaRoutes';
 import { EdaControllerToken, EdaControllerTokenCreate } from '../../interfaces/EdaControllerToken';
 import { edaAPI } from '../../api/eda-utils';
+import { EdaPageForm } from '../../EdaPageForm';
 
 function ControllerTokenInputs() {
   const { t } = useTranslation();
@@ -80,14 +80,14 @@ export function CreateControllerToken() {
   return (
     <PageLayout>
       <PageHeader title={t('Create Controller Token')} breadcrumbs={breadcrumbs} />
-      <PageForm
+      <EdaPageForm
         submitText={t('Create controller token')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
       >
         <ControllerTokenInputs />
-      </PageForm>
+      </EdaPageForm>
     </PageLayout>
   );
 }
