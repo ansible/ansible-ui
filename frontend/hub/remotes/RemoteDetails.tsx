@@ -41,6 +41,7 @@ function useErrorHandlerAndLoading<T>(
 export function RemoteDetails() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
+  const getPageUrl = useGetPageUrl();
   const pageActions = useRemoteActions({
     onRemotesDeleted: () => pageNavigate(HubRoute.Remotes),
   });
@@ -71,8 +72,6 @@ export function RemoteDetails() {
     errorRepositories,
     refreshRepositories
   );
-
-  const getPageUrl = useGetPageUrl();
 
   if (loadingOrErrorRemotes) return loadingOrErrorRemotes;
   if (loadingOrErrorRepositories) return loadingOrErrorRepositories;
@@ -114,7 +113,6 @@ export function RemoteDetails() {
           <PageDetail label={t('Rate limit')}>
             {remote?.rate_limit?.toString() ?? t('None')}
           </PageDetail>
-
           <PageDetail label={t('Repositories')}>
             {repositories?.results?.length ? (
               <LabelGroup
