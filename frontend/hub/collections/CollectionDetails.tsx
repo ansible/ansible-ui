@@ -57,7 +57,7 @@ import {
 } from '../../../framework';
 import { PageDetail } from '../../../framework/PageDetails/PageDetail';
 import { Scrollable } from '../../../framework/components/Scrollable';
-import { AwxError } from '../../awx/common/AwxError';
+import { HubError } from '../common/HubError';
 import { StatusCell } from '../../common/Status';
 import { useGet } from '../../common/crud/useGet';
 import { HubRoute } from '../HubRoutes';
@@ -137,11 +137,11 @@ export function CollectionDetails() {
   }
 
   if (collectionsRequest.error || collections?.length == 0) {
-    return <AwxError error={collectionsRequest.error} handleRefresh={collectionsRequest.refresh} />;
+    return <HubError error={collectionsRequest.error} handleRefresh={collectionsRequest.refresh} />;
   }
 
   if (collectionsRequest.error || collectionRequest.data?.data?.length == 0) {
-    return <AwxError error={collectionRequest.error} handleRefresh={collectionRequest.refresh} />;
+    return <HubError error={collectionRequest.error} handleRefresh={collectionRequest.refresh} />;
   }
 
   if (!collectionsRequest.data || !collectionRequest.data) {
@@ -265,7 +265,7 @@ function CollectionInstallTab(props: { collection: CollectionVersionSearch }) {
     <LoadingPage breadcrumbs tabs />;
   }
   if (error) {
-    return <AwxError error={new Error(error)} />;
+    return <HubError error={new Error(error)} />;
   }
 
   return (
