@@ -22,3 +22,21 @@ export const Remotes = {
   rateLimit: '10',
   tlsValidation: 'Disabled',
 };
+
+export const RemoteRegistry = {
+  createButtonText: 'Create remote registry',
+  title: 'Remote Registries',
+  url: 'remote-registries',
+  urlCreate: '/remote-registries/create',
+  remoteURL: 'https://console.redhat.com/api/automation-hub/',
+  editRemoteURL: 'https://galaxy.ansible.com/api/',
+  noResults: 'No results found',
+  username: 'Foo',
+  password: 'Bar',
+  token: 'Baz',
+  ssoURL: 'https://sso.example.com/auth',
+  proxyURL: 'https://proxy.example.com',
+  downloadConcurrency: '5',
+  rateLimit: '10',
+  tlsValidation: 'Disabled',
+};
