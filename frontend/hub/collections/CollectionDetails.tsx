@@ -364,12 +364,19 @@ async function Download(
   }
 }
 
+type CollectionVersionsContent = {
+  count: number;
+  next: string;
+  previous: string;
+  results: unknown[];
+};
+
 function CollectionDocumentationTab(props: { collection?: CollectionVersionSearch }) {
   const { collection } = props;
 
   const [content, setContent] = useState<IContents>();
 
-  const { data, error, refresh } = useGet<CollectionVersionSearch>(
+  const { data, error, refresh } = useGet<CollectionVersionsContent>(
     pulpAPI`/content/ansible/collection_versions/?namespace=${
       collection?.collection_version?.namespace || ''
     }&name=${collection?.collection_version?.name || ''}&version=${
@@ -378,14 +385,8 @@ function CollectionDocumentationTab(props: { collection?: CollectionVersionSearc
   );
 
   if (error || data?.results?.length == 0)
-    return <AwxError error={error} handleRefresh={refresh} />;
+    return <AwxError error={new Error(error)} handleRefresh={refresh} />;
   if (!data) return <LoadingPage breadcrumbs tabs />;
-
-  const readme = useMemo(() => {
-    if (data) {
-      return data.results[0].docs_blob.collection_readme.html
-    }
-  }, [data]);
 
   const groups = useMemo(() => {
     const groups: Record<string, { name: string; contents: IContents[] }> = {};
