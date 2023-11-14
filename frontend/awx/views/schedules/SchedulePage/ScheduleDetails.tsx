@@ -5,6 +5,7 @@ import { Schedule } from '../../../interfaces/Schedule';
 import { formatDateString } from '../../../../../framework/utils/formatDateString';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { useParams } from 'react-router-dom';
+import { awxAPI } from '../../../api/awx-utils';
 import { AwxError } from '../../../common/AwxError';
 
 export function ScheduleDetails() {
@@ -14,7 +15,7 @@ export function ScheduleDetails() {
     data: schedule,
     error,
     refresh,
-  } = useGetItem<Schedule>('/api/v2/schedules/', params.schedule_id);
+  } = useGetItem<Schedule>(awxAPI`/schedules/`, params.schedule_id);
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!schedule) return <LoadingPage breadcrumbs tabs />;
   return (

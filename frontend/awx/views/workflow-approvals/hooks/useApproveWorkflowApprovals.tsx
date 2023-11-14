@@ -6,6 +6,7 @@ import { getItemKey } from '../../../../common/crud/Data';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { WorkflowApproval } from '../../../interfaces/WorkflowApproval';
 import { useWorkflowApprovalsColumns } from './useWorkflowApprovalsColumns';
+import { awxAPI } from '../../../api/awx-utils';
 
 export function useApproveWorkflowApprovals(
   onComplete: (workflow_approvals: WorkflowApproval[]) => void
@@ -67,7 +68,7 @@ export function useApproveWorkflowApprovals(
       actionColumns,
       onComplete,
       actionFn: (workflow_approval: WorkflowApproval) =>
-        postRequest(`/api/v2/workflow_approvals/${workflow_approval.id}/approve/`, {}),
+        postRequest(awxAPI`/workflow_approvals/${workflow_approval.id.toString()}/approve/`, {}),
     });
   };
   return approveWorkflowApprovals;

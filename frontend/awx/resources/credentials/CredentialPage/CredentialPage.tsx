@@ -14,11 +14,12 @@ import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
 import { Credential } from '../../../interfaces/Credential';
 import { useCredentialActions } from '../hooks/useCredentialActions';
+import { awxAPI } from '../../../api/awx-utils';
 
 export function CredentialPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { data: credential } = useGetItem<Credential>('/api/v2/credentials', params.id);
+  const { data: credential } = useGetItem<Credential>(awxAPI`/credentials`, params.id);
   const getPageUrl = useGetPageUrl();
   const pageNavigate = usePageNavigate();
   const actions = useCredentialActions({

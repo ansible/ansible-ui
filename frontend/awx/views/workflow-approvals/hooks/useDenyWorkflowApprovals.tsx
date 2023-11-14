@@ -4,6 +4,7 @@ import { compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { useNameColumn } from '../../../../common/columns';
 import { getItemKey } from '../../../../common/crud/Data';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
+import { awxAPI } from '../../../api/awx-utils';
 import { WorkflowApproval } from '../../../interfaces/WorkflowApproval';
 import { useWorkflowApprovalsColumns } from './useWorkflowApprovalsColumns';
 
@@ -67,7 +68,7 @@ export function useDenyWorkflowApprovals(
       actionColumns,
       onComplete,
       actionFn: (workflow_approval: WorkflowApproval) =>
-        postRequest(`/api/v2/workflow_approvals/${workflow_approval.id}/deny/`, {}),
+        postRequest(awxAPI`/workflow_approvals/${workflow_approval.id.toString()}/deny/`, {}),
     });
   };
   return denyWorkflowApprovals;

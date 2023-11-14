@@ -49,7 +49,7 @@ export function CreateCredential() {
     } else {
       credential.user = activeUser?.id;
     }
-    const newCredential = await postRequest('/api/v2/credentials/', credential);
+    const newCredential = await postRequest(awxAPI`/credentials/`, credential);
     navigate(RouteObj.CredentialDetails.replace(':id', newCredential.id.toString()));
   };
   return (
@@ -134,7 +134,7 @@ export function EditCredential() {
 function CredentialInputs() {
   const { t } = useTranslation();
   const itemsResponse = useGet<AwxItemsResponse<CredentialType>>(
-    '/api/v2/credential_types/?page=1&page_size=200'
+    awxAPI`/credential_types/?page=1&page_size=200`
   );
   return (
     <>

@@ -33,6 +33,7 @@ import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
 import { AwxHost } from '../../interfaces/AwxHost';
 import { useAwxView } from '../../useAwxView';
 import { useDeleteHosts } from './useDeleteHosts';
+import { awxAPI } from '../../api/awx-utils';
 
 export function Hosts() {
   const { t } = useTranslation();
@@ -40,7 +41,7 @@ export function Hosts() {
   const pageNavigate = usePageNavigate();
   const toolbarFilters = useHostsFilters();
   const tableColumns = useHostsColumns();
-  const view = useAwxView<AwxHost>({ url: '/api/v2/hosts/', toolbarFilters, tableColumns });
+  const view = useAwxView<AwxHost>({ url: awxAPI`/hosts/`, toolbarFilters, tableColumns });
   const deleteHosts = useDeleteHosts(view.unselectItemsAndRefresh);
   const config = useAwxConfig();
 

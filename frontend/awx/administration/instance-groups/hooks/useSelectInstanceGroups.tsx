@@ -4,6 +4,7 @@ import { useSelectDialog } from '../../../../../framework';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { useAwxView } from '../../../useAwxView';
 import { useInstanceGroupsColumns, useInstanceGroupsFilters } from '../InstanceGroups';
+import { awxAPI } from '../../../api/awx-utils';
 
 export function useSelectInstanceGroups(isLookup: boolean) {
   const { t } = useTranslation();
@@ -17,7 +18,7 @@ export function useSelectInstanceGroups(isLookup: boolean) {
     [isLookup, tableColumns]
   );
   const view = useAwxView<InstanceGroup>({
-    url: '/api/v2/instance_groups/',
+    url: awxAPI`/instance_groups/`,
     toolbarFilters,
     tableColumns: columns,
     disableQueryString: true,

@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { SelectSingleDialog } from '../../../../../framework/PageDialogs/SelectSingleDialog';
 import { useAwxView } from '../../../useAwxView';
+import { awxAPI } from '../../../api/awx-utils';
 import { useInventorySourceColumns } from './useInventorySourceColumns';
 import { useInventorySourceFilters } from './useInventorySourceFilters';
 import { usePageDialog } from '../../../../../framework';
@@ -14,7 +15,7 @@ function SelectInventorySource(props: {
   const toolbarFilters = useInventorySourceFilters();
   const tableColumns = useInventorySourceColumns({ disableLinks: true });
   const view = useAwxView<InventorySource>({
-    url: '/api/v2/inventories/',
+    url: awxAPI`/inventories/`,
     toolbarFilters,
     tableColumns,
     disableQueryString: true,

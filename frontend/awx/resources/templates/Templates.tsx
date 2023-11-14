@@ -18,6 +18,7 @@ import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
 import { JobTemplate } from '../../interfaces/JobTemplate';
 import { WorkflowJobTemplate } from '../../interfaces/WorkflowJobTemplate';
 import { useAwxView } from '../../useAwxView';
+import { awxAPI } from '../../api/awx-utils';
 import { useDeleteTemplates } from './hooks/useDeleteTemplates';
 import { useTemplateColumns } from './hooks/useTemplateColumns';
 import { useTemplateFilters } from './hooks/useTemplateFilters';
@@ -29,7 +30,7 @@ export function Templates() {
   const toolbarFilters = useTemplateFilters();
   const tableColumns = useTemplateColumns();
   const view = useAwxView<JobTemplate | WorkflowJobTemplate>({
-    url: '/api/v2/unified_job_templates/',
+    url: awxAPI`/unified_job_templates/`,
     toolbarFilters,
     tableColumns,
     queryParams: {

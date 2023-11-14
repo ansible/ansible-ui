@@ -30,7 +30,7 @@ function useInstanceGroups(orgId: string) {
 export function OrganizationDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { data: organization } = useGetItem<Organization>('/api/v2/organizations/', params.id);
+  const { data: organization } = useGetItem<Organization>(awxAPI`/organizations/`, params.id);
   const history = useNavigate();
   const getPageUrl = useGetPageUrl();
 

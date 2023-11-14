@@ -22,6 +22,7 @@ import { AwxRoute } from '../../../AwxRoutes';
 import { AwxError } from '../../../common/AwxError';
 import { Organization } from '../../../interfaces/Organization';
 import { useDeleteOrganizations } from '../hooks/useDeleteOrganizations';
+import { awxAPI } from '../../../api/awx-utils';
 
 export function OrganizationPage() {
   const { t } = useTranslation();
@@ -30,7 +31,7 @@ export function OrganizationPage() {
     data: organization,
     error,
     refresh,
-  } = useGetItem<Organization>('/api/v2/organizations/', params.id);
+  } = useGetItem<Organization>(awxAPI`/organizations/`, params.id);
   const pageNavigate = usePageNavigate();
 
   const deleteOrganizations = useDeleteOrganizations((deleted: Organization[]) => {

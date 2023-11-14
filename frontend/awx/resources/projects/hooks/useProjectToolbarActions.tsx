@@ -10,6 +10,7 @@ import {
 } from '../../../../../framework';
 import { useOptions } from '../../../../common/crud/useOptions';
 import { AwxRoute } from '../../../AwxRoutes';
+import { awxAPI } from '../../../api/awx-utils';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { Project } from '../../../interfaces/Project';
 import { useCancelProjects } from './useCancelProjects';
@@ -18,7 +19,7 @@ import { useDeleteProjects } from './useDeleteProjects';
 export function useProjectToolbarActions(onComplete: (projects: Project[]) => void) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/v2/projects/');
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/projects/`);
   const canCreateProject = Boolean(data && data.actions && data.actions['POST']);
 
   const deleteProjects = useDeleteProjects(onComplete);

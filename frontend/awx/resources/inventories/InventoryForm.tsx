@@ -52,7 +52,7 @@ export function CreateInventory() {
   const onSubmit: PageFormSubmitHandler<InventoryFields> = async (values) => {
     const { organization, labels, instanceGroups, ...rest } = values;
 
-    const newInventory = await postRequest('/api/v2/inventories/', {
+    const newInventory = await postRequest(awxAPI`/inventories/`, {
       ...rest,
       organization: organization.id,
     });

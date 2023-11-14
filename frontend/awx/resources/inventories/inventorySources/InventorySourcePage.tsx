@@ -11,6 +11,7 @@ import { useParams } from 'react-router-dom';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { useInventorySourceActions } from '../hooks/useInventorySourceActions';
 import { AwxRoute } from '../../../AwxRoutes';
+import { awxAPI } from '../../../api/awx-utils';
 import { InventorySource } from '../../../interfaces/InventorySource';
 import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
@@ -23,7 +24,7 @@ export function InventorySourcePage() {
     data: inventorySource,
     error,
     refresh,
-  } = useGetItem<InventorySource>('/api/v2/inventory_sources/', params.source_id);
+  } = useGetItem<InventorySource>(awxAPI`/inventory_sources/`, params.source_id);
   const pageNavigate = usePageNavigate();
   const getPageUrl = useGetPageUrl();
   const itemActions = useInventorySourceActions({

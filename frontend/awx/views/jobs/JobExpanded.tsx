@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { PageDetail, PageDetails } from '../../../../framework';
 import { RouteObj } from '../../../common/Routes';
+import { awxAPI } from '../../api/awx-utils';
 import { useOptions } from '../../../common/crud/useOptions';
 import { CredentialLabel } from '../../common/CredentialLabel';
 import { ExecutionEnvironmentDetail } from '../../common/ExecutionEnvironmentDetail';
@@ -17,7 +18,7 @@ export function JobExpanded(job: UnifiedJob) {
     [job]
   );
   const { t } = useTranslation();
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/v2/inventory_sources/');
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/inventory_sources/`);
   const inventorySourceChoices = useMemo(
     () =>
       data &&
