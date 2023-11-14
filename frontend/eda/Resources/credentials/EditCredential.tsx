@@ -2,7 +2,6 @@ import { TFunction, useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
 import {
-  PageForm,
   PageFormSelect,
   PageFormSubmitHandler,
   PageFormTextInput,
@@ -18,6 +17,7 @@ import { EdaRoute } from '../../EdaRoutes';
 import { edaAPI } from '../../api/eda-utils';
 import { EdaCredential, EdaCredentialCreate } from '../../interfaces/EdaCredential';
 import { CredentialTypeEnum } from '../../interfaces/generated/eda-api';
+import { EdaPageForm } from '../../EdaPageForm';
 
 export function CredentialOptions(t: TFunction<'translation'>) {
   return [
@@ -118,14 +118,14 @@ export function CreateCredential() {
           { label: t('Create Credential') },
         ]}
       />
-      <PageForm
+      <EdaPageForm
         submitText={t('Create credential')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
       >
         <CredentialInputs />
-      </PageForm>
+      </EdaPageForm>
     </PageLayout>
   );
 }
@@ -169,7 +169,7 @@ export function EditCredential() {
             { label: `${t('Edit')} ${credential?.name || t('Credential')}` },
           ]}
         />
-        <PageForm
+        <EdaPageForm
           submitText={t('Save credential')}
           onSubmit={onSubmit}
           cancelText={t('Cancel')}
@@ -177,7 +177,7 @@ export function EditCredential() {
           defaultValue={credential}
         >
           <CredentialInputs />
-        </PageForm>
+        </EdaPageForm>
       </PageLayout>
     );
   }

@@ -12,7 +12,7 @@ const EDA_HOST = process.env.EDA_HOST || 'localhost:8000';
 const EDA_SERVER =
   process.env.EDA_SERVER || process.env.CYPRESS_EDA_SERVER || `${EDA_PROTOCOL}://${EDA_HOST}`;
 const EDA_USERNAME = process.env.EDA_USERNAME || process.env.CYPRESS_EDA_USERNAME || 'admin';
-const EDA_PASSWORD = process.env.EDA_PASSWORD || process.env.CYPRESS_EDA_PASSWORD || 'password';
+const EDA_PASSWORD = process.env.EDA_PASSWORD || process.env.CYPRESS_EDA_PASSWORD || 'testpass';
 const EDA_API_PREFIX = process.env.EDA_API_PREFIX || '/api/eda/v1';
 const EDA_ROUTE_PREFIX = process.env.EDA_ROUTE_PREFIX || '/eda';
 
