@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
-  PageForm,
   PageFormSubmitHandler,
   PageFormTextInput,
   PageHeader,
@@ -16,6 +15,7 @@ import { useInvalidateCacheOnUnmount } from '../../../common/useInvalidateCache'
 import { EdaRoute } from '../../EdaRoutes';
 import { edaAPI } from '../../api/eda-utils';
 import { EdaRole } from '../../interfaces/EdaRole';
+import { EdaPageForm } from '../../EdaPageForm';
 
 export function EditRole() {
   const { t } = useTranslation();
@@ -64,7 +64,7 @@ export function EditRole() {
               { label: t('Edit Role') },
             ]}
           />
-          <PageForm<EdaRole>
+          <EdaPageForm<EdaRole>
             submitText={t('Save role')}
             onSubmit={onSubmit}
             cancelText={t('Cancel')}
@@ -73,7 +73,7 @@ export function EditRole() {
           >
             <PageFormTextInput<EdaRole> name="name" label={t('Name')} isRequired />
             <PageFormTextInput<EdaRole> name="description" label={t('Description')} />
-          </PageForm>
+          </EdaPageForm>
         </PageLayout>
       );
     }
@@ -87,7 +87,7 @@ export function EditRole() {
             { label: t('Create Role') },
           ]}
         />
-        <PageForm<EdaRole>
+        <EdaPageForm<EdaRole>
           submitText={t('Create role')}
           onSubmit={onSubmit}
           cancelText={t('Cancel')}
@@ -95,7 +95,7 @@ export function EditRole() {
         >
           <PageFormTextInput<EdaRole> name="name" label={t('Name')} isRequired />
           <PageFormTextInput<EdaRole> name="description" label={t('Description')} />
-        </PageForm>
+        </EdaPageForm>
       </PageLayout>
     );
   }

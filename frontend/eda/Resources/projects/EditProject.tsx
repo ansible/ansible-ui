@@ -2,7 +2,6 @@ import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
 import {
-  PageForm,
   PageFormCheckbox,
   PageFormSelect,
   PageFormSubmitHandler,
@@ -22,6 +21,7 @@ import { edaAPI } from '../../api/eda-utils';
 import { EdaCredential } from '../../interfaces/EdaCredential';
 import { EdaProject, EdaProjectCreate, EdaProjectRead } from '../../interfaces/EdaProject';
 import { EdaResult } from '../../interfaces/EdaResult';
+import { EdaPageForm } from '../../EdaPageForm';
 
 function ProjectCreateInputs() {
   const { t } = useTranslation();
@@ -174,7 +174,7 @@ export function CreateProject() {
           { label: t('Create Project') },
         ]}
       />
-      <PageForm
+      <EdaPageForm
         submitText={t('Create project')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
@@ -182,7 +182,7 @@ export function CreateProject() {
         defaultValue={{ ...defaultValues }}
       >
         <ProjectCreateInputs />
-      </PageForm>
+      </EdaPageForm>
     </PageLayout>
   );
 }
@@ -225,7 +225,7 @@ export function EditProject() {
             { label: `${t('Edit')} ${project?.name || t('Project')}` },
           ]}
         />
-        <PageForm
+        <EdaPageForm
           submitText={t('Save project')}
           onSubmit={onSubmit}
           cancelText={t('Cancel')}
@@ -233,7 +233,7 @@ export function EditProject() {
           defaultValue={{ ...project, credential_id: project?.credential?.id }}
         >
           <ProjectEditInputs />
-        </PageForm>
+        </EdaPageForm>
       </PageLayout>
     );
   }
