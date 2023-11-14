@@ -25,10 +25,10 @@
       "modified_at": "2023-10-02T13:34:28.742952Z"
     },
     {
-      "id": 11,
+      "id": 2,
       "name": "Activation 2",
       "description": "",
-      "is_enabled": true,
+      "is_enabled": false,
       "status": "completed",
       "decision_environment_id": 1,
       "project_id": 1,

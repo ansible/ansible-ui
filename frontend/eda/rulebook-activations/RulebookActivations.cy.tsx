@@ -9,7 +9,6 @@ describe('RulebookActivations.cy.ts', () => {
         fixture: 'edaRulebookActivations.json',
       }
     );
-
     cy.intercept(
       { method: 'GET', url: edaAPI`/activations/?page=2&page_size=10` },
       {
@@ -113,6 +112,41 @@ describe('RulebookActivations.cy.ts', () => {
     cy.contains('th', 'Number of rules');
     cy.contains('th', 'Fire count');
     cy.contains('th', 'Restart count');
+  });
+
+  it('can restart a Rulebook Activation from the line item in list view', () => {
+    cy.mount(<RulebookActivations />);
+    cy.get('[data-cy="row-id-1"] > [data-cy="checkbox-column-cell"]').click();
+    cy.get('[data-cy="actions-dropdown"]').first().click();
+    cy.get('[data-cy="restart-selected-activations"]').click();
+    cy.get('div[role="dialog"]').within(() => {
+      cy.get('.pf-v5-c-check__label').should(
+        'contain',
+        `Yes, I confirm that I want to restart these`
+      );
+      cy.contains('Activation 1');
+      cy.get('input[id="confirm"]').click();
+      cy.get('button').contains('Restart rulebook activations').click();
+    });
+    cy.clickButton(/^Close$/);
+  });
+
+  it('can disable a Rulebook Activation from the line item in list view', () => {
+    cy.mount(<RulebookActivations />);
+    cy.intercept({ method: 'POST', url: edaAPI`/activations/2/disable/` });
+    cy.get('[data-cy="row-id-1"] > [data-cy="checkbox-column-cell"]').click();
+    cy.get('[data-cy="actions-dropdown"]').first().click();
+    cy.get('[data-cy="disable-selected-activations"]').click();
+    cy.get('div[role="dialog"]').within(() => {
+      cy.get('.pf-v5-c-check__label').should(
+        'contain',
+        `Yes, I confirm that I want to disable these`
+      );
+      cy.contains('Activation 1');
+      cy.get('input[id="confirm"]').click();
+      cy.get('button').contains('Disable rulebook activations').click();
+    });
+    cy.clickButton(/^Close$/);
   });
 });
 
