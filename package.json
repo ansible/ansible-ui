@@ -174,7 +174,6 @@
     "pino-zen": "2.0.8",
     "prettier": "3.0.3",
     "ts-node": "10.9.1",
-    "wait-on": "7.1.0",
     "webpack-dev-server": "4.15.1"
   },
   "nyc": {
