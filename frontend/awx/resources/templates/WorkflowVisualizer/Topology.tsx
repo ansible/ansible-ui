@@ -60,7 +60,7 @@ export const Topology = ({
   const visualization = visualizationRef.current;
 
   const nodeContextMenu = NodeContextMenu();
-  const baselineComponentFactory: ComponentFactory = useCallback(
+  const baselineComponentFactory = useCallback(
     (kind: ModelKind, type: string) => {
       switch (type) {
         case 'group':
@@ -92,13 +92,16 @@ export const Topology = ({
   const createVisualization = useCallback(() => {
     const newVisualization = new Visualization();
     newVisualization.setFitToScreenOnLayout(true);
-    newVisualization.registerComponentFactory(baselineComponentFactory);
+    newVisualization.registerComponentFactory(baselineComponentFactory as ComponentFactory);
     newVisualization.registerLayoutFactory(
       (type: string, graph: Graph) =>
         new DagreLayout(graph, {
+          edgesep: 100,
+          marginx: 20,
+          marginy: 20,
           rankdir: 'LR',
-          ranker: 'network-simplex',
-          ranksep: 150,
+          ranker: 'longest-path',
+          ranksep: 200,
         })
     );
     newVisualization.fromModel(graphModel, false);

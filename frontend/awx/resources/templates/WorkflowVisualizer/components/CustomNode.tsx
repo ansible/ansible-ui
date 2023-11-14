@@ -45,6 +45,7 @@ export const CustomNode: FC<
       onSelect={onSelect}
       selected={selected}
       showStatusDecorator
+      truncateLength={20}
       {...rest}
     >
       <g transform={`translate(13, 13)`}>
