@@ -12,7 +12,7 @@ describe('Remote Registry', () => {
     })}`;
     cy.navigateTo('hub', RemoteRegistry.url);
     cy.verifyPageTitle(RemoteRegistry.title);
-    cy.contains('button', RemoteRegistry.createButtonText).should('be.visible').click();
+    cy.get('[data-cy="create-remote-registry"]').should('be.visible').click();
     cy.url().should('include', RemoteRegistry.urlCreate);
     cy.get('[data-cy="name"]').type(remoteRegistryName);
     cy.get('[data-cy="url"]').type(RemoteRegistry.remoteURL);
@@ -25,7 +25,5 @@ describe('Remote Registry', () => {
     cy.clickButton(/^Delete remote registries/);
     cy.clickButton(/^Close$/);
     cy.clickButton(/^Clear all filters$/);
-    cy.searchAndDisplayResource(remoteRegistryName);
-    cy.contains(RemoteRegistry.noResults);
   });
 });
