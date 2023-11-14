@@ -6,7 +6,7 @@ import {
   useAsyncMultiSelectFilterBuilder,
   AsyncSelectFilterBuilderProps,
 } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSelectFilterBuilder';
-import { hubAPI } from '../../api/utils';
+import { hubAPI } from './../../api/formatPath';
 import { useHubView } from '../../useHubView';
 
 function useParameters(): AsyncSelectFilterBuilderProps<Registry> {

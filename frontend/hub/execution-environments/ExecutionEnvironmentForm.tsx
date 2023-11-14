@@ -13,7 +13,8 @@ import { Button, InputGroup, Label, LabelGroup, TextInput } from '@patternfly/re
 import { PageFormGroup } from '../../../framework/PageForm/Inputs/PageFormGroup';
 import { useGet } from '../../common/crud/useGet';
 import { HubRoute } from '../HubRoutes';
-import { hubAPI, hubAPIPost, pulpAPI } from '../api/utils';
+import { hubAPI, pulpAPI } from '../api/formatPath';
+import { hubAPIPost } from '../api/utils';
 import { ExecutionEnvironment } from './ExecutionEnvironment';
 import { HubPageForm } from '../HubPageForm';
 import { HubItemsResponse } from '../useHubView';
