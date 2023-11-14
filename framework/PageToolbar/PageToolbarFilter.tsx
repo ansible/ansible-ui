@@ -190,7 +190,8 @@ export function PageToolbarFilters(props: PageToolbarFiltersProps) {
                   switch (filter.type) {
                     case ToolbarFilterType.SingleSelect:
                     case ToolbarFilterType.MultiSelect:
-                      value = filter.options.find((o) => o.value === value)?.label ?? value;
+                      // The value is a label, we need to get the real value from the option
+                      value = filter.options.find((o) => o.label === value)?.value ?? value;
                       break;
                   }
                   let values = filters[filter.key];
