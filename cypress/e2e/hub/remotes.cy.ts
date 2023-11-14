@@ -1,18 +1,14 @@
 import { randomString } from '../../../framework/utils/random-string';
 import { Remotes } from './constants';
 
-const remoteName = `test-remote-${randomString(5, undefined, { isLowercase: true })}`;
-
 describe('Remotes', () => {
   before(() => {
     cy.hubLogin();
   });
 
-  beforeEach(() => {
-    cy.navigateTo('hub', 'remotes');
-  });
-
   it('create, search and delete a remote', () => {
+    cy.navigateTo('hub', 'remotes');
+    const remoteName = `test-remote-${randomString(5, undefined, { isLowercase: true })}`;
     cy.get('h1').should('contain', Remotes.title);
     cy.get('[data-cy="create-remote"]').should('be.visible').click();
     cy.url().should('include', Remotes.urlCreate);
@@ -30,9 +26,12 @@ describe('Remotes', () => {
     cy.clickButton(/^Clear all filters$/);
     cy.searchAndDisplayResource(remoteName);
     cy.contains(Remotes.noResults);
+    cy.clickButton(/^Clear all filters$/);
   });
 
   it('edit a remote', () => {
+    cy.navigateTo('hub', 'remotes');
+    const remoteName = `test-remote-${randomString(5, undefined, { isLowercase: true })}`;
     cy.get('[data-cy="create-remote"]').should('be.visible').click();
     cy.url().should('include', Remotes.urlCreate);
     cy.get('[data-cy="name"]').type(remoteName);
@@ -64,5 +63,14 @@ describe('Remotes', () => {
     cy.get('[data-cy="tls-validation"]').should('contain', Remotes.tlsValidation);
     cy.get('[data-cy="rate-limit"]').should('contain', Remotes.rateLimit);
     cy.get('[data-cy="download-concurrency"]').should('contain', Remotes.downloadConcurrency);
+
+    // Delete the edited remote
+    cy.get('[data-cy="actions-dropdown"]').click();
+    cy.get('[data-cy="delete-remote"]').click();
+    cy.get('#confirm').click();
+    cy.clickButton(/^Delete remote/);
+    cy.searchAndDisplayResource(remoteName);
+    cy.contains(Remotes.noResults);
+    cy.clickButton(/^Clear all filters$/);
   });
 });
