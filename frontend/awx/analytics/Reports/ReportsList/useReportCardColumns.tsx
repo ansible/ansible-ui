@@ -24,11 +24,10 @@ export function useReportCardColumns() {
         header: t('Description'),
         type: 'description',
         value: (report) => report.description,
-        sort: 'description',
         card: 'description',
       },
       {
-        header: t('Tags'),
+        header: t('Tags count'),
         type: 'labels',
         value: (report) => report.tags,
         sort: 'tags',
