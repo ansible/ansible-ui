@@ -7,11 +7,12 @@ import { Organization } from '../../../interfaces/Organization';
 import { useMemo } from 'react';
 import { useGetPageUrl } from '../../../../framework';
 import { PlatformRoute } from '../../../PlatformRoutes';
+import { gatewayAPI } from '../../../api/gateway-api-utils';
 
 export function PlatformUserDetails() {
   const params = useParams<{ id: string }>();
   const getPageUrl = useGetPageUrl();
-  const { data: user } = useGetItem<User>('/api/gateway/v1/users', params.id);
+  const { data: user } = useGetItem<User>(gatewayAPI`/v1/users`, params.id);
   const itemsResponse = useGet<PlatformItemsResponse<Organization>>(
     user?.related?.organizations as string
   );

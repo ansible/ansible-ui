@@ -19,11 +19,12 @@ import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { EditIcon, TrashIcon } from '@patternfly/react-icons';
 import { AwxError } from '../../../../frontend/awx/common/AwxError';
 import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
+import { gatewayAPI } from '../../../api/gateway-api-utils';
 
 export function UserPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { error, data: user, refresh } = useGetItem<User>('/api/gateway/v1/users', params.id);
+  const { error, data: user, refresh } = useGetItem<User>(gatewayAPI`/v1/users`, params.id);
   const getPageUrl = useGetPageUrl();
 
   const itemActions: IPageAction<User>[] = useMemo(() => {

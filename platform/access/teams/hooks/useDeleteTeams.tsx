@@ -5,6 +5,7 @@ import { compareStrings, useBulkConfirmation } from '../../../../framework';
 import { getItemKey, requestDelete } from '../../../../frontend/common/crud/Data';
 import { useTeamColumns } from './useTeamColumns';
 import { useNameColumn } from '../../../../frontend/common/columns';
+import { gatewayAPI } from '../../../api/gateway-api-utils';
 
 export function useDeleteTeams(onComplete: (teams: Team[]) => void) {
   const { t } = useTranslation();
@@ -51,7 +52,8 @@ export function useDeleteTeams(onComplete: (teams: Team[]) => void) {
       confirmationColumns,
       actionColumns,
       onComplete,
-      actionFn: (team: Team, signal) => requestDelete(`/api/gateway/v1/teams/${team.id}/`, signal),
+      actionFn: (team: Team, signal) =>
+        requestDelete(gatewayAPI`/v1/teams/${team.id.toString()}/`, signal),
     });
   };
   return deleteTeams;

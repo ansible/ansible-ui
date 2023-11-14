@@ -1,4 +1,7 @@
 const webpackConfig = require('../webpack/webpack.config');
+const webpack = require('webpack');
+
+const GATEWAY_API_PREFIX = process.env.GATEWAY_API_PREFIX || '/api/gateway';
 
 const PLATFORM_SERVER = process.env.PLATFORM_SERVER || 'https://localhost:443';
 
@@ -35,6 +38,12 @@ module.exports = function (env, argv) {
       changeOrigin: true,
     },
   };
+
+  config.plugins.push(
+    new webpack.DefinePlugin({
+      'process.env.GATEWAY_API_PREFIX': JSON.stringify(GATEWAY_API_PREFIX),
+    })
+  );
   return config;
 };
 

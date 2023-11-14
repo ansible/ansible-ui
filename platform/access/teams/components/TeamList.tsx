@@ -12,6 +12,7 @@ import {
   OptionsResponse,
 } from '../../../../frontend/awx/interfaces/OptionsResponse';
 import { useOptions } from '../../../../frontend/common/crud/useOptions';
+import { gatewayAPI } from '../../../api/gateway-api-utils';
 
 export function TeamList() {
   const { t } = useTranslation();
@@ -20,12 +21,12 @@ export function TeamList() {
   const pageNavigate = usePageNavigate();
 
   const view = usePlatformView<Team>({
-    url: '/api/gateway/v1/teams',
+    url: gatewayAPI`/v1/teams`,
     toolbarFilters,
     tableColumns,
   });
 
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/gateway/v1/teams');
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/v1/teams`);
   const canCreateTeam = Boolean(data && data.actions && data.actions['POST']);
   const toolbarActions = useTeamToolbarActions(view);
   const rowActions = useTeamRowActions(view);
