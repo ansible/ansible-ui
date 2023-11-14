@@ -21,6 +21,7 @@ import { AwxRoute } from '../../AwxRoutes';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { useAwxView } from '../../useAwxView';
 import { useDeleteInstanceGroups } from './hooks/useDeleteInstanceGroups';
+import { awxAPI } from '../../api/awx-utils';
 
 export function InstanceGroups() {
   const { t } = useTranslation();
@@ -28,7 +29,7 @@ export function InstanceGroups() {
   const toolbarFilters = useInstanceGroupsFilters();
   const tableColumns = useInstanceGroupsColumns();
   const view = useAwxView({
-    url: '/api/v2/instance_groups/',
+    url: awxAPI`/instance_groups/`,
     toolbarFilters,
     tableColumns,
   });

@@ -35,7 +35,7 @@ export default function SubscriptionUsage() {
   const { t } = useTranslation();
   const toolbarFilters = useSubscriptionUsageFilters();
   const [dateRange, setDateRange] = useState<IFilterState>({ dateRange: ['year'] });
-  const systemData = useGet<Settings>('/api/v2/settings/system/');
+  const systemData = useGet<Settings>(awxAPI`/settings/system/`);
   const { data } = useGet<ISubscriptionUsageChartData>(awxAPI`/host_metric_summary_monthly/`);
 
   return (

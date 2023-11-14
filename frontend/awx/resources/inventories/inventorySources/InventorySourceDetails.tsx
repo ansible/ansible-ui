@@ -21,6 +21,7 @@ import { useVerbosityString } from '../../../common/useVerbosityString';
 import { InventorySource } from '../../../interfaces/InventorySource';
 import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
 import { AwxRoute } from '../../../AwxRoutes';
+import { awxAPI } from '../../../api/awx-utils';
 import { StandardPopover } from '../../../../../framework/components/StandardPopover';
 import { StatusLabel } from '../../../../common/Status';
 import { useOptions } from '../../../../common/crud/useOptions';
@@ -45,8 +46,8 @@ export function InventorySourceDetails() {
     data: inventorySource,
     error,
     refresh,
-  } = useGetItem<InventorySource>('/api/v2/inventory_sources/', params.source_id);
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/v2/inventory_sources/');
+  } = useGetItem<InventorySource>(awxAPI`/inventory_sources/`, params.source_id);
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/inventory_sources/`);
   const handleWebSocketMessage = useCallback(
     (message?: { group_name?: string; type?: string }) => {
       switch (message?.group_name) {

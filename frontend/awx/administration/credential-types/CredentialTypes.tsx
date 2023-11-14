@@ -14,6 +14,7 @@ import { CubesIcon } from '@patternfly/react-icons';
 import { AwxRoute } from '../../AwxRoutes';
 import { useOptions } from '../../../common/crud/useOptions';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
+import { awxAPI } from '../../api/awx-utils';
 
 export function CredentialTypes() {
   const { t } = useTranslation();
@@ -23,7 +24,7 @@ export function CredentialTypes() {
   const pageNavigate = usePageNavigate();
 
   const view = useAwxView<CredentialType>({
-    url: '/api/v2/credential_types/',
+    url: awxAPI`/credential_types/`,
     toolbarFilters,
     tableColumns,
   });
@@ -31,7 +32,7 @@ export function CredentialTypes() {
   const toolbarActions = useCredentialTypeToolbarActions(view);
   const rowActions = useCredentialTypeRowActions(view);
 
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/v2/credential_types/');
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/credential_types/`);
   const canCreateCredentialType = Boolean(data && data.actions && data.actions['POST']);
 
   return (

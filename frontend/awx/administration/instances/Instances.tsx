@@ -6,13 +6,14 @@ import { useInstanceRowActions } from './hooks/useInstanceRowActions';
 import { useInstanceToolbarActions } from './hooks/useInstanceToolbarActions';
 import { useInstancesColumns } from './hooks/useInstancesColumns';
 import { useInstancesFilters } from './hooks/useInstancesFilter';
+import { awxAPI } from '../../api/awx-utils';
 
 export function Instances() {
   const { t } = useTranslation();
   const toolbarFilters = useInstancesFilters();
   const tableColumns = useInstancesColumns();
   const view = useAwxView<Instance>({
-    url: '/api/v2/instances/',
+    url: awxAPI`/instances/`,
     toolbarFilters,
     tableColumns,
   });

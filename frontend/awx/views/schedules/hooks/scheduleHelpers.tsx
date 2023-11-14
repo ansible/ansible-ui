@@ -22,6 +22,7 @@ import { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
 import { Project } from '../../../interfaces/Project';
 import { ScheduleFormFields } from '../../../interfaces/ScheduleFormFields';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
+import { awxAPI } from '../../../api/awx-utils';
 import { PageFormCredentialSelect } from '../../../resources/credentials/components/PageFormCredentialSelect';
 import { PageFormInventorySelect } from '../../../resources/inventories/components/PageFormInventorySelect';
 
@@ -32,10 +33,10 @@ export const resourceSchedulePageRoutes: { [key: string]: string } = {
   projects: RouteObj.ProjectSchedulePage,
 };
 export const resourceEndPoints: { [key: string]: string } = {
-  inventory: '/api/v2/inventories/',
-  projects: '/api/v2/projects/',
-  job_template: '/api/v2/job_templates/',
-  workflow_job_template: '/api/v2/workflow_job_templates/',
+  inventory: awxAPI`/inventories/`,
+  projects: awxAPI`/projects/`,
+  job_template: awxAPI`/job_templates/`,
+  workflow_job_template: awxAPI`/workflow_job_templates/`,
 };
 export const scheduleResourceTypeOptions: string[] = [
   'job_template',

@@ -29,7 +29,7 @@ export function useLabelPayload() {
 
       try {
         if (!organizationId) {
-          const data = await requestGet<AwxItemsResponse<Organization>>('/api/v2/organizations/');
+          const data = await requestGet<AwxItemsResponse<Organization>>(awxAPI`/organizations/`);
           organizationId = data.results[0].id;
         }
 

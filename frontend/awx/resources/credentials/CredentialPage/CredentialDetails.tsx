@@ -27,7 +27,7 @@ const PluginFieldText = styled.p`
 
 export function CredentialDetails() {
   const params = useParams<{ id: string }>();
-  const { data: credential } = useGetItem<Credential>('/api/v2/credentials', params.id);
+  const { data: credential } = useGetItem<Credential>(awxAPI`/credentials`, params.id);
 
   if (!credential) {
     return null;

@@ -35,7 +35,7 @@ export function CreateCredentialType() {
   const postRequest = usePostRequest<CredentialTypeForm, CredentialType>();
 
   const handleSubmit: PageFormSubmitHandler<CredentialTypeForm> = async (credentialType) => {
-    const createdCredentialType = await postRequest('/api/v2/credential_types/', {
+    const createdCredentialType = await postRequest(awxAPI`/credential_types/`, {
       ...credentialType,
       kind: 'cloud',
       inputs: parseVariableField(credentialType.inputs as string),

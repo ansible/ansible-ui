@@ -34,7 +34,7 @@ export function ProjectPage() {
     error: isNotifAdminError,
     refresh: refreshNotifAdmin,
     isLoading: isNotifAdminLoading,
-  } = useGet<AwxItemsResponse<Organization>>('/api/v2/organizations/', {
+  } = useGet<AwxItemsResponse<Organization>>(awxAPI`/organizations/`, {
     role_level: 'notification_admin_role',
   });
   const error = isNotifAdminError || projectError;

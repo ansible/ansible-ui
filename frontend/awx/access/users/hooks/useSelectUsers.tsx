@@ -7,6 +7,7 @@ import { useAwxView } from '../../../useAwxView';
 import { useUserAndTeamRolesLists } from '../../common/useUserAndTeamRolesLists';
 import { useUsersColumns } from './useUsersColumns';
 import { useUsersFilters } from './useUsersFilters';
+import { awxAPI } from '../../../api/awx-utils';
 
 function SelectUsers(props: {
   accessUrl?: string;
@@ -18,7 +19,7 @@ function SelectUsers(props: {
   const toolbarFilters = useUsersFilters();
   const tableColumns = useUsersColumns({ disableLinks: true });
   const view = useAwxView<User>({
-    url: props.accessUrl ?? '/api/v2/users/',
+    url: props.accessUrl ?? awxAPI`/users/`,
     toolbarFilters,
     tableColumns,
     disableQueryString: true,

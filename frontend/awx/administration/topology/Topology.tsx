@@ -5,11 +5,12 @@ import { useAwxConfig } from '../../common/useAwxConfig';
 import { TopologyViewLayer } from './Visualizer';
 import { useGet } from '../../../common/crud/useGet';
 import { MeshVisualizer } from '../../interfaces/MeshVisualizer';
+import { awxAPI } from '../../api/awx-utils';
 
 export function Topology() {
   const { t } = useTranslation();
   const config = useAwxConfig();
-  const { data } = useGet<MeshVisualizer>(`/api/v2/mesh_visualizer/`);
+  const { data } = useGet<MeshVisualizer>(awxAPI`/mesh_visualizer/`);
 
   return (
     <PageLayout>

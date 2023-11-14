@@ -13,16 +13,17 @@ import { useTeamActions } from './hooks/useTeamActions';
 import { useTeamToolbarActions } from './hooks/useTeamToolbarActions';
 import { useTeamsColumns } from './hooks/useTeamsColumns';
 import { useTeamsFilters } from './hooks/useTeamsFilters';
+import { awxAPI } from '../../api/awx-utils';
 
 export function Teams() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const toolbarFilters = useTeamsFilters();
   const tableColumns = useTeamsColumns();
-  const view = useAwxView<Team>({ url: '/api/v2/teams/', toolbarFilters, tableColumns });
+  const view = useAwxView<Team>({ url: awxAPI`/teams/`, toolbarFilters, tableColumns });
   const toolbarActions = useTeamToolbarActions(view);
   const rowActions = useTeamActions({ onTeamsDeleted: view.unselectItemsAndRefresh });
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/v2/teams/');
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/teams/`);
   const canCreateTeam = Boolean(data && data.actions && data.actions['POST']);
   usePersistentFilters('teams');
   const config = useAwxConfig();

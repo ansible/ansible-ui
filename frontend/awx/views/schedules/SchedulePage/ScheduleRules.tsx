@@ -17,6 +17,7 @@ import { EditIcon, PlusIcon } from '@patternfly/react-icons';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { Schedule } from '../../../interfaces/Schedule';
 import { AwxError } from '../../../common/AwxError';
+import { awxAPI } from '../../../api/awx-utils';
 
 export function ScheduleRules() {
   const { t } = useTranslation();
@@ -26,7 +27,7 @@ export function ScheduleRules() {
     data: schedule,
     error,
     refresh,
-  } = useGetItem<Schedule>('/api/v2/schedules/', params.schedule_id);
+  } = useGetItem<Schedule>(awxAPI`/schedules/`, params.schedule_id);
   const createUrl: string = useGetCreateRuleRoute();
 
   const rowActions = useMemo<IPageAction<{ rrule: string }>[]>(

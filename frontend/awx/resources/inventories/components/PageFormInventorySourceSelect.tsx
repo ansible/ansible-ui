@@ -16,7 +16,9 @@ export function PageFormInventorySourceSelect<
   const openSelectDialog = useSelectInventorySource();
   const query = useCallback(async () => {
     const response = await requestGet<AwxItemsResponse<InventorySource>>(
-      awxAPI`/inventories/${props.inventoryId.toString()}/inventory_sources/?page_size=200`
+      awxAPI`/inventories/${props.inventoryId.toString()}/inventory_sources/`.concat(
+        `?page_size=200`
+      )
     );
     return Promise.resolve({
       total: response.count,

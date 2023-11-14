@@ -13,6 +13,7 @@ import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { useGet, useGetItem } from '../../../../common/crud/useGet';
 import { useActiveUser } from '../../../../common/useActiveUser';
 import { AwxRoute } from '../../../AwxRoutes';
+import { awxAPI } from '../../../api/awx-utils';
 import { AwxError } from '../../../common/AwxError';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { Organization } from '../../../interfaces/Organization';
@@ -30,7 +31,7 @@ export function WorkflowJobTemplatePage() {
     data: template,
     isLoading: isTemplateLoading,
     refresh,
-  } = useGetItem<WorkflowJobTemplate>('/api/v2/workflow_job_templates', params.id);
+  } = useGetItem<WorkflowJobTemplate>(awxAPI`/workflow_job_templates`, params.id);
 
   const {
     data: isNotifAdmin,
@@ -38,7 +39,7 @@ export function WorkflowJobTemplatePage() {
     refresh: refreshNotifAdmin,
     isLoading: isNotifAdminLoading,
   } = useGet<AwxItemsResponse<Organization>>(
-    '/api/v2/organizations/?role_level=notification_admin_role'
+    awxAPI`/organizations/?role_level=notification_admin_role`
   );
   const getPageUrl = useGetPageUrl();
   const pageNavigate = usePageNavigate();

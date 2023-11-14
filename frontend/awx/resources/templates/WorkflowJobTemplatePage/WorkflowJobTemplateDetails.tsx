@@ -11,6 +11,7 @@ import { Link, useParams } from 'react-router-dom';
 import { LoadingPage, PageDetail, PageDetails, useGetPageUrl } from '../../../../../framework';
 import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
 import { useGetItem } from '../../../../common/crud/useGet';
+import { awxAPI } from '../../../api/awx-utils';
 import { AwxRoute } from '../../../AwxRoutes';
 import { AwxError } from '../../../common/AwxError';
 import { CredentialLabel } from '../../../common/CredentialLabel';
@@ -24,7 +25,7 @@ export function WorkflowJobTemplateDetails() {
     data: template,
     error,
     refresh,
-  } = useGetItem<WorkflowJobTemplate>('/api/v2/workflow_job_templates/', params.id);
+  } = useGetItem<WorkflowJobTemplate>(awxAPI`/workflow_job_templates/`, params.id);
   const getPageUrl = useGetPageUrl();
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!template) return <LoadingPage breadcrumbs tabs />;
