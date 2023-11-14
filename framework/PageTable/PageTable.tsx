@@ -267,6 +267,11 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
         button={
           (props.emptyStateButtonClick && (
             <Button
+              data-cy={
+                props.emptyStateButtonText
+                  ? convertString(props.emptyStateButtonText)
+                  : 'create-resource'
+              }
               variant="primary"
               onClick={props.emptyStateButtonClick}
               icon={props.emptyStateButtonIcon ? props.emptyStateButtonIcon : null}
@@ -906,4 +911,8 @@ function TableCells<T extends object>(props: {
       )}
     </Fragment>
   );
+}
+
+function convertString(s: string) {
+  return s.toLowerCase().split(' ').join('-');
 }
