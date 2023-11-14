@@ -9,9 +9,9 @@ import { Login } from '../common/Login';
 import { HubRoute } from './HubRoutes';
 import { Approvals } from './approvals/Approvals';
 import { CollectionDetails } from './collections/CollectionDetails';
+import { CollectionSignatureUpload } from './collections/CollectionSignatureUpload';
 import { Collections } from './collections/Collections';
 import { UploadCollection } from './collections/UploadCollection';
-import { CollectionSignatureUpload } from './collections/CollectionSignatureUpload';
 import { HubDashboard } from './dashboard/Dashboard';
 import { ExecutionEnvironments } from './execution-environments/ExecutionEnvironments';
 import { CreateHubNamespace, EditHubNamespace } from './namespaces/HubNamespaceForm';
@@ -19,6 +19,8 @@ import { HubNamespaceDetails } from './namespaces/HubNamespacePage/HubNamespaceD
 import { HubNamespacePage } from './namespaces/HubNamespacePage/HubNamespacePage';
 import { Namespaces } from './namespaces/HubNamespaces';
 import { RemoteRegistries } from './remote-registries/RemoteRegistries';
+import { RemoteRegistryDetails } from './remote-registries/RemoteRegistryDetails';
+import { CreateRemoteRegistry, EditRemoteRegistry } from './remote-registries/RemoteRegistryForm';
 import { RemoteDetails } from './remotes/RemoteDetails';
 import { CreateRemote, EditRemote } from './remotes/RemoteForm';
 import { Remotes } from './remotes/Remotes';
@@ -27,7 +29,6 @@ import { SignatureKeys } from './signature-keys/SignatureKeys';
 import { TaskDetails } from './tasks/TaskDetails';
 import { Tasks } from './tasks/Tasks';
 import { Token } from './token/Token';
-import { CreateRemoteRegistry, EditRemoteRegistry } from './remote-registries/RemoteRegistryForm';
 
 export function useHubNavigation() {
   const { t } = useTranslation();
@@ -163,11 +164,15 @@ export function useHubNavigation() {
                     id: HubRoute.CreateRemoteRegistry,
                     element: <CreateRemoteRegistry />,
                   },
-
                   {
                     path: ':id/edit',
                     id: HubRoute.EditRemoteRegistry,
                     element: <EditRemoteRegistry />,
+                  },
+                  {
+                    path: 'details/:id/*',
+                    id: HubRoute.RemoteRegistryPage,
+                    element: <RemoteRegistryDetails />,
                   },
                 ],
               },
