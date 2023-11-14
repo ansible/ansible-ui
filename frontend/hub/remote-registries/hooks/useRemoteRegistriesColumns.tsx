@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ColumnTableOption, ITableColumn, TextCell } from '../../../../framework';
+import { ColumnTableOption, ITableColumn, TextCell, useGetPageUrl } from '../../../../framework';
 import { StatusCell } from '../../../common/StatusCell';
+import { HubRoute } from '../../HubRoutes';
 import { RemoteRegistry } from '../RemoteRegistry';
 
 export function useRemoteRegistriesColumns(_options?: {
@@ -9,12 +10,18 @@ export function useRemoteRegistriesColumns(_options?: {
   disableLinks?: boolean;
 }) {
   const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
   const tableColumns = useMemo<ITableColumn<RemoteRegistry>[]>(
     () => [
       {
         header: t('Name'),
-        type: 'text',
-        value: (remoteRegistry) => remoteRegistry.name,
+        cell: (remoteRegistry) => (
+          <TextCell
+            text={remoteRegistry.name}
+            to={getPageUrl(HubRoute.RemoteRegistryPage, { params: { id: remoteRegistry.name } })}
+          />
+        ),
+        sort: 'name',
         card: 'name',
         list: 'name',
       },
@@ -49,7 +56,7 @@ export function useRemoteRegistriesColumns(_options?: {
         list: 'secondary',
       },
     ],
-    [t]
+    [getPageUrl, t]
   );
   return tableColumns;
 }

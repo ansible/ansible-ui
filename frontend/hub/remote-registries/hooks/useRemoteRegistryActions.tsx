@@ -1,3 +1,4 @@
+import { ButtonVariant } from '@patternfly/react-core';
 import { EditIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -15,10 +16,10 @@ export function useRemoteRegistryActions(options: {
   onRemoteRegistryDeleted: (remoteRegistry: RemoteRegistry[]) => void;
 }) {
   const { onRemoteRegistryDeleted } = options;
-  const deleteRemoteRegistries = useDeleteRemoteRegistries(onRemoteRegistryDeleted);
-  const pageNavigate = usePageNavigate();
   const { t } = useTranslation();
-  return useMemo<IPageAction<RemoteRegistry>[]>(
+  const pageNavigate = usePageNavigate();
+  const deleteRemoteRegistries = useDeleteRemoteRegistries(onRemoteRegistryDeleted);
+  const actions = useMemo<IPageAction<RemoteRegistry>[]>(
     () => [
       {
         icon: EditIcon,
@@ -29,6 +30,7 @@ export function useRemoteRegistryActions(options: {
         },
         selection: PageActionSelection.Single,
         type: PageActionType.Button,
+        variant: ButtonVariant.primary,
       },
       { type: PageActionType.Seperator },
       {
@@ -42,4 +44,5 @@ export function useRemoteRegistryActions(options: {
     ],
     [t, pageNavigate, deleteRemoteRegistries]
   );
+  return actions;
 }
