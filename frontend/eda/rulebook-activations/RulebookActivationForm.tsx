@@ -3,7 +3,6 @@ import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import {
-  PageForm,
   PageFormDataEditor,
   PageFormSelect,
   PageFormSubmitHandler,
@@ -33,6 +32,7 @@ import {
   EdaRulebookActivationCreate,
 } from '../interfaces/EdaRulebookActivation';
 import { RestartPolicyEnum } from '../interfaces/generated/eda-api';
+import { EdaPageForm } from '../EdaPageForm';
 
 export function CreateRulebookActivation() {
   const { t } = useTranslation();
@@ -73,7 +73,7 @@ export function CreateRulebookActivation() {
           { label: t('Create Rulebook Activation') },
         ]}
       />
-      <PageForm<IEdaRulebookActivationInputs>
+      <EdaPageForm<IEdaRulebookActivationInputs>
         submitText={t('Create rulebook activation')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
@@ -85,7 +85,7 @@ export function CreateRulebookActivation() {
         }}
       >
         <RulebookActivationInputs />
-      </PageForm>
+      </EdaPageForm>
     </PageLayout>
   );
 }
