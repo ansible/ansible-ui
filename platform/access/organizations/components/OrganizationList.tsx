@@ -15,6 +15,7 @@ import {
   OptionsResponse,
 } from '../../../../frontend/awx/interfaces/OptionsResponse';
 import { useOptions } from '../../../../frontend/common/crud/useOptions';
+import { gatewayAPI } from '../../../api/gateway-api-utils';
 
 export function OrganizationList() {
   const { t } = useTranslation();
@@ -23,12 +24,12 @@ export function OrganizationList() {
   const pageNavigate = usePageNavigate();
 
   const view = usePlatformView<Organization>({
-    url: '/api/gateway/v1/organizations',
+    url: gatewayAPI`/v1/organizations`,
     toolbarFilters,
     tableColumns,
   });
 
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/gateway/v1/organizations');
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/v1/organizations`);
   const canCreateOrganization = Boolean(data && data.actions && data.actions['POST']);
   const toolbarActions = useOrganizationToolbarActions(view);
   const rowActions = useOrganizationRowActions(view);

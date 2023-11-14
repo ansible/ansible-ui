@@ -2,6 +2,7 @@ import { createContext, ReactNode, useContext, useEffect, useState } from 'react
 import { PlatformItemsResponse } from '../interfaces/PlatformItemsResponse';
 import { User } from '../interfaces/User';
 import { useGet } from '../../frontend/common/crud/useGet';
+import { gatewayAPI } from '../api/gateway-api-utils';
 
 const ActivePlatformUserContext = createContext<User | null | undefined>(undefined);
 
@@ -15,7 +16,7 @@ export function useActivePlatformUser() {
 
 export function ActivePlatformUserProvider(props: { children?: ReactNode }) {
   const [activeUser, setActiveUser] = useState<User | null | undefined>(undefined);
-  const userResponse = useGet<PlatformItemsResponse<User>>('/api/gateway/v1/me');
+  const userResponse = useGet<PlatformItemsResponse<User>>(gatewayAPI`/v1/me`);
   useEffect(() => {
     if (
       userResponse.data &&
