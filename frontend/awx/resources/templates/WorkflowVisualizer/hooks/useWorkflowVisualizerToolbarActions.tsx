@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
@@ -25,73 +25,39 @@ import {
   ToolbarGroup,
   ToolbarItem,
 } from '@patternfly/react-core';
-import { WorkflowNode } from '../../../../interfaces/WorkflowNode';
-import { useBulkConfirmation, usePageNavigate } from '../../../../../../framework';
+import { usePageNavigate } from '../../../../../../framework';
 import { AwxRoute } from '../../../../AwxRoutes';
-import { getItemKey, postRequest } from '../../../../../common/crud/Data';
-import { stringIsUUID } from '../../../../common/util/strings';
+import { postRequest } from '../../../../../common/crud/Data';
 import { AddNodeButton } from '../components/AddNodeButton';
 import getDocsBaseUrl from '../../../../common/util/getDocsBaseUrl';
 import { useAwxConfig } from '../../../../common/useAwxConfig';
+import { WorkflowVisualizerDispatch, WorkflowVisualizerState } from '../types';
 import { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
 
 export function useWorkflowVisualizerToolbarActions(
-  nodes: WorkflowNode[],
-  expanded: [boolean, React.Dispatch<React.SetStateAction<boolean>>],
+  state: WorkflowVisualizerState,
+  dispatch: WorkflowVisualizerDispatch,
   workflowJobTemplate: WorkflowJobTemplate | undefined
 ) {
-  const [isExpanded, setIsExpanded] = expanded;
   const params = useParams<{ id: string }>();
   const { t } = useTranslation();
-  const [isKebabOpen, setIsKebabOpen] = useState<boolean>(false);
   const pageNavigate = usePageNavigate();
   const config = useAwxConfig();
-  const bulkAction = useBulkConfirmation<WorkflowNode>();
   const handleLaunchWorkflow = useCallback(async () => {
     await postRequest(`/api/v2/workflow_job_templates/${Number(params.id).toString()}/launch/`, {});
   }, [params.id]);
 
-  const handleRemoveAllNodes = useCallback(
-    (workflowNodes: WorkflowNode[]) => {
-      return bulkAction({
-        title: t('Remove all nodes'),
-        items: workflowNodes,
-        keyFn: getItemKey,
-        isDanger: true,
-        actionFn: async (_item: WorkflowNode, _signal: AbortSignal) => {
-          return Promise.resolve();
-        },
-        confirmText: t('Yes, I confirm that I want to remove these {{count}} nodes.', {
-          count: workflowNodes.length,
-        }),
-        confirmationColumns: [
-          {
-            header: t('Name'),
-            cell: (node) =>
-              !stringIsUUID(node.identifier)
-                ? node.identifier
-                : node.summary_fields.unified_job_template.name,
-          },
-        ],
-        actionColumns: [
-          {
-            header: t('Name'),
-            cell: (node) =>
-              !stringIsUUID(node.identifier)
-                ? node.identifier
-                : node.summary_fields.unified_job_template.name,
-          },
-        ],
-        actionButtonText: t('Remove all nodes', { count: workflowNodes.length }),
-      });
-    },
-    [bulkAction, t]
-  );
+  const handleRemoveAllNodes = useCallback(() => {
+    dispatch({
+      type: 'TOGGLE_CONFIRM_DELETE_MODAL',
+      value: state.nodes,
+    });
+  }, [dispatch, state.nodes]);
 
   const handleCancel = useCallback(() => {
     pageNavigate(AwxRoute.WorkflowJobTemplateDetails, { params: { id: params.id } });
   }, [pageNavigate, params.id]);
-
+  const handleToggleToolbarKebab = () => dispatch({ type: 'SET_TOOLBAR_KEBAB_OPEN' });
   const header = (
     <Title headingLevel="h1">
       {
@@ -114,7 +80,12 @@ export function useWorkflowVisualizerToolbarActions(
       </ToolbarGroup>
       <ToolbarGroup>
         <ToolbarItem>
-          <Button icon={<CheckCircleIcon />} label={t('Save')} onClick={() => {}}>
+          <Button
+            icon={<CheckCircleIcon />}
+            label={t('Save')}
+            variant={state.unsavedChanges ? 'primary' : 'secondary'}
+            onClick={() => {}}
+          >
             {t('Save')}
           </Button>
         </ToolbarItem>
@@ -123,14 +94,14 @@ export function useWorkflowVisualizerToolbarActions(
         </ToolbarItem>
         <ToolbarItem>
           <Dropdown
-            onOpenChange={(isOpen: boolean) => setIsKebabOpen(isOpen)}
-            onSelect={() => setIsKebabOpen(!isKebabOpen)}
-            isOpen={isKebabOpen}
+            onOpenChange={handleToggleToolbarKebab}
+            onSelect={handleToggleToolbarKebab}
+            isOpen={state.isToolbarKebabOpen}
             toggle={(toggleRef) => (
               <MenuToggle
                 ref={toggleRef}
                 className="toggle-kebab"
-                onClick={() => setIsKebabOpen(!isKebabOpen)}
+                onClick={handleToggleToolbarKebab}
                 variant="plain"
               >
                 <EllipsisVIcon />
@@ -156,7 +127,7 @@ export function useWorkflowVisualizerToolbarActions(
               <Divider />
               <DropdownItem
                 data-cy="remove-all-nodes"
-                onClick={() => handleRemoveAllNodes(nodes)}
+                onClick={handleRemoveAllNodes}
                 isDanger
                 icon={<MinusCircleIcon />}
               >
@@ -169,16 +140,16 @@ export function useWorkflowVisualizerToolbarActions(
       <ToolbarGroup align={{ default: 'alignRight' }}>
         <ToolbarItem style={{ alignSelf: 'center' }}>
           <div data-cy="workflow-visualizer-toolbar-total-nodes">
-            {t('Total nodes')} <Badge isRead>{nodes?.length || 0}</Badge>
+            {t('Total nodes')} <Badge isRead>{state.nodes?.length || 0}</Badge>
           </div>
         </ToolbarItem>
         <Button
           data-cy="workflow-visualizer-toolbar-expand-collapse"
           variant="plain"
-          aria-label={isExpanded ? t('Collapse') : t('Expand')}
-          onClick={() => setIsExpanded(!isExpanded)}
+          aria-label={state.isVisualizerExpanded ? t('Collapse') : t('Expand')}
+          onClick={() => dispatch({ type: 'SET_TOGGLE_VISUALIZER' })}
         >
-          {isExpanded ? (
+          {state.isVisualizerExpanded ? (
             <CompressAltIcon
               data-cy="workflow-visualizer-toolbar-collapse"
               aria-label={t('Collapse')}

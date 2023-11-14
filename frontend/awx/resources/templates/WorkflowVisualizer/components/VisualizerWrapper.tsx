@@ -26,7 +26,10 @@ function AppendBody(props: { children: ReactElement }) {
   return ReactDOM.createPortal(children, el);
 }
 
-export function VisualizerWrapper(props: { children: ReactElement; isExpanded: boolean }) {
+export function VisualizerWrapper(props: {
+  children: (ReactElement | null)[];
+  isExpanded: boolean;
+}) {
   const { children, isExpanded } = props;
   return (
     <>
