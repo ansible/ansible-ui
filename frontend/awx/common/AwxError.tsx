@@ -10,13 +10,13 @@ import { ExclamationCircleIcon, SyncIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { RequestError } from '../../common/crud/RequestError';
 
-export function AwxError(props: { error: Error | undefined; handleRefresh?: () => void }) {
+export function AwxError(props: { error: Error; handleRefresh?: () => void }) {
   const { error, handleRefresh } = props;
   const { t } = useTranslation();
   return (
     <EmptyState isFullHeight>
       <EmptyStateHeader
-        titleText={<>{error?.message || t('Not found.')}</>}
+        titleText={<>{error?.message}</>}
         icon={<EmptyStateIcon icon={ExclamationCircleIcon} />}
         headingLevel="h4"
       />
