@@ -369,13 +369,17 @@ function CollectionDocumentationTab(props: { collection?: CollectionVersionSearc
 
   const [content, setContent] = useState<IContents>();
 
-  const { data } = useGet<CollectionVersionListResponse>(
+  const { data, error, refresh } = useGet<CollectionVersionSearch>(
     pulpAPI`/content/ansible/collection_versions/?namespace=${
       collection?.collection_version?.namespace || ''
     }&name=${collection?.collection_version?.name || ''}&version=${
       collection?.collection_version?.version || ''
     }&offset=0&limit=1`
   );
+
+  if (error || data?.results?.length == 0)
+    return <AwxError error={error} handleRefresh={refresh} />;
+  if (!data) return <LoadingPage breadcrumbs tabs />;
 
   const readme = useMemo(() => {
     if (data) {
