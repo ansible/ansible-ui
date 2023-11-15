@@ -202,7 +202,7 @@ export function CollectionDetails() {
         }
         description={t('Repository: ') + collection?.repository?.name}
         footer={
-          <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gridGap: '8px' }}>
             {t('Version')}
             <PageSingleSelect<string>
               options={
