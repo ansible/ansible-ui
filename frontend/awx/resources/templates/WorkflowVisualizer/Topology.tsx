@@ -96,9 +96,12 @@ export const Topology = ({
     newVisualization.registerLayoutFactory(
       (type: string, graph: Graph) =>
         new DagreLayout(graph, {
+          edgesep: 100,
+          marginx: 20,
+          marginy: 20,
           rankdir: 'LR',
-          ranker: 'network-simplex',
-          ranksep: 150,
+          ranker: 'longest-path',
+          ranksep: 200,
         })
     );
     newVisualization.fromModel(graphModel, false);

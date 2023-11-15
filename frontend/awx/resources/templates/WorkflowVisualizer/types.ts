@@ -1,4 +1,6 @@
 import {
+  Edge,
+  EdgeModel,
   ElementModel,
   GraphElement,
   NodeModel,
@@ -23,10 +25,27 @@ export interface CustomEdgeProps {
     ElementModel,
     {
       tag: string;
-      tagStatus: NodeStatus;
-      endTerminalStatus: NodeStatus;
+      tagStatus: EdgeStatus;
     }
   >;
+}
+
+export interface CustomEdgeInnerProps extends Omit<CustomEdgeProps, 'element'> {
+  element: Edge<
+    EdgeModel,
+    {
+      tag: string;
+      tagStatus: EdgeStatus;
+    }
+  >;
+  dragging?: boolean;
+}
+
+export interface CustomLabelProps {
+  children: React.ReactNode;
+  status: EdgeStatus;
+  xPoint: number;
+  yPoint: number;
 }
 
 export interface CustomNodeProps extends WithSelectionProps {
@@ -45,4 +64,10 @@ export enum JobType {
   workflow_approval = 'workflow_approval',
   inventory_update = 'inventory_update',
   system_job = 'system_job',
+}
+
+export enum EdgeStatus {
+  danger = NodeStatus.danger,
+  success = NodeStatus.success,
+  info = NodeStatus.info,
 }
