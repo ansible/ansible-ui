@@ -68,10 +68,3 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }},quay.io/ansible/platform-ui:main
           labels: ${{ steps.meta.outputs.labels }}
-
-      - name: Upload Artifacts
-        uses: fnkr/github-action-ghr@v1
-        env:
-          GHR_COMPRESS: xz
-          GHR_PATH: build/platform/
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
