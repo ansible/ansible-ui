@@ -1,22 +1,20 @@
-import { useSize } from '@patternfly/react-topology';
-import { CustomLabelProps, EdgeStatus } from '../types';
 import { LegacyRef } from 'react';
-
-const EdgeStatusColors = {
-  [EdgeStatus.danger]: 'var(--pf-v5-global--danger-color--100)',
-  [EdgeStatus.info]: 'var(--pf-v5-global--primary-color--light-100)',
-  [EdgeStatus.success]: 'var(--pf-v5-global--success-color--100)',
-};
+import { useSize } from '@patternfly/react-topology';
+import { getPatternflyColor, pfDisabled } from '../../../../../../framework';
+import type { CustomLabelProps, EdgeStatus } from '../types';
 
 const getEdgeStyles = (
   status: EdgeStatus
 ): {
   fill: string;
   stroke: string;
-} => ({
-  fill: EdgeStatusColors[status],
-  stroke: EdgeStatusColors[status],
-});
+} => {
+  const pfStatusColor = getPatternflyColor(status) || pfDisabled;
+  return {
+    fill: pfStatusColor,
+    stroke: pfStatusColor,
+  };
+};
 
 const calculateDimensions = (
   textSize: { width: number; height: number } | null,

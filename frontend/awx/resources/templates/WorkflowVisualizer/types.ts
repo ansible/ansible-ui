@@ -21,6 +21,16 @@ export type LayoutNode = WorkflowNode & {
 };
 
 export interface CustomEdgeProps {
+  element: GraphElement<
+    ElementModel,
+    {
+      tag: string;
+      tagStatus: EdgeStatus;
+    }
+  >;
+}
+
+export interface CustomEdgeInnerProps extends Omit<CustomEdgeProps, 'element'> {
   element: Edge<
     EdgeModel,
     {

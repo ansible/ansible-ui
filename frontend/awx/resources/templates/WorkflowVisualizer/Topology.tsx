@@ -60,7 +60,7 @@ export const Topology = ({
   const visualization = visualizationRef.current;
 
   const nodeContextMenu = NodeContextMenu();
-  const baselineComponentFactory = useCallback(
+  const baselineComponentFactory: ComponentFactory = useCallback(
     (kind: ModelKind, type: string) => {
       switch (type) {
         case 'group':
@@ -92,7 +92,7 @@ export const Topology = ({
   const createVisualization = useCallback(() => {
     const newVisualization = new Visualization();
     newVisualization.setFitToScreenOnLayout(true);
-    newVisualization.registerComponentFactory(baselineComponentFactory as ComponentFactory);
+    newVisualization.registerComponentFactory(baselineComponentFactory);
     newVisualization.registerLayoutFactory(
       (type: string, graph: Graph) =>
         new DagreLayout(graph, {
