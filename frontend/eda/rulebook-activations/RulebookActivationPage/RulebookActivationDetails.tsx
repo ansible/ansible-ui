@@ -46,11 +46,7 @@ export function RulebookActivationDetails() {
         alertPrompts={
           rulebookActivation.status === Status906Enum.Error ||
           rulebookActivation.status === Status906Enum.Failed
-            ? [
-                `${t('Rulebook Activation create error: ')}${
-                  rulebookActivation?.status_message || ''
-                }`,
-              ]
+            ? [`${t('Rulebook Activation error: ')}${rulebookActivation?.status_message || ''}`]
             : []
         }
       >
