@@ -36,6 +36,7 @@ describe('RulebookActivations.cy.ts', () => {
             rules_fired_count: 1,
             created_at: '2023-10-02T13:34:18.445029Z',
             modified_at: '2023-10-02T13:34:28.742952Z',
+            status_message: 'Activation has completed',
           },
           {
             id: 11,
@@ -55,6 +56,7 @@ describe('RulebookActivations.cy.ts', () => {
             rules_fired_count: 1,
             created_at: '2023-10-02T13:34:18.445029Z',
             modified_at: '2023-10-02T13:34:28.742952Z',
+            status_message: 'Activation has completed',
           },
           {
             id: 12,
@@ -74,6 +76,7 @@ describe('RulebookActivations.cy.ts', () => {
             rules_fired_count: 1,
             created_at: '2023-10-02T13:34:18.445029Z',
             modified_at: '2023-10-02T13:34:28.742952Z',
+            status_message: 'Activation has completed',
           },
           {
             id: 12,
@@ -106,12 +109,16 @@ describe('RulebookActivations.cy.ts', () => {
     cy.contains(/^Rulebook activations are rulebooks that have been activated to run.$/).should(
       'be.visible'
     );
-    cy.contains('th', 'Activation ID');
-    cy.contains('th', 'Name');
-    cy.contains('th', 'Activation status');
-    cy.contains('th', 'Number of rules');
-    cy.contains('th', 'Fire count');
-    cy.contains('th', 'Restart count');
+    cy.get('[data-cy="activation-id-column-header"]').should('be.visible');
+    cy.get('[data-cy="name-column-header"]').should('be.visible');
+    cy.get('[data-cy="activation-status-column-header"]').should('be.visible');
+    cy.get('[data-cy="number-of-rules-column-header"]').should('be.visible');
+    cy.get('[data-cy="fire-count-column-header"]').should('be.visible');
+    cy.get('[data-cy="restart-count-column-header"]').should('be.visible');
+    cy.get('#expand-toggle0 > .pf-v5-c-table__toggle-icon').click();
+    cy.get('[data-cy="status-message"]').should('be.visible');
+    cy.get('[data-cy="created"]').should('be.visible');
+    cy.get('[data-cy="last-modified"]').should('be.visible');
   });
 
   it('can restart a Rulebook Activation from the line item in list view', () => {
