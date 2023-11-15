@@ -154,11 +154,11 @@
   },
   "devDependencies": {
     "@4tw/cypress-drag-drop": "2.2.5",
-    "@cypress/code-coverage": "3.12.9",
+    "@cypress/code-coverage": "3.12.10",
     "@types/js-yaml": "4.0.9",
     "@typescript-eslint/eslint-plugin": "6.10.0",
     "@typescript-eslint/parser": "6.11.0",
-    "cypress": "13.5.0",
+    "cypress": "13.5.1",
     "cypress-react-selector": "3.0.0",
     "eslint": "8.53.0",
     "eslint-config-prettier": "9.0.0",
