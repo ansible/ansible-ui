@@ -376,7 +376,7 @@ function CollectionDocumentationTab(props: { collection?: CollectionVersionSearc
 
   const [content, setContent] = useState<IContents>();
 
-  const { data, error, refresh } = useGet<CollectionVersionsContent>(
+  const { data } = useGet<CollectionVersionsContent>(
     pulpAPI`/content/ansible/collection_versions/?namespace=${
       collection?.collection_version?.namespace || ''
     }&name=${collection?.collection_version?.name || ''}&version=${
@@ -384,9 +384,11 @@ function CollectionDocumentationTab(props: { collection?: CollectionVersionSearc
     }&offset=0&limit=1`
   );
 
-  if (error || data?.results?.length == 0)
-    return <AwxError error={new Error(error)} handleRefresh={refresh} />;
-  if (!data) return <LoadingPage breadcrumbs tabs />;
+  const readme = data?.results[0].docs_blob.collection_readme.html;
+
+  // if (error || data?.results?.length == 0)
+  //   return <AwxError error={new Error(error)} handleRefresh={refresh} />;
+  // if (!data) return <LoadingPage breadcrumbs tabs />;
 
   const groups = useMemo(() => {
     const groups: Record<string, { name: string; contents: IContents[] }> = {};
@@ -408,31 +410,63 @@ function CollectionDocumentationTab(props: { collection?: CollectionVersionSearc
 
   const [isDrawerOpen, setDrawerOpen] = useState(true);
   const lg = useBreakpoint('lg');
-
-  return (
-    <Drawer isExpanded={isDrawerOpen} isInline={lg} position="left">
-      <DrawerContent
-        panelContent={
-          isDrawerOpen ? (
-            <CollectionDocumentationTabPanel
-              setDrawerOpen={setDrawerOpen}
-              groups={groups}
+  if (content) {
+    return (
+      <Drawer isExpanded={isDrawerOpen} isInline={lg} position="left">
+        <DrawerContent
+          panelContent={
+            isDrawerOpen ? (
+              <CollectionDocumentationTabPanel
+                setDrawerOpen={setDrawerOpen}
+                groups={groups}
+                content={content}
+                setContent={setContent}
+              />
+            ) : undefined
+          }
+        >
+          <DrawerContentBody>
+            <CollectionDocumentationTabContent
               content={content}
-              setContent={setContent}
+              isDrawerOpen={isDrawerOpen}
+              setDrawerOpen={setDrawerOpen}
             />
-          ) : undefined
-        }
-      >
-        <DrawerContentBody>
-          <CollectionDocumentationTabContent
-            content={content}
-            isDrawerOpen={isDrawerOpen}
-            setDrawerOpen={setDrawerOpen}
-          />
-        </DrawerContentBody>
-      </DrawerContent>
-    </Drawer>
-  );
+          </DrawerContentBody>
+          {readme && (
+            <DrawerContentBody>
+              <PageSection variant="light">
+                <Stack hasGutter>
+                  <div
+                    className="pf-c-content"
+                    dangerouslySetInnerHTML={{
+                      __html: readme,
+                    }}
+                  />
+                </Stack>
+              </PageSection>
+            </DrawerContentBody>
+          )}
+        </DrawerContent>
+      </Drawer>
+    );
+  } else {
+    return (
+      <Drawer isExpanded={isDrawerOpen} isInline={lg} position="left">
+        <DrawerContent
+          panelContent={
+            isDrawerOpen ? (
+              <CollectionDocumentationTabPanel
+                setDrawerOpen={setDrawerOpen}
+                groups={groups}
+                content={content}
+                setContent={setContent}
+              />
+            ) : undefined
+          }
+        ></DrawerContent>
+      </Drawer>
+    );
+  }
 }
 
 function CollectionDocumentationTabPanel(props: {
@@ -446,7 +480,6 @@ function CollectionDocumentationTabPanel(props: {
 }) {
   const { content, setContent, groups, setDrawerOpen } = props;
   const { t } = useTranslation();
-
   return (
     <DrawerPanelContent>
       <DrawerHead style={{ gap: 16 }}>
