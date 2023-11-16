@@ -125,7 +125,6 @@
     "luxon": "3.4.4",
     "merge-jsons-webpack-plugin": "2.0.1",
     "mini-css-extract-plugin": "2.7.6",
-    "mobx-react": "7.6.0",
     "monaco-editor": "0.44.0",
     "monaco-editor-webpack-plugin": "7.1.0",
     "monaco-yaml": "5.1.0",
