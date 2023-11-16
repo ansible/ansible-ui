@@ -10,8 +10,8 @@ const TopologySideBar = styled(PFTopologySideBar)`
   padding-left: 20px;
 `;
 export function WorkflowVisualizerNodeDetails(props: {
-  selectedNode: WorkflowNode;
-  setSelectedNode: (node: WorkflowNode | undefined) => void;
+  selectedNode: WorkflowNode[];
+  setSelectedNode: () => void;
 }) {
   const { selectedNode, setSelectedNode } = props;
   const { t } = useTranslation();
@@ -24,7 +24,7 @@ export function WorkflowVisualizerNodeDetails(props: {
       show
       header={<Title headingLevel="h1">{t('Node details')}</Title>}
       resizable
-      onClose={() => setSelectedNode(undefined)}
+      onClose={setSelectedNode}
     >
       {getDetails}
       <ActionList data-cy="workflow-topology-sidebar-actions" style={{ paddingBottom: '20px' }}>

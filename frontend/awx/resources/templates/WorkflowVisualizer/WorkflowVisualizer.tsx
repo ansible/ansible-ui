@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useReducer } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { ShareAltIcon } from '@patternfly/react-icons';
@@ -16,6 +16,9 @@ import styled from 'styled-components';
 import type { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
 import type { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
+import { initialState, workflowVisualizerReducer } from './hooks/workflowReducer';
+import { WorkflowVisualizerDispatch, WorkflowVisualizerState } from './types';
+import { DeleteConfirmationModal } from './components/DeleteConfirmationModal';
 
 const TopologyView = styled(PFTopologyView)`
   & .pf-topology-view__project-toolbar {
@@ -31,8 +34,6 @@ const TopologyView = styled(PFTopologyView)`
 export function WorkflowVisualizer() {
   const { id } = useParams<{ id?: string }>();
   const { t } = useTranslation();
-  const [isExpanded, setIsExpanded] = useState<boolean>(false);
-  const [selectedNode, setSelectedNode] = useState<WorkflowNode | undefined>(undefined);
   const {
     data: wfNodes,
     error: workflowNodeError,
@@ -45,12 +46,16 @@ export function WorkflowVisualizer() {
     error: workflowError,
     refresh: workflowRefresh,
   } = useGetItem<WorkflowJobTemplate>('/api/v2/workflow_job_templates/', id);
-
+  const [state, dispatch]: [WorkflowVisualizerState, WorkflowVisualizerDispatch] = useReducer(
+    workflowVisualizerReducer,
+    initialState
+  );
+  const { selectedNode, isVisualizerExpanded, isLoading, nodes } = state;
   const error = workflowError || workflowNodeError;
-  const toolbarActions = useWorkflowVisualizerToolbarActions(
-    wfNodes?.results ?? [],
-    [isExpanded, setIsExpanded],
-    workflowJobTemplate
+  const toolbarActions = useWorkflowVisualizerToolbarActions(state, dispatch, workflowJobTemplate);
+  useEffect(
+    () => dispatch({ type: 'SET_NODES', value: wfNodes?.results ?? [] }),
+    [wfNodes?.results]
   );
 
   if (error) {
@@ -58,7 +63,7 @@ export function WorkflowVisualizer() {
   }
 
   let topologyScreen;
-  if (!wfNodes || !workflowJobTemplate) {
+  if (isLoading) {
     topologyScreen = (
       <EmptyState>
         <EmptyStateHeader
@@ -80,7 +85,7 @@ export function WorkflowVisualizer() {
         </EmptyStateHeader>
       </EmptyState>
     );
-  } else if (!wfNodes?.results?.length) {
+  } else if (!nodes.length) {
     topologyScreen = (
       <EmptyStateNoData
         button={<AddNodeButton variant="primary" />}
@@ -89,34 +94,43 @@ export function WorkflowVisualizer() {
       />
     );
   } else {
-    topologyScreen = (
-      <Topology
-        data={wfNodes}
-        selectedNode={selectedNode}
-        handleSelectedNode={(clickedNodeIdentifier: string[]) => {
-          const clickedNodeData = wfNodes.results.find(
-            (node) => node.id.toString() === clickedNodeIdentifier[0]
-          );
-          setSelectedNode(clickedNodeData);
-        }}
-      />
-    );
+    topologyScreen = <Topology state={state} dispatch={dispatch} />;
+  }
+
+  let sideBar = null;
+  if (state.mode !== 'delete') {
+    if (selectedNode && state.mode === 'add-link') {
+      sideBar = <div>{t('Adding a link')}</div>;
+    }
+    if (selectedNode && state.mode === 'add-node-and-link') {
+      sideBar = <div>{t('Adding a node and link')}</div>;
+    }
+    if (selectedNode && state.mode === 'view') {
+      sideBar = (
+        <WorkflowVisualizerNodeDetails
+          setSelectedNode={() =>
+            dispatch({ type: 'SET_SELECTED_NODE', value: { node: [], mode: undefined } })
+          }
+          selectedNode={selectedNode}
+        />
+      );
+    }
   }
 
   return (
-    <VisualizerWrapper isExpanded={isExpanded}>
+    <VisualizerWrapper isExpanded={isVisualizerExpanded}>
+      {state.showDeleteNodesModal && workflowJobTemplate ? (
+        <DeleteConfirmationModal
+          state={state}
+          dispatch={dispatch}
+          workflowJobTemplate={workflowJobTemplate}
+        />
+      ) : null}
       <TopologyView
-        $isExpanded={isExpanded}
-        sideBarOpen={selectedNode !== undefined}
+        $isExpanded={isVisualizerExpanded}
+        sideBarOpen={selectedNode !== undefined && sideBar !== null}
         sideBarResizable
-        sideBar={
-          selectedNode ? (
-            <WorkflowVisualizerNodeDetails
-              setSelectedNode={setSelectedNode}
-              selectedNode={selectedNode}
-            />
-          ) : null
-        }
+        sideBar={sideBar}
         contextToolbar={toolbarActions}
         data-cy="workflow-visualizer"
       >

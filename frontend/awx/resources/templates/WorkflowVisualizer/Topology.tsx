@@ -22,11 +22,16 @@ import {
   withDragNode,
   withPanZoom,
   withSelection,
+  ElementModel,
+  GraphElement,
 } from '@patternfly/react-topology';
 import { CustomEdge, CustomNode, NodeContextMenu } from './components';
-import type { LayoutNode, GraphNode } from './types';
-import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
-import type { AwxItemsResponse } from '../../../common/AwxItemsResponse';
+import type {
+  LayoutNode,
+  GraphNode,
+  WorkflowVisualizerState,
+  WorkflowVisualizerDispatch,
+} from './types';
 
 const GRAPH_ID = 'workflow-visualizer-graph';
 const CONNECTOR_SOURCE_DROP = 'connector-src-drop';
@@ -44,22 +49,22 @@ const graphModel: Model = {
 };
 
 interface TopologyProps {
-  data: AwxItemsResponse<WorkflowNode>;
-  selectedNode: WorkflowNode | undefined;
-  handleSelectedNode: (clickedNodeIdentifier: string[]) => void;
+  state: WorkflowVisualizerState;
+  dispatch: WorkflowVisualizerDispatch;
 }
 
-export const Topology = ({
-  data: { results = [] },
-  selectedNode,
-  handleSelectedNode,
-}: TopologyProps) => {
+export const Topology = ({ state, dispatch }: TopologyProps) => {
   const { t } = useTranslation();
   const [layout, setLayout] = useState<LayoutNode[]>([]);
   const visualizationRef = useRef<Visualization>();
   const visualization = visualizationRef.current;
+  visualization?.setState({ ...state, dispatch });
+  const { nodes } = state;
+  const nodeContextMenu = useCallback(
+    (element: GraphElement<ElementModel, unknown>) => NodeContextMenu(element, t),
+    [t]
+  );
 
-  const nodeContextMenu = NodeContextMenu();
   const baselineComponentFactory: ComponentFactory = useCallback(
     (kind: ModelKind, type: string) => {
       switch (type) {
@@ -70,7 +75,7 @@ export const Topology = ({
             case ModelKind.graph:
               return withPanZoom()(withSelection()(GraphComponent));
             case ModelKind.node:
-              return withContextMenu(() => nodeContextMenu)(
+              return withContextMenu(nodeContextMenu)(
                 withDndDrop(
                   nodeDropTargetSpec([
                     CONNECTOR_SOURCE_DROP,
@@ -89,6 +94,16 @@ export const Topology = ({
     [nodeContextMenu]
   );
 
+  const handleSelectedNode = useCallback(
+    (clickedNodeIdentifier: string[]) => {
+      const clickedNode = state.nodes.find(
+        (node) => node.id.toString() === clickedNodeIdentifier[0]
+      );
+      if (clickedNode === undefined) return;
+      dispatch({ type: 'SET_SELECTED_NODE', value: { node: [clickedNode], mode: 'view' } });
+    },
+    [dispatch, state.nodes]
+  );
   const createVisualization = useCallback(() => {
     const newVisualization = new Visualization();
     newVisualization.setFitToScreenOnLayout(true);
@@ -110,7 +125,7 @@ export const Topology = ({
   }, [baselineComponentFactory, handleSelectedNode]);
 
   useEffect(() => {
-    const layoutNodes = results.map((node) => {
+    const layoutNodes = nodes.map((node) => {
       return {
         ...node,
         runAfterTasks: [],
@@ -118,7 +133,7 @@ export const Topology = ({
     });
 
     return setLayout(() => [...layoutNodes]);
-  }, [results]);
+  }, [nodes]);
 
   useEffect(() => {
     if (!visualizationRef.current) {
@@ -132,6 +147,22 @@ export const Topology = ({
     }
 
     const nodes: GraphNode[] = layout.map((n) => {
+      const isDeleted = state.nodesToDelete.find((stateNode) => stateNode.id === n.id);
+
+      if (isDeleted)
+        return {
+          id: n.id.toString(),
+          type: 'node',
+          visible: false,
+          label: n.summary_fields?.unified_job_template?.name || 'UNDEFINED',
+          width: NODE_DIAMETER,
+          height: NODE_DIAMETER,
+          shape: NodeShape.ellipse,
+          runAfterTasks: n.runAfterTasks,
+          data: {
+            jobType: n.summary_fields?.unified_job_template?.unified_job_type,
+          },
+        };
       const processNodes = (nodesArray: number[]) => {
         nodesArray.forEach((id) => {
           const afterNode = layout.find((afterNode) => afterNode.id.toString() === id.toString());
@@ -217,7 +248,7 @@ export const Topology = ({
     };
 
     visualization.fromModel(model, true);
-  }, [t, layout, visualization]);
+  }, [t, layout, visualization, state.nodesToDelete]);
 
   if (!visualization) {
     return null;
@@ -225,7 +256,7 @@ export const Topology = ({
 
   return (
     <VisualizationProvider controller={visualization}>
-      <VisualizationSurface state={selectedNode} />
+      <VisualizationSurface state={state} />
     </VisualizationProvider>
   );
 };

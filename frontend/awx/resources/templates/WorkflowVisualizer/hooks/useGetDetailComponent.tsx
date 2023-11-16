@@ -7,29 +7,26 @@ import { InventorySourceDetails } from '../../../inventories/inventorySources/In
 import { SystemJobNodeDetails } from '../components/SystemJobNodeDetails';
 import { WorkflowApprovalNodeDetails } from '../components/WorkflowApprovalNodeDetails';
 
-export function useGetDetailComponent(selectedNode: WorkflowNode) {
+export function useGetDetailComponent(selectedNode: WorkflowNode[]) {
+  const node = selectedNode[0];
   const detailsComponent = useCallback(() => {
     let component;
-    switch (selectedNode?.summary_fields.unified_job_template.unified_job_type) {
+    switch (node.summary_fields.unified_job_template.unified_job_type) {
       case 'project_update':
         component = (
-          <ProjectDetails
-            projectId={selectedNode?.summary_fields.unified_job_template.id.toString()}
-          />
+          <ProjectDetails projectId={node.summary_fields.unified_job_template.id.toString()} />
         );
         break;
       case 'job':
         component = (
-          <TemplateDetails
-            templateId={selectedNode?.summary_fields.unified_job_template.id.toString()}
-          />
+          <TemplateDetails templateId={node.summary_fields.unified_job_template.id.toString()} />
         );
 
         break;
       case 'workflow_job':
         component = (
           <WorkflowJobTemplateDetails
-            templateId={selectedNode?.summary_fields.unified_job_template.id.toString()}
+            templateId={node.summary_fields.unified_job_template.id.toString()}
           />
         );
 
@@ -37,21 +34,21 @@ export function useGetDetailComponent(selectedNode: WorkflowNode) {
       case 'inventory_update':
         component = (
           <InventorySourceDetails
-            inventorySourceId={selectedNode?.summary_fields.unified_job_template.id.toString()}
+            inventorySourceId={node.summary_fields.unified_job_template.id.toString()}
           />
         );
         break;
       case 'system_job':
-        component = <SystemJobNodeDetails selectedNode={selectedNode} />;
+        component = <SystemJobNodeDetails selectedNode={node} />;
         break;
       case 'workflow_approval':
-        component = <WorkflowApprovalNodeDetails selectedNode={selectedNode} />;
+        component = <WorkflowApprovalNodeDetails selectedNode={node} />;
         break;
 
       default:
         component = null;
     }
     return component;
-  }, [selectedNode]);
+  }, [node]);
   return detailsComponent();
 }

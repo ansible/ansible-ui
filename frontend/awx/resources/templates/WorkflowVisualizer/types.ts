@@ -71,3 +71,50 @@ export enum EdgeStatus {
   success = NodeStatus.success,
   info = NodeStatus.info,
 }
+// WorkflowVisualizerState is used in WorkflowVisualizer.tsx and in the useReducer that handles state.  It does not contain a dispatch function.
+export type WorkflowVisualizerState = {
+  showUnsavedChangesModal: boolean;
+  nodesToDelete: WorkflowNode[] | []; // could be used for delete all nodes also
+  unsavedChanges: boolean;
+  nodes: WorkflowNode[] | [];
+  showDeleteNodesModal: boolean;
+  isLoading: boolean;
+  isVisualizerExpanded: boolean;
+  isToolbarKebabOpen: boolean;
+  selectedNode: WorkflowNode[] | [];
+  mode: 'edit' | 'view' | 'add-link' | 'add-node-and-link' | 'delete' | undefined;
+};
+
+export type WorkflowVisualizerAction =
+  | { type: 'CANCEL_ACTION'; value: WorkflowVisualizerState }
+  | {
+      type: 'TOGGLE_CONFIRM_DELETE_MODAL';
+      value: WorkflowNode[];
+    }
+  | {
+      type: 'SET_NODES_TO_DELETE';
+      value: WorkflowNode[];
+    }
+  | {
+      type: 'SET_NODES';
+      value: WorkflowNode[];
+    }
+  | {
+      type: 'SET_ALL_NODES_TO_DELETE';
+      value: {
+        nodesToDelete: WorkflowNode[] | [];
+        nodes: WorkflowNode[] | [];
+        unsavedChanges?: boolean;
+      };
+    }
+  | {
+      type: 'SET_SELECTED_NODE';
+      value: {
+        node: [WorkflowNode] | [];
+        mode: 'edit' | 'view' | 'add-link' | 'add-node-and-link' | undefined;
+      };
+    }
+  | { type: 'SET_TOGGLE_VISUALIZER' }
+  | { type: 'SET_TOOLBAR_KEBAB_OPEN' };
+
+export type WorkflowVisualizerDispatch = (action: WorkflowVisualizerAction) => void;
