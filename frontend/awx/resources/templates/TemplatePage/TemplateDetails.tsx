@@ -120,7 +120,7 @@ export function TemplateDetails(props: { templateId?: string }) {
       <PageDetail
         label={t`Instance groups`}
         helpText={t`The instance groups for this job template to run on.`}
-        isEmpty={instanceGroups?.length === 0}
+        isEmpty={!instanceGroups?.length}
       >
         <LabelGroup>
           {instanceGroups?.map((ig) => (

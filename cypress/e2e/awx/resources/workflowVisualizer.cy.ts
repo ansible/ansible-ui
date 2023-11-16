@@ -29,6 +29,10 @@ describe('Workflow Job templates visualizer', () => {
         'wf_vis_testing_A.json'
       );
     });
+    cy.get('g[data-layer-id="default"]').within(() => {
+      cy.get('g[data-type="node"]').should('have.length', 4);
+      cy.get('g[data-type="edge"]').should('have.length', 3);
+    });
   });
 
   it('Should create a workflow job template and then navigate to the visualizer, and then navigate to the details view after clicking cancel', () => {
