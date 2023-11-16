@@ -761,9 +761,25 @@ Cypress.Commands.add(
           .as('newVisualizerView')
           .then(() => {
             cy.visit(`/ui_next/resources/templates/workflow_job_template/${results.id}/visualizer`);
-            cy.wait('@newVisualizerView');
           });
       });
+  }
+);
+
+Cypress.Commands.add(
+  'deleteAwxWorkflowJobTemplate',
+  (
+    workflowJobTemplate: WorkflowJobTemplate,
+    options?: {
+      /** Whether to fail on response codes other than 2xx and 3xx */
+      failOnStatusCode?: boolean;
+    }
+  ) => {
+    if (workflowJobTemplate.id) {
+      const workflowTemplateId =
+        typeof workflowJobTemplate.id === 'number' ? workflowJobTemplate.id.toString() : '';
+      cy.awxRequestDelete(`/api/v2/workflow_job_templates/${workflowTemplateId}/`, options);
+    }
   }
 );
 
