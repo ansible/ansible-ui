@@ -132,14 +132,15 @@ export const Topology = ({
     }
 
     const nodes: GraphNode[] = layout.map((n) => {
+      const nodeId = n.id.toString();
       const processNodes = (nodesArray: number[]) => {
         nodesArray.forEach((id) => {
           const afterNode = layout.find((afterNode) => afterNode.id.toString() === id.toString());
           if (afterNode) {
             if (afterNode.runAfterTasks) {
-              afterNode.runAfterTasks.push(n.id.toString());
+              afterNode.runAfterTasks.push(nodeId);
             } else {
-              afterNode.runAfterTasks = [n.id.toString()];
+              afterNode.runAfterTasks = [nodeId];
             }
           }
         });
@@ -155,7 +156,7 @@ export const Topology = ({
       }
 
       const node: GraphNode = {
-        id: n.id.toString(),
+        id: nodeId,
         type: 'node',
         label: n.summary_fields?.unified_job_template?.name || 'UNDEFINED',
         width: NODE_DIAMETER,
@@ -164,6 +165,7 @@ export const Topology = ({
         runAfterTasks: n.runAfterTasks,
         data: {
           jobType: n.summary_fields?.unified_job_template?.unified_job_type,
+          id: nodeId,
         },
       };
 
