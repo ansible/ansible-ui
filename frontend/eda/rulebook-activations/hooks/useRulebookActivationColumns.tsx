@@ -80,6 +80,15 @@ export function useRulebookActivationColumns() {
         modal: ColumnModalOption.Hidden,
       },
       {
+        header: t('Status message'),
+        type: 'text',
+        value: (activation) => activation?.status_message || '',
+        table: ColumnTableOption.Expanded,
+        card: 'hidden',
+        list: 'secondary',
+        modal: ColumnModalOption.Hidden,
+      },
+      {
         header: t('Created'),
         type: 'datetime',
         value: (activation) => activation.created_at,
