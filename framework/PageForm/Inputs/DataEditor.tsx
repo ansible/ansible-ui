@@ -117,16 +117,20 @@ export function DataEditor<
 
   useEffect(() => {
     const editor = editorRef?.current?.editor;
-    const uri = monaco.editor.getModels()[0];
-    if (editor && uri && language) {
-      monaco.editor.setModelLanguage(uri, language);
+    if (!editor) return;
+
+    const model = editor.getModel();
+    if (!model) return;
+
+    if (language) {
+      monaco.editor.setModelLanguage(model, language);
     }
-    editorRef.current?.editor?.getModel()?.onDidChangeContent(() => {
-      onChange(editorRef.current?.editor?.getValue() ?? '');
+    model.onDidChangeContent(() => {
+      onChange(editor.getValue() ?? '');
     });
-    const currentValue = editorRef.current?.editor?.getValue();
-    if (editorRef.current?.editor && currentValue !== props.value) {
-      editorRef.current?.editor?.setValue(props.value);
+    const currentValue = editor.getValue();
+    if (currentValue !== props.value) {
+      editor.setValue(props.value);
     }
     const valueArray = props.value.split('\n');
     const element = document.getElementById(idDataEditorElement);
@@ -151,9 +155,16 @@ export function DataEditor<
   }, [settings.activeTheme]);
 
   useEffect(() => {
+    const editor = editorRef?.current?.editor;
+    if (!editor) return;
+
+    const model = editor.getModel();
+    if (!model) return;
+
     monaco.editor.onDidChangeMarkers(() => {
       const markers = monaco.editor.getModelMarkers({
-        owner: monaco.editor?.getModels()[0]?.getLanguageId(),
+        owner: model.getLanguageId(),
+        resource: model.uri,
       });
       if (markers.length > 0) {
         setError(name, { message: markers.map((marker) => marker.message).join('\n') });
