@@ -37,7 +37,10 @@ export function useProjectNameColumn(options?: { disableLinks?: boolean }) {
             </SplitItem>
             <SplitItem>
               <Tooltip
-                content={t`Custom virtual environment ${project.custom_virtualenv} must be replaced by an execution environment.`}
+                content={t(
+                  `Custom virtual environment {{venvName}} must be replaced by an execution environment.`,
+                  { venvName: project.custom_virtualenv }
+                )}
                 position="right"
               >
                 <IconWrapper size={'sm'} color={'warning'}>
