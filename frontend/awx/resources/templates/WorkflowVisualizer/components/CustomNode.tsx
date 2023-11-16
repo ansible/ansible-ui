@@ -39,6 +39,7 @@ export const CustomNode: FC<
   return (
     <DefaultNode
       element={element}
+      labelClassName={`${data.id}-node-label`}
       contextMenuOpen={contextMenuOpen}
       labelPosition={LabelPosition.right}
       onContextMenu={onContextMenu}

@@ -13,6 +13,7 @@ export type GraphNode = Omit<NodeModel, 'data'> & {
   runAfterTasks?: string[];
   data: {
     jobType: UnifiedJobType;
+    id: string;
   };
 };
 
@@ -53,6 +54,7 @@ export interface CustomNodeProps extends WithSelectionProps {
     ElementModel,
     {
       jobType: UnifiedJobType;
+      id: string;
     }
   >;
 }
