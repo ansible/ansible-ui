@@ -99,7 +99,7 @@ export function useDeleteDecisionEnvironment(
         onComplete,
         alertPrompts: inUseMessage,
         actionFn: (decisionEnvironment, signal) => {
-          const url = edaAPI`/decision-environments/${decisionEnvironment.id.toString()}}/`;
+          const url = edaAPI`/decision-environments/${decisionEnvironment.id.toString()}/`;
           return requestDelete(url + forceParameter, signal);
         },
       });
