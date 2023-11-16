@@ -3,7 +3,7 @@ import { TopologySideBar as PFTopologySideBar } from '@patternfly/react-topology
 import { NodeFormInputs } from './components/NodeFormInputs';
 import { Title } from '@patternfly/react-core';
 import styled from 'styled-components';
-import { WorkflowVisualizerAction } from './types';
+import { WorkflowVisualizerAction, WorkflowVisualizerState } from './types';
 import { useCallback } from 'react';
 
 const TopologySideBar = styled(PFTopologySideBar)`
@@ -13,9 +13,13 @@ const TopologySideBar = styled(PFTopologySideBar)`
 
 export function WorkflowVisualizerNodeForm(props: {
   dispatch: (action: WorkflowVisualizerAction) => void;
+  state: WorkflowVisualizerState;
 }) {
   const { t } = useTranslation();
-  const { dispatch } = props;
+  const {
+    dispatch,
+    state: { selectedNode },
+  } = props;
   const handleClose = useCallback(() => {
     dispatch({ type: 'SET_SELECTED_NODE', value: { node: [], mode: undefined } });
   }, [dispatch]);
@@ -26,7 +30,7 @@ export function WorkflowVisualizerNodeForm(props: {
       resizable
       onClose={handleClose}
     >
-      <NodeFormInputs setSelectedNode={handleClose} />
+      <NodeFormInputs selectedNode={selectedNode[0]} setSelectedNode={handleClose} />
     </TopologySideBar>
   );
 }

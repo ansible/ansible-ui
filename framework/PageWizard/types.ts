@@ -1,3 +1,4 @@
+import { AnyRecord } from 'dns';
 import { SetStateAction } from 'react';
 
 export interface PageWizardStep {
@@ -16,8 +17,8 @@ export interface PageWizardState {
   setStepError: React.Dispatch<SetStateAction<Record<string, object>>>;
   setToggleExpanded: (update: (toggleNavExpanded: boolean) => boolean) => void;
   setWizardData: (data: object) => void;
-  stepData: Record<string, object>;
+  stepData: AnyRecord;
   stepError: Record<string, object>;
   steps: PageWizardStep[];
-  wizardData: object;
+  wizardData: AnyRecord;
 }

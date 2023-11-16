@@ -101,7 +101,7 @@ export function WorkflowVisualizer() {
   let sideBar = null;
   if (state.mode !== 'delete') {
     if (selectedNode && state.mode === 'edit') {
-      sideBar = <WorkflowVisualizerNodeForm dispatch={dispatch} />;
+      sideBar = <WorkflowVisualizerNodeForm state={state} dispatch={dispatch} />;
     }
     if (selectedNode && state.mode === 'add-link') {
       sideBar = <div>{t('Adding a link')}</div>;

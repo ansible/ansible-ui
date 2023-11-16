@@ -3,11 +3,11 @@ import { createContext, ReactNode, useState, useMemo, useEffect, useContext } fr
 import type { PageWizardStep, PageWizardState } from './types';
 
 export const PageWizardContext = createContext<PageWizardState>({} as PageWizardState);
-export function usePageWizard() {
-  return useContext(PageWizardContext);
+export function usePageWizard<T>() {
+  return useContext<T>(PageWizardContext);
 }
 
-export function PageWizardProvider<T extends object>(props: {
+export function PageWizardProvider<T, A extends object>(props: {
   children: ReactNode;
   steps: PageWizardStep[];
   defaultValue?: Record<string, object>;
@@ -41,7 +41,7 @@ export function PageWizardProvider<T extends object>(props: {
   }, [activeStep, visibleSteps]);
 
   return (
-    <PageWizardContext.Provider
+    <PageWizardContext.Provider<A>
       value={{
         wizardData,
         setWizardData: setWizardData,

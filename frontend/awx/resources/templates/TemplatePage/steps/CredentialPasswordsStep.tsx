@@ -8,8 +8,8 @@ import type { TemplateLaunch } from '../TemplateLaunchWizard';
 export default function CredentialPasswordsStep(props: { config: LaunchConfiguration }) {
   const { config } = props;
   const { t } = useTranslation();
-  const { wizardData } = usePageWizard();
-  const { credentials } = wizardData as TemplateLaunch;
+  const wizardData = usePageWizard();
+  const { credentials } = wizardData;
   const vaultsThatPrompt: string[] = [];
   let showCredentialPasswordSsh = false;
   let showCredentialPasswordPrivilegeEscalation = false;

@@ -2,39 +2,32 @@ import { useTranslation } from 'react-i18next';
 import { PageFormSelect } from '../../../../../../framework';
 import { PageFormJobTemplateSelect } from '../../components/PageFormJobTemplateSelect';
 import { usePageWizard } from '../../../../../../framework/PageWizard/PageWizardProvider';
-import { PageFormInventorySelect } from '../../../inventories/components/PageFormInventorySelect';
-import { PageFormWorkflowJobTemplateSelect } from '../../components/PageFormWorkflowJobTemplateSelect';
-import { PageFormInventorySourceSelect } from '../../../inventories/components/PageFormInventorySourceSelect';
-import { PageFormProjectSelect } from '../../../projects/components/PageFormProjectSelect';
+// import { PageFormInventorySelect } from '../../../inventories/components/PageFormInventorySelect';
+// import { PageFormWorkflowJobTemplateSelect } from '../../components/PageFormWorkflowJobTemplateSelect';
+// import { PageFormInventorySourceSelect } from '../../../inventories/components/PageFormInventorySourceSelect';
+// import { PageFormProjectSelect } from '../../../projects/components/PageFormProjectSelect';
 import { UnifiedJobTemplate } from '../../../../interfaces/generated-from-swagger/api';
 import { PageWizardState } from '../../../../../../framework/PageWizard/types';
+import { NodeFields } from './NodeFormInputs';
 
 interface Step1Fields extends Omit<PageWizardState, 'stepData'> {
   stepData: {
-    resource: {
-      node_resource: UnifiedJobTemplate;
-      node_resource_type: string;
-      node_status_type: string;
-    };
+    resource: Record<string, UnifiedJobTemplate | string>;
   };
 }
-
 export function Step1() {
-  const {
-    stepData: {
-      resource: { node_resouce, node_resource_type, node_status_type },
-    },
-    ...rest
-  }: Step1Fields = usePageWizard();
+  const wizardData = usePageWizard();
+  const { stepData } = wizardData as Step1Fields;
+  console.log({ wizardData, resource });
+  wizardData.node_resource;
   const { t } = useTranslation();
-  console.log({ stepData });
-  const resourceType = node_resource_type;
+
   return (
     <>
-      <PageFormSelect
+      <PageFormSelect<NodeFields>
         label={t('Resource type')}
-        name="node_resource_type"
-        id="node_resource_type"
+        name="resource.node_resource_type"
+        id="resource.node_resource_type"
         isRequired
         options={[
           { label: t('Job Template'), value: 'job' },
@@ -46,18 +39,17 @@ export function Step1() {
         ]}
       />
 
-      {
-        {
-          job: <PageFormJobTemplateSelect name="node_resource" />,
-          workflow_job: <PageFormWorkflowJobTemplateSelect name="node_resource" />,
-          inventory_update: <PageFormInventorySourceSelect isRequired name="node_resource" />,
-          project_update: <PageFormProjectSelect name="node_resource" />,
-          // workflow_approval: <PageFormWorkflowApprovalSelect name="node_resource" />,
-          // system_job: <PageFormSystemJobTemplateSelec name="node_resource" />,
-        }[resourceType]
-      }
+      {wizardData.stepData.resource.node_resource_type && (
+        <PageFormJobTemplateSelect<NodeFields> name="resource.node_resource.name" />
+      )}
+      {/* //   workflow_job: <PageFormWorkflowJobTemplateSelect<NodeFields> name="node_resource" />,
+        //   inventory_update: (
+        //     <PageFormInventorySourceSelect<NodeFields> isRequired name="node_resource" />
+        //   ),
+        //   project_update: <PageFormProjectSelect<NodeFields> name="node_resource" />,
+        // }[resource.node_resource_type]} */}
 
-      <PageFormSelect
+      <PageFormSelect<NodeFields>
         isRequired
         id="node_status_type"
         label={t('Status')}
