@@ -125,7 +125,7 @@ export function DataEditor<
     if (language) {
       monaco.editor.setModelLanguage(model, language);
     }
-    model.onDidChangeContent(() => {
+    const didChangeContentDisposable = model.onDidChangeContent(() => {
       onChange(editor.getValue() ?? '');
     });
     const currentValue = editor.getValue();
@@ -138,6 +138,10 @@ export function DataEditor<
       element.style.minHeight = '75px';
       element.style.height = `${(valueArray.length + 3) * 19}` + 'px';
     }
+
+    return () => {
+      didChangeContentDisposable.dispose();
+    };
   }, [props.value, language, onChange, idDataEditorElement]);
 
   useResizeObserver(divEl, () => {
@@ -161,7 +165,7 @@ export function DataEditor<
     const model = editor.getModel();
     if (!model) return;
 
-    monaco.editor.onDidChangeMarkers(() => {
+    const disChangeMarkersDisposable = monaco.editor.onDidChangeMarkers(() => {
       const markers = monaco.editor.getModelMarkers({
         owner: model.getLanguageId(),
         resource: model.uri,
@@ -172,6 +176,10 @@ export function DataEditor<
         clearErrors(name);
       }
     });
+
+    return () => {
+      disChangeMarkersDisposable.dispose();
+    };
   }, [setError, clearErrors, name]);
 
   return (
