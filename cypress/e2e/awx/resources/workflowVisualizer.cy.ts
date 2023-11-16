@@ -19,6 +19,11 @@ describe('Workflow Job templates visualizer', () => {
     });
   });
 
+  afterEach(() => {
+    cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
+    cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
+  });
+
   it('should render a workflow visualizer view with multiple nodes present', () => {
     cy.createAwxWorkflowJobTemplate({
       organization: organization.id,
@@ -28,10 +33,13 @@ describe('Workflow Job templates visualizer', () => {
         `${workflowJobTemplate.name}`,
         'wf_vis_testing_A.json'
       );
-    });
-    cy.get('g[data-layer-id="default"]').within(() => {
-      cy.get('g[data-type="node"]').should('have.length', 4);
-      cy.get('g[data-type="edge"]').should('have.length', 3);
+      cy.get('[class*="66-node-label"]')
+        .should('exist')
+        .should('contain', 'Cleanup Activity Stream');
+      cy.get('[class*="43-node-label"]').should('exist').should('contain', 'bar');
+      cy.get('[class*="42-node-label"]').should('exist').should('contain', '1');
+      cy.get('[class*="41-node-label"]').should('exist').should('contain', 'Demo Project');
+      cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate);
     });
   });
 
