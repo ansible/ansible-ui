@@ -396,7 +396,10 @@ function CollectionDocumentationTab(props: { collection?: CollectionVersionSearc
       for (const content of data.results[0].docs_blob.contents) {
         let group = groups[content.content_type];
         if (!group) {
-          group = { name: content.content_type, contents: [] };
+          group = {
+            name: content.content_type.charAt(0).toUpperCase() + content.content_type.slice(1),
+            contents: [],
+          };
           groups[content.content_type] = group;
         }
         group.contents.push(content);
@@ -432,20 +435,6 @@ function CollectionDocumentationTab(props: { collection?: CollectionVersionSearc
               setDrawerOpen={setDrawerOpen}
             />
           </DrawerContentBody>
-          {readme && (
-            <DrawerContentBody>
-              <PageSection variant="light">
-                <Stack hasGutter>
-                  <div
-                    className="pf-c-content"
-                    dangerouslySetInnerHTML={{
-                      __html: readme,
-                    }}
-                  />
-                </Stack>
-              </PageSection>
-            </DrawerContentBody>
-          )}
         </DrawerContent>
       </Drawer>
     );
@@ -463,7 +452,20 @@ function CollectionDocumentationTab(props: { collection?: CollectionVersionSearc
               />
             ) : undefined
           }
-        ></DrawerContent>
+        >
+          <DrawerContentBody>
+            <PageSection variant="light">
+              <Stack hasGutter>
+                <div
+                  className="pf-c-content"
+                  dangerouslySetInnerHTML={{
+                    __html: readme,
+                  }}
+                />
+              </Stack>
+            </PageSection>
+          </DrawerContentBody>
+        </DrawerContent>
       </Drawer>
     );
   }
