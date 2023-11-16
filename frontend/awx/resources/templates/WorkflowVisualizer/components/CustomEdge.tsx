@@ -1,11 +1,11 @@
 import { useState, useRef, useEffect, FunctionComponent } from 'react';
-import { observer } from 'mobx-react';
 import {
   Layer,
   StatusModifier,
   TOP_LAYER,
   integralShapePath,
   isEdge,
+  observer,
 } from '@patternfly/react-topology';
 import { CustomLabel } from './CustomLabel';
 import type { CustomEdgeProps, CustomEdgeInnerProps } from '../types';
