@@ -134,7 +134,7 @@ export function InstanceDetailsTab(props: {
   const toolTipMap: { [item: string]: string } = useNodeTypeTooltip();
   return (
     <PageDetails>
-      <PageDetail label={t('Name')}>
+      <PageDetail label={t('Name')} data-cy="name">
         <Button
           variant="link"
           isInline
@@ -149,16 +149,16 @@ export function InstanceDetailsTab(props: {
           {instance.hostname}
         </Button>
       </PageDetail>
-      <PageDetail label={t('Node type')}>
+      <PageDetail label={t('Node type')} data-cy="node-type">
         <Tooltip content={toolTipMap[instance.node_type]}>
           <Dotted>{`${capitalizeFirstLetter(instance.node_type)}`}</Dotted>
         </Tooltip>
       </PageDetail>
-      <PageDetail label={t('Status')}>
+      <PageDetail label={t('Status')} data-cy="node-status">
         <StatusLabel status={instance.node_state} />
       </PageDetail>
       {instanceGroups && (
-        <PageDetail label={t(`Instance groups`)}>
+        <PageDetail label={t(`Instance groups`)} data-cy="instance-groups">
           {instanceGroups.results.map((instance) => (
             <Label color="blue" style={{ marginRight: '10px' }} key={instance.id}>
               <Link to={RouteObj.InstanceGroupDetails.replace(':id', instance.id.toString())}>
@@ -170,11 +170,12 @@ export function InstanceDetailsTab(props: {
         </PageDetail>
       )}
       {instance.related?.install_bundle && (
-        <PageDetail label={t`Download bundle`}>
+        <PageDetail label={t`Download bundle`} data-cy="download-bundle">
           <Button
             size="sm"
             aria-label={t`Download Bundle`}
             component="a"
+            download={`${instance.related?.install_bundle}`}
             href={`${instance.related?.install_bundle}`}
             target="_blank"
             variant="secondary"
@@ -185,25 +186,35 @@ export function InstanceDetailsTab(props: {
         </PageDetail>
       )}
       {instance.listener_port && (
-        <PageDetail label={t`Listener port`}>{instance.listener_port}</PageDetail>
+        <PageDetail label={t`Listener port`} data-cy="listener-port">
+          {instance.listener_port}
+        </PageDetail>
       )}
-      <PageDetail label={t('Used capacity')}>
+      <PageDetail label={t('Used capacity')} data-cy="used-capacity">
         <Progress value={Math.round(100 - instance.percent_capacity_remaining)} />
       </PageDetail>
-      <PageDetail label={t('Running jobs')}>{instance.jobs_running.toString()}</PageDetail>
-      <PageDetail label={t('Total jobs')}>{instance.jobs_total.toString()}</PageDetail>
-      <PageDetail label={t('Policy type')}>
+      <PageDetail label={t('Running jobs')} data-cy="running-jobs">
+        {instance.jobs_running.toString()}
+      </PageDetail>
+      <PageDetail label={t('Total jobs')} data-cy="total-jobs">
+        {instance.jobs_total.toString()}
+      </PageDetail>
+      <PageDetail label={t('Policy type')} data-cy="policy-type">
         {instance.managed_by_policy ? t('Auto') : t('Manual')}
       </PageDetail>
-      <PageDetail label={t('Memory')}>
+      <PageDetail label={t('Memory')} data-cy="memory">
         <BytesCell bytes={instance.memory} />
       </PageDetail>
-      <PageDetail label={t('Last health check')}>
+      <PageDetail label={t('Last health check')} data-cy="last-health-check">
         {formatDateString(instance.last_health_check)}
       </PageDetail>
-      <PageDetail label={t('Created')}>{formatDateString(instance.created)}</PageDetail>
-      <PageDetail label={t('Modified')}>{formatDateString(instance.modified)}</PageDetail>
-      <PageDetail label={t('Forks')}>
+      <PageDetail label={t('Created')} data-cy="created">
+        {formatDateString(instance.created)}
+      </PageDetail>
+      <PageDetail label={t('Modified')} data-cy="modified">
+        {formatDateString(instance.modified)}
+      </PageDetail>
+      <PageDetail label={t('Forks')} data-cy="forks">
         <div>
           {t('Total forks: ')}
           {instanceForks}
@@ -222,7 +233,7 @@ export function InstanceDetailsTab(props: {
           }
         />
       </PageDetail>
-      <PageDetail label={t('Enabled')}>
+      <PageDetail label={t('Enabled')} data-cy="enabled">
         <Switch
           id="enable-instance"
           label={t('Enabled')}

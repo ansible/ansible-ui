@@ -49,7 +49,7 @@ const Legend = () => {
   };
 
   return (
-    <Panel>
+    <Panel data-cy="mesh-viz-legend">
       <PanelMain tabIndex={0}>
         <PanelMainBody>
           <DescriptionList>
