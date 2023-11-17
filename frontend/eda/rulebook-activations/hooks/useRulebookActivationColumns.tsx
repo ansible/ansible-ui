@@ -20,7 +20,7 @@ export function useRulebookActivationColumns() {
   return useMemo<ITableColumn<EdaRulebookActivation>[]>(
     () => [
       {
-        header: t('Activation ID'),
+        header: t('ID'),
         type: 'text',
         value: (activation) => activation.id.toString(),
         modal: ColumnModalOption.Hidden,
