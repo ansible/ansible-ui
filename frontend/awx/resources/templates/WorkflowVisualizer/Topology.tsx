@@ -23,7 +23,7 @@ import {
   withPanZoom,
   withSelection,
 } from '@patternfly/react-topology';
-import { CustomEdge, CustomNode, NodeContextMenu } from './components';
+import { CustomEdge, CustomNode, DeletedNode, NodeContextMenu } from './components';
 import type { LayoutNode, GraphNode } from './types';
 import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
 import type { AwxItemsResponse } from '../../../common/AwxItemsResponse';
@@ -65,6 +65,14 @@ export const Topology = ({
       switch (type) {
         case 'group':
           return DefaultGroup;
+        case 'deleted-node':
+          return withDndDrop(
+            nodeDropTargetSpec([
+              CONNECTOR_SOURCE_DROP,
+              CONNECTOR_TARGET_DROP,
+              CREATE_CONNECTOR_DROP_TYPE,
+            ])
+          )(withDragNode(nodeDragSourceSpec('node', true, true))(DeletedNode));
         default:
           switch (kind) {
             case ModelKind.graph:
@@ -133,6 +141,9 @@ export const Topology = ({
 
     const nodes: GraphNode[] = layout.map((n) => {
       const nodeId = n.id.toString();
+      let nodeType = 'node';
+      let nodeName = n.summary_fields?.unified_job_template?.name;
+
       const processNodes = (nodesArray: number[]) => {
         nodesArray.forEach((id) => {
           const afterNode = layout.find((afterNode) => afterNode.id.toString() === id.toString());
@@ -145,6 +156,7 @@ export const Topology = ({
           }
         });
       };
+
       if (n.success_nodes.length > 0) {
         processNodes(n.success_nodes);
       }
@@ -155,13 +167,18 @@ export const Topology = ({
         processNodes(n.always_nodes);
       }
 
+      if (!nodeName) {
+        nodeName = t('Deleted');
+        nodeType = 'deleted-node';
+      }
+
       const node: GraphNode = {
         id: nodeId,
-        type: 'node',
-        label: n.summary_fields?.unified_job_template?.name || 'UNDEFINED',
+        type: nodeType,
+        label: nodeName,
         width: NODE_DIAMETER,
         height: NODE_DIAMETER,
-        shape: NodeShape.ellipse,
+        shape: NodeShape.circle,
         runAfterTasks: n.runAfterTasks,
         data: {
           jobType: n.summary_fields?.unified_job_template?.unified_job_type,
