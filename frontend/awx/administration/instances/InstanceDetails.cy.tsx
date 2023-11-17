@@ -24,14 +24,12 @@ describe('Mesh Visualizer', () => {
           'have.text',
           `${capitalizeFirstLetter(instance.node_type)}`
         );
-        cy.get('[data-cy="status"] .pf-v5-c-label__text').should(
+        cy.get('[data-cy="node-label-status"]').should(
           'have.text',
           `${capitalizeFirstLetter(instance.node_state)}`
         );
         cy.get('[data-cy="instance-groups"]').should('exist');
-        if (instance.related.install_bundle) {
-          cy.get('[data-cy="download-bundle"]').should('exist');
-        }
+        cy.get('[data-cy="download-bundle"]').should('exist');
         cy.get('[data-cy="used-capacity"]').should(
           'have.text',
           `${Math.round(100 - instance.percent_capacity_remaining)}%`
@@ -52,5 +50,21 @@ describe('Mesh Visualizer', () => {
         cy.get('[data-cy="forks"]').should('exist');
         cy.get('[data-cy="enabled"]').should('exist');
       });
+  });
+  it('Does not render install bundle if an instance has no assoicated install bundle', () => {
+    cy.intercept(
+      { method: 'GET', url: '/api/v2/instances/*' },
+      { fixture: 'instance_without_install_bundle.json' }
+    ).as('getInstance');
+    cy.mount(<InstanceDetails />);
+    cy.get('[data-cy="download-bundle"]').should('not.exist');
+  });
+  it('Does not render instance groups if an instance has no associated instance groups', () => {
+    cy.intercept(
+      { method: 'GET', url: '/api/v2/instances/*/instance_groups/' },
+      { fixture: 'emptyList.json' }
+    ).as('getInstanceGroups');
+    cy.mount(<InstanceDetails />);
+    cy.get('[data-cy="instance-groups"]').should('not.exist');
   });
 });

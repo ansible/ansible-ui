@@ -1,45 +1,59 @@
 {
-  "id": 1,
-  "hostname": "awx_1",
+  "id": 3,
+  "hostname": "receptor-1",
   "type": "instance",
-  "url": "/api/v2/instances/1/",
+  "url": "/api/v2/instances/3/",
   "related": {
-    "named_url": "/api/v2/instances/awx_1/",
-    "jobs": "/api/v2/instances/1/jobs/",
-    "instance_groups": "/api/v2/instances/1/instance_groups/",
-    "peers": "/api/v2/instances/1/peers/"
+    "named_url": "/api/v2/instances/receptor-1/",
+    "jobs": "/api/v2/instances/3/jobs/",
+    "instance_groups": "/api/v2/instances/3/instance_groups/",
+    "install_bundle": "/api/v2/instances/3/install_bundle/",
+    "peers": "/api/v2/instances/3/peers/",
+    "health_check": "/api/v2/instances/3/health_check/"
   },
   "summary_fields": {
     "user_capabilities": {
       "edit": false
     },
-    "links": []
+    "links": [
+      {
+        "id": 2,
+        "url": "",
+        "related": {
+          "source_instance": "/api/v2/instances/3/",
+          "target_instance": "/api/v2/instances/2/"
+        },
+        "source": "receptor-1",
+        "target": "receptor-hop",
+        "link_state": "established"
+      }
+    ]
   },
-  "uuid": "369dd50f-2bb0-4bb4-bece-9079ec32952d",
-  "created": "2023-11-03T18:39:45.354511Z",
-  "modified": "2023-11-03T20:28:08.774397Z",
-  "last_seen": "2023-11-15T19:11:48.213825Z",
+  "uuid": "cb115176-40a6-417e-9135-b6e439d499b0",
+  "created": "2023-11-03T18:40:02.068826Z",
+  "modified": "2023-11-03T18:40:02.068871Z",
+  "last_seen": "2023-11-08T17:21:13.770965Z",
   "health_check_started": null,
   "health_check_pending": false,
-  "last_health_check": "2023-11-15T19:11:48.213825Z",
-  "errors": "",
-  "capacity_adjustment": "0.80",
-  "version": "22.3.1.dev297+g6cdea1909d.d20231103",
-  "capacity": 118,
+  "last_health_check": "2023-11-08T16:33:39.744096Z",
+  "errors": "Another cluster node has determined this instance to be unresponsive",
+  "capacity_adjustment": "1.00",
+  "version": "ansible-runner-2.3.1.dev71+gaed342f",
+  "capacity": 0,
   "consumed_capacity": 0,
-  "percent_capacity_remaining": 100.0,
+  "percent_capacity_remaining": 0.0,
   "jobs_running": 0,
-  "jobs_total": 3,
+  "jobs_total": 0,
   "cpu": "9.0",
   "memory": 16791117824,
-  "cpu_capacity": 36,
-  "mem_capacity": 139,
+  "cpu_capacity": 0,
+  "mem_capacity": 0,
   "enabled": true,
   "managed_by_policy": true,
-  "node_type": "hybrid",
-  "node_state": "ready",
+  "node_type": "execution",
+  "node_state": "unavailable",
   "ip_address": "",
-  "listener_port": 2222,
-  "peers": [],
+  "listener_port": null,
+  "peers": ["receptor-hop"],
   "peers_from_control_nodes": false
 }
