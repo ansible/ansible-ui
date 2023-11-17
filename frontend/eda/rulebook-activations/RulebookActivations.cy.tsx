@@ -109,7 +109,7 @@ describe('RulebookActivations.cy.ts', () => {
     cy.contains(/^Rulebook activations are rulebooks that have been activated to run.$/).should(
       'be.visible'
     );
-    cy.get('[data-cy="activation-id-column-header"]').should('be.visible');
+    cy.get('[data-cy="id-column-header"]').should('be.visible');
     cy.get('[data-cy="name-column-header"]').should('be.visible');
     cy.get('[data-cy="activation-status-column-header"]').should('be.visible');
     cy.get('[data-cy="number-of-rules-column-header"]').should('be.visible');
