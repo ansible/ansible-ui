@@ -32,16 +32,17 @@ export function StatusCell(props: { status?: string; disableLinks?: boolean; to?
   );
 }
 
-export function StatusLabel(props: { status?: string }) {
+export function StatusLabel(props: { status?: string; dataCy?: string }) {
   const { t } = useTranslation();
   const status = props.status || 'default';
+  const dataCy = props.dataCy || '';
 
   const label = useLabel(status, t);
   const color = getColor(status);
   const Icon = getIcon(status);
 
   return (
-    <Label variant="outline" color={color} icon={Icon ? <Icon /> : null}>
+    <Label data-cy={dataCy} variant="outline" color={color} icon={Icon ? <Icon /> : null}>
       {label}
     </Label>
   );

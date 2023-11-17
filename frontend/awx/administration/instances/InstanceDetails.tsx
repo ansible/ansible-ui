@@ -155,9 +155,9 @@ export function InstanceDetailsTab(props: {
         </Tooltip>
       </PageDetail>
       <PageDetail label={t('Status')} data-cy="node-status">
-        <StatusLabel status={instance.node_state} />
+        <StatusLabel dataCy="node-label-status" status={instance.node_state} />
       </PageDetail>
-      {instanceGroups && (
+      {instanceGroups && instanceGroups.results.length > 0 && (
         <PageDetail label={t(`Instance groups`)} data-cy="instance-groups">
           {instanceGroups.results.map((instance) => (
             <Label color="blue" style={{ marginRight: '10px' }} key={instance.id}>
