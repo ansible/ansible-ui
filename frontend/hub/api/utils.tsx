@@ -37,7 +37,7 @@ export function useRepositoryBasePath(name: string, pulp_href?: string | undefin
           repository = firstResult(repositoryResponse) as Repository;
         }
         if (!repository) {
-          throw new Error(t`Failed to find repository ${name}`);
+          throw new Error(t(`Failed to find repository {{name}}`, { name }));
         }
         const distributionResponse = await requestGet<Results>(
           pulpAPI`/distributions/ansible/ansible/?name=${name}&limit=1`
@@ -51,7 +51,7 @@ export function useRepositoryBasePath(name: string, pulp_href?: string | undefin
           );
           distribution = firstResult(newDistResponse) as Distribution;
           if (!distribution) {
-            throw new Error(t`Failed to find a distribution for repository ${name}`);
+            throw new Error(t(`Failed to find a distribution for repository {{name}}`, { name }));
           }
           setBasePath(distribution.base_path);
         }
