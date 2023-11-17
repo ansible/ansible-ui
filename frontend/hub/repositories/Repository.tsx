@@ -1,16 +1,17 @@
 export interface Repository {
-  pulp_id: string;
+  description: string;
+  gpgkey: null | string;
+  last_sync_task: null | string;
+  last_synced_metadata_time: null | string;
+  latest_version_href: string;
   name: string;
-  base_path: string;
+  private: boolean;
+  pulp_created: string;
   pulp_href: string;
-  repository: {
-    name: string;
-    description?: string;
-    pulp_id: string;
-    pulp_last_updated: string;
-    content_count: number;
-    gpgkey: string | null;
-  };
+  pulp_labels: unknown;
+  remote: null | string;
+  retain_repo_versions: null | number;
+  versions_href: string;
 }
 
 export interface RemoteRepository {
