@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { useNameColumn } from '../../../../common/columns';
@@ -43,68 +43,85 @@ export function useDeleteInstanceGroups(onComplete: (instanceGroups: InstanceGro
       ? undefined
       : t('The instance group cannot be deleted due to insufficient permission.');
   };
+  const buildAlertPrompts = useCallback(
+    async (instanceGroups: InstanceGroup[], undeletableInstanceGroups: InstanceGroup[]) => {
+      let alertPrompts: string[] = [];
+
+      /**
+       * If multiple instance groups are selected for deletion, display a general alert
+       * message that deleting instance groups could impact resources that rely on them
+       */
+      if (instanceGroups.length > 1) {
+        alertPrompts = [
+          t('Deleting instance groups could impact other resources that rely on them.', {
+            count: instanceGroups.length - undeletableInstanceGroups.length,
+          }),
+        ];
+      }
+      // Indicate alert message for instance groups that are undeletable due to insufficient permissions
+      if (undeletableInstanceGroups.length > 0) {
+        alertPrompts.push(
+          t(
+            '{{count}} of the selected instance groups cannot be deleted due to insufficient permission.',
+            {
+              count: undeletableInstanceGroups.length,
+            }
+          )
+        );
+      }
+      /**
+       * If the deletion is invoked on a single instance group, check if it has related
+       * resources and display the count of the related resources in the alert message
+       */
+      if (instanceGroups.length === 1 && !undeletableInstanceGroups.length) {
+        const isInstanceGroupBeingUsed = await checkIfInstanceGroupIsBeingUsed(instanceGroups[0]);
+        if (isInstanceGroupBeingUsed?.totalResourceCount > 0) {
+          let relatedResourceMessage = t(
+            'This instance group is currently being used by other resources: '
+          );
+          if (isInstanceGroupBeingUsed.relatedTemplatesCount > 0) {
+            if (
+              isInstanceGroupBeingUsed.totalResourceCount -
+                isInstanceGroupBeingUsed.relatedTemplatesCount >
+              0
+            ) {
+              relatedResourceMessage += t('{{count}} templates, ', {
+                count: isInstanceGroupBeingUsed.relatedTemplatesCount,
+              });
+            } else {
+              relatedResourceMessage += t('{{count}} templates', {
+                count: isInstanceGroupBeingUsed.relatedTemplatesCount,
+              });
+            }
+          }
+          if (isInstanceGroupBeingUsed.relatedOrganizationsCount > 0) {
+            if (isInstanceGroupBeingUsed.relatedInventoriesCount > 0) {
+              relatedResourceMessage += t('{{count}} organizations, ', {
+                count: isInstanceGroupBeingUsed.relatedOrganizationsCount,
+              });
+            } else {
+              relatedResourceMessage += t('{{count}} organizations', {
+                count: isInstanceGroupBeingUsed.relatedOrganizationsCount,
+              });
+            }
+          }
+          if (isInstanceGroupBeingUsed.relatedInventoriesCount > 0) {
+            relatedResourceMessage += t('{{count}} inventories', {
+              count: isInstanceGroupBeingUsed.relatedInventoriesCount,
+            });
+          }
+          alertPrompts = [relatedResourceMessage];
+        }
+      }
+
+      return alertPrompts;
+    },
+    [t]
+  );
 
   const deleteInstanceGroups = async (instanceGroups: InstanceGroup[]) => {
     const undeletableInstanceGroups = instanceGroups.filter(cannotDeleteInstanceGroup);
-    const isInstanceGroupBeingUsed = await checkIfInstanceGroupIsBeingUsed(instanceGroups[0]);
-
-    let alertPrompts: string[] = [];
-    if (instanceGroups.length > 1) {
-      alertPrompts = [
-        t('Deleting instance groups could impact other resources that rely on them.', {
-          count: instanceGroups.length - undeletableInstanceGroups.length,
-        }),
-      ];
-    }
-    if (undeletableInstanceGroups.length > 0) {
-      alertPrompts.push(
-        t(
-          '{{count}} of the selected instance groups cannot be deleted due to insufficient permission.',
-          {
-            count: undeletableInstanceGroups.length,
-          }
-        )
-      );
-    }
-    if (instanceGroups.length === 1 && !undeletableInstanceGroups.length) {
-      if (isInstanceGroupBeingUsed?.totalResourceCount > 0) {
-        let relatedResourceMessage = t(
-          'This instance group is currently being used by other resources: '
-        );
-        if (isInstanceGroupBeingUsed.relatedTemplatesCount > 0) {
-          if (
-            isInstanceGroupBeingUsed.totalResourceCount -
-              isInstanceGroupBeingUsed.relatedTemplatesCount >
-            0
-          ) {
-            relatedResourceMessage += t('{{count}} templates, ', {
-              count: isInstanceGroupBeingUsed.relatedTemplatesCount,
-            });
-          } else {
-            relatedResourceMessage += t('{{count}} templates', {
-              count: isInstanceGroupBeingUsed.relatedTemplatesCount,
-            });
-          }
-        }
-        if (isInstanceGroupBeingUsed.relatedOrganizationsCount > 0) {
-          if (isInstanceGroupBeingUsed.relatedInventoriesCount > 0) {
-            relatedResourceMessage += t('{{count}} organizations, ', {
-              count: isInstanceGroupBeingUsed.relatedOrganizationsCount,
-            });
-          } else {
-            relatedResourceMessage += t('{{count}} organizations', {
-              count: isInstanceGroupBeingUsed.relatedOrganizationsCount,
-            });
-          }
-        }
-        if (isInstanceGroupBeingUsed.relatedInventoriesCount > 0) {
-          relatedResourceMessage += t('{{count}} inventories', {
-            count: isInstanceGroupBeingUsed.relatedInventoriesCount,
-          });
-        }
-        alertPrompts = [relatedResourceMessage];
-      }
-    }
+    const alertPrompts = await buildAlertPrompts(instanceGroups, undeletableInstanceGroups);
 
     bulkAction({
       title:
