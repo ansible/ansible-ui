@@ -1,10 +1,10 @@
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, TextCell } from '../../../../../framework';
+import { ITableColumn, TextCell, useGetPageUrl } from '../../../../../framework';
 import { useCreatedColumn, useModifiedColumn } from '../../../../common/columns';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { useMemo } from 'react';
-import { RouteObj } from '../../../../common/Routes';
 import { Progress } from '@patternfly/react-core';
+import { AwxRoute } from '../../../AwxRoutes';
 
 export function useInstanceGroupsColumns(options?: {
   disableSort?: boolean;
@@ -12,7 +12,7 @@ export function useInstanceGroupsColumns(options?: {
 }) {
   const { t } = useTranslation();
   const disableLinks = options && options.disableLinks;
-
+  const getPageUrl = useGetPageUrl();
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);
 
@@ -25,7 +25,7 @@ export function useInstanceGroupsColumns(options?: {
             to={
               disableLinks
                 ? undefined
-                : RouteObj.InstanceGroupDetails.replace(':id', instanceGroup.id.toString())
+                : getPageUrl(AwxRoute.InstanceGroupDetails, { params: { id: instanceGroup.id } })
             }
             text={instanceGroup.name}
           />
