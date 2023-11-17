@@ -26,6 +26,7 @@ import { appendTrailingSlash, hubAPIPut, parsePulpIDFromURL } from '../api/utils
 import { pulpAPI } from '../api/formatPath';
 import { PulpItemsResponse } from '../usePulpView';
 import { IRemotes } from './Remotes';
+import { useClearCache } from '../../common/useInvalidateCache';
 
 interface SecredInput {
   onClear?: (name: string) => void;
@@ -67,6 +68,8 @@ const yamlRequirementsTemplate = [
 
 export function CreateRemote() {
   const { t } = useTranslation();
+  const { clearCacheByKey } = useClearCache();
+  clearCacheByKey(pulpAPI`/remotes/ansible/collection/`);
   const navigate = useNavigate();
   const postRequest = usePostRequest<IRemotes>();
   const onSubmit: PageFormSubmitHandler<RemoteFormProps> = async (remote) => {

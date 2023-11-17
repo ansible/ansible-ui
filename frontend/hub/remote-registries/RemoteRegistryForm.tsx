@@ -24,6 +24,7 @@ import { hubAPI } from '../api/formatPath';
 import { appendTrailingSlash, hubAPIPut, parsePulpIDFromURL } from '../api/utils';
 import { HubItemsResponse } from '../useHubView';
 import { RemoteRegistry } from './RemoteRegistry';
+import { useClearCache } from '../../common/useInvalidateCache';
 
 interface SecredInput {
   onClear?: (name: string) => void;
@@ -47,6 +48,8 @@ const WriteOnlyFields: (
 
 export function CreateRemoteRegistry() {
   const { t } = useTranslation();
+  const { clearCacheByKey } = useClearCache();
+  clearCacheByKey(hubAPI`/_ui/v1/execution-environments/registries/`);
   const navigate = useNavigate();
   const postRequest = usePostRequest<RemoteRegistryProps>();
   const onSubmit: PageFormSubmitHandler<RemoteRegistryProps> = async (remote) => {
