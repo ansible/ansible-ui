@@ -110,7 +110,7 @@ export default function CredentialPasswordsStep(props: { config: LaunchConfigura
           <PageFormTextInput<TemplateLaunch>
             key={credId}
             id={`launch-vault-password-${credId}`}
-            label={credId === '' ? t`Vault password` : t`Vault password | ${credId}`}
+            label={credId === '' ? t`Vault password` : t(`Vault password | {{credId}}`, { credId })}
             name={`credential_passwords.${passwordKey}`}
             placeholder={t('Enter a password')}
             type="password"
