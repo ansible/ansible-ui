@@ -52,7 +52,7 @@ export function PageDashboardCard(props: {
   maxHeight?: PageDashboardCardHeight;
 
   style?: CSSProperties;
-  help?: string[];
+  help?: string;
   helpTitle?: string;
   helpDocLink?: string;
   headerControls?: ReactNode;

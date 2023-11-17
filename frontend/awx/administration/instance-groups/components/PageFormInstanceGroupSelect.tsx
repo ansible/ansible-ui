@@ -28,7 +28,7 @@ export function PageFormInstanceGroupSelect<
       label={t('Instance group')}
       selectTitle={t('Select an instance group')}
       selectOpen={selectInstanceGroup}
-      validate={async (instanceGroups: InstanceGroup[]) => {
+      validate={(instanceGroups: InstanceGroup[]) => {
         if (props.isRequired && instanceGroups.length === 0) {
           return t('Instance group is required.');
         }
