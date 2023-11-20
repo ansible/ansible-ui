@@ -127,7 +127,7 @@ describe('Credential Types List', () => {
       cy.contains('a', /^Create credential type$/).should('have.attr', 'aria-disabled', 'false');
     });
 
-    it('Displays error if projects are not successfully loaded', () => {
+    it('Displays error if credential types are not successfully loaded', () => {
       cy.intercept(
         {
           method: 'GET',
