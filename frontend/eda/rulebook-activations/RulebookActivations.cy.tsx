@@ -155,6 +155,24 @@ describe('RulebookActivations.cy.ts', () => {
     });
     cy.clickButton(/^Close$/);
   });
+
+  it('can delete a Rulebook Activation from the line item in list view', () => {
+    cy.mount(<RulebookActivations />);
+    cy.intercept({ method: 'POST', url: edaAPI`/activations/2/delete/` });
+    cy.get('[data-cy="row-id-1"] > [data-cy="checkbox-column-cell"]').click();
+    cy.get('[data-cy="actions-dropdown"]').first().click();
+    cy.get('[data-cy="delete-selected-activations"]').click();
+    cy.get('div[role="dialog"]').within(() => {
+      cy.get('.pf-v5-c-check__label').should(
+        'contain',
+        `Yes, I confirm that I want to delete these`
+      );
+      cy.contains('Activation 1');
+      cy.get('input[id="confirm"]').click();
+      cy.get('button').contains('Delete rulebook activations').click();
+    });
+    cy.clickButton(/^Close$/);
+  });
 });
 
 describe('Empty list', () => {
