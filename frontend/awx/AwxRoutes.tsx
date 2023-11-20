@@ -52,7 +52,6 @@ export enum AwxRoute {
   WorkflowJobTemplateEditSchedule = 'awx-workflow-job-template-edit-schedule',
   WorkflowJobTemplateJobs = 'awx-workflow-job-template-jobs',
   WorkflowJobTemplateSurvey = 'awx-workflow-job-template-survey',
-  WorkflowJobTemplateVisualizer = 'awx-workflow-job-template-visualizer',
   WorkflowJobTemplateNotifications = 'awx-workflow-job-template-notifications',
   EditWorkflowJobTemplate = 'awx-edit-workflow-job-template',
   WorkflowVisualizer = 'awx-workflow-visualizer',

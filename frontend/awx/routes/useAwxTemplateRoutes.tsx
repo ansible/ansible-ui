@@ -16,6 +16,7 @@ import {
 } from '../resources/templates/WorkflowJobTemplateForm';
 import { WorkflowJobTemplateDetails } from '../resources/templates/WorkflowJobTemplatePage/WorkflowJobTemplateDetails';
 import { WorkflowJobTemplatePage } from '../resources/templates/WorkflowJobTemplatePage/WorkflowJobTemplatePage';
+import { WorkflowVisualizer } from '../resources/templates/WorkflowVisualizer/WorkflowVisualizer';
 import { CreateSchedule } from '../views/schedules/ScheduleForm';
 import { ScheduleDetails } from '../views/schedules/SchedulePage/ScheduleDetails';
 import { SchedulePage } from '../views/schedules/SchedulePage/SchedulePage';
@@ -194,6 +195,11 @@ export function useAwxTemplateRoutes() {
               ],
             },
             {
+              id: AwxRoute.WorkflowVisualizer,
+              path: ':id/visualizer',
+              element: <WorkflowVisualizer />,
+            },
+            {
               id: AwxRoute.WorkflowJobTemplatePage,
               path: ':id',
               element: <WorkflowJobTemplatePage />,
@@ -216,11 +222,6 @@ export function useAwxTemplateRoutes() {
                 {
                   id: AwxRoute.WorkflowJobTemplateSurvey,
                   path: 'survey',
-                  element: <PageNotImplemented />,
-                },
-                {
-                  id: AwxRoute.WorkflowVisualizer,
-                  path: 'visualizer',
                   element: <PageNotImplemented />,
                 },
                 {
