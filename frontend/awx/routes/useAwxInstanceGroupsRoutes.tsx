@@ -26,7 +26,13 @@ export function useAwxInstanceGroupsRoutes() {
         {
           id: AwxRoute.InstanceGroupPage,
           path: ':id/',
-          element: <PageNotImplemented />,
+          children: [
+            {
+              id: AwxRoute.InstanceGroupDetails,
+              path: 'details',
+              element: <PageNotImplemented />,
+            },
+          ],
         },
         {
           path: '',
