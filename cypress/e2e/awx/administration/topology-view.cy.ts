@@ -56,10 +56,9 @@ describe('Topology view', () => {
         cy.wait('@getInstanceGroups')
           .its('response.body.results')
           .then((instanceGroups: InstanceGroup[]) => {
-            const instanceGroup = instanceGroups.filter((i) => i.name === 'default');
-            cy.clickLink('default');
+            cy.clickLink(`${instanceGroups[0].name}`);
             // TODO Instance groups detail page not yet implemented; check URL for now
-            cy.url().should('contain', `/instance-groups/${instanceGroup[0].id}`);
+            cy.url().should('contain', `/instance-groups/${instanceGroups[0].id}`);
           });
       });
   });
