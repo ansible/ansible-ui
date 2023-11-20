@@ -2,6 +2,7 @@ import { AddNodeButton } from './AddNodeButton';
 import { CustomEdge } from './CustomEdge';
 import { CustomNode } from './CustomNode';
 import { DeletedNode } from './DeletedNode';
+import { Legend } from './Legend';
 import { NodeContextMenu } from './NodeContextMenu';
 import { SystemJobNodeDetails } from './SystemJobNodeDetails';
 import { VisualizerWrapper } from './VisualizerWrapper';
@@ -12,6 +13,7 @@ export {
   CustomEdge,
   CustomNode,
   DeletedNode,
+  Legend,
   NodeContextMenu,
   SystemJobNodeDetails,
   VisualizerWrapper,

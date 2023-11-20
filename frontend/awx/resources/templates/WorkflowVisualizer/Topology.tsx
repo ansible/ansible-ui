@@ -1,32 +1,60 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 import {
   CREATE_CONNECTOR_DROP_TYPE,
   ComponentFactory,
   DagreLayout,
   DefaultGroup,
+  EdgeModel,
   Graph,
   GraphComponent,
   Model,
   ModelKind,
   NodeShape,
-  NodeStatus,
   SELECTION_EVENT,
+  TopologyControlBar,
   Visualization,
   VisualizationProvider,
   VisualizationSurface,
+  action,
+  createTopologyControlButtons,
+  defaultControlButtonsOptions,
   nodeDragSourceSpec,
   nodeDropTargetSpec,
-  withDndDrop,
   withContextMenu,
+  withDndDrop,
   withDragNode,
   withPanZoom,
   withSelection,
+  TopologyView as PFTopologyView,
 } from '@patternfly/react-topology';
-import { CustomEdge, CustomNode, DeletedNode, NodeContextMenu } from './components';
-import type { LayoutNode, GraphNode } from './types';
+import { EmptyStateNoData } from '../../../../../framework/components/EmptyStateNoData';
+import {
+  AddNodeButton,
+  CustomEdge,
+  CustomNode,
+  DeletedNode,
+  Legend,
+  NodeContextMenu,
+  VisualizerWrapper,
+} from './components';
+import { WorkflowVisualizerNodeDetails } from './WorkflowVisualizerNodeDetails';
+import { useWorkflowVisualizerToolbarActions } from './hooks/useWorkflowVisualizerToolbarActions';
+import { LayoutNode, GraphNode, EdgeStatus } from './types';
 import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
-import type { AwxItemsResponse } from '../../../common/AwxItemsResponse';
+import type { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
+
+const TopologyView = styled(PFTopologyView)`
+  & .pf-topology-view__project-toolbar {
+    ${(props: { $isExpanded: boolean }) => !props.$isExpanded && 'flex-wrap: wrap;'}
+    flex: 1;
+  }
+
+  & .pf-topology-view__project-toolbar > :first-child {
+    ${(props: { $isExpanded: boolean }) => !props.$isExpanded && 'flex: 100%; padding-bottom:20px'}
+  }
+`;
 
 const GRAPH_ID = 'workflow-visualizer-graph';
 const CONNECTOR_SOURCE_DROP = 'connector-src-drop';
@@ -44,20 +72,36 @@ const graphModel: Model = {
 };
 
 interface TopologyProps {
-  data: AwxItemsResponse<WorkflowNode>;
-  selectedNode: WorkflowNode | undefined;
-  handleSelectedNode: (clickedNodeIdentifier: string[]) => void;
+  data: {
+    nodes: WorkflowNode[];
+    template: WorkflowJobTemplate;
+  };
 }
 
-export const Topology = ({
-  data: { results = [] },
-  selectedNode,
-  handleSelectedNode,
-}: TopologyProps) => {
+export const Visualizer = ({ data: { nodes = [], template } }: TopologyProps) => {
   const { t } = useTranslation();
+  const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [layout, setLayout] = useState<LayoutNode[]>([]);
+  const [selectedNode, setSelectedNode] = useState<WorkflowNode | undefined>(undefined);
+  const [showLegend, setShowLegend] = useState<boolean>(false);
   const visualizationRef = useRef<Visualization>();
   const visualization = visualizationRef.current;
+
+  const toolbarActions = useWorkflowVisualizerToolbarActions(
+    nodes,
+    [isExpanded, setIsExpanded],
+    template
+  );
+  const handleSelectedNode = useCallback(
+    (clickedNodeIdentifier: string[]) => {
+      const clickedNodeData = nodes.find((node) => node.id.toString() === clickedNodeIdentifier[0]);
+      setSelectedNode(clickedNodeData);
+    },
+    [nodes]
+  );
+  function toggleLegend() {
+    setShowLegend(!showLegend);
+  }
 
   const nodeContextMenu = NodeContextMenu();
   const baselineComponentFactory: ComponentFactory = useCallback(
@@ -117,8 +161,31 @@ export const Topology = ({
     return newVisualization;
   }, [baselineComponentFactory, handleSelectedNode]);
 
+  const createEdge = useCallback(
+    (source: string, target: string, tagStatus: EdgeStatus) => {
+      const tagLabel = {
+        [EdgeStatus.success]: t('On success'),
+        [EdgeStatus.danger]: t('On fail'),
+        [EdgeStatus.info]: t('On always'),
+      };
+
+      return {
+        id: `${source}-${target}`,
+        type: 'edge',
+        source,
+        target,
+        data: {
+          tag: tagLabel[tagStatus],
+          tagStatus,
+          endTerminalStatus: tagStatus.toLowerCase(),
+        },
+      };
+    },
+    [t]
+  );
+
   useEffect(() => {
-    const layoutNodes = results.map((node) => {
+    const layoutNodes = nodes.map((node) => {
       return {
         ...node,
         runAfterTasks: [],
@@ -126,7 +193,7 @@ export const Topology = ({
     });
 
     return setLayout(() => [...layoutNodes]);
-  }, [results]);
+  }, [nodes]);
 
   useEffect(() => {
     if (!visualizationRef.current) {
@@ -139,38 +206,26 @@ export const Topology = ({
       return;
     }
 
+    const edges: EdgeModel[] = [];
     const nodes: GraphNode[] = layout.map((n) => {
       const nodeId = n.id.toString();
       let nodeType = 'node';
       let nodeName = n.summary_fields?.unified_job_template?.name;
 
-      const processNodes = (nodesArray: number[]) => {
-        nodesArray.forEach((id) => {
-          const afterNode = layout.find((afterNode) => afterNode.id.toString() === id.toString());
-          if (afterNode) {
-            if (afterNode.runAfterTasks) {
-              afterNode.runAfterTasks.push(nodeId);
-            } else {
-              afterNode.runAfterTasks = [nodeId];
-            }
-          }
-        });
-      };
-
-      if (n.success_nodes.length > 0) {
-        processNodes(n.success_nodes);
-      }
-      if (n.failure_nodes.length > 0) {
-        processNodes(n.failure_nodes);
-      }
-      if (n.always_nodes.length > 0) {
-        processNodes(n.always_nodes);
-      }
-
       if (!nodeName) {
         nodeName = t('Deleted');
         nodeType = 'deleted-node';
       }
+
+      n.success_nodes.forEach((id) => {
+        edges.push(createEdge(nodeId, id.toString(), EdgeStatus.success));
+      });
+      n.failure_nodes.forEach((id) => {
+        edges.push(createEdge(nodeId, id.toString(), EdgeStatus.danger));
+      });
+      n.always_nodes.forEach((id) => {
+        edges.push(createEdge(nodeId, id.toString(), EdgeStatus.info));
+      });
 
       const node: GraphNode = {
         id: nodeId,
@@ -179,7 +234,6 @@ export const Topology = ({
         width: NODE_DIAMETER,
         height: NODE_DIAMETER,
         shape: NodeShape.circle,
-        runAfterTasks: n.runAfterTasks,
         data: {
           jobType: n.summary_fields?.unified_job_template?.unified_job_type,
           id: nodeId,
@@ -187,42 +241,6 @@ export const Topology = ({
       };
 
       return node;
-    });
-
-    const edges = nodes.flatMap((targetNode) => {
-      if (!targetNode.runAfterTasks) return [];
-
-      return targetNode.runAfterTasks.map((sourceNodeId) => {
-        const tagLabel = {
-          [NodeStatus.success]: t('On success'),
-          [NodeStatus.danger]: t('On fail'),
-          [NodeStatus.info]: t('On always'),
-        };
-
-        const sourceNode = layout.find((node) => node.id === Number(sourceNodeId));
-        const targetNodeId = targetNode.id;
-
-        let status = NodeStatus.info;
-        if (sourceNode) {
-          if (sourceNode.success_nodes?.includes(Number(targetNodeId))) {
-            status = NodeStatus.success;
-          } else if (sourceNode.failure_nodes?.includes(Number(targetNodeId))) {
-            status = NodeStatus.danger;
-          }
-        }
-
-        return {
-          id: `${sourceNodeId}-${targetNodeId}`,
-          type: 'edge',
-          source: sourceNodeId,
-          target: targetNodeId,
-          data: {
-            tag: tagLabel[status],
-            tagStatus: status,
-            endTerminalStatus: status,
-          },
-        };
-      });
     });
 
     const model: Model = {
@@ -236,7 +254,7 @@ export const Topology = ({
     };
 
     visualization.fromModel(model, true);
-  }, [t, layout, visualization]);
+  }, [t, layout, visualization, createEdge]);
 
   if (!visualization) {
     return null;
@@ -244,7 +262,70 @@ export const Topology = ({
 
   return (
     <VisualizationProvider controller={visualization}>
-      <VisualizationSurface state={selectedNode} />
+      <VisualizerWrapper isExpanded={isExpanded}>
+        <TopologyView
+          $isExpanded={isExpanded}
+          data-cy="workflow-visualizer"
+          contextToolbar={toolbarActions}
+          controlBar={
+            <TopologyControlBar
+              controlButtons={createTopologyControlButtons({
+                ...defaultControlButtonsOptions,
+                zoomInCallback: action(() => {
+                  visualization.getGraph().scaleBy(4 / 3);
+                }),
+                zoomOutCallback: action(() => {
+                  visualization.getGraph().scaleBy(0.75);
+                }),
+                fitToScreenCallback: action(() => {
+                  visualization.getGraph().fit(80);
+                }),
+                resetViewCallback: action(() => {
+                  visualization.getGraph().reset();
+                  visualization.getGraph().layout();
+                }),
+                legend: true,
+                legendCallback: toggleLegend,
+              })}
+            />
+          }
+          sideBarOpen={selectedNode !== undefined}
+          sideBarResizable
+          sideBar={
+            selectedNode ? (
+              <WorkflowVisualizerNodeDetails
+                setSelectedNode={setSelectedNode}
+                selectedNode={selectedNode}
+              />
+            ) : null
+          }
+        >
+          <VisualizerGraph selectedNode={selectedNode} isEmpty={!nodes.length} />
+          {showLegend && <Legend />}
+        </TopologyView>
+      </VisualizerWrapper>
     </VisualizationProvider>
   );
 };
+
+function VisualizerGraph({
+  selectedNode,
+  isEmpty,
+}: {
+  selectedNode?: WorkflowNode;
+  isEmpty: boolean;
+}) {
+  const { t } = useTranslation();
+
+  if (isEmpty) {
+    return (
+      <EmptyStateNoData
+        button={<AddNodeButton variant="primary" />}
+        title={t('There are currently no nodes in this workflow')}
+        description={t('Add a node by clicking the button below')}
+      />
+    );
+  }
+
+  return <VisualizationSurface state={selectedNode} />;
+}
