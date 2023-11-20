@@ -3,8 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { useSelectDialog } from '../../../../../framework';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { useAwxView } from '../../../useAwxView';
-import { useInstanceGroupsColumns, useInstanceGroupsFilters } from '../InstanceGroups';
 import { awxAPI } from '../../../api/awx-utils';
+import { useInstanceGroupsFilters } from '../InstanceGroups';
+import { useInstanceGroupsColumns } from './useInstanceGroupColumns';
 
 export function useSelectInstanceGroups(isLookup: boolean) {
   const { t } = useTranslation();
