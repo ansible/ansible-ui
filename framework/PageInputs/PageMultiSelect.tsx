@@ -97,6 +97,7 @@ export function PageMultiSelect<
   const { id, icon, placeholder, values, onSelect, options, variant, disableClearSelection } =
     props;
   const [isOpen, setIsOpen] = useState(false);
+  const selectListRef = useRef<HTMLDivElement>(null);
 
   const selectedOptions = useMemo(
     () =>
@@ -112,21 +113,32 @@ export function PageMultiSelect<
   const Toggle = (toggleRef: Ref<MenuToggleElement>) => {
     return (
       <MenuToggle
-        isFullWidth
         id={id}
         ref={toggleRef}
         onClick={() => setIsOpen((open) => !open)}
         isExpanded={isOpen}
         onKeyDown={(event) => {
           switch (event.key) {
+            case 'Tab':
+            case 'Enter':
+              break;
             default:
               setIsOpen(true);
+              setTimeout(() => {
+                if (searchRef.current) {
+                  searchRef.current.focus();
+                  if (event.key.length === 1) {
+                    setSearchValue(event.key.trim());
+                  }
+                }
+              }, 0);
               break;
           }
         }}
         data-cy={id}
         icon={icon}
         isDisabled={props.isDisabled}
+        isFullWidth
       >
         {selectedOptions.length > 0 ? (
           <>
@@ -191,9 +203,8 @@ export function PageMultiSelect<
   const [searchValue, setSearchValue] = useState('');
   const searchRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
-    setSearchValue('');
-    if (isOpen && searchRef.current) {
-      searchRef.current.focus();
+    if (!isOpen) {
+      setSearchValue('');
     }
   }, [isOpen]);
 
@@ -215,6 +226,7 @@ export function PageMultiSelect<
       onOpenChange={setIsOpen}
       toggle={Toggle}
       popperProps={{ appendTo: () => document.body }}
+      innerRef={selectListRef}
     >
       <MenuSearch>
         <MenuSearchInput>
@@ -228,6 +240,20 @@ export function PageMultiSelect<
               setSearchValue('');
             }}
             resultsCount={`${visibleOptions.length} / ${options.length}`}
+            onKeyDown={(event) => {
+              switch (event.key) {
+                case 'ArrowDown':
+                case 'Tab': {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  const firstElement = selectListRef?.current?.querySelector(
+                    'li button:not(:disabled),li input:not(:disabled)'
+                  );
+                  firstElement && (firstElement as HTMLElement).focus();
+                  break;
+                }
+              }
+            }}
           />
         </MenuSearchInput>
       </MenuSearch>
@@ -237,7 +263,18 @@ export function PageMultiSelect<
           {t('No results found')}
         </SelectOption>
       ) : (
-        <SelectList style={{ maxHeight: '40vh', overflowY: 'auto' }}>
+        <SelectList
+          style={{ maxHeight: '40vh', overflowY: 'auto' }}
+          onKeyDown={(event) => {
+            switch (event.key) {
+              case 'Tab':
+                event.preventDefault();
+                event.stopPropagation();
+                searchRef.current?.focus();
+                break;
+            }
+          }}
+        >
           {visibleOptions.map((option) => {
             const optionId = getID(option);
             return (
