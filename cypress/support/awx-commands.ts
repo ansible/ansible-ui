@@ -9,16 +9,17 @@ import { CredentialType } from '../../frontend/awx/interfaces/CredentialType';
 import { ExecutionEnvironment } from '../../frontend/awx/interfaces/ExecutionEnvironment';
 import { InstanceGroup } from '../../frontend/awx/interfaces/InstanceGroup';
 import { Inventory } from '../../frontend/awx/interfaces/Inventory';
+import { Job } from '../../frontend/awx/interfaces/Job';
 import { JobEvent } from '../../frontend/awx/interfaces/JobEvent';
 import { JobTemplate } from '../../frontend/awx/interfaces/JobTemplate';
 import { Label } from '../../frontend/awx/interfaces/Label';
 import { Organization } from '../../frontend/awx/interfaces/Organization';
 import { Project } from '../../frontend/awx/interfaces/Project';
+import { Role } from '../../frontend/awx/interfaces/Role';
 import { Schedule } from '../../frontend/awx/interfaces/Schedule';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
-import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/generated-from-swagger/api';
-import { Job } from '../../frontend/awx/interfaces/Job';
+import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/WorkflowJobTemplate';
 import './auth';
 import './commands';
 import './rest-commands';
@@ -513,6 +514,27 @@ Cypress.Commands.add(
   }
 );
 
+Cypress.Commands.add('giveUserWfjtAccess', (wfjtName: string, userId: number, roleName: string) => {
+  cy.awxRequestGet<AwxItemsResponse<WorkflowJobTemplate>>(
+    `/api/v2/workflow_job_templates/?name=${wfjtName}`
+  )
+    .its('results[0]')
+    .then((resource: WorkflowJobTemplate) => {
+      cy.awxRequestGet<AwxItemsResponse<Role>>(
+        `/api/v2/workflow_job_templates/${resource.id}/object_roles/`
+      )
+        .its('results')
+        .then((rolesArray) => {
+          const approveRole = rolesArray
+            ? rolesArray.find((role) => role.name === roleName)
+            : undefined;
+          cy.awxRequestPost<Partial<Role>>(`/api/v2/users/${userId}/roles/`, {
+            id: approveRole?.id,
+          });
+        });
+    });
+});
+
 Cypress.Commands.add(
   'createAwxProject',
   (project?: SetRequired<Partial<Omit<Project, 'id'>>, 'organization'>, skipSync?: boolean) => {
@@ -731,12 +753,15 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('createAwxWorkflowJobTemplate', (jobTemplate: WorkflowJobTemplate) => {
-  cy.requestPost<WorkflowJobTemplate>('/api/v2/workflow_job_templates/', {
-    name: 'E2E WorkflowJob Template ' + randomString(4),
-    ...jobTemplate,
-  });
-});
+Cypress.Commands.add(
+  'createAwxWorkflowJobTemplate',
+  (workflowJobTemplate: Partial<WorkflowJobTemplate>) => {
+    cy.requestPost<WorkflowJobTemplate>('/api/v2/workflow_job_templates/', {
+      name: 'E2E WorkflowJob Template ' + randomString(4),
+      ...workflowJobTemplate,
+    });
+  }
+);
 
 Cypress.Commands.add('getAwxWorkflowJobTemplateByName', (awxWorkflowJobTemplateName: string) => {
   cy.awxRequestGet<AwxItemsResponse<WorkflowJobTemplate>>(
