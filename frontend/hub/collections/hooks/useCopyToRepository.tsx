@@ -17,7 +17,7 @@ import { PulpItemsResponse } from '../../usePulpView';
 import { parsePulpIDFromURL } from '../../api/utils';
 import { useHubContext, HubContext } from './../../useHubContext';
 import { SigningServiceResponse } from '../../api-schemas/generated/SigningServiceResponse';
-import { AwxError } from '../../../awx/common/AwxError';
+import { HubError } from '../../common/HubError';
 import { hubAPI, pulpAPI } from '../../api/formatPath';
 
 export function useCopyToRepository() {
@@ -241,7 +241,7 @@ function CopyToRepositoryModal(props: {
           setSelectedRepositories([]);
         }}
       />
-      {error && <AwxError error={{ name: t('Error'), message: error }}></AwxError>}
+      {error && <HubError error={{ name: t('Error'), message: error }}></HubError>}
     </Modal>
   );
 }

@@ -9,7 +9,7 @@ import {
 } from '../../../framework';
 import { PageDetail } from '../../../framework/PageDetails/PageDetail';
 import { LoadingPage } from '../../../framework/components/LoadingPage';
-import { AwxError } from '../../awx/common/AwxError';
+import { HubError } from '../common/HubError';
 import { StatusCell } from '../../common/Status';
 import { useGet } from '../../common/crud/useGet';
 import { HubRoute } from '../HubRoutes';
@@ -27,7 +27,7 @@ export function TaskDetails() {
 
   const getPageUrl = useGetPageUrl();
 
-  if (error) return <AwxError error={error} handleRefresh={refresh} />;
+  if (error) return <HubError error={error} handleRefresh={refresh} />;
   if (!task) return <LoadingPage breadcrumbs tabs />;
 
   return (
