@@ -413,6 +413,30 @@ declare global {
        */
       giveUserWfjtAccess(wfjtName: string, userId: number, roleName: string): Chainable<Role>;
 
+      /**
+       * This command sends a request to the API to assign a certain type of role access to a user
+       * for a credential.
+       * @param credentialName: pass the existing credential name as a string
+       * @param userId: pass the ID of the existing user as a number
+       * @param roleName: pass the name of the role type that you want to assign to your user.
+       * Available roles for a credential are: Admin, Use, Read
+       */
+      giveUserCredentialsAccess(
+        credentialName: string,
+        userId: number,
+        roleName: string
+      ): Chainable<Role>;
+
+      /**
+       * This command sends a request to the API to assign a certain type of role access to a user
+       * for a project.
+       * @param projectName: pass the existing project name as a string
+       * @param userId: pass the ID of the existing user as a number
+       * @param roleName: pass the name of the role type that you want to assign to your user.
+       * Available roles for a project are: Admin, Use, Update, Read
+       */
+      giveUserProjectAccess(projectName: string, userId: number, roleName: string): Chainable<Role>;
+
       getAwxJobTemplateByName(awxJobTemplateName: string): Chainable<JobTemplate>;
       createAwxTeam(organization: Organization): Chainable<Team>;
       createAwxUser(organization: Organization): Chainable<User>;

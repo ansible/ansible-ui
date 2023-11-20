@@ -3,21 +3,24 @@
 import { randomString } from '../../../../framework/utils/random-string';
 import { Credential } from '../../../../frontend/awx/interfaces/Credential';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
+import { User } from '../../../../frontend/awx/interfaces/User';
 
 describe('credentials', () => {
   let organization: Organization;
   let credential: Credential;
+  let user: User;
 
   before(() => {
     cy.awxLogin();
 
     cy.requestPost<Organization>('/api/v2/organizations/', {
       name: 'E2E Credentials ' + randomString(4),
-    }).then((testOrg) => (organization = testOrg));
-  });
-
-  after(() => {
-    cy.requestDelete(`/api/v2/organizations/${organization.id}/`, { failOnStatusCode: false });
+    }).then((testOrg) => {
+      organization = testOrg;
+      cy.createAwxUser(organization).then((testUser) => {
+        user = testUser;
+      });
+    });
   });
 
   beforeEach(() => {
@@ -25,12 +28,20 @@ describe('credentials', () => {
       name: 'E2E Credential ' + randomString(4),
       credential_type: 1,
       organization: organization.id,
-    }).then((testCredential) => (credential = testCredential));
+    }).then((testCredential) => {
+      credential = testCredential;
+      //Assign normal user the 'Use' role of the newly created credential
+      cy.giveUserCredentialsAccess(credential.name, user.id, 'Use');
+    });
     cy.navigateTo('awx', 'credentials');
   });
 
   afterEach(() => {
     cy.requestDelete(`/api/v2/credentials/${credential.id}/`, { failOnStatusCode: false });
+  });
+
+  after(() => {
+    cy.requestDelete(`/api/v2/organizations/${organization.id}/`, { failOnStatusCode: false });
   });
 
   it('credentials page', () => {

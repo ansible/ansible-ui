@@ -15,7 +15,6 @@ import { JobTemplate } from '../../frontend/awx/interfaces/JobTemplate';
 import { Label } from '../../frontend/awx/interfaces/Label';
 import { Organization } from '../../frontend/awx/interfaces/Organization';
 import { Project } from '../../frontend/awx/interfaces/Project';
-import { Role } from '../../frontend/awx/interfaces/Role';
 import { Schedule } from '../../frontend/awx/interfaces/Schedule';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
@@ -517,27 +516,6 @@ Cypress.Commands.add(
     }
   }
 );
-
-Cypress.Commands.add('giveUserWfjtAccess', (wfjtName: string, userId: number, roleName: string) => {
-  cy.awxRequestGet<AwxItemsResponse<WorkflowJobTemplate>>(
-    `/api/v2/workflow_job_templates/?name=${wfjtName}`
-  )
-    .its('results[0]')
-    .then((resource: WorkflowJobTemplate) => {
-      cy.awxRequestGet<AwxItemsResponse<Role>>(
-        `/api/v2/workflow_job_templates/${resource.id}/object_roles/`
-      )
-        .its('results')
-        .then((rolesArray) => {
-          const approveRole = rolesArray
-            ? rolesArray.find((role) => role.name === roleName)
-            : undefined;
-          cy.awxRequestPost<Partial<Role>>(`/api/v2/users/${userId}/roles/`, {
-            id: approveRole?.id,
-          });
-        });
-    });
-});
 
 Cypress.Commands.add(
   'createAwxProject',
