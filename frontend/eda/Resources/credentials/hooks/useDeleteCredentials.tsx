@@ -20,7 +20,7 @@ export function useDeleteCredentials(onComplete?: (credentials: EdaCredential[])
       const inUseDes = await InUseResources(credentials, edaAPI`/activations/?credential_id=`);
       const inUseMessage =
         inUseDes && inUseDes.length > 0
-          ? [t(`The following decision environments are in use: ${inUseDes.join()}`)]
+          ? [t(`The following credentials are in use: ${inUseDes.join()}`)]
           : [];
       const forceParameter = inUseMessage.length > 0 ? '?force=true' : '';
 
@@ -40,8 +40,10 @@ export function useDeleteCredentials(onComplete?: (credentials: EdaCredential[])
         actionColumns,
         onComplete,
         alertPrompts: inUseMessage,
-        actionFn: (credential: EdaCredential, signal) =>
-          requestDelete(edaAPI`/credentials/${credential.id.toString()}/${forceParameter}`, signal),
+        actionFn: (credential: EdaCredential, signal) => {
+          const url = edaAPI`/credentials/${credential.id.toString()}/`;
+          return requestDelete(url + forceParameter, signal);
+        },
       });
     },
     [actionColumns, bulkAction, confirmationColumns, onComplete, t]
