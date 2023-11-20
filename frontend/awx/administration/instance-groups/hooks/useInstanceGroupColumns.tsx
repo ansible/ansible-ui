@@ -76,7 +76,7 @@ export function useInstanceGroupsColumns(options?: {
       modifiedColumn,
     ],
 
-    [t, disableLinks, createdColumn, modifiedColumn]
+    [t, createdColumn, modifiedColumn, disableLinks, getPageUrl]
   );
 
   return tableColumns;
