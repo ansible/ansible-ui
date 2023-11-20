@@ -15,12 +15,12 @@ export function Roles() {
           'A role is a set of permissions that can be assigned to users based on their role within an organization.'
         )}
       />
-      <EdaRoleTable />
+      <EdaRolesTable />
     </PageLayout>
   );
 }
 
-export function EdaRoleTable() {
+export function EdaRolesTable() {
   const { t } = useTranslation();
   const tableColumns = useRoleColumns(true);
   const view = useEdaView<EdaRole>({
