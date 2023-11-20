@@ -12,20 +12,18 @@ import { ExecutionEnvironment } from '../../frontend/awx/interfaces/ExecutionEnv
 import { InstanceGroup } from '../../frontend/awx/interfaces/InstanceGroup';
 import { Inventory } from '../../frontend/awx/interfaces/Inventory';
 import { InventorySource } from '../../frontend/awx/interfaces/InventorySource';
-import { JobEvent } from '../../frontend/awx/interfaces/JobEvent';
 import { Job } from '../../frontend/awx/interfaces/Job';
+import { JobEvent } from '../../frontend/awx/interfaces/JobEvent';
 import { JobTemplate } from '../../frontend/awx/interfaces/JobTemplate';
 import { Label } from '../../frontend/awx/interfaces/Label';
 import { Organization } from '../../frontend/awx/interfaces/Organization';
 import { Project } from '../../frontend/awx/interfaces/Project';
+import { Role } from '../../frontend/awx/interfaces/Role';
 import { Schedule } from '../../frontend/awx/interfaces/Schedule';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
-import {
-  Group,
-  Host,
-  WorkflowJobTemplate,
-} from '../../frontend/awx/interfaces/generated-from-swagger/api';
+import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/WorkflowJobTemplate';
+import { Group, Host } from '../../frontend/awx/interfaces/generated-from-swagger/api';
 import { EdaControllerToken } from '../../frontend/eda/interfaces/EdaControllerToken';
 import { EdaCredential } from '../../frontend/eda/interfaces/EdaCredential';
 import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisionEnvironment';
@@ -383,7 +381,7 @@ declare global {
       ): Chainable<JobTemplate>;
 
       createAwxWorkflowJobTemplate(
-        jobTemplate: WorkflowJobTemplate
+        workflowJobTemplate: Partial<WorkflowJobTemplate>
       ): Chainable<WorkflowJobTemplate>;
       /**
        * This command creates a job template with specific variables that will work in conjunction with
@@ -407,6 +405,17 @@ declare global {
         inventory: Inventory,
         jobTemplate?: Partial<JobTemplate>
       ): Chainable<JobTemplate>;
+
+      /**
+       * This command sends a request to the API to assign a certain type of role access to a user
+       * for a workflow job template.
+       * @param wfjtName: pass the existing workflow job template name as a string
+       * @param userId: pass the ID of the existing user as a number
+       * @param roleName: pass the name of the role type that you want to assign to your user.
+       * Available roles for a workflow job template are: Admin, Execute, Read, Approve
+       */
+      giveUserWfjtAccess(wfjtName: string, userId: number, roleName: string): Chainable<Role>;
+
       getAwxJobTemplateByName(awxJobTemplateName: string): Chainable<JobTemplate>;
       createAwxTeam(organization: Organization): Chainable<Team>;
       createAwxUser(organization: Organization): Chainable<User>;
