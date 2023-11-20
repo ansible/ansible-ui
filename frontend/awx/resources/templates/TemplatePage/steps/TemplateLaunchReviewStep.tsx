@@ -138,7 +138,7 @@ export default function TemplateLaunchReviewStep(props: { template: JobTemplate 
   );
 }
 
-function CredentialDetail({ credentialID }: { credentialID: number }) {
+export function CredentialDetail({ credentialID }: { credentialID: number }) {
   const { data: credentialData } = useGet<Credential>(
     awxAPI`/credentials/${credentialID.toString()}/`
   );

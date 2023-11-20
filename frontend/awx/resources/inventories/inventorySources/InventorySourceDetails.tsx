@@ -37,16 +37,18 @@ export type WebsocketInventorySource = {
   status: string;
 } & InventorySource;
 
-export function InventorySourceDetails() {
+export function InventorySourceDetails(props: { inventorySourceId?: string }) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const params = useParams<{ source_id: string; id: string }>();
+  const urlId = props?.inventorySourceId ? props.inventorySourceId : params.id;
+
   const getPageUrl = useGetPageUrl();
   const {
     data: inventorySource,
     error,
     refresh,
-  } = useGetItem<InventorySource>(awxAPI`/inventory_sources/`, params.source_id);
+  } = useGetItem<InventorySource>(awxAPI`/inventory_sources/`, urlId);
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/inventory_sources/`);
   const handleWebSocketMessage = useCallback(
     (message?: { group_name?: string; type?: string }) => {
@@ -194,7 +196,19 @@ export function InventorySourceDetails() {
 
   return (
     <PageDetails>
-      <PageDetail label={t`Name`}>{inventorySource.name}</PageDetail>
+      <PageDetail label={t`Name`}>
+        {props.inventorySourceId ? (
+          <Link
+            to={getPageUrl(AwxRoute.InventorySourceDetail, {
+              params: { id: props.inventorySourceId },
+            })}
+          >
+            {inventorySource.name}
+          </Link>
+        ) : (
+          inventorySource.name
+        )}
+      </PageDetail>
       {lastJob ? (
         <PageDetail label={t`Last job status`}>
           <Tooltip

@@ -49,7 +49,7 @@ describe('Workflow Job templates form', () => {
       cy.contains('Create "test skip tag"').click();
     });
     cy.get('[data-cy="Submit"]').click();
-    cy.verifyPageTitle(jtName);
+    cy.get('button[data-cy="workflow-visualizer-toolbar-close"]').should('be.visible');
   });
 
   it('Should edit a workflow job template', () => {

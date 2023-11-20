@@ -1,3 +1,5 @@
+import { InstanceGroup } from './InstanceGroup';
+
 export interface LaunchConfiguration {
   can_start_without_user_input: boolean;
   passwords_needed_to_start: string[];
@@ -33,6 +35,7 @@ export interface LaunchConfiguration {
       name: string;
       id: number;
     };
+    time_out: number;
     limit: string;
     labels: { id: number; name: string }[];
     scm_branch: string;
@@ -57,7 +60,7 @@ export interface LaunchConfiguration {
     forks: number;
     job_slice_count: number;
     timeout: number;
-    instance_groups: [];
+    instance_groups: InstanceGroup[] | [];
   };
   job_template_data: {
     name: string;
