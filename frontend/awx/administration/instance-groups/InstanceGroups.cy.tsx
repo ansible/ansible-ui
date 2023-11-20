@@ -34,7 +34,7 @@ describe('Instance Groups List', () => {
       cy.mount(<InstanceGroups />);
       cy.contains('tr', 'Container Group 01').within(() => {
         cy.get('button.toggle-kebab').click();
-        cy.contains('.pf-v5-c-dropdown__menu-item', /^Delete instance group$/).should(
+        cy.contains('.pf-v5-c-dropdown__menu-item', /^Delete container group$/).should(
           'have.attr',
           'aria-disabled',
           'true'
@@ -45,7 +45,7 @@ describe('Instance Groups List', () => {
       cy.mount(<InstanceGroups />);
       cy.contains('tr', 'Container Group 01').within(() => {
         cy.get('[data-cy="actions-column-cell"]').within(() => {
-          cy.get(`[data-cy="edit-instance-group"]`).should('have.attr', 'aria-disabled', 'true');
+          cy.get(`[data-cy="edit-container-group"]`).should('have.attr', 'aria-disabled', 'true');
         });
       });
     });
