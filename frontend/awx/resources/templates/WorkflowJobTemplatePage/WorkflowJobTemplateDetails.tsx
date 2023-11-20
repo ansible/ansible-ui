@@ -18,14 +18,15 @@ import { CredentialLabel } from '../../../common/CredentialLabel';
 import { UserDateDetail } from '../../../common/UserDateDetail';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 
-export function WorkflowJobTemplateDetails() {
+export function WorkflowJobTemplateDetails(props: { templateId?: string }) {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
+  const urlId = props?.templateId ? props.templateId : params.id;
   const {
     data: template,
     error,
     refresh,
-  } = useGetItem<WorkflowJobTemplate>(awxAPI`/workflow_job_templates/`, params.id);
+  } = useGetItem<WorkflowJobTemplate>(awxAPI`/workflow_job_templates/`, urlId);
   const getPageUrl = useGetPageUrl();
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!template) return <LoadingPage breadcrumbs tabs />;
@@ -42,7 +43,19 @@ export function WorkflowJobTemplateDetails() {
 
   return (
     <PageDetails>
-      <PageDetail label={t('Name')}>{template.name}</PageDetail>
+      <PageDetail label={t('Name')}>
+        {props.templateId ? (
+          <Link
+            to={getPageUrl(AwxRoute.WorkflowJobTemplateDetails, {
+              params: { id: props.templateId },
+            })}
+          >
+            {template.name}
+          </Link>
+        ) : (
+          template.name
+        )}
+      </PageDetail>
       <PageDetail label={t('Description')}>{template.description}</PageDetail>
       <PageDetail label={t('Organization')} isEmpty={!summaryFields.organization}>
         <Link

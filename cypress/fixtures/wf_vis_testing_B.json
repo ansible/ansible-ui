@@ -1,0 +1,139 @@
+{
+  "count": 2,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 1,
+      "type": "workflow_job_template_node",
+      "url": "/api/v2/workflow_job_template_nodes/1/",
+      "related": {
+        "inventory": "/api/v2/inventories/1/",
+        "labels": "/api/v2/workflow_job_template_nodes/1/labels/",
+        "credentials": "/api/v2/workflow_job_template_nodes/1/credentials/",
+        "instance_groups": "/api/v2/workflow_job_template_nodes/1/instance_groups/",
+        "create_approval_template": "/api/v2/workflow_job_template_nodes/1/create_approval_template/",
+        "success_nodes": "/api/v2/workflow_job_template_nodes/1/success_nodes/",
+        "failure_nodes": "/api/v2/workflow_job_template_nodes/1/failure_nodes/",
+        "always_nodes": "/api/v2/workflow_job_template_nodes/1/always_nodes/",
+        "unified_job_template": "/api/v2/job_templates/7/",
+        "workflow_job_template": "/api/v2/workflow_job_templates/2908/"
+      },
+      "summary_fields": {
+        "inventory": {
+          "id": 1,
+          "name": "Demo Inventory",
+          "description": "",
+          "has_active_failures": false,
+          "total_hosts": 1,
+          "hosts_with_active_failures": 0,
+          "total_groups": 2,
+          "has_inventory_sources": true,
+          "total_inventory_sources": 1,
+          "inventory_sources_with_failures": 0,
+          "organization_id": 1,
+          "kind": ""
+        },
+        "workflow_job_template": {
+          "id": 2908,
+          "name": "blah",
+          "description": ""
+        },
+        "unified_job_template": {
+          "id": 7,
+          "name": "Demo Job Template",
+          "description": "",
+          "unified_job_type": "job"
+        }
+      },
+      "created": "2023-11-02T17:22:00.687074Z",
+      "modified": "2023-11-02T17:22:00.687087Z",
+      "extra_data": {},
+      "inventory": 1,
+      "scm_branch": "",
+      "job_type": null,
+      "job_tags": "",
+      "skip_tags": "",
+      "limit": "",
+      "diff_mode": false,
+      "verbosity": null,
+      "execution_environment": null,
+      "forks": null,
+      "job_slice_count": null,
+      "timeout": null,
+      "workflow_job_template": 2908,
+      "unified_job_template": 7,
+      "success_nodes": [],
+      "failure_nodes": [],
+      "always_nodes": [],
+      "all_parents_must_converge": false,
+      "identifier": "f7b8f1ae-4fad-4fa9-99e8-992d21b38546"
+    },
+    {
+      "id": 2,
+      "type": "workflow_job_template_node",
+      "url": "/api/v2/workflow_job_template_nodes/2/",
+      "related": {
+        "inventory": "/api/v2/inventories/1/",
+        "labels": "/api/v2/workflow_job_template_nodes/2/labels/",
+        "credentials": "/api/v2/workflow_job_template_nodes/2/credentials/",
+        "instance_groups": "/api/v2/workflow_job_template_nodes/2/instance_groups/",
+        "create_approval_template": "/api/v2/workflow_job_template_nodes/2/create_approval_template/",
+        "success_nodes": "/api/v2/workflow_job_template_nodes/2/success_nodes/",
+        "failure_nodes": "/api/v2/workflow_job_template_nodes/2/failure_nodes/",
+        "always_nodes": "/api/v2/workflow_job_template_nodes/2/always_nodes/",
+        "unified_job_template": "/api/v2/job_templates/7/",
+        "workflow_job_template": "/api/v2/workflow_job_templates/2908/"
+      },
+      "summary_fields": {
+        "inventory": {
+          "id": 1,
+          "name": "Demo Inventory",
+          "description": "",
+          "has_active_failures": false,
+          "total_hosts": 1,
+          "hosts_with_active_failures": 0,
+          "total_groups": 2,
+          "has_inventory_sources": true,
+          "total_inventory_sources": 1,
+          "inventory_sources_with_failures": 0,
+          "organization_id": 1,
+          "kind": ""
+        },
+        "workflow_job_template": {
+          "id": 2908,
+          "name": "blah",
+          "description": ""
+        },
+        "unified_job_template": {
+          "id": 7,
+          "name": "Demo Job Template",
+          "description": "",
+          "unified_job_type": "job"
+        }
+      },
+      "created": "2023-11-06T15:57:13.977878Z",
+      "modified": "2023-11-06T15:57:13.977891Z",
+      "extra_data": {},
+      "inventory": 1,
+      "scm_branch": "",
+      "job_type": null,
+      "job_tags": "",
+      "skip_tags": "",
+      "limit": "",
+      "diff_mode": false,
+      "verbosity": null,
+      "execution_environment": null,
+      "forks": null,
+      "job_slice_count": null,
+      "timeout": null,
+      "workflow_job_template": 2908,
+      "unified_job_template": 7,
+      "success_nodes": [],
+      "failure_nodes": [],
+      "always_nodes": [],
+      "all_parents_must_converge": false,
+      "identifier": "bc6bd38d-fc1d-482c-964f-759ad8dc5d95"
+    }
+  ]
+}
