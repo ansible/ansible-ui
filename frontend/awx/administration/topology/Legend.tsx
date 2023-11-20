@@ -29,7 +29,7 @@ const Panel = styled(PFPanel)`
   width: 240px;
   min-height: 300px;
   position: absolute;
-  left: 555px;
+  left: 255px;
   bottom: 60px;
   border-radius: var(--pf-v5-global--BorderRadius--sm);
   box-shadow: var(--pf-v5-global--BoxShadow--sm);
