@@ -3,12 +3,12 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import useSWR from 'swr';
 import {
-  PageFormSelect,
   PageFormSubmitHandler,
   PageHeader,
   PageLayout,
   useGetPageUrl,
 } from '../../../../framework';
+import { PageFormSingleSelect } from '../../../../framework/PageForm/Inputs/PageFormSingleSelect';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 import { RouteObj } from '../../../common/Routes';
@@ -184,10 +184,10 @@ function UserInputs(props: { mode: 'create' | 'edit' }) {
           }
         }}
       />
-      <PageFormSelect<IUserInput>
+      <PageFormSingleSelect<IUserInput>
         name="userType"
         label={t('User type')}
-        placeholderText={t('Select user type')}
+        placeholder={t('Select user type')}
         options={[
           {
             label: t('System administrator'),
