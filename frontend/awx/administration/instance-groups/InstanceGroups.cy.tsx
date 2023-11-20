@@ -33,7 +33,6 @@ describe('Instance Groups List', () => {
     it('Delete instance group row action is disabled if the user does not have permission to edit instance groups', () => {
       cy.mount(<InstanceGroups />);
       cy.contains('tr', 'Container Group 01').within(() => {
-        // user_capabilities.delete: false
         cy.get('button.toggle-kebab').click();
         cy.contains('.pf-v5-c-dropdown__menu-item', /^Delete instance group$/).should(
           'have.attr',
@@ -45,7 +44,6 @@ describe('Instance Groups List', () => {
     it('Edit instance group row action is disabled if the user does not have permission to edit instance groups', () => {
       cy.mount(<InstanceGroups />);
       cy.contains('tr', 'Container Group 01').within(() => {
-        // user_capabilities.edit: false
         cy.get('[data-cy="actions-column-cell"]').within(() => {
           cy.get(`[data-cy="edit-instance-group"]`).should('have.attr', 'aria-disabled', 'true');
         });

@@ -95,6 +95,23 @@ export function useInstanceGroupRowActions(onComplete: (instanceGroups: Instance
             : t(
                 'You do not have permission to edit this instance group. Please contact your organization administrator if there is an issue with your access.'
               ),
+        isHidden: (instanceGroup) => instanceGroup.is_container_group,
+        onClick: (instanceGroup) =>
+          pageNavigate(AwxRoute.EditInstanceGroup, { params: { id: instanceGroup.id } }),
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: EditIcon,
+        isPinned: true,
+        label: t('Edit container group'),
+        isDisabled: (instanceGroup) =>
+          instanceGroup.summary_fields?.user_capabilities?.edit
+            ? undefined
+            : t(
+                'You do not have permission to edit this container group. Please contact your organization administrator if there is an issue with your access.'
+              ),
+        isHidden: (instanceGroup) => !instanceGroup.is_container_group,
         onClick: (instanceGroup) =>
           pageNavigate(AwxRoute.EditInstanceGroup, { params: { id: instanceGroup.id } }),
       },
@@ -110,6 +127,22 @@ export function useInstanceGroupRowActions(onComplete: (instanceGroups: Instance
             : t(
                 'You do not have permission to delete this instance group. Please contact your organization administrator if there is an issue with your access.'
               ),
+        isHidden: (instanceGroup) => instanceGroup.is_container_group,
+        onClick: (instanceGroup) => deleteInstanceGroups([instanceGroup]),
+        isDanger: true,
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: TrashIcon,
+        label: t('Delete container group'),
+        isDisabled: (instanceGroup) =>
+          instanceGroup.summary_fields?.user_capabilities?.delete
+            ? undefined
+            : t(
+                'You do not have permission to delete this container group. Please contact your organization administrator if there is an issue with your access.'
+              ),
+        isHidden: (instanceGroup) => !instanceGroup.is_container_group,
         onClick: (instanceGroup) => deleteInstanceGroups([instanceGroup]),
         isDanger: true,
       },
