@@ -285,7 +285,9 @@ function CollectionInstallTab(props: { collection: CollectionVersionSearch }) {
               }.${collection?.collection_version?.name ?? ''}`}
             />
             <PageDetail>
-              {t(`Note Installing collecion with ansible-galaxy is only supported in ansible 2.9+`)}
+              {t(
+                `Note: Installing collection with ansible-galaxy is only supported in ansible 2.9+`
+              )}
             </PageDetail>
             <a href="/#" ref={downloadLinkRef} style={{ display: 'none' }}>
               {t(`Link`)}
