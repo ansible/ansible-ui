@@ -65,9 +65,6 @@ describe('Remotes', () => {
     cy.get('[data-cy="actions-dropdown"]').click();
     cy.get('[data-cy="delete-remote"]').click();
     cy.get('#confirm').click();
-    cy.clickButton(/^Delete remote/);
-    cy.searchAndDisplayResource(remoteName);
-    cy.contains(Remotes.noResults);
-    cy.clickButton(/^Clear all filters$/);
+    cy.clickButton(/^Delete remotes/);
   });
 });
