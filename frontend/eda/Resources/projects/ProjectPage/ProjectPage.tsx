@@ -79,6 +79,7 @@ export function ProjectPage() {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: PencilAltIcon,
+        isPinned: true,
         label: t('Edit project'),
         onClick: (project: EdaProject) =>
           pageNavigate(EdaRoute.EditProject, { params: { id: project.id } }),
