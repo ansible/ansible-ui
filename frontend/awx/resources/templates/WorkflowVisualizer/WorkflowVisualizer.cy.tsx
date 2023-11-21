@@ -16,7 +16,7 @@ describe('WorkflowVisualizer', () => {
     cy.intercept('/api/v2/job_templates/*/instance_groups', { fixture: 'instance_groups.json' });
   });
 
-  it('should render nodes and labels', () => {
+  it('Should render nodes and labels', () => {
     cy.mount(<WorkflowVisualizer />);
     cy.wait('@getWorkflowNodes')
       .its('response.body.results')
@@ -27,6 +27,43 @@ describe('WorkflowVisualizer', () => {
             'have.text',
             node.summary_fields.unified_job_template.name
           );
+        });
+      });
+  });
+
+  it('Should show topology control bar and legend', () => {
+    cy.mount(<WorkflowVisualizer />);
+    cy.get('.pf-topology-control-bar').within(() => {
+      cy.get('button').should('have.length', 5);
+      cy.get('button#reset-view').should('be.visible');
+      cy.get('button#zoom-in').should('be.visible');
+      cy.get('button#zoom-out').should('be.visible');
+      cy.get('button#fit-to-screen').should('be.visible');
+      cy.get('button#legend').should('be.visible');
+      cy.get('button#legend').click();
+    });
+    cy.get('[data-cy="workflow-visualizer-legend"]')
+      .should('be.visible')
+      .within(() => {
+        cy.get('[data-cy="legend-node-types"]').should((description) => {
+          expect(description).to.contain('Node types');
+          expect(description).to.contain('Job Template');
+          expect(description).to.contain('Workflow Template');
+          expect(description).to.contain('Project Sync');
+          expect(description).to.contain('Approval Node');
+          expect(description).to.contain('Inventory Update');
+          expect(description).to.contain('System Job');
+        });
+        cy.get('[data-cy="legend-node-status-types"]').should((description) => {
+          expect(description).to.contain('Node status types');
+          expect(description).to.contain('Failed');
+          expect(description).to.contain('Warning');
+        });
+        cy.get('[data-cy="legend-run-status-types"]').should((description) => {
+          expect(description).to.contain('Run status types');
+          expect(description).to.contain('Run on success');
+          expect(description).to.contain('Run on fail');
+          expect(description).to.contain('Run on always');
         });
       });
   });
