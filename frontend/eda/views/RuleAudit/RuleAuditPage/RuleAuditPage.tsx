@@ -36,8 +36,8 @@ export function RuleAuditPage() {
         }}
         tabs={[
           { label: t('Details'), page: EdaRoute.RuleAuditDetails },
-          { label: t('Actions'), page: EdaRoute.RuleAuditActions },
           { label: t('Events'), page: EdaRoute.RuleAuditEvents },
+          { label: t('Actions'), page: EdaRoute.RuleAuditActions },
         ]}
         params={{ id: params.id }}
       />
