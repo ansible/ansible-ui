@@ -64,7 +64,7 @@ describe('EDA decision environment- Create, Edit, Delete', () => {
       });
       cy.verifyPageTitle(edaDE.name);
       cy.intercept('DELETE', `/api/eda/v1/decision-environments/${edaDE.id}/`).as('deleteDE');
-      cy.clickPageAction(/^Delete decision environment$/);
+      cy.clickPageAction('delete-decision-environment');
       cy.clickModalConfirmCheckbox();
       cy.clickModalButton('Delete decision environments');
       cy.wait('@deleteDE').then((deleteDE) => {

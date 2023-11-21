@@ -87,7 +87,7 @@ describe('EDA Users- Create, Edit, Delete', () => {
       cy.clickTableRow(edaUser.username, false);
       cy.verifyPageTitle(edaUser.username);
       cy.intercept('DELETE', `/api/eda/v1/users/${edaUser.id}/`).as('deleteUser');
-      cy.clickPageAction(/^Delete user$/);
+      cy.clickPageAction('delete-user');
       cy.clickModalConfirmCheckbox();
       cy.clickModalButton('Delete user');
       cy.wait('@deleteUser').then((deleteuser) => {

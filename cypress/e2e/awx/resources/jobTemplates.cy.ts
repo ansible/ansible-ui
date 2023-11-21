@@ -1,7 +1,5 @@
 import { randomString } from '../../../../framework/utils/random-string';
 import { Credential } from '../../../../frontend/awx/interfaces/Credential';
-// import { ExecutionEnvironment } from '../../../../frontend/awx/interfaces/ExecutionEnvironment';
-//import { InstanceGroup } from '../../../../frontend/awx/interfaces/InstanceGroup';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
@@ -28,19 +26,7 @@ describe('Job templates form Create, Edit, Delete', function () {
     }).then((cred) => {
       machineCredential = cred;
     });
-
-    // cy.createAwxInstanceGroup().then((ig) => {
-    //   instanceGroup = ig;
-    // });
-
-    // cy.createAwxLabel({ organization: organization.id }).then((l) => {
-    //   label = l;
-    // });
   });
-
-  // after(() => {
-  //   cy.deleteAwxInstanceGroup(instanceGroup);
-  // });
 
   it('should create a job template with all fields without prompt on launch option', function () {
     cy.intercept('POST', `/api/v2/job_templates`).as('createJT');
@@ -74,7 +60,7 @@ describe('Job templates form Create, Edit, Delete', function () {
             cy.waitForTemplateStatus(jobId);
           });
         cy.navigateTo('awx', 'templates');
-        cy.clickTableRowKebabAction(jtName, /^Delete template$/);
+        cy.clickTableRowKebabAction(jtName, 'delete-template');
         cy.get('#confirm').click();
         cy.intercept('DELETE', `/api/v2/job_templates/${id}/`).as('deleteJobTemplate');
         cy.clickButton(/^Delete template/);
@@ -131,7 +117,7 @@ describe('Job templates form Create, Edit, Delete', function () {
           });
         cy.navigateTo('awx', 'templates');
         cy.intercept('DELETE', `/api/v2/job_templates/${id}/`).as('deleteJobTemplate');
-        cy.clickTableRowKebabAction(jtName, /^Delete template$/);
+        cy.clickTableRowKebabAction(jtName, 'delete-template');
         cy.get('#confirm').click();
         cy.clickButton(/^Delete template/);
         cy.wait('@deleteJobTemplate').then((deleteJobTemplate) => {
@@ -181,7 +167,7 @@ describe('Job templates form Create, Edit, Delete', function () {
           });
         cy.navigateTo('awx', 'templates');
         cy.intercept('DELETE', `/api/v2/job_templates/${id}/`).as('deleteJobTemplate');
-        cy.clickTableRowKebabAction(jtName, /^Delete template$/);
+        cy.clickTableRowKebabAction(jtName, 'delete-template');
         cy.get('#confirm').click();
         cy.clickButton(/^Delete template/);
         cy.wait('@deleteJobTemplate').then((deleteJobTemplate) => {
@@ -215,7 +201,7 @@ describe('Job templates form Create, Edit, Delete', function () {
         });
       cy.verifyPageTitle(newName);
       cy.intercept('DELETE', `/api/v2/job_templates/${jobTemplate.id}/`).as('deleteJobTemplate');
-      cy.clickPageAction(/^Delete template/);
+      cy.clickPageAction('delete-template');
       cy.get('#confirm').click();
       cy.clickButton(/^Delete template/);
       cy.wait('@deleteJobTemplate').then((deleteJobTemplate) => {
@@ -249,7 +235,7 @@ describe('Job templates form Create, Edit, Delete', function () {
         });
       cy.verifyPageTitle(newName);
       cy.intercept('DELETE', `/api/v2/job_templates/${jobTemplate.id}/`).as('deleteJobTemplate');
-      cy.clickPageAction(/^Delete template/);
+      cy.clickPageAction('delete-template');
       cy.get('#confirm').click();
       cy.clickButton(/^Delete template/);
       cy.wait('@deleteJobTemplate').then((deleteJobTemplate) => {
@@ -269,7 +255,7 @@ describe('Job templates form Create, Edit, Delete', function () {
       cy.clickTableRow(jobTemplate.name);
       cy.verifyPageTitle(jobTemplate.name);
       cy.intercept('DELETE', `/api/v2/job_templates/${jobTemplate.id}/`).as('deleteJobTemplate');
-      cy.clickPageAction(/^Delete template/);
+      cy.clickPageAction('delete-template');
       cy.get('#confirm').click();
       cy.clickButton(/^Delete template/);
       cy.wait('@deleteJobTemplate').then((deleteJobTemplate) => {
@@ -293,7 +279,7 @@ describe('Job templates form Create, Edit, Delete', function () {
         cy.navigateTo('awx', 'templates');
         cy.selectTableRow(jobTemplate1.name);
         cy.selectTableRow(jobTemplate2.name);
-        cy.clickToolbarKebabAction(/^Delete selected templates$/);
+        cy.clickToolbarKebabAction('delete-selected-templates');
         cy.intercept('DELETE', `/api/v2/job_templates/${jobTemplate1.id}/`).as(
           'deleteJobTemplate1'
         );

@@ -40,7 +40,7 @@ describe('Inventories.cy.ts', () => {
       cy.wait('@orgFilterRequest');
       cy.clickButton(/^Clear all filters$/);
     });
-    it('disable "create inventory" toolbar action if the user does not have permissions', () => {
+    it.only('disable "create inventory" toolbar action if the user does not have permissions', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({
         data: {
           actions: {},

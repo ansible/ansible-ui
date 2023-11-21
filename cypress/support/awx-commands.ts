@@ -79,7 +79,7 @@ Cypress.Commands.add(
     cy.verifyPageTitle(customCredTypeName);
     cy.hasDetail(/^Name$/, `${customCredTypeName}`);
     cy.hasDetail(/^Description$/, `${credentialTypeDesc}`);
-    cy.clickPageAction(/^Delete credential type/);
+    cy.clickPageAction('delete-credential-type');
     cy.get('#confirm').click();
     cy.clickButton(/^Delete credential type/);
     cy.clickButton(/^Close/);
@@ -111,7 +111,7 @@ Cypress.Commands.add('selectItemFromLookupModal', (resource: string, itemName: s
   cy.get(`[data-cy*="${resource}-form-group"]`).within(() => {
     cy.get('button').eq(1).click();
   });
-  cy.get('.pf-v5-c-modal-box').within(() => {
+  cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
     cy.searchAndDisplayResource(itemName);
     cy.get('[data-ouia-component-id="simple-table"] tbody').within(() => {
       cy.get('[data-cy="checkbox-column-cell"]').click();
@@ -146,10 +146,10 @@ Cypress.Commands.add('selectDropdownOptionByResourceName', (resource: string, it
 });
 
 Cypress.Commands.add('setTablePageSize', (text: '10' | '20' | '50' | '100') => {
-  cy.get('.pf-v5-c-pagination')
+  cy.get('[data-cy="pagination"]')
     .first()
     .within(() => {
-      cy.get('.pf-v5-c-menu-toggle').click();
+      cy.get('#options-menu-bottom-toggle').click();
       cy.contains('button', `${text} per page`).click();
     });
 });
@@ -191,16 +191,20 @@ Cypress.Commands.add('verifyPageTitle', (label: string) => {
 });
 
 Cypress.Commands.add('hasAlert', (label: string | RegExp) => {
-  cy.contains('.pf-v5-c-alert__title', label);
+  cy.contains('[data-cy="alert-toaster"]', label);
 });
 
 Cypress.Commands.add('hasTooltip', (label: string | RegExp) => {
   cy.contains('.pf-v5-c-tooltip__content', label);
 });
 
-Cypress.Commands.add('clickToolbarKebabAction', (label: string | RegExp) => {
-  cy.get('.page-table-toolbar').within(() => {
-    cy.get('.toggle-kebab').click().get('.pf-v5-c-dropdown__menu-item').contains(label).click();
+Cypress.Commands.add('clickToolbarKebabAction', (dataCyLabel: string | RegExp) => {
+  cy.get('[data-ouia-component-id="page-toolbar"]').within(() => {
+    cy.get('[data-cy*="actions-dropdown"]')
+      .click()
+      .then(() => {
+        cy.get(`[data-cy=${dataCyLabel}]`).click();
+      });
   });
 });
 
@@ -241,26 +245,26 @@ Cypress.Commands.add('selectDetailsPageKebabAction', (dataCy: string) => {
 
 Cypress.Commands.add(
   'clickTableRowKebabAction',
-  (name: string | RegExp, label: string | RegExp, filter?: boolean) => {
+  (name: string | RegExp, dataCyLabel: string | RegExp, filter?: boolean) => {
     cy.getTableRowByText(name, filter).within(() => {
-      cy.get('[data-cy="actions-dropdown"]').click();
-      cy.contains('.pf-v5-c-dropdown__menu-item', label)
-        .should('not.be.disabled')
-        .should('not.have.attr', 'aria-disabled', 'true')
-        .click();
+      cy.get('[data-cy*="actions-dropdown"]')
+        .click()
+        .then(() => {
+          cy.get(`[data-cy=${dataCyLabel}]`).click();
+        });
     });
   }
 );
 
 Cypress.Commands.add(
   'clickListCardKebabAction',
-  (name: string | RegExp, label: string | RegExp, filter?: boolean) => {
-    cy.getListCardByText(name, filter).within(() => {
-      cy.get('.pf-v5-c-dropdown__toggle').click();
-      cy.contains('.pf-v5-c-dropdown__menu-item', label)
-        .should('not.be.disabled')
-        .should('not.have.attr', 'aria-disabled', 'true')
-        .click();
+  (id: number, name: string | RegExp, dataCyLabel: string | RegExp) => {
+    cy.get(`[data-ouia-component-id="${id}"]`).within(() => {
+      cy.get('[data-cy*="actions-dropdown"]')
+        .click()
+        .then(() => {
+          cy.get(`[data-cy=${dataCyLabel}]`).click();
+        });
     });
   }
 );
@@ -288,12 +292,8 @@ Cypress.Commands.add('selectTableRow', (name: string | RegExp, filter?: boolean)
   });
 });
 
-Cypress.Commands.add('getDialog', () => {
-  cy.get('.pf-v5-c-modal-box');
-});
-
 Cypress.Commands.add('selectTableRowInDialog', (name: string | RegExp, filter?: boolean) => {
-  cy.getDialog().within(() => {
+  cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
     cy.getTableRowByText(name, filter).within(() => {
       cy.get('td[data-cy=checkbox-column-cell]').click();
     });
@@ -302,7 +302,7 @@ Cypress.Commands.add('selectTableRowInDialog', (name: string | RegExp, filter?: 
 
 Cypress.Commands.add('expandTableRow', (name: string | RegExp, filter?: boolean) => {
   cy.getTableRowByText(name, filter).within(() => {
-    cy.get('button[id^="expand-toggle"]').click();
+    cy.get('[data-cy="expand-column-cell"]').click();
   });
 });
 
@@ -314,19 +314,19 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add('clickModalButton', (label: string | RegExp) => {
-  cy.getDialog().within(() => {
+  cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
     cy.contains('button', label).click();
   });
 });
 
 Cypress.Commands.add('clickModalConfirmCheckbox', () => {
-  cy.getDialog().within(() => {
+  cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
     cy.get('input[id="confirm"]').click();
   });
 });
 
 Cypress.Commands.add('assertModalSuccess', () => {
-  cy.getDialog().within(() => {
+  cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
     cy.get('tbody>tr')
       .find('[data-label="Status"]')
       .each(($li) => {
@@ -335,8 +335,12 @@ Cypress.Commands.add('assertModalSuccess', () => {
   });
 });
 
-Cypress.Commands.add('clickPageAction', (label: string | RegExp) => {
-  cy.get('.toggle-kebab').click().get('.pf-v5-c-dropdown__menu-item').contains(label).click();
+Cypress.Commands.add('clickPageAction', (dataCyLabel: string | RegExp) => {
+  cy.get('[data-cy="actions-dropdown"]')
+    .click()
+    .then(() => {
+      cy.get(`[data-cy="${dataCyLabel}"]`).click();
+    });
 });
 
 // Resources for testing AWX

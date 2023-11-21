@@ -105,7 +105,7 @@ describe('EDA Credentials- Create, Edit, Delete', () => {
       cy.clickTableRow(edaCredential.name);
       cy.verifyPageTitle(edaCredential.name);
       cy.intercept('DELETE', `/api/eda/v1/credentials/${edaCredential.id}/`).as('deleted');
-      cy.clickPageAction(/^Delete credential$/);
+      cy.clickPageAction('delete-credential');
       cy.clickModalConfirmCheckbox();
       cy.clickModalButton('Delete credential');
       cy.wait('@deleted').then((deleted) => {

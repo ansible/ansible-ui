@@ -30,7 +30,7 @@ describe('Jobs.cy.ts', () => {
       .then((results: UnifiedJob[]) => {
         const job = results[0];
         cy.selectTableRow(job.name, false);
-        cy.clickToolbarKebabAction(/^Delete selected jobs$/);
+        cy.clickToolbarKebabAction('delete-selected-jobs');
         expect(spy).to.be.called;
       });
   });
@@ -77,7 +77,7 @@ describe('Jobs.cy.ts', () => {
         const job = results[4]; // job with summary_fields.user_capabilities.delete: false
         cy.selectToolbarFilterType('ID');
         cy.selectTableRow(job.id.toString(), false);
-        cy.clickToolbarKebabAction(/^Delete selected jobs$/);
+        cy.clickToolbarKebabAction('delete-selected-jobs');
         cy.contains(
           '1 of the selected jobs cannot be deleted due to insufficient permissions.'
         ).should('be.visible');
@@ -147,7 +147,7 @@ describe('Jobs.cy.ts', () => {
         const job = results[0];
         cy.selectToolbarFilterType('ID');
         cy.selectTableRow(job.id.toString(), false);
-        cy.clickToolbarKebabAction(/^Cancel selected jobs$/);
+        cy.clickToolbarKebabAction('cancel-selected-jobs');
         cy.contains(
           '1 of the selected jobs cannot be canceled because they are not running.'
         ).should('be.visible');
