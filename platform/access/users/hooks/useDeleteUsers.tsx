@@ -4,6 +4,7 @@ import { User } from '../../../interfaces/User';
 import { TextCell, compareStrings, useBulkConfirmation } from '../../../../framework';
 import { getItemKey, requestDelete } from '../../../../frontend/common/crud/Data';
 import { useUsersColumns } from './useUserColumns';
+import { gatewayAPI } from '../../../api/gateway-api-utils';
 
 export function useDeleteUsers(onComplete: (users: User[]) => void) {
   const { t } = useTranslation();
@@ -54,7 +55,8 @@ export function useDeleteUsers(onComplete: (users: User[]) => void) {
       confirmationColumns,
       actionColumns,
       onComplete,
-      actionFn: (user: User, signal) => requestDelete(`/api/gateway/v1/users/${user.id}/`, signal),
+      actionFn: (user: User, signal) =>
+        requestDelete(gatewayAPI`/v1/users/${user.id.toString()}/`, signal),
     });
   };
   return deleteUsers;

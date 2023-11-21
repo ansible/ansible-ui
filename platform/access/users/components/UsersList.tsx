@@ -12,6 +12,7 @@ import {
   ActionsResponse,
   OptionsResponse,
 } from '../../../../frontend/awx/interfaces/OptionsResponse';
+import { gatewayAPI } from '../../../api/gateway-api-utils';
 
 export function UsersList() {
   const { t } = useTranslation();
@@ -20,12 +21,12 @@ export function UsersList() {
   const pageNavigate = usePageNavigate();
 
   const view = usePlatformView<User>({
-    url: '/api/gateway/v1/users',
+    url: gatewayAPI`/v1/users`,
     toolbarFilters,
     tableColumns,
   });
 
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/gateway/v1/users');
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/v1/users`);
   const canCreateUser = Boolean(data && data.actions && data.actions['POST']);
   const toolbarActions = useUserToolbarActions(view);
   const rowActions = useUserRowActions(view);

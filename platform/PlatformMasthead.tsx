@@ -11,6 +11,7 @@ import { PageRefreshIcon } from '../frontend/common/PageRefreshIcon';
 import { PlatformRoute } from './PlatformRoutes';
 import { useActivePlatformUser } from './hooks/useActivePlatformUser';
 import PlatformIcon from './platform-icon.svg';
+import { gatewayAPI } from './api/gateway-api-utils';
 
 export function PlatformMasthead() {
   const { t } = useTranslation();
@@ -19,7 +20,7 @@ export function PlatformMasthead() {
 
   const { cache } = useSWRConfig();
   const logout = useCallback(async () => {
-    await fetch('/api/gateway/v1/logout/');
+    await fetch(gatewayAPI`/v1/logout/`);
     for (const key of cache.keys()) {
       cache.delete(key);
     }

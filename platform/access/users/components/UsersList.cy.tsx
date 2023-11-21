@@ -10,6 +10,7 @@ Users list test cases
 
 import { UsersList } from './UsersList';
 import * as useOptions from '../../../../frontend/common/crud/useOptions';
+import { gatewayAPI } from '../../../api/gateway-api-utils';
 
 describe('Users list', () => {
   describe('Non-empty list', () => {
@@ -17,7 +18,7 @@ describe('Users list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/gateway/v1/users*',
+          url: gatewayAPI`/v1/users*`,
         },
         {
           fixture: 'platformUsers.json',
@@ -68,7 +69,7 @@ describe('Users list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/gateway/v1/users*',
+          url: gatewayAPI`/v1/users*`,
         },
         {
           fixture: 'emptyList.json',
@@ -111,7 +112,7 @@ describe('Users list', () => {
   });
   describe('Error retrieving list', () => {
     it('Displays error loading users', () => {
-      cy.intercept({ method: 'GET', url: '/api/gateway/v1/users/*' }, { statusCode: 500 });
+      cy.intercept({ method: 'GET', url: gatewayAPI`/v1/users/*` }, { statusCode: 500 });
       cy.mount(<UsersList />);
       cy.contains('Error loading users');
     });

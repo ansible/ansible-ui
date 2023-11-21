@@ -5,6 +5,7 @@ import { compareStrings, useBulkConfirmation } from '../../../../framework';
 import { getItemKey, requestDelete } from '../../../../frontend/common/crud/Data';
 import { useOrganizationColumns } from './useOrganizationColumns';
 import { useNameColumn } from '../../../../frontend/common/columns';
+import { gatewayAPI } from '../../../api/gateway-api-utils';
 
 export function useDeleteOrganizations(onComplete: (organizations: Organization[]) => void) {
   const { t } = useTranslation();
@@ -63,7 +64,7 @@ export function useDeleteOrganizations(onComplete: (organizations: Organization[
       actionColumns,
       onComplete,
       actionFn: (organization: Organization, signal) =>
-        requestDelete(`/api/gateway/v1/organizations/${organization.id}/`, signal),
+        requestDelete(gatewayAPI`/v1/organizations/${organization.id.toString()}/`, signal),
     });
   };
   return deleteOrganizations;

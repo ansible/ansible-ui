@@ -19,11 +19,12 @@ import { EditIcon, TrashIcon } from '@patternfly/react-icons';
 import { AwxError } from '../../../../frontend/awx/common/AwxError';
 import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
 import { Team } from '../../../interfaces/Team';
+import { gatewayAPI } from '../../../api/gateway-api-utils';
 
 export function TeamPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { error, data: team, refresh } = useGetItem<Team>('/api/gateway/v1/teams', params.id);
+  const { error, data: team, refresh } = useGetItem<Team>(gatewayAPI`/v1/teams`, params.id);
   const getPageUrl = useGetPageUrl();
 
   const itemActions: IPageAction<Team>[] = useMemo(() => {
