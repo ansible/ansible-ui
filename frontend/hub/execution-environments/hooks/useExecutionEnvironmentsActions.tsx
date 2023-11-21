@@ -1,22 +1,27 @@
 import { ButtonVariant } from '@patternfly/react-core';
 import { PlusIcon, TrashIcon } from '@patternfly/react-icons';
+
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
+
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   compareStrings,
   useBulkConfirmation,
+  usePageNavigate,
 } from '../../../../framework';
 import { postRequest, requestDelete, requestGet } from '../../../common/crud/Data';
 import { SigningServiceResponse } from '../../api-schemas/generated/SigningServiceResponse';
 import { hubAPI, pulpAPI } from '../../api/formatPath';
 import { HubContext, useHubContext } from '../../useHubContext';
 import { PulpItemsResponse } from '../../usePulpView';
+
 import { ExecutionEnvironment } from '../ExecutionEnvironment';
 import { useExecutionEnvironmentsColumns } from './useExecutionEnvironmentsColumns';
+import { HubRoute } from '../../HubRoutes';
 
 export function useExecutionEnvironmentsActions(callback?: (ees: ExecutionEnvironment[]) => void) {
   const { t } = useTranslation();
@@ -24,6 +29,7 @@ export function useExecutionEnvironmentsActions(callback?: (ees: ExecutionEnviro
   const deleteExecutionEnvironments = useDeleteExecutionEnvironments(callback);
   const syncExecutionEnvironments = useSyncExecutionEnvironments(callback);
   const signExecutionEnvironments = useSignExecutionEnvironments(callback);
+  const pageNavigate = usePageNavigate();
 
   return useMemo<IPageAction<ExecutionEnvironment>[]>(
     () => [
@@ -35,7 +41,7 @@ export function useExecutionEnvironmentsActions(callback?: (ees: ExecutionEnviro
         icon: PlusIcon,
         label: t('Add execution environment'),
         onClick: () => {
-          /**/
+          pageNavigate(HubRoute.CreateExecutionEnvironment);
         },
       },
       {
@@ -72,7 +78,14 @@ export function useExecutionEnvironmentsActions(callback?: (ees: ExecutionEnviro
             : t`You do not have rights to this operation`,
       },
     ],
-    [t, context, deleteExecutionEnvironments, syncExecutionEnvironments, signExecutionEnvironments]
+    [
+      t,
+      context,
+      deleteExecutionEnvironments,
+      syncExecutionEnvironments,
+      signExecutionEnvironments,
+      pageNavigate,
+    ]
   );
 }
 

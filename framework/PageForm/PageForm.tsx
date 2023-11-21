@@ -53,6 +53,7 @@ export interface PageFormProps<T extends object> {
   autoComplete?: 'on' | 'off';
   footer?: ReactNode;
   errorAdapter?: ErrorAdapter;
+  disableSubmitOnEnter?: boolean;
 }
 
 export function useFormErrors<T extends object>(
@@ -62,7 +63,6 @@ export function useFormErrors<T extends object>(
   const form = useForm<T>({
     defaultValues: defaultValue ?? ({} as DefaultValues<T>),
   });
-
   const { handleSubmit, setError: setFieldError } = form;
   const [error, setError] = useState<(string | ReactNode)[] | string | null>(null);
 
@@ -111,6 +111,11 @@ export function PageForm<T extends object>(props: PageFormProps<T>) {
   return (
     <FormProvider {...form}>
       <Form
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' && props.disableSubmitOnEnter) {
+            event.preventDefault();
+          }
+        }}
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
         onSubmit={handleSubmit(
           async (
