@@ -8,6 +8,8 @@ import { useExecutionEnvironmentsActions } from './hooks/useExecutionEnvironment
 import { useExecutionEnvironmentsColumns } from './hooks/useExecutionEnvironmentsColumns';
 import { hubAPI } from '../api/formatPath';
 import { idKeyFn } from '../../common/utils/nameKeyFn';
+import { usePageNavigate } from '../../../framework';
+import { HubRoute } from '../HubRoutes';
 
 export function ExecutionEnvironments() {
   const { t } = useTranslation();
@@ -21,6 +23,8 @@ export function ExecutionEnvironments() {
   });
   const toolbarActions = useExecutionEnvironmentsActions(view.unselectItemsAndRefresh);
   const rowActions = useExecutionEnvironmentActions(view.unselectItemsAndRefresh);
+  const navigate = usePageNavigate();
+
   return (
     <PageLayout>
       <PageHeader
@@ -37,6 +41,8 @@ export function ExecutionEnvironments() {
         rowActions={rowActions}
         errorStateTitle={t('Error loading execution environments')}
         emptyStateTitle={t('No execution environments yet')}
+        emptyStateButtonText={t('Add Execution Environment')}
+        emptyStateButtonClick={() => navigate(HubRoute.CreateExecutionEnvironment)}
         {...view}
         defaultSubtitle={t('Execution Environment')}
       />
