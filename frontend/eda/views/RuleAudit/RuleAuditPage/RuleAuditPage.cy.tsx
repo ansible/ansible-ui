@@ -18,7 +18,7 @@ describe('RuleAuditPage', () => {
   });
 
   it('Should render all the tabs', () => {
-    const tabNames: string[] = ['Back to Rule Audit', 'Details', 'Actions', 'Events'];
+    const tabNames: string[] = ['Back to Rule Audit', 'Details', 'Events', 'Actions'];
     cy.mount(<RuleAuditPage />);
 
     cy.get('.pf-v5-c-tabs__list').within(() => {
