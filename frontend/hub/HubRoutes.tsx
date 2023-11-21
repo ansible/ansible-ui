@@ -16,6 +16,8 @@ export enum HubRoute {
   CollectionPage = 'hub-collection-page',
 
   ExecutionEnvironments = 'hub-execution-environments',
+  EditExecutionEnvironment = 'hub-edit-execution-environment',
+  CreateExecutionEnvironment = 'hub-create-execution-environment',
 
   SignatureKeys = 'hub-signature-keys',
 

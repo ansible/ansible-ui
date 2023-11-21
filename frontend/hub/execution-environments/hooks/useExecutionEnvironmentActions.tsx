@@ -1,7 +1,12 @@
 import { EditIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IPageAction, PageActionSelection, PageActionType } from '../../../../framework';
+import {
+  IPageAction,
+  PageActionSelection,
+  PageActionType,
+  usePageNavigate,
+} from '../../../../framework';
 import { ExecutionEnvironment } from '../ExecutionEnvironment';
 import {
   useDeleteExecutionEnvironments,
@@ -9,6 +14,7 @@ import {
   useSignExecutionEnvironments,
 } from './useExecutionEnvironmentsActions';
 import { useHubContext } from '../../useHubContext';
+import { HubRoute } from '../../HubRoutes';
 
 export function useExecutionEnvironmentActions(callback?: (ees: ExecutionEnvironment[]) => void) {
   const { t } = useTranslation();
@@ -16,6 +22,7 @@ export function useExecutionEnvironmentActions(callback?: (ees: ExecutionEnviron
   const deleteExecutionEnvironments = useDeleteExecutionEnvironments(callback);
   const syncExecutionEnvironments = useSyncExecutionEnvironments(callback);
   const signExecutionEnvironment = useSignExecutionEnvironments(callback);
+  const pageNavigate = usePageNavigate();
 
   return useMemo<IPageAction<ExecutionEnvironment>[]>(
     () => [
@@ -24,8 +31,9 @@ export function useExecutionEnvironmentActions(callback?: (ees: ExecutionEnviron
         selection: PageActionSelection.Single,
         icon: EditIcon,
         label: t('Edit'),
-        onClick: () => {
-          /**/
+        isPinned: true,
+        onClick: (ee: ExecutionEnvironment) => {
+          pageNavigate(HubRoute.EditExecutionEnvironment, { params: { id: ee.name } });
         },
       },
       {
@@ -62,6 +70,13 @@ export function useExecutionEnvironmentActions(callback?: (ees: ExecutionEnviron
             : t`You do not have rights to this operation`,
       },
     ],
-    [t, context, deleteExecutionEnvironments, syncExecutionEnvironments, signExecutionEnvironment]
+    [
+      t,
+      context,
+      deleteExecutionEnvironments,
+      syncExecutionEnvironments,
+      signExecutionEnvironment,
+      pageNavigate,
+    ]
   );
 }
