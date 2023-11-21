@@ -116,6 +116,9 @@ export function RulebookActivationPage() {
             onClick: (activation: EdaRulebookActivation) => restartRulebookActivation([activation]),
           },
           {
+            type: PageActionType.Seperator,
+          },
+          {
             type: PageActionType.Button,
             selection: PageActionSelection.Single,
             icon: TrashIcon,
