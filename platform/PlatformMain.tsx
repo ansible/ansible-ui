@@ -19,6 +19,7 @@ import { useAbortController } from '../frontend/common/crud/useAbortController';
 import useSWR from 'swr';
 import { createRequestError } from '../frontend/common/crud/RequestError';
 import '../frontend/common/i18n';
+import { gatewayAPI } from './api/gateway-api-utils';
 
 export default function PlatformMain() {
   const { data: services } = useServices();
@@ -70,7 +71,7 @@ function useServices() {
     return (await response.json()) as ServicesResponse;
   };
 
-  const response = useSWR<ServicesResponse>('/api/gateway/v1/services', getServices, {
+  const response = useSWR<ServicesResponse>(gatewayAPI`/v1/services`, getServices, {
     dedupingInterval: 0,
   });
 

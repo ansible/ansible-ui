@@ -18,12 +18,13 @@ import {
   OptionsResponse,
 } from '../../../../frontend/awx/interfaces/OptionsResponse';
 import { useOptions } from '../../../../frontend/common/crud/useOptions';
+import { gatewayAPI } from '../../../api/gateway-api-utils';
 
 export function useTeamToolbarActions(view: IPlatformView<Team>) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
 
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/gateway/v1/teams');
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/v1/teams`);
   const canCreateTeam = Boolean(data && data.actions && data.actions['POST']);
   const deleteTeams = useDeleteTeams(view.unselectItemsAndRefresh);
 

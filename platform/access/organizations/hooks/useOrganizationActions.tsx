@@ -18,12 +18,13 @@ import {
   ActionsResponse,
   OptionsResponse,
 } from '../../../../frontend/awx/interfaces/OptionsResponse';
+import { gatewayAPI } from '../../../api/gateway-api-utils';
 
 export function useOrganizationToolbarActions(view: IPlatformView<Organization>) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
 
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/gateway/v1/organizations');
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/v1/organizations`);
   const canCreateOrganization = Boolean(data && data.actions && data.actions['POST']);
   const deleteOrganizations = useDeleteOrganizations(view.unselectItemsAndRefresh);
 

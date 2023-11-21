@@ -4,10 +4,11 @@ import { useGetItem } from '../../../../frontend/common/crud/useGet';
 import { Team } from '../../../interfaces/Team';
 import { PlatformRoute } from '../../../PlatformRoutes';
 import { TeamDetails, TeamDetailsType } from '../../../../frontend/common/access/TeamDetails';
+import { gatewayAPI } from '../../../api/gateway-api-utils';
 
 export function PlatformTeamDetails() {
   const params = useParams<{ id: string }>();
-  const { data: team } = useGetItem<Team>('/api/gateway/v1/teams', params.id);
+  const { data: team } = useGetItem<Team>(gatewayAPI`/v1/teams`, params.id);
   const getPageUrl = useGetPageUrl();
 
   return team ? (

@@ -18,12 +18,13 @@ import {
   ActionsResponse,
   OptionsResponse,
 } from '../../../../frontend/awx/interfaces/OptionsResponse';
+import { gatewayAPI } from '../../../api/gateway-api-utils';
 
 export function useUserToolbarActions(view: IPlatformView<User>) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
 
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/gateway/v1/users');
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/v1/users`);
   const canCreateUser = Boolean(data && data.actions && data.actions['POST']);
   const deleteUsers = useDeleteUsers(view.unselectItemsAndRefresh);
 
