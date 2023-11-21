@@ -288,6 +288,7 @@ describe('EdaRuleAuditChart.cy.ts', () => {
   });
 
   it('Dashboard renders the rule audit graph for successful and failed runs', () => {
+    cy.contains(/^Rule Audit$/).should('be.visible');
     cy.contains(/^Rule Runs$/).should('be.visible');
     cy.contains(/^Success$/).should('be.visible');
     cy.contains(/^Failed$/).should('be.visible');

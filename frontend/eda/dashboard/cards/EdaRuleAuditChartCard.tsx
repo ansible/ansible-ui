@@ -119,7 +119,7 @@ const RuleAuditChart = () => {
 
   return (
     <PageDashboardCard
-      title={t('Rule Runs')}
+      title={t('Rule Audit')}
       width="xxl"
       height="sm"
       to={getPageUrl(EdaRoute.RuleAudits)}
