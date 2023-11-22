@@ -12,7 +12,7 @@ export function useRoleFilters() {
         label: t('Name'),
         type: ToolbarFilterType.Text,
         query: 'name__icontains',
-        comparison: 'startsWith',
+        comparison: 'contains',
       },
     ],
     [t]
