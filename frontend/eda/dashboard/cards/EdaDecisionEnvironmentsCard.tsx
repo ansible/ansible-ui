@@ -48,7 +48,7 @@ export function EdaDecisionEnvironmentsCard(props: { view: IEdaView<EdaDecisionE
       help={t('Decision environments are a container image to run Ansible rulebooks.')}
     >
       <PageTable
-        id="eda-decision-environments-table"
+        id="eda-dashboard-decision-environments-table"
         disableBodyPadding={true}
         tableColumns={columns}
         autoHidePagination={true}
