@@ -70,8 +70,6 @@ export function ProjectDetails() {
         <PageDetail label={t('Last modified')}>
           {project?.modified_at ? formatDateString(project.modified_at) : ''}
         </PageDetail>
-      </PageDetails>
-      <PageDetails>
         {!!project?.verify_ssl && (
           <PageDetail label={t('Enabled option')}>
             <DescriptionListGroup>
