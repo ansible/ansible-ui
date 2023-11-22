@@ -22,6 +22,9 @@ import { EdaCredential } from '../../interfaces/EdaCredential';
 import { EdaProject, EdaProjectCreate, EdaProjectRead } from '../../interfaces/EdaProject';
 import { EdaResult } from '../../interfaces/EdaResult';
 import { EdaPageForm } from '../../EdaPageForm';
+import { TextList, TextListItem, TextListItemVariants } from '@patternfly/react-core';
+import { StandardPopover } from '../../../../framework/components/StandardPopover';
+import React from 'react';
 
 function ProjectCreateInputs() {
   const { t } = useTranslation();
@@ -77,13 +80,23 @@ function ProjectCreateInputs() {
         labelHelpTitle={t('Credential')}
         labelHelp={t('The token needed to utilize the SCM URL.')}
       />
-      <PageFormGroup
-        label={t('Options')}
-        labelHelp={t(
-          'Enabling this option verifies the SSL with HTTPS when the project is imported.'
-        )}
-      >
-        <PageFormCheckbox<EdaProjectCreate> label={t('Verify SSL')} name="verify_ssl" />
+      <PageFormGroup label={t('Options')}>
+        <PageFormCheckbox<EdaProjectCreate>
+          label={
+            <TextList>
+              <TextListItem component={TextListItemVariants.li}>
+                {t`Verify SSL`}
+                <StandardPopover
+                  header=""
+                  content={t(
+                    'Enabling this option verifies the SSL with HTTPS when the project is imported.'
+                  )}
+                />
+              </TextListItem>
+            </TextList>
+          }
+          name="verify_ssl"
+        />
       </PageFormGroup>
     </>
   );
@@ -134,13 +147,23 @@ function ProjectEditInputs() {
         }
         footer={<Link to={getPageUrl(EdaRoute.CreateCredential)}>{t('Create credential')}</Link>}
       />
-      <PageFormGroup
-        label={t('Options')}
-        labelHelp={t(
-          'Enabling this option verifies the SSL with HTTPS when the project is imported.'
-        )}
-      >
-        <PageFormCheckbox label={t('Verify SSL')} name="verify_ssl" />
+      <PageFormGroup label={t('Options')}>
+        <PageFormCheckbox
+          label={
+            <TextList>
+              <TextListItem component={TextListItemVariants.li}>
+                {t`Verify SSL`}
+                <StandardPopover
+                  header=""
+                  content={t(
+                    'Enabling this option verifies the SSL with HTTPS when the project is imported.'
+                  )}
+                />
+              </TextListItem>
+            </TextList>
+          }
+          name="verify_ssl"
+        />
       </PageFormGroup>
     </>
   );
