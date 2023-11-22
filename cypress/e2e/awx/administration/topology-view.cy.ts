@@ -7,7 +7,10 @@ beforeEach(() => {
   cy.intercept({ method: 'GET', url: '/api/v2/instances/*/instance_groups/' }).as(
     'getInstanceGroups'
   );
-  cy.intercept('PATCH', `api/v2/instances/1/`).as('editInstance');
+  cy.intercept(
+    { method: 'PATCH', url: `api/v2/instances/1/` },
+    { fixture: 'instance_without_install_bundle.json' }
+  ).as('editInstance');
 });
 describe('Topology view', () => {
   before(() => {
@@ -63,7 +66,11 @@ describe('Topology view', () => {
       });
   });
   it('should show adjust instance forks when instance forks slider is adjusted', () => {
-    cy.intercept({ method: 'GET', url: '/api/v2/instances/1/' }).as('getInstance');
+    // Adjusting instance capacity while other concurrent tests are running could have unwanted side-effects affecting job runs. We should mock the response data in this scenario.
+    cy.intercept(
+      { method: 'GET', url: '/api/v2/instances/1/' },
+      { fixture: 'instance_without_install_bundle.json' }
+    ).as('getInstance');
     cy.navigateTo('awx', 'topology-view');
     cy.wait('@getMeshVisualizer')
       .its('response.body')
@@ -87,6 +94,7 @@ describe('Topology view', () => {
       });
   });
   it('should show enabled/disabled when instance is toggled from sidebar', () => {
+    // Enabling/disabling an instance while other concurrent tests are running could have unwanted side-effects affecting job runs. We should mock the response data in this scenario.
     cy.intercept({ method: 'GET', url: '/api/v2/instances/1/' }).as('getInstance');
     cy.navigateTo('awx', 'topology-view');
     cy.wait('@getMeshVisualizer')
