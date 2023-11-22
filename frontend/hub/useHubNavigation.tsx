@@ -33,6 +33,7 @@ import { SignatureKeys } from './signature-keys/SignatureKeys';
 import { TaskDetails } from './tasks/TaskDetails';
 import { Tasks } from './tasks/Tasks';
 import { Token } from './token/Token';
+import { Roles } from './access/roles/Roles';
 
 export function useHubNavigation() {
   const { t } = useTranslation();
@@ -254,6 +255,12 @@ export function useHubNavigation() {
                 label: t('API Token'),
                 path: 'api-token',
                 element: <Token />,
+              },
+              {
+                id: HubRoute.Roles,
+                label: t('Roles'),
+                path: 'hub-roles',
+                element: <Roles />,
               },
             ],
           },
