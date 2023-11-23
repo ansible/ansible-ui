@@ -86,6 +86,7 @@ async function deleteCollectionFromRepository(
 
   if (!version) {
     // load all associated collection versions
+    // TODO - we are not loading all of them! Implement bulk request get
     const results = await requestGet<HubItemsResponse<CollectionVersionSearch>>(
       hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${
         collection.collection_version?.name || ''
@@ -96,6 +97,7 @@ async function deleteCollectionFromRepository(
     itemsToDelete.push(collection.collection_version?.pulp_href || '');
   }
 
+  // TODO - implement error messages
   const res: { task: string } = await postRequest(
     pulpAPI`/repositories/ansible/ansible/${
       parsePulpIDFromURL(collection.repository.pulp_href) || ''
