@@ -78,7 +78,7 @@ export function UserDetails<T extends UserDetailsType>(props: {
           />
         </PageDetail>
         {(user.modified || user.modified_at || user.modified_on) && (
-          <PageDetail label={t('Modified')}>
+          <PageDetail label={t('Last modified')}>
             <DateTimeCell
               format="date-time"
               value={user.modified ?? user.modified_at ?? user.modified_on}

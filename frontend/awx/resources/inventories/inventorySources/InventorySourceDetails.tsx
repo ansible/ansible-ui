@@ -329,7 +329,7 @@ export function InventorySourceDetails(props: { inventorySourceId?: string }) {
           }
         />
       </PageDetail>
-      <PageDetail label={t`Modified`}>
+      <PageDetail label={t`Last modified`}>
         <DateTimeCell
           format="since"
           value={inventorySource.modified}
