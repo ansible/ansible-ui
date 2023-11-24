@@ -86,13 +86,29 @@ async function deleteCollectionFromRepository(
 
   if (!version) {
     // load all associated collection versions
-    // TODO - we are not loading all of them! Implement bulk request get
-    const results = await requestGet<HubItemsResponse<CollectionVersionSearch>>(
-      hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${
-        collection.collection_version?.name || ''
-      }&repository_name=${collection.repository.name}`
-    );
-    itemsToDelete = results.data?.map((item) => item.collection_version?.pulp_href || '');
+    let results: CollectionVersionSearch[] = [];
+
+    let pageNumber = 0;
+    let pageSize = 10;
+    while (true) {
+      const data = await requestGet<HubItemsResponse<CollectionVersionSearch>>(
+        hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${
+          collection.collection_version?.name || ''
+        }&repository_name=${
+          collection.repository.name
+        }&offset=${pageNumber.toString()}&limit=${pageSize.toString()}`
+      );
+
+      pageNumber += pageSize;
+
+      results = [...results, ...data.data];
+
+      if (results.length >= data.meta.count) {
+        break;
+      }
+    }
+
+    itemsToDelete = results?.map((item) => item.collection_version?.pulp_href || '');
   } else {
     itemsToDelete.push(collection.collection_version?.pulp_href || '');
   }
