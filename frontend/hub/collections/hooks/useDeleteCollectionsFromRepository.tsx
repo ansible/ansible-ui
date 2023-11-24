@@ -9,7 +9,8 @@ import { useCollectionColumns } from './useCollectionColumns';
 import { HubItemsResponse } from '../../useHubView';
 import { usePageNavigate } from '../../../../framework';
 import { HubRoute } from '../../HubRoutes';
-import { postRequest, requestGet } from '../../../common/crud/Data';
+import { postRequest } from '../../../common/crud/Data';
+import { getHubAllItems } from '../../api/request';
 
 export function useDeleteCollectionsFromRepository(
   onComplete?: (collections: CollectionVersionSearch[]) => void,
@@ -86,34 +87,24 @@ async function deleteCollectionFromRepository(
 
   if (!version) {
     // load all associated collection versions
-    let results: CollectionVersionSearch[] = [];
 
-    let pageNumber = 0;
-    let pageSize = 10;
-    while (true) {
-      const data = await requestGet<HubItemsResponse<CollectionVersionSearch>>(
-        hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${
-          collection.collection_version?.name || ''
-        }&repository_name=${
-          collection.repository.name
-        }&offset=${pageNumber.toString()}&limit=${pageSize.toString()}`
-      );
+    const url = hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${
+      collection.collection_version?.name || ''
+    }&repository_name=${collection.repository.name}`;
 
-      pageNumber += pageSize;
-
-      results = [...results, ...data.data];
-
-      if (results.length >= data.meta.count) {
-        break;
-      }
-    }
+    const results = await getHubAllItems<
+      HubItemsResponse<CollectionVersionSearch>,
+      CollectionVersionSearch
+    >(url, {
+      getData: (data) => data.data,
+      getNextUrl: (data) => data.links.next,
+    });
 
     itemsToDelete = results?.map((item) => item.collection_version?.pulp_href || '');
   } else {
     itemsToDelete.push(collection.collection_version?.pulp_href || '');
   }
 
-  // TODO - implement error messages
   const res: { task: string } = await postRequest(
     pulpAPI`/repositories/ansible/ansible/${
       parsePulpIDFromURL(collection.repository.pulp_href) || ''

@@ -2,6 +2,7 @@ import { createRequestError } from '../../common/crud/RequestError';
 import { getCookie } from '../../common/crud/cookie';
 import { TaskResponse } from '../tasks/Task';
 import { parseTaskResponse } from './utils';
+import { requestGet } from '../../common/crud/Data';
 
 interface Options {
   method: string;
@@ -178,4 +179,24 @@ export async function getHubRequest<ResponseBody extends object | TaskResponse>(
     signal,
   };
   return hubRequestCommon<ResponseBody>(url, options);
+}
+
+export async function getHubAllItems<ResponseBody, ResponseItem>(
+  url: string,
+  settings: {
+    getData: (res: ResponseBody) => ResponseItem[] | undefined;
+    getNextUrl: (res: ResponseBody) => string | undefined;
+  }
+) {
+  let actualUrl = url;
+  let results: ResponseItem[] = [];
+
+  while (actualUrl) {
+    const data = await requestGet<ResponseBody>(actualUrl);
+
+    actualUrl = settings.getNextUrl(data) || '';
+    results = [...results, ...(settings.getData(data) || [])];
+  }
+
+  return results;
 }
