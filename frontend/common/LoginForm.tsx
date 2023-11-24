@@ -15,7 +15,7 @@ import { HubRoute } from '../hub/HubRoutes';
 import { hubAPI } from '../hub/api/formatPath';
 import { AuthOption, SocialAuthLogin } from './SocialAuthLogin';
 import { RequestError, createRequestError } from './crud/RequestError';
-import { setCookie } from './crud/cookie';
+import { setCookie, getCookie } from './crud/cookie';
 import { useInvalidateCacheOnUnmount } from './useInvalidateCache';
 
 type LoginFormProps = {
@@ -90,11 +90,18 @@ export function LoginForm(props: LoginFormProps) {
         searchParams.set('password', data.password);
         searchParams.set('next', '/');
 
+        let headers: { [key: string]: string } = {
+          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+        };
+        if (process.env.UI_MODE == 'HUB') {
+          headers['X-Csrftoken'] = getCookie('csrftoken') || '';
+        }
+
         try {
           const response = await fetch(loginPageUrl, {
             credentials: 'include',
             method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+            headers,
             body: searchParams,
             redirect: 'manual',
           });

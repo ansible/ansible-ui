@@ -15,7 +15,6 @@ export default function HubMain() {
   const navigation = useHubNavigation();
   return (
     <PageApp
-      // fix hub login
       login={<Login />}
       root={
         <HubContextProvider>
