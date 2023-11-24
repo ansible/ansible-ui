@@ -90,9 +90,10 @@ export function LoginForm(props: LoginFormProps) {
         searchParams.set('password', data.password);
         searchParams.set('next', '/');
 
-        let headers: { [key: string]: string } = {
+        const headers: { [key: string]: string } = {
           'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
         };
+
         if (process.env.UI_MODE == 'HUB') {
           headers['X-Csrftoken'] = getCookie('csrftoken') || '';
         }
