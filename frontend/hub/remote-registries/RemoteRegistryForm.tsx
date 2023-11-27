@@ -13,20 +13,21 @@ import {
 } from '../../../framework';
 import { PageFormFileUpload } from '../../../framework/PageForm/Inputs/PageFormFileUpload';
 import { PageFormGroup } from '../../../framework/PageForm/Inputs/PageFormGroup';
-import { PageFormExpandableSection } from '../../../framework/PageForm/PageFormExpandableSection';
 import { PageFormSecret } from '../../../framework/PageForm/Inputs/PageFormSecret';
-import { HubError } from '../common/HubError';
+import { PageFormExpandableSection } from '../../../framework/PageForm/PageFormExpandableSection';
 import { useGet } from '../../common/crud/useGet';
 import { usePostRequest } from '../../common/crud/usePostRequest';
+import { useClearCache } from '../../common/useInvalidateCache';
+import { useIsValidUrl } from '../../common/validation/useIsValidUrl';
 import { HubPageForm } from '../HubPageForm';
 import { HubRoute } from '../HubRoutes';
 import { hubAPI } from '../api/formatPath';
 import { appendTrailingSlash, hubAPIPut, parsePulpIDFromURL } from '../api/utils';
+import { HubError } from '../common/HubError';
 import { HubItemsResponse } from '../useHubView';
 import { RemoteRegistry } from './RemoteRegistry';
-import { useClearCache } from '../../common/useInvalidateCache';
 
-interface SecredInput {
+interface SecretInput {
   onClear?: (name: string) => void;
   shouldHideField?: (name: string) => boolean;
 }
@@ -197,14 +198,16 @@ export function EditRemoteRegistry() {
   );
 }
 
-function ProxyAdvancedRemoteInputs({ onClear, shouldHideField }: SecredInput) {
+function ProxyAdvancedRemoteInputs({ onClear, shouldHideField }: SecretInput) {
   const { t } = useTranslation();
+  const isValidUrl = useIsValidUrl();
   return (
     <>
       <PageFormTextInput<RemoteRegistryProps>
         name="proxy_url"
         label={t('Proxy URL')}
         placeholder={t('Enter a proxy URL')}
+        validate={isValidUrl}
       />
       <PageFormSecret
         onClear={() => {
@@ -235,7 +238,7 @@ function ProxyAdvancedRemoteInputs({ onClear, shouldHideField }: SecredInput) {
   );
 }
 
-function CertificatesAdvancedRemoteInputs({ onClear, shouldHideField }: SecredInput) {
+function CertificatesAdvancedRemoteInputs({ onClear, shouldHideField }: SecretInput) {
   const { t } = useTranslation();
   return (
     <>
@@ -298,8 +301,9 @@ function MiscAdvancedRemoteInputs() {
   );
 }
 
-function RemoteInputs({ onClear, shouldHideField }: SecredInput) {
+function RemoteInputs({ onClear, shouldHideField }: SecretInput) {
   const { t } = useTranslation();
+  const isValidUrl = useIsValidUrl();
   return (
     <>
       <PageFormTextInput<RemoteRegistryProps>
@@ -314,6 +318,7 @@ function RemoteInputs({ onClear, shouldHideField }: SecredInput) {
         placeholder={t('Enter a URL')}
         labelHelp={t('The URL of an external content source.')}
         isRequired
+        validate={isValidUrl}
       />
       <PageFormSecret
         onClear={() => {
