@@ -38,7 +38,7 @@ import {
 } from '@patternfly/react-icons';
 import { Table /* data-codemods */, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { DateTime } from 'luxon';
-import { Dispatch, SetStateAction, useMemo, useState, useEffect } from 'react';
+import { Dispatch, SetStateAction, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import {
@@ -57,9 +57,9 @@ import {
 } from '../../../framework';
 import { PageDetail } from '../../../framework/PageDetails/PageDetail';
 import { Scrollable } from '../../../framework/components/Scrollable';
-import { AwxError } from '../../awx/common/AwxError';
+import { HubError } from '../common/HubError';
 import { StatusCell } from '../../common/Status';
-import { useGetRequest, useGet } from '../../common/crud/useGet';
+import { useGet } from '../../common/crud/useGet';
 import { HubRoute } from '../HubRoutes';
 import { hubAPI } from '../api/formatPath';
 import { HubItemsResponse } from '../useHubView';
@@ -74,12 +74,44 @@ import { requestGet } from '../../common/crud/Data';
 export function CollectionDetails() {
   const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
-  const itemActions = useCollectionActions(() => void refresh(), true);
-  const [collection, setCollection] = useState<CollectionVersionSearch | undefined>(undefined);
-  const [collections, setCollections] = useState<CollectionVersionSearch[]>([]);
-  const [collectionError, setCollectionError] = useState<JSX.Element | undefined>(undefined);
-  const request = useGetRequest<HubItemsResponse<CollectionVersionSearch>>();
 
+  const name = searchParams.get('name') || '';
+  const namespace = searchParams.get('namespace') || '';
+  const repository = searchParams.get('repository') || '';
+  const redirectIfEmpty = searchParams.get('redirectIfEmpty') || '';
+
+  // load collection by search params
+  const version = searchParams.get('version');
+
+  const collectionsRequest = useGet<HubItemsResponse<CollectionVersionSearch>>(
+    hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${name || ''}&namespace=${
+      namespace || ''
+    }&repository_name=${repository || ''}&order_by=-version`
+  );
+
+  const collections = collectionsRequest.data?.data;
+
+  let queryFilter = '';
+
+  if (!version) {
+    // for unspecified version, load highest
+    queryFilter = '&is_highest=true';
+  } else {
+    queryFilter = '&version=' + version;
+  }
+
+  const collectionRequest = useGet<HubItemsResponse<CollectionVersionSearch>>(
+    hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${name || ''}&namespace=${
+      namespace || ''
+    }&repository_name=${repository || ''}` + queryFilter
+  );
+
+  const collection =
+    collectionRequest?.data?.data && collectionRequest?.data?.data?.length > 0
+      ? collectionRequest.data?.data[0]
+      : undefined;
+
+  const itemActions = useCollectionActions(() => void collectionRequest.refresh(), true);
   const navigate = usePageNavigate();
 
   function setVersionParams(version: string) {
@@ -89,98 +121,31 @@ export function CollectionDetails() {
     });
   }
 
-  const name = searchParams.get('name') || '';
-  const namespace = searchParams.get('namespace') || '';
-  const repository = searchParams.get('repository') || '';
-  const redirectIfEmpty = searchParams.get('redirectIfEmpty') || '';
-
-  useEffect(() => {
-    if (!(name && namespace && repository)) {
-      setCollectionError(<AwxError error={{ name: 'not found', message: t('Not Found') }} />);
-    }
-  }, [name, namespace, repository, setCollectionError, t]);
-
-  useEffect(() => {
-    void (async function () {
-      try {
-        const res = await request(hubAPI`/v3/plugin/ansible/search/collection-versions/`, {
-          name,
-          namespace,
-          repository_name: repository,
-        });
-
-        if (res.data.length == 0) {
-          if (redirectIfEmpty) {
-            navigate(HubRoute.Collections);
-          } else {
-            setCollectionError(<AwxError error={{ name: 'not found', message: t('Not Found') }} />);
-          }
-        }
-
-        if (redirectIfEmpty) {
-          const newParams = new URLSearchParams(searchParams.toString());
-
-          // Set a new query parameter or update existing ones
-          newParams.set('redirectIfEmpty', '');
-
-          setSearchParams(newParams);
-        }
-
-        setCollections(res.data);
-      } catch (error) {
-        setCollectionError(<AwxError error={{ name: 'not found', message: t('Not Found') }} />);
-      }
-    })();
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [name, namespace, repository, redirectIfEmpty, t]);
-
-  // load collection by search params
-  const version = searchParams.get('version');
-
-  let highestFilter = '';
-  let versionFilter = '';
-
-  if (!version) {
-    // for unspecified version, load highest
-    highestFilter = '&isHighest=true';
-  } else {
-    versionFilter = '&version=' + version;
-  }
-
-  const { data, refresh, error, isLoading } = useGet<HubItemsResponse<CollectionVersionSearch>>(
-    hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${
-      searchParams.get('name') || ''
-    }&namespace=${searchParams.get('namespace') || ''}&repository_name=${
-      searchParams.get('repository') || ''
-    }&order_by=-version` +
-      versionFilter +
-      highestFilter
-  );
-
-  if (data && data.data.length > 0) {
-    const newCollection = data.data[0];
-    if (
-      !collection ||
-      collection.collection_version?.version != newCollection.collection_version?.version
-    ) {
-      setCollection(newCollection);
-    }
-  }
-
   const getPageUrl = useGetPageUrl();
 
-  if (error || (isLoading == false && data && data.data.length == 0)) {
-    return (
-      <AwxError
-        error={error || { name: 'not found', message: t('Not Found') }}
-        handleRefresh={refresh}
-      />
-    );
+  if (redirectIfEmpty) {
+    const newParams = new URLSearchParams(searchParams.toString());
+
+    // Set a new query parameter or update existing ones
+    newParams.set('redirectIfEmpty', '');
+
+    if (collections && collections?.length == 0) {
+      navigate(HubRoute.Collections);
+    } else {
+      navigate(HubRoute.CollectionPage, { query: { name, namespace, repository } });
+    }
   }
 
-  if (collectionError) {
-    return collectionError;
+  if (collectionsRequest.error || collections?.length == 0) {
+    return <HubError error={collectionsRequest.error} handleRefresh={collectionsRequest.refresh} />;
+  }
+
+  if (collectionsRequest.error || collectionRequest.data?.data?.length == 0) {
+    return <HubError error={collectionRequest.error} handleRefresh={collectionRequest.refresh} />;
+  }
+
+  if (!collectionsRequest.data || !collectionRequest.data) {
+    return <LoadingPage breadcrumbs tabs />;
   }
 
   return (
@@ -227,7 +192,7 @@ export function CollectionDetails() {
                   : []
               }
               onSelect={(item: string) => {
-                const found = collections.find(
+                const found = collections?.find(
                   (item2) => item2.collection_version?.version == item
                 );
                 if (found && found.collection_version) {
@@ -300,7 +265,7 @@ function CollectionInstallTab(props: { collection: CollectionVersionSearch }) {
     <LoadingPage breadcrumbs tabs />;
   }
   if (error) {
-    return <AwxError error={new Error(error)} />;
+    return <HubError error={new Error(error)} />;
   }
 
   return (
