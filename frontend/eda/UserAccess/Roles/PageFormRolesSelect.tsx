@@ -24,7 +24,7 @@ export function PageFormRolesSelect<TFieldValues extends FieldValues = FieldValu
       label={props.label || t('Roles')}
       selectTitle={t('Select roles')}
       selectOpen={selectRoles}
-      validate={async (roles: EdaRole[]) => {
+      validate={(roles: EdaRole[]) => {
         if (props.isRequired && roles.length === 0) {
           return t('Role is required.');
         }

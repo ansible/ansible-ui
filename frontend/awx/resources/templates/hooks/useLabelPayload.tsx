@@ -1,13 +1,14 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePageAlertToaster } from '../../../../../framework';
-import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { requestGet } from '../../../../common/crud/Data';
+import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 
-import type { Label } from '../../../interfaces/Label';
 import type { JobTemplate } from '../../../interfaces/JobTemplate';
+import type { Label } from '../../../interfaces/Label';
 import type { Organization } from '../../../interfaces/Organization';
+import { awxAPI } from '../../../api/awx-utils';
 
 type LabelPayload = (
   labels: { name: string; id?: number }[],
@@ -28,14 +29,14 @@ export function useLabelPayload() {
 
       try {
         if (!organizationId) {
-          const data = await requestGet<AwxItemsResponse<Organization>>('/api/v2/organizations/');
+          const data = await requestGet<AwxItemsResponse<Organization>>(awxAPI`/organizations/`);
           organizationId = data.results[0].id;
         }
 
         const labelRequests = [];
         for (const label of newLabels || []) {
           labelRequests.push(
-            postRequest(`/api/v2/labels/`, {
+            postRequest(awxAPI`/labels/`, {
               name: label.name,
               organization: organizationId,
             })

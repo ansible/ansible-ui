@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePageAlertToaster } from '../../../../framework';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
+import { awxAPI } from '../../api/awx-utils';
 import { AccessRole, User } from '../../interfaces/User';
 
 export function useDeleteAccessRole(onComplete?: () => void) {
@@ -12,12 +13,12 @@ export function useDeleteAccessRole(onComplete?: () => void) {
     async (role: AccessRole, user: User) => {
       try {
         if (typeof role.team_id !== 'undefined') {
-          await postRequest(`/api/v2/teams/${role.team_id}/roles/`, {
+          await postRequest(awxAPI`/teams/${role.team_id.toString()}/roles/`, {
             id: role.id,
             disassociate: true,
           });
         }
-        await postRequest(`/api/v2/users/${user.id}/roles/`, {
+        await postRequest(awxAPI`/users/${user.id.toString()}/roles/`, {
           id: role.id,
           disassociate: true,
         });

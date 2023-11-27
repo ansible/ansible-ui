@@ -1,23 +1,51 @@
 import { RedoIcon, TrashIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IPageAction, PageActionSelection, PageActionType } from '../../../../framework';
+import {
+  IPageAction,
+  PageActionSelection,
+  PageActionType,
+  usePageAlertToaster,
+} from '../../../../framework';
+import { edaAPI } from '../../api/eda-utils';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { Status906Enum } from '../../interfaces/generated/eda-api';
 import { IEdaView } from '../../useEventDrivenView';
 import {
   useDisableRulebookActivations,
-  useEnableRulebookActivations,
   useRestartRulebookActivations,
 } from './useControlRulebookActivations';
 import { useDeleteRulebookActivations } from './useDeleteRulebookActivations';
+import { postRequest } from '../../../common/crud/Data';
+import { AlertProps } from '@patternfly/react-core';
 
 export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivation>) {
   const { t } = useTranslation();
-  const enableActivations = useEnableRulebookActivations(view.unselectItemsAndRefresh);
   const disableActivations = useDisableRulebookActivations(view.unselectItemsAndRefresh);
   const restartActivations = useRestartRulebookActivations(view.unselectItemsAndRefresh);
   const deleteRulebookActivations = useDeleteRulebookActivations(view.unselectItemsAndRefresh);
+  const alertToaster = usePageAlertToaster();
+  const enableActivation: (activation: EdaRulebookActivation) => Promise<void> = useCallback(
+    async (activation) => {
+      const alert: AlertProps = {
+        variant: 'success',
+        title: `${activation.name} ${t('enabled')}.`,
+        timeout: 5000,
+      };
+      await postRequest(edaAPI`/activations/${activation.id.toString()}/${'enable/'}`, undefined)
+        .then(() => alertToaster.addAlert(alert))
+        .catch(() => {
+          alertToaster.addAlert({
+            variant: 'danger',
+            title: `${t('Failed to enable')} ${activation.name}`,
+            timeout: 5000,
+          });
+        });
+      view.unselectItemsAndRefresh([activation]);
+    },
+    [view, alertToaster, t]
+  );
+
   return useMemo<IPageAction<EdaRulebookActivation>[]>(() => {
     const actions: IPageAction<EdaRulebookActivation>[] = [
       {
@@ -29,7 +57,7 @@ export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivatio
         label: t('Rulebook activation enabled'),
         labelOff: t('Rulebook activation disabled'),
         onToggle: (activation: EdaRulebookActivation, activate: boolean) => {
-          if (activate) void enableActivations([activation]);
+          if (activate) void enableActivation(activation);
           else void disableActivations([activation]);
         },
         isSwitchOn: (activation: EdaRulebookActivation) => activation.is_enabled ?? false,
@@ -65,5 +93,5 @@ export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivatio
       },
     ];
     return actions;
-  }, [t, restartActivations, enableActivations, disableActivations, deleteRulebookActivations]);
+  }, [t, restartActivations, deleteRulebookActivations, disableActivations, enableActivation]);
 }

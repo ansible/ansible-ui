@@ -16,12 +16,13 @@ import { useOptions } from '../../../../common/crud/useOptions';
 import { CredentialLabel } from '../../../common/CredentialLabel';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { UnifiedJob } from '../../../interfaces/UnifiedJob';
+import { awxAPI } from '../../../api/awx-utils';
 import { getJobOutputUrl, getLaunchedByDetails, getScheduleUrl, isJobRunning } from '../jobUtils';
 
 export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
 
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/v2/inventory_sources/');
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/inventory_sources/`);
   const inventorySourceChoices = useMemo(
     () =>
       data &&

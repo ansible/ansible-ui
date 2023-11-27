@@ -7,6 +7,7 @@ import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
 import { AwxError } from '../../../common/AwxError';
 import { Application } from '../../../interfaces/Application';
+import { awxAPI } from '../../../api/awx-utils';
 
 export function ApplicationPage() {
   const { t } = useTranslation();
@@ -15,7 +16,7 @@ export function ApplicationPage() {
     error,
     data: application,
     refresh,
-  } = useGetItem<Application>('/api/v2/applications', params.id);
+  } = useGetItem<Application>(awxAPI`/applications`, params.id);
 
   const getPageUrl = useGetPageUrl();
 

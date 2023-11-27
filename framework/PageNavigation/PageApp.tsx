@@ -1,9 +1,8 @@
 import { Page } from '@patternfly/react-core';
 import { ReactNode, useMemo } from 'react';
 import { Outlet, RouterProvider, createBrowserRouter } from 'react-router-dom';
-import { PageNotFound } from '../../frontend/common/PageNotFound';
+import { PageNotFound } from '../PageEmptyStates/PageNotFound';
 import { PageFramework } from '../PageFramework';
-import { PageLayout } from '../PageLayout';
 import { PageNavigation } from './PageNavigation';
 import { PageNavigationItem } from './PageNavigationItem';
 import { PageNavigationRoutesProvider } from './PageNavigationRoutesProvider';
@@ -46,9 +45,7 @@ export function PageApp(props: {
                 path: '',
                 element: (
                   <Page header={header} sidebar={<PageNavigation navigation={navigation} />}>
-                    <PageLayout>
-                      <Outlet />
-                    </PageLayout>
+                    <Outlet />
                   </Page>
                 ),
                 children: navigation,

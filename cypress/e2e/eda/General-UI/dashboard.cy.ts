@@ -167,20 +167,29 @@ describe('dashboard checks when resources before any resources are created', () 
   it('checks the dashboard landing page titles ', () => {
     cy.navigateTo('eda', 'dashboard');
     cy.verifyPageTitle('Welcome to');
-    cy.get('[data-cy="Projects"]').should('contain', 'Projects');
-    cy.get('[data-cy="Recently updated projects"]').should('contain', 'Recently updated projects');
-    cy.get('[data-cy="Rulebook Activations"]').should('contain', 'Rulebook Activations');
-    cy.get('[data-cy="Recently updated activations"]').should(
-      'contain',
-      'Recently updated activations'
-    );
-    cy.get('[data-cy="Rule Audit"]').should('contain', 'Rule Audit');
-    cy.get('[data-cy="Recently fired rules"]').should('contain', 'Recently fired rules');
-    cy.get('[data-cy="Decision Environments"]').should('contain', 'Decision Environments');
-    cy.get('[data-cy="Recently updated environments"]').should(
-      'contain',
-      'Recently updated environments'
-    );
+    cy.get('[data-cy="projects"]')
+      .should('contain', 'Projects')
+      .within(() => {
+        cy.get('[data-cy="card-subtitle"]').should('contain', 'Recently updated projects');
+      });
+
+    cy.get('[data-cy="rulebook-activations"]')
+      .should('contain', 'Rulebook Activations')
+      .within(() => {
+        cy.get('[data-cy="card-subtitle"]').should('contain', 'Recently updated activations');
+      });
+
+    cy.get('[data-cy="rule-audit"]')
+      .should('contain', 'Rule Audit')
+      .within(() => {
+        cy.get('[data-cy="card-subtitle"]').should('contain', 'Recently fired rules');
+      });
+
+    cy.get('[data-cy="decision-environments"]')
+      .should('contain', 'Decision Environments')
+      .within(() => {
+        cy.get('[data-cy="card-subtitle"]').should('contain', 'Recently updated environments');
+      });
   });
 
   // THIS NEEDS TO BE MOVED TO A COMPONENT TEST AS THE STATE OF THE E2E SERVER IS UNKNOWN AND THIS MAY NOT SHOW UP

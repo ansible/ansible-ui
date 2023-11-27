@@ -26,15 +26,10 @@ import './commands';
 /*  EDA related custom command implementation  */
 
 Cypress.Commands.add('selectEdaUserRoleByName', (roleName: string) => {
-  cy.contains('.pf-v5-c-form__label-text', 'Role(s)')
-    .parent()
-    .parent()
-    .parent()
-    .parent()
-    .within(() => {
-      cy.get('button[data-cy="roles"]').click();
-      cy.get(`[data-cy="${roleName.toLowerCase()}"]`).click();
-    });
+  cy.get('button#roles:not(:disabled):not(:hidden)').click();
+  cy.get('#roles-select').within(() => {
+    cy.get(`[data-cy="${roleName.toLowerCase()}"]`).click();
+  });
 });
 
 Cypress.Commands.add('checkAnchorLinks', (anchorName: string) => {
@@ -223,7 +218,8 @@ Cypress.Commands.add('getEdaProjectByName', (edaProjectName: string) => {
 });
 
 Cypress.Commands.add('deleteEdaProject', (project: EdaProject) => {
-  cy.waitEdaProjectSync(project);
+  // this is just cleanup, so we don't care if the sync fails
+  // cy.waitEdaProjectSync(project);
   cy.requestDelete(`/api/eda/v1/projects/${project.id}/`, {
     failOnStatusCode: false,
   }).then(() => {

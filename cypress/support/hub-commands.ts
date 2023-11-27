@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
+import { hubAPI } from '../../frontend/hub/api/formatPath';
 import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
 import { HubItemsResponse } from '../../frontend/hub/useHubView';
 import './commands';
@@ -51,7 +52,7 @@ Cypress.Commands.add(
       cy.wait(300);
 
       cy.requestGet<HubItemsResponse<CollectionVersionSearch>>(
-        `${apiPrefix}v3/plugin/ansible/search/collection-versions/?namespace=${namespaceName}&name=${collectionName}`
+        hubAPI`/v3/plugin/ansible/search/collection-versions/?namespace=${namespaceName}&name=${collectionName}`
       ).then((itemsResponse) => {
         if (itemsResponse.data.length === 0) {
           waitTillPublished(maxLoops - 1);
@@ -89,7 +90,7 @@ Cypress.Commands.add('deleteNamespace', (namespaceName: string) => {
 
 Cypress.Commands.add('deleteCollectionsInNamespace', (namespaceName: string) => {
   cy.requestGet<HubItemsResponse<CollectionVersionSearch>>(
-    `${apiPrefix}v3/plugin/ansible/search/collection-versions/?namespace=${namespaceName}`
+    hubAPI`/v3/plugin/ansible/search/collection-versions/?namespace=${namespaceName}`
   ).then((itemsResponse) => {
     cy.log(`count of collections in namespace: ${itemsResponse.data.length}`);
     for (const collection of itemsResponse.data) {

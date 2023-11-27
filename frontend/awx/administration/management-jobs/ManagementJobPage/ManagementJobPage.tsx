@@ -8,6 +8,7 @@ import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
 import { AwxError } from '../../../common/AwxError';
 import { SystemJobTemplate } from '../../../interfaces/SystemJobTemplate';
+import { awxAPI } from '../../../api/awx-utils';
 
 export function ManagementJobPage() {
   const { t } = useTranslation();
@@ -16,7 +17,7 @@ export function ManagementJobPage() {
     error,
     data: systemJobTemplate,
     refresh,
-  } = useGetItem<SystemJobTemplate>('/api/v2/system_job_templates', params.id);
+  } = useGetItem<SystemJobTemplate>(awxAPI`/system_job_templates`, params.id);
 
   const getPageUrl = useGetPageUrl();
 

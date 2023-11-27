@@ -9,16 +9,22 @@ import { Login } from '../common/Login';
 import { HubRoute } from './HubRoutes';
 import { Approvals } from './approvals/Approvals';
 import { CollectionDetails } from './collections/CollectionDetails';
+import { CollectionSignatureUpload } from './collections/CollectionSignatureUpload';
 import { Collections } from './collections/Collections';
 import { UploadCollection } from './collections/UploadCollection';
-import { CollectionSignatureUpload } from './collections/CollectionSignatureUpload';
 import { HubDashboard } from './dashboard/Dashboard';
 import { ExecutionEnvironments } from './execution-environments/ExecutionEnvironments';
+import {
+  CreateExecutionEnvironment,
+  EditExecutionEnvironment,
+} from './execution-environments/ExecutionEnvironmentForm';
 import { CreateHubNamespace, EditHubNamespace } from './namespaces/HubNamespaceForm';
 import { HubNamespaceDetails } from './namespaces/HubNamespacePage/HubNamespaceDetails';
 import { HubNamespacePage } from './namespaces/HubNamespacePage/HubNamespacePage';
 import { Namespaces } from './namespaces/HubNamespaces';
 import { RemoteRegistries } from './remote-registries/RemoteRegistries';
+import { RemoteRegistryDetails } from './remote-registries/RemoteRegistryDetails';
+import { CreateRemoteRegistry, EditRemoteRegistry } from './remote-registries/RemoteRegistryForm';
 import { RemoteDetails } from './remotes/RemoteDetails';
 import { CreateRemote, EditRemote } from './remotes/RemoteForm';
 import { Remotes } from './remotes/Remotes';
@@ -27,6 +33,7 @@ import { SignatureKeys } from './signature-keys/SignatureKeys';
 import { TaskDetails } from './tasks/TaskDetails';
 import { Tasks } from './tasks/Tasks';
 import { Token } from './token/Token';
+import { Roles } from './access/roles/Roles';
 
 export function useHubNavigation() {
   const { t } = useTranslation();
@@ -115,6 +122,16 @@ export function useHubNavigation() {
                 path: 'execution-environments',
                 children: [
                   {
+                    id: HubRoute.CreateExecutionEnvironment,
+                    path: 'create',
+                    element: <CreateExecutionEnvironment />,
+                  },
+                  {
+                    id: HubRoute.EditExecutionEnvironment,
+                    path: ':id/edit',
+                    element: <EditExecutionEnvironment />,
+                  },
+                  {
                     path: '',
                     element: <ExecutionEnvironments />,
                   },
@@ -156,6 +173,21 @@ export function useHubNavigation() {
                   {
                     path: '',
                     element: <RemoteRegistries />,
+                  },
+                  {
+                    path: 'create',
+                    id: HubRoute.CreateRemoteRegistry,
+                    element: <CreateRemoteRegistry />,
+                  },
+                  {
+                    path: ':id/edit',
+                    id: HubRoute.EditRemoteRegistry,
+                    element: <EditRemoteRegistry />,
+                  },
+                  {
+                    path: 'details/:id/*',
+                    id: HubRoute.RemoteRegistryPage,
+                    element: <RemoteRegistryDetails />,
                   },
                 ],
               },
@@ -223,6 +255,12 @@ export function useHubNavigation() {
                 label: t('API Token'),
                 path: 'api-token',
                 element: <Token />,
+              },
+              {
+                id: HubRoute.Roles,
+                label: t('Roles'),
+                path: 'hub-roles',
+                element: <Roles />,
               },
             ],
           },

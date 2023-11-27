@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { requestDelete } from '../../../../common/crud/Data';
 import { idKeyFn } from '../../../../common/utils/nameKeyFn';
-import { API_PREFIX } from '../../../constants';
+import { edaAPI } from '../../../api/eda-utils';
 import { EdaProject } from '../../../interfaces/EdaProject';
 import { useProjectColumns } from './useProjectColumns';
 
@@ -26,7 +26,8 @@ export function useDeleteProjects(onComplete: (projects: EdaProject[]) => void) 
         confirmationColumns,
         actionColumns,
         onComplete,
-        actionFn: (project: EdaProject) => requestDelete(`${API_PREFIX}/projects/${project.id}/`),
+        actionFn: (project: EdaProject, signal) =>
+          requestDelete(edaAPI`/projects/${project.id.toString()}/`, signal),
         alertPrompts: [t('Note: This will not delete any running activations in these projects.')],
       });
     },

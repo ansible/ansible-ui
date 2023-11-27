@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useBulkActionDialog } from '../../../../../framework';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
+import { awxAPI } from '../../../api/awx-utils';
 import { User } from '../../../interfaces/User';
 import { ResourceType } from '../../common/ResourceAccessList';
 
@@ -19,7 +20,7 @@ export function useAddUsersToResources() {
         actionFn: async (user: User, signal: AbortSignal) => {
           for (const resource of resources) {
             await postRequest(
-              `/api/v2/users/${user.id.toString()}/roles/`,
+              awxAPI`/users/${user.id.toString()}/roles/`,
               { id: resource.summary_fields.object_roles.member_role.id },
               signal
             );

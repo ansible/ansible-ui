@@ -8,6 +8,7 @@ import { usePersistentFilters } from '../../../common/PersistentFilters';
 import { type Inventory } from '../../interfaces/Inventory';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { useAwxView } from '../../useAwxView';
+import { awxAPI } from '../../api/awx-utils';
 import { useInventoriesColumns } from './hooks/useInventoriesColumns';
 import { useInventoriesFilters } from './hooks/useInventoriesFilters';
 import { useInventoriesToolbarActions } from './hooks/useInventoriesToolbarActions';
@@ -28,12 +29,12 @@ type WebSocketMessage = {
 
 export function Inventories() {
   const { t } = useTranslation();
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/v2/inventories/');
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/inventories/`);
   const canCreateInventory = Boolean(data && data.actions && data.actions['POST']);
   const toolbarFilters = useInventoriesFilters();
   const tableColumns = useInventoriesColumns();
   const view = useAwxView<Inventory>({
-    url: '/api/v2/inventories/',
+    url: awxAPI`/inventories/`,
     toolbarFilters,
     tableColumns,
   });

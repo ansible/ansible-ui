@@ -2,6 +2,7 @@ import { postRequest, requestGet } from '../../../common/crud/Data';
 import { LaunchConfiguration } from '../../interfaces/LaunchConfiguration';
 
 import { Job } from '../../interfaces/Job';
+import { awxAPI } from '../../api/awx-utils';
 // TODO: Add launch prompt functionality.  This includes, but it not limited to:
 // 1) Fetching labels from api
 // 2) Fetching survey from api
@@ -30,9 +31,9 @@ export const handleLaunch = async (resourceType: string, resourceId: number) => 
   const readLaunch =
     resourceType === 'workflow_job_template'
       ? requestGet<LaunchConfiguration>(
-          `/api/v2/workflow_job_templates/${resourceId.toString()}/launch/`
+          awxAPI`/workflow_job_templates/${resourceId.toString()}/launch/`
         )
-      : requestGet<LaunchConfiguration>(`/api/v2/job_templates/${resourceId.toString()}/launch/`);
+      : requestGet<LaunchConfiguration>(awxAPI`/job_templates/${resourceId.toString()}/launch/`);
 
   try {
     const launchResponse: LaunchConfiguration = await readLaunch;
@@ -56,16 +57,16 @@ const launchWithParams = (
   let jobPromise;
 
   if (resourceType === 'job_template') {
-    jobPromise = postRequest<Job>(`/api/v2/job_templates/${resourceId.toString()}/launch/`, params);
+    jobPromise = postRequest<Job>(awxAPI`/job_templates/${resourceId.toString()}/launch/`, params);
   } else if (resourceType === 'workflow_job_template') {
     jobPromise = postRequest<Job>(
-      `/api/v2/workflow_job_templates/${resourceId.toString()}/launch/`,
+      awxAPI`/workflow_job_templates/${resourceId.toString()}/launch/`,
       params
     );
   } else if (resourceType === 'job') {
-    jobPromise = postRequest<Job>(`/api/v2/jobs/${resourceId.toString()}/launch/`, params);
+    jobPromise = postRequest<Job>(awxAPI`/jobs/${resourceId.toString()}/launch/`, params);
   } else if (resourceType === 'workflow_job') {
-    jobPromise = postRequest<Job>(`/api/v2/workflow_jobs/${resourceId.toString()}/launch/`, params);
+    jobPromise = postRequest<Job>(awxAPI`/workflow_jobs/${resourceId.toString()}/launch/`, params);
   } else if (resourceType === 'ad_hoc_command') {
     if (params && params.credential_passwords) {
       // The api expects the passwords at the top level of the object instead of nested
@@ -78,7 +79,7 @@ const launchWithParams = (
       });
     }
     jobPromise = postRequest<Job>(
-      `/api/v2/ad_hoc_commands/${resourceId.toString()}/launch/`,
+      awxAPI`/ad_hoc_commands/${resourceId.toString()}/launch/`,
       params || {}
     );
   }
@@ -97,24 +98,24 @@ export const handleRelaunch = async (
   if (resourceType === 'inventory_update') {
     // We'll need to handle the scenario where the src no longer exists
     readRelaunch = requestGet<LaunchConfiguration>(
-      `/api/v2/inventory_sources/${resourceId.toString()}/relaunch/`
+      awxAPI`/inventory_sources/${resourceId.toString()}/relaunch/`
     );
   } else if (resourceType === 'project_update') {
     // We'll need to handle the scenario where the project no longer exists
     readRelaunch = requestGet<LaunchConfiguration>(
-      `/api/v2/project_updates/${resourceId.toString()}/relaunch/`
+      awxAPI`/project_updates/${resourceId.toString()}/relaunch/`
     );
   } else if (resourceType === 'workflow_job') {
     readRelaunch = requestGet<LaunchConfiguration>(
-      `/api/v2/workflow_jobs/${resourceId.toString()}/relaunch/`
+      awxAPI`/workflow_jobs/${resourceId.toString()}/relaunch/`
     );
   } else if (resourceType === 'ad_hoc_command') {
     readRelaunch = requestGet<LaunchConfiguration>(
-      `/api/v2/ad_hoc_commands/${resourceId.toString()}/relaunch/`
+      awxAPI`/ad_hoc_commands/${resourceId.toString()}/relaunch/`
     );
   } else if (resourceType === 'job') {
     readRelaunch = requestGet<LaunchConfiguration>(
-      `/api/v2/jobs/${resourceId.toString()}/relaunch/`
+      awxAPI`/jobs/${resourceId.toString()}/relaunch/`
     );
   }
 
@@ -126,26 +127,26 @@ export const handleRelaunch = async (
     ) {
       if (resourceType === 'inventory_update') {
         relaunch = postRequest<Job>(
-          `/api/v2/inventory_sources/${resourceId.toString()}/update/`,
+          awxAPI`/inventory_sources/${resourceId.toString()}/update/`,
           {}
         );
       } else if (resourceType === 'project_update') {
         relaunch = relaunch = postRequest<Job>(
-          `/api/v2/projects/${resourceId.toString()}/update/`,
+          awxAPI`/projects/${resourceId.toString()}/update/`,
           {}
         );
       } else if (resourceType === 'workflow_job') {
         relaunch = relaunch = postRequest<Job>(
-          `/api/v2/workflow_jobs/${resourceId.toString()}/update/`,
+          awxAPI`/workflow_jobs/${resourceId.toString()}/update/`,
           {}
         );
       } else if (resourceType === 'ad_hoc_command') {
         relaunch = relaunch = postRequest<Job>(
-          `/api/v2/ad_hoc_commands/${resourceId.toString()}/update/`,
+          awxAPI`/ad_hoc_commands/${resourceId.toString()}/update/`,
           {}
         );
       } else if (resourceType === 'job') {
-        relaunch = postRequest<Job>(`/api/v2/jobs/${resourceId.toString()}/update/`, params || {});
+        relaunch = postRequest<Job>(awxAPI`/jobs/${resourceId.toString()}/update/`, params || {});
       }
       return relaunch;
     }

@@ -27,8 +27,15 @@ import {
   StackItem,
   Title,
 } from '@patternfly/react-core';
+import { LoadingPage } from '../../../framework';
+import React from 'react';
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
-import { BarsIcon, CheckCircleIcon, ExclamationTriangleIcon } from '@patternfly/react-icons';
+import {
+  BarsIcon,
+  CheckCircleIcon,
+  ExclamationTriangleIcon,
+  DownloadIcon,
+} from '@patternfly/react-icons';
 import { Table /* data-codemods */, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { DateTime } from 'luxon';
 import { Dispatch, SetStateAction, useMemo, useState } from 'react';
@@ -50,24 +57,62 @@ import {
 } from '../../../framework';
 import { PageDetail } from '../../../framework/PageDetails/PageDetail';
 import { Scrollable } from '../../../framework/components/Scrollable';
-import { AwxError } from '../../awx/common/AwxError';
+import { HubError } from '../common/HubError';
 import { StatusCell } from '../../common/Status';
 import { useGet } from '../../common/crud/useGet';
 import { HubRoute } from '../HubRoutes';
-import { hubAPI } from '../api/utils';
+import { hubAPI } from '../api/formatPath';
 import { HubItemsResponse } from '../useHubView';
 import { PageSingleSelect } from './../../../framework/PageInputs/PageSingleSelect';
 import { CollectionVersionSearch } from './Collection';
 import { useCollectionActions } from './hooks/useCollectionActions';
 import { useCollectionColumns } from './hooks/useCollectionColumns';
+import { usePageNavigate } from '../../../framework';
+import { useRepositoryBasePath } from '../api/utils';
+import { requestGet } from '../../common/crud/Data';
 
 export function CollectionDetails() {
   const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
-  const itemActions = useCollectionActions(() => void refresh());
-  const [collection, setCollection] = useState<CollectionVersionSearch | undefined>(undefined);
 
-  let collectionError: JSX.Element | undefined = undefined;
+  const name = searchParams.get('name') || '';
+  const namespace = searchParams.get('namespace') || '';
+  const repository = searchParams.get('repository') || '';
+  const redirectIfEmpty = searchParams.get('redirectIfEmpty') || '';
+
+  // load collection by search params
+  const version = searchParams.get('version');
+
+  const collectionsRequest = useGet<HubItemsResponse<CollectionVersionSearch>>(
+    hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${name || ''}&namespace=${
+      namespace || ''
+    }&repository_name=${repository || ''}&order_by=-version`
+  );
+
+  const collections = collectionsRequest.data?.data;
+
+  let queryFilter = '';
+
+  if (!version) {
+    // for unspecified version, load highest
+    queryFilter = '&is_highest=true';
+  } else {
+    queryFilter = '&version=' + version;
+  }
+
+  const collectionRequest = useGet<HubItemsResponse<CollectionVersionSearch>>(
+    hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${name || ''}&namespace=${
+      namespace || ''
+    }&repository_name=${repository || ''}` + queryFilter
+  );
+
+  const collection =
+    collectionRequest?.data?.data && collectionRequest?.data?.data?.length > 0
+      ? collectionRequest.data?.data[0]
+      : undefined;
+
+  const itemActions = useCollectionActions(() => void collectionRequest.refresh(), true);
+  const navigate = usePageNavigate();
 
   function setVersionParams(version: string) {
     setSearchParams((params) => {
@@ -75,74 +120,32 @@ export function CollectionDetails() {
       return params;
     });
   }
-  // load all collections versions belong to the repository
-  const collectionsResult = useGet<HubItemsResponse<CollectionVersionSearch>>(
-    hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${
-      searchParams.get('name') || ''
-    }&namespace=${searchParams.get('namespace') || ''}&repository_name=${
-      searchParams.get('repository') || ''
-    }&order_by=-version`
-  );
-
-  if (
-    collectionsResult.error ||
-    (collectionsResult.isLoading == false &&
-      collectionsResult.data &&
-      collectionsResult.data.data.length == 0)
-  ) {
-    collectionError = (
-      <AwxError error={collectionsResult.error || { name: 'not found', message: t('Not Found') }} />
-    );
-  }
-
-  const collections = collectionsResult.data ? collectionsResult.data.data : [];
-
-  // load collection by search params
-  const version = searchParams.get('version');
-
-  let highestFilter = '';
-  let versionFilter = '';
-
-  if (!version) {
-    // for unspecified version, load highest
-    highestFilter = '&isHighest=true';
-  } else {
-    versionFilter = '&version=' + version;
-  }
-
-  const { data, refresh, error, isLoading } = useGet<HubItemsResponse<CollectionVersionSearch>>(
-    hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${
-      searchParams.get('name') || ''
-    }&namespace=${searchParams.get('namespace') || ''}&repository_name=${
-      searchParams.get('repository') || ''
-    }&order_by=-version` +
-      versionFilter +
-      highestFilter
-  );
-
-  if (data && data.data.length > 0) {
-    const newCollection = data.data[0];
-    if (
-      !collection ||
-      collection.collection_version?.version != newCollection.collection_version?.version
-    ) {
-      setCollection(newCollection);
-    }
-  }
 
   const getPageUrl = useGetPageUrl();
 
-  if (error || (isLoading == false && data && data.data.length == 0)) {
-    return (
-      <AwxError
-        error={error || { name: 'not found', message: t('Not Found') }}
-        handleRefresh={refresh}
-      />
-    );
+  if (redirectIfEmpty) {
+    const newParams = new URLSearchParams(searchParams.toString());
+
+    // Set a new query parameter or update existing ones
+    newParams.set('redirectIfEmpty', '');
+
+    if (collections && collections?.length == 0) {
+      navigate(HubRoute.Collections);
+    } else {
+      navigate(HubRoute.CollectionPage, { query: { name, namespace, repository } });
+    }
   }
 
-  if (collectionError) {
-    return collectionError;
+  if (collectionsRequest.error || collections?.length == 0) {
+    return <HubError error={collectionsRequest.error} handleRefresh={collectionsRequest.refresh} />;
+  }
+
+  if (collectionsRequest.error || collectionRequest.data?.data?.length == 0) {
+    return <HubError error={collectionRequest.error} handleRefresh={collectionRequest.refresh} />;
+  }
+
+  if (!collectionsRequest.data || !collectionRequest.data) {
+    return <LoadingPage breadcrumbs tabs />;
   }
 
   return (
@@ -164,7 +167,7 @@ export function CollectionDetails() {
         }
         description={t('Repository: ') + collection?.repository?.name}
         footer={
-          <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gridGap: '8px' }}>
             {t('Version')}
             <PageSingleSelect<string>
               options={
@@ -189,7 +192,7 @@ export function CollectionDetails() {
                   : []
               }
               onSelect={(item: string) => {
-                const found = collections.find(
+                const found = collections?.find(
                   (item2) => item2.collection_version?.version == item
                 );
                 if (found && found.collection_version) {
@@ -243,15 +246,28 @@ export function CollectionDetails() {
   );
 }
 
-function CollectionDetailsTab(props: { collection?: CollectionVersionSearch }) {
+function CollectionDetailsTab(props: { collection?: CollectionVersionSearch | undefined }) {
   const { collection } = props;
   const tableColumns = useCollectionColumns();
   return <PageDetailsFromColumns item={collection} columns={tableColumns} />;
 }
 
-function CollectionInstallTab(props: { collection?: CollectionVersionSearch }) {
+function CollectionInstallTab(props: { collection: CollectionVersionSearch }) {
   const { t } = useTranslation();
+  const downloadLinkRef = React.useRef<HTMLAnchorElement>(null);
   const { collection } = props;
+  const { basePath, error, loading } = useRepositoryBasePath(
+    collection.repository?.name ?? '',
+    collection.repository?.pulp_href
+  );
+
+  if (loading) {
+    <LoadingPage breadcrumbs tabs />;
+  }
+  if (error) {
+    return <HubError error={new Error(error)} />;
+  }
+
   return (
     <Scrollable>
       <PageSection variant="light">
@@ -268,6 +284,21 @@ function CollectionInstallTab(props: { collection?: CollectionVersionSearch }) {
                 collection?.collection_version?.namespace ?? ''
               }.${collection?.collection_version?.name ?? ''}`}
             />
+            <PageDetail>
+              {t(`Note Installing collecion with ansible-galaxy is only supported in ansible 2.9+`)}
+            </PageDetail>
+            <a href="/#" ref={downloadLinkRef} style={{ display: 'none' }}>
+              {t(`Link`)}
+            </a>
+            <Button
+              variant="link"
+              icon={<DownloadIcon />}
+              onClick={() => {
+                void Download(basePath, collection, downloadLinkRef);
+              }}
+            >
+              {t(`Download tarball`)}
+            </Button>
           </PageDetail>
           <PageDetail label={t('Requires')}>
             {collection?.collection_version?.require_ansible &&
@@ -277,6 +308,24 @@ function CollectionInstallTab(props: { collection?: CollectionVersionSearch }) {
       </PageSection>
     </Scrollable>
   );
+}
+
+async function Download(
+  basePath: string,
+  collection: CollectionVersionSearch | undefined,
+  downloadLinkRef: React.RefObject<HTMLAnchorElement>
+) {
+  const downloadURL = await requestGet<{ download_url: string }>(
+    hubAPI`/v3/plugin/ansible/content/${basePath}/collections/index/${
+      collection?.collection_version?.namespace || ''
+    }/${collection?.collection_version?.name || ''}/versions/${
+      collection?.collection_version?.version || ''
+    }/`
+  );
+  if (downloadLinkRef.current) {
+    downloadLinkRef.current.href = downloadURL.download_url;
+    downloadLinkRef.current.click();
+  }
 }
 
 function CollectionDocumentationTab(props: { collection?: CollectionVersionSearch }) {

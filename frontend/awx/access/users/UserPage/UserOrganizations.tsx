@@ -12,6 +12,7 @@ import {
 } from '../../../../../framework';
 import { DetailInfo } from '../../../../../framework/components/DetailInfo';
 import { useGetItem } from '../../../../common/crud/useGet';
+import { awxAPI } from '../../../api/awx-utils';
 import { Organization } from '../../../interfaces/Organization';
 import { User } from '../../../interfaces/User';
 import { useAwxView } from '../../../useAwxView';
@@ -24,7 +25,7 @@ import { useSelectOrganizationsAddUsers } from '../../organizations/hooks/useSel
 
 export function UserOrganizations() {
   const params = useParams<{ id: string }>();
-  const { data: user } = useGetItem<User>('/api/v2/users', params.id);
+  const { data: user } = useGetItem<User>(awxAPI`/users`, params.id);
 
   if (!user) {
     return null;
@@ -39,7 +40,7 @@ function UserOrganizationsInternal(props: { user: User }) {
   const tableColumns = useOrganizationsColumns();
 
   const view = useAwxView<Organization>({
-    url: `/api/v2/users/${user.id}/organizations/`,
+    url: awxAPI`/users/${user.id.toString()}/organizations/`,
     toolbarFilters,
     disableQueryString: true,
   });

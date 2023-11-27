@@ -11,7 +11,7 @@ import { StatusCell } from '../../../common/Status';
 import { EdaRoute } from '../../EdaRoutes';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { Status906Enum } from '../../interfaces/generated/eda-api';
-import { Label } from '@patternfly/react-core';
+import { Label, Truncate } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
 
 export function useRulebookActivationColumns() {
@@ -20,7 +20,7 @@ export function useRulebookActivationColumns() {
   return useMemo<ITableColumn<EdaRulebookActivation>[]>(
     () => [
       {
-        header: t('Activation ID'),
+        header: t('ID'),
         type: 'text',
         value: (activation) => activation.id.toString(),
         modal: ColumnModalOption.Hidden,
@@ -77,6 +77,14 @@ export function useRulebookActivationColumns() {
         header: t('Restart count'),
         type: 'count',
         value: (activation) => activation?.restart_count ?? 0,
+        modal: ColumnModalOption.Hidden,
+      },
+      {
+        header: t('Status message'),
+        cell: (activation) => <Truncate content={activation?.status_message || ''} />,
+        table: ColumnTableOption.Expanded,
+        card: 'hidden',
+        list: 'secondary',
         modal: ColumnModalOption.Hidden,
       },
       {

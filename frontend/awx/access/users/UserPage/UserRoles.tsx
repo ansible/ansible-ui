@@ -3,8 +3,8 @@ import {
   ButtonVariant,
   EmptyState,
   EmptyStateBody,
-  EmptyStateIcon,
   EmptyStateHeader,
+  EmptyStateIcon,
 } from '@patternfly/react-core';
 import { CubesIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
@@ -19,6 +19,7 @@ import {
 } from '../../../../../framework';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
+import { awxAPI } from '../../../api/awx-utils';
 import { Role } from '../../../interfaces/Role';
 import { User } from '../../../interfaces/User';
 import { useAwxView } from '../../../useAwxView';
@@ -26,7 +27,7 @@ import { useRolesColumns, useRolesFilters } from '../../roles/Roles';
 
 export function UserRoles() {
   const params = useParams<{ id: string }>();
-  const { data: user } = useGetItem<User>('/api/v2/users', params.id);
+  const { data: user } = useGetItem<User>(awxAPI`/users`, params.id);
 
   if (!user) {
     return null;
@@ -41,7 +42,7 @@ function UserRolesInternal(props: { user: User }) {
   const tableColumns = useRolesColumns();
   const pageNavigate = usePageNavigate();
   const view = useAwxView<Role>({
-    url: `/api/v2/users/${user.id}/roles/`,
+    url: awxAPI`/users/${user.id.toString()}/roles/`,
     toolbarFilters,
     tableColumns,
     disableQueryString: true,

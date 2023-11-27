@@ -4,7 +4,7 @@ import {
   CodeBlockAction,
   CodeBlockCode,
 } from '@patternfly/react-core';
-import React, { useState } from 'react';
+import React, { ReactNode, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { useClipboard } from '../hooks/useClipboard';
@@ -13,8 +13,9 @@ import { PageDetail } from './PageDetail';
 export function PageDetailCodeEditor(props: {
   label?: string;
   value: string;
-  helpText?: string;
+  helpText?: string | ReactNode;
   showCopyToClipboard?: boolean;
+  toggleLanguage?: boolean;
 }) {
   const { value, label, helpText } = props;
   const { id } = useParams();

@@ -11,6 +11,7 @@ import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { AwxPageForm } from '../../AwxPageForm';
 import { AwxRoute } from '../../AwxRoutes';
+import { awxAPI } from '../../api/awx-utils';
 import { Team } from '../../interfaces/Team';
 import { PageFormSelectOrganization } from '../organizations/components/PageFormOrganizationSelect';
 
@@ -20,7 +21,7 @@ export function CreateTeam() {
   const postRequest = usePostRequest<Team>();
   const onSubmit: PageFormSubmitHandler<Team> = async (team) => {
     team.organization = team.summary_fields?.organization?.id;
-    const createdTeam = await postRequest('/api/v2/teams/', team);
+    const createdTeam = await postRequest(awxAPI`/teams/`, team);
     navigate(RouteObj.TeamDetails.replace(':id', createdTeam.id.toString()));
   };
   const getPageUrl = useGetPageUrl();
@@ -45,11 +46,11 @@ export function EditTeam() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const { data: team } = useGet<Team>(`/api/v2/teams/${id.toString()}/`);
+  const { data: team } = useGet<Team>(awxAPI`/teams/${id.toString()}/`);
   const patchRequest = usePatchRequest<Team, Team>();
   const onSubmit: PageFormSubmitHandler<Team> = async (team) => {
     team.organization = team.summary_fields?.organization?.id;
-    await patchRequest(`/api/v2/teams/${id}/`, team);
+    await patchRequest(awxAPI`/teams/${id.toString()}/`, team);
     navigate(-1);
   };
   const getPageUrl = useGetPageUrl();

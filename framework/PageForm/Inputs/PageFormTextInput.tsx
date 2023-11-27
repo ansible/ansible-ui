@@ -290,7 +290,7 @@ export function PageFormTextInput<
                   aria-label="Options menu"
                   isDisabled={isDisabled || isSubmitting}
                 >
-                  <SearchIcon />
+                  <SearchIcon data-cy="lookup-button" />
                 </Button>
               )}
               {button && button}

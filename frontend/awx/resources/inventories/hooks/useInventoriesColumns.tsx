@@ -13,6 +13,7 @@ import {
 } from '../../../../common/columns';
 import { Inventory } from '../../../interfaces/Inventory';
 import { type WebSocketInventory } from '../Inventories';
+import { AwxRoute } from '../../../AwxRoutes';
 
 export function useInventoriesColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const navigate = useNavigate();
@@ -38,7 +39,7 @@ export function useInventoriesColumns(options?: { disableSort?: boolean; disable
   const createdColumn = useCreatedColumn(options);
   const descriptionColumn = useDescriptionColumn();
   const modifiedColumn = useModifiedColumn(options);
-  const organizationColumn = useOrganizationNameColumn(options);
+  const organizationColumn = useOrganizationNameColumn(AwxRoute.OrganizationDetails, options);
   const typeColumn = useMemo<ITableColumn<Inventory>>(
     () => ({
       header: t('Type'),

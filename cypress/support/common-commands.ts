@@ -5,7 +5,7 @@ Cypress.Commands.add('searchAndDisplayResource', (resourceName: string) => {
     .find('input')
     .type(resourceName)
     .then(() => {
-      cy.get('[data-cy="apply-filter"]').click();
+      cy.get('[data-cy="apply-filter"]:not(:disabled):not(:hidden)').click();
     });
 });
 
@@ -21,9 +21,8 @@ Cypress.Commands.add('getListRowByText', (name: string | RegExp, filter?: boolea
 });
 
 Cypress.Commands.add('openToolbarFilterTypeSelect', () => {
-  cy.getFiltersToolbarItem().within(() => {
-    cy.get('#filter').click().parent().get('.pf-v5-c-menu');
-  });
+  cy.get('#filter').click();
+  cy.get('#filter-select');
 });
 
 Cypress.Commands.add('selectToolbarFilterType', (text: string | RegExp) => {
@@ -36,7 +35,7 @@ Cypress.Commands.add('filterTableByText', (text: string) => {
   cy.get('[data-cy="text-input"]').within(() => {
     cy.get('input').clear().type(text, { delay: 0 });
   });
-  cy.get('[data-cy="apply-filter"]').click();
+  cy.get('[data-cy="apply-filter"]:not(:disabled):not(:hidden)').click();
 });
 
 Cypress.Commands.add('filterTableByTypeAndText', (filterLabel: string | RegExp, text: string) => {
@@ -44,12 +43,23 @@ Cypress.Commands.add('filterTableByTypeAndText', (filterLabel: string | RegExp, 
   cy.filterTableByText(text);
 });
 
+Cypress.Commands.add('clearAllFilters', () => {
+  cy.get('button').then((buttons) => {
+    for (let i = 0; i <= buttons.length; i++) {
+      const button = buttons[i];
+      if (button?.innerText === 'Clear all filters') {
+        button.click();
+      }
+    }
+  });
+});
+
 Cypress.Commands.add(
   'filterBySingleSelection',
   (filterType: RegExp | string, selectLabel: RegExp | string) => {
     cy.selectToolbarFilterType(filterType);
-    cy.getFiltersToolbarItem().within(() => {
-      cy.get('.pf-v5-c-menu-toggle').eq(1).click();
+    cy.get('#filter-input').click();
+    cy.get('#filter-input-select').within(() => {
       cy.contains(selectLabel).click();
     });
   }
@@ -59,8 +69,8 @@ Cypress.Commands.add(
   'filterByMultiSelection',
   (filterType: RegExp | string, selectLabel: RegExp | string) => {
     cy.selectToolbarFilterType(filterType);
-    cy.getFiltersToolbarItem().within(() => {
-      cy.get('.pf-v5-c-menu-toggle').eq(1).click();
+    cy.get('#filter-input').click();
+    cy.get('#filter-input-select').within(() => {
       cy.contains(selectLabel).click();
     });
     cy.get('tbody').click();
@@ -129,4 +139,8 @@ Cypress.Commands.add('selectMultiSelectOption', (selector: string, label: string
           cy.get('input').click();
         });
     });
+});
+
+Cypress.Commands.add('clickTableHeader', (text: string | RegExp) => {
+  cy.get('thead').find('th').contains(text).click();
 });

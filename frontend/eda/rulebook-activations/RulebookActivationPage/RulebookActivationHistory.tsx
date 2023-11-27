@@ -2,11 +2,11 @@ import { CubesIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { PageLayout, PageTable } from '../../../../framework';
-import { API_PREFIX } from '../../constants';
 import { EdaActivationInstance } from '../../interfaces/EdaActivationInstance';
 import { useEdaView } from '../../useEventDrivenView';
 import { useActivationHistoryColumns } from '../hooks/useActivationHistoryColumns';
 import { useActivationHistoryFilters } from '../hooks/useActivationHistoryFilters';
+import { edaAPI } from '../../api/eda-utils';
 
 export function RulebookActivationHistory() {
   const params = useParams<{ id: string }>();
@@ -16,7 +16,7 @@ export function RulebookActivationHistory() {
 
   const tableColumns = useActivationHistoryColumns();
   const view = useEdaView<EdaActivationInstance>({
-    url: `${API_PREFIX}/activations/${params?.id || ''}/instances/`,
+    url: edaAPI`/activations/${params?.id || ''}/instances/`,
     toolbarFilters,
     tableColumns,
   });

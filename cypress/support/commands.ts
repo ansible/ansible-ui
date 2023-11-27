@@ -7,22 +7,23 @@ import { SetOptional, SetRequired } from 'type-fest';
 import { AwxItemsResponse } from '../../frontend/awx/common/AwxItemsResponse';
 import { AwxToken } from '../../frontend/awx/interfaces/AwxToken';
 import { Credential } from '../../frontend/awx/interfaces/Credential';
+import { CredentialType } from '../../frontend/awx/interfaces/CredentialType';
 import { ExecutionEnvironment } from '../../frontend/awx/interfaces/ExecutionEnvironment';
 import { InstanceGroup } from '../../frontend/awx/interfaces/InstanceGroup';
 import { Inventory } from '../../frontend/awx/interfaces/Inventory';
+import { InventorySource } from '../../frontend/awx/interfaces/InventorySource';
+import { Job } from '../../frontend/awx/interfaces/Job';
 import { JobEvent } from '../../frontend/awx/interfaces/JobEvent';
 import { JobTemplate } from '../../frontend/awx/interfaces/JobTemplate';
 import { Label } from '../../frontend/awx/interfaces/Label';
 import { Organization } from '../../frontend/awx/interfaces/Organization';
 import { Project } from '../../frontend/awx/interfaces/Project';
+import { Role } from '../../frontend/awx/interfaces/Role';
 import { Schedule } from '../../frontend/awx/interfaces/Schedule';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
-import {
-  Group,
-  Host,
-  WorkflowJobTemplate,
-} from '../../frontend/awx/interfaces/generated-from-swagger/api';
+import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/WorkflowJobTemplate';
+import { Group, Host } from '../../frontend/awx/interfaces/generated-from-swagger/api';
 import { EdaControllerToken } from '../../frontend/eda/interfaces/EdaControllerToken';
 import { EdaCredential } from '../../frontend/eda/interfaces/EdaCredential';
 import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisionEnvironment';
@@ -39,7 +40,9 @@ import './auth';
 import './awx-commands';
 import { IAwxResources } from './awx-commands';
 import './common-commands';
+import './e2e';
 import './eda-commands';
+import './global-project';
 import './hub-commands';
 import './rest-commands';
 
@@ -54,30 +57,41 @@ declare global {
       requiredVariablesAreSet(requiredVariables: string[]): Chainable<void>;
 
       // --- NAVIGATION COMMANDS ---
-
+      // createGlobalProject(): Chainable<Project>;
       /**Navigates to a page of the UI using using the links on the page sidebar. Intended as an alternative to cy.visit(). */
       navigateTo(component: 'awx' | 'eda' | 'hub', label: string): Chainable<void>;
 
       /**Locates a title using its label. No assertion is made. */
       verifyPageTitle(label: string): Chainable<void>;
 
+      // ---- UI COMMANDS ---
+      createAndDeleteCustomAWXCredentialTypeUI(
+        customCredentialTypeName: string,
+        inputConfig?: string,
+        injectorConfig?: string,
+        defaultConfig?: string
+      ): Chainable<void>;
+
       // --- INPUT COMMANDS ---
 
-      /** Get a checkbox by its label. */
-      getCheckboxByLabel(label: string | RegExp): Chainable<JQuery<HTMLElement>>;
+      inputCustomCredTypeConfig(configType: string, config: string): Chainable<void>;
+
+      configFormatToggle(configType: string): Chainable<void>;
+
+      typeMonacoTextField(textString: string): Chainable<void>;
+
+      /** This command works for a form field to look up item from table
+       * (used for components that do not utilize the PageFormAsyncSelect component yet) */
+      selectItemFromLookupModal(resource: string, itemName: string): Chainable<void>;
 
       /**
-       * @param {String} resource: The name of a resource. IE: credentials, execution-environments, etc.
-       * @param {String} itemName: The specific name of that resource.
-       * @param {Boolean} spyglass: This is an optional boolean value, and will default to false. Set as a third param
-       * to 'true' if the formgroup contains a spyglass to be clicked on.
-       * Finds a dropdown/select component by its data-cy form-group and clicks on the option
-       * specified.*/
-      selectDropdownOptionByResourceName(
-        resource: string,
-        itemName: string,
-        spyglass?: boolean
-      ): Chainable<void>;
+       * This command works for a form field that can show up either as a drop down
+       * or as a spyglass lookup.
+       *
+       * @param {String} resource: The name of a resource entered as a string. IE: credentials, execution-environments, etc.
+       * @param {String} itemName: The specific name of that resource entered as a string. Set as a third param
+       * */
+      selectDropdownOptionByResourceName(resource: string, itemName: string): Chainable<void>;
 
       selectPromptOnLaunch(resourceName: string): Chainable<void>;
 
@@ -97,6 +111,8 @@ declare global {
         label: string | RegExp
       ): Chainable<void>;
       selectMultiSelectOption(selector: string, label: string | RegExp): Chainable<void>;
+
+      clickTableHeader(name: string | RegExp): Chainable<void>;
 
       // --- TABLE COMMANDS ---
 
@@ -119,7 +135,7 @@ declare global {
        */
       openToolbarFilterTypeSelect(): Chainable<JQuery<HTMLElement>>;
 
-      searchAndDisplayResource(name: string): Chainable<void>;
+      searchAndDisplayResource(resourceName: string): Chainable<void>;
 
       filterBySingleSelection(
         filterType: RegExp | string,
@@ -136,6 +152,10 @@ declare global {
 
       /** Filter the table using specified filter and text. */
       filterTableByTypeAndText(filterLabel: string | RegExp, text: string): Chainable<void>;
+
+      clearAllFilters(): Chainable<void>;
+
+      selectDetailsPageKebabAction(dataCy: string): Chainable<void>;
 
       /** Click an action in the table toolbar kebab dropdown actions menu. */
       clickToolbarKebabAction(label: string | RegExp): Chainable<void>;
@@ -168,8 +188,6 @@ declare global {
         label: string | RegExp,
         filter?: boolean
       ): Chainable<void>;
-
-      selectItemFromLookupModal(resource: string, itemName: string): Chainable<void>;
 
       /**
        * Finds a list card containing text and clicks action specified by label.
@@ -298,7 +316,7 @@ declare global {
         }
       ): Chainable<void>;
 
-      createAwxOrganization(): Chainable<Organization>;
+      createAwxOrganization(orgName?: string): Chainable<Organization>;
 
       /**
        * `createAwxProject` creates an AWX Project via API,
@@ -324,6 +342,8 @@ declare global {
           'organization' | 'kind' | 'credential_type'
         >
       ): Chainable<Credential>;
+      /** Creates a credential type in AWX */
+      createAwxCredentialType(): Chainable<CredentialType>;
       /**
        * Creates a project in AWX that is specific to being utilized in an EDA test.
        */
@@ -332,6 +352,11 @@ declare global {
       }): Chainable<Project>;
 
       createAwxInventory(inventory?: Partial<Omit<Inventory, 'id'>>): Chainable<Inventory>;
+
+      createAwxInventorySource(
+        inventory: Partial<Pick<Inventory, 'id'>>,
+        project: Partial<Pick<Project, 'id'>>
+      ): Chainable<InventorySource>;
 
       /**
        * Creates an organization, project, inventory, and job template that are all linked to each other in AWX.
@@ -356,7 +381,7 @@ declare global {
       ): Chainable<JobTemplate>;
 
       createAwxWorkflowJobTemplate(
-        jobTemplate: WorkflowJobTemplate
+        workflowJobTemplate: Partial<WorkflowJobTemplate>
       ): Chainable<WorkflowJobTemplate>;
       /**
        * This command creates a job template with specific variables that will work in conjunction with
@@ -365,11 +390,32 @@ declare global {
        * @param inventory
        * @param jobTemplate
        */
+
+      getAwxWorkflowJobTemplateByName(
+        awxWorkflowJobTemplateName: string
+      ): Chainable<WorkflowJobTemplate>;
+
+      renderWorkflowVisualizerNodesFromFixtureFile(
+        workflowJobTemplateName: string,
+        fixtureFile: string
+      ): Chainable<void>;
+
       createEdaAwxJobTemplate(
         project: Project,
         inventory: Inventory,
         jobTemplate?: Partial<JobTemplate>
       ): Chainable<JobTemplate>;
+
+      /**
+       * This command sends a request to the API to assign a certain type of role access to a user
+       * for a workflow job template.
+       * @param wfjtName: pass the existing workflow job template name as a string
+       * @param userId: pass the ID of the existing user as a number
+       * @param roleName: pass the name of the role type that you want to assign to your user.
+       * Available roles for a workflow job template are: Admin, Execute, Read, Approve
+       */
+      giveUserWfjtAccess(wfjtName: string, userId: number, roleName: string): Chainable<Role>;
+
       getAwxJobTemplateByName(awxJobTemplateName: string): Chainable<JobTemplate>;
       createAwxTeam(organization: Organization): Chainable<Team>;
       createAwxUser(organization: Organization): Chainable<User>;
@@ -400,6 +446,13 @@ declare global {
           failOnStatusCode?: boolean;
         }
       ): Chainable<void>;
+      deleteAwxCredentialType(
+        credentialType: CredentialType,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
+      ): Chainable<void>;
       deleteAwxInventory(
         inventory: Inventory,
         options?: {
@@ -409,6 +462,13 @@ declare global {
       ): Chainable<void>;
       deleteAwxJobTemplate(
         jobTemplate: JobTemplate,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
+      ): Chainable<void>;
+      deleteAwxWorkflowJobTemplate(
+        workflowJobTemplate: WorkflowJobTemplate,
         options?: {
           /** Whether to fail on response codes other than 2xx and 3xx */
           failOnStatusCode?: boolean;
@@ -485,6 +545,7 @@ declare global {
       ): Chainable<{ inventory: Inventory; host: Host; group: Group }>;
 
       waitForTemplateStatus(jobID: string): Chainable<AwxItemsResponse<JobEvent>>;
+      waitForJobToProcessEvents(jobID: string): Chainable<Job>;
 
       // --- EDA COMMANDS ---
 

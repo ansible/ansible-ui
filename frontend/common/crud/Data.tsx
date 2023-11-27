@@ -44,7 +44,7 @@ export async function requestPatch<ResponseBody, RequestBody = unknown>(
 
 export async function requestDelete<ResponseBody>(
   url: string,
-  signal?: AbortSignal
+  signal: AbortSignal
 ): Promise<ResponseBody> {
   const options: Options = { signal, method: 'DELETE' };
   return requestFactory<ResponseBody>(url, options);

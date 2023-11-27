@@ -17,6 +17,7 @@ export function useRemoteToolbarActions(view: IPulpView<IRemotes>) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const deleteRemotes = useDeleteRemotes(view.unselectItemsAndRefresh);
+
   const actions = useMemo<IPageAction<IRemotes>[]>(
     () => [
       {

@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { useNameColumn, useOrganizationNameColumn } from '../../../../common/columns';
 import { getItemKey, requestDelete } from '../../../../common/crud/Data';
+import { AwxRoute } from '../../../AwxRoutes';
+import { awxAPI } from '../../../api/awx-utils';
 import { Team } from '../../../interfaces/Team';
 import { useTeamsColumns } from './useTeamsColumns';
 
@@ -10,7 +12,7 @@ export function useDeleteTeams(onComplete: (teams: Team[]) => void) {
   const { t } = useTranslation();
   const confirmationColumns = useTeamsColumns({ disableLinks: true, disableSort: true });
   const deleteActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true });
-  const deleteActionOrganizationColumn = useOrganizationNameColumn({
+  const deleteActionOrganizationColumn = useOrganizationNameColumn(AwxRoute.OrganizationDetails, {
     disableLinks: true,
     disableSort: true,
   });
@@ -54,7 +56,8 @@ export function useDeleteTeams(onComplete: (teams: Team[]) => void) {
       confirmationColumns,
       actionColumns,
       onComplete,
-      actionFn: (team: Team) => requestDelete(`/api/v2/teams/${team.id}/`),
+      actionFn: (team: Team, signal) =>
+        requestDelete(awxAPI`/teams/${team.id.toString()}/`, signal),
     });
   };
   return deleteTeams;

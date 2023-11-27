@@ -68,3 +68,13 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }},quay.io/ansible/platform-ui:main
           labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Archive Platform UI Build
+        run: tar -czvf platform-ui.tar.gz build/platform
+
+      - uses: ncipollo/release-action@v1
+        with:
+          name: platform-ui
+          artifacts: platform-ui.tar.gz
+          omitBody: true
+          removeArtifacts: true

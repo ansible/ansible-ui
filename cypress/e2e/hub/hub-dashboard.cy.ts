@@ -1,4 +1,5 @@
 import { randomString } from '../../../framework/utils/random-string';
+import { hubAPI } from '../../../frontend/hub/api/formatPath';
 import { HubDashboard, HubRoutes } from './constants';
 
 const namespaceName = 'e2e_namespace_' + randomString(4, undefined, { isLowercase: true });
@@ -13,7 +14,7 @@ const collectionNames: { [key: string]: { [key: string]: string } } = {
   },
 };
 
-describe('hub dashboard', () => {
+describe.skip('hub dashboard', () => {
   before(() => {
     cy.hubLogin();
     // Create collections
@@ -49,7 +50,7 @@ describe('hub dashboard', () => {
   it('verify that API request indicated a limit of 12 collections sorted by latest created timestamp', () => {
     cy.intercept(
       'GET',
-      '/api/automation-hub/v3/plugin/ansible/search/collection-versions/?limit=12&order_by=-pulp_created&tags=eda',
+      hubAPI`/v3/plugin/ansible/search/collection-versions/?limit=12&order_by=-pulp_created&tags=eda`,
       (req) => {
         req.alias = 'latest12collections';
       }

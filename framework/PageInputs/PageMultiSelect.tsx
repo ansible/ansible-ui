@@ -1,20 +1,22 @@
 import {
   Chip,
   ChipGroup,
+  Divider,
+  MenuFooter,
+  MenuSearch,
+  MenuSearchInput,
   MenuToggle,
   MenuToggleElement,
   SearchInput,
-  Select /* data-codemods */,
-  SelectList /* data-codemods */,
-  SelectOption /* data-codemods */,
+  Select,
+  SelectList,
+  SelectOption,
 } from '@patternfly/react-core';
 
 import { TimesIcon } from '@patternfly/react-icons';
 import { ReactNode, Ref, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getID } from '../hooks/useID';
-import './PageMultiSelect.css';
-import './PageSelect.css';
 import { PageSelectOption } from './PageSelectOption';
 
 export interface PageMultiSelectProps<ValueT> {
@@ -29,6 +31,7 @@ export interface PageMultiSelectProps<ValueT> {
 
   /** Disables the toggle to open and close the menu */
   isDisabled?: boolean;
+
   /** The selected values. */
   values: ValueT[] | undefined | null;
 
@@ -44,7 +47,11 @@ export interface PageMultiSelectProps<ValueT> {
   /** The footer to show at the bottom of the dropdown. */
   footer?: ReactNode;
 
-  /** Whether to disable the clear selection button. */
+  /**
+   * Whether to disable the clear selection button.
+   *
+   * User by the toolbar since clearing the select is part of the toolbar filter chips already.
+   */
   disableClearSelection?: boolean;
 }
 
@@ -90,6 +97,7 @@ export function PageMultiSelect<
   const { id, icon, placeholder, values, onSelect, options, variant, disableClearSelection } =
     props;
   const [isOpen, setIsOpen] = useState(false);
+  const selectListRef = useRef<HTMLDivElement>(null);
 
   const selectedOptions = useMemo(
     () =>
@@ -105,21 +113,33 @@ export function PageMultiSelect<
   const Toggle = (toggleRef: Ref<MenuToggleElement>) => {
     return (
       <MenuToggle
-        isFullWidth
         id={id}
         ref={toggleRef}
         onClick={() => setIsOpen((open) => !open)}
         isExpanded={isOpen}
         onKeyDown={(event) => {
           switch (event.key) {
+            case 'Tab':
+            case 'Enter':
+              break;
             default:
               setIsOpen(true);
+              setTimeout(() => {
+                if (searchRef.current) {
+                  searchRef.current.focus();
+                  if (event.key.length === 1) {
+                    setSearchValue(event.key.trim());
+                  }
+                }
+              }, 0);
               break;
           }
         }}
         data-cy={id}
+        icon={icon}
+        isDisabled={props.isDisabled}
+        isFullWidth
       >
-        {icon && <span style={{ paddingLeft: 4, paddingRight: 12 }}>{icon}</span>}
         {selectedOptions.length > 0 ? (
           <>
             {variant === 'count' ? (
@@ -151,7 +171,7 @@ export function PageMultiSelect<
             )}
           </>
         ) : (
-          <span className="page-select-placeholder">{placeholder}</span>
+          <span style={{ opacity: 0.7 }}>{placeholder}</span>
         )}
       </MenuToggle>
     );
@@ -183,9 +203,8 @@ export function PageMultiSelect<
   const [searchValue, setSearchValue] = useState('');
   const searchRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
-    setSearchValue('');
-    if (isOpen && searchRef.current) {
-      searchRef.current.focus();
+    if (!isOpen) {
+      setSearchValue('');
     }
   }, [isOpen]);
 
@@ -199,18 +218,20 @@ export function PageMultiSelect<
   );
 
   return (
-    <div className="page-multi-select">
-      <Select
-        selected={selected}
-        onSelect={onSelectHandler}
-        isOpen={isOpen}
-        onOpenChange={setIsOpen}
-        toggle={Toggle}
-        style={{ zIndex: isOpen ? 9999 : undefined }}
-      >
-        <div className="page-select-header">
+    <Select
+      id={`${id}-select`}
+      selected={selected}
+      onSelect={onSelectHandler}
+      isOpen={isOpen}
+      onOpenChange={setIsOpen}
+      toggle={Toggle}
+      popperProps={{ appendTo: () => document.body }}
+      innerRef={selectListRef}
+    >
+      <MenuSearch>
+        <MenuSearchInput>
           <SearchInput
-            id={id ? `${id}-search` : undefined}
+            id={`${id}-search`}
             ref={searchRef}
             value={searchValue}
             onChange={(_, value: string) => setSearchValue(value)}
@@ -218,35 +239,66 @@ export function PageMultiSelect<
               event.stopPropagation();
               setSearchValue('');
             }}
+            resultsCount={`${visibleOptions.length} / ${options.length}`}
+            onKeyDown={(event) => {
+              switch (event.key) {
+                case 'ArrowDown':
+                case 'Tab': {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  const firstElement = selectListRef?.current?.querySelector(
+                    'li button:not(:disabled),li input:not(:disabled)'
+                  );
+                  firstElement && (firstElement as HTMLElement).focus();
+                  break;
+                }
+              }
+            }}
           />
-        </div>
-        {visibleOptions.length === 0 ? (
-          <div style={{ margin: 16 }}>{t('No results found')}</div>
-        ) : (
-          <SelectList className="page-select-list">
-            {visibleOptions.map((option) => {
-              const optionId = getID(option);
-              return (
-                <SelectOption
-                  key={option.key !== undefined ? option.key : option.label}
-                  value={option.key !== undefined ? option.key : option.label}
-                  description={
-                    option.description ? (
-                      <div style={{ maxWidth: 300 }}>{option.description}</div>
-                    ) : undefined
-                  }
-                  hasCheckbox
-                  isSelected={selectedOptions.includes(option)}
-                  data-cy={optionId}
-                >
-                  {option.label}
-                </SelectOption>
-              );
-            })}
-          </SelectList>
-        )}
-        {props.footer && <div className="page-select-footer">{props.footer}</div>}
-      </Select>
-    </div>
+        </MenuSearchInput>
+      </MenuSearch>
+      <Divider />
+      {visibleOptions.length === 0 ? (
+        <SelectOption isDisabled key="no result">
+          {t('No results found')}
+        </SelectOption>
+      ) : (
+        <SelectList
+          style={{ maxHeight: '40vh', overflowY: 'auto' }}
+          onKeyDown={(event) => {
+            switch (event.key) {
+              case 'Tab':
+                event.preventDefault();
+                event.stopPropagation();
+                searchRef.current?.focus();
+                break;
+            }
+          }}
+        >
+          {visibleOptions.map((option) => {
+            const optionId = getID(option);
+            return (
+              <SelectOption
+                id={optionId}
+                icon={option.icon}
+                key={option.key !== undefined ? option.key : option.label}
+                value={option.key !== undefined ? option.key : option.label}
+                description={
+                  option.description ? (
+                    <div style={{ maxWidth: 300 }}>{option.description}</div>
+                  ) : undefined
+                }
+                hasCheckbox
+                isSelected={selectedOptions.includes(option)}
+                data-cy={optionId}
+              >
+                {option.label}
+              </SelectOption>
+            );
+          })}
+        </SelectList>
+      )}
+      {props.footer && <MenuFooter>{props.footer}</MenuFooter>}
+    </Select>
   );
 }

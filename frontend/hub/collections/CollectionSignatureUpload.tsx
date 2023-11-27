@@ -1,17 +1,24 @@
 import { useTranslation } from 'react-i18next';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import {
+  LoadingPage,
+  PageHeader,
+  PageLayout,
+  useGetPageUrl,
+  usePageNavigate,
+} from '../../../framework';
 import { PageFormFileUpload } from '../../../framework/PageForm/Inputs/PageFormFileUpload';
-import { PageHeader, PageLayout, PageForm } from '../../../framework';
 import { useGet, useGetRequest } from '../../common/crud/useGet';
-import { hubAPI, pulpAPI } from '../api/utils';
-import { HubItemsResponse } from '../useHubView';
-import { CollectionVersionSearch } from './Collection';
-import { Repository } from '../repositories/Repository';
+import { HubPageForm } from '../HubPageForm';
 import { HubRoute } from '../HubRoutes';
-import { useGetPageUrl } from '../../../framework';
+import { hubAPI, pulpAPI } from '../api/formatPath';
 import { hubPostRequestFile } from '../api/request';
-import { usePageNavigate } from '../../../framework/PageNavigation/usePageNavigate';
+import { Repository } from '../repositories/Repository';
+import { HubItemsResponse } from '../useHubView';
 import { PulpItemsResponse } from '../usePulpView';
+import { CollectionVersionSearch } from './Collection';
+import { HubError } from '../common/HubError';
+import { useSearchParams } from 'react-router-dom';
 
 interface UploadData {
   file: unknown;
@@ -21,15 +28,31 @@ interface UploadData {
 
 export function CollectionSignatureUpload() {
   const { t } = useTranslation();
-  const location = useLocation();
+  const [searchParams] = useSearchParams();
   const getPageUrl = useGetPageUrl();
-  const { data } = useGet<HubItemsResponse<CollectionVersionSearch>>(
-    hubAPI`/v3/plugin/ansible/search/collection-versions/?${location.search}`
+
+  const name = searchParams.get('name') || '';
+  const namespace = searchParams.get('namespace') || '';
+  const repository = searchParams.get('repository') || '';
+  const version = searchParams.get('version') || '';
+
+  const { data, error, refresh } = useGet<HubItemsResponse<CollectionVersionSearch>>(
+    hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${name}&namespace=${namespace}&version=${version}&repository_name=${repository}`
   );
+
+  if (error || data?.data.length == 0) {
+    return <HubError error={error} handleRefresh={refresh} />;
+  }
+
+  if (!data) {
+    return <LoadingPage />;
+  }
+
   let collection: CollectionVersionSearch | undefined = undefined;
   if (data && data.data && data.data.length > 0) {
     collection = data.data[0];
   }
+
   return (
     <PageLayout>
       <PageHeader
@@ -39,25 +62,20 @@ export function CollectionSignatureUpload() {
           { label: collection?.collection_version?.name },
         ]}
       />
-      <UploadSignatureByFile />
+      {collection && <UploadSignatureByFile collection={collection} />}
     </PageLayout>
   );
 }
 
-export function UploadSignatureByFile() {
+export function UploadSignatureByFile(props: { collection: CollectionVersionSearch }) {
   const getRequest = useGetRequest();
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
   const { t } = useTranslation();
   const onCancel = () => navigate(-1);
 
-  const { data } = useGet<HubItemsResponse<CollectionVersionSearch>>(
-    hubAPI`/v3/plugin/ansible/search/collection-versions/?${location.search}`
-  );
-  let collection: CollectionVersionSearch | undefined = undefined;
-  if (data && data.data && data.data.length > 0) {
-    collection = data.data[0];
-  }
+  const { collection } = props;
+
   const collectionID = collection?.collection_version?.pulp_href;
 
   async function submitData(data: UploadData) {
@@ -78,7 +96,7 @@ export function UploadSignatureByFile() {
 
   return (
     <>
-      <PageForm<UploadData>
+      <HubPageForm<UploadData>
         submitText={t('Confirm')}
         cancelText={t('Cancel')}
         onCancel={onCancel}
@@ -88,7 +106,7 @@ export function UploadSignatureByFile() {
         singleColumn={true}
       >
         <PageFormFileUpload label={t('Signature file')} name="file" isRequired />
-      </PageForm>
+      </HubPageForm>
     </>
   );
 }

@@ -1,0 +1,38 @@
+.scrollable-outer {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow-y: hidden;
+  position: relative;
+}
+
+.scrollable-inner {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+.scrollable-shadow-top {
+  position: absolute;
+  top: 0;
+  height: 10px;
+  width: 100%;
+  background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0));
+}
+:root:where(.pf-v5-theme-dark) .scrollable-shadow-top {
+  height: 14px;
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0));
+}
+
+.scrollable-shadow-bottom {
+  position: absolute;
+  bottom: 0;
+  height: 10px;
+  width: 100%;
+  background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.2));
+}
+:root:where(.pf-v5-theme-dark) .scrollable-shadow-bottom {
+  height: 14px;
+  background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5));
+}

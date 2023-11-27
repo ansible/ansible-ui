@@ -11,6 +11,7 @@ import {
 } from '../../../../../framework';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { AwxRoute } from '../../../AwxRoutes';
+import { awxAPI } from '../../../api/awx-utils';
 import { Project } from '../../../interfaces/Project';
 import { useCancelProjects } from './useCancelProjects';
 import { useDeleteProjects } from './useDeleteProjects';
@@ -87,7 +88,9 @@ export function useProjectActions(
             title: t(`Syncing ${project.name}.`),
             timeout: 2000,
           };
-          postRequest(`/api/v2/projects/${project?.id ?? 0}/update/`, { id: project.id })
+          postRequest(awxAPI`/projects/${project?.id.toString() ?? ''}/update/`, {
+            id: project.id,
+          })
             .then(() => {
               showToastMessage ? alertToaster.addAlert(alert) : null;
             })
@@ -121,7 +124,7 @@ export function useProjectActions(
             title: t(`${project.name} copied.`),
             timeout: 2000,
           };
-          postRequest(`/api/v2/projects/${project?.id ?? 0}/copy/`, {
+          postRequest(awxAPI`/projects/${project?.id.toString() ?? ''}/copy/`, {
             name: `${project.name} @ ${new Date()
               .toTimeString()
               .replace(/.*(\d{2}:\d{2}:\d{2}).*/, '$1')}`,

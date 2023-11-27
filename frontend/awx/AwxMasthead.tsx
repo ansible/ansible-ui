@@ -1,9 +1,8 @@
-import { ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
+import { Icon, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import { DropdownItem } from '@patternfly/react-core/deprecated';
 import { ExternalLinkAltIcon, QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSWRConfig } from 'swr';
 import { PageMasthead, usePageNavigate } from '../../framework';
 import { PageMastheadDropdown } from '../../framework/PageMasthead/PageMastheadDropdown';
 import { PageNotificationsIcon } from '../../framework/PageMasthead/PageNotificationsIcon';
@@ -12,6 +11,7 @@ import { PageThemeSwitcher } from '../../framework/PageMasthead/PageThemeSwitche
 import { useAnsibleAboutModal } from '../common/AboutModal';
 import { PageRefreshIcon } from '../common/PageRefreshIcon';
 import { useActiveUser } from '../common/useActiveUser';
+import { useClearCache } from '../common/useInvalidateCache';
 import { AwxRoute } from './AwxRoutes';
 import AwxIcon from './awx-logo.svg';
 import { useAwxConfig } from './common/useAwxConfig';
@@ -20,26 +20,23 @@ import getDocsBaseUrl from './common/util/getDocsBaseUrl';
 export function AwxMasthead() {
   const { t } = useTranslation();
   const openAnsibleAboutModal = useAnsibleAboutModal();
+  const { clearAllCache } = useClearCache();
   const config = useAwxConfig();
   const pageNavigate = usePageNavigate();
   const activeUser = useActiveUser();
-  const { cache } = useSWRConfig();
   const logout = useCallback(async () => {
     await fetch('/api/logout/');
-    for (const key of cache.keys()) {
-      cache.delete(key);
-    }
+    clearAllCache();
     pageNavigate(AwxRoute.Login);
-  }, [cache, pageNavigate]);
+  }, [pageNavigate, clearAllCache]);
   return (
     <PageMasthead
-      icon={<AwxIcon style={{ height: 64 }} />}
+      icon={<AwxIcon style={{ height: 60 }} />}
       title={process.env.PRODUCT}
       brand={process.env.BRAND}
     >
-      <ToolbarItem style={{ flexGrow: 1 }} />
-      <ToolbarGroup variant="icon-button-group">
-        <ToolbarItem>
+      <ToolbarGroup variant="icon-button-group" style={{ flexGrow: 1 }}>
+        <ToolbarItem style={{ marginLeft: 'auto' }}>
           <PageRefreshIcon />
         </ToolbarItem>
         <ToolbarItem>
@@ -78,7 +75,11 @@ export function AwxMasthead() {
         <ToolbarItem>
           <PageMastheadDropdown
             id="account-menu"
-            icon={<UserCircleIcon />}
+            icon={
+              <Icon size="lg">
+                <UserCircleIcon />
+              </Icon>
+            }
             label={activeUser?.username}
           >
             <DropdownItem

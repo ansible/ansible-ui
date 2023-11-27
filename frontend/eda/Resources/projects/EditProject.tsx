@@ -2,7 +2,6 @@ import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
 import {
-  PageForm,
   PageFormCheckbox,
   PageFormSelect,
   PageFormSubmitHandler,
@@ -18,14 +17,18 @@ import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { useIsValidUrl } from '../../../common/validation/useIsValidUrl';
 import { EdaRoute } from '../../EdaRoutes';
-import { API_PREFIX } from '../../constants';
+import { edaAPI } from '../../api/eda-utils';
 import { EdaCredential } from '../../interfaces/EdaCredential';
 import { EdaProject, EdaProjectCreate, EdaProjectRead } from '../../interfaces/EdaProject';
 import { EdaResult } from '../../interfaces/EdaResult';
+import { EdaPageForm } from '../../EdaPageForm';
+import { TextList, TextListItem, TextListItemVariants } from '@patternfly/react-core';
+import { StandardPopover } from '../../../../framework/components/StandardPopover';
+import React from 'react';
 
 function ProjectCreateInputs() {
   const { t } = useTranslation();
-  const { data: credentials } = useGet<EdaResult<EdaCredential>>(`${API_PREFIX}/credentials/`);
+  const { data: credentials } = useGet<EdaResult<EdaCredential>>(edaAPI`/credentials/`);
   const isValidUrl = useIsValidUrl();
   const getPageUrl = useGetPageUrl();
   return (
@@ -77,11 +80,23 @@ function ProjectCreateInputs() {
         labelHelpTitle={t('Credential')}
         labelHelp={t('The token needed to utilize the SCM URL.')}
       />
-      <PageFormGroup
-        label={t('Options')}
-        labelHelp={t('Verify SSL before synchronize project over HTTPS.')}
-      >
-        <PageFormCheckbox<EdaProjectCreate> label={t('Verify SSL')} name="verify_ssl" />
+      <PageFormGroup label={t('Options')}>
+        <PageFormCheckbox<EdaProjectCreate>
+          label={
+            <TextList>
+              <TextListItem component={TextListItemVariants.li}>
+                {t`Verify SSL`}
+                <StandardPopover
+                  header=""
+                  content={t(
+                    'Enabling this option verifies the SSL with HTTPS when the project is imported.'
+                  )}
+                />
+              </TextListItem>
+            </TextList>
+          }
+          name="verify_ssl"
+        />
       </PageFormGroup>
     </>
   );
@@ -90,7 +105,7 @@ function ProjectCreateInputs() {
 function ProjectEditInputs() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
-  const { data: credentials } = useGet<EdaResult<EdaCredential>>(`${API_PREFIX}/credentials/`);
+  const { data: credentials } = useGet<EdaResult<EdaCredential>>(edaAPI`/credentials/`);
   return (
     <>
       <PageFormTextInput<EdaProjectCreate>
@@ -132,11 +147,23 @@ function ProjectEditInputs() {
         }
         footer={<Link to={getPageUrl(EdaRoute.CreateCredential)}>{t('Create credential')}</Link>}
       />
-      <PageFormGroup
-        label={t('Options')}
-        labelHelp={t('Verify SSL before synchronize project over HTTPS.')}
-      >
-        <PageFormCheckbox label={t('Verify SSL')} name="verify_ssl" />
+      <PageFormGroup label={t('Options')}>
+        <PageFormCheckbox
+          label={
+            <TextList>
+              <TextListItem component={TextListItemVariants.li}>
+                {t`Verify SSL`}
+                <StandardPopover
+                  header=""
+                  content={t(
+                    'Enabling this option verifies the SSL with HTTPS when the project is imported.'
+                  )}
+                />
+              </TextListItem>
+            </TextList>
+          }
+          name="verify_ssl"
+        />
       </PageFormGroup>
     </>
   );
@@ -153,7 +180,7 @@ export function CreateProject() {
   const postRequest = usePostRequest<EdaProjectCreate, EdaProject>();
 
   const onSubmit: PageFormSubmitHandler<EdaProjectCreate> = async (project) => {
-    const newProject = await postRequest(`${API_PREFIX}/projects/`, project);
+    const newProject = await postRequest(edaAPI`/projects/`, project);
     (cache as unknown as { clear: () => void }).clear?.();
     pageNavigate(EdaRoute.ProjectPage, { params: { id: newProject.id } });
   };
@@ -170,7 +197,7 @@ export function CreateProject() {
           { label: t('Create Project') },
         ]}
       />
-      <PageForm
+      <EdaPageForm
         submitText={t('Create project')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
@@ -178,7 +205,7 @@ export function CreateProject() {
         defaultValue={{ ...defaultValues }}
       >
         <ProjectCreateInputs />
-      </PageForm>
+      </EdaPageForm>
     </PageLayout>
   );
 }
@@ -188,13 +215,13 @@ export function EditProject() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const { data: project } = useGet<EdaProjectRead>(`${API_PREFIX}/projects/${id.toString()}/`);
+  const { data: project } = useGet<EdaProjectRead>(edaAPI`/projects/${id.toString()}/`);
 
   const { cache } = useSWRConfig();
   const patchRequest = usePatchRequest<EdaProjectCreate, EdaProjectCreate>();
 
   const onSubmit: PageFormSubmitHandler<EdaProjectCreate> = async (project) => {
-    await patchRequest(`${API_PREFIX}/projects/${id}/`, project);
+    await patchRequest(edaAPI`/projects/${id.toString()}/`, project);
     (cache as unknown as { clear: () => void }).clear?.();
     navigate(-1);
   };
@@ -221,7 +248,7 @@ export function EditProject() {
             { label: `${t('Edit')} ${project?.name || t('Project')}` },
           ]}
         />
-        <PageForm
+        <EdaPageForm
           submitText={t('Save project')}
           onSubmit={onSubmit}
           cancelText={t('Cancel')}
@@ -229,7 +256,7 @@ export function EditProject() {
           defaultValue={{ ...project, credential_id: project?.credential?.id }}
         >
           <ProjectEditInputs />
-        </PageForm>
+        </EdaPageForm>
       </PageLayout>
     );
   }

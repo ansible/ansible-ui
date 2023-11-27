@@ -1,21 +1,22 @@
 import { RouteObj } from '../../../common/Routes';
+import { awxAPI } from '../../api/awx-utils';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
 
 /** Returns the jobs API endpoint based on the job type */
 export function getJobsAPIUrl(type: string) {
   switch (type) {
     case 'ad_hoc_command':
-      return '/api/v2/ad_hoc_commands/';
+      return awxAPI`/ad_hoc_commands/`;
     case 'inventory_update':
-      return '/api/v2/inventory_updates/';
+      return awxAPI`/inventory_updates/`;
     case 'project_update':
-      return '/api/v2/project_updates/';
+      return awxAPI`/project_updates/`;
     case 'system_job':
-      return '/api/v2/system_jobs/';
+      return awxAPI`/system_jobs/`;
     case 'workflow_job':
-      return '/api/v2/workflow_jobs/';
+      return awxAPI`/workflow_jobs/`;
     default:
-      return '/api/v2/jobs/';
+      return awxAPI`/jobs/`;
   }
 }
 
@@ -44,10 +45,10 @@ export function getRelaunchEndpoint(job: UnifiedJob) {
       return `${baseUrl}${job.id}/relaunch/`;
     case 'inventory_update':
       return job.inventory_source
-        ? `/api/v2/inventory_sources/${job.inventory_source}/update/`
+        ? awxAPI`/inventory_sources/${job.inventory_source}/update/`
         : undefined;
     case 'project_update':
-      return job.project ? `/api/v2/projects/${job.project}/update/` : undefined;
+      return job.project ? awxAPI`/projects/${job.project}/update/` : undefined;
   }
 }
 

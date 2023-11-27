@@ -1,7 +1,7 @@
 import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
 import { LoadingPage } from '../../framework/components/LoadingPage';
 import { useGet } from '../common/crud/useGet';
-import { hubAPI } from './api/utils';
+import { hubAPI } from './api/formatPath';
 
 type HubFeatureFlags = {
   // execution environments

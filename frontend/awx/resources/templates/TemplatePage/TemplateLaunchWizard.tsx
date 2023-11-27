@@ -1,11 +1,5 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { AwxRoute } from '../../../AwxRoutes';
-import { awxErrorAdapter } from '../../../adapters/awxErrorAdapter';
-import { getJobOutputUrl } from '../../../views/jobs/jobUtils';
-import { AwxError } from '../../../common/AwxError';
-import { useGet } from '../../../../common/crud/useGet';
-import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import {
   LoadingPage,
   PageHeader,
@@ -15,20 +9,27 @@ import {
   useGetPageUrl,
   usePageAlertToaster,
 } from '../../../../../framework';
-import { PageFormCredentialSelect } from '../../credentials/components/PageFormCredentialSelect';
+import { useGet } from '../../../../common/crud/useGet';
+import { usePostRequest } from '../../../../common/crud/usePostRequest';
+import { AwxRoute } from '../../../AwxRoutes';
+import { awxErrorAdapter } from '../../../adapters/awxErrorAdapter';
 import { PageFormExecutionEnvironmentSelect } from '../../../administration/execution-environments/components/PageFormExecutionEnvironmentSelect';
 import { PageFormInstanceGroupSelect } from '../../../administration/instance-groups/components/PageFormInstanceGroupSelect';
+import { AwxError } from '../../../common/AwxError';
+import { getJobOutputUrl } from '../../../views/jobs/jobUtils';
+import { PageFormCredentialSelect } from '../../credentials/components/PageFormCredentialSelect';
 import { PageFormInventorySelect } from '../../inventories/components/PageFormInventorySelect';
+import { parseStringToTagArray } from '../JobTemplateFormHelpers';
 import { useLabelPayload } from '../hooks/useLabelPayload';
 import { CredentialPasswordsStep, OtherPromptsStep, TemplateLaunchReviewStep } from './steps';
-import { parseStringToTagArray } from '../JobTemplateFormHelpers';
 
+import type { Credential } from '../../../interfaces/Credential';
+import type { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
+import type { Inventory } from '../../../interfaces/Inventory';
 import type { JobTemplate } from '../../../interfaces/JobTemplate';
 import type { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
 import type { UnifiedJob } from '../../../interfaces/UnifiedJob';
-import type { Inventory } from '../../../interfaces/Inventory';
-import type { Credential } from '../../../interfaces/Credential';
-import type { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
+import { awxAPI } from '../../../api/awx-utils';
 
 export interface TemplateLaunch {
   inventory: Inventory;
@@ -86,12 +87,12 @@ export function TemplateLaunchWizard() {
     data: template,
     error: getTemplateError,
     refresh: getTemplateRefresh,
-  } = useGet<JobTemplate>(`/api/v2/job_templates/${resourceId}/`);
+  } = useGet<JobTemplate>(awxAPI`/job_templates/${resourceId}/`);
   const {
     data: config,
     error: getLaunchError,
     refresh: getLaunchRefresh,
-  } = useGet<LaunchConfiguration>(`/api/v2/job_templates/${resourceId}/launch/`);
+  } = useGet<LaunchConfiguration>(awxAPI`/job_templates/${resourceId}/launch/`);
   const error = getTemplateError || getLaunchError;
   const refresh = getTemplateRefresh || getLaunchRefresh;
 
@@ -148,7 +149,7 @@ export function TemplateLaunchWizard() {
         setValue('timeout', timeout);
         setValue('verbosity', verbosity);
 
-        const job = await postRequest(`/api/v2/job_templates/${resourceId}/launch/`, payload);
+        const job = await postRequest(awxAPI`/job_templates/${resourceId}/launch/`, payload);
         if (job) {
           navigate(getJobOutputUrl(job));
         }

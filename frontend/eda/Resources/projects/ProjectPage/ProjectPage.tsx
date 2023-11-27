@@ -20,7 +20,8 @@ import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs
 import { postRequest } from '../../../../common/crud/Data';
 import { useGet } from '../../../../common/crud/useGet';
 import { EdaRoute } from '../../../EdaRoutes';
-import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../../constants';
+import { edaAPI } from '../../../api/eda-utils';
+import { SWR_REFRESH_INTERVAL } from '../../../constants';
 import { EdaProject } from '../../../interfaces/EdaProject';
 import { ImportStateEnum } from '../../../interfaces/generated/eda-api';
 import { useDeleteProjects } from '../hooks/useDeleteProjects';
@@ -33,13 +34,13 @@ export function ProjectPage() {
   const alertToaster = usePageAlertToaster();
 
   const { data: project, refresh } = useGet<EdaProject>(
-    `${API_PREFIX}/projects/${params.id ?? ''}/`,
+    edaAPI`/projects/${params.id ?? ''}/`,
     undefined,
     { refreshInterval: SWR_REFRESH_INTERVAL }
   );
   const syncProject = useCallback(
     (project: EdaProject) =>
-      postRequest(`${API_PREFIX}/projects/${project.id}/sync/`, undefined)
+      postRequest(edaAPI`/projects/${project.id.toString()}/sync/`, undefined)
         .then(() => {
           alertToaster.addAlert({
             title: `${t('Syncing')} ${project?.name || t('project')}`,
@@ -78,6 +79,7 @@ export function ProjectPage() {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: PencilAltIcon,
+        isPinned: true,
         label: t('Edit project'),
         onClick: (project: EdaProject) =>
           pageNavigate(EdaRoute.EditProject, { params: { id: project.id } }),
@@ -114,6 +116,11 @@ export function ProjectPage() {
         }
       />
       <PageRoutedTabs
+        backTab={{
+          label: t('Back to Projects'),
+          page: EdaRoute.Projects,
+          persistentFilterKey: 'projects',
+        }}
         tabs={[{ label: t('Details'), page: EdaRoute.ProjectDetails }]}
         params={{ id: project?.id }}
       />

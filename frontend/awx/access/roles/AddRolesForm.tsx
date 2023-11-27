@@ -7,6 +7,7 @@ import { PageFormHidden } from '../../../../framework/PageForm/Utils/PageFormHid
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { AwxPageForm } from '../../AwxPageForm';
+import { awxAPI } from '../../api/awx-utils';
 import { Team } from '../../interfaces/Team';
 import { User } from '../../interfaces/User';
 import { PageFormCredentialSelect } from '../../resources/credentials/components/PageFormCredentialSelect';
@@ -85,10 +86,20 @@ export function AddRolesForm(props: { users?: User[]; teams?: Team[]; onClose?: 
             { header: t('Resource'), cell: (addRole) => addRole.resource.name },
             { header: t('Role'), cell: (addRole) => addRole.roleName },
           ],
-          actionFn: (addRole) => {
+          actionFn: async (addRole, signal: AbortSignal) => {
             return 'user' in addRole
-              ? postRequest(`/api/v2/users/${addRole.user.id}/roles/`, { id: addRole.roleId })
-              : postRequest(`/api/v2/teams/${addRole.team.id}/roles/`, { id: addRole.roleId });
+              ? await postRequest(
+                  awxAPI`/users/${addRole.user.id.toString()}/roles/`,
+                  { id: addRole.roleId },
+                  signal
+                )
+              : await postRequest(
+                  awxAPI`/teams/${addRole.team.id.toString()}/roles/`,
+                  {
+                    id: addRole.roleId,
+                  },
+                  signal
+                );
           },
           onClose: props.onClose,
         });

@@ -15,10 +15,11 @@ import { AwxRoute } from '../../AwxRoutes';
 import { Project } from '../../interfaces/Project';
 import { useProjectsColumns } from '../../resources/projects/hooks/useProjectsColumns';
 import { useAwxView } from '../../useAwxView';
+import { awxAPI } from '../../api/awx-utils';
 
 export function AwxRecentProjectsCard() {
   const view = useAwxView<Project>({
-    url: '/api/v2/projects/',
+    url: awxAPI`/projects/`,
     disableQueryString: true,
     defaultSort: 'modified',
     defaultSortDirection: 'desc',

@@ -1,13 +1,13 @@
+import { CubesIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 import { EdaRuleAuditItem } from '../../interfaces/EdaRuleAudit';
+import { useEdaView } from '../../useEventDrivenView';
 import { useRuleAuditColumns } from './hooks/useRuleAuditColumns';
 import { useRuleAuditFilters } from './hooks/useRuleAuditFilters';
-import { API_PREFIX } from '../../constants';
-import { useEdaView } from '../../useEventDrivenView';
-import { CubesIcon } from '@patternfly/react-icons';
+import { edaAPI } from '../../api/eda-utils';
 
-const ruleAuditEndpoint = `${API_PREFIX}/audit-rules/`;
+const ruleAuditEndpoint = edaAPI`/audit-rules/`;
 
 export function RuleAudit() {
   const { t } = useTranslation();

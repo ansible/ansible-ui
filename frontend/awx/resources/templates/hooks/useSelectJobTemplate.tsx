@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { SelectSingleDialog } from '../../../../../framework/PageDialogs/SelectSingleDialog';
 import { useAwxView } from '../../../useAwxView';
+import { awxAPI } from '../../../api/awx-utils';
 import { useTemplateColumns } from './useTemplateColumns';
 import { useTemplateFilters } from './useTemplateFilters';
 import { usePageDialog } from '../../../../../framework';
@@ -11,7 +12,7 @@ function SelectJobTemplate(props: { title: string; onSelect: (template: JobTempl
   const toolbarFilters = useTemplateFilters();
   const tableColumns = useTemplateColumns({ disableLinks: true });
   const view = useAwxView<JobTemplate>({
-    url: '/api/v2/job_templates/',
+    url: awxAPI`/job_templates/`,
     toolbarFilters,
     tableColumns,
     disableQueryString: true,

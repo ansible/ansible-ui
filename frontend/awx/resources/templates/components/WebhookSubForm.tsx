@@ -5,14 +5,15 @@ import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useParams } from 'react-router-dom';
 import { PageFormSelect, PageFormTextInput } from '../../../../../framework';
+import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { requestGet } from '../../../../common/crud/Data';
 import { useGet } from '../../../../common/crud/useGet';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { CredentialType } from '../../../interfaces/CredentialType';
 import { JobTemplateForm } from '../../../interfaces/JobTemplateForm';
-import { PageFormCredentialSelect } from '../../credentials/components/PageFormCredentialSelect';
-import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { WorkflowJobTemplateForm } from '../../../interfaces/WorkflowJobTemplate';
+import { PageFormCredentialSelect } from '../../credentials/components/PageFormCredentialSelect';
+import { awxAPI } from '../../../api/awx-utils';
 
 export function WebhookSubForm() {
   const { t } = useTranslation();
@@ -25,7 +26,7 @@ export function WebhookSubForm() {
   const { pathname } = useLocation();
 
   const { data: webhookCredentialType } = useGet<AwxItemsResponse<CredentialType>>(
-    `/api/v2/credential_types/`,
+    awxAPI`/credential_types/`,
     {
       namespace: `${webhookService}_token`,
     }
@@ -33,30 +34,30 @@ export function WebhookSubForm() {
 
   const handleFetchWebhookKey = useCallback(async () => {
     if (isWebhookEnabled && params.id) {
-      const webhookKey = await requestGet<string>(`/api/v2/job_template/${params.id}/webhook_key`);
+      const webhookKey = await requestGet<string>(awxAPI`/job_template/${params.id}/webhook_key`);
       setValue('webhook_key', webhookKey);
       return;
     }
   }, [isWebhookEnabled, setValue, params]);
 
   useGet<AwxItemsResponse<CredentialType>>(
-    `/api/v2/credential_types/?namespace=${webhookService}_token`
+    awxAPI`/credential_types/?namespace=${webhookService}_token`
   );
 
   useEffect(() => {
     if (!webhookService) return;
     setValue(
       'related.webhook_receiver',
-      pathname.endsWith('/add')
+      pathname.endsWith('/creat')
         ? t`a new webhook url will be generated on save.`.toUpperCase()
-        : `${document.location.origin}/api/v2/job_template/${
+        : `${document.location.origin}${awxAPI`/job_template/`}${
             params.id as string
           }/${webhookService}/`
     );
   }, [webhookService, setValue, pathname, params.id, t]);
 
   const isUpdateKeyDisabled =
-    pathname.endsWith('/add') || webhookKey === 'A NEW WEBHOOK KEY WILL BE GENERATED ON SAVE.';
+    pathname.endsWith('/create') || webhookKey === 'A NEW WEBHOOK KEY WILL BE GENERATED ON SAVE.';
   return (
     <PageFormSection title={t('Webhook details')}>
       <PageFormSelect<JobTemplateForm>

@@ -13,6 +13,7 @@ import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageD
 import { RouteObj } from '../../../../common/Routes';
 import { useGet, useGetItem } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
+import { awxAPI } from '../../../api/awx-utils';
 import { AwxError } from '../../../common/AwxError';
 import { CredentialLabel } from '../../../common/CredentialLabel';
 import { UserDateDetail } from '../../../common/UserDateDetail';
@@ -22,20 +23,18 @@ import { JobTemplate } from '../../../interfaces/JobTemplate';
 
 function useInstanceGroups(templateId: string) {
   const { data } = useGet<{ results: InstanceGroup[] }>(
-    `/api/v2/job_templates/${templateId}/instance_groups/`
+    awxAPI`/job_templates/${templateId}/instance_groups/`
   );
   return data?.results ?? [];
 }
 
-export function TemplateDetails() {
+export function TemplateDetails(props: { templateId?: string }) {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const {
-    error,
-    data: template,
-    refresh,
-  } = useGetItem<JobTemplate>('/api/v2/job_templates', params.id);
-  const instanceGroups = useInstanceGroups(params.id || '0');
+
+  const urlId = props?.templateId ? props.templateId : params.id;
+  const { error, data: template, refresh } = useGetItem<JobTemplate>(awxAPI`/job_templates`, urlId);
+  const instanceGroups = useInstanceGroups(urlId || '0');
   const getPageUrl = useGetPageUrl();
 
   const verbosity: string = useVerbosityString(template?.verbosity);
@@ -59,7 +58,15 @@ export function TemplateDetails() {
 
   return (
     <PageDetails>
-      <PageDetail label={t('Name')}>{template.name}</PageDetail>
+      <PageDetail label={t('Name')}>
+        {props.templateId ? (
+          <Link to={getPageUrl(AwxRoute.JobTemplateDetails, { params: { id: props.templateId } })}>
+            {template.name}
+          </Link>
+        ) : (
+          template.name
+        )}
+      </PageDetail>
       <PageDetail label={t('Description')}>{template.description}</PageDetail>
       <PageDetail label={t('Job type')}>{template.job_type}</PageDetail>
       <PageDetail label={t('Organization')} isEmpty={!summaryFields.organization}>
@@ -103,9 +110,9 @@ export function TemplateDetails() {
       </PageDetail>
       <PageDetail label={t('Source control branch')}>{template.scm_branch}</PageDetail>
       <PageDetail label={t('Playbook')}>{template.playbook}</PageDetail>
-      <PageDetail label={t('Credentials')} isEmpty={!summaryFields.credentials.length}>
+      <PageDetail label={t('Credentials')} isEmpty={!summaryFields.credentials?.length}>
         <LabelGroup>
-          {summaryFields.credentials.map((credential) => (
+          {summaryFields.credentials?.map((credential) => (
             <CredentialLabel credential={credential} key={credential.id} />
           ))}
         </LabelGroup>
@@ -113,10 +120,10 @@ export function TemplateDetails() {
       <PageDetail
         label={t`Instance groups`}
         helpText={t`The instance groups for this job template to run on.`}
-        isEmpty={instanceGroups.length === 0}
+        isEmpty={!instanceGroups?.length}
       >
         <LabelGroup>
-          {instanceGroups.map((ig) => (
+          {instanceGroups?.map((ig) => (
             <Label color="blue" key={ig.id}>
               <Link to={RouteObj.InstanceGroupDetails.replace(':id', (ig.id ?? 0).toString())}>
                 {ig.name}
@@ -155,23 +162,19 @@ export function TemplateDetails() {
       />
       <PageDetail label={t('Labels')} isEmpty={!summaryFields.labels?.results?.length}>
         <LabelGroup>
-          {summaryFields.labels.results.map((label) => (
+          {summaryFields.labels?.results?.map((label) => (
             <Label key={label.id}>{label.name}</Label>
           ))}
         </LabelGroup>
       </PageDetail>
       <PageDetail label={t('Job tags')} isEmpty={!template.job_tags}>
         <LabelGroup>
-          {template.job_tags.split(',').map((tag) => (
-            <Label key={tag}>{tag}</Label>
-          ))}
+          {template.job_tags.split(',')?.map((tag) => <Label key={tag}>{tag}</Label>)}
         </LabelGroup>
       </PageDetail>
       <PageDetail label={t('Skip tags')} isEmpty={!template.skip_tags}>
         <LabelGroup>
-          {template.skip_tags.split(',').map((tag) => (
-            <Label key={tag}>{tag}</Label>
-          ))}
+          {template.skip_tags.split(',')?.map((tag) => <Label key={tag}>{tag}</Label>)}
         </LabelGroup>
       </PageDetail>
       <PageDetailCodeEditor label={t('Extra vars')} value={template.extra_vars} />

@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable } from '../../../framework';
-import { collectionKeyFn, hubAPI } from '../api/utils';
+import { collectionKeyFn } from '../api/utils';
+import { hubAPI } from '../api/formatPath';
 import { useHubView } from '../useHubView';
 import { CollectionVersionSearch } from './Approval';
 import { useApprovalActions } from './hooks/useApprovalActions';

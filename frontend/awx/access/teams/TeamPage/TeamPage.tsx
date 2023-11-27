@@ -16,11 +16,12 @@ import { AwxError } from '../../../common/AwxError';
 import { Team } from '../../../interfaces/Team';
 import { useViewActivityStream } from '../../common/useViewActivityStream';
 import { useTeamActions } from '../hooks/useTeamActions';
+import { awxAPI } from '../../../api/awx-utils';
 
 export function TeamPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { error, data: team, refresh } = useGetItem<Team>('/api/v2/teams', params.id);
+  const { error, data: team, refresh } = useGetItem<Team>(awxAPI`/teams`, params.id);
   const pageNavigate = usePageNavigate();
   const itemActions = useTeamActions({
     onTeamsDeleted: () => pageNavigate(AwxRoute.Teams),

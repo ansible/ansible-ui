@@ -1,17 +1,16 @@
+import { edaAPI } from '../api/eda-utils';
 import { RulebookActivations } from './RulebookActivations';
-import { API_PREFIX } from '../constants';
 
 describe('RulebookActivations.cy.ts', () => {
   beforeEach(() => {
     cy.intercept(
-      { method: 'GET', url: `${API_PREFIX}/activations/?page=1&page_size=10` },
+      { method: 'GET', url: edaAPI`/activations/?page=1&page_size=10` },
       {
         fixture: 'edaRulebookActivations.json',
       }
     );
-
     cy.intercept(
-      { method: 'GET', url: `${API_PREFIX}/activations/?page=2&page_size=10` },
+      { method: 'GET', url: edaAPI`/activations/?page=2&page_size=10` },
       {
         count: 5,
         next: null,
@@ -37,6 +36,7 @@ describe('RulebookActivations.cy.ts', () => {
             rules_fired_count: 1,
             created_at: '2023-10-02T13:34:18.445029Z',
             modified_at: '2023-10-02T13:34:28.742952Z',
+            status_message: 'Activation has completed',
           },
           {
             id: 11,
@@ -56,6 +56,7 @@ describe('RulebookActivations.cy.ts', () => {
             rules_fired_count: 1,
             created_at: '2023-10-02T13:34:18.445029Z',
             modified_at: '2023-10-02T13:34:28.742952Z',
+            status_message: 'Activation has completed',
           },
           {
             id: 12,
@@ -75,6 +76,7 @@ describe('RulebookActivations.cy.ts', () => {
             rules_fired_count: 1,
             created_at: '2023-10-02T13:34:18.445029Z',
             modified_at: '2023-10-02T13:34:28.742952Z',
+            status_message: 'Activation has completed',
           },
           {
             id: 12,
@@ -107,12 +109,69 @@ describe('RulebookActivations.cy.ts', () => {
     cy.contains(/^Rulebook activations are rulebooks that have been activated to run.$/).should(
       'be.visible'
     );
-    cy.contains('th', 'Activation ID');
-    cy.contains('th', 'Name');
-    cy.contains('th', 'Activation status');
-    cy.contains('th', 'Number of rules');
-    cy.contains('th', 'Fire count');
-    cy.contains('th', 'Restart count');
+    cy.get('[data-cy="id-column-header"]').should('be.visible');
+    cy.get('[data-cy="name-column-header"]').should('be.visible');
+    cy.get('[data-cy="activation-status-column-header"]').should('be.visible');
+    cy.get('[data-cy="number-of-rules-column-header"]').should('be.visible');
+    cy.get('[data-cy="fire-count-column-header"]').should('be.visible');
+    cy.get('[data-cy="restart-count-column-header"]').should('be.visible');
+    cy.get('#expand-toggle0 > .pf-v5-c-table__toggle-icon').click();
+    cy.get('[data-cy="status-message"]').should('be.visible');
+    cy.get('[data-cy="created"]').should('be.visible');
+    cy.get('[data-cy="last-modified"]').should('be.visible');
+  });
+
+  it('can restart a Rulebook Activation from the line item in list view', () => {
+    cy.mount(<RulebookActivations />);
+    cy.get('[data-cy="row-id-1"] > [data-cy="checkbox-column-cell"]').click();
+    cy.get('[data-cy="actions-dropdown"]').first().click();
+    cy.get('[data-cy="restart-selected-activations"]').click();
+    cy.get('div[role="dialog"]').within(() => {
+      cy.get('.pf-v5-c-check__label').should(
+        'contain',
+        `Yes, I confirm that I want to restart these`
+      );
+      cy.contains('Activation 1');
+      cy.get('input[id="confirm"]').click();
+      cy.get('button').contains('Restart rulebook activations').click();
+    });
+    cy.clickButton(/^Close$/);
+  });
+
+  it('can disable a Rulebook Activation from the line item in list view', () => {
+    cy.mount(<RulebookActivations />);
+    cy.intercept({ method: 'POST', url: edaAPI`/activations/2/disable/` });
+    cy.get('[data-cy="row-id-1"] > [data-cy="checkbox-column-cell"]').click();
+    cy.get('[data-cy="actions-dropdown"]').first().click();
+    cy.get('[data-cy="disable-selected-activations"]').click();
+    cy.get('div[role="dialog"]').within(() => {
+      cy.get('.pf-v5-c-check__label').should(
+        'contain',
+        `Yes, I confirm that I want to disable these`
+      );
+      cy.contains('Activation 1');
+      cy.get('input[id="confirm"]').click();
+      cy.get('button').contains('Disable rulebook activations').click();
+    });
+    cy.clickButton(/^Close$/);
+  });
+
+  it('can delete a Rulebook Activation from the line item in list view', () => {
+    cy.mount(<RulebookActivations />);
+    cy.intercept({ method: 'POST', url: edaAPI`/activations/2/delete/` });
+    cy.get('[data-cy="row-id-1"] > [data-cy="checkbox-column-cell"]').click();
+    cy.get('[data-cy="actions-dropdown"]').first().click();
+    cy.get('[data-cy="delete-selected-activations"]').click();
+    cy.get('div[role="dialog"]').within(() => {
+      cy.get('.pf-v5-c-check__label').should(
+        'contain',
+        `Yes, I confirm that I want to delete these`
+      );
+      cy.contains('Activation 1');
+      cy.get('input[id="confirm"]').click();
+      cy.get('button').contains('Delete rulebook activations').click();
+    });
+    cy.clickButton(/^Close$/);
   });
 });
 
@@ -121,7 +180,7 @@ describe('Empty list', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: `${API_PREFIX}/activations/*`,
+        url: edaAPI`/activations/*`,
       },
       {
         fixture: 'emptyList.json',

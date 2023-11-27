@@ -10,8 +10,8 @@ export function useRemoteRegistryFilters() {
         key: 'name',
         label: t('Name'),
         type: ToolbarFilterType.Text,
-        query: 'name',
-        comparison: 'startsWith',
+        query: 'name__icontains',
+        comparison: 'contains',
       },
     ],
     [t]

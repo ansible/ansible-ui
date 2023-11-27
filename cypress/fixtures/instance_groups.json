@@ -94,8 +94,8 @@
       "pod_spec_override": "",
       "summary_fields": {
         "user_capabilities": {
-          "edit": true,
-          "delete": true
+          "edit": false,
+          "delete": false
         }
       }
     }

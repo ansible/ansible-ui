@@ -3,6 +3,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 import { Schedule } from '../../interfaces/Schedule';
 import { useAwxView } from '../../useAwxView';
+import { awxAPI } from '../../api/awx-utils';
 import { useSchedulesActions } from './hooks/useSchedulesActions';
 import { useSchedulesColumns } from './hooks/useSchedulesColumns';
 import { useSchedulesFilter } from './hooks/useSchedulesFilter';
@@ -16,16 +17,17 @@ import { usePersistentFilters } from '../../../common/PersistentFilters';
 export function Schedules(props: { sublistEndpoint?: string }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const params = useParams<{ id: string }>();
+  const params = useParams<{ id: string; source_id?: string }>();
   const location = useLocation();
   const toolbarFilters = useSchedulesFilter();
   const tableColumns = useSchedulesColumns();
+  const resourceId = params.source_id ?? params.id;
   const apiEndPoint: string | undefined = props.sublistEndpoint
-    ? `${props.sublistEndpoint}/${params.id}/schedules/`
+    ? `${props.sublistEndpoint}/${resourceId}/schedules/`
     : undefined;
 
   const view = useAwxView<Schedule>({
-    url: apiEndPoint ?? '/api/v2/schedules/',
+    url: apiEndPoint ?? awxAPI`/schedules/`,
     toolbarFilters,
     tableColumns,
   });
@@ -35,9 +37,7 @@ export function Schedules(props: { sublistEndpoint?: string }) {
   );
   usePersistentFilters(resource_type ? `${resource_type}-schedules` : 'schedules');
 
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(
-    apiEndPoint ?? '/api/v2/schedules/'
-  );
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(apiEndPoint ?? awxAPI`/schedules/`);
   const canCreateSchedule = Boolean(data && data.actions && data.actions['POST']);
   const createUrl = useGetSchedulCreateUrl(apiEndPoint);
   const toolbarActions = useScheduleToolbarActions(view.unselectItemsAndRefresh, apiEndPoint);

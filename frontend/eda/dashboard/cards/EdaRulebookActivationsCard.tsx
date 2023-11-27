@@ -11,14 +11,14 @@ import {
 } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
 import { EdaRoute } from '../../EdaRoutes';
-import { API_PREFIX } from '../../constants';
+import { edaAPI } from '../../api/eda-utils';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { useRulebookActivationColumns } from '../../rulebook-activations/hooks/useRulebookActivationColumns';
 import { useEdaView } from '../../useEventDrivenView';
 
 export function EdaRulebookActivationsCard() {
   const view = useEdaView<EdaRulebookActivation>({
-    url: `${API_PREFIX}/activations/`,
+    url: edaAPI`/activations/`,
     queryParams: { page: '1', page_size: '10' },
     disableQueryString: true,
   });

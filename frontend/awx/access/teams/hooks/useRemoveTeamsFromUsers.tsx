@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useBulkActionDialog } from '../../../../../framework';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
+import { awxAPI } from '../../../api/awx-utils';
 import { Team } from '../../../interfaces/Team';
 import { User } from '../../../interfaces/User';
 
@@ -17,11 +18,11 @@ export function useRemoveTeamsFromUsers(onComplete?: (team: Team[]) => void) {
         }),
         keyFn: (team: Team) => team.id,
         items: teams,
-        actionColumns: [{ header: 'Team', cell: (team: Team) => team.name }],
+        actionColumns: [{ header: t('Team'), cell: (team: Team) => team.name }],
         actionFn: async (team: Team, signal: AbortSignal) => {
           for (const user of users) {
             await postRequest(
-              `/api/v2/users/${user.id.toString()}/roles/`,
+              awxAPI`/users/${user.id.toString()}/roles/`,
               { id: team.summary_fields.object_roles.member_role.id, disassociate: true },
               signal
             );

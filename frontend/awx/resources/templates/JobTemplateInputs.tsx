@@ -12,6 +12,7 @@ import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSe
 import { requestGet } from '../../../common/crud/Data';
 import { PageFormExecutionEnvironmentSelect } from '../../administration/execution-environments/components/PageFormExecutionEnvironmentSelect';
 import { PageFormInstanceGroupSelect } from '../../administration/instance-groups/components/PageFormInstanceGroupSelect';
+import { awxAPI } from '../../api/awx-utils';
 import { PageFormLabelSelect } from '../../common/PageFormLabelSelect';
 import { JobTemplateForm } from '../../interfaces/JobTemplateForm';
 import { Project } from '../../interfaces/Project';
@@ -47,7 +48,7 @@ function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
     async function handleFetchPlaybooks() {
       if (projectPath) {
         const playbooks = await requestGet<string[]>(
-          `/api/v2/projects/${projectPath.id.toString()}/playbooks/`
+          awxAPI`/projects/${projectPath.id.toString()}/playbooks/`
         );
         return setPlaybookOptions(playbooks);
       }

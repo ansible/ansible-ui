@@ -25,8 +25,10 @@ describe('Workflow Job templates form', () => {
     });
   });
 
-  after(() => {
-    cy.deleteAwxOrganization(organization);
+  afterEach(() => {
+    cy.deleteAwxLabel(label, { failOnStatusCode: false });
+    cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
+    cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
 
   it('Should create job template with all fields except for prompt on launch values', () => {
@@ -47,7 +49,7 @@ describe('Workflow Job templates form', () => {
       cy.contains('Create "test skip tag"').click();
     });
     cy.get('[data-cy="Submit"]').click();
-    cy.verifyPageTitle(jtName);
+    cy.get('button[data-cy="workflow-visualizer-toolbar-close"]').should('be.visible');
   });
 
   it('Should edit a workflow job template', () => {
@@ -60,7 +62,7 @@ describe('Workflow Job templates form', () => {
       if (!workflowJobTemplate.name) return;
 
       cy.clickTableRowPinnedAction(workflowJobTemplate?.name, 'edit-template', true);
-      cy.get('[data-cy="name"]').type(newName);
+      cy.get('[data-cy="name"]').clear().type(newName);
       cy.get('[data-cy="description"]').type('this is a new description');
       cy.clickButton(/^Save workflow job template$/);
       cy.verifyPageTitle(newName);

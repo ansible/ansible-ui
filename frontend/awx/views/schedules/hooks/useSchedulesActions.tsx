@@ -5,6 +5,7 @@ import { IPageAction, PageActionSelection, PageActionType } from '../../../../..
 import { requestPatch } from '../../../../common/crud/Data';
 import { useOptions } from '../../../../common/crud/useOptions';
 import { cannotDeleteResource, cannotEditResource } from '../../../../common/utils/RBAChelpers';
+import { awxAPI } from '../../../api/awx-utils';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { Schedule } from '../../../interfaces/Schedule';
 import { useGetSchedulCreateUrl } from './scheduleHelpers';
@@ -16,11 +17,11 @@ export function useSchedulesActions(options: {
 }) {
   const { t } = useTranslation();
   const deleteSchedule = useDeleteSchedules(options?.onScheduleToggleorDeleteCompleted);
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/v2/schedules/');
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/schedules/`);
   const canCreateSchedule = Boolean(data && data.actions && data.actions['POST']);
   const handleToggleSchedule: (schedule: Schedule, enabled: boolean) => Promise<void> = useCallback(
     async (schedule, enabled) => {
-      await requestPatch<Schedule>(`/api/v2/schedules/${schedule.id}/`, { enabled });
+      await requestPatch<Schedule>(awxAPI`/schedules/${schedule.id.toString()}/`, { enabled });
       options?.onScheduleToggleorDeleteCompleted();
     },
     [options]

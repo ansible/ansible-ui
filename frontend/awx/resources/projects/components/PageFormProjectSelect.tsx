@@ -3,6 +3,7 @@ import { FieldPath, FieldPathValue, FieldValues, Path } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { PageFormAsyncSelect } from '../../../../../framework/PageForm/Inputs/PageFormAsyncSelect';
 import { requestGet } from '../../../../common/crud/Data';
+import { awxAPI } from '../../../api/awx-utils';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { Project } from '../../../interfaces/Project';
 import { useSelectProject } from '../hooks/useSelectProject';
@@ -15,7 +16,9 @@ export function PageFormProjectSelect<
 
   const openSelectDialog = useSelectProject();
   const query = useCallback(async () => {
-    const response = await requestGet<AwxItemsResponse<Project>>('/api/v2/projects/?page_size=200');
+    const response = await requestGet<AwxItemsResponse<Project>>(
+      awxAPI`/projects/`.concat(`?page_size=200`)
+    );
     return Promise.resolve({
       total: response.count,
       values: response.results as FieldPathValue<TFieldValues, Path<TFieldValues>>[],

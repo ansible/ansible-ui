@@ -1,0 +1,139 @@
+{
+  "id": 5,
+  "name": "Activation 2",
+  "description": "",
+  "is_enabled": true,
+  "decision_environment": {
+    "id": 1,
+    "name": "DE1",
+    "description": "",
+    "image_url": "quay.io/ansible/ansible-rulebook:main"
+  },
+  "status": "completed",
+  "git_hash": "1d1789a160fd0ff33f583582ba3d1eed20697971",
+  "project": {
+    "id": 2,
+    "git_hash": "1d1789a160fd0ff33f583582ba3d1eed20697971",
+    "url": "https://github.com/ansible/ansible-ui",
+    "name": "Project 1",
+    "description": ""
+  },
+  "rulebook": {
+    "id": 11,
+    "name": "fail.yml",
+    "description": ""
+  },
+  "extra_var": null,
+  "instances": [
+    {
+      "id": 55,
+      "name": "Activation 2",
+      "status": "completed",
+      "git_hash": "1d1789a160fd0ff33f583582ba3d1eed20697971",
+      "status_message": "Activation has completed",
+      "activation_id": 5,
+      "started_at": "2023-10-30T19:49:48.298274Z",
+      "ended_at": "2023-10-30T19:49:59.549997Z"
+    },
+    {
+      "id": 54,
+      "name": "Activation 2",
+      "status": "completed",
+      "git_hash": "1d1789a160fd0ff33f583582ba3d1eed20697971",
+      "status_message": "Activation has completed",
+      "activation_id": 5,
+      "started_at": "2023-10-30T19:49:18.147834Z",
+      "ended_at": "2023-10-30T19:49:29.213237Z"
+    },
+    {
+      "id": 50,
+      "name": "Activation 2",
+      "status": "completed",
+      "git_hash": "1d1789a160fd0ff33f583582ba3d1eed20697971",
+      "status_message": "Activation has completed",
+      "activation_id": 5,
+      "started_at": "2023-10-30T19:48:10.490148Z",
+      "ended_at": "2023-10-30T19:48:41.713824Z"
+    },
+    {
+      "id": 45,
+      "name": "Activation 2",
+      "status": "stopped",
+      "git_hash": "1d1789a160fd0ff33f583582ba3d1eed20697971",
+      "status_message": "Activation has stopped",
+      "activation_id": 5,
+      "started_at": "2023-10-27T19:52:50.058327Z",
+      "ended_at": null
+    },
+    {
+      "id": 44,
+      "name": "Activation 2",
+      "status": "completed",
+      "git_hash": "1d1789a160fd0ff33f583582ba3d1eed20697971",
+      "status_message": "Activation has completed",
+      "activation_id": 5,
+      "started_at": "2023-10-27T19:18:06.922274Z",
+      "ended_at": "2023-10-27T19:18:17.060915Z"
+    },
+    {
+      "id": 43,
+      "name": "Activation 2",
+      "status": "stopped",
+      "git_hash": "1d1789a160fd0ff33f583582ba3d1eed20697971",
+      "status_message": "Activation has stopped",
+      "activation_id": 5,
+      "started_at": "2023-10-27T19:17:56.517341Z",
+      "ended_at": null
+    },
+    {
+      "id": 42,
+      "name": "Activation 2",
+      "status": "completed",
+      "git_hash": "1d1789a160fd0ff33f583582ba3d1eed20697971",
+      "status_message": "Activation has completed",
+      "activation_id": 5,
+      "started_at": "2023-10-26T19:39:01.414799Z",
+      "ended_at": "2023-10-26T19:39:12.209406Z"
+    },
+    {
+      "id": 41,
+      "name": "Activation 2",
+      "status": "completed",
+      "git_hash": "1d1789a160fd0ff33f583582ba3d1eed20697971",
+      "status_message": "Activation has completed",
+      "activation_id": 5,
+      "started_at": "2023-10-26T19:22:58.826848Z",
+      "ended_at": "2023-10-26T19:23:09.696430Z"
+    },
+    {
+      "id": 40,
+      "name": "Activation 2",
+      "status": "stopped",
+      "git_hash": "1d1789a160fd0ff33f583582ba3d1eed20697971",
+      "status_message": "Activation has stopped",
+      "activation_id": 5,
+      "started_at": "2023-10-26T19:22:41.964064Z",
+      "ended_at": null
+    },
+    {
+      "id": 39,
+      "name": "Activation 2",
+      "status": "completed",
+      "git_hash": "1d1789a160fd0ff33f583582ba3d1eed20697971",
+      "status_message": "Activation has completed",
+      "activation_id": 5,
+      "started_at": "2023-10-26T19:21:40.834960Z",
+      "ended_at": "2023-10-26T19:21:52.057263Z"
+    }
+  ],
+  "restart_policy": "on-failure",
+  "restart_count": 2,
+  "rulebook_name": "fail.yml",
+  "current_job_id": null,
+  "rules_count": 1,
+  "rules_fired_count": 1,
+  "created_at": "2023-10-26T19:21:40.801669Z",
+  "modified_at": "2023-10-30T19:49:59.551090Z",
+  "restarted_at": "2023-10-30T19:49:48.298274Z",
+  "status_message": "Activation has completed"
+}

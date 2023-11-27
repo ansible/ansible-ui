@@ -15,6 +15,7 @@ import { getID } from '../hooks/useID';
 import { IPageAction, PageActionSelection, PageActionType } from './PageAction';
 import { PageActionSwitch } from './PageActionSwitch';
 import { isPageActionHidden, usePageActionDisabled } from './PageActionUtils';
+import { useTranslation } from 'react-i18next';
 
 const IconSpan = styled.span`
   padding-right: 4px;
@@ -120,7 +121,6 @@ export function PageActionDropdown<T extends object>(props: PageActionDropdownPr
             </div>
           ) : undefined
         }
-        ouiaId={id}
         data-cy={id}
       >
         {iconOnly ? undefined : label}
@@ -132,7 +132,6 @@ export function PageActionDropdown<T extends object>(props: PageActionDropdownPr
         onToggle={() => setDropdownOpen(!dropdownOpen)}
         toggleVariant={isPrimary ? 'primary' : undefined}
         style={isPrimary && !label ? { color: 'var(--pf-v5-global--Color--light-100)' } : {}}
-        ouiaId={id}
         data-cy={id}
       >
         {toggleIcon}
@@ -179,6 +178,7 @@ function PageDropdownActionItem<T extends object>(props: {
   index: number;
 }): JSX.Element {
   const { action, selectedItems, selectedItem, hasIcons, hasSwitches, index } = props;
+  const { t } = useTranslation();
   const isPageActionDisabled = usePageActionDisabled<T>();
   const isDisabled = isPageActionDisabled(action, selectedItem, selectedItems);
 
@@ -189,7 +189,7 @@ function PageDropdownActionItem<T extends object>(props: {
       let tooltip = isDisabled ?? action.tooltip;
       let isButtonDisabled = !!isDisabled;
       if (action.selection === PageActionSelection.Multiple && !selectedItems.length) {
-        tooltip = 'No selections';
+        tooltip = t(`Select at least one item from the list`);
         isButtonDisabled = true;
       }
       return (
@@ -218,7 +218,6 @@ function PageDropdownActionItem<T extends object>(props: {
               }}
               isAriaDisabled={isButtonDisabled}
               id={getID(action)}
-              ouiaId={getID(action)}
               data-cy={getID(action)}
             >
               {action.label}

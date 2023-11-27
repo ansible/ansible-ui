@@ -4,6 +4,7 @@ import { compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { useNameColumn } from '../../../../common/columns';
 import { getItemKey } from '../../../../common/crud/Data';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
+import { awxAPI } from '../../../api/awx-utils';
 import { Project } from '../../../interfaces/Project';
 import { useProjectsColumns } from './useProjectsColumns';
 
@@ -85,7 +86,9 @@ export function useCancelProjects(onComplete?: (projects: Project[]) => void) {
       onComplete,
       actionFn: (project: Project) =>
         postRequest(
-          `/api/v2/project_updates/${project.summary_fields?.current_update?.id ?? 0}/cancel/`,
+          awxAPI`/project_updates/${
+            project.summary_fields?.current_update?.id.toString() ?? ''
+          }/cancel/`,
           {}
         ),
     });
