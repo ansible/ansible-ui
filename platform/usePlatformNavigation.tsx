@@ -79,16 +79,16 @@ export function usePlatformNavigation() {
       navigationItems.push(analytics);
     }
     navigationItems.push({
-      id: PlatformRoute.Lightspeed,
-      label: 'Ansible Lightspeed',
-      path: 'lightspeed',
-      element: <Lightspeed />,
-    });
-    navigationItems.push({
       id: PlatformRoute.Access,
       label: t('Access Management'),
       path: 'access',
       children: [organizations, teams, users],
+    });
+    navigationItems.push({
+      id: PlatformRoute.Lightspeed,
+      label: 'Ansible Lightspeed',
+      path: 'lightspeed',
+      element: <Lightspeed />,
     });
     navigationItems.push({
       id: PlatformRoute.Root,
