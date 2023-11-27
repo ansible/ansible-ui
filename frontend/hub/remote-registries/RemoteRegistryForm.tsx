@@ -15,7 +15,7 @@ import { PageFormFileUpload } from '../../../framework/PageForm/Inputs/PageFormF
 import { PageFormGroup } from '../../../framework/PageForm/Inputs/PageFormGroup';
 import { PageFormExpandableSection } from '../../../framework/PageForm/PageFormExpandableSection';
 import { PageFormSecret } from '../../../framework/PageForm/Inputs/PageFormSecret';
-import { AwxError } from '../../awx/common/AwxError';
+import { HubError } from '../common/HubError';
 import { useGet } from '../../common/crud/useGet';
 import { usePostRequest } from '../../common/crud/usePostRequest';
 import { HubPageForm } from '../HubPageForm';
@@ -114,7 +114,7 @@ export function EditRemoteRegistry() {
     hubAPI`/_ui/v1/execution-environments/registries/?name=${name ?? ''}`
   );
   const getPageUrl = useGetPageUrl();
-  if (error) return <AwxError error={error} handleRefresh={refresh} />;
+  if (error) return <HubError error={error} handleRefresh={refresh} />;
   if (!data) return <LoadingPage breadcrumbs tabs />;
 
   const remoteRegistry = data?.data[0];
@@ -134,7 +134,7 @@ export function EditRemoteRegistry() {
             { label: t('Edit remote registry') },
           ]}
         />
-        <AwxError error={new Error(t('Remote registry not found'))} handleRefresh={handleRefresh} />
+        <HubError error={new Error(t('Remote registry not found'))} handleRefresh={handleRefresh} />
       </PageLayout>
     );
   }

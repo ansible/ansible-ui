@@ -12,7 +12,7 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../framework';
-import { AwxError } from '../../awx/common/AwxError';
+import { HubError } from '../common/HubError';
 import { StatusCell } from '../../common/Status';
 import { useGet } from '../../common/crud/useGet';
 import { HubRoute } from '../HubRoutes';
@@ -38,7 +38,7 @@ export function RemoteRegistryDetails() {
   );
 
   if (errorRemoteRegistry) {
-    return <AwxError error={errorRemoteRegistry} handleRefresh={refreshRemoteRegistry} />;
+    return <HubError error={errorRemoteRegistry} handleRefresh={refreshRemoteRegistry} />;
   }
   if (!remoteRegistryData) {
     return <LoadingPage breadcrumbs tabs />;
