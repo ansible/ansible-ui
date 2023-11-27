@@ -5,8 +5,7 @@ import '@patternfly/patternfly/patternfly-charts-theme-dark.css';
 
 import '@patternfly/quickstarts/dist/quickstarts.min.css';
 
-import { AllQuickStartStates, QuickStartContainer } from '@patternfly/quickstarts';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { Outlet } from 'react-router-dom';
 import useSWR from 'swr';
 import { PageApp } from '../framework/PageNavigation/PageApp';
@@ -21,7 +20,7 @@ import { HubContextProvider } from '../frontend/hub/useHubContext';
 import { PlatformLogin } from './PlatformLogin';
 import { PlatformMasthead } from './PlatformMasthead';
 import { gatewayAPI } from './api/gateway-api-utils';
-import { quickStarts } from './dashboard/quickstarts/quickstarts';
+import { QuickStartProvider } from './dashboard/quickstarts/QuickStartProvider';
 import { ActivePlatformUserProvider } from './hooks/useActivePlatformUser';
 import { Service } from './interfaces/Service';
 import { usePlatformNavigation } from './usePlatformNavigation';
@@ -29,21 +28,11 @@ import { usePlatformNavigation } from './usePlatformNavigation';
 export default function PlatformMain() {
   const { data: services } = useServices();
   const navigation = usePlatformNavigation(services || []);
-
-  const [activeQuickStartID, setActiveQuickStartID] = useState('add-healthchecks');
-  const [allQuickStartStates, setAllQuickStartStates] = useState<AllQuickStartStates>({});
-
   return (
     <PageApp
       login={<PlatformLogin />}
       root={
-        <QuickStartContainer
-          quickStarts={quickStarts}
-          activeQuickStartID={activeQuickStartID}
-          setActiveQuickStartID={setActiveQuickStartID}
-          allQuickStartStates={allQuickStartStates}
-          setAllQuickStartStates={setAllQuickStartStates}
-        >
+        <QuickStartProvider>
           <WebSocketProvider>
             <ActivePlatformUserProvider>
               <ActiveUserProvider>
@@ -57,7 +46,7 @@ export default function PlatformMain() {
               </ActiveUserProvider>
             </ActivePlatformUserProvider>
           </WebSocketProvider>
-        </QuickStartContainer>
+        </QuickStartProvider>
       }
       masthead={<PlatformMasthead />}
       navigation={navigation}

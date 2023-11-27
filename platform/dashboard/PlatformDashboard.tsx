@@ -17,10 +17,11 @@ import { AwxRecentInventoriesCard } from '../../frontend/awx/dashboard/cards/Awx
 import { AwxRecentJobsCard } from '../../frontend/awx/dashboard/cards/AwxRecentJobsCard';
 import { AwxRecentProjectsCard } from '../../frontend/awx/dashboard/cards/AwxRecentProjectsCard';
 import { EdaRulebookActivationsCard } from '../../frontend/eda/dashboard/cards/EdaRulebookActivationsCard';
-import { quickStarts } from './quickstarts/quickstarts';
+import { useQuickStarts } from './quickstarts/QuickStartProvider';
 
 export function PlatformDashboard() {
   const { t } = useTranslation();
+  const { quickStarts, setActiveQuickStartID } = useQuickStarts();
   return (
     <PageLayout>
       <PageHeader
@@ -34,7 +35,10 @@ export function PlatformDashboard() {
           <CardBody>
             <Gallery hasGutter minWidths={{ default: '390px' }}>
               {quickStarts.map((quickStart) => (
-                <GalleryCard key={quickStart.metadata.name}>
+                <GalleryCard
+                  key={quickStart.metadata.name}
+                  onClick={() => setActiveQuickStartID(quickStart.metadata.name)}
+                >
                   <GalleryCardHeader
                     icon={quickStart.spec.icon}
                     title={quickStart.spec.displayName}
@@ -56,9 +60,9 @@ export function PlatformDashboard() {
   );
 }
 
-export function GalleryCard(props: { children: ReactNode }) {
+export function GalleryCard(props: { children: ReactNode; onClick?: () => void }) {
   return (
-    <Card isFlat isRounded>
+    <Card isFlat isRounded onClick={props.onClick}>
       {props.children}
     </Card>
   );
