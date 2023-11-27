@@ -13,6 +13,7 @@ import type { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplat
 export function WorkflowVisualizer() {
   const { t } = useTranslation();
   const { id } = useParams<{ id?: string }>();
+
   const {
     data: wfNodes,
     error: workflowNodeError,
