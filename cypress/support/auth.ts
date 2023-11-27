@@ -12,37 +12,27 @@ Cypress.Commands.add('requiredVariablesAreSet', (requiredVariables: string[]) =>
   });
 });
 
-Cypress.Commands.add('login', (server: string, username: string, password: string) => {
-  window.localStorage.setItem('theme', 'light');
-  window.localStorage.setItem('disclaimer', 'true');
-
-  if (server === Cypress.env('AWX_SERVER')) {
-    cy.visit(`/ui_next/dashboard/`, {
-      retryOnStatusCodeFailure: true,
-      retryOnNetworkFailure: true,
-    });
-  } else {
-    cy.visit(`login/`, {
-      retryOnStatusCodeFailure: true,
-      retryOnNetworkFailure: true,
-    });
-  }
-  cy.get('[data-cy="username"]').type(username, { log: false, delay: 100 });
-  cy.get('[data-cy="password"]').type(password, { log: false });
-  cy.get('[data-cy="Submit"]').click();
-});
-
 Cypress.Commands.add('awxLogin', () => {
   cy.requiredVariablesAreSet(['AWX_SERVER', 'AWX_USERNAME', 'AWX_PASSWORD']);
   cy.session(
     'AWX',
     () => {
-      cy.login(
-        Cypress.env('AWX_SERVER') as string,
-        Cypress.env('AWX_USERNAME') as string,
-        Cypress.env('AWX_PASSWORD') as string
-      );
+      window.localStorage.setItem('theme', 'light');
+      window.localStorage.setItem('disclaimer', 'true');
       window.localStorage.setItem('hide-welcome-message', 'true');
+      cy.visit(`/ui_next/login`, {
+        retryOnStatusCodeFailure: true,
+        retryOnNetworkFailure: true,
+      });
+      cy.get('[data-cy="username"]').type(Cypress.env('AWX_USERNAME') as string, {
+        log: false,
+        delay: 0,
+      });
+      cy.get('[data-cy="password"]').type(Cypress.env('AWX_PASSWORD') as string, {
+        log: false,
+        delay: 0,
+      });
+      cy.get('[data-cy="Submit"]').click();
       cy.get('[data-cy="nav-toggle"]').should('exist');
     },
     {
@@ -60,11 +50,19 @@ Cypress.Commands.add('edaLogin', () => {
   cy.session(
     'EDA',
     () => {
-      cy.login(
-        Cypress.env('EDA_SERVER') as string,
-        Cypress.env('EDA_USERNAME') as string,
-        Cypress.env('EDA_PASSWORD') as string
-      );
+      cy.visit(`/eda/login`, {
+        retryOnStatusCodeFailure: true,
+        retryOnNetworkFailure: true,
+      });
+      cy.get('[data-cy="username"]').type(Cypress.env('EDA_USERNAME') as string, {
+        log: false,
+        delay: 0,
+      });
+      cy.get('[data-cy="password"]').type(Cypress.env('EDA_PASSWORD') as string, {
+        log: false,
+        delay: 0,
+      });
+      cy.get('[data-cy="Submit"]').click();
       cy.verifyPageTitle('Welcome to');
     },
     {
@@ -91,11 +89,19 @@ Cypress.Commands.add('hubLogin', () => {
   cy.session(
     'HUB',
     () => {
-      cy.login(
-        Cypress.env('HUB_SERVER') as string,
-        Cypress.env('HUB_USERNAME') as string,
-        Cypress.env('HUB_PASSWORD') as string
-      );
+      cy.visit(`/hub/login`, {
+        retryOnStatusCodeFailure: true,
+        retryOnNetworkFailure: true,
+      });
+      cy.get('[data-cy="username"]').type(Cypress.env('HUB_USERNAME') as string, {
+        log: false,
+        delay: 0,
+      });
+      cy.get('[data-cy="password"]').type(Cypress.env('HUB_PASSWORD') as string, {
+        log: false,
+        delay: 0,
+      });
+      cy.get('[data-cy="Submit"]').click();
       cy.verifyPageTitle('Welcome to');
     },
     {
