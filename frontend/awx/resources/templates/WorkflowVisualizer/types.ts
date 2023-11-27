@@ -47,6 +47,7 @@ export interface CustomLabelProps {
   status: EdgeStatus;
   xPoint: number;
   yPoint: number;
+  hoverRef: (node: Element) => (() => void) | undefined;
 }
 
 export interface CustomNodeProps extends WithSelectionProps {
