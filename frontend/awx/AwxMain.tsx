@@ -1,6 +1,6 @@
+import '@patternfly/patternfly/patternfly-addons.css';
 import '@patternfly/patternfly/patternfly-base.css';
 import '@patternfly/patternfly/patternfly-charts.css';
-import '@patternfly/patternfly/patternfly-addons.css';
 
 import '@patternfly/patternfly/patternfly-charts-theme-dark.css';
 
@@ -30,6 +30,7 @@ export default function AwxMain() {
       }
       masthead={<AwxMasthead />}
       navigation={navigation}
+      basename={process.env.AWX_ROUTE_PREFIX}
     />
   );
 }

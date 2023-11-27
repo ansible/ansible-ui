@@ -11,6 +11,7 @@ import {
 import { CSSProperties, ReactNode, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { Help } from '../components/Help';
+import { useID } from '../hooks/useID';
 import { PageDashboardContext } from './PageDashboard';
 
 export type PageDashboardCardWidth = 'xxs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
@@ -19,6 +20,7 @@ export type PageDashboardCardHeight = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 const heightUnit = 90;
 
 export function PageDashboardCard(props: {
+  id?: string;
   supertitle?: string;
   title?: string;
   subtitle?: string;
@@ -98,8 +100,11 @@ export function PageDashboardCard(props: {
 
   const minHeight = rowSpan ? heightUnit * rowSpan + 16 * (rowSpan - 1) : undefined;
 
+  const id = useID(props);
+
   return (
     <Card
+      id={id}
       isFlat
       isRounded
       style={{
@@ -113,7 +118,7 @@ export function PageDashboardCard(props: {
       }}
       isCompact={props.isCompact}
       className="page-dashboard-card"
-      data-cy={`${props.title?.toLowerCase().split(' ').join('-')}`}
+      data-cy={id}
     >
       {(props.title || props.linkText) && (
         <CardHeader>

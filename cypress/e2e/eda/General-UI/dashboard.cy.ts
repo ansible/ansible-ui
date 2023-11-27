@@ -179,7 +179,7 @@ describe('dashboard checks when resources before any resources are created', () 
         cy.get('[data-cy="card-subtitle"]').should('contain', 'Recently updated activations');
       });
 
-    cy.get('[data-cy="rule-audit"]')
+    cy.get('[data-cy="recent-rule-audits"]')
       .should('contain', 'Rule Audit')
       .within(() => {
         cy.get('[data-cy="card-subtitle"]').should('contain', 'Recently fired rules');
