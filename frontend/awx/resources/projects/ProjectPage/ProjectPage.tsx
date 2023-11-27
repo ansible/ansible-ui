@@ -44,9 +44,7 @@ export function ProjectPage() {
       { label: t('Details'), page: AwxRoute.ProjectDetails },
       { label: t('Access'), page: AwxRoute.ProjectAccess },
       { label: t('Schedules'), page: AwxRoute.ProjectSchedules },
-      { label: t('Jobs'), page: AwxRoute.ProjectNotifications },
       { label: t('Job templates'), page: AwxRoute.ProjectJobTemplates },
-      { label: t('Survey'), page: AwxRoute.ProjectSurvey },
     ];
     if (currentUser?.is_system_auditor || (isNotifAdmin && isNotifAdmin.results.length > 0)) {
       tabs.push({ label: t('Notifications'), page: AwxRoute.WorkflowJobTemplateNotifications });
