@@ -28,6 +28,8 @@ import {
   withPanZoom,
   withSelection,
   TopologyView as PFTopologyView,
+  GraphElement,
+  ElementModel,
 } from '@patternfly/react-topology';
 import { EmptyStateNoData } from '../../../../../framework/components/EmptyStateNoData';
 import {
@@ -44,6 +46,7 @@ import { useWorkflowVisualizerToolbarActions } from './hooks/useWorkflowVisualiz
 import { LayoutNode, GraphNode, EdgeStatus } from './types';
 import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
 import type { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
+import { EdgeContextMenu } from './components/EdgeContextMenu';
 
 const TopologyView = styled(PFTopologyView)`
   & .pf-topology-view__project-toolbar {
@@ -104,6 +107,11 @@ export const Visualizer = ({ data: { nodes = [], template } }: TopologyProps) =>
   }
 
   const nodeContextMenu = NodeContextMenu();
+
+  const edgeContextMenu = useCallback(
+    (element: GraphElement<ElementModel, unknown>) => EdgeContextMenu(element, t),
+    [t]
+  );
   const baselineComponentFactory: ComponentFactory = useCallback(
     (kind: ModelKind, type: string) => {
       switch (type) {
@@ -132,13 +140,13 @@ export const Visualizer = ({ data: { nodes = [], template } }: TopologyProps) =>
                 )(withDragNode(nodeDragSourceSpec('node', true, true))(withSelection()(CustomNode)))
               );
             case ModelKind.edge:
-              return CustomEdge;
+              return withContextMenu(edgeContextMenu)(withSelection()(CustomEdge));
             default:
               return undefined;
           }
       }
     },
-    [nodeContextMenu]
+    [nodeContextMenu, edgeContextMenu]
   );
 
   const createVisualization = useCallback(() => {
@@ -164,9 +172,9 @@ export const Visualizer = ({ data: { nodes = [], template } }: TopologyProps) =>
   const createEdge = useCallback(
     (source: string, target: string, tagStatus: EdgeStatus) => {
       const tagLabel = {
-        [EdgeStatus.success]: t('On success'),
-        [EdgeStatus.danger]: t('On fail'),
-        [EdgeStatus.info]: t('On always'),
+        [EdgeStatus.success]: t('Run on success'),
+        [EdgeStatus.danger]: t('Run on fail'),
+        [EdgeStatus.info]: t('Run always'),
       };
 
       return {
