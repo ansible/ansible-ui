@@ -113,7 +113,7 @@ function CopyToRepositoryModal(props: {
       props.onClose();
     } catch (error) {
       setError(
-        operation == 'approve' ? t('Can not approve collection.') : t('Can not copy collection')
+        operation === 'approve' ? t('Can not approve collection.') : t('Can not copy collection')
       );
       setIsLoading(false);
     }
@@ -148,7 +148,7 @@ function CopyToRepositoryModal(props: {
   }, []);
 
   let queryParams = undefined;
-  if (operation == 'approve') {
+  if (operation === 'approve') {
     queryParams = { pulp_label_select: 'pipeline=approved' };
   }
 
@@ -179,7 +179,7 @@ function CopyToRepositoryModal(props: {
           onClick={() => {
             void copyToRepositories();
           }}
-          isDisabled={selectedRepositories.length == 0}
+          isDisabled={selectedRepositories.length === 0}
           isLoading={isLoading}
         >
           {t('Select')}
@@ -213,8 +213,8 @@ function CopyToRepositoryModal(props: {
         selectedItems={selectedRepositories as AnsibleAnsibleRepositoryResponse[]}
         isSelectMultiple={true}
         isSelected={(item) =>
-          selectedRepositories.find((i) => i.name == item.name) ||
-          fixedRepositories.find((i) => i.name == item.name)
+          selectedRepositories.find((i) => i.name === item.name) ||
+          fixedRepositories.find((i) => i.name === item.name)
             ? true
             : false
         }
@@ -226,8 +226,8 @@ function CopyToRepositoryModal(props: {
           const newItems = [...selectedRepositories];
           for (const item of items) {
             if (
-              !selectedRepositories.find((item2) => item.name == item2.name) &&
-              !fixedRepositories.find((item2) => item2.name == item.name)
+              !selectedRepositories.find((item2) => item.name === item2.name) &&
+              !fixedRepositories.find((item2) => item2.name === item.name)
             ) {
               newItems.push(item);
             }
@@ -235,7 +235,7 @@ function CopyToRepositoryModal(props: {
           setSelectedRepositories(newItems);
         }}
         unselectItem={(item) => {
-          setSelectedRepositories(selectedRepositories.filter((item2) => item2.name != item.name));
+          setSelectedRepositories(selectedRepositories.filter((item2) => item2.name !== item.name));
         }}
         unselectAll={() => {
           setSelectedRepositories([]);

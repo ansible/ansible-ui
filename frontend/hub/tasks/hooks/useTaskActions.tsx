@@ -22,7 +22,7 @@ export function useTaskActions(onComplete?: (tasks: Task[]) => void) {
         isDanger: true,
         isDisabled: (item: Task) => {
           const hasPermission = context.hasPermission('core.change_task');
-          const isStoppable = item.state == 'running' || item.state == 'waiting';
+          const isStoppable = item.state === 'running' || item.state === 'waiting';
 
           if (isStoppable && hasPermission) {
             return '';
