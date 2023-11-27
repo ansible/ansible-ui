@@ -87,8 +87,8 @@ async function deleteCollectionFromRepository(
 
   if (!version) {
     // load all associated collection versions
-
-    const url = hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${
+    // TODO - waiting for API
+    const url = hubAPI`/v3/plugin/ansible/search/collection-versions/?limit=100&name=${
       collection.collection_version?.name || ''
     }&repository_name=${collection.repository.name}`;
 

@@ -181,6 +181,9 @@ export async function getHubRequest<ResponseBody extends object | TaskResponse>(
   return hubRequestCommon<ResponseBody>(url, options);
 }
 
+/*
+Use this function carefuly, can be only used in situations where there are not tons of data
+*/
 export async function getHubAllItems<ResponseBody, ResponseItem>(
   url: string,
   settings: {
