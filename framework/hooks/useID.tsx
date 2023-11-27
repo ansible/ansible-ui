@@ -5,7 +5,9 @@ export function useID(props: { id?: string; label?: string; name?: string }) {
   return getID(props) || generatedId;
 }
 
-export function getID(props: { id?: string; label?: string; name?: string } | string) {
+export function getID(
+  props: { id?: string; label?: string; name?: string; title?: string } | string
+) {
   if (typeof props === 'string') {
     return props.toLowerCase().replace(/ /g, '-').replace(/_/g, '-').replace(/\./g, '-');
   }
@@ -16,6 +18,10 @@ export function getID(props: { id?: string; label?: string; name?: string } | st
 
   if (props.name) {
     return props.name.toLowerCase().replace(/ /g, '-').replace(/_/g, '-').replace(/\./g, '-');
+  }
+
+  if (props.title) {
+    return props.title.toLowerCase().replace(/ /g, '-').replace(/_/g, '-').replace(/\./g, '-');
   }
 
   if (props.label) {
