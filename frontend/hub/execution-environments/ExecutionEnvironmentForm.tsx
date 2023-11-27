@@ -27,7 +27,7 @@ import { useSelectRegistrySingle } from './hooks/useRegistrySelector';
 import { usePageNavigate } from '../../../framework';
 
 import { LoadingPage } from '../../../framework/components/LoadingPage';
-import { AwxError } from '../../awx/common/AwxError';
+import { HubError } from '../common/HubError';
 
 export function CreateExecutionEnvironment() {
   return <ExecutionEnvironmentForm mode="add" />;
@@ -148,13 +148,13 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
   };
 
   if (isLoading) return <LoadingPage breadcrumbs tabs />;
-  if (registry.error) return <AwxError error={registry.error} handleRefresh={registry.refresh} />;
+  if (registry.error) return <HubError error={registry.error} handleRefresh={registry.refresh} />;
   if (executionEnvironment.error)
     return (
-      <AwxError error={executionEnvironment.error} handleRefresh={executionEnvironment.refresh} />
+      <HubError error={executionEnvironment.error} handleRefresh={executionEnvironment.refresh} />
     );
   if (singleRegistry.error)
-    return <AwxError error={singleRegistry.error} handleRefresh={singleRegistry.refresh} />;
+    return <HubError error={singleRegistry.error} handleRefresh={singleRegistry.refresh} />;
 
   return (
     <PageLayout>
