@@ -21,6 +21,7 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
   });
 
   it('clicking on Cog icon opens the Manage Dashboard modal', () => {
+    cy.visit('/ui_next/dashboard');
     cy.navigateTo('awx', 'dashboard');
     cy.clickButton('Manage view');
     cy.get('.pf-v5-c-modal-box__title-text').should('contain', 'Manage Dashboard');
