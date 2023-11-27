@@ -9,6 +9,8 @@ import {
   isEdge,
   useHover,
   observer,
+  WithSourceDragProps,
+  WithTargetDragProps,
 } from '@patternfly/react-topology';
 import { css } from '@patternfly/react-styles';
 import { CustomLabel } from './CustomLabel';
@@ -30,68 +32,73 @@ function useCenterPoint(edgePath: string) {
   return { centerPoint, pathRef };
 }
 
-const CustomEdgeInner: FC<CustomEdgeInnerProps & WithContextMenuProps & WithSelectionProps> =
-  observer((props) => {
-    const {
-      element: edgeElement,
-      contextMenuOpen,
-      dragging,
-      selected,
-      onSelect,
-      onContextMenu,
-      ...rest
-    } = props;
-    const [hover, hoverRef] = useHover(0);
-    const [tagHover, tagHoverRef] = useHover(0);
-    const startPoint = edgeElement.getStartPoint();
-    const endPoint = edgeElement.getEndPoint();
+const CustomEdgeInner: FC<
+  CustomEdgeInnerProps &
+    WithContextMenuProps &
+    WithSelectionProps &
+    WithSourceDragProps &
+    WithTargetDragProps
+> = observer((props) => {
+  const {
+    element: edgeElement,
+    contextMenuOpen,
+    dragging,
+    selected,
+    onSelect,
+    onContextMenu,
+    ...rest
+  } = props;
+  const [hover, hoverRef] = useHover(0);
+  const [tagHover, tagHoverRef] = useHover(0);
+  const startPoint = edgeElement.getStartPoint();
+  const endPoint = edgeElement.getEndPoint();
 
-    const edgePath = integralShapePath(startPoint, endPoint, 0, 20);
-    const { centerPoint, pathRef } = useCenterPoint(edgePath);
+  const edgePath = integralShapePath(startPoint, endPoint, 0, 20);
+  const { centerPoint, pathRef } = useCenterPoint(edgePath);
 
-    const data = edgeElement.getData();
-    if (!data) return null;
-    const { tag, tagStatus } = data;
+  const data = edgeElement.getData();
+  if (!data) return null;
+  const { tag, tagStatus } = data;
 
-    const edgeStyles = css(
-      `pf-topology__edge ${StatusModifier[tagStatus]}`,
-      (hover || tagHover) && 'pf-m-hover'
-    );
-    return (
-      <Layer id={dragging ? TOP_LAYER : undefined} {...rest}>
-        <g
-          data-test-id="task-handler"
-          className={edgeStyles}
-          fillOpacity={0}
-          ref={hoverRef as LegacyRef<SVGTextElement>}
-          onClick={onSelect}
+  const edgeStyles = css(
+    `pf-topology__edge ${StatusModifier[tagStatus]}`,
+    (hover || tagHover) && 'pf-m-hover'
+  );
+  return (
+    <Layer id={dragging ? TOP_LAYER : undefined} {...rest}>
+      <g
+        data-test-id="task-handler"
+        className={edgeStyles}
+        fillOpacity={0}
+        ref={hoverRef as LegacyRef<SVGTextElement>}
+        onClick={onSelect}
+      >
+        <path
+          className="pf-topology__edge__background"
+          d={integralShapePath(startPoint, endPoint, 0, 20)}
+        />
+        <path
+          d={integralShapePath(startPoint, endPoint, 0, 20)}
+          transform="translate(0.5,0.5)"
+          shapeRendering="geometricPrecision"
+          className="pf-topology__edge__link"
+          ref={pathRef}
+        />
+      </g>
+      {centerPoint ? (
+        <CustomLabel
+          hoverRef={tagHoverRef}
+          xPoint={centerPoint.x}
+          yPoint={centerPoint.y}
+          status={tagStatus}
+          {...props}
         >
-          <path
-            className="pf-topology__edge__background"
-            d={integralShapePath(startPoint, endPoint, 0, 20)}
-          />
-          <path
-            d={integralShapePath(startPoint, endPoint, 0, 20)}
-            transform="translate(0.5,0.5)"
-            shapeRendering="geometricPrecision"
-            className="pf-topology__edge__link"
-            ref={pathRef}
-          />
-        </g>
-        {centerPoint ? (
-          <CustomLabel
-            hoverRef={tagHoverRef}
-            xPoint={centerPoint.x}
-            yPoint={centerPoint.y}
-            status={tagStatus}
-            {...props}
-          >
-            {tag}
-          </CustomLabel>
-        ) : null}
-      </Layer>
-    );
-  });
+          {tag}
+        </CustomLabel>
+      ) : null}
+    </Layer>
+  );
+});
 
 export const CustomEdge: FC<CustomEdgeProps & WithContextMenuProps & WithSelectionProps> = ({
   element,
