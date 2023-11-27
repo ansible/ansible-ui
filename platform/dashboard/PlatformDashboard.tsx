@@ -1,4 +1,3 @@
-/* eslint-disable i18next/no-literal-string */
 import {
   Card,
   CardBody,
@@ -19,8 +18,6 @@ import { AwxRecentJobsCard } from '../../frontend/awx/dashboard/cards/AwxRecentJ
 import { AwxRecentProjectsCard } from '../../frontend/awx/dashboard/cards/AwxRecentProjectsCard';
 import { EdaRulebookActivationsCard } from '../../frontend/eda/dashboard/cards/EdaRulebookActivationsCard';
 import { quickStarts } from './quickstarts/quickstarts';
-// import EventDrivenControllerIcon from '../icons/event-driver-controller.svg';
-// import AutomationExentutionEnvironmnentIcon from '../icons//automation-execution-environment.svg';
 
 export function PlatformDashboard() {
   const { t } = useTranslation();
@@ -33,10 +30,7 @@ export function PlatformDashboard() {
         )}
       />
       <PageDashboard>
-        <PageDashboardCard
-          title={t('Getting started with the Ansible Automation Platform')}
-          width="xxl"
-        >
+        <PageDashboardCard title={t('Ansible Automation Platform Quick Starts')} width="xxl">
           <CardBody>
             <Gallery hasGutter minWidths={{ default: '390px' }}>
               {quickStarts.map((quickStart) => (
@@ -44,7 +38,7 @@ export function PlatformDashboard() {
                   <GalleryCardHeader
                     icon={quickStart.spec.icon}
                     title={quickStart.spec.displayName}
-                    subtitle={quickStart.spec.subtitle}
+                    subtitle={quickStart.subtitle}
                   />
                   <CardBody>{quickStart.spec.description}</CardBody>
                 </GalleryCard>
@@ -52,10 +46,6 @@ export function PlatformDashboard() {
             </Gallery>
           </CardBody>
         </PageDashboardCard>
-        {/* <PageDashboardCard title={t('Execution Environments')} width="xxl">
-          <CardBody>Something goes here.</CardBody>
-        </PageDashboardCard> */}
-        {/* <AwxCountsCard /> */}
         <AwxJobActivityCard />
         <AwxRecentJobsCard />
         <AwxRecentProjectsCard />
@@ -68,12 +58,7 @@ export function PlatformDashboard() {
 
 export function GalleryCard(props: { children: ReactNode }) {
   return (
-    <Card
-      isSelectable
-      isFlat
-      isRounded
-      style={{ backgroundColor: 'var(--pf-global--BackgroundColor--300)' }}
-    >
+    <Card isFlat isRounded>
       {props.children}
     </Card>
   );
@@ -99,5 +84,3 @@ const CardSubtitle = styled.div`
   opacity: 0.5;
   font-size: smaller;
 `;
-
-const iconStyle = { width: 38, height: 38 };

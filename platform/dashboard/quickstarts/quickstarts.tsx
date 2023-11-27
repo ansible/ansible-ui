@@ -1,4 +1,7 @@
 import { QuickStart } from '@patternfly/quickstarts';
-import Test from './test.json';
+import Test from './finding-content.json';
 
-export const quickStarts: QuickStart[] = [Test as QuickStart];
+interface IPlatformQuickStart extends QuickStart {
+  subtitle: string;
+}
+export const quickStarts: IPlatformQuickStart[] = [Test as IPlatformQuickStart];
