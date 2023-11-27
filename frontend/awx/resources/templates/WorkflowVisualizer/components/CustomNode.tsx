@@ -11,8 +11,10 @@ import {
   DefaultNode,
   LabelPosition,
   WithContextMenuProps,
+  WithCreateConnectorProps,
   WithDragNodeProps,
   WithSelectionProps,
+  observer,
 } from '@patternfly/react-topology';
 import type { CustomNodeProps } from '../types';
 import type { SVGIconProps } from '@patternfly/react-icons/dist/js/createIcon';
@@ -28,8 +30,13 @@ const NodeIcon: Record<UnifiedJobType, ElementType<SVGIconProps>> = {
 };
 
 export const CustomNode: FC<
-  CustomNodeProps & WithContextMenuProps & WithSelectionProps & WithDragNodeProps
-> = ({ element, contextMenuOpen, onContextMenu, onSelect, selected, ...rest }) => {
+  CustomNodeProps &
+    WithContextMenuProps &
+    WithSelectionProps &
+    WithDragNodeProps &
+    WithCreateConnectorProps
+> = observer((props) => {
+  const { element, contextMenuOpen, onContextMenu, onSelect, selected, ...rest } = props;
   const data = element.getData();
 
   if (!data || !data.jobType) return null;
@@ -54,4 +61,4 @@ export const CustomNode: FC<
       </g>
     </DefaultNode>
   );
-};
+});

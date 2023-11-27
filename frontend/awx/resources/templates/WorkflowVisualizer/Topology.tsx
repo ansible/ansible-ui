@@ -28,6 +28,8 @@ import {
   withSelection,
   GraphElement,
   ElementModel,
+  withCreateConnector,
+  isNode,
 } from '@patternfly/react-topology';
 import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -137,14 +139,41 @@ export const Visualizer = ({ data: { nodes = [], template } }: TopologyProps) =>
             case ModelKind.graph:
               return withPanZoom()(withSelection()(GraphComponent));
             case ModelKind.node:
-              return withContextMenu(() => nodeContextMenu)(
-                withDndDrop(
-                  nodeDropTargetSpec([
-                    CONNECTOR_SOURCE_DROP,
-                    CONNECTOR_TARGET_DROP,
-                    CREATE_CONNECTOR_DROP_TYPE,
-                  ])
-                )(withDragNode(nodeDragSourceSpec('node', true, true))(withSelection()(CustomNode)))
+              return withCreateConnector((source, target): void => {
+                const model = source.getController().toModel();
+                if (!isNode(target)) {
+                  return;
+                }
+                if (!model.edges) {
+                  model.edges = [];
+                }
+                model.edges.push({
+                  id: `${source.getId()}-${target.getId()}`,
+                  type: 'edge',
+                  source: source.getId(),
+                  target: target.getId(),
+                  data: {
+                    tag: t('Run always'),
+                    tagStatus: 'info',
+                    endTerminalStatus: 'info',
+                  },
+                });
+                // TODO: Handle toggle unsaved changes
+                source.getController().fromModel(model);
+              })(
+                withContextMenu(() => nodeContextMenu)(
+                  withDndDrop(
+                    nodeDropTargetSpec([
+                      CONNECTOR_SOURCE_DROP,
+                      CONNECTOR_TARGET_DROP,
+                      CREATE_CONNECTOR_DROP_TYPE,
+                    ])
+                  )(
+                    withDragNode(nodeDragSourceSpec('node', true, true))(
+                      withSelection()(CustomNode)
+                    )
+                  )
+                )
               );
             case ModelKind.edge:
               return withContextMenu(edgeContextMenu)(withSelection()(CustomEdge));
@@ -153,7 +182,7 @@ export const Visualizer = ({ data: { nodes = [], template } }: TopologyProps) =>
           }
       }
     },
-    [nodeContextMenu, edgeContextMenu]
+    [nodeContextMenu, edgeContextMenu, t]
   );
 
   const createVisualization = useCallback(() => {
