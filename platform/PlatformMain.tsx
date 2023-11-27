@@ -1,10 +1,10 @@
 import '@patternfly/patternfly/patternfly-addons.css';
 import '@patternfly/patternfly/patternfly-base.css';
 import '@patternfly/patternfly/patternfly-charts.css';
+import '@patternfly/quickstarts/dist/quickstarts.min.css';
 
 // patternfly-charts-theme-dark.css must come after patternfly-charts.css
 import '@patternfly/patternfly/patternfly-charts-theme-dark.css';
-import '@patternfly/quickstarts/dist/quickstarts.min.css';
 
 import { Outlet } from 'react-router-dom';
 import { PageApp } from '../framework/PageNavigation/PageApp';
@@ -22,28 +22,25 @@ import { usePlatformNavigation } from './usePlatformNavigation';
 
 export default function PlatformMain() {
   const navigation = usePlatformNavigation();
-
-export default function PlatformMain() {
-  const navigation = usePlatformNavigation();
   return (
     <PageApp
       login={<PlatformLogin />}
       root={
         <PlatformProvider>
-        <QuickStartProvider>
-          <WebSocketProvider>
-            <ActivePlatformUserProvider>
-              <ActiveUserProvider>
-                <AwxConfigProvider>
-                  <HubContextProvider>
-                    <ActiveEdaUserProvider>
-                      <Outlet />
-                    </ActiveEdaUserProvider>
-                  </HubContextProvider>
-                </AwxConfigProvider>
-              </ActiveUserProvider>
-            </ActivePlatformUserProvider>
-          </WebSocketProvider>
+          <QuickStartProvider>
+            <WebSocketProvider>
+              <ActivePlatformUserProvider>
+                <ActiveUserProvider>
+                  <AwxConfigProvider>
+                    <HubContextProvider>
+                      <ActiveEdaUserProvider>
+                        <Outlet />
+                      </ActiveEdaUserProvider>
+                    </HubContextProvider>
+                  </AwxConfigProvider>
+                </ActiveUserProvider>
+              </ActivePlatformUserProvider>
+            </WebSocketProvider>
           </QuickStartProvider>
         </PlatformProvider>
       }
