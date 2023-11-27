@@ -111,5 +111,5 @@ Cypress.Commands.add('hubLogin', () => {
       },
     }
   );
-  cy.visit(`/`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true });
+  cy.visit(`/hub`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true });
 });
