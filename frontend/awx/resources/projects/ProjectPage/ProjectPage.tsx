@@ -43,6 +43,7 @@ export function ProjectPage() {
     const tabs = [
       { label: t('Details'), page: AwxRoute.ProjectDetails },
       { label: t('Access'), page: AwxRoute.ProjectAccess },
+      { label: t('Notifications'), page: AwxRoute.ProjectNotifications },
       { label: t('Schedules'), page: AwxRoute.ProjectSchedules },
       { label: t('Job templates'), page: AwxRoute.ProjectJobTemplates },
     ];
