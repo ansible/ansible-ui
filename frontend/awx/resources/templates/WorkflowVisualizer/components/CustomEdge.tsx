@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect, FC, LegacyRef } from 'react';
-import { observer } from 'mobx-react';
 import {
   Layer,
   StatusModifier,
@@ -9,6 +8,7 @@ import {
   integralShapePath,
   isEdge,
   useHover,
+  observer,
 } from '@patternfly/react-topology';
 import { css } from '@patternfly/react-styles';
 import { CustomLabel } from './CustomLabel';
@@ -81,7 +81,6 @@ const CustomEdgeInner: FC<CustomEdgeInnerProps & WithContextMenuProps & WithSele
         {centerPoint ? (
           <CustomLabel
             hoverRef={tagHoverRef}
-            tagHover={tagHover}
             xPoint={centerPoint.x}
             yPoint={centerPoint.y}
             status={tagStatus}

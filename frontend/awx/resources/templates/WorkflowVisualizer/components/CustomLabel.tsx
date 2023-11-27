@@ -1,6 +1,5 @@
 import { FC, LegacyRef } from 'react';
 import { useSize, WithContextMenuProps, WithSelectionProps } from '@patternfly/react-topology';
-import { css } from '@patternfly/react-styles';
 import { getPatternflyColor, pfDisabled } from '../../../../../../framework';
 import type { CustomLabelProps, EdgeStatus } from '../types';
 import { EllipsisVIcon } from '@patternfly/react-icons';
@@ -32,11 +31,9 @@ export const CustomLabel: FC<CustomLabelProps & WithContextMenuProps & WithSelec
   children,
   xPoint,
   yPoint,
-  selected,
   status,
   onContextMenu,
   hoverRef,
-  tagHover,
 }) => {
   const paddingX = 10;
   const paddingY = 4;
@@ -48,14 +45,9 @@ export const CustomLabel: FC<CustomLabelProps & WithContextMenuProps & WithSelec
   const y = yPoint - height / 2;
 
   const [iconSize, iconRef] = useSize([EllipsisVIcon, paddingX]);
-  const edgeStyles = css(tagHover && 'pf-m-hover ', selected && 'pf-m-selected');
   const contextIconRadius = textSize?.height ? `${textSize.height / 2}` : '0';
   return (
-    <g
-      className={edgeStyles}
-      transform={`translate(${x}, ${y})`}
-      ref={hoverRef as LegacyRef<SVGTextElement>}
-    >
+    <g transform={`translate(${x}, ${y})`} ref={hoverRef as LegacyRef<SVGTextElement>}>
       {textSize && (
         <rect
           style={getEdgeStyles(status)}

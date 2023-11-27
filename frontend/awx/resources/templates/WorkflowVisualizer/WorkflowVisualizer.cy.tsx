@@ -63,7 +63,7 @@ describe('WorkflowVisualizer', () => {
           expect(description).to.contain('Run status types');
           expect(description).to.contain('Run on success');
           expect(description).to.contain('Run on fail');
-          expect(description).to.contain('Run on always');
+          expect(description).to.contain('Run always');
         });
       });
   });
