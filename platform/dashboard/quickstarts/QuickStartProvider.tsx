@@ -1,15 +1,16 @@
-// this is a react context provider for the quickstarts
-
 import { AllQuickStartStates, QuickStart, QuickStartContainer } from '@patternfly/quickstarts';
-import { ReactNode, createContext, useContext, useState } from 'react';
-import FindingContent from './finding-content.json';
+import { ReactNode, createContext, useContext, useMemo, useState } from 'react';
+import { PlatformQuickStart } from './PlatformQuickStart';
+import { useFindingContent } from './useFindingContent';
 
-export interface IQuickStarts {
-  quickStarts: IPlatformQuickStart[];
+interface IQuickStartContext {
+  platformQuickStarts: PlatformQuickStart[];
+  quickStarts: QuickStart[];
   setActiveQuickStartID: (id: string) => void;
 }
 
-const QuickStartContext = createContext<IQuickStarts>({
+const QuickStartContext = createContext<IQuickStartContext>({
+  platformQuickStarts: [],
   quickStarts: [],
   setActiveQuickStartID: () => {},
 });
@@ -17,11 +18,22 @@ const QuickStartContext = createContext<IQuickStarts>({
 export const useQuickStarts = () => useContext(QuickStartContext);
 
 export function QuickStartProvider(props: { children: ReactNode }) {
-  const [activeQuickStartID, setActiveQuickStartID] = useState('add-healthchecks');
+  const [activeQuickStartID, setActiveQuickStartID] = useState('');
   const [allQuickStartStates, setAllQuickStartStates] = useState<AllQuickStartStates>({});
 
+  const findingContent = useFindingContent();
+  const platformQuickStarts = useMemo(() => [findingContent], [findingContent]);
+  const quickStarts = useMemo(
+    () => platformQuickStarts.map(convertQuickStart),
+    [platformQuickStarts]
+  );
+  const value = useMemo(
+    () => ({ platformQuickStarts, quickStarts, setActiveQuickStartID }),
+    [platformQuickStarts, quickStarts]
+  );
+
   return (
-    <QuickStartContext.Provider value={{ quickStarts, setActiveQuickStartID }}>
+    <QuickStartContext.Provider value={value}>
       <QuickStartContainer
         quickStarts={quickStarts}
         activeQuickStartID={activeQuickStartID}
@@ -35,8 +47,31 @@ export function QuickStartProvider(props: { children: ReactNode }) {
   );
 }
 
-export const quickStarts: IPlatformQuickStart[] = [FindingContent];
-
-export interface IPlatformQuickStart extends QuickStart {
-  subtitle: string;
+function convertQuickStart(quickStart: PlatformQuickStart): QuickStart {
+  return {
+    metadata: {
+      name: quickStart.id,
+    },
+    spec: {
+      icon: '',
+      displayName: quickStart.name,
+      description: quickStart.description,
+      durationMinutes: quickStart.durationMinutes,
+      prerequisites: quickStart.prerequisites,
+      introduction: quickStart.introduction,
+      conclusion: quickStart.conclusion,
+      tasks: quickStart.tasks.map((task) => ({
+        ...task,
+        id: task.title,
+        title: task.title,
+        description: [
+          '###' + task.description,
+          ...task.actions.map((a, i) => `${i + 1}. ${a}`),
+        ].join('\n'),
+        review: {
+          instructions: [task.review.question].join('\n'),
+        },
+      })),
+    },
+  };
 }

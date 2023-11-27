@@ -21,7 +21,7 @@ import { useQuickStarts } from './quickstarts/QuickStartProvider';
 
 export function PlatformDashboard() {
   const { t } = useTranslation();
-  const { quickStarts, setActiveQuickStartID } = useQuickStarts();
+  const { platformQuickStarts, setActiveQuickStartID } = useQuickStarts();
   return (
     <PageLayout>
       <PageHeader
@@ -34,17 +34,17 @@ export function PlatformDashboard() {
         <PageDashboardCard title={t('Ansible Automation Platform Quick Starts')} width="xxl">
           <CardBody>
             <Gallery hasGutter minWidths={{ default: '390px' }}>
-              {quickStarts.map((quickStart) => (
+              {platformQuickStarts.map((platformQuickStart) => (
                 <GalleryCard
-                  key={quickStart.metadata.name}
-                  onClick={() => setActiveQuickStartID(quickStart.metadata.name)}
+                  key={platformQuickStart.id}
+                  onClick={() => setActiveQuickStartID(platformQuickStart.id)}
                 >
                   <GalleryCardHeader
-                    icon={quickStart.spec.icon}
-                    title={quickStart.spec.displayName}
-                    subtitle={quickStart.subtitle}
+                    // icon={platformQuickStart}
+                    title={platformQuickStart.name}
+                    subtitle={platformQuickStart.subtitle}
                   />
-                  <CardBody>{quickStart.spec.description}</CardBody>
+                  <CardBody>{platformQuickStart.description}</CardBody>
                 </GalleryCard>
               ))}
             </Gallery>
