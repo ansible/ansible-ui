@@ -211,12 +211,12 @@ function transformEndpoint(url: string) {
   for (let id = 0; id < urls.length; id++) {
     const val = urls[id];
 
-    if (val == 'tower-analytics') {
+    if (val === 'tower-analytics') {
       urls[id] = 'analytics';
       continue;
     }
 
-    if (val == 'v1') {
+    if (val === 'v1') {
       // change path - swap analytics and version set to v2
       if (id - 1 >= 0) {
         const store = urls[id - 1];
@@ -386,7 +386,7 @@ function AnalyticsReportBuilderTable(props: AnalyticsTableProps) {
   let sortOption = queryParams.get('sort');
 
   // fix the desc sorting with prefix -
-  if (sortOption && sortOption.length > 0 && sortOption[0] == '-') {
+  if (sortOption && sortOption.length > 0 && sortOption[0] === '-') {
     sortOption = sortOption.substring(1);
   }
 
@@ -416,7 +416,7 @@ function AnalyticsReportBuilderTable(props: AnalyticsTableProps) {
   let perPageOptions: PerPageOptions[] = [];
 
   // set page options that are different from framework defaults (in fact, those defaults are from patternfly component itself)
-  if (props.report_name == 'automation_calculator') {
+  if (props.report_name === 'automation_calculator') {
     perPageOptions = [4, 6, 8, 10, 15, 20, 25].map((item) => {
       return { title: item, value: item };
     });
@@ -447,7 +447,7 @@ function AnalyticsReportBuilderTable(props: AnalyticsTableProps) {
               y: sortOption,
               tooltip: 'Savings for',
               field: sortOption,
-              label: props.options?.sort_options?.find((item) => item.key == sortOption)?.value,
+              label: props.options?.sort_options?.find((item) => item.key === sortOption)?.value,
               xTickFormat: getDateFormatByGranularity(props.defaultDataParams?.granularity || ''),
               chartType: chartType as AnyType,
             })}
@@ -480,7 +480,7 @@ function AnalyticsReportBuilderTable(props: AnalyticsTableProps) {
 }
 
 function capitalize(string: string) {
-  if (string.length == 0) {
+  if (string.length === 0) {
     return string;
   }
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -582,7 +582,7 @@ export function computeMainFilterKeys(params: AnalyticsReportBuilderBodyProps) {
     });
   }
 
-  if (items.length == 0) {
+  if (items.length === 0) {
     // if group by missing, try to determine them automatically
     const postParams = params.defaultDataParams;
     if (!postParams) {
@@ -625,7 +625,7 @@ function buildTableColumns(params: AnalyticsReportColumnBuilderProps) {
 
     // loop over obj items
     for (const key in obj) {
-      const alreadyExist = columns.find((item) => item.id == key);
+      const alreadyExist = columns.find((item) => item.id === key);
 
       let column = {} as ITableColumn<AnyType>;
 
@@ -660,7 +660,7 @@ function buildTableColumns(params: AnalyticsReportColumnBuilderProps) {
   if (params.mainData?.report.tableHeaders && params.mainData.report.tableHeaders.length > 0) {
     // set nice names
     for (const tableHeader of params.mainData.report.tableHeaders) {
-      const col = columns.find((item) => item.id == tableHeader.key);
+      const col = columns.find((item) => item.id === tableHeader.key);
 
       if (col) {
         col.header = tableHeader.value + '(' + tableHeader.key + ')';
@@ -669,7 +669,7 @@ function buildTableColumns(params: AnalyticsReportColumnBuilderProps) {
 
     // hide all columns into expanded that are not in table Header
     for (const col of columns) {
-      const found = params.mainData?.report?.tableHeaders?.find((item) => item.key == col.id);
+      const found = params.mainData?.report?.tableHeaders?.find((item) => item.key === col.id);
       if (!found) {
         col.table = ColumnTableOption.Expanded;
       }
@@ -679,7 +679,7 @@ function buildTableColumns(params: AnalyticsReportColumnBuilderProps) {
   // set sort by
   if (params.options?.sort_options) {
     for (const sort of params.options.sort_options) {
-      const col = columns.find((item) => item.id == sort.key);
+      const col = columns.find((item) => item.id === sort.key);
 
       if (col) {
         col.sort = col.id;

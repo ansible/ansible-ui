@@ -129,18 +129,18 @@ export function CollectionDetails() {
     // Set a new query parameter or update existing ones
     newParams.set('redirectIfEmpty', '');
 
-    if (collections && collections?.length == 0) {
+    if (collections && collections?.length === 0) {
       navigate(HubRoute.Collections);
     } else {
       navigate(HubRoute.CollectionPage, { query: { name, namespace, repository } });
     }
   }
 
-  if (collectionsRequest.error || collections?.length == 0) {
+  if (collectionsRequest.error || collections?.length === 0) {
     return <HubError error={collectionsRequest.error} handleRefresh={collectionsRequest.refresh} />;
   }
 
-  if (collectionsRequest.error || collectionRequest.data?.data?.length == 0) {
+  if (collectionsRequest.error || collectionRequest.data?.data?.length === 0) {
     return <HubError error={collectionRequest.error} handleRefresh={collectionRequest.refresh} />;
   }
 
@@ -193,7 +193,7 @@ export function CollectionDetails() {
               }
               onSelect={(item: string) => {
                 const found = collections?.find(
-                  (item2) => item2.collection_version?.version == item
+                  (item2) => item2.collection_version?.version === item
                 );
                 if (found && found.collection_version) {
                   setVersionParams(found.collection_version?.version);

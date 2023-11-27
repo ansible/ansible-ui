@@ -40,7 +40,7 @@ export function CollectionSignatureUpload() {
     hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${name}&namespace=${namespace}&version=${version}&repository_name=${repository}`
   );
 
-  if (error || data?.data.length == 0) {
+  if (error || data?.data.length === 0) {
     return <HubError error={error} handleRefresh={refresh} />;
   }
 

@@ -86,7 +86,7 @@ const MySelectDropdown = (props: {
     <Select
       isOpen={isOpen}
       onToggle={(_event, isOpen: boolean) => onToggle(isOpen)}
-      selections={props.items.find((item) => item == props.selected)}
+      selections={props.items.find((item) => item === props.selected)}
       onSelect={onSelect}
       placeholderText=""
     >

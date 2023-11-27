@@ -85,7 +85,7 @@ export function UploadCollectionByFile() {
   const [searchParams] = useSearchParams();
 
   const ns = searchParams.get('namespace');
-  if (ns && namespaceParams != ns) {
+  if (ns && namespaceParams !== ns) {
     setNamespaceParams(ns);
   }
 
@@ -108,7 +108,7 @@ export function UploadCollectionByFile() {
       return;
     }
 
-    const item = view.pageItems?.find((item) => item.name == 'staging');
+    const item = view.pageItems?.find((item) => item.name === 'staging');
     if (item) {
       setSelectedRepo({ name: 'staging', pulp_href: item.pulp_href });
       view.selectItem(item);
@@ -194,7 +194,7 @@ export function UploadCollectionByFile() {
             {(file) => {
               const namespace = file?.name.split('-')[0] ?? '';
               if (namespaceParams) {
-                if (namespaceParams != namespace) {
+                if (namespaceParams !== namespace) {
                   return (
                     <Alert
                       variant="danger"

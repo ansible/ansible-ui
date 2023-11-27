@@ -36,7 +36,7 @@ export function useApprovalsColumns(_options?: { disableSort?: boolean; disableL
       {
         header: t('Status'),
         cell: (approval) => {
-          if (approval.repository?.pulp_labels?.pipeline == 'staging') {
+          if (approval.repository?.pulp_labels?.pipeline === 'staging') {
             return (
               <TextCell
                 icon={<ExclamationTriangleIcon />}
@@ -50,7 +50,7 @@ export function useApprovalsColumns(_options?: { disableSort?: boolean; disableL
             );
           }
 
-          if (approval.repository?.pulp_labels?.pipeline == 'approved') {
+          if (approval.repository?.pulp_labels?.pipeline === 'approved') {
             if (approval.is_signed && display_signatures) {
               return (
                 <TextCell
@@ -66,7 +66,7 @@ export function useApprovalsColumns(_options?: { disableSort?: boolean; disableL
             }
           }
 
-          if (approval.repository?.pulp_labels?.pipeline == 'rejected') {
+          if (approval.repository?.pulp_labels?.pipeline === 'rejected') {
             return <TextCell icon={<ThumbsDownIcon />} text={t('Rejected')} color={PFColorE.Red} />;
           }
         },

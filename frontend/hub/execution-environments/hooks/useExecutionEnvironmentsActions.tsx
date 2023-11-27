@@ -194,7 +194,7 @@ async function signExecutionEnvironment(
 ) {
   if (
     ee.pulp?.repository?.remote &&
-    Object.keys(ee.pulp?.repository?.remote?.last_sync_task || {}).length == 0
+    Object.keys(ee.pulp?.repository?.remote?.last_sync_task || {}).length === 0
   ) {
     throw new Error(t`Container must be synchronized with remote repository first.`);
   }
@@ -210,7 +210,7 @@ async function signExecutionEnvironment(
   const postObj: { future_base_path?: string; manifest_signing_service: string } = {
     manifest_signing_service: signingService,
   };
-  if (pulp_type == 'container') {
+  if (pulp_type === 'container') {
     postObj.future_base_path = ee.pulp?.distribution?.base_path;
   }
 
