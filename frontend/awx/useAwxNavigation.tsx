@@ -124,7 +124,7 @@ export function useAwxNavigation() {
             element: <Reports />,
           },
           {
-            id: 'TestAnalyticsBuilder',
+            id: AwxRoute.AnalyticsBuilder,
             label: t('Analytics builder'),
             path: 'builder',
             element: <Test />,
