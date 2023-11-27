@@ -142,5 +142,3 @@ const CardSubtitle = styled.div`
   opacity: 0.5;
   font-size: smaller;
 `;
-
-const iconStyle = { width: 38, height: 38 };
