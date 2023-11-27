@@ -4,6 +4,7 @@ import '@patternfly/patternfly/patternfly-charts.css';
 
 // patternfly-charts-theme-dark.css must come after patternfly-charts.css
 import '@patternfly/patternfly/patternfly-charts-theme-dark.css';
+import '@patternfly/quickstarts/dist/quickstarts.min.css';
 
 import { Outlet } from 'react-router-dom';
 import { PageApp } from '../framework/PageNavigation/PageApp';
@@ -15,8 +16,12 @@ import { HubContextProvider } from '../frontend/hub/useHubContext';
 import { PlatformLogin } from './PlatformLogin';
 import { PlatformMasthead } from './PlatformMasthead';
 import { PlatformProvider } from './PlatformProvider';
+import { QuickStartProvider } from './dashboard/quickstarts/QuickStartProvider';
 import { ActivePlatformUserProvider } from './hooks/useActivePlatformUser';
 import { usePlatformNavigation } from './usePlatformNavigation';
+
+export default function PlatformMain() {
+  const navigation = usePlatformNavigation();
 
 export default function PlatformMain() {
   const navigation = usePlatformNavigation();
@@ -25,6 +30,7 @@ export default function PlatformMain() {
       login={<PlatformLogin />}
       root={
         <PlatformProvider>
+        <QuickStartProvider>
           <WebSocketProvider>
             <ActivePlatformUserProvider>
               <ActiveUserProvider>
@@ -38,6 +44,7 @@ export default function PlatformMain() {
               </ActiveUserProvider>
             </ActivePlatformUserProvider>
           </WebSocketProvider>
+          </QuickStartProvider>
         </PlatformProvider>
       }
       masthead={<PlatformMasthead />}
