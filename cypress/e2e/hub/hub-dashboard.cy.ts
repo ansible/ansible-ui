@@ -1,6 +1,6 @@
 import { randomString } from '../../../framework/utils/random-string';
 import { hubAPI } from '../../../frontend/hub/api/formatPath';
-import { HubDashboard, HubRoutes } from './constants';
+import { HubDashboard } from './constants';
 
 const namespaceName = 'e2e_namespace_' + randomString(4, undefined, { isLowercase: true });
 
@@ -40,7 +40,7 @@ describe.skip('hub dashboard', () => {
     cy.contains('button', 'Manage view').should('be.visible');
   });
   it('verify that EDA collections are displayed', () => {
-    cy.visit(HubRoutes.dashboard);
+    cy.navigateTo('hub', 'dashboard');
     cy.contains('div.pf-v5-c-card__header', 'Event-Driven Ansible content')
       .parent()
       .within(() => {
@@ -55,7 +55,7 @@ describe.skip('hub dashboard', () => {
         req.alias = 'latest12collections';
       }
     );
-    cy.visit(HubRoutes.dashboard);
+    cy.navigateTo('hub', 'dashboard');
     cy.contains('div.pf-v5-c-card__header', 'Event-Driven Ansible content')
       .parent()
       .within(() => {
@@ -65,7 +65,7 @@ describe.skip('hub dashboard', () => {
     cy.wait('@latest12collections');
   });
   it('verify that collection name links to collection details', () => {
-    cy.visit(HubRoutes.dashboard);
+    cy.navigateTo('hub', 'dashboard');
     cy.contains('div.pf-v5-c-card__header', 'Event-Driven Ansible content')
       .parent()
       .within(() => {
@@ -76,7 +76,7 @@ describe.skip('hub dashboard', () => {
       .should('include', `?name=${collectionNames.eda.collection1}`);
   });
   it('clicking on "Go to collections" opens collections UI filtered by EDA collections', () => {
-    cy.visit(HubRoutes.dashboard);
+    cy.navigateTo('hub', 'dashboard');
     cy.contains('div.pf-v5-c-card__header', 'Event-Driven Ansible content')
       .parent()
       .within(() => {
@@ -89,14 +89,14 @@ describe.skip('hub dashboard', () => {
   });
   describe('Manage view modal', () => {
     it('clicking on Cog icon opens the Manage view modal', () => {
-      cy.visit(HubRoutes.dashboard);
+      cy.navigateTo('hub', 'dashboard');
       cy.clickButton('Manage view');
       cy.get('.pf-v5-c-modal-box__title-text').should('contain', 'Manage Dashboard');
       cy.clickModalButton('Cancel');
       cy.get('div.pf-v5-c-backdrop').should('not.exist');
     });
     it('unselecting all categories in the Manage results in an empty state UI on the dashboard', () => {
-      cy.visit(HubRoutes.dashboard);
+      cy.navigateTo('hub', 'dashboard');
       cy.clickButton('Manage view');
       cy.get('.pf-v5-c-modal-box__title-text').should('contain', 'Manage Dashboard');
       cy.contains('tr', 'Cloud collections').find('input').uncheck();
@@ -125,7 +125,7 @@ describe.skip('hub dashboard', () => {
       cy.clickModalButton('Apply');
     });
     it('within the Manage Dashboard modal, checking/unchecking a resource should display/hide the resource', () => {
-      cy.visit(HubRoutes.dashboard);
+      cy.navigateTo('hub', 'dashboard');
       cy.clickButton('Manage view');
       cy.contains('tr', 'Storage collections').find('input').uncheck();
       cy.clickModalButton('Apply');
@@ -139,7 +139,7 @@ describe.skip('hub dashboard', () => {
     it('reordering categories within the Manage View modal should be reflected in the dashboard', () => {
       let initialArray: string[];
       let editedArray: string[];
-      cy.visit(HubRoutes.dashboard);
+      cy.navigateTo('hub', 'dashboard');
 
       cy.get('.page-dashboard-card .pf-v5-c-card__header').then((headers) => {
         initialArray = Array.from(headers, (title) => title.innerText.split('\n')[0]);
