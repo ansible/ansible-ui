@@ -5,6 +5,7 @@ export function useIsValidUrl() {
   const { t } = useTranslation();
   const isValidUrl = useCallback(
     (url: string) => {
+      if (!url) return true;
       let valid = true;
       try {
         const parsed = new URL(url);
@@ -14,7 +15,7 @@ export function useIsValidUrl() {
         if (!parsed.host) {
           valid = false;
         }
-        if (!valid) return parsed.protocol;
+        if (!valid) return t(`Must be a valid protocol ${parsed.protocol}`);
       } catch {
         valid = false;
       }
