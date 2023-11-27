@@ -1,10 +1,10 @@
 {
+  "subtitle": "Automation Hub",
   "metadata": {
-    "name": "add-healthchecks"
+    "name": "finding-content"
   },
   "spec": {
     "displayName": "Finding content in automation hub",
-    "subtitle": "Automation Hub",
     "durationMinutes": 10,
     "icon": "",
     "description": "Learn how to search for and browse automation hub content.",
