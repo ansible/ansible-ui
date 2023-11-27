@@ -13,7 +13,7 @@ import {
 } from '../../../framework';
 import { PageDetailCodeEditor } from '../../../framework/PageDetails/PageDetailCodeEditor';
 import { LoadingPage } from '../../../framework/components/LoadingPage';
-import { AwxError } from '../../awx/common/AwxError';
+import { HubError } from '../common/HubError';
 import { useGet } from '../../common/crud/useGet';
 import { HubRoute } from '../HubRoutes';
 import { pulpAPI } from '../api/formatPath';
@@ -28,7 +28,7 @@ function useErrorHandlerAndLoading<T>(
   refresh?: () => void
 ) {
   if (error) {
-    return <AwxError error={error} handleRefresh={refresh} />;
+    return <HubError error={error} handleRefresh={refresh} />;
   }
 
   if (!data) {

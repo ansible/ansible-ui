@@ -37,7 +37,7 @@ export function useApprovalActions(callback?: (collections: CollectionVersionSea
             query: {
               name: i?.collection_version?.name,
               namespace: i?.collection_version?.namespace,
-              repository: 'staging',
+              repository: i?.repository?.name,
               version: i?.collection_version?.version,
             },
           });
