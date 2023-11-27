@@ -43,6 +43,7 @@ export enum HubRoute {
   RemotePage = 'hub-remote-page',
 
   // Access
+  Access = 'hub-access',
   APIToken = 'hub-api-token',
   Roles = 'hub-roles',
   CreateRole = 'hub-create-role',
