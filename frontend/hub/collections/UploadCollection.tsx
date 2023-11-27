@@ -66,6 +66,9 @@ export function UploadCollection() {
 
 export function UploadCollectionByFile() {
   const { t } = useTranslation();
+  // TODO - we dont definetly want load all namespaces and repositories
+  // this will be addressed in future PR - load particular repo and namespace when we know the name after file selection
+  // so no need to handle errors in useGet inside those hooks
   const namespaces = useHubNamespaces();
   const repositories = useRepositories();
   const navigate = useNavigate();
