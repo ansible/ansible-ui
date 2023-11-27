@@ -69,7 +69,7 @@ function FiltersToolbarItem(props: PageToolbarFiltersProps) {
     } else if (
       toolbarFilters[0].type === ToolbarFilterType.SingleSelect &&
       toolbarFilters[0].isPinned &&
-      (filterState[toolbarFilters[0].key] == undefined ||
+      (filterState[toolbarFilters[0].key] === undefined ||
         filterState[toolbarFilters[0].key]?.length === 0)
     ) {
       // Do not show the label if the pinned filter does not have a value
