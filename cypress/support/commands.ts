@@ -49,7 +49,6 @@ import './rest-commands';
 declare global {
   namespace Cypress {
     interface Chainable {
-      login(server: string, username: string, password: string): Chainable<void>;
       edaLogout(): Chainable<EdaUser | undefined>;
       awxLogin(): Chainable<void>;
       edaLogin(): Chainable<void>;
