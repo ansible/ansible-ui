@@ -14,6 +14,7 @@ import { Visualizer } from './Topology';
 export function WorkflowVisualizer() {
   const { t } = useTranslation();
   const { id } = useParams<{ id?: string }>();
+
   const {
     data: wfNodes,
     error: workflowNodeError,
