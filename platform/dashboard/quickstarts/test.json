@@ -3,55 +3,39 @@
     "name": "add-healthchecks"
   },
   "spec": {
-    "displayName": "Adding health checks to your sample application",
+    "displayName": "Finding content in automation hub",
+    "subtitle": "Automation Hub",
     "durationMinutes": 10,
     "icon": "",
-    "description": "You just created a sample application. Now, let’s add health checks to it.",
-    "prerequisites": [
-      "You completed the \"Getting started with a sample\" quick start."
-    ],
-    "introduction": "### This quick start shows you how to add health checks to your sample application.\nYou should have previously created the **sample-app** application and **nodejs-sample** deployment using the **Get started with a sample** quick start. If you haven't, you may be able to follow these tasks with any existing deployment without configured health checks.",
+    "description": "Learn how to search for and browse automation hub content.",
+    "prerequisites": ["You have a valid Ansible Automation Platform subscription."],
+    "introduction": "### In this Quick Start you will learn to search for and browse automation hub content.",
     "tasks": [
       {
-        "title": "Viewing the details of your sample application",
-        "description": "### To view the details of your sample application:\n1. Go to the project your sample application was created in.\n2. In the **</> Developer** perspective, go to **Topology**.\n3. Click on the **nodejs-sample** deployment to view its details.\n\nA side panel is displayed containing the details of your sample application.",
+        "title": "Search for automation hub content",
+        "description": "### To search for automation hub content:\n 1. From the navigation panel, select **Collections > Collections**.\n2. In the Filter by keywords field, enter an appropriate keyword for the collection you want to search for and click the magnifying glass icon.\n3. If you don’t find what you’re looking for, you can expand your search. From the dropdown menu, select **Repository**, **Namespace**, or **Tag** depending on the search term you want to use.\n4. Scroll through the list of search results and select the collection you want.",
         "review": {
-          "instructions": "#### To verify you are viewing the details of your sample application:\nIs the side panel titled **nodejs-sample**?",
+          "instructions": "#### To verify that you can search for automation hub content:\nDo you see a list of collection titles that correspond to your search term?",
           "failedTaskHelp": "This task isn’t verified yet. Try the task again."
         },
         "summary": {
-          "success": "You have viewed the details of your sample app!",
+          "success": "You have searched for automation hub content!",
           "failed": "Try the steps again."
         }
       },
       {
-        "title": "Verifying that there are no health checks",
-        "description": "### To verify that there your sample application has no health checks configured:\n1. View the information in the **Resources** tab in the side panel.",
+        "title": "Browse automation hub content",
+        "description": "### To browse automation hub content:\n1. From the navigation panel, select **Collections > Collections**.\n2. Scroll through the list of collections and use the page navigation arrows to go to the next page.\n3. To see more collections on a single page, select the number of collections you want to see per page from the drop down menu beneath the collection count.\n4. Choose your page layout by selecting **Tile** or **List** view.",
         "review": {
-          "instructions": "#### To verify there are no health checks configured:\nDo you see an inline alert stating that **nodejs-sample** does not have health checks?",
+          "instructions": "#### To verify that you can browse automation hub content:\nDo you see a list of collection titles that you can scroll through?",
           "failedTaskHelp": "This task isn’t verified yet. Try the task again."
         },
         "summary": {
-          "success": "You have verified that there are no existing health checks!",
-          "failed": "Try the steps again."
-        }
-      },
-      {
-        "title": "Adding health checks to your sample",
-        "description": "### To add health checks to your sample:\n1. Add health checks to your **nodejs-sample** deployment in one of the following ways: (a) On the side panel, click on the **Actions** menu, where you will see an **Add Health Checks** menu item or (b) Click on the **Add Health Checks** link on the inline notification in the side panel.\n2. In the Add Health Checks form, click on the **Add Readiness Probe** link.  Leave the default values, and click on the check to add the Readiness Probe.\n3. Click on the **Add Liveness Probe** link.  Leave the default values, and click on the check to add the Liveness Probe.\n4. Click on the **Add Startup Probe** link.  Leave the default values, and click on the check to add the Startup Probe.\n5. Click **Add** when you’re done.\n\nYou will be brought back to the Topology View.",
-        "review": {
-          "instructions": "#### Verify that health checks are now configured:\nIs the inline notification gone?",
-          "failedTaskHelp": "This task isn’t verified yet. Try the task again, or [read more](https://docs.openshift.com/container-platform/4.6/applications/application-health.html#odc-adding-health-checks) about this topic."
-        },
-        "summary": {
-          "success": "You have added health checks to your sample app!",
+          "success": "You have browsed automation hub content!",
           "failed": "Try the steps again."
         }
       }
     ],
-    "conclusion": "Your sample application now has health checks. To ensure that your application is running correctly, take the **Monitor your sample application** quick start.",
-    "nextQuickStart": [
-      "template-id"
-    ]
+    "conclusion": "You have learned to search for and browse automation hub content."
   }
 }
