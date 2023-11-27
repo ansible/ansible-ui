@@ -3,6 +3,7 @@ import useSWR from 'swr';
 import { IFilterState } from '../../../../framework';
 import { PageDashboardChart } from '../../../../framework/PageDashboard/PageDashboardChart';
 import { usePageChartColors } from '../../../../framework/PageDashboard/usePageChartColors';
+import { awxAPI } from '../../api/awx-utils';
 
 interface ISubscriptionUsageChartData {
   results: [
@@ -52,7 +53,7 @@ export function SubscriptionUsageChart(props: { period: IFilterState }) {
   };
 
   const { data, isLoading } = useSWR<ISubscriptionUsageChartData>(
-    `/api/v2/host_metric_summary_monthly/?date__gte=${calculateDateRange()}&order_by=date&page_size=100`,
+    awxAPI`/host_metric_summary_monthly/?date__gte=${calculateDateRange()}&order_by=date&page_size=100`,
     (url: string) => fetch(url).then((r) => r.json())
   );
 

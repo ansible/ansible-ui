@@ -4,6 +4,7 @@ import { useBulkActionDialog } from '../../../../../framework';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { Team } from '../../../interfaces/Team';
 import { User } from '../../../interfaces/User';
+import { awxAPI } from '../../../api/awx-utils';
 
 export function useRemoveUsersFromTeams() {
   const { t } = useTranslation();
@@ -17,11 +18,11 @@ export function useRemoveUsersFromTeams() {
         }),
         keyFn: (user: User) => user.id,
         items: users,
-        actionColumns: [{ header: 'User', cell: (user: User) => user.username }],
+        actionColumns: [{ header: t('User'), cell: (user: User) => user.username }],
         actionFn: async (user: User, signal: AbortSignal) => {
           for (const team of teams) {
             await postRequest(
-              `/api/v2/users/${user.id.toString()}/roles/`,
+              awxAPI`/users/${user.id.toString()}/roles/`,
               { id: team.summary_fields.object_roles.member_role.id, disassociate: true },
               signal
             );

@@ -1,62 +1,48 @@
 import { randomString } from '../../../../framework/utils/random-string';
-// import { Credential } from '../../../../frontend/awx/interfaces/Credential';
+import { Credential } from '../../../../frontend/awx/interfaces/Credential';
 // import { ExecutionEnvironment } from '../../../../frontend/awx/interfaces/ExecutionEnvironment';
-// import { InstanceGroup } from '../../../../frontend/awx/interfaces/InstanceGroup';
+//import { InstanceGroup } from '../../../../frontend/awx/interfaces/InstanceGroup';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
-// import { Label } from '../../../../frontend/awx/interfaces/Label';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
 
-describe('Job templates form Create, Edit, Delete', () => {
-  let organization: Organization;
-  let project: Project;
+describe('Job templates form Create, Edit, Delete', function () {
   let inventory: Inventory;
-  const executionEnvironment = 'Control Plane Execution Environment';
-  const machineCredential = 'Demo Credential';
+  let machineCredential: Credential;
   const instanceGroup = 'default';
+  const executionEnvironment = 'Control Plane Execution Environment';
 
-  before(() => {
+  before(function () {
     cy.awxLogin();
 
-    cy.createAwxOrganization().then((o) => {
-      organization = o;
+    cy.createAwxInventory({ organization: (this.globalProjectOrg as Organization).id }).then(
+      (inv) => {
+        inventory = inv;
+      }
+    );
 
-      cy.createAwxProject({ organization: organization.id }).then((p) => {
-        project = p;
-      });
-
-      cy.createAwxInventory({ organization: organization.id }).then((i) => {
-        inventory = i;
-      });
-
-      // cy.createAwxExecutionEnvironment({ organization: organization.id }).then((ee) => {
-      //   executionEnvironment = ee;
-      // });
-
-      // cy.createAWXCredential({
-      //   kind: 'machine',
-      //   organization: organization.id,
-      //   credential_type: 1,
-      // }).then((cred) => {
-      //   machineCredential = cred;
-      // });
-
-      // cy.createAwxInstanceGroup().then((ig) => {
-      //   instanceGroup = ig;
-      // });
-
-      // cy.createAwxLabel({ organization: organization.id }).then((l) => {
-      //   label = l;
-      // });
+    cy.createAWXCredential({
+      kind: 'machine',
+      organization: (this.globalProjectOrg as Organization).id,
+      credential_type: 1,
+    }).then((cred) => {
+      machineCredential = cred;
     });
+
+    // cy.createAwxInstanceGroup().then((ig) => {
+    //   instanceGroup = ig;
+    // });
+
+    // cy.createAwxLabel({ organization: organization.id }).then((l) => {
+    //   label = l;
+    // });
   });
 
-  after(() => {
-    cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
-    // cy.deleteAwxInstanceGroup(instanceGroup);
-  });
+  // after(() => {
+  //   cy.deleteAwxInstanceGroup(instanceGroup);
+  // });
 
-  it('should create a job template with all fields without prompt on launch option', () => {
+  it('should create a job template with all fields without prompt on launch option', function () {
     cy.intercept('POST', `/api/v2/job_templates`).as('createJT');
     const jtName = 'E2E-JT ' + randomString(4);
     cy.navigateTo('awx', 'templates');
@@ -65,14 +51,10 @@ describe('Job templates form Create, Edit, Delete', () => {
     cy.get('[data-cy="name"]').type(jtName);
     cy.get('[data-cy="description"]').type('This is a JT description');
     cy.selectDropdownOptionByResourceName('inventory', inventory.name);
-    cy.selectDropdownOptionByResourceName('project', project.name);
+    cy.selectDropdownOptionByResourceName('project', `${(this.globalProject as Project).name}`);
     cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
-    cy.selectDropdownOptionByResourceName(
-      'execution-environment-select',
-      executionEnvironment,
-      true
-    );
-    cy.selectDropdownOptionByResourceName('credential-select', machineCredential, true);
+    cy.selectItemFromLookupModal('execution-environment-select', executionEnvironment);
+    cy.selectItemFromLookupModal('credential-select', machineCredential.name);
     cy.clickButton(/^Create job template$/);
     cy.wait('@createJT')
       .its('response.body.id')
@@ -105,7 +87,7 @@ describe('Job templates form Create, Edit, Delete', () => {
       });
   });
 
-  it('creation of job template using the prompt on launch wizard', () => {
+  it('creation of job template using the prompt on launch wizard', function () {
     cy.intercept('POST', `/api/v2/job_templates`).as('createPOLJT');
     const jtName = 'E2E-POLJT ' + randomString(4);
 
@@ -115,7 +97,7 @@ describe('Job templates form Create, Edit, Delete', () => {
     cy.get('[data-cy="name"]').type(jtName);
     cy.get('[data-cy="description"]').type('This is a JT with POL wizard description');
     cy.selectPromptOnLaunch('inventory');
-    cy.selectDropdownOptionByResourceName('project', project.name);
+    cy.selectDropdownOptionByResourceName('project', `${(this.globalProject as Project).name}`);
     cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
     cy.selectPromptOnLaunch('execution_environment');
     cy.selectPromptOnLaunch('credential');
@@ -133,7 +115,7 @@ describe('Job templates form Create, Edit, Delete', () => {
         });
         cy.selectDropdownOptionByResourceName('inventory', inventory.name);
         cy.clickButton(/^Next/);
-        cy.selectItemFromLookupModal('credential-select', machineCredential);
+        cy.selectItemFromLookupModal('credential-select', machineCredential.name);
         cy.clickButton(/^Next/);
         cy.selectItemFromLookupModal('execution-environment-select', executionEnvironment);
         cy.clickButton(/^Next/);
@@ -161,7 +143,7 @@ describe('Job templates form Create, Edit, Delete', () => {
       });
   });
 
-  it('launch a job template from the details page launch cta using the prompt on launch', () => {
+  it('launch a job template from the details page launch cta using the prompt on launch', function () {
     cy.intercept('POST', `/api/v2/job_templates`).as('createPOLJT');
     const jtName = 'E2E-POLJT ' + randomString(4);
 
@@ -171,7 +153,7 @@ describe('Job templates form Create, Edit, Delete', () => {
     cy.get('[data-cy="name"]').type(jtName);
     cy.get('[data-cy="description"]').type('This is a JT with POL wizard description');
     cy.selectPromptOnLaunch('inventory');
-    cy.selectDropdownOptionByResourceName('project', project.name);
+    cy.selectDropdownOptionByResourceName('project', `${(this.globalProject as Project).name}`);
     cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
     cy.selectPromptOnLaunch('execution_environment');
     cy.selectPromptOnLaunch('credential');
@@ -184,7 +166,7 @@ describe('Job templates form Create, Edit, Delete', () => {
         cy.clickButton(/^Launch template$/);
         cy.selectDropdownOptionByResourceName('inventory', inventory.name);
         cy.clickButton(/^Next/);
-        cy.selectItemFromLookupModal('credential-select', machineCredential);
+        cy.selectItemFromLookupModal('credential-select', machineCredential.name);
         cy.clickButton(/^Next/);
         cy.selectItemFromLookupModal('execution-environment-select', executionEnvironment);
         cy.clickButton(/^Next/);
@@ -211,10 +193,10 @@ describe('Job templates form Create, Edit, Delete', () => {
       });
   });
 
-  it('should edit a job template using the kebab menu of the template list page page', () => {
+  it('should edit a job template using the kebab menu of the template list page page', function () {
     cy.createAwxJobTemplate({
-      organization: organization.id,
-      project: project.id,
+      organization: (this.globalProjectOrg as Organization).id,
+      project: (this.globalProject as Project).id,
       inventory: inventory.id,
     }).then((jobTemplate) => {
       cy.navigateTo('awx', 'templates');
@@ -243,10 +225,10 @@ describe('Job templates form Create, Edit, Delete', () => {
     });
   });
 
-  it('should edit a job template using the edit template cta on details page', () => {
+  it('should edit a job template using the edit template cta on details page', function () {
     cy.createAwxJobTemplate({
-      organization: organization.id,
-      project: project.id,
+      organization: (this.globalProjectOrg as Organization).id,
+      project: (this.globalProject as Project).id,
       inventory: inventory.id,
     }).then((jobTemplate) => {
       cy.navigateTo('awx', 'templates');
@@ -277,10 +259,10 @@ describe('Job templates form Create, Edit, Delete', () => {
     });
   });
 
-  it('should delete a job template from the details page', () => {
+  it('should delete a job template from the details page', function () {
     cy.createAwxJobTemplate({
-      organization: organization.id,
-      project: project.id,
+      organization: (this.globalProjectOrg as Organization).id,
+      project: (this.globalProject as Project).id,
       inventory: inventory.id,
     }).then((jobTemplate) => {
       cy.navigateTo('awx', 'templates');
@@ -297,15 +279,15 @@ describe('Job templates form Create, Edit, Delete', () => {
     });
   });
 
-  it('should bulk delete job templates from the list page', () => {
+  it('should bulk delete job templates from the list page', function () {
     cy.createAwxJobTemplate({
-      organization: organization.id,
-      project: project.id,
+      organization: (this.globalProjectOrg as Organization).id,
+      project: (this.globalProject as Project).id,
       inventory: inventory.id,
     }).then((jobTemplate1) => {
       cy.createAwxJobTemplate({
-        organization: organization.id,
-        project: project.id,
+        organization: (this.globalProjectOrg as Organization).id,
+        project: (this.globalProject as Project).id,
         inventory: inventory.id,
       }).then((jobTemplate2) => {
         cy.navigateTo('awx', 'templates');

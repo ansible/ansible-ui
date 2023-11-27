@@ -18,6 +18,8 @@ export enum AwxRoute {
 
   WorkflowApprovals = 'awx-workflow-approvals',
   WorkflowApprovalPage = 'awx-workflow-approval-page',
+  WorkflowApprovalDetails = 'awx-workflow-approval-details',
+  WorkflowApprovalWorkflowJobDetails = 'awx-workflow-approval-workflow-job-details',
 
   // Resources
 
@@ -50,7 +52,6 @@ export enum AwxRoute {
   WorkflowJobTemplateEditSchedule = 'awx-workflow-job-template-edit-schedule',
   WorkflowJobTemplateJobs = 'awx-workflow-job-template-jobs',
   WorkflowJobTemplateSurvey = 'awx-workflow-job-template-survey',
-  WorkflowJobTemplateVisualizer = 'awx-workflow-job-template-visualizer',
   WorkflowJobTemplateNotifications = 'awx-workflow-job-template-notifications',
   EditWorkflowJobTemplate = 'awx-edit-workflow-job-template',
   WorkflowVisualizer = 'awx-workflow-visualizer',
@@ -91,8 +92,12 @@ export enum AwxRoute {
   InventoryGroups = 'awx-inventory-groups',
   InventoryHosts = 'awx-inventory-hosts',
   InventorySources = 'awx-inventory-sources',
+  InventorySourcePage = 'awx-inventory-source-page',
+  InventorySourceDetail = 'awx-inventory-source-detail',
+  InventorySourceNotifications = 'awx-inventory-source-notifications',
   InventoryJobs = 'awx-inventory-jobs',
   InventoryJobTemplates = 'awx-inventory-job-templates',
+  InventorySourceEdit = 'awx-edit-inventory-source',
   InventorySourceSchedules = 'awx-inventory-schedules',
   InventorySourceScheduleCreate = 'awx-inventory-schedule-create',
   InventorySourceScheduleEdit = 'awx-inventory-schedule-edit',
@@ -143,8 +148,11 @@ export enum AwxRoute {
   // Administration
 
   CredentialTypes = 'awx-credential-types',
-  CredentialType = 'awx-credential-type',
+  CredentialTypePage = 'awx-credential-type-page',
   CredentialTypeDetails = 'awx-credential-type-details',
+  CredentialTypeCredentials = 'awx-credential-type-credentials',
+  CreateCredentialType = 'awx-create-credential-type',
+  EditCredentialType = 'awx-edit-credential-type',
 
   NotificationTemplates = 'awx-notification-templates',
   NotificationTemplatePage = 'awx-notification-template-page',
@@ -163,6 +171,7 @@ export enum AwxRoute {
   CreateInstanceGroup = 'awx-create-instance-group',
   EditInstanceGroup = 'awx-edit-instance-group',
   InstanceGroupPage = 'awx-instance-group-page',
+  InstanceGroupDetails = 'awx-instance-group-details',
   InstanceGroups = 'awx-instance-groups',
 
   Instances = 'awx-instances',

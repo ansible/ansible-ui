@@ -8,6 +8,7 @@ import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
 import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
 import { useAwxView } from '../../useAwxView';
+import { awxAPI } from '../../api/awx-utils';
 import { useJobRowActions } from './hooks/useJobRowActions';
 import { useJobToolbarActions } from './hooks/useJobToolbarActions';
 import { useJobsColumns } from './hooks/useJobsColumns';
@@ -19,7 +20,7 @@ export default function Jobs() {
   const toolbarFilters = useJobsFilters();
   const tableColumns = useJobsColumns();
   const view = useAwxView<UnifiedJob>({
-    url: '/api/v2/unified_jobs/',
+    url: awxAPI`/unified_jobs/`,
     queryParams: {
       not__launch_type: 'sync',
     },

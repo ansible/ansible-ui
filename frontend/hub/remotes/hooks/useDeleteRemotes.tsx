@@ -1,7 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../framework';
 import { nameKeyFn } from '../../../common/utils/nameKeyFn';
-import { hubAPIDelete, parsePulpIDFromURL, pulpAPI } from '../../api/utils';
+import { hubAPIDelete, parsePulpIDFromURL } from '../../api/utils';
+import { pulpAPI } from '../../api/formatPath';
 import { IRemotes } from '../Remotes';
 import { useRemoteColumns } from './useRemoteColumns';
 
@@ -24,9 +25,10 @@ export function useDeleteRemotes(onComplete: (remotes: IRemotes[]) => void) {
       actionColumns: confirmationColumns,
       onComplete,
       alertPrompts: [t('This will also delete all associated resources under this remote.')],
-      actionFn: (remote: IRemotes) =>
-        hubAPIDelete(
-          pulpAPI`/remotes/ansible/collection/${parsePulpIDFromURL(remote.pulp_href) || ''}/`
+      actionFn: async (remote: IRemotes, signal: AbortSignal) =>
+        await hubAPIDelete(
+          pulpAPI`/remotes/ansible/collection/${parsePulpIDFromURL(remote.pulp_href) || ''}/`,
+          signal
         ),
     });
   };

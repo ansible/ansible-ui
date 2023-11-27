@@ -20,6 +20,7 @@ import { AwxRoute } from '../../../AwxRoutes';
 import { PageFormSelectOrganization } from '../../../access/organizations/components/PageFormOrganizationSelect';
 import { getOrganizationByName } from '../../../access/organizations/utils/getOrganizationByName';
 import { PageFormExecutionEnvironmentSelect } from '../../../administration/execution-environments/components/PageFormExecutionEnvironmentSelect';
+import { awxAPI } from '../../../api/awx-utils';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { Organization } from '../../../interfaces/Organization';
 import { Project, SCMType } from '../../../interfaces/Project';
@@ -93,7 +94,7 @@ export function CreateProject() {
     }
 
     // Create new project
-    const newProject = await postRequest('/api/v2/projects/', project as Project);
+    const newProject = await postRequest(awxAPI`/projects/`, project as Project);
 
     navigate(RouteObj.ProjectDetails.replace(':id', newProject.id.toString()));
   };
@@ -128,7 +129,7 @@ export function EditProject() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const { data: project } = useGet<Project>(`/api/v2/projects/${id.toString()}/`);
+  const { data: project } = useGet<Project>(awxAPI`/projects/${id.toString()}/`);
 
   if (project && project.scm_type === '') {
     project.scm_type = 'manual';
@@ -171,7 +172,7 @@ export function EditProject() {
 
     // Update project
     const updatedProject = await requestPatch<Project>(
-      `/api/v2/projects/${id.toString()}/`,
+      awxAPI`/projects/${id.toString()}/`,
       editedProject
     );
 
@@ -234,7 +235,7 @@ const scmFormFieldDefaults: { [key: string]: any } = {
 function ProjectInputs(props: { project?: Project }) {
   const { t } = useTranslation();
   const org = useWatch({ name: 'project.summary_fields.organization' }) as Organization;
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/v2/projects/');
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/projects/`);
   const scmTypeOptions = data?.actions?.GET?.scm_type?.choices;
   const credentialTypeIDs = useGetCredentialTypeIDs();
   const scmType = useWatch({ name: 'project.scm_type' }) as SCMType;

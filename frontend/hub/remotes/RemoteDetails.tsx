@@ -13,10 +13,10 @@ import {
 } from '../../../framework';
 import { PageDetailCodeEditor } from '../../../framework/PageDetails/PageDetailCodeEditor';
 import { LoadingPage } from '../../../framework/components/LoadingPage';
-import { AwxError } from '../../awx/common/AwxError';
+import { HubError } from '../common/HubError';
 import { useGet } from '../../common/crud/useGet';
 import { HubRoute } from '../HubRoutes';
-import { pulpAPI } from '../api/utils';
+import { pulpAPI } from '../api/formatPath';
 import { Repository } from '../repositories/Repository';
 import { PulpItemsResponse } from '../usePulpView';
 import { IRemotes } from './Remotes';
@@ -28,7 +28,7 @@ function useErrorHandlerAndLoading<T>(
   refresh?: () => void
 ) {
   if (error) {
-    return <AwxError error={error} handleRefresh={refresh} />;
+    return <HubError error={error} handleRefresh={refresh} />;
   }
 
   if (!data) {
@@ -41,6 +41,7 @@ function useErrorHandlerAndLoading<T>(
 export function RemoteDetails() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
+  const getPageUrl = useGetPageUrl();
   const pageActions = useRemoteActions({
     onRemotesDeleted: () => pageNavigate(HubRoute.Remotes),
   });
@@ -71,8 +72,6 @@ export function RemoteDetails() {
     errorRepositories,
     refreshRepositories
   );
-
-  const getPageUrl = useGetPageUrl();
 
   if (loadingOrErrorRemotes) return loadingOrErrorRemotes;
   if (loadingOrErrorRepositories) return loadingOrErrorRepositories;
@@ -114,7 +113,6 @@ export function RemoteDetails() {
           <PageDetail label={t('Rate limit')}>
             {remote?.rate_limit?.toString() ?? t('None')}
           </PageDetail>
-
           <PageDetail label={t('Repositories')}>
             {repositories?.results?.length ? (
               <LabelGroup

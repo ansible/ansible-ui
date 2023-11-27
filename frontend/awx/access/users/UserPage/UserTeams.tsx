@@ -13,6 +13,7 @@ import {
 import { DetailInfo } from '../../../../../framework/components/DetailInfo';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { useOptions } from '../../../../common/crud/useOptions';
+import { awxAPI } from '../../../api/awx-utils';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { Team } from '../../../interfaces/Team';
 import { User } from '../../../interfaces/User';
@@ -24,7 +25,7 @@ import { useTeamsFilters } from '../../teams/hooks/useTeamsFilters';
 
 export function UserTeams() {
   const params = useParams<{ id: string }>();
-  const { data: user } = useGetItem<User>('/api/v2/users', params.id);
+  const { data: user } = useGetItem<User>(awxAPI`/users`, params.id);
 
   if (!user) {
     return null;
@@ -38,13 +39,13 @@ function UserTeamsInternal(props: { user: User }) {
   const toolbarFilters = useTeamsFilters();
   const tableColumns = useTeamsColumns();
   const view = useAwxView<Team>({
-    url: `/api/v2/users/${user.id}/teams/`,
+    url: awxAPI`/users/${user.id.toString()}/teams/`,
     toolbarFilters,
     disableQueryString: true,
   });
   const selectTeamsAddUsers = useSelectTeamsAddUsers(view.selectItemsAndRefresh);
   const removeTeamsFromUsers = useRemoveTeamsFromUsers(view.unselectItemsAndRefresh);
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/v2/users/');
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/users/`);
   const canAddUserToTeam = Boolean(data && data.actions && data.actions['POST']);
 
   const toolbarActions = useMemo<IPageAction<Team>[]>(

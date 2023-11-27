@@ -9,13 +9,14 @@ import { dateToInputDateTime } from '../../../../framework/utils/dateTimeHelpers
 import { RouteObj } from '../../../common/Routes';
 import { postRequest } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
+import { AwxPageForm } from '../../AwxPageForm';
 import { AwxRoute } from '../../AwxRoutes';
+import { awxAPI } from '../../api/awx-utils';
 import { AwxError } from '../../common/AwxError';
 import { getAddedAndRemoved } from '../../common/util/getAddedAndRemoved';
 import { ScheduleFormFields } from '../../interfaces/ScheduleFormFields';
 import { ScheduleInputs } from './components/ScheduleInputs';
 import { buildScheduleContainer } from './hooks/scheduleHelpers';
-import { AwxPageForm } from '../../AwxPageForm';
 
 const routes: { [key: string]: string } = {
   inventory: RouteObj.InventorySourceScheduleDetails,
@@ -109,7 +110,7 @@ export function CreateSchedule() {
 
     await Promise.all(
       removedLabels.map((label) =>
-        postRequest(`/api/v2/schedules/${response.id}/labels/`, {
+        postRequest(awxAPI`/schedules/${response.id.toString()}/labels/`, {
           id: label.id,
           disassociate: true,
         })
@@ -117,7 +118,7 @@ export function CreateSchedule() {
     );
     await Promise.all(
       removedInstanceGroups.map((instanceGroup) =>
-        postRequest(`/api/v2/schedules/${response.id}/instance_groups/`, {
+        postRequest(awxAPI`/schedules/${response.id.toString()}/instance_groups/`, {
           id: instanceGroup.id,
           disassociate: true,
         })
@@ -125,7 +126,7 @@ export function CreateSchedule() {
     );
     await Promise.all(
       removedCredentials.map((credential) =>
-        postRequest(`/api/v2/schedules/${response.id}/credentials/`, {
+        postRequest(awxAPI`/schedules/${response.id.toString()}/credentials/`, {
           id: credential.id,
           disassociate: true,
         })
@@ -134,7 +135,7 @@ export function CreateSchedule() {
 
     await Promise.all(
       addedLabels.map((label) =>
-        postRequest(`/api/v2/schedules/${response.id}/labels/`, {
+        postRequest(awxAPI`/schedules/${response.id.toString()}/labels/`, {
           id: label.id,
         })
       )
@@ -142,7 +143,7 @@ export function CreateSchedule() {
 
     await Promise.all(
       addedInstanceGroups.map((instanceGroup) =>
-        postRequest(`/api/v2/schedules/${response.id}/instance_groups/`, {
+        postRequest(awxAPI`/schedules/${response.id.toString()}/instance_groups/`, {
           id: instanceGroup.id,
         })
       )
@@ -150,7 +151,7 @@ export function CreateSchedule() {
 
     await Promise.all(
       addedCredentials.map((credential) =>
-        postRequest(`/api/v2/schedules/${response.id}/credentials/`, {
+        postRequest(awxAPI`/schedules/${response.id.toString()}/credentials/`, {
           id: credential.id,
         })
       )
@@ -171,7 +172,7 @@ export function CreateSchedule() {
   };
   const onCancel = () => navigate(-1);
   const { data, isLoading } = useGet<{ zones: string[]; links: Record<string, string> }>(
-    '/api/v2/schedules/zoneinfo/'
+    awxAPI`/schedules/zoneinfo/`
   );
 
   const timeZones = useMemo(

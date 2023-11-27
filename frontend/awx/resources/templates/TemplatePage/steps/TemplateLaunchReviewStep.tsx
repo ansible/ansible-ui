@@ -12,6 +12,7 @@ import { useVerbosityString } from '../../../../common/useVerbosityString';
 import type { Credential } from '../../../../interfaces/Credential';
 import type { JobTemplate } from '../../../../interfaces/JobTemplate';
 import type { TemplateLaunch } from '../TemplateLaunchWizard';
+import { awxAPI } from '../../../../api/awx-utils';
 
 export default function TemplateLaunchReviewStep(props: { template: JobTemplate }) {
   const { template } = props;
@@ -137,9 +138,9 @@ export default function TemplateLaunchReviewStep(props: { template: JobTemplate 
   );
 }
 
-function CredentialDetail({ credentialID }: { credentialID: number }) {
+export function CredentialDetail({ credentialID }: { credentialID: number }) {
   const { data: credentialData } = useGet<Credential>(
-    `/api/v2/credentials/${credentialID.toString()}/`
+    awxAPI`/credentials/${credentialID.toString()}/`
   );
   if (!credentialData) return null;
   return <CredentialLabel credential={credentialData} key={credentialID} />;

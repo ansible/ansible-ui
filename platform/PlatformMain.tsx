@@ -15,10 +15,12 @@ import { WebSocketProvider } from '../frontend/awx/common/useAwxWebSocket';
 import { createRequestError } from '../frontend/common/crud/RequestError';
 import { requestCommon } from '../frontend/common/crud/requestCommon';
 import { useAbortController } from '../frontend/common/crud/useAbortController';
+import '../frontend/common/i18n';
 import { ActiveEdaUserProvider, ActiveUserProvider } from '../frontend/common/useActiveUser';
 import { HubContextProvider } from '../frontend/hub/useHubContext';
 import { PlatformLogin } from './PlatformLogin';
 import { PlatformMasthead } from './PlatformMasthead';
+import { gatewayAPI } from './api/gateway-api-utils';
 import { quickStarts } from './dashboard/quickstarts/quickstarts';
 import { ActivePlatformUserProvider } from './hooks/useActivePlatformUser';
 import { Service } from './interfaces/Service';
@@ -85,7 +87,7 @@ function useServices() {
     return (await response.json()) as ServicesResponse;
   };
 
-  const response = useSWR<ServicesResponse>('/api/gateway/v1/services', getServices, {
+  const response = useSWR<ServicesResponse>(gatewayAPI`/v1/services`, getServices, {
     dedupingInterval: 0,
   });
 

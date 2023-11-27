@@ -12,6 +12,9 @@ import { PlatformRoute } from './PlatformRoutes';
 import { PlatformDashboard } from './dashboard/PlatformDashboard';
 import { Lightspeed } from './lightspeed/Lightspeed';
 import type { Service } from './interfaces/Service';
+import { useGetPlatformTeamsRoutes } from './routes/useGetPlatformTeamsRoutes';
+import { useGetPlatformUsersRoutes } from './routes/useGetPlatformUsersRoutes';
+import { useGetPlatformOrganizationsRoutes } from './routes/useGetPlatformOrganizationsRoutes';
 
 export function usePlatformNavigation(services: Service[]) {
   const { t } = useTranslation();
@@ -20,9 +23,15 @@ export function usePlatformNavigation(services: Service[]) {
   const hubNav = useHubNavigation();
   const edaNav = useEdaNavigation();
 
-  const hasController = services.some((service) => service.api_slug === 'controller');
-  const hasEda = services.some((service) => service.api_slug === 'eda');
-  const hasHub = services.some((service) => service.api_slug === 'hub');
+  const hasController = services.some(
+    (service) => service.summary_fields.service_cluster?.service_type === 'controller'
+  );
+  const hasEda = services.some(
+    (service) => service.summary_fields.service_cluster?.service_type === 'eda'
+  );
+  const hasHub = services.some(
+    (service) => service.summary_fields.service_cluster?.service_type === 'hub'
+  );
   const awx = hasController ? awxNav : [];
   const hub = hasHub ? hubNav : [];
   const eda = hasEda ? edaNav : [];
@@ -71,9 +80,10 @@ export function usePlatformNavigation(services: Service[]) {
   const applications = removeNavigationItemById(awx, AwxRoute.Applications);
 
   // Access
-  const organizations = removeNavigationItemById(awx, AwxRoute.Organizations);
-  const teams = removeNavigationItemById(awx, AwxRoute.Teams);
-  const users = removeNavigationItemById(awx, AwxRoute.Users);
+  // const organizations = removeNavigationItemById(awx, AwxRoute.Organizations);
+  const organizations = useGetPlatformOrganizationsRoutes();
+  const teams = useGetPlatformTeamsRoutes();
+  const users = useGetPlatformUsersRoutes();
 
   // Adminsitration
   const credentials = removeNavigationItemById(awx, AwxRoute.Credentials);

@@ -6,7 +6,8 @@ import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashb
 import { PageDashboardChart } from '../../../../framework/PageDashboard/PageDashboardChart';
 import { useGet } from '../../../common/crud/useGet';
 import { EdaRoute } from '../../EdaRoutes';
-import { API_PREFIX, EDA_MAX_PAGE_SIZE } from '../../constants';
+import { edaAPI } from '../../api/eda-utils';
+import { EDA_MAX_PAGE_SIZE } from '../../constants';
 import { EdaResult } from '../../interfaces/EdaResult';
 import { EdaRuleAuditItem } from '../../interfaces/EdaRuleAudit';
 
@@ -15,7 +16,7 @@ const RuleAuditChart = () => {
   const getPageUrl = useGetPageUrl();
 
   const { data } = useGet<EdaResult<EdaRuleAuditItem>>(
-    `${API_PREFIX}/audit-rules/?page_size=${EDA_MAX_PAGE_SIZE}`
+    edaAPI`/audit-rules/?page_size=${EDA_MAX_PAGE_SIZE.toString()}`
   );
 
   // Chart Test Code
@@ -43,7 +44,9 @@ const RuleAuditChart = () => {
         if (item.fired_at) {
           const firedAtDate = new Date(item.fired_at);
           if (!firstDate || firedAtDate < firstDate) firstDate = firedAtDate;
-          const label = `${firedAtDate.getMonth() + 1}/${firedAtDate.getDate()}`;
+          const label = `${String(firedAtDate.getMonth() + 1).padStart(2, '0')}/${String(
+            firedAtDate.getDate()
+          ).padStart(2, '0')}`;
           switch (item.status) {
             case 'successful':
               {
@@ -90,7 +93,10 @@ const RuleAuditChart = () => {
           date <= lastDate;
           date = new Date(date.valueOf() + 24 * 60 * 60 * 1000)
         ) {
-          const label = `${date.getMonth() + 1}/${date.getDate()}`;
+          const label = `${String(date.getMonth() + 1).padStart(2, '0')}/${String(
+            date.getDate()
+          ).padStart(2, '0')}`;
+          //const label = date;
           const successfulRun = successfulRunMap[label];
           if (!successfulRun) successfulRunMap[label] = { label, value: 0 };
           const failedRun = failedRunMap[label];
@@ -113,7 +119,7 @@ const RuleAuditChart = () => {
 
   return (
     <PageDashboardCard
-      title={t('Rule Runs')}
+      title={t('Rule Audit')}
       width="xxl"
       height="sm"
       to={getPageUrl(EdaRoute.RuleAudits)}

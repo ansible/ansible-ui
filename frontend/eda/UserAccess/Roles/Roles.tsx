@@ -1,17 +1,12 @@
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
+import { edaAPI } from '../../api/eda-utils';
 import { EdaRole } from '../../interfaces/EdaRole';
-import { useRoleColumns } from './hooks/useRoleColumns';
-import { API_PREFIX } from '../../constants';
 import { useEdaView } from '../../useEventDrivenView';
+import { useRoleColumns } from './hooks/useRoleColumns';
 
 export function Roles() {
   const { t } = useTranslation();
-  const tableColumns = useRoleColumns(true);
-  const view = useEdaView<EdaRole>({
-    url: `${API_PREFIX}/roles/`,
-    tableColumns,
-  });
   return (
     <PageLayout>
       <PageHeader
@@ -20,14 +15,26 @@ export function Roles() {
           'A role is a set of permissions that can be assigned to users based on their role within an organization.'
         )}
       />
-      <PageTable
-        id="eda-roles-table"
-        tableColumns={tableColumns}
-        errorStateTitle={t('Error loading roles')}
-        emptyStateTitle={t('There are currently no roles added for your organization.')}
-        {...view}
-        defaultSubtitle={t('Roles')}
-      />
+      <EdaRolesTable />
     </PageLayout>
+  );
+}
+
+export function EdaRolesTable() {
+  const { t } = useTranslation();
+  const tableColumns = useRoleColumns(true);
+  const view = useEdaView<EdaRole>({
+    url: edaAPI`/roles/`,
+    tableColumns,
+  });
+  return (
+    <PageTable
+      id="eda-roles-table"
+      tableColumns={tableColumns}
+      errorStateTitle={t('Error loading roles')}
+      emptyStateTitle={t('There are currently no roles added for your organization.')}
+      {...view}
+      defaultSubtitle={t('Roles')}
+    />
   );
 }

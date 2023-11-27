@@ -1,4 +1,3 @@
-import { PerPageOptions } from '@patternfly/react-core';
 import {
   Button,
   EmptyState,
@@ -9,6 +8,7 @@ import {
   EmptyStateIcon,
   Flex,
   PageSection,
+  PerPageOptions,
   Stack,
 } from '@patternfly/react-core';
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
@@ -55,7 +55,6 @@ import { getID } from '../hooks/useID';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { PageLoadingTable } from './PageLoadingTable';
 import { PagePagination } from './PagePagination';
-import './PageTable.css';
 import { PageTableCards } from './PageTableCards';
 import {
   ITableColumn,
@@ -177,7 +176,8 @@ export type PageTableProps<T extends object> = {
   maxSelections?: number;
 
   /**
-   * This will render content between PageToolbar and table hader. Set scrollOutsideTable to true, if you want proper scrolling in table.
+   * This will render content between PageToolbar and table header. Set
+   * scrollOutsideTable to true, if you want proper scrolling in table.
    */
   topContent?: React.ReactNode;
 
@@ -267,6 +267,11 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
         button={
           (props.emptyStateButtonClick && (
             <Button
+              data-cy={
+                props.emptyStateButtonText
+                  ? convertString(props.emptyStateButtonText)
+                  : 'create-resource'
+              }
               variant="primary"
               onClick={props.emptyStateButtonClick}
               icon={props.emptyStateButtonIcon ? props.emptyStateButtonIcon : null}
@@ -632,14 +637,14 @@ function TableHead<T extends object>(props: {
   return (
     <Thead>
       <Tr className="bg-lighten">
-        {expandedRow && <Th style={{ padding: 0, backgroundColor: 'inherit' }} />}
+        {expandedRow && <Th style={{ padding: 0 }} className="bg-lighten" />}
         {(showSelect || onSelect) && (
           <Th
             isStickyColumn
             stickyMinWidth="0px"
             hasRightBorder={props.scrollLeft}
-            style={{ backgroundColor: 'inherit' }}
             data-cy={'selections-column-header'}
+            className={props.scrollLeft ? 'bg-lighten-2' : 'bg-lighten'}
           >
             &nbsp;
           </Th>
@@ -658,9 +663,9 @@ function TableHead<T extends object>(props: {
                     ? column.minWidth
                     : undefined,
                 maxWidth: column.maxWidth !== undefined ? column.maxWidth : undefined,
-                backgroundColor: 'inherit',
               }}
               data-cy={getID(column.header + '-column-header')}
+              className="bg-lighten"
             >
               {column.header}
             </Th>
@@ -675,10 +680,9 @@ function TableHead<T extends object>(props: {
               right: 0,
               padding: 0,
               paddingRight: 0,
-              backgroundColor: 'inherit',
               zIndex: 302,
             }}
-            className={props.scrollRight ? 'pf-m-border-left' : undefined}
+            className={props.scrollRight ? 'pf-m-border-left bg-lighten-2' : 'bg-lighten'}
             data-cy={'action-column-header'}
           >
             &nbsp;
@@ -743,7 +747,6 @@ function TableRow<T extends object>(props: {
   return (
     <>
       <Tr
-        isRowSelected={expanded}
         style={{
           boxShadow: 'unset',
           borderBottom: expanded || (props.isLastRow && disableLastRowBorder) ? 'unset' : undefined,
@@ -790,6 +793,7 @@ function TableRow<T extends object>(props: {
             stickyMinWidth="0px"
             hasRightBorder={props.scrollLeft}
             data-cy={'checkbox-column-cell'}
+            className={props.scrollLeft ? 'bg-lighten' : undefined}
           />
         )}
         {onSelect && (
@@ -811,6 +815,7 @@ function TableRow<T extends object>(props: {
             stickyMinWidth="0px"
             hasRightBorder={props.scrollLeft}
             data-cy={'checkbox-column-cell'}
+            className={props.scrollLeft ? 'bg-lighten' : undefined}
           />
         )}
         <TableCells
@@ -825,7 +830,12 @@ function TableRow<T extends object>(props: {
         <Tr isExpanded={expanded} style={{ boxShadow: 'unset' }}>
           <Td />
           {showSelect && (
-            <Th isStickyColumn stickyMinWidth="0px" hasRightBorder={props.scrollLeft} />
+            <Th
+              isStickyColumn
+              stickyMinWidth="0px"
+              hasRightBorder={props.scrollLeft}
+              className={props.scrollLeft ? 'bg-lighten' : undefined}
+            />
           )}
           {onSelect && <Td isStickyColumn stickyMinWidth="0px" hasRightBorder={props.scrollLeft} />}
           <Td
@@ -839,12 +849,8 @@ function TableRow<T extends object>(props: {
               isActionCell
               isStickyColumn
               stickyMinWidth="0px"
-              style={{
-                right: 0,
-                padding: 0,
-                paddingRight: 0,
-              }}
-              className={props.scrollRight ? 'pf-m-border-left' : undefined}
+              style={{ right: 0, padding: 0, paddingRight: 0 }}
+              className={props.scrollRight ? 'pf-m-border-left bg-lighten' : undefined}
             >
               &nbsp;
             </Td>
@@ -891,8 +897,8 @@ function TableCells<T extends object>(props: {
             paddingRight: 8,
             zIndex: actionsExpanded ? 400 : undefined, // ZIndex 400 is needed for PF table stick headers
           }}
-          className={props.scrollRight ? 'pf-m-border-left' : undefined}
           data-cy={'actions-column-cell'}
+          className={props.scrollRight ? 'pf-m-border-left bg-lighten' : undefined}
         >
           <PageActions
             actions={rowActions}
@@ -905,4 +911,8 @@ function TableCells<T extends object>(props: {
       )}
     </Fragment>
   );
+}
+
+function convertString(s: string) {
+  return s.toLowerCase().split(' ').join('-');
 }

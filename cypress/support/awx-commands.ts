@@ -5,74 +5,107 @@ import { AwxItemsResponse } from '../../frontend/awx/common/AwxItemsResponse';
 import { AwxHost } from '../../frontend/awx/interfaces/AwxHost';
 import { AwxToken } from '../../frontend/awx/interfaces/AwxToken';
 import { Credential } from '../../frontend/awx/interfaces/Credential';
+import { CredentialType } from '../../frontend/awx/interfaces/CredentialType';
 import { ExecutionEnvironment } from '../../frontend/awx/interfaces/ExecutionEnvironment';
 import { InstanceGroup } from '../../frontend/awx/interfaces/InstanceGroup';
 import { Inventory } from '../../frontend/awx/interfaces/Inventory';
+import { Job } from '../../frontend/awx/interfaces/Job';
 import { JobEvent } from '../../frontend/awx/interfaces/JobEvent';
 import { JobTemplate } from '../../frontend/awx/interfaces/JobTemplate';
 import { Label } from '../../frontend/awx/interfaces/Label';
 import { Organization } from '../../frontend/awx/interfaces/Organization';
 import { Project } from '../../frontend/awx/interfaces/Project';
+import { Role } from '../../frontend/awx/interfaces/Role';
 import { Schedule } from '../../frontend/awx/interfaces/Schedule';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
-import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/generated-from-swagger/api';
+import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/WorkflowJobTemplate';
 import './auth';
 import './commands';
 import './rest-commands';
+//import { Credential } from '../../frontend/eda/interfaces/generated/eda-api';
 
 //  AWX related custom command implementation
 
-Cypress.Commands.add('getCheckboxByLabel', (label: string | RegExp) => {
-  cy.contains('.pf-v5-c-check__label', label)
-    .invoke('attr', 'for')
-    .then((id: string | undefined) => {
-      if (id) {
-        cy.get('#' + id);
-      }
-    });
+/**
+ * cy.inputCustomCredTypeConfig(json/yml, input/injector config)
+ */
+
+Cypress.Commands.add('inputCustomCredTypeConfig', (configType: string, config: string) => {
+  cy.get(`[data-cy="${configType}"]`)
+    .find('textarea:not(:disabled)')
+    .focus()
+    .clear()
+    .type('{selectAll}{backspace}')
+    .type(`${config}`, {
+      delay: 0,
+      parseSpecialCharSequences: false,
+    })
+    .type('{esc}');
 });
 
-Cypress.Commands.add('selectDropdownOptionByResourceName', (resource: string, itemName: string) => {
-  cy.get(`[data-cy*="${resource}-form-group"]`).within(() => {
-    cy.get('[data-ouia-component-id="menu-select"] button')
-      .click()
-      .then(() => {
-        cy.contains('li', itemName).scrollIntoView().click();
-      });
-  });
+/**@param
+ * createAWXCredentialTypeUI
+ */
+
+Cypress.Commands.add(
+  'createAndDeleteCustomAWXCredentialTypeUI',
+  (
+    customCredTypeName: string,
+    inputConfig?: string,
+    injectorConfig?: string,
+    defaultFormat?: string
+  ) => {
+    const credentialTypeDesc = 'This is a custom credential type that is not managed';
+    cy.navigateTo('awx', 'credential-types');
+    cy.get('a[data-cy="create-credential-type"').click();
+    cy.verifyPageTitle('Create Credential Type');
+    cy.url().then((currentUrl) => {
+      expect(currentUrl.includes('/credential-types/create')).to.be.true;
+    });
+    cy.get('[data-cy="name"]').type(`${customCredTypeName}`);
+    cy.get('[data-cy="description"]').type(`${credentialTypeDesc}`);
+    if (inputConfig && injectorConfig) {
+      if (defaultFormat === 'json') {
+        cy.configFormatToggle('inputs');
+      }
+      cy.inputCustomCredTypeConfig('inputs', inputConfig);
+      if (defaultFormat === 'json') {
+        cy.configFormatToggle('injectors');
+      }
+      cy.inputCustomCredTypeConfig('injectors', injectorConfig);
+    }
+    cy.clickButton(/^Create credential type$/);
+    cy.verifyPageTitle(customCredTypeName);
+    cy.hasDetail(/^Name$/, `${customCredTypeName}`);
+    cy.hasDetail(/^Description$/, `${credentialTypeDesc}`);
+    cy.clickPageAction(/^Delete credential type/);
+    cy.get('#confirm').click();
+    cy.clickButton(/^Delete credential type/);
+    cy.clickButton(/^Close/);
+  }
+);
+
+/** @param
+ * Configuration format YAML-JSON and JSON-YAML toggle switch
+ *
+ */
+
+Cypress.Commands.add('configFormatToggle', (configType: string) => {
+  cy.get(`[data-cy="${configType}-form-group"] [data-cy=toggle-json]`).click();
+});
+
+Cypress.Commands.add('typeMonacoTextField', (textString: string) => {
+  cy.get('[data-cy="expandable"]')
+    .click()
+    .then(() => {
+      cy.get('[class*="monaco-scrollable-element"]').type(`${textString}{esc}`);
+    });
 });
 
 Cypress.Commands.add('selectPromptOnLaunch', (resourceName: string) => {
   cy.get(`[data-cy="ask_${resourceName}_on_launch"]`).click();
 });
-
-Cypress.Commands.add(
-  'selectDropdownOptionByResourceName',
-  (resource: string, itemName: string, spyglass?: boolean) => {
-    if (spyglass === undefined) {
-      spyglass === false;
-    }
-    if (spyglass) {
-      cy.get(`[data-cy*="${resource}-form-group"]`).within(() => {
-        cy.get('button').eq(1).click();
-      });
-      cy.get('.pf-v5-c-modal-box').within(() => {
-        cy.searchAndDisplayResource(itemName);
-        cy.get('tbody tr input').click();
-        cy.clickButton('Confirm');
-      });
-    } else {
-      cy.get(`[data-cy*="${resource}-form-group"]`).within(() => {
-        cy.get('[data-ouia-component-id="menu-select"] button')
-          .click()
-          .then(() => {
-            cy.contains('li', itemName).click();
-          });
-      });
-    }
-  }
-);
 
 Cypress.Commands.add('selectItemFromLookupModal', (resource: string, itemName: string) => {
   cy.get(`[data-cy*="${resource}-form-group"]`).within(() => {
@@ -87,6 +120,31 @@ Cypress.Commands.add('selectItemFromLookupModal', (resource: string, itemName: s
   });
 });
 
+Cypress.Commands.add('selectDropdownOptionByResourceName', (resource: string, itemName: string) => {
+  const menuSelector = `[data-cy*="${resource}-form-group"] div[data-ouia-component-id="menu-select"]`;
+  cy.get('[data-cy="loading-spinner"]').should('not.exist');
+
+  cy.get(`${menuSelector}`)
+    .find('svg[data-cy="lookup-button"]', { timeout: 1000 })
+    .should((_) => {})
+    .then(($elements) => {
+      if ($elements.length) {
+        cy.get('svg[data-cy="lookup-button"]').click({ force: true });
+        cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+          cy.searchAndDisplayResource(itemName);
+          cy.get('tbody tr input').click();
+          cy.clickButton('Confirm');
+        });
+      } else {
+        cy.get(`${menuSelector} button`)
+          .click()
+          .then(() => {
+            cy.contains('li', itemName).click();
+          });
+      }
+    });
+});
+
 Cypress.Commands.add('setTablePageSize', (text: '10' | '20' | '50' | '100') => {
   cy.get('.pf-v5-c-pagination')
     .first()
@@ -97,11 +155,9 @@ Cypress.Commands.add('setTablePageSize', (text: '10' | '20' | '50' | '100') => {
 });
 
 Cypress.Commands.add('clickLink', (label: string | RegExp) => {
-  cy.contains('a:not(:disabled):not(:hidden)', label).should(
-    'not.have.attr',
-    'aria-disabled',
-    'true'
-  );
+  cy.contains('a:not(:disabled):not(:hidden)', label)
+    .should('not.have.attr', 'aria-disabled', 'true')
+    .should('be.visible');
   cy.contains('a:not(:disabled):not(:hidden)', label).click();
 });
 
@@ -126,6 +182,7 @@ Cypress.Commands.add('navigateTo', (component: string, label: string) => {
       cy.get(`[data-cy="${component}-${label}"]`).click();
     }
   });
+  cy.clearAllFilters();
   cy.get('[data-cy="refresh"]').click();
 });
 
@@ -168,6 +225,18 @@ Cypress.Commands.add('getListCardByText', (name: string | RegExp, filter?: boole
     cy.filterTableByText(name);
   }
   cy.contains('article', name);
+});
+
+Cypress.Commands.add('selectDetailsPageKebabAction', (dataCy: string) => {
+  cy.get('[data-cy="actions-dropdown"]')
+    .click()
+    .then(() => {
+      cy.get(`[data-cy="${dataCy}"]`).click();
+      cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+        cy.get('[data-ouia-component-id="confirm"]').click();
+        cy.get('[data-ouia-component-id="submit"]').click();
+      });
+    });
 });
 
 Cypress.Commands.add(
@@ -271,9 +340,9 @@ Cypress.Commands.add('clickPageAction', (label: string | RegExp) => {
 });
 
 // Resources for testing AWX
-Cypress.Commands.add('createAwxOrganization', () => {
+Cypress.Commands.add('createAwxOrganization', (orgName?: string) => {
   cy.awxRequestPost<Pick<Organization, 'name'>, Organization>('/api/v2/organizations/', {
-    name: 'E2E Organization ' + randomString(4),
+    name: orgName ? orgName : 'E2E Organization ' + randomString(4),
   });
 });
 
@@ -304,9 +373,32 @@ Cypress.Commands.add(
       failOnStatusCode?: boolean;
     }
   ) => {
-    // Delete organization created for this credential (this will also delete the credential)
-    if (credential?.organization) {
-      cy.awxRequestDelete(`/api/v2/organizations/${credential.organization.toString()}/`, options);
+    cy.awxRequestDelete(`/api/v2/credentials/${credential.id}/`, options);
+  }
+);
+
+Cypress.Commands.add('createAwxCredentialType', () => {
+  cy.awxRequestPost<Pick<CredentialType, 'name' | 'description' | 'kind'>, CredentialType>(
+    '/api/v2/credential_types/',
+    {
+      name: 'E2E Custom Credential Type ' + randomString(4),
+      description: 'E2E Custom Credential Type Description',
+      kind: 'cloud',
+    }
+  );
+});
+
+Cypress.Commands.add(
+  'deleteAwxCredentialType',
+  (
+    credentialType: CredentialType,
+    options?: {
+      /** Whether to fail on response codes other than 2xx and 3xx */
+      failOnStatusCode?: boolean;
+    }
+  ) => {
+    if (credentialType?.id) {
+      cy.awxRequestDelete(`/api/v2/credential_types/${credentialType.id.toString()}`, options);
     }
   }
 );
@@ -422,6 +514,27 @@ Cypress.Commands.add(
   }
 );
 
+Cypress.Commands.add('giveUserWfjtAccess', (wfjtName: string, userId: number, roleName: string) => {
+  cy.awxRequestGet<AwxItemsResponse<WorkflowJobTemplate>>(
+    `/api/v2/workflow_job_templates/?name=${wfjtName}`
+  )
+    .its('results[0]')
+    .then((resource: WorkflowJobTemplate) => {
+      cy.awxRequestGet<AwxItemsResponse<Role>>(
+        `/api/v2/workflow_job_templates/${resource.id}/object_roles/`
+      )
+        .its('results')
+        .then((rolesArray) => {
+          const approveRole = rolesArray
+            ? rolesArray.find((role) => role.name === roleName)
+            : undefined;
+          cy.awxRequestPost<Partial<Role>>(`/api/v2/users/${userId}/roles/`, {
+            id: approveRole?.id,
+          });
+        });
+    });
+});
+
 Cypress.Commands.add(
   'createAwxProject',
   (project?: SetRequired<Partial<Omit<Project, 'id'>>, 'organization'>, skipSync?: boolean) => {
@@ -452,6 +565,10 @@ Cypress.Commands.add('waitForProjectToFinishSyncing', (projectId: number) => {
       requestCount = 1;
       return;
     }
+    Cypress.log({
+      displayName: 'PROJECT SYNC:',
+      message: [`🕓WAITING FOR PROJECT TO SYNC...🕓`],
+    });
     requestCount++;
     cy.wait(1000);
     cy.waitForProjectToFinishSyncing(projectId);
@@ -524,6 +641,19 @@ Cypress.Commands.add('createAwxInventory', (inventory?: Partial<Omit<Inventory, 
     });
   }
 });
+Cypress.Commands.add(
+  'createAwxInventorySource',
+  (inventory: Partial<Pick<Inventory, 'id'>>, project: Partial<Pick<Project, 'id'>>) => {
+    cy.requestPost('/api/v2/inventory_sources/', {
+      name: 'E2E Inventory Source ' + randomString(4),
+      descriptiom: 'This is a description',
+      source: 'scm',
+      source_project: project.id,
+      source_path: '',
+      inventory: inventory.id,
+    });
+  }
+);
 
 Cypress.Commands.add(
   'deleteAwxInventory',
@@ -534,10 +664,7 @@ Cypress.Commands.add(
       failOnStatusCode?: boolean;
     }
   ) => {
-    // Delete organization created for this inventory (this will also delete the inventory)
-    if (inventory?.organization) {
-      cy.awxRequestDelete(`/api/v2/organizations/${inventory.organization.toString()}/`, options);
-    }
+    cy.awxRequestDelete(`/api/v2/inventories/${inventory.id}/`, options);
   }
 );
 
@@ -626,12 +753,60 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('createAwxWorkflowJobTemplate', (jobTemplate: WorkflowJobTemplate) => {
-  cy.requestPost<WorkflowJobTemplate>('/api/v2/workflow_job_templates/', {
-    name: 'E2E Job Template ' + randomString(4),
-    ...jobTemplate,
-  });
+Cypress.Commands.add(
+  'createAwxWorkflowJobTemplate',
+  (workflowJobTemplate: Partial<WorkflowJobTemplate>) => {
+    cy.requestPost<WorkflowJobTemplate>('/api/v2/workflow_job_templates/', {
+      name: 'E2E WorkflowJob Template ' + randomString(4),
+      ...workflowJobTemplate,
+    });
+  }
+);
+
+Cypress.Commands.add('getAwxWorkflowJobTemplateByName', (awxWorkflowJobTemplateName: string) => {
+  cy.awxRequestGet<AwxItemsResponse<WorkflowJobTemplate>>(
+    `/api/v2/workflow_job_templates/?name=${awxWorkflowJobTemplateName}`
+  );
 });
+
+Cypress.Commands.add(
+  'renderWorkflowVisualizerNodesFromFixtureFile',
+  (workflowJobTemplateName: string, fixtureFile: string) => {
+    cy.getAwxWorkflowJobTemplateByName(workflowJobTemplateName)
+      .its('results[0]')
+      .then((results: WorkflowJobTemplate) => {
+        cy.log('THIS ONE THIS ONE', results.id);
+        cy.intercept(
+          {
+            method: 'GET',
+            url: `/api/v2/workflow_job_templates/${results.id}/workflow_nodes/`,
+          },
+          { fixture: fixtureFile }
+        )
+          .as('newVisualizerView')
+          .then(() => {
+            cy.visit(`/ui_next/resources/templates/workflow_job_template/${results.id}/visualizer`);
+          });
+      });
+  }
+);
+
+Cypress.Commands.add(
+  'deleteAwxWorkflowJobTemplate',
+  (
+    workflowJobTemplate: WorkflowJobTemplate,
+    options?: {
+      /** Whether to fail on response codes other than 2xx and 3xx */
+      failOnStatusCode?: boolean;
+    }
+  ) => {
+    if (workflowJobTemplate.id) {
+      const workflowTemplateId =
+        typeof workflowJobTemplate.id === 'number' ? workflowJobTemplate.id.toString() : '';
+      cy.awxRequestDelete(`/api/v2/workflow_job_templates/${workflowTemplateId}/`, options);
+    }
+  }
+);
 
 Cypress.Commands.add(
   'createEdaAwxJobTemplate',
@@ -671,17 +846,9 @@ Cypress.Commands.add(
       failOnStatusCode?: boolean;
     }
   ) => {
-    const projectId = jobTemplate.project;
-
     if (jobTemplate.id) {
       const templateId = typeof jobTemplate.id === 'number' ? jobTemplate.id.toString() : '';
       cy.awxRequestDelete(`/api/v2/job_templates/${templateId}/`, options);
-    }
-    if (typeof projectId === 'number') {
-      cy.awxRequestGet<Project>(`/api/v2/projects/${projectId}/`).then((project) => {
-        // This will take care of deleting the project and the associated org, inventory
-        cy.deleteAwxProject(project, options);
-      });
     }
   }
 );
@@ -740,6 +907,8 @@ Cypress.Commands.add(
       '/api/v2/instance_groups/',
       {
         name: 'E2E Instance Group ' + randomString(4),
+        percent_capacity_remaining: 100,
+        policy_instance_minimum: 100,
         ...instanceGroup,
       }
     );
@@ -825,4 +994,29 @@ Cypress.Commands.add('waitForTemplateStatus', (jobID: string) => {
           break;
       }
     });
+});
+
+Cypress.Commands.add('waitForJobToProcessEvents', (jobID: string) => {
+  const waitForJobToFinishProcessingEvents = (maxLoops: number) => {
+    if (maxLoops == 0) {
+      cy.log('Max loops reached while waiting for processing events.');
+      return;
+    }
+    cy.wait(500);
+
+    cy.requestGet<Job>(`api/v2/jobs/${jobID}/`).then((job) => {
+      if (job.event_processing_finished !== true) {
+        cy.log(`EVENT PROCESSING = ${job.event_processing_finished}`);
+        cy.log(`MAX LOOPS RAN = ${maxLoops}`);
+        waitForJobToFinishProcessingEvents(maxLoops - 1);
+      } else {
+        cy.log(`EVENT PROCESSED = ${job.event_processing_finished}`);
+      }
+    });
+  };
+  /*
+  reason the numbers chosen for wait is 500ms and maxLoops is 80,
+  as processing events takes ~30s, hence 80 * 500ms is chosen as the upper limit)
+  */
+  waitForJobToFinishProcessingEvents(80);
 });

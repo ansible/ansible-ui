@@ -1,5 +1,11 @@
-import { RequestError } from '../../common/crud/RequestError';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { requestGet } from '../../common/crud/Data';
+import { RequestError, isRequestError } from '../../common/crud/RequestError';
+import { AnsibleAnsibleDistributionResponse as Distribution } from '../api-schemas/generated/AnsibleAnsibleDistributionResponse';
+import { AnsibleAnsibleRepositoryResponse as Repository } from '../api-schemas/generated/AnsibleAnsibleRepositoryResponse';
 import { Task, TaskResponse } from '../tasks/Task';
+import { pulpAPI } from './formatPath';
 import {
   deleteHubRequest,
   getHubRequest,
@@ -8,8 +14,66 @@ import {
   putHubRequest,
 } from './request';
 
-function getBaseAPIPath() {
-  return process.env.HUB_API_PREFIX;
+type Results = { results: Repository[] | Distribution[] };
+export function useRepositoryBasePath(name: string, pulp_href?: string | undefined) {
+  const { t } = useTranslation();
+
+  const [basePath, setBasePath] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string>('');
+
+  useEffect(() => {
+    setLoading(true);
+    const fetchRepositoryBasePath = async () => {
+      try {
+        let repository: Repository | undefined | { name: string; pulp_href: string };
+
+        if (pulp_href) {
+          repository = { name, pulp_href };
+        } else {
+          const repositoryResponse = await requestGet<Results>(
+            pulpAPI`/repositories/ansible/ansible/?name=${name}&limit=1`
+          );
+          repository = firstResult(repositoryResponse) as Repository;
+        }
+        if (!repository) {
+          throw new Error(t(`Failed to find repository {{name}}`, { name }));
+        }
+        const distributionResponse = await requestGet<Results>(
+          pulpAPI`/distributions/ansible/ansible/?name=${name}&limit=1`
+        );
+        let distribution: Distribution = firstResult(distributionResponse) as Distribution;
+        if (distribution && distribution.repository === repository.pulp_href) {
+          setBasePath(distribution.base_path);
+        } else {
+          const newDistResponse = await requestGet<Results>(
+            pulpAPI`/distributions/ansible/ansible/?repository=${repository.pulp_href}&ordering=pulp_created&limit=1`
+          );
+          distribution = firstResult(newDistResponse) as Distribution;
+          if (!distribution) {
+            throw new Error(t(`Failed to find a distribution for repository {{name}}`, { name }));
+          }
+          setBasePath(distribution.base_path);
+        }
+      } catch (error) {
+        if (isRequestError(error)) {
+          setError(error?.message);
+        } else {
+          setError(t`Failed to find repository base path`);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    void fetchRepositoryBasePath();
+  }, [name, pulp_href, t]);
+
+  return { basePath, loading, error };
+}
+
+function firstResult(results: Results) {
+  return results.results[0];
 }
 
 export function apiTag(strings: TemplateStringsArray, ...values: string[]) {
@@ -26,16 +90,6 @@ export function apiTag(strings: TemplateStringsArray, ...values: string[]) {
   });
 
   return url;
-}
-
-export function hubAPI(strings: TemplateStringsArray, ...values: string[]) {
-  const base = getBaseAPIPath();
-  return base + apiTag(strings, ...values);
-}
-
-export function pulpAPI(strings: TemplateStringsArray, ...values: string[]) {
-  const base = getBaseAPIPath();
-  return base + '/pulp/api/v3' + apiTag(strings, ...values);
 }
 
 export type QueryParams = {
@@ -81,10 +135,16 @@ export function pulpHrefKeyFn(item: { pulp_href: string }) {
 }
 
 export function collectionKeyFn(item: {
-  collection_version?: { pulp_href: string };
+  collection_version?: { pulp_href: string; version?: string };
   repository?: { name: string };
 }) {
-  return item.collection_version?.pulp_href + '_' + item.repository?.name;
+  return (
+    item.collection_version?.pulp_href +
+    '_' +
+    item.repository?.name +
+    '_' +
+    item.collection_version?.version
+  );
 }
 
 export function appendTrailingSlash(url: string) {

@@ -1,5 +1,4 @@
 import { AwxItemsResponse } from '../../../../frontend/awx/common/AwxItemsResponse';
-import { IAwxDashboardData } from '../../../../frontend/awx/dashboard/AwxDashboard';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Job } from '../../../../frontend/awx/interfaces/Job';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
@@ -79,66 +78,12 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
     });
   });
 
-  it('checks inventories count', () => {
-    cy.intercept('GET', 'api/v2/dashboard/').as('getDashboard');
-    cy.navigateTo('awx', 'dashboard');
-    cy.wait('@getDashboard')
-      .its('response.body')
-      .then((data: IAwxDashboardData) => {
-        cy.get('#inventories-chart').should('contain', data.inventories.total);
-        const readyCount = data.inventories.total - data.inventories.inventory_failed;
-        if (readyCount > 0) {
-          cy.get('#inventories-legend-synced-count').should('contain', readyCount);
-        }
-        if (data.inventories.inventory_failed > 0) {
-          cy.get('#inventories-legend-failed-count').should(
-            'contain',
-            data.inventories.inventory_failed
-          );
-        }
-      });
-  });
-
-  it('checks hosts count', () => {
-    cy.intercept('GET', 'api/v2/dashboard/').as('getDashboard');
-    cy.navigateTo('awx', 'dashboard');
-    cy.wait('@getDashboard')
-      .its('response.body')
-      .then((data: IAwxDashboardData) => {
-        cy.get('#hosts-chart').should('contain', data.hosts.total);
-        const readyCount = data.hosts.total - data.hosts.failed;
-        if (readyCount > 0) {
-          cy.get('#hosts-legend-ready-count').should('contain', readyCount);
-        }
-        if (data.hosts.failed > 0) {
-          cy.get('#hosts-legend-failed-count').should('contain', data.hosts.failed);
-        }
-      });
-  });
-
-  it('checks projects count', () => {
-    cy.intercept('GET', 'api/v2/dashboard/').as('getDashboard');
-    cy.navigateTo('awx', 'dashboard');
-    cy.wait('@getDashboard')
-      .its('response.body')
-      .then((data: IAwxDashboardData) => {
-        cy.get('#projects-chart').should('contain', data.projects.total);
-        const readyCount = data.projects.total - data.projects.failed;
-        if (readyCount > 0) {
-          cy.get('#projects-legend-ready-count').should('contain', readyCount);
-        }
-        if (data.projects.failed > 0) {
-          cy.get('#projects-legend-failed-count').should('contain', data.projects.failed);
-        }
-      });
-  });
-
   it('checks jobs count and the max # of jobs in the table', () => {
     cy.intercept('GET', '/api/v2/unified_jobs/?order_by=-finished&page=1&page_size=10').as(
       'getJobs'
     );
     cy.navigateTo('awx', 'dashboard');
-    cy.get('[data-cy="Recent Jobs"]').should('contain', 'Recent Jobs');
+    cy.get('[data-cy="recent-jobs"]').should('contain', 'Recent Jobs');
     cy.checkAnchorLinks('Go to Jobs');
     cy.wait('@getJobs')
       .its('response.body.results')
@@ -173,7 +118,7 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
       'getProjects'
     );
     cy.navigateTo('awx', 'dashboard');
-    cy.get('[data-cy="Recent Projects"]').should('contain', 'Recent Projects');
+    cy.get('[data-cy="recent-projects"]').should('contain', 'Recent Projects');
     cy.checkAnchorLinks('Go to Projects');
     cy.wait('@getProjects')
       .its('response.body.results')
@@ -211,7 +156,7 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
       'getInventories'
     );
     cy.navigateTo('awx', 'dashboard');
-    cy.get('[data-cy="Recent Inventories"]').should('contain', 'Recent Inventories');
+    cy.get('[data-cy="recent-inventories"]').should('contain', 'Recent Inventories');
     cy.checkAnchorLinks('Go to Inventories');
     cy.wait('@getInventories')
       .its('response.body.results')

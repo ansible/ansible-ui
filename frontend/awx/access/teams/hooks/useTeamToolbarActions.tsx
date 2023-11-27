@@ -15,6 +15,7 @@ import { Team } from '../../../interfaces/Team';
 import { IAwxView } from '../../../useAwxView';
 import { useSelectUsersAddTeams } from '../../users/hooks/useSelectUsersAddTeams';
 import { useDeleteTeams } from './useDeleteTeams';
+import { awxAPI } from '../../../api/awx-utils';
 
 export function useTeamToolbarActions(view: IAwxView<Team>) {
   const { t } = useTranslation();
@@ -22,7 +23,7 @@ export function useTeamToolbarActions(view: IAwxView<Team>) {
   const deleteTeams = useDeleteTeams(view.unselectItemsAndRefresh);
   const selectUsersAddTeams = useSelectUsersAddTeams();
   // const selectUsersRemoveTeams = useSelectUsersRemoveTeams();
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>('/api/v2/teams/');
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/teams/`);
   const canCreateTeam = Boolean(data && data.actions && data.actions['POST']);
 
   return useMemo<IPageAction<Team>[]>(

@@ -327,6 +327,7 @@ export function PageFormDataEditor<
             icon={
               isExpandable ? (
                 <AngleRightIcon
+                  data-cy="expandable"
                   style={{
                     transform: isCollapsed ? 'rotate(0deg)' : 'rotate(90deg)',
                     transition: 'transform',
@@ -355,16 +356,31 @@ export function PageFormDataEditor<
                   setLanguage={setLanguage}
                   toggleLanguages={toggleLanguages}
                 />
-                <div
-                  id="code-editor-dropzone"
-                  {...dropzone.getRootProps({ disabled })}
-                  style={{ width: '100%', height: '100%' }}
-                >
-                  <input
-                    id="code-editor-dropzone-input"
-                    {...dropzone.getInputProps()}
-                    ref={fileInputRef}
-                  />
+                {props.allowUpload ? (
+                  <div
+                    id="code-editor-dropzone"
+                    {...dropzone.getRootProps({ disabled })}
+                    style={{ width: '100%', height: '100%' }}
+                  >
+                    <input
+                      id="code-editor-dropzone-input"
+                      {...dropzone.getInputProps()}
+                      ref={fileInputRef}
+                    />
+                    <DataEditor<TFieldValues, TFieldName>
+                      setError={setFormError}
+                      clearErrors={clearErrors}
+                      id={id}
+                      data-cy={id}
+                      name={name}
+                      language={selectedLanguage}
+                      value={value}
+                      onChange={onChange}
+                      isReadOnly={isReadOnly || isSubmitting}
+                      invalid={!(validate && isValidating) && error?.message !== undefined}
+                    />
+                  </div>
+                ) : (
                   <DataEditor<TFieldValues, TFieldName>
                     setError={setFormError}
                     clearErrors={clearErrors}
@@ -377,7 +393,7 @@ export function PageFormDataEditor<
                     isReadOnly={isReadOnly || isSubmitting}
                     invalid={!(validate && isValidating) && error?.message !== undefined}
                   />
-                </div>
+                )}
               </>
             )}
           </PageFormGroup>

@@ -6,7 +6,7 @@
   "page": 1,
   "results": [
     {
-      "id": 5,
+      "id": 1,
       "name": "Activation 1",
       "description": "",
       "is_enabled": true,
@@ -22,13 +22,14 @@
       "rules_count": 1,
       "rules_fired_count": 1,
       "created_at": "2023-10-02T13:34:18.445029Z",
-      "modified_at": "2023-10-02T13:34:28.742952Z"
+      "modified_at": "2023-10-02T13:34:28.742952Z",
+      "status_message": "Activation has completed"
     },
     {
-      "id": 5,
+      "id": 2,
       "name": "Activation 2",
       "description": "",
-      "is_enabled": true,
+      "is_enabled": false,
       "status": "completed",
       "decision_environment_id": 1,
       "project_id": 1,
@@ -41,7 +42,8 @@
       "rules_count": 1,
       "rules_fired_count": 1,
       "created_at": "2023-10-02T13:34:18.445029Z",
-      "modified_at": "2023-10-02T13:34:28.742952Z"
+      "modified_at": "2023-10-02T13:34:28.742952Z",
+      "status_message": "Activation has completed"
     },
     {
       "id": 5,
@@ -60,7 +62,8 @@
       "rules_count": 1,
       "rules_fired_count": 1,
       "created_at": "2023-10-02T13:34:18.445029Z",
-      "modified_at": "2023-10-02T13:34:28.742952Z"
+      "modified_at": "2023-10-02T13:34:28.742952Z",
+      "status_message": "Activation has completed"
     },
     {
       "id": 5,
@@ -79,7 +82,8 @@
       "rules_count": 1,
       "rules_fired_count": 1,
       "created_at": "2023-10-02T13:34:18.445029Z",
-      "modified_at": "2023-10-02T13:34:28.742952Z"
+      "modified_at": "2023-10-02T13:34:28.742952Z",
+      "status_message": "Activation has completed"
     },
     {
       "id": 5,
@@ -98,7 +102,8 @@
       "rules_count": 1,
       "rules_fired_count": 1,
       "created_at": "2023-10-02T13:34:18.445029Z",
-      "modified_at": "2023-10-02T13:34:28.742952Z"
+      "modified_at": "2023-10-02T13:34:28.742952Z",
+      "status_message": "Activation has completed"
     },
     {
       "id": 5,
@@ -117,7 +122,8 @@
       "rules_count": 1,
       "rules_fired_count": 1,
       "created_at": "2023-10-02T13:34:18.445029Z",
-      "modified_at": "2023-10-02T13:34:28.742952Z"
+      "modified_at": "2023-10-02T13:34:28.742952Z",
+      "status_message": "Activation has completed"
     },
     {
       "id": 5,
@@ -136,7 +142,8 @@
       "rules_count": 1,
       "rules_fired_count": 1,
       "created_at": "2023-10-02T13:34:18.445029Z",
-      "modified_at": "2023-10-02T13:34:28.742952Z"
+      "modified_at": "2023-10-02T13:34:28.742952Z",
+      "status_message": "Activation has completed"
     },
     {
       "id": 5,
@@ -155,7 +162,8 @@
       "rules_count": 1,
       "rules_fired_count": 1,
       "created_at": "2023-10-02T13:34:18.445029Z",
-      "modified_at": "2023-10-02T13:34:28.742952Z"
+      "modified_at": "2023-10-02T13:34:28.742952Z",
+      "status_message": "Activation has completed"
     },
     {
       "id": 5,
@@ -174,7 +182,8 @@
       "rules_count": 1,
       "rules_fired_count": 1,
       "created_at": "2023-10-02T13:34:18.445029Z",
-      "modified_at": "2023-10-02T13:34:28.742952Z"
+      "modified_at": "2023-10-02T13:34:28.742952Z",
+      "status_message": "Activation has completed"
     },
     {
       "id": 5,
@@ -193,7 +202,8 @@
       "rules_count": 1,
       "rules_fired_count": 1,
       "created_at": "2023-10-02T13:34:18.445029Z",
-      "modified_at": "2023-10-02T13:34:28.742952Z"
+      "modified_at": "2023-10-02T13:34:28.742952Z",
+      "status_message": "Activation has completed"
     }
   ]
 }

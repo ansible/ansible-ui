@@ -16,11 +16,12 @@ import { Job } from '../../interfaces/Job';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
 import { useAwxView } from '../../useAwxView';
 import { useJobsColumns } from '../../views/jobs/hooks/useJobsColumns';
+import { awxAPI } from '../../api/awx-utils';
 
 export function AwxRecentJobsCard() {
   const getPageUrl = useGetPageUrl();
   const view = useAwxView<Job>({
-    url: '/api/v2/unified_jobs/',
+    url: awxAPI`/unified_jobs/`,
     disableQueryString: true,
     defaultSort: 'finished',
     defaultSortDirection: 'desc',

@@ -19,6 +19,7 @@ import { Credential } from '../../../interfaces/Credential';
 import { CredentialInputSource } from '../../../interfaces/CredentialInputSource';
 import { CredentialType } from '../../../interfaces/CredentialType';
 import { CredentialTypeDetail } from '../components/CredentialTypeDetail';
+import { awxAPI } from '../../../api/awx-utils';
 
 const PluginFieldText = styled.p`
   margin-top: 10px;
@@ -26,7 +27,7 @@ const PluginFieldText = styled.p`
 
 export function CredentialDetails() {
   const params = useParams<{ id: string }>();
-  const { data: credential } = useGetItem<Credential>('/api/v2/credentials', params.id);
+  const { data: credential } = useGetItem<Credential>(awxAPI`/credentials`, params.id);
 
   if (!credential) {
     return null;
@@ -48,7 +49,7 @@ export function CredentialDetailsInner(props: { credential: Credential }) {
     error,
     refresh,
   } = useGetItem<CredentialType>(
-    `/api/v2/credential_types`,
+    awxAPI`/credential_types`,
     summary_fields.credential_type.id.toString()
   );
   const inputLabelsAndValues: {
@@ -76,7 +77,7 @@ export function CredentialDetailsInner(props: { credential: Credential }) {
     isLoading: isInputSourceLoading,
     refresh: refreshInputSources,
   } = useAwxGetAllPages<CredentialInputSource>(
-    `/api/v2/credentials/${credential.id}/input_sources/`
+    awxAPI`/credentials/${credential.id.toString()}/input_sources/`
   );
 
   const inputSourcesMap = useMemo(() => {

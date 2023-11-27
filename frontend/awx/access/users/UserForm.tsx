@@ -3,23 +3,24 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import useSWR from 'swr';
 import {
-  PageFormSelect,
   PageFormSubmitHandler,
   PageHeader,
   PageLayout,
   useGetPageUrl,
 } from '../../../../framework';
+import { PageFormSingleSelect } from '../../../../framework/PageForm/Inputs/PageFormSingleSelect';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 import { RouteObj } from '../../../common/Routes';
 import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
+import { AwxPageForm } from '../../AwxPageForm';
 import { AwxRoute } from '../../AwxRoutes';
+import { awxAPI } from '../../api/awx-utils';
 import { Organization } from '../../interfaces/Organization';
 import { User } from '../../interfaces/User';
 import { PageFormOrganizationSelect } from '../organizations/components/PageFormOrganizationSelect';
 import { getOrganizationByName } from '../organizations/utils/getOrganizationByName';
-import { AwxPageForm } from '../../AwxPageForm';
 
 const UserType = {
   SystemAdministrator: 'System administrator',
@@ -52,7 +53,7 @@ export function CreateUser() {
       return false;
     }
     const newUser = await postRequest(
-      `/api/v2/organizations/${user.organization.toString()}/users/`,
+      awxAPI`/organizations/${user.organization.toString()}/users/`,
       user
     );
     navigate(RouteObj.UserDetails.replace(':id', newUser.id.toString()));
@@ -88,7 +89,7 @@ export function EditUser() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const { data: user } = useSWR<User>(`/api/v2/users/${id.toString()}/`, requestGet, swrOptions);
+  const { data: user } = useSWR<User>(awxAPI`/users/${id.toString()}/`, requestGet, swrOptions);
 
   const onSubmit: PageFormSubmitHandler<IUserInput> = async (
     userInput: IUserInput,
@@ -104,7 +105,7 @@ export function EditUser() {
         return false;
       }
     }
-    const newUser = await requestPatch<User>(`/api/v2/users/${id}/`, user);
+    const newUser = await requestPatch<User>(awxAPI`/users/${id.toString()}/`, user);
     navigate(RouteObj.UserDetails.replace(':id', newUser.id.toString()));
   };
 
@@ -183,10 +184,10 @@ function UserInputs(props: { mode: 'create' | 'edit' }) {
           }
         }}
       />
-      <PageFormSelect<IUserInput>
+      <PageFormSingleSelect<IUserInput>
         name="userType"
         label={t('User type')}
-        placeholderText={t('Select user type')}
+        placeholder={t('Select user type')}
         options={[
           {
             label: t('System administrator'),

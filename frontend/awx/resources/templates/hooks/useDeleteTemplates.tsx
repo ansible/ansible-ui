@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { useNameColumn } from '../../../../common/columns';
 import { getItemKey, requestDelete } from '../../../../common/crud/Data';
+import { awxAPI } from '../../../api/awx-utils';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { useTemplateColumns } from './useTemplateColumns';
@@ -37,11 +38,11 @@ export function useDeleteTemplates(
       confirmationColumns,
       actionColumns,
       onComplete,
-      actionFn: (template: JobTemplate | WorkflowJobTemplate) => {
+      actionFn: (template: JobTemplate | WorkflowJobTemplate, signal) => {
         if (template.type === 'job_template') {
-          return requestDelete(`/api/v2/job_templates/${template.id}/`);
+          return requestDelete(awxAPI`/job_templates/${template.id.toString()}/`, signal);
         } else {
-          return requestDelete(`/api/v2/workflow_job_templates/${template.id}/`);
+          return requestDelete(awxAPI`/workflow_job_templates/${template.id.toString()}/`, signal);
         }
       },
     });

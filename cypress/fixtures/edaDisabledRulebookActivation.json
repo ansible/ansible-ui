@@ -1,0 +1,39 @@
+{
+  "id": 1,
+  "name": "Activation 1",
+  "description": "",
+  "is_enabled": false,
+  "decision_environment": {
+    "id": 1,
+    "name": "DE1",
+    "description": "",
+    "image_url": "quay.io/ansible/ansible-rulebook:main"
+  },
+  "status": "completed",
+  "git_hash": "09ec99f2304e5b78b3c88131d7313f63e38e29a4",
+  "project": null,
+  "rulebook": null,
+  "extra_var": null,
+  "instances": [
+    {
+      "id": 48,
+      "name": "Activation 1",
+      "status": "completed",
+      "git_hash": "09ec99f2304e5b78b3c88131d7313f63e38e29a4",
+      "status_message": "Activation has completed",
+      "activation_id": 1,
+      "started_at": "2023-10-27T21:38:51.660535Z",
+      "ended_at": "2023-10-27T21:38:56.566707Z"
+    }
+  ],
+  "restart_policy": "on-failure",
+  "restart_count": 1,
+  "rulebook_name": "multi_ruleset.yml",
+  "current_job_id": null,
+  "rules_count": 2,
+  "rules_fired_count": 2,
+  "created_at": "2023-10-16T22:33:57.606832Z",
+  "modified_at": "2023-10-27T21:38:56.567840Z",
+  "restarted_at": "2023-10-27T21:38:51.660535Z",
+  "status_message": "Activation has completed"
+}

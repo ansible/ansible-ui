@@ -1,17 +1,17 @@
+import { edaAPI } from '../../api/eda-utils';
 import { Credentials } from './Credentials';
-import { API_PREFIX } from '../../constants';
 
 describe('Credentials.cy.ts', () => {
   beforeEach(() => {
     cy.intercept(
-      { method: 'GET', url: `${API_PREFIX}/credentials/?page=1&page_size=10` },
+      { method: 'GET', url: edaAPI`/credentials/?page=1&page_size=10` },
       {
         fixture: 'edaCredentials.json',
       }
     );
 
     cy.intercept(
-      { method: 'GET', url: `${API_PREFIX}/credentials/?page=2&page_size=10` },
+      { method: 'GET', url: edaAPI`/credentials/?page=2&page_size=10` },
       {
         count: 5,
         next: null,
@@ -79,6 +79,93 @@ describe('Credentials.cy.ts', () => {
     cy.contains('th', 'Name');
     cy.contains('th', 'Type');
   });
+
+  it('Can delete a Credential not in use', () => {
+    cy.mount(<Credentials />);
+    cy.intercept(
+      { method: 'DELETE', url: edaAPI`/credentials/100/` },
+      {
+        statusCode: 204,
+      }
+    );
+    cy.intercept(
+      { method: 'GET', url: edaAPI`/activations/?credential_id=100` },
+      { count: 0, next: null, previous: null, page_size: 20, page: 1, results: [] }
+    );
+    cy.get('[data-cy="checkbox-column-cell"]').first().click();
+    cy.get('[data-cy="actions-dropdown"]').first().click();
+    cy.get('[data-cy="delete-selected-credentials"]').click();
+    cy.get('div[role="dialog"]').within(() => {
+      cy.get('.pf-v5-c-check__label').should(
+        'contain',
+        `Yes, I confirm that I want to delete these`
+      );
+      cy.contains('EDA Credential 1');
+      cy.get('input[id="confirm"]').click();
+      cy.get('button').contains('Delete credentials').click();
+    });
+    cy.get('[data-cy="status-column-cell"] > span').contains('Success');
+    cy.clickButton(/^Close$/);
+  });
+
+  it('can delete a Credential in use', () => {
+    cy.mount(<Credentials />);
+    cy.intercept(
+      { method: 'DELETE', url: edaAPI`/credentials/100/?force=true` },
+      {
+        statusCode: 204,
+      }
+    );
+    cy.intercept(
+      { method: 'GET', url: edaAPI`/activations/?credential_id=100` },
+      {
+        count: 1,
+        next: null,
+        previous: null,
+        page_size: 20,
+        page: 1,
+        results: [
+          {
+            id: 1,
+            name: 'Activation with credential',
+            description: '',
+            is_enabled: true,
+            status: 'failed',
+            decision_environment_id: 11,
+            project_id: 4,
+            rulebook_id: 28,
+            extra_var_id: null,
+            restart_policy: 'on-failure',
+            restart_count: 0,
+            rulebook_name: 'basic_short.yml',
+            current_job_id: null,
+            rules_count: 0,
+            rules_fired_count: 0,
+            created_at: '2023-11-16T20:22:48.755916Z',
+            modified_at: '2023-11-16T20:22:51.382540Z',
+            status_message: 'Activation has failed',
+          },
+        ],
+      }
+    );
+    cy.get('[data-cy="checkbox-column-cell"]').first().click();
+    cy.get('[data-cy="actions-dropdown"]').first().click();
+    cy.get('[data-cy="delete-selected-credentials"]').click();
+    cy.get('div[role="dialog"]').within(() => {
+      cy.get('.pf-v5-c-check__label').should(
+        'contain',
+        `Yes, I confirm that I want to delete these`
+      );
+      cy.contains('EDA Credential 1');
+      cy.get('.pf-v5-c-alert__title').contains(
+        'The following credentials are in use: EDA Credential 1'
+      );
+      cy.get('input[id="confirm"]').click();
+      cy.get('button').contains('Delete credentials').click();
+    });
+    cy.get('[data-cy="status-column-cell"] > span').contains('Success');
+    cy.clickButton(/^Close$/);
+  });
 });
 
 describe('Empty list', () => {
@@ -86,7 +173,7 @@ describe('Empty list', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/eda/v1/credentials/*',
+        url: edaAPI`/credentials/*`,
       },
       {
         fixture: 'emptyList.json',

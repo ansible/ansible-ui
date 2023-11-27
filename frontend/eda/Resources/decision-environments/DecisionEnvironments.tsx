@@ -2,13 +2,13 @@ import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../../framework';
 import { PageTableViewTypeE } from '../../../../framework/PageToolbar/PageTableViewType';
 import { EdaRoute } from '../../EdaRoutes';
-import { API_PREFIX } from '../../constants';
 import { EdaDecisionEnvironment } from '../../interfaces/EdaDecisionEnvironment';
 import { useEdaView } from '../../useEventDrivenView';
 import { useDecisionEnvironmentActions } from './hooks/useDecisionEnvironmentActions';
 import { useDecisionEnvironmentsColumns } from './hooks/useDecisionEnvironmentColumns';
 import { useDecisionEnvironmentFilters } from './hooks/useDecisionEnvironmentFilters';
 import { useDecisionEnvironmentsActions } from './hooks/useDecisionEnvironmentsActions';
+import { edaAPI } from '../../api/eda-utils';
 
 export function DecisionEnvironments() {
   const { t } = useTranslation();
@@ -16,7 +16,7 @@ export function DecisionEnvironments() {
   const toolbarFilters = useDecisionEnvironmentFilters();
   const tableColumns = useDecisionEnvironmentsColumns();
   const view = useEdaView<EdaDecisionEnvironment>({
-    url: `${API_PREFIX}/decision-environments/`,
+    url: edaAPI`/decision-environments/`,
     toolbarFilters,
     tableColumns,
   });

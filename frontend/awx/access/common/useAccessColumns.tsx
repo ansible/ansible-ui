@@ -72,7 +72,7 @@ export function useAccessColumns(
                           onClick={() => deleteRole && deleteRole(role, user)}
                           isReadOnly={!role.user_capabilities.unattach}
                           ouiaId={`${role.name}-${role.id}`}
-                          closeBtnAriaLabel={t`Remove ${role.name} chip`}
+                          closeBtnAriaLabel={t(`Remove {{roleName}} chip`, { roleName: role.name })}
                         >
                           {role.name}
                         </Chip>
@@ -92,7 +92,7 @@ export function useAccessColumns(
                           onClick={() => deleteRole && deleteRole(role, user)}
                           isReadOnly={!role.user_capabilities.unattach}
                           ouiaId={`team-role-${role.name}-${role.id}`}
-                          closeBtnAriaLabel={t`Remove ${role.name} chip`}
+                          closeBtnAriaLabel={t(`Remove {{roleName}} chip`, { roleName: role.name })}
                         >
                           {role.name}
                         </Chip>

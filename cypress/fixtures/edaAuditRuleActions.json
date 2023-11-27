@@ -1,0 +1,18 @@
+{
+  "count": 1,
+  "next": null,
+  "previous": null,
+  "page_size": 10,
+  "page": 1,
+  "results": [
+    {
+      "id": "4152ddff-432f-410d-aae4-e63fecae1c43",
+      "name": "debug",
+      "status": "successful",
+      "url": "",
+      "fired_at": "2023-11-07T16:23:29.140872Z",
+      "rule_fired_at": "2023-11-07T16:23:29.139170Z",
+      "audit_rule_id": 125
+    }
+  ]
+}

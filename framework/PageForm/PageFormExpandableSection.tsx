@@ -13,6 +13,7 @@ export function PageFormExpandableSection(props: IPageFormExpandableSectionProps
   return (
     <PageFormSection singleColumn={singleColumn}>
       <ExpandableSection
+        data-cy={'expandable-section'}
         toggleTextExpanded={t`Hide advanced options`}
         toggleTextCollapsed={t`Show advanced options`}
       >

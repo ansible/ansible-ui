@@ -4,7 +4,8 @@ import { PageHeader, PageLayout, useGetPageUrl } from '../../../../framework';
 import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
 import { useGet } from '../../../common/crud/useGet';
 import { EdaRoute } from '../../EdaRoutes';
-import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
+import { edaAPI } from '../../api/eda-utils';
+import { SWR_REFRESH_INTERVAL } from '../../constants';
 import { EdaActivationInstance } from '../../interfaces/EdaActivationInstance';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 
@@ -12,12 +13,12 @@ export function ActivationInstancePage() {
   const { t } = useTranslation();
   const params = useParams<{ instanceId: string }>();
   const { data: activationInstance } = useGet<EdaActivationInstance>(
-    `${API_PREFIX}/activation-instances/${params.instanceId ?? ''}/`,
+    edaAPI`/activation-instances/${params.instanceId ?? ''}/`,
     undefined,
     { refreshInterval: SWR_REFRESH_INTERVAL }
   );
   const { data: activation } = useGet<EdaRulebookActivation>(
-    `${API_PREFIX}/activations/${activationInstance?.activation_id ?? ''}/`,
+    edaAPI`/activations/${activationInstance?.activation_id.toString() ?? ''}/`,
     undefined,
     { refreshInterval: SWR_REFRESH_INTERVAL }
   );

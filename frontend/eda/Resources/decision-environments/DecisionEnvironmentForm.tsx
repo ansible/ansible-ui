@@ -2,7 +2,6 @@ import { Trans, useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
 import {
-  PageForm,
   PageFormSelect,
   PageFormSubmitHandler,
   PageFormTextInput,
@@ -15,18 +14,19 @@ import { useGet } from '../../../common/crud/useGet';
 import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { EdaRoute } from '../../EdaRoutes';
-import { API_PREFIX } from '../../constants';
+import { edaAPI } from '../../api/eda-utils';
 import { EdaCredential } from '../../interfaces/EdaCredential';
 import {
   EdaDecisionEnvironment,
   EdaDecisionEnvironmentRead,
 } from '../../interfaces/EdaDecisionEnvironment';
 import { EdaResult } from '../../interfaces/EdaResult';
+import { EdaPageForm } from '../../EdaPageForm';
 
 function DecisionEnvironmentInputs() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
-  const { data: credentials } = useGet<EdaResult<EdaCredential>>(`${API_PREFIX}/credentials/`);
+  const { data: credentials } = useGet<EdaResult<EdaCredential>>(edaAPI`/credentials/`);
   const imageHelpBlock = (
     <>
       <p>
@@ -95,7 +95,7 @@ export function CreateDecisionEnvironment() {
 
   const onSubmit: PageFormSubmitHandler<EdaDecisionEnvironment> = async (decisionEnvironment) => {
     const newDecisionEnvironment = await postRequest(
-      `${API_PREFIX}/decision-environments/`,
+      edaAPI`/decision-environments/`,
       decisionEnvironment
     );
     (cache as unknown as { clear: () => void }).clear?.();
@@ -112,14 +112,14 @@ export function CreateDecisionEnvironment() {
           { label: t('Create Decision Environment') },
         ]}
       />
-      <PageForm
+      <EdaPageForm
         submitText={t('Create decision environment')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
       >
         <DecisionEnvironmentInputs />
-      </PageForm>
+      </EdaPageForm>
     </PageLayout>
   );
 }
@@ -130,13 +130,13 @@ export function EditDecisionEnvironment() {
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
   const { data: decisionEnvironment } = useGet<EdaDecisionEnvironmentRead>(
-    `${API_PREFIX}/decision-environments/${id.toString()}/`
+    edaAPI`/decision-environments/${id.toString()}/`
   );
   const { cache } = useSWRConfig();
   const patchRequest = usePatchRequest<Partial<EdaDecisionEnvironment>, EdaDecisionEnvironment>();
 
   const onSubmit: PageFormSubmitHandler<EdaDecisionEnvironment> = async (decisionEnvironment) => {
-    await patchRequest(`${API_PREFIX}/decision-environments/${id}/`, decisionEnvironment);
+    await patchRequest(edaAPI`/decision-environments/${id.toString()}/`, decisionEnvironment);
     (cache as unknown as { clear: () => void }).clear?.();
     navigate(-1);
   };
@@ -164,7 +164,7 @@ export function EditDecisionEnvironment() {
             { label: `${t('Edit')} ${decisionEnvironment?.name || t('Decision Environment')}` },
           ]}
         />
-        <PageForm
+        <EdaPageForm
           submitText={t('Save decision environment')}
           onSubmit={onSubmit}
           cancelText={t('Cancel')}
@@ -175,7 +175,7 @@ export function EditDecisionEnvironment() {
           }}
         >
           <DecisionEnvironmentInputs />
-        </PageForm>
+        </EdaPageForm>
       </PageLayout>
     );
   }

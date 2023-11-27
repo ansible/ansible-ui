@@ -38,6 +38,9 @@ export const RouteObj = {
   CredentialPage: `${awxRoutePrefix}/resources/credentials/:id/*`,
   CredentialDetails: `${awxRoutePrefix}/resources/credentials/:id/details`,
 
+  CredentialTypePage: `${awxRoutePrefix}/resources/credential-types/:id/*`,
+  CredentialTypeDetails: `${awxRoutePrefix}/resources/credential-types/:id/details`,
+
   Projects: `${awxRoutePrefix}/resources/projects`,
   ProjectDetails: `${awxRoutePrefix}/resources/projects/:id/details`,
   ProjectSchedules: `${awxRoutePrefix}/resources/projects/:id/schedules`,
@@ -75,4 +78,12 @@ export const RouteObj = {
 
   // EDA
   EdaUserDetailsTokens: `${edaRoutePrefix}/access/users/details/:id/tokens`,
+  EdaRulebookActivationPage: `${edaRoutePrefix}/views/rulebook-activations/:id/*`,
+  EdaRulebookActivationDetails: `${edaRoutePrefix}/views/rulebook-activations/:id/details`,
+  EdaRulebookActivationHistory: `${edaRoutePrefix}/views/rulebook-activations/:id/history`,
+
+  EdaRuleAuditPage: `${edaRoutePrefix}/views/rule-audits/:id/*`,
+  EdaRuleAuditDetails: `${edaRoutePrefix}/views/rule-audits/:id/details`,
+  EdaRuleAuditActions: `${edaRoutePrefix}/views/rule-audits/:id/actions`,
+  EdaRuleAuditEvents: `${edaRoutePrefix}/views/rule-audits/:id/events`,
 };

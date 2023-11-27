@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
-  PageForm,
   PageFormSubmitHandler,
   PageFormTextInput,
   PageHeader,
@@ -14,8 +13,9 @@ import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { useInvalidateCacheOnUnmount } from '../../../common/useInvalidateCache';
 import { EdaRoute } from '../../EdaRoutes';
-import { API_PREFIX } from '../../constants';
+import { edaAPI } from '../../api/eda-utils';
 import { EdaRole } from '../../interfaces/EdaRole';
+import { EdaPageForm } from '../../EdaPageForm';
 
 export function EditRole() {
   const { t } = useTranslation();
@@ -23,7 +23,7 @@ export function EditRole() {
   const pageNavigate = usePageNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const { data: Role } = useGet<EdaRole>(`${API_PREFIX}/roles/${id.toString()}/`);
+  const { data: Role } = useGet<EdaRole>(edaAPI`/roles/${id.toString()}/`);
 
   useInvalidateCacheOnUnmount();
 
@@ -32,10 +32,10 @@ export function EditRole() {
 
   const onSubmit: PageFormSubmitHandler<EdaRole> = async (Role) => {
     if (Number.isInteger(id)) {
-      Role = await patchRequest(`${API_PREFIX}/roles/${id}/`, Role);
+      Role = await patchRequest(edaAPI`/roles/${id.toString()}/`, Role);
       navigate(-1);
     } else {
-      const newRole = await postRequest(`${API_PREFIX}/roles/`, Role);
+      const newRole = await postRequest(edaAPI`/roles/`, Role);
       pageNavigate(EdaRoute.RolePage, { params: { id: newRole.id } });
     }
   };
@@ -64,7 +64,7 @@ export function EditRole() {
               { label: t('Edit Role') },
             ]}
           />
-          <PageForm<EdaRole>
+          <EdaPageForm<EdaRole>
             submitText={t('Save role')}
             onSubmit={onSubmit}
             cancelText={t('Cancel')}
@@ -73,7 +73,7 @@ export function EditRole() {
           >
             <PageFormTextInput<EdaRole> name="name" label={t('Name')} isRequired />
             <PageFormTextInput<EdaRole> name="description" label={t('Description')} />
-          </PageForm>
+          </EdaPageForm>
         </PageLayout>
       );
     }
@@ -87,7 +87,7 @@ export function EditRole() {
             { label: t('Create Role') },
           ]}
         />
-        <PageForm<EdaRole>
+        <EdaPageForm<EdaRole>
           submitText={t('Create role')}
           onSubmit={onSubmit}
           cancelText={t('Cancel')}
@@ -95,7 +95,7 @@ export function EditRole() {
         >
           <PageFormTextInput<EdaRole> name="name" label={t('Name')} isRequired />
           <PageFormTextInput<EdaRole> name="description" label={t('Description')} />
-        </PageForm>
+        </EdaPageForm>
       </PageLayout>
     );
   }

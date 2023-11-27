@@ -9,11 +9,12 @@ import {
   PageToolbar,
 } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
+import { getItemKey } from '../../../common/crud/Data';
+import { useGet } from '../../../common/crud/useGet';
+import { awxAPI } from '../../api/awx-utils';
+import { Settings } from '../../interfaces/Settings';
 import { SubscriptionUsageChart } from '../subscription-usage/SubscriptionUsageChart';
 import { useSubscriptionUsageFilters } from './useSubscriptionUsageFilters';
-import { getItemKey } from '../../../common/crud/Data';
-import { Settings } from '../../interfaces/Settings';
-import { useGet } from '../../../common/crud/useGet';
 
 interface ISubscriptionUsageChartData {
   count: number;
@@ -34,8 +35,8 @@ export default function SubscriptionUsage() {
   const { t } = useTranslation();
   const toolbarFilters = useSubscriptionUsageFilters();
   const [dateRange, setDateRange] = useState<IFilterState>({ dateRange: ['year'] });
-  const systemData = useGet<Settings>('/api/v2/settings/system/');
-  const { data } = useGet<ISubscriptionUsageChartData>(`/api/v2/host_metric_summary_monthly/`);
+  const systemData = useGet<Settings>(awxAPI`/settings/system/`);
+  const { data } = useGet<ISubscriptionUsageChartData>(awxAPI`/host_metric_summary_monthly/`);
 
   return (
     <PageLayout>

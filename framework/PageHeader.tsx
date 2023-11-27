@@ -10,7 +10,6 @@ import {
   Skeleton,
   Stack,
   StackItem,
-  Text,
   Title,
   Truncate,
 } from '@patternfly/react-core';
@@ -178,11 +177,7 @@ export function PageHeader(props: PageHeaderProps) {
               </Title>
             )}
             {isMdOrLarger && description && (
-              <Text
-                data-cy="app-description"
-                component="p"
-                style={{ paddingTop: isXl ? 4 : 2, opacity: 0.8 }}
-              >
+              <div data-cy="app-description" style={{ paddingTop: isXl ? 4 : 2, opacity: 0.8 }}>
                 {typeof description === 'string' ? (
                   <Truncate content={description} />
                 ) : (
@@ -192,7 +187,7 @@ export function PageHeader(props: PageHeaderProps) {
                     ))}
                   </Stack>
                 )}
-              </Text>
+              </div>
             )}
           </FlexItem>
           {title && (headerActions || controls) && (

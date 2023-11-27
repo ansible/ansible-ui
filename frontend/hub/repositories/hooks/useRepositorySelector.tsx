@@ -8,7 +8,7 @@ import {
   AsyncSelectFilterBuilderProps,
 } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSelectFilterBuilder';
 import { usePulpView } from '../../usePulpView';
-import { pulpAPI } from '../../api/utils';
+import { pulpAPI } from '../../api/formatPath';
 
 function useParameters(): AsyncSelectFilterBuilderProps<Repository> {
   const tableColumns = useRepositoryColumns();
@@ -25,7 +25,7 @@ function useParameters(): AsyncSelectFilterBuilderProps<Repository> {
       toolbarFilters,
       tableColumns,
       disableQueryString: true,
-      keyFn: (item) => item.name,
+      keyFn: (item) => item?.name,
     },
   };
 }

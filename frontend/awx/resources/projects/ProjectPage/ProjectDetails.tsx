@@ -8,7 +8,7 @@ import {
 } from '@patternfly/react-core';
 import { useCallback } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   CopyCell,
   DateTimeCell,
@@ -21,9 +21,10 @@ import {
 import { StandardPopover } from '../../../../../framework/components/StandardPopover';
 import { RouteObj } from '../../../../common/Routes';
 import { StatusCell } from '../../../../common/Status';
-import { useGet } from '../../../../common/crud/useGet';
+import { useGetItem } from '../../../../common/crud/useGet';
 import { ScmType } from '../../../../common/scm';
 import { AwxRoute } from '../../../AwxRoutes';
+import { awxAPI } from '../../../api/awx-utils';
 import { AwxError } from '../../../common/AwxError';
 import { CredentialLabel } from '../../../common/CredentialLabel';
 import { ExecutionEnvironmentDetail } from '../../../common/ExecutionEnvironmentDetail';
@@ -32,10 +33,11 @@ import { useAwxWebSocketSubscription } from '../../../common/useAwxWebSocket';
 import getDocsBaseUrl from '../../../common/util/getDocsBaseUrl';
 import { Project } from '../../../interfaces/Project';
 
-export function ProjectDetails() {
+export function ProjectDetails(props: { projectId?: string }) {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { error, data: project, refresh } = useGet<Project>(`/api/v2/projects/${params.id ?? ''}/`);
+  const urlId = props?.projectId ? props.projectId : params.id;
+  const { error, data: project, refresh } = useGetItem<Project>(awxAPI`/projects`, urlId);
   const history = useNavigate();
   const config = useAwxConfig();
   const getPageUrl = useGetPageUrl();
@@ -207,7 +209,15 @@ export function ProjectDetails() {
   if (!project) return <LoadingPage breadcrumbs tabs />;
   return (
     <PageDetails>
-      <PageDetail label={t('Name')}>{project.name}</PageDetail>
+      <PageDetail label={t('Name')}>
+        {props.projectId ? (
+          <Link to={getPageUrl(AwxRoute.ProjectDetails, { params: { id: props.projectId } })}>
+            {project.name}
+          </Link>
+        ) : (
+          project.name
+        )}
+      </PageDetail>
       <PageDetail label={t('Description')}>{project.description}</PageDetail>
       {project.summary_fields?.organization?.name && (
         <PageDetail label={t('Organization')}>

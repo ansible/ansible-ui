@@ -6,6 +6,7 @@ import { requestGet } from '../../../../common/crud/Data';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { useSelectWorkflowJobTemplate } from '../hooks/useSelectWorkflowJobTemplate';
+import { awxAPI } from '../../../api/awx-utils';
 
 export function PageFormWorkflowJobTemplateSelect<
   TFieldValues extends FieldValues = FieldValues,
@@ -21,7 +22,7 @@ export function PageFormWorkflowJobTemplateSelect<
   const openSelectDialog = useSelectWorkflowJobTemplate();
   const query = useCallback(async () => {
     const response = await requestGet<AwxItemsResponse<WorkflowJobTemplate>>(
-      `/api/v2/workflow_job_templates/?page_size=200`
+      awxAPI`/workflow_job_templates/`.concat(`?page_size=200`)
     );
 
     return Promise.resolve({

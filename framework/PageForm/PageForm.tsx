@@ -5,9 +5,8 @@ import {
   Grid,
   gridItemSpanValueShape,
   PageSection,
-  Tooltip,
 } from '@patternfly/react-core';
-import { BaseSyntheticEvent, CSSProperties, ReactNode, useContext, useState } from 'react';
+import { BaseSyntheticEvent, ReactNode, useContext, useState } from 'react';
 import {
   DefaultValues,
   ErrorOption,
@@ -17,16 +16,26 @@ import {
   Path,
   useForm,
   UseFormReturn,
-  useFormState,
 } from 'react-hook-form';
-import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 import { Scrollable } from '../components/Scrollable';
 import { useBreakpoint } from '../components/useBreakPoint';
 import { SettingsContext } from '../Settings';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { ErrorAlert } from './ErrorAlert';
 import { genericErrorAdapter } from './genericErrorAdapter';
+import { PageFormCancelButton, PageFormSubmitButton } from './PageFormButtons';
 import { ErrorAdapter } from './typesErrorAdapter';
+
+const FormContainer = styled(PageSection)`
+  margin-block-end: var(--pf-v5-global--spacer--xl);
+`;
+
+const FormActionGroup = styled(ActionGroup)`
+  && {
+    margin-block-start: unset;
+  }
+`;
 
 export interface PageFormProps<T extends object> {
   children?: ReactNode;
@@ -39,28 +48,23 @@ export interface PageFormProps<T extends object> {
   defaultValue?: DefaultValues<T>;
   isVertical?: boolean;
   singleColumn?: boolean;
-  disableScrolling?: boolean;
-  disableBody?: boolean;
   disablePadding?: boolean;
   disableGrid?: boolean;
-  autoComplete?: string;
+  autoComplete?: 'on' | 'off';
   footer?: ReactNode;
   errorAdapter?: ErrorAdapter;
+  disableSubmitOnEnter?: boolean;
 }
 
-export function PageForm<T extends object>(props: PageFormProps<T>) {
-  const { errorAdapter = genericErrorAdapter } = props;
+export function useFormErrors<T extends object>(
+  defaultValue: DefaultValues<T> | undefined,
+  errorAdapter: ErrorAdapter
+) {
   const form = useForm<T>({
-    defaultValues: props.defaultValue ?? ({} as DefaultValues<T>),
+    defaultValues: defaultValue ?? ({} as DefaultValues<T>),
   });
-
-  const [frameworkTranslations] = useFrameworkTranslations();
-
   const { handleSubmit, setError: setFieldError } = form;
   const [error, setError] = useState<(string | ReactNode)[] | string | null>(null);
-  const isMd = useBreakpoint('md');
-  const [settings] = useContext(SettingsContext);
-  const isHorizontal = props.isVertical ? false : settings.formLayout === 'horizontal';
 
   const handleSubmitError = (err: unknown) => {
     const { genericErrors, fieldErrors } = errorAdapter(err);
@@ -82,6 +86,19 @@ export function PageForm<T extends object>(props: PageFormProps<T>) {
     }
   };
 
+  return { form, handleSubmit, error, setError, handleSubmitError, setFieldError };
+}
+
+export function PageForm<T extends object>(props: PageFormProps<T>) {
+  const { errorAdapter = genericErrorAdapter } = props;
+
+  const { form, handleSubmit, error, setError, handleSubmitError, setFieldError } =
+    useFormErrors<T>(props.defaultValue, errorAdapter);
+  const [settings] = useContext(SettingsContext);
+  const [frameworkTranslations] = useFrameworkTranslations();
+  const isMd = useBreakpoint('md');
+  const isHorizontal = props.isVertical ? false : settings.formLayout === 'horizontal';
+
   let children = props.children;
   if (props.disableGrid !== true) {
     children = (
@@ -91,9 +108,14 @@ export function PageForm<T extends object>(props: PageFormProps<T>) {
     );
   }
 
-  const Component = (
+  return (
     <FormProvider {...form}>
       <Form
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' && props.disableSubmitOnEnter) {
+            event.preventDefault();
+          }
+        }}
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
         onSubmit={handleSubmit(
           async (
@@ -120,7 +142,7 @@ export function PageForm<T extends object>(props: PageFormProps<T>) {
           }
         )}
         isHorizontal={isHorizontal}
-        autoComplete="off"
+        autoComplete={props.autoComplete}
         style={{
           display: 'flex',
           flexDirection: 'column',
@@ -134,21 +156,20 @@ export function PageForm<T extends object>(props: PageFormProps<T>) {
         {error && <ErrorAlert error={error} isMd={isMd} onCancel={props.onCancel} />}
 
         <Scrollable>
-          <PageSection
+          <FormContainer
             variant="light"
             isFilled
             isWidthLimited
             padding={{ default: props.disablePadding ? 'noPadding' : 'padding' }}
-            // hasOverflowScroll
           >
             {children}
-          </PageSection>
+          </FormContainer>
         </Scrollable>
         {props.footer ? (
           props.footer
         ) : (
-          <PageSection variant="light" isFilled={false}>
-            <ActionGroup>
+          <PageSection variant="light" isFilled={false} className="bg-lighten border-top">
+            <FormActionGroup>
               <PageFormSubmitButton>{props.submitText}</PageFormSubmitButton>
               {props.additionalActionText ? (
                 <Button aria-label={props.additionalActionText} type="submit" variant="secondary">
@@ -160,18 +181,12 @@ export function PageForm<T extends object>(props: PageFormProps<T>) {
                   {props.cancelText ?? frameworkTranslations.cancelText}
                 </PageFormCancelButton>
               )}
-            </ActionGroup>
+            </FormActionGroup>
           </PageSection>
         )}
       </Form>
     </FormProvider>
   );
-
-  // if (!props.disableBody) {
-  //   Component = <PageBody>{Component}</PageBody>;
-  // }
-
-  return Component;
 }
 
 export type PageFormSubmitHandler<T extends FieldValues> = (
@@ -203,39 +218,4 @@ export function PageFormGrid(props: {
   );
 
   return Component;
-}
-
-export function PageFormSubmitButton(props: { children: ReactNode; style?: CSSProperties }) {
-  const { isSubmitting, errors } = useFormState();
-  const { clearErrors } = useForm();
-  const { t } = useTranslation();
-  const hasErrors = errors && Object.keys(errors).length > 0;
-  return (
-    <Tooltip content={t('Please fix errors')} trigger={hasErrors ? undefined : 'manual'}>
-      <Button
-        onClick={() => {
-          if (hasErrors) {
-            clearErrors();
-          }
-        }}
-        data-cy={'Submit'}
-        type="submit"
-        isDisabled={isSubmitting}
-        isLoading={isSubmitting}
-        isDanger={hasErrors}
-        variant={hasErrors ? 'secondary' : undefined}
-        style={props.style}
-      >
-        {props.children}
-      </Button>
-    </Tooltip>
-  );
-}
-
-export function PageFormCancelButton(props: { onCancel: () => void; children: ReactNode }) {
-  return (
-    <Button data-cy={'Cancel'} type="button" variant="link" onClick={props.onCancel}>
-      {props.children}
-    </Button>
-  );
 }

@@ -72,9 +72,7 @@ Cypress.Commands.add('mount', (component, route, activeUserFixture) => {
         url: '/api/v2/me/',
         hostname: 'localhost',
       },
-      {
-        activeUser,
-      }
+      { count: 1, results: [activeUser] }
     );
   });
   return mount(

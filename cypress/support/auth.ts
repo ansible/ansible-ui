@@ -1,3 +1,5 @@
+import { hubAPI } from '../../frontend/hub/api/formatPath';
+
 Cypress.Commands.add('requiredVariablesAreSet', (requiredVariables: string[]) => {
   if (Cypress.env('IS_GITHUB_ACTION') || process.env.IS_GITHUB_ACTION) {
     cy.log('Skipping requiredVariablesAreSet check in GitHub Actions');
@@ -14,12 +16,19 @@ Cypress.Commands.add('login', (server: string, username: string, password: strin
   window.localStorage.setItem('theme', 'light');
   window.localStorage.setItem('disclaimer', 'true');
 
-  cy.visit(`/login`, {
-    retryOnStatusCodeFailure: true,
-    retryOnNetworkFailure: true,
-  });
-  cy.get('[data-cy="username"]').type(username, { delay: 100 });
-  cy.get('[data-cy="password"]').type(password);
+  if (server === Cypress.env('AWX_SERVER')) {
+    cy.visit(`/ui_next/dashboard/`, {
+      retryOnStatusCodeFailure: true,
+      retryOnNetworkFailure: true,
+    });
+  } else {
+    cy.visit(`login/`, {
+      retryOnStatusCodeFailure: true,
+      retryOnNetworkFailure: true,
+    });
+  }
+  cy.get('[data-cy="username"]').type(username, { log: false, delay: 100 });
+  cy.get('[data-cy="password"]').type(password, { log: false });
   cy.get('[data-cy="Submit"]').click();
 });
 
@@ -92,7 +101,7 @@ Cypress.Commands.add('hubLogin', () => {
     {
       cacheAcrossSpecs: true,
       validate: () => {
-        cy.request({ method: 'GET', url: 'api/automation-hub/_ui/v1/me/' });
+        cy.request({ method: 'GET', url: hubAPI`/_ui/v1/me/` });
       },
     }
   );

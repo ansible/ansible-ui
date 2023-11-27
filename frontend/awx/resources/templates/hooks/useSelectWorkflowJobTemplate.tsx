@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { usePageDialog } from '../../../../../framework';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { useAwxView } from '../../../useAwxView';
+import { awxAPI } from '../../../api/awx-utils';
 import { useTemplateColumns } from './useTemplateColumns';
 import { useTemplateFilters } from './useTemplateFilters';
 import { SelectSingleDialog } from '../../../../../framework/PageDialogs/SelectSingleDialog';
@@ -14,7 +15,7 @@ function SelectWorkflowJobTemplate(props: {
   const toolbarFilters = useTemplateFilters();
   const tableColumns = useTemplateColumns({ disableLinks: true });
   const view = useAwxView<WorkflowJobTemplate>({
-    url: '/api/v2/job_templates/',
+    url: awxAPI`/job_templates/`,
     toolbarFilters,
     tableColumns,
     disableQueryString: true,

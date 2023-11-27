@@ -1,0 +1,125 @@
+name: awx-e2e
+
+on:
+  workflow_call:
+    inputs:
+      AWX_SERVER:
+        type: string
+        required: true
+      SKIP_JOB:
+        type: boolean
+        required: false
+        default: false
+    secrets:
+      AWX_PASSWORD:
+        required: true
+      CYPRESS_AUI_AWX_E2E_PROJECT_ID:
+        required: true
+      CYPRESS_AUI_AWX_E2E_RECORD_KEY:
+        required: true
+
+jobs:
+  awx-ui-image:
+    name: AWX UI Image
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      DOCKER_BUILDKIT: 1
+    steps:
+      - uses: actions/checkout@v3
+        if: ${{ !inputs.SKIP_JOB }}
+        with:
+          fetch-depth: 1
+      - name: PreCache
+        if: ${{ !inputs.SKIP_JOB }}
+        run: npm version 0.0.0 --no-git-tag-version
+      - name: Cache dependencies
+        if: ${{ !inputs.SKIP_JOB }}
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ./node_modules
+            /home/runner/.cache/Cypress
+          key: modules-${{ hashFiles('package-lock.json') }}
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true' && !inputs.SKIP_JOB
+        run: npm ci
+      - name: NPM Build
+        if: ${{ !inputs.SKIP_JOB }}
+        run: npm run build:awx
+      - name: Build Image
+        if: ${{ !inputs.SKIP_JOB }}
+        run: npm run docker:build:awx
+      - name: Save Image
+        if: ${{ !inputs.SKIP_JOB }}
+        run: docker save awx-ui > awx-ui.tar
+      - name: Upload Image
+        if: ${{ !inputs.SKIP_JOB }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: awx-ui.tar
+          path: awx-ui.tar
+
+  awx-e2e:
+    name: AWX E2E
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: awx-ui-image
+    strategy:
+      fail-fast: false
+      matrix:
+        containers: [1,2,3]
+    steps:
+      - name: Download container image
+        if: ${{ !inputs.SKIP_JOB }}
+        uses: actions/download-artifact@v3
+        with:
+          name: awx-ui.tar
+      - name: Load container image
+        if: ${{ !inputs.SKIP_JOB }}
+        run: docker load --input awx-ui.tar
+      - name: Checkout
+        if: ${{ !inputs.SKIP_JOB }}
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+      - name: Setup node
+        if: ${{ !inputs.SKIP_JOB }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: PreCache
+        if: ${{ !inputs.SKIP_JOB }}
+        run: npm version 0.0.0 --no-git-tag-version
+      - name: Cache dependencies
+        if: ${{ !inputs.SKIP_JOB }}
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ./node_modules
+            /home/runner/.cache/Cypress
+          key: modules-${{ hashFiles('package-lock.json') }}
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true' && !inputs.SKIP_JOB
+        run: npm ci
+      - name: Cypress
+        if: ${{ !inputs.SKIP_JOB }}
+        uses: cypress-io/github-action@v5
+        with:
+          install: false
+          start: npm run docker:run:awx
+          wait-on: 'https://localhost:4101'
+          record: true
+          parallel: true
+          # auto-cancel-after-failures: 1
+          config-file: cypress.awx.config.ts
+        env:
+          AWX_SERVER: ${{ inputs.AWX_SERVER }}
+          AWX_USERNAME: e2e
+          AWX_PASSWORD: ${{ secrets.AWX_PASSWORD }}
+          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_AWX_E2E_PROJECT_ID }}
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_AWX_E2E_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_TLS_REJECT_UNAUTHORIZED: 0

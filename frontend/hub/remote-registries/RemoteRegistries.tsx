@@ -1,12 +1,14 @@
 import { useTranslation } from 'react-i18next';
-import { PageHeader, PageLayout, PageTable } from '../../../framework';
+import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../framework';
+import { HubRoute } from '../HubRoutes';
+import { hubAPI } from '../api/formatPath';
+import { pulpHrefKeyFn } from '../api/utils';
 import { useHubView } from '../useHubView';
 import { RemoteRegistry } from './RemoteRegistry';
-import { useRemoteRegistriesActions } from './hooks/useRemoteRegistriesActions';
 import { useRemoteRegistriesColumns } from './hooks/useRemoteRegistriesColumns';
+import { useRemoteRegistriesToolbarActions } from './hooks/useRemoteRegistriesToolbarActions';
 import { useRemoteRegistryActions } from './hooks/useRemoteRegistryActions';
 import { useRemoteRegistryFilters } from './hooks/useRemoteRegistryFilters';
-import { hubAPI, pulpHrefKeyFn } from '../api/utils';
 
 export function RemoteRegistries() {
   const { t } = useTranslation();
@@ -18,8 +20,11 @@ export function RemoteRegistries() {
     toolbarFilters,
     tableColumns,
   });
-  const toolbarActions = useRemoteRegistriesActions();
-  const rowActions = useRemoteRegistryActions();
+  const pageNavigate = usePageNavigate();
+  const toolbarActions = useRemoteRegistriesToolbarActions(view);
+  const rowActions = useRemoteRegistryActions({
+    onRemoteRegistryDeleted: view.unselectItemsAndRefresh,
+  });
   return (
     <PageLayout>
       <PageHeader
@@ -30,14 +35,18 @@ export function RemoteRegistries() {
       />
       <PageTable<RemoteRegistry>
         id="hub-remote-registries-table"
-        toolbarFilters={toolbarFilters}
+        defaultSubtitle={t('Remote Registry')}
+        emptyStateButtonClick={() => {
+          pageNavigate(HubRoute.CreateRemoteRegistry);
+        }}
+        emptyStateButtonText={t('Create remote registry')}
+        emptyStateTitle={t('No remote registries yet')}
+        errorStateTitle={t('Error loading remote registries')}
+        rowActions={rowActions}
         tableColumns={tableColumns}
         toolbarActions={toolbarActions}
-        rowActions={rowActions}
-        errorStateTitle={t('Error loading remote registries')}
-        emptyStateTitle={t('No remote registries yet')}
+        toolbarFilters={toolbarFilters}
         {...view}
-        defaultSubtitle={t('Remote Registry')}
       />
     </PageLayout>
   );

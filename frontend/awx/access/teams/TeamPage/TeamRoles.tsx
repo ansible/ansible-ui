@@ -8,11 +8,12 @@ import {
   PageActionSelection,
   PageActionType,
   PageTable,
-  usePageNavigate,
   useGetPageUrl,
+  usePageNavigate,
 } from '../../../../../framework';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
+import { awxAPI } from '../../../api/awx-utils';
 import { Role } from '../../../interfaces/Role';
 import { Team } from '../../../interfaces/Team';
 import { useAwxView } from '../../../useAwxView';
@@ -20,7 +21,7 @@ import { useRolesColumns, useRolesFilters } from '../../roles/Roles';
 
 export function TeamRoles() {
   const params = useParams<{ id: string }>();
-  const { data: team } = useGetItem<Team>('/api/v2/teams', params.id);
+  const { data: team } = useGetItem<Team>(awxAPI`/teams`, params.id);
 
   return team ? <TeamRolesInner team={team} /> : null;
 }
@@ -32,7 +33,7 @@ export function TeamRolesInner(props: { team: Team }) {
   const tableColumns = useRolesColumns();
   const pageNavigate = usePageNavigate();
   const view = useAwxView<Role>({
-    url: `/api/v2/teams/${team.id}/roles/`,
+    url: awxAPI`/teams/${team.id.toString()}/roles/`,
     toolbarFilters,
     tableColumns,
     disableQueryString: true,

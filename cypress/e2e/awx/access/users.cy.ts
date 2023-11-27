@@ -22,9 +22,9 @@ describe('Users List Actions', () => {
     });
   });
 
-  after(() => {
-    cy.deleteAwxUser(user);
-    cy.deleteAwxOrganization(organization);
+  afterEach(() => {
+    cy.deleteAwxUser(user, { failOnStatusCode: false });
+    cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
 
   it('renders the users list page', () => {
@@ -93,8 +93,9 @@ describe('Users Delete Actions', () => {
     });
   });
 
-  after(() => {
-    cy.deleteAwxOrganization(organization);
+  afterEach(() => {
+    cy.deleteAwxUser(user, { failOnStatusCode: false });
+    cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
 
   it('deletes a user from the details page', () => {

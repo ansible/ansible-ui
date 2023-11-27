@@ -1,0 +1,46 @@
+name: hub-update-server
+
+on:
+  workflow_dispatch:
+    inputs:
+      HUB_SERVER:
+        type: string
+        required: true
+        description: 'HUB Server'
+      UPDATE_SERVER:
+        type: boolean
+        required: true
+        default: false
+        description: 'Update server on success'
+
+jobs:
+  hub-e2e:
+    name: HUB E2E
+    uses: ./.github/workflows/hub-e2e.yml
+    with:
+      HUB_SERVER: ${{ inputs.HUB_SERVER }}
+    secrets:
+      HUB_PASSWORD: ${{ secrets.HUB_PASSWORD }}
+      CYPRESS_AUI_HUB_E2E_PROJECT_ID: ${{ secrets.CYPRESS_AUI_HUB_E2E_PROJECT_ID }}
+      CYPRESS_AUI_HUB_E2E_RECORD_KEY: ${{ secrets.CYPRESS_AUI_HUB_E2E_RECORD_KEY }}
+
+  hub-update-server:
+    name: HUB Update Server
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.UPDATE_SERVER == true }}
+    needs: hub-e2e
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          curl -L -X PATCH -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          "https://api.github.com/repos/ansible/ansible-ui/actions/variables/HUB_SERVER" \
+          -d '{"name":"HUB_SERVER","value":"${{ inputs.HUB_SERVER }}"}'
+
+      # - name: Slack Notification
+      #   uses: slackapi/slack-github-action@v1.24.0
+      #   with:
+      #     channel-id: ${{ secrets.AAP_UI_CHANNEL_ID }}
+      #     slack-message: HUB_SERVER=${{ inputs.HUB_SERVER }}
+      #   env:
+      #     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}

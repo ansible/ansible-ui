@@ -9,7 +9,7 @@ import {
 } from '../../../framework';
 import { idKeyFn } from '../../common/utils/nameKeyFn';
 import { HubRoute } from '../HubRoutes';
-import { hubAPI } from '../api/utils';
+import { hubAPI } from '../api/formatPath';
 import { useHubView } from '../useHubView';
 import { HubNamespace } from './HubNamespace';
 import { useHubNamespaceActions } from './hooks/useHubNamespaceActions';

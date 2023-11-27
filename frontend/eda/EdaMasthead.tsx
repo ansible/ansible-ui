@@ -3,7 +3,6 @@ import { DropdownItem } from '@patternfly/react-core/deprecated';
 import { ExternalLinkAltIcon, QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSWRConfig } from 'swr';
 import { PageMasthead, usePageNavigate } from '../../framework';
 import { PageMastheadDropdown } from '../../framework/PageMasthead/PageMastheadDropdown';
 import { PageSettingsIcon } from '../../framework/PageMasthead/PageSettingsIcon';
@@ -12,32 +11,30 @@ import { useAnsibleAboutModal } from '../common/AboutModal';
 import { PageRefreshIcon } from '../common/PageRefreshIcon';
 import { postRequest } from '../common/crud/Data';
 import { useActiveUser } from '../common/useActiveUser';
+import { useClearCache } from '../common/useInvalidateCache';
 import { EdaRoute } from './EdaRoutes';
-import { API_PREFIX } from './constants';
+import { edaAPI } from './api/eda-utils';
 import EdaIcon from './eda-logo.svg';
 
 export function EdaMasthead() {
   const { t } = useTranslation();
   const openAnsibleAboutModal = useAnsibleAboutModal();
+  const { clearAllCache } = useClearCache();
   const pageNavigate = usePageNavigate();
   const activeUser = useActiveUser();
-  const { cache } = useSWRConfig();
   const logout = useCallback(async () => {
-    await postRequest(`${API_PREFIX}/auth/session/logout/`, {});
-    for (const key of cache.keys()) {
-      cache.delete(key);
-    }
+    await postRequest(edaAPI`/auth/session/logout/`, {});
+    clearAllCache();
     pageNavigate(EdaRoute.Login);
-  }, [cache, pageNavigate]);
+  }, [clearAllCache, pageNavigate]);
   return (
     <PageMasthead
       icon={<EdaIcon style={{ height: 64 }} />}
       title={process.env.PRODUCT}
       brand={process.env.BRAND}
     >
-      <ToolbarItem style={{ flexGrow: 1 }} />
-      <ToolbarGroup variant="icon-button-group">
-        <ToolbarItem>
+      <ToolbarGroup variant="icon-button-group" style={{ flexGrow: 1 }}>
+        <ToolbarItem style={{ marginLeft: 'auto' }}>
           <PageRefreshIcon />
         </ToolbarItem>
         <ToolbarItem>

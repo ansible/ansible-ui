@@ -19,13 +19,13 @@ UI projects for [Ansible](https://www.ansible.com).
 
 2. Clone Repository
 
-   ```
+   ```zsh
    git clone git@github.com:ansible/ansible-ui.git
    ```
 
 3. Install Package Dependencies
 
-   ```
+   ```zsh
    npm ci
    ```
 
@@ -57,11 +57,11 @@ export AWX_SERVER=http://localhost:8043
 export AWX_USERNAME='my-user'
 export AWX_PASSWORD='my-password'
 
-export EDA_SERVER=http://localhost:5001
+export EDA_SERVER=http://localhost:8000
 export EDA_USERNAME='my-user'
 export EDA_PASSWORD='my-password'
 
-export HUB_SERVER=http://localhost:8000
+export HUB_SERVER=http://localhost:5001
 export HUB_USERNAME='my-user'
 export HUB_PASSWORD='my-password'
 ```
@@ -99,6 +99,7 @@ export HUB_PASSWORD='my-password'
 
 - [Development](./docs/DEVELOPMENT.md)
 - [Framework](./framework/README.md) - A framework for building applications using [PatternFly](https://www.patternfly.org).
+- [Handling Errors in Forms](./framework/PageForm/README.md) - A component for handling forms and errors.
 
 ## Code of Conduct
 

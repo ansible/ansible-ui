@@ -273,6 +273,7 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
               : placeholder
           }
           typeAheadAriaLabel={placeholder}
+          data-cy="dropdown-menu"
           selections={value}
           onSelect={(_, value) => {
             if (typeof value === 'object' && 'option' in value && value.option) {
@@ -299,11 +300,15 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
           }}
           toggleIndicator={
             loading ? (
-              <Spinner size="md" style={{ margin: -1, marginBottom: -3 }} />
+              <Spinner
+                size="md"
+                style={{ margin: -1, marginBottom: -3 }}
+                data-cy="loading-spinner"
+              />
             ) : loadingError ? (
               <SyncAltIcon />
             ) : useSelectDialog ? (
-              <SearchIcon />
+              <SearchIcon data-cy="lookup-button" />
             ) : undefined
           }
           validated={validated}
@@ -315,6 +320,7 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
           footer={
             props.openSelectDialog ? (
               <Button
+                data-cy="browse-button"
                 variant="link"
                 onClick={() => {
                   setOpen(false);

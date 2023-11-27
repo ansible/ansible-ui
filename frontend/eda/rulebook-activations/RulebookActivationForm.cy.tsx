@@ -1,34 +1,34 @@
+import { edaAPI } from '../api/eda-utils';
 import { CreateRulebookActivation } from './RulebookActivationForm';
-import { API_PREFIX } from '../constants';
 
 describe('Create rulebook activation ', () => {
   beforeEach(() => {
     cy.intercept(
-      { method: 'GET', url: `${API_PREFIX}/projects/*` },
+      { method: 'GET', url: edaAPI`/projects/*` },
       {
         fixture: 'edaProjects.json',
       }
     );
     cy.intercept(
-      { method: 'GET', url: `${API_PREFIX}/projects/1/*` },
+      { method: 'GET', url: edaAPI`/projects/1/*` },
       {
         fixture: 'edaProject.json',
       }
     );
     cy.intercept(
-      { method: 'GET', url: `${API_PREFIX}/decision-environments/*` },
+      { method: 'GET', url: edaAPI`/decision-environments/*` },
       {
         fixture: 'edaDecisionEnvironments.json',
       }
     );
     cy.intercept(
-      { method: 'GET', url: `${API_PREFIX}/rulebooks/*` },
+      { method: 'GET', url: edaAPI`/rulebooks/*` },
       {
         fixture: 'edaRulebooks.json',
       }
     );
     cy.intercept(
-      { method: 'GET', url: `${API_PREFIX}/activations/*` },
+      { method: 'GET', url: edaAPI`/activations/*` },
       {
         fixture: 'edaRulebookActivations.json',
       }
@@ -61,7 +61,7 @@ describe('Create rulebook activation ', () => {
     cy.selectDropdownOptionByResourceName('rulebook', 'hello_echo.yml');
     cy.clickButton('Create rulebook activation');
 
-    cy.intercept('POST', `${API_PREFIX}/activations/`, (req) => {
+    cy.intercept('POST', edaAPI`/activations/`, (req) => {
       expect(req.body).to.contain({
         project_id: 8,
         restart_policy: 'on-failure',

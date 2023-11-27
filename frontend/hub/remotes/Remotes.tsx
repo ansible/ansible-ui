@@ -1,7 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../framework';
 import { HubRoute } from '../HubRoutes';
-import { pulpAPI, pulpHrefKeyFn } from '../api/utils';
+import { pulpHrefKeyFn } from '../api/utils';
+import { pulpAPI } from '../api/formatPath';
 import { usePulpView } from '../usePulpView';
 import { useRemoteActions } from './hooks/useRemoteActions';
 import { useRemoteColumns } from './hooks/useRemoteColumns';
@@ -24,7 +25,7 @@ export interface IRemotes {
   signed_only: boolean;
   hidden_fields?: {
     is_set: boolean;
-    name: string;
+    name: 'client_key' | 'password' | 'proxy_username' | 'proxy_password' | 'token' | 'username';
   }[];
   my_permissions?: string[];
 }

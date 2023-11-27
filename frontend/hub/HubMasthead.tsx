@@ -3,7 +3,6 @@ import { DropdownItem } from '@patternfly/react-core/deprecated';
 import { QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSWRConfig } from 'swr';
 import { PageMasthead, usePageNavigate } from '../../framework';
 import { PageMastheadDropdown } from '../../framework/PageMasthead/PageMastheadDropdown';
 import { PageNotificationsIcon } from '../../framework/PageMasthead/PageNotificationsIcon';
@@ -13,23 +12,22 @@ import { useAnsibleAboutModal } from '../common/AboutModal';
 import { PageRefreshIcon } from '../common/PageRefreshIcon';
 import { postRequest } from '../common/crud/Data';
 import { useActiveUser } from '../common/useActiveUser';
+import { useClearCache } from '../common/useInvalidateCache';
 import { HubRoute } from './HubRoutes';
-import { hubAPI } from './api/utils';
+import { hubAPI } from './api/formatPath';
 import Logo from './galaxy-logo.svg';
 
 export function HubMasthead() {
   const { t } = useTranslation();
   const openAnsibleAboutModal = useAnsibleAboutModal();
+  const { clearAllCache } = useClearCache();
   const pageNavigate = usePageNavigate();
   const activeUser = useActiveUser();
-  const { cache } = useSWRConfig();
   const logout = useCallback(async () => {
     await postRequest(hubAPI`/_ui/v1/auth/logout/`, {});
-    for (const key of cache.keys()) {
-      cache.delete(key);
-    }
+    clearAllCache();
     pageNavigate(HubRoute.Login);
-  }, [cache, pageNavigate]);
+  }, [clearAllCache, pageNavigate]);
   return (
     <PageMasthead
       icon={<Logo style={{ height: 48, marginTop: -8 }} />}
@@ -37,9 +35,8 @@ export function HubMasthead() {
       title=""
       brand={process.env.BRAND}
     >
-      <ToolbarItem style={{ flexGrow: 1 }} />
-      <ToolbarGroup variant="icon-button-group">
-        <ToolbarItem>
+      <ToolbarGroup variant="icon-button-group" style={{ flexGrow: 1 }}>
+        <ToolbarItem style={{ marginLeft: 'auto' }}>
           <PageRefreshIcon />
         </ToolbarItem>
         <ToolbarItem>

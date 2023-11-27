@@ -1,13 +1,13 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../../framework';
+import { useNameColumn } from '../../../../common/columns';
 import { requestDelete } from '../../../../common/crud/Data';
 import { idKeyFn } from '../../../../common/utils/nameKeyFn';
-import { API_PREFIX } from '../../../constants';
+import { edaAPI } from '../../../api/eda-utils';
+import { InUseResources } from '../../../common/EdaResourcesComon';
 import { EdaCredential } from '../../../interfaces/EdaCredential';
 import { useCredentialColumns } from './useCredentialColumns';
-import { useNameColumn } from '../../../../common/columns';
-import { InUseResources } from '../../../common/EdaResourcesComon';
 
 export function useDeleteCredentials(onComplete?: (credentials: EdaCredential[]) => void) {
   const { t } = useTranslation();
@@ -17,13 +17,10 @@ export function useDeleteCredentials(onComplete?: (credentials: EdaCredential[])
   const bulkAction = useBulkConfirmation<EdaCredential>();
   return useCallback(
     async (credentials: EdaCredential[]) => {
-      const inUseDes = await InUseResources(
-        credentials,
-        `${API_PREFIX}/activations/?credential_id=`
-      );
+      const inUseDes = await InUseResources(credentials, edaAPI`/activations/?credential_id=`);
       const inUseMessage =
         inUseDes && inUseDes.length > 0
-          ? [t(`The following decision environments are in use: ${inUseDes.join()}`)]
+          ? [t(`The following credentials are in use: ${inUseDes.join()}`)]
           : [];
       const forceParameter = inUseMessage.length > 0 ? '?force=true' : '';
 
@@ -43,8 +40,10 @@ export function useDeleteCredentials(onComplete?: (credentials: EdaCredential[])
         actionColumns,
         onComplete,
         alertPrompts: inUseMessage,
-        actionFn: (credential: EdaCredential) =>
-          requestDelete(`${API_PREFIX}/credentials/${credential.id}/${forceParameter}`),
+        actionFn: (credential: EdaCredential, signal) => {
+          const url = edaAPI`/credentials/${credential.id.toString()}/`;
+          return requestDelete(url + forceParameter, signal);
+        },
       });
     },
     [actionColumns, bulkAction, confirmationColumns, onComplete, t]

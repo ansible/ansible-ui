@@ -5,6 +5,7 @@ import { PageHeader, PageLayout, useGetPageUrl } from '../../../../../framework'
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { useGetItem } from '../../../../common/crud/useGet';
+import { awxAPI } from '../../../api/awx-utils';
 import { AwxRoute } from '../../../AwxRoutes';
 import { AwxError } from '../../../common/AwxError';
 import { AwxHost } from '../../../interfaces/AwxHost';
@@ -12,7 +13,7 @@ import { AwxHost } from '../../../interfaces/AwxHost';
 export function HostPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { error, data: host, refresh } = useGetItem<AwxHost>('/api/v2/hosts', params.id);
+  const { error, data: host, refresh } = useGetItem<AwxHost>(awxAPI`/hosts`, params.id);
 
   const getPageUrl = useGetPageUrl();
 
