@@ -2,11 +2,11 @@
 
 export function compareUnknowns(a: unknown, b: unknown) {
   /* istanbul ignore next */
-  if (a == undefined && b == undefined) return 0;
+  if (a === undefined && b === undefined) return 0;
   /* istanbul ignore next */
-  if (a == undefined) return 1;
+  if (a === undefined) return 1;
   /* istanbul ignore next */
-  if (b == undefined) return -1;
+  if (b === undefined) return -1;
 
   /* istanbul ignore else */
   if (typeof a === 'string') {
@@ -30,16 +30,16 @@ export function compareUnknowns(a: unknown, b: unknown) {
 
 /* istanbul ignore next */
 export function compareStrings(a: string | undefined | null, b: string | undefined | null) {
-  if (a == undefined && b == undefined) return 0;
-  if (a == undefined) return 1;
-  if (b == undefined) return -1;
+  if (a === undefined && b === undefined) return 0;
+  if (a === undefined || a === null) return 1;
+  if (b === undefined || b === null) return -1;
   return a < b ? -1 : a > b ? 1 : 0;
 }
 
 /* istanbul ignore next */
 export function compareNumbers(a: number | undefined | null, b: number | undefined | null) {
-  if (a == undefined && b == undefined) return 0;
-  if (a == undefined) return 1;
-  if (b == undefined) return -1;
+  if (a === undefined && b === undefined) return 0;
+  if (a === undefined || a === null) return 1;
+  if (b === undefined || b === null) return -1;
   return a < b ? -1 : a > b ? 1 : 0;
 }

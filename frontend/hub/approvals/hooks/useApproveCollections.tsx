@@ -85,7 +85,7 @@ export function approveCollection(
     approvedRepo = repoRes.results[0].pulp_href;
 
     const pipeline = collection.repository?.pulp_labels?.pipeline;
-    if (pipeline == 'approved') {
+    if (pipeline === 'approved') {
       throw new Error(t('You can only approve collections in rejected or staging repositories'));
     }
 

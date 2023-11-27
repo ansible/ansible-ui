@@ -28,7 +28,7 @@ interface Props {
 }
 // eslint-disable-next-line react/prop-types
 const CustomPoint: FC<Props> = ({ x, y, disableInlineStyles, ...props }) => {
-  return x != undefined && y != undefined ? (
+  return x !== undefined && y !== undefined ? (
     // eslint-disable-next-line react/prop-types
     <ExclamationCircleIcon x={x - 8} y={y - 8} {...props} {...props.events}></ExclamationCircleIcon>
   ) : null;
