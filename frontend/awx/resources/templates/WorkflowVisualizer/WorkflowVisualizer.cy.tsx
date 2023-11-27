@@ -63,7 +63,7 @@ describe('WorkflowVisualizer', () => {
           expect(description).to.contain('Run status types');
           expect(description).to.contain('Run on success');
           expect(description).to.contain('Run on fail');
-          expect(description).to.contain('Run on always');
+          expect(description).to.contain('Run always');
         });
       });
   });
@@ -81,6 +81,28 @@ describe('WorkflowVisualizer', () => {
     cy.get('li[data-cy="add-link"]').should('be.visible');
     cy.get('li[data-cy="add-node-and-link"]').should('be.visible');
     cy.get('li[data-cy="remove-node"]').should('be.visible');
+  });
+
+  it('Edge label kebab should open context menu dropdown', () => {
+    cy.mount(<WorkflowVisualizer />);
+    cy.get('[data-id="38-37"]').within(() => {
+      cy.get('[data-cy="edge-context-menu_kebab"]').click({ force: true });
+    });
+    cy.get('li[data-cy="success"]').should('be.visible');
+    cy.get('li[data-cy="always"]').should('be.visible');
+    cy.get('li[data-cy="fail"]').should('be.visible');
+    cy.get('li[data-cy="remove-link"]').should('be.visible');
+  });
+
+  it('Click on edge context menu option to change link type', () => {
+    cy.mount(<WorkflowVisualizer />);
+    cy.get('[data-id="38-37"]').within(() => {
+      cy.get('[data-cy="edge-context-menu_kebab"]').click({ force: true });
+    });
+    cy.get('li[data-cy="fail"]').click();
+    cy.get('[data-id="38-37"]').within(() => {
+      cy.get('text').should('have.text', 'Run on failure');
+    });
   });
 
   it('Should show the WorkflowVisualizer toolbar with Add and Cancel buttons', () => {
