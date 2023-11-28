@@ -44,7 +44,7 @@ Cypress.Commands.add(
   'createApprovedCollection',
   (namespaceName: string, collectionName: string, tags?: string[]) => {
     const waitTillPublished = (maxLoops: number) => {
-      if (maxLoops == 0) {
+      if (maxLoops === 0) {
         cy.log('Max loops reached while waiting for the approved collection.');
         return;
       }

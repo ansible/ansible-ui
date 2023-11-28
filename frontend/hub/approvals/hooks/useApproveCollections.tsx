@@ -41,7 +41,9 @@ export function useApproveCollections(
           : t('Yes, I confirm that I want to approve these {{count}} collections.', {
               count: collections.length,
             }),
-        actionButtonText: t('Approve collections', { count: collections.length }),
+        actionButtonText: autoSign
+          ? t('Approve and sign collections', { count: collections.length })
+          : t('Approve collections', { count: collections.length }),
         items: collections.sort((l, r) =>
           compareStrings(
             l.collection_version?.pulp_href || '' + l.repository?.name,
@@ -85,7 +87,7 @@ export function approveCollection(
     approvedRepo = repoRes.results[0].pulp_href;
 
     const pipeline = collection.repository?.pulp_labels?.pipeline;
-    if (pipeline == 'approved') {
+    if (pipeline === 'approved') {
       throw new Error(t('You can only approve collections in rejected or staging repositories'));
     }
 

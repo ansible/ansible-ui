@@ -13,14 +13,14 @@ export function PageChartLegend(props: {
     return (
       <PageChartLegendHorizontalStyle>
         {props.legend.map((item, index) => {
-          if (item.count === 0 && props.allowZero != true) return <Fragment key={index} />;
+          if (item.count === 0 && props.allowZero !== true) return <Fragment key={index} />;
           return (
             <PageChartLegendHorizontalItemStyle key={index}>
               <PageChartLegendColor
                 id={`${props.id}-${item.label.toLowerCase().replace(/ /g, '-')}-count`}
                 color={item.color}
               />
-              {props.showLegendCount == false ? null : <PageChartLegendCount count={item.count} />}
+              {props.showLegendCount === false ? null : <PageChartLegendCount count={item.count} />}
               <PageChartLegendLabel label={item.label} link={item.link} />
             </PageChartLegendHorizontalItemStyle>
           );
@@ -31,11 +31,11 @@ export function PageChartLegend(props: {
   return (
     <PageChartLegendVerticalStyle>
       {props.legend.map((item, index) => {
-        if (item.count === 0 && props.allowZero != true) return <Fragment key={index} />;
+        if (item.count === 0 && props.allowZero !== true) return <Fragment key={index} />;
         return (
           <Fragment key={index}>
             <PageChartLegendColor color={item.color} />
-            {props.showLegendCount == false ? null : (
+            {props.showLegendCount === false ? null : (
               <PageChartLegendCount
                 id={`${props.id}-${item.label.toLowerCase().replace(/ /g, '-')}-count`}
                 count={item.count}

@@ -27,7 +27,7 @@ import { useSelectRegistrySingle } from './hooks/useRegistrySelector';
 import { usePageNavigate } from '../../../framework';
 
 import { LoadingPage } from '../../../framework/components/LoadingPage';
-import { AwxError } from '../../awx/common/AwxError';
+import { HubError } from '../common/HubError';
 
 export function CreateExecutionEnvironment() {
   return <ExecutionEnvironmentForm mode="add" />;
@@ -54,14 +54,14 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
   );
 
   const eeUrl =
-    mode == 'edit' && params?.id
+    mode === 'edit' && params?.id
       ? hubAPI`/v3/plugin/execution-environments/repositories/${params?.id}/`
       : '';
 
   const executionEnvironment = useGet<ExecutionEnvironment>(eeUrl);
 
   const singleRegistryUrl =
-    mode == 'edit' &&
+    mode === 'edit' &&
     executionEnvironment.data &&
     executionEnvironment.data?.pulp?.repository?.remote?.registry
       ? hubAPI`/_ui/v1/execution-environments/registries/${executionEnvironment.data?.pulp?.repository?.remote?.registry}/`
@@ -69,9 +69,9 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
 
   const singleRegistry = useGet<Registry>(singleRegistryUrl);
 
-  const isLoading = (!executionEnvironment.data || !singleRegistry.data) && mode == 'edit';
+  const isLoading = (!executionEnvironment.data || !singleRegistry.data) && mode === 'edit';
 
-  if (mode == 'edit' && !tagsSet && isLoading == false) {
+  if (mode === 'edit' && !tagsSet && isLoading === false) {
     setTagsSet(true);
     setTagsToExclude(executionEnvironment.data?.pulp?.repository?.remote?.exclude_tags || []);
     setTagsToInclude(executionEnvironment.data?.pulp?.repository?.remote?.include_tags || []);
@@ -148,19 +148,19 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
   };
 
   if (isLoading) return <LoadingPage breadcrumbs tabs />;
-  if (registry.error) return <AwxError error={registry.error} handleRefresh={registry.refresh} />;
+  if (registry.error) return <HubError error={registry.error} handleRefresh={registry.refresh} />;
   if (executionEnvironment.error)
     return (
-      <AwxError error={executionEnvironment.error} handleRefresh={executionEnvironment.refresh} />
+      <HubError error={executionEnvironment.error} handleRefresh={executionEnvironment.refresh} />
     );
   if (singleRegistry.error)
-    return <AwxError error={singleRegistry.error} handleRefresh={singleRegistry.refresh} />;
+    return <HubError error={singleRegistry.error} handleRefresh={singleRegistry.refresh} />;
 
   return (
     <PageLayout>
       <PageHeader
         title={
-          props.mode == 'edit' ? t('Edit Execution Environment') : t('Add Execution Environment')
+          props.mode === 'edit' ? t('Edit Execution Environment') : t('Add Execution Environment')
         }
         breadcrumbs={[
           { label: t('Execution Environments'), to: getPageUrl(HubRoute.ExecutionEnvironments) },
@@ -171,7 +171,7 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
       {!isLoading && (
         <HubPageForm<ExecutionEnvironmentFormProps>
           submitText={
-            props.mode == 'edit' ? t('Edit Execution Environment') : t('Add Execution Environment')
+            props.mode === 'edit' ? t('Edit Execution Environment') : t('Add Execution Environment')
           }
           onCancel={() => navigate(HubRoute.ExecutionEnvironments)}
           onSubmit={onSubmit}
@@ -184,7 +184,7 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
             label={t('Name')}
             placeholder={t('Enter a execution environment name')}
             isRequired
-            isDisabled={mode == 'edit' || !isRemote}
+            isDisabled={mode === 'edit' || !isRemote}
             validate={(name: string) => validateName(name, t)}
           />
 
@@ -228,7 +228,7 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
             name="description"
             label={t('Description')}
             placeholder={t('Enter a description')}
-            isDisabled={mode == 'add'}
+            isDisabled={mode === 'add'}
           />
         </HubPageForm>
       )}
@@ -277,8 +277,8 @@ function TagsSelector(props: {
   const { tags, setTags, mode } = props;
   const { t } = useTranslation();
 
-  const label = mode == 'exclude' ? t('Add tag(s) to exclude') : t('Add tag(s) to include');
-  const label2 = mode == 'exclude' ? t('Currently excluded tags') : t('Currently included tags');
+  const label = mode === 'exclude' ? t('Add tag(s) to exclude') : t('Add tag(s) to include');
+  const label2 = mode === 'exclude' ? t('Currently excluded tags') : t('Currently included tags');
 
   const chipGroupProps = () => {
     const count = '${remaining}'; // pf templating
@@ -289,7 +289,7 @@ function TagsSelector(props: {
   };
 
   const addTags = () => {
-    if (tagsText == '' || !tagsText.trim().length) {
+    if (tagsText === '' || !tagsText.trim().length) {
       return;
     }
     const tagsArray = tagsText.split(/\s+|\s*,\s*/).filter(Boolean);
@@ -333,7 +333,11 @@ function TagsSelector(props: {
         numLabels={5}
       >
         {tags.map((tag) => (
-          <Label icon={<TagIcon />} onClose={() => setTags(tags.filter((t) => t != tag))} key={tag}>
+          <Label
+            icon={<TagIcon />}
+            onClose={() => setTags(tags.filter((t) => t !== tag))}
+            key={tag}
+          >
             {tag}
           </Label>
         ))}

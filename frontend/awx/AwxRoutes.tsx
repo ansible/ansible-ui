@@ -115,6 +115,8 @@ export enum AwxRoute {
 
   // Access
 
+  Access = 'awx-access',
+
   Organizations = 'awx-organizations',
   CreateOrganization = 'awx-create-organization',
   EditOrganization = 'awx-edit-organization',
@@ -191,6 +193,7 @@ export enum AwxRoute {
   Analytics = 'awx-analytics',
   Reports = 'awx-reports',
   AutomationCalculator = 'awx-automation-calculator',
+  AnalyticsBuilder = 'awx-analytics-builder',
   HostMetrics = 'awx-host-metrics',
   SubscriptionUsage = 'awx-subscription-usage',
 
