@@ -22,7 +22,7 @@ export function PageFormLabelSelect<
   const { labelHelpTitle, labelHelp, name, placeholderText, additionalControls } = props;
   const { t } = useTranslation();
 
-  const { items, isLoading } = useAwxGetAllPages<Label>(awxAPI`/labels/`);
+  const { items, isLoading } = useAwxGetAllPages<Label>(awxAPI`/labels/`, { order_by: 'name' });
   const options = isLoading ? [{ name: '' }] : items;
   return (
     <PageFormCreatableSelect<TFieldValues, TFieldName>
