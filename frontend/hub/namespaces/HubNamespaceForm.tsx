@@ -55,7 +55,11 @@ export function EditHubNamespace() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const name = params.id;
-  const { data: namespace, error, refresh } = useGet<HubNamespace>(hubAPI`/_ui/v1/namespaces/${name ?? ''}/`);
+  const {
+    data: namespace,
+    error,
+    refresh,
+  } = useGet<HubNamespace>(hubAPI`/_ui/v1/namespaces/${name ?? ''}/`);
   const patchRequest = usePatchRequest<HubNamespace, HubNamespace>();
   const onSubmit: PageFormSubmitHandler<HubNamespace> = async (namespace) => {
     await patchRequest(hubAPI`/_ui/v1/namespaces/`, namespace);
@@ -63,14 +67,12 @@ export function EditHubNamespace() {
   };
   const getPageUrl = useGetPageUrl();
 
-  if (error)
-  {
+  if (error) {
     return <HubError error={error} handleRefresh={refresh}></HubError>;
   }
 
-  if (!namespace && !error)
-  {
-    return <LoadingPage></LoadingPage>
+  if (!namespace && !error) {
+    return <LoadingPage></LoadingPage>;
   }
 
   if (!namespace) {
