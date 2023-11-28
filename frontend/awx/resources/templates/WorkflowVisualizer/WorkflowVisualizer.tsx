@@ -3,31 +3,30 @@ import { useParams } from 'react-router-dom';
 import { ShareAltIcon } from '@patternfly/react-icons';
 import { Bullseye, EmptyState, EmptyStateHeader, Icon, Spinner } from '@patternfly/react-core';
 import { getPatternflyColor } from '../../../../../framework';
-import { useGet, useGetItem } from '../../../../common/crud/useGet';
+import { useAwxGetAllPages } from '../../../common/useAwxGetAllPages';
+import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxError } from '../../../common/AwxError';
+import { awxAPI } from '../../../api/awx-utils';
 import { Visualizer } from './Topology';
-import type { AwxItemsResponse } from '../../../common/AwxItemsResponse';
-import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
 import type { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
+import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
 
 export function WorkflowVisualizer() {
   const { t } = useTranslation();
-  const { id } = useParams<{ id?: string }>();
-
+  const { id } = useParams<{ id: string }>();
   const {
-    data: wfNodes,
+    items: wfNodes,
     error: workflowNodeError,
-    refresh: workflowNodeRefresh,
     isLoading: workflowNodeIsLoading,
-  } = useGet<AwxItemsResponse<WorkflowNode>>(
-    `/api/v2/workflow_job_templates/${Number(id).toString()}/workflow_nodes/`
-  );
+    refresh: workflowNodeRefresh,
+  } = useAwxGetAllPages<WorkflowNode>(awxAPI`/workflow_job_templates/${id ?? ''}/workflow_nodes/`);
+
   const {
     data: workflowJobTemplate,
     error: workflowError,
     refresh: workflowRefresh,
     isLoading: workflowIsLoading,
-  } = useGetItem<WorkflowJobTemplate>('/api/v2/workflow_job_templates/', id);
+  } = useGetItem<WorkflowJobTemplate>(awxAPI`/workflow_job_templates/`, id);
 
   const error = workflowError || workflowNodeError;
   if (error) {
@@ -63,7 +62,7 @@ export function WorkflowVisualizer() {
   return (
     <Visualizer
       data={{
-        nodes: wfNodes?.results,
+        nodes: wfNodes,
         template: workflowJobTemplate,
       }}
     />
