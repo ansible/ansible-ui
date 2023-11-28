@@ -1,0 +1,85 @@
+{
+  "nodes": [
+    {
+      "id": 1,
+      "hostname": "awx_1",
+      "node_type": "hybrid",
+      "node_state": "ready",
+      "enabled": true
+    },
+    {
+      "id": 3,
+      "hostname": "receptor-1",
+      "node_type": "execution",
+      "node_state": "ready",
+      "enabled": true
+    },
+    {
+      "id": 4,
+      "hostname": "receptor-2",
+      "node_type": "execution",
+      "node_state": "unavailable",
+      "enabled": true
+    },
+    {
+      "id": 5,
+      "hostname": "receptor-3",
+      "node_type": "execution",
+      "node_state": "installed",
+      "enabled": true
+    },
+    {
+      "id": 2,
+      "hostname": "receptor-hop",
+      "node_type": "hop",
+      "node_state": "provisioning",
+      "enabled": true
+    }
+  ],
+  "links": [
+    {
+      "id": 1,
+      "url": "",
+      "related": {
+        "source_instance": "/api/v2/instances/2/",
+        "target_instance": "/api/v2/instances/1/"
+      },
+      "source": "receptor-hop",
+      "target": "awx_1",
+      "link_state": "established"
+    },
+    {
+      "id": 2,
+      "url": "",
+      "related": {
+        "source_instance": "/api/v2/instances/3/",
+        "target_instance": "/api/v2/instances/2/"
+      },
+      "source": "receptor-1",
+      "target": "receptor-hop",
+      "link_state": "established"
+    },
+    {
+      "id": 3,
+      "url": "",
+      "related": {
+        "source_instance": "/api/v2/instances/4/",
+        "target_instance": "/api/v2/instances/2/"
+      },
+      "source": "receptor-2",
+      "target": "receptor-hop",
+      "link_state": "established"
+    },
+    {
+      "id": 4,
+      "url": "",
+      "related": {
+        "source_instance": "/api/v2/instances/5/",
+        "target_instance": "/api/v2/instances/2/"
+      },
+      "source": "receptor-3",
+      "target": "receptor-hop",
+      "link_state": "established"
+    }
+  ]
+}

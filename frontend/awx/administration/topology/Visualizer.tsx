@@ -194,7 +194,7 @@ export const TopologyViewLayer = (props: { mesh: MeshVisualizer }) => {
     });
     const links: EdgeModel[] = meshLayout.links.map((l) => {
       return {
-        id: `edge-${l.source.id}-${l.target.id}`,
+        id: `edge-${l.source.hostname}-${l.target.hostname}`,
         type: 'edge',
         source: l.source.id,
         target: l.target.id,
@@ -226,7 +226,8 @@ export const TopologyViewLayer = (props: { mesh: MeshVisualizer }) => {
       id="mesh-topology"
       sideBar={
         <TopologySideBar
-          className="topology-example-sidebar"
+          data-cy="mesh-viz-sidebar"
+          className="mesh-viz-sidebar"
           show={selectedIds.length > 0}
           onClose={() => setSelectedIds([])}
         >

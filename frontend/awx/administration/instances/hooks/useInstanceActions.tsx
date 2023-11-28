@@ -15,11 +15,9 @@ export function useInstanceActions(instanceId: string) {
     cpuCapacity: number,
     selectedCapacityAdjustment: number
   ) {
-    const minCapacity = memCapacity;
-    const maxCapacity = cpuCapacity;
-    const percentage = selectedCapacityAdjustment * 100;
-
-    return Math.round((maxCapacity - minCapacity) / 100) * percentage + minCapacity;
+    const minCapacity = Math.min(memCapacity, cpuCapacity);
+    const maxCapacity = Math.max(memCapacity, cpuCapacity);
+    return Math.floor(minCapacity + (maxCapacity - minCapacity) * selectedCapacityAdjustment);
   }
 
   useEffect(() => {
@@ -59,10 +57,11 @@ export function useInstanceActions(instanceId: string) {
     return ((maxAllowed - minAllowed) * (currentVal - min)) / (max - min) + minAllowed;
   }
   const handleInstanceForksSlider = debounce(async (instance: Instance, value: number) => {
-    const computedVal =
-      mapBetween(value, 0, 100, instance.mem_capacity, instance.cpu_capacity) / 100;
+    const adjustedMin = Math.min(instance.mem_capacity, instance.cpu_capacity);
+    const adjustedMax = Math.max(instance.mem_capacity, instance.cpu_capacity);
+    const computedVal = mapBetween(value, 0, 1, adjustedMin, adjustedMax);
     const response = await requestPatch<Instance>(awxAPI`/instances/${instance.id.toString()}/`, {
-      capacity_adjustment: computedVal.toFixed(1),
+      capacity_adjustment: computedVal.toFixed(2),
     });
     setInstance(response);
     setInstanceForks(
