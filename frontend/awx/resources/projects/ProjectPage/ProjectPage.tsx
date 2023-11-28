@@ -43,12 +43,11 @@ export function ProjectPage() {
     const tabs = [
       { label: t('Details'), page: AwxRoute.ProjectDetails },
       { label: t('Access'), page: AwxRoute.ProjectAccess },
-      { label: t('Notifications'), page: AwxRoute.ProjectNotifications },
       { label: t('Schedules'), page: AwxRoute.ProjectSchedules },
       { label: t('Job templates'), page: AwxRoute.ProjectJobTemplates },
     ];
     if (currentUser?.is_system_auditor || (isNotifAdmin && isNotifAdmin.results.length > 0)) {
-      tabs.push({ label: t('Notifications'), page: AwxRoute.WorkflowJobTemplateNotifications });
+      tabs.push({ label: t('Notifications'), page: AwxRoute.ProjectNotifications });
     }
     return tabs;
   }, [t, currentUser, isNotifAdmin]);
