@@ -41,7 +41,9 @@ export function useApproveCollections(
           : t('Yes, I confirm that I want to approve these {{count}} collections.', {
               count: collections.length,
             }),
-        actionButtonText: t('Approve collections', { count: collections.length }),
+        actionButtonText: autoSign
+          ? t('Approve and sign collections', { count: collections.length })
+          : t('Approve collections', { count: collections.length }),
         items: collections.sort((l, r) =>
           compareStrings(
             l.collection_version?.pulp_href || '' + l.repository?.name,
