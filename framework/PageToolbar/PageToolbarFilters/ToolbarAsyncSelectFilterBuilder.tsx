@@ -75,6 +75,7 @@ function SelectFilter<T extends object>(
   const viewParams: object = { ...props.viewParams, defaultSelection };
   const toolbarFilters = props.toolbarFilters;
   const tableColumns = props.tableColumns;
+
   const view = props.useView(viewParams as ViewExtendedOptions<T>);
 
   if (props.multiSelection) {

@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IToolbarFilter, ToolbarFilterType } from '../../../../framework';
-import { toolbarSingleSelectBrowseAdapter } from './../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSingleSelectFilter';
+import { singleSelectBrowseAdapter } from './../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSingleSelectFilter';
 import { AnsibleAnsibleRepositoryResponse as Repository } from './../../api-schemas/generated/AnsibleAnsibleRepositoryResponse';
 import { useSelectRepositorySingle } from './../../repositories/hooks/useRepositorySelector';
 import { useRepoQueryOptions } from './../../repositories/hooks/useRepoQueryOptions';
@@ -11,7 +11,7 @@ export function useApprovalFilters() {
 
   const repoQueryOptions = useRepoQueryOptions();
 
-  const repoSelector = toolbarSingleSelectBrowseAdapter<Repository>(
+  const repoSelector = singleSelectBrowseAdapter<Repository>(
     useSelectRepositorySingle().onBrowse,
     (item) => item.name,
     (name) => {

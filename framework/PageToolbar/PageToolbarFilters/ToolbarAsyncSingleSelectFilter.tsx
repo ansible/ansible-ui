@@ -46,7 +46,7 @@ export interface IToolbarAsyncSingleSelectFilter extends ToolbarFilterCommon {
  * @param objectFn Function to create an object from the key. Used for default selection in the dialog.
  * @returns A function to open the select dialog.
  */
-export function toolbarSingleSelectBrowseAdapter<T>(
+export function singleSelectBrowseAdapter<T>(
   /** The function to open the original select dialog that uses objects. */
   selectFn: (onItemSelect: (itemValue: T) => void, itemDefaultSelection?: T) => void,
   /** The function to get a unique key from the object. Used as the string value in the toolbar filter values and query string. */
