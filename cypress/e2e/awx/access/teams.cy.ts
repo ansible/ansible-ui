@@ -229,7 +229,7 @@ describe('teams', function () {
     cy.navigateTo('awx', 'teams');
     cy.clickTableRow(team.name);
     cy.verifyPageTitle(team.name);
-    cy.clickPageAction('dSelete-team');
+    cy.clickPageAction('delete-team');
     cy.intercept('DELETE', `/api/v2/teams/${team.id}/`).as('deleted');
     cy.get('#confirm').click();
     cy.clickButton(/^Delete team/);
