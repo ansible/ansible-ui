@@ -9,19 +9,31 @@ import { HubItemsResponse } from '../../useHubView';
 import { HubNamespace } from '../HubNamespace';
 import { useHubNamespaceActions } from '../hooks/useHubNamespaceActions';
 import { hubAPI } from '../../api/formatPath';
+import { LoadingPage } from '../../../../framework';
+import { HubError } from '../../common/HubError';
 
 export function HubNamespacePage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { data } = useGet<HubItemsResponse<HubNamespace>>(
+  const { data, error, refresh } = useGet<HubItemsResponse<HubNamespace>>(
     hubAPI`/_ui/v1/namespaces/?limit=1&name=${params.id ?? ''}`
   );
+
   let namespace: HubNamespace | undefined = undefined;
   if (data && data.data && data.data.length > 0) {
     namespace = data.data[0];
   }
   const getPageUrl = useGetPageUrl();
   const pageActions = useHubNamespaceActions();
+
+  if (!data && !error) {
+    return <LoadingPage />;
+  }
+
+  if (error) {
+    return <HubError error={error} handleRefresh={refresh} />;
+  }
+
   return (
     <PageLayout>
       <PageHeader
