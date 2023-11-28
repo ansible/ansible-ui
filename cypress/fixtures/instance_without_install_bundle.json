@@ -1,0 +1,45 @@
+{
+  "id": 1,
+  "hostname": "awx_1",
+  "type": "instance",
+  "url": "/api/v2/instances/1/",
+  "related": {
+    "named_url": "/api/v2/instances/awx_1/",
+    "jobs": "/api/v2/instances/1/jobs/",
+    "instance_groups": "/api/v2/instances/1/instance_groups/",
+    "peers": "/api/v2/instances/1/peers/"
+  },
+  "summary_fields": {
+    "user_capabilities": {
+      "edit": false
+    },
+    "links": []
+  },
+  "uuid": "369dd50f-2bb0-4bb4-bece-9079ec32952d",
+  "created": "2023-11-03T18:39:45.354511Z",
+  "modified": "2023-11-03T20:28:08.774397Z",
+  "last_seen": "2023-11-15T19:11:48.213825Z",
+  "health_check_started": null,
+  "health_check_pending": false,
+  "last_health_check": "2023-11-15T19:11:48.213825Z",
+  "errors": "",
+  "capacity_adjustment": "0.80",
+  "version": "22.3.1.dev297+g6cdea1909d.d20231103",
+  "capacity": 118,
+  "consumed_capacity": 0,
+  "percent_capacity_remaining": 100.0,
+  "jobs_running": 0,
+  "jobs_total": 3,
+  "cpu": "9.0",
+  "memory": 16791117824,
+  "cpu_capacity": 36,
+  "mem_capacity": 139,
+  "enabled": true,
+  "managed_by_policy": true,
+  "node_type": "hybrid",
+  "node_state": "ready",
+  "ip_address": "",
+  "listener_port": 2222,
+  "peers": [],
+  "peers_from_control_nodes": false
+}

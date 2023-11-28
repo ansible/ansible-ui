@@ -1,5 +1,6 @@
 export function BytesCell(props: { bytes: number; decimals?: number }) {
   const { bytes } = props;
+  if (bytes === 0) return <>0</>;
   if (!+bytes) return <></>;
 
   const k = 1024;
