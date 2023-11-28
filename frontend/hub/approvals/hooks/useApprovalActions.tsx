@@ -57,7 +57,8 @@ export function useApprovalActions(callback?: (collections: CollectionVersionSea
         onClick: (collection) => approveCollections([collection]),
         isDanger: false,
         isDisabled: (collection) =>
-          can_upload_signatures && require_upload_signatures && collection.is_signed
+          (can_upload_signatures && require_upload_signatures && collection.is_signed) ||
+          (collection.repository?.name !== 'staging' && collection?.repository?.name !== 'rejected')
             ? t`You do not have rights to this operation`
             : undefined,
       },
