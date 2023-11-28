@@ -72,6 +72,11 @@ export function useApprovalActions(callback?: (collections: CollectionVersionSea
         label: t('Reject'),
         onClick: (collection) => rejectCollections([collection]),
         isDanger: true,
+        isDisabled: (collection) =>
+          collection?.repository?.name === 'rejected' ||
+          collection?.repository?.pulp_labels?.pipeline === 'staging'
+            ? t`You do not have rights to this operation`
+            : undefined,
       },
     ],
     [
