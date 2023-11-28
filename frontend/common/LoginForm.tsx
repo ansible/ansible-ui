@@ -7,22 +7,16 @@ import {
   PageFormSubmitButton,
   PageFormSubmitHandler,
   PageFormTextInput,
-  usePageNavigate,
 } from '../../framework';
-import { AwxRoute } from '../awx/AwxRoutes';
-import { EdaRoute } from '../eda/EdaRoutes';
-import { HubRoute } from '../hub/HubRoutes';
-import { hubAPI } from '../hub/api/formatPath';
 import { AuthOption, SocialAuthLogin } from './SocialAuthLogin';
 import { RequestError, createRequestError } from './crud/RequestError';
-import { setCookie } from './crud/cookie';
+import { getCookie } from './crud/cookie';
 import { useInvalidateCacheOnUnmount } from './useInvalidateCache';
 
 type LoginFormProps = {
-  apiUrl?: string;
+  apiUrl: string;
   authOptions?: AuthOption[];
-  onLoginUrl?: string;
-  onLogin?: () => void;
+  onLoginUrl: string;
   hideInputs?: boolean;
 };
 
@@ -30,7 +24,6 @@ export function LoginForm(props: LoginFormProps) {
   const { authOptions } = props;
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const pageNavigate = usePageNavigate();
 
   useInvalidateCacheOnUnmount();
 
@@ -39,62 +32,33 @@ export function LoginForm(props: LoginFormProps) {
   >(
     async (data, setError) => {
       try {
-        let loginPageUrl = props.apiUrl;
-        let searchString = 'name="csrfmiddlewaretoken" value="';
+        if (!props.apiUrl) return;
 
-        if (!loginPageUrl) {
-          // This is the "old" way to determine the url; leaving this here until
-          // all apps are updated to pass in the url via prop
-          switch (process.env.UI_MODE) {
-            case 'AWX':
-              loginPageUrl = '/api/login/';
-              break;
-            case 'EDA':
-              loginPageUrl = '/api/eda/v1/auth/session/login/';
-              searchString = 'csrfToken: "';
-              break;
-            case 'GALAXY':
-            case 'HUB':
-              loginPageUrl = hubAPI`/_ui/v1/auth/login/`;
-              break;
-          }
-        }
-
-        if (!loginPageUrl) return;
-
-        const loginPageResponse = await fetch(loginPageUrl, {
+        const loginPageResponse = await fetch(props.apiUrl, {
           credentials: 'include',
-          headers: {
-            Accept: 'text/*',
-          },
+          headers: { Accept: 'text/*' },
         });
         if (!loginPageResponse.ok) {
           throw await createRequestError(loginPageResponse);
         }
-        const loginPage = await loginPageResponse.text();
-        const searchStringIndex = loginPage.indexOf(searchString);
-        let csrfmiddlewaretoken: string | undefined;
-        if (searchStringIndex !== -1) {
-          csrfmiddlewaretoken = loginPage.substring(
-            searchStringIndex + searchString.length,
-            loginPage.indexOf('"', searchStringIndex + searchString.length)
-          );
-        }
 
         const searchParams = new URLSearchParams();
-        if (csrfmiddlewaretoken) {
-          searchParams.set('csrfmiddlewaretoken', csrfmiddlewaretoken);
-          setCookie('csrftoken', csrfmiddlewaretoken);
-        }
         searchParams.set('username', data.username);
         searchParams.set('password', data.password);
-        searchParams.set('next', '/');
+
+        const headers = {
+          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+          ['X-Csrftoken']: getCookie('csrftoken') || '',
+        };
 
         try {
-          const response = await fetch(loginPageUrl, {
+          // We need to make a request to the login page first to get the CSRF token
+          // the CSRF token is required for the login request
+          // and is set as a cookie on the login page response
+          const response = await fetch(props.apiUrl, {
             credentials: 'include',
             method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+            headers,
             body: searchParams,
             redirect: 'manual',
           });
@@ -112,23 +76,7 @@ export function LoginForm(props: LoginFormProps) {
           }
         }
 
-        if (props.onLoginUrl) {
-          navigate(props.onLoginUrl);
-        }
-        switch (process.env.UI_MODE) {
-          case 'AWX':
-            pageNavigate(AwxRoute.Dashboard);
-            break;
-          case 'EDA':
-            pageNavigate(EdaRoute.Dashboard);
-            break;
-          case 'HUB':
-          case 'GALAXY':
-            pageNavigate(HubRoute.Dashboard);
-            break;
-        }
-
-        props.onLogin?.();
+        navigate(props.onLoginUrl);
       } catch (err) {
         if (err instanceof Error) {
           setError(err.message);
@@ -137,7 +85,7 @@ export function LoginForm(props: LoginFormProps) {
         }
       }
     },
-    [pageNavigate, navigate, props, t]
+    [navigate, props, t]
   );
 
   if (props.hideInputs) {
