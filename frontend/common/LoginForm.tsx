@@ -94,7 +94,7 @@ export function LoginForm(props: LoginFormProps) {
           'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
         };
 
-        if (process.env.UI_MODE == 'HUB') {
+        if (process.env.UI_MODE === 'HUB') {
           headers['X-Csrftoken'] = getCookie('csrftoken') || '';
         }
 
