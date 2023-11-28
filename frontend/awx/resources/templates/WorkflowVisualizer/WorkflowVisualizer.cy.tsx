@@ -5,7 +5,10 @@ import { WorkflowVisualizer } from './WorkflowVisualizer';
 describe('WorkflowVisualizer', () => {
   beforeEach(() => {
     cy.intercept(
-      { method: 'GET', url: '/api/v2/workflow_job_templates/*/workflow_nodes/' },
+      {
+        method: 'GET',
+        url: '/api/v2/workflow_job_templates/*/workflow_nodes/*',
+      },
       { fixture: 'workflow_nodes.json' }
     ).as('getWorkflowNodes');
     cy.intercept(
@@ -128,7 +131,7 @@ describe('WorkflowVisualizer', () => {
     cy.fixture('workflow_nodes.json').then((workflowNodes: AwxItemsResponse<WorkflowNode>) => {
       workflowNodes.count = 3;
       cy.intercept(
-        { method: 'GET', url: '/api/v2/workflow_job_templates/*/workflow_nodes/' },
+        { method: 'GET', url: '/api/v2/workflow_job_templates/*/workflow_nodes/*' },
         workflowNodes
       );
     });
@@ -143,7 +146,7 @@ describe('WorkflowVisualizer', () => {
 
   it('Should show Delete all nodes button', () => {
     cy.intercept(
-      { method: 'GET', url: '/api/v2/workflow_job_templates/*/workflow_nodes/' },
+      { method: 'GET', url: '/api/v2/workflow_job_templates/*/workflow_nodes/*' },
       { fixture: 'workflow_nodes.json' }
     );
 
@@ -177,7 +180,7 @@ describe('Workflow visualizer empty state', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/workflow_job_templates/*/workflow_nodes/',
+          url: '/api/v2/workflow_job_templates/*/workflow_nodes/*',
           hostname: 'localhost',
         },
         { workflow_nodes }
