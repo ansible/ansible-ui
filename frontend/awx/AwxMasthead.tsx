@@ -3,6 +3,7 @@ import { DropdownItem } from '@patternfly/react-core/deprecated';
 import { ExternalLinkAltIcon, QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { PageMasthead, usePageNavigate } from '../../framework';
 import { PageMastheadDropdown } from '../../framework/PageMasthead/PageMastheadDropdown';
 import { PageNotificationsIcon } from '../../framework/PageMasthead/PageNotificationsIcon';
@@ -22,13 +23,14 @@ export function AwxMasthead() {
   const openAnsibleAboutModal = useAnsibleAboutModal();
   const { clearAllCache } = useClearCache();
   const config = useAwxConfig();
+  const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
   const activeUser = useActiveUser();
   const logout = useCallback(async () => {
     await fetch('/api/logout/');
     clearAllCache();
-    pageNavigate(AwxRoute.Login);
-  }, [pageNavigate, clearAllCache]);
+    navigate('/login');
+  }, [clearAllCache, navigate]);
   return (
     <PageMasthead
       icon={<AwxIcon style={{ height: 60 }} />}
