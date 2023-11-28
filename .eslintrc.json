@@ -19,6 +19,7 @@
     "plugin:i18next/recommended"
   ],
   "rules": {
+    "eqeqeq": ["error", "always"],
     "semi": ["error", "always"],
     "no-only-tests/no-only-tests": "error",
     "react/react-in-jsx-scope": "off",

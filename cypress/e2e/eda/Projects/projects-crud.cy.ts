@@ -28,7 +28,7 @@ describe('EDA Projects CRUD', () => {
       cy.navigateTo('eda', 'projects');
       cy.get('h1').should('contain', 'Projects');
       cy.clickTableRow(edaProject.name);
-      cy.clickPageAction('edit-project');
+      cy.get('[data-cy="edit-project"]').click();
       cy.verifyPageTitle(`Edit ${edaProject.name}`);
       cy.get('[data-cy="name"]').type(edaProject.name + 'a');
       cy.clickButton(/^Save project$/);

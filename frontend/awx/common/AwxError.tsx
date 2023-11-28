@@ -16,7 +16,7 @@ export function AwxError(props: { error: Error; handleRefresh?: () => void }) {
   return (
     <EmptyState isFullHeight>
       <EmptyStateHeader
-        titleText={<>{error.message}</>}
+        titleText={<>{error?.message}</>}
         icon={<EmptyStateIcon icon={ExclamationCircleIcon} />}
         headingLevel="h4"
       />

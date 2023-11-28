@@ -13,22 +13,23 @@ import {
 } from '../../../framework';
 import { PageFormFileUpload } from '../../../framework/PageForm/Inputs/PageFormFileUpload';
 import { PageFormGroup } from '../../../framework/PageForm/Inputs/PageFormGroup';
+import { PageFormSecret } from '../../../framework/PageForm/Inputs/PageFormSecret';
 import { PageFormExpandableSection } from '../../../framework/PageForm/PageFormExpandableSection';
 import { PageFormSection } from '../../../framework/PageForm/Utils/PageFormSection';
-import { PageFormSecret } from '../../../framework/PageForm/Inputs/PageFormSecret';
 import { LoadingPage } from '../../../framework/components/LoadingPage';
-import { AwxError } from '../../awx/common/AwxError';
+import { HubError } from '../common/HubError';
 import { useGet } from '../../common/crud/useGet';
 import { usePostRequest } from '../../common/crud/usePostRequest';
+import { useClearCache } from '../../common/useInvalidateCache';
+import { useIsValidUrl } from '../../common/validation/useIsValidUrl';
 import { HubPageForm } from '../HubPageForm';
 import { HubRoute } from '../HubRoutes';
-import { appendTrailingSlash, hubAPIPut, parsePulpIDFromURL } from '../api/utils';
 import { pulpAPI } from '../api/formatPath';
+import { appendTrailingSlash, hubAPIPut, parsePulpIDFromURL } from '../api/utils';
 import { PulpItemsResponse } from '../usePulpView';
 import { IRemotes } from './Remotes';
-import { useClearCache } from '../../common/useInvalidateCache';
 
-interface SecredInput {
+interface SecretInput {
   onClear?: (name: string) => void;
   shouldHideField?: (name: string) => boolean;
 }
@@ -79,6 +80,10 @@ export function CreateRemote() {
     }
     if (remote?.proxy_username === '') {
       delete remote.proxy_username;
+    }
+
+    if (remote?.proxy_url === '') {
+      delete remote.proxy_url;
     }
 
     await postRequest(pulpAPI`/remotes/ansible/collection/`, {
@@ -189,13 +194,14 @@ export function EditRemote() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const name = params.id;
+
   const { data, error, refresh } = useGet<PulpItemsResponse<RemoteFormProps>>(
     pulpAPI`/remotes/ansible/collection/?name=${name ?? ''}`
   );
 
   const getPageUrl = useGetPageUrl();
 
-  if (error) return <AwxError error={error} handleRefresh={refresh} />;
+  if (error) return <HubError error={error} handleRefresh={refresh} />;
   if (!data) return <LoadingPage breadcrumbs tabs />;
 
   const remote = data.results[0];
@@ -228,7 +234,7 @@ export function EditRemote() {
             { label: t('Edit Remote') },
           ]}
         />
-        <AwxError error={new Error(t('Remote not found'))} handleRefresh={handleRefresh} />
+        <HubError error={new Error(t('Remote not found'))} handleRefresh={handleRefresh} />
       </PageLayout>
     );
   }
@@ -271,7 +277,7 @@ export function EditRemote() {
         title={t('Edit Remote')}
         breadcrumbs={[
           { label: t('Remotes'), to: getPageUrl(HubRoute.Remotes) },
-          { label: t(' Remote') },
+          { label: t('Remote') },
         ]}
       />
       <HubPageForm<RemoteFormProps>
@@ -295,14 +301,17 @@ export function EditRemote() {
   );
 }
 
-function ProxyAdvancedRemoteInputs({ onClear, shouldHideField }: SecredInput) {
+function ProxyAdvancedRemoteInputs({ onClear, shouldHideField }: SecretInput) {
   const { t } = useTranslation();
+  const isValidUrl = useIsValidUrl();
   return (
     <>
       <PageFormTextInput<RemoteFormProps>
         name="proxy_url"
         label={t('Proxy URL')}
         placeholder={t('Enter a proxy URL')}
+        labelHelp={t('The URL of an external proxy server.')}
+        validate={isValidUrl}
       />
       <PageFormSecret
         onClear={() => {
@@ -333,7 +342,7 @@ function ProxyAdvancedRemoteInputs({ onClear, shouldHideField }: SecredInput) {
   );
 }
 
-function CertificatesAdvancedRemoteInputs({ onClear, shouldHideField }: SecredInput) {
+function CertificatesAdvancedRemoteInputs({ onClear, shouldHideField }: SecretInput) {
   const { t } = useTranslation();
   return (
     <>
@@ -396,8 +405,9 @@ function MiscAdvancedRemoteInputs() {
   );
 }
 
-function RemoteInputs({ onClear, shouldHideField }: SecredInput) {
+function RemoteInputs({ onClear, shouldHideField }: SecretInput) {
   const { t } = useTranslation();
+  const isValidUrl = useIsValidUrl();
   return (
     <>
       <PageFormTextInput<RemoteFormProps>
@@ -412,6 +422,7 @@ function RemoteInputs({ onClear, shouldHideField }: SecredInput) {
         placeholder={t('Enter a URL')}
         labelHelp={t('The URL of an external content source.')}
         isRequired
+        validate={isValidUrl}
       />
       <PageFormSecret
         onClear={() => {
@@ -464,6 +475,7 @@ function RemoteInputs({ onClear, shouldHideField }: SecredInput) {
         label={t('SSO URL')}
         placeholder={t('Enter a SSO URL')}
         labelHelp={t('Single sign on URL.')}
+        validate={isValidUrl}
       />
     </>
   );

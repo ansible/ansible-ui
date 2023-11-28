@@ -13,6 +13,7 @@ export function useGet<T>(
   swrConfiguration: SWRConfiguration = {}
 ) {
   const getRequest = useGetRequest<T>();
+
   url += normalizeQueryString(query);
   const response = useSWR<T>(url, getRequest, {
     dedupingInterval: 0,
@@ -23,6 +24,7 @@ export function useGet<T>(
   if (error && !(error instanceof Error)) {
     error = new Error('Unknown error');
   }
+
   return useMemo(
     () => ({
       data: response.data,

@@ -1002,7 +1002,7 @@ Cypress.Commands.add('waitForTemplateStatus', (jobID: string) => {
 
 Cypress.Commands.add('waitForJobToProcessEvents', (jobID: string) => {
   const waitForJobToFinishProcessingEvents = (maxLoops: number) => {
-    if (maxLoops == 0) {
+    if (maxLoops === 0) {
       cy.log('Max loops reached while waiting for processing events.');
       return;
     }

@@ -65,7 +65,7 @@ export const getClickableText = (
   if (isOther(item, key)) return '-';
   if (timeFields.includes(key)) return formatTotalTime(+item[key]);
   if (costFields.includes(key)) return currencyFormatter(+item[key]);
-  if (Object.keys(countMapper).includes(key) && item.id != -1 && item.name) {
+  if (Object.keys(countMapper).includes(key) && item.id !== -1 && item.name) {
     return (
       <Tooltip content={`View ${item.name} usage`}>
         <Button
@@ -142,7 +142,7 @@ export const paths = {
 };
 
 export function renderAllTasksStatus(item: AnyType, params: AnalyticsReportBuilderBodyProps) {
-  if (params.report_name == 'most_used_modules') {
+  if (params.report_name === 'most_used_modules') {
     return <TableExpandedRow item={item}></TableExpandedRow>;
   }
 }

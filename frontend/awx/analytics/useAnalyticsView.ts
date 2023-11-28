@@ -176,11 +176,11 @@ export function useAnalyticsView<T extends object, DataType extends object = Any
   let queryString = queryParams ? `?${getQueryString(queryParams)}` : '';
 
   if (sort) {
-    let canSort = tableColumns?.find((item) => item.sort == sort) ? true : false;
+    let canSort = tableColumns?.find((item) => item.sort === sort) ? true : false;
 
     if (!canSort) {
       // try sortableColumns instead if table columns not defined
-      canSort = sortableColumns?.find((item) => item == sort) ? true : false;
+      canSort = sortableColumns?.find((item) => item === sort) ? true : false;
     }
 
     if (canSort) {
@@ -217,11 +217,11 @@ export function useAnalyticsView<T extends object, DataType extends object = Any
       try {
         let data = null;
 
-        if (requestMethod == 'post') {
+        if (requestMethod === 'post') {
           data = await postRequest(url, payloadData);
         }
 
-        if (requestMethod == 'get') {
+        if (requestMethod === 'get') {
           data = await requestGet(url);
         }
 
@@ -272,7 +272,7 @@ export function fillFilters(
       if (toolbarFilter) {
         const values = filterState[key];
 
-        if (!values || values.length == 0) {
+        if (!values || values.length === 0) {
           continue;
         }
 
