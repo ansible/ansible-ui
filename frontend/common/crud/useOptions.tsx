@@ -1,7 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useSWR, { SWRConfiguration } from 'swr';
-import { RouteObj } from '../Routes';
 import { createRequestError } from './RequestError';
 import { normalizeQueryString } from './normalizeQueryString';
 import { requestCommon } from './requestCommon';
@@ -53,7 +52,7 @@ function useOptionsRequest<ResponseBody>() {
     });
     if (!response.ok) {
       if (response.status === 401) {
-        navigate(RouteObj.Login + '?navigate-back=true');
+        navigate('/login?navigate-back=true');
       }
       throw await createRequestError(response);
     }
