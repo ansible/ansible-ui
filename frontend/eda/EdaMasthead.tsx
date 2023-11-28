@@ -27,7 +27,7 @@ export function EdaMasthead() {
   const logout = useCallback(async () => {
     await postRequest(edaAPI`/auth/session/logout/`, {});
     clearAllCache();
-    navigate('/');
+    navigate('/login');
   }, [clearAllCache, navigate]);
   return (
     <PageMasthead

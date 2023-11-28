@@ -1,5 +1,4 @@
 import { useNavigate } from 'react-router-dom';
-import { RouteObj } from '../Routes';
 import { createRequestError } from './RequestError';
 import { requestCommon } from './requestCommon';
 import { useAbortController } from './useAbortController';
@@ -24,7 +23,7 @@ export function usePatchRequest<RequestBody, ResponseBody>() {
     });
     if (!response.ok) {
       if (response.status === 401) {
-        navigate(RouteObj.Login + '?navigate-back=true');
+        navigate('/login?navigate-back=true');
       }
       throw await createRequestError(response);
     }

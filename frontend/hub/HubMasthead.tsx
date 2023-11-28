@@ -3,6 +3,7 @@ import { DropdownItem } from '@patternfly/react-core/deprecated';
 import { QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { PageMasthead, usePageNavigate } from '../../framework';
 import { PageMastheadDropdown } from '../../framework/PageMasthead/PageMastheadDropdown';
 import { PageNotificationsIcon } from '../../framework/PageMasthead/PageNotificationsIcon';
@@ -21,13 +22,14 @@ export function HubMasthead() {
   const { t } = useTranslation();
   const openAnsibleAboutModal = useAnsibleAboutModal();
   const { clearAllCache } = useClearCache();
+  const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
   const activeUser = useActiveUser();
   const logout = useCallback(async () => {
     await postRequest(hubAPI`/_ui/v1/auth/logout/`, {});
     clearAllCache();
-    pageNavigate(HubRoute.Login);
-  }, [clearAllCache, pageNavigate]);
+    navigate('/login');
+  }, [clearAllCache, navigate]);
   return (
     <PageMasthead
       icon={<Logo style={{ height: 48, marginTop: -8 }} />}

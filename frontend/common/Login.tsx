@@ -1,13 +1,11 @@
-import { useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Title, TitleSizes } from '@patternfly/react-core';
-import background from '../../node_modules/@patternfly/patternfly/assets/images/pfbg_1200.jpg';
-import { useFrameworkTranslations } from '../../framework/useFrameworkTranslations';
+import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 import ErrorBoundary from '../../framework/components/ErrorBoundary';
+import { useFrameworkTranslations } from '../../framework/useFrameworkTranslations';
+import background from '../../node_modules/@patternfly/patternfly/assets/images/pfbg_1200.jpg';
 import { LoginForm } from './LoginForm';
 import type { AuthOption } from './SocialAuthLogin';
-import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
 
 const Wrapper = styled.div`
   min-height: 100dvh;
@@ -36,19 +34,13 @@ const Heading = styled(Title)`
 type LoginProps = {
   hideInputs?: boolean;
   authOptions?: AuthOption[];
-  apiUrl?: string;
-  onLoginUrl?: string;
+  apiUrl: string;
+  onLoginUrl: string;
 };
 
 export function Login(props: LoginProps) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
-  const navigateBack = useCallback(() => {
-    navigate('/');
-  }, [navigate]);
-
   const productName = process.env.PRODUCT ?? 'Ansible';
-
   const [translations] = useFrameworkTranslations();
   return (
     <ErrorBoundary message={translations.errorText}>
@@ -61,7 +53,6 @@ export function Login(props: LoginProps) {
             apiUrl={props.apiUrl}
             authOptions={props.authOptions}
             onLoginUrl={props.onLoginUrl}
-            onLogin={navigateBack}
             hideInputs={props.hideInputs}
           />
         </Inner>
