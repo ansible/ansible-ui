@@ -39,7 +39,7 @@ describe('EDA Decision Environment List', () => {
     });
   });
 
-  it.only('can verify the delete functionality of items in the kebab menu of the DE list view', () => {
+  it('can verify the delete functionality of items in the kebab menu of the DE list view', () => {
     cy.createEdaDecisionEnvironment().then((edaDE) => {
       cy.navigateTo('eda', 'decision-environments');
       cy.verifyPageTitle('Decision Environments');
