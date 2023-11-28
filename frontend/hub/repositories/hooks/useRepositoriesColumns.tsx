@@ -1,7 +1,9 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, TextCell } from '../../../../framework';
+import { DateTimeCell, ITableColumn, TextCell } from '../../../../framework';
 import { Repository } from '../Repository';
+import { Label } from '@patternfly/react-core';
+import { StatusCell } from '../../../common/StatusCell';
 
 export function useRepositoriesColumns(_options?: {
   disableSort?: boolean;
@@ -10,10 +12,53 @@ export function useRepositoriesColumns(_options?: {
   const { t } = useTranslation();
   const tableColumns = useMemo<ITableColumn<Repository>[]>(
     () => [
-      { header: t('Name'), cell: (repository) => <TextCell text={repository.name} /> },
       {
-        header: t('Description'),
-        cell: (repository) => <TextCell text={repository.description} />,
+        header: t('Repository name'),
+        cell: (repository) => <TextCell text={repository.name} />,
+        sort: 'name',
+      },
+      {
+        header: t('Labels'),
+        cell: (repository) => {
+          if (Object.keys(repository.pulp_labels).length === 0) {
+            return <TextCell text={t('None')} />;
+          } else {
+            return Object.keys(repository.pulp_labels).map((label) =>
+              repository.pulp_labels[label] ? (
+                <Label readOnly key={label}>
+                  {label}: {repository.pulp_labels[label]}
+                </Label>
+              ) : (
+                <Label readOnly key={label}>
+                  {label}
+                </Label>
+              )
+            );
+          }
+        },
+      },
+      {
+        header: t('Private'),
+        cell: (repository) => <TextCell text={repository.private ? t('Yes') : t('No')} />,
+      },
+      {
+        header: t('Sync status'),
+        cell: (repository) => {
+          if (repository.remote) {
+            if (repository.last_sync_task) {
+              return <StatusCell status={repository.last_sync_task.state} />;
+            } else {
+              return <TextCell text={t('Never synced')} />;
+            }
+          } else {
+            return <TextCell text={t('No remote')} />;
+          }
+        },
+      },
+      {
+        header: t('Created at'),
+        cell: (repository) => <DateTimeCell format="since" value={repository.pulp_created} />,
+        sort: 'pulp_created',
       },
     ],
     [t]

@@ -74,6 +74,29 @@ export function useRepositoryFilters() {
         query: 'name',
         comparison: 'equals',
       },
+      {
+        key: 'pipeline',
+        label: t('Pipeline'),
+        type: ToolbarFilterType.SingleSelect,
+        query: 'pulp_label_select',
+        placeholder: t('Pipeline'),
+        options: [
+          { label: t('Needs review'), value: `pipeline=staging` },
+          { label: t('Approved'), value: `pipeline=approved` },
+          { label: t('Rejected'), value: `pipeline=rejected` },
+        ],
+      },
+      {
+        key: 'remote',
+        label: t('Remote'),
+        type: ToolbarFilterType.SingleSelect,
+        placeholder: t('Remote'),
+        query: 'remote',
+        options: [
+          { label: t('None'), value: 'null' },
+          // TODO get all remotes
+        ],
+      },
     ],
     [t]
   );

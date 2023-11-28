@@ -1,14 +1,23 @@
 export interface Repository {
   description: string;
   gpgkey: null | string;
-  last_sync_task: null | string;
+  last_sync_task: {
+    error?: {
+      description: string;
+      traceback: string;
+    };
+    finished_at: string;
+    started_at: string;
+    state: string;
+    task_id: string;
+  };
   last_synced_metadata_time: null | string;
   latest_version_href: string;
   name: string;
   private: boolean;
   pulp_created: string;
   pulp_href: string;
-  pulp_labels: unknown;
+  pulp_labels: Record<string, string>;
   remote: null | string;
   retain_repo_versions: null | number;
   versions_href: string;
