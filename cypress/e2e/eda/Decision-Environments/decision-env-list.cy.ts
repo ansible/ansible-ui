@@ -44,6 +44,7 @@ describe('EDA Decision Environment List', () => {
       cy.navigateTo('eda', 'decision-environments');
       cy.verifyPageTitle('Decision Environments');
       cy.searchAndDisplayResource(edaDE.name);
+      cy.get('[data-cy="card-view"]').click();
       cy.clickListCardKebabAction(edaDE.id, edaDE.name, 'delete-decision-environment');
       cy.get('#confirm').click();
       cy.clickButton(/^Delete decision environment/);
