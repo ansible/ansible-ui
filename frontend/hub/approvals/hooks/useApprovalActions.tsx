@@ -58,8 +58,7 @@ export function useApprovalActions(callback?: (collections: CollectionVersionSea
         isDanger: false,
         isDisabled: (collection) =>
           (can_upload_signatures && require_upload_signatures && collection.is_signed) ||
-          (collection?.repository?.name !== 'rejected' &&
-            collection?.repository?.pulp_labels?.pipeline !== 'staging')
+          collection?.repository?.pulp_labels?.pipeline === 'approved'
             ? t`You do not have rights to this operation`
             : undefined,
       },
@@ -73,8 +72,7 @@ export function useApprovalActions(callback?: (collections: CollectionVersionSea
         onClick: (collection) => rejectCollections([collection]),
         isDanger: true,
         isDisabled: (collection) =>
-          collection?.repository?.name === 'rejected' ||
-          collection?.repository?.pulp_labels?.pipeline === 'staging'
+          collection?.repository?.pulp_labels?.pipeline === 'rejected'
             ? t`You do not have rights to this operation`
             : undefined,
       },
