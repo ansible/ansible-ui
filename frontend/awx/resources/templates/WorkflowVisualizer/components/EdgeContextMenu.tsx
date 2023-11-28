@@ -1,9 +1,10 @@
 import { ReactElement } from 'react';
 import {
-  ContextMenuSeparator,
   ContextMenuItem,
-  GraphElement,
+  ContextMenuSeparator,
   ElementModel,
+  GraphElement,
+  action,
 } from '@patternfly/react-topology';
 import {
   CheckCircleIcon,
@@ -31,12 +32,15 @@ export function useEdgeMenuItems(t: (item: string) => string): MenuItem[] {
         </Icon>
       ),
       label: t('Run on success'),
-      onClick: (element: GraphElement) =>
-        element.setData({
-          tag: t('Run on success'),
-          tagStatus: 'success',
-          endTerminalStatus: 'success',
-        }),
+      onClick: (element: GraphElement) => {
+        action(() => {
+          element.setData({
+            tag: t('Run on success'),
+            tagStatus: 'success',
+            endTerminalStatus: 'success',
+          });
+        })();
+      },
     },
     {
       key: 'always',
@@ -46,8 +50,11 @@ export function useEdgeMenuItems(t: (item: string) => string): MenuItem[] {
         </Icon>
       ),
       label: t('Run always'),
-      onClick: (element: GraphElement) =>
-        element.setData({ tag: t('Run always'), tagStatus: 'info', endTerminalStatus: 'info' }),
+      onClick: (element: GraphElement) => {
+        action(() => {
+          element.setData({ tag: t('Run always'), tagStatus: 'info', endTerminalStatus: 'info' });
+        })();
+      },
     },
     {
       key: 'fail',
@@ -56,13 +63,16 @@ export function useEdgeMenuItems(t: (item: string) => string): MenuItem[] {
           <ExclamationCircleIcon />
         </Icon>
       ),
-      label: t('Run on failure'),
-      onClick: (element: GraphElement) =>
-        element.setData({
-          tag: t('Run on failure'),
-          tagStatus: 'danger',
-          endTerminalStatus: 'fail',
-        }),
+      label: t('Run on fail'),
+      onClick: (element: GraphElement) => {
+        action(() => {
+          element.setData({
+            tag: t('Run on fail'),
+            tagStatus: 'danger',
+            endTerminalStatus: 'fail',
+          });
+        })();
+      },
     },
     {
       key: 'separator',
