@@ -101,7 +101,7 @@ describe('WorkflowVisualizer', () => {
     });
     cy.get('li[data-cy="fail"]').click();
     cy.get('[data-id="38-37"]').within(() => {
-      cy.get('text').should('have.text', 'Run on failure');
+      cy.get('text').should('have.text', 'Run on fail');
     });
   });
 
