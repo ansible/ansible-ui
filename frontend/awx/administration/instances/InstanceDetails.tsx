@@ -45,6 +45,7 @@ import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { useInstanceActions } from './hooks/useInstanceActions';
+import { LastModifiedPageDetail } from '../../../common/LastModifiedPageDetail';
 
 export function InstanceDetails() {
   const { t } = useTranslation();
@@ -211,9 +212,11 @@ export function InstanceDetailsTab(props: {
       <PageDetail label={t('Created')} data-cy="created">
         {formatDateString(instance.created)}
       </PageDetail>
-      <PageDetail label={t('Last modified')} data-cy="last-modified">
-        {formatDateString(instance.modified)}
-      </PageDetail>
+      <LastModifiedPageDetail
+        format="date-time"
+        value={instance.modified}
+        data-cy="last-modified"
+      />
       <PageDetail label={t('Forks')} data-cy="forks">
         <div>
           {t('Total forks: ')}

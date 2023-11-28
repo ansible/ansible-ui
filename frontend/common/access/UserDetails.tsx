@@ -4,6 +4,7 @@ import { UserType } from '../../awx/access/users/components/UserType';
 import { AuthenticationType } from '../../awx/access/users/components/AuthenticationType';
 import { RoleRef } from '../../eda/interfaces/generated/eda-api';
 import { Label, LabelGroup } from '@patternfly/react-core';
+import { LastModifiedPageDetail } from '../LastModifiedPageDetail';
 
 export type UserDetailsType = {
   first_name: string;
@@ -78,12 +79,10 @@ export function UserDetails<T extends UserDetailsType>(props: {
           />
         </PageDetail>
         {(user.modified || user.modified_at || user.modified_on) && (
-          <PageDetail label={t('Last modified')}>
-            <DateTimeCell
-              format="date-time"
-              value={user.modified ?? user.modified_at ?? user.modified_on}
-            />
-          </PageDetail>
+          <LastModifiedPageDetail
+            format="date-time"
+            value={user.modified ?? user.modified_at ?? user.modified_on}
+          />
         )}
         {user.roles && user.roles.length > 0 && (
           <PageDetail label={t('Role(s)')}>
