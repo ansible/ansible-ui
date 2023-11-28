@@ -92,6 +92,7 @@ const MeshNode: React.FC<CustomNodeProps & WithSelectionProps> = ({
       onSelect={onSelect}
       selected={selected}
       onStatusDecoratorClick={onSelect}
+      truncateLength={20}
     >
       <g transform={`translate(13, 13)`}>
         {Icon && <Icon style={{ color: '#393F44' }} width={25} height={25} />}
