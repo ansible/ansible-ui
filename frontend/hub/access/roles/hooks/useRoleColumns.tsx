@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { DateTimeCell, ITableColumn, TextCell } from '../../../../../framework';
+import { ColumnModalOption, DateTimeCell, ITableColumn, TextCell } from '../../../../../framework';
 import { useLockedRolesWithDescription } from './useLockedRolesWithDescription';
 import { Role } from '../Role';
 import { useMemo } from 'react';
@@ -32,6 +32,7 @@ export function useRoleColumns(options?: { disableSort?: boolean; disableLinks?:
         cell: (item) => <DateTimeCell format="since" value={item.pulp_created} />,
         sort: 'pulp_created',
         defaultSortDirection: 'desc',
+        modal: ColumnModalOption.Hidden,
       },
       {
         header: t('Editable'),
@@ -41,6 +42,7 @@ export function useRoleColumns(options?: { disableSort?: boolean; disableLinks?:
         defaultSortDirection: 'asc',
         card: 'subtitle',
         list: 'subtitle',
+        modal: ColumnModalOption.Hidden,
       },
     ],
 
