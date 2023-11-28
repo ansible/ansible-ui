@@ -24,7 +24,7 @@ export function HubNamespaceDetails() {
   }
 
   if (error) {
-    return <HubError error={error} handleRefresh={refresh}></HubError>;
+    return <HubError error={error} handleRefresh={refresh} />;
   }
 
   return <PageDetailsFromColumns item={response.data[0]} columns={tableColumns} />;
