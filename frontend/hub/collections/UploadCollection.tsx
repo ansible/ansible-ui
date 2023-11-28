@@ -28,6 +28,7 @@ import { hubPostRequestFile } from '../api/request';
 import { useHubNamespaces } from '../namespaces/hooks/useHubNamespaces';
 import { useRepositories } from '../repositories/hooks/useRepositories';
 import { PulpItemsResponse, usePulpView } from '../usePulpView';
+import { HubError } from '../common/HubError';
 
 interface UploadData {
   file: unknown;
@@ -115,6 +116,14 @@ export function UploadCollectionByFile() {
     }
   }, [view.pageItems, selectedRepo, view]);
 
+  if (!repositories.data && !repositories.error) {
+    return <LoadingPage />;
+  }
+
+  if (repositories.error) {
+    return <HubError error={repositories.error} handleRefresh={repositories.refresh} />;
+  }
+
   function renderRepoSelector() {
     return (
       <>
@@ -175,7 +184,7 @@ export function UploadCollectionByFile() {
 
   return (
     <>
-      {namespaces === undefined || repositories === undefined ? (
+      {namespaces?.data?.data === undefined || repositories?.data?.data === undefined ? (
         <LoadingPage />
       ) : (
         <HubPageForm<UploadData>
@@ -212,17 +221,20 @@ export function UploadCollectionByFile() {
               }
               return (
                 <>
-                  {namespace && !namespaces.find((ns) => ns.name === namespace) && (
-                    <Alert
-                      variant="danger"
-                      isInline
-                      title={t(`Namespace "${namespace}" not found`)}
-                    >
-                      {t(
-                        'The collection cannot be imported. Please create namespace before importing.'
-                      )}
-                    </Alert>
-                  )}
+                  {
+                    /* TODO - we have to load namespace by name, not all of them */
+                    namespace && !namespaces.data?.data.find((ns) => ns.name === namespace) && (
+                      <Alert
+                        variant="danger"
+                        isInline
+                        title={t(`Namespace "${namespace}" not found`)}
+                      >
+                        {t(
+                          'The collection cannot be imported. Please create namespace before importing.'
+                        )}
+                      </Alert>
+                    )
+                  }
                   {namespace && (
                     <PageDetails>
                       <PageDetail label={t('Namespace')}>{namespace}</PageDetail>

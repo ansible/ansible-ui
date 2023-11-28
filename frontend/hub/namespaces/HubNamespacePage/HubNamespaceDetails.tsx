@@ -6,15 +6,26 @@ import { HubItemsResponse } from '../../useHubView';
 import { HubNamespace } from '../HubNamespace';
 import { useHubNamespacesColumns } from '../hooks/useHubNamespacesColumns';
 import { hubAPI } from '../../api/formatPath';
+import { HubError } from '../../common/HubError';
 
 export function HubNamespaceDetails() {
   const params = useParams<{ id: string }>();
-  const { data: response } = useGet<HubItemsResponse<HubNamespace>>(
+  const {
+    data: response,
+    error,
+    refresh,
+  } = useGet<HubItemsResponse<HubNamespace>>(
     hubAPI`/_ui/v1/namespaces/?limit=1&name=${params.id ?? ''}`
   );
   const tableColumns = useHubNamespacesColumns();
-  if (!response || !response.data || response.data.length === 0) {
+
+  if (!response || !response.data || (response.data.length === 0 && !error)) {
     return <LoadingPage />;
   }
+
+  if (error) {
+    return <HubError error={error} handleRefresh={refresh} />;
+  }
+
   return <PageDetailsFromColumns item={response.data[0]} columns={tableColumns} />;
 }
