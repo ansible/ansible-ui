@@ -76,7 +76,7 @@ describe('Workflow Job templates form', () => {
       inventory: inventory.id,
     }).then((workflowJobTemplate) => {
       if (!workflowJobTemplate.name) return;
-      cy.clickTableRowKebabAction(workflowJobTemplate?.name, /^Delete template$/);
+      cy.clickTableRowKebabAction(workflowJobTemplate?.name, 'delete-template');
       cy.get('#confirm').click();
       cy.clickButton(/^Delete template/);
       cy.contains(/^Success$/);

@@ -44,7 +44,7 @@ describe('Users List Actions', () => {
     cy.clickButton(/^Create user$/);
     cy.verifyPageTitle(userName);
     // Clean up this user
-    cy.clickPageAction(/^Delete user/);
+    cy.clickPageAction('delete-user');
     cy.get('#confirm').click();
     cy.clickButton(/^Delete user/);
     cy.verifyPageTitle('Users');
@@ -102,7 +102,7 @@ describe('Users Delete Actions', () => {
     cy.navigateTo('awx', 'users');
     cy.clickTableRow(user.username);
     cy.verifyPageTitle(user.username);
-    cy.clickPageAction(/^Delete user/);
+    cy.clickPageAction('delete-user');
     cy.get('#confirm').click();
     cy.clickButton(/^Delete user/);
     cy.verifyPageTitle('Users');
@@ -110,7 +110,7 @@ describe('Users Delete Actions', () => {
 
   it('deletes a user from the users list row item', () => {
     cy.navigateTo('awx', 'users');
-    cy.clickTableRowKebabAction(user.username, /^Delete user$/);
+    cy.clickTableRowKebabAction(user.username, 'delete-user');
     cy.get('#confirm').click();
     cy.clickButton(/^Delete user/);
     cy.contains(/^Success$/);
@@ -121,7 +121,7 @@ describe('Users Delete Actions', () => {
   it('deletes a user from the users list toolbar', () => {
     cy.navigateTo('awx', 'users');
     cy.selectTableRow(user.username);
-    cy.clickToolbarKebabAction(/^Delete selected users$/);
+    cy.clickToolbarKebabAction('delete-selected-users');
     cy.get('#confirm').click();
     cy.clickButton(/^Delete user/);
     cy.contains(/^Success$/);

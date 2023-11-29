@@ -2,6 +2,26 @@
 import WorkflowApprovals from './WorkflowApprovals';
 
 describe('Workflow Approvals List', () => {
+  describe('Empty list', () => {
+    beforeEach(() => {
+      cy.intercept(
+        {
+          method: 'GET',
+          url: '/api/v2/workflow_approvals/*',
+        },
+        {
+          fixture: 'emptyList.json',
+        }
+      ).as('emptyList');
+    });
+
+    it('Empty state is displayed correctly', () => {
+      cy.mount(<WorkflowApprovals />);
+      cy.contains(/^There are currently no workflow approvals$/);
+      cy.contains(/^Past and pending workflow approvals will appear here when available$/);
+    });
+  });
+
   describe('Non-empty list', () => {
     beforeEach(() => {
       cy.intercept(
@@ -172,7 +192,7 @@ describe('Workflow Approvals List', () => {
       cy.intercept('api/v2/workflow_approvals/131/', {
         statusCode: 204,
       }).as('deleteRequest');
-      cy.clickTableRowKebabAction('can delete approval', 'Delete workflow approval');
+      cy.clickTableRowKebabAction('can delete approval', 'delete-workflow-approval');
       cy.get('#confirm').click();
       cy.clickButton(/^Delete workflow approvals/);
       cy.wait('@deleteRequest');
@@ -192,25 +212,6 @@ describe('Workflow Approvals List', () => {
       );
       cy.mount(<WorkflowApprovals />);
       cy.contains('Error loading workflow approvals');
-    });
-  });
-
-  describe('Empty list', () => {
-    beforeEach(() => {
-      cy.intercept(
-        {
-          method: 'GET',
-          url: '/api/v2/workflow_approvals/*',
-        },
-        {
-          fixture: 'emptyList.json',
-        }
-      ).as('emptyList');
-    });
-    it('Empty state is displayed correctly', () => {
-      cy.mount(<WorkflowApprovals />);
-      cy.contains(/^There are currently no workflow approvals$/);
-      cy.contains(/^Past and pending workflow approvals will appear here when available$/);
     });
   });
 });

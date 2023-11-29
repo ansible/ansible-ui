@@ -1,7 +1,5 @@
 import { randomString } from '../../../../framework/utils/random-string';
 import { Credential } from '../../../../frontend/awx/interfaces/Credential';
-// import { ExecutionEnvironment } from '../../../../frontend/awx/interfaces/ExecutionEnvironment';
-//import { InstanceGroup } from '../../../../frontend/awx/interfaces/InstanceGroup';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
@@ -28,25 +26,13 @@ describe('Job templates form Create, Edit, Delete', function () {
     }).then((cred) => {
       machineCredential = cred;
     });
-
-    // cy.createAwxInstanceGroup().then((ig) => {
-    //   instanceGroup = ig;
-    // });
-
-    // cy.createAwxLabel({ organization: organization.id }).then((l) => {
-    //   label = l;
-    // });
   });
-
-  // after(() => {
-  //   cy.deleteAwxInstanceGroup(instanceGroup);
-  // });
 
   it('should create a job template with all fields without prompt on launch option', function () {
     cy.intercept('POST', `/api/v2/job_templates`).as('createJT');
     const jtName = 'E2E-JT ' + randomString(4);
     cy.navigateTo('awx', 'templates');
-    cy.clickButton(/^Create template$/);
+    cy.get('[data-cy="create-template"]').click();
     cy.clickLink(/^Create job template$/);
     cy.get('[data-cy="name"]').type(jtName);
     cy.get('[data-cy="description"]').type('This is a JT description');
@@ -55,7 +41,7 @@ describe('Job templates form Create, Edit, Delete', function () {
     cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
     cy.selectItemFromLookupModal('execution-environment-select', executionEnvironment);
     cy.selectItemFromLookupModal('credential-select', machineCredential.name);
-    cy.clickButton(/^Create job template$/);
+    cy.get('[data-cy="Submit"]').click();
     cy.wait('@createJT')
       .its('response.body.id')
       .then((id: string) => {
@@ -74,10 +60,10 @@ describe('Job templates form Create, Edit, Delete', function () {
             cy.waitForTemplateStatus(jobId);
           });
         cy.navigateTo('awx', 'templates');
-        cy.clickTableRowKebabAction(jtName, /^Delete template$/);
+        cy.clickTableRowKebabAction(jtName, 'delete-template');
         cy.get('#confirm').click();
         cy.intercept('DELETE', `/api/v2/job_templates/${id}/`).as('deleteJobTemplate');
-        cy.clickButton(/^Delete template/);
+        cy.get('[data-ouia-component-id="submit"]').click();
         cy.wait('@deleteJobTemplate').then((deleteJobTemplate) => {
           expect(deleteJobTemplate?.response?.statusCode).to.eql(204);
         });
@@ -92,7 +78,7 @@ describe('Job templates form Create, Edit, Delete', function () {
     const jtName = 'E2E-POLJT ' + randomString(4);
 
     cy.navigateTo('awx', 'templates');
-    cy.clickButton(/^Create template$/);
+    cy.get('[data-cy="create-template"]').click();
     cy.clickLink(/^Create job template$/);
     cy.get('[data-cy="name"]').type(jtName);
     cy.get('[data-cy="description"]').type('This is a JT with POL wizard description');
@@ -102,7 +88,7 @@ describe('Job templates form Create, Edit, Delete', function () {
     cy.selectPromptOnLaunch('execution_environment');
     cy.selectPromptOnLaunch('credential');
     cy.selectPromptOnLaunch('instance_groups');
-    cy.clickButton(/^Create job template$/);
+    cy.get('[data-cy="Submit"]').click();
     cy.wait('@createPOLJT')
       .its('response.body.id')
       .then((id: string) => {
@@ -131,9 +117,9 @@ describe('Job templates form Create, Edit, Delete', function () {
           });
         cy.navigateTo('awx', 'templates');
         cy.intercept('DELETE', `/api/v2/job_templates/${id}/`).as('deleteJobTemplate');
-        cy.clickTableRowKebabAction(jtName, /^Delete template$/);
+        cy.clickTableRowKebabAction(jtName, 'delete-template');
         cy.get('#confirm').click();
-        cy.clickButton(/^Delete template/);
+        cy.get('[data-ouia-component-id="submit"]').click();
         cy.wait('@deleteJobTemplate').then((deleteJobTemplate) => {
           expect(deleteJobTemplate?.response?.statusCode).to.eql(204);
         });
@@ -148,7 +134,7 @@ describe('Job templates form Create, Edit, Delete', function () {
     const jtName = 'E2E-POLJT ' + randomString(4);
 
     cy.navigateTo('awx', 'templates');
-    cy.clickButton(/^Create template$/);
+    cy.get('[data-cy="create-template"]').click();
     cy.clickLink(/^Create job template$/);
     cy.get('[data-cy="name"]').type(jtName);
     cy.get('[data-cy="description"]').type('This is a JT with POL wizard description');
@@ -158,7 +144,7 @@ describe('Job templates form Create, Edit, Delete', function () {
     cy.selectPromptOnLaunch('execution_environment');
     cy.selectPromptOnLaunch('credential');
     cy.selectPromptOnLaunch('instance_groups');
-    cy.clickButton(/^Create job template$/);
+    cy.get('[data-cy="Submit"]').click();
     cy.wait('@createPOLJT')
       .its('response.body.id')
       .then((id: string) => {
@@ -181,9 +167,9 @@ describe('Job templates form Create, Edit, Delete', function () {
           });
         cy.navigateTo('awx', 'templates');
         cy.intercept('DELETE', `/api/v2/job_templates/${id}/`).as('deleteJobTemplate');
-        cy.clickTableRowKebabAction(jtName, /^Delete template$/);
+        cy.clickTableRowKebabAction(jtName, 'delete-template');
         cy.get('#confirm').click();
-        cy.clickButton(/^Delete template/);
+        cy.get('[data-ouia-component-id="submit"]').click();
         cy.wait('@deleteJobTemplate').then((deleteJobTemplate) => {
           expect(deleteJobTemplate?.response?.statusCode).to.eql(204);
         });
@@ -215,9 +201,7 @@ describe('Job templates form Create, Edit, Delete', function () {
         });
       cy.verifyPageTitle(newName);
       cy.intercept('DELETE', `/api/v2/job_templates/${jobTemplate.id}/`).as('deleteJobTemplate');
-      cy.clickPageAction(/^Delete template/);
-      cy.get('#confirm').click();
-      cy.clickButton(/^Delete template/);
+      cy.selectDetailsPageKebabAction('delete-template');
       cy.wait('@deleteJobTemplate').then((deleteJobTemplate) => {
         expect(deleteJobTemplate?.response?.statusCode).to.eql(204);
       });
@@ -249,9 +233,7 @@ describe('Job templates form Create, Edit, Delete', function () {
         });
       cy.verifyPageTitle(newName);
       cy.intercept('DELETE', `/api/v2/job_templates/${jobTemplate.id}/`).as('deleteJobTemplate');
-      cy.clickPageAction(/^Delete template/);
-      cy.get('#confirm').click();
-      cy.clickButton(/^Delete template/);
+      cy.selectDetailsPageKebabAction('delete-template');
       cy.wait('@deleteJobTemplate').then((deleteJobTemplate) => {
         expect(deleteJobTemplate?.response?.statusCode).to.eql(204);
       });
@@ -269,9 +251,7 @@ describe('Job templates form Create, Edit, Delete', function () {
       cy.clickTableRow(jobTemplate.name);
       cy.verifyPageTitle(jobTemplate.name);
       cy.intercept('DELETE', `/api/v2/job_templates/${jobTemplate.id}/`).as('deleteJobTemplate');
-      cy.clickPageAction(/^Delete template/);
-      cy.get('#confirm').click();
-      cy.clickButton(/^Delete template/);
+      cy.selectDetailsPageKebabAction('delete-template');
       cy.wait('@deleteJobTemplate').then((deleteJobTemplate) => {
         expect(deleteJobTemplate?.response?.statusCode).to.eql(204);
       });
@@ -293,7 +273,7 @@ describe('Job templates form Create, Edit, Delete', function () {
         cy.navigateTo('awx', 'templates');
         cy.selectTableRow(jobTemplate1.name);
         cy.selectTableRow(jobTemplate2.name);
-        cy.clickToolbarKebabAction(/^Delete selected templates$/);
+        cy.clickToolbarKebabAction('delete-selected-templates');
         cy.intercept('DELETE', `/api/v2/job_templates/${jobTemplate1.id}/`).as(
           'deleteJobTemplate1'
         );

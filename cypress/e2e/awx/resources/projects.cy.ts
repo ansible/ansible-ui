@@ -33,7 +33,7 @@ describe('projects', () => {
     cy.hasDetail(/^Organization$/, `${(this.globalProjectOrg as Organization).name}`);
     cy.hasDetail(/^Source control type$/, 'Git');
     cy.hasDetail(/^Enabled options$/, 'Allow branch override');
-    cy.clickPageAction(/^Delete project/);
+    cy.clickPageAction('delete-project');
     cy.get('#confirm').click();
     cy.clickButton(/^Delete project/);
     cy.verifyPageTitle('Projects');
@@ -216,7 +216,7 @@ describe('project edit and delete tests', () => {
 
   it('can delete project from projects list table row kebab menu', function () {
     cy.navigateTo('awx', 'projects');
-    cy.clickTableRowKebabAction(`${project.name}`, /^Delete project$/);
+    cy.clickTableRowKebabAction(`${project.name}`, 'delete-project');
     cy.get('#confirm').click();
     cy.clickButton(/^Delete project/);
     cy.contains(/^Success$/);
@@ -262,7 +262,7 @@ describe('project edit and delete tests', () => {
   //   }).then((testProject) => {
   //     cy.navigateTo('awx', 'projects');
   //     cy.selectTableRow(testProject.name);
-  //     cy.clickToolbarKebabAction(/^Cancel selected projects$/);
+  //     cy.clickToolbarKebabAction('cancel-selected-projects');
   //     cy.get('#confirm').click();
   //     cy.clickButton(/^Cancel project sync/);
   //     cy.contains(/^Success$/);
@@ -277,7 +277,7 @@ describe('project edit and delete tests', () => {
     const endOfProject = project.name.split(' ').slice(-1).toString();
     cy.navigateTo('awx', 'projects');
     cy.selectTableRow(`${project.name}`);
-    cy.clickToolbarKebabAction(/^Delete selected projects$/);
+    cy.clickToolbarKebabAction('delete-selected-projects');
     cy.get('#confirm').click();
     cy.get('button[data-ouia-component-id="submit"]').click();
     cy.contains(/^Success$/);
@@ -291,7 +291,7 @@ describe('project edit and delete tests', () => {
     cy.navigateTo('awx', 'projects');
     cy.clickTableRow(`${project.name}`);
     cy.get('[data-cy="page-title"]').should('contain', `${project.name}`);
-    cy.clickPageAction(/^Delete project/);
+    cy.clickPageAction('delete-project');
     cy.get('.pf-v5-c-modal-box').within(() => {
       cy.intercept('DELETE', `/api/v2/projects/${project.id}/`).as('deleted');
       cy.get('#confirm').click();

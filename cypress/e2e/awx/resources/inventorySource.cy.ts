@@ -38,7 +38,7 @@ describe('Inventory source page', () => {
     );
 
     cy.verifyPageTitle(inventorySource.name);
-    cy.clickPageAction(/^Delete inventory source/);
+    cy.clickPageAction('delete-inventory-source');
     cy.get('#confirm').click();
     cy.clickButton(/^Delete inventory source/);
   });

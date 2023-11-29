@@ -178,7 +178,13 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
             {alertPrompts &&
               alertPrompts.length > 0 &&
               alertPrompts.map((alertPrompt, i) => (
-                <Alert isInline title={alertPrompt} variant="warning" key={i}></Alert>
+                <Alert
+                  data-cy="alert-toaster"
+                  isInline
+                  title={alertPrompt}
+                  variant="warning"
+                  key={i}
+                ></Alert>
               ))}
             <PageTable<T>
               key="items"

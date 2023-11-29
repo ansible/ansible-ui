@@ -30,6 +30,7 @@ export function PagePagination(props: PagePaginationProps) {
 
   return (
     <Pagination
+      data-cy="pagination"
       variant={PaginationVariant.bottom}
       itemCount={props.itemCount}
       page={props.page}

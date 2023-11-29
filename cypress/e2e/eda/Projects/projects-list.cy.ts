@@ -37,7 +37,7 @@ describe('EDA Projects List', () => {
         cy.navigateTo('eda', 'projects');
         cy.selectTableRow(edaProject.name);
         cy.selectTableRow(testProject.name);
-        cy.clickToolbarKebabAction(/^Delete selected projects$/);
+        cy.clickToolbarKebabAction('delete-selected-projects');
         cy.intercept('DELETE', `/api/eda/v1/projects/${edaProject.id}/`).as('edaProject');
         cy.intercept('DELETE', `/api/eda/v1/projects/${testProject.id}/`).as('testProject');
         cy.clickModalConfirmCheckbox();

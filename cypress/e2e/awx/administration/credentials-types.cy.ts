@@ -1,5 +1,5 @@
-import { CredentialType } from '../../../../frontend/awx/interfaces/CredentialType';
 import { randomString } from '../../../../framework/utils/random-string';
+import { CredentialType } from '../../../../frontend/awx/interfaces/CredentialType';
 
 describe('Credential Types', () => {
   let credentialType: CredentialType;
@@ -100,7 +100,7 @@ describe('Credential Types', () => {
         });
       cy.verifyPageTitle(newCredentialTypeName);
       cy.navigateTo('awx', 'credential-types');
-      cy.clickTableRowKebabAction(`${newCredentialTypeName}`, /^Delete credential type$/);
+      cy.clickTableRowKebabAction(`${newCredentialTypeName}`, 'delete-credential-type');
       cy.get('#confirm').click();
       cy.intercept('DELETE', `api/v2/credential_types/${credType.id}/`).as('deleteCredType');
       cy.clickButton(/^Delete credential type/);
@@ -135,7 +135,7 @@ describe('Credential Types', () => {
         });
       cy.verifyPageTitle(newCredentialTypeName);
       cy.intercept('DELETE', `api/v2/credential_types/${credType.id}/`).as('deleteCredType');
-      cy.clickPageAction(/^Delete credential type/);
+      cy.clickPageAction('delete-credential-type');
       cy.get('#confirm').click();
       cy.clickButton(/^Delete credential type/);
       cy.clickButton(/^Close/);
@@ -150,7 +150,7 @@ describe('Credential Types', () => {
   it('bulk deletion dialog shows warnings for managed credential types', () => {
     cy.navigateTo('awx', 'credential-types');
     cy.get('#select-all').click();
-    cy.clickToolbarKebabAction(/^Delete selected credential types$/);
+    cy.clickToolbarKebabAction('delete-selected-credential-types');
     cy.contains(
       'of the selected credential types cannot be deleted because they are read-only.'
     ).should('be.visible');
@@ -161,7 +161,7 @@ describe('Credential Types', () => {
   it('delete a credential type from the list row action', () => {
     cy.createAwxCredentialType().then((credType: CredentialType) => {
       cy.navigateTo('awx', 'credential-types');
-      cy.clickTableRowKebabAction(credType.name, /^Delete credential type$/);
+      cy.clickTableRowKebabAction(credType.name, 'delete-credential-type');
       cy.get('#confirm').click();
       cy.clickButton(/^Delete credential type/);
       cy.contains(/^Success$/);
@@ -176,7 +176,7 @@ describe('Credential Types', () => {
         cy.navigateTo('awx', 'credential-types');
         cy.selectTableRow(credType1.name);
         cy.selectTableRow(credType2.name);
-        cy.clickToolbarKebabAction(/^Delete selected credential types$/);
+        cy.clickToolbarKebabAction('delete-selected-credential-types');
         cy.intercept('DELETE', `api/v2/credential_types/${credType1.id}/`).as('deleteCredType1');
         cy.intercept('DELETE', `api/v2/credential_types/${credType2.id}/`).as('deleteCredType2');
         cy.clickModalConfirmCheckbox();
