@@ -26,7 +26,7 @@ export function useRoleToolbarActions(onComplete: (roles: Role[]) => void) {
         isPinned: true,
         icon: PlusCircleIcon,
         label: t('Create role'),
-        isDisabled: user.is_superuser
+        isDisabled: user?.is_superuser
           ? undefined
           : t(
               'You do not have permission to create a role. Please contact your system administrator if there is an issue with your access.'
@@ -43,7 +43,7 @@ export function useRoleToolbarActions(onComplete: (roles: Role[]) => void) {
         isDanger: true,
       },
     ],
-    [deleteRoles, getPageUrl, t, user.is_superuser]
+    [deleteRoles, getPageUrl, t, user?.is_superuser]
   );
 }
 
@@ -80,7 +80,7 @@ export function useRoleRowActions(onComplete: (roles: Role[]) => void) {
         isDisabled: (role) =>
           role.locked
             ? t('Built-in roles cannot be deleted.')
-            : user.is_superuser
+            : user?.is_superuser
             ? undefined
             : t(
                 'You do not have permission to delete this role. Please contact your organization administrator if there is an issue with your access.'
@@ -90,6 +90,6 @@ export function useRoleRowActions(onComplete: (roles: Role[]) => void) {
         isDanger: true,
       },
     ],
-    [deleteRoles, t, user.is_superuser]
+    [deleteRoles, t, user?.is_superuser]
   );
 }
