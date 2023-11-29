@@ -114,7 +114,7 @@ Cypress.Commands.add('selectItemFromLookupModal', (resource: string, itemName: s
   cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
     cy.searchAndDisplayResource(itemName);
     cy.get('[data-ouia-component-id="simple-table"] tbody').within(() => {
-      cy.get('[data-cy="checkbox-column-cell"]').click();
+      cy.get('[data-cy="checkbox-column-cell"] input').click();
     });
     cy.clickButton(/^Confirm/);
   });
@@ -170,7 +170,7 @@ Cypress.Commands.add('clickTab', (label: string | RegExp, isLink) => {
 });
 
 Cypress.Commands.add('clickButton', (label: string | RegExp) => {
-  cy.contains('button:not(:disabled):not(:hidden)', label).click();
+  cy.contains('button', label).click();
 });
 
 Cypress.Commands.add('navigateTo', (component: string, label: string) => {
