@@ -17,7 +17,7 @@ import { useGetItem } from '../../../../frontend/common/crud/useGet';
 import { AwxError } from '../../../../frontend/awx/common/AwxError';
 import { Authenticator } from '../../../interfaces/Authenticator';
 import { PlatformRoute } from '../../../PlatformRoutes';
-import { AuthenticatorDetails } from './AuthenticatorDetails';
+import { PlatformAuthenticatorDetails } from './PlatformAuthenticatorDetails';
 
 export function AuthenticatorPage() {
   const { t } = useTranslation();
@@ -64,7 +64,7 @@ export function AuthenticatorPage() {
           />
         }
       />
-      <AuthenticatorDetails />
+      <PlatformAuthenticatorDetails />
     </PageLayout>
   );
 }
