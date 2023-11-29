@@ -11,7 +11,7 @@ import { UnifiedJob } from '../../interfaces/UnifiedJob';
 export type UnifiedJobSummary = Pick<UnifiedJob, 'id' | 'finished' | 'failed'>;
 
 interface IJobChartData {
-  jobs: {
+  jobs?: {
     failed: [number, number][];
     successful: [number, number][];
     canceled?: [number, number][];
@@ -50,10 +50,10 @@ export function JobsChart(props: {
     return { label, value: tuple[1] };
   };
 
-  const failed = data?.jobs.failed.map(reducer) ?? [];
-  const successful = data?.jobs.successful.map(reducer) ?? [];
-  const canceled = data?.jobs.canceled?.map(reducer) ?? [];
-  const error = data?.jobs.error?.map(reducer) ?? [];
+  const failed = data?.jobs?.failed.map(reducer) ?? [];
+  const successful = data?.jobs?.successful.map(reducer) ?? [];
+  const canceled = data?.jobs?.canceled?.map(reducer) ?? [];
+  const error = data?.jobs?.error?.map(reducer) ?? [];
 
   const { successfulColor, failedColor, errorColor, canceledColor } = usePageChartColors();
 
