@@ -57,8 +57,10 @@ export function useApprovalActions(callback?: (collections: CollectionVersionSea
         onClick: (collection) => approveCollections([collection]),
         isDanger: false,
         isDisabled: (collection) =>
-          can_upload_signatures && require_upload_signatures && collection.is_signed
-            ? t`You do not have rights to this operation`
+          collection?.repository?.pulp_labels?.pipeline === 'approved'
+            ? t`Collection is already approved`
+            : can_upload_signatures && require_upload_signatures && !collection.is_signed
+            ? t`Signature must be uploaded first`
             : undefined,
       },
       { type: PageActionType.Seperator },
@@ -70,6 +72,10 @@ export function useApprovalActions(callback?: (collections: CollectionVersionSea
         label: t('Reject'),
         onClick: (collection) => rejectCollections([collection]),
         isDanger: true,
+        isDisabled: (collection) =>
+          collection?.repository?.pulp_labels?.pipeline === 'rejected'
+            ? t`Collection is already rejected`
+            : undefined,
       },
     ],
     [
