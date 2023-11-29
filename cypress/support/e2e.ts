@@ -4,6 +4,13 @@ import '@cypress/code-coverage/support';
 import './commands';
 import { createGlobalOrganization, createGlobalProject } from './global-project';
 
+process.env.HUB_API_PREFIX = Cypress.env('HUB_API_PREFIX') as string;
+process.env.HUB_ROUTE_PREFIX = Cypress.env('HUB_ROUTE_PREFIX') as string;
+process.env.AWX_API_PREFIX = Cypress.env('AWX_API_PREFIX') as string;
+process.env.AWX_ROUTE_PREFIX = Cypress.env('AWX_ROUTE_PREFIX') as string;
+process.env.EDA_API_PREFIX = Cypress.env('EDA_API_PREFIX') as string;
+process.env.EDA_ROUTE_PREFIX = Cypress.env('EDA_ROUTE_PREFIX') as string;
+
 before(function () {
   const devBaseUrlPort = Cypress.config().baseUrl?.split(':').slice(-1).toString();
   if (devBaseUrlPort === '4101') {

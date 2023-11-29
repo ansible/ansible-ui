@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
 import { randomString } from '../../framework/utils/random-string';
 import { Role } from '../../frontend/hub/access/roles/Role';
+import { pulpAPI } from '../../frontend/hub/api/formatPath';
 import { parsePulpIDFromURL } from '../../frontend/hub/api/utils';
 import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
 import { HubItemsResponse } from '../../frontend/hub/useHubView';
@@ -111,14 +112,11 @@ Cypress.Commands.add('deleteCollectionsInNamespace', (namespaceName: string) => 
 });
 
 Cypress.Commands.add('createHubRole', () => {
-  cy.requestPost<Pick<Role, 'name' | 'description' | 'permissions'>, Role>(
-    `${apiPrefix}/pulp/api/v3/roles/`,
-    {
-      name: `galaxy.e2erole${randomString(4)}`,
-      description: 'E2E custom role description',
-      permissions: ['galaxy.add_namespace', 'container.namespace_change_containerdistribution'],
-    }
-  );
+  cy.requestPost<Pick<Role, 'name' | 'description' | 'permissions'>, Role>(pulpAPI`/roles/`, {
+    name: `galaxy.e2erole${randomString(4)}`,
+    description: 'E2E custom role description',
+    permissions: ['galaxy.add_namespace', 'container.namespace_change_containerdistribution'],
+  });
 });
 
 Cypress.Commands.add(
@@ -131,10 +129,7 @@ Cypress.Commands.add(
     }
   ) => {
     if (role?.name) {
-      cy.requestDelete(
-        `${apiPrefix}/pulp/api/v3/roles/${parsePulpIDFromURL(role.pulp_href)}`,
-        options
-      );
+      cy.requestDelete(pulpAPI`/roles/${parsePulpIDFromURL(role.pulp_href)}`, options);
     }
   }
 );
