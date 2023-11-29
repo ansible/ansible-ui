@@ -4,11 +4,10 @@ import {
   PageActionSelection,
   PageActionType,
   useGetPageUrl,
-  usePageAlertToaster,
   usePageNavigate,
 } from '../../../../framework';
 import { Authenticator } from '../../../interfaces/Authenticator';
-import { AlertProps, ButtonVariant } from '@patternfly/react-core';
+import { ButtonVariant } from '@patternfly/react-core';
 import { PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { PlatformRoute } from '../../../PlatformRoutes';
@@ -20,19 +19,12 @@ import {
 } from '../../../../frontend/awx/interfaces/OptionsResponse';
 import { gatewayAPI } from '../../../api/gateway-api-utils';
 
-export function useAuthenticatorToolbarActions(view: IPlatformView<Authenticator>) {
+export function useAuthenticatorToolbarActions(_view: IPlatformView<Authenticator>) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
 
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/v1/authenticators`);
   const canCreateAuthenticator = Boolean(data && data.actions && data.actions['POST']);
-  const alert: AlertProps = {
-    variant: 'warning',
-    title: t(`Delete not implemented`),
-    timeout: 2000,
-  };
-  const alertToaster = usePageAlertToaster();
-
   const toolbarActions = useMemo<IPageAction<Authenticator>[]>(
     () => [
       {
@@ -55,7 +47,7 @@ export function useAuthenticatorToolbarActions(view: IPlatformView<Authenticator
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
         label: t('Delete selected authenticators'),
-        onClick: () => alertToaster.addAlert(alert),
+        onClick: () => alert('TODO'),
         isDanger: true,
       },
     ],
@@ -68,12 +60,6 @@ export function useAuthenticatorToolbarActions(view: IPlatformView<Authenticator
 export function useAuthenticatorRowActions(_view: IPlatformView<Authenticator>) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const alert: AlertProps = {
-    variant: 'warning',
-    title: t(`Delete not implemented`),
-    timeout: 2000,
-  };
-  const alertToaster = usePageAlertToaster();
   const rowActions = useMemo<IPageAction<Authenticator>[]>(() => {
     // TODO: Update based on RBAC information from Authenticators API
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -87,6 +73,21 @@ export function useAuthenticatorRowActions(_view: IPlatformView<Authenticator>) 
       true ? '' : t(`The authenticator cannot be edited due to insufficient permissions.`);
 
     return [
+      {
+        type: PageActionType.Switch,
+        ariaLabel: (isEnabled) =>
+          isEnabled
+            ? t('Click to disable authentication method')
+            : t('Click to enable authentication method'),
+        selection: PageActionSelection.Single,
+        isPinned: true,
+        label: t('Enabled'),
+        labelOff: t('Disabled'),
+        showPinnedLabel: true,
+        iconOnly: true,
+        onToggle: (_authenticator) => alert('TODO'),
+        isSwitchOn: (authenticator: Authenticator) => authenticator?.enabled ?? false,
+      },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
@@ -105,7 +106,7 @@ export function useAuthenticatorRowActions(_view: IPlatformView<Authenticator>) 
         icon: TrashIcon,
         label: t('Delete authenticator'),
         isDisabled: (authenticator: Authenticator) => cannotDeleteAuthenticator(authenticator),
-        onClick: () => alertToaster.addAlert(alert),
+        onClick: () => alert('TODO'),
         isDanger: true,
       },
     ];
