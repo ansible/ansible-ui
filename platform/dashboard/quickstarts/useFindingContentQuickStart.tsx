@@ -31,7 +31,7 @@ export function useFindingContentQuickStart() {
           },
         },
       ],
-      conclusion: t('You has successfully searched for and browseed automation hub content'),
+      conclusion: t('You has successfully searched for and browseed automation hub content.'),
     },
   };
   return quickStart;
