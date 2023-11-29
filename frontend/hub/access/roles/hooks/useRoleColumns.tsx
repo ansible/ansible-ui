@@ -1,17 +1,37 @@
 import { useTranslation } from 'react-i18next';
-import { ColumnModalOption, DateTimeCell, ITableColumn, TextCell } from '../../../../../framework';
+import {
+  ColumnModalOption,
+  DateTimeCell,
+  ITableColumn,
+  TextCell,
+  useGetPageUrl,
+} from '../../../../../framework';
 import { useLockedRolesWithDescription } from './useLockedRolesWithDescription';
 import { Role } from '../Role';
 import { useMemo } from 'react';
+import { HubRoute } from '../../../HubRoutes';
+import { parsePulpIDFromURL } from '../../../api/utils';
 
 export function useRoleColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
   const lockedRolesWithDescription = useLockedRolesWithDescription();
+  const getPageUrl = useGetPageUrl();
   const tableColumns = useMemo<ITableColumn<Role>[]>(
     () => [
       {
         header: t('Name'),
-        cell: (role) => <TextCell text={role.name} />,
+        cell: (role) => (
+          <TextCell
+            to={
+              options?.disableLinks
+                ? undefined
+                : getPageUrl(HubRoute.RoleDetails, {
+                    params: { id: parsePulpIDFromURL(role.pulp_href) },
+                  })
+            }
+            text={role.name}
+          />
+        ),
         sort: options?.disableSort ? undefined : 'name',
         card: 'name',
         list: 'name',
