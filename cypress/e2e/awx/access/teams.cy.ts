@@ -118,7 +118,7 @@ describe('teams', function () {
       cy.filterTableByText(user2.username);
       cy.get(`[data-cy="row-id-${user2.id}"]`).find('input').click();
     });
-    cy.getDialog().within(() => {
+    cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
       cy.clickButton(/^Add/);
       cy.contains(/^Success$/);
       cy.clickButton(/^Close$/);
@@ -150,7 +150,7 @@ describe('teams', function () {
     // Remove users
     cy.selectTableRow(user1.username);
     cy.selectTableRow(user2.username);
-    cy.clickToolbarKebabAction(/^Remove users$/);
+    cy.clickToolbarKebabAction('remove-users');
     cy.get('#confirm').click();
     cy.clickButton(/^Remove user/);
     cy.contains(/^Success$/);
@@ -168,7 +168,7 @@ describe('teams', function () {
     cy.clickTableRow(team.name);
     cy.verifyPageTitle(team.name);
     cy.clickTab(/^Access$/, true);
-    cy.clickTableRowKebabAction(user1.username, /^Remove user$/);
+    cy.clickTableRowKebabAction(user1.username, 'remove-user');
     cy.get('#confirm').click();
     cy.clickButton(/^Remove user/);
     cy.contains(/^Success$/);
@@ -229,7 +229,7 @@ describe('teams', function () {
     cy.navigateTo('awx', 'teams');
     cy.clickTableRow(team.name);
     cy.verifyPageTitle(team.name);
-    cy.clickPageAction(/^Delete team/);
+    cy.clickPageAction('delete-team');
     cy.intercept('DELETE', `/api/v2/teams/${team.id}/`).as('deleted');
     cy.get('#confirm').click();
     cy.clickButton(/^Delete team/);
@@ -250,7 +250,7 @@ describe('teams', function () {
   it('can delete a team from the teams list row item', function () {
     cy.createAwxTeam(this.globalProjectOrg as Organization).then((testTeam) => {
       cy.navigateTo('awx', 'teams');
-      cy.clickTableRowKebabAction(testTeam.name, /^Delete team$/);
+      cy.clickTableRowKebabAction(testTeam.name, 'delete-team');
       cy.get('#confirm').click();
       cy.intercept('DELETE', `/api/v2/teams/${testTeam.id}/`).as('deleted');
       cy.clickButton(/^Delete team/);
@@ -269,7 +269,7 @@ describe('teams', function () {
     cy.createAwxTeam(this.globalProjectOrg as Organization).then((testTeam) => {
       cy.navigateTo('awx', 'teams');
       cy.selectTableRow(testTeam.name);
-      cy.clickToolbarKebabAction(/^Delete selected teams$/);
+      cy.clickToolbarKebabAction('delete-selected-teams');
       cy.get('#confirm').click();
       cy.intercept('DELETE', `/api/v2/teams/${testTeam.id}/`).as('deleted');
       cy.clickButton(/^Delete team/);

@@ -21,7 +21,7 @@ describe('organizations', () => {
     cy.get('[data-cy="organization-name"]').type(organizationName);
     cy.clickButton(/^Create organization$/);
     cy.verifyPageTitle(organizationName);
-    cy.clickPageAction(/^Delete organization/);
+    cy.clickPageAction('delete-organization');
     cy.get('#confirm').click();
     cy.intercept('DELETE', '/api/v2/organizations/*').as('delete');
     cy.clickButton(/^Delete organization/);
@@ -97,7 +97,7 @@ describe('organizations edit and delete', function () {
     cy.navigateTo('awx', 'organizations');
     cy.clickTableRow(organization.name);
     cy.verifyPageTitle(organization.name);
-    cy.clickPageAction(/^Delete organization/);
+    cy.clickPageAction('delete-organization');
     cy.get('#confirm').click();
     cy.intercept('DELETE', '/api/v2/organizations/*').as('delete');
     cy.clickButton(/^Delete organization/);
@@ -131,7 +131,7 @@ describe('organizations edit and delete', function () {
       cy.get(`[data-cy="row-id-${organization.id}"]`).within(() => {
         cy.get('input').click();
       });
-      cy.clickToolbarKebabAction(/^Delete selected organizations$/);
+      cy.clickToolbarKebabAction('delete-selected-organizations');
       cy.get('#confirm').click();
       cy.clickButton(/^Delete organization/);
       cy.contains(/^Success$/);

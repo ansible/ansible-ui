@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-/// <reference types="cypress" />
 
 import { randomString } from '../../../../framework/utils/random-string';
 import { Credential } from '../../../../frontend/awx/interfaces/Credential';
@@ -83,7 +82,7 @@ describe('credentials', () => {
     cy.navigateTo('awx', 'credentials');
     cy.clickTableRow(credential.name);
     cy.verifyPageTitle(credential.name);
-    cy.clickPageAction(/^Delete credential/);
+    cy.clickPageAction('delete-credential');
     cy.get('#confirm').click();
     cy.clickButton(/^Delete credential/);
     cy.verifyPageTitle('Credentials');
@@ -97,7 +96,7 @@ describe('credentials', () => {
 
   it('credentials table row delete credential', () => {
     cy.navigateTo('awx', 'credentials');
-    cy.clickTableRowKebabAction(credential.name, /^Delete credential$/);
+    cy.clickTableRowKebabAction(credential.name, 'delete-credential');
     cy.get('#confirm').click();
     cy.clickButton(/^Delete credential/);
     cy.contains(/^Success$/);
@@ -108,7 +107,7 @@ describe('credentials', () => {
   it('credentials toolbar delete credentials', () => {
     cy.navigateTo('awx', 'credentials');
     cy.selectTableRow(credential.name);
-    cy.clickToolbarKebabAction(/^Delete selected credentials$/);
+    cy.clickToolbarKebabAction('delete-selected-credentials');
     cy.get('#confirm').click();
     cy.clickButton(/^Delete credential/);
     cy.contains(/^Success$/);

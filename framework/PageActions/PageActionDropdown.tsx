@@ -9,13 +9,13 @@ import {
 } from '@patternfly/react-core/deprecated';
 import { CircleIcon } from '@patternfly/react-icons';
 import { ComponentClass, FunctionComponent, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { getID } from '../hooks/useID';
 import { IPageAction, PageActionSelection, PageActionType } from './PageAction';
 import { PageActionSwitch } from './PageActionSwitch';
 import { isPageActionHidden, usePageActionDisabled } from './PageActionUtils';
-import { useTranslation } from 'react-i18next';
 
 const IconSpan = styled.span`
   padding-right: 4px;
@@ -218,7 +218,7 @@ function PageDropdownActionItem<T extends object>(props: {
               }}
               isAriaDisabled={isButtonDisabled}
               id={getID(action)}
-              data-cy={getID(action)}
+              data-cy={getID(action)?.split('.').join('-')}
             >
               {action.label}
             </DropdownItem>
