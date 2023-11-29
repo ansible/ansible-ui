@@ -101,11 +101,6 @@ export function useAwxProjectRoutes() {
               element: <PageNotImplemented />,
             },
             {
-              id: AwxRoute.ProjectSurvey,
-              path: 'survey',
-              element: <PageNotImplemented />,
-            },
-            {
               id: AwxRoute.ProjectSchedules,
               path: 'schedules',
               element: <Schedules sublistEndpoint={awxAPI`/projects`} />,
