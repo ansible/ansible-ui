@@ -31,7 +31,7 @@ describe('Instance Groups', () => {
   it('delete an instance group from the list row action', () => {
     cy.createAwxInstanceGroup().then((instanceGroup: InstanceGroup) => {
       cy.navigateTo('awx', 'instance-groups');
-      cy.clickTableRowKebabAction(instanceGroup.name, /^Delete instance group$/);
+      cy.clickTableRowKebabAction(instanceGroup.name, 'delete-instance-group');
       cy.get('#confirm').click();
       cy.clickButton(/^Delete instance group/);
       cy.contains(/^Success$/);
@@ -43,7 +43,7 @@ describe('Instance Groups', () => {
   it('bulk deletion dialog shows warnings for instance groups that cannot be deleted', () => {
     cy.navigateTo('awx', 'instance-groups');
     cy.get('#select-all').click();
-    cy.clickToolbarKebabAction(/^Delete selected instance groups$/);
+    cy.clickToolbarKebabAction('delete-selected-instance-groups');
     cy.contains(
       'of the selected instance groups cannot be deleted due to insufficient permission.'
     ).should('be.visible');

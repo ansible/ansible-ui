@@ -173,7 +173,7 @@ describe('EDA rulebook activations- Edit, Delete', () => {
     //this test should only live downstream
     cy.visit(`/eda/rulebook-activations/details/${edaRBA.id}`);
     cy.intercept('DELETE', `/api/eda/v1/activations/${edaRBA.id}/`).as('deleted');
-    cy.clickPageAction(/^Delete rulebook activation$/);
+    cy.clickPageAction('delete-rulebook-activation');
     cy.clickModalConfirmCheckbox();
     cy.clickModalButton('Delete rulebook activations');
     cy.wait('@deleted').then((deleted) => {

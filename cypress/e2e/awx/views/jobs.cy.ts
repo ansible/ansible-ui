@@ -158,7 +158,7 @@ describe('job delete', () => {
         cy.filterTableByTypeAndText('ID', jobId);
         const jobName = testJob.name ? testJob.name : '';
         cy.waitForJobToProcessEvents(jobId);
-        cy.clickTableRowKebabAction(jobName, /^Delete job$/, false);
+        cy.clickTableRowKebabAction(jobName, 'delete-job', false);
         cy.get('#confirm').click();
         cy.clickButton(/^Delete job/);
         cy.contains(/^Success$/);
@@ -184,7 +184,7 @@ describe('job delete', () => {
       const jobName = jobList.name ? jobList.name : '';
       cy.waitForJobToProcessEvents(jobId);
       cy.selectTableRow(jobName, false);
-      cy.clickToolbarKebabAction(/^Delete selected jobs$/);
+      cy.clickToolbarKebabAction('delete-selected-jobs');
       cy.get('#confirm').click();
       cy.clickButton(/^Delete job/);
       cy.contains(/^Success$/);
