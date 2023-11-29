@@ -194,12 +194,21 @@ export async function getHubAllItems<ResponseBody, ResponseItem>(
   let actualUrl = url;
   let results: ResponseItem[] = [];
 
+  let count = 0;
+  let loadedAll = true;
+
   while (actualUrl) {
+    count++;
+    if (count > 3) {
+      loadedAll = false;
+      break;
+    }
+
     const data = await requestGet<ResponseBody>(actualUrl);
 
     actualUrl = settings.getNextUrl(data) || '';
     results = [...results, ...(settings.getData(data) || [])];
   }
 
-  return results;
+  return { results, loadedAll };
 }

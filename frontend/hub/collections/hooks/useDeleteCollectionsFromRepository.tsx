@@ -85,6 +85,8 @@ async function deleteCollectionFromRepository(
     throw new Error(t?.('Collection is missing in the repositories'));
   }
 
+  let loadedAll = true;
+
   if (!version) {
     // load all associated collection versions
     // TODO - waiting for API
@@ -92,7 +94,7 @@ async function deleteCollectionFromRepository(
       collection.collection_version?.name || ''
     }&repository_name=${collection.repository.name}`;
 
-    const results = await getHubAllItems<
+    const result = await getHubAllItems<
       HubItemsResponse<CollectionVersionSearch>,
       CollectionVersionSearch
     >(url, {
@@ -100,7 +102,8 @@ async function deleteCollectionFromRepository(
       getNextUrl: (data) => data.links.next,
     });
 
-    itemsToDelete = results?.map((item) => item.collection_version?.pulp_href || '');
+    loadedAll = result.loadedAll;
+    itemsToDelete = result.results?.map((item) => item.collection_version?.pulp_href || '');
   } else {
     itemsToDelete.push(collection.collection_version?.pulp_href || '');
   }
@@ -115,6 +118,14 @@ async function deleteCollectionFromRepository(
     }
   );
   await waitForTask(parsePulpIDFromURL(res.task));
+
+  if (!loadedAll) {
+    throw new Error(
+      t?.(
+        'Not all collections versions were removed. This operation can remove only 300 versions. Try to repeat this operation.'
+      )
+    );
+  }
 }
 
 export function navigateAfterDelete(
