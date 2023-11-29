@@ -43,23 +43,6 @@ Cypress.Commands.add('checkAnchorLinks', (anchorName: string) => {
   });
 });
 
-Cypress.Commands.add('clickEdaPageAction', (label: string | RegExp) => {
-  cy.get('.pf-v5-c-toolbar__content-section')
-    .eq(1)
-    .within(() => {
-      cy.get('.toggle-kebab').click().get('.pf-v5-c-dropdown__menu-item').contains(label).click();
-    });
-});
-
-Cypress.Commands.add('edaRuleBookActivationActions', (action: string, rbaName: string) => {
-  cy.contains('td[data-label="Name"]', rbaName)
-    .parent()
-    .within(() => {
-      cy.get('button.toggle-kebab').click();
-      cy.contains('a', action).click();
-    });
-});
-
 Cypress.Commands.add('edaRuleBookActivationCheckbox', (rbaName: string) => {
   cy.contains('tr', rbaName).within(() => {
     cy.get('input[type=checkbox]').eq(0).click();
@@ -128,7 +111,6 @@ Cypress.Commands.add('getEdaRulebookActivation', (edaRulebookActivationName: str
 });
 
 Cypress.Commands.add('deleteEdaRulebookActivation', (edaRulebookActivation) => {
-  // cy.waitForRulebookActionStatus(edaRulebookActivation);
   cy.requestDelete(`/api/eda/v1/activations/${edaRulebookActivation.id}/`, {
     failOnStatusCode: false,
   }).then(() => {
@@ -219,7 +201,6 @@ Cypress.Commands.add('getEdaProjectByName', (edaProjectName: string) => {
 
 Cypress.Commands.add('deleteEdaProject', (project: EdaProject) => {
   // this is just cleanup, so we don't care if the sync fails
-  // cy.waitEdaProjectSync(project);
   cy.requestDelete(`/api/eda/v1/projects/${project.id}/`, {
     failOnStatusCode: false,
   }).then(() => {
@@ -289,7 +270,7 @@ Cypress.Commands.add('getEdaRoles', () => {
 
 Cypress.Commands.add('checkActionsofResource', (resourceType: string) => {
   return cy
-    .contains('dt.pf-v5-c-description-list__term', resourceType)
+    .contains('[data-cy="permissions"]', resourceType)
     .next()
     .then((result) => {
       cy.wrap(result);
@@ -298,7 +279,7 @@ Cypress.Commands.add('checkActionsofResource', (resourceType: string) => {
 
 Cypress.Commands.add('checkResourceNameAndAction', (resourceTypes: string[], actions: string[]) => {
   resourceTypes.forEach((resource) => {
-    cy.contains('dt.pf-v5-c-description-list__term', resource)
+    cy.contains('[data-cy="permissions"]', resource)
       .next()
       .within(() => {
         actions.forEach((action) => {
@@ -460,7 +441,6 @@ Cypress.Commands.add('getEdaDecisionEnvironmentByName', (edaDEName: string) => {
 Cypress.Commands.add(
   'deleteEdaDecisionEnvironment',
   (decisionEnvironment: EdaDecisionEnvironment) => {
-    //cy.waitEdaDESync(decisionEnvironment);
     cy.requestDelete(`/api/eda/v1/decision-environments/${decisionEnvironment.id}/?force=true`, {
       failOnStatusCode: false,
     }).then(() => {
@@ -471,22 +451,3 @@ Cypress.Commands.add(
     });
   }
 );
-
-/*
-  Cypress.Commands.add('waitEdaDESync', (decisionEnvironment) => {
-    cy.requestGet<EdaResult<EdaDecisionEnvironment>>(
-      `/api/eda/v1/decision-environments/?name=${decisionEnvironment.name}`
-    ).then((result) => {
-      if (Array.isArray(result?.results) && result.results.length === 1) {
-        const project = result.results[0];
-        if (project.import_state !== 'completed') {
-          cy.wait(100).then(() => cy.waitEdaDESync(decisionEnvironment));
-        } else {
-          cy.wrap(project);
-        }
-      } else {
-        cy.wait(100).then(() => cy.waitEdaDESync(decisionEnvironment));
-      }
-    });
-  });
-  */

@@ -35,7 +35,7 @@ describe('schedules', () => {
 
   it('deletes a schedule from the schedules list row', () => {
     cy.navigateTo('awx', 'schedules');
-    cy.clickTableRowKebabAction(schedule.name, /^Delete schedule$/, true);
+    cy.clickTableRowKebabAction(schedule.name, 'delete-schedule', true);
     cy.get('#confirm').click();
     cy.clickButton(/^Delete schedule/);
     cy.contains(/^Success$/);
@@ -49,7 +49,7 @@ describe('schedules', () => {
     cy.getTableRowByText(schedule.name).within(() => {
       cy.get('input[aria-label="Select all rows"]').click();
     });
-    cy.clickToolbarKebabAction(/^Delete selected schedules$/);
+    cy.clickToolbarKebabAction('delete-selected-schedules');
     cy.get('#confirm').click();
     cy.clickButton(/^Delete schedule/);
     cy.contains(/^Success$/);

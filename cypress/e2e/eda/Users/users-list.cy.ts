@@ -53,7 +53,7 @@ describe('EDA Users List', () => {
         cy.navigateTo('eda', 'users');
         cy.selectTableRow(auditor.username, false);
         cy.selectTableRow(viewer.username, false);
-        cy.clickToolbarKebabAction(/^Delete selected users$/);
+        cy.clickToolbarKebabAction('delete-selected-users');
         cy.intercept('DELETE', `/api/eda/v1/users/${auditor.id}/`).as('auditor');
         cy.intercept('DELETE', `/api/eda/v1/users/${viewer.id}/`).as('viewer');
         cy.clickModalConfirmCheckbox();
@@ -74,7 +74,7 @@ describe('EDA Users List', () => {
     }).then((edaUser) => {
       cy.navigateTo('eda', 'users');
       cy.selectTableRow(edaUser.username, false);
-      cy.clickToolbarKebabAction(/^Delete selected users$/);
+      cy.clickToolbarKebabAction('delete-selected-users');
       cy.get('#confirm').click();
       cy.clickButton(/^Delete user/);
       cy.contains(/^Success$/);

@@ -65,7 +65,7 @@ describe('Workflow Job templates visualizer', () => {
     cy.get('button[data-cy="workflow-visualizer-toolbar-close"]').click();
 
     // Clean up - delete workflow job template
-    cy.clickPageAction(/^Delete template/);
+    cy.clickPageAction('delete-template');
     cy.get('#confirm').click();
     cy.clickButton(/^Delete template/);
     cy.verifyPageTitle('Template');

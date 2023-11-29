@@ -55,7 +55,7 @@ describe('inventories', () => {
     cy.hasDetail(/^Organization$/, organization.name);
     cy.hasDetail(/^Enabled options$/, 'Prevent instance group fallback');
     // Clean up this inventory
-    cy.clickPageAction(/^Delete inventory/);
+    cy.clickPageAction('delete-inventory');
     cy.get('#confirm').click();
     cy.clickButton(/^Delete inventory/);
     cy.verifyPageTitle('Inventories');
@@ -95,7 +95,7 @@ describe('inventories', () => {
     cy.navigateTo('awx', 'inventories');
     cy.clickTableRow(inventory.name);
     cy.verifyPageTitle(inventory.name);
-    cy.clickPageAction(/^Delete inventory/);
+    cy.clickPageAction('delete-inventory');
     cy.get('#confirm').click();
     cy.clickButton(/^Delete inventory/);
     cy.verifyPageTitle('Inventories');
@@ -105,7 +105,7 @@ describe('inventories', () => {
     cy.navigateTo('awx', 'inventories');
     cy.clickTableRow(inventory.name);
     cy.verifyPageTitle(inventory.name);
-    cy.clickPageAction(/^Copy inventory/);
+    cy.clickPageAction('copy-inventory');
     cy.hasAlert(`${inventory.name} copied`);
   });
 
@@ -120,14 +120,14 @@ describe('inventories', () => {
 
   it('can copy an inventory from the inventory list row item', () => {
     cy.navigateTo('awx', 'inventories');
-    cy.clickTableRowKebabAction(inventory.name, /^Copy inventory$/, true);
+    cy.clickTableRowKebabAction(inventory.name, 'copy-inventory', true);
     cy.hasAlert(`${inventory.name.toString()} copied`);
     cy.deleteAwxInventory(inventory);
   });
 
   it('can delete an inventory from the inventory list row item', () => {
     cy.navigateTo('awx', 'inventories');
-    cy.clickTableRowKebabAction(inventory.name, /^Delete inventory$/, true);
+    cy.clickTableRowKebabAction(inventory.name, 'delete-inventory', true);
     cy.get('#confirm').click();
     cy.clickButton(/^Delete inventory/);
     cy.contains(/^Success$/);
@@ -138,7 +138,7 @@ describe('inventories', () => {
   it('can delete an inventory from the inventory list toolbar', () => {
     cy.navigateTo('awx', 'inventories');
     cy.selectTableRow(inventory.name, true);
-    cy.clickToolbarKebabAction(/^Delete selected inventories$/);
+    cy.clickToolbarKebabAction('delete-selected-inventories');
     cy.get('#confirm').click();
     cy.clickButton(/^Delete inventory/);
     cy.contains(/^Success$/);

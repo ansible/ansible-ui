@@ -157,7 +157,7 @@ declare global {
       selectDetailsPageKebabAction(dataCy: string): Chainable<void>;
 
       /** Click an action in the table toolbar kebab dropdown actions menu. */
-      clickToolbarKebabAction(label: string | RegExp): Chainable<void>;
+      clickToolbarKebabAction(dataCyLabel: string | RegExp): Chainable<void>;
 
       /** Get the table row containing the specified text. */
       getTableRowByText(name: string | RegExp, filter?: boolean): Chainable<void>;
@@ -184,7 +184,7 @@ declare global {
       /** Finds a table row containing text and clicks action specified by label. */
       clickTableRowKebabAction(
         name: string | RegExp,
-        label: string | RegExp,
+        dataCyLabel: string | RegExp,
         filter?: boolean
       ): Chainable<void>;
 
@@ -195,9 +195,9 @@ declare global {
        * @param filter
        */
       clickListCardKebabAction(
+        id: number,
         name: string | RegExp,
-        label: string | RegExp,
-        filter?: boolean
+        dataCyLabel: string | RegExp
       ): Chainable<void>;
 
       /** Finds a table row containing text and clicks action specified by label. */
@@ -217,9 +217,6 @@ declare global {
       expandTableRow(name: string | RegExp, filter?: boolean): Chainable<void>;
 
       // --- MODAL COMMANDS ---
-
-      /** Get the active modal dialog. */
-      getDialog(): Chainable<void>;
 
       /** Clicks a button in the active modal dialog. */
       clickModalButton(label: string | RegExp): Chainable<void>;
@@ -242,7 +239,7 @@ declare global {
 
       clickLink(label: string | RegExp): Chainable<void>;
       clickButton(label: string | RegExp): Chainable<void>;
-      clickPageAction(label: string | RegExp): Chainable<void>;
+      clickPageAction(dataCyLabel: string | RegExp): Chainable<void>;
 
       /**Finds an alert by its label. Does not make an assertion.  */
       hasAlert(label: string | RegExp): Chainable<void>;
@@ -561,27 +558,13 @@ declare global {
        */
       checkAnchorLinks(anchorName: string): Chainable<void>;
 
-      clickEdaPageAction(label: string | RegExp): Chainable<void>;
-
-      /**
-       * `edaRuleBookActivationActions()` performs an action either `Relaunch` or `Restart` or `Delete rulebookActivation` on a rulebook activation,
-       *
-       * accepts 2 parameters action name and edaRulebookActivation name
-       *
-       * edaRuleBookActivationActions('Relaunch')
-       * edaRuleBookActivationActions('Restart')
-       * edaRuleBookActivationActions('Delete rulebookActivation')
-       * @param action
-       */
-      edaRuleBookActivationActions(action: string, rbaName: string): Chainable<void>;
-
       /**
        * `edaRuleBookActivationActionsModal()` clicks on button `Relaunch` or `Restart` of a rulebook activation modal,
        *
        * accepts 2 parameters action name and edaRulebookActivation name
        *
-       * edaRuleBookActivationActions('Relaunch')
-       * edaRuleBookActivationActions('Restart')
+       * edaRuleBookActivationActionsModal('Relaunch')
+       * edaRuleBookActivationActionsModal('Restart')
        * @param action
        */
       edaRuleBookActivationActionsModal(action: string, rbaName: string): Chainable<void>;
