@@ -16,7 +16,7 @@ export default function EdaMain() {
   const navigation = useEdaNavigation();
   return (
     <PageApp
-      login={<Login apiUrl={edaAPI`/auth/session/login/`} onLoginUrl="/dashboard" />}
+      login={<Login apiUrl={edaAPI`/auth/session/login/`} onLoginUrl="/overview" />}
       root={
         <ActiveEdaUserProvider>
           <Outlet />

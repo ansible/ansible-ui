@@ -49,220 +49,171 @@ export function useEdaNavigation() {
     const navigationItems: PageNavigationItem[] = [
       {
         id: EdaRoute.Dashboard,
-        label: t('Dashboard'),
-        path: 'dashboard',
+        label: t('Overview'),
+        path: 'overview',
         element: <EdaDashboard />,
       },
       {
-        label: t('Views'),
-        path: 'views',
+        id: EdaRoute.RuleAudits,
+        label: t('Rule Audit'),
+        path: 'rule-audits',
         children: [
           {
-            id: EdaRoute.RuleAudits,
-            label: t('Rule Audit'),
-            path: 'rule-audits',
+            id: EdaRoute.RuleAuditPage,
+            path: ':id',
+            element: <RuleAuditPage />,
             children: [
               {
-                id: EdaRoute.RuleAuditPage,
-                path: ':id',
-                element: <RuleAuditPage />,
-                children: [
-                  {
-                    id: EdaRoute.RuleAuditDetails,
-                    path: 'details',
-                    element: <RuleAuditDetails />,
-                  },
-                  {
-                    id: EdaRoute.RuleAuditActions,
-                    path: 'actions',
-                    element: <RuleAuditActions />,
-                  },
-                  {
-                    id: EdaRoute.RuleAuditEvents,
-                    path: 'events',
-                    element: <RuleAuditEvents />,
-                  },
-                  {
-                    path: '',
-                    element: <Navigate to="details" />,
-                  },
-                ],
+                id: EdaRoute.RuleAuditDetails,
+                path: 'details',
+                element: <RuleAuditDetails />,
+              },
+              {
+                id: EdaRoute.RuleAuditActions,
+                path: 'actions',
+                element: <RuleAuditActions />,
+              },
+              {
+                id: EdaRoute.RuleAuditEvents,
+                path: 'events',
+                element: <RuleAuditEvents />,
               },
               {
                 path: '',
-                element: <RuleAudit />,
+                element: <Navigate to="details" />,
               },
             ],
           },
           {
-            id: EdaRoute.RulebookActivations,
-            label: t('Rulebook Activations'),
-            path: 'rulebook-activations',
-            children: [
-              {
-                id: EdaRoute.CreateRulebookActivation,
-                path: 'create',
-                element: <CreateRulebookActivation />,
-              },
-              {
-                id: EdaRoute.RulebookActivationInstancePage,
-                path: ':id/history/:instanceId',
-                element: <ActivationInstancePage />,
-                children: [
-                  {
-                    id: EdaRoute.RulebookActivationInstanceDetails,
-                    path: 'details',
-                    element: <ActivationInstanceDetails />,
-                  },
-                  {
-                    path: '',
-                    element: <Navigate to="details" />,
-                  },
-                ],
-              },
-              {
-                id: EdaRoute.RulebookActivationPage,
-                path: ':id',
-                element: <RulebookActivationPage />,
-                children: [
-                  {
-                    id: EdaRoute.RulebookActivationDetails,
-                    path: 'details',
-                    element: <RulebookActivationDetails />,
-                  },
-                  {
-                    id: EdaRoute.RulebookActivationHistory,
-                    path: 'history',
-                    element: <RulebookActivationHistory />,
-                  },
-                  {
-                    path: '',
-                    element: <Navigate to="details" />,
-                  },
-                ],
-              },
-              {
-                path: '',
-                element: <RulebookActivations />,
-              },
-            ],
+            path: '',
+            element: <RuleAudit />,
           },
         ],
       },
       {
-        label: t('Resources'),
-        path: 'resources',
+        id: EdaRoute.RulebookActivations,
+        label: t('Rulebook Activations'),
+        path: 'rulebook-activations',
         children: [
           {
-            id: EdaRoute.Projects,
-            label: t('Projects'),
-            path: 'projects',
+            id: EdaRoute.CreateRulebookActivation,
+            path: 'create',
+            element: <CreateRulebookActivation />,
+          },
+          {
+            id: EdaRoute.RulebookActivationInstancePage,
+            path: ':id/history/:instanceId',
+            element: <ActivationInstancePage />,
             children: [
               {
-                id: EdaRoute.CreateProject,
-                path: 'create',
-                element: <CreateProject />,
-              },
-              {
-                id: EdaRoute.EditProject,
-                path: 'edit/:id',
-                element: <EditProject />,
-              },
-              {
-                id: EdaRoute.ProjectPage,
-                path: ':id',
-                element: <ProjectPage />,
-                children: [
-                  {
-                    id: EdaRoute.ProjectDetails,
-                    path: 'details',
-                    element: <ProjectDetails />,
-                  },
-                  {
-                    path: '',
-                    element: <Navigate to="details" />,
-                  },
-                ],
+                id: EdaRoute.RulebookActivationInstanceDetails,
+                path: 'details',
+                element: <ActivationInstanceDetails />,
               },
               {
                 path: '',
-                element: <Projects />,
+                element: <Navigate to="details" />,
               },
             ],
           },
           {
-            id: EdaRoute.DecisionEnvironments,
-            label: t('Decision Environments'),
-            path: 'decision-environments',
+            id: EdaRoute.RulebookActivationPage,
+            path: ':id',
+            element: <RulebookActivationPage />,
             children: [
               {
-                id: EdaRoute.CreateDecisionEnvironment,
-                path: 'create',
-                element: <CreateDecisionEnvironment />,
+                id: EdaRoute.RulebookActivationDetails,
+                path: 'details',
+                element: <RulebookActivationDetails />,
               },
               {
-                id: EdaRoute.EditDecisionEnvironment,
-                path: 'edit/:id',
-                element: <EditDecisionEnvironment />,
-              },
-              {
-                id: EdaRoute.DecisionEnvironmentPage,
-                path: ':id',
-                element: <DecisionEnvironmentPage />,
-                children: [
-                  {
-                    id: EdaRoute.DecisionEnvironmentDetails,
-                    path: 'details',
-                    element: <DecisionEnvironmentDetails />,
-                  },
-                  {
-                    path: '',
-                    element: <Navigate to="details" />,
-                  },
-                ],
+                id: EdaRoute.RulebookActivationHistory,
+                path: 'history',
+                element: <RulebookActivationHistory />,
               },
               {
                 path: '',
-                element: <DecisionEnvironments />,
+                element: <Navigate to="details" />,
               },
             ],
           },
           {
-            id: EdaRoute.Credentials,
-            label: t('Credentials'),
-            path: 'credentials',
+            path: '',
+            element: <RulebookActivations />,
+          },
+        ],
+      },
+      {
+        id: EdaRoute.Projects,
+        label: t('Projects'),
+        path: 'projects',
+        children: [
+          {
+            id: EdaRoute.CreateProject,
+            path: 'create',
+            element: <CreateProject />,
+          },
+          {
+            id: EdaRoute.EditProject,
+            path: 'edit/:id',
+            element: <EditProject />,
+          },
+          {
+            id: EdaRoute.ProjectPage,
+            path: ':id',
+            element: <ProjectPage />,
             children: [
               {
-                id: EdaRoute.CreateCredential,
-                path: 'create',
-                element: <CreateCredential />,
-              },
-              {
-                id: EdaRoute.EditCredential,
-                path: 'edit/:id',
-                element: <EditCredential />,
-              },
-              {
-                id: EdaRoute.CredentialPage,
-                path: ':id',
-                element: <CredentialPage />,
-                children: [
-                  {
-                    id: EdaRoute.CredentialDetails,
-                    path: 'details',
-                    element: <CredentialDetails />,
-                  },
-                  {
-                    path: '',
-                    element: <Navigate to="details" />,
-                  },
-                ],
+                id: EdaRoute.ProjectDetails,
+                path: 'details',
+                element: <ProjectDetails />,
               },
               {
                 path: '',
-                element: <Credentials />,
+                element: <Navigate to="details" />,
               },
             ],
+          },
+          {
+            path: '',
+            element: <Projects />,
+          },
+        ],
+      },
+      {
+        id: EdaRoute.DecisionEnvironments,
+        label: t('Decision Environments'),
+        path: 'decision-environments',
+        children: [
+          {
+            id: EdaRoute.CreateDecisionEnvironment,
+            path: 'create',
+            element: <CreateDecisionEnvironment />,
+          },
+          {
+            id: EdaRoute.EditDecisionEnvironment,
+            path: 'edit/:id',
+            element: <EditDecisionEnvironment />,
+          },
+          {
+            id: EdaRoute.DecisionEnvironmentPage,
+            path: ':id',
+            element: <DecisionEnvironmentPage />,
+            children: [
+              {
+                id: EdaRoute.DecisionEnvironmentDetails,
+                path: 'details',
+                element: <DecisionEnvironmentDetails />,
+              },
+              {
+                path: '',
+                element: <Navigate to="details" />,
+              },
+            ],
+          },
+          {
+            path: '',
+            element: <DecisionEnvironments />,
           },
         ],
       },
@@ -375,11 +326,48 @@ export function useEdaNavigation() {
               },
             ],
           },
+          {
+            id: EdaRoute.Credentials,
+            label: t('Credentials'),
+            path: 'credentials',
+            children: [
+              {
+                id: EdaRoute.CreateCredential,
+                path: 'create',
+                element: <CreateCredential />,
+              },
+              {
+                id: EdaRoute.EditCredential,
+                path: 'edit/:id',
+                element: <EditCredential />,
+              },
+              {
+                id: EdaRoute.CredentialPage,
+                path: ':id',
+                element: <CredentialPage />,
+                children: [
+                  {
+                    id: EdaRoute.CredentialDetails,
+                    path: 'details',
+                    element: <CredentialDetails />,
+                  },
+                  {
+                    path: '',
+                    element: <Navigate to="details" />,
+                  },
+                ],
+              },
+              {
+                path: '',
+                element: <Credentials />,
+              },
+            ],
+          },
         ],
       },
       {
         path: '',
-        element: <Navigate to={'./dashboard'} />,
+        element: <Navigate to={'./overview'} />,
       },
     ];
     return navigationItems;

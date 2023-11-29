@@ -12,7 +12,7 @@ export function useAwxNotificationsRoutes() {
   const notificationsRoutes = useMemo<PageNavigationItem>(
     () => ({
       id: AwxRoute.NotificationTemplates,
-      label: t('Notifications'),
+      label: t('Job Notifications'),
       path: 'notifications',
       children: [
         {

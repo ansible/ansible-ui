@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
+import { PageNotImplemented } from '../../framework';
 import { PageNavigationItem } from '../../framework/PageNavigation/PageNavigationItem';
 import { HubRoute } from './HubRoutes';
 import { Roles } from './access/roles/Roles';
@@ -37,98 +38,98 @@ export function useHubNavigation() {
     const navigationItems: PageNavigationItem[] = [
       {
         id: HubRoute.Dashboard,
-        label: t('Dashboard'),
-        path: 'dashboard',
+        label: t('Overview'),
+        path: 'overview',
         element: <HubDashboard />,
       },
       {
-        label: t('Automation Content'),
-        path: 'automation-content',
+        id: HubRoute.Namespaces,
+        label: t('Namespaces'),
+        path: 'namespaces',
         children: [
           {
-            id: HubRoute.Namespaces,
-            label: t('Namespaces'),
-            path: 'namespaces',
+            id: HubRoute.CreateNamespace,
+            path: 'create',
+            element: <CreateHubNamespace />,
+          },
+          {
+            id: HubRoute.EditNamespace,
+            path: ':id',
+            element: <EditHubNamespace />,
+          },
+          {
+            id: HubRoute.NamespacePage,
+            path: ':id',
+            element: <HubNamespacePage />,
             children: [
               {
-                id: HubRoute.CreateNamespace,
-                path: 'create',
-                element: <CreateHubNamespace />,
-              },
-              {
-                id: HubRoute.EditNamespace,
-                path: ':id',
-                element: <EditHubNamespace />,
-              },
-              {
-                id: HubRoute.NamespacePage,
-                path: ':id',
-                element: <HubNamespacePage />,
-                children: [
-                  {
-                    id: HubRoute.NamespaceDetails,
-                    path: 'details',
-                    element: <HubNamespaceDetails />,
-                  },
-                  {
-                    path: '',
-                    element: <Navigate to="details" />,
-                  },
-                ],
+                id: HubRoute.NamespaceDetails,
+                path: 'details',
+                element: <HubNamespaceDetails />,
               },
               {
                 path: '',
-                element: <Namespaces />,
+                element: <Navigate to="details" />,
               },
             ],
           },
           {
-            id: HubRoute.Collections,
-            label: t('Collections'),
-            path: 'collections',
-            children: [
-              {
-                id: HubRoute.UploadCollection,
-                path: 'upload',
-                element: <UploadCollection />,
-              },
-              {
-                id: HubRoute.CollectionSignatureUpload,
-                path: 'signature-upload',
-                element: <CollectionSignatureUpload />,
-              },
-              {
-                id: HubRoute.CollectionPage,
-                path: ':id/*',
-                element: <CollectionDetails />,
-              },
-              {
-                path: '',
-                element: <Collections />,
-              },
-            ],
+            path: '',
+            element: <Namespaces />,
+          },
+        ],
+      },
+      {
+        id: HubRoute.Collections,
+        label: t('Collections'),
+        path: 'collections',
+        children: [
+          {
+            id: HubRoute.UploadCollection,
+            path: 'upload',
+            element: <UploadCollection />,
           },
           {
-            id: HubRoute.ExecutionEnvironments,
-            label: t('Execution Environments'),
-            path: 'execution-environments',
-            children: [
-              {
-                id: HubRoute.CreateExecutionEnvironment,
-                path: 'create',
-                element: <CreateExecutionEnvironment />,
-              },
-              {
-                id: HubRoute.EditExecutionEnvironment,
-                path: ':id/edit',
-                element: <EditExecutionEnvironment />,
-              },
-              {
-                path: '',
-                element: <ExecutionEnvironments />,
-              },
-            ],
+            id: HubRoute.CollectionSignatureUpload,
+            path: 'signature-upload',
+            element: <CollectionSignatureUpload />,
           },
+          {
+            id: HubRoute.CollectionPage,
+            path: ':id/*',
+            element: <CollectionDetails />,
+          },
+          {
+            path: '',
+            element: <Collections />,
+          },
+        ],
+      },
+      {
+        id: HubRoute.ExecutionEnvironments,
+        label: t('Execution Environments'),
+        path: 'execution-environments',
+        children: [
+          {
+            id: HubRoute.CreateExecutionEnvironment,
+            path: 'create',
+            element: <CreateExecutionEnvironment />,
+          },
+          {
+            id: HubRoute.EditExecutionEnvironment,
+            path: ':id/edit',
+            element: <EditExecutionEnvironment />,
+          },
+          {
+            path: '',
+            element: <ExecutionEnvironments />,
+          },
+        ],
+      },
+      {
+        label: t('Administration'),
+        path: 'administration',
+        children: [
           {
             id: HubRoute.SignatureKeys,
             label: t('Signature Keys'),
@@ -140,12 +141,6 @@ export function useHubNavigation() {
               },
             ],
           },
-        ],
-      },
-      {
-        label: t('Administration'),
-        path: 'administration',
-        children: [
           {
             id: HubRoute.Repositories,
             label: t('Repositories'),
@@ -201,7 +196,7 @@ export function useHubNavigation() {
           },
           {
             id: HubRoute.Approvals,
-            label: t('Approvals'),
+            label: t('Collection Approvals'),
             path: 'approvals',
             children: [
               {
@@ -244,6 +239,24 @@ export function useHubNavigation() {
         path: 'access',
         children: [
           {
+            id: HubRoute.Organizations,
+            label: t('Organizations'),
+            path: 'organizations',
+            element: <PageNotImplemented />,
+          },
+          {
+            id: HubRoute.Teams,
+            label: t('Teams'),
+            path: 'teams',
+            element: <PageNotImplemented />,
+          },
+          {
+            id: HubRoute.Users,
+            label: t('Users'),
+            path: 'users',
+            element: <PageNotImplemented />,
+          },
+          {
             id: HubRoute.Roles,
             label: t('Roles'),
             path: 'roles',
@@ -259,7 +272,7 @@ export function useHubNavigation() {
       },
       {
         path: '',
-        element: <Navigate to={'./dashboard'} />,
+        element: <Navigate to={'./overview'} />,
       },
     ];
     return navigationItems;

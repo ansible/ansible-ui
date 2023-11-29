@@ -44,6 +44,9 @@ export enum HubRoute {
 
   // Access
   Access = 'hub-access',
+  Organizations = 'hub-organizations',
+  Teams = 'hub-teams',
+  Users = 'hub-users',
   APIToken = 'hub-api-token',
   Roles = 'hub-roles',
   CreateRole = 'hub-create-role',
