@@ -1,35 +1,47 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageHeader, PageLayout } from '../../../../../framework';
+import { PageActions, PageHeader, PageLayout, useGetPageUrl } from '../../../../../framework';
 import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
-import { AwxRoute } from '../../../AwxRoutes';
 import { useGetItem } from '../../../../common/crud/useGet';
+import { AwxRoute } from '../../../AwxRoutes';
 import { awxAPI } from '../../../api/awx-utils';
 import { AwxError } from '../../../common/AwxError';
 import { WorkflowApproval } from '../../../interfaces/WorkflowApproval';
+import { useWorkflowApprovalsRowActions } from '../hooks/useWorkflowApprovalsRowActions';
 
 export function WorkflowApprovalPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const {
     error,
-    data: workflow_approval,
+    data: workflowApproval,
     refresh,
   } = useGetItem<WorkflowApproval>(awxAPI`/workflow_approvals`, params.id);
+  const getPageUrl = useGetPageUrl();
+
+  const actions = useWorkflowApprovalsRowActions(refresh);
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
-  if (!workflow_approval) return <LoadingPage breadcrumbs tabs />;
+  if (!workflowApproval) return <LoadingPage breadcrumbs tabs />;
 
   return (
     <PageLayout>
       <PageHeader
-        title={workflow_approval?.name}
+        title={workflowApproval?.name}
         breadcrumbs={[
-          { label: t('Workflow Approvals'), to: AwxRoute.WorkflowApprovals },
-          { label: workflow_approval?.name },
+          { label: t('Workflow Approvals'), to: getPageUrl(AwxRoute.WorkflowApprovals) },
+          { label: workflowApproval?.name },
         ]}
+        headerActions={
+          <PageActions
+            actions={actions}
+            position={DropdownPosition.right}
+            selectedItem={workflowApproval}
+          />
+        }
       />
       <PageRoutedTabs
         backTab={{

@@ -1,22 +1,28 @@
 import { Icon, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import { DropdownItem } from '@patternfly/react-core/deprecated';
 import { ExternalLinkAltIcon, QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { PageMasthead, usePageNavigate } from '../../framework';
+import { PageMasthead, useGetPageUrl, usePageNavigate } from '../../framework';
 import { PageMastheadDropdown } from '../../framework/PageMasthead/PageMastheadDropdown';
 import { PageNotificationsIcon } from '../../framework/PageMasthead/PageNotificationsIcon';
 import { PageSettingsIcon } from '../../framework/PageMasthead/PageSettingsIcon';
 import { PageThemeSwitcher } from '../../framework/PageMasthead/PageThemeSwitcher';
+import { usePageNotifications } from '../../framework/PageNotifications/PageNotificationsProvider';
 import { useAnsibleAboutModal } from '../common/AboutModal';
 import { PageRefreshIcon } from '../common/PageRefreshIcon';
+import { useGet } from '../common/crud/useGet';
 import { useActiveUser } from '../common/useActiveUser';
 import { useClearCache } from '../common/useInvalidateCache';
 import { AwxRoute } from './AwxRoutes';
+import { awxAPI } from './api/awx-utils';
 import AwxIcon from './awx-logo.svg';
+import { AwxItemsResponse } from './common/AwxItemsResponse';
 import { useAwxConfig } from './common/useAwxConfig';
+import { useAwxWebSocketSubscription } from './common/useAwxWebSocket';
 import getDocsBaseUrl from './common/util/getDocsBaseUrl';
+import { WorkflowApproval } from './interfaces/WorkflowApproval';
 
 export function AwxMasthead() {
   const { t } = useTranslation();
@@ -26,11 +32,59 @@ export function AwxMasthead() {
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
   const activeUser = useActiveUser();
+  const getPageUrl = useGetPageUrl();
+
+  const { data, refresh } = useGet<AwxItemsResponse<WorkflowApproval>>(
+    awxAPI`/workflow_approvals/`,
+    { page_size: 200, status: 'pending' }
+  );
+
+  const handleWebSocketMessage = useCallback(
+    (message?: { group_name?: string; type?: string }) => {
+      switch (message?.group_name) {
+        case 'jobs':
+          switch (message?.type) {
+            case 'workflow_approval':
+              void refresh();
+              break;
+          }
+          break;
+      }
+    },
+    [refresh]
+  );
+
+  useAwxWebSocketSubscription(
+    { control: ['limit_reached_1'], jobs: ['status_changed'] },
+    handleWebSocketMessage as (data: unknown) => void
+  );
+
+  const { setNotificationGroups, setNotificationsDrawerOpen } = usePageNotifications();
+  useEffect(() => {
+    setNotificationGroups((groups) => {
+      groups['workflow-approvals'] = {
+        title: t('Workflow Approvals'),
+        notifications:
+          data?.results.map((workflow_approval) => ({
+            title: workflow_approval.name,
+            description: workflow_approval.summary_fields.workflow_job?.name,
+            timestamp: workflow_approval.created,
+            variant: 'info',
+            to: getPageUrl(AwxRoute.WorkflowApprovalDetails, {
+              params: { id: workflow_approval.id },
+            }),
+          })) ?? [],
+      };
+      return { ...groups };
+    });
+  }, [data, getPageUrl, setNotificationGroups, t]);
+
   const logout = useCallback(async () => {
     await fetch('/api/logout/');
     clearAllCache();
     navigate('/login');
   }, [clearAllCache, navigate]);
+
   return (
     <PageMasthead
       icon={<AwxIcon style={{ height: 60 }} />}
@@ -49,8 +103,8 @@ export function AwxMasthead() {
         </ToolbarItem>
         <ToolbarItem>
           <PageNotificationsIcon
-            count={0}
-            onClick={() => pageNavigate(AwxRoute.WorkflowApprovals)}
+            count={data?.count ?? 0}
+            onClick={() => setNotificationsDrawerOpen((open) => !open)}
           />
         </ToolbarItem>
         <ToolbarItem>
