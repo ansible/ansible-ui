@@ -8,7 +8,8 @@ import {
   Text,
   Title,
 } from '@patternfly/react-core';
-import { CSSProperties, ReactNode, useContext } from 'react';
+import { AngleRightIcon } from '@patternfly/react-icons';
+import { CSSProperties, ReactNode, useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Help } from '../components/Help';
 import { useID } from '../hooks/useID';
@@ -60,6 +61,8 @@ export function PageDashboardCard(props: {
   headerControls?: ReactNode;
 
   isCompact?: boolean;
+
+  canCollapse?: boolean;
 }) {
   const dashboardContext = useContext(PageDashboardContext);
 
@@ -101,6 +104,8 @@ export function PageDashboardCard(props: {
   const minHeight = rowSpan ? heightUnit * rowSpan + 16 * (rowSpan - 1) : undefined;
 
   const id = useID(props);
+
+  const [isCollapsed, setCollapsed] = useState(false);
 
   return (
     <Card
@@ -156,14 +161,25 @@ export function PageDashboardCard(props: {
                 {props.linkText && <Link to={props.to as string}>{props.linkText}</Link>}
               </Text>
             </FlexItem>
+            {props.canCollapse && (
+              <FlexItem>
+                <AngleRightIcon
+                  style={{
+                    transform: isCollapsed ? 'rotate(0deg)' : 'rotate(90deg)',
+                    transition: 'transform',
+                  }}
+                  onClick={() => setCollapsed((c) => !c)}
+                />
+              </FlexItem>
+            )}
           </Flex>
-          {props.description && (
+          {props.description && !isCollapsed && (
             <span style={{ opacity: 0.8, paddingTop: 6 }}>{props.description}</span>
           )}
         </CardHeader>
       )}
-      {props.children}
-      {props.footerActionButton && (
+      {!isCollapsed && props.children}
+      {!isCollapsed && props.footerActionButton && (
         <CardFooter style={{ textAlign: 'end' }}>
           <Button
             variant="link"
