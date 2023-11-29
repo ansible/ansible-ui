@@ -129,7 +129,7 @@ Cypress.Commands.add(
     }
   ) => {
     if (role?.name) {
-      cy.requestDelete(pulpAPI`/roles/${parsePulpIDFromURL(role.pulp_href)}`, options);
+      cy.requestDelete(pulpAPI`/roles/${parsePulpIDFromURL(role.pulp_href) as string}`, options);
     }
   }
 );
