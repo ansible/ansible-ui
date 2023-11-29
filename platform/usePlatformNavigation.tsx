@@ -11,6 +11,7 @@ import { useHubNavigation } from '../frontend/hub/useHubNavigation';
 import { useHasController, useHasEda, useHasHub } from './PlatformProvider';
 import { PlatformRoute } from './PlatformRoutes';
 import { PlatformDashboard } from './dashboard/PlatformDashboard';
+import { QuickStartsPage } from './dashboard/quickstarts/Quickstarts';
 import { Lightspeed } from './lightspeed/Lightspeed';
 import { useGetPlatformOrganizationsRoutes } from './routes/useGetPlatformOrganizationsRoutes';
 import { useGetPlatformTeamsRoutes } from './routes/useGetPlatformTeamsRoutes';
@@ -86,9 +87,15 @@ export function usePlatformNavigation() {
     });
     navigationItems.push({
       id: PlatformRoute.Lightspeed,
-      label: 'Ansible Lightspeed',
+      label: t('Ansible Lightspeed'),
       path: 'lightspeed',
       element: <Lightspeed />,
+    });
+    navigationItems.push({
+      id: PlatformRoute.QuickStarts,
+      // label: t('QuickStarts'),
+      path: 'quickstarts',
+      element: <QuickStartsPage />,
     });
     navigationItems.push({
       id: PlatformRoute.Root,
