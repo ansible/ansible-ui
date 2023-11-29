@@ -15,6 +15,7 @@ import { Lightspeed } from './lightspeed/Lightspeed';
 import { useGetPlatformOrganizationsRoutes } from './routes/useGetPlatformOrganizationsRoutes';
 import { useGetPlatformTeamsRoutes } from './routes/useGetPlatformTeamsRoutes';
 import { useGetPlatformUsersRoutes } from './routes/useGetPlatformUsersRoutes';
+import { useGetPlatformAuthenticatorsRoutes } from './routes/useGetPlatformAuthenticatorsRoutes';
 
 export function usePlatformNavigation() {
   const { t } = useTranslation();
@@ -42,6 +43,7 @@ export function usePlatformNavigation() {
   const organizations = useGetPlatformOrganizationsRoutes();
   const teams = useGetPlatformTeamsRoutes();
   const users = useGetPlatformUsersRoutes();
+  const authenticators = useGetPlatformAuthenticatorsRoutes();
 
   const pageNavigationItems = useMemo<PageNavigationItem[]>(() => {
     const navigationItems: PageNavigationItem[] = [];
@@ -82,7 +84,7 @@ export function usePlatformNavigation() {
       id: PlatformRoute.Access,
       label: t('Access Management'),
       path: 'access',
-      children: [organizations, teams, users],
+      children: [organizations, teams, users, authenticators],
     });
     navigationItems.push({
       id: PlatformRoute.Lightspeed,
@@ -97,6 +99,19 @@ export function usePlatformNavigation() {
     });
 
     return navigationItems;
-  }, [analytics, awxNav, edaNav, hasAwx, hasEda, hasHub, hubNav, organizations, t, teams, users]);
+  }, [
+    analytics,
+    awxNav,
+    edaNav,
+    hasAwx,
+    hasEda,
+    hasHub,
+    hubNav,
+    organizations,
+    t,
+    teams,
+    users,
+    authenticators,
+  ]);
   return pageNavigationItems;
 }
