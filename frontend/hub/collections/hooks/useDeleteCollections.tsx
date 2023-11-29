@@ -1,8 +1,8 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation, usePageNavigate } from '../../../../framework';
-import { requestDelete, requestGet } from '../../../common/crud/Data';
-import { collectionKeyFn } from '../../api/utils';
+import { requestGet } from '../../../common/crud/Data';
+import { collectionKeyFn, hubAPIDelete } from '../../api/utils';
 import { hubAPI, pulpAPI } from '../../api/formatPath';
 import { PulpItemsResponse } from '../../usePulpView';
 import { CollectionVersionSearch } from '../Collection';
@@ -78,7 +78,7 @@ async function deleteCollection(
   if (version) {
     versionQuery = 'versions/' + collection.collection_version?.version || '' + '/';
   }
-  await requestDelete(
+  await hubAPIDelete(
     hubAPI`/v3/plugin/ansible/content/${distro.results[0].base_path}/collections/index/${
       collection?.collection_version?.namespace || ''
     }/${collection?.collection_version?.name || ''}/` + versionQuery,
