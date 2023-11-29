@@ -1,6 +1,5 @@
 import { randomString } from '../../../framework/utils/random-string';
 import { Roles } from './constants';
-import { Role } from '../../../frontend/hub/access/roles/Role';
 
 const roleName = `galaxy.e2erole${randomString(4)}`;
 

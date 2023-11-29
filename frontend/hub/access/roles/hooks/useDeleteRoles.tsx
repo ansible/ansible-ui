@@ -31,7 +31,7 @@ export function useDeleteRoles(onComplete: (roles: Role[]) => void) {
   const bulkAction = useBulkConfirmation<Role>();
   const cannotDeleteBuiltInRole = (role: Role) =>
     role.locked ? t('Built-in roles cannot be deleted.') : '';
-  const cannotDeleteRoleDueToPermissions = (role: Role) =>
+  const cannotDeleteRoleDueToPermissions = () =>
     user.is_superuser
       ? ''
       : t(
@@ -51,7 +51,10 @@ export function useDeleteRoles(onComplete: (roles: Role[]) => void) {
         count:
           roles.length - undeletableBuiltInRoles.length - undeletableRolesDueToPermissions.length,
       }),
-      actionButtonText: t('Delete roles', { count: roles.length }),
+      actionButtonText: t('Delete roles', {
+        count:
+          roles.length - undeletableBuiltInRoles.length - undeletableRolesDueToPermissions.length,
+      }),
       items: roles.sort((l, r) => compareStrings(l.name, r.name)),
       alertPrompts:
         undeletableBuiltInRoles.length || undeletableRolesDueToPermissions.length
@@ -81,7 +84,7 @@ export function useDeleteRoles(onComplete: (roles: Role[]) => void) {
       isItemNonActionable: (role: Role) =>
         cannotDeleteBuiltInRole(role)
           ? cannotDeleteBuiltInRole(role)
-          : cannotDeleteRoleDueToPermissions(role),
+          : cannotDeleteRoleDueToPermissions(),
       keyFn: (role) => role.pulp_href,
       isDanger: true,
       confirmationColumns,

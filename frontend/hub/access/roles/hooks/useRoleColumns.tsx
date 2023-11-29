@@ -26,7 +26,7 @@ export function useRoleColumns(options?: { disableSort?: boolean; disableLinks?:
               options?.disableLinks
                 ? undefined
                 : getPageUrl(HubRoute.RoleDetails, {
-                    params: { id: parsePulpIDFromURL(role.pulp_href) },
+                    params: { id: parsePulpIDFromURL(role.pulp_href) ?? '' },
                   })
             }
             text={role.name}
@@ -66,7 +66,7 @@ export function useRoleColumns(options?: { disableSort?: boolean; disableLinks?:
       },
     ],
 
-    [t, options?.disableSort, lockedRolesWithDescription]
+    [t, options?.disableSort, options?.disableLinks, getPageUrl, lockedRolesWithDescription]
   );
 
   return tableColumns;
