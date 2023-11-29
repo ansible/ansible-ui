@@ -4,7 +4,6 @@
 import { randomString } from '../../../../framework/utils/random-string';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
-import { User } from '../../../../frontend/awx/interfaces/User';
 
 // These tests do not modify the project, thus can use the globalProject
 describe('projects', () => {
@@ -80,7 +79,6 @@ describe('projects', () => {
 describe('project edit and delete tests', () => {
   let project: Project;
   let organization: Organization;
-  let user: User;
 
   before(function () {
     cy.awxLogin();
@@ -104,7 +102,7 @@ describe('project edit and delete tests', () => {
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
 
-  it.only('can sync project from project details page', function () {
+  it('can sync project from project details page', function () {
     cy.navigateTo('awx', 'projects');
     cy.clickTableRow(`${project.name}`);
     cy.verifyPageTitle(`${project.name}`);
