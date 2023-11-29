@@ -1,11 +1,12 @@
 import { AllQuickStartStates, QuickStart, QuickStartContainer } from '@patternfly/quickstarts';
 import { ReactNode, useMemo, useState } from 'react';
-import ExampleQuickStart from './Example.json';
+import { useExampleQuickStart } from './useExampleQuickStart';
 
 export function QuickStartProvider(props: { children: ReactNode }) {
   const [activeQuickStartID, setActiveQuickStartID] = useState('');
   const [allQuickStartStates, setAllQuickStartStates] = useState<AllQuickStartStates>({});
-  const quickStarts = useMemo<QuickStart[]>(() => [ExampleQuickStart as QuickStart], []);
+  const exampleQuickStart = useExampleQuickStart();
+  const quickStarts = useMemo<QuickStart[]>(() => [exampleQuickStart], [exampleQuickStart]);
   return (
     <QuickStartContainer
       quickStarts={quickStarts}
