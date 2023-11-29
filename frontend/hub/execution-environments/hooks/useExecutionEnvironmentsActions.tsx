@@ -1,10 +1,8 @@
 import { ButtonVariant } from '@patternfly/react-core';
 import { PlusIcon, TrashIcon } from '@patternfly/react-icons';
-
+import { TFunction } from 'i18next';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { TFunction } from 'i18next';
-
 import {
   IPageAction,
   PageActionSelection,
@@ -13,15 +11,15 @@ import {
   useBulkConfirmation,
   usePageNavigate,
 } from '../../../../framework';
-import { postRequest, requestDelete, requestGet } from '../../../common/crud/Data';
+import { postRequest, requestGet } from '../../../common/crud/Data';
+import { HubRoute } from '../../HubRoutes';
 import { SigningServiceResponse } from '../../api-schemas/generated/SigningServiceResponse';
 import { hubAPI, pulpAPI } from '../../api/formatPath';
+import { hubAPIDelete } from '../../api/utils';
 import { HubContext, useHubContext } from '../../useHubContext';
 import { PulpItemsResponse } from '../../usePulpView';
-
 import { ExecutionEnvironment } from '../ExecutionEnvironment';
 import { useExecutionEnvironmentsColumns } from './useExecutionEnvironmentsColumns';
-import { HubRoute } from '../../HubRoutes';
 
 export function useExecutionEnvironmentsActions(callback?: (ees: ExecutionEnvironment[]) => void) {
   const { t } = useTranslation();
@@ -119,7 +117,10 @@ export function useDeleteExecutionEnvironments(onComplete?: (ees: ExecutionEnvir
 }
 
 async function deleteExecutionEnvironment(ee: ExecutionEnvironment, signal: AbortSignal) {
-  return requestDelete(hubAPI`/v3/plugin/execution-environments/repositories/${ee.name}/`, signal);
+  return await hubAPIDelete(
+    hubAPI`/v3/plugin/execution-environments/repositories/${ee.name}/`,
+    signal
+  );
 }
 
 export function useSyncExecutionEnvironments(onComplete?: (ees: ExecutionEnvironment[]) => void) {
