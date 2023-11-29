@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
-import { hubAPI } from '../../frontend/hub/api/formatPath';
 import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
 import { HubItemsResponse } from '../../frontend/hub/useHubView';
 import './commands';
@@ -14,7 +13,10 @@ Cypress.Commands.add('galaxykit', (operation: string, ...args: string[]) => {
   const adminPassword = Cypress.env('HUB_PASSWORD') as string;
   const galaxykitCommand =
     (Cypress.env('HUB_GALAXYKIT_COMMAND') as string) ?? 'galaxykit --ignore-certs';
-  const server = (Cypress.env('HUB_SERVER') as string) + apiPrefix;
+  let server = (Cypress.env('HUB_SERVER') as string).endsWith('/')
+    ? (Cypress.env('HUB_SERVER') as string) + apiPrefix.replace(/^\/+/g, '')
+    : (Cypress.env('HUB_SERVER') as string) + apiPrefix;
+  server = server.endsWith('/') ? server : server + '/';
   const options = { failOnNonZeroExit: false };
 
   cy.log(`${galaxykitCommand} ${operation} ${args.join(' ')}`);
@@ -52,7 +54,7 @@ Cypress.Commands.add(
       cy.wait(300);
 
       cy.requestGet<HubItemsResponse<CollectionVersionSearch>>(
-        hubAPI`/v3/plugin/ansible/search/collection-versions/?namespace=${namespaceName}&name=${collectionName}`
+        `${apiPrefix}/v3/plugin/ansible/search/collection-versions/?namespace=${namespaceName}&name=${collectionName}`
       ).then((itemsResponse) => {
         if (itemsResponse.data.length === 0) {
           waitTillPublished(maxLoops - 1);
@@ -103,4 +105,20 @@ Cypress.Commands.add('deleteCollectionsInNamespace', (namespaceName: string) => 
       );
     }
   });
+});
+
+Cypress.Commands.add(
+  'createHubRole',
+  (details: { name: string; description: string; permissions: string[] }) => {
+    cy.galaxykit(
+      '-i role create',
+      `--permissions ${details.permissions.join(',')}`,
+      details.name,
+      details.description
+    );
+  }
+);
+
+Cypress.Commands.add('deleteHubRole', (roleName: string) => {
+  cy.galaxykit('role delete', roleName);
 });

@@ -749,6 +749,12 @@ declare global {
       ): Cypress.Chainable<void>;
       deleteNamespace(namespaceName: string): Cypress.Chainable<void>;
       deleteCollectionsInNamespace(namespaceName: string): Cypress.Chainable<void>;
+      createHubRole(details: {
+        name: string;
+        description: string;
+        permissions: string[];
+      }): Cypress.Chainable<void>;
+      deleteHubRole(roleName: string): Cypress.Chainable<void>;
     }
   }
 }
