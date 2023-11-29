@@ -1,3 +1,5 @@
+import { AuthenticatorTypeEnum } from './Authenticator';
+
 export interface PluginConfiguration {
   name: string;
   help_text: string;
@@ -8,7 +10,7 @@ export interface PluginConfiguration {
 }
 
 export interface AuthenticatorPlugin {
-  type: string;
+  type: AuthenticatorTypeEnum;
   configuration_schema: PluginConfiguration[];
   documentation_url: string;
 }

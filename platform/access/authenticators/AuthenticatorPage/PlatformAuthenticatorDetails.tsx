@@ -15,7 +15,7 @@ type ObjField = {
   value: { [k: string]: string } | string[];
 };
 
-export function AuthenticatorDetails() {
+export function PlatformAuthenticatorDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const { data: authenticator } = useGetItem<Authenticator>(
