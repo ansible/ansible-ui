@@ -1,4 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
+import { randomString } from '../../framework/utils/random-string';
+import { Role } from '../../frontend/hub/access/roles/Role';
+import { parsePulpIDFromURL } from '../../frontend/hub/api/utils';
 import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
 import { HubItemsResponse } from '../../frontend/hub/useHubView';
 import './commands';
@@ -107,18 +110,31 @@ Cypress.Commands.add('deleteCollectionsInNamespace', (namespaceName: string) => 
   });
 });
 
+Cypress.Commands.add('createHubRole', () => {
+  cy.requestPost<Pick<Role, 'name' | 'description' | 'permissions'>, Role>(
+    `${apiPrefix}/pulp/api/v3/roles/`,
+    {
+      name: `galaxy.e2erole${randomString(4)}`,
+      description: 'E2E custom role description',
+      permissions: ['galaxy.add_namespace', 'container.namespace_change_containerdistribution'],
+    }
+  );
+});
+
 Cypress.Commands.add(
-  'createHubRole',
-  (details: { name: string; description: string; permissions: string[] }) => {
-    cy.galaxykit(
-      '-i role create',
-      `--permissions ${details.permissions.join(',')}`,
-      details.name,
-      details.description
-    );
+  'deleteHubRole',
+  (
+    role: Role,
+    options?: {
+      /** Whether to fail on response codes other than 2xx and 3xx */
+      failOnStatusCode?: boolean;
+    }
+  ) => {
+    if (role?.name) {
+      cy.requestDelete(
+        `${apiPrefix}/pulp/api/v3/roles/${parsePulpIDFromURL(role.pulp_href)}`,
+        options
+      );
+    }
   }
 );
-
-Cypress.Commands.add('deleteHubRole', (roleName: string) => {
-  cy.galaxykit('role delete', roleName);
-});

@@ -1,21 +1,19 @@
-import { randomString } from '../../../framework/utils/random-string';
+import { Role } from '../../../frontend/hub/access/roles/Role';
 import { Roles } from './constants';
 
-const roleName = `galaxy.e2erole${randomString(4)}`;
+let role: Role;
 
 describe('Hub roles', () => {
   before(() => {
     cy.hubLogin();
     // Create a custom role
-    cy.createHubRole({
-      name: roleName,
-      description: `Description for ${roleName}`,
-      permissions: ['galaxy.add_namespace', 'container.namespace_change_containerdistribution'],
+    cy.createHubRole().then((createdRole: Role) => {
+      role = createdRole;
     });
   });
 
   after(() => {
-    cy.deleteHubRole(roleName);
+    cy.deleteHubRole(role);
   });
 
   it('render the roles list page', () => {
@@ -25,7 +23,7 @@ describe('Hub roles', () => {
 
   it('navigate to the details page for a role', () => {
     cy.navigateTo('hub', 'roles');
-    cy.clickTableRow(roleName);
+    cy.clickTableRow(role?.name);
     cy.url().then((currentUrl) => {
       expect(currentUrl.includes('details')).to.be.true;
       // TODO: Uncomment when roles details page is implemented
@@ -45,18 +43,14 @@ describe('Hub roles', () => {
   });
 
   it('delete a role from the list row action', () => {
-    const testRoleName = `galaxy.e2erole${randomString(4)}`;
-    cy.createHubRole({
-      name: testRoleName,
-      description: `Description for ${testRoleName}`,
-      permissions: ['galaxy.add_namespace', 'container.namespace_change_containerdistribution'],
+    cy.createHubRole().then((createdRole: Role) => {
+      cy.navigateTo('hub', 'roles');
+      cy.clickTableRowKebabAction(createdRole.name, /^Delete role$/, true);
+      cy.get('#confirm').click();
+      cy.clickButton(/^Delete role/);
+      cy.contains(/^Success$/);
+      cy.clickButton(/^Close$/);
+      cy.clickButton(/^Clear all filters$/);
     });
-    cy.navigateTo('hub', 'roles');
-    cy.clickTableRowKebabAction(testRoleName, /^Delete role$/);
-    cy.get('#confirm').click();
-    cy.clickButton(/^Delete role/);
-    cy.contains(/^Success$/);
-    cy.clickButton(/^Close$/);
-    cy.clickButton(/^Clear all filters$/);
   });
 });

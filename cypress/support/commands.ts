@@ -45,6 +45,7 @@ import './eda-commands';
 import './global-project';
 import './hub-commands';
 import './rest-commands';
+import { Role as HubRole } from '../../frontend/hub/access/roles/Role';
 
 declare global {
   namespace Cypress {
@@ -749,12 +750,8 @@ declare global {
       ): Cypress.Chainable<void>;
       deleteNamespace(namespaceName: string): Cypress.Chainable<void>;
       deleteCollectionsInNamespace(namespaceName: string): Cypress.Chainable<void>;
-      createHubRole(details: {
-        name: string;
-        description: string;
-        permissions: string[];
-      }): Cypress.Chainable<void>;
-      deleteHubRole(roleName: string): Cypress.Chainable<void>;
+      createHubRole(): Cypress.Chainable<HubRole>;
+      deleteHubRole(role: HubRole): Cypress.Chainable<void>;
     }
   }
 }
