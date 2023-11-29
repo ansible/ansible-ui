@@ -75,7 +75,6 @@ export enum AwxRoute {
   ProjectScheduleCreate = 'awx-project-schedule-create',
   ProjectScheduleEdit = 'awx-project-schedule-edit',
   ProjectSchedules = 'awx-project-schedules',
-  ProjectSurvey = 'awx-project-survey',
 
   ProjectSchedulePage = 'awx-project-schedule-page',
   ProjectScheduleDetails = 'awx-project-schedule-details',
