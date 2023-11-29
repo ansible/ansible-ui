@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
 import { randomString } from '../../framework/utils/random-string';
 import { Role } from '../../frontend/hub/access/roles/Role';
-import { pulpAPI } from '../../frontend/hub/api/formatPath';
+import { hubAPI, pulpAPI } from '../../frontend/hub/api/formatPath';
 import { parsePulpIDFromURL } from '../../frontend/hub/api/utils';
 import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
 import { HubItemsResponse } from '../../frontend/hub/useHubView';
@@ -17,10 +17,7 @@ Cypress.Commands.add('galaxykit', (operation: string, ...args: string[]) => {
   const adminPassword = Cypress.env('HUB_PASSWORD') as string;
   const galaxykitCommand =
     (Cypress.env('HUB_GALAXYKIT_COMMAND') as string) ?? 'galaxykit --ignore-certs';
-  let server = (Cypress.env('HUB_SERVER') as string).endsWith('/')
-    ? (Cypress.env('HUB_SERVER') as string) + apiPrefix.replace(/^\/+/g, '')
-    : (Cypress.env('HUB_SERVER') as string) + apiPrefix;
-  server = server.endsWith('/') ? server : server + '/';
+  const server = (Cypress.env('HUB_SERVER') as string) + apiPrefix;
   const options = { failOnNonZeroExit: false };
 
   cy.log(`${galaxykitCommand} ${operation} ${args.join(' ')}`);
@@ -58,7 +55,7 @@ Cypress.Commands.add(
       cy.wait(300);
 
       cy.requestGet<HubItemsResponse<CollectionVersionSearch>>(
-        `${apiPrefix}/v3/plugin/ansible/search/collection-versions/?namespace=${namespaceName}&name=${collectionName}`
+        hubAPI`/v3/plugin/ansible/search/collection-versions/?namespace=${namespaceName}&name=${collectionName}`
       ).then((itemsResponse) => {
         if (itemsResponse.data.length === 0) {
           waitTillPublished(maxLoops - 1);
