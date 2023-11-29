@@ -28,4 +28,9 @@ export enum PlatformRoute {
   EditOrganization = 'platform-edit-organization',
   Access = 'platform-access',
   Lightspeed = 'platform-lightspeed',
+  Authenticators = 'platform-authenticators',
+  AuthenticatorPage = 'platform-authenticator-page',
+  AuthenticatorDetails = 'platform-authenticator-details',
+  CreateAuthenticator = 'platform-create-authenticator',
+  EditAuthenticator = 'platform-edit-authenticator',
 }
