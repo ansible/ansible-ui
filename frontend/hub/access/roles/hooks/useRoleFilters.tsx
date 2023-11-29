@@ -35,7 +35,6 @@ export function useRoleFilters() {
           { label: t('All roles'), value: '' },
         ],
         placeholder: t('Filter by role type'),
-        isPinned: true,
       },
     ],
     [t]

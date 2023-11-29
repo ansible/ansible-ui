@@ -23,7 +23,7 @@ describe('Roles List', () => {
     cy.verifyPageTitle('Roles');
     cy.get('tbody').find('tr').should('have.length', 10);
     cy.contains('Role type')
-      .siblings('button[data-cy="filter-input"]')
+      .siblings('ul.pf-v5-c-chip-group__list')
       .should('contain', 'Galaxy-only roles');
   });
   it('Filter roles by name', () => {
@@ -44,6 +44,16 @@ describe('Roles List', () => {
     cy.intercept(pulpAPI`/roles/*locked=false*`).as('editableFilterRequest');
     cy.filterBySingleSelection('Editable', 'Editable');
     cy.wait('@editableFilterRequest');
+    cy.clickButton(/^Clear all filters$/);
+  });
+  it('Change filter to view all roles', () => {
+    cy.stub(useHubContext, 'useHubContext').callsFake(() => ({
+      user: mockUser,
+    }));
+    cy.mount(<Roles />);
+    cy.intercept(pulpAPI`/roles/*name__startswith=&*`).as('allRolesFilterRequest');
+    cy.filterBySingleSelection('Role type', 'All roles');
+    cy.wait('@allRolesFilterRequest');
     cy.clickButton(/^Clear all filters$/);
   });
   it('Create role button is disabled if the user is not a super user', () => {
