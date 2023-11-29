@@ -217,7 +217,7 @@
       },
       "modified": {
         "type": "datetime",
-        "label": "Last modified",
+        "label": "Modified",
         "help_text": "Timestamp when this inventory source was last modified.",
         "filterable": true
       },

@@ -80,6 +80,7 @@ export function UserDetails<T extends UserDetailsType>(props: {
         </PageDetail>
         {(user.modified || user.modified_at || user.modified_on) && (
           <LastModifiedPageDetail
+            data-cy="modified"
             format="date-time"
             value={user.modified ?? user.modified_at ?? user.modified_on}
           />

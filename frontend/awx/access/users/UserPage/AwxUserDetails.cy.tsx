@@ -15,6 +15,6 @@ describe('User details', () => {
     cy.get('[data-cy="authentication-type"]').should('contain', 'Local');
     cy.get('[data-cy="last-login"]').should('have.text', formatDateString(mockAwxUser.last_login));
     cy.get('[data-cy="created"]').should('have.text', formatDateString(mockAwxUser.created));
-    cy.get('[data-cy="modified"]').should('have.text', formatDateString(mockAwxUser.modified));
+    cy.get('[data-cy="last-modified"]').should('have.text', formatDateString(mockAwxUser.modified));
   });
 });
