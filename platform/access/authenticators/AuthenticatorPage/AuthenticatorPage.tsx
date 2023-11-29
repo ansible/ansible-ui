@@ -1,7 +1,10 @@
+import { DropdownPosition } from '@patternfly/react-core/deprecated';
+import { EditIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
   IPageAction,
-  LoadingPage,
   PageActionSelection,
   PageActionType,
   PageActions,
@@ -9,17 +12,12 @@ import {
   PageLayout,
   useGetPageUrl,
 } from '../../../../framework';
+import { LoadingPage } from '../../../../framework/components/LoadingPage';
 import { useGetItem } from '../../../../frontend/common/crud/useGet';
+import { AwxError } from '../../../../frontend/awx/common/AwxError';
 import { Authenticator } from '../../../interfaces/Authenticator';
 import { PlatformRoute } from '../../../PlatformRoutes';
-import { useTranslation } from 'react-i18next';
-import { useMemo } from 'react';
-import { ButtonVariant } from '@patternfly/react-core';
-import { DropdownPosition } from '@patternfly/react-core/deprecated';
-import { EditIcon, TrashIcon } from '@patternfly/react-icons';
-import { AwxError } from '../../../../frontend/awx/common/AwxError';
-import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
-import { gatewayAPI } from '../../../api/gateway-api-utils';
+import { PlatformAuthenticatorDetails } from './PlatformAuthenticatorDetails';
 
 export function AuthenticatorPage() {
   const { t } = useTranslation();
@@ -28,34 +26,24 @@ export function AuthenticatorPage() {
     error,
     data: authenticator,
     refresh,
-  } = useGetItem<Authenticator>(gatewayAPI`/v1/authenticators`, params.id);
+  } = useGetItem<Authenticator>(`/api/gateway/v1/authenticators`, params.id);
+
   const getPageUrl = useGetPageUrl();
 
   const itemActions: IPageAction<Authenticator>[] = useMemo(() => {
     const itemActions: IPageAction<Authenticator>[] = [
       {
-        type: PageActionType.Button,
+        type: PageActionType.Link,
         selection: PageActionSelection.Single,
-        variant: ButtonVariant.primary,
+        // variant: ButtonVariant.primary,
         isPinned: true,
         icon: EditIcon,
         label: t('Edit authenticator'),
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        onClick: (authenticator) => alert('TODO'),
-      },
-      { type: PageActionType.Seperator },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Single,
-        icon: TrashIcon,
-        label: t('Delete authenticator'),
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        onClick: (authenticator) => alert('TODO'),
-        isDanger: true,
+        href: () => getPageUrl(PlatformRoute.EditAuthenticator, { params: { id: params.id } }),
       },
     ];
     return itemActions;
-  }, [t]);
+  }, [t, getPageUrl, params.id]);
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!authenticator) return <LoadingPage breadcrumbs tabs />;
@@ -63,7 +51,7 @@ export function AuthenticatorPage() {
   return (
     <PageLayout>
       <PageHeader
-        title={authenticator?.name}
+        title={authenticator.name}
         breadcrumbs={[
           { label: t('Authenticators'), to: getPageUrl(PlatformRoute.Authenticators) },
           { label: authenticator.name },
@@ -76,15 +64,7 @@ export function AuthenticatorPage() {
           />
         }
       />
-      <PageRoutedTabs
-        backTab={{
-          label: t('Back to Authenticators'),
-          page: PlatformRoute.Authenticators,
-          persistentFilterKey: 'authenticators',
-        }}
-        tabs={[{ label: t('Details'), page: PlatformRoute.AuthenticatorDetails }]}
-        params={{ id: authenticator.id }}
-      />
+      <PlatformAuthenticatorDetails />
     </PageLayout>
   );
 }
