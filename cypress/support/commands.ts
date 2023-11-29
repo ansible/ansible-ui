@@ -39,6 +39,7 @@ import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaU
 import './auth';
 import './awx-commands';
 import { IAwxResources } from './awx-commands';
+import './awx-user-access-commands';
 import './common-commands';
 import './e2e';
 import './eda-commands';
