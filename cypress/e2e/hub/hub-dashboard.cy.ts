@@ -1,5 +1,5 @@
 import { randomString } from '../../../framework/utils/random-string';
-import { hubAPI } from '../../../frontend/hub/api/formatPath';
+import { hubAPI } from '../../support/formatApiPathForHub';
 import { HubDashboard } from './constants';
 
 const namespaceName = 'e2e_namespace_' + randomString(4, undefined, { isLowercase: true });

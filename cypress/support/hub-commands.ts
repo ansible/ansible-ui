@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
 import { randomString } from '../../framework/utils/random-string';
 import { Role } from '../../frontend/hub/access/roles/Role';
-import { hubAPI, pulpAPI } from '../../frontend/hub/api/formatPath';
+import { hubAPI, pulpAPI } from './formatApiPathForHub';
 import { parsePulpIDFromURL } from '../../frontend/hub/api/utils';
 import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
 import { HubItemsResponse } from '../../frontend/hub/useHubView';
