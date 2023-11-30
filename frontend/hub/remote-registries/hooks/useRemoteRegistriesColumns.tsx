@@ -1,6 +1,12 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ColumnTableOption, ITableColumn, TextCell, useGetPageUrl } from '../../../../framework';
+import {
+  ColumnTableOption,
+  CopyCell,
+  ITableColumn,
+  TextCell,
+  useGetPageUrl,
+} from '../../../../framework';
 import { StatusCell } from '../../../common/StatusCell';
 import { HubRoute } from '../../HubRoutes';
 import { RemoteRegistry } from '../RemoteRegistry';
@@ -37,7 +43,7 @@ export function useRemoteRegistriesColumns(_options?: {
       },
       {
         header: t('URL'),
-        cell: (remoteRegistry) => <TextCell text={remoteRegistry.url} />,
+        cell: (remoteRegistry) => <CopyCell text={remoteRegistry.url} />,
       },
       {
         header: t('Created'),
