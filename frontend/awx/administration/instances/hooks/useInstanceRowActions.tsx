@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { EditIcon, HeartbeatIcon } from '@patternfly/react-icons';
+import { PencilAltIcon, HeartbeatIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -56,7 +56,7 @@ export function useInstanceRowActions(onComplete: (instances: Instance[]) => voi
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        icon: EditIcon,
+        icon: PencilAltIcon,
         isPinned: true,
         label: t('Edit instance'),
         onClick: (instance) => pageNavigate(AwxRoute.EditInstance, { params: { id: instance.id } }),
