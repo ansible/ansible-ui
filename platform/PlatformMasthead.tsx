@@ -1,5 +1,5 @@
 import { DropdownItem, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
-import { UserCircleIcon } from '@patternfly/react-icons';
+import { ExternalLinkAltIcon, QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSWRConfig } from 'swr';
@@ -9,9 +9,9 @@ import { PageSettingsIcon } from '../framework/PageMasthead/PageSettingsIcon';
 import { PageThemeSwitcher } from '../framework/PageMasthead/PageThemeSwitcher';
 import { PageRefreshIcon } from '../frontend/common/PageRefreshIcon';
 import { PlatformRoute } from './PlatformRoutes';
+import { gatewayAPI } from './api/gateway-api-utils';
 import { useActivePlatformUser } from './hooks/useActivePlatformUser';
 import PlatformIcon from './platform-icon.svg';
-import { gatewayAPI } from './api/gateway-api-utils';
 
 export function PlatformMasthead() {
   const { t } = useTranslation();
@@ -47,13 +47,13 @@ export function PlatformMasthead() {
         {/* <ToolbarItem>
           <PageNotificationsIcon count={0} onClick={() => pageNavigate(PlatformRoute.Notifications)} />
         </ToolbarItem> */}
-        {/* <ToolbarItem>
+        <ToolbarItem>
           <PageMastheadDropdown id="help-menu" icon={<QuestionCircleIcon />}>
             <DropdownItem
               id="documentation"
               icon={<ExternalLinkAltIcon />}
               component="a"
-              href={`${getDocsBaseUrl(config)}/html/userguide/index.html`}
+              href={`https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform`}
               target="_blank"
               data-cy="masthead-documentation"
             >
@@ -61,13 +61,20 @@ export function PlatformMasthead() {
             </DropdownItem>
             <DropdownItem
               id="about"
+              onClick={() => pageNavigate(PlatformRoute.QuickStarts)}
+              data-cy="masthead-quickstarts"
+            >
+              {t('Quickstarts')}
+            </DropdownItem>
+            {/* <DropdownItem
+              id="about"
               onClick={() => openAnsibleAboutModal({})}
               data-cy="masthead-about"
             >
               {t('About')}
-            </DropdownItem>
+            </DropdownItem> */}
           </PageMastheadDropdown>
-        </ToolbarItem> */}
+        </ToolbarItem>
         <ToolbarItem>
           <PageMastheadDropdown
             id="account-menu"

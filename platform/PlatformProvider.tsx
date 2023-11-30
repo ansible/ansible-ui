@@ -1,7 +1,10 @@
 // A react context that contains the serveices of the platform
 // Path: platform/PlatformProvider.tsx
 
+import { Page } from '@patternfly/react-core';
 import { createContext, useContext, useMemo } from 'react';
+import { PageLayout } from '../framework';
+import { LoadingState } from '../framework/components/LoadingState';
 import { useGet } from '../frontend/common/crud/useGet';
 import { gatewayAPI } from './api/gateway-api-utils';
 import { Service } from './interfaces/Service';
@@ -17,6 +20,15 @@ export const usePlatformContext = () => useContext(PlatformContext);
 export function PlatformProvider(props: { children: React.ReactNode }) {
   const { children } = props;
   const servicesResponse = useGet<{ results: Service[] }>(gatewayAPI`/v1/services`);
+  if (!servicesResponse.data) {
+    return (
+      <Page>
+        <PageLayout>
+          <LoadingState />
+        </PageLayout>
+      </Page>
+    );
+  }
   return (
     <PlatformContext.Provider value={{ services: servicesResponse.data?.results ?? [] }}>
       {children}
