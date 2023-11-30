@@ -4,6 +4,7 @@
 import { randomString } from '../../../../framework/utils/random-string';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 // These tests do not modify the project, thus can use the globalProject
 describe('projects', () => {
@@ -159,7 +160,7 @@ describe('project edit and delete tests', () => {
     cy.get(`[data-cy="row-id-${project.id}"]`).within(() => {
       cy.get('[data-cy="name-column-cell"]').click();
     });
-    cy.intercept('POST', `/api/v2/projects/${project.id}/copy/`).as('copiedProject');
+    cy.intercept('POST', awxAPI`/projects/${project.id}/copy/`).as('copiedProject');
     cy.get('[data-cy="actions-dropdown"]')
       .click()
       .then(() => {
@@ -172,7 +173,7 @@ describe('project edit and delete tests', () => {
         cy.get('[data-cy="Projects"]').eq(1).click();
         cy.intercept(
           'GET',
-          `/api/v2/projects/?name__icontains=${endOfProject}&order_by=name&page=1&page_size=10`
+          awxAPI`/projects/?name__icontains=${endOfProject}&order_by=name&page=1&page_size=10`
         ).as('searchResults');
         cy.searchAndDisplayResource(endOfProject);
         cy.wait('@searchResults')
@@ -188,7 +189,7 @@ describe('project edit and delete tests', () => {
     const endOfProject = project.name.split(' ').slice(-1).toString();
     cy.navigateTo('awx', 'projects');
     cy.searchAndDisplayResource(endOfProject);
-    cy.intercept('POST', `/api/v2/projects/${project.id}/copy/`).as('copiedProject');
+    cy.intercept('POST', awxAPI`/projects/${project.id}/copy/`).as('copiedProject');
     cy.get(`[data-cy="row-id-${project.id}"]`).within(() => {
       cy.get('[data-cy="actions-dropdown"]')
         .click()
@@ -202,7 +203,7 @@ describe('project edit and delete tests', () => {
         expect(response?.statusCode).to.eq(201);
         cy.intercept(
           'GET',
-          `/api/v2/projects/?or__name__icontains=${endOfProject}&or__name__icontains=${endOfProject}&order_by=name&page=1&page_size=10`
+          awxAPI`/projects/?or__name__icontains=${endOfProject}&or__name__icontains=${endOfProject}&order_by=name&page=1&page_size=10`
         ).as('searchResults');
         cy.searchAndDisplayResource(endOfProject);
         cy.wait('@searchResults')
@@ -228,7 +229,7 @@ describe('project edit and delete tests', () => {
 
   // TODO - Move this to a unit test as on an e2e server the project might sync too fast and cancel will not be avail/enabled
   // it('can cancel project sync from projects list table row kebab menu', () => {
-  //   cy.requestPost<Project>('/api/v2/projects/', {
+  //   cy.requestPost<Project>(awxAPI`/projects/`, {
   //     name: 'E2E Project ' + randomString(4),
   //     organization: organization.id,
   //     scm_type: 'git', // Only projects with scm_type and scm_url can be synced
@@ -254,7 +255,7 @@ describe('project edit and delete tests', () => {
 
   // TODO - Move this to a unit test as on an e2e server the project might sync too fast and cancel will not be avail/enabled
   // it('can cancel project sync from projects list toolbar ', () => {
-  //   cy.requestPost<Project>('/api/v2/projects/', {
+  //   cy.requestPost<Project>(awxAPI`/projects/`, {
   //     name: 'E2E Project ' + randomString(4),
   //     organization: organization.id,
   //     scm_type: 'git', // Only projects with scm_type and scm_url can be synced
@@ -293,7 +294,7 @@ describe('project edit and delete tests', () => {
     cy.get('[data-cy="page-title"]').should('contain', `${project.name}`);
     cy.clickPageAction('delete-project');
     cy.get('.pf-v5-c-modal-box').within(() => {
-      cy.intercept('DELETE', `/api/v2/projects/${project.id}/`).as('deleted');
+      cy.intercept('DELETE', awxAPI`/projects/${project.id}/`).as('deleted');
       cy.get('#confirm').click();
       cy.clickButton(/^Delete project/);
       cy.wait('@deleted');

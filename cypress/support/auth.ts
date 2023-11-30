@@ -1,3 +1,4 @@
+import { awxAPI } from './formatApiPathForAwx';
 import { hubAPI } from './formatApiPathForHub';
 
 Cypress.Commands.add('requiredVariablesAreSet', (requiredVariables: string[]) => {
@@ -37,7 +38,7 @@ Cypress.Commands.add('awxLogin', () => {
     },
     {
       validate: () => {
-        cy.request({ method: 'GET', url: '/api/v2/me' });
+        cy.request({ method: 'GET', url: awxAPI`/me` });
       },
       cacheAcrossSpecs: true,
     }
