@@ -5,6 +5,7 @@ import { randomString } from '../../../../framework/utils/random-string';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Team } from '../../../../frontend/awx/interfaces/Team';
 import { User } from '../../../../frontend/awx/interfaces/User';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 describe('teams', function () {
   let team: Team;
@@ -40,7 +41,7 @@ describe('teams', function () {
 
   it('can create a basic team', function () {
     const teamName = 'E2E Team ' + randomString(4);
-    cy.intercept('POST', '/api/v2/teams/').as('newTeam');
+    cy.intercept('POST', awxAPI`/teams/`).as('newTeam');
     cy.navigateTo('awx', 'teams');
     cy.clickLink(/^Create team$/);
     cy.get('[data-cy="name"]').type(teamName);
@@ -53,7 +54,7 @@ describe('teams', function () {
       .its('response.body')
       .then((team: Team) => {
         cy.verifyPageTitle(team.name);
-        cy.intercept('DELETE', `/api/v2/teams/${team.id}/`).as('deleted');
+        cy.intercept('DELETE', awxAPI`/teams/${team.id.toString()}/`).as('deleted');
         cy.selectDetailsPageKebabAction('delete-team');
         cy.wait('@deleted')
           .its('response')
@@ -64,10 +65,10 @@ describe('teams', function () {
   });
 
   it('can remove users from the team via the teams list row item', function () {
-    cy.requestPost<User>(`/api/v2/users/${user1.id.toString()}/roles/`, {
+    cy.requestPost<User>(awxAPI`/users/${user1.id.toString()}/roles/`, {
       id: team.summary_fields.object_roles.member_role.id,
     });
-    cy.requestPost<User>(`/api/v2/users/${user2.id.toString()}/roles/`, {
+    cy.requestPost<User>(awxAPI`/users/${user2.id.toString()}/roles/`, {
       id: team.summary_fields.object_roles.member_role.id,
     });
     cy.navigateTo('awx', 'teams');
@@ -125,11 +126,11 @@ describe('teams', function () {
     });
     cy.getTableRowByText(user1.username).should('be.visible');
     cy.getTableRowByText(user2.username).should('be.visible');
-    cy.requestPost<User>(`/api/v2/users/${user1.id.toString()}/roles/`, {
+    cy.requestPost<User>(awxAPI`/users/${user1.id.toString()}/roles/`, {
       id: team.summary_fields.object_roles.member_role.id,
       disassociate: true,
     });
-    cy.requestPost<User>(`/api/v2/users/${user2.id.toString()}/roles/`, {
+    cy.requestPost<User>(awxAPI`/users/${user2.id.toString()}/roles/`, {
       id: team.summary_fields.object_roles.member_role.id,
       disassociate: true,
     });
@@ -137,10 +138,10 @@ describe('teams', function () {
   });
 
   it('can remove users from the team via the team access tab toolbar', function () {
-    cy.requestPost<User>(`/api/v2/users/${user1.id.toString()}/roles/`, {
+    cy.requestPost<User>(awxAPI`/users/${user1.id.toString()}/roles/`, {
       id: team.summary_fields.object_roles.member_role.id,
     });
-    cy.requestPost<User>(`/api/v2/users/${user2.id.toString()}/roles/`, {
+    cy.requestPost<User>(awxAPI`/users/${user2.id.toString()}/roles/`, {
       id: team.summary_fields.object_roles.member_role.id,
     });
     cy.navigateTo('awx', 'teams');
@@ -161,7 +162,7 @@ describe('teams', function () {
   });
 
   it('can remove a single user from the team via the team access tab row action', function () {
-    cy.requestPost<User>(`/api/v2/users/${user1.id.toString()}/roles/`, {
+    cy.requestPost<User>(awxAPI`/users/${user1.id.toString()}/roles/`, {
       id: team.summary_fields.object_roles.member_role.id,
     });
     cy.navigateTo('awx', 'teams');
@@ -179,10 +180,10 @@ describe('teams', function () {
   });
 
   it('can remove a role from a user via the team access tab row action', function () {
-    cy.requestPost<User>(`/api/v2/users/${user1.id.toString()}/roles/`, {
+    cy.requestPost<User>(awxAPI`/users/${user1.id.toString()}/roles/`, {
       id: team.summary_fields.object_roles.member_role.id,
     });
-    cy.requestPost<User>(`/api/v2/users/${user1.id.toString()}/roles/`, {
+    cy.requestPost<User>(awxAPI`/users/${user1.id.toString()}/roles/`, {
       id: team.summary_fields.object_roles.read_role.id,
     });
     cy.navigateTo('awx', 'teams');
@@ -203,7 +204,7 @@ describe('teams', function () {
         `div[data-ouia-component-id="Read-${team.summary_fields.object_roles.read_role.id}"]`
       ).should('not.exist');
     });
-    cy.requestPost<User>(`/api/v2/users/${user1.id.toString()}/roles/`, {
+    cy.requestPost<User>(awxAPI`/users/${user1.id.toString()}/roles/`, {
       id: team.summary_fields.object_roles.member_role.id,
       disassociate: true,
     });
@@ -230,7 +231,7 @@ describe('teams', function () {
     cy.clickTableRow(team.name);
     cy.verifyPageTitle(team.name);
     cy.clickPageAction('delete-team');
-    cy.intercept('DELETE', `/api/v2/teams/${team.id}/`).as('deleted');
+    cy.intercept('DELETE', awxAPI`/teams/${team.id.toString()}/`).as('deleted');
     cy.get('#confirm').click();
     cy.clickButton(/^Delete team/);
     cy.wait('@deleted')
@@ -252,7 +253,7 @@ describe('teams', function () {
       cy.navigateTo('awx', 'teams');
       cy.clickTableRowKebabAction(testTeam.name, 'delete-team');
       cy.get('#confirm').click();
-      cy.intercept('DELETE', `/api/v2/teams/${testTeam.id}/`).as('deleted');
+      cy.intercept('DELETE', awxAPI`/teams/${testTeam.id.toString()}/`).as('deleted');
       cy.clickButton(/^Delete team/);
       cy.wait('@deleted')
         .its('response')
@@ -271,7 +272,7 @@ describe('teams', function () {
       cy.selectTableRow(testTeam.name);
       cy.clickToolbarKebabAction('delete-selected-teams');
       cy.get('#confirm').click();
-      cy.intercept('DELETE', `/api/v2/teams/${testTeam.id}/`).as('deleted');
+      cy.intercept('DELETE', awxAPI`/teams/${testTeam.id.toString()}/`).as('deleted');
       cy.clickButton(/^Delete team/);
       cy.wait('@deleted')
         .its('response')

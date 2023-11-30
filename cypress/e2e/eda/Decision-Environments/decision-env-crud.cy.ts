@@ -1,5 +1,6 @@
 //Tests a user's ability to create, edit, and delete an decision environment in the EDA UI.
 import { randomString } from '../../../../framework/utils/random-string';
+import { edaAPI } from '../../../support/formatApiPathForEDA';
 describe('EDA decision environment- Create, Edit, Delete', () => {
   before(() => {
     cy.edaLogin();
@@ -34,7 +35,7 @@ describe('EDA decision environment- Create, Edit, Delete', () => {
       cy.navigateTo('eda', 'decision-environments');
       cy.verifyPageTitle('Decision Environments');
       /*
-      DE's are displayed by default in card view hence clickTableRow() doesn't work 
+      DE's are displayed by default in card view hence clickTableRow() doesn't work
       cy.clickTableRow(edaDE.name);
       */
       cy.get('button[aria-label="table view"]').click();
@@ -63,7 +64,7 @@ describe('EDA decision environment- Create, Edit, Delete', () => {
         cy.get('a').click();
       });
       cy.verifyPageTitle(edaDE.name);
-      cy.intercept('DELETE', `/api/eda/v1/decision-environments/${edaDE.id}/`).as('deleteDE');
+      cy.intercept('DELETE', edaAPI`/decision-environments/${edaDE.id.toString()}/`).as('deleteDE');
       cy.clickPageAction('delete-decision-environment');
       cy.clickModalConfirmCheckbox();
       cy.clickModalButton('Delete decision environments');

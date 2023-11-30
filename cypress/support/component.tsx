@@ -30,6 +30,7 @@ import { ActiveUserProvider } from '../../frontend/common/useActiveUser';
 import './commands';
 
 import '../../frontend/common/i18n';
+import { awxAPI } from './formatApiPathForAwx';
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
@@ -69,7 +70,7 @@ Cypress.Commands.add('mount', (component, route, activeUserFixture) => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/me/',
+        url: awxAPI`/me/`,
         hostname: 'localhost',
       },
       { count: 1, results: [activeUser] }
