@@ -98,6 +98,8 @@ export function EdgeContextMenu(
 ) {
   const data = element.getData() as { tagStatus: string };
 
+  // element.remove();  // TODO: remove link
+
   const items = useEdgeMenuItems(t);
   return items.map((item) => {
     if (item.label === '-') {

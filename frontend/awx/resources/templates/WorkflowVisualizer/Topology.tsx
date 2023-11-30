@@ -1,6 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
 import {
   CREATE_CONNECTOR_DROP_TYPE,
   ComponentFactory,
@@ -27,7 +26,7 @@ import {
   withDragNode,
   withPanZoom,
   withSelection,
-  TopologyView as PFTopologyView,
+  TopologyView,
   GraphElement,
   ElementModel,
   withCreateConnector,
@@ -39,27 +38,17 @@ import {
   CustomEdge,
   CustomNode,
   DeletedNode,
+  EdgeContextMenu,
   Legend,
   NodeContextMenu,
-  VisualizerWrapper,
+  WorkflowVisualizerToolbar,
 } from './components';
 import { WorkflowVisualizerNodeDetails } from './WorkflowVisualizerNodeDetails';
-import { useWorkflowVisualizerToolbarActions } from './hooks/useWorkflowVisualizerToolbarActions';
-import { LayoutNode, GraphNode, EdgeStatus } from './types';
+import { EdgeStatus } from './types';
 import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
 import type { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
-import { EdgeContextMenu } from './components/EdgeContextMenu';
-
-const TopologyView = styled(PFTopologyView)`
-  & .pf-topology-view__project-toolbar {
-    ${(props: { $isExpanded: boolean }) => !props.$isExpanded && 'flex-wrap: wrap;'}
-    flex: 1;
-  }
-
-  & .pf-topology-view__project-toolbar > :first-child {
-    ${(props: { $isExpanded: boolean }) => !props.$isExpanded && 'flex: 100%; padding-bottom:20px'}
-  }
-`;
+import { ViewOptionsProvider, ViewOptionsContext, useViewOptions } from './ViewOptionsProvider';
+import { ToolbarHeader } from './components/WorkflowVisualizerToolbar';
 
 const GRAPH_ID = 'workflow-visualizer-graph';
 const CONNECTOR_SOURCE_DROP = 'connector-src-drop';
@@ -73,40 +62,30 @@ const graphModel: Model = {
     id: GRAPH_ID,
     type: 'graph',
     layout: 'Dagre',
+    visible: false,
   },
 };
 
 interface TopologyProps {
   data: {
-    nodes: WorkflowNode[];
+    workflowNodes: WorkflowNode[];
     template: WorkflowJobTemplate;
   };
 }
 
-export const Visualizer = ({ data: { nodes = [], template } }: TopologyProps) => {
+export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyProps) => {
   const { t } = useTranslation();
-  const [isExpanded, setIsExpanded] = useState<boolean>(false);
-  const [layout, setLayout] = useState<LayoutNode[]>([]);
   const [selectedNode, setSelectedNode] = useState<WorkflowNode | undefined>(undefined);
-  const [showLegend, setShowLegend] = useState<boolean>(false);
-  const visualizationRef = useRef<Visualization>();
-  const visualization = visualizationRef.current;
 
-  const toolbarActions = useWorkflowVisualizerToolbarActions(
-    nodes,
-    [isExpanded, setIsExpanded],
-    template
-  );
   const handleSelectedNode = useCallback(
     (clickedNodeIdentifier: string[]) => {
-      const clickedNodeData = nodes.find((node) => node.id.toString() === clickedNodeIdentifier[0]);
+      const clickedNodeData = workflowNodes.find(
+        (node) => node.id.toString() === clickedNodeIdentifier[0]
+      );
       setSelectedNode(clickedNodeData);
     },
-    [nodes]
+    [workflowNodes]
   );
-  function toggleLegend() {
-    setShowLegend(!showLegend);
-  }
 
   const nodeContextMenu = NodeContextMenu();
 
@@ -126,7 +105,11 @@ export const Visualizer = ({ data: { nodes = [], template } }: TopologyProps) =>
               CONNECTOR_TARGET_DROP,
               CREATE_CONNECTOR_DROP_TYPE,
             ])
-          )(withDragNode(nodeDragSourceSpec('node', true, true))(DeletedNode));
+          )(
+            withDragNode(nodeDragSourceSpec('node', true, true))(
+              withSelection({ multiSelect: true })(DeletedNode)
+            )
+          );
         default:
           switch (kind) {
             case ModelKind.graph:
@@ -220,23 +203,7 @@ export const Visualizer = ({ data: { nodes = [], template } }: TopologyProps) =>
     },
     [t]
   );
-
-  useEffect(() => {
-    const layoutNodes = nodes.map((node) => {
-      return {
-        ...node,
-        runAfterTasks: [],
-      };
-    });
-
-    return setLayout(() => [...layoutNodes]);
-  }, [nodes]);
-
-  useEffect(() => {
-    if (!visualizationRef.current) {
-      visualizationRef.current = createVisualization();
-    }
-  }, [createVisualization, visualization]);
+  const visualization = createVisualization();
 
   useEffect(() => {
     if (!visualization) {
@@ -244,7 +211,7 @@ export const Visualizer = ({ data: { nodes = [], template } }: TopologyProps) =>
     }
 
     const edges: EdgeModel[] = [];
-    const nodes: GraphNode[] = layout.map((n) => {
+    const nodes = workflowNodes.map((n) => {
       const nodeId = n.id.toString();
       let nodeType = 'node';
       let nodeName = n.summary_fields?.unified_job_template?.name;
@@ -264,7 +231,7 @@ export const Visualizer = ({ data: { nodes = [], template } }: TopologyProps) =>
         edges.push(createEdge(nodeId, id.toString(), EdgeStatus.info));
       });
 
-      const node: GraphNode = {
+      const node = {
         id: nodeId,
         type: nodeType,
         label: nodeName,
@@ -272,87 +239,90 @@ export const Visualizer = ({ data: { nodes = [], template } }: TopologyProps) =>
         height: NODE_DIAMETER,
         shape: NodeShape.circle,
         data: {
-          jobType: n.summary_fields?.unified_job_template?.unified_job_type,
           id: nodeId,
+          resource: n,
         },
       };
 
       return node;
     });
 
-    const model: Model = {
+    const model = {
       edges,
       nodes,
       graph: {
         id: GRAPH_ID,
         type: 'graph',
         layout: 'Dagre',
+        visible: true,
       },
     };
 
     visualization.fromModel(model, true);
-  }, [t, layout, visualization, createEdge]);
-
-  if (!visualization) {
-    return null;
-  }
+  }, [t, visualization, createEdge, workflowNodes]);
 
   return (
     <VisualizationProvider controller={visualization}>
-      <VisualizerWrapper isExpanded={isExpanded}>
-        <TopologyView
-          $isExpanded={isExpanded}
-          data-cy="workflow-visualizer"
-          contextToolbar={toolbarActions}
-          controlBar={
-            <TopologyControlBar
-              controlButtons={createTopologyControlButtons({
-                ...defaultControlButtonsOptions,
-                zoomInCallback: action(() => {
-                  visualization.getGraph().scaleBy(4 / 3);
-                }),
-                zoomOutCallback: action(() => {
-                  visualization.getGraph().scaleBy(0.75);
-                }),
-                fitToScreenCallback: action(() => {
-                  visualization.getGraph().fit(80);
-                }),
-                resetViewCallback: action(() => {
-                  visualization.getGraph().reset();
-                  visualization.getGraph().layout();
-                }),
-                legend: true,
-                legendCallback: toggleLegend,
-              })}
-            />
-          }
-          sideBarOpen={selectedNode !== undefined}
-          sideBarResizable
-          sideBar={
-            selectedNode ? (
-              <WorkflowVisualizerNodeDetails
-                setSelectedNode={setSelectedNode}
-                selectedNode={selectedNode}
-              />
-            ) : null
-          }
-        >
-          <VisualizerGraph selectedNode={selectedNode} isEmpty={!nodes.length} />
-          {showLegend && <Legend />}
-        </TopologyView>
-      </VisualizerWrapper>
+      <ViewOptionsProvider>
+        {/* tools provider name */}
+        <ViewOptionsContext.Consumer>
+          {({ isFullScreen, isLegendOpen, toggleLegend }) => {
+            return (
+              <TopologyView
+                data-cy="workflow-visualizer"
+                contextToolbar={isFullScreen ? null : <ToolbarHeader />}
+                viewToolbar={<WorkflowVisualizerToolbar />}
+                controlBar={
+                  <TopologyControlBar
+                    controlButtons={createTopologyControlButtons({
+                      ...defaultControlButtonsOptions,
+                      zoomInCallback: action(() => {
+                        visualization.getGraph().scaleBy(4 / 3);
+                      }),
+                      zoomOutCallback: action(() => {
+                        visualization.getGraph().scaleBy(0.75);
+                      }),
+                      fitToScreenCallback: action(() => {
+                        visualization.getGraph().fit(80);
+                      }),
+                      resetViewCallback: action(() => {
+                        visualization.getGraph().reset();
+                        visualization.getGraph().layout();
+                      }),
+                      legend: true,
+                      legendCallback: toggleLegend,
+                    })}
+                  />
+                }
+                sideBarOpen={selectedNode !== undefined}
+                sideBarResizable
+                sideBar={
+                  selectedNode ? (
+                    <WorkflowVisualizerNodeDetails
+                      setSelectedNode={setSelectedNode}
+                      selectedNode={selectedNode}
+                    />
+                  ) : null
+                }
+              >
+                <VisualizerGraph state={{ selectedNode, workflowTemplate: template }} />
+                {isLegendOpen && <Legend />}
+              </TopologyView>
+            );
+          }}
+        </ViewOptionsContext.Consumer>
+      </ViewOptionsProvider>
     </VisualizationProvider>
   );
 };
 
 function VisualizerGraph({
-  selectedNode,
-  isEmpty,
+  state,
 }: {
-  selectedNode?: WorkflowNode;
-  isEmpty: boolean;
+  state: { selectedNode?: WorkflowNode; workflowTemplate: WorkflowJobTemplate };
 }) {
   const { t } = useTranslation();
+  const { isEmpty } = useViewOptions();
 
   if (isEmpty) {
     return (
@@ -364,5 +334,5 @@ function VisualizerGraph({
     );
   }
 
-  return <VisualizationSurface state={selectedNode} />;
+  return <VisualizationSurface state={state} />;
 }
