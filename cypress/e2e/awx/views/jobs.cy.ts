@@ -6,6 +6,7 @@ import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { JobTemplate } from '../../../../frontend/awx/interfaces/JobTemplate';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 describe('jobs', () => {
   let inventory: Inventory;
@@ -29,7 +30,7 @@ describe('jobs', () => {
         jobTemplate = jt;
 
         // Launch job to populate jobs list
-        cy.awxRequestPost(`/api/v2/job_templates/${jobTemplate.id.toString()}/launch/`, {}).then(
+        cy.awxRequestPost(awxAPI`/job_templates/${jobTemplate.id.toString()}/launch/`, {}).then(
           (jl) => {
             jobList = jl;
           }
@@ -40,7 +41,7 @@ describe('jobs', () => {
 
   after(() => {
     const jobId = jobList?.id ? jobList?.id.toString() : '';
-    cy.awxRequestDelete(`/api/v2/jobs/${jobId}/`, { failOnStatusCode: false });
+    cy.awxRequestDelete(awxAPI`/jobs/${jobId}/`, { failOnStatusCode: false });
     cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
   });
@@ -133,7 +134,7 @@ describe('job delete', () => {
         jobTemplate = jt;
 
         // Launch job to populate jobs list
-        cy.awxRequestPost(`/api/v2/job_templates/${jobTemplate.id.toString()}/launch/`, {}).then(
+        cy.awxRequestPost(awxAPI`/job_templates/${jobTemplate.id.toString()}/launch/`, {}).then(
           (jl) => {
             jobList = jl;
           }
@@ -144,14 +145,14 @@ describe('job delete', () => {
 
   afterEach(() => {
     const jobId = jobList?.id ? jobList?.id.toString() : '';
-    cy.awxRequestDelete(`/api/v2/jobs/${jobId}/`, { failOnStatusCode: false });
+    cy.awxRequestDelete(awxAPI`/jobs/${jobId}/`, { failOnStatusCode: false });
     cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
   });
 
   it('deletes a job from the jobs list row', () => {
     const jobTemplateId = jobTemplate.id ? jobTemplate.id.toString() : '';
-    cy.requestPost<UnifiedJobList>(`/api/v2/job_templates/${jobTemplateId}/launch/`, {}).then(
+    cy.requestPost<UnifiedJobList>(awxAPI`/job_templates/${jobTemplateId}/launch/`, {}).then(
       (testJob) => {
         cy.navigateTo('awx', 'jobs');
         const jobId = testJob.id ? testJob.id.toString() : '';
@@ -171,14 +172,14 @@ describe('job delete', () => {
 
   it('deletes a job from the jobs list toolbar', () => {
     cy.requestPost<UnifiedJobList>(
-      `/api/v2/job_templates/${jobTemplate.id.toString()}/launch/`,
+      awxAPI`/job_templates/${jobTemplate.id.toString()}/launch/`,
       {} as UnifiedJobList
     ).then((jobList) => {
       cy.navigateTo('awx', 'jobs');
       const jobId = jobList.id ? jobList.id.toString() : '';
       cy.intercept(
         'GET',
-        `/api/v2/unified_jobs/?not__launch_type=sync&id=${jobId}&order_by=-finished&page=1&page_size=10`
+        awxAPI`/unified_jobs/?not__launch_type=sync&id=${jobId}&order_by=-finished&page=1&page_size=10`
       ).as('jobRun');
       cy.filterTableByTypeAndText('ID', jobId);
       const jobName = jobList.name ? jobList.name : '';

@@ -1,10 +1,11 @@
 import { InstanceGroup } from '../../../../frontend/awx/interfaces/InstanceGroup';
 import { MeshVisualizer } from '../../../../frontend/awx/interfaces/MeshVisualizer';
 import { Instance } from '../../../../frontend/awx/interfaces/generated-from-swagger/api';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 beforeEach(() => {
-  cy.intercept({ method: 'GET', url: '/api/v2/mesh_visualizer/' }).as('getMeshVisualizer');
-  cy.intercept({ method: 'GET', url: '/api/v2/instances/*/instance_groups/' }).as(
+  cy.intercept({ method: 'GET', url: awxAPI`/mesh_visualizer/` }).as('getMeshVisualizer');
+  cy.intercept({ method: 'GET', url: awxAPI`/instances/*/instance_groups/` }).as(
     'getInstanceGroups'
   );
   cy.intercept(
@@ -68,7 +69,7 @@ describe('Topology view', () => {
   it('should show adjust instance forks when instance forks slider is adjusted', () => {
     // Adjusting instance capacity while other concurrent tests are running could have unwanted side-effects affecting job runs. We should mock the response data in this scenario.
     cy.intercept(
-      { method: 'GET', url: '/api/v2/instances/1/' },
+      { method: 'GET', url: awxAPI`/instances/1/` },
       { fixture: 'instance_without_install_bundle.json' }
     ).as('getInstance');
     cy.navigateTo('awx', 'topology-view');
@@ -95,7 +96,7 @@ describe('Topology view', () => {
   });
   it('should show enabled/disabled when instance is toggled from sidebar', () => {
     // Enabling/disabling an instance while other concurrent tests are running could have unwanted side-effects affecting job runs. We should mock the response data in this scenario.
-    cy.intercept({ method: 'GET', url: '/api/v2/instances/1/' }).as('getInstance');
+    cy.intercept({ method: 'GET', url: awxAPI`/instances/1/` }).as('getInstance');
     cy.navigateTo('awx', 'topology-view');
     cy.wait('@getMeshVisualizer')
       .its('response.body')
@@ -131,7 +132,7 @@ describe('Topology view', () => {
     /**
      Only certain node types have install bundles, however creating an instance via the API requires that a user also manually download the respective install bundle and SSH into the machine in order to run a few scripts to register the new instance(s) and update the mesh. See https://docs.ansible.com/automation-controller/4.4/html/administration/instances.html#add-an-instance. In our current automated test environment this would be complicated to replicate so a fixture with the requisite field is provided instead. This also means we can skip the resources clean up step.
     */
-    cy.intercept({ method: 'GET', url: '/api/v2/instances/1/' }, { fixture: 'instance.json' }).as(
+    cy.intercept({ method: 'GET', url: awxAPI`/instances/1/` }, { fixture: 'instance.json' }).as(
       'getInstanceWithInstallBundle'
     );
     cy.navigateTo('awx', 'topology-view');

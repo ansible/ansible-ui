@@ -3,6 +3,7 @@
 import { randomString } from '../../../../framework/utils/random-string';
 import { Credential } from '../../../../frontend/awx/interfaces/Credential';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 describe('credentials', () => {
   let organization: Organization;
@@ -11,17 +12,19 @@ describe('credentials', () => {
   before(() => {
     cy.awxLogin();
 
-    cy.requestPost<Organization>('/api/v2/organizations/', {
+    cy.requestPost<Organization>(awxAPI`/organizations/`, {
       name: 'E2E Credentials ' + randomString(4),
     }).then((testOrg) => (organization = testOrg));
   });
 
   after(() => {
-    cy.requestDelete(`/api/v2/organizations/${organization.id}/`, { failOnStatusCode: false });
+    cy.requestDelete(awxAPI`/organizations/${organization.id.toString()}/`, {
+      failOnStatusCode: false,
+    });
   });
 
   beforeEach(() => {
-    cy.requestPost<Credential>('/api/v2/credentials/', {
+    cy.requestPost<Credential>(awxAPI`/credentials/`, {
       name: 'E2E Credential ' + randomString(4),
       credential_type: 1,
       organization: organization.id,
@@ -30,7 +33,9 @@ describe('credentials', () => {
   });
 
   afterEach(() => {
-    cy.requestDelete(`/api/v2/credentials/${credential.id}/`, { failOnStatusCode: false });
+    cy.requestDelete(awxAPI`/credentials/${credential.id.toString()}/`, {
+      failOnStatusCode: false,
+    });
   });
 
   it('credentials page', () => {
