@@ -1,7 +1,7 @@
 export enum AwxRoute {
   Awx = 'awx',
 
-  Dashboard = 'awx-dashboard',
+  Overview = 'awx-overview',
 
   // Views
 

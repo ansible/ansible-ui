@@ -1,7 +1,7 @@
 export enum HubRoute {
   Hub = 'hub',
 
-  Dashboard = 'hub-dashboard',
+  Overview = 'hub-overview',
 
   // Automation Content
   Namespaces = 'hub-namespaces',
@@ -44,6 +44,9 @@ export enum HubRoute {
 
   // Access
   Access = 'hub-access',
+  Organizations = 'hub-organizations',
+  Teams = 'hub-teams',
+  Users = 'hub-users',
   APIToken = 'hub-api-token',
   Roles = 'hub-roles',
   CreateRole = 'hub-create-role',
