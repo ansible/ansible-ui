@@ -2,6 +2,7 @@ import { AwxItemsResponse } from '../../../../frontend/awx/common/AwxItemsRespon
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Job } from '../../../../frontend/awx/interfaces/Job';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 describe('Dashboard: General UI tests - resources count and empty state check', () => {
   before(() => {
@@ -80,7 +81,7 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
   });
 
   it('checks jobs count and the max # of jobs in the table', () => {
-    cy.intercept('GET', '/api/v2/unified_jobs/?order_by=-finished&page=1&page_size=10').as(
+    cy.intercept('GET', awxAPI`/unified_jobs/?order_by=-finished&page=1&page_size=10`).as(
       'getJobs'
     );
     cy.navigateTo('awx', 'overview');
@@ -190,9 +191,9 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
   // This should be a component test
   it('admin users see default empty state with Create {resource} button', () => {
     cy.navigateTo('awx', 'overview');
-    cy.intercept({ method: 'GET', url: '/api/v2/projects/*' }, { fixture: 'emptyList.json' });
-    cy.intercept({ method: 'GET', url: '/api/v2/inventories/*' }, { fixture: 'emptyList.json' });
-    cy.intercept({ method: 'GET', url: '/api/v2/unified_jobs/*' }, { fixture: 'emptyList.json' });
+    cy.intercept({ method: 'GET', url: awxAPI`/projects/*` }, { fixture: 'emptyList.json' });
+    cy.intercept({ method: 'GET', url: awxAPI`/inventories/*` }, { fixture: 'emptyList.json' });
+    cy.intercept({ method: 'GET', url: awxAPI`/unified_jobs/*` }, { fixture: 'emptyList.json' });
     cy.reload();
     cy.contains('There are currently no jobs').should('exist');
     cy.contains('There are currently no projects').should('exist');
@@ -207,10 +208,10 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
   // this is not a valid test.
   // it('non-admin users see default empty state without Create {resource} button', () => {
   //   cy.navigateTo('awx', 'overview');
-  //   cy.intercept({ method: 'GET', url: '/api/v2/projects/*' }, { fixture: 'emptyList.json' });
-  //   cy.intercept({ method: 'GET', url: '/api/v2/inventories/*' }, { fixture: 'emptyList.json' });
-  //   cy.intercept({ method: 'GET', url: '/api/v2/unified_jobs/*' }, { fixture: 'emptyList.json' });
-  //   cy.intercept({ method: 'GET', url: '/api/v2/me' }, { fixture: 'normalUser.json' });
+  //   cy.intercept({ method: 'GET', url: awxAPI`/projects/*` }, { fixture: 'emptyList.json' });
+  //   cy.intercept({ method: 'GET', url: awxAPI`/inventories/*` }, { fixture: 'emptyList.json' });
+  //   cy.intercept({ method: 'GET', url: awxAPI`/unified_jobs/*` }, { fixture: 'emptyList.json' });
+  //   cy.intercept({ method: 'GET', url: awxAPI`/me` }, { fixture: 'normalUser.json' });
   //   cy.reload();
   //   cy.verifyPageTitle('There are currently no jobs');
   //   cy.verifyPageTitle('There are currently no projects');

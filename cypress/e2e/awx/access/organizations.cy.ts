@@ -3,6 +3,7 @@
 
 import { randomString } from '../../../../framework/utils/random-string';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 describe('organizations', () => {
   before(() => {
@@ -23,7 +24,7 @@ describe('organizations', () => {
     cy.verifyPageTitle(organizationName);
     cy.clickPageAction('delete-organization');
     cy.get('#confirm').click();
-    cy.intercept('DELETE', '/api/v2/organizations/*').as('delete');
+    cy.intercept('DELETE', awxAPI`/organizations/*`).as('delete');
     cy.clickButton(/^Delete organization/);
     cy.wait('@delete');
     cy.verifyPageTitle('Organizations');
@@ -99,7 +100,7 @@ describe('organizations edit and delete', function () {
     cy.verifyPageTitle(organization.name);
     cy.clickPageAction('delete-organization');
     cy.get('#confirm').click();
-    cy.intercept('DELETE', '/api/v2/organizations/*').as('delete');
+    cy.intercept('DELETE', awxAPI`/organizations/*`).as('delete');
     cy.clickButton(/^Delete organization/);
     cy.wait('@delete');
     cy.verifyPageTitle('Organizations');
@@ -124,7 +125,7 @@ describe('organizations edit and delete', function () {
     cy.navigateTo('awx', 'organizations');
     cy.intercept(
       'GET',
-      `/api/v2/organizations/?name__icontains=${endOfName}&order_by=name&page=1&page_size=10`
+      awxAPI`/organizations/?name__icontains=${endOfName}&order_by=name&page=1&page_size=10`
     ).as('orgResult');
     cy.searchAndDisplayResource(`${endOfName}`);
     cy.wait('@orgResult').then(() => {
