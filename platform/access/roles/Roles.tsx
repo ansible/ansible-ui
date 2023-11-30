@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout } from '../../../framework';
 import { AwxRoles } from './AwxRoles';
 import { EdaRoles } from './EdaRoles';
+import { HubRoles } from './HubRoles';
 
 export function PlatformRoles() {
   const { t } = useTranslation();
@@ -14,7 +15,7 @@ export function PlatformRoles() {
       <PageHeader
         title={t('Roles')}
         description={t(
-          'A role represents set of actions that a group or user may perform on a resource or set of resources.'
+          'A role represents set of actions that a team or user may perform on a resource or set of resources.'
         )}
         navigation={
           <div style={{ paddingLeft: 8 }}>
@@ -34,11 +35,23 @@ export function PlatformRoles() {
           </div>
         }
       />
-
+      <Nav variant="tertiary" style={{ minHeight: 40, paddingLeft: 8 }}>
+        <NavList>
+          <NavItem isActive={active === 'awx'} onClick={() => setActive('awx')}>
+            {t('Automation Execution')}
+          </NavItem>
+          <NavItem isActive={active === 'eda'} onClick={() => setActive('eda')}>
+            {t('Automation Decisions')}
+          </NavItem>
+          <NavItem isActive={active === 'hub'} onClick={() => setActive('hub')}>
+            {t('Automation Content')}
+          </NavItem>
+        </NavList>
+      </Nav>
       <Divider />
       {active === 'awx' && <AwxRoles />}
       {active === 'eda' && <EdaRoles />}
-      {/* {active === 'hub' && <HubRoles />} */}
+      {active === 'hub' && <HubRoles />}
     </PageLayout>
   );
 }
