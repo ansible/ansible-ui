@@ -47,6 +47,9 @@ export enum HubRoute {
   APIToken = 'hub-api-token',
   Roles = 'hub-roles',
   CreateRole = 'hub-create-role',
+  RolePage = 'hub-role-page',
+  RoleDetails = 'hub-role-details',
+  EditRole = 'hub-edit-role',
 
   Login = 'hub-login',
 }

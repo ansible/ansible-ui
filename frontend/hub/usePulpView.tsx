@@ -33,6 +33,7 @@ export function usePulpView<T extends object>({
   tableColumns,
   disableQueryString,
   queryParams,
+  defaultFilters,
   defaultSelection,
   defaultSort: initialDefaultSort,
   defaultSortDirection: initialDefaultSortDirection,
@@ -43,6 +44,7 @@ export function usePulpView<T extends object>({
   tableColumns?: ITableColumn<T>[];
   disableQueryString?: boolean;
   queryParams?: QueryParams;
+  defaultFilters?: Record<string, string[]>;
   /** The default items that should be initially selected. */
   defaultSelection?: T[];
   defaultSort?: string | undefined;
@@ -59,7 +61,11 @@ export function usePulpView<T extends object>({
   }
 
   const view = useView({
-    defaultValues: { sort: defaultSort, sortDirection: defaultSortDirection },
+    defaultValues: {
+      sort: defaultSort,
+      sortDirection: defaultSortDirection,
+      filterState: defaultFilters,
+    },
     disableQueryString,
   });
   const itemCountRef = useRef<{ itemCount: number | undefined }>({ itemCount: undefined });
