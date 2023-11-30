@@ -2,6 +2,7 @@ import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
+  CopyCell,
   DateTimeCell,
   LoadingPage,
   PageActions,
@@ -63,7 +64,9 @@ export function RemoteRegistryDetails() {
         />
         <PageDetails>
           <PageDetail label={t('Name')}>{remoteRegistry?.name}</PageDetail>
-          <PageDetail label={t('URL')}>{remoteRegistry?.url}</PageDetail>
+          <PageDetail label={t('URL')}>
+            <CopyCell text={remoteRegistry?.url} />
+          </PageDetail>
           <PageDetail label={t('Sync status')}>
             {<StatusCell status={remoteRegistry?.last_sync_task?.state} />}
           </PageDetail>
@@ -72,7 +75,11 @@ export function RemoteRegistryDetails() {
               {<DateTimeCell format="since" value={remoteRegistry?.last_sync_task?.finished_at} />}
             </PageDetail>
           ) : null}
-          <PageDetail label={t('Proxy URL')}>{remoteRegistry?.proxy_url}</PageDetail>
+          {remoteRegistry?.proxy_url ? (
+            <PageDetail label={t('Proxy URL')}>
+              <CopyCell text={remoteRegistry?.proxy_url} />
+            </PageDetail>
+          ) : null}
           <PageDetail label={t('TLS validation')}>
             {remoteRegistry?.tls_validation ? t('Enabled') : t('Disabled')}
           </PageDetail>
