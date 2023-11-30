@@ -440,7 +440,7 @@ declare global {
 
       /**
        * This command sends a request to the API to assign a certain type of role access to a user
-       * for a inventory.
+       * for an inventory.
        * @param inventoryName: pass the existing inventory name as a string
        * @param userId: pass the ID of the existing user as a number
        * @param roleName: pass the name of the role type that you want to assign to your user.
@@ -448,6 +448,22 @@ declare global {
        */
       giveUserInventoryAccess(
         inventoryName: string,
+        userId: number,
+        roleName: string
+      ): Chainable<Role>;
+
+      /**
+       * This command sends a request to the API to assign a certain type of role access to a user
+       * for an organization.
+       * @param organizationName: pass the existing organization name as a string
+       * @param userId: pass the ID of the existing user as a number
+       * @param roleName: pass the name of the role type that you want to assign to your user.
+       * Available roles for a organization are: Admin, Execute, Project Admin, Inventory Admin,
+       *  Credential Admin, Workflow Admin, Notification Admin, Job Template Admin, Execution Environment Admin,
+       *  Auditor, Member, Read, Approve
+       */
+      giveUserOrganizationAccess(
+        organizationName: string,
         userId: number,
         roleName: string
       ): Chainable<Role>;

@@ -3,6 +3,7 @@
 
 import { randomString } from '../../../../framework/utils/random-string';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
+import { User } from '../../../../frontend/awx/interfaces/User';
 
 describe('organizations', () => {
   before(() => {
@@ -40,6 +41,7 @@ describe('organizations', () => {
 
 describe('organizations edit and delete', function () {
   let organization: Organization;
+  let user: User;
 
   before(function () {
     cy.awxLogin();
@@ -50,10 +52,15 @@ describe('organizations edit and delete', function () {
     const orgName = 'E2E Organization ' + `${stringRandom}`;
     cy.createAwxOrganization(orgName).then((testOrganization) => {
       organization = testOrganization;
+      cy.createAwxUser(organization).then((testUser) => {
+        user = testUser;
+        cy.giveUserOrganizationAccess(organization.name, user.id, 'Read');
+      });
     });
   });
 
   afterEach(function () {
+    cy.deleteAwxUser(user, { failOnStatusCode: false });
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
 

@@ -8,6 +8,7 @@ import './commands';
 import './rest-commands';
 import { Project } from '../../frontend/awx/interfaces/Project';
 import { Inventory } from '../../frontend/awx/interfaces/Inventory';
+import { Organization } from '../../frontend/awx/interfaces/Organization';
 
 Cypress.Commands.add('giveUserWfjtAccess', (wfjtName: string, userId: number, roleName: string) => {
   cy.awxRequestGet<AwxItemsResponse<WorkflowJobTemplate>>(
@@ -77,6 +78,30 @@ Cypress.Commands.add(
       .its('results[0]')
       .then((resource: Inventory) => {
         cy.awxRequestGet<AwxItemsResponse<Role>>(`/api/v2/inventories/${resource.id}/object_roles/`)
+          .its('results')
+          .then((rolesArray) => {
+            const approveRole = rolesArray
+              ? rolesArray.find((role) => role.name === roleName)
+              : undefined;
+            cy.awxRequestPost<Partial<Role>>(`/api/v2/users/${userId}/roles/`, {
+              id: approveRole?.id,
+            });
+          });
+      });
+  }
+);
+
+Cypress.Commands.add(
+  'giveUserOrganizationAccess',
+  (organizationName: string, userId: number, roleName: string) => {
+    cy.awxRequestGet<AwxItemsResponse<Organization>>(
+      `/api/v2/organizations/?name=${organizationName}`
+    )
+      .its('results[0]')
+      .then((resource: Organization) => {
+        cy.awxRequestGet<AwxItemsResponse<Role>>(
+          `/api/v2/organizations/${resource.id}/object_roles/`
+        )
           .its('results')
           .then((rolesArray) => {
             const approveRole = rolesArray
