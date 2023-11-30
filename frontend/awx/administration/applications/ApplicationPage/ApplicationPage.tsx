@@ -1,13 +1,13 @@
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { PageHeader, PageLayout, useGetPageUrl } from '../../../../../framework';
-import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
+import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
+import { awxAPI } from '../../../api/awx-utils';
 import { AwxError } from '../../../common/AwxError';
 import { Application } from '../../../interfaces/Application';
-import { awxAPI } from '../../../api/awx-utils';
 
 export function ApplicationPage() {
   const { t } = useTranslation();
@@ -28,7 +28,7 @@ export function ApplicationPage() {
       <PageHeader
         title={application?.name}
         breadcrumbs={[
-          { label: t('Applications'), to: getPageUrl(AwxRoute.Applications) },
+          { label: t('OAuth Applications'), to: getPageUrl(AwxRoute.Applications) },
           { label: application?.name },
         ]}
         headerActions={[]}

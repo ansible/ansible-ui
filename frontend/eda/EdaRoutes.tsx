@@ -1,7 +1,7 @@
 export enum EdaRoute {
   Eda = 'eda',
 
-  Dashboard = 'eda-dashboard',
+  Overview = 'eda-overview',
 
   RuleAudits = 'eda-rule-audits',
   RuleAuditPage = 'eda-rule-audit-page',

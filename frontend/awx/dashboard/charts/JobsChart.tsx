@@ -33,7 +33,7 @@ export function JobsChart(props: {
   const { period, jobType } = props;
 
   const { data, isLoading } = useSWR<IJobChartData>(
-    awxAPI`/dashboard/graphs/jobs/?job_type=${jobType ?? 'all'}&period=${period ?? 'month'}`,
+    awxAPI`/overview/graphs/jobs/?job_type=${jobType ?? 'all'}&period=${period ?? 'month'}`,
     (url: string) => fetch(url).then((r) => r.json())
   );
 
