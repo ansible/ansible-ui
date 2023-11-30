@@ -41,6 +41,7 @@ describe('credentials', () => {
   });
 
   after(() => {
+    cy.deleteAwxUser(user, { failOnStatusCode: false });
     cy.requestDelete(`/api/v2/organizations/${organization.id}/`, { failOnStatusCode: false });
   });
 

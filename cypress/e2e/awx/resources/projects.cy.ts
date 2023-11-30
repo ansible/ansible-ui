@@ -101,6 +101,7 @@ describe('project edit and delete tests', () => {
 
   afterEach(() => {
     cy.deleteAwxProject(project, { failOnStatusCode: false });
+    cy.deleteAwxUser(user, { failOnStatusCode: false });
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
 
