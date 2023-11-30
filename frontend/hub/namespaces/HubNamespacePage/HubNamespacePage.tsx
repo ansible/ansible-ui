@@ -58,7 +58,7 @@ export function HubNamespacePage() {
           },
           {
             label: t('CLI Configuration'),
-            page: HubRoute.EditNamespace,
+            page: HubRoute.NamespaceCLI,
           },
         ]}
         params={{ id: namespace?.name }}
