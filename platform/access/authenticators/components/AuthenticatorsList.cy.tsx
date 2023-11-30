@@ -33,7 +33,7 @@ describe('Authenticators list', () => {
         cy.get('.toggle-kebab')
           .click()
           .get('.pf-v5-c-dropdown__menu-item')
-          .contains('Delete selected authenticators')
+          .contains('Delete selected authentications')
           .should('be.visible');
       });
     });
