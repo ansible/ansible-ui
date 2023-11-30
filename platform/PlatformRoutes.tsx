@@ -27,6 +27,7 @@ export enum PlatformRoute {
   CreateOrganization = 'platform-create-organization',
   EditOrganization = 'platform-edit-organization',
   Access = 'platform-access',
+  Roles = 'platform-roles',
   Lightspeed = 'platform-lightspeed',
   QuickStarts = 'platform-quickstarts',
   Authenticators = 'platform-authenticators',
