@@ -23,7 +23,7 @@ export function useAuthenticatorToolbarActions(_view: IPlatformView<Authenticato
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
 
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/v1/authenticators`);
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/v1/authenticators/`);
   const canCreateAuthenticator = Boolean(data && data.actions && data.actions['POST']);
   const toolbarActions = useMemo<IPageAction<Authenticator>[]>(
     () => [
@@ -33,7 +33,7 @@ export function useAuthenticatorToolbarActions(_view: IPlatformView<Authenticato
         variant: ButtonVariant.primary,
         isPinned: true,
         icon: PlusCircleIcon,
-        label: t('Create authenticator'),
+        label: t('Create authentication'),
         isDisabled: canCreateAuthenticator
           ? undefined
           : t(
@@ -46,7 +46,7 @@ export function useAuthenticatorToolbarActions(_view: IPlatformView<Authenticato
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Delete selected authenticators'),
+        label: t('Delete selected authentications'),
         onClick: () => alert('TODO'),
         isDanger: true,
       },
@@ -81,10 +81,10 @@ export function useAuthenticatorRowActions(_view: IPlatformView<Authenticator>) 
             : t('Click to enable authentication method'),
         selection: PageActionSelection.Single,
         isPinned: true,
+        icon: PlusCircleIcon,
         label: t('Enabled'),
         labelOff: t('Disabled'),
         showPinnedLabel: true,
-        iconOnly: true,
         onToggle: (_authenticator) => alert('TODO'),
         isSwitchOn: (authenticator: Authenticator) => authenticator?.enabled ?? false,
       },
@@ -104,7 +104,7 @@ export function useAuthenticatorRowActions(_view: IPlatformView<Authenticator>) 
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: TrashIcon,
-        label: t('Delete authenticator'),
+        label: t('Delete authentication'),
         isDisabled: (authenticator: Authenticator) => cannotDeleteAuthenticator(authenticator),
         onClick: () => alert('TODO'),
         isDanger: true,
