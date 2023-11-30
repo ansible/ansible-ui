@@ -468,6 +468,16 @@ declare global {
         roleName: string
       ): Chainable<Role>;
 
+      /**
+       * This command sends a request to the API to assign a certain type of role access to a user
+       * for a team.
+       * @param teamName: pass the existing team name as a string
+       * @param userId: pass the ID of the existing user as a number
+       * @param roleName: pass the name of the role type that you want to assign to your user.
+       * Available roles for a team are: Admin, Member, Read
+       */
+      giveUserTeamAccess(teamName: string, userId: number, roleName: string): Chainable<Role>;
+
       getAwxJobTemplateByName(awxJobTemplateName: string): Chainable<JobTemplate>;
       createAwxTeam(organization: Organization): Chainable<Team>;
       createAwxUser(organization: Organization): Chainable<User>;
