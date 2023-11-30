@@ -21,6 +21,7 @@ import { useGetPlatformAuthenticatorsRoutes } from './routes/useGetPlatformAuthe
 import { useGetPlatformOrganizationsRoutes } from './routes/useGetPlatformOrganizationsRoutes';
 import { useGetPlatformTeamsRoutes } from './routes/useGetPlatformTeamsRoutes';
 import { useGetPlatformUsersRoutes } from './routes/useGetPlatformUsersRoutes';
+import { useGetPlatformAuthenticatorsRoutes } from './routes/useGetPlatformAuthenticatorsRoutes';
 
 export function usePlatformNavigation() {
   const { t } = useTranslation();
