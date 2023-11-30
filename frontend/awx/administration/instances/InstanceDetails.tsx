@@ -11,7 +11,7 @@ import {
   Tooltip,
 } from '@patternfly/react-core';
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
-import { DownloadIcon, EditIcon, HeartbeatIcon } from '@patternfly/react-icons';
+import { DownloadIcon, PencilAltIcon, HeartbeatIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -61,7 +61,7 @@ export function InstanceDetails() {
         selection: PageActionSelection.Single,
         variant: ButtonVariant.primary,
         isPinned: true,
-        icon: EditIcon,
+        icon: PencilAltIcon,
         label: t('Edit instance'),
         onClick: (instance) => pageNavigate(AwxRoute.EditInstance, { params: { id: instance.id } }),
       },

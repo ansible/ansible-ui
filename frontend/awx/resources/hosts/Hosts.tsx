@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { EditIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons';
+import { PencilAltIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -75,7 +75,7 @@ export function Hosts() {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         isPinned: true,
-        icon: EditIcon,
+        icon: PencilAltIcon,
         label: t('Edit host'),
         onClick: (host) => pageNavigate(AwxRoute.EditHost, { params: { id: host.id } }),
       },

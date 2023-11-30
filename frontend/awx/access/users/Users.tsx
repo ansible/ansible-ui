@@ -1,7 +1,7 @@
 import { ButtonVariant } from '@patternfly/react-core';
 import {
   CubesIcon,
-  EditIcon,
+  PencilAltIcon,
   MinusCircleIcon,
   PlusCircleIcon,
   PlusIcon,
@@ -145,7 +145,7 @@ export function Users() {
         selection: PageActionSelection.Single,
         // variant: ButtonVariant.primary,
         isPinned: true,
-        icon: EditIcon,
+        icon: PencilAltIcon,
         label: t('Edit user'),
         isDisabled: (user: User) => cannotEditUser(user),
         onClick: (user) => pageNavigate(AwxRoute.EditUser, { params: { id: user.id } }),

@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { EditIcon, MinusCircleIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { PencilAltIcon, MinusCircleIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -55,7 +55,7 @@ export function useTeamActions(options: {
         selection: PageActionSelection.Single,
         variant: ButtonVariant.primary,
         isPinned: true,
-        icon: EditIcon,
+        icon: PencilAltIcon,
         label: t('Edit team'),
         isDisabled: (team: Team) => cannotEditTeam(team),
         onClick: (team) => pageNavigate(AwxRoute.EditTeam, { params: { id: team.id } }),
