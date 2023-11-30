@@ -13,10 +13,10 @@ import { PlatformRoute } from './PlatformRoutes';
 import { PlatformDashboard } from './dashboard/PlatformDashboard';
 import { QuickStartsPage } from './dashboard/quickstarts/Quickstarts';
 import { Lightspeed } from './lightspeed/Lightspeed';
+import { useGetPlatformAuthenticatorsRoutes } from './routes/useGetPlatformAuthenticatorsRoutes';
 import { useGetPlatformOrganizationsRoutes } from './routes/useGetPlatformOrganizationsRoutes';
 import { useGetPlatformTeamsRoutes } from './routes/useGetPlatformTeamsRoutes';
 import { useGetPlatformUsersRoutes } from './routes/useGetPlatformUsersRoutes';
-import { useGetPlatformAuthenticatorsRoutes } from './routes/useGetPlatformAuthenticatorsRoutes';
 
 export function usePlatformNavigation() {
   const { t } = useTranslation();
@@ -26,15 +26,27 @@ export function usePlatformNavigation() {
   const hasHub = useHasHub();
 
   const awxNav = useAwxNavigation();
-  removeNavigationItemById(awxNav, AwxRoute.Dashboard);
+  removeNavigationItemById(awxNav, AwxRoute.Overview);
+  const credentials = removeNavigationItemById(awxNav, AwxRoute.Credentials)!;
+  const credentialTypes = removeNavigationItemById(awxNav, AwxRoute.CredentialTypes)!;
   removeNavigationItemById(awxNav, AwxRoute.Access);
 
   const edaNav = useEdaNavigation();
-  removeNavigationItemById(edaNav, EdaRoute.Dashboard);
+  removeNavigationItemById(edaNav, EdaRoute.Overview);
   removeNavigationItemById(edaNav, EdaRoute.Users);
+  const edaRoles = removeNavigationItemById(edaNav, EdaRoute.Roles)!;
+  edaNav.push(removeNavigationItemById(edaNav, EdaRoute.Credentials)!);
+  removeNavigationItemById(edaNav, EdaRoute.Access);
 
   const hubNav = useHubNavigation();
-  removeNavigationItemById(hubNav, HubRoute.Dashboard);
+  removeNavigationItemById(hubNav, HubRoute.Overview);
+  removeNavigationItemById(hubNav, HubRoute.Organizations);
+  removeNavigationItemById(hubNav, HubRoute.Teams);
+  removeNavigationItemById(hubNav, HubRoute.Users);
+  // const hubAdministration = findNavigationItemById(hubNav, HubRoute.Administration);
+  // hubAdministration!.children.push(removeNavigationItemById(hubNav, HubRoute.Roles)!);
+  // hubAdministration!.childrenhubNav.push(removeNavigationItemById(hubNav, HubRoute.APIToken)!);
+  removeNavigationItemById(hubNav, HubRoute.Access);
 
   const analytics = removeNavigationItemById(awxNav, AwxRoute.Analytics);
   if (analytics) {
@@ -57,7 +69,7 @@ export function usePlatformNavigation() {
     if (hasAwx || process.env.NODE_ENV === 'development') {
       navigationItems.push({
         id: PlatformRoute.AWX,
-        label: t('Automation Controller'),
+        label: t('Automation Execution'),
         path: 'controller',
         children: awxNav,
       });
@@ -65,7 +77,7 @@ export function usePlatformNavigation() {
     if (hasEda || process.env.NODE_ENV === 'development') {
       navigationItems.push({
         id: PlatformRoute.EDA,
-        label: t('Event Driven Automation'),
+        label: t('Automation Decisions'),
         path: 'eda',
         children: edaNav,
       });
@@ -73,7 +85,7 @@ export function usePlatformNavigation() {
     if (hasHub || process.env.NODE_ENV === 'development') {
       navigationItems.push({
         id: PlatformRoute.HUB,
-        label: t('Automation Hub'),
+        label: t('Automation Content'),
         path: 'hub',
         children: hubNav,
       });
@@ -85,7 +97,15 @@ export function usePlatformNavigation() {
       id: PlatformRoute.Access,
       label: t('Access Management'),
       path: 'access',
-      children: [organizations, teams, users, authenticators],
+      children: [
+        authenticators,
+        organizations,
+        teams,
+        users,
+        edaRoles,
+        credentials,
+        credentialTypes,
+      ],
     });
     navigationItems.push({
       id: PlatformRoute.Lightspeed,
