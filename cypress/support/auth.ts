@@ -1,4 +1,4 @@
-import { hubAPI } from '../../frontend/hub/api/formatPath';
+import { hubAPI } from './formatApiPathForHub';
 
 Cypress.Commands.add('requiredVariablesAreSet', (requiredVariables: string[]) => {
   if (Cypress.env('IS_GITHUB_ACTION') || process.env.IS_GITHUB_ACTION) {
