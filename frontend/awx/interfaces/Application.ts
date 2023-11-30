@@ -13,4 +13,19 @@ export interface Application {
   client_secret?: string;
   authorization_grant_type?: string;
   skip_authorization?: boolean;
+  summary_fields: {
+    user_capabilities: {
+      edit: boolean;
+      delete: boolean;
+    };
+    organization?: {
+      id: number;
+      name: string;
+      description: string;
+    };
+    tokens?: {
+      count: number;
+      results: Array<object>;
+    };
+  };
 }
