@@ -6,24 +6,10 @@
  * process.env variables
  */
 
+import { apiTag } from '../../frontend/hub/api/formatPath';
+
 function getBaseAPIPath() {
   return (Cypress.env('HUB_API_PREFIX') as string) || '/api/galaxy';
-}
-
-export function apiTag(strings: TemplateStringsArray, ...values: string[]) {
-  if (strings[0]?.[0] !== '/') {
-    throw new Error('Invalid URL');
-  }
-
-  let url = '';
-  strings.forEach((fragment, index) => {
-    url += fragment;
-    if (index !== strings.length - 1) {
-      url += encodeURIComponent(`${values.shift() ?? ''}`);
-    }
-  });
-
-  return url;
 }
 
 export function hubAPI(strings: TemplateStringsArray, ...values: string[]) {
