@@ -65,7 +65,7 @@ export function AwxDashboard() {
 
 function DashboardInternal(props: { managedResources: Resource[] }) {
   const { managedResources } = props;
-  const { data, isLoading } = useSWR<IAwxDashboardData>(awxAPI`/dashboard/`, (url: string) =>
+  const { data, isLoading } = useSWR<IAwxDashboardData>(awxAPI`/overview/`, (url: string) =>
     fetch(url).then((r) => r.json())
   );
   if (!data || isLoading) {
