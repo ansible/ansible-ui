@@ -75,7 +75,7 @@ export function Applications() {
         isDanger: true,
       },
     ],
-    [history, deleteApplications, t]
+    [t, deleteApplications, history, getPageUrl]
   );
 
   const rowActions = useMemo<IPageAction<Application>[]>(
@@ -103,7 +103,7 @@ export function Applications() {
         isDanger: true,
       },
     ],
-    [history, deleteApplications, t]
+    [t, history, getPageUrl, deleteApplications]
   );
 
   return (
