@@ -1,8 +1,7 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { EditIcon, PlusIcon, TrashIcon, BanIcon } from '@patternfly/react-icons';
+import { EditIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import {
   IPageAction,
   ITableColumn,
@@ -12,7 +11,6 @@ import {
   PageHeader,
   PageLayout,
   PageTable,
-  useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
 import {
@@ -39,10 +37,11 @@ import { AwxRoute } from '../../AwxRoutes';
 import { awxAPI } from '../../api/awx-utils';
 import { Application } from '../../interfaces/Application';
 import { cannotDeleteResource, cannotEditResource } from '../../../common/utils/RBAChelpers';
+import { useOptions } from '../../../common/crud/useOptions';
+import { OptionsResponse, ActionsResponse } from '../../interfaces/OptionsResponse';
 
 export function Applications() {
   const { t } = useTranslation();
-  // const navigate = useNavigate();
   const config = useAwxConfig();
   const toolbarFilters = useApplicationsFilters();
   const tableColumns = useApplicationsColumns();
@@ -52,9 +51,10 @@ export function Applications() {
     tableColumns,
   });
   const deleteApplications = useDeleteApplications(view.unselectItemsAndRefresh);
-  const history = useNavigate();
-  const getPageUrl = useGetPageUrl();
   const pageNavigate = usePageNavigate();
+
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/applications/`);
+  const canCreateApplication = Boolean(data && data.actions && data.actions['POST']);
 
   const toolbarActions = useMemo<IPageAction<Application>[]>(
     () => [
@@ -63,8 +63,13 @@ export function Applications() {
         selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
         isPinned: true,
-        icon: PlusIcon,
+        icon: PlusCircleIcon,
         label: t('Create application'),
+        isDisabled: canCreateApplication
+          ? undefined
+          : t(
+              'You do not have permission to create an application. Please contact your system administrator if there is an issue with your access.'
+            ),
         onClick: () => pageNavigate(AwxRoute.CreateApplication),
       },
       { type: PageActionType.Seperator },
@@ -77,7 +82,7 @@ export function Applications() {
         isDanger: true,
       },
     ],
-    [t, deleteApplications, pageNavigate]
+    [t, canCreateApplication, deleteApplications, pageNavigate]
   );
 
   const rowActions = useMemo<IPageAction<Application>[]>(
@@ -124,10 +129,22 @@ export function Applications() {
         tableColumns={tableColumns}
         rowActions={rowActions}
         errorStateTitle={t('Error loading applications')}
-        emptyStateTitle={t('No applications yet')}
-        emptyStateDescription={t('To get started, create an application.')}
-        emptyStateButtonText={t('Create application')}
-        emptyStateButtonClick={() => history(getPageUrl(AwxRoute.CreateApplication))}
+        emptyStateTitle={
+          canCreateApplication
+            ? t('There are currently no applications added')
+            : t('You do not have permission to create an application.')
+        }
+        emptyStateDescription={
+          canCreateApplication
+            ? t('Please create an application by using the button below.')
+            : t(
+                'Please contact your organization administrator if there is an issue with your access.'
+              )
+        }
+        emptyStateButtonText={canCreateApplication ? t('Create application') : undefined}
+        emptyStateButtonClick={
+          canCreateApplication ? () => pageNavigate(AwxRoute.CreateApplication) : undefined
+        }
         {...view}
         defaultSubtitle={t('Application')}
       />
