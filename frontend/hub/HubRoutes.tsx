@@ -1,7 +1,7 @@
 export enum HubRoute {
   Hub = 'hub',
 
-  Dashboard = 'hub-dashboard',
+  Overview = 'hub-overview',
 
   // Automation Content
   Namespaces = 'hub-namespaces',

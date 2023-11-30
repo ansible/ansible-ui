@@ -37,7 +37,7 @@ export function useHubNavigation() {
   const pageNavigationItems = useMemo<PageNavigationItem[]>(() => {
     const navigationItems: PageNavigationItem[] = [
       {
-        id: HubRoute.Dashboard,
+        id: HubRoute.Overview,
         label: t('Overview'),
         path: 'overview',
         element: <HubDashboard />,

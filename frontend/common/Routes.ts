@@ -3,9 +3,9 @@ export type RouteType = `/${string}`;
 /** @deprecated Use usePageUrl and usePagenavigation with AwxRoute, EdaRoute, and HubRoute instead. */
 export const RouteObj = {
   // Views/Jobs
-  JobOutput: `/views/jobs/:job_type/:id/output`,
-  JobDetails: `/views/jobs/:job_type/:id/details`,
-  CreateSchedule: `/views/schedules/create`,
+  JobOutput: `/jobs/:job_type/:id/output`,
+  JobDetails: `/jobs/:job_type/:id/details`,
+  CreateSchedule: `/schedules/create`,
 
   // Resources
   Templates: `/templates`,

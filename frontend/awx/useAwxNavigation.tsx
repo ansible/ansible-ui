@@ -55,7 +55,7 @@ export function useAwxNavigation() {
   const pageNavigationItems = useMemo<PageNavigationItem[]>(() => {
     const navigationItems: PageNavigationItem[] = [
       {
-        id: AwxRoute.Dashboard,
+        id: AwxRoute.Overview,
         label: t('Overview'),
         path: 'overview',
         element: <AwxDashboard />,

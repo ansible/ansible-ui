@@ -48,7 +48,7 @@ export function useEdaNavigation() {
   const pageNavigationItems = useMemo<PageNavigationItem[]>(() => {
     const navigationItems: PageNavigationItem[] = [
       {
-        id: EdaRoute.Dashboard,
+        id: EdaRoute.Overview,
         label: t('Overview'),
         path: 'overview',
         element: <EdaDashboard />,
