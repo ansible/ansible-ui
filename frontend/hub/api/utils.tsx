@@ -6,7 +6,6 @@ import { AnsibleAnsibleDistributionResponse as Distribution } from '../api-schem
 import { AnsibleAnsibleRepositoryResponse as Repository } from '../api-schemas/generated/AnsibleAnsibleRepositoryResponse';
 import { Task, TaskResponse } from '../tasks/Task';
 import { pulpAPI } from './formatPath';
-import { HUB_API_PREFIX, HUB_SERVER } from '../../../webpack/environment.cjs';
 import {
   deleteHubRequest,
   getHubRequest,
@@ -296,7 +295,7 @@ export async function waitForTask(
 export function getRepoURL(distribution_base_path: string, view_published = false) {
   // If the api is hosted on another URL, use HUB_SERVER as the host part of the URL.
   // Otherwise use the host that the UI is served from
-  const host = HUB_SERVER ? HUB_SERVER : window.location.origin;
+  const host = process.env.HUB_SERVER ? process.env.HUB_SERVER : window.location.origin;
 
   // repo/distro "published" is special; not related to repo pipeline type
   if (distribution_base_path === 'published' && view_published === false) {
