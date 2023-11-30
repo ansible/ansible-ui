@@ -20,12 +20,11 @@ export function useDeleteApplications(onComplete: (applications: Application[]) 
     bulkAction({
       title:
         applications.length === 1
-          ? t('Permanently delete executionEnvironment')
-          : t('Permanently delete executionEnvironments'),
-      confirmText: t(
-        'Yes, I confirm that I want to delete these {{count}} executionEnvironments.',
-        { count: applications.length }
-      ),
+          ? t('Permanently delete application')
+          : t('Permanently delete applications'),
+      confirmText: t('Yes, I confirm that I want to delete these {{count}} applications.', {
+        count: applications.length,
+      }),
       actionButtonText: t('Delete application', { count: applications.length }),
       items: applications.sort((l, r) => compareStrings(l.name, r.name)),
       keyFn: getItemKey,
@@ -34,7 +33,7 @@ export function useDeleteApplications(onComplete: (applications: Application[]) 
       actionColumns,
       onComplete,
       actionFn: (application: Application, signal) =>
-        requestDelete(awxAPI`/application/${application.id.toString()}/`, signal),
+        requestDelete(awxAPI`/applications/${application.id.toString()}/`, signal),
     });
   };
   return deleteApplications;
