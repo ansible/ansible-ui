@@ -102,15 +102,6 @@ export function Applications() {
         onClick: (application) => deleteApplications([application]),
         isDanger: true,
       },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Single,
-        icon: BanIcon,
-        label: t('Disable application'),
-        isDisabled: (application) => cannotEditResource(application, t),
-        onClick: (application) => deleteApplications([application]),
-        isDanger: true,
-      },
     ],
     [t, pageNavigate, deleteApplications]
   );
