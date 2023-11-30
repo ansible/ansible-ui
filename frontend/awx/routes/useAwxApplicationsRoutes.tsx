@@ -11,7 +11,7 @@ export function useAwxApplicationsRoutes() {
   const applicationsRoutes = useMemo<PageNavigationItem>(
     () => ({
       id: AwxRoute.Applications,
-      label: t('Applications'),
+      label: t('OAuth Applications'),
       path: 'applications',
       children: [
         {

@@ -8,7 +8,7 @@ export default function Settings() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const breadcrumbs = useMemo(
-    () => [{ label: 'Dashboard', to: getPageUrl(AwxRoute.Dashboard) }, { label: 'Settings' }],
+    () => [{ label: 'Dashboard', to: getPageUrl(AwxRoute.Overview) }, { label: 'Settings' }],
     [getPageUrl]
   );
   return (
