@@ -1,5 +1,7 @@
 //Tests a user's ability to perform certain actions on the Decision Environment list in the EDA UI.
 
+import { edaAPI } from '../../../support/formatApiPathForEDA';
+
 describe('EDA Decision Environment List', () => {
   before(() => {
     cy.edaLogin();
@@ -24,8 +26,8 @@ describe('EDA Decision Environment List', () => {
         cy.selectTableRow(edaDE1.name);
         cy.selectTableRow(edaDE2.name);
         cy.clickToolbarKebabAction('delete-selected-decision-environments');
-        cy.intercept('DELETE', `/api/eda/v1/decision-environments/${edaDE1.id}/`).as('edaDE1');
-        cy.intercept('DELETE', `/api/eda/v1/decision-environments/${edaDE2.id}/`).as('edaDE2');
+        cy.intercept('DELETE', edaAPI`/decision-environments/${edaDE1.id}/`).as('edaDE1');
+        cy.intercept('DELETE', edaAPI`/decision-environments/${edaDE2.id}/`).as('edaDE2');
         cy.clickModalConfirmCheckbox();
         cy.clickModalButton('Delete decision environments');
         cy.wait(['@edaDE1', '@edaDE2']).then((edaArr) => {

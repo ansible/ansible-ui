@@ -6,6 +6,7 @@ import { EdaProject } from '../../../../frontend/eda/interfaces/EdaProject';
 import { EdaRulebook } from '../../../../frontend/eda/interfaces/EdaRulebook';
 import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRulebookActivation';
 import { ActivationRead } from '../../../../frontend/eda/interfaces/generated/eda-api';
+import { edaAPI } from '../../../support/formatApiPathForEDA';
 
 describe('EDA rulebook activations- Create', () => {
   let edaProject: EdaProject;
@@ -43,7 +44,7 @@ describe('EDA rulebook activations- Create', () => {
     cy.selectDropdownOptionByResourceName('project-id', edaProject.name);
     cy.selectDropdownOptionByResourceName('rulebook', edaRuleBook.name);
     cy.selectDropdownOptionByResourceName('decision-environment-id', edaDecisionEnvironment.name);
-    cy.intercept('POST', '/api/eda/v1/activations/').as('edaRBA');
+    cy.intercept('POST', edaAPI`/activations/`).as('edaRBA');
     cy.clickButton(/^Create rulebook activation$/);
     cy.wait('@edaRBA').then((edaRBA) => {
       const rbaToBeDeleted = edaRBA?.response?.body as ActivationRead;
@@ -65,7 +66,7 @@ describe('EDA rulebook activations- Create', () => {
     cy.selectDropdownOptionByResourceName('rulebook', edaRuleBook.name);
     cy.selectDropdownOptionByResourceName('decision-environment', edaDecisionEnvironment.name);
     cy.selectDropdownOptionByResourceName('restart-policy', 'Always');
-    cy.intercept('POST', '/api/eda/v1/activations/').as('edaRBA');
+    cy.intercept('POST', edaAPI`/activations/`).as('edaRBA');
     cy.clickButton(/^Create rulebook activation$/);
     cy.wait('@edaRBA').then((edaRBA) => {
       const rbaToBeDeleted = edaRBA?.response?.body as ActivationRead;
@@ -78,9 +79,7 @@ describe('EDA rulebook activations- Create', () => {
           .click()
           .then(() => {
             cy.contains('li', 'Restart rulebook activation').click();
-            cy.intercept('POST', `/api/eda/v1/activations/${rbaToBeDeleted.id}/restart/`).as(
-              'restart'
-            );
+            cy.intercept('POST', edaAPI`/activations/${rbaToBeDeleted.id}/restart/`).as('restart');
             cy.edaRuleBookActivationActionsModal('restart', rbaToBeDeleted.name);
             cy.get('button').contains('rulebook activations').click();
             cy.get('button').contains('Close').click();
@@ -143,7 +142,7 @@ describe('EDA rulebook activations- Edit, Delete', () => {
     cy.filterTableByText(edaRBA.name);
     cy.getTableRowByText(edaRBA.name).within(() => {
       cy.get('.pf-v5-c-switch__toggle').click();
-      cy.intercept('POST', `/api/eda/v1/activations/${edaRBA.id}/disable/`).as('disable');
+      cy.intercept('POST', edaAPI`/activations/${edaRBA.id}/disable/`).as('disable');
     });
     cy.edaRuleBookActivationActionsModal('disable', edaRBA.name);
     cy.get('button').contains('rulebook activations').click();
@@ -159,7 +158,7 @@ describe('EDA rulebook activations- Edit, Delete', () => {
     cy.filterTableByText(edaDisabledRBA.name);
     cy.getTableRowByText(edaDisabledRBA.name).within(() => {
       cy.get('.pf-v5-c-switch__toggle').click();
-      cy.intercept('POST', `/api/eda/v1/activations/${edaDisabledRBA.id}/enable/`).as('enable');
+      cy.intercept('POST', edaAPI`/activations/${edaDisabledRBA.id}/enable/`).as('enable');
     });
     cy.edaRuleBookActivationActionsModal('enable', edaDisabledRBA.name);
     cy.get('button').contains('rulebook activations').click();
@@ -172,7 +171,7 @@ describe('EDA rulebook activations- Edit, Delete', () => {
   it.skip('can delete a Rulebook Activation from the details view', () => {
     //this test should only live downstream
     cy.visit(`/eda/rulebook-activations/details/${edaRBA.id}`);
-    cy.intercept('DELETE', `/api/eda/v1/activations/${edaRBA.id}/`).as('deleted');
+    cy.intercept('DELETE', edaAPI`/activations/${edaRBA.id}/`).as('deleted');
     cy.clickPageAction('delete-rulebook-activation');
     cy.clickModalConfirmCheckbox();
     cy.clickModalButton('Delete rulebook activations');
