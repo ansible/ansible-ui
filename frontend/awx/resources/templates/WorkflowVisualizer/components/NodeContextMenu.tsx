@@ -1,7 +1,7 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ContextMenuSeparator, ContextMenuItem } from '@patternfly/react-topology';
-import { EditIcon, MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { PencilAltIcon, MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 
 interface MenuItem {
   key: string;
@@ -16,7 +16,7 @@ export function useNodeMenuItems(): MenuItem[] {
   return [
     {
       key: 'edit-node',
-      icon: <EditIcon />,
+      icon: <PencilAltIcon />,
       label: t('Edit node'),
       onClick: () => alert(`Selected: Edit node`),
     },
