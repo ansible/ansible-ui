@@ -54,7 +54,7 @@ describe('teams', function () {
       .its('response.body')
       .then((team: Team) => {
         cy.verifyPageTitle(team.name);
-        cy.intercept('DELETE', awxAPI`/teams/${team.id}/`).as('deleted');
+        cy.intercept('DELETE', awxAPI`/teams/${team.id.toString()}/`).as('deleted');
         cy.selectDetailsPageKebabAction('delete-team');
         cy.wait('@deleted')
           .its('response')
@@ -231,7 +231,7 @@ describe('teams', function () {
     cy.clickTableRow(team.name);
     cy.verifyPageTitle(team.name);
     cy.clickPageAction('delete-team');
-    cy.intercept('DELETE', awxAPI`/teams/${team.id}/`).as('deleted');
+    cy.intercept('DELETE', awxAPI`/teams/${team.id.toString()}/`).as('deleted');
     cy.get('#confirm').click();
     cy.clickButton(/^Delete team/);
     cy.wait('@deleted')
@@ -253,7 +253,7 @@ describe('teams', function () {
       cy.navigateTo('awx', 'teams');
       cy.clickTableRowKebabAction(testTeam.name, 'delete-team');
       cy.get('#confirm').click();
-      cy.intercept('DELETE', awxAPI`/teams/${testTeam.id}/`).as('deleted');
+      cy.intercept('DELETE', awxAPI`/teams/${testTeam.id.toString()}/`).as('deleted');
       cy.clickButton(/^Delete team/);
       cy.wait('@deleted')
         .its('response')
@@ -272,7 +272,7 @@ describe('teams', function () {
       cy.selectTableRow(testTeam.name);
       cy.clickToolbarKebabAction('delete-selected-teams');
       cy.get('#confirm').click();
-      cy.intercept('DELETE', awxAPI`/teams/${testTeam.id}/`).as('deleted');
+      cy.intercept('DELETE', awxAPI`/teams/${testTeam.id.toString()}/`).as('deleted');
       cy.clickButton(/^Delete team/);
       cy.wait('@deleted')
         .its('response')

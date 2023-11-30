@@ -378,7 +378,7 @@ Cypress.Commands.add(
       failOnStatusCode?: boolean;
     }
   ) => {
-    cy.awxRequestDelete(awxAPI`/credentials/${credential.id}/`, options);
+    cy.awxRequestDelete(awxAPI`/credentials/${credential.id.toString()}/`, options);
   }
 );
 
@@ -465,7 +465,7 @@ Cypress.Commands.add(
     }
   ) => {
     if (!organization?.id) return;
-    cy.awxRequestDelete(awxAPI`/organizations/${organization?.id}/`, options);
+    cy.awxRequestDelete(awxAPI`/organizations/${organization?.id.toString()}/`, options);
   }
 );
 
@@ -514,7 +514,7 @@ Cypress.Commands.add(
     }
   ) => {
     if (user?.id) {
-      cy.awxRequestDelete(awxAPI`/users/${user.id}/`, options);
+      cy.awxRequestDelete(awxAPI`/users/${user.id.toString()}/`, options);
     }
   }
 );
@@ -526,14 +526,14 @@ Cypress.Commands.add('giveUserWfjtAccess', (wfjtName: string, userId: number, ro
     .its('results[0]')
     .then((resource: WorkflowJobTemplate) => {
       cy.awxRequestGet<AwxItemsResponse<Role>>(
-        awxAPI`/workflow_job_templates/${resource.id}/object_roles/`
+        awxAPI`/workflow_job_templates/${resource.id.toString()}/object_roles/`
       )
         .its('results')
         .then((rolesArray) => {
           const approveRole = rolesArray
             ? rolesArray.find((role) => role.name === roleName)
             : undefined;
-          cy.awxRequestPost<Partial<Role>>(awxAPI`/users/${userId}/roles/`, {
+          cy.awxRequestPost<Partial<Role>>(awxAPI`/users/${userId.toString()}/roles/`, {
             id: approveRole?.id,
           });
         });
@@ -560,7 +560,7 @@ Cypress.Commands.add(
 
 Cypress.Commands.add('waitForProjectToFinishSyncing', (projectId: number) => {
   let requestCount = 1;
-  cy.awxRequestGet<Project>(awxAPI`/projects/${projectId}`).then((project) => {
+  cy.awxRequestGet<Project>(awxAPI`/projects/${projectId.toString()}`).then((project) => {
     // Assuming that projects could take up to 5 min to sync if the instance is under load with other jobs
     if (project.status === 'successful' || requestCount > 300) {
       if (requestCount > 300) {
@@ -622,7 +622,7 @@ Cypress.Commands.add(
       cy.awxRequestDelete(projectUpdateEndpoint, options);
     }
     // Delete project
-    cy.awxRequestDelete(awxAPI`/projects/${project.id}/`, options);
+    cy.awxRequestDelete(awxAPI`/projects/${project.id.toString()}/`, options);
     // Delete organization for the project
     if (organizationId) {
       cy.requestDelete(awxAPI`/organizations/${organizationId.toString()}/`, options);
@@ -669,7 +669,7 @@ Cypress.Commands.add(
       failOnStatusCode?: boolean;
     }
   ) => {
-    cy.awxRequestDelete(awxAPI`/inventories/${inventory.id}/`, options);
+    cy.awxRequestDelete(awxAPI`/inventories/${inventory.id.toString()}/`, options);
   }
 );
 
@@ -694,7 +694,7 @@ Cypress.Commands.add(
       failOnStatusCode?: boolean;
     }
   ) => {
-    cy.requestDelete(awxAPI`/schedules/${schedule.id}/`, options);
+    cy.requestDelete(awxAPI`/schedules/${schedule.id.toString()}/`, options);
   }
 );
 
@@ -784,7 +784,7 @@ Cypress.Commands.add(
         cy.intercept(
           {
             method: 'GET',
-            url: awxAPI`/workflow_job_templates/${results.id}/workflow_nodes/`,
+            url: awxAPI`/workflow_job_templates/${results.id.toString()}/workflow_nodes/`,
           },
           { fixture: fixtureFile }
         )
@@ -869,10 +869,13 @@ Cypress.Commands.add(
         name: 'E2E Host ' + randomString(4),
         inventory: inventory.id,
       }).then((host) => {
-        cy.awxRequestPost<{ name: string; inventory: number }>(awxAPI`/hosts/${host.id}/groups/`, {
-          name: 'E2E Group ' + randomString(4),
-          inventory: host.inventory,
-        }).then((group) => ({
+        cy.awxRequestPost<{ name: string; inventory: number }>(
+          awxAPI`/hosts/${host.id.toString()}/groups/`,
+          {
+            name: 'E2E Group ' + randomString(4),
+            inventory: host.inventory,
+          }
+        ).then((group) => ({
           inventory,
           host,
           group,
@@ -964,7 +967,7 @@ Cypress.Commands.add(
       failOnStatusCode?: boolean;
     }
   ) => {
-    cy.awxRequestDelete(awxAPI`/tokens/${awxToken.id}/`, options);
+    cy.awxRequestDelete(awxAPI`/tokens/${awxToken.id.toString()}/`, options);
   }
 );
 

@@ -26,8 +26,12 @@ describe('EDA Decision Environment List', () => {
         cy.selectTableRow(edaDE1.name);
         cy.selectTableRow(edaDE2.name);
         cy.clickToolbarKebabAction('delete-selected-decision-environments');
-        cy.intercept('DELETE', edaAPI`/decision-environments/${edaDE1.id}/`).as('edaDE1');
-        cy.intercept('DELETE', edaAPI`/decision-environments/${edaDE2.id}/`).as('edaDE2');
+        cy.intercept('DELETE', edaAPI`/decision-environments/${edaDE1.id.toString()}/`).as(
+          'edaDE1'
+        );
+        cy.intercept('DELETE', edaAPI`/decision-environments/${edaDE2.id.toString()}/`).as(
+          'edaDE2'
+        );
         cy.clickModalConfirmCheckbox();
         cy.clickModalButton('Delete decision environments');
         cy.wait(['@edaDE1', '@edaDE2']).then((edaArr) => {

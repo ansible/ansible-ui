@@ -39,8 +39,12 @@ describe('EDA Credentials List', () => {
         cy.selectTableRow(edaCredential.name);
         cy.selectTableRow(testCredential.name);
         cy.clickToolbarKebabAction('delete-selected-credentials');
-        cy.intercept('DELETE', edaAPI`/credentials/${edaCredential.id}/`).as('edaCredential');
-        cy.intercept('DELETE', edaAPI`/credentials/${testCredential.id}/`).as('testCredential');
+        cy.intercept('DELETE', edaAPI`/credentials/${edaCredential.id.toString()}/`).as(
+          'edaCredential'
+        );
+        cy.intercept('DELETE', edaAPI`/credentials/${testCredential.id.toString()}/`).as(
+          'testCredential'
+        );
         cy.clickModalConfirmCheckbox();
         cy.clickModalButton('Delete credentials');
         cy.wait('@edaCredential').then((edaCredential) => {

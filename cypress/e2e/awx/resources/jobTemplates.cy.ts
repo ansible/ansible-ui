@@ -201,7 +201,9 @@ describe('Job templates form Create, Edit, Delete', function () {
           expect(newName).to.be.equal(name);
         });
       cy.verifyPageTitle(newName);
-      cy.intercept('DELETE', awxAPI`/job_templates/${jobTemplate.id}/`).as('deleteJobTemplate');
+      cy.intercept('DELETE', awxAPI`/job_templates/${jobTemplate.id.toString()}/`).as(
+        'deleteJobTemplate'
+      );
       cy.selectDetailsPageKebabAction('delete-template');
       cy.wait('@deleteJobTemplate').then((deleteJobTemplate) => {
         expect(deleteJobTemplate?.response?.statusCode).to.eql(204);
@@ -233,7 +235,9 @@ describe('Job templates form Create, Edit, Delete', function () {
           expect(newName).to.be.equal(name);
         });
       cy.verifyPageTitle(newName);
-      cy.intercept('DELETE', awxAPI`/job_templates/${jobTemplate.id}/`).as('deleteJobTemplate');
+      cy.intercept('DELETE', awxAPI`/job_templates/${jobTemplate.id.toString()}/`).as(
+        'deleteJobTemplate'
+      );
       cy.selectDetailsPageKebabAction('delete-template');
       cy.wait('@deleteJobTemplate').then((deleteJobTemplate) => {
         expect(deleteJobTemplate?.response?.statusCode).to.eql(204);
@@ -251,7 +255,9 @@ describe('Job templates form Create, Edit, Delete', function () {
       cy.navigateTo('awx', 'templates');
       cy.clickTableRow(jobTemplate.name);
       cy.verifyPageTitle(jobTemplate.name);
-      cy.intercept('DELETE', awxAPI`/job_templates/${jobTemplate.id}/`).as('deleteJobTemplate');
+      cy.intercept('DELETE', awxAPI`/job_templates/${jobTemplate.id.toString()}/`).as(
+        'deleteJobTemplate'
+      );
       cy.selectDetailsPageKebabAction('delete-template');
       cy.wait('@deleteJobTemplate').then((deleteJobTemplate) => {
         expect(deleteJobTemplate?.response?.statusCode).to.eql(204);
@@ -275,8 +281,12 @@ describe('Job templates form Create, Edit, Delete', function () {
         cy.selectTableRow(jobTemplate1.name);
         cy.selectTableRow(jobTemplate2.name);
         cy.clickToolbarKebabAction('delete-selected-templates');
-        cy.intercept('DELETE', awxAPI`/job_templates/${jobTemplate1.id}/`).as('deleteJobTemplate1');
-        cy.intercept('DELETE', awxAPI`/job_templates/${jobTemplate2.id}/`).as('deleteJobTemplate2');
+        cy.intercept('DELETE', awxAPI`/job_templates/${jobTemplate1.id.toString()}/`).as(
+          'deleteJobTemplate1'
+        );
+        cy.intercept('DELETE', awxAPI`/job_templates/${jobTemplate2.id.toString()}/`).as(
+          'deleteJobTemplate2'
+        );
         cy.clickModalConfirmCheckbox();
         cy.clickModalButton('Delete template');
         cy.wait(['@deleteJobTemplate1', '@deleteJobTemplate2']).then((jtArray) => {

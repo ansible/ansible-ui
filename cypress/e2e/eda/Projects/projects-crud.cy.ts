@@ -43,7 +43,7 @@ describe('EDA Projects CRUD', () => {
       cy.navigateTo('eda', 'projects');
       cy.clickTableRow(edaProject.name);
       cy.verifyPageTitle(edaProject.name);
-      cy.intercept('DELETE', edaAPI`/projects/${edaProject.id}/`).as('deleted');
+      cy.intercept('DELETE', edaAPI`/projects/${edaProject.id.toString()}/`).as('deleted');
       cy.clickPageAction('delete-project');
       cy.clickModalConfirmCheckbox();
       cy.clickModalButton('Delete projects');

@@ -77,7 +77,9 @@ describe('AWX Cleanup', () => {
       awxAPI`/instance_groups/?name__startswith=E2E&page=1&page_size=200&created__lt=${tenMinutesAgo}`
     ).then((result) => {
       for (const resource of result.results ?? []) {
-        cy.awxRequestDelete(awxAPI`/instance_groups/${resource.id}/`, { failOnStatusCode: false });
+        cy.awxRequestDelete(awxAPI`/instance_groups/${resource.id.toString()}/`, {
+          failOnStatusCode: false,
+        });
       }
     });
   });

@@ -160,7 +160,7 @@ describe('project edit and delete tests', () => {
     cy.get(`[data-cy="row-id-${project.id}"]`).within(() => {
       cy.get('[data-cy="name-column-cell"]').click();
     });
-    cy.intercept('POST', awxAPI`/projects/${project.id}/copy/`).as('copiedProject');
+    cy.intercept('POST', awxAPI`/projects/${project.id.toString()}/copy/`).as('copiedProject');
     cy.get('[data-cy="actions-dropdown"]')
       .click()
       .then(() => {
@@ -189,7 +189,7 @@ describe('project edit and delete tests', () => {
     const endOfProject = project.name.split(' ').slice(-1).toString();
     cy.navigateTo('awx', 'projects');
     cy.searchAndDisplayResource(endOfProject);
-    cy.intercept('POST', awxAPI`/projects/${project.id}/copy/`).as('copiedProject');
+    cy.intercept('POST', awxAPI`/projects/${project.id.toString()}/copy/`).as('copiedProject');
     cy.get(`[data-cy="row-id-${project.id}"]`).within(() => {
       cy.get('[data-cy="actions-dropdown"]')
         .click()
@@ -294,7 +294,7 @@ describe('project edit and delete tests', () => {
     cy.get('[data-cy="page-title"]').should('contain', `${project.name}`);
     cy.clickPageAction('delete-project');
     cy.get('.pf-v5-c-modal-box').within(() => {
-      cy.intercept('DELETE', awxAPI`/projects/${project.id}/`).as('deleted');
+      cy.intercept('DELETE', awxAPI`/projects/${project.id.toString()}/`).as('deleted');
       cy.get('#confirm').click();
       cy.clickButton(/^Delete project/);
       cy.wait('@deleted');

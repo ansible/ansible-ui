@@ -56,8 +56,8 @@ describe('EDA Users List', () => {
         cy.selectTableRow(auditor.username, false);
         cy.selectTableRow(viewer.username, false);
         cy.clickToolbarKebabAction('delete-selected-users');
-        cy.intercept('DELETE', edaAPI`/users/${auditor.id}/`).as('auditor');
-        cy.intercept('DELETE', edaAPI`/users/${viewer.id}/`).as('viewer');
+        cy.intercept('DELETE', edaAPI`/users/${auditor.id.toString()}/`).as('auditor');
+        cy.intercept('DELETE', edaAPI`/users/${viewer.id.toString()}/`).as('viewer');
         cy.clickModalConfirmCheckbox();
         cy.clickModalButton('Delete users');
         cy.wait(['@auditor', '@viewer']).then((activationArr) => {

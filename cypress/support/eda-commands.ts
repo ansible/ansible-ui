@@ -75,7 +75,7 @@ Cypress.Commands.add('createEdaProject', () => {
 });
 
 Cypress.Commands.add('getEdaRulebooks', (edaProject, rulebookName?: string) => {
-  let url = edaAPI`/rulebooks/?project_id=${edaProject.id}`;
+  let url = edaAPI`/rulebooks/?project_id=${edaProject.id.toString()}`;
   if (rulebookName) url = url + `&name=${rulebookName}`;
   cy.pollEdaResults<EdaRulebook>(url).then((edaRulebooks) => {
     return edaRulebooks;
@@ -112,7 +112,7 @@ Cypress.Commands.add('getEdaRulebookActivation', (edaRulebookActivationName: str
 });
 
 Cypress.Commands.add('deleteEdaRulebookActivation', (edaRulebookActivation) => {
-  cy.requestDelete(edaAPI`/activations/${edaRulebookActivation.id}/`, {
+  cy.requestDelete(edaAPI`/activations/${edaRulebookActivation.id.toString()}/`, {
     failOnStatusCode: false,
   }).then(() => {
     Cypress.log({
@@ -125,19 +125,19 @@ Cypress.Commands.add('deleteEdaRulebookActivation', (edaRulebookActivation) => {
 Cypress.Commands.add(
   'waitForRulebookActionStatus',
   (edaRulebookActivation: EdaRulebookActivation) => {
-    cy.requestGet<EdaRulebookActivation>(edaAPI`/activations/${edaRulebookActivation.id}`).then(
-      (rba) => {
-        switch (rba.status) {
-          case 'failed':
-          case 'completed':
-            cy.wrap(rba);
-            break;
-          default:
-            cy.wait(100).then(() => cy.waitForRulebookActionStatus(edaRulebookActivation));
-            break;
-        }
+    cy.requestGet<EdaRulebookActivation>(
+      edaAPI`/activations/${edaRulebookActivation.id.toString()}`
+    ).then((rba) => {
+      switch (rba.status) {
+        case 'failed':
+        case 'completed':
+          cy.wrap(rba);
+          break;
+        default:
+          cy.wait(100).then(() => cy.waitForRulebookActionStatus(edaRulebookActivation));
+          break;
       }
-    );
+    });
   }
 );
 
@@ -159,31 +159,37 @@ Cypress.Commands.add('waitEdaProjectSync', (edaProject) => {
 });
 
 Cypress.Commands.add('getEdaProjects', (page: number, perPage: number) => {
-  cy.requestGet<EdaResult<EdaProject>>(edaAPI`/projects/?page=${page}&page_size=${perPage}`);
+  cy.requestGet<EdaResult<EdaProject>>(
+    edaAPI`/projects/?page=${page.toString()}&page_size=${perPage.toString()}`
+  );
 });
 
 Cypress.Commands.add('getEdaDecisionEnvironments', (page: number, perPage: number) => {
   cy.requestGet<EdaResult<EdaDecisionEnvironment>>(
-    edaAPI`/decision-environments/?page=${page}&page_size=${perPage}`
+    edaAPI`/decision-environments/?page=${page.toString()}&page_size=${perPage.toString()}`
   );
 });
 
 Cypress.Commands.add('getEdaRulebookActivations', (page: number, perPage: number) => {
   cy.requestGet<EdaResult<EdaRulebookActivation>>(
-    edaAPI`/activations/?page=${page}&page_size=${perPage}`
+    edaAPI`/activations/?page=${page.toString()}&page_size=${perPage.toString()}`
   );
 });
 
 Cypress.Commands.add('getEdaCredentials', (page: number, perPage: number) => {
-  cy.requestGet<EdaResult<EdaCredential>>(edaAPI`/credentials/?page=${page}&page_size=${perPage}`);
+  cy.requestGet<EdaResult<EdaCredential>>(
+    edaAPI`/credentials/?page=${page.toString()}&page_size=${perPage.toString()}`
+  );
 });
 
 Cypress.Commands.add('getEdaUsers', (page: number, perPage: number) => {
-  cy.requestGet<EdaResult<EdaUser>>(edaAPI`/users/?page=${page}&page_size=${perPage}`);
+  cy.requestGet<EdaResult<EdaUser>>(
+    edaAPI`/users/?page=${page.toString()}&page_size=${perPage.toString()}`
+  );
 });
 
 Cypress.Commands.add('getEdaUser', (id: number) => {
-  cy.requestGet<EdaResult<EdaUser>>(edaAPI`/users/${id}/`);
+  cy.requestGet<EdaResult<EdaUser>>(edaAPI`/users/${id.toString()}/`);
 });
 
 Cypress.Commands.add('getEdaProjectByName', (edaProjectName: string) => {
@@ -198,7 +204,7 @@ Cypress.Commands.add('getEdaProjectByName', (edaProjectName: string) => {
 
 Cypress.Commands.add('deleteEdaProject', (project: EdaProject) => {
   // this is just cleanup, so we don't care if the sync fails
-  cy.requestDelete(edaAPI`/projects/${project.id}/`, {
+  cy.requestDelete(edaAPI`/projects/${project.id.toString()}/`, {
     failOnStatusCode: false,
   }).then(() => {
     Cypress.log({
@@ -236,7 +242,7 @@ Cypress.Commands.add('createEdaCredential', () => {
 });
 
 Cypress.Commands.add('deleteEdaCredential', (credential: EdaCredential) => {
-  cy.requestDelete(edaAPI`/credentials/${credential.id}/?force=true`, {
+  cy.requestDelete(edaAPI`/credentials/${credential.id.toString()}/?force=true`, {
     failOnStatusCode: false,
   }).then(() => {
     Cypress.log({
@@ -321,7 +327,7 @@ Cypress.Commands.add('deleteEdaUser', (user: EdaUser) => {
   cy.wrap(user).should('not.be.undefined');
   cy.wrap(user.id).should('not.equal', 1);
   if (user.id === 1) return; // DO NOT DELETE ADMIN USER
-  cy.requestDelete(edaAPI`/users/${user.id}/`, {
+  cy.requestDelete(edaAPI`/users/${user.id.toString()}/`, {
     failOnStatusCode: false,
   }).then(() => {
     Cypress.log({
@@ -375,7 +381,7 @@ Cypress.Commands.add('addEdaCurrentUserAwxToken', (awxToken: string) => {
 });
 
 Cypress.Commands.add('deleteEdaCurrentUserAwxToken', (awxToken: EdaControllerToken) => {
-  cy.requestDelete(edaAPI`/users/me/awx-tokens/${awxToken.id}/`, {
+  cy.requestDelete(edaAPI`/users/me/awx-tokens/${awxToken.id.toString()}/`, {
     failOnStatusCode: false,
   }).then(() => {
     Cypress.log({
@@ -438,9 +444,12 @@ Cypress.Commands.add('getEdaDecisionEnvironmentByName', (edaDEName: string) => {
 Cypress.Commands.add(
   'deleteEdaDecisionEnvironment',
   (decisionEnvironment: EdaDecisionEnvironment) => {
-    cy.requestDelete(edaAPI`/decision-environments/${decisionEnvironment.id}/?force=true`, {
-      failOnStatusCode: false,
-    }).then(() => {
+    cy.requestDelete(
+      edaAPI`/decision-environments/${decisionEnvironment.id.toString()}/?force=true`,
+      {
+        failOnStatusCode: false,
+      }
+    ).then(() => {
       Cypress.log({
         displayName: 'EDA DECISION ENVIRONMENT DELETION :',
         message: [`Deleted 👉  ${decisionEnvironment.name}`],

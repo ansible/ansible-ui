@@ -18,7 +18,9 @@ describe('credentials', () => {
   });
 
   after(() => {
-    cy.requestDelete(awxAPI`/organizations/${organization.id}/`, { failOnStatusCode: false });
+    cy.requestDelete(awxAPI`/organizations/${organization.id.toString()}/`, {
+      failOnStatusCode: false,
+    });
   });
 
   beforeEach(() => {
@@ -31,7 +33,9 @@ describe('credentials', () => {
   });
 
   afterEach(() => {
-    cy.requestDelete(awxAPI`/credentials/${credential.id}/`, { failOnStatusCode: false });
+    cy.requestDelete(awxAPI`/credentials/${credential.id.toString()}/`, {
+      failOnStatusCode: false,
+    });
   });
 
   it('credentials page', () => {
