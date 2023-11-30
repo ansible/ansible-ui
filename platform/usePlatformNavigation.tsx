@@ -10,6 +10,7 @@ import { HubRoute } from '../frontend/hub/HubRoutes';
 import { useHubNavigation } from '../frontend/hub/useHubNavigation';
 import { useHasController, useHasEda, useHasHub } from './PlatformProvider';
 import { PlatformRoute } from './PlatformRoutes';
+import { PlatformRoles } from './access/roles/Roles';
 import { PlatformDashboard } from './dashboard/PlatformDashboard';
 import { QuickStartsPage } from './dashboard/quickstarts/Quickstarts';
 import { Lightspeed } from './lightspeed/Lightspeed';
@@ -34,8 +35,8 @@ export function usePlatformNavigation() {
   const edaNav = useEdaNavigation();
   removeNavigationItemById(edaNav, EdaRoute.Overview);
   removeNavigationItemById(edaNav, EdaRoute.Users);
-  const edaRoles = removeNavigationItemById(edaNav, EdaRoute.Roles)!;
-  edaNav.push(removeNavigationItemById(edaNav, EdaRoute.Credentials)!);
+  // removeNavigationItemById(edaNav, EdaRoute.Roles);
+  // removeNavigationItemById(edaNav, EdaRoute.Credentials)
   removeNavigationItemById(edaNav, EdaRoute.Access);
 
   const hubNav = useHubNavigation();
@@ -102,7 +103,12 @@ export function usePlatformNavigation() {
         organizations,
         teams,
         users,
-        edaRoles,
+        {
+          id: PlatformRoute.Roles,
+          label: t('Roles'),
+          path: 'roles',
+          element: <PlatformRoles />,
+        },
         credentials,
         credentialTypes,
       ],
@@ -127,18 +133,20 @@ export function usePlatformNavigation() {
 
     return navigationItems;
   }, [
-    analytics,
-    awxNav,
-    edaNav,
+    t,
     hasAwx,
     hasEda,
     hasHub,
-    hubNav,
+    analytics,
+    authenticators,
     organizations,
-    t,
     teams,
     users,
-    authenticators,
+    credentials,
+    credentialTypes,
+    awxNav,
+    edaNav,
+    hubNav,
   ]);
   return pageNavigationItems;
 }
