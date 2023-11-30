@@ -1,37 +1,31 @@
-import { ButtonVariant } from '@patternfly/react-core';
-import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
-  PageHeader,
-  PageLayout,
   PageTable,
   usePageNavigate,
 } from '../../../../framework';
-import { usePersistentFilters } from '../../../common/PersistentFilters';
 import { AwxRoute } from '../../AwxRoutes';
-import { useAwxConfig } from '../../common/useAwxConfig';
-import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
+import { useAwxView } from '../../useAwxView';
 import { JobTemplate } from '../../interfaces/JobTemplate';
 import { WorkflowJobTemplate } from '../../interfaces/WorkflowJobTemplate';
-import { useAwxView } from '../../useAwxView';
-import { awxAPI } from '../../api/awx-utils';
-import { useDeleteTemplates } from './hooks/useDeleteTemplates';
-import { useTemplateColumns } from './hooks/useTemplateColumns';
+import { usePersistentFilters } from '../../../common/PersistentFilters';
 import { useTemplateFilters } from './hooks/useTemplateFilters';
+import { useTemplateColumns } from './hooks/useTemplateColumns';
+import { useDeleteTemplates } from './hooks/useDeleteTemplates';
+import { useMemo } from 'react';
+import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { ButtonVariant } from '@patternfly/react-core';
 import { useTemplateActions } from './hooks/useTemplateActions';
 
-export function Templates(props: { url: string }) {
+export function TemplatesList(props: { url: string }) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const toolbarFilters = useTemplateFilters();
   const tableColumns = useTemplateColumns();
-
   const view = useAwxView<JobTemplate | WorkflowJobTemplate>({
-    url: props.url ? props.url : awxAPI`/unified_job_templates/`,
+    url: props.url,
     toolbarFilters,
     tableColumns,
     queryParams: {
@@ -39,8 +33,6 @@ export function Templates(props: { url: string }) {
     },
   });
   usePersistentFilters('templates');
-  const config = useAwxConfig();
-
   const deleteTemplates = useDeleteTemplates(view.unselectItemsAndRefresh);
 
   const toolbarActions = useMemo<IPageAction<JobTemplate | WorkflowJobTemplate>[]>(
@@ -82,32 +74,19 @@ export function Templates(props: { url: string }) {
   const rowActions = useTemplateActions({ onTemplatesDeleted: view.unselectItemsAndRefresh });
 
   return (
-    <PageLayout>
-      <PageHeader
-        title={t('Templates')}
-        titleHelpTitle={t('Template')}
-        titleHelp={t(
-          'A job template is a definition and set of parameters for running an Ansible job. Job templates are useful to execute the same job many times. Job templates also encourage the reuse of Ansible playbook content and collaboration between teams.'
-        )}
-        titleDocLink={`${getDocsBaseUrl(config)}/html/userguide/job_templates.html`}
-        description={t(
-          'A job template is a definition and set of parameters for running an Ansible job.'
-        )}
-      />
-      <PageTable<JobTemplate | WorkflowJobTemplate>
-        id="awx-job-templates-table"
-        toolbarFilters={toolbarFilters}
-        toolbarActions={toolbarActions}
-        tableColumns={tableColumns}
-        rowActions={rowActions}
-        errorStateTitle={t('Error loading templates')}
-        emptyStateTitle={t('No templates yet')}
-        emptyStateDescription={t('To get started, create a template.')}
-        emptyStateButtonText={t('Create template')}
-        emptyStateButtonClick={() => pageNavigate(AwxRoute.CreateJobTemplate)}
-        {...view}
-        defaultSubtitle={t('Template')}
-      />
-    </PageLayout>
+    <PageTable<JobTemplate | WorkflowJobTemplate>
+      id="awx-job-templates-table"
+      toolbarFilters={toolbarFilters}
+      toolbarActions={toolbarActions}
+      tableColumns={tableColumns}
+      rowActions={rowActions}
+      errorStateTitle={t('Error loading templates')}
+      emptyStateTitle={t('No templates yet')}
+      emptyStateDescription={t('To get started, create a template.')}
+      emptyStateButtonText={t('Create template')}
+      emptyStateButtonClick={() => pageNavigate(AwxRoute.CreateJobTemplate)}
+      {...view}
+      defaultSubtitle={t('Template')}
+    />
   );
 }

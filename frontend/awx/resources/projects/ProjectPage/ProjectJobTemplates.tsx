@@ -1,9 +1,9 @@
-//import { useParams } from 'react-router-dom';
-//import { awxAPI } from '../../../api/awx-utils';
-import { Templates } from '../../templates/Templates';
+import { useParams } from 'react-router-dom';
+//import { Templates } from '../../templates/Templates';
+import { awxAPI } from '../../../api/awx-utils';
+import { TemplatesList } from '../../templates/TemplatesList';
 
 export function ProjectJobTemplates() {
-  //const params = useParams<{ id: string }>();
-  //return <Templates url={awxAPI`/projects/${params.id ?? ''}/job_templates/>;
-  return <Templates />;
+  const { id = '' } = useParams<{ id: string }>();
+  return <TemplatesList url={awxAPI`/projects/${id}/job_templates`} />;
 }
