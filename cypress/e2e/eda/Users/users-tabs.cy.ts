@@ -37,7 +37,7 @@
 //       //the following two lines need to be refactored:
 //       cy.get('[data-cy="name"]').type(newTokenName);
 //       cy.get('[data-cy="token"]').type(awxToken.token);
-//       cy.intercept('POST', '/api/eda/v1/users/me/awx-tokens/').as('created');
+//       cy.intercept('POST', edaAPI`/users/me/awx-tokens/`).as('created');
 //       cy.clickButton('Create controller token');
 //       // cy.setPageSize(100);
 //       cy.contains('td', newTokenName);
@@ -64,7 +64,7 @@
 //   //           });
 //   //       });
 //   //       cy.clickModalConfirmCheckbox();
-//   //       cy.intercept('DELETE', `/api/eda/v1/users/me/awx-tokens/${activeUserToken.id}/`).as(
+//   //       cy.intercept('DELETE', edaAPI`/users/me/awx-tokens/${activeUserToken.id}/`).as(
 //   //         'deleted'
 //   //       );
 //   //       cy.clickModalButton('Delete controller tokens');

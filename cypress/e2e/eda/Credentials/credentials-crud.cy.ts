@@ -1,6 +1,7 @@
 //Tests a user's ability to create, edit, and delete a Credential in the EDA UI.
 //Do we want to add create tests for all credential types now or wait until next release cycle?
 import { randomString } from '../../../../framework/utils/random-string';
+import { edaAPI } from '../../../support/formatApiPathForEDA';
 
 describe('EDA Credentials- Create, Edit, Delete', () => {
   before(() => {
@@ -104,7 +105,7 @@ describe('EDA Credentials- Create, Edit, Delete', () => {
       cy.get('h1').should('contain', 'Credentials');
       cy.clickTableRow(edaCredential.name);
       cy.verifyPageTitle(edaCredential.name);
-      cy.intercept('DELETE', `/api/eda/v1/credentials/${edaCredential.id}/`).as('deleted');
+      cy.intercept('DELETE', edaAPI`/credentials/${edaCredential.id.toString()}/`).as('deleted');
       cy.clickPageAction('delete-credential');
       cy.clickModalConfirmCheckbox();
       cy.clickModalButton('Delete credential');
