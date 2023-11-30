@@ -7,7 +7,7 @@ import {
   useGetPageUrl,
 } from '../../../../../framework';
 import { useMemo } from 'react';
-import { EditIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useHubContext } from '../../../useHubContext';
 import { HubRoute } from '../../../HubRoutes';
 import { useDeleteRoles } from './useDeleteRoles';
@@ -57,7 +57,7 @@ export function useRoleRowActions(onComplete: (roles: Role[]) => void) {
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        icon: EditIcon,
+        icon: PencilAltIcon,
         isPinned: true,
         label: t('Edit role'),
         isDisabled: (role) =>

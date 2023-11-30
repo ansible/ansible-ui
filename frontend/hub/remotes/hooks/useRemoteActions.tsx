@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { EditIcon, TrashIcon } from '@patternfly/react-icons';
+import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -20,7 +20,7 @@ export function useRemoteActions(options: { onRemotesDeleted: (remotes: IRemotes
   const actions = useMemo<IPageAction<IRemotes>[]>(
     () => [
       {
-        icon: EditIcon,
+        icon: PencilAltIcon,
         isPinned: true,
         label: t('Edit remote'),
         onClick: (remotes) => pageNavigate(HubRoute.EditRemote, { params: { id: remotes.name } }),

@@ -1,6 +1,6 @@
 import { ButtonVariant } from '@patternfly/react-core';
 import {
-  EditIcon,
+  PencilAltIcon,
   MinusCircleIcon,
   PlusCircleIcon,
   PlusIcon,
@@ -119,7 +119,7 @@ export function Organizations() {
         type: PageActionType.Link,
         selection: PageActionSelection.Single,
         isPinned: true,
-        icon: EditIcon,
+        icon: PencilAltIcon,
         label: t('Edit organization'),
         href: (organization) => {
           return getPageUrl(AwxRoute.EditOrganization, { params: { id: organization.id } });

@@ -1,5 +1,11 @@
 import { AlertProps, ButtonVariant } from '@patternfly/react-core';
-import { CopyIcon, EditIcon, MinusCircleIcon, SyncIcon, TrashIcon } from '@patternfly/react-icons';
+import {
+  CopyIcon,
+  PencilAltIcon,
+  MinusCircleIcon,
+  SyncIcon,
+  TrashIcon,
+} from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -107,7 +113,7 @@ export function useProjectActions(
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         isPinned: true,
-        icon: EditIcon,
+        icon: PencilAltIcon,
         label: t('Edit project'),
         isDisabled: (project: Project) => cannotEditProject(project),
         onClick: (project) => pageNavigate(AwxRoute.EditProject, { params: { id: project.id } }),

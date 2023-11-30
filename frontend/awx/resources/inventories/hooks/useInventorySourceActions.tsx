@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { EditIcon, RocketIcon, TrashIcon } from '@patternfly/react-icons';
+import { PencilAltIcon, RocketIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -66,7 +66,7 @@ export function useInventorySourceActions({
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        icon: EditIcon,
+        icon: PencilAltIcon,
         variant: ButtonVariant.primary,
         isPinned: true,
         label: t('Edit inventory source'),
