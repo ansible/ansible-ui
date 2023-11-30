@@ -80,7 +80,7 @@ export type HubContext = {
   user: HubUser;
 };
 
-const HubContext = createContext<HubContext | null>(null);
+export const HubContext = createContext<HubContext | null>(null);
 
 export const useHubContext = (): HubContext => useContext(HubContext) as HubContext;
 

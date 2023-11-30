@@ -118,6 +118,7 @@ jobs:
           HUB_SERVER: ${{ inputs.HUB_SERVER }}
           HUB_USERNAME: e2e
           HUB_PASSWORD: ${{ secrets.HUB_PASSWORD }}
+          HUB_API_PREFIX: '/api/galaxy'
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_HUB_E2E_PROJECT_ID }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_HUB_E2E_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -30,6 +30,7 @@ import { SignatureKeys } from './signature-keys/SignatureKeys';
 import { TaskDetails } from './tasks/TaskDetails';
 import { Tasks } from './tasks/Tasks';
 import { Token } from './token/Token';
+import { PageNotImplemented } from '../../framework';
 
 export function useHubNavigation() {
   const { t } = useTranslation();
@@ -247,7 +248,33 @@ export function useHubNavigation() {
             id: HubRoute.Roles,
             label: t('Roles'),
             path: 'roles',
-            element: <Roles />,
+            children: [
+              {
+                id: HubRoute.CreateRole,
+                path: 'create',
+                element: <PageNotImplemented />,
+              },
+              {
+                id: HubRoute.EditRole,
+                path: ':id/edit',
+                element: <PageNotImplemented />,
+              },
+              {
+                id: HubRoute.RolePage,
+                path: ':id/',
+                children: [
+                  {
+                    id: HubRoute.RoleDetails,
+                    path: 'details',
+                    element: <PageNotImplemented />,
+                  },
+                ],
+              },
+              {
+                path: '',
+                element: <Roles />,
+              },
+            ],
           },
           {
             id: HubRoute.APIToken,

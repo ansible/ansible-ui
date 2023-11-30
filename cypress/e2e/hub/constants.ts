@@ -75,3 +75,7 @@ export const APITokens = {
   title: 'API Token',
   url: 'api-token',
 };
+
+export const Roles = {
+  title: 'Roles',
+};

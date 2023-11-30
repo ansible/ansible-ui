@@ -1,5 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
-import { hubAPI } from '../../frontend/hub/api/formatPath';
+import { randomString } from '../../framework/utils/random-string';
+import { Role } from '../../frontend/hub/access/roles/Role';
+import { hubAPI, pulpAPI } from './formatApiPathForHub';
+import { parsePulpIDFromURL } from '../../frontend/hub/api/utils';
 import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
 import { HubItemsResponse } from '../../frontend/hub/useHubView';
 import './commands';
@@ -90,7 +93,7 @@ Cypress.Commands.add('deleteNamespace', (namespaceName: string) => {
 
 Cypress.Commands.add('deleteCollectionsInNamespace', (namespaceName: string) => {
   cy.requestGet<HubItemsResponse<CollectionVersionSearch>>(
-    hubAPI`/v3/plugin/ansible/search/collection-versions/?namespace=${namespaceName}`
+    `${apiPrefix}/v3/plugin/ansible/search/collection-versions/?namespace=${namespaceName}`
   ).then((itemsResponse) => {
     cy.log(`count of collections in namespace: ${itemsResponse.data.length}`);
     for (const collection of itemsResponse.data) {
@@ -104,3 +107,26 @@ Cypress.Commands.add('deleteCollectionsInNamespace', (namespaceName: string) => 
     }
   });
 });
+
+Cypress.Commands.add('createHubRole', () => {
+  cy.requestPost<Pick<Role, 'name' | 'description' | 'permissions'>, Role>(pulpAPI`/roles/`, {
+    name: `galaxy.e2erole${randomString(4)}`,
+    description: 'E2E custom role description',
+    permissions: ['galaxy.add_namespace', 'container.namespace_change_containerdistribution'],
+  });
+});
+
+Cypress.Commands.add(
+  'deleteHubRole',
+  (
+    role: Role,
+    options?: {
+      /** Whether to fail on response codes other than 2xx and 3xx */
+      failOnStatusCode?: boolean;
+    }
+  ) => {
+    if (role?.name) {
+      cy.requestDelete(pulpAPI`/roles/${parsePulpIDFromURL(role.pulp_href) as string}`, options);
+    }
+  }
+);
