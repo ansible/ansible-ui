@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { EditIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons';
+import { EditIcon, PlusIcon, TrashIcon, BanIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -13,8 +13,8 @@ import {
   PageLayout,
   PageTable,
   useGetPageUrl,
+  usePageNavigate,
 } from '../../../../framework';
-import { RouteObj } from '../../../common/Routes';
 import {
   useCreatedColumn,
   useDescriptionColumn,
@@ -38,6 +38,7 @@ import { useDeleteApplications } from './hooks/useDeleteApplications';
 import { AwxRoute } from '../../AwxRoutes';
 import { awxAPI } from '../../api/awx-utils';
 import { Application } from '../../interfaces/Application';
+import { cannotDeleteResource, cannotEditResource } from '../../../common/utils/RBAChelpers';
 
 export function Applications() {
   const { t } = useTranslation();
@@ -53,6 +54,7 @@ export function Applications() {
   const deleteApplications = useDeleteApplications(view.unselectItemsAndRefresh);
   const history = useNavigate();
   const getPageUrl = useGetPageUrl();
+  const pageNavigate = usePageNavigate();
 
   const toolbarActions = useMemo<IPageAction<Application>[]>(
     () => [
@@ -63,7 +65,7 @@ export function Applications() {
         isPinned: true,
         icon: PlusIcon,
         label: t('Create application'),
-        onClick: () => history(getPageUrl(AwxRoute.CreateApplication)),
+        onClick: () => pageNavigate(AwxRoute.CreateApplication),
       },
       { type: PageActionType.Seperator },
       {
@@ -75,7 +77,7 @@ export function Applications() {
         isDanger: true,
       },
     ],
-    [t, deleteApplications, history, getPageUrl]
+    [t, deleteApplications, pageNavigate]
   );
 
   const rowActions = useMemo<IPageAction<Application>[]>(
@@ -86,12 +88,9 @@ export function Applications() {
         icon: EditIcon,
         isPinned: true,
         label: t('Edit application'),
+        isDisabled: (application) => cannotEditResource(application, t),
         onClick: (application) =>
-          history(
-            getPageUrl(AwxRoute.EditApplication, {
-              params: { id: (application?.id ?? 0).toString() },
-            })
-          ),
+          pageNavigate(AwxRoute.EditApplication, { params: { id: application.id } }),
       },
       { type: PageActionType.Seperator },
       {
@@ -99,11 +98,21 @@ export function Applications() {
         selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete application'),
+        isDisabled: (application) => cannotDeleteResource(application, t),
+        onClick: (application) => deleteApplications([application]),
+        isDanger: true,
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: BanIcon,
+        label: t('Disable application'),
+        isDisabled: (application) => cannotEditResource(application, t),
         onClick: (application) => deleteApplications([application]),
         isDanger: true,
       },
     ],
-    [t, history, getPageUrl, deleteApplications]
+    [t, pageNavigate, deleteApplications]
   );
 
   return (
@@ -164,11 +173,12 @@ export function useApplicationsColumns(options?: {
   disableSort?: boolean;
   disableLinks?: boolean;
 }) {
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
+
   const nameClick = useCallback(
     (application: Application) =>
-      navigate(RouteObj.ApplicationDetails.replace(':id', application.id.toString())),
-    [navigate]
+      pageNavigate(AwxRoute.ApplicationDetails, { params: { id: application.id } }),
+    [pageNavigate]
   );
   const nameColumn = useNameColumn({
     ...options,
