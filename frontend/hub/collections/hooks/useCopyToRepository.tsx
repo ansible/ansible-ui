@@ -19,6 +19,7 @@ import { useHubContext, HubContext } from './../../useHubContext';
 import { SigningServiceResponse } from '../../api-schemas/generated/SigningServiceResponse';
 import { HubError } from '../../common/HubError';
 import { hubAPI, pulpAPI } from '../../api/formatPath';
+import { requestGet } from '../../../common/crud/Data';
 
 export function useCopyToRepository() {
   const [_, setDialog] = usePageDialog();
@@ -40,7 +41,7 @@ export function useCopyToRepository() {
 function CopyToRepositoryModal(props: {
   collection: CollectionVersionSearch;
   onClose: () => void;
-  context : HubContext;
+  context: HubContext;
   operation: 'approve' | 'copy';
 }) {
   const toolbarFilters = useRepositoryFilters();
@@ -49,7 +50,7 @@ function CopyToRepositoryModal(props: {
   const { collection } = props;
   const request = useGetRequest<HubItemsResponse<CollectionVersionSearch>>();
 
-  const copyToRepositoryAction = useCopyToRepositoryAction();
+  const pulpRequest = useGetRequest<PulpItemsResponse<SigningServiceResponse>>();
 
   const [selectedRepositories, setSelectedRepositories] = useState<Repository[]>([]);
   const [fixedRepositories, setFixedRepositories] = useState<Repository[]>([]);
@@ -63,7 +64,13 @@ function CopyToRepositoryModal(props: {
     try {
       setIsLoading(true);
 
-      copyToRepositoryAction(collection, operation, selectedRepositories, props.context);
+      copyToRepositoryAction(
+        collection,
+        operation,
+        selectedRepositories,
+        props.context,
+        pulpRequest
+      );
 
       setIsLoading(false);
       props.onClose();
@@ -207,62 +214,60 @@ interface Repository {
   pulp_href: string;
 }
 
-export function useCopyToRepositoryAction()
-{
-    const pulpRequest = useGetRequest<PulpItemsResponse<SigningServiceResponse>>();
+export async function copyToRepositoryAction(
+  collection: CollectionVersionSearch,
+  operation: 'approve' | 'copy',
+  selectedRepositories: Repository[],
+  context: HubContext,
+  pulpRequest: any
+) {
+  const { repository } = collection;
+  if (!repository) {
+    return;
+  }
 
-    return async (collection : CollectionVersionSearch, operation : "approve" | "copy", 
-    selectedRepositories : Repository[],
-    context : HubContext
-  ) => {
-      const { repository } = collection;
-      if (!repository) {
-        return;
-      }
+  const pulpId = parsePulpIDFromURL(repository?.pulp_href);
 
-      debugger;
-      const pulpId = parsePulpIDFromURL(repository?.pulp_href);
+  const { collection_auto_sign, require_upload_signatures } = context.featureFlags;
+  const autoSign = collection_auto_sign && !require_upload_signatures;
 
-      const { collection_auto_sign, require_upload_signatures } = context.featureFlags;
-      const autoSign = collection_auto_sign && !require_upload_signatures;
-      
-      let signingService = '';
-      const signingServiceName = context?.settings?.GALAXY_COLLECTION_SIGNING_SERVICE;
-      if (((operation === 'approve' && autoSign) || operation === 'copy') && signingServiceName) {
-        const url = pulpAPI`/signing-services/?name=${signingServiceName}`;
-        const signingServiceList = await pulpRequest(url);
-        debugger;
-        signingService = signingServiceList?.results?.[0].pulp_href;
-      }
+  let signingService = '';
 
+  const signingServiceName = context?.settings?.GALAXY_COLLECTION_SIGNING_SERVICE;
+  if (((operation === 'approve' && autoSign) || operation === 'copy') && signingServiceName) {
+    const url = pulpAPI`/signing-services/?name=${signingServiceName}`;
 
+    // TODO - this does not work? Why? It fails that request was aborted
+    //const signingServiceList = await pulpRequest(url);
+    const signingServiceList = await requestGet<PulpItemsResponse<SigningServiceResponse>>(url);
+    signingService = signingServiceList?.results?.[0].pulp_href;
+  }
 
-      const repoHrefs: string[] = [];
+  const repoHrefs: string[] = [];
 
-      for (const repo of selectedRepositories) {
-        repoHrefs.push(repo.pulp_href);
-      }
+  for (const repo of selectedRepositories) {
+    repoHrefs.push(repo.pulp_href);
+  }
 
-      const params: {
-        collection_versions: string[];
-        destination_repositories: string[];
-        signing_service?: string;
-      } = {
-        collection_versions: collection.collection_version?.pulp_href
-          ? [collection.collection_version?.pulp_href]
-          : [],
-        destination_repositories: repoHrefs,
-      };
+  const params: {
+    collection_versions: string[];
+    destination_repositories: string[];
+    signing_service?: string;
+  } = {
+    collection_versions: collection.collection_version?.pulp_href
+      ? [collection.collection_version?.pulp_href]
+      : [],
+    destination_repositories: repoHrefs,
+  };
 
-      if (signingService) {
-        params.signing_service = signingService;
-      }
+  if (signingService) {
+    params.signing_service = signingService;
+  }
 
-      const api_op = {
-        approve: 'move_collection_version',
-        copy: 'copy_collection_version',
-      }[operation];
+  const api_op = {
+    approve: 'move_collection_version',
+    copy: 'copy_collection_version',
+  }[operation];
 
-      await hubAPIPost(pulpAPI`/repositories/ansible/ansible/${pulpId || ''}/${api_op}/`, params);
-    };
+  await hubAPIPost(pulpAPI`/repositories/ansible/ansible/${pulpId || ''}/${api_op}/`, params);
 }

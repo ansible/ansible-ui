@@ -54,6 +54,7 @@ export function useGetRequest<ResponseBody>() {
       method: 'GET',
       signal: signal ?? abortController.signal,
     });
+
     if (!response.ok) {
       if (response.status === 401) {
         navigate('/login?navigate-back=true');
