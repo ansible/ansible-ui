@@ -19,7 +19,6 @@ import { useHubContext, HubContext } from './../../useHubContext';
 import { SigningServiceResponse } from '../../api-schemas/generated/SigningServiceResponse';
 import { HubError } from '../../common/HubError';
 import { hubAPI, pulpAPI } from '../../api/formatPath';
-import { requestGet } from '../../../common/crud/Data';
 
 export function useCopyToRepository() {
   const [_, setDialog] = usePageDialog();
@@ -219,7 +218,7 @@ export async function copyToRepositoryAction(
   operation: 'approve' | 'copy',
   selectedRepositories: Repository[],
   context: HubContext,
-  pulpRequest: any
+  pulpRequest: ReturnType<typeof useGetRequest<PulpItemsResponse<SigningServiceResponse>>>
 ) {
   const { repository } = collection;
   if (!repository) {
@@ -236,10 +235,7 @@ export async function copyToRepositoryAction(
   const signingServiceName = context?.settings?.GALAXY_COLLECTION_SIGNING_SERVICE;
   if (((operation === 'approve' && autoSign) || operation === 'copy') && signingServiceName) {
     const url = pulpAPI`/signing-services/?name=${signingServiceName}`;
-
-    // TODO - this does not work? Why? It fails that request was aborted
-    //const signingServiceList = await pulpRequest(url);
-    const signingServiceList = await requestGet<PulpItemsResponse<SigningServiceResponse>>(url);
+    const signingServiceList = await pulpRequest(url);
     signingService = signingServiceList?.results?.[0].pulp_href;
   }
 

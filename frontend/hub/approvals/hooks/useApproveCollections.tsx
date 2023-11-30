@@ -11,6 +11,7 @@ import { useApprovalsColumns } from './useApprovalsColumns';
 import { HubContext, useHubContext } from './../../useHubContext';
 import { useCopyToRepository } from '../../collections/hooks/useCopyToRepository';
 import { copyToRepositoryAction } from '../../collections/hooks/useCopyToRepository';
+import { SigningServiceResponse } from '../../api-schemas/generated/SigningServiceResponse';
 
 export function useApproveCollections(
   onComplete?: (collections: CollectionVersionSearch[]) => void
@@ -28,6 +29,7 @@ export function useApproveCollections(
   const autoSign = collection_auto_sign && !require_upload_signatures;
 
   const copyToRepository = useCopyToRepository();
+  const pulpRequest = useGetRequest<PulpItemsResponse<SigningServiceResponse>>();
 
   return useCallback(
     (collections: CollectionVersionSearch[]) => {
@@ -62,7 +64,8 @@ export function useApproveCollections(
             collections.length > 1,
             t,
             copyToRepository,
-            context
+            context,
+            pulpRequest
           ),
       });
     },
@@ -75,6 +78,8 @@ export function useApproveCollections(
       getRequest,
       autoSign,
       copyToRepository,
+      pulpRequest,
+      context,
     ]
   );
 }
@@ -85,7 +90,8 @@ export function approveCollection(
   bulkAction: boolean,
   t: TFunction<'translation', undefined>,
   copyToRepository: ReturnType<typeof useCopyToRepository>,
-  context: HubContext
+  context: HubContext,
+  pulpRequest: ReturnType<typeof useGetRequest<PulpItemsResponse<SigningServiceResponse>>>
 ) {
   let approvedRepo = '';
 
@@ -116,7 +122,7 @@ export function approveCollection(
         'approve',
         [{ pulp_href: approvedRepo } as Repository],
         context,
-        null
+        pulpRequest
       );
     }
   }
