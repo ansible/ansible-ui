@@ -1,5 +1,6 @@
 import { EdaControllerToken } from '../../../../frontend/eda/interfaces/EdaControllerToken';
 import { EdaResult } from '../../../../frontend/eda/interfaces/EdaResult';
+import { edaAPI } from '../../../support/formatApiPathForEDA';
 
 function isOldResource(prefix: string, resource: { name?: string; created_at?: string }) {
   if (!resource.name) return false;
@@ -16,19 +17,17 @@ describe('EDA Cleanup', () => {
   before(() => cy.edaLogin());
 
   it('cleanup old admin awx tokens', () => {
-    cy.request<EdaResult<EdaControllerToken>>('/api/eda/v1/users/me/awx-tokens/').then(
-      (response) => {
-        const tokens = response.body.results;
-        for (const token of tokens ?? []) {
-          if (isOldResource('E2E Token', token)) {
-            cy.deleteEdaCurrentUserAwxToken(token);
-          }
-          if (isOldResource('AWX Token', token)) {
-            cy.deleteEdaCurrentUserAwxToken(token);
-          }
+    cy.request<EdaResult<EdaControllerToken>>(edaAPI`/users/me/awx-tokens/`).then((response) => {
+      const tokens = response.body.results;
+      for (const token of tokens ?? []) {
+        if (isOldResource('E2E Token', token)) {
+          cy.deleteEdaCurrentUserAwxToken(token);
+        }
+        if (isOldResource('AWX Token', token)) {
+          cy.deleteEdaCurrentUserAwxToken(token);
         }
       }
-    );
+    });
   });
 
   it('cleanup old eda projects', () => {

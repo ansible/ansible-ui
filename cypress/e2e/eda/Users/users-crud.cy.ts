@@ -1,6 +1,7 @@
 //Tests a user's ability to create, edit, and delete Users in the EDA UI.
 import { randomString } from '../../../../framework/utils/random-string';
 import { EdaUser } from '../../../../frontend/eda/interfaces/EdaUser';
+import { edaAPI } from '../../../support/formatApiPathForEDA';
 
 describe('EDA Users- Create, Edit, Delete', () => {
   let roleNames: string[];
@@ -38,7 +39,7 @@ describe('EDA Users- Create, Edit, Delete', () => {
     cy.get('[data-cy="password"]').type(userInfo.Password);
     cy.get('[data-cy="confirmpassword"]').type(userInfo.Password);
     cy.selectEdaUserRoleByName(contributorRoleName);
-    cy.intercept('POST', `/api/eda/v1/users/`).as('createUser');
+    cy.intercept('POST', edaAPI`/users/`).as('createUser');
     cy.clickButton(/^Create user$/);
     cy.hasDetail('First name', userInfo.FirstName);
     cy.hasDetail('Last name', userInfo.LastName);
@@ -86,7 +87,7 @@ describe('EDA Users- Create, Edit, Delete', () => {
       cy.setTablePageSize('100');
       cy.clickTableRow(edaUser.username, false);
       cy.verifyPageTitle(edaUser.username);
-      cy.intercept('DELETE', `/api/eda/v1/users/${edaUser.id}/`).as('deleteUser');
+      cy.intercept('DELETE', edaAPI`/users/${edaUser.id.toString()}/`).as('deleteUser');
       cy.clickPageAction('delete-user');
       cy.clickModalConfirmCheckbox();
       cy.clickModalButton('Delete user');

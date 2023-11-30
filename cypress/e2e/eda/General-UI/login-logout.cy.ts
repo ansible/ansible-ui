@@ -1,6 +1,7 @@
 //Tests a user's ability to log into and out of the EDA UI.
 //Note that EDA Actions do not have any CRUD functionality.
 import { randomString } from '../../../../framework/utils/random-string';
+import { edaAPI } from '../../../support/formatApiPathForEDA';
 
 describe('EDA Login / Logoff', () => {
   before(() => {
@@ -9,7 +10,7 @@ describe('EDA Login / Logoff', () => {
 
   it('can log into the UI and view username in the top right of the Dashboard toolbar', () => {
     cy.getEdaActiveUser().then((edaUser) => {
-      cy.intercept('POST', '/api/eda/v1/auth/session/logout/').as('loggedOut');
+      cy.intercept('POST', edaAPI`/auth/session/logout/`).as('loggedOut');
       cy.edaLogout();
       cy.wait('@loggedOut').then((result) => {
         expect(result?.response?.statusCode).to.eql(204);
@@ -47,7 +48,7 @@ describe('EDA Login / Logoff', () => {
     cy.hasDetail('Last name', userDetails.LastName);
     cy.hasDetail('Email', userDetails.Email);
     cy.hasDetail('Username', userDetails.Username);
-    cy.intercept('POST', '/api/eda/v1/auth/session/logout/').as('login');
+    cy.intercept('POST', edaAPI`/auth/session/logout/`).as('login');
     cy.edaLogout();
     cy.wait('@login');
     cy.get('[data-cy="username"]').type(userDetails.Username);
