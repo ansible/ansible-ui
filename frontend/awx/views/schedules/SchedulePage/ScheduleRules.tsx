@@ -13,7 +13,7 @@ import {
 import { useGetCreateRuleRoute } from '../hooks/scheduleHelpers';
 import { useMemo } from 'react';
 import { ButtonVariant } from '@patternfly/react-core';
-import { EditIcon, PlusIcon } from '@patternfly/react-icons';
+import { PencilAltIcon, PlusIcon } from '@patternfly/react-icons';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { Schedule } from '../../../interfaces/Schedule';
 import { AwxError } from '../../../common/AwxError';
@@ -35,7 +35,7 @@ export function ScheduleRules() {
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        icon: EditIcon,
+        icon: PencilAltIcon,
         label: t('Edit rule'),
         onClick: () => navigate(createUrl),
         isPinned: true,

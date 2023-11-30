@@ -1,4 +1,4 @@
-import { EditIcon, ProjectDiagramIcon, RocketIcon, TrashIcon } from '@patternfly/react-icons';
+import { PencilAltIcon, ProjectDiagramIcon, RocketIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -46,7 +46,7 @@ export function useTemplateActions(options: {
         selection: PageActionSelection.Single,
         isPinned: true,
         isHidden: (template) => !template?.summary_fields.user_capabilities.edit,
-        icon: EditIcon,
+        icon: PencilAltIcon,
         label: t('Edit template'),
         ouiaId: 'job-template-detail-edit-button',
         href: (template) =>

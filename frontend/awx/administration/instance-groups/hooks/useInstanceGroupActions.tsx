@@ -8,7 +8,7 @@ import {
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { ButtonVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { EditIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { AwxRoute } from '../../../AwxRoutes';
 import { useDeleteInstanceGroups } from './useDeleteInstanceGroups';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
@@ -86,7 +86,7 @@ export function useInstanceGroupRowActions(onComplete: (instanceGroups: Instance
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        icon: EditIcon,
+        icon: PencilAltIcon,
         isPinned: true,
         label: t('Edit instance group'),
         isDisabled: (instanceGroup) =>
@@ -102,7 +102,7 @@ export function useInstanceGroupRowActions(onComplete: (instanceGroups: Instance
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        icon: EditIcon,
+        icon: PencilAltIcon,
         isPinned: true,
         label: t('Edit container group'),
         isDisabled: (instanceGroup) =>
