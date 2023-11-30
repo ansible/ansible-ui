@@ -700,7 +700,7 @@ declare global {
        * @param url The url for the get request
        *
        * @example
-       *  cy.pollEdaResults<EdaProject>(`/api/eda/v1/projects/`).then(
+       *  cy.pollEdaResults<EdaProject>(edaAPI`/projects/`).then(
        *    (projects: EdaProject[]) => {
        *      // Do something with projects
        *    }

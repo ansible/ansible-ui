@@ -1,5 +1,5 @@
 import { AlertProps, ButtonVariant } from '@patternfly/react-core';
-import { EditIcon, SyncIcon, TrashIcon } from '@patternfly/react-icons';
+import { PencilAltIcon, SyncIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -55,7 +55,7 @@ export function useRemoteRegistryActions(options: {
         },
       },
       {
-        icon: EditIcon,
+        icon: PencilAltIcon,
         isPinned: true,
         label: t('Edit remote registry'),
         onClick: (remoteRegistry) => {

@@ -1,6 +1,7 @@
 import { AwxItemsResponse } from '../../frontend/awx/common/AwxItemsResponse';
 import { Organization } from '../../frontend/awx/interfaces/Organization';
 import { Project } from '../../frontend/awx/interfaces/Project';
+import { awxAPI } from './formatApiPathForAwx';
 
 const GLOBAL_PROJECT_NAME = 'Global Project for E2E tests';
 const GLOBAL_PROJECT_DESCRIPTION = 'Global Read Only Project for E2E tests';
@@ -29,7 +30,7 @@ export let globalOrganization: Organization;
 
 export function createGlobalOrganization() {
   cy.log('👀<<CHECKING EXISTENCE OF GLOBAL ORGANIZATION>>👀');
-  cy.awxRequestGet<AwxItemsResponse<Organization>>(`/api/v2/organizations?name=${GLOBAL_ORG_NAME}`)
+  cy.awxRequestGet<AwxItemsResponse<Organization>>(awxAPI`/organizations?name=${GLOBAL_ORG_NAME}`)
     .its('results')
     .then((orgResults: Organization[]) => {
       if (orgResults.length === 0) {
@@ -51,11 +52,11 @@ export let globalProject: Project;
 
 export function createGlobalProject() {
   cy.log('👀<<CHECKING EXISTENCE OF GLOBAL PROJECT>>👀');
-  cy.awxRequestGet<AwxItemsResponse<Project>>(`/api/v2/projects?name=${GLOBAL_PROJECT_NAME}&page=1`)
+  cy.awxRequestGet<AwxItemsResponse<Project>>(awxAPI`/projects?name=${GLOBAL_PROJECT_NAME}&page=1`)
     .its('results')
     .then((projectResults: Project[]) => {
       if (projectResults.length === 0) {
-        cy.awxRequestPost<Partial<Project>, Project>('/api/v2/projects/', {
+        cy.awxRequestPost<Partial<Project>, Project>(awxAPI`/projects/`, {
           name: GLOBAL_PROJECT_NAME,
           description: GLOBAL_PROJECT_DESCRIPTION,
           organization: globalOrganization.id,

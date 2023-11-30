@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { EditIcon, TrashIcon } from '@patternfly/react-icons';
+import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -24,7 +24,7 @@ export function useHubNamespaceActions() {
         selection: PageActionSelection.Single,
         variant: ButtonVariant.primary,
         isPinned: true,
-        icon: EditIcon,
+        icon: PencilAltIcon,
         label: t('Edit namespace'),
         onClick: (namespace) =>
           pageNavigate(HubRoute.EditNamespace, { params: { id: namespace.name } }),

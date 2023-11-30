@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { EditIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons';
+import { PencilAltIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -80,7 +80,7 @@ export function ExecutionEnvironments() {
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        icon: EditIcon,
+        icon: PencilAltIcon,
         isPinned: true,
         label: t('Edit execution environment'),
         onClick: (executionEnvironment) =>

@@ -1,3 +1,5 @@
+import { awxAPI } from './formatApiPathForAwx';
+import { edaAPI } from './formatApiPathForEDA';
 import { hubAPI } from './formatApiPathForHub';
 
 Cypress.Commands.add('requiredVariablesAreSet', (requiredVariables: string[]) => {
@@ -37,7 +39,7 @@ Cypress.Commands.add('awxLogin', () => {
     },
     {
       validate: () => {
-        cy.request({ method: 'GET', url: '/api/v2/me' });
+        cy.request({ method: 'GET', url: awxAPI`/me` });
       },
       cacheAcrossSpecs: true,
     }
@@ -68,7 +70,7 @@ Cypress.Commands.add('edaLogin', () => {
     {
       cacheAcrossSpecs: true,
       validate: () => {
-        cy.request({ method: 'GET', url: '/api/eda/v1/users/me/' });
+        cy.request({ method: 'GET', url: edaAPI`/users/me/` });
       },
     }
   );
