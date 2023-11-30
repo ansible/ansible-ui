@@ -40,3 +40,38 @@ export const RemoteRegistry = {
   rateLimit: '10',
   tlsValidation: 'Disabled',
 };
+
+export const Collections = {
+  title: 'Collections',
+  url: 'collections',
+};
+
+export const Namespaces = {
+  title: 'Namespaces',
+  url: 'namespaces',
+};
+
+export const ExecutionEnvironments = {
+  title: 'Execution Environments',
+  url: 'execution-environments',
+};
+
+export const SignatureKeys = {
+  title: 'Signature Keys',
+  url: 'signature-keys',
+};
+
+export const Repositories = {
+  title: 'Repository Management',
+  url: 'repositories',
+};
+
+export const Approvals = {
+  title: 'Approvals',
+  url: 'approvals',
+};
+
+export const APITokens = {
+  title: 'API Token',
+  url: 'api-token',
+};
