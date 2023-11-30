@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /// <reference types="cypress" />
 
+import { edaAPI } from '../../../support/formatApiPathForEDA';
+
 //Tests a user's ability to perform necessary actions on the Projects list in the EDA UI.
 
 describe('EDA Projects List', () => {
