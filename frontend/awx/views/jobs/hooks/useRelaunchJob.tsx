@@ -90,7 +90,7 @@ export function useRelaunchJob(jobRelaunchParams?: JobRelaunch) {
         variant: 'danger',
         title: t('Failed to relaunch job'),
         children: error instanceof Error && error.message,
-        timeout: true,
+        timeout: 2000,
       });
     }
   };
