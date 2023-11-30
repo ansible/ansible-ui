@@ -3,6 +3,7 @@
 import { EdaDecisionEnvironment } from '../../../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../../../../frontend/eda/interfaces/EdaProject';
 import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRulebookActivation';
+import { edaAPI } from '../../../support/formatApiPathForEDA';
 
 describe('EDA Dashboard', () => {
   let edaProject: EdaProject;
@@ -59,7 +60,7 @@ describe('EDA Dashboard', () => {
   });
 
   it('verifies the working links - user can create a project using the CTA, when there are no projects', () => {
-    cy.intercept('GET', '/api/eda/v1/projects/*').as('getProjects');
+    cy.intercept('GET', edaAPI`/projects/*`).as('getProjects');
     cy.navigateTo('eda', 'overview');
     cy.wait('@getProjects')
       .its('response.body.results')
@@ -83,7 +84,7 @@ describe('EDA Dashboard', () => {
   });
 
   it('verifies the working links - user can see create an RBA(Rulebook Activation) using the CTA when there are no RBAs', () => {
-    cy.intercept('GET', '/api/eda/v1/activations/*').as('getRBAs');
+    cy.intercept('GET', edaAPI`/activations/*`).as('getRBAs');
     cy.navigateTo('eda', 'overview');
     cy.wait('@getRBAs')
       .its('response.body.results')
@@ -109,7 +110,7 @@ describe('EDA Dashboard', () => {
   });
 
   it('verifies the working links - user can create a Decision Environments(DE) using the CTA, when there are no DEs', () => {
-    cy.intercept('GET', '/api/eda/v1/decision-environments/*').as('getDEs');
+    cy.intercept('GET', edaAPI`/decision-environments/*`).as('getDEs');
     cy.navigateTo('eda', 'overview');
     cy.wait('@getDEs')
       .its('response.body.results')
