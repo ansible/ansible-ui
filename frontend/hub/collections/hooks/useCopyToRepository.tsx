@@ -64,7 +64,7 @@ function CopyToRepositoryModal(props: {
     try {
       setIsLoading(true);
 
-      copyToRepositoryAction(
+      await copyToRepositoryAction(
         collection,
         operation,
         selectedRepositories,
