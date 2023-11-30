@@ -3,13 +3,14 @@ import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../framework';
 import { useGetRequest } from '../../../common/crud/useGet';
-import { collectionKeyFn, parsePulpIDFromURL, hubAPIPost } from '../../api/utils';
+import { collectionKeyFn } from '../../api/utils';
 import { pulpAPI } from '../../api/formatPath';
 import { PulpItemsResponse } from '../../usePulpView';
 import { CollectionVersionSearch } from '../Approval';
 import { useApprovalsColumns } from './useApprovalsColumns';
-import { useHubContext } from './../../useHubContext';
+import { HubContext, useHubContext } from './../../useHubContext';
 import { useCopyToRepository } from '../../collections/hooks/useCopyToRepository';
+import { copyToRepositoryAction } from '../../collections/hooks/useCopyToRepository';
 
 export function useApproveCollections(
   onComplete?: (collections: CollectionVersionSearch[]) => void
@@ -22,8 +23,8 @@ export function useApproveCollections(
 
   const getRequest = useGetRequest();
 
-  const { featureFlags } = useHubContext();
-  const { collection_auto_sign, require_upload_signatures } = featureFlags;
+  const context = useHubContext();
+  const { collection_auto_sign, require_upload_signatures } = context.featureFlags;
   const autoSign = collection_auto_sign && !require_upload_signatures;
 
   const copyToRepository = useCopyToRepository();
@@ -55,7 +56,14 @@ export function useApproveCollections(
         actionColumns,
         onComplete,
         actionFn: (collection: CollectionVersionSearch) =>
-          approveCollection(collection, getRequest, collections.length > 1, t, copyToRepository),
+          approveCollection(
+            collection,
+            getRequest,
+            collections.length > 1,
+            t,
+            copyToRepository,
+            context
+          ),
       });
     },
     [
@@ -76,7 +84,8 @@ export function approveCollection(
   getRequest: ReturnType<typeof useGetRequest>,
   bulkAction: boolean,
   t: TFunction<'translation', undefined>,
-  copyToRepository: ReturnType<typeof useCopyToRepository>
+  copyToRepository: ReturnType<typeof useCopyToRepository>,
+  context: HubContext
 ) {
   let approvedRepo = '';
 
@@ -102,14 +111,12 @@ export function approveCollection(
         copyToRepository(collection, 'approve');
       }
     } else {
-      await hubAPIPost(
-        pulpAPI`/repositories/ansible/ansible/${
-          parsePulpIDFromURL(collection.repository?.pulp_href || '') || ''
-        }/move_collection_version/`,
-        {
-          collection_versions: [`${collection.collection_version?.pulp_href}`],
-          destination_repositories: [approvedRepo],
-        }
+      await copyToRepositoryAction(
+        collection,
+        'approve',
+        [{ pulp_href: approvedRepo } as Repository],
+        context,
+        null
       );
     }
   }
