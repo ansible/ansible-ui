@@ -62,7 +62,7 @@ export const RouteObj = {
   // Administration
   ManagementJobs: `/administration/management_jobs`,
   ManagementJobSchedulesDetails: `/administration/management_jobs/:id/schedules/:schedule_id/details`,
-  InstanceGroupDetails: `/administration/instance-groups/:id`,
+  InstanceGroupDetails: `/infrastructure/instance-groups/:id`,
   ExecutionEnvironmentDetails: `/administration/execution-environments/:id/details`,
   CreateExecutionEnvironment: `/administration/execution-environments/create`,
   EditExecutionEnvironment: `/administration/execution-environments/:id/edit`,
