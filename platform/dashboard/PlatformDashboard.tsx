@@ -1,13 +1,5 @@
-import {
-  Card,
-  CardBody,
-  CardHeader,
-  CardTitle,
-  Gallery,
-  Split,
-  SplitItem,
-  Stack,
-} from '@patternfly/react-core';
+import { QuickStartCatalogPage } from '@patternfly/quickstarts';
+import { CardHeader, CardTitle, Divider, Split, SplitItem, Stack } from '@patternfly/react-core';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -18,13 +10,11 @@ import { AwxRecentJobsCard } from '../../frontend/awx/dashboard/cards/AwxRecentJ
 import { AwxRecentProjectsCard } from '../../frontend/awx/dashboard/cards/AwxRecentProjectsCard';
 import { EdaRulebookActivationsCard } from '../../frontend/eda/dashboard/cards/EdaRulebookActivationsCard';
 import { useHasController, useHasEda } from '../PlatformProvider';
-import { useQuickStarts } from './quickstarts/QuickStartProvider';
 
 export function PlatformDashboard() {
   const { t } = useTranslation();
   const hasAwx = useHasController();
   const hasEda = useHasEda();
-  const { platformQuickStarts, setActiveQuickStartID } = useQuickStarts();
   return (
     <PageLayout>
       <PageHeader
@@ -34,24 +24,14 @@ export function PlatformDashboard() {
         )}
       />
       <PageDashboard>
-        <PageDashboardCard title={t('Ansible Automation Platform Quick Starts')} width="xxl">
-          <CardBody>
-            <Gallery hasGutter minWidths={{ default: '390px' }}>
-              {platformQuickStarts.map((platformQuickStart) => (
-                <GalleryCard
-                  key={platformQuickStart.id}
-                  onClick={() => setActiveQuickStartID(platformQuickStart.id)}
-                >
-                  <GalleryCardHeader
-                    // icon={platformQuickStart}
-                    title={platformQuickStart.name}
-                    subtitle={platformQuickStart.subtitle}
-                  />
-                  <CardBody>{platformQuickStart.description}</CardBody>
-                </GalleryCard>
-              ))}
-            </Gallery>
-          </CardBody>
+        <PageDashboardCard
+          width="xxl"
+          title={t('Quick starts')}
+          subtitle={t('Learn Ansible automation with hands-on quickstarts.')}
+          // canCollapse
+        >
+          <Divider />
+          <QuickStartCatalogPage showFilter showTitle={false} />
         </PageDashboardCard>
         {hasAwx && <AwxJobActivityCard />}
         {hasAwx && <AwxRecentJobsCard />}
@@ -60,14 +40,6 @@ export function PlatformDashboard() {
         {hasEda && <EdaRulebookActivationsCard />}
       </PageDashboard>
     </PageLayout>
-  );
-}
-
-export function GalleryCard(props: { children: ReactNode; onClick?: () => void }) {
-  return (
-    <Card isSelectable isFlat isRounded className="bg-lighten-2" onClick={props.onClick}>
-      {props.children}
-    </Card>
   );
 }
 
