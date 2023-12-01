@@ -16,7 +16,7 @@ import { PageFormProjectSelect } from '../../resources/projects/components/PageF
 import { PageFormJobTemplateSelect } from '../../resources/templates/components/PageFormJobTemplateSelect';
 import { PageFormWorkflowJobTemplateSelect } from '../../resources/templates/components/PageFormWorkflowJobTemplateSelect';
 import { PageFormSelectOrganization } from '../organizations/components/PageFormOrganizationSelect';
-import { IRoles, useRolesMetadata } from './useRoleMetadata';
+import { AwxResourceTypeRoles, useAwxRoles } from './useAwxRoles';
 
 interface UserRole {
   index: number;
@@ -134,7 +134,7 @@ export function AddRolesForm(props: { users?: User[]; teams?: Team[]; onClose?: 
 }
 
 function UserCredentialRole() {
-  const rolesMetadata = useRolesMetadata();
+  const rolesMetadata = useAwxRoles();
   const { t } = useTranslation();
   return (
     <PageFormHidden watch="role" hidden={(type: string) => type !== 'credential'}>
@@ -146,74 +146,76 @@ function UserCredentialRole() {
         labelHelp={t('Choose credentials that will be receiving new roles.')}
         isMultiple
       />
-      <Permissions roles={rolesMetadata.credential} />
+      <Permissions resourceTypeRoles={rolesMetadata.credential} />
     </PageFormHidden>
   );
 }
 
 function UserJobTemplateRole() {
-  const rolesMetadata = useRolesMetadata();
+  const rolesMetadata = useAwxRoles();
   return (
     <PageFormHidden watch="role" hidden={(type: string) => type !== 'job_template'}>
       <PageFormJobTemplateSelect name="resource" />
-      <Permissions roles={rolesMetadata.job_template} />
+      <Permissions resourceTypeRoles={rolesMetadata.job_template} />
     </PageFormHidden>
   );
 }
 
 function UserWorkflowJobTemplateRole() {
-  const rolesMetadata = useRolesMetadata();
+  const rolesMetadata = useAwxRoles();
   return (
     <PageFormHidden watch="role" hidden={(type: string) => type !== 'workflow_job_template'}>
       <PageFormWorkflowJobTemplateSelect name="resource" />
-      <Permissions roles={rolesMetadata.workflow_job_template} />
+      <Permissions resourceTypeRoles={rolesMetadata.workflow_job_template} />
     </PageFormHidden>
   );
 }
 
 function UserInventoryRole() {
-  const rolesMetadata = useRolesMetadata();
+  const rolesMetadata = useAwxRoles();
   return (
     <PageFormHidden watch="role" hidden={(type: string) => type !== 'inventory'}>
       <PageFormInventorySelect name="inventoryName" />
-      <Permissions roles={rolesMetadata.inventory} />
+      <Permissions resourceTypeRoles={rolesMetadata.inventory} />
     </PageFormHidden>
   );
 }
 
 function UserProjectRole() {
-  const rolesMetadata = useRolesMetadata();
+  const rolesMetadata = useAwxRoles();
   return (
     <PageFormHidden watch="role" hidden={(type: string) => type !== 'project'}>
       <PageFormProjectSelect name="resource" />
-      <Permissions roles={rolesMetadata.project} />
+      <Permissions resourceTypeRoles={rolesMetadata.project} />
     </PageFormHidden>
   );
 }
 
 function UserOrganizationRole() {
-  const rolesMetadata = useRolesMetadata();
+  const rolesMetadata = useAwxRoles();
   return (
     <PageFormHidden watch="role" hidden={(type: string) => type !== 'organization'}>
       <PageFormSelectOrganization name="resource" isRequired />
-      <Permissions roles={rolesMetadata.organization} />
+      <Permissions resourceTypeRoles={rolesMetadata.organization} />
     </PageFormHidden>
   );
 }
 
-function Permissions(props: { roles: IRoles }) {
-  const { roles } = props;
+function Permissions(props: { resourceTypeRoles: AwxResourceTypeRoles }) {
+  const { resourceTypeRoles } = props;
   const { t } = useTranslation();
   return (
     <PageFormSection title={t('Permissions')}>
-      {Object.keys(roles).map((role) => (
-        <PageFormCheckbox
-          key={role}
-          name={role}
-          label={roles[role].label}
-          description={roles[role].description}
-        />
-      ))}
+      {Object.keys(resourceTypeRoles.roles).map((role) => {
+        return (
+          <PageFormCheckbox
+            key={role}
+            name={role}
+            label={resourceTypeRoles.roles[role].description}
+            description={resourceTypeRoles.roles[role].description}
+          />
+        );
+      })}
     </PageFormSection>
   );
 }
