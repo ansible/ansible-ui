@@ -23,7 +23,8 @@ import { awxAPI } from '../../../api/awx-utils';
 import { Role } from '../../../interfaces/Role';
 import { User } from '../../../interfaces/User';
 import { useAwxView } from '../../../useAwxView';
-import { useRolesColumns, useRolesFilters } from '../../roles/Roles';
+import { useRolesColumns } from '../../roles/useRolesColumns';
+import { useRolesFilters } from '../../roles/useRolesFilters';
 
 export function UserRoles() {
   const params = useParams<{ id: string }>();
