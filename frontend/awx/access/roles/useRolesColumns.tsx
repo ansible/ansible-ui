@@ -1,32 +1,9 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  ITableColumn,
-  IToolbarFilter,
-  TextCell,
-  ToolbarFilterType,
-  useGetPageUrl,
-} from '../../../../framework';
+import { ITableColumn, TextCell, useGetPageUrl } from '../../../../framework';
 import { AwxRoute } from '../../AwxRoutes';
 import { Role } from '../../interfaces/Role';
 import { useAwxRoles } from './useAwxRoles';
-
-export function useRolesFilters() {
-  const { t } = useTranslation();
-  const toolbarFilters = useMemo<IToolbarFilter[]>(
-    () => [
-      {
-        key: 'role',
-        label: t('Role'),
-        type: ToolbarFilterType.Text,
-        query: 'role_field__icontains',
-        comparison: 'contains',
-      },
-    ],
-    [t]
-  );
-  return toolbarFilters;
-}
 
 export function useRolesColumns() {
   const { t } = useTranslation();
