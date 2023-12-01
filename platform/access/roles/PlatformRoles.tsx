@@ -1,7 +1,5 @@
 /* eslint-disable i18next/no-literal-string */
-import { Divider } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Outlet } from 'react-router-dom';
 import { PageHeader, PageLayout } from '../../../framework';
 import { EdaRoute } from '../../../frontend/eda/EdaRoutes';
 import { HubRoute } from '../../../frontend/hub/HubRoutes';
@@ -23,8 +21,6 @@ export function PlatformRoles() {
         eda={EdaRoute.Roles}
         hub={HubRoute.Roles}
       />
-      <Divider />
-      <Outlet />
     </PageLayout>
   );
 }
