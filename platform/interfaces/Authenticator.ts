@@ -4,6 +4,7 @@ export enum AuthenticatorTypeEnum {
   Local = 'ansible_base.authenticator_plugins.local',
   LDAP = 'ansible_base.authenticator_plugins.ldap',
   Keycloak = 'ansible_base.authenticator_plugins.keycloak',
+  SAML = 'ansible_base.authenticator_plugins.saml',
 }
 
 export interface Authenticator {

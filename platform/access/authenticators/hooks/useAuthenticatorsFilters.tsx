@@ -1,13 +1,14 @@
 import { useTranslation } from 'react-i18next';
 import { IToolbarFilter, ToolbarFilterType } from '../../../../framework';
 import { useMemo } from 'react';
+import { AuthenticatorTypeEnum } from '../../../interfaces/Authenticator';
 
 export function useNameToolbarFilter() {
   const { t } = useTranslation();
   return useMemo<IToolbarFilter>(
     () => ({
       key: 'name',
-      label: t('name'),
+      label: t('Name'),
       type: ToolbarFilterType.Text,
       query: 'name__contains',
       comparison: 'contains',
@@ -22,9 +23,15 @@ export function useTypeToolbarFilter() {
     () => ({
       key: 'type',
       label: t('Authentication type'),
-      type: ToolbarFilterType.Text,
-      query: 'type__contains',
-      comparison: 'contains',
+      type: ToolbarFilterType.MultiSelect,
+      query: 'or__type',
+      options: [
+        { label: t('LDAP'), value: AuthenticatorTypeEnum.LDAP },
+        { label: t('Local'), value: AuthenticatorTypeEnum.Local },
+        { label: t('Keycloak'), value: AuthenticatorTypeEnum.Keycloak },
+        { label: t('SAML'), value: AuthenticatorTypeEnum.SAML },
+      ],
+      placeholder: t('Select types'),
     }),
     [t]
   );
