@@ -44,7 +44,9 @@ function PageNavigationItems(props: { items: PageNavigationItem[]; baseRoute: st
 function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRoute: string }) {
   const { item } = props;
   const [isExpanded, setIsExpanded] = useState(
-    () => localStorage.getItem((item.id ?? item.label) + '-expanded') !== 'false'
+    () =>
+      localStorage.getItem('default-nav-expanded') === 'true' ||
+      localStorage.getItem((item.id ?? item.label) + '-expanded') === 'true'
   );
   const setExpanded = (expanded: boolean) => {
     setIsExpanded(expanded);
@@ -71,7 +73,7 @@ function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRout
   const hasChildNavItems = 'children' in item && item.children?.find((child) => child.label);
 
   if (!hasChildNavItems && 'label' in item) {
-    const isActive = location.pathname.startsWith(route);
+    const isActive = location.pathname.includes(route);
     return (
       <NavItem
         id={id}
@@ -97,7 +99,7 @@ function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRout
   return (
     <NavExpandable
       title={item.label}
-      isActive={location.pathname.startsWith(route)}
+      isActive={location.pathname.includes(route)}
       isExpanded={isExpanded}
       onExpand={(_e, expanded: boolean) => setExpanded(expanded)}
     >
