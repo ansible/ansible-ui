@@ -637,10 +637,10 @@ function CollectionImportLogTab(props: { collection?: CollectionVersionSearch })
                     message.level === 'INFO'
                       ? PFColorE.Default
                       : message.level === 'WARNING'
-                      ? PFColorE.Warning
-                      : message.level === 'ERROR'
-                      ? PFColorE.Danger
-                      : PFColorE.Disabled
+                        ? PFColorE.Warning
+                        : message.level === 'ERROR'
+                          ? PFColorE.Danger
+                          : PFColorE.Disabled
                   ),
                 }}
               >

@@ -37,10 +37,10 @@ export function PageActionButton<T extends object>(props: {
   const tooltip = isDisabled
     ? isDisabled
     : action.tooltip
-    ? action.tooltip
-    : iconOnly
-    ? action.label
-    : undefined;
+      ? action.tooltip
+      : iconOnly
+        ? action.label
+        : undefined;
 
   let variant = action.variant ?? ButtonVariant.secondary;
   if (isSecondary && [ButtonVariant.primary, ButtonVariant.danger].includes(variant)) {
