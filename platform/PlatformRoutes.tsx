@@ -36,4 +36,5 @@ export enum PlatformRoute {
   AuthenticatorDetails = 'platform-authenticator-details',
   CreateAuthenticator = 'platform-create-authenticator',
   EditAuthenticator = 'platform-edit-authenticator',
+  ApiTokens = 'platform-api-tokens',
 }

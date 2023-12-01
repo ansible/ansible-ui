@@ -47,6 +47,7 @@ export function usePlatformNavigation() {
     edaRolesRoute.label = undefined;
     edaRolesRoute.path = 'decisions';
   }
+  // TODO - Eda Credentials should not be needed if the Gateway service to server work goes through
   // removeNavigationItemById(edaNav, EdaRoute.Credentials)
   removeNavigationItemById(edaNav, EdaRoute.Access);
 
@@ -66,6 +67,8 @@ export function usePlatformNavigation() {
   }
   // TODO - create token page for all 3 and put in access
   // hubAdministration!.childrenhubNav.push(removeNavigationItemById(hubNav, HubRoute.APIToken)!);
+  // const hubApiTokenRoute = removeNavigationItemById(hubNav, HubRoute.APIToken)!;
+  // hubApiTokenRoute.label = t('Content API Token');
   removeNavigationItemById(hubNav, HubRoute.Access);
 
   const analytics = removeNavigationItemById(awxNav, AwxRoute.Analytics);
@@ -143,6 +146,7 @@ export function usePlatformNavigation() {
         },
         credentials,
         credentialTypes,
+        // hubApiTokenRoute,
       ],
     });
     navigationItems.push({
