@@ -19,6 +19,10 @@ interface AwxRole {
   description: string;
 }
 
+function roleKeyFn(role: AwxRole) {
+  return role.id;
+}
+
 export function AwxRoles() {
   const { t } = useTranslation();
   return (
@@ -101,6 +105,7 @@ export function AwxRolesTable() {
           return options;
         }, []),
         placeholder: t('Filter by role'),
+        isPinned: true,
       },
       {
         type: ToolbarFilterType.MultiSelect,
@@ -114,13 +119,14 @@ export function AwxRolesTable() {
           return options;
         }, []),
         placeholder: t('Filter by resource'),
+        isPinned: true,
       },
     ];
     return filters;
   }, [roles, t]);
 
   const view = useInMemoryView<AwxRole>({
-    keyFn: (role) => role.id,
+    keyFn: roleKeyFn,
     items: roles,
     tableColumns,
     toolbarFilters,
