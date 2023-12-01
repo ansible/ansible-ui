@@ -1,10 +1,9 @@
-import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
-import { LoadingPage } from '../../framework/components/LoadingPage';
-import { useGet } from '../common/crud/useGet';
-import { hubAPI } from './api/formatPath';
 import { Page } from '@patternfly/react-core';
+import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
 import { PageLayout } from '../../framework';
 import { LoadingState } from '../../framework/components/LoadingState';
+import { useGet } from '../common/crud/useGet';
+import { hubAPI } from './api/formatPath';
 
 type HubFeatureFlags = {
   // execution environments
