@@ -9,7 +9,7 @@ import {
 } from '../../../../framework';
 import { AwxRoute } from '../../AwxRoutes';
 import { Role } from '../../interfaces/Role';
-import { IRoles, useRolesMetadata } from './useRoleMetadata';
+import { useAwxRoles } from './useAwxRoles';
 
 export function useRolesFilters() {
   const { t } = useTranslation();
@@ -30,7 +30,7 @@ export function useRolesFilters() {
 
 export function useRolesColumns() {
   const { t } = useTranslation();
-  const rolesMetadata = useRolesMetadata();
+  const awxRoles = useAwxRoles();
   const getPageUrl = useGetPageUrl();
 
   const tableColumns = useMemo<ITableColumn<Role>[]>(
@@ -69,15 +69,11 @@ export function useRolesColumns() {
         header: t('Description'),
         cell: (role) => {
           if (!role.summary_fields.resource_type) return;
-          const roles = (rolesMetadata as Record<string, IRoles>)[
-            role.summary_fields.resource_type
-          ];
-          if (roles) {
-            const roleMetadata = Object.values(roles).find(
-              (roleMetadata) => roleMetadata.id === role.name
-            );
-            if (roleMetadata) {
-              return <TextCell text={roleMetadata.description} />;
+          const resourceTypeRoles = awxRoles[role.summary_fields.resource_type];
+          if (resourceTypeRoles) {
+            const resourceRole = resourceTypeRoles.roles[role.name];
+            if (resourceRole) {
+              return <TextCell text={resourceRole.description} />;
             }
           }
         },
@@ -85,7 +81,7 @@ export function useRolesColumns() {
         list: 'description',
       },
     ],
-    [getPageUrl, rolesMetadata, t]
+    [getPageUrl, awxRoles, t]
   );
   return tableColumns;
 }
