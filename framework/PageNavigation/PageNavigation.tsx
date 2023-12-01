@@ -73,7 +73,7 @@ function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRout
   const hasChildNavItems = 'children' in item && item.children?.find((child) => child.label);
 
   if (!hasChildNavItems && 'label' in item) {
-    const isActive = location.pathname.startsWith(route);
+    const isActive = location.pathname.includes(route);
     return (
       <NavItem
         id={id}
@@ -99,7 +99,7 @@ function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRout
   return (
     <NavExpandable
       title={item.label}
-      isActive={location.pathname.startsWith(route)}
+      isActive={location.pathname.includes(route)}
       isExpanded={isExpanded}
       onExpand={(_e, expanded: boolean) => setExpanded(expanded)}
     >
