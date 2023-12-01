@@ -206,14 +206,16 @@ function Permissions(props: { resourceTypeRoles: AwxResourceTypeRoles }) {
   const { t } = useTranslation();
   return (
     <PageFormSection title={t('Permissions')}>
-      {Object.keys(resourceTypeRoles).map((role) => (
-        <PageFormCheckbox
-          key={role}
-          name={role}
-          label={resourceTypeRoles.roles[role].label}
-          description={resourceTypeRoles.roles[role].description}
-        />
-      ))}
+      {Object.keys(resourceTypeRoles.roles).map((role) => {
+        return (
+          <PageFormCheckbox
+            key={role}
+            name={role}
+            label={resourceTypeRoles.roles[role].description}
+            description={resourceTypeRoles.roles[role].description}
+          />
+        );
+      })}
     </PageFormSection>
   );
 }
