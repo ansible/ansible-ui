@@ -1,12 +1,12 @@
-import { pulpAPI } from '../api/formatPath';
-import { Repository } from './Repository';
+import { pulpAPI } from '../../api/formatPath';
+import { Repository } from '../Repository';
 import { useParams, useOutletContext } from 'react-router-dom';
-import { ITableColumn, useGetPageUrl, PageTable, TextCell } from '../../../framework';
-import { CollectionReduced } from '../collections/Collection';
+import { ITableColumn, useGetPageUrl, PageTable, TextCell } from '../../../../framework';
+import { CollectionReduced } from '../../collections/Collection';
 import { useMemo } from 'react';
-import { usePulpView } from '../usePulpView';
+import { usePulpView } from '../../usePulpView';
 import { useTranslation } from 'react-i18next';
-import { HubRoute } from '../HubRoutes';
+import { HubRoute } from '../../HubRoutes';
 
 export function RepositoryVersionCollections() {
   const { repository } = useOutletContext<{ repository: Repository }>();
@@ -53,7 +53,7 @@ export function RepositoryVersionCollections() {
       tableColumns={tableColumns}
       errorStateTitle={t('Error loading collections')}
       emptyStateTitle={t('No collections yet')}
-      emptyStateDescription={t('Collections will appear one day.')}
+      emptyStateDescription={t('There is no collections for this repository.')}
       {...view}
       defaultTableView="list"
       defaultSubtitle={t('Collection')}

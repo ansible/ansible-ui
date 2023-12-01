@@ -33,18 +33,18 @@ import { RemoteDetails } from './remotes/RemoteDetails';
 import { CreateRemote, EditRemote } from './remotes/RemoteForm';
 import { Remotes } from './remotes/Remotes';
 import { Repositories } from './repositories/Repositories';
-import { RepositoryDetails } from './repositories/RepositoryDetails';
+import { RepositoryPage } from './repositories/RepositoryPage/RepositoryPage';
+import { RepositoryAccess } from './repositories/RepositoryPage/RepositoryAccess';
+import { RepositoryCollectionVersion } from './repositories/RepositoryPage/RepositoryCollectionVersion';
+import { RepositoryDetails } from './repositories/RepositoryPage/RepositoryDetails';
+import { RepositoryVersions } from './repositories/RepositoryPage/RepositoryVersions';
+import { RepositoryVersionPage } from './repositories/RepositoryVersionPage/RepositoryVersionPage';
+import { RepositoryVersionDetails } from './repositories/RepositoryVersionPage/RepositoryVersionDetails';
+import { RepositoryVersionCollections } from './repositories/RepositoryVersionPage/RepositoryVersionCollections';
 import { SignatureKeys } from './signature-keys/SignatureKeys';
 import { TaskDetails } from './tasks/TaskDetails';
 import { Tasks } from './tasks/Tasks';
 import { Token } from './token/Token';
-import { RepositoryPage } from './repositories/RepositoryPage';
-import { RepositoryAccess } from './repositories/RepositoryAccess';
-import { RepositoryCollectionVersion } from './repositories/RepositoryCollectionVersion';
-import { RepositoryVersions } from './repositories/RepositoryVersions';
-import { RepositoryVersionPage } from './repositories/RepositoryVersionPage';
-import { RepositoryVersionDetails } from './repositories/RepositoryVersionDetails';
-import { RepositoryVersionCollections } from './repositories/RepositoryVersionCollections';
 
 export function useHubNavigation() {
   const { t } = useTranslation();

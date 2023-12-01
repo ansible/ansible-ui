@@ -1,14 +1,14 @@
 import { useTranslation } from 'react-i18next';
-import { hubAPI } from '../api/formatPath';
-import { PageTable } from '../../../framework';
-import { CollectionVersionSearch } from '../collections/Collection';
-import { useCollectionColumns } from '../collections/hooks/useCollectionColumns';
-import { useHubView } from '../useHubView';
-import { collectionKeyFn } from '../api/utils';
+import { hubAPI } from '../../api/formatPath';
+import { PageTable } from '../../../../framework';
+import { CollectionVersionSearch } from '../../collections/Collection';
+import { useCollectionColumns } from '../../collections/hooks/useCollectionColumns';
+import { useHubView } from '../../useHubView';
+import { collectionKeyFn } from '../../api/utils';
 import { useOutletContext } from 'react-router-dom';
-import { useRepositoryCollectionVersionFilters } from './hooks/useRepositorySelector';
-import { useCollectionVersionsActions } from './hooks/useRepositoryActions';
-import { useRepositoryCollectionVersionToolbarActions } from './hooks/useRepositoryToolbarActions';
+import { useRepositoryCollectionVersionFilters } from '../hooks/useRepositorySelector';
+import { useCollectionVersionsActions } from '../hooks/useRepositoryActions';
+import { useRepositoryCollectionVersionToolbarActions } from '../hooks/useRepositoryToolbarActions';
 
 export function RepositoryCollectionVersion() {
   const { t } = useTranslation();

@@ -32,7 +32,6 @@ export interface Collection {
     };
   };
 }
-
 export interface IContents {
   doc_strings: null | {
     doc: {
@@ -197,7 +196,6 @@ export interface CollectionReduced {
   version: string;
   namespace: string;
 }
-
 export interface CollectionVersion {
   pulp_href: string;
   pulp_created: string;

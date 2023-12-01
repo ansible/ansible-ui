@@ -5,20 +5,20 @@ import {
   PageHeader,
   PageLayout,
   useGetPageUrl,
-} from '../../../framework';
-import { HubRoute } from '../HubRoutes';
-import { PageRoutedTabs } from '../../../framework/PageTabs/PageRoutedTabs';
+} from '../../../../framework';
+import { HubRoute } from '../../HubRoutes';
+import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
 import { useParams } from 'react-router-dom';
-import { useGet } from '../../common/crud/useGet';
-import { Repository } from './Repository';
-import { pulpAPI } from '../api/formatPath';
-import { DropdownPosition } from '@patternfly/react-core/deprecated';
-import { useRepositoryActions } from './hooks/useRepositoryActions';
-import { PulpItemsResponse } from '../usePulpView';
-import { parsePulpIDFromURL } from '../api/utils';
-import { StatusCell } from '../../common/StatusCell';
+import { useGet } from '../../../common/crud/useGet';
+import { Repository } from '../Repository';
+import { pulpAPI } from '../../api/formatPath';
+import { DropdownPosition } from '@patternfly/react-core/dist/esm/deprecated';
+import { useRepositoryActions } from '../hooks/useRepositoryActions';
+import { PulpItemsResponse } from '../../usePulpView';
+import { parsePulpIDFromURL } from '../../api/utils';
+import { StatusCell } from '../../../common/StatusCell';
 import { Trans, useTranslation } from 'react-i18next';
-import { HubError } from '../common/HubError';
+import { HubError } from '../../common/HubError';
 
 export function RepositoryPage() {
   const params = useParams<{ id: string }>();
@@ -66,21 +66,26 @@ export function RepositoryPage() {
           breadcrumbs={breadcrumbs}
         />
         <PageRoutedTabs
+          backTab={{
+            label: t('Back to Repositories'),
+            page: HubRoute.Repositories,
+            persistentFilterKey: '',
+          }}
           tabs={[
             {
-              label: 'Details',
+              label: t('Details'),
               page: HubRoute.RepositoryDetails,
             },
             {
-              label: 'Access',
+              label: t('Access'),
               page: HubRoute.RepositoryAccess,
             },
             {
-              label: 'Collection version',
+              label: t('Collection version'),
               page: HubRoute.RepositoryCollectionVersion,
             },
             {
-              label: 'Versions',
+              label: t('Versions'),
               page: HubRoute.RepositoryVersions,
             },
           ]}

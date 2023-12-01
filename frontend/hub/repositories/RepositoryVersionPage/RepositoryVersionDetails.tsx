@@ -1,12 +1,12 @@
-import { DateTimeCell, LoadingPage, PageDetail, PageDetails } from '../../../framework';
+import { DateTimeCell, LoadingPage, PageDetail, PageDetails } from '../../../../framework';
 import { useTranslation } from 'react-i18next';
 import { useOutletContext, useParams } from 'react-router-dom';
-import { useGet } from '../../common/crud/useGet';
-import { pulpAPI } from '../api/formatPath';
-import { HubError } from '../common/HubError';
+import { useGet } from '../../../common/crud/useGet';
+import { pulpAPI } from '../../api/formatPath';
+import { HubError } from '../../common/HubError';
 import { LabelGroup, Label } from '@patternfly/react-core';
-import { PulpItemsResponse } from '../usePulpView';
-import { CollectionVersion } from '../collections/Collection';
+import { PulpItemsResponse } from '../../usePulpView';
+import { CollectionVersion } from '../../collections/Collection';
 
 export function RepositoryVersionDetails() {
   const { t } = useTranslation();

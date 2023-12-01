@@ -1,14 +1,20 @@
 import { useParams, Link, useOutletContext } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { CopyCell, LoadingPage, PageDetail, PageDetails, useGetPageUrl } from '../../../framework';
-import { useGet } from '../../common/crud/useGet';
-import { Task } from '../tasks/Task';
-import { pulpAPI } from '../api/formatPath';
-import { RepositoryLabels } from './components/RepositoryLabels';
-import { HubRoute } from '../HubRoutes';
-import { Repository } from './Repository';
-import { parsePulpIDFromURL } from '../api/utils';
-import { HubError } from '../common/HubError';
+import {
+  CopyCell,
+  LoadingPage,
+  PageDetail,
+  PageDetails,
+  useGetPageUrl,
+} from '../../../../framework';
+import { useGet } from '../../../common/crud/useGet';
+import { Task } from '../../tasks/Task';
+import { pulpAPI } from '../../api/formatPath';
+import { RepositoryLabels } from '../components/RepositoryLabels';
+import { HubRoute } from '../../HubRoutes';
+import { Repository } from '../Repository';
+import { parsePulpIDFromURL } from '../../api/utils';
+import { HubError } from '../../common/HubError';
 
 export function RepositoryDetails() {
   const params = useParams<{ id: string }>();

@@ -1,12 +1,12 @@
 import { useOutletContext, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { pulpAPI } from '../api/formatPath';
-import { usePulpView } from '../usePulpView';
-import { ITableColumn, PageTable, TextCell, useGetPageUrl } from '../../../framework';
-import { useVersionsActions } from './hooks/useRepositoryActions';
-import { RepositoryVersion } from './Repository';
+import { pulpAPI } from '../../api/formatPath';
+import { usePulpView } from '../../usePulpView';
+import { ITableColumn, PageTable, TextCell, useGetPageUrl } from '../../../../framework';
+import { useVersionsActions } from '../hooks/useRepositoryActions';
+import { RepositoryVersion } from '../Repository';
 import { useMemo } from 'react';
-import { HubRoute } from '../HubRoutes';
+import { HubRoute } from '../../HubRoutes';
 
 export function RepositoryVersions() {
   const { t } = useTranslation();

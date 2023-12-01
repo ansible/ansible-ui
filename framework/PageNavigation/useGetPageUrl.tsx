@@ -41,6 +41,7 @@ export function useGetPageUrl() {
       } else {
         console.error(`Page id ${id} not found`); // eslint-disable-line no-console
       }
+
       return url;
     },
     [routes]
