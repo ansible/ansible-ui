@@ -10,17 +10,15 @@ import {
 } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
 import { RouteObj } from '../../../common/Routes';
-import { useModifiedColumn } from '../../../common/columns';
 import { AwxRoute } from '../../AwxRoutes';
+import { awxAPI } from '../../api/awx-utils';
 import { Inventory } from '../../interfaces/Inventory';
 import { useInventoriesColumns } from '../../resources/inventories/hooks/useInventoriesColumns';
 import { useAwxView } from '../../useAwxView';
-import { awxAPI } from '../../api/awx-utils';
 
 export function AwxRecentInventoriesCard() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const modifiedColumn = useModifiedColumn();
 
   const view = useAwxView<Inventory>({
     url: awxAPI`/inventories/`,
@@ -31,7 +29,7 @@ export function AwxRecentInventoriesCard() {
 
   let columns = useInventoriesColumns();
   columns = useVisibleModalColumns(columns);
-  columns = useMemo(() => [...columns, modifiedColumn], [columns, modifiedColumn]);
+  columns = useMemo(() => [...columns], [columns]);
   columns = useColumnsWithoutSort(columns);
   columns = useColumnsWithoutExpandedRow(columns);
 
@@ -39,7 +37,7 @@ export function AwxRecentInventoriesCard() {
     <PageDashboardCard
       title={t('Recent Inventories')}
       subtitle={t('Recently updated inventories')}
-      width="lg"
+      width="md"
       height="md"
       linkText={t('Go to Inventories')}
       to={RouteObj.Inventories}
