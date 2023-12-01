@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  ITableColumn,
   IToolbarFilter,
   PageHeader,
   PageLayout,
@@ -10,11 +9,14 @@ import {
   useInMemoryView,
 } from '../../../../framework';
 import { PageSelectOption } from '../../../../framework/PageInputs/PageSelectOption';
+import { useAwxRoleColumns } from './useAwxRoleColumns';
 import { useAwxRoles } from './useAwxRoles';
 
-interface AwxRole {
+export interface AwxRole {
   id: string;
+  resourceId: string;
   resource: string;
+  roleId: string;
   name: string;
   description: string;
 }
@@ -48,9 +50,11 @@ export function AwxRolesTable() {
       for (const roleId of Object.keys(resourceType.roles)) {
         const role = resourceType.roles[roleId];
         roles.push({
-          id: resourceTypeId + '-' + roleId,
-          resource: resourceType.name,
+          id: roleId + '-' + resourceTypeId,
+          roleId: roleId,
           name: role.label,
+          resourceId: resourceTypeId,
+          resource: resourceType.name,
           description: role.description,
         });
       }
@@ -58,38 +62,7 @@ export function AwxRolesTable() {
     return roles;
   }, [awxRoles]);
 
-  const tableColumns = useMemo(() => {
-    const columns: ITableColumn<AwxRole>[] = [
-      {
-        id: 'name',
-        type: 'text',
-        header: t('Role'),
-        value: (role: AwxRole) => role.name,
-        sort: 'name',
-        card: 'name',
-        list: 'name',
-      },
-      {
-        id: 'resource',
-        type: 'text',
-        header: t('Resource'),
-        value: (role: AwxRole) => role.resource,
-        sort: 'resource',
-        defaultSort: true,
-        card: 'subtitle',
-        list: 'subtitle',
-      },
-      {
-        id: 'description',
-        type: 'text',
-        header: t('Description'),
-        value: (role: AwxRole) => role.description,
-        card: 'description',
-        list: 'description',
-      },
-    ];
-    return columns;
-  }, [t]);
+  const tableColumns = useAwxRoleColumns();
 
   const toolbarFilters = useMemo(() => {
     const filters: IToolbarFilter[] = [
