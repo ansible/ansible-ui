@@ -47,6 +47,6 @@ export function useAwxRoleColumns() {
       },
     ];
     return columns;
-  }, [t]);
+  }, [getPageUrl, t]);
   return columns;
 }
