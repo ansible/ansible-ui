@@ -2,7 +2,7 @@ import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { PageNotImplemented } from '../../../framework';
 
-export function AwxRoles() {
+export function PlatformAwxRoles() {
   const { t } = useTranslation();
   // const awxRoles = useRolesMetadata();
   return (
