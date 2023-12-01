@@ -12,7 +12,7 @@ export function PlatformEdaRoles() {
         style={{ borderTop: 0 }}
         className="border-bottom"
         isInline
-      ></Alert>
+      />
       <EdaRolesTable />
     </>
   );

@@ -12,7 +12,7 @@ export function PlatformHubRoles() {
         style={{ borderTop: 0 }}
         className="border-bottom"
         isInline
-      ></Alert>
+      />
       <HubRolesTable />
     </>
   );
