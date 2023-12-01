@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-/// <reference types="cypress" />
 
 import { UnifiedJobList } from '../../../../frontend/awx/interfaces/generated-from-swagger/api';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
