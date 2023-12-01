@@ -10,7 +10,7 @@ export function LastModifiedPageDetail(props: {
   return (
     <PageDetail label={t('Last modified')}>
       <DateTimeCell
-        format={props.format ? props.format : 'since'}
+        format={props.format ? props.format : 'date-time'}
         value={props.value}
         author={props?.author}
         onClick={props?.onClick}
