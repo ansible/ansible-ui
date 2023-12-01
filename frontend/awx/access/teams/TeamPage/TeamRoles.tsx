@@ -17,7 +17,8 @@ import { awxAPI } from '../../../api/awx-utils';
 import { Role } from '../../../interfaces/Role';
 import { Team } from '../../../interfaces/Team';
 import { useAwxView } from '../../../useAwxView';
-import { useRolesColumns, useRolesFilters } from '../../roles/Roles';
+import { useRolesColumns } from '../../roles/useRolesColumns';
+import { useRolesFilters } from '../../roles/useRolesFilters';
 
 export function TeamRoles() {
   const params = useParams<{ id: string }>();

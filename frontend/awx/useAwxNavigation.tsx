@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
 import { PageNavigationItem } from '../../framework/PageNavigation/PageNavigationItem';
 import { AwxRoute } from './AwxRoutes';
+import { AwxRoles } from './access/roles/AwxRoles';
 import { Topology } from './administration/topology/Topology';
 import { Test } from './analytics/AnalyticsReportBuilder/Test';
 import Reports from './analytics/Reports/Reports';
@@ -143,6 +144,12 @@ export function useAwxNavigation() {
           awxOrganizationRoutes,
           awxTeamsRoutes,
           awxUsersRoutes,
+          {
+            id: AwxRoute.Roles,
+            label: t('Roles'),
+            path: 'roles',
+            element: <AwxRoles />,
+          },
           awxCredentialRoutes,
           awxCredentialTypesRoutes,
         ],
