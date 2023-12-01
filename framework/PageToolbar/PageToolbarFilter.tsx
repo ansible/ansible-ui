@@ -63,10 +63,7 @@ function FiltersToolbarItem(props: PageToolbarFiltersProps) {
 
   let showLabel = toolbarFilters.length === 1;
   if (toolbarFilters.length >= 1) {
-    if (toolbarFilters[0].type === ToolbarFilterType.MultiSelect && toolbarFilters[0].isPinned) {
-      // Do not show the label if the pinned filter is a multiselect
-      showLabel = false;
-    } else if (
+    if (
       toolbarFilters[0].type === ToolbarFilterType.SingleSelect &&
       toolbarFilters[0].isPinned &&
       (filterState[toolbarFilters[0].key] === undefined ||
@@ -145,7 +142,7 @@ export function PageToolbarFilters(props: PageToolbarFiltersProps) {
 
   return (
     <PageToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md" id="filters">
-      <ToolbarGroup variant="filter-group" style={{ flexWrap: 'wrap', gap: 8 }}>
+      <ToolbarGroup variant="button-group" style={{ flexWrap: 'wrap', gap: 8 }}>
         {showFilterLabel && <ToolbarItem variant="label">{translations.filter}</ToolbarItem>}
         <FiltersToolbarItem
           toolbarFilters={groupedFilters}
