@@ -157,7 +157,6 @@
   },
   "devDependencies": {
     "@4tw/cypress-drag-drop": "2.2.5",
-    "@cypress/code-coverage": "3.12.12",
     "@types/js-yaml": "4.0.9",
     "@typescript-eslint/eslint-plugin": "6.13.1",
     "@typescript-eslint/parser": "6.13.1",

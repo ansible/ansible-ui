@@ -2,7 +2,6 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /// <reference types="cypress" />
 import '@4tw/cypress-drag-drop';
-import '@cypress/code-coverage/support';
 import { SetOptional, SetRequired } from 'type-fest';
 import { AwxItemsResponse } from '../../frontend/awx/common/AwxItemsResponse';
 import { AwxToken } from '../../frontend/awx/interfaces/AwxToken';
@@ -36,6 +35,7 @@ import {
   EdaRulebookActivationCreate,
 } from '../../frontend/eda/interfaces/EdaRulebookActivation';
 import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaUser';
+import { Role as HubRole } from '../../frontend/hub/access/roles/Role';
 import './auth';
 import './awx-commands';
 import { IAwxResources } from './awx-commands';
@@ -46,7 +46,6 @@ import './eda-commands';
 import './global-project';
 import './hub-commands';
 import './rest-commands';
-import { Role as HubRole } from '../../frontend/hub/access/roles/Role';
 
 declare global {
   namespace Cypress {

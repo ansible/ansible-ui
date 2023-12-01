@@ -1,4 +1,3 @@
-import '@cypress/code-coverage/support';
 import { SetRequired } from 'type-fest';
 import { randomString } from '../../framework/utils/random-string';
 import { AwxItemsResponse } from '../../frontend/awx/common/AwxItemsResponse';

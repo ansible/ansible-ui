@@ -1,6 +1,4 @@
 /// <reference types="cypress" />
-import '@cypress/code-coverage/support';
-
 Cypress.Commands.add('requestPost', function requestPost<
   ResponseT,
   RequestT = ResponseT,

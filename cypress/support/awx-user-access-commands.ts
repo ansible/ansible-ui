@@ -1,4 +1,3 @@
-import '@cypress/code-coverage/support';
 import { AwxItemsResponse } from '../../frontend/awx/common/AwxItemsResponse';
 import { Credential } from '../../frontend/awx/interfaces/Credential';
 import { Role } from '../../frontend/awx/interfaces/Role';

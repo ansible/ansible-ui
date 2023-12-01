@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 // import 'cypress-axe';
-import '@cypress/code-coverage/support';
+// import '@cypress/code-coverage/support';
 import './commands';
 import { createGlobalOrganization, createGlobalProject } from './global-project';
 
