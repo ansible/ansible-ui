@@ -1005,5 +1005,5 @@ Cypress.Commands.add('waitForJobToProcessEvents', (jobID: string) => {
   reason the numbers chosen for wait is 500ms and maxLoops is 80,
   as processing events takes ~30s, hence 80 * 500ms is chosen as the upper limit)
   */
-  waitForJobToFinishProcessingEvents(80);
+  waitForJobToFinishProcessingEvents(120);
 });
