@@ -1,3 +1,4 @@
+import { Alert } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -34,6 +35,11 @@ export function AwxRoles() {
         description={t(
           'A role represents set of actions that a team or user may perform on a resource or set of resources.'
         )}
+      />
+      <Alert
+        variant="info"
+        title="Roles can be assigned to teams and users from the teams and users pages."
+        isInline
       />
       <AwxRolesTable />;
     </PageLayout>
