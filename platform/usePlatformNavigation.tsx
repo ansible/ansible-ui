@@ -10,13 +10,17 @@ import { HubRoute } from '../frontend/hub/HubRoutes';
 import { useHubNavigation } from '../frontend/hub/useHubNavigation';
 import { useHasController, useHasEda, useHasHub } from './PlatformProvider';
 import { PlatformRoute } from './PlatformRoutes';
+import { PlatformAwxRoles } from './access/roles/PlatformAwxRoles';
+import { PlatformEdaRoles } from './access/roles/PlatformEdaRoles';
+import { PlatformHubRoles } from './access/roles/PlatformHubRoles';
+import { PlatformRoles } from './access/roles/PlatformRoles';
 import { PlatformDashboard } from './dashboard/PlatformDashboard';
 import { QuickStartsPage } from './dashboard/quickstarts/Quickstarts';
 import { Lightspeed } from './lightspeed/Lightspeed';
+import { useGetPlatformAuthenticatorsRoutes } from './routes/useGetPlatformAuthenticatorsRoutes';
 import { useGetPlatformOrganizationsRoutes } from './routes/useGetPlatformOrganizationsRoutes';
 import { useGetPlatformTeamsRoutes } from './routes/useGetPlatformTeamsRoutes';
 import { useGetPlatformUsersRoutes } from './routes/useGetPlatformUsersRoutes';
-import { useGetPlatformAuthenticatorsRoutes } from './routes/useGetPlatformAuthenticatorsRoutes';
 
 export function usePlatformNavigation() {
   const { t } = useTranslation();
@@ -26,15 +30,46 @@ export function usePlatformNavigation() {
   const hasHub = useHasHub();
 
   const awxNav = useAwxNavigation();
-  removeNavigationItemById(awxNav, AwxRoute.Dashboard);
+  removeNavigationItemById(awxNav, AwxRoute.Overview);
+  const credentials = removeNavigationItemById(awxNav, AwxRoute.Credentials)!;
+  const credentialTypes = removeNavigationItemById(awxNav, AwxRoute.CredentialTypes)!;
   removeNavigationItemById(awxNav, AwxRoute.Access);
 
   const edaNav = useEdaNavigation();
-  removeNavigationItemById(edaNav, EdaRoute.Dashboard);
+  removeNavigationItemById(edaNav, EdaRoute.Overview);
   removeNavigationItemById(edaNav, EdaRoute.Users);
+  const edaRolesRoute = removeNavigationItemById(edaNav, EdaRoute.Roles)!;
+  if ('children' in edaRolesRoute) {
+    const edaRoles = edaRolesRoute.children.find((r) => r.path === '')!;
+    if ('element' in edaRoles) {
+      edaRoles.element = <PlatformEdaRoles />;
+    }
+    edaRolesRoute.label = undefined;
+    edaRolesRoute.path = 'decisions';
+  }
+  // TODO - Eda Credentials should not be needed if the Gateway service to server work goes through
+  // removeNavigationItemById(edaNav, EdaRoute.Credentials)
+  removeNavigationItemById(edaNav, EdaRoute.Access);
 
   const hubNav = useHubNavigation();
-  removeNavigationItemById(hubNav, HubRoute.Dashboard);
+  removeNavigationItemById(hubNav, HubRoute.Overview);
+  removeNavigationItemById(hubNav, HubRoute.Organizations);
+  removeNavigationItemById(hubNav, HubRoute.Teams);
+  removeNavigationItemById(hubNav, HubRoute.Users);
+  const hubRouteRoles = removeNavigationItemById(hubNav, HubRoute.Roles)!;
+  if ('children' in hubRouteRoles) {
+    const hubRoles = hubRouteRoles.children.find((r) => r.path === '')!;
+    if ('element' in hubRoles) {
+      hubRoles.element = <PlatformHubRoles />;
+    }
+    hubRouteRoles.label = undefined;
+    hubRouteRoles.path = 'content';
+  }
+  // TODO - create token page for all 3 and put in access
+  // hubAdministration!.childrenhubNav.push(removeNavigationItemById(hubNav, HubRoute.APIToken)!);
+  // const hubApiTokenRoute = removeNavigationItemById(hubNav, HubRoute.APIToken)!;
+  // hubApiTokenRoute.label = t('Content API Token');
+  removeNavigationItemById(hubNav, HubRoute.Access);
 
   const analytics = removeNavigationItemById(awxNav, AwxRoute.Analytics);
   if (analytics) {
@@ -57,24 +92,24 @@ export function usePlatformNavigation() {
     if (hasAwx || process.env.NODE_ENV === 'development') {
       navigationItems.push({
         id: PlatformRoute.AWX,
-        label: t('Automation Controller'),
-        path: 'controller',
+        label: t('Automation Execution'),
+        path: 'execution',
         children: awxNav,
       });
     }
     if (hasEda || process.env.NODE_ENV === 'development') {
       navigationItems.push({
         id: PlatformRoute.EDA,
-        label: t('Event Driven Automation'),
-        path: 'eda',
+        label: t('Automation Decisions'),
+        path: 'descicions',
         children: edaNav,
       });
     }
     if (hasHub || process.env.NODE_ENV === 'development') {
       navigationItems.push({
         id: PlatformRoute.HUB,
-        label: t('Automation Hub'),
-        path: 'hub',
+        label: t('Automation Content'),
+        path: 'content',
         children: hubNav,
       });
     }
@@ -85,7 +120,34 @@ export function usePlatformNavigation() {
       id: PlatformRoute.Access,
       label: t('Access Management'),
       path: 'access',
-      children: [organizations, teams, users, authenticators],
+      children: [
+        authenticators,
+        organizations,
+        teams,
+        users,
+        {
+          id: PlatformRoute.Roles,
+          label: t('Roles'),
+          path: 'roles',
+          element: <PlatformRoles />,
+          children: [
+            {
+              id: PlatformRoute.ExecutionRoles,
+              path: 'execution',
+              element: <PlatformAwxRoles />,
+            },
+            edaRolesRoute,
+            hubRouteRoles,
+            {
+              path: '',
+              element: <Navigate to="execution" />,
+            },
+          ],
+        },
+        credentials,
+        credentialTypes,
+        // hubApiTokenRoute,
+      ],
     });
     navigationItems.push({
       id: PlatformRoute.Lightspeed,
@@ -107,18 +169,22 @@ export function usePlatformNavigation() {
 
     return navigationItems;
   }, [
-    analytics,
-    awxNav,
-    edaNav,
+    t,
     hasAwx,
     hasEda,
     hasHub,
-    hubNav,
+    analytics,
+    authenticators,
     organizations,
-    t,
     teams,
     users,
-    authenticators,
+    edaRolesRoute,
+    hubRouteRoles,
+    credentials,
+    credentialTypes,
+    awxNav,
+    edaNav,
+    hubNav,
   ]);
   return pageNavigationItems;
 }

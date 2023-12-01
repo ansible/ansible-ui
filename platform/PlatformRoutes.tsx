@@ -27,6 +27,8 @@ export enum PlatformRoute {
   CreateOrganization = 'platform-create-organization',
   EditOrganization = 'platform-edit-organization',
   Access = 'platform-access',
+  Roles = 'platform-roles',
+  ExecutionRoles = 'platform-execution-roles',
   Lightspeed = 'platform-lightspeed',
   QuickStarts = 'platform-quickstarts',
   Authenticators = 'platform-authenticators',
@@ -34,4 +36,5 @@ export enum PlatformRoute {
   AuthenticatorDetails = 'platform-authenticator-details',
   CreateAuthenticator = 'platform-create-authenticator',
   EditAuthenticator = 'platform-edit-authenticator',
+  ApiTokens = 'platform-api-tokens',
 }

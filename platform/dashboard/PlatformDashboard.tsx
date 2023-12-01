@@ -28,7 +28,7 @@ export function PlatformDashboard() {
           width="xxl"
           title={t('Quick starts')}
           subtitle={t('Learn Ansible automation with hands-on quickstarts.')}
-          // canCollapse
+          canCollapse
         >
           <Divider />
           <QuickStartCatalogPage showFilter showTitle={false} />
