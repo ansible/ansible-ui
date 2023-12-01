@@ -64,6 +64,8 @@ export function PageDashboardCard(props: {
 
   canCollapse?: boolean;
 }) {
+  const id = useID(props);
+
   const dashboardContext = useContext(PageDashboardContext);
 
   let colSpan = {
@@ -79,7 +81,15 @@ export function PageDashboardCard(props: {
     colSpan = dashboardContext.columns;
   }
 
-  const heightSpan = {
+  const [isCollapsed, setCollapsedState] = useState(
+    localStorage.getItem('db-' + id + '-collapsed') === 'true'
+  );
+  const setCollapsed = (collapsed: boolean) => {
+    setCollapsedState(collapsed);
+    localStorage.setItem('db-' + id + '-collapsed', collapsed ? 'true' : 'false');
+  };
+
+  let heightSpan = {
     xs: 2,
     sm: 3,
     md: 4,
@@ -89,9 +99,11 @@ export function PageDashboardCard(props: {
     none: undefined,
   }[props.height || 'none'];
 
+  if (isCollapsed) heightSpan = undefined;
+
   const height = heightSpan ? heightUnit * heightSpan + 16 * (heightSpan - 1) : undefined;
 
-  const rowSpan = {
+  let rowSpan = {
     xs: 2,
     sm: 3,
     md: 4,
@@ -101,11 +113,9 @@ export function PageDashboardCard(props: {
     none: heightSpan,
   }[props.height || 'none'];
 
+  if (isCollapsed) rowSpan = undefined;
+
   const minHeight = rowSpan ? heightUnit * rowSpan + 16 * (rowSpan - 1) : undefined;
-
-  const id = useID(props);
-
-  const [isCollapsed, setCollapsed] = useState(false);
 
   return (
     <Card
@@ -129,7 +139,7 @@ export function PageDashboardCard(props: {
         <CardHeader>
           <Flex
             spaceItems={{ default: 'spaceItemsLg' }}
-            alignItems={{ default: 'alignItemsFlexStart' }}
+            alignItems={{ default: 'alignItemsCenter' }}
             justifyContent={{ default: 'justifyContentFlexEnd' }}
           >
             <FlexItem grow={{ default: 'grow' }}>
@@ -168,7 +178,7 @@ export function PageDashboardCard(props: {
                     transform: isCollapsed ? 'rotate(0deg)' : 'rotate(90deg)',
                     transition: 'transform',
                   }}
-                  onClick={() => setCollapsed((c) => !c)}
+                  onClick={() => setCollapsed(!isCollapsed)}
                 />
               </FlexItem>
             )}
