@@ -24,7 +24,7 @@ import { useTemplateColumns } from './hooks/useTemplateColumns';
 import { useTemplateFilters } from './hooks/useTemplateFilters';
 import { useTemplateActions } from './hooks/useTemplateActions';
 
-export function Templates(props: { url: string }) {
+export function Templates() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const toolbarFilters = useTemplateFilters();
