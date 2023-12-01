@@ -1,34 +1,10 @@
-import { useParams } from 'react-router-dom';
-import React from 'react';
-import { LoadingPage } from '../../../../framework';
+import { ClipboardCopy } from '@patternfly/react-core';
 import ExternalLinkAltIcon from '@patternfly/react-icons/dist/esm/icons/external-link-alt-icon';
 import { Trans } from 'react-i18next';
-import { ClipboardCopy } from '@patternfly/react-core';
-import { useGet } from '../../../common/crud/useGet';
-import { HubItemsResponse } from '../../useHubView';
-import { HubNamespace } from '../HubNamespace';
-import { hubAPI } from '../../api/formatPath';
-import { HubError } from '../../common/HubError';
 import { getRepoURL } from '../../api/utils';
 
 export function HubNamespaceCLI() {
   const repositoryUrl = getRepoURL('published');
-  const params = useParams<{ id: string }>();
-  const {
-    data: response,
-    error,
-    refresh,
-  } = useGet<HubItemsResponse<HubNamespace>>(
-    hubAPI`/_ui/v1/namespaces/?limit=1&name=${params.id ?? ''}`
-  );
-
-  if (!response || !response.data || (response.data.length === 0 && !error)) {
-    return <LoadingPage />;
-  }
-
-  if (error) {
-    return <HubError error={error} handleRefresh={refresh} />;
-  }
 
   return (
     <div style={{ padding: '24px' }}>
