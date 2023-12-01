@@ -74,6 +74,7 @@ describe('inventories', () => {
     cy.get(`[data-cy="row-id-${inventory.id}"]`).within(() => {
       cy.get('[data-cy="edit-inventory"]').click();
     });
+    cy.typeMonacoTextField('remote_install_path: /opt/my_app_config');
     cy.get('#instance-group-select-form-group').within(() => {
       cy.get('button[aria-label="Options menu"]').click();
     });
@@ -83,6 +84,7 @@ describe('inventories', () => {
       cy.contains('button', 'Confirm').click();
       cy.contains('button', 'Save inventory').click();
       cy.verifyPageTitle(inventory.name);
+      cy.assertMonacoTextField('remote_install_path: /opt/my_app_config');
       cy.hasDetail(/^Instance groups$/, igName);
     }
   });
