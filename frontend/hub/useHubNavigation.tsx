@@ -33,10 +33,18 @@ import { RemoteDetails } from './remotes/RemoteDetails';
 import { CreateRemote, EditRemote } from './remotes/RemoteForm';
 import { Remotes } from './remotes/Remotes';
 import { Repositories } from './repositories/Repositories';
+import { RepositoryDetails } from './repositories/RepositoryDetails';
 import { SignatureKeys } from './signature-keys/SignatureKeys';
 import { TaskDetails } from './tasks/TaskDetails';
 import { Tasks } from './tasks/Tasks';
 import { Token } from './token/Token';
+import { RepositoryPage } from './repositories/RepositoryPage';
+import { RepositoryAccess } from './repositories/RepositoryAccess';
+import { RepositoryCollectionVersion } from './repositories/RepositoryCollectionVersion';
+import { RepositoryVersions } from './repositories/RepositoryVersions';
+import { RepositoryVersionPage } from './repositories/RepositoryVersionPage';
+import { RepositoryVersionDetails } from './repositories/RepositoryVersionDetails';
+import { RepositoryVersionCollections } from './repositories/RepositoryVersionCollections';
 
 export function useHubNavigation() {
   const { t } = useTranslation();
@@ -195,6 +203,58 @@ export function useHubNavigation() {
             {
               path: '',
               element: <Repositories />,
+            },
+            {
+              path: ':id/',
+              id: HubRoute.RepositoryPage,
+              element: <RepositoryPage />,
+              children: [
+                {
+                  path: 'details',
+                  id: HubRoute.RepositoryDetails,
+                  element: <RepositoryDetails />,
+                },
+                {
+                  path: 'access',
+                  id: HubRoute.RepositoryAccess,
+                  element: <RepositoryAccess />,
+                },
+                {
+                  path: 'collection-version',
+                  id: HubRoute.RepositoryCollectionVersion,
+                  element: <RepositoryCollectionVersion />,
+                },
+                {
+                  path: 'versions',
+                  id: HubRoute.RepositoryVersions,
+                  element: <RepositoryVersions />,
+                },
+                {
+                  path: '',
+                  element: <Navigate to="details" />,
+                },
+              ],
+            },
+            {
+              path: ':id/versions-details/:version/',
+              id: HubRoute.RepositoryVersionPage,
+              element: <RepositoryVersionPage />,
+              children: [
+                {
+                  path: 'details',
+                  id: HubRoute.RepositoryVersionDetails,
+                  element: <RepositoryVersionDetails />,
+                },
+                {
+                  path: 'collections',
+                  id: HubRoute.RepositoryVersionCollections,
+                  element: <RepositoryVersionCollections />,
+                },
+                {
+                  path: '',
+                  element: <Navigate to="details" />,
+                },
+              ],
             },
           ],
         },
