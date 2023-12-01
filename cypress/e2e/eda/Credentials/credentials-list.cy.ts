@@ -37,6 +37,7 @@ describe('EDA Credentials List', () => {
       cy.createEdaCredential().then((testCredential) => {
         cy.navigateTo('eda', 'credentials');
         cy.selectTableRow(edaCredential.name);
+        cy.clearAllFilters();
         cy.selectTableRow(testCredential.name);
         cy.clickToolbarKebabAction('delete-selected-credentials');
         cy.intercept('DELETE', edaAPI`/credentials/${edaCredential.id.toString()}/`).as(
