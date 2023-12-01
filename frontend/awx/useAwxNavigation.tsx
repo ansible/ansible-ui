@@ -152,7 +152,6 @@ export function useAwxNavigation() {
             children: [
               {
                 id: AwxRoute.Role,
-                label: t('Role'),
                 path: ':resourceType/:id',
                 element: <AwxRolePage />,
               },
