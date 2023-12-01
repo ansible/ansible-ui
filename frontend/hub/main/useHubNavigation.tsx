@@ -395,11 +395,12 @@ export function useHubNavigation() {
             {
               id: HubRoute.RolePage,
               path: ':id/',
+              element: <RolePage />,
               children: [
                 {
                   id: HubRoute.RoleDetails,
                   path: 'details',
-                  element: <PageNotImplemented />,
+                  element: <RoleDetails />,
                 },
               ],
             },

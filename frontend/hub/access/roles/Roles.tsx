@@ -1,7 +1,6 @@
 import { CubesIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
-import { nameKeyFn } from '../../../common/utils/nameKeyFn';
 import { pulpAPI } from '../../common/api/formatPath';
 import { useHubContext } from '../../common/useHubContext';
 import { useHubView } from '../../common/useHubView';
@@ -29,7 +28,7 @@ export function HubRolesTable() {
 
   const view = useHubView<Role>({
     url: pulpAPI`/roles/`,
-    keyFn: nameKeyFn,
+    keyFn: (role: { pulp_href: string }) => role.pulp_href,
     toolbarFilters,
     tableColumns,
     queryParams: {
@@ -50,7 +49,7 @@ export function HubRolesTable() {
       toolbarActions={toolbarActions}
       rowActions={rowActions}
       toolbarFilters={toolbarFilters}
-      expandedRow={(role) => <RoleExpandedRow role={role} />}
+      expandedRow={(role) => <RoleExpandedRow role={role} showCustom={true} />}
       errorStateTitle={t('Error loading roles')}
       emptyStateTitle={
         user && !user.is_anonymous && user.is_superuser
