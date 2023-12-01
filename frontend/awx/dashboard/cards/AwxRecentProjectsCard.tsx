@@ -10,12 +10,11 @@ import {
 } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
 import { RouteObj } from '../../../common/Routes';
-import { useModifiedColumn } from '../../../common/columns';
 import { AwxRoute } from '../../AwxRoutes';
+import { awxAPI } from '../../api/awx-utils';
 import { Project } from '../../interfaces/Project';
 import { useProjectsColumns } from '../../resources/projects/hooks/useProjectsColumns';
 import { useAwxView } from '../../useAwxView';
-import { awxAPI } from '../../api/awx-utils';
 
 export function AwxRecentProjectsCard() {
   const view = useAwxView<Project>({
@@ -26,11 +25,10 @@ export function AwxRecentProjectsCard() {
   });
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const modifiedColumn = useModifiedColumn();
 
   let columns = useProjectsColumns();
   columns = useVisibleModalColumns(columns);
-  columns = useMemo(() => [...columns, modifiedColumn], [columns, modifiedColumn]);
+  columns = useMemo(() => [...columns], [columns]);
   columns = useColumnsWithoutSort(columns);
   columns = useColumnsWithoutExpandedRow(columns);
 
@@ -38,7 +36,7 @@ export function AwxRecentProjectsCard() {
     <PageDashboardCard
       title={t('Recent Projects')}
       subtitle={t('Recently updated projects')}
-      width="lg"
+      width="md"
       height="md"
       linkText={t('Go to Projects')}
       to={RouteObj.Projects}

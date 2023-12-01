@@ -3,7 +3,6 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import {
-  DateTimeCell,
   PageTable,
   useColumnsWithoutExpandedRow,
   useColumnsWithoutSort,
@@ -12,11 +11,10 @@ import {
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
 import { useGetPageUrl } from '../../../../framework/PageNavigation/useGetPageUrl';
 import { AwxRoute } from '../../AwxRoutes';
+import { awxAPI } from '../../api/awx-utils';
 import { Job } from '../../interfaces/Job';
-import { UnifiedJob } from '../../interfaces/UnifiedJob';
 import { useAwxView } from '../../useAwxView';
 import { useJobsColumns } from '../../views/jobs/hooks/useJobsColumns';
-import { awxAPI } from '../../api/awx-utils';
 
 export function AwxRecentJobsCard() {
   const getPageUrl = useGetPageUrl();
@@ -30,17 +28,7 @@ export function AwxRecentJobsCard() {
   const navigate = useNavigate();
   let columns = useJobsColumns();
   columns = useVisibleModalColumns(columns);
-  columns = useMemo(
-    () => [
-      ...columns,
-      {
-        header: t('Finished'),
-        cell: (job: UnifiedJob) =>
-          job.finished && <DateTimeCell format="date-time" value={job.started} />,
-      },
-    ],
-    [columns, t]
-  );
+  columns = useMemo(() => [...columns], [columns]);
   columns = useColumnsWithoutSort(columns);
   columns = useColumnsWithoutExpandedRow(columns);
 
@@ -48,7 +36,7 @@ export function AwxRecentJobsCard() {
     <PageDashboardCard
       title={t('Recent Jobs')}
       subtitle={t('Recently finished jobs')}
-      width="lg"
+      width="md"
       height="md"
       linkText={t('Go to Jobs')}
       to={getPageUrl(AwxRoute.Jobs)}
