@@ -16,11 +16,13 @@ describe('Inventories.cy.ts', () => {
         }
       ).as('inventoriesList');
     });
+
     it('should render inventory list', () => {
       cy.mount(<Inventories />);
       cy.verifyPageTitle('Inventories');
       cy.get('table').find('tr').should('have.length', 10);
     });
+
     it('should have filters for Name, Description, Type, Organization, Created By and Modified By', () => {
       cy.mount(<Inventories />);
       cy.intercept('/api/v2/inventories/?organization__name__icontains=Organization%200*').as(
@@ -40,6 +42,7 @@ describe('Inventories.cy.ts', () => {
       cy.wait('@orgFilterRequest');
       cy.clickButton(/^Clear all filters$/);
     });
+
     it('disable "create inventory" toolbar action if the user does not have permissions', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({
         data: {
@@ -54,6 +57,7 @@ describe('Inventories.cy.ts', () => {
         /^You do not have permission to create an inventory. Please contact your organization administrator if there is an issue with your access.$/
       );
     });
+
     it('disable delete row action if the user does not have permissions', () => {
       cy.mount(<Inventories />);
       cy.fixture('inventories.json')
@@ -73,6 +77,7 @@ describe('Inventories.cy.ts', () => {
           cy.hasTooltip('The inventory cannot be deleted due to insufficient permission');
         });
     });
+
     it('disable edit row action if the user does not have permissions', () => {
       cy.mount(<Inventories />);
       cy.fixture('inventories.json')
@@ -90,6 +95,7 @@ describe('Inventories.cy.ts', () => {
           );
         });
     });
+
     it('disable copy row action if the user does not have permissions', () => {
       cy.mount(<Inventories />);
       cy.fixture('inventories.json')
@@ -111,6 +117,7 @@ describe('Inventories.cy.ts', () => {
           );
         });
     });
+
     it('disable copy row action if the inventory has inventory sources', () => {
       cy.mount(<Inventories />);
       cy.fixture('inventories.json')
@@ -143,6 +150,7 @@ describe('Inventories.cy.ts', () => {
         }
       ).as('emptyList');
     });
+
     it('display Empty State and create button for user with permission to create inventories', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({
         data: {
@@ -175,6 +183,7 @@ describe('Inventories.cy.ts', () => {
         .contains(/^Create constructed inventory$/)
         .should('exist');
     });
+
     it('display Empty state for user without permission to create teams', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({
         data: {

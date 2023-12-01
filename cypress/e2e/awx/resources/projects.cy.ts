@@ -4,6 +4,7 @@
 import { randomString } from '../../../../framework/utils/random-string';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
+import { User } from '../../../../frontend/awx/interfaces/User';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 // These tests do not modify the project, thus can use the globalProject
@@ -80,6 +81,7 @@ describe('projects', () => {
 describe('project edit and delete tests', () => {
   let project: Project;
   let organization: Organization;
+  let user: User;
 
   before(function () {
     cy.awxLogin();
@@ -88,14 +90,19 @@ describe('project edit and delete tests', () => {
   beforeEach(() => {
     cy.createAwxOrganization().then((org) => {
       organization = org;
-      cy.createAwxProject({ organization: organization.id }).then((proj) => {
-        project = proj;
+      cy.createAwxUser(organization).then((testUser) => {
+        user = testUser;
+        cy.createAwxProject({ organization: organization.id }).then((proj) => {
+          project = proj;
+          cy.giveUserProjectAccess(project.name, user.id, 'Read');
+        });
       });
     });
   });
 
   afterEach(() => {
     cy.deleteAwxProject(project, { failOnStatusCode: false });
+    cy.deleteAwxUser(user, { failOnStatusCode: false });
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
 

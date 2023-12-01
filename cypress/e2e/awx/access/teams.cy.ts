@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-/// <reference types="cypress" />
 
 import { randomString } from '../../../../framework/utils/random-string';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
@@ -17,11 +16,12 @@ describe('teams', function () {
   });
 
   beforeEach(function () {
-    cy.createAwxTeam(this.globalProjectOrg as Organization).then((createdTeam) => {
-      team = createdTeam;
-    });
     cy.createAwxUser(this.globalProjectOrg as Organization).then((user) => {
       user1 = user;
+      cy.createAwxTeam(this.globalProjectOrg as Organization).then((createdTeam) => {
+        team = createdTeam;
+        cy.giveUserTeamAccess(team.name, user1.id, 'Read');
+      });
     });
     cy.createAwxUser(this.globalProjectOrg as Organization).then((user) => {
       user2 = user;
