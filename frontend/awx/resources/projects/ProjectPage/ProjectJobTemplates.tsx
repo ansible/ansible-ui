@@ -5,5 +5,10 @@ import { TemplatesList } from '../../templates/TemplatesList';
 
 export function ProjectJobTemplates() {
   const { id = '' } = useParams<{ id: string }>();
-  return <TemplatesList url={awxAPI`/projects/${id}/job_templates`} />;
+  return (
+    <TemplatesList
+      url={awxAPI`/job_templates/`} /*{awxAPI`/projects/${id}/job_templates`}*/
+      projectId={id}
+    />
+  );
 }

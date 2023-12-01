@@ -19,18 +19,19 @@ import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { ButtonVariant } from '@patternfly/react-core';
 import { useTemplateActions } from './hooks/useTemplateActions';
 
-export function TemplatesList(props: { url: string }) {
+export function TemplatesList(props: { url: string; projectId?: string }) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const toolbarFilters = useTemplateFilters();
   const tableColumns = useTemplateColumns();
   const view = useAwxView<JobTemplate | WorkflowJobTemplate>({
     url: props.url,
-    toolbarFilters,
-    tableColumns,
     queryParams: {
+      project__id: props.projectId ? props.projectId : '',
       type: 'job_template,workflow_job_template',
     },
+    toolbarFilters,
+    tableColumns,
   });
   usePersistentFilters('templates');
   const deleteTemplates = useDeleteTemplates(view.unselectItemsAndRefresh);
