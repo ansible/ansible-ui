@@ -31,7 +31,7 @@ export function Templates() {
   const tableColumns = useTemplateColumns();
 
   const view = useAwxView<JobTemplate | WorkflowJobTemplate>({
-    url: props.url ? props.url : awxAPI`/unified_job_templates/`,
+    url: awxAPI`/unified_job_templates/`,
     toolbarFilters,
     tableColumns,
     queryParams: {
