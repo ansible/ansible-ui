@@ -33,12 +33,12 @@ export function AwxRoles() {
       <PageHeader
         title={t('Roles')}
         description={t(
-          'A role represents set of actions that a team or user may perform on a resource or set of resources.'
+          'A role represents a set of actions that a team or user may perform on a resource or set of resources.'
         )}
       />
       <Alert
         variant="info"
-        title="Roles can be assigned to teams and users from the teams and users pages."
+        title={t('Roles can be assigned to teams and users from the teams and users pages.')}
         isInline
       />
       <AwxRolesTable />;
