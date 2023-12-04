@@ -1,6 +1,5 @@
 export enum PlatformRoute {
-  Login = 'platform-login',
-  Dashboard = 'platform-dashboard',
+  Overview = 'platform-overview',
   AWX = 'platform-awx',
   HUB = 'platform-hub',
   EDA = 'platform-eda',

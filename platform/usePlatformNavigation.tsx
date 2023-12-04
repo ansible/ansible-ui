@@ -93,7 +93,7 @@ export function usePlatformNavigation() {
   const pageNavigationItems = useMemo<PageNavigationItem[]>(() => {
     const navigationItems: PageNavigationItem[] = [];
     navigationItems.push({
-      id: PlatformRoute.Dashboard,
+      id: PlatformRoute.Overview,
       label: t('Overview'),
       path: 'overview',
       element: <PlatformDashboard />,
