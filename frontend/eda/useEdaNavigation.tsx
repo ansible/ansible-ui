@@ -18,9 +18,9 @@ import { CreateProject, EditProject } from './Resources/projects/EditProject';
 import { ProjectDetails } from './Resources/projects/ProjectPage/ProjectDetails';
 import { ProjectPage } from './Resources/projects/ProjectPage/ProjectPage';
 import { Projects } from './Resources/projects/Projects';
+import { EdaRoles } from './UserAccess/Roles/EdaRoles';
 import { EditRole } from './UserAccess/Roles/EditRole';
 import { RoleDetails } from './UserAccess/Roles/RoleDetails';
-import { Roles } from './UserAccess/Roles/Roles';
 import { CreateControllerToken } from './UserAccess/Users/CreateControllerToken';
 import { CreateUser, EditCurrentUser, EditUser } from './UserAccess/Users/EditUser';
 import { ControllerTokens } from './UserAccess/Users/UserPage/ControllerTokens';
@@ -322,7 +322,7 @@ export function useEdaNavigation() {
               },
               {
                 path: '',
-                element: <Roles />,
+                element: <EdaRoles />,
               },
             ],
           },
