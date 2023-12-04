@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ColumnModalOption,
@@ -6,11 +7,10 @@ import {
   TextCell,
   useGetPageUrl,
 } from '../../../../../framework';
-import { useLockedRolesWithDescription } from './useLockedRolesWithDescription';
-import { Role } from '../Role';
-import { useMemo } from 'react';
 import { HubRoute } from '../../../HubRoutes';
 import { parsePulpIDFromURL } from '../../../api/utils';
+import { Role } from '../Role';
+import { useLockedRolesWithDescription } from './useLockedRolesWithDescription';
 
 export function useRoleColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
@@ -39,11 +39,10 @@ export function useRoleColumns(options?: { disableSort?: boolean; disableLinks?:
       {
         header: t('Description'),
         cell: (role) => (
-          <span style={{ maxWidth: 150, whiteSpace: 'normal' }}>
+          <span style={{ minWidth: 200, whiteSpace: 'normal' }}>
             {lockedRolesWithDescription[role.name] ?? role.description}
           </span>
         ),
-        minWidth: 150,
         card: 'subtitle',
         list: 'subtitle',
       },
