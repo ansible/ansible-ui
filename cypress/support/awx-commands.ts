@@ -96,11 +96,11 @@ Cypress.Commands.add('configFormatToggle', (configType: string) => {
 });
 
 Cypress.Commands.add('typeMonacoTextField', (textString: string) => {
-  cy.get('[data-cy="expandable"]')
-    .click()
-    .then(() => {
-      cy.get('[class*="monaco-scrollable-element"]').type(`${textString}{esc}`);
-    });
+  cy.get('[data-cy="variables"]').type(textString);
+});
+
+Cypress.Commands.add('assertMonacoTextField', (textString: string) => {
+  cy.get('[data-cy="variables"] code').should('contain', textString);
 });
 
 Cypress.Commands.add('selectPromptOnLaunch', (resourceName: string) => {
