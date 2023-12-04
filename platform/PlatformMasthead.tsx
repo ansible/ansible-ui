@@ -4,10 +4,11 @@ import { ExternalLinkAltIcon, QuestionCircleIcon, UserCircleIcon } from '@patter
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSWRConfig } from 'swr';
-import { PageMasthead, usePageNavigate } from '../framework';
+import { PageMasthead, PageNotificationsIcon, usePageNavigate } from '../framework';
 import { PageMastheadDropdown } from '../framework/PageMasthead/PageMastheadDropdown';
 import { PageSettingsIcon } from '../framework/PageMasthead/PageSettingsIcon';
 import { PageThemeSwitcher } from '../framework/PageMasthead/PageThemeSwitcher';
+import { useAwxNotifications } from '../frontend/awx/AwxMasthead';
 import { PageRefreshIcon } from '../frontend/common/PageRefreshIcon';
 import { PlatformRoute } from './PlatformRoutes';
 import { gatewayAPI } from './api/gateway-api-utils';
@@ -18,6 +19,7 @@ export function PlatformMasthead() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const activeUser = useActivePlatformUser();
+  useAwxNotifications();
 
   const { cache } = useSWRConfig();
   const logout = useCallback(async () => {
@@ -45,9 +47,9 @@ export function PlatformMasthead() {
         <ToolbarItem>
           <PageSettingsIcon />
         </ToolbarItem>
-        {/* <ToolbarItem>
-          <PageNotificationsIcon count={0} onClick={() => pageNavigate(PlatformRoute.Notifications)} />
-        </ToolbarItem> */}
+        <ToolbarItem>
+          <PageNotificationsIcon />
+        </ToolbarItem>
         <ToolbarItem>
           <PageMastheadDropdown id="help-menu" icon={<QuestionCircleIcon />}>
             <DropdownItem
