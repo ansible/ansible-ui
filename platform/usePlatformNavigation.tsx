@@ -102,6 +102,7 @@ export function usePlatformNavigation() {
       navigationItems.push({
         id: PlatformRoute.AWX,
         label: t('Automation Execution'),
+        subtitle: t('Automation Controller'),
         path: 'execution',
         children: awxNav,
       });
@@ -110,6 +111,7 @@ export function usePlatformNavigation() {
       navigationItems.push({
         id: PlatformRoute.EDA,
         label: t('Automation Decisions'),
+        subtitle: t('Event Driven Automation'),
         path: 'descicions',
         children: edaNav,
       });
@@ -118,6 +120,7 @@ export function usePlatformNavigation() {
       navigationItems.push({
         id: PlatformRoute.HUB,
         label: t('Automation Content'),
+        subtitle: t('Automation Hub'),
         path: 'content',
         children: hubNav,
       });
