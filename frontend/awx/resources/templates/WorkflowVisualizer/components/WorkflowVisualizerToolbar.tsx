@@ -27,7 +27,6 @@ import {
 import {
   useVisualizationState,
   useVisualizationController,
-  isNode,
   observer,
 } from '@patternfly/react-topology';
 import { usePageNavigate } from '../../../../../../framework';
@@ -36,9 +35,10 @@ import { postRequest } from '../../../../../common/crud/Data';
 import { AddNodeButton } from './AddNodeButton';
 import getDocsBaseUrl from '../../../../common/util/getDocsBaseUrl';
 import { useAwxConfig } from '../../../../common/useAwxConfig';
-import type { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
 import { useRemoveAllNodes } from '../hooks/useRemoveAllNodes';
 import { useViewOptions } from '../ViewOptionsProvider';
+import type { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
+import type { GraphNode } from '../types';
 
 export function ToolbarHeader() {
   const { t } = useTranslation();
@@ -89,7 +89,7 @@ function WorkflowVisualizerToolbar() {
   const [workflowTemplate] = useVisualizationState<WorkflowJobTemplate>('workflowTemplate');
 
   const controller = useVisualizationController();
-  const nodes = controller.getElements().filter(isNode);
+  const nodes = controller.getGraph().getNodes() as GraphNode[];
 
   const removeAllNodes = useRemoveAllNodes();
 

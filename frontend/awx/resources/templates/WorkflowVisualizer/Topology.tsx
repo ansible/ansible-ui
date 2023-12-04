@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   CREATE_CONNECTOR_DROP_TYPE,
@@ -47,7 +47,8 @@ import { WorkflowVisualizerNodeDetails } from './WorkflowVisualizerNodeDetails';
 import { EdgeStatus } from './types';
 import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
 import type { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
-import { ViewOptionsProvider, ViewOptionsContext, useViewOptions } from './ViewOptionsProvider';
+import type { GraphNode } from './types';
+import { ViewOptionsProvider, ViewOptionsContext } from './ViewOptionsProvider';
 import { ToolbarHeader } from './components/WorkflowVisualizerToolbar';
 
 const GRAPH_ID = 'workflow-visualizer-graph';
@@ -87,8 +88,7 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
     [workflowNodes]
   );
 
-  const nodeContextMenu = NodeContextMenu();
-
+  const nodeContextMenu = useCallback((element: GraphNode) => NodeContextMenu(element, t), [t]);
   const edgeContextMenu = useCallback(
     (element: GraphElement<ElementModel, unknown>) => EdgeContextMenu(element, t),
     [t]
@@ -137,7 +137,7 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
                 // TODO: Handle toggle unsaved changes
                 source.getController().fromModel(model);
               })(
-                withContextMenu(() => nodeContextMenu)(
+                withContextMenu(nodeContextMenu)(
                   withDndDrop(
                     nodeDropTargetSpec([
                       CONNECTOR_SOURCE_DROP,
@@ -203,13 +203,11 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
     },
     [t]
   );
-  const visualization = createVisualization();
+
+  const visualizationRef = useRef<Visualization>(createVisualization());
+  const visualization = visualizationRef.current;
 
   useEffect(() => {
-    if (!visualization) {
-      return;
-    }
-
     const edges: EdgeModel[] = [];
     const nodes = workflowNodes.map((n) => {
       const nodeId = n.id.toString();
@@ -266,7 +264,7 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
       <ViewOptionsProvider>
         {/* tools provider name */}
         <ViewOptionsContext.Consumer>
-          {({ isFullScreen, isLegendOpen, toggleLegend }) => {
+          {({ isFullScreen, isEmpty, isLegendOpen, toggleLegend }) => {
             return (
               <TopologyView
                 data-cy="workflow-visualizer"
@@ -305,8 +303,17 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
                   ) : null
                 }
               >
-                <VisualizerGraph state={{ selectedNode, workflowTemplate: template }} />
+                {isEmpty && (
+                  <div style={{ flex: '1 0 100%' }}>
+                    <EmptyStateNoData
+                      button={<AddNodeButton variant="primary" />}
+                      title={t('There are currently no nodes in this workflow')}
+                      description={t('Add a node by clicking the button below')}
+                    />
+                  </div>
+                )}
                 {isLegendOpen && <Legend />}
+                <VisualizationSurface state={{ selectedNode, workflowTemplate: template }} />
               </TopologyView>
             );
           }}
@@ -315,24 +322,3 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
     </VisualizationProvider>
   );
 };
-
-function VisualizerGraph({
-  state,
-}: {
-  state: { selectedNode?: WorkflowNode; workflowTemplate: WorkflowJobTemplate };
-}) {
-  const { t } = useTranslation();
-  const { isEmpty } = useViewOptions();
-
-  if (isEmpty) {
-    return (
-      <EmptyStateNoData
-        button={<AddNodeButton variant="primary" />}
-        title={t('There are currently no nodes in this workflow')}
-        description={t('Add a node by clicking the button below')}
-      />
-    );
-  }
-
-  return <VisualizationSurface state={state} />;
-}

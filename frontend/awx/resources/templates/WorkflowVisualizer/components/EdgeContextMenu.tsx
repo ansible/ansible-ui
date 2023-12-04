@@ -87,7 +87,11 @@ export function useEdgeMenuItems(t: (item: string) => string): MenuItem[] {
       ),
       isDanger: true,
       label: t('Remove link'),
-      onClick: (_element) => alert(`Selected: Remove Node`),
+      onClick: (element: GraphElement) => {
+        action(() => {
+          element.remove();
+        })();
+      },
     },
   ];
 }
@@ -97,8 +101,6 @@ export function EdgeContextMenu(
   t: (string: string) => string
 ) {
   const data = element.getData() as { tagStatus: string };
-
-  // element.remove();  // TODO: remove link
 
   const items = useEdgeMenuItems(t);
   return items.map((item) => {
