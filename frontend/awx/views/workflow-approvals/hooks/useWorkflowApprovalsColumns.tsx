@@ -7,11 +7,11 @@ import {
   TextCell,
   usePageNavigate,
 } from '../../../../../framework';
+import { RouteObj } from '../../../../common/Routes';
+import { useIdColumn, useNameColumn } from '../../../../common/columns';
+import { AwxRoute } from '../../../AwxRoutes';
 import { WorkflowApproval } from '../../../interfaces/WorkflowApproval';
 import { WorkflowApprovalStatusCell } from '../components/WorkflowApprovalStatusCell';
-import { AwxRoute } from '../../../AwxRoutes';
-import { useIdColumn, useNameColumn } from '../../../../common/columns';
-import { RouteObj } from '../../../../common/Routes';
 
 export function useWorkflowApprovalsColumns(options?: {
   disableSort?: boolean;
@@ -19,7 +19,7 @@ export function useWorkflowApprovalsColumns(options?: {
 }) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const idColumn = useIdColumn();
+  const idColumn = useIdColumn(false);
   const nameClick = useCallback(
     (workflow_approval: WorkflowApproval) =>
       pageNavigate(AwxRoute.WorkflowApprovalDetails, { params: { id: workflow_approval.id } }),
@@ -38,7 +38,7 @@ export function useWorkflowApprovalsColumns(options?: {
         cell: (workflow_approval: WorkflowApproval) => {
           return (
             <TextCell
-              text={`${workflow_approval.summary_fields.source_workflow_job.id} - ${workflow_approval.summary_fields.source_workflow_job.name}`}
+              text={`${workflow_approval.summary_fields.source_workflow_job.name}`}
               to={RouteObj.JobOutput.replace(':job_type', 'workflow').replace(
                 ':id',
                 workflow_approval.summary_fields.source_workflow_job.id.toString()

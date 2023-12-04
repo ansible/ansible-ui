@@ -4,7 +4,7 @@ import { QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { PageMasthead, usePageNavigate } from '../../framework';
+import { PageMasthead } from '../../framework';
 import { PageMastheadDropdown } from '../../framework/PageMasthead/PageMastheadDropdown';
 import { PageNotificationsIcon } from '../../framework/PageMasthead/PageNotificationsIcon';
 import { PageSettingsIcon } from '../../framework/PageMasthead/PageSettingsIcon';
@@ -14,7 +14,6 @@ import { PageRefreshIcon } from '../common/PageRefreshIcon';
 import { postRequest } from '../common/crud/Data';
 import { useActiveUser } from '../common/useActiveUser';
 import { useClearCache } from '../common/useInvalidateCache';
-import { HubRoute } from './HubRoutes';
 import { hubAPI } from './api/formatPath';
 import Logo from './galaxy-logo.svg';
 
@@ -23,7 +22,6 @@ export function HubMasthead() {
   const openAnsibleAboutModal = useAnsibleAboutModal();
   const { clearAllCache } = useClearCache();
   const navigate = useNavigate();
-  const pageNavigate = usePageNavigate();
   const activeUser = useActiveUser();
   const logout = useCallback(async () => {
     await postRequest(hubAPI`/_ui/v1/auth/logout/`, {});
@@ -48,7 +46,7 @@ export function HubMasthead() {
           <PageSettingsIcon />
         </ToolbarItem>
         <ToolbarItem>
-          <PageNotificationsIcon count={0} onClick={() => pageNavigate(HubRoute.Approvals)} />
+          <PageNotificationsIcon />
         </ToolbarItem>
         <ToolbarItem>
           <PageMastheadDropdown id="help-menu" icon={<QuestionCircleIcon />}>
