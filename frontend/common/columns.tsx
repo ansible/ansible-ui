@@ -11,19 +11,19 @@ import {
 } from '../../framework';
 import { RouteObj } from './Routes';
 
-export function useIdColumn<T extends { name: string; id: number }>() {
+export function useIdColumn<T extends { name: string; id: number }>(isHidden: boolean = true) {
   const { t } = useTranslation();
   const column = useMemo<ITableColumn<T>>(
     () => ({
       header: t('Id'),
       cell: (team) => team.id,
       minWidth: 0,
-      table: ColumnTableOption.Hidden,
-      card: 'hidden',
-      list: 'hidden',
-      modal: ColumnModalOption.Hidden,
+      table: isHidden ? ColumnTableOption.Hidden : undefined,
+      card: isHidden ? 'hidden' : undefined,
+      list: isHidden ? 'hidden' : undefined,
+      modal: isHidden ? ColumnModalOption.Hidden : undefined,
     }),
-    [t]
+    [isHidden, t]
   );
   return column;
 }

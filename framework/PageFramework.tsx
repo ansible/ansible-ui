@@ -4,6 +4,7 @@ import { ReactNode } from 'react';
 import { PageAlertToasterProvider } from './PageAlertToaster';
 import { PageDialogProvider } from './PageDialogs/PageDialog';
 import { PageNavSideBarProvider } from './PageNavigation/PageNavSidebar';
+import { PageNotificationsProvider } from './PageNotifications/PageNotificationsProvider';
 import { SettingsProvider } from './Settings';
 import { FrameworkTranslationsProvider } from './useFrameworkTranslations';
 
@@ -19,7 +20,9 @@ export function PageFramework(props: { children: ReactNode }) {
       <SettingsProvider>
         <PageDialogProvider>
           <PageAlertToasterProvider>
-            <PageNavSideBarProvider>{props.children}</PageNavSideBarProvider>
+            <PageNavSideBarProvider>
+              <PageNotificationsProvider>{props.children}</PageNotificationsProvider>
+            </PageNavSideBarProvider>
           </PageAlertToasterProvider>
         </PageDialogProvider>
       </SettingsProvider>
