@@ -1,9 +1,9 @@
+import { useGetPageUrl } from '../framework/PageNavigation/useGetPageUrl';
 import { Login } from '../frontend/common/Login';
 import { useGet } from '../frontend/common/crud/useGet';
-import { useGetPageUrl } from '../framework/PageNavigation/useGetPageUrl';
-import { UIAuth } from './interfaces/UIAuth';
 import { PlatformRoute } from './PlatformRoutes';
 import { gatewayAPI } from './api/gateway-api-utils';
+import { UIAuth } from './interfaces/UIAuth';
 
 export function PlatformLogin() {
   const { data: options } = useGet<UIAuth>(gatewayAPI`/v1/ui_auth/`);
@@ -13,7 +13,7 @@ export function PlatformLogin() {
   return (
     <Login
       apiUrl={gatewayAPI`/v1/login/`}
-      onLoginUrl={getPageUrl(PlatformRoute.Dashboard)}
+      onLoginUrl={getPageUrl(PlatformRoute.Overview)}
       hideInputs={hideInputs}
       authOptions={options?.ssos}
     />
