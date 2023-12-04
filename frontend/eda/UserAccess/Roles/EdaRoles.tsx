@@ -81,20 +81,6 @@ export function EdaRolesTable() {
         placeholder: t('Filter by role'),
         isPinned: true,
       },
-      // {
-      //   type: ToolbarFilterType.MultiSelect,
-      //   label: t('Resource'),
-      //   key: 'resource',
-      //   query: 'resource',
-      //   options: roles.reduce<PageSelectOption<string>[]>((options, role) => {
-      //     if (!options.find((option) => option.label === role.resource)) {
-      //       options.push({ label: role.resource, value: role.resource });
-      //     }
-      //     return options;
-      //   }, []),
-      //   placeholder: t('Filter by resource'),
-      //   isPinned: true,
-      // },
     ];
     return filters;
   }, [roles, t]);
