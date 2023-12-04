@@ -1,6 +1,6 @@
 import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { EdaRolesTable } from '../../../frontend/eda/UserAccess/Roles/Roles';
+import { EdaRolesTable } from '../../../frontend/eda/UserAccess/Roles/EdaRoles';
 
 export function PlatformEdaRoles() {
   const { t } = useTranslation();
