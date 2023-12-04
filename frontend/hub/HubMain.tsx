@@ -16,7 +16,7 @@ export default function HubMain() {
   const navigation = useHubNavigation();
   return (
     <PageApp
-      login={<Login apiUrl={hubAPI`/_ui/v1/auth/login/`} onLoginUrl="/dashboard" />}
+      login={<Login apiUrl={hubAPI`/_ui/v1/auth/login/`} onLoginUrl="/overview" />}
       root={
         <HubContextProvider>
           <Outlet />

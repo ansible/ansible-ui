@@ -4,7 +4,7 @@ export const HubDashboard = {
     'Find and use content that is supported by Red Hat and our partners to deliver reassurance for the most demanding environments. Get started by exploring the options below.',
 };
 
-export const HubRoutes = { dashboard: '/hub/dashboard' };
+export const HubRoutes = { dashboard: '/hub/overview' };
 
 export const Remotes = {
   title: 'Remotes',
@@ -39,4 +39,43 @@ export const RemoteRegistry = {
   downloadConcurrency: '5',
   rateLimit: '10',
   tlsValidation: 'Disabled',
+};
+
+export const Collections = {
+  title: 'Collections',
+  url: 'collections',
+};
+
+export const Namespaces = {
+  title: 'Namespaces',
+  url: 'namespaces',
+};
+
+export const ExecutionEnvironments = {
+  title: 'Execution Environments',
+  url: 'execution-environments',
+};
+
+export const SignatureKeys = {
+  title: 'Signature Keys',
+  url: 'signature-keys',
+};
+
+export const Repositories = {
+  title: 'Repository Management',
+  url: 'repositories',
+};
+
+export const Approvals = {
+  title: 'Approvals',
+  url: 'approvals',
+};
+
+export const APITokens = {
+  title: 'API Token',
+  url: 'api-token',
+};
+
+export const Roles = {
+  title: 'Roles',
 };

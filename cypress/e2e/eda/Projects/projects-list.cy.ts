@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /// <reference types="cypress" />
 
+import { edaAPI } from '../../../support/formatApiPathForEDA';
+
 //Tests a user's ability to perform necessary actions on the Projects list in the EDA UI.
 
 describe('EDA Projects List', () => {
@@ -37,9 +39,9 @@ describe('EDA Projects List', () => {
         cy.navigateTo('eda', 'projects');
         cy.selectTableRow(edaProject.name);
         cy.selectTableRow(testProject.name);
-        cy.clickToolbarKebabAction(/^Delete selected projects$/);
-        cy.intercept('DELETE', `/api/eda/v1/projects/${edaProject.id}/`).as('edaProject');
-        cy.intercept('DELETE', `/api/eda/v1/projects/${testProject.id}/`).as('testProject');
+        cy.clickToolbarKebabAction('delete-selected-projects');
+        cy.intercept('DELETE', edaAPI`/projects/${edaProject.id.toString()}/`).as('edaProject');
+        cy.intercept('DELETE', edaAPI`/projects/${testProject.id.toString()}/`).as('testProject');
         cy.clickModalConfirmCheckbox();
         cy.clickModalButton('Delete projects');
         cy.wait('@edaProject').then((edaProject) => {

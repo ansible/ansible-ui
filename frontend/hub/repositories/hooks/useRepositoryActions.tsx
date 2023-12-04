@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { EditIcon, TrashIcon } from '@patternfly/react-icons';
+import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../framework';
@@ -11,7 +11,7 @@ export function useRepositoryActions() {
   const actions = useMemo<IPageAction<Repository>[]>(
     () => [
       {
-        icon: EditIcon,
+        icon: PencilAltIcon,
         isPinned: true,
         label: t('Edit repository'),
         onClick: () => {},

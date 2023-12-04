@@ -1,4 +1,6 @@
-import { hubAPI } from '../../frontend/hub/api/formatPath';
+import { awxAPI } from './formatApiPathForAwx';
+import { edaAPI } from './formatApiPathForEDA';
+import { hubAPI } from './formatApiPathForHub';
 
 Cypress.Commands.add('requiredVariablesAreSet', (requiredVariables: string[]) => {
   if (Cypress.env('IS_GITHUB_ACTION') || process.env.IS_GITHUB_ACTION) {
@@ -17,6 +19,7 @@ Cypress.Commands.add('awxLogin', () => {
   cy.session(
     'AWX',
     () => {
+      window.localStorage.setItem('default-nav-expanded', 'true');
       window.localStorage.setItem('theme', 'light');
       window.localStorage.setItem('disclaimer', 'true');
       window.localStorage.setItem('hide-welcome-message', 'true');
@@ -37,7 +40,7 @@ Cypress.Commands.add('awxLogin', () => {
     },
     {
       validate: () => {
-        cy.request({ method: 'GET', url: '/api/v2/me' });
+        cy.request({ method: 'GET', url: awxAPI`/me` });
       },
       cacheAcrossSpecs: true,
     }
@@ -50,6 +53,7 @@ Cypress.Commands.add('edaLogin', () => {
   cy.session(
     'EDA',
     () => {
+      window.localStorage.setItem('default-nav-expanded', 'true');
       cy.visit(`/eda/login`, {
         retryOnStatusCodeFailure: true,
         retryOnNetworkFailure: true,
@@ -68,7 +72,7 @@ Cypress.Commands.add('edaLogin', () => {
     {
       cacheAcrossSpecs: true,
       validate: () => {
-        cy.request({ method: 'GET', url: '/api/eda/v1/users/me/' });
+        cy.request({ method: 'GET', url: edaAPI`/users/me/` });
       },
     }
   );
@@ -89,6 +93,7 @@ Cypress.Commands.add('hubLogin', () => {
   cy.session(
     'HUB',
     () => {
+      window.localStorage.setItem('default-nav-expanded', 'true');
       cy.visit(`/hub/login`, {
         retryOnStatusCodeFailure: true,
         retryOnNetworkFailure: true,

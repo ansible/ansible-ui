@@ -8,7 +8,8 @@ import {
   Text,
   Title,
 } from '@patternfly/react-core';
-import { CSSProperties, ReactNode, useContext } from 'react';
+import { AngleRightIcon } from '@patternfly/react-icons';
+import { CSSProperties, ReactNode, useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Help } from '../components/Help';
 import { useID } from '../hooks/useID';
@@ -60,7 +61,11 @@ export function PageDashboardCard(props: {
   headerControls?: ReactNode;
 
   isCompact?: boolean;
+
+  canCollapse?: boolean;
 }) {
+  const id = useID(props);
+
   const dashboardContext = useContext(PageDashboardContext);
 
   let colSpan = {
@@ -76,7 +81,15 @@ export function PageDashboardCard(props: {
     colSpan = dashboardContext.columns;
   }
 
-  const heightSpan = {
+  const [isCollapsed, setCollapsedState] = useState(
+    localStorage.getItem('db-' + id + '-collapsed') === 'true'
+  );
+  const setCollapsed = (collapsed: boolean) => {
+    setCollapsedState(collapsed);
+    localStorage.setItem('db-' + id + '-collapsed', collapsed ? 'true' : 'false');
+  };
+
+  let heightSpan = {
     xs: 2,
     sm: 3,
     md: 4,
@@ -86,9 +99,11 @@ export function PageDashboardCard(props: {
     none: undefined,
   }[props.height || 'none'];
 
+  if (isCollapsed) heightSpan = undefined;
+
   const height = heightSpan ? heightUnit * heightSpan + 16 * (heightSpan - 1) : undefined;
 
-  const rowSpan = {
+  let rowSpan = {
     xs: 2,
     sm: 3,
     md: 4,
@@ -98,9 +113,9 @@ export function PageDashboardCard(props: {
     none: heightSpan,
   }[props.height || 'none'];
 
-  const minHeight = rowSpan ? heightUnit * rowSpan + 16 * (rowSpan - 1) : undefined;
+  if (isCollapsed) rowSpan = undefined;
 
-  const id = useID(props);
+  const minHeight = rowSpan ? heightUnit * rowSpan + 16 * (rowSpan - 1) : undefined;
 
   return (
     <Card
@@ -124,7 +139,7 @@ export function PageDashboardCard(props: {
         <CardHeader>
           <Flex
             spaceItems={{ default: 'spaceItemsLg' }}
-            alignItems={{ default: 'alignItemsFlexStart' }}
+            alignItems={{ default: 'alignItemsCenter' }}
             justifyContent={{ default: 'justifyContentFlexEnd' }}
           >
             <FlexItem grow={{ default: 'grow' }}>
@@ -156,14 +171,25 @@ export function PageDashboardCard(props: {
                 {props.linkText && <Link to={props.to as string}>{props.linkText}</Link>}
               </Text>
             </FlexItem>
+            {props.canCollapse && (
+              <FlexItem>
+                <AngleRightIcon
+                  style={{
+                    transform: isCollapsed ? 'rotate(0deg)' : 'rotate(90deg)',
+                    transition: 'transform',
+                  }}
+                  onClick={() => setCollapsed(!isCollapsed)}
+                />
+              </FlexItem>
+            )}
           </Flex>
-          {props.description && (
+          {props.description && !isCollapsed && (
             <span style={{ opacity: 0.8, paddingTop: 6 }}>{props.description}</span>
           )}
         </CardHeader>
       )}
-      {props.children}
-      {props.footerActionButton && (
+      {!isCollapsed && props.children}
+      {!isCollapsed && props.footerActionButton && (
         <CardFooter style={{ textAlign: 'end' }}>
           <Button
             variant="link"

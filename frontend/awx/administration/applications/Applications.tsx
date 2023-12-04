@@ -11,7 +11,7 @@ export function Applications() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Applications')}
+        title={t('OAuth Applications')}
         description={t(
           'Create and configure token-based authentication for external applications.'
         )}

@@ -22,5 +22,5 @@ export function AwxLogin() {
     });
   }
 
-  return <Login authOptions={authOptions} apiUrl="/api/login/" onLoginUrl="/dashboard" />;
+  return <Login authOptions={authOptions} apiUrl="/api/login/" onLoginUrl="/overview" />;
 }
