@@ -93,8 +93,10 @@ describe('inventories', () => {
     cy.verifyPageTitle(inventory.name);
     cy.clickButton(/^Edit inventory/);
     cy.selectDropdownOptionByResourceName('labels', label.name);
+    cy.typeMonacoTextField('remote_install_path: /opt/my_app_config');
     cy.contains('button', 'Save inventory').click();
     cy.verifyPageTitle(inventory.name);
+    cy.assertMonacoTextField('remote_install_path: /opt/my_app_config');
     cy.hasDetail(/^Labels$/, label.name);
   });
 
