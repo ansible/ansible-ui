@@ -17,17 +17,15 @@ export function PageNavigation(props: { navigation: PageNavigationItem[] }) {
   const navBar = usePageNavSideBar();
 
   return (
-    <>
-      <PageSidebar isSidebarOpen={navBar.isOpen} className="bg-lighten">
-        <PageSidebarBody>
-          <Nav data-cy="page-navigation" className="side-nav">
-            <NavList>
-              <PageNavigationItems baseRoute={''} items={navigationItems} />
-            </NavList>
-          </Nav>
-        </PageSidebarBody>
-      </PageSidebar>
-    </>
+    <PageSidebar isSidebarOpen={navBar.isOpen} className="bg-lighten">
+      <PageSidebarBody>
+        <Nav data-cy="page-navigation" className="side-nav">
+          <NavList>
+            <PageNavigationItems baseRoute={''} items={navigationItems} />
+          </NavList>
+        </Nav>
+      </PageSidebarBody>
+    </PageSidebar>
   );
 }
 
@@ -107,7 +105,7 @@ function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRout
       title={
         (
           <div>
-            <div>{item.label}</div>
+            <div style={{ textAlign: 'left' }}>{item.label}</div>
             {item.subtitle && (
               <div style={{ fontSize: 'x-small', opacity: 0.5, textAlign: 'left' }}>
                 {item.subtitle}
