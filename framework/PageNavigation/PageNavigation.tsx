@@ -107,7 +107,7 @@ function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRout
           <div>
             <div style={{ textAlign: 'left' }}>{item.label}</div>
             {item.subtitle && (
-              <div style={{ fontSize: 'x-small', opacity: 0.5, textAlign: 'left' }}>
+              <div style={{ fontSize: 'small', opacity: 0.5, textAlign: 'left' }}>
                 {item.subtitle}
               </div>
             )}
