@@ -5,6 +5,7 @@ import {
   PageActionType,
   PageTable,
   usePageNavigate,
+  useGetPageUrl,
 } from '../../../../framework';
 import { AwxRoute } from '../../AwxRoutes';
 import { useAwxView } from '../../useAwxView';
@@ -22,6 +23,7 @@ import { useTemplateActions } from './hooks/useTemplateActions';
 export function TemplatesList(props: { url: string; projectId?: string }) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
+  const getPageUrl = useGetPageUrl();
   const toolbarFilters = useTemplateFilters();
   const tableColumns = useTemplateColumns();
   const view = useAwxView<JobTemplate | WorkflowJobTemplate>({
@@ -47,16 +49,16 @@ export function TemplatesList(props: { url: string; projectId?: string }) {
         icon: PlusCircleIcon,
         actions: [
           {
-            type: PageActionType.Button,
+            type: PageActionType.Link,
             selection: PageActionSelection.None,
             label: t('Create job template'),
-            onClick: () => pageNavigate(AwxRoute.CreateJobTemplate),
+            href: getPageUrl(AwxRoute.CreateJobTemplate),
           },
           {
-            type: PageActionType.Button,
+            type: PageActionType.Link,
             selection: PageActionSelection.None,
             label: t('Create workflow job template'),
-            onClick: () => pageNavigate(AwxRoute.CreateWorkflowJobTemplate),
+            href: getPageUrl(AwxRoute.CreateWorkflowJobTemplate),
           },
         ],
       },
