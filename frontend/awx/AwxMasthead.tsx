@@ -33,7 +33,6 @@ export function AwxMasthead() {
   const pageNavigate = usePageNavigate();
   const activeUser = useActiveUser();
   useAwxNotifications();
-  const { setNotificationsDrawerOpen } = usePageNotifications();
   const logout = useCallback(async () => {
     await fetch('/api/logout/');
     clearAllCache();
