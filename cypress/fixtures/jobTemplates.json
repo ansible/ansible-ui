@@ -1,0 +1,204 @@
+{
+  "count": 1,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 12002,
+      "type": "job_template",
+      "url": "/api/v2/job_templates/12002/",
+      "related": {
+        "created_by": "/api/v2/users/3/",
+        "modified_by": "/api/v2/users/3/",
+        "labels": "/api/v2/job_templates/12002/labels/",
+        "inventory": "/api/v2/inventories/1/",
+        "project": "/api/v2/projects/6/",
+        "organization": "/api/v2/organizations/1/",
+        "credentials": "/api/v2/job_templates/12002/credentials/",
+        "last_job": "/api/v2/jobs/10361/",
+        "next_schedule": "/api/v2/schedules/1414/",
+        "jobs": "/api/v2/job_templates/12002/jobs/",
+        "schedules": "/api/v2/job_templates/12002/schedules/",
+        "activity_stream": "/api/v2/job_templates/12002/activity_stream/",
+        "launch": "/api/v2/job_templates/12002/launch/",
+        "webhook_key": "/api/v2/job_templates/12002/webhook_key/",
+        "webhook_receiver": "",
+        "notification_templates_started": "/api/v2/job_templates/12002/notification_templates_started/",
+        "notification_templates_success": "/api/v2/job_templates/12002/notification_templates_success/",
+        "notification_templates_error": "/api/v2/job_templates/12002/notification_templates_error/",
+        "access_list": "/api/v2/job_templates/12002/access_list/",
+        "survey_spec": "/api/v2/job_templates/12002/survey_spec/",
+        "object_roles": "/api/v2/job_templates/12002/object_roles/",
+        "instance_groups": "/api/v2/job_templates/12002/instance_groups/",
+        "slice_workflow_jobs": "/api/v2/job_templates/12002/slice_workflow_jobs/",
+        "copy": "/api/v2/job_templates/12002/copy/"
+      },
+      "summary_fields": {
+        "organization": {
+          "id": 1,
+          "name": "Default",
+          "description": ""
+        },
+        "inventory": {
+          "id": 1,
+          "name": "Demo Inventory",
+          "description": "",
+          "has_active_failures": false,
+          "total_hosts": 1,
+          "hosts_with_active_failures": 0,
+          "total_groups": 2,
+          "has_inventory_sources": true,
+          "total_inventory_sources": 1,
+          "inventory_sources_with_failures": 0,
+          "organization_id": 1,
+          "kind": ""
+        },
+        "project": {
+          "id": 6,
+          "name": "Demo Project",
+          "description": "",
+          "status": "successful",
+          "scm_type": "git",
+          "allow_override": false
+        },
+        "last_job": {
+          "id": 10361,
+          "name": "a_template",
+          "description": "",
+          "finished": "2023-12-03T19:01:08.515634Z",
+          "status": "successful",
+          "failed": false
+        },
+        "last_update": {
+          "id": 10361,
+          "name": "a_template",
+          "description": "",
+          "status": "successful",
+          "failed": false
+        },
+        "created_by": {
+          "id": 3,
+          "username": "dev",
+          "first_name": "",
+          "last_name": ""
+        },
+        "modified_by": {
+          "id": 3,
+          "username": "dev",
+          "first_name": "",
+          "last_name": ""
+        },
+        "object_roles": {
+          "admin_role": {
+            "description": "Can manage all aspects of the job template",
+            "name": "Admin",
+            "id": 302212
+          },
+          "execute_role": {
+            "description": "May run the job template",
+            "name": "Execute",
+            "id": 302213
+          },
+          "read_role": {
+            "description": "May view settings for the job template",
+            "name": "Read",
+            "id": 302214
+          }
+        },
+        "user_capabilities": {
+          "edit": true,
+          "delete": true,
+          "start": true,
+          "schedule": true,
+          "copy": true
+        },
+        "labels": {
+          "count": 0,
+          "results": []
+        },
+        "recent_jobs": [
+          {
+            "id": 10361,
+            "status": "successful",
+            "finished": "2023-12-03T19:01:08.515634Z",
+            "canceled_on": null,
+            "type": "job"
+          },
+          {
+            "id": 10339,
+            "status": "successful",
+            "finished": "2023-12-02T19:01:11.962958Z",
+            "canceled_on": null,
+            "type": "job"
+          },
+          {
+            "id": 10090,
+            "status": "successful",
+            "finished": "2023-12-01T19:00:30.531036Z",
+            "canceled_on": null,
+            "type": "job"
+          },
+          {
+            "id": 9397,
+            "status": "successful",
+            "finished": "2023-11-30T21:14:26.187109Z",
+            "canceled_on": null,
+            "type": "job"
+          }
+        ],
+        "credentials": []
+      },
+      "created": "2023-11-29T20:16:25.138662Z",
+      "modified": "2023-11-29T21:24:00.557744Z",
+      "name": "a_template",
+      "description": "",
+      "job_type": "run",
+      "inventory": 1,
+      "project": 6,
+      "playbook": "hello_world.yml",
+      "scm_branch": "",
+      "forks": 0,
+      "limit": "",
+      "verbosity": 0,
+      "extra_vars": "---",
+      "job_tags": "",
+      "force_handlers": false,
+      "skip_tags": "",
+      "start_at_task": "",
+      "timeout": 0,
+      "use_fact_cache": false,
+      "organization": 1,
+      "last_job_run": "2023-12-03T19:01:08.515634Z",
+      "last_job_failed": false,
+      "next_job_run": "2023-12-04T19:00:00Z",
+      "status": "successful",
+      "execution_environment": null,
+      "host_config_key": "",
+      "ask_scm_branch_on_launch": false,
+      "ask_diff_mode_on_launch": false,
+      "ask_variables_on_launch": false,
+      "ask_limit_on_launch": false,
+      "ask_tags_on_launch": false,
+      "ask_skip_tags_on_launch": false,
+      "ask_job_type_on_launch": true,
+      "ask_verbosity_on_launch": false,
+      "ask_inventory_on_launch": false,
+      "ask_credential_on_launch": false,
+      "ask_execution_environment_on_launch": false,
+      "ask_labels_on_launch": false,
+      "ask_forks_on_launch": false,
+      "ask_job_slice_count_on_launch": false,
+      "ask_timeout_on_launch": false,
+      "ask_instance_groups_on_launch": false,
+      "survey_enabled": false,
+      "become_enabled": false,
+      "diff_mode": false,
+      "allow_simultaneous": false,
+      "custom_virtualenv": null,
+      "job_slice_count": 1,
+      "webhook_service": "",
+      "webhook_credential": null,
+      "prevent_instance_group_fallback": false
+    }
+  ]
+}
