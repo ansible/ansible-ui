@@ -81,6 +81,8 @@ declare global {
 
       typeMonacoTextField(textString: string): Chainable<void>;
 
+      assertMonacoTextField(textString: string): Chainable<void>;
+
       /** This command works for a form field to look up item from table
        * (used for components that do not utilize the PageFormAsyncSelect component yet) */
       selectItemFromLookupModal(resource: string, itemName: string): Chainable<void>;
