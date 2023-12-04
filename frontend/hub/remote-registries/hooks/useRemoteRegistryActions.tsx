@@ -90,6 +90,7 @@ export function useRemoteRegistryActions(options: {
         type: PageActionType.Button,
         variant: ButtonVariant.primary,
         isDisabled: (remoteRegistry) => isIndexableItem(remoteRegistry),
+        tooltip: t('Find execution environments in this registry'),
       },
       {
         icon: PencilAltIcon,
