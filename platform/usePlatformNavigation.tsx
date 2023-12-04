@@ -33,6 +33,15 @@ export function usePlatformNavigation() {
   removeNavigationItemById(awxNav, AwxRoute.Overview);
   const credentials = removeNavigationItemById(awxNav, AwxRoute.Credentials)!;
   const credentialTypes = removeNavigationItemById(awxNav, AwxRoute.CredentialTypes)!;
+  const awxRolesRoute = removeNavigationItemById(awxNav, AwxRoute.Roles)!;
+  if ('children' in awxRolesRoute) {
+    const edaRoles = awxRolesRoute.children.find((r) => r.path === '')!;
+    if ('element' in edaRoles) {
+      edaRoles.element = <PlatformAwxRoles />;
+    }
+    awxRolesRoute.label = undefined;
+    awxRolesRoute.path = 'execution';
+  }
   removeNavigationItemById(awxNav, AwxRoute.Access);
 
   const edaNav = useEdaNavigation();
@@ -131,11 +140,7 @@ export function usePlatformNavigation() {
           path: 'roles',
           element: <PlatformRoles />,
           children: [
-            {
-              id: PlatformRoute.ExecutionRoles,
-              path: 'execution',
-              element: <PlatformAwxRoles />,
-            },
+            awxRolesRoute,
             edaRolesRoute,
             hubRouteRoles,
             {
@@ -178,6 +183,7 @@ export function usePlatformNavigation() {
     organizations,
     teams,
     users,
+    awxRolesRoute,
     edaRolesRoute,
     hubRouteRoles,
     credentials,
