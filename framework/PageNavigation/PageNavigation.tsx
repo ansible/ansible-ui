@@ -5,7 +5,6 @@ import {
   NavList,
   PageSidebar,
   PageSidebarBody,
-  Stack,
 } from '@patternfly/react-core';
 import { useState } from 'react';
 import { usePageNavBarClick, usePageNavSideBar } from './PageNavSidebar';
@@ -83,15 +82,14 @@ function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRout
         className={isActive ? 'bg-lighten' : undefined}
         onClick={() => onClickNavItem(route)}
         data-cy={id}
+        style={{ display: 'flex', alignItems: 'left', flexDirection: 'column' }}
       >
-        <Stack>
-          <div>{item.label}</div>
-          {item.subtitle && (
-            <div style={{ fontSize: 'x-small', opacity: 0.5, textAlign: 'left' }}>
-              {item.subtitle}
-            </div>
-          )}
-        </Stack>
+        {item.label}
+        {item.subtitle && (
+          <div style={{ fontSize: 'x-small', opacity: 0.5, textAlign: 'left' }}>
+            {item.subtitle}
+          </div>
+        )}
       </NavItem>
     );
   }
