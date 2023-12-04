@@ -67,7 +67,7 @@ export function PageActionSwitch<T extends object>(props: {
                   break;
               }
             }}
-            isReversed={iconOnly}
+            isReversed={action?.isReversed !== undefined ? action.isReversed : iconOnly}
           />
         </Tooltip>
       </div>
