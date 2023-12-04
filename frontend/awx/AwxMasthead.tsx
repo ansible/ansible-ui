@@ -32,7 +32,7 @@ export function AwxMasthead() {
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
   const activeUser = useActiveUser();
-  const notificationCount = useAwxNotifications();
+  useAwxNotifications();
   const { setNotificationsDrawerOpen } = usePageNotifications();
   const logout = useCallback(async () => {
     await fetch('/api/logout/');
@@ -57,10 +57,7 @@ export function AwxMasthead() {
           <PageSettingsIcon />
         </ToolbarItem>
         <ToolbarItem>
-          <PageNotificationsIcon
-            count={notificationCount}
-            onClick={() => setNotificationsDrawerOpen((open) => !open)}
-          />
+          <PageNotificationsIcon />
         </ToolbarItem>
         <ToolbarItem>
           <PageMastheadDropdown id="help-menu" icon={<QuestionCircleIcon />}>

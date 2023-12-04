@@ -37,12 +37,12 @@ interface IPageNotifications {
   setNotificationGroups: Dispatch<SetStateAction<Record<string, IPageNotificationGroup>>>;
 }
 
-interface IPageNotificationGroup {
+export interface IPageNotificationGroup {
   title: string;
   notifications: IPageNotification[];
 }
 
-interface IPageNotification {
+export interface IPageNotification {
   title: string;
   description?: string | undefined;
   timestamp?: string;
@@ -102,7 +102,7 @@ export function PageNotificationsDrawer(props: { children: ReactNode }) {
       <DrawerContent
         panelContent={
           <DrawerPanelContent>
-            <NotificationDrawer>
+            <NotificationDrawer data-cy="notifications-drawer">
               <NotificationDrawerHeader title={t('Notifications')}>
                 <DrawerCloseButton onClick={onCloseClick} />
               </NotificationDrawerHeader>
