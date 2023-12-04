@@ -21,52 +21,10 @@ export type PermissionCategories = {
 export function RolePermissions(props: { role: Role; showCustom?: boolean; showEmpty?: boolean }) {
   const { t } = useTranslation();
   const { role, showCustom, showEmpty } = props;
-  const { user, featureFlags } = useHubContext();
+  const { user } = useHubContext();
   const model_permissions = useMemo(() => user.model_permissions, [user.model_permissions]);
 
-  // show user/group permissions by default
-  const userManagementFilter = useCallback(
-    (permission: string) =>
-      !featureFlags.external_authentication || USER_GROUP_MGMT_PERMISSIONS.includes(permission),
-    [featureFlags.external_authentication]
-  );
-  const allPermissions = useMemo(
-    () => Object.keys(model_permissions).filter(userManagementFilter),
-    [model_permissions, userManagementFilter]
-  );
-  const groups = useKnownPermissionsAndCategories(model_permissions, allPermissions);
-  const allGroups = useMemo(
-    () =>
-      showCustom
-        ? [
-            ...groups,
-            {
-              label: t`Custom permissions`,
-              allPermissions: role.permissions
-                .filter(userManagementFilter)
-                .filter((permission) => !allPermissions.includes(permission)),
-            } as PermissionCategories,
-          ]
-        : groups,
-    [allPermissions, groups, role.permissions, showCustom, t, userManagementFilter]
-  );
-  const withActive = useMemo(
-    () =>
-      allGroups.map((group) => ({
-        ...group,
-        selectedPermissions: group.allPermissions.filter(
-          (permission) => role.permissions?.includes(permission)
-        ),
-        availablePermissions: group.allPermissions.filter(
-          (permission) => !role.permissions?.includes(permission)
-        ),
-      })),
-    [allGroups, role.permissions]
-  );
-  const groupsToShow = useMemo(
-    () => (showEmpty ? withActive : withActive.filter((group) => group.selectedPermissions.length)),
-    [showEmpty, withActive]
-  );
+  const groupsToShow = usePermissionCategories(role.permissions, showCustom, showEmpty);
 
   return (
     <DescriptionList
@@ -119,4 +77,60 @@ function useKnownPermissionsAndCategories(
 
     return Object.values(categories);
   }, [allPermissions, model_permissions]);
+}
+
+export function usePermissionCategories(
+  permissions: string[] = [],
+  showCustom?: boolean,
+  showEmpty?: boolean
+) {
+  const { t } = useTranslation();
+  const { user, featureFlags } = useHubContext();
+  const model_permissions = useMemo(() => user.model_permissions, [user.model_permissions]);
+
+  // show user/group permissions by default
+  const userManagementFilter = useCallback(
+    (permission: string) =>
+      !featureFlags.external_authentication || USER_GROUP_MGMT_PERMISSIONS.includes(permission),
+    [featureFlags.external_authentication]
+  );
+  const allPermissions = useMemo(
+    () => Object.keys(model_permissions).filter(userManagementFilter),
+    [model_permissions, userManagementFilter]
+  );
+  const groups = useKnownPermissionsAndCategories(model_permissions, allPermissions);
+  const allGroups = useMemo(
+    () =>
+      showCustom
+        ? [
+            ...groups,
+            {
+              label: t('Custom permissions'),
+              allPermissions: permissions
+                .filter(userManagementFilter)
+                .filter((permission) => !allPermissions.includes(permission)),
+            } as PermissionCategories,
+          ]
+        : groups,
+    [allPermissions, groups, permissions, showCustom, t, userManagementFilter]
+  );
+  const withActive = useMemo(
+    () =>
+      allGroups.map((group) => ({
+        ...group,
+        selectedPermissions: group.allPermissions.filter(
+          (permission) => permissions?.includes(permission)
+        ),
+        availablePermissions: group.allPermissions.filter(
+          (permission) => !role.permissions?.includes(permission)
+        ),
+      })),
+    [allGroups, permissions]
+  );
+  const groupsToShow = useMemo(
+    () => (showEmpty ? withActive : withActive.filter((group) => group.selectedPermissions.length)),
+    [showEmpty, withActive]
+  );
+
+  return groupsToShow;
 }
