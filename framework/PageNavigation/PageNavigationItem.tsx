@@ -1,6 +1,7 @@
 interface PageNavigationGroup {
   id?: string;
   label?: string;
+  subtitle?: string;
   path: string;
   children: PageNavigationItem[];
 }
@@ -8,6 +9,7 @@ interface PageNavigationGroup {
 interface PageNavigationComponent {
   id?: string;
   label?: string;
+  subtitle?: string;
   path: string;
   element: JSX.Element;
 }
