@@ -17,17 +17,15 @@ export function PageNavigation(props: { navigation: PageNavigationItem[] }) {
   const navBar = usePageNavSideBar();
 
   return (
-    <>
-      <PageSidebar isSidebarOpen={navBar.isOpen} className="bg-lighten">
-        <PageSidebarBody>
-          <Nav data-cy="page-navigation" className="side-nav">
-            <NavList>
-              <PageNavigationItems baseRoute={''} items={navigationItems} />
-            </NavList>
-          </Nav>
-        </PageSidebarBody>
-      </PageSidebar>
-    </>
+    <PageSidebar isSidebarOpen={navBar.isOpen} className="bg-lighten">
+      <PageSidebarBody>
+        <Nav data-cy="page-navigation" className="side-nav">
+          <NavList>
+            <PageNavigationItems baseRoute={''} items={navigationItems} />
+          </NavList>
+        </Nav>
+      </PageSidebarBody>
+    </PageSidebar>
   );
 }
 
@@ -73,7 +71,7 @@ function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRout
   const hasChildNavItems = 'children' in item && item.children?.find((child) => child.label);
 
   if (!hasChildNavItems && 'label' in item) {
-    const isActive = location.pathname.includes(route);
+    const isActive = location.pathname.endsWith(route);
     return (
       <NavItem
         id={id}
@@ -82,8 +80,14 @@ function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRout
         className={isActive ? 'bg-lighten' : undefined}
         onClick={() => onClickNavItem(route)}
         data-cy={id}
+        style={{ display: 'flex', alignItems: 'left', flexDirection: 'column' }}
       >
         {item.label}
+        {item.subtitle && (
+          <div style={{ fontSize: 'x-small', opacity: 0.5, textAlign: 'left' }}>
+            {item.subtitle}
+          </div>
+        )}
       </NavItem>
     );
   }
@@ -98,8 +102,18 @@ function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRout
 
   return (
     <NavExpandable
-      title={item.label}
-      isActive={location.pathname.includes(route)}
+      title={
+        (
+          <div>
+            <div style={{ textAlign: 'left' }}>{item.label}</div>
+            {item.subtitle && (
+              <div style={{ fontSize: 'small', opacity: 0.5, textAlign: 'left' }}>
+                {item.subtitle}
+              </div>
+            )}
+          </div>
+        ) as unknown as string
+      }
       isExpanded={isExpanded}
       onExpand={(_e, expanded: boolean) => setExpanded(expanded)}
     >
