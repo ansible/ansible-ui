@@ -85,6 +85,7 @@ export function useAuthenticatorRowActions(_view: IPlatformView<Authenticator>) 
         label: t('Enabled'),
         labelOff: t('Disabled'),
         showPinnedLabel: true,
+        isReversed: false,
         onToggle: (_authenticator) => alert('TODO'),
         isSwitchOn: (authenticator: Authenticator) => authenticator?.enabled ?? false,
       },
