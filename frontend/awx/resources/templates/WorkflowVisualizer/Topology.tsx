@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, useRef } from 'react';
+import { ReactElement, useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   CREATE_CONNECTOR_DROP_TYPE,
@@ -43,13 +43,13 @@ import {
   NodeContextMenu,
   WorkflowVisualizerToolbar,
 } from './components';
-import { WorkflowVisualizerNodeDetails } from './WorkflowVisualizerNodeDetails';
 import { EdgeStatus } from './types';
 import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
 import type { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
-import type { GraphNode } from './types';
+import type { GraphData, GraphNode } from './types';
 import { ViewOptionsProvider, ViewOptionsContext } from './ViewOptionsProvider';
 import { ToolbarHeader } from './components/WorkflowVisualizerToolbar';
+import { Sidebar } from './components/Sidebar';
 
 const GRAPH_ID = 'workflow-visualizer-graph';
 const CONNECTOR_SOURCE_DROP = 'connector-src-drop';
@@ -76,19 +76,22 @@ interface TopologyProps {
 
 export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyProps) => {
   const { t } = useTranslation();
-  const [selectedNode, setSelectedNode] = useState<WorkflowNode | undefined>(undefined);
 
   const handleSelectedNode = useCallback(
     (clickedNodeIdentifier: string[]) => {
       const clickedNodeData = workflowNodes.find(
         (node) => node.id.toString() === clickedNodeIdentifier[0]
       );
-      setSelectedNode(clickedNodeData);
+      return clickedNodeData;
     },
     [workflowNodes]
   );
-
-  const nodeContextMenu = useCallback((element: GraphNode) => NodeContextMenu(element, t), [t]);
+  const nodeContextMenu = useCallback(
+    (element: GraphNode) =>
+      (<NodeContextMenu element={element} t={t} />) as unknown as ReactElement,
+    [t]
+  );
+  // const nodeContextMenu = useCallback((element: GraphNode) => NodeContextMenu(element, t), [t]);
   const edgeContextMenu = useCallback(
     (element: GraphElement<ElementModel, unknown>) => EdgeContextMenu(element, t),
     [t]
@@ -137,7 +140,9 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
                 // TODO: Handle toggle unsaved changes
                 source.getController().fromModel(model);
               })(
-                withContextMenu(nodeContextMenu)(
+                withContextMenu((element: GraphElement) => (
+                  <NodeContextMenu element={element} t={t} />
+                ))(
                   withDndDrop(
                     nodeDropTargetSpec([
                       CONNECTOR_SOURCE_DROP,
@@ -253,18 +258,29 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
         type: 'graph',
         layout: 'Dagre',
         visible: true,
+        sideBarMode: undefined,
       },
     };
 
     visualization.fromModel(model, true);
   }, [t, visualization, createEdge, workflowNodes]);
-
   return (
     <VisualizationProvider controller={visualization}>
       <ViewOptionsProvider>
         {/* tools provider name */}
         <ViewOptionsContext.Consumer>
-          {({ isFullScreen, isEmpty, isLegendOpen, toggleLegend }) => {
+          {({ isFullScreen, isEmpty, isLegendOpen, isLoading, toggleLegend }) => {
+            const state: TopologyProps & { selectedIds: string[] | [] } = visualization.getState();
+            let showSideBar = false;
+            const graphData = visualization.getGraph().getData() as GraphData;
+            if (state?.selectedIds?.length && !isLoading) {
+              const element = visualization.getElementById(state.selectedIds[0]) as GraphElement;
+              showSideBar = isNode(element);
+            }
+            if (graphData && graphData.sideBarMode === 'add') {
+              showSideBar = true;
+            }
+
             return (
               <TopologyView
                 data-cy="workflow-visualizer"
@@ -292,16 +308,9 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
                     })}
                   />
                 }
-                sideBarOpen={selectedNode !== undefined}
+                sideBarOpen={showSideBar}
                 sideBarResizable
-                sideBar={
-                  selectedNode ? (
-                    <WorkflowVisualizerNodeDetails
-                      setSelectedNode={setSelectedNode}
-                      selectedNode={selectedNode}
-                    />
-                  ) : null
-                }
+                sideBar={<Sidebar />}
               >
                 {isEmpty && (
                   <div style={{ flex: '1 0 100%' }}>
@@ -313,7 +322,7 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
                   </div>
                 )}
                 {isLegendOpen && <Legend />}
-                <VisualizationSurface state={{ selectedNode, workflowTemplate: template }} />
+                <VisualizationSurface state={{ workflowTemplate: template }} />
               </TopologyView>
             );
           }}

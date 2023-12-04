@@ -103,6 +103,7 @@ export function EdgeContextMenu(
   const data = element.getData() as { tagStatus: string };
 
   const items = useEdgeMenuItems(t);
+
   return items.map((item) => {
     if (item.label === '-') {
       return <ContextMenuSeparator component="li" key={`separator:${item.key}`} />;

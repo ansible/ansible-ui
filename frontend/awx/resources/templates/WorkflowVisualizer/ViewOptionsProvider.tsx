@@ -1,7 +1,8 @@
 import styled from 'styled-components';
-import { ReactElement, createContext, useContext, useEffect, useState } from 'react';
+import { ReactElement, createContext, useCallback, useContext, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { useVisualizationController, observer, isNode } from '@patternfly/react-topology';
+import { GraphData } from './types';
 
 const FullPage = styled.div`
   position: fixed;
@@ -29,12 +30,13 @@ export const ViewOptionsContext = createContext({
   isLegendOpen: false,
   toggleLegend: () => {},
   isEmpty: false,
+  isLoading: true,
 });
 
 export const ViewOptionsProvider = observer((props: { children: ReactElement }) => {
   const { children } = props;
   const controller = useVisualizationController();
-
+  const state: { selectedIds: string[] | [] } = controller.getState();
   const nodes = controller.getElements().filter(isNode);
   const isGraphReady = controller.toModel().graph?.visible;
 
@@ -42,7 +44,19 @@ export const ViewOptionsProvider = observer((props: { children: ReactElement }) 
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [isLegendOpen, setIsLegendOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(isGraphReady ? false : true);
+  const setGraphData = useCallback(
+    (data: GraphData) => {
+      controller.getGraph().setData(data);
+    },
+    [controller]
+  );
+  useEffect(() => {
+    if (state.selectedIds?.length && !state.selectedIds.every((id) => parseInt(id, 10))) {
+      const graphData = controller?.getGraph()?.getData() as GraphData;
 
+      controller.getGraph().setData({ ...graphData, sideBarMode: undefined });
+    }
+  }, [state.selectedIds, setGraphData, controller]);
   useEffect(() => {
     if (isGraphReady) {
       setIsLoading(false);

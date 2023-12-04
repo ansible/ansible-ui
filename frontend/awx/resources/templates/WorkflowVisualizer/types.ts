@@ -12,6 +12,10 @@ import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
 
 export type GraphNode = Node<NodeModel, { id: string; resource: WorkflowNode }>;
 
+export type GraphData = ElementModel & {
+  sideBarMode: string | undefined;
+};
+
 export interface CustomEdgeProps {
   element: GraphElement<
     ElementModel,

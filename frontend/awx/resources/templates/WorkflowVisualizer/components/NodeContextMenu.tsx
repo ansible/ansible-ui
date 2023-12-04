@@ -17,7 +17,16 @@ export function useNodeMenuItems(t: (item: string) => string): MenuItem[] {
       key: 'edit-node',
       icon: <PencilAltIcon />,
       label: t('Edit node'),
-      onClick: () => alert(`Selected: Edit node`),
+      onClick: (element1) => {
+        action(() => {
+          const controller = element1.getController();
+          controller.getGraph().setData({ ...controller.getGraph(), sideBarMode: 'edit' });
+          controller.setState({
+            ...controller.getState(),
+            selectedIds: [element1.getData()?.resource.id.toString()],
+          });
+        })();
+      },
     },
     {
       key: 'add-link',
@@ -51,9 +60,9 @@ export function useNodeMenuItems(t: (item: string) => string): MenuItem[] {
   ];
 }
 
-export function NodeContextMenu(element: GraphNode, t: (string: string) => string) {
+export function NodeContextMenu(props: { element: GraphNode; t: (string: string) => string }) {
+  const { element, t } = props;
   const items = useNodeMenuItems(t);
-
   return items.map((item) => {
     if (item.label === '-') {
       return <ContextMenuSeparator component="li" key={`separator:${item.key}`} />;
