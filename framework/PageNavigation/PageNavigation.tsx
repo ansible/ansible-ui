@@ -5,6 +5,7 @@ import {
   NavList,
   PageSidebar,
   PageSidebarBody,
+  Stack,
 } from '@patternfly/react-core';
 import { useState } from 'react';
 import { usePageNavBarClick, usePageNavSideBar } from './PageNavSidebar';
@@ -73,7 +74,7 @@ function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRout
   const hasChildNavItems = 'children' in item && item.children?.find((child) => child.label);
 
   if (!hasChildNavItems && 'label' in item) {
-    const isActive = location.pathname.includes(route);
+    const isActive = location.pathname.endsWith(route);
     return (
       <NavItem
         id={id}
@@ -83,7 +84,14 @@ function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRout
         onClick={() => onClickNavItem(route)}
         data-cy={id}
       >
-        {item.label}
+        <Stack>
+          <div>{item.label}</div>
+          {item.subtitle && (
+            <div style={{ fontSize: 'x-small', opacity: 0.5, textAlign: 'left' }}>
+              {item.subtitle}
+            </div>
+          )}
+        </Stack>
       </NavItem>
     );
   }
@@ -98,8 +106,18 @@ function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRout
 
   return (
     <NavExpandable
-      title={item.label}
-      isActive={location.pathname.includes(route)}
+      title={
+        (
+          <div>
+            <div>{item.label}</div>
+            {item.subtitle && (
+              <div style={{ fontSize: 'x-small', opacity: 0.5, textAlign: 'left' }}>
+                {item.subtitle}
+              </div>
+            )}
+          </div>
+        ) as unknown as string
+      }
       isExpanded={isExpanded}
       onExpand={(_e, expanded: boolean) => setExpanded(expanded)}
     >
