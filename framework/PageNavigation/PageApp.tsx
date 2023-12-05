@@ -26,7 +26,7 @@ export function PageApp(props: {
    */
   basename?: string;
 }) {
-  const { navigation, basename, masthead: header } = props;
+  const { navigation, basename, masthead } = props;
   const routes = useMemo(
     () => [
       {
@@ -40,12 +40,12 @@ export function PageApp(props: {
           { path: 'login', element: props.login },
           {
             path: '',
-            element: props.root ?? <></>,
+            element: props.root,
             children: [
               {
                 path: '',
                 element: (
-                  <Page header={header} sidebar={<PageNavigation navigation={navigation} />}>
+                  <Page header={masthead} sidebar={<PageNavigation navigation={navigation} />}>
                     <PageNotificationsDrawer>
                       <Outlet />
                     </PageNotificationsDrawer>
@@ -59,7 +59,7 @@ export function PageApp(props: {
         ],
       },
     ],
-    [header, navigation, props.login, props.root]
+    [masthead, navigation, props.login, props.root]
   );
   const router = useMemo(() => createBrowserRouter(routes, { basename }), [basename, routes]);
   return (
