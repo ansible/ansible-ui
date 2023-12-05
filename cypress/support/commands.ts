@@ -44,7 +44,6 @@ import './awx-user-access-commands';
 import './common-commands';
 import './e2e';
 import './eda-commands';
-import './global-project';
 import './hub-commands';
 import './rest-commands';
 
