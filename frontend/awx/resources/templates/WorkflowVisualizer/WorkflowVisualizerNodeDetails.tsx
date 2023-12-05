@@ -1,4 +1,7 @@
-import { TopologySideBar as PFTopologySideBar } from '@patternfly/react-topology';
+import {
+  TopologySideBar as PFTopologySideBar,
+  useVisualizationController,
+} from '@patternfly/react-topology';
 import { WorkflowNode } from '../../../interfaces/WorkflowNode';
 import { useTranslation } from 'react-i18next';
 import { ActionList, Button, Title } from '@patternfly/react-core';
@@ -17,6 +20,12 @@ export function WorkflowVisualizerNodeDetails(props: {
   const { t } = useTranslation();
 
   const getDetails = useGetDetailComponent(selectedNode);
+  const controller = useVisualizationController();
+
+  const handleClose = () => {
+    setSelectedNode(undefined);
+    controller.setState({ selectedIds: [] });
+  };
 
   return (
     <TopologySideBar
@@ -24,7 +33,7 @@ export function WorkflowVisualizerNodeDetails(props: {
       show
       header={<Title headingLevel="h1">{t('Node details')}</Title>}
       resizable
-      onClose={() => setSelectedNode(undefined)}
+      onClose={handleClose}
     >
       {getDetails}
       <ActionList data-cy="workflow-topology-sidebar-actions" style={{ paddingBottom: '20px' }}>
