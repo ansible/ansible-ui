@@ -1,0 +1,421 @@
+{
+  "count": 6,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 3561,
+      "type": "system_job",
+      "url": "/api/v2/system_jobs/3561/",
+      "related": {
+        "unified_job_template": "/api/v2/system_job_templates/1/",
+        "schedule": "/api/v2/schedules/1/",
+        "execution_environment": "/api/v2/execution_environments/1/",
+        "system_job_template": "/api/v2/system_job_templates/1/",
+        "notifications": "/api/v2/system_jobs/3561/notifications/",
+        "cancel": "/api/v2/system_jobs/3561/cancel/",
+        "events": "/api/v2/system_jobs/3561/events/"
+      },
+      "summary_fields": {
+        "execution_environment": {
+          "id": 1,
+          "name": "quay.io/ansible/awx-ee (latest)",
+          "description": "",
+          "image": "quay.io/ansible/awx-ee:latest"
+        },
+        "schedule": {
+          "id": 1,
+          "name": "Cleanup Job Schedule",
+          "description": "Automatically Generated Schedule",
+          "next_run": "2023-12-10T19:08:57Z"
+        },
+        "unified_job_template": {
+          "id": 1,
+          "name": "Cleanup Job Details",
+          "description": "Remove job history",
+          "unified_job_type": "system_job"
+        },
+        "instance_group": {
+          "id": 1,
+          "name": "controlplane",
+          "is_container_group": false
+        },
+        "user_capabilities": {
+          "delete": true,
+          "start": false
+        }
+      },
+      "created": "2023-11-05T19:09:21.037674Z",
+      "modified": "2023-11-05T19:09:21.140263Z",
+      "name": "Cleanup Job Details",
+      "description": "Remove job history",
+      "unified_job_template": 1,
+      "launch_type": "scheduled",
+      "status": "successful",
+      "execution_environment": 1,
+      "failed": false,
+      "started": "2023-11-05T19:09:21.206042Z",
+      "finished": "2023-11-05T19:09:25.418515Z",
+      "canceled_on": null,
+      "elapsed": 4.212,
+      "job_explanation": "",
+      "execution_node": "awx-task-9bb4c7485-sbt8n",
+      "launched_by": {
+        "id": 1,
+        "name": "Cleanup Job Schedule",
+        "type": "schedule",
+        "url": "/api/v2/schedules/1/"
+      },
+      "work_unit_id": null,
+      "system_job_template": 1,
+      "job_type": "cleanup_jobs",
+      "extra_vars": "{\"days\": \"120\"}",
+      "result_stdout": "ad hoc commands: 0 deleted, 0 skipped.\ninventory updates: 0 deleted, 0 skipped.\nnotifications: 0 deleted, 0 skipped.\njobs: 0 deleted, 0 skipped.\nworkflow jobs: 0 deleted, 0 skipped.\nproject updates: 0 deleted, 0 skipped.\nmanagement jobs: 0 deleted, 2 skipped.\n"
+    },
+    {
+      "id": 4123,
+      "type": "system_job",
+      "url": "/api/v2/system_jobs/4123/",
+      "related": {
+        "unified_job_template": "/api/v2/system_job_templates/2/",
+        "schedule": "/api/v2/schedules/2/",
+        "execution_environment": "/api/v2/execution_environments/1/",
+        "system_job_template": "/api/v2/system_job_templates/2/",
+        "notifications": "/api/v2/system_jobs/4123/notifications/",
+        "cancel": "/api/v2/system_jobs/4123/cancel/",
+        "events": "/api/v2/system_jobs/4123/events/"
+      },
+      "summary_fields": {
+        "execution_environment": {
+          "id": 1,
+          "name": "quay.io/ansible/awx-ee (latest)",
+          "description": "",
+          "image": "quay.io/ansible/awx-ee:latest"
+        },
+        "schedule": {
+          "id": 2,
+          "name": "Cleanup Activity Schedule",
+          "description": "Automatically Generated Schedule",
+          "next_run": "2023-12-05T19:08:57Z"
+        },
+        "unified_job_template": {
+          "id": 2,
+          "name": "Cleanup Activity Stream",
+          "description": "Remove activity stream history",
+          "unified_job_type": "system_job"
+        },
+        "instance_group": {
+          "id": 1,
+          "name": "controlplane",
+          "is_container_group": false
+        },
+        "user_capabilities": {
+          "delete": true,
+          "start": false
+        }
+      },
+      "created": "2023-11-07T19:09:21.061512Z",
+      "modified": "2023-11-07T19:09:21.187488Z",
+      "name": "Cleanup Activity Stream",
+      "description": "Remove activity stream history",
+      "unified_job_template": 2,
+      "launch_type": "scheduled",
+      "status": "successful",
+      "execution_environment": 1,
+      "failed": false,
+      "started": "2023-11-07T19:09:21.276647Z",
+      "finished": "2023-11-07T19:09:32.774982Z",
+      "canceled_on": null,
+      "elapsed": 11.498,
+      "job_explanation": "",
+      "execution_node": "awx-task-9bb4c7485-sbt8n",
+      "launched_by": {
+        "id": 2,
+        "name": "Cleanup Activity Schedule",
+        "type": "schedule",
+        "url": "/api/v2/schedules/2/"
+      },
+      "work_unit_id": null,
+      "system_job_template": 2,
+      "job_type": "cleanup_activitystream",
+      "extra_vars": "{\"days\": \"355\"}",
+      "result_stdout": "Removed 0 items\n"
+    },
+    {
+      "id": 4615,
+      "type": "system_job",
+      "url": "/api/v2/system_jobs/4615/",
+      "related": {
+        "unified_job_template": "/api/v2/system_job_templates/4/",
+        "schedule": "/api/v2/schedules/4/",
+        "execution_environment": "/api/v2/execution_environments/1/",
+        "system_job_template": "/api/v2/system_job_templates/4/",
+        "notifications": "/api/v2/system_jobs/4615/notifications/",
+        "cancel": "/api/v2/system_jobs/4615/cancel/",
+        "events": "/api/v2/system_jobs/4615/events/"
+      },
+      "summary_fields": {
+        "execution_environment": {
+          "id": 1,
+          "name": "quay.io/ansible/awx-ee (latest)",
+          "description": "",
+          "image": "quay.io/ansible/awx-ee:latest"
+        },
+        "schedule": {
+          "id": 4,
+          "name": "Cleanup Expired Sessions",
+          "description": "Cleans out expired browser sessions",
+          "next_run": "2023-12-06T19:10:18Z"
+        },
+        "unified_job_template": {
+          "id": 4,
+          "name": "Cleanup Expired Sessions",
+          "description": "Cleans out expired browser sessions",
+          "unified_job_type": "system_job"
+        },
+        "instance_group": {
+          "id": 1,
+          "name": "controlplane",
+          "is_container_group": false
+        },
+        "user_capabilities": {
+          "delete": true,
+          "start": false
+        }
+      },
+      "created": "2023-11-08T19:10:21.066148Z",
+      "modified": "2023-11-08T19:10:21.220183Z",
+      "name": "Cleanup Expired Sessions",
+      "description": "Cleans out expired browser sessions",
+      "unified_job_template": 4,
+      "launch_type": "scheduled",
+      "status": "successful",
+      "execution_environment": 1,
+      "failed": false,
+      "started": "2023-11-08T19:10:21.316570Z",
+      "finished": "2023-11-08T19:10:25.287817Z",
+      "canceled_on": null,
+      "elapsed": 3.971,
+      "job_explanation": "",
+      "execution_node": "awx-task-9bb4c7485-sbt8n",
+      "launched_by": {
+        "id": 4,
+        "name": "Cleanup Expired Sessions",
+        "type": "schedule",
+        "url": "/api/v2/schedules/4/"
+      },
+      "work_unit_id": null,
+      "system_job_template": 4,
+      "job_type": "cleanup_sessions",
+      "extra_vars": "",
+      "result_stdout": "Expired Sessions deleted 680\n"
+    },
+    {
+      "id": 4616,
+      "type": "system_job",
+      "url": "/api/v2/system_jobs/4616/",
+      "related": {
+        "unified_job_template": "/api/v2/system_job_templates/5/",
+        "schedule": "/api/v2/schedules/5/",
+        "execution_environment": "/api/v2/execution_environments/1/",
+        "system_job_template": "/api/v2/system_job_templates/5/",
+        "notifications": "/api/v2/system_jobs/4616/notifications/",
+        "cancel": "/api/v2/system_jobs/4616/cancel/",
+        "events": "/api/v2/system_jobs/4616/events/"
+      },
+      "summary_fields": {
+        "execution_environment": {
+          "id": 1,
+          "name": "quay.io/ansible/awx-ee (latest)",
+          "description": "",
+          "image": "quay.io/ansible/awx-ee:latest"
+        },
+        "schedule": {
+          "id": 5,
+          "name": "Cleanup Expired OAuth 2 Tokens",
+          "description": "Removes expired OAuth 2 access and refresh tokens",
+          "next_run": "2023-12-06T19:10:18Z"
+        },
+        "unified_job_template": {
+          "id": 5,
+          "name": "Cleanup Expired OAuth 2 Tokens",
+          "description": "Cleanup expired OAuth 2 access and refresh tokens",
+          "unified_job_type": "system_job"
+        },
+        "instance_group": {
+          "id": 1,
+          "name": "controlplane",
+          "is_container_group": false
+        },
+        "user_capabilities": {
+          "delete": true,
+          "start": false
+        }
+      },
+      "created": "2023-11-08T19:10:21.181993Z",
+      "modified": "2023-11-08T19:10:45.069934Z",
+      "name": "Cleanup Expired OAuth 2 Tokens",
+      "description": "Cleanup expired OAuth 2 access and refresh tokens",
+      "unified_job_template": 5,
+      "launch_type": "scheduled",
+      "status": "successful",
+      "execution_environment": 1,
+      "failed": false,
+      "started": "2023-11-08T19:10:45.166506Z",
+      "finished": "2023-11-08T19:10:49.148195Z",
+      "canceled_on": null,
+      "elapsed": 3.982,
+      "job_explanation": "",
+      "execution_node": "awx-task-9bb4c7485-sbt8n",
+      "launched_by": {
+        "id": 5,
+        "name": "Cleanup Expired OAuth 2 Tokens",
+        "type": "schedule",
+        "url": "/api/v2/schedules/5/"
+      },
+      "work_unit_id": null,
+      "system_job_template": 5,
+      "job_type": "cleanup_tokens",
+      "extra_vars": "",
+      "result_stdout": "Expired OAuth 2 Access Tokens deleted: 0\nExpired OAuth 2 Refresh Tokens deleted: 0\n"
+    },
+    {
+      "id": 5130,
+      "type": "system_job",
+      "url": "/api/v2/system_jobs/5130/",
+      "related": {
+        "unified_job_template": "/api/v2/system_job_templates/1/",
+        "schedule": "/api/v2/schedules/1/",
+        "execution_environment": "/api/v2/execution_environments/1/",
+        "system_job_template": "/api/v2/system_job_templates/1/",
+        "notifications": "/api/v2/system_jobs/5130/notifications/",
+        "cancel": "/api/v2/system_jobs/5130/cancel/",
+        "events": "/api/v2/system_jobs/5130/events/"
+      },
+      "summary_fields": {
+        "execution_environment": {
+          "id": 1,
+          "name": "quay.io/ansible/awx-ee (latest)",
+          "description": "",
+          "image": "quay.io/ansible/awx-ee:latest"
+        },
+        "schedule": {
+          "id": 1,
+          "name": "Cleanup Job Schedule",
+          "description": "Automatically Generated Schedule",
+          "next_run": "2023-12-10T19:08:57Z"
+        },
+        "unified_job_template": {
+          "id": 1,
+          "name": "Cleanup Job Details",
+          "description": "Remove job history",
+          "unified_job_type": "system_job"
+        },
+        "instance_group": {
+          "id": 1,
+          "name": "controlplane",
+          "is_container_group": false
+        },
+        "user_capabilities": {
+          "delete": true,
+          "start": false
+        }
+      },
+      "created": "2023-11-12T19:09:21.044448Z",
+      "modified": "2023-11-12T19:09:21.259452Z",
+      "name": "Cleanup Job Details",
+      "description": "Remove job history",
+      "unified_job_template": 1,
+      "launch_type": "scheduled",
+      "status": "successful",
+      "execution_environment": 1,
+      "failed": false,
+      "started": "2023-11-12T19:09:21.335147Z",
+      "finished": "2023-11-12T19:09:25.359625Z",
+      "canceled_on": null,
+      "elapsed": 4.024,
+      "job_explanation": "",
+      "execution_node": "awx-task-9bb4c7485-sbt8n",
+      "launched_by": {
+        "id": 1,
+        "name": "Cleanup Job Schedule",
+        "type": "schedule",
+        "url": "/api/v2/schedules/1/"
+      },
+      "work_unit_id": null,
+      "system_job_template": 1,
+      "job_type": "cleanup_jobs",
+      "extra_vars": "{\"days\": \"120\"}",
+      "result_stdout": "project updates: 0 deleted, 20 skipped.\nad hoc commands: 0 deleted, 0 skipped.\ninventory updates: 0 deleted, 0 skipped.\nmanagement jobs: 0 deleted, 10 skipped.\nworkflow jobs: 0 deleted, 14 skipped.\nnotifications: 0 deleted, 0 skipped.\njobs: 0 deleted, 12 skipped.\n"
+    },
+    {
+      "id": 5568,
+      "type": "system_job",
+      "url": "/api/v2/system_jobs/5568/",
+      "related": {
+        "unified_job_template": "/api/v2/system_job_templates/2/",
+        "schedule": "/api/v2/schedules/2/",
+        "execution_environment": "/api/v2/execution_environments/1/",
+        "system_job_template": "/api/v2/system_job_templates/2/",
+        "notifications": "/api/v2/system_jobs/5568/notifications/",
+        "cancel": "/api/v2/system_jobs/5568/cancel/",
+        "events": "/api/v2/system_jobs/5568/events/"
+      },
+      "summary_fields": {
+        "execution_environment": {
+          "id": 1,
+          "name": "quay.io/ansible/awx-ee (latest)",
+          "description": "",
+          "image": "quay.io/ansible/awx-ee:latest"
+        },
+        "schedule": {
+          "id": 2,
+          "name": "Cleanup Activity Schedule",
+          "description": "Automatically Generated Schedule",
+          "next_run": "2023-12-05T19:08:57Z"
+        },
+        "unified_job_template": {
+          "id": 2,
+          "name": "Cleanup Activity Stream",
+          "description": "Remove activity stream history",
+          "unified_job_type": "system_job"
+        },
+        "instance_group": {
+          "id": 1,
+          "name": "controlplane",
+          "is_container_group": false
+        },
+        "user_capabilities": {
+          "delete": true,
+          "start": false
+        }
+      },
+      "created": "2023-11-14T19:09:21.047385Z",
+      "modified": "2023-11-14T19:09:21.171789Z",
+      "name": "Cleanup Activity Stream",
+      "description": "Remove activity stream history",
+      "unified_job_template": 2,
+      "launch_type": "scheduled",
+      "status": "successful",
+      "execution_environment": 1,
+      "failed": false,
+      "started": "2023-11-14T19:09:21.254043Z",
+      "finished": "2023-11-14T19:09:35.047302Z",
+      "canceled_on": null,
+      "elapsed": 13.793,
+      "job_explanation": "",
+      "execution_node": "awx-task-9bb4c7485-sbt8n",
+      "launched_by": {
+        "id": 2,
+        "name": "Cleanup Activity Schedule",
+        "type": "schedule",
+        "url": "/api/v2/schedules/2/"
+      },
+      "work_unit_id": null,
+      "system_job_template": 2,
+      "job_type": "cleanup_activitystream",
+      "extra_vars": "{\"days\": \"355\"}",
+      "result_stdout": "Removed 0 items\n"
+    }
+  ]
+}
