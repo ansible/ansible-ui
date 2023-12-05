@@ -27,6 +27,7 @@ import {
   StackItem,
   Title,
 } from '@patternfly/react-core';
+import { pulpAPI } from '../api/formatPath';
 import { LoadingPage } from '../../../framework';
 import React from 'react';
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
@@ -335,16 +336,27 @@ function CollectionDocumentationTab(props: { collection?: CollectionVersionSearc
 
   const [content, setContent] = useState<IContents>();
 
-  const { data } = useGet<CollectionDocs>(
+  /*const { data } = useGet<CollectionDocs>(
     hubAPI`/_ui/v1/repo/published/${collection?.collection_version?.name || ''}/${
       collection?.collection_version?.name || ''
     }/?include_related=my_permissions`
+  );*/
+
+  const { data } = useGet<any>(
+    pulpAPI`/content/ansible/collection_versions/?namespace=${
+      collection?.collection_version?.namespace || ''
+    }&name=${collection?.collection_version?.name || ''}&version=${
+      collection?.collection_version?.version || ''
+    }`
   );
+
+  const dataItem = data?.results?.[0];
+  const docs_blob = dataItem?.docs_blob;
 
   const groups = useMemo(() => {
     const groups: Record<string, { name: string; contents: IContents[] }> = {};
-    if (data?.latest_version.docs_blob.contents) {
-      for (const content of data.latest_version.docs_blob.contents) {
+    if (docs_blob?.contents) {
+      for (const content of docs_blob.contents) {
         let group = groups[content.content_type];
         if (!group) {
           group = { name: content.content_type, contents: [] };
@@ -357,7 +369,7 @@ function CollectionDocumentationTab(props: { collection?: CollectionVersionSearc
       group.contents = group.contents.sort((l, r) => l.content_name.localeCompare(r.content_name));
     }
     return Object.values(groups);
-  }, [data?.latest_version.docs_blob.contents]);
+  }, [dataItem?.contents]);
 
   const [isDrawerOpen, setDrawerOpen] = useState(true);
   const lg = useBreakpoint('lg');
@@ -382,9 +394,78 @@ function CollectionDocumentationTab(props: { collection?: CollectionVersionSearc
             isDrawerOpen={isDrawerOpen}
             setDrawerOpen={setDrawerOpen}
           />
+          <DocumentationHTML
+            data={dataItem}
+            collection={collection}
+            content={content}
+          ></DocumentationHTML>
         </DrawerContentBody>
       </DrawerContent>
     </Drawer>
+  );
+}
+
+function DocumentationHTML(props: {
+  data?: any;
+  collection?: CollectionVersionSearch;
+  content?: IContents;
+}) {
+  const content = props.content;
+  const data = props.data;
+
+  if (!props.data) {
+    return <></>;
+  }
+
+  let displayHTML: string = '';
+  let pluginData;
+
+  const urlFields: Record<string, string> = {};
+  urlFields['name'] = content?.content_name || '';
+  urlFields['type'] = content?.content_type || '';
+
+  const contentType = urlFields['type'] || 'docs';
+  const contentName = urlFields['name'] || urlFields['page'] || null;
+
+  if (contentType === 'docs' && contentName) {
+    if (data.docs_blob.documentation_files) {
+      const file = data.docs_blob.documentation_files.find(
+        (x: any) => sanitizeDocsUrls(x.name) === urlFields['page']
+      );
+
+      if (file) {
+        displayHTML = file.html;
+      }
+    }
+  } else if (contentName) {
+    // check if contents exists
+    if (data.docs_blob.contents) {
+      const selectedContent = data.docs_blob.contents.find(
+        (x: any) => x.content_type === contentType && x.content_name === contentName
+      );
+
+      if (selectedContent) {
+        if (contentType === 'role') {
+          displayHTML = selectedContent['readme_html'];
+        } else {
+          pluginData = selectedContent;
+        }
+      }
+    }
+  } else {
+    if (data.docs_blob.collection_readme) {
+      displayHTML = data.docs_blob.collection_readme.html;
+    }
+  }
+
+  return (
+    <>
+      <div
+        dangerouslySetInnerHTML={{
+          __html: displayHTML,
+        }}
+      />
+    </>
   );
 }
 
@@ -399,44 +480,49 @@ function CollectionDocumentationTabPanel(props: {
 }) {
   const { content, setContent, groups, setDrawerOpen } = props;
   const { t } = useTranslation();
+
   return (
-    <DrawerPanelContent>
-      <DrawerHead style={{ gap: 16 }}>
-        <SearchInput placeholder={t('Find content')} />
-        <DrawerActions style={{ alignSelf: 'center' }}>
-          <DrawerCloseButton onClick={() => setDrawerOpen(false)} />
-        </DrawerActions>
-      </DrawerHead>
-      <DrawerPanelBody style={{ borderTop: 'thin solid var(--pf-v5-global--BorderColor--100)' }}>
-        <Nav theme="light">
-          <NavList>
-            <NavExpandable key="documentation" title={t('Documentation')} isExpanded>
-              <NavItem key="readme">{t('Readme')}</NavItem>
-            </NavExpandable>
-            {groups.map((group) => (
-              <NavExpandable
-                key={group.name}
-                title={group.name}
-                isExpanded
-                isActive={group.contents.find((c) => c === content) !== undefined}
-              >
-                {group.contents.map((c) => (
-                  <NavItem
-                    key={c.content_name}
-                    onClick={() => setContent(c)}
-                    isActive={c === content}
-                  >
-                    {c.content_name}
-                  </NavItem>
-                ))}
+    <>
+      <DrawerPanelContent>
+        <DrawerHead style={{ gap: 16 }}>
+          <SearchInput placeholder={t('Find content')} />
+          <DrawerActions style={{ alignSelf: 'center' }}>
+            <DrawerCloseButton onClick={() => setDrawerOpen(false)} />
+          </DrawerActions>
+        </DrawerHead>
+        <DrawerPanelBody style={{ borderTop: 'thin solid var(--pf-v5-global--BorderColor--100)' }}>
+          <Nav theme="light">
+            <NavList>
+              <NavExpandable key="documentation" title={t('Documentation')} isExpanded>
+                <NavItem key="readme">{t('Readme')}</NavItem>
               </NavExpandable>
-            ))}
-          </NavList>
-        </Nav>
-      </DrawerPanelBody>
-    </DrawerPanelContent>
+              {groups.map((group) => (
+                <NavExpandable
+                  key={group.name}
+                  title={group.name}
+                  isExpanded
+                  isActive={group.contents.find((c) => c === content) !== undefined}
+                >
+                  {group.contents.map((c) => (
+                    <NavItem
+                      key={c.content_name}
+                      onClick={() => setContent(c)}
+                      isActive={c === content}
+                    >
+                      {c.content_name}
+                    </NavItem>
+                  ))}
+                </NavExpandable>
+              ))}
+            </NavList>
+          </Nav>
+        </DrawerPanelBody>
+      </DrawerPanelContent>
+    </>
   );
 }
+
+function RenderDocumentationHTML() {}
 
 const splitString = '- name';
 
@@ -840,4 +926,8 @@ interface IContents {
   readme_html: null;
   content_name: string;
   content_type: string;
+}
+
+export function sanitizeDocsUrls(url: string) {
+  return url.replace('.md', '');
 }
