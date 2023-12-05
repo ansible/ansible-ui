@@ -6,11 +6,11 @@ import { Task } from '../Task';
 import { useHubContext } from '../../useHubContext';
 import { compareStrings, useBulkConfirmation } from '../../../../framework';
 import { requestPatch } from '../../../common/crud/Data';
-import { useTasksColumns } from '../Tasks';
 import { pulpAPI } from '../../api/formatPath';
 import { parsePulpIDFromURL } from '../../api/utils';
+import { useTasksColumns } from './useTasksColumns';
 
-export function useTasksActions(onComplete?: (tasks: Task[]) => void) {
+export function useTasksToolbarActions(onComplete?: (tasks: Task[]) => void) {
   const { t } = useTranslation();
   const context = useHubContext();
   const stopTasks = useStopTasks(onComplete);
@@ -40,12 +40,18 @@ export function useStopTasks(onComplete?: (tasks: Task[]) => void) {
   const bulkAction = useBulkConfirmation<Task>();
   return useCallback(
     (ees: Task[]) => {
+      const filteredEes = ees
+        .map((task) => task.state)
+        .filter((state) => state === 'running' || state === 'waiting');
       bulkAction({
-        title: t('Stop running task', { count: ees.length }),
-        confirmText: t('Yes, I confirm that I want to stop these {{count}} running tasks.', {
-          count: ees.length,
-        }),
-        actionButtonText: t('Stop tasks', { count: ees.length }),
+        title: t('Stop running/waiting task', { count: filteredEes.length }),
+        confirmText: t(
+          'Yes, I confirm that I want to stop these {{count}} running/waiting tasks.',
+          {
+            count: filteredEes.length,
+          }
+        ),
+        actionButtonText: t('Stop tasks', { count: filteredEes.length }),
         items: ees.sort((l, r) => compareStrings(l.pulp_href || '', r.pulp_href || '')),
         keyFn: (item) => item.name,
         isDanger: true,
@@ -64,7 +70,7 @@ export function useStopTasks(onComplete?: (tasks: Task[]) => void) {
 }
 
 function stopRunningTask(task: Task) {
-  return requestPatch(pulpAPI`/tasks/${parsePulpIDFromURL(task.pulp_href) || ''}`, {
+  return requestPatch(pulpAPI`/tasks/${parsePulpIDFromURL(task.pulp_href) || ''}/`, {
     state: 'canceled',
   });
 }
