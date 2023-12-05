@@ -20,8 +20,8 @@ jobs:
     name: Setup
     runs-on: ubuntu-latest
     outputs:
-      output1: ${{ steps.step1.outputs.test }}
-      output2: ${{ steps.step2.outputs.test }}
+      AWX_SERVER: ${{ steps.step1.outputs.AWX_SERVER }}
+      UPDATE_SERVER: ${{ steps.step2.outputs.UPDATE_SERVER }}
     steps:
       - id: step1
         run: |
