@@ -14,6 +14,13 @@ export enum HubRoute {
   Collections = 'hub-collections',
   UploadCollection = 'hub-create-collection',
   CollectionPage = 'hub-collection-page',
+  CollectionDetails = 'hub-collection-details',
+  CollectionInstall = 'hub-collection-install',
+  CollectionDocumentation = 'hub-collection-documentation',
+  CollectionContents = 'hub-collection-contents',
+  CollectionImportLog = 'hub-collection-page-import-log',
+  CollectionDistributions = 'hub-collection-distributions',
+  CollectionDependencies = 'hub-collection-dependencies',
 
   ExecutionEnvironments = 'hub-execution-environments',
   EditExecutionEnvironment = 'hub-edit-execution-environment',
