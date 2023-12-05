@@ -48,7 +48,7 @@ jobs:
 
   awx-update-server:
     name: AWX Update Server
-    if: ${{ github.event_name == 'workflow_dispatch' && needs.setup.outputs.UPDATE_SERVER == 'true' }}
+    if: ${{ needs.setup.outputs.UPDATE_SERVER == 'true' }}
     needs:
       - awx-e2e
       - setup
