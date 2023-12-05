@@ -192,21 +192,13 @@ export function useApplicationsColumns(options?: {
     ...options,
     onClick: nameClick,
   });
-  const idColumn = useIdColumn<Application>();
   const descriptionColumn = useDescriptionColumn();
   const organizationColumn = useOrganizationNameColumn(AwxRoute.OrganizationDetails, options);
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);
   const tableColumns = useMemo<ITableColumn<Application>[]>(
-    () => [
-      idColumn,
-      nameColumn,
-      descriptionColumn,
-      organizationColumn,
-      createdColumn,
-      modifiedColumn,
-    ],
-    [idColumn, nameColumn, descriptionColumn, organizationColumn, createdColumn, modifiedColumn]
+    () => [nameColumn, descriptionColumn, organizationColumn, createdColumn, modifiedColumn],
+    [nameColumn, descriptionColumn, organizationColumn, createdColumn, modifiedColumn]
   );
   return tableColumns;
 }
