@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       AWX_SERVER: ${{ steps.step1.outputs.AWX_SERVER }}
-      UPDATE_SERVER: ${{ steps.step2.outputs.UPDATE_SERVER }}
+      UPDATE_SERVER: ${{ steps.step1.outputs.UPDATE_SERVER }}
     steps:
       - id: step1
         run: |
