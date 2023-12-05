@@ -13,10 +13,11 @@ on:
         default: false
         description: 'Update server on success'
   schedule:
-    - cron: '0 8 * * *'
+    - cron: '40 * * * *'
 
 jobs:
-  variables:
+  setup:
+    name: Setup
     runs-on: ubuntu-latest
     steps:
       - run: |
@@ -33,7 +34,7 @@ jobs:
     name: AWX E2E
     uses: ./.github/workflows/awx-e2e.yml
     with:
-      AWX_SERVER: ${{ steps.variables.outputs.AWX_SERVER }}
+      AWX_SERVER: ${{ steps.setup.outputs.AWX_SERVER }}
     secrets:
       AWX_PASSWORD: ${{ secrets.AWX_PASSWORD }}
       CYPRESS_AUI_AWX_E2E_PROJECT_ID: ${{ secrets.CYPRESS_AUI_AWX_E2E_PROJECT_ID }}
@@ -41,7 +42,7 @@ jobs:
 
   awx-update-server:
     name: AWX Update Server
-    if: ${{ github.event_name == 'workflow_dispatch' && steps.variables.outputs.UPDATE_SERVER == 'true' }}
+    if: ${{ github.event_name == 'workflow_dispatch' && steps.setup.outputs.UPDATE_SERVER == 'true' }}
     needs: awx-e2e
     runs-on: ubuntu-latest
     steps:
@@ -50,4 +51,4 @@ jobs:
           -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" \
           -H "X-GitHub-Api-Version: 2022-11-28" \
           "https://api.github.com/repos/ansible/ansible-ui/actions/variables/AWX_SERVER" \
-          -d '{"name":"AWX_SERVER","value":"${{ steps.variables.outputs.AWX_SERVER }}"}'
+          -d '{"name":"AWX_SERVER","value":"${{ steps.setup.outputs.AWX_SERVER }}"}'
