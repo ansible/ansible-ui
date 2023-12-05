@@ -87,7 +87,11 @@ export function useEdgeMenuItems(t: (item: string) => string): MenuItem[] {
       ),
       isDanger: true,
       label: t('Remove link'),
-      onClick: (_element) => alert(`Selected: Remove Node`),
+      onClick: (element: GraphElement) => {
+        action(() => {
+          element.remove();
+        })();
+      },
     },
   ];
 }
