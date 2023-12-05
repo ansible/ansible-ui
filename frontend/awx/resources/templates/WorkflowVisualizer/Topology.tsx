@@ -43,13 +43,14 @@ import {
   CustomEdge,
   CustomNode,
   DeletedNode,
+  EdgeContextMenu,
   Legend,
   NodeContextMenu,
-  VisualizerWrapper,
+  WorkflowVisualizerToolbar,
 } from './components';
-import { useWorkflowVisualizerToolbarActions } from './hooks/useWorkflowVisualizerToolbarActions';
-import { LayoutNode, GraphNode, EdgeStatus } from './types';
-import { EdgeContextMenu } from './components/EdgeContextMenu';
+import { GraphNode, EdgeStatus } from './types';
+import { ViewOptionsContext, ViewOptionsProvider } from './ViewOptionsProvider';
+import { ToolbarHeader } from './components/WorkflowVisualizerToolbar';
 
 const TopologyView = styled<
   FunctionComponent<
@@ -80,43 +81,32 @@ const graphModel: Model = {
     id: GRAPH_ID,
     type: 'graph',
     layout: 'Dagre',
+    visible: false,
   },
 };
 
 interface TopologyProps {
   data: {
-    nodes: WorkflowNode[];
+    workflowNodes: WorkflowNode[];
     template: WorkflowJobTemplate;
   };
 }
 
-export const Visualizer = ({ data: { nodes = [], template } }: TopologyProps) => {
+export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyProps) => {
   const { t } = useTranslation();
-  const [isExpanded, setIsExpanded] = useState<boolean>(false);
-  const [layout, setLayout] = useState<LayoutNode[]>([]);
   const [selectedNode, setSelectedNode] = useState<WorkflowNode | undefined>(undefined);
-  const [showLegend, setShowLegend] = useState<boolean>(false);
-  const visualizationRef = useRef<Visualization>();
-  const visualization = visualizationRef.current;
 
-  const toolbarActions = useWorkflowVisualizerToolbarActions(
-    nodes,
-    [isExpanded, setIsExpanded],
-    template
-  );
   const handleSelectedNode = useCallback(
     (clickedNodeIdentifier: string[]) => {
-      const clickedNodeData = nodes.find((node) => node.id.toString() === clickedNodeIdentifier[0]);
+      const clickedNodeData = workflowNodes.find(
+        (node) => node.id.toString() === clickedNodeIdentifier[0]
+      );
       setSelectedNode(clickedNodeData);
     },
-    [nodes]
+    [workflowNodes]
   );
-  function toggleLegend() {
-    setShowLegend(!showLegend);
-  }
 
-  const nodeContextMenu = NodeContextMenu();
-
+  const nodeContextMenu = useCallback((element: GraphNode) => NodeContextMenu(element, t), [t]);
   const edgeContextMenu = useCallback(
     (element: GraphElement<ElementModel, unknown>) => EdgeContextMenu(element, t),
     [t]
@@ -133,7 +123,11 @@ export const Visualizer = ({ data: { nodes = [], template } }: TopologyProps) =>
               CONNECTOR_TARGET_DROP,
               CREATE_CONNECTOR_DROP_TYPE,
             ])
-          )(withDragNode(nodeDragSourceSpec('node', true, true))(DeletedNode));
+          )(
+            withDragNode(nodeDragSourceSpec('node', true, true))(
+              withSelection({ multiSelect: true })(DeletedNode)
+            )
+          );
         default:
           switch (kind) {
             case ModelKind.graph:
@@ -161,7 +155,7 @@ export const Visualizer = ({ data: { nodes = [], template } }: TopologyProps) =>
                 // TODO: Handle toggle unsaved changes
                 source.getController().fromModel(model);
               })(
-                withContextMenu(() => nodeContextMenu)(
+                withContextMenu(nodeContextMenu)(
                   withDndDrop(
                     nodeDropTargetSpec([
                       CONNECTOR_SOURCE_DROP,
@@ -228,30 +222,12 @@ export const Visualizer = ({ data: { nodes = [], template } }: TopologyProps) =>
     [t]
   );
 
-  useEffect(() => {
-    const layoutNodes = nodes.map((node) => {
-      return {
-        ...node,
-        runAfterTasks: [],
-      };
-    });
-
-    return setLayout(() => [...layoutNodes]);
-  }, [nodes]);
+  const visualizationRef = useRef<Visualization>(createVisualization());
+  const visualization = visualizationRef.current;
 
   useEffect(() => {
-    if (!visualizationRef.current) {
-      visualizationRef.current = createVisualization();
-    }
-  }, [createVisualization, visualization]);
-
-  useEffect(() => {
-    if (!visualization) {
-      return;
-    }
-
     const edges: EdgeModel[] = [];
-    const nodes: GraphNode[] = layout.map((n) => {
+    const nodes = workflowNodes.map((n) => {
       const nodeId = n.id.toString();
       let nodeType = 'node';
       let nodeName = n.summary_fields?.unified_job_template?.name;
@@ -271,7 +247,7 @@ export const Visualizer = ({ data: { nodes = [], template } }: TopologyProps) =>
         edges.push(createEdge(nodeId, id.toString(), EdgeStatus.info));
       });
 
-      const node: GraphNode = {
+      const node = {
         id: nodeId,
         type: nodeType,
         label: nodeName,
@@ -279,97 +255,88 @@ export const Visualizer = ({ data: { nodes = [], template } }: TopologyProps) =>
         height: NODE_DIAMETER,
         shape: NodeShape.circle,
         data: {
-          jobType: n.summary_fields?.unified_job_template?.unified_job_type,
           id: nodeId,
+          resource: n,
         },
       };
 
       return node;
     });
 
-    const model: Model = {
+    const model = {
       edges,
       nodes,
       graph: {
         id: GRAPH_ID,
         type: 'graph',
         layout: 'Dagre',
+        visible: true,
       },
     };
 
     visualization.fromModel(model, true);
-  }, [t, layout, visualization, createEdge]);
-
-  if (!visualization) {
-    return null;
-  }
+  }, [t, visualization, createEdge, workflowNodes]);
 
   return (
     <VisualizationProvider controller={visualization}>
-      <VisualizerWrapper isExpanded={isExpanded}>
-        <TopologyView
-          $isExpanded={isExpanded}
-          data-cy="workflow-visualizer"
-          contextToolbar={toolbarActions}
-          controlBar={
-            <TopologyControlBar
-              controlButtons={createTopologyControlButtons({
-                ...defaultControlButtonsOptions,
-                zoomInCallback: action(() => {
-                  visualization.getGraph().scaleBy(4 / 3);
-                }),
-                zoomOutCallback: action(() => {
-                  visualization.getGraph().scaleBy(0.75);
-                }),
-                fitToScreenCallback: action(() => {
-                  visualization.getGraph().fit(80);
-                }),
-                resetViewCallback: action(() => {
-                  visualization.getGraph().reset();
-                  visualization.getGraph().layout();
-                }),
-                legend: true,
-                legendCallback: toggleLegend,
-              })}
-            />
-          }
-          sideBarOpen={selectedNode !== undefined}
-          sideBarResizable
-          sideBar={
-            selectedNode ? (
-              <WorkflowVisualizerNodeDetails
-                setSelectedNode={setSelectedNode}
-                selectedNode={selectedNode}
-              />
-            ) : null
-          }
-        >
-          <VisualizerGraph selectedNode={selectedNode} isEmpty={!nodes.length} />
-          {showLegend && <Legend />}
-        </TopologyView>
-      </VisualizerWrapper>
+      <ViewOptionsProvider>
+        {/* tools provider name */}
+        <ViewOptionsContext.Consumer>
+          {({ isFullScreen, isEmpty, isLegendOpen, toggleLegend }) => {
+            return (
+              <TopologyView
+                data-cy="workflow-visualizer"
+                contextToolbar={isFullScreen ? null : <ToolbarHeader />}
+                viewToolbar={<WorkflowVisualizerToolbar />}
+                controlBar={
+                  <TopologyControlBar
+                    controlButtons={createTopologyControlButtons({
+                      ...defaultControlButtonsOptions,
+                      zoomInCallback: action(() => {
+                        visualization.getGraph().scaleBy(4 / 3);
+                      }),
+                      zoomOutCallback: action(() => {
+                        visualization.getGraph().scaleBy(0.75);
+                      }),
+                      fitToScreenCallback: action(() => {
+                        visualization.getGraph().fit(80);
+                      }),
+                      resetViewCallback: action(() => {
+                        visualization.getGraph().reset();
+                        visualization.getGraph().layout();
+                      }),
+                      legend: true,
+                      legendCallback: toggleLegend,
+                    })}
+                  />
+                }
+                sideBarOpen={selectedNode !== undefined}
+                sideBarResizable
+                sideBar={
+                  selectedNode ? (
+                    <WorkflowVisualizerNodeDetails
+                      setSelectedNode={setSelectedNode}
+                      selectedNode={selectedNode}
+                    />
+                  ) : null
+                }
+              >
+                {isEmpty && (
+                  <div style={{ flex: '1 0 100%' }}>
+                    <EmptyStateNoData
+                      button={<AddNodeButton variant="primary" />}
+                      title={t('There are currently no nodes in this workflow')}
+                      description={t('Add a node by clicking the button below')}
+                    />
+                  </div>
+                )}
+                {isLegendOpen && <Legend />}
+                <VisualizationSurface state={{ selectedNode, workflowTemplate: template }} />
+              </TopologyView>
+            );
+          }}
+        </ViewOptionsContext.Consumer>
+      </ViewOptionsProvider>
     </VisualizationProvider>
   );
 };
-
-function VisualizerGraph({
-  selectedNode,
-  isEmpty,
-}: {
-  selectedNode?: WorkflowNode;
-  isEmpty: boolean;
-}) {
-  const { t } = useTranslation();
-
-  if (isEmpty) {
-    return (
-      <EmptyStateNoData
-        button={<AddNodeButton variant="primary" />}
-        title={t('There are currently no nodes in this workflow')}
-        description={t('Add a node by clicking the button below')}
-      />
-    );
-  }
-
-  return <VisualizationSurface state={selectedNode} />;
-}

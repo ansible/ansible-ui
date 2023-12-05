@@ -1,18 +1,17 @@
 import { ReactElement } from 'react';
-import { useTranslation } from 'react-i18next';
-import { ContextMenuSeparator, ContextMenuItem } from '@patternfly/react-topology';
+import { ContextMenuSeparator, ContextMenuItem, action } from '@patternfly/react-topology';
 import { PencilAltIcon, MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import type { GraphNode } from '../types';
 
 interface MenuItem {
   key: string;
   label: string;
   icon?: ReactElement;
   isDanger?: boolean;
-  onClick?: () => void;
+  onClick?: (element: GraphNode) => void;
 }
 
-export function useNodeMenuItems(): MenuItem[] {
-  const { t } = useTranslation();
+export function useNodeMenuItems(t: (item: string) => string): MenuItem[] {
   return [
     {
       key: 'edit-node',
@@ -41,13 +40,19 @@ export function useNodeMenuItems(): MenuItem[] {
       icon: <MinusCircleIcon />,
       isDanger: true,
       label: t('Remove node'),
-      onClick: () => alert(`Selected: Remove Node`),
+      onClick: (element) => {
+        action(() => {
+          element.getTargetEdges().forEach((edge) => edge.remove());
+          element.getSourceEdges().forEach((edge) => edge.remove());
+          element.remove();
+        })();
+      },
     },
   ];
 }
 
-export function NodeContextMenu() {
-  const items = useNodeMenuItems();
+export function NodeContextMenu(element: GraphNode, t: (string: string) => string) {
+  const items = useNodeMenuItems(t);
 
   return items.map((item) => {
     if (item.label === '-') {
@@ -60,7 +65,7 @@ export function NodeContextMenu() {
         key={item.key}
         icon={item.icon}
         isDanger={item.isDanger}
-        onClick={item.onClick}
+        onClick={() => item?.onClick && item.onClick(element)}
       >
         {item.label}
       </ContextMenuItem>
