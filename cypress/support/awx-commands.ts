@@ -21,8 +21,8 @@ import { User } from '../../frontend/awx/interfaces/User';
 import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/WorkflowJobTemplate';
 import './auth';
 import './commands';
-import './rest-commands';
 import { awxAPI } from './formatApiPathForAwx';
+import './rest-commands';
 //import { Credential } from '../../frontend/eda/interfaces/generated/eda-api';
 
 //  AWX related custom command implementation
@@ -344,10 +344,12 @@ Cypress.Commands.add('clickPageAction', (dataCyLabel: string | RegExp) => {
 });
 
 // Resources for testing AWX
-Cypress.Commands.add('createAwxOrganization', (orgName?: string) => {
-  cy.awxRequestPost<Pick<Organization, 'name'>, Organization>(awxAPI`/organizations/`, {
-    name: orgName ? orgName : 'E2E Organization ' + randomString(4),
-  });
+Cypress.Commands.add('createAwxOrganization', (orgName?: string, failOnStatusCode?: boolean) => {
+  cy.awxRequestPost<Pick<Organization, 'name'>, Organization>(
+    awxAPI`/organizations/`,
+    { name: orgName ? orgName : 'E2E Organization ' + randomString(4) },
+    failOnStatusCode
+  );
 });
 
 Cypress.Commands.add(
@@ -433,8 +435,10 @@ Cypress.Commands.add(
 Cypress.Commands.add('awxRequestPost', function awxRequestPost<
   RequestBodyT extends Cypress.RequestBody,
   ResponseBodyT = RequestBodyT,
->(url: string, body: RequestBodyT) {
-  cy.awxRequest<ResponseBodyT>('POST', url, body).then((response) => response.body);
+>(url: string, body: RequestBodyT, failOnStatusCode?: boolean) {
+  cy.awxRequest<ResponseBodyT>('POST', url, body, failOnStatusCode).then(
+    (response) => response.body
+  );
 });
 
 Cypress.Commands.add('awxRequestGet', function awxRequestGet<ResponseBodyT = unknown>(url: string) {
@@ -1006,4 +1010,54 @@ Cypress.Commands.add('waitForJobToProcessEvents', (jobID: string) => {
   as processing events takes ~30s, hence 80 * 500ms is chosen as the upper limit)
   */
   waitForJobToFinishProcessingEvents(80);
+});
+
+const GLOBAL_PROJECT_NAME = 'Global Project';
+const GLOBAL_PROJECT_DESCRIPTION = 'Global Read Only Project for E2E tests';
+const GLOBAL_PROJECT_SCM_URL = 'https://github.com/ansible/ansible-ui';
+const GLOBAL_ORG_NAME = 'Global Organization';
+
+/** Create a global organization if it doesn't exist. */
+Cypress.Commands.add('createGlobalOrganization', function () {
+  cy.awxRequestGet<AwxItemsResponse<Organization>>(awxAPI`/organizations?name=${GLOBAL_ORG_NAME}`)
+    .its('results')
+    .then((orgResults: Organization[]) => {
+      if (orgResults.length === 0) {
+        cy.awxRequest<AwxItemsResponse<Organization>>(
+          'POST',
+          awxAPI`/organizations/`,
+          { name: GLOBAL_ORG_NAME },
+          false
+        );
+        cy.wait(100).then(() => cy.createGlobalOrganization());
+      } else {
+        cy.wrap(orgResults[0]).as('globalOrganization');
+      }
+    });
+});
+
+/** Create a global project if it doesn't exist. */
+Cypress.Commands.add('createGlobalProject', function () {
+  const globalOrganization = this.globalOrganization as Organization;
+  cy.awxRequestGet<AwxItemsResponse<Project>>(awxAPI`/projects?name=${GLOBAL_PROJECT_NAME}`)
+    .its('results')
+    .then((projectResults: Project[]) => {
+      if (projectResults.length === 0) {
+        cy.awxRequest<AwxItemsResponse<Project>>(
+          'POST',
+          awxAPI`/projects/`,
+          {
+            name: GLOBAL_PROJECT_NAME,
+            description: GLOBAL_PROJECT_DESCRIPTION,
+            organization: globalOrganization.id,
+            scm_type: 'git',
+            scm_url: GLOBAL_PROJECT_SCM_URL,
+          },
+          false
+        );
+        cy.wait(100).then(() => cy.createGlobalProject());
+      } else {
+        cy.wrap(projectResults[0]).as('globalProject');
+      }
+    });
 });

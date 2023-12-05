@@ -16,14 +16,14 @@ describe('teams', function () {
   });
 
   beforeEach(function () {
-    cy.createAwxUser(this.globalProjectOrg as Organization).then((user) => {
+    cy.createAwxUser(this.globalOrganization as Organization).then((user) => {
       user1 = user;
-      cy.createAwxTeam(this.globalProjectOrg as Organization).then((createdTeam) => {
+      cy.createAwxTeam(this.globalOrganization as Organization).then((createdTeam) => {
         team = createdTeam;
         cy.giveUserTeamAccess(team.name, user1.id, 'Read');
       });
     });
-    cy.createAwxUser(this.globalProjectOrg as Organization).then((user) => {
+    cy.createAwxUser(this.globalOrganization as Organization).then((user) => {
       user2 = user;
     });
   });
@@ -47,7 +47,7 @@ describe('teams', function () {
     cy.get('[data-cy="name"]').type(teamName);
     cy.selectDropdownOptionByResourceName(
       'organization',
-      `${(this.globalProjectOrg as Organization).name}`
+      `${(this.globalOrganization as Organization).name}`
     );
     cy.clickButton(/^Create team$/);
     cy.wait('@newTeam')
@@ -249,7 +249,7 @@ describe('teams', function () {
   });
 
   it('can delete a team from the teams list row item', function () {
-    cy.createAwxTeam(this.globalProjectOrg as Organization).then((testTeam) => {
+    cy.createAwxTeam(this.globalOrganization as Organization).then((testTeam) => {
       cy.navigateTo('awx', 'teams');
       cy.clickTableRowKebabAction(testTeam.name, 'delete-team');
       cy.get('#confirm').click();
@@ -267,7 +267,7 @@ describe('teams', function () {
   });
 
   it('can delete a team from the teams list toolbar', function () {
-    cy.createAwxTeam(this.globalProjectOrg as Organization).then((testTeam) => {
+    cy.createAwxTeam(this.globalOrganization as Organization).then((testTeam) => {
       cy.navigateTo('awx', 'teams');
       cy.selectTableRow(testTeam.name);
       cy.clickToolbarKebabAction('delete-selected-teams');
