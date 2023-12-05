@@ -33,10 +33,10 @@ describe('organizations', () => {
 
   it('renders the organization details page', function () {
     cy.navigateTo('awx', 'organizations');
-    cy.clickTableRow(`${(this.globalProjectOrg as Organization).name}`);
-    cy.verifyPageTitle(`${(this.globalProjectOrg as Organization).name}`);
+    cy.clickTableRow(`${(this.globalOrganization as Organization).name}`);
+    cy.verifyPageTitle(`${(this.globalOrganization as Organization).name}`);
     cy.clickLink(/^Details$/);
-    cy.contains('#name', `${(this.globalProjectOrg as Organization).name}`);
+    cy.contains('#name', `${(this.globalOrganization as Organization).name}`);
   });
 });
 
