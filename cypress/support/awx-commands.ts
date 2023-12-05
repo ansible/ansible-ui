@@ -1012,14 +1012,13 @@ Cypress.Commands.add('waitForJobToProcessEvents', (jobID: string) => {
   waitForJobToFinishProcessingEvents(80);
 });
 
-const GLOBAL_PROJECT_NAME = 'Global Project for E2E tests';
+const GLOBAL_PROJECT_NAME = 'Global Project';
 const GLOBAL_PROJECT_DESCRIPTION = 'Global Read Only Project for E2E tests';
 const GLOBAL_PROJECT_SCM_URL = 'https://github.com/ansible/ansible-ui';
-const GLOBAL_ORG_NAME = 'Global Project Org';
+const GLOBAL_ORG_NAME = 'Global Organization';
 
-export let globalOrganization: Organization;
 /** Create a global organization if it doesn't exist. */
-Cypress.Commands.add('createGlobalOrganization', () => {
+Cypress.Commands.add('createGlobalOrganization', function () {
   cy.awxRequestGet<AwxItemsResponse<Organization>>(awxAPI`/organizations?name=${GLOBAL_ORG_NAME}`)
     .its('results')
     .then((orgResults: Organization[]) => {
@@ -1032,21 +1031,20 @@ Cypress.Commands.add('createGlobalOrganization', () => {
         );
         cy.wait(100).then(() => cy.createGlobalOrganization());
       } else {
-        globalOrganization = orgResults[0];
-        cy.wrap(orgResults[0]).as('globalProjectOrg');
+        cy.wrap(orgResults[0]).as('globalOrganization');
       }
     });
 });
 
-export let globalProject: Project;
 /** Create a global project if it doesn't exist. */
-Cypress.Commands.add('createGlobalProject', () => {
-  cy.log('👀<<CHECKING EXISTENCE OF GLOBAL PROJECT>>👀');
-  cy.awxRequestGet<AwxItemsResponse<Project>>(awxAPI`/projects?name=${GLOBAL_PROJECT_NAME}&page=1`)
+Cypress.Commands.add('createGlobalProject', function () {
+  const globalOrganization = this.globalOrganization as Organization;
+  cy.awxRequestGet<AwxItemsResponse<Project>>(awxAPI`/projects?name=${GLOBAL_PROJECT_NAME}`)
     .its('results')
     .then((projectResults: Project[]) => {
       if (projectResults.length === 0) {
-        cy.awxRequestPost<Partial<Project>, Project>(
+        cy.awxRequest<AwxItemsResponse<Project>>(
+          'POST',
           awxAPI`/projects/`,
           {
             name: GLOBAL_PROJECT_NAME,
@@ -1056,19 +1054,9 @@ Cypress.Commands.add('createGlobalProject', () => {
             scm_url: GLOBAL_PROJECT_SCM_URL,
           },
           false
-        ).then((project: Project) => {
-          cy.log('🕓<<WAITING FOR PROJECT TO SYNC>>🕓');
-          cy.waitForProjectToFinishSyncing(project.id);
-          cy.log('🎉GLOBAL PROJECT CREATED🎉....ACCESS IT USING globalProject IN THE TESTS.');
-          globalProject = project;
-          cy.wrap(project).as('globalProject');
-        });
-      } else {
-        globalProject = projectResults[0];
-        cy.log(
-          '🎉GLOBAL PROJECT FOUND🎉....ACCESS IT USING globalProject IN THE TESTS.',
-          globalProject
         );
+        cy.wait(100).then(() => cy.createGlobalProject());
+      } else {
         cy.wrap(projectResults[0]).as('globalProject');
       }
     });
