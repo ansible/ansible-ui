@@ -32,9 +32,16 @@ export function PageNavigation(props: { navigation: PageNavigationItem[] }) {
 function PageNavigationItems(props: { items: PageNavigationItem[]; baseRoute: string }) {
   return (
     <>
-      {props.items.map((item, index) => (
-        <PageNavigationItemComponent key={index} item={item} baseRoute={props.baseRoute} />
-      ))}
+      {props.items
+        .filter((item) => {
+          if ('hidden' in item) {
+            return item.hidden !== true;
+          }
+          return true;
+        })
+        .map((item, index) => (
+          <PageNavigationItemComponent key={index} item={item} baseRoute={props.baseRoute} />
+        ))}
     </>
   );
 }
