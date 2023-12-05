@@ -14,7 +14,7 @@ describe('Job templates form Create, Edit, Delete', function () {
   before(function () {
     cy.awxLogin();
 
-    cy.createAwxInventory({ organization: (this.globalProjectOrg as Organization).id }).then(
+    cy.createAwxInventory({ organization: (this.globalOrganization as Organization).id }).then(
       (inv) => {
         inventory = inv;
       }
@@ -22,7 +22,7 @@ describe('Job templates form Create, Edit, Delete', function () {
 
     cy.createAWXCredential({
       kind: 'machine',
-      organization: (this.globalProjectOrg as Organization).id,
+      organization: (this.globalOrganization as Organization).id,
       credential_type: 1,
     }).then((cred) => {
       machineCredential = cred;
@@ -182,7 +182,7 @@ describe('Job templates form Create, Edit, Delete', function () {
 
   it('should edit a job template using the kebab menu of the template list page page', function () {
     cy.createAwxJobTemplate({
-      organization: (this.globalProjectOrg as Organization).id,
+      organization: (this.globalOrganization as Organization).id,
       project: (this.globalProject as Project).id,
       inventory: inventory.id,
     }).then((jobTemplate) => {
@@ -214,7 +214,7 @@ describe('Job templates form Create, Edit, Delete', function () {
 
   it('should edit a job template using the edit template cta on details page', function () {
     cy.createAwxJobTemplate({
-      organization: (this.globalProjectOrg as Organization).id,
+      organization: (this.globalOrganization as Organization).id,
       project: (this.globalProject as Project).id,
       inventory: inventory.id,
     }).then((jobTemplate) => {
@@ -248,7 +248,7 @@ describe('Job templates form Create, Edit, Delete', function () {
 
   it('should delete a job template from the details page', function () {
     cy.createAwxJobTemplate({
-      organization: (this.globalProjectOrg as Organization).id,
+      organization: (this.globalOrganization as Organization).id,
       project: (this.globalProject as Project).id,
       inventory: inventory.id,
     }).then((jobTemplate) => {
@@ -268,12 +268,12 @@ describe('Job templates form Create, Edit, Delete', function () {
 
   it('should bulk delete job templates from the list page', function () {
     cy.createAwxJobTemplate({
-      organization: (this.globalProjectOrg as Organization).id,
+      organization: (this.globalOrganization as Organization).id,
       project: (this.globalProject as Project).id,
       inventory: inventory.id,
     }).then((jobTemplate1) => {
       cy.createAwxJobTemplate({
-        organization: (this.globalProjectOrg as Organization).id,
+        organization: (this.globalOrganization as Organization).id,
         project: (this.globalProject as Project).id,
         inventory: inventory.id,
       }).then((jobTemplate2) => {
