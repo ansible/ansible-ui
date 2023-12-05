@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageDetails, PageDetail, LoadingPage } from '../../../../framework';
+import { PageDetails, PageDetail, LoadingPage, Scrollable } from '../../../../framework';
 import { useGet, useGetItem } from '../../../../frontend/common/crud/useGet';
 import { PageDetailCodeEditor } from '../../../../framework/PageDetails/PageDetailCodeEditor';
 import type { Authenticator } from '../../../interfaces/Authenticator';
@@ -55,7 +55,7 @@ export function PlatformAuthenticatorDetails() {
   });
 
   return (
-    <>
+    <Scrollable>
       <PageDetails>
         <PageDetail label={t('Name')}>{authenticator.name}</PageDetail>
         <PageDetail label={t('Type')}>{authenticator.type}</PageDetail>
@@ -74,6 +74,6 @@ export function PlatformAuthenticatorDetails() {
           />
         ))}
       </PageDetails>
-    </>
+    </Scrollable>
   );
 }
