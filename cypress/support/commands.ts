@@ -36,6 +36,7 @@ import {
   EdaRulebookActivationCreate,
 } from '../../frontend/eda/interfaces/EdaRulebookActivation';
 import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaUser';
+import { Role as HubRole } from '../../frontend/hub/access/roles/Role';
 import './auth';
 import './awx-commands';
 import { IAwxResources } from './awx-commands';
@@ -46,7 +47,6 @@ import './eda-commands';
 import './global-project';
 import './hub-commands';
 import './rest-commands';
-import { Role as HubRole } from '../../frontend/hub/access/roles/Role';
 
 declare global {
   namespace Cypress {
@@ -295,7 +295,8 @@ declare global {
        */
       awxRequestPost<RequestBodyT extends Cypress.RequestBody, ResponseBodyT = RequestBodyT>(
         url: string,
-        body: RequestBodyT
+        body: RequestBodyT,
+        failOnStatusCode?: boolean
       ): Chainable<ResponseBodyT>;
 
       /**
@@ -316,7 +317,7 @@ declare global {
         }
       ): Chainable<void>;
 
-      createAwxOrganization(orgName?: string): Chainable<Organization>;
+      createAwxOrganization(orgName?: string, failOnStatusCode?: boolean): Chainable<Organization>;
 
       /**
        * `createAwxProject` creates an AWX Project via API,

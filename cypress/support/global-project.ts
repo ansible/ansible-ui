@@ -56,13 +56,17 @@ export function createGlobalProject() {
     .its('results')
     .then((projectResults: Project[]) => {
       if (projectResults.length === 0) {
-        cy.awxRequestPost<Partial<Project>, Project>(awxAPI`/projects/`, {
-          name: GLOBAL_PROJECT_NAME,
-          description: GLOBAL_PROJECT_DESCRIPTION,
-          organization: globalOrganization.id,
-          scm_type: 'git',
-          scm_url: GLOBAL_PROJECT_SCM_URL,
-        }).then((project: Project) => {
+        cy.awxRequestPost<Partial<Project>, Project>(
+          awxAPI`/projects/`,
+          {
+            name: GLOBAL_PROJECT_NAME,
+            description: GLOBAL_PROJECT_DESCRIPTION,
+            organization: globalOrganization.id,
+            scm_type: 'git',
+            scm_url: GLOBAL_PROJECT_SCM_URL,
+          },
+          false
+        ).then((project: Project) => {
           cy.log('🕓<<WAITING FOR PROJECT TO SYNC>>🕓');
           cy.waitForProjectToFinishSyncing(project.id);
           cy.log('🎉GLOBAL PROJECT CREATED🎉....ACCESS IT USING globalProject IN THE TESTS.');

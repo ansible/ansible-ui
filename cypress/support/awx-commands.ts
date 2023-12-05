@@ -21,8 +21,8 @@ import { User } from '../../frontend/awx/interfaces/User';
 import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/WorkflowJobTemplate';
 import './auth';
 import './commands';
-import './rest-commands';
 import { awxAPI } from './formatApiPathForAwx';
+import './rest-commands';
 //import { Credential } from '../../frontend/eda/interfaces/generated/eda-api';
 
 //  AWX related custom command implementation
@@ -344,10 +344,12 @@ Cypress.Commands.add('clickPageAction', (dataCyLabel: string | RegExp) => {
 });
 
 // Resources for testing AWX
-Cypress.Commands.add('createAwxOrganization', (orgName?: string) => {
-  cy.awxRequestPost<Pick<Organization, 'name'>, Organization>(awxAPI`/organizations/`, {
-    name: orgName ? orgName : 'E2E Organization ' + randomString(4),
-  });
+Cypress.Commands.add('createAwxOrganization', (orgName?: string, failOnStatusCode?: boolean) => {
+  cy.awxRequestPost<Pick<Organization, 'name'>, Organization>(
+    awxAPI`/organizations/`,
+    { name: orgName ? orgName : 'E2E Organization ' + randomString(4) },
+    failOnStatusCode
+  );
 });
 
 Cypress.Commands.add(
@@ -433,8 +435,10 @@ Cypress.Commands.add(
 Cypress.Commands.add('awxRequestPost', function awxRequestPost<
   RequestBodyT extends Cypress.RequestBody,
   ResponseBodyT = RequestBodyT,
->(url: string, body: RequestBodyT) {
-  cy.awxRequest<ResponseBodyT>('POST', url, body).then((response) => response.body);
+>(url: string, body: RequestBodyT, failOnStatusCode?: boolean) {
+  cy.awxRequest<ResponseBodyT>('POST', url, body, failOnStatusCode).then(
+    (response) => response.body
+  );
 });
 
 Cypress.Commands.add('awxRequestGet', function awxRequestGet<ResponseBodyT = unknown>(url: string) {
