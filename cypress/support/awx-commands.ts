@@ -899,7 +899,7 @@ Cypress.Commands.add(
         cy.intercept(
           {
             method: 'GET',
-            url: awxAPI`/workflow_job_templates/${results.id.toString()}/workflow_nodes/`,
+            url: awxAPI`/workflow_job_templates/${results.id.toString()}/workflow_nodes/*`,
           },
           { fixture: fixtureFile }
         )
