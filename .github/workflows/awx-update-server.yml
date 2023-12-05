@@ -40,7 +40,7 @@ jobs:
     needs: setup
     uses: ./.github/workflows/awx-e2e.yml
     with:
-      AWX_SERVER: ${{ needs.packages.outputs.AWX_SERVER }}
+      AWX_SERVER: ${{ needs.setup.outputs.AWX_SERVER }}
     secrets:
       AWX_PASSWORD: ${{ secrets.AWX_PASSWORD }}
       CYPRESS_AUI_AWX_E2E_PROJECT_ID: ${{ secrets.CYPRESS_AUI_AWX_E2E_PROJECT_ID }}
@@ -48,7 +48,7 @@ jobs:
 
   awx-update-server:
     name: AWX Update Server
-    if: ${{ github.event_name == 'workflow_dispatch' && needs.packages.outputs.UPDATE_SERVER == 'true' }}
+    if: ${{ github.event_name == 'workflow_dispatch' && needs.setup.outputs.UPDATE_SERVER == 'true' }}
     needs:
       - awx-e2e
       - setup
@@ -59,4 +59,4 @@ jobs:
           -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" \
           -H "X-GitHub-Api-Version: 2022-11-28" \
           "https://api.github.com/repos/ansible/ansible-ui/actions/variables/AWX_SERVER" \
-          -d '{"name":"AWX_SERVER","value":"${{ needs.packages.outputs.AWX_SERVER }}"}'
+          -d '{"name":"AWX_SERVER","value":"${{ needs.setup.outputs.AWX_SERVER }}"}'
