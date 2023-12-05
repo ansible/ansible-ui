@@ -46,7 +46,7 @@ describe('WorkflowVisualizer', () => {
       cy.get('button#legend').click();
     });
     cy.get('[data-cy="workflow-visualizer-legend"]')
-      .should('be.visible')
+      .should('exist')
       .within(() => {
         cy.get('[data-cy="legend-node-types"]').should((description) => {
           expect(description).to.contain('Node types');

@@ -6,20 +6,11 @@ import {
   NodeModel,
   NodeStatus,
   WithSelectionProps,
+  Node,
 } from '@patternfly/react-topology';
-import type { WorkflowNode, UnifiedJobType } from '../../../interfaces/WorkflowNode';
+import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
 
-export type GraphNode = Omit<NodeModel, 'data'> & {
-  runAfterTasks?: string[];
-  data: {
-    jobType: UnifiedJobType;
-    id: string;
-  };
-};
-
-export type LayoutNode = WorkflowNode & {
-  runAfterTasks?: string[];
-};
+export type GraphNode = Node<NodeModel, { id: string; resource: WorkflowNode }>;
 
 export interface CustomEdgeProps {
   element: GraphElement<
@@ -54,8 +45,8 @@ export interface CustomNodeProps extends WithSelectionProps {
   element: GraphElement<
     ElementModel,
     {
-      jobType: UnifiedJobType;
       id: string;
+      resource: WorkflowNode;
     }
   >;
 }
