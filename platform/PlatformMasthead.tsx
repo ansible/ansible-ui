@@ -3,6 +3,7 @@ import { DropdownItem } from '@patternfly/react-core/deprecated';
 import { ExternalLinkAltIcon, QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
 import { PageMasthead, PageNotificationsIcon, usePageNavigate } from '../framework';
 import { PageMastheadDropdown } from '../framework/PageMasthead/PageMastheadDropdown';
@@ -18,6 +19,7 @@ import PlatformIcon from './platform-icon.svg';
 export function PlatformMasthead() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
+  const navigate = useNavigate();
   const activeUser = useActivePlatformUser();
   useAwxNotifications();
 
@@ -27,8 +29,8 @@ export function PlatformMasthead() {
     for (const key of cache.keys()) {
       cache.delete(key);
     }
-    pageNavigate('/login');
-  }, [cache, pageNavigate]);
+    navigate('/login');
+  }, [cache, navigate]);
 
   return (
     <PageMasthead

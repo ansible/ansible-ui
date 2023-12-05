@@ -15,7 +15,6 @@ import { ActiveEdaUserProvider, ActiveUserProvider } from '../frontend/common/us
 import { HubContextProvider } from '../frontend/hub/useHubContext';
 import { PlatformLogin } from './PlatformLogin';
 import { PlatformMasthead } from './PlatformMasthead';
-import { PlatformProvider } from './PlatformProvider';
 import { QuickStartProvider } from './dashboard/quickstarts/QuickStartProvider';
 import { ActivePlatformUserProvider } from './hooks/useActivePlatformUser';
 import { usePlatformNavigation } from './usePlatformNavigation';
@@ -26,23 +25,21 @@ export default function PlatformMain() {
     <PageApp
       login={<PlatformLogin />}
       root={
-        <PlatformProvider>
-          <QuickStartProvider>
-            <WebSocketProvider>
-              <ActivePlatformUserProvider>
-                <ActiveUserProvider>
-                  <AwxConfigProvider>
-                    <HubContextProvider>
-                      <ActiveEdaUserProvider>
-                        <Outlet />
-                      </ActiveEdaUserProvider>
-                    </HubContextProvider>
-                  </AwxConfigProvider>
-                </ActiveUserProvider>
-              </ActivePlatformUserProvider>
-            </WebSocketProvider>
-          </QuickStartProvider>
-        </PlatformProvider>
+        <QuickStartProvider>
+          <WebSocketProvider>
+            <ActivePlatformUserProvider>
+              <ActiveUserProvider>
+                <AwxConfigProvider>
+                  <HubContextProvider>
+                    <ActiveEdaUserProvider>
+                      <Outlet />
+                    </ActiveEdaUserProvider>
+                  </HubContextProvider>
+                </AwxConfigProvider>
+              </ActiveUserProvider>
+            </ActivePlatformUserProvider>
+          </WebSocketProvider>
+        </QuickStartProvider>
       }
       masthead={<PlatformMasthead />}
       navigation={navigation}

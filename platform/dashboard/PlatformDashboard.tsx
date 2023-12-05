@@ -9,11 +9,11 @@ import { AwxRecentInventoriesCard } from '../../frontend/awx/dashboard/cards/Awx
 import { AwxRecentJobsCard } from '../../frontend/awx/dashboard/cards/AwxRecentJobsCard';
 import { AwxRecentProjectsCard } from '../../frontend/awx/dashboard/cards/AwxRecentProjectsCard';
 import { EdaRulebookActivationsCard } from '../../frontend/eda/dashboard/cards/EdaRulebookActivationsCard';
-import { useHasController, useHasEda } from '../PlatformProvider';
+import { useHasAwx, useHasEda } from '../PlatformProvider';
 
 export function PlatformDashboard() {
   const { t } = useTranslation();
-  const hasAwx = useHasController();
+  const hasAwx = useHasAwx();
   const hasEda = useHasEda();
   return (
     <PageLayout>
