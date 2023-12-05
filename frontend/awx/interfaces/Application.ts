@@ -25,7 +25,7 @@ export interface Application {
     };
     tokens?: {
       count: number;
-      results: {id: number, token:string, scope:string}[]
+      results: { id: number; token: string; scope: string }[];
     };
   };
 }
