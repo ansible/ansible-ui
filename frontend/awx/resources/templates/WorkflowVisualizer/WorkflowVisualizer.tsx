@@ -15,7 +15,7 @@ export function WorkflowVisualizer() {
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const {
-    items: wfNodes,
+    items: workflowNodes,
     error: workflowNodeError,
     isLoading: workflowNodeIsLoading,
     refresh: workflowNodeRefresh,
@@ -33,7 +33,7 @@ export function WorkflowVisualizer() {
     return <AwxError error={error} handleRefresh={workflowRefresh || workflowNodeRefresh} />;
   }
 
-  if (workflowIsLoading || workflowNodeIsLoading || !workflowJobTemplate || !wfNodes) {
+  if (workflowIsLoading || workflowNodeIsLoading || !workflowJobTemplate || !workflowNodes) {
     return (
       <Bullseye>
         <EmptyState>
@@ -62,7 +62,7 @@ export function WorkflowVisualizer() {
   return (
     <Visualizer
       data={{
-        nodes: wfNodes,
+        workflowNodes,
         template: workflowJobTemplate,
       }}
     />
