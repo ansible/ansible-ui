@@ -4,6 +4,7 @@ interface PageNavigationGroup {
   subtitle?: string;
   path: string;
   children: PageNavigationItem[];
+  hidden?: boolean;
 }
 
 interface PageNavigationComponent {
@@ -12,6 +13,7 @@ interface PageNavigationComponent {
   subtitle?: string;
   path: string;
   element: JSX.Element;
+  hidden?: boolean;
 }
 
 /**
