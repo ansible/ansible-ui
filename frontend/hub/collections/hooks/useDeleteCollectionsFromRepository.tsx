@@ -9,7 +9,8 @@ import { useCollectionColumns } from './useCollectionColumns';
 import { HubItemsResponse } from '../../useHubView';
 import { usePageNavigate } from '../../../../framework';
 import { HubRoute } from '../../HubRoutes';
-import { postRequest, requestGet } from '../../../common/crud/Data';
+import { postRequest } from '../../../common/crud/Data';
+import { getHubAllItems } from '../../api/request';
 
 export function useDeleteCollectionsFromRepository(
   onComplete?: (collections: CollectionVersionSearch[]) => void,
@@ -84,14 +85,25 @@ async function deleteCollectionFromRepository(
     throw new Error(t?.('Collection is missing in the repositories'));
   }
 
+  let loadedAll = true;
+
   if (!version) {
     // load all associated collection versions
-    const results = await requestGet<HubItemsResponse<CollectionVersionSearch>>(
-      hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${
-        collection.collection_version?.name || ''
-      }&repository_name=${collection.repository.name}`
-    );
-    itemsToDelete = results.data?.map((item) => item.collection_version?.pulp_href || '');
+    // TODO - waiting for API
+    const url = hubAPI`/v3/plugin/ansible/search/collection-versions/?limit=100&name=${
+      collection.collection_version?.name || ''
+    }&repository_name=${collection.repository.name}`;
+
+    const result = await getHubAllItems<
+      HubItemsResponse<CollectionVersionSearch>,
+      CollectionVersionSearch
+    >(url, {
+      getData: (data) => data.data,
+      getNextUrl: (data) => data.links.next,
+    });
+
+    loadedAll = result.loadedAll;
+    itemsToDelete = result.results?.map((item) => item.collection_version?.pulp_href || '');
   } else {
     itemsToDelete.push(collection.collection_version?.pulp_href || '');
   }
@@ -106,6 +118,14 @@ async function deleteCollectionFromRepository(
     }
   );
   await waitForTask(parsePulpIDFromURL(res.task));
+
+  if (!loadedAll) {
+    throw new Error(
+      t?.(
+        'Not all collections versions were removed. This operation can remove only 300 versions. Try to repeat this operation.'
+      )
+    );
+  }
 }
 
 export function navigateAfterDelete(

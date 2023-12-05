@@ -51,6 +51,7 @@ export function useAwxManagementJobsRoutes() {
           path: ':id',
           element: <ManagementJobPage />,
           children: [
+            { id: AwxRoute.ManagementJobDetails, path: 'details', element: <PageNotImplemented /> },
             {
               id: AwxRoute.ManagementJobSchedules,
               path: 'schedules',

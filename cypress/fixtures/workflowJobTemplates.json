@@ -1,0 +1,144 @@
+{
+  "count": 234,
+  "next": "/api/v2/workflow_job_templates/?page=2",
+  "previous": null,
+  "results": [
+    {
+      "id": 8178,
+      "type": "workflow_job_template",
+      "url": "/api/v2/workflow_job_templates/8178/",
+      "related": {
+        "created_by": "/api/v2/users/3/",
+        "modified_by": "/api/v2/users/3/",
+        "last_job": "/api/v2/workflow_jobs/8577/",
+        "workflow_jobs": "/api/v2/workflow_job_templates/8178/workflow_jobs/",
+        "schedules": "/api/v2/workflow_job_templates/8178/schedules/",
+        "launch": "/api/v2/workflow_job_templates/8178/launch/",
+        "webhook_key": "/api/v2/workflow_job_templates/8178/webhook_key/",
+        "webhook_receiver": "",
+        "workflow_nodes": "/api/v2/workflow_job_templates/8178/workflow_nodes/",
+        "labels": "/api/v2/workflow_job_templates/8178/labels/",
+        "activity_stream": "/api/v2/workflow_job_templates/8178/activity_stream/",
+        "notification_templates_started": "/api/v2/workflow_job_templates/8178/notification_templates_started/",
+        "notification_templates_success": "/api/v2/workflow_job_templates/8178/notification_templates_success/",
+        "notification_templates_error": "/api/v2/workflow_job_templates/8178/notification_templates_error/",
+        "notification_templates_approvals": "/api/v2/workflow_job_templates/8178/notification_templates_approvals/",
+        "access_list": "/api/v2/workflow_job_templates/8178/access_list/",
+        "object_roles": "/api/v2/workflow_job_templates/8178/object_roles/",
+        "survey_spec": "/api/v2/workflow_job_templates/8178/survey_spec/",
+        "copy": "/api/v2/workflow_job_templates/8178/copy/"
+      },
+      "summary_fields": {
+        "last_job": {
+          "id": 8577,
+          "name": "alex wfjt",
+          "description": "",
+          "finished": "2023-12-01T21:12:48.372140Z",
+          "status": "failed",
+          "failed": true
+        },
+        "last_update": {
+          "id": 8577,
+          "name": "alex wfjt",
+          "description": "",
+          "status": "failed",
+          "failed": true
+        },
+        "created_by": {
+          "id": 3,
+          "username": "dev",
+          "first_name": "",
+          "last_name": ""
+        },
+        "modified_by": {
+          "id": 3,
+          "username": "dev",
+          "first_name": "",
+          "last_name": ""
+        },
+        "object_roles": {
+          "admin_role": {
+            "description": "Can manage all aspects of the workflow job template",
+            "name": "Admin",
+            "id": 207569
+          },
+          "execute_role": {
+            "description": "May run the workflow job template",
+            "name": "Execute",
+            "id": 207570
+          },
+          "read_role": {
+            "description": "May view settings for the workflow job template",
+            "name": "Read",
+            "id": 207571
+          },
+          "approval_role": {
+            "description": "Can approve or deny a workflow approval node",
+            "name": "Approve",
+            "id": 207572
+          }
+        },
+        "user_capabilities": {
+          "edit": true,
+          "delete": true,
+          "start": true,
+          "schedule": true,
+          "copy": true
+        },
+        "labels": {
+          "count": 0,
+          "results": []
+        },
+        "recent_jobs": [
+          {
+            "id": 8577,
+            "status": "failed",
+            "finished": "2023-12-01T21:12:48.372140Z",
+            "canceled_on": null,
+            "type": "workflow_job"
+          },
+          {
+            "id": 8526,
+            "status": "failed",
+            "finished": "2023-11-29T15:51:08.523442Z",
+            "canceled_on": null,
+            "type": "workflow_job"
+          },
+          {
+            "id": 8521,
+            "status": "canceled",
+            "finished": "2023-11-29T15:22:45.142363Z",
+            "canceled_on": "2023-11-29T15:22:38.575871Z",
+            "type": "workflow_job"
+          }
+        ]
+      },
+      "created": "2023-11-17T15:33:51.521851Z",
+      "modified": "2023-11-17T15:33:51.521865Z",
+      "name": "alex wfjt",
+      "description": "",
+      "last_job_run": "2023-12-01T21:12:48.372140Z",
+      "last_job_failed": true,
+      "next_job_run": null,
+      "status": "failed",
+      "extra_vars": "---",
+      "organization": null,
+      "survey_enabled": false,
+      "allow_simultaneous": false,
+      "ask_variables_on_launch": false,
+      "inventory": null,
+      "limit": null,
+      "scm_branch": null,
+      "ask_inventory_on_launch": false,
+      "ask_scm_branch_on_launch": false,
+      "ask_limit_on_launch": false,
+      "webhook_service": "",
+      "webhook_credential": null,
+      "ask_labels_on_launch": false,
+      "ask_skip_tags_on_launch": false,
+      "ask_tags_on_launch": false,
+      "skip_tags": null,
+      "job_tags": null
+    }
+  ]
+}
