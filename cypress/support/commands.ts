@@ -490,6 +490,9 @@ declare global {
 
       createAwxLabel(label: Partial<Omit<Label, 'id'>>): Chainable<Label>;
 
+      createGlobalOrganization(): Chainable<void>;
+      createGlobalProject(): Chainable<void>;
+
       deleteAwxOrganization(
         organization: Organization,
         options?: {

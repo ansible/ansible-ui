@@ -28,6 +28,7 @@ const GLOBAL_ORG_NAME = 'Global Project Org';
 
 export let globalOrganization: Organization;
 
+/** Create a global organization if it doesn't exist. */
 export function createGlobalOrganization() {
   cy.log('👀<<CHECKING EXISTENCE OF GLOBAL ORGANIZATION>>👀');
   cy.awxRequestGet<AwxItemsResponse<Organization>>(awxAPI`/organizations?name=${GLOBAL_ORG_NAME}`)
@@ -35,10 +36,12 @@ export function createGlobalOrganization() {
     .then((orgResults: Organization[]) => {
       if (orgResults.length === 0) {
         cy.log('🚨GLOBAL ORG NOT FOUND🚨.....🚧CREATING🚧');
-        cy.createAwxOrganization('Global Project Org')
+        cy.awxRequest<AwxItemsResponse<Organization>>('POST', awxAPI`/organizations/`, {
+          name: 'Global Project Org',
+        })
           .as('globalProjectOrg')
-          .then((org) => {
-            globalOrganization = org;
+          .then((response) => {
+            globalOrganization = response.body.results[0];
           });
       } else {
         cy.log('🎉GLOBAL ORG FOUND🎉....ACCESS IT USING this.globalProjectOrg IN THE TESTS.');
@@ -50,6 +53,7 @@ export function createGlobalOrganization() {
 
 export let globalProject: Project;
 
+/** Create a global project if it doesn't exist. */
 export function createGlobalProject() {
   cy.log('👀<<CHECKING EXISTENCE OF GLOBAL PROJECT>>👀');
   cy.awxRequestGet<AwxItemsResponse<Project>>(awxAPI`/projects?name=${GLOBAL_PROJECT_NAME}&page=1`)
