@@ -125,9 +125,10 @@ export function usePlatformNavigation() {
       children: hubNav,
     });
     // }
-    // if ((hasAwx || process.env.NODE_ENV === 'development') && analytics) {
-    navigationItems.push(analytics);
-    // }
+    if (analytics) {
+      // if ((hasAwx || process.env.NODE_ENV === 'development') && analytics) {
+      navigationItems.push(analytics);
+    }
     navigationItems.push({
       id: PlatformRoute.Access,
       label: t('Access Management'),
