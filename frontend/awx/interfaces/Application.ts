@@ -18,7 +18,7 @@ export interface Application {
       edit: boolean;
       delete: boolean;
     };
-    organization?: {
+    organization: {
       id: number;
       name: string;
       description: string;
