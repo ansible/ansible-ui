@@ -2,13 +2,12 @@
 // import 'cypress-axe';
 import '@cypress/code-coverage/support';
 import './commands';
-import { createGlobalOrganization, createGlobalProject } from './global-project';
 
 before(function () {
   const devBaseUrlPort = Cypress.config().baseUrl?.split(':').slice(-1).toString();
   if (devBaseUrlPort === '4101') {
-    createGlobalOrganization();
-    createGlobalProject();
+    cy.createGlobalOrganization();
+    cy.createGlobalProject();
   }
 });
 

@@ -17,7 +17,7 @@ describe('jobs', () => {
   });
 
   before(function () {
-    const globalOrganization = this.globalProjectOrg as Organization;
+    const globalOrganization = this.globalOrganization as Organization;
     const globalProject = this.globalProject as Project;
     cy.createAwxInventory({ organization: globalOrganization.id }).then((inv) => {
       inventory = inv;
@@ -121,7 +121,7 @@ describe('job delete', () => {
   });
 
   beforeEach(function () {
-    const globalOrganization = this.globalProjectOrg as Organization;
+    const globalOrganization = this.globalOrganization as Organization;
     const globalProject = this.globalProject as Project;
     cy.createAwxInventory({ organization: globalOrganization.id }).then((inv) => {
       inventory = inv;
