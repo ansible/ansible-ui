@@ -16,17 +16,13 @@ import {
 import {
   useCreatedColumn,
   useDescriptionColumn,
-  useIdColumn,
   useModifiedColumn,
   useNameColumn,
   useOrganizationNameColumn,
 } from '../../../common/columns';
 import {
-  useCreatedByToolbarFilter,
   useDescriptionToolbarFilter,
-  useModifiedByToolbarFilter,
   useNameToolbarFilter,
-  useOrganizationToolbarFilter,
 } from '../../common/awx-toolbar-filters';
 import { useAwxView } from '../../useAwxView';
 
@@ -155,24 +151,9 @@ export function Applications() {
 export function useApplicationsFilters() {
   const nameToolbarFilter = useNameToolbarFilter();
   const descriptionToolbarFilter = useDescriptionToolbarFilter();
-  const organizationToolbarFilter = useOrganizationToolbarFilter();
-  const createdByToolbarFilter = useCreatedByToolbarFilter();
-  const modifiedByToolbarFilter = useModifiedByToolbarFilter();
   const toolbarFilters = useMemo<IToolbarFilter[]>(
-    () => [
-      nameToolbarFilter,
-      descriptionToolbarFilter,
-      organizationToolbarFilter,
-      createdByToolbarFilter,
-      modifiedByToolbarFilter,
-    ],
-    [
-      nameToolbarFilter,
-      descriptionToolbarFilter,
-      organizationToolbarFilter,
-      createdByToolbarFilter,
-      modifiedByToolbarFilter,
-    ]
+    () => [nameToolbarFilter, descriptionToolbarFilter],
+    [nameToolbarFilter, descriptionToolbarFilter]
   );
   return toolbarFilters;
 }
