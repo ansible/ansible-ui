@@ -19,15 +19,20 @@ jobs:
   setup:
     name: Setup
     runs-on: ubuntu-latest
+    outputs:
+      output1: ${{ steps.step1.outputs.test }}
+      output2: ${{ steps.step2.outputs.test }}
     steps:
-      - run: |
+      - id: step1
+        run: |
           CURRENTDATE=$(date +'%Y%m%d')
+          echo $CURRENTDATE
           if([ "${{ github.event_name }}" == "workflow_dispatch" ]); then
-            echo "AWX_SERVER=${{ github.event.inputs.AWX_SERVER }}" >> $GITHUB_ENV
-            echo "UPDATE_SERVER=${{ github.event.inputs.UPDATE_SERVER }}" >> $GITHUB_ENV
+            echo "AWX_SERVER=${{ github.event.inputs.AWX_SERVER }}" >> "$GITHUB_OUTPUT"
+            echo "UPDATE_SERVER=${{ github.event.inputs.UPDATE_SERVER }}" >> "$GITHUB_OUTPUT"
           else 
-            echo "AWX_SERVER=https://awx.ci-ui-${CURRENTDATE}.gcp.testing.ansible.com" >> $GITHUB_ENV
-            echo "UPDATE_SERVER=true" >> $GITHUB_ENV
+            echo "AWX_SERVER=https://awx.ci-ui-${CURRENTDATE}.gcp.testing.ansible.com" >> "$GITHUB_OUTPUT"
+            echo "UPDATE_SERVER=true" >> "$GITHUB_OUTPUT"
           fi
 
   awx-e2e:
