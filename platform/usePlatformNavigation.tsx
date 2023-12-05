@@ -25,9 +25,9 @@ import { useGetPlatformUsersRoutes } from './routes/useGetPlatformUsersRoutes';
 export function usePlatformNavigation() {
   const { t } = useTranslation();
 
-  const hasAwx = useHasController();
-  const hasEda = useHasEda();
-  const hasHub = useHasHub();
+  // const hasAwx = useHasController();
+  // const hasEda = useHasEda();
+  // const hasHub = useHasHub();
 
   const awxNav = useAwxNavigation();
   removeNavigationItemById(awxNav, AwxRoute.Overview);
@@ -98,36 +98,36 @@ export function usePlatformNavigation() {
       path: 'overview',
       element: <PlatformDashboard />,
     });
-    if (hasAwx || process.env.NODE_ENV === 'development') {
-      navigationItems.push({
-        id: PlatformRoute.AWX,
-        label: t('Automation Execution'),
-        subtitle: t('Automation Controller'),
-        path: 'execution',
-        children: awxNav,
-      });
-    }
-    if (hasEda || process.env.NODE_ENV === 'development') {
-      navigationItems.push({
-        id: PlatformRoute.EDA,
-        label: t('Automation Decisions'),
-        subtitle: t('Event Driven Automation'),
-        path: 'descicions',
-        children: edaNav,
-      });
-    }
-    if (hasHub || process.env.NODE_ENV === 'development') {
-      navigationItems.push({
-        id: PlatformRoute.HUB,
-        label: t('Automation Content'),
-        subtitle: t('Automation Hub'),
-        path: 'content',
-        children: hubNav,
-      });
-    }
-    if ((hasAwx || process.env.NODE_ENV === 'development') && analytics) {
-      navigationItems.push(analytics);
-    }
+    // if (hasAwx || process.env.NODE_ENV === 'development') {
+    navigationItems.push({
+      id: PlatformRoute.AWX,
+      label: t('Automation Execution'),
+      subtitle: t('Automation Controller'),
+      path: 'execution',
+      children: awxNav,
+    });
+    // }
+    // if (hasEda || process.env.NODE_ENV === 'development') {
+    navigationItems.push({
+      id: PlatformRoute.EDA,
+      label: t('Automation Decisions'),
+      subtitle: t('Event Driven Automation'),
+      path: 'descicions',
+      children: edaNav,
+    });
+    // }
+    // if (hasHub || process.env.NODE_ENV === 'development') {
+    navigationItems.push({
+      id: PlatformRoute.HUB,
+      label: t('Automation Content'),
+      subtitle: t('Automation Hub'),
+      path: 'content',
+      children: hubNav,
+    });
+    // }
+    // if ((hasAwx || process.env.NODE_ENV === 'development') && analytics) {
+    navigationItems.push(analytics);
+    // }
     navigationItems.push({
       id: PlatformRoute.Access,
       label: t('Access Management'),
@@ -178,9 +178,9 @@ export function usePlatformNavigation() {
     return navigationItems;
   }, [
     t,
-    hasAwx,
-    hasEda,
-    hasHub,
+    // hasAwx,
+    // hasEda,
+    // hasHub,
     analytics,
     authenticators,
     organizations,
