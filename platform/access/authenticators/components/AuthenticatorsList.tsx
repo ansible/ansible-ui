@@ -24,12 +24,12 @@ export function AuthenticatorsList() {
   const pageNavigate = usePageNavigate();
 
   const view = usePlatformView<Authenticator>({
-    url: gatewayAPI`/v1/authenticators`,
+    url: gatewayAPI`/v1/authenticators/`,
     toolbarFilters,
     tableColumns,
   });
 
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/v1/authenticators`);
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/v1/authenticators/`);
   const canCreateAuthenticator = Boolean(data && data.actions && data.actions['POST']);
   const toolbarActions = useAuthenticatorToolbarActions(view);
   const rowActions = useAuthenticatorRowActions(view);
@@ -57,7 +57,7 @@ export function AuthenticatorsList() {
               )
         }
         emptyStateIcon={canCreateAuthenticator ? undefined : CubesIcon}
-        emptyStateButtonText={canCreateAuthenticator ? t('Create authenticator') : undefined}
+        emptyStateButtonText={canCreateAuthenticator ? t('Create authentication') : undefined}
         emptyStateButtonClick={
           canCreateAuthenticator ? () => pageNavigate(PlatformRoute.CreateAuthenticator) : undefined
         }
