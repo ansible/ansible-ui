@@ -1,0 +1,354 @@
+{
+  "authenticators": [
+    {
+      "type": "ansible_base.authenticator_plugins.keycloak",
+      "configuration_schema": [
+        {
+          "name": "ADDITIONAL_UNVERIFIED_ARGS",
+          "help_text": "Any additional fields that this authenticator can take, they are not validated and passed directly back to the authenticator",
+          "required": false,
+          "default": null,
+          "type": "JSONField",
+          "ui_field_label": "Additional Authenticator Fields"
+        },
+        {
+          "name": "ACCESS_TOKEN_URL",
+          "help_text": "Location where this app can fetch the user's token from.",
+          "required": true,
+          "default": "https://keycloak.example.com/auth/realms/<my_realm>/protocol/openid-connect/token",
+          "type": "URLField",
+          "ui_field_label": "Keycloak Access Token URL"
+        },
+        {
+          "name": "AUTHORIZATION_URL",
+          "help_text": "Location to redirect the user to during the login flow.",
+          "required": true,
+          "default": "https://keycloak.example.com/auth/realms/<my_realm>/protocol/openid-connect/auth",
+          "type": "URLField",
+          "ui_field_label": "Keycloak Provider URL"
+        },
+        {
+          "name": "KEY",
+          "help_text": "The OIDC key (Client ID) from your Keycloak installation.",
+          "required": true,
+          "default": null,
+          "type": "CharField",
+          "ui_field_label": "Keycloak OIDC Key"
+        },
+        {
+          "name": "PUBLIC_KEY",
+          "help_text": "RS256 public key provided by your Keycloak ream.",
+          "required": true,
+          "default": null,
+          "type": "CharField",
+          "ui_field_label": "Keycloak Public Key"
+        },
+        {
+          "name": "SECRET",
+          "help_text": "The OIDC secret (Client Secret) from your Keycloak installation.",
+          "required": false,
+          "default": null,
+          "type": "CharField",
+          "ui_field_label": "Keycloak OIDC Secret"
+        }
+      ],
+      "documentation_url": "https://python-social-auth.readthedocs.io/en/latest/backends/keycloak.html"
+    },
+    {
+      "type": "ansible_base.authenticator_plugins.ldap",
+      "configuration_schema": [
+        {
+          "name": "ADDITIONAL_UNVERIFIED_ARGS",
+          "help_text": "Any additional fields that this authenticator can take, they are not validated and passed directly back to the authenticator",
+          "required": false,
+          "default": null,
+          "type": "JSONField",
+          "ui_field_label": "Additional Authenticator Fields"
+        },
+        {
+          "name": "SERVER_URI",
+          "help_text": "A list of URIs to connect to LDAP server, such as \"ldap://ldap.example.com:389\" (non-SSL) or \"ldaps://ldap.example.com:636\" (SSL).",
+          "required": true,
+          "default": null,
+          "type": "URLListField",
+          "ui_field_label": "LDAP Server URI"
+        },
+        {
+          "name": "BIND_DN",
+          "help_text": "DN (Distinguished Name) of user to bind for all search queries. This is the system user account we will use to login to query LDAP for other user information. Refer to the documentation for example syntax.",
+          "required": true,
+          "default": null,
+          "type": "DNField",
+          "ui_field_label": "LDAP Bind DN"
+        },
+        {
+          "name": "BIND_PASSWORD",
+          "help_text": "The password used for BIND_DN.",
+          "required": true,
+          "default": null,
+          "type": "CharField",
+          "ui_field_label": "LDAP Bind Password"
+        },
+        {
+          "name": "CONNECTION_OPTIONS",
+          "help_text": "Additional options to set for the LDAP connection.  LDAP referrals are disabled by default (to prevent certain LDAP queries from hanging with AD). Option names should be strings (e.g. \"OPT_REFERRALS\"). Refer to https://www.python-ldap.org/doc/html/ldap.html#options for possible options and values that can be set.",
+          "required": true,
+          "default": {},
+          "type": "LDAPConnectionOptions",
+          "ui_field_label": "LDAP Connection Options"
+        },
+        {
+          "name": "GROUP_TYPE",
+          "help_text": "The group type may need to be changed based on the type of the LDAP server.  Values are listed at: https://django-auth-ldap.readthedocs.io/en/stable/groups.html#types-of-groups",
+          "required": true,
+          "default": null,
+          "type": "ChoiceField",
+          "ui_field_label": "LDAP Group Type"
+        },
+        {
+          "name": "GROUP_TYPE_PARAMS",
+          "help_text": "Key value parameters to send the chosen group type init method.",
+          "required": true,
+          "default": null,
+          "type": "DictField",
+          "ui_field_label": "LDAP Group Type Parameters"
+        },
+        {
+          "name": "GROUP_SEARCH",
+          "help_text": "Users are mapped to organizations based on their membership in LDAP groups. This setting defines the LDAP search query to find groups. Unlike the user search, group search does not support LDAPSearchUnion.",
+          "required": false,
+          "default": null,
+          "type": "LDAPSearchField",
+          "ui_field_label": "LDAP Group Search"
+        },
+        {
+          "name": "START_TLS",
+          "help_text": "Whether to enable TLS when the LDAP connection is not using SSL.",
+          "required": true,
+          "default": false,
+          "type": "BooleanField",
+          "ui_field_label": "LDAP Start TLS"
+        },
+        {
+          "name": "USER_DN_TEMPLATE",
+          "help_text": "Alternative to user search, if user DNs are all of the same format. This approach is more efficient for user lookups than searching if it is usable in your organizational environment. If this setting has a value it will be used instead of AUTH_LDAP_USER_SEARCH.",
+          "required": true,
+          "default": null,
+          "type": "DNField",
+          "ui_field_label": "LDAP User DN Template"
+        },
+        {
+          "name": "USER_ATTR_MAP",
+          "help_text": "Mapping of LDAP user schema to API user attributes. The default setting is valid for ActiveDirectory but users with other LDAP configurations may need to change the values. Refer to the documentation for additional details.",
+          "required": true,
+          "default": null,
+          "type": "UserAttrMap",
+          "ui_field_label": "LDAP User Attribute Map"
+        },
+        {
+          "name": "USER_SEARCH",
+          "help_text": "LDAP search query to find users.  Any user that matches the given pattern will be able to login to the service.  The user should also be mapped into an organization (as defined in the AUTH_LDAP_ORGANIZATION_MAP setting).  If multiple search queries need to be supported use of \"LDAPUnion\" is possible. See the documentation for details.",
+          "required": true,
+          "default": null,
+          "type": "LDAPSearchField",
+          "ui_field_label": "LDAP User Search"
+        }
+      ],
+      "documentation_url": "https://django-auth-ldap.readthedocs.io/en/latest/"
+    },
+    {
+      "type": "ansible_base.authenticator_plugins.local",
+      "configuration_schema": [
+        {
+          "name": "ADDITIONAL_UNVERIFIED_ARGS",
+          "help_text": "Any additional fields that this authenticator can take, they are not validated and passed directly back to the authenticator",
+          "required": false,
+          "default": null,
+          "type": "JSONField",
+          "ui_field_label": "Additional Authenticator Fields"
+        }
+      ],
+      "documentation_url": "https://docs.djangoproject.com/en/4.2/ref/contrib/auth/#django.contrib.auth.backends.ModelBackend"
+    },
+    {
+      "type": "ansible_base.authenticator_plugins.saml",
+      "configuration_schema": [
+        {
+          "name": "ADDITIONAL_UNVERIFIED_ARGS",
+          "help_text": "Any additional fields that this authenticator can take, they are not validated and passed directly back to the authenticator",
+          "required": false,
+          "default": null,
+          "type": "JSONField",
+          "ui_field_label": "Additional Authenticator Fields"
+        },
+        {
+          "name": "SP_ENTITY_ID",
+          "help_text": "The application-defined unique identifier used as the audience of the SAML service provider (SP) configuration. This is usually the URL for the service.",
+          "required": true,
+          "default": "aap_gateway",
+          "type": "CharField",
+          "ui_field_label": "SAML Service Provider Entity ID"
+        },
+        {
+          "name": "SP_PUBLIC_CERT",
+          "help_text": "Create a keypair to use as a service provider (SP) and include the certificate content here.",
+          "required": true,
+          "default": null,
+          "type": "PublicCert",
+          "ui_field_label": "SAML Service Provider Public Certificate"
+        },
+        {
+          "name": "SP_PRIVATE_KEY",
+          "help_text": "Create a keypair to use as a service provider (SP) and include the private key content here.",
+          "required": true,
+          "default": null,
+          "type": "PrivateKey",
+          "ui_field_label": "SAML Service Provider Private Key"
+        },
+        {
+          "name": "ORG_INFO",
+          "help_text": "Provide the URL, display name, and the name of your app. Refer to the documentation for example syntax.",
+          "required": true,
+          "default": {
+            "en-US": {
+              "url": "",
+              "name": "",
+              "displayname": ""
+            }
+          },
+          "type": "JSONField",
+          "ui_field_label": "SAML Service Provider Organization Info"
+        },
+        {
+          "name": "TECHNICAL_CONTACT",
+          "help_text": "Provide the name and email address of the technical contact for your service provider. Refer to the documentation for example syntax.",
+          "required": true,
+          "default": {
+            "givenName": "",
+            "emailAddress": ""
+          },
+          "type": "JSONField",
+          "ui_field_label": "SAML Service Provider Technical Contact"
+        },
+        {
+          "name": "SUPPORT_CONTACT",
+          "help_text": "Provide the name and email address of the support contact for your service provider. Refer to the documentation for example syntax.",
+          "required": true,
+          "default": {
+            "givenName": "",
+            "emailAddress": ""
+          },
+          "type": "JSONField",
+          "ui_field_label": "SAML Service Provider Support Contact"
+        },
+        {
+          "name": "SP_EXTRA",
+          "help_text": "A dict of key value pairs to be passed to the underlying python-saml Service Provider configuration setting.",
+          "required": true,
+          "default": {
+            "requestedAuthnContext": false
+          },
+          "type": "JSONField",
+          "ui_field_label": "SAML Service Provider extra configuration data"
+        },
+        {
+          "name": "SECURITY_CONFIG",
+          "help_text": "A dict of key value pairs that are passed to the underlying python-saml security setting https://github.com/onelogin/python-saml#settings",
+          "required": true,
+          "default": {},
+          "type": "JSONField",
+          "ui_field_label": "SAML Security Config"
+        },
+        {
+          "name": "EXTRA_DATA",
+          "help_text": "A list of tuples that maps IDP attributes to extra_attributes. Each attribute will be a list of values, even if only 1 value.",
+          "required": true,
+          "default": [],
+          "type": "ListField",
+          "ui_field_label": "SAML IDP to extra_data attribute mapping"
+        },
+        {
+          "name": "IDP_URL",
+          "help_text": "The URL to redirect the user to for login initiation.",
+          "required": true,
+          "default": null,
+          "type": "URLField",
+          "ui_field_label": "IdP Login URL"
+        },
+        {
+          "name": "IDP_X509_CERT",
+          "help_text": "The public cert used for secrets coming from the IdP.",
+          "required": true,
+          "default": null,
+          "type": "PublicCert",
+          "ui_field_label": "IdP Public Cert"
+        },
+        {
+          "name": "IDP_ENTITY_ID",
+          "help_text": "The entity ID returned in the assertion.",
+          "required": true,
+          "default": null,
+          "type": "CharField",
+          "ui_field_label": "Entity ID"
+        },
+        {
+          "name": "IDP_GROUPS",
+          "help_text": "The field in the assertion which represents the users groups.",
+          "required": false,
+          "default": null,
+          "type": "CharField",
+          "ui_field_label": "Groups"
+        },
+        {
+          "name": "IDP_ATTR_EMAIL",
+          "help_text": "The field in the assertion which represents the users email.",
+          "required": false,
+          "default": null,
+          "type": "CharField",
+          "ui_field_label": "User Email"
+        },
+        {
+          "name": "IDP_ATTR_USERNAME",
+          "help_text": "The field in the assertion which represents the users username.",
+          "required": false,
+          "default": null,
+          "type": "CharField",
+          "ui_field_label": "Username"
+        },
+        {
+          "name": "IDP_ATTR_LAST_NAME",
+          "help_text": "The field in the assertion which represents the users last name.",
+          "required": false,
+          "default": null,
+          "type": "CharField",
+          "ui_field_label": "User Last Name"
+        },
+        {
+          "name": "IDP_ATTR_FIRST_NAME",
+          "help_text": "The field in the assertion which represents the users first name.",
+          "required": false,
+          "default": null,
+          "type": "CharField",
+          "ui_field_label": "User First Name"
+        },
+        {
+          "name": "IDP_ATTR_USER_PERMANENT_ID",
+          "help_text": "The field in the assertion which represents the users permanent id (overrides IDP_ATTR_USERNAME)",
+          "required": false,
+          "default": null,
+          "type": "CharField",
+          "ui_field_label": "User Permanent ID"
+        },
+        {
+          "name": "CALLBACK_URL",
+          "help_text": "Register the service as a service provider (SP) with each identity provider (IdP) you have configured.Provide your SP Entity ID and this ACS URL for your application.",
+          "required": false,
+          "default": null,
+          "type": "URLField",
+          "ui_field_label": "SAML Assertion Consumer Service (ACS) URL"
+        }
+      ],
+      "documentation_url": "https://python-social-auth.readthedocs.io/en/latest/backends/saml.html"
+    }
+  ]
+}
