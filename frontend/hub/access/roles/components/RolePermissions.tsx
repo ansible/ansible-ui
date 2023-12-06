@@ -11,7 +11,7 @@ import { useHubContext } from '../../../useHubContext';
 import { USER_GROUP_MGMT_PERMISSIONS } from '../../../common/constants';
 import { useCallback, useMemo } from 'react';
 
-export type PermissionCategories = {
+export type PermissionCategory = {
   label: string;
   allPermissions: string[];
   availablePermissions?: string[];
@@ -24,7 +24,7 @@ export function RolePermissions(props: { role: Role; showCustom?: boolean; showE
   const { user } = useHubContext();
   const model_permissions = useMemo(() => user.model_permissions, [user.model_permissions]);
 
-  const groupsToShow = usePermissionCategories(role.permissions, showCustom, showEmpty);
+  const groupsToShow = usePermissionCategories(role?.permissions, showCustom, showEmpty);
 
   return (
     <DescriptionList
@@ -64,9 +64,9 @@ export function RolePermissions(props: { role: Role; showCustom?: boolean; showE
 function useKnownPermissionsAndCategories(
   model_permissions: ModelPermissionsType,
   allPermissions: string[] = Object.keys(model_permissions)
-): PermissionCategories[] {
+): PermissionCategory[] {
   return useMemo(() => {
-    const categories: { [key: string]: PermissionCategories } = {};
+    const categories: { [key: string]: PermissionCategory } = {};
 
     Object.entries(model_permissions)
       .filter(([k, _]) => allPermissions.includes(k))
@@ -109,7 +109,7 @@ export function usePermissionCategories(
               allPermissions: permissions
                 .filter(userManagementFilter)
                 .filter((permission) => !allPermissions.includes(permission)),
-            } as PermissionCategories,
+            } as PermissionCategory,
           ]
         : groups,
     [allPermissions, groups, permissions, showCustom, t, userManagementFilter]
@@ -122,7 +122,7 @@ export function usePermissionCategories(
           (permission) => permissions?.includes(permission)
         ),
         availablePermissions: group.allPermissions.filter(
-          (permission) => !role.permissions?.includes(permission)
+          (permission) => !permissions?.includes(permission)
         ),
       })),
     [allGroups, permissions]
