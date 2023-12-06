@@ -271,3 +271,35 @@ export function useTypeColumn<T extends object>(options: {
   );
   return column;
 }
+export function useScopeColumn<T extends { scope?: string }>(options?: {
+  header?: string;
+  disableSort?: boolean;
+  sort?: string;
+}) {
+  const { t } = useTranslation();
+  const column: ITableColumn<T> = useMemo(
+    () => ({
+      header: t('Scope'),
+      cell: (item: T) => <TextCell text={item.scope} />,
+      sort: options?.disableSort ? undefined : options?.sort ?? 'scope',
+    }),
+    [t, options?.disableSort, options?.sort]
+  );
+  return column;
+}
+export function useExpiresColumn<T extends { expires?: string }>(options?: {
+  header?: string;
+  disableSort?: boolean;
+  sort?: string;
+}) {
+  const { t } = useTranslation();
+  const column: ITableColumn<T> = useMemo(
+    () => ({
+      header: t('Expires'),
+      cell: (item: T) => <DateTimeCell value={item.expires} format="date-time" />,
+      sort: options?.disableSort ? undefined : options?.sort ?? 'expires',
+    }),
+    [t, options?.disableSort, options?.sort]
+  );
+  return column;
+}
