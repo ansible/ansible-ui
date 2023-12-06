@@ -10,6 +10,8 @@ import {
   useGetPageUrl,
 } from '../../framework';
 import { RouteObj } from './Routes';
+import { NavItem } from '@patternfly/react-core';
+import { DateTime } from 'luxon';
 
 export function useIdColumn<T extends { name: string; id: number }>() {
   const { t } = useTranslation();
@@ -74,6 +76,28 @@ export function useDescriptionColumn<T extends { description?: string | null | u
       modal: ColumnModalOption.Hidden,
     }),
     [t]
+  );
+  return column;
+}
+
+export function useLastRanColumn(options?: {
+  disableSort?: boolean;
+  disableLinks?: boolean;
+  sortKey?: string;
+  hideByDefaultInTableView?: boolean;
+}) {
+  const { t } = useTranslation();
+  const column: ITableColumn<{ recent_job?: string; finished_time?: string }> = useMemo(
+    () => ({
+      header: t('Last Ran'),
+      cell: (item) => {
+        if (!item.finished_time) return <TextCell value={t('Running')} />;
+        return <DateTimeCell format="since" value={item.finished_time} />;
+      },
+      sort: options?.disableSort ? undefined : options?.sortKey ?? 'created',
+      defaultSortDirection: 'desc',
+    }),
+    [options?.disableSort, options?.sortKey, t]
   );
   return column;
 }

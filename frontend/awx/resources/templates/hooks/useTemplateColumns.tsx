@@ -7,6 +7,8 @@ import {
   useModifiedColumn,
   useNameColumn,
   useTypeColumn,
+  useOrganizationNameColumn,
+  useLastRanColumn,
 } from '../../../../common/columns';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
@@ -39,13 +41,31 @@ export function useTemplateColumns(options?: { disableSort?: boolean; disableLin
   const createdColumn = useCreatedColumn(options);
   const descriptionColumn = useDescriptionColumn();
   const modifiedColumn = useModifiedColumn(options);
+  const organizationColumn = useOrganizationNameColumn(AwxRoute.OrganizationDetails, options);
+  const lastRanColumn = useLastRanColumn(options);
   const typeOfTemplate = useTypeColumn<JobTemplate | WorkflowJobTemplate>({
     ...options,
     makeReadable,
   });
   const tableColumns = useMemo<ITableColumn<JobTemplate | WorkflowJobTemplate>[]>(
-    () => [nameColumn, descriptionColumn, typeOfTemplate, createdColumn, modifiedColumn],
-    [nameColumn, descriptionColumn, typeOfTemplate, createdColumn, modifiedColumn]
+    () => [
+      nameColumn,
+      descriptionColumn,
+      typeOfTemplate,
+      createdColumn,
+      modifiedColumn,
+      organizationColumn,
+      lastRanColumn,
+    ],
+    [
+      nameColumn,
+      descriptionColumn,
+      typeOfTemplate,
+      createdColumn,
+      modifiedColumn,
+      organizationColumn,
+      lastRanColumn,
+    ]
   );
   return tableColumns;
 }
