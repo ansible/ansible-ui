@@ -10,8 +10,6 @@ import {
   useGetPageUrl,
 } from '../../framework';
 import { RouteObj } from './Routes';
-import { NavItem } from '@patternfly/react-core';
-import { DateTime } from 'luxon';
 
 export function useIdColumn<T extends { name: string; id: number }>() {
   const { t } = useTranslation();
@@ -87,12 +85,12 @@ export function useLastRanColumn(options?: {
   hideByDefaultInTableView?: boolean;
 }) {
   const { t } = useTranslation();
-  const column: ITableColumn<{ recent_job?: string; finished_time?: string }> = useMemo(
+  const column: ITableColumn<{ last_job_run: string }> = useMemo(
     () => ({
       header: t('Last Ran'),
       cell: (item) => {
-        if (!item.finished_time) return <TextCell value={t('Running')} />;
-        return <DateTimeCell format="since" value={item.finished_time} />;
+        if (!item.last_job_run) return <></>;
+        return <DateTimeCell format="since" value={item.last_job_run} />;
       },
       sort: options?.disableSort ? undefined : options?.sortKey ?? 'created',
       defaultSortDirection: 'desc',
