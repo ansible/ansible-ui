@@ -6,7 +6,7 @@ export function useIsValidRoleDescription() {
   const isValidRoleDescription = useCallback(
     (roleName: string) => {
       if (roleName.length <= 2) {
-        return t('This field must be longer than 2 characters');
+        return t('Description must be longer than 2 characters.');
       }
     },
     [t]
