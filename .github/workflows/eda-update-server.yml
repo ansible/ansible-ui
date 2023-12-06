@@ -12,13 +12,35 @@ on:
         required: true
         default: false
         description: 'Update server on success'
+  schedule:
+    - cron: '0 8 * * *'
 
 jobs:
+  setup:
+    name: Setup
+    runs-on: ubuntu-latest
+    outputs:
+      EDA_SERVER: ${{ steps.step1.outputs.EDA_SERVER }}
+      UPDATE_SERVER: ${{ steps.step1.outputs.UPDATE_SERVER }}
+    steps:
+      - id: step1
+        run: |
+          CURRENTDATE=$(date +'%Y%m%d')
+          echo $CURRENTDATE
+          if([ "${{ github.event_name }}" == "workflow_dispatch" ]); then
+            echo "EDA_SERVER=${{ github.event.inputs.EDA_SERVER }}" >> "$GITHUB_OUTPUT"
+            echo "UPDATE_SERVER=${{ github.event.inputs.UPDATE_SERVER }}" >> "$GITHUB_OUTPUT"
+          else 
+            echo "EDA_SERVER=https://eda.ci-ui-${CURRENTDATE}.gcp.testing.ansible.com" >> "$GITHUB_OUTPUT"
+            echo "UPDATE_SERVER=true" >> "$GITHUB_OUTPUT"
+          fi
+
   eda-e2e:
     name: EDA E2E
+    needs: setup
     uses: ./.github/workflows/eda-e2e.yml
     with:
-      EDA_SERVER: ${{ inputs.EDA_SERVER }}
+      EDA_SERVER: ${{ needs.setup.outputs.EDA_SERVER }}
     secrets:
       EDA_PASSWORD: ${{ secrets.EDA_PASSWORD }}
       CYPRESS_AUI_EDA_E2E_PROJECT_ID: ${{ secrets.CYPRESS_AUI_EDA_E2E_PROJECT_ID }}
@@ -26,21 +48,26 @@ jobs:
 
   eda-update-server:
     name: EDA Update Server
-    if: ${{ github.event_name == 'workflow_dispatch' && inputs.UPDATE_SERVER == true }}
-    needs: eda-e2e
+    if: ${{ needs.setup.outputs.UPDATE_SERVER == 'true' }}
+    needs:
+      - eda-e2e
+      - setup
     runs-on: ubuntu-latest
     steps:
-      - run: |
+      - name: Update Server Variable
+        run: |
           curl -L -X PATCH -H "Accept: application/vnd.github+json" \
           -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" \
           -H "X-GitHub-Api-Version: 2022-11-28" \
           "https://api.github.com/repos/ansible/ansible-ui/actions/variables/EDA_SERVER" \
-          -d '{"name":"EDA_SERVER","value":"${{ inputs.EDA_SERVER }}"}'
-
-      # - name: Slack Notification
-      #   uses: slackapi/slack-github-action@v1.24.0
-      #   with:
-      #     channel-id: ${{ secrets.AAP_UI_CHANNEL_ID }}
-      #     slack-message: EDA_SERVER=${{ inputs.EDA_SERVER }}
-      #   env:
-      #     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          -d '{"name":"EDA_SERVER","value":"${{ needs.setup.outputs.EDA_SERVER }}"}'
+      - name: Slack Notification
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          channel-id: ${{ secrets.AAP_UI_CHANNEL_ID }}
+          slack-message: |
+            ```
+            EDA_SERVER=${{ inputs.EDA_SERVER }}
+            ```
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
