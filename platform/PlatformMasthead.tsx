@@ -1,6 +1,11 @@
 import { ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import { DropdownItem } from '@patternfly/react-core/deprecated';
-import { ExternalLinkAltIcon, QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
+import {
+  ExternalLinkAltIcon,
+  QuestionCircleIcon,
+  RedhatIcon,
+  UserCircleIcon,
+} from '@patternfly/react-icons';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -36,7 +41,23 @@ export function PlatformMasthead() {
     <PageMasthead
       icon={<PlatformIcon style={{ width: 52 }} />}
       title={process.env.PRODUCT}
-      brand={process.env.BRAND}
+      brand={
+        (
+          <div style={{ paddingBottom: 2 }}>
+            <RedhatIcon
+              style={{
+                marginTop: -3,
+                marginBottom: -3,
+                marginRight: 6,
+                height: 24,
+                width: 24,
+                color: '#ee0000',
+              }}
+            />
+            Red Hat
+          </div>
+        ) as unknown as string
+      }
     >
       <ToolbarItem style={{ flexGrow: 1 }} />
       <ToolbarGroup variant="icon-button-group">
