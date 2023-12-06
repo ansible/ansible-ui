@@ -5,7 +5,7 @@ import { useNameColumn } from '../../../../common/columns';
 import { getItemKey, requestDelete } from '../../../../common/crud/Data';
 import { awxAPI } from '../../../api/awx-utils';
 import { Application } from '../../../interfaces/Application';
-import { useApplicationsColumns } from '../Applications';
+import { useApplicationsColumns } from './useApplicationsColumns';
 
 export function useDeleteApplications(onComplete: (applications: Application[]) => void) {
   const { t } = useTranslation();

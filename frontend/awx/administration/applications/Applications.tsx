@@ -1,11 +1,9 @@
 import { ButtonVariant } from '@patternfly/react-core';
 import { EditIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
-  ITableColumn,
-  IToolbarFilter,
   PageActionSelection,
   PageActionType,
   PageHeader,
@@ -13,22 +11,12 @@ import {
   PageTable,
   usePageNavigate,
 } from '../../../../framework';
-import {
-  useCreatedColumn,
-  useDescriptionColumn,
-  useModifiedColumn,
-  useNameColumn,
-  useOrganizationNameColumn,
-} from '../../../common/columns';
-import {
-  useDescriptionToolbarFilter,
-  useNameToolbarFilter,
-} from '../../common/awx-toolbar-filters';
 import { useAwxView } from '../../useAwxView';
-
 import { useAwxConfig } from '../../common/useAwxConfig';
 import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
 import { useDeleteApplications } from './hooks/useDeleteApplications';
+import { useApplicationsFilters } from './hooks/useApplicationsFilters';
+import { useApplicationsColumns } from './hooks/useApplicationsColumns';
 import { AwxRoute } from '../../AwxRoutes';
 import { awxAPI } from '../../api/awx-utils';
 import { Application } from '../../interfaces/Application';
@@ -146,40 +134,4 @@ export function Applications() {
       />
     </PageLayout>
   );
-}
-
-export function useApplicationsFilters() {
-  const nameToolbarFilter = useNameToolbarFilter();
-  const descriptionToolbarFilter = useDescriptionToolbarFilter();
-  const toolbarFilters = useMemo<IToolbarFilter[]>(
-    () => [nameToolbarFilter, descriptionToolbarFilter],
-    [nameToolbarFilter, descriptionToolbarFilter]
-  );
-  return toolbarFilters;
-}
-
-export function useApplicationsColumns(options?: {
-  disableSort?: boolean;
-  disableLinks?: boolean;
-}) {
-  const pageNavigate = usePageNavigate();
-
-  const nameClick = useCallback(
-    (application: Application) =>
-      pageNavigate(AwxRoute.ApplicationDetails, { params: { id: application.id } }),
-    [pageNavigate]
-  );
-  const nameColumn = useNameColumn({
-    ...options,
-    onClick: nameClick,
-  });
-  const descriptionColumn = useDescriptionColumn();
-  const organizationColumn = useOrganizationNameColumn(AwxRoute.OrganizationDetails, options);
-  const createdColumn = useCreatedColumn(options);
-  const modifiedColumn = useModifiedColumn(options);
-  const tableColumns = useMemo<ITableColumn<Application>[]>(
-    () => [nameColumn, descriptionColumn, organizationColumn, createdColumn, modifiedColumn],
-    [nameColumn, descriptionColumn, organizationColumn, createdColumn, modifiedColumn]
-  );
-  return tableColumns;
 }
