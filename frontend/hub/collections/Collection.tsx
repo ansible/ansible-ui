@@ -31,6 +31,164 @@ export interface Collection {
   };
 }
 
+export interface IContents {
+  doc_strings: null | {
+    doc: {
+      notes?: string[];
+      author: string | string[];
+      module?: string;
+      options?: {
+        name: string;
+        type?: string;
+        description: string | string[];
+        choices?: string[];
+        default?: (boolean | number | string) | string[];
+        required?: boolean;
+        aliases?: string[];
+        elements?: string;
+        suboptions?: {
+          name: string;
+          type: string;
+          description: string[];
+        }[];
+        env?: {
+          name: string;
+        }[];
+        ini?: {
+          key: string;
+          section: string;
+        }[];
+        vars?: {
+          name: string;
+        }[];
+        version_added?: string;
+        version_added_collection?: string;
+        cli?: {
+          name: string;
+        }[];
+      }[];
+      filename: string;
+      collection: string;
+      has_action?: boolean;
+      description: string[];
+      version_added: string;
+      short_description: string;
+      version_added_collection: string;
+      requirements?: string[];
+      name?: string;
+    };
+    return:
+      | null
+      | {
+          name: string;
+          type: string;
+          sample?:
+            | (number | string)
+            | string[]
+            | {
+                avg?: number;
+                max?: number;
+                min?: number;
+                after?: string;
+                before?: string;
+              };
+          returned: string;
+          description: string;
+          contains?: {
+            name: string;
+            type: string;
+            description: string[];
+          }[];
+        }[];
+    examples: null | string;
+    metadata: null;
+  };
+  readme_file: null;
+  readme_html: null;
+  content_name: string;
+  content_type: string;
+}
+
+export interface CollectionDocs {
+  id: string;
+  namespace: {
+    pulp_href: string;
+    id: number;
+    name: string;
+    company: string;
+    email: string;
+    avatar_url: string;
+    description: string;
+    groups: unknown[];
+    related_fields: {
+      my_permissions: string[];
+    };
+  };
+  name: string;
+  download_count: number;
+  latest_version: {
+    id: string;
+    namespace: string;
+    name: string;
+    version: string;
+    requires_ansible: string;
+    created_at: string;
+    metadata: {
+      dependencies: {
+        'ansible.utils': string;
+      };
+      contents: {
+        name: string;
+        description: null | string;
+        content_type: string;
+      }[];
+      documentation: string;
+      homepage: string;
+      issues: string;
+      repository: string;
+      description: string;
+      authors: string[];
+      license: unknown[];
+      tags: string[];
+      signatures: unknown[];
+    };
+    contents: {
+      name: string;
+      content_type: string;
+      description: null | string;
+    }[];
+    sign_state: string;
+    docs_blob: {
+      contents: IContents[];
+      collection_readme: {
+        html: string;
+        name: string;
+      };
+      documentation_files: unknown[];
+    };
+  };
+  all_versions: {
+    id: string;
+    version: string;
+    created: string;
+    sign_state: string;
+  }[];
+  sign_state: string;
+}
+export interface CollectionImport {
+  created_at: string;
+  finished_at: string;
+  id: string;
+  name: string;
+  namespace: string;
+  started_at: string;
+  state: string;
+  updated_at: string;
+  version: string;
+  error?: { traceback: string; description: string };
+  messages?: { time: number; level: 'INFO' | 'WARNING' | 'ERROR'; message: string }[];
+}
+
 /*
 export interface CollectionVersionSearch {
   collection_version: {
