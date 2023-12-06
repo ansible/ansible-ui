@@ -5,10 +5,17 @@ import { PageNavigationItem } from '../../framework/PageNavigation/PageNavigatio
 import { HubRoute } from './HubRoutes';
 import { Roles } from './access/roles/Roles';
 import { Approvals } from './approvals/Approvals';
-import { CollectionDetails } from './collections/CollectionDetails';
 import { CollectionSignatureUpload } from './collections/CollectionSignatureUpload';
 import { Collections } from './collections/Collections';
 import { UploadCollection } from './collections/UploadCollection';
+import { CollectionPage } from './collections/CollectionPage/CollectionPage';
+import { CollectionContents } from './collections/CollectionPage/CollectionContents';
+import { CollectionDependencies } from './collections/CollectionPage/CollectionDependencies';
+import { CollectionDetails } from './collections/CollectionPage/CollectionDetails';
+import { CollectionDistributions } from './collections/CollectionPage/CollectionDistributions';
+import { CollectionDocumentation } from './collections/CollectionPage/CollectionDocumentation';
+import { CollectionImportLog } from './collections/CollectionPage/CollectionImportLog';
+import { CollectionInstall } from './collections/CollectionPage/CollectionInstall';
 import { HubDashboard } from './dashboard/Dashboard';
 import {
   CreateExecutionEnvironment,
@@ -94,8 +101,49 @@ export function useHubNavigation() {
         },
         {
           id: HubRoute.CollectionPage,
-          path: ':id/*',
-          element: <CollectionDetails />,
+          path: ':id',
+          element: <CollectionPage />,
+          children: [
+            {
+              id: HubRoute.CollectionDetails,
+              path: 'details',
+              element: <CollectionDetails />,
+            },
+            {
+              id: HubRoute.CollectionInstall,
+              path: 'install',
+              element: <CollectionInstall />,
+            },
+            {
+              id: HubRoute.CollectionDocumentation,
+              path: 'documentation',
+              element: <CollectionDocumentation />,
+            },
+            {
+              id: HubRoute.CollectionContents,
+              path: 'contents',
+              element: <CollectionContents />,
+            },
+            {
+              id: HubRoute.CollectionImportLog,
+              path: 'import_log',
+              element: <CollectionImportLog />,
+            },
+            {
+              id: HubRoute.CollectionDistributions,
+              path: 'distributions',
+              element: <CollectionDistributions />,
+            },
+            {
+              id: HubRoute.CollectionDependencies,
+              path: 'dependencies',
+              element: <CollectionDependencies />,
+            },
+            {
+              path: '',
+              element: <Navigate to="details" />,
+            },
+          ],
         },
         {
           path: '',
