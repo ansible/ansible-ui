@@ -4,6 +4,7 @@ import { PageNavigationItem } from '../../../framework';
 import { PageNotImplemented } from '../../../framework/PageEmptyStates/PageNotImplemented';
 import { AwxRoute } from '../AwxRoutes';
 import { ApplicationPage } from '../administration/applications/ApplicationPage/ApplicationPage';
+import { ApplicationPageDetails } from '../administration/applications/ApplicationPage/ApplicationPageDetails';
 import { Applications } from '../administration/applications/Applications';
 
 export function useAwxApplicationsRoutes() {
@@ -32,7 +33,7 @@ export function useAwxApplicationsRoutes() {
             {
               id: AwxRoute.ApplicationDetails,
               path: 'details',
-              element: <PageNotImplemented />,
+              element: <ApplicationPageDetails />,
             },
             {
               id: AwxRoute.ApplicationTokens,
