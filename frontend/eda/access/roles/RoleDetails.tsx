@@ -8,7 +8,15 @@ import {
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { DateTimeCell, PageDetail, PageDetails, Scrollable } from '../../../../framework';
+import {
+  DateTimeCell,
+  PageDetail,
+  PageDetails,
+  PageHeader,
+  PageLayout,
+  Scrollable,
+  useGetPageUrl,
+} from '../../../../framework';
 import { useGet } from '../../../common/crud/useGet';
 import { SWR_REFRESH_INTERVAL } from '../../common/eda-constants';
 import { edaAPI } from '../../common/eda-utils';
@@ -38,45 +46,53 @@ export function RoleDetails() {
     credential: t('Credential'),
   };
 
+  const getPageUrl = useGetPageUrl();
+
   return (
-    <Scrollable>
-      <PageDetails>
-        <PageDetail label={t('Name')}>{role?.name || ''}</PageDetail>
-        <PageDetail label={t('Description')}>{role?.description || ''}</PageDetail>
-        <PageDetail label={t('Created')}>
-          <DateTimeCell format="date-time" value={role?.created_at} />
-        </PageDetail>
-      </PageDetails>
-      <PageDetails numberOfColumns={'single'}>
-        <PageDetail label={t('Permissions')}>
-          <DescriptionList
-            isCompact
-            isHorizontal
-            horizontalTermWidthModifier={{
-              default: '16ch',
-            }}
-          >
-            {role?.permissions.map((permission) => (
-              <DescriptionListGroup key={permission?.resource_type}>
-                <DescriptionListTerm
-                  data-cy={'permissions'}
-                  style={{ fontWeight: 'normal' }}
-                  key={permission?.resource_type}
-                >
-                  {ResourceTypes[permission?.resource_type] || permission?.resource_type}
-                </DescriptionListTerm>
-                <DescriptionListDescription>
-                  {!!permission?.action.length && (
-                    <LabelGroup numLabels={5}>
-                      {permission?.action.map((action) => <Label key={action}>{action}</Label>)}
-                    </LabelGroup>
-                  )}
-                </DescriptionListDescription>
-              </DescriptionListGroup>
-            ))}
-          </DescriptionList>
-        </PageDetail>
-      </PageDetails>
-    </Scrollable>
+    <PageLayout>
+      <PageHeader
+        title={role?.name}
+        breadcrumbs={[{ label: t('Roles'), to: getPageUrl(EdaRoute.Roles) }, { label: role?.name }]}
+      />
+      <Scrollable>
+        <PageDetails>
+          <PageDetail label={t('Name')}>{role?.name || ''}</PageDetail>
+          <PageDetail label={t('Description')}>{role?.description || ''}</PageDetail>
+          <PageDetail label={t('Created')}>
+            <DateTimeCell format="date-time" value={role?.created_at} />
+          </PageDetail>
+        </PageDetails>
+        <PageDetails numberOfColumns={'single'}>
+          <PageDetail label={t('Permissions')}>
+            <DescriptionList
+              isCompact
+              isHorizontal
+              horizontalTermWidthModifier={{
+                default: '16ch',
+              }}
+            >
+              {role?.permissions.map((permission) => (
+                <DescriptionListGroup key={permission?.resource_type}>
+                  <DescriptionListTerm
+                    data-cy={'permissions'}
+                    style={{ fontWeight: 'normal' }}
+                    key={permission?.resource_type}
+                  >
+                    {ResourceTypes[permission?.resource_type] || permission?.resource_type}
+                  </DescriptionListTerm>
+                  <DescriptionListDescription>
+                    {!!permission?.action.length && (
+                      <LabelGroup numLabels={5}>
+                        {permission?.action.map((action) => <Label key={action}>{action}</Label>)}
+                      </LabelGroup>
+                    )}
+                  </DescriptionListDescription>
+                </DescriptionListGroup>
+              ))}
+            </DescriptionList>
+          </PageDetail>
+        </PageDetails>
+      </Scrollable>
+    </PageLayout>
   );
 }
