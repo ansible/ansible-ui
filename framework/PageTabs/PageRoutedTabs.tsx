@@ -9,7 +9,7 @@ export function PageRoutedTabs(props: {
   tabs: ({ label: string; page: string } | false)[];
   params?: { [key: string]: string | number | undefined };
   // Use to pass data to tab's component. To access data in that component use useOutletContext()
-  componentParams?: { [key: string]: string | number | undefined };
+  componentParams?: { [key: string]: unknown };
 }) {
   const pageNavigate = usePageNavigate();
   const navigate = useNavigate();
