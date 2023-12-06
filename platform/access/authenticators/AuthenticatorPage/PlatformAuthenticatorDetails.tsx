@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { PageDetails, PageDetail, LoadingPage, Scrollable } from '../../../../framework';
 import { useGet, useGetItem } from '../../../../frontend/common/crud/useGet';
 import { PageDetailCodeEditor } from '../../../../framework/PageDetails/PageDetailCodeEditor';
+import type { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
 import type { Authenticator } from '../../../interfaces/Authenticator';
 import type { AuthenticatorPlugins } from '../../../interfaces/AuthenticatorPlugin';
 import type { AuthenticatorMap } from '../../../interfaces/AuthenticatorMap';
@@ -34,9 +35,10 @@ export function PlatformAuthenticatorDetails() {
     params.id
   );
   const { data: plugins } = useGet<AuthenticatorPlugins>(`/api/gateway/v1/authenticator_plugins`);
-  const { data: maps } = useGet<AuthenticatorMap[]>(
+  const mapsResponse = useGet<PlatformItemsResponse<AuthenticatorMap>>(
     `/api/gateway/v1/authenticator_maps?authenticator=${params.id}`
   );
+  const maps = mapsResponse?.data?.results || [];
 
   if (!authenticator || !plugins) {
     return <LoadingPage />;
@@ -90,7 +92,7 @@ export function PlatformAuthenticatorDetails() {
           ))}
         </PageDetails>
       ) : null}
-      {maps ? (
+      {maps && maps.length ? (
         <>
           <Section>
             <Divider />
