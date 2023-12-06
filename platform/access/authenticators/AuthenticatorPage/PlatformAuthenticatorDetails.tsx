@@ -1,10 +1,14 @@
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
+import { Divider, TextContent, Text, TextVariants } from '@patternfly/react-core';
+import styled from 'styled-components';
 import { PageDetails, PageDetail, LoadingPage, Scrollable } from '../../../../framework';
 import { useGet, useGetItem } from '../../../../frontend/common/crud/useGet';
 import { PageDetailCodeEditor } from '../../../../framework/PageDetails/PageDetailCodeEditor';
+import type { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
 import type { Authenticator } from '../../../interfaces/Authenticator';
 import type { AuthenticatorPlugins } from '../../../interfaces/AuthenticatorPlugin';
+import type { AuthenticatorMap } from '../../../interfaces/AuthenticatorMap';
 
 type Field = {
   label: string;
@@ -15,6 +19,14 @@ type ObjField = {
   value: { [k: string]: string } | string[];
 };
 
+const Section = styled(TextContent)`
+  padding-inline: 24px;
+`;
+
+const SubHeading = styled(Text)`
+  margin-block: 24px;
+`;
+
 export function PlatformAuthenticatorDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
@@ -23,6 +35,10 @@ export function PlatformAuthenticatorDetails() {
     params.id
   );
   const { data: plugins } = useGet<AuthenticatorPlugins>(`/api/gateway/v1/authenticator_plugins`);
+  const mapsResponse = useGet<PlatformItemsResponse<AuthenticatorMap>>(
+    `/api/gateway/v1/authenticator_maps?authenticator=${params.id}`
+  );
+  const maps = mapsResponse?.data?.results || [];
 
   if (!authenticator || !plugins) {
     return <LoadingPage />;
@@ -65,15 +81,32 @@ export function PlatformAuthenticatorDetails() {
           </PageDetail>
         ))}
       </PageDetails>
-      <PageDetails numberOfColumns="single">
-        {objFields.map((field) => (
-          <PageDetailCodeEditor
-            label={field.label}
-            key={field.label}
-            value={JSON.stringify(field.value, null, 2)}
-          />
-        ))}
-      </PageDetails>
+      {objFields.length ? (
+        <PageDetails numberOfColumns="single">
+          {objFields.map((field) => (
+            <PageDetailCodeEditor
+              label={field.label}
+              key={field.label}
+              value={JSON.stringify(field.value, null, 2)}
+            />
+          ))}
+        </PageDetails>
+      ) : null}
+      {maps && maps.length ? (
+        <>
+          <Section>
+            <Divider />
+            <SubHeading component={TextVariants.h3}>{t('Mapping')}</SubHeading>
+          </Section>
+          <PageDetails numberOfColumns="single">
+            {maps.map((map) => (
+              <PageDetail label={map.name} key={map.name}>
+                {map.ui_summary || t('{{mapType}} map', { mapType: map.map_type })}
+              </PageDetail>
+            ))}
+          </PageDetails>
+        </>
+      ) : null}
     </Scrollable>
   );
 }
