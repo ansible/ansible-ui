@@ -15,6 +15,16 @@ export function useAwxApplicationsRoutes() {
       path: 'applications',
       children: [
         {
+          id: AwxRoute.CreateApplication,
+          path: 'create',
+          element: <PageNotImplemented />,
+        },
+        {
+          id: AwxRoute.EditApplication,
+          path: ':id/edit',
+          element: <PageNotImplemented />,
+        },
+        {
           id: AwxRoute.ApplicationPage,
           path: ':id',
           element: <ApplicationPage />,
