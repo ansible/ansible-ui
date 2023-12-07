@@ -37,6 +37,7 @@ import {
 } from '../../frontend/eda/interfaces/EdaRulebookActivation';
 import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaUser';
 import { Role as HubRole } from '../../frontend/hub/access/roles/Role';
+import { RemoteRegistry } from '../../frontend/hub/remote-registries/RemoteRegistry';
 import './auth';
 import './awx-commands';
 import { IAwxResources } from './awx-commands';
@@ -824,6 +825,8 @@ declare global {
       deleteHubRole(role: HubRole): Cypress.Chainable<void>;
       createRemote(remoteName: string): Cypress.Chainable<void>;
       deleteRemote(remoteName: string): Cypress.Chainable<void>;
+      createRemoteRegistry(remoteRegistryName: string): Cypress.Chainable<RemoteRegistry>;
+      deleteRemoteRegistry(remoteRegistryId: string): Cypress.Chainable<void>;
     }
   }
 }
