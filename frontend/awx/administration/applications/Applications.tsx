@@ -20,7 +20,11 @@ import { useApplicationsColumns } from './hooks/useApplicationsColumns';
 import { AwxRoute } from '../../AwxRoutes';
 import { awxAPI } from '../../api/awx-utils';
 import { Application } from '../../interfaces/Application';
-import { cannotDeleteResource, cannotEditResource } from '../../../common/utils/RBAChelpers';
+import {
+  cannotDeleteResource,
+  cannotEditResource,
+  cannotDeleteResources,
+} from '../../../common/utils/RBAChelpers';
 import { useOptions } from '../../../common/crud/useOptions';
 import { OptionsResponse, ActionsResponse } from '../../interfaces/OptionsResponse';
 
@@ -62,6 +66,7 @@ export function Applications() {
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
         label: t('Delete selected applications'),
+        isDisabled: (applications: Application[]) => cannotDeleteResources(applications, t),
         onClick: deleteApplications,
         isDanger: true,
       },
