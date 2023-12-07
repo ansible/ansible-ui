@@ -141,3 +141,14 @@ Cypress.Commands.add('createRemote', (remoteName: string) => {
 Cypress.Commands.add('deleteRemote', (remoteName: string) => {
   cy.requestDelete(pulpAPI`/remotes/ansible/collection/${remoteName}/`);
 });
+
+Cypress.Commands.add('createRemoteRegistry', (remoteRegistryName: string) => {
+  cy.requestPost(hubAPI`/_ui/v1/execution-environments/registries/`, {
+    name: remoteRegistryName,
+    url: 'https://console.redhat.com/api/automation-hub/',
+  });
+});
+
+Cypress.Commands.add('deleteRemoteRegistry', (remoteRegistryId: string) => {
+  cy.requestDelete(hubAPI`/_ui/v1/execution-environments/registries/${remoteRegistryId}/`);
+});
