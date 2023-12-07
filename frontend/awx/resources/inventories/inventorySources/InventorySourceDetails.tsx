@@ -32,6 +32,7 @@ import { CredentialLabel } from '../../../common/CredentialLabel';
 import { AwxError } from '../../../common/AwxError';
 import { useCallback } from 'react';
 import { useAwxWebSocketSubscription } from '../../../common/useAwxWebSocket';
+import { LastModifiedPageDetail } from '../../../../common/LastModifiedPageDetail';
 
 export type WebsocketInventorySource = {
   status: string;
@@ -329,16 +330,14 @@ export function InventorySourceDetails(props: { inventorySourceId?: string }) {
           }
         />
       </PageDetail>
-      <PageDetail label={t`Modified`}>
-        <DateTimeCell
-          format="since"
-          value={inventorySource.modified}
-          author={summary_fields?.modified_by?.username}
-          onClick={() =>
-            pageNavigate(AwxRoute.UserDetails, { params: { id: summary_fields?.modified_by?.id } })
-          }
-        />
-      </PageDetail>
+      <LastModifiedPageDetail
+        format="since"
+        value={inventorySource.modified}
+        author={summary_fields?.modified_by?.username}
+        onClick={() =>
+          pageNavigate(AwxRoute.UserDetails, { params: { id: summary_fields?.modified_by?.id } })
+        }
+      />
     </PageDetails>
   );
 }

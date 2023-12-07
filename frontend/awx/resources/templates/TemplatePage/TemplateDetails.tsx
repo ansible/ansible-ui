@@ -7,7 +7,7 @@ import {
   TextListVariants,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { LoadingPage, PageDetail, PageDetails, useGetPageUrl } from '../../../../../framework';
 import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
 import { RouteObj } from '../../../../common/Routes';
@@ -20,6 +20,7 @@ import { UserDateDetail } from '../../../common/UserDateDetail';
 import { useVerbosityString } from '../../../common/useVerbosityString';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
+import { LastModifiedPageDetail } from '../../../../common/LastModifiedPageDetail';
 
 function useInstanceGroups(templateId: string) {
   const { data } = useGet<{ results: InstanceGroup[] }>(
@@ -36,6 +37,7 @@ export function TemplateDetails(props: { templateId?: string }) {
   const { error, data: template, refresh } = useGetItem<JobTemplate>(awxAPI`/job_templates`, urlId);
   const instanceGroups = useInstanceGroups(urlId || '0');
   const getPageUrl = useGetPageUrl();
+  const history = useNavigate();
 
   const verbosity: string = useVerbosityString(template?.verbosity);
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
@@ -155,10 +157,17 @@ export function TemplateDetails(props: { templateId?: string }) {
         date={template.created}
         user={template.summary_fields.created_by}
       />
-      <UserDateDetail
-        label={t('Last modified')}
-        date={template.modified}
-        user={template.summary_fields.modified_by}
+      <LastModifiedPageDetail
+        value={template.modified}
+        format="date-time"
+        author={template.summary_fields.modified_by?.username}
+        onClick={() =>
+          history(
+            getPageUrl(AwxRoute.UserDetails, {
+              params: { id: (template.summary_fields?.modified_by?.id ?? 0).toString() },
+            })
+          )
+        }
       />
       <PageDetail label={t('Labels')} isEmpty={!summaryFields.labels?.results?.length}>
         <LabelGroup>

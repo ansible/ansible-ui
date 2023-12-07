@@ -32,6 +32,7 @@ import { useAwxConfig } from '../../../common/useAwxConfig';
 import { useAwxWebSocketSubscription } from '../../../common/useAwxWebSocket';
 import getDocsBaseUrl from '../../../common/util/getDocsBaseUrl';
 import { Project } from '../../../interfaces/Project';
+import { LastModifiedPageDetail } from '../../../../common/LastModifiedPageDetail';
 
 export function ProjectDetails(props: { projectId?: string }) {
   const { t } = useTranslation();
@@ -316,21 +317,19 @@ export function ProjectDetails(props: { projectId?: string }) {
           }
         />
       </PageDetail>
-      <PageDetail label={t('Last modified')}>
-        <DateTimeCell
-          format="since"
-          value={project.modified}
-          author={project.summary_fields?.modified_by?.username}
-          onClick={() =>
-            history(
-              RouteObj.UserDetails.replace(
-                ':id',
-                (project.summary_fields?.modified_by?.id ?? 0).toString()
-              )
+      <LastModifiedPageDetail
+        format="since"
+        value={project.modified}
+        author={project.summary_fields?.modified_by?.username}
+        onClick={() =>
+          history(
+            RouteObj.UserDetails.replace(
+              ':id',
+              (project.summary_fields?.modified_by?.id ?? 0).toString()
             )
-          }
-        />
-      </PageDetail>
+          )
+        }
+      />
       {(project.scm_clean ||
         project.scm_delete_on_update ||
         project.scm_track_submodules ||
