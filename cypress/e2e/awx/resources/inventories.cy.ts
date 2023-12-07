@@ -4,12 +4,14 @@ import { InstanceGroup } from '../../../../frontend/awx/interfaces/InstanceGroup
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Label } from '../../../../frontend/awx/interfaces/Label';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
+import { User } from '../../../../frontend/awx/interfaces/User';
 
 describe('inventories', () => {
   let organization: Organization;
   let inventory: Inventory;
   let instanceGroup: InstanceGroup;
   let label: Label;
+  let user: User;
 
   before(() => {
     cy.awxLogin();
@@ -27,6 +29,10 @@ describe('inventories', () => {
       cy.createAwxInstanceGroup().then((ig) => {
         instanceGroup = ig;
       });
+      cy.createAwxUser(organization).then((testUser) => {
+        user = testUser;
+        cy.giveUserInventoryAccess(inventory.name, user.id, 'Read');
+      });
     });
   });
 
@@ -34,6 +40,7 @@ describe('inventories', () => {
     cy.deleteAwxLabel(label, { failOnStatusCode: false });
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
     cy.deleteAwxInstanceGroup(instanceGroup, { failOnStatusCode: false });
+    cy.deleteAwxUser(user, { failOnStatusCode: false });
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
 
@@ -55,7 +62,7 @@ describe('inventories', () => {
     cy.hasDetail(/^Organization$/, organization.name);
     cy.hasDetail(/^Enabled options$/, 'Prevent instance group fallback');
     // Clean up this inventory
-    cy.clickPageAction(/^Delete inventory/);
+    cy.clickPageAction('delete-inventory');
     cy.get('#confirm').click();
     cy.clickButton(/^Delete inventory/);
     cy.verifyPageTitle('Inventories');
@@ -86,8 +93,10 @@ describe('inventories', () => {
     cy.verifyPageTitle(inventory.name);
     cy.clickButton(/^Edit inventory/);
     cy.selectDropdownOptionByResourceName('labels', label.name);
+    cy.typeMonacoTextField('remote_install_path: /opt/my_app_config');
     cy.contains('button', 'Save inventory').click();
     cy.verifyPageTitle(inventory.name);
+    cy.assertMonacoTextField('remote_install_path: /opt/my_app_config');
     cy.hasDetail(/^Labels$/, label.name);
   });
 
@@ -95,7 +104,7 @@ describe('inventories', () => {
     cy.navigateTo('awx', 'inventories');
     cy.clickTableRow(inventory.name);
     cy.verifyPageTitle(inventory.name);
-    cy.clickPageAction(/^Delete inventory/);
+    cy.clickPageAction('delete-inventory');
     cy.get('#confirm').click();
     cy.clickButton(/^Delete inventory/);
     cy.verifyPageTitle('Inventories');
@@ -105,7 +114,7 @@ describe('inventories', () => {
     cy.navigateTo('awx', 'inventories');
     cy.clickTableRow(inventory.name);
     cy.verifyPageTitle(inventory.name);
-    cy.clickPageAction(/^Copy inventory/);
+    cy.clickPageAction('copy-inventory');
     cy.hasAlert(`${inventory.name} copied`);
   });
 
@@ -120,14 +129,14 @@ describe('inventories', () => {
 
   it('can copy an inventory from the inventory list row item', () => {
     cy.navigateTo('awx', 'inventories');
-    cy.clickTableRowKebabAction(inventory.name, /^Copy inventory$/, true);
+    cy.clickTableRowKebabAction(inventory.name, 'copy-inventory', true);
     cy.hasAlert(`${inventory.name.toString()} copied`);
     cy.deleteAwxInventory(inventory);
   });
 
   it('can delete an inventory from the inventory list row item', () => {
     cy.navigateTo('awx', 'inventories');
-    cy.clickTableRowKebabAction(inventory.name, /^Delete inventory$/, true);
+    cy.clickTableRowKebabAction(inventory.name, 'delete-inventory', true);
     cy.get('#confirm').click();
     cy.clickButton(/^Delete inventory/);
     cy.contains(/^Success$/);
@@ -138,7 +147,7 @@ describe('inventories', () => {
   it('can delete an inventory from the inventory list toolbar', () => {
     cy.navigateTo('awx', 'inventories');
     cy.selectTableRow(inventory.name, true);
-    cy.clickToolbarKebabAction(/^Delete selected inventories$/);
+    cy.clickToolbarKebabAction('delete-selected-inventories');
     cy.get('#confirm').click();
     cy.clickButton(/^Delete inventory/);
     cy.contains(/^Success$/);

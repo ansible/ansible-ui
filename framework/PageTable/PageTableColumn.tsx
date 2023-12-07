@@ -156,7 +156,7 @@ export interface ITableColumnTypeDateTime<T extends object> extends ITableColumn
   // TODO add format to datetime & allow user to change
 }
 
-/** Table column used for rednering columns in tables, lists, and cards. */
+/** Table column used for rendering columns in tables, lists, and cards. */
 export type ITableColumn<T extends object> =
   | ITableColumnTypeReactNode<T>
   | ITableColumnTypeText<T>

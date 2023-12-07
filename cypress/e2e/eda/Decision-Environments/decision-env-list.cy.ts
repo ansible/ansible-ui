@@ -1,5 +1,7 @@
 //Tests a user's ability to perform certain actions on the Decision Environment list in the EDA UI.
 
+import { edaAPI } from '../../../support/formatApiPathForEDA';
+
 describe('EDA Decision Environment List', () => {
   before(() => {
     cy.edaLogin();
@@ -23,9 +25,13 @@ describe('EDA Decision Environment List', () => {
         cy.get('button[aria-label="table view"]').click();
         cy.selectTableRow(edaDE1.name);
         cy.selectTableRow(edaDE2.name);
-        cy.clickToolbarKebabAction(/^Delete selected decision environments$/);
-        cy.intercept('DELETE', `/api/eda/v1/decision-environments/${edaDE1.id}/`).as('edaDE1');
-        cy.intercept('DELETE', `/api/eda/v1/decision-environments/${edaDE2.id}/`).as('edaDE2');
+        cy.clickToolbarKebabAction('delete-selected-decision-environments');
+        cy.intercept('DELETE', edaAPI`/decision-environments/${edaDE1.id.toString()}/`).as(
+          'edaDE1'
+        );
+        cy.intercept('DELETE', edaAPI`/decision-environments/${edaDE2.id.toString()}/`).as(
+          'edaDE2'
+        );
         cy.clickModalConfirmCheckbox();
         cy.clickModalButton('Delete decision environments');
         cy.wait(['@edaDE1', '@edaDE2']).then((edaArr) => {
@@ -39,11 +45,13 @@ describe('EDA Decision Environment List', () => {
     });
   });
 
-  it.skip('can verify the delete functionality of items in the kebab menu of the DE list view', () => {
+  it('can verify the delete functionality of items in the kebab menu of the DE list view', () => {
     cy.createEdaDecisionEnvironment().then((edaDE) => {
       cy.navigateTo('eda', 'decision-environments');
       cy.verifyPageTitle('Decision Environments');
-      cy.clickListCardKebabAction(edaDE.name, /^Delete decision-environment$/);
+      cy.searchAndDisplayResource(edaDE.name);
+      cy.get('[data-cy="card-view"]').click();
+      cy.clickListCardKebabAction(edaDE.id, edaDE.name, 'delete-decision-environment');
       cy.get('#confirm').click();
       cy.clickButton(/^Delete decision environment/);
       cy.contains(/^Success$/);

@@ -98,7 +98,16 @@ export function PageActionPinned<T extends object>(props: PageActionPinnedProps<
 
     case PageActionType.Dropdown: {
       const isDisabled = isPageActionDisabled(action, selectedItem, selectedItems);
-      const tooltip = isDisabled ? isDisabled : action.tooltip ? action.tooltip : action.label;
+      let tooltip;
+
+      if (isDisabled) {
+        tooltip = isDisabled;
+      } else if (action.tooltip) {
+        tooltip = action.tooltip;
+      } else {
+        tooltip = action.label;
+      }
+
       return (
         <PageActionDropdown<T>
           icon={action.icon}

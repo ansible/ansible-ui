@@ -8,38 +8,38 @@
 }
 
 .border-top {
-  border-top: thin solid #0003;
+  border-top: thin solid #00000028;
 }
 :root:where(.pf-v5-theme-dark) .border-top {
-  border-top: thin solid #fff3;
+  border-top: thin solid #ffffff28;
 }
 
 .border-bottom {
-  border-bottom: thin solid #0003;
+  border-bottom: thin solid #00000028;
 }
 :root:where(.pf-v5-theme-dark) .border-bottom {
-  border-bottom: thin solid #fff3;
+  border-bottom: thin solid #ffffff28;
 }
 
 .border-left {
-  border-left: thin solid #0003;
+  border-left: thin solid #00000028;
 }
 :root:where(.pf-v5-theme-dark) .border-left {
-  border-left: thin solid #fff3;
+  border-left: thin solid #ffffff28;
 }
 
 .border-right {
-  border-right: thin solid #0003;
+  border-right: thin solid #00000028;
 }
 :root:where(.pf-v5-theme-dark) .border-right {
-  border-right: thin solid #fff3;
+  border-right: thin solid #ffffff28;
 }
 
 .border {
-  border: thin solid #0003;
+  border: thin solid #00000028;
 }
 :root:where(.pf-v5-theme-dark) .border {
-  border: thin solid #fff3;
+  border: thin solid #ffffff28;
 }
 
 :root:where(.pf-v5-theme-dark) .bg-lighten {

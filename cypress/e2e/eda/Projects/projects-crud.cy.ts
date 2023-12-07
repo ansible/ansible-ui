@@ -4,6 +4,7 @@
 //Tests a user's ability to create, edit, and delete a Project in the EDA UI.
 
 import { randomString } from '../../../../framework/utils/random-string';
+import { edaAPI } from '../../../support/formatApiPathForEDA';
 
 describe('EDA Projects CRUD', () => {
   before(() => cy.edaLogin());
@@ -42,8 +43,8 @@ describe('EDA Projects CRUD', () => {
       cy.navigateTo('eda', 'projects');
       cy.clickTableRow(edaProject.name);
       cy.verifyPageTitle(edaProject.name);
-      cy.intercept('DELETE', `/api/eda/v1/projects/${edaProject.id}/`).as('deleted');
-      cy.clickPageAction(/^Delete project$/);
+      cy.intercept('DELETE', edaAPI`/projects/${edaProject.id.toString()}/`).as('deleted');
+      cy.clickPageAction('delete-project');
       cy.clickModalConfirmCheckbox();
       cy.clickModalButton('Delete projects');
       cy.wait('@deleted').then((deleted) => {

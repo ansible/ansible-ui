@@ -36,13 +36,15 @@ import {
   EdaRulebookActivationCreate,
 } from '../../frontend/eda/interfaces/EdaRulebookActivation';
 import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaUser';
+import { Role as HubRole } from '../../frontend/hub/access/roles/Role';
+import { RemoteRegistry } from '../../frontend/hub/remote-registries/RemoteRegistry';
 import './auth';
 import './awx-commands';
 import { IAwxResources } from './awx-commands';
+import './awx-user-access-commands';
 import './common-commands';
 import './e2e';
 import './eda-commands';
-import './global-project';
 import './hub-commands';
 import './rest-commands';
 
@@ -78,6 +80,8 @@ declare global {
       configFormatToggle(configType: string): Chainable<void>;
 
       typeMonacoTextField(textString: string): Chainable<void>;
+
+      assertMonacoTextField(textString: string): Chainable<void>;
 
       /** This command works for a form field to look up item from table
        * (used for components that do not utilize the PageFormAsyncSelect component yet) */
@@ -157,7 +161,7 @@ declare global {
       selectDetailsPageKebabAction(dataCy: string): Chainable<void>;
 
       /** Click an action in the table toolbar kebab dropdown actions menu. */
-      clickToolbarKebabAction(label: string | RegExp): Chainable<void>;
+      clickToolbarKebabAction(dataCyLabel: string | RegExp): Chainable<void>;
 
       /** Get the table row containing the specified text. */
       getTableRowByText(name: string | RegExp, filter?: boolean): Chainable<void>;
@@ -184,7 +188,7 @@ declare global {
       /** Finds a table row containing text and clicks action specified by label. */
       clickTableRowKebabAction(
         name: string | RegExp,
-        label: string | RegExp,
+        dataCyLabel: string | RegExp,
         filter?: boolean
       ): Chainable<void>;
 
@@ -195,9 +199,9 @@ declare global {
        * @param filter
        */
       clickListCardKebabAction(
+        id: number,
         name: string | RegExp,
-        label: string | RegExp,
-        filter?: boolean
+        dataCyLabel: string | RegExp
       ): Chainable<void>;
 
       /** Finds a table row containing text and clicks action specified by label. */
@@ -217,9 +221,6 @@ declare global {
       expandTableRow(name: string | RegExp, filter?: boolean): Chainable<void>;
 
       // --- MODAL COMMANDS ---
-
-      /** Get the active modal dialog. */
-      getDialog(): Chainable<void>;
 
       /** Clicks a button in the active modal dialog. */
       clickModalButton(label: string | RegExp): Chainable<void>;
@@ -242,7 +243,7 @@ declare global {
 
       clickLink(label: string | RegExp): Chainable<void>;
       clickButton(label: string | RegExp): Chainable<void>;
-      clickPageAction(label: string | RegExp): Chainable<void>;
+      clickPageAction(dataCyLabel: string | RegExp): Chainable<void>;
 
       /**Finds an alert by its label. Does not make an assertion.  */
       hasAlert(label: string | RegExp): Chainable<void>;
@@ -294,7 +295,8 @@ declare global {
        */
       awxRequestPost<RequestBodyT extends Cypress.RequestBody, ResponseBodyT = RequestBodyT>(
         url: string,
-        body: RequestBodyT
+        body: RequestBodyT,
+        failOnStatusCode?: boolean
       ): Chainable<ResponseBodyT>;
 
       /**
@@ -315,7 +317,7 @@ declare global {
         }
       ): Chainable<void>;
 
-      createAwxOrganization(orgName?: string): Chainable<Organization>;
+      createAwxOrganization(orgName?: string, failOnStatusCode?: boolean): Chainable<Organization>;
 
       /**
        * `createAwxProject` creates an AWX Project via API,
@@ -415,6 +417,70 @@ declare global {
        */
       giveUserWfjtAccess(wfjtName: string, userId: number, roleName: string): Chainable<Role>;
 
+      /**
+       * This command sends a request to the API to assign a certain type of role access to a user
+       * for a credential.
+       * @param credentialName: pass the existing credential name as a string
+       * @param userId: pass the ID of the existing user as a number
+       * @param roleName: pass the name of the role type that you want to assign to your user.
+       * Available roles for a credential are: Admin, Use, Read
+       */
+      giveUserCredentialsAccess(
+        credentialName: string,
+        userId: number,
+        roleName: string
+      ): Chainable<Role>;
+
+      /**
+       * This command sends a request to the API to assign a certain type of role access to a user
+       * for a project.
+       * @param projectName: pass the existing project name as a string
+       * @param userId: pass the ID of the existing user as a number
+       * @param roleName: pass the name of the role type that you want to assign to your user.
+       * Available roles for a project are: Admin, Use, Update, Read
+       */
+      giveUserProjectAccess(projectName: string, userId: number, roleName: string): Chainable<Role>;
+
+      /**
+       * This command sends a request to the API to assign a certain type of role access to a user
+       * for an inventory.
+       * @param inventoryName: pass the existing inventory name as a string
+       * @param userId: pass the ID of the existing user as a number
+       * @param roleName: pass the name of the role type that you want to assign to your user.
+       * Available roles for a inventory are: Admin, Adhoc, Use, Update, Read
+       */
+      giveUserInventoryAccess(
+        inventoryName: string,
+        userId: number,
+        roleName: string
+      ): Chainable<Role>;
+
+      /**
+       * This command sends a request to the API to assign a certain type of role access to a user
+       * for an organization.
+       * @param organizationName: pass the existing organization name as a string
+       * @param userId: pass the ID of the existing user as a number
+       * @param roleName: pass the name of the role type that you want to assign to your user.
+       * Available roles for a organization are: Admin, Execute, Project Admin, Inventory Admin,
+       *  Credential Admin, Workflow Admin, Notification Admin, Job Template Admin, Execution Environment Admin,
+       *  Auditor, Member, Read, Approve
+       */
+      giveUserOrganizationAccess(
+        organizationName: string,
+        userId: number,
+        roleName: string
+      ): Chainable<Role>;
+
+      /**
+       * This command sends a request to the API to assign a certain type of role access to a user
+       * for a team.
+       * @param teamName: pass the existing team name as a string
+       * @param userId: pass the ID of the existing user as a number
+       * @param roleName: pass the name of the role type that you want to assign to your user.
+       * Available roles for a team are: Admin, Member, Read
+       */
+      giveUserTeamAccess(teamName: string, userId: number, roleName: string): Chainable<Role>;
+
       getAwxJobTemplateByName(awxJobTemplateName: string): Chainable<JobTemplate>;
       createAwxTeam(organization: Organization): Chainable<Team>;
       createAwxUser(organization: Organization): Chainable<User>;
@@ -423,6 +489,9 @@ declare global {
       ): Chainable<InstanceGroup>;
 
       createAwxLabel(label: Partial<Omit<Label, 'id'>>): Chainable<Label>;
+
+      createGlobalOrganization(): Chainable<void>;
+      createGlobalProject(): Chainable<void>;
 
       deleteAwxOrganization(
         organization: Organization,
@@ -561,27 +630,13 @@ declare global {
        */
       checkAnchorLinks(anchorName: string): Chainable<void>;
 
-      clickEdaPageAction(label: string | RegExp): Chainable<void>;
-
-      /**
-       * `edaRuleBookActivationActions()` performs an action either `Relaunch` or `Restart` or `Delete rulebookActivation` on a rulebook activation,
-       *
-       * accepts 2 parameters action name and edaRulebookActivation name
-       *
-       * edaRuleBookActivationActions('Relaunch')
-       * edaRuleBookActivationActions('Restart')
-       * edaRuleBookActivationActions('Delete rulebookActivation')
-       * @param action
-       */
-      edaRuleBookActivationActions(action: string, rbaName: string): Chainable<void>;
-
       /**
        * `edaRuleBookActivationActionsModal()` clicks on button `Relaunch` or `Restart` of a rulebook activation modal,
        *
        * accepts 2 parameters action name and edaRulebookActivation name
        *
-       * edaRuleBookActivationActions('Relaunch')
-       * edaRuleBookActivationActions('Restart')
+       * edaRuleBookActivationActionsModal('Relaunch')
+       * edaRuleBookActivationActionsModal('Restart')
        * @param action
        */
       edaRuleBookActivationActionsModal(action: string, rbaName: string): Chainable<void>;
@@ -661,7 +716,7 @@ declare global {
        * @param url The url for the get request
        *
        * @example
-       *  cy.pollEdaResults<EdaProject>(`/api/eda/v1/projects/`).then(
+       *  cy.pollEdaResults<EdaProject>(edaAPI`/projects/`).then(
        *    (projects: EdaProject[]) => {
        *      // Do something with projects
        *    }
@@ -766,6 +821,12 @@ declare global {
       ): Cypress.Chainable<void>;
       deleteNamespace(namespaceName: string): Cypress.Chainable<void>;
       deleteCollectionsInNamespace(namespaceName: string): Cypress.Chainable<void>;
+      createHubRole(): Cypress.Chainable<HubRole>;
+      deleteHubRole(role: HubRole): Cypress.Chainable<void>;
+      createRemote(remoteName: string): Cypress.Chainable<void>;
+      deleteRemote(remoteName: string): Cypress.Chainable<void>;
+      createRemoteRegistry(remoteRegistryName: string): Cypress.Chainable<RemoteRegistry>;
+      deleteRemoteRegistry(remoteRegistryId: string): Cypress.Chainable<void>;
     }
   }
 }

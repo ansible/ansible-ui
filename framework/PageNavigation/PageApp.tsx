@@ -3,6 +3,7 @@ import { ReactNode, useMemo } from 'react';
 import { Outlet, RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { PageNotFound } from '../PageEmptyStates/PageNotFound';
 import { PageFramework } from '../PageFramework';
+import { PageNotificationsDrawer } from '../PageNotifications/PageNotificationsProvider';
 import { PageNavigation } from './PageNavigation';
 import { PageNavigationItem } from './PageNavigationItem';
 import { PageNavigationRoutesProvider } from './PageNavigationRoutesProvider';
@@ -25,7 +26,7 @@ export function PageApp(props: {
    */
   basename?: string;
 }) {
-  const { navigation, basename, masthead: header } = props;
+  const { navigation, basename, masthead } = props;
   const routes = useMemo(
     () => [
       {
@@ -39,13 +40,15 @@ export function PageApp(props: {
           { path: 'login', element: props.login },
           {
             path: '',
-            element: props.root ?? <></>,
+            element: props.root,
             children: [
               {
                 path: '',
                 element: (
-                  <Page header={header} sidebar={<PageNavigation navigation={navigation} />}>
-                    <Outlet />
+                  <Page header={masthead} sidebar={<PageNavigation navigation={navigation} />}>
+                    <PageNotificationsDrawer>
+                      <Outlet />
+                    </PageNotificationsDrawer>
                   </Page>
                 ),
                 children: navigation,
@@ -56,7 +59,7 @@ export function PageApp(props: {
         ],
       },
     ],
-    [header, navigation, props.login, props.root]
+    [masthead, navigation, props.login, props.root]
   );
   const router = useMemo(() => createBrowserRouter(routes, { basename }), [basename, routes]);
   return (

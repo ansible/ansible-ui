@@ -3,6 +3,7 @@ import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
+  CopyCell,
   PageActions,
   PageDetail,
   PageDetails,
@@ -98,8 +99,14 @@ export function RemoteDetails() {
         />
         <PageDetails>
           <PageDetail label={t('Name')}>{remote?.name}</PageDetail>
-          <PageDetail label={t('URL')}>{remote?.url}</PageDetail>
-          <PageDetail label={t('Proxy URL')}>{remote?.proxy_url}</PageDetail>
+          <PageDetail label={t('URL')}>
+            <CopyCell text={remote?.url} />
+          </PageDetail>
+          {remote?.proxy_url ? (
+            <PageDetail label={t('Proxy URL')}>
+              <CopyCell text={remote?.proxy_url} />
+            </PageDetail>
+          ) : null}
           <PageDetail label={t('TLS validation')}>
             {remote?.tls_validation ? t('Enabled') : t('Disabled')}
           </PageDetail>

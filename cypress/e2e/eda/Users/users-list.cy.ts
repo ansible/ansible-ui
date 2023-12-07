@@ -1,5 +1,7 @@
 //Tests a user's ability to perform certain actions on the Users list in the EDA UI.
 
+import { edaAPI } from '../../../support/formatApiPathForEDA';
+
 describe('EDA Users List', () => {
   let roleIDs: { [key: string]: string };
   let editorRoleID: string;
@@ -53,9 +55,9 @@ describe('EDA Users List', () => {
         cy.navigateTo('eda', 'users');
         cy.selectTableRow(auditor.username, false);
         cy.selectTableRow(viewer.username, false);
-        cy.clickToolbarKebabAction(/^Delete selected users$/);
-        cy.intercept('DELETE', `/api/eda/v1/users/${auditor.id}/`).as('auditor');
-        cy.intercept('DELETE', `/api/eda/v1/users/${viewer.id}/`).as('viewer');
+        cy.clickToolbarKebabAction('delete-selected-users');
+        cy.intercept('DELETE', edaAPI`/users/${auditor.id.toString()}/`).as('auditor');
+        cy.intercept('DELETE', edaAPI`/users/${viewer.id.toString()}/`).as('viewer');
         cy.clickModalConfirmCheckbox();
         cy.clickModalButton('Delete users');
         cy.wait(['@auditor', '@viewer']).then((activationArr) => {
@@ -74,7 +76,7 @@ describe('EDA Users List', () => {
     }).then((edaUser) => {
       cy.navigateTo('eda', 'users');
       cy.selectTableRow(edaUser.username, false);
-      cy.clickToolbarKebabAction(/^Delete selected users$/);
+      cy.clickToolbarKebabAction('delete-selected-users');
       cy.get('#confirm').click();
       cy.clickButton(/^Delete user/);
       cy.contains(/^Success$/);

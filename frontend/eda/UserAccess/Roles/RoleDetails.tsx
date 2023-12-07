@@ -74,6 +74,7 @@ export function RoleDetails() {
               {role?.permissions.map((permission) => (
                 <DescriptionListGroup key={permission?.resource_type}>
                   <DescriptionListTerm
+                    data-cy={'permissions'}
                     style={{ fontWeight: 'normal' }}
                     key={permission?.resource_type}
                   >

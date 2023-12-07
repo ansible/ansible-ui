@@ -11,7 +11,7 @@ import {
   Tooltip,
 } from '@patternfly/react-core';
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
-import { DownloadIcon, EditIcon, HeartbeatIcon } from '@patternfly/react-icons';
+import { DownloadIcon, PencilAltIcon, HeartbeatIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -45,6 +45,7 @@ import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { useInstanceActions } from './hooks/useInstanceActions';
+import { LastModifiedPageDetail } from '../../../common/LastModifiedPageDetail';
 
 export function InstanceDetails() {
   const { t } = useTranslation();
@@ -61,7 +62,7 @@ export function InstanceDetails() {
         selection: PageActionSelection.Single,
         variant: ButtonVariant.primary,
         isPinned: true,
-        icon: EditIcon,
+        icon: PencilAltIcon,
         label: t('Edit instance'),
         onClick: (instance) => pageNavigate(AwxRoute.EditInstance, { params: { id: instance.id } }),
       },
@@ -211,9 +212,7 @@ export function InstanceDetailsTab(props: {
       <PageDetail label={t('Created')} data-cy="created">
         {formatDateString(instance.created)}
       </PageDetail>
-      <PageDetail label={t('Modified')} data-cy="modified">
-        {formatDateString(instance.modified)}
-      </PageDetail>
+      <LastModifiedPageDetail format="date-time" value={instance.modified} data-cy="modified" />
       <PageDetail label={t('Forks')} data-cy="forks">
         <div>
           {t('Total forks: ')}

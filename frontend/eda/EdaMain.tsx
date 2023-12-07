@@ -9,13 +9,14 @@ import { Login } from '../common/Login';
 import '../common/i18n';
 import { ActiveEdaUserProvider } from '../common/useActiveUser';
 import { EdaMasthead } from './EdaMasthead';
+import { edaAPI } from './api/eda-utils';
 import { useEdaNavigation } from './useEdaNavigation';
 
 export default function EdaMain() {
   const navigation = useEdaNavigation();
   return (
     <PageApp
-      login={<Login />}
+      login={<Login apiUrl={edaAPI`/auth/session/login/`} onLoginUrl="/overview" />}
       root={
         <ActiveEdaUserProvider>
           <Outlet />

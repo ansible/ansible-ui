@@ -8,6 +8,7 @@ import { PageApp } from '../../framework/PageNavigation/PageApp';
 import { Login } from '../common/Login';
 import '../common/i18n';
 import { HubMasthead } from './HubMasthead';
+import { hubAPI } from './api/formatPath';
 import { HubContextProvider } from './useHubContext';
 import { useHubNavigation } from './useHubNavigation';
 
@@ -15,7 +16,7 @@ export default function HubMain() {
   const navigation = useHubNavigation();
   return (
     <PageApp
-      login={<Login />}
+      login={<Login apiUrl={hubAPI`/_ui/v1/auth/login/`} onLoginUrl="/overview" />}
       root={
         <HubContextProvider>
           <Outlet />

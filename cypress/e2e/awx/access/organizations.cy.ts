@@ -3,6 +3,8 @@
 
 import { randomString } from '../../../../framework/utils/random-string';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
+import { User } from '../../../../frontend/awx/interfaces/User';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 describe('organizations', () => {
   before(() => {
@@ -21,9 +23,9 @@ describe('organizations', () => {
     cy.get('[data-cy="organization-name"]').type(organizationName);
     cy.clickButton(/^Create organization$/);
     cy.verifyPageTitle(organizationName);
-    cy.clickPageAction(/^Delete organization/);
+    cy.clickPageAction('delete-organization');
     cy.get('#confirm').click();
-    cy.intercept('DELETE', '/api/v2/organizations/*').as('delete');
+    cy.intercept('DELETE', awxAPI`/organizations/*`).as('delete');
     cy.clickButton(/^Delete organization/);
     cy.wait('@delete');
     cy.verifyPageTitle('Organizations');
@@ -31,15 +33,16 @@ describe('organizations', () => {
 
   it('renders the organization details page', function () {
     cy.navigateTo('awx', 'organizations');
-    cy.clickTableRow(`${(this.globalProjectOrg as Organization).name}`);
-    cy.verifyPageTitle(`${(this.globalProjectOrg as Organization).name}`);
+    cy.clickTableRow(`${(this.globalOrganization as Organization).name}`);
+    cy.verifyPageTitle(`${(this.globalOrganization as Organization).name}`);
     cy.clickLink(/^Details$/);
-    cy.contains('#name', `${(this.globalProjectOrg as Organization).name}`);
+    cy.contains('#name', `${(this.globalOrganization as Organization).name}`);
   });
 });
 
 describe('organizations edit and delete', function () {
   let organization: Organization;
+  let user: User;
 
   before(function () {
     cy.awxLogin();
@@ -50,10 +53,15 @@ describe('organizations edit and delete', function () {
     const orgName = 'E2E Organization ' + `${stringRandom}`;
     cy.createAwxOrganization(orgName).then((testOrganization) => {
       organization = testOrganization;
+      cy.createAwxUser(organization).then((testUser) => {
+        user = testUser;
+        cy.giveUserOrganizationAccess(organization.name, user.id, 'Read');
+      });
     });
   });
 
   afterEach(function () {
+    cy.deleteAwxUser(user, { failOnStatusCode: false });
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
 
@@ -97,9 +105,9 @@ describe('organizations edit and delete', function () {
     cy.navigateTo('awx', 'organizations');
     cy.clickTableRow(organization.name);
     cy.verifyPageTitle(organization.name);
-    cy.clickPageAction(/^Delete organization/);
+    cy.clickPageAction('delete-organization');
     cy.get('#confirm').click();
-    cy.intercept('DELETE', '/api/v2/organizations/*').as('delete');
+    cy.intercept('DELETE', awxAPI`/organizations/*`).as('delete');
     cy.clickButton(/^Delete organization/);
     cy.wait('@delete');
     cy.verifyPageTitle('Organizations');
@@ -124,14 +132,14 @@ describe('organizations edit and delete', function () {
     cy.navigateTo('awx', 'organizations');
     cy.intercept(
       'GET',
-      `/api/v2/organizations/?name__icontains=${endOfName}&order_by=name&page=1&page_size=10`
+      awxAPI`/organizations/?name__icontains=${endOfName}&order_by=name&page=1&page_size=10`
     ).as('orgResult');
     cy.searchAndDisplayResource(`${endOfName}`);
     cy.wait('@orgResult').then(() => {
       cy.get(`[data-cy="row-id-${organization.id}"]`).within(() => {
         cy.get('input').click();
       });
-      cy.clickToolbarKebabAction(/^Delete selected organizations$/);
+      cy.clickToolbarKebabAction('delete-selected-organizations');
       cy.get('#confirm').click();
       cy.clickButton(/^Delete organization/);
       cy.contains(/^Success$/);

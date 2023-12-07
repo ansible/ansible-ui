@@ -3,7 +3,8 @@ import { DropdownItem } from '@patternfly/react-core/deprecated';
 import { QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageMasthead, usePageNavigate } from '../../framework';
+import { useNavigate } from 'react-router-dom';
+import { PageMasthead } from '../../framework';
 import { PageMastheadDropdown } from '../../framework/PageMasthead/PageMastheadDropdown';
 import { PageNotificationsIcon } from '../../framework/PageMasthead/PageNotificationsIcon';
 import { PageSettingsIcon } from '../../framework/PageMasthead/PageSettingsIcon';
@@ -13,7 +14,6 @@ import { PageRefreshIcon } from '../common/PageRefreshIcon';
 import { postRequest } from '../common/crud/Data';
 import { useActiveUser } from '../common/useActiveUser';
 import { useClearCache } from '../common/useInvalidateCache';
-import { HubRoute } from './HubRoutes';
 import { hubAPI } from './api/formatPath';
 import Logo from './galaxy-logo.svg';
 
@@ -21,13 +21,13 @@ export function HubMasthead() {
   const { t } = useTranslation();
   const openAnsibleAboutModal = useAnsibleAboutModal();
   const { clearAllCache } = useClearCache();
-  const pageNavigate = usePageNavigate();
+  const navigate = useNavigate();
   const activeUser = useActiveUser();
   const logout = useCallback(async () => {
     await postRequest(hubAPI`/_ui/v1/auth/logout/`, {});
     clearAllCache();
-    pageNavigate(HubRoute.Login);
-  }, [clearAllCache, pageNavigate]);
+    navigate('/login');
+  }, [clearAllCache, navigate]);
   return (
     <PageMasthead
       icon={<Logo style={{ height: 48, marginTop: -8 }} />}
@@ -46,7 +46,7 @@ export function HubMasthead() {
           <PageSettingsIcon />
         </ToolbarItem>
         <ToolbarItem>
-          <PageNotificationsIcon count={0} onClick={() => pageNavigate(HubRoute.Approvals)} />
+          <PageNotificationsIcon />
         </ToolbarItem>
         <ToolbarItem>
           <PageMastheadDropdown id="help-menu" icon={<QuestionCircleIcon />}>

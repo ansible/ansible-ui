@@ -8,6 +8,8 @@ export function PageRoutedTabs(props: {
   backTab?: { label: string; page: string; persistentFilterKey: string };
   tabs: ({ label: string; page: string } | false)[];
   params?: { [key: string]: string | number | undefined };
+  // Use to pass data to tab's component. To access data in that component use useOutletContext()
+  componentParams?: { [key: string]: unknown };
 }) {
   const pageNavigate = usePageNavigate();
   const navigate = useNavigate();
@@ -75,7 +77,7 @@ export function PageRoutedTabs(props: {
       <div style={{ flexGrow: 1, overflow: 'hidden' }}>
         {/* PageLayout now sets its max height to 100% which is 100% of the div above, which allows it's contents to scroll. */}
         <PageLayout>
-          <Outlet />
+          <Outlet context={props.componentParams} />
         </PageLayout>
       </div>
     </>

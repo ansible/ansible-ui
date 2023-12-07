@@ -1,7 +1,7 @@
 export enum HubRoute {
   Hub = 'hub',
 
-  Dashboard = 'hub-dashboard',
+  Overview = 'hub-overview',
 
   // Automation Content
   Namespaces = 'hub-namespaces',
@@ -14,6 +14,13 @@ export enum HubRoute {
   Collections = 'hub-collections',
   UploadCollection = 'hub-create-collection',
   CollectionPage = 'hub-collection-page',
+  CollectionDetails = 'hub-collection-details',
+  CollectionInstall = 'hub-collection-install',
+  CollectionDocumentation = 'hub-collection-documentation',
+  CollectionContents = 'hub-collection-contents',
+  CollectionImportLog = 'hub-collection-page-import-log',
+  CollectionDistributions = 'hub-collection-distributions',
+  CollectionDependencies = 'hub-collection-dependencies',
 
   ExecutionEnvironments = 'hub-execution-environments',
   EditExecutionEnvironment = 'hub-edit-execution-environment',
@@ -44,9 +51,15 @@ export enum HubRoute {
 
   // Access
   Access = 'hub-access',
+  Organizations = 'hub-organizations',
+  Teams = 'hub-teams',
+  Users = 'hub-users',
   APIToken = 'hub-api-token',
   Roles = 'hub-roles',
   CreateRole = 'hub-create-role',
+  RolePage = 'hub-role-page',
+  RoleDetails = 'hub-role-details',
+  EditRole = 'hub-edit-role',
 
   Login = 'hub-login',
 }

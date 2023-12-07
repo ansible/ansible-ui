@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-/// <reference types="cypress" />
 
 import { UnifiedJobList } from '../../../../frontend/awx/interfaces/generated-from-swagger/api';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { JobTemplate } from '../../../../frontend/awx/interfaces/JobTemplate';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 describe('jobs', () => {
   let inventory: Inventory;
@@ -17,7 +17,7 @@ describe('jobs', () => {
   });
 
   before(function () {
-    const globalOrganization = this.globalProjectOrg as Organization;
+    const globalOrganization = this.globalOrganization as Organization;
     const globalProject = this.globalProject as Project;
     cy.createAwxInventory({ organization: globalOrganization.id }).then((inv) => {
       inventory = inv;
@@ -29,7 +29,7 @@ describe('jobs', () => {
         jobTemplate = jt;
 
         // Launch job to populate jobs list
-        cy.awxRequestPost(`/api/v2/job_templates/${jobTemplate.id.toString()}/launch/`, {}).then(
+        cy.awxRequestPost(awxAPI`/job_templates/${jobTemplate.id.toString()}/launch/`, {}).then(
           (jl) => {
             jobList = jl;
           }
@@ -40,7 +40,7 @@ describe('jobs', () => {
 
   after(() => {
     const jobId = jobList?.id ? jobList?.id.toString() : '';
-    cy.awxRequestDelete(`/api/v2/jobs/${jobId}/`, { failOnStatusCode: false });
+    cy.awxRequestDelete(awxAPI`/jobs/${jobId}/`, { failOnStatusCode: false });
     cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
   });
@@ -121,7 +121,7 @@ describe('job delete', () => {
   });
 
   beforeEach(function () {
-    const globalOrganization = this.globalProjectOrg as Organization;
+    const globalOrganization = this.globalOrganization as Organization;
     const globalProject = this.globalProject as Project;
     cy.createAwxInventory({ organization: globalOrganization.id }).then((inv) => {
       inventory = inv;
@@ -133,7 +133,7 @@ describe('job delete', () => {
         jobTemplate = jt;
 
         // Launch job to populate jobs list
-        cy.awxRequestPost(`/api/v2/job_templates/${jobTemplate.id.toString()}/launch/`, {}).then(
+        cy.awxRequestPost(awxAPI`/job_templates/${jobTemplate.id.toString()}/launch/`, {}).then(
           (jl) => {
             jobList = jl;
           }
@@ -144,21 +144,21 @@ describe('job delete', () => {
 
   afterEach(() => {
     const jobId = jobList?.id ? jobList?.id.toString() : '';
-    cy.awxRequestDelete(`/api/v2/jobs/${jobId}/`, { failOnStatusCode: false });
+    cy.awxRequestDelete(awxAPI`/jobs/${jobId}/`, { failOnStatusCode: false });
     cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
   });
 
   it('deletes a job from the jobs list row', () => {
     const jobTemplateId = jobTemplate.id ? jobTemplate.id.toString() : '';
-    cy.requestPost<UnifiedJobList>(`/api/v2/job_templates/${jobTemplateId}/launch/`, {}).then(
+    cy.requestPost<UnifiedJobList>(awxAPI`/job_templates/${jobTemplateId}/launch/`, {}).then(
       (testJob) => {
         cy.navigateTo('awx', 'jobs');
         const jobId = testJob.id ? testJob.id.toString() : '';
         cy.filterTableByTypeAndText('ID', jobId);
         const jobName = testJob.name ? testJob.name : '';
         cy.waitForJobToProcessEvents(jobId);
-        cy.clickTableRowKebabAction(jobName, /^Delete job$/, false);
+        cy.clickTableRowKebabAction(jobName, 'delete-job', false);
         cy.get('#confirm').click();
         cy.clickButton(/^Delete job/);
         cy.contains(/^Success$/);
@@ -171,20 +171,20 @@ describe('job delete', () => {
 
   it('deletes a job from the jobs list toolbar', () => {
     cy.requestPost<UnifiedJobList>(
-      `/api/v2/job_templates/${jobTemplate.id.toString()}/launch/`,
+      awxAPI`/job_templates/${jobTemplate.id.toString()}/launch/`,
       {} as UnifiedJobList
     ).then((jobList) => {
       cy.navigateTo('awx', 'jobs');
       const jobId = jobList.id ? jobList.id.toString() : '';
       cy.intercept(
         'GET',
-        `/api/v2/unified_jobs/?not__launch_type=sync&id=${jobId}&order_by=-finished&page=1&page_size=10`
+        awxAPI`/unified_jobs/?not__launch_type=sync&id=${jobId}&order_by=-finished&page=1&page_size=10`
       ).as('jobRun');
       cy.filterTableByTypeAndText('ID', jobId);
       const jobName = jobList.name ? jobList.name : '';
       cy.waitForJobToProcessEvents(jobId);
       cy.selectTableRow(jobName, false);
-      cy.clickToolbarKebabAction(/^Delete selected jobs$/);
+      cy.clickToolbarKebabAction('delete-selected-jobs');
       cy.get('#confirm').click();
       cy.clickButton(/^Delete job/);
       cy.contains(/^Success$/);

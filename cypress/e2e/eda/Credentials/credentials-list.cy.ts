@@ -1,5 +1,7 @@
 //Tests a user's ability to perform certain actions on the Credentials list in the EDA UI.
 
+import { edaAPI } from '../../../support/formatApiPathForEDA';
+
 describe('EDA Credentials List', () => {
   before(() => {
     cy.edaLogin();
@@ -35,10 +37,13 @@ describe('EDA Credentials List', () => {
       cy.createEdaCredential().then((testCredential) => {
         cy.navigateTo('eda', 'credentials');
         cy.selectTableRow(edaCredential.name);
+        cy.clearAllFilters();
         cy.selectTableRow(testCredential.name);
-        cy.clickToolbarKebabAction(/^Delete selected credentials$/);
-        cy.intercept('DELETE', `/api/eda/v1/credentials/${edaCredential.id}/`).as('edaCredential');
-        cy.intercept('DELETE', `/api/eda/v1/credentials/${testCredential.id}/`).as(
+        cy.clickToolbarKebabAction('delete-selected-credentials');
+        cy.intercept('DELETE', edaAPI`/credentials/${edaCredential.id.toString()}/`).as(
+          'edaCredential'
+        );
+        cy.intercept('DELETE', edaAPI`/credentials/${testCredential.id.toString()}/`).as(
           'testCredential'
         );
         cy.clickModalConfirmCheckbox();

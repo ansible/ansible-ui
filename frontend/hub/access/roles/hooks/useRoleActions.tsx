@@ -7,14 +7,16 @@ import {
   useGetPageUrl,
 } from '../../../../../framework';
 import { useMemo } from 'react';
-import { EditIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useHubContext } from '../../../useHubContext';
 import { HubRoute } from '../../../HubRoutes';
+import { useDeleteRoles } from './useDeleteRoles';
 
-export function useRoleToolbarActions() {
+export function useRoleToolbarActions(onComplete: (roles: Role[]) => void) {
   const { t } = useTranslation();
   const { user } = useHubContext();
   const getPageUrl = useGetPageUrl();
+  const deleteRoles = useDeleteRoles(onComplete);
 
   return useMemo<IPageAction<Role>[]>(
     () => [
@@ -24,7 +26,7 @@ export function useRoleToolbarActions() {
         isPinned: true,
         icon: PlusCircleIcon,
         label: t('Create role'),
-        isDisabled: user.is_superuser
+        isDisabled: user?.is_superuser
           ? undefined
           : t(
               'You do not have permission to create a role. Please contact your system administrator if there is an issue with your access.'
@@ -37,24 +39,25 @@ export function useRoleToolbarActions() {
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
         label: t('Delete selected roles'),
-        onClick: () => alert('TODO'),
+        onClick: deleteRoles,
         isDanger: true,
       },
     ],
-    [getPageUrl, t, user.is_superuser]
+    [deleteRoles, getPageUrl, t, user?.is_superuser]
   );
 }
 
-export function useRoleRowActions() {
+export function useRoleRowActions(onComplete: (roles: Role[]) => void) {
   const { t } = useTranslation();
   const { user } = useHubContext();
+  const deleteRoles = useDeleteRoles(onComplete);
 
   return useMemo<IPageAction<Role>[]>(
     () => [
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        icon: EditIcon,
+        icon: PencilAltIcon,
         isPinned: true,
         label: t('Edit role'),
         isDisabled: (role) =>
@@ -77,16 +80,16 @@ export function useRoleRowActions() {
         isDisabled: (role) =>
           role.locked
             ? t('Built-in roles cannot be deleted.')
-            : user.is_superuser
+            : user?.is_superuser
             ? undefined
             : t(
                 'You do not have permission to delete this role. Please contact your organization administrator if there is an issue with your access.'
               ),
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        onClick: (role) => alert('TODO'),
+        onClick: (role) => deleteRoles([role]),
         isDanger: true,
       },
     ],
-    [t, user.is_superuser]
+    [deleteRoles, t, user?.is_superuser]
   );
 }

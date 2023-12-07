@@ -34,11 +34,11 @@ describe('Inventory source page', () => {
 
   it('deletes an inventory source from the details page', () => {
     cy.visit(
-      `/ui_next/resources/inventories/inventory/${inventorySource.inventory}/sources/${inventorySource.id}/details`
+      `/ui_next/infrastructure/inventories/inventory/${inventorySource.inventory}/sources/${inventorySource.id}/details`
     );
 
     cy.verifyPageTitle(inventorySource.name);
-    cy.clickPageAction(/^Delete inventory source/);
+    cy.clickPageAction('delete-inventory-source');
     cy.get('#confirm').click();
     cy.clickButton(/^Delete inventory source/);
   });

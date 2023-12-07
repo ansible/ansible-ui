@@ -1,7 +1,7 @@
 export enum AwxRoute {
   Awx = 'awx',
 
-  Dashboard = 'awx-dashboard',
+  Overview = 'awx-overview',
 
   // Views
 
@@ -75,7 +75,6 @@ export enum AwxRoute {
   ProjectScheduleCreate = 'awx-project-schedule-create',
   ProjectScheduleEdit = 'awx-project-schedule-edit',
   ProjectSchedules = 'awx-project-schedules',
-  ProjectSurvey = 'awx-project-survey',
 
   ProjectSchedulePage = 'awx-project-schedule-page',
   ProjectScheduleDetails = 'awx-project-schedule-details',
@@ -147,6 +146,9 @@ export enum AwxRoute {
   UserRoles = 'awx-user-roles',
   AddRolesToUser = 'awx-add-roles-to-user',
 
+  Roles = 'awx-roles',
+  Role = 'awx-role',
+
   // Administration
 
   CredentialTypes = 'awx-credential-types',
@@ -162,6 +164,7 @@ export enum AwxRoute {
 
   ManagementJobs = 'awx-management-jobs',
   ManagementJobPage = 'awx-management-job-page',
+  ManagementJobDetails = 'awx-management-job-details',
   ManagementJobSchedules = 'awx-management-job-schedules',
   ManagementJobNotifications = 'awx-management-job-notifications',
 
@@ -184,6 +187,8 @@ export enum AwxRoute {
   ApplicationPage = 'awx-application-page',
   ApplicationDetails = 'awx-application-details',
   ApplicationTokens = 'awx-application-tokens',
+  CreateApplication = 'awx-create-application',
+  EditApplication = 'awx-edit-application',
 
   ExecutionEnvironments = 'awx-execution-environments',
 

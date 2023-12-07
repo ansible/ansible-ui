@@ -1,6 +1,12 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ColumnTableOption, ITableColumn, TextCell, useGetPageUrl } from '../../../../framework';
+import {
+  ColumnTableOption,
+  CopyCell,
+  ITableColumn,
+  TextCell,
+  useGetPageUrl,
+} from '../../../../framework';
 import { HubRoute } from '../../HubRoutes';
 import { IRemotes } from '../Remotes';
 
@@ -18,15 +24,11 @@ export function useRemoteColumns() {
           />
         ),
         sort: 'name',
-        card: 'name',
-        list: 'name',
       },
       {
         header: t('URL'),
-        cell: (remote) => <TextCell text={remote.url} />,
+        cell: (remote) => <CopyCell text={remote.url} />,
         sort: 'url',
-        card: 'name',
-        list: 'name',
       },
       {
         header: t('Created'),
