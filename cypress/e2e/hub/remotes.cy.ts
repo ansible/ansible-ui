@@ -6,6 +6,39 @@ describe('Remotes', () => {
     cy.hubLogin();
   });
 
+  it('bulk delete remotes', () => {
+    for (let i = 0; i < 5; i++) {
+      const remoteName = `test-remote-${randomString(5, undefined, { isLowercase: true })}`;
+      cy.createRemote(remoteName);
+    }
+    cy.navigateTo('hub', 'remotes');
+    cy.setTablePageSize('50');
+    cy.get('#select-all').click();
+    cy.clickToolbarKebabAction('delete-selected-remotes');
+    cy.get('#confirm').click();
+    cy.clickButton(/^Delete remotes$/);
+    cy.contains(/^Success$/);
+    cy.clickButton(/^Close$/);
+  });
+
+  it('explore different views and pagination', () => {
+    const remoteName = `test-remote-${randomString(5, undefined, { isLowercase: true })}`;
+    cy.createRemote(remoteName);
+    cy.navigateTo('hub', 'remotes');
+    cy.setTablePageSize('50');
+    cy.searchAndDisplayResource(remoteName);
+    cy.get('[data-cy="card-view"]').click();
+    cy.get('[data-cy="list-view"]').click();
+    cy.get('[data-cy="table-view"]').click();
+    cy.get('#select-all').click();
+    cy.clickToolbarKebabAction('delete-selected-remotes');
+    cy.get('#confirm').click();
+    cy.clickButton(/^Delete remotes$/);
+    cy.contains(/^Success$/);
+    cy.clickButton(/^Close$/);
+    cy.clickButton(/^Clear all filters$/);
+  });
+
   it('create, search and delete a remote', () => {
     cy.navigateTo('hub', 'remotes');
     const remoteName = `test-remote-${randomString(5, undefined, { isLowercase: true })}`;
