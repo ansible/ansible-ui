@@ -46,6 +46,20 @@ export function ApplicationTokens() {
     [deleteTokens, t]
   );
 
+  const rowActions = useMemo<IPageAction<Token>[]>(
+    () => [
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: TrashIcon,
+        label: t('Delete token'),
+        onClick: (token) => deleteTokens([token]),
+        isDanger: true,
+      },
+    ],
+    [t, deleteTokens]
+  );
+
   return (
     <PageLayout>
       <PageHeader
@@ -60,6 +74,7 @@ export function ApplicationTokens() {
         toolbarFilters={toolbarFilters}
         toolbarActions={toolbarActions}
         tableColumns={tableColumns}
+        rowActions={rowActions}
         errorStateTitle={t('Error loading applications')}
         emptyStateTitle={t('There are currently no tokens associated with this application')}
         emptyStateDescription={t('You can create a token from your user page.')}
