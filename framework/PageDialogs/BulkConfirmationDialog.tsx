@@ -31,6 +31,10 @@ const ConfirmBoxDiv = styled.div`
   height: 64px;
   display: flex;
   align-items: center;
+
+  &:focus {
+    outline: none;
+  }
 `;
 
 export interface BulkConfirmationDialog<T extends object> {
@@ -143,6 +147,13 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
 
   const modalColumns = useVisibleModalColumns(columnsForConfirmation);
 
+  const handleKeyDown = useCallback((event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'Enter') {
+      setConfirmed((prev) => !prev);
+      event.preventDefault();
+    }
+  }, []);
+
   return (
     <Modal
       titleIconVariant={isDanger ? 'warning' : undefined}
@@ -202,7 +213,7 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
             />
           </ModalBodyDiv>
           {confirmText && actionableItems.length > 0 && (
-            <ConfirmBoxDiv>
+            <ConfirmBoxDiv tabIndex={0} onKeyDown={handleKeyDown}>
               <Checkbox
                 id="confirm"
                 ouiaId="confirm"
