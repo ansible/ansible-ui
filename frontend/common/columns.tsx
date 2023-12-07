@@ -29,16 +29,18 @@ export function useIdColumn<T extends { name: string; id: number }>(isHidden: bo
 }
 
 export function useNameColumn<
-  T extends {
-    name?: string;
-    hostname?: string;
-    id: number;
-    summary_fields?: {
-      user: {
-        username: string;
-      };
-    };
-  },
+  T extends
+    | {
+        name?: string;
+        hostname?: string;
+        id: number;
+        summary_fields?: { user?: { username?: string } };
+      }
+    | {
+        name?: string;
+        hostname?: string;
+        id: number;
+      },
 >(options?: {
   header?: string;
   url?: string;
@@ -54,7 +56,11 @@ export function useNameColumn<
       header: options?.header ?? t('Name'),
       cell: (item: T) => (
         <TextCell
-          text={item.name || item.hostname || item.summary_fields?.user?.username}
+          text={
+            item.name ||
+            item.hostname ||
+            ('summary_fields' in item ? item.summary_fields?.user?.username : undefined)
+          }
           iconSize="sm"
           to={disableLinks ? undefined : url?.replace(':id', item.id.toString())}
           onClick={!disableLinks && onClick ? () => onClick?.(item) : undefined}
