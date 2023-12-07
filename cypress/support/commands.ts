@@ -46,6 +46,7 @@ import './e2e';
 import './eda-commands';
 import './hub-commands';
 import './rest-commands';
+import 'cypress-file-upload';
 
 declare global {
   namespace Cypress {
