@@ -822,6 +822,8 @@ declare global {
       deleteCollectionsInNamespace(namespaceName: string): Cypress.Chainable<void>;
       createHubRole(): Cypress.Chainable<HubRole>;
       deleteHubRole(role: HubRole): Cypress.Chainable<void>;
+      createRemote(remoteName: string): Cypress.Chainable<void>;
+      deleteRemote(remoteName: string): Cypress.Chainable<void>;
     }
   }
 }
