@@ -289,6 +289,7 @@ export function useTypeColumn<T extends object>(options: {
 export function useScopeColumn<T extends { scope?: string }>(options?: {
   header?: string;
   disableSort?: boolean;
+  disableLinks?: boolean;
   sort?: string;
 }) {
   const { t } = useTranslation();
@@ -305,6 +306,7 @@ export function useScopeColumn<T extends { scope?: string }>(options?: {
 export function useExpiresColumn<T extends { expires?: string }>(options?: {
   header?: string;
   disableSort?: boolean;
+  disableLinks?: boolean;
   sort?: string;
 }) {
   const { t } = useTranslation();

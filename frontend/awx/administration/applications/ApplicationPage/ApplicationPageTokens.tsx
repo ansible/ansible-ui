@@ -1,13 +1,23 @@
 import { useTranslation } from 'react-i18next';
-import { PageHeader, PageLayout, PageTable } from '../../../../../framework';
+import {
+  IPageAction,
+  PageActionSelection,
+  PageActionType,
+  PageHeader,
+  PageLayout,
+  PageTable,
+} from '../../../../../framework';
 import { useAwxView } from '../../../useAwxView';
 import { useAwxConfig } from '../../../common/useAwxConfig';
 import getDocsBaseUrl from '../../../common/util/getDocsBaseUrl';
 import { useTokensColumns } from '../hooks/useTokensColumns';
+import { useDeleteTokens } from '../hooks/useDeleteTokens';
 import { awxAPI } from '../../../api/awx-utils';
 import { Token } from '../../../interfaces/Token';
 import { useParams } from 'react-router-dom';
 import { useTokensFilters } from '../hooks/useTokensFilters';
+import { TrashIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
 
 export function ApplicationTokens() {
   const { t } = useTranslation();
@@ -20,6 +30,21 @@ export function ApplicationTokens() {
     tableColumns,
     toolbarFilters,
   });
+  const deleteTokens = useDeleteTokens(view.unselectItemsAndRefresh);
+
+  const toolbarActions = useMemo<IPageAction<Token>[]>(
+    () => [
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
+        icon: TrashIcon,
+        label: t('Delete selected tokens'),
+        onClick: deleteTokens,
+        isDanger: true,
+      },
+    ],
+    [deleteTokens, t]
+  );
 
   return (
     <PageLayout>
@@ -33,12 +58,13 @@ export function ApplicationTokens() {
       <PageTable<Token>
         id="awx-applications-token-table"
         toolbarFilters={toolbarFilters}
+        toolbarActions={toolbarActions}
         tableColumns={tableColumns}
         errorStateTitle={t('Error loading applications')}
         emptyStateTitle={t('There are currently no tokens associated with this application')}
-        emptyStateDescription={t('Please create an application by using the button below.')}
+        emptyStateDescription={t('You can create a token from your user page.')}
         {...view}
-        defaultSubtitle={t('Tokens')}
+        defaultSubtitle={t('Token')}
       />
     </PageLayout>
   );
