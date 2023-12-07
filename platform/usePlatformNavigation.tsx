@@ -106,7 +106,7 @@ export function usePlatformNavigation() {
       id: PlatformRoute.EDA,
       label: t('Automation Decisions'),
       subtitle: t('Event Driven Automation'),
-      path: 'descicions',
+      path: 'decisions',
       children: edaNav,
       hidden: !hasEda,
     });
