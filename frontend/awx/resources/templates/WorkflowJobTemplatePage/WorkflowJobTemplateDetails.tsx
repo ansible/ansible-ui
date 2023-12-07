@@ -7,10 +7,11 @@ import {
   TextListVariants,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { LoadingPage, PageDetail, PageDetails, useGetPageUrl } from '../../../../../framework';
 import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
 import { useGetItem } from '../../../../common/crud/useGet';
+import { LastModifiedPageDetail } from '../../../../common/LastModifiedPageDetail';
 import { awxAPI } from '../../../api/awx-utils';
 import { AwxRoute } from '../../../AwxRoutes';
 import { AwxError } from '../../../common/AwxError';
@@ -28,6 +29,7 @@ export function WorkflowJobTemplateDetails(props: { templateId?: string }) {
     refresh,
   } = useGetItem<WorkflowJobTemplate>(awxAPI`/workflow_job_templates/`, urlId);
   const getPageUrl = useGetPageUrl();
+  const history = useNavigate();
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!template) return <LoadingPage breadcrumbs tabs />;
 
@@ -94,10 +96,17 @@ export function WorkflowJobTemplateDetails(props: { templateId?: string }) {
         date={template.created}
         user={template.summary_fields.created_by}
       />
-      <UserDateDetail
-        label={t('Last modified')}
-        date={template.modified}
-        user={template.summary_fields.modified_by}
+      <LastModifiedPageDetail
+        value={template.modified}
+        format="date-time"
+        author={template.summary_fields.modified_by?.username}
+        onClick={() =>
+          history(
+            getPageUrl(AwxRoute.UserDetails, {
+              params: { id: (template.summary_fields?.modified_by?.id ?? 0).toString() },
+            })
+          )
+        }
       />
       <PageDetail label={t('Labels')} isEmpty={!summaryFields.labels?.results?.length}>
         <LabelGroup>

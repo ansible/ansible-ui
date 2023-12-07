@@ -25,6 +25,7 @@ import { useVerbosityString } from '../../../common/useVerbosityString';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { Inventory } from '../../../interfaces/Inventory';
 import { useGetInventory } from './InventoryPage';
+import { LastModifiedPageDetail } from '../../../../common/LastModifiedPageDetail';
 
 function useInstanceGroups(inventoryId: string) {
   const { data } = useGet<{ results: InstanceGroup[] }>(
@@ -170,21 +171,19 @@ export function InventoryDetailsInner(props: { inventory: Inventory }) {
           }
         />
       </PageDetail>
-      <PageDetail label={t('Last modified')}>
-        <DateTimeCell
-          format="since"
-          value={inventory.modified}
-          author={inventory.summary_fields?.modified_by?.username}
-          onClick={() =>
-            navigate(
-              RouteObj.UserDetails.replace(
-                ':id',
-                (inventory.summary_fields?.modified_by?.id ?? 0).toString()
-              )
+      <LastModifiedPageDetail
+        format="since"
+        value={inventory.modified}
+        author={inventory.summary_fields?.modified_by?.username}
+        onClick={() =>
+          navigate(
+            RouteObj.UserDetails.replace(
+              ':id',
+              (inventory.summary_fields?.modified_by?.id ?? 0).toString()
             )
-          }
-        />
-      </PageDetail>
+          )
+        }
+      />
       <PageDetail label={t('Enabled options')} isEmpty={!inventory.prevent_instance_group_fallback}>
         <TextList component={TextListVariants.ul}>
           {inventory.prevent_instance_group_fallback && (

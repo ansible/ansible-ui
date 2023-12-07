@@ -1,5 +1,11 @@
 import { useTranslation } from 'react-i18next';
-import { DateTimeCell, PageDetail, PageDetails, useGetPageUrl } from '../../../../../framework';
+import {
+  DateTimeCell,
+  PageDetail,
+  PageDetails,
+  Scrollable,
+  useGetPageUrl,
+} from '../../../../../framework';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { useNavigate, useParams } from 'react-router-dom';
 import { CredentialType } from '../../../interfaces/CredentialType';
@@ -8,6 +14,7 @@ import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageD
 import { Label } from '@patternfly/react-core';
 import { jsonToYaml } from '../../../../../framework/utils/codeEditorUtils';
 import { awxAPI } from '../../../api/awx-utils';
+import { LastModifiedPageDetail } from '../../../../common/LastModifiedPageDetail';
 
 export function CredentialTypeDetails() {
   const params = useParams<{ id: string }>();
@@ -36,39 +43,39 @@ export function CredentialTypeDetailInner(props: { credentialType: CredentialTyp
   }
 
   return (
-    <PageDetails>
-      <PageDetail label={t('Name')}>{renderCredentialTypeName(props.credentialType)}</PageDetail>
-      <PageDetail label={t('Description')}>{props.credentialType.description}</PageDetail>
-      <PageDetailCodeEditor
-        helpText={t('Input schema which defines a set of ordered fields for that type.')}
-        label={t('Input configuration')}
-        value={jsonToYaml(JSON.stringify(props.credentialType.inputs))}
-      />
-      <PageDetailCodeEditor
-        helpText={t(
-          'Environment variables or extra variables that specify the values a credential type can inject.'
-        )}
-        label={t('Injector configuration')}
-        value={jsonToYaml(JSON.stringify(props.credentialType.injectors))}
-      />
-      <PageDetail label={t('Created')}>
-        <DateTimeCell
-          format="since"
-          value={props.credentialType.created}
-          author={props.credentialType.summary_fields?.created_by?.username}
-          onClick={() =>
-            history(
-              getPageUrl(AwxRoute.UserDetails, {
-                params: {
-                  id: (props.credentialType.summary_fields?.created_by?.id ?? 0).toString(),
-                },
-              })
-            )
-          }
+    <Scrollable>
+      <PageDetails>
+        <PageDetail label={t('Name')}>{renderCredentialTypeName(props.credentialType)}</PageDetail>
+        <PageDetail label={t('Description')}>{props.credentialType.description}</PageDetail>
+        <PageDetailCodeEditor
+          helpText={t('Input schema which defines a set of ordered fields for that type.')}
+          label={t('Input configuration')}
+          value={jsonToYaml(JSON.stringify(props.credentialType.inputs))}
         />
-      </PageDetail>
-      <PageDetail label={t('Last modified')}>
-        <DateTimeCell
+        <PageDetailCodeEditor
+          helpText={t(
+            'Environment variables or extra variables that specify the values a credential type can inject.'
+          )}
+          label={t('Injector configuration')}
+          value={jsonToYaml(JSON.stringify(props.credentialType.injectors))}
+        />
+        <PageDetail label={t('Created')}>
+          <DateTimeCell
+            format="since"
+            value={props.credentialType.created}
+            author={props.credentialType.summary_fields?.created_by?.username}
+            onClick={() =>
+              history(
+                getPageUrl(AwxRoute.UserDetails, {
+                  params: {
+                    id: (props.credentialType.summary_fields?.created_by?.id ?? 0).toString(),
+                  },
+                })
+              )
+            }
+          />
+        </PageDetail>
+        <LastModifiedPageDetail
           format="since"
           value={props.credentialType.modified}
           author={props.credentialType.summary_fields?.modified_by?.username}
@@ -82,7 +89,7 @@ export function CredentialTypeDetailInner(props: { credentialType: CredentialTyp
             )
           }
         />
-      </PageDetail>
-    </PageDetails>
+      </PageDetails>
+    </Scrollable>
   );
 }
