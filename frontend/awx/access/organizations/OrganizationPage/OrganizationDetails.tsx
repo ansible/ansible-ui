@@ -12,6 +12,7 @@ import { Credential } from '../../../interfaces/Credential';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { Organization } from '../../../interfaces/Organization';
 import { awxAPI } from '../../../api/awx-utils';
+import { LastModifiedPageDetail } from '../../../../common/LastModifiedPageDetail';
 
 function useGalaxyCredentials(orgId: string) {
   const { data } = useGet<{ results: Credential[] }>(
@@ -72,20 +73,18 @@ export function OrganizationDetails() {
           }
         />
       </PageDetail>
-      <PageDetail label={t('Last modified')}>
-        <DateTimeCell
-          format="since"
-          value={organization.modified}
-          author={organization.summary_fields?.modified_by?.username}
-          onClick={() =>
-            history(
-              getPageUrl(AwxRoute.UserDetails, {
-                params: { id: (organization.summary_fields?.modified_by?.id ?? 0).toString() },
-              })
-            )
-          }
-        />
-      </PageDetail>
+      <LastModifiedPageDetail
+        format="since"
+        value={organization.modified}
+        author={organization.summary_fields?.modified_by?.username}
+        onClick={() =>
+          history(
+            getPageUrl(AwxRoute.UserDetails, {
+              params: { id: (organization.summary_fields?.modified_by?.id ?? 0).toString() },
+            })
+          )
+        }
+      />
       <PageDetail
         label={t`Instance groups`}
         helpText={t`The instance groups for this organization to run on.`}

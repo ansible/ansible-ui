@@ -32,9 +32,8 @@ describe('InventorySourceDetails', () => {
       'have.text',
       'dev'
     );
-    cy.get('#modified > .pf-v5-c-description-list__text > .date-time > .pf-v5-c-button').should(
-      'have.text',
-      'dev'
-    );
+    cy.get(
+      '#last-modified > .pf-v5-c-description-list__text > .date-time > .pf-v5-c-button'
+    ).should('have.text', 'dev');
   });
 });

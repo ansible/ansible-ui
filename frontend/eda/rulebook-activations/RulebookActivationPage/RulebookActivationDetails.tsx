@@ -18,6 +18,7 @@ import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { RestartPolicyEnum, Status906Enum } from '../../interfaces/generated/eda-api';
 import { EdaExtraVarsCell } from '../components/EdaExtraVarCell';
 import { edaAPI } from '../../api/eda-utils';
+import { LastModifiedPageDetail } from '../../../common/LastModifiedPageDetail';
 
 export function RulebookActivationDetails() {
   const { t } = useTranslation();
@@ -122,9 +123,12 @@ export function RulebookActivationDetails() {
         <PageDetail label={t('Created')}>
           {rulebookActivation?.created_at ? formatDateString(rulebookActivation?.created_at) : ''}
         </PageDetail>
-        <PageDetail label={t('Last modified')}>
-          {rulebookActivation?.modified_at ? formatDateString(rulebookActivation?.modified_at) : ''}
-        </PageDetail>
+        <LastModifiedPageDetail
+          format="date-time"
+          value={
+            rulebookActivation?.modified_at ? formatDateString(rulebookActivation?.modified_at) : ''
+          }
+        />
       </PageDetails>
       {rulebookActivation?.extra_var?.id && (
         <PageSection variant="light">

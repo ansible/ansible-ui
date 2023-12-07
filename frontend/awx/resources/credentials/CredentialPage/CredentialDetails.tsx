@@ -20,6 +20,7 @@ import { CredentialInputSource } from '../../../interfaces/CredentialInputSource
 import { CredentialType } from '../../../interfaces/CredentialType';
 import { CredentialTypeDetail } from '../components/CredentialTypeDetail';
 import { awxAPI } from '../../../api/awx-utils';
+import { LastModifiedPageDetail } from '../../../../common/LastModifiedPageDetail';
 
 const PluginFieldText = styled.p`
   margin-top: 10px;
@@ -137,21 +138,19 @@ export function CredentialDetailsInner(props: { credential: Credential }) {
           }
         />
       </PageDetail>
-      <PageDetail label={t('Last modified')}>
-        <DateTimeCell
-          format="since"
-          value={credential.modified}
-          author={credential.summary_fields?.modified_by?.username}
-          onClick={() =>
-            navigate(
-              RouteObj.UserDetails.replace(
-                ':id',
-                (credential.summary_fields?.modified_by?.id ?? 0).toString()
-              )
+      <LastModifiedPageDetail
+        format="since"
+        value={credential.modified}
+        author={credential.summary_fields?.modified_by?.username}
+        onClick={() =>
+          navigate(
+            RouteObj.UserDetails.replace(
+              ':id',
+              (credential.summary_fields?.modified_by?.id ?? 0).toString()
             )
-          }
-        />
-      </PageDetail>
+          )
+        }
+      />
       {credentialInputs && inputSources && Object.keys(inputSources).length > 0 && (
         <PluginFieldText>
           {t`* This field will be retrieved from an external secret management system using the specified credential.`}
