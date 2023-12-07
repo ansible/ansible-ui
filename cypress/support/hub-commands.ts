@@ -130,3 +130,14 @@ Cypress.Commands.add(
     }
   }
 );
+
+Cypress.Commands.add('createRemote', (remoteName: string) => {
+  cy.requestPost(pulpAPI`/remotes/ansible/collection/`, {
+    name: remoteName,
+    url: 'https://console.redhat.com/api/automation-hub/',
+  });
+});
+
+Cypress.Commands.add('deleteRemote', (remoteName: string) => {
+  cy.requestDelete(pulpAPI`/remotes/ansible/collection/${remoteName}/`);
+});
