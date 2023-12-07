@@ -4,7 +4,7 @@ import { useNameColumn, useScopeColumn, useExpiresColumn } from '../../../../com
 import { AwxRoute } from '../../../AwxRoutes';
 import { Token } from '../../../interfaces/Token';
 
-export function useTokensColumns() {
+export function useTokensColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const pageNavigate = usePageNavigate();
 
   const nameClick = useCallback(
@@ -14,9 +14,10 @@ export function useTokensColumns() {
   const nameColumn = useNameColumn({
     onClick: nameClick,
     sort: 'user__username',
+    ...options,
   });
-  const scopeColumn = useScopeColumn();
-  const expiresColumn = useExpiresColumn();
+  const scopeColumn = useScopeColumn(options);
+  const expiresColumn = useExpiresColumn(options);
 
   const tableColumns = useMemo<ITableColumn<Token>[]>(
     () => [nameColumn, scopeColumn, expiresColumn],
