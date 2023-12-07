@@ -28,8 +28,11 @@ describe('Remotes', () => {
     cy.setTablePageSize('50');
     cy.searchAndDisplayResource(remoteName);
     cy.get('[data-cy="card-view"]').click();
+    cy.contains(remoteName).should('be.visible');
     cy.get('[data-cy="list-view"]').click();
+    cy.contains(remoteName).should('be.visible');
     cy.get('[data-cy="table-view"]').click();
+    cy.contains(remoteName).should('be.visible');
     cy.get('#select-all').click();
     cy.clickToolbarKebabAction('delete-selected-remotes');
     cy.get('#confirm').click();
