@@ -85,14 +85,14 @@ export function useLastRanColumn(options?: {
   hideByDefaultInTableView?: boolean;
 }) {
   const { t } = useTranslation();
-  const column: ITableColumn<{ last_job_run: string }> = useMemo(
+  const column: ITableColumn<{ last_job_run: string | null }> = useMemo(
     () => ({
       header: t('Last Ran'),
       cell: (item) => {
         if (!item.last_job_run) return <></>;
         return <DateTimeCell format="since" value={item.last_job_run} />;
       },
-      sort: options?.disableSort ? undefined : options?.sortKey ?? 'created',
+      sort: options?.disableSort ? undefined : options?.sortKey ?? 'last_job_run',
       defaultSortDirection: 'desc',
     }),
     [options?.disableSort, options?.sortKey, t]
