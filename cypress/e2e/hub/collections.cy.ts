@@ -1,6 +1,6 @@
 import { Collections } from './constants';
 
-describe('Collections List View', () => {
+describe('Collections- List View', () => {
   before(() => {
     cy.hubLogin();
   });
