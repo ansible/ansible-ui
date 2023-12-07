@@ -39,6 +39,7 @@ export const RemoteRegistry = {
   downloadConcurrency: '5',
   rateLimit: '10',
   tlsValidation: 'Disabled',
+  syncStatus: 'Completed',
 };
 
 export const Collections = {
