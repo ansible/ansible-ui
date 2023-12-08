@@ -17,18 +17,14 @@ import { CollectionVersionSearch } from '../Collection';
 import { useCollectionActions } from '../hooks/useCollectionActions';
 import { usePageNavigate } from '../../../../framework';
 import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
+import { useParams } from 'react-router-dom';
 
 export function CollectionPage() {
   const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
+  const { name, namespace, repository, version } = useParams();
 
-  const name = searchParams.get('name') || '';
-  const namespace = searchParams.get('namespace') || '';
-  const repository = searchParams.get('repository') || '';
   const redirectIfEmpty = searchParams.get('redirectIfEmpty') || '';
-
-  // load collection by search params
-  const version = searchParams.get('version');
 
   const collectionsRequest = useGet<HubItemsResponse<CollectionVersionSearch>>(
     hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${name || ''}&namespace=${
@@ -182,7 +178,12 @@ export function CollectionPage() {
           { label: t('Dependencies'), page: HubRoute.CollectionDependencies },
           { label: t('Distributions'), page: HubRoute.CollectionDistributions },
         ]}
-        params={{ id: collection?.collection_version?.name || '' }}
+        params={{
+          name: collection?.collection_version?.name || '',
+          namespace: collection?.collection_version?.namespace || '',
+          version: collection?.collection_version?.version || '',
+          repository: collection?.repository?.name || '',
+        }}
         componentParams={{ collection: collection }}
       />
     </PageLayout>
