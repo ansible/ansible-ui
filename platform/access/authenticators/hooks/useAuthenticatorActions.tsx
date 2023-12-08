@@ -1,13 +1,14 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   useGetPageUrl,
+  usePageAlertToaster,
   usePageNavigate,
 } from '../../../../framework';
 import { Authenticator } from '../../../interfaces/Authenticator';
-import { ButtonVariant } from '@patternfly/react-core';
+import { AlertProps, ButtonVariant } from '@patternfly/react-core';
 import { PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { PlatformRoute } from '../../../PlatformRoutes';
@@ -18,6 +19,7 @@ import {
   OptionsResponse,
 } from '../../../../frontend/awx/interfaces/OptionsResponse';
 import { gatewayAPI } from '../../../api/gateway-api-utils';
+import { requestPatch } from '../../../../frontend/common/crud/Data';
 
 export function useAuthenticatorToolbarActions(_view: IPlatformView<Authenticator>) {
   const { t } = useTranslation();
@@ -57,9 +59,37 @@ export function useAuthenticatorToolbarActions(_view: IPlatformView<Authenticato
   return toolbarActions;
 }
 
-export function useAuthenticatorRowActions(_view: IPlatformView<Authenticator>) {
+export function useAuthenticatorRowActions(view: IPlatformView<Authenticator>) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
+  const alertToaster = usePageAlertToaster();
+  const handleToggleAuthenticator: (
+    authenticator: Authenticator,
+    enabled: boolean
+  ) => Promise<void> = useCallback(
+    async (authenticator, enabled) => {
+      const alert: AlertProps = {
+        variant: 'success',
+        title: `${authenticator.name} ${enabled ? t('enabled') : t('disabled')}.`,
+        timeout: 5000,
+      };
+      await requestPatch(gatewayAPI`/authenticators/${authenticator.id.toString()}/`, {
+        enabled: enabled,
+      })
+        .then(() => alertToaster.addAlert(alert))
+        .catch(() => {
+          alertToaster.addAlert({
+            variant: 'danger',
+            title: `${enabled ? t('Failed to disable') : t('Failed to enable')} ${
+              authenticator.name
+            }`,
+            timeout: 5000,
+          });
+        });
+      view.unselectItemsAndRefresh([authenticator]);
+    },
+    [view, alertToaster, t]
+  );
   const rowActions = useMemo<IPageAction<Authenticator>[]>(() => {
     // TODO: Update based on RBAC information from Authenticators API
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -86,7 +116,7 @@ export function useAuthenticatorRowActions(_view: IPlatformView<Authenticator>) 
         labelOff: t('Disabled'),
         showPinnedLabel: true,
         isReversed: false,
-        onToggle: (_authenticator) => alert('TODO'),
+        onToggle: (authenticator, enabled) => handleToggleAuthenticator(authenticator, enabled),
         isSwitchOn: (authenticator: Authenticator) => authenticator?.enabled ?? false,
       },
       {
@@ -111,7 +141,7 @@ export function useAuthenticatorRowActions(_view: IPlatformView<Authenticator>) 
         isDanger: true,
       },
     ];
-  }, [pageNavigate, t]);
+  }, [pageNavigate, handleToggleAuthenticator, t]);
 
   return rowActions;
 }
