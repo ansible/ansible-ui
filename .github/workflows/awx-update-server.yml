@@ -115,7 +115,7 @@ jobs:
                         },
                         {
                           "type": "text",
-                          "text": "AWX Server Update Failure: ${{ github.event.inputs.AWX_SERVER }}",
+                          "text": "@here AWX Server Update Failure: ${{ github.event.inputs.AWX_SERVER }}",
                         }
                       ]
                     }
