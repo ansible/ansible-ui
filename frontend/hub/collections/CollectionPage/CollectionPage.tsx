@@ -14,7 +14,6 @@ import { HubItemsResponse } from '../../useHubView';
 import { PageAsyncSingleSelect } from '../../../../framework/PageInputs/PageAsyncSingleSelect';
 import { CollectionVersionSearch } from '../Collection';
 import { useCollectionActions } from '../hooks/useCollectionActions';
-import { usePageNavigate } from '../../../../framework';
 import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
 import { useParams } from 'react-router-dom';
 import { requestGet } from '../../../common/crud/Data';
@@ -202,6 +201,7 @@ export function CollectionPage() {
           repository: collection?.repository?.name || '',
         }}
         componentParams={{ collection: collection }}
+        sharedQueryKeys={['version']}
       />
     </PageLayout>
   );
