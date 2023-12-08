@@ -71,7 +71,7 @@ jobs:
                   "type": "header",
                   "text": {
                     "type": "plain_text",
-                    "text": ":rocket: AWX E2E Server Updated",
+                    "text": ":rocket: AWX Server Updated",
                     "emoji": true
                   }
                 },
@@ -79,36 +79,25 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "```export AWX_SERVER=${{ inputs.AWX_SERVER }}```"
+                    "text": "*Environment Variables*```export AWX_SERVER=${{ inputs.AWX_SERVER }}```"
+                  }
+                },   
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Server:*\n${{ github.event.inputs.AWX_SERVER }}"
                   }
                 },
                 {
-                  "type": "actions",
-                  "elements": [
-                    {
-                      "type": "button",
-                      "text": {
-                        "type": "plain_text",
-                        "text": "AWX Server",
-                        "emoji": true
-                      },
-                      "value": "${{ github.event.inputs.AWX_SERVER }}",
-                      "action_id": "server"
-                    },
-                    {
-                      "type": "button",
-                      "text": {
-                        "type": "plain_text",
-                        "text": "GitHub Action Run",
-                        "emoji": true
-                      },
-                      "value": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
-                      "action_id": "action"
-                    }
-                  ]
-                }                           
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*GitHub Action:*\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                  }
+                }
               ]
-            }          
+            }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
@@ -130,7 +119,7 @@ jobs:
                   "type": "header",
                   "text": {
                     "type": "plain_text",
-                    "text": ":failed: AWX E2E Server Update Failure",
+                    "text": ":failed: AWX Server Update Failure",
                     "emoji": true
                   }
                 },
@@ -143,32 +132,21 @@ jobs:
                   }
                 },
                 {
-                  "type": "actions",
-                  "elements": [
-                    {
-                      "type": "button",
-                      "text": {
-                        "type": "plain_text",
-                        "text": "AWX Server",
-                        "emoji": true
-                      },
-                      "value": "${{ github.event.inputs.AWX_SERVER }}",
-                      "action_id": "server"
-                    },
-                    {
-                      "type": "button",
-                      "text": {
-                        "type": "plain_text",
-                        "text": "GitHub Action Run",
-                        "emoji": true
-                      },
-                      "value": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
-                      "action_id": "action"
-                    }
-                  ]
-                }              
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Server*\n${{ github.event.inputs.AWX_SERVER }}"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*GitHub Action Run*\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                  }
+                }
               ]
-            }          
+            }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
