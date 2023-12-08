@@ -71,7 +71,7 @@ jobs:
                   "type": "header",
                   "text": {
                     "type": "plain_text",
-                    "text": ":rocket: AWX Server Updated",
+                    "text": ":rocket: AWX E2E Server Updated",
                     "emoji": true
                   }
                 },
@@ -119,7 +119,7 @@ jobs:
                   "type": "header",
                   "text": {
                     "type": "plain_text",
-                    "text": ":failed: AWX Server Update Failure",
+                    "text": ":failed: AWX E2E Server Update Failure",
                     "emoji": true
                   }
                 },
