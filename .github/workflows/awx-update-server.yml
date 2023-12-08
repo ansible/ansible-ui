@@ -126,6 +126,14 @@ jobs:
                 {
                   "type": "section",
                   "text": {
+                    "type": "plain_text",
+                    "text": "<@here> The GitHub Action to update the server failed.",
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
                     "type": "mrkdwn",
                     "text": "*Server*\n    ${{ github.event.inputs.AWX_SERVER }}"
                   }
