@@ -21,7 +21,10 @@ export function useGetPageUrl() {
             let value = params[key];
             if (value === undefined) return acc;
             value = encodeURIComponent(value.toString());
-            return acc.replace(`:${key}`, value);
+            const stringToReplace = ':' + key;
+            // search for longest string is necessary, because without it, we can replace substring
+            const regex = new RegExp(stringToReplace + '(?!.*' + stringToReplace + ')', 'g');
+            return acc.replace(regex, value);
           }, url);
         }
         if (query) {
