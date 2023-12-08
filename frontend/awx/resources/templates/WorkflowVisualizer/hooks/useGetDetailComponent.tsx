@@ -6,9 +6,11 @@ import { TemplateDetails } from '../../TemplatePage/TemplateDetails';
 import { WorkflowJobTemplateDetails } from '../../WorkflowJobTemplatePage/WorkflowJobTemplateDetails';
 import { SystemJobNodeDetails } from '../components/SystemJobNodeDetails';
 import { WorkflowApprovalNodeDetails } from '../components/WorkflowApprovalNodeDetails';
-
-export function useGetDetailComponent(selectedNode: WorkflowNode) {
+export function useGetDetailComponent(selectedNode: WorkflowNode | undefined) {
   const detailsComponent = useCallback(() => {
+    if (!selectedNode) {
+      return null;
+    }
     let component;
     switch (selectedNode?.summary_fields.unified_job_template.unified_job_type) {
       case UnifiedJobType.project_update:
