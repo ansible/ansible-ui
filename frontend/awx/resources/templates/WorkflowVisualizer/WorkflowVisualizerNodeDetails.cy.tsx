@@ -16,14 +16,13 @@ describe('WorkflowVisualizerNodeDetails', () => {
     );
     cy.mount(
       <WorkflowVisualizerNodeDetails
-        selectedNode={
+        resource={
           {
             summary_fields: {
               unified_job_template: { unified_job_type: 'job', id: 7 },
             },
           } as WorkflowNode
         }
-        setSelectedNode={() => {}}
       />
     );
 
@@ -43,14 +42,13 @@ describe('WorkflowVisualizerNodeDetails', () => {
 
     cy.mount(
       <WorkflowVisualizerNodeDetails
-        selectedNode={
+        resource={
           {
             summary_fields: {
               unified_job_template: { unified_job_type: 'workflow_job', id: 7 },
             },
           } as WorkflowNode
         }
-        setSelectedNode={() => {}}
       />
     );
 
@@ -63,14 +61,13 @@ describe('WorkflowVisualizerNodeDetails', () => {
     cy.intercept({ method: 'GET', url: '/api/v2/projects/*/' }, { fixture: 'project.json' });
     cy.mount(
       <WorkflowVisualizerNodeDetails
-        selectedNode={
+        resource={
           {
             summary_fields: {
               unified_job_template: { unified_job_type: 'project_update', id: 7 },
             },
           } as WorkflowNode
         }
-        setSelectedNode={() => {}}
       />
     );
     cy.get('dd[data-cy="name"]').within(() => {
@@ -85,14 +82,13 @@ describe('WorkflowVisualizerNodeDetails', () => {
     );
     cy.mount(
       <WorkflowVisualizerNodeDetails
-        selectedNode={
+        resource={
           {
             summary_fields: {
               unified_job_template: { unified_job_type: 'inventory_update', id: 7 },
             },
           } as WorkflowNode
         }
-        setSelectedNode={() => {}}
       />
     );
     cy.get('dd[data-cy="name"]').within(() => {
@@ -104,7 +100,7 @@ describe('WorkflowVisualizerNodeDetails', () => {
   it('Should render system job details', () => {
     cy.mount(
       <WorkflowVisualizerNodeDetails
-        selectedNode={
+        resource={
           {
             all_parents_must_converge: false,
             summary_fields: {
@@ -117,7 +113,6 @@ describe('WorkflowVisualizerNodeDetails', () => {
             },
           } as WorkflowNode
         }
-        setSelectedNode={() => {}}
       />
     );
     cy.get('dd[data-cy="name"]').should('have.text', 'System job');
@@ -125,7 +120,7 @@ describe('WorkflowVisualizerNodeDetails', () => {
   it('Should render workflow approval details', () => {
     cy.mount(
       <WorkflowVisualizerNodeDetails
-        selectedNode={
+        resource={
           {
             all_parents_must_converge: false,
             summary_fields: {
@@ -138,7 +133,6 @@ describe('WorkflowVisualizerNodeDetails', () => {
             },
           } as WorkflowNode
         }
-        setSelectedNode={() => {}}
       />
     );
     cy.get('dd[data-cy="name"]').should('have.text', 'Workflow approval');
