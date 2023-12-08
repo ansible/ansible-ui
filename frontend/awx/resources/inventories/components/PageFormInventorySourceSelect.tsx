@@ -11,15 +11,16 @@ import { useSelectInventorySource } from '../hooks/useSelectInventorySource';
 export function PageFormInventorySourceSelect<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
->(props: { name: TFieldName; isRequired?: boolean; inventoryId: number }) {
+>(props: { name: TFieldName; isRequired?: boolean; inventoryId?: number }) {
   const { t } = useTranslation();
   const openSelectDialog = useSelectInventorySource();
   const query = useCallback(async () => {
-    const response = await requestGet<AwxItemsResponse<InventorySource>>(
-      awxAPI`/inventories/${props.inventoryId.toString()}/inventory_sources/`.concat(
-        `?page_size=200`
-      )
-    );
+    const url = props.inventoryId
+      ? awxAPI`/inventories/${props.inventoryId.toString()}/inventory_sources/`.concat(
+          `?page_size=200`
+        )
+      : awxAPI`/inventory_sources/`.concat(`?page_size=200`);
+    const response = await requestGet<AwxItemsResponse<InventorySource>>(url);
     return Promise.resolve({
       total: response.count,
       values: response.results as FieldPathValue<TFieldValues, Path<TFieldValues>>[],
