@@ -27,8 +27,9 @@ const indexExecutionEnvironments = async (remoteRegistry: RemoteRegistry) => {
 
 export function useRemoteRegistryActions(options: {
   onRemoteRegistryDeleted: (remoteRegistry: RemoteRegistry[]) => void;
+  refresh?: () => Promise<void>;
 }) {
-  const { onRemoteRegistryDeleted } = options;
+  const { onRemoteRegistryDeleted, refresh } = options;
   const { t } = useTranslation();
   const alertToaster = usePageAlertToaster();
   const pageNavigate = usePageNavigate();
@@ -55,6 +56,7 @@ export function useRemoteRegistryActions(options: {
           };
           void syncRemoteRegistry(remoteRegistry)
             .then(() => {
+              void refresh?.();
               alertToaster.addAlert(alert);
             })
             .catch((error) => {
@@ -113,7 +115,7 @@ export function useRemoteRegistryActions(options: {
         isDanger: true,
       },
     ],
-    [t, pageNavigate, deleteRemoteRegistries, alertToaster, isIndexableItem]
+    [t, pageNavigate, deleteRemoteRegistries, alertToaster, isIndexableItem, refresh]
   );
   return actions;
 }
