@@ -80,7 +80,7 @@ jobs:
                   "elements": [
                     {
                       "type": "mrkdwn",
-                      "text": "```AWX_SERVER=${{ inputs.AWX_SERVER }}```"
+                      "text": "```export AWX_SERVER=${{ inputs.AWX_SERVER }}```"
                     }
                   ]
                 }
