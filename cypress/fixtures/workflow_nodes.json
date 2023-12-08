@@ -1,38 +1,38 @@
 {
-  "count": 3,
+  "count": 6,
   "next": null,
   "previous": null,
   "results": [
     {
-      "id": 36,
+      "id": 585,
       "type": "workflow_job_template_node",
-      "url": "/api/v2/workflow_job_template_nodes/36/",
+      "url": "/api/v2/workflow_job_template_nodes/585/",
       "related": {
-        "labels": "/api/v2/workflow_job_template_nodes/36/labels/",
-        "credentials": "/api/v2/workflow_job_template_nodes/36/credentials/",
-        "instance_groups": "/api/v2/workflow_job_template_nodes/36/instance_groups/",
-        "create_approval_template": "/api/v2/workflow_job_template_nodes/36/create_approval_template/",
-        "success_nodes": "/api/v2/workflow_job_template_nodes/36/success_nodes/",
-        "failure_nodes": "/api/v2/workflow_job_template_nodes/36/failure_nodes/",
-        "always_nodes": "/api/v2/workflow_job_template_nodes/36/always_nodes/",
-        "unified_job_template": "/api/v2/projects/6/",
-        "workflow_job_template": "/api/v2/workflow_job_templates/237/"
+        "labels": "/api/v2/workflow_job_template_nodes/585/labels/",
+        "credentials": "/api/v2/workflow_job_template_nodes/585/credentials/",
+        "instance_groups": "/api/v2/workflow_job_template_nodes/585/instance_groups/",
+        "create_approval_template": "/api/v2/workflow_job_template_nodes/585/create_approval_template/",
+        "success_nodes": "/api/v2/workflow_job_template_nodes/585/success_nodes/",
+        "failure_nodes": "/api/v2/workflow_job_template_nodes/585/failure_nodes/",
+        "always_nodes": "/api/v2/workflow_job_template_nodes/585/always_nodes/",
+        "unified_job_template": "/api/v2/job_templates/14426/",
+        "workflow_job_template": "/api/v2/workflow_job_templates/8178/"
       },
       "summary_fields": {
         "workflow_job_template": {
-          "id": 237,
-          "name": "mock_wf",
+          "id": 8178,
+          "name": "alex wfjt",
           "description": ""
         },
         "unified_job_template": {
-          "id": 6,
-          "name": "Demo Project",
+          "id": 14426,
+          "name": "E2E Job Template 9Bay",
           "description": "",
-          "unified_job_type": "project_update"
+          "unified_job_type": "job"
         }
       },
-      "created": "2023-10-19T19:10:59.000165Z",
-      "modified": "2023-10-19T19:10:59.000171Z",
+      "created": "2023-11-17T15:34:22.114062Z",
+      "modified": "2023-12-05T15:16:55.861196Z",
       "extra_data": {},
       "inventory": null,
       "scm_branch": null,
@@ -46,44 +46,198 @@
       "forks": null,
       "job_slice_count": null,
       "timeout": null,
-      "workflow_job_template": 237,
+      "workflow_job_template": 8178,
+      "unified_job_template": 14426,
+      "success_nodes": [],
+      "failure_nodes": [],
+      "always_nodes": [1510],
+      "all_parents_must_converge": false,
+      "identifier": "1ac94337-f228-4ffd-b41a-cb9b0e50cd00"
+    },
+    {
+      "id": 586,
+      "type": "workflow_job_template_node",
+      "url": "/api/v2/workflow_job_template_nodes/586/",
+      "related": {
+        "labels": "/api/v2/workflow_job_template_nodes/586/labels/",
+        "credentials": "/api/v2/workflow_job_template_nodes/586/credentials/",
+        "instance_groups": "/api/v2/workflow_job_template_nodes/586/instance_groups/",
+        "create_approval_template": "/api/v2/workflow_job_template_nodes/586/create_approval_template/",
+        "success_nodes": "/api/v2/workflow_job_template_nodes/586/success_nodes/",
+        "failure_nodes": "/api/v2/workflow_job_template_nodes/586/failure_nodes/",
+        "always_nodes": "/api/v2/workflow_job_template_nodes/586/always_nodes/",
+        "unified_job_template": "/api/v2/projects/6/",
+        "workflow_job_template": "/api/v2/workflow_job_templates/8178/"
+      },
+      "summary_fields": {
+        "workflow_job_template": {
+          "id": 8178,
+          "name": "alex wfjt",
+          "description": ""
+        },
+        "unified_job_template": {
+          "id": 6,
+          "name": "Demo Project",
+          "description": "",
+          "unified_job_type": "project_update"
+        }
+      },
+      "created": "2023-11-17T15:34:22.115186Z",
+      "modified": "2023-11-17T15:34:22.115199Z",
+      "extra_data": {},
+      "inventory": null,
+      "scm_branch": null,
+      "job_type": null,
+      "job_tags": null,
+      "skip_tags": null,
+      "limit": null,
+      "diff_mode": null,
+      "verbosity": null,
+      "execution_environment": null,
+      "forks": null,
+      "job_slice_count": null,
+      "timeout": null,
+      "workflow_job_template": 8178,
       "unified_job_template": 6,
+      "success_nodes": [585],
+      "failure_nodes": [],
+      "always_nodes": [1356],
+      "all_parents_must_converge": false,
+      "identifier": "ca82465e-9301-465d-943c-5530d934f45b"
+    },
+    {
+      "id": 1286,
+      "type": "workflow_job_template_node",
+      "url": "/api/v2/workflow_job_template_nodes/1286/",
+      "related": {
+        "labels": "/api/v2/workflow_job_template_nodes/1286/labels/",
+        "credentials": "/api/v2/workflow_job_template_nodes/1286/credentials/",
+        "instance_groups": "/api/v2/workflow_job_template_nodes/1286/instance_groups/",
+        "create_approval_template": "/api/v2/workflow_job_template_nodes/1286/create_approval_template/",
+        "success_nodes": "/api/v2/workflow_job_template_nodes/1286/success_nodes/",
+        "failure_nodes": "/api/v2/workflow_job_template_nodes/1286/failure_nodes/",
+        "always_nodes": "/api/v2/workflow_job_template_nodes/1286/always_nodes/",
+        "unified_job_template": "/api/v2/workflow_approval_templates/10202/",
+        "workflow_job_template": "/api/v2/workflow_job_templates/8178/"
+      },
+      "summary_fields": {
+        "workflow_job_template": {
+          "id": 8178,
+          "name": "alex wfjt",
+          "description": ""
+        },
+        "unified_job_template": {
+          "id": 10202,
+          "name": "app new",
+          "description": "",
+          "unified_job_type": "workflow_approval",
+          "timeout": 0
+        }
+      },
+      "created": "2023-11-27T16:12:30.928388Z",
+      "modified": "2023-11-27T16:12:30.928403Z",
+      "extra_data": {},
+      "inventory": null,
+      "scm_branch": null,
+      "job_type": null,
+      "job_tags": null,
+      "skip_tags": null,
+      "limit": null,
+      "diff_mode": null,
+      "verbosity": null,
+      "execution_environment": null,
+      "forks": null,
+      "job_slice_count": null,
+      "timeout": null,
+      "workflow_job_template": 8178,
+      "unified_job_template": 10202,
       "success_nodes": [],
       "failure_nodes": [],
       "always_nodes": [],
       "all_parents_must_converge": false,
-      "identifier": "1f186904-9e2d-41a3-b46e-f3b4b06cfe67"
+      "identifier": "6ed68bac-0d04-4b62-8082-2f844750e40f"
     },
     {
-      "id": 37,
+      "id": 1356,
       "type": "workflow_job_template_node",
-      "url": "/api/v2/workflow_job_template_nodes/37/",
+      "url": "/api/v2/workflow_job_template_nodes/1356/",
       "related": {
-        "labels": "/api/v2/workflow_job_template_nodes/37/labels/",
-        "credentials": "/api/v2/workflow_job_template_nodes/37/credentials/",
-        "instance_groups": "/api/v2/workflow_job_template_nodes/37/instance_groups/",
-        "create_approval_template": "/api/v2/workflow_job_template_nodes/37/create_approval_template/",
-        "success_nodes": "/api/v2/workflow_job_template_nodes/37/success_nodes/",
-        "failure_nodes": "/api/v2/workflow_job_template_nodes/37/failure_nodes/",
-        "always_nodes": "/api/v2/workflow_job_template_nodes/37/always_nodes/",
-        "unified_job_template": "/api/v2/system_job_templates/1/",
-        "workflow_job_template": "/api/v2/workflow_job_templates/237/"
+        "labels": "/api/v2/workflow_job_template_nodes/1356/labels/",
+        "credentials": "/api/v2/workflow_job_template_nodes/1356/credentials/",
+        "instance_groups": "/api/v2/workflow_job_template_nodes/1356/instance_groups/",
+        "create_approval_template": "/api/v2/workflow_job_template_nodes/1356/create_approval_template/",
+        "success_nodes": "/api/v2/workflow_job_template_nodes/1356/success_nodes/",
+        "failure_nodes": "/api/v2/workflow_job_template_nodes/1356/failure_nodes/",
+        "always_nodes": "/api/v2/workflow_job_template_nodes/1356/always_nodes/",
+        "unified_job_template": "/api/v2/workflow_job_templates/8178/",
+        "workflow_job_template": "/api/v2/workflow_job_templates/8178/"
       },
       "summary_fields": {
         "workflow_job_template": {
-          "id": 237,
-          "name": "mock_wf",
+          "id": 8178,
+          "name": "alex wfjt",
           "description": ""
         },
         "unified_job_template": {
-          "id": 1,
-          "name": "Cleanup Job Details",
-          "description": "Remove job history",
+          "id": 8178,
+          "name": "alex wfjt",
+          "description": "",
+          "unified_job_type": "workflow_job"
+        }
+      },
+      "created": "2023-11-29T20:16:44.302008Z",
+      "modified": "2023-12-05T15:16:55.869555Z",
+      "extra_data": {},
+      "inventory": null,
+      "scm_branch": null,
+      "job_type": null,
+      "job_tags": null,
+      "skip_tags": null,
+      "limit": null,
+      "diff_mode": null,
+      "verbosity": null,
+      "execution_environment": null,
+      "forks": null,
+      "job_slice_count": null,
+      "timeout": null,
+      "workflow_job_template": 8178,
+      "unified_job_template": 8178,
+      "success_nodes": [],
+      "failure_nodes": [],
+      "always_nodes": [1511],
+      "all_parents_must_converge": false,
+      "identifier": "5aa1abd9-97ae-487e-8d57-9fa934fc56bb"
+    },
+    {
+      "id": 1510,
+      "type": "workflow_job_template_node",
+      "url": "/api/v2/workflow_job_template_nodes/1510/",
+      "related": {
+        "labels": "/api/v2/workflow_job_template_nodes/1510/labels/",
+        "credentials": "/api/v2/workflow_job_template_nodes/1510/credentials/",
+        "instance_groups": "/api/v2/workflow_job_template_nodes/1510/instance_groups/",
+        "create_approval_template": "/api/v2/workflow_job_template_nodes/1510/create_approval_template/",
+        "success_nodes": "/api/v2/workflow_job_template_nodes/1510/success_nodes/",
+        "failure_nodes": "/api/v2/workflow_job_template_nodes/1510/failure_nodes/",
+        "always_nodes": "/api/v2/workflow_job_template_nodes/1510/always_nodes/",
+        "unified_job_template": "/api/v2/system_job_templates/2/",
+        "workflow_job_template": "/api/v2/workflow_job_templates/8178/"
+      },
+      "summary_fields": {
+        "workflow_job_template": {
+          "id": 8178,
+          "name": "alex wfjt",
+          "description": ""
+        },
+        "unified_job_template": {
+          "id": 2,
+          "name": "Cleanup Activity Stream",
+          "description": "Remove activity stream history",
           "unified_job_type": "system_job"
         }
       },
-      "created": "2023-10-19T19:10:59.000494Z",
-      "modified": "2023-10-19T19:10:59.000499Z",
+      "created": "2023-12-05T15:16:55.847180Z",
+      "modified": "2023-12-05T15:16:55.847201Z",
       "extra_data": {
         "days": 30
       },
@@ -99,44 +253,44 @@
       "forks": null,
       "job_slice_count": null,
       "timeout": null,
-      "workflow_job_template": 237,
-      "unified_job_template": 1,
+      "workflow_job_template": 8178,
+      "unified_job_template": 2,
       "success_nodes": [],
       "failure_nodes": [],
       "always_nodes": [],
       "all_parents_must_converge": false,
-      "identifier": "70cb600a-bfcd-40fa-aaf5-6f05a45e93fe"
+      "identifier": "3a11de40-85fe-4516-b20f-c7ecb4143c3e"
     },
     {
-      "id": 38,
+      "id": 1511,
       "type": "workflow_job_template_node",
-      "url": "/api/v2/workflow_job_template_nodes/38/",
+      "url": "/api/v2/workflow_job_template_nodes/1511/",
       "related": {
-        "labels": "/api/v2/workflow_job_template_nodes/38/labels/",
-        "credentials": "/api/v2/workflow_job_template_nodes/38/credentials/",
-        "instance_groups": "/api/v2/workflow_job_template_nodes/38/instance_groups/",
-        "create_approval_template": "/api/v2/workflow_job_template_nodes/38/create_approval_template/",
-        "success_nodes": "/api/v2/workflow_job_template_nodes/38/success_nodes/",
-        "failure_nodes": "/api/v2/workflow_job_template_nodes/38/failure_nodes/",
-        "always_nodes": "/api/v2/workflow_job_template_nodes/38/always_nodes/",
-        "unified_job_template": "/api/v2/job_templates/128/",
-        "workflow_job_template": "/api/v2/workflow_job_templates/237/"
+        "labels": "/api/v2/workflow_job_template_nodes/1511/labels/",
+        "credentials": "/api/v2/workflow_job_template_nodes/1511/credentials/",
+        "instance_groups": "/api/v2/workflow_job_template_nodes/1511/instance_groups/",
+        "create_approval_template": "/api/v2/workflow_job_template_nodes/1511/create_approval_template/",
+        "success_nodes": "/api/v2/workflow_job_template_nodes/1511/success_nodes/",
+        "failure_nodes": "/api/v2/workflow_job_template_nodes/1511/failure_nodes/",
+        "always_nodes": "/api/v2/workflow_job_template_nodes/1511/always_nodes/",
+        "unified_job_template": "/api/v2/inventory_sources/3190/",
+        "workflow_job_template": "/api/v2/workflow_job_templates/8178/"
       },
       "summary_fields": {
         "workflow_job_template": {
-          "id": 237,
-          "name": "mock_wf",
+          "id": 8178,
+          "name": "alex wfjt",
           "description": ""
         },
         "unified_job_template": {
-          "id": 128,
-          "name": "a_template",
+          "id": 3190,
+          "name": "blah",
           "description": "",
-          "unified_job_type": "job"
+          "unified_job_type": "inventory_update"
         }
       },
-      "created": "2023-10-19T19:10:59.003739Z",
-      "modified": "2023-10-19T19:10:59.003747Z",
+      "created": "2023-12-05T15:16:55.853544Z",
+      "modified": "2023-12-05T15:16:55.853563Z",
       "extra_data": {},
       "inventory": null,
       "scm_branch": null,
@@ -150,13 +304,13 @@
       "forks": null,
       "job_slice_count": null,
       "timeout": null,
-      "workflow_job_template": 237,
-      "unified_job_template": 128,
-      "success_nodes": [37],
-      "failure_nodes": [36],
+      "workflow_job_template": 8178,
+      "unified_job_template": 3190,
+      "success_nodes": [],
+      "failure_nodes": [],
       "always_nodes": [],
       "all_parents_must_converge": false,
-      "identifier": "565df377-75f1-4ee9-a6c3-78648d697660"
+      "identifier": "7dda89ac-f292-4a31-8daf-9733a7231831"
     }
   ]
 }
