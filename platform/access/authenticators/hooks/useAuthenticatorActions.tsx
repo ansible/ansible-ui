@@ -41,7 +41,7 @@ export function useAuthenticatorToolbarActions(view: IPlatformView<Authenticator
         isDisabled: canCreateAuthenticator
           ? undefined
           : t(
-              'You do not have permission to create an authenticator. Please contact your system administrator if there is an issue with your access.'
+              'You do not have permission to create an authentication. Please contact your system administrator if there is an issue with your access.'
             ),
         href: getPageUrl(PlatformRoute.CreateAuthenticator),
       },
@@ -76,14 +76,14 @@ export function useAuthenticatorRowActions(view: IPlatformView<Authenticator>) {
         title: `${authenticator.name} ${enabled ? t('enabled') : t('disabled')}.`,
         timeout: 5000,
       };
-      await requestPatch(gatewayAPI`/authenticators/${authenticator.id.toString()}/`, {
+      await requestPatch(gatewayAPI`/v1/authenticators/${authenticator.id.toString()}/`, {
         enabled: enabled,
       })
         .then(() => alertToaster.addAlert(alert))
         .catch(() => {
           alertToaster.addAlert({
             variant: 'danger',
-            title: `${enabled ? t('Failed to disable') : t('Failed to enable')} ${
+            title: `${enabled ? t('Failed to enable') : t('Failed to disable')} ${
               authenticator.name
             }`,
             timeout: 5000,
@@ -98,20 +98,18 @@ export function useAuthenticatorRowActions(view: IPlatformView<Authenticator>) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const cannotDeleteAuthenticator = (authenticator: Authenticator) =>
       // eslint-disable-next-line no-constant-condition
-      true ? '' : t(`The authenticator cannot be deleted due to insufficient permissions.`);
+      true ? '' : t(`The authentication cannot be deleted due to insufficient permissions.`);
     // TODO: Update based on RBAC information from Authenticators API
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const cannotEditAuthenticator = (authenticator: Authenticator) =>
       // eslint-disable-next-line no-constant-condition
-      true ? '' : t(`The authenticator cannot be edited due to insufficient permissions.`);
+      true ? '' : t(`The authentication cannot be edited due to insufficient permissions.`);
 
     return [
       {
         type: PageActionType.Switch,
         ariaLabel: (isEnabled) =>
-          isEnabled
-            ? t('Click to disable authentication method')
-            : t('Click to enable authentication method'),
+          isEnabled ? t('Click to disable authentication') : t('Click to enable authentication'),
         selection: PageActionSelection.Single,
         isPinned: true,
         icon: PlusCircleIcon,
