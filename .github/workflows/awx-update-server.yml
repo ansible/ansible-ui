@@ -119,7 +119,7 @@ jobs:
                   "type": "header",
                   "text": {
                     "type": "plain_text",
-                    "text": ":alert: AWX Server Update Failure",
+                    "text": ":failed: AWX Server Update Failure",
                     "emoji": true
                   }
                 },
