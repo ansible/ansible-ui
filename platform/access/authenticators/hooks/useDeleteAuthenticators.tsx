@@ -25,24 +25,24 @@ export function useDeleteAuthenticators(onComplete: (authenticators: Authenticat
     // eslint-disable-next-line no-constant-condition
     return true //authenticator?.summary_fields?.authenticator_capabilities?.delete
       ? undefined
-      : t('The authenticator cannot be deleted due to insufficient permissions.');
+      : t('The authentication cannot be deleted due to insufficient permissions.');
   };
   const bulkAction = useBulkConfirmation<Authenticator>();
   const deleteAuthenticators = (authenticators: Authenticator[]) => {
     const undeletableAuthenticators = authenticators.filter(cannotDeleteAuthenticator);
 
     bulkAction({
-      title: t('Permanently delete authenticators', { count: authenticators.length }),
-      confirmText: t('Yes, I confirm that I want to delete these {{count}} authenticators.', {
+      title: t('Permanently delete authentications', { count: authenticators.length }),
+      confirmText: t('Yes, I confirm that I want to delete these {{count}} authentications.', {
         count: authenticators.length - undeletableAuthenticators.length,
       }),
-      actionButtonText: t('Delete authenticators', { count: authenticators.length }),
+      actionButtonText: t('Delete authentications', { count: authenticators.length }),
       items: authenticators.sort((l, r) => compareStrings(l.name, r.name)),
       alertPrompts:
         undeletableAuthenticators.length > 0
           ? [
               t(
-                '{{count}} of the selected authenticators cannot be deleted due to insufficient permissions.',
+                '{{count}} of the selected authentications cannot be deleted due to insufficient permissions.',
                 {
                   count: undeletableAuthenticators.length,
                 }
