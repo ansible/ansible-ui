@@ -46,7 +46,7 @@ export function CollectionPage() {
   });
 
   const singleSelectorBrowser = singleSelectBrowseAdapter<CollectionVersionSearch>(
-    singleSelector.onBrowse,
+    singleSelector.openBrowse,
     (item) => {
       return item.collection_version?.version || '';
     },

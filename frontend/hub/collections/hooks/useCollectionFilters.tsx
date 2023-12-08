@@ -14,7 +14,7 @@ export function useCollectionFilters() {
   const selectRepositoryMulti = useSelectRepositoryMulti();
 
   const repoSelector = multiSelectBrowseAdapter<Repository>(
-    selectRepositoryMulti.onBrowse,
+    selectRepositoryMulti.openBrowse,
     (item) => item.name,
     (name) => {
       return { name };
