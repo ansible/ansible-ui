@@ -73,13 +73,13 @@ describe('WorkflowVisualizer', () => {
 
   it('Should show sidebar details when a node is selected', () => {
     cy.mount(<WorkflowVisualizer />);
-    cy.get('[data-id="38"]').click();
+    cy.get('[data-id="1510"]').click();
     cy.get('[data-cy="workflow-topology-sidebar"]').should('be.visible');
   });
 
   it('Node label kebab should open context menu dropdown', () => {
     cy.mount(<WorkflowVisualizer />);
-    cy.get('[data-id="38"] .pf-topology__node__action-icon').click();
+    cy.get('[data-id="1510"] .pf-topology__node__action-icon').click();
     cy.get('li[data-cy="edit-node"]').should('be.visible');
     cy.get('li[data-cy="add-link"]').should('be.visible');
     cy.get('li[data-cy="add-node-and-link"]').should('be.visible');
@@ -88,7 +88,7 @@ describe('WorkflowVisualizer', () => {
 
   it('Edge label kebab should open context menu dropdown', () => {
     cy.mount(<WorkflowVisualizer />);
-    cy.get('[data-id="38-37"]').within(() => {
+    cy.get('[data-id="1356-1511"]').within(() => {
       cy.get('[data-cy="edge-context-menu_kebab"]').click({ force: true });
     });
     cy.get('li[data-cy="success"]').should('be.visible');
@@ -99,11 +99,11 @@ describe('WorkflowVisualizer', () => {
 
   it('Click on edge context menu option to change link type', () => {
     cy.mount(<WorkflowVisualizer />);
-    cy.get('[data-id="38-37"]').within(() => {
+    cy.get('[data-id="1356-1511"]').within(() => {
       cy.get('[data-cy="edge-context-menu_kebab"]').click({ force: true });
     });
     cy.get('li[data-cy="fail"]').click();
-    cy.get('[data-id="38-37"]').within(() => {
+    cy.get('[data-id="1356-1511"]').within(() => {
       cy.get('text').should('have.text', 'Run on fail');
     });
   });
@@ -140,7 +140,7 @@ describe('WorkflowVisualizer', () => {
     cy.get('[data-cy="workflow-visualizer"]').should('be.visible');
     cy.get('[data-cy="workflow-visualizer-toolbar-total-nodes"]').should(
       'have.text',
-      'Total nodes 3'
+      'Total nodes 6'
     );
   });
 

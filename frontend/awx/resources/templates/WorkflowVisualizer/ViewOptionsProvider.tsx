@@ -3,6 +3,8 @@ import { ReactElement, createContext, useContext, useEffect, useState } from 're
 import ReactDOM from 'react-dom';
 import { useVisualizationController, observer, isNode } from '@patternfly/react-topology';
 
+import { GRAPH_ID } from './Topology';
+
 const FullPage = styled.div`
   position: fixed;
   top: 0;
@@ -22,19 +24,34 @@ const ViewWrapper = styled.div`
     display: flex;
   }
 `;
+export interface IViewOptions {
+  toggleFullScreen: () => void;
+  isFullScreen: boolean;
+  isLegendOpen: boolean;
+  toggleLegend: () => void;
+  isEmpty: boolean;
+  isLoading: boolean;
+  sidebarMode: 'add' | 'edit' | 'view' | undefined;
+  setSidebarMode: (value: 'add' | 'edit' | 'view' | undefined) => void;
+}
 
-export const ViewOptionsContext = createContext({
-  isFullScreen: false,
+export const ViewOptionsContext = createContext<IViewOptions>({
   toggleFullScreen: () => {},
+  isFullScreen: false,
   isLegendOpen: false,
   toggleLegend: () => {},
   isEmpty: false,
+  isLoading: true,
+  sidebarMode: undefined,
+  setSidebarMode: () => null,
 });
 
 export const ViewOptionsProvider = observer((props: { children: ReactElement }) => {
   const { children } = props;
   const controller = useVisualizationController();
+  const state: { selectedIds: string[] | [] } = controller.getState();
 
+  const [sidebarMode, setSidebarMode] = useState<'add' | 'edit' | 'view' | undefined>(undefined);
   const nodes = controller.getElements().filter(isNode);
   const isGraphReady = controller.toModel().graph?.visible;
 
@@ -76,6 +93,11 @@ export const ViewOptionsProvider = observer((props: { children: ReactElement }) 
     }
   };
 
+  useEffect(() => {
+    if (state.selectedIds?.length && state.selectedIds.some((id) => id === GRAPH_ID)) {
+      setSidebarMode(undefined);
+    }
+  }, [state.selectedIds, setSidebarMode, controller]);
   const value = {
     isFullScreen,
     toggleFullScreen,
@@ -83,6 +105,8 @@ export const ViewOptionsProvider = observer((props: { children: ReactElement }) 
     toggleLegend,
     isLoading,
     isEmpty,
+    sidebarMode,
+    setSidebarMode,
   };
 
   return (
@@ -102,7 +126,6 @@ export const ViewOptionsProvider = observer((props: { children: ReactElement }) 
 
 export const useViewOptions = () => {
   const context = useContext(ViewOptionsContext);
-
   if (!context) {
     throw new Error('useViewOptions must be used within a ViewOptions');
   }
