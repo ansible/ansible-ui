@@ -68,22 +68,34 @@ jobs:
             {
               "blocks":[
                 {
-                  "type": "section",
+                  "type": "header",
                   "text": {
                     "type": "plain_text",
-                    "text": "AWX Server Updated",
+                    "text": ":rocket: AWX Server Updated",
                     "emoji": true
                   }
-                },              
+                },
                 {
-                  "type": "context",
-                  "elements": [
-                    {
-                      "type": "mrkdwn",
-                      "text": "```export AWX_SERVER=${{ inputs.AWX_SERVER }}```"
-                    }
-                  ]
-                }
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Server:*\n    ${{ github.event.inputs.AWX_SERVER }}"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*GitHub Action:*\n    ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Environment Variables*```export AWX_SERVER=${{ inputs.AWX_SERVER }}```"
+                  }
+                }                             
               ]
             }          
         env:
@@ -104,23 +116,27 @@ jobs:
             {
               "blocks":[
                 {
-                  "type": "rich_text",
-                  "elements": [
-                    {
-                      "type": "rich_text_section",
-                      "elements": [
-                        {
-                          "type": "emoji",
-                          "name": "alert"
-                        },
-                        {
-                          "type": "text",
-                          "text": "AWX Server Update Failure: ${{ github.event.inputs.AWX_SERVER }}",
-                        }
-                      ]
-                    }
-                  ]
-                }
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": ":alert:  AWX Server Update Failure",
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Server*\n    ${{ github.event.inputs.AWX_SERVER }}"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*GitHub Action*\n    ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                  }
+                }                
               ]
             }          
         env:
