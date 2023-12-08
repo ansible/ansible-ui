@@ -1,11 +1,11 @@
 import { Button } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
-import { action, useVisualizationController } from '@patternfly/react-topology';
+import { action } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
+import { useViewOptions } from '../ViewOptionsProvider';
 
 export function AddNodeButton(props: { variant?: 'primary' | 'secondary' }) {
-  const controller = useVisualizationController();
-
+  const { setSidebarMode } = useViewOptions();
   const { t } = useTranslation();
   return (
     <Button
@@ -15,9 +15,7 @@ export function AddNodeButton(props: { variant?: 'primary' | 'secondary' }) {
       label={t('Add node')}
       onClick={() => {
         action(() => {
-          controller
-            .getGraph()
-            .setData({ ...controller?.getGraph()?.getData(), sideBarMode: 'add' });
+          setSidebarMode('add');
         })();
       }}
     >

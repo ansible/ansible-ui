@@ -3,23 +3,24 @@ import { WorkflowVisualizerNodeDetails } from '../WorkflowVisualizerNodeDetails'
 
 import { NodeForm } from '../NodeForm';
 import { WorkflowNode } from '../../../../interfaces/WorkflowNode';
-import { GraphData } from '../types';
+import { useViewOptions } from '../ViewOptionsProvider';
 
 export const Sidebar = observer(() => {
   const controller = useVisualizationController();
+  const { sidebarMode, setSidebarMode } = useViewOptions();
   const state: { selectedIds: string[] } = controller.getState();
   const { selectedIds } = state;
+  if (sidebarMode === 'add') return <NodeForm node={undefined} />;
 
-  const graphData = controller?.getGraph()?.getData() as GraphData;
-
-  if (graphData && graphData.sideBarMode === 'add') return <NodeForm node={undefined} />;
-
-  if (!selectedIds?.length || Number.isNaN(parseInt(selectedIds[0], 10))) return null;
+  if (!selectedIds?.length || Number.isNaN(parseInt(selectedIds[0], 10))) {
+    setSidebarMode(undefined);
+    return null;
+  }
 
   const node = controller.getNodeById(selectedIds[0]) as Node;
   const { resource } = node.getData() as { resource: WorkflowNode };
 
-  if (graphData?.sideBarMode === 'edit') {
+  if (sidebarMode === 'edit') {
     return <NodeForm node={resource} />;
   }
 

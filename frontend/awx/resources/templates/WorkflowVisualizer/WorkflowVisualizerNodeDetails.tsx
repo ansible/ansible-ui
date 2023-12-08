@@ -9,6 +9,7 @@ import { ActionList, Button, Title } from '@patternfly/react-core';
 import styled from 'styled-components';
 import { useGetDetailComponent } from './hooks/useGetDetailComponent';
 import { useCallback } from 'react';
+import { useViewOptions } from './ViewOptionsProvider';
 
 const TopologySideBar = styled(PFTopologySideBar)`
   padding-top: 20px;
@@ -20,15 +21,14 @@ export function WorkflowVisualizerNodeDetails(props: { resource: WorkflowNode })
 
   const getDetails = useGetDetailComponent(selectedNode);
   const controller = useVisualizationController();
+  const { setSidebarMode } = useViewOptions();
 
   const handleClose = useCallback(() => {
     action(() => {
-      controller
-        .getGraph()
-        .setData({ ...controller?.getGraph()?.getData(), sideBarMode: undefined });
       controller.setState({ ...controller.getState(), selectedIds: [] });
+      setSidebarMode(undefined);
     })();
-  }, [controller]);
+  }, [controller, setSidebarMode]);
 
   return (
     <TopologySideBar

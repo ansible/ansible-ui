@@ -1,4 +1,4 @@
-import { ReactElement, useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   CREATE_CONNECTOR_DROP_TYPE,
@@ -43,15 +43,14 @@ import {
   NodeContextMenu,
   WorkflowVisualizerToolbar,
 } from './components';
-import { EdgeStatus } from './types';
+import { EdgeStatus, GraphNode } from './types';
 import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
 import type { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
-import type { GraphData, GraphNode } from './types';
 import { ViewOptionsProvider, ViewOptionsContext } from './ViewOptionsProvider';
 import { ToolbarHeader } from './components/WorkflowVisualizerToolbar';
 import { Sidebar } from './components/Sidebar';
 
-const GRAPH_ID = 'workflow-visualizer-graph';
+export const GRAPH_ID = 'workflow-visualizer-graph';
 const CONNECTOR_SOURCE_DROP = 'connector-src-drop';
 const CONNECTOR_TARGET_DROP = 'connector-target-drop';
 const NODE_DIAMETER = 50;
@@ -87,14 +86,14 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
     [workflowNodes]
   );
   const nodeContextMenu = useCallback(
-    (element: GraphNode) =>
-      (<NodeContextMenu element={element} t={t} />) as unknown as ReactElement,
-    [t]
+    (element: GraphNode) => [<NodeContextMenu key="nodeContext" element={element} />],
+    []
   );
-  // const nodeContextMenu = useCallback((element: GraphNode) => NodeContextMenu(element, t), [t]);
   const edgeContextMenu = useCallback(
-    (element: GraphElement<ElementModel, unknown>) => EdgeContextMenu(element, t),
-    [t]
+    (element: GraphElement<ElementModel, unknown>) => [
+      <EdgeContextMenu key="edgeContext" element={element} />,
+    ],
+    []
   );
   const baselineComponentFactory: ComponentFactory = useCallback(
     (kind: ModelKind, type: string) => {
@@ -140,9 +139,7 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
                 // TODO: Handle toggle unsaved changes
                 source.getController().fromModel(model);
               })(
-                withContextMenu((element: GraphElement) => (
-                  <NodeContextMenu element={element} t={t} />
-                ))(
+                withContextMenu(nodeContextMenu)(
                   withDndDrop(
                     nodeDropTargetSpec([
                       CONNECTOR_SOURCE_DROP,
@@ -258,7 +255,6 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
         type: 'graph',
         layout: 'Dagre',
         visible: true,
-        sideBarMode: undefined,
       },
     };
 
@@ -269,15 +265,17 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
       <ViewOptionsProvider>
         {/* tools provider name */}
         <ViewOptionsContext.Consumer>
-          {({ isFullScreen, isEmpty, isLegendOpen, isLoading, toggleLegend }) => {
-            const state: TopologyProps & { selectedIds: string[] | [] } = visualization.getState();
+          {({ isFullScreen, isEmpty, isLegendOpen, isLoading, toggleLegend, sidebarMode }) => {
+            const state: TopologyProps & {
+              selectedIds: string[] | [];
+            } = visualization.getState();
             let showSideBar = false;
-            const graphData = visualization.getGraph().getData() as GraphData;
+
             if (state?.selectedIds?.length && !isLoading) {
               const element = visualization.getElementById(state.selectedIds[0]) as GraphElement;
               showSideBar = isNode(element);
             }
-            if (graphData && graphData.sideBarMode === 'add') {
+            if (sidebarMode === 'add') {
               showSideBar = true;
             }
 
