@@ -24,8 +24,10 @@ export function useNodeMenuItems(element: GraphNode): MenuItem[] {
   const { t } = useTranslation();
   const controller = useVisualizationController();
   const { setSidebarMode } = useViewOptions();
-  const state: { selectedIds: string[] | [] } = controller.getState();
-  const [_, setSelectedIds] = useVisualizationState('selectedIds', state.selectedIds);
+  const { selectedIds } = controller.getState<{
+    selectedIds: string[] | [];
+  }>();
+  const [_, setSelectedIds] = useVisualizationState('selectedIds', selectedIds);
 
   const data = element.getData() as { id: string };
   return [

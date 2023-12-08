@@ -1,4 +1,4 @@
-import { Node, observer, useVisualizationController } from '@patternfly/react-topology';
+import { Node, NodeModel, observer, useVisualizationController } from '@patternfly/react-topology';
 import { WorkflowVisualizerNodeDetails } from '../WorkflowVisualizerNodeDetails';
 
 import { NodeForm } from '../NodeForm';
@@ -8,8 +8,8 @@ import { useViewOptions } from '../ViewOptionsProvider';
 export const Sidebar = observer(() => {
   const controller = useVisualizationController();
   const { sidebarMode, setSidebarMode } = useViewOptions();
-  const state: { selectedIds: string[] } = controller.getState();
-  const { selectedIds } = state;
+  const { selectedIds } = controller.getState<{ selectedIds: string[] }>();
+
   if (sidebarMode === 'add') return <NodeForm node={undefined} />;
 
   if (!selectedIds?.length || Number.isNaN(parseInt(selectedIds[0], 10))) {
@@ -17,8 +17,10 @@ export const Sidebar = observer(() => {
     return null;
   }
 
-  const node = controller.getNodeById(selectedIds[0]) as Node;
-  const { resource } = node.getData() as { resource: WorkflowNode };
+  const node: Node<NodeModel, { resource: WorkflowNode }> | undefined = controller.getNodeById(
+    selectedIds[0]
+  );
+  const { resource } = node?.getData() as { resource: WorkflowNode };
 
   if (sidebarMode === 'edit') {
     return <NodeForm node={resource} />;
