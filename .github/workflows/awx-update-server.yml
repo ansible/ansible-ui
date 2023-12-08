@@ -67,7 +67,17 @@ jobs:
           slack-message: "AWX_SERVER=${{ inputs.AWX_SERVER }}"
           payload: |
             {
-              "text": "AWX_SERVER=${{ inputs.AWX_SERVER }}",
+              "blocks":[
+                {
+                  "type": "context",
+                  "elements": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "```AWX_SERVER=${{ inputs.AWX_SERVER }}```"
+                    }
+                  ]
+                }
+              ]
             }          
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
@@ -86,6 +96,17 @@ jobs:
           payload: |
             {
               "text": "AWX UPDATE SERVER FAILURE",
+              "blocks":[
+                {
+                  "type": "context",
+                  "elements": [
+                    {
+                      "type": "mrkdwn",
+                      "text": ">AWX UPDATE SERVER FAILURE: ${{ inputs.AWX_SERVER }}"
+                    }
+                  ]
+                }
+              ]
             }          
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
