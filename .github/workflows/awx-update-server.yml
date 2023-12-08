@@ -64,9 +64,9 @@ jobs:
       - name: Slack Notification
         uses: slackapi/slack-github-action@v1.24.0
         with:
-          slack-message: "AWX_SERVER=${{ inputs.AWX_SERVER }}"
           payload: |
             {
+              "text": "AWX_SERVER=${{ inputs.AWX_SERVER }}",
               "blocks":[
                 {
                   "type": "context",
