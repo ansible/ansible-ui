@@ -79,14 +79,14 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*Server:*\n    ${{ github.event.inputs.AWX_SERVER }}"
+                    "text": "*Server:*\n${{ github.event.inputs.AWX_SERVER }}"
                   }
                 },
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*GitHub Action:*\n    ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                    "text": "*GitHub Action:*\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
                   }
                 },
                 {
@@ -119,15 +119,7 @@ jobs:
                   "type": "header",
                   "text": {
                     "type": "plain_text",
-                    "text": ":alert:  AWX Server Update Failure",
-                    "emoji": true
-                  }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "plain_text",
-                    "text": "<@here> The GitHub Action to update the server failed.",
+                    "text": ":failed: AWX Server Update Failure",
                     "emoji": true
                   }
                 },
@@ -135,14 +127,22 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*Server*\n    ${{ github.event.inputs.AWX_SERVER }}"
+                    "text": "The GitHub Action to update the server failed. <!here>",
+                    "emoji": true
                   }
                 },
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*GitHub Action*\n    ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                    "text": "*Server*\n${{ github.event.inputs.AWX_SERVER }}"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*GitHub Action*\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
                   }
                 }                
               ]
