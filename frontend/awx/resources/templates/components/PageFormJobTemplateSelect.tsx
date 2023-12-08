@@ -16,26 +16,31 @@ export function PageFormJobTemplateSelect<
   isRequired?: boolean;
   jobTemplatePath?: string;
   templateId?: number;
+  templateType?: 'job_templates|' | 'workflow_job_templates';
 }) {
   const { t } = useTranslation();
-
+  const { templateType = 'job_templates' } = props;
   const openSelectDialog = useSelectJobTemplate();
   const query = useCallback(async () => {
     const response = await requestGet<AwxItemsResponse<JobTemplate>>(
-      awxAPI`/job_templates/`.concat(`?page_size=200`)
+      awxAPI`/${templateType}/`.concat(`?page_size=200`)
     );
 
     return Promise.resolve({
       total: response.count,
       values: response.results as FieldPathValue<TFieldValues, Path<TFieldValues>>[],
     });
-  }, []);
+  }, [templateType]);
 
   return (
     <PageFormAsyncSelect<TFieldValues>
       name={props.name}
       id="job-template-select"
-      label={t('Job Template')}
+      label={
+        props.templateType === 'workflow_job_templates'
+          ? t('Wokflow Job Template')
+          : t('Job Template')
+      }
       query={query}
       valueToString={(value) => {
         if (value && typeof value === 'string') {
@@ -43,9 +48,21 @@ export function PageFormJobTemplateSelect<
         }
         return (value as JobTemplate)?.name ?? '';
       }}
-      placeholder={t('Select job template')}
-      loadingPlaceholder={t('Loading job templates...')}
-      loadingErrorText={t('Error loading job templates')}
+      placeholder={
+        props.templateType === 'workflow_job_templates'
+          ? t('Select a workflow job template')
+          : t('Select job template')
+      }
+      loadingPlaceholder={
+        props.templateType === 'workflow_job_templates'
+          ? t('Loading workflow job templates...')
+          : t('Loading job templates...')
+      }
+      loadingErrorText={
+        props.templateType === 'workflow_job_templates'
+          ? t('Error loading workflow job templates')
+          : t('Error loading job templates')
+      }
       isRequired={props.isRequired}
       limit={200}
       openSelectDialog={openSelectDialog}
