@@ -22,10 +22,11 @@ export function useCollectionColumns(_options?: { disableSort?: boolean; disable
           <TextCell
             text={collection.collection_version?.name}
             to={getPageUrl(HubRoute.CollectionPage, {
-              query: {
+              params: {
                 name: collection.collection_version?.name,
                 namespace: collection.collection_version?.namespace,
                 repository: collection.repository?.name,
+                version: collection.collection_version?.version,
               },
             })}
           />
