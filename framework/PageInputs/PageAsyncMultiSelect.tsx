@@ -5,12 +5,6 @@ import { useTranslation } from 'react-i18next';
 import { PageMultiSelect, PageMultiSelectProps } from './PageMultiSelect';
 import { PageSelectOption } from './PageSelectOption';
 
-/** A function to open a single selection browse modal for a filter. */
-type PageOpenMultiSelectBrowse<T> = (
-  onSelect: (values: T[]) => void,
-  defaultSelections?: T[]
-) => void;
-
 export interface PageAsyncMultiSelectQueryResult<ValueT> {
   total: number;
   options: PageSelectOption<ValueT>[];
@@ -31,9 +25,6 @@ export interface PageAsyncMultiSelectProps<ValueT>
 
   /** The placeholder to show if the query fails. */
   queryErrorText?: string | ((error: Error) => string);
-
-  /** The function to open the browse modal. */
-  openBrowse?: PageOpenMultiSelectBrowse<ValueT>;
 }
 
 /**
@@ -166,18 +157,6 @@ export function PageAsyncMultiSelect<
           </SplitItem>
         </Split>
       )}
-      {props.openBrowse ? (
-        <Button
-          variant="link"
-          onClick={() => {
-            props.openBrowse?.((selections) => {
-              props.onSelect(() => selections);
-            }, props.values || undefined);
-          }}
-        >
-          {t`Browse`}
-        </Button>
-      ) : undefined}
       {props.footer}
     </Stack>
   );

@@ -5,9 +5,6 @@ import { useTranslation } from 'react-i18next';
 import { PageSelectOption } from './PageSelectOption';
 import { PageSingleSelect, PageSingleSelectProps } from './PageSingleSelect';
 
-/** A function to open a single selection browse modal for a filter. */
-type PageOpenSingleSelectBrowse<T> = (onSelect: (value: T) => void, defaultSelection?: T) => void;
-
 export interface PageAsyncSingleSelectQueryResult<ValueT> {
   total: number;
   options: PageSelectOption<ValueT>[];
@@ -30,9 +27,6 @@ export interface PageAsyncSingleSelectProps<ValueT>
 
   /** The placeholder to show if the query fails. */
   queryErrorText?: PageAsyncQueryErrorTextType;
-
-  /** The function to open the browse modal. */
-  openBrowse?: PageOpenSingleSelectBrowse<ValueT>;
 }
 
 /**
@@ -165,18 +159,6 @@ export function PageAsyncSingleSelect<
           </SplitItem>
         </Split>
       )}
-      {props.openBrowse ? (
-        <Button
-          variant="link"
-          onClick={() => {
-            props.openBrowse?.((selection) => {
-              props.onSelect(selection);
-            }, props.value);
-          }}
-        >
-          {t`Browse`}
-        </Button>
-      ) : undefined}
       {props.footer}
     </Stack>
   );

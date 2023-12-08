@@ -159,7 +159,6 @@ export function CollectionPage() {
               }}
               placeholder={''}
               value={collection?.collection_version?.version || version || ''}
-              openBrowse={singleSelectorBrowser}
             />
             {collection?.collection_version &&
               t('Last updated') +
