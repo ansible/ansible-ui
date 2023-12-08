@@ -26,7 +26,19 @@ import { singleSelectBrowseAdapter } from '../../../../framework/PageToolbar/Pag
 export function CollectionPage() {
   const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { name, namespace, repository, version } = useParams();
+  const { name, namespace, repository } = useParams();
+
+  // load collection by search params
+  const version = searchParams.get('version');
+
+  let queryFilter = '';
+
+  if (!version) {
+    // for unspecified version, load highest
+    queryFilter = '&is_highest=true';
+  } else {
+    queryFilter = '&version=' + version;
+  }
 
   const singleSelector = useSelectCollectionVersionSingle({
     collection: name || '',
@@ -47,7 +59,7 @@ export function CollectionPage() {
   const collectionRequest = useGet<HubItemsResponse<CollectionVersionSearch>>(
     hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${name || ''}&namespace=${
       namespace || ''
-    }&repository_name=${repository || ''}&version=${version || ''}`
+    }&repository_name=${repository || ''}` + queryFilter
   );
 
   const collection =
