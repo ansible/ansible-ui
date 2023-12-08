@@ -64,10 +64,17 @@ jobs:
       - name: Slack Notification
         uses: slackapi/slack-github-action@v1.24.0
         with:
-          slack-message: "AWX_SERVER=${{ inputs.AWX_SERVER }}"
           payload: |
             {
               "blocks":[
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "AWX Server Updated",
+                    "emoji": true
+                  }
+                },              
                 {
                   "type": "context",
                   "elements": [
@@ -95,14 +102,22 @@ jobs:
         with:
           payload: |
             {
-              "text": "AWX UPDATE SERVER FAILURE",
               "blocks":[
                 {
-                  "type": "context",
+                  "type": "rich_text",
                   "elements": [
                     {
-                      "type": "mrkdwn",
-                      "text": ">AWX UPDATE SERVER FAILURE: ${{ inputs.AWX_SERVER }}"
+                      "type": "rich_text_section",
+                      "elements": [
+                        {
+                          "type": "emoji",
+                          "name": "alert"
+                        },
+                        {
+                          "type": "text",
+                          "text": "AWX Server Update Failure: ${{ github.event.inputs.AWX_SERVER }}",
+                        }
+                      ]
                     }
                   ]
                 }
