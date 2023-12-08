@@ -13,7 +13,7 @@ function useTokenUserToolbarFilter() {
   return useMemo<IToolbarFilter>(
     () => ({
       key: 'name',
-      label: t('name'),
+      label: t('Name'),
       type: ToolbarFilterType.Text,
       query: 'user__username__icontains',
       comparison: 'contains',

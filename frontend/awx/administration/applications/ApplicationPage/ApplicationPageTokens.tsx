@@ -75,7 +75,7 @@ export function ApplicationTokens() {
         toolbarActions={toolbarActions}
         tableColumns={tableColumns}
         rowActions={rowActions}
-        errorStateTitle={t('Error loading applications')}
+        errorStateTitle={t('Error loading tokens')}
         emptyStateTitle={t('There are currently no tokens associated with this application')}
         emptyStateDescription={t('You can create a token from your user page.')}
         {...view}
