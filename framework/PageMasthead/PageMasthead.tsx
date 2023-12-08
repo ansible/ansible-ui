@@ -27,7 +27,6 @@ export function PageMasthead(props: { brand: ReactNode; children?: ReactNode }) 
       <PageMastheadToggle />
       {isSmallOrLarger && (
         <MastheadMain>
-          <MastheadBrand component="a">{props.icon}</MastheadBrand>
           <MastheadBrand component={(props) => <Link {...props} to="/" />}>
             {props.brand}
           </MastheadBrand>
