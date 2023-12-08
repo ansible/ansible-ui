@@ -17,6 +17,7 @@ import { useCollectionActions } from '../hooks/useCollectionActions';
 import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
 import { useParams } from 'react-router-dom';
 import { requestGet } from '../../../common/crud/Data';
+import { Button } from '@patternfly/react-core';
 
 import { useCallback } from 'react';
 import { useSelectCollectionVersionSingle } from '../hooks/useCollectionVersionSelector';
@@ -159,6 +160,21 @@ export function CollectionPage() {
               }}
               placeholder={''}
               value={collection?.collection_version?.version || version || ''}
+              footer={
+                <Button
+                  variant="link"
+                  onClick={() => {
+                    singleSelectorBrowser?.(
+                      (selection) => {
+                        setVersionParams(selection);
+                      },
+                      collection?.collection_version?.version || version || ''
+                    );
+                  }}
+                >
+                  {t`Browse`}
+                </Button>
+              }
             />
             {collection?.collection_version &&
               t('Last updated') +
