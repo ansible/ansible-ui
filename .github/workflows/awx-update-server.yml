@@ -65,6 +65,10 @@ jobs:
         uses: slackapi/slack-github-action@v1.24.0
         with:
           slack-message: "AWX_SERVER=${{ inputs.AWX_SERVER }}"
+          payload: |
+            {
+              "text": "AWX_SERVER=${{ inputs.AWX_SERVER }}",
+            }          
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
@@ -79,7 +83,10 @@ jobs:
       - name: Slack Notification
         uses: slackapi/slack-github-action@v1.24.0
         with:
-          slack-message: "AWX UPDATE SERVER FAILURE"
+          payload: |
+            {
+              "text": "AWX UPDATE SERVER FAILURE",
+            }          
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
