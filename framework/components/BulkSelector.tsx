@@ -133,10 +133,15 @@ export function BulkSelector<T extends object>(props: BulkSelectorProps<T>) {
     );
   }, [selectItems, pageItems]);
 
-  const dropdownItems = useMemo(
-    () => [selectNoneDropdownItem, selectPageDropdownItem],
-    [selectNoneDropdownItem, selectPageDropdownItem]
-  );
+  const dropdownItems = useMemo(() => {
+    const hasSelectedItems = selectedItems && selectedItems.length > 0;
+
+    if (hasSelectedItems) {
+      return [selectNoneDropdownItem, selectPageDropdownItem];
+    } else {
+      return [selectPageDropdownItem];
+    }
+  }, [selectNoneDropdownItem, selectPageDropdownItem, selectedItems]);
 
   return (
     // Negative margin is needed to align the bulk select with table checkboxes
