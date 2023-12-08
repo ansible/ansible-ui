@@ -20,10 +20,12 @@ import {
 } from '../../../../frontend/awx/interfaces/OptionsResponse';
 import { gatewayAPI } from '../../../api/gateway-api-utils';
 import { requestPatch } from '../../../../frontend/common/crud/Data';
+import { useDeleteAuthenticators } from './useDeleteAuthenticators';
 
-export function useAuthenticatorToolbarActions(_view: IPlatformView<Authenticator>) {
+export function useAuthenticatorToolbarActions(view: IPlatformView<Authenticator>) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
+  const deleteAuthenticators = useDeleteAuthenticators(view.unselectItemsAndRefresh);
 
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/v1/authenticators/`);
   const canCreateAuthenticator = Boolean(data && data.actions && data.actions['POST']);
@@ -39,7 +41,7 @@ export function useAuthenticatorToolbarActions(_view: IPlatformView<Authenticato
         isDisabled: canCreateAuthenticator
           ? undefined
           : t(
-              'You do not have permission to create a authenticator. Please contact your system administrator if there is an issue with your access.'
+              'You do not have permission to create an authenticator. Please contact your system administrator if there is an issue with your access.'
             ),
         href: getPageUrl(PlatformRoute.CreateAuthenticator),
       },
@@ -49,11 +51,11 @@ export function useAuthenticatorToolbarActions(_view: IPlatformView<Authenticato
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
         label: t('Delete selected authentications'),
-        onClick: () => alert('TODO'),
+        onClick: deleteAuthenticators,
         isDanger: true,
       },
     ],
-    [t, canCreateAuthenticator, getPageUrl]
+    [t, canCreateAuthenticator, deleteAuthenticators, getPageUrl]
   );
 
   return toolbarActions;
@@ -61,6 +63,7 @@ export function useAuthenticatorToolbarActions(_view: IPlatformView<Authenticato
 
 export function useAuthenticatorRowActions(view: IPlatformView<Authenticator>) {
   const { t } = useTranslation();
+  const deleteAuthenticator = useDeleteAuthenticators(view.unselectItemsAndRefresh);
   const pageNavigate = usePageNavigate();
   const alertToaster = usePageAlertToaster();
   const handleToggleAuthenticator: (
@@ -137,11 +140,11 @@ export function useAuthenticatorRowActions(view: IPlatformView<Authenticator>) {
         icon: TrashIcon,
         label: t('Delete authentication'),
         isDisabled: (authenticator: Authenticator) => cannotDeleteAuthenticator(authenticator),
-        onClick: () => alert('TODO'),
+        onClick: (authenticator) => deleteAuthenticator([authenticator]),
         isDanger: true,
       },
     ];
-  }, [pageNavigate, handleToggleAuthenticator, t]);
+  }, [pageNavigate, deleteAuthenticator, handleToggleAuthenticator, t]);
 
   return rowActions;
 }
