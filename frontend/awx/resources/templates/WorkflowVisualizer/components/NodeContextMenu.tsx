@@ -1,23 +1,46 @@
 import { ReactElement } from 'react';
-import { ContextMenuSeparator, ContextMenuItem, action } from '@patternfly/react-topology';
+import {
+  ContextMenuSeparator,
+  ContextMenuItem,
+  action,
+  useVisualizationController,
+  useVisualizationState,
+} from '@patternfly/react-topology';
 import { PencilAltIcon, MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
-import type { GraphNode } from '../types';
+
+import { useTranslation } from 'react-i18next';
+import { useViewOptions } from '../ViewOptionsProvider';
+import { GraphNode } from '../types';
 
 interface MenuItem {
   key: string;
   label: string;
   icon?: ReactElement;
   isDanger?: boolean;
-  onClick?: (element: GraphNode) => void;
+  onClick?: () => void;
 }
 
-export function useNodeMenuItems(t: (item: string) => string): MenuItem[] {
+export function useNodeMenuItems(element: GraphNode): MenuItem[] {
+  const { t } = useTranslation();
+  const controller = useVisualizationController();
+  const { setSidebarMode } = useViewOptions();
+  const { selectedIds } = controller.getState<{
+    selectedIds: string[] | [];
+  }>();
+  const [_, setSelectedIds] = useVisualizationState('selectedIds', selectedIds);
+
+  const data = element.getData() as { id: string };
   return [
     {
       key: 'edit-node',
       icon: <PencilAltIcon />,
       label: t('Edit node'),
-      onClick: () => alert(`Selected: Edit node`),
+      onClick: () => {
+        action(() => {
+          setSidebarMode('edit');
+          setSelectedIds([data.id.toString()]);
+        })();
+      },
     },
     {
       key: 'add-link',
@@ -40,7 +63,7 @@ export function useNodeMenuItems(t: (item: string) => string): MenuItem[] {
       icon: <MinusCircleIcon />,
       isDanger: true,
       label: t('Remove node'),
-      onClick: (element) => {
+      onClick: () => {
         action(() => {
           element.getTargetEdges().forEach((edge) => edge.remove());
           element.getSourceEdges().forEach((edge) => edge.remove());
@@ -51,9 +74,9 @@ export function useNodeMenuItems(t: (item: string) => string): MenuItem[] {
   ];
 }
 
-export function NodeContextMenu(element: GraphNode, t: (string: string) => string) {
-  const items = useNodeMenuItems(t);
-
+export function NodeContextMenu(props: { element: GraphNode }) {
+  const { element } = props;
+  const items = useNodeMenuItems(element);
   return items.map((item) => {
     if (item.label === '-') {
       return <ContextMenuSeparator component="li" key={`separator:${item.key}`} />;
@@ -65,7 +88,7 @@ export function NodeContextMenu(element: GraphNode, t: (string: string) => strin
         key={item.key}
         icon={item.icon}
         isDanger={item.isDanger}
-        onClick={() => item?.onClick && item.onClick(element)}
+        onClick={() => item?.onClick && item.onClick()}
       >
         {item.label}
       </ContextMenuItem>
