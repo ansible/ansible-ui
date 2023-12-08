@@ -9,10 +9,9 @@ import {
   Model,
   ModelKind,
   NodeShape,
-  TopologyView as PFTopologyView,
+  TopologyView,
   SELECTION_EVENT,
   TopologyControlBar,
-  TopologyViewProps,
   Visualization,
   VisualizationProvider,
   VisualizationSurface,
@@ -31,13 +30,11 @@ import {
   withCreateConnector,
   isNode,
 } from '@patternfly/react-topology';
-import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
 import { EmptyStateNoData } from '../../../../../framework/components/EmptyStateNoData';
 import type { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
-import { WorkflowVisualizerNodeDetails } from './WorkflowVisualizerNodeDetails';
 import {
   AddNodeButton,
   CustomEdge,
@@ -51,25 +48,9 @@ import {
 import { GraphNode, EdgeStatus } from './types';
 import { ViewOptionsContext, ViewOptionsProvider } from './ViewOptionsProvider';
 import { ToolbarHeader } from './components/WorkflowVisualizerToolbar';
+import { Sidebar } from './components/Sidebar';
 
-const TopologyView = styled<
-  FunctionComponent<
-    TopologyViewProps & {
-      $isExpanded: boolean;
-    }
-  >
->(PFTopologyView)`
-  & .pf-topology-view__project-toolbar {
-    ${(props: { $isExpanded: boolean }) => !props.$isExpanded && 'flex-wrap: wrap;'}
-    flex: 1;
-  }
-
-  & .pf-topology-view__project-toolbar > :first-child {
-    ${(props: { $isExpanded: boolean }) => !props.$isExpanded && 'flex: 100%; padding-bottom:20px'}
-  }
-`;
-
-const GRAPH_ID = 'workflow-visualizer-graph';
+export const GRAPH_ID = 'workflow-visualizer-graph';
 const CONNECTOR_SOURCE_DROP = 'connector-src-drop';
 const CONNECTOR_TARGET_DROP = 'connector-target-drop';
 const NODE_DIAMETER = 50;
@@ -94,22 +75,25 @@ interface TopologyProps {
 
 export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyProps) => {
   const { t } = useTranslation();
-  const [selectedNode, setSelectedNode] = useState<WorkflowNode | undefined>(undefined);
 
   const handleSelectedNode = useCallback(
     (clickedNodeIdentifier: string[]) => {
       const clickedNodeData = workflowNodes.find(
         (node) => node.id.toString() === clickedNodeIdentifier[0]
       );
-      setSelectedNode(clickedNodeData);
+      return clickedNodeData;
     },
     [workflowNodes]
   );
-
-  const nodeContextMenu = useCallback((element: GraphNode) => NodeContextMenu(element, t), [t]);
+  const nodeContextMenu = useCallback(
+    (element: GraphNode) => [<NodeContextMenu key="nodeContext" element={element} />],
+    []
+  );
   const edgeContextMenu = useCallback(
-    (element: GraphElement<ElementModel, unknown>) => EdgeContextMenu(element, t),
-    [t]
+    (element: GraphElement<ElementModel, unknown>) => [
+      <EdgeContextMenu key="edgeContext" element={element} />,
+    ],
+    []
   );
   const baselineComponentFactory: ComponentFactory = useCallback(
     (kind: ModelKind, type: string) => {
@@ -276,13 +260,25 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
 
     visualization.fromModel(model, true);
   }, [t, visualization, createEdge, workflowNodes]);
-
   return (
     <VisualizationProvider controller={visualization}>
       <ViewOptionsProvider>
         {/* tools provider name */}
         <ViewOptionsContext.Consumer>
-          {({ isFullScreen, isEmpty, isLegendOpen, toggleLegend }) => {
+          {({ isFullScreen, isEmpty, isLegendOpen, isLoading, toggleLegend, sidebarMode }) => {
+            const state: TopologyProps & {
+              selectedIds: string[] | [];
+            } = visualization.getState();
+            let showSideBar = false;
+
+            if (state?.selectedIds?.length && !isLoading) {
+              const element = visualization.getElementById(state.selectedIds[0]) as GraphElement;
+              showSideBar = isNode(element);
+            }
+            if (sidebarMode === 'add') {
+              showSideBar = true;
+            }
+
             return (
               <TopologyView
                 data-cy="workflow-visualizer"
@@ -310,16 +306,9 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
                     })}
                   />
                 }
-                sideBarOpen={selectedNode !== undefined}
+                sideBarOpen={showSideBar}
                 sideBarResizable
-                sideBar={
-                  selectedNode ? (
-                    <WorkflowVisualizerNodeDetails
-                      setSelectedNode={setSelectedNode}
-                      selectedNode={selectedNode}
-                    />
-                  ) : null
-                }
+                sideBar={<Sidebar />}
               >
                 {isEmpty && (
                   <div style={{ flex: '1 0 100%' }}>
@@ -331,7 +320,7 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
                   </div>
                 )}
                 {isLegendOpen && <Legend />}
-                <VisualizationSurface state={{ selectedNode, workflowTemplate: template }} />
+                <VisualizationSurface state={{ workflowTemplate: template }} />
               </TopologyView>
             );
           }}

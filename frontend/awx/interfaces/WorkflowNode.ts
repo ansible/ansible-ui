@@ -3,7 +3,6 @@ export interface WorkflowNode {
   type: string;
   url: string;
   related: {
-    named_url: string;
     labels: string;
     credentials: string;
     instance_groups: string;
@@ -25,7 +24,7 @@ export interface WorkflowNode {
       name: string;
       description: string;
       unified_job_type: UnifiedJobType;
-      timeout: number;
+      timeout?: number;
     };
   };
   created: string;
