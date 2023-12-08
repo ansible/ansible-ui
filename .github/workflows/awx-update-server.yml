@@ -86,7 +86,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*GitHub Action:*\n    ${{ github.event.inputs.AWX_SERVER }}"
+                    "text": "*GitHub Action:*\n    ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
                   }
                 },
                 {
@@ -134,7 +134,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*GitHub Action*\n    ${{ github.event.inputs.AWX_SERVER }}"
+                    "text": "*GitHub Action*\n    ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
                   }
                 }                
               ]
