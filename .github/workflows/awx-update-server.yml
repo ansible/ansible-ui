@@ -81,7 +81,7 @@ jobs:
                     "type": "mrkdwn",
                     "text": "```export AWX_SERVER=${{ inputs.AWX_SERVER }}```"
                   }
-                }  
+                },
                 {
                   "type": "actions",
                   "elements": [
