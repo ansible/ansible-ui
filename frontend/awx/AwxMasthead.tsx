@@ -40,7 +40,7 @@ export function AwxMasthead() {
   }, [clearAllCache, navigate]);
 
   return (
-    <PageMasthead brand={<AwxBrand style={{ height: 60 }} />} title={process.env.PRODUCT}>
+    <PageMasthead brand={<AwxBrand style={{ height: 60 }} />}>
       <ToolbarGroup variant="icon-button-group" style={{ flexGrow: 1 }}>
         <ToolbarItem style={{ marginLeft: 'auto' }}>
           <PageRefreshIcon />
