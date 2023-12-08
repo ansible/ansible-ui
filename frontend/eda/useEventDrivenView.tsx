@@ -1,11 +1,17 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import useSWR from 'swr';
-import { ISelected, ITableColumn, IToolbarFilter, useSelected } from '../../framework';
-import { IView, useView } from '../../framework';
-import { EdaItemsResponse } from './common/EdaItemsResponse';
+import {
+  ISelected,
+  ITableColumn,
+  IToolbarFilter,
+  IView,
+  useSelected,
+  useView,
+} from '../../framework';
 import { getItemKey, swrOptions, useFetcher } from '../common/crud/Data';
-import { SWR_REFRESH_INTERVAL } from './constants';
 import { RequestError } from '../common/crud/RequestError';
+import { EdaItemsResponse } from './common/EdaItemsResponse';
+import { SWR_REFRESH_INTERVAL } from './constants';
 
 export type IEdaView<T extends { id: number | string }> = IView &
   ISelected<T> & {
@@ -14,7 +20,6 @@ export type IEdaView<T extends { id: number | string }> = IView &
     refresh: () => Promise<void>;
     selectItemsAndRefresh: (items: T[]) => void;
     unselectItemsAndRefresh: (items: T[]) => void;
-    refreshing: boolean;
   };
 
 export type QueryParams = {
@@ -100,12 +105,8 @@ export function useEdaView<T extends { id: number | string }>(options: {
     refreshInterval: SWR_REFRESH_INTERVAL,
   });
   const { data, mutate } = response;
-  const [refreshing, setRefreshing] = useState(false);
   const refresh = useCallback(async () => {
-    setRefreshing(true);
-    await mutate().finally(() => {
-      setRefreshing(false);
-    });
+    await mutate().finally(() => {});
   }, [mutate]);
 
   useSWR<EdaItemsResponse<T>>(data?.next, fetcher, swrOptions);
@@ -151,13 +152,11 @@ export function useEdaView<T extends { id: number | string }>(options: {
       ...selection,
       selectItemsAndRefresh,
       unselectItemsAndRefresh,
-      refreshing,
     };
   }, [
     data?.results,
     error,
     refresh,
-    refreshing,
     selectItemsAndRefresh,
     selection,
     unselectItemsAndRefresh,
