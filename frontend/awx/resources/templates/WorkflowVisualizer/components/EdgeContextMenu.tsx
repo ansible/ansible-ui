@@ -13,6 +13,7 @@ import {
   TrashIcon,
 } from '@patternfly/react-icons';
 import { Icon } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 
 interface MenuItem {
   key: string;
@@ -22,7 +23,8 @@ interface MenuItem {
   onClick?: (element: GraphElement) => void;
 }
 
-export function useEdgeMenuItems(t: (item: string) => string): MenuItem[] {
+export function useEdgeMenuItems(): MenuItem[] {
+  const { t } = useTranslation();
   return [
     {
       key: 'success',
@@ -96,13 +98,12 @@ export function useEdgeMenuItems(t: (item: string) => string): MenuItem[] {
   ];
 }
 
-export function EdgeContextMenu(
-  element: GraphElement<ElementModel, unknown>,
-  t: (string: string) => string
-) {
+export function EdgeContextMenu(props: { element: GraphElement<ElementModel, unknown> }) {
+  const { element } = props;
   const data = element.getData() as { tagStatus: string };
 
-  const items = useEdgeMenuItems(t);
+  const items = useEdgeMenuItems();
+
   return items.map((item) => {
     if (item.label === '-') {
       return <ContextMenuSeparator component="li" key={`separator:${item.key}`} />;
