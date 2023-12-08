@@ -17,7 +17,7 @@ import { useActiveUser } from '../common/useActiveUser';
 import { useClearCache } from '../common/useInvalidateCache';
 import { AwxRoute } from './AwxRoutes';
 import { awxAPI } from './api/awx-utils';
-import AwxIcon from './awx-logo.svg';
+import AwxBrand from './awx-logo.svg';
 import { AwxItemsResponse } from './common/AwxItemsResponse';
 import { useAwxConfig } from './common/useAwxConfig';
 import { useAwxWebSocketSubscription } from './common/useAwxWebSocket';
@@ -40,11 +40,7 @@ export function AwxMasthead() {
   }, [clearAllCache, navigate]);
 
   return (
-    <PageMasthead
-      icon={<AwxIcon style={{ height: 60 }} />}
-      title={process.env.PRODUCT}
-      brand={process.env.BRAND}
-    >
+    <PageMasthead brand={<AwxBrand style={{ height: 60 }} />} title={process.env.PRODUCT}>
       <ToolbarGroup variant="icon-button-group" style={{ flexGrow: 1 }}>
         <ToolbarItem style={{ marginLeft: 'auto' }}>
           <PageRefreshIcon />

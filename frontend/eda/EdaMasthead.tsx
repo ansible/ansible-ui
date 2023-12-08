@@ -15,7 +15,7 @@ import { useActiveUser } from '../common/useActiveUser';
 import { useClearCache } from '../common/useInvalidateCache';
 import { EdaRoute } from './EdaRoutes';
 import { edaAPI } from './api/eda-utils';
-import EdaIcon from './eda-logo.svg';
+import EdaBrand from './eda-logo.svg';
 
 export function EdaMasthead() {
   const { t } = useTranslation();
@@ -30,11 +30,7 @@ export function EdaMasthead() {
     navigate('/login');
   }, [clearAllCache, navigate]);
   return (
-    <PageMasthead
-      icon={<EdaIcon style={{ height: 64 }} />}
-      title={process.env.PRODUCT}
-      brand={process.env.BRAND}
-    >
+    <PageMasthead brand={<EdaBrand style={{ height: 64 }} />}>
       <ToolbarGroup variant="icon-button-group" style={{ flexGrow: 1 }}>
         <ToolbarItem style={{ marginLeft: 'auto' }}>
           <PageRefreshIcon />
