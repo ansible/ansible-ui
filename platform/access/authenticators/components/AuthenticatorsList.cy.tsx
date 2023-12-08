@@ -8,7 +8,6 @@ Authenticators list test cases
 import { AuthenticatorsList } from './AuthenticatorsList';
 import * as useOptions from '../../../../frontend/common/crud/useOptions';
 import { gatewayAPI } from '../../../api/gateway-api-utils';
-import { RulebookActivations } from '../../../../frontend/eda/rulebook-activations/RulebookActivations';
 
 describe('Authenticators list', () => {
   describe('Non-empty list', () => {
