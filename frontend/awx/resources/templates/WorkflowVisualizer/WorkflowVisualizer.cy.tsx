@@ -172,25 +172,28 @@ describe('WorkflowVisualizer', () => {
   });
 });
 
-describe('Workflow visualizer empty state', () => {
-  it('Should mount with empty state', () => {
-    cy.fixture('workflow_nodes.json').then((workflow_nodes: AwxItemsResponse<WorkflowNode>) => {
-      workflow_nodes.count = 0;
-      workflow_nodes.results = [];
-      cy.intercept(
-        {
-          method: 'GET',
-          url: '/api/v2/workflow_job_templates/*/workflow_nodes/*',
-          hostname: 'localhost',
-        },
-        { workflow_nodes }
-      );
-    });
+describe('Empty state', () => {
+  it('Should show empty state view', () => {
     cy.intercept(
-      { method: 'GET', url: '/api/v2/workflow_job_templates/*' },
+      { method: 'GET', url: '/api/v2/workflow_job_templates/123/workflow_nodes/?*' },
+      {
+        statusCode: 200,
+        body: {
+          count: 0,
+          next: null,
+          previous: null,
+          results: [],
+        },
+      }
+    );
+    cy.intercept(
+      { method: 'GET', url: '/api/v2/workflow_job_templates/123' },
       { fixture: 'workflowJobTemplate.json' }
     );
-    cy.mount(<WorkflowVisualizer />);
+    cy.mount(<WorkflowVisualizer />, {
+      path: '/templates/workflow_job_template/:id/visualizer',
+      initialEntries: ['/templates/workflow_job_template/123/visualizer'],
+    });
     cy.get('h4.pf-v5-c-empty-state__title-text').should(
       'have.text',
       'There are currently no nodes in this workflow'
