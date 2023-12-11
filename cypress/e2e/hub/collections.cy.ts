@@ -7,7 +7,8 @@ describe('Collections- List View', () => {
   //**The only way to get rid of a collection's artifact is to choose the following opt: Delete entire collection from repository
   //
   before(() => {
-    const namespaceName = 'E2E Namespace ' + randomString(4);
+    const newname = 'e2enamespace' + randomString(4);
+    const namespaceName = newname.toLowerCase();
     cy.hubLogin();
     cy.createNamespace(namespaceName);
   });
