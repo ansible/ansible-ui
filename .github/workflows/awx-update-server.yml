@@ -66,7 +66,7 @@ jobs:
         with:
           payload: |
             {
-              "blocks":[
+              "blocks": [
                 {
                   "type": "header",
                   "text": {
@@ -79,14 +79,14 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*Environment Variables*```export AWX_SERVER=${{ steps.step1.outputs.AWX_SERVER }}```"
+                    "text": "*Environment Variables*```export AWX_SERVER=${{ needs.setup.outputs.AWX_SERVER }}```"
                   }
                 },   
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*Server*\n${{ steps.step1.outputs.AWX_SERVER }}"
+                    "text": "*Server*\n${{ needs.setup.outputs.AWX_SERVER }}"
                   }
                 },
                 {
@@ -107,6 +107,7 @@ jobs:
     if: failure()
     needs:
       - awx-update-server
+      - setup
     runs-on: ubuntu-latest
     steps:
       - name: Slack Notification
@@ -114,7 +115,7 @@ jobs:
         with:
           payload: |
             {
-              "blocks":[
+              "blocks": [
                 {
                   "type": "header",
                   "text": {
@@ -128,14 +129,13 @@ jobs:
                   "text": {
                     "type": "mrkdwn",
                     "text": "The GitHub Action to update the server failed. <!here>",
-                    "emoji": true
                   }
                 },
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*Server*\n${{ steps.step1.outputs.AWX_SERVER }}"
+                    "text": "*Server*\n${{ needs.setup.outputs.AWX_SERVER }}"
                   }
                 },
                 {
