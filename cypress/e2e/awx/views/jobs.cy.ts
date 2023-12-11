@@ -163,7 +163,7 @@ describe('job delete', () => {
           .prev()
           .find('td[data-cy="status-column-cell"]')
           .within(() => {
-            cy.contains('Sucessful').should('be.visible');
+            cy.contains('Successful').should('be.visible');
           });
         cy.get('input[id="confirm"]').should('be.visible');
         cy.get('#confirm').click();
@@ -196,7 +196,7 @@ describe('job delete', () => {
         .prev()
         .find('td[data-cy="status-column-cell"]')
         .within(() => {
-          cy.contains('Sucessful').should('be.visible');
+          cy.contains('Successful').should('be.visible');
         });
       cy.get('input[id="confirm"]').should('be.visible');
       cy.get('#confirm').click();
