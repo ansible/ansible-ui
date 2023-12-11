@@ -130,7 +130,6 @@ Cypress.Commands.add(
     options?: {
       /** Whether to fail on response codes other than 2xx and 3xx */
       failOnStatusCode?: boolean;
-      blah;
     }
   ) => {
     if (role?.name) {
