@@ -86,10 +86,12 @@ function WorkflowVisualizerToolbar() {
   const config = useAwxConfig();
   const [isKebabOpen, setIsKebabOpen] = useState<boolean>(false);
   const { isFullScreen, toggleFullScreen } = useViewOptions();
-  const [workflowTemplate] = useVisualizationState<WorkflowJobTemplate>('workflowTemplate');
 
   const controller = useVisualizationController();
   const nodes = controller.getGraph().getNodes() as GraphNode[];
+  const { workflowTemplate } = controller.getState<{ workflowTemplate: WorkflowJobTemplate }>();
+  const isReadOnly = !workflowTemplate?.summary_fields?.user_capabilities?.edit;
+  const isLaunchable = workflowTemplate?.summary_fields?.user_capabilities?.start;
 
   const removeAllNodes = useRemoveAllNodes();
 
@@ -104,14 +106,23 @@ function WorkflowVisualizerToolbar() {
   return (
     <>
       {isFullScreen && <ToolbarHeader />}
-      <ToolbarItem>
-        <Button icon={<CheckCircleIcon />} label={t('Save')} onClick={() => {}}>
-          {t('Save')}
-        </Button>
-      </ToolbarItem>
-      <ToolbarItem>
-        <AddNodeButton />
-      </ToolbarItem>
+      {!isReadOnly && (
+        <>
+          <ToolbarItem>
+            <Button
+              data-cy="workflow-visualizer-toolbar-save"
+              icon={<CheckCircleIcon />}
+              label={t('Save')}
+              onClick={() => {}}
+            >
+              {t('Save')}
+            </Button>
+          </ToolbarItem>
+          <ToolbarItem>
+            <AddNodeButton />
+          </ToolbarItem>
+        </>
+      )}
       <ToolbarItem>
         <Dropdown
           onOpenChange={(isOpen: boolean) => setIsKebabOpen(isOpen)}
@@ -137,22 +148,28 @@ function WorkflowVisualizerToolbar() {
             >
               {t('Documentation')}
             </DropdownItem>
-            <DropdownItem
-              data-cy="launch-workflow"
-              onClick={() => void handleLaunchWorkflow()}
-              icon={<RocketIcon />}
-            >
-              {t('Launch workflow')}
-            </DropdownItem>
-            <Divider />
-            <DropdownItem
-              data-cy="remove-all-nodes"
-              onClick={() => removeAllNodes(nodes)}
-              isDanger
-              icon={<MinusCircleIcon />}
-            >
-              {t('Remove all nodes')}
-            </DropdownItem>
+            {isLaunchable && (
+              <DropdownItem
+                data-cy="workflow-visualizer-toolbar-launch"
+                onClick={() => void handleLaunchWorkflow()}
+                icon={<RocketIcon />}
+              >
+                {t('Launch workflow')}
+              </DropdownItem>
+            )}
+            {!isReadOnly && (
+              <>
+                <Divider />
+                <DropdownItem
+                  data-cy="workflow-visualizer-toolbar-remove-all"
+                  onClick={() => removeAllNodes(nodes)}
+                  isDanger
+                  icon={<MinusCircleIcon />}
+                >
+                  {t('Remove all nodes')}
+                </DropdownItem>
+              </>
+            )}
           </DropdownList>
         </Dropdown>
       </ToolbarItem>
