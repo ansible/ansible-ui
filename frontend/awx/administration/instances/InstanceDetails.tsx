@@ -131,6 +131,7 @@ export function InstanceDetailsTab(props: {
     handleInstanceForksSlider,
   } = props;
   const toolTipMap: { [item: string]: string } = useNodeTypeTooltip();
+  const capacityAvailable = instance.cpu_capacity !== 0 && instance.mem_capacity !== 0;
   return (
     <PageDetails>
       <PageDetail label={t('Name')} data-cy="name">
@@ -224,7 +225,7 @@ export function InstanceDetailsTab(props: {
           }
           isDisabled={
             // need to add rbac for super user
-            !instance.enabled
+            !instance.enabled || !capacityAvailable
           }
         />
       </PageDetail>
