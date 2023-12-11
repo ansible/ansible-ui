@@ -79,14 +79,14 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*Environment Variables*```export AWX_SERVER=${{ inputs.AWX_SERVER }}```"
+                    "text": "*Environment Variables*```export AWX_SERVER=${{ steps.step1.outputs.AWX_SERVER }}```"
                   }
                 },   
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*Server:*\n${{ github.event.inputs.AWX_SERVER }}"
+                    "text": "*Server:*\n${{ steps.step1.outputs.AWX_SERVER }}"
                   }
                 },
                 {
@@ -135,7 +135,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*Server*\n${{ github.event.inputs.AWX_SERVER }}"
+                    "text": "*Server*\n${{ steps.step1.outputs.AWX_SERVER }}"
                   }
                 },
                 {
