@@ -15,10 +15,7 @@ export function useDeleteCredentials(onComplete?: (credentials: Credential[]) =>
   const bulkAction = useBulkConfirmation<Credential>();
   const deleteCredentials = (credentials: Credential[]) => {
     bulkAction({
-      title:
-        credentials.length === 1
-          ? t('Permanently delete credential')
-          : t('Permanently delete credentials'),
+      title: t('Permanently delete credentials', { count: credentials.length }),
       confirmText: t('Yes, I confirm that I want to delete these {{count}} credentials.', {
         count: credentials.length,
       }),
