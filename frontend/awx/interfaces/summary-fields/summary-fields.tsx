@@ -1,3 +1,10 @@
+export interface SummaryFieldRecentJob {
+  id: number;
+  status: string;
+  finished: string | null;
+  canceled_on: string | null;
+  type: string;
+}
 export interface SummaryFieldsOrganization {
   id: number;
   name: string;
@@ -176,4 +183,5 @@ export interface JobSummaryFields {
     description: string;
     next_run: string;
   };
+  recent_jobs?: SummaryFieldRecentJob[];
 }
