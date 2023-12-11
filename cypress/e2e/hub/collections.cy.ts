@@ -1,8 +1,13 @@
 import { Collections } from './constants';
 
 describe('Collections- List View', () => {
+  //Important to know:
+  //**In order to upload a collection, a namespace must first exist containing the first word of the collection file name
+  //**The only way to get rid of a collection's artifact is to choose the following opt: Delete entire collection from repository
+  //
   before(() => {
     cy.hubLogin();
+    cy.createNamespace('misfit');
   });
 
   it('it should render the collections page', () => {
