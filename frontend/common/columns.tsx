@@ -272,7 +272,7 @@ export function useOrganizationNameColumn(
 }
 
 export function useInventoryNameColumn(
-  invDetailsRoute: string,
+  inventoryDetailsRoute: string,
   options?: {
     disableLinks?: boolean;
     disableSort?: boolean;
@@ -293,7 +293,7 @@ export function useInventoryNameColumn(
       cell: (item) => (
         <TextCell
           text={item.summary_fields?.inventory?.name}
-          to={getPageUrl(invDetailsRoute, {
+          to={getPageUrl(inventoryDetailsRoute, {
             params: { id: item.summary_fields?.inventory?.id },
           })}
           disableLinks={options?.disableLinks}
@@ -306,7 +306,41 @@ export function useInventoryNameColumn(
       list: 'hidden',
       modal: ColumnModalOption.Hidden,
     }),
-    [getPageUrl, options?.disableLinks, options?.disableSort, invDetailsRoute, t]
+    [getPageUrl, options?.disableLinks, options?.disableSort, inventoryDetailsRoute, t]
+  );
+  return column;
+}
+
+export function useCredentialTypeColumn(options?: {
+  disableLinks?: boolean;
+  disableSort?: boolean;
+}) {
+  const { t } = useTranslation();
+  const column: ITableColumn<{
+    summary_fields?: {
+      credentials?: {
+        id: number;
+        name: string;
+        kind: string;
+      };
+    };
+  }> = useMemo(
+    () => ({
+      header: t('Credentials'),
+      cell: (item) => (
+        <TextCell
+          text={item.summary_fields?.credentials?.name}
+          disableLinks={options?.disableLinks}
+        />
+      ),
+      value: (item) => item.summary_fields?.credentials?.name,
+      sort: options?.disableSort ? undefined : 'credentials',
+      table: ColumnTableOption.Expanded,
+      card: 'hidden',
+      list: 'hidden',
+      modal: ColumnModalOption.Hidden,
+    }),
+    [options?.disableLinks, options?.disableSort, t]
   );
   return column;
 }
