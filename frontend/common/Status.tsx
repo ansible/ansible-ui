@@ -13,7 +13,12 @@ import {
 import { useTranslation } from 'react-i18next';
 import { RunningIcon, TextCell } from '../../framework';
 
-export function StatusCell(props: { status?: string; disableLinks?: boolean; to?: string }) {
+export function StatusCell(props: {
+  status?: string;
+  disableLinks?: boolean;
+  to?: string;
+  hideLabel?: boolean;
+}) {
   const { t } = useTranslation();
   const status = props.status || 'default';
 
@@ -23,7 +28,7 @@ export function StatusCell(props: { status?: string; disableLinks?: boolean; to?
 
   return (
     <TextCell
-      text={label}
+      text={props.hideLabel ? '' : label}
       color={color}
       icon={Icon ? <Icon /> : null}
       to={props.to}
