@@ -270,6 +270,47 @@ export function useOrganizationNameColumn(
   );
   return column;
 }
+
+export function useInventoryNameColumn(
+  invDetailsRoute: string,
+  options?: {
+    disableLinks?: boolean;
+    disableSort?: boolean;
+  }
+) {
+  const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
+  const column: ITableColumn<{
+    summary_fields?: {
+      inventory?: {
+        id: number;
+        name: string;
+      };
+    };
+  }> = useMemo(
+    () => ({
+      header: t('Inventory'),
+      cell: (item) => (
+        <TextCell
+          text={item.summary_fields?.inventory?.name}
+          to={getPageUrl(invDetailsRoute, {
+            params: { id: item.summary_fields?.inventory?.id },
+          })}
+          disableLinks={options?.disableLinks}
+        />
+      ),
+      value: (item) => item.summary_fields?.inventory?.name,
+      sort: options?.disableSort ? undefined : 'inventory',
+      table: ColumnTableOption.Expanded,
+      card: 'hidden',
+      list: 'hidden',
+      modal: ColumnModalOption.Hidden,
+    }),
+    [getPageUrl, options?.disableLinks, options?.disableSort, invDetailsRoute, t]
+  );
+  return column;
+}
+
 export function useTypeColumn<T extends object>(options: {
   header?: string;
   url?: string;
