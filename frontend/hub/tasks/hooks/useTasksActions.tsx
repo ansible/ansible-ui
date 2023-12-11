@@ -39,14 +39,14 @@ export function useStopTasks(onComplete?: (tasks: Task[]) => void) {
   const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
   const bulkAction = useBulkConfirmation<Task>();
   return useCallback(
-    (ees: Task[]) => {
+    (tasks: Task[]) => {
       bulkAction({
-        title: t('Stop running task', { count: ees.length }),
+        title: t('Stop running task', { count: tasks.length }),
         confirmText: t('Yes, I confirm that I want to stop these {{count}} running tasks.', {
-          count: ees.length,
+          count: tasks.length,
         }),
-        actionButtonText: t('Stop tasks', { count: ees.length }),
-        items: ees.sort((l, r) => compareStrings(l.pulp_href || '', r.pulp_href || '')),
+        actionButtonText: t('Stop tasks', { count: tasks.length }),
+        items: tasks.sort((l, r) => compareStrings(l.pulp_href || '', r.pulp_href || '')),
         keyFn: (item) => item.name,
         isDanger: true,
         confirmationColumns,
