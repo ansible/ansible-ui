@@ -27,10 +27,7 @@ export function useTemplateActions(options: {
     const itemActions: IPageAction<Template>[] = [
       {
         type: PageActionType.Link,
-        isHidden: (template) =>
-          template?.type !== 'workflow_job_template' ||
-          !template?.summary_fields.user_capabilities.edit,
-
+        isHidden: (template) => template?.type !== 'workflow_job_template',
         selection: PageActionSelection.Single,
         isPinned: true,
         icon: ProjectDiagramIcon,
