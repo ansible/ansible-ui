@@ -1,3 +1,4 @@
+import { randomString } from '../../../framework/utils/random-string';
 import { Collections } from './constants';
 
 describe('Collections- List View', () => {
@@ -6,8 +7,9 @@ describe('Collections- List View', () => {
   //**The only way to get rid of a collection's artifact is to choose the following opt: Delete entire collection from repository
   //
   before(() => {
+    const namespaceName = 'E2E Namespace ' + randomString(4);
     cy.hubLogin();
-    cy.createNamespace('misfit');
+    cy.createNamespace(namespaceName);
   });
 
   it('it should render the collections page', () => {
