@@ -86,14 +86,14 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*Server:*\n${{ steps.step1.outputs.AWX_SERVER }}"
+                    "text": "*Server*\n${{ steps.step1.outputs.AWX_SERVER }}"
                   }
                 },
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*GitHub Action:*\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                    "text": "*GitHub Action*\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
                   }
                 }
               ]
