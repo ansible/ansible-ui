@@ -128,7 +128,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "The GitHub Action to update the server failed. <!here>",
+                    "text": "The GitHub Action to update the server failed. <!here>"
                   }
                 },
                 {
