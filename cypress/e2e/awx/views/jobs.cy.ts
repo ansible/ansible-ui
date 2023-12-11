@@ -159,6 +159,13 @@ describe('job delete', () => {
         const jobName = testJob.name ? testJob.name : '';
         cy.waitForJobToProcessEvents(jobId);
         cy.clickTableRowKebabAction(jobName, 'delete-job', false);
+        cy.get('.pf-v5-c-modal-box__footer')
+          .prev()
+          .find('td[data-cy="status-column-cell"]')
+          .within(() => {
+            cy.contains('Sucessful').should('be.visible');
+          });
+        cy.get('input[id="confirm"]').should('be.visible');
         cy.get('#confirm').click();
         cy.clickButton(/^Delete job/);
         cy.contains(/^Success$/);
@@ -185,6 +192,13 @@ describe('job delete', () => {
       cy.waitForJobToProcessEvents(jobId);
       cy.selectTableRow(jobName, false);
       cy.clickToolbarKebabAction('delete-selected-jobs');
+      cy.get('.pf-v5-c-modal-box__footer')
+        .prev()
+        .find('td[data-cy="status-column-cell"]')
+        .within(() => {
+          cy.contains('Sucessful').should('be.visible');
+        });
+      cy.get('input[id="confirm"]').should('be.visible');
       cy.get('#confirm').click();
       cy.clickButton(/^Delete job/);
       cy.contains(/^Success$/);
