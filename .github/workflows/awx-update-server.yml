@@ -71,7 +71,7 @@ jobs:
                   "type": "header",
                   "text": {
                     "type": "plain_text",
-                    "text": ":rocket:  AWX E2E Server Updated",
+                    "text": "AWX E2E Server Updated",
                     "emoji": true
                   }
                 },
