@@ -19,8 +19,8 @@
           "description": ""
         },
         "user_capabilities": {
-          "edit": false,
-          "delete": false
+          "edit": true,
+          "delete": true
         },
         "tokens": {
           "count": 1,

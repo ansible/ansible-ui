@@ -1,4 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import * as useOptions from '../../../common/crud/useOptions';
+import { RouteObj } from '../../../common/Routes';
+import { Application } from '../../interfaces/Application';
+import { ApplicationPage } from './ApplicationPage/ApplicationPage';
 import { Applications } from './Applications';
 
 describe('Applications List', () => {
@@ -43,26 +49,66 @@ describe('Applications List', () => {
     });
 
     it('Delete application row action is disabled if the user does not have permission to delete application', () => {
-      cy.mount(<Applications />);
-      cy.contains('tr', 'test').within(() => {
-        // user_capabilities.delete: false
-        cy.get('button.toggle-kebab').click();
-        cy.contains('.pf-v5-c-dropdown__menu-item', /^Delete application$/).should(
-          'have.attr',
-          'aria-disabled',
-          'true'
-        );
-      });
+      cy.fixture('applications')
+        .then((applications) => {
+          for (let i = 0; i < (applications.results as Application[]).length; i++) {
+            applications.results[i].summary_fields.user_capabilities.delete = false;
+          }
+          return applications;
+        })
+        .then((applications) => {
+          cy.intercept(
+            {
+              method: 'GET',
+              url: '/api/v2/applications/*',
+            },
+            { body: applications }
+          );
+        })
+        .then(() => {
+          cy.mount(<Applications />);
+        })
+        .then(() => {
+          cy.contains('tr', 'test').within(() => {
+            // user_capabilities.delete: false
+            cy.get('button.toggle-kebab').click();
+            cy.contains('.pf-v5-c-dropdown__menu-item', /^Delete application$/).should(
+              'have.attr',
+              'aria-disabled',
+              'true'
+            );
+          });
+        });
     });
 
     it('Edit application row action is disabled if the user does not have permission to edit application', () => {
-      cy.mount(<Applications />);
-      cy.contains('tr', 'test').within(() => {
-        // user_capabilities.edit: false
-        cy.get('[data-cy="actions-column-cell"]').within(() => {
-          cy.get(`[data-cy="edit-application"]`).should('have.attr', 'aria-disabled', 'true');
+      cy.fixture('applications')
+        .then((applications) => {
+          for (let i = 0; i < (applications.results as Application[]).length; i++) {
+            applications.results[i].summary_fields.user_capabilities.edit = false;
+          }
+          return applications;
+        })
+        .then((applications) => {
+          cy.intercept(
+            {
+              method: 'GET',
+              url: '/api/v2/applications/*',
+            },
+            { body: applications }
+          );
+        })
+        .then(() => {
+          cy.mount(<Applications />);
+        })
+        .then(() => {
+          cy.contains('tr', 'test').within(() => {
+            // user_capabilities.edit: false
+            cy.get('[data-cy="actions-column-cell"]').within(() => {
+              cy.get(`[data-cy="edit-application"]`).should('have.attr', 'aria-disabled', 'true');
+            });
+          });
         });
-      });
     });
 
     it('Create application button is enabled if the user has permission to create applications', () => {
@@ -87,15 +133,6 @@ describe('Applications List', () => {
     });
 
     it('Delete application row action is enabled if the user has permission to delete application', () => {
-      cy.intercept(
-        {
-          method: 'GET',
-          url: '/api/v2/applications/*',
-        },
-        {
-          fixture: 'applications_edit_delete.json',
-        }
-      );
       cy.mount(<Applications />);
       cy.contains('tr', 'test').within(() => {
         // user_capabilities.delete: false
@@ -109,15 +146,6 @@ describe('Applications List', () => {
     });
 
     it('Edit application row action is enabled if the user has permission to edit application', () => {
-      cy.intercept(
-        {
-          method: 'GET',
-          url: '/api/v2/applications/*',
-        },
-        {
-          fixture: 'applications_edit_delete.json',
-        }
-      );
       cy.mount(<Applications />);
       cy.contains('tr', 'test').within(() => {
         // user_capabilities.edit: false
