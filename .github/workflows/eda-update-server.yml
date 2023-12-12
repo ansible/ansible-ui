@@ -71,7 +71,7 @@ jobs:
                   "type": "header",
                   "text": {
                     "type": "plain_text",
-                    "text": ":rocket:  EDA E2E Server Updated",
+                    "text": "EDA E2E Server Updated",
                     "emoji": true
                   }
                 },
