@@ -86,7 +86,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*Server*\n${{ needs.setup.outputs.AWX_SERVER }}"
+                    "text": "*Server*\n${{ needs.setup.outputs.AWX_SERVER }}/ui_next"
                   }
                 },
                 {
@@ -135,7 +135,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*Server*\n${{ needs.setup.outputs.AWX_SERVER }}"
+                    "text": "*Server*\n${{ needs.setup.outputs.AWX_SERVER }}/ui_next"
                   }
                 },
                 {

@@ -86,7 +86,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*Server*\n${{ needs.setup.outputs.EDA_SERVER }}"
+                    "text": "*Server*\n${{ needs.setup.outputs.EDA_SERVER }}/eda"
                   }
                 },
                 {
@@ -135,7 +135,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*Server*\n${{ needs.setup.outputs.EDA_SERVER }}"
+                    "text": "*Server*\n${{ needs.setup.outputs.EDA_SERVER }}/eda"
                   }
                 },
                 {
