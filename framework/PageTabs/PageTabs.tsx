@@ -49,7 +49,7 @@ export function PageTabs(props: {
         onSelect={onSelect}
         inset={{ default: 'insetSm' }}
         isBox
-        style={{ backgroundColor: 'var(--pf-v5-c-tabs__link--BackgroundColor)' }}
+        style={{ flexShrink: 0, backgroundColor: 'var(--pf-v5-c-tabs__link--BackgroundColor)' }}
       >
         {tabs as unknown as TabsChild}
       </Tabs>
