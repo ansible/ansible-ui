@@ -12,8 +12,8 @@ import styled from 'styled-components';
 import { LoadingPage } from '../../../../framework';
 import { PageSection } from '@patternfly/react-core';
 import { useEffect } from 'react';
-
 import { useRef } from 'react';
+import { EmptyStateNoData } from '../../../../framework/components/EmptyStateNoData';
 
 export function CollectionContents() {
   const { t } = useTranslation();
@@ -124,7 +124,7 @@ export function CollectionContents() {
               });
             }}
           />
-
+          <br />
           <span className={'hub-c-toolbar__item-type-selector-label'}>{t`Showing`}:</span>
           {Object.keys(summary).map((key) => {
             // eslint-disable-next-line i18next/no-literal-string
@@ -149,9 +149,44 @@ export function CollectionContents() {
               </ToolbarItem>
             );
           })}
+          <br /> <br />
+          <table className="hub-c-table-content pf-c-table pf-m-compact">
+            <thead>
+              <tr>
+                <th>{t`Name`}</th>
+                <th>{t`Type`}</th>
+                <th>{t`Description`}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {toShow.map((content, i) => (
+                <tr key={i}>
+                  <td>
+                    {content.name}
+                    {/* TODO - links and format path*/}
+                  </td>
+                  <td>{content.content_type}</td>
+                  <td>{content.description}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {summary.all <= 0 && collection.repository?.name === 'community' && (
+            <RenderCommunityWarningMessage />
+          )}
         </StyledDiv>
       </PageSection>
     </>
+  );
+}
+
+function RenderCommunityWarningMessage() {
+  const { t } = useTranslation();
+  return (
+    <EmptyStateNoData
+      title={t`Warning`}
+      description={t`Community collections do not have docs nor content counts, but all content gets synchronized`}
+    />
   );
 }
 
