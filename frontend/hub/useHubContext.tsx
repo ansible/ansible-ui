@@ -1,5 +1,7 @@
+import { Page } from '@patternfly/react-core';
 import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
-import { LoadingPage } from '../../framework/components/LoadingPage';
+import { PageLayout } from '../../framework';
+import { LoadingState } from '../../framework/components/LoadingState';
 import { useGet } from '../common/crud/useGet';
 import { hubAPI } from './api/formatPath';
 
@@ -129,7 +131,11 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
       {children}
     </HubContext.Provider>
   ) : (
-    <LoadingPage />
+    <Page>
+      <PageLayout>
+        <LoadingState />
+      </PageLayout>
+    </Page>
   );
 };
 
