@@ -47,7 +47,7 @@ export function PageDashboardCountBar(props: PageDashboardCountBarProps) {
                     size="xl"
                     style={{ whiteSpace: 'nowrap', textDecoration: 'none' }}
                   >
-                    {total} &nbsp;{item.title}
+                    {total} {item.title}
                   </Title>
                 </Link>
 
