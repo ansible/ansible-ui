@@ -71,7 +71,7 @@ jobs:
                   "type": "header",
                   "text": {
                     "type": "plain_text",
-                    "text": ":rocket: EDA E2E Server Updated",
+                    "text": ":rocket:  EDA E2E Server Updated",
                     "emoji": true
                   }
                 },
@@ -120,7 +120,7 @@ jobs:
                   "type": "header",
                   "text": {
                     "type": "plain_text",
-                    "text": ":failed: EDA E2E Server Update Failure",
+                    "text": ":alert-1190:  EDA E2E Server Update Failure",
                     "emoji": true
                   }
                 },
