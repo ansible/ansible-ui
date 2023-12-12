@@ -820,6 +820,7 @@ declare global {
         collectionName: string,
         tags?: string[]
       ): Cypress.Chainable<void>;
+      createNamespace(namespaceName: string): Cypress.Chainable<void>;
       deleteNamespace(namespaceName: string): Cypress.Chainable<void>;
       deleteCollectionsInNamespace(namespaceName: string): Cypress.Chainable<void>;
       createHubRole(): Cypress.Chainable<HubRole>;
