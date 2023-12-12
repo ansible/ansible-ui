@@ -44,6 +44,6 @@ export function useUsersActions(view: IEdaView<EdaUser>) {
         isDanger: true,
       },
     ],
-    [deleteUsers, isCurrentUserSelected, pageNavigate, t]
+    [deleteUsers, isCurrentUserSelected, activeUser, pageNavigate, t]
   );
 }

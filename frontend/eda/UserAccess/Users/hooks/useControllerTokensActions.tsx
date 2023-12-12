@@ -38,6 +38,6 @@ export function useControllerTokensActions(view: IEdaView<EdaControllerToken>) {
         isDanger: true,
       },
     ],
-    [deleteControllerTokens, t]
+    [deleteControllerTokens, pageNavigate, t]
   );
 }
