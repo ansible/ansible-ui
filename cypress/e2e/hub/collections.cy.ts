@@ -1,8 +1,17 @@
+import { randomString } from '../../../framework/utils/random-string';
 import { Collections } from './constants';
 
 describe('Collections- List View', () => {
+  //Important to know:
+  //**In order to upload a collection, a namespace must first exist containing the first word of the collection file name
+  //**The only way to get rid of a collection's artifact is to choose the following option:
+  //**Delete entire collection from repository
+  //
   before(() => {
+    const newname = 'e2enamespace' + randomString(4);
+    const namespaceName = newname.toLowerCase();
     cy.hubLogin();
+    cy.createNamespace(namespaceName);
   });
 
   it('it should render the collections page', () => {
