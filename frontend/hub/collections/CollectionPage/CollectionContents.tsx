@@ -14,6 +14,7 @@ import { PageSection } from '@patternfly/react-core';
 import { useEffect } from 'react';
 import { useRef } from 'react';
 import { EmptyStateNoData } from '../../../../framework/components/EmptyStateNoData';
+import { Link } from 'react-router-dom';
 
 export function CollectionContents() {
   const { t } = useTranslation();
@@ -161,10 +162,7 @@ export function CollectionContents() {
             <tbody>
               {toShow.map((content, i) => (
                 <tr key={i}>
-                  <td>
-                    {content.name}
-                    {/* TODO - links and format path*/}
-                  </td>
+                  <Link to={returnPath()}>{content.name}</Link>
                   <td>{content.content_type}</td>
                   <td>{content.description}</td>
                 </tr>
@@ -188,6 +186,17 @@ function RenderCommunityWarningMessage() {
       description={t`Community collections do not have docs nor content counts, but all content gets synchronized`}
     />
   );
+}
+
+function returnPath() {
+  // TODO - this is maybe not correct, without documentation tab working, we cant be sure those paths are leading to right places
+  // TODO - this is not handling insights well right now probably, but insights is still not discussed
+  let path = window.location.origin + window.location.pathname;
+  path = path.replace('/contents', '/documentation');
+
+  // TODO - this will work when documentation will be finished
+  //path += `/${content.content_type}/${content.name}/`;
+  return path;
 }
 
 interface CollectionContentResult {
