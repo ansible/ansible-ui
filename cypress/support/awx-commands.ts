@@ -23,9 +23,148 @@ import './auth';
 import './commands';
 import { awxAPI } from './formatApiPathForAwx';
 import './rest-commands';
-//import { Credential } from '../../frontend/eda/interfaces/generated/eda-api';
+import { WorkflowApprovalNode } from '../../frontend/awx/interfaces/WorkflowNode';
 
 //  AWX related custom command implementation
+
+/* The above code is adding a custom Cypress command called
+`createAwxWorkflowVisualizerJobTemplateNode`. This command is used to create a new workflow job
+template node in an AWX (Ansible Tower) instance. */
+Cypress.Commands.add(
+  'createAwxWorkflowVisualizerJobTemplateNode',
+  (workflowJobTemplate: WorkflowJobTemplate, jobTemplateNode: JobTemplate) => {
+    cy.requestPost<WorkflowJobTemplateNode>(
+      `/api/v2/workflow_job_templates/${workflowJobTemplate?.id}/workflow_nodes/`,
+      {
+        unified_job_template: jobTemplateNode.id,
+      }
+    );
+  }
+);
+
+/* The above code is adding a custom Cypress command called
+`createAwxWorkflowVisualizerManagementNode`. This command is used to create a workflow node for a
+given workflow job template in an AWX (Ansible Tower) application. The `workflowJobTemplateId`
+parameter is the ID of the workflow job template, and the `managementId` parameter is the ID of the
+management node (1, 2, 3, or 4). The command makes a POST request to the AWX API to create the
+workflow node with the specified parameters. */
+Cypress.Commands.add(
+  'createAwxWorkflowVisualizerManagementNode',
+  (workflowJobTemplateId: WorkflowJobTemplate, managementId: 1 | 2 | 3 | 4) => {
+    cy.requestPost<WorkflowJobTemplateNode>(
+      `/api/v2/workflow_job_templates/${workflowJobTemplateId?.id}/workflow_nodes/`,
+      {
+        unified_job_template: managementId,
+      }
+    );
+  }
+);
+
+/* The above code is adding a custom Cypress command called `createAwxWorkflowVisualizerWJTNode`. This
+command is used to create a new workflow node for a given workflow job template. It makes a POST
+request to the `/api/v2/workflow_job_templates/{id}/workflow_nodes/` endpoint with the necessary
+data to create the node. */
+Cypress.Commands.add(
+  'createAwxWorkflowVisualizerWJTNode',
+  (workflowJobTemplate: WorkflowJobTemplate) => {
+    cy.requestPost<WorkflowJobTemplateNode>(
+      `/api/v2/workflow_job_templates/${workflowJobTemplate?.id}/workflow_nodes/`,
+      {
+        unified_job_template: workflowJobTemplate?.id,
+        limit: null,
+        scm_branch: null,
+      }
+    );
+  }
+);
+
+/* The above code is adding a custom Cypress command called `createAwxWorkflowVisualizerProjectNode`.
+This command is used to create a new workflow node for a given `workflowJobTemplate` and `project`
+in an AWX (Ansible Tower) environment. */
+Cypress.Commands.add(
+  'createAwxWorkflowVisualizerProjectNode',
+  function (workflowJobTemplate: WorkflowJobTemplate, project: Project) {
+    cy.requestPost<WorkflowJobTemplateNode>(
+      `/api/v2/workflow_job_templates/${workflowJobTemplate?.id}/workflow_nodes/`,
+      {
+        unified_job_template: project.id,
+      }
+    );
+  }
+);
+
+Cypress.Commands.add(
+  'createAwxWorkflowVisualizerApprovalNode',
+  (workflowJobTemplate: WorkflowJobTemplate) => {
+    cy.requestPost<WorkflowJobTemplateNode>(
+      `/api/v2/workflow_job_templates/${workflowJobTemplate?.id}/workflow_nodes/`,
+      {}
+    ).then((approvalNode: WorkflowApprovalNode) => {
+      cy.requestPost(
+        `/api/v2/workflow_job_template_nodes/${approvalNode.id}/create_approval_template/`,
+        {
+          name: 'E2E WorkflowJTApprovalNode ' + randomString(4),
+        }
+      ).then(() => {
+        return approvalNode;
+      });
+    });
+  }
+);
+
+/* The above code is adding a custom Cypress command called
+`createAwxWorkflowVisualizerInventorySourceNode`. This command is used to create a workflow node for
+an Ansible Tower workflow job template. The function takes two parameters: `workflowJobTemplate` (of
+type `WorkflowJobTemplate`) and `inventorySource` (of type `InventorySource`). */
+Cypress.Commands.add(
+  'createAwxWorkflowVisualizerInventorySourceNode',
+  function (workflowJobTemplate: WorkflowJobTemplate, inventorySource: InventorySource) {
+    cy.requestPost<WorkflowJobTemplateNode>(
+      `/api/v2/workflow_job_templates/${workflowJobTemplate?.id}/workflow_nodes/`,
+      {
+        unified_job_template: inventorySource.id,
+        scm_branch: null,
+        limit: null,
+        job_tags: null,
+        skip_tags: null,
+      }
+    );
+  }
+);
+
+/* The above code is adding a custom Cypress command called `createWorkflowJTSuccessNodeLink`. This
+command is used to create a link between two nodes in a workflow job template. It takes two
+parameters, `firstNode` and `secondNode`, which are objects representing the first and second nodes
+respectively. */
+Cypress.Commands.add(
+  'createWorkflowJTSuccessNodeLink',
+  function (firstNode: WorkflowJobTemplateNode, secondNode: WorkflowJobTemplateNode) {
+    cy.requestPost<WorkflowJobTemplateNode>(
+      `/api/v2/workflow_job_template_nodes/${firstNode.id}/success_nodes/`,
+      {
+        id: secondNode.id,
+      }
+    );
+  }
+);
+
+/* The above code is adding a custom Cypress command called `createWorkflowJTFailureNodeLink`. This
+command is used to create a failure node link between two workflow job template nodes. It makes a
+POST request to the `/api/v2/workflow_job_template_nodes/{firstNode.id}/failure_nodes/` endpoint
+with the `id` of the second node as the request payload. */
+
+Cypress.Commands.add(
+  'createWorkflowJTFailureNodeLink',
+  function (firstNode: WorkflowJobTemplateNode, secondNode: WorkflowJobTemplateNode) {
+    cy.requestPost<WorkflowJobTemplateNode>(
+      `/api/v2/workflow_job_template_nodes/${firstNode.id}/failure_nodes/`,
+      {
+        id: secondNode.id,
+      }
+    );
+  }
+);
+
 
 /**
  * cy.inputCustomCredTypeConfig(json/yml, input/injector config)

@@ -613,6 +613,44 @@ declare global {
         organization: Organization
       ): Chainable<{ inventory: Inventory; host: Host; group: Group }>;
 
+      createAwxWorkflowVisualizerJobTemplateNode(
+        workflowJT: WorkflowJobTemplate,
+        jobTemplateId: number
+      ): Chainable<WorkflowJobTemplate>;
+
+      createAwxWorkflowVisualizerProjectNode(
+        workflowJobTemplate: WorkflowJobTemplate,
+        project: Project
+      ): Chainable<WorkflowJobTemplateNode>;
+
+      createAwxWorkflowVisualizerApprovalNode(
+        firstNode: WorkflowJobTemplateNode
+      ): Chainable<WorkflowJobTemplateNode>;
+
+      createAwxWorkflowVisualizerInventorySourceNode(
+        workflowJT: WorkflowJobTemplate,
+        inventorySourceId: InventorySource
+      ): Chainable<WorkflowJobTemplate>;
+
+      createAwxWorkflowVisualizerWJTNode(
+        workflowJT: WorkflowJobTemplate
+      ): Chainable<WorkflowJobTemplate>;
+
+      createAwxWorkflowVisualizerManagementNode(
+        workflowJobTemplate: WorkflowJobTemplate,
+        managementId: 1 | 2 | 3 | 4
+      ): Chainable<WorkflowJobTemplateNode>;
+
+      createWorkflowJTSuccessNodeLink(
+        firstNode: WorkflowJobTemplateNode,
+        secondNode: WorkflowJobTemplateNode
+      ): Chainable<void>;
+
+      createWorkflowJTFailureNodeLink(
+        firstNode: WorkflowJobTemplateNode,
+        secondNode: WorkflowJobTemplateNode
+      ): Chainable<void>;
+
       waitForTemplateStatus(jobID: string): Chainable<AwxItemsResponse<JobEvent>>;
       waitForJobToProcessEvents(jobID: string): Chainable<Job>;
 
