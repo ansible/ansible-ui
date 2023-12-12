@@ -47,6 +47,15 @@ describe('Authenticators list', () => {
       cy.get('[data-cy="authentication-type-column-header"]').should('be.visible');
     });
 
+    it('can disable an Authenticator from the line item in list view', () => {
+      cy.mount(<AuthenticatorsList />);
+      cy.intercept({ method: 'PATCH', url: gatewayAPI`/v1/authenticators/2/` }, { enabled: false });
+      cy.get(
+        '[data-cy="row-id-2"] > [data-cy="actions-column-cell"] > .pf-v5-l-flex > :nth-child(1) > .pf-v5-l-split > [data-cy="toggle-switch"] > div > .pf-v5-c-switch > .pf-v5-c-switch__toggle > .pf-v5-c-switch__toggle-icon'
+      ).click();
+      cy.contains('Dev Keycloak Container disabled');
+    });
+
     it('can delete an Authenticator from the toolbar button', () => {
       cy.mount(<AuthenticatorsList />);
       cy.intercept({ method: 'POST', url: gatewayAPI`/v1/authenticators/2/delete/` });
