@@ -186,7 +186,7 @@ function useTableColumns() {
       },
       {
         header: t('Description'),
-        type: 'text',
+        type: 'description',
         value: (item) => item.description,
       },
     ],
