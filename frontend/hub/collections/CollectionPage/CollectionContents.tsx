@@ -9,17 +9,20 @@ import { SearchInput } from '@patternfly/react-core';
 import { useSearchParams } from 'react-router-dom';
 import { ToolbarItem } from '@patternfly/react-core';
 import styled from 'styled-components';
-import { LoadingPage } from '../../../../framework';
+import { LoadingPage, PageTable } from '../../../../framework';
 import { PageSection } from '@patternfly/react-core';
 import { useEffect } from 'react';
 import { useRef } from 'react';
 import { EmptyStateNoData } from '../../../../framework/components/EmptyStateNoData';
 import { Link } from 'react-router-dom';
+import { useMemo } from 'react';
+import { ITableColumn } from '../../../../framework';
 
 export function CollectionContents() {
   const { t } = useTranslation();
   const { collection } = useOutletContext<{ collection: CollectionVersionSearch }>();
   const [searchParams, setSearchParams] = useSearchParams();
+  const tableColumns = useTableColumns();
   const searchRef = useRef<HTMLInputElement>(null);
 
   const keywords = searchParams.get('keywords') || '';
@@ -66,18 +69,10 @@ export function CollectionContents() {
   const label_style = `
     margin-right: 25px;
     text-transform: capitalize;
-    font-size: 18px;
+    font-size: 16px;
   `;
 
   const StyledDiv = styled.div`
-    .hub-c-table-content {
-      width: 100%;
-    }
-
-    .hub-c-table-content th {
-      font-weight: bold;
-    }
-
     .hub-c-toolbar__item-type-selector {
       ${label_style}
     }
@@ -151,30 +146,51 @@ export function CollectionContents() {
             );
           })}
           <br /> <br />
-          <table className="hub-c-table-content pf-c-table pf-m-compact">
-            <thead>
-              <tr>
-                <th>{t`Name`}</th>
-                <th>{t`Type`}</th>
-                <th>{t`Description`}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {toShow.map((content, i) => (
-                <tr key={i}>
-                  <Link to={returnPath()}>{content.name}</Link>
-                  <td>{content.content_type}</td>
-                  <td>{content.description}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <PageTable<CollectionContent>
+            keyFn={(item) => item.name + '_' + item.content_type}
+            tableColumns={tableColumns}
+            pageItems={toShow}
+            itemCount={toShow.length}
+            page={1}
+            perPage={toShow.length}
+            setPage={() => {}}
+            setPerPage={() => {}}
+            errorStateTitle=""
+            emptyStateTitle={t`No content available`}
+            disablePagination={true}
+            compact={true}
+          />
+          ;
           {summary.all <= 0 && collection.repository?.name === 'community' && (
             <RenderCommunityWarningMessage />
           )}
         </StyledDiv>
       </PageSection>
     </>
+  );
+}
+
+function useTableColumns() {
+  const { t } = useTranslation();
+
+  return useMemo<ITableColumn<CollectionContent>[]>(
+    () => [
+      {
+        header: t('Name'),
+        cell: (item) => <Link to={returnPath()}>{item.name}</Link>,
+      },
+      {
+        header: t('Type'),
+        type: 'text',
+        value: (item) => item.content_type,
+      },
+      {
+        header: t('Description'),
+        type: 'text',
+        value: (item) => item.description,
+      },
+    ],
+    [t]
   );
 }
 
