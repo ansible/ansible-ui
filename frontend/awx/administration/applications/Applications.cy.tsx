@@ -68,7 +68,6 @@ describe('Applications List', () => {
         })
         .then(() => {
           cy.contains('tr', 'test').within(() => {
-            // user_capabilities.delete: false
             cy.get('button.toggle-kebab').click();
             cy.contains('.pf-v5-c-dropdown__menu-item', /^Delete application$/).should(
               'have.attr',
@@ -101,7 +100,6 @@ describe('Applications List', () => {
         })
         .then(() => {
           cy.contains('tr', 'test').within(() => {
-            // user_capabilities.edit: false
             cy.get('[data-cy="actions-column-cell"]').within(() => {
               cy.get(`[data-cy="edit-application"]`).should('have.attr', 'aria-disabled', 'true');
             });
