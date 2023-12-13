@@ -59,6 +59,8 @@ export function NodeFormInputs(props: {
   };
   return (
     <PageWizard<NodeFields>
+      isVertical
+      singleColumn
       steps={steps}
       onCancel={() => setSelectedNode(undefined)}
       onSubmit={handleSubmit}
