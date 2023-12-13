@@ -101,7 +101,7 @@ export function useHubNavigation() {
         },
         {
           id: HubRoute.CollectionPage,
-          path: ':repository/:namespace/:name/:version',
+          path: ':repository/:namespace/:name',
           element: <CollectionPage />,
           children: [
             {
