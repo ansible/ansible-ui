@@ -2,9 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import * as useOptions from '../../../common/crud/useOptions';
-import { RouteObj } from '../../../common/Routes';
 import { Application } from '../../interfaces/Application';
-import { ApplicationPage } from './ApplicationPage/ApplicationPage';
 import { Applications } from './Applications';
 
 describe('Applications List', () => {
