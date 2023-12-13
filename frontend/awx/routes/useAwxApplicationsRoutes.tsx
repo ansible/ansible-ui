@@ -5,6 +5,7 @@ import { PageNotImplemented } from '../../../framework/PageEmptyStates/PageNotIm
 import { AwxRoute } from '../AwxRoutes';
 import { ApplicationPage } from '../administration/applications/ApplicationPage/ApplicationPage';
 import { Applications } from '../administration/applications/Applications';
+import { ApplicationTokens } from '../administration/applications/ApplicationPage/ApplicationPageTokens';
 
 export function useAwxApplicationsRoutes() {
   const { t } = useTranslation();
@@ -37,7 +38,7 @@ export function useAwxApplicationsRoutes() {
             {
               id: AwxRoute.ApplicationTokens,
               path: 'tokens',
-              element: <PageNotImplemented />,
+              element: <ApplicationTokens />,
             },
           ],
         },
