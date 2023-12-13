@@ -46,7 +46,7 @@ export interface IToolbarAsyncMultiSelectFilter extends ToolbarFilterCommon {
  * @param objectFn Function to create an object from the key. Used for default selection in the dialog.
  * @returns A function to open the select dialog.
  */
-export function toolbarMultiSelectBrowseAdapter<T>(
+export function multiSelectBrowseAdapter<T>(
   /** The function to open the original select dialog that uses objects. */
   selectFn: (onItemsSelect: (itemValue: T[]) => void, itemDefaultSelections?: T[]) => void,
   /** The function to get a unique key from the object. Used as the string value in the toolbar filter values and query string. */
