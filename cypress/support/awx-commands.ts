@@ -23,7 +23,8 @@ import './auth';
 import './commands';
 import { awxAPI } from './formatApiPathForAwx';
 import './rest-commands';
-import { WorkflowApprovalNode } from '../../frontend/awx/interfaces/WorkflowNode';
+import { InventorySource } from '../../frontend/awx/interfaces/InventorySource';
+import { WorkflowNode } from '../../frontend/awx/interfaces/WorkflowNode';
 
 //  AWX related custom command implementation
 
@@ -33,7 +34,7 @@ template node in an AWX (Ansible Tower) instance. */
 Cypress.Commands.add(
   'createAwxWorkflowVisualizerJobTemplateNode',
   (workflowJobTemplate: WorkflowJobTemplate, jobTemplateNode: JobTemplate) => {
-    cy.requestPost<WorkflowJobTemplateNode>(
+    cy.requestPost<WorkflowNode>(
       `/api/v2/workflow_job_templates/${workflowJobTemplate?.id}/workflow_nodes/`,
       {
         unified_job_template: jobTemplateNode.id,
@@ -51,7 +52,7 @@ workflow node with the specified parameters. */
 Cypress.Commands.add(
   'createAwxWorkflowVisualizerManagementNode',
   (workflowJobTemplateId: WorkflowJobTemplate, managementId: 1 | 2 | 3 | 4) => {
-    cy.requestPost<WorkflowJobTemplateNode>(
+    cy.requestPost<WorkflowNode>(
       `/api/v2/workflow_job_templates/${workflowJobTemplateId?.id}/workflow_nodes/`,
       {
         unified_job_template: managementId,
@@ -67,7 +68,7 @@ data to create the node. */
 Cypress.Commands.add(
   'createAwxWorkflowVisualizerWJTNode',
   (workflowJobTemplate: WorkflowJobTemplate) => {
-    cy.requestPost<WorkflowJobTemplateNode>(
+    cy.requestPost<WorkflowNode>(
       `/api/v2/workflow_job_templates/${workflowJobTemplate?.id}/workflow_nodes/`,
       {
         unified_job_template: workflowJobTemplate?.id,
@@ -84,7 +85,7 @@ in an AWX (Ansible Tower) environment. */
 Cypress.Commands.add(
   'createAwxWorkflowVisualizerProjectNode',
   function (workflowJobTemplate: WorkflowJobTemplate, project: Project) {
-    cy.requestPost<WorkflowJobTemplateNode>(
+    cy.requestPost<WorkflowNode>(
       `/api/v2/workflow_job_templates/${workflowJobTemplate?.id}/workflow_nodes/`,
       {
         unified_job_template: project.id,
@@ -96,10 +97,10 @@ Cypress.Commands.add(
 Cypress.Commands.add(
   'createAwxWorkflowVisualizerApprovalNode',
   (workflowJobTemplate: WorkflowJobTemplate) => {
-    cy.requestPost<WorkflowJobTemplateNode>(
+    cy.requestPost<WorkflowNode>(
       `/api/v2/workflow_job_templates/${workflowJobTemplate?.id}/workflow_nodes/`,
       {}
-    ).then((approvalNode: WorkflowApprovalNode) => {
+    ).then((approvalNode) => {
       cy.requestPost(
         `/api/v2/workflow_job_template_nodes/${approvalNode.id}/create_approval_template/`,
         {
@@ -119,7 +120,7 @@ type `WorkflowJobTemplate`) and `inventorySource` (of type `InventorySource`). *
 Cypress.Commands.add(
   'createAwxWorkflowVisualizerInventorySourceNode',
   function (workflowJobTemplate: WorkflowJobTemplate, inventorySource: InventorySource) {
-    cy.requestPost<WorkflowJobTemplateNode>(
+    cy.requestPost<WorkflowNode>(
       `/api/v2/workflow_job_templates/${workflowJobTemplate?.id}/workflow_nodes/`,
       {
         unified_job_template: inventorySource.id,
@@ -138,8 +139,8 @@ parameters, `firstNode` and `secondNode`, which are objects representing the fir
 respectively. */
 Cypress.Commands.add(
   'createWorkflowJTSuccessNodeLink',
-  function (firstNode: WorkflowJobTemplateNode, secondNode: WorkflowJobTemplateNode) {
-    cy.requestPost<WorkflowJobTemplateNode>(
+  function (firstNode: WorkflowNode, secondNode: WorkflowNode) {
+    cy.requestPost<WorkflowNode>(
       `/api/v2/workflow_job_template_nodes/${firstNode.id}/success_nodes/`,
       {
         id: secondNode.id,
@@ -155,8 +156,8 @@ with the `id` of the second node as the request payload. */
 
 Cypress.Commands.add(
   'createWorkflowJTFailureNodeLink',
-  function (firstNode: WorkflowJobTemplateNode, secondNode: WorkflowJobTemplateNode) {
-    cy.requestPost<WorkflowJobTemplateNode>(
+  function (firstNode: WorkflowNode, secondNode: WorkflowJobTemplate) {
+    cy.requestPost<WorkflowNode>(
       `/api/v2/workflow_job_template_nodes/${firstNode.id}/failure_nodes/`,
       {
         id: secondNode.id,
@@ -164,7 +165,6 @@ Cypress.Commands.add(
     );
   }
 );
-
 
 /**
  * cy.inputCustomCredTypeConfig(json/yml, input/injector config)
@@ -1134,7 +1134,7 @@ Cypress.Commands.add('waitForJobToProcessEvents', (jobID: string) => {
     }
     cy.wait(500);
 
-    cy.requestGet<Job>(`api/v2/jobs/${jobID}/`).then((job) => {
+    cy.requestGet<Job>(awxAPI`/jobs/${jobID}/`).then((job) => {
       if (job.event_processing_finished !== true) {
         cy.log(`EVENT PROCESSING = ${job.event_processing_finished}`);
         cy.log(`MAX LOOPS RAN = ${maxLoops}`);
@@ -1150,6 +1150,73 @@ Cypress.Commands.add('waitForJobToProcessEvents', (jobID: string) => {
   */
   waitForJobToFinishProcessingEvents(120);
 });
+
+Cypress.Commands.add('waitForWorkflowJobStatus', (jobID: string) => {
+  const waitForWFJobStatus = (maxLoops: number) => {
+    if (maxLoops === 0) {
+      cy.log('Max loops reached while waiting for processing events.');
+      return;
+    }
+    cy.wait(500);
+
+    cy.requestGet<Job>(awxAPI`/workflow_jobs/${jobID}/`)
+      .its('status')
+      .then((status) => {
+        if (status !== 'successful') {
+          cy.log(`WORKFLOW JOB STATUS = ${status}`);
+          cy.log(`MAX LOOPS RAN = ${maxLoops}`);
+          waitForWFJobStatus(maxLoops - 1);
+        } else {
+          cy.log(`WORKFLOW JOB STATUS = ${status as string}`);
+        }
+      });
+  };
+  /*
+  reason the numbers chosen for wait is 500ms and maxLoops is 80,
+  as processing events takes ~30s, hence 80 * 500ms is chosen as the upper limit)
+  */
+  waitForWFJobStatus(120);
+});
+
+// Cypress.Commands.add('waitForWorkflowJobStatus', (jobID: string) => {
+//   cy.requestGet<Job>(`api/v2/workflow_jobs/${jobID}/`)
+//     .its('status')
+//     .then((status: string) => {
+//       cy.log(status);
+//       switch (status) {
+//         case 'failed':
+//         case 'successful':
+//           cy.wrap(status);
+//           break;
+//         default:
+//           cy.wait(100).then(() => cy.waitForWorkflowJobStatus(jobID));
+//           break;
+//       }
+//     });
+
+//   // const waitForWFJobToFinishProcessingEvents = (maxLoops: number) => {
+//   //   if (maxLoops === 0) {
+//   //     cy.log('Max loops reached while waiting for processing events.');
+//   //     return;
+//   //   }
+//   //   cy.wait(500);
+
+//   //   cy.requestGet<Job>(`api/v2/workflow_jobs/${jobID}/`).then((job) => {
+//   //     if (job.event_processing_finished !== true) {
+//   //       cy.log(`EVENT PROCESSING = ${job.event_processing_finished}`);
+//   //       cy.log(`MAX LOOPS RAN = ${maxLoops}`);
+//   //       waitForWFJobToFinishProcessingEvents(maxLoops - 1);
+//   //     } else {
+//   //       cy.log(`EVENT PROCESSED = ${job.event_processing_finished}`);
+//   //     }
+//   //   });
+//   // };
+//   // /*
+//   // reason the numbers chosen for wait is 500ms and maxLoops is 80,
+//   // as processing events takes ~30s, hence 80 * 500ms is chosen as the upper limit)
+//   // */
+//   // waitForWFJobToFinishProcessingEvents(120);
+// });
 
 const GLOBAL_PROJECT_NAME = 'Global Project';
 const GLOBAL_PROJECT_DESCRIPTION = 'Global Read Only Project for E2E tests';

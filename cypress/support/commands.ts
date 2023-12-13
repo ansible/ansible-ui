@@ -48,6 +48,7 @@ import './eda-commands';
 import './hub-commands';
 import './rest-commands';
 import 'cypress-file-upload';
+import { WorkflowNode } from '../../frontend/awx/interfaces/WorkflowNode';
 
 declare global {
   namespace Cypress {
@@ -615,17 +616,17 @@ declare global {
 
       createAwxWorkflowVisualizerJobTemplateNode(
         workflowJT: WorkflowJobTemplate,
-        jobTemplateId: number
+        jobTemplateNode: JobTemplate
       ): Chainable<WorkflowJobTemplate>;
 
       createAwxWorkflowVisualizerProjectNode(
         workflowJobTemplate: WorkflowJobTemplate,
         project: Project
-      ): Chainable<WorkflowJobTemplateNode>;
+      ): Chainable<WorkflowNode>;
 
       createAwxWorkflowVisualizerApprovalNode(
-        firstNode: WorkflowJobTemplateNode
-      ): Chainable<WorkflowJobTemplateNode>;
+        firstNode: WorkflowJobTemplate
+      ): Chainable<WorkflowNode>;
 
       createAwxWorkflowVisualizerInventorySourceNode(
         workflowJT: WorkflowJobTemplate,
@@ -639,20 +640,21 @@ declare global {
       createAwxWorkflowVisualizerManagementNode(
         workflowJobTemplate: WorkflowJobTemplate,
         managementId: 1 | 2 | 3 | 4
-      ): Chainable<WorkflowJobTemplateNode>;
+      ): Chainable<WorkflowNode>;
 
       createWorkflowJTSuccessNodeLink(
-        firstNode: WorkflowJobTemplateNode,
-        secondNode: WorkflowJobTemplateNode
-      ): Chainable<void>;
+        firstNode: WorkflowNode,
+        secondNode: WorkflowNode
+      ): Chainable<WorkflowNode>;
 
       createWorkflowJTFailureNodeLink(
-        firstNode: WorkflowJobTemplateNode,
-        secondNode: WorkflowJobTemplateNode
-      ): Chainable<void>;
+        firstNode: WorkflowNode,
+        secondNode: WorkflowJobTemplate
+      ): Chainable<WorkflowNode>;
 
       waitForTemplateStatus(jobID: string): Chainable<AwxItemsResponse<JobEvent>>;
       waitForJobToProcessEvents(jobID: string): Chainable<Job>;
+      waitForWorkflowJobStatus(jobID: string): Chainable<Job>;
 
       // --- EDA COMMANDS ---
 
