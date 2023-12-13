@@ -12,6 +12,8 @@ export function PageWizardBody<T>(props: {
   onSubmit: (wizardData: T) => Promise<void>;
   errorAdapter?: ErrorAdapter;
   disableGrid?: boolean;
+  isVertical?: boolean;
+  singleColumn?: boolean;
 }) {
   const navigate = useNavigate();
   const { onSubmit, onCancel, errorAdapter } = props;
@@ -65,6 +67,8 @@ export function PageWizardBody<T>(props: {
             defaultValue={stepData[activeStep.id]}
             errorAdapter={errorAdapter}
             disableGrid={props.disableGrid}
+            isVertical={props.isVertical}
+            singleColumn={props.singleColumn}
           >
             <StepErrors />
             {activeStep.inputs}
