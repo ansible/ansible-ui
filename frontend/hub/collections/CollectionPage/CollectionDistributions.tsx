@@ -69,7 +69,7 @@ function useDistributionsColumns(_options?: { disableSort?: boolean; disableLink
         sort: 'pulp_created',
       },
       {
-        header: t('	CLI configuration'),
+        header: t('CLI configuration'),
         cell: (item) => {
           const copyText = [
             '[galaxy]',
