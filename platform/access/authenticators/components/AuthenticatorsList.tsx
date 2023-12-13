@@ -43,15 +43,15 @@ export function AuthenticatorsList() {
         toolbarActions={toolbarActions}
         tableColumns={tableColumns}
         rowActions={rowActions}
-        errorStateTitle={t('Error loading authentication methods')}
+        errorStateTitle={t('Error loading authentications')}
         emptyStateTitle={
           canCreateAuthenticator
-            ? t('There are currently no authentication methods added.')
-            : t('You do not have permission to create an authentication method')
+            ? t('There are currently no authentications added.')
+            : t('You do not have permission to create an authentication')
         }
         emptyStateDescription={
           canCreateAuthenticator
-            ? t('Please create an authentication method by using the button below.')
+            ? t('Please create an authentication by using the button below.')
             : t(
                 'Please contact your organization administrator if there is an issue with your access.'
               )

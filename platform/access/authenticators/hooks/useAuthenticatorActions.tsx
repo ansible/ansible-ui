@@ -1,13 +1,14 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   useGetPageUrl,
+  usePageAlertToaster,
   usePageNavigate,
 } from '../../../../framework';
 import { Authenticator } from '../../../interfaces/Authenticator';
-import { ButtonVariant } from '@patternfly/react-core';
+import { AlertProps, ButtonVariant } from '@patternfly/react-core';
 import { PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { PlatformRoute } from '../../../PlatformRoutes';
@@ -18,10 +19,13 @@ import {
   OptionsResponse,
 } from '../../../../frontend/awx/interfaces/OptionsResponse';
 import { gatewayAPI } from '../../../api/gateway-api-utils';
+import { requestPatch } from '../../../../frontend/common/crud/Data';
+import { useDeleteAuthenticators } from './useDeleteAuthenticators';
 
-export function useAuthenticatorToolbarActions(_view: IPlatformView<Authenticator>) {
+export function useAuthenticatorToolbarActions(view: IPlatformView<Authenticator>) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
+  const deleteAuthenticators = useDeleteAuthenticators(view.unselectItemsAndRefresh);
 
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/v1/authenticators/`);
   const canCreateAuthenticator = Boolean(data && data.actions && data.actions['POST']);
@@ -37,7 +41,7 @@ export function useAuthenticatorToolbarActions(_view: IPlatformView<Authenticato
         isDisabled: canCreateAuthenticator
           ? undefined
           : t(
-              'You do not have permission to create a authenticator. Please contact your system administrator if there is an issue with your access.'
+              'You do not have permission to create an authentication. Please contact your system administrator if there is an issue with your access.'
             ),
         href: getPageUrl(PlatformRoute.CreateAuthenticator),
       },
@@ -47,38 +51,65 @@ export function useAuthenticatorToolbarActions(_view: IPlatformView<Authenticato
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
         label: t('Delete selected authentications'),
-        onClick: () => alert('TODO'),
+        onClick: deleteAuthenticators,
         isDanger: true,
       },
     ],
-    [t, canCreateAuthenticator, getPageUrl]
+    [t, canCreateAuthenticator, deleteAuthenticators, getPageUrl]
   );
 
   return toolbarActions;
 }
 
-export function useAuthenticatorRowActions(_view: IPlatformView<Authenticator>) {
+export function useAuthenticatorRowActions(view: IPlatformView<Authenticator>) {
   const { t } = useTranslation();
+  const deleteAuthenticator = useDeleteAuthenticators(view.unselectItemsAndRefresh);
   const pageNavigate = usePageNavigate();
+  const alertToaster = usePageAlertToaster();
+  const handleToggleAuthenticator: (
+    authenticator: Authenticator,
+    enabled: boolean
+  ) => Promise<void> = useCallback(
+    async (authenticator, enabled) => {
+      const alert: AlertProps = {
+        variant: 'success',
+        title: `${authenticator.name} ${enabled ? t('enabled') : t('disabled')}.`,
+        timeout: 5000,
+      };
+      await requestPatch(gatewayAPI`/v1/authenticators/${authenticator.id.toString()}/`, {
+        enabled: enabled,
+      })
+        .then(() => alertToaster.addAlert(alert))
+        .catch(() => {
+          alertToaster.addAlert({
+            variant: 'danger',
+            title: `${enabled ? t('Failed to enable') : t('Failed to disable')} ${
+              authenticator.name
+            }`,
+            timeout: 5000,
+          });
+        });
+      view.unselectItemsAndRefresh([authenticator]);
+    },
+    [view, alertToaster, t]
+  );
   const rowActions = useMemo<IPageAction<Authenticator>[]>(() => {
     // TODO: Update based on RBAC information from Authenticators API
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const cannotDeleteAuthenticator = (authenticator: Authenticator) =>
       // eslint-disable-next-line no-constant-condition
-      true ? '' : t(`The authenticator cannot be deleted due to insufficient permissions.`);
+      true ? '' : t(`The authentication cannot be deleted due to insufficient permissions.`);
     // TODO: Update based on RBAC information from Authenticators API
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const cannotEditAuthenticator = (authenticator: Authenticator) =>
       // eslint-disable-next-line no-constant-condition
-      true ? '' : t(`The authenticator cannot be edited due to insufficient permissions.`);
+      true ? '' : t(`The authentication cannot be edited due to insufficient permissions.`);
 
     return [
       {
         type: PageActionType.Switch,
         ariaLabel: (isEnabled) =>
-          isEnabled
-            ? t('Click to disable authentication method')
-            : t('Click to enable authentication method'),
+          isEnabled ? t('Click to disable authentication') : t('Click to enable authentication'),
         selection: PageActionSelection.Single,
         isPinned: true,
         icon: PlusCircleIcon,
@@ -86,7 +117,7 @@ export function useAuthenticatorRowActions(_view: IPlatformView<Authenticator>) 
         labelOff: t('Disabled'),
         showPinnedLabel: true,
         isReversed: false,
-        onToggle: (_authenticator) => alert('TODO'),
+        onToggle: (authenticator, enabled) => handleToggleAuthenticator(authenticator, enabled),
         isSwitchOn: (authenticator: Authenticator) => authenticator?.enabled ?? false,
       },
       {
@@ -107,11 +138,11 @@ export function useAuthenticatorRowActions(_view: IPlatformView<Authenticator>) 
         icon: TrashIcon,
         label: t('Delete authentication'),
         isDisabled: (authenticator: Authenticator) => cannotDeleteAuthenticator(authenticator),
-        onClick: () => alert('TODO'),
+        onClick: (authenticator) => deleteAuthenticator([authenticator]),
         isDanger: true,
       },
     ];
-  }, [pageNavigate, t]);
+  }, [pageNavigate, deleteAuthenticator, handleToggleAuthenticator, t]);
 
   return rowActions;
 }
