@@ -21,7 +21,7 @@ export function PageFormManagementJobsSelect<
   const openSelectDialog = useSelectManagementJobs();
   const query = useCallback(async () => {
     const response = await requestGet<AwxItemsResponse<SystemJobTemplate>>(
-      awxAPI`/system_jobs/`.concat(`?page_size=200`)
+      awxAPI`/system_job_templates/`
     );
 
     return Promise.resolve({
@@ -34,7 +34,7 @@ export function PageFormManagementJobsSelect<
     <PageFormAsyncSelect<TFieldValues>
       name={props.name}
       id="management-job-template-select"
-      label={t('Management Job Templates')}
+      label={t('Management Job Template')}
       query={query}
       valueToString={(value) => {
         if (value && typeof value === 'string') {

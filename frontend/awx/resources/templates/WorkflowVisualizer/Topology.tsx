@@ -310,6 +310,7 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
                 sideBarOpen={showSideBar}
                 sideBarResizable
                 sideBar={<Sidebar />}
+                minSideBarSize={'50%'}
               >
                 {isEmpty && (
                   <div style={{ flex: '1 0 100%' }}>
