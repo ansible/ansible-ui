@@ -15,6 +15,8 @@ export function PageWizard<T extends object>(props: {
   errorAdapter?: ErrorAdapter;
   disableGrid?: boolean;
   title?: string;
+  isVertical?: boolean;
+  singleColumn?: boolean;
 }) {
   return (
     <PageWizardProvider<T> steps={props.steps} defaultValue={props.defaultValue}>
@@ -46,6 +48,8 @@ export function PageWizard<T extends object>(props: {
             onCancel={props.onCancel}
             onSubmit={props.onSubmit}
             disableGrid={props.disableGrid}
+            isVertical={props.isVertical}
+            singleColumn={props.singleColumn}
           />
         </div>
       </div>
