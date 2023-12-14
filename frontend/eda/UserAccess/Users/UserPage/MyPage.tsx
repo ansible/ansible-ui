@@ -36,34 +36,38 @@ export function MyPage() {
     activeUser?.is_superuser ||
     activeUser?.roles.some((role) => role.name === 'Admin' || role.name === 'Auditor');
 
-  const itemActions = useMemo<IPageAction<EdaUser>[]>(
-    () => [
-      {
-        type: PageActionType.Button,
-        variant: ButtonVariant.primary,
-        selection: PageActionSelection.Single,
-        icon: PencilAltIcon,
-        isPinned: true,
-        label: t('Edit user'),
-        isHidden: (_user: EdaUser) => !canEditUser,
-        onClick: (user: EdaUser) => pageNavigate(EdaRoute.EditUser, { params: { id: user?.id } }),
-      },
-      {
-        type: PageActionType.Button,
-        variant: ButtonVariant.primary,
-        selection: PageActionSelection.Single,
-        icon: PencilAltIcon,
-        isPinned: true,
-        isHidden: (_user: EdaUser) => canEditUser,
-        label: t('Edit user'),
-        onClick: () => pageNavigate(EdaRoute.EditCurrentUser),
-      },
-      {
-        type: PageActionType.Seperator,
-      },
-    ],
-    [canEditUser, pageNavigate, t]
-  );
+  const isActionTab = location.pathname === `/eda/access/users/me/details`;
+  const itemActions = useMemo<IPageAction<EdaUser>[]>(() => {
+    const actions: IPageAction<EdaUser>[] = isActionTab
+      ? [
+          {
+            type: PageActionType.Button,
+            variant: ButtonVariant.primary,
+            selection: PageActionSelection.Single,
+            icon: PencilAltIcon,
+            isPinned: true,
+            label: t('Edit user'),
+            isHidden: (_user: EdaUser) => !canEditUser,
+            onClick: (user: EdaUser) =>
+              pageNavigate(EdaRoute.EditUser, { params: { id: user?.id } }),
+          },
+          {
+            type: PageActionType.Button,
+            variant: ButtonVariant.primary,
+            selection: PageActionSelection.Single,
+            icon: PencilAltIcon,
+            isPinned: true,
+            isHidden: (_user: EdaUser) => canEditUser,
+            label: t('Edit user'),
+            onClick: () => pageNavigate(EdaRoute.EditCurrentUser),
+          },
+          {
+            type: PageActionType.Seperator,
+          },
+        ]
+      : [];
+    return actions;
+  }, [canEditUser, pageNavigate, isActionTab, t]);
   if (!activeUser) return <LoadingPage breadcrumbs tabs />;
   return (
     <PageLayout>
