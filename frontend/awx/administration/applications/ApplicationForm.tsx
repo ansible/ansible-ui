@@ -96,6 +96,95 @@ export function CreateApplication() {
   );
 }
 
+export function EditApplication() {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
+  const params = useParams<{ id?: string }>();
+  const id = Number(params.id);
+  const { data: application } = useSWR<Application>(
+    awxAPI`/applications/${id.toString()}/`,
+    requestGet,
+    swrOptions
+  );
+
+  const onSubmit: PageFormSubmitHandler<IApplicationInput> = async (
+    applicationInput: IApplicationInput,
+    setError,
+    setFieldError
+  ) => {
+    if (
+      applicationInput.authorization_grant_type === 'authorization-code' &&
+      (applicationInput.redirect_uris === undefined || applicationInput.redirect_uris === '')
+    ) {
+      setFieldError('redirect_uris', {
+        message: t('Need to pass a redirect URI if grant type is authorization code'),
+      });
+      return false;
+    }
+    let organization: Organization | undefined;
+    let modifiedInput;
+    try {
+      organization = await getOrganizationByName(applicationInput.organization);
+      if (!organization) throw new Error(t('Organization not found.'));
+      modifiedInput = { ...applicationInput, organization: organization.id };
+    } catch {
+      throw new Error(t('Organization not found.'));
+    }
+    const editedApplication = await requestPatch<Application>(
+      awxAPI`/applications/${id.toString()}/`,
+      modifiedInput
+    );
+    pageNavigate(AwxRoute.ApplicationDetails, { params: { id: editedApplication.id } });
+  };
+
+  const getPageUrl = useGetPageUrl();
+
+  const onCancel = () => navigate(-1);
+
+  if (!application) {
+    return (
+      <PageLayout>
+        <PageHeader
+          breadcrumbs={[
+            { label: t('Applications'), to: getPageUrl(AwxRoute.Applications) },
+            { label: t('Edit Application') },
+          ]}
+        />
+      </PageLayout>
+    );
+  }
+
+  const defaultValue: Partial<IApplicationInput> = {
+    organization: application.summary_fields.organization.name,
+    authorization_grant_type: application.authorization_grant_type,
+    client_type: application.client_type,
+    name: application.name,
+    redirect_uris: application.redirect_uris,
+    description: application.description,
+  };
+  return (
+    <PageLayout>
+      <PageHeader
+        title={t('Edit Application')}
+        breadcrumbs={[
+          { label: t('Applications'), to: getPageUrl(AwxRoute.Applications) },
+          { label: t('Edit Application') },
+        ]}
+      />
+      <AwxPageForm<IApplicationInput>
+        submitText={t('Save application')}
+        onSubmit={onSubmit}
+        cancelText={t('Cancel')}
+        onCancel={onCancel}
+        defaultValue={defaultValue}
+      >
+        <ApplicationInputs mode="edit" />
+      </AwxPageForm>
+    </PageLayout>
+  );
+}
+
 function ApplicationInputs(props: { mode: 'create' | 'edit' }) {
   const { mode } = props;
   const { t } = useTranslation();
