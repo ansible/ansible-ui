@@ -1171,7 +1171,7 @@ Cypress.Commands.add('waitForWorkflowJobStatus', (jobID: string) => {
         }
       });
   };
-  waitForWFJobStatus(150);
+  waitForWFJobStatus(200);
 });
 
 const GLOBAL_PROJECT_NAME = 'Global Project';

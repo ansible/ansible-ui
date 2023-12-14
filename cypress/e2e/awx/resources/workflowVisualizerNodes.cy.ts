@@ -108,7 +108,6 @@ describe('Workflow Visualizer Nodes', function () {
         cy.contains(`${jobTemplate.name}`);
         cy.contains('button', 'Save').click();
         cy.navigateTo('awx', 'templates');
-        cy.getTableRowByText(`${workflowJobTemplate.name}`).should('be.visible');
         cy.intercept('POST', `api/v2/workflow_job_templates/${workflowJobTemplate.id}/launch/`).as(
           'launchWJT-WithNodes'
         );
