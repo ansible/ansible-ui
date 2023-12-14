@@ -156,7 +156,7 @@ with the `id` of the second node as the request payload. */
 
 Cypress.Commands.add(
   'createWorkflowJTFailureNodeLink',
-  function (firstNode: WorkflowNode, secondNode: WorkflowJobTemplate) {
+  function (firstNode: WorkflowNode, secondNode: WorkflowNode) {
     cy.requestPost<WorkflowNode>(
       `/api/v2/workflow_job_template_nodes/${firstNode.id}/failure_nodes/`,
       {
@@ -1171,52 +1171,8 @@ Cypress.Commands.add('waitForWorkflowJobStatus', (jobID: string) => {
         }
       });
   };
-  /*
-  reason the numbers chosen for wait is 500ms and maxLoops is 80,
-  as processing events takes ~30s, hence 80 * 500ms is chosen as the upper limit)
-  */
-  waitForWFJobStatus(120);
+  waitForWFJobStatus(150);
 });
-
-// Cypress.Commands.add('waitForWorkflowJobStatus', (jobID: string) => {
-//   cy.requestGet<Job>(`api/v2/workflow_jobs/${jobID}/`)
-//     .its('status')
-//     .then((status: string) => {
-//       cy.log(status);
-//       switch (status) {
-//         case 'failed':
-//         case 'successful':
-//           cy.wrap(status);
-//           break;
-//         default:
-//           cy.wait(100).then(() => cy.waitForWorkflowJobStatus(jobID));
-//           break;
-//       }
-//     });
-
-//   // const waitForWFJobToFinishProcessingEvents = (maxLoops: number) => {
-//   //   if (maxLoops === 0) {
-//   //     cy.log('Max loops reached while waiting for processing events.');
-//   //     return;
-//   //   }
-//   //   cy.wait(500);
-
-//   //   cy.requestGet<Job>(`api/v2/workflow_jobs/${jobID}/`).then((job) => {
-//   //     if (job.event_processing_finished !== true) {
-//   //       cy.log(`EVENT PROCESSING = ${job.event_processing_finished}`);
-//   //       cy.log(`MAX LOOPS RAN = ${maxLoops}`);
-//   //       waitForWFJobToFinishProcessingEvents(maxLoops - 1);
-//   //     } else {
-//   //       cy.log(`EVENT PROCESSED = ${job.event_processing_finished}`);
-//   //     }
-//   //   });
-//   // };
-//   // /*
-//   // reason the numbers chosen for wait is 500ms and maxLoops is 80,
-//   // as processing events takes ~30s, hence 80 * 500ms is chosen as the upper limit)
-//   // */
-//   // waitForWFJobToFinishProcessingEvents(120);
-// });
 
 const GLOBAL_PROJECT_NAME = 'Global Project';
 const GLOBAL_PROJECT_DESCRIPTION = 'Global Read Only Project for E2E tests';

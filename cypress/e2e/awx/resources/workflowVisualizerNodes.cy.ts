@@ -41,10 +41,29 @@ describe('Workflow Visualizer Nodes', function () {
       });
       cy.visit(`/ui_next/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
       cy.contains('Workflow Visualizer').should('be.visible');
+      cy.contains(`${workflowJobTemplate.name}`);
+      cy.contains('button', 'Save').click();
+      /*
+      uncomment when workflow approvals is working along with quick starts
+      cy.navigateTo('awx', 'templates');
+      cy.getTableRowByText(`${workflowJobTemplate.name}`).should('be.visible');
+      cy.intercept('POST', `api/v2/workflow_job_templates/${workflowJobTemplate.id}/launch/`).as(
+        'launchWJT-WithNodes'
+      );
+      cy.searchAndDisplayResource(`${workflowJobTemplate.name}`);
+      cy.get('td[data-cy="actions-column-cell"] [data-cy="launch-template"]').click();
+      cy.wait('@launchWJT-WithNodes')
+        .its('response.body.id')
+        .then((jobId: string) => {
+          //there is a known React create request error happening due the output tab work in progress
+          cy.waitForWorkflowJobStatus(jobId);
+        });
+      */
+      cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate);
     });
   });
 
-  it('create a project node with a success link to a job template node', function () {
+  it('create multiple nodes in the workflow job template, save and launch the template', function () {
     cy.createAwxJobTemplate({
       organization: (this.globalOrganization as Organization).id,
       project: (this.globalProject as Project).id,
@@ -102,7 +121,7 @@ describe('Workflow Visualizer Nodes', function () {
         cy.wait('@launchWJT-WithNodes')
           .its('response.body.id')
           .then((jobId: string) => {
-            /*there is a known React create request error happening due the output tab work in progress */
+            /*there is a known React error, `create request error` happening due the output tab work in progress,but the test executes fine since there is no ui interaction here*/
             cy.waitForWorkflowJobStatus(jobId);
           });
         cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate);

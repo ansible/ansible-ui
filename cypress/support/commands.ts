@@ -617,7 +617,7 @@ declare global {
       createAwxWorkflowVisualizerJobTemplateNode(
         workflowJT: WorkflowJobTemplate,
         jobTemplateNode: JobTemplate
-      ): Chainable<WorkflowJobTemplate>;
+      ): Chainable<WorkflowNode>;
 
       createAwxWorkflowVisualizerProjectNode(
         workflowJobTemplate: WorkflowJobTemplate,
@@ -631,7 +631,7 @@ declare global {
       createAwxWorkflowVisualizerInventorySourceNode(
         workflowJT: WorkflowJobTemplate,
         inventorySourceId: InventorySource
-      ): Chainable<WorkflowJobTemplate>;
+      ): Chainable<WorkflowNode>;
 
       createAwxWorkflowVisualizerWJTNode(
         workflowJT: WorkflowJobTemplate
@@ -649,7 +649,7 @@ declare global {
 
       createWorkflowJTFailureNodeLink(
         firstNode: WorkflowNode,
-        secondNode: WorkflowJobTemplate
+        secondNode: WorkflowNode
       ): Chainable<WorkflowNode>;
 
       waitForTemplateStatus(jobID: string): Chainable<AwxItemsResponse<JobEvent>>;
