@@ -5,7 +5,7 @@ import {
   IPageAction,
   PageActionSelection,
   PageActionType,
-  useGetPageUrl,
+  usePageNavigate,
 } from '../../../../../framework';
 import { Application } from '../../../interfaces/Application';
 import { useDeleteApplications } from '../hooks/useDeleteApplications';
@@ -19,19 +19,20 @@ export function useApplicationActions(options: {
   const { onApplicationsDeleted } = options;
   const { t } = useTranslation();
   const deleteApplications = useDeleteApplications(onApplicationsDeleted);
-  const getPageUrl = useGetPageUrl();
+  const pageNavigate = usePageNavigate();
 
   return useMemo<IPageAction<Application>[]>(() => {
     const itemActions: IPageAction<Application>[] = [
       {
-        type: PageActionType.Link,
+        type: PageActionType.Button,
         isHidden: (application) => !application?.summary_fields.user_capabilities.edit,
         selection: PageActionSelection.Single,
         isPinned: true,
         icon: PencilAltIcon,
         label: t('Edit application'),
         ouiaId: 'application-detail-edit-button',
-        href: () => getPageUrl(AwxRoute.Applications),
+        onClick: (application) =>
+          pageNavigate(AwxRoute.EditApplication, { params: { id: application.id } }),
       },
       { type: PageActionType.Seperator },
       {
@@ -53,5 +54,5 @@ export function useApplicationActions(options: {
       },
     ];
     return itemActions;
-  }, [deleteApplications, getPageUrl, activeUser?.is_system_auditor, t]);
+  }, [t, pageNavigate, activeUser?.is_system_auditor, deleteApplications]);
 }
