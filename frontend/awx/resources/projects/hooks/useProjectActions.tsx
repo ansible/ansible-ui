@@ -88,6 +88,7 @@ export function useProjectActions(
         icon: SyncIcon,
         label: t('Sync project'),
         isDisabled: cannotSyncProject,
+        isHidden: (project: Project) => Boolean(!cannotCancelProjectDueToStatus(project)),
         onClick: (project: Project) => {
           const alert: AlertProps = {
             variant: 'success',
