@@ -59,51 +59,43 @@ export function NodeFormInputs(props: {
   };
 
   const handleSubmit = async (data: NodeFields) => {
-    if (data) {
-      let nodeID = data?.node_resource?.id?.toString();
-      if (!data.node_resource.id) {
-        nodeID = 'id' + Math.random().toString(16).slice(2).toString();
-      }
+    const nodes = controller.getElements().filter(isNode);
 
-      const nodes = controller.getElements().filter(isNode);
-
-      const node = {
-        id: `${nodes.length + 1}-unsavedNode`,
-        type: 'node',
-        label: data.alias || data.node_resource.name,
-        width: 50,
-        height: 50,
-        shape: NodeShape.circle,
-        data: {
-          id: nodeID,
-          resource: {
-            summary_fields: {
-              unified_job_template: {
-                unified_job_type: data.node_type,
-                name: data.node_resource.name,
-                description: data.node_resource.description,
-              },
+    const node = {
+      id: `${nodes.length + 1}-unsavedNode`,
+      type: 'node',
+      label: data.alias || data.node_resource.name,
+      width: 50,
+      height: 50,
+      shape: NodeShape.circle,
+      data: {
+        resource: {
+          summary_fields: {
+            unified_job_template: {
+              unified_job_type: data.node_type,
+              name: data.node_resource.name,
+              description: data.node_resource.description,
             },
           },
         },
-      };
+      },
+    };
 
-      const model = controller.toModel();
+    const model = controller.toModel();
 
-      model?.nodes?.push(node);
-      model.graph = {
-        id: 'workflow-visualizer-graph',
-        layout: 'Dagre',
-        type: 'graph',
-        visible: true,
-      };
+    model?.nodes?.push(node);
+    model.graph = {
+      id: 'workflow-visualizer-graph',
+      layout: 'Dagre',
+      type: 'graph',
+      visible: true,
+    };
 
-      controller.fromModel(model, true);
+    controller.fromModel(model, true);
 
-      setSidebarMode(undefined);
+    setSidebarMode(undefined);
 
-      return Promise.resolve();
-    }
+    return Promise.resolve();
   };
   return (
     <PageWizard<NodeFields>

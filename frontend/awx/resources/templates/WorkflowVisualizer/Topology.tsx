@@ -239,7 +239,6 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
         height: NODE_DIAMETER,
         shape: NodeShape.circle,
         data: {
-          id: nodeId,
           resource: n,
         },
       };
