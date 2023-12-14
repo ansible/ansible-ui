@@ -40,7 +40,7 @@ export interface IApplicationInput {
   description?: string;
 }
 
-export function CreateApplication() {
+export function CreateApplication(props: { onSuccessfulCreate?: (app: Application) => void }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
@@ -69,6 +69,7 @@ export function CreateApplication() {
       throw new Error(t('Organization not found.'));
     }
     const newApplication = await postRequest(awxAPI`/applications/`, modifiedInput as Application);
+    if (props.onSuccessfulCreate) props.onSuccessfulCreate(newApplication);
     pageNavigate(AwxRoute.ApplicationDetails, { params: { id: newApplication.id } });
   };
 
