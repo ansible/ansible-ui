@@ -1,13 +1,12 @@
 import React, { useMemo, useState } from 'react';
 import { useGet } from '../../../common/crud/useGet';
-import { hubAPI, pulpAPI } from '../../api/formatPath';
+import { pulpAPI } from '../../api/formatPath';
 import { useBreakpoint } from '../../../../framework';
 import { Drawer, DrawerContent, DrawerContentBody } from '@patternfly/react-core';
 import { useOutletContext } from 'react-router-dom';
-import { IContents, CollectionDocs, CollectionVersionSearch } from '../Collection';
+import { IContents, CollectionVersionSearch } from '../Collection';
 import { CollectionDocumentationTabPanel } from '../components/CollectionDocumentationTabPanel';
 import { CollectionDocumentationTabContent } from '../components/CollectionDocumentationTabContent';
-import { CollectionVersionListResponse } from '../../api-schemas/generated/CollectionVersionListResponse';
 
 export function CollectionDocumentation() {
   const { collection } = useOutletContext<{ collection: CollectionVersionSearch }>();
@@ -34,15 +33,14 @@ export function CollectionDocumentation() {
     if (data) {
       for (const content of data.results[0].docs_blob.contents) {
         let group = groups[content.content_type];
-        if (!group)  {
+        if (!group) {
           group = {
             name: content.content_type.charAt(0).toUpperCase() + content.content_type.slice(1),
             contents: [],
           };
+          groups[content.content_type] = group;
         }
-        groups[content.content_type] = group;
-        }
-        groups.contents.push(content);
+        group.contents.push(content);
       }
     }
     for (const group of Object.values(groups)) {
