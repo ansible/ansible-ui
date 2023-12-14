@@ -3,13 +3,13 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import useSWR from 'swr';
 import {
+  PageFormSelect,
   PageFormSubmitHandler,
   PageHeader,
   PageLayout,
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
-import { PageFormSingleSelect } from '../../../../framework/PageForm/Inputs/PageFormSingleSelect';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
@@ -31,7 +31,7 @@ const AuthorizationType = {
   Password: 'password',
 };
 
-interface IApplicationInput {
+export interface IApplicationInput {
   organization: string;
   authorization_grant_type: string;
   client_type: string;
@@ -203,38 +203,34 @@ function ApplicationInputs(props: { mode: 'create' | 'edit' }) {
         placeholder={t('Enter a description')}
       />
       <PageFormOrganizationSelect<IApplicationInput> name="organization" isRequired />
-      <PageFormSingleSelect<IApplicationInput>
+      <PageFormSelect<IApplicationInput>
         isReadOnly={mode === 'edit'}
         name="authorization_grant_type"
         label={t('Authorization grant type')}
-        placeholder={t('Select a grant type')}
+        placeholderText={t('Select a grant type')}
         options={[
           {
             label: t('Authorization code'),
-            description: t('use authorization code as grant type'),
             value: AuthorizationType.AuthorizationCode,
           },
           {
             label: t('Password'),
-            description: t('use password as grant type'),
             value: AuthorizationType.Password,
           },
         ]}
         isRequired
       />
-      <PageFormSingleSelect<IApplicationInput>
+      <PageFormSelect<IApplicationInput>
         name="client_type"
         label={t('Client type')}
-        placeholder={t('Select a client type')}
+        placeholderText={t('Select a client type')}
         options={[
           {
             label: t('Confidential'),
-            description: t('use authorization code as grant type'),
             value: ClientType.Confidential,
           },
           {
             label: t('Public'),
-            description: t('use password as grant type'),
             value: ClientType.Public,
           },
         ]}
