@@ -14,7 +14,7 @@ import { StatusCell } from '../../../common/Status';
 import { useOutletContext } from 'react-router-dom';
 import { CollectionImport, CollectionVersionSearch } from '../Collection';
 import styled from 'styled-components';
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 
 export function CollectionImportLog() {
   const { collection } = useOutletContext<{ collection: CollectionVersionSearch }>();
@@ -35,32 +35,6 @@ export function CollectionImportLog() {
       ? hubAPI`/_ui/v1/imports/collections/${collectionImportsResponse.data[0].id}/`
       : ''
   );
-
-  const StyledArrowDown = styled.div`
-    color: white;
-    &:hover {
-      cursor: pointer;
-    }
-    position: absolute;
-    right: 0; /* Aligns the icon to the right */
-    top: 0; /* Aligns the icon to the top */
-    margin-top: 10px;
-    margin-right: 10px;
-    font-size: 120%;
-  `;
-
-  const StyledArrowUp = styled.div`
-    color: white;
-    &:hover {
-      cursor: pointer;
-    }
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    margin-bottom: 10px;
-    margin-right: 10px;
-    font-size: 120%;
-  `;
 
   // http://ec2-54-147-146-116.compute-1.amazonaws.com:8002/api/automation-hub/_ui/v1/imports/collections/ef7849bd-17f5-434f-b35a-3c1877884d12/
 
@@ -154,8 +128,31 @@ function getColor(messageLevel: string) {
       : PFColorE.Disabled
   );
 
-  if (messageLevel == 'INFO') {
+  if (messageLevel === 'INFO') {
     return 'white';
   }
   return res;
 }
+
+const arrowStyle = `
+  color: white;
+  &:hover {
+    cursor: pointer;
+  }
+  position: absolute;
+  margin-bottom: 10px;
+  margin-right: 10px;
+  font-size: 120%;
+`;
+
+const StyledArrowDown = styled.div`
+  ${arrowStyle}
+  right: 0; /* Aligns the icon to the right */
+  top: 0; /* Aligns the icon to the top */
+`;
+
+const StyledArrowUp = styled.div`
+  ${arrowStyle}
+  right: 0;
+  bottom: 0;
+`;
