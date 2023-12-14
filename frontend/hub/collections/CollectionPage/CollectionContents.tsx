@@ -66,35 +66,6 @@ export function CollectionContents() {
     }
   }
 
-  const label_style = `
-    margin-right: 25px;
-    text-transform: capitalize;
-    font-size: 16px;
-  `;
-
-  const StyledDiv = styled.div`
-    .hub-c-toolbar__item-type-selector {
-      ${label_style}
-    }
-
-    .hub-c-toolbar__item-type-selector-label {
-      ${label_style}
-    }
-
-    .hub-c-toolbar__item-selected-item,
-    .hub-c-toolbar__item-type-selector:hover {
-      border-bottom: 2px solid var(--pf-global--link--Color);
-      padding-bottom: 2px;
-      margin-bottom: -4px;
-      background-color: white;
-      cursor: pointer;
-      text-decoration: underline;
-      text-decoration-color: blue; /* Sets the underline color to blue */
-      text-decoration-thickness: 2px; /* Sets the thickness of the underline */
-      text-underline-offset: 8px; /* Sets the space between the text and the underline */
-    }
-  `;
-
   if (error || data?.results?.length === 0) {
     return <HubError error={error} handleRefresh={refresh} />;
   }
@@ -224,3 +195,32 @@ interface CollectionContent {
   description: string;
   content_type: string;
 }
+
+const label_style = `
+  margin-right: 25px;
+  text-transform: capitalize;
+  font-size: 16px;
+`;
+
+const StyledDiv = styled.div`
+  .hub-c-toolbar__item-type-selector {
+    ${label_style}
+  }
+
+  .hub-c-toolbar__item-type-selector-label {
+    ${label_style}
+  }
+
+  .hub-c-toolbar__item-selected-item,
+  .hub-c-toolbar__item-type-selector:hover {
+    border-bottom: 2px solid var(--pf-global--link--Color);
+    padding-bottom: 2px;
+    margin-bottom: -4px;
+    background-color: white;
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-color: blue; /* Sets the underline color to blue */
+    text-decoration-thickness: 2px; /* Sets the thickness of the underline */
+    text-underline-offset: 8px; /* Sets the space between the text and the underline */
+  }
+`;
