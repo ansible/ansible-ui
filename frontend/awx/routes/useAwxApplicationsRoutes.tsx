@@ -7,6 +7,7 @@ import { ApplicationPage } from '../administration/applications/ApplicationPage/
 import { ApplicationPageDetails } from '../administration/applications/ApplicationPage/ApplicationPageDetails';
 import { Applications } from '../administration/applications/Applications';
 import { ApplicationTokens } from '../administration/applications/ApplicationPage/ApplicationPageTokens';
+import { CreateApplication } from '../administration/applications/ApplicationForm';
 
 export function useAwxApplicationsRoutes() {
   const { t } = useTranslation();
@@ -19,7 +20,7 @@ export function useAwxApplicationsRoutes() {
         {
           id: AwxRoute.CreateApplication,
           path: 'create',
-          element: <PageNotImplemented />,
+          element: <CreateApplication />,
         },
         {
           id: AwxRoute.EditApplication,
