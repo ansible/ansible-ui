@@ -8,7 +8,7 @@ import type { PageWizardStep } from './types';
 
 export default function PageWizard<T extends object>(props: {
   steps: PageWizardStep[];
-  defaultValue?: Record<string, object>;
+  defaultValue: Record<string, object>;
   onCancel?: () => void;
   onSubmit: (wizardData: T) => Promise<void>;
   errorAdapter?: ErrorAdapter;

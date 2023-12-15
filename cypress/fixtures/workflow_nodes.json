@@ -131,7 +131,7 @@
           "name": "app new",
           "description": "",
           "unified_job_type": "workflow_approval",
-          "timeout": 0
+          "timeout": 600
         }
       },
       "created": "2023-11-27T16:12:30.928388Z",
@@ -155,7 +155,7 @@
       "failure_nodes": [],
       "always_nodes": [],
       "all_parents_must_converge": false,
-      "identifier": "6ed68bac-0d04-4b62-8082-2f844750e40f"
+      "identifier": "workflow_approval_alias"
     },
     {
       "id": 1356,

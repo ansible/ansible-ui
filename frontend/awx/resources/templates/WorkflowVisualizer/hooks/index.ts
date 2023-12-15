@@ -1,4 +1,5 @@
+import { useCloseSidebar } from './useCloseSidebar';
 import { useGetDetailComponent } from './useGetDetailComponent';
 import { useRemoveAllNodes } from './useRemoveAllNodes';
 
-export { useGetDetailComponent, useRemoveAllNodes };
+export { useCloseSidebar, useGetDetailComponent, useRemoveAllNodes };

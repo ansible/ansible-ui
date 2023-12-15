@@ -1,5 +1,5 @@
 import { JobTemplate } from '../../../interfaces/JobTemplate';
-import { WorkflowNode, UnifiedJobType } from '../../../interfaces/WorkflowNode';
+import { WorkflowNode } from '../../../interfaces/WorkflowNode';
 import { WorkflowVisualizerNodeDetails } from './WorkflowVisualizerNodeDetails';
 import { ControllerContext, Controller } from '@patternfly/react-topology';
 import { SummaryFieldUnifiedJobTemplate } from '../../../interfaces/summary-fields/summary-fields';
@@ -34,9 +34,7 @@ describe('WorkflowVisualizerNodeDetails', () => {
     );
     cy.mount(
       <ControllerContext.Provider value={mockContext}>
-        <WorkflowVisualizerNodeDetails
-          resource={mockNode({ unified_job_type: UnifiedJobType.job })}
-        />
+        <WorkflowVisualizerNodeDetails resource={mockNode({ unified_job_type: 'job' })} />
       </ControllerContext.Provider>
     );
 
@@ -56,9 +54,7 @@ describe('WorkflowVisualizerNodeDetails', () => {
 
     cy.mount(
       <ControllerContext.Provider value={mockContext}>
-        <WorkflowVisualizerNodeDetails
-          resource={mockNode({ unified_job_type: UnifiedJobType.workflow_job })}
-        />
+        <WorkflowVisualizerNodeDetails resource={mockNode({ unified_job_type: 'workflow_job' })} />
       </ControllerContext.Provider>
     );
 
@@ -72,7 +68,7 @@ describe('WorkflowVisualizerNodeDetails', () => {
     cy.mount(
       <ControllerContext.Provider value={mockContext}>
         <WorkflowVisualizerNodeDetails
-          resource={mockNode({ unified_job_type: UnifiedJobType.project_update })}
+          resource={mockNode({ unified_job_type: 'project_update' })}
         />
       </ControllerContext.Provider>
     );
@@ -89,7 +85,7 @@ describe('WorkflowVisualizerNodeDetails', () => {
     cy.mount(
       <ControllerContext.Provider value={mockContext}>
         <WorkflowVisualizerNodeDetails
-          resource={mockNode({ unified_job_type: UnifiedJobType.inventory_update })}
+          resource={mockNode({ unified_job_type: 'inventory_update' })}
         />
       </ControllerContext.Provider>
     );
@@ -103,7 +99,7 @@ describe('WorkflowVisualizerNodeDetails', () => {
     cy.mount(
       <ControllerContext.Provider value={mockContext}>
         <WorkflowVisualizerNodeDetails
-          resource={mockNode({ unified_job_type: UnifiedJobType.system_job, name: 'System job' })}
+          resource={mockNode({ unified_job_type: 'system_job', name: 'System job' })}
         />
       </ControllerContext.Provider>
     );
@@ -114,7 +110,7 @@ describe('WorkflowVisualizerNodeDetails', () => {
       <ControllerContext.Provider value={mockContext}>
         <WorkflowVisualizerNodeDetails
           resource={mockNode({
-            unified_job_type: UnifiedJobType.workflow_approval,
+            unified_job_type: 'workflow_approval',
             name: 'Workflow approval',
           })}
         />

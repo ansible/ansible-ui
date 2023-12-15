@@ -6,31 +6,31 @@ import {
   DagreLayout,
   DefaultGroup,
   EdgeModel,
+  ElementModel,
   Graph,
   GraphComponent,
+  GraphElement,
   Model,
   ModelKind,
   NodeShape,
   SELECTION_EVENT,
   TopologyControlBar,
+  TopologyView,
   Visualization,
   VisualizationProvider,
   VisualizationSurface,
   action,
   createTopologyControlButtons,
   defaultControlButtonsOptions,
+  isNode,
   nodeDragSourceSpec,
   nodeDropTargetSpec,
   withContextMenu,
+  withCreateConnector,
   withDndDrop,
   withDragNode,
   withPanZoom,
   withSelection,
-  TopologyView,
-  GraphElement,
-  ElementModel,
-  withCreateConnector,
-  isNode,
 } from '@patternfly/react-topology';
 import { EmptyStateNoData } from '../../../../../framework/components/EmptyStateNoData';
 import {
@@ -41,14 +41,14 @@ import {
   EdgeContextMenu,
   Legend,
   NodeContextMenu,
+  Sidebar,
+  ToolbarHeader,
   WorkflowVisualizerToolbar,
 } from './components';
+import { ViewOptionsProvider, ViewOptionsContext } from './ViewOptionsProvider';
 import { EdgeStatus, GraphNode } from './types';
 import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
 import type { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
-import { ViewOptionsProvider, ViewOptionsContext } from './ViewOptionsProvider';
-import { ToolbarHeader } from './components/WorkflowVisualizerToolbar';
-import { Sidebar } from './components/Sidebar';
 
 export const GRAPH_ID = 'workflow-visualizer-graph';
 const CONNECTOR_SOURCE_DROP = 'connector-src-drop';

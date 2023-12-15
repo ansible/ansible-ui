@@ -29,7 +29,9 @@ export interface WorkflowNode {
   };
   created: string;
   modified: string;
-  extra_data: object;
+  extra_data: {
+    days: number;
+  };
   inventory: null;
   scm_branch: null;
   job_type: null;
@@ -59,11 +61,10 @@ export interface WorkflowApprovalNode {
   timeout?: string;
 }
 
-export enum UnifiedJobType {
-  job = 'job',
-  workflow_job = 'workflow_job',
-  project_update = 'project_update',
-  workflow_approval = 'workflow_approval',
-  inventory_update = 'inventory_update',
-  system_job = 'system_job',
-}
+export type UnifiedJobType =
+  | 'job'
+  | 'workflow_job'
+  | 'project_update'
+  | 'workflow_approval'
+  | 'inventory_update'
+  | 'system_job';

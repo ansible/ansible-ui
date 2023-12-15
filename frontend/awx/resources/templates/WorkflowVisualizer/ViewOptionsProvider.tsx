@@ -96,8 +96,11 @@ export const ViewOptionsProvider = observer((props: { children: ReactElement }) 
   useEffect(() => {
     if (state.selectedIds?.length && state.selectedIds.some((id) => id === GRAPH_ID)) {
       setSidebarMode(undefined);
+    } else if (state.selectedIds?.length && sidebarMode === undefined) {
+      setSidebarMode('view');
     }
-  }, [state.selectedIds, setSidebarMode, controller]);
+  }, [state.selectedIds, setSidebarMode, controller, sidebarMode]);
+
   const value = {
     isFullScreen,
     toggleFullScreen,

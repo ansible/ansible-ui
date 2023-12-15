@@ -55,15 +55,6 @@ export interface CustomNodeProps extends WithSelectionProps {
   >;
 }
 
-export enum JobType {
-  job = 'job',
-  workflow_job = 'workflow_job',
-  project_update = 'project_update',
-  workflow_approval = 'workflow_approval',
-  inventory_update = 'inventory_update',
-  system_job = 'system_job',
-}
-
 export enum EdgeStatus {
   danger = NodeStatus.danger,
   success = NodeStatus.success,

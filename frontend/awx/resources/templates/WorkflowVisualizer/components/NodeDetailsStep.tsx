@@ -1,58 +1,55 @@
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageFormJobTemplateSelect } from '../../components/PageFormJobTemplateSelect';
+import { useWatch, useFormContext } from 'react-hook-form';
+import { awxAPI } from '../../../../api/awx-utils';
 import { PageFormSelect, PageFormTextInput } from '../../../../../../framework';
-import getDocsBaseUrl from '../../../../common/util/getDocsBaseUrl';
 import { useAwxConfig } from '../../../../common/useAwxConfig';
-import { NodeFields } from './NodeFormInputs';
+import { useGetItem } from '../../../../../common/crud/useGet';
+import { usePageWizard } from '../../../../../../framework/PageWizard/PageWizardProvider';
+import getDocsBaseUrl from '../../../../common/util/getDocsBaseUrl';
+import { PageFormJobTemplateSelect } from '../../components/PageFormJobTemplateSelect';
 import { PageFormProjectSelect } from '../../../projects/components/PageFormProjectSelect';
 import { PageFormInventorySourceSelect } from '../../../inventories/components/PageFormInventorySourceSelect';
 import { PageFormManagementJobsSelect } from '../../../../administration/management-jobs/components/PageFormManagementJobsSelect';
-import { useWatch, useFormContext } from 'react-hook-form';
-import { useEffect } from 'react';
-import { UnifiedJobType } from '../../../../interfaces/WorkflowNode';
+import type { WorkflowNodeWizardData } from './NodeWizard';
+import type { SystemJobTemplate } from '../../../../interfaces/SystemJobTemplate';
+import type { UnifiedJobType } from '../../../../interfaces/WorkflowNode';
 
-export function NodeTypeStep() {
+export function NodeDetailsStep() {
   const { t } = useTranslation();
   const config = useAwxConfig();
   const {
     reset,
     getValues,
     formState: { defaultValues },
-  } = useFormContext<NodeFields>();
+  } = useFormContext<WorkflowNodeWizardData>();
   // Need to handle cases where we are adding a new node.  The user should be able to select a parent node.
   // A parent node is not required though.
 
-  const nodeType = useWatch({ name: 'node_type' }) as
-    | 'job'
-    | 'workflow_job'
-    | 'workflow_approval'
-    | 'project_update'
-    | 'inventory_update'
-    | 'system_job';
+  const nodeType = useWatch({ name: 'node_type' }) as UnifiedJobType;
 
   useEffect(() => {
-    if (defaultValues?.node_resource?.unified_job_type !== nodeType) {
+    if (defaultValues?.node_type !== nodeType) {
       reset(
         {
           node_type: nodeType,
           node_resource: {
             name: '',
+            id: 0,
             description: '',
-            unified_job_type: nodeType as UnifiedJobType,
+            unified_job_type: nodeType,
           },
-          node_status_type: getValues('node_status_type'),
           convergence: getValues('convergence'),
           alias: getValues('alias'),
         },
         { keepDefaultValues: true }
       );
-      return;
     }
-    reset({ ...defaultValues }, { keepDefaultValues: true });
   }, [defaultValues, nodeType, reset, getValues]);
+
   return (
     <>
-      <PageFormSelect<NodeFields>
+      <PageFormSelect<WorkflowNodeWizardData>
         isRequired
         label={t('Node type')}
         name="node_type"
@@ -68,9 +65,11 @@ export function NodeTypeStep() {
       />
       {
         {
-          job: <PageFormJobTemplateSelect<NodeFields> name="node_resource" isRequired />,
+          job: (
+            <PageFormJobTemplateSelect<WorkflowNodeWizardData> name="node_resource" isRequired />
+          ),
           workflow_job: (
-            <PageFormJobTemplateSelect<NodeFields>
+            <PageFormJobTemplateSelect<WorkflowNodeWizardData>
               templateType="workflow_job_templates"
               name="node_resource"
               isRequired
@@ -78,58 +77,44 @@ export function NodeTypeStep() {
           ),
           workflow_approval: (
             <>
-              <PageFormTextInput<NodeFields>
+              <PageFormTextInput<WorkflowNodeWizardData>
                 label={t('Name')}
-                name="node_resource.name"
+                name="name"
+                id="workflow-approval-name"
                 isRequired
               />
-              <PageFormTextInput<NodeFields>
+              <PageFormTextInput<WorkflowNodeWizardData>
                 label={t('Description')}
-                name="node_resource.description"
+                name="description"
+                id="workflow-approval-description"
               />
 
-              <PageFormTextInput<NodeFields>
+              <PageFormTextInput<WorkflowNodeWizardData>
                 label={t('Minutes')}
-                name="node_resource.timeout_minute"
+                name="timeout_minutes"
                 type="number"
+                id="workflow-approval-timeout-minutes"
               />
-              <PageFormTextInput<NodeFields>
+              <PageFormTextInput<WorkflowNodeWizardData>
                 label={t('Seconds')}
-                name="node_resource.timeout_seconds"
+                name="timeout_seconds"
                 type="number"
+                id="workflow-approval-timeout-seconds"
               />
             </>
           ),
-          project_update: <PageFormProjectSelect<NodeFields> name="node_resource" isRequired />,
-          inventory_update: (
-            <PageFormInventorySourceSelect<NodeFields> name="node_resource" isRequired />
+          project_update: (
+            <PageFormProjectSelect<WorkflowNodeWizardData> name="node_resource" isRequired />
           ),
-          system_job: <PageFormManagementJobsSelect<NodeFields> name="node_resource" isRequired />,
+          inventory_update: (
+            <PageFormInventorySourceSelect<WorkflowNodeWizardData>
+              name="node_resource"
+              isRequired
+            />
+          ),
+          system_job: <SystemJobInputs />,
         }[nodeType]
       }
-      <PageFormSelect
-        label={t('Status')}
-        data-cy="node_status_type"
-        name="node_status_type"
-        isRequired
-        options={[
-          {
-            label: t('Always run'),
-            value: 'always',
-            description: t('Execute regardless of the parent node final state.'),
-          },
-          {
-            label: t('Run on success'),
-            value: 'success',
-            description: t('Execute when the parent node results in a successful state.'),
-          },
-          {
-            label: t('Run on failure'),
-            value: 'failure',
-            description: t('Execute when the parent node results in a failure state.'),
-          },
-        ]}
-      />
       <PageFormSelect
         label={t('Convergence')}
         name="convergence"
@@ -172,6 +157,43 @@ export function NodeTypeStep() {
         labelHelpTitle={t('Node alias')}
         labelHelp={t('Node alias to use for this node.')}
       />
+    </>
+  );
+}
+
+function SystemJobInputs() {
+  const { t } = useTranslation();
+  const { setWizardData } = usePageWizard();
+
+  const systemJobTemplate = useWatch({
+    name: 'node_resource',
+  }) as SystemJobTemplate;
+
+  const { data } = useGetItem<SystemJobTemplate>(
+    awxAPI`/system_job_templates/`,
+    systemJobTemplate?.id
+  );
+
+  const showDaysToKeep = ['cleanup_jobs', 'cleanup_activitystream'].includes(data?.job_type || '');
+  useEffect(() => {
+    if (showDaysToKeep) {
+      setWizardData((prev: WorkflowNodeWizardData) => ({ ...prev, showDaysToKeep: true }));
+    }
+  }, [showDaysToKeep, setWizardData]);
+
+  return (
+    <>
+      <PageFormManagementJobsSelect<WorkflowNodeWizardData> name="node_resource" isRequired />
+      {showDaysToKeep && (
+        <PageFormTextInput
+          name="days_to_keep"
+          label={t('Days of data to be retained')}
+          placeholder={t('Enter number of days')}
+          type="number"
+          isRequired
+          min={0}
+        />
+      )}
     </>
   );
 }
