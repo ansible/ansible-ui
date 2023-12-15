@@ -38,6 +38,7 @@ export const CustomNode: FC<
 > = observer((props) => {
   const { element, contextMenuOpen, onContextMenu, onSelect, selected, ...rest } = props;
   const data = element.getData();
+  const id = element.getId();
   const jobType = data && data.resource.summary_fields.unified_job_template.unified_job_type;
 
   if (!data || !jobType) return null;
@@ -47,7 +48,7 @@ export const CustomNode: FC<
   return (
     <DefaultNode
       element={element}
-      labelClassName={`${data.id}-node-label`}
+      labelClassName={`${id}-node-label`}
       contextMenuOpen={contextMenuOpen}
       labelPosition={LabelPosition.right}
       onContextMenu={onContextMenu}
