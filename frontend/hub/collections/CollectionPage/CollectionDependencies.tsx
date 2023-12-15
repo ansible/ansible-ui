@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
-import { Scrollable } from '../../../../framework';
+import { PFColorE, Scrollable } from '../../../../framework';
 import {
+  Button,
   DescriptionList,
   DescriptionListDescription,
   DescriptionListGroup,
@@ -9,11 +10,11 @@ import {
   Stack,
   Title,
 } from '@patternfly/react-core';
-import React from 'react';
+import React, { useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { CollectionVersionSearch } from '../Collection';
 import { HubError } from '../../common/HubError';
-import { useHubView } from '../../useHubView';
+import { HubItemsResponse, useHubView } from '../../useHubView';
 import { PageTable } from '../../../../framework';
 import { useGetPageUrl } from '../../../../framework';
 import { ITableColumn } from '../../../../framework';
@@ -22,30 +23,76 @@ import { HubRoute } from '../../HubRoutes';
 import { TextCell } from '../../../../framework';
 import { hubAPI } from '../../api/formatPath';
 import { IToolbarFilter } from '../../../../framework';
+import { requestGet } from '../../../common/crud/Data';
+import { LoadingPage } from '../../../../framework';
 import { ToolbarFilterType } from '../../../../framework';
+import { usePageNavigate } from '../../../../framework';
 
 export function CollectionDependencies() {
   const { collection } = useOutletContext<{ collection: CollectionVersionSearch }>();
   const { t } = useTranslation();
 
+  const [missingCollection, setMissingCollection] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = usePageNavigate();
+
   if (!collection?.collection_version?.dependencies)
     return <HubError error={{ name: '', message: t`Error loading dependencies` }}></HubError>;
+
+  if (isLoading) {
+    return <LoadingPage />;
+  }
+
+  const dependencies = collection?.collection_version?.dependencies;
+
+  function goToDependency(dependency: string) {
+    setIsLoading(true);
+
+    (async () => {
+      try {
+        setMissingCollection('');
+        const strings = dependency.split('.');
+
+        const namespace = strings[0];
+        const name = strings[1];
+
+        const result = await requestGet<HubItemsResponse<CollectionVersionSearch>>(
+          hubAPI`/v3/plugin/ansible/search/collection-versions?namespace=${namespace}&name=${name}`
+        );
+
+        // select the first repo
+        const repository = result.data[0].repository?.name;
+        setIsLoading(false);
+        navigate(HubRoute.CollectionDetails, { params: { repository, namespace, name } });
+      } catch (ex) {
+        setIsLoading(false);
+        setMissingCollection(dependency);
+      }
+    })();
+  }
 
   return (
     <Scrollable>
       <PageSection variant="light">
         <Stack hasGutter>
           <Title headingLevel="h2">{t('Dependencies')}</Title>
+
           {t`This collections requires the following collections for use`}
+          <br></br>
+          <span style={{ color: PFColorE.Danger }}>
+            {missingCollection && t`Collection was not found in the system`}
+          </span>
           <DescriptionList isHorizontal>
             {Object.keys(collection.collection_version.dependencies).map((key) => {
               return (
                 <DescriptionListGroup key={key}>
-                  <DescriptionListTerm>{key}</DescriptionListTerm>
-                  <DescriptionListDescription>
-                    {collection.collection_version?.dependencies
-                      ? collection.collection_version.dependencies[key]
-                      : ''}
+-                  <DescriptionListDescription>
+                  <Button
+                    variant="link"
+                    onClick={() => {
+                      goToDependency(key);
+                    }}
+                  >{`${key} ${dependencies?.[key]}`}</Button>
                   </DescriptionListDescription>
                 </DescriptionListGroup>
               );
