@@ -239,7 +239,6 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
         height: NODE_DIAMETER,
         shape: NodeShape.circle,
         data: {
-          id: nodeId,
           resource: n,
         },
       };
@@ -312,7 +311,7 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
                 sideBar={<Sidebar />}
                 minSideBarSize={'50%'}
               >
-                {isEmpty && (
+                {isEmpty ? (
                   <div style={{ flex: '1 0 100%' }}>
                     <EmptyStateNoData
                       button={<AddNodeButton variant="primary" />}
@@ -320,9 +319,12 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
                       description={t('Add a node by clicking the button below')}
                     />
                   </div>
+                ) : (
+                  <>
+                    {isLegendOpen && <Legend />}
+                    <VisualizationSurface state={{ workflowTemplate: template }} />
+                  </>
                 )}
-                {isLegendOpen && <Legend />}
-                <VisualizationSurface state={{ workflowTemplate: template }} />
               </TopologyView>
             );
           }}
