@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { UnifiedJobType, WorkflowNode } from '../../../../interfaces/WorkflowNode';
 import { NodeTypeStep } from './NodeTypeStep';
 import { awxErrorAdapter } from '../../../../adapters/awxErrorAdapter';
+import { NodeShape, isNode, useVisualizationController } from '@patternfly/react-topology';
+import { useViewOptions } from '../ViewOptionsProvider';
 
 export interface NodeFields {
   parentNodes?: WorkflowNode[];
@@ -31,7 +33,10 @@ export function NodeFormInputs(props: {
   node: WorkflowNode | undefined;
 }) {
   const { setSelectedNode } = props;
+  const { setSidebarMode } = useViewOptions();
   const { t } = useTranslation();
+
+  const controller = useVisualizationController();
 
   const steps: PageWizardStep[] = [
     {
@@ -52,10 +57,45 @@ export function NodeFormInputs(props: {
       alias: '',
     },
   };
+
   const handleSubmit = async (data: NodeFields) => {
-    if (data) {
-      return Promise.resolve();
-    }
+    const nodes = controller.getElements().filter(isNode);
+
+    const node = {
+      id: `${nodes.length + 1}-unsavedNode`,
+      type: 'node',
+      label: data.alias || data.node_resource.name,
+      width: 50,
+      height: 50,
+      shape: NodeShape.circle,
+      data: {
+        resource: {
+          summary_fields: {
+            unified_job_template: {
+              unified_job_type: data.node_type,
+              name: data.node_resource.name,
+              description: data.node_resource.description,
+            },
+          },
+        },
+      },
+    };
+
+    const model = controller.toModel();
+
+    model?.nodes?.push(node);
+    model.graph = {
+      id: 'workflow-visualizer-graph',
+      layout: 'Dagre',
+      type: 'graph',
+      visible: true,
+    };
+
+    controller.fromModel(model, true);
+
+    setSidebarMode(undefined);
+
+    return Promise.resolve();
   };
   return (
     <PageWizard<NodeFields>
