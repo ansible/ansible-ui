@@ -77,65 +77,58 @@ export function CollectionContents() {
   return (
     <>
       <PageSection variant="light">
-        <StyledDiv>
-          <SearchInput
-            key="content-search-input-key"
-            id="content-search-input-id"
-            placeholder={t('Find content')}
-            value={keywords}
-            ref={searchRef}
-            onChange={(value) => {
-              setSearchParams((params) => {
-                params.set('keywords', value?.currentTarget?.value || '');
-                return params;
-              });
-            }}
-          />
-          <br />
-          <span className={'hub-c-toolbar__item-type-selector-label'}>{t`Showing`}:</span>
-          {Object.keys(summary).map((key) => {
-            // eslint-disable-next-line i18next/no-literal-string
-            let className = 'clickable hub-c-toolbar__item-type-selector';
-            if (key === showing) {
-              // eslint-disable-next-line i18next/no-literal-string
-              className += ' hub-c-toolbar__item-selected-item ';
-            }
-
-            return (
-              <ToolbarItem
-                key={key}
-                onClick={() =>
-                  setSearchParams((params) => {
-                    params.set('showing', key);
-                    return params;
-                  })
-                }
-                className={className}
-              >
-                {key} ({summary[key]})
-              </ToolbarItem>
-            );
-          })}
-          <br /> <br />
-          <PageTable<CollectionContent>
-            keyFn={(item) => item.name + '_' + item.content_type}
-            tableColumns={tableColumns}
-            pageItems={toShow}
-            itemCount={toShow.length}
-            page={1}
-            perPage={toShow.length}
-            setPage={() => {}}
-            setPerPage={() => {}}
-            errorStateTitle=""
-            emptyStateTitle={t`No content available`}
-            disablePagination={true}
-            compact={true}
-          />
-          ;
-          {summary.all <= 0 && collection.repository?.name === 'community' && (
-            <RenderCommunityWarningMessage />
-          )}
-        </StyledDiv>
+        <SearchInput
+          key="content-search-input-key"
+          id="content-search-input-id"
+          placeholder={t('Find content')}
+          value={keywords}
+          ref={searchRef}
+          onChange={(value) => {
+            setSearchParams((params) => {
+              params.set('keywords', value?.currentTarget?.value || '');
+              return params;
+            });
+          }}
+        />
+        <br />
+        <StyledToolbarItem isSelected={false} isLabel={true}>
+          {t`Showing`}
+        </StyledToolbarItem>
+        {Object.keys(summary).map((key) => {
+          return (
+            <StyledToolbarItem
+              key={key}
+              onClick={() =>
+                setSearchParams((params) => {
+                  params.set('showing', key);
+                  return params;
+                })
+              }
+              isSelected={key === showing}
+            >
+              {key} ({summary[key]})
+            </StyledToolbarItem>
+          );
+        })}
+        <br /> <br />
+        <PageTable<CollectionContent>
+          keyFn={(item) => item.name + '_' + item.content_type}
+          tableColumns={tableColumns}
+          pageItems={toShow}
+          itemCount={toShow.length}
+          page={1}
+          perPage={toShow.length}
+          setPage={() => {}}
+          setPerPage={() => {}}
+          errorStateTitle=""
+          emptyStateTitle={t`No content available`}
+          disablePagination={true}
+          compact={true}
+        />
+        ;
+        {summary.all <= 0 && collection.repository?.name === 'community' && (
+          <RenderCommunityWarningMessage />
+        )}
       </PageSection>
     </>
   );
@@ -196,23 +189,7 @@ interface CollectionContent {
   content_type: string;
 }
 
-const label_style = `
-  margin-right: 25px;
-  text-transform: capitalize;
-  font-size: 16px;
-`;
-
-const StyledDiv = styled.div`
-  .hub-c-toolbar__item-type-selector {
-    ${label_style}
-  }
-
-  .hub-c-toolbar__item-type-selector-label {
-    ${label_style}
-  }
-
-  .hub-c-toolbar__item-selected-item,
-  .hub-c-toolbar__item-type-selector:hover {
+const hoverOrSelected = `
     border-bottom: 2px solid var(--pf-global--link--Color);
     padding-bottom: 2px;
     margin-bottom: -4px;
@@ -222,5 +199,14 @@ const StyledDiv = styled.div`
     text-decoration-color: blue; /* Sets the underline color to blue */
     text-decoration-thickness: 2px; /* Sets the thickness of the underline */
     text-underline-offset: 8px; /* Sets the space between the text and the underline */
+`;
+
+const StyledToolbarItem = styled(ToolbarItem)<{ isSelected: boolean; isLabel?: boolean }>`
+  margin-right: 25px;
+  text-transform: capitalize;
+  font-size: 16px;
+  :hover {
+    ${(props) => !props.isLabel && hoverOrSelected}
   }
+  ${(props) => props.isSelected && !props.isLabel && hoverOrSelected}
 `;
