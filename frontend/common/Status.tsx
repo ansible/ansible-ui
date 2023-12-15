@@ -20,7 +20,7 @@ export function StatusCell(props: {
   hideLabel?: boolean;
 }) {
   const { t } = useTranslation();
-  const status = props.status || 'default';
+  const status = props.status;
 
   const label = useLabel(status, t);
   const color = getColor(status);
@@ -53,7 +53,8 @@ export function StatusLabel(props: { status?: string; dataCy?: string }) {
   );
 }
 
-function useLabel(status: string, t: (str: string) => string) {
+function useLabel(status: string | undefined, t: (str: string) => string) {
+  if (status === undefined) return t('Unknown');
   const labels: { [key: string]: string } = {
     approved: t('Approved'),
     completed: t('Completed'),
@@ -93,7 +94,7 @@ function useLabel(status: string, t: (str: string) => string) {
   return labels[status] || status;
 }
 
-function getColor(status: string) {
+function getColor(status: string | undefined) {
   switch (status) {
     case 'approved':
     case 'completed':
@@ -136,7 +137,7 @@ function getColor(status: string) {
   }
 }
 
-function getIcon(status: string) {
+function getIcon(status: string | undefined) {
   switch (status) {
     case 'approved':
     case 'completed':
