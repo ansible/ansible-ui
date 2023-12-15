@@ -77,22 +77,18 @@ export function CollectionImportLog() {
                   position: 'relative',
                 }}
               >
-                <StyledArrowDown>
-                  <span
-                    onClick={() => {
-                      ref?.current?.scrollIntoView({ block: 'end', behavior: 'smooth' });
-                    }}
-                    className="fa fa-arrow-circle-down clickable"
-                  />
-                </StyledArrowDown>
-                <StyledArrowUp>
-                  <span
-                    onClick={() => {
-                      ref?.current?.scrollIntoView({ block: 'start', behavior: 'smooth' });
-                    }}
-                    className="fa fa-arrow-circle-up clickable"
-                  />
-                </StyledArrowUp>
+                <NavigationArrow
+                  direction="down"
+                  onClick={() => ref.current?.scrollIntoView({ block: 'end', behavior: 'smooth' })}
+                />
+
+                <NavigationArrow
+                  direction="up"
+                  onClick={() =>
+                    ref.current?.scrollIntoView({ block: 'start', behavior: 'smooth' })
+                  }
+                />
+
                 {collectionImport?.messages?.map((message, index) => (
                   <div
                     key={index}
@@ -156,3 +152,21 @@ const StyledArrowUp = styled.div`
   right: 0;
   bottom: 0;
 `;
+
+function NavigationArrow(props: { direction: 'up' | 'down'; onClick: () => void }) {
+  const className = `fa fa-arrow-circle-${props.direction} clickable`;
+
+  const Component = props.direction === 'up' ? StyledArrowUp : StyledArrowDown;
+
+  return (
+    <Component>
+      <span
+        role="button"
+        onClick={() => {
+          props.onClick();
+        }}
+        className={className}
+      />
+    </Component>
+  );
+}
