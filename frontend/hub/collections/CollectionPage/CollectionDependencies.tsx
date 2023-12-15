@@ -1,15 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { PFColorE, Scrollable } from '../../../../framework';
-import {
-  Button,
-  DescriptionList,
-  DescriptionListDescription,
-  DescriptionListGroup,
-  DescriptionListTerm,
-  PageSection,
-  Stack,
-  Title,
-} from '@patternfly/react-core';
+import { Button, PageSection, Title } from '@patternfly/react-core';
 import React, { useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { CollectionVersionSearch } from '../Collection';
@@ -24,7 +15,6 @@ import { TextCell } from '../../../../framework';
 import { hubAPI } from '../../api/formatPath';
 import { IToolbarFilter } from '../../../../framework';
 import { requestGet } from '../../../common/crud/Data';
-import { LoadingPage } from '../../../../framework';
 import { ToolbarFilterType } from '../../../../framework';
 import { usePageNavigate } from '../../../../framework';
 
@@ -33,22 +23,18 @@ export function CollectionDependencies() {
   const { t } = useTranslation();
 
   const [missingCollection, setMissingCollection] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState('');
   const navigate = usePageNavigate();
 
   if (!collection?.collection_version?.dependencies)
     return <HubError error={{ name: '', message: t`Error loading dependencies` }}></HubError>;
 
-  if (isLoading) {
-    return <LoadingPage />;
-  }
-
   const dependencies = collection?.collection_version?.dependencies;
 
   function goToDependency(dependency: string) {
-    setIsLoading(true);
+    setIsLoading(dependency);
 
-    (async () => {
+    void (async () => {
       try {
         setMissingCollection('');
         const strings = dependency.split('.');
@@ -62,10 +48,10 @@ export function CollectionDependencies() {
 
         // select the first repo
         const repository = result.data[0].repository?.name;
-        setIsLoading(false);
+        setIsLoading('');
         navigate(HubRoute.CollectionDetails, { params: { repository, namespace, name } });
       } catch (ex) {
-        setIsLoading(false);
+        setIsLoading('');
         setMissingCollection(dependency);
       }
     })();
@@ -74,33 +60,29 @@ export function CollectionDependencies() {
   return (
     <Scrollable>
       <PageSection variant="light">
-        <Stack hasGutter>
-          <Title headingLevel="h2">{t('Dependencies')}</Title>
-
-          {t`This collections requires the following collections for use`}
-          <br></br>
-          <span style={{ color: PFColorE.Danger }}>
-            {missingCollection && t`Collection was not found in the system`}
-          </span>
-          <DescriptionList isHorizontal>
-            {Object.keys(collection.collection_version.dependencies).map((key) => {
-              return (
-                <DescriptionListGroup key={key}>
--                  <DescriptionListDescription>
-                  <Button
-                    variant="link"
-                    onClick={() => {
-                      goToDependency(key);
-                    }}
-                  >{`${key} ${dependencies?.[key]}`}</Button>
-                  </DescriptionListDescription>
-                </DescriptionListGroup>
-              );
-            })}
-          </DescriptionList>
-          {t`This collection is being used by`}
-          <UsedByDependenciesTable collection={collection} />
-        </Stack>
+        <Title headingLevel="h2">{t('Dependencies')}</Title>
+        {t`This collections requires the following collections for use`}
+        <br></br>
+        <span style={{ color: PFColorE.Red }}>
+          {missingCollection && t`Collection was not found in the system`}
+        </span>
+        <br></br>
+        {Object.keys(collection.collection_version.dependencies).map((key) => {
+          return (
+            <Button
+              key={key}
+              isLoading={isLoading === key}
+              variant="link"
+              onClick={() => {
+                goToDependency(key);
+              }}
+            >{`${key} ${dependencies?.[key]}`}</Button>
+          );
+        })}
+        <br></br>
+        <br></br>
+        {t`This collection is being used by`}
+        <UsedByDependenciesTable collection={collection} />
       </PageSection>
     </Scrollable>
   );
