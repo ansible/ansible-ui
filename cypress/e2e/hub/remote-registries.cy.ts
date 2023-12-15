@@ -44,6 +44,27 @@ describe('Remote Registry', () => {
     });
   });
 
+  it('index execution environments', () => {
+    const remoteRegistryName = `test-remote-registry-${randomString(5, undefined, {
+      isLowercase: true,
+    })}`;
+    cy.navigateTo('hub', RemoteRegistry.url);
+    cy.get('[data-cy="create-remote-registry"]').should('be.visible').click();
+    cy.get('[data-cy="name"]').type(remoteRegistryName);
+    cy.get('[data-cy="url"]').type(RemoteRegistry.validIndexableURL);
+    cy.get('[data-cy="Submit"]').click();
+    cy.searchAndDisplayResource(remoteRegistryName);
+    cy.get('[data-cy="actions-column-cell"]').click();
+    cy.get('[data-cy="index-execution-environments"]').should('be.visible').click({ force: true });
+    cy.hasAlert(`Indexing remote registry ${remoteRegistryName}`);
+    cy.get('[data-cy="actions-column-cell"]').click();
+    cy.get('[data-cy="delete-remote-registry"]').click({ force: true });
+    cy.get('#confirm').click();
+    cy.clickButton(/^Delete remote registries/);
+    cy.clickButton(/^Close$/);
+    cy.clickButton(/^Clear all filters$/);
+  });
+
   it('create, search and delete a remote registry', () => {
     const remoteRegistryName = `test-remote-registry-${randomString(5, undefined, {
       isLowercase: true,
