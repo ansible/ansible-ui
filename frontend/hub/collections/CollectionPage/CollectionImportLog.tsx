@@ -4,6 +4,7 @@ import { HubItemsResponse } from '../../useHubView';
 import { hubAPI } from '../../api/formatPath';
 import {
   getPatternflyColor,
+  LoadingPage,
   PageDetail,
   PageDetails,
   PFColorE,
@@ -15,11 +16,12 @@ import { useOutletContext } from 'react-router-dom';
 import { CollectionImport, CollectionVersionSearch } from '../Collection';
 import styled from 'styled-components';
 import { useRef } from 'react';
+import { HubError } from '../../common/HubError';
 
 export function CollectionImportLog() {
   const { collection } = useOutletContext<{ collection: CollectionVersionSearch }>();
   const { t } = useTranslation();
-  const { data: collectionImportsResponse } = useGet<HubItemsResponse<CollectionImport>>(
+  const collectionImportsResponse = useGet<HubItemsResponse<CollectionImport>>(
     collection
       ? hubAPI`/_ui/v1/imports/collections/?namespace=${
           collection.collection_version?.namespace || ''
@@ -30,16 +32,58 @@ export function CollectionImportLog() {
   );
   const ref = useRef<HTMLDivElement>(null);
 
-  const { data: collectionImport } = useGet<CollectionImport>(
-    collectionImportsResponse && collectionImportsResponse.data.length
-      ? hubAPI`/_ui/v1/imports/collections/${collectionImportsResponse.data[0].id}/`
+  const collectionImportResponse = useGet<CollectionImport>(
+    collectionImportsResponse.data && collectionImportsResponse.data.data.length
+      ? hubAPI`/_ui/v1/imports/collections/${collectionImportsResponse.data.data[0].id}/`
       : ''
   );
 
-  // http://ec2-54-147-146-116.compute-1.amazonaws.com:8002/api/automation-hub/_ui/v1/imports/collections/ef7849bd-17f5-434f-b35a-3c1877884d12/
+  const collectionImport = collectionImportResponse.data;
 
-  if (!collection) return <></>;
-  // &sort=-created&offset=0&limit=10
+  if (collectionImportsResponse.error) {
+    return (
+      <HubError
+        error={collectionImportsResponse.error}
+        handleRefresh={collectionImportsResponse.refresh}
+      />
+    );
+  }
+
+  if (collectionImportsResponse.data?.data.length === 0) {
+    return <HubError handleRefresh={collectionImportsResponse.refresh} />;
+  }
+
+  if (!collectionImportsResponse.error && !collectionImportsResponse.data) {
+    return <LoadingPage />;
+  }
+
+  if (collectionImportResponse.error) {
+    return (
+      <HubError
+        error={collectionImportsResponse.error}
+        handleRefresh={collectionImportResponse.refresh}
+      />
+    );
+  }
+
+  if (!collectionImportResponse.error && !collectionImportResponse.data) {
+    return <LoadingPage />;
+  }
+
+  let approvalStatus = t`waiting for import to finish`;
+
+  if (collection) {
+    const pipeline = collection.repository?.pulp_labels?.pipeline;
+    if (pipeline === 'rejected') {
+      approvalStatus = t`rejected`;
+    } else if (pipeline === 'staging') {
+      approvalStatus = t`waiting for approval`;
+    } else if (pipeline === 'approved') {
+      approvalStatus = t`approved`;
+    } else {
+      approvalStatus = t`could not be determined yet`;
+    }
+  }
 
   return (
     <Scrollable>
@@ -50,8 +94,9 @@ export function CollectionImportLog() {
               <PageDetail label={t('Status')}>
                 <StatusCell status={collectionImport?.state} />
               </PageDetail>
-              {/* <Detail label={t('Approval Status')}>
-            </Detail> */}
+              <PageDetail label={t('Approval Status')}>
+                <StatusCell status={approvalStatus} />
+              </PageDetail>
               <PageDetail label={t('Version')}>{collectionImport?.version}</PageDetail>
             </PageDetails>
             {collectionImport?.error && (
@@ -165,6 +210,13 @@ function NavigationArrow(props: { direction: 'up' | 'down'; onClick: () => void 
         onClick={() => {
           props.onClick();
         }}
+        onKeyDown={(event) => {
+          // Trigger click on Enter key
+          if (event.key === 'Enter') {
+            props.onClick();
+          }
+        }}
+        tabIndex={props.direction === 'up' ? 0 : 1} // Make the element focusable
         className={className}
       />
     </Component>
