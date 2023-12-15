@@ -10,7 +10,12 @@ import {
 } from '@patternfly/react-topology';
 import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
 
-export type GraphNode = Node<NodeModel, { id: string; resource: WorkflowNode }>;
+export type GraphNode = Node<
+  NodeModel,
+  {
+    resource: WorkflowNode;
+  }
+>;
 
 export interface CustomEdgeProps {
   element: GraphElement<
@@ -45,7 +50,6 @@ export interface CustomNodeProps extends WithSelectionProps {
   element: GraphElement<
     ElementModel,
     {
-      id: string;
       resource: WorkflowNode;
     }
   >;

@@ -29,7 +29,7 @@ export function useNodeMenuItems(element: GraphNode): MenuItem[] {
   }>();
   const [_, setSelectedIds] = useVisualizationState('selectedIds', selectedIds);
 
-  const data = element.getData() as { id: string };
+  const id = element.getId();
   return [
     {
       key: 'edit-node',
@@ -38,7 +38,7 @@ export function useNodeMenuItems(element: GraphNode): MenuItem[] {
       onClick: () => {
         action(() => {
           setSidebarMode('edit');
-          setSelectedIds([data.id.toString()]);
+          setSelectedIds([id]);
         })();
       },
     },
