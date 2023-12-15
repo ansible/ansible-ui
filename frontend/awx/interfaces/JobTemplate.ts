@@ -87,7 +87,7 @@ export interface JobTemplate
   inventory: number;
   job_slice_count: number;
   last_job_failed: boolean;
-  last_job_run: string;
+  last_job_run: string | undefined;
   limit: string;
   next_job_run: string;
   playbook: string;

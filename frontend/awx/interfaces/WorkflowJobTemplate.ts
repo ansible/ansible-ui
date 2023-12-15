@@ -30,7 +30,7 @@ export interface WorkflowJobTemplate
   job_tags: string;
   webhook_credential: number | null;
   extra_vars: string;
-  last_job_run: string | null;
+  last_job_run: string | undefined;
   last_job_failed: boolean;
   next_job_run: string | null;
   status: string;
