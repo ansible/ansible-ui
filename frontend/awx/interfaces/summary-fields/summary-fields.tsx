@@ -18,7 +18,7 @@ export interface SummaryFieldsByUser {
   last_name: string;
 }
 
-export interface SummeryFieldObjectRole {
+export interface SummaryFieldObjectRole {
   description: string;
   name: string;
   id: number;
