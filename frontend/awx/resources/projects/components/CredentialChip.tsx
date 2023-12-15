@@ -15,7 +15,7 @@ interface CredentialName {
 export function CredentialChip({
   credentials: credential,
 }: {
-  credentials: SummaryFieldCredential[] | undefined;
+  credentials: SummaryFieldCredential[];
 }) {
   const { t } = useTranslation();
   let type: string;

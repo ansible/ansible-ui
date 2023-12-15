@@ -104,20 +104,22 @@ export function useLastRanColumn(options?: {
 
 export function useCredentialsColumn() {
   const { t } = useTranslation();
-  const column: ITableColumn<{ summary_fields?: { credentials?: SummaryFieldCredential[] } }> =
-    useMemo(
-      () => ({
-        header: t('Credentials'),
-        cell: (item) => {
-          return <CredentialChip credentials={item.summary_fields?.credentials}></CredentialChip>;
-        },
-        table: ColumnTableOption.Expanded,
-        card: 'hidden',
-        list: 'hidden',
-        modal: ColumnModalOption.Hidden,
-      }),
-      [t]
-    );
+  const column: ITableColumn<{
+    summary_fields?: { credentials?: SummaryFieldCredential[] };
+  }> = useMemo(
+    () => ({
+      header: t('Credentials'),
+      cell: (item) => {
+        if (!item.summary_fields?.credentials) return <></>;
+        return <CredentialChip credentials={item.summary_fields?.credentials}></CredentialChip>;
+      },
+      table: ColumnTableOption.Expanded,
+      card: 'hidden',
+      list: 'hidden',
+      modal: ColumnModalOption.Hidden,
+    }),
+    [t]
+  );
   return column;
 }
 
