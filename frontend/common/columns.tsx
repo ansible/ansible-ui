@@ -10,6 +10,8 @@ import {
   useGetPageUrl,
 } from '../../framework';
 import { RouteObj } from './Routes';
+import CredentialChip from '../awx/resources/projects/components/CredentialChip';
+import { SummaryFieldCredential } from '../awx/interfaces/summary-fields/summary-fields';
 
 export function useIdColumn<T extends { name: string; id: number }>(isHidden: boolean = true) {
   const { t } = useTranslation();
@@ -97,6 +99,25 @@ export function useLastRanColumn(options?: {
     }),
     [options?.disableSort, options?.sortKey, t]
   );
+  return column;
+}
+
+export function useCredentialsColumn() {
+  const { t } = useTranslation();
+  const column: ITableColumn<{ summary_fields?: { credentials?: SummaryFieldCredential[] } }> =
+    useMemo(
+      () => ({
+        header: t('Credentials'),
+        cell: (item) => {
+          return <CredentialChip credentials={item.summary_fields?.credentials}></CredentialChip>;
+        },
+        table: ColumnTableOption.Expanded,
+        card: 'hidden',
+        list: 'hidden',
+        modal: ColumnModalOption.Hidden,
+      }),
+      [t]
+    );
   return column;
 }
 
@@ -307,40 +328,6 @@ export function useInventoryNameColumn(
       modal: ColumnModalOption.Hidden,
     }),
     [getPageUrl, options?.disableLinks, options?.disableSort, inventoryDetailsRoute, t]
-  );
-  return column;
-}
-
-export function useCredentialTypeColumn(options?: {
-  disableLinks?: boolean;
-  disableSort?: boolean;
-}) {
-  const { t } = useTranslation();
-  const column: ITableColumn<{
-    summary_fields?: {
-      credentials?: {
-        id: number;
-        name: string;
-        kind: string;
-      };
-    };
-  }> = useMemo(
-    () => ({
-      header: t('Credentials'),
-      cell: (item) => (
-        <TextCell
-          text={item.summary_fields?.credentials?.name}
-          disableLinks={options?.disableLinks}
-        />
-      ),
-      value: (item) => item.summary_fields?.credentials?.name,
-      sort: options?.disableSort ? undefined : 'credentials',
-      table: ColumnTableOption.Expanded,
-      card: 'hidden',
-      list: 'hidden',
-      modal: ColumnModalOption.Hidden,
-    }),
-    [options?.disableLinks, options?.disableSort, t]
   );
   return column;
 }

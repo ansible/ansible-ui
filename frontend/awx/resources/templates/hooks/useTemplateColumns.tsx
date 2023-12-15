@@ -9,7 +9,7 @@ import {
   useTypeColumn,
   useOrganizationNameColumn,
   useInventoryNameColumn,
-  useCredentialTypeColumn,
+  useCredentialsColumn,
   useLastRanColumn,
 } from '../../../../common/columns';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
@@ -45,7 +45,7 @@ export function useTemplateColumns(options?: { disableSort?: boolean; disableLin
   const modifiedColumn = useModifiedColumn(options);
   const organizationColumn = useOrganizationNameColumn(AwxRoute.OrganizationDetails, options);
   const inventoryColumn = useInventoryNameColumn(AwxRoute.InventoryDetails, options);
-  const credentialsColumn = useCredentialTypeColumn(options);
+  const credentialsColumn = useCredentialsColumn();
   const lastRanColumn = useLastRanColumn(options);
   const typeOfTemplate = useTypeColumn<JobTemplate | WorkflowJobTemplate>({
     ...options,
