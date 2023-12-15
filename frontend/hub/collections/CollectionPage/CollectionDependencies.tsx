@@ -12,16 +12,29 @@ import {
 import React from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { CollectionVersionSearch } from '../Collection';
+import { HubError } from '../../common/HubError';
+import { useHubView } from '../../useHubView';
+import { PageTable } from '../../../../framework';
+import { useGetPageUrl } from '../../../../framework';
+import { ITableColumn } from '../../../../framework';
+import { useMemo } from 'react';
+import { HubRoute } from '../../HubRoutes';
+import { TextCell } from '../../../../framework';
+import { hubAPI } from '../../api/formatPath';
 
 export function CollectionDependencies() {
   const { collection } = useOutletContext<{ collection: CollectionVersionSearch }>();
   const { t } = useTranslation();
-  if (!collection?.collection_version?.dependencies) return <></>;
+
+  if (!collection?.collection_version?.dependencies)
+    return <HubError error={{ name: '', message: t`Error loading dependencies` }}></HubError>;
+
   return (
     <Scrollable>
       <PageSection variant="light">
         <Stack hasGutter>
           <Title headingLevel="h2">{t('Dependencies')}</Title>
+          {t`This collections requires the following collections for use`}
           <DescriptionList isHorizontal>
             {Object.keys(collection.collection_version.dependencies).map((key) => {
               return (
@@ -36,8 +49,72 @@ export function CollectionDependencies() {
               );
             })}
           </DescriptionList>
+          {t`This collection is being used by`}
+          <UsedByDependenciesTable collection={collection} />
         </Stack>
       </PageSection>
     </Scrollable>
+  );
+}
+
+function UsedByDependenciesTable(props: { collection: CollectionVersionSearch }) {
+  const version = props.collection.collection_version;
+  const { t } = useTranslation();
+  const tableColumns = useCollectionColumns();
+
+  const view = useHubView<UsedByDependenciesTableType>({
+    url: hubAPI`/_ui/v1/collection-versions/`,
+    keyFn: (item) => item.name + '_' + item.namespace,
+    queryParams: {
+      dependency: `${version?.namespace}.${version?.name}`,
+    },
+  });
+
+  return (
+    <PageTable<UsedByDependenciesTableType>
+      id="hub-used-by-dependencies-table"
+      tableColumns={tableColumns}
+      errorStateTitle={t('Error loading used by dependencies')}
+      emptyStateTitle={t('No collections yet')}
+      compact={true}
+      {...view}
+    />
+  );
+}
+
+type UsedByDependenciesTableType = {
+  name: string;
+  namespace: string;
+  repository_list: string[];
+};
+
+function useCollectionColumns() {
+  const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
+
+  return useMemo<ITableColumn<UsedByDependenciesTableType>[]>(
+    () => [
+      {
+        header: t('Name'),
+        value: (collection) => collection.namespace + '_' + collection.name,
+        cell: (collection) => (
+          <TextCell
+            text={collection.name}
+            to={getPageUrl(HubRoute.CollectionPage, {
+              params: {
+                name: collection.name,
+                namespace: collection.namespace,
+                repository:
+                  collection.repository_list.length > 0
+                    ? collection.repository_list[0]
+                    : 'published',
+              },
+            })}
+          />
+        ),
+        sort: 'collection',
+      },
+    ],
+    [getPageUrl, t]
   );
 }
