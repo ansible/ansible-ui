@@ -21,6 +21,8 @@ import { useMemo } from 'react';
 import { HubRoute } from '../../HubRoutes';
 import { TextCell } from '../../../../framework';
 import { hubAPI } from '../../api/formatPath';
+import { IToolbarFilter } from '../../../../framework';
+import { ToolbarFilterType } from '../../../../framework';
 
 export function CollectionDependencies() {
   const { collection } = useOutletContext<{ collection: CollectionVersionSearch }>();
@@ -61,6 +63,7 @@ function UsedByDependenciesTable(props: { collection: CollectionVersionSearch })
   const version = props.collection.collection_version;
   const { t } = useTranslation();
   const tableColumns = useCollectionColumns();
+  const filters = useCollectionFilters();
 
   const view = useHubView<UsedByDependenciesTableType>({
     url: hubAPI`/_ui/v1/collection-versions/`,
@@ -74,6 +77,7 @@ function UsedByDependenciesTable(props: { collection: CollectionVersionSearch })
     <PageTable<UsedByDependenciesTableType>
       id="hub-used-by-dependencies-table"
       tableColumns={tableColumns}
+      toolbarFilters={filters}
       errorStateTitle={t('Error loading used by dependencies')}
       emptyStateTitle={t('No collections yet')}
       compact={true}
@@ -86,6 +90,7 @@ type UsedByDependenciesTableType = {
   name: string;
   namespace: string;
   repository_list: string[];
+  version: string;
 };
 
 function useCollectionColumns() {
@@ -99,7 +104,7 @@ function useCollectionColumns() {
         value: (collection) => collection.namespace + '_' + collection.name,
         cell: (collection) => (
           <TextCell
-            text={collection.name}
+            text={`${collection.namespace}.${collection.name}.v${collection.version}`}
             to={getPageUrl(HubRoute.CollectionPage, {
               params: {
                 name: collection.name,
@@ -117,4 +122,21 @@ function useCollectionColumns() {
     ],
     [getPageUrl, t]
   );
+}
+
+export function useCollectionFilters() {
+  const { t } = useTranslation();
+
+  return useMemo<IToolbarFilter[]>(() => {
+    const filters: IToolbarFilter[] = [
+      {
+        key: 'name__icontains',
+        label: t('Name'),
+        type: ToolbarFilterType.Text,
+        query: 'keywords',
+        comparison: 'contains',
+      },
+    ];
+    return filters;
+  }, [t]);
 }
