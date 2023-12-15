@@ -202,4 +202,36 @@ describe('Empty state', () => {
       cy.get('[data-cy="add-node-button"]').should('be.visible');
     });
   });
+  it('Should add a node to an empty workflow visualizer', () => {
+    cy.intercept(
+      { method: 'GET', url: '/api/v2/workflow_job_templates/123/workflow_nodes/?*' },
+      {
+        statusCode: 200,
+        body: {
+          count: 0,
+          next: null,
+          previous: null,
+          results: [],
+        },
+      }
+    );
+    cy.intercept(
+      { method: 'GET', url: '/api/v2/workflow_job_templates/123' },
+      { fixture: 'workflowJobTemplate.json' }
+    );
+    cy.intercept(
+      { method: 'GET', url: '/api/v2/job_templates/*' },
+      { fixture: 'jobTemplates.json' }
+    );
+    cy.mount(<WorkflowVisualizer />, {
+      path: '/templates/workflow_job_template/:id/visualizer',
+      initialEntries: ['/templates/workflow_job_template/123/visualizer'],
+    });
+    cy.get('div.pf-v5-c-empty-state__actions').within(() => {
+      cy.get('[data-cy="add-node-button"]').click();
+    });
+    cy.get('button[data-cy="Submit"]').click();
+    cy.get('button[data-cy="wizard-next"]').click();
+    cy.get('g[data-id="1-unsavedNode"]').should('be.visible');
+  });
 });
