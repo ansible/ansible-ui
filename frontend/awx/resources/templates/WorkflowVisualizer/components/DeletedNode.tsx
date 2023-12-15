@@ -9,13 +9,13 @@ export const DeletedNode: FC<CustomNodeProps & WithDragNodeProps & WithSelection
   selected,
   ...rest
 }) => {
-  const data = element.getData();
-  if (!data) return null;
+  const id = element.getId();
+  if (!id) return null;
 
   return (
     <DefaultNode
       element={element}
-      labelClassName={`${data.id}-node-label`}
+      labelClassName={`${id}-node-label`}
       onSelect={onSelect}
       selected={selected}
       {...rest}
