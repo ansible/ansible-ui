@@ -42,6 +42,10 @@ import { RulebookActivationHistory } from '../rulebook-activations/RulebookActiv
 import { RulebookActivationPage } from '../rulebook-activations/RulebookActivationPage/RulebookActivationPage';
 import { RulebookActivations } from '../rulebook-activations/RulebookActivations';
 import { EdaRoute } from './EdaRoutes';
+import { CreateEventSource, EditEventSource } from './Resources/event-sources/EventSourceForm';
+import { EventSourcePage } from './Resources/event-sources/EventSourcePage/EventSourcePage';
+import { EventSourceDetails } from './Resources/event-sources/EventSourcePage/EventSourceDetails';
+import { EventSources } from './Resources/event-sources/EventSources';
 
 export function useEdaNavigation() {
   const { t } = useTranslation();
@@ -213,6 +217,43 @@ export function useEdaNavigation() {
         {
           path: '',
           element: <DecisionEnvironments />,
+        },
+      ],
+    },
+    {
+      id: EdaRoute.EventSources,
+      label: t('Event Sources'),
+      path: 'event-sources',
+      children: [
+        {
+          id: EdaRoute.CreateEventSource,
+          path: 'create',
+          element: <CreateEventSource />,
+        },
+        {
+          id: EdaRoute.EditEventSource,
+          path: 'edit/:id',
+          element: <EditEventSource />,
+        },
+        {
+          id: EdaRoute.EventSourcePage,
+          path: ':id',
+          element: <EventSourcePage />,
+          children: [
+            {
+              id: EdaRoute.EventSourceDetails,
+              path: 'details',
+              element: <EventSourceDetails />,
+            },
+            {
+              path: '',
+              element: <Navigate to="details" />,
+            },
+          ],
+        },
+        {
+          path: '',
+          element: <EventSources />,
         },
       ],
     },
