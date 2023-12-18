@@ -41,7 +41,7 @@ describe('Collections- List View', () => {
     ).as('collection');
     cy.get('[data-cy="Submit"]').click();
     cy.wait('@collection').then((resp) => {
-      expect(resp.response.statusCode).to.eql(202);
+      expect(resp?.response?.statusCode).to.eql(202);
     });
     cy.get('[data-cy="hub-collections"]').click();
     cy.verifyPageTitle(Collections.title);
