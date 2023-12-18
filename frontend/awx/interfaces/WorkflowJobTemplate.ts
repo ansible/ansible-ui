@@ -95,7 +95,7 @@ export interface WorkflowJobTemplate
       schedule: boolean;
       copy: boolean;
     };
-    credentials: SummaryFieldCredential[] | [];
+    credentials: SummaryFieldCredential[];
   };
 }
 
