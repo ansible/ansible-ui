@@ -68,7 +68,7 @@ export function useHubNavigation() {
         },
         {
           id: HubRoute.EditNamespace,
-          path: ':id',
+          path: 'edit/:id',
           element: <EditHubNamespace />,
         },
         {
