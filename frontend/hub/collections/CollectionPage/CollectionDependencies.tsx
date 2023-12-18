@@ -17,6 +17,7 @@ import { IToolbarFilter } from '../../../../framework';
 import { requestGet } from '../../../common/crud/Data';
 import { ToolbarFilterType } from '../../../../framework';
 import { usePageNavigate } from '../../../../framework';
+import styled from 'styled-components';
 
 export function CollectionDependencies() {
   const { collection } = useOutletContext<{ collection: CollectionVersionSearch }>();
@@ -63,9 +64,9 @@ export function CollectionDependencies() {
         <Title headingLevel="h2">{t('Dependencies')}</Title>
         {t`This collections requires the following collections for use`}
         <br></br>
-        <span style={{ color: PFColorE.Red }}>
+        <WarningMessage>
           {missingCollection && t`Collection was not found in the system`}
-        </span>
+        </WarningMessage>
         <br></br>
         {Object.keys(collection.collection_version.dependencies).map((key) => {
           return (
@@ -108,7 +109,7 @@ function UsedByDependenciesTable(props: { collection: CollectionVersionSearch })
       tableColumns={tableColumns}
       toolbarFilters={filters}
       errorStateTitle={t('Error loading used by dependencies')}
-      emptyStateTitle={t('No collections yet')}
+      emptyStateTitle={t('No dependencies')}
       compact={true}
       {...view}
     />
@@ -169,3 +170,7 @@ export function useCollectionFilters() {
     return filters;
   }, [t]);
 }
+
+const WarningMessage = styled.span`
+  color: ${PFColorE.Red};
+`;
