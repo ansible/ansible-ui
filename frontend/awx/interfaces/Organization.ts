@@ -2,7 +2,7 @@ import { Organization as SwaggerOrganization } from './generated-from-swagger/ap
 import {
   SummaryFieldsByUser,
   SummaryFieldsExecutionEnvironment,
-  SummeryFieldObjectRole,
+  SummaryFieldObjectRole,
 } from './summary-fields/summary-fields';
 
 export interface Organization extends Omit<SwaggerOrganization, 'id' | 'summary_fields'> {
@@ -12,19 +12,19 @@ export interface Organization extends Omit<SwaggerOrganization, 'id' | 'summary_
     created_by: SummaryFieldsByUser;
     modified_by: SummaryFieldsByUser;
     object_roles: {
-      admin_role: SummeryFieldObjectRole;
-      execute_role: SummeryFieldObjectRole;
-      project_admin_role: SummeryFieldObjectRole;
-      inventory_admin_role: SummeryFieldObjectRole;
-      credential_admin_role: SummeryFieldObjectRole;
-      workflow_admin_role: SummeryFieldObjectRole;
-      notification_admin_role: SummeryFieldObjectRole;
-      job_template_admin_role: SummeryFieldObjectRole;
-      execution_environment_admin_role: SummeryFieldObjectRole;
-      auditor_role: SummeryFieldObjectRole;
-      member_role: SummeryFieldObjectRole;
-      read_role: SummeryFieldObjectRole;
-      approval_role: SummeryFieldObjectRole;
+      admin_role: SummaryFieldObjectRole;
+      execute_role: SummaryFieldObjectRole;
+      project_admin_role: SummaryFieldObjectRole;
+      inventory_admin_role: SummaryFieldObjectRole;
+      credential_admin_role: SummaryFieldObjectRole;
+      workflow_admin_role: SummaryFieldObjectRole;
+      notification_admin_role: SummaryFieldObjectRole;
+      job_template_admin_role: SummaryFieldObjectRole;
+      execution_environment_admin_role: SummaryFieldObjectRole;
+      auditor_role: SummaryFieldObjectRole;
+      member_role: SummaryFieldObjectRole;
+      read_role: SummaryFieldObjectRole;
+      approval_role: SummaryFieldObjectRole;
     };
     user_capabilities: {
       edit: boolean;

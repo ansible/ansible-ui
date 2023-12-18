@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
 import { randomString } from '../../framework/utils/random-string';
 import { Role } from '../../frontend/hub/access/roles/Role';
-import { hubAPI, pulpAPI } from './formatApiPathForHub';
 import { parsePulpIDFromURL } from '../../frontend/hub/api/utils';
 import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
 import { HubItemsResponse } from '../../frontend/hub/useHubView';
 import './commands';
+import { hubAPI, pulpAPI } from './formatApiPathForHub';
 import './rest-commands';
 import { escapeForShellCommand } from './utils';
 
@@ -86,6 +86,13 @@ Cypress.Commands.add(
     // }
   }
 );
+
+Cypress.Commands.add('createNamespace', (namespaceName: string) => {
+  cy.requestPost(hubAPI`/_ui/v1/namespaces/`, {
+    name: namespaceName,
+    groups: [],
+  });
+});
 
 Cypress.Commands.add('deleteNamespace', (namespaceName: string) => {
   cy.galaxykit('namespace delete', namespaceName);

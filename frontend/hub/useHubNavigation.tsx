@@ -24,6 +24,7 @@ import {
 import { ExecutionEnvironments } from './execution-environments/ExecutionEnvironments';
 import { CreateHubNamespace, EditHubNamespace } from './namespaces/HubNamespaceForm';
 import { HubNamespaceDetails } from './namespaces/HubNamespacePage/HubNamespaceDetails';
+import { HubNamespaceCLI } from './namespaces/HubNamespacePage/HubNamespaceCLI';
 import { HubNamespacePage } from './namespaces/HubNamespacePage/HubNamespacePage';
 import { Namespaces } from './namespaces/HubNamespaces';
 import { RemoteRegistries } from './remote-registries/RemoteRegistries';
@@ -73,6 +74,11 @@ export function useHubNavigation() {
               element: <HubNamespaceDetails />,
             },
             {
+              id: HubRoute.NamespaceCLI,
+              path: 'cli',
+              element: <HubNamespaceCLI />,
+            },
+            {
               path: '',
               element: <Navigate to="details" />,
             },
@@ -101,7 +107,7 @@ export function useHubNavigation() {
         },
         {
           id: HubRoute.CollectionPage,
-          path: ':id',
+          path: ':repository/:namespace/:name',
           element: <CollectionPage />,
           children: [
             {

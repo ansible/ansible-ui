@@ -1,6 +1,5 @@
 import { Label } from '@patternfly/react-core';
 import { LoadingPage } from '../../../../framework';
-import React from 'react';
 import { DropdownPosition } from '@patternfly/react-core/dist/esm/deprecated';
 import { CheckCircleIcon, ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { DateTime } from 'luxon';
@@ -12,31 +11,25 @@ import { useGet } from '../../../common/crud/useGet';
 import { HubRoute } from '../../HubRoutes';
 import { hubAPI } from '../../api/formatPath';
 import { HubItemsResponse } from '../../useHubView';
-import { PageSingleSelect } from '../../../../framework/PageInputs/PageSingleSelect';
+import { PageAsyncSingleSelect } from '../../../../framework/PageInputs/PageAsyncSingleSelect';
 import { CollectionVersionSearch } from '../Collection';
 import { useCollectionActions } from '../hooks/useCollectionActions';
-import { usePageNavigate } from '../../../../framework';
 import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
+import { useParams } from 'react-router-dom';
+import { requestGet } from '../../../common/crud/Data';
+import { Button } from '@patternfly/react-core';
+
+import { useCallback } from 'react';
+import { useSelectCollectionVersionSingle } from '../hooks/useCollectionVersionSelector';
+import { singleSelectBrowseAdapter } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSingleSelectFilter';
 
 export function CollectionPage() {
   const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
-
-  const name = searchParams.get('name') || '';
-  const namespace = searchParams.get('namespace') || '';
-  const repository = searchParams.get('repository') || '';
-  const redirectIfEmpty = searchParams.get('redirectIfEmpty') || '';
+  const { name, namespace, repository } = useParams();
 
   // load collection by search params
   const version = searchParams.get('version');
-
-  const collectionsRequest = useGet<HubItemsResponse<CollectionVersionSearch>>(
-    hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${name || ''}&namespace=${
-      namespace || ''
-    }&repository_name=${repository || ''}&order_by=-version`
-  );
-
-  const collections = collectionsRequest.data?.data;
 
   let queryFilter = '';
 
@@ -46,6 +39,22 @@ export function CollectionPage() {
   } else {
     queryFilter = '&version=' + version;
   }
+
+  const singleSelector = useSelectCollectionVersionSingle({
+    collection: name || '',
+    namespace: namespace || '',
+    repository: repository || '',
+  });
+
+  const singleSelectorBrowser = singleSelectBrowseAdapter<CollectionVersionSearch>(
+    singleSelector.openBrowse,
+    (item) => {
+      return item.collection_version?.version || '';
+    },
+    (name) => {
+      return { collection_version: { version: name } };
+    }
+  );
 
   const collectionRequest = useGet<HubItemsResponse<CollectionVersionSearch>>(
     hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${name || ''}&namespace=${
@@ -59,7 +68,6 @@ export function CollectionPage() {
       : undefined;
 
   const itemActions = useCollectionActions(() => void collectionRequest.refresh(), true);
-  const navigate = usePageNavigate();
 
   function setVersionParams(version: string) {
     setSearchParams((params) => {
@@ -68,31 +76,60 @@ export function CollectionPage() {
     });
   }
 
+  // load collection versions
+  const queryOptions = useCallback(
+    (page: number) => {
+      const pageSize = 10;
+
+      async function load() {
+        const data = await requestGet<HubItemsResponse<CollectionVersionSearch>>(
+          hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${name || ''}&namespace=${
+            namespace || ''
+          }&repository_name=${repository || ''}&order_by=-version&offset=${(
+            pageSize *
+            (page - 1)
+          ).toString()}&limit=${pageSize.toString()}`
+        );
+
+        return {
+          total: data.meta.count,
+          options: data.data.map((item) => {
+            let label =
+              item.collection_version?.version +
+              ' ' +
+              t('updated') +
+              ' ' +
+              `${DateTime.fromISO(item.collection_version?.pulp_created || '').toRelative()} (${
+                item.is_signed ? t('signed') : t('unsigned')
+              })`;
+            if (item.is_highest) {
+              label += ' (' + t('latest') + ')';
+            }
+            return {
+              value: item.collection_version?.version || '',
+              label,
+            };
+          }),
+        };
+      }
+
+      return load();
+    },
+    [name, namespace, repository, t]
+  );
+
   const getPageUrl = useGetPageUrl();
 
-  if (redirectIfEmpty) {
-    const newParams = new URLSearchParams(searchParams.toString());
-
-    // Set a new query parameter or update existing ones
-    newParams.set('redirectIfEmpty', '');
-
-    if (collections && collections?.length === 0) {
-      navigate(HubRoute.Collections);
-    } else {
-      navigate(HubRoute.CollectionPage, { query: { name, namespace, repository } });
-    }
-  }
-
-  if (collectionsRequest.error || collections?.length === 0) {
-    return <HubError error={collectionsRequest.error} handleRefresh={collectionsRequest.refresh} />;
-  }
-
-  if (collectionsRequest.error || collectionRequest.data?.data?.length === 0) {
+  if (collectionRequest.error) {
     return <HubError error={collectionRequest.error} handleRefresh={collectionRequest.refresh} />;
   }
 
-  if (!collectionsRequest.data || !collectionRequest.data) {
-    return <LoadingPage breadcrumbs tabs />;
+  if (!collection) {
+    return <HubError handleRefresh={collectionRequest.refresh} />;
+  }
+
+  if (!collectionRequest.data && !collectionRequest.error) {
+    return <LoadingPage />;
   }
 
   return (
@@ -116,38 +153,28 @@ export function CollectionPage() {
         footer={
           <div style={{ display: 'flex', alignItems: 'center', gridGap: '8px' }}>
             {t('Version')}
-            <PageSingleSelect<string>
-              options={
-                collections
-                  ? collections.map((item) => {
-                      let label =
-                        item.collection_version?.version +
-                        ' ' +
-                        t('updated') +
-                        ' ' +
-                        `${DateTime.fromISO(
-                          item.collection_version?.pulp_created || ''
-                        ).toRelative()} (${item.is_signed ? t('signed') : t('unsigned')})`;
-                      if (item.is_highest) {
-                        label += ' (' + t('latest') + ')';
-                      }
-                      return {
-                        value: item.collection_version?.version || '',
-                        label,
-                      };
-                    })
-                  : []
-              }
+            <PageAsyncSingleSelect<string>
+              queryOptions={queryOptions}
               onSelect={(item: string) => {
-                const found = collections?.find(
-                  (item2) => item2.collection_version?.version === item
-                );
-                if (found && found.collection_version) {
-                  setVersionParams(found.collection_version?.version);
-                }
+                setVersionParams(item);
               }}
               placeholder={''}
-              value={collection?.collection_version?.version || ''}
+              value={collection?.collection_version?.version || version || ''}
+              footer={
+                <Button
+                  variant="link"
+                  onClick={() => {
+                    singleSelectorBrowser?.(
+                      (selection) => {
+                        setVersionParams(selection);
+                      },
+                      collection?.collection_version?.version || version || ''
+                    );
+                  }}
+                >
+                  {t`Browse`}
+                </Button>
+              }
             />
             {collection?.collection_version &&
               t('Last updated') +
@@ -182,8 +209,14 @@ export function CollectionPage() {
           { label: t('Dependencies'), page: HubRoute.CollectionDependencies },
           { label: t('Distributions'), page: HubRoute.CollectionDistributions },
         ]}
-        params={{ id: collection?.collection_version?.name || '' }}
+        params={{
+          name: collection?.collection_version?.name || '',
+          namespace: collection?.collection_version?.namespace || '',
+          version: collection?.collection_version?.version || '',
+          repository: collection?.repository?.name || '',
+        }}
         componentParams={{ collection: collection }}
+        sharedQueryKeys={['version']}
       />
     </PageLayout>
   );

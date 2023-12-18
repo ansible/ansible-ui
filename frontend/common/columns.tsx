@@ -31,7 +31,18 @@ export function useIdColumn<T extends { name: string; id: number }>(isHidden: bo
 }
 
 export function useNameColumn<
-  T extends { name?: string; hostname?: string; id: number },
+  T extends
+    | {
+        name?: string;
+        hostname?: string;
+        id: number;
+        summary_fields?: { user?: { username?: string } };
+      }
+    | {
+        name?: string;
+        hostname?: string;
+        id: number;
+      },
 >(options?: {
   header?: string;
   url?: string;
@@ -47,7 +58,11 @@ export function useNameColumn<
       header: options?.header ?? t('Name'),
       cell: (item: T) => (
         <TextCell
-          text={item.name || item.hostname}
+          text={
+            item.name ||
+            item.hostname ||
+            ('summary_fields' in item ? item.summary_fields?.user?.username : undefined)
+          }
           iconSize="sm"
           to={disableLinks ? undefined : url?.replace(':id', item.id.toString())}
           onClick={!disableLinks && onClick ? () => onClick?.(item) : undefined}
@@ -354,6 +369,40 @@ export function useTypeColumn<T extends object>(options: {
       sort: options?.disableSort ? undefined : options?.sort,
     }),
     [t, makeReadable, options.disableSort, options.sort]
+  );
+  return column;
+}
+export function useScopeColumn<T extends { scope?: string }>(options?: {
+  header?: string;
+  disableSort?: boolean;
+  disableLinks?: boolean;
+  sort?: string;
+}) {
+  const { t } = useTranslation();
+  const column: ITableColumn<T> = useMemo(
+    () => ({
+      header: t('Scope'),
+      cell: (item: T) => <TextCell text={item.scope} />,
+      sort: options?.disableSort ? undefined : options?.sort ?? 'scope',
+    }),
+    [t, options?.disableSort, options?.sort]
+  );
+  return column;
+}
+export function useExpiresColumn<T extends { expires?: string }>(options?: {
+  header?: string;
+  disableSort?: boolean;
+  disableLinks?: boolean;
+  sort?: string;
+}) {
+  const { t } = useTranslation();
+  const column: ITableColumn<T> = useMemo(
+    () => ({
+      header: t('Expires'),
+      cell: (item: T) => <DateTimeCell value={item.expires} format="date-time" />,
+      sort: options?.disableSort ? undefined : options?.sort ?? 'expires',
+    }),
+    [t, options?.disableSort, options?.sort]
   );
   return column;
 }

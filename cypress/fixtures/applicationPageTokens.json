@@ -1,0 +1,69 @@
+{
+  "count": 1,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 7790,
+      "type": "o_auth2_access_token",
+      "url": "/api/v2/tokens/7790/",
+      "related": {
+        "user": "/api/v2/users/18455/",
+        "application": "/api/v2/applications/1/",
+        "activity_stream": "/api/v2/tokens/7790/activity_stream/"
+      },
+      "summary_fields": {
+        "user": {
+          "id": 18455,
+          "username": "test",
+          "first_name": "test",
+          "last_name": ""
+        },
+        "application": {
+          "id": 1,
+          "name": "test"
+        }
+      },
+      "created": "2023-12-06T18:35:17.630160Z",
+      "modified": "2023-12-06T18:35:17.646263Z",
+      "description": "",
+      "user": 18455,
+      "token": "************",
+      "refresh_token": "************",
+      "application": 1,
+      "expires": "3023-04-08T18:35:17.621035Z",
+      "scope": "write"
+    },
+    {
+      "id": 7791,
+      "type": "o_auth2_access_token",
+      "url": "/api/v2/tokens/7791/",
+      "related": {
+        "user": "/api/v2/users/18456/",
+        "application": "/api/v2/applications/1/",
+        "activity_stream": "/api/v2/tokens/7791/activity_stream/"
+      },
+      "summary_fields": {
+        "user": {
+          "id": 18456,
+          "username": "test2",
+          "first_name": "test2",
+          "last_name": ""
+        },
+        "application": {
+          "id": 1,
+          "name": "test"
+        }
+      },
+      "created": "2023-12-06T18:35:17.630160Z",
+      "modified": "2023-12-06T18:35:17.646263Z",
+      "description": "",
+      "user": 18456,
+      "token": "************",
+      "refresh_token": "************",
+      "application": 1,
+      "expires": "3024-04-08T18:35:17.621035Z",
+      "scope": "read"
+    }
+  ]
+}

@@ -25,7 +25,7 @@ export function useAsyncSingleSelectFilterBuilder<T extends object>(
   const [_, setDialog] = usePageDialog();
 
   return {
-    onBrowse: useCallback(
+    openBrowse: useCallback(
       (onSelect: (value: T) => void, defaultSelection?: T) => {
         setDialog(
           <SelectFilter<T>
@@ -47,7 +47,7 @@ export function useAsyncMultiSelectFilterBuilder<T extends object>(
   const [_, setDialog] = usePageDialog();
 
   return {
-    onBrowse: useCallback(
+    openBrowse: useCallback(
       (onSelect: (value: T[]) => void, defaultSelection?: T[]) => {
         setDialog(
           <SelectFilter<T>
@@ -75,6 +75,7 @@ function SelectFilter<T extends object>(
   const viewParams: object = { ...props.viewParams, defaultSelection };
   const toolbarFilters = props.toolbarFilters;
   const tableColumns = props.tableColumns;
+
   const view = props.useView(viewParams as ViewExtendedOptions<T>);
 
   if (props.multiSelection) {
