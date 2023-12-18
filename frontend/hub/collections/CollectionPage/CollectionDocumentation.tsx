@@ -21,11 +21,15 @@ export function CollectionDocumentation() {
     }&offset=0&limit=1`
   );
 
+  type CollectionVersionContentItem = {
+    docs_blob: { contents: IContents[] };
+  };
+
   type CollectionVersionsContent = {
     count: number;
     next: string;
     previous: string;
-    results: unknown[];
+    results: CollectionVersionContentItem[];
   };
 
   const groups = useMemo(() => {
