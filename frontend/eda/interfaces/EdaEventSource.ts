@@ -1,6 +1,6 @@
 export interface EdaEventSource {
   name: string;
-  args: string;
+  args: string | undefined;
   type: string;
   decision_environment_id: number | null;
   decision_environment_name: string;

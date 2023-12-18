@@ -1,6 +1,5 @@
-import { ButtonVariant } from '@patternfly/react-core';
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
-import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
+import { TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
@@ -43,21 +42,6 @@ export function EventSourcePage() {
     () => [
       {
         type: PageActionType.Button,
-        variant: ButtonVariant.primary,
-        selection: PageActionSelection.Single,
-        icon: PencilAltIcon,
-        isPinned: true,
-        label: t('Edit event source'),
-        onClick: (eventSource: EdaEventSourceRead) =>
-          pageNavigate(EdaRoute.EditEventSource, {
-            params: { id: eventSource.id },
-          }),
-      },
-      {
-        type: PageActionType.Seperator,
-      },
-      {
-        type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete decision environment'),
@@ -65,7 +49,7 @@ export function EventSourcePage() {
         isDanger: true,
       },
     ],
-    [deleteEventSource, pageNavigate, t]
+    [deleteEventSource, t]
   );
 
   const getPageUrl = useGetPageUrl();

@@ -22,11 +22,11 @@ import { EdaResult } from '../../interfaces/EdaResult';
 import { EdaPageForm } from '../../EdaPageForm';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 
-export interface EventSourceFields {
+export interface IEventSourceFields {
   name: string;
   type: string;
   decision_environment: { name: string; id: number };
-  variables: string;
+  args: string;
 }
 function EventSourceInputs() {
   const { t } = useTranslation();
@@ -72,6 +72,18 @@ function EventSourceInputs() {
         labelHelp={t('The decision environment for the event source.')}
         labelHelpTitle={t('Decision environment')}
       />
+      <PageFormSection singleColumn>
+        <PageFormDataEditor<IEventSourceFields>
+          name="args"
+          label={t('Arguments')}
+          toggleLanguages={['yaml', 'json']}
+          labelHelp={t(`Arguments.`)}
+          labelHelpTitle={t('Arguments')}
+          allowUpload={false}
+          allowDownload={false}
+          defaultExpanded={true}
+        />
+      </PageFormSection>
     </>
   );
 }
@@ -104,6 +116,7 @@ export function CreateEventSource() {
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
+        defaultValue={{ args: '' }}
       >
         <EventSourceInputs />
       </EdaPageForm>
@@ -128,7 +141,6 @@ export function EditEventSource() {
   };
   const onCancel = () => navigate(-1);
   const getPageUrl = useGetPageUrl();
-
   if (!eventSource) {
     return (
       <PageLayout>
@@ -158,7 +170,6 @@ export function EditEventSource() {
           defaultValue={{
             ...eventSource,
             decision_environment_id: eventSource?.decision_environment_id || undefined,
-            args: '',
           }}
         >
           <EventSourceInputs />
