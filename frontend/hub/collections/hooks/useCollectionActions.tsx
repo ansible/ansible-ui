@@ -15,6 +15,8 @@ import { useCopyToRepository } from './useCopyToRepository';
 import { useDeleteCollections } from './useDeleteCollections';
 import { useDeleteCollectionsFromRepository } from './useDeleteCollectionsFromRepository';
 import { useDeprecateCollections } from './useDeprecateCollections';
+import { useSignVersion } from './useSignVersion';
+
 
 export function useCollectionActions(
   callback?: (collections: CollectionVersionSearch[]) => void,
@@ -38,12 +40,11 @@ export function useCollectionActions(
   );
   const deleteCollectionsVersions = useDeleteCollections(callback, true, detail);
   const copyToRepository = useCopyToRepository();
+  const signVersion = useSignVersion(callback);
 
   const context = useHubContext();
 
   const { can_upload_signatures } = context.featureFlags;
-
-
 
   return useMemo<IPageAction<CollectionVersionSearch>[]>(
     () => [
@@ -124,12 +125,11 @@ export function useCollectionActions(
         label: t('Sign selected version'),
         isHidden: () => (detail ? false : true),
         onClick: (collection) => {
-          if (can_upload_signatures)
-          {
+          if (can_upload_signatures) {
             // upload certificate
-          }else
-          {
+          } else {
             // sign version
+            signVersion([collection]);
           }
         },
       },

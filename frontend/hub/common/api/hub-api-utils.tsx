@@ -14,6 +14,43 @@ import {
   putHubRequest,
 } from './request';
 
+// returns the preferred distribution base_path given a repo name
+// if there is a distribution with the same name as the repository, it will be used (as long as it's connected to the right repo too)
+// if not, the oldest will be used
+// reject if no distributions or repository
+// optional pulp_href param skips repo lookup
+
+export async function getRepositoryBasePath(name: string, pulp_href?: string) {
+  let repository: Repository | undefined | { name: string; pulp_href: string };
+  if (pulp_href) {
+    repository = { name, pulp_href };
+  } else {
+    const repositoryResponse = await requestGet<Results>(
+      pulpAPI`/repositories/ansible/ansible/?name=${name}&limit=1`
+    );
+    repository = firstResult(repositoryResponse) as Repository;
+  }
+
+  const distributionResponse = await requestGet<Results>(
+    pulpAPI`/distributions/ansible/ansible/?name=${name}&limit=1`
+  );
+
+  let distribution: Distribution = firstResult(distributionResponse) as Distribution;
+
+  if (distribution && distribution.repository === repository.pulp_href) {
+    return distribution.base_path;
+  } else {
+    const newDistResponse = await requestGet<Results>(
+      pulpAPI`/distributions/ansible/ansible/?repository=${repository.pulp_href}&ordering=pulp_created&limit=1`
+    );
+    distribution = firstResult(newDistResponse) as Distribution;
+
+    return distribution.base_path;
+  }
+}
+
+// the same for hook version
+
 type Results = { results: Repository[] | Distribution[] };
 export function useRepositoryBasePath(name: string, pulp_href?: string | undefined) {
   const { t } = useTranslation();
