@@ -41,6 +41,10 @@ export function useCollectionActions(
 
   const context = useHubContext();
 
+  const { can_upload_signatures } = context.featureFlags;
+
+
+
   return useMemo<IPageAction<CollectionVersionSearch>[]>(
     () => [
       {
@@ -120,7 +124,13 @@ export function useCollectionActions(
         label: t('Sign selected version'),
         isHidden: () => (detail ? false : true),
         onClick: (collection) => {
-          // todo
+          if (can_upload_signatures)
+          {
+            // upload certificate
+          }else
+          {
+            // sign version
+          }
         },
       },
       {
