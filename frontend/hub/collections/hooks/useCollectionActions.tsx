@@ -166,6 +166,8 @@ export function useCollectionActions(
       detail,
       deleteCollectionsVersionsFromRepository,
       copyToRepository,
+      can_upload_signatures,
+      signVersion,
     ]
   );
 }
