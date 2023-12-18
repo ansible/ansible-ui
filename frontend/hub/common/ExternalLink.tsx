@@ -12,7 +12,6 @@ interface IProps {
 // download - no external link icon (role download)
 // menu - top nav question mark menu (Customer Support, Training)
 // nav - left side nav (Documentation, Terms of Use)
-// default - everywhere else
 
 export const ExternalLink = ({
   children,
@@ -24,13 +23,18 @@ export const ExternalLink = ({
     return null;
   }
 
-  const iconStyle: Record<string, string> = {
+  const iconStyle = {
     nav: { position: 'absolute', right: '32px', top: '22px' },
     download: { display: 'none' },
+    default: undefined,
+    menu: undefined,
   }[variant];
+
   const className = {
     nav: 'pf-c-nav__link',
     menu: 'pf-c-dropdown__menu-item',
+    default: undefined,
+    download: undefined,
   }[variant];
 
   return (

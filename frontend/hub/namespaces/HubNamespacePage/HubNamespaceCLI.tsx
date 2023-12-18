@@ -1,4 +1,3 @@
-import ExternalLinkAltIcon from '@patternfly/react-icons/dist/esm/icons/external-link-alt-icon';
 import { Trans } from 'react-i18next';
 import { getRepoURL } from '../../api/utils';
 import { CopyCell } from '../../../../framework';
