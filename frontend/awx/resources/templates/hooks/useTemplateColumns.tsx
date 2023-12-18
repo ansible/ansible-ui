@@ -95,6 +95,7 @@ export function useTemplateColumns(options?: { disableSort?: boolean; disableLin
     ],
     [
       nameColumn,
+      activityColumn,
       descriptionColumn,
       typeOfTemplate,
       createdColumn,

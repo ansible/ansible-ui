@@ -71,7 +71,7 @@ export function TemplatesList(props: { url: string; projectId?: string }) {
         isDanger: true,
       },
     ],
-    [deleteTemplates, pageNavigate, t]
+    [deleteTemplates, getPageUrl, t]
   );
 
   const rowActions = useTemplateActions({ onTemplatesDeleted: view.unselectItemsAndRefresh });
