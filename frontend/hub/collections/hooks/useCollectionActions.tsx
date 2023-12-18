@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { BanIcon, CopyIcon, TrashIcon, UploadIcon } from '@patternfly/react-icons';
+import { BanIcon, CopyIcon, TrashIcon, UploadIcon, KeyIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -78,15 +78,6 @@ export function useCollectionActions(
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        icon: BanIcon,
-        label: t('Deprecate collection'),
-        onClick: (collection) => {
-          deprecateCollections([collection]);
-        },
-      },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete version from system'),
         isDanger: true,
@@ -94,6 +85,9 @@ export function useCollectionActions(
           deleteCollectionsVersions([collection]);
         },
         isHidden: () => (detail ? false : true),
+        isDisabled: context.hasPermission('ansible.delete_collection')
+          ? ''
+          : t('You do not have rights to this operation'),
       },
       {
         type: PageActionType.Button,
@@ -105,6 +99,38 @@ export function useCollectionActions(
           deleteCollectionsVersionsFromRepository([collection]);
         },
         isHidden: () => (detail ? false : true),
+        isDisabled: context.hasPermission('ansible.delete_collection')
+          ? ''
+          : t('You do not have rights to this operation'),
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: KeyIcon,
+        label: t('Sign collection'),
+        isHidden: () => (detail ? false : true),
+        onClick: (collection) => {
+          // todo
+        },
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: KeyIcon,
+        label: t('Sign selected version'),
+        isHidden: () => (detail ? false : true),
+        onClick: (collection) => {
+          // todo
+        },
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: BanIcon,
+        label: t('Deprecate collection'),
+        onClick: (collection) => {
+          deprecateCollections([collection]);
+        },
       },
       {
         type: PageActionType.Button,
