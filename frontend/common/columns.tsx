@@ -102,7 +102,7 @@ export function useLastRanColumn(options?: {
   hideByDefaultInTableView?: boolean;
 }) {
   const { t } = useTranslation();
-  const column: ITableColumn<{ last_job_run: string | undefined }> = useMemo(
+  const column: ITableColumn<{ last_job_run: string | null }> = useMemo(
     () => ({
       header: t('Last Ran'),
       cell: (item) => {
