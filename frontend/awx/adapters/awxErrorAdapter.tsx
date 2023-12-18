@@ -19,7 +19,7 @@ export const awxErrorAdapter = (error: unknown): ErrorOutput => {
       }
     }
     // handle API responses {error: 'Cannot assign a Credential of kind `galaxy`.'}
-    if ('error' in data) {
+    else if ('error' in data) {
       if (Array.isArray(data['error'])) {
         genericErrors.push({ message: data['error'][0] as string });
       } else {
