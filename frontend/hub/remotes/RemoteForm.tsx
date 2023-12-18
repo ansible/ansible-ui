@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { Alert } from '@patternfly/react-core';
+import { useEffect, useMemo, useState } from 'react';
+import { useForm, useWatch } from 'react-hook-form';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
@@ -17,7 +18,6 @@ import { PageFormSecret } from '../../../framework/PageForm/Inputs/PageFormSecre
 import { PageFormExpandableSection } from '../../../framework/PageForm/PageFormExpandableSection';
 import { PageFormSection } from '../../../framework/PageForm/Utils/PageFormSection';
 import { LoadingPage } from '../../../framework/components/LoadingPage';
-import { HubError } from '../common/HubError';
 import { useGet } from '../../common/crud/useGet';
 import { usePostRequest } from '../../common/crud/usePostRequest';
 import { useClearCache } from '../../common/useInvalidateCache';
@@ -26,12 +26,26 @@ import { HubPageForm } from '../HubPageForm';
 import { HubRoute } from '../HubRoutes';
 import { pulpAPI } from '../api/formatPath';
 import { appendTrailingSlash, hubAPIPut, parsePulpIDFromURL } from '../api/utils';
+import { HubError } from '../common/HubError';
+import { useHubContext } from '../useHubContext';
 import { PulpItemsResponse } from '../usePulpView';
 import { IRemotes } from './Remotes';
+import { REMOTE_COMMUNITY_COLLECTIONS_URL, yamlRequirementsTemplate } from './constants';
 
 interface SecretInput {
   onClear?: (name: string) => void;
   shouldHideField?: (name: string) => boolean;
+}
+
+interface IRemoteInputs extends SecretInput {
+  isCommunityRemote?: boolean;
+  setIsCommunityRemote?: (isCommunityRemote: boolean) => void;
+  collection_signing?: boolean;
+  allowEditName?: boolean;
+}
+
+interface IRequirementsFile {
+  isCommunityRemote: boolean;
 }
 
 interface RemoteFormProps extends IRemotes {
@@ -59,16 +73,12 @@ const HiddenFields: AllowedHiddenFields[] = [
   'username',
 ];
 
-const yamlRequirementsTemplate = [
-  '# Sample requirements.yaml',
-  '',
-  'collections:',
-  '  - name: my_namespace.my_collection_name',
-  '  - name: my_namespace.my_collection_name2',
-].join('\n');
-
 export function CreateRemote() {
+  const {
+    featureFlags: { collection_signing },
+  } = useHubContext();
   const { t } = useTranslation();
+  const [isCommunityRemote, setIsCommunityRemote] = useState(false);
   const { clearCacheByKey } = useClearCache();
   clearCacheByKey(pulpAPI`/remotes/ansible/collection/`);
   const navigate = useNavigate();
@@ -93,6 +103,7 @@ export function CreateRemote() {
     navigate(-1);
   };
   const getPageUrl = useGetPageUrl();
+
   return (
     <PageLayout>
       <PageHeader
@@ -106,15 +117,25 @@ export function CreateRemote() {
         submitText={t('Create remote')}
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
-        defaultValue={{ name: '', url: '', requirements_file: yamlRequirementsTemplate }}
+        defaultValue={{
+          name: '',
+          url: '',
+          signed_only: false,
+          sync_dependencies: false,
+          requirements_file: yamlRequirementsTemplate,
+        }}
       >
         <>
-          <RemoteInputs />
+          <RemoteInputs
+            isCommunityRemote={isCommunityRemote}
+            setIsCommunityRemote={setIsCommunityRemote}
+            collection_signing={collection_signing}
+          />
           <PageFormExpandableSection singleColumn>
             <ProxyAdvancedRemoteInputs />
             <CertificatesAdvancedRemoteInputs />
             <MiscAdvancedRemoteInputs />
-            <RequirementsFile />
+            <RequirementsFile isCommunityRemote={isCommunityRemote} />
           </PageFormExpandableSection>
         </>
       </HubPageForm>
@@ -134,6 +155,7 @@ const initialRemote: Partial<RemoteFormProps> = {
   requirements_file: '---',
   auth_url: null,
   signed_only: false,
+  sync_dependencies: false,
   client_key: null,
   password: null,
   proxy_password: null,
@@ -188,7 +210,11 @@ function smartUpdate(modifiedRemote: RemoteFormProps, unmodifiedRemote: RemoteFo
   return modifiedRemote;
 }
 export function EditRemote() {
+  const {
+    featureFlags: { collection_signing },
+  } = useHubContext();
   const [clear, setClear] = useState(false);
+  const [isCommunityRemote, setIsCommunityRemote] = useState(false);
   const { resetField } = useForm();
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -286,7 +312,14 @@ export function EditRemote() {
         onCancel={() => navigate(-1)}
         defaultValue={remoteDefaultValues}
       >
-        <RemoteInputs onClear={handleOnClear} shouldHideField={shouldHideField} />
+        <RemoteInputs
+          allowEditName
+          collection_signing={collection_signing}
+          isCommunityRemote={isCommunityRemote}
+          onClear={handleOnClear}
+          setIsCommunityRemote={setIsCommunityRemote}
+          shouldHideField={shouldHideField}
+        />
         <PageFormExpandableSection singleColumn>
           <ProxyAdvancedRemoteInputs onClear={handleOnClear} shouldHideField={shouldHideField} />
           <CertificatesAdvancedRemoteInputs
@@ -294,7 +327,7 @@ export function EditRemote() {
             shouldHideField={shouldHideField}
           />
           <MiscAdvancedRemoteInputs />
-          <RequirementsFile />
+          <RequirementsFile isCommunityRemote={isCommunityRemote} />
         </PageFormExpandableSection>
       </HubPageForm>
     </PageLayout>
@@ -405,9 +438,36 @@ function MiscAdvancedRemoteInputs() {
   );
 }
 
-function RemoteInputs({ onClear, shouldHideField }: SecretInput) {
+function RemoteInputs({
+  allowEditName,
+  collection_signing,
+  isCommunityRemote,
+  onClear,
+  setIsCommunityRemote,
+  shouldHideField,
+}: IRemoteInputs) {
   const { t } = useTranslation();
   const isValidUrl = useIsValidUrl();
+  const urlInput = useWatch({ name: 'url' }) as string;
+  const signedOnlyInput = useWatch({ name: 'signed_only' }) as boolean;
+
+  const parsedInputUrl = useMemo(() => {
+    if (urlInput === '') return '';
+    try {
+      return new URL(urlInput);
+    } catch {
+      return '';
+    }
+  }, [urlInput]);
+
+  useEffect(() => {
+    if (parsedInputUrl) {
+      const parsedCommunityCollectionsUrl = new URL(REMOTE_COMMUNITY_COLLECTIONS_URL);
+      const isCommunityRemote = parsedInputUrl.hostname === parsedCommunityCollectionsUrl.hostname;
+      setIsCommunityRemote && setIsCommunityRemote(isCommunityRemote);
+    }
+  }, [parsedInputUrl, setIsCommunityRemote]);
+
   return (
     <>
       <PageFormTextInput<RemoteFormProps>
@@ -415,6 +475,7 @@ function RemoteInputs({ onClear, shouldHideField }: SecretInput) {
         label={t('Remote name')}
         placeholder={t('Enter a remote name')}
         isRequired
+        isDisabled={allowEditName}
       />
       <PageFormTextInput<RemoteFormProps>
         name="url"
@@ -424,6 +485,30 @@ function RemoteInputs({ onClear, shouldHideField }: SecretInput) {
         isRequired
         validate={isValidUrl}
       />
+      {collection_signing ? (
+        <PageFormGroup
+          label={t('Signed collections only')}
+          labelHelp={t('Download only signed collections')}
+        >
+          <>
+            <PageFormCheckbox<RemoteFormProps> name="signed_only" />
+            {isCommunityRemote && signedOnlyInput ? (
+              <Alert
+                data-cy="signed-only-warning"
+                isInline
+                variant="warning"
+                title={t`Community content will never be synced if this setting is enabled`}
+              />
+            ) : null}
+          </>
+        </PageFormGroup>
+      ) : null}
+      <PageFormGroup
+        label={t('Sync all dependencies')}
+        labelHelp={t('Include all dependencies when syncing a collection')}
+      >
+        <PageFormCheckbox<RemoteFormProps> name="sync_dependencies" />
+      </PageFormGroup>
       <PageFormSecret
         onClear={() => {
           onClear && onClear('username');
@@ -494,18 +579,40 @@ const TranslationLabelHelp = () => {
   );
 };
 
-function RequirementsFile() {
+function RequirementsFile({ isCommunityRemote }: IRequirementsFile) {
   const { t } = useTranslation();
+  const isRequired = isCommunityRemote;
+
+  const handleValidate = (value: string) => {
+    if (isRequired && value === yamlRequirementsTemplate) {
+      return t('YAML requirements file is required for community remotes');
+    }
+    return true;
+  };
+
   return (
     <PageFormSection singleColumn>
-      <PageFormDataEditor<RemoteFormProps>
-        name="requirements_file"
-        label={t('Requirements file')}
-        defaultExpanded={true}
-        labelHelp={TranslationLabelHelp()}
-        toggleLanguages={['yaml']}
-        labelHelpTitle={t('Requirements file')}
-      />
+      <>
+        <PageFormDataEditor<RemoteFormProps>
+          name="requirements_file"
+          label={t('Requirements file')}
+          defaultExpanded={true}
+          labelHelp={TranslationLabelHelp()}
+          toggleLanguages={['yaml']}
+          labelHelpTitle={t('Requirements file')}
+          isRequired={isRequired}
+          validate={isRequired ? handleValidate : undefined}
+          data-cy="requirements-file-remotes"
+        />
+        {isRequired ? (
+          <Alert
+            data-cy="requirements-file-warning"
+            isInline
+            variant="warning"
+            title={t`YAML requirements file is required for community remotes`}
+          />
+        ) : null}
+      </>
     </PageFormSection>
   );
 }

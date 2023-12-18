@@ -49,7 +49,7 @@ export function PageDetailCodeEditor(props: {
   return (
     <PageDetail label={label ?? t('Variables')} helpText={helpText}>
       <CodeBlock id={id} actions={actions}>
-        <CodeBlockCode>{value}</CodeBlockCode>
+        <CodeBlockCode data-cy={'code-block-value'}>{value}</CodeBlockCode>
       </CodeBlock>
     </PageDetail>
   );
