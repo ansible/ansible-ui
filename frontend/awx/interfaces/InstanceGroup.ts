@@ -1,5 +1,5 @@
 import { InstanceGroup as SwaggerInstanceGroup } from './generated-from-swagger/api';
-import { SummeryFieldObjectRole } from './summary-fields/summary-fields';
+import { SummaryFieldObjectRole } from './summary-fields/summary-fields';
 
 export interface InstanceGroup
   extends Omit<
@@ -22,11 +22,11 @@ export interface InstanceGroup
   results: InstanceGroup[];
   summary_fields: {
     object_roles: {
-      admin_role: SummeryFieldObjectRole;
-      update_role: SummeryFieldObjectRole;
-      adhoc_role: SummeryFieldObjectRole;
-      use_role: SummeryFieldObjectRole;
-      read_role: SummeryFieldObjectRole;
+      admin_role: SummaryFieldObjectRole;
+      update_role: SummaryFieldObjectRole;
+      adhoc_role: SummaryFieldObjectRole;
+      use_role: SummaryFieldObjectRole;
+      read_role: SummaryFieldObjectRole;
     };
     user_capabilities: {
       edit: boolean;
