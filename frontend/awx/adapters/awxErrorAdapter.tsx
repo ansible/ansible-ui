@@ -17,6 +17,14 @@ export const awxErrorAdapter = (error: unknown): ErrorOutput => {
       } else {
         genericErrors.push({ message: data['__all__'] as string });
       }
+    }
+    // handle API responses {error: 'Cannot assign a Credential of kind `galaxy`.'}
+    if ('error' in data) {
+      if (Array.isArray(data['error'])) {
+        genericErrors.push({ message: data['error'][0] as string });
+      } else {
+        genericErrors.push({ message: data['error'] as string });
+      }
     } else {
       for (const key in data) {
         let value = (data as Record<string, unknown>)[key];
@@ -32,6 +40,5 @@ export const awxErrorAdapter = (error: unknown): ErrorOutput => {
   } else if (error instanceof Error) {
     genericErrors.push({ message: error.message });
   }
-
   return { genericErrors, fieldErrors };
 };
