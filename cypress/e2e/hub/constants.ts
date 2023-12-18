@@ -45,6 +45,7 @@ export const RemoteRegistry = {
   rateLimit: '10',
   tlsValidation: 'Disabled',
   syncStatus: 'Completed',
+  initialSyncStatus: 'Never synced',
   validIndexableURL: 'https://registry.redhat.io',
 };
 

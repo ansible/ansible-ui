@@ -1,9 +1,9 @@
+import { Label } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DateTimeCell, ITableColumn, TextCell } from '../../../../framework';
+import { StatusCell } from '../../../common/Status';
 import { Repository } from '../Repository';
-import { Label } from '@patternfly/react-core';
-import { StatusCell } from '../../../common/StatusCell';
 
 export function useRepositoriesColumns(_options?: {
   disableSort?: boolean;

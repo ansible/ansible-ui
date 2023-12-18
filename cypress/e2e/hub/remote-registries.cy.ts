@@ -37,6 +37,10 @@ describe('Remote Registry', () => {
     cy.createRemoteRegistry(remoteRegistryName).then((remoteRegistry: IRemoteRegistry) => {
       cy.navigateTo('hub', RemoteRegistry.url);
       cy.searchAndDisplayResource(remoteRegistryName);
+      cy.get('[data-cy="sync-status-column-cell"]').should(
+        'contain',
+        RemoteRegistry.initialSyncStatus
+      );
       cy.get('[data-cy="actions-column-cell"]').click();
       cy.get('[data-cy="sync-remote-registry"]').click({ force: true });
       cy.get('[data-cy="sync-status-column-cell"]').should('contain', RemoteRegistry.syncStatus);
