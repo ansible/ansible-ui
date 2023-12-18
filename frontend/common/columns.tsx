@@ -10,8 +10,9 @@ import {
   useGetPageUrl,
 } from '../../framework';
 import { RouteObj } from './Routes';
-import CredentialChip from '../awx/resources/projects/components/CredentialChip';
 import { SummaryFieldCredential } from '../awx/interfaces/summary-fields/summary-fields';
+import { LabelGroup } from '@patternfly/react-core';
+import { CredentialLabel } from '../awx/common/CredentialLabel';
 
 export function useIdColumn<T extends { name: string; id: number }>(isHidden: boolean = true) {
   const { t } = useTranslation();
@@ -126,7 +127,14 @@ export function useCredentialsColumn() {
       header: t('Credentials'),
       cell: (item) => {
         if (!item.summary_fields?.credentials) return <></>;
-        return <CredentialChip credentials={item.summary_fields?.credentials}></CredentialChip>;
+        return (
+          <LabelGroup>
+            {' '}
+            {item.summary_fields.credentials?.map((credential) => (
+              <CredentialLabel credential={credential} key={credential.id} />
+            ))}
+          </LabelGroup>
+        );
       },
       table: ColumnTableOption.Expanded,
       card: 'hidden',
