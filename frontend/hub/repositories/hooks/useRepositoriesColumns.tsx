@@ -1,9 +1,9 @@
+import { Label } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DateTimeCell, ITableColumn, TextCell, useGetPageUrl } from '../../../../framework';
 import { Repository } from '../Repository';
-import { Label } from '@patternfly/react-core';
-import { StatusCell } from '../../../common/StatusCell';
+import { StatusCell } from '../../../common/Status';
 import { HubRoute } from '../../HubRoutes';
 
 export function useRepositoriesColumns(_options?: {

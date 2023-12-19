@@ -16,7 +16,7 @@ import { DropdownPosition } from '@patternfly/react-core/dist/esm/deprecated';
 import { useRepositoryActions } from '../hooks/useRepositoryActions';
 import { PulpItemsResponse } from '../../usePulpView';
 import { parsePulpIDFromURL } from '../../api/utils';
-import { StatusCell } from '../../../common/StatusCell';
+import { StatusCell } from '../../../common/Status';
 import { Trans, useTranslation } from 'react-i18next';
 import { HubError } from '../../common/HubError';
 
