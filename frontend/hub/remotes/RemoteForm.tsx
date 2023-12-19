@@ -41,7 +41,7 @@ interface IRemoteInputs extends SecretInput {
   isCommunityRemote?: boolean;
   setIsCommunityRemote?: (isCommunityRemote: boolean) => void;
   collection_signing?: boolean;
-  allowEditName?: boolean;
+  disableEditName?: boolean;
 }
 
 interface IRequirementsFile {
@@ -313,7 +313,7 @@ export function EditRemote() {
         defaultValue={remoteDefaultValues}
       >
         <RemoteInputs
-          allowEditName
+          disableEditName
           collection_signing={collection_signing}
           isCommunityRemote={isCommunityRemote}
           onClear={handleOnClear}
@@ -439,7 +439,7 @@ function MiscAdvancedRemoteInputs() {
 }
 
 function RemoteInputs({
-  allowEditName,
+  disableEditName,
   collection_signing,
   isCommunityRemote,
   onClear,
@@ -475,7 +475,7 @@ function RemoteInputs({
         label={t('Remote name')}
         placeholder={t('Enter a remote name')}
         isRequired
-        isDisabled={allowEditName}
+        isDisabled={disableEditName}
       />
       <PageFormTextInput<RemoteFormProps>
         name="url"
