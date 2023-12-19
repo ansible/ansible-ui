@@ -10,6 +10,7 @@ import {
 } from '../../../../framework';
 import { HubRoute } from '../../HubRoutes';
 import { Repository } from '../Repository';
+import { CollectionVersionSearch } from '../../collections/Collection';
 
 export function useRepositoryToolbarActions() {
   const { t } = useTranslation();
@@ -36,6 +37,24 @@ export function useRepositoryToolbarActions() {
       },
     ],
     [t, pageNavigate]
+  );
+  return actions;
+}
+
+export function useRepositoryCollectionVersionToolbarActions() {
+  const { t } = useTranslation();
+  const actions = useMemo<IPageAction<CollectionVersionSearch>[]>(
+    () => [
+      {
+        isPinned: true,
+        label: t('Add collection'),
+        onClick: () => {},
+        selection: PageActionSelection.None,
+        type: PageActionType.Button,
+        variant: ButtonVariant.primary,
+      },
+    ],
+    [t]
   );
   return actions;
 }

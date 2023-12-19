@@ -6,6 +6,8 @@ export { CollectionVersionSearch };
 export interface Collection {
   id: number;
   name: string;
+  description: string;
+  version: string;
   sign_state: 'unsigned' | 'signed';
   deprecated: boolean;
   download_count: number;
@@ -30,7 +32,6 @@ export interface Collection {
     };
   };
 }
-
 export interface IContents {
   doc_strings: null | {
     doc: {
@@ -187,6 +188,25 @@ export interface CollectionImport {
   version: string;
   error?: { traceback: string; description: string };
   messages?: { time: number; level: 'INFO' | 'WARNING' | 'ERROR'; message: string }[];
+}
+export interface CollectionReduced {
+  id: number;
+  name: string;
+  description: string;
+  version: string;
+  namespace: string;
+}
+export interface CollectionVersion {
+  pulp_href: string;
+  pulp_created: string;
+  number: number;
+  repository: string;
+  base_version: string;
+  content_summary: {
+    added: Record<string, { count: number }>;
+    removed: Record<string, { count: number }>;
+    present: Record<string, { count: number }>;
+  };
 }
 
 /*

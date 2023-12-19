@@ -101,3 +101,27 @@ export function useRepositoryFilters() {
     [t]
   );
 }
+
+export function useRepositoryCollectionVersionFilters() {
+  const { t } = useTranslation();
+
+  return useMemo<IToolbarFilter[]>(
+    () => [
+      {
+        key: 'keywords',
+        label: t('Keywords'),
+        type: ToolbarFilterType.Text,
+        query: 'keywords',
+        comparison: 'equals',
+      },
+      {
+        key: 'namespace',
+        label: t('Namespace'),
+        type: ToolbarFilterType.Text,
+        query: 'namespace',
+        comparison: 'equals',
+      },
+    ],
+    [t]
+  );
+}

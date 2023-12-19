@@ -23,6 +23,14 @@ export interface Repository {
   versions_href: string;
 }
 
+export interface RepositoryVersion {
+  pulp_href: string;
+  pulp_created: string;
+  number: number;
+  repository: string;
+  base_version: string;
+}
+
 export interface RemoteRepository {
   auth_url: string | null;
   ca_cert: string | null;
