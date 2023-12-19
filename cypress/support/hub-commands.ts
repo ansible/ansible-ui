@@ -88,20 +88,71 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('uploadHubCollectionFile', (hubFilePath: string, hubFileName: string) => {
-  cy.fixture(hubFilePath, 'binary')
-    .then(Cypress.Blob.binaryStringToBlob)
-    .then((fileContent) => {
-      cy.get('input[id="file-upload-file-filename"]').attachFile(
-        {
-          fileContent,
-          fileName: hubFileName,
-          filePath: hubFilePath,
-          mimeType: 'application/gzip',
-        },
-        { subjectType: 'drag-n-drop' }
-      );
+Cypress.Commands.add(
+  'uploadHubCollectionFile',
+  (hubFilePath: string | undefined, hubFileName: string | undefined) => {
+    cy.fixture(hubFilePath, 'binary')
+      .then(Cypress.Blob.binaryStringToBlob)
+      .then((fileContent) => {
+        cy.get('input[id="file-upload-file-filename"]').attachFile(
+          {
+            fileContent,
+            fileName: hubFileName,
+            filePath: hubFilePath,
+            mimeType: 'application/gzip',
+          },
+          { subjectType: 'drag-n-drop' }
+        );
+      });
+  }
+);
+
+Cypress.Commands.add('getOrCreateCollection', () => {
+  let newCollectionVersion;
+  cy.requestGet<HubItemsResponse<CollectionVersionSearch>>(
+    `/api/galaxy/v3/plugin/ansible/search/collection-versions/?is_deprecated=false&repository_label=!hide_from_search&is_highest=true&keywords=zos_zoau_operator&offset=0&limit=10`
+  ).then((result) => {
+    const collectionA = result.data.length;
+    cy.requestGet<HubItemsResponse<CollectionVersionSearch>>(
+      `/api/galaxy/v3/plugin/ansible/search/collection-versions/?is_deprecated=false&repository_label=!hide_from_search&is_highest=true&keywords=zos_cics_operator&offset=0&limit=10`
+    ).then((result) => {
+      const collectionB = result.data.length;
+      cy.requestGet<HubItemsResponse<CollectionVersionSearch>>(
+        `/api/galaxy/v3/plugin/ansible/search/collection-versions/?is_deprecated=false&repository_label=!hide_from_search&is_highest=true&keywords=spm_toolbox&offset=0&limit=10`
+      ).then((result) => {
+        const collectionC = result.data.length;
+        cy.requestGet<HubItemsResponse<CollectionVersionSearch>>(
+          `/api/galaxy/v3/plugin/ansible/search/collection-versions/?is_deprecated=false&repository_label=!hide_from_search&is_highest=true&keywords=ds8000&offset=0&limit=10`
+        ).then((result) => {
+          const collectionD = result.data.length;
+          cy.requestGet<HubItemsResponse<CollectionVersionSearch>>(
+            `/api/galaxy/v3/plugin/ansible/search/collection-versions/?is_deprecated=false&repository_label=!hide_from_search&is_highest=true&keywords=operator_collection_sdk&offset=0&limit=10`
+          ).then((result) => {
+            const collectionE = result.data.length;
+
+            if (collectionA === 0) {
+              newCollectionVersion = 'ibm-zos_zoau_operator-1.0.3.tar.gz';
+              return newCollectionVersion;
+            } else if (collectionB === 0) {
+              newCollectionVersion = 'ibm-zos_cics_operator-1.0.1.tar.gz';
+              return newCollectionVersion;
+            } else if (collectionC === 0) {
+              newCollectionVersion = 'ibm-spm_toolbox-1.0.2.tar.gz';
+              return newCollectionVersion;
+            } else if (collectionD === 0) {
+              newCollectionVersion = 'ibm-ds8000-1.1.0.tar.gz';
+              return newCollectionVersion;
+            } else if (collectionE === 0) {
+              newCollectionVersion = 'ibm-operator_collection_sdk-1.1.0.tar.gz';
+              return newCollectionVersion;
+            } else {
+              return 'All test collections currently exist. Please delete one or more and re-run the test.';
+            }
+          });
+        });
+      });
     });
+  });
 });
 
 Cypress.Commands.add('createNamespace', (namespaceName: string) => {
@@ -115,7 +166,6 @@ Cypress.Commands.add('getNamespace', (namespaceName: string) => {
   cy.requestGet<HubItemsResponse<HubNamespace>>(
     hubAPI`/_ui/v1/namespaces/?name=${namespaceName}`
   ).then((itemsResponse) => {
-    cy.log('ITEMS', itemsResponse);
     if (itemsResponse.data.length === 0) {
       cy.createNamespace(namespaceName);
     } else {

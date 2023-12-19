@@ -12,40 +12,51 @@ describe('Collections- List View', () => {
     cy.getNamespace('ibm');
   });
 
-  // after(() => {
-  //   cy.deleteCollectionsInNamespace('ibm');
-  // });
-
   it('it should render the collections page', () => {
     cy.navigateTo('hub', Collections.url);
     cy.verifyPageTitle(Collections.title);
   });
 
-  it.skip('user can upload a new collection', () => {
-    cy.navigateTo('hub', Collections.url);
-    cy.verifyPageTitle(Collections.title);
-    cy.get('[data-cy="upload-collection"]').click();
-
-    cy.uploadHubCollectionFile(
-      'collection-files/ibm-zos_zoau_operator-1.0.3.tar.gz',
-      'ibm-zos_zoau_operator-1.0.3.tar.gz'
-    );
-
-    cy.get('input[id="radio-non-pipeline"]').click();
-    cy.get('[data-cy="row-0"]').within(() => {
-      cy.get('input').click();
+  it('user can upload and then delete a new collection', () => {
+    cy.getOrCreateCollection().then((thisCollection) => {
+      const thisCollectionName = thisCollection.split('-').slice(-2, -1).toString();
+      cy.navigateTo('hub', Collections.url);
+      cy.verifyPageTitle(Collections.title);
+      cy.get('[data-cy="upload-collection"]').click();
+      cy.uploadHubCollectionFile(`collection-files/` + thisCollection, thisCollection);
+      cy.get('input[id="radio-non-pipeline"]').click();
+      cy.get('[data-cy="row-0"]').within(() => {
+        cy.get('input').click();
+      });
+      cy.intercept(
+        'POST',
+        `/api/galaxy//v3/plugin/ansible/content/community/collections/artifacts/`
+      ).as('collection');
+      cy.get('[data-cy="Submit"]').click();
+      cy.wait('@collection').then((resp) => {
+        expect(resp?.response?.statusCode).to.eql(202);
+        expect(resp?.response?.statusMessage).to.eql('Accepted');
+        expect(resp?.responseWaited).to.eql(true);
+      });
+      cy.intercept(
+        'GET',
+        '/api/galaxy//v3/plugin/ansible/search/collection-versions?is_deprecated=false&repository_label=!hide_from_search&is_highest=true&offset=0&limit=10'
+      ).as('collections');
+      cy.reload();
+      cy.get('[data-cy="hub-collections"]').click();
+      cy.verifyPageTitle(Collections.title);
+      cy.get('[data-cy="app-description"]').should(
+        'contain',
+        'Collections are a packaged unit of Ansible content that includes roles, modules, plugins, and other components, making it easier to share and reuse automation functionality.'
+      );
+      cy.wait('@collections');
+      cy.get('[data-cy="table-view"]').click();
+      cy.clickTableRowKebabAction(thisCollectionName, 'delete-entire-collection-from-system');
+      cy.get('[data-ouia-component-id="confirm"]').click();
+      cy.get('[data-ouia-component-id="submit"]').click();
+      cy.clickButton(/^Close$/);
+      cy.clickButton(/^Clear all filters$/);
     });
-    cy.intercept(
-      'POST',
-      `/api/galaxy//v3/plugin/ansible/content/community/collections/artifacts/`
-    ).as('collection');
-    cy.get('[data-cy="Submit"]').click();
-    cy.wait('@collection').then((resp) => {
-      expect(resp?.response?.statusCode).to.eql(202);
-    });
-    cy.get('[data-cy="hub-collections"]').click();
-    cy.verifyPageTitle(Collections.title);
-    cy.get('[data-cy="refresh"]').click();
   });
 
   it.skip('user can delete a collection using the list toolbar', () => {});
