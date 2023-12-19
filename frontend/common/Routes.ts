@@ -32,6 +32,9 @@ export const RouteObj = {
   CredentialTypePage: `/access/credential-types/:id/*`,
   CredentialTypeDetails: `/access/credential-types/:id/details`,
 
+  ApplicationPage: `/administration/applications/:id/*`,
+  ApplicationPageDetails: `/administration/applications/:id/details`,
+
   Projects: `/projects`,
   ProjectDetails: `/projects/:id/details`,
   ProjectSchedules: `/projects/:id/schedules`,
