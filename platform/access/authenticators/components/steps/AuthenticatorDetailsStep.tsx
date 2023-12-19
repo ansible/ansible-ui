@@ -1,5 +1,10 @@
 import { useTranslation } from 'react-i18next';
-import { PageFormGrid, PageFormTextInput, PageFormSwitch } from '../../../../../framework';
+import {
+  PageFormGrid,
+  PageFormTextInput,
+  PageFormSwitch,
+  PageFormDataEditor,
+} from '../../../../../framework';
 import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
 import type {
   AuthenticatorPlugins,
@@ -7,71 +12,86 @@ import type {
 } from '../../../../interfaces/AuthenticatorPlugin';
 import type { AuthenticatorForm } from '../AuthenticatorForm';
 
+/* TODO: more intelligent categorization of field type to input type
+    pending updates to the API */
+const textInputTypes = [
+  'CharField',
+  'URLField',
+  'URLListField',
+  'ChoiceField',
+  'DNField',
+  'PublicCert',
+  'PrivateKey',
+];
+const dataInputTypes = [
+  'JSONField',
+  'DictField',
+  'ListField',
+  'LDAPConnectionOptions',
+  'LDAPSearchField',
+  'UserAttrMap',
+];
+
 export function AuthenticatorDetailsStep(props: { plugins: AuthenticatorPlugins }) {
   const { t } = useTranslation();
   const { wizardData } = usePageWizard();
-
-  console.log(wizardData);
 
   const authenticator = props.plugins.authenticators.find(
     (authenticator) => authenticator.type === (wizardData as AuthenticatorForm).type
   );
   const schema = authenticator?.configuration_schema || [];
+  const textFields: PluginConfiguration[] = [];
+  const boolFields: PluginConfiguration[] = [];
+  const dataFields: PluginConfiguration[] = [];
+  schema.forEach((field) => {
+    if (textInputTypes.includes(field.type)) {
+      textFields.push(field);
+    } else if (field.type === 'BooleanField') {
+      boolFields.push(field);
+    } else if (dataInputTypes.includes(field.type)) {
+      dataFields.push(field);
+    }
+  });
 
-  console.log(schema);
   return (
-    <PageFormGrid isVertical singleColumn>
-      <PageFormTextInput name="name" label={t('Name')} isRequired />
-      {schema.map((field) => (
-        <SchemaField field={field} key={field.name} />
-      ))}
-    </PageFormGrid>
+    <>
+      <PageFormGrid isVertical>
+        <PageFormTextInput name="name" label={t('Name')} isRequired />
+        {textFields.map((field) => (
+          <PageFormTextInput
+            id={`schema-input-${field.name}`}
+            name={`schema.${field.name}`}
+            key={field.name}
+            label={field.ui_field_label || field.name}
+            isRequired={field.required}
+            labelHelpTitle={field.ui_field_label || field.name}
+            labelHelp={field.help_text}
+          />
+        ))}
+        {boolFields.map((field) => (
+          <PageFormSwitch
+            id={`schema-input-${field.name}`}
+            name={`schema.${field.name}`}
+            key={field.name}
+            label={field.ui_field_label || field.name}
+            isRequired={field.required}
+            labelHelpTitle={field.ui_field_label || field.name}
+            labelHelp={field.help_text}
+          />
+        ))}
+      </PageFormGrid>
+      <PageFormGrid isVertical singleColumn>
+        {dataFields.map((field) => (
+          <PageFormDataEditor
+            id={`schema-editor-${field.name}`}
+            name={`schema.${field.name}`}
+            key={field.name}
+            label={field.ui_field_label || field.name}
+            labelHelpTitle={field.ui_field_label || field.name}
+            labelHelp={field.help_text}
+          />
+        ))}
+      </PageFormGrid>
+    </>
   );
-}
-
-function SchemaField(props: { field: PluginConfiguration }) {
-  const { field } = props;
-
-  if (['CharField', 'URLField', 'URLListField'].includes(field.type)) {
-    return (
-      <PageFormTextInput
-        id={`schema-input-${field.name}`}
-        name={`schema.${field.name}`}
-        label={field.ui_field_label || field.name}
-        isRequired={field.required}
-        labelHelpTitle={field.ui_field_label || field.name}
-        labelHelp={field.help_text}
-      />
-    );
-  }
-
-  if (field.type === 'BooleanField') {
-    return (
-      <PageFormSwitch
-        id={`schema-switch-${field.name}`}
-        name={`schema.${field.name}`}
-        label={field.ui_field_label || field.name}
-        labelHelpTitle={field.ui_field_label || field.name}
-        labelHelp={field.help_text}
-      />
-    );
-  }
-
-  return null;
-  if (field.type === 'JSONField') {
-  }
-
-  /*
-  'JSONField'
-  'BooleanField'
-  'ListField'
-  'LDAPConnectionOptions'
-  'ChoiceField'
-  'DictField'
-  'LDAPSearchField'
-  'DNField'
-  'UserAttrMap'
-  'PublicCert'
-  'PrivateKey'
-  */
 }
