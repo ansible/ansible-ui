@@ -32,6 +32,10 @@ interface SecretInput {
   shouldHideField?: (name: string) => boolean;
 }
 
+interface IRemoteInputs extends SecretInput {
+  disableEditName?: boolean;
+}
+
 interface RemoteRegistryProps extends RemoteRegistry {
   client_key?: string | null;
   password?: string | null;
@@ -184,7 +188,7 @@ export function EditRemoteRegistry() {
         onCancel={() => navigate(-1)}
         defaultValue={remoteRegistryDefaultValues}
       >
-        <RemoteInputs onClear={handleOnClear} shouldHideField={shouldHideField} />
+        <RemoteInputs disableEditName onClear={handleOnClear} shouldHideField={shouldHideField} />
         <PageFormExpandableSection singleColumn>
           <ProxyAdvancedRemoteInputs onClear={handleOnClear} shouldHideField={shouldHideField} />
           <CertificatesAdvancedRemoteInputs
@@ -301,7 +305,7 @@ function MiscAdvancedRemoteInputs() {
   );
 }
 
-function RemoteInputs({ onClear, shouldHideField }: SecretInput) {
+function RemoteInputs({ onClear, shouldHideField, disableEditName }: IRemoteInputs) {
   const { t } = useTranslation();
   const isValidUrl = useIsValidUrl();
   return (
@@ -311,6 +315,7 @@ function RemoteInputs({ onClear, shouldHideField }: SecretInput) {
         label={t('Remote name')}
         placeholder={t('Enter a remote name')}
         isRequired
+        isDisabled={disableEditName}
       />
       <PageFormTextInput<RemoteRegistryProps>
         name="url"
