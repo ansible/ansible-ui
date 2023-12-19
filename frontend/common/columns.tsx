@@ -11,7 +11,7 @@ import {
 } from '../../framework';
 import { RouteObj } from './Routes';
 import { SummaryFieldCredential } from '../awx/interfaces/summary-fields/summary-fields';
-import { LabelGroup } from '@patternfly/react-core';
+import { Label, LabelGroup } from '@patternfly/react-core';
 import { CredentialLabel } from '../awx/common/CredentialLabel';
 
 export function useIdColumn<T extends { name: string; id: number }>(isHidden: boolean = true) {
@@ -118,6 +118,33 @@ export function useLastRanColumn(options?: {
   return column;
 }
 
+export function useLabelsColumn() {
+  const { t } = useTranslation();
+  const column: ITableColumn<{
+    summary_fields?: { labels: { count: number; results: { id: number; name: string }[] } };
+  }> = useMemo(
+    () => ({
+      header: t('Labels'),
+      cell: (item) => {
+        if (!item.summary_fields?.labels?.results) return <></>;
+        return (
+          <LabelGroup>
+            {item.summary_fields.labels?.results.map((result) => (
+              <Label key={result.id}>{result.name}</Label>
+            ))}
+          </LabelGroup>
+        );
+      },
+      table: ColumnTableOption.Expanded,
+      card: 'hidden',
+      list: 'hidden',
+      modal: ColumnModalOption.Hidden,
+    }),
+    [t]
+  );
+  return column;
+}
+
 export function useCredentialsColumn() {
   const { t } = useTranslation();
   const column: ITableColumn<{
@@ -129,7 +156,6 @@ export function useCredentialsColumn() {
         if (!item.summary_fields?.credentials) return <></>;
         return (
           <LabelGroup>
-            {' '}
             {item.summary_fields.credentials?.map((credential) => (
               <CredentialLabel credential={credential} key={credential.id} />
             ))}

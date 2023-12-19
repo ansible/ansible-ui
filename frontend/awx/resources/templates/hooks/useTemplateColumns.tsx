@@ -16,6 +16,7 @@ import {
   useInventoryNameColumn,
   useProjectNameColumn,
   useCredentialsColumn,
+  useLabelsColumn,
   useLastRanColumn,
 } from '../../../../common/columns';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
@@ -77,6 +78,7 @@ export function useTemplateColumns(options?: { disableSort?: boolean; disableLin
   const inventoryColumn = useInventoryNameColumn(AwxRoute.InventoryDetails, options);
   const projectColumn = useProjectNameColumn(AwxRoute.ProjectDetails, options);
   const credentialsColumn = useCredentialsColumn();
+  const labelsColumn = useLabelsColumn();
   const lastRanColumn = useLastRanColumn(options);
   const typeOfTemplate = useTypeColumn<JobTemplate | WorkflowJobTemplate>({
     ...options,
@@ -94,6 +96,7 @@ export function useTemplateColumns(options?: { disableSort?: boolean; disableLin
       inventoryColumn,
       projectColumn,
       credentialsColumn,
+      labelsColumn,
       lastRanColumn,
     ],
     [
@@ -107,6 +110,7 @@ export function useTemplateColumns(options?: { disableSort?: boolean; disableLin
       inventoryColumn,
       projectColumn,
       credentialsColumn,
+      labelsColumn,
       lastRanColumn,
     ]
   );
