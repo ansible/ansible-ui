@@ -19,7 +19,7 @@ describe('Collections- List View', () => {
 
   it('user can upload and then delete a new collection', () => {
     cy.getOrCreateCollection().then((thisCollection) => {
-      const thisCollectionName = thisCollection.split('-').slice(-2, -1).toString();
+      const thisCollectionName = thisCollection?.split('-').slice(-2, -1).toString();
       cy.navigateTo('hub', Collections.url);
       cy.verifyPageTitle(Collections.title);
       cy.get('[data-cy="upload-collection"]').click();
