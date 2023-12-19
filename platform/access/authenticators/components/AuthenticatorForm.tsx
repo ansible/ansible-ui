@@ -5,6 +5,7 @@ import {
   PageLayout,
   PageWizard,
   PageWizardStep,
+  PageFormGrid,
   useGetPageUrl,
   PageFormSelect,
   // usePageAlertToaster,
@@ -48,17 +49,19 @@ export function CreateAuthenticator() {
       id: 'type',
       label: t('Authentication type'),
       inputs: (
-        <PageFormSelect
-          name="type"
-          label={t('Authentication setting')}
-          options={[
-            { value: AuthenticatorTypeEnum.Local, label: t('Local') },
-            { value: AuthenticatorTypeEnum.LDAP, label: t('LDAP') },
-            { value: AuthenticatorTypeEnum.SAML, label: t('SAML') },
-            { value: AuthenticatorTypeEnum.Keycloak, label: t('Keycloak') },
-          ]}
-          isRequired
-        />
+        <PageFormGrid isVertical>
+          <PageFormSelect
+            name="type"
+            label={t('Authentication setting')}
+            options={[
+              { value: AuthenticatorTypeEnum.Local, label: t('Local') },
+              { value: AuthenticatorTypeEnum.LDAP, label: t('LDAP') },
+              { value: AuthenticatorTypeEnum.SAML, label: t('SAML') },
+              { value: AuthenticatorTypeEnum.Keycloak, label: t('Keycloak') },
+            ]}
+            isRequired
+          />
+        </PageFormGrid>
       ),
       hidden: () => false, // TODO hide step when in edit mode
     },
@@ -115,6 +118,7 @@ export function CreateAuthenticator() {
         defaultValue={initialValues}
         onSubmit={handleSubmit}
         errorAdapter={awxErrorAdapter}
+        disableGrid
       />
     </PageLayout>
   );
