@@ -4,12 +4,14 @@ import { InstanceGroup } from '../../../../frontend/awx/interfaces/InstanceGroup
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Label } from '../../../../frontend/awx/interfaces/Label';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
+import { User } from '../../../../frontend/awx/interfaces/User';
 
 describe('inventories', () => {
   let organization: Organization;
   let inventory: Inventory;
   let instanceGroup: InstanceGroup;
   let label: Label;
+  let user: User;
 
   before(() => {
     cy.awxLogin();
@@ -27,6 +29,10 @@ describe('inventories', () => {
       cy.createAwxInstanceGroup().then((ig) => {
         instanceGroup = ig;
       });
+      cy.createAwxUser(organization).then((testUser) => {
+        user = testUser;
+        cy.giveUserInventoryAccess(inventory.name, user.id, 'Read');
+      });
     });
   });
 
@@ -34,6 +40,7 @@ describe('inventories', () => {
     cy.deleteAwxLabel(label, { failOnStatusCode: false });
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
     cy.deleteAwxInstanceGroup(instanceGroup, { failOnStatusCode: false });
+    cy.deleteAwxUser(user, { failOnStatusCode: false });
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
 
@@ -86,8 +93,10 @@ describe('inventories', () => {
     cy.verifyPageTitle(inventory.name);
     cy.clickButton(/^Edit inventory/);
     cy.selectDropdownOptionByResourceName('labels', label.name);
+    cy.typeMonacoTextField('remote_install_path: /opt/my_app_config');
     cy.contains('button', 'Save inventory').click();
     cy.verifyPageTitle(inventory.name);
+    cy.assertMonacoTextField('remote_install_path: /opt/my_app_config');
     cy.hasDetail(/^Labels$/, label.name);
   });
 

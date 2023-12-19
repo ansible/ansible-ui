@@ -7,6 +7,7 @@ import { SWR_REFRESH_INTERVAL } from '../../../constants';
 import { EdaCredential } from '../../../interfaces/EdaCredential';
 import { CredentialOptions } from '../EditCredential';
 import { edaAPI } from '../../../api/eda-utils';
+import { LastModifiedPageDetail } from '../../../../common/LastModifiedPageDetail';
 
 export function CredentialDetails() {
   const { t } = useTranslation();
@@ -43,9 +44,10 @@ export function CredentialDetails() {
       <PageDetail label={t('Created')}>
         {credential?.created_at ? formatDateString(credential.created_at) : ''}
       </PageDetail>
-      <PageDetail label={t('Last modified')}>
-        {credential?.modified_at ? formatDateString(credential.modified_at) : ''}
-      </PageDetail>
+      <LastModifiedPageDetail
+        format="date-time"
+        value={credential?.modified_at ? formatDateString(credential.modified_at) : ''}
+      />
     </PageDetails>
   );
 }

@@ -1,8 +1,9 @@
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
 import { PageNavigationItem } from '../../framework/PageNavigation/PageNavigationItem';
 import { AwxRoute } from './AwxRoutes';
+import { AwxRolePage } from './access/roles/AwxRolePage';
+import { AwxRoles } from './access/roles/AwxRoles';
 import { Topology } from './administration/topology/Topology';
 import { Test } from './analytics/AnalyticsReportBuilder/Test';
 import Reports from './analytics/Reports/Reports';
@@ -52,129 +53,120 @@ export function useAwxNavigation() {
   const awxApplicationsRoutes = useAwxApplicationsRoutes();
   const awxExecutionEnvironmentsRoutes = useAwxExecutionEnvironmentRoutes();
   const awxCredentialTypesRoutes = useAwxCredentialTypesRoutes();
-  const pageNavigationItems = useMemo<PageNavigationItem[]>(() => {
-    const navigationItems: PageNavigationItem[] = [
-      {
-        id: AwxRoute.Overview,
-        label: t('Overview'),
-        path: 'overview',
-        element: <AwxDashboard />,
-      },
-      awxJobsRoutes,
-      awxTemplateRoutes,
-      awxSchedulesRoutes,
-      awxProjectRoutes,
-      {
-        label: t('Infrastructure'),
-        path: 'infrastructure',
-        children: [
-          {
-            id: AwxRoute.TopologyView,
-            label: 'Topology View',
-            path: 'topology',
-            element: <Topology />,
-          },
-          awxInventoryRoutes,
-          awxHostRoutes,
-          awxInstanceGroupsRoutes,
-          awxInstancesRoutes,
-          awxExecutionEnvironmentsRoutes,
-        ],
-      },
-      {
-        id: AwxRoute.Analytics,
-        label: t('Analytics'),
-        path: 'analytics',
-        children: [
-          {
-            id: AwxRoute.Reports,
-            label: t('Reports'),
-            path: 'reports',
-            element: <ReportsList />,
-          },
-          {
-            id: AwxRoute.AutomationCalculator,
-            label: t('Automation Calculator'),
-            path: 'automation-calculator',
-            element: <Reports />,
-          },
-          {
-            id: AwxRoute.AnalyticsBuilder,
-            label: t('Analytics builder'),
-            path: 'builder',
-            element: <Test />,
-          },
-          {
-            id: AwxRoute.HostMetrics,
-            label: 'Host Metrics',
-            path: 'host-metrics',
-            element: <HostMetrics />,
-          },
-          {
-            id: AwxRoute.SubscriptionUsage,
-            label: 'Subscription Usage',
-            path: 'subscription-usage',
-            element: <SubscriptionUsage />,
-          },
-        ],
-      },
-      {
-        label: t('Administration'),
-        path: 'administration',
-        children: [
-          awxActivityStreamRoutes,
-          awxWorkflowApprovalRoutes,
-          awxNotificationsRoutes,
-          awxManagementJobsRoutes,
-          awxApplicationsRoutes,
-          {
-            id: AwxRoute.Settings,
-            label: t('Settings'),
-            path: 'settings',
-            element: <Settings />,
-          },
-        ],
-      },
-      {
-        id: AwxRoute.Access,
-        label: t('Access'),
-        path: 'access',
-        children: [
-          awxOrganizationRoutes,
-          awxTeamsRoutes,
-          awxUsersRoutes,
-          awxCredentialRoutes,
-          awxCredentialTypesRoutes,
-        ],
-      },
-      {
-        path: '',
-        element: <Navigate to={'./overview'} />,
-      },
-    ];
-    return navigationItems;
-  }, [
-    t,
-    awxInventoryRoutes,
-    awxCredentialRoutes,
-    awxTemplateRoutes,
-    awxHostRoutes,
-    awxProjectRoutes,
-    awxActivityStreamRoutes,
-    awxApplicationsRoutes,
-    awxExecutionEnvironmentsRoutes,
-    awxInstanceGroupsRoutes,
-    awxInstancesRoutes,
+  const navigationItems: PageNavigationItem[] = [
+    {
+      id: AwxRoute.Overview,
+      label: t('Overview'),
+      path: 'overview',
+      element: <AwxDashboard />,
+    },
     awxJobsRoutes,
-    awxManagementJobsRoutes,
-    awxNotificationsRoutes,
-    awxOrganizationRoutes,
+    awxTemplateRoutes,
     awxSchedulesRoutes,
-    awxTeamsRoutes,
-    awxUsersRoutes,
-    awxWorkflowApprovalRoutes,
-    awxCredentialTypesRoutes,
-  ]);
-
-  return pageNavigationItems;
+    awxProjectRoutes,
+    {
+      label: t('Infrastructure'),
+      path: 'infrastructure',
+      children: [
+        {
+          id: AwxRoute.TopologyView,
+          label: 'Topology View',
+          path: 'topology',
+          element: <Topology />,
+        },
+        awxInventoryRoutes,
+        awxHostRoutes,
+        awxInstanceGroupsRoutes,
+        awxInstancesRoutes,
+        awxExecutionEnvironmentsRoutes,
+      ],
+    },
+    {
+      id: AwxRoute.Analytics,
+      label: t('Analytics'),
+      path: 'analytics',
+      children: [
+        {
+          id: AwxRoute.Reports,
+          label: t('Reports'),
+          path: 'reports',
+          element: <ReportsList />,
+        },
+        {
+          id: AwxRoute.AutomationCalculator,
+          label: t('Automation Calculator'),
+          path: 'automation-calculator',
+          element: <Reports />,
+        },
+        {
+          id: AwxRoute.AnalyticsBuilder,
+          label: t('Analytics builder'),
+          path: 'builder',
+          element: <Test />,
+        },
+        {
+          id: AwxRoute.HostMetrics,
+          label: 'Host Metrics',
+          path: 'host-metrics',
+          element: <HostMetrics />,
+        },
+        {
+          id: AwxRoute.SubscriptionUsage,
+          label: 'Subscription Usage',
+          path: 'subscription-usage',
+          element: <SubscriptionUsage />,
+        },
+      ],
+    },
+    {
+      label: t('Administration'),
+      path: 'administration',
+      children: [
+        awxActivityStreamRoutes,
+        awxWorkflowApprovalRoutes,
+        awxNotificationsRoutes,
+        awxManagementJobsRoutes,
+        awxApplicationsRoutes,
+        {
+          id: AwxRoute.Settings,
+          label: t('Settings'),
+          path: 'settings',
+          element: <Settings />,
+        },
+      ],
+    },
+    {
+      id: AwxRoute.Access,
+      label: t('Access'),
+      path: 'access',
+      children: [
+        awxOrganizationRoutes,
+        awxTeamsRoutes,
+        awxUsersRoutes,
+        {
+          id: AwxRoute.Roles,
+          label: t('Roles'),
+          path: 'roles',
+          children: [
+            {
+              id: AwxRoute.Role,
+              path: ':resourceType/:id',
+              element: <AwxRolePage />,
+            },
+            {
+              path: '',
+              element: <AwxRoles />,
+            },
+          ],
+        },
+        awxCredentialRoutes,
+        awxCredentialTypesRoutes,
+      ],
+    },
+    {
+      path: '',
+      element: <Navigate to={'./overview'} />,
+    },
+  ];
+  return navigationItems;
 }

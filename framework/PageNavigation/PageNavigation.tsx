@@ -17,26 +17,31 @@ export function PageNavigation(props: { navigation: PageNavigationItem[] }) {
   const navBar = usePageNavSideBar();
 
   return (
-    <>
-      <PageSidebar isSidebarOpen={navBar.isOpen} className="bg-lighten">
-        <PageSidebarBody>
-          <Nav data-cy="page-navigation" className="side-nav">
-            <NavList>
-              <PageNavigationItems baseRoute={''} items={navigationItems} />
-            </NavList>
-          </Nav>
-        </PageSidebarBody>
-      </PageSidebar>
-    </>
+    <PageSidebar isSidebarOpen={navBar.isOpen} className="bg-lighten">
+      <PageSidebarBody>
+        <Nav data-cy="page-navigation" className="side-nav">
+          <NavList>
+            <PageNavigationItems baseRoute={''} items={navigationItems} />
+          </NavList>
+        </Nav>
+      </PageSidebarBody>
+    </PageSidebar>
   );
 }
 
 function PageNavigationItems(props: { items: PageNavigationItem[]; baseRoute: string }) {
   return (
     <>
-      {props.items.map((item, index) => (
-        <PageNavigationItemComponent key={index} item={item} baseRoute={props.baseRoute} />
-      ))}
+      {props.items
+        .filter((item) => {
+          if ('hidden' in item) {
+            return item.hidden !== true;
+          }
+          return true;
+        })
+        .map((item, index) => (
+          <PageNavigationItemComponent key={index} item={item} baseRoute={props.baseRoute} />
+        ))}
     </>
   );
 }
@@ -44,7 +49,9 @@ function PageNavigationItems(props: { items: PageNavigationItem[]; baseRoute: st
 function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRoute: string }) {
   const { item } = props;
   const [isExpanded, setIsExpanded] = useState(
-    () => localStorage.getItem((item.id ?? item.label) + '-expanded') !== 'false'
+    () =>
+      localStorage.getItem('default-nav-expanded') === 'true' ||
+      localStorage.getItem((item.id ?? item.label) + '-expanded') === 'true'
   );
   const setExpanded = (expanded: boolean) => {
     setIsExpanded(expanded);
@@ -71,7 +78,7 @@ function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRout
   const hasChildNavItems = 'children' in item && item.children?.find((child) => child.label);
 
   if (!hasChildNavItems && 'label' in item) {
-    const isActive = location.pathname.startsWith(route);
+    const isActive = location.pathname.endsWith(route);
     return (
       <NavItem
         id={id}
@@ -80,8 +87,14 @@ function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRout
         className={isActive ? 'bg-lighten' : undefined}
         onClick={() => onClickNavItem(route)}
         data-cy={id}
+        style={{ display: 'flex', alignItems: 'left', flexDirection: 'column' }}
       >
         {item.label}
+        {item.subtitle && (
+          <div style={{ fontSize: 'x-small', opacity: 0.5, textAlign: 'left' }}>
+            {item.subtitle}
+          </div>
+        )}
       </NavItem>
     );
   }
@@ -96,8 +109,18 @@ function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRout
 
   return (
     <NavExpandable
-      title={item.label}
-      isActive={location.pathname.startsWith(route)}
+      title={
+        (
+          <div>
+            <div style={{ textAlign: 'left' }}>{item.label}</div>
+            {item.subtitle && (
+              <div style={{ fontSize: 'small', opacity: 0.5, textAlign: 'left' }}>
+                {item.subtitle}
+              </div>
+            )}
+          </div>
+        ) as unknown as string
+      }
       isExpanded={isExpanded}
       onExpand={(_e, expanded: boolean) => setExpanded(expanded)}
     >

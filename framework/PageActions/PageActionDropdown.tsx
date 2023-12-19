@@ -64,6 +64,7 @@ export function PageActionDropdown<T extends object>(props: PageActionDropdownPr
   } = props;
 
   let { actions } = props;
+
   actions = actions.filter((action) => !isPageActionHidden(action, selectedItem));
   actions = filterActionSeperators(actions);
 
@@ -160,12 +161,22 @@ export function PageActionDropdown<T extends object>(props: PageActionDropdownPr
       style={{ zIndex: dropdownOpen ? 400 : undefined }}
     />
   );
-  return tooltip && (iconOnly || isDisabled) ? (
-    <Tooltip content={tooltip} trigger={tooltip ? undefined : 'manual'}>
+  let tooltipContent;
+
+  if (isDisabled) {
+    tooltipContent = isDisabled;
+  } else if (tooltip) {
+    tooltipContent = tooltip;
+  } else if (iconOnly) {
+    tooltipContent = label;
+  } else {
+    tooltipContent = undefined;
+  }
+
+  return (
+    <Tooltip content={tooltipContent} trigger={tooltipContent ? undefined : 'manual'}>
       {dropdown}
     </Tooltip>
-  ) : (
-    { ...dropdown }
   );
 }
 
@@ -186,7 +197,18 @@ function PageDropdownActionItem<T extends object>(props: {
     case PageActionType.Button: {
       let Icon: ComponentClass | FunctionComponent | undefined = action.icon;
       if (!Icon && hasIcons) Icon = TransparentIcon;
-      let tooltip = isDisabled ?? action.tooltip;
+      let tooltip;
+
+      if (isDisabled) {
+        tooltip = isDisabled;
+      } else if (action.tooltip) {
+        tooltip = action.tooltip;
+      } else if (action.icon) {
+        tooltip = action.label;
+      } else {
+        tooltip = undefined;
+      }
+
       let isButtonDisabled = !!isDisabled;
       if (action.selection === PageActionSelection.Multiple && !selectedItems.length) {
         tooltip = t(`Select at least one item from the list`);

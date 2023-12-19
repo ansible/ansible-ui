@@ -22,16 +22,15 @@ import { hubAPI, pulpAPI } from '../../api/formatPath';
 
 export function useCopyToRepository() {
   const [_, setDialog] = usePageDialog();
-
-  const context = useHubContext();
   const onClose = useCallback(() => setDialog(undefined), [setDialog]);
+  const context = useHubContext();
 
   return (collection: CollectionVersionSearch, operation: 'approve' | 'copy') => {
     setDialog(
       <CopyToRepositoryModal
         collection={collection}
-        context={context}
         onClose={onClose}
+        context={context}
         operation={operation}
       />
     );
@@ -40,8 +39,8 @@ export function useCopyToRepository() {
 
 function CopyToRepositoryModal(props: {
   collection: CollectionVersionSearch;
-  context: HubContext;
   onClose: () => void;
+  context: HubContext;
   operation: 'approve' | 'copy';
 }) {
   const toolbarFilters = useRepositoryFilters();
@@ -49,6 +48,7 @@ function CopyToRepositoryModal(props: {
   const { t } = useTranslation();
   const { collection } = props;
   const request = useGetRequest<HubItemsResponse<CollectionVersionSearch>>();
+
   const pulpRequest = useGetRequest<PulpItemsResponse<SigningServiceResponse>>();
 
   const [selectedRepositories, setSelectedRepositories] = useState<Repository[]>([]);
@@ -57,57 +57,19 @@ function CopyToRepositoryModal(props: {
   const [error, setError] = useState<string>('');
   const [message, setMessage] = useState<string>('');
 
-  const { collection_auto_sign, require_upload_signatures } = props.context.featureFlags;
-  const autoSign = collection_auto_sign && !require_upload_signatures;
-
   const operation = props.operation;
 
   const copyToRepositories = async () => {
     try {
       setIsLoading(true);
 
-      const { repository } = props.collection;
-      if (!repository) {
-        return;
-      }
-
-      const pulpId = parsePulpIDFromURL(repository?.pulp_href);
-
-      let signingService = '';
-      const signingServiceName = props.context?.settings?.GALAXY_COLLECTION_SIGNING_SERVICE;
-      if (((operation === 'approve' && autoSign) || operation === 'copy') && signingServiceName) {
-        const url = pulpAPI`/signing-services/?name=${signingServiceName}`;
-        const signingServiceList = await pulpRequest(url);
-        signingService = signingServiceList?.results?.[0].pulp_href;
-      }
-
-      const repoHrefs: string[] = [];
-
-      for (const repo of selectedRepositories) {
-        repoHrefs.push(repo.pulp_href);
-      }
-
-      const params: {
-        collection_versions: string[];
-        destination_repositories: string[];
-        signing_service?: string;
-      } = {
-        collection_versions: collection.collection_version?.pulp_href
-          ? [collection.collection_version?.pulp_href]
-          : [],
-        destination_repositories: repoHrefs,
-      };
-
-      if (signingService) {
-        params.signing_service = signingService;
-      }
-
-      const api_op = {
-        approve: 'move_collection_version',
-        copy: 'copy_collection_version',
-      }[operation];
-
-      await hubAPIPost(pulpAPI`/repositories/ansible/ansible/${pulpId || ''}/${api_op}/`, params);
+      await copyToRepositoryAction(
+        collection,
+        operation,
+        selectedRepositories,
+        props.context,
+        pulpRequest
+      );
 
       setIsLoading(false);
       props.onClose();
@@ -249,4 +211,59 @@ function CopyToRepositoryModal(props: {
 interface Repository {
   name: string;
   pulp_href: string;
+}
+
+export async function copyToRepositoryAction(
+  collection: CollectionVersionSearch,
+  operation: 'approve' | 'copy',
+  selectedRepositories: Repository[],
+  context: HubContext,
+  pulpRequest: ReturnType<typeof useGetRequest<PulpItemsResponse<SigningServiceResponse>>>
+) {
+  const { repository } = collection;
+  if (!repository) {
+    return;
+  }
+
+  const pulpId = parsePulpIDFromURL(repository?.pulp_href);
+
+  const { collection_auto_sign, require_upload_signatures } = context.featureFlags;
+  const autoSign = collection_auto_sign && !require_upload_signatures;
+
+  let signingService = '';
+
+  const signingServiceName = context?.settings?.GALAXY_COLLECTION_SIGNING_SERVICE;
+  if (((operation === 'approve' && autoSign) || operation === 'copy') && signingServiceName) {
+    const url = pulpAPI`/signing-services/?name=${signingServiceName}`;
+    const signingServiceList = await pulpRequest(url);
+    signingService = signingServiceList?.results?.[0].pulp_href;
+  }
+
+  const repoHrefs: string[] = [];
+
+  for (const repo of selectedRepositories) {
+    repoHrefs.push(repo.pulp_href);
+  }
+
+  const params: {
+    collection_versions: string[];
+    destination_repositories: string[];
+    signing_service?: string;
+  } = {
+    collection_versions: collection.collection_version?.pulp_href
+      ? [collection.collection_version?.pulp_href]
+      : [],
+    destination_repositories: repoHrefs,
+  };
+
+  if (signingService) {
+    params.signing_service = signingService;
+  }
+
+  const api_op = {
+    approve: 'move_collection_version',
+    copy: 'copy_collection_version',
+  }[operation];
+
+  await hubAPIPost(pulpAPI`/repositories/ansible/ansible/${pulpId || ''}/${api_op}/`, params);
 }

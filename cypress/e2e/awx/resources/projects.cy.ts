@@ -4,6 +4,7 @@
 import { randomString } from '../../../../framework/utils/random-string';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
+import { User } from '../../../../frontend/awx/interfaces/User';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 // These tests do not modify the project, thus can use the globalProject
@@ -24,14 +25,14 @@ describe('projects', () => {
     cy.get('[data-cy="project-name"]').type(projectName);
     cy.selectDropdownOptionByResourceName(
       'organization',
-      `${(this.globalProjectOrg as Organization).name}`
+      `${(this.globalOrganization as Organization).name}`
     );
     cy.selectDropdownOptionByResourceName('source_control_type', 'Git');
     cy.get('[data-cy="project-scm-url"]').type('https://github.com/ansible/ansible-ui');
     cy.get('[data-cy="option-allow-override"]').click();
     cy.clickButton(/^Create project$/);
     cy.verifyPageTitle(projectName);
-    cy.hasDetail(/^Organization$/, `${(this.globalProjectOrg as Organization).name}`);
+    cy.hasDetail(/^Organization$/, `${(this.globalOrganization as Organization).name}`);
     cy.hasDetail(/^Source control type$/, 'Git');
     cy.hasDetail(/^Enabled options$/, 'Allow branch override');
     cy.clickPageAction('delete-project');
@@ -80,6 +81,7 @@ describe('projects', () => {
 describe('project edit and delete tests', () => {
   let project: Project;
   let organization: Organization;
+  let user: User;
 
   before(function () {
     cy.awxLogin();
@@ -88,14 +90,19 @@ describe('project edit and delete tests', () => {
   beforeEach(() => {
     cy.createAwxOrganization().then((org) => {
       organization = org;
-      cy.createAwxProject({ organization: organization.id }).then((proj) => {
-        project = proj;
+      cy.createAwxUser(organization).then((testUser) => {
+        user = testUser;
+        cy.createAwxProject({ organization: organization.id }).then((proj) => {
+          project = proj;
+          cy.giveUserProjectAccess(project.name, user.id, 'Read');
+        });
       });
     });
   });
 
   afterEach(() => {
     cy.deleteAwxProject(project, { failOnStatusCode: false });
+    cy.deleteAwxUser(user, { failOnStatusCode: false });
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
 

@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-/// <reference types="cypress" />
 
 import { UnifiedJobList } from '../../../../frontend/awx/interfaces/generated-from-swagger/api';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
@@ -18,7 +17,7 @@ describe('jobs', () => {
   });
 
   before(function () {
-    const globalOrganization = this.globalProjectOrg as Organization;
+    const globalOrganization = this.globalOrganization as Organization;
     const globalProject = this.globalProject as Project;
     cy.createAwxInventory({ organization: globalOrganization.id }).then((inv) => {
       inventory = inv;
@@ -122,7 +121,7 @@ describe('job delete', () => {
   });
 
   beforeEach(function () {
-    const globalOrganization = this.globalProjectOrg as Organization;
+    const globalOrganization = this.globalOrganization as Organization;
     const globalProject = this.globalProject as Project;
     cy.createAwxInventory({ organization: globalOrganization.id }).then((inv) => {
       inventory = inv;
@@ -160,6 +159,13 @@ describe('job delete', () => {
         const jobName = testJob.name ? testJob.name : '';
         cy.waitForJobToProcessEvents(jobId);
         cy.clickTableRowKebabAction(jobName, 'delete-job', false);
+        cy.get('.pf-v5-c-modal-box__footer')
+          .prev()
+          .find('td[data-cy="status-column-cell"]')
+          .within(() => {
+            cy.contains('Successful').should('be.visible');
+          });
+        cy.get('input[id="confirm"]').should('be.visible');
         cy.get('#confirm').click();
         cy.clickButton(/^Delete job/);
         cy.contains(/^Success$/);
@@ -186,6 +192,13 @@ describe('job delete', () => {
       cy.waitForJobToProcessEvents(jobId);
       cy.selectTableRow(jobName, false);
       cy.clickToolbarKebabAction('delete-selected-jobs');
+      cy.get('.pf-v5-c-modal-box__footer')
+        .prev()
+        .find('td[data-cy="status-column-cell"]')
+        .within(() => {
+          cy.contains('Successful').should('be.visible');
+        });
+      cy.get('input[id="confirm"]').should('be.visible');
       cy.get('#confirm').click();
       cy.clickButton(/^Delete job/);
       cy.contains(/^Success$/);

@@ -156,7 +156,7 @@ export interface ITableColumnTypeDateTime<T extends object> extends ITableColumn
   // TODO add format to datetime & allow user to change
 }
 
-/** Table column used for rednering columns in tables, lists, and cards. */
+/** Table column used for rendering columns in tables, lists, and cards. */
 export type ITableColumn<T extends object> =
   | ITableColumnTypeReactNode<T>
   | ITableColumnTypeText<T>
@@ -176,7 +176,7 @@ export function TableColumnCell<T extends object>(props: {
     case 'text':
       return <TextCell text={column.value(item)} />;
     case 'description':
-      return <TextCell text={column.value(item)} />;
+      return <div style={{ minWidth: 200, whiteSpace: 'normal' }}>{column.value(item)}</div>;
     case 'datetime':
       // TODO - handle format from column options
       return <DateTimeCell format="since" value={column.value(item)} />;

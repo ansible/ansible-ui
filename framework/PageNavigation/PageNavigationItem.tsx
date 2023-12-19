@@ -1,15 +1,19 @@
 interface PageNavigationGroup {
   id?: string;
   label?: string;
+  subtitle?: string;
   path: string;
   children: PageNavigationItem[];
+  hidden?: boolean;
 }
 
 interface PageNavigationComponent {
   id?: string;
   label?: string;
+  subtitle?: string;
   path: string;
   element: JSX.Element;
+  hidden?: boolean;
 }
 
 /**

@@ -92,7 +92,7 @@
       "progress_reports": [],
       "created_resources": [],
       "reserved_resources_record": [
-          "/api/automation-hub/pulp/api/v3/remotes/ansible/collection/018c21f2-c65b-73b0-97cd-372b1a59e127/"
+        "/api/automation-hub/pulp/api/v3/remotes/ansible/collection/018c21f2-c65b-73b0-97cd-372b1a59e127/"
       ]
     },
     {
@@ -111,12 +111,12 @@
       "task_group": null,
       "progress_reports": [],
       "created_resources": [
-          "/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/018bd8d7-d94a-790c-bfd9-98376981182b/versions/1/",
-          "/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/018bd8d7-d52e-70bd-90a9-812d90a2c027/versions/3/"
+        "/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/018bd8d7-d94a-790c-bfd9-98376981182b/versions/1/",
+        "/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/018bd8d7-d52e-70bd-90a9-812d90a2c027/versions/3/"
       ],
       "reserved_resources_record": [
-          "/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/018bd8d7-d94a-790c-bfd9-98376981182b/",
-          "shared:/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/018bd8d7-d52e-70bd-90a9-812d90a2c027/"
+        "/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/018bd8d7-d94a-790c-bfd9-98376981182b/",
+        "shared:/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/018bd8d7-d52e-70bd-90a9-812d90a2c027/"
       ]
     },
     {
@@ -132,41 +132,38 @@
       "worker": "/api/automation-hub/pulp/api/v3/workers/018c1d26-ba64-731c-a839-1d8c10cbb98d/",
       "parent_task": "/api/automation-hub/pulp/api/v3/tasks/018c2181-7aa3-770d-8a8d-a3e4f2b1bee5/",
       "child_tasks": [
-          "/api/automation-hub/pulp/api/v3/tasks/018c2181-8bde-77bf-a3df-260a7989bc75/"
+        "/api/automation-hub/pulp/api/v3/tasks/018c2181-8bde-77bf-a3df-260a7989bc75/"
       ],
       "task_group": "/api/automation-hub/pulp/api/v3/task-groups/018c2181-7a9b-7fe2-8419-c65d6ba0641b/",
       "progress_reports": [
-          {
-              "message": "Signing new CollectionVersions",
-              "code": "sign.new.signature",
-              "state": "completed",
-              "total": 1,
-              "done": 1,
-              "suffix": null
-          },
-          {
-              "message": "Adding present CollectionVersionSignatures",
-              "code": "sign.present.signature",
-              "state": "completed",
-              "total": 0,
-              "done": 0,
-              "suffix": null
-          },
-          {
-              "message": "Associating Content",
-              "code": "associating.content",
-              "state": "completed",
-              "total": null,
-              "done": 1,
-              "suffix": null
-          }
+        {
+          "message": "Signing new CollectionVersions",
+          "code": "sign.new.signature",
+          "state": "completed",
+          "total": 1,
+          "done": 1,
+          "suffix": null
+        },
+        {
+          "message": "Adding present CollectionVersionSignatures",
+          "code": "sign.present.signature",
+          "state": "completed",
+          "total": 0,
+          "done": 0,
+          "suffix": null
+        },
+        {
+          "message": "Associating Content",
+          "code": "associating.content",
+          "state": "completed",
+          "total": null,
+          "done": 1,
+          "suffix": null
+        }
       ],
-      "created_resources": [
-          null,
-          null
-      ],
+      "created_resources": [null, null],
       "reserved_resources_record": [
-          "/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/018bd8d7-d52e-70bd-90a9-812d90a2c027/"
+        "/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/018bd8d7-d52e-70bd-90a9-812d90a2c027/"
       ]
     },
     {
@@ -182,12 +179,12 @@
       "worker": "/api/automation-hub/pulp/api/v3/workers/018c1d26-ba64-731c-a839-1d8c10cbb98d/",
       "parent_task": null,
       "child_tasks": [
-          "/api/automation-hub/pulp/api/v3/tasks/018c2181-8811-7d7a-8b61-ef18130f0d0c/"
+        "/api/automation-hub/pulp/api/v3/tasks/018c2181-8811-7d7a-8b61-ef18130f0d0c/"
       ],
       "task_group": "/api/automation-hub/pulp/api/v3/task-groups/018c2181-7a9b-7fe2-8419-c65d6ba0641b/",
       "progress_reports": [],
       "created_resources": [
-          "/api/automation-hub/pulp/api/v3/content/ansible/collection_versions/018c2181-8785-722a-a810-0c4ee0d7636b/"
+        "/api/automation-hub/pulp/api/v3/content/ansible/collection_versions/018c2181-8785-722a-a810-0c4ee0d7636b/"
       ],
       "reserved_resources_record": []
     },
@@ -222,7 +219,7 @@
       "worker": "/api/automation-hub/pulp/api/v3/workers/018c1d26-ba64-731c-a839-1d8c10cbb98d/",
       "parent_task": null,
       "child_tasks": [
-          "/api/automation-hub/pulp/api/v3/tasks/018c2180-e4c1-77d0-b825-a2e95dcc56ee/"
+        "/api/automation-hub/pulp/api/v3/tasks/018c2180-e4c1-77d0-b825-a2e95dcc56ee/"
       ],
       "task_group": null,
       "progress_reports": [],

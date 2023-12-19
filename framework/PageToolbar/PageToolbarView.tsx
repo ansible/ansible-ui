@@ -66,6 +66,7 @@ export function PageToolbarView(props: PageToolbarViewProps) {
                             aria-label="card view"
                             data-cy={'card-view'}
                             tooltip={translations.cardView}
+                            key={'card-view'}
                           />
                         );
                       case PageTableViewTypeE.List:
@@ -77,6 +78,7 @@ export function PageToolbarView(props: PageToolbarViewProps) {
                             aria-label="list view"
                             data-cy={'list-view'}
                             tooltip={translations.listView}
+                            key={'list-view'}
                           />
                         );
                       case PageTableViewTypeE.Table:
@@ -88,6 +90,7 @@ export function PageToolbarView(props: PageToolbarViewProps) {
                             aria-label="table view"
                             data-cy={'table-view'}
                             tooltip={translations.tableView}
+                            key={'table-view'}
                           />
                         );
                     }
@@ -107,14 +110,12 @@ function PageToggleGroupItem(
   }
 ) {
   const { tooltip, ...rest } = props;
+  const tooltipRef = useRef<HTMLDivElement>(null);
   return (
-    <Tooltip
-      content={tooltip}
-      position="top-end"
-      enableFlip={false}
-      triggerRef={useRef<HTMLDivElement>(null)}
-    >
-      <ToggleGroupItem ref={useRef<HTMLDivElement>(null)} {...rest} />
+    <Tooltip content={tooltip} position="top-end" enableFlip={false} triggerRef={tooltipRef}>
+      <div ref={tooltipRef}>
+        <ToggleGroupItem {...rest} />
+      </div>
     </Tooltip>
   );
 }

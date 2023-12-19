@@ -3,6 +3,7 @@
 
 import { randomString } from '../../../../framework/utils/random-string';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
+import { User } from '../../../../frontend/awx/interfaces/User';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 describe('organizations', () => {
@@ -32,15 +33,16 @@ describe('organizations', () => {
 
   it('renders the organization details page', function () {
     cy.navigateTo('awx', 'organizations');
-    cy.clickTableRow(`${(this.globalProjectOrg as Organization).name}`);
-    cy.verifyPageTitle(`${(this.globalProjectOrg as Organization).name}`);
+    cy.clickTableRow(`${(this.globalOrganization as Organization).name}`);
+    cy.verifyPageTitle(`${(this.globalOrganization as Organization).name}`);
     cy.clickLink(/^Details$/);
-    cy.contains('#name', `${(this.globalProjectOrg as Organization).name}`);
+    cy.contains('#name', `${(this.globalOrganization as Organization).name}`);
   });
 });
 
 describe('organizations edit and delete', function () {
   let organization: Organization;
+  let user: User;
 
   before(function () {
     cy.awxLogin();
@@ -51,10 +53,15 @@ describe('organizations edit and delete', function () {
     const orgName = 'E2E Organization ' + `${stringRandom}`;
     cy.createAwxOrganization(orgName).then((testOrganization) => {
       organization = testOrganization;
+      cy.createAwxUser(organization).then((testUser) => {
+        user = testUser;
+        cy.giveUserOrganizationAccess(organization.name, user.id, 'Read');
+      });
     });
   });
 
   afterEach(function () {
+    cy.deleteAwxUser(user, { failOnStatusCode: false });
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
 

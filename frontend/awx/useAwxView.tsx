@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import useSWR from 'swr';
 import { ISelected, ITableColumn, IToolbarFilter, useSelected } from '../../framework';
 import { IView, useView } from '../../framework/useView';
@@ -13,7 +13,6 @@ export type IAwxView<T extends { id: number }> = IView &
     refresh: () => Promise<void>;
     selectItemsAndRefresh: (items: T[]) => void;
     unselectItemsAndRefresh: (items: T[]) => void;
-    refreshing: boolean;
   };
 
 export type QueryParams = {
@@ -107,12 +106,8 @@ export function useAwxView<T extends { id: number }>(options: {
   const fetcher = useFetcher();
   const response = useSWR<AwxItemsResponse<T>>(url, fetcher, swrOptions);
   const { data, mutate } = response;
-  const [refreshing, setRefreshing] = useState(false);
   const refresh = useCallback(async () => {
-    setRefreshing(true);
-    await mutate().finally(() => {
-      setRefreshing(false);
-    });
+    await mutate().finally(() => {});
   }, [mutate]);
 
   useSWR<AwxItemsResponse<T>>(data?.next, fetcher, swrOptions);
@@ -158,13 +153,11 @@ export function useAwxView<T extends { id: number }>(options: {
       ...selection,
       selectItemsAndRefresh,
       unselectItemsAndRefresh,
-      refreshing,
     };
   }, [
     data?.results,
     error,
     refresh,
-    refreshing,
     selectItemsAndRefresh,
     selection,
     unselectItemsAndRefresh,

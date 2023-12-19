@@ -46,7 +46,10 @@ describe('Mesh Visualizer', () => {
           formatDateString(instance.last_health_check)
         );
         cy.get('[data-cy="created"]').should('have.text', formatDateString(instance.created));
-        cy.get('[data-cy="modified"]').should('have.text', formatDateString(instance.modified));
+        cy.get('[data-cy="last-modified"]').should(
+          'have.text',
+          formatDateString(instance.modified)
+        );
         cy.get('[data-cy="forks"]').should('exist');
         cy.get('[data-cy="enabled"]').should('exist');
       });

@@ -36,16 +36,19 @@ import {
   EdaRulebookActivationCreate,
 } from '../../frontend/eda/interfaces/EdaRulebookActivation';
 import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaUser';
+import { Role as HubRole } from '../../frontend/hub/access/roles/Role';
+import { RemoteRegistry } from '../../frontend/hub/remote-registries/RemoteRegistry';
 import './auth';
 import './awx-commands';
 import { IAwxResources } from './awx-commands';
+import './awx-user-access-commands';
 import './common-commands';
 import './e2e';
 import './eda-commands';
-import './global-project';
 import './hub-commands';
 import './rest-commands';
-import { Role as HubRole } from '../../frontend/hub/access/roles/Role';
+import 'cypress-file-upload';
+import { WorkflowNode } from '../../frontend/awx/interfaces/WorkflowNode';
 
 declare global {
   namespace Cypress {
@@ -79,6 +82,8 @@ declare global {
       configFormatToggle(configType: string): Chainable<void>;
 
       typeMonacoTextField(textString: string): Chainable<void>;
+
+      assertMonacoTextField(textString: string): Chainable<void>;
 
       /** This command works for a form field to look up item from table
        * (used for components that do not utilize the PageFormAsyncSelect component yet) */
@@ -292,7 +297,8 @@ declare global {
        */
       awxRequestPost<RequestBodyT extends Cypress.RequestBody, ResponseBodyT = RequestBodyT>(
         url: string,
-        body: RequestBodyT
+        body: RequestBodyT,
+        failOnStatusCode?: boolean
       ): Chainable<ResponseBodyT>;
 
       /**
@@ -313,7 +319,7 @@ declare global {
         }
       ): Chainable<void>;
 
-      createAwxOrganization(orgName?: string): Chainable<Organization>;
+      createAwxOrganization(orgName?: string, failOnStatusCode?: boolean): Chainable<Organization>;
 
       /**
        * `createAwxProject` creates an AWX Project via API,
@@ -413,6 +419,70 @@ declare global {
        */
       giveUserWfjtAccess(wfjtName: string, userId: number, roleName: string): Chainable<Role>;
 
+      /**
+       * This command sends a request to the API to assign a certain type of role access to a user
+       * for a credential.
+       * @param credentialName: pass the existing credential name as a string
+       * @param userId: pass the ID of the existing user as a number
+       * @param roleName: pass the name of the role type that you want to assign to your user.
+       * Available roles for a credential are: Admin, Use, Read
+       */
+      giveUserCredentialsAccess(
+        credentialName: string,
+        userId: number,
+        roleName: string
+      ): Chainable<Role>;
+
+      /**
+       * This command sends a request to the API to assign a certain type of role access to a user
+       * for a project.
+       * @param projectName: pass the existing project name as a string
+       * @param userId: pass the ID of the existing user as a number
+       * @param roleName: pass the name of the role type that you want to assign to your user.
+       * Available roles for a project are: Admin, Use, Update, Read
+       */
+      giveUserProjectAccess(projectName: string, userId: number, roleName: string): Chainable<Role>;
+
+      /**
+       * This command sends a request to the API to assign a certain type of role access to a user
+       * for an inventory.
+       * @param inventoryName: pass the existing inventory name as a string
+       * @param userId: pass the ID of the existing user as a number
+       * @param roleName: pass the name of the role type that you want to assign to your user.
+       * Available roles for a inventory are: Admin, Adhoc, Use, Update, Read
+       */
+      giveUserInventoryAccess(
+        inventoryName: string,
+        userId: number,
+        roleName: string
+      ): Chainable<Role>;
+
+      /**
+       * This command sends a request to the API to assign a certain type of role access to a user
+       * for an organization.
+       * @param organizationName: pass the existing organization name as a string
+       * @param userId: pass the ID of the existing user as a number
+       * @param roleName: pass the name of the role type that you want to assign to your user.
+       * Available roles for a organization are: Admin, Execute, Project Admin, Inventory Admin,
+       *  Credential Admin, Workflow Admin, Notification Admin, Job Template Admin, Execution Environment Admin,
+       *  Auditor, Member, Read, Approve
+       */
+      giveUserOrganizationAccess(
+        organizationName: string,
+        userId: number,
+        roleName: string
+      ): Chainable<Role>;
+
+      /**
+       * This command sends a request to the API to assign a certain type of role access to a user
+       * for a team.
+       * @param teamName: pass the existing team name as a string
+       * @param userId: pass the ID of the existing user as a number
+       * @param roleName: pass the name of the role type that you want to assign to your user.
+       * Available roles for a team are: Admin, Member, Read
+       */
+      giveUserTeamAccess(teamName: string, userId: number, roleName: string): Chainable<Role>;
+
       getAwxJobTemplateByName(awxJobTemplateName: string): Chainable<JobTemplate>;
       createAwxTeam(organization: Organization): Chainable<Team>;
       createAwxUser(organization: Organization): Chainable<User>;
@@ -421,6 +491,9 @@ declare global {
       ): Chainable<InstanceGroup>;
 
       createAwxLabel(label: Partial<Omit<Label, 'id'>>): Chainable<Label>;
+
+      createGlobalOrganization(): Chainable<void>;
+      createGlobalProject(): Chainable<void>;
 
       deleteAwxOrganization(
         organization: Organization,
@@ -541,8 +614,47 @@ declare global {
         organization: Organization
       ): Chainable<{ inventory: Inventory; host: Host; group: Group }>;
 
+      createAwxWorkflowVisualizerJobTemplateNode(
+        workflowJT: WorkflowJobTemplate,
+        jobTemplateNode: JobTemplate
+      ): Chainable<WorkflowNode>;
+
+      createAwxWorkflowVisualizerProjectNode(
+        workflowJobTemplate: WorkflowJobTemplate,
+        project: Project
+      ): Chainable<WorkflowNode>;
+
+      createAwxWorkflowVisualizerApprovalNode(
+        firstNode: WorkflowJobTemplate
+      ): Chainable<WorkflowNode>;
+
+      createAwxWorkflowVisualizerInventorySourceNode(
+        workflowJT: WorkflowJobTemplate,
+        inventorySourceId: InventorySource
+      ): Chainable<WorkflowNode>;
+
+      createAwxWorkflowVisualizerWJTNode(
+        workflowJT: WorkflowJobTemplate
+      ): Chainable<WorkflowJobTemplate>;
+
+      createAwxWorkflowVisualizerManagementNode(
+        workflowJobTemplate: WorkflowJobTemplate,
+        managementId: 1 | 2 | 3 | 4
+      ): Chainable<WorkflowNode>;
+
+      createWorkflowJTSuccessNodeLink(
+        firstNode: WorkflowNode,
+        secondNode: WorkflowNode
+      ): Chainable<WorkflowNode>;
+
+      createWorkflowJTFailureNodeLink(
+        firstNode: WorkflowNode,
+        secondNode: WorkflowNode
+      ): Chainable<WorkflowNode>;
+
       waitForTemplateStatus(jobID: string): Chainable<AwxItemsResponse<JobEvent>>;
       waitForJobToProcessEvents(jobID: string): Chainable<Job>;
+      waitForWorkflowJobStatus(jobID: string): Chainable<Job>;
 
       // --- EDA COMMANDS ---
 
@@ -748,10 +860,17 @@ declare global {
         collectionName: string,
         tags?: string[]
       ): Cypress.Chainable<void>;
+      uploadHubCollectionFile(hubFilePath: string, hubFileName: string): Cypress.Chainable<void>;
+      createNamespace(namespaceName: string): Cypress.Chainable<void>;
+      getNamespace(namespaceName: string): Cypress.Chainable<void>;
       deleteNamespace(namespaceName: string): Cypress.Chainable<void>;
       deleteCollectionsInNamespace(namespaceName: string): Cypress.Chainable<void>;
       createHubRole(): Cypress.Chainable<HubRole>;
       deleteHubRole(role: HubRole): Cypress.Chainable<void>;
+      createRemote(remoteName: string): Cypress.Chainable<void>;
+      deleteRemote(remoteName: string): Cypress.Chainable<void>;
+      createRemoteRegistry(remoteRegistryName: string): Cypress.Chainable<RemoteRegistry>;
+      deleteRemoteRegistry(remoteRegistryId: string): Cypress.Chainable<void>;
     }
   }
 }
