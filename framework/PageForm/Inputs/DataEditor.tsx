@@ -130,9 +130,9 @@ export function DataEditor<
     });
     const currentValue = editor.getValue();
     if (currentValue !== props.value) {
-      editor.setValue(props.value);
+      editor.setValue(props.value || '');
     }
-    const valueArray = props.value.split('\n');
+    const valueArray = props.value?.split('\n') || [''];
     const element = document.getElementById(idDataEditorElement);
     if (valueArray.length > 0 && element) {
       element.style.minHeight = '75px';
