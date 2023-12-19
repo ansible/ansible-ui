@@ -28,6 +28,7 @@ export function EventSourceDetails() {
   return (
     <PageDetails>
       <PageDetail label={t('Name')}>{eventSource?.name || ''}</PageDetail>
+      <PageDetail label={t('Type')}>{eventSource?.type || ''}</PageDetail>
       <PageDetail label={t('Decision environment')} helpText={t('Decision environment.')}>
         {eventSource && eventSource.decision_environment_id ? (
           <Link

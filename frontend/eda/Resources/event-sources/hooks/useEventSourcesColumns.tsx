@@ -30,6 +30,12 @@ export function useEventSourcesColumns() {
         list: 'name',
       },
       {
+        header: t('Type'),
+        cell: (eventSource) => <TextCell text={eventSource.type} />,
+        card: 'name',
+        list: 'name',
+      },
+      {
         header: t('Decision environment'),
         cell: (eventSource) => (
           <EdaDecisionEnvironmentCell id={eventSource.decision_environment_id} />
