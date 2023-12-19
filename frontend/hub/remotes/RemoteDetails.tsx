@@ -120,6 +120,12 @@ export function RemoteDetails() {
           <PageDetail label={t('Rate limit')}>
             {remote?.rate_limit?.toString() ?? t('None')}
           </PageDetail>
+          <PageDetail label={t('Include all dependencies when syncing a collection')}>
+            {remote?.sync_dependencies ? t('True') : t('False')}
+          </PageDetail>
+          <PageDetail label={t('Download only signed collections')}>
+            {remote?.signed_only ? t('True') : t('False')}
+          </PageDetail>
           <PageDetail label={t('Repositories')}>
             {repositories?.results?.length ? (
               <LabelGroup

@@ -25,14 +25,14 @@ describe('projects', () => {
     cy.get('[data-cy="project-name"]').type(projectName);
     cy.selectDropdownOptionByResourceName(
       'organization',
-      `${(this.globalProjectOrg as Organization).name}`
+      `${(this.globalOrganization as Organization).name}`
     );
     cy.selectDropdownOptionByResourceName('source_control_type', 'Git');
     cy.get('[data-cy="project-scm-url"]').type('https://github.com/ansible/ansible-ui');
     cy.get('[data-cy="option-allow-override"]').click();
     cy.clickButton(/^Create project$/);
     cy.verifyPageTitle(projectName);
-    cy.hasDetail(/^Organization$/, `${(this.globalProjectOrg as Organization).name}`);
+    cy.hasDetail(/^Organization$/, `${(this.globalOrganization as Organization).name}`);
     cy.hasDetail(/^Source control type$/, 'Git');
     cy.hasDetail(/^Enabled options$/, 'Allow branch override');
     cy.clickPageAction('delete-project');

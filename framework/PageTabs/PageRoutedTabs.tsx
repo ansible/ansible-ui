@@ -3,13 +3,17 @@ import { CaretLeftIcon } from '@patternfly/react-icons';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { PageLayout, useGetPageUrl, usePageNavigate } from '..';
 import { getPersistentFilters } from '../../frontend/common/PersistentFilters';
+import { useSearchParams } from 'react-router-dom';
 
 export function PageRoutedTabs(props: {
   backTab?: { label: string; page: string; persistentFilterKey: string };
   tabs: ({ label: string; page: string } | false)[];
   params?: { [key: string]: string | number | undefined };
   // Use to pass data to tab's component. To access data in that component use useOutletContext()
-  componentParams?: { [key: string]: string | number | undefined };
+  componentParams?: { [key: string]: unknown };
+
+  // url query keys that are shared accross tabs, the rest query strings will dissappear when switching tabs
+  sharedQueryKeys?: string[];
 }) {
   const pageNavigate = usePageNavigate();
   const navigate = useNavigate();
@@ -18,6 +22,16 @@ export function PageRoutedTabs(props: {
   const activeTab = props.tabs.find(
     (tab) => tab && getPageUrl(tab.page, { params: props.params }) === location.pathname
   );
+
+  const [searchParams] = useSearchParams();
+
+  const sharedQueryKeysObj: Record<string, string | number | undefined> = {};
+  if (props.sharedQueryKeys) {
+    for (const key of props.sharedQueryKeys) {
+      sharedQueryKeysObj[key] = searchParams.get(key) || '';
+    }
+  }
+
   const querystring = getPersistentFilters(props.backTab?.persistentFilterKey);
   const query = parseQuery(querystring);
   const onSelect = (
@@ -28,7 +42,7 @@ export function PageRoutedTabs(props: {
     if (eventKey === props.backTab?.page) {
       navigate(getPageUrl(eventKey.toString(), { params: props.params, query }));
     } else {
-      pageNavigate(eventKey.toString(), { params: props.params });
+      pageNavigate(eventKey.toString(), { params: props.params, query: sharedQueryKeysObj });
     }
   };
 
@@ -40,7 +54,7 @@ export function PageRoutedTabs(props: {
           key={tab.page}
           eventKey={tab.page}
           title={tab.label}
-          href={getPageUrl(tab.page, { params: props.params })}
+          href={getPageUrl(tab.page, { params: props.params, query: sharedQueryKeysObj })}
         />
       ) : null
     ) as unknown as TabsChild;

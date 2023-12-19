@@ -16,24 +16,31 @@ on:
     - cron: '0 8 * * *'
 
 jobs:
-  variables:
+  setup:
+    name: Setup
     runs-on: ubuntu-latest
+    outputs:
+      AWX_SERVER: ${{ steps.step1.outputs.AWX_SERVER }}
+      UPDATE_SERVER: ${{ steps.step1.outputs.UPDATE_SERVER }}
     steps:
-      - run: |
+      - id: step1
+        run: |
           CURRENTDATE=$(date +'%Y%m%d')
+          echo $CURRENTDATE
           if([ "${{ github.event_name }}" == "workflow_dispatch" ]); then
-            echo "AWX_SERVER=${{ github.event.inputs.AWX_SERVER }}" >> $GITHUB_ENV
-            echo "UPDATE_SERVER=${{ github.event.inputs.UPDATE_SERVER }}" >> $GITHUB_ENV
+            echo "AWX_SERVER=${{ github.event.inputs.AWX_SERVER }}" >> "$GITHUB_OUTPUT"
+            echo "UPDATE_SERVER=${{ github.event.inputs.UPDATE_SERVER }}" >> "$GITHUB_OUTPUT"
           else 
-            echo "AWX_SERVER=https://awx.ci-ui-${CURRENTDATE}.gcp.testing.ansible.com" >> $GITHUB_ENV
-            echo "UPDATE_SERVER=true" >> $GITHUB_ENV
+            echo "AWX_SERVER=https://awx.ci-ui-${CURRENTDATE}.gcp.testing.ansible.com" >> "$GITHUB_OUTPUT"
+            echo "UPDATE_SERVER=true" >> "$GITHUB_OUTPUT"
           fi
 
   awx-e2e:
     name: AWX E2E
+    needs: setup
     uses: ./.github/workflows/awx-e2e.yml
     with:
-      AWX_SERVER: ${{ steps.variables.outputs.AWX_SERVER }}
+      AWX_SERVER: ${{ needs.setup.outputs.AWX_SERVER }}
     secrets:
       AWX_PASSWORD: ${{ secrets.AWX_PASSWORD }}
       CYPRESS_AUI_AWX_E2E_PROJECT_ID: ${{ secrets.CYPRESS_AUI_AWX_E2E_PROJECT_ID }}
@@ -41,13 +48,105 @@ jobs:
 
   awx-update-server:
     name: AWX Update Server
-    if: ${{ github.event_name == 'workflow_dispatch' && steps.variables.outputs.UPDATE_SERVER == 'true' }}
-    needs: awx-e2e
+    if: ${{ needs.setup.outputs.UPDATE_SERVER == 'true' }}
+    needs:
+      - awx-e2e
+      - setup
     runs-on: ubuntu-latest
     steps:
-      - run: |
+      - name: Update Server Variable
+        run: |
           curl -L -X PATCH -H "Accept: application/vnd.github+json" \
           -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" \
           -H "X-GitHub-Api-Version: 2022-11-28" \
           "https://api.github.com/repos/ansible/ansible-ui/actions/variables/AWX_SERVER" \
-          -d '{"name":"AWX_SERVER","value":"${{ steps.variables.outputs.AWX_SERVER }}"}'
+          -d '{"name":"AWX_SERVER","value":"${{ needs.setup.outputs.AWX_SERVER }}"}'
+      - name: Slack Notification
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "AWX E2E Server Updated",
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Environment Variables*```export AWX_SERVER=${{ needs.setup.outputs.AWX_SERVER }}```"
+                  }
+                },   
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Server*\n${{ needs.setup.outputs.AWX_SERVER }}/ui_next"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*GitHub Action*\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+
+  slack-failure-notification:
+    name: Slack Failure Notification
+    if: failure()
+    needs:
+      - awx-update-server
+      - setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Slack Notification
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": ":alert-1190:  AWX E2E Server Update Failure",
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "The GitHub Action to update the server failed. <!here>"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Server*\n${{ needs.setup.outputs.AWX_SERVER }}/ui_next"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*GitHub Action Run*\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK

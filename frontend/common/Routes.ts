@@ -36,6 +36,10 @@ export const RouteObj = {
   CredentialTypeDetails: `/access/credential-types/:id/details`,
 
   /** DO NOT ADD NEW VALUES - DEPRECATED */
+  ApplicationPage: `/administration/applications/:id/*`,
+  ApplicationPageDetails: `/administration/applications/:id/details`,
+
+  /** DO NOT ADD NEW VALUES - DEPRECATED */
   Projects: `/projects`,
   ProjectDetails: `/projects/:id/details`,
   ProjectSchedules: `/projects/:id/schedules`,

@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
 import { randomString } from '../../framework/utils/random-string';
 import { Role } from '../../frontend/hub/access/roles/Role';
-import { hubAPI, pulpAPI } from './formatApiPathForHub';
 import { parsePulpIDFromURL } from '../../frontend/hub/api/utils';
 import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
+import { HubNamespace } from '../../frontend/hub/namespaces/HubNamespace';
 import { HubItemsResponse } from '../../frontend/hub/useHubView';
 import './commands';
+import { hubAPI, pulpAPI } from './formatApiPathForHub';
 import './rest-commands';
 import { escapeForShellCommand } from './utils';
 
@@ -87,6 +88,42 @@ Cypress.Commands.add(
   }
 );
 
+Cypress.Commands.add('uploadHubCollectionFile', (hubFilePath: string, hubFileName: string) => {
+  cy.fixture(hubFilePath, 'binary')
+    .then(Cypress.Blob.binaryStringToBlob)
+    .then((fileContent) => {
+      cy.get('input[id="file-upload-file-filename"]').attachFile(
+        {
+          fileContent,
+          fileName: hubFileName,
+          filePath: hubFilePath,
+          mimeType: 'application/gzip',
+        },
+        { subjectType: 'drag-n-drop' }
+      );
+    });
+});
+
+Cypress.Commands.add('createNamespace', (namespaceName: string) => {
+  cy.requestPost(hubAPI`/_ui/v1/namespaces/`, {
+    name: namespaceName,
+    groups: [],
+  });
+});
+
+Cypress.Commands.add('getNamespace', (namespaceName: string) => {
+  cy.requestGet<HubItemsResponse<HubNamespace>>(
+    hubAPI`/_ui/v1/namespaces/?name=${namespaceName}`
+  ).then((itemsResponse) => {
+    cy.log('ITEMS', itemsResponse);
+    if (itemsResponse.data.length === 0) {
+      cy.createNamespace(namespaceName);
+    } else {
+      cy.log('Namespace Exists');
+    }
+  });
+});
+
 Cypress.Commands.add('deleteNamespace', (namespaceName: string) => {
   cy.galaxykit('namespace delete', namespaceName);
 });
@@ -130,3 +167,25 @@ Cypress.Commands.add(
     }
   }
 );
+
+Cypress.Commands.add('createRemote', (remoteName: string) => {
+  cy.requestPost(pulpAPI`/remotes/ansible/collection/`, {
+    name: remoteName,
+    url: 'https://console.redhat.com/api/automation-hub/',
+  });
+});
+
+Cypress.Commands.add('deleteRemote', (remoteName: string) => {
+  cy.requestDelete(pulpAPI`/remotes/ansible/collection/${remoteName}/`);
+});
+
+Cypress.Commands.add('createRemoteRegistry', (remoteRegistryName: string) => {
+  cy.requestPost(hubAPI`/_ui/v1/execution-environments/registries/`, {
+    name: remoteRegistryName,
+    url: 'https://console.redhat.com/api/automation-hub/',
+  });
+});
+
+Cypress.Commands.add('deleteRemoteRegistry', (remoteRegistryId: string) => {
+  cy.requestDelete(hubAPI`/_ui/v1/execution-environments/registries/${remoteRegistryId}/`);
+});

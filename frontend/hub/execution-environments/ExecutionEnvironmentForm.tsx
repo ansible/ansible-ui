@@ -78,7 +78,7 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
   }
 
   const selectRegistrySingle = useSelectRegistrySingle();
-  const registrySelector = selectRegistrySingle.onBrowse;
+  const registrySelector = selectRegistrySingle.openBrowse;
 
   const isNew = !executionEnvironment.data?.pulp?.repository;
   const isRemote = executionEnvironment.data?.pulp?.repository

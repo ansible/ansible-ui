@@ -164,6 +164,7 @@ export enum AwxRoute {
 
   ManagementJobs = 'awx-management-jobs',
   ManagementJobPage = 'awx-management-job-page',
+  ManagementJobDetails = 'awx-management-job-details',
   ManagementJobSchedules = 'awx-management-job-schedules',
   ManagementJobNotifications = 'awx-management-job-notifications',
 
@@ -186,6 +187,8 @@ export enum AwxRoute {
   ApplicationPage = 'awx-application-page',
   ApplicationDetails = 'awx-application-details',
   ApplicationTokens = 'awx-application-tokens',
+  CreateApplication = 'awx-create-application',
+  EditApplication = 'awx-edit-application',
 
   ExecutionEnvironments = 'awx-execution-environments',
 

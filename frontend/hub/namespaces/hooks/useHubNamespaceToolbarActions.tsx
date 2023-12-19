@@ -11,10 +11,11 @@ import {
 import { HubRoute } from '../../HubRoutes';
 import { HubNamespace } from '../HubNamespace';
 import { useDeleteHubNamespaces } from './useDeleteHubNamespaces';
+import { IPulpView } from '../../usePulpView';
 
-export function useHubNamespaceToolbarActions() {
+export function useHubNamespaceToolbarActions(view: IPulpView<HubNamespace>) {
   const { t } = useTranslation();
-  const deleteHubNamespaces = useDeleteHubNamespaces(() => null);
+  const deleteHubNamespaces = useDeleteHubNamespaces(view.unselectItemsAndRefresh);
   const getPageUrl = useGetPageUrl();
 
   return useMemo<IPageAction<HubNamespace>[]>(
