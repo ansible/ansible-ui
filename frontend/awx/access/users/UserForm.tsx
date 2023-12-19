@@ -132,8 +132,8 @@ export function EditUser() {
     userType: user.is_superuser
       ? UserType.SystemAdministrator
       : user.is_system_auditor
-      ? UserType.SystemAuditor
-      : UserType.NormalUser,
+        ? UserType.SystemAuditor
+        : UserType.NormalUser,
   };
   return (
     <PageLayout>

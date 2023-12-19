@@ -27,10 +27,10 @@ export function PageActionLink<T extends object>(props: {
   const tooltip = isDisabled
     ? isDisabled
     : action.tooltip
-    ? action.tooltip
-    : iconOnly
-    ? action.label
-    : undefined;
+      ? action.tooltip
+      : iconOnly
+        ? action.label
+        : undefined;
 
   const id = useID(action);
   const content = iconOnly && Icon ? <Icon /> : action.label;
