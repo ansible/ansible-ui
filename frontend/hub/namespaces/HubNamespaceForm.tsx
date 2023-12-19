@@ -59,10 +59,10 @@ export function EditHubNamespace() {
     data: namespace,
     error,
     refresh,
-  } = useGet<HubNamespace>(hubAPI`/_ui/v1/namespaces/${name ?? ''}/`);
+  } = useGet<HubNamespace>(hubAPI`/_ui/v1/my-namespaces/${name ?? ''}/`);
   const patchRequest = usePatchRequest<HubNamespace, HubNamespace>();
   const onSubmit: PageFormSubmitHandler<HubNamespace> = async (namespace) => {
-    await patchRequest(hubAPI`/_ui/v1/namespaces/`, namespace);
+    await patchRequest(hubAPI`/_ui/v1/my-namespaces/${name ?? ''}/`, namespace);
     navigate(-1);
   };
   const getPageUrl = useGetPageUrl();
@@ -81,6 +81,7 @@ export function EditHubNamespace() {
         <PageHeader
           breadcrumbs={[
             { label: t('Namespaces'), to: getPageUrl(HubRoute.Namespaces) },
+            { label: name, to: getPageUrl(HubRoute.NamespacePage, { params: { id: name } }) },
             { label: t('Edit Namespace') },
           ]}
         />
@@ -93,6 +94,7 @@ export function EditHubNamespace() {
         title={t('Edit Namespace')}
         breadcrumbs={[
           { label: t('Namespaces'), to: getPageUrl(HubRoute.Namespaces) },
+          { label: name, to: getPageUrl(HubRoute.NamespacePage, { params: { id: name } }) },
           { label: t('Edit Namespace') },
         ]}
       />
