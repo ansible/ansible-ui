@@ -20,7 +20,7 @@ export function EventSourceDetails() {
   );
 
   const { data: decisionEnvironment } = useGet<EdaDecisionEnvironment>(
-    edaAPI`/decision-environment/`.concat(`${eventSource?.decision_environment_id || ''}/`)
+    edaAPI`/decision-environments/`.concat(`${eventSource?.decision_environment_id || ''}/`)
   );
 
   const getPageUrl = useGetPageUrl();
