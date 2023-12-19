@@ -176,7 +176,7 @@ export function TableColumnCell<T extends object>(props: {
     case 'text':
       return <TextCell text={column.value(item)} />;
     case 'description':
-      return <TextCell text={column.value(item)} />;
+      return <div style={{ minWidth: 200, whiteSpace: 'normal' }}>{column.value(item)}</div>;
     case 'datetime':
       // TODO - handle format from column options
       return <DateTimeCell format="since" value={column.value(item)} />;
