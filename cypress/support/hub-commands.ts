@@ -88,24 +88,21 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add(
-  'uploadHubCollectionFile',
-  (hubFilePath: string | undefined, hubFileName: string | undefined) => {
-    cy.fixture(hubFilePath, 'binary')
-      .then(Cypress.Blob.binaryStringToBlob)
-      .then((fileContent) => {
-        cy.get('input[id="file-upload-file-filename"]').attachFile(
-          {
-            fileContent,
-            fileName: hubFileName,
-            filePath: hubFilePath,
-            mimeType: 'application/gzip',
-          },
-          { subjectType: 'drag-n-drop' }
-        );
-      });
-  }
-);
+Cypress.Commands.add('uploadHubCollectionFile', (hubFilePath: string, hubFileName: string) => {
+  cy.fixture(hubFilePath, 'binary')
+    .then(Cypress.Blob.binaryStringToBlob)
+    .then((fileContent) => {
+      cy.get('input[id="file-upload-file-filename"]').attachFile(
+        {
+          fileContent,
+          fileName: hubFileName,
+          filePath: hubFilePath,
+          mimeType: 'application/gzip',
+        },
+        { subjectType: 'drag-n-drop' }
+      );
+    });
+});
 
 Cypress.Commands.add('getOrCreateCollection', () => {
   let newCollectionVersion;

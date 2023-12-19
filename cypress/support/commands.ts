@@ -861,10 +861,7 @@ declare global {
         tags?: string[]
       ): Cypress.Chainable<void>;
       getOrCreateCollection(): Cypress.Chainable<string | undefined>;
-      uploadHubCollectionFile(
-        hubFilePath: string | undefined,
-        hubFileName: string | undefined
-      ): Cypress.Chainable<void>;
+      uploadHubCollectionFile(hubFilePath: string, hubFileName: string): Cypress.Chainable<void>;
       createNamespace(namespaceName: string): Cypress.Chainable<void>;
       getNamespace(namespaceName: string): Cypress.Chainable<void>;
       deleteNamespace(namespaceName: string): Cypress.Chainable<void>;
