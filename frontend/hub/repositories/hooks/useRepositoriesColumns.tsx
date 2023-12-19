@@ -1,20 +1,27 @@
+import { Label } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { DateTimeCell, ITableColumn, TextCell } from '../../../../framework';
+import { DateTimeCell, ITableColumn, TextCell, useGetPageUrl } from '../../../../framework';
 import { Repository } from '../Repository';
-import { Label } from '@patternfly/react-core';
-import { StatusCell } from '../../../common/StatusCell';
+import { StatusCell } from '../../../common/Status';
+import { HubRoute } from '../../HubRoutes';
 
 export function useRepositoriesColumns(_options?: {
   disableSort?: boolean;
   disableLinks?: boolean;
 }) {
   const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
   const tableColumns = useMemo<ITableColumn<Repository>[]>(
     () => [
       {
         header: t('Repository name'),
-        cell: (repository) => <TextCell text={repository.name} />,
+        cell: (repository) => (
+          <TextCell
+            text={repository.name}
+            to={getPageUrl(HubRoute.RepositoryPage, { params: { id: repository.name } })}
+          />
+        ),
         sort: 'name',
       },
       {
@@ -61,7 +68,7 @@ export function useRepositoriesColumns(_options?: {
         sort: 'pulp_created',
       },
     ],
-    [t]
+    [t, getPageUrl]
   );
   return tableColumns;
 }

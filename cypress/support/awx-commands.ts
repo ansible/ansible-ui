@@ -21,11 +21,150 @@ import { User } from '../../frontend/awx/interfaces/User';
 import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/WorkflowJobTemplate';
 import './auth';
 import './commands';
-import './rest-commands';
 import { awxAPI } from './formatApiPathForAwx';
-//import { Credential } from '../../frontend/eda/interfaces/generated/eda-api';
+import './rest-commands';
+import { InventorySource } from '../../frontend/awx/interfaces/InventorySource';
+import { WorkflowNode } from '../../frontend/awx/interfaces/WorkflowNode';
 
 //  AWX related custom command implementation
+
+/* The above code is adding a custom Cypress command called
+`createAwxWorkflowVisualizerJobTemplateNode`. This command is used to create a new workflow job
+template node in an AWX (Ansible Tower) instance. */
+Cypress.Commands.add(
+  'createAwxWorkflowVisualizerJobTemplateNode',
+  (workflowJobTemplate: WorkflowJobTemplate, jobTemplateNode: JobTemplate) => {
+    cy.requestPost<WorkflowNode>(
+      `/api/v2/workflow_job_templates/${workflowJobTemplate?.id}/workflow_nodes/`,
+      {
+        unified_job_template: jobTemplateNode.id,
+      }
+    );
+  }
+);
+
+/* The above code is adding a custom Cypress command called
+`createAwxWorkflowVisualizerManagementNode`. This command is used to create a workflow node for a
+given workflow job template in an AWX (Ansible Tower) application. The `workflowJobTemplateId`
+parameter is the ID of the workflow job template, and the `managementId` parameter is the ID of the
+management node (1, 2, 3, or 4). The command makes a POST request to the AWX API to create the
+workflow node with the specified parameters. */
+Cypress.Commands.add(
+  'createAwxWorkflowVisualizerManagementNode',
+  (workflowJobTemplateId: WorkflowJobTemplate, managementId: 1 | 2 | 3 | 4) => {
+    cy.requestPost<WorkflowNode>(
+      `/api/v2/workflow_job_templates/${workflowJobTemplateId?.id}/workflow_nodes/`,
+      {
+        unified_job_template: managementId,
+      }
+    );
+  }
+);
+
+/* The above code is adding a custom Cypress command called `createAwxWorkflowVisualizerWJTNode`. This
+command is used to create a new workflow node for a given workflow job template. It makes a POST
+request to the `/api/v2/workflow_job_templates/{id}/workflow_nodes/` endpoint with the necessary
+data to create the node. */
+Cypress.Commands.add(
+  'createAwxWorkflowVisualizerWJTNode',
+  (workflowJobTemplate: WorkflowJobTemplate) => {
+    cy.requestPost<WorkflowNode>(
+      `/api/v2/workflow_job_templates/${workflowJobTemplate?.id}/workflow_nodes/`,
+      {
+        unified_job_template: workflowJobTemplate?.id,
+        limit: null,
+        scm_branch: null,
+      }
+    );
+  }
+);
+
+/* The above code is adding a custom Cypress command called `createAwxWorkflowVisualizerProjectNode`.
+This command is used to create a new workflow node for a given `workflowJobTemplate` and `project`
+in an AWX (Ansible Tower) environment. */
+Cypress.Commands.add(
+  'createAwxWorkflowVisualizerProjectNode',
+  function (workflowJobTemplate: WorkflowJobTemplate, project: Project) {
+    cy.requestPost<WorkflowNode>(
+      `/api/v2/workflow_job_templates/${workflowJobTemplate?.id}/workflow_nodes/`,
+      {
+        unified_job_template: project.id,
+      }
+    );
+  }
+);
+
+Cypress.Commands.add(
+  'createAwxWorkflowVisualizerApprovalNode',
+  (workflowJobTemplate: WorkflowJobTemplate) => {
+    cy.requestPost<WorkflowNode>(
+      `/api/v2/workflow_job_templates/${workflowJobTemplate?.id}/workflow_nodes/`,
+      {}
+    ).then((approvalNode) => {
+      cy.requestPost(
+        `/api/v2/workflow_job_template_nodes/${approvalNode.id}/create_approval_template/`,
+        {
+          name: 'E2E WorkflowJTApprovalNode ' + randomString(4),
+        }
+      ).then(() => {
+        return approvalNode;
+      });
+    });
+  }
+);
+
+/* The above code is adding a custom Cypress command called
+`createAwxWorkflowVisualizerInventorySourceNode`. This command is used to create a workflow node for
+an Ansible Tower workflow job template. The function takes two parameters: `workflowJobTemplate` (of
+type `WorkflowJobTemplate`) and `inventorySource` (of type `InventorySource`). */
+Cypress.Commands.add(
+  'createAwxWorkflowVisualizerInventorySourceNode',
+  function (workflowJobTemplate: WorkflowJobTemplate, inventorySource: InventorySource) {
+    cy.requestPost<WorkflowNode>(
+      `/api/v2/workflow_job_templates/${workflowJobTemplate?.id}/workflow_nodes/`,
+      {
+        unified_job_template: inventorySource.id,
+        scm_branch: null,
+        limit: null,
+        job_tags: null,
+        skip_tags: null,
+      }
+    );
+  }
+);
+
+/* The above code is adding a custom Cypress command called `createWorkflowJTSuccessNodeLink`. This
+command is used to create a link between two nodes in a workflow job template. It takes two
+parameters, `firstNode` and `secondNode`, which are objects representing the first and second nodes
+respectively. */
+Cypress.Commands.add(
+  'createWorkflowJTSuccessNodeLink',
+  function (firstNode: WorkflowNode, secondNode: WorkflowNode) {
+    cy.requestPost<WorkflowNode>(
+      `/api/v2/workflow_job_template_nodes/${firstNode.id}/success_nodes/`,
+      {
+        id: secondNode.id,
+      }
+    );
+  }
+);
+
+/* The above code is adding a custom Cypress command called `createWorkflowJTFailureNodeLink`. This
+command is used to create a failure node link between two workflow job template nodes. It makes a
+POST request to the `/api/v2/workflow_job_template_nodes/{firstNode.id}/failure_nodes/` endpoint
+with the `id` of the second node as the request payload. */
+
+Cypress.Commands.add(
+  'createWorkflowJTFailureNodeLink',
+  function (firstNode: WorkflowNode, secondNode: WorkflowNode) {
+    cy.requestPost<WorkflowNode>(
+      `/api/v2/workflow_job_template_nodes/${firstNode.id}/failure_nodes/`,
+      {
+        id: secondNode.id,
+      }
+    );
+  }
+);
 
 /**
  * cy.inputCustomCredTypeConfig(json/yml, input/injector config)
@@ -344,10 +483,12 @@ Cypress.Commands.add('clickPageAction', (dataCyLabel: string | RegExp) => {
 });
 
 // Resources for testing AWX
-Cypress.Commands.add('createAwxOrganization', (orgName?: string) => {
-  cy.awxRequestPost<Pick<Organization, 'name'>, Organization>(awxAPI`/organizations/`, {
-    name: orgName ? orgName : 'E2E Organization ' + randomString(4),
-  });
+Cypress.Commands.add('createAwxOrganization', (orgName?: string, failOnStatusCode?: boolean) => {
+  cy.awxRequestPost<Pick<Organization, 'name'>, Organization>(
+    awxAPI`/organizations/`,
+    { name: orgName ? orgName : 'E2E Organization ' + randomString(4) },
+    failOnStatusCode
+  );
 });
 
 Cypress.Commands.add(
@@ -433,8 +574,10 @@ Cypress.Commands.add(
 Cypress.Commands.add('awxRequestPost', function awxRequestPost<
   RequestBodyT extends Cypress.RequestBody,
   ResponseBodyT = RequestBodyT,
->(url: string, body: RequestBodyT) {
-  cy.awxRequest<ResponseBodyT>('POST', url, body).then((response) => response.body);
+>(url: string, body: RequestBodyT, failOnStatusCode?: boolean) {
+  cy.awxRequest<ResponseBodyT>('POST', url, body, failOnStatusCode).then(
+    (response) => response.body
+  );
 });
 
 Cypress.Commands.add('awxRequestGet', function awxRequestGet<ResponseBodyT = unknown>(url: string) {
@@ -991,7 +1134,7 @@ Cypress.Commands.add('waitForJobToProcessEvents', (jobID: string) => {
     }
     cy.wait(500);
 
-    cy.requestGet<Job>(`api/v2/jobs/${jobID}/`).then((job) => {
+    cy.requestGet<Job>(awxAPI`/jobs/${jobID}/`).then((job) => {
       if (job.event_processing_finished !== true) {
         cy.log(`EVENT PROCESSING = ${job.event_processing_finished}`);
         cy.log(`MAX LOOPS RAN = ${maxLoops}`);
@@ -1005,5 +1148,78 @@ Cypress.Commands.add('waitForJobToProcessEvents', (jobID: string) => {
   reason the numbers chosen for wait is 500ms and maxLoops is 80,
   as processing events takes ~30s, hence 80 * 500ms is chosen as the upper limit)
   */
-  waitForJobToFinishProcessingEvents(80);
+  waitForJobToFinishProcessingEvents(120);
+});
+
+Cypress.Commands.add('waitForWorkflowJobStatus', (jobID: string) => {
+  const waitForWFJobStatus = (maxLoops: number) => {
+    if (maxLoops === 0) {
+      cy.log('Max loops reached while waiting for processing events.');
+      return;
+    }
+    cy.wait(500);
+
+    cy.requestGet<Job>(awxAPI`/workflow_jobs/${jobID}/`)
+      .its('status')
+      .then((status) => {
+        if (status !== 'successful') {
+          cy.log(`WORKFLOW JOB STATUS = ${status}`);
+          cy.log(`MAX LOOPS RAN = ${maxLoops}`);
+          waitForWFJobStatus(maxLoops - 1);
+        } else {
+          cy.log(`WORKFLOW JOB STATUS = ${status as string}`);
+        }
+      });
+  };
+  waitForWFJobStatus(200);
+});
+
+const GLOBAL_PROJECT_NAME = 'Global Project';
+const GLOBAL_PROJECT_DESCRIPTION = 'Global Read Only Project for E2E tests';
+const GLOBAL_PROJECT_SCM_URL = 'https://github.com/ansible/ansible-ui';
+const GLOBAL_ORG_NAME = 'Global Organization';
+
+/** Create a global organization if it doesn't exist. */
+Cypress.Commands.add('createGlobalOrganization', function () {
+  cy.awxRequestGet<AwxItemsResponse<Organization>>(awxAPI`/organizations?name=${GLOBAL_ORG_NAME}`)
+    .its('results')
+    .then((orgResults: Organization[]) => {
+      if (orgResults.length === 0) {
+        cy.awxRequest<AwxItemsResponse<Organization>>(
+          'POST',
+          awxAPI`/organizations/`,
+          { name: GLOBAL_ORG_NAME },
+          false
+        );
+        cy.wait(100).then(() => cy.createGlobalOrganization());
+      } else {
+        cy.wrap(orgResults[0]).as('globalOrganization');
+      }
+    });
+});
+
+/** Create a global project if it doesn't exist. */
+Cypress.Commands.add('createGlobalProject', function () {
+  const globalOrganization = this.globalOrganization as Organization;
+  cy.awxRequestGet<AwxItemsResponse<Project>>(awxAPI`/projects?name=${GLOBAL_PROJECT_NAME}`)
+    .its('results')
+    .then((projectResults: Project[]) => {
+      if (projectResults.length === 0) {
+        cy.awxRequest<AwxItemsResponse<Project>>(
+          'POST',
+          awxAPI`/projects/`,
+          {
+            name: GLOBAL_PROJECT_NAME,
+            description: GLOBAL_PROJECT_DESCRIPTION,
+            organization: globalOrganization.id,
+            scm_type: 'git',
+            scm_url: GLOBAL_PROJECT_SCM_URL,
+          },
+          false
+        );
+        cy.wait(100).then(() => cy.createGlobalProject());
+      } else {
+        cy.wrap(projectResults[0]).as('globalProject');
+      }
+    });
 });

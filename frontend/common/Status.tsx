@@ -13,9 +13,14 @@ import {
 import { useTranslation } from 'react-i18next';
 import { RunningIcon, TextCell } from '../../framework';
 
-export function StatusCell(props: { status?: string; disableLinks?: boolean; to?: string }) {
+export function StatusCell(props: {
+  status?: string;
+  disableLinks?: boolean;
+  to?: string;
+  hideLabel?: boolean;
+}) {
   const { t } = useTranslation();
-  const status = props.status || 'default';
+  const status = props.status;
 
   const label = useLabel(status, t);
   const color = getColor(status);
@@ -23,7 +28,7 @@ export function StatusCell(props: { status?: string; disableLinks?: boolean; to?
 
   return (
     <TextCell
-      text={label}
+      text={props.hideLabel ? '' : label}
       color={color}
       icon={Icon ? <Icon /> : null}
       to={props.to}
@@ -48,7 +53,8 @@ export function StatusLabel(props: { status?: string; dataCy?: string }) {
   );
 }
 
-function useLabel(status: string, t: (str: string) => string) {
+function useLabel(status: string | undefined, t: (str: string) => string) {
+  if (status === undefined) return t('Unknown');
   const labels: { [key: string]: string } = {
     approved: t('Approved'),
     completed: t('Completed'),
@@ -88,7 +94,7 @@ function useLabel(status: string, t: (str: string) => string) {
   return labels[status] || status;
 }
 
-function getColor(status: string) {
+function getColor(status: string | undefined) {
   switch (status) {
     case 'approved':
     case 'completed':
@@ -131,7 +137,7 @@ function getColor(status: string) {
   }
 }
 
-function getIcon(status: string) {
+function getIcon(status: string | undefined) {
   switch (status) {
     case 'approved':
     case 'completed':

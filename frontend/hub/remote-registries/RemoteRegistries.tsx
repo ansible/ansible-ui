@@ -24,6 +24,7 @@ export function RemoteRegistries() {
   const toolbarActions = useRemoteRegistriesToolbarActions(view);
   const rowActions = useRemoteRegistryActions({
     onRemoteRegistryDeleted: view.unselectItemsAndRefresh,
+    refresh: view.refresh,
   });
   return (
     <PageLayout>

@@ -1,16 +1,48 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, usePageNavigate } from '../../../../../framework';
+import {
+  ColumnModalOption,
+  ColumnTableOption,
+  ITableColumn,
+  usePageNavigate,
+} from '../../../../../framework';
 import {
   useCreatedColumn,
   useDescriptionColumn,
   useModifiedColumn,
   useNameColumn,
   useTypeColumn,
+  useOrganizationNameColumn,
+  useInventoryNameColumn,
+  useCredentialsColumn,
+  useLastRanColumn,
 } from '../../../../common/columns';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { AwxRoute } from '../../../AwxRoutes';
+import { SummaryFieldRecentJob } from '../../../interfaces/summary-fields/summary-fields';
+import { Sparkline } from '../components/Sparkline';
+
+function useActivityColumn() {
+  const { t } = useTranslation();
+  const column: ITableColumn<{
+    summary_fields?: { recent_jobs?: SummaryFieldRecentJob[] };
+  }> = useMemo(
+    () => ({
+      header: t('Activity'),
+      cell: (item) => {
+        if (!item.summary_fields?.recent_jobs) return <></>;
+        return <Sparkline jobs={item.summary_fields?.recent_jobs} />;
+      },
+      table: ColumnTableOption.Expanded,
+      card: 'hidden',
+      list: 'hidden',
+      modal: ColumnModalOption.Hidden,
+    }),
+    [t]
+  );
+  return column;
+}
 
 export function useTemplateColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
@@ -38,14 +70,41 @@ export function useTemplateColumns(options?: { disableSort?: boolean; disableLin
   };
   const createdColumn = useCreatedColumn(options);
   const descriptionColumn = useDescriptionColumn();
+  const activityColumn = useActivityColumn();
   const modifiedColumn = useModifiedColumn(options);
+  const organizationColumn = useOrganizationNameColumn(AwxRoute.OrganizationDetails, options);
+  const inventoryColumn = useInventoryNameColumn(AwxRoute.InventoryDetails, options);
+  const credentialsColumn = useCredentialsColumn();
+  const lastRanColumn = useLastRanColumn(options);
   const typeOfTemplate = useTypeColumn<JobTemplate | WorkflowJobTemplate>({
     ...options,
     makeReadable,
   });
   const tableColumns = useMemo<ITableColumn<JobTemplate | WorkflowJobTemplate>[]>(
-    () => [nameColumn, descriptionColumn, typeOfTemplate, createdColumn, modifiedColumn],
-    [nameColumn, descriptionColumn, typeOfTemplate, createdColumn, modifiedColumn]
+    () => [
+      nameColumn,
+      activityColumn,
+      descriptionColumn,
+      typeOfTemplate,
+      createdColumn,
+      modifiedColumn,
+      organizationColumn,
+      inventoryColumn,
+      credentialsColumn,
+      lastRanColumn,
+    ],
+    [
+      nameColumn,
+      activityColumn,
+      descriptionColumn,
+      typeOfTemplate,
+      createdColumn,
+      modifiedColumn,
+      organizationColumn,
+      inventoryColumn,
+      credentialsColumn,
+      lastRanColumn,
+    ]
   );
   return tableColumns;
 }

@@ -24,15 +24,11 @@ export function useRemoteColumns() {
           />
         ),
         sort: 'name',
-        card: 'name',
-        list: 'name',
       },
       {
         header: t('URL'),
         cell: (remote) => <CopyCell text={remote.url} />,
         sort: 'url',
-        card: 'name',
-        list: 'name',
       },
       {
         header: t('Created'),

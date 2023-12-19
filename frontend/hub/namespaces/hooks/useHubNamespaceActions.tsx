@@ -12,10 +12,15 @@ import { HubRoute } from '../../HubRoutes';
 import { HubNamespace } from '../HubNamespace';
 import { useDeleteHubNamespaces } from './useDeleteHubNamespaces';
 
-export function useHubNamespaceActions() {
+export function useHubNamespaceActions(options?: {
+  onHubNamespacesDeleted: (namespaces: HubNamespace[]) => void;
+}) {
+  if (!options) {
+    options = { onHubNamespacesDeleted: () => {} };
+  }
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const deleteHubNamespaces = useDeleteHubNamespaces(() => null);
+  const deleteHubNamespaces = useDeleteHubNamespaces(options.onHubNamespacesDeleted);
 
   return useMemo(() => {
     const actions: IPageAction<HubNamespace>[] = [

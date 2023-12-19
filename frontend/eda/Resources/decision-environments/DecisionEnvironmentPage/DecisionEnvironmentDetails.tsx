@@ -7,6 +7,7 @@ import { edaAPI } from '../../../api/eda-utils';
 import { SWR_REFRESH_INTERVAL } from '../../../constants';
 import { EdaCredential } from '../../../interfaces/EdaCredential';
 import { EdaDecisionEnvironmentRead } from '../../../interfaces/EdaDecisionEnvironment';
+import { LastModifiedPageDetail } from '../../../../common/LastModifiedPageDetail';
 
 export function DecisionEnvironmentDetails() {
   const { t } = useTranslation();
@@ -64,9 +65,7 @@ export function DecisionEnvironmentDetails() {
       <PageDetail label={t('Created')}>
         <DateTimeCell format="date-time" value={decisionEnvironment?.created_at} />
       </PageDetail>
-      <PageDetail label={t('Last modified')}>
-        <DateTimeCell format="date-time" value={decisionEnvironment?.modified_at} />
-      </PageDetail>
+      <LastModifiedPageDetail format="date-time" value={decisionEnvironment?.modified_at} />
     </PageDetails>
   );
 }

@@ -17,6 +17,7 @@ import { EdaProjectRead } from '../../../interfaces/EdaProject';
 import { edaAPI } from '../../../api/eda-utils';
 import { Fragment } from 'react';
 import { StandardPopover } from '../../../../../framework/components/StandardPopover';
+import { LastModifiedPageDetail } from '../../../../common/LastModifiedPageDetail';
 
 export function ProjectDetails() {
   const { t } = useTranslation();
@@ -67,9 +68,10 @@ export function ProjectDetails() {
         <PageDetail label={t('Created')}>
           {project?.created_at ? formatDateString(project.created_at) : ''}
         </PageDetail>
-        <PageDetail label={t('Last modified')}>
-          {project?.modified_at ? formatDateString(project.modified_at) : ''}
-        </PageDetail>
+        <LastModifiedPageDetail
+          format="date-time"
+          value={project?.modified_at ? formatDateString(project.modified_at) : ''}
+        />
         {!!project?.verify_ssl && (
           <PageDetail label={t('Enabled option')}>
             <DescriptionListGroup>
