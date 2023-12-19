@@ -41,7 +41,7 @@ export function useWorkflowApprovalsColumns(options?: {
               text={`${workflow_approval.summary_fields.source_workflow_job.name}`}
               to={RouteObj.JobOutput.replace(':job_type', 'workflow').replace(
                 ':id',
-                workflow_approval.summary_fields.source_workflow_job.id.toString()
+                workflow_approval.summary_fields.source_workflow_job.id?.toString()
               )}
               disableLinks={options?.disableLinks}
             />
