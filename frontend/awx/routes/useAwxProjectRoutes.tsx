@@ -9,6 +9,7 @@ import { ProjectDetails } from '../resources/projects/ProjectPage/ProjectDetails
 import { CreateProject, EditProject } from '../resources/projects/ProjectPage/ProjectForm';
 import { ProjectPage } from '../resources/projects/ProjectPage/ProjectPage';
 import { Projects } from '../resources/projects/Projects';
+import { ProjectJobTemplates } from '../resources/projects/ProjectPage/ProjectJobTemplates';
 import { CreateSchedule } from '../views/schedules/ScheduleForm';
 import { ScheduleDetails } from '../views/schedules/SchedulePage/ScheduleDetails';
 import { SchedulePage } from '../views/schedules/SchedulePage/SchedulePage';
@@ -93,7 +94,7 @@ export function useAwxProjectRoutes() {
             {
               id: AwxRoute.ProjectJobTemplates,
               path: 'job_templates',
-              element: <PageNotImplemented />,
+              element: <ProjectJobTemplates />,
             },
             {
               id: AwxRoute.ProjectNotifications,

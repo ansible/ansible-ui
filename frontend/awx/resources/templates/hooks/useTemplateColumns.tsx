@@ -12,6 +12,10 @@ import {
   useModifiedColumn,
   useNameColumn,
   useTypeColumn,
+  useOrganizationNameColumn,
+  useInventoryNameColumn,
+  useCredentialsColumn,
+  useLastRanColumn,
 } from '../../../../common/columns';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
@@ -68,6 +72,10 @@ export function useTemplateColumns(options?: { disableSort?: boolean; disableLin
   const descriptionColumn = useDescriptionColumn();
   const activityColumn = useActivityColumn();
   const modifiedColumn = useModifiedColumn(options);
+  const organizationColumn = useOrganizationNameColumn(AwxRoute.OrganizationDetails, options);
+  const inventoryColumn = useInventoryNameColumn(AwxRoute.InventoryDetails, options);
+  const credentialsColumn = useCredentialsColumn();
+  const lastRanColumn = useLastRanColumn(options);
   const typeOfTemplate = useTypeColumn<JobTemplate | WorkflowJobTemplate>({
     ...options,
     makeReadable,
@@ -80,8 +88,23 @@ export function useTemplateColumns(options?: { disableSort?: boolean; disableLin
       typeOfTemplate,
       createdColumn,
       modifiedColumn,
+      organizationColumn,
+      inventoryColumn,
+      credentialsColumn,
+      lastRanColumn,
     ],
-    [nameColumn, activityColumn, descriptionColumn, typeOfTemplate, createdColumn, modifiedColumn]
+    [
+      nameColumn,
+      activityColumn,
+      descriptionColumn,
+      typeOfTemplate,
+      createdColumn,
+      modifiedColumn,
+      organizationColumn,
+      inventoryColumn,
+      credentialsColumn,
+      lastRanColumn,
+    ]
   );
   return tableColumns;
 }
