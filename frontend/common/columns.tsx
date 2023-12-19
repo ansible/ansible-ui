@@ -357,6 +357,46 @@ export function useInventoryNameColumn(
   return column;
 }
 
+export function useProjectNameColumn(
+  projectDetailsRoute: string,
+  options?: {
+    disableLinks?: boolean;
+    disableSort?: boolean;
+  }
+) {
+  const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
+  const column: ITableColumn<{
+    summary_fields?: {
+      project?: {
+        id: number;
+        name: string;
+      };
+    };
+  }> = useMemo(
+    () => ({
+      header: t('Project'),
+      cell: (item) => (
+        <TextCell
+          text={item.summary_fields?.project?.name}
+          to={getPageUrl(projectDetailsRoute, {
+            params: { id: item.summary_fields?.project?.id },
+          })}
+          disableLinks={options?.disableLinks}
+        />
+      ),
+      value: (item) => item.summary_fields?.project?.name,
+      sort: options?.disableSort ? undefined : 'project',
+      table: ColumnTableOption.Expanded,
+      card: 'hidden',
+      list: 'hidden',
+      modal: ColumnModalOption.Hidden,
+    }),
+    [getPageUrl, options?.disableLinks, options?.disableSort, projectDetailsRoute, t]
+  );
+  return column;
+}
+
 export function useTypeColumn<T extends object>(options: {
   header?: string;
   url?: string;
