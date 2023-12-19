@@ -29,6 +29,7 @@ import {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
 
 interface IPageNotifications {
   notificationsDrawerOpen: boolean;
@@ -117,11 +118,15 @@ export function PageNotificationsDrawer(props: { children: ReactNode }) {
           </DrawerPanelContent>
         }
       >
-        <DrawerContentBody>{props.children}</DrawerContentBody>
+        <DrawerContentBodyStyled>{props.children}</DrawerContentBodyStyled>
       </DrawerContent>
     </Drawer>
   );
 }
+
+const DrawerContentBodyStyled = styled(DrawerContentBody)`
+  max-height: 100%;
+`;
 
 function PageNotificationGroup(props: { group: IPageNotificationGroup }) {
   const { t } = useTranslation();
