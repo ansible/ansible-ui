@@ -56,10 +56,10 @@ export function EdaRolesTable() {
         defaultSort: true,
       },
       {
+        id: 'description',
+        type: 'description',
         header: t('Description'),
-        cell: (role) => role.description && <TextCell text={role.description} />,
-        card: 'description',
-        list: 'description',
+        value: (role) => role.description,
       },
     ],
     [t, getPageUrl]

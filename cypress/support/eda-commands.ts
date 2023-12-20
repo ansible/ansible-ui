@@ -19,6 +19,7 @@ import {
   CredentialTypeEnum,
   ImportStateEnum,
   RestartPolicyEnum,
+  Status906Enum,
 } from '../../frontend/eda/interfaces/generated/eda-api';
 import './auth';
 import './commands';
@@ -129,8 +130,8 @@ Cypress.Commands.add(
       edaAPI`/activations/${edaRulebookActivation.id.toString()}`
     ).then((rba) => {
       switch (rba.status) {
-        case 'failed':
-        case 'completed':
+        case Status906Enum.Failed:
+        case Status906Enum.Completed:
           cy.wrap(rba);
           break;
         default:

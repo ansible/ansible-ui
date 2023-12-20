@@ -252,18 +252,18 @@ export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<
             abortController.signal.aborted
               ? translations.canceledText
               : error
-              ? translations.errorText
-              : !isProcessing
-              ? translations.successText
-              : processingText ?? translations.processingText
+                ? translations.errorText
+                : !isProcessing
+                  ? translations.successText
+                  : processingText ?? translations.processingText
           }
           size={ProgressSize.lg}
           variant={
             error || isCanceled
               ? ProgressVariant.danger
               : progress === items.length
-              ? ProgressVariant.success
-              : undefined
+                ? ProgressVariant.success
+                : undefined
           }
         />
       </ModalBoxBody>
