@@ -10,7 +10,7 @@ import {
   usePageNavigate,
 } from '../../../framework';
 import { useGet } from '../../common/crud/useGet';
-import { usePatchRequest } from '../../common/crud/usePatchRequest';
+import { usePutRequest } from '../../common/crud/usePutRequest';
 import { usePostRequest } from '../../common/crud/usePostRequest';
 import { HubRoute } from '../HubRoutes';
 import { hubAPI } from '../api/formatPath';
@@ -55,14 +55,17 @@ export function EditHubNamespace() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const name = params.id;
+  const url = hubAPI`/_ui/v1/my-namespaces/${name ?? ''}/`;
+  console.log('url: ', url);
   const {
     data: namespace,
     error,
     refresh,
   } = useGet<HubNamespace>(hubAPI`/_ui/v1/my-namespaces/${name ?? ''}/`);
-  const patchRequest = usePatchRequest<HubNamespace, HubNamespace>();
+debugger
+  const putRequest = usePutRequest<HubNamespace, HubNamespace>();
   const onSubmit: PageFormSubmitHandler<HubNamespace> = async (namespace) => {
-    await patchRequest(hubAPI`/_ui/v1/my-namespaces/${name ?? ''}/`, namespace);
+    await putRequest(hubAPI`/_ui/v1/my-namespaces/${name ?? ''}/`, namespace);
     navigate(-1);
   };
   const getPageUrl = useGetPageUrl();
