@@ -9,8 +9,8 @@ import {
   PageTable,
   usePageNavigate,
 } from '../../../../framework';
-import { useActiveUser } from '../../../common/useActiveUser';
 import { AwxRoute } from '../../AwxRoutes';
+import { useAwxActiveUser } from '../../common/useAwxActiveUser';
 import { AccessRole, User } from '../../interfaces/User';
 import { useAwxView } from '../../useAwxView';
 import { useSelectUsersAddTeams } from '../users/hooks/useSelectUsersAddTeams';
@@ -39,7 +39,7 @@ export function ResourceAccessList(props: { url: string; resource: ResourceType 
   const { t } = useTranslation();
   const { url, resource } = props;
 
-  const activeUser = useActiveUser();
+  const activeUser = useAwxActiveUser();
   const canAddAndRemoveUsers: boolean = useMemo(
     () => activeUser?.is_superuser || resource?.summary_fields?.user_capabilities?.edit,
     [activeUser?.is_superuser, resource?.summary_fields?.user_capabilities?.edit]

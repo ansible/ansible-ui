@@ -7,15 +7,15 @@ import {
   PageActionType,
   usePageNavigate,
 } from '../../../../../framework';
+import { AwxRoute } from '../../../AwxRoutes';
+import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import { Application } from '../../../interfaces/Application';
 import { useDeleteApplications } from '../hooks/useDeleteApplications';
-import { AwxRoute } from '../../../AwxRoutes';
-import { useActiveUser } from '../../../../common/useActiveUser';
 
 export function useApplicationActions(options: {
   onApplicationsDeleted: (applications: Application[]) => void;
 }) {
-  const activeUser = useActiveUser();
+  const activeUser = useAwxActiveUser();
   const { onApplicationsDeleted } = options;
   const { t } = useTranslation();
   const deleteApplications = useDeleteApplications(onApplicationsDeleted);

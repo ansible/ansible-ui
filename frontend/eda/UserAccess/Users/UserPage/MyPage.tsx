@@ -17,9 +17,9 @@ import {
 import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { useGet } from '../../../../common/crud/useGet';
-import { useEdaActiveUser } from '../../../../common/useActiveUser';
 import { EdaRoute } from '../../../EdaRoutes';
 import { edaAPI } from '../../../api/eda-utils';
+import { useEdaActiveUser } from '../../../common/useEdaActiveUser';
 import { EdaUser } from '../../../interfaces/EdaUser';
 
 export function MyPage() {
@@ -31,10 +31,10 @@ export function MyPage() {
 
   const activeUser = useEdaActiveUser();
   const canEditUser =
-    activeUser?.is_superuser || activeUser?.roles.some((role) => role.name === 'Admin');
+    !!activeUser?.is_superuser || !!activeUser?.roles.some((role) => role.name === 'Admin');
   const canViewUsers =
-    activeUser?.is_superuser ||
-    activeUser?.roles.some((role) => role.name === 'Admin' || role.name === 'Auditor');
+    !!activeUser?.is_superuser ||
+    !!activeUser?.roles.some((role) => role.name === 'Admin' || role.name === 'Auditor');
 
   const isActionTab = location.pathname === `/eda/access/users/me/details`;
   const itemActions = useMemo<IPageAction<EdaUser>[]>(() => {
