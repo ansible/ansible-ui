@@ -75,7 +75,7 @@ export function useWorkflowApprovalsColumns(options?: {
         defaultSortDirection: 'desc',
       },
     ],
-    [idColumn, nameColumn, options?.disableLinks, t]
+    [getPageUrl, idColumn, nameColumn, options?.disableLinks, t]
   );
   return tableColumns;
 }
