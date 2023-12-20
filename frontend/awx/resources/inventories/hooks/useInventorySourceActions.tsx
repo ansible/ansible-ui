@@ -10,9 +10,9 @@ import {
   usePageNavigate,
 } from '../../../../../framework';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
-import { useActiveUser } from '../../../../common/useActiveUser';
 import { AwxRoute } from '../../../AwxRoutes';
 import { awxAPI } from '../../../api/awx-utils';
+import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import { InventorySource } from '../../../interfaces/InventorySource';
 import { useDeleteInventorySources } from './useDeleteInventorySources';
 
@@ -27,7 +27,7 @@ export function useInventorySourceActions({
   const pageNavigate = usePageNavigate();
   const deleteInventorySources = useDeleteInventorySources(onInventorySourcesDeleted);
 
-  const activeUser = useActiveUser();
+  const activeUser = useAwxActiveUser();
   const alertToaster = usePageAlertToaster();
 
   const postRequest = usePostRequest();

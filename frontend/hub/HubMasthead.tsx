@@ -9,10 +9,10 @@ import { PageMastheadDropdown } from '../../framework/PageMasthead/PageMastheadD
 import { PageNotificationsIcon } from '../../framework/PageMasthead/PageNotificationsIcon';
 import { PageSettingsIcon } from '../../framework/PageMasthead/PageSettingsIcon';
 import { PageThemeSwitcher } from '../../framework/PageMasthead/PageThemeSwitcher';
+import { useAwxActiveUser } from '../awx/common/useAwxActiveUser';
 import { useAnsibleAboutModal } from '../common/AboutModal';
 import { PageRefreshIcon } from '../common/PageRefreshIcon';
 import { postRequest } from '../common/crud/Data';
-import { useActiveUser } from '../common/useActiveUser';
 import { useClearCache } from '../common/useInvalidateCache';
 import { hubAPI } from './api/formatPath';
 import Logo from './galaxy-logo.svg';
@@ -22,7 +22,7 @@ export function HubMasthead() {
   const openAnsibleAboutModal = useAnsibleAboutModal();
   const { clearAllCache } = useClearCache();
   const navigate = useNavigate();
-  const activeUser = useActiveUser();
+  const activeUser = useAwxActiveUser();
   const logout = useCallback(async () => {
     await postRequest(hubAPI`/_ui/v1/auth/logout/`, {});
     clearAllCache();

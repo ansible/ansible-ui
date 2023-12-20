@@ -8,10 +8,10 @@ import { PageMasthead, usePageNavigate } from '../../framework';
 import { PageMastheadDropdown } from '../../framework/PageMasthead/PageMastheadDropdown';
 import { PageSettingsIcon } from '../../framework/PageMasthead/PageSettingsIcon';
 import { PageThemeSwitcher } from '../../framework/PageMasthead/PageThemeSwitcher';
+import { useAwxActiveUser } from '../awx/common/useAwxActiveUser';
 import { useAnsibleAboutModal } from '../common/AboutModal';
 import { PageRefreshIcon } from '../common/PageRefreshIcon';
 import { postRequest } from '../common/crud/Data';
-import { useActiveUser } from '../common/useActiveUser';
 import { useClearCache } from '../common/useInvalidateCache';
 import { EdaRoute } from './EdaRoutes';
 import { edaAPI } from './api/eda-utils';
@@ -23,7 +23,7 @@ export function EdaMasthead() {
   const { clearAllCache } = useClearCache();
   const pageNavigate = usePageNavigate();
   const navigate = useNavigate();
-  const activeUser = useActiveUser();
+  const activeUser = useAwxActiveUser();
   const logout = useCallback(async () => {
     await postRequest(edaAPI`/auth/session/logout/`, {});
     clearAllCache();
