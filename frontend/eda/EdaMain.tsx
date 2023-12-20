@@ -7,9 +7,9 @@ import { Outlet } from 'react-router-dom';
 import { PageApp } from '../../framework/PageNavigation/PageApp';
 import { Login } from '../common/Login';
 import '../common/i18n';
-import { ActiveEdaUserProvider } from '../common/useActiveUser';
 import { EdaMasthead } from './EdaMasthead';
 import { edaAPI } from './api/eda-utils';
+import { EdaActiveUserProvider } from './common/useEdaActiveUser';
 import { useEdaNavigation } from './useEdaNavigation';
 
 export default function EdaMain() {
@@ -18,9 +18,9 @@ export default function EdaMain() {
     <PageApp
       login={<Login apiUrl={edaAPI`/auth/session/login/`} onLoginUrl="/overview" />}
       root={
-        <ActiveEdaUserProvider>
+        <EdaActiveUserProvider>
           <Outlet />
-        </ActiveEdaUserProvider>
+        </EdaActiveUserProvider>
       }
       masthead={<EdaMasthead />}
       navigation={navigation}
