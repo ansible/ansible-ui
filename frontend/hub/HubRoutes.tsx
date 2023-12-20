@@ -9,6 +9,7 @@ export enum HubRoute {
   EditNamespace = 'hub-edit-namespace',
   NamespacePage = 'hub-namespace-page',
   NamespaceDetails = 'hub-namespace-details',
+  NamespaceCLI = 'hub-namespace-cli',
 
   CollectionSignatureUpload = 'hub-signature-upload',
   Collections = 'hub-collections',
@@ -33,6 +34,13 @@ export enum HubRoute {
   CreateRepository = 'hub-create-repository',
   EditRepository = 'hub-edit-repository',
   RepositoryPage = 'hub-repository-page',
+  RepositoryDetails = 'hub-repository-page-details',
+  RepositoryAccess = 'hub-repository-page-access',
+  RepositoryCollectionVersion = 'hub-repository-page-collection-version',
+  RepositoryVersions = 'hub-repository-page-versions',
+  RepositoryVersionPage = 'hub-repository-page-version-page',
+  RepositoryVersionDetails = 'hub-repository-page-version-page-details',
+  RepositoryVersionCollections = 'hub-repository-page-version-page-collections',
 
   RemoteRegistries = 'hub-remote-registries',
   CreateRemoteRegistry = 'hub-create-remote-registry',

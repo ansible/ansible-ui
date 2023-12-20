@@ -48,6 +48,7 @@ import './eda-commands';
 import './hub-commands';
 import './rest-commands';
 import 'cypress-file-upload';
+import { WorkflowNode } from '../../frontend/awx/interfaces/WorkflowNode';
 
 declare global {
   namespace Cypress {
@@ -613,8 +614,47 @@ declare global {
         organization: Organization
       ): Chainable<{ inventory: Inventory; host: Host; group: Group }>;
 
+      createAwxWorkflowVisualizerJobTemplateNode(
+        workflowJT: WorkflowJobTemplate,
+        jobTemplateNode: JobTemplate
+      ): Chainable<WorkflowNode>;
+
+      createAwxWorkflowVisualizerProjectNode(
+        workflowJobTemplate: WorkflowJobTemplate,
+        project: Project
+      ): Chainable<WorkflowNode>;
+
+      createAwxWorkflowVisualizerApprovalNode(
+        firstNode: WorkflowJobTemplate
+      ): Chainable<WorkflowNode>;
+
+      createAwxWorkflowVisualizerInventorySourceNode(
+        workflowJT: WorkflowJobTemplate,
+        inventorySourceId: InventorySource
+      ): Chainable<WorkflowNode>;
+
+      createAwxWorkflowVisualizerWJTNode(
+        workflowJT: WorkflowJobTemplate
+      ): Chainable<WorkflowJobTemplate>;
+
+      createAwxWorkflowVisualizerManagementNode(
+        workflowJobTemplate: WorkflowJobTemplate,
+        managementId: 1 | 2 | 3 | 4
+      ): Chainable<WorkflowNode>;
+
+      createWorkflowJTSuccessNodeLink(
+        firstNode: WorkflowNode,
+        secondNode: WorkflowNode
+      ): Chainable<WorkflowNode>;
+
+      createWorkflowJTFailureNodeLink(
+        firstNode: WorkflowNode,
+        secondNode: WorkflowNode
+      ): Chainable<WorkflowNode>;
+
       waitForTemplateStatus(jobID: string): Chainable<AwxItemsResponse<JobEvent>>;
       waitForJobToProcessEvents(jobID: string): Chainable<Job>;
+      waitForWorkflowJobStatus(jobID: string): Chainable<Job>;
 
       // --- EDA COMMANDS ---
 
@@ -820,6 +860,9 @@ declare global {
         collectionName: string,
         tags?: string[]
       ): Cypress.Chainable<void>;
+      uploadHubCollectionFile(hubFilePath: string, hubFileName: string): Cypress.Chainable<void>;
+      createNamespace(namespaceName: string): Cypress.Chainable<void>;
+      getNamespace(namespaceName: string): Cypress.Chainable<void>;
       deleteNamespace(namespaceName: string): Cypress.Chainable<void>;
       deleteCollectionsInNamespace(namespaceName: string): Cypress.Chainable<void>;
       createHubRole(): Cypress.Chainable<HubRole>;

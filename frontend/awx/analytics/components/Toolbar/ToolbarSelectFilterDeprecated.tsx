@@ -96,8 +96,8 @@ export function ToolbarSelectFilterDeprecated(props: {
       ? props.label
       : props.placeholder
     : values.length
-    ? undefined
-    : props.placeholder;
+      ? undefined
+      : props.placeholder;
 
   const onClear =
     !props.isRequired && props.hasClear

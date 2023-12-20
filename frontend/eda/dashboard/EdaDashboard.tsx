@@ -118,8 +118,8 @@ export function EdaDashboard() {
                       !hasProject || !hasDecisionEnvironment
                         ? 'pending'
                         : hasRulebookActivation
-                        ? 'success'
-                        : 'info'
+                          ? 'success'
+                          : 'info'
                     }
                     description={t('Create a rulebook activation.')}
                   >

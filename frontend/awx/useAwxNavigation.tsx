@@ -70,7 +70,7 @@ export function useAwxNavigation() {
       children: [
         {
           id: AwxRoute.TopologyView,
-          label: 'Topology View',
+          label: t('Topology View'),
           path: 'topology',
           element: <Topology />,
         },
@@ -106,13 +106,13 @@ export function useAwxNavigation() {
         },
         {
           id: AwxRoute.HostMetrics,
-          label: 'Host Metrics',
+          label: t('Host Metrics'),
           path: 'host-metrics',
           element: <HostMetrics />,
         },
         {
           id: AwxRoute.SubscriptionUsage,
-          label: 'Subscription Usage',
+          label: t('Subscription Usage'),
           path: 'subscription-usage',
           element: <SubscriptionUsage />,
         },
