@@ -105,10 +105,10 @@ export function useHubNotifications() {
 
   const { hasPermission } = useHubContext();
 
-  const canApprovel = hasPermission('ansible.modify_ansible_repo_content');
+  const canApprove = hasPermission('ansible.modify_ansible_repo_content');
 
   const { data: result } = useGet<HubItemsResponse<CollectionVersionSearch>>(
-    canApprovel ? hubAPI`/v3/plugin/ansible/search/collection-versions/` : undefined,
+    canApprove ? hubAPI`/v3/plugin/ansible/search/collection-versions/` : undefined,
     { page_size: 200, repository_label: 'pipeline=staging' },
     { refreshInterval: 10 * 1000 }
   );
