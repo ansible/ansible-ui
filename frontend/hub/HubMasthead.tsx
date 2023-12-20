@@ -20,6 +20,7 @@ import { HubRoute } from './HubRoutes';
 import { hubAPI } from './api/formatPath';
 import { CollectionVersionSearch } from './approvals/Approval';
 import Logo from './galaxy-logo.svg';
+import { useHubContext } from './useHubContext';
 import { HubItemsResponse } from './useHubView';
 
 export function HubMasthead() {
@@ -102,8 +103,12 @@ export function useHubNotifications() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
 
+  const { hasPermission } = useHubContext();
+
+  const canApprovel = hasPermission('ansible.modify_ansible_repo_content');
+
   const { data: result } = useGet<HubItemsResponse<CollectionVersionSearch>>(
-    hubAPI`/v3/plugin/ansible/search/collection-versions/`,
+    canApprovel ? hubAPI`/v3/plugin/ansible/search/collection-versions/` : undefined,
     { page_size: 200, repository_label: 'pipeline=staging' },
     { refreshInterval: 10 * 1000 }
   );
