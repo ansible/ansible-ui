@@ -9,17 +9,18 @@ import {
   usePageNavigate,
 } from '../../../../../framework';
 import { EdaRoute } from '../../../EdaRoutes';
+import { useEdaActiveUser } from '../../../common/useEdaActiveUser';
 import { EdaUser } from '../../../interfaces/EdaUser';
 import { IEdaView } from '../../../useEventDrivenView';
 import { useDeleteUsers } from './useDeleteUser';
-import { useEdaActiveUser } from '../../../../common/useActiveUser';
 
 export function useUsersActions(view: IEdaView<EdaUser>) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const deleteUsers = useDeleteUsers(view.unselectItemsAndRefresh);
   const activeUser = useEdaActiveUser();
-  const isCurrentUserSelected = view.selectedItems.length > 0 && view.isSelected(activeUser);
+  const isCurrentUserSelected =
+    activeUser && view.selectedItems.length > 0 && view.isSelected(activeUser);
 
   return useMemo<IPageAction<EdaUser>[]>(
     () => [
@@ -31,7 +32,7 @@ export function useUsersActions(view: IEdaView<EdaUser>) {
         icon: PlusIcon,
         label: t('Create user'),
         isHidden: () =>
-          !activeUser.is_superuser && !activeUser.roles.find((role) => role.name === 'Admin'),
+          !activeUser?.is_superuser && !activeUser?.roles.find((role) => role.name === 'Admin'),
         onClick: () => pageNavigate(EdaRoute.CreateUser),
       },
       {
