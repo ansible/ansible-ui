@@ -163,6 +163,7 @@ export function useCredentialsColumn() {
         );
       },
       table: ColumnTableOption.Expanded,
+      value: undefined,
       card: 'hidden',
       list: 'hidden',
       modal: ColumnModalOption.Hidden,
