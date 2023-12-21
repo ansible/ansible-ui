@@ -2,7 +2,7 @@ import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { InventorySource } from '../../../../frontend/awx/interfaces/InventorySource';
-import { JobTemplate } from '../../../../frontend/awx/interfaces/JobTemplate';
+//import { JobTemplate } from '../../../../frontend/awx/interfaces/JobTemplate';
 import { randomString } from '../../../../framework/utils/random-string';
 
 describe('Workflow Visualizer Nodes', function () {
@@ -162,7 +162,7 @@ describe('Workflow Visualizer Nodes', function () {
     });
   });
 
-  it.only('edit a node and links using the kebab menu of the visualizer in the workflow job template, save and launch the template', function () {
+  it('edit a node and links using the kebab menu of the visualizer in the workflow job template, save and launch the template', function () {
     // let jobTemplateName: JobTemplate;
     // cy.createAwxJobTemplate({
     //   organization: (this.globalOrganization as Organization).id,
