@@ -20,15 +20,14 @@ export function useDeleteExecutionEnvironments(
   const bulkAction = useBulkConfirmation<ExecutionEnvironment>();
   const deleteExecutionEnvironments = (executionEnvironments: ExecutionEnvironment[]) => {
     bulkAction({
-      title:
-        executionEnvironments.length === 1
-          ? t('Permanently delete executionEnvironment')
-          : t('Permanently delete executionEnvironments'),
+      title: t('Permanently delete execution environments', {
+        count: executionEnvironments.length,
+      }),
       confirmText: t(
-        'Yes, I confirm that I want to delete these {{count}} executionEnvironments.',
+        'Yes, I confirm that I want to delete these {{count}} execution environments.',
         { count: executionEnvironments.length }
       ),
-      actionButtonText: t('Delete executionEnvironment', { count: executionEnvironments.length }),
+      actionButtonText: t('Delete execution environments', { count: executionEnvironments.length }),
       items: executionEnvironments.sort((l, r) => compareStrings(l.name, r.name)),
       keyFn: getItemKey,
       isDanger: true,

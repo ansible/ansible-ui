@@ -12,17 +12,17 @@ import { PageThemeSwitcher } from '../../framework/PageMasthead/PageThemeSwitche
 import { useAnsibleAboutModal } from '../common/AboutModal';
 import { PageRefreshIcon } from '../common/PageRefreshIcon';
 import { postRequest } from '../common/crud/Data';
-import { useActiveUser } from '../common/useActiveUser';
 import { useClearCache } from '../common/useInvalidateCache';
 import { hubAPI } from './api/formatPath';
 import GalaxyBrand from './galaxy-logo.svg';
+import { useHubContext } from './useHubContext';
 
 export function HubMasthead() {
   const { t } = useTranslation();
   const openAnsibleAboutModal = useAnsibleAboutModal();
   const { clearAllCache } = useClearCache();
   const navigate = useNavigate();
-  const activeUser = useActiveUser();
+  const context = useHubContext();
   const logout = useCallback(async () => {
     await postRequest(hubAPI`/_ui/v1/auth/logout/`, {});
     clearAllCache();
@@ -69,7 +69,7 @@ export function HubMasthead() {
           <PageMastheadDropdown
             id="account-menu"
             icon={<UserCircleIcon />}
-            label={activeUser?.username}
+            label={context.user.username}
           >
             {/* <DropdownItem
               id="user-details"

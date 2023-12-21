@@ -15,10 +15,7 @@ export function useDeleteOrganizations(onComplete: (organizations: Organization[
   const bulkAction = useBulkConfirmation<Organization>();
   const deleteOrganizations = (organizations: Organization[]) => {
     bulkAction({
-      title:
-        organizations.length === 1
-          ? t('Permanently delete organization')
-          : t('Permanently delete organizations'),
+      title: t('Permanently delete organizations', { count: organizations.length }),
       confirmText: t('Yes, I confirm that I want to delete these {{count}} organizations.', {
         count: organizations.length,
       }),

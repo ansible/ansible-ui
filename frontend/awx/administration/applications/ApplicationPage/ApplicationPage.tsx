@@ -1,6 +1,12 @@
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageHeader, PageLayout, useGetPageUrl } from '../../../../../framework';
+import {
+  PageActions,
+  PageHeader,
+  PageLayout,
+  useGetPageUrl,
+  usePageNavigate,
+} from '../../../../../framework';
 import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { useGetItem } from '../../../../common/crud/useGet';
@@ -8,6 +14,8 @@ import { AwxRoute } from '../../../AwxRoutes';
 import { awxAPI } from '../../../api/awx-utils';
 import { AwxError } from '../../../common/AwxError';
 import { Application } from '../../../interfaces/Application';
+import { DropdownPosition } from '@patternfly/react-core/deprecated';
+import { useApplicationActions } from '../hooks/useApplicationActions';
 
 export function ApplicationPage() {
   const { t } = useTranslation();
@@ -19,6 +27,11 @@ export function ApplicationPage() {
   } = useGetItem<Application>(awxAPI`/applications`, params.id);
 
   const getPageUrl = useGetPageUrl();
+  const pageNavigate = usePageNavigate();
+
+  const itemActions = useApplicationActions({
+    onApplicationsDeleted: () => pageNavigate(AwxRoute.Applications),
+  });
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!application) return <LoadingPage breadcrumbs tabs />;
@@ -31,7 +44,13 @@ export function ApplicationPage() {
           { label: t('OAuth Applications'), to: getPageUrl(AwxRoute.Applications) },
           { label: application?.name },
         ]}
-        headerActions={[]}
+        headerActions={
+          <PageActions
+            actions={itemActions}
+            position={DropdownPosition.right}
+            selectedItem={application}
+          />
+        }
       />
       <PageRoutedTabs
         backTab={{

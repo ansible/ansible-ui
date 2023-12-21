@@ -64,10 +64,45 @@ jobs:
       - name: Slack Notification
         uses: slackapi/slack-github-action@v1.24.0
         with:
-          channel-id: ${{ secrets.AAP_UI_CHANNEL_ID }}
-          slack-message: |
-            ```
-            AWX_SERVER=${{ inputs.AWX_SERVER }}
-            ```
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": ":check: AWX E2E Update - <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Success> - <${{ needs.setup.outputs.AWX_SERVER }}|Server>"
+                  }
+                }
+              ]
+            }
         env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+
+  slack-failure-notification:
+    name: Slack Failure Notification
+    if: failure()
+    needs:
+      - awx-update-server
+      - setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Slack Notification
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": ":alert: *AWX E2E Update* - *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Failure>* - <${{ needs.setup.outputs.AWX_SERVER }}|Server>"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK

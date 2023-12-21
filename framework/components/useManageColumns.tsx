@@ -22,9 +22,9 @@ export function useManageColumns<T extends object>(
       columns.push({
         header: t('Table View'),
         cell: (column: ITableColumn<T>, setColumn: (column: ITableColumn<T>) => void) => (
-          <PageSingleSelect
+          <PageSingleSelect<ColumnTableOption | ''>
             value={column.table ?? ''}
-            onSelect={(value) => {
+            onSelect={(value: ColumnTableOption | '') => {
               switch (value) {
                 case '':
                   setColumn({ ...column, table: undefined });

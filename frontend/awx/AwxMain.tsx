@@ -7,9 +7,9 @@ import '@patternfly/patternfly/patternfly-charts-theme-dark.css';
 import { Outlet } from 'react-router-dom';
 import { PageApp } from '../../framework/PageNavigation/PageApp';
 import '../common/i18n';
-import { ActiveUserProvider } from '../common/useActiveUser';
 import { AwxLogin } from './AwxLogin';
 import { AwxMasthead } from './AwxMasthead';
+import { AwxActiveUserProvider } from './common/useAwxActiveUser';
 import { AwxConfigProvider } from './common/useAwxConfig';
 import { WebSocketProvider } from './common/useAwxWebSocket';
 import { useAwxNavigation } from './useAwxNavigation';
@@ -21,11 +21,11 @@ export default function AwxMain() {
       login={<AwxLogin />}
       root={
         <WebSocketProvider>
-          <ActiveUserProvider>
+          <AwxActiveUserProvider>
             <AwxConfigProvider>
               <Outlet />
             </AwxConfigProvider>
-          </ActiveUserProvider>
+          </AwxActiveUserProvider>
         </WebSocketProvider>
       }
       masthead={<AwxMasthead />}

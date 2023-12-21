@@ -39,12 +39,17 @@ export function PageFormGroup(props: PageFormGroupProps) {
           <Split hasGutter>
             {props.icon}
             {label}
+            {labelHelp ? (
+              <Help title={labelHelpTitle} help={labelHelp} marginLeft={'0px'} />
+            ) : undefined}
           </Split>
         ) : (
           label
         )
       }
-      labelIcon={labelHelp ? <Help title={labelHelpTitle} help={labelHelp} /> : undefined}
+      labelIcon={
+        labelHelp && !props.icon ? <Help title={labelHelpTitle} help={labelHelp} /> : undefined
+      }
       labelInfo={props.additionalControls}
       isRequired={isRequired}
       data-cy={`${props.fieldId}-form-group`}

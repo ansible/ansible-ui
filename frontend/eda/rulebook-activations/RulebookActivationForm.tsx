@@ -218,9 +218,10 @@ export function RulebookActivationInputs() {
           name="variables"
           label={t('Variables')}
           isExpandable
-          defaultExpanded={false}
+          toggleLanguages={['yaml', 'json']}
           labelHelp={t(
-            `The variables for the rulebook are in a JSON or YAML format. The content would be equivalent to the file passed through the '--vars' flag of ansible-rulebook command.`
+            `The variables for the rulebook are in a JSON or YAML format. 
+            The content would be equivalent to the file passed through the '--vars' flag of ansible-rulebook command.`
           )}
           labelHelpTitle={t('Variables')}
         />

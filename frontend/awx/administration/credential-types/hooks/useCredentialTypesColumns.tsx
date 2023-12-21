@@ -1,3 +1,5 @@
+import { Label, Split } from '@patternfly/react-core';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ColumnModalOption,
@@ -6,16 +8,20 @@ import {
   TextCell,
   useGetPageUrl,
 } from '../../../../../framework';
-import { useMemo } from 'react';
-import { CredentialType } from '../../../interfaces/CredentialType';
+import {
+  useCreatedColumn,
+  useDescriptionColumn,
+  useModifiedColumn,
+} from '../../../../common/columns';
 import { AwxRoute } from '../../../AwxRoutes';
-import { useDescriptionColumn } from '../../../../common/columns';
-import { Label, Split } from '@patternfly/react-core';
+import { CredentialType } from '../../../interfaces/CredentialType';
 
 export function useCredentialTypesColumns() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const descriptionColumn = useDescriptionColumn();
+  const createdColumn = useCreatedColumn();
+  const modifiedColumn = useModifiedColumn();
 
   const tableColumns = useMemo<ITableColumn<CredentialType>[]>(
     () => [
@@ -48,8 +54,10 @@ export function useCredentialTypesColumns() {
         defaultSort: true,
         modal: ColumnModalOption.Hidden,
       },
+      createdColumn,
+      modifiedColumn,
     ],
-    [descriptionColumn, getPageUrl, t]
+    [descriptionColumn, getPageUrl, t, createdColumn, modifiedColumn]
   );
   return tableColumns;
 }

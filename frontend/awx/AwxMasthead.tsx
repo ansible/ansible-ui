@@ -13,12 +13,12 @@ import { usePageNotifications } from '../../framework/PageNotifications/PageNoti
 import { useAnsibleAboutModal } from '../common/AboutModal';
 import { PageRefreshIcon } from '../common/PageRefreshIcon';
 import { useGet } from '../common/crud/useGet';
-import { useActiveUser } from '../common/useActiveUser';
 import { useClearCache } from '../common/useInvalidateCache';
 import { AwxRoute } from './AwxRoutes';
 import { awxAPI } from './api/awx-utils';
 import AwxBrand from './awx-logo.svg';
 import { AwxItemsResponse } from './common/AwxItemsResponse';
+import { useAwxActiveUser } from './common/useAwxActiveUser';
 import { useAwxConfig } from './common/useAwxConfig';
 import { useAwxWebSocketSubscription } from './common/useAwxWebSocket';
 import getDocsBaseUrl from './common/util/getDocsBaseUrl';
@@ -31,7 +31,7 @@ export function AwxMasthead() {
   const config = useAwxConfig();
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
-  const activeUser = useActiveUser();
+  const activeUser = useAwxActiveUser();
   useAwxNotifications();
   const logout = useCallback(async () => {
     await fetch('/api/logout/');
