@@ -160,7 +160,7 @@ describe('Workflow Visualizer Nodes', function () {
     });
   });
 
-  it.only('edit a node and links using the kebab menu of the visualizer in the workflow job template, save and launch the template', function () {
+  it('edit a node and links using the kebab menu of the visualizer in the workflow job template, save and launch the template', function () {
     // let jobTemplateName: JobTemplate;
     // cy.createAwxJobTemplate({
     //   organization: (this.globalOrganization as Organization).id,
