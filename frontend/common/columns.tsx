@@ -125,17 +125,15 @@ export function useCredentialsColumn() {
   }> = useMemo(
     () => ({
       header: t('Credentials'),
-      cell: (item) => {
-        if (!item.summary_fields?.credentials) return <></>;
-        return (
-          <LabelGroup>
-            {' '}
-            {item.summary_fields.credentials?.map((credential) => (
-              <CredentialLabel credential={credential} key={credential.id} />
-            ))}
-          </LabelGroup>
-        );
-      },
+      cell: (item) => (
+        <LabelGroup>
+          {item.summary_fields?.credentials?.map((credential) => (
+            <CredentialLabel credential={credential} key={credential.id} />
+          ))}
+        </LabelGroup>
+      ),
+      value: (item) =>
+        item.summary_fields?.credentials && item.summary_fields.credentials.length > 0,
       table: ColumnTableOption.Expanded,
       card: 'hidden',
       list: 'hidden',
