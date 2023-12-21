@@ -25,8 +25,8 @@ import type { MountReturn } from 'cypress/react';
 import { mount } from 'cypress/react18';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { PageFramework } from '../../framework';
+import { AwxActiveUserProvider } from '../../frontend/awx/common/useAwxActiveUser';
 import { User } from '../../frontend/awx/interfaces/User';
-import { ActiveUserProvider } from '../../frontend/common/useActiveUser';
 import './commands';
 
 import '../../frontend/common/i18n';
@@ -79,13 +79,13 @@ Cypress.Commands.add('mount', (component, route, activeUserFixture) => {
   return mount(
     <MemoryRouter initialEntries={route?.initialEntries || ['/1']}>
       <PageFramework>
-        <ActiveUserProvider>
+        <AwxActiveUserProvider>
           <Page>
             <Routes>
               <Route path={`${route?.path || '/:id/*'}`} element={component} />
             </Routes>
           </Page>
-        </ActiveUserProvider>
+        </AwxActiveUserProvider>
       </PageFramework>
     </MemoryRouter>
   );

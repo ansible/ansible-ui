@@ -2,15 +2,15 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../framework';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { useActiveUser } from '../../../common/useActiveUser';
 import { awxAPI } from '../../api/awx-utils';
+import { useAwxActiveUser } from '../../common/useAwxActiveUser';
 import { User } from '../../interfaces/User';
 import { useUsersColumns } from '../users/hooks/useUsersColumns';
 import { ResourceType } from './ResourceAccessList';
 
 export function useRemoveUsersFromResource() {
   const { t } = useTranslation();
-  const activeUser = useActiveUser();
+  const activeUser = useAwxActiveUser();
   const confirmationColumns = useUsersColumns();
   const removeUserConfirmationDialog = useBulkConfirmation<User>();
 
