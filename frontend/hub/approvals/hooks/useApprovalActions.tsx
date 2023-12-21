@@ -60,8 +60,8 @@ export function useApprovalActions(callback?: (collections: CollectionVersionSea
           collection?.repository?.pulp_labels?.pipeline === 'approved'
             ? t`Collection is already approved`
             : can_upload_signatures && require_upload_signatures && !collection.is_signed
-              ? t`Signature must be uploaded first`
-              : undefined,
+            ? t`Signature must be uploaded first`
+            : undefined,
       },
       { type: PageActionType.Seperator },
       {

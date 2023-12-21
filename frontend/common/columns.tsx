@@ -176,10 +176,10 @@ export function useCreatedColumn(options?: {
               item.created
                 ? item.created
                 : item.created_on
-                  ? item.created_on
-                  : item.date_joined
-                    ? item.date_joined
-                    : item.pulp_created
+                ? item.created_on
+                : item.date_joined
+                ? item.date_joined
+                : item.pulp_created
             }
             author={
               'summary_fields' in item ? item.summary_fields?.created_by?.username : undefined

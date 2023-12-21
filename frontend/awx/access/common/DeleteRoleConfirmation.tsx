@@ -35,8 +35,8 @@ export function DeleteRoleConfirmation(props: DeleteRoleConfirmationProps) {
         title
           ? title
           : typeof role.team_id !== 'undefined'
-            ? t(`Remove team access`)
-            : t(`Remove user access`)
+          ? t(`Remove team access`)
+          : t(`Remove user access`)
       }
       variant={ModalVariant.small}
       isOpen
