@@ -123,7 +123,7 @@ function WorkflowVisualizerToolbar() {
           </ToolbarItem>
         </>
       )}
-      <ToolbarItem>
+      <ToolbarItem data-cy="workflow-visualizer-toolbar-kebab">
         <Dropdown
           onOpenChange={(isOpen: boolean) => setIsKebabOpen(isOpen)}
           onSelect={() => setIsKebabOpen(!isKebabOpen)}
