@@ -126,6 +126,7 @@ export interface ITableColumnTypeReactNode<T extends object> extends ITableColum
 export interface ITableColumnTypeText<T extends object> extends ITableColumnCommon<T> {
   type: 'text';
   value: CellFn<T, string | null | undefined>;
+  to?: string;
 }
 
 // TODO - default ITableColumnTypeDateTime columns maxWidth. - this will need a helper function called from the table getColumnWidth(column)
@@ -174,7 +175,7 @@ export function TableColumnCell<T extends object>(props: {
   if (!column) return <></>;
   switch (column.type) {
     case 'text':
-      return <TextCell text={column.value(item)} />;
+      return <TextCell text={column.value(item)} to={column.to} />;
     case 'description':
       return <div style={{ minWidth: 200, whiteSpace: 'normal' }}>{column.value(item)}</div>;
     case 'datetime':
