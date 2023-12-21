@@ -24,6 +24,7 @@ import {
 import { ExecutionEnvironments } from './execution-environments/ExecutionEnvironments';
 import { CreateHubNamespace, EditHubNamespace } from './namespaces/HubNamespaceForm';
 import { HubNamespaceDetails } from './namespaces/HubNamespacePage/HubNamespaceDetails';
+import { HubNamespaceCLI } from './namespaces/HubNamespacePage/HubNamespaceCLI';
 import { HubNamespacePage } from './namespaces/HubNamespacePage/HubNamespacePage';
 import { Namespaces } from './namespaces/HubNamespaces';
 import { RemoteRegistries } from './remote-registries/RemoteRegistries';
@@ -33,6 +34,14 @@ import { RemoteDetails } from './remotes/RemoteDetails';
 import { CreateRemote, EditRemote } from './remotes/RemoteForm';
 import { Remotes } from './remotes/Remotes';
 import { Repositories } from './repositories/Repositories';
+import { RepositoryPage } from './repositories/RepositoryPage/RepositoryPage';
+import { RepositoryAccess } from './repositories/RepositoryPage/RepositoryAccess';
+import { RepositoryCollectionVersion } from './repositories/RepositoryPage/RepositoryCollectionVersion';
+import { RepositoryDetails } from './repositories/RepositoryPage/RepositoryDetails';
+import { RepositoryVersions } from './repositories/RepositoryPage/RepositoryVersions';
+import { RepositoryVersionPage } from './repositories/RepositoryVersionPage/RepositoryVersionPage';
+import { RepositoryVersionDetails } from './repositories/RepositoryVersionPage/RepositoryVersionDetails';
+import { RepositoryVersionCollections } from './repositories/RepositoryVersionPage/RepositoryVersionCollections';
 import { SignatureKeys } from './signature-keys/SignatureKeys';
 import { TaskDetails } from './tasks/TaskDetails';
 import { Tasks } from './tasks/Tasks';
@@ -71,6 +80,11 @@ export function useHubNavigation() {
               id: HubRoute.NamespaceDetails,
               path: 'details',
               element: <HubNamespaceDetails />,
+            },
+            {
+              id: HubRoute.NamespaceCLI,
+              path: 'cli',
+              element: <HubNamespaceCLI />,
             },
             {
               path: '',
@@ -195,6 +209,58 @@ export function useHubNavigation() {
             {
               path: '',
               element: <Repositories />,
+            },
+            {
+              path: ':id/',
+              id: HubRoute.RepositoryPage,
+              element: <RepositoryPage />,
+              children: [
+                {
+                  path: 'details',
+                  id: HubRoute.RepositoryDetails,
+                  element: <RepositoryDetails />,
+                },
+                {
+                  path: 'access',
+                  id: HubRoute.RepositoryAccess,
+                  element: <RepositoryAccess />,
+                },
+                {
+                  path: 'collection-version',
+                  id: HubRoute.RepositoryCollectionVersion,
+                  element: <RepositoryCollectionVersion />,
+                },
+                {
+                  path: 'versions',
+                  id: HubRoute.RepositoryVersions,
+                  element: <RepositoryVersions />,
+                },
+                {
+                  path: '',
+                  element: <Navigate to="details" />,
+                },
+              ],
+            },
+            {
+              path: ':id/versions-details/:version/',
+              id: HubRoute.RepositoryVersionPage,
+              element: <RepositoryVersionPage />,
+              children: [
+                {
+                  path: 'details',
+                  id: HubRoute.RepositoryVersionDetails,
+                  element: <RepositoryVersionDetails />,
+                },
+                {
+                  path: 'collections',
+                  id: HubRoute.RepositoryVersionCollections,
+                  element: <RepositoryVersionCollections />,
+                },
+                {
+                  path: '',
+                  element: <Navigate to="details" />,
+                },
+              ],
             },
           ],
         },

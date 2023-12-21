@@ -10,6 +10,9 @@ import {
   useGetPageUrl,
 } from '../../framework';
 import { RouteObj } from './Routes';
+import { SummaryFieldCredential } from '../awx/interfaces/summary-fields/summary-fields';
+import { LabelGroup } from '@patternfly/react-core';
+import { CredentialLabel } from '../awx/common/CredentialLabel';
 
 export function useIdColumn<T extends { name: string; id: number }>(isHidden: boolean = true) {
   const { t } = useTranslation();
@@ -93,6 +96,56 @@ export function useDescriptionColumn<T extends { description?: string | null | u
   return column;
 }
 
+export function useLastRanColumn(options?: {
+  disableSort?: boolean;
+  disableLinks?: boolean;
+  sortKey?: string;
+  hideByDefaultInTableView?: boolean;
+}) {
+  const { t } = useTranslation();
+  const column: ITableColumn<{ last_job_run: string | null }> = useMemo(
+    () => ({
+      header: t('Last Ran'),
+      cell: (item) => {
+        if (!item.last_job_run) return <></>;
+        return <DateTimeCell format="since" value={item.last_job_run} />;
+      },
+      sort: options?.disableSort ? undefined : options?.sortKey ?? 'last_job_run',
+      defaultSortDirection: 'desc',
+    }),
+    [options?.disableSort, options?.sortKey, t]
+  );
+  return column;
+}
+
+export function useCredentialsColumn() {
+  const { t } = useTranslation();
+  const column: ITableColumn<{
+    summary_fields?: { credentials?: SummaryFieldCredential[] };
+  }> = useMemo(
+    () => ({
+      header: t('Credentials'),
+      cell: (item) => {
+        if (!item.summary_fields?.credentials) return <></>;
+        return (
+          <LabelGroup>
+            {' '}
+            {item.summary_fields.credentials?.map((credential) => (
+              <CredentialLabel credential={credential} key={credential.id} />
+            ))}
+          </LabelGroup>
+        );
+      },
+      table: ColumnTableOption.Expanded,
+      card: 'hidden',
+      list: 'hidden',
+      modal: ColumnModalOption.Hidden,
+    }),
+    [t]
+  );
+  return column;
+}
+
 export function useCreatedColumn(options?: {
   disableSort?: boolean;
   disableLinks?: boolean;
@@ -123,10 +176,10 @@ export function useCreatedColumn(options?: {
               item.created
                 ? item.created
                 : item.created_on
-                ? item.created_on
-                : item.date_joined
-                ? item.date_joined
-                : item.pulp_created
+                  ? item.created_on
+                  : item.date_joined
+                    ? item.date_joined
+                    : item.pulp_created
             }
             author={
               'summary_fields' in item ? item.summary_fields?.created_by?.username : undefined
@@ -263,6 +316,47 @@ export function useOrganizationNameColumn(
   );
   return column;
 }
+
+export function useInventoryNameColumn(
+  inventoryDetailsRoute: string,
+  options?: {
+    disableLinks?: boolean;
+    disableSort?: boolean;
+  }
+) {
+  const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
+  const column: ITableColumn<{
+    summary_fields?: {
+      inventory?: {
+        id: number;
+        name: string;
+      };
+    };
+  }> = useMemo(
+    () => ({
+      header: t('Inventory'),
+      cell: (item) => (
+        <TextCell
+          text={item.summary_fields?.inventory?.name}
+          to={getPageUrl(inventoryDetailsRoute, {
+            params: { id: item.summary_fields?.inventory?.id },
+          })}
+          disableLinks={options?.disableLinks}
+        />
+      ),
+      value: (item) => item.summary_fields?.inventory?.name,
+      sort: options?.disableSort ? undefined : 'inventory',
+      table: ColumnTableOption.Expanded,
+      card: 'hidden',
+      list: 'hidden',
+      modal: ColumnModalOption.Hidden,
+    }),
+    [getPageUrl, options?.disableLinks, options?.disableSort, inventoryDetailsRoute, t]
+  );
+  return column;
+}
+
 export function useTypeColumn<T extends object>(options: {
   header?: string;
   url?: string;
