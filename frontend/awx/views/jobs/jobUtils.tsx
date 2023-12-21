@@ -114,8 +114,8 @@ export function getLaunchedByDetails(job: UnifiedJob) {
       link = jobTemplate
         ? `/templates/job_template/${jobTemplate.id}/details`
         : workflowJT
-        ? `/templates/workflow_job_template/${workflowJT.id}/details`
-        : undefined;
+          ? `/templates/workflow_job_template/${workflowJT.id}/details`
+          : undefined;
       break;
     case 'scheduled':
       value = schedule?.name;
