@@ -20,14 +20,14 @@ export function WorkflowVisualizer() {
     refresh: workflowNodeRefresh,
     isLoading: workflowNodeIsLoading,
   } = useGet<AwxItemsResponse<WorkflowNode>>(
-    awxAPI`workflow_job_templates/${Number(id).toString()}/workflow_nodes/`
+    awxAPI`/workflow_job_templates/${Number(id).toString()}/workflow_nodes/`
   );
   const {
     data: workflowJobTemplate,
     error: workflowError,
     refresh: workflowRefresh,
     isLoading: workflowIsLoading,
-  } = useGetItem<WorkflowJobTemplate>(awxAPI`workflow_job_templates/`, id);
+  } = useGetItem<WorkflowJobTemplate>(awxAPI`/workflow_job_templates/`, id);
 
   const error = workflowError || workflowNodeError;
   if (error) {
