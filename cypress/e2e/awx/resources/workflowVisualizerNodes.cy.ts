@@ -43,8 +43,7 @@ describe('Workflow Visualizer Nodes', function () {
       cy.contains('Workflow Visualizer').should('be.visible');
       cy.contains(`${workflowJobTemplate.name}`);
       cy.contains('button', 'Save').click();
-      /*
-      uncomment when workflow approvals is working along with quick starts
+      //uncomment when workflow approvals is working along with quick starts
       cy.navigateTo('awx', 'templates');
       cy.getTableRowByText(`${workflowJobTemplate.name}`).should('be.visible');
       cy.intercept('POST', `api/v2/workflow_job_templates/${workflowJobTemplate.id}/launch/`).as(
@@ -58,12 +57,11 @@ describe('Workflow Visualizer Nodes', function () {
           //there is a known React create request error happening due the output tab work in progress
           cy.waitForWorkflowJobStatus(jobId);
         });
-      */
       cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate);
     });
   });
 
-  it('create multiple nodes in the workflow job template, save and launch the template', function () {
+  it('create multiple nodes in the workflow job template, save and launch the template from list page', function () {
     cy.createAwxJobTemplate({
       organization: (this.globalOrganization as Organization).id,
       project: (this.globalProject as Project).id,
@@ -88,12 +86,12 @@ describe('Workflow Visualizer Nodes', function () {
                     cy.createAwxWorkflowVisualizerInventorySourceNode(
                       workflowJobTemplate,
                       inventorySource
-                    ).then((InventorySourceNode) => {
+                    ).then((inventorySourceNode) => {
                       cy.createAwxWorkflowVisualizerManagementNode(workflowJobTemplate, 2).then(
                         (managementNode) => {
                           cy.createWorkflowJTSuccessNodeLink(projectNode, jobTemplateNode);
-                          cy.createWorkflowJTSuccessNodeLink(jobTemplateNode, InventorySourceNode);
-                          cy.createWorkflowJTFailureNodeLink(InventorySourceNode, managementNode);
+                          cy.createWorkflowJTSuccessNodeLink(jobTemplateNode, inventorySourceNode);
+                          cy.createWorkflowJTFailureNodeLink(inventorySourceNode, managementNode);
                         }
                       );
                     });
@@ -125,6 +123,192 @@ describe('Workflow Visualizer Nodes', function () {
           });
         cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate);
       });
+    });
+  });
+
+  it('create nodes in the workflow job template, save and launch the template from details page', function () {
+    cy.createAwxWorkflowJobTemplate({
+      organization: (this.globalOrganization as Organization).id,
+      inventory: inventory.id,
+    }).then((workflowJobTemplate) => {
+      cy.createAwxWorkflowVisualizerProjectNode(
+        workflowJobTemplate,
+        this.globalProject as Project
+      ).then((projectNode) => {
+        cy.createAwxWorkflowVisualizerManagementNode(workflowJobTemplate, 2).then(
+          (managementNode) => {
+            cy.createWorkflowJTSuccessNodeLink(projectNode, managementNode);
+          }
+        );
+      });
+      cy.visit(`/ui_next/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
+      cy.contains('Workflow Visualizer').should('be.visible');
+      cy.contains(`${workflowJobTemplate.name}`);
+      cy.contains('button', 'Save').click();
+      cy.get('[data-cy="workflow-visualizer-toolbar-close"]').click();
+      cy.intercept('POST', `api/v2/workflow_job_templates/${workflowJobTemplate.id}/launch/`).as(
+        'launchWJT-WithNodes'
+      );
+      cy.get('[data-cy="launch-template"]').click();
+      cy.wait('@launchWJT-WithNodes')
+        .its('response.body.id')
+        .then((jobId: string) => {
+          //there is a known React create request error happening due the output tab work in progress
+          cy.waitForWorkflowJobStatus(jobId);
+        });
+      cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate);
+    });
+  });
+
+  it.only('edit a node and links using the kebab menu of the visualizer in the workflow job template, save and launch the template', function () {
+    // let jobTemplateName: JobTemplate;
+    // cy.createAwxJobTemplate({
+    //   organization: (this.globalOrganization as Organization).id,
+    //   project: (this.globalProject as Project).id,
+    //   inventory: inventory.id,
+    // }).then((jobTemplate) => {
+    //   jobTemplateName = jobTemplate.name;
+    // });
+    const approvalNodeName = 'E2E-Approval-Node ' + randomString(4);
+    cy.createAwxWorkflowJobTemplate({
+      organization: (this.globalOrganization as Organization).id,
+      inventory: inventory.id,
+    }).then((workflowJobTemplate) => {
+      cy.createAwxWorkflowVisualizerProjectNode(
+        workflowJobTemplate,
+        this.globalProject as Project
+      ).then((projectNode) => {
+        cy.createAwxOrganization().then((org) => {
+          organization = org;
+          cy.createAwxProject({ organization: organization.id }).then((p) => {
+            project = p;
+            cy.createAwxInventorySource(inventory, project).then((invSrc) => {
+              inventorySource = invSrc;
+              cy.createAwxWorkflowVisualizerInventorySourceNode(
+                workflowJobTemplate,
+                inventorySource
+              ).then((inventorySourceNode) => {
+                cy.createAwxWorkflowVisualizerManagementNode(workflowJobTemplate, 1).then(
+                  (managementNode) => {
+                    cy.createWorkflowJTSuccessNodeLink(projectNode, inventorySourceNode);
+                    cy.createWorkflowJTAlwaysNodeLink(inventorySourceNode, managementNode);
+                  }
+                );
+              });
+            });
+          });
+        });
+        // });
+        cy.visit(`/ui_next/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
+        cy.contains('Workflow Visualizer').should('be.visible');
+        cy.contains(`${workflowJobTemplate.name}`);
+        cy.contains('button', 'Save').click();
+        cy.intercept('GET', 'api/v2/projects/?page_size=200').as('getProjects');
+        cy.editNodeInVisualizer(
+          `${(this.globalProject as Project).name}`,
+          'Approval',
+          approvalNodeName
+        );
+        cy.wait('@getProjects');
+        cy.clickButton(/^Next/);
+        cy.clickButton(/^Finish/);
+        cy.contains(`${approvalNodeName}`).should('be.visible');
+        //cy.intercept('PATCH', `api/v2/workflow_job_template_nodes/${workflowJobTemplate.id}/`).as('saveEditedNode');
+        cy.get('[data-cy="workflow-visualizer-toolbar-save"]').click();
+        // cy.wait('@saveEditedNode');
+        //cy.contains(`${(this.globalProject as Project).name}`).should('not.exist');
+      });
+      cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate);
+    });
+  });
+
+  it('remove a node and links using the kebab menu of the node in the visualizer', function () {
+    cy.createAwxWorkflowJobTemplate({
+      organization: (this.globalOrganization as Organization).id,
+      inventory: inventory.id,
+    }).then((workflowJobTemplate) => {
+      cy.createAwxWorkflowVisualizerProjectNode(
+        workflowJobTemplate,
+        this.globalProject as Project
+      ).then((projectNode) => {
+        cy.createAwxOrganization().then((org) => {
+          organization = org;
+          cy.createAwxProject({ organization: organization.id }).then((p) => {
+            project = p;
+            cy.createAwxInventorySource(inventory, project).then((invSrc) => {
+              inventorySource = invSrc;
+              cy.createAwxWorkflowVisualizerInventorySourceNode(
+                workflowJobTemplate,
+                inventorySource
+              ).then((inventorySourceNode) => {
+                cy.createAwxWorkflowVisualizerManagementNode(workflowJobTemplate, 1).then(
+                  (managementNode) => {
+                    cy.createWorkflowJTSuccessNodeLink(projectNode, inventorySourceNode);
+                    cy.createWorkflowJTAlwaysNodeLink(inventorySourceNode, managementNode);
+                  }
+                );
+              });
+            });
+          });
+        });
+        // });
+        cy.visit(`/ui_next/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
+        cy.contains('Workflow Visualizer').should('be.visible');
+        cy.contains(`${workflowJobTemplate.name}`);
+        cy.contains('button', 'Save').click();
+        cy.removeNodeInVisualizer(`${(this.globalProject as Project).name}`);
+        cy.contains(`${(this.globalProject as Project).name}`).should('not.exist');
+      });
+      cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate);
+    });
+  });
+  it('remove all nodes using the kebab menu of the visualizer toolbar, save and delete the template', function () {
+    cy.createAwxWorkflowJobTemplate({
+      organization: (this.globalOrganization as Organization).id,
+      inventory: inventory.id,
+    }).then((workflowJobTemplate) => {
+      cy.createAwxWorkflowVisualizerProjectNode(
+        workflowJobTemplate,
+        this.globalProject as Project
+      ).then((projectNode) => {
+        cy.createAwxOrganization().then((org) => {
+          organization = org;
+          cy.createAwxProject({ organization: organization.id }).then((p) => {
+            project = p;
+            cy.createAwxInventorySource(inventory, project).then((invSrc) => {
+              inventorySource = invSrc;
+              cy.createAwxWorkflowVisualizerInventorySourceNode(
+                workflowJobTemplate,
+                inventorySource
+              ).then((inventorySourceNode) => {
+                cy.createAwxWorkflowVisualizerManagementNode(workflowJobTemplate, 1).then(
+                  (managementNode) => {
+                    cy.createWorkflowJTSuccessNodeLink(projectNode, inventorySourceNode);
+                    cy.createWorkflowJTAlwaysNodeLink(inventorySourceNode, managementNode);
+                  }
+                );
+              });
+            });
+          });
+        });
+      });
+      cy.visit(`/ui_next/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
+      cy.contains('Workflow Visualizer').should('be.visible');
+      cy.contains(`${workflowJobTemplate.name}`);
+      cy.contains('button', 'Save').click();
+      //remove-node, add-node-and-link, add-link, add-link, edit-node
+      cy.removeAllNodesFromVisualizerToolbar();
+      // cy.get('[data-cy="workflow-visualizer-toolbar-close"]').click();
+      // cy.intercept('POST', `api/v2/workflow_job_templates/${workflowJobTemplate.id}/launch/`).as(
+      //   'launchWJT-WithNodes'
+      // );
+      // cy.get('[data-cy="launch-template"]').click();
+      // cy.wait('@launchWJT-WithNodes')
+      //   .its('response.body.id')
+      //   .then((jobId: string) => {
+      //     cy.waitForWorkflowJobStatus(jobId);
+      //   });
+      cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate);
     });
   });
 });
