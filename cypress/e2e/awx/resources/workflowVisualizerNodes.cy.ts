@@ -160,14 +160,6 @@ describe('Workflow Visualizer Nodes', function () {
   });
 
   it('edit a node and links using the kebab menu of the visualizer in the workflow job template, save and launch the template', function () {
-    // let jobTemplateName: JobTemplate;
-    // cy.createAwxJobTemplate({
-    //   organization: (this.globalOrganization as Organization).id,
-    //   project: (this.globalProject as Project).id,
-    //   inventory: inventory.id,
-    // }).then((jobTemplate) => {
-    //   jobTemplateName = jobTemplate.name;
-    // });
     const approvalNodeName = 'E2E-Approval-Node ' + randomString(4);
     cy.createAwxWorkflowJobTemplate({
       organization: (this.globalOrganization as Organization).id,
