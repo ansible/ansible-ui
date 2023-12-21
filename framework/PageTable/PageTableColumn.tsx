@@ -116,15 +116,17 @@ interface ITableColumnCommon<T extends object> {
   modal?: ColumnModalOption;
 }
 
-//** Column that renders using a render function that returns a ReactNode. */
+/** Column that renders using a render function that returns a ReactNode. */
 export interface ITableColumnTypeReactNode<T extends object> extends ITableColumnCommon<T> {
   type?: undefined;
+  /** if value returns undefined, this column will be hidden from expanded rows, cards, and lists. */
   value?: CellFn<T, string | string[] | number | boolean | undefined | null>;
   cell: CellFn<T, ReactNode | undefined>;
 }
 
 export interface ITableColumnTypeText<T extends object> extends ITableColumnCommon<T> {
   type: 'text';
+  /** if value returns undefined, this column will be hidden from expanded rows, cards, and lists. */
   value: CellFn<T, string | null | undefined>;
   to?: (item: T) => string | undefined;
 }
@@ -133,12 +135,14 @@ export interface ITableColumnTypeText<T extends object> extends ITableColumnComm
 // TODO - default option table, card, list to 'description' and modal to 'hidden'. - this will need a helper function
 export interface ITableColumnTypeDescription<T extends object> extends ITableColumnCommon<T> {
   type: 'description';
+  /** if value returns undefined, this column will be hidden from expanded rows, cards, and lists. */
   value: CellFn<T, string | undefined | null>;
 }
 
 // TODO - default option table, card, list to 'count' and modal to 'hidden'.
 export interface ITableColumnTypeCount<T extends object> extends ITableColumnCommon<T> {
   type: 'count';
+  /** if value returns undefined, this column will be hidden from expanded rows, cards, and lists. */
   value: CellFn<T, number | undefined>;
   // TODO options for formatting number. i.e. should number be error/warning color if not 0?
 }
@@ -146,6 +150,7 @@ export interface ITableColumnTypeCount<T extends object> extends ITableColumnCom
 /** Table column that shows a count. In a card, this shows up in a count section at the bottom of the card. */
 export interface ITableColumnTypeLabels<T extends object> extends ITableColumnCommon<T> {
   type: 'labels';
+  /** if value returns undefined, this column will be hidden from expanded rows, cards, and lists. */
   value: CellFn<T, string[] | undefined>;
   // TODO add use option indicating how many labels to show by default
 }
@@ -153,6 +158,7 @@ export interface ITableColumnTypeLabels<T extends object> extends ITableColumnCo
 // TODO - default ITableColumnTypeDateTime columns to sort 'desc'.
 export interface ITableColumnTypeDateTime<T extends object> extends ITableColumnCommon<T> {
   type: 'datetime';
+  /** if value returns undefined, this column will be hidden from expanded rows, cards, and lists. */
   value: CellFn<T, number | string | undefined>;
   // TODO add format to datetime & allow user to change
 }
