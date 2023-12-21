@@ -16,7 +16,7 @@ import { useGet } from '../common/crud/useGet';
 import { useClearCache } from '../common/useInvalidateCache';
 import { AwxRoute } from './AwxRoutes';
 import { awxAPI } from './api/awx-utils';
-import AwxIcon from './awx-logo.svg';
+import AwxBrand from './awx-logo.svg';
 import { AwxItemsResponse } from './common/AwxItemsResponse';
 import { useAwxActiveUser } from './common/useAwxActiveUser';
 import { useAwxConfig } from './common/useAwxConfig';
@@ -40,11 +40,7 @@ export function AwxMasthead() {
   }, [clearAllCache, navigate]);
 
   return (
-    <PageMasthead
-      icon={<AwxIcon style={{ height: 60 }} />}
-      title={process.env.PRODUCT}
-      brand={process.env.BRAND}
-    >
+    <PageMasthead brand={<AwxBrand style={{ height: 60 }} />}>
       <ToolbarGroup variant="icon-button-group" style={{ flexGrow: 1 }}>
         <ToolbarItem style={{ marginLeft: 'auto' }}>
           <PageRefreshIcon />
