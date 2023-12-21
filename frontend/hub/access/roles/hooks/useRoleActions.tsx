@@ -64,10 +64,10 @@ export function useRoleRowActions(onComplete: (roles: Role[]) => void) {
           role.locked
             ? t('Built-in roles cannot be edited.')
             : user.is_superuser
-            ? undefined
-            : t(
-                'You do not have permission to edit this role. Please contact your organization administrator if there is an issue with your access.'
-              ),
+              ? undefined
+              : t(
+                  'You do not have permission to edit this role. Please contact your organization administrator if there is an issue with your access.'
+                ),
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         onClick: (role) => alert('TODO'),
       },
@@ -81,10 +81,10 @@ export function useRoleRowActions(onComplete: (roles: Role[]) => void) {
           role.locked
             ? t('Built-in roles cannot be deleted.')
             : user?.is_superuser
-            ? undefined
-            : t(
-                'You do not have permission to delete this role. Please contact your organization administrator if there is an issue with your access.'
-              ),
+              ? undefined
+              : t(
+                  'You do not have permission to delete this role. Please contact your organization administrator if there is an issue with your access.'
+                ),
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         onClick: (role) => deleteRoles([role]),
         isDanger: true,
