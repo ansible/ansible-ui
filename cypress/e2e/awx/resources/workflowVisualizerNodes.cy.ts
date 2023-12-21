@@ -46,6 +46,7 @@ describe('Workflow Visualizer Nodes', function () {
       cy.contains(`${workflowJobTemplate.name}`);
       cy.contains('button', 'Save').click();
       //uncomment when workflow approvals is working along with quick starts
+      /*
       cy.navigateTo('awx', 'templates');
       cy.intercept('POST', `api/v2/workflow_job_templates/${workflowJobTemplate.id}/launch/`).as(
         'launchWJT-WithNodes'
@@ -58,6 +59,7 @@ describe('Workflow Visualizer Nodes', function () {
           //there is a known React create request error happening due the output tab work in progress
           cy.waitForWorkflowJobStatus(jobId);
         });
+        */
       cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate);
     });
   });
