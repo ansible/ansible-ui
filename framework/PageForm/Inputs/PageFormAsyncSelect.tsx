@@ -267,10 +267,10 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
             loadingError
               ? frameworkTranslations.clickToRefresh
               : loadingPlaceholder
-                ? loading
-                  ? loadingPlaceholder
-                  : placeholder
+              ? loading
+                ? loadingPlaceholder
                 : placeholder
+              : placeholder
           }
           typeAheadAriaLabel={placeholder}
           data-cy="dropdown-menu"

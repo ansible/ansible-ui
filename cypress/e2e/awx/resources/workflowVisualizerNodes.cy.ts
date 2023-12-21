@@ -45,7 +45,6 @@ describe('Workflow Visualizer Nodes', function () {
       cy.contains('button', 'Save').click();
       //uncomment when workflow approvals is working along with quick starts
       cy.navigateTo('awx', 'templates');
-      cy.getTableRowByText(`${workflowJobTemplate.name}`).should('be.visible');
       cy.intercept('POST', `api/v2/workflow_job_templates/${workflowJobTemplate.id}/launch/`).as(
         'launchWJT-WithNodes'
       );

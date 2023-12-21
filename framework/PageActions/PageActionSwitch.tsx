@@ -21,12 +21,12 @@ export function PageActionSwitch<T extends object>(props: {
   const tooltip = isDisabled
     ? isDisabled
     : action.tooltip
-      ? action.tooltip
-      : iconOnly
-        ? isChecked
-          ? action.label
-          : action.labelOff ?? action.label
-        : undefined;
+    ? action.tooltip
+    : iconOnly
+    ? isChecked
+      ? action.label
+      : action.labelOff ?? action.label
+    : undefined;
 
   const id = useId();
 
