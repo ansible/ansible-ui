@@ -343,6 +343,61 @@ export function useOrganizationNameColumn(
   return column;
 }
 
+export function useExecutionEnvColumn<
+  T extends {
+    type?: string;
+    summary_fields?: {
+      execution_environment?: {
+        id: number;
+        name: string;
+      };
+    };
+  },
+>(
+  envDetailsRoute: string,
+  options?: {
+    disableLinks?: boolean;
+    disableSort?: boolean;
+  }
+) {
+  const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
+  const column: ITableColumn<T> = useMemo(
+    () => ({
+      header: t('Execution Environment'),
+      cell: (item) => {
+        if (item.type !== 'job_template') {
+          return <></>;
+        } else {
+          return (
+            <TextCell
+              text={item.summary_fields?.execution_environment?.name}
+              to={getPageUrl(envDetailsRoute, {
+                params: { id: item.summary_fields?.execution_environment?.id },
+              })}
+              disableLinks={options?.disableLinks}
+            />
+          );
+        }
+      },
+      value: (item) => {
+        if (item.type === 'job_template') {
+          return item.summary_fields?.execution_environment?.name;
+        } else {
+          return undefined;
+        }
+      },
+      sort: options?.disableSort ? undefined : 'execution_environment',
+      table: ColumnTableOption.Expanded,
+      card: 'hidden',
+      list: 'hidden',
+      modal: ColumnModalOption.Hidden,
+    }),
+    [t, options?.disableSort, options?.disableLinks, getPageUrl, envDetailsRoute]
+  );
+  return column;
+}
+
 export function useInventoryNameColumn(
   inventoryDetailsRoute: string,
   options?: {

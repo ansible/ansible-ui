@@ -14,6 +14,7 @@ import {
   useTypeColumn,
   useOrganizationNameColumn,
   useInventoryNameColumn,
+  useExecutionEnvColumn,
   useProjectNameColumn,
   useCredentialsColumn,
   useLabelsColumn,
@@ -24,6 +25,7 @@ import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { AwxRoute } from '../../../AwxRoutes';
 import { SummaryFieldRecentJob } from '../../../interfaces/summary-fields/summary-fields';
 import { Sparkline } from '../components/Sparkline';
+import { get } from 'cypress/types/lodash';
 
 function useActivityColumn() {
   const { t } = useTranslation();
@@ -79,6 +81,8 @@ export function useTemplateColumns(options?: { disableSort?: boolean; disableLin
   const projectColumn = useProjectNameColumn(AwxRoute.ProjectDetails, options);
   const credentialsColumn = useCredentialsColumn();
   const labelsColumn = useLabelsColumn();
+  const executionEnvColumn = useExecutionEnvColumn(AwxRoute.ExecutionEnvironments, options);
+
   const lastRanColumn = useLastRanColumn(options);
   const typeOfTemplate = useTypeColumn<JobTemplate | WorkflowJobTemplate>({
     ...options,
@@ -94,6 +98,7 @@ export function useTemplateColumns(options?: { disableSort?: boolean; disableLin
       modifiedColumn,
       organizationColumn,
       inventoryColumn,
+      executionEnvColumn,
       projectColumn,
       credentialsColumn,
       labelsColumn,
@@ -108,6 +113,7 @@ export function useTemplateColumns(options?: { disableSort?: boolean; disableLin
       modifiedColumn,
       organizationColumn,
       inventoryColumn,
+      executionEnvColumn,
       projectColumn,
       credentialsColumn,
       labelsColumn,
