@@ -3,15 +3,17 @@ import { useTranslation } from 'react-i18next';
 import { useBulkConfirmation, ITableColumn, TextCell } from '../../../../../../framework';
 import { action, useVisualizationController } from '@patternfly/react-topology';
 import type { GraphNode } from '../types';
+import { useSetVisualizerModified } from './useSetVisualizerModified';
 
 export function useRemoveAllNodes() {
   const { t } = useTranslation();
-
+  const setModified = useSetVisualizerModified();
   const controller = useVisualizationController();
   const handleRemoveAllNodes = action(() => {
     controller.getElements().forEach((element) => {
       controller.removeElement(element);
     });
+    setModified(true);
   });
 
   const nameColumn = useMemo<ITableColumn<GraphNode>>(

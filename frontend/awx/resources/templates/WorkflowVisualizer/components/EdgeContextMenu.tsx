@@ -2,8 +2,8 @@ import { ReactElement } from 'react';
 import {
   ContextMenuItem,
   ContextMenuSeparator,
+  Edge,
   ElementModel,
-  GraphElement,
   action,
 } from '@patternfly/react-topology';
 import {
@@ -14,6 +14,8 @@ import {
 } from '@patternfly/react-icons';
 import { Icon } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { useSetVisualizerModified } from '../hooks/useSetVisualizerModified';
+import { EdgeStatus } from '../types';
 
 interface MenuItem {
   key: string;
@@ -23,7 +25,16 @@ interface MenuItem {
   onClick?: () => void;
 }
 
-export function useEdgeMenuItems(element: GraphElement<ElementModel, unknown>): MenuItem[] {
+export function useEdgeMenuItems(
+  element: Edge<
+    ElementModel,
+    {
+      tag: string;
+      tagStatus: EdgeStatus;
+      endTerminalStatus: string;
+    }
+  >
+): MenuItem[] {
   const { t } = useTranslation();
   return [
     {
@@ -38,7 +49,7 @@ export function useEdgeMenuItems(element: GraphElement<ElementModel, unknown>): 
         action(() => {
           element.setData({
             tag: t('Run on success'),
-            tagStatus: 'success',
+            tagStatus: EdgeStatus.success,
             endTerminalStatus: 'success',
           });
         })();
@@ -54,7 +65,11 @@ export function useEdgeMenuItems(element: GraphElement<ElementModel, unknown>): 
       label: t('Run always'),
       onClick: () => {
         action(() => {
-          element.setData({ tag: t('Run always'), tagStatus: 'info', endTerminalStatus: 'info' });
+          element.setData({
+            tag: t('Run always'),
+            tagStatus: EdgeStatus.info,
+            endTerminalStatus: 'info',
+          });
         })();
       },
     },
@@ -70,7 +85,7 @@ export function useEdgeMenuItems(element: GraphElement<ElementModel, unknown>): 
         action(() => {
           element.setData({
             tag: t('Run on fail'),
-            tagStatus: 'danger',
+            tagStatus: EdgeStatus.danger,
             endTerminalStatus: 'fail',
           });
         })();
@@ -99,9 +114,19 @@ export function useEdgeMenuItems(element: GraphElement<ElementModel, unknown>): 
   ];
 }
 
-export function EdgeContextMenu(props: { element: GraphElement<ElementModel, unknown> }) {
+export function EdgeContextMenu(props: {
+  element: Edge<
+    ElementModel,
+    {
+      tag: string;
+      tagStatus: EdgeStatus;
+      endTerminalStatus: string;
+    }
+  >;
+}) {
   const { element } = props;
   const data = element.getData() as { tagStatus: string };
+  const setModified = useSetVisualizerModified();
 
   const items = useEdgeMenuItems(element);
 
@@ -117,7 +142,10 @@ export function EdgeContextMenu(props: { element: GraphElement<ElementModel, unk
         key={item.key}
         icon={item.icon}
         isDanger={item.isDanger}
-        onClick={() => item?.onClick && item.onClick()}
+        onClick={() => {
+          item?.onClick && item.onClick();
+          setModified(true);
+        }}
       >
         {item.label}
       </ContextMenuItem>

@@ -21,6 +21,7 @@ import {
   FlexItem,
   Icon,
   MenuToggle,
+  Modal,
   Title,
   ToolbarItem,
 } from '@patternfly/react-core';
@@ -44,11 +45,24 @@ export function ToolbarHeader() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const { isFullScreen } = useViewOptions();
-  const [workflowTemplate] = useVisualizationState<WorkflowJobTemplate>('workflowTemplate');
-
+  const { modified, workflowTemplate: template } = useVisualizationController().getState<{
+    modified: boolean;
+    workflowTemplate: WorkflowJobTemplate;
+  }>();
+  const [workflowTemplate] = useVisualizationState<WorkflowJobTemplate>(
+    'workflowTemplate',
+    template
+  );
+  const [showUnsavedChangesModal, setShowUnsavedChangesModal] = useState<boolean>(false);
   const handleCancel = useCallback(() => {
-    pageNavigate(AwxRoute.WorkflowJobTemplateDetails, { params: { id: workflowTemplate?.id } });
-  }, [pageNavigate, workflowTemplate?.id]);
+    if (modified) {
+      setShowUnsavedChangesModal(true);
+      return;
+    }
+    pageNavigate(AwxRoute.WorkflowJobTemplateDetails, {
+      params: { id: workflowTemplate?.id },
+    });
+  }, [pageNavigate, workflowTemplate?.id, modified]);
 
   return (
     <>
@@ -77,6 +91,31 @@ export function ToolbarHeader() {
           onClick={handleCancel}
         />
       </ToolbarItem>
+      <Modal
+        title={t('Warning: Unsaved changes')}
+        data-cy="visualizer-unsaved-changes-modal"
+        titleIconVariant="warning"
+        isOpen={showUnsavedChangesModal}
+        variant="small"
+        onClose={() => setShowUnsavedChangesModal(false)}
+        actions={[
+          <Button key="save-and-exit" data-cy="save-and-exit" variant="primary" onClick={() => {}}>
+            {t('Save and exit')}
+          </Button>,
+          <Button
+            key="exit-without-saving"
+            data-cy="exit-without-saving"
+            variant="danger"
+            onClick={() => {
+              pageNavigate(AwxRoute.WorkflowJobTemplateDetails, {
+                params: { id: workflowTemplate?.id },
+              });
+            }}
+          >
+            {t('Exit without saving')}
+          </Button>,
+        ]}
+      >{`You have unsaved changes. Are you sure you want to leave this page?`}</Modal>
     </>
   );
 }

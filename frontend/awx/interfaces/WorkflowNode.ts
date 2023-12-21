@@ -54,7 +54,7 @@ export interface WorkflowNode {
 export interface WorkflowApprovalNode {
   name: string;
   type: 'Workflow Approval';
-  convergence: string;
+  all_parents_must_converge: string;
   description?: string;
   timeout?: string;
 }

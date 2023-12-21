@@ -235,3 +235,31 @@ describe('Empty state', () => {
     cy.get('g[data-id="1-unsavedNode"]').should('be.visible');
   });
 });
+
+describe('Should show unsaved changes modal', () => {
+  beforeEach(() => {
+    cy.intercept(
+      {
+        method: 'GET',
+        url: '/api/v2/workflow_job_templates/*/workflow_nodes/*',
+      },
+      { fixture: 'workflow_nodes.json' }
+    ).as('getWorkflowNodes');
+    cy.intercept(
+      { method: 'GET', url: '/api/v2/workflow_job_templates/*' },
+      { fixture: 'workflowJobTemplate.json' }
+    );
+    cy.intercept('/api/v2/job_templates/*', { fixture: 'jobTemplate.json' });
+    cy.intercept('/api/v2/job_templates/*/instance_groups', { fixture: 'instance_groups.json' });
+  });
+  it('Click on edge context menu option to change link type', () => {
+    cy.mount(<WorkflowVisualizer />);
+    cy.get('[data-id="1356-1511"]').within(() => {
+      cy.get('[data-cy="edge-context-menu_kebab"]').click({ force: true });
+    });
+    cy.get('li[data-cy="fail"]').click();
+    cy.get('[data-id="1356-1511"]').should('have.text', 'Run on fail');
+    cy.get('button[data-cy="workflow-visualizer-toolbar-close"]').click();
+    cy.get('div[data-cy="visualizer-unsaved-changes-modal"]').should('be.visible');
+  });
+});
