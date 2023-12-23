@@ -1,3 +1,4 @@
+import { LabelGroup } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -9,10 +10,9 @@ import {
   TextCell,
   useGetPageUrl,
 } from '../../framework';
-import { RouteObj } from './Routes';
-import { SummaryFieldCredential } from '../awx/interfaces/summary-fields/summary-fields';
-import { LabelGroup } from '@patternfly/react-core';
 import { CredentialLabel } from '../awx/common/CredentialLabel';
+import { SummaryFieldCredential } from '../awx/interfaces/summary-fields/summary-fields';
+import { RouteObj } from './Routes';
 
 export function useIdColumn<T extends { name: string; id: number }>(isHidden: boolean = true) {
   const { t } = useTranslation();
@@ -170,15 +170,7 @@ export function useCreatedColumn(options?: {
         return (
           <DateTimeCell
             format="since"
-            value={
-              item.created
-                ? item.created
-                : item.created_on
-                  ? item.created_on
-                  : item.date_joined
-                    ? item.date_joined
-                    : item.pulp_created
-            }
+            value={item.created ?? item.created_on ?? item.date_joined ?? item.pulp_created}
             author={
               'summary_fields' in item ? item.summary_fields?.created_by?.username : undefined
             }
