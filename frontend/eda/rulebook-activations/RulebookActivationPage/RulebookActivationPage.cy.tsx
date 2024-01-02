@@ -1,7 +1,6 @@
 /* eslint-disable i18next/no-literal-string */
 
 import { RulebookActivationPage } from './RulebookActivationPage';
-import { RouteObj } from '../../../common/Routes';
 
 describe('RulebookActivationPage', () => {
   beforeEach(() => {
@@ -23,10 +22,7 @@ describe('RulebookActivationPage', () => {
       { method: 'GET', url: '/api/eda/v1/activations/1/' },
       { fixture: 'edaDisabledRulebookActivation.json' }
     );
-    cy.mount(<RulebookActivationPage />, {
-      path: RouteObj.EdaRulebookActivationPage,
-      initialEntries: [RouteObj.EdaRulebookActivationDetails.replace(':id', '1')],
-    });
+    cy.mount(<RulebookActivationPage />);
     cy.get('h1').should('have.text', 'Activation 1');
   });
 
@@ -43,24 +39,18 @@ describe('RulebookActivationPage', () => {
       return req.reply({ statusCode: 204 });
     }).as('enableActivation');
 
-    cy.mount(<RulebookActivationPage />, {
-      path: RouteObj.EdaRulebookActivationPage,
-      initialEntries: [RouteObj.EdaRulebookActivationDetails.replace(':id', '1')],
-    });
+    cy.mount(<RulebookActivationPage />);
     cy.get('.pf-v5-c-switch__toggle').click();
     cy.wait('@enableActivation');
     cy.get('.pf-v5-c-alert__title').should('contain', 'Activation 1 enabled');
   });
 
   it('Can disable the rulebook activation', () => {
-    cy.intercept('POST', '/api/eda/v1/activations/5/disable/', (req) => {
+    cy.intercept('POST', '/api/eda/v1/activations/1/disable/', (req) => {
       return req.reply({ statusCode: 204 });
     }).as('disableActivation');
 
-    cy.mount(<RulebookActivationPage />, {
-      path: RouteObj.EdaRulebookActivationPage,
-      initialEntries: [RouteObj.EdaRulebookActivationDetails.replace(':id', '5')],
-    });
+    cy.mount(<RulebookActivationPage />);
 
     cy.get('.pf-v5-c-switch__toggle').click();
     cy.get('div[role="dialog"]').within(() => {

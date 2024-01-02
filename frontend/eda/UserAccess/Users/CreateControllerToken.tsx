@@ -8,7 +8,6 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
-import { RouteObj } from '../../../common/Routes';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { EdaPageForm } from '../../EdaPageForm';
 import { EdaRoute } from '../../EdaRoutes';
@@ -71,7 +70,7 @@ export function CreateControllerToken() {
     {
       label: t('Controller tokens'),
       to: canViewUsers
-        ? RouteObj.EdaUserDetailsTokens.replace(':id', `${user?.id || ''}`)
+        ? getPageUrl(EdaRoute.UserTokens, { params: { id: user?.id } })
         : getPageUrl(EdaRoute.MyTokens),
     },
     { label: user?.username ?? '' },

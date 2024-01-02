@@ -78,16 +78,4 @@ export const RouteObj = {
   EditExecutionEnvironment: `/administration/execution-environments/:id/edit`,
 
   /** DO NOT ADD NEW VALUES - DEPRECATED */
-  EdaUserDetailsTokens: `/access/users/details/:id/tokens`,
-  EdaRulebookActivationPage: `/rulebook-activations/:id/*`,
-  EdaRulebookActivationDetails: `/rulebook-activations/:id/details`,
-  EdaRulebookActivationHistory: `/rulebook-activations/:id/history`,
-
-  /** DO NOT ADD NEW VALUES - DEPRECATED */
-  EdaRuleAuditPage: `/rule-audits/:id/*`,
-  EdaRuleAuditDetails: `/rule-audits/:id/details`,
-  EdaRuleAuditActions: `/rule-audits/:id/actions`,
-  EdaRuleAuditEvents: `/rule-audits/:id/events`,
-
-  /** DO NOT ADD NEW VALUES - DEPRECATED */
 };
