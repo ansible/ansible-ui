@@ -1,5 +1,3 @@
-export type RouteType = `/${string}`;
-
 /** @deprecated Use useGetPageUrl and usePageNavigation with AwxRoute, EdaRoute, and HubRoute instead. */
 export const RouteObj = {
   /** DO NOT ADD NEW VALUES - DEPRECATED */
