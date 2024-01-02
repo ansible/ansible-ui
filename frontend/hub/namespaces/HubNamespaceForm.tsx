@@ -55,14 +55,11 @@ export function EditHubNamespace() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const name = params.id;
-  const url = hubAPI`/_ui/v1/my-namespaces/${name ?? ''}/`;
-  console.log('url: ', url);
   const {
     data: namespace,
     error,
     refresh,
   } = useGet<HubNamespace>(hubAPI`/_ui/v1/my-namespaces/${name ?? ''}/`);
-debugger
   const putRequest = usePutRequest<HubNamespace, HubNamespace>();
   const onSubmit: PageFormSubmitHandler<HubNamespace> = async (namespace) => {
     await putRequest(hubAPI`/_ui/v1/my-namespaces/${name ?? ''}/`, namespace);
