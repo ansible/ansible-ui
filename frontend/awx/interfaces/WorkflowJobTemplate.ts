@@ -58,6 +58,7 @@ export interface WorkflowJobTemplate
       kind: '' | 'smart' | 'constructed';
     };
     project: Pick<Project, 'id' | 'name'>;
+    execution_environment?: { id: number; name: string };
     organization?: {
       id: number;
       name: string;
@@ -115,6 +116,7 @@ export interface WorkflowJobTemplateForm
     | 'skip_tags'
     | 'job_tags'
     | 'type'
+    | 'execution_environment'
     | 'id'
     | 'job_type'
     | 'related'

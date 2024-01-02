@@ -25,7 +25,6 @@ import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { AwxRoute } from '../../../AwxRoutes';
 import { SummaryFieldRecentJob } from '../../../interfaces/summary-fields/summary-fields';
 import { Sparkline } from '../components/Sparkline';
-import { get } from 'cypress/types/lodash';
 
 function useActivityColumn() {
   const { t } = useTranslation();
