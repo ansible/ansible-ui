@@ -1,10 +1,10 @@
+import pDebounce from 'p-debounce';
 import { useEffect, useState } from 'react';
+import { requestGet, requestPatch } from '../../../../common/crud/Data';
+import { awxAPI } from '../../../api/awx-utils';
+import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { Instance } from '../../../interfaces/Instance';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
-import { requestGet, requestPatch } from '../../../../common/crud/Data';
-import { debounce } from 'debounce';
-import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
-import { awxAPI } from '../../../api/awx-utils';
 
 export function useInstanceActions(instanceId: string) {
   const [instance, setInstance] = useState<Instance>();
@@ -56,7 +56,7 @@ export function useInstanceActions(instanceId: string) {
   ) {
     return ((maxAllowed - minAllowed) * (currentVal - min)) / (max - min) + minAllowed;
   }
-  const handleInstanceForksSlider = debounce(async (instance: Instance, value: number) => {
+  const handleInstanceForksSlider = pDebounce(async (instance: Instance, value: number) => {
     const adjustedMin = Math.min(instance.mem_capacity, instance.cpu_capacity);
     const adjustedMax = Math.max(instance.mem_capacity, instance.cpu_capacity);
     const computedVal = mapBetween(value, 0, 1, adjustedMin, adjustedMax);
@@ -71,7 +71,7 @@ export function useInstanceActions(instanceId: string) {
         parseFloat(response.capacity_adjustment)
       )
     );
-  });
+  }, 200);
 
   return {
     instance,
