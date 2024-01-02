@@ -1,7 +1,6 @@
 /* eslint-disable i18next/no-literal-string */
 import { edaAPI } from '../../../api/eda-utils';
 import { RuleAuditEvents } from './RuleAuditEvents';
-import { RouteObj } from '../../../../common/Routes';
 
 describe('RuleAuditEvents', () => {
   it('Rule Audit events are displayed correctly', () => {
@@ -14,10 +13,7 @@ describe('RuleAuditEvents', () => {
         fixture: 'edaAuditRuleEvents.json',
       }
     );
-    cy.mount(<RuleAuditEvents />, {
-      path: RouteObj.EdaRuleAuditEvents,
-      initialEntries: [RouteObj.EdaRuleAuditEvents.replace(':id', '1')],
-    });
+    cy.mount(<RuleAuditEvents />);
     cy.get('tbody').find('tr').should('have.length', 10);
     cy.get('[data-cy="name-column-header"]').should('contain', 'Name');
     cy.get('a').should('have.text', 'ansible.eda.range');
