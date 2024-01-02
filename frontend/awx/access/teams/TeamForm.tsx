@@ -17,6 +17,7 @@ import { PageFormSelectOrganization } from '../organizations/components/PageForm
 export function CreateTeam() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
+  const navigate = useNavigate();
   const postRequest = usePostRequest<Team>();
   const onSubmit: PageFormSubmitHandler<Team> = async (team) => {
     team.organization = team.summary_fields?.organization?.id;
@@ -33,11 +34,7 @@ export function CreateTeam() {
           { label: t('Create Team') },
         ]}
       />
-      <AwxPageForm
-        submitText={t('Create team')}
-        onSubmit={onSubmit}
-        onCancel={() => pageNavigate(-1)}
-      >
+      <AwxPageForm submitText={t('Create team')} onSubmit={onSubmit} onCancel={() => navigate(-1)}>
         <TeamInputs />
       </AwxPageForm>
     </PageLayout>
