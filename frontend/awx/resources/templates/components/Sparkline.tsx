@@ -10,7 +10,7 @@ const Wrapper = styled.div`
   display: inline-flex;
   flex-wrap: wrap;
 `;
-export const Sparkline = ({ jobs }: { jobs: SummaryFieldRecentJob[] }) => {
+export const Sparkline = ({ jobs }: { jobs: SummaryFieldRecentJob[] | undefined }) => {
   const JOB_TYPE_URL_SEGMENTS: { [char: string]: string } = {
     job: 'playbook',
     project_update: 'project',

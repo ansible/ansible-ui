@@ -14,12 +14,11 @@ import { useAnsibleAboutModal } from '../common/AboutModal';
 import { PageRefreshIcon } from '../common/PageRefreshIcon';
 import { postRequest } from '../common/crud/Data';
 import { useGet } from '../common/crud/useGet';
-import { useActiveUser } from '../common/useActiveUser';
 import { useClearCache } from '../common/useInvalidateCache';
 import { HubRoute } from './HubRoutes';
 import { hubAPI } from './api/formatPath';
 import { CollectionVersionSearch } from './approvals/Approval';
-import Logo from './galaxy-logo.svg';
+import GalaxyBrand from './galaxy-logo.svg';
 import { useHubContext } from './useHubContext';
 import { HubItemsResponse } from './useHubView';
 
@@ -28,7 +27,7 @@ export function HubMasthead() {
   const openAnsibleAboutModal = useAnsibleAboutModal();
   const { clearAllCache } = useClearCache();
   const navigate = useNavigate();
-  const activeUser = useActiveUser();
+  const context = useHubContext();
   useHubNotifications();
   const logout = useCallback(async () => {
     await postRequest(hubAPI`/_ui/v1/auth/logout/`, {});
@@ -36,12 +35,7 @@ export function HubMasthead() {
     navigate('/login');
   }, [clearAllCache, navigate]);
   return (
-    <PageMasthead
-      icon={<Logo style={{ height: 48, marginTop: -8 }} />}
-      // title={process.env.PRODUCT}
-      title=""
-      brand={process.env.BRAND}
-    >
+    <PageMasthead brand={<GalaxyBrand style={{ height: 48, marginTop: -8 }} />}>
       <ToolbarGroup variant="icon-button-group" style={{ flexGrow: 1 }}>
         <ToolbarItem style={{ marginLeft: 'auto' }}>
           <PageRefreshIcon />
@@ -81,7 +75,7 @@ export function HubMasthead() {
           <PageMastheadDropdown
             id="account-menu"
             icon={<UserCircleIcon />}
-            label={activeUser?.username}
+            label={context.user.username}
           >
             {/* <DropdownItem
               id="user-details"
