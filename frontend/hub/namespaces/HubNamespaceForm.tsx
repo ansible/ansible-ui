@@ -79,6 +79,7 @@ export function EditHubNamespace() {
     return (
       <PageLayout>
         <PageHeader
+          title={t('Edit Namespace')}
           breadcrumbs={[
             { label: t('Namespaces'), to: getPageUrl(HubRoute.Namespaces) },
             { label: name, to: getPageUrl(HubRoute.NamespacePage, { params: { id: name } }) },
