@@ -1,7 +1,6 @@
 /* eslint-disable i18next/no-literal-string */
 import { edaAPI } from '../../../api/eda-utils';
 import { RuleAuditDetails } from './RuleAuditDetails';
-import { RouteObj } from '../../../../common/Routes';
 
 describe('RuleAuditDetails', () => {
   beforeEach(() => {
@@ -17,10 +16,7 @@ describe('RuleAuditDetails', () => {
   });
 
   it('Rule Audit details are displayed correctly', () => {
-    cy.mount(<RuleAuditDetails />, {
-      path: RouteObj.EdaRuleAuditDetails,
-      initialEntries: [RouteObj.EdaRuleAuditDetails.replace(':id', '1')],
-    });
+    cy.mount(<RuleAuditDetails />);
     cy.get('[data-cy="name"] > .pf-v5-c-description-list__text').should(
       'have.text',
       'Say Hello long running'

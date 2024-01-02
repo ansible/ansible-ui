@@ -1,7 +1,6 @@
 /* eslint-disable i18next/no-literal-string */
 import { edaAPI } from '../../../api/eda-utils';
 import { RuleAuditActions } from './RuleAuditActions';
-import { RouteObj } from '../../../../common/Routes';
 
 describe('RuleAuditActions', () => {
   it('Rule Audit actions are displayed correctly', () => {
@@ -14,10 +13,7 @@ describe('RuleAuditActions', () => {
         fixture: 'edaAuditRuleActions.json',
       }
     );
-    cy.mount(<RuleAuditActions />, {
-      path: RouteObj.EdaRuleAuditActions,
-      initialEntries: [RouteObj.EdaRuleAuditActions.replace(':id', '1')],
-    });
+    cy.mount(<RuleAuditActions />);
     cy.get('tbody').find('tr').should('have.length', 10);
     cy.get('[data-cy="name-column-header"]').should('contain', 'Name');
     cy.get('[data-cy="name-column-cell"]').should('have.text', 'debug');
