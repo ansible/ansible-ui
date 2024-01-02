@@ -46,11 +46,11 @@ describe('RulebookActivationPage', () => {
   });
 
   it('Can disable the rulebook activation', () => {
-    cy.intercept('POST', '/api/eda/v1/activations/1/disable/', (req) => {
+    cy.intercept('POST', '/api/eda/v1/activations/5/disable/', (req) => {
       return req.reply({ statusCode: 204 });
     }).as('disableActivation');
 
-    cy.mount(<RulebookActivationPage />);
+    cy.mount(<RulebookActivationPage />, { path: '/:id/*', initialEntries: ['/5'] });
 
     cy.get('.pf-v5-c-switch__toggle').click();
     cy.get('div[role="dialog"]').within(() => {
