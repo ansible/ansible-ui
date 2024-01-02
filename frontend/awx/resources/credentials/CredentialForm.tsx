@@ -32,6 +32,7 @@ interface CredentialForm extends Credential {
 export function CreateCredential() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
+  const navigate = useNavigate();
   const activeUser = useAwxActiveUser();
   const postRequest = usePostRequest<Credential>();
   const getPageUrl = useGetPageUrl();
@@ -64,7 +65,7 @@ export function CreateCredential() {
       <AwxPageForm
         submitText={t('Create credential')}
         onSubmit={onSubmit}
-        onCancel={() => pageNavigate(-1)}
+        onCancel={() => navigate(-1)}
       >
         <CredentialInputs />
       </AwxPageForm>
