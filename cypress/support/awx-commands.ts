@@ -952,7 +952,6 @@ Cypress.Commands.add('getAwxJobTemplateByName', (awxJobTemplateName: string) => 
   cy.awxRequestGet<AwxItemsResponse<JobTemplate>>(
     awxAPI`/job_templates/?name=${awxJobTemplateName}`
   ).then((result) => {
-    cy.log('Job Template', result);
     if (result && result.count === 0) {
       cy.createAwxOrganizationProjectInventoryJobTemplate();
     } else {
