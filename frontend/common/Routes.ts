@@ -62,9 +62,6 @@ export const RouteObj = {
   InventorySourceScheduleRules: `/infrastructure/inventories/inventory/:id/sources/:source_id/schedules/:schedule_id/rules`,
 
   /** DO NOT ADD NEW VALUES - DEPRECATED */
-  UserDetails: `/access/users/:id/details`,
-
-  /** DO NOT ADD NEW VALUES - DEPRECATED */
   ManagementJobs: `/administration/management_jobs`,
   ManagementJobSchedulesDetails: `/administration/management_jobs/:id/schedules/:schedule_id/details`,
   InstanceGroupDetails: `/infrastructure/instance-groups/:id`,
