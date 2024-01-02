@@ -69,7 +69,7 @@ export function HubMasthead() {
           <PageMastheadDropdown
             id="account-menu"
             icon={<UserCircleIcon />}
-            label={context.user.username}
+            label={context?.user?.username}
           >
             {/* <DropdownItem
               id="user-details"
