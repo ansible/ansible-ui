@@ -17,6 +17,7 @@ import { hubAPI } from '../api/formatPath';
 import { HubNamespace } from './HubNamespace';
 import { HubPageForm } from '../HubPageForm';
 import { HubError } from '../common/HubError';
+import { useClearCache } from '../../common/useInvalidateCache';
 
 export function CreateHubNamespace() {
   const { t } = useTranslation();
@@ -53,6 +54,7 @@ export function CreateHubNamespace() {
 export function EditHubNamespace() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { clearCacheByKey } = useClearCache();
   const params = useParams<{ id?: string }>();
   const name = params.id;
   const {
@@ -63,6 +65,7 @@ export function EditHubNamespace() {
   const putRequest = usePutRequest<HubNamespace, HubNamespace>();
   const onSubmit: PageFormSubmitHandler<HubNamespace> = async (namespace) => {
     await putRequest(hubAPI`/_ui/v1/my-namespaces/${name ?? ''}/`, namespace);
+    clearCacheByKey(hubAPI`/_ui/v1/my-namespaces/${name ?? ''}/`);
     navigate(-1);
   };
   const getPageUrl = useGetPageUrl();
