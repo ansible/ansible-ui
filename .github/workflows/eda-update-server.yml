@@ -98,7 +98,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": ":alert: *EDA E2E Update* - *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Failure>* - <${{ needs.setup.outputs.EDA_SERVER }}/eda|Server>"
+                    "text": ":alert: *EDA E2E Update* - *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Failure>* - <${{ needs.setup.outputs.EDA_SERVER }}/eda|Server> - <!here>"
                   }
                 }
               ]
