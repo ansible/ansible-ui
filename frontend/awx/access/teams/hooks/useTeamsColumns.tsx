@@ -16,7 +16,7 @@ export function useTeamsColumns(options?: { disableLinks?: boolean; disableSort?
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const nameColumnClick = useCallback(
-    (team: Team) => pageNavigate(AwxRoute.TeamDetails, { params: { ':id': team.id } }),
+    (team: Team) => pageNavigate(AwxRoute.TeamDetails, { params: { id: team.id } }),
     [pageNavigate]
   );
   const idColumn = useIdColumn();

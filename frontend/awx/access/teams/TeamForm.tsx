@@ -22,7 +22,7 @@ export function CreateTeam() {
   const onSubmit: PageFormSubmitHandler<Team> = async (team) => {
     team.organization = team.summary_fields?.organization?.id;
     const createdTeam = await postRequest(awxAPI`/teams/`, team);
-    pageNavigate(AwxRoute.TeamDetails, { params: { ':id': createdTeam.id } });
+    pageNavigate(AwxRoute.TeamDetails, { params: { id: createdTeam.id } });
   };
   const getPageUrl = useGetPageUrl();
   return (
