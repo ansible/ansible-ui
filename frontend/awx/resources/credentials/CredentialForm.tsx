@@ -6,12 +6,12 @@ import {
   PageLayout,
   compareStrings,
   useGetPageUrl,
+  usePageNavigate,
 } from '../../../../framework';
 import { PageFormTextArea } from '../../../../framework/PageForm/Inputs/PageFormTextArea';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
-import { RouteObj } from '../../../common/Routes';
 import { requestPatch } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
@@ -31,7 +31,7 @@ interface CredentialForm extends Credential {
 
 export function CreateCredential() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const activeUser = useAwxActiveUser();
   const postRequest = usePostRequest<Credential>();
   const getPageUrl = useGetPageUrl();
@@ -50,7 +50,7 @@ export function CreateCredential() {
       credential.user = activeUser?.id;
     }
     const newCredential = await postRequest(awxAPI`/credentials/`, credential);
-    navigate(RouteObj.CredentialDetails.replace(':id', newCredential.id.toString()));
+    pageNavigate(AwxRoute.CredentialDetails, { params: { id: newCredential.id } });
   };
   return (
     <PageLayout>
@@ -64,7 +64,7 @@ export function CreateCredential() {
       <AwxPageForm
         submitText={t('Create credential')}
         onSubmit={onSubmit}
-        onCancel={() => navigate(-1)}
+        onCancel={() => pageNavigate(-1)}
       >
         <CredentialInputs />
       </AwxPageForm>

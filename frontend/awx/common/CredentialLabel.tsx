@@ -1,7 +1,8 @@
 import { Label } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { RouteObj } from '../../common/Routes';
+import { useGetPageUrl } from '../../../framework';
+import { AwxRoute } from '../AwxRoutes';
 import { Credential } from '../interfaces/Credential';
 import { SummaryFieldCredential } from '../interfaces/summary-fields/summary-fields';
 import { toTitleCase } from './util/strings';
@@ -9,6 +10,7 @@ import { toTitleCase } from './util/strings';
 function CredentialLabel(props: { credential: Credential | SummaryFieldCredential }) {
   const { t } = useTranslation();
   const { credential, ...rest } = props;
+  const getPageUrl = useGetPageUrl();
 
   let type;
   if (credential.cloud) {
@@ -29,7 +31,7 @@ function CredentialLabel(props: { credential: Credential | SummaryFieldCredentia
 
   return (
     <Label color="blue" {...rest}>
-      <Link to={RouteObj.CredentialDetails.replace(':id', credential.id.toString())}>
+      <Link to={getPageUrl(AwxRoute.CredentialDetails, { params: { id: credential.id } })}>
         {/* eslint-disable-next-line i18next/no-literal-string */}
         <strong>{type}: </strong>
         {credential.kind === 'vault' && vault_id
