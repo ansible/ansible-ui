@@ -1,11 +1,10 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { PageHeader, PageLayout, useGetPageUrl } from '../../../../framework';
+import { PageHeader, PageLayout, useGetPageUrl, usePageNavigate } from '../../../../framework';
 import { PageFormTextArea } from '../../../../framework/PageForm/Inputs/PageFormTextArea';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
-import { RouteObj } from '../../../common/Routes';
 import { useGet } from '../../../common/crud/useGet';
 import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
@@ -17,12 +16,12 @@ import { PageFormSelectOrganization } from '../organizations/components/PageForm
 
 export function CreateTeam() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const postRequest = usePostRequest<Team>();
   const onSubmit: PageFormSubmitHandler<Team> = async (team) => {
     team.organization = team.summary_fields?.organization?.id;
     const createdTeam = await postRequest(awxAPI`/teams/`, team);
-    navigate(RouteObj.TeamDetails.replace(':id', createdTeam.id.toString()));
+    pageNavigate(AwxRoute.TeamDetails, { params: { ':id': createdTeam.id } });
   };
   const getPageUrl = useGetPageUrl();
   return (
@@ -34,7 +33,11 @@ export function CreateTeam() {
           { label: t('Create Team') },
         ]}
       />
-      <AwxPageForm submitText={t('Create team')} onSubmit={onSubmit} onCancel={() => navigate(-1)}>
+      <AwxPageForm
+        submitText={t('Create team')}
+        onSubmit={onSubmit}
+        onCancel={() => pageNavigate(-1)}
+      >
         <TeamInputs />
       </AwxPageForm>
     </PageLayout>

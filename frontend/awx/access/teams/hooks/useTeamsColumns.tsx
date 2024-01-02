@@ -1,8 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { ITableColumn } from '../../../../../framework';
-import { RouteObj } from '../../../../common/Routes';
+import { ITableColumn, usePageNavigate } from '../../../../../framework';
 import {
   useCreatedColumn,
   useDescriptionColumn,
@@ -11,15 +9,15 @@ import {
   useNameColumn,
   useOrganizationNameColumn,
 } from '../../../../common/columns';
-import { Team } from '../../../interfaces/Team';
 import { AwxRoute } from '../../../AwxRoutes';
+import { Team } from '../../../interfaces/Team';
 
 export function useTeamsColumns(options?: { disableLinks?: boolean; disableSort?: boolean }) {
   const { t } = useTranslation();
-  const history = useNavigate();
+  const pageNavigate = usePageNavigate();
   const nameColumnClick = useCallback(
-    (team: Team) => history(RouteObj.TeamDetails.replace(':id', team.id.toString())),
-    [history]
+    (team: Team) => pageNavigate(AwxRoute.TeamDetails, { params: { ':id': team.id } }),
+    [pageNavigate]
   );
   const idColumn = useIdColumn();
   const nameColumn = useNameColumn({ header: t('Team'), ...options, onClick: nameColumnClick });
