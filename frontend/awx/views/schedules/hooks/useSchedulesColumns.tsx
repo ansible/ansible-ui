@@ -1,14 +1,15 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { DateTimeCell, ITableColumn, TextCell } from '../../../../../framework';
-import { RouteObj } from '../../../../common/Routes';
+import { DateTimeCell, ITableColumn, TextCell, useGetPageUrl } from '../../../../../framework';
 import { useDescriptionColumn, useNameColumn, useTypeColumn } from '../../../../common/columns';
+import { AwxRoute } from '../../../AwxRoutes';
 import { Schedule } from '../../../interfaces/Schedule';
 
 export function useSchedulesColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const getPageUrl = useGetPageUrl();
 
   type JobTypeLabel = {
     [key: string]: { [key: string]: string };
@@ -17,28 +18,28 @@ export function useSchedulesColumns(options?: { disableSort?: boolean; disableLi
     () => ({
       inventory_update: {
         name: t('Inventory sync'),
-        scheduleDetailsRoute: RouteObj.InventorySourceScheduleDetails,
-        resourceDetailsRoute: RouteObj.InventorySourcesDetails,
+        scheduleDetailsRoute: getPageUrl(AwxRoute.InventorySourceScheduleDetails),
+        resourceDetailsRoute: getPageUrl(AwxRoute.InventorySourceDetail),
       },
       job: {
         name: t('Playbook run'),
-        scheduleDetailsRoute: RouteObj.JobTemplateScheduleDetails,
-        resourceDetailsRoute: RouteObj.JobTemplateDetails,
+        scheduleDetailsRoute: getPageUrl(AwxRoute.JobTemplateScheduleDetails),
+        resourceDetailsRoute: getPageUrl(AwxRoute.JobTemplateDetails),
       },
       project_update: {
         name: t('Source control update'),
-        scheduleDetailsRoute: RouteObj.ProjectScheduleDetails,
-        resourceDetailsRoute: RouteObj.ProjectDetails,
+        scheduleDetailsRoute: getPageUrl(AwxRoute.ProjectScheduleDetails),
+        resourceDetailsRoute: getPageUrl(AwxRoute.ProjectDetails),
       },
       system_job: {
         name: t('Management job'),
-        scheduleDetailsRoute: RouteObj.ManagementJobSchedulesDetails,
-        resourceDetailsRoute: RouteObj.ManagementJobs,
+        scheduleDetailsRoute: getPageUrl(AwxRoute.ManagementJobScheduleDetails),
+        resourceDetailsRoute: getPageUrl(AwxRoute.ManagementJobs),
       },
       workflow_job: {
         name: t('Workflow job'),
-        scheduleDetailsRoute: RouteObj.WorkflowJobTemplateScheduleDetails,
-        resourceDetailsRoute: RouteObj.WorkflowJobTemplateDetails,
+        scheduleDetailsRoute: getPageUrl(AwxRoute.WorkflowJobTemplateScheduleDetails),
+        resourceDetailsRoute: getPageUrl(AwxRoute.WorkflowJobTemplateDetails),
       },
     }),
     [t]

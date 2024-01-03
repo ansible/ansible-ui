@@ -192,6 +192,9 @@ export enum AwxRoute {
 
   ExecutionEnvironments = 'awx-execution-environments',
   ExecutionEnvironmentPage = 'awx-execution-environments-page',
+  ExecutionEnvironmentDetails = 'awx-execution-environments-details',
+  CreateExecutionEnvironment = 'awx-create-execution-environment',
+  EditExecutionEnvironment = 'awx-edit-execution-environment',
 
   TopologyView = 'awx-topology-view',
 

@@ -1,4 +1,3 @@
-import { RouteObj } from '../../../../common/Routes';
 import * as useOptions from '../../../../common/crud/useOptions';
 import * as useAwxConfig from '../../../common/useAwxConfig';
 import { CreateProject, EditProject } from './ProjectForm';
@@ -77,10 +76,7 @@ describe('ProjectForm.cy.ts', () => {
           results: [],
         }
       );
-      cy.mount(<EditProject />, {
-        path: RouteObj.EditProject,
-        initialEntries: [RouteObj.EditProject.replace(':id', '9')],
-      });
+      cy.mount(<EditProject />, { path: '/:id/*', initialEntries: ['/9'] });
       cy.get('#credential-select').type('XYZ');
       cy.clickButton(/^Save project$/);
       cy.contains('Credential not found.').should('be.visible');
@@ -96,10 +92,7 @@ describe('ProjectForm.cy.ts', () => {
           results: [],
         }
       );
-      cy.mount(<EditProject />, {
-        path: RouteObj.EditProject,
-        initialEntries: [RouteObj.EditProject.replace(':id', '9')],
-      });
+      cy.mount(<EditProject />, { path: '/:id/*', initialEntries: ['/9'] });
       // Incorrect credential
       cy.get('#credential-select').type('XYZ');
       cy.clickButton(/^Save project$/);
