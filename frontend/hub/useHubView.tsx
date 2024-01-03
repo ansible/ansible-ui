@@ -22,27 +22,13 @@ export interface HubItemsResponse<T extends object> {
   };
 }
 
-export type IHubView<T extends object> = IView &
-  ISelected<T> & {
-    itemCount: number | undefined;
-    pageItems: T[] | undefined;
-    refresh: () => Promise<void>;
-    unselectItemsAndRefresh: (items: T[]) => void;
-  };
+export interface PulpItemsResponse<T extends object> {
+  count: number;
+  results: T[];
+  next?: string;
+}
 
-export function useHubView<T extends object>({
-  url,
-  keyFn,
-  toolbarFilters,
-  tableColumns,
-  disableQueryString,
-  queryParams,
-  sortKey,
-  defaultFilters,
-  defaultSelection,
-  defaultSort: initialDefaultSort,
-  defaultSortDirection: initialDefaultSortDirection,
-}: {
+interface IHubViewParams {
   url: string;
   keyFn: (item: T) => string | number;
   toolbarFilters?: IToolbarFilter[];
@@ -54,6 +40,32 @@ export function useHubView<T extends object>({
   defaultSelection?: T[];
   defaultSort?: string | undefined;
   defaultSortDirection?: 'asc' | 'desc' | undefined;
+}
+
+export type IHubView<T extends object> = IView &
+  ISelected<T> & {
+    itemCount: number | undefined;
+    pageItems: T[] | undefined;
+    refresh: () => Promise<void>;
+    unselectItemsAndRefresh: (items: T[]) => void;
+  };
+
+export function useCommonView<T extends object>({
+  url,
+  keyFn,
+  toolbarFilters,
+  tableColumns,
+  disableQueryString,
+  queryParams,
+  sortKey,
+  defaultFilters,
+  defaultSelection,
+  defaultSort: initialDefaultSort,
+  defaultSortDirection: initialDefaultSortDirection,
+  deconstruct,
+}: IHubViewParams & {
+  sortKey: string;
+  deconstruct: (data: unknown) => { count: number; next?: string; pageItems: T[] | undefined };
 }): IHubView<T> {
   let defaultSort: string | undefined = initialDefaultSort;
   let defaultSortDirection: 'asc' | 'desc' | undefined = initialDefaultSortDirection;
@@ -97,9 +109,6 @@ export function useHubView<T extends object>({
   }
 
   if (sort) {
-    if (!sortKey) {
-      sortKey = 'sort';
-    }
     queryString ? (queryString += '&') : (queryString += '?');
     if (sortDirection === 'desc') {
       queryString += `${sortKey}=-${sort}`;
@@ -116,7 +125,7 @@ export function useHubView<T extends object>({
 
   url += queryString;
   const fetcher = useFetcher();
-  const response = useSWR<HubItemsResponse<T>>(url, fetcher, {
+  const response = useSWR<HubItemsResponse<T> | PulpItemsResponse<T>>(url, fetcher, {
     dedupingInterval: 0,
     refreshInterval: 30000,
   });
@@ -125,10 +134,10 @@ export function useHubView<T extends object>({
     await mutate();
   }, [mutate]);
 
-  const { data: pageItems, meta: { count }, links: { next } } = data || {};
+  const { count, next, pageItems } = deconstruct(data);
 
   const nextPage = serverlessURL(next);
-  useSWR<HubItemsResponse<T>>(nextPage, fetcher, {
+  useSWR<HubItemsResponse<T> | PulpItemsResponse<T>>(nextPage, fetcher, {
     dedupingInterval: 0,
   });
 
@@ -166,4 +175,33 @@ export function useHubView<T extends object>({
       unselectItemsAndRefresh,
     };
   }, [error, pageItems, refresh, selection, unselectItemsAndRefresh, view]);
+}
+
+export function useHubView<T extends object>(params: IHubViewParams): IHubView<T> {
+  return useCommonView({
+    sortKey: 'sort',
+    ...params,
+    deconstruct: (
+      { data: pageItems, meta: { count }, links: { next } }: HubItemsResponse<T> = {
+        meta: {},
+        links: {},
+      }
+    ) => ({
+      count,
+      next,
+      pageItems,
+    }),
+  });
+}
+
+export function usePulpView<T extends object>(params: IHubViewParams): IHubView<T> {
+  return useCommonView({
+    sortKey: 'ordering',
+    ...params,
+    deconstruct: ({ results: pageItems, count, next }: PulpItemsResponse<T> = {}) => ({
+      count,
+      next,
+      pageItems,
+    }),
+  });
 }
