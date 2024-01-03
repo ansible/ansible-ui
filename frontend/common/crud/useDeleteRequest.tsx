@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { useClearCache } from '../useInvalidateCache';
 import { createRequestError } from './RequestError';
 import { requestCommon } from './requestCommon';
 import { useAbortController } from './useAbortController';
@@ -14,6 +15,7 @@ import { useAbortController } from './useAbortController';
 export function useDeleteRequest<ResponseBody = unknown>() {
   const navigate = useNavigate();
   const abortController = useAbortController();
+  const { clearCacheByKey } = useClearCache();
   return async (url: string, signal?: AbortSignal) => {
     const response = await requestCommon({
       url,
@@ -26,6 +28,7 @@ export function useDeleteRequest<ResponseBody = unknown>() {
       }
       throw await createRequestError(response);
     }
+    clearCacheByKey(url);
     switch (response.status) {
       case 204:
         return null as ResponseBody;
