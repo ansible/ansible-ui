@@ -2,10 +2,10 @@ import { Chip, ChipGroup, LabelGroup } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { PageDetail, PageDetails } from '../../../../framework';
-import { RouteObj } from '../../../common/Routes';
-import { awxAPI } from '../../api/awx-utils';
+import { PageDetail, PageDetails, useGetPageUrl } from '../../../../framework';
 import { useOptions } from '../../../common/crud/useOptions';
+import { AwxRoute } from '../../AwxRoutes';
+import { awxAPI } from '../../api/awx-utils';
 import { CredentialLabel } from '../../common/CredentialLabel';
 import { ExecutionEnvironmentDetail } from '../../common/ExecutionEnvironmentDetail';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
@@ -18,6 +18,7 @@ export function JobExpanded(job: UnifiedJob) {
     [job]
   );
   const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/inventory_sources/`);
   const inventorySourceChoices = useMemo(
     () =>
@@ -61,10 +62,9 @@ export function JobExpanded(job: UnifiedJob) {
       {job.summary_fields?.job_template && (
         <PageDetail label={t`Job template`}>
           <Link
-            to={RouteObj.JobTemplateDetails.replace(
-              ':id',
-              job.summary_fields?.job_template?.id.toString()
-            )}
+            to={getPageUrl(AwxRoute.JobTemplateDetails, {
+              params: { id: job.summary_fields?.job_template?.id },
+            })}
           >
             {job.summary_fields?.job_template?.name}
           </Link>
@@ -73,10 +73,9 @@ export function JobExpanded(job: UnifiedJob) {
       {job.summary_fields?.workflow_job_template && (
         <PageDetail label={t`Workflow job template`}>
           <Link
-            to={RouteObj.WorkflowJobTemplateDetails.replace(
-              ':id',
-              job.summary_fields?.workflow_job_template.id.toString()
-            )}
+            to={getPageUrl(AwxRoute.WorkflowJobTemplateDetails, {
+              params: { id: job.summary_fields?.workflow_job_template.id },
+            })}
           >
             {job.summary_fields?.workflow_job_template.name}
           </Link>
@@ -85,10 +84,9 @@ export function JobExpanded(job: UnifiedJob) {
       {job.summary_fields?.source_workflow_job && (
         <PageDetail label={t`Source workflow job`}>
           <Link
-            to={RouteObj.JobDetails.replace(':job_type', 'workflow').replace(
-              ':id',
-              job.summary_fields.source_workflow_job.id.toString()
-            )}
+            to={getPageUrl(AwxRoute.JobDetails, {
+              params: { job_type: 'workflow', id: job.summary_fields.source_workflow_job.id },
+            })}
           >
             {job.summary_fields.source_workflow_job.name}
           </Link>
@@ -97,10 +95,12 @@ export function JobExpanded(job: UnifiedJob) {
       {job.summary_fields?.inventory && (
         <PageDetail label={t`Inventory`}>
           <Link
-            to={RouteObj.InventoryDetails.replace(
-              ':inventory_type',
-              inventoryUrlPaths[job.summary_fields?.inventory.kind]
-            ).replace(':id', job.summary_fields?.inventory.id.toString())}
+            to={getPageUrl(AwxRoute.InventoryDetails, {
+              params: {
+                inventory_type: inventoryUrlPaths[job.summary_fields?.inventory.kind],
+                id: job.summary_fields?.inventory.id,
+              },
+            })}
           >
             {job.summary_fields?.inventory.name}
           </Link>
@@ -109,7 +109,9 @@ export function JobExpanded(job: UnifiedJob) {
       {job.summary_fields?.project && (
         <PageDetail label={t`Project`}>
           <Link
-            to={RouteObj.ProjectDetails.replace(':id', job.summary_fields?.project.id.toString())}
+            to={getPageUrl(AwxRoute.ProjectDetails, {
+              params: { id: job.summary_fields?.project.id },
+            })}
           >
             {job.summary_fields?.project.name}
           </Link>
