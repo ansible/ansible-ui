@@ -125,7 +125,7 @@ function HubNamespaceInputs(props: { isDisabled?: boolean; isRequired?: boolean 
         placeholder={t('Enter name')}
         isDisabled={props.isDisabled}
         isRequired={props.isRequired}
-        helperText={t('Name is not editable.')}
+        helperText={props.isDisabled ? t('Name is not editable.') : undefined}
       />
       <PageFormTextInput<HubNamespace>
         name="description"
