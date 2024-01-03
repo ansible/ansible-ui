@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { useClearCache } from '../useInvalidateCache';
 import { createRequestError } from './RequestError';
 import { requestCommon } from './requestCommon';
 import { useAbortController } from './useAbortController';
@@ -14,6 +15,7 @@ import { useAbortController } from './useAbortController';
 export function usePostRequest<RequestBody, ResponseBody = RequestBody>() {
   const navigate = useNavigate();
   const abortController = useAbortController();
+  const { clearCacheByKey } = useClearCache();
   return async (url: string, body: RequestBody, signal?: AbortSignal) => {
     const response = await requestCommon({
       url,
@@ -27,6 +29,7 @@ export function usePostRequest<RequestBody, ResponseBody = RequestBody>() {
       }
       throw await createRequestError(response);
     }
+    clearCacheByKey(url);
     switch (response.status) {
       case 204:
         return null as ResponseBody;
