@@ -240,8 +240,8 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
       (hasTableViewType
         ? PageTableViewTypeE.Table
         : hasListViewType
-        ? PageTableViewTypeE.List
-        : PageTableViewTypeE.Cards)
+          ? PageTableViewTypeE.List
+          : PageTableViewTypeE.Cards)
     );
   });
   const setViewType = useCallback(
@@ -660,8 +660,8 @@ function TableHead<T extends object>(props: {
                   column.minWidth === 0
                     ? '1%'
                     : column.minWidth !== undefined
-                    ? column.minWidth
-                    : undefined,
+                      ? column.minWidth
+                      : undefined,
                 maxWidth: column.maxWidth !== undefined ? column.maxWidth : undefined,
               }}
               data-cy={getID(column.header + '-column-header')}

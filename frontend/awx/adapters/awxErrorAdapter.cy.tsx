@@ -65,4 +65,18 @@ describe('awxErrorAdapter', () => {
     expect(result.fieldErrors.length).equal(0);
     expect(result.genericErrors).to.deep.equal([{ message: 'Error' }]);
   });
+
+  it('should deal with {error: "error msg"} as generic errors', () => {
+    const error = new RequestError(
+      'Validation failed',
+      undefined,
+      400,
+      {},
+      { error: ['Cannot assign type of galaxy'] }
+    );
+    const result = awxErrorAdapter(error);
+    expect(result.genericErrors.length).equal(1);
+    expect(result.fieldErrors.length).equal(0);
+    expect(result.genericErrors).to.deep.equal([{ message: 'Cannot assign type of galaxy' }]);
+  });
 });

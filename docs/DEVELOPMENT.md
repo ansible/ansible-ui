@@ -12,3 +12,7 @@
 ## Testing
 
 See: [CYPRESS.md](../cypress/CYPRESS.md)
+
+## Internationalization (i18n)
+
+See: [i18n.md](./i18n.md)

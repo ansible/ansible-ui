@@ -62,9 +62,11 @@ export function CommonNamespaces({ url }: { url: string }) {
   const pageNavigate = usePageNavigate();
   const toolbarFilters = useHubNamespaceFilters();
   const tableColumns = useHubNamespacesColumns();
-  const toolbarActions = useHubNamespaceToolbarActions();
-  const rowActions = useHubNamespaceActions();
   const view = useHubView<HubNamespace>({ url, keyFn: idKeyFn, toolbarFilters, tableColumns });
+  const toolbarActions = useHubNamespaceToolbarActions(view);
+  const rowActions = useHubNamespaceActions({
+    onHubNamespacesDeleted: view.unselectItemsAndRefresh,
+  });
   return (
     <PageTable<HubNamespace>
       id="hub-namespaces-table"

@@ -29,6 +29,12 @@ describe('EDA Login / Logoff', () => {
       Username: `E2EUser${randomString(4)}`,
       FirstName: 'Firstname',
       LastName: 'Lastname',
+      roles: [
+        {
+          id: '5399bd06-a228-4d99-b61d-ab857837ff4b',
+          name: 'Admin',
+        },
+      ],
       Email: 'first.last@redhat.com',
       Password: `${randomString(12)}`,
     };

@@ -21,6 +21,11 @@ export const Remotes = {
   downloadConcurrency: '5',
   rateLimit: '10',
   tlsValidation: 'Disabled',
+  remoteCommunityURL: 'https://galaxy.ansible.com/api/',
+  signedOnly: 'True',
+  syncDependencies: 'True',
+  showAdvancedOptions: 'Show advanced options',
+  communityGeneral: 'community.general',
 };
 
 export const RemoteRegistry = {
@@ -40,6 +45,8 @@ export const RemoteRegistry = {
   rateLimit: '10',
   tlsValidation: 'Disabled',
   syncStatus: 'Completed',
+  initialSyncStatus: 'Never synced',
+  validIndexableURL: 'https://registry.redhat.io',
 };
 
 export const Collections = {

@@ -211,17 +211,20 @@ describe('projects.cy.ts', () => {
         });
     });
 
-    it('Sync project kebab button is disabled for project with active sync status', () => {
+    it('Sync project kebab button is visible for project with non-active sync status and is hidden for project with active sync status', () => {
       cy.mount(<Projects />);
+      // select prorject with non-active sync status
+      cy.contains('td', ' Project 1 Org 0')
+        .parent()
+        .within(() => {
+          cy.get('#sync-project').should('exist');
+        });
+      // select project with active sync status
       cy.contains('td', ' Project 3 Org 0')
         .parent()
         .within(() => {
-          cy.get('#sync-project').trigger('mouseenter');
-          cy.get('#sync-project').should('have.attr', 'aria-disabled', 'true');
+          cy.get('#sync-project').should('not.exist');
         });
-      cy.get('.pf-v5-c-tooltip')
-        .contains(/^The project cannot be synced because a sync job is currently running$/)
-        .should('be.visible');
     });
 
     it('Cancel project sync kebab button is visible for project with active sync status and is hidden for project with non active sync status', () => {

@@ -1,9 +1,9 @@
 import { useTranslation } from 'react-i18next';
 import { PageLayout, PageTable, usePageNavigate } from '../../../../../framework';
-import { PageTableViewTypeE } from '../../../../../framework/PageToolbar/PageTableViewType';
 import { EdaRoute } from '../../../EdaRoutes';
 import { EdaControllerToken } from '../../../interfaces/EdaControllerToken';
 import { useEdaView } from '../../../useEventDrivenView';
+import { useControllerTokensActions } from '../hooks/useControllerTokensActions';
 import { useControllerTokenActions } from '../hooks/useControllerTokenActions';
 import { useControllerTokensColumns } from '../hooks/useControllerTokensColumns';
 import { edaAPI } from '../../../api/eda-utils';
@@ -17,14 +17,15 @@ export function ControllerTokens() {
     url: edaAPI`/users/me/awx-tokens/`,
     tableColumns,
   });
+  const toolbarActions = useControllerTokensActions(view);
   const rowActions = useControllerTokenActions(view);
   return (
     <PageLayout>
       <PageTable
         id="eda-controller-tokens-table"
         tableColumns={tableColumns}
+        toolbarActions={toolbarActions}
         rowActions={rowActions}
-        defaultTableView={PageTableViewTypeE.List}
         errorStateTitle={t('Error loading controller tokens')}
         emptyStateTitle={t('You currently do not have any tokens from Automation Controller.')}
         emptyStateDescription={t(

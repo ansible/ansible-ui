@@ -124,10 +124,7 @@ export function useDeleteInstanceGroups(onComplete: (instanceGroups: InstanceGro
     const alertPrompts = await buildAlertPrompts(instanceGroups, undeletableInstanceGroups);
 
     bulkAction({
-      title:
-        instanceGroups.length === 1
-          ? t('Permanently delete instance group')
-          : t('Permanently delete instance groups'),
+      title: t('Permanently delete instance groups', { count: instanceGroups.length }),
       confirmText: t('Yes, I confirm that I want to delete these {{count}} instance groups.', {
         count: instanceGroups.length - undeletableInstanceGroups.length,
       }),

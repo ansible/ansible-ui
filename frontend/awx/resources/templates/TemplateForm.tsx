@@ -178,7 +178,7 @@ async function submitCredentials(
   );
 
   const disassociateCredentials = removed.map((cred) =>
-    postRequest(awxAPI`/job_templates/${template?.id?.toString()}/credentials`, {
+    postRequest(awxAPI`/job_templates/${template?.id?.toString()}/credentials/`, {
       id: cred.id,
       disassociate: true,
     })

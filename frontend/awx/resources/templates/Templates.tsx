@@ -29,6 +29,7 @@ export function Templates() {
   const pageNavigate = usePageNavigate();
   const toolbarFilters = useTemplateFilters();
   const tableColumns = useTemplateColumns();
+
   const view = useAwxView<JobTemplate | WorkflowJobTemplate>({
     url: awxAPI`/unified_job_templates/`,
     toolbarFilters,

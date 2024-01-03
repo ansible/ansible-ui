@@ -10,6 +10,7 @@ import {
   PageDetails,
   PageHeader,
   PageLayout,
+  TextCell,
   useGetPageUrl,
   usePageNavigate,
 } from '../../../framework';
@@ -68,7 +69,11 @@ export function RemoteRegistryDetails() {
             <CopyCell text={remoteRegistry?.url} />
           </PageDetail>
           <PageDetail label={t('Sync status')}>
-            {<StatusCell status={remoteRegistry?.last_sync_task?.state} />}
+            {Object.keys(remoteRegistry?.last_sync_task).length > 0 ? (
+              <StatusCell status={remoteRegistry?.last_sync_task.state} />
+            ) : (
+              <TextCell text={t('Never synced')} />
+            )}
           </PageDetail>
           {remoteRegistry?.last_sync_task?.finished_at ? (
             <PageDetail label={t('Last sync')}>

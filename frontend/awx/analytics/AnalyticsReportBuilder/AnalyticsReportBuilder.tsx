@@ -205,7 +205,7 @@ export function FillDefaultProps(props: AnalyticsReportBuilderProps) {
 // swamps endpoint path from old path using v1 version and tower analytics. Example
 // /api/tower-analytics/v1/report/hosts_by_organization/
 // transforms to
-// /api/v2/analytics/report/hosts_by_organization/
+// awxAPI`/analytics/report/hosts_by_organization/`
 function transformEndpoint(url: string) {
   const urls = url.split('/');
   for (let id = 0; id < urls.length; id++) {

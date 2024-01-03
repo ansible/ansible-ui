@@ -25,10 +25,7 @@ export function useDeleteCredentials(onComplete?: (credentials: EdaCredential[])
       const forceParameter = inUseMessage.length > 0 ? '?force=true' : '';
 
       bulkAction({
-        title:
-          credentials.length === 1
-            ? t('Permanently delete credential')
-            : t('Permanently delete credentials'),
+        title: t('Permanently delete credentials', { count: credentials.length }),
         confirmText: t('Yes, I confirm that I want to delete these {{count}} credentials.', {
           count: credentials.length,
         }),

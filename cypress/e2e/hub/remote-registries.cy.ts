@@ -37,11 +37,36 @@ describe('Remote Registry', () => {
     cy.createRemoteRegistry(remoteRegistryName).then((remoteRegistry: IRemoteRegistry) => {
       cy.navigateTo('hub', RemoteRegistry.url);
       cy.searchAndDisplayResource(remoteRegistryName);
+      cy.get('[data-cy="sync-status-column-cell"]').should(
+        'contain',
+        RemoteRegistry.initialSyncStatus
+      );
       cy.get('[data-cy="actions-column-cell"]').click();
       cy.get('[data-cy="sync-remote-registry"]').click({ force: true });
       cy.get('[data-cy="sync-status-column-cell"]').should('contain', RemoteRegistry.syncStatus);
       cy.deleteRemoteRegistry(remoteRegistry.id);
     });
+  });
+
+  it('index execution environments', () => {
+    const remoteRegistryName = `test-remote-registry-${randomString(5, undefined, {
+      isLowercase: true,
+    })}`;
+    cy.navigateTo('hub', RemoteRegistry.url);
+    cy.get('[data-cy="create-remote-registry"]').should('be.visible').click();
+    cy.get('[data-cy="name"]').type(remoteRegistryName);
+    cy.get('[data-cy="url"]').type(RemoteRegistry.validIndexableURL);
+    cy.get('[data-cy="Submit"]').click();
+    cy.searchAndDisplayResource(remoteRegistryName);
+    cy.get('[data-cy="actions-column-cell"]').click();
+    cy.get('[data-cy="index-execution-environments"]').should('be.visible').click({ force: true });
+    cy.hasAlert(`Indexing remote registry ${remoteRegistryName}`);
+    cy.get('[data-cy="actions-column-cell"]').click();
+    cy.get('[data-cy="delete-remote-registry"]').click({ force: true });
+    cy.get('#confirm').click();
+    cy.clickButton(/^Delete remote registries/);
+    cy.clickButton(/^Close$/);
+    cy.clickButton(/^Clear all filters$/);
   });
 
   it('create, search and delete a remote registry', () => {
@@ -63,5 +88,33 @@ describe('Remote Registry', () => {
     cy.clickButton(/^Delete remote registries/);
     cy.clickButton(/^Close$/);
     cy.clickButton(/^Clear all filters$/);
+  });
+
+  it('edit a remote registry', () => {
+    const remoteRegistryName = `test-remote-registry-${randomString(5, undefined, {
+      isLowercase: true,
+    })}`;
+    cy.navigateTo('hub', RemoteRegistry.url);
+    cy.get('[data-cy="create-remote-registry"]').should('be.visible').click();
+    cy.get('[data-cy="name"]').type(remoteRegistryName);
+    cy.get('[data-cy="url"]').type(RemoteRegistry.validIndexableURL);
+    cy.get('[data-cy="Submit"]').click();
+    cy.searchAndDisplayResource(remoteRegistryName);
+    cy.get('[data-cy="actions-column-cell"]').click();
+    cy.get('[data-cy="edit-remote-registry"]').click({ force: true });
+    cy.url().should('include', `remote-registries/${remoteRegistryName}/edit`);
+    cy.get('[data-cy="url"]').clear().type(RemoteRegistry.remoteURL);
+    cy.clickButton(/^Edit remote registry$/);
+    cy.clickButton(/^Clear all filters$/);
+    cy.contains(remoteRegistryName).click();
+    cy.url().should('include', `remote-registries/details/${remoteRegistryName}`);
+    cy.get('[data-cy="name"]').should('contain', remoteRegistryName);
+    cy.get('[data-cy="url"]').should('contain', RemoteRegistry.remoteURL);
+
+    // Delete the edited remote registry
+    cy.get('[data-cy="actions-dropdown"]').click();
+    cy.get('[data-cy="delete-remote-registry"]').click();
+    cy.get('#confirm').click();
+    cy.clickButton(/^Delete remote registries/);
   });
 });

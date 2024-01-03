@@ -1,16 +1,3 @@
-import { useCallback, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import {
-  CheckCircleIcon,
-  CloseIcon,
-  CompressAltIcon,
-  EllipsisVIcon,
-  ExpandAltIcon,
-  ExternalLinkAltIcon,
-  MinusCircleIcon,
-  RocketIcon,
-} from '@patternfly/react-icons';
 import {
   Badge,
   Button,
@@ -25,15 +12,29 @@ import {
   ToolbarGroup,
   ToolbarItem,
 } from '@patternfly/react-core';
-import { WorkflowNode } from '../../../../interfaces/WorkflowNode';
+import {
+  CheckCircleIcon,
+  CloseIcon,
+  CompressAltIcon,
+  EllipsisVIcon,
+  ExpandAltIcon,
+  ExternalLinkAltIcon,
+  MinusCircleIcon,
+  RocketIcon,
+} from '@patternfly/react-icons';
+import { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { useBulkConfirmation, usePageNavigate } from '../../../../../../framework';
-import { AwxRoute } from '../../../../AwxRoutes';
 import { getItemKey, postRequest } from '../../../../../common/crud/Data';
-import { stringIsUUID } from '../../../../common/util/strings';
-import { AddNodeButton } from '../components/AddNodeButton';
-import getDocsBaseUrl from '../../../../common/util/getDocsBaseUrl';
+import { AwxRoute } from '../../../../AwxRoutes';
+import { awxAPI } from '../../../../api/awx-utils';
 import { useAwxConfig } from '../../../../common/useAwxConfig';
+import getDocsBaseUrl from '../../../../common/util/getDocsBaseUrl';
+import { stringIsUUID } from '../../../../common/util/strings';
 import { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
+import { WorkflowNode } from '../../../../interfaces/WorkflowNode';
+import { AddNodeButton } from '../components/AddNodeButton';
 
 export function useWorkflowVisualizerToolbarActions(
   nodes: WorkflowNode[],
@@ -48,7 +49,7 @@ export function useWorkflowVisualizerToolbarActions(
   const config = useAwxConfig();
   const bulkAction = useBulkConfirmation<WorkflowNode>();
   const handleLaunchWorkflow = useCallback(async () => {
-    await postRequest(`/api/v2/workflow_job_templates/${Number(params.id).toString()}/launch/`, {});
+    await postRequest(awxAPI`/workflow_job_templates/${Number(params.id).toString()}/launch/`, {});
   }, [params.id]);
 
   const handleRemoveAllNodes = useCallback(

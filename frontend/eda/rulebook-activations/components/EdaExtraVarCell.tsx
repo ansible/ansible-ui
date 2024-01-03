@@ -22,7 +22,7 @@ export function EdaExtraVarsCell(props: {
   }
   return (
     <PageDetailCodeEditor
-      value={JSON.stringify(data?.extra_var)}
+      value={data?.extra_var}
       showCopyToClipboard={true}
       label={props.label}
       helpText={props.helpText}

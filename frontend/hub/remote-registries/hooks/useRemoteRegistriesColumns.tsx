@@ -7,7 +7,7 @@ import {
   TextCell,
   useGetPageUrl,
 } from '../../../../framework';
-import { StatusCell } from '../../../common/StatusCell';
+import { StatusCell } from '../../../common/Status';
 import { HubRoute } from '../../HubRoutes';
 import { RemoteRegistry } from '../RemoteRegistry';
 
@@ -33,7 +33,13 @@ export function useRemoteRegistriesColumns(_options?: {
       },
       {
         header: t('Sync Status'),
-        cell: (remoteRegistry) => <StatusCell status={remoteRegistry.last_sync_task.state} />,
+        cell: (remoteRegistry) => {
+          if (Object.keys(remoteRegistry.last_sync_task).length > 0) {
+            return <StatusCell status={remoteRegistry.last_sync_task.state} />;
+          } else {
+            return <TextCell text={t('Never synced')} />;
+          }
+        },
       },
       {
         header: t('Last Sync'),

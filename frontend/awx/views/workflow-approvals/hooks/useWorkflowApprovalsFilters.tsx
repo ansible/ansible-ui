@@ -10,6 +10,19 @@ export function useWorkflowApprovalsFilters() {
     () => [
       nameToolbarFilter,
       {
+        type: ToolbarFilterType.MultiSelect,
+        key: 'status',
+        label: t('Status'),
+        query: 'status',
+        options: [
+          { label: t('Approved'), value: 'successful' },
+          { label: t('Denied'), value: 'failed' },
+          { label: t('Pending'), value: 'pending' },
+          { label: t('Canceled'), value: 'canceled' },
+        ],
+        placeholder: t('Filter by status'),
+      },
+      {
         key: 'id',
         label: t('ID'),
         type: ToolbarFilterType.Text,

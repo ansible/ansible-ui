@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { PencilAltIcon, MinusCircleIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { MinusCircleIcon, PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -8,8 +8,8 @@ import {
   PageActionType,
   usePageNavigate,
 } from '../../../../../framework';
-import { useActiveUser } from '../../../../common/useActiveUser';
 import { AwxRoute } from '../../../AwxRoutes';
+import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import { Team } from '../../../interfaces/Team';
 import { useSelectAndRemoveUsersFromTeam } from '../../users/hooks/useSelectAndRemoveUsersFromTeam';
 import { useSelectUsersAddTeams } from '../../users/hooks/useSelectUsersAddTeams';
@@ -25,7 +25,7 @@ export function useTeamActions(options: {
   const deleteTeams = useDeleteTeams(onTeamsDeleted);
   const selectUsersAddTeams = useSelectUsersAddTeams();
   const selectAndRemoveUsersFromTeam = useSelectAndRemoveUsersFromTeam();
-  const activeUser = useActiveUser();
+  const activeUser = useAwxActiveUser();
 
   return useMemo(() => {
     const cannotDeleteTeam = (team: Team) =>

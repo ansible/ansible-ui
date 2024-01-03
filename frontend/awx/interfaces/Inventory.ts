@@ -2,7 +2,7 @@ import { Inventory as SwaggerInventory } from './generated-from-swagger/api';
 import {
   SummaryFieldsByUser,
   SummaryFieldsOrganization,
-  SummeryFieldObjectRole,
+  SummaryFieldObjectRole,
 } from './summary-fields/summary-fields';
 import { Label } from './Label';
 
@@ -19,11 +19,11 @@ export interface CommonInventory
     created_by: SummaryFieldsByUser;
     modified_by: SummaryFieldsByUser;
     object_roles: {
-      admin_role: SummeryFieldObjectRole;
-      update_role: SummeryFieldObjectRole;
-      adhoc_role: SummeryFieldObjectRole;
-      use_role: SummeryFieldObjectRole;
-      read_role: SummeryFieldObjectRole;
+      admin_role: SummaryFieldObjectRole;
+      update_role: SummaryFieldObjectRole;
+      adhoc_role: SummaryFieldObjectRole;
+      use_role: SummaryFieldObjectRole;
+      read_role: SummaryFieldObjectRole;
     };
     user_capabilities: {
       edit: boolean;

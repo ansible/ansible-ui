@@ -17,6 +17,7 @@ export interface JobTemplate
     | 'id'
     | 'name'
     | 'summary_fields'
+    | 'last_job_run'
     | 'related'
     | 'status'
     | 'job_type'
@@ -87,7 +88,7 @@ export interface JobTemplate
   inventory: number;
   job_slice_count: number;
   last_job_failed: boolean;
-  last_job_run: string;
+  last_job_run: string | null;
   limit: string;
   next_job_run: string;
   playbook: string;

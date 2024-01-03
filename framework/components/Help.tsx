@@ -7,8 +7,9 @@ export function Help(props: {
   title?: string;
   help?: string | string[] | ReactNode;
   docLink?: string;
+  marginLeft?: string;
 }) {
-  const { help, title, docLink } = props;
+  const { help, title, docLink, marginLeft } = props;
   const [translations] = useFrameworkTranslations();
   if (!help) return <></>;
   return (
@@ -36,7 +37,10 @@ export function Help(props: {
         </Stack>
       }
     >
-      <Button variant="plain" style={{ padding: 0, marginLeft: '8px', verticalAlign: 'middle' }}>
+      <Button
+        variant="plain"
+        style={{ padding: 0, marginLeft: marginLeft || '8px', verticalAlign: 'middle' }}
+      >
         <OutlinedQuestionCircleIcon />
       </Button>
     </Popover>
