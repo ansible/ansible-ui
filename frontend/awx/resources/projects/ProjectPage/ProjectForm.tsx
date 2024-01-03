@@ -59,6 +59,7 @@ const defaultValues: Partial<Project> = {
 export function CreateProject() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
+  const navigate = useNavigate();
   const postRequest = usePostRequest<Project>();
   const onSubmit: PageFormSubmitHandler<ProjectFields> = async (values) => {
     const { project } = values;

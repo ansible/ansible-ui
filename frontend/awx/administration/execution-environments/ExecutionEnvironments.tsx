@@ -125,7 +125,7 @@ export function ExecutionEnvironments() {
         emptyStateTitle={t('No execution environments yet')}
         emptyStateDescription={t('To get started, create an execution environment.')}
         emptyStateButtonText={t('Create execution environment')}
-        emptyStateButtonClick={() => pageNavigate(RouteObj.CreateExecutionEnvironment)}
+        emptyStateButtonClick={() => pageNavigate(AwxRoute.CreateExecutionEnvironment)}
         {...view}
         defaultSubtitle={t('Execution environment')}
       />
