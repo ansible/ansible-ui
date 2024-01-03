@@ -22,7 +22,7 @@ export function useTeamColumns(options?: { disableLinks?: boolean; disableSort?:
       navigate(getPageUrl(PlatformRoute.TeamDetails, { params: { id: team.id } })),
     [getPageUrl, navigate]
   );
-  const nameColumn = useNameColumn({ header: t('Team'), ...options, onClick: nameColumnClick });
+  const nameColumn = useNameColumn({ header: t('Name'), ...options, onClick: nameColumnClick });
   const organizationNameColumn = useOrganizationNameColumn(
     PlatformRoute.OrganizationDetails,
     options
