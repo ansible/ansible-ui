@@ -35,17 +35,18 @@ interface CommonResponse<T extends object> {
 }
 
 interface IHubViewParams<T extends object> {
-  url: string;
-  keyFn: (item: T) => string | number;
-  toolbarFilters?: IToolbarFilter[];
-  tableColumns?: ITableColumn<T>[];
-  disableQueryString?: boolean;
-  queryParams?: QueryParams;
-  sortKey?: string;
   defaultFilters?: Record<string, string[]>;
   defaultSelection?: T[];
   defaultSort?: string | undefined;
   defaultSortDirection?: 'asc' | 'desc' | undefined;
+  disableQueryString?: boolean;
+  keyFn: (item: T) => string | number;
+  pageKey?: string;
+  queryParams?: QueryParams;
+  sortKey?: string;
+  tableColumns?: ITableColumn<T>[];
+  toolbarFilters?: IToolbarFilter[];
+  url: string;
 }
 
 export type IHubView<T extends object> = IView &
@@ -57,21 +58,22 @@ export type IHubView<T extends object> = IView &
   };
 
 export function useCommonView<T extends object, Response>({
-  url,
-  keyFn,
-  toolbarFilters,
-  tableColumns,
-  disableQueryString,
-  queryParams,
-  sortKey,
+  deconstruct,
   defaultFilters,
   defaultSelection,
   defaultSort: initialDefaultSort,
   defaultSortDirection: initialDefaultSortDirection,
-  deconstruct,
+  disableQueryString,
+  keyFn,
+  pageKey = 'offset',
+  queryParams,
+  sortKey,
+  tableColumns,
+  toolbarFilters,
+  url,
 }: IHubViewParams<T> & {
-  sortKey: string;
   deconstruct: (data: Response) => CommonResponse<T>;
+  sortKey: string;
 }): IHubView<T> {
   let defaultSort: string | undefined = initialDefaultSort;
   let defaultSortDirection: 'asc' | 'desc' | undefined = initialDefaultSortDirection;
@@ -124,8 +126,13 @@ export function useCommonView<T extends object, Response>({
     }
   }
 
-  queryString.push(`offset=${(page - 1) * perPage}`);
-  queryString.push(`limit=${perPage}`);
+  if (pageKey === 'offset') {
+    queryString.push(`offset=${(page - 1) * perPage}`);
+    queryString.push(`limit=${perPage}`);
+  } else if (pageKey === 'page') {
+    queryString.push(`page=${page}`);
+    queryString.push(`page_size=${perPage}`);
+  }
 
   if (queryString.length) {
     url += '?' + queryString.join('&');
