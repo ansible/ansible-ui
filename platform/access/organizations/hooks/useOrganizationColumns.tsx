@@ -44,20 +44,20 @@ export function useOrganizationColumns(options?: {
     () => [
       idColumn,
       nameColumn,
-      {
-        header: t('Members'),
-        type: 'count',
-        value: (organization) => organization.summary_fields?.related_field_counts?.users,
-      },
-      {
-        header: t('Teams'),
-        type: 'count',
-        value: (organization) => organization.summary_fields?.related_field_counts?.teams,
-      },
+      // {
+      //   header: t('Members'),
+      //   type: 'count',
+      //   value: (organization) => organization.summary_fields?.related_field_counts?.users,
+      // },
+      // {
+      //   header: t('Teams'),
+      //   type: 'count',
+      //   value: (organization) => organization.summary_fields?.related_field_counts?.teams,
+      // },
       createdColumn,
       modifiedColumn,
     ],
-    [createdColumn, idColumn, modifiedColumn, nameColumn, t]
+    [createdColumn, idColumn, modifiedColumn, nameColumn]
   );
   return tableColumns;
 }

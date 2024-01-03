@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
@@ -10,11 +11,15 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
+import { PageFormAsyncSingleSelect } from '../../../../framework/PageForm/Inputs/PageFormAsyncSingleSelect';
+import { requestGet } from '../../../../frontend/common/crud/Data';
 import { useGet } from '../../../../frontend/common/crud/useGet';
 import { usePatchRequest } from '../../../../frontend/common/crud/usePatchRequest';
 import { usePostRequest } from '../../../../frontend/common/crud/usePostRequest';
 import { PlatformRoute } from '../../../PlatformRoutes';
 import { gatewayAPI } from '../../../api/gateway-api-utils';
+import { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
+import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 
 export function CreatePlatformTeam() {
@@ -84,6 +89,18 @@ export function EditPlatformTeam() {
 
 function PlatformTeamInputs() {
   const { t } = useTranslation();
+  const queryOptions = useCallback(async (page: number) => {
+    const organizations = await requestGet<PlatformItemsResponse<PlatformOrganization>>(
+      gatewayAPI`/v1/organizations/?page=${page.toString()}`
+    );
+    return {
+      total: organizations.count,
+      options: organizations.results.map((organization) => ({
+        label: organization.name,
+        value: organization.id,
+      })),
+    };
+  }, []);
   return (
     <>
       <PageFormTextInput<PlatformTeam>
@@ -92,14 +109,12 @@ function PlatformTeamInputs() {
         placeholder={t('Enter name')}
         isRequired
       />
-      <PageFormTextInput<PlatformTeam>
+      <PageFormAsyncSingleSelect<PlatformTeam>
         name="organization"
         label={t('Organization')}
-        placeholder={t('Enter organization')}
+        placeholder={t('Select organization')}
+        queryOptions={queryOptions}
         isRequired
-        helperText={t(
-          'Enter the id of the organization until we have a dropdown with all the organizations.'
-        )}
       />
     </>
   );
