@@ -28,27 +28,6 @@ export interface PulpItemsResponse<T extends object> {
   next?: string;
 }
 
-interface CommonResponse<T extends object> {
-  count: number | undefined;
-  next: string | undefined;
-  pageItems: T[] | undefined;
-}
-
-interface IHubViewParams<T extends object> {
-  defaultFilters?: Record<string, string[]>;
-  defaultSelection?: T[];
-  defaultSort?: string | undefined;
-  defaultSortDirection?: 'asc' | 'desc' | undefined;
-  disableQueryString?: boolean;
-  keyFn: (item: T) => string | number;
-  pageKey?: string;
-  queryParams?: QueryParams;
-  sortKey?: string;
-  tableColumns?: ITableColumn<T>[];
-  toolbarFilters?: IToolbarFilter[];
-  url: string;
-}
-
 export type IHubView<T extends object> = IView &
   ISelected<T> & {
     itemCount: number | undefined;
@@ -56,6 +35,12 @@ export type IHubView<T extends object> = IView &
     refresh: () => Promise<void>;
     unselectItemsAndRefresh: (items: T[]) => void;
   };
+
+interface CommonResponse<T extends object> {
+  count: number | undefined;
+  next: string | undefined;
+  pageItems: T[] | undefined;
+}
 
 function deconstruct<T extends object>(
   data: HubItemsResponse<T> | PulpItemsResponse<T> | undefined
@@ -77,7 +62,7 @@ function deconstruct<T extends object>(
   }
 }
 
-export function useCommonView<T extends object>({
+export function useHubView<T extends object>({
   defaultFilters,
   defaultSelection,
   defaultSort: initialDefaultSort,
@@ -86,12 +71,23 @@ export function useCommonView<T extends object>({
   keyFn,
   pageKey = 'offset',
   queryParams,
-  sortKey,
+  sortKey = 'sort',
   tableColumns,
   toolbarFilters,
   url,
-}: IHubViewParams<T> & {
-  sortKey: string;
+}: {
+  defaultFilters?: Record<string, string[]>;
+  defaultSelection?: T[];
+  defaultSort?: string | undefined;
+  defaultSortDirection?: 'asc' | 'desc' | undefined;
+  disableQueryString?: boolean;
+  keyFn: (item: T) => string | number;
+  pageKey?: string;
+  queryParams?: QueryParams;
+  sortKey?: string;
+  tableColumns?: ITableColumn<T>[];
+  toolbarFilters?: IToolbarFilter[];
+  url: string;
 }): IHubView<T> {
   let defaultSort: string | undefined = initialDefaultSort;
   let defaultSortDirection: 'asc' | 'desc' | undefined = initialDefaultSortDirection;
@@ -207,18 +203,4 @@ export function useCommonView<T extends object>({
       unselectItemsAndRefresh,
     };
   }, [error, pageItems, refresh, selection, unselectItemsAndRefresh, view]);
-}
-
-export function useHubView<T extends object>(params: IHubViewParams<T>): IHubView<T> {
-  return useCommonView<T>({
-    sortKey: 'sort',
-    ...params,
-  });
-}
-
-export function usePulpView<T extends object>(params: IHubViewParams<T>): IHubView<T> {
-  return useCommonView<T>({
-    sortKey: 'ordering',
-    ...params,
-  });
 }
