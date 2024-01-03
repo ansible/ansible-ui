@@ -9,6 +9,7 @@ import { CredentialType } from '../../frontend/awx/interfaces/CredentialType';
 import { ExecutionEnvironment } from '../../frontend/awx/interfaces/ExecutionEnvironment';
 import { InstanceGroup } from '../../frontend/awx/interfaces/InstanceGroup';
 import { Inventory } from '../../frontend/awx/interfaces/Inventory';
+import { InventorySource } from '../../frontend/awx/interfaces/InventorySource';
 import { Job } from '../../frontend/awx/interfaces/Job';
 import { JobEvent } from '../../frontend/awx/interfaces/JobEvent';
 import { JobTemplate } from '../../frontend/awx/interfaces/JobTemplate';
@@ -19,12 +20,11 @@ import { Schedule } from '../../frontend/awx/interfaces/Schedule';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
 import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/WorkflowJobTemplate';
+import { WorkflowNode } from '../../frontend/awx/interfaces/WorkflowNode';
 import './auth';
 import './commands';
 import { awxAPI } from './formatApiPathForAwx';
 import './rest-commands';
-import { InventorySource } from '../../frontend/awx/interfaces/InventorySource';
-import { WorkflowNode } from '../../frontend/awx/interfaces/WorkflowNode';
 
 //  AWX related custom command implementation
 
@@ -357,6 +357,7 @@ Cypress.Commands.add('clickTableRow', (name: string | RegExp, filter?: boolean) 
 });
 
 Cypress.Commands.add('getTableRowByText', (name: string | RegExp, filter?: boolean) => {
+  cy.clearAllFilters();
   if (filter !== false && typeof name === 'string') {
     cy.filterTableByText(name);
   }
