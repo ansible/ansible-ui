@@ -33,7 +33,18 @@ export function PlatformTeamList() {
 
   return (
     <PageLayout>
-      <PageHeader title={t('Teams')} />
+      <PageHeader
+        title={t('Teams')}
+        description={t('A team is a group of users that can be assigned permissions to resources.')}
+        titleHelpTitle={t('Team')}
+        titleHelp={[
+          t('A team is a group of users that can be assigned permissions to resources.'),
+          t(
+            'Teams provide a means to implement role-based access control schemes and delegate responsibilities across organizations. For instance, permissions may be granted to a whole team rather than each user on the team.'
+          ),
+        ]}
+        titleDocLink="https://docs.ansible.com"
+      />
       <PageTable<PlatformTeam>
         id="platform-teams-table"
         toolbarFilters={toolbarFilters}
@@ -59,6 +70,7 @@ export function PlatformTeamList() {
           canCreateTeam ? () => pageNavigate(PlatformRoute.CreateTeam) : undefined
         }
         {...view}
+        defaultSubtitle={t('Team')}
       />
     </PageLayout>
   );
