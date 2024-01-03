@@ -27,7 +27,6 @@ export function SignatureKeys() {
   const toolbarFilters = useSignatureKeyFilters();
   const tableColumns = useSignatureKeysColumns();
   const view = useHubView<SignatureKey>({
-    sortKey: 'ordering',
     url: pulpAPI`/signing-services/`,
     keyFn: pulpHrefKeyFn,
     toolbarFilters,

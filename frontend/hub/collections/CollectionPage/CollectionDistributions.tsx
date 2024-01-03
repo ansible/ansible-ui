@@ -16,7 +16,6 @@ export function CollectionDistributions() {
   const tableColumns = useDistributionsColumns();
 
   const view = useHubView<Distribution>({
-    sortKey: 'ordering',
     url: pulpAPI`/distributions/ansible/ansible/`,
     keyFn: (item) => item.base_path,
     tableColumns,

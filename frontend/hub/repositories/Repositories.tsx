@@ -19,7 +19,6 @@ export function Repositories() {
   const pageNavigate = usePageNavigate();
 
   const view = useHubView<Repository>({
-    sortKey: 'ordering',
     url: pulpAPI`/repositories/ansible/ansible/`,
     keyFn: pulpHrefKeyFn,
     toolbarFilters,

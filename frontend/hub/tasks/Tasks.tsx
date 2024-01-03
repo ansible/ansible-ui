@@ -27,7 +27,6 @@ export function Tasks() {
   const toolbarFilters = useTaskFilters();
   const tableColumns = useTasksColumns();
   const view = useHubView<Task>({
-    sortKey: 'ordering',
     url: pulpAPI`/tasks/`,
     keyFn: pulpHrefKeyFn,
     toolbarFilters,

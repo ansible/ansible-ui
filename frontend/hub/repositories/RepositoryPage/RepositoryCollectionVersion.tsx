@@ -20,7 +20,6 @@ export function RepositoryCollectionVersion() {
   const view = useHubView<CollectionVersionSearch>({
     url: hubAPI`/v3/plugin/ansible/search/collection-versions`,
     keyFn: collectionKeyFn,
-    sortKey: 'ordering',
     defaultSort: 'name',
     queryParams: {
       is_deprecated: 'false',

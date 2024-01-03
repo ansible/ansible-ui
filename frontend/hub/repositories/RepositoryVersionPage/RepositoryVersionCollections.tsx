@@ -37,7 +37,6 @@ export function RepositoryVersionCollections() {
   );
 
   const view = useHubView<CollectionReduced>({
-    sortKey: 'ordering',
     url: pulpAPI`/content/ansible/collection_versions/?repository_version=${
       repository.versions_href
     }${params.version || ''}/`,

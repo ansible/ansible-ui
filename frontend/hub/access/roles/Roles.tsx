@@ -28,7 +28,6 @@ export function HubRolesTable() {
   const toolbarFilters = useRoleFilters();
 
   const view = useHubView<Role>({
-    sortKey: 'ordering',
     url: pulpAPI`/roles/`,
     keyFn: nameKeyFn,
     toolbarFilters,

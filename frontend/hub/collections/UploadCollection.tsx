@@ -91,7 +91,6 @@ export function UploadCollectionByFile() {
   }
 
   const view = useHubView<Repository>({
-    sortKey: 'ordering',
     url: pulpAPI`/repositories/ansible/ansible/`,
     keyFn: nameKeyFn,
     toolbarFilters,

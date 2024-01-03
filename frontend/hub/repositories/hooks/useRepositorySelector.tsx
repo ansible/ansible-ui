@@ -26,7 +26,6 @@ function useParameters(): AsyncSelectFilterBuilderProps<Repository> {
       tableColumns,
       disableQueryString: true,
       keyFn: (item) => item?.name,
-      sortKey: 'ordering',
     },
   };
 }

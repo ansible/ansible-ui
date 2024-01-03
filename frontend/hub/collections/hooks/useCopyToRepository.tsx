@@ -115,7 +115,6 @@ function CopyToRepositoryModal(props: {
   }
 
   const view = useHubView({
-    sortKey: 'ordering',
     url: pulpAPI`/repositories/ansible/ansible/`,
     toolbarFilters,
     tableColumns,

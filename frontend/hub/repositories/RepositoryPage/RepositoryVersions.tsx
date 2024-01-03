@@ -39,7 +39,6 @@ export function RepositoryVersions() {
   );
 
   const view = useHubView<RepositoryVersion>({
-    sortKey: 'ordering',
     url: pulpAPI`/repositories/ansible/ansible/${repo_id}/versions`,
     keyFn: (repo) => repo.number,
     queryParams: {

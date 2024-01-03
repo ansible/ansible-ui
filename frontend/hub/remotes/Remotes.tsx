@@ -36,7 +36,6 @@ export function Remotes() {
   const toolbarFilters = useRemoteFilters();
   const tableColumns = useRemoteColumns();
   const view = useHubView<IRemotes>({
-    sortKey: 'ordering',
     url: pulpAPI`/remotes/ansible/collection/`,
     keyFn: pulpHrefKeyFn,
     toolbarFilters,
