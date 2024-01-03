@@ -16,6 +16,7 @@ export function ApplicationClientSecretModal(props: {
       position="top"
       title={t`Application information`}
       onClose={() => props.onClose(undefined)}
+      hasNoBodyWrapper
     >
       <PageDetails
         alertPrompts={[t`This is the only time the client secret will be shown.`]}
