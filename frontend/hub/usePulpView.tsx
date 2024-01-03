@@ -33,6 +33,7 @@ export function usePulpView<T extends object>({
   tableColumns,
   disableQueryString,
   queryParams,
+  sortKey,
   defaultFilters,
   defaultSelection,
   defaultSort: initialDefaultSort,
@@ -44,8 +45,8 @@ export function usePulpView<T extends object>({
   tableColumns?: ITableColumn<T>[];
   disableQueryString?: boolean;
   queryParams?: QueryParams;
+  sortKey?: string;
   defaultFilters?: Record<string, string[]>;
-  /** The default items that should be initially selected. */
   defaultSelection?: T[];
   defaultSort?: string | undefined;
   defaultSortDirection?: 'asc' | 'desc' | undefined;
@@ -92,11 +93,14 @@ export function usePulpView<T extends object>({
   }
 
   if (sort) {
+    if (!sortKey) {
+      sortKey = 'ordering';
+    }
     queryString ? (queryString += '&') : (queryString += '?');
     if (sortDirection === 'desc') {
-      queryString += `ordering=-${sort}`;
+      queryString += `${sortKey}=-${sort}`;
     } else {
-      queryString += `ordering=${sort}`;
+      queryString += `${sortKey}=${sort}`;
     }
   }
 
@@ -117,7 +121,9 @@ export function usePulpView<T extends object>({
     await mutate();
   }, [mutate]);
 
-  const nextPage = serverlessURL(data?.next);
+  const { results: pageItems, count, next } = data || {};
+
+  const nextPage = serverlessURL(next);
   useSWR<PulpItemsResponse<T>>(nextPage, fetcher, {
     dedupingInterval: 0,
   });
@@ -131,10 +137,10 @@ export function usePulpView<T extends object>({
     }
   }
 
-  const selection = useSelected(data?.results ?? [], keyFn, defaultSelection);
+  const selection = useSelected(pageItems ?? [], keyFn, defaultSelection);
 
-  if (data?.count !== undefined) {
-    itemCountRef.current.itemCount = data?.count;
+  if (count !== undefined) {
+    itemCountRef.current.itemCount = count;
   }
 
   const unselectItemsAndRefresh = useCallback(
@@ -149,11 +155,11 @@ export function usePulpView<T extends object>({
     return {
       refresh,
       itemCount: itemCountRef.current.itemCount,
-      pageItems: data?.results,
+      pageItems,
       error,
       ...view,
       ...selection,
       unselectItemsAndRefresh,
     };
-  }, [data, error, refresh, selection, view, unselectItemsAndRefresh]);
+  }, [error, pageItems, refresh, selection, unselectItemsAndRefresh, view]);
 }

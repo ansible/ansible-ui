@@ -39,9 +39,9 @@ export function useHubView<T extends object>({
   queryParams,
   sortKey,
   defaultFilters,
+  defaultSelection,
   defaultSort: initialDefaultSort,
   defaultSortDirection: initialDefaultSortDirection,
-  defaultSelection,
 }: {
   url: string;
   keyFn: (item: T) => string | number;
@@ -51,9 +51,9 @@ export function useHubView<T extends object>({
   queryParams?: QueryParams;
   sortKey?: string;
   defaultFilters?: Record<string, string[]>;
+  defaultSelection?: T[];
   defaultSort?: string | undefined;
   defaultSortDirection?: 'asc' | 'desc' | undefined;
-  defaultSelection?: T[];
 }): IHubView<T> {
   let defaultSort: string | undefined = initialDefaultSort;
   let defaultSortDirection: 'asc' | 'desc' | undefined = initialDefaultSortDirection;
@@ -125,7 +125,9 @@ export function useHubView<T extends object>({
     await mutate();
   }, [mutate]);
 
-  const nextPage = serverlessURL(data?.links?.next);
+  const { data: pageItems, meta: { count }, links: { next } } = data || {};
+
+  const nextPage = serverlessURL(next);
   useSWR<HubItemsResponse<T>>(nextPage, fetcher, {
     dedupingInterval: 0,
   });
@@ -139,10 +141,10 @@ export function useHubView<T extends object>({
     }
   }
 
-  const selection = useSelected(data?.data ?? [], keyFn, defaultSelection);
+  const selection = useSelected(pageItems ?? [], keyFn, defaultSelection);
 
-  if (data?.meta.count !== undefined) {
-    itemCountRef.current.itemCount = data?.meta.count;
+  if (count !== undefined) {
+    itemCountRef.current.itemCount = count;
   }
 
   const unselectItemsAndRefresh = useCallback(
@@ -157,11 +159,11 @@ export function useHubView<T extends object>({
     return {
       refresh,
       itemCount: itemCountRef.current.itemCount,
-      pageItems: data?.data,
+      pageItems,
       error,
       ...view,
       ...selection,
       unselectItemsAndRefresh,
     };
-  }, [data?.data, error, refresh, selection, unselectItemsAndRefresh, view]);
+  }, [error, pageItems, refresh, selection, unselectItemsAndRefresh, view]);
 }
