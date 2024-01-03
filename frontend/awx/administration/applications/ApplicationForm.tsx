@@ -41,25 +41,14 @@ export interface IApplicationInput {
   description?: string;
 }
 
-export function CreateApplication(props: { onSuccessfulCreate?: (app: Application) => void }) {
+export function CreateApplication(props: { onSuccessfulCreate: (app: Application) => void }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
   const postRequest = usePostRequest<Application>();
   const onSubmit: PageFormSubmitHandler<IApplicationInput> = async (
-    applicationInput: IApplicationInput,
-    setError,
-    setFieldError
+    applicationInput: IApplicationInput
   ) => {
-    if (
-      applicationInput.authorization_grant_type === 'authorization-code' &&
-      (applicationInput.redirect_uris === undefined || applicationInput.redirect_uris === '')
-    ) {
-      setFieldError('redirect_uris', {
-        message: t('Need to pass a redirect URI if grant type is authorization code'),
-      });
-      return false;
-    }
     let organization: Organization | undefined;
     let modifiedInput;
     try {
