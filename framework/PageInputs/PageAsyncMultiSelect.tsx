@@ -172,6 +172,8 @@ export function PageAsyncMultiSelect<
         onSelect={props.onSelect}
         variant={props.variant}
         footer={footer}
+        disableClearSelection={props.disableClearSelection}
+        disableClearChips={props.disableClearChips}
       />
     );
   }
