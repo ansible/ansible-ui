@@ -1,18 +1,18 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import {
   ColumnModalOption,
   ColumnTableOption,
   DateTimeCell,
   ITableColumn,
+  usePageNavigate,
 } from '../../../../../framework';
-import { RouteObj } from '../../../../common/Routes';
+import { AwxRoute } from '../../../AwxRoutes';
 import { Project } from '../../../interfaces/Project';
 
 export function useLastUsedColumn() {
   const { t } = useTranslation();
-  const history = useNavigate();
+  const pageNavigate = usePageNavigate();
   const column = useMemo<ITableColumn<Project>>(
     () => ({
       header: t('Last used'),
@@ -30,12 +30,11 @@ export function useLastUsedColumn() {
               !('summary_fields' in item)
                 ? undefined
                 : () =>
-                    history(
-                      RouteObj.UserDetails.replace(
-                        ':id',
-                        (item.summary_fields?.modified_by?.id ?? 0).toString()
-                      )
-                    )
+                    pageNavigate(AwxRoute.UserDetails, {
+                      params: {
+                        id: item.summary_fields?.modified_by?.id,
+                      },
+                    })
             }
           />
         );
@@ -45,7 +44,7 @@ export function useLastUsedColumn() {
       list: 'secondary',
       modal: ColumnModalOption.Hidden,
     }),
-    [history, t]
+    [pageNavigate, t]
   );
   return column;
 }
