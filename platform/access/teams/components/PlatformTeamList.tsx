@@ -71,6 +71,7 @@ export function PlatformTeamList() {
         }
         {...view}
         defaultSubtitle={t('Team')}
+        defaultTableView="cards"
       />
     </PageLayout>
   );
