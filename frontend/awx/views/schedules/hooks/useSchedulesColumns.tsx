@@ -42,7 +42,7 @@ export function useSchedulesColumns(options?: { disableSort?: boolean; disableLi
         resourceDetailsRoute: getPageUrl(AwxRoute.WorkflowJobTemplateDetails),
       },
     }),
-    [t]
+    [getPageUrl, t]
   );
 
   const nameClick = useCallback(
