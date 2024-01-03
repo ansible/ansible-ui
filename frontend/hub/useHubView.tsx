@@ -95,7 +95,7 @@ export function useCommonView<T extends object, Response>({
 
   const { page, perPage, sort, sortDirection, filterState } = view;
 
-  let queryString = queryParams ? `?${getQueryString(queryParams)}` : '';
+  const queryString = queryParams ? [getQueryString(queryParams)] : [];
 
   if (filterState) {
     for (const key in filterState) {
@@ -103,11 +103,13 @@ export function useCommonView<T extends object, Response>({
       if (toolbarFilter) {
         const values = filterState[key];
         if (values && values.length > 0) {
-          queryString ? (queryString += '&') : (queryString += '?');
           if (values.length > 1) {
-            queryString += values.map((value) => `or__${toolbarFilter.query}=${value}`).join('&');
+            // FIXME: this doesn't seem to be something hub api supports yet - is it useful anywhere specific?
+            queryString.push(
+              values.map((value) => `or__${toolbarFilter.query}=${value}`).join('&')
+            );
           } else {
-            queryString += `${toolbarFilter.query}=${values.join(',')}`;
+            queryString.push(`${toolbarFilter.query}=${values.join(',')}`);
           }
         }
       }
@@ -115,21 +117,20 @@ export function useCommonView<T extends object, Response>({
   }
 
   if (sort) {
-    queryString ? (queryString += '&') : (queryString += '?');
     if (sortDirection === 'desc') {
-      queryString += `${sortKey}=-${sort}`;
+      queryString.push(`${sortKey}=-${sort}`);
     } else {
-      queryString += `${sortKey}=${sort}`;
+      queryString.push(`${sortKey}=${sort}`);
     }
   }
 
-  queryString ? (queryString += '&') : (queryString += '?');
-  queryString += `offset=${(page - 1) * perPage}`;
+  queryString.push(`offset=${(page - 1) * perPage}`);
+  queryString.push(`limit=${perPage}`);
 
-  queryString ? (queryString += '&') : (queryString += '?');
-  queryString += `limit=${perPage}`;
+  if (queryString.length) {
+    url += '?' + queryString.join('&');
+  }
 
-  url += queryString;
   const fetcher = useFetcher();
   const response = useSWR<Response>(url, fetcher, {
     dedupingInterval: 0,
