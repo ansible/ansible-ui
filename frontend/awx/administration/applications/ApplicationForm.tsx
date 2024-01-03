@@ -20,6 +20,7 @@ import { Application } from '../../interfaces/Application';
 import { PageFormOrganizationSelect } from '../../access/organizations/components/PageFormOrganizationSelect';
 import { Organization } from '../../interfaces/Organization';
 import { getOrganizationByName } from '../../access/organizations/utils/getOrganizationByName';
+import { useWatch } from 'react-hook-form';
 
 const ClientType = {
   Confidential: 'confidential',
@@ -189,6 +190,9 @@ export function EditApplication() {
 function ApplicationInputs(props: { mode: 'create' | 'edit' }) {
   const { mode } = props;
   const { t } = useTranslation();
+  const authorizationGrantType = useWatch<IApplicationInput>({
+    name: 'authorization_grant_type',
+  });
   return (
     <>
       <PageFormTextInput<IApplicationInput>
@@ -241,6 +245,7 @@ function ApplicationInputs(props: { mode: 'create' | 'edit' }) {
         name="redirect_uris"
         label={t('Redirect URIs')}
         placeholder={t('Enter a redriect URI')}
+        isRequired={Boolean(authorizationGrantType === 'authorization-code')}
       />
     </>
   );
