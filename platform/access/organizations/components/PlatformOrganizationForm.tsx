@@ -7,9 +7,11 @@ import {
   PageFormTextInput,
   PageHeader,
   PageLayout,
+  PageNotFound,
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
+import { AwxError } from '../../../../frontend/awx/common/AwxError';
 import { useGet } from '../../../../frontend/common/crud/useGet';
 import { usePatchRequest } from '../../../../frontend/common/crud/usePatchRequest';
 import { usePostRequest } from '../../../../frontend/common/crud/usePostRequest';
@@ -53,9 +55,11 @@ export function EditPlatformOrganization() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const { data: organization, isLoading } = useGet<PlatformOrganization>(
-    gatewayAPI`/v1/organizations/${id.toString()}/`
-  );
+  const {
+    data: organization,
+    isLoading,
+    error,
+  } = useGet<PlatformOrganization>(gatewayAPI`/v1/organizations/${id.toString()}/`);
   const patchRequest = usePatchRequest<PlatformOrganization, PlatformOrganization>();
   const onSubmit: PageFormSubmitHandler<PlatformOrganization> = async (organization) => {
     await patchRequest(gatewayAPI`/v1/organizations/${id.toString()}/`, organization);
@@ -63,6 +67,8 @@ export function EditPlatformOrganization() {
   };
   const getPageUrl = useGetPageUrl();
   if (isLoading) return <LoadingPage breadcrumbs />;
+  if (error) return <AwxError error={error} />;
+  if (!organization) return <PageNotFound />;
   return (
     <PageLayout>
       <PageHeader

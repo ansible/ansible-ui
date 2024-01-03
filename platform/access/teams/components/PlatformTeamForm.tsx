@@ -8,10 +8,14 @@ import {
   PageFormTextInput,
   PageHeader,
   PageLayout,
+  PageNotFound,
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
+import { PageFormAsyncMultiSelect } from '../../../../framework/PageForm/Inputs/PageFormAsyncMultiSelect';
 import { PageFormAsyncSingleSelect } from '../../../../framework/PageForm/Inputs/PageFormAsyncSingleSelect';
+import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
+import { AwxError } from '../../../../frontend/awx/common/AwxError';
 import { requestGet } from '../../../../frontend/common/crud/Data';
 import { useGet } from '../../../../frontend/common/crud/useGet';
 import { usePatchRequest } from '../../../../frontend/common/crud/usePatchRequest';
@@ -21,6 +25,7 @@ import { gatewayAPI } from '../../../api/gateway-api-utils';
 import { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
+import { PlatformUser } from '../../../interfaces/PlatformUser';
 
 export function CreatePlatformTeam() {
   const { t } = useTranslation();
@@ -58,7 +63,11 @@ export function EditPlatformTeam() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const { data: team, isLoading } = useGet<PlatformTeam>(gatewayAPI`/v1/teams/${id.toString()}/`);
+  const {
+    data: team,
+    isLoading,
+    error,
+  } = useGet<PlatformTeam>(gatewayAPI`/v1/teams/${id.toString()}/`);
   const patchRequest = usePatchRequest<PlatformTeam, PlatformTeam>();
   const onSubmit: PageFormSubmitHandler<PlatformTeam> = async (team) => {
     await patchRequest(gatewayAPI`/v1/teams/${id.toString()}/`, team);
@@ -66,6 +75,8 @@ export function EditPlatformTeam() {
   };
   const getPageUrl = useGetPageUrl();
   if (isLoading) return <LoadingPage breadcrumbs />;
+  if (error) return <AwxError error={error} />;
+  if (!team) return <PageNotFound />;
   return (
     <PageLayout>
       <PageHeader
@@ -89,7 +100,7 @@ export function EditPlatformTeam() {
 
 function PlatformTeamInputs() {
   const { t } = useTranslation();
-  const queryOptions = useCallback(async (page: number) => {
+  const queryOrganizations = useCallback(async (page: number) => {
     const organizations = await requestGet<PlatformItemsResponse<PlatformOrganization>>(
       gatewayAPI`/v1/organizations/?page=${page.toString()}`
     );
@@ -98,6 +109,18 @@ function PlatformTeamInputs() {
       options: organizations.results.map((organization) => ({
         label: organization.name,
         value: organization.id,
+      })),
+    };
+  }, []);
+  const queryUsers = useCallback(async (page: number) => {
+    const users = await requestGet<PlatformItemsResponse<PlatformUser>>(
+      gatewayAPI`/v1/users/?page=${page.toString()}`
+    );
+    return {
+      total: users.count,
+      options: users.results.map((user) => ({
+        label: user.username,
+        value: user.id,
       })),
     };
   }, []);
@@ -113,9 +136,21 @@ function PlatformTeamInputs() {
         name="organization"
         label={t('Organization')}
         placeholder={t('Select organization')}
-        queryOptions={queryOptions}
+        queryOptions={queryOrganizations}
         isRequired
+        queryPlaceholder={t('Loading organizations...')}
+        queryErrorText={(error) => t('Error loading organizations: {{error}}', { error })}
       />
+
+      <PageFormSection title={t('Members')} singleColumn>
+        <PageFormAsyncMultiSelect<PlatformTeam>
+          name="users"
+          placeholder={t('Select users')}
+          queryOptions={queryUsers}
+          queryPlaceholder={t('Loading users...')}
+          queryErrorText={(error) => t('Error loading users: {{error}}', { error })}
+        />
+      </PageFormSection>
     </>
   );
 }
