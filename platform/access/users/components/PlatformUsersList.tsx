@@ -33,7 +33,17 @@ export function PlatformUsersList() {
 
   return (
     <PageLayout>
-      <PageHeader title={t('Users')} />
+      <PageHeader
+        title={t('Users')}
+        description={t(
+          'A user is someone who has access with associated permissions and credentials.'
+        )}
+        titleHelpTitle={t('User')}
+        titleHelp={[
+          t('A user is someone who has access with associated permissions and credentials.'),
+        ]}
+        titleDocLink="https://docs.ansible.com"
+      />
       <PageTable<PlatformUser>
         id="platform-users-table"
         toolbarFilters={toolbarFilters}

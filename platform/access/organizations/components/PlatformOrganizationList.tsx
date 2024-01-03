@@ -36,7 +36,13 @@ export function PlatformOrganizationList() {
 
   return (
     <PageLayout>
-      <PageHeader title={t('Organizations')} />
+      <PageHeader
+        title={t('Organizations')}
+        description={t('An organization is a logical collection of users, teams, and resources.')}
+        titleHelpTitle={t('Organization')}
+        titleHelp={[t('An organization is a logical collection of users, teams, and resources.')]}
+        titleDocLink="https://docs.ansible.com"
+      />
       <PageTable<PlatformOrganization>
         id="platform-organizations-table"
         toolbarFilters={toolbarFilters}
