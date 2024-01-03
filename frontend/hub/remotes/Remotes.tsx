@@ -3,7 +3,7 @@ import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../fra
 import { HubRoute } from '../HubRoutes';
 import { pulpHrefKeyFn } from '../api/utils';
 import { pulpAPI } from '../api/formatPath';
-import { usePulpView } from '../useHubView';
+import { useHubView } from '../useHubView';
 import { useRemoteActions } from './hooks/useRemoteActions';
 import { useRemoteColumns } from './hooks/useRemoteColumns';
 import { useRemoteFilters } from './hooks/useRemoteFilters';
@@ -35,7 +35,8 @@ export function Remotes() {
   const { t } = useTranslation();
   const toolbarFilters = useRemoteFilters();
   const tableColumns = useRemoteColumns();
-  const view = usePulpView<IRemotes>({
+  const view = useHubView<IRemotes>({
+    sortKey: 'ordering',
     url: pulpAPI`/remotes/ansible/collection/`,
     keyFn: pulpHrefKeyFn,
     toolbarFilters,

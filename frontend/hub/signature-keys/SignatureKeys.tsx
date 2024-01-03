@@ -19,14 +19,15 @@ import {
 import { downloadTextFile } from '../../../framework/utils/download-file';
 import { pulpHrefKeyFn } from '../api/utils';
 import { pulpAPI } from '../api/formatPath';
-import { usePulpView } from '../useHubView';
+import { useHubView } from '../useHubView';
 import { SignatureKey } from './SignatureKey';
 
 export function SignatureKeys() {
   const { t } = useTranslation();
   const toolbarFilters = useSignatureKeyFilters();
   const tableColumns = useSignatureKeysColumns();
-  const view = usePulpView<SignatureKey>({
+  const view = useHubView<SignatureKey>({
+    sortKey: 'ordering',
     url: pulpAPI`/signing-services/`,
     keyFn: pulpHrefKeyFn,
     toolbarFilters,

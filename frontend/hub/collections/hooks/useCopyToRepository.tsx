@@ -8,7 +8,7 @@ import {
   useRepositoryFilters,
 } from './../../repositories/hooks/useRepositorySelector';
 import { PageTable } from './../../../../framework/PageTable/PageTable';
-import { usePulpView } from '../../useHubView';
+import { useHubView } from '../../useHubView';
 import { AnsibleAnsibleRepositoryResponse } from './../../api-schemas/generated/AnsibleAnsibleRepositoryResponse';
 import { hubAPIPost } from '../../api/utils';
 import { useGetRequest } from './../../../common/crud/useGet';
@@ -114,7 +114,8 @@ function CopyToRepositoryModal(props: {
     queryParams = { pulp_label_select: 'pipeline=approved' };
   }
 
-  const view = usePulpView({
+  const view = useHubView({
+    sortKey: 'ordering',
     url: pulpAPI`/repositories/ansible/ansible/`,
     toolbarFilters,
     tableColumns,

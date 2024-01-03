@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useOutletContext } from 'react-router-dom';
 import { CollectionVersionSearch } from '../Collection';
-import { usePulpView } from '../../useHubView';
+import { useHubView } from '../../useHubView';
 import { pulpAPI } from '../../api/formatPath';
 import { useMemo } from 'react';
 import { ITableColumn } from '../../../../framework';
@@ -15,7 +15,8 @@ export function CollectionDistributions() {
 
   const tableColumns = useDistributionsColumns();
 
-  const view = usePulpView<Distribution>({
+  const view = useHubView<Distribution>({
+    sortKey: 'ordering',
     url: pulpAPI`/distributions/ansible/ansible/`,
     keyFn: (item) => item.base_path,
     tableColumns,

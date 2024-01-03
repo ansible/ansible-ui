@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 import { useRoleColumns } from './hooks/useRoleColumns';
-import { usePulpView } from '../../useHubView';
+import { useHubView } from '../../useHubView';
 import { Role } from './Role';
 import { pulpAPI } from '../../api/formatPath';
 import { nameKeyFn } from '../../../common/utils/nameKeyFn';
@@ -27,7 +27,8 @@ export function HubRolesTable() {
   const { user } = useHubContext();
   const toolbarFilters = useRoleFilters();
 
-  const view = usePulpView<Role>({
+  const view = useHubView<Role>({
+    sortKey: 'ordering',
     url: pulpAPI`/roles/`,
     keyFn: nameKeyFn,
     toolbarFilters,
