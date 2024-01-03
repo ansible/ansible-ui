@@ -1,18 +1,19 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings, useBulkConfirmation } from '../../../../../framework';
+import { compareStrings } from '../../../../../framework';
 import { useNameColumn } from '../../../../common/columns';
 import { getItemKey, postRequest } from '../../../../common/crud/Data';
-import { Instance } from '../../../interfaces/Instance';
-import { useInstancesColumns } from './useInstancesColumns';
 import { awxAPI } from '../../../api/awx-utils';
+import { Instance } from '../../../interfaces/Instance';
+import { useAwxBulkConfirmation } from '../../../common/useAwxBulkConfirmation';
+import { useInstancesColumns } from './useInstancesColumns';
 
 export function useRunHealthCheck(onComplete: (instances: Instance[]) => void) {
   const { t } = useTranslation();
   const confirmationColumns = useInstancesColumns({ disableLinks: true, disableSort: true });
   const deleteActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true });
   const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn]);
-  const bulkAction = useBulkConfirmation<Instance>();
+  const bulkAction = useAwxBulkConfirmation<Instance>();
   const cannotRunHealthCheckDueToNodeType = (instance: Instance) => {
     if (instance.node_type !== 'execution')
       return t(`Health checks can only be run on execution instances.`);
