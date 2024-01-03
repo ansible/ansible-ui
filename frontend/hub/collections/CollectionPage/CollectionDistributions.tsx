@@ -7,8 +7,7 @@ import { useMemo } from 'react';
 import { ITableColumn } from '../../../../framework';
 import { PageTable } from '../../../../framework';
 import { CopyCell } from '../../../../framework';
-
-import { getRepoURL } from '../../api/formatPath';
+import { getRepoURL } from '../../api/utils';
 
 export function CollectionDistributions() {
   const { t } = useTranslation();
