@@ -28,7 +28,13 @@ export interface PulpItemsResponse<T extends object> {
   next?: string;
 }
 
-interface IHubViewParams {
+interface CommonResponse<T extends object> {
+  count: number | undefined;
+  next: string | undefined;
+  pageItems: T[] | undefined;
+}
+
+interface IHubViewParams<T extends object> {
   url: string;
   keyFn: (item: T) => string | number;
   toolbarFilters?: IToolbarFilter[];
@@ -50,7 +56,7 @@ export type IHubView<T extends object> = IView &
     unselectItemsAndRefresh: (items: T[]) => void;
   };
 
-export function useCommonView<T extends object>({
+export function useCommonView<T extends object, Response>({
   url,
   keyFn,
   toolbarFilters,
@@ -63,9 +69,9 @@ export function useCommonView<T extends object>({
   defaultSort: initialDefaultSort,
   defaultSortDirection: initialDefaultSortDirection,
   deconstruct,
-}: IHubViewParams & {
+}: IHubViewParams<T> & {
   sortKey: string;
-  deconstruct: (data: unknown) => { count: number; next?: string; pageItems: T[] | undefined };
+  deconstruct: (data: Response) => CommonResponse<T>;
 }): IHubView<T> {
   let defaultSort: string | undefined = initialDefaultSort;
   let defaultSortDirection: 'asc' | 'desc' | undefined = initialDefaultSortDirection;
@@ -125,7 +131,7 @@ export function useCommonView<T extends object>({
 
   url += queryString;
   const fetcher = useFetcher();
-  const response = useSWR<HubItemsResponse<T> | PulpItemsResponse<T>>(url, fetcher, {
+  const response = useSWR<Response>(url, fetcher, {
     dedupingInterval: 0,
     refreshInterval: 30000,
   });
@@ -134,10 +140,10 @@ export function useCommonView<T extends object>({
     await mutate();
   }, [mutate]);
 
-  const { count, next, pageItems } = deconstruct(data);
+  const { count, next, pageItems } = deconstruct(data as Response);
 
   const nextPage = serverlessURL(next);
-  useSWR<HubItemsResponse<T> | PulpItemsResponse<T>>(nextPage, fetcher, {
+  useSWR<Response>(nextPage, fetcher, {
     dedupingInterval: 0,
   });
 
@@ -177,31 +183,39 @@ export function useCommonView<T extends object>({
   }, [error, pageItems, refresh, selection, unselectItemsAndRefresh, view]);
 }
 
-export function useHubView<T extends object>(params: IHubViewParams): IHubView<T> {
-  return useCommonView({
+export function useHubView<T extends object>(params: IHubViewParams<T>): IHubView<T> {
+  return useCommonView<T, HubItemsResponse<T>>({
     sortKey: 'sort',
     ...params,
-    deconstruct: (
-      { data: pageItems, meta: { count }, links: { next } }: HubItemsResponse<T> = {
-        meta: {},
+    deconstruct: (data: HubItemsResponse<T>): CommonResponse<T> => {
+      const {
+        data: pageItems,
+        meta: { count },
+        links: { next },
+      } = data || {
         links: {},
-      }
-    ) => ({
-      count,
-      next,
-      pageItems,
-    }),
+        meta: {},
+      };
+      return {
+        count,
+        next,
+        pageItems,
+      };
+    },
   });
 }
 
-export function usePulpView<T extends object>(params: IHubViewParams): IHubView<T> {
-  return useCommonView({
+export function usePulpView<T extends object>(params: IHubViewParams<T>): IHubView<T> {
+  return useCommonView<T, PulpItemsResponse<T>>({
     sortKey: 'ordering',
     ...params,
-    deconstruct: ({ results: pageItems, count, next }: PulpItemsResponse<T> = {}) => ({
-      count,
-      next,
-      pageItems,
-    }),
+    deconstruct: (data: PulpItemsResponse<T>): CommonResponse<T> => {
+      const { results: pageItems, count, next } = data || {};
+      return {
+        count,
+        next,
+        pageItems,
+      };
+    },
   });
 }
