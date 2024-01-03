@@ -225,13 +225,13 @@ export function InstanceDetailsTab(props: {
           onChange={(_event: SliderOnChangeEvent, value: number) =>
             void handleInstanceForksSlider(instance, value)
           }
-          isDisabled={!activeUser.is_superuser || !instance.enabled || !capacityAvailable}
+          isDisabled={!activeUser?.is_superuser || !instance.enabled || !capacityAvailable}
         />
       </PageDetail>
       <PageDetail label={t('Enabled')} data-cy="enabled">
         <Switch
           id="enable-instance"
-          isDisabled={!activeUser.is_superuser}
+          isDisabled={!activeUser?.is_superuser}
           label={t('Enabled')}
           labelOff={t('Disabled')}
           isChecked={instance.enabled}
