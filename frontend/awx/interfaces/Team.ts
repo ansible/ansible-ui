@@ -2,7 +2,7 @@ import { Team as SwaggerTeam } from './generated-from-swagger/api';
 import {
   SummaryFieldsByUser,
   SummaryFieldsOrganization,
-  SummeryFieldObjectRole,
+  SummaryFieldObjectRole,
 } from './summary-fields/summary-fields';
 
 export interface Team extends Omit<SwaggerTeam, 'id' | 'name' | 'summary_fields'> {
@@ -13,9 +13,9 @@ export interface Team extends Omit<SwaggerTeam, 'id' | 'name' | 'summary_fields'
     created_by: SummaryFieldsByUser;
     modified_by: SummaryFieldsByUser;
     object_roles: {
-      admin_role: SummeryFieldObjectRole;
-      member_role: SummeryFieldObjectRole;
-      read_role: SummeryFieldObjectRole;
+      admin_role: SummaryFieldObjectRole;
+      member_role: SummaryFieldObjectRole;
+      read_role: SummaryFieldObjectRole;
     };
     user_capabilities: {
       edit: boolean;

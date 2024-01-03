@@ -66,34 +66,12 @@ jobs:
         with:
           payload: |
             {
-              "blocks":[
-                {
-                  "type": "header",
-                  "text": {
-                    "type": "plain_text",
-                    "text": ":rocket: AWX E2E Server Updated",
-                    "emoji": true
-                  }
-                },
+              "blocks": [
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*Environment Variables*```export AWX_SERVER=${{ inputs.AWX_SERVER }}```"
-                  }
-                },   
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*Server:*\n${{ github.event.inputs.AWX_SERVER }}"
-                  }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*GitHub Action:*\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                    "text": ":check: AWX E2E Update - <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Success> - <${{ needs.setup.outputs.AWX_SERVER }}/ui_next|Server>"
                   }
                 }
               ]
@@ -107,6 +85,7 @@ jobs:
     if: failure()
     needs:
       - awx-update-server
+      - setup
     runs-on: ubuntu-latest
     steps:
       - name: Slack Notification
@@ -114,35 +93,12 @@ jobs:
         with:
           payload: |
             {
-              "blocks":[
-                {
-                  "type": "header",
-                  "text": {
-                    "type": "plain_text",
-                    "text": ":failed: AWX E2E Server Update Failure",
-                    "emoji": true
-                  }
-                },
+              "blocks": [
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "The GitHub Action to update the server failed. <!here>",
-                    "emoji": true
-                  }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*Server*\n${{ github.event.inputs.AWX_SERVER }}"
-                  }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*GitHub Action Run*\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                    "text": ":alert: *AWX E2E Update* - *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Failure>* - <${{ needs.setup.outputs.AWX_SERVER }}/ui_next|Server> - <https://cloud.cypress.io/projects/77sud6|Cypress> - <!here>"
                   }
                 }
               ]

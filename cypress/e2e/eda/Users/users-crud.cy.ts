@@ -27,6 +27,12 @@ describe('EDA Users- Create, Edit, Delete', () => {
       FirstName: 'Firstname',
       LastName: 'Lastname',
       Email: 'first.last@redhat.com',
+      roles: [
+        {
+          id: '5399bd06-a228-4d99-b61d-ab857837ff4b',
+          name: 'Admin',
+        },
+      ],
       Password: `${randomString(12)}`,
     };
     cy.navigateTo('eda', 'users');

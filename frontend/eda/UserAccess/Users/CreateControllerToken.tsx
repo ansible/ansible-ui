@@ -8,13 +8,12 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
-import { RouteObj } from '../../../common/Routes';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { useEdaActiveUser } from '../../../common/useActiveUser';
-import { EdaRoute } from '../../EdaRoutes';
-import { EdaControllerToken, EdaControllerTokenCreate } from '../../interfaces/EdaControllerToken';
-import { edaAPI } from '../../api/eda-utils';
 import { EdaPageForm } from '../../EdaPageForm';
+import { EdaRoute } from '../../EdaRoutes';
+import { edaAPI } from '../../api/eda-utils';
+import { useEdaActiveUser } from '../../common/useEdaActiveUser';
+import { EdaControllerToken, EdaControllerTokenCreate } from '../../interfaces/EdaControllerToken';
 
 function ControllerTokenInputs() {
   const { t } = useTranslation();
@@ -71,7 +70,7 @@ export function CreateControllerToken() {
     {
       label: t('Controller tokens'),
       to: canViewUsers
-        ? RouteObj.EdaUserDetailsTokens.replace(':id', `${user?.id || ''}`)
+        ? getPageUrl(EdaRoute.UserTokens, { params: { id: user?.id } })
         : getPageUrl(EdaRoute.MyTokens),
     },
     { label: user?.username ?? '' },

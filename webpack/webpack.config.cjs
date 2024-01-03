@@ -16,6 +16,7 @@ const {
   EDA_API_PREFIX,
   HUB_ROUTE_PREFIX,
   HUB_API_PREFIX,
+  HUB_SERVER,
 } = require('./environment.cjs');
 
 switch (process.env.UI_MODE) {
@@ -111,6 +112,7 @@ module.exports = function (env, argv) {
         'process.env.EDA_API_PREFIX': JSON.stringify(EDA_API_PREFIX),
         'process.env.HUB_ROUTE_PREFIX': JSON.stringify(HUB_ROUTE_PREFIX),
         'process.env.HUB_API_PREFIX': JSON.stringify(HUB_API_PREFIX),
+        'process.env.HUB_SERVER': JSON.stringify(HUB_SERVER),
       }),
       isDevelopment && new ReactRefreshWebpackPlugin(),
       ...['en', 'es', 'fr', 'ja', 'ko', 'nl', 'zh', 'zu'].map((locale) => {

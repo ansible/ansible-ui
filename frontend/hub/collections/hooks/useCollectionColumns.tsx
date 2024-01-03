@@ -26,7 +26,6 @@ export function useCollectionColumns(_options?: { disableSort?: boolean; disable
                 name: collection.collection_version?.name,
                 namespace: collection.collection_version?.namespace,
                 repository: collection.repository?.name,
-                version: collection.collection_version?.version,
               },
             })}
           />
