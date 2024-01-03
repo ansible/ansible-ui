@@ -45,7 +45,7 @@ export function CreateHubNamespace() {
         onCancel={() => navigate(-1)}
         defaultValue={{ groups: [] }}
       >
-        <HubNamespaceInputs />
+        <HubNamespaceInputs isDisabled={false} isRequired={true} />
       </HubPageForm>
     </PageLayout>
   );
@@ -109,13 +109,13 @@ export function EditHubNamespace() {
         onCancel={() => navigate(-1)}
         defaultValue={namespace}
       >
-        <HubNamespaceInputs />
+        <HubNamespaceInputs isDisabled={true} />
       </HubPageForm>
     </PageLayout>
   );
 }
 
-function HubNamespaceInputs() {
+function HubNamespaceInputs(props: { isDisabled?: boolean; isRequired?: boolean }) {
   const { t } = useTranslation();
   return (
     <>
@@ -123,7 +123,9 @@ function HubNamespaceInputs() {
         name="name"
         label={t('Name')}
         placeholder={t('Enter name')}
-        isRequired
+        isDisabled={props.isDisabled}
+        isRequired={props.isRequired}
+        helperText={t('Name is not editable.')}
       />
       <PageFormTextInput<HubNamespace>
         name="description"
