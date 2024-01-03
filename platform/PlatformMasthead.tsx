@@ -1,4 +1,11 @@
-import { ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
+import {
+  Stack,
+  TextContent,
+  Title,
+  ToolbarGroup,
+  ToolbarItem,
+  Truncate,
+} from '@patternfly/react-core';
 import { DropdownItem } from '@patternfly/react-core/deprecated';
 import {
   ExternalLinkAltIcon,
@@ -10,7 +17,7 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
-import { PageMasthead, PageNotificationsIcon, usePageNavigate } from '../framework';
+import { PageMasthead, PageNotificationsIcon, useBreakpoint, usePageNavigate } from '../framework';
 import { PageMastheadDropdown } from '../framework/PageMasthead/PageMastheadDropdown';
 import { PageSettingsIcon } from '../framework/PageMasthead/PageSettingsIcon';
 import { PageThemeSwitcher } from '../framework/PageMasthead/PageThemeSwitcher';
@@ -19,7 +26,6 @@ import { PageRefreshIcon } from '../frontend/common/PageRefreshIcon';
 import { PlatformRoute } from './PlatformRoutes';
 import { gatewayAPI } from './api/gateway-api-utils';
 import { useActivePlatformUser } from './hooks/useActivePlatformUser';
-import PlatformIcon from './platform-icon.svg';
 
 export function PlatformMasthead() {
   const { t } = useTranslation();
@@ -27,6 +33,7 @@ export function PlatformMasthead() {
   const navigate = useNavigate();
   const activeUser = useActivePlatformUser();
   useAwxNotifications();
+  const showTitle = useBreakpoint('md');
 
   const { cache } = useSWRConfig();
   const logout = useCallback(async () => {
@@ -39,26 +46,38 @@ export function PlatformMasthead() {
 
   return (
     <PageMasthead
-      icon={<PlatformIcon style={{ width: 52 }} />}
-      title={process.env.PRODUCT}
       brand={
         (
-          <div style={{ paddingBottom: 2 }}>
-            <RedhatIcon
-              style={{
-                marginTop: -3,
-                marginBottom: -3,
-                marginRight: 6,
-                height: 24,
-                width: 24,
-                color: '#ee0000',
-              }}
-            />
-            Red Hat
-          </div>
+          <RedhatIcon
+            style={{ height: 36, width: 36, color: '#ee0000', marginTop: -24, marginRight: -4 }}
+          />
         ) as unknown as string
       }
     >
+      {showTitle && (
+        <ToolbarItem style={{ flexGrow: 1 }}>
+          <TextContent>
+            <Title
+              headingLevel="h1"
+              size="xl"
+              style={{ fontWeight: 'unset', margin: 0, lineHeight: 1.2 }}
+            >
+              <Stack>
+                <Truncate
+                  content={t('Red Hat')}
+                  className="pf-v5-u-font-weight-bold"
+                  style={{ minWidth: 0 }}
+                />
+                <Truncate
+                  content={t('Ansible Automation Platform')}
+                  className="pf-v5-u-font-weight-light"
+                  style={{ minWidth: 0 }}
+                />
+              </Stack>
+            </Title>
+          </TextContent>
+        </ToolbarItem>
+      )}
       <ToolbarItem style={{ flexGrow: 1 }} />
       <ToolbarGroup variant="icon-button-group">
         <ToolbarItem>

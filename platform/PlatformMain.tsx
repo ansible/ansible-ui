@@ -8,10 +8,11 @@ import '@patternfly/patternfly/patternfly-charts-theme-dark.css';
 
 import { Outlet } from 'react-router-dom';
 import { PageApp } from '../framework/PageNavigation/PageApp';
+import { AwxActiveUserProvider } from '../frontend/awx/common/useAwxActiveUser';
 import { AwxConfigProvider } from '../frontend/awx/common/useAwxConfig';
 import { WebSocketProvider } from '../frontend/awx/common/useAwxWebSocket';
 import '../frontend/common/i18n';
-import { ActiveEdaUserProvider, ActiveUserProvider } from '../frontend/common/useActiveUser';
+import { EdaActiveUserProvider } from '../frontend/eda/common/useEdaActiveUser';
 import { HubContextProvider } from '../frontend/hub/useHubContext';
 import { PlatformLogin } from './PlatformLogin';
 import { PlatformMasthead } from './PlatformMasthead';
@@ -28,15 +29,15 @@ export default function PlatformMain() {
         <QuickStartProvider>
           <WebSocketProvider>
             <ActivePlatformUserProvider>
-              <ActiveUserProvider>
+              <AwxActiveUserProvider>
                 <AwxConfigProvider>
                   <HubContextProvider>
-                    <ActiveEdaUserProvider>
+                    <EdaActiveUserProvider>
                       <Outlet />
-                    </ActiveEdaUserProvider>
+                    </EdaActiveUserProvider>
                   </HubContextProvider>
                 </AwxConfigProvider>
-              </ActiveUserProvider>
+              </AwxActiveUserProvider>
             </ActivePlatformUserProvider>
           </WebSocketProvider>
         </QuickStartProvider>
