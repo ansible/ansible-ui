@@ -18,7 +18,7 @@ export interface PulpItemsResponse<T extends object> {
   next?: string;
 }
 
-export type IPulpView<T extends object> = IView &
+export type IHubView<T extends object> = IView &
   ISelected<T> & {
     itemCount: number | undefined;
     pageItems: T[] | undefined;
@@ -50,7 +50,7 @@ export function usePulpView<T extends object>({
   defaultSelection?: T[];
   defaultSort?: string | undefined;
   defaultSortDirection?: 'asc' | 'desc' | undefined;
-}): IPulpView<T> {
+}): IHubView<T> {
   let defaultSort: string | undefined = initialDefaultSort;
   let defaultSortDirection: 'asc' | 'desc' | undefined = initialDefaultSortDirection;
 

@@ -9,11 +9,11 @@ import {
   usePageNavigate,
 } from '../../../../framework';
 import { HubRoute } from '../../HubRoutes';
-import { IPulpView } from '../../usePulpView';
+import { IHubView } from '../../usePulpView';
 import { IRemotes } from '../Remotes';
 import { useDeleteRemotes } from './useDeleteRemotes';
 
-export function useRemoteToolbarActions(view: IPulpView<IRemotes>) {
+export function useRemoteToolbarActions(view: IHubView<IRemotes>) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const deleteRemotes = useDeleteRemotes(view.unselectItemsAndRefresh);
