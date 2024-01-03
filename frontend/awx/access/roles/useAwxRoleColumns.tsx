@@ -39,11 +39,9 @@ export function useAwxRoleColumns() {
       },
       {
         id: 'description',
-        type: 'text',
+        type: 'description',
         header: t('Description'),
         value: (role: AwxRole) => role.description,
-        card: 'description',
-        list: 'description',
       },
     ];
     return columns;

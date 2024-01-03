@@ -29,14 +29,13 @@ import { Sparkline } from '../components/Sparkline';
 function useActivityColumn() {
   const { t } = useTranslation();
   const column: ITableColumn<{
-    summary_fields?: { recent_jobs?: SummaryFieldRecentJob[] };
+    summary_fields?: { recent_jobs?: SummaryFieldRecentJob[] | undefined };
   }> = useMemo(
     () => ({
       header: t('Activity'),
-      cell: (item) => {
-        if (!item.summary_fields?.recent_jobs) return <></>;
-        return <Sparkline jobs={item.summary_fields?.recent_jobs} />;
-      },
+      cell: (item) => <Sparkline jobs={item.summary_fields?.recent_jobs} />,
+      value: (item) =>
+        item.summary_fields?.recent_jobs && item.summary_fields?.recent_jobs?.length > 0,
       table: ColumnTableOption.Expanded,
       card: 'hidden',
       list: 'hidden',

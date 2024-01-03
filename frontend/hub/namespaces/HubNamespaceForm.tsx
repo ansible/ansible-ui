@@ -10,13 +10,14 @@ import {
   usePageNavigate,
 } from '../../../framework';
 import { useGet } from '../../common/crud/useGet';
-import { usePatchRequest } from '../../common/crud/usePatchRequest';
+import { usePutRequest } from '../../common/crud/usePutRequest';
 import { usePostRequest } from '../../common/crud/usePostRequest';
 import { HubRoute } from '../HubRoutes';
 import { hubAPI } from '../api/formatPath';
 import { HubNamespace } from './HubNamespace';
 import { HubPageForm } from '../HubPageForm';
 import { HubError } from '../common/HubError';
+import { useClearCache } from '../../common/useInvalidateCache';
 
 export function CreateHubNamespace() {
   const { t } = useTranslation();
@@ -44,7 +45,7 @@ export function CreateHubNamespace() {
         onCancel={() => navigate(-1)}
         defaultValue={{ groups: [] }}
       >
-        <HubNamespaceInputs />
+        <HubNamespaceInputs isDisabled={false} isRequired={true} />
       </HubPageForm>
     </PageLayout>
   );
@@ -53,16 +54,18 @@ export function CreateHubNamespace() {
 export function EditHubNamespace() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { clearCacheByKey } = useClearCache();
   const params = useParams<{ id?: string }>();
   const name = params.id;
   const {
     data: namespace,
     error,
     refresh,
-  } = useGet<HubNamespace>(hubAPI`/_ui/v1/namespaces/${name ?? ''}/`);
-  const patchRequest = usePatchRequest<HubNamespace, HubNamespace>();
+  } = useGet<HubNamespace>(hubAPI`/_ui/v1/my-namespaces/${name ?? ''}/`);
+  const putRequest = usePutRequest<HubNamespace, HubNamespace>();
   const onSubmit: PageFormSubmitHandler<HubNamespace> = async (namespace) => {
-    await patchRequest(hubAPI`/_ui/v1/namespaces/`, namespace);
+    await putRequest(hubAPI`/_ui/v1/my-namespaces/${name ?? ''}/`, namespace);
+    clearCacheByKey(hubAPI`/_ui/v1/my-namespaces/${name ?? ''}/`);
     navigate(-1);
   };
   const getPageUrl = useGetPageUrl();
@@ -79,8 +82,10 @@ export function EditHubNamespace() {
     return (
       <PageLayout>
         <PageHeader
+          title={t('Edit Namespace')}
           breadcrumbs={[
             { label: t('Namespaces'), to: getPageUrl(HubRoute.Namespaces) },
+            { label: name, to: getPageUrl(HubRoute.NamespacePage, { params: { id: name } }) },
             { label: t('Edit Namespace') },
           ]}
         />
@@ -93,6 +98,7 @@ export function EditHubNamespace() {
         title={t('Edit Namespace')}
         breadcrumbs={[
           { label: t('Namespaces'), to: getPageUrl(HubRoute.Namespaces) },
+          { label: name, to: getPageUrl(HubRoute.NamespacePage, { params: { id: name } }) },
           { label: t('Edit Namespace') },
         ]}
       />
@@ -103,13 +109,13 @@ export function EditHubNamespace() {
         onCancel={() => navigate(-1)}
         defaultValue={namespace}
       >
-        <HubNamespaceInputs />
+        <HubNamespaceInputs isDisabled={true} />
       </HubPageForm>
     </PageLayout>
   );
 }
 
-function HubNamespaceInputs() {
+function HubNamespaceInputs(props: { isDisabled?: boolean; isRequired?: boolean }) {
   const { t } = useTranslation();
   return (
     <>
@@ -117,7 +123,9 @@ function HubNamespaceInputs() {
         name="name"
         label={t('Name')}
         placeholder={t('Enter name')}
-        isRequired
+        isDisabled={props.isDisabled}
+        isRequired={props.isRequired}
+        helperText={props.isDisabled ? t('Name is not editable.') : undefined}
       />
       <PageFormTextInput<HubNamespace>
         name="description"

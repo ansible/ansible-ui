@@ -1,8 +1,7 @@
 /* eslint-disable i18next/no-literal-string */
 
-import { RuleAuditPage } from './RuleAuditPage';
-import { RouteObj } from '../../../../common/Routes';
 import { edaAPI } from '../../../api/eda-utils';
+import { RuleAuditPage } from './RuleAuditPage';
 
 describe('RuleAuditPage', () => {
   beforeEach(() => {
@@ -10,10 +9,7 @@ describe('RuleAuditPage', () => {
   });
 
   it('Component renders and displays the rule audit', () => {
-    cy.mount(<RuleAuditPage />, {
-      path: RouteObj.EdaRuleAuditPage,
-      initialEntries: [RouteObj.EdaRuleAuditDetails.replace(':id', '1')],
-    });
+    cy.mount(<RuleAuditPage />);
     cy.get('h1').should('have.text', 'Say Hello long running');
   });
 

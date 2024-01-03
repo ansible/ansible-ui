@@ -191,6 +191,7 @@ export enum AwxRoute {
   EditApplication = 'awx-edit-application',
 
   ExecutionEnvironments = 'awx-execution-environments',
+  ExecutionEnvironmentPage = 'awx-execution-environments-page',
 
   TopologyView = 'awx-topology-view',
 
