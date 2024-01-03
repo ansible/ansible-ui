@@ -1,22 +1,22 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
-import { PlatformItemsResponse } from '../interfaces/PlatformItemsResponse';
-import { User } from '../interfaces/User';
 import { useGet } from '../../frontend/common/crud/useGet';
 import { gatewayAPI } from '../api/gateway-api-utils';
+import { PlatformItemsResponse } from '../interfaces/PlatformItemsResponse';
+import { PlatformUser } from '../interfaces/PlatformUser';
 
-const ActivePlatformUserContext = createContext<User | null | undefined>(undefined);
+const ActivePlatformUserContext = createContext<PlatformUser | null | undefined>(undefined);
 
 /**
  * Get the active logged in user
  * @returns undefined while querying, null if user not logged in, otherwise the User.
  */
 export function useActivePlatformUser() {
-  return useContext(ActivePlatformUserContext) as User;
+  return useContext(ActivePlatformUserContext) as PlatformUser;
 }
 
 export function ActivePlatformUserProvider(props: { children?: ReactNode }) {
-  const [activeUser, setActiveUser] = useState<User | null | undefined>(undefined);
-  const userResponse = useGet<PlatformItemsResponse<User>>(gatewayAPI`/v1/me`);
+  const [activeUser, setActiveUser] = useState<PlatformUser | null | undefined>(undefined);
+  const userResponse = useGet<PlatformItemsResponse<PlatformUser>>(gatewayAPI`/v1/me`);
   useEffect(() => {
     if (
       userResponse.data &&

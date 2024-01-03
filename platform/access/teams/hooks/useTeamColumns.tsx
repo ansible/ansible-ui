@@ -1,22 +1,25 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { ITableColumn, useGetPageUrl } from '../../../../framework';
-import { PlatformRoute } from '../../../PlatformRoutes';
 import {
   useCreatedColumn,
+  useIdColumn,
   useModifiedColumn,
   useNameColumn,
   useOrganizationNameColumn,
 } from '../../../../frontend/common/columns';
-import { useNavigate } from 'react-router-dom';
-import { Team } from '../../../interfaces/Team';
+import { PlatformRoute } from '../../../PlatformRoutes';
+import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 
 export function useTeamColumns(options?: { disableLinks?: boolean; disableSort?: boolean }) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const navigate = useNavigate();
+  const idColumn = useIdColumn();
   const nameColumnClick = useCallback(
-    (team: Team) => navigate(getPageUrl(PlatformRoute.TeamDetails, { params: { id: team.id } })),
+    (team: PlatformTeam) =>
+      navigate(getPageUrl(PlatformRoute.TeamDetails, { params: { id: team.id } })),
     [getPageUrl, navigate]
   );
   const nameColumn = useNameColumn({ header: t('Team'), ...options, onClick: nameColumnClick });
@@ -26,18 +29,18 @@ export function useTeamColumns(options?: { disableLinks?: boolean; disableSort?:
   );
   const createdColumn = useCreatedColumn({
     sortKey: 'created_on',
-    hideByDefaultInTableView: true,
+    // hideByDefaultInTableView: true,
     ...options,
   });
   const modifiedColumn = useModifiedColumn({
     sortKey: 'modified_on',
-    hideByDefaultInTableView: true,
+    // hideByDefaultInTableView: true,
     ...options,
   });
 
-  const tableColumns = useMemo<ITableColumn<Team>[]>(
-    () => [nameColumn, organizationNameColumn, createdColumn, modifiedColumn],
-    [createdColumn, modifiedColumn, nameColumn, organizationNameColumn]
+  const tableColumns = useMemo<ITableColumn<PlatformTeam>[]>(
+    () => [idColumn, nameColumn, organizationNameColumn, createdColumn, modifiedColumn],
+    [createdColumn, idColumn, modifiedColumn, nameColumn, organizationNameColumn]
   );
   return tableColumns;
 }
