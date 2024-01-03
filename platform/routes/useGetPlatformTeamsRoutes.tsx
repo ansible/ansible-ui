@@ -1,11 +1,11 @@
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageNavigationItem, PageNotImplemented } from '../../framework';
-import { useMemo } from 'react';
 import { PlatformRoute } from '../PlatformRoutes';
-import { CreateTeam, EditTeam } from '../access/teams/components/TeamForm';
-import { TeamPage } from '../access/teams/components/TeamPage';
 import { PlatformTeamDetails } from '../access/teams/components/PlatformTeamDetails';
-import { TeamList } from '../access/teams/components/TeamList';
+import { CreatePlatformTeam, EditPlatformTeam } from '../access/teams/components/PlatformTeamForm';
+import { PlatformTeamList } from '../access/teams/components/PlatformTeamList';
+import { PlatformTeamPage } from '../access/teams/components/PlatformTeamPage';
 
 export function useGetPlatformTeamsRoutes() {
   const { t } = useTranslation();
@@ -18,17 +18,17 @@ export function useGetPlatformTeamsRoutes() {
         {
           id: PlatformRoute.CreateTeam,
           path: 'create',
-          element: <CreateTeam />,
+          element: <CreatePlatformTeam />,
         },
         {
           id: PlatformRoute.EditTeam,
           path: ':id/edit',
-          element: <EditTeam />,
+          element: <EditPlatformTeam />,
         },
         {
           id: PlatformRoute.TeamPage,
           path: ':id',
-          element: <TeamPage />,
+          element: <PlatformTeamPage />,
           children: [
             {
               id: PlatformRoute.TeamDetails,
@@ -54,7 +54,7 @@ export function useGetPlatformTeamsRoutes() {
         },
         {
           path: '',
-          element: <TeamList />,
+          element: <PlatformTeamList />,
         },
       ],
     }),

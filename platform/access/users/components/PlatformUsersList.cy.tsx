@@ -1,49 +1,49 @@
 /*
-Teams list test cases
-1. Team list loads
-2. Filter by name, description, organization, created, modified - TODO
-3. RBAC enable/disable team Create
-4. RBAC enable/disable Edit, Delete - TODO
+Users list test cases
+1. User list loads
+2. Filter by username, first name, last name, email - TODO
+3. RBAC enable/disable user Create
+4. RBAC for Edit, Delete - TODO
 5. Handle 500 error state
 6. Handle empty state
 */
 
-import { TeamList } from './TeamList';
 import * as useOptions from '../../../../frontend/common/crud/useOptions';
 import { gatewayAPI } from '../../../api/gateway-api-utils';
+import { PlatformUsersList } from './PlatformUsersList';
 
-describe('Teams list', () => {
+describe('Users list', () => {
   describe('Non-empty list', () => {
     beforeEach(() => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayAPI`/v1/teams*`,
+          url: gatewayAPI`/v1/users*`,
         },
         {
-          fixture: 'platformTeams.json',
+          fixture: 'platformUsers.json',
         }
-      ).as('teamsList');
+      ).as('usersList');
     });
-    it('Teams list renders', () => {
-      cy.mount(<TeamList />);
-      cy.verifyPageTitle('Teams');
-      cy.get('tbody').find('tr').should('have.length', 3);
+    it('Users list renders', () => {
+      cy.mount(<PlatformUsersList />);
+      cy.verifyPageTitle('Users');
+      cy.get('tbody').find('tr').should('have.length', 4);
       // Toolbar actions are visible
-      cy.get(`[data-cy="create-team"]`).should('be.visible');
+      cy.get(`[data-cy="create-user"]`).should('be.visible');
       cy.get('.page-table-toolbar').within(() => {
         cy.get('.toggle-kebab')
           .click()
           .get('.pf-v5-c-dropdown__menu-item')
-          .contains('Delete selected teams')
+          .contains('Delete selected users')
           .should('be.visible');
       });
     });
-    it('Create Team button is disabled if the user does not have permission to create teams', () => {
-      cy.mount(<TeamList />);
-      cy.get('a[data-cy="create-team"]').should('have.attr', 'aria-disabled', 'true');
+    it('Create User button is disabled if the user does not have permission to create users', () => {
+      cy.mount(<PlatformUsersList />);
+      cy.get('a[data-cy="create-user"]').should('have.attr', 'aria-disabled', 'true');
     });
-    it('Create Team button is enabled if the user has permission to create teams', () => {
+    it('Create User button is enabled if the user has permission to create users', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({
         data: {
           actions: {
@@ -60,8 +60,8 @@ describe('Teams list', () => {
           },
         },
       }));
-      cy.mount(<TeamList />);
-      cy.get('a[data-cy="create-team"]').should('have.attr', 'aria-disabled', 'false');
+      cy.mount(<PlatformUsersList />);
+      cy.get('a[data-cy="create-user"]').should('have.attr', 'aria-disabled', 'false');
     });
   });
   describe('Empty list', () => {
@@ -69,14 +69,14 @@ describe('Teams list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayAPI`/v1/teams*`,
+          url: gatewayAPI`/v1/users*`,
         },
         {
           fixture: 'emptyList.json',
         }
       ).as('emptyList');
     });
-    it('Empty state is displayed correctly for user with permission to create teams', () => {
+    it('Empty state is displayed', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({
         data: {
           actions: {
@@ -93,9 +93,9 @@ describe('Teams list', () => {
           },
         },
       }));
-      cy.mount(<TeamList />);
-      cy.contains(/^There are currently no teams added.$/);
-      cy.contains(/^Please create a team by using the button below.$/);
+      cy.mount(<PlatformUsersList />);
+      cy.contains(/^There are currently no users added.$/);
+      cy.contains(/^Please create a user by using the button below.$/);
     });
     it('Empty state is displayed correctly for user without permission to create teams', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({
@@ -103,18 +103,18 @@ describe('Teams list', () => {
           actions: {},
         },
       }));
-      cy.mount(<TeamList />);
-      cy.contains(/^You do not have permission to create a team/);
+      cy.mount(<PlatformUsersList />);
+      cy.contains(/^You do not have permission to create a user/);
       cy.contains(
         /^Please contact your organization administrator if there is an issue with your access.$/
       );
     });
   });
   describe('Error retrieving list', () => {
-    it('Displays error loading teams', () => {
-      cy.intercept({ method: 'GET', url: gatewayAPI`/v1/teams/*` }, { statusCode: 500 });
-      cy.mount(<TeamList />);
-      cy.contains('Error loading teams');
+    it('Displays error loading users', () => {
+      cy.intercept({ method: 'GET', url: gatewayAPI`/v1/users/*` }, { statusCode: 500 });
+      cy.mount(<PlatformUsersList />);
+      cy.contains('Error loading users');
     });
   });
 });

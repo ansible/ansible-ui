@@ -1,29 +1,29 @@
+import { CubesIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../../framework';
-import { useOrganizationFilters } from '../hooks/useOrganizationFilters';
-import { useOrganizationColumns } from '../hooks/useOrganizationColumns';
-import { Organization } from '../../../interfaces/Organization';
-import { usePlatformView } from '../../../hooks/usePlatformView';
-import { CubesIcon } from '@patternfly/react-icons';
-import { PlatformRoute } from '../../../PlatformRoutes';
-import {
-  useOrganizationRowActions,
-  useOrganizationToolbarActions,
-} from '../hooks/useOrganizationActions';
 import {
   ActionsResponse,
   OptionsResponse,
 } from '../../../../frontend/awx/interfaces/OptionsResponse';
 import { useOptions } from '../../../../frontend/common/crud/useOptions';
+import { PlatformRoute } from '../../../PlatformRoutes';
 import { gatewayAPI } from '../../../api/gateway-api-utils';
+import { usePlatformView } from '../../../hooks/usePlatformView';
+import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
+import {
+  useOrganizationRowActions,
+  useOrganizationToolbarActions,
+} from '../hooks/useOrganizationActions';
+import { useOrganizationColumns } from '../hooks/useOrganizationColumns';
+import { useOrganizationFilters } from '../hooks/useOrganizationFilters';
 
-export function OrganizationList() {
+export function PlatformOrganizationList() {
   const { t } = useTranslation();
   const toolbarFilters = useOrganizationFilters();
   const tableColumns = useOrganizationColumns();
   const pageNavigate = usePageNavigate();
 
-  const view = usePlatformView<Organization>({
+  const view = usePlatformView<PlatformOrganization>({
     url: gatewayAPI`/v1/organizations`,
     toolbarFilters,
     tableColumns,
@@ -37,7 +37,7 @@ export function OrganizationList() {
   return (
     <PageLayout>
       <PageHeader title={t('Organizations')} />
-      <PageTable<Organization>
+      <PageTable<PlatformOrganization>
         id="platform-organizations-table"
         toolbarFilters={toolbarFilters}
         toolbarActions={toolbarActions}

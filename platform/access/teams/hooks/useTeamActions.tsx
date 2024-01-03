@@ -1,4 +1,7 @@
+import { ButtonVariant } from '@patternfly/react-core';
+import { PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
   PageActionSelection,
@@ -6,21 +9,18 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
-import { Team } from '../../../interfaces/Team';
-import { ButtonVariant } from '@patternfly/react-core';
-import { PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
-import { useTranslation } from 'react-i18next';
-import { PlatformRoute } from '../../../PlatformRoutes';
-import { useDeleteTeams } from './useDeleteTeams';
-import { IPlatformView } from '../../../hooks/usePlatformView';
 import {
   ActionsResponse,
   OptionsResponse,
 } from '../../../../frontend/awx/interfaces/OptionsResponse';
 import { useOptions } from '../../../../frontend/common/crud/useOptions';
+import { PlatformRoute } from '../../../PlatformRoutes';
 import { gatewayAPI } from '../../../api/gateway-api-utils';
+import { IPlatformView } from '../../../hooks/usePlatformView';
+import { PlatformTeam } from '../../../interfaces/PlatformTeam';
+import { useDeleteTeams } from './useDeleteTeams';
 
-export function useTeamToolbarActions(view: IPlatformView<Team>) {
+export function useTeamToolbarActions(view: IPlatformView<PlatformTeam>) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
 
@@ -28,7 +28,7 @@ export function useTeamToolbarActions(view: IPlatformView<Team>) {
   const canCreateTeam = Boolean(data && data.actions && data.actions['POST']);
   const deleteTeams = useDeleteTeams(view.unselectItemsAndRefresh);
 
-  const toolbarActions = useMemo<IPageAction<Team>[]>(
+  const toolbarActions = useMemo<IPageAction<PlatformTeam>[]>(
     () => [
       {
         type: PageActionType.Link,
@@ -60,20 +60,20 @@ export function useTeamToolbarActions(view: IPlatformView<Team>) {
   return toolbarActions;
 }
 
-export function useTeamRowActions(view: IPlatformView<Team>) {
+export function useTeamRowActions(view: IPlatformView<PlatformTeam>) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const deleteTeams = useDeleteTeams(view.unselectItemsAndRefresh);
 
-  const rowActions = useMemo<IPageAction<Team>[]>(() => {
+  const rowActions = useMemo<IPageAction<PlatformTeam>[]>(() => {
     // TODO: Update based on RBAC information from Teams API
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const cannotDeleteTeam = (team: Team) =>
+    const cannotDeleteTeam = (team: PlatformTeam) =>
       // eslint-disable-next-line no-constant-condition
       true ? '' : t(`The team cannot be deleted due to insufficient permissions.`);
     // TODO: Update based on RBAC information from Teams API
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const cannotEditTeam = (team: Team) =>
+    const cannotEditTeam = (team: PlatformTeam) =>
       // eslint-disable-next-line no-constant-condition
       true ? '' : t(`The team cannot be edited due to insufficient permissions.`);
 
@@ -85,7 +85,7 @@ export function useTeamRowActions(view: IPlatformView<Team>) {
         isPinned: true,
         icon: PencilAltIcon,
         label: t('Edit team'),
-        isDisabled: (team: Team) => cannotEditTeam(team),
+        isDisabled: (team: PlatformTeam) => cannotEditTeam(team),
         onClick: (team) => pageNavigate(PlatformRoute.EditTeam, { params: { id: team.id } }),
       },
       { type: PageActionType.Seperator },
@@ -94,7 +94,7 @@ export function useTeamRowActions(view: IPlatformView<Team>) {
         selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete team'),
-        isDisabled: (team: Team) => cannotDeleteTeam(team),
+        isDisabled: (team: PlatformTeam) => cannotDeleteTeam(team),
         onClick: (team) => deleteTeams([team]),
         isDanger: true,
       },

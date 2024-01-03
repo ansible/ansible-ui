@@ -1,14 +1,14 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { PageNavigationItem } from '../../framework';
 import { PlatformRoute } from '../PlatformRoutes';
-import { useTranslation } from 'react-i18next';
+import { PlatformOrganizationDetails } from '../access/organizations/components/PlatformOrganizationDetails';
 import {
-  CreateOrganization,
-  EditOrganization,
-} from '../access/organizations/components/OrganizationForm';
-import { OrganizationPage } from '../access/organizations/components/OrganizationPage';
-import { OrganizationDetails } from '../access/organizations/components/OrganizationDetails';
-import { OrganizationList } from '../access/organizations/components/OrganizationList';
+  CreatePlatformOrganization,
+  EditPlatformOrganization,
+} from '../access/organizations/components/PlatformOrganizationForm';
+import { PlatformOrganizationList } from '../access/organizations/components/PlatformOrganizationList';
+import { PlatformOrganizationPage } from '../access/organizations/components/PlatformOrganizationPage';
 
 export function useGetPlatformOrganizationsRoutes() {
   const { t } = useTranslation();
@@ -21,28 +21,28 @@ export function useGetPlatformOrganizationsRoutes() {
         {
           id: PlatformRoute.CreateOrganization,
           path: 'create',
-          element: <CreateOrganization />,
+          element: <CreatePlatformOrganization />,
         },
         {
           id: PlatformRoute.EditOrganization,
           path: ':id/edit',
-          element: <EditOrganization />,
+          element: <EditPlatformOrganization />,
         },
         {
           id: PlatformRoute.OrganizationPage,
           path: ':id',
-          element: <OrganizationPage />,
+          element: <PlatformOrganizationPage />,
           children: [
             {
               id: PlatformRoute.OrganizationDetails,
               path: 'details',
-              element: <OrganizationDetails />,
+              element: <PlatformOrganizationDetails />,
             },
           ],
         },
         {
           path: '',
-          element: <OrganizationList />,
+          element: <PlatformOrganizationList />,
         },
       ],
     }),

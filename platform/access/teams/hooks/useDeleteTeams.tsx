@@ -1,13 +1,13 @@
-import { useTranslation } from 'react-i18next';
 import { useMemo } from 'react';
-import { Team } from '../../../interfaces/Team';
+import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../framework';
-import { getItemKey, requestDelete } from '../../../../frontend/common/crud/Data';
-import { useTeamColumns } from './useTeamColumns';
 import { useNameColumn } from '../../../../frontend/common/columns';
+import { getItemKey, requestDelete } from '../../../../frontend/common/crud/Data';
 import { gatewayAPI } from '../../../api/gateway-api-utils';
+import { PlatformTeam } from '../../../interfaces/PlatformTeam';
+import { useTeamColumns } from './useTeamColumns';
 
-export function useDeleteTeams(onComplete: (teams: Team[]) => void) {
+export function useDeleteTeams(onComplete: (teams: PlatformTeam[]) => void) {
   const { t } = useTranslation();
   const confirmationColumns = useTeamColumns({ disableLinks: true, disableSort: true });
   const deleteActionNameColumn = useNameColumn({
@@ -18,14 +18,14 @@ export function useDeleteTeams(onComplete: (teams: Team[]) => void) {
   const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn]);
   // TODO: Update based on RBAC information from Teams API
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const cannotDeleteTeam = (team: Team) => {
+  const cannotDeleteTeam = (team: PlatformTeam) => {
     // eslint-disable-next-line no-constant-condition
     return true //team?.summary_fields?.user_capabilities?.delete
       ? undefined
       : t('The team cannot be deleted due to insufficient permissions.');
   };
-  const bulkAction = useBulkConfirmation<Team>();
-  const deleteTeams = (teams: Team[]) => {
+  const bulkAction = useBulkConfirmation<PlatformTeam>();
+  const deleteTeams = (teams: PlatformTeam[]) => {
     const undeletableTeams = teams.filter(cannotDeleteTeam);
 
     bulkAction({
@@ -52,7 +52,7 @@ export function useDeleteTeams(onComplete: (teams: Team[]) => void) {
       confirmationColumns,
       actionColumns,
       onComplete,
-      actionFn: (team: Team, signal) =>
+      actionFn: (team: PlatformTeam, signal) =>
         requestDelete(gatewayAPI`/v1/teams/${team.id.toString()}/`, signal),
     });
   };

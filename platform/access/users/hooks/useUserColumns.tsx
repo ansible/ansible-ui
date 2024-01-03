@@ -1,30 +1,30 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ITableColumn, TextCell, useGetPageUrl } from '../../../../framework';
 import {
-  ColumnModalOption,
-  ColumnTableOption,
-  ITableColumn,
-  TextCell,
-  useGetPageUrl,
-} from '../../../../framework';
-import { User } from '../../../interfaces/User';
+  useCreatedColumn,
+  useIdColumn,
+  useModifiedColumn,
+} from '../../../../frontend/common/columns';
 import { PlatformRoute } from '../../../PlatformRoutes';
-import { useCreatedColumn, useModifiedColumn } from '../../../../frontend/common/columns';
+import { PlatformUser } from '../../../interfaces/PlatformUser';
 
 export function useUsersColumns() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
+  const idColumn = useIdColumn();
   const createdColumn = useCreatedColumn({
     sortKey: 'created_on',
-    hideByDefaultInTableView: true,
+    // hideByDefaultInTableView: true,
   });
   const modifiedColumn = useModifiedColumn({
     sortKey: 'modified_on',
-    hideByDefaultInTableView: true,
+    // hideByDefaultInTableView: true,
   });
 
-  const tableColumns = useMemo<ITableColumn<User>[]>(
+  const tableColumns = useMemo<ITableColumn<PlatformUser>[]>(
     () => [
+      idColumn,
       {
         header: t('Username'),
         cell: (user) => (
@@ -39,6 +39,23 @@ export function useUsersColumns() {
         maxWidth: 200,
       },
       {
+        header: t('User type'),
+        type: 'labels',
+        value: (user) => {
+          const roles: string[] = [];
+          if (user.is_superuser) roles.push(t('System adminsitrator'));
+          else if (user.is_system_auditor) roles.push(t('System auditor'));
+          else roles.push(t('Normal user'));
+          return roles;
+        },
+      },
+      {
+        header: t('Email'),
+        type: 'text',
+        value: (user) => user.email,
+        sort: 'email',
+      },
+      {
         header: t('First name'),
         type: 'text',
         value: (user) => user.first_name,
@@ -50,11 +67,17 @@ export function useUsersColumns() {
         value: (user) => user.last_name,
         sort: 'last_name',
       },
+      {
+        header: t('Last login'),
+        type: 'datetime',
+        value: (user) => user.last_login,
+      },
+
       //TODO: Column to display teams. Currently not returned in the API.
       createdColumn,
       modifiedColumn,
     ],
-    [getPageUrl, t]
+    [idColumn, createdColumn, getPageUrl, modifiedColumn, t]
   );
   return tableColumns;
 }
