@@ -19,4 +19,5 @@ export interface PlatformUser {
   is_superuser: boolean;
   is_system_auditor: boolean;
   last_login_map_results: [];
+  last_login: string;
 }
