@@ -1,5 +1,3 @@
-export type RouteType = `/${string}`;
-
 /** @deprecated Use useGetPageUrl and usePageNavigation with AwxRoute, EdaRoute, and HubRoute instead. */
 export const RouteObj = {
   /** DO NOT ADD NEW VALUES - DEPRECATED */
@@ -59,9 +57,6 @@ export const RouteObj = {
   InventorySourceScheduleDetails: `/infrastructure/inventories/inventory/:id/sources/:source_id/schedules/:schedule_id/details`,
   InventorySourceCreateScheduleRules: `/infrastructure/inventories/inventory/:id/sources/:source_id/schedules/:schedule_id/rules/create`,
   InventorySourceScheduleRules: `/infrastructure/inventories/inventory/:id/sources/:source_id/schedules/:schedule_id/rules`,
-
-  /** DO NOT ADD NEW VALUES - DEPRECATED */
-  UserDetails: `/access/users/:id/details`,
 
   /** DO NOT ADD NEW VALUES - DEPRECATED */
   ManagementJobs: `/administration/management_jobs`,
