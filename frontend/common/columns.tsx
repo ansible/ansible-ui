@@ -14,7 +14,7 @@ import { AwxRoute } from '../awx/AwxRoutes';
 import { CredentialLabel } from '../awx/common/CredentialLabel';
 import { SummaryFieldCredential } from '../awx/interfaces/summary-fields/summary-fields';
 
-export function useIdColumn<T extends { name: string; id: number }>(isHidden: boolean = true) {
+export function useIdColumn<T extends { id: number }>(isHidden: boolean = true) {
   const { t } = useTranslation();
   const column = useMemo<ITableColumn<T>>(
     () => ({

@@ -57,6 +57,8 @@ export const Collections = {
 export const Namespaces = {
   title: 'Namespaces',
   url: 'namespaces',
+  urlCreate: '/namespaces/create',
+  company: 'Foo Bar',
 };
 
 export const ExecutionEnvironments = {

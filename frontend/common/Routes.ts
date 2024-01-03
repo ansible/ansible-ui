@@ -6,7 +6,6 @@ export const RouteObj = {
   CreateSchedule: `/schedules/create`,
 
   /** DO NOT ADD NEW VALUES - DEPRECATED */
-  Templates: `/templates`,
   JobTemplateDetails: `/templates/job_template/:id/details`,
 
   /** DO NOT ADD NEW VALUES - DEPRECATED */
