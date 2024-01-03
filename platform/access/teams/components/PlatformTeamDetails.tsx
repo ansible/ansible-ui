@@ -1,30 +1,21 @@
 import { useParams } from 'react-router-dom';
-import { useGetPageUrl } from '../../../../framework';
-import { TeamDetails, TeamDetailsType } from '../../../../frontend/common/access/TeamDetails';
+import { LoadingPage, PageDetailsFromColumns, PageNotFound } from '../../../../framework';
+import { AwxError } from '../../../../frontend/awx/common/AwxError';
 import { useGetItem } from '../../../../frontend/common/crud/useGet';
-import { PlatformRoute } from '../../../PlatformRoutes';
 import { gatewayAPI } from '../../../api/gateway-api-utils';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
+import { useTeamColumns } from '../hooks/useTeamColumns';
 
 export function PlatformTeamDetails() {
   const params = useParams<{ id: string }>();
-  const { data: team } = useGetItem<PlatformTeam>(gatewayAPI`/v1/teams`, params.id);
-  const getPageUrl = useGetPageUrl();
-
-  return team ? (
-    <TeamDetails
-      team={team as TeamDetailsType}
-      organizationDetailsUrl={getPageUrl(PlatformRoute.OrganizationDetails, {
-        params: { id: (team.summary_fields?.organization?.id ?? '').toString() },
-      })}
-      createdByUserDetailsUrl={getPageUrl(PlatformRoute.UserDetails, {
-        params: { id: (team.summary_fields?.created_by?.id ?? 0).toString() },
-      })}
-      modifiedByUserDetailsUrl={getPageUrl(PlatformRoute.UserDetails, {
-        params: {
-          id: (team.summary_fields?.modified_by?.id ?? 0).toString(),
-        },
-      })}
-    />
-  ) : null;
+  const {
+    data: team,
+    isLoading,
+    error,
+  } = useGetItem<PlatformTeam>(gatewayAPI`/v1/teams`, params.id);
+  const columns = useTeamColumns();
+  if (isLoading) return <LoadingPage />;
+  if (error) return <AwxError error={error} />;
+  if (!team) return <PageNotFound />;
+  return <PageDetailsFromColumns columns={columns} item={team} />;
 }

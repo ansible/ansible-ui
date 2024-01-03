@@ -1,3 +1,4 @@
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
@@ -8,15 +9,22 @@ import {
   PageFormTextInput,
   PageHeader,
   PageLayout,
+  PageNotFound,
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
+import { PageFormAsyncMultiSelect } from '../../../../framework/PageForm/Inputs/PageFormAsyncMultiSelect';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
+import { AwxError } from '../../../../frontend/awx/common/AwxError';
+import { requestGet } from '../../../../frontend/common/crud/Data';
 import { useGet } from '../../../../frontend/common/crud/useGet';
 import { usePatchRequest } from '../../../../frontend/common/crud/usePatchRequest';
 import { usePostRequest } from '../../../../frontend/common/crud/usePostRequest';
 import { PlatformRoute } from '../../../PlatformRoutes';
 import { gatewayAPI } from '../../../api/gateway-api-utils';
+import { useGetAll } from '../../../common/useGetAll';
+import { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
+import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
 
 export function CreatePlatformUser() {
@@ -55,14 +63,54 @@ export function EditPlatformUser() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const { data: user, isLoading } = useGet<PlatformUser>(gatewayAPI`/v1/users/${id.toString()}/`);
-  const patchRequest = usePatchRequest<PlatformUser, PlatformUser>();
-  const onSubmit: PageFormSubmitHandler<PlatformUser> = async (user) => {
-    await patchRequest(gatewayAPI`/v1/users/${id.toString()}/`, user);
-    navigate(-1);
-  };
+  const {
+    data: user,
+    isLoading,
+    error,
+  } = useGet<PlatformUser>(gatewayAPI`/v1/users/${id.toString()}/`);
+  const {
+    items: teams,
+    isLoading: isTeamsLoading,
+    error: teamError,
+  } = useGetAll<PlatformTeam>(gatewayAPI`/v1/teams/`);
+  const patchUser = usePatchRequest<PlatformUser, PlatformUser>();
+  const patchTeam = usePatchRequest<Partial<PlatformTeam>, PlatformTeam>();
+  const onSubmit: PageFormSubmitHandler<PlatformUser> = useCallback(
+    async (user) => {
+      await patchUser(gatewayAPI`/v1/users/${id.toString()}/`, user);
+      const teamIds = (user as unknown as { teams: number[] }).teams;
+      if (teamIds && teams) {
+        for (const team of teams) {
+          if (teamIds.includes(team.id)) {
+            if (team.users.find((id) => id === user.id) === undefined) {
+              team.users.push(user.id);
+              await patchTeam(gatewayAPI`/v1/teams/${team.id.toString()}/`, { users: team.users });
+            }
+          } else {
+            if (team.users.find((id) => id === user.id) !== undefined) {
+              team.users = team.users.filter((id) => id !== user.id);
+              await patchTeam(gatewayAPI`/v1/teams/${team.id.toString()}/`, { users: team.users });
+            }
+          }
+        }
+      }
+      navigate(-1);
+    },
+    [id, navigate, patchTeam, patchUser, teams]
+  );
   const getPageUrl = useGetPageUrl();
-  if (isLoading) return <LoadingPage breadcrumbs />;
+
+  const userWithTeams = useMemo(() => {
+    if (!user) return undefined;
+    if (!teams) return undefined;
+    const teamIds = teams.filter((team) => team.users.includes(user.id)).map((team) => team.id);
+    return { ...user, teams: teamIds };
+  }, [teams, user]);
+
+  if (isLoading || isTeamsLoading) return <LoadingPage breadcrumbs />;
+  if (error) return <AwxError error={error} />;
+  if (teamError) return <AwxError error={teamError} />;
+  if (!userWithTeams) return <PageNotFound />;
   return (
     <PageLayout>
       <PageHeader
@@ -76,7 +124,7 @@ export function EditPlatformUser() {
         submitText={t('Save user')}
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
-        defaultValue={user}
+        defaultValue={userWithTeams as unknown as PlatformUser}
       >
         <PlatformUserInputs />
       </PageForm>
@@ -86,6 +134,19 @@ export function EditPlatformUser() {
 
 function PlatformUserInputs(props: { isCreate?: boolean }) {
   const { t } = useTranslation();
+
+  const queryTeams = useCallback(async (page: number) => {
+    const teams = await requestGet<PlatformItemsResponse<PlatformTeam>>(
+      gatewayAPI`/v1/teams/?page=${page.toString()}`
+    );
+    return {
+      total: teams.count,
+      options: teams.results.map((team) => ({
+        label: team.name,
+        value: team.id,
+      })),
+    };
+  }, []);
   return (
     <>
       <PageFormSection>
@@ -119,6 +180,7 @@ function PlatformUserInputs(props: { isCreate?: boolean }) {
         label={t('EMail')}
         placeholder={t('Enter email')}
       />
+
       <PageFormSection title={t('User Type')} singleColumn>
         <PageFormCheckbox<PlatformUser>
           name="is_superuser"
@@ -133,6 +195,17 @@ function PlatformUserInputs(props: { isCreate?: boolean }) {
           description={t(
             'System auditors have read-only access to the system and can view all resources.'
           )}
+        />
+      </PageFormSection>
+
+      <PageFormSection singleColumn title={t('Team membership')}>
+        <PageFormAsyncMultiSelect
+          name="teams"
+          placeholder={t('Select teams')}
+          queryOptions={queryTeams}
+          isRequired
+          queryPlaceholder={t('Loading teams...')}
+          queryErrorText={(error) => t('Error loading teams: {{error}}', { error })}
         />
       </PageFormSection>
     </>

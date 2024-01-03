@@ -193,6 +193,7 @@ export function PageAsyncSingleSelect<
             return 1;
           });
         }}
+        style={{ width: '100%', textAlign: 'left' }}
       >
         {typeof props.queryErrorText === 'function'
           ? props.queryErrorText(loadingError)
@@ -202,7 +203,7 @@ export function PageAsyncSingleSelect<
   }
 
   return (
-    <Button id={props.id} variant="control" isLoading>
+    <Button id={props.id} variant="control" isLoading style={{ width: '100%', textAlign: 'left' }}>
       {props.queryPlaceholder ?? t('Loading options...')}
     </Button>
   );
