@@ -1,5 +1,4 @@
 /* eslint-disable i18next/no-literal-string */
-import { RouteObj } from '../../../../common/Routes';
 import { Application } from '../../../interfaces/Application';
 import { ApplicationPage } from './ApplicationPage';
 
@@ -11,26 +10,15 @@ describe('ApplicationPage', () => {
     );
   });
   it('Displays breadcrumbs back to Applications list page', () => {
-    cy.mount(<ApplicationPage />, {
-      path: RouteObj.ApplicationPage,
-      initialEntries: [RouteObj.ApplicationPageDetails.replace(':id', '1')],
-    });
+    cy.mount(<ApplicationPage />);
     cy.get('.pf-v5-c-tabs__item').eq(0).should('have.text', 'Back to Applications');
   });
   it('Should show enabled edit button', () => {
-    cy.mount(<ApplicationPage />, {
-      path: RouteObj.ApplicationPage,
-      initialEntries: [RouteObj.ApplicationPageDetails.replace(':id', '1')],
-    });
-
+    cy.mount(<ApplicationPage />);
     cy.get('[data-cy="edit-application"]').should('have.attr', 'aria-disabled', 'false');
   });
   it('Should show enabled delete button', () => {
-    cy.mount(<ApplicationPage />, {
-      path: RouteObj.ApplicationPage,
-      initialEntries: [RouteObj.ApplicationPageDetails.replace(':id', '1')],
-    });
-
+    cy.mount(<ApplicationPage />);
     cy.get('[data-cy="delete-application"]').should('have.attr', 'aria-disabled', 'false');
   });
   it('Should hide edit button', () => {
@@ -49,10 +37,7 @@ describe('ApplicationPage', () => {
         );
       })
       .then(() => {
-        cy.mount(<ApplicationPage />, {
-          path: RouteObj.ApplicationPage,
-          initialEntries: [RouteObj.ApplicationPageDetails.replace(':id', '1')],
-        });
+        cy.mount(<ApplicationPage />);
       })
       .then(() => {
         cy.get('[data-cy="edit-application"]').should('not.exist');
@@ -75,10 +60,7 @@ describe('ApplicationPage', () => {
         );
       })
       .then(() => {
-        cy.mount(<ApplicationPage />, {
-          path: RouteObj.ApplicationPage,
-          initialEntries: [RouteObj.ApplicationPageDetails.replace(':id', '1')],
-        });
+        cy.mount(<ApplicationPage />);
       })
       .then(() => {
         cy.get('[data-cy="delete-application"]').should('not.exist');
