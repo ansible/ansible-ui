@@ -59,6 +59,7 @@ export function PlatformTeamList() {
           canCreateTeam ? () => pageNavigate(PlatformRoute.CreateTeam) : undefined
         }
         {...view}
+        defaultSubtitle={t('Team')}
       />
     </PageLayout>
   );

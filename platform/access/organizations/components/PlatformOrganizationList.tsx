@@ -62,6 +62,7 @@ export function PlatformOrganizationList() {
           canCreateOrganization ? () => pageNavigate(PlatformRoute.CreateOrganization) : undefined
         }
         {...view}
+        defaultSubtitle={t('Organization')}
       />
     </PageLayout>
   );
