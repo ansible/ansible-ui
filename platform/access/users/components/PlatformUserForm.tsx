@@ -16,7 +16,7 @@ import {
 import { PageFormAsyncMultiSelect } from '../../../../framework/PageForm/Inputs/PageFormAsyncMultiSelect';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 import { AwxError } from '../../../../frontend/awx/common/AwxError';
-import { requestGet } from '../../../../frontend/common/crud/Data';
+import { requestGet, requestPatch } from '../../../../frontend/common/crud/Data';
 import { useGet } from '../../../../frontend/common/crud/useGet';
 import { usePatchRequest } from '../../../../frontend/common/crud/usePatchRequest';
 import { usePostRequest } from '../../../../frontend/common/crud/usePostRequest';
@@ -34,6 +34,16 @@ export function CreatePlatformUser() {
   const postRequest = usePostRequest<PlatformUser>();
   const onSubmit: PageFormSubmitHandler<PlatformUser> = async (user) => {
     const createdUser = await postRequest(gatewayAPI`/v1/users/`, user);
+    const teamIds = (user as unknown as { teams: number[] }).teams;
+    if (teamIds) {
+      for (const teamId of teamIds) {
+        const team = await requestGet<PlatformTeam>(gatewayAPI`/v1/teams/${teamId.toString()}/`);
+        team.users.push(createdUser.id);
+        await requestPatch<PlatformTeam>(gatewayAPI`/v1/teams/${teamId.toString()}/`, {
+          users: team.users,
+        });
+      }
+    }
     pageNavigate(PlatformRoute.UserDetails, { params: { id: createdUser.id } });
   };
   const getPageUrl = useGetPageUrl();
@@ -198,7 +208,7 @@ function PlatformUserInputs(props: { isCreate?: boolean }) {
         />
       </PageFormSection>
 
-      <PageFormSection singleColumn title={t('Team membership')}>
+      <PageFormSection singleColumn title={t('Teams')}>
         <PageFormAsyncMultiSelect
           name="teams"
           placeholder={t('Select teams')}
