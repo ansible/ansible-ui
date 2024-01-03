@@ -11,7 +11,7 @@ import {
   Tooltip,
 } from '@patternfly/react-core';
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
-import { DownloadIcon, PencilAltIcon, HeartbeatIcon } from '@patternfly/react-icons';
+import { DownloadIcon, HeartbeatIcon, PencilAltIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -28,24 +28,23 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
+import { Dotted } from '../../../../framework/components/Dotted';
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
+import { formatDateString } from '../../../../framework/utils/formatDateString';
+import { capitalizeFirstLetter } from '../../../../framework/utils/strings';
+import { LastModifiedPageDetail } from '../../../common/LastModifiedPageDetail';
+import { RouteObj } from '../../../common/Routes';
 import { StatusLabel } from '../../../common/Status';
 import { useGetItem } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { AwxError } from '../../common/AwxError';
-import { Instance } from '../../interfaces/Instance';
-
-import { Dotted } from '../../../../framework/components/Dotted';
-import { capitalizeFirstLetter } from '../../../../framework/utils/strings';
 import { AwxRoute } from '../../AwxRoutes';
 import { awxAPI } from '../../api/awx-utils';
-import { useNodeTypeTooltip } from './hooks/useNodeTypeTooltip';
-import { RouteObj } from '../../../common/Routes';
-import { formatDateString } from '../../../../framework/utils/formatDateString';
+import { AwxError } from '../../common/AwxError';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
+import { Instance } from '../../interfaces/Instance';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { useInstanceActions } from './hooks/useInstanceActions';
-import { LastModifiedPageDetail } from '../../../common/LastModifiedPageDetail';
+import { useNodeTypeTooltip } from './hooks/useNodeTypeTooltip';
 
 export function InstanceDetails() {
   const { t } = useTranslation();
