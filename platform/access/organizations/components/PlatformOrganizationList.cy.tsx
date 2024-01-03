@@ -8,9 +8,9 @@ Organizations list test cases
 5. Handle empty state
 */
 
-import { OrganizationList } from './OrganizationList';
 import * as useOptions from '../../../../frontend/common/crud/useOptions';
 import { gatewayAPI } from '../../../api/gateway-api-utils';
+import { PlatformOrganizationList } from './PlatformOrganizationList';
 
 describe('Organizations list', () => {
   describe('Non-empty list', () => {
@@ -26,7 +26,7 @@ describe('Organizations list', () => {
       ).as('organizationsList');
     });
     it('Organizations list renders', () => {
-      cy.mount(<OrganizationList />);
+      cy.mount(<PlatformOrganizationList />);
       cy.verifyPageTitle('Organizations');
       cy.get('tbody').find('tr').should('have.length', 3);
       // Toolbar actions are visible
@@ -40,7 +40,7 @@ describe('Organizations list', () => {
       });
     });
     it('Create Organization button is disabled if the user does not have permission to create organizations', () => {
-      cy.mount(<OrganizationList />);
+      cy.mount(<PlatformOrganizationList />);
       cy.get('a[data-cy="create-organization"]').should('have.attr', 'aria-disabled', 'true');
     });
     it('Create Organization button is enabled if the user has permission to create organizations', () => {
@@ -60,7 +60,7 @@ describe('Organizations list', () => {
           },
         },
       }));
-      cy.mount(<OrganizationList />);
+      cy.mount(<PlatformOrganizationList />);
       cy.get('a[data-cy="create-organization"]').should('have.attr', 'aria-disabled', 'false');
     });
   });
@@ -93,7 +93,7 @@ describe('Organizations list', () => {
           },
         },
       }));
-      cy.mount(<OrganizationList />);
+      cy.mount(<PlatformOrganizationList />);
       cy.contains(/^There are currently no organizations added.$/);
       cy.contains(/^Please create an organization by using the button below.$/);
     });
@@ -103,7 +103,7 @@ describe('Organizations list', () => {
           actions: {},
         },
       }));
-      cy.mount(<OrganizationList />);
+      cy.mount(<PlatformOrganizationList />);
       cy.contains(/^You do not have permission to create an organization/);
       cy.contains(
         /^Please contact your organization administrator if there is an issue with your access.$/
@@ -113,7 +113,7 @@ describe('Organizations list', () => {
   describe('Error retrieving list', () => {
     it('Displays error loading organizations', () => {
       cy.intercept({ method: 'GET', url: gatewayAPI`/v1/organizations/*` }, { statusCode: 500 });
-      cy.mount(<OrganizationList />);
+      cy.mount(<PlatformOrganizationList />);
       cy.contains('Error loading organizations');
     });
   });

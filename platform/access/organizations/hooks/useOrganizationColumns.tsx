@@ -1,14 +1,15 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { ITableColumn, useGetPageUrl } from '../../../../framework';
-import { PlatformRoute } from '../../../PlatformRoutes';
 import {
   useCreatedColumn,
+  useIdColumn,
   useModifiedColumn,
   useNameColumn,
 } from '../../../../frontend/common/columns';
-import { useNavigate } from 'react-router-dom';
-import { Organization } from '../../../interfaces/Organization';
+import { PlatformRoute } from '../../../PlatformRoutes';
+import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 
 export function useOrganizationColumns(options?: {
   disableLinks?: boolean;
@@ -18,28 +19,30 @@ export function useOrganizationColumns(options?: {
   const getPageUrl = useGetPageUrl();
   const navigate = useNavigate();
   const nameColumnClick = useCallback(
-    (organization: Organization) =>
+    (organization: PlatformOrganization) =>
       navigate(getPageUrl(PlatformRoute.OrganizationDetails, { params: { id: organization.id } })),
     [getPageUrl, navigate]
   );
+  const idColumn = useIdColumn();
   const nameColumn = useNameColumn({
-    header: t('Organization'),
+    header: t('Name'),
     ...options,
     onClick: nameColumnClick,
   });
   const createdColumn = useCreatedColumn({
     sortKey: 'created_on',
-    hideByDefaultInTableView: true,
+    // hideByDefaultInTableView: true,
     ...options,
   });
   const modifiedColumn = useModifiedColumn({
     sortKey: 'modified_on',
-    hideByDefaultInTableView: true,
+    // hideByDefaultInTableView: true,
     ...options,
   });
 
-  const tableColumns = useMemo<ITableColumn<Organization>[]>(
+  const tableColumns = useMemo<ITableColumn<PlatformOrganization>[]>(
     () => [
+      idColumn,
       nameColumn,
       {
         header: t('Members'),
@@ -54,7 +57,7 @@ export function useOrganizationColumns(options?: {
       createdColumn,
       modifiedColumn,
     ],
-    [createdColumn, modifiedColumn, nameColumn, t]
+    [createdColumn, idColumn, modifiedColumn, nameColumn, t]
   );
   return tableColumns;
 }

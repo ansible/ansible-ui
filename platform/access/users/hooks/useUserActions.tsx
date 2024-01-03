@@ -1,4 +1,7 @@
+import { ButtonVariant } from '@patternfly/react-core';
+import { PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
   PageActionSelection,
@@ -6,21 +9,18 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
-import { User } from '../../../interfaces/User';
-import { ButtonVariant } from '@patternfly/react-core';
-import { PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
-import { useTranslation } from 'react-i18next';
-import { PlatformRoute } from '../../../PlatformRoutes';
-import { useDeleteUsers } from './useDeleteUsers';
-import { IPlatformView } from '../../../hooks/usePlatformView';
-import { useOptions } from '../../../../frontend/common/crud/useOptions';
 import {
   ActionsResponse,
   OptionsResponse,
 } from '../../../../frontend/awx/interfaces/OptionsResponse';
+import { useOptions } from '../../../../frontend/common/crud/useOptions';
+import { PlatformRoute } from '../../../PlatformRoutes';
 import { gatewayAPI } from '../../../api/gateway-api-utils';
+import { IPlatformView } from '../../../hooks/usePlatformView';
+import { PlatformUser } from '../../../interfaces/PlatformUser';
+import { useDeleteUsers } from './useDeleteUsers';
 
-export function useUserToolbarActions(view: IPlatformView<User>) {
+export function useUserToolbarActions(view: IPlatformView<PlatformUser>) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
 
@@ -28,7 +28,7 @@ export function useUserToolbarActions(view: IPlatformView<User>) {
   const canCreateUser = Boolean(data && data.actions && data.actions['POST']);
   const deleteUsers = useDeleteUsers(view.unselectItemsAndRefresh);
 
-  const toolbarActions = useMemo<IPageAction<User>[]>(
+  const toolbarActions = useMemo<IPageAction<PlatformUser>[]>(
     () => [
       {
         type: PageActionType.Link,
@@ -60,20 +60,20 @@ export function useUserToolbarActions(view: IPlatformView<User>) {
   return toolbarActions;
 }
 
-export function useUserRowActions(view: IPlatformView<User>) {
+export function useUserRowActions(view: IPlatformView<PlatformUser>) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const deleteUsers = useDeleteUsers(view.unselectItemsAndRefresh);
 
-  const rowActions = useMemo<IPageAction<User>[]>(() => {
+  const rowActions = useMemo<IPageAction<PlatformUser>[]>(() => {
     // TODO: Update based on RBAC information from Users API
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const cannotDeleteUser = (user: User) =>
+    const cannotDeleteUser = (user: PlatformUser) =>
       // eslint-disable-next-line no-constant-condition
       true ? '' : t(`The user cannot be deleted due to insufficient permissions.`);
     // TODO: Update based on RBAC information from Users API
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const cannotEditUser = (user: User) =>
+    const cannotEditUser = (user: PlatformUser) =>
       // eslint-disable-next-line no-constant-condition
       true ? '' : t(`The user cannot be edited due to insufficient permissions.`);
 
@@ -85,7 +85,7 @@ export function useUserRowActions(view: IPlatformView<User>) {
         isPinned: true,
         icon: PencilAltIcon,
         label: t('Edit user'),
-        isDisabled: (user: User) => cannotEditUser(user),
+        isDisabled: (user: PlatformUser) => cannotEditUser(user),
         onClick: (user) => pageNavigate(PlatformRoute.EditUser, { params: { id: user.id } }),
       },
       { type: PageActionType.Seperator },
@@ -94,7 +94,7 @@ export function useUserRowActions(view: IPlatformView<User>) {
         selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete user'),
-        isDisabled: (user: User) => cannotDeleteUser(user),
+        isDisabled: (user: PlatformUser) => cannotDeleteUser(user),
         onClick: (user) => deleteUsers([user]),
         isDanger: true,
       },

@@ -1,3 +1,7 @@
+import { DropdownPosition } from '@patternfly/react-core/deprecated';
+import { EditIcon, TrashIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
   IPageAction,
@@ -9,26 +13,21 @@ import {
   PageLayout,
   useGetPageUrl,
 } from '../../../../framework';
+import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
+import { AwxError } from '../../../../frontend/awx/common/AwxError';
 import { useGetItem } from '../../../../frontend/common/crud/useGet';
 import { PlatformRoute } from '../../../PlatformRoutes';
-import { useTranslation } from 'react-i18next';
-import { useMemo } from 'react';
-import { ButtonVariant } from '@patternfly/react-core';
-import { DropdownPosition } from '@patternfly/react-core/deprecated';
-import { EditIcon, TrashIcon } from '@patternfly/react-icons';
-import { AwxError } from '../../../../frontend/awx/common/AwxError';
-import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
-import { Team } from '../../../interfaces/Team';
 import { gatewayAPI } from '../../../api/gateway-api-utils';
+import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 
-export function TeamPage() {
+export function PlatformTeamPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { error, data: team, refresh } = useGetItem<Team>(gatewayAPI`/v1/teams`, params.id);
+  const { error, data: team, refresh } = useGetItem<PlatformTeam>(gatewayAPI`/v1/teams`, params.id);
   const getPageUrl = useGetPageUrl();
 
-  const itemActions: IPageAction<Team>[] = useMemo(() => {
-    const itemActions: IPageAction<Team>[] = [
+  const itemActions: IPageAction<PlatformTeam>[] = useMemo(() => {
+    const itemActions: IPageAction<PlatformTeam>[] = [
       {
         type: PageActionType.Link,
         selection: PageActionSelection.Single,
@@ -49,7 +48,7 @@ export function TeamPage() {
       },
     ];
     return itemActions;
-  }, [t]);
+  }, [getPageUrl, t]);
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!team) return <LoadingPage breadcrumbs tabs />;
@@ -59,11 +58,11 @@ export function TeamPage() {
       <PageHeader
         title={team.name}
         breadcrumbs={[
-          { label: t('Teams'), to: getPageUrl(PlatformRoute.Users) },
+          { label: t('Teams'), to: getPageUrl(PlatformRoute.Teams) },
           { label: team.name },
         ]}
         headerActions={
-          <PageActions<Team>
+          <PageActions<PlatformTeam>
             actions={itemActions}
             position={DropdownPosition.right}
             selectedItem={team}
@@ -73,7 +72,7 @@ export function TeamPage() {
       <PageRoutedTabs
         backTab={{
           label: t('Back to Teams'),
-          page: PlatformRoute.Users,
+          page: PlatformRoute.Teams,
           persistentFilterKey: 'teams',
         }}
         tabs={[
