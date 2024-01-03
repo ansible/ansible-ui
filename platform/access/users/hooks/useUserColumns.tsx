@@ -37,17 +37,18 @@ export function useUsersColumns() {
         list: 'name',
         sort: 'username',
         maxWidth: 200,
+        defaultSort: true,
       },
       {
         header: t('User type'),
-        type: 'labels',
+        type: 'text',
         value: (user) => {
-          const roles: string[] = [];
-          if (user.is_superuser) roles.push(t('System adminsitrator'));
-          else if (user.is_system_auditor) roles.push(t('System auditor'));
-          else roles.push(t('Normal user'));
-          return roles;
+          if (user.is_superuser) return t('System adminsitrator');
+          if (user.is_system_auditor) return t('System auditor');
+          return t('Normal user');
         },
+        card: 'subtitle',
+        list: 'subtitle',
       },
       {
         header: t('Email'),
@@ -71,6 +72,7 @@ export function useUsersColumns() {
         header: t('Last login'),
         type: 'datetime',
         value: (user) => user.last_login,
+        list: 'secondary',
       },
 
       //TODO: Column to display teams. Currently not returned in the API.
