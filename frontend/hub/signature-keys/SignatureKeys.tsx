@@ -19,7 +19,7 @@ import {
 import { downloadTextFile } from '../../../framework/utils/download-file';
 import { pulpHrefKeyFn } from '../api/utils';
 import { pulpAPI } from '../api/formatPath';
-import { usePulpView } from '../usePulpView';
+import { usePulpView } from '../useHubView';
 import { SignatureKey } from './SignatureKey';
 
 export function SignatureKeys() {

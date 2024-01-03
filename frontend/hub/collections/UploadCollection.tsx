@@ -27,7 +27,7 @@ import { hubAPI, pulpAPI } from '../api/formatPath';
 import { hubPostRequestFile } from '../api/request';
 import { useHubNamespaces } from '../namespaces/hooks/useHubNamespaces';
 import { useRepositories } from '../repositories/hooks/useRepositories';
-import { PulpItemsResponse, usePulpView } from '../usePulpView';
+import { PulpItemsResponse, usePulpView } from '../useHubView';
 import { HubError } from '../common/HubError';
 
 interface UploadData {

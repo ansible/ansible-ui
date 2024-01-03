@@ -17,7 +17,7 @@ import { SigningServiceResponse } from '../../api-schemas/generated/SigningServi
 import { hubAPI, pulpAPI } from '../../api/formatPath';
 import { hubAPIDelete } from '../../api/utils';
 import { HubContext, useHubContext } from '../../useHubContext';
-import { PulpItemsResponse } from '../../usePulpView';
+import { PulpItemsResponse } from '../../useHubView';
 import { ExecutionEnvironment } from '../ExecutionEnvironment';
 import { useExecutionEnvironmentsColumns } from './useExecutionEnvironmentsColumns';
 

@@ -7,7 +7,7 @@ import {
   useAsyncMultiSelectFilterBuilder,
   AsyncSelectFilterBuilderProps,
 } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSelectFilterBuilder';
-import { usePulpView } from '../../usePulpView';
+import { usePulpView } from '../../useHubView';
 import { pulpAPI } from '../../api/formatPath';
 
 function useParameters(): AsyncSelectFilterBuilderProps<Repository> {

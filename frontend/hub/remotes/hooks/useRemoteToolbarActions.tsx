@@ -9,7 +9,7 @@ import {
   usePageNavigate,
 } from '../../../../framework';
 import { HubRoute } from '../../HubRoutes';
-import { IHubView } from '../../usePulpView';
+import { IHubView } from '../../useHubView';
 import { IRemotes } from '../Remotes';
 import { useDeleteRemotes } from './useDeleteRemotes';
 

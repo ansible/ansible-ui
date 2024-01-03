@@ -5,7 +5,7 @@ import { compareStrings, useBulkConfirmation } from '../../../../framework';
 import { useGetRequest } from '../../../common/crud/useGet';
 import { collectionKeyFn } from '../../api/utils';
 import { pulpAPI } from '../../api/formatPath';
-import { PulpItemsResponse } from '../../usePulpView';
+import { PulpItemsResponse } from '../../useHubView';
 import { CollectionVersionSearch } from '../Approval';
 import { useApprovalsColumns } from './useApprovalsColumns';
 import { HubContext, useHubContext } from './../../useHubContext';

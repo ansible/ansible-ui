@@ -4,7 +4,7 @@ import { useParams, useOutletContext } from 'react-router-dom';
 import { ITableColumn, useGetPageUrl, PageTable, TextCell } from '../../../../framework';
 import { CollectionReduced } from '../../collections/Collection';
 import { useMemo } from 'react';
-import { usePulpView } from '../../usePulpView';
+import { usePulpView } from '../../useHubView';
 import { useTranslation } from 'react-i18next';
 import { HubRoute } from '../../HubRoutes';
 

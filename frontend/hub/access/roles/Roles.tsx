@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 import { useRoleColumns } from './hooks/useRoleColumns';
-import { usePulpView } from '../../usePulpView';
+import { usePulpView } from '../../useHubView';
 import { Role } from './Role';
 import { pulpAPI } from '../../api/formatPath';
 import { nameKeyFn } from '../../../common/utils/nameKeyFn';

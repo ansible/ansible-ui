@@ -5,7 +5,7 @@ import { useGet } from '../../../common/crud/useGet';
 import { pulpAPI } from '../../api/formatPath';
 import { HubError } from '../../common/HubError';
 import { LabelGroup, Label } from '@patternfly/react-core';
-import { PulpItemsResponse } from '../../usePulpView';
+import { PulpItemsResponse } from '../../useHubView';
 import { CollectionVersion } from '../../collections/Collection';
 
 export function RepositoryVersionDetails() {

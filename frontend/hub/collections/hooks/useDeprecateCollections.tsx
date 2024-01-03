@@ -4,7 +4,7 @@ import { compareStrings, useBulkConfirmation } from '../../../../framework';
 import { requestGet, requestPatch } from '../../../common/crud/Data';
 import { collectionKeyFn } from '../../api/utils';
 import { hubAPI, pulpAPI } from '../../api/formatPath';
-import { PulpItemsResponse } from '../../usePulpView';
+import { PulpItemsResponse } from '../../useHubView';
 import { CollectionVersionSearch } from '../Collection';
 import { useCollectionColumns } from './useCollectionColumns';
 

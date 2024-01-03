@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useOutletContext } from 'react-router-dom';
 import { CollectionVersionSearch } from '../Collection';
-import { usePulpView } from '../../usePulpView';
+import { usePulpView } from '../../useHubView';
 import { pulpAPI } from '../../api/formatPath';
 import { useMemo } from 'react';
 import { ITableColumn } from '../../../../framework';

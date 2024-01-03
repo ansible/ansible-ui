@@ -11,7 +11,7 @@ import {
 import { HubRoute } from '../../HubRoutes';
 import { HubNamespace } from '../HubNamespace';
 import { useDeleteHubNamespaces } from './useDeleteHubNamespaces';
-import { IHubView } from '../../usePulpView';
+import { IHubView } from '../../useHubView';
 
 export function useHubNamespaceToolbarActions(view: IHubView<HubNamespace>) {
   const { t } = useTranslation();

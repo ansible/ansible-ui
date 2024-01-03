@@ -17,7 +17,7 @@ import { StatusCell } from '../../common/Status';
 import { HubRoute } from '../HubRoutes';
 import { parsePulpIDFromURL, pulpHrefKeyFn } from '../api/utils';
 import { pulpAPI } from '../api/formatPath';
-import { usePulpView } from '../usePulpView';
+import { usePulpView } from '../useHubView';
 import { Task } from './Task';
 import { useTasksActions } from './hooks/useTasksActions';
 import { useTaskActions } from './hooks/useTaskActions';

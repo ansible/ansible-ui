@@ -3,7 +3,7 @@ import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../fra
 import { HubRoute } from '../HubRoutes';
 import { pulpAPI } from '../api/formatPath';
 import { pulpHrefKeyFn } from '../api/utils';
-import { usePulpView } from '../usePulpView';
+import { usePulpView } from '../useHubView';
 import { Repository } from './Repository';
 import { useRepositoryToolbarActions } from './hooks/useRepositoryToolbarActions';
 import { useRepositoryFilters } from './hooks/useRepositorySelector';
