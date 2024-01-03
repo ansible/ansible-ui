@@ -1,8 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { ITableColumn } from '../../../../../framework';
-import { RouteObj } from '../../../../common/Routes';
+import { ITableColumn, usePageNavigate } from '../../../../../framework';
 import {
   useCreatedColumn,
   useDescriptionColumn,
@@ -11,18 +9,19 @@ import {
   useNameColumn,
 } from '../../../../common/columns';
 import { useGet } from '../../../../common/crud/useGet';
+import { AwxRoute } from '../../../AwxRoutes';
+import { awxAPI } from '../../../api/awx-utils';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { Credential } from '../../../interfaces/Credential';
 import { CredentialType } from '../../../interfaces/CredentialType';
-import { awxAPI } from '../../../api/awx-utils';
 
 export function useCredentialsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const nameClick = useCallback(
     (credential: Credential) =>
-      navigate(RouteObj.CredentialDetails.replace(':id', credential.id.toString())),
-    [navigate]
+      pageNavigate(AwxRoute.CredentialDetails, { params: { id: credential.id } }),
+    [pageNavigate]
   );
   const idColumn = useIdColumn();
   const nameColumn = useNameColumn({ ...options, onClick: nameClick });
