@@ -1,5 +1,5 @@
-import type { User } from './User';
 import type { Authenticator } from './Authenticator';
+import type { PlatformUser } from './PlatformUser';
 
 export interface AuthenticatorMap {
   name: string;
@@ -22,8 +22,8 @@ export interface AuthenticatorMap {
   map_type: string;
   ui_summary?: string;
   summary_fields: {
-    created_by: User;
-    modified_by: User;
+    created_by: PlatformUser;
+    modified_by: PlatformUser;
     authenticator: Pick<Authenticator, 'id' | 'name'>;
   };
 }

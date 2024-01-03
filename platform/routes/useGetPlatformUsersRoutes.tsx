@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { PageNavigationItem, PageNotImplemented } from '../../framework';
 import { PlatformRoute } from '../PlatformRoutes';
-import { CreateUser, EditUser } from '../access/users/components/UserForm';
-import { UserPage } from '../access/users/components/UserPage';
 import { PlatformUserDetails } from '../access/users/components/PlatformUserDetails';
-import { UsersList } from '../access/users/components/UsersList';
-import { useTranslation } from 'react-i18next';
+import { CreatePlatformUser, EditPlatformUser } from '../access/users/components/PlatformUserForm';
+import { PlatformUserPage } from '../access/users/components/PlatformUserPage';
+import { PlatformUsersList } from '../access/users/components/PlatformUsersList';
 
 export function useGetPlatformUsersRoutes() {
   const { t } = useTranslation();
@@ -18,17 +18,17 @@ export function useGetPlatformUsersRoutes() {
         {
           id: PlatformRoute.CreateUser,
           path: 'create',
-          element: <CreateUser />,
+          element: <CreatePlatformUser />,
         },
         {
           id: PlatformRoute.EditUser,
           path: ':id/edit',
-          element: <EditUser />,
+          element: <EditPlatformUser />,
         },
         {
           id: PlatformRoute.UserPage,
           path: ':id',
-          element: <UserPage />,
+          element: <PlatformUserPage />,
           children: [
             {
               id: PlatformRoute.UserDetails,
@@ -54,7 +54,7 @@ export function useGetPlatformUsersRoutes() {
         },
         {
           path: '',
-          element: <UsersList />,
+          element: <PlatformUsersList />,
         },
       ],
     }),

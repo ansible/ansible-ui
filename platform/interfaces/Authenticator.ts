@@ -1,4 +1,4 @@
-import type { User } from './User';
+import type { PlatformUser } from './PlatformUser';
 
 export enum AuthenticatorTypeEnum {
   Local = 'ansible_base.authenticator_plugins.local',
@@ -29,7 +29,7 @@ export interface Authenticator {
   order: number;
   slug: string;
   summary_fields: {
-    created_by: User;
-    modified_by: User;
+    created_by: PlatformUser;
+    modified_by: PlatformUser;
   };
 }

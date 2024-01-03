@@ -1,6 +1,6 @@
 // import { User as SwaggerUser } from './generated-from-swagger/api';
 
-export interface User {
+export interface PlatformUser {
   id: number;
   url: string;
   created_on: string;

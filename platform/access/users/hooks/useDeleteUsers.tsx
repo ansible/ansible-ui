@@ -1,18 +1,18 @@
-import { useTranslation } from 'react-i18next';
 import { useMemo } from 'react';
-import { User } from '../../../interfaces/User';
+import { useTranslation } from 'react-i18next';
 import { TextCell, compareStrings, useBulkConfirmation } from '../../../../framework';
 import { getItemKey, requestDelete } from '../../../../frontend/common/crud/Data';
-import { useUsersColumns } from './useUserColumns';
 import { gatewayAPI } from '../../../api/gateway-api-utils';
+import { PlatformUser } from '../../../interfaces/PlatformUser';
+import { useUsersColumns } from './useUserColumns';
 
-export function useDeleteUsers(onComplete: (users: User[]) => void) {
+export function useDeleteUsers(onComplete: (users: PlatformUser[]) => void) {
   const { t } = useTranslation();
   const confirmationColumns = useUsersColumns();
   const deleteActionNameColumn = useMemo(
     () => ({
       header: t('Username'),
-      cell: (user: User) => <TextCell text={user.username} />,
+      cell: (user: PlatformUser) => <TextCell text={user.username} />,
       sort: 'username',
       maxWidth: 200,
     }),
@@ -21,14 +21,14 @@ export function useDeleteUsers(onComplete: (users: User[]) => void) {
   const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn]);
   // TODO: Update based on RBAC information from Users API
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const cannotDeleteUser = (user: User) => {
+  const cannotDeleteUser = (user: PlatformUser) => {
     // eslint-disable-next-line no-constant-condition
     return true //user?.summary_fields?.user_capabilities?.delete
       ? undefined
       : t('The user cannot be deleted due to insufficient permissions.');
   };
-  const bulkAction = useBulkConfirmation<User>();
-  const deleteUsers = (users: User[]) => {
+  const bulkAction = useBulkConfirmation<PlatformUser>();
+  const deleteUsers = (users: PlatformUser[]) => {
     const undeletableUsers = users.filter(cannotDeleteUser);
 
     bulkAction({
@@ -55,7 +55,7 @@ export function useDeleteUsers(onComplete: (users: User[]) => void) {
       confirmationColumns,
       actionColumns,
       onComplete,
-      actionFn: (user: User, signal) =>
+      actionFn: (user: PlatformUser, signal) =>
         requestDelete(gatewayAPI`/v1/users/${user.id.toString()}/`, signal),
     });
   };

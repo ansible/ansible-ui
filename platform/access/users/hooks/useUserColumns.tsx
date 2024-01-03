@@ -1,30 +1,30 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ITableColumn, TextCell, useGetPageUrl } from '../../../../framework';
 import {
-  ColumnModalOption,
-  ColumnTableOption,
-  ITableColumn,
-  TextCell,
-  useGetPageUrl,
-} from '../../../../framework';
-import { User } from '../../../interfaces/User';
+  useCreatedColumn,
+  useIdColumn,
+  useModifiedColumn,
+} from '../../../../frontend/common/columns';
 import { PlatformRoute } from '../../../PlatformRoutes';
-import { useCreatedColumn, useModifiedColumn } from '../../../../frontend/common/columns';
+import { PlatformUser } from '../../../interfaces/PlatformUser';
 
 export function useUsersColumns() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
+  const idColumn = useIdColumn();
   const createdColumn = useCreatedColumn({
     sortKey: 'created_on',
-    hideByDefaultInTableView: true,
+    // hideByDefaultInTableView: true,
   });
   const modifiedColumn = useModifiedColumn({
     sortKey: 'modified_on',
-    hideByDefaultInTableView: true,
+    // hideByDefaultInTableView: true,
   });
 
-  const tableColumns = useMemo<ITableColumn<User>[]>(
+  const tableColumns = useMemo<ITableColumn<PlatformUser>[]>(
     () => [
+      idColumn,
       {
         header: t('Username'),
         cell: (user) => (
@@ -37,6 +37,12 @@ export function useUsersColumns() {
         list: 'name',
         sort: 'username',
         maxWidth: 200,
+      },
+      {
+        header: t('Email'),
+        type: 'text',
+        value: (user) => user.email,
+        sort: 'email',
       },
       {
         header: t('First name'),
@@ -54,7 +60,7 @@ export function useUsersColumns() {
       createdColumn,
       modifiedColumn,
     ],
-    [getPageUrl, t]
+    [idColumn, createdColumn, getPageUrl, modifiedColumn, t]
   );
   return tableColumns;
 }

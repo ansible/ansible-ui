@@ -1,26 +1,26 @@
+import { CubesIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../../framework';
-import { useTeamFilters } from '../hooks/useTeamFilters';
-import { useTeamColumns } from '../hooks/useTeamColumns';
-import { Team } from '../../../interfaces/Team';
-import { usePlatformView } from '../../../hooks/usePlatformView';
-import { CubesIcon } from '@patternfly/react-icons';
-import { PlatformRoute } from '../../../PlatformRoutes';
-import { useTeamRowActions, useTeamToolbarActions } from '../hooks/useTeamActions';
 import {
   ActionsResponse,
   OptionsResponse,
 } from '../../../../frontend/awx/interfaces/OptionsResponse';
 import { useOptions } from '../../../../frontend/common/crud/useOptions';
+import { PlatformRoute } from '../../../PlatformRoutes';
 import { gatewayAPI } from '../../../api/gateway-api-utils';
+import { usePlatformView } from '../../../hooks/usePlatformView';
+import { PlatformTeam } from '../../../interfaces/PlatformTeam';
+import { useTeamRowActions, useTeamToolbarActions } from '../hooks/useTeamActions';
+import { useTeamColumns } from '../hooks/useTeamColumns';
+import { useTeamFilters } from '../hooks/useTeamFilters';
 
-export function TeamList() {
+export function PlatformTeamList() {
   const { t } = useTranslation();
   const toolbarFilters = useTeamFilters();
   const tableColumns = useTeamColumns();
   const pageNavigate = usePageNavigate();
 
-  const view = usePlatformView<Team>({
+  const view = usePlatformView<PlatformTeam>({
     url: gatewayAPI`/v1/teams`,
     toolbarFilters,
     tableColumns,
@@ -34,7 +34,7 @@ export function TeamList() {
   return (
     <PageLayout>
       <PageHeader title={t('Teams')} />
-      <PageTable<Team>
+      <PageTable<PlatformTeam>
         id="platform-teams-table"
         toolbarFilters={toolbarFilters}
         toolbarActions={toolbarActions}

@@ -1,14 +1,14 @@
 import { useParams } from 'react-router-dom';
 import { useGetPageUrl } from '../../../../framework';
-import { useGetItem } from '../../../../frontend/common/crud/useGet';
-import { Team } from '../../../interfaces/Team';
-import { PlatformRoute } from '../../../PlatformRoutes';
 import { TeamDetails, TeamDetailsType } from '../../../../frontend/common/access/TeamDetails';
+import { useGetItem } from '../../../../frontend/common/crud/useGet';
+import { PlatformRoute } from '../../../PlatformRoutes';
 import { gatewayAPI } from '../../../api/gateway-api-utils';
+import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 
 export function PlatformTeamDetails() {
   const params = useParams<{ id: string }>();
-  const { data: team } = useGetItem<Team>(gatewayAPI`/v1/teams`, params.id);
+  const { data: team } = useGetItem<PlatformTeam>(gatewayAPI`/v1/teams`, params.id);
   const getPageUrl = useGetPageUrl();
 
   return team ? (

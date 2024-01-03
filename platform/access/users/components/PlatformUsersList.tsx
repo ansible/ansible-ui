@@ -1,26 +1,26 @@
+import { CubesIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../../framework';
-import { useUsersFilters } from '../hooks/useUsersFilters';
-import { useUsersColumns } from '../hooks/useUserColumns';
-import { User } from '../../../interfaces/User';
-import { usePlatformView } from '../../../hooks/usePlatformView';
-import { CubesIcon } from '@patternfly/react-icons';
-import { PlatformRoute } from '../../../PlatformRoutes';
-import { useUserRowActions, useUserToolbarActions } from '../hooks/useUserActions';
-import { useOptions } from '../../../../frontend/common/crud/useOptions';
 import {
   ActionsResponse,
   OptionsResponse,
 } from '../../../../frontend/awx/interfaces/OptionsResponse';
+import { useOptions } from '../../../../frontend/common/crud/useOptions';
+import { PlatformRoute } from '../../../PlatformRoutes';
 import { gatewayAPI } from '../../../api/gateway-api-utils';
+import { usePlatformView } from '../../../hooks/usePlatformView';
+import { PlatformUser } from '../../../interfaces/PlatformUser';
+import { useUserRowActions, useUserToolbarActions } from '../hooks/useUserActions';
+import { useUsersColumns } from '../hooks/useUserColumns';
+import { useUsersFilters } from '../hooks/useUsersFilters';
 
-export function UsersList() {
+export function PlatformUsersList() {
   const { t } = useTranslation();
   const toolbarFilters = useUsersFilters();
   const tableColumns = useUsersColumns();
   const pageNavigate = usePageNavigate();
 
-  const view = usePlatformView<User>({
+  const view = usePlatformView<PlatformUser>({
     url: gatewayAPI`/v1/users`,
     toolbarFilters,
     tableColumns,
@@ -34,7 +34,7 @@ export function UsersList() {
   return (
     <PageLayout>
       <PageHeader title={t('Users')} />
-      <PageTable<User>
+      <PageTable<PlatformUser>
         id="platform-users-table"
         toolbarFilters={toolbarFilters}
         toolbarActions={toolbarActions}

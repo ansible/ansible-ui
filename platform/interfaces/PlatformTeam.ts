@@ -1,4 +1,4 @@
-export interface Organization {
+export interface PlatformTeam {
   name: string;
   id: number;
   url: string;
@@ -9,7 +9,7 @@ export interface Organization {
   related: {
     created_by: string;
     modified_by: string;
-    teams: string;
+    organization: string;
   };
   summary_fields: {
     created_by: {
@@ -24,10 +24,11 @@ export interface Organization {
       first_name: string;
       last_name: string;
     };
-    related_field_counts?: {
-      teams?: number;
-      users?: number;
+    organization: {
+      id: number;
+      name: string;
     };
   };
-  environment: number;
+  organization: number;
+  users: number[];
 }

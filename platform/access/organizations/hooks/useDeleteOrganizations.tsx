@@ -1,13 +1,15 @@
-import { useTranslation } from 'react-i18next';
 import { useCallback, useMemo } from 'react';
-import { Organization } from '../../../interfaces/Organization';
+import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../framework';
-import { getItemKey, requestDelete } from '../../../../frontend/common/crud/Data';
-import { useOrganizationColumns } from './useOrganizationColumns';
 import { useNameColumn } from '../../../../frontend/common/columns';
+import { getItemKey, requestDelete } from '../../../../frontend/common/crud/Data';
 import { gatewayAPI } from '../../../api/gateway-api-utils';
+import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
+import { useOrganizationColumns } from './useOrganizationColumns';
 
-export function useDeleteOrganizations(onComplete: (organizations: Organization[]) => void) {
+export function useDeleteOrganizations(
+  onComplete: (organizations: PlatformOrganization[]) => void
+) {
   const { t } = useTranslation();
   const confirmationColumns = useOrganizationColumns({ disableLinks: true, disableSort: true });
   const deleteActionNameColumn = useNameColumn({
@@ -18,15 +20,15 @@ export function useDeleteOrganizations(onComplete: (organizations: Organization[
   const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn]);
   // TODO: Update based on RBAC information from Organizations API
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const cannotDeleteOrganization = (organization: Organization) => {
+  const cannotDeleteOrganization = (organization: PlatformOrganization) => {
     // eslint-disable-next-line no-constant-condition
     return true //organization?.summary_fields?.user_capabilities?.delete
       ? undefined
       : t('The organization cannot be deleted due to insufficient permissions.');
   };
-  const bulkAction = useBulkConfirmation<Organization>();
+  const bulkAction = useBulkConfirmation<PlatformOrganization>();
   const getAlertPrompts = useCallback(
-    (organizations: Organization[], undeletableOrganizations: Organization[]) => {
+    (organizations: PlatformOrganization[], undeletableOrganizations: PlatformOrganization[]) => {
       const alertPrompts = [
         t('Deleting these organizations could impact other resources that rely on them.', {
           count: organizations.length,
@@ -46,7 +48,7 @@ export function useDeleteOrganizations(onComplete: (organizations: Organization[
     },
     [t]
   );
-  const deleteOrganizations = (organizations: Organization[]) => {
+  const deleteOrganizations = (organizations: PlatformOrganization[]) => {
     const undeletableOrganizations = organizations.filter(cannotDeleteOrganization);
 
     bulkAction({
@@ -63,7 +65,7 @@ export function useDeleteOrganizations(onComplete: (organizations: Organization[
       confirmationColumns,
       actionColumns,
       onComplete,
-      actionFn: (organization: Organization, signal) =>
+      actionFn: (organization: PlatformOrganization, signal) =>
         requestDelete(gatewayAPI`/v1/organizations/${organization.id.toString()}/`, signal),
     });
   };
