@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import {
   LoadingPage,
   PageForm,
+  PageFormCheckbox,
   PageFormSubmitHandler,
   PageFormTextInput,
   PageHeader,
@@ -10,6 +11,7 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
+import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 import { useGet } from '../../../../frontend/common/crud/useGet';
 import { usePatchRequest } from '../../../../frontend/common/crud/usePatchRequest';
 import { usePostRequest } from '../../../../frontend/common/crud/usePostRequest';
@@ -86,19 +88,22 @@ function PlatformUserInputs(props: { isCreate?: boolean }) {
   const { t } = useTranslation();
   return (
     <>
-      <PageFormTextInput<PlatformUser>
-        name="username"
-        label={t('Username')}
-        placeholder={t('Enter username')}
-        isRequired
-      />
-      <PageFormTextInput<PlatformUser>
-        name="password"
-        label={t('Password')}
-        placeholder={t('Enter password')}
-        type="password"
-        isRequired={props.isCreate}
-      />
+      <PageFormSection>
+        <PageFormTextInput<PlatformUser>
+          name="username"
+          label={t('Username')}
+          placeholder={t('Enter username')}
+          isRequired
+        />
+        <PageFormTextInput<PlatformUser>
+          name="password"
+          label={t('Password')}
+          placeholder={t('Enter password')}
+          type="password"
+          isRequired={props.isCreate}
+        />
+      </PageFormSection>
+
       <PageFormTextInput<PlatformUser>
         name="first_name"
         label={t('First name')}
@@ -114,6 +119,22 @@ function PlatformUserInputs(props: { isCreate?: boolean }) {
         label={t('EMail')}
         placeholder={t('Enter email')}
       />
+      <PageFormSection title={t('User Type')} singleColumn>
+        <PageFormCheckbox<PlatformUser>
+          name="is_superuser"
+          label={t('System administrator')}
+          description={t(
+            'System administrators have full access to the system and can manage other users.'
+          )}
+        />
+        <PageFormCheckbox<PlatformUser>
+          name="is_system_auditor"
+          label={t('System auditor')}
+          description={t(
+            'System auditors have read-only access to the system and can view all resources.'
+          )}
+        />
+      </PageFormSection>
     </>
   );
 }

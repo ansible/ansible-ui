@@ -39,6 +39,17 @@ export function useUsersColumns() {
         maxWidth: 200,
       },
       {
+        header: t('User type'),
+        type: 'labels',
+        value: (user) => {
+          const roles: string[] = [];
+          if (user.is_superuser) roles.push(t('System adminsitrator'));
+          else if (user.is_system_auditor) roles.push(t('System auditor'));
+          else roles.push(t('Normal user'));
+          return roles;
+        },
+      },
+      {
         header: t('Email'),
         type: 'text',
         value: (user) => user.email,
@@ -56,6 +67,12 @@ export function useUsersColumns() {
         value: (user) => user.last_name,
         sort: 'last_name',
       },
+      {
+        header: t('Last login'),
+        type: 'datetime',
+        value: (user) => user.last_login,
+      },
+
       //TODO: Column to display teams. Currently not returned in the API.
       createdColumn,
       modifiedColumn,

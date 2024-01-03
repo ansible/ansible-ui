@@ -60,10 +60,10 @@ export function useUserToolbarActions(view: IPlatformView<PlatformUser>) {
   return toolbarActions;
 }
 
-export function useUserRowActions(view: IPlatformView<PlatformUser>) {
+export function useUserRowActions(view?: IPlatformView<PlatformUser>) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const deleteUsers = useDeleteUsers(view.unselectItemsAndRefresh);
+  const deleteUsers = useDeleteUsers((u) => view?.unselectItemsAndRefresh(u));
 
   const rowActions = useMemo<IPageAction<PlatformUser>[]>(() => {
     // TODO: Update based on RBAC information from Users API
