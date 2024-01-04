@@ -1,6 +1,6 @@
+import { LabelGroup } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import {
   ColumnModalOption,
   ColumnTableOption,
@@ -8,13 +8,13 @@ import {
   ITableColumn,
   TextCell,
   useGetPageUrl,
+  usePageNavigate,
 } from '../../framework';
-import { RouteObj } from './Routes';
-import { SummaryFieldCredential } from '../awx/interfaces/summary-fields/summary-fields';
-import { LabelGroup } from '@patternfly/react-core';
+import { AwxRoute } from '../awx/AwxRoutes';
 import { CredentialLabel } from '../awx/common/CredentialLabel';
+import { SummaryFieldCredential } from '../awx/interfaces/summary-fields/summary-fields';
 
-export function useIdColumn<T extends { name: string; id: number }>(isHidden: boolean = true) {
+export function useIdColumn<T extends { id: number }>(isHidden: boolean = true) {
   const { t } = useTranslation();
   const column = useMemo<ITableColumn<T>>(
     () => ({
@@ -125,17 +125,15 @@ export function useCredentialsColumn() {
   }> = useMemo(
     () => ({
       header: t('Credentials'),
-      cell: (item) => {
-        if (!item.summary_fields?.credentials) return <></>;
-        return (
-          <LabelGroup>
-            {' '}
-            {item.summary_fields.credentials?.map((credential) => (
-              <CredentialLabel credential={credential} key={credential.id} />
-            ))}
-          </LabelGroup>
-        );
-      },
+      cell: (item) => (
+        <LabelGroup>
+          {item.summary_fields?.credentials?.map((credential) => (
+            <CredentialLabel credential={credential} key={credential.id} />
+          ))}
+        </LabelGroup>
+      ),
+      value: (item) =>
+        item.summary_fields?.credentials && item.summary_fields.credentials.length > 0,
       table: ColumnTableOption.Expanded,
       card: 'hidden',
       list: 'hidden',
@@ -153,7 +151,7 @@ export function useCreatedColumn(options?: {
   hideByDefaultInTableView?: boolean;
 }) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const column: ITableColumn<
     | { created?: string; created_on?: string; date_joined?: string; pulp_created?: string }
     | {
@@ -172,15 +170,7 @@ export function useCreatedColumn(options?: {
         return (
           <DateTimeCell
             format="since"
-            value={
-              item.created
-                ? item.created
-                : item.created_on
-                ? item.created_on
-                : item.date_joined
-                ? item.date_joined
-                : item.pulp_created
-            }
+            value={item.created ?? item.created_on ?? item.date_joined ?? item.pulp_created}
             author={
               'summary_fields' in item ? item.summary_fields?.created_by?.username : undefined
             }
@@ -188,12 +178,9 @@ export function useCreatedColumn(options?: {
               options?.disableLinks || !('summary_fields' in item)
                 ? undefined
                 : () =>
-                    navigate(
-                      RouteObj.UserDetails.replace(
-                        ':id',
-                        (item.summary_fields?.created_by?.id ?? 0).toString()
-                      )
-                    )
+                    pageNavigate(AwxRoute.UserDetails, {
+                      params: { id: item.summary_fields?.created_by?.id },
+                    })
             }
           />
         );
@@ -208,7 +195,7 @@ export function useCreatedColumn(options?: {
       modal: ColumnModalOption.Hidden,
     }),
     [
-      navigate,
+      pageNavigate,
       options?.disableLinks,
       options?.disableSort,
       options?.hideByDefaultInTableView,
@@ -226,7 +213,7 @@ export function useModifiedColumn(options?: {
   hideByDefaultInTableView?: boolean;
 }) {
   const { t } = useTranslation();
-  const history = useNavigate();
+  const pageNavigate = usePageNavigate();
   const column: ITableColumn<
     | { modified?: string; modified_on?: string }
     | {
@@ -250,12 +237,9 @@ export function useModifiedColumn(options?: {
               options?.disableLinks || !('summary_fields' in item)
                 ? undefined
                 : () =>
-                    history(
-                      RouteObj.UserDetails.replace(
-                        ':id',
-                        (item.summary_fields?.modified_by?.id ?? 0).toString()
-                      )
-                    )
+                    pageNavigate(AwxRoute.UserDetails, {
+                      params: { id: item.summary_fields?.modified_by?.id },
+                    })
             }
           />
         );
@@ -270,7 +254,7 @@ export function useModifiedColumn(options?: {
       modal: ColumnModalOption.Hidden,
     }),
     [
-      history,
+      pageNavigate,
       options?.disableLinks,
       options?.disableSort,
       options?.hideByDefaultInTableView,

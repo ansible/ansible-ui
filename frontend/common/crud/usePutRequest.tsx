@@ -1,25 +1,25 @@
 import { useNavigate } from 'react-router-dom';
-import { useClearCache } from '../useInvalidateCache';
 import { createRequestError } from './RequestError';
 import { requestCommon } from './requestCommon';
 import { useAbortController } from './useAbortController';
+import { useClearCache } from '../useInvalidateCache';
 
 /**
- * Hook for making POST API requests
+ * Hook for making PUT API requests
  *
  * - Returns a function that takes a url and body and returns the response body
  * - Throws an RequestError if the response is not ok
  * - Navigates to the login page if the response is a 401
  * - Supports aborting the request on unmount
  */
-export function usePostRequest<RequestBody, ResponseBody = RequestBody>() {
+export function usePutRequest<RequestBody, ResponseBody>() {
   const navigate = useNavigate();
   const abortController = useAbortController();
   const { clearCacheByKey } = useClearCache();
   return async (url: string, body: RequestBody, signal?: AbortSignal) => {
     const response = await requestCommon({
       url,
-      method: 'POST',
+      method: 'PUT',
       body,
       signal: signal ?? abortController.signal,
     });
