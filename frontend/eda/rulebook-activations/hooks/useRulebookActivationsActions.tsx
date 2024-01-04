@@ -16,10 +16,10 @@ import {
   usePageNavigate,
 } from '../../../../framework';
 import { postRequest } from '../../../common/crud/Data';
-import { EdaRoute } from '../../EdaRoutes';
-import { edaAPI } from '../../api/eda-utils';
+import { edaAPI } from '../../common/eda-utils';
+import { IEdaView } from '../../common/useEventDrivenView';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
-import { IEdaView } from '../../useEventDrivenView';
+import { EdaRoute } from '../../main/EdaRoutes';
 import {
   useDisableRulebookActivations,
   useRestartRulebookActivations,
