@@ -1,15 +1,16 @@
 import { useTranslation } from 'react-i18next';
-import { compareStrings, useBulkConfirmation } from '../../../../framework';
+import { compareStrings } from '../../../../framework';
 import { nameKeyFn } from '../../../common/utils/nameKeyFn';
 import { hubAPI } from '../../api/formatPath';
 import { hubAPIDelete, parsePulpIDFromURL } from '../../api/utils';
 import { RemoteRegistry } from '../RemoteRegistry';
 import { useRemoteRegistriesColumns } from './useRemoteRegistriesColumns';
+import { useHubBulkConfirmation } from '../../common/useHubBulkConfirmation';
 
 export function useDeleteRemoteRegistries(onComplete: (remoteRegistry: RemoteRegistry[]) => void) {
   const { t } = useTranslation();
   const confirmationColumns = useRemoteRegistriesColumns();
-  const bulkAction = useBulkConfirmation<RemoteRegistry>();
+  const bulkAction = useHubBulkConfirmation<RemoteRegistry>();
 
   const deleteRemoteRegistry = (remoteRegistry: RemoteRegistry[]) => {
     bulkAction({

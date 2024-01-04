@@ -1,7 +1,7 @@
 import { RedhatIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, TextCell, useGetPageUrl } from '../../../../framework';
+import { ColumnModalOption, ITableColumn, TextCell, useGetPageUrl } from '../../../../framework';
 import { HubRoute } from '../../HubRoutes';
 import { HubNamespace } from '../HubNamespace';
 
@@ -33,6 +33,7 @@ export function useHubNamespacesColumns(_options?: {
         value: (namespace) => namespace.description ?? undefined,
         card: 'description',
         list: 'description',
+        modal: ColumnModalOption.Hidden,
       },
       {
         header: t('Company'),

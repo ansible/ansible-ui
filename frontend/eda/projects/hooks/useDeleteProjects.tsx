@@ -1,9 +1,10 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings, useBulkConfirmation } from '../../../../framework';
+import { compareStrings } from '../../../../framework';
 import { requestDelete } from '../../../common/crud/Data';
 import { idKeyFn } from '../../../common/utils/nameKeyFn';
 import { edaAPI } from '../../common/eda-utils';
+import { useEdaBulkConfirmation } from '../../common/useEdaBulkConfirmation';
 import { EdaProject } from '../../interfaces/EdaProject';
 import { useProjectColumns } from './useProjectColumns';
 
@@ -11,7 +12,7 @@ export function useDeleteProjects(onComplete: (projects: EdaProject[]) => void) 
   const { t } = useTranslation();
   const confirmationColumns = useProjectColumns();
   const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
-  const bulkAction = useBulkConfirmation<EdaProject>();
+  const bulkAction = useEdaBulkConfirmation<EdaProject>();
   return useCallback(
     (projects: EdaProject[]) => {
       bulkAction({
