@@ -1,3 +1,4 @@
+import { AlertProps } from '@patternfly/react-core';
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { RedoIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
@@ -11,23 +12,22 @@ import {
   PageHeader,
   PageLayout,
   useGetPageUrl,
-  usePageNavigate,
   usePageAlertToaster,
+  usePageNavigate,
 } from '../../../../framework';
 import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
+import { postRequest } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
-import { EdaRoute } from '../../EdaRoutes';
-import { edaAPI } from '../../api/eda-utils';
-import { SWR_REFRESH_INTERVAL } from '../../constants';
+import { SWR_REFRESH_INTERVAL } from '../../common/eda-constants';
+import { edaAPI } from '../../common/eda-utils';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { Status906Enum } from '../../interfaces/generated/eda-api';
+import { EdaRoute } from '../../main/EdaRoutes';
 import {
   useDisableRulebookActivations,
   useRestartRulebookActivations,
 } from '../hooks/useControlRulebookActivations';
 import { useDeleteRulebookActivations } from '../hooks/useDeleteRulebookActivations';
-import { postRequest } from '../../../common/crud/Data';
-import { AlertProps } from '@patternfly/react-core';
 
 export function RulebookActivationPage() {
   const { t } = useTranslation();

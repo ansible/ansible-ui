@@ -1,7 +1,7 @@
 import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
 import { useGet } from '../../common/crud/useGet';
-import { edaAPI } from '../api/eda-utils';
 import { EdaUser } from '../interfaces/EdaUser';
+import { edaAPI } from './eda-utils';
 
 const EdaActiveUserContext = createContext<EdaUser | null | undefined>(undefined);
 

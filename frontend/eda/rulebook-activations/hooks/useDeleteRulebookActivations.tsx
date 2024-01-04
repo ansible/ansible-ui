@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../framework';
 import { requestDelete } from '../../../common/crud/Data';
-import { edaAPI } from '../../api/eda-utils';
+import { edaAPI } from '../../common/eda-utils';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { useRulebookActivationColumns } from './useRulebookActivationColumns';
 
