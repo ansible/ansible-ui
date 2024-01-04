@@ -1,6 +1,3 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
 import {
   CREATE_CONNECTOR_DROP_TYPE,
   ComponentFactory,
@@ -12,8 +9,10 @@ import {
   Model,
   ModelKind,
   NodeShape,
+  TopologyView as PFTopologyView,
   SELECTION_EVENT,
   TopologyControlBar,
+  TopologyViewProps,
   Visualization,
   VisualizationProvider,
   VisualizationSurface,
@@ -27,9 +26,14 @@ import {
   withDragNode,
   withPanZoom,
   withSelection,
-  TopologyView as PFTopologyView,
 } from '@patternfly/react-topology';
+import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 import { EmptyStateNoData } from '../../../../../framework/components/EmptyStateNoData';
+import type { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
+import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
+import { WorkflowVisualizerNodeDetails } from './WorkflowVisualizerNodeDetails';
 import {
   AddNodeButton,
   CustomEdge,
@@ -39,13 +43,16 @@ import {
   NodeContextMenu,
   VisualizerWrapper,
 } from './components';
-import { WorkflowVisualizerNodeDetails } from './WorkflowVisualizerNodeDetails';
 import { useWorkflowVisualizerToolbarActions } from './hooks/useWorkflowVisualizerToolbarActions';
-import { LayoutNode, GraphNode, EdgeStatus } from './types';
-import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
-import type { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
+import { EdgeStatus, GraphNode, LayoutNode } from './types';
 
-const TopologyView = styled(PFTopologyView)`
+const TopologyView = styled<
+  FunctionComponent<
+    TopologyViewProps & {
+      $isExpanded: boolean;
+    }
+  >
+>(PFTopologyView)`
   & .pf-topology-view__project-toolbar {
     ${(props: { $isExpanded: boolean }) => !props.$isExpanded && 'flex-wrap: wrap;'}
     flex: 1;

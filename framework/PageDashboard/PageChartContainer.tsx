@@ -2,18 +2,6 @@ import useResizeObserver from '@react-hook/resize-observer';
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-const ChartContainerDiv = styled.div`
-  width: 100%;
-  height: 100%;
-  flex-grow: 1;
-  align-self: stretch';
-  justify-self: stretch;
-  position: relative;
-  `;
-const PropsDiv = styled.div`
-  position: absolute;
-`;
-
 export interface PageContainerSize {
   width: number;
   height: number;
@@ -54,3 +42,16 @@ export function PageChartContainer(props: {
     </ChartContainerDiv>
   );
 }
+
+const ChartContainerDiv = styled.div`
+  width: 100%;
+  height: 100%;
+  flex-grow: 1;
+  align-self: stretch;
+  justify-self: stretch;
+  position: relative;
+`;
+
+const PropsDiv = styled.div`
+  position: absolute;
+`;
