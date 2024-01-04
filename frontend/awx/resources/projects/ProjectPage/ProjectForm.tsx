@@ -9,8 +9,8 @@ import {
   PageHeader,
   PageLayout,
   useGetPageUrl,
+  usePageNavigate,
 } from '../../../../../framework';
-import { RouteObj } from '../../../../common/Routes';
 import { requestPatch } from '../../../../common/crud/Data';
 import { useGet } from '../../../../common/crud/useGet';
 import { useOptions } from '../../../../common/crud/useOptions';
@@ -58,6 +58,7 @@ const defaultValues: Partial<Project> = {
 
 export function CreateProject() {
   const { t } = useTranslation();
+  const pageNavigate = usePageNavigate();
   const navigate = useNavigate();
   const postRequest = usePostRequest<Project>();
   const onSubmit: PageFormSubmitHandler<ProjectFields> = async (values) => {
@@ -96,7 +97,7 @@ export function CreateProject() {
     // Create new project
     const newProject = await postRequest(awxAPI`/projects/`, project as Project);
 
-    navigate(RouteObj.ProjectDetails.replace(':id', newProject.id.toString()));
+    pageNavigate(AwxRoute.ProjectDetails, { params: { id: newProject.id } });
   };
 
   const getPageUrl = useGetPageUrl();
@@ -127,6 +128,7 @@ export function CreateProject() {
 export function EditProject() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
   const { data: project } = useGet<Project>(awxAPI`/projects/${id.toString()}/`);
@@ -176,7 +178,7 @@ export function EditProject() {
       editedProject
     );
 
-    navigate(RouteObj.ProjectDetails.replace(':id', updatedProject.id.toString()));
+    pageNavigate(AwxRoute.ProjectDetails, { params: { id: updatedProject.id } });
   };
 
   const getPageUrl = useGetPageUrl();
