@@ -7,9 +7,9 @@ import { AwxRoute } from '../AwxRoutes';
 import { awxAPI } from '../api/awx-utils';
 import { ProjectDetails } from '../resources/projects/ProjectPage/ProjectDetails';
 import { CreateProject, EditProject } from '../resources/projects/ProjectPage/ProjectForm';
+import { ProjectJobTemplates } from '../resources/projects/ProjectPage/ProjectJobTemplates';
 import { ProjectPage } from '../resources/projects/ProjectPage/ProjectPage';
 import { Projects } from '../resources/projects/Projects';
-import { ProjectJobTemplates } from '../resources/projects/ProjectPage/ProjectJobTemplates';
 import { CreateSchedule } from '../views/schedules/ScheduleForm';
 import { ScheduleDetails } from '../views/schedules/SchedulePage/ScheduleDetails';
 import { SchedulePage } from '../views/schedules/SchedulePage/SchedulePage';
@@ -61,7 +61,7 @@ export function useAwxProjectRoutes() {
                 },
                 {
                   label: t('Rules'),
-                  page: AwxRoute.ProjectScheduleRrules,
+                  page: AwxRoute.ProjectScheduleRules,
                 },
               ]}
             />
@@ -73,7 +73,7 @@ export function useAwxProjectRoutes() {
               element: <ScheduleDetails />,
             },
             {
-              id: AwxRoute.ProjectScheduleRrules,
+              id: AwxRoute.ProjectScheduleRules,
               path: 'rrules',
               element: <ScheduleRules />,
             },

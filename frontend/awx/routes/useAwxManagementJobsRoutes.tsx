@@ -35,7 +35,7 @@ export function useAwxManagementJobsRoutes() {
                 },
                 {
                   label: t('Rules'),
-                  page: AwxRoute.ManagementJobScheduleRrules,
+                  page: AwxRoute.ManagementJobScheduleRules,
                 },
               ]}
             />

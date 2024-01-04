@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable i18next/no-literal-string */
-import { RouteObj } from '../../../../common/Routes';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { Organization } from '../../../interfaces/Organization';
 import { WorkflowJobTemplatePage } from './WorkflowJobTemplatePage';
@@ -52,10 +51,7 @@ describe('WorflowJobTemplatePage', () => {
       return req.reply({ statusCode: 200, body: { id: 1000, type: 'job' } });
     }).as('launchJob');
 
-    cy.mount(<WorkflowJobTemplatePage />, {
-      path: RouteObj.WorkflowJobTemplatePage,
-      initialEntries: [RouteObj.WorkflowJobTemplateDetails.replace(':id', '1')],
-    });
+    cy.mount(<WorkflowJobTemplatePage />);
 
     cy.clickButton(/^Launch template$/);
 
@@ -80,10 +76,7 @@ describe('WorflowJobTemplatePage', () => {
       return req.reply({ statusCode: 404, body: { message: 'Could not launch job' } });
     }).as('launchJob');
 
-    cy.mount(<WorkflowJobTemplatePage />, {
-      path: RouteObj.WorkflowJobTemplatePage,
-      initialEntries: [RouteObj.WorkflowJobTemplateDetails.replace(':id', '1')],
-    });
+    cy.mount(<WorkflowJobTemplatePage />);
 
     cy.clickButton(/^Launch template$/);
 
@@ -109,10 +102,7 @@ describe('WorflowJobTemplatePage', () => {
       'Survey',
       'Notifications',
     ];
-    cy.mount(<WorkflowJobTemplatePage />, {
-      path: RouteObj.WorkflowJobTemplatePage,
-      initialEntries: [RouteObj.WorkflowJobTemplateDetails.replace(':id', '1')],
-    });
+    cy.mount(<WorkflowJobTemplatePage />);
 
     cy.get('.pf-v5-c-tabs__list').within(() => {
       cy.get('.pf-v5-c-tabs__item').should('have.length', 7);
@@ -141,14 +131,7 @@ describe('WorflowJobTemplatePage', () => {
       'Survey',
       'Notifications',
     ];
-    cy.mount(
-      <WorkflowJobTemplatePage />,
-      {
-        path: RouteObj.WorkflowJobTemplatePage,
-        initialEntries: [RouteObj.WorkflowJobTemplateDetails.replace(':id', '1')],
-      },
-      'activeUserSysAuditor'
-    );
+    cy.mount(<WorkflowJobTemplatePage />, undefined, 'activeUserSysAuditor');
     cy.get('.pf-v5-c-tabs__list').within(() => {
       // cy.get('.pf-v5-c-tabs__item').should('have.length', 7); TODO: Fix flaky test
       cy.get('.pf-v5-c-tabs__item').each((tab, index) => {
@@ -177,10 +160,7 @@ describe('WorflowJobTemplatePage', () => {
       'Survey',
     ];
 
-    cy.mount(<WorkflowJobTemplatePage />, {
-      path: RouteObj.WorkflowJobTemplatePage,
-      initialEntries: [RouteObj.WorkflowJobTemplateDetails.replace(':id', '1')],
-    });
+    cy.mount(<WorkflowJobTemplatePage />);
     cy.wait('@getOrganizations');
 
     cy.get('.pf-v5-c-tabs__list').within(() => {

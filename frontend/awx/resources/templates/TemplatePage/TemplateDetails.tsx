@@ -10,7 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { LoadingPage, PageDetail, PageDetails, useGetPageUrl } from '../../../../../framework';
 import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
-import { RouteObj } from '../../../../common/Routes';
+import { LastModifiedPageDetail } from '../../../../common/LastModifiedPageDetail';
 import { useGet, useGetItem } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
 import { awxAPI } from '../../../api/awx-utils';
@@ -20,7 +20,6 @@ import { UserDateDetail } from '../../../common/UserDateDetail';
 import { useVerbosityString } from '../../../common/useVerbosityString';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
-import { LastModifiedPageDetail } from '../../../../common/LastModifiedPageDetail';
 
 function useInstanceGroups(templateId: string) {
   const { data } = useGet<{ results: InstanceGroup[] }>(
@@ -102,10 +101,9 @@ export function TemplateDetails(props: { templateId?: string }) {
       {/* TODO: more flushed out ExecutionEnvironmentDetail ? */}
       <PageDetail label={t`Execution environment`} isEmpty={!summaryFields.resolved_environment}>
         <Link
-          to={RouteObj.ExecutionEnvironmentDetails.replace(
-            ':id',
-            summaryFields.resolved_environment?.id.toString() ?? ''
-          )}
+          to={getPageUrl(AwxRoute.ExecutionEnvironmentDetails, {
+            params: { id: summaryFields.resolved_environment?.id },
+          })}
         >
           {summaryFields.resolved_environment?.name}
         </Link>
@@ -127,7 +125,11 @@ export function TemplateDetails(props: { templateId?: string }) {
         <LabelGroup>
           {instanceGroups?.map((ig) => (
             <Label color="blue" key={ig.id}>
-              <Link to={RouteObj.InstanceGroupDetails.replace(':id', (ig.id ?? 0).toString())}>
+              <Link
+                to={getPageUrl(AwxRoute.InstanceGroupDetails, {
+                  params: { id: ig.id },
+                })}
+              >
                 {ig.name}
               </Link>
             </Label>
