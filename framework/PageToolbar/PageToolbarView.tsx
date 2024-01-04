@@ -3,13 +3,11 @@ import {
   Split,
   ToggleGroup,
   ToggleGroupItem,
-  ToggleGroupItemProps,
   ToolbarGroup,
   ToolbarItem,
   Tooltip,
 } from '@patternfly/react-core';
 import { ColumnsIcon, ListIcon, TableIcon, ThLargeIcon } from '@patternfly/react-icons';
-import { useRef } from 'react';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { PageTableViewType, PageTableViewTypeE } from './PageTableViewType';
 import { PageToolbarToggleGroup } from './PageToolbarToggleGroup';
@@ -59,37 +57,34 @@ export function PageToolbarView(props: PageToolbarViewProps) {
                     switch (vt) {
                       case PageTableViewTypeE.Cards:
                         return (
-                          <PageToggleGroupItem
+                          <ToggleGroupItem
                             icon={<ThLargeIcon />}
                             isSelected={viewType === PageTableViewTypeE.Cards}
                             onClick={() => setViewType?.(PageTableViewTypeE.Cards)}
                             aria-label="card view"
                             data-cy={'card-view'}
-                            tooltip={translations.cardView}
                             key={'card-view'}
                           />
                         );
                       case PageTableViewTypeE.List:
                         return (
-                          <PageToggleGroupItem
+                          <ToggleGroupItem
                             icon={<ListIcon />}
                             isSelected={viewType === PageTableViewTypeE.List}
                             onClick={() => setViewType?.(PageTableViewTypeE.List)}
                             aria-label="list view"
                             data-cy={'list-view'}
-                            tooltip={translations.listView}
                             key={'list-view'}
                           />
                         );
                       case PageTableViewTypeE.Table:
                         return (
-                          <PageToggleGroupItem
+                          <ToggleGroupItem
                             icon={<TableIcon />}
                             isSelected={viewType === PageTableViewTypeE.Table}
                             onClick={() => setViewType?.(PageTableViewTypeE.Table)}
                             aria-label="table view"
                             data-cy={'table-view'}
-                            tooltip={translations.tableView}
                             key={'table-view'}
                           />
                         );
@@ -101,21 +96,5 @@ export function PageToolbarView(props: PageToolbarViewProps) {
         </ToolbarItem>
       </ToolbarGroup>
     </PageToolbarToggleGroup>
-  );
-}
-
-function PageToggleGroupItem(
-  props: ToggleGroupItemProps & {
-    tooltip: string;
-  }
-) {
-  const { tooltip, ...rest } = props;
-  const tooltipRef = useRef<HTMLDivElement>(null);
-  return (
-    <Tooltip content={tooltip} position="top-end" enableFlip={false} triggerRef={tooltipRef}>
-      <div ref={tooltipRef}>
-        <ToggleGroupItem {...rest} />
-      </div>
-    </Tooltip>
   );
 }
