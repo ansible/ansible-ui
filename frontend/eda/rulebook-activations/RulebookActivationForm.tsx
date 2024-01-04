@@ -19,9 +19,8 @@ import { PageFormSection } from '../../../framework/PageForm/Utils/PageFormSecti
 import { requestGet } from '../../common/crud/Data';
 import { useGet } from '../../common/crud/useGet';
 import { usePostRequest } from '../../common/crud/usePostRequest';
-import { EdaRoute } from '../EdaRoutes';
-import { EdaProjectCell } from '../Resources/projects/components/EdaProjectCell';
-import { edaAPI } from '../api/eda-utils';
+import { EdaPageForm } from '../common/EdaPageForm';
+import { edaAPI } from '../common/eda-utils';
 import { EdaDecisionEnvironment } from '../interfaces/EdaDecisionEnvironment';
 import { EdaExtraVars } from '../interfaces/EdaExtraVars';
 import { EdaProject } from '../interfaces/EdaProject';
@@ -32,7 +31,8 @@ import {
   EdaRulebookActivationCreate,
 } from '../interfaces/EdaRulebookActivation';
 import { RestartPolicyEnum } from '../interfaces/generated/eda-api';
-import { EdaPageForm } from '../EdaPageForm';
+import { EdaRoute } from '../main/EdaRoutes';
+import { EdaProjectCell } from '../projects/components/EdaProjectCell';
 
 export function CreateRulebookActivation() {
   const { t } = useTranslation();
