@@ -1,4 +1,4 @@
-import { LabelGroup } from '@patternfly/react-core';
+import { Label, LabelGroup } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -114,6 +114,33 @@ export function useLastRanColumn(options?: {
       defaultSortDirection: 'desc',
     }),
     [options?.disableSort, options?.sortKey, t]
+  );
+  return column;
+}
+
+export function useLabelsColumn() {
+  const { t } = useTranslation();
+  const column: ITableColumn<{
+    summary_fields?: { labels: { count: number; results: { id: number; name: string }[] } };
+  }> = useMemo(
+    () => ({
+      header: t('Labels'),
+      cell: (item) => {
+        if (!item.summary_fields?.labels?.results) return <></>;
+        return (
+          <LabelGroup>
+            {item.summary_fields.labels?.results.map((result) => (
+              <Label key={result.id}>{result.name}</Label>
+            ))}
+          </LabelGroup>
+        );
+      },
+      table: ColumnTableOption.Expanded,
+      card: 'hidden',
+      list: 'hidden',
+      modal: ColumnModalOption.Hidden,
+    }),
+    [t]
   );
   return column;
 }
@@ -301,6 +328,61 @@ export function useOrganizationNameColumn(
   return column;
 }
 
+export function useExecutionEnvColumn<
+  T extends {
+    type?: string;
+    summary_fields?: {
+      execution_environment?: {
+        id: number;
+        name: string;
+      };
+    };
+  },
+>(
+  envDetailsRoute: string,
+  options?: {
+    disableLinks?: boolean;
+    disableSort?: boolean;
+  }
+) {
+  const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
+  const column: ITableColumn<T> = useMemo(
+    () => ({
+      header: t('Execution Environment'),
+      cell: (item) => {
+        if (item.type !== 'job_template') {
+          return <></>;
+        } else {
+          return (
+            <TextCell
+              text={item.summary_fields?.execution_environment?.name}
+              to={getPageUrl(envDetailsRoute, {
+                params: { id: item.summary_fields?.execution_environment?.id },
+              })}
+              disableLinks={options?.disableLinks}
+            />
+          );
+        }
+      },
+      value: (item) => {
+        if (item.type === 'job_template') {
+          return item.summary_fields?.execution_environment?.name;
+        } else {
+          return undefined;
+        }
+      },
+      sort: options?.disableSort ? undefined : 'execution_environment',
+      table: ColumnTableOption.Expanded,
+      card: 'hidden',
+      list: 'hidden',
+      modal: ColumnModalOption.Hidden,
+    }),
+    [t, options?.disableSort, options?.disableLinks, getPageUrl, envDetailsRoute]
+  );
+  return column;
+}
+
 export function useInventoryNameColumn(
   inventoryDetailsRoute: string,
   options?: {
@@ -337,6 +419,46 @@ export function useInventoryNameColumn(
       modal: ColumnModalOption.Hidden,
     }),
     [getPageUrl, options?.disableLinks, options?.disableSort, inventoryDetailsRoute, t]
+  );
+  return column;
+}
+
+export function useProjectNameColumn(
+  projectDetailsRoute: string,
+  options?: {
+    disableLinks?: boolean;
+    disableSort?: boolean;
+  }
+) {
+  const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
+  const column: ITableColumn<{
+    summary_fields?: {
+      project?: {
+        id: number;
+        name: string;
+      };
+    };
+  }> = useMemo(
+    () => ({
+      header: t('Project'),
+      cell: (item) => (
+        <TextCell
+          text={item.summary_fields?.project?.name}
+          to={getPageUrl(projectDetailsRoute, {
+            params: { id: item.summary_fields?.project?.id },
+          })}
+          disableLinks={options?.disableLinks}
+        />
+      ),
+      value: (item) => item.summary_fields?.project?.name,
+      sort: options?.disableSort ? undefined : 'project',
+      table: ColumnTableOption.Expanded,
+      card: 'hidden',
+      list: 'hidden',
+      modal: ColumnModalOption.Hidden,
+    }),
+    [getPageUrl, options?.disableLinks, options?.disableSort, projectDetailsRoute, t]
   );
   return column;
 }
