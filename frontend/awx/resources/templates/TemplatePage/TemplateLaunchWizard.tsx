@@ -15,21 +15,20 @@ import { AwxRoute } from '../../../AwxRoutes';
 import { awxErrorAdapter } from '../../../adapters/awxErrorAdapter';
 import { PageFormExecutionEnvironmentSelect } from '../../../administration/execution-environments/components/PageFormExecutionEnvironmentSelect';
 import { PageFormInstanceGroupSelect } from '../../../administration/instance-groups/components/PageFormInstanceGroupSelect';
+import { awxAPI } from '../../../api/awx-utils';
 import { AwxError } from '../../../common/AwxError';
-import { getJobOutputUrl } from '../../../views/jobs/jobUtils';
-import { PageFormCredentialSelect } from '../../credentials/components/PageFormCredentialSelect';
-import { PageFormInventorySelect } from '../../inventories/components/PageFormInventorySelect';
-import { parseStringToTagArray } from '../JobTemplateFormHelpers';
-import { useLabelPayload } from '../hooks/useLabelPayload';
-import { CredentialPasswordsStep, OtherPromptsStep, TemplateLaunchReviewStep } from './steps';
-
 import type { Credential } from '../../../interfaces/Credential';
 import type { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
 import type { Inventory } from '../../../interfaces/Inventory';
 import type { JobTemplate } from '../../../interfaces/JobTemplate';
 import type { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
 import type { UnifiedJob } from '../../../interfaces/UnifiedJob';
-import { awxAPI } from '../../../api/awx-utils';
+import { useGetJobOutputUrl } from '../../../views/jobs/jobUtils';
+import { PageFormCredentialSelect } from '../../credentials/components/PageFormCredentialSelect';
+import { PageFormInventorySelect } from '../../inventories/components/PageFormInventorySelect';
+import { parseStringToTagArray } from '../JobTemplateFormHelpers';
+import { useLabelPayload } from '../hooks/useLabelPayload';
+import { CredentialPasswordsStep, OtherPromptsStep, TemplateLaunchReviewStep } from './steps';
 
 export interface TemplateLaunch {
   inventory: Inventory;
@@ -95,6 +94,7 @@ export function TemplateLaunchWizard() {
   } = useGet<LaunchConfiguration>(awxAPI`/job_templates/${resourceId}/launch/`);
   const error = getTemplateError || getLaunchError;
   const refresh = getTemplateRefresh || getLaunchRefresh;
+  const getJobOutputUrl = useGetJobOutputUrl();
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!config || !template) return <LoadingPage breadcrumbs tabs />;

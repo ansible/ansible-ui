@@ -18,7 +18,12 @@ import { awxAPI } from '../../../api/awx-utils';
 import { CredentialLabel } from '../../../common/CredentialLabel';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { UnifiedJob } from '../../../interfaces/UnifiedJob';
-import { getJobOutputUrl, getLaunchedByDetails, getScheduleUrl, isJobRunning } from '../jobUtils';
+import {
+  getLaunchedByDetails,
+  getScheduleUrl,
+  isJobRunning,
+  useGetJobOutputUrl,
+} from '../jobUtils';
 
 export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
@@ -36,6 +41,8 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
         : [],
     [data]
   );
+
+  const getJobOutputUrl = useGetJobOutputUrl();
 
   const tableColumns = useMemo<ITableColumn<UnifiedJob>[]>(
     () => [
@@ -347,7 +354,7 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
         modal: ColumnModalOption.Hidden,
       },
     ],
-    [getPageUrl, inventorySourceChoices, options?.disableLinks, t]
+    [getJobOutputUrl, getPageUrl, inventorySourceChoices, options?.disableLinks, t]
   );
   return tableColumns;
 }

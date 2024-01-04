@@ -1,4 +1,6 @@
-import { RouteObj } from '../../../common/Routes';
+import { useCallback } from 'react';
+import { useGetPageUrl } from '../../../../framework';
+import { AwxRoute } from '../../AwxRoutes';
 import { awxAPI } from '../../api/awx-utils';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
 
@@ -60,11 +62,20 @@ const jobPaths: { [key: string]: string } = {
   system_job: 'management',
   workflow_job: 'workflow',
 };
-export function getJobOutputUrl(job: UnifiedJob) {
-  return RouteObj.JobOutput.replace(':job_type', jobPaths[job.type]).replace(
-    ':id',
-    job.id.toString()
+export function useGetJobOutputUrl() {
+  const getPageUrl = useGetPageUrl();
+  const getJobOutputUrl = useCallback(
+    (job: UnifiedJob) => {
+      return getPageUrl(AwxRoute.JobOutput, {
+        params: {
+          job_type: jobPaths[job.type],
+          id: job.id,
+        },
+      });
+    },
+    [getPageUrl]
   );
+  return getJobOutputUrl;
 }
 
 /**
