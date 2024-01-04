@@ -57,6 +57,10 @@ export function HubNamespacePage() {
             page: HubRoute.NamespaceDetails,
           },
           {
+            label: t('Collections'),
+            page: HubRoute.NamespaceCollections,
+          },
+          {
             label: t('CLI Configuration'),
             page: HubRoute.NamespaceCLI,
           },
