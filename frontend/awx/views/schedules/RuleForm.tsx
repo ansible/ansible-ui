@@ -17,7 +17,7 @@ import { awxAPI } from '../../api/awx-utils';
 import { AwxError } from '../../common/AwxError';
 import { Schedule } from '../../interfaces/Schedule';
 import { RuleInputs } from './components/RuleInputs';
-import { scheduleRulesRoutes } from './hooks/ruleHelpers';
+import { useScheuleRulesRoutes } from './hooks/ruleHelpers';
 import { buildDateTimeObj } from './hooks/scheduleHelpers';
 
 export interface RuleFormFields {
@@ -53,6 +53,7 @@ export function CreateScheduleRule() {
   }>();
   const navigate = useNavigate();
   const alertToaster = usePageAlertToaster();
+  const scheduleRulesRoutes = useScheuleRulesRoutes();
 
   const onSubmit: PageFormSubmitHandler<RuleFormFields> = async (
     values: RuleFormFields,
@@ -113,7 +114,7 @@ export function CreateScheduleRule() {
               pathname.split('/').find((i) => Object.keys(scheduleRulesRoutes).includes(i)) || ''
             ]
               ?.replace(':id', res.summary_fields.unified_job_template.id.toString())
-              .replace(':schedule_id', res.id.toString())
+              .replace(':schedule_id', res.id.toString()) ?? ''
           );
         }
       })
@@ -134,7 +135,7 @@ export function CreateScheduleRule() {
         pathname.split('/').find((i) => Object.keys(scheduleRulesRoutes).includes(i)) || ''
       ]
         ?.replace(':id', resource_id as string)
-        .replace(':schedule_id', schedule_id as string)
+        .replace(':schedule_id', schedule_id as string) ?? ''
     );
   };
 
