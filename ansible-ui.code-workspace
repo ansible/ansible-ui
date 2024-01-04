@@ -1,28 +1,20 @@
 {
   "folders": [
-    {
-      "name": "Ansible UI",
-      "path": "."
-    },
-    {
-      "name": "AWX",
-      "path": "frontend/awx"
-    },
-    {
-      "name": "HUB",
-      "path": "frontend/hub"
-    },
-    {
-      "name": "EDA",
-      "path": "frontend/eda"
-    },
-    {
-      "name": "Shared",
-      "path": "frontend/common"
-    },
-    {
-      "name": "Framework",
-      "path": "framework"
+    { "name": "AWX", "path": "frontend/awx" },
+    { "name": "EDA", "path": "frontend/eda" },
+    { "name": "HUB", "path": "frontend/hub" },
+    { "name": "Common", "path": "frontend/common" },
+    { "name": "Framework", "path": "framework" }
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/.git": true,
+      "**/.svn": true,
+      "**/.hg": true,
+      "**/CVS": true,
+      "**/.DS_Store": true,
+      "**/Thumbs.db": true,
+      "**/tsconfig.json": true
     }
-  ]
+  }
 }
