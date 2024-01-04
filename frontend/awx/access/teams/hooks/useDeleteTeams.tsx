@@ -1,12 +1,13 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings, useBulkConfirmation } from '../../../../../framework';
+import { compareStrings } from '../../../../../framework';
 import { useNameColumn, useOrganizationNameColumn } from '../../../../common/columns';
 import { getItemKey, requestDelete } from '../../../../common/crud/Data';
 import { AwxRoute } from '../../../AwxRoutes';
 import { awxAPI } from '../../../api/awx-utils';
 import { Team } from '../../../interfaces/Team';
 import { useTeamsColumns } from './useTeamsColumns';
+import { useAwxBulkConfirmation } from '../../../common/useAwxBulkConfirmation';
 
 export function useDeleteTeams(onComplete: (teams: Team[]) => void) {
   const { t } = useTranslation();
@@ -27,7 +28,7 @@ export function useDeleteTeams(onComplete: (teams: Team[]) => void) {
       : t('The team cannot be deleted due to insufficient permissions.');
   };
 
-  const bulkAction = useBulkConfirmation<Team>();
+  const bulkAction = useAwxBulkConfirmation<Team>();
 
   const deleteTeams = (teams: Team[]) => {
     const undeletableTeams = teams.filter(cannotDeleteTeam);

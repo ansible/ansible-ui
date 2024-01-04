@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
-import { compareStrings, useBulkConfirmation } from '../../../../framework';
+import { compareStrings } from '../../../../framework';
 import { useGetRequest } from '../../../common/crud/useGet';
 import { collectionKeyFn } from '../../api/utils';
 import { pulpAPI } from '../../api/formatPath';
@@ -12,6 +12,7 @@ import { HubContext, useHubContext } from './../../useHubContext';
 import { useCopyToRepository } from '../../collections/hooks/useCopyToRepository';
 import { copyToRepositoryAction } from '../../collections/hooks/useCopyToRepository';
 import { SigningServiceResponse } from '../../api-schemas/generated/SigningServiceResponse';
+import { useHubBulkConfirmation } from '../../common/useHubBulkConfirmation';
 
 export function useApproveCollections(
   onComplete?: (collections: CollectionVersionSearch[]) => void
@@ -20,7 +21,7 @@ export function useApproveCollections(
   const confirmationColumns = useApprovalsColumns();
   const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
 
-  const bulkAction = useBulkConfirmation<CollectionVersionSearch>();
+  const bulkAction = useHubBulkConfirmation<CollectionVersionSearch>();
 
   const getRequest = useGetRequest();
 

@@ -25,7 +25,7 @@ import {
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { useBulkConfirmation, usePageNavigate } from '../../../../../../framework';
+import { usePageNavigate } from '../../../../../../framework';
 import { getItemKey, postRequest } from '../../../../../common/crud/Data';
 import { AwxRoute } from '../../../../AwxRoutes';
 import { awxAPI } from '../../../../api/awx-utils';
@@ -34,6 +34,7 @@ import getDocsBaseUrl from '../../../../common/util/getDocsBaseUrl';
 import { stringIsUUID } from '../../../../common/util/strings';
 import { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
 import { WorkflowNode } from '../../../../interfaces/WorkflowNode';
+import { useAwxBulkConfirmation } from '../../../../common/useAwxBulkConfirmation';
 import { AddNodeButton } from '../components/AddNodeButton';
 
 export function useWorkflowVisualizerToolbarActions(
@@ -47,7 +48,7 @@ export function useWorkflowVisualizerToolbarActions(
   const [isKebabOpen, setIsKebabOpen] = useState<boolean>(false);
   const pageNavigate = usePageNavigate();
   const config = useAwxConfig();
-  const bulkAction = useBulkConfirmation<WorkflowNode>();
+  const bulkAction = useAwxBulkConfirmation<WorkflowNode>();
   const handleLaunchWorkflow = useCallback(async () => {
     await postRequest(awxAPI`/workflow_job_templates/${Number(params.id).toString()}/launch/`, {});
   }, [params.id]);
