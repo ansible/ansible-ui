@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { UseFormReturn } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Options, RRule, RRuleSet, Weekday } from 'rrule';
@@ -9,16 +10,14 @@ import {
   usePageAlertToaster,
 } from '../../../../framework';
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
-import { requestGet, requestPatch } from '../../../common/crud/Data';
-import { Schedule } from '../../interfaces/Schedule';
-import { RuleInputs } from './components/RuleInputs';
-import { scheduleRulesRoutes } from './hooks/ruleHelpers';
-
-import { UseFormReturn } from 'react-hook-form';
 import { formatDateString } from '../../../../framework/utils/dateTimeHelpers';
+import { requestGet, requestPatch } from '../../../common/crud/Data';
 import { AwxPageForm } from '../../AwxPageForm';
 import { awxAPI } from '../../api/awx-utils';
 import { AwxError } from '../../common/AwxError';
+import { Schedule } from '../../interfaces/Schedule';
+import { RuleInputs } from './components/RuleInputs';
+import { scheduleRulesRoutes } from './hooks/ruleHelpers';
 import { buildDateTimeObj } from './hooks/scheduleHelpers';
 
 export interface RuleFormFields {

@@ -4,15 +4,14 @@ import { Link } from 'react-router-dom';
 import { PageDetail, PageDetails, useGetPageUrl } from '../../../../../../framework';
 import { PageDetailCodeEditor } from '../../../../../../framework/PageDetails/PageDetailCodeEditor';
 import { usePageWizard } from '../../../../../../framework/PageWizard/PageWizardProvider';
-import { RouteObj } from '../../../../../common/Routes';
 import { useGet } from '../../../../../common/crud/useGet';
 import { AwxRoute } from '../../../../AwxRoutes';
+import { awxAPI } from '../../../../api/awx-utils';
 import { CredentialLabel } from '../../../../common/CredentialLabel';
 import { useVerbosityString } from '../../../../common/useVerbosityString';
 import type { Credential } from '../../../../interfaces/Credential';
 import type { JobTemplate } from '../../../../interfaces/JobTemplate';
 import type { TemplateLaunch } from '../TemplateLaunchWizard';
-import { awxAPI } from '../../../../api/awx-utils';
 
 export default function TemplateLaunchReviewStep(props: { template: JobTemplate }) {
   const { template } = props;
@@ -82,10 +81,9 @@ export default function TemplateLaunchReviewStep(props: { template: JobTemplate 
       )}
       <PageDetail label={t`Execution environment`} isEmpty={isEmpty(execution_environment)}>
         <Link
-          to={RouteObj.ExecutionEnvironmentDetails.replace(
-            ':id',
-            execution_environment?.id?.toString() ?? ''
-          )}
+          to={getPageUrl(AwxRoute.ExecutionEnvironmentDetails, {
+            params: { id: execution_environment?.id },
+          })}
         >
           {execution_environment?.name}
         </Link>
@@ -109,7 +107,7 @@ export default function TemplateLaunchReviewStep(props: { template: JobTemplate 
         <LabelGroup>
           {instance_groups?.map((ig) => (
             <Label color="blue" key={ig.id}>
-              <Link to={RouteObj.InstanceGroupDetails.replace(':id', (ig.id ?? 0).toString())}>
+              <Link to={getPageUrl(AwxRoute.InstanceGroupDetails, { params: { id: ig.id } })}>
                 {ig.name}
               </Link>
             </Label>
