@@ -15,6 +15,7 @@ import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFor
 import { RouteObj } from '../../../../common/Routes';
 import { PageFormExecutionEnvironmentSelect } from '../../../administration/execution-environments/components/PageFormExecutionEnvironmentSelect';
 import { PageFormInstanceGroupSelect } from '../../../administration/instance-groups/components/PageFormInstanceGroupSelect';
+import { awxAPI } from '../../../api/awx-utils';
 import { PageFormLabelSelect } from '../../../common/PageFormLabelSelect';
 import { InventorySource } from '../../../interfaces/InventorySource';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
@@ -22,7 +23,6 @@ import { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
 import { Project } from '../../../interfaces/Project';
 import { ScheduleFormFields } from '../../../interfaces/ScheduleFormFields';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
-import { awxAPI } from '../../../api/awx-utils';
 import { PageFormCredentialSelect } from '../../../resources/credentials/components/PageFormCredentialSelect';
 import { PageFormInventorySelect } from '../../../resources/inventories/components/PageFormInventorySelect';
 

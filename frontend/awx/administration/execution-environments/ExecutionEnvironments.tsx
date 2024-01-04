@@ -12,6 +12,7 @@ import {
   PageHeader,
   PageLayout,
   PageTable,
+  usePageNavigate,
 } from '../../../../framework';
 import { RouteObj } from '../../../common/Routes';
 import {
@@ -32,15 +33,15 @@ import {
 import { ExecutionEnvironment } from '../../interfaces/ExecutionEnvironment';
 import { useAwxView } from '../../useAwxView';
 
+import { AwxRoute } from '../../AwxRoutes';
+import { awxAPI } from '../../api/awx-utils';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
 import { useDeleteExecutionEnvironments } from './hooks/useDeleteExecutionEnvironments';
-import { AwxRoute } from '../../AwxRoutes';
-import { awxAPI } from '../../api/awx-utils';
 
 export function ExecutionEnvironments() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const config = useAwxConfig();
   const toolbarFilters = useExecutionEnvironmentsFilters();
   const tableColumns = useExecutionEnvironmentsColumns();
@@ -60,7 +61,7 @@ export function ExecutionEnvironments() {
         isPinned: true,
         icon: PlusIcon,
         label: t('Create execution environment'),
-        onClick: () => navigate(RouteObj.CreateExecutionEnvironment),
+        onClick: () => pageNavigate(AwxRoute.CreateExecutionEnvironment),
       },
       { type: PageActionType.Seperator },
       {
@@ -72,7 +73,7 @@ export function ExecutionEnvironments() {
         isDanger: true,
       },
     ],
-    [navigate, deleteExecutionEnvironments, t]
+    [pageNavigate, deleteExecutionEnvironments, t]
   );
 
   const rowActions = useMemo<IPageAction<ExecutionEnvironment>[]>(
@@ -84,9 +85,9 @@ export function ExecutionEnvironments() {
         isPinned: true,
         label: t('Edit execution environment'),
         onClick: (executionEnvironment) =>
-          navigate(
-            RouteObj.EditExecutionEnvironment.replace(':id', executionEnvironment.id.toString())
-          ),
+          pageNavigate(AwxRoute.EditExecutionEnvironment, {
+            params: { id: executionEnvironment.id },
+          }),
       },
       { type: PageActionType.Seperator },
       {
@@ -98,7 +99,7 @@ export function ExecutionEnvironments() {
         isDanger: true,
       },
     ],
-    [navigate, deleteExecutionEnvironments, t]
+    [pageNavigate, deleteExecutionEnvironments, t]
   );
 
   return (
@@ -124,7 +125,7 @@ export function ExecutionEnvironments() {
         emptyStateTitle={t('No execution environments yet')}
         emptyStateDescription={t('To get started, create an execution environment.')}
         emptyStateButtonText={t('Create execution environment')}
-        emptyStateButtonClick={() => navigate(RouteObj.CreateExecutionEnvironment)}
+        emptyStateButtonClick={() => pageNavigate(AwxRoute.CreateExecutionEnvironment)}
         {...view}
         defaultSubtitle={t('Execution environment')}
       />
