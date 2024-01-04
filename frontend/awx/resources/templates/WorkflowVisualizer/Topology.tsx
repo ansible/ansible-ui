@@ -1,5 +1,3 @@
-import { useCallback, useEffect, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   CREATE_CONNECTOR_DROP_TYPE,
   ComponentFactory,
@@ -32,6 +30,8 @@ import {
   withCreateConnector,
   isNode,
 } from '@patternfly/react-topology';
+import { useCallback, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { EmptyStateNoData } from '../../../../../framework/components/EmptyStateNoData';
 import {
   AddNodeButton,
