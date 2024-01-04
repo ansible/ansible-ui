@@ -1,10 +1,15 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
-import { PageActions, PageHeader, PageLayout, useGetPageUrl } from '../../../../../framework';
+import { useParams } from 'react-router-dom';
+import {
+  PageActions,
+  PageHeader,
+  PageLayout,
+  useGetPageUrl,
+  usePageNavigate,
+} from '../../../../../framework';
 import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
-import { RouteObj } from '../../../../common/Routes';
 import { useGet } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
 import { awxAPI } from '../../../api/awx-utils';
@@ -15,9 +20,9 @@ export function InventoryPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string; inventory_type: string }>();
   const inventory = useGetInventory(params.id, params.inventory_type);
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const itemActions = useInventoryActions({
-    onInventoriesDeleted: () => navigate(RouteObj.Inventories),
+    onInventoriesDeleted: () => pageNavigate(AwxRoute.Inventories),
   });
   const getPageUrl = useGetPageUrl();
   const isSmartInventory = inventory?.kind === 'smart';

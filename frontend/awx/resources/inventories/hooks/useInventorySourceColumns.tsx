@@ -1,12 +1,12 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ITableColumn, usePageNavigate } from '../../../../../framework';
-import { RouteObj } from '../../../../common/Routes';
 import { StatusCell } from '../../../../common/Status';
 import { useDescriptionColumn, useNameColumn } from '../../../../common/columns';
-import { InventorySource } from '../../../interfaces/InventorySource';
-import { awxAPI } from '../../../api/awx-utils';
 import { useOptions } from '../../../../common/crud/useOptions';
+import { AwxRoute } from '../../../AwxRoutes';
+import { awxAPI } from '../../../api/awx-utils';
+import { InventorySource } from '../../../interfaces/InventorySource';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 
 export function useInventorySourceColumns(options?: {
@@ -20,7 +20,7 @@ export function useInventorySourceColumns(options?: {
   const pageNavigate = usePageNavigate();
   const nameClick = useCallback(
     (inventorySource: InventorySource) => {
-      return pageNavigate(RouteObj.InventoryDetails, {
+      return pageNavigate(AwxRoute.InventoryDetails, {
         params: { id: inventorySource.inventory.toString(), source_id: inventorySource.id },
       });
     },
