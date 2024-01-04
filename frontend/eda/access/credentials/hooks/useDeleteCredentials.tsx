@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings, useBulkConfirmation } from '../../../../../framework';
+import { compareStrings } from '../../../../../framework';
 import { useNameColumn } from '../../../../common/columns';
 import { requestDelete } from '../../../../common/crud/Data';
 import { idKeyFn } from '../../../../common/utils/nameKeyFn';
@@ -8,13 +8,14 @@ import { InUseResources } from '../../../common/EdaResourcesComon';
 import { edaAPI } from '../../../common/eda-utils';
 import { EdaCredential } from '../../../interfaces/EdaCredential';
 import { useCredentialColumns } from './useCredentialColumns';
+import { useEdaBulkConfirmation } from '../../../common/useEdaBulkConfirmation';
 
 export function useDeleteCredentials(onComplete?: (credentials: EdaCredential[]) => void) {
   const { t } = useTranslation();
   const confirmationColumns = useCredentialColumns();
   const deleteActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true });
   const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn]);
-  const bulkAction = useBulkConfirmation<EdaCredential>();
+  const bulkAction = useEdaBulkConfirmation<EdaCredential>();
   return useCallback(
     async (credentials: EdaCredential[]) => {
       const inUseDes = await InUseResources(credentials, edaAPI`/activations/?credential_id=`);

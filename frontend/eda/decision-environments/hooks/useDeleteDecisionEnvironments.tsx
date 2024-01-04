@@ -1,10 +1,11 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings, useBulkConfirmation } from '../../../../framework';
+import { compareStrings } from '../../../../framework';
 import { requestDelete } from '../../../common/crud/Data';
 import { idKeyFn } from '../../../common/utils/nameKeyFn';
 import { InUseResources } from '../../common/EdaResourcesComon';
 import { edaAPI } from '../../common/eda-utils';
+import { useEdaBulkConfirmation } from '../../common/useEdaBulkConfirmation';
 import {
   EdaDecisionEnvironment,
   EdaDecisionEnvironmentRead,
@@ -20,7 +21,7 @@ export function useDeleteDecisionEnvironments(
   const { t } = useTranslation();
   const confirmationColumns = useDecisionEnvironmentsColumns();
   const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
-  const bulkAction = useBulkConfirmation<EdaDecisionEnvironment>();
+  const bulkAction = useEdaBulkConfirmation<EdaDecisionEnvironment>();
   return useCallback(
     async (decisionEnvironments: EdaDecisionEnvironment[]) => {
       const inUseDes = await InUseResources(
@@ -67,7 +68,7 @@ export function useDeleteDecisionEnvironment(
   const { t } = useTranslation();
   const confirmationColumns = useDecisionEnvironmentColumns();
   const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
-  const bulkAction = useBulkConfirmation<EdaDecisionEnvironmentRead>();
+  const bulkAction = useEdaBulkConfirmation<EdaDecisionEnvironmentRead>();
   return useCallback(
     async (decisionEnvironments: EdaDecisionEnvironmentRead[]) => {
       const inUseDes = await InUseResources(
