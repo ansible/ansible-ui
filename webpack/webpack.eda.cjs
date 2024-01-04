@@ -5,7 +5,7 @@ const proxyUrl = new URL(EDA_SERVER);
 module.exports = function (env, argv) {
   const config = webpackConfig(env, argv);
 
-  config.entry = './frontend/eda/Eda.tsx';
+  config.entry = './frontend/eda/main/Eda.tsx';
 
   config.devServer.proxy = {
     '/api': {

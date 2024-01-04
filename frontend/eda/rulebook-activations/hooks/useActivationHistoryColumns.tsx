@@ -2,8 +2,8 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DateTimeCell, ITableColumn, TextCell, useGetPageUrl } from '../../../../framework';
 import { StatusCell } from '../../../common/Status';
-import { EdaRoute } from '../../EdaRoutes';
 import { EdaActivationInstance } from '../../interfaces/EdaActivationInstance';
+import { EdaRoute } from '../../main/EdaRoutes';
 
 export function useActivationHistoryColumns() {
   const { t } = useTranslation();

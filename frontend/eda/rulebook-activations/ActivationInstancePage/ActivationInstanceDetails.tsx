@@ -6,9 +6,9 @@ import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { AwxItemsResponse } from '../../../awx/common/AwxItemsResponse';
 import { StatusCell } from '../../../common/Status';
 import { useGet, useGetItem } from '../../../common/crud/useGet';
-import { edaAPI } from '../../api/eda-utils';
 import { PageDetailsSection } from '../../common/PageDetailsSection';
-import { SWR_REFRESH_INTERVAL } from '../../constants';
+import { SWR_REFRESH_INTERVAL } from '../../common/eda-constants';
+import { edaAPI } from '../../common/eda-utils';
 import { EdaActivationInstance } from '../../interfaces/EdaActivationInstance';
 import { EdaActivationInstanceLog } from '../../interfaces/EdaActivationInstanceLog';
 
