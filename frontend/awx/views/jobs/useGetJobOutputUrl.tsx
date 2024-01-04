@@ -2,7 +2,6 @@ import { useCallback } from 'react';
 import { useGetPageUrl } from '../../../../framework';
 import { AwxRoute } from '../../AwxRoutes';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
-import { jobPaths } from './useGetJobOutputUrl';
 
 export function useGetJobOutputUrl() {
   const getPageUrl = useGetPageUrl();
@@ -19,7 +18,8 @@ export function useGetJobOutputUrl() {
   );
   return getJobOutputUrl;
 }
-export const jobPaths: { [key: string]: string } = {
+
+const jobPaths: { [key: string]: string } = {
   project_update: 'project',
   inventory_update: 'inventory',
   job: 'playbook',
