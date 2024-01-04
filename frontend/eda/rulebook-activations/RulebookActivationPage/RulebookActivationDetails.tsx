@@ -11,14 +11,14 @@ import {
 } from '../../../../framework';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { capitalizeFirstLetter } from '../../../../framework/utils/strings';
+import { LastModifiedPageDetail } from '../../../common/LastModifiedPageDetail';
 import { StatusCell } from '../../../common/Status';
 import { useGetItem } from '../../../common/crud/useGet';
-import { EdaRoute } from '../../EdaRoutes';
+import { edaAPI } from '../../common/eda-utils';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { RestartPolicyEnum, Status906Enum } from '../../interfaces/generated/eda-api';
+import { EdaRoute } from '../../main/EdaRoutes';
 import { EdaExtraVarsCell } from '../components/EdaExtraVarCell';
-import { edaAPI } from '../../api/eda-utils';
-import { LastModifiedPageDetail } from '../../../common/LastModifiedPageDetail';
 
 export function RulebookActivationDetails() {
   const { t } = useTranslation();
