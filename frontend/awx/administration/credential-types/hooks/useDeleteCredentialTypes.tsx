@@ -1,10 +1,11 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { TextCell, compareStrings, useBulkConfirmation } from '../../../../../framework';
+import { TextCell, compareStrings } from '../../../../../framework';
 import { getItemKey, requestDelete } from '../../../../common/crud/Data';
 import { awxAPI } from '../../../api/awx-utils';
 import { CredentialType } from '../../../interfaces/CredentialType';
 import { useCredentialTypesColumns } from './useCredentialTypesColumns';
+import { useAwxBulkConfirmation } from '../../../common/useAwxBulkConfirmation';
 
 export function useDeleteCredentialTypes(onComplete: (users: CredentialType[]) => void) {
   const { t } = useTranslation();
@@ -29,7 +30,7 @@ export function useDeleteCredentialTypes(onComplete: (users: CredentialType[]) =
       ? t(`The credential type is provided by the system and is read-only.`)
       : '';
 
-  const bulkAction = useBulkConfirmation<CredentialType>();
+  const bulkAction = useAwxBulkConfirmation<CredentialType>();
   const deleteCredentialTypes = (credentialTypes: CredentialType[]) => {
     const undeletableManagedCredentialTypes: CredentialType[] = credentialTypes.filter(
       (credentialType) => credentialType.managed

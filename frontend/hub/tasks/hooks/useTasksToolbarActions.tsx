@@ -4,10 +4,11 @@ import { useTranslation } from 'react-i18next';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../framework';
 import { Task } from '../Task';
 import { useHubContext } from '../../useHubContext';
-import { compareStrings, useBulkConfirmation } from '../../../../framework';
+import { compareStrings } from '../../../../framework';
 import { requestPatch } from '../../../common/crud/Data';
 import { pulpAPI } from '../../api/formatPath';
 import { parsePulpIDFromURL } from '../../api/utils';
+import { useHubBulkConfirmation } from '../../common/useHubBulkConfirmation';
 import { useTasksColumns } from './useTasksColumns';
 
 export function useTasksToolbarActions(onComplete?: (tasks: Task[]) => void) {
@@ -37,7 +38,7 @@ export function useStopTasks(onComplete?: (tasks: Task[]) => void) {
   const { t } = useTranslation();
   const confirmationColumns = useTasksColumns();
   const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
-  const bulkAction = useBulkConfirmation<Task>();
+  const bulkAction = useHubBulkConfirmation<Task>();
   return useCallback(
     (tasks: Task[]) => {
       const filteredTasks = tasks

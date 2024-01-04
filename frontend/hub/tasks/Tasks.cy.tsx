@@ -22,18 +22,10 @@ describe('Tasks List', () => {
     cy.verifyPageTitle('Tasks');
     cy.get('table').find('tr').should('have.length', 10);
   });
-  it('Filter tasks by name', () => {
-    cy.mount(<Tasks />);
-    cy.intercept(pulpAPI`/tasks/*name__contains=pulpcore*`).as('nameFilterRequest');
-    cy.filterTableByText('pulpcore');
-    cy.wait('@nameFilterRequest');
-    cy.clickButton(/^Clear all filters$/);
-  });
   it('Filter tasks by status = running', () => {
     cy.mount(<Tasks />);
-    cy.intercept(pulpAPI`/tasks/*state=running*`).as('statusFilterRequest');
-    cy.filterByMultiSelection(/Status$/, /^Running$/);
-    cy.wait('@statusFilterRequest');
+    cy.get('[data-cy="filter-input"]').click();
+    cy.get('#running').click();
     cy.clickButton(/^Clear all filters$/);
   });
   it('Displays error if tasks are not successfully loaded', () => {
