@@ -2,11 +2,15 @@ import { DateTime } from 'luxon';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { PageFormSubmitHandler, PageHeader, PageLayout } from '../../../../framework';
+import {
+  PageFormSubmitHandler,
+  PageHeader,
+  PageLayout,
+  usePageNavigate,
+} from '../../../../framework';
 import { useGetPageUrl } from '../../../../framework/PageNavigation/useGetPageUrl';
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
 import { dateToInputDateTime } from '../../../../framework/utils/dateTimeHelpers';
-import { RouteObj } from '../../../common/Routes';
 import { postRequest } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
 import { AwxPageForm } from '../../AwxPageForm';
@@ -18,13 +22,6 @@ import { ScheduleFormFields } from '../../interfaces/ScheduleFormFields';
 import { ScheduleInputs } from './components/ScheduleInputs';
 import { buildScheduleContainer } from './hooks/scheduleHelpers';
 
-const routes: { [key: string]: string } = {
-  inventory: RouteObj.InventorySourceScheduleDetails,
-  job_template: RouteObj.JobTemplateScheduleDetails,
-  workflow_job_template: RouteObj.WorkflowJobTemplateScheduleDetails,
-  project: RouteObj.ProjectScheduleDetails,
-};
-
 export function CreateSchedule() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
@@ -33,8 +30,8 @@ export function CreateSchedule() {
   const closestQuarterHour: DateTime = DateTime.fromMillis(
     Math.ceil(now.toMillis() / 900000) * 900000
   );
-
   const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
 
   const [currentDate, time]: string[] = dateToInputDateTime(closestQuarterHour.toISO() as string);
 
@@ -157,17 +154,44 @@ export function CreateSchedule() {
       )
     );
     if (resource_type === 'inventory_source' && inventory) {
-      navigate(
-        RouteObj.InventorySourceScheduleDetails.replace(':id', inventory.id.toString())
-          .replace(':source_id', unified_job_template.toString())
-          .replace(':schedule_id', response?.id?.toString())
-      );
+      pageNavigate(AwxRoute.InventorySourceScheduleDetails, {
+        params: { id: inventory.id, source_id: unified_job_template, schedule_id: response?.id },
+      });
     } else {
-      navigate(
-        routes[unified_job_template_object.type]
-          .replace(':id', unified_job_template.toString())
-          .replace(':schedule_id', response.id.toString())
-      );
+      switch (unified_job_template_object.type) {
+        case 'inventory':
+          pageNavigate(AwxRoute.InventorySourceScheduleDetails, {
+            params: {
+              id: inventory?.id,
+              schedule_id: response?.id,
+            },
+          });
+          break;
+        case 'job_template':
+          pageNavigate(AwxRoute.JobTemplateScheduleDetails, {
+            params: {
+              id: unified_job_template_object.id,
+              schedule_id: response?.id,
+            },
+          });
+          break;
+        case 'workflow_job_template':
+          pageNavigate(AwxRoute.WorkflowJobTemplateScheduleDetails, {
+            params: {
+              id: unified_job_template_object.id,
+              schedule_id: response?.id,
+            },
+          });
+          break;
+        case 'project':
+          pageNavigate(AwxRoute.ProjectScheduleDetails, {
+            params: {
+              id: unified_job_template_object.id,
+              schedule_id: response?.id,
+            },
+          });
+          break;
+      }
     }
   };
   const onCancel = () => navigate(-1);

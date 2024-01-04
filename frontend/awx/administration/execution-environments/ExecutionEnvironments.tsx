@@ -2,7 +2,6 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { PencilAltIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import {
   IPageAction,
   ITableColumn,
@@ -14,7 +13,6 @@ import {
   PageTable,
   usePageNavigate,
 } from '../../../../framework';
-import { RouteObj } from '../../../common/Routes';
 import {
   useCreatedColumn,
   useDescriptionColumn,
@@ -163,13 +161,13 @@ export function useExecutionEnvironmentsColumns(options?: {
   disableLinks?: boolean;
 }) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const nameClick = useCallback(
     (executionEnvironment: ExecutionEnvironment) =>
-      navigate(
-        RouteObj.ExecutionEnvironmentDetails.replace(':id', executionEnvironment.id.toString())
-      ),
-    [navigate]
+      pageNavigate(AwxRoute.ExecutionEnvironmentDetails, {
+        params: { id: executionEnvironment.id },
+      }),
+    [pageNavigate]
   );
   const nameColumn = useNameColumn({
     ...options,

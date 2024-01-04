@@ -41,7 +41,7 @@ export function useAwxInventoryRoutes() {
                 },
                 {
                   label: t('Rules'),
-                  page: AwxRoute.InventorySourceScheduleRrules,
+                  page: AwxRoute.InventorySourceScheduleRules,
                 },
               ]}
             />
@@ -53,7 +53,7 @@ export function useAwxInventoryRoutes() {
               element: <ScheduleDetails />,
             },
             {
-              id: AwxRoute.InventorySourceScheduleRrules,
+              id: AwxRoute.InventorySourceScheduleRules,
               path: 'rrules',
               element: <ScheduleRules />,
             },

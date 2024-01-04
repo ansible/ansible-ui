@@ -14,7 +14,7 @@ import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { DownloadIcon, HeartbeatIcon, PencilAltIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import {
   BytesCell,
   IPageAction,
@@ -33,7 +33,6 @@ import { LoadingPage } from '../../../../framework/components/LoadingPage';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { capitalizeFirstLetter } from '../../../../framework/utils/strings';
 import { LastModifiedPageDetail } from '../../../common/LastModifiedPageDetail';
-import { RouteObj } from '../../../common/Routes';
 import { StatusLabel } from '../../../common/Status';
 import { useGetItem } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
@@ -122,7 +121,7 @@ export function InstanceDetailsTab(props: {
   handleInstanceForksSlider: (instance: Instance, value: number) => Promise<void>;
 }) {
   const { t } = useTranslation();
-  const history = useNavigate();
+  const pageNavigate = usePageNavigate();
   const getPageUrl = useGetPageUrl();
   const {
     instance,
@@ -139,11 +138,9 @@ export function InstanceDetailsTab(props: {
           variant="link"
           isInline
           onClick={() =>
-            history(
-              getPageUrl(AwxRoute.InstancePage, {
-                params: { id: instance.id },
-              })
-            )
+            pageNavigate(AwxRoute.InstancePage, {
+              params: { id: instance.id },
+            })
           }
         >
           {instance.hostname}
@@ -161,7 +158,7 @@ export function InstanceDetailsTab(props: {
         <PageDetail label={t(`Instance groups`)} data-cy="instance-groups">
           {instanceGroups.results.map((instance) => (
             <Label color="blue" style={{ marginRight: '10px' }} key={instance.id}>
-              <Link to={RouteObj.InstanceGroupDetails.replace(':id', instance.id.toString())}>
+              <Link to={getPageUrl(AwxRoute.InstanceGroupDetails, { params: { id: instance.id } })}>
                 {/* eslint-disable-next-line i18next/no-literal-string */}
                 {instance.name}
               </Link>
