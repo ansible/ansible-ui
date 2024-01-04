@@ -53,6 +53,8 @@ export interface PageMultiSelectProps<ValueT> {
    * User by the toolbar since clearing the select is part of the toolbar filter chips already.
    */
   disableClearSelection?: boolean;
+
+  disableClearChips?: boolean;
 }
 
 /**
@@ -139,6 +141,7 @@ export function PageMultiSelect<
         icon={icon}
         isDisabled={props.isDisabled}
         isFullWidth
+        style={{ paddingTop: 2, paddingBottom: 4, minHeight: 36 }}
       >
         {selectedOptions.length > 0 ? (
           <>
@@ -146,15 +149,24 @@ export function PageMultiSelect<
               <Chip
                 isReadOnly={disableClearSelection}
                 onClick={() => onSelect(() => [])}
-                style={{ marginTop: -2, marginBottom: -2 }}
+                style={{ marginTop: -4, marginBottom: -4 }}
               >
                 {selectedOptions.length}
               </Chip>
             ) : (
               <>
-                <ChipGroup>
+                <ChipGroup numChips={99}>
                   {selectedOptions.map((option) => (
-                    <Chip key={option.label} isReadOnly style={{ marginTop: -2, marginBottom: -2 }}>
+                    <Chip
+                      key={option.label}
+                      isReadOnly={props.disableClearChips}
+                      style={{ marginTop: -2, marginBottom: -2 }}
+                      onClick={() =>
+                        onSelect(
+                          (previousValues) => previousValues?.filter((v) => v !== option.value)
+                        )
+                      }
+                    >
                       {option.label}
                     </Chip>
                   ))}
