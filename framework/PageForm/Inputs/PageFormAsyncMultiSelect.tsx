@@ -34,6 +34,8 @@ export type PageFormAsyncMultiSelectProps<
   | 'queryOptions'
   | 'queryPlaceholder'
   | 'queryErrorText'
+  | 'disableClearChips'
+  | 'disableClearSelection'
 > &
   Pick<
     PageFormGroupProps,
@@ -85,6 +87,8 @@ export function PageFormAsyncMultiSelect<
               onSelect={(getNewValues) => onChange(getNewValues(value))}
               isDisabled={props.isDisabled || props.isReadOnly || isSubmitting}
               footer={props.footer}
+              disableClearChips={props.disableClearChips}
+              disableClearSelection={props.disableClearSelection}
             />
           </PageFormGroup>
         );
