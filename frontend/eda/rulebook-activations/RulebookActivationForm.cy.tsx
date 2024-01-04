@@ -1,4 +1,4 @@
-import { edaAPI } from '../api/eda-utils';
+import { edaAPI } from '../common/eda-utils';
 import { CreateRulebookActivation } from './RulebookActivationForm';
 
 describe('Create rulebook activation ', () => {
