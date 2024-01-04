@@ -1,10 +1,11 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings, TextCell, useBulkConfirmation } from '../../../../../framework';
+import { compareStrings, TextCell } from '../../../../../framework';
 import { getItemKey, requestDelete } from '../../../../common/crud/Data';
 import { awxAPI } from '../../../api/awx-utils';
 import { User } from '../../../interfaces/User';
 import { useUsersColumns } from './useUsersColumns';
+import { useAwxBulkConfirmation } from '../../../common/useAwxBulkConfirmation';
 
 export function useDeleteUsers(onComplete: (users: User[]) => void) {
   const { t } = useTranslation();
@@ -24,7 +25,7 @@ export function useDeleteUsers(onComplete: (users: User[]) => void) {
       ? undefined
       : t('The user cannot be deleted due to insufficient permissions.');
   };
-  const bulkAction = useBulkConfirmation<User>();
+  const bulkAction = useAwxBulkConfirmation<User>();
   const deleteUsers = (users: User[]) => {
     const undeletableUsers = users.filter(cannotDeleteUser);
 

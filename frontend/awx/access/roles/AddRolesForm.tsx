@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { PageFormSelect, useBulkActionDialog } from '../../../../framework';
+import { PageFormSelect } from '../../../../framework';
 import { PageFormCheckbox } from '../../../../framework/PageForm/Inputs/PageFormCheckbox';
 import { PageFormHidden } from '../../../../framework/PageForm/Utils/PageFormHidden';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
@@ -15,6 +15,7 @@ import { PageFormInventorySelect } from '../../resources/inventories/components/
 import { PageFormProjectSelect } from '../../resources/projects/components/PageFormProjectSelect';
 import { PageFormJobTemplateSelect } from '../../resources/templates/components/PageFormJobTemplateSelect';
 import { PageFormWorkflowJobTemplateSelect } from '../../resources/templates/components/PageFormWorkflowJobTemplateSelect';
+import { useAwxBulkActionDialog } from '../../common/useAwxBulkActionDialog';
 import { PageFormSelectOrganization } from '../organizations/components/PageFormOrganizationSelect';
 import { AwxResourceTypeRoles, useAwxRoles } from './useAwxRoles';
 
@@ -39,7 +40,7 @@ type AddRole = UserRole | TeamRole;
 export function AddRolesForm(props: { users?: User[]; teams?: Team[]; onClose?: () => void }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const openBulkActionDialog = useBulkActionDialog<AddRole>();
+  const openBulkActionDialog = useAwxBulkActionDialog<AddRole>();
   const postRequest = usePostRequest();
   return (
     <AwxPageForm

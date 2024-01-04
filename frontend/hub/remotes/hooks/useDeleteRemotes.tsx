@@ -1,15 +1,16 @@
 import { useTranslation } from 'react-i18next';
-import { compareStrings, useBulkConfirmation } from '../../../../framework';
+import { compareStrings } from '../../../../framework';
 import { nameKeyFn } from '../../../common/utils/nameKeyFn';
 import { hubAPIDelete, parsePulpIDFromURL } from '../../api/utils';
 import { pulpAPI } from '../../api/formatPath';
 import { IRemotes } from '../Remotes';
 import { useRemoteColumns } from './useRemoteColumns';
+import { useHubBulkConfirmation } from '../../common/useHubBulkConfirmation';
 
 export function useDeleteRemotes(onComplete: (remotes: IRemotes[]) => void) {
   const { t } = useTranslation();
   const confirmationColumns = useRemoteColumns();
-  const bulkAction = useBulkConfirmation<IRemotes>();
+  const bulkAction = useHubBulkConfirmation<IRemotes>();
 
   const deleteRemotes = (remotes: IRemotes[]) => {
     bulkAction({

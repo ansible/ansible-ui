@@ -1,10 +1,11 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings, useBulkConfirmation } from '../../../../../framework';
+import { compareStrings } from '../../../../../framework';
 import { useNameColumn } from '../../../../common/columns';
 import { getItemKey, requestDelete } from '../../../../common/crud/Data';
 import { awxAPI } from '../../../api/awx-utils';
 import { Credential } from '../../../interfaces/Credential';
+import { useAwxBulkConfirmation } from '../../../common/useAwxBulkConfirmation';
 import { useCredentialsColumns } from './useCredentialsColumns';
 
 export function useDeleteCredentials(onComplete?: (credentials: Credential[]) => void) {
@@ -12,7 +13,7 @@ export function useDeleteCredentials(onComplete?: (credentials: Credential[]) =>
   const confirmationColumns = useCredentialsColumns({ disableLinks: true, disableSort: true });
   const deleteActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true });
   const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn]);
-  const bulkAction = useBulkConfirmation<Credential>();
+  const bulkAction = useAwxBulkConfirmation<Credential>();
   const deleteCredentials = (credentials: Credential[]) => {
     bulkAction({
       title: t('Permanently delete credentials', { count: credentials.length }),
