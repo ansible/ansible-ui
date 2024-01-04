@@ -18,12 +18,8 @@ import { awxAPI } from '../../../api/awx-utils';
 import { CredentialLabel } from '../../../common/CredentialLabel';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { UnifiedJob } from '../../../interfaces/UnifiedJob';
-import {
-  getLaunchedByDetails,
-  getScheduleUrl,
-  isJobRunning,
-  useGetJobOutputUrl,
-} from '../jobUtils';
+import { getLaunchedByDetails, getScheduleUrl, isJobRunning } from '../jobUtils';
+import { useGetJobOutputUrl } from '../useGetJobOutputUrl';
 
 export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();

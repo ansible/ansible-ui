@@ -23,7 +23,7 @@ import type { Inventory } from '../../../interfaces/Inventory';
 import type { JobTemplate } from '../../../interfaces/JobTemplate';
 import type { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
 import type { UnifiedJob } from '../../../interfaces/UnifiedJob';
-import { useGetJobOutputUrl } from '../../../views/jobs/jobUtils';
+import { useGetJobOutputUrl } from '../../../views/jobs/useGetJobOutputUrl';
 import { PageFormCredentialSelect } from '../../credentials/components/PageFormCredentialSelect';
 import { PageFormInventorySelect } from '../../inventories/components/PageFormInventorySelect';
 import { parseStringToTagArray } from '../JobTemplateFormHelpers';

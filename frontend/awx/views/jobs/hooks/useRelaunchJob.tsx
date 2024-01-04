@@ -12,7 +12,8 @@ import {
   WorkflowJobRelaunch,
 } from '../../../interfaces/RelaunchConfiguration';
 import { UnifiedJob } from '../../../interfaces/UnifiedJob';
-import { getRelaunchEndpoint, useGetJobOutputUrl } from '../jobUtils';
+import { getRelaunchEndpoint } from '../jobUtils';
+import { useGetJobOutputUrl } from '../useGetJobOutputUrl';
 
 export function useRelaunchJob(jobRelaunchParams?: JobRelaunch) {
   const alertToaster = usePageAlertToaster();

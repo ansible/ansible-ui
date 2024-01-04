@@ -9,7 +9,7 @@ import type { JobTemplate } from '../../../interfaces/JobTemplate';
 import type { UnifiedJob } from '../../../interfaces/UnifiedJob';
 import type { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import type { JobLaunch, WorkflowJobLaunch } from '../../../interfaces/generated-from-swagger/api';
-import { useGetJobOutputUrl } from '../../../views/jobs/jobUtils';
+import { useGetJobOutputUrl } from '../../../views/jobs/useGetJobOutputUrl';
 
 type Template = JobTemplate | WorkflowJobTemplate;
 type TemplateLaunch = JobLaunch & WorkflowJobLaunch;
