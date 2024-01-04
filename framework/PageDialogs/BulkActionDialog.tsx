@@ -12,6 +12,8 @@ import pLimit from 'p-limit';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAbortController } from '../../frontend/common/crud/useAbortController';
+import { genericErrorAdapter } from '../PageForm/genericErrorAdapter';
+import { ErrorAdapter } from '../PageForm/typesErrorAdapter';
 import { PageTable } from '../PageTable/PageTable';
 import { ITableColumn, useVisibleModalColumns } from '../PageTable/PageTableColumn';
 import { usePaged } from '../PageTable/useTableItems';
@@ -50,6 +52,9 @@ export interface BulkActionDialogProps<T extends object> {
 
   /** Indicates if this is a destructive operation */
   isDanger?: boolean;
+
+  /** Error adapter used to parse the error message */
+  errorAdapter?: ErrorAdapter;
 }
 
 /**
@@ -67,6 +72,7 @@ export interface BulkActionDialogProps<T extends object> {
  * @param {function=} onClose - Callback called when the dialog closes.
  * @param {string=} processingText - The text to show for each item when the action is happening.
  * @param {boolean=} isDanger - Indicates if this is a destructive operation.
+ * @param {ErrorAdapter} [errorAdapter] - Optional adapter for error handling.
  */
 export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<T>) {
   const {
@@ -79,6 +85,7 @@ export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<
     onClose,
     processingText,
     isDanger,
+    errorAdapter = genericErrorAdapter,
   } = props;
   const { t } = useTranslation();
   const [translations] = useFrameworkTranslations();
@@ -128,9 +135,14 @@ export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<
               }
               successfulItems.push(item);
             } catch (err) {
+              const { genericErrors, fieldErrors } = errorAdapter(err);
+              const parsedErrors = [...genericErrors, ...fieldErrors.filter((e) => e.message)];
               if (!abortController.signal.aborted) {
                 if (err instanceof Error) {
-                  const message = err.message;
+                  const message =
+                    typeof parsedErrors[0].message === 'string' && parsedErrors.length === 1
+                      ? parsedErrors[0].message
+                      : t(`Unknown error`);
                   setStatuses((statuses) => ({
                     ...(statuses ?? {}),
                     [key]: message,
@@ -157,7 +169,16 @@ export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<
       onComplete?.(successfulItems);
     }
     void process();
-  }, [abortController, actionFn, items, keyFn, onComplete, translations.errorText, t]);
+  }, [
+    abortController,
+    actionFn,
+    items,
+    keyFn,
+    onComplete,
+    translations.errorText,
+    t,
+    errorAdapter,
+  ]);
 
   const pagination = usePaged(items);
 
@@ -274,11 +295,16 @@ export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<
 /**
  * useBulkActionDialog - react hook to open a BulkActionDialog
  *
+ * @template T - The type of the items on which the bulk action will be performed.
+ * @param {ErrorAdapter} [defaultErrorAdapter = genericErrorAdapter] - Optional default adapter for error handling.
+ * @returns {(props: BulkActionDialogProps<T>) => void} - A function to set the properties of the BulkActionDialog.
  * @example
  * const openBulkActionDialog = useBulkActionDialog()
  * openBulkActionDialog(...) // Pass BulkActionDialogProps
  */
-export function useBulkActionDialog<T extends object>() {
+export function useBulkActionDialog<T extends object>(
+  defaultErrorAdapter: ErrorAdapter = genericErrorAdapter
+) {
   const [_, setDialog] = usePageDialog();
   const [props, setProps] = useState<BulkActionDialogProps<T>>();
   useEffect(() => {
@@ -287,10 +313,16 @@ export function useBulkActionDialog<T extends object>() {
         setProps(undefined);
         props.onClose?.();
       };
-      setDialog(<BulkActionDialog<T> {...props} onClose={onCloseHandler} />);
+      setDialog(
+        <BulkActionDialog<T>
+          {...props}
+          errorAdapter={props.errorAdapter ?? defaultErrorAdapter}
+          onClose={onCloseHandler}
+        />
+      );
     } else {
       setDialog(undefined);
     }
-  }, [props, setDialog]);
+  }, [props, setDialog, defaultErrorAdapter]);
   return setProps;
 }

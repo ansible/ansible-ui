@@ -8,7 +8,6 @@ import {
   PageActionSelection,
   PageActionType,
   compareStrings,
-  useBulkConfirmation,
   usePageNavigate,
 } from '../../../../framework';
 import { postRequest, requestGet } from '../../../common/crud/Data';
@@ -20,6 +19,7 @@ import { HubContext, useHubContext } from '../../useHubContext';
 import { PulpItemsResponse } from '../../usePulpView';
 import { ExecutionEnvironment } from '../ExecutionEnvironment';
 import { useExecutionEnvironmentsColumns } from './useExecutionEnvironmentsColumns';
+import { useHubBulkConfirmation } from '../../common/useHubBulkConfirmation';
 
 export function useExecutionEnvironmentsActions(callback?: (ees: ExecutionEnvironment[]) => void) {
   const { t } = useTranslation();
@@ -91,7 +91,7 @@ export function useDeleteExecutionEnvironments(onComplete?: (ees: ExecutionEnvir
   const { t } = useTranslation();
   const confirmationColumns = useExecutionEnvironmentsColumns();
   const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
-  const bulkAction = useBulkConfirmation<ExecutionEnvironment>();
+  const bulkAction = useHubBulkConfirmation<ExecutionEnvironment>();
   return useCallback(
     (ees: ExecutionEnvironment[]) => {
       bulkAction({
@@ -127,7 +127,7 @@ export function useSyncExecutionEnvironments(onComplete?: (ees: ExecutionEnviron
   const { t } = useTranslation();
   const confirmationColumns = useExecutionEnvironmentsColumns();
   const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
-  const bulkAction = useBulkConfirmation<ExecutionEnvironment>();
+  const bulkAction = useHubBulkConfirmation<ExecutionEnvironment>();
   return useCallback(
     (ees: ExecutionEnvironment[]) => {
       bulkAction({
@@ -162,7 +162,7 @@ export function useSignExecutionEnvironments(onComplete?: (ees: ExecutionEnviron
   const { t } = useTranslation();
   const confirmationColumns = useExecutionEnvironmentsColumns();
   const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
-  const bulkAction = useBulkConfirmation<ExecutionEnvironment>();
+  const bulkAction = useHubBulkConfirmation<ExecutionEnvironment>();
   const context = useHubContext();
 
   return useCallback(

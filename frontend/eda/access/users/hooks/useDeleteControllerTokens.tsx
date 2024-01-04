@@ -1,17 +1,18 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings, useBulkConfirmation } from '../../../../../framework';
+import { compareStrings } from '../../../../../framework';
 import { requestDelete } from '../../../../common/crud/Data';
 import { idKeyFn } from '../../../../common/utils/nameKeyFn';
 import { edaAPI } from '../../../common/eda-utils';
 import { EdaControllerToken } from '../../../interfaces/EdaControllerToken';
+import { useEdaBulkConfirmation } from '../../../common/useEdaBulkConfirmation';
 import { useControllerTokensColumns } from './useControllerTokensColumns';
 
 export function useDeleteControllerTokens(onComplete: (credentials: EdaControllerToken[]) => void) {
   const { t } = useTranslation();
   const confirmationColumns = useControllerTokensColumns();
   const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
-  const bulkAction = useBulkConfirmation<EdaControllerToken>();
+  const bulkAction = useEdaBulkConfirmation<EdaControllerToken>();
   return useCallback(
     (controllerTokens: EdaControllerToken[]) => {
       bulkAction({
