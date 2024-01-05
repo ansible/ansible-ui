@@ -14,7 +14,7 @@ import { Repository } from '../Repository';
 import { pulpAPI } from '../../api/formatPath';
 import { DropdownPosition } from '@patternfly/react-core/dist/esm/deprecated';
 import { useRepositoryActions } from '../hooks/useRepositoryActions';
-import { PulpItemsResponse } from '../../usePulpView';
+import { PulpItemsResponse } from '../../useHubView';
 import { parsePulpIDFromURL } from '../../api/utils';
 import { StatusCell } from '../../../common/Status';
 import { Trans, useTranslation } from 'react-i18next';

@@ -4,7 +4,7 @@ import { compareStrings, usePageNavigate } from '../../../../framework';
 import { requestGet } from '../../../common/crud/Data';
 import { collectionKeyFn, hubAPIDelete } from '../../api/utils';
 import { hubAPI, pulpAPI } from '../../api/formatPath';
-import { PulpItemsResponse } from '../../usePulpView';
+import { PulpItemsResponse } from '../../useHubView';
 import { CollectionVersionSearch } from '../Collection';
 import { useCollectionColumns } from './useCollectionColumns';
 import { navigateAfterDelete } from './useDeleteCollectionsFromRepository';

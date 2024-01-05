@@ -28,7 +28,7 @@ import { pulpAPI } from '../api/formatPath';
 import { appendTrailingSlash, hubAPIPut, parsePulpIDFromURL } from '../api/utils';
 import { HubError } from '../common/HubError';
 import { useHubContext } from '../useHubContext';
-import { PulpItemsResponse } from '../usePulpView';
+import { PulpItemsResponse } from '../useHubView';
 import { IRemotes } from './Remotes';
 import { REMOTE_COMMUNITY_COLLECTIONS_URL, yamlRequirementsTemplate } from './constants';
 
