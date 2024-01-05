@@ -19,7 +19,7 @@ import { useGet } from '../../common/crud/useGet';
 import { HubRoute } from '../HubRoutes';
 import { pulpAPI } from '../api/formatPath';
 import { Repository } from '../repositories/Repository';
-import { PulpItemsResponse } from '../usePulpView';
+import { PulpItemsResponse } from '../useHubView';
 import { IRemotes } from './Remotes';
 import { useRemoteActions } from './hooks/useRemoteActions';
 
