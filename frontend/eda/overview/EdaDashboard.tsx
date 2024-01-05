@@ -9,7 +9,6 @@ import { useEdaView } from '../common/useEventDrivenView';
 import { EdaControllerToken } from '../interfaces/EdaControllerToken';
 import { EdaDecisionEnvironment } from '../interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../interfaces/EdaProject';
-import { EdaRuleAuditItem } from '../interfaces/EdaRuleAudit';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
 import { EdaRoute } from '../main/EdaRoutes';
 import { EdaDecisionEnvironmentsCard } from './cards/EdaDecisionEnvironmentsCard';
@@ -37,11 +36,6 @@ export function EdaDashboard() {
   });
   const edaDecisionEnvironmentView = useEdaView<EdaDecisionEnvironment>({
     url: edaAPI`/decision-environments/`,
-    queryParams: { page: '1', page_size: '10' },
-    disableQueryString: true,
-  });
-  const edaRuleAuditView = useEdaView<EdaRuleAuditItem>({
-    url: edaAPI`/audit-rules/`,
     queryParams: { page: '1', page_size: '10' },
     disableQueryString: true,
   });
@@ -134,9 +128,9 @@ export function EdaDashboard() {
         )}
         <RuleAuditChart />
         <EdaRecentProjectsCard view={edaProjectView} />
-        <EdaDecisionEnvironmentsCard view={edaDecisionEnvironmentView} />
+        <EdaDecisionEnvironmentsCard />
         <EdaRulebookActivationsCard />
-        <EdaRuleAuditCard view={edaRuleAuditView} />
+        <EdaRuleAuditCard />
       </PageDashboard>
     </>
   );
