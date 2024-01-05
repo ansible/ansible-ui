@@ -20,12 +20,12 @@ import { requestGet, requestPatch } from '../../../../frontend/common/crud/Data'
 import { useGet } from '../../../../frontend/common/crud/useGet';
 import { usePatchRequest } from '../../../../frontend/common/crud/usePatchRequest';
 import { usePostRequest } from '../../../../frontend/common/crud/usePostRequest';
-import { PlatformRoute } from '../../../PlatformRoutes';
 import { gatewayAPI } from '../../../api/gateway-api-utils';
 import { useGetAll } from '../../../common/useGetAll';
 import { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
+import { PlatformRoute } from '../../../main/PlatformRoutes';
 
 export function CreatePlatformUser() {
   const { t } = useTranslation();

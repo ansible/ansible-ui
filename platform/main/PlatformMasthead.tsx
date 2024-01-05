@@ -17,15 +17,21 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
-import { PageMasthead, PageNotificationsIcon, useBreakpoint, usePageNavigate } from '../framework';
-import { PageMastheadDropdown } from '../framework/PageMasthead/PageMastheadDropdown';
-import { PageSettingsIcon } from '../framework/PageMasthead/PageSettingsIcon';
-import { PageThemeSwitcher } from '../framework/PageMasthead/PageThemeSwitcher';
-import { useAwxNotifications } from '../frontend/awx/AwxMasthead';
-import { PageRefreshIcon } from '../frontend/common/PageRefreshIcon';
+import {
+  PageMasthead,
+  PageNotificationsIcon,
+  useBreakpoint,
+  usePageNavigate,
+} from '../../framework';
+import { PageMastheadDropdown } from '../../framework/PageMasthead/PageMastheadDropdown';
+import { PageSettingsIcon } from '../../framework/PageMasthead/PageSettingsIcon';
+import { PageThemeSwitcher } from '../../framework/PageMasthead/PageThemeSwitcher';
+import { useAwxNotifications } from '../../frontend/awx/AwxMasthead';
+import { PageRefreshIcon } from '../../frontend/common/PageRefreshIcon';
+import { postRequest } from '../../frontend/common/crud/Data';
+import { gatewayAPI } from '../api/gateway-api-utils';
+import { useActivePlatformUser } from '../hooks/useActivePlatformUser';
 import { PlatformRoute } from './PlatformRoutes';
-import { gatewayAPI } from './api/gateway-api-utils';
-import { useActivePlatformUser } from './hooks/useActivePlatformUser';
 
 export function PlatformMasthead() {
   const { t } = useTranslation();
@@ -37,7 +43,7 @@ export function PlatformMasthead() {
 
   const { cache } = useSWRConfig();
   const logout = useCallback(async () => {
-    await fetch(gatewayAPI`/v1/logout/`);
+    await postRequest(gatewayAPI`/v1/logout/`, {});
     for (const key of cache.keys()) {
       cache.delete(key);
     }

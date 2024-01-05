@@ -1,26 +1,26 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
-import { PageNavigationItem, removeNavigationItemById } from '../framework';
-import { AwxRoute } from '../frontend/awx/AwxRoutes';
-import { useAwxNavigation } from '../frontend/awx/useAwxNavigation';
-import { EdaRoute } from '../frontend/eda/EdaRoutes';
-import { useEdaNavigation } from '../frontend/eda/useEdaNavigation';
-import { HubRoute } from '../frontend/hub/HubRoutes';
-import { useHubNavigation } from '../frontend/hub/useHubNavigation';
+import { PageNavigationItem, removeNavigationItemById } from '../../framework';
+import { AwxRoute } from '../../frontend/awx/AwxRoutes';
+import { useAwxNavigation } from '../../frontend/awx/useAwxNavigation';
+import { EdaRoute } from '../../frontend/eda/main/EdaRoutes';
+import { useEdaNavigation } from '../../frontend/eda/main/useEdaNavigation';
+import { HubRoute } from '../../frontend/hub/HubRoutes';
+import { useHubNavigation } from '../../frontend/hub/useHubNavigation';
+import { PlatformAwxRoles } from '../access/roles/PlatformAwxRoles';
+import { PlatformEdaRoles } from '../access/roles/PlatformEdaRoles';
+import { PlatformHubRoles } from '../access/roles/PlatformHubRoles';
+import { PlatformRoles } from '../access/roles/PlatformRoles';
+import { Lightspeed } from '../lightspeed/Lightspeed';
+import { PlatformOverview } from '../overview/PlatformOverview';
+import { QuickStartsPage } from '../overview/quickstarts/Quickstarts';
+import { useGetPlatformAuthenticatorsRoutes } from '../routes/useGetPlatformAuthenticatorsRoutes';
+import { useGetPlatformOrganizationsRoutes } from '../routes/useGetPlatformOrganizationsRoutes';
+import { useGetPlatformTeamsRoutes } from '../routes/useGetPlatformTeamsRoutes';
+import { useGetPlatformUsersRoutes } from '../routes/useGetPlatformUsersRoutes';
 import { useHasAwx, useHasEda, useHasHub } from './PlatformProvider';
 import { PlatformRoute } from './PlatformRoutes';
-import { PlatformAwxRoles } from './access/roles/PlatformAwxRoles';
-import { PlatformEdaRoles } from './access/roles/PlatformEdaRoles';
-import { PlatformHubRoles } from './access/roles/PlatformHubRoles';
-import { PlatformRoles } from './access/roles/PlatformRoles';
-import { PlatformDashboard } from './dashboard/PlatformDashboard';
-import { QuickStartsPage } from './dashboard/quickstarts/Quickstarts';
-import { Lightspeed } from './lightspeed/Lightspeed';
-import { useGetPlatformAuthenticatorsRoutes } from './routes/useGetPlatformAuthenticatorsRoutes';
-import { useGetPlatformOrganizationsRoutes } from './routes/useGetPlatformOrganizationsRoutes';
-import { useGetPlatformTeamsRoutes } from './routes/useGetPlatformTeamsRoutes';
-import { useGetPlatformUsersRoutes } from './routes/useGetPlatformUsersRoutes';
 
 export function usePlatformNavigation() {
   const { t } = useTranslation();
@@ -92,7 +92,7 @@ export function usePlatformNavigation() {
       id: PlatformRoute.Overview,
       label: t('Overview'),
       path: 'overview',
-      element: <PlatformDashboard />,
+      element: <PlatformOverview />,
     });
     navigationItems.push({
       id: PlatformRoute.AWX,

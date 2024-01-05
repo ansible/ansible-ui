@@ -1,21 +1,21 @@
+import { CubesIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../../framework';
-import { useAuthenticatorsFilters } from '../hooks/useAuthenticatorsFilters';
-import { useAuthenticatorsColumns } from '../hooks/useAuthenticatorColumns';
-import { Authenticator } from '../../../interfaces/Authenticator';
-import { usePlatformView } from '../../../hooks/usePlatformView';
-import { CubesIcon } from '@patternfly/react-icons';
-import { PlatformRoute } from '../../../PlatformRoutes';
-import {
-  useAuthenticatorRowActions,
-  useAuthenticatorToolbarActions,
-} from '../hooks/useAuthenticatorActions';
-import { useOptions } from '../../../../frontend/common/crud/useOptions';
 import {
   ActionsResponse,
   OptionsResponse,
 } from '../../../../frontend/awx/interfaces/OptionsResponse';
+import { useOptions } from '../../../../frontend/common/crud/useOptions';
 import { gatewayAPI } from '../../../api/gateway-api-utils';
+import { usePlatformView } from '../../../hooks/usePlatformView';
+import { Authenticator } from '../../../interfaces/Authenticator';
+import { PlatformRoute } from '../../../main/PlatformRoutes';
+import {
+  useAuthenticatorRowActions,
+  useAuthenticatorToolbarActions,
+} from '../hooks/useAuthenticatorActions';
+import { useAuthenticatorsColumns } from '../hooks/useAuthenticatorColumns';
+import { useAuthenticatorsFilters } from '../hooks/useAuthenticatorsFilters';
 
 export function AuthenticatorsList() {
   const { t } = useTranslation();

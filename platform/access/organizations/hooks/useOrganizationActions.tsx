@@ -14,10 +14,10 @@ import {
   OptionsResponse,
 } from '../../../../frontend/awx/interfaces/OptionsResponse';
 import { useOptions } from '../../../../frontend/common/crud/useOptions';
-import { PlatformRoute } from '../../../PlatformRoutes';
 import { gatewayAPI } from '../../../api/gateway-api-utils';
 import { IPlatformView } from '../../../hooks/usePlatformView';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
+import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { useDeleteOrganizations } from './useDeleteOrganizations';
 
 export function useOrganizationToolbarActions(view: IPlatformView<PlatformOrganization>) {
