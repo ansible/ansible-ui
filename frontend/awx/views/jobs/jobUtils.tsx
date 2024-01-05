@@ -1,4 +1,3 @@
-import { RouteObj } from '../../../common/Routes';
 import { awxAPI } from '../../api/awx-utils';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
 
@@ -50,21 +49,6 @@ export function getRelaunchEndpoint(job: UnifiedJob) {
     case 'project_update':
       return job.project ? awxAPI`/projects/${job.project}/update/` : undefined;
   }
-}
-
-const jobPaths: { [key: string]: string } = {
-  project_update: 'project',
-  inventory_update: 'inventory',
-  job: 'playbook',
-  ad_hoc_command: 'command',
-  system_job: 'management',
-  workflow_job: 'workflow',
-};
-export function getJobOutputUrl(job: UnifiedJob) {
-  return RouteObj.JobOutput.replace(':job_type', jobPaths[job.type]).replace(
-    ':id',
-    job.id.toString()
-  );
 }
 
 /**

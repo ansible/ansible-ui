@@ -22,6 +22,12 @@ export interface HubItemsResponse<T extends object> {
   };
 }
 
+export interface PulpItemsResponse<T extends object> {
+  count: number;
+  results: T[];
+  next?: string;
+}
+
 export type IHubView<T extends object> = IView &
   ISelected<T> & {
     itemCount: number | undefined;
@@ -30,30 +36,88 @@ export type IHubView<T extends object> = IView &
     unselectItemsAndRefresh: (items: T[]) => void;
   };
 
+interface CommonResponse<T extends object> {
+  count: number | undefined;
+  next: string | undefined;
+  pageItems: T[] | undefined;
+}
+
+function deconstruct<T extends object>(
+  data: HubItemsResponse<T> | PulpItemsResponse<T> | undefined
+): CommonResponse<T> {
+  if (data && 'meta' in data) {
+    // HubItemsResponse
+    return {
+      count: data.meta.count,
+      next: data.links?.next,
+      pageItems: data.data,
+    };
+  } else {
+    // PulpItemsResponse | undefined
+    return {
+      count: data?.count,
+      next: data?.next,
+      pageItems: data?.results,
+    };
+  }
+}
+
+const sortKeys = {
+  '/pulp/api/v3/': 'ordering',
+  '/pulp/api/v3/pulp_container/namespaces/': 'sort',
+  '/v1/imports/': 'order_by',
+  '/v1/roles/': 'order_by',
+  '/_ui/v1/': 'sort',
+  '/v3/plugin/ansible/search/collection-versions/': 'order_by',
+};
+
+const pageKeys = {
+  '/v1/imports/': 'page',
+  '/v1/namespaces/': 'page',
+  '/v1/roles/': 'page',
+  '/_ui/v1/': 'offset',
+};
+
+function url2keys(url: string): { sortKey: string; pageKey: string } {
+  let sortKey = 'sort';
+  Object.entries(sortKeys).forEach(([k, v]) => {
+    if (url.includes(k)) {
+      sortKey = v;
+    }
+  });
+
+  let pageKey = 'offset';
+  Object.entries(pageKeys).forEach(([k, v]) => {
+    if (url.includes(k)) {
+      pageKey = v;
+    }
+  });
+
+  return { pageKey, sortKey };
+}
+
 export function useHubView<T extends object>({
-  url,
-  keyFn,
-  toolbarFilters,
-  tableColumns,
-  disableQueryString,
-  queryParams,
-  sortKey,
   defaultFilters,
+  defaultSelection,
   defaultSort: initialDefaultSort,
   defaultSortDirection: initialDefaultSortDirection,
-  defaultSelection,
+  disableQueryString,
+  keyFn,
+  queryParams,
+  tableColumns,
+  toolbarFilters,
+  url,
 }: {
-  url: string;
-  keyFn: (item: T) => string | number;
-  toolbarFilters?: IToolbarFilter[];
-  tableColumns?: ITableColumn<T>[];
-  disableQueryString?: boolean;
-  queryParams?: QueryParams;
-  sortKey?: string;
   defaultFilters?: Record<string, string[]>;
+  defaultSelection?: T[];
   defaultSort?: string | undefined;
   defaultSortDirection?: 'asc' | 'desc' | undefined;
-  defaultSelection?: T[];
+  disableQueryString?: boolean;
+  keyFn: (item: T) => string | number;
+  queryParams?: QueryParams;
+  tableColumns?: ITableColumn<T>[];
+  toolbarFilters?: IToolbarFilter[];
+  url: string;
 }): IHubView<T> {
   let defaultSort: string | undefined = initialDefaultSort;
   let defaultSortDirection: 'asc' | 'desc' | undefined = initialDefaultSortDirection;
@@ -77,7 +141,7 @@ export function useHubView<T extends object>({
 
   const { page, perPage, sort, sortDirection, filterState } = view;
 
-  let queryString = queryParams ? `?${getQueryString(queryParams)}` : '';
+  const queryString = queryParams ? [getQueryString(queryParams)] : [];
 
   if (filterState) {
     for (const key in filterState) {
@@ -85,38 +149,43 @@ export function useHubView<T extends object>({
       if (toolbarFilter) {
         const values = filterState[key];
         if (values && values.length > 0) {
-          queryString ? (queryString += '&') : (queryString += '?');
           if (values.length > 1) {
-            queryString += values.map((value) => `or__${toolbarFilter.query}=${value}`).join('&');
+            // FIXME: this doesn't seem to be something hub api supports yet - is it useful anywhere specific?
+            queryString.push(
+              values.map((value) => `or__${toolbarFilter.query}=${value}`).join('&')
+            );
           } else {
-            queryString += `${toolbarFilter.query}=${values.join(',')}`;
+            queryString.push(`${toolbarFilter.query}=${values.join(',')}`);
           }
         }
       }
     }
   }
 
+  const { pageKey, sortKey } = url2keys(url);
+
   if (sort) {
-    if (!sortKey) {
-      sortKey = 'sort';
-    }
-    queryString ? (queryString += '&') : (queryString += '?');
     if (sortDirection === 'desc') {
-      queryString += `${sortKey}=-${sort}`;
+      queryString.push(`${sortKey}=-${sort}`);
     } else {
-      queryString += `${sortKey}=${sort}`;
+      queryString.push(`${sortKey}=${sort}`);
     }
   }
 
-  queryString ? (queryString += '&') : (queryString += '?');
-  queryString += `offset=${(page - 1) * perPage}`;
+  if (pageKey === 'offset') {
+    queryString.push(`offset=${(page - 1) * perPage}`);
+    queryString.push(`limit=${perPage}`);
+  } else if (pageKey === 'page') {
+    queryString.push(`page=${page}`);
+    queryString.push(`page_size=${perPage}`);
+  }
 
-  queryString ? (queryString += '&') : (queryString += '?');
-  queryString += `limit=${perPage}`;
+  if (queryString.length) {
+    url += '?' + queryString.join('&');
+  }
 
-  url += queryString;
   const fetcher = useFetcher();
-  const response = useSWR<HubItemsResponse<T>>(url, fetcher, {
+  const response = useSWR<HubItemsResponse<T> | PulpItemsResponse<T>>(url, fetcher, {
     dedupingInterval: 0,
     refreshInterval: 30000,
   });
@@ -125,8 +194,10 @@ export function useHubView<T extends object>({
     await mutate();
   }, [mutate]);
 
-  const nextPage = serverlessURL(data?.links?.next);
-  useSWR<HubItemsResponse<T>>(nextPage, fetcher, {
+  const { count, next, pageItems } = deconstruct<T>(data);
+
+  const nextPage = serverlessURL(next);
+  useSWR<HubItemsResponse<T> | PulpItemsResponse<T>>(nextPage, fetcher, {
     dedupingInterval: 0,
   });
 
@@ -139,10 +210,10 @@ export function useHubView<T extends object>({
     }
   }
 
-  const selection = useSelected(data?.data ?? [], keyFn, defaultSelection);
+  const selection = useSelected(pageItems ?? [], keyFn, defaultSelection);
 
-  if (data?.meta.count !== undefined) {
-    itemCountRef.current.itemCount = data?.meta.count;
+  if (count !== undefined) {
+    itemCountRef.current.itemCount = count;
   }
 
   const unselectItemsAndRefresh = useCallback(
@@ -157,11 +228,11 @@ export function useHubView<T extends object>({
     return {
       refresh,
       itemCount: itemCountRef.current.itemCount,
-      pageItems: data?.data,
+      pageItems,
       error,
       ...view,
       ...selection,
       unselectItemsAndRefresh,
     };
-  }, [data?.data, error, refresh, selection, unselectItemsAndRefresh, view]);
+  }, [error, pageItems, refresh, selection, unselectItemsAndRefresh, view]);
 }
