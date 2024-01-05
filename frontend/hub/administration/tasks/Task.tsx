@@ -22,6 +22,7 @@ interface TaskError {
   description: string;
   traceback: string;
 }
+
 export interface TaskResponse {
   task: string;
 }
