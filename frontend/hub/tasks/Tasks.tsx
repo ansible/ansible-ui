@@ -17,7 +17,7 @@ import { StatusCell } from '../../common/Status';
 import { HubRoute } from '../HubRoutes';
 import { parsePulpIDFromURL, pulpHrefKeyFn } from '../api/utils';
 import { pulpAPI } from '../api/formatPath';
-import { usePulpView } from '../usePulpView';
+import { useHubView } from '../useHubView';
 import { Task } from './Task';
 import { useTasksActions } from './hooks/useTasksActions';
 import { useTaskActions } from './hooks/useTaskActions';
@@ -26,7 +26,7 @@ export function Tasks() {
   const { t } = useTranslation();
   const toolbarFilters = useTaskFilters();
   const tableColumns = useTasksColumns();
-  const view = usePulpView<Task>({
+  const view = useHubView<Task>({
     url: pulpAPI`/tasks/`,
     keyFn: pulpHrefKeyFn,
     toolbarFilters,

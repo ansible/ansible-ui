@@ -11,9 +11,9 @@ import {
 import { HubRoute } from '../../HubRoutes';
 import { HubNamespace } from '../HubNamespace';
 import { useDeleteHubNamespaces } from './useDeleteHubNamespaces';
-import { IPulpView } from '../../usePulpView';
+import { IHubView } from '../../useHubView';
 
-export function useHubNamespaceToolbarActions(view: IPulpView<HubNamespace>) {
+export function useHubNamespaceToolbarActions(view: IHubView<HubNamespace>) {
   const { t } = useTranslation();
   const deleteHubNamespaces = useDeleteHubNamespaces(view.unselectItemsAndRefresh);
   const getPageUrl = useGetPageUrl();
