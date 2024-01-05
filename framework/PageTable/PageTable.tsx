@@ -438,6 +438,7 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
           columns={expandedRowColumns}
           disablePadding
           numberOfColumns="multiple"
+          labelOrientation="vertical"
         />
       ));
     }
