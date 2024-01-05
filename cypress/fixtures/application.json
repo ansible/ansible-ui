@@ -34,7 +34,7 @@
   "name": "test",
   "description": "hello",
   "client_id": "WLIG801bgwcrnAlFdg4YStryRjprRVXFHXsLL7od",
-  "client_secret": "************",
+  "client_secret": "abcthisisatestabc",
   "client_type": "confidential",
   "redirect_uris": "https://www.google.com",
   "authorization_grant_type": "authorization-code",
