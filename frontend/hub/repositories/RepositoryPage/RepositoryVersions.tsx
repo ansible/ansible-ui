@@ -1,7 +1,7 @@
 import { useOutletContext, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { pulpAPI } from '../../api/formatPath';
-import { usePulpView } from '../../usePulpView';
+import { useHubView } from '../../useHubView';
 import { ITableColumn, PageTable, TextCell, useGetPageUrl } from '../../../../framework';
 import { useVersionsActions } from '../hooks/useRepositoryActions';
 import { RepositoryVersion } from '../Repository';
@@ -38,7 +38,7 @@ export function RepositoryVersions() {
     [t, getPageUrl, params.id]
   );
 
-  const view = usePulpView<RepositoryVersion>({
+  const view = useHubView<RepositoryVersion>({
     url: pulpAPI`/repositories/ansible/ansible/${repo_id}/versions`,
     keyFn: (repo) => repo.number,
     queryParams: {
