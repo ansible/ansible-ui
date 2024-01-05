@@ -9,6 +9,7 @@ import { CredentialType } from '../../frontend/awx/interfaces/CredentialType';
 import { ExecutionEnvironment } from '../../frontend/awx/interfaces/ExecutionEnvironment';
 import { InstanceGroup } from '../../frontend/awx/interfaces/InstanceGroup';
 import { Inventory } from '../../frontend/awx/interfaces/Inventory';
+import { InventorySource } from '../../frontend/awx/interfaces/InventorySource';
 import { Job } from '../../frontend/awx/interfaces/Job';
 import { JobEvent } from '../../frontend/awx/interfaces/JobEvent';
 import { JobTemplate } from '../../frontend/awx/interfaces/JobTemplate';
@@ -19,12 +20,11 @@ import { Schedule } from '../../frontend/awx/interfaces/Schedule';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
 import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/WorkflowJobTemplate';
+import { WorkflowNode } from '../../frontend/awx/interfaces/WorkflowNode';
 import './auth';
 import './commands';
 import { awxAPI } from './formatApiPathForAwx';
 import './rest-commands';
-import { InventorySource } from '../../frontend/awx/interfaces/InventorySource';
-import { WorkflowNode } from '../../frontend/awx/interfaces/WorkflowNode';
 
 //  AWX related custom command implementation
 
@@ -1125,29 +1125,37 @@ Cypress.Commands.add('waitForTemplateStatus', (jobID: string) => {
     });
 });
 
-Cypress.Commands.add('waitForJobToProcessEvents', (jobID: string) => {
-  const waitForJobToFinishProcessingEvents = (maxLoops: number) => {
-    if (maxLoops === 0) {
-      cy.log('Max loops reached while waiting for processing events.');
-      return;
-    }
-    cy.wait(500);
+Cypress.Commands.add('waitForJobToProcessEvents', (jobID: string, retries = 45) => {
+  /* default retries = 1s * 30s for processing events  * 1.5 for good measure */
+  cy.requestGet<Job>(awxAPI`/jobs/${jobID}/`).then((job) => {
+    let stillProcessing = false;
 
-    cy.requestGet<Job>(awxAPI`/jobs/${jobID}/`).then((job) => {
-      if (job.event_processing_finished !== true) {
-        cy.log(`EVENT PROCESSING = ${job.event_processing_finished}`);
-        cy.log(`MAX LOOPS RAN = ${maxLoops}`);
-        waitForJobToFinishProcessingEvents(maxLoops - 1);
+    // Check if job is still processing
+    switch (job.status) {
+      case 'failed':
+      case 'successful':
+      case 'canceled':
+        break;
+      default:
+        stillProcessing = true;
+        break;
+    }
+
+    // Check if job is still processing events
+    if (!job.event_processing_finished) {
+      stillProcessing = true;
+    }
+
+    if (stillProcessing) {
+      if (retries > 0) {
+        cy.wait(1000).then(() => cy.waitForJobToProcessEvents(jobID, retries - 1));
       } else {
-        cy.log(`EVENT PROCESSED = ${job.event_processing_finished}`);
+        cy.log('Wait for job to process events timed out.');
       }
-    });
-  };
-  /*
-  reason the numbers chosen for wait is 500ms and maxLoops is 80,
-  as processing events takes ~30s, hence 80 * 500ms is chosen as the upper limit)
-  */
-  waitForJobToFinishProcessingEvents(120);
+    } else {
+      cy.log(`Wait for job to process events success.`);
+    }
+  });
 });
 
 Cypress.Commands.add('waitForWorkflowJobStatus', (jobID: string) => {
