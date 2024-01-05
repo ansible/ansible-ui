@@ -1,15 +1,15 @@
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { PageLayout, PageTable, usePageNavigate } from '../../../../framework';
 import { HubRoute } from '../../HubRoutes';
-import { collectionKeyFn } from '../../api/utils';
 import { hubAPI } from '../../api/formatPath';
-import { useHubView } from '../../useHubView';
-import { useCollectionColumns } from '../../collections/hooks/useCollectionColumns';
-import { useCollectionFilters } from '../../collections/hooks/useCollectionFilters';
+import { collectionKeyFn } from '../../api/utils';
 import { CollectionVersionSearch } from '../../collections/Collection';
 import { useCollectionActions } from '../../collections/hooks/useCollectionActions';
+import { useCollectionColumns } from '../../collections/hooks/useCollectionColumns';
+import { useCollectionFilters } from '../../collections/hooks/useCollectionFilters';
 import { useCollectionsActions } from '../../collections/hooks/useCollectionsActions';
-import { useParams } from 'react-router-dom';
+import { useHubView } from '../../useHubView';
 
 export function HubNamespaceCollections() {
   const { t } = useTranslation();
@@ -20,7 +20,6 @@ export function HubNamespaceCollections() {
   const view = useHubView<CollectionVersionSearch>({
     url: hubAPI`/v3/plugin/ansible/search/collection-versions/`,
     keyFn: collectionKeyFn,
-    sortKey: 'order_by',
     queryParams: {
       is_deprecated: 'false',
       repository_label: '!hide_from_search',

@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageNavigationItem } from '../../../framework';
 import { AwxRoute } from '../AwxRoutes';
@@ -7,9 +7,13 @@ import { ApplicationPageDetails } from '../administration/applications/Applicati
 import { Applications } from '../administration/applications/Applications';
 import { ApplicationTokens } from '../administration/applications/ApplicationPage/ApplicationPageTokens';
 import { CreateApplication, EditApplication } from '../administration/applications/ApplicationForm';
+import { Application } from '../interfaces/Application';
+import { ApplicationClientSecretModal } from '../administration/applications/ApplicationPage/ApplicationClientSecretModal';
 
 export function useAwxApplicationsRoutes() {
   const { t } = useTranslation();
+  const [applicationModalSource, setApplicationModalSource] = useState<Application>();
+
   const applicationsRoutes = useMemo<PageNavigationItem>(
     () => ({
       id: AwxRoute.Applications,
@@ -19,7 +23,11 @@ export function useAwxApplicationsRoutes() {
         {
           id: AwxRoute.CreateApplication,
           path: 'create',
-          element: <CreateApplication />,
+          element: (
+            <CreateApplication
+              onSuccessfulCreate={(app: Application) => setApplicationModalSource(app)}
+            />
+          ),
         },
         {
           id: AwxRoute.EditApplication,
@@ -29,7 +37,17 @@ export function useAwxApplicationsRoutes() {
         {
           id: AwxRoute.ApplicationPage,
           path: ':id',
-          element: <ApplicationPage />,
+          element: (
+            <>
+              <ApplicationPage />
+              {applicationModalSource && (
+                <ApplicationClientSecretModal
+                  onClose={setApplicationModalSource}
+                  applicationModalSource={applicationModalSource}
+                ></ApplicationClientSecretModal>
+              )}
+            </>
+          ),
           children: [
             {
               id: AwxRoute.ApplicationDetails,
@@ -49,7 +67,7 @@ export function useAwxApplicationsRoutes() {
         },
       ],
     }),
-    [t]
+    [t, applicationModalSource]
   );
   return applicationsRoutes;
 }

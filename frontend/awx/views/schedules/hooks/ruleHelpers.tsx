@@ -1,13 +1,22 @@
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RRule } from 'rrule';
-import { RouteObj } from '../../../../common/Routes';
+import { useGetPageUrl } from '../../../../../framework';
+import { AwxRoute } from '../../../AwxRoutes';
 
-export const scheduleRulesRoutes: { [key: string]: string } = {
-  inventory: RouteObj.InventorySourceScheduleRules,
-  job_template: RouteObj.JobTemplateScheduleRules,
-  workflow_job_template: RouteObj.WorkflowJobTemplateScheduleRules,
-  projects: RouteObj.ProjectScheduleRules,
-};
+export function useScheuleRulesRoutes() {
+  const getPageUrl = useGetPageUrl();
+  const scheduleRulesRoutes = useMemo<Record<string, string | undefined>>(
+    () => ({
+      inventory: getPageUrl(AwxRoute.InventorySourceScheduleRules),
+      job_template: getPageUrl(AwxRoute.JobTemplateScheduleRules),
+      workflow_job_template: getPageUrl(AwxRoute.WorkflowJobTemplateScheduleRules),
+      projects: getPageUrl(AwxRoute.ProjectScheduleRules),
+    }),
+    [getPageUrl]
+  );
+  return scheduleRulesRoutes;
+}
 
 export function useGetWeekdayOptions() {
   const { t } = useTranslation();

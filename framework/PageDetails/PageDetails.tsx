@@ -6,11 +6,12 @@ export function PageDetails(props: {
   children?: ReactNode;
   disablePadding?: boolean;
   numberOfColumns?: 'multiple' | 'single';
+  labelOrientation?: 'horizontal' | 'vertical';
   alertPrompts?: string[];
 }) {
   const { disablePadding, alertPrompts } = props;
   const settings = useSettings();
-  const orientation = settings.formLayout;
+  const orientation = props.labelOrientation ?? settings.formLayout;
   const numberOfColumns = props.numberOfColumns ? props.numberOfColumns : settings.formColumns;
   const isCompact = false;
   return (
