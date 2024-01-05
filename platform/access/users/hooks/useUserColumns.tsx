@@ -6,8 +6,8 @@ import {
   useIdColumn,
   useModifiedColumn,
 } from '../../../../frontend/common/columns';
-import { PlatformRoute } from '../../../PlatformRoutes';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
+import { PlatformRoute } from '../../../main/PlatformRoutes';
 
 export function useUsersColumns() {
   const { t } = useTranslation();

@@ -15,9 +15,9 @@ import { AwxError } from '../../../../frontend/awx/common/AwxError';
 import { useGet } from '../../../../frontend/common/crud/useGet';
 import { usePatchRequest } from '../../../../frontend/common/crud/usePatchRequest';
 import { usePostRequest } from '../../../../frontend/common/crud/usePostRequest';
-import { PlatformRoute } from '../../../PlatformRoutes';
 import { gatewayAPI } from '../../../api/gateway-api-utils';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
+import { PlatformRoute } from '../../../main/PlatformRoutes';
 
 export function CreatePlatformOrganization() {
   const { t } = useTranslation();

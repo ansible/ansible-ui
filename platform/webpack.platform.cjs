@@ -10,7 +10,7 @@ const proxyUrl = new URL(PLATFORM_SERVER);
 module.exports = function (env, argv) {
   const config = webpackConfig(env, argv);
 
-  config.entry = './platform/Platform.tsx';
+  config.entry = './platform/main/Platform.tsx';
 
   config.devServer.proxy = {
     '/api': {
