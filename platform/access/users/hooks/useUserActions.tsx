@@ -14,10 +14,10 @@ import {
   OptionsResponse,
 } from '../../../../frontend/awx/interfaces/OptionsResponse';
 import { useOptions } from '../../../../frontend/common/crud/useOptions';
-import { PlatformRoute } from '../../../PlatformRoutes';
 import { gatewayAPI } from '../../../api/gateway-api-utils';
 import { IPlatformView } from '../../../hooks/usePlatformView';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
+import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { useDeleteUsers } from './useDeleteUsers';
 
 export function useUserToolbarActions(view: IPlatformView<PlatformUser>) {

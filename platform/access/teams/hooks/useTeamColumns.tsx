@@ -9,8 +9,8 @@ import {
   useNameColumn,
   useOrganizationNameColumn,
 } from '../../../../frontend/common/columns';
-import { PlatformRoute } from '../../../PlatformRoutes';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
+import { PlatformRoute } from '../../../main/PlatformRoutes';
 
 export function useTeamColumns(options?: { disableLinks?: boolean; disableSort?: boolean }) {
   const { t } = useTranslation();

@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageNavigationItem } from '../../framework';
-import { PlatformRoute } from '../PlatformRoutes';
 import { PlatformOrganizationDetails } from '../access/organizations/components/PlatformOrganizationDetails';
 import {
   CreatePlatformOrganization,
@@ -9,6 +8,7 @@ import {
 } from '../access/organizations/components/PlatformOrganizationForm';
 import { PlatformOrganizationList } from '../access/organizations/components/PlatformOrganizationList';
 import { PlatformOrganizationPage } from '../access/organizations/components/PlatformOrganizationPage';
+import { PlatformRoute } from '../main/PlatformRoutes';
 
 export function useGetPlatformOrganizationsRoutes() {
   const { t } = useTranslation();

@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { PageNavigationItem, PageNotImplemented } from '../../framework';
-import { PlatformRoute } from '../PlatformRoutes';
 import { AuthenticatorPage } from '../access/authenticators/AuthenticatorPage/AuthenticatorPage';
 import { PlatformAuthenticatorDetails } from '../access/authenticators/AuthenticatorPage/PlatformAuthenticatorDetails';
 import { AuthenticatorsList } from '../access/authenticators/components/AuthenticatorsList';
-import { useTranslation } from 'react-i18next';
+import { PlatformRoute } from '../main/PlatformRoutes';
 
 export function useGetPlatformAuthenticatorsRoutes() {
   const { t } = useTranslation();

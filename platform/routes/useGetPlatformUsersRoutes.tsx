@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageNavigationItem, PageNotImplemented } from '../../framework';
-import { PlatformRoute } from '../PlatformRoutes';
 import { PlatformUserDetails } from '../access/users/components/PlatformUserDetails';
 import { CreatePlatformUser, EditPlatformUser } from '../access/users/components/PlatformUserForm';
 import { PlatformUserPage } from '../access/users/components/PlatformUserPage';
 import { PlatformUsersList } from '../access/users/components/PlatformUsersList';
+import { PlatformRoute } from '../main/PlatformRoutes';
 
 export function useGetPlatformUsersRoutes() {
   const { t } = useTranslation();

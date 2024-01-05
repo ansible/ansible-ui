@@ -11,9 +11,9 @@ import {
 import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
 import { AwxError } from '../../../../frontend/awx/common/AwxError';
 import { useGetItem } from '../../../../frontend/common/crud/useGet';
-import { PlatformRoute } from '../../../PlatformRoutes';
 import { gatewayAPI } from '../../../api/gateway-api-utils';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
+import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { useUserRowActions } from '../hooks/useUserActions';
 
 export function PlatformUserPage() {
