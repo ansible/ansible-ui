@@ -8,7 +8,7 @@ import { AwxJobActivityCard } from '../../frontend/awx/dashboard/cards/AwxJobAct
 import { AwxRecentInventoriesCard } from '../../frontend/awx/dashboard/cards/AwxRecentInventoriesCard';
 import { AwxRecentJobsCard } from '../../frontend/awx/dashboard/cards/AwxRecentJobsCard';
 import { AwxRecentProjectsCard } from '../../frontend/awx/dashboard/cards/AwxRecentProjectsCard';
-import { EdaRulebookActivationsCard } from '../../frontend/eda/dashboard/cards/EdaRulebookActivationsCard';
+import { EdaRulebookActivationsCard } from '../../frontend/eda/overview/cards/EdaRulebookActivationsCard';
 import { useHasAwx, useHasEda } from '../PlatformProvider';
 
 export function PlatformDashboard() {
