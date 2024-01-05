@@ -13,10 +13,10 @@ import {
   useGetPageUrl,
 } from '../../../../framework';
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
-import { useGetItem } from '../../../../frontend/common/crud/useGet';
 import { AwxError } from '../../../../frontend/awx/common/AwxError';
+import { useGetItem } from '../../../../frontend/common/crud/useGet';
 import { Authenticator } from '../../../interfaces/Authenticator';
-import { PlatformRoute } from '../../../PlatformRoutes';
+import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { PlatformAuthenticatorDetails } from './PlatformAuthenticatorDetails';
 
 export function AuthenticatorPage() {

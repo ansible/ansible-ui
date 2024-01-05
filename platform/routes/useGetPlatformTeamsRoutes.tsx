@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageNavigationItem, PageNotImplemented } from '../../framework';
-import { PlatformRoute } from '../PlatformRoutes';
 import { PlatformTeamDetails } from '../access/teams/components/PlatformTeamDetails';
 import { CreatePlatformTeam, EditPlatformTeam } from '../access/teams/components/PlatformTeamForm';
 import { PlatformTeamList } from '../access/teams/components/PlatformTeamList';
 import { PlatformTeamPage } from '../access/teams/components/PlatformTeamPage';
+import { PlatformRoute } from '../main/PlatformRoutes';
 
 export function useGetPlatformTeamsRoutes() {
   const { t } = useTranslation();

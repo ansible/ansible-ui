@@ -8,8 +8,8 @@ import {
   useModifiedColumn,
   useNameColumn,
 } from '../../../../frontend/common/columns';
-import { PlatformRoute } from '../../../PlatformRoutes';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
+import { PlatformRoute } from '../../../main/PlatformRoutes';
 
 export function useOrganizationColumns(options?: {
   disableLinks?: boolean;

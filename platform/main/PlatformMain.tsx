@@ -7,17 +7,17 @@ import '@patternfly/quickstarts/dist/quickstarts.min.css';
 import '@patternfly/patternfly/patternfly-charts-theme-dark.css';
 
 import { Outlet } from 'react-router-dom';
-import { PageApp } from '../framework/PageNavigation/PageApp';
-import { AwxActiveUserProvider } from '../frontend/awx/common/useAwxActiveUser';
-import { AwxConfigProvider } from '../frontend/awx/common/useAwxConfig';
-import { WebSocketProvider } from '../frontend/awx/common/useAwxWebSocket';
-import '../frontend/common/i18n';
-import { EdaActiveUserProvider } from '../frontend/eda/common/useEdaActiveUser';
-import { HubContextProvider } from '../frontend/hub/useHubContext';
+import { PageApp } from '../../framework/PageNavigation/PageApp';
+import { AwxActiveUserProvider } from '../../frontend/awx/common/useAwxActiveUser';
+import { AwxConfigProvider } from '../../frontend/awx/common/useAwxConfig';
+import { WebSocketProvider } from '../../frontend/awx/common/useAwxWebSocket';
+import '../../frontend/common/i18n';
+import { EdaActiveUserProvider } from '../../frontend/eda/common/useEdaActiveUser';
+import { HubContextProvider } from '../../frontend/hub/useHubContext';
+import { ActivePlatformUserProvider } from '../hooks/useActivePlatformUser';
+import { QuickStartProvider } from '../overview/quickstarts/QuickStartProvider';
 import { PlatformLogin } from './PlatformLogin';
 import { PlatformMasthead } from './PlatformMasthead';
-import { QuickStartProvider } from './dashboard/quickstarts/QuickStartProvider';
-import { ActivePlatformUserProvider } from './hooks/useActivePlatformUser';
 import { usePlatformNavigation } from './usePlatformNavigation';
 
 export default function PlatformMain() {

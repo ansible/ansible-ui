@@ -1,4 +1,7 @@
+import { AlertProps, ButtonVariant } from '@patternfly/react-core';
+import { PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
   PageActionSelection,
@@ -7,19 +10,16 @@ import {
   usePageAlertToaster,
   usePageNavigate,
 } from '../../../../framework';
-import { Authenticator } from '../../../interfaces/Authenticator';
-import { AlertProps, ButtonVariant } from '@patternfly/react-core';
-import { PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
-import { useTranslation } from 'react-i18next';
-import { PlatformRoute } from '../../../PlatformRoutes';
-import { IPlatformView } from '../../../hooks/usePlatformView';
-import { useOptions } from '../../../../frontend/common/crud/useOptions';
 import {
   ActionsResponse,
   OptionsResponse,
 } from '../../../../frontend/awx/interfaces/OptionsResponse';
-import { gatewayAPI } from '../../../api/gateway-api-utils';
 import { requestPatch } from '../../../../frontend/common/crud/Data';
+import { useOptions } from '../../../../frontend/common/crud/useOptions';
+import { gatewayAPI } from '../../../api/gateway-api-utils';
+import { IPlatformView } from '../../../hooks/usePlatformView';
+import { Authenticator } from '../../../interfaces/Authenticator';
+import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { useDeleteAuthenticators } from './useDeleteAuthenticators';
 
 export function useAuthenticatorToolbarActions(view: IPlatformView<Authenticator>) {

@@ -1,10 +1,10 @@
+import { TFunction } from 'i18next';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ITableColumn, TextCell, useGetPageUrl } from '../../../../framework';
-import { Authenticator, AuthenticatorTypeEnum } from '../../../interfaces/Authenticator';
-import { PlatformRoute } from '../../../PlatformRoutes';
 import { useCreatedColumn, useModifiedColumn } from '../../../../frontend/common/columns';
-import { TFunction } from 'i18next';
+import { Authenticator, AuthenticatorTypeEnum } from '../../../interfaces/Authenticator';
+import { PlatformRoute } from '../../../main/PlatformRoutes';
 
 export function authenticatorTypeLabel(type: AuthenticatorTypeEnum, t: TFunction<'translation'>) {
   switch (type) {

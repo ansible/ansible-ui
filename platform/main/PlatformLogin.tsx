@@ -1,9 +1,9 @@
-import { useGetPageUrl } from '../framework/PageNavigation/useGetPageUrl';
-import { Login } from '../frontend/common/Login';
-import { useGet } from '../frontend/common/crud/useGet';
+import { useGetPageUrl } from '../../framework/PageNavigation/useGetPageUrl';
+import { Login } from '../../frontend/common/Login';
+import { useGet } from '../../frontend/common/crud/useGet';
+import { gatewayAPI } from '../api/gateway-api-utils';
+import { UIAuth } from '../interfaces/UIAuth';
 import { PlatformRoute } from './PlatformRoutes';
-import { gatewayAPI } from './api/gateway-api-utils';
-import { UIAuth } from './interfaces/UIAuth';
 
 export function PlatformLogin() {
   const { data: options } = useGet<UIAuth>(gatewayAPI`/v1/ui_auth/`);

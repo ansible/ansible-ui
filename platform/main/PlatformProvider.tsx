@@ -3,9 +3,9 @@
 
 import { useMemo } from 'react';
 import useSWR from 'swr';
-import { requestGet } from '../frontend/common/crud/Data';
-import { gatewayAPI } from './api/gateway-api-utils';
-import { Service } from './interfaces/Service';
+import { requestGet } from '../../frontend/common/crud/Data';
+import { gatewayAPI } from '../api/gateway-api-utils';
+import { Service } from '../interfaces/Service';
 
 export function useHasService(serviceName: string) {
   const { data } = useSWR<{ results: Service[] }>(gatewayAPI`/v1/services`, requestGet, {

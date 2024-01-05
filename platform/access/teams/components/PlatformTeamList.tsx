@@ -6,10 +6,10 @@ import {
   OptionsResponse,
 } from '../../../../frontend/awx/interfaces/OptionsResponse';
 import { useOptions } from '../../../../frontend/common/crud/useOptions';
-import { PlatformRoute } from '../../../PlatformRoutes';
 import { gatewayAPI } from '../../../api/gateway-api-utils';
 import { usePlatformView } from '../../../hooks/usePlatformView';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
+import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { useTeamRowActions, useTeamToolbarActions } from '../hooks/useTeamActions';
 import { useTeamColumns } from '../hooks/useTeamColumns';
 import { useTeamFilters } from '../hooks/useTeamFilters';
