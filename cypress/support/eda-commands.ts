@@ -62,7 +62,7 @@ Cypress.Commands.add('edaRuleBookActivationActionsModal', (action: string, rbaNa
   });
 });
 
-Cypress.Commands.add('createEdaProject', () => {
+Cypress.Commands.add('createEdaProject', (skipSync?: boolean) => {
   cy.requestPost<EdaProject>(edaAPI`/projects/`, {
     name: 'E2E Project ' + randomString(4),
     url: 'https://github.com/ansible/ansible-ui',
@@ -71,7 +71,39 @@ Cypress.Commands.add('createEdaProject', () => {
       displayName: 'EDA PROJECT CREATION :',
       message: [`Created 👉  ${edaProject.name}`],
     });
-    return edaProject;
+    if (!skipSync) {
+      cy.waitForEDAProjectToFinishSyncing(edaProject.id);
+    }
+    cy.wrap(edaProject);
+  });
+});
+
+Cypress.Commands.add('waitForEDAProjectToFinishSyncing', (projectId: number) => {
+  let requestCount = 1;
+  Cypress.log({
+    displayName: 'EDA PROJECT IS',
+    message: ['WAITING TO FINISH SYNCING...🕓'],
+  });
+  cy.requestGet<EdaProject>(edaAPI`/projects/${projectId.toString()}`).then((edaProject) => {
+    //Assuming that projects could take up to 5 min to sync if the instance is under load with other jobs
+    Cypress.log({
+      displayName: 'PROJECT SYNC STATUS IS NOW : 👉 ',
+      message: [`${edaProject.import_state}`],
+    });
+    if (
+      <ImportStateEnum>edaProject.import_state === ImportStateEnum.Completed ||
+      requestCount > 300
+    ) {
+      if (requestCount > 300) {
+        cy.log('Reached maximum number of requests for reading project status');
+      }
+      // Reset request count
+      requestCount = 1;
+      return;
+    }
+    requestCount++;
+    cy.wait(1000);
+    cy.waitForEDAProjectToFinishSyncing(projectId);
   });
 });
 
