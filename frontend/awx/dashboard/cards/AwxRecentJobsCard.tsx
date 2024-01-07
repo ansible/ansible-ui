@@ -34,7 +34,7 @@ export function AwxRecentJobsCard() {
 
   return (
     <PageDashboardCard
-      title={t('Recent Jobs')}
+      title={t('Jobs')}
       subtitle={t('Recently finished jobs')}
       width="md"
       height="md"
