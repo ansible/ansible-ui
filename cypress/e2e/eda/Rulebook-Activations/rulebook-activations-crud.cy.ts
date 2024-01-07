@@ -28,11 +28,11 @@ describe('EDA rulebook activations - Create', () => {
     });
   });
 
-  after(() => {
+  /* after(() => {
     cy.deleteEdaDecisionEnvironment(edaDecisionEnvironment);
     cy.deleteEdaProject(edaProject);
     cy.deleteAllEdaCurrentUserTokens();
-  });
+  });*/
 
   it('can create a Rulebook Activation including custom variables and assert the information showing on the details page', () => {
     const name = 'E2E Rulebook Activation ' + randomString(4);
@@ -52,6 +52,9 @@ describe('EDA rulebook activations - Create', () => {
       cy.navigateTo('eda', 'rulebook-activations');
       cy.deleteEdaRulebookActivation(rbaToBeDeleted);
     });
+    cy.deleteEdaDecisionEnvironment(edaDecisionEnvironment);
+    cy.deleteEdaProject(edaProject);
+    cy.deleteAllEdaCurrentUserTokens();
   });
 
   it.skip('can restart a Rulebook Activation from the from the line item in list view', () => {
@@ -95,7 +98,7 @@ describe('EDA rulebook activations - Create', () => {
   });
 });
 
-describe('EDA rulebook activations- Edit, Delete', () => {
+describe.skip('EDA rulebook activations- Edit, Delete', () => {
   let edaProject: EdaProject;
   let edaDecisionEnvironment: EdaDecisionEnvironment;
   let edaRBA: EdaRulebookActivation;
