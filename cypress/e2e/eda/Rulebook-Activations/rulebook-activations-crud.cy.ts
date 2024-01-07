@@ -8,7 +8,7 @@ import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRu
 import { ActivationRead } from '../../../../frontend/eda/interfaces/generated/eda-api';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
 
-describe('EDA rulebook activations- Create', () => {
+describe('EDA rulebook activations - Create', () => {
   let edaProject: EdaProject;
   let edaDecisionEnvironment: EdaDecisionEnvironment;
   let edaRuleBook: EdaRulebook;

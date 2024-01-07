@@ -689,8 +689,7 @@ declare global {
        *
        * @returns {Chainable<EdaProject>}
        */
-      createEdaProject(skipSync?: boolean): Chainable<EdaProject>;
-      waitForEDAProjectToFinishSyncing(projectId: number): Chainable<void>;
+      createEdaProject(): Chainable<EdaProject>;
 
       /**Identify the specific Rulebooks populated by a specific project and make them available for use in testing. */
       getEdaRulebooks(edaProject: EdaProject, rulebookName?: string): Chainable<EdaRulebook[]>;

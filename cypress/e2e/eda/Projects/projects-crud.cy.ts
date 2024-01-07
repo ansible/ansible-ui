@@ -26,20 +26,24 @@ describe('EDA Projects CRUD', () => {
 
   it('can edit a project from the list view', () => {
     cy.createEdaProject().then((edaProject) => {
+      cy.waitEdaProjectSync(edaProject);
       cy.navigateTo('eda', 'projects');
       cy.get('h1').should('contain', 'Projects');
       cy.clickTableRow(edaProject.name);
       cy.get('[data-cy="edit-project"]').click();
       cy.verifyPageTitle(`Edit ${edaProject.name}`);
-      cy.get('[data-cy="name"]').type(edaProject.name + 'a');
+      cy.get('[data-cy="name"]')
+        .clear()
+        .type(edaProject.name + ' edited');
       cy.clickButton(/^Save project$/);
-      cy.verifyPageTitle(`${edaProject.name}a`);
+      cy.verifyPageTitle(`${edaProject.name} edited`);
       cy.deleteEdaProject(edaProject);
     });
   });
 
   it('deletes a Project from kebab menu from the project details page', () => {
     cy.createEdaProject().then((edaProject) => {
+      cy.waitEdaProjectSync(edaProject);
       cy.navigateTo('eda', 'projects');
       cy.clickTableRow(edaProject.name);
       cy.verifyPageTitle(edaProject.name);
