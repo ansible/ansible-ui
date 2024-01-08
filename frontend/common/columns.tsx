@@ -171,16 +171,36 @@ export function useCredentialsColumn() {
   return column;
 }
 
-export function useCreatedColumn(options?: {
-  disableSort?: boolean;
-  disableLinks?: boolean;
-  sortKey?: string;
-  hideByDefaultInTableView?: boolean;
-}) {
+export function useCreatedColumn(
+  options?: {
+    disableSort?: boolean;
+    disableLinks?: boolean;
+  },
+  overrides?: ITableColumn<
+    | {
+        created?: string;
+        created_on?: string;
+        date_joined?: string;
+        pulp_created?: string;
+      }
+    | {
+        created?: string;
+        created_on?: string;
+        date_joined?: string;
+        pulp_created?: string;
+        summary_fields?: { created_by?: { id?: number; username?: string } };
+      }
+  >
+) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const column: ITableColumn<
-    | { created?: string; created_on?: string; date_joined?: string; pulp_created?: string }
+    | {
+        created?: string;
+        created_on?: string;
+        date_joined?: string;
+        pulp_created?: string;
+      }
     | {
         created?: string;
         created_on?: string;
@@ -190,56 +210,60 @@ export function useCreatedColumn(options?: {
       }
   > = useMemo(
     () => ({
-      header: t('Created'),
-      cell: (item) => {
-        if (!item.created && !item.created_on && !item.date_joined && !item.pulp_created)
-          return <></>;
-        return (
-          <DateTimeCell
-            format="since"
-            value={item.created ?? item.created_on ?? item.date_joined ?? item.pulp_created}
-            author={
-              'summary_fields' in item ? item.summary_fields?.created_by?.username : undefined
-            }
-            onClick={
-              options?.disableLinks || !('summary_fields' in item)
-                ? undefined
-                : () =>
-                    pageNavigate(AwxRoute.UserDetails, {
-                      params: { id: item.summary_fields?.created_by?.id },
-                    })
-            }
-          />
-        );
+      ...{
+        header: t('Created'),
+        cell: (item) => {
+          if (!item.created && !item.created_on && !item.date_joined && !item.pulp_created)
+            return <></>;
+          return (
+            <DateTimeCell
+              format="since"
+              value={item.created ?? item.created_on ?? item.date_joined ?? item.pulp_created}
+              author={
+                'summary_fields' in item ? item.summary_fields?.created_by?.username : undefined
+              }
+              onClick={
+                options?.disableLinks || !('summary_fields' in item)
+                  ? undefined
+                  : () =>
+                      pageNavigate(AwxRoute.UserDetails, {
+                        params: { id: item.summary_fields?.created_by?.id },
+                      })
+              }
+            />
+          );
+        },
+        sort: options?.disableSort ? undefined : 'created',
+        defaultSortDirection: 'desc',
+        table: 'hidden',
+        card: 'hidden',
+        list: 'secondary',
+        modal: 'hidden',
+        dashboard: 'hidden',
       },
-      sort: options?.disableSort ? undefined : options?.sortKey ?? 'created',
-      defaultSortDirection: 'desc',
-      table: options?.hideByDefaultInTableView
-        ? ColumnTableOption.hidden
-        : ColumnTableOption.expanded,
-      card: 'hidden',
-      list: 'secondary',
-      modal: 'hidden',
-      dashboard: 'hidden',
+      ...overrides,
     }),
-    [
-      pageNavigate,
-      options?.disableLinks,
-      options?.disableSort,
-      options?.hideByDefaultInTableView,
-      options?.sortKey,
-      t,
-    ]
+    [t, options?.disableSort, options?.disableLinks, overrides, pageNavigate]
   );
   return column;
 }
 
-export function useModifiedColumn(options?: {
-  disableSort?: boolean;
-  disableLinks?: boolean;
-  sortKey?: string;
-  hideByDefaultInTableView?: boolean;
-}) {
+export function useModifiedColumn(
+  options?: {
+    disableSort?: boolean;
+    disableLinks?: boolean;
+    sortKey?: string;
+    hideByDefaultInTableView?: boolean;
+  },
+  overrides?: ITableColumn<
+    | { modified?: string; modified_on?: string }
+    | {
+        modified?: string;
+        modified_on?: string;
+        summary_fields?: { modified_by?: { id?: number; username?: string } };
+      }
+  >
+) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const column: ITableColumn<
@@ -251,45 +275,39 @@ export function useModifiedColumn(options?: {
       }
   > = useMemo(
     () => ({
-      header: t('Modified'),
-      cell: (item) => {
-        if (!item.modified && !item.modified_on) return <></>;
-        return (
-          <DateTimeCell
-            format="since"
-            value={item.modified ? item.modified : item.modified_on}
-            author={
-              'summary_fields' in item ? item.summary_fields?.modified_by?.username : undefined
-            }
-            onClick={
-              options?.disableLinks || !('summary_fields' in item)
-                ? undefined
-                : () =>
-                    pageNavigate(AwxRoute.UserDetails, {
-                      params: { id: item.summary_fields?.modified_by?.id },
-                    })
-            }
-          />
-        );
+      ...{
+        header: t('Modified'),
+        cell: (item) => {
+          if (!item.modified && !item.modified_on) return <></>;
+          return (
+            <DateTimeCell
+              format="since"
+              value={item.modified ? item.modified : item.modified_on}
+              author={
+                'summary_fields' in item ? item.summary_fields?.modified_by?.username : undefined
+              }
+              onClick={
+                options?.disableLinks || !('summary_fields' in item)
+                  ? undefined
+                  : () =>
+                      pageNavigate(AwxRoute.UserDetails, {
+                        params: { id: item.summary_fields?.modified_by?.id },
+                      })
+              }
+            />
+          );
+        },
+        sort: options?.disableSort ? undefined : options?.sortKey ?? 'modified',
+        defaultSortDirection: 'desc',
+        table: 'hidden',
+        card: 'hidden',
+        list: 'secondary',
+        modal: 'hidden',
+        dashboard: 'hidden',
       },
-      sort: options?.disableSort ? undefined : options?.sortKey ?? 'modified',
-      defaultSortDirection: 'desc',
-      table: options?.hideByDefaultInTableView
-        ? ColumnTableOption.hidden
-        : ColumnTableOption.expanded,
-      card: 'hidden',
-      list: 'secondary',
-      modal: 'hidden',
-      dashboard: 'hidden',
+      ...overrides,
     }),
-    [
-      pageNavigate,
-      options?.disableLinks,
-      options?.disableSort,
-      options?.hideByDefaultInTableView,
-      options?.sortKey,
-      t,
-    ]
+    [t, options?.disableSort, options?.sortKey, options?.disableLinks, overrides, pageNavigate]
   );
   return column;
 }
