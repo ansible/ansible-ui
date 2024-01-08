@@ -1,11 +1,10 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings } from '../../../../../framework';
+import { compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { useNameColumn } from '../../../../common/columns';
 import { getItemKey, requestDelete } from '../../../../common/crud/Data';
 import { awxAPI } from '../../../api/awx-utils';
 import { HostMetric } from '../../../interfaces/HostMetric';
-import { useAwxBulkConfirmation } from '../../../common/useAwxBulkConfirmation';
 import { useHostMetricsColumns } from './useHostMetricsColumns';
 
 export function useDeleteHostMetrics(onComplete: (host: HostMetric[]) => void) {
@@ -13,7 +12,7 @@ export function useDeleteHostMetrics(onComplete: (host: HostMetric[]) => void) {
   const confirmationColumns = useHostMetricsColumns();
   const deleteActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true });
   const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn]);
-  const bulkAction = useAwxBulkConfirmation<HostMetric>();
+  const bulkAction = useBulkConfirmation<HostMetric>();
   const deleteHostMetrics = (host: HostMetric[]) => {
     bulkAction({
       title: t('Soft delete hostnames', { count: host.length }),

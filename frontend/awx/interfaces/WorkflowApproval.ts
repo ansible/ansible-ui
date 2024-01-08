@@ -1,11 +1,11 @@
 import { WorkflowApproval as SwaggerWorkflowApproval } from './generated-from-swagger/api';
 import {
   SummaryFieldJob,
-  SummaryFieldUnifiedJobTemplate,
-  SummaryFieldWorkflowApprovalTemplate,
+  SummaryFieldsByUser,
   SummaryFieldWorkflowJob,
   SummaryFieldWorkflowJobTemplate,
-  SummaryFieldsByUser,
+  SummaryFieldWorkflowApprovalTemplate,
+  SummaryFieldUnifiedJobTemplate,
 } from './summary-fields/summary-fields';
 
 export interface WorkflowApproval
@@ -25,7 +25,7 @@ export interface WorkflowApproval
       delete: boolean;
       start: boolean;
     };
-    source_workflow_job: SummaryFieldJob | object;
+    source_workflow_job: SummaryFieldJob;
   };
   status:
     | 'new'

@@ -3,8 +3,8 @@ import { ExclamationTriangleIcon as PFExclamationTriangleIcon } from '@patternfl
 import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { PageDetail, useGetPageUrl } from '../../../framework';
-import { AwxRoute } from '../AwxRoutes';
+import { PageDetail } from '../../../framework';
+import { RouteObj } from '../../common/Routes';
 import { ExecutionEnvironment } from '../interfaces/ExecutionEnvironment';
 import { SummaryFieldsExecutionEnvironment } from '../interfaces/summary-fields/summary-fields';
 import { useAwxConfig } from './useAwxConfig';
@@ -44,15 +44,15 @@ function ExecutionEnvironmentDetail(props: {
   const label = isDefaultEnvironment
     ? t('Default execution environment')
     : t('Execution environment');
-  const getPageUrl = useGetPageUrl();
 
   if (executionEnvironment) {
     return (
       <PageDetail label={label} helpText={helpText}>
         <Link
-          to={getPageUrl(AwxRoute.ExecutionEnvironmentDetails, {
-            params: { id: executionEnvironment.id },
-          })}
+          to={RouteObj.ExecutionEnvironmentDetails.replace(
+            ':id',
+            executionEnvironment.id?.toString() || ''
+          )}
         >
           {executionEnvironment.name}
         </Link>

@@ -1,14 +1,14 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useBulkActionDialog } from '../../../../../framework';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { awxAPI } from '../../../api/awx-utils';
 import { User } from '../../../interfaces/User';
-import { useAwxBulkActionDialog } from '../../../common/useAwxBulkActionDialog';
 import { ResourceType } from '../../common/ResourceAccessList';
 
 export function useAddUsersToResources() {
   const { t } = useTranslation();
-  const userProgressDialog = useAwxBulkActionDialog<User>();
+  const userProgressDialog = useBulkActionDialog<User>();
   const postRequest = usePostRequest();
   const addUserToTeams = useCallback(
     (users: User[], resources: ResourceType[], onComplete?: (users: User[]) => void) => {

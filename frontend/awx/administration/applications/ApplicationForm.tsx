@@ -20,7 +20,6 @@ import { Application } from '../../interfaces/Application';
 import { PageFormOrganizationSelect } from '../../access/organizations/components/PageFormOrganizationSelect';
 import { Organization } from '../../interfaces/Organization';
 import { getOrganizationByName } from '../../access/organizations/utils/getOrganizationByName';
-import { useWatch } from 'react-hook-form';
 
 const ClientType = {
   Confidential: 'confidential',
@@ -41,14 +40,25 @@ export interface IApplicationInput {
   description?: string;
 }
 
-export function CreateApplication(props: { onSuccessfulCreate: (app: Application) => void }) {
+export function CreateApplication() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
   const postRequest = usePostRequest<Application>();
   const onSubmit: PageFormSubmitHandler<IApplicationInput> = async (
-    applicationInput: IApplicationInput
+    applicationInput: IApplicationInput,
+    setError,
+    setFieldError
   ) => {
+    if (
+      applicationInput.authorization_grant_type === 'authorization-code' &&
+      (applicationInput.redirect_uris === undefined || applicationInput.redirect_uris === '')
+    ) {
+      setFieldError('redirect_uris', {
+        message: t('Need to pass a redirect URI if grant type is authorization code'),
+      });
+      return false;
+    }
     let organization: Organization | undefined;
     let modifiedInput;
     try {
@@ -59,7 +69,6 @@ export function CreateApplication(props: { onSuccessfulCreate: (app: Application
       throw new Error(t('Organization not found.'));
     }
     const newApplication = await postRequest(awxAPI`/applications/`, modifiedInput as Application);
-    if (props.onSuccessfulCreate) props.onSuccessfulCreate(newApplication);
     pageNavigate(AwxRoute.ApplicationDetails, { params: { id: newApplication.id } });
   };
 
@@ -179,9 +188,6 @@ export function EditApplication() {
 function ApplicationInputs(props: { mode: 'create' | 'edit' }) {
   const { mode } = props;
   const { t } = useTranslation();
-  const authorizationGrantType = useWatch<IApplicationInput>({
-    name: 'authorization_grant_type',
-  });
   return (
     <>
       <PageFormTextInput<IApplicationInput>
@@ -234,7 +240,6 @@ function ApplicationInputs(props: { mode: 'create' | 'edit' }) {
         name="redirect_uris"
         label={t('Redirect URIs')}
         placeholder={t('Enter a redriect URI')}
-        isRequired={Boolean(authorizationGrantType === 'authorization-code')}
       />
     </>
   );

@@ -1,13 +1,14 @@
 import { useTranslation } from 'react-i18next';
 import { useOutletContext } from 'react-router-dom';
 import { CollectionVersionSearch } from '../Collection';
-import { useHubView } from '../../useHubView';
+import { usePulpView } from '../../usePulpView';
 import { pulpAPI } from '../../api/formatPath';
 import { useMemo } from 'react';
 import { ITableColumn } from '../../../../framework';
 import { PageTable } from '../../../../framework';
 import { CopyCell } from '../../../../framework';
-import { getRepoURL } from '../../api/utils';
+
+import { getRepoURL } from '../../api/formatPath';
 
 export function CollectionDistributions() {
   const { t } = useTranslation();
@@ -15,7 +16,7 @@ export function CollectionDistributions() {
 
   const tableColumns = useDistributionsColumns();
 
-  const view = useHubView<Distribution>({
+  const view = usePulpView<Distribution>({
     url: pulpAPI`/distributions/ansible/ansible/`,
     keyFn: (item) => item.base_path,
     tableColumns,

@@ -1,12 +1,11 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings } from '../../../../../framework';
+import { compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { useNameColumn } from '../../../../common/columns';
 import { getItemKey, requestDelete } from '../../../../common/crud/Data';
 import { awxAPI } from '../../../api/awx-utils';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
-import { useAwxBulkConfirmation } from '../../../common/useAwxBulkConfirmation';
 import { useTemplateColumns } from './useTemplateColumns';
 
 export function useDeleteTemplates(
@@ -16,7 +15,7 @@ export function useDeleteTemplates(
   const confirmationColumns = useTemplateColumns({ disableLinks: true, disableSort: true });
   const deleteActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true });
   const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn]);
-  const bulkAction = useAwxBulkConfirmation<JobTemplate | WorkflowJobTemplate>();
+  const bulkAction = useBulkConfirmation<JobTemplate | WorkflowJobTemplate>();
   const getSingularDeleteTitle = (type: string) =>
     type === 'job_template'
       ? t('Permanently delete job template')

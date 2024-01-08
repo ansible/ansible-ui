@@ -1,10 +1,9 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings } from '../../../../framework';
+import { compareStrings, useBulkConfirmation } from '../../../../framework';
 import { requestDelete } from '../../../common/crud/Data';
-import { edaAPI } from '../../common/eda-utils';
+import { edaAPI } from '../../api/eda-utils';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
-import { useEdaBulkConfirmation } from '../../common/useEdaBulkConfirmation';
 import { useRulebookActivationColumns } from './useRulebookActivationColumns';
 
 export function useDeleteRulebookActivations(
@@ -13,7 +12,7 @@ export function useDeleteRulebookActivations(
   const { t } = useTranslation();
   const confirmationColumns = useRulebookActivationColumns();
   const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
-  const bulkAction = useEdaBulkConfirmation<EdaRulebookActivation>();
+  const bulkAction = useBulkConfirmation<EdaRulebookActivation>();
   return useCallback(
     (rulebookActivations: EdaRulebookActivation[]) => {
       bulkAction({

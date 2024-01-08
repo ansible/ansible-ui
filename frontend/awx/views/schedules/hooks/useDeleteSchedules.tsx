@@ -1,12 +1,11 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings } from '../../../../../framework';
+import { compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { useNameColumn } from '../../../../common/columns';
 import { getItemKey, requestDelete } from '../../../../common/crud/Data';
 import { awxAPI } from '../../../api/awx-utils';
 import { Schedule } from '../../../interfaces/Schedule';
 import { useSchedulesColumns } from './useSchedulesColumns';
-import { useAwxBulkConfirmation } from '../../../common/useAwxBulkConfirmation';
 
 export function useDeleteSchedules(onComplete?: (schedules: Schedule[]) => void) {
   const { t } = useTranslation();
@@ -14,7 +13,7 @@ export function useDeleteSchedules(onComplete?: (schedules: Schedule[]) => void)
   const deleteActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true });
   const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn]);
 
-  const bulkAction = useAwxBulkConfirmation<Schedule>();
+  const bulkAction = useBulkConfirmation<Schedule>();
   const deleteSchedules = (schedules: Schedule[]) => {
     bulkAction({
       title: t('Permanently delete schedule', { count: schedules.length }),

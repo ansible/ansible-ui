@@ -1,12 +1,11 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings } from '../../../../../framework';
+import { compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { useNameColumn } from '../../../../common/columns';
 import { getItemKey, requestDelete } from '../../../../common/crud/Data';
 import { awxAPI } from '../../../api/awx-utils';
 import { Token } from '../../../interfaces/Token';
 import { useTokensColumns } from './useTokensColumns';
-import { useAwxBulkConfirmation } from '../../../common/useAwxBulkConfirmation';
 
 export function useDeleteTokens(onComplete: (applications: Token[]) => void) {
   const { t } = useTranslation();
@@ -16,7 +15,7 @@ export function useDeleteTokens(onComplete: (applications: Token[]) => void) {
   });
   const deleteActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true });
   const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn]);
-  const bulkAction = useAwxBulkConfirmation<Token>();
+  const bulkAction = useBulkConfirmation<Token>();
   const deleteTokens = (tokens: Token[]) => {
     bulkAction({
       title: tokens.length === 1 ? t('Permanently delete token') : t('Permanently delete tokens'),

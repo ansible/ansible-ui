@@ -1,23 +1,18 @@
 import { Label, LabelGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router-dom';
-import {
-  DateTimeCell,
-  PageDetail,
-  PageDetails,
-  useGetPageUrl,
-  usePageNavigate,
-} from '../../../../../framework';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { DateTimeCell, PageDetail, PageDetails, useGetPageUrl } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
-import { LastModifiedPageDetail } from '../../../../common/LastModifiedPageDetail';
+import { RouteObj } from '../../../../common/Routes';
 import { useGet, useGetItem } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
-import { awxAPI } from '../../../api/awx-utils';
 import { CredentialLabel } from '../../../common/CredentialLabel';
 import { ExecutionEnvironmentDetail } from '../../../common/ExecutionEnvironmentDetail';
 import { Credential } from '../../../interfaces/Credential';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { Organization } from '../../../interfaces/Organization';
+import { awxAPI } from '../../../api/awx-utils';
+import { LastModifiedPageDetail } from '../../../../common/LastModifiedPageDetail';
 
 function useGalaxyCredentials(orgId: string) {
   const { data } = useGet<{ results: Credential[] }>(
@@ -37,7 +32,7 @@ export function OrganizationDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const { data: organization } = useGetItem<Organization>(awxAPI`/organizations/`, params.id);
-  const pageNavigate = usePageNavigate();
+  const history = useNavigate();
   const getPageUrl = useGetPageUrl();
 
   const galaxyCredentials = useGalaxyCredentials(params.id || '0');
@@ -70,9 +65,11 @@ export function OrganizationDetails() {
           value={organization.created}
           author={organization.summary_fields?.created_by?.username}
           onClick={() =>
-            pageNavigate(AwxRoute.UserDetails, {
-              params: { id: (organization.summary_fields?.created_by?.id ?? 0).toString() },
-            })
+            history(
+              getPageUrl(AwxRoute.UserDetails, {
+                params: { id: (organization.summary_fields?.created_by?.id ?? 0).toString() },
+              })
+            )
           }
         />
       </PageDetail>
@@ -81,9 +78,11 @@ export function OrganizationDetails() {
         value={organization.modified}
         author={organization.summary_fields?.modified_by?.username}
         onClick={() =>
-          pageNavigate(AwxRoute.UserDetails, {
-            params: { id: (organization.summary_fields?.modified_by?.id ?? 0).toString() },
-          })
+          history(
+            getPageUrl(AwxRoute.UserDetails, {
+              params: { id: (organization.summary_fields?.modified_by?.id ?? 0).toString() },
+            })
+          )
         }
       />
       <PageDetail
@@ -94,11 +93,7 @@ export function OrganizationDetails() {
         <LabelGroup>
           {instanceGroups.map((ig) => (
             <Label color="blue" key={ig.id}>
-              <Link
-                to={getPageUrl(AwxRoute.InstanceGroupDetails, {
-                  params: { id: ig.id },
-                })}
-              >
+              <Link to={RouteObj.InstanceGroupDetails.replace(':id', (ig.id ?? 0).toString())}>
                 {ig.name}
               </Link>
             </Label>

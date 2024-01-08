@@ -3,7 +3,7 @@ import { useGetRequest } from '../../../common/crud/useGet';
 import { pulpAPI } from '../../api/formatPath';
 import { PageAsyncSingleSelectOptionsFn } from './../../../../framework/PageInputs/PageAsyncSingleSelect';
 import { AnsibleAnsibleRepositoryResponse as Repository } from './../../api-schemas/generated/AnsibleAnsibleRepositoryResponse';
-import { PulpItemsResponse } from './../../useHubView';
+import { PulpItemsResponse } from './../../usePulpView';
 
 export function useRepoQueryOptions() {
   const repoRequest = useGetRequest<PulpItemsResponse<Repository>>();

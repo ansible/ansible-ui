@@ -11,8 +11,6 @@ import {
 import { ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { genericErrorAdapter } from '../PageForm/genericErrorAdapter';
-import { ErrorAdapter } from '../PageForm/typesErrorAdapter';
 import { PageTable } from '../PageTable/PageTable';
 import { ITableColumn, useVisibleModalColumns } from '../PageTable/PageTableColumn';
 import { usePaged } from '../PageTable/useTableItems';
@@ -75,9 +73,6 @@ export interface BulkConfirmationDialog<T extends object> {
 
   /** Indicates if this is a destructive operation */
   isDanger?: boolean;
-
-  /** Error adapter to be passed down to the useBulkActionDialog */
-  errorAdapter?: ErrorAdapter;
 }
 
 function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<T>) {
@@ -240,17 +235,7 @@ function useBulkConfirmationDialog<T extends object>() {
   return setProps;
 }
 
-/**
- * useBulkConfirmation is a custom React hook that combines the use of BulkConfirmationDialog and BulkActionDialog.
- * It provides a single function to handle the entire flow of confirming and executing bulk actions.
- *
- * @template T - The type of items for bulk action.
- * @param {ErrorAdapter} [errorAdapter = genericErrorAdapter] - Default error adapter for error handling.
- * @returns {(options: BulkConfirmationDialog<T> & BulkActionDialogProps<T>) => void} - A function to initiate the bulk confirmation and action process.
- */
-export function useBulkConfirmation<T extends object>(
-  errorAdapter: ErrorAdapter = genericErrorAdapter
-) {
+export function useBulkConfirmation<T extends object>() {
   const bulkConfirmationDialog = useBulkConfirmationDialog<T>();
   const bulkActionDialog = useBulkActionDialog<T>();
   return useCallback(
@@ -258,7 +243,7 @@ export function useBulkConfirmation<T extends object>(
       options: Omit<BulkConfirmationDialog<T>, 'onConfirm' | 'onClose'> &
         Omit<BulkActionDialogProps<T>, 'onClose'>
     ) => {
-      const bulkActionOptions = { ...options, errorAdapter };
+      const bulkActionOptions = Object.assign({}, options);
       if (options.isItemNonActionable && options.isItemNonActionable !== undefined) {
         bulkActionOptions.items = options.items.filter(
           (item) => options.isItemNonActionable !== undefined && !options.isItemNonActionable(item)
@@ -269,6 +254,6 @@ export function useBulkConfirmation<T extends object>(
         onConfirm: () => bulkActionDialog(bulkActionOptions),
       });
     },
-    [bulkActionDialog, bulkConfirmationDialog, errorAdapter]
+    [bulkActionDialog, bulkConfirmationDialog]
   );
 }

@@ -15,7 +15,6 @@ interface Response<T> {
   statusCode: number;
   response: T | null;
 }
-
 /**
  * Certain HTTP actions from the Pulp API returns a 202, requiring us to parse the task system to verify the task status.
  * This function returns the status code and the response from the API. If the

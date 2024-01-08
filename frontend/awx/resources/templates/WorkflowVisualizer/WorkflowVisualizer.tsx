@@ -1,7 +1,7 @@
-import { Bullseye, EmptyState, EmptyStateHeader, Icon, Spinner } from '@patternfly/react-core';
-import { ShareAltIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
+import { ShareAltIcon } from '@patternfly/react-icons';
+import { Bullseye, EmptyState, EmptyStateHeader, Icon, Spinner } from '@patternfly/react-core';
 import { getPatternflyColor } from '../../../../../framework';
 import { useAwxGetAllPages } from '../../../common/useAwxGetAllPages';
 import { useGetItem } from '../../../../common/crud/useGet';

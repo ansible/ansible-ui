@@ -3,11 +3,11 @@ import { useParams } from 'react-router-dom';
 import { PageHeader, PageLayout, useGetPageUrl } from '../../../../framework';
 import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
 import { useGet } from '../../../common/crud/useGet';
-import { SWR_REFRESH_INTERVAL } from '../../common/eda-constants';
-import { edaAPI } from '../../common/eda-utils';
+import { EdaRoute } from '../../EdaRoutes';
+import { edaAPI } from '../../api/eda-utils';
+import { SWR_REFRESH_INTERVAL } from '../../constants';
 import { EdaActivationInstance } from '../../interfaces/EdaActivationInstance';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
-import { EdaRoute } from '../../main/EdaRoutes';
 
 export function ActivationInstancePage() {
   const { t } = useTranslation();

@@ -8,7 +8,7 @@ import {
 } from '@patternfly/react-core';
 import { useCallback } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   CopyCell,
   DateTimeCell,
@@ -17,10 +17,9 @@ import {
   PageDetails,
   TextCell,
   useGetPageUrl,
-  usePageNavigate,
 } from '../../../../../framework';
 import { StandardPopover } from '../../../../../framework/components/StandardPopover';
-import { LastModifiedPageDetail } from '../../../../common/LastModifiedPageDetail';
+import { RouteObj } from '../../../../common/Routes';
 import { StatusCell } from '../../../../common/Status';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { ScmType } from '../../../../common/scm';
@@ -33,13 +32,14 @@ import { useAwxConfig } from '../../../common/useAwxConfig';
 import { useAwxWebSocketSubscription } from '../../../common/useAwxWebSocket';
 import getDocsBaseUrl from '../../../common/util/getDocsBaseUrl';
 import { Project } from '../../../interfaces/Project';
+import { LastModifiedPageDetail } from '../../../../common/LastModifiedPageDetail';
 
 export function ProjectDetails(props: { projectId?: string }) {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const urlId = props?.projectId ? props.projectId : params.id;
   const { error, data: project, refresh } = useGetItem<Project>(awxAPI`/projects`, urlId);
-  const pageNavigate = usePageNavigate();
+  const history = useNavigate();
   const config = useAwxConfig();
   const getPageUrl = useGetPageUrl();
 
@@ -234,12 +234,14 @@ export function ProjectDetails(props: { projectId?: string }) {
         {project.summary_fields?.current_job || project.summary_fields?.last_job ? (
           <StatusCell
             status={project.status}
-            to={getPageUrl(AwxRoute.JobOutput, {
-              params: {
-                job_type: project.type,
-                id: project.summary_fields?.current_job?.id ?? project.summary_fields?.last_job?.id,
-              },
-            })}
+            to={RouteObj.JobOutput.replace(':job_type', project.type ? project.type : '').replace(
+              ':id',
+              (
+                project.summary_fields?.current_job?.id ??
+                project.summary_fields?.last_job?.id ??
+                ''
+              ).toString()
+            )}
           />
         ) : (
           <StatusCell status={project.status} />
@@ -306,9 +308,12 @@ export function ProjectDetails(props: { projectId?: string }) {
           value={project.created}
           author={project.summary_fields?.created_by?.username}
           onClick={() =>
-            pageNavigate(AwxRoute.UserDetails, {
-              params: { id: project.summary_fields?.created_by?.id },
-            })
+            history(
+              RouteObj.UserDetails.replace(
+                ':id',
+                (project.summary_fields?.created_by?.id ?? 0).toString()
+              )
+            )
           }
         />
       </PageDetail>
@@ -317,9 +322,12 @@ export function ProjectDetails(props: { projectId?: string }) {
         value={project.modified}
         author={project.summary_fields?.modified_by?.username}
         onClick={() =>
-          pageNavigate(AwxRoute.UserDetails, {
-            params: { id: project.summary_fields?.modified_by?.id },
-          })
+          history(
+            RouteObj.UserDetails.replace(
+              ':id',
+              (project.summary_fields?.modified_by?.id ?? 0).toString()
+            )
+          )
         }
       />
       {(project.scm_clean ||

@@ -334,8 +334,6 @@ function ToolbarFilterComponent(props: {
               </Button>
             ) : undefined
           }
-          variant="count"
-          disableClearSelection
         />
       );
 

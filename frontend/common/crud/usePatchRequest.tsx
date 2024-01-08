@@ -2,7 +2,6 @@ import { useNavigate } from 'react-router-dom';
 import { createRequestError } from './RequestError';
 import { requestCommon } from './requestCommon';
 import { useAbortController } from './useAbortController';
-import { useClearCache } from '../useInvalidateCache';
 
 /**
  * Hook for making PATCH API requests
@@ -15,7 +14,6 @@ import { useClearCache } from '../useInvalidateCache';
 export function usePatchRequest<RequestBody, ResponseBody>() {
   const navigate = useNavigate();
   const abortController = useAbortController();
-  const { clearCacheByKey } = useClearCache();
   return async (url: string, body: RequestBody, signal?: AbortSignal) => {
     const response = await requestCommon({
       url,
@@ -29,7 +27,6 @@ export function usePatchRequest<RequestBody, ResponseBody>() {
       }
       throw await createRequestError(response);
     }
-    clearCacheByKey(url);
     switch (response.status) {
       case 204:
         return null as ResponseBody;

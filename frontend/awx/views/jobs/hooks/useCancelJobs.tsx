@@ -1,11 +1,10 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings } from '../../../../../framework';
+import { compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { useNameColumn } from '../../../../common/columns';
 import { getItemKey } from '../../../../common/crud/Data';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { UnifiedJob } from '../../../interfaces/UnifiedJob';
-import { useAwxBulkConfirmation } from '../../../common/useAwxBulkConfirmation';
 import { getJobsAPIUrl, isJobRunning } from '../jobUtils';
 import { useJobsColumns } from './useJobsColumns';
 
@@ -14,7 +13,7 @@ export function useCancelJobs(onComplete: (jobs: UnifiedJob[]) => void) {
   const confirmationColumns = useJobsColumns({ disableLinks: true, disableSort: true });
   const cancelActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true });
   const actionColumns = useMemo(() => [cancelActionNameColumn], [cancelActionNameColumn]);
-  const bulkAction = useAwxBulkConfirmation<UnifiedJob>();
+  const bulkAction = useBulkConfirmation<UnifiedJob>();
   const postRequest = usePostRequest();
   const cannotCancelJobDueToPermissions = (job: UnifiedJob) => {
     if (!job.summary_fields?.user_capabilities?.start && isJobRunning(job.status))

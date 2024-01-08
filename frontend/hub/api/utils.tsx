@@ -76,6 +76,22 @@ function firstResult(results: Results) {
   return results.results[0];
 }
 
+export function apiTag(strings: TemplateStringsArray, ...values: string[]) {
+  if (strings[0]?.[0] !== '/') {
+    throw new Error('Invalid URL');
+  }
+
+  let url = '';
+  strings.forEach((fragment, index) => {
+    url += fragment;
+    if (index !== strings.length - 1) {
+      url += encodeURIComponent(`${values.shift() ?? ''}`);
+    }
+  });
+
+  return url;
+}
+
 export type QueryParams = {
   [key: string]: string;
 };
@@ -277,15 +293,15 @@ export async function waitForTask(
 
 // Returns the API path for a specific repository
 export function getRepoURL(distribution_base_path: string, view_published = false) {
+  let HUB_SERVER;
   // If the api is hosted on another URL, use HUB_SERVER as the host part of the URL.
   // Otherwise use the host that the UI is served from
-  const host = process.env.HUB_SERVER ? process.env.HUB_SERVER : window.location.origin;
-  const base = process.env.HUB_API_PREFIX;
+  const host = HUB_SERVER ? HUB_SERVER : window.location.origin;
 
   // repo/distro "published" is special; not related to repo pipeline type
   if (distribution_base_path === 'published' && view_published === false) {
-    return `${host}${base}/`;
+    return `${host}${process.env.HUB_API_PREFIX}`;
   }
 
-  return `${host}${base}/content/${distribution_base_path}/`;
+  return `${host}${process.env.HUB_API_PREFIX}content/${distribution_base_path}/`;
 }

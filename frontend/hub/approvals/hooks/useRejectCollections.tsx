@@ -1,13 +1,12 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings } from '../../../../framework';
+import { compareStrings, useBulkConfirmation } from '../../../../framework';
 import { useGetRequest } from '../../../common/crud/useGet';
 import { collectionKeyFn, parsePulpIDFromURL, hubAPIPost } from '../../api/utils';
 import { pulpAPI } from '../../api/formatPath';
-import { PulpItemsResponse } from '../../useHubView';
+import { PulpItemsResponse } from '../../usePulpView';
 import { CollectionVersionSearch } from '../Approval';
 import { useApprovalsColumns } from './useApprovalsColumns';
-import { useHubBulkConfirmation } from '../../common/useHubBulkConfirmation';
 
 export function useRejectCollections(
   onComplete?: (collections: CollectionVersionSearch[]) => void
@@ -16,7 +15,7 @@ export function useRejectCollections(
   const confirmationColumns = useApprovalsColumns();
   const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
 
-  const bulkAction = useHubBulkConfirmation<CollectionVersionSearch>();
+  const bulkAction = useBulkConfirmation<CollectionVersionSearch>();
 
   const getRequest = useGetRequest();
 

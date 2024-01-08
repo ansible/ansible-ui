@@ -15,16 +15,14 @@ import {
   usePageAlertToaster,
   usePageNavigate,
 } from '../../../../framework';
-import { postRequest } from '../../../common/crud/Data';
-import { edaAPI } from '../../common/eda-utils';
-import { IEdaView } from '../../common/useEventDrivenView';
+import { EdaRoute } from '../../EdaRoutes';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
-import { EdaRoute } from '../../main/EdaRoutes';
-import {
-  useDisableRulebookActivations,
-  useRestartRulebookActivations,
-} from './useControlRulebookActivations';
+import { IEdaView } from '../../useEventDrivenView';
+import { useDisableRulebookActivations } from './useControlRulebookActivations';
+import { useRestartRulebookActivations } from './useControlRulebookActivations';
 import { useDeleteRulebookActivations } from './useDeleteRulebookActivations';
+import { postRequest } from '../../../common/crud/Data';
+import { edaAPI } from '../../api/eda-utils';
 
 export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivation>) {
   const { t } = useTranslation();
@@ -54,11 +52,9 @@ export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivati
       },
       [alertToaster, t]
     );
-  const enableRulebookActivations = useCallback(
-    (activations: EdaRulebookActivation[]) => {
-      for (const activation of activations) {
-        void enableRulebookActivation(activation);
-      }
+  const enableRulebookActivations: (activations: EdaRulebookActivation[]) => void = useCallback(
+    (activations) => {
+      activations.map((activation) => enableRulebookActivation(activation));
     },
     [enableRulebookActivation]
   );

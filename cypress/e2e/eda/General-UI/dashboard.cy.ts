@@ -66,22 +66,17 @@ describe('EDA Dashboard', () => {
       .its('response.body.results')
       .then((results: Array<EdaProject>) => {
         if (results.length === 0) {
-          cy.get('#projects')
-            .scrollIntoView()
-            .within(() => {
-              cy.verifyPageTitle('There are currently no projects');
-              cy.contains(
-                'div.pf-v5-c-empty-state__body',
-                'Create a project by clicking the button below.'
-              );
-              cy.clickButton(/^Create project$/);
-            });
+          cy.verifyPageTitle('There are currently no projects');
+          cy.contains(
+            'div.pf-v5-c-empty-state__body',
+            'Create a project by clicking the button below.'
+          );
+          cy.clickButton(/^Create project$/);
           cy.verifyPageTitle('Create project');
         } else if (results.length >= 1) {
-          cy.get('#projects')
-            .scrollIntoView()
+          cy.contains('h3', 'Projects')
+            .parents('.pf-v5-c-card')
             .within(() => {
-              cy.contains('h3', 'Projects');
               cy.get('tbody tr').should('have.lengthOf.lessThan', 8);
             });
         }
@@ -95,23 +90,19 @@ describe('EDA Dashboard', () => {
       .its('response.body.results')
       .then((results: Array<EdaRulebookActivation>) => {
         if (results.length === 0) {
-          cy.get('#rulebook-activations')
-            .scrollIntoView()
-            .within(() => {
-              cy.contains('h3', 'Rulebook Activations');
-              cy.contains('There are currently no rulebook activations');
-              cy.contains(
-                'div.pf-v5-c-empty-state__body',
-                'Create a rulebook activation by clicking the button below.'
-              );
-              cy.clickButton(/^Create rulebook activation$/);
-            });
+          cy.contains('h3', 'Rulebook Activations').scrollIntoView();
+          cy.verifyPageTitle('There are currently no rulebook activations');
+          cy.contains(
+            'div.pf-v5-c-empty-state__body',
+            'Create a rulebook activation by clicking the button below.'
+          );
+          cy.clickButton(/^Create rulebook activation$/);
           cy.verifyPageTitle('Create Rulebook Activation');
         } else if (results.length >= 1) {
-          cy.get('#rulebook-activations')
+          cy.contains('h3', 'Rulebook Activations')
             .scrollIntoView()
+            .parents('.pf-v5-c-card')
             .within(() => {
-              cy.contains('h3', 'Rulebook Activations');
               cy.get('tbody tr').should('have.lengthOf.lessThan', 8);
             });
         }
@@ -125,23 +116,17 @@ describe('EDA Dashboard', () => {
       .its('response.body.results')
       .then((results: Array<EdaDecisionEnvironment>) => {
         if (results.length === 0) {
-          cy.get('#decision-environments')
-            .scrollIntoView()
-            .within(() => {
-              cy.contains('h3', 'Decision Environments');
-              cy.contains('There are currently no decision environments');
-              cy.contains(
-                'div.pf-v5-c-empty-state__body',
-                'Create a decision environment by clicking the button below.'
-              );
-              cy.clickButton(/^Create decision environment$/);
-            });
+          cy.verifyPageTitle('There are currently no decision environments');
+          cy.contains(
+            'div.pf-v5-c-empty-state__body',
+            'Create a decision environment by clicking the button below.'
+          );
+          cy.clickButton(/^Create decision environment$/);
           cy.verifyPageTitle('Create decision environment');
         } else if (results.length >= 1) {
-          cy.get('#decision-environments')
-            .scrollIntoView()
+          cy.contains('h3', 'Decision Environments')
+            .parents('.pf-v5-c-card')
             .within(() => {
-              cy.contains('h3', 'Decision Environments');
               cy.get('tbody tr').should('have.lengthOf.lessThan', 8);
             });
         }

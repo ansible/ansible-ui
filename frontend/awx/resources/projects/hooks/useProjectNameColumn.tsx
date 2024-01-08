@@ -3,15 +3,14 @@ import { ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { ITableColumn, useGetPageUrl } from '../../../../../framework';
+import { ITableColumn } from '../../../../../framework';
 import { IconWrapper } from '../../../../../framework/components/IconWrapper';
-import { AwxRoute } from '../../../AwxRoutes';
+import { RouteObj } from '../../../../common/Routes';
 import { Project } from '../../../interfaces/Project';
 
 export function useProjectNameColumn(options?: { disableLinks?: boolean }) {
   const { t } = useTranslation();
   const { disableLinks } = options ?? {};
-  const getPageUrl = useGetPageUrl();
   const column = useMemo<ITableColumn<Project>>(
     () => ({
       header: t('Name'),
@@ -30,7 +29,7 @@ export function useProjectNameColumn(options?: { disableLinks?: boolean }) {
                 {disableLinks ? (
                   project.name
                 ) : (
-                  <Link to={getPageUrl(AwxRoute.ProjectDetails, { params: { id: project.id } })}>
+                  <Link to={RouteObj.ProjectDetails.replace(':id', project.id.toString())}>
                     {project.name}
                   </Link>
                 )}
@@ -62,7 +61,7 @@ export function useProjectNameColumn(options?: { disableLinks?: boolean }) {
             {disableLinks ? (
               project.name
             ) : (
-              <Link to={getPageUrl(AwxRoute.ProjectDetails, { params: { id: project.id } })}>
+              <Link to={RouteObj.ProjectDetails.replace(':id', project.id.toString())}>
                 {project.name}
               </Link>
             )}
@@ -73,7 +72,7 @@ export function useProjectNameColumn(options?: { disableLinks?: boolean }) {
       list: 'name',
       defaultSort: true,
     }),
-    [t, disableLinks, getPageUrl]
+    [t, disableLinks]
   );
   return column;
 }

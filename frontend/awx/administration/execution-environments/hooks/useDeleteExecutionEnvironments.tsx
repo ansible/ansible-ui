@@ -1,12 +1,11 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings } from '../../../../../framework';
+import { compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { useNameColumn } from '../../../../common/columns';
 import { getItemKey, requestDelete } from '../../../../common/crud/Data';
 import { awxAPI } from '../../../api/awx-utils';
 import { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
 import { useExecutionEnvironmentsColumns } from '../ExecutionEnvironments';
-import { useAwxBulkConfirmation } from '../../../common/useAwxBulkConfirmation';
 
 export function useDeleteExecutionEnvironments(
   onComplete: (executionEnvironments: ExecutionEnvironment[]) => void
@@ -18,7 +17,7 @@ export function useDeleteExecutionEnvironments(
   });
   const deleteActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true });
   const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn]);
-  const bulkAction = useAwxBulkConfirmation<ExecutionEnvironment>();
+  const bulkAction = useBulkConfirmation<ExecutionEnvironment>();
   const deleteExecutionEnvironments = (executionEnvironments: ExecutionEnvironment[]) => {
     bulkAction({
       title: t('Permanently delete execution environments', {

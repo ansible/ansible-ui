@@ -5,7 +5,7 @@ import { Application } from '../../interfaces/Application';
 describe('Create Edit Application Form', () => {
   describe('Create Application', () => {
     it('should validate required fields on save', () => {
-      cy.mount(<CreateApplication onSuccessfulCreate={(app: Application) => app} />);
+      cy.mount(<CreateApplication />);
       cy.clickButton(/^Create application$/);
       cy.contains('Name is required.').should('be.visible');
       cy.contains('Organization is required.').should('be.visible');
@@ -22,7 +22,7 @@ describe('Create Edit Application Form', () => {
         statusCode: 201,
         fixture: 'application.json',
       }).as('createApplication');
-      cy.mount(<CreateApplication onSuccessfulCreate={(app: Application) => app} />);
+      cy.mount(<CreateApplication />);
       cy.get('[data-cy="name"]').type('Create Application');
       cy.get('[data-cy="description"]').type('mock application description');
       cy.get('[data-cy="organization"]').type('Default');
@@ -51,7 +51,7 @@ describe('Create Edit Application Form', () => {
         statusCode: 201,
         fixture: 'application.json',
       }).as('createApplication');
-      cy.mount(<CreateApplication onSuccessfulCreate={(app: Application) => app} />);
+      cy.mount(<CreateApplication />);
       cy.get('[data-cy="name"]').type('Create Application');
       cy.get('[data-cy="description"]').type('mock application description');
       cy.get('[data-cy="organization"]').type('Default');
@@ -82,7 +82,7 @@ describe('Create Edit Application Form', () => {
         statusCode: 201,
         fixture: 'application.json',
       }).as('createApplication');
-      cy.mount(<CreateApplication onSuccessfulCreate={(app: Application) => app} />);
+      cy.mount(<CreateApplication />);
       cy.get('[data-cy="name"]').type('Create Application');
       cy.get('[data-cy="description"]').type('mock application description');
       cy.get('[data-cy="organization"]').type('Default');
@@ -90,7 +90,9 @@ describe('Create Edit Application Form', () => {
       cy.selectDropdownOptionByResourceName('client-type', 'Confidential');
       cy.get('[data-cy="redirect-uris"]').clear();
       cy.clickButton(/^Create application$/);
-      cy.get('.pf-v5-c-helper-text__item-text').contains('Redirect uris is required.');
+      cy.get('.pf-v5-c-helper-text__item-text').contains(
+        'Need to pass a redirect URI if grant type is authorization code'
+      );
     });
   });
 
@@ -218,7 +220,9 @@ describe('Create Edit Application Form', () => {
       cy.get('[data-cy="redirect-uris"]').should('have.value', 'https://www.google.com');
       cy.get('[data-cy="redirect-uris"]').clear();
       cy.clickButton(/^Save application$/);
-      cy.get('.pf-v5-c-helper-text__item-text').contains('Redirect uris is required');
+      cy.get('.pf-v5-c-helper-text__item-text').contains(
+        'Need to pass a redirect URI if grant type is authorization code'
+      );
     });
   });
 });

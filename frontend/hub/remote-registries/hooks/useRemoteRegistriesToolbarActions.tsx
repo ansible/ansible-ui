@@ -9,11 +9,11 @@ import {
   usePageNavigate,
 } from '../../../../framework';
 import { HubRoute } from '../../HubRoutes';
-import { IHubView } from '../../useHubView';
+import { IPulpView } from '../../usePulpView';
 import { RemoteRegistry } from '../RemoteRegistry';
 import { useDeleteRemoteRegistries } from './useDeleteRemoteRegistries';
 
-export function useRemoteRegistriesToolbarActions(view: IHubView<RemoteRegistry>) {
+export function useRemoteRegistriesToolbarActions(view: IPulpView<RemoteRegistry>) {
   const { t } = useTranslation();
   const deleteRemoteRegistries = useDeleteRemoteRegistries(view.unselectItemsAndRefresh);
   const pageNavigate = usePageNavigate();

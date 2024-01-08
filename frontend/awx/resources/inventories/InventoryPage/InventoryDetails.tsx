@@ -8,17 +8,16 @@ import {
   TextListVariants,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   DateTimeCell,
   PageDetail,
   PageDetails,
   TextCell,
   useGetPageUrl,
-  usePageNavigate,
 } from '../../../../../framework';
 import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
-import { LastModifiedPageDetail } from '../../../../common/LastModifiedPageDetail';
+import { RouteObj } from '../../../../common/Routes';
 import { useGet } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
 import { awxAPI } from '../../../api/awx-utils';
@@ -26,6 +25,7 @@ import { useVerbosityString } from '../../../common/useVerbosityString';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { Inventory } from '../../../interfaces/Inventory';
 import { useGetInventory } from './InventoryPage';
+import { LastModifiedPageDetail } from '../../../../common/LastModifiedPageDetail';
 
 function useInstanceGroups(inventoryId: string) {
   const { data } = useGet<{ results: InstanceGroup[] }>(
@@ -48,7 +48,7 @@ export function InventoryDetails() {
 export function InventoryDetailsInner(props: { inventory: Inventory }) {
   const { t } = useTranslation();
   const { inventory } = props;
-  const pageNavigate = usePageNavigate();
+  const navigate = useNavigate();
   const params = useParams<{ id: string }>();
   const instanceGroups = useInstanceGroups(params.id || '0');
   const verbosityString = useVerbosityString(inventory.verbosity);
@@ -114,11 +114,7 @@ export function InventoryDetailsInner(props: { inventory: Inventory }) {
         <LabelGroup>
           {instanceGroups.map((ig) => (
             <Label color="blue" key={ig.id}>
-              <Link
-                to={getPageUrl(AwxRoute.InstanceGroupDetails, {
-                  params: { id: ig.id },
-                })}
-              >
+              <Link to={RouteObj.InstanceGroupDetails.replace(':id', (ig.id ?? 0).toString())}>
                 {ig.name}
               </Link>
             </Label>
@@ -139,12 +135,10 @@ export function InventoryDetailsInner(props: { inventory: Inventory }) {
             {inputInventories?.results.map((inventory) => (
               <Label color="blue" key={inventory.id}>
                 <Link
-                  to={getPageUrl(AwxRoute.InventoryDetails, {
-                    params: {
-                      inventory_type: inventoryUrlPaths[inventory.kind],
-                      id: inventory.id,
-                    },
-                  })}
+                  to={RouteObj.InventoryDetails.replace(
+                    ':inventory_type',
+                    inventoryUrlPaths[inventory.kind]
+                  ).replace(':id', (inventory.id ?? 0).toString())}
                 >
                   {inventory.name}
                 </Link>
@@ -168,9 +162,12 @@ export function InventoryDetailsInner(props: { inventory: Inventory }) {
           value={inventory.created}
           author={inventory.summary_fields?.created_by?.username}
           onClick={() =>
-            pageNavigate(AwxRoute.UserDetails, {
-              params: { id: inventory.summary_fields?.created_by?.id },
-            })
+            navigate(
+              RouteObj.UserDetails.replace(
+                ':id',
+                (inventory.summary_fields?.created_by?.id ?? 0).toString()
+              )
+            )
           }
         />
       </PageDetail>
@@ -179,9 +176,12 @@ export function InventoryDetailsInner(props: { inventory: Inventory }) {
         value={inventory.modified}
         author={inventory.summary_fields?.modified_by?.username}
         onClick={() =>
-          pageNavigate(AwxRoute.UserDetails, {
-            params: { id: inventory.summary_fields?.modified_by?.id },
-          })
+          navigate(
+            RouteObj.UserDetails.replace(
+              ':id',
+              (inventory.summary_fields?.modified_by?.id ?? 0).toString()
+            )
+          )
         }
       />
       <PageDetail label={t('Enabled options')} isEmpty={!inventory.prevent_instance_group_fallback}>

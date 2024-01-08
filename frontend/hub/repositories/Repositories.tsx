@@ -3,7 +3,7 @@ import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../fra
 import { HubRoute } from '../HubRoutes';
 import { pulpAPI } from '../api/formatPath';
 import { pulpHrefKeyFn } from '../api/utils';
-import { useHubView } from '../useHubView';
+import { usePulpView } from '../usePulpView';
 import { Repository } from './Repository';
 import { useRepositoryToolbarActions } from './hooks/useRepositoryToolbarActions';
 import { useRepositoryFilters } from './hooks/useRepositorySelector';
@@ -18,7 +18,7 @@ export function Repositories() {
   const rowActions = useRepositoryActions();
   const pageNavigate = usePageNavigate();
 
-  const view = useHubView<Repository>({
+  const view = usePulpView<Repository>({
     url: pulpAPI`/repositories/ansible/ansible/`,
     keyFn: pulpHrefKeyFn,
     toolbarFilters,

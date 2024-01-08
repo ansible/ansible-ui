@@ -1,4 +1,4 @@
-import { edaAPI } from '../common/eda-utils';
+import { edaAPI } from '../api/eda-utils';
 import { RulebookActivations } from './RulebookActivations';
 
 describe('RulebookActivations.cy.ts', () => {

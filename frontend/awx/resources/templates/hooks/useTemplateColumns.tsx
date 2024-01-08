@@ -14,10 +14,7 @@ import {
   useTypeColumn,
   useOrganizationNameColumn,
   useInventoryNameColumn,
-  useExecutionEnvColumn,
-  useProjectNameColumn,
   useCredentialsColumn,
-  useLabelsColumn,
   useLastRanColumn,
 } from '../../../../common/columns';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
@@ -29,13 +26,14 @@ import { Sparkline } from '../components/Sparkline';
 function useActivityColumn() {
   const { t } = useTranslation();
   const column: ITableColumn<{
-    summary_fields?: { recent_jobs?: SummaryFieldRecentJob[] | undefined };
+    summary_fields?: { recent_jobs?: SummaryFieldRecentJob[] };
   }> = useMemo(
     () => ({
       header: t('Activity'),
-      cell: (item) => <Sparkline jobs={item.summary_fields?.recent_jobs} />,
-      value: (item) =>
-        item.summary_fields?.recent_jobs && item.summary_fields?.recent_jobs?.length > 0,
+      cell: (item) => {
+        if (!item.summary_fields?.recent_jobs) return <></>;
+        return <Sparkline jobs={item.summary_fields?.recent_jobs} />;
+      },
       table: ColumnTableOption.Expanded,
       card: 'hidden',
       list: 'hidden',
@@ -76,11 +74,7 @@ export function useTemplateColumns(options?: { disableSort?: boolean; disableLin
   const modifiedColumn = useModifiedColumn(options);
   const organizationColumn = useOrganizationNameColumn(AwxRoute.OrganizationDetails, options);
   const inventoryColumn = useInventoryNameColumn(AwxRoute.InventoryDetails, options);
-  const projectColumn = useProjectNameColumn(AwxRoute.ProjectDetails, options);
   const credentialsColumn = useCredentialsColumn();
-  const labelsColumn = useLabelsColumn();
-  const executionEnvColumn = useExecutionEnvColumn(AwxRoute.ExecutionEnvironments, options);
-
   const lastRanColumn = useLastRanColumn(options);
   const typeOfTemplate = useTypeColumn<JobTemplate | WorkflowJobTemplate>({
     ...options,
@@ -96,10 +90,7 @@ export function useTemplateColumns(options?: { disableSort?: boolean; disableLin
       modifiedColumn,
       organizationColumn,
       inventoryColumn,
-      executionEnvColumn,
-      projectColumn,
       credentialsColumn,
-      labelsColumn,
       lastRanColumn,
     ],
     [
@@ -111,10 +102,7 @@ export function useTemplateColumns(options?: { disableSort?: boolean; disableLin
       modifiedColumn,
       organizationColumn,
       inventoryColumn,
-      executionEnvColumn,
-      projectColumn,
       credentialsColumn,
-      labelsColumn,
       lastRanColumn,
     ]
   );

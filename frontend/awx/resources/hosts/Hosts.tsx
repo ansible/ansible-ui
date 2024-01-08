@@ -2,6 +2,7 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { PencilAltIcon, PlusIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import {
   IPageAction,
   ITableColumn,
@@ -13,6 +14,7 @@ import {
   PageTable,
   usePageNavigate,
 } from '../../../../framework';
+import { RouteObj } from '../../../common/Routes';
 import {
   useCreatedColumn,
   useDescriptionColumn,
@@ -20,7 +22,6 @@ import {
   useNameColumn,
 } from '../../../common/columns';
 import { AwxRoute } from '../../AwxRoutes';
-import { awxAPI } from '../../api/awx-utils';
 import {
   useCreatedByToolbarFilter,
   useDescriptionToolbarFilter,
@@ -32,6 +33,7 @@ import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
 import { AwxHost } from '../../interfaces/AwxHost';
 import { useAwxView } from '../../useAwxView';
 import { useDeleteHosts } from './useDeleteHosts';
+import { awxAPI } from '../../api/awx-utils';
 
 export function Hosts() {
   const { t } = useTranslation();
@@ -146,10 +148,10 @@ export function useHostsFilters() {
 }
 
 export function useHostsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
-  const pageNavigate = usePageNavigate();
+  const navigate = useNavigate();
   const nameClick = useCallback(
-    (host: AwxHost) => pageNavigate(AwxRoute.HostDetails, { params: { id: host.id } }),
-    [pageNavigate]
+    (host: AwxHost) => navigate(RouteObj.HostDetails.replace(':id', host.id.toString())),
+    [navigate]
   );
   const nameColumn = useNameColumn({
     ...options,

@@ -1,13 +1,12 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings } from '../../../../../framework';
+import { compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { useNameColumn } from '../../../../common/columns';
 import { getItemKey } from '../../../../common/crud/Data';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { WorkflowApproval } from '../../../interfaces/WorkflowApproval';
 import { useWorkflowApprovalsColumns } from './useWorkflowApprovalsColumns';
 import { awxAPI } from '../../../api/awx-utils';
-import { useAwxBulkConfirmation } from '../../../common/useAwxBulkConfirmation';
 
 export function useApproveWorkflowApprovals(
   onComplete: (workflow_approvals: WorkflowApproval[]) => void
@@ -19,7 +18,7 @@ export function useApproveWorkflowApprovals(
   });
   const cancelActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true });
   const actionColumns = useMemo(() => [cancelActionNameColumn], [cancelActionNameColumn]);
-  const bulkAction = useAwxBulkConfirmation<WorkflowApproval>();
+  const bulkAction = useBulkConfirmation<WorkflowApproval>();
   const postRequest = usePostRequest();
   const cannotApprove = (workflow_approval: WorkflowApproval) => {
     if (workflow_approval.timed_out)

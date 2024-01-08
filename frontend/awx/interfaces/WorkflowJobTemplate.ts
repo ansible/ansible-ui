@@ -1,4 +1,3 @@
-import { Project } from './Project';
 import { WorkflowJobTemplate as SwaggerWorkflowJobTemplate } from './generated-from-swagger/api';
 import { SummaryFieldCredential, SummaryFieldsByUser } from './summary-fields/summary-fields';
 
@@ -57,8 +56,6 @@ export interface WorkflowJobTemplate
       organization_id: number;
       kind: '' | 'smart' | 'constructed';
     };
-    project: Pick<Project, 'id' | 'name'>;
-    execution_environment?: { id: number; name: string };
     organization?: {
       id: number;
       name: string;
@@ -116,7 +113,6 @@ export interface WorkflowJobTemplateForm
     | 'skip_tags'
     | 'job_tags'
     | 'type'
-    | 'execution_environment'
     | 'id'
     | 'job_type'
     | 'related'

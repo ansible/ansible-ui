@@ -11,10 +11,10 @@ import {
   Tooltip,
 } from '@patternfly/react-core';
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
-import { DownloadIcon, HeartbeatIcon, PencilAltIcon } from '@patternfly/react-icons';
+import { DownloadIcon, PencilAltIcon, HeartbeatIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   BytesCell,
   IPageAction,
@@ -28,22 +28,24 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
-import { Dotted } from '../../../../framework/components/Dotted';
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
-import { formatDateString } from '../../../../framework/utils/formatDateString';
-import { capitalizeFirstLetter } from '../../../../framework/utils/strings';
-import { LastModifiedPageDetail } from '../../../common/LastModifiedPageDetail';
 import { StatusLabel } from '../../../common/Status';
 import { useGetItem } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
+import { AwxError } from '../../common/AwxError';
+import { Instance } from '../../interfaces/Instance';
+
+import { Dotted } from '../../../../framework/components/Dotted';
+import { capitalizeFirstLetter } from '../../../../framework/utils/strings';
 import { AwxRoute } from '../../AwxRoutes';
 import { awxAPI } from '../../api/awx-utils';
-import { AwxError } from '../../common/AwxError';
+import { useNodeTypeTooltip } from './hooks/useNodeTypeTooltip';
+import { RouteObj } from '../../../common/Routes';
+import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
-import { Instance } from '../../interfaces/Instance';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { useInstanceActions } from './hooks/useInstanceActions';
-import { useNodeTypeTooltip } from './hooks/useNodeTypeTooltip';
+import { LastModifiedPageDetail } from '../../../common/LastModifiedPageDetail';
 
 export function InstanceDetails() {
   const { t } = useTranslation();
@@ -121,7 +123,7 @@ export function InstanceDetailsTab(props: {
   handleInstanceForksSlider: (instance: Instance, value: number) => Promise<void>;
 }) {
   const { t } = useTranslation();
-  const pageNavigate = usePageNavigate();
+  const history = useNavigate();
   const getPageUrl = useGetPageUrl();
   const {
     instance,
@@ -138,9 +140,11 @@ export function InstanceDetailsTab(props: {
           variant="link"
           isInline
           onClick={() =>
-            pageNavigate(AwxRoute.InstancePage, {
-              params: { id: instance.id },
-            })
+            history(
+              getPageUrl(AwxRoute.InstancePage, {
+                params: { id: instance.id },
+              })
+            )
           }
         >
           {instance.hostname}
@@ -158,7 +162,7 @@ export function InstanceDetailsTab(props: {
         <PageDetail label={t(`Instance groups`)} data-cy="instance-groups">
           {instanceGroups.results.map((instance) => (
             <Label color="blue" style={{ marginRight: '10px' }} key={instance.id}>
-              <Link to={getPageUrl(AwxRoute.InstanceGroupDetails, { params: { id: instance.id } })}>
+              <Link to={RouteObj.InstanceGroupDetails.replace(':id', instance.id.toString())}>
                 {/* eslint-disable-next-line i18next/no-literal-string */}
                 {instance.name}
               </Link>

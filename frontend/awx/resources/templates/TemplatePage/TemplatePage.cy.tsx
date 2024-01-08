@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable i18next/no-literal-string */
+import { RouteObj } from '../../../../common/Routes';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { Organization } from '../../../interfaces/Organization';
 import { TemplatePage } from './TemplatePage';
@@ -134,7 +135,14 @@ describe('TemplatePage', () => {
       'Survey',
       'Notifications',
     ];
-    cy.mount(<TemplatePage />, undefined, 'activeUserSysAuditor');
+    cy.mount(
+      <TemplatePage />,
+      {
+        path: RouteObj.WorkflowJobTemplatePage,
+        initialEntries: [RouteObj.WorkflowJobTemplateDetails.replace(':id', '1')],
+      },
+      'activeUserSysAuditor'
+    );
 
     cy.get('.pf-v5-c-tabs__list').within(() => {
       cy.get('.pf-v5-c-tabs__item').should('have.length', 6);
@@ -167,7 +175,10 @@ describe('TemplatePage', () => {
       'Survey',
     ];
 
-    cy.mount(<TemplatePage />);
+    cy.mount(<TemplatePage />, {
+      path: RouteObj.WorkflowJobTemplatePage,
+      initialEntries: [RouteObj.WorkflowJobTemplateDetails.replace(':id', '1')],
+    });
     cy.wait('@getOrganizations');
 
     cy.get('.pf-v5-c-tabs__list').within(() => {

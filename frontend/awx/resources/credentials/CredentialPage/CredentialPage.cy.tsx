@@ -1,4 +1,5 @@
 /* eslint-disable i18next/no-literal-string */
+import { RouteObj } from '../../../../common/Routes';
 import { Credential } from '../../../interfaces/Credential';
 import { CredentialType } from '../../../interfaces/CredentialType';
 import { CredentialPage } from './CredentialPage';
@@ -21,7 +22,10 @@ describe('CredentialPage', () => {
       credential.summary_fields.user_capabilities.delete = false;
       cy.intercept('GET', '/api/v2/credentials/*', credential);
     });
-    cy.mount(<CredentialPage />);
+    cy.mount(<CredentialPage />, {
+      path: RouteObj.CredentialPage,
+      initialEntries: [RouteObj.CredentialDetails.replace(':id', '1')],
+    });
     cy.get('.toggle-kebab')
       .click()
       .get('a.pf-m-aria-disabled ')
@@ -33,7 +37,10 @@ describe('CredentialPage', () => {
       credential.summary_fields.user_capabilities.edit = false;
       cy.intercept('GET', '/api/v2/credentials/*', credential);
     });
-    cy.mount(<CredentialPage />);
+    cy.mount(<CredentialPage />, {
+      path: RouteObj.CredentialPage,
+      initialEntries: [RouteObj.CredentialDetails.replace(':id', '1')],
+    });
     cy.get('#edit-credential').should('have.attr', 'aria-disabled', 'true');
   });
 });

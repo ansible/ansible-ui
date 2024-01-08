@@ -15,7 +15,7 @@ import { hubAPI, pulpAPI } from '../api/formatPath';
 import { hubPostRequestFile } from '../api/request';
 import { Repository } from '../repositories/Repository';
 import { HubItemsResponse } from '../useHubView';
-import { PulpItemsResponse } from '../useHubView';
+import { PulpItemsResponse } from '../usePulpView';
 import { CollectionVersionSearch } from './Collection';
 import { HubError } from '../common/HubError';
 import { useSearchParams } from 'react-router-dom';

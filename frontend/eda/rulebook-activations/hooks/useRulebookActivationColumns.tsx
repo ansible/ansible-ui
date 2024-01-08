@@ -1,5 +1,3 @@
-import { Label, Truncate } from '@patternfly/react-core';
-import { InfoCircleIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -10,9 +8,11 @@ import {
   useGetPageUrl,
 } from '../../../../framework';
 import { StatusCell } from '../../../common/Status';
+import { EdaRoute } from '../../EdaRoutes';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { Status906Enum } from '../../interfaces/generated/eda-api';
-import { EdaRoute } from '../../main/EdaRoutes';
+import { Label, Truncate } from '@patternfly/react-core';
+import { InfoCircleIcon } from '@patternfly/react-icons';
 
 export function useRulebookActivationColumns() {
   const { t } = useTranslation();

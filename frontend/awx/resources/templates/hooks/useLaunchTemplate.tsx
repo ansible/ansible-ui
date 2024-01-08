@@ -9,7 +9,7 @@ import type { JobTemplate } from '../../../interfaces/JobTemplate';
 import type { UnifiedJob } from '../../../interfaces/UnifiedJob';
 import type { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import type { JobLaunch, WorkflowJobLaunch } from '../../../interfaces/generated-from-swagger/api';
-import { useGetJobOutputUrl } from '../../../views/jobs/useGetJobOutputUrl';
+import { getJobOutputUrl } from '../../../views/jobs/jobUtils';
 
 type Template = JobTemplate | WorkflowJobTemplate;
 type TemplateLaunch = JobLaunch & WorkflowJobLaunch;
@@ -20,7 +20,6 @@ export function useLaunchTemplate() {
   const postRequest = usePostRequest();
   const alertToaster = usePageAlertToaster();
   const pageNavigate = usePageNavigate();
-  const getJobOutputUrl = useGetJobOutputUrl();
 
   return async (template: Template) => {
     const launchEndpoint = getLaunchEndpoint(template);

@@ -9,14 +9,12 @@ import {
   PageFormSelect,
   PageFormSwitch,
   PageFormTextInput,
-  useGetPageUrl,
 } from '../../../../../framework';
 import { PageFormCreatableSelect } from '../../../../../framework/PageForm/Inputs/PageFormCreatableSelect';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
-import { AwxRoute } from '../../../AwxRoutes';
+import { RouteObj } from '../../../../common/Routes';
 import { PageFormExecutionEnvironmentSelect } from '../../../administration/execution-environments/components/PageFormExecutionEnvironmentSelect';
 import { PageFormInstanceGroupSelect } from '../../../administration/instance-groups/components/PageFormInstanceGroupSelect';
-import { awxAPI } from '../../../api/awx-utils';
 import { PageFormLabelSelect } from '../../../common/PageFormLabelSelect';
 import { InventorySource } from '../../../interfaces/InventorySource';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
@@ -24,9 +22,16 @@ import { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
 import { Project } from '../../../interfaces/Project';
 import { ScheduleFormFields } from '../../../interfaces/ScheduleFormFields';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
+import { awxAPI } from '../../../api/awx-utils';
 import { PageFormCredentialSelect } from '../../../resources/credentials/components/PageFormCredentialSelect';
 import { PageFormInventorySelect } from '../../../resources/inventories/components/PageFormInventorySelect';
 
+export const resourceSchedulePageRoutes: { [key: string]: string } = {
+  inventory: RouteObj.InventorySourceSchedulePage,
+  job_template: RouteObj.JobTemplateSchedulePage,
+  workflow_job_template: RouteObj.WorkflowJobTemplateSchedulePage,
+  projects: RouteObj.ProjectSchedulePage,
+};
 export const resourceEndPoints: { [key: string]: string } = {
   inventory: awxAPI`/inventories/`,
   projects: awxAPI`/projects/`,
@@ -39,19 +44,31 @@ export const scheduleResourceTypeOptions: string[] = [
   'inventory',
   'projects',
 ];
+export const schedulesListRoutes: { [key: string]: string } = {
+  job_template: RouteObj.JobTemplateSchedules,
+  workflow_job_template: RouteObj.WorkflowJobTemplateSchedules,
+  inventory: RouteObj.InventorySourceSchedules,
+  projects: RouteObj.ProjectSchedules,
+};
+
+export const scheduleDetailRoutes: { [key: string]: string } = {
+  inventory: RouteObj.InventorySourceScheduleDetails,
+  job_template: RouteObj.JobTemplateScheduleDetails,
+  workflow_job_template: RouteObj.WorkflowJobTemplateScheduleDetails,
+  projects: RouteObj.ProjectScheduleDetails,
+};
 
 export function useGetSchedulCreateUrl(sublistEndPoint?: string) {
-  const getPageUrl = useGetPageUrl();
   const createScheduleContainerRoutes: { [key: string]: string } = {
-    inventory: getPageUrl(AwxRoute.InventorySourceScheduleCreate),
-    job_templates: getPageUrl(AwxRoute.JobTemplateScheduleCreate),
-    workflow_job_templates: getPageUrl(AwxRoute.WorkflowJobTemplateScheduleCreate),
-    projects: getPageUrl(AwxRoute.ProjectScheduleCreate),
+    inventory: RouteObj.InventorySourceSchedulesCreate,
+    job_templates: RouteObj.JobTemplateSchedulesCreate,
+    workflow_job_templates: RouteObj.WorkflowJobTemplateSchedulesCreate,
+    projects: RouteObj.ProjectSchedulesCreate,
   };
 
   const params = useParams<{ id: string; schedule_id?: string }>();
-  if (!sublistEndPoint) return getPageUrl(AwxRoute.CreateSchedule);
-  let createUrl: string = getPageUrl(AwxRoute.CreateSchedule);
+  if (!sublistEndPoint) return RouteObj.CreateSchedule;
+  let createUrl: string = RouteObj.CreateSchedule;
   const resource_type = Object.keys(createScheduleContainerRoutes).find(
     (route) => sublistEndPoint?.split('/').includes(route)
   );
@@ -62,12 +79,11 @@ export function useGetSchedulCreateUrl(sublistEndPoint?: string) {
 }
 
 export function useGetCreateRuleRoute() {
-  const getPageUrl = useGetPageUrl();
   const createRuleRoutes: { [key: string]: string } = {
-    inventories: getPageUrl(AwxRoute.InventorySourceCreateScheduleRules),
-    job_template: getPageUrl(AwxRoute.JobTemplateCreateScheduleRules),
-    workflow_job_template: getPageUrl(AwxRoute.WorkflowJobTemplateCreateScheduleRules),
-    projects: getPageUrl(AwxRoute.ProjectCreateScheduleRules),
+    inventories: RouteObj.InventorySourceCreateScheduleRules,
+    job_template: RouteObj.JobTemplateCreateScheduleRules,
+    workflow_job_template: RouteObj.WorkflowJobTemplateCreateScheduleRules,
+    projects: RouteObj.ProjectCreateScheduleRules,
   };
 
   const params = useParams<{ id: string; schedule_id: string; source_id?: string }>();
@@ -78,9 +94,9 @@ export function useGetCreateRuleRoute() {
   let createUrl = '';
   if (resource_type && params?.id && params.schedule_id) {
     if (resource_type === 'inventories' && params?.source_id) {
-      createUrl = getPageUrl(AwxRoute.InventorySourceCreateScheduleRules, {
-        params: { id: params.id, schedule_id: params.schedule_id, source_id: params.source_id },
-      });
+      createUrl = RouteObj.InventorySourceCreateScheduleRules.replace(':id', `${params.id}`)
+        .replace(':source_id', `${params.source_id}`)
+        .replace(':schedule_id', `${params.schedule_id}`);
     }
     createUrl = createRuleRoutes[resource_type]
       .replace(':id', `${params.id}`)

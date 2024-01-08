@@ -5,14 +5,12 @@ import {
   ColumnTableOption,
   ITableColumn,
   TextCell,
-  useGetPageUrl,
 } from '../../../../../framework';
-import { AwxRoute } from '../../../AwxRoutes';
+import { RouteObj } from '../../../../common/Routes';
 import { Project } from '../../../interfaces/Project';
 
 export function useExecutionEnvironmentColumn() {
   const { t } = useTranslation();
-  const getPageUrl = useGetPageUrl();
   const column = useMemo<ITableColumn<Project>>(
     () => ({
       header: t('Default environment'),
@@ -20,9 +18,10 @@ export function useExecutionEnvironmentColumn() {
       cell: (project) => (
         <TextCell
           text={project.summary_fields?.default_environment?.name}
-          to={getPageUrl(AwxRoute.ExecutionEnvironmentDetails, {
-            params: { id: project.summary_fields?.default_environment?.id },
-          })}
+          to={RouteObj.ExecutionEnvironmentDetails.replace(
+            ':id',
+            (project.summary_fields?.default_environment?.id ?? '').toString()
+          )}
         />
       ),
       table: ColumnTableOption.Expanded,
@@ -30,7 +29,7 @@ export function useExecutionEnvironmentColumn() {
       list: 'secondary',
       modal: ColumnModalOption.Hidden,
     }),
-    [getPageUrl, t]
+    [t]
   );
   return column;
 }

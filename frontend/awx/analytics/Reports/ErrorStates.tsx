@@ -3,11 +3,11 @@ import { KeyIcon, MonitoringIcon } from '@patternfly/react-icons';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { EmptyStateCustom } from '../../../../framework/components/EmptyStateCustom';
-import { useAwxActiveUser } from '../../common/useAwxActiveUser';
+import { useActiveUser } from '../../../common/useActiveUser';
 
 export function AnalyticsErrorState(props: { error?: string }) {
   const { t } = useTranslation();
-  const activeUser = useAwxActiveUser();
+  const activeUser = useActiveUser();
   const { error } = props;
 
   interface errorTextsType {

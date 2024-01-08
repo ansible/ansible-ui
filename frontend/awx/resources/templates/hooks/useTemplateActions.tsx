@@ -7,18 +7,18 @@ import {
   PageActionType,
   useGetPageUrl,
 } from '../../../../../framework';
-import { AwxRoute } from '../../../AwxRoutes';
-import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { useDeleteTemplates } from '../hooks/useDeleteTemplates';
+import { AwxRoute } from '../../../AwxRoutes';
+import { useActiveUser } from '../../../../common/useActiveUser';
 import { useLaunchTemplate } from './useLaunchTemplate';
 
 type Template = JobTemplate | WorkflowJobTemplate;
 export function useTemplateActions(options: {
   onTemplatesDeleted: (templates: Template[]) => void;
 }) {
-  const activeUser = useAwxActiveUser();
+  const activeUser = useActiveUser();
   const { onTemplatesDeleted } = options;
   const { t } = useTranslation();
   const deleteTemplates = useDeleteTemplates(onTemplatesDeleted);

@@ -1,6 +1,8 @@
-import { PageAsyncMultiSelectOptionsFn } from '../../PageInputs/PageAsyncMultiSelect';
-import { PageAsyncQueryErrorTextType } from '../../PageInputs/PageAsyncSingleSelect';
 import { ToolbarFilterType } from '../PageToolbarFilter';
+import { PageAsyncMultiSelectOptionsFn } from '../../PageInputs/PageAsyncMultiSelect';
+
+import { PageAsyncQueryErrorTextType } from '../../PageInputs/PageAsyncSingleSelect';
+
 import { ToolbarFilterCommon } from './ToolbarFilterCommon';
 
 /** A function to open a single selection browse modal for a toolbar filter. */

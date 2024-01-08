@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings } from '../../../../../framework';
+import { compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { useNameColumn } from '../../../../common/columns';
 import { getItemKey, requestDelete, requestGet } from '../../../../common/crud/Data';
 import { awxAPI } from '../../../api/awx-utils';
@@ -11,7 +11,6 @@ import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { Inventory } from '../../../interfaces/Inventory';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
-import { useAwxBulkConfirmation } from '../../../common/useAwxBulkConfirmation';
 
 async function checkIfInstanceGroupIsBeingUsed(instanceGroup: InstanceGroup) {
   const relatedOrganizationsData = await requestGet<AwxItemsResponse<Organization>>(
@@ -38,7 +37,7 @@ export function useDeleteInstanceGroups(onComplete: (instanceGroups: InstanceGro
   const confirmationColumns = useInstanceGroupsColumns({ disableLinks: true, disableSort: true });
   const deleteActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true });
   const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn]);
-  const bulkAction = useAwxBulkConfirmation<InstanceGroup>();
+  const bulkAction = useBulkConfirmation<InstanceGroup>();
   const cannotDeleteInstanceGroup = (instanceGroup: InstanceGroup) => {
     return instanceGroup?.summary_fields?.user_capabilities?.delete
       ? undefined

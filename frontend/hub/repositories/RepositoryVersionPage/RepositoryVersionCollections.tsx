@@ -4,7 +4,7 @@ import { useParams, useOutletContext } from 'react-router-dom';
 import { ITableColumn, useGetPageUrl, PageTable, TextCell } from '../../../../framework';
 import { CollectionReduced } from '../../collections/Collection';
 import { useMemo } from 'react';
-import { useHubView } from '../../useHubView';
+import { usePulpView } from '../../usePulpView';
 import { useTranslation } from 'react-i18next';
 import { HubRoute } from '../../HubRoutes';
 
@@ -36,7 +36,7 @@ export function RepositoryVersionCollections() {
     [t, getPageUrl, repository.name]
   );
 
-  const view = useHubView<CollectionReduced>({
+  const view = usePulpView<CollectionReduced>({
     url: pulpAPI`/content/ansible/collection_versions/?repository_version=${
       repository.versions_href
     }${params.version || ''}/`,

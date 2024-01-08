@@ -27,7 +27,7 @@ import { hubAPI, pulpAPI } from '../api/formatPath';
 import { hubPostRequestFile } from '../api/request';
 import { useHubNamespaces } from '../namespaces/hooks/useHubNamespaces';
 import { useRepositories } from '../repositories/hooks/useRepositories';
-import { PulpItemsResponse, useHubView } from '../useHubView';
+import { PulpItemsResponse, usePulpView } from '../usePulpView';
 import { HubError } from '../common/HubError';
 
 interface UploadData {
@@ -90,7 +90,7 @@ export function UploadCollectionByFile() {
     setNamespaceParams(ns);
   }
 
-  const view = useHubView<Repository>({
+  const view = usePulpView<Repository>({
     url: pulpAPI`/repositories/ansible/ansible/`,
     keyFn: nameKeyFn,
     toolbarFilters,

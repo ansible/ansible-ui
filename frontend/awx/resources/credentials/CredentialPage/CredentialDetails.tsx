@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import {
   DateTimeCell,
@@ -8,19 +8,19 @@ import {
   PageDetails,
   TextCell,
   useGetPageUrl,
-  usePageNavigate,
 } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
-import { LastModifiedPageDetail } from '../../../../common/LastModifiedPageDetail';
+import { RouteObj } from '../../../../common/Routes';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
-import { awxAPI } from '../../../api/awx-utils';
 import { AwxError } from '../../../common/AwxError';
 import { useAwxGetAllPages } from '../../../common/useAwxGetAllPages';
 import { Credential } from '../../../interfaces/Credential';
 import { CredentialInputSource } from '../../../interfaces/CredentialInputSource';
 import { CredentialType } from '../../../interfaces/CredentialType';
 import { CredentialTypeDetail } from '../components/CredentialTypeDetail';
+import { awxAPI } from '../../../api/awx-utils';
+import { LastModifiedPageDetail } from '../../../../common/LastModifiedPageDetail';
 
 const PluginFieldText = styled.p`
   margin-top: 10px;
@@ -40,7 +40,7 @@ export function CredentialDetails() {
 export function CredentialDetailsInner(props: { credential: Credential }) {
   const { t } = useTranslation();
   const { credential } = props;
-  const pageNavigate = usePageNavigate();
+  const navigate = useNavigate();
   const getPageUrl = useGetPageUrl();
 
   const { summary_fields, inputs: credentialInputs } = credential;
@@ -129,9 +129,12 @@ export function CredentialDetailsInner(props: { credential: Credential }) {
           value={credential.created}
           author={credential.summary_fields?.created_by?.username}
           onClick={() =>
-            pageNavigate(AwxRoute.UserDetails, {
-              params: { id: credential.summary_fields?.created_by?.id },
-            })
+            navigate(
+              RouteObj.UserDetails.replace(
+                ':id',
+                (credential.summary_fields?.created_by?.id ?? 0).toString()
+              )
+            )
           }
         />
       </PageDetail>
@@ -140,9 +143,12 @@ export function CredentialDetailsInner(props: { credential: Credential }) {
         value={credential.modified}
         author={credential.summary_fields?.modified_by?.username}
         onClick={() =>
-          pageNavigate(AwxRoute.UserDetails, {
-            params: { id: credential.summary_fields?.modified_by?.id },
-          })
+          navigate(
+            RouteObj.UserDetails.replace(
+              ':id',
+              (credential.summary_fields?.modified_by?.id ?? 0).toString()
+            )
+          )
         }
       />
       {credentialInputs && inputSources && Object.keys(inputSources).length > 0 && (

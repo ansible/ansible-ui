@@ -7,11 +7,11 @@ import {
   PageHeader,
   PageLayout,
   useGetPageUrl,
-  usePageNavigate,
 } from '../../../../framework';
 import { PageFormSingleSelect } from '../../../../framework/PageForm/Inputs/PageFormSingleSelect';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
+import { RouteObj } from '../../../common/Routes';
 import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { AwxPageForm } from '../../AwxPageForm';
@@ -30,7 +30,6 @@ const UserType = {
 
 export function CreateUser() {
   const { t } = useTranslation();
-  const pageNavigate = usePageNavigate();
   const navigate = useNavigate();
   const postRequest = usePostRequest<User, User>();
   const onSubmit: PageFormSubmitHandler<IUserInput> = async (
@@ -57,7 +56,7 @@ export function CreateUser() {
       awxAPI`/organizations/${user.organization.toString()}/users/`,
       user
     );
-    pageNavigate(AwxRoute.UserDetails, { params: { id: newUser.id } });
+    navigate(RouteObj.UserDetails.replace(':id', newUser.id.toString()));
   };
 
   const onCancel = () => navigate(-1);
@@ -88,7 +87,6 @@ export function CreateUser() {
 export function EditUser() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const pageNavigate = usePageNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
   const { data: user } = useSWR<User>(awxAPI`/users/${id.toString()}/`, requestGet, swrOptions);
@@ -108,7 +106,7 @@ export function EditUser() {
       }
     }
     const newUser = await requestPatch<User>(awxAPI`/users/${id.toString()}/`, user);
-    pageNavigate(AwxRoute.UserDetails, { params: { id: newUser.id } });
+    navigate(RouteObj.UserDetails.replace(':id', newUser.id.toString()));
   };
 
   const getPageUrl = useGetPageUrl();

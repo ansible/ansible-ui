@@ -1,6 +1,8 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, usePageNavigate } from '../../../../../framework';
+import { useNavigate } from 'react-router-dom';
+import { ITableColumn } from '../../../../../framework';
+import { RouteObj } from '../../../../common/Routes';
 import { StatusCell } from '../../../../common/Status';
 import {
   useCreatedColumn,
@@ -9,12 +11,12 @@ import {
   useNameColumn,
   useOrganizationNameColumn,
 } from '../../../../common/columns';
-import { AwxRoute } from '../../../AwxRoutes';
 import { Inventory } from '../../../interfaces/Inventory';
 import { type WebSocketInventory } from '../Inventories';
+import { AwxRoute } from '../../../AwxRoutes';
 
 export function useInventoriesColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
-  const pageNavigate = usePageNavigate();
+  const navigate = useNavigate();
   const { t } = useTranslation();
 
   const nameClick = useCallback(
@@ -24,11 +26,14 @@ export function useInventoriesColumns(options?: { disableSort?: boolean; disable
         smart: 'smart_inventory',
         constructed: 'constructed_inventory',
       };
-      return pageNavigate(AwxRoute.InventoryDetails, {
-        params: { inventory_type: kinds[inventory.kind], id: inventory.id },
-      });
+      return navigate(
+        RouteObj.InventoryDetails.replace(':inventory_type', kinds[inventory.kind]).replace(
+          ':id',
+          inventory.id.toString()
+        )
+      );
     },
-    [pageNavigate]
+    [navigate]
   );
   const nameColumn = useNameColumn({ ...options, onClick: nameClick });
   const createdColumn = useCreatedColumn(options);

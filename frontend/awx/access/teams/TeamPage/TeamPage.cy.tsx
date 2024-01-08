@@ -1,3 +1,4 @@
+import { RouteObj } from '../../../../common/Routes';
 import { TeamPage } from './TeamPage';
 
 describe('TeamPage', () => {
@@ -6,7 +7,10 @@ describe('TeamPage', () => {
       { method: 'GET', url: '/api/v2/teams/*/', hostname: 'localhost' },
       { fixture: 'team.json' }
     );
-    cy.mount(<TeamPage />);
+    cy.mount(<TeamPage />, {
+      path: RouteObj.TeamPage,
+      initialEntries: [RouteObj.TeamDetails.replace(':id', '1')],
+    });
   });
   it('Component renders and displays team in breadcrumb', () => {
     cy.contains('nav[aria-label="Breadcrumb"]', 'Team 2 Org 0').should('exist');

@@ -1,4 +1,3 @@
-import { AlertProps } from '@patternfly/react-core';
 import { RedoIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -8,16 +7,17 @@ import {
   PageActionType,
   usePageAlertToaster,
 } from '../../../../framework';
-import { postRequest } from '../../../common/crud/Data';
-import { edaAPI } from '../../common/eda-utils';
-import { IEdaView } from '../../common/useEventDrivenView';
+import { edaAPI } from '../../api/eda-utils';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { Status906Enum } from '../../interfaces/generated/eda-api';
+import { IEdaView } from '../../useEventDrivenView';
 import {
   useDisableRulebookActivations,
   useRestartRulebookActivations,
 } from './useControlRulebookActivations';
 import { useDeleteRulebookActivations } from './useDeleteRulebookActivations';
+import { postRequest } from '../../../common/crud/Data';
+import { AlertProps } from '@patternfly/react-core';
 
 export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivation>) {
   const { t } = useTranslation();

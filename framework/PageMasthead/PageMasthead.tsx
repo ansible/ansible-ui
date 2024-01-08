@@ -5,17 +5,27 @@ import {
   MastheadMain,
   MastheadToggle,
   PageToggleButton,
+  Stack,
+  Text,
+  Title,
   Toolbar,
   ToolbarContent,
+  ToolbarItem,
+  Truncate,
 } from '@patternfly/react-core';
 import { BarsIcon } from '@patternfly/react-icons';
 import { ReactNode } from 'react';
-import { Link } from 'react-router-dom';
 import { usePageNavSideBar } from '../PageNavigation/PageNavSidebar';
 import { useBreakpoint } from '../components/useBreakPoint';
 
-export function PageMasthead(props: { brand: ReactNode; children?: ReactNode }) {
+export function PageMasthead(props: {
+  icon?: ReactNode;
+  brand?: string;
+  title: string;
+  children?: ReactNode;
+}) {
   const isSmallOrLarger = useBreakpoint('sm');
+  const isMdOrLarger = useBreakpoint('md');
   return (
     <Masthead
       display={{ default: 'inline' }}
@@ -27,9 +37,7 @@ export function PageMasthead(props: { brand: ReactNode; children?: ReactNode }) 
       <PageMastheadToggle />
       {isSmallOrLarger && (
         <MastheadMain>
-          <MastheadBrand component={(props) => <Link {...props} to="/" />}>
-            {props.brand}
-          </MastheadBrand>
+          <MastheadBrand component="a">{props.icon}</MastheadBrand>
         </MastheadMain>
       )}
       <MastheadContent style={{ marginLeft: 0, minHeight: 0 }}>
@@ -39,7 +47,25 @@ export function PageMasthead(props: { brand: ReactNode; children?: ReactNode }) 
           inset={{ default: 'insetNone' }}
           style={{ padding: 0 }}
         >
-          <ToolbarContent>{props.children}</ToolbarContent>
+          <ToolbarContent>
+            {isMdOrLarger && (
+              <ToolbarItem>
+                <Stack
+                  style={{ color: 'white', cursor: 'default', marginTop: -2, marginBottom: -2 }}
+                >
+                  {props.brand && (
+                    <Text style={{ marginTop: -6 }}>
+                      <Truncate content={props.brand} style={{ minWidth: 0 }} />
+                    </Text>
+                  )}
+                  <Title headingLevel="h1" style={{ lineHeight: 1 }}>
+                    <Truncate content={props.title} style={{ minWidth: 0 }} />
+                  </Title>
+                </Stack>
+              </ToolbarItem>
+            )}
+            {props.children}
+          </ToolbarContent>
         </Toolbar>
       </MastheadContent>
     </Masthead>

@@ -5,11 +5,11 @@ import styled from 'styled-components';
 import useSWR from 'swr';
 import { PageHeader, PageLayout } from '../../../../framework';
 import { requestGet } from '../../../common/crud/Data';
-import { awxAPI } from '../../api/awx-utils';
-import { useAwxActiveUser } from '../../common/useAwxActiveUser';
+import { useActiveUser } from '../../../common/useActiveUser';
 import { AutomationCalculator } from './AutomationCalculator';
 import { AnalyticsErrorState } from './ErrorStates';
 import { TAGS } from './constants';
+import { awxAPI } from '../../api/awx-utils';
 
 export interface ReportItemsResponse {
   report: {
@@ -23,7 +23,7 @@ export interface ReportItemsResponse {
 }
 
 export default function Reports() {
-  const activeUser = useAwxActiveUser();
+  const activeUser = useActiveUser();
   const { data, error } = useSWR<ReportItemsResponse, Error>(
     awxAPI`/analytics/report/automation_calculator/`,
     requestGet

@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import {
   PageActions,
   PageHeader,
@@ -10,21 +8,23 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../../framework';
-import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { useGet, useGetItem } from '../../../../common/crud/useGet';
 import { AwxRoute } from '../../../AwxRoutes';
-import { awxAPI } from '../../../api/awx-utils';
 import { AwxError } from '../../../common/AwxError';
-import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
-import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
+import { awxAPI } from '../../../api/awx-utils';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
-import { Organization } from '../../../interfaces/Organization';
 import { useTemplateActions } from '../hooks/useTemplateActions';
+import { useActiveUser } from '../../../../common/useActiveUser';
+import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
+import { Organization } from '../../../interfaces/Organization';
+import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
+import { useParams } from 'react-router-dom';
+import { useMemo } from 'react';
 
 export function TemplatePage() {
   const { t } = useTranslation();
-  const currentUser = useAwxActiveUser();
+  const currentUser = useActiveUser();
   const params = useParams<{ id: string }>();
   const {
     error: templateError,

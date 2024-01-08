@@ -1,10 +1,10 @@
 import React, { useMemo, useState } from 'react';
 import { useGet } from '../../../common/crud/useGet';
-import { pulpAPI } from '../../api/formatPath';
+import { hubAPI } from '../../api/formatPath';
 import { useBreakpoint } from '../../../../framework';
 import { Drawer, DrawerContent, DrawerContentBody } from '@patternfly/react-core';
 import { useOutletContext } from 'react-router-dom';
-import { IContents, CollectionVersionSearch } from '../Collection';
+import { IContents, CollectionDocs, CollectionVersionSearch } from '../Collection';
 import { CollectionDocumentationTabPanel } from '../components/CollectionDocumentationTabPanel';
 import { CollectionDocumentationTabContent } from '../components/CollectionDocumentationTabContent';
 
@@ -13,35 +13,19 @@ export function CollectionDocumentation() {
 
   const [content, setContent] = useState<IContents>();
 
-  const { data } = useGet<CollectionVersionsContent>(
-    pulpAPI`/content/ansible/collection_versions/?namespace=${
-      collection?.collection_version?.namespace || ''
-    }&name=${collection?.collection_version?.name || ''}&version=${
-      collection?.collection_version?.version || ''
-    }&offset=0&limit=1`
+  const { data } = useGet<CollectionDocs>(
+    hubAPI`/_ui/v1/repo/published/${collection?.collection_version?.name || ''}/${
+      collection?.collection_version?.name || ''
+    }/?include_related=my_permissions`
   );
-
-  type CollectionVersionContentItem = {
-    docs_blob: { contents: IContents[] };
-  };
-
-  type CollectionVersionsContent = {
-    count: number;
-    next: string;
-    previous: string;
-    results: CollectionVersionContentItem[];
-  };
 
   const groups = useMemo(() => {
     const groups: Record<string, { name: string; contents: IContents[] }> = {};
-    if (data) {
-      for (const content of data.results[0].docs_blob.contents) {
+    if (data?.latest_version.docs_blob.contents) {
+      for (const content of data.latest_version.docs_blob.contents) {
         let group = groups[content.content_type];
         if (!group) {
-          group = {
-            name: content.content_type.charAt(0).toUpperCase() + content.content_type.slice(1),
-            contents: [],
-          };
+          group = { name: content.content_type, contents: [] };
           groups[content.content_type] = group;
         }
         group.contents.push(content);
@@ -51,7 +35,7 @@ export function CollectionDocumentation() {
       group.contents = group.contents.sort((l, r) => l.content_name.localeCompare(r.content_name));
     }
     return Object.values(groups);
-  }, [data]);
+  }, [data?.latest_version.docs_blob.contents]);
 
   const [isDrawerOpen, setDrawerOpen] = useState(true);
   const lg = useBreakpoint('lg');

@@ -1,14 +1,14 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useBulkActionDialog } from '../../../../../framework';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
-import { awxAPI } from '../../../api/awx-utils';
 import { Team } from '../../../interfaces/Team';
 import { User } from '../../../interfaces/User';
-import { useAwxBulkActionDialog } from '../../../common/useAwxBulkActionDialog';
+import { awxAPI } from '../../../api/awx-utils';
 
 export function useAddTeamsToUsers() {
   const { t } = useTranslation();
-  const teamProgressDialog = useAwxBulkActionDialog<Team>();
+  const teamProgressDialog = useBulkActionDialog<Team>();
   const postRequest = usePostRequest();
   const addTeamsToUser = useCallback(
     (teams: Team[], users: User[], onComplete?: (teams: Team[]) => void) => {

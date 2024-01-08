@@ -14,7 +14,7 @@ import { PageRefreshIcon } from '../common/PageRefreshIcon';
 import { postRequest } from '../common/crud/Data';
 import { useClearCache } from '../common/useInvalidateCache';
 import { hubAPI } from './api/formatPath';
-import GalaxyBrand from './galaxy-logo.svg';
+import Logo from './galaxy-logo.svg';
 import { useHubContext } from './useHubContext';
 
 export function HubMasthead() {
@@ -29,7 +29,12 @@ export function HubMasthead() {
     navigate('/login');
   }, [clearAllCache, navigate]);
   return (
-    <PageMasthead brand={<GalaxyBrand style={{ height: 48, marginTop: -8 }} />}>
+    <PageMasthead
+      icon={<Logo style={{ height: 48, marginTop: -8 }} />}
+      // title={process.env.PRODUCT}
+      title=""
+      brand={process.env.BRAND}
+    >
       <ToolbarGroup variant="icon-button-group" style={{ flexGrow: 1 }}>
         <ToolbarItem style={{ marginLeft: 'auto' }}>
           <PageRefreshIcon />
@@ -69,7 +74,7 @@ export function HubMasthead() {
           <PageMastheadDropdown
             id="account-menu"
             icon={<UserCircleIcon />}
-            label={context?.user?.username}
+            label={context.user.username}
           >
             {/* <DropdownItem
               id="user-details"

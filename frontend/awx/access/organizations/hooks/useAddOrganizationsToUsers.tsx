@@ -1,14 +1,14 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useBulkActionDialog } from '../../../../../framework';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { awxAPI } from '../../../api/awx-utils';
 import { Organization } from '../../../interfaces/Organization';
 import { User } from '../../../interfaces/User';
-import { useAwxBulkActionDialog } from '../../../common/useAwxBulkActionDialog';
 
 export function useAddOrganizationsToUsers() {
   const { t } = useTranslation();
-  const organizationProgressDialog = useAwxBulkActionDialog<Organization>();
+  const organizationProgressDialog = useBulkActionDialog<Organization>();
   const postRequest = usePostRequest<{ id: number }, Organization>();
 
   const addUserToOrganizations = useCallback(

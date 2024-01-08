@@ -2,7 +2,6 @@ import { Button, Flex, FlexItem, Spinner, Split, SplitItem, Stack } from '@patte
 import { SyncAltIcon } from '@patternfly/react-icons';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
 import { PageMultiSelect, PageMultiSelectProps } from './PageMultiSelect';
 import { PageSelectOption } from './PageSelectOption';
 
@@ -173,15 +172,13 @@ export function PageAsyncMultiSelect<
         onSelect={props.onSelect}
         variant={props.variant}
         footer={footer}
-        disableClearSelection={props.disableClearSelection}
-        disableClearChips={props.disableClearChips}
       />
     );
   }
 
   if (loadingError) {
     return (
-      <ButtonFullWidth
+      <Button
         id={props.id}
         variant="secondary"
         isDanger
@@ -199,18 +196,13 @@ export function PageAsyncMultiSelect<
         {typeof props.queryErrorText === 'function'
           ? props.queryErrorText(loadingError)
           : props.queryErrorText ?? t('Error loading options')}
-      </ButtonFullWidth>
+      </Button>
     );
   }
 
   return (
-    <ButtonFullWidth id={props.id} variant="control" isLoading>
+    <Button id={props.id} variant="control" isLoading>
       {props.queryPlaceholder ?? t('Loading options...')}
-    </ButtonFullWidth>
+    </Button>
   );
 }
-
-const ButtonFullWidth = styled(Button)`
-  width: 100%;
-  text-align: left;
-`;

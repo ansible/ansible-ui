@@ -70,7 +70,7 @@ export function useAwxTemplateRoutes() {
                     },
                     {
                       label: t('Rules'),
-                      page: AwxRoute.JobTemplateScheduleRules,
+                      page: AwxRoute.JobTemplateScheduleRrules,
                     },
                   ]}
                 />
@@ -82,7 +82,7 @@ export function useAwxTemplateRoutes() {
                   element: <ScheduleDetails />,
                 },
                 {
-                  id: AwxRoute.JobTemplateScheduleRules,
+                  id: AwxRoute.JobTemplateScheduleRrules,
                   path: 'rrules',
                   element: <ScheduleRules />,
                 },
@@ -176,7 +176,7 @@ export function useAwxTemplateRoutes() {
                     },
                     {
                       label: t('Rules'),
-                      page: AwxRoute.WorkflowJobTemplateScheduleRules,
+                      page: AwxRoute.WorkflowJobTemplateScheduleRrules,
                     },
                   ]}
                 />
@@ -188,7 +188,7 @@ export function useAwxTemplateRoutes() {
                   element: <ScheduleDetails />,
                 },
                 {
-                  id: AwxRoute.WorkflowJobTemplateScheduleRules,
+                  id: AwxRoute.WorkflowJobTemplateScheduleRrules,
                   path: 'rrules',
                   element: <ScheduleRules />,
                 },

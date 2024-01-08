@@ -8,7 +8,6 @@ export enum HubRoute {
   CreateNamespace = 'hub-create-namespace',
   EditNamespace = 'hub-edit-namespace',
   NamespacePage = 'hub-namespace-page',
-  NamespaceCollections = 'hub-namespace-collections',
   NamespaceDetails = 'hub-namespace-details',
   NamespaceCLI = 'hub-namespace-cli',
 

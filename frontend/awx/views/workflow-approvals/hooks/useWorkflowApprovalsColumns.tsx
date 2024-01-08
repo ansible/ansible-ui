@@ -5,9 +5,9 @@ import {
   DateTimeCell,
   ITableColumn,
   TextCell,
-  useGetPageUrl,
   usePageNavigate,
 } from '../../../../../framework';
+import { RouteObj } from '../../../../common/Routes';
 import { useIdColumn, useNameColumn } from '../../../../common/columns';
 import { AwxRoute } from '../../../AwxRoutes';
 import { WorkflowApproval } from '../../../interfaces/WorkflowApproval';
@@ -20,7 +20,6 @@ export function useWorkflowApprovalsColumns(options?: {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const idColumn = useIdColumn(false);
-  const getPageUrl = useGetPageUrl();
   const nameClick = useCallback(
     (workflow_approval: WorkflowApproval) =>
       pageNavigate(AwxRoute.WorkflowApprovalDetails, { params: { id: workflow_approval.id } }),
@@ -37,20 +36,16 @@ export function useWorkflowApprovalsColumns(options?: {
       {
         header: t('Workflow Job'),
         cell: (workflow_approval: WorkflowApproval) => {
-          if ('name' in workflow_approval.summary_fields.source_workflow_job) {
-            return (
-              <TextCell
-                text={workflow_approval.summary_fields.source_workflow_job.name ?? ''}
-                to={getPageUrl(AwxRoute.JobOutput, {
-                  params: {
-                    ':job_type': 'workflow',
-                    ':id': workflow_approval.summary_fields.source_workflow_job.id,
-                  },
-                })}
-                disableLinks={options?.disableLinks}
-              />
-            );
-          }
+          return (
+            <TextCell
+              text={`${workflow_approval.summary_fields.source_workflow_job.name}`}
+              to={RouteObj.JobOutput.replace(':job_type', 'workflow').replace(
+                ':id',
+                workflow_approval.summary_fields.source_workflow_job.id.toString()
+              )}
+              disableLinks={options?.disableLinks}
+            />
+          );
         },
         sort: undefined,
         list: 'secondary',
@@ -75,7 +70,7 @@ export function useWorkflowApprovalsColumns(options?: {
         defaultSortDirection: 'desc',
       },
     ],
-    [getPageUrl, idColumn, nameColumn, options?.disableLinks, t]
+    [idColumn, nameColumn, options?.disableLinks, t]
   );
   return tableColumns;
 }

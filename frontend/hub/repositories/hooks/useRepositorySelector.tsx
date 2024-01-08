@@ -7,7 +7,7 @@ import {
   useAsyncMultiSelectFilterBuilder,
   AsyncSelectFilterBuilderProps,
 } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSelectFilterBuilder';
-import { useHubView } from '../../useHubView';
+import { usePulpView } from '../../usePulpView';
 import { pulpAPI } from '../../api/formatPath';
 
 function useParameters(): AsyncSelectFilterBuilderProps<Repository> {
@@ -19,7 +19,7 @@ function useParameters(): AsyncSelectFilterBuilderProps<Repository> {
     title: t`Select Repository`,
     tableColumns,
     toolbarFilters,
-    useView: useHubView,
+    useView: usePulpView,
     viewParams: {
       url: pulpAPI`/repositories/ansible/ansible/`,
       toolbarFilters,

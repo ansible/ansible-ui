@@ -1,11 +1,10 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings } from '../../../../../framework';
+import { compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { useNameColumn } from '../../../../common/columns';
 import { getItemKey, requestDelete } from '../../../../common/crud/Data';
 import { awxAPI } from '../../../api/awx-utils';
 import { InventorySource } from '../../../interfaces/InventorySource';
-import { useAwxBulkConfirmation } from '../../../common/useAwxBulkConfirmation';
 import { useInventorySourceColumns } from './useInventorySourceColumns';
 
 export function useDeleteInventorySources(
@@ -15,7 +14,7 @@ export function useDeleteInventorySources(
   const confirmationColumns = useInventorySourceColumns({ disableLinks: true, disableSort: true });
   const deleteActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true });
   const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn]);
-  const bulkAction = useAwxBulkConfirmation<InventorySource>();
+  const bulkAction = useBulkConfirmation<InventorySource>();
 
   const cannotDeleteInventorySources = (inventorySource: InventorySource) => {
     return inventorySource?.summary_fields?.user_capabilities?.delete

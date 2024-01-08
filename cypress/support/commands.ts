@@ -3,7 +3,6 @@
 /// <reference types="cypress" />
 import '@4tw/cypress-drag-drop';
 import '@cypress/code-coverage/support';
-import 'cypress-file-upload';
 import { SetOptional, SetRequired } from 'type-fest';
 import { AwxItemsResponse } from '../../frontend/awx/common/AwxItemsResponse';
 import { AwxToken } from '../../frontend/awx/interfaces/AwxToken';
@@ -24,7 +23,6 @@ import { Schedule } from '../../frontend/awx/interfaces/Schedule';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { User } from '../../frontend/awx/interfaces/User';
 import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/WorkflowJobTemplate';
-import { WorkflowNode } from '../../frontend/awx/interfaces/WorkflowNode';
 import { Group, Host } from '../../frontend/awx/interfaces/generated-from-swagger/api';
 import { EdaControllerToken } from '../../frontend/eda/interfaces/EdaControllerToken';
 import { EdaCredential } from '../../frontend/eda/interfaces/EdaCredential';
@@ -49,6 +47,8 @@ import './e2e';
 import './eda-commands';
 import './hub-commands';
 import './rest-commands';
+import 'cypress-file-upload';
+import { WorkflowNode } from '../../frontend/awx/interfaces/WorkflowNode';
 
 declare global {
   namespace Cypress {
@@ -653,7 +653,7 @@ declare global {
       ): Chainable<WorkflowNode>;
 
       waitForTemplateStatus(jobID: string): Chainable<AwxItemsResponse<JobEvent>>;
-      waitForJobToProcessEvents(jobID: string, retries?: number): Chainable<Job>;
+      waitForJobToProcessEvents(jobID: string): Chainable<Job>;
       waitForWorkflowJobStatus(jobID: string): Chainable<Job>;
 
       // --- EDA COMMANDS ---
@@ -860,7 +860,6 @@ declare global {
         collectionName: string,
         tags?: string[]
       ): Cypress.Chainable<void>;
-      getOrCreateCollection(): Cypress.Chainable<string>;
       uploadHubCollectionFile(hubFilePath: string, hubFileName: string): Cypress.Chainable<void>;
       createNamespace(namespaceName: string): Cypress.Chainable<void>;
       getNamespace(namespaceName: string): Cypress.Chainable<void>;

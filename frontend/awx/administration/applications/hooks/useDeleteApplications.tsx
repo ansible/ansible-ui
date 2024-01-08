@@ -1,12 +1,11 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings } from '../../../../../framework';
+import { compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { useNameColumn } from '../../../../common/columns';
 import { getItemKey, requestDelete } from '../../../../common/crud/Data';
 import { awxAPI } from '../../../api/awx-utils';
 import { Application } from '../../../interfaces/Application';
 import { useApplicationsColumns } from './useApplicationsColumns';
-import { useAwxBulkConfirmation } from '../../../common/useAwxBulkConfirmation';
 
 export function useDeleteApplications(onComplete: (applications: Application[]) => void) {
   const { t } = useTranslation();
@@ -16,7 +15,7 @@ export function useDeleteApplications(onComplete: (applications: Application[]) 
   });
   const deleteActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true });
   const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn]);
-  const bulkAction = useAwxBulkConfirmation<Application>();
+  const bulkAction = useBulkConfirmation<Application>();
   const deleteApplications = (applications: Application[]) => {
     bulkAction({
       title: t('Permanently delete applications', { count: applications.length }),

@@ -1,13 +1,17 @@
 import { useTranslation } from 'react-i18next';
 import { Role } from '../Role';
 import { useRoleColumns } from './useRoleColumns';
-import { ITableColumn, TextCell, compareStrings } from '../../../../../framework';
+import {
+  ITableColumn,
+  TextCell,
+  compareStrings,
+  useBulkConfirmation,
+} from '../../../../../framework';
 import { useMemo } from 'react';
 import { useHubContext } from '../../../useHubContext';
 import { parsePulpIDFromURL } from '../../../api/utils';
 import { requestDelete } from '../../../../common/crud/Data';
 import { pulpAPI } from '../../../api/formatPath';
-import { useHubBulkConfirmation } from '../../../common/useHubBulkConfirmation';
 
 export function useDeleteRoles(onComplete: (roles: Role[]) => void) {
   const { t } = useTranslation();
@@ -24,7 +28,7 @@ export function useDeleteRoles(onComplete: (roles: Role[]) => void) {
     [t]
   );
   const { user } = useHubContext();
-  const bulkAction = useHubBulkConfirmation<Role>();
+  const bulkAction = useBulkConfirmation<Role>();
   const cannotDeleteBuiltInRole = (role: Role) =>
     role.locked ? t('Built-in roles cannot be deleted.') : '';
   const cannotDeleteRoleDueToPermissions = () =>

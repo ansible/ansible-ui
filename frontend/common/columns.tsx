@@ -1,6 +1,6 @@
-import { Label, LabelGroup } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import {
   ColumnModalOption,
   ColumnTableOption,
@@ -8,13 +8,13 @@ import {
   ITableColumn,
   TextCell,
   useGetPageUrl,
-  usePageNavigate,
 } from '../../framework';
-import { AwxRoute } from '../awx/AwxRoutes';
-import { CredentialLabel } from '../awx/common/CredentialLabel';
+import { RouteObj } from './Routes';
 import { SummaryFieldCredential } from '../awx/interfaces/summary-fields/summary-fields';
+import { LabelGroup } from '@patternfly/react-core';
+import { CredentialLabel } from '../awx/common/CredentialLabel';
 
-export function useIdColumn<T extends { id: number }>(isHidden: boolean = true) {
+export function useIdColumn<T extends { name: string; id: number }>(isHidden: boolean = true) {
   const { t } = useTranslation();
   const column = useMemo<ITableColumn<T>>(
     () => ({
@@ -118,33 +118,6 @@ export function useLastRanColumn(options?: {
   return column;
 }
 
-export function useLabelsColumn() {
-  const { t } = useTranslation();
-  const column: ITableColumn<{
-    summary_fields?: { labels: { count: number; results: { id: number; name: string }[] } };
-  }> = useMemo(
-    () => ({
-      header: t('Labels'),
-      cell: (item) => {
-        if (!item.summary_fields?.labels?.results) return <></>;
-        return (
-          <LabelGroup>
-            {item.summary_fields.labels?.results.map((result) => (
-              <Label key={result.id}>{result.name}</Label>
-            ))}
-          </LabelGroup>
-        );
-      },
-      table: ColumnTableOption.Expanded,
-      card: 'hidden',
-      list: 'hidden',
-      modal: ColumnModalOption.Hidden,
-    }),
-    [t]
-  );
-  return column;
-}
-
 export function useCredentialsColumn() {
   const { t } = useTranslation();
   const column: ITableColumn<{
@@ -152,15 +125,17 @@ export function useCredentialsColumn() {
   }> = useMemo(
     () => ({
       header: t('Credentials'),
-      cell: (item) => (
-        <LabelGroup>
-          {item.summary_fields?.credentials?.map((credential) => (
-            <CredentialLabel credential={credential} key={credential.id} />
-          ))}
-        </LabelGroup>
-      ),
-      value: (item) =>
-        item.summary_fields?.credentials && item.summary_fields.credentials.length > 0,
+      cell: (item) => {
+        if (!item.summary_fields?.credentials) return <></>;
+        return (
+          <LabelGroup>
+            {' '}
+            {item.summary_fields.credentials?.map((credential) => (
+              <CredentialLabel credential={credential} key={credential.id} />
+            ))}
+          </LabelGroup>
+        );
+      },
       table: ColumnTableOption.Expanded,
       card: 'hidden',
       list: 'hidden',
@@ -178,7 +153,7 @@ export function useCreatedColumn(options?: {
   hideByDefaultInTableView?: boolean;
 }) {
   const { t } = useTranslation();
-  const pageNavigate = usePageNavigate();
+  const navigate = useNavigate();
   const column: ITableColumn<
     | { created?: string; created_on?: string; date_joined?: string; pulp_created?: string }
     | {
@@ -197,7 +172,15 @@ export function useCreatedColumn(options?: {
         return (
           <DateTimeCell
             format="since"
-            value={item.created ?? item.created_on ?? item.date_joined ?? item.pulp_created}
+            value={
+              item.created
+                ? item.created
+                : item.created_on
+                  ? item.created_on
+                  : item.date_joined
+                    ? item.date_joined
+                    : item.pulp_created
+            }
             author={
               'summary_fields' in item ? item.summary_fields?.created_by?.username : undefined
             }
@@ -205,9 +188,12 @@ export function useCreatedColumn(options?: {
               options?.disableLinks || !('summary_fields' in item)
                 ? undefined
                 : () =>
-                    pageNavigate(AwxRoute.UserDetails, {
-                      params: { id: item.summary_fields?.created_by?.id },
-                    })
+                    navigate(
+                      RouteObj.UserDetails.replace(
+                        ':id',
+                        (item.summary_fields?.created_by?.id ?? 0).toString()
+                      )
+                    )
             }
           />
         );
@@ -222,7 +208,7 @@ export function useCreatedColumn(options?: {
       modal: ColumnModalOption.Hidden,
     }),
     [
-      pageNavigate,
+      navigate,
       options?.disableLinks,
       options?.disableSort,
       options?.hideByDefaultInTableView,
@@ -240,7 +226,7 @@ export function useModifiedColumn(options?: {
   hideByDefaultInTableView?: boolean;
 }) {
   const { t } = useTranslation();
-  const pageNavigate = usePageNavigate();
+  const history = useNavigate();
   const column: ITableColumn<
     | { modified?: string; modified_on?: string }
     | {
@@ -264,9 +250,12 @@ export function useModifiedColumn(options?: {
               options?.disableLinks || !('summary_fields' in item)
                 ? undefined
                 : () =>
-                    pageNavigate(AwxRoute.UserDetails, {
-                      params: { id: item.summary_fields?.modified_by?.id },
-                    })
+                    history(
+                      RouteObj.UserDetails.replace(
+                        ':id',
+                        (item.summary_fields?.modified_by?.id ?? 0).toString()
+                      )
+                    )
             }
           />
         );
@@ -281,7 +270,7 @@ export function useModifiedColumn(options?: {
       modal: ColumnModalOption.Hidden,
     }),
     [
-      pageNavigate,
+      history,
       options?.disableLinks,
       options?.disableSort,
       options?.hideByDefaultInTableView,
@@ -328,61 +317,6 @@ export function useOrganizationNameColumn(
   return column;
 }
 
-export function useExecutionEnvColumn<
-  T extends {
-    type?: string;
-    summary_fields?: {
-      execution_environment?: {
-        id: number;
-        name: string;
-      };
-    };
-  },
->(
-  envDetailsRoute: string,
-  options?: {
-    disableLinks?: boolean;
-    disableSort?: boolean;
-  }
-) {
-  const { t } = useTranslation();
-  const getPageUrl = useGetPageUrl();
-  const column: ITableColumn<T> = useMemo(
-    () => ({
-      header: t('Execution Environment'),
-      cell: (item) => {
-        if (item.type !== 'job_template') {
-          return <></>;
-        } else {
-          return (
-            <TextCell
-              text={item.summary_fields?.execution_environment?.name}
-              to={getPageUrl(envDetailsRoute, {
-                params: { id: item.summary_fields?.execution_environment?.id },
-              })}
-              disableLinks={options?.disableLinks}
-            />
-          );
-        }
-      },
-      value: (item) => {
-        if (item.type === 'job_template') {
-          return item.summary_fields?.execution_environment?.name;
-        } else {
-          return undefined;
-        }
-      },
-      sort: options?.disableSort ? undefined : 'execution_environment',
-      table: ColumnTableOption.Expanded,
-      card: 'hidden',
-      list: 'hidden',
-      modal: ColumnModalOption.Hidden,
-    }),
-    [t, options?.disableSort, options?.disableLinks, getPageUrl, envDetailsRoute]
-  );
-  return column;
-}
-
 export function useInventoryNameColumn(
   inventoryDetailsRoute: string,
   options?: {
@@ -419,46 +353,6 @@ export function useInventoryNameColumn(
       modal: ColumnModalOption.Hidden,
     }),
     [getPageUrl, options?.disableLinks, options?.disableSort, inventoryDetailsRoute, t]
-  );
-  return column;
-}
-
-export function useProjectNameColumn(
-  projectDetailsRoute: string,
-  options?: {
-    disableLinks?: boolean;
-    disableSort?: boolean;
-  }
-) {
-  const { t } = useTranslation();
-  const getPageUrl = useGetPageUrl();
-  const column: ITableColumn<{
-    summary_fields?: {
-      project?: {
-        id: number;
-        name: string;
-      };
-    };
-  }> = useMemo(
-    () => ({
-      header: t('Project'),
-      cell: (item) => (
-        <TextCell
-          text={item.summary_fields?.project?.name}
-          to={getPageUrl(projectDetailsRoute, {
-            params: { id: item.summary_fields?.project?.id },
-          })}
-          disableLinks={options?.disableLinks}
-        />
-      ),
-      value: (item) => item.summary_fields?.project?.name,
-      sort: options?.disableSort ? undefined : 'project',
-      table: ColumnTableOption.Expanded,
-      card: 'hidden',
-      list: 'hidden',
-      modal: ColumnModalOption.Hidden,
-    }),
-    [getPageUrl, options?.disableLinks, options?.disableSort, projectDetailsRoute, t]
   );
   return column;
 }

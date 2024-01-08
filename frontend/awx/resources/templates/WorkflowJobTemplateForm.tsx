@@ -1,20 +1,18 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import { useSWRConfig } from 'swr';
 import {
   PageFormSubmitHandler,
   PageHeader,
   PageLayout,
-  useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
+import { RouteObj } from '../../../common/Routes';
 import { postRequest, requestGet, requestPatch } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { AwxPageForm } from '../../AwxPageForm';
-import { AwxRoute } from '../../AwxRoutes';
 import { awxAPI } from '../../api/awx-utils';
 import { AwxError } from '../../common/AwxError';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
@@ -28,11 +26,12 @@ import {
 } from '../../interfaces/WorkflowJobTemplate';
 import { parseStringToTagArray, stringifyTags } from './JobTemplateFormHelpers';
 import { WorkflowJobTemplateInputs } from './WorkflowJobTemplateInputs';
+import { AwxRoute } from '../../AwxRoutes';
+import { useParams } from 'react-router-dom';
 
 export function EditWorkflowJobTemplate() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const getPageUrl = useGetPageUrl();
   const params = useParams<{ id?: string }>();
 
   const id = Number(params.id);
@@ -102,7 +101,7 @@ export function EditWorkflowJobTemplate() {
       <PageHeader
         title={t('Edit Workflow Job Template')}
         breadcrumbs={[
-          { label: t('Templates'), to: getPageUrl(AwxRoute.Templates) },
+          { label: t('Templates'), to: RouteObj.Templates },
           { label: t('Edit Workflow Job Template') },
         ]}
       />
@@ -151,14 +150,12 @@ export function CreateWorkflowJobTemplate() {
     []
   );
 
-  const getPageUrl = useGetPageUrl();
-
   return (
     <PageLayout>
       <PageHeader
         title={t('Create Workflow Job Template')}
         breadcrumbs={[
-          { label: t('Templates'), to: getPageUrl(AwxRoute.Templates) },
+          { label: t('Templates'), to: RouteObj.Templates },
           { label: t('Create Workflow Job Template') },
         ]}
       />

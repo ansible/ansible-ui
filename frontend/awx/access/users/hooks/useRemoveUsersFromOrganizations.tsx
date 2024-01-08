@@ -1,14 +1,14 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useBulkActionDialog } from '../../../../../framework';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
-import { awxAPI } from '../../../api/awx-utils';
 import { Organization } from '../../../interfaces/Organization';
 import { User } from '../../../interfaces/User';
-import { useAwxBulkActionDialog } from '../../../common/useAwxBulkActionDialog';
+import { awxAPI } from '../../../api/awx-utils';
 
 export function useRemoveUsersFromOrganizations(onComplete?: (users: User[]) => void) {
   const { t } = useTranslation();
-  const userProgressDialog = useAwxBulkActionDialog<User>();
+  const userProgressDialog = useBulkActionDialog<User>();
   const postRequest = usePostRequest();
   const removeUserToOrganizations = useCallback(
     (users: User[], organizations: Organization[]) => {

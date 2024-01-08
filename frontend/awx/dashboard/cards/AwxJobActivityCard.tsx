@@ -14,7 +14,7 @@ export function AwxJobActivityCard() {
   const getPageUrl = useGetPageUrl();
   return (
     <PageDashboardCard
-      title={t('Job Activity')}
+      title={t('Recent Job Activity')}
       linkText={t('Go to Jobs')}
       to={getPageUrl(AwxRoute.Jobs)}
       width="xxl"

@@ -13,12 +13,12 @@ import { usePageNotifications } from '../../framework/PageNotifications/PageNoti
 import { useAnsibleAboutModal } from '../common/AboutModal';
 import { PageRefreshIcon } from '../common/PageRefreshIcon';
 import { useGet } from '../common/crud/useGet';
+import { useActiveUser } from '../common/useActiveUser';
 import { useClearCache } from '../common/useInvalidateCache';
 import { AwxRoute } from './AwxRoutes';
 import { awxAPI } from './api/awx-utils';
-import AwxBrand from './awx-logo.svg';
+import AwxIcon from './awx-logo.svg';
 import { AwxItemsResponse } from './common/AwxItemsResponse';
-import { useAwxActiveUser } from './common/useAwxActiveUser';
 import { useAwxConfig } from './common/useAwxConfig';
 import { useAwxWebSocketSubscription } from './common/useAwxWebSocket';
 import getDocsBaseUrl from './common/util/getDocsBaseUrl';
@@ -31,7 +31,7 @@ export function AwxMasthead() {
   const config = useAwxConfig();
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
-  const activeUser = useAwxActiveUser();
+  const activeUser = useActiveUser();
   useAwxNotifications();
   const logout = useCallback(async () => {
     await fetch('/api/logout/');
@@ -40,7 +40,11 @@ export function AwxMasthead() {
   }, [clearAllCache, navigate]);
 
   return (
-    <PageMasthead brand={<AwxBrand style={{ height: 60 }} />}>
+    <PageMasthead
+      icon={<AwxIcon style={{ height: 60 }} />}
+      title={process.env.PRODUCT}
+      brand={process.env.BRAND}
+    >
       <ToolbarGroup variant="icon-button-group" style={{ flexGrow: 1 }}>
         <ToolbarItem style={{ marginLeft: 'auto' }}>
           <PageRefreshIcon />
