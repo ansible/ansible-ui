@@ -22,16 +22,16 @@ export function useManageColumns<T extends object>(
       columns.push({
         header: t('Table View'),
         cell: (column: ITableColumn<T>, setColumn: (column: ITableColumn<T>) => void) => (
-          <PageSingleSelect<ColumnTableOption | ''>
+          <PageSingleSelect<keyof typeof ColumnTableOption | ''>
             value={column.table ?? ''}
-            onSelect={(value: ColumnTableOption | '') => {
+            onSelect={(value: keyof typeof ColumnTableOption | '') => {
               switch (value) {
                 case '':
                   setColumn({ ...column, table: undefined });
                   break;
-                case ColumnTableOption.Description:
-                case ColumnTableOption.Expanded:
-                case ColumnTableOption.Hidden:
+                case ColumnTableOption.description:
+                case ColumnTableOption.expanded:
+                case ColumnTableOption.hidden:
                   setColumn({ ...column, table: value });
                   break;
               }
@@ -44,19 +44,19 @@ export function useManageColumns<T extends object>(
                 description: t('Show the column in the table.'),
               },
               {
-                value: ColumnTableOption.Description,
+                value: ColumnTableOption.description,
                 label: t('Description'),
                 description: t(
                   'Show the column when the item is expanded as a full width description.'
                 ),
               },
               {
-                value: ColumnTableOption.Expanded,
+                value: ColumnTableOption.expanded,
                 label: t('Expanded'),
                 description: t('Show the column when the item is expanded as a detail.'),
               },
               {
-                value: ColumnTableOption.Hidden,
+                value: ColumnTableOption.hidden,
                 label: t('Hidden'),
                 description: t('Hide the column.'),
               },

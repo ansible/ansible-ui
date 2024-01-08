@@ -77,7 +77,7 @@ export function useInstancesColumns(options?: { disableSort?: boolean; disableLi
         header: t('Total jobs'),
         cell: (instance) => instance.jobs_total,
         list: 'secondary',
-        table: ColumnTableOption.Expanded,
+        table: ColumnTableOption.expanded,
       },
       {
         header: t('Used capacity'),
@@ -85,7 +85,7 @@ export function useInstancesColumns(options?: { disableSort?: boolean; disableLi
           <Progress value={Math.round(100 - instance.percent_capacity_remaining)} />
         ),
         list: 'secondary',
-        table: ColumnTableOption.Expanded,
+        table: ColumnTableOption.expanded,
       },
       {
         header: t('Memory'),
@@ -96,7 +96,7 @@ export function useInstancesColumns(options?: { disableSort?: boolean; disableLi
       {
         header: t('Policy type'),
         cell: (instance) => (instance.managed_by_policy ? t('Auto') : t('Manual')),
-        table: ColumnTableOption.Expanded,
+        table: ColumnTableOption.expanded,
       },
       {
         header: t('Last health check'),

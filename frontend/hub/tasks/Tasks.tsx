@@ -15,12 +15,12 @@ import {
 } from '../../../framework';
 import { StatusCell } from '../../common/Status';
 import { HubRoute } from '../HubRoutes';
-import { parsePulpIDFromURL, pulpHrefKeyFn } from '../api/utils';
 import { pulpAPI } from '../api/formatPath';
+import { parsePulpIDFromURL, pulpHrefKeyFn } from '../api/utils';
 import { useHubView } from '../useHubView';
 import { Task } from './Task';
-import { useTasksActions } from './hooks/useTasksActions';
 import { useTaskActions } from './hooks/useTaskActions';
+import { useTasksActions } from './hooks/useTasksActions';
 
 export function Tasks() {
   const { t } = useTranslation();
@@ -89,7 +89,7 @@ export function useTasksColumns(_options?: { disableSort?: boolean; disableLinks
         cell: (task) => <DateTimeCell format="since" value={task.started_at} />,
         sort: 'started_at',
         defaultSortDirection: 'desc',
-        table: ColumnTableOption.Expanded,
+        table: ColumnTableOption.expanded,
         list: 'secondary',
       },
       {
@@ -97,7 +97,7 @@ export function useTasksColumns(_options?: { disableSort?: boolean; disableLinks
         cell: (task) => <DateTimeCell format="since" value={task.finished_at} />,
         sort: 'finished_at',
         defaultSortDirection: 'desc',
-        table: ColumnTableOption.Expanded,
+        table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'secondary',
       },
@@ -106,7 +106,7 @@ export function useTasksColumns(_options?: { disableSort?: boolean; disableLinks
         cell: (task) => <DateTimeCell format="since" value={task.pulp_created} />,
         sort: 'pulp_created',
         defaultSortDirection: 'desc',
-        table: ColumnTableOption.Expanded,
+        table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'secondary',
       },
