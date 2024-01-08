@@ -197,7 +197,7 @@ Cypress.Commands.add(
   ) => {
     const credentialTypeDesc = 'This is a custom credential type that is not managed';
     cy.navigateTo('awx', 'credential-types');
-    cy.get('a[data-cy="create-credential-type"').click();
+    cy.clickLink(/^Create credential type$/);
     cy.verifyPageTitle('Create Credential Type');
     cy.url().then((currentUrl) => {
       expect(currentUrl.includes('/credential-types/create')).to.be.true;
