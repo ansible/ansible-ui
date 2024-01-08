@@ -125,7 +125,6 @@ export function CollectionContents() {
           disablePagination={true}
           compact={true}
         />
-        ;
         {summary.all <= 0 && collection.repository?.name === 'community' && (
           <RenderCommunityWarningMessage />
         )}
