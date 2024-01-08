@@ -172,8 +172,20 @@ describe('WorkflowVisualizer', () => {
   });
 });
 
-describe('Empty state', () => {
-  it('Should show empty state view', () => {
+describe('Workflow visualizer empty state', () => {
+  it('Should mount with empty state', () => {
+    cy.fixture('workflow_nodes.json').then((workflow_nodes: AwxItemsResponse<WorkflowNode>) => {
+      workflow_nodes.count = 0;
+      workflow_nodes.results = [];
+      cy.intercept(
+        {
+          method: 'GET',
+          url: '/api/v2/workflow_job_templates/*/workflow_nodes/*',
+          hostname: 'localhost',
+        },
+        { workflow_nodes }
+      );
+    });
     cy.intercept(
       { method: 'GET', url: '/api/v2/workflow_job_templates/123/workflow_nodes/?*' },
       {

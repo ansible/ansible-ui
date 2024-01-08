@@ -23,6 +23,7 @@ import {
 } from './execution-environments/ExecutionEnvironmentForm';
 import { ExecutionEnvironments } from './execution-environments/ExecutionEnvironments';
 import { CreateHubNamespace, EditHubNamespace } from './namespaces/HubNamespaceForm';
+import { HubNamespaceCollections } from './namespaces/HubNamespacePage/HubNamespaceCollections';
 import { HubNamespaceDetails } from './namespaces/HubNamespacePage/HubNamespaceDetails';
 import { HubNamespaceCLI } from './namespaces/HubNamespacePage/HubNamespaceCLI';
 import { HubNamespacePage } from './namespaces/HubNamespacePage/HubNamespacePage';
@@ -68,7 +69,7 @@ export function useHubNavigation() {
         },
         {
           id: HubRoute.EditNamespace,
-          path: ':id',
+          path: 'edit/:id',
           element: <EditHubNamespace />,
         },
         {
@@ -76,6 +77,11 @@ export function useHubNavigation() {
           path: ':id',
           element: <HubNamespacePage />,
           children: [
+            {
+              id: HubRoute.NamespaceCollections,
+              path: 'collections',
+              element: <HubNamespaceCollections />,
+            },
             {
               id: HubRoute.NamespaceDetails,
               path: 'details',

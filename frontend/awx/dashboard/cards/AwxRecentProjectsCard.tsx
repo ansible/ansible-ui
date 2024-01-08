@@ -5,11 +5,11 @@ import {
   PageTable,
   useColumnsWithoutExpandedRow,
   useColumnsWithoutSort,
+  useGetPageUrl,
   usePageNavigate,
   useVisibleModalColumns,
 } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
-import { RouteObj } from '../../../common/Routes';
 import { AwxRoute } from '../../AwxRoutes';
 import { awxAPI } from '../../api/awx-utils';
 import { Project } from '../../interfaces/Project';
@@ -25,6 +25,7 @@ export function AwxRecentProjectsCard() {
   });
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
+  const getPageUrl = useGetPageUrl();
 
   let columns = useProjectsColumns();
   columns = useVisibleModalColumns(columns);
@@ -34,12 +35,12 @@ export function AwxRecentProjectsCard() {
 
   return (
     <PageDashboardCard
-      title={t('Recent Projects')}
+      title={t('Projects')}
       subtitle={t('Recently updated projects')}
       width="md"
       height="md"
       linkText={t('Go to Projects')}
-      to={RouteObj.Projects}
+      to={getPageUrl(AwxRoute.Projects)}
     >
       <PageTable
         disableBodyPadding={true}

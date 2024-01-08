@@ -1,13 +1,13 @@
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../framework';
-import { EdaRoute } from '../EdaRoutes';
+import { edaAPI } from '../common/eda-utils';
+import { useEdaView } from '../common/useEventDrivenView';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
-import { useEdaView } from '../useEventDrivenView';
+import { EdaRoute } from '../main/EdaRoutes';
 import { useRulebookActivationActions } from './hooks/useRulebookActivationActions';
 import { useRulebookActivationColumns } from './hooks/useRulebookActivationColumns';
 import { useRulebookActivationFilters } from './hooks/useRulebookActivationFilters';
 import { useRulebookActivationsActions } from './hooks/useRulebookActivationsActions';
-import { edaAPI } from '../api/eda-utils';
 
 export function RulebookActivations() {
   const { t } = useTranslation();

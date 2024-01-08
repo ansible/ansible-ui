@@ -19,7 +19,6 @@ export function Approvals() {
     keyFn: collectionKeyFn,
     tableColumns,
     toolbarFilters,
-    sortKey: 'order_by',
     defaultFilters: { status: ['pipeline=staging'] },
   });
 
