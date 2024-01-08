@@ -165,8 +165,8 @@ function getColor(messageLevel: string) {
     messageLevel === 'WARNING'
       ? PFColorE.Warning
       : messageLevel === 'ERROR'
-      ? PFColorE.Danger
-      : PFColorE.Disabled
+        ? PFColorE.Danger
+        : PFColorE.Disabled
   );
 
   if (messageLevel === 'INFO') {
