@@ -4,7 +4,7 @@ import { pulpAPI } from '../../api/formatPath';
 import { useOutletContext } from 'react-router-dom';
 import { CollectionVersionSearch } from '../Collection';
 import { HubError } from '../../common/HubError';
-import { PulpItemsResponse } from '../../usePulpView';
+import { PulpItemsResponse } from '../../useHubView';
 import { SearchInput } from '@patternfly/react-core';
 import { useSearchParams } from 'react-router-dom';
 import { ToolbarItem } from '@patternfly/react-core';
