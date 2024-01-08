@@ -81,7 +81,7 @@ export function ToolbarHeader() {
   );
 }
 
-function WorkflowVisualizerToolbar() {
+function WorkflowVisualizerToolbar(props: { handleSave: () => void }) {
   const { t } = useTranslation();
   const config = useAwxConfig();
   const [isKebabOpen, setIsKebabOpen] = useState<boolean>(false);
@@ -113,7 +113,9 @@ function WorkflowVisualizerToolbar() {
               data-cy="workflow-visualizer-toolbar-save"
               icon={<CheckCircleIcon />}
               label={t('Save')}
-              onClick={() => {}}
+              onClick={() => {
+                props.handleSave();
+              }}
             >
               {t('Save')}
             </Button>

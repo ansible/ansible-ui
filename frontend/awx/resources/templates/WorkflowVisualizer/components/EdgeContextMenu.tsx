@@ -20,10 +20,10 @@ interface MenuItem {
   label: string;
   icon?: ReactElement;
   isDanger?: boolean;
-  onClick?: (element: GraphElement) => void;
+  onClick?: () => void;
 }
 
-export function useEdgeMenuItems(): MenuItem[] {
+export function useEdgeMenuItems(element: GraphElement<ElementModel, unknown>): MenuItem[] {
   const { t } = useTranslation();
   return [
     {
@@ -34,7 +34,7 @@ export function useEdgeMenuItems(): MenuItem[] {
         </Icon>
       ),
       label: t('Run on success'),
-      onClick: (element: GraphElement) => {
+      onClick: () => {
         action(() => {
           element.setData({
             tag: t('Run on success'),
@@ -52,7 +52,7 @@ export function useEdgeMenuItems(): MenuItem[] {
         </Icon>
       ),
       label: t('Run always'),
-      onClick: (element: GraphElement) => {
+      onClick: () => {
         action(() => {
           element.setData({ tag: t('Run always'), tagStatus: 'info', endTerminalStatus: 'info' });
         })();
@@ -66,7 +66,7 @@ export function useEdgeMenuItems(): MenuItem[] {
         </Icon>
       ),
       label: t('Run on fail'),
-      onClick: (element: GraphElement) => {
+      onClick: () => {
         action(() => {
           element.setData({
             tag: t('Run on fail'),
@@ -89,8 +89,9 @@ export function useEdgeMenuItems(): MenuItem[] {
       ),
       isDanger: true,
       label: t('Remove link'),
-      onClick: (element: GraphElement) => {
+      onClick: () => {
         action(() => {
+          element.setVisible(false);
           element.remove();
         })();
       },
@@ -102,7 +103,7 @@ export function EdgeContextMenu(props: { element: GraphElement<ElementModel, unk
   const { element } = props;
   const data = element.getData() as { tagStatus: string };
 
-  const items = useEdgeMenuItems();
+  const items = useEdgeMenuItems(element);
 
   return items.map((item) => {
     if (item.label === '-') {
@@ -116,7 +117,7 @@ export function EdgeContextMenu(props: { element: GraphElement<ElementModel, unk
         key={item.key}
         icon={item.icon}
         isDanger={item.isDanger}
-        onClick={() => item?.onClick && item.onClick(element)}
+        onClick={() => item?.onClick && item.onClick()}
       >
         {item.label}
       </ContextMenuItem>

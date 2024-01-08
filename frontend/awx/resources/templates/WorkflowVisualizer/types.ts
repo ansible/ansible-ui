@@ -10,12 +10,12 @@ import {
 } from '@patternfly/react-topology';
 import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
 
-export type GraphNode = Node<
-  NodeModel,
-  {
-    resource: WorkflowNode;
-  }
->;
+export type GraphNodeData = {
+  resource: WorkflowNode;
+  all_parents_must_converge: string;
+  identifier: string;
+};
+export type GraphNode = Node<NodeModel, GraphNodeData>;
 
 export interface CustomEdgeProps {
   element: GraphElement<
