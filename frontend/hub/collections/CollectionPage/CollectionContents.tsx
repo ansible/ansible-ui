@@ -205,7 +205,7 @@ const StyledToolbarItem = styled(ToolbarItem)<{ isSelected: boolean; isLabel?: b
   margin-right: 25px;
   text-transform: capitalize;
   font-size: 16px;
-  :hover {
+  &:hover {
     ${(props) => !props.isLabel && hoverOrSelected}
   }
   ${(props) => props.isSelected && !props.isLabel && hoverOrSelected}
