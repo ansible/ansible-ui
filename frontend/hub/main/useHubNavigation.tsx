@@ -4,7 +4,7 @@ import { PageNotImplemented } from '../../../framework';
 import { PageNavigationItem } from '../../../framework/PageNavigation/PageNavigationItem';
 import { Roles } from '../access/roles/Roles';
 import { Token } from '../access/token/Token';
-import { Approvals } from '../administration/approvals/Approvals';
+import { Approvals } from '../administration/collection-approvals/Approvals';
 import { RemoteRegistries } from '../administration/remote-registries/RemoteRegistries';
 import { RemoteRegistryDetails } from '../administration/remote-registries/RemoteRegistryDetails';
 import {

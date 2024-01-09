@@ -1,4 +1,4 @@
-import { CollectionVersionSearch } from '../administration/approvals/Approval';
+import { CollectionVersionSearch } from '../administration/collection-approvals/Approval';
 import { HubContextProvider, HubUser } from '../common/useHubContext';
 import { HubItemsResponse } from '../common/useHubView';
 import { CollectionCategoryCarousel } from './CollectionCategories';

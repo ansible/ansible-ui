@@ -1,4 +1,4 @@
-import { CollectionVersionSearch } from '../../administration/approvals/Approval';
+import { CollectionVersionSearch } from '../../administration/collection-approvals/Approval';
 import { HubItemsResponse } from '../../common/useHubView';
 import { CollectionMultiSelectDialog } from './useSelectCollections';
 
