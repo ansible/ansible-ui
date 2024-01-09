@@ -8,7 +8,6 @@ import {
   useGetPageUrl,
 } from '../../../../../framework';
 import { AwxRoute } from '../../../AwxRoutes';
-import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { useDeleteTemplates } from '../hooks/useDeleteTemplates';
@@ -18,7 +17,6 @@ type Template = JobTemplate | WorkflowJobTemplate;
 export function useTemplateActions(options: {
   onTemplatesDeleted: (templates: Template[]) => void;
 }) {
-  const activeUser = useAwxActiveUser();
   const { onTemplatesDeleted } = options;
   const { t } = useTranslation();
   const deleteTemplates = useDeleteTemplates(onTemplatesDeleted);
@@ -63,10 +61,8 @@ export function useTemplateActions(options: {
         icon: RocketIcon,
         label: t('Launch template'),
         onClick: (template: Template) => void launchTemplate(template),
-        isHidden: (template: Template) =>
-          !template?.summary_fields.user_capabilities.start && !activeUser?.is_system_auditor,
-        isDisabled: () =>
-          activeUser?.is_system_auditor
+        isDisabled: (template: Template) =>
+          !template?.summary_fields.user_capabilities.start
             ? t('You do not have permission to launch this template')
             : undefined,
         ouiaId: 'job-template-detail-launch-button',
@@ -79,7 +75,7 @@ export function useTemplateActions(options: {
         selection: PageActionSelection.Single,
         icon: TrashIcon,
         isDisabled: (template) =>
-          !template?.summary_fields.user_capabilities.delete || activeUser?.is_system_auditor
+          !template?.summary_fields.user_capabilities.delete
             ? t('You do not have permission to delete this template')
             : undefined,
         label: t('Delete template'),
@@ -92,5 +88,5 @@ export function useTemplateActions(options: {
       },
     ];
     return itemActions;
-  }, [deleteTemplates, getPageUrl, launchTemplate, activeUser?.is_system_auditor, t]);
+  }, [deleteTemplates, getPageUrl, launchTemplate, t]);
 }
