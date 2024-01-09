@@ -4,8 +4,11 @@ const { AWX_SERVER } = env;
 const proxyUrl = new URL(AWX_SERVER);
 module.exports = function (env, argv) {
   const config = webpackConfig(env, argv);
-
   config.entry = './frontend/awx/Awx.tsx';
+
+  // publicPath is the path where the bundle is served from
+  // https://webpack.js.org/guides/public-path/
+  config.output.publicPath = process.env.PUBLIC_PATH || process.env.AWX_ROUTE_PREFIX || '/';
 
   config.devServer.proxy = {
     '/api': {

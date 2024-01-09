@@ -5,7 +5,7 @@ const AWX_SERVER =
 const AWX_USERNAME = process.env.AWX_USERNAME || process.env.CYPRESS_AWX_USERNAME || 'admin';
 const AWX_PASSWORD = process.env.AWX_PASSWORD || process.env.CYPRESS_AWX_PASSWORD || 'password';
 const AWX_API_PREFIX = process.env.AWX_API_PREFIX || '/api/v2';
-const AWX_ROUTE_PREFIX = process.env.AWX_ROUTE_PREFIX || '/ui_next';
+const AWX_ROUTE_PREFIX = process.env.AWX_ROUTE_PREFIX || '/';
 
 const EDA_PROTOCOL = process.env.EDA_PROTOCOL || 'http';
 const EDA_HOST = process.env.EDA_HOST || 'localhost:8000';
@@ -14,7 +14,7 @@ const EDA_SERVER =
 const EDA_USERNAME = process.env.EDA_USERNAME || process.env.CYPRESS_EDA_USERNAME || 'admin';
 const EDA_PASSWORD = process.env.EDA_PASSWORD || process.env.CYPRESS_EDA_PASSWORD || 'testpass';
 const EDA_API_PREFIX = process.env.EDA_API_PREFIX || '/api/eda/v1';
-const EDA_ROUTE_PREFIX = process.env.EDA_ROUTE_PREFIX || '/eda';
+const EDA_ROUTE_PREFIX = process.env.EDA_ROUTE_PREFIX || '/';
 
 const HUB_PROTOCOL = process.env.HUB_PROTOCOL || 'http';
 const HUB_HOST = process.env.HUB_HOST || 'localhost:5001';
@@ -24,7 +24,7 @@ const HUB_USERNAME = process.env.HUB_USERNAME || process.env.CYPRESS_HUB_USERNAM
 const HUB_PASSWORD = process.env.HUB_PASSWORD || process.env.CYPRESS_HUB_PASSWORD || 'password';
 const HUB_API_PREFIX =
   process.env.HUB_API_PREFIX || process.env.HUB_API_BASE_PATH || '/api/automation-hub';
-const HUB_ROUTE_PREFIX = process.env.HUB_ROUTE_PREFIX || '/hub';
+const HUB_ROUTE_PREFIX = process.env.HUB_ROUTE_PREFIX || '/';
 
 module.exports = {
   AWX_API_PREFIX,

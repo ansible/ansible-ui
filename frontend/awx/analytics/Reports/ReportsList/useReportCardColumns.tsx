@@ -10,10 +10,7 @@ export function useReportCardColumns() {
       {
         header: t('Name'),
         cell: (report) => (
-          <TextCell
-            text={report.name}
-            to={`/ui_next/analytics/builder?reportName=${report.slug}`}
-          />
+          <TextCell text={report.name} to={`/analytics/builder?reportName=${report.slug}`} />
         ),
         sort: 'name',
         card: 'name',
