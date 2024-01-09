@@ -9,10 +9,15 @@ import { useTranslation } from 'react-i18next';
 import { ITableColumn, TextCell, useGetPageUrl } from '../../../../framework';
 import { HubRoute } from '../../main/HubRoutes';
 import { CollectionVersionSearch } from '../Collection';
+import { useHubContext } from '../../useHubContext';
 
 export function useCollectionColumns(_options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
+
+  const context = useHubContext();
+  const { display_signatures} = context.featureFlags;
+
   return useMemo<ITableColumn<CollectionVersionSearch>[]>(
     () => [
       {
