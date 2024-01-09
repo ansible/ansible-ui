@@ -15,7 +15,7 @@ import { useCopyToRepository } from './useCopyToRepository';
 import { useDeleteCollections } from './useDeleteCollections';
 import { useDeleteCollectionsFromRepository } from './useDeleteCollectionsFromRepository';
 import { useDeprecateCollections } from './useDeprecateCollections';
-import { useSignVersion } from './useSignVersion';
+import { useSignCollection } from './useSignCollection';
 
 
 
