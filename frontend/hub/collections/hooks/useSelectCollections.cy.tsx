@@ -1,5 +1,5 @@
-import { CollectionVersionSearch } from '../../approvals/Approval';
-import { HubItemsResponse } from '../../useHubView';
+import { CollectionVersionSearch } from '../../administration/approvals/Approval';
+import { HubItemsResponse } from '../../common/useHubView';
 import { CollectionMultiSelectDialog } from './useSelectCollections';
 
 /**
