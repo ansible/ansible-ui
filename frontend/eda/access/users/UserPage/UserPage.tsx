@@ -49,7 +49,7 @@ export function UserPage() {
     activeUser?.roles.some((role) => role.name === 'Admin' || role.name === 'Auditor');
 
   const isActionTab =
-    location.pathname === `/eda${getPageUrl(EdaRoute.UserDetails, { params: { id: user?.id } })}`;
+    location.pathname === getPageUrl(EdaRoute.UserDetails, { params: { id: user?.id } });
 
   const itemActions = useMemo<IPageAction<EdaUser>[]>(() => {
     const actions: IPageAction<EdaUser>[] = isActionTab
@@ -61,7 +61,7 @@ export function UserPage() {
             icon: PencilAltIcon,
             isPinned: true,
             label: t('Edit user'),
-            isHidden: (_user: EdaUser) => !canEditUser,
+            // isHidden: (_user: EdaUser) => !canEditUser,
             onClick: (user: EdaUser) =>
               pageNavigate(EdaRoute.EditUser, { params: { id: user.id } }),
           },

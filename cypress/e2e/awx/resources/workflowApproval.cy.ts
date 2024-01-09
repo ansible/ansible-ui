@@ -43,7 +43,7 @@ describe('Workflow Approvals List View', () => {
   it('admin can create a WF approval and assign user with access to approve and then delete the WF from the list toolbar', () => {
     //Post an approval node to the WFJT that was created in the beforeEach block
     //Post to the launch endpoint to trigger the job to launch
-    cy.visit('/ui_next/views/workflow-approvals?page=1&perPage=100&sort=name');
+    cy.visit('/views/workflow-approvals?page=1&perPage=100&sort=name');
     //filter by the name of the node to display it in the list
     // cy.searchAndDisplayResource(approvalNode.name);
   });
