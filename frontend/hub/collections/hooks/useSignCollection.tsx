@@ -8,7 +8,7 @@ import { useCollectionColumns } from './useCollectionColumns';
 import { useHubContext } from '../../useHubContext';
 import { getRepositoryBasePath } from '../../api/utils';
 
-export function useSignVersion(onComplete?: (collections: CollectionVersionSearch[]) => void) {
+export function useSignCollection(version : boolean, onComplete?: (collections: CollectionVersionSearch[]) => void) {
   const context = useHubContext();
   const signing_service = context.settings.GALAXY_COLLECTION_SIGNING_SERVICE;
   const { t } = useTranslation();

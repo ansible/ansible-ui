@@ -18,6 +18,7 @@ import { useDeprecateCollections } from './useDeprecateCollections';
 import { useSignVersion } from './useSignVersion';
 
 
+
 export function useCollectionActions(
   callback?: (collections: CollectionVersionSearch[]) => void,
   // determine if the menu item is rendered in list or in detail, which defines its redirections
@@ -40,7 +41,8 @@ export function useCollectionActions(
   );
   const deleteCollectionsVersions = useDeleteCollections(callback, true, detail);
   const copyToRepository = useCopyToRepository();
-  const signVersion = useSignVersion(callback);
+  const signCollectionVersion = useSignCollection(true, callback);
+  const signCollection = useSignCollection(false, callback);
 
   const context = useHubContext();
 
@@ -116,6 +118,7 @@ export function useCollectionActions(
         isHidden: () => (detail ? false : true),
         onClick: (collection) => {
           // todo
+          signCollection([collection]);
         },
       },
       {
@@ -129,7 +132,7 @@ export function useCollectionActions(
             // upload certificate
           } else {
             // sign version
-            signVersion([collection]);
+            signCollectionVersion([collection]);
           }
         },
       },
@@ -167,7 +170,7 @@ export function useCollectionActions(
       deleteCollectionsVersionsFromRepository,
       copyToRepository,
       can_upload_signatures,
-      signVersion,
+      signCollection,
     ]
   );
 }
