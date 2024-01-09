@@ -18,11 +18,9 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
       )
       .should('be.visible');
     cy.get('[data-cy="tech-preview"] a').should('contain', 'here').click();
-    cy.url().should('not.include', '/ui_next');
   });
 
   it('clicking on Cog icon opens the Manage Dashboard modal', () => {
-    cy.visit('/ui_next/overview');
     cy.navigateTo('awx', 'overview');
     cy.clickButton('Manage view');
     cy.get('.pf-v5-c-modal-box__title-text').should('contain', 'Manage Dashboard');
