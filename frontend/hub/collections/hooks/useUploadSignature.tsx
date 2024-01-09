@@ -28,11 +28,7 @@ export function useUploadSignature() {
 
   return (collection: CollectionVersionSearch, operation: 'approve' | 'copy') => {
     setDialog(
-      <UploadSignatureDialog
-        collection={collection}
-        onClose={onClose}
-        context={context}
-      />
+      <UploadSignatureDialog collection={collection} onClose={onClose} context={context} />
     );
   };
 }
@@ -73,8 +69,9 @@ function UploadSignatureDialog(props: {
           {t('Cancel')}
         </Button>,
       ]}
-      hasNoBodyWrapper>
-        Content
+      hasNoBodyWrapper
+    >
+      Content
     </Modal>
   );
 }
