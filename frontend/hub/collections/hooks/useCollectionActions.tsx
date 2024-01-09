@@ -16,6 +16,7 @@ import { useDeleteCollections } from './useDeleteCollections';
 import { useDeleteCollectionsFromRepository } from './useDeleteCollectionsFromRepository';
 import { useDeprecateCollections } from './useDeprecateCollections';
 import { useSignCollection } from './useSignCollection';
+import { useUploadSignature } from './useUploadSignature';
 
 
 
@@ -43,6 +44,7 @@ export function useCollectionActions(
   const copyToRepository = useCopyToRepository();
   const signCollectionVersion = useSignCollection(true, callback);
   const signCollection = useSignCollection(false, callback);
+  const uploadSignature = useUploadSignature();
 
   const context = useHubContext();
 
@@ -126,8 +128,9 @@ export function useCollectionActions(
         label: t('Sign selected version'),
         isHidden: () => (detail ? false : true),
         onClick: (collection) => {
-          if (can_upload_signatures) {
-            // upload certificate
+          if (can_upload_signatures || true) {
+            // upload signature
+            uploadSignature(collection);
           } else {
             // sign version
             signCollectionVersion([collection]);
