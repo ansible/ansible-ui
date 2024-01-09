@@ -21,6 +21,7 @@ import { Repositories } from '../administration/repositories/Repositories';
 import { RepositoryAccess } from '../administration/repositories/RepositoryPage/RepositoryAccess';
 import { RepositoryCollectionVersion } from '../administration/repositories/RepositoryPage/RepositoryCollectionVersion';
 import { RepositoryDetails } from '../administration/repositories/RepositoryPage/RepositoryDetails';
+import { RepositoryForm } from '../administration/repositories/RepositoryForm';
 import { RepositoryPage } from '../administration/repositories/RepositoryPage/RepositoryPage';
 import { RepositoryVersions } from '../administration/repositories/RepositoryPage/RepositoryVersions';
 import { RepositoryVersionCollections } from '../administration/repositories/RepositoryVersionPage/RepositoryVersionCollections';
@@ -221,6 +222,16 @@ export function useHubNavigation() {
             {
               path: '',
               element: <Repositories />,
+            },
+            {
+              path: 'create',
+              id: HubRoute.CreateRepository,
+              element: <RepositoryForm />,
+            },
+            {
+              path: 'edit/:id',
+              id: HubRoute.EditRepository,
+              element: <RepositoryForm />,
             },
             {
               path: ':id/',
