@@ -115,9 +115,7 @@ export function useCollectionActions(
         selection: PageActionSelection.Single,
         icon: KeyIcon,
         label: t('Sign collection'),
-        isHidden: () => (detail ? false : true),
         onClick: (collection) => {
-          // todo
           signCollection([collection]);
         },
       },
