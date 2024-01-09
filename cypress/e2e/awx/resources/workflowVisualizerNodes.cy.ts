@@ -1,7 +1,7 @@
-import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
-import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { InventorySource } from '../../../../frontend/awx/interfaces/InventorySource';
+import { Organization } from '../../../../frontend/awx/interfaces/Organization';
+import { Project } from '../../../../frontend/awx/interfaces/Project';
 
 describe('Workflow Visualizer Nodes', function () {
   let organization: Organization;
@@ -39,7 +39,7 @@ describe('Workflow Visualizer Nodes', function () {
           cy.createWorkflowJTSuccessNodeLink(projectNode, approvalNode);
         });
       });
-      cy.visit(`/ui_next/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
+      cy.visit(`/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
       cy.contains('Workflow Visualizer').should('be.visible');
       cy.contains(`${workflowJobTemplate.name}`);
       cy.contains('button', 'Save').click();
@@ -103,7 +103,7 @@ describe('Workflow Visualizer Nodes', function () {
             }
           );
         });
-        cy.visit(`/ui_next/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
+        cy.visit(`/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
         cy.contains('Workflow Visualizer').should('be.visible');
         cy.contains(`${jobTemplate.name}`);
         cy.contains('button', 'Save').click();
