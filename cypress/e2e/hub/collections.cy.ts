@@ -54,8 +54,9 @@ describe('Collections- List View', () => {
       cy.clickTableRowKebabAction(thisCollectionName, 'delete-entire-collection-from-system');
       cy.get('[data-ouia-component-id="confirm"]').click();
       cy.get('[data-ouia-component-id="submit"]').click();
-      cy.get('[data-cy="state-column-cell]').should('contain', 'Success');
+      cy.contains(/^Success$/);
       cy.clickButton(/^Close$/);
+      cy.contains(thisCollectionName).should('not.exist');
       cy.clickButton(/^Clear all filters$/);
     });
   });
