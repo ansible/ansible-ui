@@ -23,7 +23,7 @@ Cypress.Commands.add('awxLogin', () => {
       window.localStorage.setItem('theme', 'light');
       window.localStorage.setItem('disclaimer', 'true');
       window.localStorage.setItem('hide-welcome-message', 'true');
-      cy.visit(`/ui_next/login`, {
+      cy.visit(`/login`, {
         retryOnStatusCodeFailure: true,
         retryOnNetworkFailure: true,
       });
@@ -45,7 +45,7 @@ Cypress.Commands.add('awxLogin', () => {
       cacheAcrossSpecs: true,
     }
   );
-  cy.visit(`/ui_next`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true });
+  cy.visit(`/`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true });
 });
 
 Cypress.Commands.add('edaLogin', () => {
@@ -54,7 +54,7 @@ Cypress.Commands.add('edaLogin', () => {
     'EDA',
     () => {
       window.localStorage.setItem('default-nav-expanded', 'true');
-      cy.visit(`/eda/login`, {
+      cy.visit(`/login`, {
         retryOnStatusCodeFailure: true,
         retryOnNetworkFailure: true,
       });
@@ -76,7 +76,7 @@ Cypress.Commands.add('edaLogin', () => {
       },
     }
   );
-  cy.visit(`/eda`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true });
+  cy.visit(`/`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true });
 });
 
 Cypress.Commands.add('edaLogout', () => {
@@ -94,7 +94,7 @@ Cypress.Commands.add('hubLogin', () => {
     'HUB',
     () => {
       window.localStorage.setItem('default-nav-expanded', 'true');
-      cy.visit(`/hub/login`, {
+      cy.visit(`/login`, {
         retryOnStatusCodeFailure: true,
         retryOnNetworkFailure: true,
       });
@@ -116,5 +116,5 @@ Cypress.Commands.add('hubLogin', () => {
       },
     }
   );
-  cy.visit(`/hub`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true });
+  cy.visit(`/`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true });
 });

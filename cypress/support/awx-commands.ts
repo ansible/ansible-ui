@@ -911,7 +911,7 @@ Cypress.Commands.add(
         )
           .as('newVisualizerView')
           .then(() => {
-            cy.visit(`/ui_next/templates/workflow_job_template/${results.id}/visualizer`);
+            cy.visit(`/templates/workflow_job_template/${results.id}/visualizer`);
           });
       });
   }
