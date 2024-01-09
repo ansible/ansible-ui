@@ -66,5 +66,13 @@ export const hubErrorAdapter: ErrorAdapter = (error): ErrorOutput => {
     genericErrors.push({ message: error.message });
   }
 
+  if (fieldErrors.length > 0) {
+    fieldErrors.forEach((error) => {
+      if (['filename'].includes(error.name)) {
+        error.name = 'file';
+      }
+    });
+  }
+
   return { genericErrors, fieldErrors };
 };
