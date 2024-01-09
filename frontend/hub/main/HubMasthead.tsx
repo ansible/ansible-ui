@@ -1,20 +1,25 @@
 import { ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import { DropdownItem } from '@patternfly/react-core/deprecated';
 import { QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { PageMasthead } from '../../../framework';
+import { PageMasthead, useGetPageUrl } from '../../../framework';
 import { PageMastheadDropdown } from '../../../framework/PageMasthead/PageMastheadDropdown';
 import { PageNotificationsIcon } from '../../../framework/PageMasthead/PageNotificationsIcon';
 import { PageSettingsIcon } from '../../../framework/PageMasthead/PageSettingsIcon';
 import { PageThemeSwitcher } from '../../../framework/PageMasthead/PageThemeSwitcher';
+import { usePageNotifications } from '../../../framework/PageNotifications/PageNotificationsProvider';
 import { useAnsibleAboutModal } from '../../common/AboutModal';
 import { PageRefreshIcon } from '../../common/PageRefreshIcon';
 import { postRequest } from '../../common/crud/Data';
+import { useGet } from '../../common/crud/useGet';
 import { useClearCache } from '../../common/useInvalidateCache';
+import { CollectionVersionSearch } from '../collections/Collection';
 import { hubAPI } from '../common/api/formatPath';
 import { useHubContext } from '../common/useHubContext';
+import { HubItemsResponse } from '../common/useHubView';
+import { HubRoute } from './HubRoutes';
 import GalaxyBrand from './galaxy-logo.svg';
 
 export function HubMasthead() {
@@ -23,6 +28,7 @@ export function HubMasthead() {
   const { clearAllCache } = useClearCache();
   const navigate = useNavigate();
   const context = useHubContext();
+  useHubNotifications();
   const logout = useCallback(async () => {
     await postRequest(hubAPI`/_ui/v1/auth/logout/`, {});
     clearAllCache();
@@ -85,4 +91,41 @@ export function HubMasthead() {
       </ToolbarGroup>
     </PageMasthead>
   );
+}
+
+export function useHubNotifications() {
+  const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
+
+  const { hasPermission } = useHubContext();
+
+  const canApprove = hasPermission('ansible.modify_ansible_repo_content');
+
+  const { data: result } = useGet<HubItemsResponse<CollectionVersionSearch>>(
+    canApprove ? hubAPI`/v3/plugin/ansible/search/collection-versions/` : undefined,
+    { page_size: 100, repository_label: 'pipeline=staging' },
+    { refreshInterval: 10 * 1000 }
+  );
+
+  const { setNotificationGroups } = usePageNotifications();
+  useEffect(() => {
+    setNotificationGroups((groups) => {
+      groups['collection-approvals'] = {
+        title: t('Collection Approvals'),
+        notifications:
+          result?.data.map((approval) => ({
+            title: approval.collection_version?.name ?? '',
+            description: t('Namespace: ') + approval.collection_version?.namespace ?? '',
+            // timestamp: approval.created,
+            variant: 'info',
+
+            // TODO to should goto the specific approval page instead of the approvals page
+            to: getPageUrl(HubRoute.Approvals, { query: { status: 'pipeline=staging' } }),
+          })) ?? [],
+      };
+      return { ...groups };
+    });
+  }, [result, getPageUrl, setNotificationGroups, t]);
+
+  return result?.data ?? 0;
 }

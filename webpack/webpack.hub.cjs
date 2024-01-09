@@ -7,6 +7,10 @@ module.exports = function (env, argv) {
 
   config.entry = './frontend/hub/main/Hub.tsx';
 
+  // publicPath is the path where the bundle is served from
+  // https://webpack.js.org/guides/public-path/
+  config.output.publicPath = process.env.PUBLIC_PATH || process.env.HUB_ROUTE_PREFIX || '/';
+
   config.devServer.proxy = {
     '/api': {
       target: HUB_SERVER,
