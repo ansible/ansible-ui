@@ -8,14 +8,19 @@ import {
   PageFormGrid,
   useGetPageUrl,
   PageFormSelect,
+  PageFormSubmitHandler,
   // usePageAlertToaster,
 } from '../../../../framework';
 import { PlatformRoute } from '../../../PlatformRoutes';
 import { useGet } from '../../../../frontend/common/crud/useGet';
+import { postRequest } from '../../../../frontend/common/crud/Data';
 import { awxErrorAdapter } from '../../../../frontend/awx/adapters/awxErrorAdapter';
 import { AuthenticatorDetailsStep } from './steps/AuthenticatorDetailsStep';
-import { AuthenticatorTypeEnum } from '../../../interfaces/Authenticator';
+import { AuthenticatorMappingStep } from './steps/AuthenticatorMappingStep';
+import { AuthenticatorReviewStep } from './steps/AuthenticatorReviewStep';
+import { Authenticator, AuthenticatorTypeEnum } from '../../../interfaces/Authenticator';
 import type { AuthenticatorPlugins } from '../../../interfaces/AuthenticatorPlugin';
+import { gatewayAPI } from '../../../api/gateway-api-utils';
 
 export interface AuthenticatorForm {
   name: string;
@@ -34,10 +39,17 @@ export function CreateAuthenticator() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
 
-  const { data: plugins } = useGet<AuthenticatorPlugins>(`/api/gateway/v1/authenticator_plugins`);
+  const { data: plugins } = useGet<AuthenticatorPlugins>(gatewayAPI`/v1/authenticator_plugins`);
 
-  const handleSubmit = async (formValues: AuthenticatorForm) => {
-    console.log(formValues);
+  const handleSubmit: PageFormSubmitHandler<AuthenticatorForm> = async (
+    values: AuthenticatorForm
+  ) => {
+    const request = postRequest(gatewayAPI`/v1/authenticators`, {
+      name: values.name,
+      configuration: JSON.stringify(values.configuration),
+    });
+
+    await Promise.all([request]);
   };
 
   if (!plugins) {
@@ -70,20 +82,20 @@ export function CreateAuthenticator() {
       label: t('Authentication details'),
       inputs: <AuthenticatorDetailsStep plugins={plugins} />,
     },
-    {
-      id: 'mapping',
-      label: t('Mapping'),
-      inputs: <div />,
-    },
-    {
-      id: 'order',
-      label: t('Mapping order'),
-      inputs: <div />,
-    },
+    // {
+    //   id: 'mapping',
+    //   label: t('Mapping'),
+    //   inputs: <AuthenticatorMappingStep plugins={plugins} />,
+    // },
+    // {
+    //   id: 'order',
+    //   label: t('Mapping order'),
+    //   inputs: <div />,
+    // },
     {
       id: 'review',
       label: t('Review'),
-      element: <div />,
+      element: <AuthenticatorReviewStep plugins={plugins} />,
     },
   ];
 

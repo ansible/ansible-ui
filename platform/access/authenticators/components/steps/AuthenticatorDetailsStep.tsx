@@ -14,7 +14,7 @@ import type { AuthenticatorForm } from '../AuthenticatorForm';
 
 /* TODO: more intelligent categorization of field type to input type
     pending updates to the API */
-const textInputTypes = [
+export const textInputTypes = [
   'CharField',
   'URLField',
   'URLListField',
@@ -23,7 +23,7 @@ const textInputTypes = [
   'PublicCert',
   'PrivateKey',
 ];
-const dataInputTypes = [
+export const dataInputTypes = [
   'JSONField',
   'DictField',
   'ListField',
@@ -59,8 +59,8 @@ export function AuthenticatorDetailsStep(props: { plugins: AuthenticatorPlugins 
         <PageFormTextInput name="name" label={t('Name')} isRequired />
         {textFields.map((field) => (
           <PageFormTextInput
-            id={`schema-input-${field.name}`}
-            name={`schema.${field.name}`}
+            id={`configuration-input-${field.name}`}
+            name={`configuration.${field.name}`}
             key={field.name}
             label={field.ui_field_label || field.name}
             isRequired={field.required}
@@ -70,8 +70,8 @@ export function AuthenticatorDetailsStep(props: { plugins: AuthenticatorPlugins 
         ))}
         {boolFields.map((field) => (
           <PageFormSwitch
-            id={`schema-input-${field.name}`}
-            name={`schema.${field.name}`}
+            id={`configuration-input-${field.name}`}
+            name={`configuration.${field.name}`}
             key={field.name}
             label={field.ui_field_label || field.name}
             isRequired={field.required}
@@ -83,8 +83,8 @@ export function AuthenticatorDetailsStep(props: { plugins: AuthenticatorPlugins 
       <PageFormGrid isVertical singleColumn>
         {dataFields.map((field) => (
           <PageFormDataEditor
-            id={`schema-editor-${field.name}`}
-            name={`schema.${field.name}`}
+            id={`configuration-editor-${field.name}`}
+            name={`configuration.${field.name}`}
             key={field.name}
             label={field.ui_field_label || field.name}
             labelHelpTitle={field.ui_field_label || field.name}
