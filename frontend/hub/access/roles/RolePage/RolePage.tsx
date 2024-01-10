@@ -16,7 +16,6 @@ import { HubError } from '../../../common/HubError';
 import { HubRoute } from '../../../main/HubRoutes';
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
-import { parsePulpIDFromURL } from '../../../common/api/hub-api-utils';
 import { PulpItemsResponse } from '../../../common/useHubView';
 
 export function RolePage() {
