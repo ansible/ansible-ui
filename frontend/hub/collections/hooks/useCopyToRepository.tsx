@@ -1,24 +1,21 @@
-import { CollectionVersionSearch } from '../Collection';
-import { usePageDialog } from './../../../../framework';
 import { Button, Modal, ModalVariant } from '@patternfly/react-core';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useState, useEffect, useCallback } from 'react';
 import {
   useRepositoryColumns,
   useRepositoryFilters,
-} from './../../repositories/hooks/useRepositorySelector';
-import { PageTable } from './../../../../framework/PageTable/PageTable';
-import { useHubView } from '../../useHubView';
-import { AnsibleAnsibleRepositoryResponse } from './../../api-schemas/generated/AnsibleAnsibleRepositoryResponse';
-import { hubAPIPost } from '../../api/utils';
-import { useGetRequest } from './../../../common/crud/useGet';
-import { HubItemsResponse } from '../../useHubView';
-import { PulpItemsResponse } from '../../useHubView';
-import { parsePulpIDFromURL } from '../../api/utils';
-import { useHubContext, HubContext } from './../../useHubContext';
-import { SigningServiceResponse } from '../../api-schemas/generated/SigningServiceResponse';
+} from '../../administration/repositories/hooks/useRepositorySelector';
 import { HubError } from '../../common/HubError';
-import { hubAPI, pulpAPI } from '../../api/formatPath';
+import { hubAPI, pulpAPI } from '../../common/api/formatPath';
+import { hubAPIPost, parsePulpIDFromURL } from '../../common/api/hub-api-utils';
+import { HubContext, useHubContext } from '../../common/useHubContext';
+import { HubItemsResponse, PulpItemsResponse, useHubView } from '../../common/useHubView';
+import { AnsibleAnsibleRepositoryResponse } from '../../interfaces/generated/AnsibleAnsibleRepositoryResponse';
+import { SigningServiceResponse } from '../../interfaces/generated/SigningServiceResponse';
+import { CollectionVersionSearch } from '../Collection';
+import { usePageDialog } from './../../../../framework';
+import { PageTable } from './../../../../framework/PageTable/PageTable';
+import { useGetRequest } from './../../../common/crud/useGet';
 
 export function useCopyToRepository() {
   const [_, setDialog] = usePageDialog();

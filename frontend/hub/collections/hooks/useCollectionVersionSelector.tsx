@@ -4,12 +4,12 @@ import { ITableColumn, IToolbarFilter, TextCell, ToolbarFilterType } from '../..
 import { CollectionVersionSearch } from '../Collection';
 
 import {
-  useAsyncSingleSelectFilterBuilder,
-  useAsyncMultiSelectFilterBuilder,
   AsyncSelectFilterBuilderProps,
+  useAsyncMultiSelectFilterBuilder,
+  useAsyncSingleSelectFilterBuilder,
 } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSelectFilterBuilder';
-import { useHubView } from '../../useHubView';
-import { hubAPI } from '../../api/formatPath';
+import { hubAPI } from '../../common/api/formatPath';
+import { useHubView } from '../../common/useHubView';
 
 type collectionVersionSelectorParams = {
   namespace: string;

@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
 import { randomString } from '../../framework/utils/random-string';
 import { Role } from '../../frontend/hub/access/roles/Role';
-import { parsePulpIDFromURL } from '../../frontend/hub/api/utils';
 import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
+import { parsePulpIDFromURL } from '../../frontend/hub/common/api/hub-api-utils';
+import { HubItemsResponse } from '../../frontend/hub/common/useHubView';
 import { HubNamespace } from '../../frontend/hub/namespaces/HubNamespace';
-import { HubItemsResponse } from '../../frontend/hub/useHubView';
 import './commands';
 import { hubAPI, pulpAPI } from './formatApiPathForHub';
 import './rest-commands';

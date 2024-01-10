@@ -2,13 +2,13 @@ import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { compareStrings, usePageNavigate } from '../../../../framework';
 import { requestGet } from '../../../common/crud/Data';
-import { collectionKeyFn, hubAPIDelete } from '../../api/utils';
-import { hubAPI, pulpAPI } from '../../api/formatPath';
-import { PulpItemsResponse } from '../../useHubView';
+import { hubAPI, pulpAPI } from '../../common/api/formatPath';
+import { collectionKeyFn, hubAPIDelete } from '../../common/api/hub-api-utils';
+import { useHubBulkConfirmation } from '../../common/useHubBulkConfirmation';
+import { PulpItemsResponse } from '../../common/useHubView';
 import { CollectionVersionSearch } from '../Collection';
 import { useCollectionColumns } from './useCollectionColumns';
 import { navigateAfterDelete } from './useDeleteCollectionsFromRepository';
-import { useHubBulkConfirmation } from '../../common/useHubBulkConfirmation';
 
 export function useDeleteCollections(
   onComplete?: (collections: CollectionVersionSearch[]) => void,
