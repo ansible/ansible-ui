@@ -7,8 +7,8 @@ import {
   TextCell,
   useGetPageUrl,
 } from '../../../../../framework';
-import { HubRoute } from '../../../HubRoutes';
-import { parsePulpIDFromURL } from '../../../api/utils';
+import { parsePulpIDFromURL } from '../../../common/api/hub-api-utils';
+import { HubRoute } from '../../../main/HubRoutes';
 import { Role } from '../Role';
 import { useLockedRolesWithDescription } from './useLockedRolesWithDescription';
 

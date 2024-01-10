@@ -911,7 +911,7 @@ Cypress.Commands.add(
         )
           .as('newVisualizerView')
           .then(() => {
-            cy.visit(`/ui_next/templates/workflow_job_template/${results.id}/visualizer`);
+            cy.visit(`/templates/workflow_job_template/${results.id}/visualizer`);
           });
       });
   }
@@ -1130,20 +1130,22 @@ Cypress.Commands.add('waitForJobToProcessEvents', (jobID: string, retries = 45) 
   cy.requestGet<Job>(awxAPI`/jobs/${jobID}/`).then((job) => {
     let stillProcessing = false;
 
-    // Check if job is still processing
-    switch (job.status) {
-      case 'failed':
-      case 'successful':
-      case 'canceled':
-        break;
-      default:
-        stillProcessing = true;
-        break;
-    }
+    if (job) {
+      // Check if job is still processing
+      switch (job.status) {
+        case 'failed':
+        case 'successful':
+        case 'canceled':
+          break;
+        default:
+          stillProcessing = true;
+          break;
+      }
 
-    // Check if job is still processing events
-    if (!job.event_processing_finished) {
-      stillProcessing = true;
+      // Check if job is still processing events
+      if (!job.event_processing_finished) {
+        stillProcessing = true;
+      }
     }
 
     if (stillProcessing) {

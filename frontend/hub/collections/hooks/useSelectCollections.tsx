@@ -8,9 +8,9 @@ import {
   TextCell,
   usePageDialog,
 } from '../../../../framework';
-import { hubAPI } from '../../api/formatPath';
-import { collectionKeyFn } from '../../api/utils';
-import { useHubView } from '../../useHubView';
+import { hubAPI } from '../../common/api/formatPath';
+import { collectionKeyFn } from '../../common/api/hub-api-utils';
+import { useHubView } from '../../common/useHubView';
 import { CollectionVersionSearch } from '../Collection';
 import { useCollectionFilters } from './useCollectionFilters';
 

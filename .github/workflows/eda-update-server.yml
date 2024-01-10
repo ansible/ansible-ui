@@ -71,7 +71,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": ":check: EDA E2E Update - <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Success> - <${{ needs.setup.outputs.EDA_SERVER }}/eda|Server>"
+                    "text": ":check: EDA E2E Update - <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Success> - <${{ needs.setup.outputs.EDA_SERVER }}|Server>"
                   }
                 }
               ]
@@ -98,7 +98,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": ":alert: *EDA E2E Update* - *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Failure>* - <${{ needs.setup.outputs.EDA_SERVER }}/eda|Server> - <https://cloud.cypress.io/projects/b2zqnv|Cypress> - <!here>"
+                    "text": ":alert: *EDA E2E Update* - *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Failure>* - <${{ needs.setup.outputs.EDA_SERVER }}|Server> - <https://cloud.cypress.io/projects/b2zqnv|Cypress> - <!here>"
                   }
                 }
               ]

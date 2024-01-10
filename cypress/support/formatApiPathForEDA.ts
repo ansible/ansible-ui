@@ -5,7 +5,7 @@
  * references a Cypress env variable for EDA_API_PREFIX instead of a
  * process.env variable
  */
-import { apiTag } from '../../frontend/hub/api/formatPath';
+import { apiTag } from '../../frontend/hub/common/api/formatPath';
 
 export function edaAPI(strings: TemplateStringsArray, ...values: string[]) {
   const base = (Cypress.env('EDA_API_PREFIX') as string) || '/api/eda/v1';
