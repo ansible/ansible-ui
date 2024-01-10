@@ -26,8 +26,7 @@ describe('Hub roles', () => {
     cy.clickTableRow(role?.name);
     cy.url().then((currentUrl) => {
       expect(currentUrl.includes('details')).to.be.true;
-      // TODO: Uncomment when roles details page is implemented
-      // cy.verifyPageTitle(roleName).should('be.visible');
+      cy.verifyPageTitle(role?.name).should('be.visible');
     });
   });
 
