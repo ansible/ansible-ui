@@ -1,7 +1,7 @@
 import { Trans } from 'react-i18next';
-import { getRepoURL } from '../../api/utils';
 import { CopyCell } from '../../../../framework';
 import { ExternalLink } from '../../common/ExternalLink';
+import { getRepoURL } from '../../common/api/hub-api-utils';
 
 export function HubNamespaceCLI() {
   const repositoryUrl = getRepoURL('published');
