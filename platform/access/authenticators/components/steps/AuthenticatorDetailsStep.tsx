@@ -43,6 +43,7 @@ export function AuthenticatorDetailsStep(props: { plugins: AuthenticatorPlugins 
   const textFields: PluginConfiguration[] = [];
   const boolFields: PluginConfiguration[] = [];
   const dataFields: PluginConfiguration[] = [];
+
   schema.forEach((field) => {
     if (textInputTypes.includes(field.type)) {
       textFields.push(field);
@@ -89,6 +90,7 @@ export function AuthenticatorDetailsStep(props: { plugins: AuthenticatorPlugins 
             label={field.ui_field_label || field.name}
             labelHelpTitle={field.ui_field_label || field.name}
             labelHelp={field.help_text}
+            isRequired={field.required}
           />
         ))}
       </PageFormGrid>
