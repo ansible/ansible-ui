@@ -1,5 +1,5 @@
 import { CollectionVersionSearch } from '../Collection';
-import { usePageDialog } from './../../../../framework';
+import { LoadingPage, usePageDialog } from './../../../../framework';
 import { Button, Modal, ModalVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useState, useEffect, useCallback } from 'react';
@@ -10,7 +10,7 @@ import {
 import { PageTable } from './../../../../framework/PageTable/PageTable';
 import { useHubView } from '../../useHubView';
 import { AnsibleAnsibleRepositoryResponse } from './../../api-schemas/generated/AnsibleAnsibleRepositoryResponse';
-import { hubAPIPost } from '../../api/utils';
+import { hubAPIPost, waitForTask } from '../../api/utils';
 import { useGetRequest } from './../../../common/crud/useGet';
 import { HubItemsResponse } from '../../useHubView';
 import { PulpItemsResponse } from '../../useHubView';
@@ -22,6 +22,9 @@ import { hubAPI, pulpAPI } from '../../api/formatPath';
 import { HubPageForm } from '../../HubPageForm';
 import { PageFormFileUpload } from '../../../../framework/PageForm/Inputs/PageFormFileUpload';
 import { postHubRequest } from '../../api/request';
+import { getCookie } from '../../../common/crud/cookie';
+import { TaskResponse } from '../../tasks/Task';
+import { parseTaskResponse } from '../../api/utils';
 
 export function useUploadSignature() {
   const [_, setDialog] = usePageDialog();
@@ -40,7 +43,10 @@ function UploadSignatureDialog(props: {
   onClose: () => void;
   context: HubContext;
 }) {
-    const { t } = useTranslation();
+  const { t } = useTranslation();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<unknown>('');
+
   return (
     <Modal
       title={t(`Select repositories`)}
@@ -51,31 +57,68 @@ function UploadSignatureDialog(props: {
       }}
       variant={ModalVariant.large}
       tabIndex={0}
-      actions={[
-      ]}
+      actions={[]}
       hasNoBodyWrapper
     >
-      {<HubPageForm<UploadData>
+      {
+        <HubPageForm<UploadData>
           submitText={t('Upload')}
           cancelText={t('Cancel')}
-          onCancel={ () => props.onClose()}
+          onCancel={() => props.onClose()}
           onSubmit={(data) => {
-            debugger;
-                // TODO
-                (async () => {
-                    await postHubRequest(pulpAPI`/content/ansible/collection_signatures/`, {
-                        file : data.file, 
-                    });
-                })();
+            // TODO
+            return (async () => {
+              setIsLoading(true);
+              try {
+                const body = new FormData();
+                body.append('file', data.file as Blob);
+                body.append('repository', props.collection.repository?.pulp_href || '');
+                body.append(
+                  'signed_collection',
+                  props.collection.collection_version?.pulp_href || ''
+                );
+
+                const response = await fetch(pulpAPI`/content/ansible/collection_signatures/`, {
+                  method: 'POST',
+                  body,
+                  credentials: 'include',
+                  headers: {
+                    'X-CSRFToken': getCookie('csrftoken') ?? '',
+                  },
+                });
+
+                if (response.status === 202) {
+                  await parseTaskResponse((await response.json()) as TaskResponse);
+                }
+
+                props.onClose();
+                setIsLoading(false);
+              } catch (err: unknown) {
+                setIsLoading(false);
+                setError(err);
+              }
+            })();
           }}
           singleColumn={true}
         >
           {<PageFormFileUpload label={t('Collection file')} name="file" isRequired />}
-        </HubPageForm>}
+          {isLoading && <LoadingPage />}
+          {error ? (
+            <HubError
+              error={{
+                name: '',
+                message: t('Signature can not be uploaded.') + ' ' + error.toString(),
+              }}
+            />
+          ) : (
+            <></>
+          )}
+        </HubPageForm>
+      }
     </Modal>
   );
 }
 
 interface UploadData {
-    file: unknown;
-  }
+  file: unknown;
+}
