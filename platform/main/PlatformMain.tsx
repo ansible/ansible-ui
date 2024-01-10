@@ -13,7 +13,7 @@ import { AwxConfigProvider } from '../../frontend/awx/common/useAwxConfig';
 import { WebSocketProvider } from '../../frontend/awx/common/useAwxWebSocket';
 import '../../frontend/common/i18n';
 import { EdaActiveUserProvider } from '../../frontend/eda/common/useEdaActiveUser';
-import { HubContextProvider } from '../../frontend/hub/useHubContext';
+import { HubContextProvider } from '../../frontend/hub/common/useHubContext';
 import { ActivePlatformUserProvider } from '../hooks/useActivePlatformUser';
 import { QuickStartProvider } from '../overview/quickstarts/QuickStartProvider';
 import { PlatformLogin } from './PlatformLogin';
