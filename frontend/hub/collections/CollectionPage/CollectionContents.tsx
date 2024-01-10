@@ -192,7 +192,6 @@ const hoverOrSelected = `
     border-bottom: 2px solid var(--pf-global--link--Color);
     padding-bottom: 2px;
     margin-bottom: -4px;
-    background-color: white;
     cursor: pointer;
     text-decoration: underline;
     text-decoration-color: blue; /* Sets the underline color to blue */
