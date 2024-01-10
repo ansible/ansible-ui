@@ -7,6 +7,7 @@ import {
   PageHeader,
   PageLayout,
   useGetPageUrl,
+  usePageNavigate,
 } from '../../../../framework';
 import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
 import { useGet } from '../../../common/crud/useGet';
@@ -20,6 +21,7 @@ import { useHubNamespaceActions } from '../hooks/useHubNamespaceActions';
 export function HubNamespacePage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
+  const pageNavigate = usePageNavigate();
   const { data, error, refresh } = useGet<HubItemsResponse<HubNamespace>>(
     hubAPI`/_ui/v1/namespaces/?limit=1&name=${params.id ?? ''}`
   );
@@ -29,7 +31,9 @@ export function HubNamespacePage() {
     namespace = data.data[0];
   }
   const getPageUrl = useGetPageUrl();
-  const pageActions = useHubNamespaceActions();
+  const pageActions = useHubNamespaceActions({
+    onHubNamespacesDeleted: () => pageNavigate(HubRoute.Namespaces),
+  });
 
   if (!data && !error) {
     return <LoadingPage />;
