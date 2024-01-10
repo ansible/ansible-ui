@@ -1,3 +1,4 @@
+import { PageHeader } from '@patternfly/react-core/deprecated';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -6,7 +7,6 @@ import {
   ElapsedTimeCell,
   ITableColumn,
   IToolbarFilter,
-  PageHeader,
   PageLayout,
   PageTable,
   TextCell,
@@ -89,7 +89,7 @@ export function useTasksColumns(_options?: { disableSort?: boolean; disableLinks
         cell: (task) => <DateTimeCell format="since" value={task.started_at} />,
         sort: 'started_at',
         defaultSortDirection: 'desc',
-        table: ColumnTableOption.Expanded,
+        table: ColumnTableOption.expanded,
         list: 'secondary',
       },
       {
@@ -97,7 +97,7 @@ export function useTasksColumns(_options?: { disableSort?: boolean; disableLinks
         cell: (task) => <DateTimeCell format="since" value={task.finished_at} />,
         sort: 'finished_at',
         defaultSortDirection: 'desc',
-        table: ColumnTableOption.Expanded,
+        table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'secondary',
       },
@@ -106,7 +106,7 @@ export function useTasksColumns(_options?: { disableSort?: boolean; disableLinks
         cell: (task) => <DateTimeCell format="since" value={task.pulp_created} />,
         sort: 'pulp_created',
         defaultSortDirection: 'desc',
-        table: ColumnTableOption.Expanded,
+        table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'secondary',
       },

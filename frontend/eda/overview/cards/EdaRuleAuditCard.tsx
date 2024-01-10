@@ -1,12 +1,6 @@
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import {
-  PageTable,
-  useColumnsWithoutExpandedRow,
-  useColumnsWithoutSort,
-  useGetPageUrl,
-  useVisibleModalColumns,
-} from '../../../../framework';
+import { PageTable, useDashboardColumns, useGetPageUrl } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
 import { edaAPI } from '../../common/eda-utils';
 import { useEdaView } from '../../common/useEventDrivenView';
@@ -22,10 +16,8 @@ export function EdaRuleAuditCard() {
   });
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
-  const tableColumns = useRuleAuditColumns();
-  let columns = useVisibleModalColumns(tableColumns);
-  columns = useColumnsWithoutSort(columns);
-  columns = useColumnsWithoutExpandedRow(columns);
+  let columns = useRuleAuditColumns();
+  columns = useDashboardColumns(columns);
   return (
     <PageDashboardCard
       id="recent-rule-audits"

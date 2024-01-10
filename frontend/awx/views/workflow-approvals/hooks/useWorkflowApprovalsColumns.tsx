@@ -64,7 +64,7 @@ export function useWorkflowApprovalsColumns(options?: {
         sort: 'started',
         list: 'secondary',
         defaultSortDirection: 'desc',
-        modal: ColumnModalOption.Hidden,
+        modal: ColumnModalOption.hidden,
       },
       {
         header: t('Status'),

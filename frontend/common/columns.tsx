@@ -21,10 +21,10 @@ export function useIdColumn<T extends { id: number }>(isHidden: boolean = true) 
       header: t('Id'),
       cell: (team) => team.id,
       minWidth: 0,
-      table: isHidden ? ColumnTableOption.Hidden : undefined,
+      table: isHidden ? ColumnTableOption.hidden : undefined,
       card: isHidden ? 'hidden' : undefined,
       list: isHidden ? 'hidden' : undefined,
-      modal: isHidden ? ColumnModalOption.Hidden : undefined,
+      modal: isHidden ? ColumnModalOption.hidden : undefined,
     }),
     [isHidden, t]
   );
@@ -86,10 +86,10 @@ export function useDescriptionColumn<T extends { description?: string | null | u
       header: t('Description'),
       type: 'description',
       value: (item) => item.description,
-      table: ColumnTableOption.Description,
+      table: ColumnTableOption.description,
       list: 'description',
       card: 'description',
-      modal: ColumnModalOption.Hidden,
+      modal: ColumnModalOption.hidden,
     }),
     [t]
   );
@@ -135,10 +135,10 @@ export function useLabelsColumn() {
           </LabelGroup>
         );
       },
-      table: ColumnTableOption.Expanded,
+      table: ColumnTableOption.expanded,
       card: 'hidden',
       list: 'hidden',
-      modal: ColumnModalOption.Hidden,
+      modal: ColumnModalOption.hidden,
     }),
     [t]
   );
@@ -161,26 +161,46 @@ export function useCredentialsColumn() {
       ),
       value: (item) =>
         item.summary_fields?.credentials && item.summary_fields.credentials.length > 0,
-      table: ColumnTableOption.Expanded,
+      table: ColumnTableOption.expanded,
       card: 'hidden',
       list: 'hidden',
-      modal: ColumnModalOption.Hidden,
+      modal: ColumnModalOption.hidden,
     }),
     [t]
   );
   return column;
 }
 
-export function useCreatedColumn(options?: {
-  disableSort?: boolean;
-  disableLinks?: boolean;
-  sortKey?: string;
-  hideByDefaultInTableView?: boolean;
-}) {
+export function useCreatedColumn(
+  options?: {
+    disableSort?: boolean;
+    disableLinks?: boolean;
+  },
+  overrides?: ITableColumn<
+    | {
+        created?: string;
+        created_on?: string;
+        date_joined?: string;
+        pulp_created?: string;
+      }
+    | {
+        created?: string;
+        created_on?: string;
+        date_joined?: string;
+        pulp_created?: string;
+        summary_fields?: { created_by?: { id?: number; username?: string } };
+      }
+  >
+) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const column: ITableColumn<
-    | { created?: string; created_on?: string; date_joined?: string; pulp_created?: string }
+    | {
+        created?: string;
+        created_on?: string;
+        date_joined?: string;
+        pulp_created?: string;
+      }
     | {
         created?: string;
         created_on?: string;
@@ -190,55 +210,60 @@ export function useCreatedColumn(options?: {
       }
   > = useMemo(
     () => ({
-      header: t('Created'),
-      cell: (item) => {
-        if (!item.created && !item.created_on && !item.date_joined && !item.pulp_created)
-          return <></>;
-        return (
-          <DateTimeCell
-            format="since"
-            value={item.created ?? item.created_on ?? item.date_joined ?? item.pulp_created}
-            author={
-              'summary_fields' in item ? item.summary_fields?.created_by?.username : undefined
-            }
-            onClick={
-              options?.disableLinks || !('summary_fields' in item)
-                ? undefined
-                : () =>
-                    pageNavigate(AwxRoute.UserDetails, {
-                      params: { id: item.summary_fields?.created_by?.id },
-                    })
-            }
-          />
-        );
+      ...{
+        header: t('Created'),
+        cell: (item) => {
+          if (!item.created && !item.created_on && !item.date_joined && !item.pulp_created)
+            return <></>;
+          return (
+            <DateTimeCell
+              format="since"
+              value={item.created ?? item.created_on ?? item.date_joined ?? item.pulp_created}
+              author={
+                'summary_fields' in item ? item.summary_fields?.created_by?.username : undefined
+              }
+              onClick={
+                options?.disableLinks || !('summary_fields' in item)
+                  ? undefined
+                  : () =>
+                      pageNavigate(AwxRoute.UserDetails, {
+                        params: { id: item.summary_fields?.created_by?.id },
+                      })
+              }
+            />
+          );
+        },
+        sort: options?.disableSort ? undefined : 'created',
+        defaultSortDirection: 'desc',
+        table: 'hidden',
+        card: 'hidden',
+        list: 'secondary',
+        modal: 'hidden',
+        dashboard: 'hidden',
       },
-      sort: options?.disableSort ? undefined : options?.sortKey ?? 'created',
-      defaultSortDirection: 'desc',
-      table: options?.hideByDefaultInTableView
-        ? ColumnTableOption.Hidden
-        : ColumnTableOption.Expanded,
-      card: 'hidden',
-      list: 'secondary',
-      modal: ColumnModalOption.Hidden,
+      ...overrides,
     }),
-    [
-      pageNavigate,
-      options?.disableLinks,
-      options?.disableSort,
-      options?.hideByDefaultInTableView,
-      options?.sortKey,
-      t,
-    ]
+    [t, options?.disableSort, options?.disableLinks, overrides, pageNavigate]
   );
   return column;
 }
 
-export function useModifiedColumn(options?: {
-  disableSort?: boolean;
-  disableLinks?: boolean;
-  sortKey?: string;
-  hideByDefaultInTableView?: boolean;
-}) {
+export function useModifiedColumn(
+  options?: {
+    disableSort?: boolean;
+    disableLinks?: boolean;
+    sortKey?: string;
+    hideByDefaultInTableView?: boolean;
+  },
+  overrides?: ITableColumn<
+    | { modified?: string; modified_on?: string }
+    | {
+        modified?: string;
+        modified_on?: string;
+        summary_fields?: { modified_by?: { id?: number; username?: string } };
+      }
+  >
+) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const column: ITableColumn<
@@ -250,44 +275,39 @@ export function useModifiedColumn(options?: {
       }
   > = useMemo(
     () => ({
-      header: t('Modified'),
-      cell: (item) => {
-        if (!item.modified && !item.modified_on) return <></>;
-        return (
-          <DateTimeCell
-            format="since"
-            value={item.modified ? item.modified : item.modified_on}
-            author={
-              'summary_fields' in item ? item.summary_fields?.modified_by?.username : undefined
-            }
-            onClick={
-              options?.disableLinks || !('summary_fields' in item)
-                ? undefined
-                : () =>
-                    pageNavigate(AwxRoute.UserDetails, {
-                      params: { id: item.summary_fields?.modified_by?.id },
-                    })
-            }
-          />
-        );
+      ...{
+        header: t('Modified'),
+        cell: (item) => {
+          if (!item.modified && !item.modified_on) return <></>;
+          return (
+            <DateTimeCell
+              format="since"
+              value={item.modified ? item.modified : item.modified_on}
+              author={
+                'summary_fields' in item ? item.summary_fields?.modified_by?.username : undefined
+              }
+              onClick={
+                options?.disableLinks || !('summary_fields' in item)
+                  ? undefined
+                  : () =>
+                      pageNavigate(AwxRoute.UserDetails, {
+                        params: { id: item.summary_fields?.modified_by?.id },
+                      })
+              }
+            />
+          );
+        },
+        sort: options?.disableSort ? undefined : options?.sortKey ?? 'modified',
+        defaultSortDirection: 'desc',
+        table: 'hidden',
+        card: 'hidden',
+        list: 'secondary',
+        modal: 'hidden',
+        dashboard: 'hidden',
       },
-      sort: options?.disableSort ? undefined : options?.sortKey ?? 'modified',
-      defaultSortDirection: 'desc',
-      table: options?.hideByDefaultInTableView
-        ? ColumnTableOption.Hidden
-        : ColumnTableOption.Expanded,
-      card: 'hidden',
-      list: 'secondary',
-      modal: ColumnModalOption.Hidden,
+      ...overrides,
     }),
-    [
-      pageNavigate,
-      options?.disableLinks,
-      options?.disableSort,
-      options?.hideByDefaultInTableView,
-      options?.sortKey,
-      t,
-    ]
+    [t, options?.disableSort, options?.sortKey, options?.disableLinks, overrides, pageNavigate]
   );
   return column;
 }
@@ -322,6 +342,7 @@ export function useOrganizationNameColumn(
       ),
       value: (item) => item.summary_fields?.organization?.name,
       sort: options?.disableSort ? undefined : 'organization',
+      dashboard: 'hidden',
     }),
     [getPageUrl, options?.disableLinks, options?.disableSort, orgDetailsRoute, t]
   );
@@ -373,10 +394,10 @@ export function useExecutionEnvColumn<
         }
       },
       sort: options?.disableSort ? undefined : 'execution_environment',
-      table: ColumnTableOption.Expanded,
+      table: ColumnTableOption.expanded,
       card: 'hidden',
       list: 'hidden',
-      modal: ColumnModalOption.Hidden,
+      modal: ColumnModalOption.hidden,
     }),
     [t, options?.disableSort, options?.disableLinks, getPageUrl, envDetailsRoute]
   );
@@ -413,10 +434,10 @@ export function useInventoryNameColumn(
       ),
       value: (item) => item.summary_fields?.inventory?.name,
       sort: options?.disableSort ? undefined : 'inventory',
-      table: ColumnTableOption.Expanded,
+      table: ColumnTableOption.expanded,
       card: 'hidden',
       list: 'hidden',
-      modal: ColumnModalOption.Hidden,
+      modal: ColumnModalOption.hidden,
     }),
     [getPageUrl, options?.disableLinks, options?.disableSort, inventoryDetailsRoute, t]
   );
@@ -453,10 +474,10 @@ export function useProjectNameColumn(
       ),
       value: (item) => item.summary_fields?.project?.name,
       sort: options?.disableSort ? undefined : 'project',
-      table: ColumnTableOption.Expanded,
+      table: ColumnTableOption.expanded,
       card: 'hidden',
       list: 'hidden',
-      modal: ColumnModalOption.Hidden,
+      modal: ColumnModalOption.hidden,
     }),
     [getPageUrl, options?.disableLinks, options?.disableSort, projectDetailsRoute, t]
   );

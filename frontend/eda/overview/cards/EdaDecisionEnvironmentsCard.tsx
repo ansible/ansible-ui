@@ -1,14 +1,10 @@
 import { PlusCircleIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  DateTimeCell,
   PageTable,
-  useColumnsWithoutExpandedRow,
-  useColumnsWithoutSort,
+  useDashboardColumns,
   useGetPageUrl,
   usePageNavigate,
-  useVisibleModalColumns,
 } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
 import { edaAPI } from '../../common/eda-utils';
@@ -26,21 +22,8 @@ export function EdaDecisionEnvironmentsCard() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const getPageUrl = useGetPageUrl();
-  const tableColumns = useDecisionEnvironmentColumns();
-  let columns = useVisibleModalColumns(tableColumns);
-  columns = useMemo(
-    () => [
-      ...columns,
-      {
-        header: t('Last modified'),
-        cell: (project) =>
-          project.modified_at && <DateTimeCell format="date-time" value={project.modified_at} />,
-      },
-    ],
-    [columns, t]
-  );
-  columns = useColumnsWithoutSort(columns);
-  columns = useColumnsWithoutExpandedRow(columns);
+  let columns = useDecisionEnvironmentColumns();
+  columns = useDashboardColumns(columns);
 
   return (
     <PageDashboardCard
