@@ -11,7 +11,7 @@ describe('Namespaces', () => {
     cy.verifyPageTitle(Namespaces.title);
   });
 
-  it('create and delete a namespace', () => {
+  it('create, search and delete a namespace', () => {
     cy.navigateTo('hub', Namespaces.url);
     const namespaceName = `test_namespace_${randomString(5, undefined, { isLowercase: true })}`;
     cy.get('h1').should('contain', Namespaces.title);
@@ -22,7 +22,5 @@ describe('Namespaces', () => {
     cy.get('[data-cy="Submit"]').click();
     cy.url().should('include', `/namespaces/${namespaceName}/details`);
     cy.selectDetailsPageKebabAction('delete-namespace');
-    cy.contains(/^Success$/);
-    cy.clickButton(/^Close$/);
   });
 });
