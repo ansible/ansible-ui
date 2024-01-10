@@ -158,6 +158,11 @@ describe('job delete', () => {
         cy.filterTableByTypeAndText('ID', jobId);
         const jobName = testJob.name ? testJob.name : '';
         cy.waitForJobToProcessEvents(jobId);
+
+        // Even though the job is finished from the API perspective, the UI still shows it as running
+        // Wait for the table job row to show with Success
+        cy.tableHasRowWithSuccess(jobName, false);
+
         cy.clickTableRowKebabAction(jobName, 'delete-job', false);
         cy.get('.pf-v5-c-modal-box__footer')
           .prev()
@@ -190,6 +195,11 @@ describe('job delete', () => {
       cy.filterTableByTypeAndText('ID', jobId);
       const jobName = jobList.name ? jobList.name : '';
       cy.waitForJobToProcessEvents(jobId);
+
+      // Even though the job is finished from the API perspective, the UI still shows it as running
+      // Wait for the table job row to show with Success
+      cy.tableHasRowWithSuccess(jobName, false);
+
       cy.selectTableRow(jobName, false);
       cy.clickToolbarKebabAction('delete-selected-jobs');
       cy.get('.pf-v5-c-modal-box__footer')
