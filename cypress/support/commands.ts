@@ -7,6 +7,7 @@ import 'cypress-file-upload';
 import { SetOptional, SetRequired } from 'type-fest';
 import { AwxItemsResponse } from '../../frontend/awx/common/AwxItemsResponse';
 import { AwxToken } from '../../frontend/awx/interfaces/AwxToken';
+import { Application } from '../../frontend/awx/interfaces/Application';
 import { Credential } from '../../frontend/awx/interfaces/Credential';
 import { CredentialType } from '../../frontend/awx/interfaces/CredentialType';
 import { ExecutionEnvironment } from '../../frontend/awx/interfaces/ExecutionEnvironment';
@@ -74,6 +75,35 @@ declare global {
         injectorConfig?: string,
         defaultConfig?: string
       ): Chainable<void>;
+
+      createCustomAWXApplicationFromUI(
+        customAppName: string,
+        customAppDescription: string,
+        customGrantType: string,
+        customClientType: string,
+        customRedirectURIS: string
+      ): Chainable<void>;
+
+      editCustomAWXApplicationFromDetailsView(
+        customAppName: string,
+        customGrantType: string,
+        customClientType: string,
+        newCustomClientType: string
+      ): Chainable<void>;
+
+      editCustomAWXApplicationFromListView(
+        customAppName: string,
+        customGrantType: string,
+        newCustomClientType: string
+      ): Chainable<void>;
+
+      deleteCustomAWXApplicationFromDetailsView(
+        customAppName: string,
+        customGrantType: string,
+        customClientType: string
+      ): Chainable<void>;
+
+      deleteCustomAWXApplicationFromListView(customAppName: string): Chainable<void>;
 
       // --- INPUT COMMANDS ---
 
@@ -302,6 +332,16 @@ declare global {
       ): Chainable<ResponseBodyT>;
 
       /**
+       * This command only works for patching a resource in AWX.
+       * @param url
+       */
+      awxRequestPatch<RequestBodyT extends Cypress.RequestBody, ResponseBodyT = RequestBodyT>(
+        url: string,
+        body: RequestBodyT,
+        failOnStatusCode?: boolean
+      ): Chainable<ResponseBodyT>;
+
+      /**
        * This command only works for retrieving a resource in AWX.
        * @param url
        */
@@ -320,6 +360,7 @@ declare global {
       ): Chainable<void>;
 
       createAwxOrganization(orgName?: string, failOnStatusCode?: boolean): Chainable<Organization>;
+      editAwxApplication(application: Application, name: string): Chainable<Application>;
 
       /**
        * `createAwxProject` creates an AWX Project via API,
@@ -382,6 +423,13 @@ declare global {
           'organization' | 'project' | 'inventory'
         >
       ): Chainable<JobTemplate>;
+
+      /**
+       * `createAwxApplication` creates an AWX Application via API,
+       *  with the name `E2E Application` and appends a random string at the end of the name
+       * @returns {Chainable<Application>}
+       */
+      createAwxApplication(): Chainable<Application>;
 
       createAwxWorkflowJobTemplate(
         workflowJobTemplate: Partial<WorkflowJobTemplate>
@@ -518,6 +566,13 @@ declare global {
       ): Chainable<void>;
       deleteAwxCredentialType(
         credentialType: CredentialType,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
+      ): Chainable<void>;
+      deleteAwxApplication(
+        id: string,
         options?: {
           /** Whether to fail on response codes other than 2xx and 3xx */
           failOnStatusCode?: boolean;
