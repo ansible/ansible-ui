@@ -2,6 +2,7 @@ import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { InventorySource } from '../../../../frontend/awx/interfaces/InventorySource';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
+import { randomString } from '../../../../framework/utils/random-string';
 
 describe('Workflow Visualizer Nodes', function () {
   let organization: Organization;
