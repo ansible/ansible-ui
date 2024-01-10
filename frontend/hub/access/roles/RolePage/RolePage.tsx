@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { pulpAPI } from '../../../api/formatPath';
 import { Role } from '../Role';
-import { useGetItem } from '../../../../common/crud/useGet';
+import { useGet } from '../../../../common/crud/useGet';
 import { useRoleRowActions } from '../hooks/useRoleActions';
 import {
   LoadingPage,
@@ -17,11 +17,15 @@ import { HubRoute } from '../../../HubRoutes';
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { parsePulpIDFromURL } from '../../../api/utils';
+import { PulpItemsResponse } from '../../../useHubView';
 
 export function RolePage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { error, data: role, refresh } = useGetItem<Role>(pulpAPI`/roles`, params.id);
+  const { data, error, refresh } = useGet<PulpItemsResponse<Role>>(
+    pulpAPI`/roles/?name=${params.id || ''}`
+  );
+  const role = data?.results?.[0];
   const pageNavigate = usePageNavigate();
   const actions = useRoleRowActions(() => pageNavigate(HubRoute.Roles));
   const getPageUrl = useGetPageUrl();

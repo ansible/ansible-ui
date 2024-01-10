@@ -72,7 +72,7 @@ export function useRoleRowActions(onComplete: (roles: Role[]) => void) {
                 ),
         href: (role) => {
           return getPageUrl(HubRoute.EditRole, {
-            params: { id: parsePulpIDFromURL(role.pulp_href) ?? '' },
+            params: { id: role.name ?? '' },
           });
         },
       },

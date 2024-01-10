@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import {
+  LoadingPage,
   PageFormSubmitHandler,
   PageFormTextInput,
   PageHeader,
@@ -12,7 +13,7 @@ import { PageFormRolePermissionsSelect } from '../components/PageFormPermissions
 import { HubRoute } from '../../../HubRoutes';
 import { HubPageForm } from '../../../HubPageForm';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useGetItem } from '../../../../common/crud/useGet';
+import { useGet, useGetItem } from '../../../../common/crud/useGet';
 import { pulpAPI } from '../../../api/formatPath';
 import { PermissionCategory, usePermissionCategories } from '../components/RolePermissions';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
@@ -20,6 +21,8 @@ import { useIsValidRoleName } from '../hooks/useIsValidRoleName';
 import { useIsValidRoleDescription } from '../hooks/useIsValidRoleDescription';
 import { usePatchRequest } from '../../../../common/crud/usePatchRequest';
 import { parsePulpIDFromURL } from '../../../api/utils';
+import { HubError } from '../../../common/HubError';
+import { PulpItemsResponse } from '../../../useHubView';
 
 export interface RoleInput extends Omit<Role, 'pulp_href' | 'pulp_created' | 'locked'> {
   permissionCategories: PermissionCategory[];
@@ -69,9 +72,15 @@ export function EditRole() {
   const getPageUrl = useGetPageUrl();
   const navigate = useNavigate();
   const params = useParams<{ id: string }>();
-  const { data: role } = useGetItem<Role>(pulpAPI`/roles`, params.id);
+  const { data, error, refresh } = useGet<PulpItemsResponse<Role>>(
+    pulpAPI`/roles/?name=${params.id || ''}`
+  );
+  const role = data?.results?.[0];
   const permissionCategories = usePermissionCategories(role?.permissions, false, true);
   const patchRequest = usePatchRequest<RoleRequestBody, Role>();
+
+  if (error) return <HubError error={error} handleRefresh={refresh} />;
+  if (!role) return <LoadingPage breadcrumbs tabs />;
 
   const onSubmit: PageFormSubmitHandler<RoleInput> = async (values) => {
     const { name, description, permissionCategories } = values;

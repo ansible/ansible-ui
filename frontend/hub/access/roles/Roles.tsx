@@ -20,6 +20,10 @@ export function Roles() {
   );
 }
 
+function roleKeyFn(role: { pulp_href: string }) {
+  return role.pulp_href;
+}
+
 export function HubRolesTable() {
   const { t } = useTranslation();
   const tableColumns = useRoleColumns();
@@ -28,7 +32,7 @@ export function HubRolesTable() {
 
   const view = useHubView<Role>({
     url: pulpAPI`/roles/`,
-    keyFn: (role: { pulp_href: string }) => role.pulp_href,
+    keyFn: roleKeyFn,
     toolbarFilters,
     tableColumns,
     queryParams: {

@@ -7,7 +7,6 @@ import {
   TextCell,
   useGetPageUrl,
 } from '../../../../../framework';
-import { parsePulpIDFromURL } from '../../../common/api/hub-api-utils';
 import { HubRoute } from '../../../main/HubRoutes';
 import { Role } from '../Role';
 import { useLockedRolesWithDescription } from './useLockedRolesWithDescription';
@@ -25,9 +24,7 @@ export function useRoleColumns(options?: { disableSort?: boolean; disableLinks?:
             to={
               options?.disableLinks
                 ? undefined
-                : getPageUrl(HubRoute.RoleDetails, {
-                    params: { id: parsePulpIDFromURL(role.pulp_href) ?? '' },
-                  })
+                : getPageUrl(HubRoute.RoleDetails, { params: { id: role.name } })
             }
             text={role.name}
           />

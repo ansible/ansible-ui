@@ -1,10 +1,11 @@
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { useGetItem } from '../../../../common/crud/useGet';
+import { useGet } from '../../../../common/crud/useGet';
 import { Role } from '../Role';
 import { pulpAPI } from '../../../api/formatPath';
 import {
   DateTimeCell,
+  LoadingPage,
   PageDetail,
   PageDetails,
   PageHeader,
@@ -15,16 +16,22 @@ import {
 import { HubRoute } from '../../../HubRoutes';
 import { useLockedRolesWithDescription } from '../hooks/useLockedRolesWithDescription';
 import { RolePermissions } from '../components/RolePermissions';
+import { HubError } from '../../../common/HubError';
+import { PulpItemsResponse } from '../../../useHubView';
 
 export function RoleDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { data: role } = useGetItem<Role>(pulpAPI`/roles`, params.id);
+  const { data, error, refresh } = useGet<PulpItemsResponse<Role>>(
+    pulpAPI`/roles?name=${params.id || ''}`
+  );
+  const role = data?.results?.[0];
   const getPageUrl = useGetPageUrl();
   const lockedRolesWithDescription = useLockedRolesWithDescription();
-  if (!role) {
-    return null;
-  }
+
+  if (error) return <HubError error={error} handleRefresh={refresh} />;
+  if (!role) return <LoadingPage breadcrumbs tabs />;
+
   return (
     <PageLayout>
       <PageHeader
