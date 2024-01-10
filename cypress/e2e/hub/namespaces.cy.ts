@@ -22,7 +22,7 @@ describe('Namespaces', () => {
     cy.get('[data-cy="create-namespace"]').should('be.visible').click();
     cy.url().should('include', Namespaces.urlCreate);
     cy.get('[data-cy="name"]').type(namespaceName);
-    cy.get('[data-cy="company"]').type(Namespaces.company);
+    cy.get('[data-cy="company"]').type('test company');
     cy.get('[data-cy="Submit"]').click();
     cy.url().should('include', `/namespaces/${namespaceName}/details`);
     cy.selectDetailsPageKebabAction('delete-namespace');
@@ -36,13 +36,11 @@ describe('Namespaces', () => {
     cy.get('[data-cy="create-namespace"]').should('be.visible').click();
     cy.url().should('include', Namespaces.urlCreate);
     cy.get('[data-cy="name"]').type(namespaceName);
-    cy.get('[data-cy="company"]').type(Namespaces.company);
+    cy.get('[data-cy="company"]').type('test company');
     cy.get('[data-cy="Submit"]').click();
     cy.url().should('include', `/namespaces/${namespaceName}/details`);
     cy.get('[data-cy="edit-namespace"]').click();
-    // check that namespace name is disabled
     cy.get('[data-cy="name"]').should('be.disabled');
-    //edit company and description
     cy.get('[data-cy="company"]').clear().type('new company');
     cy.get('[data-cy="description"]').clear().type('new description');
     cy.get('[data-cy="Submit"]').click();
