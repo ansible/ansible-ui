@@ -1,13 +1,14 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings, useBulkConfirmation, usePageNavigate } from '../../../../framework';
+import { compareStrings, usePageNavigate } from '../../../../framework';
 import { requestGet } from '../../../common/crud/Data';
 import { collectionKeyFn, hubAPIDelete } from '../../api/utils';
 import { hubAPI, pulpAPI } from '../../api/formatPath';
-import { PulpItemsResponse } from '../../usePulpView';
+import { PulpItemsResponse } from '../../useHubView';
 import { CollectionVersionSearch } from '../Collection';
 import { useCollectionColumns } from './useCollectionColumns';
 import { navigateAfterDelete } from './useDeleteCollectionsFromRepository';
+import { useHubBulkConfirmation } from '../../common/useHubBulkConfirmation';
 
 export function useDeleteCollections(
   onComplete?: (collections: CollectionVersionSearch[]) => void,
@@ -17,7 +18,7 @@ export function useDeleteCollections(
   const { t } = useTranslation();
   const confirmationColumns = useCollectionColumns();
   const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
-  const bulkAction = useBulkConfirmation<CollectionVersionSearch>();
+  const bulkAction = useHubBulkConfirmation<CollectionVersionSearch>();
   const navigate = usePageNavigate();
 
   return useCallback(

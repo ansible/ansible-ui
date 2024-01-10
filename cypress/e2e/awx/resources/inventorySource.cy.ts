@@ -34,7 +34,7 @@ describe('Inventory source page', () => {
 
   it('deletes an inventory source from the details page', () => {
     cy.visit(
-      `/ui_next/infrastructure/inventories/inventory/${inventorySource.inventory}/sources/${inventorySource.id}/details`
+      `/infrastructure/inventories/inventory/${inventorySource.inventory}/sources/${inventorySource.id}/details`
     );
 
     cy.verifyPageTitle(inventorySource.name);

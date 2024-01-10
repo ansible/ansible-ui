@@ -86,7 +86,6 @@ export const CustomLabel: FC<CustomLabelProps & WithContextMenuProps & WithSelec
             style={getEdgeStyles(status)}
           />
         )}
-
         <g data-cy="node-context-menu_kebab" transform={`translate(${width + 5}, ${height / 4})`}>
           <EllipsisVIcon style={{ fill: 'white' }} />
         </g>

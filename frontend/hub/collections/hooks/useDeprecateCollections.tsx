@@ -1,12 +1,13 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings, useBulkConfirmation } from '../../../../framework';
+import { compareStrings } from '../../../../framework';
 import { requestGet, requestPatch } from '../../../common/crud/Data';
 import { collectionKeyFn } from '../../api/utils';
 import { hubAPI, pulpAPI } from '../../api/formatPath';
-import { PulpItemsResponse } from '../../usePulpView';
+import { PulpItemsResponse } from '../../useHubView';
 import { CollectionVersionSearch } from '../Collection';
 import { useCollectionColumns } from './useCollectionColumns';
+import { useHubBulkConfirmation } from '../../common/useHubBulkConfirmation';
 
 export function useDeprecateCollections(
   onComplete?: (collections: CollectionVersionSearch[]) => void
@@ -14,7 +15,7 @@ export function useDeprecateCollections(
   const { t } = useTranslation();
   const confirmationColumns = useCollectionColumns();
   const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
-  const bulkAction = useBulkConfirmation<CollectionVersionSearch>();
+  const bulkAction = useHubBulkConfirmation<CollectionVersionSearch>();
   return useCallback(
     (collections: CollectionVersionSearch[]) => {
       bulkAction({

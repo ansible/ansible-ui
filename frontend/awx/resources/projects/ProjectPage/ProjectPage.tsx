@@ -2,20 +2,25 @@
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
-import { PageActions, PageHeader, PageLayout, useGetPageUrl } from '../../../../../framework';
+import { useParams } from 'react-router-dom';
+import {
+  PageActions,
+  PageHeader,
+  PageLayout,
+  useGetPageUrl,
+  usePageNavigate,
+} from '../../../../../framework';
 import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
-import { RouteObj } from '../../../../common/Routes';
 import { useGet } from '../../../../common/crud/useGet';
-import { useActiveUser } from '../../../../common/useActiveUser';
 import { AwxRoute } from '../../../AwxRoutes';
+import { awxAPI } from '../../../api/awx-utils';
 import { AwxError } from '../../../common/AwxError';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
+import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import { Organization } from '../../../interfaces/Organization';
 import { Project } from '../../../interfaces/Project';
 import { useProjectActions } from '../hooks/useProjectActions';
-import { awxAPI } from '../../../api/awx-utils';
 
 export function ProjectPage() {
   const { t } = useTranslation();
@@ -26,9 +31,9 @@ export function ProjectPage() {
     refresh: projectRefresh,
     isLoading: isProjectLoading,
   } = useGet<Project>(awxAPI`/projects/${params.id ?? ''}/`);
-  const navigate = useNavigate();
-  const itemActions = useProjectActions(() => navigate(RouteObj.Projects));
-  const currentUser = useActiveUser();
+  const pageNavigate = usePageNavigate();
+  const itemActions = useProjectActions(() => pageNavigate(AwxRoute.Projects));
+  const currentUser = useAwxActiveUser();
   const {
     data: isNotifAdmin,
     error: isNotifAdminError,

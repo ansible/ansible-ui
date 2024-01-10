@@ -10,11 +10,16 @@ export function PageDetailsFromColumns<T extends object>(props: {
   columns: ITableColumn<T>[];
   disablePadding?: boolean;
   numberOfColumns?: 'multiple' | 'single';
+  labelOrientation?: 'horizontal' | 'vertical';
 }) {
   const { item, columns, disablePadding, numberOfColumns } = props;
   if (!item) return <></>;
   return (
-    <PageDetails disablePadding={disablePadding} numberOfColumns={numberOfColumns}>
+    <PageDetails
+      disablePadding={disablePadding}
+      numberOfColumns={numberOfColumns}
+      labelOrientation={props.labelOrientation}
+    >
       {columns.map((column) => {
         if ('value' in column && column.value) {
           const itemValue = column.value(item);

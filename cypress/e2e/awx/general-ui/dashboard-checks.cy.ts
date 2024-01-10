@@ -18,11 +18,9 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
       )
       .should('be.visible');
     cy.get('[data-cy="tech-preview"] a').should('contain', 'here').click();
-    cy.url().should('not.include', '/ui_next');
   });
 
   it('clicking on Cog icon opens the Manage Dashboard modal', () => {
-    cy.visit('/ui_next/overview');
     cy.navigateTo('awx', 'overview');
     cy.clickButton('Manage view');
     cy.get('.pf-v5-c-modal-box__title-text').should('contain', 'Manage Dashboard');
@@ -85,7 +83,7 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
       'getJobs'
     );
     cy.navigateTo('awx', 'overview');
-    cy.get('[data-cy="recent-jobs"]').should('contain', 'Recent Jobs');
+    cy.get('[data-cy="jobs"]').should('contain', 'Jobs');
     cy.checkAnchorLinks('Go to Jobs');
     cy.wait('@getJobs')
       .its('response.body.results')
@@ -120,7 +118,7 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
       'getProjects'
     );
     cy.navigateTo('awx', 'overview');
-    cy.get('[data-cy="recent-projects"]').should('contain', 'Recent Projects');
+    cy.get('[data-cy="projects"]').should('contain', 'Projects');
     cy.checkAnchorLinks('Go to Projects');
     cy.wait('@getProjects')
       .its('response.body.results')
@@ -158,7 +156,7 @@ describe('Dashboard: General UI tests - resources count and empty state check', 
       'getInventories'
     );
     cy.navigateTo('awx', 'overview');
-    cy.get('[data-cy="recent-inventories"]').should('contain', 'Recent Inventories');
+    cy.get('[data-cy="inventories"]').should('contain', 'Inventories');
     cy.checkAnchorLinks('Go to Inventories');
     cy.wait('@getInventories')
       .its('response.body.results')

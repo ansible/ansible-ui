@@ -1,5 +1,3 @@
-import { useCallback, useEffect, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   CREATE_CONNECTOR_DROP_TYPE,
   ComponentFactory,
@@ -11,6 +9,7 @@ import {
   Model,
   ModelKind,
   NodeShape,
+  TopologyView,
   SELECTION_EVENT,
   TopologyControlBar,
   Visualization,
@@ -26,13 +25,16 @@ import {
   withDragNode,
   withPanZoom,
   withSelection,
-  TopologyView,
   GraphElement,
   ElementModel,
   withCreateConnector,
   isNode,
 } from '@patternfly/react-topology';
+import { useCallback, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { EmptyStateNoData } from '../../../../../framework/components/EmptyStateNoData';
+import type { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
+import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
 import {
   AddNodeButton,
   CustomEdge,
@@ -43,10 +45,8 @@ import {
   NodeContextMenu,
   WorkflowVisualizerToolbar,
 } from './components';
-import { EdgeStatus, GraphNode } from './types';
-import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
-import type { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
-import { ViewOptionsProvider, ViewOptionsContext } from './ViewOptionsProvider';
+import { GraphNode, EdgeStatus } from './types';
+import { ViewOptionsContext, ViewOptionsProvider } from './ViewOptionsProvider';
 import { ToolbarHeader } from './components/WorkflowVisualizerToolbar';
 import { Sidebar } from './components/Sidebar';
 

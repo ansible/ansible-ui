@@ -1,7 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { PageTable } from '../../../../../framework';
-import { useAnalyticsView } from '../../useAnalyticsView';
+import { awxAPI } from '../../../api/awx-utils';
 import { ReportsList } from '../../../interfaces/ReportsList';
+import { useAnalyticsView } from '../../useAnalyticsView';
 import { useReportCardColumns } from './useReportCardColumns';
 import { useReportCardFilters } from './useReportCardFilters';
 
@@ -23,7 +24,7 @@ export function ReportCard() {
   const tableColumns = useReportCardColumns();
 
   const view = useAnalyticsView<ReportsList>({
-    url: '/api/v2/analytics/reports/',
+    url: awxAPI`/analytics/reports/`,
     keyFn: (data) => data.id,
     payload: {
       description: '',

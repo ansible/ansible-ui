@@ -1,14 +1,14 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useBulkActionDialog } from '../../../../../framework';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
+import { awxAPI } from '../../../api/awx-utils';
 import { Team } from '../../../interfaces/Team';
 import { User } from '../../../interfaces/User';
-import { awxAPI } from '../../../api/awx-utils';
+import { useAwxBulkActionDialog } from '../../../common/useAwxBulkActionDialog';
 
 export function useRemoveUsersFromTeams() {
   const { t } = useTranslation();
-  const userProgressDialog = useBulkActionDialog<User>();
+  const userProgressDialog = useAwxBulkActionDialog<User>();
   const postRequest = usePostRequest();
   const removeUserToTeams = useCallback(
     (users: User[], teams: Team[], onComplete?: (users: User[]) => void) => {

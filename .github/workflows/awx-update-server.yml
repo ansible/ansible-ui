@@ -68,32 +68,10 @@ jobs:
             {
               "blocks": [
                 {
-                  "type": "header",
-                  "text": {
-                    "type": "plain_text",
-                    "text": "AWX E2E Server Updated",
-                    "emoji": true
-                  }
-                },
-                {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*Environment Variables*```export AWX_SERVER=${{ needs.setup.outputs.AWX_SERVER }}```"
-                  }
-                },   
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*Server*\n${{ needs.setup.outputs.AWX_SERVER }}/ui_next"
-                  }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*GitHub Action*\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                    "text": ":check: AWX E2E Update - <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Success> - <${{ needs.setup.outputs.AWX_SERVER }}|Server>"
                   }
                 }
               ]
@@ -117,32 +95,10 @@ jobs:
             {
               "blocks": [
                 {
-                  "type": "header",
-                  "text": {
-                    "type": "plain_text",
-                    "text": ":alert-1190:  AWX E2E Server Update Failure",
-                    "emoji": true
-                  }
-                },
-                {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "The GitHub Action to update the server failed. <!here>"
-                  }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*Server*\n${{ needs.setup.outputs.AWX_SERVER }}/ui_next"
-                  }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*GitHub Action Run*\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                    "text": ":alert: *AWX E2E Update* - *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Failure>* - <${{ needs.setup.outputs.AWX_SERVER }}|Server> - <https://cloud.cypress.io/projects/77sud6|Cypress> - <!here>"
                   }
                 }
               ]

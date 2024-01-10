@@ -3,7 +3,7 @@ import { HubRoute } from '../../HubRoutes';
 import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
 import { useParams } from 'react-router-dom';
 import { useGet } from '../../../common/crud/useGet';
-import { PulpItemsResponse } from '../../usePulpView';
+import { PulpItemsResponse } from '../../useHubView';
 import { Repository } from '../Repository';
 import { pulpAPI } from '../../api/formatPath';
 import { parsePulpIDFromURL } from '../../api/utils';

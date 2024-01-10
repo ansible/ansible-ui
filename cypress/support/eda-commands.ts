@@ -71,7 +71,6 @@ Cypress.Commands.add('createEdaProject', () => {
       displayName: 'EDA PROJECT CREATION :',
       message: [`Created 👉  ${edaProject.name}`],
     });
-    return edaProject;
   });
 });
 
@@ -143,13 +142,25 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add('waitEdaProjectSync', (edaProject) => {
+  Cypress.log({
+    displayName: 'EDA PROJECT IS',
+    message: ['WAITING TO FINISH SYNCING...🕓'],
+  });
   cy.requestGet<EdaResult<EdaProject>>(edaAPI`/projects/?name=${edaProject.name}`).then(
     (result) => {
       if (Array.isArray(result?.results) && result.results.length === 1) {
         const project = result.results[0];
         if (project.import_state !== ImportStateEnum.Completed) {
+          Cypress.log({
+            displayName: 'PROJECT SYNC STATUS IS NOW : 👉 ',
+            message: [`${project.import_state}`],
+          });
           cy.wait(100).then(() => cy.waitEdaProjectSync(edaProject));
         } else {
+          Cypress.log({
+            displayName: 'PROJECT SYNC STATUS IS NOW : 👉 ',
+            message: [`${project.import_state}`],
+          });
           cy.wrap(project);
         }
       } else {
@@ -360,12 +371,15 @@ Cypress.Commands.add('ensureEdaCurrentUserAwxToken', () => {
   cy.getEdaCurrentUserAwxTokens().then((result) => {
     switch (result.count) {
       case 0:
+        cy.log(`TOKEN COUNT = ${result.count}, CREATES NEW TOKEN`);
         cy.addEdaCurrentUserAwxToken('testtoken');
         break;
       case 1:
         // Do nothing - token exists
+        cy.log('TOKEN exists, skipping');
         break;
       case 2:
+        cy.log('DELETES token');
         for (const token of result.results?.slice(1) ?? []) {
           cy.deleteEdaCurrentUserAwxToken(token);
         }

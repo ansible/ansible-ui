@@ -8,19 +8,22 @@ import {
   DateTimeCell,
   ITableColumn,
   TextCell,
+  useGetPageUrl,
 } from '../../../../../framework';
 import { ElapsedTimeCell } from '../../../../../framework/PageCells/ElapsedTimeCell';
-import { RouteObj } from '../../../../common/Routes';
 import { StatusCell } from '../../../../common/Status';
 import { useOptions } from '../../../../common/crud/useOptions';
+import { AwxRoute } from '../../../AwxRoutes';
+import { awxAPI } from '../../../api/awx-utils';
 import { CredentialLabel } from '../../../common/CredentialLabel';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { UnifiedJob } from '../../../interfaces/UnifiedJob';
-import { awxAPI } from '../../../api/awx-utils';
-import { getJobOutputUrl, getLaunchedByDetails, getScheduleUrl, isJobRunning } from '../jobUtils';
+import { getLaunchedByDetails, getScheduleUrl, isJobRunning } from '../jobUtils';
+import { useGetJobOutputUrl } from '../useGetJobOutputUrl';
 
 export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
 
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/inventory_sources/`);
   const inventorySourceChoices = useMemo(
@@ -34,6 +37,8 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
         : [],
     [data]
   );
+
+  const getJobOutputUrl = useGetJobOutputUrl();
 
   const tableColumns = useMemo<ITableColumn<UnifiedJob>[]>(
     () => [
@@ -153,10 +158,9 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
         header: t('Job template'),
         cell: (job: UnifiedJob) => (
           <Link
-            to={RouteObj.JobTemplateDetails.replace(
-              ':id',
-              job.summary_fields?.job_template?.id.toString() ?? ''
-            )}
+            to={getPageUrl(AwxRoute.JobTemplateDetails, {
+              params: { id: job.summary_fields?.job_template?.id },
+            })}
           >
             {job.summary_fields?.job_template?.name}
           </Link>
@@ -172,10 +176,9 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
         header: t('Workflow job template'),
         cell: (job: UnifiedJob) => (
           <Link
-            to={RouteObj.WorkflowJobTemplateDetails.replace(
-              ':id',
-              job.summary_fields?.workflow_job_template?.id.toString() ?? ''
-            )}
+            to={getPageUrl(AwxRoute.WorkflowJobTemplateDetails, {
+              params: { id: job.summary_fields?.workflow_job_template?.id },
+            })}
           >
             {job.summary_fields?.workflow_job_template?.name}
           </Link>
@@ -191,10 +194,12 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
         header: t('Source workflow job'),
         cell: (job: UnifiedJob) => (
           <Link
-            to={RouteObj.JobDetails.replace(':job_type', 'workflow').replace(
-              ':id',
-              job.summary_fields.source_workflow_job?.id.toString() ?? ''
-            )}
+            to={getPageUrl(AwxRoute.JobDetails, {
+              params: {
+                job_type: 'workflow',
+                id: job.summary_fields.source_workflow_job?.id,
+              },
+            })}
           >
             {job.summary_fields.source_workflow_job?.name}
           </Link>
@@ -210,10 +215,12 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
         header: t('Inventory'),
         cell: (job: UnifiedJob) => (
           <Link
-            to={RouteObj.InventoryDetails.replace(
-              ':inventory_type',
-              inventoryUrlPaths[job.summary_fields?.inventory?.kind ?? '']
-            ).replace(':id', job.summary_fields?.inventory?.id.toString() ?? '')}
+            to={getPageUrl(AwxRoute.InventoryDetails, {
+              params: {
+                inventory_type: inventoryUrlPaths[job.summary_fields?.inventory?.kind ?? ''],
+                id: job.summary_fields?.inventory?.id,
+              },
+            })}
           >
             {job.summary_fields?.inventory?.name}
           </Link>
@@ -229,10 +236,9 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
         header: t('Project'),
         cell: (job: UnifiedJob) => (
           <Link
-            to={RouteObj.ProjectDetails.replace(
-              ':id',
-              job.summary_fields?.project?.id.toString() ?? ''
-            )}
+            to={getPageUrl(AwxRoute.ProjectDetails, {
+              params: { id: job.summary_fields?.project?.id },
+            })}
           >
             {job.summary_fields?.project?.name}
           </Link>
@@ -248,10 +254,9 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
         header: t('Execution environment'),
         cell: (job: UnifiedJob) => (
           <Link
-            to={RouteObj.ExecutionEnvironmentDetails.replace(
-              ':id',
-              job.summary_fields.execution_environment?.id?.toString() || ''
-            )}
+            to={getPageUrl(AwxRoute.ExecutionEnvironmentPage, {
+              params: { id: job.summary_fields.execution_environment?.id },
+            })}
           >
             {job.summary_fields.execution_environment?.name}
           </Link>
@@ -345,7 +350,7 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
         modal: ColumnModalOption.Hidden,
       },
     ],
-    [inventorySourceChoices, options?.disableLinks, t]
+    [getJobOutputUrl, getPageUrl, inventorySourceChoices, options?.disableLinks, t]
   );
   return tableColumns;
 }

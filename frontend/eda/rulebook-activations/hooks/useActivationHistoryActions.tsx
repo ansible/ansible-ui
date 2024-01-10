@@ -8,8 +8,8 @@ import {
   PageActionType,
   usePageNavigate,
 } from '../../../../framework';
-import { EdaRoute } from '../../EdaRoutes';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
+import { EdaRoute } from '../../main/EdaRoutes';
 import { useDeleteRulebookActivations } from './useDeleteRulebookActivations';
 
 export function useRulebookActivationsActions(refresh: () => Promise<unknown>) {

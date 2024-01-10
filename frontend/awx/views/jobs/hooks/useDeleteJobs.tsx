@@ -1,9 +1,10 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings, useBulkConfirmation } from '../../../../../framework';
+import { compareStrings } from '../../../../../framework';
 import { useNameColumn } from '../../../../common/columns';
 import { getItemKey, requestDelete } from '../../../../common/crud/Data';
 import { UnifiedJob } from '../../../interfaces/UnifiedJob';
+import { useAwxBulkConfirmation } from '../../../common/useAwxBulkConfirmation';
 import { getJobsAPIUrl, isJobRunning } from '../jobUtils';
 import { useJobsColumns } from './useJobsColumns';
 
@@ -12,7 +13,7 @@ export function useDeleteJobs(onComplete: (jobs: UnifiedJob[]) => void) {
   const confirmationColumns = useJobsColumns({ disableLinks: true, disableSort: true });
   const deleteActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true });
   const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn]);
-  const bulkAction = useBulkConfirmation<UnifiedJob>();
+  const bulkAction = useAwxBulkConfirmation<UnifiedJob>();
   const cannotDeleteJobDueToPermissions = (job: UnifiedJob) => {
     if (!job.summary_fields.user_capabilities.delete && !isJobRunning(job.status))
       return t(`The job cannot be deleted due to insufficient permission`);

@@ -5,11 +5,11 @@ import {
   PageTable,
   useColumnsWithoutExpandedRow,
   useColumnsWithoutSort,
+  useGetPageUrl,
   usePageNavigate,
   useVisibleModalColumns,
 } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
-import { RouteObj } from '../../../common/Routes';
 import { AwxRoute } from '../../AwxRoutes';
 import { awxAPI } from '../../api/awx-utils';
 import { Inventory } from '../../interfaces/Inventory';
@@ -19,6 +19,7 @@ import { useAwxView } from '../../useAwxView';
 export function AwxRecentInventoriesCard() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
+  const getPageUrl = useGetPageUrl();
 
   const view = useAwxView<Inventory>({
     url: awxAPI`/inventories/`,
@@ -35,12 +36,12 @@ export function AwxRecentInventoriesCard() {
 
   return (
     <PageDashboardCard
-      title={t('Recent Inventories')}
+      title={t('Inventories')}
       subtitle={t('Recently updated inventories')}
       width="md"
       height="md"
       linkText={t('Go to Inventories')}
-      to={RouteObj.Inventories}
+      to={getPageUrl(AwxRoute.Inventories)}
     >
       <PageTable<Inventory>
         disableBodyPadding={true}
