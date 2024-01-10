@@ -60,13 +60,25 @@ describe('Hub Roles Form', () => {
   });
 
   it('name field should be read-only in edit mode', () => {
-    cy.intercept({ method: 'GET', url: pulpAPI`/roles/*` }, mockRole);
+    cy.intercept(
+      { method: 'GET', url: pulpAPI`/roles/*` },
+      {
+        count: 1,
+        results: [mockRole],
+      }
+    );
     cy.mount(<EditRole />);
     cy.get('[data-cy="name"]').should('have.attr', 'readonly');
   });
 
   it('should preload the form with current values', () => {
-    cy.intercept({ method: 'GET', url: pulpAPI`/roles/*` }, mockRole);
+    cy.intercept(
+      { method: 'GET', url: pulpAPI`/roles/*` },
+      {
+        count: 1,
+        results: [mockRole],
+      }
+    );
     cy.mount(<EditRole />);
     cy.verifyPageTitle('Edit Role');
     cy.get('[data-cy="name"]').should('have.value', mockRole.name);

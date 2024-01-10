@@ -31,12 +31,18 @@ const mockFeatureFlags = {
 };
 
 describe('Hub Role Details', () => {
-  it('Component renders and displays inventory', () => {
+  it('Component renders and displays role', () => {
     cy.stub(useHubContext, 'useHubContext').callsFake(() => ({
       user: mockUser,
       featureFlags: mockFeatureFlags,
     }));
-    cy.intercept({ method: 'GET', url: pulpAPI`/roles/*` }, mockRole);
+    cy.intercept(
+      { method: 'GET', url: pulpAPI`/roles/*` },
+      {
+        count: 1,
+        results: [mockRole],
+      }
+    );
     cy.mount(<RoleDetails />);
     cy.get('#name').should('have.text', mockRole.name);
     cy.get('#description').should('have.text', mockRole.description);
