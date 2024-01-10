@@ -8,7 +8,7 @@ import {
   PageActionType,
   usePageNavigate,
 } from '../../../../framework';
-import { HubRoute } from '../../HubRoutes';
+import { HubRoute } from '../../main/HubRoutes';
 import { HubNamespace } from '../HubNamespace';
 import { useDeleteHubNamespaces } from './useDeleteHubNamespaces';
 

@@ -1,15 +1,14 @@
 import { useTranslation } from 'react-i18next';
-import { PageHeader, PageLayout, PageTable } from '../../../framework';
-import { useHubView } from '../useHubView';
+import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../framework';
+import { idKeyFn } from '../../common/utils/nameKeyFn';
+import { hubAPI } from '../common/api/formatPath';
+import { useHubView } from '../common/useHubView';
+import { HubRoute } from '../main/HubRoutes';
 import { ExecutionEnvironment } from './ExecutionEnvironment';
 import { useExecutionEnvironmentActions } from './hooks/useExecutionEnvironmentActions';
 import { useExecutionEnvironmentFilters } from './hooks/useExecutionEnvironmentFilters';
 import { useExecutionEnvironmentsActions } from './hooks/useExecutionEnvironmentsActions';
 import { useExecutionEnvironmentsColumns } from './hooks/useExecutionEnvironmentsColumns';
-import { hubAPI } from '../api/formatPath';
-import { idKeyFn } from '../../common/utils/nameKeyFn';
-import { usePageNavigate } from '../../../framework';
-import { HubRoute } from '../HubRoutes';
 
 export function ExecutionEnvironments() {
   const { t } = useTranslation();

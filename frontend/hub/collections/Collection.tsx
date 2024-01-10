@@ -1,6 +1,6 @@
 import { HubNamespace } from '../namespaces/HubNamespace';
 
-import { CollectionVersionSearchListResponse as CollectionVersionSearch } from '../api-schemas/generated/CollectionVersionSearchListResponse';
+import { CollectionVersionSearchListResponse as CollectionVersionSearch } from '../interfaces/generated/CollectionVersionSearchListResponse';
 export { CollectionVersionSearch };
 
 export interface Collection {

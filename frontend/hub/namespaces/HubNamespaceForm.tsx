@@ -10,14 +10,14 @@ import {
   usePageNavigate,
 } from '../../../framework';
 import { useGet } from '../../common/crud/useGet';
-import { usePutRequest } from '../../common/crud/usePutRequest';
 import { usePostRequest } from '../../common/crud/usePostRequest';
-import { HubRoute } from '../HubRoutes';
-import { hubAPI } from '../api/formatPath';
-import { HubNamespace } from './HubNamespace';
-import { HubPageForm } from '../HubPageForm';
-import { HubError } from '../common/HubError';
+import { usePutRequest } from '../../common/crud/usePutRequest';
 import { useClearCache } from '../../common/useInvalidateCache';
+import { HubError } from '../common/HubError';
+import { HubPageForm } from '../common/HubPageForm';
+import { hubAPI } from '../common/api/formatPath';
+import { HubRoute } from '../main/HubRoutes';
+import { HubNamespace } from './HubNamespace';
 
 export function CreateHubNamespace() {
   const { t } = useTranslation();

@@ -1,15 +1,15 @@
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { PageLayout, PageTable, usePageNavigate } from '../../../../framework';
-import { HubRoute } from '../../HubRoutes';
-import { hubAPI } from '../../api/formatPath';
-import { collectionKeyFn } from '../../api/utils';
 import { CollectionVersionSearch } from '../../collections/Collection';
 import { useCollectionActions } from '../../collections/hooks/useCollectionActions';
 import { useCollectionColumns } from '../../collections/hooks/useCollectionColumns';
 import { useCollectionFilters } from '../../collections/hooks/useCollectionFilters';
 import { useCollectionsActions } from '../../collections/hooks/useCollectionsActions';
-import { useHubView } from '../../useHubView';
+import { hubAPI } from '../../common/api/formatPath';
+import { collectionKeyFn } from '../../common/api/hub-api-utils';
+import { useHubView } from '../../common/useHubView';
+import { HubRoute } from '../../main/HubRoutes';
 
 export function HubNamespaceCollections() {
   const { t } = useTranslation();

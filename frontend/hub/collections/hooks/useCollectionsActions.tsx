@@ -8,9 +8,9 @@ import {
   PageActionType,
   usePageNavigate,
 } from '../../../../framework';
-import { HubRoute } from '../../HubRoutes';
+import { useHubContext } from '../../common/useHubContext';
+import { HubRoute } from '../../main/HubRoutes';
 import { CollectionVersionSearch } from '../Collection';
-import { useHubContext } from './../../useHubContext';
 import { useDeleteCollections } from './useDeleteCollections';
 import { useDeleteCollectionsFromRepository } from './useDeleteCollectionsFromRepository';
 import { useDeprecateCollections } from './useDeprecateCollections';

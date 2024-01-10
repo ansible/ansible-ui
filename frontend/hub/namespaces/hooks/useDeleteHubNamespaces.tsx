@@ -1,11 +1,11 @@
 import { useTranslation } from 'react-i18next';
 import { compareStrings } from '../../../../framework';
 import { nameKeyFn } from '../../../common/utils/nameKeyFn';
-import { hubAPI } from '../../api/formatPath';
-import { hubAPIDelete } from '../../api/utils';
+import { hubAPI } from '../../common/api/formatPath';
+import { hubAPIDelete } from '../../common/api/hub-api-utils';
+import { useHubBulkConfirmation } from '../../common/useHubBulkConfirmation';
 import { HubNamespace } from '../HubNamespace';
 import { useHubNamespacesColumns } from './useHubNamespacesColumns';
-import { useHubBulkConfirmation } from '../../common/useHubBulkConfirmation';
 
 export function useDeleteHubNamespaces(onComplete: (namespaces: HubNamespace[]) => void) {
   const { t } = useTranslation();

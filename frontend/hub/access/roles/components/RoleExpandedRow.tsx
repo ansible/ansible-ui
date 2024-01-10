@@ -1,16 +1,16 @@
-import { useTranslation } from 'react-i18next';
-import { LabelsCell } from '../../../../../framework';
-import { ModelPermissionsType, Role } from '../Role';
-import { ExpandableRowContent } from '@patternfly/react-table';
 import {
   DescriptionList,
   DescriptionListDescription,
   DescriptionListGroup,
   DescriptionListTerm,
 } from '@patternfly/react-core';
-import { useHubContext } from '../../../useHubContext';
-import { USER_GROUP_MGMT_PERMISSIONS } from '../../../common/constants';
+import { ExpandableRowContent } from '@patternfly/react-table';
 import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { LabelsCell } from '../../../../../framework';
+import { USER_GROUP_MGMT_PERMISSIONS } from '../../../common/constants';
+import { useHubContext } from '../../../common/useHubContext';
+import { ModelPermissionsType, Role } from '../Role';
 
 type PermissionCategories = {
   label: string;

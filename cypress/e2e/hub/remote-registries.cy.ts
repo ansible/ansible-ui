@@ -1,5 +1,5 @@
 import { randomString } from '../../../framework/utils/random-string';
-import { RemoteRegistry as IRemoteRegistry } from '../../../frontend/hub/remote-registries/RemoteRegistry';
+import { RemoteRegistry as IRemoteRegistry } from '../../../frontend/hub/administration/remote-registries/RemoteRegistry';
 import { RemoteRegistry } from './constants';
 
 describe('Remote Registry', () => {

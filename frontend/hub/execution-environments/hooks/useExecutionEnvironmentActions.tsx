@@ -7,14 +7,14 @@ import {
   PageActionType,
   usePageNavigate,
 } from '../../../../framework';
+import { useHubContext } from '../../common/useHubContext';
+import { HubRoute } from '../../main/HubRoutes';
 import { ExecutionEnvironment } from '../ExecutionEnvironment';
 import {
   useDeleteExecutionEnvironments,
-  useSyncExecutionEnvironments,
   useSignExecutionEnvironments,
+  useSyncExecutionEnvironments,
 } from './useExecutionEnvironmentsActions';
-import { useHubContext } from '../../useHubContext';
-import { HubRoute } from '../../HubRoutes';
 
 export function useExecutionEnvironmentActions(callback?: (ees: ExecutionEnvironment[]) => void) {
   const { t } = useTranslation();
