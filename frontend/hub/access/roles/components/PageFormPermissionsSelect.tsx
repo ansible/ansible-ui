@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { PageFormMultiSelect } from '../../../../../framework/PageForm/Inputs/PageFormMultiSelect';
 import { RoleInput } from '../RolePage/RoleForm';
 import { usePermissionCategories } from './RolePermissions';
-import { useHubContext } from '../../../useHubContext';
+import { useHubContext } from '../../../common/useHubContext';
 import { useMemo } from 'react';
 
 export function PageFormRolePermissionsSelect(props: { permissions?: string[] }) {

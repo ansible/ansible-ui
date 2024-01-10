@@ -10,19 +10,19 @@ import {
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { Role } from '../Role';
 import { PageFormRolePermissionsSelect } from '../components/PageFormPermissionsSelect';
-import { HubRoute } from '../../../HubRoutes';
-import { HubPageForm } from '../../../HubPageForm';
+import { HubRoute } from '../../../main/HubRoutes';
+import { HubPageForm } from '../../../common/HubPageForm';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useGet } from '../../../../common/crud/useGet';
-import { pulpAPI } from '../../../api/formatPath';
+import { pulpAPI } from '../../../common/api/formatPath';
 import { PermissionCategory, usePermissionCategories } from '../components/RolePermissions';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { useIsValidRoleName } from '../hooks/useIsValidRoleName';
 import { useIsValidRoleDescription } from '../hooks/useIsValidRoleDescription';
 import { usePatchRequest } from '../../../../common/crud/usePatchRequest';
-import { parsePulpIDFromURL } from '../../../api/utils';
+import { parsePulpIDFromURL } from '../../../common/api/hub-api-utils';
 import { HubError } from '../../../common/HubError';
-import { PulpItemsResponse } from '../../../useHubView';
+import { PulpItemsResponse } from '../../../common/useHubView';
 
 export interface RoleInput extends Omit<Role, 'pulp_href' | 'pulp_created' | 'locked'> {
   permissionCategories: PermissionCategory[];

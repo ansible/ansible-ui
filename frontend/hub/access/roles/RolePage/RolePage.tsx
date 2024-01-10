@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { pulpAPI } from '../../../api/formatPath';
+import { pulpAPI } from '../../../common/api/formatPath';
 import { Role } from '../Role';
 import { useGet } from '../../../../common/crud/useGet';
 import { useRoleRowActions } from '../hooks/useRoleActions';
@@ -13,11 +13,11 @@ import {
   usePageNavigate,
 } from '../../../../../framework';
 import { HubError } from '../../../common/HubError';
-import { HubRoute } from '../../../HubRoutes';
+import { HubRoute } from '../../../main/HubRoutes';
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
-import { parsePulpIDFromURL } from '../../../api/utils';
-import { PulpItemsResponse } from '../../../useHubView';
+import { parsePulpIDFromURL } from '../../../common/api/hub-api-utils';
+import { PulpItemsResponse } from '../../../common/useHubView';
 
 export function RolePage() {
   const { t } = useTranslation();

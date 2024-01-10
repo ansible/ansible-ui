@@ -7,7 +7,7 @@ import {
   DescriptionListGroup,
   DescriptionListTerm,
 } from '@patternfly/react-core';
-import { useHubContext } from '../../../useHubContext';
+import { useHubContext } from '../../../common/useHubContext';
 import { USER_GROUP_MGMT_PERMISSIONS } from '../../../common/constants';
 import { useCallback, useMemo } from 'react';
 

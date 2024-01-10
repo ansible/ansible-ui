@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { useGet } from '../../../../common/crud/useGet';
 import { Role } from '../Role';
-import { pulpAPI } from '../../../api/formatPath';
+import { pulpAPI } from '../../../common/api/formatPath';
 import {
   DateTimeCell,
   LoadingPage,
@@ -13,11 +13,11 @@ import {
   Scrollable,
   useGetPageUrl,
 } from '../../../../../framework';
-import { HubRoute } from '../../../HubRoutes';
+import { HubRoute } from '../../../main/HubRoutes';
 import { useLockedRolesWithDescription } from '../hooks/useLockedRolesWithDescription';
 import { RolePermissions } from '../components/RolePermissions';
 import { HubError } from '../../../common/HubError';
-import { PulpItemsResponse } from '../../../useHubView';
+import { PulpItemsResponse } from '../../../common/useHubView';
 
 export function RoleDetails() {
   const { t } = useTranslation();
