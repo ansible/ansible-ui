@@ -50,6 +50,30 @@
   background-image: linear-gradient(#ffffff0f, #ffffff0f) !important;
 }
 
+tr.selected {
+  background: linear-gradient(#0088ff0a, #0088ff0a) !important;
+}
+
+:root:where(.pf-v5-theme-dark) tr.selected {
+  background: linear-gradient(#0088ff0a, #0088ff0a) !important;
+}
+
+tr:hover {
+  background-image: linear-gradient(#00000004, #00000004) !important;
+}
+
+:root:where(.pf-v5-theme-dark) tr:hover {
+  background-image: linear-gradient(#ffffff04, #ffffff04) !important;
+}
+
+tr.selected:hover {
+  background: linear-gradient(#0044aa0b, #0044aa0b) !important;
+}
+
+:root:where(.pf-v5-theme-dark) tr.selected:hover {
+  background: linear-gradient(#44ccff0b, #44ccff0b) !important;
+}
+
 /* Leaving these here until until we make sure the PF5 upgrade has handled these
 
 .pf-v5-c-truncate__start {
