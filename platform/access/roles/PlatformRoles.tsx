@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout } from '../../../framework';
 import { AwxRoute } from '../../../frontend/awx/AwxRoutes';
 import { EdaRoute } from '../../../frontend/eda/main/EdaRoutes';
-import { HubRoute } from '../../../frontend/hub/HubRoutes';
+import { HubRoute } from '../../../frontend/hub/main/HubRoutes';
 import { PlatformServiceNavigation } from '../../common/PlatformServiceNavigation';
 
 export function PlatformRoles() {
