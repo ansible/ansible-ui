@@ -13,7 +13,7 @@ import { PageFormRolePermissionsSelect } from '../components/PageFormPermissions
 import { HubRoute } from '../../../HubRoutes';
 import { HubPageForm } from '../../../HubPageForm';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useGet, useGetItem } from '../../../../common/crud/useGet';
+import { useGet } from '../../../../common/crud/useGet';
 import { pulpAPI } from '../../../api/formatPath';
 import { PermissionCategory, usePermissionCategories } from '../components/RolePermissions';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';

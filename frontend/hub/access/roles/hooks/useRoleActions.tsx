@@ -11,7 +11,6 @@ import { useHubContext } from '../../../common/useHubContext';
 import { HubRoute } from '../../../main/HubRoutes';
 import { Role } from '../Role';
 import { useDeleteRoles } from './useDeleteRoles';
-import { parsePulpIDFromURL } from '../../../api/utils';
 
 export function useRoleToolbarActions(onComplete: (roles: Role[]) => void) {
   const { t } = useTranslation();
