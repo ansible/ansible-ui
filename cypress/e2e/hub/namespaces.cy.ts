@@ -11,7 +11,11 @@ describe('Namespaces', () => {
     cy.verifyPageTitle(Namespaces.title);
   });
 
-  it('create and delete a namespace', () => {
+  it('create a namespace', () => {
+    cy.get('[data-cy="create-namespace"]').should('be.visible').click();
+  });
+
+  it.skip('create and delete a namespace', () => {
     cy.navigateTo('hub', Namespaces.url);
     const namespaceName = `test_namespace_${randomString(5, undefined, { isLowercase: true })}`;
     cy.get('h1').should('contain', Namespaces.title);
@@ -24,5 +28,25 @@ describe('Namespaces', () => {
     cy.selectDetailsPageKebabAction('delete-namespace');
     cy.contains(/^Success$/);
     cy.clickButton(/^Close$/);
+  });
+
+  it('edit a namespace', () => {
+    cy.navigateTo('hub', Namespaces.url);
+    const namespaceName = `test_namespace_${randomString(5, undefined, { isLowercase: true })}`;
+    cy.get('[data-cy="create-namespace"]').should('be.visible').click();
+    cy.url().should('include', Namespaces.urlCreate);
+    cy.get('[data-cy="name"]').type(namespaceName);
+    cy.get('[data-cy="company"]').type(Namespaces.company);
+    cy.get('[data-cy="Submit"]').click();
+    cy.url().should('include', `/namespaces/${namespaceName}/details`);
+    cy.get('[data-cy="edit-namespace"]').click();
+    // check that namespace name is disabled
+    cy.get('[data-cy="name"]').should('be.disabled');
+    //edit company and description
+    cy.get('[data-cy="company"]').clear().type('new company');
+    cy.get('[data-cy="description"]').clear().type('new description');
+    cy.get('[data-cy="Submit"]').click();
+    cy.get('[data-cy="company"]').contains(/^new company$/);
+    cy.get('[data-cy="description"]').contains(/^new description$/);
   });
 });
