@@ -39,10 +39,11 @@ export function useLastUsedColumn() {
           />
         );
       },
-      table: ColumnTableOption.Expanded,
+      table: ColumnTableOption.expanded,
       card: 'hidden',
       list: 'secondary',
-      modal: ColumnModalOption.Hidden,
+      modal: ColumnModalOption.hidden,
+      dashboard: ColumnModalOption.hidden,
     }),
     [pageNavigate, t]
   );

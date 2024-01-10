@@ -33,7 +33,7 @@ export function useHubNamespacesColumns(_options?: {
         value: (namespace) => namespace.description ?? undefined,
         card: 'description',
         list: 'description',
-        modal: ColumnModalOption.Hidden,
+        modal: ColumnModalOption.hidden,
       },
       {
         header: t('Company'),

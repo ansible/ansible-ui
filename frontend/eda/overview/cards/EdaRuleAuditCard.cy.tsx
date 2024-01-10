@@ -94,6 +94,5 @@ describe('EdaRuleAuditCard.cy.ts', () => {
     cy.contains(/^Recently fired rules$/).should('be.visible');
     cy.contains('th', 'Name');
     cy.contains('th', 'Status');
-    cy.contains('th', 'Fired date');
   });
 });

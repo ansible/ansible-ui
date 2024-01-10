@@ -1,13 +1,10 @@
 import { PlusCircleIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   PageTable,
-  useColumnsWithoutExpandedRow,
-  useColumnsWithoutSort,
+  useDashboardColumns,
   useGetPageUrl,
   usePageNavigate,
-  useVisibleModalColumns,
 } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
 import { edaAPI } from '../../common/eda-utils';
@@ -26,11 +23,8 @@ export function EdaRulebookActivationsCard() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const getPageUrl = useGetPageUrl();
-  const tableColumns = useRulebookActivationColumns();
-  let columns = useVisibleModalColumns(tableColumns);
-  columns = useMemo(() => columns, [columns]);
-  columns = useColumnsWithoutSort(columns);
-  columns = useColumnsWithoutExpandedRow(columns);
+  let columns = useRulebookActivationColumns();
+  columns = useDashboardColumns(columns);
   return (
     <PageDashboardCard
       title={t('Rulebook Activations')}

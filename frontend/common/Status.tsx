@@ -82,7 +82,7 @@ function useLabel(status: string | undefined, t: (str: string) => string) {
     stopping: t('Stopping'),
     stopped: t('Stopped'),
     success: t('Success'),
-    successful: t('Successful'),
+    successful: t('Success'),
     timedOut: t('Timed out'),
     unavailable: t('Unavailable'),
     unresponsive: t('Unresponsive'),

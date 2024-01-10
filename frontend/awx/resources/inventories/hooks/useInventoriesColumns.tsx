@@ -51,6 +51,7 @@ export function useInventoriesColumns(options?: { disableSort?: boolean; disable
       },
       card: 'subtitle',
       list: 'subtitle',
+      dashboard: 'hidden',
     }),
     [t]
   );

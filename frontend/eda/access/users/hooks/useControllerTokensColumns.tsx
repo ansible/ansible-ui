@@ -22,7 +22,7 @@ export function useControllerTokensColumns() {
         cell: (token: EdaControllerToken) =>
           token.created_at && <DateTimeCell format="date-time" value={token.created_at} />,
         value: (token) => token.created_at,
-        modal: ColumnModalOption.Hidden,
+        modal: ColumnModalOption.hidden,
       },
     ],
     [t]

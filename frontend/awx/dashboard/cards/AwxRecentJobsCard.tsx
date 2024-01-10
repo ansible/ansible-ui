@@ -1,13 +1,7 @@
 import { PlusCircleIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import {
-  PageTable,
-  useColumnsWithoutExpandedRow,
-  useColumnsWithoutSort,
-  useVisibleModalColumns,
-} from '../../../../framework';
+import { PageTable, useDashboardColumns } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
 import { useGetPageUrl } from '../../../../framework/PageNavigation/useGetPageUrl';
 import { AwxRoute } from '../../AwxRoutes';
@@ -27,10 +21,7 @@ export function AwxRecentJobsCard() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   let columns = useJobsColumns();
-  columns = useVisibleModalColumns(columns);
-  columns = useMemo(() => [...columns], [columns]);
-  columns = useColumnsWithoutSort(columns);
-  columns = useColumnsWithoutExpandedRow(columns);
+  columns = useDashboardColumns(columns);
 
   return (
     <PageDashboardCard
