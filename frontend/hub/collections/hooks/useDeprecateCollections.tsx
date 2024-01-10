@@ -2,12 +2,12 @@ import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { compareStrings } from '../../../../framework';
 import { requestGet, requestPatch } from '../../../common/crud/Data';
-import { collectionKeyFn } from '../../api/utils';
-import { hubAPI, pulpAPI } from '../../api/formatPath';
-import { PulpItemsResponse } from '../../useHubView';
+import { hubAPI, pulpAPI } from '../../common/api/formatPath';
+import { collectionKeyFn } from '../../common/api/hub-api-utils';
+import { useHubBulkConfirmation } from '../../common/useHubBulkConfirmation';
+import { PulpItemsResponse } from '../../common/useHubView';
 import { CollectionVersionSearch } from '../Collection';
 import { useCollectionColumns } from './useCollectionColumns';
-import { useHubBulkConfirmation } from '../../common/useHubBulkConfirmation';
 
 export function useDeprecateCollections(
   onComplete?: (collections: CollectionVersionSearch[]) => void

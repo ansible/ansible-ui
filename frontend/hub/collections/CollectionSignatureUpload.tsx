@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   LoadingPage,
   PageHeader,
@@ -9,16 +9,14 @@ import {
 } from '../../../framework';
 import { PageFormFileUpload } from '../../../framework/PageForm/Inputs/PageFormFileUpload';
 import { useGet, useGetRequest } from '../../common/crud/useGet';
-import { HubPageForm } from '../HubPageForm';
-import { HubRoute } from '../HubRoutes';
-import { hubAPI, pulpAPI } from '../api/formatPath';
-import { hubPostRequestFile } from '../api/request';
-import { Repository } from '../repositories/Repository';
-import { HubItemsResponse } from '../useHubView';
-import { PulpItemsResponse } from '../useHubView';
-import { CollectionVersionSearch } from './Collection';
+import { Repository } from '../administration/repositories/Repository';
 import { HubError } from '../common/HubError';
-import { useSearchParams } from 'react-router-dom';
+import { HubPageForm } from '../common/HubPageForm';
+import { hubAPI, pulpAPI } from '../common/api/formatPath';
+import { hubPostRequestFile } from '../common/api/request';
+import { HubItemsResponse, PulpItemsResponse } from '../common/useHubView';
+import { HubRoute } from '../main/HubRoutes';
+import { CollectionVersionSearch } from './Collection';
 
 interface UploadData {
   file: unknown;

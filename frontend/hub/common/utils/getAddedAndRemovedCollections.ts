@@ -1,5 +1,5 @@
-import { collectionKeyFn } from '../../api/utils';
 import { CollectionVersionSearch } from '../../collections/Collection';
+import { collectionKeyFn } from '../api/hub-api-utils';
 
 /**
  * Utility function to get arrays of collections (pulp_hrefs) to be removed and added based on original and

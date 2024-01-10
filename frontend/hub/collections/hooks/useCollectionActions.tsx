@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { BanIcon, TrashIcon, UploadIcon, CopyIcon } from '@patternfly/react-icons';
+import { BanIcon, CopyIcon, TrashIcon, UploadIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -8,13 +8,13 @@ import {
   PageActionType,
   usePageNavigate,
 } from '../../../../framework';
-import { HubRoute } from '../../HubRoutes';
+import { useHubContext } from '../../common/useHubContext';
+import { HubRoute } from '../../main/HubRoutes';
 import { CollectionVersionSearch } from '../Collection';
-import { useHubContext } from './../../useHubContext';
+import { useCopyToRepository } from './useCopyToRepository';
 import { useDeleteCollections } from './useDeleteCollections';
 import { useDeleteCollectionsFromRepository } from './useDeleteCollectionsFromRepository';
 import { useDeprecateCollections } from './useDeprecateCollections';
-import { useCopyToRepository } from './useCopyToRepository';
 
 export function useCollectionActions(
   callback?: (collections: CollectionVersionSearch[]) => void,

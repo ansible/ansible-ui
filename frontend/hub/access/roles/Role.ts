@@ -1,4 +1,4 @@
-import { Role as GeneratedRole } from '../../api-schemas/generated/Role';
+import { Role as GeneratedRole } from '../../interfaces/generated/Role';
 
 export interface Role extends GeneratedRole {
   permissions: string[];
