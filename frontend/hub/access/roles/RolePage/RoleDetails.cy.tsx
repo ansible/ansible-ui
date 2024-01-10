@@ -1,8 +1,8 @@
 import { Role } from '../Role';
 import { RoleDetails } from './RoleDetails';
-import { pulpAPI } from '../../../api/formatPath';
+import { pulpAPI } from '../../../common/api/formatPath';
 import mockUser from '../../../../../cypress/fixtures/hub_admin.json';
-import * as useHubContext from '../../../useHubContext';
+import * as useHubContext from '../../../common/useHubContext';
 import { formatDateString } from '../../../../../framework/utils/formatDateString';
 
 const mockRole: Role = {
