@@ -405,6 +405,10 @@ export function useHubNavigation() {
                   path: 'details',
                   element: <RoleDetails />,
                 },
+                {
+                  path: '',
+                  element: <Navigate to="details" />,
+                },
               ],
             },
             {

@@ -53,7 +53,7 @@ export function RolePage() {
           persistentFilterKey: 'hub-roles',
         }}
         tabs={[{ label: t('Details'), page: HubRoute.RoleDetails }]}
-        params={{ id: parsePulpIDFromURL(role.pulp_href) as string }}
+        params={{ id: role.name ?? '' }}
       />
     </PageLayout>
   );
