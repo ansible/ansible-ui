@@ -62,7 +62,7 @@ export function useSignCollection(
           signCollectionVersion(version, collection, signing_service),
       });
     },
-    [actionColumns, bulkAction, confirmationColumns, onComplete, t, signing_service]
+    [actionColumns, bulkAction, confirmationColumns, onComplete, t, signing_service, version]
   );
 }
 

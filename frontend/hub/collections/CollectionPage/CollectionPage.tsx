@@ -121,7 +121,7 @@ export function CollectionPage() {
 
       return load();
     },
-    [name, namespace, repository, t]
+    [name, namespace, repository, t, display_signatures]
   );
 
   const getPageUrl = useGetPageUrl();

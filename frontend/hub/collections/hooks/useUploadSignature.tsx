@@ -1,27 +1,13 @@
 import { CollectionVersionSearch } from '../Collection';
 import { LoadingPage, usePageDialog } from './../../../../framework';
-import { Button, Modal, ModalVariant } from '@patternfly/react-core';
+import { Modal, ModalVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useState, useEffect, useCallback } from 'react';
-import {
-  useRepositoryColumns,
-  useRepositoryFilters,
-} from './../../repositories/hooks/useRepositorySelector';
-import { PageTable } from './../../../../framework/PageTable/PageTable';
-import { useHubView } from '../../useHubView';
-import { AnsibleAnsibleRepositoryResponse } from './../../api-schemas/generated/AnsibleAnsibleRepositoryResponse';
-import { hubAPIPost, waitForTask } from '../../api/utils';
-import { useGetRequest } from './../../../common/crud/useGet';
-import { HubItemsResponse } from '../../useHubView';
-import { PulpItemsResponse } from '../../useHubView';
-import { parsePulpIDFromURL } from '../../api/utils';
+import { useState, useCallback } from 'react';
 import { useHubContext, HubContext } from './../../useHubContext';
-import { SigningServiceResponse } from '../../api-schemas/generated/SigningServiceResponse';
 import { HubError } from '../../common/HubError';
-import { hubAPI, pulpAPI } from '../../api/formatPath';
+import { pulpAPI } from '../../api/formatPath';
 import { HubPageForm } from '../../HubPageForm';
 import { PageFormFileUpload } from '../../../../framework/PageForm/Inputs/PageFormFileUpload';
-import { postHubRequest } from '../../api/request';
 import { getCookie } from '../../../common/crud/cookie';
 import { TaskResponse } from '../../tasks/Task';
 import { parseTaskResponse } from '../../api/utils';
@@ -45,7 +31,7 @@ function UploadSignatureDialog(props: {
 }) {
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<unknown>('');
+  const [error, setError] = useState<string>('');
 
   return (
     <Modal
@@ -66,7 +52,6 @@ function UploadSignatureDialog(props: {
           cancelText={t('Cancel')}
           onCancel={() => props.onClose()}
           onSubmit={(data) => {
-            // TODO
             return (async () => {
               setIsLoading(true);
               try {
@@ -93,9 +78,9 @@ function UploadSignatureDialog(props: {
 
                 props.onClose();
                 setIsLoading(false);
-              } catch (err: unknown) {
+              } catch (err) {
                 setIsLoading(false);
-                setError(err);
+                setError(err as string);
               }
             })();
           }}
@@ -107,7 +92,7 @@ function UploadSignatureDialog(props: {
             <HubError
               error={{
                 name: '',
-                message: t('Signature can not be uploaded.') + ' ' + error.toString(),
+                message: t('Signature can not be uploaded.') + ' ' + error,
               }}
             />
           ) : (

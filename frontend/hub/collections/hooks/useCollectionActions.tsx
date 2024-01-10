@@ -128,8 +128,9 @@ export function useCollectionActions(
         label: t('Sign selected version'),
         isHidden: () => (detail ? false : true),
         onClick: (collection) => {
-          if (can_upload_signatures || true) {
-            // upload signature
+          if (can_upload_signatures) {
+            // upload signature - it works only in insights, but we can leave it here for now
+            // because insights will be next
             uploadSignature(collection);
           } else {
             // sign version
@@ -172,6 +173,8 @@ export function useCollectionActions(
       copyToRepository,
       can_upload_signatures,
       signCollection,
+      signCollectionVersion,
+      uploadSignature,
     ]
   );
 }

@@ -85,6 +85,7 @@ export function useCollectionsActions(callback: (collections: CollectionVersionS
       deleteCollectionsFromRepository,
       pageNavigate,
       deprecateCollections,
+      signCollection,
     ]
   );
 }
