@@ -1,15 +1,15 @@
+import { PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Role } from '../Role';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   useGetPageUrl,
 } from '../../../../../framework';
-import { useMemo } from 'react';
-import { PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
-import { useHubContext } from '../../../useHubContext';
-import { HubRoute } from '../../../HubRoutes';
+import { useHubContext } from '../../../common/useHubContext';
+import { HubRoute } from '../../../main/HubRoutes';
+import { Role } from '../Role';
 import { useDeleteRoles } from './useDeleteRoles';
 
 export function useRoleToolbarActions(onComplete: (roles: Role[]) => void) {

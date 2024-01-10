@@ -1,23 +1,25 @@
-import { useTranslation } from 'react-i18next';
-import { PFColorE, Scrollable } from '../../../../framework';
 import { Button, PageSection, Title } from '@patternfly/react-core';
-import React, { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useOutletContext } from 'react-router-dom';
-import { CollectionVersionSearch } from '../Collection';
-import { HubError } from '../../common/HubError';
-import { HubItemsResponse, useHubView } from '../../useHubView';
-import { PageTable } from '../../../../framework';
-import { useGetPageUrl } from '../../../../framework';
-import { ITableColumn } from '../../../../framework';
-import { useMemo } from 'react';
-import { HubRoute } from '../../HubRoutes';
-import { TextCell } from '../../../../framework';
-import { hubAPI } from '../../api/formatPath';
-import { IToolbarFilter } from '../../../../framework';
-import { requestGet } from '../../../common/crud/Data';
-import { ToolbarFilterType } from '../../../../framework';
-import { usePageNavigate } from '../../../../framework';
 import styled from 'styled-components';
+import {
+  ITableColumn,
+  IToolbarFilter,
+  PFColorE,
+  PageTable,
+  Scrollable,
+  TextCell,
+  ToolbarFilterType,
+  useGetPageUrl,
+  usePageNavigate,
+} from '../../../../framework';
+import { requestGet } from '../../../common/crud/Data';
+import { HubError } from '../../common/HubError';
+import { hubAPI } from '../../common/api/formatPath';
+import { HubItemsResponse, useHubView } from '../../common/useHubView';
+import { HubRoute } from '../../main/HubRoutes';
+import { CollectionVersionSearch } from '../Collection';
 
 export function CollectionDependencies() {
   const { collection } = useOutletContext<{ collection: CollectionVersionSearch }>();

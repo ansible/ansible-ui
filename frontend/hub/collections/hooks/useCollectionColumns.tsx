@@ -7,7 +7,7 @@ import {
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ITableColumn, TextCell, useGetPageUrl } from '../../../../framework';
-import { HubRoute } from '../../HubRoutes';
+import { HubRoute } from '../../main/HubRoutes';
 import { CollectionVersionSearch } from '../Collection';
 
 export function useCollectionColumns(_options?: { disableSort?: boolean; disableLinks?: boolean }) {

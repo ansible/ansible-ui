@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IToolbarFilter, ToolbarFilterType } from '../../../../framework';
-import { useRepoQueryOptions } from './../../repositories/hooks/useRepoQueryOptions';
+import { useRepoQueryOptions } from '../../administration/repositories/hooks/useRepoQueryOptions';
 
+import { useSelectRepositoryMulti } from '../../administration/repositories/hooks/useRepositorySelector';
+import { AnsibleAnsibleRepositoryResponse as Repository } from '../../interfaces/generated/AnsibleAnsibleRepositoryResponse';
 import { multiSelectBrowseAdapter } from './../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncMultiSelectFilter';
-import { AnsibleAnsibleRepositoryResponse as Repository } from './../../api-schemas/generated/AnsibleAnsibleRepositoryResponse';
-import { useSelectRepositoryMulti } from './../../repositories/hooks/useRepositorySelector';
 
 export function useCollectionFilters() {
   const { t } = useTranslation();

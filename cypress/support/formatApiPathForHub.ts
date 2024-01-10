@@ -6,7 +6,7 @@
  * process.env variable
  */
 
-import { apiTag } from '../../frontend/hub/api/formatPath';
+import { apiTag } from '../../frontend/hub/common/api/formatPath';
 
 function getBaseAPIPath() {
   return (Cypress.env('HUB_API_PREFIX') as string) || '/api/galaxy';

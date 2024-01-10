@@ -8,10 +8,10 @@ import {
   PageActionType,
   useGetPageUrl,
 } from '../../../../framework';
-import { HubRoute } from '../../HubRoutes';
+import { IHubView } from '../../common/useHubView';
+import { HubRoute } from '../../main/HubRoutes';
 import { HubNamespace } from '../HubNamespace';
 import { useDeleteHubNamespaces } from './useDeleteHubNamespaces';
-import { IHubView } from '../../useHubView';
 
 export function useHubNamespaceToolbarActions(view: IHubView<HubNamespace>) {
   const { t } = useTranslation();

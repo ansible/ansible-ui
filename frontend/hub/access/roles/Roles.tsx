@@ -1,15 +1,15 @@
+import { CubesIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
-import { useRoleColumns } from './hooks/useRoleColumns';
-import { useHubView } from '../../useHubView';
-import { Role } from './Role';
-import { pulpAPI } from '../../api/formatPath';
 import { nameKeyFn } from '../../../common/utils/nameKeyFn';
-import { useHubContext } from '../../useHubContext';
-import { useRoleRowActions, useRoleToolbarActions } from './hooks/useRoleActions';
+import { pulpAPI } from '../../common/api/formatPath';
+import { useHubContext } from '../../common/useHubContext';
+import { useHubView } from '../../common/useHubView';
+import { Role } from './Role';
 import { RoleExpandedRow } from './components/RoleExpandedRow';
+import { useRoleRowActions, useRoleToolbarActions } from './hooks/useRoleActions';
+import { useRoleColumns } from './hooks/useRoleColumns';
 import { useRoleFilters } from './hooks/useRoleFilters';
-import { CubesIcon } from '@patternfly/react-icons';
 
 export function Roles() {
   const { t } = useTranslation();

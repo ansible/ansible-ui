@@ -1,12 +1,12 @@
-import React, { useMemo, useState } from 'react';
-import { useGet } from '../../../common/crud/useGet';
-import { pulpAPI } from '../../api/formatPath';
-import { useBreakpoint } from '../../../../framework';
 import { Drawer, DrawerContent, DrawerContentBody } from '@patternfly/react-core';
+import { useMemo, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { IContents, CollectionVersionSearch } from '../Collection';
-import { CollectionDocumentationTabPanel } from '../components/CollectionDocumentationTabPanel';
+import { useBreakpoint } from '../../../../framework';
+import { useGet } from '../../../common/crud/useGet';
+import { pulpAPI } from '../../common/api/formatPath';
+import { CollectionVersionSearch, IContents } from '../Collection';
 import { CollectionDocumentationTabContent } from '../components/CollectionDocumentationTabContent';
+import { CollectionDocumentationTabPanel } from '../components/CollectionDocumentationTabPanel';
 
 export function CollectionDocumentation() {
   const { collection } = useOutletContext<{ collection: CollectionVersionSearch }>();

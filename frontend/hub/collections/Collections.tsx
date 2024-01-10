@@ -1,9 +1,9 @@
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../framework';
-import { HubRoute } from '../HubRoutes';
-import { collectionKeyFn } from '../api/utils';
-import { hubAPI } from '../api/formatPath';
-import { useHubView } from '../useHubView';
+import { hubAPI } from '../common/api/formatPath';
+import { collectionKeyFn } from '../common/api/hub-api-utils';
+import { useHubView } from '../common/useHubView';
+import { HubRoute } from '../main/HubRoutes';
 import { CollectionVersionSearch } from './Collection';
 import { useCollectionActions } from './hooks/useCollectionActions';
 import { useCollectionColumns } from './hooks/useCollectionColumns';

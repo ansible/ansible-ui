@@ -1,14 +1,14 @@
-import { useTranslation } from 'react-i18next';
-import React from 'react';
-import { useRepositoryBasePath } from '../../api/utils';
-import { CopyCell, LoadingPage, PageDetail, PageDetails, Scrollable } from '../../../../framework';
-import { HubError } from '../../common/HubError';
 import { Button, PageSection } from '@patternfly/react-core';
 import { DownloadIcon } from '@patternfly/react-icons';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useOutletContext } from 'react-router-dom';
-import { CollectionVersionSearch } from '../Collection';
+import { CopyCell, LoadingPage, PageDetail, PageDetails, Scrollable } from '../../../../framework';
 import { requestGet } from '../../../common/crud/Data';
-import { hubAPI } from '../../api/formatPath';
+import { HubError } from '../../common/HubError';
+import { hubAPI } from '../../common/api/formatPath';
+import { useRepositoryBasePath } from '../../common/api/hub-api-utils';
+import { CollectionVersionSearch } from '../Collection';
 
 export function CollectionInstall() {
   const { t } = useTranslation();
