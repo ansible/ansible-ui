@@ -5,22 +5,26 @@ import {
   PageLayout,
   PageWizard,
   PageWizardStep,
-  PageFormGrid,
   useGetPageUrl,
-  PageFormSelect,
-  PageFormSubmitHandler,
-  // usePageAlertToaster,
 } from '../../../../framework';
 import { PlatformRoute } from '../../../PlatformRoutes';
 import { useGet } from '../../../../frontend/common/crud/useGet';
 import { postRequest } from '../../../../frontend/common/crud/Data';
 import { awxErrorAdapter } from '../../../../frontend/awx/adapters/awxErrorAdapter';
+import { AuthenticatorTypeStep } from './steps/AuthenticatorTypeStep';
 import { AuthenticatorDetailsStep } from './steps/AuthenticatorDetailsStep';
-import { AuthenticatorMappingStep } from './steps/AuthenticatorMappingStep';
+// import { AuthenticatorMappingStep } from './steps/AuthenticatorMappingStep';
 import { AuthenticatorReviewStep } from './steps/AuthenticatorReviewStep';
-import { Authenticator, AuthenticatorTypeEnum } from '../../../interfaces/Authenticator';
-import type { AuthenticatorPlugins } from '../../../interfaces/AuthenticatorPlugin';
+import { AuthenticatorTypeEnum } from '../../../interfaces/Authenticator';
+import type {
+  AuthenticatorPlugins,
+  AuthenticatorPlugin,
+} from '../../../interfaces/AuthenticatorPlugin';
 import { gatewayAPI } from '../../../api/gateway-api-utils';
+
+interface Configuration {
+  [key: string]: string | string[] | { [k: string]: string };
+}
 
 export interface AuthenticatorForm {
   name: string;
@@ -28,9 +32,7 @@ export interface AuthenticatorForm {
   create_objects: boolean;
   users_unique: boolean;
   remove_users: boolean;
-  configuration: {
-    [key: string]: string | string[] | { [k: string]: string };
-  };
+  configuration: Configuration;
   type: AuthenticatorTypeEnum;
   order: number;
 }
@@ -41,12 +43,16 @@ export function CreateAuthenticator() {
 
   const { data: plugins } = useGet<AuthenticatorPlugins>(gatewayAPI`/v1/authenticator_plugins`);
 
-  const handleSubmit: PageFormSubmitHandler<AuthenticatorForm> = async (
-    values: AuthenticatorForm
-  ) => {
-    const request = postRequest(gatewayAPI`/v1/authenticators`, {
-      name: values.name,
-      configuration: JSON.stringify(values.configuration),
+  const handleSubmit = async (values: AuthenticatorForm) => {
+    const { name, type, configuration } = values;
+    const plugin = plugins?.authenticators.find((a) => a.type === type);
+    if (!plugins || !plugin) {
+      return;
+    }
+    const request = postRequest(gatewayAPI`/v1/authenticators/`, {
+      name,
+      type,
+      configuration: formatConfiguration(configuration, plugin),
     });
 
     await Promise.all([request]);
@@ -60,21 +66,7 @@ export function CreateAuthenticator() {
     {
       id: 'type',
       label: t('Authentication type'),
-      inputs: (
-        <PageFormGrid isVertical>
-          <PageFormSelect
-            name="type"
-            label={t('Authentication setting')}
-            options={[
-              { value: AuthenticatorTypeEnum.Local, label: t('Local') },
-              { value: AuthenticatorTypeEnum.LDAP, label: t('LDAP') },
-              { value: AuthenticatorTypeEnum.SAML, label: t('SAML') },
-              { value: AuthenticatorTypeEnum.Keycloak, label: t('Keycloak') },
-            ]}
-            isRequired
-          />
-        </PageFormGrid>
-      ),
+      inputs: <AuthenticatorTypeStep plugins={plugins} />,
       hidden: () => false, // TODO hide step when in edit mode
     },
     {
@@ -82,6 +74,7 @@ export function CreateAuthenticator() {
       label: t('Authentication details'),
       inputs: <AuthenticatorDetailsStep plugins={plugins} />,
     },
+    // TODO
     // {
     //   id: 'mapping',
     //   label: t('Mapping'),
@@ -109,11 +102,6 @@ export function CreateAuthenticator() {
     },
     mapping: {},
     order: {},
-    // enabled: true,
-    // create_objects: false,
-    // users_unique: false,
-    // remove_users: false,
-    // order: 1,
   };
 
   return (
@@ -134,4 +122,39 @@ export function CreateAuthenticator() {
       />
     </PageLayout>
   );
+}
+
+function formatConfiguration(values: Configuration, plugin: AuthenticatorPlugin) {
+  const formatted: { [k: string]: string | object | [] } = {};
+  plugin.configuration_schema.map((definition) => {
+    const key = definition.name;
+    const value = values[key] as string;
+    if (!values[key]) {
+      return;
+    }
+    switch (definition.type) {
+      case 'URLListField':
+        formatted[key] = value.split(',');
+        return;
+      case 'JSONField':
+      case 'DictField':
+      case 'ListField':
+      case 'LDAPConnectionOptions':
+      case 'LDAPSearchField':
+      case 'UserAttrMap':
+        formatted[key] = JSON.parse(value) as object | [];
+        return;
+      case 'CharField':
+      case 'URLField':
+      case 'ChoiceField':
+      case 'DNField':
+      case 'PublicCert':
+      case 'PrivateKey':
+      default:
+        formatted[key] = value;
+        return;
+    }
+  });
+
+  return formatted;
 }

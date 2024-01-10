@@ -26,7 +26,6 @@ export function AuthenticatorReviewStep(props: { plugins: AuthenticatorPlugins }
   const { plugins } = props;
   const { t } = useTranslation();
   const { wizardData } = usePageWizard();
-  console.log(wizardData);
 
   const { name, type, configuration } = wizardData as Authenticator;
   const maps: AuthenticatorMap[] = [];
