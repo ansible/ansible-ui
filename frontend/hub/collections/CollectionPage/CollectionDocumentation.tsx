@@ -1,19 +1,21 @@
 import { Drawer, DrawerContent, DrawerContentBody } from '@patternfly/react-core';
 import { useMemo, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { useBreakpoint } from '../../../../framework';
+import { LoadingPage, useBreakpoint } from '../../../../framework';
 import { useGet } from '../../../common/crud/useGet';
 import { pulpAPI } from '../../common/api/formatPath';
 import { CollectionVersionSearch, IContents } from '../Collection';
-import { CollectionDocumentationTabContent } from '../components/CollectionDocumentationTabContent';
-import { CollectionDocumentationTabPanel } from '../components/CollectionDocumentationTabPanel';
+import { CollectionDocumentationTabContent } from './documentationComponents/CollectionDocumentationTabContent';
+import { CollectionDocumentationTabPanel } from './documentationComponents/CollectionDocumentationTabPanel';
+import { HubError } from '../../common/HubError';
+import { useTranslation } from 'react-i18next';
 
 export function CollectionDocumentation() {
   const { collection } = useOutletContext<{ collection: CollectionVersionSearch }>();
-
+  const { t } = useTranslation();
   const [content, setContent] = useState<IContents>();
 
-  const { data } = useGet<CollectionVersionsContent>(
+  const { data, error, refresh } = useGet<CollectionVersionsContent>(
     pulpAPI`/content/ansible/collection_versions/?namespace=${
       collection?.collection_version?.namespace || ''
     }&name=${collection?.collection_version?.name || ''}&version=${
@@ -44,6 +46,19 @@ export function CollectionDocumentation() {
 
   const [isDrawerOpen, setDrawerOpen] = useState(true);
   const lg = useBreakpoint('lg');
+
+  if (!data && !error) {
+    return <LoadingPage />;
+  }
+
+  if (error) {
+    return (
+      <HubError
+        error={{ name: '', message: t('Can not load documentation.') }}
+        handleRefresh={refresh}
+      />
+    );
+  }
 
   return (
     <Drawer isExpanded={isDrawerOpen} isInline={lg} position="left">
