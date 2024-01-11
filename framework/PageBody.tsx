@@ -1,5 +1,5 @@
 import { CSSProperties, ReactNode } from 'react';
-import ErrorBoundary from './components/ErrorBoundary';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { useBreakpoint } from './components/useBreakPoint';
 import { useFrameworkTranslations } from './useFrameworkTranslations';
 

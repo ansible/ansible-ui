@@ -29,8 +29,8 @@ import { useAwxTeamsRoutes } from './routes/useAwxTeamsRoutes';
 import { useAwxTemplateRoutes } from './routes/useAwxTemplateRoutes';
 import { useAwxUsersRoutes } from './routes/useAwxUsersRoutes';
 import { useAwxWorkflowApprovalRoutes } from './routes/useAwxWorkflowApprovalRoutes';
-import Settings from './settings/Settings';
-import HostMetrics from './views/jobs/HostMetrics';
+import { Settings } from './settings/Settings';
+import { HostMetrics } from './views/jobs/HostMetrics';
 
 export function useAwxNavigation() {
   const { t } = useTranslation();

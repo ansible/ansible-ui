@@ -1,7 +1,7 @@
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
-import * as cancelJobs from './hooks/useCancelJobs';
-import * as deleteJobs from './hooks/useDeleteJobs';
-import Jobs from './Jobs';
+import { Jobs } from './Jobs';
+import { useCancelJobs } from './hooks/useCancelJobs';
+import { useDeleteJobs } from './hooks/useDeleteJobs';
 
 describe('Jobs.cy.ts', () => {
   beforeEach(() => {
@@ -22,7 +22,7 @@ describe('Jobs.cy.ts', () => {
     cy.get('table').find('tr').should('have.length', 11);
   });
   it('deletes job from toolbar menu', () => {
-    const spy = cy.spy(deleteJobs, 'useDeleteJobs');
+    const spy = cy.spy(useDeleteJobs);
     cy.mount(<Jobs />);
     cy.fixture('jobs.json')
       .its('results')
@@ -118,7 +118,7 @@ describe('Jobs.cy.ts', () => {
       });
   });
   it('cancels a running job from row action', () => {
-    const spy = cy.spy(cancelJobs, 'useCancelJobs');
+    const spy = cy.spy(useCancelJobs);
     cy.fixture('jobs.json')
       .its('results')
       .should('be.an', 'array')

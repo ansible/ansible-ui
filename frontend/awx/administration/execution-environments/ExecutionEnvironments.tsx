@@ -34,7 +34,7 @@ import { useAwxView } from '../../useAwxView';
 import { AwxRoute } from '../../AwxRoutes';
 import { awxAPI } from '../../api/awx-utils';
 import { useAwxConfig } from '../../common/useAwxConfig';
-import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
+import { getDocsBaseUrl } from '../../common/util/getDocsBaseUrl';
 import { useDeleteExecutionEnvironments } from './hooks/useDeleteExecutionEnvironments';
 
 export function ExecutionEnvironments() {

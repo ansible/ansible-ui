@@ -26,7 +26,7 @@ import { JobTemplateCreate, JobTemplateForm } from '../../interfaces/JobTemplate
 import { Label } from '../../interfaces/Label';
 import { Organization } from '../../interfaces/Organization';
 import { getJobTemplateDefaultValues, stringifyTags } from './JobTemplateFormHelpers';
-import JobTemplateInputs from './JobTemplateInputs';
+import { JobTemplateInputs } from './JobTemplateInputs';
 
 export function EditJobTemplate() {
   const { t } = useTranslation();

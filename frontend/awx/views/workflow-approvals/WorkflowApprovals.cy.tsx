@@ -1,5 +1,6 @@
 // import * as useOptions from '../../../common/crud/useOptions';
-import WorkflowApprovals from './WorkflowApprovals';
+
+import { WorkflowApprovals } from './WorkflowApprovals';
 
 describe('Workflow Approvals List', () => {
   describe('Empty list', () => {

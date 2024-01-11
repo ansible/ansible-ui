@@ -5,7 +5,7 @@ import { PageNotImplemented } from '../../../framework/PageEmptyStates/PageNotIm
 import { AwxRoute } from '../AwxRoutes';
 import { WorkflowApprovalDetails } from '../views/workflow-approvals/WorkflowApprovalPage/WorkflowApprovalDetails';
 import { WorkflowApprovalPage } from '../views/workflow-approvals/WorkflowApprovalPage/WorkflowApprovalPage';
-import WorkflowApprovals from '../views/workflow-approvals/WorkflowApprovals';
+import { WorkflowApprovals } from '../views/workflow-approvals/WorkflowApprovals';
 
 export function useAwxWorkflowApprovalRoutes() {
   const { t } = useTranslation();

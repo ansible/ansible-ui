@@ -4,7 +4,7 @@ import { PageHeader } from '../../../framework';
 import { useGetPageUrl } from '../../../framework/PageNavigation/useGetPageUrl';
 import { AwxRoute } from '../AwxRoutes';
 
-export default function Settings() {
+export function Settings() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const breadcrumbs = useMemo(

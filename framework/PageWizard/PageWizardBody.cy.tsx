@@ -1,5 +1,5 @@
 /* eslint-disable i18next/no-literal-string */
-import PageWizardBody from './PageWizardBody';
+import { PageWizardBody } from './PageWizardBody';
 import { PageWizardProvider } from './PageWizardProvider';
 
 describe('PageWizardBody', () => {
