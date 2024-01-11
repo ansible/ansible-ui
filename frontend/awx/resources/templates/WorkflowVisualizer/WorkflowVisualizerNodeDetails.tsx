@@ -39,7 +39,7 @@ export function WorkflowVisualizerNodeDetails(props: { resource: WorkflowNode })
     if (!element) return;
     element.getTargetEdges().forEach((edge) => edge.remove());
     element.getSourceEdges().forEach((edge) => edge.remove());
-    element.remove();
+    element.setVisible(false);
     handleClose();
   };
 
