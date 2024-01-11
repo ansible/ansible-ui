@@ -1,11 +1,20 @@
 import { randomString } from '../../../../framework/utils/random-string';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
+import { Project } from '../../../../frontend/awx/interfaces/Project';
+import { WorkflowJobTemplate } from '../../../../frontend/awx/interfaces/WorkflowJobTemplate';
+import { WorkflowNode } from '../../../../frontend/awx/interfaces/WorkflowNode';
 
 describe('Workflow Job templates visualizer', () => {
   let organization: Organization;
   let inventory: Inventory;
 
+  function cleanup() {
+    cy.clickPageAction('delete-template');
+    cy.get('#confirm').click();
+    cy.clickButton(/^Delete template/);
+    cy.verifyPageTitle('Template');
+  }
   before(() => {
     cy.awxLogin();
   });
@@ -65,9 +74,46 @@ describe('Workflow Job templates visualizer', () => {
     cy.get('button[data-cy="workflow-visualizer-toolbar-close"]').click();
 
     // Clean up - delete workflow job template
-    cy.clickPageAction('delete-template');
-    cy.get('#confirm').click();
-    cy.clickButton(/^Delete template/);
-    cy.verifyPageTitle('Template');
+    cleanup();
+  });
+  it('Click on edge context menu option to change link type and close visualizer to show unsaved changes modal', function () {
+    let projectNode: WorkflowNode;
+    let approvalNode: WorkflowNode;
+    let workflowJobTemplate: WorkflowJobTemplate;
+    cy.createAwxWorkflowJobTemplate({
+      organization: (this.globalOrganization as Organization).id,
+      inventory: inventory.id,
+    })
+      .then((wfjt) => {
+        workflowJobTemplate = wfjt;
+        cy.createAwxWorkflowVisualizerProjectNode(
+          workflowJobTemplate,
+          this.globalProject as Project
+        ).then((projNode) => {
+          projectNode = projNode;
+          cy.createAwxWorkflowVisualizerApprovalNode(workflowJobTemplate).then((appNode) => {
+            approvalNode = appNode;
+            cy.createWorkflowJTSuccessNodeLink(projectNode, appNode);
+          });
+        });
+      })
+      .then(() => {
+        cy.visit(`/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
+        cy.contains('Workflow Visualizer').should('be.visible');
+        cy.get(`g[data-id="${projectNode.id}-${approvalNode.id}"]`).should(
+          'have.text',
+          'Run on success'
+        );
+        cy.get(`g[data-id="${projectNode.id}-${approvalNode.id}"]`).within(() => {
+          cy.get('[data-cy="edge-context-menu_kebab"]').click({ force: true });
+        });
+        cy.get('li[data-cy="fail"]').click();
+        cy.get('button[data-cy="workflow-visualizer-toolbar-close"]').click();
+        cy.get('div[data-cy="visualizer-unsaved-changes-modal"]').should('be.visible');
+        cy.get('button[data-cy="exit-without-saving"]').click();
+        cy.verifyPageTitle(`${workflowJobTemplate.name}`);
+      });
+    // Clean up
+    cleanup();
   });
 });
