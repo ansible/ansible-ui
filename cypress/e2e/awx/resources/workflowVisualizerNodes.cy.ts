@@ -41,8 +41,12 @@ describe('Workflow Visualizer Nodes', function () {
         });
       });
       cy.visit(`/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
-      cy.contains('Workflow Visualizer').should('be.visible');
-      cy.contains(`${workflowJobTemplate.name}`);
+      cy.get('[data-cy="wf-vzr-title"]')
+        .should('contain', 'Workflow Visualizer')
+        .should('be.visible');
+      cy.get('[data-cy="wf-vzr-name"]')
+        .should('contain', `${workflowJobTemplate.name}`)
+        .should('be.visible');
       cy.contains('button', 'Save').click();
       //uncomment when workflow approvals is working along with quick starts
       /*
@@ -104,8 +108,12 @@ describe('Workflow Visualizer Nodes', function () {
           );
         });
         cy.visit(`/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
-        cy.contains('Workflow Visualizer').should('be.visible');
-        cy.contains(`${jobTemplate.name}`);
+        cy.get('[data-cy="wf-vzr-title"]')
+          .should('contain', 'Workflow Visualizer')
+          .should('be.visible');
+        cy.get('[data-cy="wf-vzr-name"]')
+          .should('contain', `${workflowJobTemplate.name}`)
+          .should('be.visible');
         cy.contains('button', 'Save').click();
         cy.navigateTo('awx', 'templates');
         cy.intercept('POST', `api/v2/workflow_job_templates/${workflowJobTemplate.id}/launch/`).as(
@@ -143,9 +151,13 @@ describe('Workflow Visualizer Nodes', function () {
           }
         );
       });
-      cy.visit(`/ui_next/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
-      cy.contains('Workflow Visualizer').should('be.visible');
-      cy.contains(`${workflowJobTemplate.name}`);
+      cy.visit(`/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
+      cy.get('[data-cy="wf-vzr-title"]')
+        .should('contain', 'Workflow Visualizer')
+        .should('be.visible');
+      cy.get('[data-cy="wf-vzr-name"]')
+        .should('contain', `${workflowJobTemplate.name}`)
+        .should('be.visible');
       cy.contains('button', 'Save').click();
       cy.get('[data-cy="workflow-visualizer-toolbar-close"]').click();
       cy.intercept('POST', `api/v2/workflow_job_templates/${workflowJobTemplate.id}/launch/`).as(
@@ -193,9 +205,13 @@ describe('Workflow Visualizer Nodes', function () {
           });
         });
         // });
-        cy.visit(`/ui_next/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
-        cy.contains('Workflow Visualizer').should('be.visible');
-        cy.contains(`${workflowJobTemplate.name}`);
+        cy.visit(`templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
+        cy.get('[data-cy="wf-vzr-title"]')
+          .should('contain', 'Workflow Visualizer')
+          .should('be.visible');
+        cy.get('[data-cy="wf-vzr-name"]')
+          .should('contain', `${workflowJobTemplate.name}`)
+          .should('be.visible');
         cy.contains('button', 'Save').click();
         cy.intercept('GET', 'api/v2/projects/?page_size=200').as('getProjects');
         cy.editNodeInVisualizer(
@@ -246,9 +262,13 @@ describe('Workflow Visualizer Nodes', function () {
           });
         });
         // });
-        cy.visit(`/ui_next/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
-        cy.contains('Workflow Visualizer').should('be.visible');
-        cy.contains(`${workflowJobTemplate.name}`);
+        cy.visit(`/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
+        cy.get('[data-cy="wf-vzr-title"]')
+          .should('contain', 'Workflow Visualizer')
+          .should('be.visible');
+        cy.get('[data-cy="wf-vzr-name"]')
+          .should('contain', `${workflowJobTemplate.name}`)
+          .should('be.visible');
         cy.contains('button', 'Save').click();
         cy.removeNodeInVisualizer(`${(this.globalProject as Project).name}`);
         cy.contains(`${(this.globalProject as Project).name}`).should('not.exist');
@@ -286,9 +306,13 @@ describe('Workflow Visualizer Nodes', function () {
           });
         });
       });
-      cy.visit(`/ui_next/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
-      cy.contains('Workflow Visualizer').should('be.visible');
-      cy.contains(`${workflowJobTemplate.name}`);
+      cy.visit(`/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
+      cy.get('[data-cy="wf-vzr-title"]')
+        .should('contain', 'Workflow Visualizer')
+        .should('be.visible');
+      cy.get('[data-cy="wf-vzr-name"]')
+        .should('contain', `${workflowJobTemplate.name}`)
+        .should('be.visible');
       cy.contains('button', 'Save').click();
       //remove-node, add-node-and-link, add-link, add-link, edit-node
       cy.removeAllNodesFromVisualizerToolbar();
