@@ -39,10 +39,11 @@ export function NodeTypeStep() {
             name: '',
             description: '',
             unified_job_type: nodeType as UnifiedJobType,
+            id: undefined,
           },
           node_status_type: getValues('node_status_type'),
-          convergence: getValues('convergence'),
-          alias: getValues('alias'),
+          all_parents_must_converge: getValues('all_parents_must_converge'),
+          identifier: getValues('identifier'),
         },
         { keepDefaultValues: true }
       );
@@ -132,8 +133,8 @@ export function NodeTypeStep() {
       />
       <PageFormSelect
         label={t('Convergence')}
-        name="convergence"
-        data-cy="convergence"
+        name="all_parents_must_converge"
+        data-cy="all_parents_must_converge"
         isRequired
         labelHelpTitle={t('Convergence')}
         labelHelp={
@@ -167,7 +168,7 @@ export function NodeTypeStep() {
       />
       <PageFormTextInput
         label={t('Node alias')}
-        name="alias"
+        name="identifier"
         data-cy="alias"
         labelHelpTitle={t('Node alias')}
         labelHelp={t('Node alias to use for this node.')}
