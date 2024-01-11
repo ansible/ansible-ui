@@ -17,10 +17,13 @@ describe('Collections- List View', () => {
     cy.verifyPageTitle(Collections.title);
   });
 
-  // Skipping test until this can be made more robust.
-  // This is runnning into an error about "Artifact already exists"
-  it.skip('user can upload and then delete a new collection', () => {
+  // after(() => {
+  // cy.deleteCollectionFromSystem(thisCollectionName);
+  // });
+
+  it('user can upload and then delete a new collection', () => {
     cy.getOrCreateCollection().then((thisCollection) => {
+      cy.log('COLLECTION', thisCollection);
       const thisCollectionName = thisCollection?.split('-').slice(-2, -1).toString();
       cy.navigateTo('hub', Collections.url);
       cy.verifyPageTitle(Collections.title);
@@ -53,6 +56,7 @@ describe('Collections- List View', () => {
       );
       cy.wait('@collections');
       cy.get('[data-cy="table-view"]').click();
+      // cy.deleteCollectionFromSystem(thisCollectionName);
       cy.clickTableRowKebabAction(thisCollectionName, 'delete-entire-collection-from-system');
       cy.get('[data-ouia-component-id="confirm"]').click();
       cy.get('[data-ouia-component-id="submit"]').click();
