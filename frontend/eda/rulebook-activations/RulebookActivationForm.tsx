@@ -132,6 +132,7 @@ export function RulebookActivationInputs() {
   }, [projectId]);
 
   const queryAwxTokens = useCallback(async (page: number, signal: AbortSignal) => {
+    await new Promise((resolve) => setTimeout(resolve, 10000));
     const response = await requestGet<EdaResult<AwxToken>>(
       edaAPI`/users/me/awx-tokens/?${page.toString()}}`,
       signal
@@ -218,7 +219,7 @@ export function RulebookActivationInputs() {
         name="awx_token_id"
         label={t('Controller token')}
         placeholder={t('Select controller token')}
-        queryPlaceholder={t('Loading controller token')}
+        queryPlaceholder={t('Loading controller tokens...')}
         queryErrorText={t('Error loading controller tokens')}
         queryOptions={queryAwxTokens}
         labelHelpTitle={t('Controller tokens')}
