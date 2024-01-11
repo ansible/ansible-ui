@@ -15,7 +15,7 @@ describe('Namespaces', () => {
     cy.get('[data-cy="create-namespace"]').should('be.visible').click();
   });
 
-  it.skip('create and delete a namespace', () => {
+  it('create and delete a namespace', () => {
     cy.navigateTo('hub', Namespaces.url);
     const namespaceName = `test_namespace_${randomString(5, undefined, { isLowercase: true })}`;
     cy.get('h1').should('contain', Namespaces.title);
