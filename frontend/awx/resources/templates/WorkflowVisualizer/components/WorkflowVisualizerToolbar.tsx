@@ -55,13 +55,13 @@ export function ToolbarHeader() {
       <ToolbarItem align={{ default: 'alignLeft' }}>
         <Title headingLevel="h1">
           <Flex>
-            <FlexItem>{t('Workflow Visualizer')}</FlexItem>
+            <FlexItem data-cy="wf-vzr-title">{t('Workflow Visualizer')}</FlexItem>
             <Divider
               orientation={{
                 default: 'vertical',
               }}
             />
-            <FlexItem>{workflowTemplate?.name}</FlexItem>
+            <FlexItem data-cy="wf-vzr-name">{workflowTemplate?.name}</FlexItem>
           </Flex>
         </Title>
       </ToolbarItem>
