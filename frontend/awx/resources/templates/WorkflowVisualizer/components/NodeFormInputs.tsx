@@ -5,6 +5,7 @@ import { NodeTypeStep } from './NodeTypeStep';
 import { awxErrorAdapter } from '../../../../adapters/awxErrorAdapter';
 import { NodeShape, isNode, useVisualizationController } from '@patternfly/react-topology';
 import { useViewOptions } from '../ViewOptionsProvider';
+import { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
 
 export interface NodeFields {
   parentNodes?: WorkflowNode[];
@@ -24,8 +25,8 @@ export interface NodeFields {
     timeout_seconds: number;
   };
   node_status_type: string;
-  convergence: string;
-  alias: string;
+  all_parents_must_converge: string;
+  identifier: string;
 }
 
 export function NodeFormInputs(props: {
@@ -37,7 +38,6 @@ export function NodeFormInputs(props: {
   const { t } = useTranslation();
 
   const controller = useVisualizationController();
-
   const steps: PageWizardStep[] = [
     {
       id: 'node_type_step',
@@ -53,18 +53,25 @@ export function NodeFormInputs(props: {
       node_type: props.node?.summary_fields?.unified_job_template?.unified_job_type || 'job',
       node_resource: props.node?.summary_fields?.unified_job_template || undefined,
       node_status_type: 'always',
-      convergence: 'any',
-      alias: '',
+      all_parents_must_converge: 'any',
+      idenfifier: '',
     },
   };
 
   const handleSubmit = async (data: NodeFields) => {
+    const state = controller.getState<{
+      WorkflowJobTemplate: WorkflowJobTemplate;
+      unsavedNodeId: number;
+    }>();
+    const model = controller.toModel();
+
+    const nodeId = state?.unsavedNodeId === undefined ? 1 : state.unsavedNodeId;
     const nodes = controller.getElements().filter(isNode);
 
     const node = {
       id: `${nodes.length + 1}-unsavedNode`,
       type: 'node',
-      label: data.alias || data.node_resource.name,
+      label: data.identifier || data.node_resource.name,
       width: 50,
       height: 50,
       shape: NodeShape.circle,
@@ -75,13 +82,13 @@ export function NodeFormInputs(props: {
               unified_job_type: data.node_type,
               name: data.node_resource.name,
               description: data.node_resource.description,
+              id: data.node_resource.id,
             },
           },
         },
+        all_parents_must_converge: data.all_parents_must_converge,
       },
     };
-
-    const model = controller.toModel();
 
     model?.nodes?.push(node);
     model.graph = {
@@ -91,7 +98,8 @@ export function NodeFormInputs(props: {
       visible: true,
     };
 
-    controller.fromModel(model, true);
+    controller.fromModel(model, false);
+    controller.setState({ ...state, unsavedNodeId: nodeId + 1 });
 
     setSidebarMode(undefined);
 
