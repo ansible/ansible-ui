@@ -97,6 +97,7 @@ export function NodeFormInputs(props: {
 
     return Promise.resolve();
   };
+
   return (
     <PageWizard<NodeFields>
       isVertical
