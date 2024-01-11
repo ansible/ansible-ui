@@ -41,6 +41,7 @@ import { RulebookActivationHistory } from '../rulebook-activations/RulebookActiv
 import { RulebookActivationPage } from '../rulebook-activations/RulebookActivationPage/RulebookActivationPage';
 import { RulebookActivations } from '../rulebook-activations/RulebookActivations';
 import { EdaRoute } from './EdaRoutes';
+import { EdaRolePage } from '../access/roles/EdaRolePage';
 
 export function useEdaNavigation() {
   const { t } = useTranslation();
@@ -315,8 +316,19 @@ export function useEdaNavigation() {
             },
             {
               id: EdaRoute.RolePage,
-              path: ':id',
-              element: <RoleDetails />,
+              path: ':id/',
+              element: <EdaRolePage />,
+              children: [
+                {
+                  id: EdaRoute.RoleDetails,
+                  path: 'details',
+                  element: <RoleDetails />,
+                },
+                {
+                  path: '',
+                  element: <Navigate to="details" />,
+                },
+              ],
             },
             {
               path: '',
