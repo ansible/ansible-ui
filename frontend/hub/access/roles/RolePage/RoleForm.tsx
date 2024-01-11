@@ -6,6 +6,7 @@ import {
   PageHeader,
   PageLayout,
   useGetPageUrl,
+  usePageNavigate,
 } from '../../../../../framework';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { Role } from '../Role';
@@ -34,16 +35,17 @@ export function CreateRole() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const postRequest = usePostRequest<RoleRequestBody>();
   const onSubmit: PageFormSubmitHandler<RoleInput> = async (values) => {
     const { name, description, permissionCategories } = values;
     const permissions = getSelectedPermissions(permissionCategories);
-    await postRequest(pulpAPI`/roles/`, {
+    const role = await postRequest(pulpAPI`/roles/`, {
       name,
       description,
       permissions,
     });
-    navigate(-1);
+    pageNavigate(HubRoute.RoleDetails, { params: { id: role.name } });
   };
 
   return (
@@ -71,6 +73,7 @@ export function EditRole() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const params = useParams<{ id: string }>();
   const { data, error, refresh } = useGet<PulpItemsResponse<Role>>(
     pulpAPI`/roles/?name=${params.id || ''}`
@@ -90,7 +93,7 @@ export function EditRole() {
       description,
       permissions,
     });
-    navigate(-1);
+    pageNavigate(HubRoute.RoleDetails, { params: { id: role.name } });
   };
 
   if (!role) {
