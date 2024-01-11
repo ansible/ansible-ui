@@ -18,10 +18,10 @@ describe('NodeFormInputs', () => {
     cy.get('[data-cy="job-template-select-form-group"]').within(() => {
       cy.get('div.pf-v5-c-form__group-control').should('have.text', 'E2E Job Template 9Bay');
     });
-    cy.get('[data-cy="convergence-form-group"]').within(() => {
+    cy.get('[data-cy="all-parents-must-converge-form-group"]').within(() => {
       cy.get('span.pf-v5-c-select__toggle-text').should('have.text', 'Any');
     });
-    cy.get('[data-cy="alias-form-group"]').within(() => {
+    cy.get('[data-cy="identifier-form-group"]').within(() => {
       cy.get('input').should('have.value', '');
     });
   });
@@ -98,7 +98,7 @@ describe('NodeFormInputs', () => {
     cy.mount(<NodeFormInputs setSelectedNode={() => {}} node={nodes.results[5] as WorkflowNode} />);
     cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
     cy.selectDropdownOptionByResourceName('node-status-type', 'failure');
-    cy.selectDropdownOptionByResourceName('convergence', 'All');
-    cy.get('[data-cy="alias"]').type('Test Node');
+    cy.selectDropdownOptionByResourceName('all-parents-must-converge', 'All');
+    cy.get('[data-cy="identifier"]').type('Test Node');
   });
 });
