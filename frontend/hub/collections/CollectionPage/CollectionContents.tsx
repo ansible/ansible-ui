@@ -1,10 +1,10 @@
 import { useTranslation } from 'react-i18next';
 import { useGet } from '../../../common/crud/useGet';
-import { pulpAPI } from '../../api/formatPath';
+import { pulpAPI } from '../../common/api/formatPath';
 import { useOutletContext } from 'react-router-dom';
 import { CollectionVersionSearch } from '../Collection';
 import { HubError } from '../../common/HubError';
-import { PulpItemsResponse } from '../../useHubView';
+import { PulpItemsResponse } from '../../common/useHubView';
 import { SearchInput } from '@patternfly/react-core';
 import { useSearchParams } from 'react-router-dom';
 import { ToolbarItem } from '@patternfly/react-core';
