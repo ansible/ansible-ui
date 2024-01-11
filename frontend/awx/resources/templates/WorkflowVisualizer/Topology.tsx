@@ -29,12 +29,14 @@ import {
   ElementModel,
   withCreateConnector,
   isNode,
+  Edge,
+  isEdge,
 } from '@patternfly/react-topology';
 import { useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { EmptyStateNoData } from '../../../../../framework/components/EmptyStateNoData';
 import type { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
-import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
+import { UnifiedJobType, type WorkflowNode } from '../../../interfaces/WorkflowNode';
 import {
   AddNodeButton,
   CustomEdge,
@@ -45,10 +47,15 @@ import {
   NodeContextMenu,
   WorkflowVisualizerToolbar,
 } from './components';
-import { GraphNode, EdgeStatus } from './types';
+import { GraphNode, EdgeStatus, GraphNodeData } from './types';
 import { ViewOptionsContext, ViewOptionsProvider } from './ViewOptionsProvider';
 import { ToolbarHeader } from './components/WorkflowVisualizerToolbar';
 import { Sidebar } from './components/Sidebar';
+import { awxAPI } from '../../../api/awx-utils';
+import { postRequest, requestDelete } from '../../../../common/crud/Data';
+import { usePageNavigate } from '../../../../../framework';
+import { AwxRoute } from '../../../AwxRoutes';
+import { useAbortController } from '../../../../common/crud/useAbortController';
 
 export const GRAPH_ID = 'workflow-visualizer-graph';
 const CONNECTOR_SOURCE_DROP = 'connector-src-drop';
@@ -90,9 +97,17 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
     []
   );
   const edgeContextMenu = useCallback(
-    (element: GraphElement<ElementModel, unknown>) => [
-      <EdgeContextMenu key="edgeContext" element={element} />,
-    ],
+    (
+      element: Edge<
+        ElementModel,
+        {
+          tag: string;
+          isNew: boolean;
+          tagStatus: EdgeStatus;
+          endTerminalStatus: EdgeStatus;
+        }
+      >
+    ) => [<EdgeContextMenu key="edgeContext" element={element} />],
     []
   );
   const baselineComponentFactory: ComponentFactory = useCallback(
@@ -200,6 +215,7 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
           tag: tagLabel[tagStatus],
           tagStatus,
           endTerminalStatus: tagStatus.toLowerCase(),
+          isNew: false,
         },
       };
     },
@@ -260,6 +276,8 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
     visualization.fromModel(model, true);
   }, [t, visualization, createEdge, workflowNodes]);
 
+  const pageNavigate = usePageNavigate();
+  const abortController = useAbortController();
   return (
     <VisualizationProvider controller={visualization}>
       <ViewOptionsProvider>
@@ -283,7 +301,13 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
               <TopologyView
                 data-cy="workflow-visualizer"
                 contextToolbar={isFullScreen ? null : <ToolbarHeader />}
-                viewToolbar={<WorkflowVisualizerToolbar />}
+                viewToolbar={
+                  <WorkflowVisualizerToolbar
+                    handleSave={() =>
+                      void handleSave(visualization, workflowNodes, pageNavigate, abortController)
+                    }
+                  />
+                }
                 controlBar={
                   <TopologyControlBar
                     controlButtons={createTopologyControlButtons({
@@ -333,3 +357,310 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
     </VisualizationProvider>
   );
 };
+
+async function handleSave(
+  visualization: Visualization,
+  originalNodes: WorkflowNode[],
+  pageNavigate: (id: string, params: { params: { id: string } }) => void,
+  abortController: AbortController
+) {
+  const graphNodes = visualization.getElements().filter(isNode);
+
+  const state = visualization.getState<{
+    workflowTemplate: WorkflowJobTemplate;
+    unsavedNodeId: number;
+  }>();
+
+  const newNodeMap: {
+    [nodeId: string]: {
+      newNodeId: number;
+      sources: { sourceId: string; nodeType: EdgeStatus }[] | [];
+    };
+  } = {};
+  const deletedNodeIds: string[] = [];
+  const edges = visualization.getElements().filter(isEdge) as Edge<
+    ElementModel,
+    { tag: string; tagStatus: EdgeStatus }
+  >[];
+
+  const nodeRequests: Promise<WorkflowNode>[] = [];
+  const approvalTemplateRequests: Promise<WorkflowNode>[] = [];
+  graphNodes.forEach((node) => {
+    const isNewNode = node.getId().includes('unsavedNode');
+    const nodeData = node.getData() as GraphNodeData;
+
+    const isVisible: boolean = node.isVisible();
+    if (!isVisible) {
+      deletedNodeIds.push(node.getId());
+    }
+    if (isNewNode) {
+      const sources = node.getTargetEdges().map((edge) => {
+        const sourceId = edge.getSource().getId();
+        const { tagStatus } = edge.getData() as { tagStatus: EdgeStatus };
+        return { sourceId: sourceId, nodeType: tagStatus };
+      });
+      nodeRequests.push(
+        postRequest<WorkflowNode>(
+          awxAPI`/workflow_job_templates/${state.workflowTemplate.id.toString()}/workflow_nodes/`,
+          {
+            ...nodeData,
+            all_parents_must_converge: nodeData.all_parents_must_converge === 'all' ? true : false,
+            unified_job_template: nodeData.resource.summary_fields.unified_job_template.id,
+          }
+        ).then((newNode: WorkflowNode) => {
+          if (
+            nodeData.resource.summary_fields.unified_job_template.unified_job_type ===
+            UnifiedJobType.workflow_approval
+          ) {
+            approvalTemplateRequests.push(
+              postRequest<WorkflowNode>(
+                awxAPI`/workflow_job_template_nodes/${newNode.id.toString()}/create_approval_template/`,
+                {
+                  name: nodeData.resource.summary_fields.unified_job_template.name,
+                  description:
+                    nodeData.resource.summary_fields.unified_job_template.description || '',
+                  timeout: nodeData.resource.summary_fields.unified_job_template.timeout || 0,
+                }
+              )
+            );
+          }
+          const model = visualization.toModel();
+          newNodeMap[node.getId()] = { newNodeId: newNode.id, sources };
+          visualization.fromModel(model, false);
+          return newNode;
+        })
+      );
+    } else {
+      if (!isVisible) {
+        nodeRequests.push(
+          requestDelete(
+            awxAPI`/workflow_job_template_nodes/${node.getId()}/`,
+            abortController.signal
+          )
+        );
+      }
+    }
+  });
+  try {
+    await Promise.all(nodeRequests);
+    await Promise.all(approvalTemplateRequests);
+    await Promise.all(disassociateNodes(originalNodes, deletedNodeIds, edges));
+    await Promise.all(associateNodes(visualization, newNodeMap));
+    pageNavigate(AwxRoute.WorkflowJobTemplateDetails, {
+      params: { id: state.workflowTemplate.id.toString() },
+    });
+  } catch {
+    // handle error here
+  }
+}
+
+function associateNodes(
+  visualization: Visualization,
+  newNodeMap: {
+    [nodeId: string]: {
+      newNodeId: number;
+      sources: { sourceId: string; nodeType: EdgeStatus }[] | [];
+    };
+  } = {}
+) {
+  const edges = visualization.getGraph().getEdges();
+
+  if (!edges.length) return [];
+  const newNodeArray = Object.values(newNodeMap);
+  const newNodeRequests = newNodeArray.reduce(
+    (
+      _acc: Promise<WorkflowNode>[],
+      curr: {
+        newNodeId: number;
+        sources: { sourceId: string; nodeType: EdgeStatus }[] | [];
+      }
+    ): Promise<WorkflowNode>[] => {
+      return curr.sources.map((source) => {
+        const sourceId = newNodeMap[source.sourceId]?.newNodeId ?? parseInt(source.sourceId, 10);
+        return handleAssociateNewNodeRequests(curr.newNodeId, sourceId, source.nodeType);
+      });
+    },
+    []
+  );
+
+  const existingNodeRequests: Promise<WorkflowNode>[] | Promise<unknown>[] = edges
+    .filter((edge) => !edge.getTarget().getId().includes('unsavedNode'))
+    .map((edge) => {
+      const sourceId = edge.getSource().getId();
+      const targetId = edge.getTarget().getId();
+      const { tagStatus } = edge.getData() as { tagStatus: EdgeStatus };
+      return handleAssociateNewNodeRequests(
+        parseInt(targetId, 10),
+        parseInt(sourceId, 10),
+        tagStatus
+      );
+    });
+  return [...newNodeRequests, ...existingNodeRequests];
+}
+
+function handleAssociateNewNodeRequests(
+  targetId: number,
+  sourceId: number,
+  tagStatus: EdgeStatus
+): Promise<WorkflowNode> {
+  let request: Promise<WorkflowNode> = Promise.resolve({} as WorkflowNode);
+  if (tagStatus === EdgeStatus.success) {
+    request = postRequest(
+      awxAPI`/workflow_job_template_nodes/${sourceId.toString()}/success_nodes/`,
+      {
+        id: targetId,
+      }
+    );
+  }
+
+  if (tagStatus === EdgeStatus.danger) {
+    request = postRequest(
+      awxAPI`/workflow_job_template_nodes/${sourceId.toString()}/failure_nodes/`,
+      {
+        id: targetId,
+      }
+    );
+  }
+
+  if (tagStatus === EdgeStatus.info) {
+    request = postRequest(
+      awxAPI`/workflow_job_template_nodes/${sourceId.toString()}/always_nodes/`,
+      {
+        id: targetId,
+      }
+    );
+  }
+  return request;
+}
+
+function disassociateNodes(
+  originalNodes: WorkflowNode[],
+  deletedNodeIds: string[],
+  edges: Edge<
+    ElementModel,
+    {
+      tag: string;
+      tagStatus: EdgeStatus;
+    }
+  >[] = []
+) {
+  const disassociateNodeRequests: Promise<WorkflowNode>[] = [];
+  // Disassociate link that have been removed
+  const removedEdges = edges.filter((edge) => !edge.isVisible());
+  removedEdges.forEach((edge) => {
+    const { tagStatus } = edge.getData() as { tagStatus: EdgeStatus };
+    const sourceId = edge.getSource().getId();
+    const targetId = parseInt(edge.getTarget().getId(), 10);
+    const targetNodeType =
+      tagStatus === EdgeStatus.success
+        ? 'success_nodes'
+        : tagStatus === EdgeStatus.danger
+          ? 'failure_nodes'
+          : 'always_nodes';
+    disassociateNodeRequests.push(
+      postRequest(awxAPI`/workflow_job_template_nodes/${sourceId}/${targetNodeType}/`, {
+        id: targetId,
+        disassociate: true,
+      })
+    );
+  });
+
+  // Disassociate links that have been changed.
+  originalNodes.forEach((node) => {
+    node.success_nodes.forEach((successNodeId: number) => {
+      edges.forEach(
+        (
+          edge: Edge<
+            EdgeModel,
+            {
+              tag: string;
+              tagStatus: EdgeStatus;
+            }
+          >
+        ) => {
+          const edgeData = edge.getData();
+          const targetId = edge.getTarget().getId();
+
+          if (
+            !deletedNodeIds.includes(successNodeId.toString()) &&
+            node.success_nodes.includes(parseInt(targetId, 10)) &&
+            edgeData?.tagStatus !== EdgeStatus.success
+          ) {
+            disassociateNodeRequests.push(
+              postRequest(
+                awxAPI`/workflow_job_template_nodes/${node.id.toString()}/success_nodes/`,
+                {
+                  id: successNodeId,
+                  disassociate: true,
+                }
+              )
+            );
+          }
+        }
+      );
+    });
+    node.failure_nodes.forEach((failureNodeId) => {
+      edges.forEach(
+        (
+          edge: Edge<
+            EdgeModel,
+            {
+              tag: string;
+              tagStatus: EdgeStatus;
+            }
+          >
+        ) => {
+          const edgeData = edge.getData();
+          const targetId = edge.getTarget().getId();
+          if (
+            !deletedNodeIds.includes(failureNodeId.toString()) &&
+            node.failure_nodes.includes(parseInt(targetId, 10)) &&
+            edgeData?.tagStatus !== EdgeStatus.danger
+          ) {
+            disassociateNodeRequests.push(
+              postRequest(
+                awxAPI`/workflow_job_template_nodes/${node.id.toString()}/failure_nodes/`,
+                {
+                  id: failureNodeId,
+                  disassociate: true,
+                }
+              )
+            );
+          }
+        }
+      );
+    });
+    node.always_nodes.forEach((alwaysNodeId) => {
+      edges.forEach(
+        (
+          edge: Edge<
+            EdgeModel,
+            {
+              tag: string;
+              tagStatus: EdgeStatus;
+            }
+          >
+        ) => {
+          const edgeData = edge.getData();
+          const targetId = edge.getTarget().getId();
+          if (
+            !deletedNodeIds.includes(alwaysNodeId.toString()) &&
+            node.always_nodes.includes(parseInt(targetId, 10)) &&
+            edgeData?.tagStatus !== EdgeStatus.info
+          ) {
+            disassociateNodeRequests.push(
+              postRequest(
+                awxAPI`/workflow_job_template_nodes/${node.id.toString()}/always_nodes/`,
+                {
+                  id: alwaysNodeId,
+                  disassociate: true,
+                }
+              )
+            );
+          }
+        }
+      );
+    });
+  });
+  return disassociateNodeRequests;
+}
