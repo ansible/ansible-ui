@@ -11,10 +11,6 @@ describe('Namespaces', () => {
     cy.verifyPageTitle(Namespaces.title);
   });
 
-  it('create a namespace', () => {
-    cy.get('[data-cy="create-namespace"]').should('be.visible').click();
-  });
-
   it('create and delete a namespace', () => {
     cy.navigateTo('hub', Namespaces.url);
     const namespaceName = `test_namespace_${randomString(5, undefined, { isLowercase: true })}`;
