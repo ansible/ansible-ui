@@ -14,11 +14,11 @@ export function useUsersColumns() {
   const getPageUrl = useGetPageUrl();
   const idColumn = useIdColumn();
   const createdColumn = useCreatedColumn({
-    sortKey: 'created_on',
+    sort: 'created_on',
     // hideByDefaultInTableView: true,
   });
   const modifiedColumn = useModifiedColumn({
-    sortKey: 'modified_on',
+    sort: 'modified_on',
     // hideByDefaultInTableView: true,
   });
 

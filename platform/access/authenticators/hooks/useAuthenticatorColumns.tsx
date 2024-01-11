@@ -24,14 +24,8 @@ export function authenticatorTypeLabel(type: AuthenticatorTypeEnum, t: TFunction
 export function useAuthenticatorsColumns() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
-  const createdColumn = useCreatedColumn({
-    sortKey: 'created_on',
-    hideByDefaultInTableView: true,
-  });
-  const modifiedColumn = useModifiedColumn({
-    sortKey: 'modified_on',
-    hideByDefaultInTableView: true,
-  });
+  const createdColumn = useCreatedColumn({ sort: 'created_on' });
+  const modifiedColumn = useModifiedColumn({ sort: 'modified_on' });
   const tableColumns = useMemo<ITableColumn<Authenticator>[]>(
     () => [
       {
