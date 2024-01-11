@@ -1,6 +1,7 @@
 import { NodeFormInputs } from './NodeFormInputs';
 import nodes from '../../../../../../cypress/fixtures/workflow_nodes.json';
 import { WorkflowNode } from '../../../../interfaces/WorkflowNode';
+import { VisualizationProvider } from '@patternfly/react-topology';
 
 describe('NodeFormInputs', () => {
   it('Should render the correct fields for a job template node', () => {
@@ -8,7 +9,11 @@ describe('NodeFormInputs', () => {
       { method: 'GET', url: '/api/v2/job_templates/*' },
       { fixture: 'jobTemplates.json' }
     );
-    cy.mount(<NodeFormInputs setSelectedNode={() => {}} node={nodes.results[0] as WorkflowNode} />);
+    cy.mount(
+      <VisualizationProvider>
+        <NodeFormInputs setSelectedNode={() => {}} node={nodes.results[0] as WorkflowNode} />
+      </VisualizationProvider>
+    );
     cy.get('[data-cy="node-type-form-group"]').within(() => {
       cy.get('span.pf-v5-c-select__toggle-text').should('have.text', 'Job Template');
     });
@@ -25,9 +30,13 @@ describe('NodeFormInputs', () => {
       cy.get('input').should('have.value', '');
     });
   });
-  it('Should render the correct fields for a proect sync node', () => {
+  it('Should render the correct fields for a project sync node', () => {
     cy.intercept({ method: 'GET', url: '/api/v2/projects/*' }, { fixture: 'projects.json' });
-    cy.mount(<NodeFormInputs setSelectedNode={() => {}} node={nodes.results[1] as WorkflowNode} />);
+    cy.mount(
+      <VisualizationProvider>
+        <NodeFormInputs setSelectedNode={() => {}} node={nodes.results[1] as WorkflowNode} />
+      </VisualizationProvider>
+    );
     cy.get('[data-cy="node-type-form-group"]').within(() => {
       cy.get('span.pf-v5-c-select__toggle-text').should('have.text', 'Project Sync');
     });
@@ -39,7 +48,11 @@ describe('NodeFormInputs', () => {
 
   it('Should render the correct fields for a workflow approval node', () => {
     cy.intercept({ method: 'GET', url: '/api/v2/system_jobs/*' }, { fixture: 'system_jobs.json' });
-    cy.mount(<NodeFormInputs setSelectedNode={() => {}} node={nodes.results[2] as WorkflowNode} />);
+    cy.mount(
+      <VisualizationProvider>
+        <NodeFormInputs setSelectedNode={() => {}} node={nodes.results[2] as WorkflowNode} />
+      </VisualizationProvider>
+    );
     cy.get('[data-cy="node-type-form-group"]').within(() => {
       cy.get('span.pf-v5-c-select__toggle-text').should('have.text', 'Approval');
     });
@@ -51,7 +64,11 @@ describe('NodeFormInputs', () => {
       { method: 'GET', url: '/api/v2/workflow_job_templates/*' },
       { fixture: 'workflowJobTemplates.json' }
     );
-    cy.mount(<NodeFormInputs setSelectedNode={() => {}} node={nodes.results[3] as WorkflowNode} />);
+    cy.mount(
+      <VisualizationProvider>
+        <NodeFormInputs setSelectedNode={() => {}} node={nodes.results[3] as WorkflowNode} />
+      </VisualizationProvider>
+    );
     cy.get('[data-cy="node-type-form-group"]').within(() => {
       cy.get('span.pf-v5-c-select__toggle-text').should('have.text', 'Workflow Job Template');
     });
@@ -65,7 +82,11 @@ describe('NodeFormInputs', () => {
       { method: 'GET', url: '/api/v2/inventory_sources/*' },
       { fixture: 'inventory_sources.json' }
     );
-    cy.mount(<NodeFormInputs setSelectedNode={() => {}} node={nodes.results[4] as WorkflowNode} />);
+    cy.mount(
+      <VisualizationProvider>
+        <NodeFormInputs setSelectedNode={() => {}} node={nodes.results[4] as WorkflowNode} />
+      </VisualizationProvider>
+    );
     cy.get('[data-cy="node-type-form-group"]').within(() => {
       cy.get('span.pf-v5-c-select__toggle-text').should('have.text', 'Management Job');
     });
@@ -80,7 +101,11 @@ describe('NodeFormInputs', () => {
       { method: 'GET', url: '/api/v2/inventory_sources/*' },
       { fixture: 'inventory_sources.json' }
     );
-    cy.mount(<NodeFormInputs setSelectedNode={() => {}} node={nodes.results[5] as WorkflowNode} />);
+    cy.mount(
+      <VisualizationProvider>
+        <NodeFormInputs setSelectedNode={() => {}} node={nodes.results[5] as WorkflowNode} />
+      </VisualizationProvider>
+    );
     cy.get('[data-cy="node-type-form-group"]').within(() => {
       cy.get('span.pf-v5-c-select__toggle-text').should('have.text', 'Inventory Source Sync');
     });
@@ -95,7 +120,11 @@ describe('NodeFormInputs', () => {
       { method: 'GET', url: '/api/v2/job_templates/*' },
       { fixture: 'jobTemplates.json' }
     );
-    cy.mount(<NodeFormInputs setSelectedNode={() => {}} node={nodes.results[5] as WorkflowNode} />);
+    cy.mount(
+      <VisualizationProvider>
+        <NodeFormInputs setSelectedNode={() => {}} node={nodes.results[5] as WorkflowNode} />
+      </VisualizationProvider>
+    );
     cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
     cy.selectDropdownOptionByResourceName('node-status-type', 'failure');
     cy.selectDropdownOptionByResourceName('all-parents-must-converge', 'All');
