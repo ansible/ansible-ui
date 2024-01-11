@@ -16,7 +16,7 @@ import { EdaRole } from '../../interfaces/EdaRole';
 import { EdaRoute } from '../../main/EdaRoutes';
 import { EdaRolePermissions } from './components/EdaRolePermissions';
 
-export function RoleDetails() {
+export function EdaRoleDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const { data: role } = useGet<EdaRole>(edaAPI`/roles/${params.id ?? ''}/`, undefined, {
