@@ -62,9 +62,6 @@ Cypress.Commands.add('removeAllNodesFromVisualizerToolbar', () => {
   cy.get('[data-cy="workflow-visualizer-toolbar-kebab"]').click();
   cy.get('[data-cy="workflow-visualizer-toolbar-remove-all"]').click();
   cy.clickModalConfirmCheckbox();
-  cy.contains('button', 'Remove all nodes').click();
-  cy.contains(/^Success$/);
-  cy.clickButton(/^Close$/);
 });
 
 /* The above code is adding a custom Cypress command called

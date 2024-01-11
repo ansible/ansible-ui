@@ -1,3 +1,5 @@
+import { useCallback, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   CREATE_CONNECTOR_DROP_TYPE,
   ComponentFactory,
@@ -9,7 +11,6 @@ import {
   Model,
   ModelKind,
   NodeShape,
-  TopologyView,
   SELECTION_EVENT,
   TopologyControlBar,
   Visualization,
@@ -25,6 +26,7 @@ import {
   withDragNode,
   withPanZoom,
   withSelection,
+  TopologyView,
   GraphElement,
   ElementModel,
   withCreateConnector,
@@ -32,8 +34,6 @@ import {
   Edge,
   isEdge,
 } from '@patternfly/react-topology';
-import { useCallback, useEffect, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
 import { EmptyStateNoData } from '../../../../../framework/components/EmptyStateNoData';
 import type { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { UnifiedJobType, type WorkflowNode } from '../../../interfaces/WorkflowNode';
@@ -134,6 +134,7 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
             case ModelKind.node:
               return withCreateConnector((source, target): void => {
                 const model = source.getController().toModel();
+                const controller = source.getController();
                 if (!isNode(target)) {
                   return;
                 }
@@ -151,8 +152,8 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
                     endTerminalStatus: 'info',
                   },
                 });
-                // TODO: Handle toggle unsaved changes
-                source.getController().fromModel(model);
+                controller.setState({ ...controller.getState(), modified: true });
+                controller.fromModel(model);
               })(
                 withContextMenu(nodeContextMenu)(
                   withDndDrop(
@@ -300,7 +301,15 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
             return (
               <TopologyView
                 data-cy="workflow-visualizer"
-                contextToolbar={isFullScreen ? null : <ToolbarHeader />}
+                contextToolbar={
+                  isFullScreen ? null : (
+                    <ToolbarHeader
+                      handleSave={() =>
+                        void handleSave(visualization, workflowNodes, pageNavigate, abortController)
+                      }
+                    />
+                  )
+                }
                 viewToolbar={
                   <WorkflowVisualizerToolbar
                     handleSave={() =>

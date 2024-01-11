@@ -143,7 +143,7 @@ export function NodeTypeStep() {
             <a
               href={`${getDocsBaseUrl(
                 config
-              )}/html/userguide/workflow_templates.html#convergence-node`}
+              )}/html/userguide/workflow_templates.html#converge-node`}
             >
               {t('documentation.')}
             </a>
