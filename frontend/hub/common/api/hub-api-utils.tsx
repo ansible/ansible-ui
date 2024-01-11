@@ -28,6 +28,7 @@ export async function getRepositoryBasePath(
 ) {
   let error = '';
 
+  debugger;
   try {
     let repository: Repository | undefined | { name: string; pulp_href: string };
     if (pulp_href) {
@@ -57,6 +58,7 @@ export async function getRepositoryBasePath(
       return distribution.base_path;
     }
   } catch (ex) {
+    debugger;
     throw new Error(error);
   }
 }
@@ -73,7 +75,21 @@ export function useRepositoryBasePath(name: string, pulp_href?: string | undefin
 
   useEffect(() => {
     setLoading(true);
-    const fetchRepositoryBasePath = async () => {
+
+    (async () => {
+      try {
+        const path = await getRepositoryBasePath(name, pulp_href || '', t);
+        debugger;
+        setLoading(false);
+        setBasePath(path);
+      } catch (ex) {
+        setLoading(false);
+        debugger;
+        setError(ex as string);
+      }
+    })();
+
+    /*const fetchRepositoryBasePath = async () => {
       try {
         let repository: Repository | undefined | { name: string; pulp_href: string };
 
@@ -113,9 +129,9 @@ export function useRepositoryBasePath(name: string, pulp_href?: string | undefin
       } finally {
         setLoading(false);
       }
-    };
+    };*/
 
-    void fetchRepositoryBasePath();
+    //void fetchRepositoryBasePath();
   }, [name, pulp_href, t]);
 
   return { basePath, loading, error };
