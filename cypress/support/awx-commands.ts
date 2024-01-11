@@ -30,6 +30,46 @@ import './rest-commands';
 
 //  AWX related custom command implementation
 
+Cypress.Commands.add(
+  'editNodeInVisualizer',
+  (nodeName: string, newNodeType: string, newNodeName?: string) => {
+    cy.contains('text', nodeName)
+      .parents('[data-kind="node"]')
+      .within(() => {
+        cy.get('.pf-topology__node__action-icon').click();
+      });
+    cy.get('li[data-cy="edit-node"] ').click();
+    cy.get('[data-cy="node-form-dialog"]').should('be.visible');
+    cy.get('[data-cy="node-type-form-group"]').within(() => {
+      cy.get('button').click();
+      cy.contains('li', newNodeType).click();
+    });
+    if (newNodeType === 'Approval' && newNodeName !== undefined) {
+      cy.get('[data-cy="node-resource-name-form-group"]').within(() => {
+        cy.get('[data-cy="node-resource-name"]').clear().type(newNodeName);
+      });
+    }
+  }
+);
+
+Cypress.Commands.add('removeNodeInVisualizer', (nodeName: string) => {
+  cy.contains('text', nodeName)
+    .parents('[data-kind="node"]')
+    .within(() => {
+      cy.get('.pf-topology__node__action-icon').click();
+    });
+  cy.get('li[data-cy="remove-node"] ').click();
+});
+
+Cypress.Commands.add('removeAllNodesFromVisualizerToolbar', () => {
+  cy.get('[data-cy="workflow-visualizer-toolbar-kebab"]').click();
+  cy.get('[data-cy="workflow-visualizer-toolbar-remove-all"]').click();
+  cy.clickModalConfirmCheckbox();
+  cy.contains('button', 'Remove all nodes').click();
+  cy.contains(/^Success$/);
+  cy.clickButton(/^Close$/);
+});
+
 /* The above code is adding a custom Cypress command called
 `createAwxWorkflowVisualizerJobTemplateNode`. This command is used to create a new workflow job
 template node in an AWX (Ansible Tower) instance. */
@@ -161,6 +201,19 @@ Cypress.Commands.add(
   function (firstNode: WorkflowNode, secondNode: WorkflowNode) {
     cy.requestPost<WorkflowNode>(
       `/api/v2/workflow_job_template_nodes/${firstNode.id}/failure_nodes/`,
+      {
+        id: secondNode.id,
+      }
+    );
+  }
+);
+
+//Always Node creation
+Cypress.Commands.add(
+  'createWorkflowJTAlwaysNodeLink',
+  function (firstNode: WorkflowNode, secondNode: WorkflowNode) {
+    cy.requestPost<WorkflowNode>(
+      `/api/v2/workflow_job_template_nodes/${firstNode.id}/always_nodes/`,
       {
         id: secondNode.id,
       }
