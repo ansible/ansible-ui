@@ -18,8 +18,6 @@ import { useDeprecateCollections } from './useDeprecateCollections';
 import { useSignCollection } from './useSignCollection';
 import { useUploadSignature } from './useUploadSignature';
 
-
-
 export function useCollectionActions(
   callback?: (collections: CollectionVersionSearch[]) => void,
   // determine if the menu item is rendered in list or in detail, which defines its redirections

@@ -3,14 +3,14 @@ import { LoadingPage, usePageDialog } from './../../../../framework';
 import { Modal, ModalVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useState, useCallback } from 'react';
-import { useHubContext, HubContext } from './../../useHubContext';
+import { useHubContext, HubContext } from '../../common/useHubContext';
 import { HubError } from '../../common/HubError';
-import { pulpAPI } from '../../api/formatPath';
-import { HubPageForm } from '../../HubPageForm';
+import { pulpAPI } from '../../common/api/formatPath';
+import { HubPageForm } from '../..//common/HubPageForm';
 import { PageFormFileUpload } from '../../../../framework/PageForm/Inputs/PageFormFileUpload';
 import { getCookie } from '../../../common/crud/cookie';
-import { TaskResponse } from '../../tasks/Task';
-import { parseTaskResponse } from '../../api/utils';
+import { TaskResponse } from '../../administration/tasks/Task';
+import { parseTaskResponse } from '../../common/api/hub-api-utils';
 
 export function useUploadSignature() {
   const [_, setDialog] = usePageDialog();

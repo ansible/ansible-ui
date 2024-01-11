@@ -1,12 +1,11 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../framework';
-import { collectionKeyFn, hubAPIPost } from '../../api/utils';
-import { hubAPI } from '../../api/formatPath';
+import { collectionKeyFn, hubAPIPost, getRepositoryBasePath } from '../../common/api/hub-api-utils';
+import { hubAPI } from '../../common/api/formatPath';
 import { CollectionVersionSearch } from '../Collection';
 import { useCollectionColumns } from './useCollectionColumns';
-import { useHubContext } from '../../useHubContext';
-import { getRepositoryBasePath } from '../../api/utils';
+import { useHubContext } from '../../common/useHubContext';
 
 export function useSignCollection(
   version: boolean,
