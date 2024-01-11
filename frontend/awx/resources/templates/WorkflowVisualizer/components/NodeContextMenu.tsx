@@ -67,7 +67,7 @@ export function useNodeMenuItems(element: GraphNode): MenuItem[] {
         action(() => {
           element.getTargetEdges().forEach((edge) => edge.remove());
           element.getSourceEdges().forEach((edge) => edge.remove());
-          element.remove();
+          element.setVisible(false);
         })();
       },
     },
