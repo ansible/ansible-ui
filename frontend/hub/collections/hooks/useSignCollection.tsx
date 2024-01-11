@@ -1,11 +1,12 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings, useBulkConfirmation } from '../../../../framework';
+import { compareStrings } from '../../../../framework';
 import { collectionKeyFn, hubAPIPost, getRepositoryBasePath } from '../../common/api/hub-api-utils';
 import { hubAPI } from '../../common/api/formatPath';
 import { CollectionVersionSearch } from '../Collection';
 import { useCollectionColumns } from './useCollectionColumns';
 import { useHubContext } from '../../common/useHubContext';
+import { useHubBulkConfirmation } from '../../common/useHubBulkConfirmation';
 
 export function useSignCollection(
   version: boolean,
@@ -16,7 +17,7 @@ export function useSignCollection(
   const { t } = useTranslation();
   const confirmationColumns = useCollectionColumns();
   const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
-  const bulkAction = useBulkConfirmation<CollectionVersionSearch>();
+  const bulkAction = useHubBulkConfirmation<CollectionVersionSearch>();
 
   return useCallback(
     (collections: CollectionVersionSearch[]) => {
