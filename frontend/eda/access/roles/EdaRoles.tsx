@@ -19,6 +19,7 @@ import { EdaItemsResponse } from '../../common/EdaItemsResponse';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaRole } from '../../interfaces/EdaRole';
 import { EdaRoute } from '../../main/EdaRoutes';
+import { EdaRoleExpandedRow } from './components/EdaRoleExpandedRow';
 
 export function EdaRoles() {
   const { t } = useTranslation();
@@ -99,6 +100,7 @@ export function EdaRolesTable() {
       id="eda-roles-table"
       tableColumns={columns}
       toolbarFilters={toolbarFilters}
+      expandedRow={(role) => <EdaRoleExpandedRow role={role} />}
       errorStateTitle={t('Error loading roles')}
       emptyStateTitle={t('There are currently no roles added for your organization.')}
       {...view}
