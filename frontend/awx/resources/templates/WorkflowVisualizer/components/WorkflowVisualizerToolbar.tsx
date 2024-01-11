@@ -21,14 +21,11 @@ import {
   FlexItem,
   Icon,
   MenuToggle,
+  Modal,
   Title,
   ToolbarItem,
 } from '@patternfly/react-core';
-import {
-  useVisualizationState,
-  useVisualizationController,
-  observer,
-} from '@patternfly/react-topology';
+import { useVisualizationController, observer } from '@patternfly/react-topology';
 import { usePageNavigate } from '../../../../../../framework';
 import { AwxRoute } from '../../../../AwxRoutes';
 import { postRequest } from '../../../../../common/crud/Data';
@@ -40,15 +37,24 @@ import { useViewOptions } from '../ViewOptionsProvider';
 import type { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
 import type { GraphNode } from '../types';
 
-export function ToolbarHeader() {
+export function ToolbarHeader(props: { handleSave: () => void }) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const { isFullScreen } = useViewOptions();
-  const [workflowTemplate] = useVisualizationState<WorkflowJobTemplate>('workflowTemplate');
-
+  const { modified, workflowTemplate } = useVisualizationController().getState<{
+    modified: boolean;
+    workflowTemplate: WorkflowJobTemplate;
+  }>();
+  const [showUnsavedChangesModal, setShowUnsavedChangesModal] = useState<boolean>(false);
   const handleCancel = useCallback(() => {
-    pageNavigate(AwxRoute.WorkflowJobTemplateDetails, { params: { id: workflowTemplate?.id } });
-  }, [pageNavigate, workflowTemplate?.id]);
+    if (modified) {
+      setShowUnsavedChangesModal(true);
+      return;
+    }
+    pageNavigate(AwxRoute.WorkflowJobTemplateDetails, {
+      params: { id: workflowTemplate?.id },
+    });
+  }, [pageNavigate, workflowTemplate?.id, modified]);
 
   return (
     <>
@@ -77,6 +83,38 @@ export function ToolbarHeader() {
           onClick={handleCancel}
         />
       </ToolbarItem>
+      <Modal
+        title={t('Warning: Unsaved changes')}
+        data-cy="visualizer-unsaved-changes-modal"
+        titleIconVariant="warning"
+        isOpen={showUnsavedChangesModal}
+        variant="small"
+        onClose={() => setShowUnsavedChangesModal(false)}
+        actions={[
+          <Button
+            key="save-and-exit"
+            data-cy="save-and-exit"
+            variant="primary"
+            onClick={() => props.handleSave()}
+          >
+            {t('Save and exit')}
+          </Button>,
+          <Button
+            key="exit-without-saving"
+            data-cy="exit-without-saving"
+            variant="danger"
+            onClick={() => {
+              pageNavigate(AwxRoute.WorkflowJobTemplateDetails, {
+                params: { id: workflowTemplate?.id },
+              });
+            }}
+          >
+            {t('Exit without saving')}
+          </Button>,
+        ]}
+      >
+        {t(`You have unsaved changes. Are you sure you want to leave this page?`)}
+      </Modal>
     </>
   );
 }
@@ -105,7 +143,7 @@ function WorkflowVisualizerToolbar(props: { handleSave: () => void }) {
 
   return (
     <>
-      {isFullScreen && <ToolbarHeader />}
+      {isFullScreen && <ToolbarHeader handleSave={props.handleSave} />}
       {!isReadOnly && (
         <>
           <ToolbarItem>
