@@ -7,6 +7,7 @@ import { CollectionVersionSearch } from '../Collection';
 import { useCollectionColumns } from './useCollectionColumns';
 import { useHubContext } from '../../common/useHubContext';
 import { useHubBulkConfirmation } from '../../common/useHubBulkConfirmation';
+import { TFunction } from 'i18next';
 
 export function useSignCollection(
   version: boolean,
@@ -59,7 +60,7 @@ export function useSignCollection(
         actionColumns,
         onComplete,
         actionFn: (collection: CollectionVersionSearch) =>
-          signCollectionVersion(version, collection, signing_service),
+          signCollectionVersion(version, collection, signing_service, t),
       });
     },
     [actionColumns, bulkAction, confirmationColumns, onComplete, t, signing_service, version]
@@ -69,11 +70,13 @@ export function useSignCollection(
 async function signCollectionVersion(
   version: boolean,
   collection: CollectionVersionSearch,
-  signing_service: string
+  signing_service: string,
+  t: TFunction<'translation', undefined>
 ) {
   const distro_base_path = await getRepositoryBasePath(
     collection.repository?.name || '',
-    collection?.repository?.pulp_href
+    collection?.repository?.pulp_href || '',
+    t
   );
 
   const postData: Record<string, unknown> = {

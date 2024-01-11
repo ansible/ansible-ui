@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { requestGet } from '../../../common/crud/Data';
 import { RequestError, isRequestError } from '../../../common/crud/RequestError';
 import { Task, TaskResponse } from '../../administration/tasks/Task';
@@ -20,32 +21,43 @@ import {
 // reject if no distributions or repository
 // optional pulp_href param skips repo lookup
 
-export async function getRepositoryBasePath(name: string, pulp_href?: string) {
-  let repository: Repository | undefined | { name: string; pulp_href: string };
-  if (pulp_href) {
-    repository = { name, pulp_href };
-  } else {
-    const repositoryResponse = await requestGet<Results>(
-      pulpAPI`/repositories/ansible/ansible/?name=${name}&limit=1`
+export async function getRepositoryBasePath(
+  name: string,
+  pulp_href: string,
+  t: TFunction<'translation', undefined>
+) {
+  let error = '';
+
+  try {
+    let repository: Repository | undefined | { name: string; pulp_href: string };
+    if (pulp_href) {
+      repository = { name, pulp_href };
+    } else {
+      error = t(`Failed to find repository {{name}}`, { name });
+      const repositoryResponse = await requestGet<Results>(
+        pulpAPI`/repositories/ansible/ansible/?name=${name}&limit=1`
+      );
+      repository = firstResult(repositoryResponse) as Repository;
+    }
+
+    error = t(`Failed to find a distribution for repository {{name}}`, { name });
+    const distributionResponse = await requestGet<Results>(
+      pulpAPI`/distributions/ansible/ansible/?name=${name}&limit=1`
     );
-    repository = firstResult(repositoryResponse) as Repository;
-  }
 
-  const distributionResponse = await requestGet<Results>(
-    pulpAPI`/distributions/ansible/ansible/?name=${name}&limit=1`
-  );
+    let distribution: Distribution = firstResult(distributionResponse) as Distribution;
 
-  let distribution: Distribution = firstResult(distributionResponse) as Distribution;
-
-  if (distribution && distribution.repository === repository.pulp_href) {
-    return distribution.base_path;
-  } else {
-    const newDistResponse = await requestGet<Results>(
-      pulpAPI`/distributions/ansible/ansible/?repository=${repository.pulp_href}&ordering=pulp_created&limit=1`
-    );
-    distribution = firstResult(newDistResponse) as Distribution;
-
-    return distribution.base_path;
+    if (distribution && distribution.repository === repository.pulp_href) {
+      return distribution.base_path;
+    } else {
+      const newDistResponse = await requestGet<Results>(
+        pulpAPI`/distributions/ansible/ansible/?repository=${repository.pulp_href}&ordering=pulp_created&limit=1`
+      );
+      distribution = firstResult(newDistResponse) as Distribution;
+      return distribution.base_path;
+    }
+  } catch (ex) {
+    throw new Error(error);
   }
 }
 
