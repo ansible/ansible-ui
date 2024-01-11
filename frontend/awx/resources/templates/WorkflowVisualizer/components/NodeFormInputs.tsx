@@ -72,7 +72,7 @@ export function NodeFormInputs(props: {
     const nodes = controller.getElements().filter(isNode);
 
     const node = {
-      id: `${nodeId.toString()}-unsavedNode`,
+      id: `${nodes.length + 1}-unsavedNode`,
       type: 'node',
       label: data.identifier || data.node_resource.name,
       width: 50,

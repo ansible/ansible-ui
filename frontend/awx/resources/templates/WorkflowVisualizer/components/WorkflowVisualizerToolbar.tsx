@@ -25,11 +25,7 @@ import {
   Title,
   ToolbarItem,
 } from '@patternfly/react-core';
-import {
-  useVisualizationState,
-  useVisualizationController,
-  observer,
-} from '@patternfly/react-topology';
+import { useVisualizationController, observer } from '@patternfly/react-topology';
 import { usePageNavigate } from '../../../../../../framework';
 import { AwxRoute } from '../../../../AwxRoutes';
 import { postRequest } from '../../../../../common/crud/Data';
@@ -41,18 +37,14 @@ import { useViewOptions } from '../ViewOptionsProvider';
 import type { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
 import type { GraphNode } from '../types';
 
-export function ToolbarHeader() {
+export function ToolbarHeader(props: { handleSave: () => void }) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const { isFullScreen } = useViewOptions();
-  const { modified, workflowTemplate: template } = useVisualizationController().getState<{
+  const { modified, workflowTemplate } = useVisualizationController().getState<{
     modified: boolean;
     workflowTemplate: WorkflowJobTemplate;
   }>();
-  const [workflowTemplate] = useVisualizationState<WorkflowJobTemplate>(
-    'workflowTemplate',
-    template
-  );
   const [showUnsavedChangesModal, setShowUnsavedChangesModal] = useState<boolean>(false);
   const handleCancel = useCallback(() => {
     if (modified) {
@@ -99,7 +91,12 @@ export function ToolbarHeader() {
         variant="small"
         onClose={() => setShowUnsavedChangesModal(false)}
         actions={[
-          <Button key="save-and-exit" data-cy="save-and-exit" variant="primary" onClick={() => {}}>
+          <Button
+            key="save-and-exit"
+            data-cy="save-and-exit"
+            variant="primary"
+            onClick={() => props.handleSave()}
+          >
             {t('Save and exit')}
           </Button>,
           <Button
@@ -115,7 +112,9 @@ export function ToolbarHeader() {
             {t('Exit without saving')}
           </Button>,
         ]}
-      >{`You have unsaved changes. Are you sure you want to leave this page?`}</Modal>
+      >
+        {t(`You have unsaved changes. Are you sure you want to leave this page?`)}
+      </Modal>
     </>
   );
 }
@@ -144,7 +143,7 @@ function WorkflowVisualizerToolbar(props: { handleSave: () => void }) {
 
   return (
     <>
-      {isFullScreen && <ToolbarHeader />}
+      {isFullScreen && <ToolbarHeader handleSave={props.handleSave} />}
       {!isReadOnly && (
         <>
           <ToolbarItem>

@@ -301,7 +301,15 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
             return (
               <TopologyView
                 data-cy="workflow-visualizer"
-                contextToolbar={isFullScreen ? null : <ToolbarHeader />}
+                contextToolbar={
+                  isFullScreen ? null : (
+                    <ToolbarHeader
+                      handleSave={() =>
+                        void handleSave(visualization, workflowNodes, pageNavigate, abortController)
+                      }
+                    />
+                  )
+                }
                 viewToolbar={
                   <WorkflowVisualizerToolbar
                     handleSave={() =>
