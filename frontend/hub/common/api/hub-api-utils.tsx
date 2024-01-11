@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import { requestGet } from '../../../common/crud/Data';
-import { RequestError, isRequestError } from '../../../common/crud/RequestError';
+import { RequestError } from '../../../common/crud/RequestError';
 import { Task, TaskResponse } from '../../administration/tasks/Task';
 import { AnsibleAnsibleDistributionResponse as Distribution } from '../../interfaces/generated/AnsibleAnsibleDistributionResponse';
 import { AnsibleAnsibleRepositoryResponse as Repository } from '../../interfaces/generated/AnsibleAnsibleRepositoryResponse';
@@ -72,7 +72,7 @@ export function useRepositoryBasePath(name: string, pulp_href?: string | undefin
   useEffect(() => {
     setLoading(true);
 
-    (async () => {
+    void (async () => {
       try {
         const path = await getRepositoryBasePath(name, pulp_href || '', t);
         setLoading(false);
