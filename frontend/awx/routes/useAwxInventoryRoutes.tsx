@@ -15,6 +15,7 @@ import { ScheduleDetails } from '../views/schedules/SchedulePage/ScheduleDetails
 import { SchedulePage } from '../views/schedules/SchedulePage/SchedulePage';
 import { ScheduleRules } from '../views/schedules/SchedulePage/ScheduleRules';
 import { Schedules } from '../views/schedules/Schedules';
+import { ProjectJobTemplates } from '../resources/projects/ProjectPage/ProjectJobTemplates';
 
 export function useAwxInventoryRoutes() {
   const { t } = useTranslation();
@@ -129,7 +130,7 @@ export function useAwxInventoryRoutes() {
             {
               id: AwxRoute.InventoryJobTemplates,
               path: 'templates',
-              element: <PageNotImplemented />,
+              element: <ProjectJobTemplates />,
             },
           ],
         },
