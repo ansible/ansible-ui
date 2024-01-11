@@ -152,6 +152,7 @@ export enum AwxRoute {
 
   Roles = 'awx-roles',
   Role = 'awx-role',
+  RoleDetails = 'awx-role-details',
 
   // Administration
 

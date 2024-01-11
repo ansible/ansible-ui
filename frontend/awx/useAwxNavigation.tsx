@@ -31,6 +31,7 @@ import { useAwxUsersRoutes } from './routes/useAwxUsersRoutes';
 import { useAwxWorkflowApprovalRoutes } from './routes/useAwxWorkflowApprovalRoutes';
 import Settings from './settings/Settings';
 import HostMetrics from './views/jobs/HostMetrics';
+import { AwxRoleDetails } from './access/roles/AwxRoleDetails';
 
 export function useAwxNavigation() {
   const { t } = useTranslation();
@@ -152,6 +153,17 @@ export function useAwxNavigation() {
               id: AwxRoute.Role,
               path: ':resourceType/:id',
               element: <AwxRolePage />,
+              children: [
+                {
+                  id: AwxRoute.RoleDetails,
+                  path: 'details',
+                  element: <AwxRoleDetails />,
+                },
+                {
+                  path: '',
+                  element: <Navigate to="details" />,
+                },
+              ],
             },
             {
               path: '',

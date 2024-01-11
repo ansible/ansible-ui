@@ -7,7 +7,7 @@ import { Credentials } from '../access/credentials/Credentials';
 import { CreateCredential, EditCredential } from '../access/credentials/EditCredential';
 import { EdaRoles } from '../access/roles/EdaRoles';
 import { EditRole } from '../access/roles/EditRole';
-import { RoleDetails } from '../access/roles/RoleDetails';
+import { EdaRoleDetails } from '../access/roles/EdaRoleDetails';
 import { CreateControllerToken } from '../access/users/CreateControllerToken';
 import { CreateUser, EditCurrentUser, EditUser } from '../access/users/EditUser';
 import { ControllerTokens } from '../access/users/UserPage/ControllerTokens';
@@ -41,6 +41,7 @@ import { RulebookActivationHistory } from '../rulebook-activations/RulebookActiv
 import { RulebookActivationPage } from '../rulebook-activations/RulebookActivationPage/RulebookActivationPage';
 import { RulebookActivations } from '../rulebook-activations/RulebookActivations';
 import { EdaRoute } from './EdaRoutes';
+import { EdaRolePage } from '../access/roles/EdaRolePage';
 
 export function useEdaNavigation() {
   const { t } = useTranslation();
@@ -315,8 +316,19 @@ export function useEdaNavigation() {
             },
             {
               id: EdaRoute.RolePage,
-              path: ':id',
-              element: <RoleDetails />,
+              path: ':id/',
+              element: <EdaRolePage />,
+              children: [
+                {
+                  id: EdaRoute.RoleDetails,
+                  path: 'details',
+                  element: <EdaRoleDetails />,
+                },
+                {
+                  path: '',
+                  element: <Navigate to="details" />,
+                },
+              ],
             },
             {
               path: '',
