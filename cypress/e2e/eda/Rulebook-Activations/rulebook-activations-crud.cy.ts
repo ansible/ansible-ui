@@ -45,6 +45,7 @@ describe('EDA rulebook activations - Create', () => {
     cy.selectDropdownOptionByResourceName('rulebook', edaRuleBook.name);
     cy.selectDropdownOptionByResourceName('decision-environment-id', edaDecisionEnvironment.name);
     cy.intercept('POST', edaAPI`/activations/`).as('edaRBA');
+    cy.get('button#awx-token-id:not(:disabled):not(:hidden)');
     cy.clickButton(/^Create rulebook activation$/);
     cy.wait('@edaRBA').then((edaRBA) => {
       const rbaToBeDeleted = edaRBA?.response?.body as ActivationRead;

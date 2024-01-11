@@ -18,7 +18,7 @@ describe('RuleAuditActions', () => {
     cy.get('[data-cy="name-column-header"]').should('contain', 'Name');
     cy.get('[data-cy="name-column-cell"]').should('have.text', 'debug');
     cy.get('[data-cy="status-column-header"]').should('contain', 'Status');
-    cy.get('[data-cy="status-column-cell"]').should('have.text', 'Successful');
+    cy.get('[data-cy="status-column-cell"]').should('have.text', 'Success');
     cy.get('[data-cy="last-fired-date-column-header"]').should('contain', 'Last fired date');
   });
 });

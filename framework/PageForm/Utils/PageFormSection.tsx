@@ -1,5 +1,5 @@
 import { FormSection, GridItem } from '@patternfly/react-core';
-import { ReactNode } from 'react';
+import { ReactNode, useMemo } from 'react';
 import { PageFormGrid } from '../PageForm';
 
 /**
@@ -17,16 +17,32 @@ export function PageFormSection(props: {
   title?: string;
   children: ReactNode;
   singleColumn?: boolean;
+  isHorizontal?: boolean;
 }) {
+  const sectionClassNames = useMemo(
+    () =>
+      props.isHorizontal
+        ? ['pf-m-12-col', 'pf-v5-c-form', 'pf-m-horizontal']
+        : ['pf-m-12-col', 'pf-v5-c-form'],
+    [props.isHorizontal]
+  );
+  const gridItemClassNames = useMemo(
+    () => (props.isHorizontal ? ['pf-v5-c-form', 'pf-m-horizontal'] : ['pf-v5-c-form']),
+    [props.isHorizontal]
+  );
   if (!props.title) {
     return (
-      <GridItem span={12}>
+      <GridItem span={12} className={gridItemClassNames.join(' ')}>
         <PageFormGrid singleColumn={props.singleColumn}>{props.children}</PageFormGrid>
       </GridItem>
     );
   }
   return (
-    <FormSection title={props.title} style={{ marginTop: 16 }} className="pf-m-12-col">
+    <FormSection
+      title={props.title}
+      style={{ marginTop: 16 }}
+      className={sectionClassNames.join(' ')}
+    >
       <PageFormGrid singleColumn={props.singleColumn}>{props.children}</PageFormGrid>
     </FormSection>
   );

@@ -40,10 +40,10 @@ export function useUserColumns() {
         cell: (user) =>
           user.roles &&
           user.roles.length > 0 && <LabelsCell labels={user.roles.map((role) => role?.name)} />,
-        table: ColumnTableOption.Expanded,
+        table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'secondary',
-        modal: ColumnModalOption.Hidden,
+        modal: ColumnModalOption.hidden,
       },
     ],
     [getPageUrl, t]

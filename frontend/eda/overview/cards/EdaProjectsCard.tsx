@@ -1,10 +1,8 @@
 import { PlusCircleIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   PageTable,
-  useColumnsWithoutExpandedRow,
-  useColumnsWithoutSort,
+  useDashboardColumns,
   useGetPageUrl,
   usePageNavigate,
   useVisibleModalColumns,
@@ -20,9 +18,7 @@ export function EdaRecentProjectsCard(props: { view: IEdaView<EdaProject> }) {
   const { t } = useTranslation();
   const tableColumns = useProjectColumns();
   let columns = useVisibleModalColumns(tableColumns);
-  columns = useMemo(() => columns, [columns]);
-  columns = useColumnsWithoutSort(columns);
-  columns = useColumnsWithoutExpandedRow(columns);
+  columns = useDashboardColumns(columns);
   const getPageUrl = useGetPageUrl();
   const pageNavigate = usePageNavigate();
   return (

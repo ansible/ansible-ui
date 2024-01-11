@@ -50,6 +50,9 @@ import { HubNamespacePage } from '../namespaces/HubNamespacePage/HubNamespacePag
 import { Namespaces } from '../namespaces/HubNamespaces';
 import { HubDashboard } from '../overview/Dashboard';
 import { HubRoute } from './HubRoutes';
+import { RoleDetails } from '../access/roles/RolePage/RoleDetails';
+import { RolePage } from '../access/roles/RolePage/RolePage';
+import { CreateRole, EditRole } from '../access/roles/RolePage/RoleForm';
 
 export function useHubNavigation() {
   const { t } = useTranslation();
@@ -385,21 +388,26 @@ export function useHubNavigation() {
             {
               id: HubRoute.CreateRole,
               path: 'create',
-              element: <PageNotImplemented />,
+              element: <CreateRole />,
             },
             {
               id: HubRoute.EditRole,
               path: ':id/edit',
-              element: <PageNotImplemented />,
+              element: <EditRole />,
             },
             {
               id: HubRoute.RolePage,
               path: ':id/',
+              element: <RolePage />,
               children: [
                 {
                   id: HubRoute.RoleDetails,
                   path: 'details',
-                  element: <PageNotImplemented />,
+                  element: <RoleDetails />,
+                },
+                {
+                  path: '',
+                  element: <Navigate to="details" />,
                 },
               ],
             },

@@ -58,6 +58,5 @@ describe('EdaDecisionEnvironmentsCard.cy.ts', () => {
   it('Dashboard renders the correct decision environment columns', () => {
     cy.contains(/^Recently updated environments$/).should('be.visible');
     cy.contains('th', 'Name');
-    cy.contains('th', 'Last modified');
   });
 });
