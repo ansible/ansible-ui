@@ -30,6 +30,7 @@ export function NodeForm(props: { node: WorkflowNode | undefined }) {
 
   return (
     <TopologySideBar
+      data-cy="node-form-dialog"
       show
       header={<Title headingLevel="h1">{t('Node form')}</Title>}
       resizable
