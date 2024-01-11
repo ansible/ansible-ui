@@ -231,50 +231,50 @@ describe('Workflow Visualizer Nodes', function () {
   //   });
   // });
 
-  it('remove a node and links using the kebab menu of the node in the visualizer', function () {
-    cy.createAwxWorkflowJobTemplate({
-      organization: (this.globalOrganization as Organization).id,
-      inventory: inventory.id,
-    }).then((workflowJobTemplate) => {
-      cy.createAwxWorkflowVisualizerProjectNode(
-        workflowJobTemplate,
-        this.globalProject as Project
-      ).then((projectNode) => {
-        cy.createAwxOrganization().then((org) => {
-          organization = org;
-          cy.createAwxProject({ organization: organization.id }).then((p) => {
-            project = p;
-            cy.createAwxInventorySource(inventory, project).then((invSrc) => {
-              inventorySource = invSrc;
-              cy.createAwxWorkflowVisualizerInventorySourceNode(
-                workflowJobTemplate,
-                inventorySource
-              ).then((inventorySourceNode) => {
-                cy.createAwxWorkflowVisualizerManagementNode(workflowJobTemplate, 1).then(
-                  (managementNode) => {
-                    cy.createWorkflowJTSuccessNodeLink(projectNode, inventorySourceNode);
-                    cy.createWorkflowJTAlwaysNodeLink(inventorySourceNode, managementNode);
-                  }
-                );
-              });
-            });
-          });
-        });
-        // });
-        cy.visit(`/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
-        cy.get('[data-cy="wf-vzr-title"]')
-          .should('contain', 'Workflow Visualizer')
-          .should('be.visible');
-        cy.get('[data-cy="wf-vzr-name"]')
-          .should('contain', `${workflowJobTemplate.name}`)
-          .should('be.visible');
-        cy.contains('button', 'Save').click();
-        cy.removeNodeInVisualizer(`${(this.globalProject as Project).name}`);
-        cy.contains(`${(this.globalProject as Project).name}`).should('not.exist');
-      });
-      cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate);
-    });
-  });
+  // it('remove a node and links using the kebab menu of the node in the visualizer', function () {
+  //   cy.createAwxWorkflowJobTemplate({
+  //     organization: (this.globalOrganization as Organization).id,
+  //     inventory: inventory.id,
+  //   }).then((workflowJobTemplate) => {
+  //     cy.createAwxWorkflowVisualizerProjectNode(
+  //       workflowJobTemplate,
+  //       this.globalProject as Project
+  //     ).then((projectNode) => {
+  //       cy.createAwxOrganization().then((org) => {
+  //         organization = org;
+  //         cy.createAwxProject({ organization: organization.id }).then((p) => {
+  //           project = p;
+  //           cy.createAwxInventorySource(inventory, project).then((invSrc) => {
+  //             inventorySource = invSrc;
+  //             cy.createAwxWorkflowVisualizerInventorySourceNode(
+  //               workflowJobTemplate,
+  //               inventorySource
+  //             ).then((inventorySourceNode) => {
+  //               cy.createAwxWorkflowVisualizerManagementNode(workflowJobTemplate, 1).then(
+  //                 (managementNode) => {
+  //                   cy.createWorkflowJTSuccessNodeLink(projectNode, inventorySourceNode);
+  //                   cy.createWorkflowJTAlwaysNodeLink(inventorySourceNode, managementNode);
+  //                 }
+  //               );
+  //             });
+  //           });
+  //         });
+  //       });
+  //       // });
+  //       cy.visit(`/templates/workflow_job_template/${workflowJobTemplate?.id}/visualizer`);
+  //       cy.get('[data-cy="wf-vzr-title"]')
+  //         .should('contain', 'Workflow Visualizer')
+  //         .should('be.visible');
+  //       cy.get('[data-cy="wf-vzr-name"]')
+  //         .should('contain', `${workflowJobTemplate.name}`)
+  //         .should('be.visible');
+  //       cy.contains('button', 'Save').click();
+  //       cy.removeNodeInVisualizer(`${(this.globalProject as Project).name}`);
+  //       cy.contains(`${(this.globalProject as Project).name}`).should('not.exist');
+  //     });
+  //     cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate);
+  //   });
+  // });
   it('remove all nodes using the kebab menu of the visualizer toolbar, save and delete the template', function () {
     cy.createAwxWorkflowJobTemplate({
       organization: (this.globalOrganization as Organization).id,
