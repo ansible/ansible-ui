@@ -25,7 +25,7 @@ export function useProjectsFilters() {
         query: 'status__exact',
         placeholder: t('Filter by status'),
         options: [
-          { label: t('Successful'), value: 'successful' },
+          { label: t('Success'), value: 'successful' },
           { label: t('Failed'), value: 'failed' },
           { label: t('Errors'), value: 'error' },
           { label: t('Canceled'), value: 'canceled' },

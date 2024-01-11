@@ -63,6 +63,5 @@ describe('EdaProjectsCard.cy.ts', () => {
     cy.contains(/^Recently updated projects$/).should('be.visible');
     cy.contains('th', 'Name');
     cy.contains('th', 'Status');
-    cy.contains('th', 'Git hash');
   });
 });

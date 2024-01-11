@@ -25,10 +25,11 @@ export function useExecutionEnvironmentColumn() {
           })}
         />
       ),
-      table: ColumnTableOption.Expanded,
+      table: ColumnTableOption.expanded,
       card: 'hidden',
       list: 'secondary',
-      modal: ColumnModalOption.Hidden,
+      modal: ColumnModalOption.hidden,
+      dashboard: ColumnModalOption.hidden,
     }),
     [getPageUrl, t]
   );

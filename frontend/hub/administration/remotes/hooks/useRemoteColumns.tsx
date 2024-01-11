@@ -36,7 +36,7 @@ export function useRemoteColumns() {
         sort: 'pulp_created',
         defaultSort: true,
         defaultSortDirection: 'desc',
-        table: ColumnTableOption.Hidden,
+        table: ColumnTableOption.hidden,
       },
     ],
     [getPageUrl, t]

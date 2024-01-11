@@ -70,7 +70,7 @@ export function JobsChart(props: {
       variant="stackedAreaChart"
       groups={[
         {
-          label: t('Successful'),
+          label: t('Success'),
           color: successfulColor,
           values: successful,
           link: getPageUrl(AwxRoute.Jobs) + '?status=successful',

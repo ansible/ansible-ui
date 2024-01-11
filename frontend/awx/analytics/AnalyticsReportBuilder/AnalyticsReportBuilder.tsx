@@ -45,11 +45,7 @@ modify filters, add some new columns contents into the table. If more flexibilit
 */
 
 import { PerPageOptions } from '@patternfly/react-core';
-import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { useGetRequest } from '../../../common/crud/useGet';
-import { useState, useEffect } from 'react';
-import { useAnalyticsView, IAnalyticsView } from '../useAnalyticsView';
-import { PageTable } from '../../../../framework/PageTable/PageTable';
+import { useEffect, useState } from 'react';
 import {
   ITableColumn,
   ITableColumnTypeText,
@@ -57,33 +53,36 @@ import {
   PageHeader,
   PageLayout,
 } from '../../../../framework';
+import { PageTable } from '../../../../framework/PageTable/PageTable';
 import {
   IToolbarFilter,
   ToolbarFilterType,
 } from '../../../../framework/PageToolbar/PageToolbarFilter';
+import { useGetRequest } from '../../../common/crud/useGet';
+import { usePostRequest } from '../../../common/crud/usePostRequest';
 import Chart from '../components/Chart';
 import hydrateSchema from '../components/Chart/hydrateSchema';
+import { IAnalyticsView, useAnalyticsView } from '../useAnalyticsView';
 
 import { ToggleGroup, ToggleGroupItem } from '@patternfly/react-core';
 
-import { ColumnTableOption } from '../../../../framework/PageTable/PageTableColumn';
-import { IToolbarMultiSelectFilter } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarMultiSelectFilter';
 import { useLocation } from 'react-router-dom';
 import { usePageNavigate } from '../../../../framework';
+import { ColumnTableOption } from '../../../../framework/PageTable/PageTableColumn';
+import { IToolbarMultiSelectFilter } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarMultiSelectFilter';
 import { useSearchParams } from '../../../../framework/components/useSearchParams';
 
-import { ChartFunctions } from '@ansible/react-json-chart-builder';
-import { ChartSchemaElement } from '@ansible/react-json-chart-builder';
+import { ChartFunctions, ChartSchemaElement } from '@ansible/react-json-chart-builder';
 
 import { reportDefaultParams } from './constants';
 
+import { AnalyticsErrorState } from '../Reports/ErrorStates';
 import {
-  getDateFormatByGranularity,
   formattedValue,
   getClickableText,
+  getDateFormatByGranularity,
   renderAllTasksStatus,
 } from './AnalyticsReportBuilderUtils';
-import { AnalyticsErrorState } from '../Reports/ErrorStates';
 
 type KeyValue = { key: string; value: string };
 
@@ -671,7 +670,7 @@ function buildTableColumns(params: AnalyticsReportColumnBuilderProps) {
     for (const col of columns) {
       const found = params.mainData?.report?.tableHeaders?.find((item) => item.key === col.id);
       if (!found) {
-        col.table = ColumnTableOption.Expanded;
+        col.table = ColumnTableOption.expanded;
       }
     }
   }

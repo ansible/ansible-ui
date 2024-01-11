@@ -1,13 +1,10 @@
 import { PlusCircleIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   PageTable,
-  useColumnsWithoutExpandedRow,
-  useColumnsWithoutSort,
+  useDashboardColumns,
   useGetPageUrl,
   usePageNavigate,
-  useVisibleModalColumns,
 } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
 import { AwxRoute } from '../../AwxRoutes';
@@ -28,10 +25,7 @@ export function AwxRecentProjectsCard() {
   const getPageUrl = useGetPageUrl();
 
   let columns = useProjectsColumns();
-  columns = useVisibleModalColumns(columns);
-  columns = useMemo(() => [...columns], [columns]);
-  columns = useColumnsWithoutSort(columns);
-  columns = useColumnsWithoutExpandedRow(columns);
+  columns = useDashboardColumns(columns);
 
   return (
     <PageDashboardCard

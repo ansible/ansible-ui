@@ -55,7 +55,7 @@ export function useJobsFilters() {
           { label: t('Pending'), value: 'pending' },
           { label: t('Waiting'), value: 'waiting' },
           { label: t('Running'), value: 'running' },
-          { label: t('Successful'), value: 'successful' },
+          { label: t('Success'), value: 'successful' },
           { label: t('Failed'), value: 'failed' },
           { label: t('Error'), value: 'error' },
           { label: t('Canceled'), value: 'canceled' },
