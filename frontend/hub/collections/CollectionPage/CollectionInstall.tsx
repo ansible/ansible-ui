@@ -18,6 +18,7 @@ import { Trans } from 'react-i18next';
 import { HubRoute } from '../../main/HubRoutes';
 import { useGetPageUrl } from '../../../../framework';
 import { Link } from 'react-router-dom';
+import './collection-info.css';
 
 export function CollectionInstall() {
   const { t } = useTranslation();
@@ -140,9 +141,40 @@ export function CollectionInstall() {
               {t(`Download tarball`)}
             </Button>
           </PageDetail>
+
           <PageDetail label={t('Requires')}>
-            {collection?.collection_version?.require_ansible &&
-              `${t('Ansible')} ${collection.collection_version?.require_ansible}`}
+            {collection?.collection_version?.requires_ansible &&
+              `${t('Ansible')} ${collection.collection_version?.requires_ansible}`}
+          </PageDetail>
+
+          <PageDetail>
+            {content?.docs_blob?.collection_readme ? (
+              <>
+                <div className="hub-readme-container">
+                  <div
+                    className="pf-c-content"
+                    dangerouslySetInnerHTML={{
+                      __html: content?.docs_blob?.collection_readme.html,
+                    }}
+                  />
+                  <div className="hub-fade-out" />
+                </div>
+                <Link
+                  to={getPageUrl(HubRoute.CollectionDocumentation, {
+                    params: {
+                      repository: collection.repository?.name,
+                      namespace: collection.collection_version?.namespace,
+                      name: collection.collection_version?.name,
+                    },
+                    query: { version: collection.collection_version?.version },
+                  })}
+                >
+                  {t`Go to documentation`}
+                </Link>
+              </>
+            ) : (
+              ''
+            )}
           </PageDetail>
         </PageDetails>
       </PageSection>

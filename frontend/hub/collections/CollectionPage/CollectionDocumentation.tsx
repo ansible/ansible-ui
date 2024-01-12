@@ -72,7 +72,13 @@ export function CollectionDocumentation() {
 }
 
 export type CollectionVersionContentItem = {
-  docs_blob: { contents: IContents[] };
+  docs_blob: {
+    contents: IContents[];
+    collection_readme: {
+      html: string;
+      name: string;
+    };
+  };
   license: string[];
 };
 
