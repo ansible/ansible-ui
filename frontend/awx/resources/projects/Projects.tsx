@@ -5,13 +5,13 @@ import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../../
 import { usePersistentFilters } from '../../../common/PersistentFilters';
 import { useOptions } from '../../../common/crud/useOptions';
 import { AwxRoute } from '../../AwxRoutes';
+import { awxAPI } from '../../api/awx-utils';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
-import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
+import { getDocsBaseUrl } from '../../common/util/getDocsBaseUrl';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { Project } from '../../interfaces/Project';
 import { useAwxView } from '../../useAwxView';
-import { awxAPI } from '../../api/awx-utils';
 import { useProjectActions } from './hooks/useProjectActions';
 import { useProjectToolbarActions } from './hooks/useProjectToolbarActions';
 import { useProjectsColumns } from './hooks/useProjectsColumns';

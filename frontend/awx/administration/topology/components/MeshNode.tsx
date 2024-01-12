@@ -1,13 +1,4 @@
 import {
-  DEFAULT_DECORATOR_RADIUS,
-  Decorator,
-  DefaultNode,
-  TopologyQuadrant,
-  WithSelectionProps,
-  getDefaultShapeDecoratorCenter,
-} from '@patternfly/react-topology';
-import { CustomNodeProps } from '../types';
-import {
   AnsibeTowerIcon,
   CheckCircleIcon,
   ClockIcon,
@@ -19,8 +10,17 @@ import {
   RegionsIcon,
   ServerIcon,
 } from '@patternfly/react-icons';
-import { pfDanger, pfDisabled, pfInfo, pfSuccess } from '../../../../../framework';
+import {
+  DEFAULT_DECORATOR_RADIUS,
+  Decorator,
+  DefaultNode,
+  TopologyQuadrant,
+  WithSelectionProps,
+  getDefaultShapeDecoratorCenter,
+} from '@patternfly/react-topology';
 import { useMemo } from 'react';
+import { pfDanger, pfDisabled, pfInfo, pfSuccess } from '../../../../../framework';
+import { CustomNodeProps } from '../types';
 
 function getStatusIcon(nodeType: string) {
   switch (nodeType) {
@@ -56,7 +56,7 @@ function getNodeIcon(nodeType: string) {
   }
 }
 
-const MeshNode: React.FC<CustomNodeProps & WithSelectionProps> = ({
+export const MeshNode: React.FC<CustomNodeProps & WithSelectionProps> = ({
   element,
   onSelect,
   selected,
@@ -101,5 +101,3 @@ const MeshNode: React.FC<CustomNodeProps & WithSelectionProps> = ({
     </DefaultNode>
   );
 };
-
-export default MeshNode;

@@ -28,7 +28,7 @@ import {
   useNameToolbarFilter,
 } from '../../common/awx-toolbar-filters';
 import { useAwxConfig } from '../../common/useAwxConfig';
-import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
+import { getDocsBaseUrl } from '../../common/util/getDocsBaseUrl';
 import { AwxHost } from '../../interfaces/AwxHost';
 import { useAwxView } from '../../useAwxView';
 import { useDeleteHosts } from './useDeleteHosts';

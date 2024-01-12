@@ -1,12 +1,12 @@
-import React, { useState, useEffect, FunctionComponent } from 'react';
-import PropTypes from 'prop-types';
 import {
-  ToolbarFilter,
-  TextInput,
-  InputGroup,
   Button,
+  InputGroup,
   InputGroupItem,
+  TextInput,
+  ToolbarFilter,
 } from '@patternfly/react-core';
+import PropTypes from 'prop-types';
+import { FunctionComponent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { SearchIcon } from '@patternfly/react-icons';
@@ -21,7 +21,7 @@ interface Props {
   setValue: SetValue;
 }
 
-const Text: FunctionComponent<Props> = ({
+export const Text: FunctionComponent<Props> = ({
   categoryKey,
   isVisible = true,
   value = '',
@@ -90,5 +90,3 @@ Text.propTypes = {
   isVisible: PropTypes.bool,
   setValue: PropTypes.func.isRequired,
 };
-
-export default Text;

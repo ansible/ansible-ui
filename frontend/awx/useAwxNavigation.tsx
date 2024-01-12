@@ -7,9 +7,9 @@ import { AwxRolePage } from './access/roles/AwxRolePage';
 import { AwxRoles } from './access/roles/AwxRoles';
 import { Topology } from './administration/topology/Topology';
 import { Test } from './analytics/AnalyticsReportBuilder/Test';
-import Reports from './analytics/Reports/Reports';
-import ReportsList from './analytics/Reports/ReportsList/ReportsList';
-import SubscriptionUsage from './analytics/subscription-usage/SubscriptionUsage';
+import { Reports } from './analytics/Reports/Reports';
+import { ReportsList } from './analytics/Reports/ReportsList/ReportsList';
+import { SubscriptionUsage } from './analytics/subscription-usage/SubscriptionUsage';
 import { AwxOverview } from './overview/AwxOverview';
 import { useAwxActivityStreamRoutes } from './routes/useAwxActivityStreamRoutes';
 import { useAwxApplicationsRoutes } from './routes/useAwxApplicationsRoutes';
@@ -30,8 +30,8 @@ import { useAwxTeamsRoutes } from './routes/useAwxTeamsRoutes';
 import { useAwxTemplateRoutes } from './routes/useAwxTemplateRoutes';
 import { useAwxUsersRoutes } from './routes/useAwxUsersRoutes';
 import { useAwxWorkflowApprovalRoutes } from './routes/useAwxWorkflowApprovalRoutes';
-import AwxSettings from './settings/AwxSettings';
-import HostMetrics from './views/jobs/HostMetrics';
+import { AwxSettings } from './settings/AwxSettings';
+import { HostMetrics } from './views/jobs/HostMetrics';
 
 export function useAwxNavigation() {
   const { t } = useTranslation();
