@@ -43,7 +43,7 @@ export function PlatformMasthead() {
 
   const { cache } = useSWRConfig();
   const logout = useCallback(async () => {
-    await postRequest(gatewayAPI`/v1/logout/`, {});
+    await postRequest(gatewayAPI`/logout/`, {});
     for (const key of cache.keys()) {
       cache.delete(key);
     }

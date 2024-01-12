@@ -66,7 +66,7 @@ export function useDeleteOrganizations(
       actionColumns,
       onComplete,
       actionFn: (organization: PlatformOrganization, signal) =>
-        requestDelete(gatewayAPI`/v1/organizations/${organization.id.toString()}/`, signal),
+        requestDelete(gatewayAPI`/organizations/${organization.id.toString()}/`, signal),
     });
   };
   return deleteOrganizations;

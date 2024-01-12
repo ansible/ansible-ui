@@ -7,7 +7,7 @@ const mockPlatformTeam = mockPlatformTeams.results[0];
 
 describe('PlatformTeamDetails', () => {
   it('Component renders and displays team details', () => {
-    cy.intercept({ method: 'GET', path: gatewayAPI`/v1/teams/*` }, { body: mockPlatformTeam });
+    cy.intercept({ method: 'GET', path: gatewayAPI`/teams/*` }, { body: mockPlatformTeam });
     cy.mount(<PlatformTeamDetails />);
     cy.get('[data-cy="name"]').should('have.text', mockPlatformTeam.name);
     cy.get('[data-cy="description"]').should('have.text', 'This is a description');

@@ -16,7 +16,7 @@ export function useActivePlatformUser() {
 
 export function ActivePlatformUserProvider(props: { children?: ReactNode }) {
   const [activeUser, setActiveUser] = useState<PlatformUser | null | undefined>(undefined);
-  const userResponse = useGet<PlatformItemsResponse<PlatformUser>>(gatewayAPI`/v1/me`);
+  const userResponse = useGet<PlatformItemsResponse<PlatformUser>>(gatewayAPI`/me`);
   useEffect(() => {
     if (
       userResponse.data &&
