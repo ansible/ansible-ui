@@ -1,7 +1,7 @@
 import { edaAPI } from '../common/eda-utils';
-import { EdaDashboard } from './EdaDashboard';
+import { EdaOverview } from './EdaOverview';
 
-describe('EdaDashboard.cy.ts', () => {
+describe('EdaOverview.cy.ts', () => {
   beforeEach(() => {
     cy.intercept(
       { method: 'GET', url: edaAPI`/projects/*` },
@@ -54,16 +54,16 @@ describe('EdaDashboard.cy.ts', () => {
         ],
       }
     );
-    cy.mount(<EdaDashboard />);
+    cy.mount(<EdaOverview />);
   });
 
-  it('Dashboard has the correct title', () => {
+  it('Overview has the correct title', () => {
     cy.contains(
       /^Connect intelligence, analytics and service requests to enable more responsive and resilient automation.$/
     ).should('be.visible');
   });
 
-  it('Dashboard renders all components cards', () => {
+  it('Overview renders all components cards', () => {
     cy.contains('h3', 'Rulebook Activations').scrollIntoView();
     cy.contains('There are currently no rulebook activations')
       .scrollIntoView()

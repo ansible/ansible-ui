@@ -1,14 +1,14 @@
 import { HubContextProvider, HubUser } from '../common/useHubContext';
-import { HubDashboard } from './Dashboard';
+import { HubOverview } from './HubOverview';
 
-describe('HubDashboard', () => {
+describe('HubOverview', () => {
   it('"Manage view" is displayed to admins', () => {
     cy.intercept('**/_ui/v1/me/', { fixture: 'hub_admin.json' });
     cy.intercept('**/_ui/v1/settings/', { fixture: 'hub_settings.json' });
     cy.intercept('**/_ui/v1/feature-flags/', { fixture: 'hub_feature_flags.json' });
     cy.mount(
       <HubContextProvider>
-        <HubDashboard />
+        <HubOverview />
       </HubContextProvider>
     );
     cy.contains('button', 'Manage view').should('be.visible');
@@ -22,7 +22,7 @@ describe('HubDashboard', () => {
     cy.intercept('**/_ui/v1/feature-flags/', { fixture: 'hub_feature_flags.json' });
     cy.mount(
       <HubContextProvider>
-        <HubDashboard />
+        <HubOverview />
       </HubContextProvider>
     );
     cy.contains('button', 'Manage view').should('be.visible');

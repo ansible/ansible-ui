@@ -1,4 +1,4 @@
-import { IAwxDashboardData } from '../AwxDashboard';
+import { IAwxDashboardData } from '../AwxOverview';
 import { AwxCountsCard } from './AwxCountsCard';
 
 describe('AwxCountsCard.cy.ts', () => {
