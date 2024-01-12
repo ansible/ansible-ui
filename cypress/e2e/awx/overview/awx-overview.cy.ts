@@ -4,7 +4,7 @@ import { Job } from '../../../../frontend/awx/interfaces/Job';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 
-describe('Dashboard: General UI tests - resources count and empty state check', () => {
+describe('AWX Overview', () => {
   before(() => {
     cy.awxLogin();
   });

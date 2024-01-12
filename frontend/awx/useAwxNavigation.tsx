@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
 import { PageNavigationItem } from '../../framework/PageNavigation/PageNavigationItem';
 import { AwxRoute } from './AwxRoutes';
+import { AwxRoleDetails } from './access/roles/AwxRoleDetails';
 import { AwxRolePage } from './access/roles/AwxRolePage';
 import { AwxRoles } from './access/roles/AwxRoles';
 import { Topology } from './administration/topology/Topology';
@@ -9,7 +10,7 @@ import { Test } from './analytics/AnalyticsReportBuilder/Test';
 import Reports from './analytics/Reports/Reports';
 import ReportsList from './analytics/Reports/ReportsList/ReportsList';
 import SubscriptionUsage from './analytics/subscription-usage/SubscriptionUsage';
-import { AwxDashboard } from './dashboard/AwxDashboard';
+import { AwxOverview } from './overview/AwxOverview';
 import { useAwxActivityStreamRoutes } from './routes/useAwxActivityStreamRoutes';
 import { useAwxApplicationsRoutes } from './routes/useAwxApplicationsRoutes';
 import { useAwxCredentialRoutes } from './routes/useAwxCredentialRoutes';
@@ -29,9 +30,8 @@ import { useAwxTeamsRoutes } from './routes/useAwxTeamsRoutes';
 import { useAwxTemplateRoutes } from './routes/useAwxTemplateRoutes';
 import { useAwxUsersRoutes } from './routes/useAwxUsersRoutes';
 import { useAwxWorkflowApprovalRoutes } from './routes/useAwxWorkflowApprovalRoutes';
-import Settings from './settings/Settings';
+import AwxSettings from './settings/AwxSettings';
 import HostMetrics from './views/jobs/HostMetrics';
-import { AwxRoleDetails } from './access/roles/AwxRoleDetails';
 
 export function useAwxNavigation() {
   const { t } = useTranslation();
@@ -59,7 +59,7 @@ export function useAwxNavigation() {
       id: AwxRoute.Overview,
       label: t('Overview'),
       path: 'overview',
-      element: <AwxDashboard />,
+      element: <AwxOverview />,
     },
     awxJobsRoutes,
     awxTemplateRoutes,
@@ -132,7 +132,7 @@ export function useAwxNavigation() {
           id: AwxRoute.Settings,
           label: t('Settings'),
           path: 'settings',
-          element: <Settings />,
+          element: <AwxSettings />,
         },
       ],
     },

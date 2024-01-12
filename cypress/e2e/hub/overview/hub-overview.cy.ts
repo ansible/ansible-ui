@@ -1,6 +1,6 @@
-import { randomString } from '../../../framework/utils/random-string';
-import { hubAPI } from '../../support/formatApiPathForHub';
-import { HubDashboard } from './constants';
+import { randomString } from '../../../../framework/utils/random-string';
+import { hubAPI } from '../../../support/formatApiPathForHub';
+import { HubOverview } from '../constants';
 
 const namespaceName = 'e2e_namespace_' + randomString(4, undefined, { isLowercase: true });
 
@@ -14,7 +14,7 @@ const collectionNames: { [key: string]: { [key: string]: string } } = {
   },
 };
 
-describe.skip('hub dashboard', () => {
+describe.skip('HUB Overview', () => {
   before(() => {
     cy.hubLogin();
     // Create collections
@@ -30,12 +30,12 @@ describe.skip('hub dashboard', () => {
   });
   it('render the hub dashboard', () => {
     cy.navigateTo('hub', 'overview');
-    cy.get('.pf-v5-c-title').contains(HubDashboard.title);
+    cy.get('.pf-v5-c-title').contains(HubOverview.title);
     cy.get('section.pf-v5-c-page__main-section')
       .first()
       .within(() => {
-        cy.get('.pf-v5-c-title').should('contain', HubDashboard.title);
-        cy.get('span.pf-v5-c-truncate__start').should('contain', HubDashboard.description);
+        cy.get('.pf-v5-c-title').should('contain', HubOverview.title);
+        cy.get('span.pf-v5-c-truncate__start').should('contain', HubOverview.description);
       });
     cy.contains('button', 'Manage view').should('be.visible');
   });
