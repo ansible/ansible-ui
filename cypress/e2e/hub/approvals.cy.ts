@@ -9,4 +9,6 @@ describe('Approvals', () => {
     cy.navigateTo('hub', Approvals.url);
     cy.verifyPageTitle(Approvals.title);
   });
+
+  it('can reject the collection')
 });

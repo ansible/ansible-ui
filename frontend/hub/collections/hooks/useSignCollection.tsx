@@ -55,7 +55,6 @@ export function useSignCollection(
           )
         ),
         keyFn: collectionKeyFn,
-        isDanger: true,
         confirmationColumns,
         actionColumns,
         onComplete,
