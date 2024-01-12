@@ -1,10 +1,10 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { Team } from '../../../interfaces/Team';
 import { User } from '../../../interfaces/User';
 import { useRemoveUsersFromResource } from '../../common/useRemoveUserFromResource';
 import { useSelectUsers } from './useSelectUsers';
-import { awxAPI } from '../../../api/awx-utils';
 
 export function useSelectAndRemoveUsersFromTeam(onClose?: (users: User[]) => void) {
   const { t } = useTranslation();

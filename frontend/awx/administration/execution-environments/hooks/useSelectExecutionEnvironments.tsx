@@ -1,12 +1,12 @@
 import { useTranslation } from 'react-i18next';
 import { useSelectDialog } from '../../../../../framework';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { useAwxView } from '../../../common/useAwxView';
 import { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
-import { useAwxView } from '../../../useAwxView';
 import {
   useExecutionEnvironmentsColumns,
   useExecutionEnvironmentsFilters,
 } from '../ExecutionEnvironments';
-import { awxAPI } from '../../../api/awx-utils';
 
 export function useSelectExecutionEnvironments(organizationId?: string) {
   const { t } = useTranslation();

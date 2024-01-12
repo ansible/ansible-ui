@@ -2,13 +2,13 @@
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { PageHeader, PageLayout, useGetPageUrl } from '../../../../../framework';
-import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
+import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { useGetItem } from '../../../../common/crud/useGet';
-import { AwxRoute } from '../../../AwxRoutes';
 import { AwxError } from '../../../common/AwxError';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { NotificationTemplate } from '../../../interfaces/NotificationTemplate';
-import { awxAPI } from '../../../api/awx-utils';
+import { AwxRoute } from '../../../main/AwxRoutes';
 
 export function NotificationPage() {
   const { t } = useTranslation();

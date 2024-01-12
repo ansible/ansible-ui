@@ -3,8 +3,8 @@ import { FieldPath, FieldPathValue, FieldValues, Path } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { PageFormAsyncSelect } from '../../../../../framework/PageForm/Inputs/PageFormAsyncSelect';
 import { requestGet } from '../../../../common/crud/Data';
-import { awxAPI } from '../../../api/awx-utils';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { Project } from '../../../interfaces/Project';
 import { useSelectProject } from '../hooks/useSelectProject';
 

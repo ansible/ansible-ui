@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { useParams } from 'react-router-dom';
-import { User } from '../../../interfaces/User';
-import { useGet, useGetItem } from '../../../../common/crud/useGet';
-import { UserDetails, UserDetailsType } from '../../../../common/access/UserDetails';
-import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
-import { Organization } from '../../../interfaces/Organization';
 import { useMemo } from 'react';
+import { useParams } from 'react-router-dom';
 import { useGetPageUrl } from '../../../../../framework';
-import { AwxRoute } from '../../../AwxRoutes';
-import { awxAPI } from '../../../api/awx-utils';
+import { UserDetails, UserDetailsType } from '../../../../common/access/UserDetails';
+import { useGet, useGetItem } from '../../../../common/crud/useGet';
+import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { Organization } from '../../../interfaces/Organization';
+import { User } from '../../../interfaces/User';
+import { AwxRoute } from '../../../main/AwxRoutes';
 
 export function AwxUserDetails() {
   const params = useParams<{ id: string }>();

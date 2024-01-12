@@ -4,9 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { PageFormAsyncSelect } from '../../../../../framework/PageForm/Inputs/PageFormAsyncSelect';
 import { requestGet } from '../../../../common/crud/Data';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { InventorySource } from '../../../interfaces/InventorySource';
 import { useSelectInventorySource } from '../hooks/useSelectInventorySource';
-import { awxAPI } from '../../../api/awx-utils';
 
 export function PageFormInventorySourceSelect<
   TFieldValues extends FieldValues = FieldValues,

@@ -1,10 +1,10 @@
 import { useCallback } from 'react';
 import { usePageDialog } from '../../../../../framework';
 import { MultiSelectDialog } from '../../../../../framework/PageDialogs/MultiSelectDialog';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { useAwxView } from '../../../common/useAwxView';
 import { Organization } from '../../../interfaces/Organization';
-import { useAwxView } from '../../../useAwxView';
 import { useOrganizationsColumns, useOrganizationsFilters } from '../Organizations';
-import { awxAPI } from '../../../api/awx-utils';
 
 function SelectOrganizations(props: {
   title: string;

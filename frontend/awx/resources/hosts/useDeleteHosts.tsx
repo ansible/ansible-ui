@@ -3,9 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { compareStrings } from '../../../../framework';
 import { useNameColumn } from '../../../common/columns';
 import { getItemKey, requestDelete } from '../../../common/crud/Data';
-import { awxAPI } from '../../api/awx-utils';
-import { AwxHost } from '../../interfaces/AwxHost';
+import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxBulkConfirmation } from '../../common/useAwxBulkConfirmation';
+import { AwxHost } from '../../interfaces/AwxHost';
 import { useHostsColumns } from './Hosts';
 
 export function useDeleteHosts(onComplete: (hosts: AwxHost[]) => void) {

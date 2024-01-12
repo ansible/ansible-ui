@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { useSelectDialog } from '../../../../../framework';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { useAwxView } from '../../../common/useAwxView';
 import { Project } from '../../../interfaces/Project';
-import { useAwxView } from '../../../useAwxView';
-import { awxAPI } from '../../../api/awx-utils';
 import { useProjectsColumns } from './useProjectsColumns';
 import { useProjectsFilters } from './useProjectsFilters';
 

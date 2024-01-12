@@ -4,9 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { PageFormAsyncSelect } from '../../../../../framework/PageForm/Inputs/PageFormAsyncSelect';
 import { requestGet } from '../../../../common/crud/Data';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { useSelectWorkflowJobTemplate } from '../hooks/useSelectWorkflowJobTemplate';
-import { awxAPI } from '../../../api/awx-utils';
 
 export function PageFormWorkflowJobTemplateSelect<
   TFieldValues extends FieldValues = FieldValues,

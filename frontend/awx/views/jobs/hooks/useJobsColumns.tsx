@@ -13,11 +13,11 @@ import {
 import { ElapsedTimeCell } from '../../../../../framework/PageCells/ElapsedTimeCell';
 import { StatusCell } from '../../../../common/Status';
 import { useOptions } from '../../../../common/crud/useOptions';
-import { AwxRoute } from '../../../AwxRoutes';
-import { awxAPI } from '../../../api/awx-utils';
 import { CredentialLabel } from '../../../common/CredentialLabel';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { UnifiedJob } from '../../../interfaces/UnifiedJob';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { getLaunchedByDetails, getScheduleUrl, isJobRunning } from '../jobUtils';
 import { useGetJobOutputUrl } from '../useGetJobOutputUrl';
 

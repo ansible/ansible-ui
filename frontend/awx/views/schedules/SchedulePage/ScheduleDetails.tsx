@@ -1,14 +1,14 @@
 import { useTranslation } from 'react-i18next';
-import { LoadingPage, PageDetail, PageDetails, useGetPageUrl } from '../../../../../framework';
-import { UserDateDetail } from '../../../common/UserDateDetail';
-import { Schedule } from '../../../interfaces/Schedule';
-import { formatDateString } from '../../../../../framework/utils/formatDateString';
-import { useGetItem } from '../../../../common/crud/useGet';
 import { useNavigate, useParams } from 'react-router-dom';
-import { awxAPI } from '../../../api/awx-utils';
-import { AwxError } from '../../../common/AwxError';
+import { LoadingPage, PageDetail, PageDetails, useGetPageUrl } from '../../../../../framework';
+import { formatDateString } from '../../../../../framework/utils/formatDateString';
 import { LastModifiedPageDetail } from '../../../../common/LastModifiedPageDetail';
-import { AwxRoute } from '../../../AwxRoutes';
+import { useGetItem } from '../../../../common/crud/useGet';
+import { AwxError } from '../../../common/AwxError';
+import { UserDateDetail } from '../../../common/UserDateDetail';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { Schedule } from '../../../interfaces/Schedule';
+import { AwxRoute } from '../../../main/AwxRoutes';
 
 export function ScheduleDetails() {
   const { t } = useTranslation();

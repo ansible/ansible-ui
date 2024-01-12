@@ -20,10 +20,10 @@ import {
   useProjectNameColumn,
   useTypeColumn,
 } from '../../../../common/columns';
-import { AwxRoute } from '../../../AwxRoutes';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { SummaryFieldRecentJob } from '../../../interfaces/summary-fields/summary-fields';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { Sparkline } from '../components/Sparkline';
 
 function useActivityColumn() {

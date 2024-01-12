@@ -12,10 +12,10 @@ import {
 } from '../../../../../framework';
 import { DetailInfo } from '../../../../../framework/components/DetailInfo';
 import { useGetItem } from '../../../../common/crud/useGet';
-import { awxAPI } from '../../../api/awx-utils';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { useAwxView } from '../../../common/useAwxView';
 import { Organization } from '../../../interfaces/Organization';
 import { User } from '../../../interfaces/User';
-import { useAwxView } from '../../../useAwxView';
 import {
   useOrganizationsColumns,
   useOrganizationsFilters,

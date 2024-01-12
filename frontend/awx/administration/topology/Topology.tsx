@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout } from '../../../../framework';
 import { useGet } from '../../../common/crud/useGet';
-import { awxAPI } from '../../api/awx-utils';
+import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import { getDocsBaseUrl } from '../../common/util/getDocsBaseUrl';
 import { MeshVisualizer } from '../../interfaces/MeshVisualizer';

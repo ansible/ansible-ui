@@ -27,7 +27,7 @@ import { EmptyStateFilter } from '../../../../framework/components/EmptyStateFil
 import { LoadingState } from '../../../../framework/components/LoadingState';
 import { useSearchParams } from '../../../../framework/components/useSearchParams';
 import { postRequest as requestPost } from '../../../common/crud/Data';
-import { awxAPI } from '../../api/awx-utils';
+import { awxAPI } from '../../common/api/awx-utils';
 import { Chart } from '../components/Chart';
 import { hydrateSchema } from '../components/Chart/hydrateSchema';
 import { ApiOptionsType } from '../components/Toolbar/types';

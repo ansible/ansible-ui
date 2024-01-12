@@ -5,10 +5,10 @@ import { requestGet } from '../../../../common/crud/Data';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 
+import { awxAPI } from '../../../common/api/awx-utils';
 import type { JobTemplate } from '../../../interfaces/JobTemplate';
 import type { Label } from '../../../interfaces/Label';
 import type { Organization } from '../../../interfaces/Organization';
-import { awxAPI } from '../../../api/awx-utils';
 
 type LabelPayload = (
   labels: { name: string; id?: number }[],

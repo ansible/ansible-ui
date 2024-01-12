@@ -12,9 +12,9 @@ import {
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
 import { formatDateString } from '../../../../framework/utils/dateTimeHelpers';
 import { requestGet, requestPatch } from '../../../common/crud/Data';
-import { AwxPageForm } from '../../AwxPageForm';
-import { awxAPI } from '../../api/awx-utils';
 import { AwxError } from '../../common/AwxError';
+import { AwxPageForm } from '../../common/AwxPageForm';
+import { awxAPI } from '../../common/api/awx-utils';
 import { Schedule } from '../../interfaces/Schedule';
 import { RuleInputs } from './components/RuleInputs';
 import { useScheuleRulesRoutes } from './hooks/ruleHelpers';

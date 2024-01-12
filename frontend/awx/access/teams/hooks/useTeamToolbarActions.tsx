@@ -9,13 +9,13 @@ import {
   useGetPageUrl,
 } from '../../../../../framework';
 import { useOptions } from '../../../../common/crud/useOptions';
-import { AwxRoute } from '../../../AwxRoutes';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { IAwxView } from '../../../common/useAwxView';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { Team } from '../../../interfaces/Team';
-import { IAwxView } from '../../../useAwxView';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { useSelectUsersAddTeams } from '../../users/hooks/useSelectUsersAddTeams';
 import { useDeleteTeams } from './useDeleteTeams';
-import { awxAPI } from '../../../api/awx-utils';
 
 export function useTeamToolbarActions(view: IAwxView<Team>) {
   const { t } = useTranslation();

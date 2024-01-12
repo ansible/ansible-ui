@@ -15,17 +15,17 @@ import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSe
 import { postRequest, requestPatch } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { AwxPageForm } from '../../AwxPageForm';
-import { AwxRoute } from '../../AwxRoutes';
 import { PageFormSelectOrganization } from '../../access/organizations/components/PageFormOrganizationSelect';
 import { PageFormInstanceGroupSelect } from '../../administration/instance-groups/components/PageFormInstanceGroupSelect';
-import { awxAPI } from '../../api/awx-utils';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
+import { AwxPageForm } from '../../common/AwxPageForm';
 import { PageFormLabelSelect } from '../../common/PageFormLabelSelect';
+import { awxAPI } from '../../common/api/awx-utils';
 import { getAddedAndRemoved } from '../../common/util/getAddedAndRemoved';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { Inventory } from '../../interfaces/Inventory';
 import { Label } from '../../interfaces/Label';
+import { AwxRoute } from '../../main/AwxRoutes';
 
 export interface InventoryFields {
   name: string;

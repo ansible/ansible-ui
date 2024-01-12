@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
 import { useGetItem } from '../../../../common/crud/useGet';
-import { awxAPI } from '../../../api/awx-utils';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { Team } from '../../../interfaces/Team';
 import { ResourceAccessList } from '../../common/ResourceAccessList';
 

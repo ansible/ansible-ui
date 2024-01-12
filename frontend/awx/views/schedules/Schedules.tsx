@@ -1,18 +1,18 @@
+import { CubesIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
+import { usePersistentFilters } from '../../../common/PersistentFilters';
+import { useOptions } from '../../../common/crud/useOptions';
+import { awxAPI } from '../../common/api/awx-utils';
+import { useAwxView } from '../../common/useAwxView';
+import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { Schedule } from '../../interfaces/Schedule';
-import { useAwxView } from '../../useAwxView';
-import { awxAPI } from '../../api/awx-utils';
+import { scheduleResourceTypeOptions, useGetSchedulCreateUrl } from './hooks/scheduleHelpers';
 import { useSchedulesActions } from './hooks/useSchedulesActions';
 import { useSchedulesColumns } from './hooks/useSchedulesColumns';
 import { useSchedulesFilter } from './hooks/useSchedulesFilter';
 import { useScheduleToolbarActions } from './hooks/useSchedulesToolbarActions';
-import { useOptions } from '../../../common/crud/useOptions';
-import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
-import { CubesIcon } from '@patternfly/react-icons';
-import { scheduleResourceTypeOptions, useGetSchedulCreateUrl } from './hooks/scheduleHelpers';
-import { usePersistentFilters } from '../../../common/PersistentFilters';
 
 export function Schedules(props: { sublistEndpoint?: string }) {
   const { t } = useTranslation();
