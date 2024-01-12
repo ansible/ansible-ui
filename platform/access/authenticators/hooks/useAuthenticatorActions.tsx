@@ -27,7 +27,7 @@ export function useAuthenticatorToolbarActions(view: IPlatformView<Authenticator
   const getPageUrl = useGetPageUrl();
   const deleteAuthenticators = useDeleteAuthenticators(view.unselectItemsAndRefresh);
 
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/v1/authenticators/`);
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/authenticators/`);
   const canCreateAuthenticator = Boolean(data && data.actions && data.actions['POST']);
   const toolbarActions = useMemo<IPageAction<Authenticator>[]>(
     () => [
@@ -76,7 +76,7 @@ export function useAuthenticatorRowActions(view: IPlatformView<Authenticator>) {
         title: `${authenticator.name} ${enabled ? t('enabled') : t('disabled')}.`,
         timeout: 5000,
       };
-      await requestPatch(gatewayAPI`/v1/authenticators/${authenticator.id.toString()}/`, {
+      await requestPatch(gatewayAPI`/authenticators/${authenticator.id.toString()}/`, {
         enabled: enabled,
       })
         .then(() => alertToaster.addAlert(alert))

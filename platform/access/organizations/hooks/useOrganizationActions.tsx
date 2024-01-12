@@ -24,7 +24,7 @@ export function useOrganizationToolbarActions(view: IPlatformView<PlatformOrgani
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
 
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/v1/organizations`);
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/organizations`);
   const canCreateOrganization = Boolean(data && data.actions && data.actions['POST']);
   const deleteOrganizations = useDeleteOrganizations(view.unselectItemsAndRefresh);
 

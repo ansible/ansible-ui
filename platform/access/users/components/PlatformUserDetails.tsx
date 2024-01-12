@@ -8,7 +8,7 @@ import { useUsersColumns } from '../hooks/useUserColumns';
 export function PlatformUserDetails() {
   const params = useParams<{ id: string }>();
   const columns = useUsersColumns();
-  const { data: user, isLoading } = useGetItem<PlatformUser>(gatewayAPI`/v1/users`, params.id);
+  const { data: user, isLoading } = useGetItem<PlatformUser>(gatewayAPI`/users`, params.id);
   if (isLoading) return <LoadingPage />;
   return <PageDetailsFromColumns columns={columns} item={user} />;
 }

@@ -56,7 +56,7 @@ export function useDeleteAuthenticators(onComplete: (authenticators: Authenticat
       actionColumns,
       onComplete,
       actionFn: (authenticator: Authenticator, signal) =>
-        requestDelete(gatewayAPI`/v1/authenticators/${authenticator.id.toString()}/`, signal),
+        requestDelete(gatewayAPI`/authenticators/${authenticator.id.toString()}/`, signal),
     });
   };
   return deleteAuthenticators;

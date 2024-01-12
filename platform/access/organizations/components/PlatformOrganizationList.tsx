@@ -24,12 +24,12 @@ export function PlatformOrganizationList() {
   const pageNavigate = usePageNavigate();
 
   const view = usePlatformView<PlatformOrganization>({
-    url: gatewayAPI`/v1/organizations`,
+    url: gatewayAPI`/organizations`,
     toolbarFilters,
     tableColumns,
   });
 
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/v1/organizations`);
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/organizations`);
   const canCreateOrganization = Boolean(data && data.actions && data.actions['POST']);
   const toolbarActions = useOrganizationToolbarActions(view);
   const rowActions = useOrganizationRowActions(view);

@@ -4,7 +4,7 @@ import { PlatformUserDetails } from './PlatformUserDetails';
 
 const mockUser = {
   id: 8,
-  url: gatewayAPI`/v1/users/8/`,
+  url: gatewayAPI`/users/8/`,
   created_on: '2023-11-01T20:04:54.789802Z',
   created_by: 'admin',
   modified_on: '2023-11-01T20:04:54.789827Z',
@@ -23,7 +23,7 @@ const mockUser = {
 
 describe('User details', () => {
   it('Renders first & last name, username, email, last login, created & modified timestamps', () => {
-    cy.intercept(gatewayAPI`/v1/users/*`, mockUser);
+    cy.intercept(gatewayAPI`/users/*`, mockUser);
     cy.mount(<PlatformUserDetails />);
     cy.get('[data-cy="first-name"]').should('have.text', 'New');
     cy.get('[data-cy="last-name"]').should('have.text', 'User');

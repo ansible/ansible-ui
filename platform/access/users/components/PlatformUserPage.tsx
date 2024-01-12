@@ -19,7 +19,7 @@ import { useUserRowActions } from '../hooks/useUserActions';
 export function PlatformUserPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { error, data: user, refresh } = useGetItem<PlatformUser>(gatewayAPI`/v1/users`, params.id);
+  const { error, data: user, refresh } = useGetItem<PlatformUser>(gatewayAPI`/users`, params.id);
   const getPageUrl = useGetPageUrl();
   const actions = useUserRowActions();
   if (error) return <AwxError error={error} handleRefresh={refresh} />;

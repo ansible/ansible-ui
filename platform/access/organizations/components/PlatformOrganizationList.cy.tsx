@@ -18,7 +18,7 @@ describe('Organizations list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayAPI`/v1/organizations*`,
+          url: gatewayAPI`/organizations*`,
         },
         {
           fixture: 'platformOrganizations.json',
@@ -69,7 +69,7 @@ describe('Organizations list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayAPI`/v1/organizations*`,
+          url: gatewayAPI`/organizations*`,
         },
         {
           fixture: 'emptyList.json',
@@ -112,7 +112,7 @@ describe('Organizations list', () => {
   });
   describe('Error retrieving list', () => {
     it('Displays error loading organizations', () => {
-      cy.intercept({ method: 'GET', url: gatewayAPI`/v1/organizations/*` }, { statusCode: 500 });
+      cy.intercept({ method: 'GET', url: gatewayAPI`/organizations/*` }, { statusCode: 500 });
       cy.mount(<PlatformOrganizationList />);
       cy.contains('Error loading organizations');
     });
