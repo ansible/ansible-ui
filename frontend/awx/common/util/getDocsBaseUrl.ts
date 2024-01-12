@@ -1,6 +1,6 @@
 import { Config } from '../../interfaces/Config';
 
-export default function getDocsBaseUrl(config: Config | null | undefined) {
+export function getDocsBaseUrl(config: Config | null | undefined) {
   let version = 'latest';
   const licenseType = config?.license_info?.license_type;
   if (licenseType && licenseType !== 'open') {

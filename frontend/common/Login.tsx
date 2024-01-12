@@ -1,7 +1,7 @@
 import { Title, TitleSizes } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import ErrorBoundary from '../../framework/components/ErrorBoundary';
+import { ErrorBoundary } from '../../framework/components/ErrorBoundary';
 import { useFrameworkTranslations } from '../../framework/useFrameworkTranslations';
 import background from '../../node_modules/@patternfly/patternfly/assets/images/pfbg_1200.jpg';
 import { LoginForm } from './LoginForm';

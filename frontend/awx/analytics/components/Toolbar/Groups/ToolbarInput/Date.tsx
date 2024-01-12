@@ -11,7 +11,7 @@ interface Props {
   };
 }
 
-const DateInput: FunctionComponent<Props> = ({
+export const DateInput: FunctionComponent<Props> = ({
   categoryKey,
   value = '',
   setValue = () => ({}),
@@ -31,5 +31,3 @@ const DateInput: FunctionComponent<Props> = ({
     />
   );
 };
-
-export default DateInput;

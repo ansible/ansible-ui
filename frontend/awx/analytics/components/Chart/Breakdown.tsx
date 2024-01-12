@@ -7,9 +7,9 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
+import PropTypes from 'prop-types';
 import React from 'react';
 import styled from 'styled-components';
-import PropTypes from 'prop-types';
 
 const BarContainer = styled.div`
   display: flex;
@@ -52,7 +52,7 @@ function title(str: string) {
   return str[0].toUpperCase() + str.slice(1).toLowerCase();
 }
 
-const Breakdown = ({ categoryCount, categoryColor, showPercent = false }) => {
+export const Breakdown = ({ categoryCount, categoryColor, showPercent = false }) => {
   const totalCount = Object.values(categoryCount).reduce(
     (accumulated, currentVal) => accumulated + currentVal
   );
@@ -136,5 +136,3 @@ Breakdown.propTypes = {
   categoryCount: PropTypes.object.isRequired,
   showPercent: PropTypes.bool,
 };
-
-export default Breakdown;

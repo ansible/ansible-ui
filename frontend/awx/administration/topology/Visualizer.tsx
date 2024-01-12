@@ -1,10 +1,5 @@
-import { useMemo, useState, useEffect, useRef, ComponentType } from 'react';
-import * as d3 from 'd3';
 import {
-  action,
   ComponentFactory,
-  createTopologyControlButtons,
-  defaultControlButtonsOptions,
   DefaultGroup,
   EdgeModel,
   EdgeStyle,
@@ -21,17 +16,22 @@ import {
   Visualization,
   VisualizationProvider,
   VisualizationSurface,
-  withSelection,
+  action,
+  createTopologyControlButtons,
+  defaultControlButtonsOptions,
   withPanZoom,
+  withSelection,
 } from '@patternfly/react-topology';
-import { MeshVisualizer } from '../../interfaces/MeshVisualizer';
-import { InstanceDetailSidebar } from './Sidebar';
-import { WebWorkerResponse } from './types';
+import * as d3 from 'd3';
+import { ComponentType, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
-import Loader from './Loader';
-import Legend from './Legend';
-import MeshEdge from './components/MeshEdge';
-import MeshNode from './components/MeshNode';
+import { MeshVisualizer } from '../../interfaces/MeshVisualizer';
+import { Legend } from './Legend';
+import { Loader } from './Loader';
+import { InstanceDetailSidebar } from './Sidebar';
+import { MeshEdge } from './components/MeshEdge';
+import { MeshNode } from './components/MeshNode';
+import { WebWorkerResponse } from './types';
 
 const ContentLoading = styled(Loader)`
   height: 100%;

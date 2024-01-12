@@ -1,6 +1,6 @@
 /* eslint-disable i18next/no-literal-string */
-import PageWizard from './PageWizard';
 import { PageFormTextInput } from '../PageForm/Inputs/PageFormTextInput';
+import { PageWizard } from './PageWizard';
 
 describe('PageWizard', () => {
   const Review = () => {

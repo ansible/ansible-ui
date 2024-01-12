@@ -21,7 +21,7 @@ import { AwxItemsResponse } from './common/AwxItemsResponse';
 import { useAwxActiveUser } from './common/useAwxActiveUser';
 import { useAwxConfig } from './common/useAwxConfig';
 import { useAwxWebSocketSubscription } from './common/useAwxWebSocket';
-import getDocsBaseUrl from './common/util/getDocsBaseUrl';
+import { getDocsBaseUrl } from './common/util/getDocsBaseUrl';
 import { WorkflowApproval } from './interfaces/WorkflowApproval';
 
 export function AwxMasthead() {
