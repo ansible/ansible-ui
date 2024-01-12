@@ -152,7 +152,7 @@ export function CollectionInstall() {
               <>
                 <div className="hub-readme-container">
                   <div
-                    className="pf-c-content"
+                    className="pf-v5-c-content"
                     dangerouslySetInnerHTML={{
                       __html: content?.docs_blob?.collection_readme.html,
                     }}
