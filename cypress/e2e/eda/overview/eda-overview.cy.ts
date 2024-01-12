@@ -5,7 +5,7 @@ import { EdaProject } from '../../../../frontend/eda/interfaces/EdaProject';
 import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRulebookActivation';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
 
-describe('EDA Dashboard', () => {
+describe('EDA Overview', () => {
   let edaProject: EdaProject;
   // let gitHookDeployRuleBook: EdaRulebook;
   let edaDecisionEnvironment: EdaDecisionEnvironment;

@@ -17,7 +17,7 @@ import { EdaRuleAuditCard } from './cards/EdaRuleAuditCard';
 import { RuleAuditChart } from './cards/EdaRuleAuditChartCard';
 import { EdaRulebookActivationsCard } from './cards/EdaRulebookActivationsCard';
 
-export function EdaDashboard() {
+export function EdaOverview() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const edaProjectView = useEdaView<EdaProject>({

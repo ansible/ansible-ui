@@ -10,7 +10,7 @@ import { Test } from './analytics/AnalyticsReportBuilder/Test';
 import { Reports } from './analytics/Reports/Reports';
 import { ReportsList } from './analytics/Reports/ReportsList/ReportsList';
 import { SubscriptionUsage } from './analytics/subscription-usage/SubscriptionUsage';
-import { AwxDashboard } from './dashboard/AwxDashboard';
+import { AwxOverview } from './overview/AwxOverview';
 import { useAwxActivityStreamRoutes } from './routes/useAwxActivityStreamRoutes';
 import { useAwxApplicationsRoutes } from './routes/useAwxApplicationsRoutes';
 import { useAwxCredentialRoutes } from './routes/useAwxCredentialRoutes';
@@ -30,7 +30,7 @@ import { useAwxTeamsRoutes } from './routes/useAwxTeamsRoutes';
 import { useAwxTemplateRoutes } from './routes/useAwxTemplateRoutes';
 import { useAwxUsersRoutes } from './routes/useAwxUsersRoutes';
 import { useAwxWorkflowApprovalRoutes } from './routes/useAwxWorkflowApprovalRoutes';
-import { Settings } from './settings/Settings';
+import { AwxSettings } from './settings/AwxSettings';
 import { HostMetrics } from './views/jobs/HostMetrics';
 
 export function useAwxNavigation() {
@@ -59,7 +59,7 @@ export function useAwxNavigation() {
       id: AwxRoute.Overview,
       label: t('Overview'),
       path: 'overview',
-      element: <AwxDashboard />,
+      element: <AwxOverview />,
     },
     awxJobsRoutes,
     awxTemplateRoutes,
@@ -132,7 +132,7 @@ export function useAwxNavigation() {
           id: AwxRoute.Settings,
           label: t('Settings'),
           path: 'settings',
-          element: <Settings />,
+          element: <AwxSettings />,
         },
       ],
     },

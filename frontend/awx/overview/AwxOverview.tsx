@@ -6,6 +6,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import useSWR from 'swr';
 import { PageHeader, PageLayout, usePageDialog } from '../../../framework';
 import { PageDashboard } from '../../../framework/PageDashboard/PageDashboard';
+import { awxAPI } from '../api/awx-utils';
 import { useAwxConfig } from '../common/useAwxConfig';
 import { WelcomeModal } from './WelcomeModal';
 import { AwxCountsCard } from './cards/AwxCountsCard';
@@ -14,12 +15,11 @@ import { AwxRecentInventoriesCard } from './cards/AwxRecentInventoriesCard';
 import { AwxRecentJobsCard } from './cards/AwxRecentJobsCard';
 import { AwxRecentProjectsCard } from './cards/AwxRecentProjectsCard';
 import { useManagedAwxDashboard } from './hooks/useManagedAwxDashboard';
-import { awxAPI } from '../api/awx-utils';
 
 const HIDE_WELCOME_MESSAGE = 'hide-welcome-message';
 type Resource = { id: string; name: string };
 
-export function AwxDashboard() {
+export function AwxOverview() {
   const { t } = useTranslation();
   const { openManageDashboard, managedResources } = useManagedAwxDashboard();
   const product: string = process.env.PRODUCT ?? t('AWX');
@@ -58,12 +58,12 @@ export function AwxDashboard() {
         description={t('Define, operate, scale, and delegate automation across your enterprise.')}
         controls={renderCustomizeControls()}
       />
-      <DashboardInternal managedResources={managedResources} />
+      <AwxOverviewInternal managedResources={managedResources} />
     </PageLayout>
   );
 }
 
-function DashboardInternal(props: { managedResources: Resource[] }) {
+function AwxOverviewInternal(props: { managedResources: Resource[] }) {
   const { managedResources } = props;
   const { data, isLoading } = useSWR<IAwxDashboardData>(awxAPI`/dashboard/`, (url: string) =>
     fetch(url).then((r) => r.json())
