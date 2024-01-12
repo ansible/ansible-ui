@@ -1,7 +1,7 @@
 import { Split, SplitItem, ToolbarGroup } from '@patternfly/react-core';
 import { SelectOptionObject } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
-import DateInput from './Date';
+import { DateInput } from './Date';
 
 const today = (days = 0): Date => {
   const date = new Date();

@@ -22,7 +22,7 @@ export interface ReportItemsResponse {
   };
 }
 
-export default function Reports() {
+export function Reports() {
   const activeUser = useAwxActiveUser();
   const { data, error } = useSWR<ReportItemsResponse, Error>(
     awxAPI`/analytics/report/automation_calculator/`,

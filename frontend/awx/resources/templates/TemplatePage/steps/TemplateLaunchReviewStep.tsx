@@ -13,7 +13,7 @@ import type { Credential } from '../../../../interfaces/Credential';
 import type { JobTemplate } from '../../../../interfaces/JobTemplate';
 import type { TemplateLaunch } from '../TemplateLaunchWizard';
 
-export default function TemplateLaunchReviewStep(props: { template: JobTemplate }) {
+export function TemplateLaunchReviewStep(props: { template: JobTemplate }) {
   const { template } = props;
   const { t } = useTranslation();
   const { wizardData } = usePageWizard();

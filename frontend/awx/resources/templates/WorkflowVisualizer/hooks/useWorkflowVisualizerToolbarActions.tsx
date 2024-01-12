@@ -29,12 +29,12 @@ import { usePageNavigate } from '../../../../../../framework';
 import { getItemKey, postRequest } from '../../../../../common/crud/Data';
 import { AwxRoute } from '../../../../AwxRoutes';
 import { awxAPI } from '../../../../api/awx-utils';
+import { useAwxBulkConfirmation } from '../../../../common/useAwxBulkConfirmation';
 import { useAwxConfig } from '../../../../common/useAwxConfig';
-import getDocsBaseUrl from '../../../../common/util/getDocsBaseUrl';
+import { getDocsBaseUrl } from '../../../../common/util/getDocsBaseUrl';
 import { stringIsUUID } from '../../../../common/util/strings';
 import { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
 import { WorkflowNode } from '../../../../interfaces/WorkflowNode';
-import { useAwxBulkConfirmation } from '../../../../common/useAwxBulkConfirmation';
 import { AddNodeButton } from '../components/AddNodeButton';
 
 export function useWorkflowVisualizerToolbarActions(

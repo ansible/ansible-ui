@@ -1,20 +1,20 @@
+import { CubesIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../../framework';
-import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
+import { useOptions } from '../../../common/crud/useOptions';
+import { AwxRoute } from '../../AwxRoutes';
+import { awxAPI } from '../../api/awx-utils';
 import { useAwxConfig } from '../../common/useAwxConfig';
-import { useAwxView } from '../../useAwxView';
+import { getDocsBaseUrl } from '../../common/util/getDocsBaseUrl';
 import { CredentialType } from '../../interfaces/CredentialType';
-import { useCredentialTypesColumns } from './hooks/useCredentialTypesColumns';
-import { useCredentialTypesFilters } from './hooks/useCredentialTypesFilters';
+import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
+import { useAwxView } from '../../useAwxView';
 import {
   useCredentialTypeRowActions,
   useCredentialTypeToolbarActions,
 } from './hooks/useCredentialTypeActions';
-import { CubesIcon } from '@patternfly/react-icons';
-import { AwxRoute } from '../../AwxRoutes';
-import { useOptions } from '../../../common/crud/useOptions';
-import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
-import { awxAPI } from '../../api/awx-utils';
+import { useCredentialTypesColumns } from './hooks/useCredentialTypesColumns';
+import { useCredentialTypesFilters } from './hooks/useCredentialTypesFilters';
 
 export function CredentialTypes() {
   const { t } = useTranslation();

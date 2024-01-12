@@ -14,6 +14,7 @@ import { AwxConfigProvider } from './common/useAwxConfig';
 import { WebSocketProvider } from './common/useAwxWebSocket';
 import { useAwxNavigation } from './useAwxNavigation';
 
+// eslint-disable-next-line no-restricted-exports
 export default function AwxMain() {
   const navigation = useAwxNavigation();
   return (

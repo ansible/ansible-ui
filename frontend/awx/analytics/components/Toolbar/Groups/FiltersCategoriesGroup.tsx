@@ -1,11 +1,10 @@
-import React, { FunctionComponent, useState } from 'react';
 import { ToolbarGroup } from '@patternfly/react-core';
 import { SelectOptionProps } from '@patternfly/react-core/deprecated';
-
-import CategoryDropdown from './CategoryDropdown';
-import ToolbarInput from './ToolbarInput';
+import { FunctionComponent, useState } from 'react';
 import { optionsForCategories } from '../constants';
-import { SetValues, AttributeType } from '../types';
+import { AttributeType, SetValues } from '../types';
+import { CategoryDropdown } from './CategoryDropdown';
+import { ToolbarInput } from './ToolbarInput';
 
 interface Props {
   filterCategories: Record<string, SelectOptionProps[]>;
@@ -14,7 +13,7 @@ interface Props {
   setFilters: SetValues;
 }
 
-const FilterCategoriesGroup: FunctionComponent<Props> = ({
+export const FilterCategoriesGroup: FunctionComponent<Props> = ({
   filterCategories,
   defaultSelected,
   filters,
@@ -48,5 +47,3 @@ const FilterCategoriesGroup: FunctionComponent<Props> = ({
     </ToolbarGroup>
   );
 };
-
-export default FilterCategoriesGroup;

@@ -1,5 +1,5 @@
 import { edaAPI } from '../../common/eda-utils';
-import EdaRuleAuditChartCard from './EdaRuleAuditChartCard';
+import { RuleAuditChart } from './EdaRuleAuditChartCard';
 
 describe('EdaRuleAuditChart.cy.ts', () => {
   beforeEach(() => {
@@ -23,7 +23,7 @@ describe('EdaRuleAuditChart.cy.ts', () => {
         ],
       }
     );
-    cy.mount(<EdaRuleAuditChartCard />);
+    cy.mount(<RuleAuditChart />);
   });
 
   it('Dashboard renders the rule audit graph for one successful run', () => {
@@ -284,7 +284,7 @@ describe('EdaRuleAuditChart.cy.ts', () => {
         ],
       }
     );
-    cy.mount(<EdaRuleAuditChartCard />);
+    cy.mount(<RuleAuditChart />);
   });
 
   it('Dashboard renders the rule audit graph for successful and failed runs', () => {

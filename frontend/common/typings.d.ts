@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-exports */
 type SvgrComponent = React.StatelessComponent<React.SVGAttributes<SVGElement>>;
 
 declare module '*.svg' {

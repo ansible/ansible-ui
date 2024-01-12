@@ -1,16 +1,15 @@
-import React, { FunctionComponent } from 'react';
 import {
-  ToolbarGroup,
   Button,
   ButtonVariant,
+  ToolbarGroup,
   ToolbarGroupVariant,
   ToolbarItem,
 } from '@patternfly/react-core';
 import { SelectOptionProps } from '@patternfly/react-core/deprecated';
 import { SortAmountDownIcon, SortAmountUpIcon } from '@patternfly/react-icons';
-
-import ToolbarInput from './ToolbarInput';
-import { SetValues, AttributeType } from '../types';
+import { FunctionComponent } from 'react';
+import { AttributeType, SetValues } from '../types';
+import { ToolbarInput } from './ToolbarInput';
 
 interface Props {
   filters: Record<string, AttributeType>;
@@ -18,7 +17,7 @@ interface Props {
   sort_options: SelectOptionProps[];
 }
 
-const SortByGroup: FunctionComponent<Props> = ({ filters, setFilters, sort_options }) => (
+export const SortByGroup: FunctionComponent<Props> = ({ filters, setFilters, sort_options }) => (
   <ToolbarGroup variant={ToolbarGroupVariant['filter-group']}>
     <ToolbarItem>
       <ToolbarInput
@@ -40,5 +39,3 @@ const SortByGroup: FunctionComponent<Props> = ({ filters, setFilters, sort_optio
     </ToolbarItem>
   </ToolbarGroup>
 );
-
-export default SortByGroup;

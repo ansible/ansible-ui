@@ -24,7 +24,7 @@ interface Props {
   readOnly: boolean;
 }
 
-const CalculationCost: FunctionComponent<Props> = ({
+export const CalculationCost: FunctionComponent<Props> = ({
   costManual = 0,
   setFromCalculation = () => ({}),
   costAutomation = 0,
@@ -79,5 +79,3 @@ const CalculationCost: FunctionComponent<Props> = ({
     </Card>
   );
 };
-
-export default CalculationCost;

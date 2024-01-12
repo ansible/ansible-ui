@@ -31,7 +31,7 @@ import { CredentialLabel } from '../../../common/CredentialLabel';
 import { ExecutionEnvironmentDetail } from '../../../common/ExecutionEnvironmentDetail';
 import { useAwxConfig } from '../../../common/useAwxConfig';
 import { useAwxWebSocketSubscription } from '../../../common/useAwxWebSocket';
-import getDocsBaseUrl from '../../../common/util/getDocsBaseUrl';
+import { getDocsBaseUrl } from '../../../common/util/getDocsBaseUrl';
 import { Project } from '../../../interfaces/Project';
 
 export function ProjectDetails(props: { projectId?: string }) {

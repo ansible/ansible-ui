@@ -1,4 +1,4 @@
-export { default as FilterCategoriesGroup } from './FiltersCategoriesGroup';
-export { default as QuickDateGroup } from './QuickDateGroup';
-export { default as SortByGroup } from './SortByGroup';
-export { default as SettingsPanel } from './SettingsPanel';
+export { FilterCategoriesGroup } from './FiltersCategoriesGroup';
+export { QuickDateGroup } from './QuickDateGroup';
+export { SettingsPanel } from './SettingsPanel';
+export { SortByGroup } from './SortByGroup';

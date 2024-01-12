@@ -31,7 +31,7 @@ interface ISubscriptionUsageChartData {
   ];
 }
 
-export default function SubscriptionUsage() {
+export function SubscriptionUsage() {
   const { t } = useTranslation();
   const toolbarFilters = useSubscriptionUsageFilters();
   const [dateRange, setDateRange] = useState<IFilterState>({ dateRange: ['year'] });

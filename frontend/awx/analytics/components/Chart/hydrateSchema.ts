@@ -11,7 +11,7 @@ import { AttributeType } from '../Toolbar/types';
  * @param schema The stringified version of the schema.
  * @returns The hidrated schema with passed variables.
  */
-const hydrateSchema =
+export const hydrateSchema =
   (schema: ChartSchemaElement[]) =>
   (props: {
     label?: string;
@@ -33,5 +33,3 @@ const hydrateSchema =
 
     return JSON.parse(hydratedSchema) as ChartSchemaElement[];
   };
-
-export default hydrateSchema;
