@@ -38,7 +38,7 @@ export function EdaRoles() {
 
 export function EdaRolesTable() {
   const { t } = useTranslation();
-  const { data, isLoading } = useGet<EdaItemsResponse<EdaRole>>(edaAPI`/roles/`);
+  const { data, isLoading, error } = useGet<EdaItemsResponse<EdaRole>>(edaAPI`/roles/`);
   const roles = useMemo(() => data?.results ?? [], [data?.results]);
   const getPageUrl = useGetPageUrl();
   const columns = useMemo<ITableColumn<EdaRole>[]>(
@@ -91,6 +91,7 @@ export function EdaRolesTable() {
     items: data?.results ?? [],
     tableColumns: columns,
     toolbarFilters,
+    error,
   });
 
   if (isLoading) return <LoadingPage />;
