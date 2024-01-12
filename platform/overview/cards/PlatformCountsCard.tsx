@@ -1,7 +1,7 @@
 import useSWR from 'swr';
-import { awxAPI } from '../../../cypress/support/formatApiPathForAwx';
 import { IAwxDashboardData } from '../../../frontend/awx/overview/AwxOverview';
 import { AwxCountsCard } from '../../../frontend/awx/overview/cards/AwxCountsCard';
+import { awxAPI } from '../../../frontend/awx/common/api/awx-utils';
 
 export function PlatformCountsCard() {
   const { data, isLoading } = useSWR<IAwxDashboardData>(awxAPI`/dashboard/`, (url: string) =>
