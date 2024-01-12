@@ -2,9 +2,9 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageNavigationItem } from '../../../../framework';
 import { PageNotImplemented } from '../../../../framework/PageEmptyStates/PageNotImplemented';
-import { WorkflowApprovalDetails } from '../../views/workflow-approvals/WorkflowApprovalPage/WorkflowApprovalDetails';
-import { WorkflowApprovalPage } from '../../views/workflow-approvals/WorkflowApprovalPage/WorkflowApprovalPage';
-import { WorkflowApprovals } from '../../views/workflow-approvals/WorkflowApprovals';
+import { WorkflowApprovalDetails } from '../../administration/workflow-approvals/WorkflowApprovalPage/WorkflowApprovalDetails';
+import { WorkflowApprovalPage } from '../../administration/workflow-approvals/WorkflowApprovalPage/WorkflowApprovalPage';
+import { WorkflowApprovals } from '../../administration/workflow-approvals/WorkflowApprovals';
 import { AwxRoute } from '../AwxRoutes';
 
 export function useAwxWorkflowApprovalRoutes() {
