@@ -17,13 +17,12 @@ describe('Collections- List View', () => {
     cy.verifyPageTitle(Collections.title);
   });
 
-  // after(() => {
-  // cy.deleteCollectionFromSystem(thisCollectionName);
-  // });
+  after(() => {
+    cy.cleanupCollections();
+  });
 
   it('user can upload and then delete a new collection', () => {
     cy.getOrCreateCollection().then((thisCollection) => {
-      cy.log('COLLECTION', thisCollection);
       const thisCollectionName = thisCollection?.split('-').slice(-2, -1).toString();
       cy.navigateTo('hub', Collections.url);
       cy.verifyPageTitle(Collections.title);
@@ -56,7 +55,6 @@ describe('Collections- List View', () => {
       );
       cy.wait('@collections');
       cy.get('[data-cy="table-view"]').click();
-      // cy.deleteCollectionFromSystem(thisCollectionName);
       cy.clickTableRowKebabAction(thisCollectionName, 'delete-entire-collection-from-system');
       cy.get('[data-ouia-component-id="confirm"]').click();
       cy.get('[data-ouia-component-id="submit"]').click();
