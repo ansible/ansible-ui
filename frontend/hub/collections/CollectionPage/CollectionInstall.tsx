@@ -19,11 +19,16 @@ import { HubRoute } from '../../main/HubRoutes';
 import { useGetPageUrl } from '../../../../framework';
 import { Link } from 'react-router-dom';
 import './collection-info.css';
+import { useState } from 'react';
+import { CodeBlock } from '@patternfly/react-core';
+import { CodeBlockCode } from '@patternfly/react-core';
 
 export function CollectionInstall() {
   const { t } = useTranslation();
   const { collection } = useOutletContext<{ collection: CollectionVersionSearch }>();
   const downloadLinkRef = React.useRef<HTMLAnchorElement>(null);
+  const [showSignature, setShowSignature] = useState(false);
+
   const { basePath, error } = useRepositoryBasePath(
     collection.repository?.name ?? '',
     collection.repository?.pulp_href
@@ -117,7 +122,6 @@ export function CollectionInstall() {
                         namespace: collection.collection_version?.namespace,
                         name: collection.collection_version?.name,
                       },
-
                       query: { version: collection.collection_version?.version },
                     })}
                   >
@@ -140,6 +144,23 @@ export function CollectionInstall() {
             >
               {t(`Download tarball`)}
             </Button>
+          </PageDetail>
+
+          <PageDetail label={t('Signature')}>
+            <Button
+              variant="link"
+              icon={<DownloadIcon />}
+              onClick={() => {
+                if (!showSignature) {
+                  setShowSignature(true);
+                } else {
+                  setShowSignature(false);
+                }
+              }}
+            >
+              {showSignature ? t(`Hide signature`) : t(`Show signature`)}
+            </Button>
+            {showSignature && <ShowSignature collection={collection} />}
           </PageDetail>
 
           <PageDetail label={t('Requires')}>
@@ -181,3 +202,53 @@ export function CollectionInstall() {
     </Scrollable>
   );
 }
+
+function ShowSignature(props: { collection: CollectionVersionSearch }) {
+  const { collection } = props;
+
+  const { basePath, error: pathError } = useRepositoryBasePath(
+    collection.repository?.name || '',
+    collection.repository?.pulp_href
+  );
+
+  const namespace = collection.collection_version?.namespace || '';
+  const name = collection.collection_version?.name || '';
+  const version = collection.collection_version?.version || '';
+
+  let url = hubAPI`/v3/plugin/ansible/content/${basePath}/collections/index/${namespace}/${name}/versions/${version}/`;
+  if (!basePath) {
+    url = '';
+  }
+
+  const { data: signData, error: signError } = useGet<SignatureType>(url);
+
+  if (pathError) {
+    return <HubError error={{ name: '', message: pathError }} />;
+  }
+
+  if (signError) {
+    return <HubError error={signError} />;
+  }
+
+  if ((!signData && !signError) || (!basePath && !pathError)) {
+    return <LoadingPage />;
+  }
+
+  if (signData) {
+    const signatures = signData.signatures;
+
+    return signatures.map((signatureItem, idx: number) => {
+      return (
+        <CodeBlock key={idx}>
+          <CodeBlockCode>{signatureItem.signature}</CodeBlockCode>
+        </CodeBlock>
+      );
+    });
+  }
+
+  return <></>;
+}
+
+type SignatureType = {
+  signatures: [{ signature: string }];
+};
