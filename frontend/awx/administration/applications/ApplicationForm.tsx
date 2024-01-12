@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import useSWR from 'swr';
@@ -13,14 +14,13 @@ import {
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { AwxPageForm } from '../../AwxPageForm';
-import { AwxRoute } from '../../AwxRoutes';
-import { awxAPI } from '../../api/awx-utils';
-import { Application } from '../../interfaces/Application';
 import { PageFormOrganizationSelect } from '../../access/organizations/components/PageFormOrganizationSelect';
-import { Organization } from '../../interfaces/Organization';
 import { getOrganizationByName } from '../../access/organizations/utils/getOrganizationByName';
-import { useWatch } from 'react-hook-form';
+import { AwxPageForm } from '../../common/AwxPageForm';
+import { awxAPI } from '../../common/api/awx-utils';
+import { Application } from '../../interfaces/Application';
+import { Organization } from '../../interfaces/Organization';
+import { AwxRoute } from '../../main/AwxRoutes';
 
 const ClientType = {
   Confidential: 'confidential',

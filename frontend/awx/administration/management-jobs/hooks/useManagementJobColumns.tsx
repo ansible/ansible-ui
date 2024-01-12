@@ -6,8 +6,8 @@ import {
   useModifiedColumn,
   useNameColumn,
 } from '../../../../common/columns';
-import { AwxRoute } from '../../../AwxRoutes';
 import { SystemJobTemplate } from '../../../interfaces/SystemJobTemplate';
+import { AwxRoute } from '../../../main/AwxRoutes';
 
 export function useManagementJobColumns(options?: {
   disableSort?: boolean;

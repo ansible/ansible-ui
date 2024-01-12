@@ -7,11 +7,11 @@ import {
   usePageNavigate,
 } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
-import { AwxRoute } from '../../AwxRoutes';
-import { awxAPI } from '../../api/awx-utils';
+import { awxAPI } from '../../common/api/awx-utils';
+import { useAwxView } from '../../common/useAwxView';
 import { Inventory } from '../../interfaces/Inventory';
+import { AwxRoute } from '../../main/AwxRoutes';
 import { useInventoriesColumns } from '../../resources/inventories/hooks/useInventoriesColumns';
-import { useAwxView } from '../../useAwxView';
 
 export function AwxRecentInventoriesCard() {
   const { t } = useTranslation();

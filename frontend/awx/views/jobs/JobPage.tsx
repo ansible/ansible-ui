@@ -5,9 +5,9 @@ import { PageHeader, PageLayout } from '../../../../framework';
 import { useGetPageUrl } from '../../../../framework/PageNavigation/useGetPageUrl';
 import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
 import { useGet } from '../../../common/crud/useGet';
-import { AwxRoute } from '../../AwxRoutes';
+import { awxAPI } from '../../common/api/awx-utils';
 import { Job } from '../../interfaces/Job';
-import { awxAPI } from '../../api/awx-utils';
+import { AwxRoute } from '../../main/AwxRoutes';
 
 export function JobPage() {
   const { t } = useTranslation();

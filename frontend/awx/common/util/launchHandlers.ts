@@ -2,7 +2,7 @@ import { postRequest, requestGet } from '../../../common/crud/Data';
 import { LaunchConfiguration } from '../../interfaces/LaunchConfiguration';
 
 import { Job } from '../../interfaces/Job';
-import { awxAPI } from '../../api/awx-utils';
+import { awxAPI } from '../api/awx-utils';
 // TODO: Add launch prompt functionality.  This includes, but it not limited to:
 // 1) Fetching labels from api
 // 2) Fetching survey from api

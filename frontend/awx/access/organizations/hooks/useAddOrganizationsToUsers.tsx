@@ -1,10 +1,10 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
-import { awxAPI } from '../../../api/awx-utils';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { useAwxBulkActionDialog } from '../../../common/useAwxBulkActionDialog';
 import { Organization } from '../../../interfaces/Organization';
 import { User } from '../../../interfaces/User';
-import { useAwxBulkActionDialog } from '../../../common/useAwxBulkActionDialog';
 
 export function useAddOrganizationsToUsers() {
   const { t } = useTranslation();

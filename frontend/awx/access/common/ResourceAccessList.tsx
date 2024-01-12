@@ -9,10 +9,10 @@ import {
   PageTable,
   usePageNavigate,
 } from '../../../../framework';
-import { AwxRoute } from '../../AwxRoutes';
 import { useAwxActiveUser } from '../../common/useAwxActiveUser';
+import { useAwxView } from '../../common/useAwxView';
 import { AccessRole, User } from '../../interfaces/User';
-import { useAwxView } from '../../useAwxView';
+import { AwxRoute } from '../../main/AwxRoutes';
 import { useSelectUsersAddTeams } from '../users/hooks/useSelectUsersAddTeams';
 import { useUsersFilters } from '../users/hooks/useUsersFilters';
 import { useDeleteRoleConfirmationDialog } from './DeleteRoleConfirmation';

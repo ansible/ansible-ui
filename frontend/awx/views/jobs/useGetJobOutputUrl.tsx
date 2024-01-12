@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useGetPageUrl } from '../../../../framework';
-import { AwxRoute } from '../../AwxRoutes';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
+import { AwxRoute } from '../../main/AwxRoutes';
 
 export function useGetJobOutputUrl() {
   const getPageUrl = useGetPageUrl();

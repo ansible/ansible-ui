@@ -13,13 +13,13 @@ import {
 import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { useGet, useGetItem } from '../../../../common/crud/useGet';
-import { AwxRoute } from '../../../AwxRoutes';
-import { awxAPI } from '../../../api/awx-utils';
 import { AwxError } from '../../../common/AwxError';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { Organization } from '../../../interfaces/Organization';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { useTemplateActions } from '../hooks/useTemplateActions';
 
 export function TemplatePage() {
