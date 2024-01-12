@@ -168,11 +168,13 @@ Cypress.Commands.add(
       failOnStatusCode?: boolean;
     }
   ) => {
-    const thisName = collectionName?.collection_version?.name.toString();
-    cy.requestDelete(
-      hubAPI`/v3/plugin/ansible/content/community/collections/index/ibm/${thisName}/`,
-      options
-    );
+    if (collectionName) {
+      const thisName = collectionName.collection_version.name;
+      cy.requestDelete(
+        hubAPI`/v3/plugin/ansible/content/community/collections/index/ibm/${thisName}/`,
+        options
+      );
+    }
   }
 );
 
