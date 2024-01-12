@@ -1,5 +1,5 @@
 import { edaAPI } from '../../common/eda-utils';
-import { EdaDashboard } from '../EdaDashboard';
+import { EdaOverview } from '../EdaOverview';
 
 describe('EdaProjectsCard.cy.ts', () => {
   beforeEach(() => {
@@ -57,7 +57,7 @@ describe('EdaProjectsCard.cy.ts', () => {
         results: [],
       }
     );
-    cy.mount(<EdaDashboard />);
+    cy.mount(<EdaOverview />);
   });
   it('Dashboard renders the correct project columns', () => {
     cy.contains(/^Recently updated projects$/).should('be.visible');
