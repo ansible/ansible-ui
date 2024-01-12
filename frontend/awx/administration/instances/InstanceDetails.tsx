@@ -44,6 +44,7 @@ import { Instance } from '../../interfaces/Instance';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { useInstanceActions } from './hooks/useInstanceActions';
 import { useNodeTypeTooltip } from './hooks/useNodeTypeTooltip';
+import { useAwxActiveUser } from '../../common/useAwxActiveUser';
 
 export function InstanceDetails() {
   const { t } = useTranslation();
@@ -123,6 +124,7 @@ export function InstanceDetailsTab(props: {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const getPageUrl = useGetPageUrl();
+  const activeUser = useAwxActiveUser();
   const {
     instance,
     instanceGroups,
@@ -131,6 +133,7 @@ export function InstanceDetailsTab(props: {
     handleInstanceForksSlider,
   } = props;
   const toolTipMap: { [item: string]: string } = useNodeTypeTooltip();
+  const capacityAvailable = instance.cpu_capacity !== 0 && instance.mem_capacity !== 0;
   return (
     <PageDetails>
       <PageDetail label={t('Name')} data-cy="name">
@@ -222,15 +225,13 @@ export function InstanceDetailsTab(props: {
           onChange={(_event: SliderOnChangeEvent, value: number) =>
             void handleInstanceForksSlider(instance, value)
           }
-          isDisabled={
-            // need to add rbac for super user
-            !instance.enabled
-          }
+          isDisabled={!activeUser?.is_superuser || !instance.enabled || !capacityAvailable}
         />
       </PageDetail>
       <PageDetail label={t('Enabled')} data-cy="enabled">
         <Switch
           id="enable-instance"
+          isDisabled={!activeUser?.is_superuser}
           label={t('Enabled')}
           labelOff={t('Disabled')}
           isChecked={instance.enabled}
