@@ -94,6 +94,29 @@ describe('Topology view', () => {
         cy.get('button[aria-label="Close"]').click();
       });
   });
+  it('should show disabled instance forks slider when instance has 0 cpu and memory capacity', () => {
+    // Adjusting instance capacity while other concurrent tests are running could have unwanted side-effects affecting job runs. We should mock the response data in this scenario.
+    cy.intercept(
+      { method: 'GET', url: awxAPI`/instances/1/` },
+      { fixture: 'instance_hop.json' }
+    ).as('getInstance');
+    cy.navigateTo('awx', 'topology-view');
+    cy.wait('@getMeshVisualizer')
+      .its('response.body')
+      .then((data: MeshVisualizer) => {
+        cy.get(`[data-id="${data.nodes[0].id}"]`).click();
+        cy.get('[data-cy="mesh-viz-sidebar"]').should('be.visible');
+        cy.wait('@getInstance')
+          .its('response.body')
+          .then((instance: Instance) => {
+            if (instance.enabled) {
+              cy.get('.pf-v5-c-slider__thumb').should('have.attr', 'aria-disabled');
+              cy.get('.pf-v5-c-slider__thumb').should('have.attr', 'aria-disabled', 'true');
+            }
+          });
+        cy.get('button[aria-label="Close"]').click();
+      });
+  });
   it('should show enabled/disabled when instance is toggled from sidebar', () => {
     // Enabling/disabling an instance while other concurrent tests are running could have unwanted side-effects affecting job runs. We should mock the response data in this scenario.
     cy.intercept({ method: 'GET', url: awxAPI`/instances/1/` }).as('getInstance');
