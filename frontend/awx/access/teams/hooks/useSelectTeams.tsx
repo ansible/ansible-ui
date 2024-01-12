@@ -1,11 +1,11 @@
 import { useCallback } from 'react';
 import { usePageDialog } from '../../../../../framework';
 import { MultiSelectDialog } from '../../../../../framework/PageDialogs/MultiSelectDialog';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { useAwxView } from '../../../common/useAwxView';
 import { Team } from '../../../interfaces/Team';
-import { useAwxView } from '../../../useAwxView';
 import { useTeamsColumns } from './useTeamsColumns';
 import { useTeamsFilters } from './useTeamsFilters';
-import { awxAPI } from '../../../api/awx-utils';
 
 function SelectTeams(props: { title: string; onSelect: (teams: Team[]) => void }) {
   const toolbarFilters = useTeamsFilters();

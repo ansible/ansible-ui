@@ -5,10 +5,10 @@ import { PageFormCheckbox, PageHeader, PageLayout, useGetPageUrl } from '../../.
 import { PageFormSlider } from '../../../../framework/PageForm/Inputs/PageFormSlider';
 import { PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
 import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data';
-import { AwxPageForm } from '../../AwxPageForm';
-import { AwxRoute } from '../../AwxRoutes';
+import { AwxPageForm } from '../../common/AwxPageForm';
+import { awxAPI } from '../../common/api/awx-utils';
 import { Instance } from '../../interfaces/Instance';
-import { awxAPI } from '../../api/awx-utils';
+import { AwxRoute } from '../../main/AwxRoutes';
 
 export function EditInstance() {
   const { t } = useTranslation();

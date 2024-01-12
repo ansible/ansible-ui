@@ -1,17 +1,17 @@
+import { CubesIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IToolbarFilter, PageHeader, PageLayout, PageTable } from '../../../../framework';
+import { awxAPI } from '../../common/api/awx-utils';
+import { useNameToolbarFilter } from '../../common/awx-toolbar-filters';
+import { useAwxView } from '../../common/useAwxView';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
-import { useAwxView } from '../../useAwxView';
-import { awxAPI } from '../../api/awx-utils';
-import { useInstanceGroupsColumns } from './hooks/useInstanceGroupColumns';
 import {
   useDisableCreateInstanceGroup,
   useInstanceGroupRowActions,
   useInstanceGroupToolbarActions,
 } from './hooks/useInstanceGroupActions';
-import { CubesIcon } from '@patternfly/react-icons';
-import { useNameToolbarFilter } from '../../common/awx-toolbar-filters';
+import { useInstanceGroupsColumns } from './hooks/useInstanceGroupColumns';
 
 export function InstanceGroups() {
   const { t } = useTranslation();

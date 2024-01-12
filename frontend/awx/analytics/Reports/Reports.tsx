@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import useSWR from 'swr';
 import { PageHeader, PageLayout } from '../../../../framework';
 import { requestGet } from '../../../common/crud/Data';
-import { awxAPI } from '../../api/awx-utils';
+import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxActiveUser } from '../../common/useAwxActiveUser';
 import { AutomationCalculator } from './AutomationCalculator';
 import { AnalyticsErrorState } from './ErrorStates';

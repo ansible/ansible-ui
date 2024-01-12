@@ -4,8 +4,8 @@ import useSWR from 'swr';
 import { PageFormSelect, PageFormTextInput } from '../../../../../framework';
 import { PageFormHidden } from '../../../../../framework/PageForm/Utils/PageFormHidden';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { ProjectFields } from '../ProjectPage/ProjectForm';
-import { awxAPI } from '../../../api/awx-utils';
 
 interface IConfigData {
   project_base_dir: string | null;

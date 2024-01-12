@@ -1,7 +1,7 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { useGet } from '../../common/crud/useGet';
-import { awxAPI } from '../api/awx-utils';
 import { User } from '../interfaces/User';
+import { awxAPI } from './api/awx-utils';
 import { AwxItemsResponse } from './AwxItemsResponse';
 
 const AwxActiveUserContext = createContext<User | null | undefined>(undefined);

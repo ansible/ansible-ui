@@ -4,10 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import { PageTable, useDashboardColumns } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
 import { useGetPageUrl } from '../../../../framework/PageNavigation/useGetPageUrl';
-import { AwxRoute } from '../../AwxRoutes';
-import { awxAPI } from '../../api/awx-utils';
+import { awxAPI } from '../../common/api/awx-utils';
+import { useAwxView } from '../../common/useAwxView';
 import { Job } from '../../interfaces/Job';
-import { useAwxView } from '../../useAwxView';
+import { AwxRoute } from '../../main/AwxRoutes';
 import { useJobsColumns } from '../../views/jobs/hooks/useJobsColumns';
 
 export function AwxRecentJobsCard() {

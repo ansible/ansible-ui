@@ -7,9 +7,9 @@ import {
   PageActionType,
   useGetPageUrl,
 } from '../../../../../framework';
-import { AwxRoute } from '../../../AwxRoutes';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { useDeleteTemplates } from '../hooks/useDeleteTemplates';
 import { useLaunchTemplate } from './useLaunchTemplate';
 

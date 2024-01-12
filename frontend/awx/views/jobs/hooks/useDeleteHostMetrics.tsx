@@ -3,9 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { compareStrings } from '../../../../../framework';
 import { useNameColumn } from '../../../../common/columns';
 import { getItemKey, requestDelete } from '../../../../common/crud/Data';
-import { awxAPI } from '../../../api/awx-utils';
-import { HostMetric } from '../../../interfaces/HostMetric';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxBulkConfirmation } from '../../../common/useAwxBulkConfirmation';
+import { HostMetric } from '../../../interfaces/HostMetric';
 import { useHostMetricsColumns } from './useHostMetricsColumns';
 
 export function useDeleteHostMetrics(onComplete: (host: HostMetric[]) => void) {

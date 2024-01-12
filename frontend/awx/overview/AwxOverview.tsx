@@ -6,7 +6,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import useSWR from 'swr';
 import { PageHeader, PageLayout, usePageDialog } from '../../../framework';
 import { PageDashboard } from '../../../framework/PageDashboard/PageDashboard';
-import { awxAPI } from '../api/awx-utils';
+import { awxAPI } from '../common/api/awx-utils';
 import { useAwxConfig } from '../common/useAwxConfig';
 import { WelcomeModal } from './WelcomeModal';
 import { AwxCountsCard } from './cards/AwxCountsCard';

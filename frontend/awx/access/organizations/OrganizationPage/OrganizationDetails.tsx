@@ -11,13 +11,13 @@ import {
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { LastModifiedPageDetail } from '../../../../common/LastModifiedPageDetail';
 import { useGet, useGetItem } from '../../../../common/crud/useGet';
-import { AwxRoute } from '../../../AwxRoutes';
-import { awxAPI } from '../../../api/awx-utils';
 import { CredentialLabel } from '../../../common/CredentialLabel';
 import { ExecutionEnvironmentDetail } from '../../../common/ExecutionEnvironmentDetail';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { Credential } from '../../../interfaces/Credential';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { Organization } from '../../../interfaces/Organization';
+import { AwxRoute } from '../../../main/AwxRoutes';
 
 function useGalaxyCredentials(orgId: string) {
   const { data } = useGet<{ results: Credential[] }>(

@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ITableColumn, TextCell, useGetPageUrl } from '../../../../../framework';
-import { AwxRoute } from '../../../AwxRoutes';
 import { useCreatedColumn } from '../../../../common/columns';
 import { User } from '../../../interfaces/User';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { UserType } from '../components/UserType';
 
 export function useUsersColumns(options?: { disableLinks?: boolean; disableSort?: boolean }) {

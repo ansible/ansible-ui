@@ -4,9 +4,9 @@ import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { PageDetail, useGetPageUrl } from '../../../framework';
-import { AwxRoute } from '../AwxRoutes';
 import { ExecutionEnvironment } from '../interfaces/ExecutionEnvironment';
 import { SummaryFieldsExecutionEnvironment } from '../interfaces/summary-fields/summary-fields';
+import { AwxRoute } from '../main/AwxRoutes';
 import { useAwxConfig } from './useAwxConfig';
 import { getDocsBaseUrl } from './util/getDocsBaseUrl';
 

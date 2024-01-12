@@ -1,8 +1,8 @@
 import { useCallback, useMemo } from 'react';
-import { usePageNavigate, ITableColumn } from '../../../../../framework';
-import { useNameColumn, useScopeColumn, useExpiresColumn } from '../../../../common/columns';
-import { AwxRoute } from '../../../AwxRoutes';
+import { ITableColumn, usePageNavigate } from '../../../../../framework';
+import { useExpiresColumn, useNameColumn, useScopeColumn } from '../../../../common/columns';
 import { Token } from '../../../interfaces/Token';
+import { AwxRoute } from '../../../main/AwxRoutes';
 
 export function useTokensColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const pageNavigate = usePageNavigate();

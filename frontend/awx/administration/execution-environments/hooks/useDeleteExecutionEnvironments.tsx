@@ -3,10 +3,10 @@ import { useTranslation } from 'react-i18next';
 import { compareStrings } from '../../../../../framework';
 import { useNameColumn } from '../../../../common/columns';
 import { getItemKey, requestDelete } from '../../../../common/crud/Data';
-import { awxAPI } from '../../../api/awx-utils';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { useAwxBulkConfirmation } from '../../../common/useAwxBulkConfirmation';
 import { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
 import { useExecutionEnvironmentsColumns } from '../ExecutionEnvironments';
-import { useAwxBulkConfirmation } from '../../../common/useAwxBulkConfirmation';
 
 export function useDeleteExecutionEnvironments(
   onComplete: (executionEnvironments: ExecutionEnvironment[]) => void

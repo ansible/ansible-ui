@@ -1,12 +1,12 @@
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { usePageDialog } from '../../../../../framework';
 import { SelectSingleDialog } from '../../../../../framework/PageDialogs/SelectSingleDialog';
-import { useAwxView } from '../../../useAwxView';
-import { awxAPI } from '../../../api/awx-utils';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { useAwxView } from '../../../common/useAwxView';
+import { Inventory } from '../../../interfaces/Inventory';
 import { useInventoriesColumns } from './useInventoriesColumns';
 import { useInventoriesFilters } from './useInventoriesFilters';
-import { Inventory } from '../../../interfaces/Inventory';
-import { usePageDialog } from '../../../../../framework';
-import { useCallback } from 'react';
 
 function SelectInventory(props: { title: string; onSelect: (inventory: Inventory) => void }) {
   const toolbarFilters = useInventoriesFilters();

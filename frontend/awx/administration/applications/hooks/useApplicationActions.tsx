@@ -7,9 +7,9 @@ import {
   PageActionType,
   usePageNavigate,
 } from '../../../../../framework';
-import { AwxRoute } from '../../../AwxRoutes';
 import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import { Application } from '../../../interfaces/Application';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { useDeleteApplications } from '../hooks/useDeleteApplications';
 
 export function useApplicationActions(options: {

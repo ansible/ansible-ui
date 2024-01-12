@@ -20,11 +20,11 @@ import {
 import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
 import { LastModifiedPageDetail } from '../../../../common/LastModifiedPageDetail';
 import { useGet } from '../../../../common/crud/useGet';
-import { AwxRoute } from '../../../AwxRoutes';
-import { awxAPI } from '../../../api/awx-utils';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { useVerbosityString } from '../../../common/useVerbosityString';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { Inventory } from '../../../interfaces/Inventory';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { useGetInventory } from './InventoryPage';
 
 function useInstanceGroups(inventoryId: string) {

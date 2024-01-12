@@ -8,7 +8,7 @@ import {
   PageDashboardGettingStartedStep,
 } from '../../../../framework';
 import { useGetPageUrl } from '../../../../framework/PageNavigation/useGetPageUrl';
-import { AwxRoute } from '../../AwxRoutes';
+import { AwxRoute } from '../../main/AwxRoutes';
 
 export function AwxGettingStartedCard(props: {
   hasInventory: boolean;

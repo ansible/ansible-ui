@@ -13,11 +13,11 @@ import {
 import { DetailInfo } from '../../../../../framework/components/DetailInfo';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { useOptions } from '../../../../common/crud/useOptions';
-import { awxAPI } from '../../../api/awx-utils';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { useAwxView } from '../../../common/useAwxView';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { Team } from '../../../interfaces/Team';
 import { User } from '../../../interfaces/User';
-import { useAwxView } from '../../../useAwxView';
 import { useRemoveTeamsFromUsers } from '../../teams/hooks/useRemoveTeamsFromUsers';
 import { useSelectTeamsAddUsers } from '../../teams/hooks/useSelectTeamsAddUsers';
 import { useTeamsColumns } from '../../teams/hooks/useTeamsColumns';

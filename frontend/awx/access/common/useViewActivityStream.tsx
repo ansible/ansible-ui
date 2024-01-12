@@ -7,7 +7,7 @@ import {
   PageActionType,
   usePageNavigate,
 } from '../../../../framework';
-import { AwxRoute } from '../../AwxRoutes';
+import { AwxRoute } from '../../main/AwxRoutes';
 
 export function useViewActivityStream<T extends object>(type: string) {
   const { t } = useTranslation();

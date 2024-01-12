@@ -5,8 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { ITableColumn, useGetPageUrl } from '../../../../../framework';
 import { IconWrapper } from '../../../../../framework/components/IconWrapper';
-import { AwxRoute } from '../../../AwxRoutes';
 import { Project } from '../../../interfaces/Project';
+import { AwxRoute } from '../../../main/AwxRoutes';
 
 export function useProjectNameColumn(options?: { disableLinks?: boolean }) {
   const { t } = useTranslation();

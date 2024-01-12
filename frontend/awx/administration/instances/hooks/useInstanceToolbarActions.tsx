@@ -1,10 +1,10 @@
-import { useMemo } from 'react';
-import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
-import { Instance } from '../../../interfaces/Instance';
 import { ButtonVariant } from '@patternfly/react-core';
 import { HeartbeatIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IAwxView } from '../../../useAwxView';
+import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
+import { IAwxView } from '../../../common/useAwxView';
+import { Instance } from '../../../interfaces/Instance';
 import { useRunHealthCheck } from './useRunHealthCheck';
 
 export function useInstanceToolbarActions(view: IAwxView<Instance>) {
