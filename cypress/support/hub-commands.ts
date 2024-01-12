@@ -162,7 +162,7 @@ Cypress.Commands.add('getOrCreateCollection', () => {
 Cypress.Commands.add(
   'deleteCollectionFromSystem',
   (
-    collectionName: CollectionVersionSearch | undefined,
+    collectionName: CollectionVersionSearch,
     options?: {
       /** Whether to fail on response codes other than 2xx and 3xx */
       failOnStatusCode?: boolean;
@@ -171,7 +171,7 @@ Cypress.Commands.add(
     if (collectionName) {
       const thisName = collectionName.collection_version?.name;
       cy.requestDelete(
-        hubAPI`/v3/plugin/ansible/content/community/collections/index/ibm/${thisName}/`,
+        hubAPI`/v3/plugin/ansible/content/community/collections/index/ibm/${thisName ?? ''}/`,
         options
       );
     }
