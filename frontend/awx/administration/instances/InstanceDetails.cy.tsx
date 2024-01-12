@@ -3,7 +3,7 @@ import { capitalizeFirstLetter } from '../../../../framework/utils/strings';
 import { Instance } from '../../interfaces/Instance';
 import { InstanceDetails } from './InstanceDetails';
 
-describe('Mesh Visualizer', () => {
+describe('Instance Details', () => {
   beforeEach(() => {
     cy.intercept({ method: 'GET', url: '/api/v2/instances/*' }, { fixture: 'instance.json' }).as(
       'getInstance'
@@ -69,5 +69,24 @@ describe('Mesh Visualizer', () => {
     ).as('getInstanceGroups');
     cy.mount(<InstanceDetails />);
     cy.get('[data-cy="instance-groups"]').should('not.exist');
+  });
+  it('Enabled/Diabled switch is disabled if user does not have the right permissions', () => {
+    cy.mount(<InstanceDetails />);
+    cy.intercept({ method: 'GET', url: '/api/v2/me' }, { fixture: 'normalUser.json' });
+    cy.wait('@getInstance')
+      .its('response.body')
+      .then(() => {
+        cy.get('[data-cy="enabled"] #enable-instance').should('be.disabled');
+      });
+  });
+  it('Instance forks disabled if user does not have the right permissions', () => {
+    cy.mount(<InstanceDetails />);
+    cy.intercept({ method: 'GET', url: '/api/v2/me' }, { fixture: 'normalUser.json' });
+    cy.wait('@getInstance')
+      .its('response.body')
+      .then(() => {
+        cy.get('.pf-v5-c-slider__thumb').should('have.attr', 'aria-disabled');
+        cy.get('.pf-v5-c-slider__thumb').should('have.attr', 'aria-disabled', 'true');
+      });
   });
 });
