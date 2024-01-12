@@ -2,10 +2,10 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageNavigationItem } from '../../../framework';
 import { AwxRoute } from '../AwxRoutes';
-import { JobPage } from '../views/jobs/JobPage';
-import { JobOutput } from '../views/jobs/JobOutput/JobOutput';
 import { JobDetails } from '../views/jobs/JobDetails';
-import Jobs from '../views/jobs/Jobs';
+import { JobOutput } from '../views/jobs/JobOutput/JobOutput';
+import { JobPage } from '../views/jobs/JobPage';
+import { Jobs } from '../views/jobs/Jobs';
 
 export function useAwxJobsRoutes() {
   const { t } = useTranslation();

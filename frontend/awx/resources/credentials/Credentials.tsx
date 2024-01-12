@@ -1,10 +1,10 @@
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout } from '../../../../framework';
 import { usePersistentFilters } from '../../../common/PersistentFilters';
-import { useAwxConfig } from '../../common/useAwxConfig';
-import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
-import { CredentialsList } from '../../resources/common/CredentialsList';
 import { awxAPI } from '../../api/awx-utils';
+import { useAwxConfig } from '../../common/useAwxConfig';
+import { getDocsBaseUrl } from '../../common/util/getDocsBaseUrl';
+import { CredentialsList } from '../../resources/common/CredentialsList';
 
 export function Credentials() {
   const { t } = useTranslation();

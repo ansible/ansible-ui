@@ -1,19 +1,19 @@
-import { PageHeader, PageLayout, PageTable } from '../../../../framework';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 import { usePersistentFilters } from '../../../common/PersistentFilters';
+import { awxAPI } from '../../api/awx-utils';
+import { useAwxConfig } from '../../common/useAwxConfig';
+import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
+import { getDocsBaseUrl } from '../../common/util/getDocsBaseUrl';
 import { WorkflowApproval } from '../../interfaces/WorkflowApproval';
 import { useAwxView } from '../../useAwxView';
-import { useWorkflowApprovalsRowActions } from './hooks/useWorkflowApprovalsRowActions';
 import { useWorkflowApprovalToolbarActions } from './hooks/useWorkflowApprovalToolbarActions';
 import { useWorkflowApprovalsColumns } from './hooks/useWorkflowApprovalsColumns';
 import { useWorkflowApprovalsFilters } from './hooks/useWorkflowApprovalsFilters';
-import { useAwxConfig } from '../../common/useAwxConfig';
-import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
-import { useCallback } from 'react';
-import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
-import { awxAPI } from '../../api/awx-utils';
+import { useWorkflowApprovalsRowActions } from './hooks/useWorkflowApprovalsRowActions';
 
-export default function WorkflowApprovals() {
+export function WorkflowApprovals() {
   const { t } = useTranslation();
   const product: string = process.env.PRODUCT ?? t('AWX');
   const toolbarFilters = useWorkflowApprovalsFilters();

@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { PageFormSubmitButton } from '../PageForm/PageFormButtons';
 import { usePageWizard } from './PageWizardProvider';
 
-export default function PageWizardFooter(props: {
+export function PageWizardFooter(props: {
   onNext?: () => void;
   onBack: () => void;
   onCancel: () => void;

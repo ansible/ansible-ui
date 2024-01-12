@@ -1,7 +1,7 @@
 import { ButtonVariant } from '@patternfly/react-core';
 import {
-  PencilAltIcon,
   MinusCircleIcon,
+  PencilAltIcon,
   PlusCircleIcon,
   PlusIcon,
   TrashIcon,
@@ -29,6 +29,7 @@ import {
   useNameColumn,
 } from '../../../common/columns';
 import { AwxRoute } from '../../AwxRoutes';
+import { awxAPI } from '../../api/awx-utils';
 import {
   useCreatedByToolbarFilter,
   useDescriptionToolbarFilter,
@@ -36,9 +37,8 @@ import {
   useNameToolbarFilter,
 } from '../../common/awx-toolbar-filters';
 import { useAwxConfig } from '../../common/useAwxConfig';
-import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
+import { getDocsBaseUrl } from '../../common/util/getDocsBaseUrl';
 import { Organization } from '../../interfaces/Organization';
-import { awxAPI } from '../../api/awx-utils';
 import { useAwxView } from '../../useAwxView';
 import { useSelectUsersAddOrganizations } from '../users/hooks/useSelectUsersAddOrganizations';
 import { useSelectUsersRemoveOrganizations } from '../users/hooks/useSelectUsersRemoveOrganizations';

@@ -12,6 +12,7 @@ import { EdaActiveUserProvider } from '../common/useEdaActiveUser';
 import { EdaMasthead } from './EdaMasthead';
 import { useEdaNavigation } from './useEdaNavigation';
 
+// eslint-disable-next-line no-restricted-exports
 export default function EdaMain() {
   const navigation = useEdaNavigation();
   return (

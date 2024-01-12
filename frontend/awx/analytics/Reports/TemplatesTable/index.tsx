@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react';
+import { ChartLegendEntry } from '@ansible/react-json-chart-builder';
 import {
   Table /* data-codemods */,
   TableVariant,
@@ -7,9 +7,9 @@ import {
   Thead,
   Tr,
 } from '@patternfly/react-table';
+import { FunctionComponent } from 'react';
 import { useTranslation } from 'react-i18next';
-import Row from './Row';
-import { ChartLegendEntry } from '@ansible/react-json-chart-builder';
+import { Row } from './Row';
 
 interface Props {
   data: ChartLegendEntry[];
@@ -27,7 +27,7 @@ interface Props {
   };
 }
 
-const TopTemplates: FunctionComponent<Props> = ({
+export const TopTemplates: FunctionComponent<Props> = ({
   data = [],
   readOnly = true,
   variableRow,
@@ -59,5 +59,3 @@ const TopTemplates: FunctionComponent<Props> = ({
     </Table>
   );
 };
-
-export default TopTemplates;

@@ -1,4 +1,3 @@
-import styled from 'styled-components';
 import {
   DescriptionList,
   DescriptionListDescription,
@@ -8,7 +7,6 @@ import {
   PanelMain,
   PanelMainBody,
 } from '@patternfly/react-core';
-import { useTranslation } from 'react-i18next';
 import {
   AddCircleOIcon,
   AnsibeTowerIcon,
@@ -21,6 +19,8 @@ import {
   ServerIcon,
 } from '@patternfly/react-icons';
 import { ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 import { pfDanger, pfDisabled, pfInfo, pfSuccess } from '../../../../framework';
 
 const Panel = styled(PFPanel)`
@@ -35,7 +35,7 @@ const Panel = styled(PFPanel)`
   box-shadow: var(--pf-v5-global--BoxShadow--sm);
 `;
 
-const Legend = () => {
+export const Legend = () => {
   const { t } = useTranslation();
 
   const LegendDescription = (props: { label: string; icon: ReactElement }) => {
@@ -153,5 +153,3 @@ const Legend = () => {
     </Panel>
   );
 };
-
-export default Legend;

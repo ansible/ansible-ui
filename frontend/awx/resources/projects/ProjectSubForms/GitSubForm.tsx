@@ -1,13 +1,13 @@
 import { Trans, useTranslation } from 'react-i18next';
+import { PageFormTextInput } from '../../../../../framework';
 import { PageFormHidden } from '../../../../../framework/PageForm/Utils/PageFormHidden';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
-import { PageFormTextInput } from '../../../../../framework';
-import { ProjectFields } from '../ProjectPage/ProjectForm';
+import { useAwxConfig } from '../../../common/useAwxConfig';
+import { getDocsBaseUrl } from '../../../common/util/getDocsBaseUrl';
 import { PageFormCredentialSelect } from '../../credentials/components/PageFormCredentialSelect';
+import { ProjectFields } from '../ProjectPage/ProjectForm';
 import { useGetCredentialTypeIDs } from '../hooks/useGetCredentialTypeIDs';
 import { ScmTypeOptions } from './ScmTypeOptions';
-import { useAwxConfig } from '../../../common/useAwxConfig';
-import getDocsBaseUrl from '../../../common/util/getDocsBaseUrl';
 
 export function GitSubForm() {
   const { t } = useTranslation();

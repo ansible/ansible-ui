@@ -65,7 +65,7 @@ export const generateRandomNodes = (n: number) => {
   return generateRandomLinks(nodes, getRandomInt(1, n - 1));
 };
 
-export default function computeForks(
+export function computeForks(
   memCapacity: number,
   cpuCapacity: number,
   selectedCapacityAdjustment: number

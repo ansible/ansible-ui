@@ -14,7 +14,7 @@ import { EdaRoute } from '../main/EdaRoutes';
 import { EdaDecisionEnvironmentsCard } from './cards/EdaDecisionEnvironmentsCard';
 import { EdaRecentProjectsCard } from './cards/EdaProjectsCard';
 import { EdaRuleAuditCard } from './cards/EdaRuleAuditCard';
-import RuleAuditChart from './cards/EdaRuleAuditChartCard';
+import { RuleAuditChart } from './cards/EdaRuleAuditChartCard';
 import { EdaRulebookActivationsCard } from './cards/EdaRulebookActivationsCard';
 
 export function EdaOverview() {

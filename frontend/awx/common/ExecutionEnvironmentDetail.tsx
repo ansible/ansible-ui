@@ -8,7 +8,7 @@ import { AwxRoute } from '../AwxRoutes';
 import { ExecutionEnvironment } from '../interfaces/ExecutionEnvironment';
 import { SummaryFieldsExecutionEnvironment } from '../interfaces/summary-fields/summary-fields';
 import { useAwxConfig } from './useAwxConfig';
-import getDocsBaseUrl from './util/getDocsBaseUrl';
+import { getDocsBaseUrl } from './util/getDocsBaseUrl';
 
 const ExclamationTriangleIcon = styled(PFExclamationTriangleIcon)`
   color: var(--pf-v5-global--warning-color--100);

@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout } from '../../../../../framework';
 import { ReportCard } from './ReportCard';
 
-export default function ReportsList() {
+export function ReportsList() {
   const { t } = useTranslation();
 
   return (

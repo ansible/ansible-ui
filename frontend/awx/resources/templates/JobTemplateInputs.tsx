@@ -21,7 +21,7 @@ import { PageFormInventorySelect } from '../inventories/components/PageFormInven
 import { PageFormProjectSelect } from '../projects/components/PageFormProjectSelect';
 import { WebhookSubForm } from './components/WebhookSubForm';
 
-function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
+export function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
   const { jobtemplate } = props;
   const { t } = useTranslation();
   const { setValue } = useFormContext<JobTemplateForm>();
@@ -311,5 +311,3 @@ function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
     </>
   );
 }
-
-export default JobTemplateInputs;

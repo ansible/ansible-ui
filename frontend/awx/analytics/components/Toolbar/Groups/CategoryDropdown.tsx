@@ -1,6 +1,6 @@
-import React, { FunctionComponent, useState } from 'react';
 import { ToolbarItem } from '@patternfly/react-core';
 import { Select, SelectOption, SelectVariant } from '@patternfly/react-core/deprecated';
+import { FunctionComponent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface Props {
@@ -13,7 +13,7 @@ interface Props {
   }[];
 }
 
-const CategoryDropdown: FunctionComponent<Props> = ({
+export const CategoryDropdown: FunctionComponent<Props> = ({
   categoryKey,
   selected,
   setSelected = () => null,
@@ -44,5 +44,3 @@ const CategoryDropdown: FunctionComponent<Props> = ({
     </ToolbarItem>
   );
 };
-
-export default CategoryDropdown;

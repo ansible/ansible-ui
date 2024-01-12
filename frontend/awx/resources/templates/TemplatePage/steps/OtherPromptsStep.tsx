@@ -20,7 +20,7 @@ interface OtherPromptsStepProps {
   template: JobTemplate | WorkflowJobTemplate;
 }
 
-export default function OtherPromptsStep(props: OtherPromptsStepProps) {
+export function OtherPromptsStep(props: OtherPromptsStepProps) {
   const { config, template } = props;
   const { t } = useTranslation();
 

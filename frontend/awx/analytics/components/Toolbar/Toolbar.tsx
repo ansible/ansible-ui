@@ -1,7 +1,6 @@
 import { ToolbarToggleGroup } from '@patternfly/react-core';
 import { FilterIcon } from '@patternfly/react-icons';
 import { FunctionComponent } from 'react';
-
 import { FilterCategoriesGroup, SortByGroup } from './Groups';
 import { ToolbarDateFilterWithOptions } from './ToolbarDateFilterWithOptions';
 import { optionsForCategories } from './constants';
@@ -15,7 +14,7 @@ interface Props {
   setFilters: SetValues;
 }
 
-const FilterableToolbarItem: FunctionComponent<Props> = ({
+export const FilterableToolbarItem: FunctionComponent<Props> = ({
   categories,
   filters,
   defaultSelected = '',
@@ -76,5 +75,3 @@ const FilterableToolbarItem: FunctionComponent<Props> = ({
     </ToolbarToggleGroup>
   );
 };
-
-export default FilterableToolbarItem;

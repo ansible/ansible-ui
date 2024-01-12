@@ -1,5 +1,5 @@
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
-import Jobs from './Jobs';
+import { Jobs } from './Jobs';
 
 describe('Jobs.cy.ts', () => {
   beforeEach(() => {
