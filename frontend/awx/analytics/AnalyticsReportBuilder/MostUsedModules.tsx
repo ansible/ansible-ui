@@ -8,12 +8,10 @@
 
 import { Flex, FlexItem } from '@patternfly/react-core';
 import { ExpandableRowContent } from '@patternfly/react-table';
-
-import Breakdown from '../components/Chart/Breakdown';
-
-import { categoryColor } from './constants';
-import { AnyType } from './AnalyticsReportBuilder';
 import { useTranslation } from 'react-i18next';
+import { Breakdown } from '../components/Chart/Breakdown';
+import { AnyType } from './AnalyticsReportBuilder';
+import { categoryColor } from './constants';
 
 export const TableExpandedRow: React.ReactElement = (props: { item: AnyType }) => {
   const { t } = useTranslation();
