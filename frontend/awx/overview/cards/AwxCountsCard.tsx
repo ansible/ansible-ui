@@ -3,7 +3,7 @@ import { useGetPageUrl } from '../../../../framework';
 import { PageDashboardCountBar } from '../../../../framework/PageDashboard/PageDashboardCountBar';
 import { usePageChartColors } from '../../../../framework/PageDashboard/usePageChartColors';
 import { AwxRoute } from '../../AwxRoutes';
-import { IAwxDashboardData } from '../AwxDashboard';
+import { IAwxDashboardData } from '../AwxOverview';
 
 export function AwxCountsCard(props: { data: IAwxDashboardData }) {
   const { t } = useTranslation();
