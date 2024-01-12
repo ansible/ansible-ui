@@ -1,10 +1,10 @@
+import { Progress } from '@patternfly/react-core';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ITableColumn, TextCell, useGetPageUrl } from '../../../../../framework';
 import { useCreatedColumn, useModifiedColumn } from '../../../../common/columns';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
-import { useMemo } from 'react';
-import { Progress } from '@patternfly/react-core';
-import { AwxRoute } from '../../../AwxRoutes';
+import { AwxRoute } from '../../../main/AwxRoutes';
 
 export function useInstanceGroupsColumns(options?: {
   disableSort?: boolean;

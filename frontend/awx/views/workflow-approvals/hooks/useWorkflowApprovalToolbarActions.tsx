@@ -2,11 +2,11 @@ import { ThumbsDownIcon, ThumbsUpIcon, TrashIcon } from '@patternfly/react-icons
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
+import { IAwxView } from '../../../common/useAwxView';
 import { WorkflowApproval } from '../../../interfaces/WorkflowApproval';
 import { useApproveWorkflowApprovals } from './useApproveWorkflowApprovals';
-import { useDenyWorkflowApprovals } from './useDenyWorkflowApprovals';
 import { useDeleteWorkflowApprovals } from './useDeleteWorkflowApprovals';
-import { IAwxView } from '../../../useAwxView';
+import { useDenyWorkflowApprovals } from './useDenyWorkflowApprovals';
 
 export function useWorkflowApprovalToolbarActions(view: IAwxView<WorkflowApproval>) {
   const { t } = useTranslation();

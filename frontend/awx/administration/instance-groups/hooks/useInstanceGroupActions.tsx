@@ -1,19 +1,19 @@
+import { ButtonVariant } from '@patternfly/react-core';
+import { PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   usePageNavigate,
 } from '../../../../../framework';
-import { InstanceGroup } from '../../../interfaces/InstanceGroup';
-import { ButtonVariant } from '@patternfly/react-core';
-import { useTranslation } from 'react-i18next';
-import { PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
-import { AwxRoute } from '../../../AwxRoutes';
-import { useDeleteInstanceGroups } from './useDeleteInstanceGroups';
-import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
-import { awxAPI } from '../../../api/awx-utils';
 import { useOptions } from '../../../../common/crud/useOptions';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { InstanceGroup } from '../../../interfaces/InstanceGroup';
+import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
+import { AwxRoute } from '../../../main/AwxRoutes';
+import { useDeleteInstanceGroups } from './useDeleteInstanceGroups';
 
 export function useDisableCreateInstanceGroup() {
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/instance_groups/`);

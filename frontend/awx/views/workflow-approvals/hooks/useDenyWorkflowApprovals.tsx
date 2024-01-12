@@ -4,10 +4,10 @@ import { compareStrings } from '../../../../../framework';
 import { useNameColumn } from '../../../../common/columns';
 import { getItemKey } from '../../../../common/crud/Data';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
-import { awxAPI } from '../../../api/awx-utils';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { useAwxBulkConfirmation } from '../../../common/useAwxBulkConfirmation';
 import { WorkflowApproval } from '../../../interfaces/WorkflowApproval';
 import { useWorkflowApprovalsColumns } from './useWorkflowApprovalsColumns';
-import { useAwxBulkConfirmation } from '../../../common/useAwxBulkConfirmation';
 
 export function useDenyWorkflowApprovals(
   onComplete: (workflow_approvals: WorkflowApproval[]) => void

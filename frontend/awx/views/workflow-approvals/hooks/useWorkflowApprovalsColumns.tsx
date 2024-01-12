@@ -9,8 +9,8 @@ import {
   usePageNavigate,
 } from '../../../../../framework';
 import { useIdColumn, useNameColumn } from '../../../../common/columns';
-import { AwxRoute } from '../../../AwxRoutes';
 import { WorkflowApproval } from '../../../interfaces/WorkflowApproval';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { WorkflowApprovalStatusCell } from '../components/WorkflowApprovalStatusCell';
 
 export function useWorkflowApprovalsColumns(options?: {

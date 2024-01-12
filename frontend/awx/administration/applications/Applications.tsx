@@ -17,13 +17,13 @@ import {
   cannotDeleteResources,
   cannotEditResource,
 } from '../../../common/utils/RBAChelpers';
-import { AwxRoute } from '../../AwxRoutes';
-import { awxAPI } from '../../api/awx-utils';
+import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxConfig } from '../../common/useAwxConfig';
+import { useAwxView } from '../../common/useAwxView';
 import { getDocsBaseUrl } from '../../common/util/getDocsBaseUrl';
 import { Application } from '../../interfaces/Application';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
-import { useAwxView } from '../../useAwxView';
+import { AwxRoute } from '../../main/AwxRoutes';
 import { useApplicationsColumns } from './hooks/useApplicationsColumns';
 import { useApplicationsFilters } from './hooks/useApplicationsFilters';
 import { useDeleteApplications } from './hooks/useDeleteApplications';

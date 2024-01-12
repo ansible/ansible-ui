@@ -10,10 +10,10 @@ import {
   usePageNavigate,
 } from '../../../../../framework';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
-import { AwxRoute } from '../../../AwxRoutes';
-import { awxAPI } from '../../../api/awx-utils';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import { InventorySource } from '../../../interfaces/InventorySource';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { useDeleteInventorySources } from './useDeleteInventorySources';
 
 type InventorySourceActionOptions = {

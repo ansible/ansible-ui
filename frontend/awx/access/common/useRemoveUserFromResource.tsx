@@ -2,12 +2,12 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { compareStrings } from '../../../../framework';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { awxAPI } from '../../api/awx-utils';
+import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxActiveUser } from '../../common/useAwxActiveUser';
+import { useAwxBulkConfirmation } from '../../common/useAwxBulkConfirmation';
 import { User } from '../../interfaces/User';
 import { useUsersColumns } from '../users/hooks/useUsersColumns';
 import { ResourceType } from './ResourceAccessList';
-import { useAwxBulkConfirmation } from '../../common/useAwxBulkConfirmation';
 
 export function useRemoveUsersFromResource() {
   const { t } = useTranslation();

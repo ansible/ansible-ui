@@ -6,10 +6,10 @@ import { PageActions, PageHeader, PageLayout, useGetPageUrl } from '../../../../
 import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { useGetItem } from '../../../../common/crud/useGet';
-import { AwxRoute } from '../../../AwxRoutes';
-import { awxAPI } from '../../../api/awx-utils';
 import { AwxError } from '../../../common/AwxError';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { WorkflowApproval } from '../../../interfaces/WorkflowApproval';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { useWorkflowApprovalsRowActions } from '../hooks/useWorkflowApprovalsRowActions';
 
 export function WorkflowApprovalPage() {

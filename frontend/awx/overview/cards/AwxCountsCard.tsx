@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useGetPageUrl } from '../../../../framework';
 import { PageDashboardCountBar } from '../../../../framework/PageDashboard/PageDashboardCountBar';
 import { usePageChartColors } from '../../../../framework/PageDashboard/usePageChartColors';
-import { AwxRoute } from '../../AwxRoutes';
+import { AwxRoute } from '../../main/AwxRoutes';
 import { IAwxDashboardData } from '../AwxOverview';
 
 export function AwxCountsCard(props: { data: IAwxDashboardData }) {

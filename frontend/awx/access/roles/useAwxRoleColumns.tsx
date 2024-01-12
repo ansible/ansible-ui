@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ITableColumn, TextCell, useGetPageUrl } from '../../../../framework';
-import { AwxRoute } from '../../AwxRoutes';
+import { AwxRoute } from '../../main/AwxRoutes';
 import { AwxRole } from './AwxRoles';
 
 export function useAwxRoleColumns() {

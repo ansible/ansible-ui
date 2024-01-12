@@ -7,11 +7,11 @@ import {
   usePageNavigate,
 } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
-import { AwxRoute } from '../../AwxRoutes';
-import { awxAPI } from '../../api/awx-utils';
+import { awxAPI } from '../../common/api/awx-utils';
+import { useAwxView } from '../../common/useAwxView';
 import { Project } from '../../interfaces/Project';
+import { AwxRoute } from '../../main/AwxRoutes';
 import { useProjectsColumns } from '../../resources/projects/hooks/useProjectsColumns';
-import { useAwxView } from '../../useAwxView';
 
 export function AwxRecentProjectsCard() {
   const view = useAwxView<Project>({

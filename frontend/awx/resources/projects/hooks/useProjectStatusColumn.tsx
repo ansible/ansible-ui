@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ITableColumn, useGetPageUrl } from '../../../../../framework';
 import { StatusCell } from '../../../../common/Status';
-import { AwxRoute } from '../../../AwxRoutes';
+import { AwxRoute } from '../../../main/AwxRoutes';
 
 export function useProjectStatusColumn(options?: {
   tooltip?: string;

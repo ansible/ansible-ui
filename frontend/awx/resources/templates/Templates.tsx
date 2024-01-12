@@ -12,13 +12,13 @@ import {
   usePageNavigate,
 } from '../../../../framework';
 import { usePersistentFilters } from '../../../common/PersistentFilters';
-import { AwxRoute } from '../../AwxRoutes';
-import { awxAPI } from '../../api/awx-utils';
+import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxConfig } from '../../common/useAwxConfig';
+import { useAwxView } from '../../common/useAwxView';
 import { getDocsBaseUrl } from '../../common/util/getDocsBaseUrl';
 import { JobTemplate } from '../../interfaces/JobTemplate';
 import { WorkflowJobTemplate } from '../../interfaces/WorkflowJobTemplate';
-import { useAwxView } from '../../useAwxView';
+import { AwxRoute } from '../../main/AwxRoutes';
 import { useDeleteTemplates } from './hooks/useDeleteTemplates';
 import { useTemplateActions } from './hooks/useTemplateActions';
 import { useTemplateColumns } from './hooks/useTemplateColumns';

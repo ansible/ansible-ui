@@ -3,9 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { compareStrings } from '../../../../../framework';
 import { useNameColumn } from '../../../../common/columns';
 import { getItemKey, requestDelete } from '../../../../common/crud/Data';
-import { awxAPI } from '../../../api/awx-utils';
-import { WorkflowApproval } from '../../../interfaces/WorkflowApproval';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxBulkConfirmation } from '../../../common/useAwxBulkConfirmation';
+import { WorkflowApproval } from '../../../interfaces/WorkflowApproval';
 import { useWorkflowApprovalsColumns } from './useWorkflowApprovalsColumns';
 
 export function useDeleteWorkflowApprovals(

@@ -4,12 +4,12 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { PageDetail, PageDetails, useGetPageUrl } from '../../../../framework';
 import { useOptions } from '../../../common/crud/useOptions';
-import { AwxRoute } from '../../AwxRoutes';
-import { awxAPI } from '../../api/awx-utils';
 import { CredentialLabel } from '../../common/CredentialLabel';
 import { ExecutionEnvironmentDetail } from '../../common/ExecutionEnvironmentDetail';
+import { awxAPI } from '../../common/api/awx-utils';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
+import { AwxRoute } from '../../main/AwxRoutes';
 import { getLaunchedByDetails, getScheduleUrl, isJobRunning } from './jobUtils';
 
 export function JobExpanded(job: UnifiedJob) {

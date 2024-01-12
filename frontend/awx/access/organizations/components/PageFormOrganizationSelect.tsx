@@ -5,9 +5,9 @@ import { PageFormAsyncSelect } from '../../../../../framework/PageForm/Inputs/Pa
 import { PageFormTextInput } from '../../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { requestGet } from '../../../../common/crud/Data';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { Organization } from '../../../interfaces/Organization';
 import { useSelectOrganization, useSelectOrganization2 } from '../hooks/useSelectOrganization';
-import { awxAPI } from '../../../api/awx-utils';
 
 export function PageFormOrganizationSelect<
   TFieldValues extends FieldValues = FieldValues,

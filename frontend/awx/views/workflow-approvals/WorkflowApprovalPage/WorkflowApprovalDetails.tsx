@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom';
 import { PageDetailsFromColumns } from '../../../../../framework';
 import { useGetItem } from '../../../../common/crud/useGet';
-import { awxAPI } from '../../../api/awx-utils';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { WorkflowApproval } from '../../../interfaces/WorkflowApproval';
 import { useWorkflowApprovalsColumns } from '../hooks/useWorkflowApprovalsColumns';
 

@@ -2,13 +2,13 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { PlusIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useOptions } from '../../../../common/crud/useOptions';
-import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
-import { useDeleteSchedules } from './useDeleteSchedules';
-import { awxAPI } from '../../../api/awx-utils';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
+import { useOptions } from '../../../../common/crud/useOptions';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { Schedule } from '../../../interfaces/Schedule';
 import { useGetSchedulCreateUrl } from './scheduleHelpers';
+import { useDeleteSchedules } from './useDeleteSchedules';
 
 export function useScheduleToolbarActions(
   onComplete: (schedules: Schedule[]) => void,
