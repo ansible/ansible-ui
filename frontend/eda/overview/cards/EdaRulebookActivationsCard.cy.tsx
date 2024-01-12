@@ -1,5 +1,5 @@
 import { edaAPI } from '../../common/eda-utils';
-import { EdaDashboard } from '../EdaDashboard';
+import { EdaOverview } from '../EdaOverview';
 
 describe('EdaRulebookActivationsCard.cy.ts', () => {
   beforeEach(() => {
@@ -62,7 +62,7 @@ describe('EdaRulebookActivationsCard.cy.ts', () => {
         results: [],
       }
     );
-    cy.mount(<EdaDashboard />);
+    cy.mount(<EdaOverview />);
   });
   it('Dashboard renders the correct rulebook activations columns', () => {
     cy.contains(/^Recently updated activations$/).should('be.visible');
