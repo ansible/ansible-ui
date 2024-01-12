@@ -22,6 +22,8 @@ describe('Namespaces', () => {
     cy.get('[data-cy="Submit"]').click();
     cy.url().should('include', `/namespaces/${namespaceName}/details`);
     cy.selectDetailsPageKebabAction('delete-namespace');
+    cy.url().should('include', Namespaces.url);
+    cy.url().should('not.include', `/namespaces/${namespaceName}/details`);
   });
 
   it('edit a namespace', () => {
@@ -40,5 +42,11 @@ describe('Namespaces', () => {
     cy.get('[data-cy="Submit"]').click();
     cy.get('[data-cy="company"]').contains(/^new company$/);
     cy.get('[data-cy="description"]').contains(/^new description$/);
+
+    // Delete the edited namespace
+    cy.get('[data-cy="actions-dropdown"]').click();
+    cy.get('[data-cy="delete-namespace"]').click();
+    cy.get('#confirm').click();
+    cy.clickButton(/^Delete namespaces$/);
   });
 });
