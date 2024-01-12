@@ -1,11 +1,9 @@
-import React, { FunctionComponent } from 'react';
-import { SplitItem, ToolbarGroup, Split, ToolbarGroupVariant } from '@patternfly/react-core';
+import { Split, SplitItem, ToolbarGroup, ToolbarGroupVariant } from '@patternfly/react-core';
 import { SelectOptionProps } from '@patternfly/react-core/deprecated';
+import { FunctionComponent } from 'react';
 import { useTranslation } from 'react-i18next';
-
-import ToolbarInput from './ToolbarInput';
-
-import { SetValues, AttributeType } from '../types';
+import { AttributeType, SetValues } from '../types';
+import { ToolbarInput } from './ToolbarInput';
 
 const today = (days = 0): Date => {
   const date = new Date();
@@ -30,7 +28,7 @@ interface Props {
   };
 }
 
-const QuickDateGroup: FunctionComponent<Props> = ({ filters, setFilters, values }) => {
+export const QuickDateGroup: FunctionComponent<Props> = ({ filters, setFilters, values }) => {
   const endDate = (filters.end_date as string) || getDateByDays(0);
   const startDate = (filters.start_date as string) || getDateByDays(-30);
   const { t } = useTranslation();
@@ -83,5 +81,3 @@ const QuickDateGroup: FunctionComponent<Props> = ({ filters, setFilters, values 
     </ToolbarGroup>
   );
 };
-
-export default QuickDateGroup;

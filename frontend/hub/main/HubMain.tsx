@@ -12,6 +12,7 @@ import { HubContextProvider } from '../common/useHubContext';
 import { HubMasthead } from './HubMasthead';
 import { useHubNavigation } from './useHubNavigation';
 
+// eslint-disable-next-line no-restricted-exports
 export default function HubMain() {
   const navigation = useHubNavigation();
   return (
