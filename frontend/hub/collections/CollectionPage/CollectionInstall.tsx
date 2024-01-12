@@ -14,6 +14,10 @@ import { Title } from '@patternfly/react-core';
 import { useGet } from '../../../common/crud/useGet';
 import { pulpAPI } from '../../common/api/formatPath';
 import { CollectionVersionsContent } from './CollectionDocumentation';
+import { Trans } from 'react-i18next';
+import { HubRoute } from '../../main/HubRoutes';
+import { useGetPageUrl } from '../../../../framework';
+import { Link } from 'react-router-dom';
 
 export function CollectionInstall() {
   const { t } = useTranslation();
@@ -23,6 +27,10 @@ export function CollectionInstall() {
     collection.repository?.name ?? '',
     collection.repository?.pulp_href
   );
+  const getPageUrl = useGetPageUrl();
+
+  // now we are implementing standalone only, this is reminder so we dont forget
+  const IS_COMMUNITY = false;
 
   const { data: contentResults, error: contentError } = useGet<CollectionVersionsContent>(
     pulpAPI`/content/ansible/collection_versions/?namespace=${
@@ -97,6 +105,28 @@ export function CollectionInstall() {
           </PageDetail>
 
           <PageDetail label={t('Download')}>
+            {!IS_COMMUNITY ? (
+              <div>
+                <Trans>
+                  To download this collection, configure your client to connect to one of the{' '}
+                  <Link
+                    to={getPageUrl(HubRoute.CollectionDistributions, {
+                      params: {
+                        repository: collection.repository?.name,
+                        namespace: collection.collection_version?.namespace,
+                        name: collection.collection_version?.name,
+                      },
+
+                      query: { version: collection.collection_version?.version },
+                    })}
+                  >
+                    distributions&nbsp;
+                  </Link>
+                  of this repository.
+                </Trans>
+              </div>
+            ) : null}
+
             <a href="/#" ref={downloadLinkRef} style={{ display: 'none' }}>
               {t(`Link`)}
             </a>
