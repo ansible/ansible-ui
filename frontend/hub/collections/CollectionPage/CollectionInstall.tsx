@@ -9,21 +9,41 @@ import { HubError } from '../../common/HubError';
 import { hubAPI } from '../../common/api/formatPath';
 import { useRepositoryBasePath } from '../../common/api/hub-api-utils';
 import { CollectionVersionSearch } from '../Collection';
+import { Label } from '@patternfly/react-core';
+import { Title } from '@patternfly/react-core';
+import { useGet } from '../../../common/crud/useGet';
+import { pulpAPI } from '../../common/api/formatPath';
+import { CollectionVersionsContent } from './CollectionDocumentation';
 
 export function CollectionInstall() {
   const { t } = useTranslation();
   const { collection } = useOutletContext<{ collection: CollectionVersionSearch }>();
   const downloadLinkRef = React.useRef<HTMLAnchorElement>(null);
-  const { basePath, error, loading } = useRepositoryBasePath(
+  const { basePath, error } = useRepositoryBasePath(
     collection.repository?.name ?? '',
     collection.repository?.pulp_href
   );
 
-  if (loading) {
+  const { data: contentResults, error: contentError } = useGet<CollectionVersionsContent>(
+    pulpAPI`/content/ansible/collection_versions/?namespace=${
+      collection?.collection_version?.namespace || ''
+    }&name=${collection?.collection_version?.name || ''}&version=${
+      collection?.collection_version?.version || ''
+    }&offset=0&limit=1`
+  );
+
+  const content = contentResults?.results[0];
+
+  if ((!basePath && !error) || (!content && !contentError)) {
     <LoadingPage breadcrumbs tabs />;
   }
+
   if (error) {
     return <HubError error={new Error(error)} />;
+  }
+
+  if (contentError) {
+    return <HubError error={contentError} />;
   }
 
   async function Download(
@@ -47,12 +67,20 @@ export function CollectionInstall() {
   return (
     <Scrollable>
       <PageSection variant="light">
-        <PageDetails>
+        <PageDetails numberOfColumns={'single'}>
+          <PageDetail>{collection.collection_version?.description}</PageDetail>
+
+          <PageDetail>
+            {collection.collection_version?.tags?.map((tag, i) => (
+              <Label key={i} variant="outline">
+                {tag?.name}
+              </Label>
+            ))}
+          </PageDetail>
+
+          <Title headingLevel="h2">{t('Install')}</Title>
           <PageDetail label={t('License')}>
-            {/*collection?.latest_version?.metadata?.license &&
-              collection.latest_version.metadata.license?.length > 0 &&
-              collection.latest_version.metadata.license[0]*/}
-            {t`License not implemented yet`}
+            {content?.license ? content?.license.join(', ') : ''}
           </PageDetail>
           <PageDetail label={t('Installation')}>
             <CopyCell
@@ -60,11 +88,15 @@ export function CollectionInstall() {
                 collection?.collection_version?.namespace ?? ''
               }.${collection?.collection_version?.name ?? ''}`}
             />
+
             <PageDetail>
               {t(
-                `Note: Installing collection with ansible-galaxy is only supported in ansible 2.9+`
+                `Note: Installing collection with ansible-galaxy is only supported in ansible 2.13.9+`
               )}
             </PageDetail>
+          </PageDetail>
+
+          <PageDetail label={t('Download')}>
             <a href="/#" ref={downloadLinkRef} style={{ display: 'none' }}>
               {t(`Link`)}
             </a>
