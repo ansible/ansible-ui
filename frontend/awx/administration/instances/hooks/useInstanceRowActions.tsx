@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { PencilAltIcon, HeartbeatIcon } from '@patternfly/react-icons';
+import { HeartbeatIcon, PencilAltIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -9,9 +9,9 @@ import {
   usePageNavigate,
 } from '../../../../../framework';
 import { requestPatch } from '../../../../common/crud/Data';
-import { AwxRoute } from '../../../AwxRoutes';
-import { awxAPI } from '../../../api/awx-utils';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { Instance } from '../../../interfaces/Instance';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { useRunHealthCheck } from './useRunHealthCheck';
 
 export function useInstanceRowActions(onComplete: (instances: Instance[]) => void) {

@@ -1,12 +1,12 @@
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePageDialog } from '../../../../../framework';
+import { SelectSingleDialog } from '../../../../../framework/PageDialogs/SelectSingleDialog';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { useAwxView } from '../../../common/useAwxView';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
-import { useAwxView } from '../../../useAwxView';
-import { awxAPI } from '../../../api/awx-utils';
 import { useTemplateColumns } from './useTemplateColumns';
 import { useTemplateFilters } from './useTemplateFilters';
-import { SelectSingleDialog } from '../../../../../framework/PageDialogs/SelectSingleDialog';
-import { useCallback } from 'react';
 
 function SelectWorkflowJobTemplate(props: {
   title: string;

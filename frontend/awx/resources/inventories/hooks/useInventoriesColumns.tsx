@@ -9,8 +9,8 @@ import {
   useNameColumn,
   useOrganizationNameColumn,
 } from '../../../../common/columns';
-import { AwxRoute } from '../../../AwxRoutes';
 import { Inventory } from '../../../interfaces/Inventory';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { type WebSocketInventory } from '../Inventories';
 
 export function useInventoriesColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {

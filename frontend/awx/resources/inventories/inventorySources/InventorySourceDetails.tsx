@@ -6,6 +6,7 @@ import {
   TextListVariants,
   Tooltip,
 } from '@patternfly/react-core';
+import { useCallback } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import {
@@ -16,23 +17,22 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../../framework';
+import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
+import { StandardPopover } from '../../../../../framework/components/StandardPopover';
+import { formatDateString } from '../../../../../framework/utils/dateTimeHelpers';
+import { LastModifiedPageDetail } from '../../../../common/LastModifiedPageDetail';
+import { StatusLabel } from '../../../../common/Status';
 import { useGetItem } from '../../../../common/crud/useGet';
+import { useOptions } from '../../../../common/crud/useOptions';
+import { AwxError } from '../../../common/AwxError';
+import { CredentialLabel } from '../../../common/CredentialLabel';
+import { ExecutionEnvironmentDetail } from '../../../common/ExecutionEnvironmentDetail';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { useAwxWebSocketSubscription } from '../../../common/useAwxWebSocket';
 import { useVerbosityString } from '../../../common/useVerbosityString';
 import { InventorySource } from '../../../interfaces/InventorySource';
-import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
-import { AwxRoute } from '../../../AwxRoutes';
-import { awxAPI } from '../../../api/awx-utils';
-import { StandardPopover } from '../../../../../framework/components/StandardPopover';
-import { StatusLabel } from '../../../../common/Status';
-import { useOptions } from '../../../../common/crud/useOptions';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
-import { ExecutionEnvironmentDetail } from '../../../common/ExecutionEnvironmentDetail';
-import { formatDateString } from '../../../../../framework/utils/dateTimeHelpers';
-import { CredentialLabel } from '../../../common/CredentialLabel';
-import { AwxError } from '../../../common/AwxError';
-import { useCallback } from 'react';
-import { useAwxWebSocketSubscription } from '../../../common/useAwxWebSocket';
-import { LastModifiedPageDetail } from '../../../../common/LastModifiedPageDetail';
+import { AwxRoute } from '../../../main/AwxRoutes';
 
 export type WebsocketInventorySource = {
   status: string;

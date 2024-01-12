@@ -12,8 +12,8 @@ import { Dotted } from '../../../../../framework/components/Dotted';
 import { capitalizeFirstLetter } from '../../../../../framework/utils/strings';
 import { StatusCell } from '../../../../common/Status';
 import { useCreatedColumn, useModifiedColumn, useNameColumn } from '../../../../common/columns';
-import { AwxRoute } from '../../../AwxRoutes';
 import { Instance } from '../../../interfaces/Instance';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { useNodeTypeTooltip } from './useNodeTypeTooltip';
 
 export function useInstancesColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {

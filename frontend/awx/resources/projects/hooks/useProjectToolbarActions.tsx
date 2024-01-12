@@ -9,10 +9,10 @@ import {
   useGetPageUrl,
 } from '../../../../../framework';
 import { useOptions } from '../../../../common/crud/useOptions';
-import { AwxRoute } from '../../../AwxRoutes';
-import { awxAPI } from '../../../api/awx-utils';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { Project } from '../../../interfaces/Project';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { useCancelProjects } from './useCancelProjects';
 import { useDeleteProjects } from './useDeleteProjects';
 

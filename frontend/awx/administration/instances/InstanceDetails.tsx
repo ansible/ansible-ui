@@ -36,15 +36,15 @@ import { LastModifiedPageDetail } from '../../../common/LastModifiedPageDetail';
 import { StatusLabel } from '../../../common/Status';
 import { useGetItem } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { AwxRoute } from '../../AwxRoutes';
-import { awxAPI } from '../../api/awx-utils';
 import { AwxError } from '../../common/AwxError';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
+import { awxAPI } from '../../common/api/awx-utils';
+import { useAwxActiveUser } from '../../common/useAwxActiveUser';
 import { Instance } from '../../interfaces/Instance';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
+import { AwxRoute } from '../../main/AwxRoutes';
 import { useInstanceActions } from './hooks/useInstanceActions';
 import { useNodeTypeTooltip } from './hooks/useNodeTypeTooltip';
-import { useAwxActiveUser } from '../../common/useAwxActiveUser';
 
 export function InstanceDetails() {
   const { t } = useTranslation();

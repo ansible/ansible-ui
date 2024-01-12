@@ -1,12 +1,12 @@
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { usePageDialog } from '../../../../../framework';
 import { SelectSingleDialog } from '../../../../../framework/PageDialogs/SelectSingleDialog';
-import { useAwxView } from '../../../useAwxView';
-import { awxAPI } from '../../../api/awx-utils';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { useAwxView } from '../../../common/useAwxView';
+import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { useTemplateColumns } from './useTemplateColumns';
 import { useTemplateFilters } from './useTemplateFilters';
-import { usePageDialog } from '../../../../../framework';
-import { useCallback } from 'react';
-import { JobTemplate } from '../../../interfaces/JobTemplate';
 
 function SelectJobTemplate(props: { title: string; onSelect: (template: JobTemplate) => void }) {
   const toolbarFilters = useTemplateFilters();

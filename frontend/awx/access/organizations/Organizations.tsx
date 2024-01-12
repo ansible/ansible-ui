@@ -28,8 +28,7 @@ import {
   useModifiedColumn,
   useNameColumn,
 } from '../../../common/columns';
-import { AwxRoute } from '../../AwxRoutes';
-import { awxAPI } from '../../api/awx-utils';
+import { awxAPI } from '../../common/api/awx-utils';
 import {
   useCreatedByToolbarFilter,
   useDescriptionToolbarFilter,
@@ -37,9 +36,10 @@ import {
   useNameToolbarFilter,
 } from '../../common/awx-toolbar-filters';
 import { useAwxConfig } from '../../common/useAwxConfig';
+import { useAwxView } from '../../common/useAwxView';
 import { getDocsBaseUrl } from '../../common/util/getDocsBaseUrl';
 import { Organization } from '../../interfaces/Organization';
-import { useAwxView } from '../../useAwxView';
+import { AwxRoute } from '../../main/AwxRoutes';
 import { useSelectUsersAddOrganizations } from '../users/hooks/useSelectUsersAddOrganizations';
 import { useSelectUsersRemoveOrganizations } from '../users/hooks/useSelectUsersRemoveOrganizations';
 import { useDeleteOrganizations } from './hooks/useDeleteOrganizations';

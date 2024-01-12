@@ -1,9 +1,9 @@
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 
 import { useTranslation } from 'react-i18next';
-import { awxAPI } from '../../api/awx-utils';
+import { awxAPI } from '../../common/api/awx-utils';
+import { useAwxView } from '../../common/useAwxView';
 import { HostMetric } from '../../interfaces/HostMetric';
-import { useAwxView } from '../../useAwxView';
 import { useHostMetricsColumns } from './hooks/useHostMetricsColumns';
 import { useHostMetricsFilters } from './hooks/useHostMetricsFilters';
 import { useHostMetricsRowActions } from './hooks/useHostMetricsRowActions';

@@ -10,11 +10,11 @@ import {
   PageLayout,
   PageTable,
 } from '../../../../../framework';
-import { awxAPI } from '../../../api/awx-utils';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxConfig } from '../../../common/useAwxConfig';
+import { useAwxView } from '../../../common/useAwxView';
 import { getDocsBaseUrl } from '../../../common/util/getDocsBaseUrl';
 import { Token } from '../../../interfaces/Token';
-import { useAwxView } from '../../../useAwxView';
 import { useDeleteTokens } from '../hooks/useDeleteTokens';
 import { useTokensColumns } from '../hooks/useTokensColumns';
 import { useTokensFilters } from '../hooks/useTokensFilters';

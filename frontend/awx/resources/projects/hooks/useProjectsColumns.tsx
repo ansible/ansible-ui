@@ -8,8 +8,8 @@ import {
   useOrganizationNameColumn,
 } from '../../../../common/columns';
 import { ScmType } from '../../../../common/scm';
-import { AwxRoute } from '../../../AwxRoutes';
 import { Project } from '../../../interfaces/Project';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { useExecutionEnvironmentColumn } from './useDefaultEnvironment';
 import { useLastUsedColumn } from './useLastUsedColumn';
 import { useProjectNameColumn } from './useProjectNameColumn';

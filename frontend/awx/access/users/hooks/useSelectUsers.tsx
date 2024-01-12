@@ -2,12 +2,12 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePageDialog } from '../../../../../framework';
 import { MultiSelectDialog } from '../../../../../framework/PageDialogs/MultiSelectDialog';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { useAwxView } from '../../../common/useAwxView';
 import { User } from '../../../interfaces/User';
-import { useAwxView } from '../../../useAwxView';
 import { useUserAndTeamRolesLists } from '../../common/useUserAndTeamRolesLists';
 import { useUsersColumns } from './useUsersColumns';
 import { useUsersFilters } from './useUsersFilters';
-import { awxAPI } from '../../../api/awx-utils';
 
 function SelectUsers(props: {
   accessUrl?: string;

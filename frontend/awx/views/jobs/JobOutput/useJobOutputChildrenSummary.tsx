@@ -1,6 +1,6 @@
 import { useGet } from '../../../../common/crud/useGet';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { Job } from '../../../interfaces/Job';
-import { awxAPI } from '../../../api/awx-utils';
 
 export interface IJobOutputChildrenSummary {
   children_summary: { [counter: string]: { rowNumber: number; numChildren: number } };

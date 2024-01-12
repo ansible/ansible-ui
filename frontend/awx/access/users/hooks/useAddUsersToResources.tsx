@@ -1,9 +1,9 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
-import { awxAPI } from '../../../api/awx-utils';
-import { User } from '../../../interfaces/User';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxBulkActionDialog } from '../../../common/useAwxBulkActionDialog';
+import { User } from '../../../interfaces/User';
 import { ResourceType } from '../../common/ResourceAccessList';
 
 export function useAddUsersToResources() {

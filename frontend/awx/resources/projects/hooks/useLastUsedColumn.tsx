@@ -7,8 +7,8 @@ import {
   ITableColumn,
   usePageNavigate,
 } from '../../../../../framework';
-import { AwxRoute } from '../../../AwxRoutes';
 import { Project } from '../../../interfaces/Project';
+import { AwxRoute } from '../../../main/AwxRoutes';
 
 export function useLastUsedColumn() {
   const { t } = useTranslation();

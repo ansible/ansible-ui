@@ -1,3 +1,6 @@
+import { ButtonVariant } from '@patternfly/react-core';
+import { PencilAltIcon, PlusIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
@@ -10,14 +13,11 @@ import {
   PageLayout,
   PageTable,
 } from '../../../../../framework';
-import { useGetCreateRuleRoute } from '../hooks/scheduleHelpers';
-import { useMemo } from 'react';
-import { ButtonVariant } from '@patternfly/react-core';
-import { PencilAltIcon, PlusIcon } from '@patternfly/react-icons';
 import { useGetItem } from '../../../../common/crud/useGet';
-import { Schedule } from '../../../interfaces/Schedule';
 import { AwxError } from '../../../common/AwxError';
-import { awxAPI } from '../../../api/awx-utils';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { Schedule } from '../../../interfaces/Schedule';
+import { useGetCreateRuleRoute } from '../hooks/scheduleHelpers';
 
 export function ScheduleRules() {
   const { t } = useTranslation();
