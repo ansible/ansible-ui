@@ -41,9 +41,12 @@ export function Token() {
             variant="warning"
             isInline
             title={t('Copy this token now. This is the only time you will ever see it.')}
+            data-cy={'copy_token_warning'}
           />
           <PageSection variant="light">
-            <CopyCell text={token} />
+            <div data-cy={'copy_token_cell'}>
+              <CopyCell data-cy={'copy_token_cell'} text={token} />
+            </div>
           </PageSection>
         </Stack>
       ) : (
@@ -52,6 +55,7 @@ export function Token() {
             variant="warning"
             isInline
             title={t('Generating a new token will delete your old token.')}
+            data-cy={'generate_token_warning'}
           />
           <PageSection variant="light">
             <Stack hasGutter>
@@ -60,6 +64,7 @@ export function Token() {
                   // eslint-disable-next-line @typescript-eslint/no-misused-promises
                   onClick={onClick}
                   isDisabled={working}
+                  data-cy={'generate_token'}
                 >
                   {t('Generate token')}
                 </Button>
