@@ -33,13 +33,13 @@ export function CreatePlatformUser() {
   const navigate = useNavigate();
   const postRequest = usePostRequest<PlatformUser>();
   const onSubmit: PageFormSubmitHandler<PlatformUser> = async (user) => {
-    const createdUser = await postRequest(gatewayAPI`/v1/users/`, user);
+    const createdUser = await postRequest(gatewayAPI`/users/`, user);
     const teamIds = (user as unknown as { teams: number[] }).teams;
     if (teamIds) {
       for (const teamId of teamIds) {
-        const team = await requestGet<PlatformTeam>(gatewayAPI`/v1/teams/${teamId.toString()}/`);
+        const team = await requestGet<PlatformTeam>(gatewayAPI`/teams/${teamId.toString()}/`);
         team.users.push(createdUser.id);
-        await requestPatch<PlatformTeam>(gatewayAPI`/v1/teams/${teamId.toString()}/`, {
+        await requestPatch<PlatformTeam>(gatewayAPI`/teams/${teamId.toString()}/`, {
           users: team.users,
         });
       }
@@ -77,29 +77,29 @@ export function EditPlatformUser() {
     data: user,
     isLoading,
     error,
-  } = useGet<PlatformUser>(gatewayAPI`/v1/users/${id.toString()}/`);
+  } = useGet<PlatformUser>(gatewayAPI`/users/${id.toString()}/`);
   const {
     items: teams,
     isLoading: isTeamsLoading,
     error: teamError,
-  } = useGetAll<PlatformTeam>(gatewayAPI`/v1/teams/`);
+  } = useGetAll<PlatformTeam>(gatewayAPI`/teams/`);
   const patchUser = usePatchRequest<PlatformUser, PlatformUser>();
   const patchTeam = usePatchRequest<Partial<PlatformTeam>, PlatformTeam>();
   const onSubmit: PageFormSubmitHandler<PlatformUser> = useCallback(
     async (user) => {
-      await patchUser(gatewayAPI`/v1/users/${id.toString()}/`, user);
+      await patchUser(gatewayAPI`/users/${id.toString()}/`, user);
       const teamIds = (user as unknown as { teams: number[] }).teams;
       if (teamIds && teams) {
         for (const team of teams) {
           if (teamIds.includes(team.id)) {
             if (team.users.find((id) => id === user.id) === undefined) {
               team.users.push(user.id);
-              await patchTeam(gatewayAPI`/v1/teams/${team.id.toString()}/`, { users: team.users });
+              await patchTeam(gatewayAPI`/teams/${team.id.toString()}/`, { users: team.users });
             }
           } else {
             if (team.users.find((id) => id === user.id) !== undefined) {
               team.users = team.users.filter((id) => id !== user.id);
-              await patchTeam(gatewayAPI`/v1/teams/${team.id.toString()}/`, { users: team.users });
+              await patchTeam(gatewayAPI`/teams/${team.id.toString()}/`, { users: team.users });
             }
           }
         }
@@ -147,7 +147,7 @@ function PlatformUserInputs(props: { isCreate?: boolean }) {
 
   const queryTeams = useCallback(async (page: number) => {
     const teams = await requestGet<PlatformItemsResponse<PlatformTeam>>(
-      gatewayAPI`/v1/teams/?page=${page.toString()}`
+      gatewayAPI`/teams/?page=${page.toString()}`
     );
     return {
       total: teams.count,

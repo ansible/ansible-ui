@@ -33,7 +33,7 @@ export function CreatePlatformTeam() {
   const navigate = useNavigate();
   const postRequest = usePostRequest<PlatformTeam>();
   const onSubmit: PageFormSubmitHandler<PlatformTeam> = async (team) => {
-    const createdTeam = await postRequest(gatewayAPI`/v1/teams/`, team);
+    const createdTeam = await postRequest(gatewayAPI`/teams/`, team);
     pageNavigate(PlatformRoute.TeamDetails, { params: { id: createdTeam.id } });
   };
   const getPageUrl = useGetPageUrl();
@@ -67,10 +67,10 @@ export function EditPlatformTeam() {
     data: team,
     isLoading,
     error,
-  } = useGet<PlatformTeam>(gatewayAPI`/v1/teams/${id.toString()}/`);
+  } = useGet<PlatformTeam>(gatewayAPI`/teams/${id.toString()}/`);
   const patchRequest = usePatchRequest<PlatformTeam, PlatformTeam>();
   const onSubmit: PageFormSubmitHandler<PlatformTeam> = async (team) => {
-    await patchRequest(gatewayAPI`/v1/teams/${id.toString()}/`, team);
+    await patchRequest(gatewayAPI`/teams/${id.toString()}/`, team);
     navigate(-1);
   };
   const getPageUrl = useGetPageUrl();
@@ -102,7 +102,7 @@ function PlatformTeamInputs() {
   const { t } = useTranslation();
   const queryOrganizations = useCallback(async (page: number) => {
     const organizations = await requestGet<PlatformItemsResponse<PlatformOrganization>>(
-      gatewayAPI`/v1/organizations/?page=${page.toString()}`
+      gatewayAPI`/organizations/?page=${page.toString()}`
     );
     return {
       total: organizations.count,
@@ -114,7 +114,7 @@ function PlatformTeamInputs() {
   }, []);
   const queryUsers = useCallback(async (page: number) => {
     const users = await requestGet<PlatformItemsResponse<PlatformUser>>(
-      gatewayAPI`/v1/users/?page=${page.toString()}`
+      gatewayAPI`/users/?page=${page.toString()}`
     );
     return {
       total: users.count,

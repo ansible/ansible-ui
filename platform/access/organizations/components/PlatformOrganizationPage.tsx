@@ -23,7 +23,7 @@ export function PlatformOrganizationPage() {
     error,
     data: organization,
     refresh,
-  } = useGetItem<PlatformOrganization>(gatewayAPI`/v1/organizations`, params.id);
+  } = useGetItem<PlatformOrganization>(gatewayAPI`/organizations`, params.id);
   const getPageUrl = useGetPageUrl();
   const actions = useOrganizationRowActions();
 

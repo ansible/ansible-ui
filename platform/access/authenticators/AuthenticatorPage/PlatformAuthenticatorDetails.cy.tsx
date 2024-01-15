@@ -11,15 +11,15 @@ const mockMaps = mockPlatformAuthenticatorMaps;
 describe('PlatformTeamDetails', () => {
   it('Component displays authenticator details', () => {
     cy.intercept(
-      { method: 'GET', path: gatewayAPI`/v1/authenticators/*` },
+      { method: 'GET', path: gatewayAPI`/authenticators/*` },
       { body: mockAuthenticator }
     );
     cy.intercept(
-      { method: 'GET', path: gatewayAPI`/v1/authenticator_plugins` },
+      { method: 'GET', path: gatewayAPI`/authenticator_plugins` },
       { body: mockPlugins }
     );
     cy.intercept(
-      { method: 'GET', path: gatewayAPI`/v1/authenticator_maps?authenticator=*` },
+      { method: 'GET', path: gatewayAPI`/authenticator_maps?authenticator=*` },
       { body: mockMaps }
     );
     cy.mount(<PlatformAuthenticatorDetails />);

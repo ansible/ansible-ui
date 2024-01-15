@@ -24,12 +24,12 @@ export function AuthenticatorsList() {
   const pageNavigate = usePageNavigate();
 
   const view = usePlatformView<Authenticator>({
-    url: gatewayAPI`/v1/authenticators/`,
+    url: gatewayAPI`/authenticators/`,
     toolbarFilters,
     tableColumns,
   });
 
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/v1/authenticators/`);
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/authenticators/`);
   const canCreateAuthenticator = Boolean(data && data.actions && data.actions['POST']);
   const toolbarActions = useAuthenticatorToolbarActions(view);
   const rowActions = useAuthenticatorRowActions(view);

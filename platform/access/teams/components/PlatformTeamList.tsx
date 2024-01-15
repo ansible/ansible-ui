@@ -21,12 +21,12 @@ export function PlatformTeamList() {
   const pageNavigate = usePageNavigate();
 
   const view = usePlatformView<PlatformTeam>({
-    url: gatewayAPI`/v1/teams`,
+    url: gatewayAPI`/teams`,
     toolbarFilters,
     tableColumns,
   });
 
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/v1/teams`);
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/teams`);
   const canCreateTeam = Boolean(data && data.actions && data.actions['POST']);
   const toolbarActions = useTeamToolbarActions(view);
   const rowActions = useTeamRowActions(view);
