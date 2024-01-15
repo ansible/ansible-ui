@@ -237,13 +237,17 @@ function ShowSignature(props: { collection: CollectionVersionSearch }) {
   if (signData) {
     const signatures = signData.signatures;
 
-    return signatures.map((signatureItem, idx: number) => {
-      return (
-        <CodeBlock key={idx}>
-          <CodeBlockCode>{signatureItem.signature}</CodeBlockCode>
-        </CodeBlock>
-      );
-    });
+    return (
+      <>
+        {signatures.map((signatureItem, idx: number) => {
+          return (
+            <CodeBlock key={idx}>
+              <CodeBlockCode>{signatureItem.signature}</CodeBlockCode>
+            </CodeBlock>
+          );
+        })}
+      </>
+    );
   }
 
   return <></>;
