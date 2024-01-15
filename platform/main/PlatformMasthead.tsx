@@ -29,6 +29,7 @@ import { PageThemeSwitcher } from '../../framework/PageMasthead/PageThemeSwitche
 import { useAwxNotifications } from '../../frontend/awx/main/AwxMasthead';
 import { PageRefreshIcon } from '../../frontend/common/PageRefreshIcon';
 import { postRequest } from '../../frontend/common/crud/Data';
+import { useHubNotifications } from '../../frontend/hub/main/HubMasthead';
 import { gatewayAPI } from '../api/gateway-api-utils';
 import { useActivePlatformUser } from '../hooks/useActivePlatformUser';
 import { PlatformRoute } from './PlatformRoutes';
@@ -39,6 +40,7 @@ export function PlatformMasthead() {
   const navigate = useNavigate();
   const activeUser = useActivePlatformUser();
   useAwxNotifications();
+  useHubNotifications();
   const showTitle = useBreakpoint('md');
 
   const { cache } = useSWRConfig();
