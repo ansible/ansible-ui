@@ -28,6 +28,7 @@ import { postHubRequest, putHubRequest } from '../../common/api/request';
 import { postRequest } from '../../../common/crud/Data';
 
 interface RepositoryFormProps {
+  remote: IRemotes | string | null;
   name: string | null;
   description: string | null;
   retain_repo_versions: number | null;
@@ -36,7 +37,6 @@ interface RepositoryFormProps {
   hide_from_search?: boolean | null;
   createDistribution?: boolean;
   pulp_labels: Record<string, string>;
-  remote: string | null;
 }
 
 export function RepositoryForm() {
@@ -63,6 +63,10 @@ export function RepositoryForm() {
     }
     if (data.pipeline && data.pipeline !== 'none') {
       payload.pulp_labels.pipeline = data.pipeline;
+    }
+    if (data.remote) {
+      const remote = data.remote as IRemotes;
+      payload.remote = remote.pulp_href;
     }
 
     const promise = isEdit
