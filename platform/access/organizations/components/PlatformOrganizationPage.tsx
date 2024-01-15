@@ -11,7 +11,7 @@ import {
 import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
 import { AwxError } from '../../../../frontend/awx/common/AwxError';
 import { useGetItem } from '../../../../frontend/common/crud/useGet';
-import { gatewayAPI } from '../../../api/gateway-api-utils';
+import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { useOrganizationRowActions } from '../hooks/useOrganizationActions';
@@ -23,7 +23,7 @@ export function PlatformOrganizationPage() {
     error,
     data: organization,
     refresh,
-  } = useGetItem<PlatformOrganization>(gatewayAPI`/organizations`, params.id);
+  } = useGetItem<PlatformOrganization>(gatewayV1API`/organizations`, params.id);
   const getPageUrl = useGetPageUrl();
   const actions = useOrganizationRowActions();
 

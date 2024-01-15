@@ -20,7 +20,7 @@ import { requestGet, requestPatch } from '../../../../frontend/common/crud/Data'
 import { useGet } from '../../../../frontend/common/crud/useGet';
 import { usePatchRequest } from '../../../../frontend/common/crud/usePatchRequest';
 import { usePostRequest } from '../../../../frontend/common/crud/usePostRequest';
-import { gatewayAPI } from '../../../api/gateway-api-utils';
+import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { useGetAll } from '../../../common/useGetAll';
 import { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
@@ -33,13 +33,13 @@ export function CreatePlatformUser() {
   const navigate = useNavigate();
   const postRequest = usePostRequest<PlatformUser>();
   const onSubmit: PageFormSubmitHandler<PlatformUser> = async (user) => {
-    const createdUser = await postRequest(gatewayAPI`/users/`, user);
+    const createdUser = await postRequest(gatewayV1API`/users/`, user);
     const teamIds = (user as unknown as { teams: number[] }).teams;
     if (teamIds) {
       for (const teamId of teamIds) {
-        const team = await requestGet<PlatformTeam>(gatewayAPI`/teams/${teamId.toString()}/`);
+        const team = await requestGet<PlatformTeam>(gatewayV1API`/teams/${teamId.toString()}/`);
         team.users.push(createdUser.id);
-        await requestPatch<PlatformTeam>(gatewayAPI`/teams/${teamId.toString()}/`, {
+        await requestPatch<PlatformTeam>(gatewayV1API`/teams/${teamId.toString()}/`, {
           users: team.users,
         });
       }
@@ -77,29 +77,29 @@ export function EditPlatformUser() {
     data: user,
     isLoading,
     error,
-  } = useGet<PlatformUser>(gatewayAPI`/users/${id.toString()}/`);
+  } = useGet<PlatformUser>(gatewayV1API`/users/${id.toString()}/`);
   const {
     items: teams,
     isLoading: isTeamsLoading,
     error: teamError,
-  } = useGetAll<PlatformTeam>(gatewayAPI`/teams/`);
+  } = useGetAll<PlatformTeam>(gatewayV1API`/teams/`);
   const patchUser = usePatchRequest<PlatformUser, PlatformUser>();
   const patchTeam = usePatchRequest<Partial<PlatformTeam>, PlatformTeam>();
   const onSubmit: PageFormSubmitHandler<PlatformUser> = useCallback(
     async (user) => {
-      await patchUser(gatewayAPI`/users/${id.toString()}/`, user);
+      await patchUser(gatewayV1API`/users/${id.toString()}/`, user);
       const teamIds = (user as unknown as { teams: number[] }).teams;
       if (teamIds && teams) {
         for (const team of teams) {
           if (teamIds.includes(team.id)) {
             if (team.users.find((id) => id === user.id) === undefined) {
               team.users.push(user.id);
-              await patchTeam(gatewayAPI`/teams/${team.id.toString()}/`, { users: team.users });
+              await patchTeam(gatewayV1API`/teams/${team.id.toString()}/`, { users: team.users });
             }
           } else {
             if (team.users.find((id) => id === user.id) !== undefined) {
               team.users = team.users.filter((id) => id !== user.id);
-              await patchTeam(gatewayAPI`/teams/${team.id.toString()}/`, { users: team.users });
+              await patchTeam(gatewayV1API`/teams/${team.id.toString()}/`, { users: team.users });
             }
           }
         }
@@ -147,7 +147,7 @@ function PlatformUserInputs(props: { isCreate?: boolean }) {
 
   const queryTeams = useCallback(async (page: number) => {
     const teams = await requestGet<PlatformItemsResponse<PlatformTeam>>(
-      gatewayAPI`/teams/?page=${page.toString()}`
+      gatewayV1API`/teams/?page=${page.toString()}`
     );
     return {
       total: teams.count,

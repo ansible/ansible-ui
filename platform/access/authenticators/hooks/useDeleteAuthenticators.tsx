@@ -1,10 +1,10 @@
-import { useTranslation } from 'react-i18next';
 import { useMemo } from 'react';
-import { Authenticator } from '../../../interfaces/Authenticator';
+import { useTranslation } from 'react-i18next';
 import { TextCell, compareStrings, useBulkConfirmation } from '../../../../framework';
 import { getItemKey, requestDelete } from '../../../../frontend/common/crud/Data';
+import { gatewayV1API } from '../../../api/gateway-api-utils';
+import { Authenticator } from '../../../interfaces/Authenticator';
 import { useAuthenticatorsColumns } from './useAuthenticatorColumns';
-import { gatewayAPI } from '../../../api/gateway-api-utils';
 
 export function useDeleteAuthenticators(onComplete: (authenticators: Authenticator[]) => void) {
   const { t } = useTranslation();
@@ -56,7 +56,7 @@ export function useDeleteAuthenticators(onComplete: (authenticators: Authenticat
       actionColumns,
       onComplete,
       actionFn: (authenticator: Authenticator, signal) =>
-        requestDelete(gatewayAPI`/authenticators/${authenticator.id.toString()}/`, signal),
+        requestDelete(gatewayV1API`/authenticators/${authenticator.id.toString()}/`, signal),
     });
   };
   return deleteAuthenticators;

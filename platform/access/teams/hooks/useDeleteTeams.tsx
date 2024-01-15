@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../framework';
 import { useNameColumn } from '../../../../frontend/common/columns';
 import { getItemKey, requestDelete } from '../../../../frontend/common/crud/Data';
-import { gatewayAPI } from '../../../api/gateway-api-utils';
+import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { useTeamColumns } from './useTeamColumns';
 
@@ -53,7 +53,7 @@ export function useDeleteTeams(onComplete: (teams: PlatformTeam[]) => void) {
       actionColumns,
       onComplete,
       actionFn: (team: PlatformTeam, signal) =>
-        requestDelete(gatewayAPI`/teams/${team.id.toString()}/`, signal),
+        requestDelete(gatewayV1API`/teams/${team.id.toString()}/`, signal),
     });
   };
   return deleteTeams;

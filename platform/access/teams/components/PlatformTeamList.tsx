@@ -6,7 +6,7 @@ import {
   OptionsResponse,
 } from '../../../../frontend/awx/interfaces/OptionsResponse';
 import { useOptions } from '../../../../frontend/common/crud/useOptions';
-import { gatewayAPI } from '../../../api/gateway-api-utils';
+import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { usePlatformView } from '../../../hooks/usePlatformView';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
@@ -21,12 +21,12 @@ export function PlatformTeamList() {
   const pageNavigate = usePageNavigate();
 
   const view = usePlatformView<PlatformTeam>({
-    url: gatewayAPI`/teams`,
+    url: gatewayV1API`/teams`,
     toolbarFilters,
     tableColumns,
   });
 
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/teams`);
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayV1API`/teams`);
   const canCreateTeam = Boolean(data && data.actions && data.actions['POST']);
   const toolbarActions = useTeamToolbarActions(view);
   const rowActions = useTeamRowActions(view);

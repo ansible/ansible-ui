@@ -14,7 +14,7 @@ import {
   OptionsResponse,
 } from '../../../../frontend/awx/interfaces/OptionsResponse';
 import { useOptions } from '../../../../frontend/common/crud/useOptions';
-import { gatewayAPI } from '../../../api/gateway-api-utils';
+import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { IPlatformView } from '../../../hooks/usePlatformView';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
@@ -24,7 +24,7 @@ export function useUserToolbarActions(view: IPlatformView<PlatformUser>) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
 
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/users`);
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayV1API`/users`);
   const canCreateUser = Boolean(data && data.actions && data.actions['POST']);
   const deleteUsers = useDeleteUsers(view.unselectItemsAndRefresh);
 

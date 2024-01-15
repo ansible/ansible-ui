@@ -6,7 +6,7 @@ import {
   OptionsResponse,
 } from '../../../../frontend/awx/interfaces/OptionsResponse';
 import { useOptions } from '../../../../frontend/common/crud/useOptions';
-import { gatewayAPI } from '../../../api/gateway-api-utils';
+import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { usePlatformView } from '../../../hooks/usePlatformView';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
@@ -24,12 +24,12 @@ export function PlatformOrganizationList() {
   const pageNavigate = usePageNavigate();
 
   const view = usePlatformView<PlatformOrganization>({
-    url: gatewayAPI`/organizations`,
+    url: gatewayV1API`/organizations`,
     toolbarFilters,
     tableColumns,
   });
 
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/organizations`);
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayV1API`/organizations`);
   const canCreateOrganization = Boolean(data && data.actions && data.actions['POST']);
   const toolbarActions = useOrganizationToolbarActions(view);
   const rowActions = useOrganizationRowActions(view);
