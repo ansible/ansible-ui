@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { BanIcon, TrashIcon, UploadIcon } from '@patternfly/react-icons';
+import { BanIcon, TrashIcon, UploadIcon, KeyIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -14,6 +14,7 @@ import { CollectionVersionSearch } from '../Collection';
 import { useDeleteCollections } from './useDeleteCollections';
 import { useDeleteCollectionsFromRepository } from './useDeleteCollectionsFromRepository';
 import { useDeprecateCollections } from './useDeprecateCollections';
+import { useSignCollection } from './useSignCollection';
 
 export function useCollectionsActions(callback: (collections: CollectionVersionSearch[]) => void) {
   const { t } = useTranslation();
@@ -22,6 +23,7 @@ export function useCollectionsActions(callback: (collections: CollectionVersionS
   const deleteCollectionsFromRepository = useDeleteCollectionsFromRepository(callback);
   const deprecateCollections = useDeprecateCollections(callback);
   const context = useHubContext();
+  const signCollection = useSignCollection(false, callback);
 
   return useMemo<IPageAction<CollectionVersionSearch>[]>(
     () => [
@@ -66,6 +68,15 @@ export function useCollectionsActions(callback: (collections: CollectionVersionS
           deprecateCollections(collections);
         },
       },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
+        icon: KeyIcon,
+        label: t('Sign collection'),
+        onClick: (collections) => {
+          signCollection(collections);
+        },
+      },
     ],
     [
       t,
@@ -74,6 +85,7 @@ export function useCollectionsActions(callback: (collections: CollectionVersionS
       deleteCollectionsFromRepository,
       pageNavigate,
       deprecateCollections,
+      signCollection,
     ]
   );
 }

@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { requestGet } from '../../../common/crud/Data';
-import { RequestError, isRequestError } from '../../../common/crud/RequestError';
+import { RequestError } from '../../../common/crud/RequestError';
 import { Task, TaskResponse } from '../../administration/tasks/Task';
 import { AnsibleAnsibleDistributionResponse as Distribution } from '../../interfaces/generated/AnsibleAnsibleDistributionResponse';
 import { AnsibleAnsibleRepositoryResponse as Repository } from '../../interfaces/generated/AnsibleAnsibleRepositoryResponse';
@@ -14,6 +15,52 @@ import {
   putHubRequest,
 } from './request';
 
+// returns the preferred distribution base_path given a repo name
+// if there is a distribution with the same name as the repository, it will be used (as long as it's connected to the right repo too)
+// if not, the oldest will be used
+// reject if no distributions or repository
+// optional pulp_href param skips repo lookup
+
+export async function getRepositoryBasePath(
+  name: string,
+  pulp_href: string,
+  t: TFunction<'translation', undefined>
+) {
+  let error = '';
+  try {
+    let repository: Repository | undefined | { name: string; pulp_href: string };
+    if (pulp_href) {
+      repository = { name, pulp_href };
+    } else {
+      error = t(`Failed to find repository {{name}}`, { name });
+      const repositoryResponse = await requestGet<Results>(
+        pulpAPI`/repositories/ansible/ansible/?name=${name}&limit=1`
+      );
+      repository = firstResult(repositoryResponse) as Repository;
+    }
+
+    error = t(`Failed to find a distribution for repository {{name}}`, { name });
+    const distributionResponse = await requestGet<Results>(
+      pulpAPI`/distributions/ansible/ansible/?name=${name}&limit=1`
+    );
+
+    let distribution: Distribution = firstResult(distributionResponse) as Distribution;
+
+    if (distribution && distribution.repository === repository.pulp_href) {
+      return distribution.base_path;
+    } else {
+      const newDistResponse = await requestGet<Results>(
+        pulpAPI`/distributions/ansible/ansible/?repository=${repository.pulp_href}&ordering=pulp_created&limit=1`
+      );
+      distribution = firstResult(newDistResponse) as Distribution;
+      return distribution.base_path;
+    }
+  } catch (ex) {
+    throw new Error(error);
+  }
+}
+
+// the same for hook version
 type Results = { results: Repository[] | Distribution[] };
 export function useRepositoryBasePath(name: string, pulp_href?: string | undefined) {
   const { t } = useTranslation();
@@ -24,49 +71,17 @@ export function useRepositoryBasePath(name: string, pulp_href?: string | undefin
 
   useEffect(() => {
     setLoading(true);
-    const fetchRepositoryBasePath = async () => {
+
+    void (async () => {
       try {
-        let repository: Repository | undefined | { name: string; pulp_href: string };
-
-        if (pulp_href) {
-          repository = { name, pulp_href };
-        } else {
-          const repositoryResponse = await requestGet<Results>(
-            pulpAPI`/repositories/ansible/ansible/?name=${name}&limit=1`
-          );
-          repository = firstResult(repositoryResponse) as Repository;
-        }
-        if (!repository) {
-          throw new Error(t(`Failed to find repository {{name}}`, { name }));
-        }
-        const distributionResponse = await requestGet<Results>(
-          pulpAPI`/distributions/ansible/ansible/?name=${name}&limit=1`
-        );
-        let distribution: Distribution = firstResult(distributionResponse) as Distribution;
-        if (distribution && distribution.repository === repository.pulp_href) {
-          setBasePath(distribution.base_path);
-        } else {
-          const newDistResponse = await requestGet<Results>(
-            pulpAPI`/distributions/ansible/ansible/?repository=${repository.pulp_href}&ordering=pulp_created&limit=1`
-          );
-          distribution = firstResult(newDistResponse) as Distribution;
-          if (!distribution) {
-            throw new Error(t(`Failed to find a distribution for repository {{name}}`, { name }));
-          }
-          setBasePath(distribution.base_path);
-        }
-      } catch (error) {
-        if (isRequestError(error)) {
-          setError(error?.message);
-        } else {
-          setError(t`Failed to find repository base path`);
-        }
-      } finally {
+        const path = await getRepositoryBasePath(name, pulp_href || '', t);
         setLoading(false);
+        setBasePath(path);
+      } catch (ex) {
+        setLoading(false);
+        setError(ex as string);
       }
-    };
-
-    void fetchRepositoryBasePath();
+    })();
   }, [name, pulp_href, t]);
 
   return { basePath, loading, error };

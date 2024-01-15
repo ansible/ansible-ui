@@ -52,8 +52,16 @@ export function useDeleteCollectionsFromRepository(
         actionButtonText,
         items: collections.sort((l, r) =>
           compareStrings(
-            l.collection_version?.name || '' + l.repository?.name + l.collection_version?.version,
-            r.collection_version?.name || '' + r.repository?.name + r.collection_version?.version
+            l.collection_version?.name ||
+              '' +
+                l.repository?.name +
+                l.collection_version?.version +
+                l.collection_version?.namespace,
+            r.collection_version?.name ||
+              '' +
+                r.repository?.name +
+                r.collection_version?.version +
+                r.collection_version?.namespace
           )
         ),
         keyFn: collectionKeyFn,
