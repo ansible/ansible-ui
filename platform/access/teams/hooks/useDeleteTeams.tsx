@@ -53,7 +53,7 @@ export function useDeleteTeams(onComplete: (teams: PlatformTeam[]) => void) {
       actionColumns,
       onComplete,
       actionFn: (team: PlatformTeam, signal) =>
-        requestDelete(gatewayAPI`/v1/teams/${team.id.toString()}/`, signal),
+        requestDelete(gatewayAPI`/teams/${team.id.toString()}/`, signal),
     });
   };
   return deleteTeams;

@@ -56,7 +56,7 @@ export function useDeleteUsers(onComplete: (users: PlatformUser[]) => void) {
       actionColumns,
       onComplete,
       actionFn: (user: PlatformUser, signal) =>
-        requestDelete(gatewayAPI`/v1/users/${user.id.toString()}/`, signal),
+        requestDelete(gatewayAPI`/users/${user.id.toString()}/`, signal),
     });
   };
   return deleteUsers;

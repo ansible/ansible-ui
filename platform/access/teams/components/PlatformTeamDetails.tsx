@@ -8,11 +8,7 @@ import { useTeamColumns } from '../hooks/useTeamColumns';
 
 export function PlatformTeamDetails() {
   const params = useParams<{ id: string }>();
-  const {
-    data: team,
-    isLoading,
-    error,
-  } = useGetItem<PlatformTeam>(gatewayAPI`/v1/teams`, params.id);
+  const { data: team, isLoading, error } = useGetItem<PlatformTeam>(gatewayAPI`/teams`, params.id);
   const columns = useTeamColumns();
   if (isLoading) return <LoadingPage />;
   if (error) return <AwxError error={error} />;

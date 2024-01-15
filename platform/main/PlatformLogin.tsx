@@ -6,13 +6,13 @@ import { UIAuth } from '../interfaces/UIAuth';
 import { PlatformRoute } from './PlatformRoutes';
 
 export function PlatformLogin() {
-  const { data: options } = useGet<UIAuth>(gatewayAPI`/v1/ui_auth/`);
+  const { data: options } = useGet<UIAuth>(gatewayAPI`/ui_auth/`);
   const getPageUrl = useGetPageUrl();
   const hideInputs = options ? !options.show_login_form : false;
 
   return (
     <Login
-      apiUrl={gatewayAPI`/v1/login/`}
+      apiUrl={gatewayAPI`/login/`}
       onLoginUrl={getPageUrl(PlatformRoute.Overview)}
       hideInputs={hideInputs}
       authOptions={options?.ssos}

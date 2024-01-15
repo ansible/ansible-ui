@@ -18,7 +18,7 @@ describe('Teams list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayAPI`/v1/teams*`,
+          url: gatewayAPI`/teams*`,
         },
         {
           fixture: 'platformTeams.json',
@@ -69,7 +69,7 @@ describe('Teams list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayAPI`/v1/teams*`,
+          url: gatewayAPI`/teams*`,
         },
         {
           fixture: 'emptyList.json',
@@ -112,7 +112,7 @@ describe('Teams list', () => {
   });
   describe('Error retrieving list', () => {
     it('Displays error loading teams', () => {
-      cy.intercept({ method: 'GET', url: gatewayAPI`/v1/teams/*` }, { statusCode: 500 });
+      cy.intercept({ method: 'GET', url: gatewayAPI`/teams/*` }, { statusCode: 500 });
       cy.mount(<PlatformTeamList />);
       cy.contains('Error loading teams');
     });

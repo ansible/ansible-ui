@@ -10,7 +10,7 @@ export function PlatformOrganizationDetails() {
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
   const { data: organization } = useGet<PlatformOrganization>(
-    gatewayAPI`/v1/organizations/${id.toString()}/`
+    gatewayAPI`/organizations/${id.toString()}/`
   );
   return <PageDetailsFromColumns item={organization} columns={columns} />;
 }

@@ -11,7 +11,7 @@ export function useTeamFilters() {
   const nameToolbarFilter = useNameToolbarFilter();
   const queryOrganizations = useCallback(async (page: number) => {
     const organizations = await requestGet<PlatformItemsResponse<PlatformOrganization>>(
-      gatewayAPI`/v1/organizations/?page=${page.toString()}`
+      gatewayAPI`/organizations/?page=${page.toString()}`
     );
     return {
       total: organizations.count,
