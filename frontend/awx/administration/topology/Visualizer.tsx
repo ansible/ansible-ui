@@ -224,15 +224,20 @@ export const TopologyViewLayer = (props: { mesh: MeshVisualizer }) => {
   return (
     <TopologyView
       id="mesh-topology"
+      sideBarResizable
+      sideBarOpen={selectedIds.length > 0}
       sideBar={
-        <TopologySideBar
-          data-cy="mesh-viz-sidebar"
-          className="mesh-viz-sidebar"
-          show={selectedIds.length > 0}
-          onClose={() => setSelectedIds([])}
-        >
-          <InstanceDetailSidebar selectedId={selectedIds[0]}></InstanceDetailSidebar>
-        </TopologySideBar>
+        selectedIds.length > 0 && (
+          <TopologySideBar
+            data-cy="mesh-viz-sidebar"
+            className="mesh-viz-sidebar"
+            show={selectedIds.length > 0}
+            onClose={() => setSelectedIds([])}
+            resizable
+          >
+            <InstanceDetailSidebar selectedId={selectedIds[0]}></InstanceDetailSidebar>
+          </TopologySideBar>
+        )
       }
       controlBar={
         !isLoading && (

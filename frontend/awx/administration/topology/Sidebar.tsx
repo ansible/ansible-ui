@@ -20,6 +20,7 @@ export function InstanceDetailInner(props: {
   } = props;
   return (
     <InstanceDetailsTab
+      numberOfColumns="single"
       instance={instance}
       instanceGroups={instanceGroups}
       handleToggleInstance={handleToggleInstance}
