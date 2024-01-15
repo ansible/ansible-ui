@@ -17,9 +17,11 @@ describe('Collections- List View', () => {
     cy.verifyPageTitle(Collections.title);
   });
 
-  // Skipping test until this can be made more robust.
-  // This is runnning into an error about "Artifact already exists"
-  it.skip('user can upload and then delete a new collection', () => {
+  after(() => {
+    cy.cleanupCollections();
+  });
+
+  it('user can upload and then delete a new collection', () => {
     cy.getOrCreateCollection().then((thisCollection) => {
       const thisCollectionName = thisCollection?.split('-').slice(-2, -1).toString();
       cy.navigateTo('hub', Collections.url);
