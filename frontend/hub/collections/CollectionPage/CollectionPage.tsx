@@ -25,12 +25,15 @@ import { useCollectionActions } from '../hooks/useCollectionActions';
 import { useCallback } from 'react';
 import { singleSelectBrowseAdapter } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSingleSelectFilter';
 import { useSelectCollectionVersionSingle } from '../hooks/useCollectionVersionSelector';
+import { useHubContext } from '../../common/useHubContext';
 
 export function CollectionPage() {
   const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const { name, namespace, repository } = useParams();
+  const context = useHubContext();
 
+  const { display_signatures } = context.featureFlags;
   // load collection by search params
   const version = searchParams.get('version');
 
@@ -102,9 +105,9 @@ export function CollectionPage() {
               ' ' +
               t('updated') +
               ' ' +
-              `${DateTime.fromISO(item.collection_version?.pulp_created || '').toRelative()} (${
-                item.is_signed ? t('signed') : t('unsigned')
-              })`;
+              `${DateTime.fromISO(item.collection_version?.pulp_created || '').toRelative()} ${
+                display_signatures ? (item.is_signed ? t('signed') : t('unsigned')) : ''
+              }`;
             if (item.is_highest) {
               label += ' (' + t('latest') + ')';
             }
@@ -118,7 +121,7 @@ export function CollectionPage() {
 
       return load();
     },
-    [name, namespace, repository, t]
+    [name, namespace, repository, t, display_signatures]
   );
 
   const getPageUrl = useGetPageUrl();
@@ -184,6 +187,7 @@ export function CollectionPage() {
                 ' ' +
                 DateTime.fromISO(collection.collection_version?.pulp_created).toRelative()}
             {collection &&
+              display_signatures &&
               (collection.is_signed ? (
                 <Label icon={<CheckCircleIcon />} variant="outline" color="green">
                   {' ' + t('Signed')}
