@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom';
 import { PageDetailsFromColumns } from '../../../../framework';
 import { useGet } from '../../../../frontend/common/crud/useGet';
-import { gatewayAPI } from '../../../api/gateway-api-utils';
+import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { useOrganizationColumns } from '../hooks/useOrganizationColumns';
 
@@ -10,7 +10,7 @@ export function PlatformOrganizationDetails() {
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
   const { data: organization } = useGet<PlatformOrganization>(
-    gatewayAPI`/organizations/${id.toString()}/`
+    gatewayV1API`/organizations/${id.toString()}/`
   );
   return <PageDetailsFromColumns item={organization} columns={columns} />;
 }

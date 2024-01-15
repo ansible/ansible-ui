@@ -11,7 +11,7 @@ import {
 import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
 import { AwxError } from '../../../../frontend/awx/common/AwxError';
 import { useGetItem } from '../../../../frontend/common/crud/useGet';
-import { gatewayAPI } from '../../../api/gateway-api-utils';
+import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { useUserRowActions } from '../hooks/useUserActions';
@@ -19,7 +19,7 @@ import { useUserRowActions } from '../hooks/useUserActions';
 export function PlatformUserPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { error, data: user, refresh } = useGetItem<PlatformUser>(gatewayAPI`/users`, params.id);
+  const { error, data: user, refresh } = useGetItem<PlatformUser>(gatewayV1API`/users`, params.id);
   const getPageUrl = useGetPageUrl();
   const actions = useUserRowActions();
   if (error) return <AwxError error={error} handleRefresh={refresh} />;

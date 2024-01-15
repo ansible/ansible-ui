@@ -16,14 +16,14 @@ import {
 import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
 import { AwxError } from '../../../../frontend/awx/common/AwxError';
 import { useGetItem } from '../../../../frontend/common/crud/useGet';
-import { gatewayAPI } from '../../../api/gateway-api-utils';
+import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 
 export function PlatformTeamPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { error, data: team, refresh } = useGetItem<PlatformTeam>(gatewayAPI`/teams`, params.id);
+  const { error, data: team, refresh } = useGetItem<PlatformTeam>(gatewayV1API`/teams`, params.id);
   const getPageUrl = useGetPageUrl();
 
   const itemActions: IPageAction<PlatformTeam>[] = useMemo(() => {

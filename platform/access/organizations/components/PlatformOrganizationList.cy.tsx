@@ -9,7 +9,7 @@ Organizations list test cases
 */
 
 import * as useOptions from '../../../../frontend/common/crud/useOptions';
-import { gatewayAPI } from '../../../api/gateway-api-utils';
+import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { PlatformOrganizationList } from './PlatformOrganizationList';
 
 describe('Organizations list', () => {
@@ -18,7 +18,7 @@ describe('Organizations list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayAPI`/organizations*`,
+          url: gatewayV1API`/organizations*`,
         },
         {
           fixture: 'platformOrganizations.json',
@@ -69,7 +69,7 @@ describe('Organizations list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayAPI`/organizations*`,
+          url: gatewayV1API`/organizations*`,
         },
         {
           fixture: 'emptyList.json',
@@ -112,7 +112,7 @@ describe('Organizations list', () => {
   });
   describe('Error retrieving list', () => {
     it('Displays error loading organizations', () => {
-      cy.intercept({ method: 'GET', url: gatewayAPI`/organizations/*` }, { statusCode: 500 });
+      cy.intercept({ method: 'GET', url: gatewayV1API`/organizations/*` }, { statusCode: 500 });
       cy.mount(<PlatformOrganizationList />);
       cy.contains('Error loading organizations');
     });

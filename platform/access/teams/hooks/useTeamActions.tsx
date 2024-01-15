@@ -14,7 +14,7 @@ import {
   OptionsResponse,
 } from '../../../../frontend/awx/interfaces/OptionsResponse';
 import { useOptions } from '../../../../frontend/common/crud/useOptions';
-import { gatewayAPI } from '../../../api/gateway-api-utils';
+import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { IPlatformView } from '../../../hooks/usePlatformView';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
@@ -24,7 +24,7 @@ export function useTeamToolbarActions(view: IPlatformView<PlatformTeam>) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
 
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/teams`);
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayV1API`/teams`);
   const canCreateTeam = Boolean(data && data.actions && data.actions['POST']);
   const deleteTeams = useDeleteTeams(view.unselectItemsAndRefresh);
 

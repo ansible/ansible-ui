@@ -15,7 +15,7 @@ import { AwxError } from '../../../../frontend/awx/common/AwxError';
 import { useGet } from '../../../../frontend/common/crud/useGet';
 import { usePatchRequest } from '../../../../frontend/common/crud/usePatchRequest';
 import { usePostRequest } from '../../../../frontend/common/crud/usePostRequest';
-import { gatewayAPI } from '../../../api/gateway-api-utils';
+import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 
@@ -25,7 +25,7 @@ export function CreatePlatformOrganization() {
   const navigate = useNavigate();
   const postRequest = usePostRequest<PlatformOrganization>();
   const onSubmit: PageFormSubmitHandler<PlatformOrganization> = async (organization) => {
-    const createdOrganization = await postRequest(gatewayAPI`/organizations/`, organization);
+    const createdOrganization = await postRequest(gatewayV1API`/organizations/`, organization);
     pageNavigate(PlatformRoute.OrganizationDetails, { params: { id: createdOrganization.id } });
   };
   const getPageUrl = useGetPageUrl();
@@ -59,10 +59,10 @@ export function EditPlatformOrganization() {
     data: organization,
     isLoading,
     error,
-  } = useGet<PlatformOrganization>(gatewayAPI`/organizations/${id.toString()}/`);
+  } = useGet<PlatformOrganization>(gatewayV1API`/organizations/${id.toString()}/`);
   const patchRequest = usePatchRequest<PlatformOrganization, PlatformOrganization>();
   const onSubmit: PageFormSubmitHandler<PlatformOrganization> = async (organization) => {
-    await patchRequest(gatewayAPI`/organizations/${id.toString()}/`, organization);
+    await patchRequest(gatewayV1API`/organizations/${id.toString()}/`, organization);
     navigate(-1);
   };
   const getPageUrl = useGetPageUrl();

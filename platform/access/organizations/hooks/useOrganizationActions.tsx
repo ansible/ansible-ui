@@ -14,7 +14,7 @@ import {
   OptionsResponse,
 } from '../../../../frontend/awx/interfaces/OptionsResponse';
 import { useOptions } from '../../../../frontend/common/crud/useOptions';
-import { gatewayAPI } from '../../../api/gateway-api-utils';
+import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { IPlatformView } from '../../../hooks/usePlatformView';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
@@ -24,7 +24,7 @@ export function useOrganizationToolbarActions(view: IPlatformView<PlatformOrgani
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
 
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/organizations`);
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayV1API`/organizations`);
   const canCreateOrganization = Boolean(data && data.actions && data.actions['POST']);
   const deleteOrganizations = useDeleteOrganizations(view.unselectItemsAndRefresh);
 

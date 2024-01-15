@@ -20,7 +20,7 @@ import { requestGet } from '../../../../frontend/common/crud/Data';
 import { useGet } from '../../../../frontend/common/crud/useGet';
 import { usePatchRequest } from '../../../../frontend/common/crud/usePatchRequest';
 import { usePostRequest } from '../../../../frontend/common/crud/usePostRequest';
-import { gatewayAPI } from '../../../api/gateway-api-utils';
+import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
@@ -33,7 +33,7 @@ export function CreatePlatformTeam() {
   const navigate = useNavigate();
   const postRequest = usePostRequest<PlatformTeam>();
   const onSubmit: PageFormSubmitHandler<PlatformTeam> = async (team) => {
-    const createdTeam = await postRequest(gatewayAPI`/teams/`, team);
+    const createdTeam = await postRequest(gatewayV1API`/teams/`, team);
     pageNavigate(PlatformRoute.TeamDetails, { params: { id: createdTeam.id } });
   };
   const getPageUrl = useGetPageUrl();
@@ -67,10 +67,10 @@ export function EditPlatformTeam() {
     data: team,
     isLoading,
     error,
-  } = useGet<PlatformTeam>(gatewayAPI`/teams/${id.toString()}/`);
+  } = useGet<PlatformTeam>(gatewayV1API`/teams/${id.toString()}/`);
   const patchRequest = usePatchRequest<PlatformTeam, PlatformTeam>();
   const onSubmit: PageFormSubmitHandler<PlatformTeam> = async (team) => {
-    await patchRequest(gatewayAPI`/teams/${id.toString()}/`, team);
+    await patchRequest(gatewayV1API`/teams/${id.toString()}/`, team);
     navigate(-1);
   };
   const getPageUrl = useGetPageUrl();
@@ -102,7 +102,7 @@ function PlatformTeamInputs() {
   const { t } = useTranslation();
   const queryOrganizations = useCallback(async (page: number) => {
     const organizations = await requestGet<PlatformItemsResponse<PlatformOrganization>>(
-      gatewayAPI`/organizations/?page=${page.toString()}`
+      gatewayV1API`/organizations/?page=${page.toString()}`
     );
     return {
       total: organizations.count,
@@ -114,7 +114,7 @@ function PlatformTeamInputs() {
   }, []);
   const queryUsers = useCallback(async (page: number) => {
     const users = await requestGet<PlatformItemsResponse<PlatformUser>>(
-      gatewayAPI`/users/?page=${page.toString()}`
+      gatewayV1API`/users/?page=${page.toString()}`
     );
     return {
       total: users.count,

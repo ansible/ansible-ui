@@ -1,8 +1,8 @@
-import { PlatformAuthenticatorDetails } from './PlatformAuthenticatorDetails';
-import mockPlatformAuthenticators from '../../../../cypress/fixtures/platformAuthenticators.json';
-import mockPlatformAuthenticatorPlugins from '../../../../cypress/fixtures/platformAuthenticatorPlugins.json';
 import mockPlatformAuthenticatorMaps from '../../../../cypress/fixtures/platformAuthenticatorMaps.json';
-import { gatewayAPI } from '../../../api/gateway-api-utils';
+import mockPlatformAuthenticatorPlugins from '../../../../cypress/fixtures/platformAuthenticatorPlugins.json';
+import mockPlatformAuthenticators from '../../../../cypress/fixtures/platformAuthenticators.json';
+import { gatewayV1API } from '../../../api/gateway-api-utils';
+import { PlatformAuthenticatorDetails } from './PlatformAuthenticatorDetails';
 
 const mockAuthenticator = mockPlatformAuthenticators.results[2];
 const mockPlugins = mockPlatformAuthenticatorPlugins;
@@ -11,15 +11,15 @@ const mockMaps = mockPlatformAuthenticatorMaps;
 describe('PlatformTeamDetails', () => {
   it('Component displays authenticator details', () => {
     cy.intercept(
-      { method: 'GET', path: gatewayAPI`/authenticators/*` },
+      { method: 'GET', path: gatewayV1API`/authenticators/*` },
       { body: mockAuthenticator }
     );
     cy.intercept(
-      { method: 'GET', path: gatewayAPI`/authenticator_plugins` },
+      { method: 'GET', path: gatewayV1API`/authenticator_plugins` },
       { body: mockPlugins }
     );
     cy.intercept(
-      { method: 'GET', path: gatewayAPI`/authenticator_maps?authenticator=*` },
+      { method: 'GET', path: gatewayV1API`/authenticator_maps?authenticator=*` },
       { body: mockMaps }
     );
     cy.mount(<PlatformAuthenticatorDetails />);

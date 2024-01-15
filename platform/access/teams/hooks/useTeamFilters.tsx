@@ -3,7 +3,7 @@ import { IToolbarFilter, ToolbarFilterType } from '../../../../framework';
 import { IToolbarAsyncMultiSelectFilter } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncMultiSelectFilter';
 import { useNameToolbarFilter } from '../../../../frontend/awx/common/awx-toolbar-filters';
 import { requestGet } from '../../../../frontend/common/crud/Data';
-import { gatewayAPI } from '../../../api/gateway-api-utils';
+import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 
@@ -11,7 +11,7 @@ export function useTeamFilters() {
   const nameToolbarFilter = useNameToolbarFilter();
   const queryOrganizations = useCallback(async (page: number) => {
     const organizations = await requestGet<PlatformItemsResponse<PlatformOrganization>>(
-      gatewayAPI`/organizations/?page=${page.toString()}`
+      gatewayV1API`/organizations/?page=${page.toString()}`
     );
     return {
       total: organizations.count,

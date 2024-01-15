@@ -5,9 +5,9 @@ Authenticators list test cases
 3. Handle empty state
 */
 
-import { AuthenticatorsList } from './AuthenticatorsList';
 import * as useOptions from '../../../../frontend/common/crud/useOptions';
-import { gatewayAPI } from '../../../api/gateway-api-utils';
+import { gatewayV1API } from '../../../api/gateway-api-utils';
+import { AuthenticatorsList } from './AuthenticatorsList';
 
 describe('Authenticators list', () => {
   describe('Non-empty list', () => {
@@ -15,7 +15,7 @@ describe('Authenticators list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayAPI`/authenticators/*`,
+          url: gatewayV1API`/authenticators/*`,
         },
         {
           fixture: 'platformAuthenticators.json',
@@ -49,7 +49,7 @@ describe('Authenticators list', () => {
 
     it('can disable an Authenticator from the line item in list view', () => {
       cy.mount(<AuthenticatorsList />);
-      cy.intercept({ method: 'PATCH', url: gatewayAPI`/authenticators/2/` }, { enabled: false });
+      cy.intercept({ method: 'PATCH', url: gatewayV1API`/authenticators/2/` }, { enabled: false });
       cy.get(
         '[data-cy="row-id-2"] > [data-cy="actions-column-cell"] > .pf-v5-l-flex > :nth-child(1) > .pf-v5-l-split > [data-cy="toggle-switch"] > div > .pf-v5-c-switch > .pf-v5-c-switch__toggle > .pf-v5-c-switch__toggle-icon'
       ).click();
@@ -58,7 +58,7 @@ describe('Authenticators list', () => {
 
     it('can delete an Authenticator from the toolbar button', () => {
       cy.mount(<AuthenticatorsList />);
-      cy.intercept({ method: 'POST', url: gatewayAPI`/authenticators/2/delete/` });
+      cy.intercept({ method: 'POST', url: gatewayV1API`/authenticators/2/delete/` });
       cy.get('[data-cy="row-id-2"] > [data-cy="checkbox-column-cell"]').click();
       cy.get('[data-cy="actions-dropdown"]').first().click();
       cy.get('[data-cy="delete-selected-authentications"]').click();
@@ -80,7 +80,7 @@ describe('Authenticators list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayAPI`/authenticators/*`,
+          url: gatewayV1API`/authenticators/*`,
         },
         {
           fixture: 'emptyList.json',
@@ -112,7 +112,7 @@ describe('Authenticators list', () => {
 
   describe('Error retrieving list', () => {
     it('Displays error loading authenticators', () => {
-      cy.intercept({ method: 'GET', url: gatewayAPI`/authenticators/*` }, { statusCode: 500 });
+      cy.intercept({ method: 'GET', url: gatewayV1API`/authenticators/*` }, { statusCode: 500 });
       cy.mount(<AuthenticatorsList />);
       cy.contains('Error loading authentications');
     });
