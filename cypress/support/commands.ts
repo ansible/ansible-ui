@@ -50,6 +50,7 @@ import './e2e';
 import './eda-commands';
 import './hub-commands';
 import './rest-commands';
+import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
 
 declare global {
   namespace Cypress {
@@ -916,11 +917,13 @@ declare global {
         tags?: string[]
       ): Cypress.Chainable<void>;
       getOrCreateCollection(): Cypress.Chainable<string>;
+      deleteCollectionFromSystem(collection: CollectionVersionSearch): Cypress.Chainable<void>;
       uploadHubCollectionFile(hubFilePath: string, hubFileName: string): Cypress.Chainable<void>;
       createNamespace(namespaceName: string): Cypress.Chainable<void>;
       getNamespace(namespaceName: string): Cypress.Chainable<void>;
       deleteNamespace(namespaceName: string): Cypress.Chainable<void>;
       deleteCollectionsInNamespace(namespaceName: string): Cypress.Chainable<void>;
+      cleanupCollections(): Cypress.Chainable<void>;
       createHubRole(): Cypress.Chainable<HubRole>;
       deleteHubRole(role: HubRole): Cypress.Chainable<void>;
       createRemote(remoteName: string): Cypress.Chainable<void>;
