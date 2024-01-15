@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { BanIcon, CopyIcon, TrashIcon, UploadIcon } from '@patternfly/react-icons';
+import { BanIcon, CopyIcon, TrashIcon, UploadIcon, KeyIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -15,6 +15,8 @@ import { useCopyToRepository } from './useCopyToRepository';
 import { useDeleteCollections } from './useDeleteCollections';
 import { useDeleteCollectionsFromRepository } from './useDeleteCollectionsFromRepository';
 import { useDeprecateCollections } from './useDeprecateCollections';
+import { useSignCollection } from './useSignCollection';
+import { useUploadSignature } from './useUploadSignature';
 
 export function useCollectionActions(
   callback?: (collections: CollectionVersionSearch[]) => void,
@@ -38,8 +40,13 @@ export function useCollectionActions(
   );
   const deleteCollectionsVersions = useDeleteCollections(callback, true, detail);
   const copyToRepository = useCopyToRepository();
+  const signCollectionVersion = useSignCollection(true, callback);
+  const signCollection = useSignCollection(false, callback);
+  const uploadSignature = useUploadSignature();
 
   const context = useHubContext();
+
+  const { can_upload_signatures } = context.featureFlags;
 
   return useMemo<IPageAction<CollectionVersionSearch>[]>(
     () => [
@@ -78,15 +85,6 @@ export function useCollectionActions(
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        icon: BanIcon,
-        label: t('Deprecate collection'),
-        onClick: (collection) => {
-          deprecateCollections([collection]);
-        },
-      },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete version from system'),
         isDanger: true,
@@ -94,6 +92,9 @@ export function useCollectionActions(
           deleteCollectionsVersions([collection]);
         },
         isHidden: () => (detail ? false : true),
+        isDisabled: context.hasPermission('ansible.delete_collection')
+          ? ''
+          : t('You do not have rights to this operation'),
       },
       {
         type: PageActionType.Button,
@@ -105,6 +106,44 @@ export function useCollectionActions(
           deleteCollectionsVersionsFromRepository([collection]);
         },
         isHidden: () => (detail ? false : true),
+        isDisabled: context.hasPermission('ansible.delete_collection')
+          ? ''
+          : t('You do not have rights to this operation'),
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: KeyIcon,
+        label: t('Sign collection'),
+        onClick: (collection) => {
+          signCollection([collection]);
+        },
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: KeyIcon,
+        label: t('Sign selected version'),
+        isHidden: () => (detail ? false : true),
+        onClick: (collection) => {
+          if (can_upload_signatures) {
+            // upload signature - it works only in insights, but we can leave it here for now
+            // because insights will be next
+            uploadSignature(collection);
+          } else {
+            // sign version
+            signCollectionVersion([collection]);
+          }
+        },
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: BanIcon,
+        label: t('Deprecate collection'),
+        onClick: (collection) => {
+          deprecateCollections([collection]);
+        },
       },
       {
         type: PageActionType.Button,
@@ -130,6 +169,10 @@ export function useCollectionActions(
       detail,
       deleteCollectionsVersionsFromRepository,
       copyToRepository,
+      can_upload_signatures,
+      signCollection,
+      signCollectionVersion,
+      uploadSignature,
     ]
   );
 }
