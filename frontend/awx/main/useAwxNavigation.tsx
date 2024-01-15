@@ -66,7 +66,7 @@ export function useAwxNavigation() {
     awxSchedulesRoutes,
     awxProjectRoutes,
     {
-      label: t('Infrastructure'),
+      label: t('Tina Infrastructure'),
       path: 'infrastructure',
       children: [
         {
