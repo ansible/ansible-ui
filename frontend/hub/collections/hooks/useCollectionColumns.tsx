@@ -6,13 +6,24 @@ import {
 } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, TextCell, useGetPageUrl } from '../../../../framework';
+import {
+  ITableColumn,
+  TextCell,
+  useGetPageUrl,
+  ColumnTableOption,
+  ColumnCardOption,
+} from '../../../../framework';
 import { HubRoute } from '../../main/HubRoutes';
 import { CollectionVersionSearch } from '../Collection';
+import { useHubContext } from '../../common/useHubContext';
 
 export function useCollectionColumns(_options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
+
+  const context = useHubContext();
+  const { display_signatures } = context.featureFlags;
+
   return useMemo<ITableColumn<CollectionVersionSearch>[]>(
     () => [
       {
@@ -78,25 +89,31 @@ export function useCollectionColumns(_options?: { disableSort?: boolean; disable
       {
         header: t('Signed state'),
         cell: (collection) => {
-          switch (collection.is_signed) {
-            case true:
-              return (
-                <Label icon={<CheckCircleIcon />} variant="outline" color="green">
-                  {t('Signed')}
-                </Label>
-              );
-            case false:
-              return (
-                <Label icon={<ExclamationTriangleIcon />} variant="outline" color="orange">
-                  {t('Unsigned')}
-                </Label>
-              );
+          if (display_signatures) {
+            switch (collection.is_signed) {
+              case true:
+                return (
+                  <Label icon={<CheckCircleIcon />} variant="outline" color="green">
+                    {t('Signed')}
+                  </Label>
+                );
+              case false:
+                return (
+                  <Label icon={<ExclamationTriangleIcon />} variant="outline" color="orange">
+                    {t('Unsigned')}
+                  </Label>
+                );
+            }
+          } else {
+            return <></>;
           }
         },
         list: 'secondary',
         value: (collection) => !collection.is_signed || collection.is_signed,
+        card: display_signatures ? undefined : ColumnCardOption.hidden,
+        table: display_signatures ? undefined : ColumnTableOption.hidden,
       },
     ],
-    [getPageUrl, t]
+    [getPageUrl, t, display_signatures]
   );
 }
