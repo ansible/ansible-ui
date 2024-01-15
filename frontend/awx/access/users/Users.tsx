@@ -1,8 +1,8 @@
 import { ButtonVariant } from '@patternfly/react-core';
 import {
   CubesIcon,
-  PencilAltIcon,
   MinusCircleIcon,
+  PencilAltIcon,
   PlusCircleIcon,
   PlusIcon,
   TrashIcon,
@@ -21,12 +21,13 @@ import {
 } from '../../../../framework';
 import { usePersistentFilters } from '../../../common/PersistentFilters';
 import { useOptions } from '../../../common/crud/useOptions';
-import { AwxRoute } from '../../AwxRoutes';
+import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxConfig } from '../../common/useAwxConfig';
-import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
+import { useAwxView } from '../../common/useAwxView';
+import { getDocsBaseUrl } from '../../common/util/getDocsBaseUrl';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { User } from '../../interfaces/User';
-import { useAwxView } from '../../useAwxView';
+import { AwxRoute } from '../../main/AwxRoutes';
 import { useSelectOrganizationsAddUsers } from '../organizations/hooks/useSelectOrganizationsAddUsers';
 import { useSelectOrganizationsRemoveUsers } from '../organizations/hooks/useSelectOrganizationsRemoveUsers';
 import { useSelectTeamsAddUsers } from '../teams/hooks/useSelectTeamsAddUsers';
@@ -34,7 +35,6 @@ import { useSelectTeamsRemoveUsers } from '../teams/hooks/useSelectTeamsRemoveUs
 import { useDeleteUsers } from './hooks/useDeleteUsers';
 import { useUsersColumns } from './hooks/useUsersColumns';
 import { useUsersFilters } from './hooks/useUsersFilters';
-import { awxAPI } from '../../api/awx-utils';
 
 export function Users() {
   const { t } = useTranslation();

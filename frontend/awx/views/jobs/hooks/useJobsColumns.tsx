@@ -13,11 +13,11 @@ import {
 import { ElapsedTimeCell } from '../../../../../framework/PageCells/ElapsedTimeCell';
 import { StatusCell } from '../../../../common/Status';
 import { useOptions } from '../../../../common/crud/useOptions';
-import { AwxRoute } from '../../../AwxRoutes';
-import { awxAPI } from '../../../api/awx-utils';
 import { CredentialLabel } from '../../../common/CredentialLabel';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { UnifiedJob } from '../../../interfaces/UnifiedJob';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { getLaunchedByDetails, getScheduleUrl, isJobRunning } from '../jobUtils';
 import { useGetJobOutputUrl } from '../useGetJobOutputUrl';
 
@@ -48,6 +48,7 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
         sort: 'id',
         card: 'hidden',
         list: 'hidden',
+        dashboard: 'hidden',
         minWidth: 0,
       },
       {
@@ -86,12 +87,14 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
         sort: 'type',
         card: 'subtitle',
         list: 'subtitle',
+        dashboard: 'hidden',
       },
       {
         header: t('Duration'),
         cell: (job: UnifiedJob) =>
           job.started && <ElapsedTimeCell start={job.started} finish={job.finished} />,
-        modal: ColumnModalOption.Hidden,
+        modal: ColumnModalOption.hidden,
+        dashboard: 'hidden',
       },
       {
         header: t('Started'),
@@ -100,7 +103,8 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
         sort: 'started',
         list: 'secondary',
         defaultSortDirection: 'desc',
-        modal: ColumnModalOption.Hidden,
+        modal: ColumnModalOption.hidden,
+        dashboard: 'hidden',
       },
       {
         header: t('Finished'),
@@ -111,18 +115,20 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
         list: 'secondary',
         defaultSortDirection: 'desc',
         defaultSort: true,
-        modal: ColumnModalOption.Hidden,
+        modal: ColumnModalOption.hidden,
+        dashboard: 'hidden',
       },
       {
         header: t('Source'),
         cell: (job: UnifiedJob) =>
           inventorySourceChoices?.map(([string, label]) => (string === job.source ? label : null)),
         value: (job: UnifiedJob) => !!job.source,
-        table: ColumnTableOption.Expanded,
+        table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'hidden',
         defaultSortDirection: 'desc',
-        modal: ColumnModalOption.Hidden,
+        modal: ColumnModalOption.hidden,
+        dashboard: 'hidden',
       },
       {
         header: t('Launched by'),
@@ -134,11 +140,12 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
             return launchedByValue;
           }
         },
-        table: ColumnTableOption.Expanded,
+        table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'hidden',
         defaultSortDirection: 'desc',
-        modal: ColumnModalOption.Hidden,
+        modal: ColumnModalOption.hidden,
+        dashboard: 'hidden',
       },
       {
         header: t('Schedule'),
@@ -148,11 +155,12 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
           </Link>
         ),
         value: (job: UnifiedJob) => job.summary_fields?.schedule?.name,
-        table: ColumnTableOption.Expanded,
+        table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'hidden',
         defaultSortDirection: 'desc',
-        modal: ColumnModalOption.Hidden,
+        modal: ColumnModalOption.hidden,
+        dashboard: 'hidden',
       },
       {
         header: t('Job template'),
@@ -166,11 +174,12 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
           </Link>
         ),
         value: (job: UnifiedJob) => !!job.summary_fields?.job_template,
-        table: ColumnTableOption.Expanded,
+        table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'hidden',
         defaultSortDirection: 'desc',
-        modal: ColumnModalOption.Hidden,
+        modal: ColumnModalOption.hidden,
+        dashboard: 'hidden',
       },
       {
         header: t('Workflow job template'),
@@ -184,11 +193,12 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
           </Link>
         ),
         value: (job: UnifiedJob) => !!job.summary_fields?.workflow_job_template,
-        table: ColumnTableOption.Expanded,
+        table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'hidden',
         defaultSortDirection: 'desc',
-        modal: ColumnModalOption.Hidden,
+        modal: ColumnModalOption.hidden,
+        dashboard: 'hidden',
       },
       {
         header: t('Source workflow job'),
@@ -205,11 +215,12 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
           </Link>
         ),
         value: (job: UnifiedJob) => !!job.summary_fields?.source_workflow_job,
-        table: ColumnTableOption.Expanded,
+        table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'hidden',
         defaultSortDirection: 'desc',
-        modal: ColumnModalOption.Hidden,
+        modal: ColumnModalOption.hidden,
+        dashboard: 'hidden',
       },
       {
         header: t('Inventory'),
@@ -226,11 +237,12 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
           </Link>
         ),
         value: (job: UnifiedJob) => !!job.summary_fields?.inventory,
-        table: ColumnTableOption.Expanded,
+        table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'hidden',
         defaultSortDirection: 'desc',
-        modal: ColumnModalOption.Hidden,
+        modal: ColumnModalOption.hidden,
+        dashboard: 'hidden',
       },
       {
         header: t('Project'),
@@ -244,11 +256,12 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
           </Link>
         ),
         value: (job: UnifiedJob) => !!job.summary_fields?.project,
-        table: ColumnTableOption.Expanded,
+        table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'hidden',
         defaultSortDirection: 'desc',
-        modal: ColumnModalOption.Hidden,
+        modal: ColumnModalOption.hidden,
+        dashboard: 'hidden',
       },
       {
         header: t('Execution environment'),
@@ -266,11 +279,12 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
           !isJobRunning(job.status) &&
           job.status !== 'canceled' &&
           !!job.summary_fields?.execution_environment,
-        table: ColumnTableOption.Expanded,
+        table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'hidden',
         defaultSortDirection: 'desc',
-        modal: ColumnModalOption.Hidden,
+        modal: ColumnModalOption.hidden,
+        dashboard: 'hidden',
       },
       {
         header: t('Credentials'),
@@ -287,11 +301,12 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
           </LabelGroup>
         ),
         value: (job: UnifiedJob) => !!job.summary_fields?.credentials?.length,
-        table: ColumnTableOption.Expanded,
+        table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'hidden',
         defaultSortDirection: 'desc',
-        modal: ColumnModalOption.Hidden,
+        modal: ColumnModalOption.hidden,
+        dashboard: 'hidden',
       },
       {
         header: t('Labels'),
@@ -311,21 +326,23 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
           </ChipGroup>
         ),
         value: (job: UnifiedJob) => (job.summary_fields?.labels?.results.length ?? 0) > 0,
-        table: ColumnTableOption.Expanded,
+        table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'hidden',
         defaultSortDirection: 'desc',
-        modal: ColumnModalOption.Hidden,
+        modal: ColumnModalOption.hidden,
+        dashboard: 'hidden',
       },
       {
         header: t('Explanation'),
         cell: (job: UnifiedJob) => job.job_explanation,
         value: (job: UnifiedJob) => job.job_explanation,
-        table: ColumnTableOption.Expanded,
+        table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'hidden',
         defaultSortDirection: 'desc',
-        modal: ColumnModalOption.Hidden,
+        modal: ColumnModalOption.hidden,
+        dashboard: 'hidden',
       },
       {
         header: t('Job slice'),
@@ -333,21 +350,23 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
           <span>{`${job.job_slice_number ?? 0}/${(job.job_slice_count ?? 0).toString()}`}</span>
         ),
         value: (job: UnifiedJob) => job.job_slice_count,
-        table: ColumnTableOption.Expanded,
+        table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'hidden',
         defaultSortDirection: 'desc',
-        modal: ColumnModalOption.Hidden,
+        modal: ColumnModalOption.hidden,
+        dashboard: 'hidden',
       },
       {
         header: t('Job slice parent'),
         cell: (_job: UnifiedJob) => <span>{t`True`}</span>,
         value: (job: UnifiedJob) => job.type === 'workflow_job' && job.is_sliced_job,
-        table: ColumnTableOption.Expanded,
+        table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'hidden',
         defaultSortDirection: 'desc',
-        modal: ColumnModalOption.Hidden,
+        modal: ColumnModalOption.hidden,
+        dashboard: 'hidden',
       },
     ],
     [getJobOutputUrl, getPageUrl, inventorySourceChoices, options?.disableLinks, t]

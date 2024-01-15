@@ -1,6 +1,6 @@
+import { Label, Truncate } from '@patternfly/react-core';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useCollectionFilters } from './useCollectionFilters';
 import {
   ColumnTableOption,
   ITableColumn,
@@ -8,11 +8,11 @@ import {
   TextCell,
   usePageDialog,
 } from '../../../../framework';
+import { hubAPI } from '../../common/api/formatPath';
+import { collectionKeyFn } from '../../common/api/hub-api-utils';
+import { useHubView } from '../../common/useHubView';
 import { CollectionVersionSearch } from '../Collection';
-import { collectionKeyFn } from '../../api/utils';
-import { hubAPI } from '../../api/formatPath';
-import { useHubView } from '../../useHubView';
-import { Label, Truncate } from '@patternfly/react-core';
+import { useCollectionFilters } from './useCollectionFilters';
 
 // TODO: If deployment mode is INSIGHTS, CERTIFIED_REPO should be set to 'published'. This needs to be updated
 // in the future when we are able to identify INSIGHTS mode
@@ -47,13 +47,13 @@ export function CollectionMultiSelectDialog(props: {
         header: t('Description'),
         type: 'description',
         value: (collection) => collection.collection_version?.description,
-        table: ColumnTableOption.Expanded,
+        table: ColumnTableOption.expanded,
       },
       {
         header: t('Version'),
         type: 'text',
         value: (collection) => collection.collection_version?.version,
-        table: ColumnTableOption.Hidden,
+        table: ColumnTableOption.hidden,
         sort: 'version',
       },
       {
@@ -75,7 +75,6 @@ export function CollectionMultiSelectDialog(props: {
   const view = useHubView<CollectionVersionSearch>({
     url: hubAPI`/v3/plugin/ansible/search/collection-versions`,
     keyFn: collectionKeyFn,
-    sortKey: 'order_by',
     queryParams: {
       is_deprecated: 'false',
       repository_label: '!hide_from_search',

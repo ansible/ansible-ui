@@ -11,7 +11,7 @@ import {
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
 import { getItemKey } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
-import { awxAPI } from '../../api/awx-utils';
+import { awxAPI } from '../../common/api/awx-utils';
 import { Settings } from '../../interfaces/Settings';
 import { SubscriptionUsageChart } from '../subscription-usage/SubscriptionUsageChart';
 import { useSubscriptionUsageFilters } from './useSubscriptionUsageFilters';
@@ -31,7 +31,7 @@ interface ISubscriptionUsageChartData {
   ];
 }
 
-export default function SubscriptionUsage() {
+export function SubscriptionUsage() {
   const { t } = useTranslation();
   const toolbarFilters = useSubscriptionUsageFilters();
   const [dateRange, setDateRange] = useState<IFilterState>({ dateRange: ['year'] });

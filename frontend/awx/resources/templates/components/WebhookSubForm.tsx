@@ -8,12 +8,12 @@ import { PageFormSelect, PageFormTextInput } from '../../../../../framework';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { requestGet } from '../../../../common/crud/Data';
 import { useGet } from '../../../../common/crud/useGet';
+import { PageFormCredentialSelect } from '../../../access/credentials/components/PageFormCredentialSelect';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { CredentialType } from '../../../interfaces/CredentialType';
 import { JobTemplateForm } from '../../../interfaces/JobTemplateForm';
 import { WorkflowJobTemplateForm } from '../../../interfaces/WorkflowJobTemplate';
-import { PageFormCredentialSelect } from '../../credentials/components/PageFormCredentialSelect';
-import { awxAPI } from '../../../api/awx-utils';
 
 export function WebhookSubForm() {
   const { t } = useTranslation();

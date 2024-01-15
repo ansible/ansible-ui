@@ -2,7 +2,7 @@ import { Card, CardBody, CardTitle, Spinner, Title } from '@patternfly/react-cor
 import { FunctionComponent } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import currencyFormatter from '../utilities/currencyFormatter';
+import { currencyFormatter } from '../utilities/currencyFormatter';
 
 interface Props {
   totalSavings: number;
@@ -14,7 +14,7 @@ const SpinnerDiv = styled.div`
   padding-left: 100px;
 `;
 
-const TotalSavings: FunctionComponent<Props> = ({
+export const TotalSavings: FunctionComponent<Props> = ({
   totalSavings = 0,
   currentPageSavings = 0,
   isLoading = false,
@@ -50,5 +50,3 @@ const TotalSavings: FunctionComponent<Props> = ({
     </>
   );
 };
-
-export default TotalSavings;

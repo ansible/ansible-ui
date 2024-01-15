@@ -1,20 +1,22 @@
 import { Alert, DescriptionList, PageSection } from '@patternfly/react-core';
 import { ReactNode } from 'react';
+import styled from 'styled-components';
 import { useSettings } from '../Settings';
 
 export function PageDetails(props: {
   children?: ReactNode;
   disablePadding?: boolean;
   numberOfColumns?: 'multiple' | 'single';
+  labelOrientation?: 'horizontal' | 'vertical';
   alertPrompts?: string[];
 }) {
   const { disablePadding, alertPrompts } = props;
   const settings = useSettings();
-  const orientation = settings.formLayout;
+  const orientation = props.labelOrientation ?? settings.formLayout;
   const numberOfColumns = props.numberOfColumns ? props.numberOfColumns : settings.formColumns;
   const isCompact = false;
   return (
-    <PageSection variant="light" padding={{ default: 'noPadding' }}>
+    <PageSectionStyled variant="light" padding={{ default: 'noPadding' }}>
       {alertPrompts &&
         alertPrompts.length > 0 &&
         alertPrompts.map((alertPrompt, i) => (
@@ -52,6 +54,10 @@ export function PageDetails(props: {
       >
         {props.children}
       </DescriptionList>
-    </PageSection>
+    </PageSectionStyled>
   );
 }
+
+const PageSectionStyled = styled(PageSection)`
+  background-color: transparent;
+`;

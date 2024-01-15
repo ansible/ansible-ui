@@ -1,15 +1,15 @@
+import { PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Role } from '../Role';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   useGetPageUrl,
 } from '../../../../../framework';
-import { useMemo } from 'react';
-import { PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
-import { useHubContext } from '../../../useHubContext';
-import { HubRoute } from '../../../HubRoutes';
+import { useHubContext } from '../../../common/useHubContext';
+import { HubRoute } from '../../../main/HubRoutes';
+import { Role } from '../Role';
 import { useDeleteRoles } from './useDeleteRoles';
 
 export function useRoleToolbarActions(onComplete: (roles: Role[]) => void) {
@@ -51,11 +51,12 @@ export function useRoleRowActions(onComplete: (roles: Role[]) => void) {
   const { t } = useTranslation();
   const { user } = useHubContext();
   const deleteRoles = useDeleteRoles(onComplete);
+  const getPageUrl = useGetPageUrl();
 
   return useMemo<IPageAction<Role>[]>(
     () => [
       {
-        type: PageActionType.Button,
+        type: PageActionType.Link,
         selection: PageActionSelection.Single,
         icon: PencilAltIcon,
         isPinned: true,
@@ -68,8 +69,11 @@ export function useRoleRowActions(onComplete: (roles: Role[]) => void) {
               : t(
                   'You do not have permission to edit this role. Please contact your organization administrator if there is an issue with your access.'
                 ),
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        onClick: (role) => alert('TODO'),
+        href: (role) => {
+          return getPageUrl(HubRoute.EditRole, {
+            params: { id: role.name ?? '' },
+          });
+        },
       },
       { type: PageActionType.Seperator },
       {
@@ -90,6 +94,6 @@ export function useRoleRowActions(onComplete: (roles: Role[]) => void) {
         isDanger: true,
       },
     ],
-    [deleteRoles, t, user?.is_superuser]
+    [deleteRoles, getPageUrl, t, user.is_superuser]
   );
 }

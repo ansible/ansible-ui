@@ -1,5 +1,5 @@
 import { edaAPI } from '../../common/eda-utils';
-import { EdaDashboard } from '../EdaDashboard';
+import { EdaOverview } from '../EdaOverview';
 
 describe('EdaRuleAuditCard.cy.ts', () => {
   beforeEach(() => {
@@ -88,12 +88,11 @@ describe('EdaRuleAuditCard.cy.ts', () => {
         ],
       }
     );
-    cy.mount(<EdaDashboard />);
+    cy.mount(<EdaOverview />);
   });
   it('Dashboard renders the correct rule audit columns', () => {
     cy.contains(/^Recently fired rules$/).should('be.visible');
     cy.contains('th', 'Name');
     cy.contains('th', 'Status');
-    cy.contains('th', 'Fired date');
   });
 });

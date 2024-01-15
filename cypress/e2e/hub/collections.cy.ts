@@ -17,6 +17,10 @@ describe('Collections- List View', () => {
     cy.verifyPageTitle(Collections.title);
   });
 
+  after(() => {
+    cy.cleanupCollections();
+  });
+
   it('user can upload and then delete a new collection', () => {
     cy.getOrCreateCollection().then((thisCollection) => {
       const thisCollectionName = thisCollection?.split('-').slice(-2, -1).toString();

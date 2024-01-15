@@ -8,12 +8,12 @@ import {
   PageActionType,
   useGetPageUrl,
 } from '../../../../framework';
-import { HubRoute } from '../../HubRoutes';
+import { IHubView } from '../../common/useHubView';
+import { HubRoute } from '../../main/HubRoutes';
 import { HubNamespace } from '../HubNamespace';
 import { useDeleteHubNamespaces } from './useDeleteHubNamespaces';
-import { IPulpView } from '../../usePulpView';
 
-export function useHubNamespaceToolbarActions(view: IPulpView<HubNamespace>) {
+export function useHubNamespaceToolbarActions(view: IHubView<HubNamespace>) {
   const { t } = useTranslation();
   const deleteHubNamespaces = useDeleteHubNamespaces(view.unselectItemsAndRefresh);
   const getPageUrl = useGetPageUrl();

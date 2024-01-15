@@ -1,4 +1,3 @@
-import styled from 'styled-components';
 import {
   EmptyState as PFEmptyState,
   Progress,
@@ -7,6 +6,7 @@ import {
   TextContent,
   TextVariants,
 } from '@patternfly/react-core';
+import styled from 'styled-components';
 
 import { TopologyIcon as PFTopologyIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
@@ -21,7 +21,7 @@ const TopologyIcon = styled(PFTopologyIcon)`
   fill: #6a6e73;
 `;
 
-const Loader = ({ className, progress }: { className: string; progress: number }) => {
+export const Loader = ({ className, progress }: { className: string; progress: number }) => {
   const { t } = useTranslation();
 
   return (
@@ -41,5 +41,3 @@ const Loader = ({ className, progress }: { className: string; progress: number }
     </EmptyState>
   );
 };
-
-export default Loader;

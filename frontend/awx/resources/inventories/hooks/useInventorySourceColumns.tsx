@@ -4,10 +4,10 @@ import { ITableColumn, usePageNavigate } from '../../../../../framework';
 import { StatusCell } from '../../../../common/Status';
 import { useDescriptionColumn, useNameColumn } from '../../../../common/columns';
 import { useOptions } from '../../../../common/crud/useOptions';
-import { AwxRoute } from '../../../AwxRoutes';
-import { awxAPI } from '../../../api/awx-utils';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { InventorySource } from '../../../interfaces/InventorySource';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
+import { AwxRoute } from '../../../main/AwxRoutes';
 
 export function useInventorySourceColumns(options?: {
   disableSort?: boolean;

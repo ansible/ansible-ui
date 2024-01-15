@@ -2,13 +2,13 @@ import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { compareStrings, usePageNavigate } from '../../../../framework';
 import { requestGet } from '../../../common/crud/Data';
-import { collectionKeyFn, hubAPIDelete } from '../../api/utils';
-import { hubAPI, pulpAPI } from '../../api/formatPath';
-import { PulpItemsResponse } from '../../usePulpView';
+import { hubAPI, pulpAPI } from '../../common/api/formatPath';
+import { collectionKeyFn, hubAPIDelete } from '../../common/api/hub-api-utils';
+import { useHubBulkConfirmation } from '../../common/useHubBulkConfirmation';
+import { PulpItemsResponse } from '../../common/useHubView';
 import { CollectionVersionSearch } from '../Collection';
 import { useCollectionColumns } from './useCollectionColumns';
 import { navigateAfterDelete } from './useDeleteCollectionsFromRepository';
-import { useHubBulkConfirmation } from '../../common/useHubBulkConfirmation';
 
 export function useDeleteCollections(
   onComplete?: (collections: CollectionVersionSearch[]) => void,
@@ -44,8 +44,16 @@ export function useDeleteCollections(
         actionButtonText,
         items: collections.sort((l, r) =>
           compareStrings(
-            l.collection_version?.name || '' + l.repository?.name + l.collection_version?.version,
-            r.collection_version?.name || '' + r.repository?.name + r.collection_version?.version
+            l.collection_version?.name ||
+              '' +
+                l.repository?.name +
+                l.collection_version?.version +
+                l.collection_version?.namespace,
+            r.collection_version?.name ||
+              '' +
+                r.repository?.name +
+                r.collection_version?.version +
+                r.collection_version?.namespace
           )
         ),
         keyFn: collectionKeyFn,

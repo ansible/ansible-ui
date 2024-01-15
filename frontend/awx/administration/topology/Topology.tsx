@@ -1,11 +1,11 @@
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout } from '../../../../framework';
-import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
-import { useAwxConfig } from '../../common/useAwxConfig';
-import { TopologyViewLayer } from './Visualizer';
 import { useGet } from '../../../common/crud/useGet';
+import { awxAPI } from '../../common/api/awx-utils';
+import { useAwxConfig } from '../../common/useAwxConfig';
+import { getDocsBaseUrl } from '../../common/util/getDocsBaseUrl';
 import { MeshVisualizer } from '../../interfaces/MeshVisualizer';
-import { awxAPI } from '../../api/awx-utils';
+import { TopologyViewLayer } from './Visualizer';
 
 export function Topology() {
   const { t } = useTranslation();

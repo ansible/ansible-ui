@@ -1,10 +1,10 @@
-import { useGetPageUrl } from '../../../../../framework';
-import { useGetItem } from '../../../../common/crud/useGet';
-import { AwxRoute } from '../../../AwxRoutes';
-import { Team } from '../../../interfaces/Team';
-import { TeamDetails, TeamDetailsType } from '../../../../common/access/TeamDetails';
 import { useParams } from 'react-router-dom';
-import { awxAPI } from '../../../api/awx-utils';
+import { useGetPageUrl } from '../../../../../framework';
+import { TeamDetails, TeamDetailsType } from '../../../../common/access/TeamDetails';
+import { useGetItem } from '../../../../common/crud/useGet';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { Team } from '../../../interfaces/Team';
+import { AwxRoute } from '../../../main/AwxRoutes';
 
 export function AwxTeamDetails() {
   const params = useParams<{ id: string }>();

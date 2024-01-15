@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RRule } from 'rrule';
 import { useGetPageUrl } from '../../../../../framework';
-import { AwxRoute } from '../../../AwxRoutes';
+import { AwxRoute } from '../../../main/AwxRoutes';
 
 export function useScheuleRulesRoutes() {
   const getPageUrl = useGetPageUrl();

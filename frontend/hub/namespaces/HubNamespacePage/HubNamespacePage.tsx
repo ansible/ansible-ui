@@ -1,20 +1,27 @@
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageActions, PageHeader, PageLayout, useGetPageUrl } from '../../../../framework';
+import {
+  LoadingPage,
+  PageActions,
+  PageHeader,
+  PageLayout,
+  useGetPageUrl,
+  usePageNavigate,
+} from '../../../../framework';
 import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
 import { useGet } from '../../../common/crud/useGet';
-import { HubRoute } from '../../HubRoutes';
-import { HubItemsResponse } from '../../useHubView';
+import { HubError } from '../../common/HubError';
+import { hubAPI } from '../../common/api/formatPath';
+import { HubItemsResponse } from '../../common/useHubView';
+import { HubRoute } from '../../main/HubRoutes';
 import { HubNamespace } from '../HubNamespace';
 import { useHubNamespaceActions } from '../hooks/useHubNamespaceActions';
-import { hubAPI } from '../../api/formatPath';
-import { LoadingPage } from '../../../../framework';
-import { HubError } from '../../common/HubError';
 
 export function HubNamespacePage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
+  const pageNavigate = usePageNavigate();
   const { data, error, refresh } = useGet<HubItemsResponse<HubNamespace>>(
     hubAPI`/_ui/v1/namespaces/?limit=1&name=${params.id ?? ''}`
   );
@@ -24,7 +31,9 @@ export function HubNamespacePage() {
     namespace = data.data[0];
   }
   const getPageUrl = useGetPageUrl();
-  const pageActions = useHubNamespaceActions();
+  const pageActions = useHubNamespaceActions({
+    onHubNamespacesDeleted: () => pageNavigate(HubRoute.Namespaces),
+  });
 
   if (!data && !error) {
     return <LoadingPage />;

@@ -203,7 +203,14 @@ export function PageAsyncSingleSelect<
   }
 
   return (
-    <ButtonFullWidth id={props.id} variant="control" isLoading>
+    <ButtonFullWidth
+      id={props.id}
+      variant="control"
+      isLoading
+      style={{ opacity: 0.7 }}
+      isDisabled
+      disabled
+    >
       {props.queryPlaceholder ?? t('Loading options...')}
     </ButtonFullWidth>
   );

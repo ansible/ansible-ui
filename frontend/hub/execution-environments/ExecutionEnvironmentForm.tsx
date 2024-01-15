@@ -1,30 +1,30 @@
-import { useTranslation } from 'react-i18next';
+import { Button, InputGroup, Label, LabelGroup, TextInput } from '@patternfly/react-core';
+import { TagIcon } from '@patternfly/react-icons';
 import { TFunction } from 'i18next';
+import { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
   PageFormSubmitHandler,
+  PageFormTextArea,
   PageFormTextInput,
   PageHeader,
   PageLayout,
   useGetPageUrl,
-  PageFormTextArea,
 } from '../../../framework';
-import { TagIcon } from '@patternfly/react-icons';
-import { Button, InputGroup, Label, LabelGroup, TextInput } from '@patternfly/react-core';
 import { PageFormGroup } from '../../../framework/PageForm/Inputs/PageFormGroup';
 import { useGet } from '../../common/crud/useGet';
-import { HubRoute } from '../HubRoutes';
-import { hubAPI, pulpAPI } from '../api/formatPath';
-import { hubAPIPost } from '../api/utils';
+import { HubPageForm } from '../common/HubPageForm';
+import { hubAPI, pulpAPI } from '../common/api/formatPath';
+import { hubAPIPost } from '../common/api/hub-api-utils';
+import { HubItemsResponse } from '../common/useHubView';
+import { HubRoute } from '../main/HubRoutes';
 import { ExecutionEnvironment } from './ExecutionEnvironment';
-import { HubPageForm } from '../HubPageForm';
-import { HubItemsResponse } from '../useHubView';
-import { useState, useCallback } from 'react';
 
-import { patchHubRequest, putHubRequest } from './../api/request';
-import { PageFormAsyncSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncSelect';
-import { useSelectRegistrySingle } from './hooks/useRegistrySelector';
 import { usePageNavigate } from '../../../framework';
+import { PageFormAsyncSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncSelect';
+import { patchHubRequest, putHubRequest } from '../common/api/request';
+import { useSelectRegistrySingle } from './hooks/useRegistrySelector';
 
 import { LoadingPage } from '../../../framework/components/LoadingPage';
 import { HubError } from '../common/HubError';

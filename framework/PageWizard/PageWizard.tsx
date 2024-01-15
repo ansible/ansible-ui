@@ -1,12 +1,12 @@
 import '@patternfly/patternfly/components/Wizard/wizard.css';
 import { ErrorAdapter } from '../PageForm/typesErrorAdapter';
-import PageWizardBody from './PageWizardBody';
-import PageWizardNavigation from './PageWizardNavigation';
+import { PageWizardBody } from './PageWizardBody';
+import { PageWizardNavigation } from './PageWizardNavigation';
 import { PageWizardProvider } from './PageWizardProvider';
-import PageWizardToggle from './PageWizardToggle';
+import { PageWizardToggle } from './PageWizardToggle';
 import type { PageWizardStep } from './types';
 
-export default function PageWizard<T extends object>(props: {
+export function PageWizard<T extends object>(props: {
   steps: PageWizardStep[];
   defaultValue?: Record<string, object>;
   onCancel?: () => void;

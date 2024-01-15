@@ -5,15 +5,15 @@ import { PageDetail, PageDetails, useGetPageUrl } from '../../../../../../framew
 import { PageDetailCodeEditor } from '../../../../../../framework/PageDetails/PageDetailCodeEditor';
 import { usePageWizard } from '../../../../../../framework/PageWizard/PageWizardProvider';
 import { useGet } from '../../../../../common/crud/useGet';
-import { AwxRoute } from '../../../../AwxRoutes';
-import { awxAPI } from '../../../../api/awx-utils';
 import { CredentialLabel } from '../../../../common/CredentialLabel';
+import { awxAPI } from '../../../../common/api/awx-utils';
 import { useVerbosityString } from '../../../../common/useVerbosityString';
 import type { Credential } from '../../../../interfaces/Credential';
 import type { JobTemplate } from '../../../../interfaces/JobTemplate';
+import { AwxRoute } from '../../../../main/AwxRoutes';
 import type { TemplateLaunch } from '../TemplateLaunchWizard';
 
-export default function TemplateLaunchReviewStep(props: { template: JobTemplate }) {
+export function TemplateLaunchReviewStep(props: { template: JobTemplate }) {
   const { template } = props;
   const { t } = useTranslation();
   const { wizardData } = usePageWizard();

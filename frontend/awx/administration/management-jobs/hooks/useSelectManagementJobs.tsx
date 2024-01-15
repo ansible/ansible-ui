@@ -1,12 +1,12 @@
 import { useTranslation } from 'react-i18next';
 import { SelectSingleDialog } from '../../../../../framework/PageDialogs/SelectSingleDialog';
-import { useAwxView } from '../../../useAwxView';
-import { awxAPI } from '../../../api/awx-utils';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { useAwxView } from '../../../common/useAwxView';
 import { useManagementJobColumns } from './useManagementJobColumns';
 import { useManagementJobFilters } from './useManagementJobFilters';
 
-import { usePageDialog } from '../../../../../framework';
 import { useCallback } from 'react';
+import { usePageDialog } from '../../../../../framework';
 import { SystemJobTemplate } from '../../../interfaces/SystemJobTemplate';
 
 function SelectManagementJob(props: {

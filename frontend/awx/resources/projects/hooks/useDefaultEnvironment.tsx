@@ -7,8 +7,8 @@ import {
   TextCell,
   useGetPageUrl,
 } from '../../../../../framework';
-import { AwxRoute } from '../../../AwxRoutes';
 import { Project } from '../../../interfaces/Project';
+import { AwxRoute } from '../../../main/AwxRoutes';
 
 export function useExecutionEnvironmentColumn() {
   const { t } = useTranslation();
@@ -25,10 +25,11 @@ export function useExecutionEnvironmentColumn() {
           })}
         />
       ),
-      table: ColumnTableOption.Expanded,
+      table: ColumnTableOption.expanded,
       card: 'hidden',
       list: 'secondary',
-      modal: ColumnModalOption.Hidden,
+      modal: ColumnModalOption.hidden,
+      dashboard: ColumnModalOption.hidden,
     }),
     [getPageUrl, t]
   );

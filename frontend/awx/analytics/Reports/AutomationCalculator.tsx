@@ -27,16 +27,16 @@ import { EmptyStateFilter } from '../../../../framework/components/EmptyStateFil
 import { LoadingState } from '../../../../framework/components/LoadingState';
 import { useSearchParams } from '../../../../framework/components/useSearchParams';
 import { postRequest as requestPost } from '../../../common/crud/Data';
-import { awxAPI } from '../../api/awx-utils';
-import Chart from '../components/Chart';
-import hydrateSchema from '../components/Chart/hydrateSchema';
+import { awxAPI } from '../../common/api/awx-utils';
+import { Chart } from '../components/Chart';
+import { hydrateSchema } from '../components/Chart/hydrateSchema';
 import { ApiOptionsType } from '../components/Toolbar/types';
-import currencyFormatter from '../utilities/currencyFormatter';
-import AutomationFormula from './AutomationFormula';
-import CalculationCost from './CalculationCost';
+import { currencyFormatter } from '../utilities/currencyFormatter';
+import { AutomationFormula } from './AutomationFormula';
+import { CalculationCost } from './CalculationCost';
 import { AnalyticsErrorState } from './ErrorStates';
-import TemplatesTable from './TemplatesTable';
-import TotalSavings from './TotalSavings';
+import { TopTemplates } from './TemplatesTable';
+import { TotalSavings } from './TotalSavings';
 
 export interface ReportDataResponse {
   meta: {
@@ -497,7 +497,7 @@ export function AutomationCalculatorInternal(props: {
                 <GridItem span={3}>{!isLoading && renderRight()}</GridItem>
               </Grid>
             </CardBody>
-            <TemplatesTable
+            <TopTemplates
               data={data?.meta.legend || []}
               variableRow={{ key: sortOption.value, value: sortOption.label }}
               readOnly={true}

@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { PageFormHidden } from '../../../../../framework/PageForm/Utils/PageFormHidden';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
+import { PageFormCredentialSelect } from '../../../access/credentials/components/PageFormCredentialSelect';
 import { ProjectFields } from '../ProjectPage/ProjectForm';
-import { PageFormCredentialSelect } from '../../credentials/components/PageFormCredentialSelect';
 import { useGetCredentialTypeIDs } from '../hooks/useGetCredentialTypeIDs';
 import { ScmTypeOptions } from './ScmTypeOptions';
 

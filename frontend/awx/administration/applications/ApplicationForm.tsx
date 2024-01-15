@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import useSWR from 'swr';
@@ -13,13 +14,13 @@ import {
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { AwxPageForm } from '../../AwxPageForm';
-import { AwxRoute } from '../../AwxRoutes';
-import { awxAPI } from '../../api/awx-utils';
-import { Application } from '../../interfaces/Application';
 import { PageFormOrganizationSelect } from '../../access/organizations/components/PageFormOrganizationSelect';
-import { Organization } from '../../interfaces/Organization';
 import { getOrganizationByName } from '../../access/organizations/utils/getOrganizationByName';
+import { AwxPageForm } from '../../common/AwxPageForm';
+import { awxAPI } from '../../common/api/awx-utils';
+import { Application } from '../../interfaces/Application';
+import { Organization } from '../../interfaces/Organization';
+import { AwxRoute } from '../../main/AwxRoutes';
 
 const ClientType = {
   Confidential: 'confidential',
@@ -40,25 +41,14 @@ export interface IApplicationInput {
   description?: string;
 }
 
-export function CreateApplication() {
+export function CreateApplication(props: { onSuccessfulCreate: (app: Application) => void }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
   const postRequest = usePostRequest<Application>();
   const onSubmit: PageFormSubmitHandler<IApplicationInput> = async (
-    applicationInput: IApplicationInput,
-    setError,
-    setFieldError
+    applicationInput: IApplicationInput
   ) => {
-    if (
-      applicationInput.authorization_grant_type === 'authorization-code' &&
-      (applicationInput.redirect_uris === undefined || applicationInput.redirect_uris === '')
-    ) {
-      setFieldError('redirect_uris', {
-        message: t('Need to pass a redirect URI if grant type is authorization code'),
-      });
-      return false;
-    }
     let organization: Organization | undefined;
     let modifiedInput;
     try {
@@ -69,6 +59,7 @@ export function CreateApplication() {
       throw new Error(t('Organization not found.'));
     }
     const newApplication = await postRequest(awxAPI`/applications/`, modifiedInput as Application);
+    if (props.onSuccessfulCreate) props.onSuccessfulCreate(newApplication);
     pageNavigate(AwxRoute.ApplicationDetails, { params: { id: newApplication.id } });
   };
 
@@ -188,6 +179,9 @@ export function EditApplication() {
 function ApplicationInputs(props: { mode: 'create' | 'edit' }) {
   const { mode } = props;
   const { t } = useTranslation();
+  const authorizationGrantType = useWatch<IApplicationInput>({
+    name: 'authorization_grant_type',
+  });
   return (
     <>
       <PageFormTextInput<IApplicationInput>
@@ -240,6 +234,7 @@ function ApplicationInputs(props: { mode: 'create' | 'edit' }) {
         name="redirect_uris"
         label={t('Redirect URIs')}
         placeholder={t('Enter a redriect URI')}
+        isRequired={Boolean(authorizationGrantType === 'authorization-code')}
       />
     </>
   );

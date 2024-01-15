@@ -1,15 +1,14 @@
+import { CubesIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
-import { useRoleColumns } from './hooks/useRoleColumns';
-import { usePulpView } from '../../usePulpView';
+import { pulpAPI } from '../../common/api/formatPath';
+import { useHubContext } from '../../common/useHubContext';
+import { useHubView } from '../../common/useHubView';
 import { Role } from './Role';
-import { pulpAPI } from '../../api/formatPath';
-import { nameKeyFn } from '../../../common/utils/nameKeyFn';
-import { useHubContext } from '../../useHubContext';
-import { useRoleRowActions, useRoleToolbarActions } from './hooks/useRoleActions';
 import { RoleExpandedRow } from './components/RoleExpandedRow';
+import { useRoleRowActions, useRoleToolbarActions } from './hooks/useRoleActions';
+import { useRoleColumns } from './hooks/useRoleColumns';
 import { useRoleFilters } from './hooks/useRoleFilters';
-import { CubesIcon } from '@patternfly/react-icons';
 
 export function Roles() {
   const { t } = useTranslation();
@@ -21,15 +20,19 @@ export function Roles() {
   );
 }
 
+function roleKeyFn(role: { pulp_href: string }) {
+  return role.pulp_href;
+}
+
 export function HubRolesTable() {
   const { t } = useTranslation();
   const tableColumns = useRoleColumns();
   const { user } = useHubContext();
   const toolbarFilters = useRoleFilters();
 
-  const view = usePulpView<Role>({
+  const view = useHubView<Role>({
     url: pulpAPI`/roles/`,
-    keyFn: nameKeyFn,
+    keyFn: roleKeyFn,
     toolbarFilters,
     tableColumns,
     queryParams: {
@@ -50,7 +53,7 @@ export function HubRolesTable() {
       toolbarActions={toolbarActions}
       rowActions={rowActions}
       toolbarFilters={toolbarFilters}
-      expandedRow={(role) => <RoleExpandedRow role={role} />}
+      expandedRow={(role) => <RoleExpandedRow role={role} showCustom={true} />}
       errorStateTitle={t('Error loading roles')}
       emptyStateTitle={
         user && !user.is_anonymous && user.is_superuser

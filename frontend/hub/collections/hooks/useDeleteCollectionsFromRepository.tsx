@@ -1,17 +1,16 @@
+import { TFunction } from 'i18next';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { TFunction } from 'i18next';
-import { compareStrings } from '../../../../framework';
-import { collectionKeyFn, parsePulpIDFromURL, waitForTask } from '../../api/utils';
-import { hubAPI, pulpAPI } from '../../api/formatPath';
+import { compareStrings, usePageNavigate } from '../../../../framework';
+import { postRequest } from '../../../common/crud/Data';
+import { hubAPI, pulpAPI } from '../../common/api/formatPath';
+import { collectionKeyFn, parsePulpIDFromURL, waitForTask } from '../../common/api/hub-api-utils';
+import { getHubAllItems } from '../../common/api/request';
+import { useHubBulkConfirmation } from '../../common/useHubBulkConfirmation';
+import { HubItemsResponse } from '../../common/useHubView';
+import { HubRoute } from '../../main/HubRoutes';
 import { CollectionVersionSearch } from '../Collection';
 import { useCollectionColumns } from './useCollectionColumns';
-import { HubItemsResponse } from '../../useHubView';
-import { usePageNavigate } from '../../../../framework';
-import { HubRoute } from '../../HubRoutes';
-import { postRequest } from '../../../common/crud/Data';
-import { getHubAllItems } from '../../api/request';
-import { useHubBulkConfirmation } from '../../common/useHubBulkConfirmation';
 
 export function useDeleteCollectionsFromRepository(
   onComplete?: (collections: CollectionVersionSearch[]) => void,
@@ -53,8 +52,16 @@ export function useDeleteCollectionsFromRepository(
         actionButtonText,
         items: collections.sort((l, r) =>
           compareStrings(
-            l.collection_version?.name || '' + l.repository?.name + l.collection_version?.version,
-            r.collection_version?.name || '' + r.repository?.name + r.collection_version?.version
+            l.collection_version?.name ||
+              '' +
+                l.repository?.name +
+                l.collection_version?.version +
+                l.collection_version?.namespace,
+            r.collection_version?.name ||
+              '' +
+                r.repository?.name +
+                r.collection_version?.version +
+                r.collection_version?.namespace
           )
         ),
         keyFn: collectionKeyFn,

@@ -1,14 +1,14 @@
 import { useCallback, useMemo } from 'react';
-import { usePageNavigate, ITableColumn } from '../../../../../framework';
+import { ITableColumn, usePageNavigate } from '../../../../../framework';
 import {
-  useNameColumn,
-  useDescriptionColumn,
-  useOrganizationNameColumn,
   useCreatedColumn,
+  useDescriptionColumn,
   useModifiedColumn,
+  useNameColumn,
+  useOrganizationNameColumn,
 } from '../../../../common/columns';
-import { AwxRoute } from '../../../AwxRoutes';
 import { Application } from '../../../interfaces/Application';
+import { AwxRoute } from '../../../main/AwxRoutes';
 
 export function useApplicationsColumns(options?: {
   disableSort?: boolean;
@@ -28,7 +28,7 @@ export function useApplicationsColumns(options?: {
   const descriptionColumn = useDescriptionColumn();
   const organizationColumn = useOrganizationNameColumn(AwxRoute.OrganizationDetails, options);
   const createdColumn = useCreatedColumn(options);
-  const modifiedColumn = useModifiedColumn(options);
+  const modifiedColumn = useModifiedColumn({ ...options, disableSort: true });
   const tableColumns = useMemo<ITableColumn<Application>[]>(
     () => [nameColumn, descriptionColumn, organizationColumn, createdColumn, modifiedColumn],
     [nameColumn, descriptionColumn, organizationColumn, createdColumn, modifiedColumn]

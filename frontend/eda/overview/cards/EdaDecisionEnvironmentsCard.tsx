@@ -1,41 +1,29 @@
 import { PlusCircleIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  DateTimeCell,
   PageTable,
-  useColumnsWithoutExpandedRow,
-  useColumnsWithoutSort,
+  useDashboardColumns,
   useGetPageUrl,
   usePageNavigate,
-  useVisibleModalColumns,
 } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
-import { IEdaView } from '../../common/useEventDrivenView';
+import { edaAPI } from '../../common/eda-utils';
+import { useEdaView } from '../../common/useEventDrivenView';
 import { useDecisionEnvironmentColumns } from '../../decision-environments/hooks/useDecisionEnvironmentColumns';
 import { EdaDecisionEnvironment } from '../../interfaces/EdaDecisionEnvironment';
 import { EdaRoute } from '../../main/EdaRoutes';
 
-export function EdaDecisionEnvironmentsCard(props: { view: IEdaView<EdaDecisionEnvironment> }) {
-  const { view } = props;
+export function EdaDecisionEnvironmentsCard() {
+  const view = useEdaView<EdaDecisionEnvironment>({
+    url: edaAPI`/decision-environments/`,
+    queryParams: { page: '1', page_size: '10' },
+    disableQueryString: true,
+  });
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const getPageUrl = useGetPageUrl();
-  const tableColumns = useDecisionEnvironmentColumns();
-  let columns = useVisibleModalColumns(tableColumns);
-  columns = useMemo(
-    () => [
-      ...columns,
-      {
-        header: t('Last modified'),
-        cell: (project) =>
-          project.modified_at && <DateTimeCell format="date-time" value={project.modified_at} />,
-      },
-    ],
-    [columns, t]
-  );
-  columns = useColumnsWithoutSort(columns);
-  columns = useColumnsWithoutExpandedRow(columns);
+  let columns = useDecisionEnvironmentColumns();
+  columns = useDashboardColumns(columns);
 
   return (
     <PageDashboardCard

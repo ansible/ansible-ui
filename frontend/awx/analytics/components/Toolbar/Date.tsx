@@ -8,7 +8,7 @@ interface Props {
   validators?: ((date: Date) => string)[];
 }
 
-const DateInput: FunctionComponent<Props> = ({
+export const DateInput: FunctionComponent<Props> = ({
   categoryKey,
   value = '',
   setValue = () => ({}),
@@ -53,5 +53,3 @@ const DateInput: FunctionComponent<Props> = ({
     />
   );
 };
-
-export default DateInput;

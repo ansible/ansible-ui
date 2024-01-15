@@ -1,9 +1,9 @@
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { CopyCell, DateTimeCell, PageDetail, PageDetails } from '../../../../../framework';
 import { useGetItem } from '../../../../common/crud/useGet';
-import { useParams } from 'react-router-dom';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { Application } from '../../../interfaces/Application';
-import { awxAPI } from '../../../api/awx-utils';
 
 export function ApplicationPageDetails() {
   const params = useParams<{ id: string }>();

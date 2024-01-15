@@ -8,22 +8,22 @@ import {
 } from '../../../../../framework';
 import {
   useCreatedColumn,
-  useDescriptionColumn,
-  useModifiedColumn,
-  useNameColumn,
-  useTypeColumn,
-  useOrganizationNameColumn,
-  useInventoryNameColumn,
-  useExecutionEnvColumn,
-  useProjectNameColumn,
   useCredentialsColumn,
+  useDescriptionColumn,
+  useExecutionEnvColumn,
+  useInventoryNameColumn,
   useLabelsColumn,
   useLastRanColumn,
+  useModifiedColumn,
+  useNameColumn,
+  useOrganizationNameColumn,
+  useProjectNameColumn,
+  useTypeColumn,
 } from '../../../../common/columns';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
-import { AwxRoute } from '../../../AwxRoutes';
 import { SummaryFieldRecentJob } from '../../../interfaces/summary-fields/summary-fields';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { Sparkline } from '../components/Sparkline';
 
 function useActivityColumn() {
@@ -36,10 +36,10 @@ function useActivityColumn() {
       cell: (item) => <Sparkline jobs={item.summary_fields?.recent_jobs} />,
       value: (item) =>
         item.summary_fields?.recent_jobs && item.summary_fields?.recent_jobs?.length > 0,
-      table: ColumnTableOption.Expanded,
+      table: ColumnTableOption.expanded,
       card: 'hidden',
       list: 'hidden',
-      modal: ColumnModalOption.Hidden,
+      modal: ColumnModalOption.hidden,
     }),
     [t]
   );

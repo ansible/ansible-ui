@@ -11,15 +11,15 @@ import {
   usePageNavigate,
 } from '../../../../framework';
 import { postRequest, requestGet } from '../../../common/crud/Data';
-import { HubRoute } from '../../HubRoutes';
-import { SigningServiceResponse } from '../../api-schemas/generated/SigningServiceResponse';
-import { hubAPI, pulpAPI } from '../../api/formatPath';
-import { hubAPIDelete } from '../../api/utils';
-import { HubContext, useHubContext } from '../../useHubContext';
-import { PulpItemsResponse } from '../../usePulpView';
+import { hubAPI, pulpAPI } from '../../common/api/formatPath';
+import { hubAPIDelete } from '../../common/api/hub-api-utils';
+import { useHubBulkConfirmation } from '../../common/useHubBulkConfirmation';
+import { HubContext, useHubContext } from '../../common/useHubContext';
+import { PulpItemsResponse } from '../../common/useHubView';
+import { SigningServiceResponse } from '../../interfaces/generated/SigningServiceResponse';
+import { HubRoute } from '../../main/HubRoutes';
 import { ExecutionEnvironment } from '../ExecutionEnvironment';
 import { useExecutionEnvironmentsColumns } from './useExecutionEnvironmentsColumns';
-import { useHubBulkConfirmation } from '../../common/useHubBulkConfirmation';
 
 export function useExecutionEnvironmentsActions(callback?: (ees: ExecutionEnvironment[]) => void) {
   const { t } = useTranslation();

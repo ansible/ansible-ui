@@ -19,8 +19,7 @@ import {
   useModifiedColumn,
   useNameColumn,
 } from '../../../common/columns';
-import { AwxRoute } from '../../AwxRoutes';
-import { awxAPI } from '../../api/awx-utils';
+import { awxAPI } from '../../common/api/awx-utils';
 import {
   useCreatedByToolbarFilter,
   useDescriptionToolbarFilter,
@@ -28,9 +27,10 @@ import {
   useNameToolbarFilter,
 } from '../../common/awx-toolbar-filters';
 import { useAwxConfig } from '../../common/useAwxConfig';
-import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
+import { useAwxView } from '../../common/useAwxView';
+import { getDocsBaseUrl } from '../../common/util/getDocsBaseUrl';
 import { AwxHost } from '../../interfaces/AwxHost';
-import { useAwxView } from '../../useAwxView';
+import { AwxRoute } from '../../main/AwxRoutes';
 import { useDeleteHosts } from './useDeleteHosts';
 
 export function Hosts() {

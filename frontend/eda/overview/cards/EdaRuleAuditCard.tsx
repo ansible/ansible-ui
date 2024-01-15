@@ -1,26 +1,23 @@
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import {
-  PageTable,
-  useColumnsWithoutExpandedRow,
-  useColumnsWithoutSort,
-  useGetPageUrl,
-  useVisibleModalColumns,
-} from '../../../../framework';
+import { PageTable, useDashboardColumns, useGetPageUrl } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
-import { IEdaView } from '../../common/useEventDrivenView';
+import { edaAPI } from '../../common/eda-utils';
+import { useEdaView } from '../../common/useEventDrivenView';
 import { EdaRuleAuditItem } from '../../interfaces/EdaRuleAudit';
 import { EdaRoute } from '../../main/EdaRoutes';
 import { useRuleAuditColumns } from '../../rule-audit/hooks/useRuleAuditColumns';
 
-export function EdaRuleAuditCard(props: { view: IEdaView<EdaRuleAuditItem> }) {
-  const { view } = props;
+export function EdaRuleAuditCard() {
+  const view = useEdaView<EdaRuleAuditItem>({
+    url: edaAPI`/audit-rules/`,
+    queryParams: { page: '1', page_size: '10' },
+    disableQueryString: true,
+  });
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
-  const tableColumns = useRuleAuditColumns();
-  let columns = useVisibleModalColumns(tableColumns);
-  columns = useColumnsWithoutSort(columns);
-  columns = useColumnsWithoutExpandedRow(columns);
+  let columns = useRuleAuditColumns();
+  columns = useDashboardColumns(columns);
   return (
     <PageDashboardCard
       id="recent-rule-audits"

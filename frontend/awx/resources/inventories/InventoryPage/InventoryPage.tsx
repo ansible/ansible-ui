@@ -11,9 +11,9 @@ import {
 } from '../../../../../framework';
 import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { useGet } from '../../../../common/crud/useGet';
-import { AwxRoute } from '../../../AwxRoutes';
-import { awxAPI } from '../../../api/awx-utils';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { Inventory } from '../../../interfaces/Inventory';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { useInventoryActions } from '../hooks/useInventoryActions';
 
 export function InventoryPage() {

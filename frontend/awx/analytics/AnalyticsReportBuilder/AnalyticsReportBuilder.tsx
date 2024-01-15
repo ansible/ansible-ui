@@ -44,46 +44,39 @@ modify filters, add some new columns contents into the table. If more flexibilit
 
 */
 
-import { PerPageOptions } from '@patternfly/react-core';
-import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { useGetRequest } from '../../../common/crud/useGet';
-import { useState, useEffect } from 'react';
-import { useAnalyticsView, IAnalyticsView } from '../useAnalyticsView';
-import { PageTable } from '../../../../framework/PageTable/PageTable';
+import { ChartFunctions, ChartSchemaElement } from '@ansible/react-json-chart-builder';
+import { PerPageOptions, ToggleGroup, ToggleGroupItem } from '@patternfly/react-core';
+import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import {
   ITableColumn,
   ITableColumnTypeText,
   LoadingPage,
   PageHeader,
   PageLayout,
+  usePageNavigate,
 } from '../../../../framework';
+import { PageTable } from '../../../../framework/PageTable/PageTable';
+import { ColumnTableOption } from '../../../../framework/PageTable/PageTableColumn';
 import {
   IToolbarFilter,
   ToolbarFilterType,
 } from '../../../../framework/PageToolbar/PageToolbarFilter';
-import Chart from '../components/Chart';
-import hydrateSchema from '../components/Chart/hydrateSchema';
-
-import { ToggleGroup, ToggleGroupItem } from '@patternfly/react-core';
-
-import { ColumnTableOption } from '../../../../framework/PageTable/PageTableColumn';
 import { IToolbarMultiSelectFilter } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarMultiSelectFilter';
-import { useLocation } from 'react-router-dom';
-import { usePageNavigate } from '../../../../framework';
 import { useSearchParams } from '../../../../framework/components/useSearchParams';
-
-import { ChartFunctions } from '@ansible/react-json-chart-builder';
-import { ChartSchemaElement } from '@ansible/react-json-chart-builder';
-
-import { reportDefaultParams } from './constants';
-
+import { useGetRequest } from '../../../common/crud/useGet';
+import { usePostRequest } from '../../../common/crud/usePostRequest';
+import { AnalyticsErrorState } from '../Reports/ErrorStates';
+import { Chart } from '../components/Chart';
+import { hydrateSchema } from '../components/Chart/hydrateSchema';
+import { IAnalyticsView, useAnalyticsView } from '../useAnalyticsView';
 import {
-  getDateFormatByGranularity,
   formattedValue,
   getClickableText,
+  getDateFormatByGranularity,
   renderAllTasksStatus,
 } from './AnalyticsReportBuilderUtils';
-import { AnalyticsErrorState } from '../Reports/ErrorStates';
+import { reportDefaultParams } from './constants';
 
 type KeyValue = { key: string; value: string };
 
@@ -671,7 +664,7 @@ function buildTableColumns(params: AnalyticsReportColumnBuilderProps) {
     for (const col of columns) {
       const found = params.mainData?.report?.tableHeaders?.find((item) => item.key === col.id);
       if (!found) {
-        col.table = ColumnTableOption.Expanded;
+        col.table = ColumnTableOption.expanded;
       }
     }
   }

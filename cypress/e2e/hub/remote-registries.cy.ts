@@ -1,5 +1,5 @@
 import { randomString } from '../../../framework/utils/random-string';
-import { RemoteRegistry as IRemoteRegistry } from '../../../frontend/hub/remote-registries/RemoteRegistry';
+import { RemoteRegistry as IRemoteRegistry } from '../../../frontend/hub/administration/remote-registries/RemoteRegistry';
 import { RemoteRegistry } from './constants';
 
 describe('Remote Registry', () => {
@@ -57,6 +57,7 @@ describe('Remote Registry', () => {
     cy.get('[data-cy="name"]').type(remoteRegistryName);
     cy.get('[data-cy="url"]').type(RemoteRegistry.validIndexableURL);
     cy.get('[data-cy="Submit"]').click();
+    cy.contains('Remote registries').click();
     cy.searchAndDisplayResource(remoteRegistryName);
     cy.get('[data-cy="actions-column-cell"]').click();
     cy.get('[data-cy="index-execution-environments"]').should('be.visible').click({ force: true });
@@ -80,6 +81,8 @@ describe('Remote Registry', () => {
     cy.get('[data-cy="name"]').type(remoteRegistryName);
     cy.get('[data-cy="url"]').type(RemoteRegistry.remoteURL);
     cy.get('[data-cy="Submit"]').click();
+    cy.url().should('include', `remote-registries/details/${remoteRegistryName}`);
+    cy.contains('Remote registries').click();
     cy.url().should('include', RemoteRegistry.url);
     cy.searchAndDisplayResource(remoteRegistryName);
     cy.get('[data-cy="actions-column-cell"]').click();
@@ -99,6 +102,7 @@ describe('Remote Registry', () => {
     cy.get('[data-cy="name"]').type(remoteRegistryName);
     cy.get('[data-cy="url"]').type(RemoteRegistry.validIndexableURL);
     cy.get('[data-cy="Submit"]').click();
+    cy.contains('Remote registries').click();
     cy.searchAndDisplayResource(remoteRegistryName);
     cy.get('[data-cy="actions-column-cell"]').click();
     cy.get('[data-cy="edit-remote-registry"]').click({ force: true });

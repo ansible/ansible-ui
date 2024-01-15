@@ -71,7 +71,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": ":check: AWX E2E Update - <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Success> - <${{ needs.setup.outputs.AWX_SERVER }}/ui_next|Server>"
+                    "text": ":check: AWX E2E Update - <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Success> - <${{ needs.setup.outputs.AWX_SERVER }}|Server>"
                   }
                 }
               ]
@@ -98,7 +98,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": ":alert: *AWX E2E Update* - *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Failure>* - <${{ needs.setup.outputs.AWX_SERVER }}/ui_next|Server> - <https://cloud.cypress.io/projects/77sud6|Cypress> - <!here>"
+                    "text": ":alert: *AWX E2E Update* - *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Failure>* - <${{ needs.setup.outputs.AWX_SERVER }}|Server> - <https://cloud.cypress.io/projects/77sud6|Cypress> - <!here>"
                   }
                 }
               ]

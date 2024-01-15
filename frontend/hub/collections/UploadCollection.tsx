@@ -21,14 +21,14 @@ import { LoadingPage } from '../../../framework/components/LoadingPage';
 import { useSearchParams } from '../../../framework/components/useSearchParams';
 import { useGetRequest } from '../../common/crud/useGet';
 import { nameKeyFn } from '../../common/utils/nameKeyFn';
-import { HubPageForm } from '../HubPageForm';
-import { HubRoute } from '../HubRoutes';
-import { hubAPI, pulpAPI } from '../api/formatPath';
-import { hubPostRequestFile } from '../api/request';
-import { useHubNamespaces } from '../namespaces/hooks/useHubNamespaces';
-import { useRepositories } from '../repositories/hooks/useRepositories';
-import { PulpItemsResponse, usePulpView } from '../usePulpView';
+import { useRepositories } from '../administration/repositories/hooks/useRepositories';
 import { HubError } from '../common/HubError';
+import { HubPageForm } from '../common/HubPageForm';
+import { hubAPI, pulpAPI } from '../common/api/formatPath';
+import { hubPostRequestFile } from '../common/api/request';
+import { PulpItemsResponse, useHubView } from '../common/useHubView';
+import { HubRoute } from '../main/HubRoutes';
+import { useHubNamespaces } from '../namespaces/hooks/useHubNamespaces';
 
 interface UploadData {
   file: unknown;
@@ -90,7 +90,7 @@ export function UploadCollectionByFile() {
     setNamespaceParams(ns);
   }
 
-  const view = usePulpView<Repository>({
+  const view = useHubView<Repository>({
     url: pulpAPI`/repositories/ansible/ansible/`,
     keyFn: nameKeyFn,
     toolbarFilters,
