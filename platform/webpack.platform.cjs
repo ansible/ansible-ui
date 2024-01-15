@@ -1,7 +1,7 @@
 const webpackConfig = require('../webpack/webpack.config');
 const webpack = require('webpack');
 
-const GATEWAY_API_PREFIX = process.env.GATEWAY_API_PREFIX || '/api/gateway';
+const GATEWAY_API_PREFIX = process.env.GATEWAY_API_PREFIX || '/api/gateway/v1';
 
 const PLATFORM_SERVER = process.env.PLATFORM_SERVER || 'https://localhost:443';
 
