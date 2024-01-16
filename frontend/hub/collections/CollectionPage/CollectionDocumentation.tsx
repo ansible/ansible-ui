@@ -63,9 +63,18 @@ export function CollectionDocumentation() {
 
   const content_name = searchParams.get('content_name');
   const content_type = searchParams.get('content_type');
-  const content = data?.results[0].docs_blob?.contents.find(
+  let content = data?.results[0]?.docs_blob?.contents.find(
     (c) => c.content_name === content_name && c.content_type === content_type
   );
+
+  let html = '';
+  if (content_type === 'docs') {
+    html = data?.results[0]?.docs_blob?.collection_readme?.html || '';
+  }
+
+  if (html && content) {
+    content = undefined;
+  }
 
   return (
     <Drawer isExpanded={isDrawerOpen} isInline={lg} position="left">
@@ -77,11 +86,21 @@ export function CollectionDocumentation() {
         }
       >
         <DrawerContentBody>
-          <CollectionDocumentationTabContent
-            content={content}
-            isDrawerOpen={isDrawerOpen}
-            setDrawerOpen={setDrawerOpen}
-          />
+          {content && (
+            <CollectionDocumentationTabContent
+              content={content}
+              isDrawerOpen={isDrawerOpen}
+              setDrawerOpen={setDrawerOpen}
+            />
+          )}
+
+          {html && (
+            <div
+              dangerouslySetInnerHTML={{
+                __html: html,
+              }}
+            />
+          )}
         </DrawerContentBody>
       </DrawerContent>
     </Drawer>
