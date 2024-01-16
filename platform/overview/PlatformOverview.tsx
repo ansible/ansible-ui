@@ -45,6 +45,7 @@ export function PlatformOverview() {
             case 'quick-starts':
               return (
                 <PageDashboardCard
+                  key={resource.id}
                   width="xxl"
                   title={t('Quick starts')}
                   subtitle={t('Learn Ansible automation with hands-on quickstarts.')}
