@@ -34,7 +34,7 @@ export interface Collection {
 }
 export interface IContents {
   doc_strings: null | {
-    doc: {
+    doc?: {
       notes?: string[];
       author: string | string[];
       module?: string;

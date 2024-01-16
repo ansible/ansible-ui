@@ -39,12 +39,12 @@ export function CollectionDocumentationTabContent(props: {
             {content?.content_name && <BreadcrumbItem>{content.content_name}</BreadcrumbItem>}
           </Breadcrumb>
           <Title headingLevel="h1">{content?.content_name}</Title>
-          {content?.doc_strings?.doc.short_description && (
+          {content?.doc_strings?.doc?.short_description && (
             <StackItem>{content?.doc_strings?.doc.short_description}</StackItem>
           )}
         </Stack>
       </PageSection>
-      {content?.doc_strings?.doc.description && (
+      {content?.doc_strings?.doc?.description && (
         <PageSection variant="light">
           <Stack hasGutter>
             <Title headingLevel="h2">{t('Synopsis')}</Title>
@@ -52,7 +52,7 @@ export function CollectionDocumentationTabContent(props: {
           </Stack>
         </PageSection>
       )}
-      {content?.doc_strings?.doc.options && (
+      {content?.doc_strings?.doc?.options && (
         <>
           <PageSection variant="light" style={{ paddingBottom: 0 }}>
             <Title headingLevel="h2">{t('Parameters')}</Title>
@@ -82,7 +82,7 @@ export function CollectionDocumentationTabContent(props: {
           </PageSection>
         </>
       )}
-      {content?.doc_strings?.doc.notes && (
+      {content?.doc_strings?.doc?.notes && (
         <PageSection variant="light">
           <Stack hasGutter>
             <Title headingLevel="h2">{t('Notes')}</Title>

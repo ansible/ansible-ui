@@ -62,7 +62,6 @@ export function CollectionDocumentation() {
     );
   }
 
-  
   const content_name = searchParams.get('content_name');
   const content_type = searchParams.get('content_type');
   let content = data?.results[0]?.docs_blob?.contents.find(
@@ -87,7 +86,7 @@ export function CollectionDocumentation() {
           ) : undefined
         }
       >
-        <DrawerContentBody className='body hub-docs-content pf-v5-c-content hub-content-alert-fix'>
+        <DrawerContentBody className="body hub-docs-content pf-v5-c-content hub-content-alert-fix">
           {content && (
             <CollectionDocumentationTabContent
               content={content}
