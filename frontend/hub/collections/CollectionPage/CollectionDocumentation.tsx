@@ -9,11 +9,12 @@ import { CollectionDocumentationTabContent } from './documentationComponents/Col
 import { CollectionDocumentationTabPanel } from './documentationComponents/CollectionDocumentationTabPanel';
 import { HubError } from '../../common/HubError';
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router-dom';
 
 export function CollectionDocumentation() {
   const { collection } = useOutletContext<{ collection: CollectionVersionSearch }>();
   const { t } = useTranslation();
-  const [content, setContent] = useState<IContents>();
+  const [searchParams] = useSearchParams();
 
   const { data, error, refresh } = useGet<CollectionVersionsContent>(
     pulpAPI`/content/ansible/collection_versions/?namespace=${
@@ -51,7 +52,7 @@ export function CollectionDocumentation() {
     return <LoadingPage />;
   }
 
-  if (error) {
+  if (error || data?.results.length === 0) {
     return (
       <HubError
         error={{ name: '', message: t('Can not load documentation.') }}
@@ -60,17 +61,18 @@ export function CollectionDocumentation() {
     );
   }
 
+  const content_name = searchParams.get('content_name');
+  const content_type = searchParams.get('content_type');
+  const content = data?.results[0].docs_blob?.contents.find(
+    (c) => c.content_name === content_name && c.content_type === content_type
+  );
+
   return (
     <Drawer isExpanded={isDrawerOpen} isInline={lg} position="left">
       <DrawerContent
         panelContent={
           isDrawerOpen ? (
-            <CollectionDocumentationTabPanel
-              setDrawerOpen={setDrawerOpen}
-              groups={groups}
-              content={content}
-              setContent={setContent}
-            />
+            <CollectionDocumentationTabPanel setDrawerOpen={setDrawerOpen} groups={groups} />
           ) : undefined
         }
       >

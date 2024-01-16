@@ -13,17 +13,21 @@ import {
   SearchInput,
 } from '@patternfly/react-core';
 import { IContents } from '../../Collection';
+import { useSearchParams } from 'react-router-dom';
 
 export function CollectionDocumentationTabPanel(props: {
   setDrawerOpen: Dispatch<SetStateAction<boolean>>;
-  content: IContents | undefined;
-  setContent: Dispatch<SetStateAction<IContents | undefined>>;
   groups: {
     name: string;
     contents: IContents[];
   }[];
 }) {
-  const { content, setContent, groups, setDrawerOpen } = props;
+  const { groups, setDrawerOpen } = props;
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const content_name = searchParams.get('content_name');
+  const content_type = searchParams.get('content_type');
+
   const { t } = useTranslation();
   return (
     <DrawerPanelContent>
@@ -37,20 +41,41 @@ export function CollectionDocumentationTabPanel(props: {
         <Nav theme="light">
           <NavList>
             <NavExpandable key="documentation" title={t('Documentation')} isExpanded>
-              <NavItem key="readme">{t('Readme')}</NavItem>
+              <NavItem
+                key="readme"
+                onClick={() => {
+                  setSearchParams((params) => {
+                    params.set('content_type', 'docs');
+                    params.set('content_name', '');
+                    return params;
+                  });
+                }}
+              >
+                {t('Readme')}
+              </NavItem>
             </NavExpandable>
             {groups.map((group) => (
               <NavExpandable
                 key={group.name}
                 title={group.name}
                 isExpanded
-                isActive={group.contents.find((c) => c === content) !== undefined}
+                isActive={
+                  group.contents.find(
+                    (c) => c.content_name === content_name && c.content_type === content_type
+                  ) !== undefined
+                }
               >
                 {group.contents.map((c) => (
                   <NavItem
                     key={c.content_name}
-                    onClick={() => setContent(c)}
-                    isActive={c === content}
+                    onClick={() => {
+                      setSearchParams((params) => {
+                        params.set('content_type', c.content_type);
+                        params.set('content_name', c.content_name);
+                        return params;
+                      });
+                    }}
+                    isActive={c.content_name === content_name && c.content_type === 'content_type'}
                   >
                     {c.content_name}
                   </NavItem>
