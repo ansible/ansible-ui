@@ -21,11 +21,13 @@ import { IPlatformView } from '../../../hooks/usePlatformView';
 import { Authenticator } from '../../../interfaces/Authenticator';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { useDeleteAuthenticators } from './useDeleteAuthenticators';
+import { useManageAuthenticators } from './useManageAuthenticators';
 
 export function useAuthenticatorToolbarActions(view: IPlatformView<Authenticator>) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const deleteAuthenticators = useDeleteAuthenticators(view.unselectItemsAndRefresh);
+  const manageAuthenticators = useManageAuthenticators(view.unselectItemsAndRefresh);
 
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayV1API`/authenticators/`);
   const canCreateAuthenticator = Boolean(data && data.actions && data.actions['POST']);
@@ -45,6 +47,20 @@ export function useAuthenticatorToolbarActions(view: IPlatformView<Authenticator
             ),
         href: getPageUrl(PlatformRoute.CreateAuthenticator),
       },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.None,
+        variant: ButtonVariant.primary,
+        isPinned: false,
+        icon: PlusCircleIcon,
+        label: t('Manage authenticators'),
+        isDisabled: canCreateAuthenticator
+          ? undefined
+          : t(
+              'You do not have permission to manage authentications. Please contact your system administrator if there is an issue with your access.'
+            ),
+        onClick: manageAuthenticators.openReorderModal,
+      },
       { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
@@ -55,7 +71,7 @@ export function useAuthenticatorToolbarActions(view: IPlatformView<Authenticator
         isDanger: true,
       },
     ],
-    [t, canCreateAuthenticator, deleteAuthenticators, getPageUrl]
+    [t, canCreateAuthenticator, deleteAuthenticators, manageAuthenticators, getPageUrl]
   );
 
   return toolbarActions;
