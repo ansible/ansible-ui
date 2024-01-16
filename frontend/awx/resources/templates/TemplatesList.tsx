@@ -20,7 +20,7 @@ import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { ButtonVariant } from '@patternfly/react-core';
 import { useTemplateActions } from './hooks/useTemplateActions';
 
-export function TemplatesList(props: { url: string; projectId?: string }) {
+export function TemplatesList(props: { url: string; projectId?: string; inventoryId?: string }) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const getPageUrl = useGetPageUrl();
