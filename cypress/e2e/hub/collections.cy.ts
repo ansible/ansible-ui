@@ -57,7 +57,14 @@ describe('Collections- List View', () => {
       cy.get('[data-cy="table-view"]').click();
       cy.clickTableRowKebabAction(thisCollectionName, 'delete-entire-collection-from-system');
       cy.get('[data-ouia-component-id="confirm"]').click();
+      cy.intercept(
+        'DELETE',
+        `/api/galaxy/v3/plugin/ansible/content/community/collections/index/ibm/${thisCollectionName}/`
+      ).as('deleted');
       cy.get('[data-ouia-component-id="submit"]').click();
+      cy.wait('@deleted').then((deleted) => {
+        expect(deleted.response.statusCode).to.eq(202);
+      });
       cy.clickButton(/^Close$/);
       cy.clickButton(/^Clear all filters$/);
     });
