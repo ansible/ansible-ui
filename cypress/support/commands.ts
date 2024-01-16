@@ -917,7 +917,13 @@ declare global {
         tags?: string[]
       ): Cypress.Chainable<void>;
       getOrCreateCollection(): Cypress.Chainable<string>;
-      deleteCollectionFromSystem(collection: CollectionVersionSearch): Cypress.Chainable<void>;
+      deleteCommunityCollectionFromSystem(
+        collection: CollectionVersionSearch,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
+      ): Cypress.Chainable<void>;
       uploadHubCollectionFile(hubFilePath: string, hubFileName: string): Cypress.Chainable<void>;
       createNamespace(namespaceName: string): Cypress.Chainable<void>;
       getNamespace(namespaceName: string): Cypress.Chainable<void>;

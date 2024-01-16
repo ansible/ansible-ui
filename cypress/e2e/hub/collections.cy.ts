@@ -18,7 +18,7 @@ describe('Collections- List View', () => {
   });
 
   after(() => {
-    //cy.cleanupCollections();
+    cy.cleanupCollections();
   });
 
   it('user can upload and then delete a new collection', () => {

@@ -160,7 +160,7 @@ Cypress.Commands.add('getOrCreateCollection', () => {
 });
 
 Cypress.Commands.add(
-  'deleteCollectionFromSystem',
+  'deleteCommunityCollectionFromSystem',
   (
     collectionName: CollectionVersionSearch,
     options?: {
@@ -183,7 +183,9 @@ Cypress.Commands.add('cleanupCollections', () => {
     hubAPI`/v3/plugin/ansible/search/collection-versions/?namespace=ibm`
   ).then((result) => {
     for (const resource of result.data ?? []) {
-      cy.deleteCollectionFromSystem(resource);
+      if (resource.repository.name === 'community') {
+        cy.deleteCommunityCollectionFromSystem(resource);
+      }
     }
   });
 });
