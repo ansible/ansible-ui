@@ -63,7 +63,7 @@ describe('Collections- List View', () => {
       ).as('deleted');
       cy.get('[data-ouia-component-id="submit"]').click();
       cy.wait('@deleted').then((deleted) => {
-        expect(deleted.response.statusCode).to.eq(202);
+        expect(deleted?.response?.statusCode).to.eq(202);
       });
       cy.clickButton(/^Close$/);
       cy.clickButton(/^Clear all filters$/);
