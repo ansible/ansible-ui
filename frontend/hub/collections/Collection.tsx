@@ -33,7 +33,7 @@ export interface Collection {
   };
 }
 
-export interface IContentsOptions {
+export interface IContentsOption {
   name: string;
   type?: string;
   description: string | string[];
@@ -42,7 +42,7 @@ export interface IContentsOptions {
   required?: boolean;
   aliases?: string[];
   elements?: string;
-  suboptions?: IContentsOptions[];
+  suboptions?: IContentsOption[];
   env?: {
     name: string;
   }[];
@@ -58,7 +58,7 @@ export interface IContentsOptions {
   cli?: {
     name: string;
   }[];
-};
+}
 
 export interface IContents {
   doc_strings: null | {
@@ -66,7 +66,7 @@ export interface IContents {
       notes?: string[];
       author: string | string[];
       module?: string;
-      options?: IContentsOptions[];
+      options?: IContentsOption[];
       filename: string;
       collection: string;
       has_action?: boolean;

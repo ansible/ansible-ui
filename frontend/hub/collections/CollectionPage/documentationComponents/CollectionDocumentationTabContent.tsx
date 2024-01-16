@@ -12,7 +12,7 @@ import {
 } from '@patternfly/react-core';
 import { BarsIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
-import { IContents } from '../../Collection';
+import { IContents, IContentsOption } from '../../Collection';
 
 export function CollectionDocumentationTabContent(props: {
   content: IContents | undefined;
@@ -22,6 +22,28 @@ export function CollectionDocumentationTabContent(props: {
   const { t } = useTranslation();
   const { content, isDrawerOpen, setDrawerOpen } = props;
   const splitString = '- name';
+
+  type OptionRecord = { option: IContentsOption; level: number };
+  const options: OptionRecord[] = [];
+
+  function fillOptions(local_options?: IContentsOption[], level?: number) {
+    if (level === undefined) {
+      return;
+    }
+
+    if (!local_options) {
+      return;
+    }
+
+    local_options.forEach((option) => {
+      options.push({ option, level });
+      if (option.suboptions) {
+        fillOptions(option.suboptions, level + 1);
+      }
+    });
+  }
+
+  fillOptions(content?.doc_strings?.doc?.options, 0);
 
   return (
     <>
@@ -52,7 +74,7 @@ export function CollectionDocumentationTabContent(props: {
           </Stack>
         </PageSection>
       )}
-      {content?.doc_strings?.doc?.options && (
+      {options && options.length > 0 && (
         <>
           <PageSection variant="light" style={{ paddingBottom: 0 }}>
             <Title headingLevel="h2">{t('Parameters')}</Title>
@@ -67,14 +89,16 @@ export function CollectionDocumentationTabContent(props: {
                 </Tr>
               </Thead>
               <Tbody>
-                {content?.doc_strings?.doc.options?.map((option) => (
-                  <Tr key={option.name}>
+                {options.map((optionRecord) => (
+                  <Tr key={optionRecord.option.name}>
                     <Td>
-                      <div>{option.name}</div>
-                      <small style={{ opacity: 0.7 }}>{option.type}</small>
+                      <div>{optionRecord.option.name}</div>
+                      <small style={{ opacity: 0.7 }}>{optionRecord.option.type}</small>
                     </Td>
-                    <Td>{option.choices?.map((choice) => <p key={choice}>{choice}</p>)}</Td>
-                    <Td>{option.description}</Td>
+                    <Td>
+                      {optionRecord.option.choices?.map((choice) => <p key={choice}>{choice}</p>)}
+                    </Td>
+                    <Td>{optionRecord.option.description}</Td>
                   </Tr>
                 ))}
               </Tbody>
