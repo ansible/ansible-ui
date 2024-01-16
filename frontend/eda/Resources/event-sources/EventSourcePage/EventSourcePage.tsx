@@ -15,11 +15,11 @@ import {
 } from '../../../../../framework';
 import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { useGet } from '../../../../common/crud/useGet';
-import { EdaRoute } from '../../../EdaRoutes';
-import { SWR_REFRESH_INTERVAL } from '../../../constants';
 import { EdaEventSourceRead } from '../../../interfaces/EdaEventSource';
 import { useDeleteEventSource } from '../hooks/useDeleteEventSources';
-import { edaAPI } from '../../../api/eda-utils';
+import { edaAPI } from '../../../common/eda-utils';
+import { SWR_REFRESH_INTERVAL } from '../../../common/eda-constants';
+import { EdaRoute } from '../../../main/EdaRoutes';
 
 export function EventSourcePage() {
   const { t } = useTranslation();

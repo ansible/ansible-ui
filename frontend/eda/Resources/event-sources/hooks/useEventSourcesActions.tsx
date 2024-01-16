@@ -8,10 +8,10 @@ import {
   PageActionType,
   usePageNavigate,
 } from '../../../../../framework';
-import { EdaRoute } from '../../../EdaRoutes';
 import { EdaEventSource } from '../../../interfaces/EdaEventSource';
-import { IEdaView } from '../../../useEventDrivenView';
 import { useDeleteEventSources } from './useDeleteEventSources';
+import { IEdaView } from '../../../common/useEventDrivenView';
+import { EdaRoute } from '../../../main/EdaRoutes';
 
 export function useEventSourcesActions(view: IEdaView<EdaEventSource>) {
   const { t } = useTranslation();

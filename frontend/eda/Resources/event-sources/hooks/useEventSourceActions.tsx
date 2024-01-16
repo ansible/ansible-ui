@@ -3,8 +3,8 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
 import { EdaEventSource } from '../../../interfaces/EdaEventSource';
-import { IEdaView } from '../../../useEventDrivenView';
 import { useDeleteEventSources } from './useDeleteEventSources';
+import { IEdaView } from '../../../common/useEventDrivenView';
 
 export function useEventSourceActions(view: IEdaView<EdaEventSource>) {
   const { t } = useTranslation();

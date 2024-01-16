@@ -1,7 +1,7 @@
 import { TextCell, useGetPageUrl } from '../../../../../framework';
 import { useGet } from '../../../../common/crud/useGet';
-import { EdaRoute } from '../../../EdaRoutes';
 import { EdaProject } from '../../../interfaces/EdaProject';
+import { EdaRoute } from '../../../main/EdaRoutes';
 
 export function EdaEventSourceCell(props: { id?: number }) {
   const getPageUrl = useGetPageUrl();

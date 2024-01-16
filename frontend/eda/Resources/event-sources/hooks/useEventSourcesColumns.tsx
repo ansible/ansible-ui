@@ -7,9 +7,9 @@ import {
   TextCell,
   useGetPageUrl,
 } from '../../../../../framework';
-import { EdaRoute } from '../../../EdaRoutes';
 import { EdaEventSource, EdaEventSourceRead } from '../../../interfaces/EdaEventSource';
-import { EdaDecisionEnvironmentCell } from '../../decision-environments/components/EdaDecisionEnvironmentCell';
+import { EdaRoute } from '../../../main/EdaRoutes';
+import { EdaDecisionEnvironmentCell } from '../../../decision-environments/components/EdaDecisionEnvironmentCell';
 
 export function useEventSourcesColumns() {
   const { t } = useTranslation();
@@ -46,19 +46,19 @@ export function useEventSourcesColumns() {
         header: t('Created'),
         type: 'datetime',
         value: (source) => source.created_at,
-        table: ColumnTableOption.Expanded,
+        table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'secondary',
-        modal: ColumnModalOption.Hidden,
+        modal: ColumnModalOption.hidden,
       },
       {
         header: t('Last modified'),
         type: 'datetime',
         value: (source) => source.modified_at,
-        table: ColumnTableOption.Expanded,
+        table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'secondary',
-        modal: ColumnModalOption.Hidden,
+        modal: ColumnModalOption.hidden,
       },
     ],
     [getPageUrl, t]
@@ -96,19 +96,19 @@ export function useEventSourceColumns() {
         header: t('Created'),
         type: 'datetime',
         value: (source) => source.created_at,
-        table: ColumnTableOption.Expanded,
+        table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'secondary',
-        modal: ColumnModalOption.Hidden,
+        modal: ColumnModalOption.hidden,
       },
       {
         header: t('Last modified'),
         type: 'datetime',
         value: (source) => source.modified_at,
-        table: ColumnTableOption.Expanded,
+        table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'secondary',
-        modal: ColumnModalOption.Hidden,
+        modal: ColumnModalOption.hidden,
       },
     ],
     [getPageUrl, t]

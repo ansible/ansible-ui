@@ -1,13 +1,13 @@
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../../framework';
-import { EdaRoute } from '../../EdaRoutes';
 import { EdaEventSource } from '../../interfaces/EdaEventSource';
-import { useEdaView } from '../../useEventDrivenView';
 import { useEventSourceActions } from './hooks/useEventSourceActions';
 import { useEventSourcesColumns } from './hooks/useEventSourcesColumns';
 import { useEventSourceFilters } from './hooks/useEventSourceFilters';
 import { useEventSourcesActions } from './hooks/useEventSourcesActions';
-import { edaAPI } from '../../api/eda-utils';
+import { useEdaView } from '../../common/useEventDrivenView';
+import { edaAPI } from '../../common/eda-utils';
+import { EdaRoute } from '../../main/EdaRoutes';
 
 export function EventSources() {
   const { t } = useTranslation();

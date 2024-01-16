@@ -14,13 +14,13 @@ import {
 import { useGet } from '../../../common/crud/useGet';
 import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { EdaRoute } from '../../EdaRoutes';
-import { edaAPI } from '../../api/eda-utils';
 import { EdaCredential } from '../../interfaces/EdaCredential';
 import { EdaEventSource, EdaEventSourceRead } from '../../interfaces/EdaEventSource';
 import { EdaResult } from '../../interfaces/EdaResult';
-import { EdaPageForm } from '../../EdaPageForm';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
+import { edaAPI } from '../../common/eda-utils';
+import { EdaRoute } from '../../main/EdaRoutes';
+import { EdaPageForm } from '../../common/EdaPageForm';
 
 export interface IEventSourceFields {
   name: string;

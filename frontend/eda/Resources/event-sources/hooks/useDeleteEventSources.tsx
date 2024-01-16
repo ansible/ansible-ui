@@ -3,10 +3,10 @@ import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { requestDelete } from '../../../../common/crud/Data';
 import { idKeyFn } from '../../../../common/utils/nameKeyFn';
-import { edaAPI } from '../../../api/eda-utils';
 import { InUseResources } from '../../../common/EdaResourcesComon';
 import { EdaEventSource, EdaEventSourceRead } from '../../../interfaces/EdaEventSource';
 import { useEventSourceColumns, useEventSourcesColumns } from './useEventSourcesColumns';
+import { edaAPI } from '../../../common/eda-utils';
 
 export function useDeleteEventSources(onComplete: (eventSources: EdaEventSource[]) => void) {
   const { t } = useTranslation();
