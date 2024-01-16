@@ -32,42 +32,41 @@ export interface Collection {
     };
   };
 }
+
+export interface IContentsOptions {
+  name: string;
+  type?: string;
+  description: string | string[];
+  choices?: string[];
+  default?: (boolean | number | string) | string[];
+  required?: boolean;
+  aliases?: string[];
+  elements?: string;
+  suboptions?: IContentsOptions[];
+  env?: {
+    name: string;
+  }[];
+  ini?: {
+    key: string;
+    section: string;
+  }[];
+  vars?: {
+    name: string;
+  }[];
+  version_added?: string;
+  version_added_collection?: string;
+  cli?: {
+    name: string;
+  }[];
+};
+
 export interface IContents {
   doc_strings: null | {
     doc?: {
       notes?: string[];
       author: string | string[];
       module?: string;
-      options?: {
-        name: string;
-        type?: string;
-        description: string | string[];
-        choices?: string[];
-        default?: (boolean | number | string) | string[];
-        required?: boolean;
-        aliases?: string[];
-        elements?: string;
-        suboptions?: {
-          name: string;
-          type: string;
-          description: string[];
-        }[];
-        env?: {
-          name: string;
-        }[];
-        ini?: {
-          key: string;
-          section: string;
-        }[];
-        vars?: {
-          name: string;
-        }[];
-        version_added?: string;
-        version_added_collection?: string;
-        cli?: {
-          name: string;
-        }[];
-      }[];
+      options?: IContentsOptions[];
       filename: string;
       collection: string;
       has_action?: boolean;
