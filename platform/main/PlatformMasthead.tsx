@@ -21,6 +21,7 @@ import {
   PageMasthead,
   PageNotificationsIcon,
   useBreakpoint,
+  usePageDialog,
   usePageNavigate,
 } from '../../framework';
 import { PageMastheadDropdown } from '../../framework/PageMasthead/PageMastheadDropdown';
@@ -32,6 +33,7 @@ import { postRequest } from '../../frontend/common/crud/Data';
 import { useHubNotifications } from '../../frontend/hub/main/HubMasthead';
 import { gatewayAPI } from '../api/gateway-api-utils';
 import { useActivePlatformUser } from '../hooks/useActivePlatformUser';
+import { PlatformAbout } from './PlatformAbout';
 import { PlatformRoute } from './PlatformRoutes';
 
 export function PlatformMasthead() {
@@ -42,6 +44,7 @@ export function PlatformMasthead() {
   useAwxNotifications();
   useHubNotifications();
   const showTitle = useBreakpoint('md');
+  const [_dialog, setDialog] = usePageDialog();
 
   const { cache } = useSWRConfig();
   const logout = useCallback(async () => {
@@ -119,13 +122,13 @@ export function PlatformMasthead() {
             >
               {t('Quickstarts')}
             </DropdownItem>
-            {/* <DropdownItem
+            <DropdownItem
               id="about"
-              onClick={() => openAnsibleAboutModal({})}
+              onClick={() => setDialog(<PlatformAbout />)}
               data-cy="masthead-about"
             >
               {t('About')}
-            </DropdownItem> */}
+            </DropdownItem>
           </PageMastheadDropdown>
         </ToolbarItem>
         <ToolbarItem>
