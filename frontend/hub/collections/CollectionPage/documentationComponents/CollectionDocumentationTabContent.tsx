@@ -22,6 +22,7 @@ export function CollectionDocumentationTabContent(props: {
   const { t } = useTranslation();
   const { content, isDrawerOpen, setDrawerOpen } = props;
   const splitString = '- name';
+
   return (
     <>
       <PageSection variant="light">

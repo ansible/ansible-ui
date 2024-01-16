@@ -52,7 +52,8 @@ export function CollectionDocumentation() {
     return <LoadingPage />;
   }
 
-  if (error || data?.results.length === 0) {
+  const dataItem = data?.results[0];
+  if (error || !dataItem) {
     return (
       <HubError
         error={{ name: '', message: t('Can not load documentation.') }}
@@ -61,6 +62,7 @@ export function CollectionDocumentation() {
     );
   }
 
+  
   const content_name = searchParams.get('content_name');
   const content_type = searchParams.get('content_type');
   let content = data?.results[0]?.docs_blob?.contents.find(
@@ -69,7 +71,7 @@ export function CollectionDocumentation() {
 
   let html = '';
   if (content_type === 'docs') {
-    html = data?.results[0]?.docs_blob?.collection_readme?.html || '';
+    html = dataItem?.docs_blob?.collection_readme?.html || '';
   }
 
   if (html && content) {
