@@ -26,6 +26,9 @@ export interface IToolbarAsyncSingleSelectFilter extends ToolbarFilterCommon {
   /** The function to open the browse modal. */
   openBrowse?: ToolbarOpenSingleSelectBrowse;
 
+  /** The function to query for the label of a value. */
+  queryLabel?: (value: string) => Promise<string | undefined>;
+
   /**
    * Whether the select required an option to be selected.
    *

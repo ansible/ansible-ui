@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { PageAsyncMultiSelectOptionsFn } from '../../PageInputs/PageAsyncMultiSelect';
 import { PageAsyncQueryErrorTextType } from '../../PageInputs/PageAsyncSingleSelect';
 import { ToolbarFilterType } from '../PageToolbarFilter';
@@ -20,6 +21,9 @@ export interface IToolbarAsyncMultiSelectFilter extends ToolbarFilterCommon {
 
   /** The placeholder to show if the query fails. */
   queryErrorText?: PageAsyncQueryErrorTextType;
+
+  /** The function to query for the label of a value. */
+  queryLabel?: (value: string) => Promise<string | undefined>;
 
   /** The function to open the browse modal. */
   openBrowse?: ToolbarOpenMultiSelectBrowse;
@@ -60,4 +64,18 @@ export function multiSelectBrowseAdapter<T>(
         : []
     );
   };
+}
+
+export function AsyncQueryChip(props: {
+  value: string;
+  queryLabel?: (value: string) => Promise<string | undefined>;
+}) {
+  const { value, queryLabel } = props;
+  const [label, setLabel] = useState<string | undefined>(undefined);
+  useEffect(() => {
+    if (queryLabel) {
+      void queryLabel(value).then((label) => setLabel(label));
+    }
+  }, [value, queryLabel]);
+  return <>{label || value}</>;
 }
