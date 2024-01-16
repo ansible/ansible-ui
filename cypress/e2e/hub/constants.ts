@@ -88,4 +88,11 @@ export const APITokens = {
 
 export const Roles = {
   title: 'Roles',
+  url: 'roles',
+};
+
+export const Tasks = {
+  title: 'Tasks',
+  url: 'tasks',
+  noResults: 'No results found',
 };
