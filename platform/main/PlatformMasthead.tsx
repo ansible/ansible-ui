@@ -44,7 +44,7 @@ export function PlatformMasthead() {
   useAwxNotifications();
   useHubNotifications();
   const showTitle = useBreakpoint('md');
-  const [dialog, setDialog] = usePageDialog();
+  const [_dialog, setDialog] = usePageDialog();
 
   const { cache } = useSWRConfig();
   const logout = useCallback(async () => {
