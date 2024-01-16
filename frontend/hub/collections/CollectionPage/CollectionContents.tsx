@@ -17,6 +17,7 @@ import { EmptyStateNoData } from '../../../../framework/components/EmptyStateNoD
 import { Link } from 'react-router-dom';
 import { useMemo } from 'react';
 import { ITableColumn } from '../../../../framework';
+import { Scrollable } from '../../../../framework';
 
 export function CollectionContents() {
   const { t } = useTranslation();
@@ -75,7 +76,7 @@ export function CollectionContents() {
   }
 
   return (
-    <>
+    <Scrollable>
       <PageSection variant="light">
         <SearchInput
           key="content-search-input-key"
@@ -129,7 +130,7 @@ export function CollectionContents() {
           <RenderCommunityWarningMessage />
         )}
       </PageSection>
-    </>
+    </Scrollable>
   );
 }
 
@@ -140,7 +141,7 @@ function useTableColumns() {
     () => [
       {
         header: t('Name'),
-        cell: (item) => <Link to={returnPath()}>{item.name}</Link>,
+        cell: (item) => <Link to={returnPath(item)}>{item.name}</Link>,
       },
       {
         header: t('Type'),
@@ -167,14 +168,12 @@ function RenderCommunityWarningMessage() {
   );
 }
 
-function returnPath() {
-  // TODO - this is maybe not correct, without documentation tab working, we cant be sure those paths are leading to right places
+function returnPath(item: CollectionContent) {
   // TODO - this is not handling insights well right now probably, but insights is still not discussed
   let path = window.location.origin + window.location.pathname;
-  path = path.replace('/contents', '/documentation');
+  path = path.replace('/contents', '/documentation?');
 
-  // TODO - this will work when documentation will be finished
-  //path += `/${content.content_type}/${content.name}/`;
+  path += `content_type=${item.content_type}&content_name=${item.name}`;
   return path;
 }
 
