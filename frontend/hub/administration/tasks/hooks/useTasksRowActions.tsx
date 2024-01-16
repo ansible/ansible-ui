@@ -2,11 +2,11 @@ import { StopIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
-import { useHubContext } from '../../../common/useHubContext';
 import { Task } from '../Task';
-import { useStopTasks } from './useTasksActions';
+import { useStopTasks } from './useTasksToolbarActions';
+import { useHubContext } from '../../../common/useHubContext';
 
-export function useTaskActions(onComplete?: (tasks: Task[]) => void) {
+export function useTasksRowActions(onComplete?: (tasks: Task[]) => void) {
   const { t } = useTranslation();
   const context = useHubContext();
   const stopTask = useStopTasks(onComplete);
