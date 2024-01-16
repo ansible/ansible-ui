@@ -9,13 +9,13 @@ import {
 } from '../../../../../framework';
 import { requestPatch } from '../../../../common/crud/Data';
 import { pulpAPI } from '../../../common/api/formatPath';
-import { parsePulpIDFromURL } from '../../../common/api/hub-api-utils';
 import { useHubBulkConfirmation } from '../../../common/useHubBulkConfirmation';
 import { useHubContext } from '../../../common/useHubContext';
 import { Task } from '../Task';
-import { useTasksColumns } from '../Tasks';
+import { parsePulpIDFromURL } from '../../../common/api/hub-api-utils';
+import { useTasksColumns } from './useTasksColumns';
 
-export function useTasksActions(onComplete?: (tasks: Task[]) => void) {
+export function useTasksToolbarActions(onComplete?: (tasks: Task[]) => void) {
   const { t } = useTranslation();
   const context = useHubContext();
   const stopTasks = useStopTasks(onComplete);
@@ -45,12 +45,18 @@ export function useStopTasks(onComplete?: (tasks: Task[]) => void) {
   const bulkAction = useHubBulkConfirmation<Task>();
   return useCallback(
     (tasks: Task[]) => {
+      const filteredTasks = tasks
+        .map((task) => task.state)
+        .filter((state) => state === 'running' || state === 'waiting');
       bulkAction({
-        title: t('Stop running task', { count: tasks.length }),
-        confirmText: t('Yes, I confirm that I want to stop these {{count}} running tasks.', {
-          count: tasks.length,
-        }),
-        actionButtonText: t('Stop tasks', { count: tasks.length }),
+        title: t('Stop running/waiting task', { count: filteredTasks.length }),
+        confirmText: t(
+          'Yes, I confirm that I want to stop these {{count}} running/waiting tasks.',
+          {
+            count: filteredTasks.length,
+          }
+        ),
+        actionButtonText: t('Stop tasks', { count: filteredTasks.length }),
         items: tasks.sort((l, r) => compareStrings(l.pulp_href || '', r.pulp_href || '')),
         keyFn: (item) => item.name,
         isDanger: true,
@@ -69,7 +75,7 @@ export function useStopTasks(onComplete?: (tasks: Task[]) => void) {
 }
 
 function stopRunningTask(task: Task) {
-  return requestPatch(pulpAPI`/tasks/${parsePulpIDFromURL(task.pulp_href) || ''}`, {
+  return requestPatch(pulpAPI`/tasks/${parsePulpIDFromURL(task.pulp_href) || ''}/`, {
     state: 'canceled',
   });
 }
