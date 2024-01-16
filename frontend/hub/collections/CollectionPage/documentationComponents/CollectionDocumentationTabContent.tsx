@@ -92,9 +92,12 @@ export function CollectionDocumentationTabContent(props: {
                 {options.map((optionRecord) => (
                   <Tr key={optionRecord.option.name}>
                     <Td>
-                      <div>{optionRecord.option.name}</div>
-                      <small style={{ opacity: 0.7 }}>{optionRecord.option.type}</small>
+                      <div style={{ marginLeft: `${optionRecord.level * 30}px` }}>
+                        <div>{optionRecord.option.name}</div>
+                        <small style={{ opacity: 0.7 }}>{optionRecord.option.type}</small>
+                      </div>
                     </Td>
+
                     <Td>
                       {optionRecord.option.choices?.map((choice) => <p key={choice}>{choice}</p>)}
                     </Td>
