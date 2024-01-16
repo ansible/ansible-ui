@@ -85,7 +85,7 @@ export function CollectionDocumentation() {
           ) : undefined
         }
       >
-        <DrawerContentBody>
+        <DrawerContentBody className='body hub-docs-content pf-v5-c-content hub-content-alert-fix'>
           {content && (
             <CollectionDocumentationTabContent
               content={content}
