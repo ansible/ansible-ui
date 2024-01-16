@@ -183,7 +183,7 @@ Cypress.Commands.add('cleanupCollections', () => {
     hubAPI`/v3/plugin/ansible/search/collection-versions/?namespace=ibm`
   ).then((result) => {
     for (const resource of result.data ?? []) {
-      if (resource.repository.name === 'community') {
+      if (resource.repository?.name === 'community') {
         cy.deleteCommunityCollectionFromSystem(resource);
       }
     }
