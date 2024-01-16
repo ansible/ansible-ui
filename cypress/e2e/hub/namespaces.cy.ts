@@ -1,6 +1,8 @@
 import { randomString } from '../../../framework/utils/random-string';
 import { Namespaces } from './constants';
 
+const apiPrefix = Cypress.env('HUB_API_PREFIX') as string;
+
 describe('Namespaces', () => {
   before(() => {
     cy.hubLogin();
@@ -24,6 +26,23 @@ describe('Namespaces', () => {
     cy.selectDetailsPageKebabAction('delete-namespace');
     cy.url().should('include', Namespaces.url);
     cy.url().should('not.include', `/namespaces/${namespaceName}/details`);
+  });
+
+  it('should show the correct URL when clicking on the CLI configuration tab', () => {
+    cy.navigateTo('hub', Namespaces.url);
+    const namespaceName = `test_namespace_${randomString(5, undefined, { isLowercase: true })}`;
+    cy.get('[data-cy="create-namespace"]').should('be.visible').click();
+    cy.url().should('include', Namespaces.urlCreate);
+    cy.get('[data-cy="name"]').type(namespaceName);
+    cy.get('[data-cy="company"]').type('test company');
+    cy.get('[data-cy="Submit"]').click();
+    cy.url().should('include', `/namespaces/${namespaceName}/details`);
+    cy.get('*[aria-controls^="pf-tab-section-hub-namespace-cli"]').should(
+      'contain',
+      'CLI Configuration'
+    );
+    cy.get('*[aria-controls^="pf-tab-section-hub-namespace-cli"]').click();
+    cy.get('[class="pf-v5-c-truncate__start"]').should('contain', apiPrefix);
   });
 
   it('edit a namespace', () => {
