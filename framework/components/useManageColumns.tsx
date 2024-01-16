@@ -16,11 +16,11 @@ export function useManageColumns<T extends object>(
     const columns: {
       header: string;
       cell: (column: ITableColumn<T>, setColumn: (column: ITableColumn<T>) => void) => ReactNode;
-    }[] = [{ header: t('Column Name'), cell: (column: ITableColumn<T>) => column.header }];
+    }[] = [{ header: t('Name'), cell: (column: ITableColumn<T>) => column.header }];
 
     if (!disableTableView) {
       columns.push({
-        header: t('Table View'),
+        header: t('Table'),
         cell: (column: ITableColumn<T>, setColumn: (column: ITableColumn<T>) => void) => (
           <PageSingleSelect<keyof typeof ColumnTableOption | ''>
             value={column.table ?? ''}
@@ -68,7 +68,7 @@ export function useManageColumns<T extends object>(
 
     if (!disableListView) {
       columns.push({
-        header: t('List View'),
+        header: t('List'),
         cell: (column: ITableColumn<T>, setColumn: (column: ITableColumn<T>) => void) => (
           <PageSingleSelect
             value={column.list ?? ''}
@@ -104,11 +104,6 @@ export function useManageColumns<T extends object>(
                 description: t('Show the column as the list item description.'),
               },
               {
-                value: '',
-                label: t('Left side'),
-                description: t('Show the column on the left side of the list.'),
-              },
-              {
                 value: 'primary',
                 label: t('Left side'),
                 description: t('Show the column on the left side of the list.'),
@@ -132,7 +127,7 @@ export function useManageColumns<T extends object>(
 
     if (!disableCardView) {
       columns.push({
-        header: t('Card View'),
+        header: t('Card'),
         cell: (column: ITableColumn<T>, setColumn: (column: ITableColumn<T>) => void) => (
           <PageSingleSelect
             value={column.card ?? ''}
