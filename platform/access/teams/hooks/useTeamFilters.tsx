@@ -28,9 +28,13 @@ export function useTeamFilters() {
       label: 'Organization',
       type: ToolbarFilterType.AsyncMultiSelect,
       queryOptions: queryOrganizations,
-      placeholder: 'Select organizations',
+      placeholder: 'Select organization',
       queryPlaceholder: 'Loading organizations...',
       queryErrorText: 'Failed to load organizations.',
+      queryLabel: (id: string) =>
+        requestGet<PlatformOrganization>(gatewayV1API`/organizations/${id}/`).then(
+          (organization) => organization?.name
+        ),
     };
     return filter;
   }, [queryOrganizations]);
