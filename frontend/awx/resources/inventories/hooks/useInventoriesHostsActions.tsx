@@ -9,8 +9,8 @@ import {
 } from '../../../../../framework';
 import { requestPatch } from '../../../../common/crud/Data';
 import { cannotEditResource } from '../../../../common/utils/RBAChelpers';
-import { awxAPI } from '../../../api/awx-utils';
-import { AwxRoute } from '../../../AwxRoutes';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { AwxHost } from '../../../interfaces/AwxHost';
 
 export function useInventoriesHostsActions(onComplete: (hosts: AwxHost[]) => void) {

@@ -7,9 +7,9 @@ import {
   PageActionType,
   usePageNavigate,
 } from '../../../../../framework';
-import { AwxRoute } from '../../../AwxRoutes';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { AwxHost } from '../../../interfaces/AwxHost';
-import { IAwxView } from '../../../useAwxView';
+import { IAwxView } from '../../../common/useAwxView';
 import { useDeleteHosts } from './useDeleteHosts';
 
 export function useHostsActions(view: IAwxView<AwxHost>) {

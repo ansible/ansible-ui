@@ -11,11 +11,11 @@ import {
 } from '../../../../../framework';
 import { useOptions } from '../../../../common/crud/useOptions';
 import { cannotDeleteResources } from '../../../../common/utils/RBAChelpers';
-import { awxAPI } from '../../../api/awx-utils';
-import { AwxRoute } from '../../../AwxRoutes';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { AwxHost } from '../../../interfaces/AwxHost';
 import { OptionsResponse, ActionsResponse } from '../../../interfaces/OptionsResponse';
-import { IAwxView } from '../../../useAwxView';
+import { IAwxView } from '../../../common/useAwxView';
 import { useDeleteHosts } from '../../hosts/hooks/useDeleteHosts';
 
 export function useInventoriesHostsToolbarActions(view: IAwxView<AwxHost>) {
@@ -44,7 +44,7 @@ export function useInventoriesHostsToolbarActions(view: IAwxView<AwxHost>) {
         icon: PlusIcon,
         label: t('Create host'),
         onClick: () =>
-          pageNavigate(AwxRoute.InventoryHostsAdd, {
+          pageNavigate(String(AwxRoute.InventoryHostsAdd), {
             params: { inventory_type: params.inventory_type, id: params.id },
           }),
         isDisabled: () =>

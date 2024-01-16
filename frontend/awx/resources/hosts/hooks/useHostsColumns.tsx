@@ -6,7 +6,7 @@ import {
   useCreatedColumn,
   useModifiedColumn,
 } from '../../../../common/columns';
-import { AwxRoute } from '../../../AwxRoutes';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { AwxHost } from '../../../interfaces/AwxHost';
 
 export function useHostsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
