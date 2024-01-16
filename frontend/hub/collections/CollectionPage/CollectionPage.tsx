@@ -76,10 +76,12 @@ export function CollectionPage() {
   const itemActions = useCollectionActions(() => void collectionRequest.refresh(), true);
 
   function setVersionParams(version: string) {
-    setSearchParams((params) => {
-      params.set('version', version);
-      return params;
-    });
+    setTimeout(() => {
+      setSearchParams((params) => {
+        params.set('version', version);
+        return params;
+      });
+    }, 0);
   }
 
   // load collection versions
