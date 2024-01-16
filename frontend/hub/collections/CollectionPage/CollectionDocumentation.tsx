@@ -63,16 +63,27 @@ export function CollectionDocumentation() {
   }
 
   const content_name = searchParams.get('content_name');
-  const content_type = searchParams.get('content_type');
+  const content_type = searchParams.get('content_type') || 'docs';
+
+  // find content based on search params
   let content = data?.results[0]?.docs_blob?.contents.find(
     (c) => c.content_name === content_name && c.content_type === content_type
   );
 
+  // for readme, use the root html of all contents
   let html = '';
   if (content_type === 'docs') {
     html = dataItem?.docs_blob?.collection_readme?.html || '';
   }
 
+  // if the content has html, lets use that instead of content frontent generation
+  if (content?.readme_html) {
+    html = content.readme_html;
+    content = undefined;
+  }
+
+  // prioritize html for rest of cases where html and content is available
+  // if the content is available, and html not, try to render documentation in frontend
   if (html && content) {
     content = undefined;
   }
