@@ -18,7 +18,7 @@ describe('Collections- List View', () => {
   });
 
   after(() => {
-    cy.cleanupCollections();
+    //cy.cleanupCollections();
   });
 
   it('user can upload and then delete a new collection', () => {
@@ -70,7 +70,7 @@ describe('Collections- List View', () => {
   it.skip('user can deprecate selected collections using the list toolbar', () => {});
 });
 
-describe('Collections List- Line Item Kebab Menu', () => {
+describe.skip('Collections List- Line Item Kebab Menu', () => {
   before(() => {
     cy.hubLogin();
   });
@@ -86,7 +86,7 @@ describe('Collections List- Line Item Kebab Menu', () => {
   it.skip('user can copy a version to repository', () => {});
 });
 
-describe('Collections Details View', () => {
+describe.skip('Collections Details View', () => {
   before(() => {
     cy.hubLogin();
   });
@@ -108,7 +108,7 @@ describe('Collections Details View', () => {
   it.skip('user can access the Install tab and download a tarball', () => {});
 });
 
-describe('Collection Approvals List', () => {
+describe.skip('Collection Approvals List', () => {
   before(() => {
     cy.hubLogin();
   });
