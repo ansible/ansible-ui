@@ -1,6 +1,6 @@
 import { useTranslation, Trans } from 'react-i18next';
-import { HubItemsResponse } from '../../useHubView';
-import { hubAPI } from '../../api/formatPath';
+import { HubItemsResponse } from '../../common/useHubView';
+import { hubAPI } from '../../common/api/formatPath';
 import { DateTimeCell, PageToolbar, IFilterState } from '../../../../framework';
 import {
   Button,
