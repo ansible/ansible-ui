@@ -2,7 +2,7 @@ import { PageWizard, PageWizardStep } from '../../../../../../framework';
 import { useTranslation } from 'react-i18next';
 import { UnifiedJobType, WorkflowNode } from '../../../../interfaces/WorkflowNode';
 import { NodeTypeStep } from './NodeTypeStep';
-import { awxErrorAdapter } from '../../../../adapters/awxErrorAdapter';
+import { awxErrorAdapter } from '../../../../common/adapters/awxErrorAdapter';
 import { NodeShape, isNode, useVisualizationController } from '@patternfly/react-topology';
 import { useViewOptions } from '../ViewOptionsProvider';
 import { useSetVisualizerModified } from '../hooks/useSetVisualizerModified';

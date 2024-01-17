@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 import useSWRInfinite from 'swr/infinite';
 import { useGetRequest } from '../../common/crud/useGet';
 import { normalizeQueryString } from '../../common/crud/normalizeQueryString';
-import { QueryParams } from '../useAwxView';
+import { QueryParams } from './useAwxView';
 import { AwxItemsResponse } from './AwxItemsResponse';
 
 export function useAwxGetAllPages<T extends object>(url: string, queryParams?: QueryParams) {
