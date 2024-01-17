@@ -1,22 +1,21 @@
-import { useState } from 'react';
+import { useState, MouseEvent } from 'react';
 import { Dropdown, DropdownList, DropdownItem, MenuToggle } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
-import type { AuthenticatorPlugins } from '../../../../interfaces/AuthenticatorPlugin';
+// import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
+// import type { AuthenticatorPlugins } from '../../../../interfaces/AuthenticatorPlugin';
 import { AuthenticatorMapType } from '../../../../interfaces/AuthenticatorMap';
-import type { AuthenticatorForm } from '../AuthenticatorForm';
 
-export function AuthenticatorMappingStep(props: { plugins: AuthenticatorPlugins }) {
-  const { t } = useTranslation();
-  const { wizardData, setWizardData } = usePageWizard();
-  const { mappings = [] } = wizardData;
+export function AuthenticatorMappingStep(/*props: { plugins: AuthenticatorPlugins }*/) {
+  // const { wizardData, setWizardData } = usePageWizard();
+  // const { mappings = [] } = wizardData;
 
-  const addMapping = (value: AuthenticatorMapType) => {
-    setWizardData({
-      ...wizardData,
-      mappings: [...mappings, { type: value }],
-    });
-  };
+  const addMapping = () => {};
+  // const addMapping = (value: AuthenticatorMapType) => {
+  //   setWizardData({
+  //     ...wizardData,
+  //     mappings: [...mappings, { type: value }],
+  //   });
+  // };
 
   return (
     <>
@@ -29,9 +28,14 @@ function AddMappingDropdown(props: { onSelect: (value: AuthenticatorMapType) => 
   const [isOpen, setIsOpen] = useState(false);
   const { t } = useTranslation();
 
-  const onSelect = (value: AuthenticatorMapType) => {
+  const onSelect = (
+    event?: MouseEvent<Element> | undefined,
+    value?: string | number | undefined
+  ) => {
     setIsOpen(false);
-    props.onSelect(value);
+    if (value) {
+      props.onSelect(value as AuthenticatorMapType);
+    }
   };
 
   return (
