@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { PageFormJobTemplateSelect } from '../../components/PageFormJobTemplateSelect';
 import { PageFormSelect, PageFormTextInput } from '../../../../../../framework';
-import getDocsBaseUrl from '../../../../common/util/getDocsBaseUrl';
+import { getDocsBaseUrl } from '../../../../common/util/getDocsBaseUrl';
 import { useAwxConfig } from '../../../../common/useAwxConfig';
 import { NodeFields } from './NodeFormInputs';
 import { PageFormProjectSelect } from '../../../projects/components/PageFormProjectSelect';
