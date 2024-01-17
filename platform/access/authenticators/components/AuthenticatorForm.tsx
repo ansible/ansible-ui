@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   LoadingPage,
@@ -6,6 +7,7 @@ import {
   PageWizard,
   PageWizardStep,
   useGetPageUrl,
+  usePageAlertToaster,
 } from '../../../../framework';
 import { PlatformRoute } from '../../../PlatformRoutes';
 import { useGet } from '../../../../frontend/common/crud/useGet';
@@ -37,9 +39,16 @@ export interface AuthenticatorForm {
   order: number;
 }
 
+type Errors =
+  | {
+      [key: string]: string;
+    }
+  | undefined;
+
 export function CreateAuthenticator() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
+  const alertToaster = usePageAlertToaster();
 
   const { data: plugins } = useGet<AuthenticatorPlugins>(gatewayAPI`/v1/authenticator_plugins`);
 
@@ -55,7 +64,26 @@ export function CreateAuthenticator() {
       configuration: formatConfiguration(configuration, plugin),
     });
 
-    await Promise.all([request]);
+    try {
+      await Promise.all([request]);
+    } catch (err) {
+      let children: ReactNode | string | string[];
+      if (err && typeof err === 'object' && 'body' in err) {
+        const errorMessages = err.body as Errors;
+        if (errorMessages) {
+          children = Object.keys(errorMessages).map((key) => (
+            <p key="key">{`${key}: ${errorMessages[key]}`}</p>
+          ));
+        }
+      } else if (err instanceof Error && err.message) {
+        children = err.message;
+      }
+      alertToaster.addAlert({
+        variant: 'danger',
+        title: t('Error saving authenticator'),
+        children,
+      });
+    }
   };
 
   if (!plugins) {
