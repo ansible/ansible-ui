@@ -53,6 +53,7 @@ import { HubNamespacePage } from '../namespaces/HubNamespacePage/HubNamespacePag
 import { Namespaces } from '../namespaces/HubNamespaces';
 import { HubOverview } from '../overview/HubOverview';
 import { HubRoute } from './HubRoutes';
+import { MyImports } from '../imports/Imports';
 
 export function useHubNavigation() {
   const { t } = useTranslation();
@@ -424,6 +425,13 @@ export function useHubNavigation() {
           element: <Token />,
         },
       ],
+    },
+    {
+      id: HubRoute.MyImports,
+      label: t('My imports'),
+      path: 'my-imports',
+      element: <MyImports />,
+      hidden: true,
     },
     {
       path: '',
