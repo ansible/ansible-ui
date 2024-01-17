@@ -1,19 +1,11 @@
 import { useTranslation } from 'react-i18next';
-import React, { Dispatch, SetStateAction } from 'react';
-import {
-  CodeBlock,
-  PageSection,
-  Stack,
-  StackItem,
-  Title,
-} from '@patternfly/react-core';
+import React from 'react';
+import { CodeBlock, PageSection, Stack, StackItem, Title } from '@patternfly/react-core';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { IContents, IContentsOption } from '../../Collection';
 import { PFColorE } from '../../../../../framework';
 
-export function CollectionDocumentationTabContent(props: {
-  content: IContents | undefined;
-}) {
+export function CollectionDocumentationTabContent(props: { content: IContents | undefined }) {
   const { t } = useTranslation();
   const { content } = props;
   const splitString = '- name';
@@ -41,6 +33,13 @@ export function CollectionDocumentationTabContent(props: {
         new_path += '/';
       }
       new_path += option.name;
+
+      // fill boolean choices if their are missing
+      if (option.type == 'bool' && !(option.choices && option.choices.length > 0)) {
+        option.choices = [];
+        option.choices.push('true');
+        option.choices.push('false');
+      }
       global_options?.push({ option, level, path_name: new_path });
       if (option.suboptions) {
         fillOptions(option.suboptions, level + 1, global_options, new_path);
@@ -101,7 +100,20 @@ export function CollectionDocumentationTabContent(props: {
                       </div>
                     </Td>
                     <Td>
-                      {optionRecord.option.choices?.map((choice) => <p key={choice}>{choice}</p>)}
+                      {optionRecord.option.choices?.map((choice) => {
+                        let style = {};
+                        let title = '';
+                        if (optionRecord.option.default?.toString() === choice.toString()) {
+                          title = t('Default');
+                          style = { color: PFColorE.Blue };
+                        }
+
+                        return (
+                          <p title={title} style={style} key={choice}>
+                            {choice}
+                          </p>
+                        );
+                      })}
                     </Td>
                     <Td>{optionRecord.option.description}</Td>
                   </Tr>
