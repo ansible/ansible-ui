@@ -9,10 +9,10 @@ import {
   useGetPageUrl,
   usePageAlertToaster,
 } from '../../../../framework';
-import { PlatformRoute } from '../../../PlatformRoutes';
+import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { useGet } from '../../../../frontend/common/crud/useGet';
 import { postRequest } from '../../../../frontend/common/crud/Data';
-import { awxErrorAdapter } from '../../../../frontend/awx/adapters/awxErrorAdapter';
+import { genericErrorAdapter } from '../../../../framework/PageForm/genericErrorAdapter';
 import { AuthenticatorTypeStep } from './steps/AuthenticatorTypeStep';
 import { AuthenticatorDetailsStep } from './steps/AuthenticatorDetailsStep';
 // import { AuthenticatorMappingStep } from './steps/AuthenticatorMappingStep';
@@ -145,7 +145,7 @@ export function CreateAuthenticator() {
         steps={steps}
         defaultValue={initialValues}
         onSubmit={handleSubmit}
-        errorAdapter={awxErrorAdapter}
+        errorAdapter={genericErrorAdapter}
         disableGrid
       />
     </PageLayout>
