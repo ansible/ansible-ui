@@ -11,10 +11,10 @@ export interface Task {
   logging_cid: string;
   task_group: string;
   parent_task: string;
-  child_tasks: [];
+  child_tasks: string[];
   progress_reports: [];
   created_resources: [];
-  reserved_resources_record: [];
+  reserved_resources_record: string[];
 }
 
 interface TaskError {
