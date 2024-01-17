@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useGet } from '../../common/crud/useGet';
-import { HubItemsResponse } from '../useHubView';
-import { hubAPI } from '../api/formatPath';
+import { HubItemsResponse } from '../common/useHubView';
+import { hubAPI } from '../common/api/formatPath';
 import {
   Scrollable,
   PageLayout,
@@ -25,7 +25,7 @@ import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { ImportLog } from './components/ImportLog';
 import { CollectionImport, CollectionVersionSearch } from '../collections/Collection';
-import { HubRoute } from '../HubRoutes';
+import { HubRoute } from '../main/HubRoutes';
 import { ImportList } from './components/ImportList';
 
 export function MyImports() {
