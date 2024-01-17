@@ -54,6 +54,7 @@ export function MyImports() {
 
       return params;
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [collectionFilter]);
 
   const { data: collectionImportsResp } = useGet<HubItemsResponse<CollectionImport>>(
