@@ -49,4 +49,27 @@ describe('Namespaces', () => {
     cy.get('#confirm').click();
     cy.clickButton(/^Delete namespaces$/);
   });
+
+  it('explore different views and pagination', () => {
+    const nameSpaceName = `test_pagination_namespace_${randomString(5, undefined, {
+      isLowercase: true,
+    })}`;
+    cy.createNamespace(nameSpaceName);
+    cy.navigateTo('hub', Namespaces.url);
+    cy.setTablePageSize('50');
+    cy.searchAndDisplayResource(nameSpaceName);
+    cy.get('[data-cy="card-view"]').click();
+    cy.contains(nameSpaceName).should('be.visible');
+    cy.get('[data-cy="list-view"]').click();
+    cy.contains(nameSpaceName).should('be.visible');
+    cy.get('[data-cy="table-view"]').click();
+    cy.contains(nameSpaceName).should('be.visible');
+    cy.get('#select-all').click();
+    cy.clickToolbarKebabAction('delete-selected-namespaces');
+    cy.get('#confirm').click();
+    cy.clickButton(/^Delete namespaces$/);
+    cy.contains(/^Success$/);
+    cy.clickButton(/^Close$/);
+    cy.clickButton(/^Clear all filters$/);
+  });
 });
