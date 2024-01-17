@@ -5,8 +5,8 @@ import {
   useAsyncSingleSelectFilterBuilder,
   AsyncSelectFilterBuilderProps,
 } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSelectFilterBuilder';
-import { hubAPI } from './../../api/formatPath';
-import { useHubView } from '../../useHubView';
+import { hubAPI } from './../../common/api/formatPath';
+import { useHubView } from '../../common/useHubView';
 import { HubNamespace } from '../../namespaces/HubNamespace';
 
 function useParameters(): AsyncSelectFilterBuilderProps<HubNamespace> {
