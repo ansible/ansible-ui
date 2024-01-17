@@ -50,7 +50,7 @@ export function CreateAuthenticator() {
   const getPageUrl = useGetPageUrl();
   const alertToaster = usePageAlertToaster();
 
-  const { data: plugins } = useGet<AuthenticatorPlugins>(gatewayAPI`/v1/authenticator_plugins`);
+  const { data: plugins } = useGet<AuthenticatorPlugins>(gatewayAPI`/authenticator_plugins`);
 
   const handleSubmit = async (values: AuthenticatorForm) => {
     const { name, type, configuration } = values;
@@ -58,7 +58,7 @@ export function CreateAuthenticator() {
     if (!plugins || !plugin) {
       return;
     }
-    const request = postRequest(gatewayAPI`/v1/authenticators/`, {
+    const request = postRequest(gatewayAPI`/authenticators/`, {
       name,
       type,
       configuration: formatConfiguration(configuration, plugin),
