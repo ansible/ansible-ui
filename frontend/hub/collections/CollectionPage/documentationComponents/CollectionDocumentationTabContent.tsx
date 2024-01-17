@@ -59,18 +59,7 @@ export function CollectionDocumentationTabContent(props: {
     <>
       <PageSection variant="light">
         <Stack hasGutter>
-          <Breadcrumb>
-            {!isDrawerOpen && (
-              <BreadcrumbItem>
-                <Button onClick={() => setDrawerOpen(true)} variant="plain" isInline>
-                  <BarsIcon />
-                </Button>
-              </BreadcrumbItem>
-            )}
-            {content?.content_type && <BreadcrumbItem>{content.content_type}</BreadcrumbItem>}
-            {content?.content_name && <BreadcrumbItem>{content.content_name}</BreadcrumbItem>}
-          </Breadcrumb>
-          <Title headingLevel="h1">{content?.content_name}</Title>
+          <Title headingLevel="h1">{content?.content_type + ' > ' + content?.content_name}</Title>
           {content?.doc_strings?.doc?.short_description && (
             <StackItem>{content?.doc_strings?.doc.short_description}</StackItem>
           )}
@@ -94,7 +83,7 @@ export function CollectionDocumentationTabContent(props: {
               <Thead>
                 <Tr>
                   <Th>{t('Parameter')}</Th>
-                  <Th>{t('Choices / Defaults')}</Th>
+                  <Th>{t('Choices')}</Th>
                   <Th>{t('Comments')}</Th>
                 </Tr>
               </Thead>
