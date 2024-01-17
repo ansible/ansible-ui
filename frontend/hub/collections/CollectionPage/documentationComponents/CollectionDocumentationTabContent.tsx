@@ -1,27 +1,21 @@
 import { useTranslation } from 'react-i18next';
 import React, { Dispatch, SetStateAction } from 'react';
 import {
-  Breadcrumb,
-  BreadcrumbItem,
-  Button,
   CodeBlock,
   PageSection,
   Stack,
   StackItem,
   Title,
 } from '@patternfly/react-core';
-import { BarsIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { IContents, IContentsOption } from '../../Collection';
 import { PFColorE } from '../../../../../framework';
 
 export function CollectionDocumentationTabContent(props: {
   content: IContents | undefined;
-  isDrawerOpen: boolean;
-  setDrawerOpen: Dispatch<SetStateAction<boolean>>;
 }) {
   const { t } = useTranslation();
-  const { content, isDrawerOpen, setDrawerOpen } = props;
+  const { content } = props;
   const splitString = '- name';
 
   type OptionRecord = { option: IContentsOption; level: number; path_name: string };
@@ -98,9 +92,12 @@ export function CollectionDocumentationTabContent(props: {
                             optionRecord.path_name}
                         </div>
                         <div style={{ fontWeight: 'bold' }}>{optionRecord.option.name}</div>
-                        <small style={{ opacity: 0.7 }}>{optionRecord.option.type} {optionRecord.option.required && <span style={{ color : PFColorE.Red }}> / {t('Required')}</span>} </small>
-                        
-                        
+                        <small style={{ opacity: 0.7 }}>
+                          {optionRecord.option.type}{' '}
+                          {optionRecord.option.required && (
+                            <span style={{ color: PFColorE.Red }}> / {t('Required')}</span>
+                          )}{' '}
+                        </small>
                       </div>
                     </Td>
                     <Td>

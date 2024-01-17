@@ -101,8 +101,6 @@ export function CollectionDocumentation() {
           {content && (
             <CollectionDocumentationTabContent
               content={content}
-              isDrawerOpen={isDrawerOpen}
-              setDrawerOpen={setDrawerOpen}
             />
           )}
 
