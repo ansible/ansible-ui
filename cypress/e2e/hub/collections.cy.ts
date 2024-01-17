@@ -63,6 +63,10 @@ describe('Collections- List View', () => {
     });
   });
 
+  it('should call galaxykit without error', () => {
+    cy.galaxykit('collection -h');
+  });
+
   it.skip('user can delete a collection using the list toolbar', () => {});
 
   it.skip('user can delete selected entire collections from repository using the list toolbar', () => {});
