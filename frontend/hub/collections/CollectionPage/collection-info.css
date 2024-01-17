@@ -1,0 +1,24 @@
+.hub-readme-container {
+  position: relative;
+  max-height: 300px;
+  min-height: 50px;
+  overflow: hidden;
+}
+
+.hub-fade-out {
+  position: absolute;
+  z-index: 1;
+  bottom: 0;
+  left: 0;
+  pointer-events: none;
+  width: 100%;
+  height: 50px;
+}
+
+.download-button {
+  padding-left: 0;
+}
+
+.info-panel {
+  padding: 8px;
+}

@@ -9,21 +9,55 @@ import { HubError } from '../../common/HubError';
 import { hubAPI } from '../../common/api/formatPath';
 import { useRepositoryBasePath } from '../../common/api/hub-api-utils';
 import { CollectionVersionSearch } from '../Collection';
+import { Label } from '@patternfly/react-core';
+import { Title } from '@patternfly/react-core';
+import { useGet } from '../../../common/crud/useGet';
+import { pulpAPI } from '../../common/api/formatPath';
+import { CollectionVersionsContent } from './CollectionDocumentation';
+import { Trans } from 'react-i18next';
+import { HubRoute } from '../../main/HubRoutes';
+import { useGetPageUrl } from '../../../../framework';
+import { Link } from 'react-router-dom';
+import './collection-info.css';
+import { useState } from 'react';
+import { CodeBlock } from '@patternfly/react-core';
+import { CodeBlockCode } from '@patternfly/react-core';
 
 export function CollectionInstall() {
   const { t } = useTranslation();
   const { collection } = useOutletContext<{ collection: CollectionVersionSearch }>();
   const downloadLinkRef = React.useRef<HTMLAnchorElement>(null);
-  const { basePath, error, loading } = useRepositoryBasePath(
+  const [showSignature, setShowSignature] = useState(false);
+
+  const { basePath, error } = useRepositoryBasePath(
     collection.repository?.name ?? '',
     collection.repository?.pulp_href
   );
+  const getPageUrl = useGetPageUrl();
 
-  if (loading) {
+  // now we are implementing standalone only, this is reminder so we dont forget
+  const IS_COMMUNITY = false;
+
+  const { data: contentResults, error: contentError } = useGet<CollectionVersionsContent>(
+    pulpAPI`/content/ansible/collection_versions/?namespace=${
+      collection?.collection_version?.namespace || ''
+    }&name=${collection?.collection_version?.name || ''}&version=${
+      collection?.collection_version?.version || ''
+    }&offset=0&limit=1`
+  );
+
+  const content = contentResults?.results[0];
+
+  if ((!basePath && !error) || (!content && !contentError)) {
     <LoadingPage breadcrumbs tabs />;
   }
+
   if (error) {
     return <HubError error={new Error(error)} />;
+  }
+
+  if (contentError) {
+    return <HubError error={contentError} />;
   }
 
   async function Download(
@@ -47,12 +81,20 @@ export function CollectionInstall() {
   return (
     <Scrollable>
       <PageSection variant="light">
-        <PageDetails>
+        <PageDetails numberOfColumns={'single'}>
+          <PageDetail>{collection.collection_version?.description}</PageDetail>
+
+          <PageDetail>
+            {collection.collection_version?.tags?.map((tag, i) => (
+              <Label key={i} variant="outline">
+                {tag?.name}
+              </Label>
+            ))}
+          </PageDetail>
+
+          <Title headingLevel="h2">{t('Install')}</Title>
           <PageDetail label={t('License')}>
-            {/*collection?.latest_version?.metadata?.license &&
-              collection.latest_version.metadata.license?.length > 0 &&
-              collection.latest_version.metadata.license[0]*/}
-            {t`License not implemented yet`}
+            {content?.license ? content?.license.join(', ') : ''}
           </PageDetail>
           <PageDetail label={t('Installation')}>
             <CopyCell
@@ -60,11 +102,36 @@ export function CollectionInstall() {
                 collection?.collection_version?.namespace ?? ''
               }.${collection?.collection_version?.name ?? ''}`}
             />
+
             <PageDetail>
               {t(
-                `Note: Installing collection with ansible-galaxy is only supported in ansible 2.9+`
+                `Note: Installing collection with ansible-galaxy is only supported in ansible 2.13.9+`
               )}
             </PageDetail>
+          </PageDetail>
+
+          <PageDetail label={t('Download')}>
+            {!IS_COMMUNITY ? (
+              <div>
+                <Trans>
+                  To download this collection, configure your client to connect to one of the{' '}
+                  <Link
+                    to={getPageUrl(HubRoute.CollectionDistributions, {
+                      params: {
+                        repository: collection.repository?.name,
+                        namespace: collection.collection_version?.namespace,
+                        name: collection.collection_version?.name,
+                      },
+                      query: { version: collection.collection_version?.version },
+                    })}
+                  >
+                    distributions&nbsp;
+                  </Link>
+                  of this repository.
+                </Trans>
+              </div>
+            ) : null}
+
             <a href="/#" ref={downloadLinkRef} style={{ display: 'none' }}>
               {t(`Link`)}
             </a>
@@ -78,12 +145,114 @@ export function CollectionInstall() {
               {t(`Download tarball`)}
             </Button>
           </PageDetail>
+
+          <PageDetail label={t('Signature')}>
+            <Button
+              variant="link"
+              icon={<DownloadIcon />}
+              onClick={() => {
+                if (!showSignature) {
+                  setShowSignature(true);
+                } else {
+                  setShowSignature(false);
+                }
+              }}
+            >
+              {showSignature ? t(`Hide signature`) : t(`Show signature`)}
+            </Button>
+            {showSignature && <ShowSignature collection={collection} />}
+          </PageDetail>
+
           <PageDetail label={t('Requires')}>
-            {collection?.collection_version?.require_ansible &&
-              `${t('Ansible')} ${collection.collection_version?.require_ansible}`}
+            {collection?.collection_version?.requires_ansible &&
+              `${t('Ansible')} ${collection.collection_version?.requires_ansible}`}
+          </PageDetail>
+
+          <PageDetail>
+            {content?.docs_blob?.collection_readme ? (
+              <>
+                <div className="hub-readme-container">
+                  <div
+                    className="pf-v5-c-content"
+                    dangerouslySetInnerHTML={{
+                      __html: content?.docs_blob?.collection_readme.html,
+                    }}
+                  />
+                  <div className="hub-fade-out" />
+                </div>
+                <Link
+                  to={getPageUrl(HubRoute.CollectionDocumentation, {
+                    params: {
+                      repository: collection.repository?.name,
+                      namespace: collection.collection_version?.namespace,
+                      name: collection.collection_version?.name,
+                    },
+                    query: { version: collection.collection_version?.version },
+                  })}
+                >
+                  {t`Go to documentation`}
+                </Link>
+              </>
+            ) : (
+              ''
+            )}
           </PageDetail>
         </PageDetails>
       </PageSection>
     </Scrollable>
   );
 }
+
+function ShowSignature(props: { collection: CollectionVersionSearch }) {
+  const { collection } = props;
+
+  const { basePath, error: pathError } = useRepositoryBasePath(
+    collection.repository?.name || '',
+    collection.repository?.pulp_href
+  );
+
+  const namespace = collection.collection_version?.namespace || '';
+  const name = collection.collection_version?.name || '';
+  const version = collection.collection_version?.version || '';
+
+  let url = hubAPI`/v3/plugin/ansible/content/${basePath}/collections/index/${namespace}/${name}/versions/${version}/`;
+  if (!basePath) {
+    url = '';
+  }
+
+  const { data: signData, error: signError } = useGet<SignatureType>(url);
+
+  if (pathError) {
+    return <HubError error={{ name: '', message: pathError }} />;
+  }
+
+  if (signError) {
+    return <HubError error={signError} />;
+  }
+
+  if ((!signData && !signError) || (!basePath && !pathError)) {
+    return <LoadingPage />;
+  }
+
+  if (signData) {
+    const signatures = signData.signatures;
+
+    return (
+      <>
+        {signatures.map((signatureItem, idx: number) => {
+          return (
+            <CodeBlock key={idx}>
+              <CodeBlockCode>{signatureItem.signature}</CodeBlockCode>
+            </CodeBlock>
+          );
+        })}
+      </>
+    );
+  }
+
+  return <></>;
+}
+
+type SignatureType = {
+  signatures: [{ signature: string }];
+};
