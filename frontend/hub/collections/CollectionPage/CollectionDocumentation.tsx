@@ -21,17 +21,6 @@ export function CollectionDocumentation() {
     }&offset=0&limit=1`
   );
 
-  type CollectionVersionContentItem = {
-    docs_blob: { contents: IContents[] };
-  };
-
-  type CollectionVersionsContent = {
-    count: number;
-    next: string;
-    previous: string;
-    results: CollectionVersionContentItem[];
-  };
-
   const groups = useMemo(() => {
     const groups: Record<string, { name: string; contents: IContents[] }> = {};
     if (data) {
@@ -81,3 +70,21 @@ export function CollectionDocumentation() {
     </Drawer>
   );
 }
+
+export type CollectionVersionContentItem = {
+  docs_blob: {
+    contents: IContents[];
+    collection_readme: {
+      html: string;
+      name: string;
+    };
+  };
+  license: string[];
+};
+
+export type CollectionVersionsContent = {
+  count: number;
+  next: string;
+  previous: string;
+  results: CollectionVersionContentItem[];
+};
