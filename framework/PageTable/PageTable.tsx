@@ -187,6 +187,8 @@ export type PageTableProps<T extends object> = {
    * If topContent is set and this variable is set to true, topContent will be scrolled with table.
    */
   scrollTopContent?: boolean;
+
+  limitFiltersToOneOrOperation?: boolean;
 };
 
 /**
@@ -313,6 +315,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
         viewType={viewType}
         setViewType={setViewType}
         sortOptions={sortOptions}
+        limitFiltersToOneOrOperation={props.limitFiltersToOneOrOperation}
       />
       {viewType === PageTableViewTypeE.Table && (
         <>

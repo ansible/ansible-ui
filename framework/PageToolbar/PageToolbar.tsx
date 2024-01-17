@@ -85,6 +85,8 @@ export type PageToolbarProps<T extends object> = {
   maxSelections?: number;
 
   toolbarContent?: React.ReactNode;
+
+  limitFiltersToOneOrOperation?: boolean;
 };
 
 export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
@@ -204,6 +206,7 @@ export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
               toolbarFilters={toolbarFilters}
               filterState={filterState}
               setFilterState={setFilterState}
+              limitFiltersToOneOrOperation={props.limitFiltersToOneOrOperation}
             />
           )}
 

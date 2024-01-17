@@ -48,6 +48,7 @@ export type PageToolbarFiltersProps = {
   toolbarFilters?: IToolbarFilter[];
   filterState: IFilterState;
   setFilterState: Dispatch<SetStateAction<IFilterState>>;
+  limitFiltersToOneOrOperation?: boolean;
 };
 
 /** A ToolbarItem that renders the toolbar filters passed in as props */
@@ -92,6 +93,7 @@ function FiltersToolbarItem(props: PageToolbarFiltersProps) {
             filterState={filterState}
             setFilterState={setFilterState}
             data-cy={selectedFilter}
+            limitFiltersToOneOrOperation={props.limitFiltersToOneOrOperation}
           />
         </ToolbarItem>
       ) : (
@@ -114,6 +116,7 @@ function FiltersToolbarItem(props: PageToolbarFiltersProps) {
             filterState={filterState}
             setFilterState={setFilterState}
             data-cy={selectedFilter}
+            limitFiltersToOneOrOperation={props.limitFiltersToOneOrOperation}
           />
         </ToolbarItem>
       )}
@@ -151,6 +154,7 @@ export function PageToolbarFilters(props: PageToolbarFiltersProps) {
           toolbarFilters={groupedFilters}
           setFilterState={setFilterState}
           filterState={filterState}
+          limitFiltersToOneOrOperation={props.limitFiltersToOneOrOperation}
         />
         {pinnedFilters?.map((filter) => (
           <FiltersToolbarItem
@@ -158,6 +162,7 @@ export function PageToolbarFilters(props: PageToolbarFiltersProps) {
             toolbarFilters={[filter]}
             setFilterState={setFilterState}
             filterState={filterState}
+            limitFiltersToOneOrOperation={props.limitFiltersToOneOrOperation}
           />
         ))}
 
@@ -174,21 +179,23 @@ export function PageToolbarFilters(props: PageToolbarFiltersProps) {
             <ToolbarFilter
               key={filter.label}
               categoryName={filter.label}
-              chips={values.map((value) => {
-                switch (filter.type) {
-                  case ToolbarFilterType.SingleSelect:
-                  case ToolbarFilterType.MultiSelect:
-                    return filter.options?.find((o) => o.value === value)?.label ?? value;
-                  case ToolbarFilterType.AsyncSingleSelect:
-                  case ToolbarFilterType.AsyncMultiSelect:
-                    return {
-                      key: value,
-                      node: <AsyncQueryChip value={value} queryLabel={filter.queryLabel} />,
-                    };
-                  default:
-                    return value;
-                }
-              })}
+              chips={[
+                ...values.map((value) => {
+                  switch (filter.type) {
+                    case ToolbarFilterType.SingleSelect:
+                    case ToolbarFilterType.MultiSelect:
+                      return filter.options?.find((o) => o.value === value)?.label ?? value;
+                    case ToolbarFilterType.AsyncSingleSelect:
+                    case ToolbarFilterType.AsyncMultiSelect:
+                      return {
+                        key: value,
+                        node: <AsyncQueryChip value={value} queryLabel={filter.queryLabel} />,
+                      };
+                    default:
+                      return value;
+                  }
+                }),
+              ]}
               deleteChip={(_group, value) => {
                 setFilterState?.((filters) => {
                   const newState = { ...filters };
@@ -237,6 +244,7 @@ function ToolbarFilterComponent(props: {
   filter: IToolbarFilter;
   filterState: IFilterState;
   setFilterState: Dispatch<SetStateAction<IFilterState>>;
+  limitFiltersToOneOrOperation?: boolean;
 }): JSX.Element {
   const { filter, filterState, setFilterState } = props;
 
@@ -265,6 +273,18 @@ function ToolbarFilterComponent(props: {
     },
     [filter.key, setFilterState]
   );
+
+  let isHasOrFilter = false;
+  if (filterState) {
+    for (const key in filterState) {
+      if (key === filter.key) continue;
+      const filterValues = filterState[key];
+      if (filterValues && filterValues?.length >= 2) {
+        isHasOrFilter = true;
+        break;
+      }
+    }
+  }
 
   switch (filter.type) {
     case ToolbarFilterType.Text:
@@ -349,6 +369,17 @@ function ToolbarFilterComponent(props: {
       );
 
     case ToolbarFilterType.MultiSelect:
+      if (isHasOrFilter && props.limitFiltersToOneOrOperation) {
+        return (
+          <PageSingleSelect
+            id={props.id ?? filter.key}
+            placeholder={filter.placeholder}
+            value={filterValues && filterValues?.length > 0 ? filterValues[0] : ''}
+            onSelect={(item) => setFilterValues(() => [item])}
+            options={filter.options}
+          />
+        );
+      }
       return (
         <PageMultiSelect<string>
           id={props.id ?? filter.key}
