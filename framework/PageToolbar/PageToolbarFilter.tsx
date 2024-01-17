@@ -303,7 +303,7 @@ function ToolbarFilterComponent(props: {
           comparison={filter.comparison}
           setValue={(value) => setFilterValues(() => (value ? [value] : []))}
           value={filterValues && filterValues?.length > 0 ? filterValues[0] : ''}
-          hasKey={filterValues?.[filter.key] !== undefined}
+          hasKey={!!filterState?.[filter.key]}
         />
       );
 
