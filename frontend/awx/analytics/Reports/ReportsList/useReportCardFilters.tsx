@@ -55,7 +55,7 @@ export function useReportCardFilters() {
       {
         key: 'description',
         label: t('Description'),
-        type: ToolbarFilterType.Text,
+        type: ToolbarFilterType.MultiText,
         query: 'description',
         comparison: 'contains',
       },

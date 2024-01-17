@@ -12,14 +12,14 @@ export function useJobsFilters() {
       {
         key: 'id',
         label: t('ID'),
-        type: ToolbarFilterType.Text,
+        type: ToolbarFilterType.MultiText,
         query: 'id',
         comparison: 'equals',
       },
       {
         key: 'labels__name__icontains',
         label: t('Label name'),
-        type: ToolbarFilterType.Text,
+        type: ToolbarFilterType.MultiText,
         query: 'labels__name__icontains',
         comparison: 'contains',
       },
@@ -41,7 +41,7 @@ export function useJobsFilters() {
       {
         key: 'created_by__username__icontains',
         label: t('Launched by (Username)'),
-        type: ToolbarFilterType.Text,
+        type: ToolbarFilterType.MultiText,
         query: 'created_by__username__icontains',
         comparison: 'contains',
       },
@@ -65,7 +65,7 @@ export function useJobsFilters() {
       {
         key: 'job__limit',
         label: t('Limit'),
-        type: ToolbarFilterType.Text,
+        type: ToolbarFilterType.MultiText,
         query: 'job__limit',
         comparison: 'equals',
       },

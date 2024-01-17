@@ -1,34 +1,41 @@
 import {
   Button,
   InputGroup,
+  InputGroupItem,
   TextInputGroup,
   TextInputGroupMain,
   TextInputGroupUtilities,
-  InputGroupItem,
 } from '@patternfly/react-core';
 import { ArrowRightIcon, TimesIcon } from '@patternfly/react-icons';
-import { useState } from 'react';
+import debounce from 'debounce';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ToolbarFilterType } from '../PageToolbarFilter';
 import { ToolbarFilterCommon } from './ToolbarFilterCommon';
 
-/** Filter for filtering by user text input. */
-export interface IToolbarTextFilter extends ToolbarFilterCommon {
-  /** Filter for filtering by user text input. */
-  type: ToolbarFilterType.Text;
+/** Filter for filtering by user text input with single value. */
+export interface IToolbarSingleTextFilter extends ToolbarFilterCommon {
+  type: ToolbarFilterType.SingleText;
 
   /** The comparison to use when filtering. */
   comparison: 'contains' | 'startsWith' | 'endsWith' | 'equals';
 }
 
-export interface IToolbarTextFilterProps {
+/** Filter for filtering by user text input with multiple values. */
+export interface IToolbarMultiTextFilter extends ToolbarFilterCommon {
+  /** Filter for filtering by user text input. */
+  type: ToolbarFilterType.MultiText;
+
+  /** The comparison to use when filtering. */
+  comparison: 'contains' | 'startsWith' | 'endsWith' | 'equals';
+}
+
+export function ToolbarTextMultiFilter(props: {
   id?: string;
   addFilter: (value: string) => void;
   placeholder?: string;
   comparison: 'contains' | 'startsWith' | 'endsWith' | 'equals';
-}
-
-export function ToolbarTextFilter(props: IToolbarTextFilterProps) {
+}) {
   const { t } = useTranslation();
   const [value, setValue] = useState('');
   let placeholder = props.placeholder;
@@ -98,6 +105,86 @@ export function ToolbarTextFilter(props: IToolbarTextFilterProps) {
         >
           <ArrowRightIcon />
         </Button>
+      </InputGroupItem>
+    </InputGroup>
+  );
+}
+
+export function ToolbarSingleTextFilter(props: {
+  id?: string;
+  placeholder?: string;
+  comparison: 'contains' | 'startsWith' | 'endsWith' | 'equals';
+  setValue: (value: string) => void;
+  value: string;
+  hasKey: boolean;
+}) {
+  const { t } = useTranslation();
+  const [value, setValue] = useState(props.value ?? '');
+  let placeholder = props.placeholder ?? '';
+  if (!placeholder) {
+    switch (props.comparison) {
+      case 'contains':
+        placeholder = t('contains');
+        break;
+      case 'startsWith':
+        placeholder = t('starts with');
+        break;
+      case 'endsWith':
+        placeholder = t('ends with');
+        break;
+      case 'equals':
+        placeholder = t('equals');
+        break;
+    }
+  }
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const setValueDebounced = useCallback(
+    debounce((value: string) => props.setValue(value), 200),
+    []
+  );
+
+  useEffect(() => {
+    if (!props.hasKey) {
+      setValue('');
+    }
+  }, [props.hasKey]);
+
+  return (
+    <InputGroup>
+      <InputGroupItem>
+        <TextInputGroup data-cy={'text-input'} style={{ minWidth: 220 }}>
+          <TextInputGroupMain
+            id={props.id}
+            value={value}
+            onChange={(e, v) => {
+              if (typeof e === 'string') {
+                setValue(e);
+                setValueDebounced(e);
+              } else {
+                setValue(v);
+                setValueDebounced(v);
+              }
+            }}
+            placeholder={placeholder}
+          />
+          {value !== '' && (
+            <TextInputGroupUtilities>
+              <Button
+                variant="plain"
+                aria-label="clear filter"
+                onClick={() => {
+                  setValue('');
+                  props.setValue('');
+                }}
+                style={{ opacity: value ? undefined : 0 }}
+                tabIndex={-1}
+              >
+                <TimesIcon />
+              </Button>
+            </TextInputGroupUtilities>
+          )}
+        </TextInputGroup>
       </InputGroupItem>
     </InputGroup>
   );

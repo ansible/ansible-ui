@@ -18,12 +18,18 @@ import {
 } from './PageToolbarFilters/ToolbarDateRangeFilter';
 import { IToolbarMultiSelectFilter } from './PageToolbarFilters/ToolbarMultiSelectFilter';
 import { IToolbarSingleSelectFilter } from './PageToolbarFilters/ToolbarSingleSelectFilter';
-import { IToolbarTextFilter, ToolbarTextFilter } from './PageToolbarFilters/ToolbarTextFilter';
+import {
+  IToolbarMultiTextFilter,
+  IToolbarSingleTextFilter,
+  ToolbarSingleTextFilter,
+  ToolbarTextMultiFilter,
+} from './PageToolbarFilters/ToolbarTextFilter';
 import { PageToolbarToggleGroup } from './PageToolbarToggleGroup';
 
 /** Represents the types of filters that can be used in the toolbar */
 export enum ToolbarFilterType {
-  Text,
+  SingleText,
+  MultiText,
   SingleSelect,
   MultiSelect,
   DateRange,
@@ -33,7 +39,8 @@ export enum ToolbarFilterType {
 
 /** An IToolbarFilter represents a filter that can be used in the toolbar */
 export type IToolbarFilter =
-  | IToolbarTextFilter
+  | IToolbarSingleTextFilter
+  | IToolbarMultiTextFilter
   | IToolbarDateRangeFilter
   | IToolbarSingleSelectFilter
   | IToolbarMultiSelectFilter
@@ -287,9 +294,36 @@ function ToolbarFilterComponent(props: {
   }
 
   switch (filter.type) {
-    case ToolbarFilterType.Text:
+    case ToolbarFilterType.SingleText:
       return (
-        <ToolbarTextFilter
+        <ToolbarSingleTextFilter
+          key={filter.key}
+          id={props.id ?? filter.key}
+          placeholder={filter.placeholder}
+          comparison={filter.comparison}
+          setValue={(value) => setFilterValues(() => (value ? [value] : []))}
+          value={filterValues && filterValues?.length > 0 ? filterValues[0] : ''}
+          hasKey={filterValues?.[filter.key] !== undefined}
+        />
+      );
+
+    case ToolbarFilterType.MultiText:
+      if (isHasOrFilter && props.limitFiltersToOneOrOperation) {
+        return (
+          <ToolbarSingleTextFilter
+            key={filter.key}
+            id={props.id ?? filter.key}
+            placeholder={filter.placeholder}
+            comparison={filter.comparison}
+            setValue={(value) => setFilterValues(() => (value ? [value] : []))}
+            value={filterValues && filterValues?.length > 0 ? filterValues[0] : ''}
+            hasKey={!!filterState?.[filter.key]}
+          />
+        );
+      }
+      return (
+        <ToolbarTextMultiFilter
+          key={filter.key}
           id={props.id ?? filter.key}
           addFilter={addFilter}
           placeholder={filter.placeholder}
@@ -300,6 +334,7 @@ function ToolbarFilterComponent(props: {
     case ToolbarFilterType.SingleSelect:
       return (
         <PageSingleSelect
+          key={filter.key}
           id={props.id ?? filter.key}
           placeholder={filter.placeholder}
           value={filterValues && filterValues?.length > 0 ? filterValues[0] : ''}
@@ -312,6 +347,7 @@ function ToolbarFilterComponent(props: {
     case ToolbarFilterType.AsyncSingleSelect:
       return (
         <PageAsyncSingleSelect<string>
+          key={filter.key}
           id={props.id ?? filter.key}
           value={filterValues && filterValues?.length > 0 ? filterValues[0] : ''}
           onSelect={(item) => setFilterValues(() => [item])}
@@ -341,6 +377,7 @@ function ToolbarFilterComponent(props: {
     case ToolbarFilterType.AsyncMultiSelect:
       return (
         <PageAsyncMultiSelect<string>
+          key={filter.key}
           id={props.id ?? filter.key}
           values={filterValues}
           onSelect={setFilterValues}
@@ -372,6 +409,7 @@ function ToolbarFilterComponent(props: {
       if (isHasOrFilter && props.limitFiltersToOneOrOperation) {
         return (
           <PageSingleSelect
+            key={filter.key}
             id={props.id ?? filter.key}
             placeholder={filter.placeholder}
             value={filterValues && filterValues?.length > 0 ? filterValues[0] : ''}
@@ -382,6 +420,7 @@ function ToolbarFilterComponent(props: {
       }
       return (
         <PageMultiSelect<string>
+          key={filter.key}
           id={props.id ?? filter.key}
           placeholder={filter.placeholder}
           values={filterValues}
@@ -395,6 +434,7 @@ function ToolbarFilterComponent(props: {
     case ToolbarFilterType.DateRange:
       return (
         <ToolbarDateRangeFilter
+          key={filter.key}
           id={props.id ?? filter.key}
           label={filter.label}
           placeholder={filter.placeholder ?? ''}
