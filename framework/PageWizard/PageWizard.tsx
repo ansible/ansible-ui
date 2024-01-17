@@ -12,6 +12,7 @@ export function PageWizard<T extends object>(props: {
   onCancel?: () => void;
   onSubmit: (wizardData: T) => Promise<void>;
   errorAdapter?: ErrorAdapter;
+  disableGrid?: boolean;
 }) {
   return (
     <PageWizardProvider<T> steps={props.steps} defaultValue={props.defaultValue}>
@@ -41,6 +42,7 @@ export function PageWizard<T extends object>(props: {
             errorAdapter={props.errorAdapter}
             onCancel={props.onCancel}
             onSubmit={props.onSubmit}
+            disableGrid={props.disableGrid}
           />
         </div>
       </div>
