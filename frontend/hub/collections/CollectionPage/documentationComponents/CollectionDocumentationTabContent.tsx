@@ -13,6 +13,7 @@ import {
 import { BarsIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { IContents, IContentsOption } from '../../Collection';
+import { PFColorE } from '../../../../../framework';
 
 export function CollectionDocumentationTabContent(props: {
   content: IContents | undefined;
@@ -97,7 +98,9 @@ export function CollectionDocumentationTabContent(props: {
                             optionRecord.path_name}
                         </div>
                         <div style={{ fontWeight: 'bold' }}>{optionRecord.option.name}</div>
-                        <small style={{ opacity: 0.7 }}>{optionRecord.option.type}</small>
+                        <small style={{ opacity: 0.7 }}>{optionRecord.option.type} {optionRecord.option.required && <span style={{ color : PFColorE.Red }}> / {t('Required')}</span>} </small>
+                        
+                        
                       </div>
                     </Td>
                     <Td>
