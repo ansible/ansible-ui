@@ -51,10 +51,10 @@ import { GraphNode, EdgeStatus, GraphNodeData } from './types';
 import { ViewOptionsContext, ViewOptionsProvider } from './ViewOptionsProvider';
 import { ToolbarHeader } from './components/WorkflowVisualizerToolbar';
 import { Sidebar } from './components/Sidebar';
-import { awxAPI } from '../../../api/awx-utils';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { postRequest, requestDelete } from '../../../../common/crud/Data';
 import { usePageNavigate } from '../../../../../framework';
-import { AwxRoute } from '../../../AwxRoutes';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { useAbortController } from '../../../../common/crud/useAbortController';
 
 export const GRAPH_ID = 'workflow-visualizer-graph';
