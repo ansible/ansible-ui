@@ -43,6 +43,11 @@ describe('Namespaces', () => {
     );
     cy.get('*[aria-controls^="pf-tab-section-hub-namespace-cli"]').click();
     cy.get('[class="pf-v5-c-truncate__start"]').should('contain', apiPrefix);
+    // Delete namespace
+    cy.get('[data-cy="actions-dropdown"]').click();
+    cy.get('[data-cy="delete-namespace"]').click();
+    cy.get('#confirm').click();
+    cy.clickButton(/^Delete namespaces$/);
   });
 
   it('edit a namespace', () => {
