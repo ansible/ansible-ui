@@ -23,10 +23,15 @@ export function CollectionDocumentationTabContent(props: {
   const { content, isDrawerOpen, setDrawerOpen } = props;
   const splitString = '- name';
 
-  type OptionRecord = { option: IContentsOption; level: number };
+  type OptionRecord = { option: IContentsOption; level: number; path_name: string };
   const options: OptionRecord[] = [];
 
-  function fillOptions(local_options?: IContentsOption[], level?: number) {
+  function fillOptions(
+    local_options: IContentsOption[],
+    level: number,
+    global_options: OptionRecord[],
+    path_name: string
+  ) {
     if (level === undefined) {
       return;
     }
@@ -36,14 +41,19 @@ export function CollectionDocumentationTabContent(props: {
     }
 
     local_options.forEach((option) => {
-      options.push({ option, level });
+      let new_path = path_name;
+      if (new_path.length > 0) {
+        new_path += '/';
+      }
+      new_path += option.name;
+      global_options?.push({ option, level, path_name: new_path });
       if (option.suboptions) {
-        fillOptions(option.suboptions, level + 1);
+        fillOptions(option.suboptions, level + 1, global_options, new_path);
       }
     });
   }
 
-  fillOptions(content?.doc_strings?.doc?.options, 0);
+  fillOptions(content?.doc_strings?.doc?.options || [], 0, options, '');
 
   return (
     <>
@@ -84,20 +94,23 @@ export function CollectionDocumentationTabContent(props: {
               <Thead>
                 <Tr>
                   <Th>{t('Parameter')}</Th>
-                  <Th>{t('Choices')}</Th>
+                  <Th>{t('Choices / Defaults')}</Th>
                   <Th>{t('Comments')}</Th>
                 </Tr>
               </Thead>
               <Tbody>
                 {options.map((optionRecord) => (
-                  <Tr key={optionRecord.option.name}>
+                  <Tr key={optionRecord.path_name}>
                     <Td>
                       <div style={{ marginLeft: `${optionRecord.level * 30}px` }}>
-                        <div>{optionRecord.option.name}</div>
+                        <div>
+                          {optionRecord.path_name !== optionRecord.option.name &&
+                            optionRecord.path_name}
+                        </div>
+                        <div style={{ fontWeight: 'bold' }}>{optionRecord.option.name}</div>
                         <small style={{ opacity: 0.7 }}>{optionRecord.option.type}</small>
                       </div>
                     </Td>
-
                     <Td>
                       {optionRecord.option.choices?.map((choice) => <p key={choice}>{choice}</p>)}
                     </Td>
