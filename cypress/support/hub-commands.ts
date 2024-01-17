@@ -16,20 +16,19 @@ const apiPrefix = Cypress.env('HUB_API_PREFIX') as string;
 Cypress.Commands.add('galaxykit', (operation: string, ...args: string[]) => {
   const adminUsername = Cypress.env('HUB_USERNAME') as string;
   const adminPassword = Cypress.env('HUB_PASSWORD') as string;
-  const galaxykitCommand =
-    (Cypress.env('HUB_GALAXYKIT_COMMAND') as string) ?? 'galaxykit --ignore-certs';
-  const server = (Cypress.env('HUB_SERVER') as string) + apiPrefix;
+  const galaxykitCommand = (Cypress.env('HUB_GALAXYKIT_COMMAND') as string) ?? 'galaxykit';
+  const server = (Cypress.env('HUB_SERVER') as string) + apiPrefix + '/';
   const options = { failOnNonZeroExit: false };
 
   cy.log(`${galaxykitCommand} ${operation} ${args.join(' ')}`);
 
-  const cmd = `${galaxykitCommand} -s '${server}' -u '${adminUsername}' -p '${adminPassword}' ${operation} ${escapeForShellCommand(
+  const cmd = `${galaxykitCommand} -c -s '${server}' -u '${adminUsername}' -p '${adminPassword}' ${operation} ${escapeForShellCommand(
     args
   )}`;
 
   cy.exec(cmd, options).then(({ code, stderr, stdout }) => {
     cy.log(`RUN ${cmd}`, code, stderr, stdout).then(() => {
-      if (code || stderr) {
+      if (code) {
         cy.log('galaxykit code: ' + code.toString()).then(() => {
           cy.log('galaxykit stderr: ' + stderr).then(() => {
             throw new Error(`Galaxykit failed: ${stderr}`);

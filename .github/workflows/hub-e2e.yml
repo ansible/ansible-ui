@@ -104,6 +104,8 @@ jobs:
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true' && !inputs.SKIP_JOB
         run: npm ci
+      - name: Install galaxykit
+        run: pip3 install galaxykit
       - name: Cypress
         if: ${{ !inputs.SKIP_JOB }}
         uses: cypress-io/github-action@v5
