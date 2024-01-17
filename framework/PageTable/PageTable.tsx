@@ -207,14 +207,6 @@ export type PageTableProps<T extends object> = {
 export function PageTable<T extends object>(props: PageTableProps<T>) {
   const { id, toolbarActions, filterState, error, itemCount } = props;
 
-  const { openColumnManagement, managedColumns } = useManageColumns<T>(
-    (id ?? '') + '-columns',
-    props.tableColumns,
-    props.disableTableView,
-    props.disableListView,
-    props.disableCardView
-  );
-
   const showSelect =
     props.showSelect ||
     toolbarActions?.find(
@@ -252,6 +244,14 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
       }
     },
     [props.id]
+  );
+
+  const { openColumnManagement, managedColumns } = useManageColumns<T>(
+    (id ?? '') + '-columns',
+    props.tableColumns,
+    viewType !== PageTableViewTypeE.Table,
+    viewType !== PageTableViewTypeE.List,
+    viewType !== PageTableViewTypeE.Cards
   );
 
   const sortOptions = usePageToolbarSortOptionsFromColumns(props.tableColumns);
