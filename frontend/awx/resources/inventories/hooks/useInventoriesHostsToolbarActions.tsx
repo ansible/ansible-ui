@@ -57,7 +57,7 @@ export function useInventoriesHostsToolbarActions(view: IAwxView<AwxHost>) {
       {
         type: PageActionType.Button,
         selection: PageActionSelection.None,
-        variant: ButtonVariant.primary,
+        variant: ButtonVariant.secondary,
         isPinned: true,
         label: t('Run Command'),
         onClick: () => pageNavigate(AwxRoute.Inventories),
