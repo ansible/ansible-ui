@@ -1,3 +1,4 @@
+import { hubAPI } from '../../support/formatApiPathForHub';
 import { Collections } from './constants';
 
 describe('Collections- List View', () => {
@@ -18,7 +19,7 @@ describe('Collections- List View', () => {
   });
 
   after(() => {
-    //cy.cleanupCollections();
+    cy.cleanupCollections();
   });
 
   it('user can upload and then delete a new collection', () => {
@@ -32,10 +33,9 @@ describe('Collections- List View', () => {
       cy.get('[data-cy="row-0"]').within(() => {
         cy.get('input').click();
       });
-      cy.intercept(
-        'POST',
-        `/api/galaxy//v3/plugin/ansible/content/community/collections/artifacts/`
-      ).as('collection');
+      cy.intercept('POST', hubAPI`/v3/plugin/ansible/content/community/collections/artifacts/`).as(
+        'collection'
+      );
       cy.get('[data-cy="Submit"]').click();
       cy.wait('@collection').then((resp) => {
         expect(resp?.response?.statusCode).to.eql(202);
@@ -44,7 +44,7 @@ describe('Collections- List View', () => {
       });
       cy.intercept(
         'GET',
-        '/api/galaxy//v3/plugin/ansible/search/collection-versions?is_deprecated=false&repository_label=!hide_from_search&is_highest=true&offset=0&limit=10'
+        hubAPI`/v3/plugin/ansible/search/collection-versions?is_deprecated=false&repository_label=!hide_from_search&is_highest=true&offset=0&limit=10`
       ).as('collections');
       cy.reload();
       cy.get('[data-cy="hub-collections"]').click();
@@ -57,7 +57,14 @@ describe('Collections- List View', () => {
       cy.get('[data-cy="table-view"]').click();
       cy.clickTableRowKebabAction(thisCollectionName, 'delete-entire-collection-from-system');
       cy.get('[data-ouia-component-id="confirm"]').click();
+      cy.intercept(
+        'DELETE',
+        hubAPI`/v3/plugin/ansible/content/community/collections/index/ibm/${thisCollectionName}/`
+      ).as('deleted');
       cy.get('[data-ouia-component-id="submit"]').click();
+      cy.wait('@deleted').then((deleted) => {
+        expect(deleted?.response?.statusCode).to.eq(202);
+      });
       cy.clickButton(/^Close$/);
       cy.clickButton(/^Clear all filters$/);
     });
