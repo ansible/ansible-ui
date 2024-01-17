@@ -27,10 +27,10 @@ import {
 } from '@patternfly/react-core';
 import { useVisualizationController, observer } from '@patternfly/react-topology';
 import { usePageNavigate } from '../../../../../../framework';
-import { AwxRoute } from '../../../../AwxRoutes';
+import { AwxRoute } from '../../../../main/AwxRoutes';
 import { postRequest } from '../../../../../common/crud/Data';
 import { AddNodeButton } from './AddNodeButton';
-import getDocsBaseUrl from '../../../../common/util/getDocsBaseUrl';
+import { getDocsBaseUrl } from '../../../../common/util/getDocsBaseUrl';
 import { useAwxConfig } from '../../../../common/useAwxConfig';
 import { useRemoveAllNodes } from '../hooks/useRemoveAllNodes';
 import { useViewOptions } from '../ViewOptionsProvider';
