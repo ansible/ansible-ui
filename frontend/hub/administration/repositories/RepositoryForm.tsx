@@ -114,8 +114,9 @@ export function RepositoryForm() {
   } else {
     repo = null;
   }
+  const page_size = 50;
   const remote = useGet<PulpItemsResponse<IRemotes>>(
-    pulpAPI`/remotes/ansible/collection/?offset=0&limit=10`
+    pulpAPI`/remotes/ansible/collection/?offset=0&limit=${page_size.toString()}`
   );
   const query = useCallback(() => {
     return Promise.resolve({
@@ -141,7 +142,9 @@ export function RepositoryForm() {
     return <LoadingPage />;
   }
 
-  const page_size = 50;
+  const getRemote = (url: string): IRemotes | null => {
+    return remote?.data?.results?.find((r) => r.pulp_href === url) || null;
+  };
 
   const repositoryFormValues: RepositoryFormProps = {
     name: repo?.name || '',
@@ -152,7 +155,7 @@ export function RepositoryForm() {
     hide_from_search: repo?.pulp_labels
       ? Object.keys(repo.pulp_labels).includes('hide_from_search')
       : false,
-    remote: repo?.remote || null,
+    remote: repo?.remote ? getRemote(repo.remote) : null,
     pulp_labels: repo?.pulp_labels || {},
     createDistribution: !isDistributionDisabled,
   };
