@@ -29,6 +29,7 @@ describe('Namespaces', () => {
   });
 
   it('should show the correct URL when clicking on the CLI configuration tab', () => {
+  it('should show namespace details tab', () => {
     cy.navigateTo('hub', Namespaces.url);
     const namespaceName = `test_namespace_${randomString(5, undefined, { isLowercase: true })}`;
     cy.get('[data-cy="create-namespace"]').should('be.visible').click();
@@ -64,6 +65,10 @@ describe('Namespaces', () => {
     cy.get('[data-cy="delete-namespace"]').click();
     cy.get('#confirm').click();
     cy.clickButton(/^Delete namespaces$/);
+    cy.get('*[aria-controls^="pf-tab-section-hub-namespace-details"]').should('contain', 'Details');
+    cy.get('*[aria-controls^="pf-tab-section-hub-namespace-details"]').click();
+    //check name, company, description
+    cy.get('[class="pf-v5-c-truncate__start"]').should('contain', apiPrefix);
   });
 
   it('edit a namespace', () => {
