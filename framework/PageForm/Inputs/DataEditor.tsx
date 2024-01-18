@@ -34,6 +34,7 @@ export function DataEditor<
     configureMonacoYaml(monaco, {
       validate: true,
       format: true,
+      customTags: ['!vault scalar'],
       schemas: [
         {
           uri: '',

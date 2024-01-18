@@ -16,7 +16,6 @@ import {
 } from '../../../framework';
 import { PageFormAsyncSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncSelect';
 import { PageFormAsyncSingleSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncSingleSelect';
-import { PageFormMultiSelect } from '../../../framework/PageForm/Inputs/PageFormMultiSelect';
 import { PageFormSection } from '../../../framework/PageForm/Utils/PageFormSection';
 import { requestGet } from '../../common/crud/Data';
 import { useGet } from '../../common/crud/useGet';
@@ -24,7 +23,6 @@ import { usePostRequest } from '../../common/crud/usePostRequest';
 import { EdaPageForm } from '../common/EdaPageForm';
 import { edaAPI } from '../common/eda-utils';
 import { EdaDecisionEnvironment } from '../interfaces/EdaDecisionEnvironment';
-import { EdaEventSource } from '../interfaces/EdaEventSource';
 import { EdaExtraVars } from '../interfaces/EdaExtraVars';
 import { EdaProject } from '../interfaces/EdaProject';
 import { EdaResult } from '../interfaces/EdaResult';
@@ -36,6 +34,10 @@ import {
 import { AwxToken, RestartPolicyEnum } from '../interfaces/generated/eda-api';
 import { EdaRoute } from '../main/EdaRoutes';
 import { EdaProjectCell } from '../projects/components/EdaProjectCell';
+import { EdaEventSource } from '../interfaces/EdaEventSource';
+import { PageFormMultiSelect } from '../../../framework/PageForm/Inputs/PageFormMultiSelect';
+import { PageFormCredentialSelect } from '../access/credentials/components/PageFormCredentialsSelect';
+import { EdaCredential } from '../interfaces/EdaCredential';
 
 export function CreateRulebookActivation() {
   const { t } = useTranslation();
@@ -58,6 +60,9 @@ export function CreateRulebookActivation() {
     }
     rulebookActivation.extra_var_id = extra_var?.id;
     rulebookActivation.rulebook_id = rulebook?.id;
+    rulebookActivation.credentials = rulebookActivation.credential_refs
+      ? rulebookActivation.credential_refs.map((credential) => `${credential.id || ''}`)
+      : undefined;
     const newRulebookActivation = await postEdaRulebookActivation(
       edaAPI`/activations/`,
       rulebookActivation
@@ -138,6 +143,7 @@ export function RulebookActivationInputs() {
   }, [projectId]);
 
   const queryAwxTokens = useCallback(async (page: number, signal: AbortSignal) => {
+    await new Promise((resolve) => setTimeout(resolve, 10000));
     const response = await requestGet<EdaResult<AwxToken>>(
       edaAPI`/users/me/awx-tokens/?${page.toString()}}`,
       signal
@@ -213,6 +219,10 @@ export function RulebookActivationInputs() {
         placeholder={t('Select source(s)')}
         footer={<Link to={getPageUrl(EdaRoute.CreateEventSource)}>Create source</Link>}
       />
+      <PageFormCredentialSelect<{ credential_refs: string; id: string }>
+        name="credential_refs"
+        labelHelp={t(`Select the credentials for this rulebook activations.`)}
+      />
       <PageFormSelect<IEdaRulebookActivationInputs>
         name="decision_environment_id"
         label={t('Decision environment')}
@@ -285,4 +295,6 @@ type IEdaRulebookActivationInputs = Omit<EdaRulebookActivationCreate, 'sources'>
   project_id: string;
   variables: string;
   awx_token_id: number;
+  credentials?: string[];
+  credential_refs?: EdaCredential[];
 };

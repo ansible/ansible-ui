@@ -85,6 +85,15 @@ export function RulebookActivationDetails() {
             </LabelGroup>
           </PageDetail>
         )}
+        {rulebookActivation.credentials && rulebookActivation.credentials.length > 0 && (
+          <PageDetail label={t('Credential(s)')}>
+            <LabelGroup>
+              {rulebookActivation.credentials.map((credential) => (
+                <Label key={credential?.id}>{credential?.name}</Label>
+              ))}
+            </LabelGroup>
+          </PageDetail>
+        )}
         <PageDetail
           label={t('Decision environment')}
           helpText={t('Decision environments are a container image to run Ansible rulebooks.')}
