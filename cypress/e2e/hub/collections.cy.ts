@@ -11,6 +11,7 @@ describe('Collections- List View', () => {
   before(() => {
     cy.hubLogin();
     cy.getNamespace('ibm');
+    cy.addAndApproveMultiCollections(5);
   });
 
   it('it should render the collections page', () => {
@@ -19,7 +20,7 @@ describe('Collections- List View', () => {
   });
 
   after(() => {
-    cy.cleanupCollections();
+    cy.cleanupCollections('ibm', 'community');
   });
 
   it('user can upload and then delete a new collection', () => {
