@@ -33,31 +33,3 @@
 .pf-v5-c-toolbar__group .pf-m-toggle-group {
   margin-inline-end: 0;
 }
-
-/* Overwrite PageToolbar styles */
-.hub-import-collections-filters .pf-v5-c-toolbar {
-  row-gap: 0;
-  padding-bottom: 0;
-}
-
-.hub-import-collections-filters .pf-v5-c-toolbar__content {
-  padding: 0px;
-  width: 100%;
-}
-
-.hub-import-collections-filters .pf-v5-c-toolbar__group {
-  width: 100%;
-  margin: 0px;
-}
-
-.hub-import-collections-filters .pf-v5-c-toolbar__item {
-  width: 100%;
-}
-
-.hub-import-collections-filters .pf-v5-c-text-input-group {
-  min-width: 120px !important;
-}
-
-.hub-import-collections-filters .pf-v5-c-menu-toggle {
-  max-width: 200px;
-}

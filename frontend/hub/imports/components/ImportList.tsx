@@ -25,6 +25,7 @@ import styled from 'styled-components';
 import { EmptyStateNoData } from '../../../../framework/components/EmptyStateNoData';
 import { EmptyStateFilter } from '../../../../framework/components/EmptyStateFilter';
 import { useCollectionImportFilters } from '../hooks/useCollectionImportFilters';
+import './hub-import-collections-filters.css';
 
 const NamespaceSelectorWrapper = styled.div`
   display: flex;
