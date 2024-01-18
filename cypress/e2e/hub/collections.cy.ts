@@ -43,12 +43,12 @@ describe('Collections- List View', () => {
         expect(resp?.response?.statusMessage).to.eql('Accepted');
         expect(resp?.responseWaited).to.eql(true);
       });
-      cy.intercept(
-        'GET',
-        hubAPI`/v3/plugin/ansible/search/collection-versions?is_deprecated=false&repository_label=!hide_from_search&is_highest=true&offset=0&limit=10`
-      ).as('collections');
       cy.reload();
       cy.get('[data-cy="hub-collections"]').click();
+      cy.intercept(
+        'GET',
+        hubAPI`/v3/plugin/ansible/search/collection-versions/?is_deprecated=false&repository_label=!hide_from_search&is_highest=true&offset=0&limit=100`
+      ).as('collections');
       cy.verifyPageTitle(Collections.title);
       cy.get('[data-cy="app-description"]').should(
         'contain',
