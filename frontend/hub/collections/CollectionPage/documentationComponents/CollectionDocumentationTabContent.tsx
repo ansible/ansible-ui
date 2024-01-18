@@ -6,6 +6,10 @@ import { IContents, IContentsOption } from '../../Collection';
 import { PFColorE } from '../../../../../framework';
 import { useState, useEffect } from 'react';
 
+import { css } from '@patternfly/react-styles';
+import styles from '@patternfly/react-styles/css/components/ExpandableSection/expandable-section';
+import { AngleDownIcon, AngleRightIcon } from '@patternfly/react-icons';
+
 export function CollectionDocumentationTabContent(props: { content: IContents | undefined }) {
   const { t } = useTranslation();
   const { content } = props;
@@ -19,6 +23,7 @@ export function CollectionDocumentationTabContent(props: { content: IContents | 
     parent_path: string;
     visible: boolean;
     children: boolean;
+    checked: boolean;
   };
 
   const contentKey = content?.content_type + ' > ' + content?.content_name;
@@ -58,6 +63,7 @@ export function CollectionDocumentationTabContent(props: { content: IContents | 
           path_name: new_path,
           parent_path: path_name,
           visible: true,
+          checked: true,
           children: option.suboptions ? true : false,
         });
         if (option.suboptions) {
@@ -68,7 +74,29 @@ export function CollectionDocumentationTabContent(props: { content: IContents | 
 
     fillOptions(content?.doc_strings?.doc?.options || [], 0, options, '');
     setOptionsState(options);
-  }, [contentKey]);
+  }, [contentKey, content?.doc_strings?.doc?.options]);
+
+  function setVisibility(path: string, value: boolean) {
+    const newState = JSON.parse(JSON.stringify(optionsState)) as OptionRecord[];
+
+    const currentOption = newState.find((item) => item.path_name === path);
+    if (currentOption) {
+      currentOption.checked = value;
+    }
+
+    newState.forEach((optionRecord) => {
+      // search for all record starting with this path
+      if (optionRecord.path_name.startsWith(path)) {
+        // except the exact path, this we dont want to hide
+        if (optionRecord.path_name !== path) {
+          optionRecord.visible = value;
+          optionRecord.checked = value;
+        }
+      }
+    });
+
+    setOptionsState(newState);
+  }
 
   return (
     <>
@@ -97,9 +125,15 @@ export function CollectionDocumentationTabContent(props: { content: IContents | 
             <Table variant="compact">
               <Thead>
                 <Tr>
-                  <Th>{t('Parameter')}</Th>
-                  <Th>{t('Choices')}</Th>
-                  <Th>{t('Comments')}</Th>
+                  <Th>
+                    <Title headingLevel="h3">{t('Parameters')}</Title>
+                  </Th>
+                  <Th>
+                    <Title headingLevel="h3">{t('Choices')}</Title>
+                  </Th>
+                  <Th>
+                    <Title headingLevel="h3">{t('Comments')}</Title>
+                  </Th>
                 </Tr>
               </Thead>
               <Tbody>
@@ -110,13 +144,32 @@ export function CollectionDocumentationTabContent(props: { content: IContents | 
                       <Td>
                         <div style={{ marginLeft: `${optionRecord.level * 30}px` }}>
                           <div>
-                            {optionRecord.path_name !== optionRecord.option.name &&
-                              optionRecord.path_name}
+                            {optionRecord.children && (
+                              <button
+                                className={css(styles.expandableSectionToggle)}
+                                type="button"
+                                aria-expanded={optionRecord.checked}
+                                aria-controls={optionRecord.path_name + '_aria_controls'}
+                                id={optionRecord.path_name + '_id'}
+                                onClick={() =>
+                                  setVisibility(optionRecord.path_name, !optionRecord.checked)
+                                }
+                                title={t('Expand / Collapse')}
+                              >
+                                {optionRecord.checked ? (
+                                  <AngleDownIcon aria-hidden />
+                                ) : (
+                                  <AngleRightIcon aria-hidden />
+                                )}
+                                <span style={{ fontWeight: 'bold' }}>
+                                  &nbsp;&nbsp;{optionRecord.option.name}
+                                </span>
+                              </button>
+                            )}
                           </div>
-                          <div style={{ fontWeight: 'bold' }}>{optionRecord.option.name}</div>
                           <small style={{ opacity: 0.7 }}>
                             {optionRecord.option.type}
-                            {optionRecord.option.elements && ' / ' }
+                            {optionRecord.option.elements && ' / '}
                             {optionRecord.option.elements}{' '}
                             {optionRecord.option.required && (
                               <span style={{ color: PFColorE.Red }}> / {t('Required')}</span>
