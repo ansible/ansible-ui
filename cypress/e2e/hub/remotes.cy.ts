@@ -2,27 +2,35 @@ import { randomString } from '../../../framework/utils/random-string';
 import { Remotes } from './constants';
 
 describe('Remotes', () => {
+  const testSignature: string = randomString(5, undefined, { isLowercase: true });
+  function generateRemoteName(): string {
+    return `test-${testSignature}-remote-${randomString(5, undefined, { isLowercase: true })}`;
+  }
   before(() => {
     cy.hubLogin();
   });
 
   it('bulk delete remotes', () => {
-    for (let i = 0; i < 5; i++) {
-      const remoteName = `test-remote-${randomString(5, undefined, { isLowercase: true })}`;
+    const numberOfRemotes = 5;
+    for (let i = 0; i < numberOfRemotes; i++) {
+      const remoteName = generateRemoteName();
       cy.createRemote(remoteName);
     }
     cy.navigateTo('hub', 'remotes');
     cy.setTablePageSize('50');
-    cy.get('#select-all').click();
+    cy.searchAndDisplayResource(testSignature);
+    cy.get('tbody').find('tr').should('have.length', numberOfRemotes);
+    cy.get('[data-cy="select-all"]').click({ force: true });
     cy.clickToolbarKebabAction('delete-selected-remotes');
     cy.get('#confirm').click();
     cy.clickButton(/^Delete remotes$/);
     cy.contains(/^Success$/);
     cy.clickButton(/^Close$/);
+    cy.clickButton(/^Clear all filters$/);
   });
 
   it('explore different views and pagination', () => {
-    const remoteName = `test-remote-${randomString(5, undefined, { isLowercase: true })}`;
+    const remoteName = generateRemoteName();
     cy.createRemote(remoteName);
     cy.navigateTo('hub', 'remotes');
     cy.setTablePageSize('50');
@@ -44,7 +52,7 @@ describe('Remotes', () => {
 
   it('create, search and delete a remote', () => {
     cy.navigateTo('hub', 'remotes');
-    const remoteName = `test-remote-${randomString(5, undefined, { isLowercase: true })}`;
+    const remoteName = generateRemoteName();
     cy.get('h1').should('contain', Remotes.title);
     cy.get('[data-cy="create-remote"]').should('be.visible').click();
     cy.url().should('include', Remotes.urlCreate);
@@ -66,7 +74,7 @@ describe('Remotes', () => {
 
   it('display alert when creating a remote with community URL and checking select `signed collections only`', () => {
     cy.navigateTo('hub', 'remotes');
-    const remoteName = `test-remote-${randomString(5, undefined, { isLowercase: true })}`;
+    const remoteName = generateRemoteName();
     cy.get('[data-cy="create-remote"]').should('be.visible').click();
     cy.get('[data-cy="name"]').type(remoteName);
     cy.get('[data-cy="url"]').type(Remotes.remoteCommunityURL);
@@ -96,7 +104,7 @@ collections:
   - name: ${Remotes.communityGeneral}
 `;
     cy.navigateTo('hub', 'remotes');
-    const remoteName = `test-remote-${randomString(5, undefined, { isLowercase: true })}`;
+    const remoteName = generateRemoteName();
     cy.get('[data-cy="create-remote"]').should('be.visible').click();
     cy.url().should('include', Remotes.urlCreate);
     cy.get('[data-cy="name"]').type(remoteName);
