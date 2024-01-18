@@ -120,6 +120,7 @@ export function InstanceDetailsTab(props: {
   instanceForks: number;
   handleToggleInstance: (instance: Instance, isEnabled: boolean) => Promise<void>;
   handleInstanceForksSlider: (instance: Instance, value: number) => Promise<void>;
+  numberOfColumns?: 'multiple' | 'single' | undefined;
 }) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
@@ -135,7 +136,7 @@ export function InstanceDetailsTab(props: {
   const toolTipMap: { [item: string]: string } = useNodeTypeTooltip();
   const capacityAvailable = instance.cpu_capacity !== 0 && instance.mem_capacity !== 0;
   return (
-    <PageDetails>
+    <PageDetails numberOfColumns={props.numberOfColumns}>
       <PageDetail label={t('Name')} data-cy="name">
         <Button
           variant="link"
