@@ -1,6 +1,12 @@
 import { useTranslation } from 'react-i18next';
 import React from 'react';
-import { CodeBlock, PageSection, Stack, StackItem, Title } from '@patternfly/react-core';
+import {
+  CodeBlock,
+  PageSection,
+  Stack,
+  StackItem,
+  Title,
+} from '@patternfly/react-core';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { IContents, IContentsOption } from '../../Collection';
 import { PFColorE } from '../../../../../framework';
@@ -252,7 +258,16 @@ export function CollectionDocumentationTabContent(props: { content: IContents | 
                       <small style={{ opacity: 0.7 }}>{parameter.type}</small>
                     </Td>
                     <Td>{parameter.returned}</Td>
-                    <Td>{parameter.description}</Td>
+                    <Td>
+                      <div>{parameter.description}</div>
+                      {parameter.sample && (
+                        <>
+                          <div>{t('Sample')}:</div>
+                          <br />
+                          <Sample sample={parameter.sample} />
+                        </>
+                      )}
+                    </Td>
                   </Tr>
                 ))}
               </Tbody>
@@ -261,5 +276,47 @@ export function CollectionDocumentationTabContent(props: { content: IContents | 
         </>
       )}
     </>
+  );
+}
+
+function Sample(props: { sample: any }) {
+  const { sample } = props;
+
+  return <SampleNode sample={sample} level={0} draw_comma={false} />;
+}
+
+function SampleNode(props: { sample: any; level: number; draw_comma: boolean }) {
+  const { sample, level, draw_comma } = props;
+
+  let comma = '';
+  if (draw_comma) {
+    comma += ',';
+  }
+
+  if (Array.isArray(sample)) {
+    return (
+      <>
+        <SampleLine text="[" level={level} />
+        {sample.map((item: any, index: number) => {
+          return (
+            <SampleNode key={index} sample={item} level={level + 1} draw_comma={index !== sample.length - 1} />
+          );
+        })}
+        <SampleLine text={']' + comma} level={level} />
+      </>
+    );
+  }
+
+  return <SampleLine text={`"` + sample.toString() + `"${comma}`} level={level} />;
+}
+
+function SampleLine(props: { text: string; level: number }) {
+  const { text, level } = props;
+
+  return (
+    <span style={{ marginLeft: `${level * 10}px` }}>
+      {text}
+      <br />
+    </span>
   );
 }
