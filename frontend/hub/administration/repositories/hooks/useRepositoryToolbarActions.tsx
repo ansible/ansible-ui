@@ -11,10 +11,13 @@ import {
 import { CollectionVersionSearch } from '../../../collections/Collection';
 import { HubRoute } from '../../../main/HubRoutes';
 import { Repository } from '../Repository';
+import { useDeleteRepositories } from './useDeleteRepositories';
+import { IHubView } from '../../../common/useHubView';
 
-export function useRepositoryToolbarActions() {
+export function useRepositoryToolbarActions(view: IHubView<Repository>) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
+  const deleteRepositories = useDeleteRepositories(view.unselectItemsAndRefresh);
   const actions = useMemo<IPageAction<Repository>[]>(
     () => [
       {
@@ -29,14 +32,14 @@ export function useRepositoryToolbarActions() {
       { type: PageActionType.Seperator },
       {
         icon: TrashIcon,
-        label: t('Delete selected repositories'),
-        onClick: () => {},
+        label: t('Delete repository'),
+        onClick: deleteRepositories,
         selection: PageActionSelection.Multiple,
         type: PageActionType.Button,
         isDanger: true,
       },
     ],
-    [t, pageNavigate]
+    [t, pageNavigate, deleteRepositories]
   );
   return actions;
 }
