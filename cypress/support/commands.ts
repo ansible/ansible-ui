@@ -936,6 +936,16 @@ declare global {
       deleteRemote(remoteName: string): Cypress.Chainable<void>;
       createRemoteRegistry(remoteRegistryName: string): Cypress.Chainable<RemoteRegistry>;
       deleteRemoteRegistry(remoteRegistryId: string): Cypress.Chainable<void>;
+      deleteCollection(
+        collectionName: string,
+        namespaceName: string,
+        repository: string,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
+      ): Cypress.Chainable<void>;
+      uploadCollection(collection: string, namespace: string): Cypress.Chainable<void>;
     }
   }
 }
