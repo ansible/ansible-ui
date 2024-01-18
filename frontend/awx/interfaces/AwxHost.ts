@@ -18,4 +18,14 @@ export interface AwxHost
   name: string;
   created: string;
   modified: string;
+  summary_fields: {
+    groups: {
+      count: number;
+      results: Array<{ id: number; name: string }>;
+    };
+    user_capabilities: {
+      edit: boolean;
+      delete: boolean;
+    };
+  };
 }
