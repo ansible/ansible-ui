@@ -14,8 +14,6 @@ export function Repositories() {
   const { t } = useTranslation();
   const toolbarFilters = useRepositoryFilters();
   const tableColumns = useRepositoriesColumns();
-  const toolbarActions = useRepositoryToolbarActions();
-  const rowActions = useRepositoryActions();
   const pageNavigate = usePageNavigate();
 
   const view = useHubView<Repository>({
@@ -24,6 +22,9 @@ export function Repositories() {
     toolbarFilters,
     tableColumns,
   });
+
+  const toolbarActions = useRepositoryToolbarActions(view);
+  const rowActions = useRepositoryActions({ onRepositoriesDeleted: view.unselectItemsAndRefresh });
 
   return (
     <PageLayout>
