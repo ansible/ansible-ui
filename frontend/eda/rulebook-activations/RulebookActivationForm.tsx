@@ -36,6 +36,7 @@ import { EdaRoute } from '../main/EdaRoutes';
 import { EdaProjectCell } from '../projects/components/EdaProjectCell';
 import { EdaEventSource } from '../interfaces/EdaEventSource';
 import { PageFormMultiSelect } from '../../../framework/PageForm/Inputs/PageFormMultiSelect';
+import { PageFormCredentialSelect } from '../access/credentials/components/PageFormCredentialsSelect';
 
 export function CreateRulebookActivation() {
   const { t } = useTranslation();
@@ -214,6 +215,10 @@ export function RulebookActivationInputs() {
         placeholder={t('Select source(s)')}
         footer={<Link to={getPageUrl(EdaRoute.CreateEventSource)}>Create source</Link>}
       />
+      <PageFormCredentialSelect<{ credentials: string; id: number }>
+        name="credentials"
+        labelHelp={t(`Select the credentials for this rulebook activations.`)}
+      />
       <PageFormSelect<IEdaRulebookActivationInputs>
         name="decision_environment_id"
         label={t('Decision environment')}
@@ -286,4 +291,5 @@ type IEdaRulebookActivationInputs = Omit<EdaRulebookActivationCreate, 'sources'>
   project_id: string;
   variables: string;
   awx_token_id: number;
+  credentials: string[];
 };

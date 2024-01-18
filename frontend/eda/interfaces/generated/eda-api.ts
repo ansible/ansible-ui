@@ -142,6 +142,7 @@ export interface ActivationRead {
   is_enabled?: boolean;
   decision_environment?: DecisionEnvironmentRef | null;
   sources?: SourceRef[];
+  credentials?: CredentialRef[];
 
   /**
    * * `starting` - starting
