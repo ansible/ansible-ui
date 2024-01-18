@@ -1,8 +1,12 @@
-import useSWR from 'swr';
+import useSWR, { SWRConfiguration } from 'swr';
 import { useCallback } from 'react';
 
-export function useGetFn<T>(key: string, fetcher: () => Promise<T>) {
-  const response = useSWR<T>(key, fetcher, { dedupingInterval: 0 });
+export function useGetFn<T>(
+  key: string,
+  fetcher: () => Promise<T>,
+  swrConfiguration: SWRConfiguration = {}
+) {
+  const response = useSWR<T>(key, fetcher, { dedupingInterval: 0, ...swrConfiguration });
   const refresh = useCallback(() => void response.mutate(), [response]);
 
   let error = response.error as Error;
