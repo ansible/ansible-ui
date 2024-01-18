@@ -3,12 +3,17 @@ import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
-import { CollectionVersionSearch } from '../../../collections/Collection';
 import { PROTECTED_REPOSITORIES } from '../../../common/constants';
 import { Repository, RepositoryVersion } from '../Repository';
+import { useDeleteRepositories } from './useDeleteRepositories';
+import { CollectionVersionSearch } from '../../../collections/Collection';
 
-export function useRepositoryActions() {
+export function useRepositoryActions(options: {
+  onRepositoriesDeleted: (repositories: Repository[]) => void;
+}) {
   const { t } = useTranslation();
+  const { onRepositoriesDeleted } = options;
+  const deleteRepositories = useDeleteRepositories(onRepositoriesDeleted);
   const actions = useMemo<IPageAction<Repository>[]>(
     () => [
       {
@@ -43,7 +48,7 @@ export function useRepositoryActions() {
       {
         icon: TrashIcon,
         label: t('Delete repository'),
-        onClick: () => {},
+        onClick: (repository) => deleteRepositories([repository]),
         selection: PageActionSelection.Single,
         type: PageActionType.Button,
         isDanger: true,
@@ -54,7 +59,7 @@ export function useRepositoryActions() {
         },
       },
     ],
-    [t]
+    [t, deleteRepositories]
   );
 
   return actions;
@@ -68,14 +73,9 @@ export function useCollectionVersionsActions() {
         icon: TrashIcon,
         label: t('Delete'),
         onClick: () => {},
-        selection: PageActionSelection.Single,
+        selection: PageActionSelection.Multiple,
         type: PageActionType.Button,
         isDanger: true,
-        isDisabled: (repo) => {
-          return PROTECTED_REPOSITORIES.includes(repo.repository_version)
-            ? t('Protected repository cannot be deleted')
-            : undefined;
-        },
       },
     ],
     [t]
@@ -91,14 +91,8 @@ export function useVersionsActions() {
       {
         label: t('Revert to this version'),
         onClick: () => {},
-        selection: PageActionSelection.Single,
+        selection: PageActionSelection.Multiple,
         type: PageActionType.Button,
-        isDisabled: (repo) => {
-          // TODO current version
-          return PROTECTED_REPOSITORIES.includes(repo?.number?.toString())
-            ? t('Already the current version')
-            : undefined;
-        },
       },
     ],
     [t]
