@@ -26,6 +26,7 @@ import { useSelectRemoteSingle } from './hooks/useRemoteSelector';
 import { useRepositoryBasePath, parsePulpIDFromURL } from '../../common/api/hub-api-utils';
 import { postHubRequest, putHubRequest } from '../../common/api/request';
 import { postRequest } from '../../../common/crud/Data';
+import { PageFormWatch } from '../../../../framework/PageForm/Utils/PageFormWatch';
 
 interface RepositoryFormProps {
   remote: IRemotes | string | null;
@@ -33,7 +34,7 @@ interface RepositoryFormProps {
   description: string | null;
   retain_repo_versions: number | null;
   private: boolean | null;
-  pipeline?: string | null;
+  pipeline?: string;
   hide_from_search?: boolean | null;
   createDistribution?: boolean;
   pulp_labels: Record<string, string>;
@@ -134,10 +135,6 @@ export function RepositoryForm() {
     repo?.pulp_href || undefined
   );
 
-  if (!baseLoading && !!baseData && isEdit) {
-    isDistributionDisabled = true;
-  }
-
   if ((isEdit && !repo) || baseLoading) {
     return <LoadingPage />;
   }
@@ -145,6 +142,9 @@ export function RepositoryForm() {
   const getRemote = (url: string): IRemotes | null => {
     return remote?.data?.results?.find((r) => r.pulp_href === url) || null;
   };
+  if (!baseLoading && !!baseData && isEdit) {
+    isDistributionDisabled = true;
+  }
 
   const repositoryFormValues: RepositoryFormProps = {
     name: repo?.name || '',
@@ -240,11 +240,17 @@ export function RepositoryForm() {
           ))}
           {Object.keys(repositoryFormValues?.pulp_labels).length === 0 && t('None')}
           <br />
-          <PageFormCheckbox<RepositoryFormProps>
-            name="hide_from_search"
-            label={t('Hide from search')}
-            isDisabled={repositoryFormValues.pipeline === 'staging'}
-          />
+          <PageFormWatch<string> watch={'pipeline'}>
+            {(pipeline: string) => {
+              return (
+                <PageFormCheckbox<RepositoryFormProps>
+                  name="hide_from_search"
+                  label={t('Hide from search')}
+                  isDisabled={pipeline === 'staging'}
+                />
+              );
+            }}
+          </PageFormWatch>
         </PageFormGroup>
         <PageFormGroup label={t('Private')} labelHelp={t('Make the repository private.')}>
           <PageFormCheckbox<RepositoryFormProps> name="private" label={t('Make private')} />
