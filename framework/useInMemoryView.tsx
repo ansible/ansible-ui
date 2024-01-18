@@ -11,6 +11,7 @@ import {
 import { IToolbarFilter } from './PageToolbar/PageToolbarFilter';
 import { IView, useView } from './useView';
 import { compareUnknowns } from './utils/compare';
+import { IToolbarTextFilter } from './PageToolbar/PageToolbarFilters/ToolbarTextFilter';
 
 export type IInMemoryView<T extends object> = IView &
   ISelected<T> & {
@@ -64,7 +65,14 @@ export function useInMemoryView<T extends object>(options: {
             if (typeof value === 'string') {
               const filterValues = filterState[key];
               if (filterValues && filterValues.length !== 0) {
-                if (!filterValues.includes(value)) {
+                if ((toolbarFilter as IToolbarTextFilter).comparison === 'contains') {
+                  if (
+                    !filterValues.some(
+                      (filterValue) => value.toLowerCase().includes(filterValue.toLowerCase()) // case-insensitive search
+                    )
+                  )
+                    return false;
+                } else if (!filterValues.includes(value)) {
                   return false;
                 }
               }

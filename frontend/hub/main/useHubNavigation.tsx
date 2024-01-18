@@ -54,6 +54,8 @@ import { HubNamespacePage } from '../namespaces/HubNamespacePage/HubNamespacePag
 import { Namespaces } from '../namespaces/HubNamespaces';
 import { HubOverview } from '../overview/HubOverview';
 import { HubRoute } from './HubRoutes';
+import { NamespaceUserAccess } from '../namespaces/HubNamespacePage/NamespaceUserAccess';
+import { NamespaceTeamAccess } from '../namespaces/HubNamespacePage/NamespaceTeamAccess';
 
 export function useHubNavigation() {
   const { t } = useTranslation();
@@ -98,6 +100,26 @@ export function useHubNavigation() {
               id: HubRoute.NamespaceCLI,
               path: 'cli',
               element: <HubNamespaceCLI />,
+            },
+            {
+              id: HubRoute.NamespaceUserAccess,
+              path: 'user-access',
+              element: <NamespaceUserAccess />,
+            },
+            {
+              id: HubRoute.NamespaceTeamAccess,
+              path: 'team-access',
+              element: <NamespaceTeamAccess />,
+            },
+            {
+              id: HubRoute.NamespaceUserAccessAddUser,
+              path: 'user-access-add-user',
+              element: <PageNotImplemented />,
+            },
+            {
+              id: HubRoute.NamespaceTeamAccessAddTeam,
+              path: 'user-access-add-team',
+              element: <PageNotImplemented />,
             },
             {
               path: '',

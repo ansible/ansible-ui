@@ -76,6 +76,14 @@ export function HubNamespacePage() {
             page: HubRoute.NamespaceCLI,
             dataCy: 'namespace-cli-tab',
           },
+          {
+            label: t('User Access'),
+            page: HubRoute.NamespaceUserAccess,
+          },
+          {
+            label: t('Team Access'),
+            page: HubRoute.NamespaceTeamAccess,
+          },
         ]}
         params={{ id: namespace?.name }}
       />
