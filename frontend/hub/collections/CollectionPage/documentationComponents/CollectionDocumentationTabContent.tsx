@@ -35,7 +35,7 @@ export function CollectionDocumentationTabContent(props: { content: IContents | 
       new_path += option.name;
 
       // fill boolean choices if their are missing
-      if (option.type == 'bool' && !(option.choices && option.choices.length > 0)) {
+      if (option.type === 'bool' && !(option.choices && option.choices.length > 0)) {
         option.choices = [];
         option.choices.push('true');
         option.choices.push('false');

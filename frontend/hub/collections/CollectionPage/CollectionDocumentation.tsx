@@ -15,6 +15,7 @@ export function CollectionDocumentation() {
   const { collection } = useOutletContext<{ collection: CollectionVersionSearch }>();
   const { t } = useTranslation();
   const [searchParams] = useSearchParams();
+  const [searchText, setSearchText] = useState('');
 
   const { data, error, refresh } = useGet<CollectionVersionsContent>(
     pulpAPI`/content/ansible/collection_versions/?namespace=${
@@ -36,14 +37,17 @@ export function CollectionDocumentation() {
           };
           groups[content.content_type] = group;
         }
+
         group.contents.push(content);
       }
     }
     for (const group of Object.values(groups)) {
-      group.contents = group.contents.sort((l, r) => l.content_name.localeCompare(r.content_name));
+      group.contents = group.contents
+        .filter((content) => content?.content_name?.startsWith(searchText))
+        .sort((l, r) => l.content_name.localeCompare(r.content_name));
     }
     return Object.values(groups);
-  }, [data]);
+  }, [data, searchText]);
 
   const [isDrawerOpen, setDrawerOpen] = useState(true);
   const lg = useBreakpoint('lg');
@@ -93,13 +97,16 @@ export function CollectionDocumentation() {
       <DrawerContent
         panelContent={
           isDrawerOpen ? (
-            <CollectionDocumentationTabPanel setDrawerOpen={setDrawerOpen} groups={groups} />
+            <CollectionDocumentationTabPanel
+              setDrawerOpen={setDrawerOpen}
+              groups={groups}
+              setSearchText={setSearchText}
+            />
           ) : undefined
         }
       >
         <DrawerContentBody className="body hub-docs-content pf-v5-c-content hub-content-alert-fix">
           {content && <CollectionDocumentationTabContent content={content} />}
-
           {html && (
             <div
               dangerouslySetInnerHTML={{

@@ -17,12 +17,13 @@ import { useSearchParams } from 'react-router-dom';
 
 export function CollectionDocumentationTabPanel(props: {
   setDrawerOpen: Dispatch<SetStateAction<boolean>>;
+  setSearchText: Dispatch<SetStateAction<string>>;
   groups: {
     name: string;
     contents: IContents[];
   }[];
 }) {
-  const { groups, setDrawerOpen } = props;
+  const { groups, setDrawerOpen, setSearchText } = props;
   const [searchParams, setSearchParams] = useSearchParams();
 
   const content_name = searchParams.get('content_name');
@@ -32,7 +33,10 @@ export function CollectionDocumentationTabPanel(props: {
   return (
     <DrawerPanelContent>
       <DrawerHead style={{ gap: 16 }}>
-        <SearchInput placeholder={t('Find content')} />
+        <SearchInput
+          placeholder={t('Find content')}
+          onChange={(event, value) => setSearchText(value)}
+        />
         <DrawerActions style={{ alignSelf: 'center' }}>
           <DrawerCloseButton onClick={() => setDrawerOpen(false)} />
         </DrawerActions>
