@@ -299,10 +299,13 @@ export interface Credential {
   name: string;
   description?: string;
   username?: string | null;
+  key?: string | null;
   /**
    * * `Container Registry` - Container Registry
    * * `GitHub Personal Access Token` - GitHub Personal Access Token
    * * `GitLab Personal Access Token` - GitLab Personal Access Token
+   * * `Extra Vars` - Extra Vars
+   * * `Ansible Vault Password` - Ansible Vault Password
    */
   credential_type?: CredentialTypeEnum;
   id: number;
@@ -319,9 +322,12 @@ export interface CredentialCreate {
    * * `Container Registry` - Container Registry
    * * `GitHub Personal Access Token` - GitHub Personal Access Token
    * * `GitLab Personal Access Token` - GitLab Personal Access Token
+   * * `Extra Vars` - Extra Vars
+   * * `Ansible Vault Password` - Ansible Vault Password
    */
   credential_type?: CredentialTypeEnum;
   username?: string | null;
+  key?: string | null;
   secret?: string | null;
 }
 
@@ -343,11 +349,15 @@ export interface CredentialRef {
  * * `Container Registry` - Container Registry
  * * `GitHub Personal Access Token` - GitHub Personal Access Token
  * * `GitLab Personal Access Token` - GitLab Personal Access Token
+ * * `Extra Vars` - Extra Vars
+ * * `Ansible Vault Password` - Ansible Vault Password
  */
 export enum CredentialTypeEnum {
   ContainerRegistry = 'Container Registry',
   GitHubPersonalAccessToken = 'GitHub Personal Access Token',
   GitLabPersonalAccessToken = 'GitLab Personal Access Token',
+  ExtraVar = 'Extra Var',
+  AnsibleVaultPassword = 'Ansible Vault Password',
 }
 
 export interface DecisionEnvironment {
