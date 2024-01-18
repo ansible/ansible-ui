@@ -247,7 +247,6 @@ export function RulebookActivationInputs() {
           t('Controller tokens are used to authenticate with controller API.'),
           t('Controller tokens can be added under the current user details.'),
         ]}
-        isRequired
       />
       <PageFormSelect<IEdaRulebookActivationInputs>
         name="restart_policy"
