@@ -92,7 +92,8 @@ export function CollectionDocumentationTabContent(props: { content: IContents | 
                         </div>
                         <div style={{ fontWeight: 'bold' }}>{optionRecord.option.name}</div>
                         <small style={{ opacity: 0.7 }}>
-                          {optionRecord.option.type}{' '}
+                          {optionRecord.option.type}
+                          {optionRecord.option.elements && ' / elements = '}{optionRecord.option.elements}{' '}
                           {optionRecord.option.required && (
                             <span style={{ color: PFColorE.Red }}> / {t('Required')}</span>
                           )}{' '}
