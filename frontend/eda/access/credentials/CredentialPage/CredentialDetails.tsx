@@ -8,6 +8,7 @@ import { SWR_REFRESH_INTERVAL } from '../../../common/eda-constants';
 import { edaAPI } from '../../../common/eda-utils';
 import { EdaCredential } from '../../../interfaces/EdaCredential';
 import { CredentialOptions } from '../EditCredential';
+import { CredentialTypeEnum } from '../../../interfaces/generated/eda-api';
 
 export function CredentialDetails() {
   const { t } = useTranslation();
@@ -41,6 +42,12 @@ export function CredentialDetails() {
         {credentialOption ? credentialOption?.label : credential?.credential_type}
       </PageDetail>
       <PageDetail label={t('Username')}>{credential?.username || ''}</PageDetail>
+      {credential.credential_type === CredentialTypeEnum.ExtraVar && (
+        <PageDetail label={t('Extra var name')}>{credential?.key || ''}</PageDetail>
+      )}
+      {credential.credential_type === CredentialTypeEnum.AnsibleVaultPassword && (
+        <PageDetail label={t('Vault identifier')}>{credential?.key || ''}</PageDetail>
+      )}
       <PageDetail label={t('Created')}>
         {credential?.created_at ? formatDateString(credential.created_at) : ''}
       </PageDetail>
