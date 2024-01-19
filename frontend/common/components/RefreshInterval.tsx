@@ -1,25 +1,8 @@
-import { Flex, FlexItem, Tooltip } from '@patternfly/react-core';
+import { Tooltip } from '@patternfly/react-core';
 import { ReactNode, createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SWRConfig } from 'swr';
 import { PageSingleSelect } from '../../../framework/PageInputs/PageSingleSelect';
-import { PageRefreshIcon } from '../PageRefreshIcon';
-
-export function RefreshInterval() {
-  const { t } = useTranslation();
-  return (
-    <Flex flexWrap={{ default: 'nowrap' }} spaceItems={{ default: 'spaceItemsXs' }}>
-      <FlexItem>
-        <Tooltip content={t('Refresh')}>
-          <PageRefreshIcon />
-        </Tooltip>
-      </FlexItem>
-      <FlexItem>
-        <RefreshIntervalSelect />
-      </FlexItem>
-    </Flex>
-  );
-}
 
 export function RefreshIntervalSelect() {
   const { t } = useTranslation();
