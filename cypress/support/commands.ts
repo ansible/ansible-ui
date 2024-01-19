@@ -50,6 +50,7 @@ import './e2e';
 import './eda-commands';
 import './hub-commands';
 import './rest-commands';
+import './platform-commands';
 import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
 
 declare global {
@@ -59,6 +60,7 @@ declare global {
       awxLogin(): Chainable<void>;
       edaLogin(): Chainable<void>;
       hubLogin(): Chainable<void>;
+      platformLogin(): Chainable<void>;
       requiredVariablesAreSet(requiredVariables: string[]): Chainable<void>;
 
       // --- NAVIGATION COMMANDS ---
