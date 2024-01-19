@@ -305,3 +305,25 @@ Cypress.Commands.add('createRemoteRegistry', (remoteRegistryName: string) => {
 Cypress.Commands.add('deleteRemoteRegistry', (remoteRegistryId: string) => {
   cy.requestDelete(hubAPI`/_ui/v1/execution-environments/registries/${remoteRegistryId}/`);
 });
+
+Cypress.Commands.add(
+  'deleteCollection',
+  (
+    collectionName: string,
+    namespaceName: string,
+    repository: string,
+    options?: {
+      /** Whether to fail on response codes other than 2xx and 3xx */
+      failOnStatusCode?: boolean;
+    }
+  ) => {
+    cy.requestDelete(
+      hubAPI`/v3/plugin/ansible/content/${repository}/collections/index/${namespaceName}/${collectionName}/`,
+      options
+    );
+  }
+);
+
+Cypress.Commands.add('uploadCollection', (collection: string, namespace: string) => {
+  cy.galaxykit(`-i collection upload ${namespace} ${collection}`);
+});
