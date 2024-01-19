@@ -1,4 +1,4 @@
-import { gatewayAPI } from '../../platform/api/gateway-api-utils';
+import { gatewayV1API } from '../../platform/api/gateway-api-utils';
 
 Cypress.Commands.add('platformLogin', () => {
   //cy.requiredVariablesAreSet(['PLATFORM_SERVER', 'PLATFORM_USERNAME', 'PLATFORM_PASSWORD']);
@@ -26,7 +26,7 @@ Cypress.Commands.add('platformLogin', () => {
     },
     {
       validate: () => {
-        cy.request({ method: 'GET', url: gatewayAPI`/me` });
+        cy.request({ method: 'GET', url: gatewayV1API`/me` });
       },
       cacheAcrossSpecs: true,
     }
