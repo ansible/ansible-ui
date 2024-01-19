@@ -89,6 +89,7 @@ export enum AwxRoute {
   CreateConstructedInventory = 'awx-create-constructed-inventory',
   EditInventory = 'awx-edit-inventory',
   InventoryPage = 'awx-inventory-page',
+  InventoryHostPage = 'awx-inventory-host-page',
   InventoryDetails = 'awx-inventory-details',
   InventoryAccess = 'awx-inventory-access',
   InventoryGroups = 'awx-inventory-groups',
