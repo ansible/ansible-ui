@@ -8,6 +8,9 @@ import { HubError } from '../../common/HubError';
 import { useMemo } from 'react';
 import { useHubContext } from '../../common/useHubContext';
 import { HubResourceAccessUsers } from '../../access/resource-access/HubResourceAccessUsers';
+import { ResourceAccessUser } from '../../access/resource-access/HubResourceAccessInterfaces';
+import { useTranslation } from 'react-i18next';
+import { useUpdatePageBreadcrumbs } from '../../../../framework/hooks/usePageBreadcrumbsContext';
 
 export function NamespaceUserAccess() {
   const params = useParams<{ id: string }>();
@@ -23,12 +26,17 @@ export function NamespaceUserAccess() {
     [response]
   );
   const { hasPermission, user } = useHubContext();
-  const canEditAccess =
+  const canEditAccess = Boolean(
     hasPermission('galaxy.change_namespace') ||
-    namespace?.related_fields?.my_permissions?.includes?.('galaxy.change_namespace') ||
-    user.is_superuser;
+      namespace?.related_fields?.my_permissions?.includes('galaxy.change_namespace') ||
+      user.is_superuser
+  );
+  const { t } = useTranslation();
+  useUpdatePageBreadcrumbs({
+    label: t('User Access'),
+  });
 
-  const usersWithAccess = useMemo(
+  const usersWithAccess = useMemo<ResourceAccessUser[]>(
     () =>
       namespace
         ? namespace.users.map(({ name, object_roles }) => ({

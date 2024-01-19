@@ -7,6 +7,8 @@ import { hubAPI } from '../../common/api/formatPath';
 import { HubItemsResponse } from '../../common/useHubView';
 import { HubNamespace } from '../HubNamespace';
 import { useHubNamespacesColumns } from '../hooks/useHubNamespacesColumns';
+import { useUpdatePageBreadcrumbs } from '../../../../framework/hooks/usePageBreadcrumbsContext';
+import { useTranslation } from 'react-i18next';
 
 export function HubNamespaceDetails() {
   const params = useParams<{ id: string }>();
@@ -16,6 +18,10 @@ export function HubNamespaceDetails() {
     refresh,
   } = useGet<HubItemsResponse<HubNamespace>>(hubAPI`/_ui/v1/namespaces/?limit=1&name=${params.id}`);
   const tableColumns = useHubNamespacesColumns();
+  const { t } = useTranslation();
+  useUpdatePageBreadcrumbs({
+    label: t('Details'),
+  });
 
   if (!response || !response.data || (response.data.length === 0 && !error)) {
     return <LoadingPage />;

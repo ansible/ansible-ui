@@ -8,6 +8,8 @@ import { HubError } from '../../common/HubError';
 import { useMemo } from 'react';
 import { useHubContext } from '../../common/useHubContext';
 import { HubResourceAccessTeams } from '../../access/resource-access/HubResourceAccessTeams';
+import { useUpdatePageBreadcrumbs } from '../../../../framework/hooks/usePageBreadcrumbsContext';
+import { useTranslation } from 'react-i18next';
 
 export function NamespaceTeamAccess() {
   const params = useParams<{ id: string }>();
@@ -27,6 +29,10 @@ export function NamespaceTeamAccess() {
     hasPermission('galaxy.change_namespace') ||
     namespace?.related_fields?.my_permissions?.includes?.('galaxy.change_namespace') ||
     user.is_superuser;
+  const { t } = useTranslation();
+  useUpdatePageBreadcrumbs({
+    label: t('Team Access'),
+  });
 
   if (!response || !response.data || (response.data.length === 0 && !error)) {
     return <LoadingPage />;

@@ -10,6 +10,7 @@ import { hubAPI } from '../../common/api/formatPath';
 import { collectionKeyFn } from '../../common/api/hub-api-utils';
 import { useHubView } from '../../common/useHubView';
 import { HubRoute } from '../../main/HubRoutes';
+import { useUpdatePageBreadcrumbs } from '../../../../framework/hooks/usePageBreadcrumbsContext';
 
 export function HubNamespaceCollections() {
   const { t } = useTranslation();
@@ -27,6 +28,9 @@ export function HubNamespaceCollections() {
       namespace: params?.id || '',
     },
     toolbarFilters,
+  });
+  useUpdatePageBreadcrumbs({
+    label: t('Collections'),
   });
 
   const toolbarActions = useCollectionsActions(view.unselectItemsAndRefresh);

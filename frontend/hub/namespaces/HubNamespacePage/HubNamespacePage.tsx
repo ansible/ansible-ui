@@ -2,6 +2,7 @@ import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
+  ICatalogBreadcrumb,
   LoadingPage,
   PageActions,
   PageHeader,
@@ -17,6 +18,8 @@ import { HubItemsResponse } from '../../common/useHubView';
 import { HubRoute } from '../../main/HubRoutes';
 import { HubNamespace } from '../HubNamespace';
 import { useHubNamespaceActions } from '../hooks/useHubNamespaceActions';
+import { BreadcrumbsContext } from '../../../../framework/hooks/usePageBreadcrumbsContext';
+import { useEffect, useMemo, useState } from 'react';
 
 export function HubNamespacePage() {
   const { t } = useTranslation();
@@ -26,14 +29,25 @@ export function HubNamespacePage() {
     hubAPI`/_ui/v1/namespaces/?limit=1&name=${params.id}`
   );
 
-  let namespace: HubNamespace | undefined = undefined;
-  if (data && data.data && data.data.length > 0) {
-    namespace = data.data[0];
-  }
+  const namespace = useMemo<HubNamespace | undefined>(() => {
+    if (data && data.data && data.data.length > 0) {
+      return data.data[0];
+    }
+    return undefined;
+  }, [data]);
+
   const getPageUrl = useGetPageUrl();
   const pageActions = useHubNamespaceActions({
     onHubNamespacesDeleted: () => pageNavigate(HubRoute.Namespaces),
   });
+  const [breadcrumbs, setBreadcrumbs] = useState<ICatalogBreadcrumb[]>([]);
+
+  useEffect(() => {
+    setBreadcrumbs([
+      { label: t('Namespaces'), to: getPageUrl(HubRoute.Namespaces) },
+      { label: namespace?.name, to: getPageUrl(HubRoute.NamespaceDetails, { params: params }) },
+    ]);
+  }, [getPageUrl, namespace?.name, params, setBreadcrumbs, t]);
 
   if (!data && !error) {
     return <LoadingPage />;
