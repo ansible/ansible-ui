@@ -7,7 +7,6 @@ import { PageRefreshIcon } from '../PageRefreshIcon';
 
 export function RefreshInterval() {
   const { t } = useTranslation();
-  const [interval, setInterval] = useRefreshInterval();
   return (
     <Flex flexWrap={{ default: 'nowrap' }} spaceItems={{ default: 'spaceItemsXs' }}>
       <FlexItem>
