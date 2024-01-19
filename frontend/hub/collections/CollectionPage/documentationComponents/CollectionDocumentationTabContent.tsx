@@ -32,6 +32,7 @@ export function CollectionDocumentationTabContent(props: { content: IContents | 
   };
 
   const contentKey = content?.content_type + ' > ' + content?.content_name;
+
   useEffect(() => {
     const options: OptionRecord[] = [];
 
@@ -144,17 +145,18 @@ export function CollectionDocumentationTabContent(props: { content: IContents | 
           }
         </Stack>
       </PageSection>
-      {content?.doc_strings?.doc?.description && (
-        <PageSection variant="light">
-          <Title headingLevel="h2" id="Synopsis_part">
-            {t('Synopsis')}
-          </Title>
-          {backtoMenuLink}
-          <Stack hasGutter>
-            <p>{content?.doc_strings?.doc.description}</p>
-          </Stack>
-        </PageSection>
-      )}
+      {content?.doc_strings?.doc?.description &&
+        Array.isArray(content?.doc_strings?.doc?.description) && (
+          <PageSection variant="light">
+            <Title headingLevel="h2" id="Synopsis_part">
+              {t('Synopsis')}
+            </Title>
+            {backtoMenuLink}
+            <Stack hasGutter>
+              <ul>{content?.doc_strings?.doc?.description.map((item, index) => <li key={item+index.toString()}>{item}</li>)}</ul>
+            </Stack>
+          </PageSection>
+        )}
       {optionsState && optionsState.length > 0 && (
         <>
           <PageSection variant="light" style={{ paddingBottom: 0 }}>
@@ -209,6 +211,12 @@ export function CollectionDocumentationTabContent(props: { content: IContents | 
                               </button>
                             )}
                           </div>
+                          {!optionRecord.children && (
+                            <span style={{ fontWeight: 'bold' }}>
+                              {optionRecord.option.name}
+                              <br />
+                            </span>
+                          )}
                           <small style={{ opacity: 0.7 }}>
                             {optionRecord.option.type}
                             {optionRecord.option.elements && ' / '}
