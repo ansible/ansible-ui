@@ -1,6 +1,5 @@
-import { contains } from 'cypress/types/jquery';
 import { TemplatesList } from './TemplatesList';
-import { useOptions } from '../../../common/crud/useOptions';
+import * as useOptions from '../../../common/crud/useOptions';
 import { ToolbarFilterType } from '../../../../framework';
 
 describe('TemplatesList', () => {
@@ -111,7 +110,11 @@ describe('TemplatesList', () => {
       cy.contains('.pf-v5-c-dropdown__toggle', 'Create template').should('not.be.disabled');
     });
 
-    it('Delete Template button renders delete modal', () => {});
+    it('Delete Template button renders delete modal', () => {
+      cy.mount(<TemplatesList url={'/api/v2/projects/6/*'} />);
+      cy.clickTableRowPinnedAction('Demo Job Template', 'actions-dropdown');
+      cy.get('[data-cy="delete-template"]').click();
+    });
 
     it('Clicking Sort button changes the order of listed templates', () => {});
 
