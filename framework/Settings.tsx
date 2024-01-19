@@ -1,13 +1,12 @@
 /* eslint-disable i18next/no-literal-string */
-import { Button, Flex, Form, Modal, ModalVariant, Radio } from '@patternfly/react-core';
+import { Button, Form, Modal, ModalVariant } from '@patternfly/react-core';
 import { ReactNode, createContext, useCallback, useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { RefreshIntervalSelect } from '../frontend/common/components/RefreshInterval';
 import { usePageDialog } from './PageDialogs/PageDialog';
 import { PageFormGroup } from './PageForm/Inputs/PageFormGroup';
-import { PageSingleSelect, PageSingleSelectProps } from './PageInputs/PageSingleSelect';
+import { PageSingleSelect } from './PageInputs/PageSingleSelect';
 import { Scrollable } from './components/Scrollable';
-import { useID } from './hooks/useID';
 import { useFrameworkTranslations } from './useFrameworkTranslations';
 
 export interface Settings {
@@ -261,24 +260,3 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
 const FormDiv = styled.div`
   padding: var(--pf-v5-global--spacer--lg);
 `;
-
-function PageRadio<T extends string | number>(props: PageSingleSelectProps<T>) {
-  const id = useID(props);
-  return (
-    <Flex direction={{ default: 'column' }} spaceItems={{ default: 'spaceItemsSm' }}>
-      {props.options.map((option) => (
-        <Radio
-          id={id + '-' + option.value}
-          key={option.value}
-          name={id}
-          label={option.label}
-          description={option.description}
-          isChecked={props.value === option.value}
-          onChange={(_event, isChecked) => {
-            props.onSelect(isChecked ? option.value : undefined);
-          }}
-        />
-      ))}
-    </Flex>
-  );
-}
