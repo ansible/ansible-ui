@@ -47,10 +47,6 @@ export function useGetJob(id?: string, type?: string) {
     workflow: 'workflow_jobs',
   };
   const path = type ? apiPaths[type] : 'jobs';
-  const { data: job, refresh: refreshJob } = useGet<Job>(
-    id ? awxAPI`/${path}/${id}/` : '',
-    undefined,
-    { refreshInterval: 0 }
-  );
+  const { data: job, refresh: refreshJob } = useGet<Job>(id ? awxAPI`/${path}/${id}/` : '');
   return { job, refreshJob };
 }

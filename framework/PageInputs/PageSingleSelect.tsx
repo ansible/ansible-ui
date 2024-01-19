@@ -29,7 +29,7 @@ export interface PageSingleSelectProps<ValueT> {
   value: ValueT;
 
   /** The function to set the selected value. */
-  onSelect: (value: ValueT) => void;
+  onSelect: (value: ValueT | undefined) => void;
 
   /** The options to select from. */
   options: PageSelectOption<ValueT>[];

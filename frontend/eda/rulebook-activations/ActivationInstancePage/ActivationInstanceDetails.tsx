@@ -7,7 +7,6 @@ import { AwxItemsResponse } from '../../../awx/common/AwxItemsResponse';
 import { StatusCell } from '../../../common/Status';
 import { useGet, useGetItem } from '../../../common/crud/useGet';
 import { PageDetailsSection } from '../../common/PageDetailsSection';
-import { SWR_REFRESH_INTERVAL } from '../../common/eda-constants';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaActivationInstance } from '../../interfaces/EdaActivationInstance';
 import { EdaActivationInstanceLog } from '../../interfaces/EdaActivationInstanceLog';
@@ -20,16 +19,12 @@ export function ActivationInstanceDetails() {
     params.instanceId
   );
   const { data: activationInstanceLogInfo } = useGet<AwxItemsResponse<EdaActivationInstanceLog>>(
-    edaAPI`/activation-instances/${params.instanceId ?? ''}/logs/?page_size=1`,
-    undefined,
-    { refreshInterval: SWR_REFRESH_INTERVAL }
+    edaAPI`/activation-instances/${params.instanceId ?? ''}/logs/?page_size=1`
   );
   const { data: activationInstanceLog } = useGet<AwxItemsResponse<EdaActivationInstanceLog>>(
     edaAPI`/activation-instances/${params.instanceId ?? ''}/logs/?page_size=${
       activationInstanceLogInfo?.count.toString() || '10'
-    }`,
-    undefined,
-    { refreshInterval: SWR_REFRESH_INTERVAL }
+    }`
   );
   if (!activationInstance) {
     return <LoadingPage />;
