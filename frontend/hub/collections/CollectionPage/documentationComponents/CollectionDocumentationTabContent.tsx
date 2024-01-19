@@ -11,6 +11,7 @@ import styles from '@patternfly/react-styles/css/components/ExpandableSection/ex
 import { AngleDownIcon, AngleRightIcon } from '@patternfly/react-icons';
 import { useSearchParams } from 'react-router-dom';
 import { ISample } from '../../Collection';
+import { queryStringFromObject } from '../../../../common/utils/queryStringFromObject';
 
 export function CollectionDocumentationTabContent(props: { content: IContents | undefined }) {
   const { t } = useTranslation();
@@ -18,10 +19,7 @@ export function CollectionDocumentationTabContent(props: { content: IContents | 
   const splitString = '- name';
   const [optionsState, setOptionsState] = useState<OptionRecord[]>([]);
   const [searchParams] = useSearchParams();
-  const params = Array.from(searchParams.entries());
-  const queryString = params
-    .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
-    .join('&');
+  const queryString = queryStringFromObject(searchParams);
 
   type OptionRecord = {
     option: IContentsOption;
@@ -147,17 +145,15 @@ export function CollectionDocumentationTabContent(props: { content: IContents | 
         </Stack>
       </PageSection>
       {content?.doc_strings?.doc?.description && (
-        <>
+        <PageSection variant="light">
           <Title headingLevel="h2" id="Synopsis_part">
             {t('Synopsis')}
           </Title>
           {backtoMenuLink}
-          <PageSection variant="light">
-            <Stack hasGutter>
-              <p>{content?.doc_strings?.doc.description}</p>
-            </Stack>
-          </PageSection>
-        </>
+          <Stack hasGutter>
+            <p>{content?.doc_strings?.doc.description}</p>
+          </Stack>
+        </PageSection>
       )}
       {optionsState && optionsState.length > 0 && (
         <>

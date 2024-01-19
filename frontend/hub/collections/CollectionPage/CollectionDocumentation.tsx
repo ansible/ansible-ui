@@ -9,13 +9,14 @@ import { CollectionDocumentationTabContent } from './documentationComponents/Col
 import { CollectionDocumentationTabPanel } from './documentationComponents/CollectionDocumentationTabPanel';
 import { HubError } from '../../common/HubError';
 import { useTranslation } from 'react-i18next';
-import { useSearchParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 export function CollectionDocumentation() {
   const { collection } = useOutletContext<{ collection: CollectionVersionSearch }>();
   const { t } = useTranslation();
-  const [searchParams] = useSearchParams();
+
   const [searchText, setSearchText] = useState('');
+  const params = useParams();
 
   const { data, error, refresh } = useGet<CollectionVersionsContent>(
     pulpAPI`/content/ansible/collection_versions/?namespace=${
@@ -66,8 +67,7 @@ export function CollectionDocumentation() {
     );
   }
 
-  const content_name = searchParams.get('content_name');
-  const content_type = searchParams.get('content_type') || 'docs';
+  const { content_type, content_name } = params;
 
   // find content based on search params
   let content = data?.results[0]?.docs_blob?.contents.find(
@@ -76,7 +76,7 @@ export function CollectionDocumentation() {
 
   // for readme, use the root html of all contents
   let html = '';
-  if (content_type === 'docs') {
+  if (!content_type) {
     html = dataItem?.docs_blob?.collection_readme?.html || '';
   }
 

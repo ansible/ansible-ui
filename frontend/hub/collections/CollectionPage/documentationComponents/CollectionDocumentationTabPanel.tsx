@@ -13,7 +13,9 @@ import {
   SearchInput,
 } from '@patternfly/react-core';
 import { IContents } from '../../Collection';
-import { useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
+import { HubRoute } from '../../../main/HubRoutes';
+import { usePageNavigate } from '../../../../../framework';
 
 export function CollectionDocumentationTabPanel(props: {
   setDrawerOpen: Dispatch<SetStateAction<boolean>>;
@@ -24,10 +26,12 @@ export function CollectionDocumentationTabPanel(props: {
   }[];
 }) {
   const { groups, setDrawerOpen, setSearchText } = props;
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
+  const navigate = usePageNavigate();
+  const params = useParams();
 
-  const content_name = searchParams.get('content_name');
-  const content_type = searchParams.get('content_type');
+  const query = Object.fromEntries(searchParams.entries());
+  const { repository, namespace, name, content_name, content_type } = params;
 
   const { t } = useTranslation();
   return (
@@ -48,10 +52,9 @@ export function CollectionDocumentationTabPanel(props: {
               <NavItem
                 key="readme"
                 onClick={() => {
-                  setSearchParams((params) => {
-                    params.set('content_type', 'docs');
-                    params.set('content_name', '');
-                    return params;
+                  navigate(HubRoute.CollectionDocumentation, {
+                    query,
+                    params: { repository, namespace, name },
                   });
                 }}
               >
@@ -73,10 +76,15 @@ export function CollectionDocumentationTabPanel(props: {
                   <NavItem
                     key={c.content_name}
                     onClick={() => {
-                      setSearchParams((params) => {
-                        params.set('content_type', c.content_type);
-                        params.set('content_name', c.content_name);
-                        return params;
+                      navigate(HubRoute.CollectionDocumentationContent, {
+                        query,
+                        params: {
+                          repository,
+                          namespace,
+                          name,
+                          content_type: c.content_type,
+                          content_name: c.content_name,
+                        },
                       });
                     }}
                     isActive={c.content_name === content_name && c.content_type === 'content_type'}

@@ -170,10 +170,8 @@ function RenderCommunityWarningMessage() {
 
 function returnPath(item: CollectionContent) {
   // TODO - this is not handling insights well right now probably, but insights is still not discussed
-  let path = window.location.origin + window.location.pathname;
-  path = path.replace('/contents', '/documentation?');
-
-  path += `content_type=${item.content_type}&content_name=${item.name}`;
+  let path = window.location.href;
+  path = path.replace('/contents', `/documentation/${item.content_type}/${item.name}`);
   return path;
 }
 
