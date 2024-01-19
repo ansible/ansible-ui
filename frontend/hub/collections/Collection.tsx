@@ -87,6 +87,7 @@ export interface IContents {
       version_added_collection: string;
       requirements?: string[];
       name?: string;
+      deprecated?: { why: string; alternative: string };
     };
     return:
       | null

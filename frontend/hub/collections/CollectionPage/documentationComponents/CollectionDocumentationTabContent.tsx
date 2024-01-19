@@ -104,7 +104,7 @@ export function CollectionDocumentationTabContent(props: { content: IContents | 
     setOptionsState(newState);
   }
 
-  const backtoMenuLink = <a href={`?${queryString}#Menu_part`}>{t('Back to menu')}</a>;
+  const backtoMenuLink = <a href={`?${queryString}#Menu_part`}>{t('Back to overview')}</a>;
 
   return (
     <>
@@ -114,6 +114,23 @@ export function CollectionDocumentationTabContent(props: { content: IContents | 
           {content?.doc_strings?.doc?.short_description && (
             <StackItem>{content?.doc_strings?.doc.short_description}</StackItem>
           )}
+          {content?.doc_strings?.doc?.deprecated && (
+            <>
+              <Title headingLevel="h2">{t('DEPRECATED')}</Title>
+              <StackItem>
+                {' '}
+                <span style={{ fontWeight: 'bold' }}>{t('Why')}</span> :{' '}
+                {content?.doc_strings?.doc?.deprecated?.why}
+              </StackItem>
+              <StackItem>
+                {' '}
+                <span style={{ fontWeight: 'bold' }}>{t('Alternative')}</span> :{' '}
+                {content?.doc_strings?.doc?.deprecated?.alternative}
+              </StackItem>
+            </>
+          )}
+
+          <Title headingLevel="h2">{t('Overview')}</Title>
           {
             <ul>
               {content?.doc_strings?.doc?.description && (
@@ -153,7 +170,11 @@ export function CollectionDocumentationTabContent(props: { content: IContents | 
             </Title>
             {backtoMenuLink}
             <Stack hasGutter>
-              <ul>{content?.doc_strings?.doc?.description.map((item, index) => <li key={item+index.toString()}>{item}</li>)}</ul>
+              <ul>
+                {content?.doc_strings?.doc?.description.map((item, index) => (
+                  <li key={item + index.toString()}>{item}</li>
+                ))}
+              </ul>
             </Stack>
           </PageSection>
         )}
