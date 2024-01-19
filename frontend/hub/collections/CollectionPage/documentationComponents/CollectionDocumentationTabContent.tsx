@@ -1,12 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import React from 'react';
-import {
-  CodeBlock,
-  PageSection,
-  Stack,
-  StackItem,
-  Title,
-} from '@patternfly/react-core';
+import { CodeBlock, PageSection, Stack, StackItem, Title } from '@patternfly/react-core';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { IContents, IContentsOption } from '../../Collection';
 import { PFColorE } from '../../../../../framework';
@@ -15,12 +9,19 @@ import { useState, useEffect } from 'react';
 import { css } from '@patternfly/react-styles';
 import styles from '@patternfly/react-styles/css/components/ExpandableSection/expandable-section';
 import { AngleDownIcon, AngleRightIcon } from '@patternfly/react-icons';
+import { useSearchParams } from 'react-router-dom';
+import { ISample } from '../../Collection';
 
 export function CollectionDocumentationTabContent(props: { content: IContents | undefined }) {
   const { t } = useTranslation();
   const { content } = props;
   const splitString = '- name';
   const [optionsState, setOptionsState] = useState<OptionRecord[]>([]);
+  const [searchParams] = useSearchParams();
+  const params = Array.from(searchParams.entries());
+  const queryString = params
+    .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+    .join('&');
 
   type OptionRecord = {
     option: IContentsOption;
@@ -104,28 +105,67 @@ export function CollectionDocumentationTabContent(props: { content: IContents | 
     setOptionsState(newState);
   }
 
+  const backtoMenuLink = <a href={`?${queryString}#Menu_part`}>{t('Back to menu')}</a>;
+
   return (
     <>
-      <PageSection variant="light">
+      <PageSection variant="light" id="Menu_part">
         <Stack hasGutter>
           <Title headingLevel="h1">{content?.content_type + ' > ' + content?.content_name}</Title>
           {content?.doc_strings?.doc?.short_description && (
             <StackItem>{content?.doc_strings?.doc.short_description}</StackItem>
           )}
+          {
+            <ul>
+              {content?.doc_strings?.doc?.description && (
+                <li>
+                  <a href={`?${queryString}#Synopsis_part`}>{t('Synopsis')}</a>
+                </li>
+              )}
+              {optionsState && optionsState.length > 0 && (
+                <li>
+                  <a href={`?${queryString}#Parameters_part`}>{t('Parameters')}</a>
+                </li>
+              )}
+              {content?.doc_strings?.doc?.notes && (
+                <li>
+                  <a href={`?${queryString}#Notes_part`}>{t('Notes')}</a>
+                </li>
+              )}
+              {content?.doc_strings?.examples && (
+                <li>
+                  <a href={`?${queryString}#Examples_part`}>{t('Examples')}</a>
+                </li>
+              )}
+              {content?.doc_strings?.return && (
+                <li>
+                  <a href={`?${queryString}#Returns_part`}>{t('Returns')}</a>
+                </li>
+              )}
+            </ul>
+          }
         </Stack>
       </PageSection>
       {content?.doc_strings?.doc?.description && (
-        <PageSection variant="light">
-          <Stack hasGutter>
-            <Title headingLevel="h2">{t('Synopsis')}</Title>
-            <p>{content?.doc_strings?.doc.description}</p>
-          </Stack>
-        </PageSection>
+        <>
+          <Title headingLevel="h2" id="Synopsis_part">
+            {t('Synopsis')}
+          </Title>
+          {backtoMenuLink}
+          <PageSection variant="light">
+            <Stack hasGutter>
+              <p>{content?.doc_strings?.doc.description}</p>
+            </Stack>
+          </PageSection>
+        </>
       )}
       {optionsState && optionsState.length > 0 && (
         <>
           <PageSection variant="light" style={{ paddingBottom: 0 }}>
-            <Title headingLevel="h2">{t('Parameters')}</Title>
+            <Title headingLevel="h2" id="Parameters_part">
+              {t('Parameters')}
+            </Title>
+            {backtoMenuLink}
           </PageSection>
           <PageSection variant="light" style={{ paddingLeft: 0, paddingRight: 0, paddingTop: 0 }}>
             <Table variant="compact">
@@ -209,16 +249,22 @@ export function CollectionDocumentationTabContent(props: { content: IContents | 
       )}
       {content?.doc_strings?.doc?.notes && (
         <PageSection variant="light">
+          <Title headingLevel="h2" id="Notes_part">
+            {t('Notes')}
+          </Title>
+          {backtoMenuLink}
           <Stack hasGutter>
-            <Title headingLevel="h2">{t('Notes')}</Title>
             {content?.doc_strings?.doc.notes?.map((note, index) => <p key={index}>{note}</p>)}
           </Stack>
         </PageSection>
       )}
       {content?.doc_strings?.examples && (
         <PageSection variant="light">
+          <Title headingLevel="h2" id="Examples_part">
+            {t('Examples')}
+          </Title>
+          {backtoMenuLink}
           <Stack hasGutter>
-            <Title headingLevel="h2">{t('Examples')}</Title>
             {content.doc_strings.examples
               .split(splitString)
               .filter((example) => !!example.trim())
@@ -239,7 +285,10 @@ export function CollectionDocumentationTabContent(props: { content: IContents | 
       {content?.doc_strings?.return && (
         <>
           <PageSection variant="light" style={{ paddingBottom: 0 }}>
-            <Title headingLevel="h2">{t('Returns')}</Title>
+            <Title headingLevel="h2" id="Returns_part">
+              {t('Returns')}
+            </Title>
+            {backtoMenuLink}
           </PageSection>
           <PageSection variant="light" style={{ paddingLeft: 0, paddingRight: 0, paddingTop: 0 }}>
             <Table variant="compact">
@@ -279,13 +328,13 @@ export function CollectionDocumentationTabContent(props: { content: IContents | 
   );
 }
 
-function Sample(props: { sample: any }) {
+function Sample(props: { sample: ISample }) {
   const { sample } = props;
 
   return <SampleNode sample={sample} level={0} draw_comma={false} />;
 }
 
-function SampleNode(props: { sample: any; level: number; draw_comma: boolean }) {
+function SampleNode(props: { sample: ISample; level: number; draw_comma: boolean }) {
   const { sample, level, draw_comma } = props;
 
   let comma = '';
@@ -297,9 +346,14 @@ function SampleNode(props: { sample: any; level: number; draw_comma: boolean }) 
     return (
       <>
         <SampleLine text="[" level={level} />
-        {sample.map((item: any, index: number) => {
+        {sample.map((item: ISample, index: number) => {
           return (
-            <SampleNode key={index} sample={item} level={level + 1} draw_comma={index !== sample.length - 1} />
+            <SampleNode
+              key={index}
+              sample={item}
+              level={level + 1}
+              draw_comma={index !== sample.length - 1}
+            />
           );
         })}
         <SampleLine text={']' + comma} level={level} />
@@ -307,6 +361,7 @@ function SampleNode(props: { sample: any; level: number; draw_comma: boolean }) 
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-base-to-string
   return <SampleLine text={`"` + sample.toString() + `"${comma}`} level={level} />;
 }
 

@@ -60,6 +60,17 @@ export interface IContentsOption {
   }[];
 }
 
+export type ISample =
+  | (number | string)
+  | ISample[]
+  | {
+      avg?: number;
+      max?: number;
+      min?: number;
+      after?: string;
+      before?: string;
+    };
+
 export interface IContents {
   doc_strings: null | {
     doc?: {
@@ -82,16 +93,7 @@ export interface IContents {
       | {
           name: string;
           type: string;
-          sample?:
-            | (number | string)
-            | string[]
-            | {
-                avg?: number;
-                max?: number;
-                min?: number;
-                after?: string;
-                before?: string;
-              };
+          sample?: ISample;
           returned: string;
           description: string;
           contains?: {
