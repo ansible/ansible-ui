@@ -1,5 +1,5 @@
 import { Flex, FlexItem, Tooltip } from '@patternfly/react-core';
-import { ReactNode, createContext, useContext, useState } from 'react';
+import { ReactNode, createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SWRConfig } from 'swr';
 import { PageSingleSelect } from '../../../framework/PageInputs/PageSingleSelect';
@@ -59,7 +59,24 @@ export function useRefreshInterval() {
 }
 
 export function RefreshIntervalProvider(props: { children: ReactNode; default?: number }) {
-  const state = useState(props.default ?? 60);
+  const [refreshInterval, setRefreshIntervalState] = useState<number>(() => {
+    const lsv = localStorage.getItem('refreshInterval');
+    try {
+      if (lsv) return Number(lsv);
+    } catch (_e) {
+      // DO NOTHING
+    }
+    return props.default || 60;
+  });
+  const setRefreshInterval = useCallback((interval: number) => {
+    localStorage.setItem('refreshInterval', interval.toString());
+    setRefreshIntervalState(interval);
+  }, []);
+  const state = useMemo<[number, (interval: number) => void]>(
+    () => [refreshInterval, setRefreshInterval],
+    [refreshInterval, setRefreshInterval]
+  );
+
   return (
     <SWRConfig value={{ refreshInterval: state[0] * 1000 }}>
       <RefreshIntervalContext.Provider value={state}>
