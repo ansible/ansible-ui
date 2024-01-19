@@ -94,6 +94,7 @@ export enum AwxRoute {
   InventoryGroups = 'awx-inventory-groups',
   InventoryHosts = 'awx-inventory-hosts',
   InventoryHostsAdd = 'awx-inventory-hosts-add',
+  InventoryHostDetails = 'awx-inventory-hosts-details',
   InventorySources = 'awx-inventory-sources',
   InventorySourcePage = 'awx-inventory-source-page',
   InventorySourceDetail = 'awx-inventory-source-detail',
