@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { PageNavigationItem, PageNotImplemented } from '../../framework';
 import { AuthenticatorPage } from '../access/authenticators/AuthenticatorPage/AuthenticatorPage';
 import { PlatformAuthenticatorDetails } from '../access/authenticators/AuthenticatorPage/PlatformAuthenticatorDetails';
+import { CreateAuthenticator } from '../access/authenticators/components/AuthenticatorForm';
 import { AuthenticatorsList } from '../access/authenticators/components/AuthenticatorsList';
 import { PlatformRoute } from '../main/PlatformRoutes';
 
@@ -17,7 +18,7 @@ export function useGetPlatformAuthenticatorsRoutes() {
         {
           id: PlatformRoute.CreateAuthenticator,
           path: 'create',
-          element: <PageNotImplemented />,
+          element: <CreateAuthenticator />,
         },
         {
           id: PlatformRoute.EditAuthenticator,

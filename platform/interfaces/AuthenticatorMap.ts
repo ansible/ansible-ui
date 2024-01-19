@@ -1,6 +1,12 @@
 import type { Authenticator } from './Authenticator';
 import type { PlatformUser } from './PlatformUser';
 
+export enum AuthenticatorMapType {
+  'allow' = 'allow',
+  'organization' = 'organization',
+  'team' = 'team',
+}
+
 export interface AuthenticatorMap {
   name: string;
   id: number;
@@ -19,7 +25,7 @@ export interface AuthenticatorMap {
   triggers: {
     [key: string]: object;
   };
-  map_type: string;
+  map_type: AuthenticatorMapType;
   ui_summary?: string;
   summary_fields: {
     created_by: PlatformUser;
