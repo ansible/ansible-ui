@@ -1,7 +1,10 @@
 import { useTranslation } from 'react-i18next';
+import { useEffect, useState } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useGet } from '../../common/crud/useGet';
 import { HubItemsResponse } from '../common/useHubView';
 import { hubAPI } from '../common/api/formatPath';
+import { HubRoute } from '../main/HubRoutes';
 import {
   Scrollable,
   PageLayout,
@@ -21,11 +24,8 @@ import {
   DrawerPanelBody,
   Title,
 } from '@patternfly/react-core';
-import { useEffect, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
-import { ImportLog } from './components/ImportLog';
 import { CollectionImport, CollectionVersionSearch } from '../collections/Collection';
-import { HubRoute } from '../main/HubRoutes';
+import { ImportLog } from './components/ImportLog';
 import { ImportList } from './components/ImportList';
 
 export function MyImports() {
@@ -36,13 +36,19 @@ export function MyImports() {
   const namespaceQP = searchParams.get('namespace') ?? '';
   const nameQP = searchParams.get('name') ?? undefined;
   const statusQP = searchParams.get('status') ?? undefined;
+  const versionQP = searchParams.get('version') ?? undefined;
+  const pageQP = Number(searchParams.get('page') ?? 1);
+  const perPageQP = Number(searchParams.get('perPage') ?? 10);
 
   const [isDrawerExpanded, setIsDrawerExpanded] = useState(false);
   const [selectedImport, setSelectedImport] = useState('');
   const [collectionFilter, setCollectionFilter] = useState<IFilterState>({
     name: nameQP ? [nameQP] : undefined,
     status: statusQP ? [statusQP] : undefined,
+    version: versionQP ? [versionQP] : undefined,
   });
+  const [page, setPage] = useState(pageQP);
+  const [perPage, setPerPage] = useState(perPageQP);
 
   useEffect(() => {
     setSearchParams((params) => {
@@ -52,17 +58,30 @@ export function MyImports() {
       collectionFilter.status !== statusQP &&
         params.set('status', collectionFilter.status?.[0] ?? '');
 
+      collectionFilter.version !== versionQP &&
+        params.set('version', collectionFilter.version?.join(',') ?? '');
+
+      page !== pageQP && params.set('page', page.toString());
+
+      perPage !== perPageQP && params.set('perPage', perPage.toString());
+
       return params;
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [collectionFilter]);
+  }, [collectionFilter, page, perPage]);
 
-  const { data: collectionImportsResp } = useGet<HubItemsResponse<CollectionImport>>(
+  const {
+    data: collectionImportsResp,
+    isLoading: collectionImportsLoading,
+    error: collectionImportsError,
+  } = useGet<HubItemsResponse<CollectionImport>>(
     namespaceQP
       ? hubAPI`/_ui/v1/imports/collections/?namespace=${namespaceQP}&keywords=${
           collectionFilter?.name?.join(',') ?? ''
-        }&state=${collectionFilter?.status?.[0] ?? ''}`
-      : undefined
+        }&state=${collectionFilter?.status?.[0] ?? ''}&version=${
+          collectionFilter?.version?.join(',') ?? ''
+        }&offset=${(perPage * (page - 1)).toString()}&limit=${perPage.toString()}&sort=-created`
+      : ''
   );
 
   const collectionImports =
@@ -70,28 +89,34 @@ export function MyImports() {
       ? collectionImportsResp?.data
       : [];
 
+  const collectionImportsCount = collectionImportsResp?.meta.count;
+
   const collectionImport =
     collectionImports.length > 0
-      ? collectionImports.find((_import: CollectionImport) => _import.name === selectedImport)
+      ? collectionImports.find((_import: CollectionImport) => _import.id === selectedImport)
       : undefined;
 
-  const { data: collectionImportResp } = useGet<CollectionImport>(
-    collectionImport?.id
-      ? hubAPI`/_ui/v1/imports/collections/${collectionImport?.id ?? ''}/`
-      : undefined
+  const {
+    data: collectionImportResp,
+    isLoading: collectionImportLoading,
+    error: collectionImportError,
+  } = useGet<CollectionImport>(
+    collectionImport?.id ? hubAPI`/_ui/v1/imports/collections/${collectionImport?.id ?? ''}/` : ''
   );
 
-  const collectionResp = useGet<HubItemsResponse<CollectionVersionSearch>>(
+  const {
+    data: collectionResp,
+    isLoading: colletionIsLoading,
+    error: collectionError,
+  } = useGet<HubItemsResponse<CollectionVersionSearch>>(
     hubAPI`/v3/plugin/ansible/search/collection-versions/?namespace=${namespaceQP}&
     name=${collectionImport?.name ?? ''}&version=${collectionImport?.version ?? ''}`
   );
 
   const collection =
-    collectionResp?.data?.data && collectionResp?.data?.data?.length > 0
-      ? collectionResp.data?.data[0]
-      : undefined;
+    collectionResp?.data && collectionResp?.data?.length > 0 ? collectionResp.data[0] : undefined;
 
-  const isMultipleCollections = collectionResp?.data?.data?.length !== 1;
+  const isMultipleCollections = collectionResp?.data?.length !== 1;
 
   function setNamespaceQP(namespace: string) {
     setSearchParams((params) => {
@@ -99,6 +124,9 @@ export function MyImports() {
       return params;
     });
   }
+
+  const importLogLoading = colletionIsLoading || collectionImportLoading;
+  const importLogError = collectionImportError || collectionError;
 
   const panelContent = (
     <DrawerPanelContent widths={{ default: 'width_66', xl: 'width_66' }} hasNoBorder>
@@ -132,7 +160,12 @@ export function MyImports() {
       <DrawerPanelBody>
         <Flex spaceItems={{ default: 'spaceItemsLg' }} direction={{ default: 'column' }}>
           <FlexItem>
-            <ImportLog collectionImport={collectionImportResp} collection={collection} />
+            <ImportLog
+              isLoading={importLogLoading}
+              error={importLogError}
+              collectionImport={collectionImportResp}
+              collection={collection}
+            />
           </FlexItem>
         </Flex>
       </DrawerPanelBody>
@@ -148,6 +181,8 @@ export function MyImports() {
             <DrawerContent panelContent={panelContent}>
               <DrawerContentBody>
                 <ImportList
+                  isLoading={collectionImportsLoading}
+                  error={collectionImportsError}
                   collectionImports={collectionImports}
                   selectedImport={selectedImport}
                   setSelectedImport={(collectionImport) => {
@@ -160,7 +195,12 @@ export function MyImports() {
                     status: statusQP,
                     name: nameQP,
                     namespace: namespaceQP,
+                    perPage: perPageQP,
+                    page: pageQP,
                   }}
+                  setPage={setPage}
+                  setPerPage={setPerPage}
+                  itemCount={collectionImportsCount}
                   setDrawerExpanded={() => {
                     setIsDrawerExpanded(true);
                   }}

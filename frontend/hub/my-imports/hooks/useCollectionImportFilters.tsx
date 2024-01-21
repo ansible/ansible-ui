@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useMemo } from 'react';
 import { IToolbarFilter, ToolbarFilterType } from '../../../../framework';
+
 export function useCollectionImportFilters() {
   const { t } = useTranslation();
   const toolbarFilters = useMemo<IToolbarFilter[]>(
@@ -25,6 +26,14 @@ export function useCollectionImportFilters() {
         ],
         placeholder: t('Filter by status'),
         query: 'status',
+      },
+      {
+        key: 'version',
+        label: t('Version'),
+        type: ToolbarFilterType.Text,
+        query: 'version',
+        comparison: 'equals',
+        placeholder: t('Filter by version'),
       },
     ],
     [t]

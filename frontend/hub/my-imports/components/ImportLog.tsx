@@ -4,6 +4,8 @@ import { Alert, CodeBlock, Stack, StackItem } from '@patternfly/react-core';
 import { CollectionImport, CollectionVersionSearch } from '../../collections/Collection';
 import { ImportStatusBar } from './ImportStatusBar';
 import styled from 'styled-components';
+import { LoadingState } from '../../../../framework/components/LoadingState';
+import { EmptyStateError } from '../../../../framework/components/EmptyStateError';
 
 const EmptyImportConsole = styled.div`
   height: 500px;
@@ -15,10 +17,16 @@ const EmptyImportConsole = styled.div`
 interface IProps {
   collectionImport?: CollectionImport;
   collection?: CollectionVersionSearch;
+  isLoading: boolean;
+  error?: Error;
 }
 
-export function ImportLog({ collectionImport, collection }: IProps) {
+export function ImportLog({ isLoading, collectionImport, collection, error }: IProps) {
   const { t } = useTranslation();
+
+  if (error) return <EmptyStateError titleProp={error.name} message={error.message} />;
+
+  if (isLoading) return <LoadingState />;
 
   return (
     <>
@@ -27,6 +35,7 @@ export function ImportLog({ collectionImport, collection }: IProps) {
       )}
       {collectionImport?.error && (
         <Alert
+          style={{ marginTop: '10px' }}
           variant="danger"
           title={
             <Stack>
@@ -38,7 +47,7 @@ export function ImportLog({ collectionImport, collection }: IProps) {
           isInline
           isExpandable
         >
-          <pre>{collectionImport?.error?.traceback}</pre>
+          <pre style={{ whiteSpace: 'pre-wrap' }}>{collectionImport?.error?.traceback}</pre>
         </Alert>
       )}
       <CodeBlock style={{ marginTop: '10px' }}>

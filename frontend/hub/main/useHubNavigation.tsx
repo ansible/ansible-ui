@@ -54,7 +54,7 @@ import { HubNamespacePage } from '../namespaces/HubNamespacePage/HubNamespacePag
 import { Namespaces } from '../namespaces/HubNamespaces';
 import { HubOverview } from '../overview/HubOverview';
 import { HubRoute } from './HubRoutes';
-import { MyImports } from '../imports/Imports';
+import { MyImports } from '../my-imports/MyImports';
 
 export function useHubNavigation() {
   const { t } = useTranslation();
