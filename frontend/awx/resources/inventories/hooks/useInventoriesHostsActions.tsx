@@ -60,7 +60,7 @@ export function useInventoriesHostsActions(onComplete: (hosts: AwxHost[]) => voi
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: TrashIcon,
-        label: t('Delete inventory'),
+        label: t('Delete host'),
         isDisabled: (host: AwxHost) => cannotDeleteResource(host, t),
         onClick: (host) => deleteHosts([host]),
         isDanger: true,
