@@ -20,7 +20,7 @@ import { PageActionSwitch } from '../../../../../framework/PageActions/PageActio
 import { cannotEditResource } from '../../../../common/utils/RBAChelpers';
 import { requestPatch } from '../../../../common/crud/Data';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 
 export function InventoryHostsDetails() {
   const params = useParams<{ id: string; inventory_type: string; host_id: string }>();
@@ -43,13 +43,12 @@ export function InventoryHostsDetailsInner(props: { host: AwxHost }) {
     canceled_on: null,
   }));
 
-  const handleToggleHost = useCallback(
-    async (selectedHost: AwxHost, enabled: boolean) => {
-      await requestPatch(awxAPI`/hosts/${selectedHost.id.toString()}/`, { enabled });
-      setHost({ ...host, enabled: enabled });
-    },
-    [host]
-  );
+  const handleToggleHost = async (selectedHost: AwxHost, enabled: boolean) => {
+    const response = await requestPatch<AwxHost>(awxAPI`/hosts/${selectedHost.id.toString()}/`, {
+      enabled,
+    });
+    setHost(response);
+  };
 
   const hostSwitch: IPageAction<AwxHost> = {
     type: PageActionType.Switch,
@@ -68,7 +67,6 @@ export function InventoryHostsDetailsInner(props: { host: AwxHost }) {
 
   return (
     <PageDetails>
-      <PageActionSwitch action={hostSwitch} selectedItem={host} />
       <PageDetail label={t('Name')}>{host.name}</PageDetail>
       <PageDetail label={t('Activity')}>
         <Sparkline jobs={recentPlaybookJobs} />
@@ -100,6 +98,7 @@ export function InventoryHostsDetailsInner(props: { host: AwxHost }) {
         showCopyToClipboard
         value={host.variables || '---'}
       />
+      <PageActionSwitch action={hostSwitch} selectedItem={host} />
     </PageDetails>
   );
 }
