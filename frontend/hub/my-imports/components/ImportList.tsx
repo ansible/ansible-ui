@@ -13,7 +13,7 @@ import {
   DataListItemCells,
   Title,
 } from '@patternfly/react-core';
-import React, { useCallback, Dispatch, SetStateAction } from 'react';
+import React, { useCallback, Dispatch, SetStateAction, useEffect } from 'react';
 import { HubNamespace } from '../../namespaces/HubNamespace';
 import { CollectionImport } from '../../collections/Collection';
 import { ImportStatusIndicator } from '../components/ImportStatusIndicator';
@@ -98,9 +98,15 @@ export function ImportList({
     (name) => ({ name })
   );
 
+  useEffect(() => {
+    collectionImports.length && setSelectedImport(collectionImports[0].id);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [collectionImports]);
+
   const queryOptions = useCallback(async () => {
     const response = await requestGet<HubItemsResponse<HubNamespace>>(
-      hubAPI`/_ui/v1/my-namespaces/`
+      hubAPI`/_ui/v1/my-namespaces/?limit=200`
     );
 
     return Promise.resolve({
