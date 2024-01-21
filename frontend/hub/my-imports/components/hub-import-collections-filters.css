@@ -14,10 +14,10 @@
   margin: 0px;
 }
 
-.hub-import-collections-filters .pf-v5-c-toolbar__item {
-  width: 100%;
-}
-
 .hub-import-collections-filters .pf-v5-c-text-input-group {
   min-width: 120px !important;
+}
+
+.hub-import-collections-filters .pf-v5-c-toolbar__content-section .pf-v5-c-toolbar__item {
+  width: 100%;
 }
