@@ -131,11 +131,11 @@ export function MyImports() {
   const panelContent = (
     <DrawerPanelContent widths={{ default: 'width_66', xl: 'width_66' }} hasNoBorder>
       <DrawerHead style={{ padding: '0px' }}>
-        {collection && (
+        {collectionImport && collection && (
           <>
             {isMultipleCollections ? (
               <Title headingLevel="h3" size="lg" style={{ padding: '0px' }}>
-                {collectionImport?.name}
+                {collectionImport?.namespace}.{collectionImport?.name}
               </Title>
             ) : (
               <Link
@@ -150,7 +150,7 @@ export function MyImports() {
                 style={{ color: 'var(--pf-v5-global--text--Color)' }}
               >
                 <Title headingLevel="h3" size="lg">
-                  {collectionImport?.name}
+                  {collectionImport?.namespace}.{collectionImport?.name}
                 </Title>
               </Link>
             )}
