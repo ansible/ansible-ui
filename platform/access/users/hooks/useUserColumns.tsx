@@ -73,6 +73,7 @@ export function useUsersColumns() {
         type: 'datetime',
         value: (user) => user.last_login,
         list: 'secondary',
+        sort: 'last_login',
       },
 
       //TODO: Column to display teams. Currently not returned in the API.
