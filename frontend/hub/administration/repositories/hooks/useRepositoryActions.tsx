@@ -1,12 +1,20 @@
-import { ButtonVariant } from '@patternfly/react-core';
+import { AlertProps, ButtonVariant } from '@patternfly/react-core';
 import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
+import {
+  IPageAction,
+  PageActionSelection,
+  PageActionType,
+  usePageAlertToaster,
+} from '../../../../../framework';
+import { CollectionVersionSearch } from '../../../collections/Collection';
 import { PROTECTED_REPOSITORIES } from '../../../common/constants';
 import { Repository, RepositoryVersion } from '../Repository';
 import { useDeleteRepositories } from './useDeleteRepositories';
-import { CollectionVersionSearch } from '../../../collections/Collection';
+import { getRepositoryBasePath } from '../../../common/api/hub-api-utils';
+import { getRepoURL } from '../../../common/api/hub-api-utils';
+import { useClipboard } from '../../../../../framework/hooks/useClipboard';
 
 export function useRepositoryActions(options: {
   onRepositoriesDeleted: (repositories: Repository[]) => void;
@@ -14,6 +22,8 @@ export function useRepositoryActions(options: {
   const { t } = useTranslation();
   const { onRepositoriesDeleted } = options;
   const deleteRepositories = useDeleteRepositories(onRepositoriesDeleted);
+  const alertToaster = usePageAlertToaster();
+  const { writeToClipboard } = useClipboard();
   const actions = useMemo<IPageAction<Repository>[]>(
     () => [
       {
@@ -41,7 +51,32 @@ export function useRepositoryActions(options: {
       },
       {
         label: t('Copy CLI configuration'),
-        onClick: () => {},
+        onClick: (repo) => {
+          const alertSuccess: AlertProps = {
+            variant: 'success',
+            title: t('Copied to clipboard'),
+          };
+          const alertNoDistro: AlertProps = {
+            variant: 'danger',
+            title: t('There are no distributions associated with this repository.'),
+          };
+
+          getRepositoryBasePath(repo.name, repo.pulp_href, t).then(
+            (distroBasePath) => {
+              const cliConfig = [
+                '[galaxy]',
+                `server_list = ${distroBasePath}`,
+                '',
+                `[galaxy_server.${distroBasePath}]`,
+                `url=${getRepoURL(distroBasePath)}`,
+                'token=<put your token here>',
+              ].join('\n');
+              writeToClipboard(cliConfig);
+              alertToaster.addAlert(alertSuccess);
+            },
+            () => alertToaster.addAlert(alertNoDistro)
+          );
+        },
         selection: PageActionSelection.Single,
         type: PageActionType.Button,
       },
@@ -59,7 +94,7 @@ export function useRepositoryActions(options: {
         },
       },
     ],
-    [t, deleteRepositories]
+    [t, deleteRepositories, alertToaster, writeToClipboard]
   );
 
   return actions;
