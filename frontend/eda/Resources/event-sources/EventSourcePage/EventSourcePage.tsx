@@ -15,11 +15,10 @@ import {
 } from '../../../../../framework';
 import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { useGet } from '../../../../common/crud/useGet';
-import { EdaEventSourceRead } from '../../../interfaces/EdaEventSource';
-import { useDeleteEventSource } from '../hooks/useDeleteEventSources';
 import { edaAPI } from '../../../common/eda-utils';
-import { SWR_REFRESH_INTERVAL } from '../../../common/eda-constants';
+import { EdaEventSourceRead } from '../../../interfaces/EdaEventSource';
 import { EdaRoute } from '../../../main/EdaRoutes';
+import { useDeleteEventSource } from '../hooks/useDeleteEventSources';
 
 export function EventSourcePage() {
   const { t } = useTranslation();
@@ -27,9 +26,7 @@ export function EventSourcePage() {
   const pageNavigate = usePageNavigate();
 
   const { data: eventSource } = useGet<EdaEventSourceRead>(
-    edaAPI`/sources/`.concat(`${params.id ?? ''}/`),
-    undefined,
-    { refreshInterval: SWR_REFRESH_INTERVAL }
+    edaAPI`/sources/`.concat(`${params.id ?? ''}/`)
   );
 
   const deleteEventSource = useDeleteEventSource((deleted) => {

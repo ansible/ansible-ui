@@ -187,7 +187,6 @@ export function useHubView<T extends object>({
   const fetcher = useFetcher();
   const response = useSWR<HubItemsResponse<T> | PulpItemsResponse<T>>(url, fetcher, {
     dedupingInterval: 0,
-    refreshInterval: 30000,
   });
   const { data, mutate } = response;
   const refresh = useCallback(async () => {

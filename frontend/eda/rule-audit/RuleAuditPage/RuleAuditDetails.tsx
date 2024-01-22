@@ -10,7 +10,6 @@ import {
 import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { StatusCell } from '../../../common/Status';
 import { useGet } from '../../../common/crud/useGet';
-import { SWR_REFRESH_INTERVAL } from '../../common/eda-constants';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaRuleAudit } from '../../interfaces/EdaRuleAudit';
 import { EdaRoute } from '../../main/EdaRoutes';
@@ -20,11 +19,7 @@ export function RuleAuditDetails() {
   const params = useParams<{ id: string }>();
   const getPageUrl = useGetPageUrl();
 
-  const { data: ruleAudit } = useGet<EdaRuleAudit>(
-    edaAPI`/audit-rules/${params.id ?? ''}/`,
-    undefined,
-    { refreshInterval: SWR_REFRESH_INTERVAL }
-  );
+  const { data: ruleAudit } = useGet<EdaRuleAudit>(edaAPI`/audit-rules/${params.id ?? ''}/`);
   return (
     <Scrollable>
       <PageDetails>

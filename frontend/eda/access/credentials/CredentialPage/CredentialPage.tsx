@@ -16,7 +16,6 @@ import {
 } from '../../../../../framework';
 import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { useGet } from '../../../../common/crud/useGet';
-import { SWR_REFRESH_INTERVAL } from '../../../common/eda-constants';
 import { edaAPI } from '../../../common/eda-utils';
 import { EdaCredential } from '../../../interfaces/EdaCredential';
 import { EdaRoute } from '../../../main/EdaRoutes';
@@ -26,11 +25,7 @@ export function CredentialPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const pageNavigate = usePageNavigate();
-  const { data: credential } = useGet<EdaCredential>(
-    edaAPI`/credentials/${params.id ?? ''}/`,
-    undefined,
-    { refreshInterval: SWR_REFRESH_INTERVAL }
-  );
+  const { data: credential } = useGet<EdaCredential>(edaAPI`/credentials/${params.id ?? ''}/`);
 
   const deleteCredentials = useDeleteCredentials((deleted) => {
     if (deleted.length > 0) {
