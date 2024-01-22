@@ -18,6 +18,7 @@ import { queryStringFromObject } from '../../../../common/utils/queryStringFromO
 import { useGetPageUrl } from '../../../../../framework';
 import { HubRoute } from '../../../main/HubRoutes';
 import { CollectionVersionSearch } from '../../Collection';
+import { useSettings } from '../../../../../framework';
 
 
 type GroupType = {
@@ -34,6 +35,7 @@ export function CollectionDocumentationTabContent(props: { content: IContents | 
   const [searchParams] = useSearchParams();
   const queryString = queryStringFromObject(searchParams);
   const getPageUrl = useGetPageUrl();
+  const settings = useSettings();
 
   type OptionRecord = {
     option: IContentsOption;
@@ -298,6 +300,7 @@ export function CollectionDocumentationTabContent(props: { content: IContents | 
                               content_name : content?.content_name || '',
                             },
                             url : '',
+                            settings,
                       })}</>)}</Td>
                     </Tr>
                   )})}
@@ -484,7 +487,7 @@ function formatPart(part: dom.Part, params : Params): React.ReactNode {
     case dom.PartType.BOLD:
       return formatPartBold(part as dom.BoldPart);
     case dom.PartType.CODE:
-      return formatPartCode(part as dom.CodePart);
+      return formatPartCode(part as dom.CodePart, params);
     case dom.PartType.HORIZONTAL_LINE:
       return formatPartHorizontalLine(part as dom.HorizontalLinePart);
     case dom.PartType.ITALIC:
@@ -500,11 +503,11 @@ function formatPart(part: dom.Part, params : Params): React.ReactNode {
     case dom.PartType.TEXT:
       return formatPartText(part as dom.TextPart);
     case dom.PartType.ENV_VARIABLE:
-      return formatPartEnvVariable(part as dom.EnvVariablePart);
+      return formatPartEnvVariable(part as dom.EnvVariablePart, params);
     case dom.PartType.OPTION_NAME:
       return formatPartOptionNameReturnValue(part as dom.OptionNamePart, params);
     case dom.PartType.OPTION_VALUE:
-      return formatPartOptionValue(part as dom.OptionValuePart);
+      return formatPartOptionValue(part as dom.OptionValuePart, params);
     case dom.PartType.PLUGIN:
       return formatPartPlugin(part as dom.PluginPart, params);
     case dom.PartType.RETURN_VALUE:
@@ -522,14 +525,24 @@ function formatPartBold(part: dom.BoldPart): React.ReactNode {
   return <b>{part.text}</b>;
 }
 
-function formatPartCode(part: dom.CodePart): React.ReactNode {
+function formatPartCode(part: dom.CodePart, params : Params): React.ReactNode {
+ return formatPartCodeCommon(part.text, params);
+}
+
+function formatPartCodeCommon(text : string, params : Params) : React.ReactNode{
+
+  let color = '#e6e9e9';
+  if (params.settings.theme == 'dark')
+  {
+    color = '#6e9e9e';
+  }
   return <span style={{
-    backgroundColor: '#e6e9e9',
+    backgroundColor: color,
     fontFamily: 'var(--pf-global--FontFamily--monospace)',
     display: 'inline-block',
     borderRadius: '2px',
     padding: '0 2px',
-  }}>{part.text}</span>;
+  }}>{text}</span>;
 }
 
 function formatPartHorizontalLine(
@@ -569,8 +582,8 @@ function formatPartText(part: dom.TextPart): React.ReactNode {
   return part.text;
 }
 
-function formatPartEnvVariable(part: dom.EnvVariablePart): React.ReactNode {
-  return <span className='inline-code'>{part.name}</span>;
+function formatPartEnvVariable(part: dom.EnvVariablePart, params : Params): React.ReactNode {
+  return formatPartCodeCommon(part.name, params);
 }
 
 function formatPartOptionNameReturnValue(
@@ -584,13 +597,9 @@ function formatPartOptionNameReturnValue(
 
   const content =
     part.value === undefined ? (
-      <span className='inline-code'>
-        <b>{part.name}</b>
-      </span>
+      formatPartCodeCommon(part.name, params)
     ) : (
-      <span className='inline-code'>
-        {part.name}={part.value}
-      </span>
+      formatPartCodeCommon(part.value, params)
     );
   if (!part.plugin) {
     return content;
@@ -601,8 +610,8 @@ function formatPartOptionNameReturnValue(
   );
 }
 
-function formatPartOptionValue(part: dom.OptionValuePart): React.ReactNode {
-  return <span className='inline-code'>{part.value}</span>;
+function formatPartOptionValue(part: dom.OptionValuePart, params : Params): React.ReactNode {
+  return formatPartCodeCommon(part.value, params);
 }
 
 function formatPartPlugin(part: dom.PluginPart, params : Params): React.ReactNode {
@@ -699,6 +708,7 @@ type Params = {
   groups : GroupType[],
   docParams : DocParams,
   url : string;
+  settings : ReturnType<typeof useSettings>,
 };
 
 type DocParams = { repository : string, namespace :string, name : string, content_type : string, content_name : string};
