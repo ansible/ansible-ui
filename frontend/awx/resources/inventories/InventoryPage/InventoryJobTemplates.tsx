@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import { awxAPI } from '../../../api/awx-utils';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { TemplatesList } from '../../templates/TemplatesList';
 
 export function InventoryJobTemplates() {
