@@ -1,26 +1,21 @@
+import { PageSection } from '@patternfly/react-core';
+import { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import { DateTimeCell, PageDetail, PageDetails, useGetPageUrl } from '../../../../../framework';
-import { useGet } from '../../../../common/crud/useGet';
-import { EdaEventSourceRead } from '../../../interfaces/EdaEventSource';
-import { LastModifiedPageDetail } from '../../../../common/LastModifiedPageDetail';
-import { EdaDecisionEnvironment } from '../../../interfaces/EdaDecisionEnvironment';
-import { PageSection } from '@patternfly/react-core';
 import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
-import { Fragment } from 'react';
+import { LastModifiedPageDetail } from '../../../../common/LastModifiedPageDetail';
+import { useGet } from '../../../../common/crud/useGet';
 import { edaAPI } from '../../../common/eda-utils';
-import { SWR_REFRESH_INTERVAL } from '../../../common/eda-constants';
+import { EdaDecisionEnvironment } from '../../../interfaces/EdaDecisionEnvironment';
+import { EdaEventSourceRead } from '../../../interfaces/EdaEventSource';
 import { EdaRoute } from '../../../main/EdaRoutes';
 
 export function EventSourceDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
 
-  const { data: eventSource } = useGet<EdaEventSourceRead>(
-    edaAPI`/sources/${params.id ?? ''}/`,
-    undefined,
-    { refreshInterval: SWR_REFRESH_INTERVAL }
-  );
+  const { data: eventSource } = useGet<EdaEventSourceRead>(edaAPI`/sources/${params.id ?? ''}/`);
 
   const { data: decisionEnvironment } = useGet<EdaDecisionEnvironment>(
     edaAPI`/decision-environments/`.concat(`${eventSource?.decision_environment_id || ''}/`)

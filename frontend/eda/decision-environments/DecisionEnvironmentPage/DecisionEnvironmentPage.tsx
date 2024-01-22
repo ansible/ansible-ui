@@ -16,7 +16,6 @@ import {
 } from '../../../../framework';
 import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
 import { useGet } from '../../../common/crud/useGet';
-import { SWR_REFRESH_INTERVAL } from '../../common/eda-constants';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaDecisionEnvironmentRead } from '../../interfaces/EdaDecisionEnvironment';
 import { EdaRoute } from '../../main/EdaRoutes';
@@ -28,9 +27,7 @@ export function DecisionEnvironmentPage() {
   const pageNavigate = usePageNavigate();
 
   const { data: decisionEnvironment } = useGet<EdaDecisionEnvironmentRead>(
-    edaAPI`/decision-environments/${params.id ?? ''}/`,
-    undefined,
-    { refreshInterval: SWR_REFRESH_INTERVAL }
+    edaAPI`/decision-environments/${params.id ?? ''}/`
   );
 
   const deleteDecisionEnvironment = useDeleteDecisionEnvironment((deleted) => {
