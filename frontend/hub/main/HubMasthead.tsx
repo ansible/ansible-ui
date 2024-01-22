@@ -103,8 +103,7 @@ export function useHubNotifications() {
 
   const { data: result } = useGet<HubItemsResponse<CollectionVersionSearch>>(
     canApprove ? hubAPI`/v3/plugin/ansible/search/collection-versions/` : undefined,
-    { page_size: 100, repository_label: 'pipeline=staging' },
-    { refreshInterval: 10 * 1000 }
+    { page_size: 100, repository_label: 'pipeline=staging' }
   );
 
   const { setNotificationGroups } = usePageNotifications();
