@@ -4,6 +4,7 @@ import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { EmptyStateCustom } from '../../../../framework/components/EmptyStateCustom';
 import { useAwxActiveUser } from '../../common/useAwxActiveUser';
+import { EmptyStateError } from '../../../../framework/components/EmptyStateError';
 
 export function AnalyticsErrorState(props: { error?: string }) {
   const { t } = useTranslation();
@@ -71,13 +72,7 @@ export function AnalyticsErrorState(props: { error?: string }) {
         />
       );
     }
-    return (
-      <EmptyStateCustom
-        title={t('ERROR')}
-        description={t('WHO KNOWS WHAT HAPPENED')}
-        icon={KeyIcon}
-      />
-    );
+    return <EmptyStateError />;
   }
   function DisabledState() {
     return (
