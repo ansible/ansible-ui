@@ -7,7 +7,10 @@ import { PageMultiSelect } from '../PageInputs/PageMultiSelect';
 import { PageSingleSelect } from '../PageInputs/PageSingleSelect';
 import { useBreakpoint } from '../components/useBreakPoint';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
-import { IToolbarAsyncMultiSelectFilter } from './PageToolbarFilters/ToolbarAsyncMultiSelectFilter';
+import {
+  AsyncQueryChip,
+  IToolbarAsyncMultiSelectFilter,
+} from './PageToolbarFilters/ToolbarAsyncMultiSelectFilter';
 import { IToolbarAsyncSingleSelectFilter } from './PageToolbarFilters/ToolbarAsyncSingleSelectFilter';
 import {
   IToolbarDateRangeFilter,
@@ -175,7 +178,13 @@ export function PageToolbarFilters(props: PageToolbarFiltersProps) {
                 switch (filter.type) {
                   case ToolbarFilterType.SingleSelect:
                   case ToolbarFilterType.MultiSelect:
-                    return filter.options.find((o) => o.value === value)?.label ?? value;
+                    return filter.options?.find((o) => o.value === value)?.label ?? value;
+                  case ToolbarFilterType.AsyncSingleSelect:
+                  case ToolbarFilterType.AsyncMultiSelect:
+                    return {
+                      key: value,
+                      node: <AsyncQueryChip value={value} queryLabel={filter.queryLabel} />,
+                    };
                   default:
                     return value;
                 }

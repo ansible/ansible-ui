@@ -13,11 +13,10 @@ import { LoadingPage } from '../../../../framework/components/LoadingPage';
 import { postRequest, requestGet, requestPatch } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { AwxPageForm } from '../../AwxPageForm';
-import { AwxRoute } from '../../AwxRoutes';
-import { awxAPI } from '../../api/awx-utils';
 import { AwxError } from '../../common/AwxError';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
+import { AwxPageForm } from '../../common/AwxPageForm';
+import { awxAPI } from '../../common/api/awx-utils';
 import { getAddedAndRemoved } from '../../common/util/getAddedAndRemoved';
 import { Credential } from '../../interfaces/Credential';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
@@ -25,8 +24,9 @@ import { JobTemplate } from '../../interfaces/JobTemplate';
 import { JobTemplateCreate, JobTemplateForm } from '../../interfaces/JobTemplateForm';
 import { Label } from '../../interfaces/Label';
 import { Organization } from '../../interfaces/Organization';
+import { AwxRoute } from '../../main/AwxRoutes';
 import { getJobTemplateDefaultValues, stringifyTags } from './JobTemplateFormHelpers';
-import JobTemplateInputs from './JobTemplateInputs';
+import { JobTemplateInputs } from './JobTemplateInputs';
 
 export function EditJobTemplate() {
   const { t } = useTranslation();

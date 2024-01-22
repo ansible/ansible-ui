@@ -2,10 +2,10 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePageDialog, useSelectDialog } from '../../../../../framework';
 import { SelectSingleDialog } from '../../../../../framework/PageDialogs/SelectSingleDialog';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { useAwxView } from '../../../common/useAwxView';
 import { Organization } from '../../../interfaces/Organization';
-import { useAwxView } from '../../../useAwxView';
 import { useOrganizationsColumns, useOrganizationsFilters } from '../Organizations';
-import { awxAPI } from '../../../api/awx-utils';
 
 export function useSelectOrganization() {
   const { t } = useTranslation();

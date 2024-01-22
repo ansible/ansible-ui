@@ -4,9 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { PageFormTextInput } from '../../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { requestGet } from '../../../../common/crud/Data';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
 import { useSelectExecutionEnvironments } from '../hooks/useSelectExecutionEnvironments';
-import { awxAPI } from '../../../api/awx-utils';
 
 export function PageFormExecutionEnvironmentSelect<
   TFieldValues extends FieldValues = FieldValues,

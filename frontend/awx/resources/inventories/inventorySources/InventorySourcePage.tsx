@@ -1,4 +1,6 @@
+import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import {
   LoadingPage,
   PageActions,
@@ -7,15 +9,13 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../../framework';
-import { useParams } from 'react-router-dom';
-import { useGetItem } from '../../../../common/crud/useGet';
-import { useInventorySourceActions } from '../hooks/useInventorySourceActions';
-import { AwxRoute } from '../../../AwxRoutes';
-import { awxAPI } from '../../../api/awx-utils';
-import { InventorySource } from '../../../interfaces/InventorySource';
 import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
-import { DropdownPosition } from '@patternfly/react-core/deprecated';
+import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxError } from '../../../common/AwxError';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { InventorySource } from '../../../interfaces/InventorySource';
+import { AwxRoute } from '../../../main/AwxRoutes';
+import { useInventorySourceActions } from '../hooks/useInventorySourceActions';
 
 export function InventorySourcePage() {
   const { t } = useTranslation();

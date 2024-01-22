@@ -8,8 +8,8 @@ import {
   PageActionType,
   usePageNavigate,
 } from '../../../../../framework';
-import { AwxRoute } from '../../../AwxRoutes';
 import { Inventory } from '../../../interfaces/Inventory';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { useCopyInventory } from './useCopyInventory';
 import { useDeleteInventories } from './useDeleteInventories';
 

@@ -27,14 +27,14 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { usePageNavigate } from '../../../../../../framework';
 import { getItemKey, postRequest } from '../../../../../common/crud/Data';
-import { AwxRoute } from '../../../../AwxRoutes';
-import { awxAPI } from '../../../../api/awx-utils';
+import { awxAPI } from '../../../../common/api/awx-utils';
+import { useAwxBulkConfirmation } from '../../../../common/useAwxBulkConfirmation';
 import { useAwxConfig } from '../../../../common/useAwxConfig';
-import getDocsBaseUrl from '../../../../common/util/getDocsBaseUrl';
+import { getDocsBaseUrl } from '../../../../common/util/getDocsBaseUrl';
 import { stringIsUUID } from '../../../../common/util/strings';
 import { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
 import { WorkflowNode } from '../../../../interfaces/WorkflowNode';
-import { useAwxBulkConfirmation } from '../../../../common/useAwxBulkConfirmation';
+import { AwxRoute } from '../../../../main/AwxRoutes';
 import { AddNodeButton } from '../components/AddNodeButton';
 
 export function useWorkflowVisualizerToolbarActions(

@@ -1,5 +1,5 @@
 import { requestGet } from '../../../../common/crud/Data';
-import { awxAPI } from '../../../api/awx-utils';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { Organization } from '../../../interfaces/Organization';
 

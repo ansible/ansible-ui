@@ -1,11 +1,11 @@
 import { useTranslation } from 'react-i18next';
-import { PageFormTextInput, PageFormGrid } from '../../../../../../framework';
+import { PageFormGrid, PageFormTextInput } from '../../../../../../framework';
 import { usePageWizard } from '../../../../../../framework/PageWizard/PageWizardProvider';
-import { ConditionalField } from './ConditionalField';
 import type { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
 import type { TemplateLaunch } from '../TemplateLaunchWizard';
+import { ConditionalField } from './ConditionalField';
 
-export default function CredentialPasswordsStep(props: { config: LaunchConfiguration }) {
+export function CredentialPasswordsStep(props: { config: LaunchConfiguration }) {
   const { config } = props;
   const { t } = useTranslation();
   const { wizardData } = usePageWizard();

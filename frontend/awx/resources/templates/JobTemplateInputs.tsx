@@ -10,18 +10,18 @@ import { PageFormSwitch } from '../../../../framework/PageForm/Inputs/PageFormSw
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 import { requestGet } from '../../../common/crud/Data';
+import { PageFormCredentialSelect } from '../../access/credentials/components/PageFormCredentialSelect';
 import { PageFormExecutionEnvironmentSelect } from '../../administration/execution-environments/components/PageFormExecutionEnvironmentSelect';
 import { PageFormInstanceGroupSelect } from '../../administration/instance-groups/components/PageFormInstanceGroupSelect';
-import { awxAPI } from '../../api/awx-utils';
 import { PageFormLabelSelect } from '../../common/PageFormLabelSelect';
+import { awxAPI } from '../../common/api/awx-utils';
 import { JobTemplateForm } from '../../interfaces/JobTemplateForm';
 import { Project } from '../../interfaces/Project';
-import { PageFormCredentialSelect } from '../credentials/components/PageFormCredentialSelect';
 import { PageFormInventorySelect } from '../inventories/components/PageFormInventorySelect';
 import { PageFormProjectSelect } from '../projects/components/PageFormProjectSelect';
 import { WebhookSubForm } from './components/WebhookSubForm';
 
-function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
+export function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
   const { jobtemplate } = props;
   const { t } = useTranslation();
   const { setValue } = useFormContext<JobTemplateForm>();
@@ -311,5 +311,3 @@ function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
     </>
   );
 }
-
-export default JobTemplateInputs;

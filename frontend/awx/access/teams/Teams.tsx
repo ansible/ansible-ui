@@ -3,17 +3,17 @@ import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../../framework';
 import { usePersistentFilters } from '../../../common/PersistentFilters';
 import { useOptions } from '../../../common/crud/useOptions';
-import { AwxRoute } from '../../AwxRoutes';
+import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxConfig } from '../../common/useAwxConfig';
-import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
+import { useAwxView } from '../../common/useAwxView';
+import { getDocsBaseUrl } from '../../common/util/getDocsBaseUrl';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { Team } from '../../interfaces/Team';
-import { useAwxView } from '../../useAwxView';
+import { AwxRoute } from '../../main/AwxRoutes';
 import { useTeamActions } from './hooks/useTeamActions';
 import { useTeamToolbarActions } from './hooks/useTeamToolbarActions';
 import { useTeamsColumns } from './hooks/useTeamsColumns';
 import { useTeamsFilters } from './hooks/useTeamsFilters';
-import { awxAPI } from '../../api/awx-utils';
 
 export function Teams() {
   const { t } = useTranslation();

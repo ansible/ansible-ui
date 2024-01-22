@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { DateTimeCell, ITableColumn, TextCell, useGetPageUrl } from '../../../../../framework';
 import { useDescriptionColumn, useNameColumn, useTypeColumn } from '../../../../common/columns';
-import { AwxRoute } from '../../../AwxRoutes';
 import { Schedule } from '../../../interfaces/Schedule';
+import { AwxRoute } from '../../../main/AwxRoutes';
 
 export function useSchedulesColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();

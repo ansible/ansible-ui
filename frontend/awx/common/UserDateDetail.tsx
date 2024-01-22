@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useGetPageUrl } from '../../../framework';
 import { PageDetail } from '../../../framework/PageDetails/PageDetail';
 import { formatDateString } from '../../../framework/utils/formatDateString';
-import { AwxRoute } from '../AwxRoutes';
+import { AwxRoute } from '../main/AwxRoutes';
 
 interface User {
   id: number;

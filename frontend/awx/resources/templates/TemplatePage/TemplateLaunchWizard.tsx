@@ -11,20 +11,20 @@ import {
 } from '../../../../../framework';
 import { useGet } from '../../../../common/crud/useGet';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
-import { AwxRoute } from '../../../AwxRoutes';
-import { awxErrorAdapter } from '../../../adapters/awxErrorAdapter';
+import { PageFormCredentialSelect } from '../../../access/credentials/components/PageFormCredentialSelect';
 import { PageFormExecutionEnvironmentSelect } from '../../../administration/execution-environments/components/PageFormExecutionEnvironmentSelect';
 import { PageFormInstanceGroupSelect } from '../../../administration/instance-groups/components/PageFormInstanceGroupSelect';
-import { awxAPI } from '../../../api/awx-utils';
 import { AwxError } from '../../../common/AwxError';
+import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
+import { awxAPI } from '../../../common/api/awx-utils';
 import type { Credential } from '../../../interfaces/Credential';
 import type { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
 import type { Inventory } from '../../../interfaces/Inventory';
 import type { JobTemplate } from '../../../interfaces/JobTemplate';
 import type { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
 import type { UnifiedJob } from '../../../interfaces/UnifiedJob';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { useGetJobOutputUrl } from '../../../views/jobs/useGetJobOutputUrl';
-import { PageFormCredentialSelect } from '../../credentials/components/PageFormCredentialSelect';
 import { PageFormInventorySelect } from '../../inventories/components/PageFormInventorySelect';
 import { parseStringToTagArray } from '../JobTemplateFormHelpers';
 import { useLabelPayload } from '../hooks/useLabelPayload';
@@ -131,13 +131,19 @@ export function TemplateLaunchWizard() {
           }
         };
 
-        setValue('credentials', credentials?.map((cred) => cred.id));
+        setValue(
+          'credentials',
+          credentials?.map((cred) => cred.id)
+        );
         setValue('credential_passwords', credential_passwords);
         setValue('diff_mode', diff_mode);
         setValue('execution_environment', execution_environment?.id);
         setValue('extra_vars', extra_vars);
         setValue('forks', forks);
-        setValue('instance_groups', instance_groups?.map((ig) => ig.id));
+        setValue(
+          'instance_groups',
+          instance_groups?.map((ig) => ig.id)
+        );
         setValue('inventory', inventory?.id);
         setValue('job_slice_count', job_slice_count);
         setValue('job_tags', job_tags?.map((tag) => tag.name).join(','));

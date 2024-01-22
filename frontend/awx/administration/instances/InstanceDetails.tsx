@@ -36,12 +36,13 @@ import { LastModifiedPageDetail } from '../../../common/LastModifiedPageDetail';
 import { StatusLabel } from '../../../common/Status';
 import { useGetItem } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { AwxRoute } from '../../AwxRoutes';
-import { awxAPI } from '../../api/awx-utils';
 import { AwxError } from '../../common/AwxError';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
+import { awxAPI } from '../../common/api/awx-utils';
+import { useAwxActiveUser } from '../../common/useAwxActiveUser';
 import { Instance } from '../../interfaces/Instance';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
+import { AwxRoute } from '../../main/AwxRoutes';
 import { useInstanceActions } from './hooks/useInstanceActions';
 import { useNodeTypeTooltip } from './hooks/useNodeTypeTooltip';
 
@@ -119,10 +120,12 @@ export function InstanceDetailsTab(props: {
   instanceForks: number;
   handleToggleInstance: (instance: Instance, isEnabled: boolean) => Promise<void>;
   handleInstanceForksSlider: (instance: Instance, value: number) => Promise<void>;
+  numberOfColumns?: 'multiple' | 'single' | undefined;
 }) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const getPageUrl = useGetPageUrl();
+  const activeUser = useAwxActiveUser();
   const {
     instance,
     instanceGroups,
@@ -131,8 +134,9 @@ export function InstanceDetailsTab(props: {
     handleInstanceForksSlider,
   } = props;
   const toolTipMap: { [item: string]: string } = useNodeTypeTooltip();
+  const capacityAvailable = instance.cpu_capacity !== 0 && instance.mem_capacity !== 0;
   return (
-    <PageDetails>
+    <PageDetails numberOfColumns={props.numberOfColumns}>
       <PageDetail label={t('Name')} data-cy="name">
         <Button
           variant="link"
@@ -222,15 +226,13 @@ export function InstanceDetailsTab(props: {
           onChange={(_event: SliderOnChangeEvent, value: number) =>
             void handleInstanceForksSlider(instance, value)
           }
-          isDisabled={
-            // need to add rbac for super user
-            !instance.enabled
-          }
+          isDisabled={!activeUser?.is_superuser || !instance.enabled || !capacityAvailable}
         />
       </PageDetail>
       <PageDetail label={t('Enabled')} data-cy="enabled">
         <Switch
           id="enable-instance"
+          isDisabled={!activeUser?.is_superuser}
           label={t('Enabled')}
           labelOff={t('Disabled')}
           isChecked={instance.enabled}

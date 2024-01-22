@@ -1,3 +1,4 @@
+import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
@@ -10,11 +11,10 @@ import {
 import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { useGetItem } from '../../../../common/crud/useGet';
-import { AwxRoute } from '../../../AwxRoutes';
-import { awxAPI } from '../../../api/awx-utils';
 import { AwxError } from '../../../common/AwxError';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { Application } from '../../../interfaces/Application';
-import { DropdownPosition } from '@patternfly/react-core/deprecated';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { useApplicationActions } from '../hooks/useApplicationActions';
 
 export function ApplicationPage() {

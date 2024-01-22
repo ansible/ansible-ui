@@ -3,9 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { compareStrings } from '../../../../../framework';
 import { useNameColumn } from '../../../../common/columns';
 import { getItemKey, postRequest } from '../../../../common/crud/Data';
-import { awxAPI } from '../../../api/awx-utils';
-import { Instance } from '../../../interfaces/Instance';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxBulkConfirmation } from '../../../common/useAwxBulkConfirmation';
+import { Instance } from '../../../interfaces/Instance';
 import { useInstancesColumns } from './useInstancesColumns';
 
 export function useRunHealthCheck(onComplete: (instances: Instance[]) => void) {

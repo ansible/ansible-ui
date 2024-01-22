@@ -9,11 +9,11 @@ import {
   usePageNavigate,
 } from '../../../../../framework';
 import { useOptions } from '../../../../common/crud/useOptions';
-import { AwxRoute } from '../../../AwxRoutes';
-import { awxAPI } from '../../../api/awx-utils';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { IAwxView } from '../../../common/useAwxView';
 import { Inventory } from '../../../interfaces/Inventory';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
-import { IAwxView } from '../../../useAwxView';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { useDeleteInventories } from './useDeleteInventories';
 
 export function useInventoriesToolbarActions(view: IAwxView<Inventory>) {

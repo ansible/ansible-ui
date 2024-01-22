@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom';
 import { PageHeader, PageLayout, useGetPageUrl } from '../../../../framework';
 import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
 import { useGet } from '../../../common/crud/useGet';
-import { SWR_REFRESH_INTERVAL } from '../../common/eda-constants';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaActivationInstance } from '../../interfaces/EdaActivationInstance';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
@@ -13,14 +12,10 @@ export function ActivationInstancePage() {
   const { t } = useTranslation();
   const params = useParams<{ instanceId: string }>();
   const { data: activationInstance } = useGet<EdaActivationInstance>(
-    edaAPI`/activation-instances/${params.instanceId ?? ''}/`,
-    undefined,
-    { refreshInterval: SWR_REFRESH_INTERVAL }
+    edaAPI`/activation-instances/${params.instanceId ?? ''}/`
   );
   const { data: activation } = useGet<EdaRulebookActivation>(
-    edaAPI`/activations/${activationInstance?.activation_id.toString() ?? ''}/`,
-    undefined,
-    { refreshInterval: SWR_REFRESH_INTERVAL }
+    edaAPI`/activations/${activationInstance?.activation_id.toString() ?? ''}/`
   );
 
   const getPageUrl = useGetPageUrl();

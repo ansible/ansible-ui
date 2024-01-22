@@ -1,14 +1,29 @@
-import { ButtonVariant } from '@patternfly/react-core';
+import { AlertProps, ButtonVariant } from '@patternfly/react-core';
 import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
+import {
+  IPageAction,
+  PageActionSelection,
+  PageActionType,
+  usePageAlertToaster,
+} from '../../../../../framework';
 import { CollectionVersionSearch } from '../../../collections/Collection';
 import { PROTECTED_REPOSITORIES } from '../../../common/constants';
 import { Repository, RepositoryVersion } from '../Repository';
+import { useDeleteRepositories } from './useDeleteRepositories';
+import { getRepositoryBasePath } from '../../../common/api/hub-api-utils';
+import { getRepoURL } from '../../../common/api/hub-api-utils';
+import { useClipboard } from '../../../../../framework/hooks/useClipboard';
 
-export function useRepositoryActions() {
+export function useRepositoryActions(options: {
+  onRepositoriesDeleted: (repositories: Repository[]) => void;
+}) {
   const { t } = useTranslation();
+  const { onRepositoriesDeleted } = options;
+  const deleteRepositories = useDeleteRepositories(onRepositoriesDeleted);
+  const alertToaster = usePageAlertToaster();
+  const { writeToClipboard } = useClipboard();
   const actions = useMemo<IPageAction<Repository>[]>(
     () => [
       {
@@ -36,14 +51,39 @@ export function useRepositoryActions() {
       },
       {
         label: t('Copy CLI configuration'),
-        onClick: () => {},
+        onClick: (repo) => {
+          const alertSuccess: AlertProps = {
+            variant: 'success',
+            title: t('Copied to clipboard'),
+          };
+          const alertNoDistro: AlertProps = {
+            variant: 'danger',
+            title: t('There are no distributions associated with this repository.'),
+          };
+
+          getRepositoryBasePath(repo.name, repo.pulp_href, t).then(
+            (distroBasePath) => {
+              const cliConfig = [
+                '[galaxy]',
+                `server_list = ${distroBasePath}`,
+                '',
+                `[galaxy_server.${distroBasePath}]`,
+                `url=${getRepoURL(distroBasePath)}`,
+                'token=<put your token here>',
+              ].join('\n');
+              writeToClipboard(cliConfig);
+              alertToaster.addAlert(alertSuccess);
+            },
+            () => alertToaster.addAlert(alertNoDistro)
+          );
+        },
         selection: PageActionSelection.Single,
         type: PageActionType.Button,
       },
       {
         icon: TrashIcon,
         label: t('Delete repository'),
-        onClick: () => {},
+        onClick: (repository) => deleteRepositories([repository]),
         selection: PageActionSelection.Single,
         type: PageActionType.Button,
         isDanger: true,
@@ -54,7 +94,7 @@ export function useRepositoryActions() {
         },
       },
     ],
-    [t]
+    [t, deleteRepositories, alertToaster, writeToClipboard]
   );
 
   return actions;
@@ -68,14 +108,9 @@ export function useCollectionVersionsActions() {
         icon: TrashIcon,
         label: t('Delete'),
         onClick: () => {},
-        selection: PageActionSelection.Single,
+        selection: PageActionSelection.Multiple,
         type: PageActionType.Button,
         isDanger: true,
-        isDisabled: (repo) => {
-          return PROTECTED_REPOSITORIES.includes(repo.repository_version)
-            ? t('Protected repository cannot be deleted')
-            : undefined;
-        },
       },
     ],
     [t]
@@ -91,14 +126,8 @@ export function useVersionsActions() {
       {
         label: t('Revert to this version'),
         onClick: () => {},
-        selection: PageActionSelection.Single,
+        selection: PageActionSelection.Multiple,
         type: PageActionType.Button,
-        isDisabled: (repo) => {
-          // TODO current version
-          return PROTECTED_REPOSITORIES.includes(repo?.number?.toString())
-            ? t('Already the current version')
-            : undefined;
-        },
       },
     ],
     [t]

@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { IFilterState, IToolbarFilter } from '../../../../../framework';
 import { requestGet } from '../../../../common/crud/Data';
-import { awxAPI } from '../../../api/awx-utils';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxWebSocketSubscription } from '../../../common/useAwxWebSocket';
 import { Job } from '../../../interfaces/Job';
 import { JobEvent } from '../../../interfaces/JobEvent';

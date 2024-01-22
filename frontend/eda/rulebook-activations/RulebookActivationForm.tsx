@@ -34,6 +34,8 @@ import {
 import { AwxToken, RestartPolicyEnum } from '../interfaces/generated/eda-api';
 import { EdaRoute } from '../main/EdaRoutes';
 import { EdaProjectCell } from '../projects/components/EdaProjectCell';
+import { EdaEventSource } from '../interfaces/EdaEventSource';
+import { PageFormMultiSelect } from '../../../framework/PageForm/Inputs/PageFormMultiSelect';
 
 export function CreateRulebookActivation() {
   const { t } = useTranslation();
@@ -107,6 +109,10 @@ export function RulebookActivationInputs() {
   const { data: projects } = useGet<EdaResult<EdaProject>>(edaAPI`/projects/?page=1&page_size=200`);
   const { data: environments } = useGet<EdaResult<EdaDecisionEnvironment>>(
     edaAPI`/decision-environments/?page=1&page_size=200`
+  );
+
+  const { data: sources } = useGet<EdaResult<EdaEventSource>>(
+    edaAPI`/sources/?page=1&page_size=200`
   );
 
   const RESTART_OPTIONS = [
@@ -194,6 +200,20 @@ export function RulebookActivationInputs() {
         labelHelp={t('Rulebooks will be shown according to the project selected.')}
         labelHelpTitle={t('Rulebook')}
       />
+      <PageFormMultiSelect<IEdaRulebookActivationInputs>
+        name="sources"
+        label={t('Source(s)')}
+        options={
+          sources?.results
+            ? sources.results.map((item) => ({
+                label: item.name,
+                value: item.id,
+              }))
+            : []
+        }
+        placeholder={t('Select source(s)')}
+        footer={<Link to={getPageUrl(EdaRoute.CreateEventSource)}>Create source</Link>}
+      />
       <PageFormSelect<IEdaRulebookActivationInputs>
         name="decision_environment_id"
         label={t('Decision environment')}
@@ -227,7 +247,6 @@ export function RulebookActivationInputs() {
           t('Controller tokens are used to authenticate with controller API.'),
           t('Controller tokens can be added under the current user details.'),
         ]}
-        isRequired
       />
       <PageFormSelect<IEdaRulebookActivationInputs>
         name="restart_policy"
@@ -261,8 +280,9 @@ export function RulebookActivationInputs() {
   );
 }
 
-type IEdaRulebookActivationInputs = EdaRulebookActivationCreate & {
+type IEdaRulebookActivationInputs = Omit<EdaRulebookActivationCreate, 'sources'> & {
   rulebook: EdaRulebook;
+  sources?: string[];
   project_id: string;
   variables: string;
   awx_token_id: number;

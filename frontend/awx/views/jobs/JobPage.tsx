@@ -5,9 +5,9 @@ import { PageHeader, PageLayout } from '../../../../framework';
 import { useGetPageUrl } from '../../../../framework/PageNavigation/useGetPageUrl';
 import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
 import { useGet } from '../../../common/crud/useGet';
-import { AwxRoute } from '../../AwxRoutes';
+import { awxAPI } from '../../common/api/awx-utils';
 import { Job } from '../../interfaces/Job';
-import { awxAPI } from '../../api/awx-utils';
+import { AwxRoute } from '../../main/AwxRoutes';
 
 export function JobPage() {
   const { t } = useTranslation();
@@ -47,10 +47,6 @@ export function useGetJob(id?: string, type?: string) {
     workflow: 'workflow_jobs',
   };
   const path = type ? apiPaths[type] : 'jobs';
-  const { data: job, refresh: refreshJob } = useGet<Job>(
-    id ? awxAPI`/${path}/${id}/` : '',
-    undefined,
-    { refreshInterval: 0 }
-  );
+  const { data: job, refresh: refreshJob } = useGet<Job>(id ? awxAPI`/${path}/${id}/` : '');
   return { job, refreshJob };
 }

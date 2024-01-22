@@ -5,7 +5,7 @@ import { IPageAction, PageActionSelection, PageActionType } from '../../../../..
 import { requestPatch } from '../../../../common/crud/Data';
 import { useOptions } from '../../../../common/crud/useOptions';
 import { cannotDeleteResource, cannotEditResource } from '../../../../common/utils/RBAChelpers';
-import { awxAPI } from '../../../api/awx-utils';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { Schedule } from '../../../interfaces/Schedule';
 import { useGetSchedulCreateUrl } from './scheduleHelpers';

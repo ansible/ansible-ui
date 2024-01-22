@@ -6,16 +6,16 @@ import { PageFormCheckbox } from '../../../../framework/PageForm/Inputs/PageForm
 import { PageFormHidden } from '../../../../framework/PageForm/Utils/PageFormHidden';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { AwxPageForm } from '../../AwxPageForm';
-import { awxAPI } from '../../api/awx-utils';
+import { AwxPageForm } from '../../common/AwxPageForm';
+import { awxAPI } from '../../common/api/awx-utils';
+import { useAwxBulkActionDialog } from '../../common/useAwxBulkActionDialog';
 import { Team } from '../../interfaces/Team';
 import { User } from '../../interfaces/User';
-import { PageFormCredentialSelect } from '../../resources/credentials/components/PageFormCredentialSelect';
 import { PageFormInventorySelect } from '../../resources/inventories/components/PageFormInventorySelect';
 import { PageFormProjectSelect } from '../../resources/projects/components/PageFormProjectSelect';
 import { PageFormJobTemplateSelect } from '../../resources/templates/components/PageFormJobTemplateSelect';
 import { PageFormWorkflowJobTemplateSelect } from '../../resources/templates/components/PageFormWorkflowJobTemplateSelect';
-import { useAwxBulkActionDialog } from '../../common/useAwxBulkActionDialog';
+import { PageFormCredentialSelect } from '../credentials/components/PageFormCredentialSelect';
 import { PageFormSelectOrganization } from '../organizations/components/PageFormOrganizationSelect';
 import { AwxResourceTypeRoles, useAwxRoles } from './useAwxRoles';
 

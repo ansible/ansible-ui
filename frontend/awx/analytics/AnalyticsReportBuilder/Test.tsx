@@ -15,7 +15,7 @@ import {
 import { useState } from 'react';
 
 import { Select, SelectOption, SelectOptionObject } from '@patternfly/react-core/deprecated';
-import { awxAPI } from '../../api/awx-utils';
+import { awxAPI } from '../../common/api/awx-utils';
 import { allDefaultParams } from './constants';
 
 export function Test() {

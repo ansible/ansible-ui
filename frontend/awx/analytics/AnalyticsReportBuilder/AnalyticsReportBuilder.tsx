@@ -44,45 +44,39 @@ modify filters, add some new columns contents into the table. If more flexibilit
 
 */
 
-import { PerPageOptions } from '@patternfly/react-core';
+import { ChartFunctions, ChartSchemaElement } from '@ansible/react-json-chart-builder';
+import { PerPageOptions, ToggleGroup, ToggleGroupItem } from '@patternfly/react-core';
 import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import {
   ITableColumn,
   ITableColumnTypeText,
   LoadingPage,
   PageHeader,
   PageLayout,
+  usePageNavigate,
 } from '../../../../framework';
 import { PageTable } from '../../../../framework/PageTable/PageTable';
+import { ColumnTableOption } from '../../../../framework/PageTable/PageTableColumn';
 import {
   IToolbarFilter,
   ToolbarFilterType,
 } from '../../../../framework/PageToolbar/PageToolbarFilter';
-import { useGetRequest } from '../../../common/crud/useGet';
-import { usePostRequest } from '../../../common/crud/usePostRequest';
-import Chart from '../components/Chart';
-import hydrateSchema from '../components/Chart/hydrateSchema';
-import { IAnalyticsView, useAnalyticsView } from '../useAnalyticsView';
-
-import { ToggleGroup, ToggleGroupItem } from '@patternfly/react-core';
-
-import { useLocation } from 'react-router-dom';
-import { usePageNavigate } from '../../../../framework';
-import { ColumnTableOption } from '../../../../framework/PageTable/PageTableColumn';
 import { IToolbarMultiSelectFilter } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarMultiSelectFilter';
 import { useSearchParams } from '../../../../framework/components/useSearchParams';
-
-import { ChartFunctions, ChartSchemaElement } from '@ansible/react-json-chart-builder';
-
-import { reportDefaultParams } from './constants';
-
+import { useGetRequest } from '../../../common/crud/useGet';
+import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { AnalyticsErrorState } from '../Reports/ErrorStates';
+import { Chart } from '../components/Chart';
+import { hydrateSchema } from '../components/Chart/hydrateSchema';
+import { IAnalyticsView, useAnalyticsView } from '../useAnalyticsView';
 import {
   formattedValue,
   getClickableText,
   getDateFormatByGranularity,
   renderAllTasksStatus,
 } from './AnalyticsReportBuilderUtils';
+import { reportDefaultParams } from './constants';
 
 type KeyValue = { key: string; value: string };
 

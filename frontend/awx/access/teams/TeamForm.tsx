@@ -8,10 +8,10 @@ import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSe
 import { useGet } from '../../../common/crud/useGet';
 import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { AwxPageForm } from '../../AwxPageForm';
-import { AwxRoute } from '../../AwxRoutes';
-import { awxAPI } from '../../api/awx-utils';
+import { AwxPageForm } from '../../common/AwxPageForm';
+import { awxAPI } from '../../common/api/awx-utils';
 import { Team } from '../../interfaces/Team';
+import { AwxRoute } from '../../main/AwxRoutes';
 import { PageFormSelectOrganization } from '../organizations/components/PageFormOrganizationSelect';
 
 export function CreateTeam() {

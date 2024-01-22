@@ -2,10 +2,10 @@
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { PageTable, usePageNavigate } from '../../../../../framework';
-import { AwxRoute } from '../../../AwxRoutes';
-import { awxAPI } from '../../../api/awx-utils';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { useAwxView } from '../../../common/useAwxView';
 import { Team } from '../../../interfaces/Team';
-import { useAwxView } from '../../../useAwxView';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { useTeamsColumns } from '../../teams/hooks/useTeamsColumns';
 import { useTeamsFilters } from '../../teams/hooks/useTeamsFilters';
 

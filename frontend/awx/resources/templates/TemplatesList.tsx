@@ -1,24 +1,24 @@
+import { ButtonVariant } from '@patternfly/react-core';
+import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   PageTable,
-  usePageNavigate,
   useGetPageUrl,
+  usePageNavigate,
 } from '../../../../framework';
-import { AwxRoute } from '../../AwxRoutes';
-import { useAwxView } from '../../useAwxView';
+import { usePersistentFilters } from '../../../common/PersistentFilters';
+import { useAwxView } from '../../common/useAwxView';
 import { JobTemplate } from '../../interfaces/JobTemplate';
 import { WorkflowJobTemplate } from '../../interfaces/WorkflowJobTemplate';
-import { usePersistentFilters } from '../../../common/PersistentFilters';
-import { useTemplateFilters } from './hooks/useTemplateFilters';
-import { useTemplateColumns } from './hooks/useTemplateColumns';
+import { AwxRoute } from '../../main/AwxRoutes';
 import { useDeleteTemplates } from './hooks/useDeleteTemplates';
-import { useMemo } from 'react';
-import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
-import { ButtonVariant } from '@patternfly/react-core';
 import { useTemplateActions } from './hooks/useTemplateActions';
+import { useTemplateColumns } from './hooks/useTemplateColumns';
+import { useTemplateFilters } from './hooks/useTemplateFilters';
 
 export function TemplatesList(props: {
   url: string;

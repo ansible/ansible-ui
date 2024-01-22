@@ -3,11 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { compareStrings } from '../../../../../framework';
 import { useNameColumn, useOrganizationNameColumn } from '../../../../common/columns';
 import { getItemKey, requestDelete } from '../../../../common/crud/Data';
-import { AwxRoute } from '../../../AwxRoutes';
-import { awxAPI } from '../../../api/awx-utils';
-import { Team } from '../../../interfaces/Team';
-import { useTeamsColumns } from './useTeamsColumns';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxBulkConfirmation } from '../../../common/useAwxBulkConfirmation';
+import { Team } from '../../../interfaces/Team';
+import { AwxRoute } from '../../../main/AwxRoutes';
+import { useTeamsColumns } from './useTeamsColumns';
 
 export function useDeleteTeams(onComplete: (teams: Team[]) => void) {
   const { t } = useTranslation();

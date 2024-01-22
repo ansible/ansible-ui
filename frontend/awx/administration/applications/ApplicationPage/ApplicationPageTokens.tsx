@@ -1,4 +1,7 @@
+import { TrashIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import {
   IPageAction,
   PageActionSelection,
@@ -7,17 +10,14 @@ import {
   PageLayout,
   PageTable,
 } from '../../../../../framework';
-import { useAwxView } from '../../../useAwxView';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxConfig } from '../../../common/useAwxConfig';
-import getDocsBaseUrl from '../../../common/util/getDocsBaseUrl';
-import { useTokensColumns } from '../hooks/useTokensColumns';
-import { useDeleteTokens } from '../hooks/useDeleteTokens';
-import { awxAPI } from '../../../api/awx-utils';
+import { useAwxView } from '../../../common/useAwxView';
+import { getDocsBaseUrl } from '../../../common/util/getDocsBaseUrl';
 import { Token } from '../../../interfaces/Token';
-import { useParams } from 'react-router-dom';
+import { useDeleteTokens } from '../hooks/useDeleteTokens';
+import { useTokensColumns } from '../hooks/useTokensColumns';
 import { useTokensFilters } from '../hooks/useTokensFilters';
-import { TrashIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
 
 export function ApplicationTokens() {
   const { t } = useTranslation();

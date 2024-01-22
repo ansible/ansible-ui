@@ -34,6 +34,7 @@ export interface ActivationCreate {
   description?: string;
   is_enabled?: boolean;
   decision_environment_id: number;
+  sources?: [];
   rulebook_id: number;
   extra_var_id?: number | null;
   /**
@@ -128,6 +129,11 @@ export interface ActivationList {
   status_message?: string | null;
 }
 
+export interface SourceRef {
+  id: string;
+  name: string;
+}
+
 /** Serializer for reading the Activation with related objects info. */
 export interface ActivationRead {
   id: number;
@@ -135,6 +141,8 @@ export interface ActivationRead {
   description?: string;
   is_enabled?: boolean;
   decision_environment?: DecisionEnvironmentRef | null;
+  sources?: SourceRef[];
+
   /**
    * * `starting` - starting
    * * `running` - running

@@ -1,3 +1,4 @@
+import { hubAPI } from '../../support/formatApiPathForHub';
 import { Collections } from './constants';
 
 describe('Collections- List View', () => {
@@ -10,6 +11,7 @@ describe('Collections- List View', () => {
   before(() => {
     cy.hubLogin();
     cy.getNamespace('ibm');
+    cy.addAndApproveMultiCollections(5);
   });
 
   it('it should render the collections page', () => {
@@ -17,9 +19,11 @@ describe('Collections- List View', () => {
     cy.verifyPageTitle(Collections.title);
   });
 
-  // Skipping test until this can be made more robust.
-  // This is runnning into an error about "Artifact already exists"
-  it.skip('user can upload and then delete a new collection', () => {
+  after(() => {
+    cy.cleanupCollections('ibm', 'community');
+  });
+
+  it('user can upload and then delete a new collection', () => {
     cy.getOrCreateCollection().then((thisCollection) => {
       const thisCollectionName = thisCollection?.split('-').slice(-2, -1).toString();
       cy.navigateTo('hub', Collections.url);
@@ -30,22 +34,21 @@ describe('Collections- List View', () => {
       cy.get('[data-cy="row-0"]').within(() => {
         cy.get('input').click();
       });
-      cy.intercept(
-        'POST',
-        `/api/galaxy//v3/plugin/ansible/content/community/collections/artifacts/`
-      ).as('collection');
+      cy.intercept('POST', hubAPI`/v3/plugin/ansible/content/community/collections/artifacts/`).as(
+        'collection'
+      );
       cy.get('[data-cy="Submit"]').click();
       cy.wait('@collection').then((resp) => {
         expect(resp?.response?.statusCode).to.eql(202);
         expect(resp?.response?.statusMessage).to.eql('Accepted');
         expect(resp?.responseWaited).to.eql(true);
       });
-      cy.intercept(
-        'GET',
-        '/api/galaxy//v3/plugin/ansible/search/collection-versions?is_deprecated=false&repository_label=!hide_from_search&is_highest=true&offset=0&limit=10'
-      ).as('collections');
       cy.reload();
       cy.get('[data-cy="hub-collections"]').click();
+      cy.intercept(
+        'GET',
+        hubAPI`/v3/plugin/ansible/search/collection-versions/?is_deprecated=false&repository_label=!hide_from_search&is_highest=true&offset=0&limit=100`
+      ).as('collections');
       cy.verifyPageTitle(Collections.title);
       cy.get('[data-cy="app-description"]').should(
         'contain',
@@ -55,10 +58,21 @@ describe('Collections- List View', () => {
       cy.get('[data-cy="table-view"]').click();
       cy.clickTableRowKebabAction(thisCollectionName, 'delete-entire-collection-from-system');
       cy.get('[data-ouia-component-id="confirm"]').click();
+      cy.intercept(
+        'DELETE',
+        hubAPI`/v3/plugin/ansible/content/community/collections/index/ibm/${thisCollectionName}/`
+      ).as('deleted');
       cy.get('[data-ouia-component-id="submit"]').click();
+      cy.wait('@deleted').then((deleted) => {
+        expect(deleted?.response?.statusCode).to.eq(202);
+      });
       cy.clickButton(/^Close$/);
       cy.clickButton(/^Clear all filters$/);
     });
+  });
+
+  it('should call galaxykit without error', () => {
+    cy.galaxykit('collection -h');
   });
 
   it.skip('user can delete a collection using the list toolbar', () => {});
@@ -68,7 +82,7 @@ describe('Collections- List View', () => {
   it.skip('user can deprecate selected collections using the list toolbar', () => {});
 });
 
-describe('Collections List- Line Item Kebab Menu', () => {
+describe.skip('Collections List- Line Item Kebab Menu', () => {
   before(() => {
     cy.hubLogin();
   });
@@ -84,7 +98,7 @@ describe('Collections List- Line Item Kebab Menu', () => {
   it.skip('user can copy a version to repository', () => {});
 });
 
-describe('Collections Details View', () => {
+describe.skip('Collections Details View', () => {
   before(() => {
     cy.hubLogin();
   });
@@ -106,7 +120,7 @@ describe('Collections Details View', () => {
   it.skip('user can access the Install tab and download a tarball', () => {});
 });
 
-describe('Collection Approvals List', () => {
+describe.skip('Collection Approvals List', () => {
   before(() => {
     cy.hubLogin();
   });

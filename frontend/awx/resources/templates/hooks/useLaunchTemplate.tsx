@@ -3,12 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { usePageAlertToaster, usePageNavigate } from '../../../../../framework';
 import { requestGet } from '../../../../common/crud/Data';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
-import { AwxRoute } from '../../../AwxRoutes';
-import { awxAPI } from '../../../api/awx-utils';
+import { awxAPI } from '../../../common/api/awx-utils';
 import type { JobTemplate } from '../../../interfaces/JobTemplate';
 import type { UnifiedJob } from '../../../interfaces/UnifiedJob';
 import type { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import type { JobLaunch, WorkflowJobLaunch } from '../../../interfaces/generated-from-swagger/api';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { useGetJobOutputUrl } from '../../../views/jobs/useGetJobOutputUrl';
 
 type Template = JobTemplate | WorkflowJobTemplate;

@@ -1,8 +1,8 @@
 import { AlertProps, ButtonVariant } from '@patternfly/react-core';
 import {
   CopyIcon,
-  PencilAltIcon,
   MinusCircleIcon,
+  PencilAltIcon,
   SyncIcon,
   TrashIcon,
 } from '@patternfly/react-icons';
@@ -16,9 +16,9 @@ import {
   usePageNavigate,
 } from '../../../../../framework';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
-import { AwxRoute } from '../../../AwxRoutes';
-import { awxAPI } from '../../../api/awx-utils';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { Project } from '../../../interfaces/Project';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { useCancelProjects } from './useCancelProjects';
 import { useDeleteProjects } from './useDeleteProjects';
 

@@ -2,8 +2,8 @@ import { ReactElement } from 'react';
 import { FieldPath, FieldValues } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { PageFormCreatableSelect } from '../../../framework/PageForm/Inputs/PageFormCreatableSelect';
-import { awxAPI } from '../api/awx-utils';
 import { Label } from '../interfaces/Label';
+import { awxAPI } from './api/awx-utils';
 import { useAwxGetAllPages } from './useAwxGetAllPages';
 
 /**

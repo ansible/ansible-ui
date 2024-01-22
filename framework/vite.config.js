@@ -1,4 +1,5 @@
 // vite.config.js
+/* eslint-disable no-restricted-exports */
 import { defineConfig } from 'vite';
 
 export default defineConfig({

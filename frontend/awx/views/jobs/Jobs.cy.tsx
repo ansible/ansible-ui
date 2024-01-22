@@ -1,7 +1,5 @@
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
-import * as cancelJobs from './hooks/useCancelJobs';
-import * as deleteJobs from './hooks/useDeleteJobs';
-import Jobs from './Jobs';
+import { Jobs } from './Jobs';
 
 describe('Jobs.cy.ts', () => {
   beforeEach(() => {
@@ -21,8 +19,8 @@ describe('Jobs.cy.ts', () => {
     cy.verifyPageTitle('Jobs');
     cy.get('table').find('tr').should('have.length', 11);
   });
+
   it('deletes job from toolbar menu', () => {
-    const spy = cy.spy(deleteJobs, 'useDeleteJobs');
     cy.mount(<Jobs />);
     cy.fixture('jobs.json')
       .its('results')
@@ -31,9 +29,10 @@ describe('Jobs.cy.ts', () => {
         const job = results[0];
         cy.selectTableRow(job.name, false);
         cy.clickToolbarKebabAction('delete-selected-jobs');
-        expect(spy).to.be.called;
+        cy.contains('Permanently delete jobs').should('be.visible');
       });
   });
+
   it('row action to delete job is disabled if the selected job is running', () => {
     cy.mount(<Jobs />);
     cy.fixture('jobs.json')
@@ -117,8 +116,8 @@ describe('Jobs.cy.ts', () => {
         });
       });
   });
+
   it('cancels a running job from row action', () => {
-    const spy = cy.spy(cancelJobs, 'useCancelJobs');
     cy.fixture('jobs.json')
       .its('results')
       .should('be.an', 'array')
@@ -131,13 +130,14 @@ describe('Jobs.cy.ts', () => {
           cy.contains('tr', job.name).within(() => {
             cy.get('#cancel-job').should('be.visible');
             cy.get('#cancel-job').click();
-            expect(spy).to.be.called;
           });
+          cy.contains('Cancel jobs').should('be.visible');
         } else {
           throw new Error('Error retrieving jobs from fixture');
         }
       });
   });
+
   it('bulk cancellation confirmation contains message about selected jobs that cannot be canceled', () => {
     cy.mount(<Jobs />);
     cy.fixture('jobs.json')

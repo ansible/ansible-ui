@@ -1,0 +1,38 @@
+{
+  "data": {
+    "create_cases": [
+      {
+        "auth_grant_type": "Password",
+        "client_type": "Public",
+        "redirect_uris": "https://password_public.com"
+      },
+      {
+        "auth_grant_type": "Authorization code",
+        "client_type": "Public",
+        "redirect_uris": "https://auth_code_public.com"
+      },
+      {
+        "auth_grant_type": "Password",
+        "client_type": "Confidential",
+        "redirect_uris": "https://password_conf.com"
+      },
+      {
+        "auth_grant_type": "Authorization code",
+        "client_type": "Confidential",
+        "redirect_uris": "https://auth_code_conf.com"
+      }
+    ],
+    "edit_cases": [
+      {
+        "auth_grant_type": "Password",
+        "client_type": "Public",
+        "new_client_type": "Confidential"
+      },
+      {
+        "auth_grant_type": "Authorization code",
+        "client_type": "Public",
+        "new_client_type": "Confidential"
+      }
+    ]
+  }
+}

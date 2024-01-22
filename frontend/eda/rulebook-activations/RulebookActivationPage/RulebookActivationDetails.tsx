@@ -1,4 +1,4 @@
-import { PageSection } from '@patternfly/react-core';
+import { Label, LabelGroup, PageSection } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import {
@@ -76,6 +76,15 @@ export function RulebookActivationDetails() {
         >
           {rulebookActivation?.rulebook?.name || rulebookActivation?.rulebook_name || ''}
         </PageDetail>
+        {rulebookActivation.sources && rulebookActivation.sources.length > 0 && (
+          <PageDetail label={t('Sources(s)')}>
+            <LabelGroup>
+              {rulebookActivation.sources.map((source) => (
+                <Label key={source?.id}>{source?.name}</Label>
+              ))}
+            </LabelGroup>
+          </PageDetail>
+        )}
         <PageDetail
           label={t('Decision environment')}
           helpText={t('Decision environments are a container image to run Ansible rulebooks.')}

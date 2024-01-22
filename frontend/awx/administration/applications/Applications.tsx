@@ -11,22 +11,22 @@ import {
   PageTable,
   usePageNavigate,
 } from '../../../../framework';
-import { useAwxView } from '../../useAwxView';
-import { useAwxConfig } from '../../common/useAwxConfig';
-import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
-import { useDeleteApplications } from './hooks/useDeleteApplications';
-import { useApplicationsFilters } from './hooks/useApplicationsFilters';
-import { useApplicationsColumns } from './hooks/useApplicationsColumns';
-import { AwxRoute } from '../../AwxRoutes';
-import { awxAPI } from '../../api/awx-utils';
-import { Application } from '../../interfaces/Application';
+import { useOptions } from '../../../common/crud/useOptions';
 import {
   cannotDeleteResource,
-  cannotEditResource,
   cannotDeleteResources,
+  cannotEditResource,
 } from '../../../common/utils/RBAChelpers';
-import { useOptions } from '../../../common/crud/useOptions';
-import { OptionsResponse, ActionsResponse } from '../../interfaces/OptionsResponse';
+import { awxAPI } from '../../common/api/awx-utils';
+import { useAwxConfig } from '../../common/useAwxConfig';
+import { useAwxView } from '../../common/useAwxView';
+import { getDocsBaseUrl } from '../../common/util/getDocsBaseUrl';
+import { Application } from '../../interfaces/Application';
+import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
+import { AwxRoute } from '../../main/AwxRoutes';
+import { useApplicationsColumns } from './hooks/useApplicationsColumns';
+import { useApplicationsFilters } from './hooks/useApplicationsFilters';
+import { useDeleteApplications } from './hooks/useDeleteApplications';
 
 export function Applications() {
   const { t } = useTranslation();

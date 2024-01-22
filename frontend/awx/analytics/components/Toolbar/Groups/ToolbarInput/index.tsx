@@ -1,10 +1,10 @@
+import { SelectOptionProps } from '@patternfly/react-core/deprecated';
 import React, { FunctionComponent } from 'react';
-import Select from './Select';
-import DateInput from './Date';
-import Text from './Text';
 import { optionsForCategories } from '../../constants';
 import { AttributeType, SetValue } from '../../types';
-import { SelectOptionProps } from '@patternfly/react-core/deprecated';
+import { DateInput } from './Date';
+import { Select } from './Select';
+import { Text } from './Text';
 
 // Todo: unify the interfaces better so we don't have to use any
 // and avoid accidentall wronglt passed props
@@ -29,7 +29,7 @@ interface Props {
   [x: string]: any;
 }
 
-const ToolbarInput: FunctionComponent<Props> = ({
+export const ToolbarInput: FunctionComponent<Props> = ({
   categoryKey,
   value,
   selectOptions,
@@ -62,5 +62,3 @@ const ToolbarInput: FunctionComponent<Props> = ({
     />
   );
 };
-
-export default ToolbarInput;

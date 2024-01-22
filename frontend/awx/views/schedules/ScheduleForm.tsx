@@ -13,12 +13,12 @@ import { LoadingPage } from '../../../../framework/components/LoadingPage';
 import { dateToInputDateTime } from '../../../../framework/utils/dateTimeHelpers';
 import { postRequest } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
-import { AwxPageForm } from '../../AwxPageForm';
-import { AwxRoute } from '../../AwxRoutes';
-import { awxAPI } from '../../api/awx-utils';
 import { AwxError } from '../../common/AwxError';
+import { AwxPageForm } from '../../common/AwxPageForm';
+import { awxAPI } from '../../common/api/awx-utils';
 import { getAddedAndRemoved } from '../../common/util/getAddedAndRemoved';
 import { ScheduleFormFields } from '../../interfaces/ScheduleFormFields';
+import { AwxRoute } from '../../main/AwxRoutes';
 import { ScheduleInputs } from './components/ScheduleInputs';
 import { buildScheduleContainer } from './hooks/scheduleHelpers';
 

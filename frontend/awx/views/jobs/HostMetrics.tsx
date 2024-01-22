@@ -1,15 +1,15 @@
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 
 import { useTranslation } from 'react-i18next';
+import { awxAPI } from '../../common/api/awx-utils';
+import { useAwxView } from '../../common/useAwxView';
 import { HostMetric } from '../../interfaces/HostMetric';
-import { useAwxView } from '../../useAwxView';
-import { awxAPI } from '../../api/awx-utils';
 import { useHostMetricsColumns } from './hooks/useHostMetricsColumns';
 import { useHostMetricsFilters } from './hooks/useHostMetricsFilters';
 import { useHostMetricsRowActions } from './hooks/useHostMetricsRowActions';
 import { useHostMetricsToolbarActions } from './hooks/useHostMetricsToolbarActions';
 
-export default function HostMetrics() {
+export function HostMetrics() {
   const { t } = useTranslation();
   const toolbarFilters = useHostMetricsFilters();
   const tableColumns = useHostMetricsColumns();

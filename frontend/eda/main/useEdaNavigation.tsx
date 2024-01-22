@@ -5,9 +5,10 @@ import { CredentialDetails } from '../access/credentials/CredentialPage/Credenti
 import { CredentialPage } from '../access/credentials/CredentialPage/CredentialPage';
 import { Credentials } from '../access/credentials/Credentials';
 import { CreateCredential, EditCredential } from '../access/credentials/EditCredential';
+import { EdaRoleDetails } from '../access/roles/EdaRoleDetails';
+import { EdaRolePage } from '../access/roles/EdaRolePage';
 import { EdaRoles } from '../access/roles/EdaRoles';
 import { EditRole } from '../access/roles/EditRole';
-import { EdaRoleDetails } from '../access/roles/EdaRoleDetails';
 import { CreateControllerToken } from '../access/users/CreateControllerToken';
 import { CreateUser, EditCurrentUser, EditUser } from '../access/users/EditUser';
 import { ControllerTokens } from '../access/users/UserPage/ControllerTokens';
@@ -23,7 +24,7 @@ import {
 import { DecisionEnvironmentDetails } from '../decision-environments/DecisionEnvironmentPage/DecisionEnvironmentDetails';
 import { DecisionEnvironmentPage } from '../decision-environments/DecisionEnvironmentPage/DecisionEnvironmentPage';
 import { DecisionEnvironments } from '../decision-environments/DecisionEnvironments';
-import { EdaDashboard } from '../overview/EdaDashboard';
+import { EdaOverview } from '../overview/EdaOverview';
 import { CreateProject, EditProject } from '../projects/EditProject';
 import { ProjectDetails } from '../projects/ProjectPage/ProjectDetails';
 import { ProjectPage } from '../projects/ProjectPage/ProjectPage';
@@ -41,7 +42,10 @@ import { RulebookActivationHistory } from '../rulebook-activations/RulebookActiv
 import { RulebookActivationPage } from '../rulebook-activations/RulebookActivationPage/RulebookActivationPage';
 import { RulebookActivations } from '../rulebook-activations/RulebookActivations';
 import { EdaRoute } from './EdaRoutes';
-import { EdaRolePage } from '../access/roles/EdaRolePage';
+import { CreateEventSource, EditEventSource } from '../Resources/event-sources/EventSourceForm';
+import { EventSourcePage } from '../Resources/event-sources/EventSourcePage/EventSourcePage';
+import { EventSourceDetails } from '../Resources/event-sources/EventSourcePage/EventSourceDetails';
+import { EventSources } from '../Resources/event-sources/EventSources';
 
 export function useEdaNavigation() {
   const { t } = useTranslation();
@@ -50,7 +54,7 @@ export function useEdaNavigation() {
       id: EdaRoute.Overview,
       label: t('Overview'),
       path: 'overview',
-      element: <EdaDashboard />,
+      element: <EdaOverview />,
     },
     {
       id: EdaRoute.RuleAudits,
@@ -213,6 +217,43 @@ export function useEdaNavigation() {
         {
           path: '',
           element: <DecisionEnvironments />,
+        },
+      ],
+    },
+    {
+      id: EdaRoute.EventSources,
+      label: t('Event Sources'),
+      path: 'event-sources',
+      children: [
+        {
+          id: EdaRoute.CreateEventSource,
+          path: 'create',
+          element: <CreateEventSource />,
+        },
+        {
+          id: EdaRoute.EditEventSource,
+          path: 'edit/:id',
+          element: <EditEventSource />,
+        },
+        {
+          id: EdaRoute.EventSourcePage,
+          path: ':id',
+          element: <EventSourcePage />,
+          children: [
+            {
+              id: EdaRoute.EventSourceDetails,
+              path: 'details',
+              element: <EventSourceDetails />,
+            },
+            {
+              path: '',
+              element: <Navigate to="details" />,
+            },
+          ],
+        },
+        {
+          path: '',
+          element: <EventSources />,
         },
       ],
     },

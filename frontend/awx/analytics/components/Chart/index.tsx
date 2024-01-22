@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
-import { FC, useEffect, useState } from 'react';
-import { ExclamationCircleIcon } from '@patternfly/react-icons';
 import ChartBuilder, {
   ChartData,
   ChartFunctions,
   ChartSchemaElement,
   functions,
 } from '@ansible/react-json-chart-builder';
+import { ChartDataSerie } from '@ansible/react-json-chart-builder/dist/cjs';
+import { ExclamationCircleIcon } from '@patternfly/react-icons';
+import { FC, useEffect, useState } from 'react';
+import { AnyType } from '../../AnalyticsReportBuilder/AnalyticsReportBuilder';
 import { convertApiToData } from './convertApi';
 import { ApiReturnType } from './types';
-import { ChartDataSerie } from '@ansible/react-json-chart-builder/dist/cjs';
-import { AnyType } from '../../AnalyticsReportBuilder/AnalyticsReportBuilder';
 
 interface Props {
   schema: ChartSchemaElement[];
@@ -72,7 +72,7 @@ const applyHiddenFilter = (chartData: ChartData, chartSeriesHidden: string[] = [
   })),
 });
 
-const Chart: FC<Props> = ({ schema, data, specificFunctions }) => {
+export const Chart: FC<Props> = ({ schema, data, specificFunctions }) => {
   const chartSeriesHiddenProps: string[] = [];
 
   const [chartData, setChartData] = useState<ChartData>({
@@ -98,5 +98,3 @@ const Chart: FC<Props> = ({ schema, data, specificFunctions }) => {
     />
   );
 };
-
-export default Chart;
