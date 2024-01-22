@@ -226,6 +226,11 @@ export function CollectionDocumentationTabContent(props: { content: IContents | 
                   <Th>
                     <Title headingLevel="h3">{t('Choices')}</Title>
                   </Th>
+                  {content?.content_type !== 'module' &&
+                    <Th>
+                      <Title headingLevel='h3'>{t('Coonfiguration')}</Title>
+                    </Th>
+                  }
                   <Th>
                     <Title headingLevel="h3">{t('Comments')}</Title>
                   </Th>
@@ -333,6 +338,9 @@ export function CollectionDocumentationTabContent(props: { content: IContents | 
                           return <></>;
                         })}
                       </Td>
+                      {content?.content_type !== 'module' &&
+                        <Td>{renderPluginConfiguration(optionRecord.option)}</Td>
+                      }
                       <Td>{descriptions.map( (description, index) => <>
                           {index > 0 && <><br/><br/></>}
                           {applyDocFormatters(description, params)}</>)}</Td>
@@ -696,6 +704,40 @@ function renderDocLink(
   } else {
     return null;
   }
+}
+
+function renderPluginConfiguration(option : IContentsOption) {
+  return (
+    <React.Fragment>
+      {option.ini ? (
+        <div className='plugin-config'>
+          ini entries:
+          {option.ini.map((v, i) => (
+            <p key={i}>
+              [{v.section}]<br />
+              {v.key} = {v.default ? v.default : 'VALUE'}
+            </p>
+          ))}
+        </div>
+      ) : null}
+
+      {option.env ? (
+        <div className='plugin-config'>
+          {option.env.map((v, i) => (
+            <div key={i}>env: {v.name}</div>
+          ))}
+        </div>
+      ) : null}
+
+      {option.vars ? (
+        <div className='plugin-config'>
+          {option['vars'].map((v, i) => (
+            <div key={i}>var: {v.name}</div>
+          ))}
+        </div>
+      ) : null}
+    </React.Fragment>
+  );
 }
 
 function renderPluginLink(

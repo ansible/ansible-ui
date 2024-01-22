@@ -49,6 +49,7 @@ export interface IContentsOption {
   ini?: {
     key: string;
     section: string;
+    default : string;
   }[];
   vars?: {
     name: string;
