@@ -1,10 +1,13 @@
 import { useTranslation } from 'react-i18next';
+import { dom, parse } from 'antsibull-docs';
+
 import React from 'react';
 import { CodeBlock, PageSection, Stack, StackItem, Title } from '@patternfly/react-core';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { IContents, IContentsOption } from '../../Collection';
 import { PFColorE } from '../../../../../framework';
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 import { css } from '@patternfly/react-styles';
 import styles from '@patternfly/react-styles/css/components/ExpandableSection/expandable-section';
@@ -12,6 +15,7 @@ import { AngleDownIcon, AngleRightIcon } from '@patternfly/react-icons';
 import { useSearchParams } from 'react-router-dom';
 import { ISample } from '../../Collection';
 import { queryStringFromObject } from '../../../../common/utils/queryStringFromObject';
+import { useGetPageUrl } from '../../../../../framework';
 
 export function CollectionDocumentationTabContent(props: { content: IContents | undefined }) {
   const { t } = useTranslation();
@@ -20,6 +24,7 @@ export function CollectionDocumentationTabContent(props: { content: IContents | 
   const [optionsState, setOptionsState] = useState<OptionRecord[]>([]);
   const [searchParams] = useSearchParams();
   const queryString = queryStringFromObject(searchParams);
+  const getPageUrl = useGetPageUrl();
 
   type OptionRecord = {
     option: IContentsOption;
@@ -105,6 +110,8 @@ export function CollectionDocumentationTabContent(props: { content: IContents | 
   }
 
   const backtoMenuLink = <a href={`?${queryString}#Menu_part`}>{t('Back to overview')}</a>;
+
+
 
   return (
     <>
@@ -204,7 +211,11 @@ export function CollectionDocumentationTabContent(props: { content: IContents | 
               <Tbody>
                 {optionsState
                   .filter((optionState) => optionState.visible)
-                  .map((optionRecord) => (
+                  .map((optionRecord) => {
+                    const descriptions = Array.isArray(optionRecord.option.description) ?
+                      optionRecord.option.description : [optionRecord.option.description];
+
+                    return (
                     <Tr key={optionRecord.path_name}>
                       <Td>
                         <div style={{ marginLeft: `${optionRecord.level * 30}px` }}>
@@ -264,9 +275,9 @@ export function CollectionDocumentationTabContent(props: { content: IContents | 
                           );
                         })}
                       </Td>
-                      <Td>{optionRecord.option.description}</Td>
+                      <Td>{descriptions.map( (description) => applyDocFormatters(description))}</Td>
                     </Tr>
-                  ))}
+                  )})}
               </Tbody>
             </Table>
           </PageSection>
@@ -353,6 +364,8 @@ export function CollectionDocumentationTabContent(props: { content: IContents | 
   );
 }
 
+
+
 function Sample(props: { sample: ISample }) {
   const { sample } = props;
 
@@ -399,4 +412,235 @@ function SampleLine(props: { text: string; level: number }) {
       <br />
     </span>
   );
+}
+
+function applyDocFormatters(text: string): React.ReactNode {
+  // TODO: pass current plugin's type and name, and (if role) the current entrypoint as well
+
+  debugger;
+  const parsed = parse(text);
+
+  // Special case: result is a single paragraph consisting of a single text part
+  if (
+    parsed.length === 1 &&
+    parsed[0].length === 1 &&
+    parsed[0][0].type === dom.PartType.TEXT
+  ) {
+    return <span>{parsed[0][0].text}</span>;
+  }
+
+  const fragments : React.ReactNode[] = [];
+  for (const paragraph of parsed) {
+    for (const part of paragraph) {
+      fragments.push(formatPart(part));
+    }
+  }
+  return (
+    <span>
+      {fragments.map((x, i) => (
+        <React.Fragment key={i}>{x}</React.Fragment>
+      ))}
+    </span>
+  );
+}
+
+function formatPart(part: dom.Part): React.ReactNode {
+  switch (part.type) {
+    case dom.PartType.ERROR:
+      return formatPartError(part as dom.ErrorPart);
+    case dom.PartType.BOLD:
+      return formatPartBold(part as dom.BoldPart);
+    case dom.PartType.CODE:
+      return formatPartCode(part as dom.CodePart);
+    case dom.PartType.HORIZONTAL_LINE:
+      return formatPartHorizontalLine(part as dom.HorizontalLinePart);
+    case dom.PartType.ITALIC:
+      return formatPartItalic(part as dom.ItalicPart);
+    case dom.PartType.LINK:
+      return formatPartLink(part as dom.LinkPart);
+    case dom.PartType.MODULE:
+      return formatPartModule(part as dom.ModulePart);
+    case dom.PartType.RST_REF:
+      return formatPartRstRef(part as dom.RSTRefPart);
+    case dom.PartType.URL:
+      return formatPartURL(part as dom.URLPart);
+    case dom.PartType.TEXT:
+      return formatPartText(part as dom.TextPart);
+    case dom.PartType.ENV_VARIABLE:
+      return formatPartEnvVariable(part as dom.EnvVariablePart);
+    case dom.PartType.OPTION_NAME:
+      return formatPartOptionNameReturnValue(part as dom.OptionNamePart);
+    case dom.PartType.OPTION_VALUE:
+      return formatPartOptionValue(part as dom.OptionValuePart);
+    case dom.PartType.PLUGIN:
+      return formatPartPlugin(part as dom.PluginPart);
+    case dom.PartType.RETURN_VALUE:
+      return formatPartOptionNameReturnValue(
+        part as dom.ReturnValuePart,
+      );
+  }
+}
+
+
+function formatPartError(part: dom.ErrorPart): React.ReactNode {
+  return <span className='error'>ERROR while parsing: {part.message}</span>;
+}
+
+function formatPartBold(part: dom.BoldPart): React.ReactNode {
+  return <b>{part.text}</b>;
+}
+
+function formatPartCode(part: dom.CodePart): React.ReactNode {
+  return <span className='inline-code'>{part.text}</span>;
+}
+
+function formatPartHorizontalLine(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  part: dom.HorizontalLinePart,
+): React.ReactNode {
+  return <hr />;
+}
+
+function formatPartItalic(part: dom.ItalicPart): React.ReactNode {
+  return <i>{part.text}</i>;
+}
+
+function formatPartLink(part: dom.LinkPart): React.ReactNode {
+  return renderDocLink(part.text, part.url);
+}
+
+function formatPartModule(part: dom.ModulePart): React.ReactNode {
+  return renderPluginLink(part.fqcn, 'module', undefined);
+}
+
+function formatPartRstRef(part: dom.RSTRefPart): React.ReactNode {
+  return part.text;
+}
+
+function formatPartURL(part: dom.URLPart): React.ReactNode {
+  return <Link to={part.url}>{part.url}</Link>;
+}
+
+function formatPartText(part: dom.TextPart): React.ReactNode {
+  return part.text;
+}
+
+function formatPartEnvVariable(part: dom.EnvVariablePart): React.ReactNode {
+  return <span className='inline-code'>{part.name}</span>;
+}
+
+function formatPartOptionNameReturnValue(
+  part: dom.OptionNamePart | dom.ReturnValuePart,
+): React.ReactNode {
+  const content =
+    part.value === undefined ? (
+      <span className='inline-code'>
+        <b>{part.name}</b>
+      </span>
+    ) : (
+      <span className='inline-code'>
+        {part.name}={part.value}
+      </span>
+    );
+  if (!part.plugin) {
+    return content;
+  }
+  return renderPluginLink(
+    part.plugin.fqcn,
+    part.plugin.type,
+    content,
+  );
+}
+
+function formatPartOptionValue(part: dom.OptionValuePart): React.ReactNode {
+  return <span className='inline-code'>{part.value}</span>;
+}
+
+function formatPartPlugin(part: dom.PluginPart): React.ReactNode {
+  return renderPluginLink(
+    part.plugin.fqcn,
+    part.plugin.type,
+    undefined,
+  );
+}
+
+function renderDocLink(
+  name,
+  href,
+  collection: CollectionVersionSearch,
+  params,
+) {
+  if (!!href && href.startsWith('http')) {
+    return <Link to={href}>{name}</Link>;
+  } else if (href) {
+    // TODO: right now this will break if people put
+    // ../ at the front of their urls. Need to find a
+    // way to document this
+
+    const { collection_version, repository } = collection;
+
+    let path = window.location.href;
+    path = path.replace('/contents', `/documentation/${item.content_type}/${item.name}`);
+
+
+    
+    return (
+      <Link
+        to={formatPath(
+          Paths.collectionDocsPageByRepo,
+          {
+            namespace: collection_version.namespace,
+            collection: collection_version.name,
+            page: href,
+            repo: repository.name,
+          },
+          params,
+        )}
+      >
+        {name}
+      </Link>
+    );
+  } else {
+    return null;
+  }
+}
+
+function renderPluginLink(
+  pluginName,
+  pluginType,
+  text,
+  collection,
+  params,
+  allContent,
+) {
+  const module = allContent.find(
+    (x) => x.content_type === pluginType && x.name === pluginName,
+  );
+
+  if (module) {
+    return (
+      <Link
+        to={formatPath(
+          Paths.collectionContentDocsByRepo,
+          {
+            namespace: collection.collection_version.namespace,
+            collection: collection.collection_version.name,
+            type: pluginType,
+            name: pluginName,
+            repo: this.props.routeParams.repo,
+          },
+          params,
+        )}
+      >
+        {text}
+      </Link>
+    );
+  } else {
+    return text;
+  }
+}
+
+function formatDocPath(repo :string, namespace :string, collection : string, plugin_type : string, plugin_name : string)
+{
+  const path = 
 }
