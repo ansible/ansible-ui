@@ -20,14 +20,16 @@ import { HubRoute } from '../../../main/HubRoutes';
 import { CollectionVersionSearch } from '../../Collection';
 import { useSettings } from '../../../../../framework';
 
-
 type GroupType = {
   name: string;
   contents: IContents[];
-}
+};
 
-
-export function CollectionDocumentationTabContent(props: { content: IContents | undefined, collection : CollectionVersionSearch, groups: GroupType[]}) {
+export function CollectionDocumentationTabContent(props: {
+  content: IContents | undefined;
+  collection: CollectionVersionSearch;
+  groups: GroupType[];
+}) {
   const { t } = useTranslation();
   const { content } = props;
   const splitString = '- name';
@@ -122,18 +124,18 @@ export function CollectionDocumentationTabContent(props: { content: IContents | 
 
   const backtoMenuLink = <a href={`?${queryString}#Menu_part`}>{t('Back to overview')}</a>;
 
-  const params  : Params= {
-    getPageUrl, 
-    groups : props.groups,  
-    url : '',
+  const params: Params = {
+    getPageUrl,
+    groups: props.groups,
+    url: '',
     settings,
-    docParams : {
-      repository : '',
-      namespace : '',
-      name : '',
-      content_name : '',
-      content_type : '',
-    }
+    docParams: {
+      repository: '',
+      namespace: '',
+      name: '',
+      content_name: '',
+      content_type: '',
+    },
   };
 
   return (
@@ -142,7 +144,9 @@ export function CollectionDocumentationTabContent(props: { content: IContents | 
         <Stack hasGutter>
           <Title headingLevel="h1">{content?.content_type + ' > ' + content?.content_name}</Title>
           {content?.doc_strings?.doc?.short_description && (
-            <StackItem>{applyDocFormatters(content?.doc_strings?.doc.short_description, params)}</StackItem>
+            <StackItem>
+              {applyDocFormatters(content?.doc_strings?.doc.short_description, params)}
+            </StackItem>
           )}
           {content?.doc_strings?.doc?.deprecated && (
             <>
@@ -226,11 +230,11 @@ export function CollectionDocumentationTabContent(props: { content: IContents | 
                   <Th>
                     <Title headingLevel="h3">{t('Choices')}</Title>
                   </Th>
-                  {content?.content_type !== 'module' &&
+                  {content?.content_type !== 'module' && (
                     <Th>
-                      <Title headingLevel='h3'>{t('Coonfiguration')}</Title>
+                      <Title headingLevel="h3">{t('Coonfiguration')}</Title>
                     </Th>
-                  }
+                  )}
                   <Th>
                     <Title headingLevel="h3">{t('Comments')}</Title>
                   </Th>
@@ -240,112 +244,125 @@ export function CollectionDocumentationTabContent(props: { content: IContents | 
                 {optionsState
                   .filter((optionState) => optionState.visible)
                   .map((optionRecord) => {
-                    const descriptions = Array.isArray(optionRecord.option.description) ?
-                      optionRecord.option.description : [optionRecord.option.description];
+                    const descriptions = Array.isArray(optionRecord.option.description)
+                      ? optionRecord.option.description
+                      : [optionRecord.option.description];
 
-                      // if its string, transform it to array
-                      if (typeof optionRecord.option.default === 'string' )
-                      {
-                        optionRecord.option.default = [optionRecord.option.default];
-                      } 
-                      // special cases where choices are empty, fill are with defaults
-                      if (!optionRecord.option.choices || Array.isArray(optionRecord.option.choices))
-                      {
-                        if (Array.isArray(optionRecord.option.default))
-                        {
-                          optionRecord.option.choices = optionRecord.option.default;
-                        }
+                    // if its string, transform it to array
+                    if (typeof optionRecord.option.default === 'string') {
+                      optionRecord.option.default = [optionRecord.option.default];
+                    }
+                    // special cases where choices are empty, fill are with defaults
+                    if (
+                      !optionRecord.option.choices ||
+                      Array.isArray(optionRecord.option.choices)
+                    ) {
+                      if (Array.isArray(optionRecord.option.default)) {
+                        optionRecord.option.choices = optionRecord.option.default;
                       }
+                    }
 
-                      const params : Params = {
-                        getPageUrl, 
-                        groups : props.groups,  
-                        docParams : 
-                        { 
-                          repository : props.collection.repository?.name || '', 
-                          namespace : props.collection.collection_version?.namespace || '', 
-                          name : props.collection.collection_version?.name || '',
-                          content_type : content?.content_type || '',
-                          content_name : content?.content_name || '',
-                        },
-                        url : '',
-                        settings,
-                  }
+                    const params: Params = {
+                      getPageUrl,
+                      groups: props.groups,
+                      docParams: {
+                        repository: props.collection.repository?.name || '',
+                        namespace: props.collection.collection_version?.namespace || '',
+                        name: props.collection.collection_version?.name || '',
+                        content_type: content?.content_type || '',
+                        content_name: content?.content_name || '',
+                      },
+                      url: '',
+                      settings,
+                    };
 
                     return (
-                    <Tr key={optionRecord.path_name}>
-                      <Td>
-                        <div style={{ marginLeft: `${optionRecord.level * 30}px` }}>
-                          <div>
-                            {optionRecord.children && (
-                              <button
-                                className={css(styles.expandableSectionToggle)}
-                                type="button"
-                                aria-expanded={optionRecord.checked}
-                                aria-controls={optionRecord.path_name + '_aria_controls'}
-                                id={optionRecord.path_name + '_id'}
-                                onClick={() =>
-                                  setVisibility(optionRecord.path_name, !optionRecord.checked)
-                                }
-                                title={t('Expand / Collapse')}
-                              >
-                                {optionRecord.checked ? (
-                                  <AngleDownIcon aria-hidden />
-                                ) : (
-                                  <AngleRightIcon aria-hidden />
-                                )}
-                                <span style={{ fontWeight: 'bold' }}>
-                                  &nbsp;&nbsp;{optionRecord.option.name}
-                                </span>
-                              </button>
+                      <Tr key={optionRecord.path_name}>
+                        <Td>
+                          <div style={{ marginLeft: `${optionRecord.level * 30}px` }}>
+                            <div>
+                              {optionRecord.children && (
+                                <button
+                                  className={css(styles.expandableSectionToggle)}
+                                  type="button"
+                                  aria-expanded={optionRecord.checked}
+                                  aria-controls={optionRecord.path_name + '_aria_controls'}
+                                  id={optionRecord.path_name + '_id'}
+                                  onClick={() =>
+                                    setVisibility(optionRecord.path_name, !optionRecord.checked)
+                                  }
+                                  title={t('Expand / Collapse')}
+                                >
+                                  {optionRecord.checked ? (
+                                    <AngleDownIcon aria-hidden />
+                                  ) : (
+                                    <AngleRightIcon aria-hidden />
+                                  )}
+                                  <span style={{ fontWeight: 'bold' }}>
+                                    &nbsp;&nbsp;{optionRecord.option.name}
+                                  </span>
+                                </button>
+                              )}
+                            </div>
+                            {!optionRecord.children && (
+                              <span style={{ fontWeight: 'bold' }}>
+                                {optionRecord.option.name}
+                                <br />
+                              </span>
                             )}
+                            <small style={{ opacity: 0.7 }}>
+                              {optionRecord.option.type}
+                              {optionRecord.option.elements && ' / '}
+                              {optionRecord.option.elements}{' '}
+                              {optionRecord.option.required && (
+                                <span style={{ color: PFColorE.Red }}> / {t('Required')}</span>
+                              )}{' '}
+                            </small>
                           </div>
-                          {!optionRecord.children && (
-                            <span style={{ fontWeight: 'bold' }}>
-                              {optionRecord.option.name}
-                              <br />
-                            </span>
-                          )}
-                          <small style={{ opacity: 0.7 }}>
-                            {optionRecord.option.type}
-                            {optionRecord.option.elements && ' / '}
-                            {optionRecord.option.elements}{' '}
-                            {optionRecord.option.required && (
-                              <span style={{ color: PFColorE.Red }}> / {t('Required')}</span>
-                            )}{' '}
-                          </small>
-                        </div>
-                      </Td>
-                      <Td>
-                        {optionRecord.option.choices?.map((choice, index) => {
-                          let style = {};
-                          let title = '';
+                        </Td>
+                        <Td>
+                          {optionRecord.option.choices?.map((choice, index) => {
+                            let style = {};
+                            let title = '';
 
-                          if (Array.isArray(optionRecord.option.default) && optionRecord.option.default.includes(choice)) {
-                            title = t('Default');
-                            style = { color: PFColorE.Blue };
-                          }
-                          
-                          if (typeof choice === 'string')
-                          {
-                                                   return (
-                                        <p title={title} style={style} key={choice + index}>
-                                          {choice}
-                                        </p>
-                                    );
-                          }
+                            if (
+                              Array.isArray(optionRecord.option.default) &&
+                              optionRecord.option.default.includes(choice)
+                            ) {
+                              title = t('Default');
+                              style = { color: PFColorE.Blue };
+                            }
 
-                          return <></>;
-                        })}
-                      </Td>
-                      {content?.content_type !== 'module' &&
-                        <Td>{renderPluginConfiguration(optionRecord.option)}</Td>
-                      }
-                      <Td>{descriptions.map( (description, index) => <>
-                          {index > 0 && <><br/><br/></>}
-                          {applyDocFormatters(description, params)}</>)}</Td>
-                    </Tr>
-                  )})}
+                            if (typeof choice === 'string') {
+                              return (
+                                <p title={title} style={style} key={choice + index}>
+                                  {choice}
+                                </p>
+                              );
+                            }
+
+                            return <></>;
+                          })}
+                        </Td>
+                        {content?.content_type !== 'module' && (
+                          <Td>{renderPluginConfiguration(optionRecord.option)}</Td>
+                        )}
+                        <Td>
+                          {descriptions.map((description, index) => (
+                            <>
+                              {index > 0 && (
+                                <>
+                                  <br />
+                                  <br />
+                                </>
+                              )}
+                              {applyDocFormatters(description, params)}
+                            </>
+                          ))}
+                        </Td>
+                      </Tr>
+                    );
+                  })}
               </Tbody>
             </Table>
           </PageSection>
@@ -358,7 +375,9 @@ export function CollectionDocumentationTabContent(props: { content: IContents | 
           </Title>
           {backtoMenuLink}
           <Stack hasGutter>
-            {content?.doc_strings?.doc.notes?.map((note, index) => <p key={index}>{applyDocFormatters(note, params)}</p>)}
+            {content?.doc_strings?.doc.notes?.map((note, index) => (
+              <p key={index}>{applyDocFormatters(note, params)}</p>
+            ))}
           </Stack>
         </PageSection>
       )}
@@ -432,8 +451,6 @@ export function CollectionDocumentationTabContent(props: { content: IContents | 
   );
 }
 
-
-
 function Sample(props: { sample: ISample }) {
   const { sample } = props;
 
@@ -482,23 +499,18 @@ function SampleLine(props: { text: string; level: number }) {
   );
 }
 
-function applyDocFormatters(text: string, params : Params): React.ReactNode {
+function applyDocFormatters(text: string, params: Params): React.ReactNode {
   // TODO: pass current plugin's type and name, and (if role) the current entrypoint as well
 
-  try
-  {
+  try {
     const parsed = parse(text);
 
     // Special case: result is a single paragraph consisting of a single text part
-    if (
-      parsed.length === 1 &&
-      parsed[0].length === 1 &&
-      parsed[0][0].type === dom.PartType.TEXT
-    ) {
+    if (parsed.length === 1 && parsed[0].length === 1 && parsed[0][0].type === dom.PartType.TEXT) {
       return <span>{parsed[0][0].text}</span>;
     }
 
-    const fragments : React.ReactNode[] = [];
+    const fragments: React.ReactNode[] = [];
     for (const paragraph of parsed) {
       for (const part of paragraph) {
         fragments.push(formatPart(part, params));
@@ -510,22 +522,22 @@ function applyDocFormatters(text: string, params : Params): React.ReactNode {
           <React.Fragment key={i}>{x}</React.Fragment>
         ))}
       </span>
-  );
-  }catch(error)
-  {
+    );
+  } catch (error) {
     return <>{text}</>;
   }
 }
 
-function formatPart(part: dom.Part, params : Params): React.ReactNode {
-
-  if (part.type === dom.PartType.PLUGIN || part.type === dom.PartType.LINK || part.type=== dom.PartType.MODULE)
-  {
+function formatPart(part: dom.Part, params: Params): React.ReactNode {
+  if (
+    part.type === dom.PartType.PLUGIN ||
+    part.type === dom.PartType.LINK ||
+    part.type === dom.PartType.MODULE
+  ) {
     //debugger;
   }
 
-  if (part.type !== dom.PartType.TEXT)
-  {
+  if (part.type !== dom.PartType.TEXT) {
     //debugger;
   }
 
@@ -559,43 +571,45 @@ function formatPart(part: dom.Part, params : Params): React.ReactNode {
     case dom.PartType.PLUGIN:
       return formatPartPlugin(part as dom.PluginPart, params);
     case dom.PartType.RETURN_VALUE:
-      return formatPartOptionNameReturnValue(
-        part as dom.ReturnValuePart, params);
+      return formatPartOptionNameReturnValue(part as dom.ReturnValuePart, params);
   }
 }
 
-
 function formatPartError(part: dom.ErrorPart): React.ReactNode {
-  return <span className='error'>ERROR while parsing: {part.message}</span>;
+  return <span className="error">ERROR while parsing: {part.message}</span>;
 }
 
 function formatPartBold(part: dom.BoldPart): React.ReactNode {
   return <b>{part.text}</b>;
 }
 
-function formatPartCode(part: dom.CodePart, params : Params): React.ReactNode {
- return formatPartCodeCommon(part.text, params);
+function formatPartCode(part: dom.CodePart, params: Params): React.ReactNode {
+  return formatPartCodeCommon(part.text, params);
 }
 
-function formatPartCodeCommon(text : string, params : Params) : React.ReactNode{
-
+function formatPartCodeCommon(text: string, params: Params): React.ReactNode {
   let color = '#e6e9e9';
-  if (params.settings.theme == 'dark')
-  {
+  if (params.settings.theme == 'dark') {
     color = '#6e9e9e';
   }
-  return <span style={{
-    backgroundColor: color,
-    fontFamily: 'var(--pf-global--FontFamily--monospace)',
-    display: 'inline-block',
-    borderRadius: '2px',
-    padding: '0 2px',
-  }}>{text}</span>;
+  return (
+    <span
+      style={{
+        backgroundColor: color,
+        fontFamily: 'var(--pf-global--FontFamily--monospace)',
+        display: 'inline-block',
+        borderRadius: '2px',
+        padding: '0 2px',
+      }}
+    >
+      {text}
+    </span>
+  );
 }
 
 function formatPartHorizontalLine(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  part: dom.HorizontalLinePart,
+  part: dom.HorizontalLinePart
 ): React.ReactNode {
   return <hr />;
 }
@@ -604,14 +618,13 @@ function formatPartItalic(part: dom.ItalicPart): React.ReactNode {
   return <i>{part.text}</i>;
 }
 
-function formatPartLink(part: dom.LinkPart, params : Params): React.ReactNode {
+function formatPartLink(part: dom.LinkPart, params: Params): React.ReactNode {
   return renderDocLink(part.text, part.url, params);
 }
 
-function formatPartModule(part: dom.ModulePart, params : Params): React.ReactNode {
-
-  const newDocParams = {...params.docParams};
-  const newParams = {...params};
+function formatPartModule(part: dom.ModulePart, params: Params): React.ReactNode {
+  const newDocParams = { ...params.docParams };
+  const newParams = { ...params };
   newDocParams.content_type = 'module';
   newParams.docParams = newDocParams;
 
@@ -630,56 +643,43 @@ function formatPartText(part: dom.TextPart): React.ReactNode {
   return part.text;
 }
 
-function formatPartEnvVariable(part: dom.EnvVariablePart, params : Params): React.ReactNode {
+function formatPartEnvVariable(part: dom.EnvVariablePart, params: Params): React.ReactNode {
   return formatPartCodeCommon(part.name, params);
 }
 
 function formatPartOptionNameReturnValue(
-  part: dom.OptionNamePart | dom.ReturnValuePart, params : Params
+  part: dom.OptionNamePart | dom.ReturnValuePart,
+  params: Params
 ): React.ReactNode {
-
-  const newDocParams = {...params.docParams};
-  const newParams = {...params};
+  const newDocParams = { ...params.docParams };
+  const newParams = { ...params };
   newDocParams.content_type = part.plugin?.type || '';
   newParams.docParams = newDocParams;
 
   const content =
-    part.value === undefined ? (
-      formatPartCodeCommon(part.name, params)
-    ) : (
-      formatPartCodeCommon(part.value, params)
-    );
+    part.value === undefined
+      ? formatPartCodeCommon(part.name, params)
+      : formatPartCodeCommon(part.value, params);
   if (!part.plugin) {
     return content;
   }
-  return renderPluginLink(
-    part.plugin.fqcn,
-    newParams
-  );
+  return renderPluginLink(part.plugin.fqcn, newParams);
 }
 
-function formatPartOptionValue(part: dom.OptionValuePart, params : Params): React.ReactNode {
+function formatPartOptionValue(part: dom.OptionValuePart, params: Params): React.ReactNode {
   return formatPartCodeCommon(part.value, params);
 }
 
-function formatPartPlugin(part: dom.PluginPart, params : Params): React.ReactNode {
-  
-  const newDocParams = {...params.docParams};
-  const newParams = {...params};
+function formatPartPlugin(part: dom.PluginPart, params: Params): React.ReactNode {
+  const newDocParams = { ...params.docParams };
+  const newParams = { ...params };
   newDocParams.content_type = part.plugin.type;
   newParams.docParams = newDocParams;
 
-  return renderPluginLink(
-    part.plugin.fqcn,
-    newParams,
-  );
+  return renderPluginLink(part.plugin.fqcn, newParams);
 }
 
-function renderDocLink(
-  name : string,
-  href : string | undefined,
-  params : Params
-) {
+function renderDocLink(name: string, href: string | undefined, params: Params) {
   const docParams = params.docParams;
 
   if (!!href && href.startsWith('http')) {
@@ -690,27 +690,22 @@ function renderDocLink(
     // way to document this
 
     let path = window.location.href;
-    path = path.replace('/contents', `/documentation/${docParams.content_type}/${docParams.content_name}`);
-
-    return (
-      <Link
-        to={formatDocPath(
-         params
-        )}
-      >
-        {name}
-      </Link>
+    path = path.replace(
+      '/contents',
+      `/documentation/${docParams.content_type}/${docParams.content_name}`
     );
+
+    return <Link to={formatDocPath(params)}>{name}</Link>;
   } else {
     return null;
   }
 }
 
-function renderPluginConfiguration(option : IContentsOption) {
+function renderPluginConfiguration(option: IContentsOption) {
   return (
     <React.Fragment>
       {option.ini ? (
-        <div className='plugin-config'>
+        <div className="plugin-config">
           ini entries:
           {option.ini.map((v, i) => (
             <p key={i}>
@@ -722,7 +717,7 @@ function renderPluginConfiguration(option : IContentsOption) {
       ) : null}
 
       {option.env ? (
-        <div className='plugin-config'>
+        <div className="plugin-config">
           {option.env.map((v, i) => (
             <div key={i}>env: {v.name}</div>
           ))}
@@ -730,7 +725,7 @@ function renderPluginConfiguration(option : IContentsOption) {
       ) : null}
 
       {option.vars ? (
-        <div className='plugin-config'>
+        <div className="plugin-config">
           {option['vars'].map((v, i) => (
             <div key={i}>var: {v.name}</div>
           ))}
@@ -740,56 +735,49 @@ function renderPluginConfiguration(option : IContentsOption) {
   );
 }
 
-function renderPluginLink(
-  text : string,
-  params : Params, 
-) {
-
-  let module : IContents | undefined = undefined;
+function renderPluginLink(text: string, params: Params) {
+  let module: IContents | undefined = undefined;
   const docParams = params.docParams;
 
-  params.groups.forEach( (group) => {
-    group.contents.forEach( (content) => {
-      if (content.content_name == docParams.content_name && content.content_type == docParams.content_type)
-      {
+  params.groups.forEach((group) => {
+    group.contents.forEach((content) => {
+      if (
+        content.content_name == docParams.content_name &&
+        content.content_type == docParams.content_type
+      ) {
         module = content;
       }
-    })
-
+    });
   });
 
   if (module) {
-    return (
-      <Link
-        to={formatDocPath(
-          params, 
-        )}
-      >
-        {text}
-      </Link>
-    );
+    return <Link to={formatDocPath(params)}>{text}</Link>;
   } else {
     return text;
   }
 }
 
-function formatDocPath(params : Params)
-{
+function formatDocPath(params: Params) {
   const { repository, namespace, name, content_type, content_name } = params.docParams;
-  const path = params.getPageUrl(HubRoute.CollectionDocumentationContent, 
-      { 
-      params : { repository, namespace, name }, 
-      query : { content_type, content_name }
-    });
+  const path = params.getPageUrl(HubRoute.CollectionDocumentationContent, {
+    params: { repository, namespace, name },
+    query: { content_type, content_name },
+  });
   return path;
 }
 
 type Params = {
-  getPageUrl : ReturnType<typeof useGetPageUrl>,
-  groups : GroupType[],
-  docParams : DocParams,
-  url : string;
-  settings : ReturnType<typeof useSettings>,
+  getPageUrl: ReturnType<typeof useGetPageUrl>;
+  groups: GroupType[];
+  docParams: DocParams;
+  url: string;
+  settings: ReturnType<typeof useSettings>;
 };
 
-type DocParams = { repository : string, namespace :string, name : string, content_type : string, content_name : string};
+type DocParams = {
+  repository: string;
+  namespace: string;
+  name: string;
+  content_type: string;
+  content_name: string;
+};
