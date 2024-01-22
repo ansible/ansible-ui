@@ -19,7 +19,6 @@ import {
 import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
 import { postRequest } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
-import { SWR_REFRESH_INTERVAL } from '../../common/eda-constants';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaProject } from '../../interfaces/EdaProject';
 import { ImportStateEnum } from '../../interfaces/generated/eda-api';
@@ -33,11 +32,7 @@ export function ProjectPage() {
   const getPageUrl = useGetPageUrl();
   const alertToaster = usePageAlertToaster();
 
-  const { data: project, refresh } = useGet<EdaProject>(
-    edaAPI`/projects/${params.id ?? ''}/`,
-    undefined,
-    { refreshInterval: SWR_REFRESH_INTERVAL }
-  );
+  const { data: project, refresh } = useGet<EdaProject>(edaAPI`/projects/${params.id ?? ''}/`);
   const syncProject = useCallback(
     (project: EdaProject) =>
       postRequest(edaAPI`/projects/${project.id.toString()}/sync/`, undefined)

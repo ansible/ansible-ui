@@ -2,16 +2,15 @@
 import { Button, Form, Modal, ModalVariant } from '@patternfly/react-core';
 import { ReactNode, createContext, useCallback, useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { RefreshIntervalSelect } from '../frontend/common/components/RefreshInterval';
 import { usePageDialog } from './PageDialogs/PageDialog';
 import { PageFormGroup } from './PageForm/Inputs/PageFormGroup';
 import { PageSingleSelect } from './PageInputs/PageSingleSelect';
+import { Scrollable } from './components/Scrollable';
 import { useFrameworkTranslations } from './useFrameworkTranslations';
 
-const FormDiv = styled.div`
-  padding: var(--pf-v5-global--spacer--lg);
-`;
-
 export interface Settings {
+  refreshInterval?: 60;
   theme?: 'system' | 'light' | 'dark';
   activeTheme?: 'light' | 'dark';
   tableLayout?: 'compact' | 'comfortable';
@@ -138,7 +137,7 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
       aria-label="Settings"
       isOpen={props.open}
       onClose={onClose}
-      variant={ModalVariant.medium}
+      variant={ModalVariant.small}
       tabIndex={0}
       actions={[
         <Button key="close" variant="primary" onClick={onClose}>
@@ -147,76 +146,117 @@ export function SettingsDialog(props: { open: boolean; setOpen: (open: boolean) 
       ]}
       hasNoBodyWrapper
     >
-      <FormDiv>
-        <Form isHorizontal={settings.formLayout === 'horizontal'} autoComplete="off">
-          <PageFormGroup label="Theme" fieldId="theme">
-            <PageSingleSelect
-              id="theme"
-              value={settings.theme ?? 'system'}
-              onSelect={(theme) =>
-                setSettings({ ...settings, theme: theme as 'system' | 'light' | 'dark' })
-              }
-              placeholder="Select theme"
-              options={[
-                { label: 'System default', value: 'system' },
-                { label: 'Light', value: 'light' },
-                { label: 'Dark', value: 'dark' },
-              ]}
-            />
-          </PageFormGroup>
-          <PageFormGroup label="Table Layout" fieldId="table-layout">
-            <PageSingleSelect
-              id="table-layout"
-              value={settings.tableLayout ?? 'comfortable'}
-              onSelect={(tableLayout) =>
-                setSettings({
-                  ...settings,
-                  tableLayout: tableLayout as 'compact' | 'comfortable',
-                })
-              }
-              placeholder="Select table layout"
-              options={[
-                { label: 'Comfortable', value: 'comfortable' },
-                { label: 'Compact', value: 'compact' },
-              ]}
-            />
-          </PageFormGroup>
-          <PageFormGroup label="Form Columns" fieldId="form-columns">
-            <PageSingleSelect
-              id="form-columns"
-              value={settings.formColumns ?? 'multiple'}
-              onSelect={(formColumns) =>
-                setSettings({
-                  ...settings,
-                  formColumns: formColumns as 'multiple' | 'single',
-                })
-              }
-              placeholder="Select form columns"
-              options={[
-                { label: 'Multiple columns', value: 'multiple' },
-                { label: 'Single column', value: 'single' },
-              ]}
-            />
-          </PageFormGroup>
-          <PageFormGroup label="Form Layout" fieldId="form-layout">
-            <PageSingleSelect
-              id="form-layout"
-              value={settings.formLayout ?? 'vertical'}
-              onSelect={(formLayout) =>
-                setSettings({
-                  ...settings,
-                  formLayout: formLayout as 'vertical' | 'horizontal',
-                })
-              }
-              placeholder="Select form layout"
-              options={[
-                { label: 'Vertical labels', value: 'vertical' },
-                { label: 'Horizontal labels', value: 'horizontal' },
-              ]}
-            />
-          </PageFormGroup>
-        </Form>
-      </FormDiv>
+      <Scrollable>
+        <FormDiv>
+          <Form isHorizontal={settings.formLayout === 'horizontal'} autoComplete="off">
+            <PageFormGroup label="Refresh interval" fieldId="form-columns">
+              <RefreshIntervalSelect />
+            </PageFormGroup>
+
+            <PageFormGroup label="Color Theme" fieldId="theme">
+              <PageSingleSelect
+                id="theme"
+                value={settings.theme ?? 'system'}
+                onSelect={(theme) =>
+                  setSettings({ ...settings, theme: theme as 'system' | 'light' | 'dark' })
+                }
+                placeholder="Select theme"
+                options={[
+                  {
+                    label: 'System default',
+                    value: 'system',
+                    description: 'Use system default color theme',
+                  },
+                  { label: 'Light', value: 'light', description: 'Enable light theme' },
+                  { label: 'Dark', value: 'dark', description: 'Enable dark theme' },
+                ]}
+              />
+            </PageFormGroup>
+
+            <PageFormGroup label="Table Layout" fieldId="table-layout">
+              <PageSingleSelect
+                id="table-layout"
+                value={settings.tableLayout ?? 'comfortable'}
+                onSelect={(tableLayout) =>
+                  setSettings({
+                    ...settings,
+                    tableLayout: tableLayout as 'compact' | 'comfortable',
+                  })
+                }
+                placeholder="Select table layout"
+                options={[
+                  {
+                    label: 'Comfortable',
+                    value: 'comfortable',
+                    description: 'Increase vertical spacing and makes the table more comfortable.',
+                  },
+                  {
+                    label: 'Compact',
+                    value: 'compact',
+                    description: 'Reduce vertical spacing and makes the table more compact.',
+                  },
+                ]}
+              />
+            </PageFormGroup>
+
+            <PageFormGroup label="Form Columns" fieldId="form-columns">
+              <PageSingleSelect
+                id="form-columns"
+                value={settings.formColumns ?? 'multiple'}
+                onSelect={(formColumns) =>
+                  setSettings({
+                    ...settings,
+                    formColumns: formColumns as 'multiple' | 'single',
+                  })
+                }
+                placeholder="Select form columns"
+                options={[
+                  {
+                    label: 'Multiple',
+                    value: 'multiple',
+                    description: 'Multiple columns are used to display form fields.',
+                  },
+                  {
+                    label: 'Single',
+                    value: 'single',
+                    description: 'Single column is used to display form fields.',
+                  },
+                ]}
+              />
+            </PageFormGroup>
+
+            <PageFormGroup label="Form Labels" fieldId="form-layout">
+              <PageSingleSelect
+                id="form-layout"
+                value={settings.formLayout ?? 'vertical'}
+                onSelect={(formLayout) =>
+                  setSettings({
+                    ...settings,
+                    formLayout: formLayout as 'vertical' | 'horizontal',
+                  })
+                }
+                placeholder="Select form layout"
+                options={[
+                  {
+                    label: 'Vertical',
+                    value: 'vertical',
+                    description: 'Labels for form fields are displayed above the fields.',
+                  },
+                  {
+                    label: 'Horizontal',
+                    value: 'horizontal',
+                    description: 'Labels for form fields are displayed to the left of the fields.',
+                  },
+                ]}
+              />
+            </PageFormGroup>
+          </Form>
+        </FormDiv>
+      </Scrollable>
     </Modal>
   );
 }
+
+const FormDiv = styled.div`
+  padding: var(--pf-v5-global--spacer--lg);
+`;

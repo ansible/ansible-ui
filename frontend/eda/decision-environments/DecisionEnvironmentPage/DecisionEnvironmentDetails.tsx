@@ -3,7 +3,6 @@ import { Link, useParams } from 'react-router-dom';
 import { DateTimeCell, PageDetail, PageDetails, useGetPageUrl } from '../../../../framework';
 import { LastModifiedPageDetail } from '../../../common/LastModifiedPageDetail';
 import { useGet } from '../../../common/crud/useGet';
-import { SWR_REFRESH_INTERVAL } from '../../common/eda-constants';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaCredential } from '../../interfaces/EdaCredential';
 import { EdaDecisionEnvironmentRead } from '../../interfaces/EdaDecisionEnvironment';
@@ -28,9 +27,7 @@ export function DecisionEnvironmentDetails() {
     </>
   );
   const { data: decisionEnvironment } = useGet<EdaDecisionEnvironmentRead>(
-    edaAPI`/decision-environments/${params.id ?? ''}/`,
-    undefined,
-    { refreshInterval: SWR_REFRESH_INTERVAL }
+    edaAPI`/decision-environments/${params.id ?? ''}/`
   );
 
   const { data: credential } = useGet<EdaCredential>(

@@ -18,7 +18,6 @@ import {
 import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { useGet } from '../../../../common/crud/useGet';
-import { SWR_REFRESH_INTERVAL } from '../../../common/eda-constants';
 import { edaAPI } from '../../../common/eda-utils';
 import { useEdaActiveUser } from '../../../common/useEdaActiveUser';
 import { EdaUser } from '../../../interfaces/EdaUser';
@@ -28,9 +27,7 @@ import { useDeleteUsers } from '../hooks/useDeleteUser';
 export function UserPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { data: user } = useGet<EdaUser>(edaAPI`/users/${params.id ?? ''}/`, undefined, {
-    refreshInterval: SWR_REFRESH_INTERVAL,
-  });
+  const { data: user } = useGet<EdaUser>(edaAPI`/users/${params.id ?? ''}/`);
   const pageNavigate = usePageNavigate();
   const deleteUsers = useDeleteUsers((deleted) => {
     if (deleted && deleted.length > 0) {

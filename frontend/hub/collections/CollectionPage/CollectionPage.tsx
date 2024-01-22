@@ -2,6 +2,7 @@ import { Button, Label } from '@patternfly/react-core';
 import { DropdownPosition } from '@patternfly/react-core/dist/esm/deprecated';
 import { CheckCircleIcon, ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { DateTime } from 'luxon';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useSearchParams } from 'react-router-dom';
 import {
@@ -13,19 +14,17 @@ import {
 } from '../../../../framework';
 import { PageAsyncSingleSelect } from '../../../../framework/PageInputs/PageAsyncSingleSelect';
 import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
+import { singleSelectBrowseAdapter } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSingleSelectFilter';
 import { requestGet } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
 import { HubError } from '../../common/HubError';
 import { hubAPI } from '../../common/api/formatPath';
+import { useHubContext } from '../../common/useHubContext';
 import { HubItemsResponse } from '../../common/useHubView';
 import { HubRoute } from '../../main/HubRoutes';
 import { CollectionVersionSearch } from '../Collection';
 import { useCollectionActions } from '../hooks/useCollectionActions';
-
-import { useCallback } from 'react';
-import { singleSelectBrowseAdapter } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSingleSelectFilter';
 import { useSelectCollectionVersionSingle } from '../hooks/useCollectionVersionSelector';
-import { useHubContext } from '../../common/useHubContext';
 
 export function CollectionPage() {
   const { t } = useTranslation();
