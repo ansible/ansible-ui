@@ -11,6 +11,7 @@ import { PageApp } from '../../framework/PageNavigation/PageApp';
 import { AwxActiveUserProvider } from '../../frontend/awx/common/useAwxActiveUser';
 import { AwxConfigProvider } from '../../frontend/awx/common/useAwxConfig';
 import { WebSocketProvider } from '../../frontend/awx/common/useAwxWebSocket';
+import { RefreshIntervalProvider } from '../../frontend/common/components/RefreshInterval';
 import '../../frontend/common/i18n';
 import { EdaActiveUserProvider } from '../../frontend/eda/common/useEdaActiveUser';
 import { HubContextProvider } from '../../frontend/hub/common/useHubContext';
@@ -20,30 +21,33 @@ import { PlatformLogin } from './PlatformLogin';
 import { PlatformMasthead } from './PlatformMasthead';
 import { usePlatformNavigation } from './usePlatformNavigation';
 
+// eslint-disable-next-line no-restricted-exports
 export default function PlatformMain() {
   const navigation = usePlatformNavigation();
   return (
-    <PageApp
-      login={<PlatformLogin />}
-      root={
-        <QuickStartProvider>
-          <WebSocketProvider>
-            <ActivePlatformUserProvider>
-              <AwxActiveUserProvider>
-                <AwxConfigProvider>
-                  <HubContextProvider>
-                    <EdaActiveUserProvider>
-                      <Outlet />
-                    </EdaActiveUserProvider>
-                  </HubContextProvider>
-                </AwxConfigProvider>
-              </AwxActiveUserProvider>
-            </ActivePlatformUserProvider>
-          </WebSocketProvider>
-        </QuickStartProvider>
-      }
-      masthead={<PlatformMasthead />}
-      navigation={navigation}
-    />
+    <RefreshIntervalProvider>
+      <PageApp
+        login={<PlatformLogin />}
+        root={
+          <QuickStartProvider>
+            <WebSocketProvider>
+              <ActivePlatformUserProvider>
+                <AwxActiveUserProvider>
+                  <AwxConfigProvider>
+                    <HubContextProvider>
+                      <EdaActiveUserProvider>
+                        <Outlet />
+                      </EdaActiveUserProvider>
+                    </HubContextProvider>
+                  </AwxConfigProvider>
+                </AwxActiveUserProvider>
+              </ActivePlatformUserProvider>
+            </WebSocketProvider>
+          </QuickStartProvider>
+        }
+        masthead={<PlatformMasthead />}
+        navigation={navigation}
+      />
+    </RefreshIntervalProvider>
   );
 }
