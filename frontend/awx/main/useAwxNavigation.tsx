@@ -6,9 +6,9 @@ import { AwxRolePage } from '../access/roles/AwxRolePage';
 import { AwxRoles } from '../access/roles/AwxRoles';
 import { AwxSettings } from '../administration/settings/AwxSettings';
 import { Topology } from '../administration/topology/Topology';
-import { Test } from '../analytics/AnalyticsReportBuilder/Test';
+// import { Test } from '../analytics/AnalyticsReportBuilder/Test';
 import { Reports } from '../analytics/Reports/Reports';
-import { ReportsList } from '../analytics/Reports/ReportsList/ReportsList';
+// import { ReportsList } from '../analytics/Reports/ReportsList/ReportsList';
 import { SubscriptionUsage } from '../analytics/subscription-usage/SubscriptionUsage';
 import { AwxOverview } from '../overview/AwxOverview';
 import { HostMetrics } from '../views/jobs/HostMetrics';
@@ -87,24 +87,24 @@ export function useAwxNavigation() {
       label: t('Analytics'),
       path: 'analytics',
       children: [
-        {
-          id: AwxRoute.Reports,
-          label: t('Reports'),
-          path: 'reports',
-          element: <ReportsList />,
-        },
+        // {
+        //   id: AwxRoute.Reports,
+        //   label: t('Reports'),
+        //   path: 'reports',
+        //   element: <ReportsList />,
+        // },
         {
           id: AwxRoute.AutomationCalculator,
           label: t('Automation Calculator'),
           path: 'automation-calculator',
           element: <Reports />,
         },
-        {
-          id: AwxRoute.AnalyticsBuilder,
-          label: t('Analytics builder'),
-          path: 'builder',
-          element: <Test />,
-        },
+        // {
+        //   id: AwxRoute.AnalyticsBuilder,
+        //   label: t('Analytics builder'),
+        //   path: 'builder',
+        //   element: <Test />,
+        // },
         {
           id: AwxRoute.HostMetrics,
           label: t('Host Metrics'),
