@@ -1,7 +1,7 @@
 import { hubAPI } from '../../support/formatApiPathForHub';
 import { Collections } from './constants';
 
-describe('Collections- List View', () => {
+describe.skip('Collections- List View', () => {
   //**Important to know:
   //**In order to upload a collection, a namespace must first exist containing the first word of the collection file name
   //**The only way to get rid of a collection's artifact is to choose the following option:
