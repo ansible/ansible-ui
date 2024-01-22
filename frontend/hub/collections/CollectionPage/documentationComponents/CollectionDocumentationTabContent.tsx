@@ -16,8 +16,16 @@ import { useSearchParams } from 'react-router-dom';
 import { ISample } from '../../Collection';
 import { queryStringFromObject } from '../../../../common/utils/queryStringFromObject';
 import { useGetPageUrl } from '../../../../../framework';
+import { HubRoute } from '../../../main/HubRoutes';
+import { string } from 'yaml/dist/schema/common/string';
 
-export function CollectionDocumentationTabContent(props: { content: IContents | undefined }) {
+type GroupType = {
+  name: string;
+  contents: IContents[];
+}
+
+
+export function CollectionDocumentationTabContent(props: { content: IContents | undefined, groups: GroupType[]}) {
   const { t } = useTranslation();
   const { content } = props;
   const splitString = '- name';
@@ -275,7 +283,7 @@ export function CollectionDocumentationTabContent(props: { content: IContents | 
                           );
                         })}
                       </Td>
-                      <Td>{descriptions.map( (description) => applyDocFormatters(description))}</Td>
+                      <Td>{descriptions.map( (description) => applyDocFormatters(description, getPageUrl))}</Td>
                     </Tr>
                   )})}
               </Tbody>
@@ -414,7 +422,7 @@ function SampleLine(props: { text: string; level: number }) {
   );
 }
 
-function applyDocFormatters(text: string): React.ReactNode {
+function applyDocFormatters(text: string, pathParams : PathParams): React.ReactNode {
   // TODO: pass current plugin's type and name, and (if role) the current entrypoint as well
 
   debugger;
@@ -432,7 +440,7 @@ function applyDocFormatters(text: string): React.ReactNode {
   const fragments : React.ReactNode[] = [];
   for (const paragraph of parsed) {
     for (const part of paragraph) {
-      fragments.push(formatPart(part));
+      fragments.push(formatPart(part, pathParams));
     }
   }
   return (
@@ -444,7 +452,7 @@ function applyDocFormatters(text: string): React.ReactNode {
   );
 }
 
-function formatPart(part: dom.Part): React.ReactNode {
+function formatPart(part: dom.Part, pathParams : PathParams): React.ReactNode {
   switch (part.type) {
     case dom.PartType.ERROR:
       return formatPartError(part as dom.ErrorPart);
@@ -606,30 +614,29 @@ function renderDocLink(
 }
 
 function renderPluginLink(
-  pluginName,
-  pluginType,
-  text,
-  collection,
-  params,
-  allContent,
+  text : string,
+  params : Params, 
+  docParams : DocParams, 
 ) {
-  const module = allContent.find(
-    (x) => x.content_type === pluginType && x.name === pluginName,
-  );
+
+  let module : IContents | undefined = undefined;
+
+  params.groups.forEach( (group) => {
+    group.contents.forEach( (content) => {
+      if (content.content_name == docParams.content_name && content.content_type == docParams.content_type)
+      {
+        module = content;
+      }
+    })
+
+  });
 
   if (module) {
     return (
       <Link
-        to={formatPath(
-          Paths.collectionContentDocsByRepo,
-          {
-            namespace: collection.collection_version.namespace,
-            collection: collection.collection_version.name,
-            type: pluginType,
-            name: pluginName,
-            repo: this.props.routeParams.repo,
-          },
-          params,
+        to={formatDocPath(
+          params, 
+         docParams,
         )}
       >
         {text}
@@ -640,7 +647,21 @@ function renderPluginLink(
   }
 }
 
-function formatDocPath(repo :string, namespace :string, collection : string, plugin_type : string, plugin_name : string)
+function formatDocPath(params : Params, docParams : DocParams)
 {
-  const path = 
+  debugger;
+  const { repository, namespace, name, content_type, content_name } = docParams;
+  const path = params.getPageUrl(HubRoute.CollectionDocumentationContent, 
+      { 
+      params : { repository, namespace, name }, 
+      query : { content_type, content_name }
+    });
+  return path;
 }
+
+type Params = {
+  getPageUrl : ReturnType<typeof useGetPageUrl>,
+  groups : GroupType[],
+};
+
+type DocParams = { repository : string, namespace :string, name : string, content_type : string, content_name : string};
