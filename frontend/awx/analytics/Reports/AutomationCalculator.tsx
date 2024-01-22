@@ -365,7 +365,7 @@ export function AutomationCalculatorInternal(props: {
       awxAPI`/analytics/roi_templates/?limit=${perPage.toString()}&offset=${(
         (page - 1) *
         perPage
-      ).toString()}&sort_by=${sortOption?.value}${encodeURIComponent(`:${sortOrder}`)}`,
+      ).toString()}&sort_by=${sortOption?.value}:${encodeURIComponent(sortOrder)}`,
       requestBody,
       abortController.signal
     )
@@ -409,7 +409,7 @@ export function AutomationCalculatorInternal(props: {
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     const tooltip = `${sortOption.label} for ${datum.name || ''}: ${
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      formattedValue('successful_hosts_savings', datum.y) || ''
+      formattedValue(sortOption.value, datum.y) || ''
     }`;
     return tooltip;
   };
