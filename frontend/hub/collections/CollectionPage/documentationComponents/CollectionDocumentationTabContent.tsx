@@ -122,7 +122,19 @@ export function CollectionDocumentationTabContent(props: { content: IContents | 
 
   const backtoMenuLink = <a href={`?${queryString}#Menu_part`}>{t('Back to overview')}</a>;
 
-
+  const params  : Params= {
+    getPageUrl, 
+    groups : props.groups,  
+    url : '',
+    settings,
+    docParams : {
+      repository : '',
+      namespace : '',
+      name : '',
+      content_name : '',
+      content_type : '',
+    }
+  };
 
   return (
     <>
@@ -130,7 +142,7 @@ export function CollectionDocumentationTabContent(props: { content: IContents | 
         <Stack hasGutter>
           <Title headingLevel="h1">{content?.content_type + ' > ' + content?.content_name}</Title>
           {content?.doc_strings?.doc?.short_description && (
-            <StackItem>{content?.doc_strings?.doc.short_description}</StackItem>
+            <StackItem>{applyDocFormatters(content?.doc_strings?.doc.short_description, params)}</StackItem>
           )}
           {content?.doc_strings?.doc?.deprecated && (
             <>
@@ -138,12 +150,12 @@ export function CollectionDocumentationTabContent(props: { content: IContents | 
               <StackItem>
                 {' '}
                 <span style={{ fontWeight: 'bold' }}>{t('Why')}</span> :{' '}
-                {content?.doc_strings?.doc?.deprecated?.why}
+                {applyDocFormatters(content?.doc_strings?.doc?.deprecated?.why, params)}
               </StackItem>
               <StackItem>
                 {' '}
                 <span style={{ fontWeight: 'bold' }}>{t('Alternative')}</span> :{' '}
-                {content?.doc_strings?.doc?.deprecated?.alternative}
+                {applyDocFormatters(content?.doc_strings?.doc?.deprecated?.alternative, params)}
               </StackItem>
             </>
           )}
@@ -190,7 +202,7 @@ export function CollectionDocumentationTabContent(props: { content: IContents | 
             <Stack hasGutter>
               <ul>
                 {content?.doc_strings?.doc?.description.map((item, index) => (
-                  <li key={item + index.toString()}>{item}</li>
+                  <li key={item + index.toString()}>{applyDocFormatters(item, params)}</li>
                 ))}
               </ul>
             </Stack>
@@ -225,6 +237,35 @@ export function CollectionDocumentationTabContent(props: { content: IContents | 
                   .map((optionRecord) => {
                     const descriptions = Array.isArray(optionRecord.option.description) ?
                       optionRecord.option.description : [optionRecord.option.description];
+
+                      // if its string, transform it to array
+                      if (typeof optionRecord.option.default === 'string' )
+                      {
+                        optionRecord.option.default = [optionRecord.option.default];
+                      } 
+                      // special cases where choices are empty, fill are with defaults
+                      if (!optionRecord.option.choices || Array.isArray(optionRecord.option.choices))
+                      {
+                        if (Array.isArray(optionRecord.option.default))
+                        {
+                          optionRecord.option.choices = optionRecord.option.default;
+                        }
+                      }
+
+                      const params : Params = {
+                        getPageUrl, 
+                        groups : props.groups,  
+                        docParams : 
+                        { 
+                          repository : props.collection.repository?.name || '', 
+                          namespace : props.collection.collection_version?.namespace || '', 
+                          name : props.collection.collection_version?.name || '',
+                          content_type : content?.content_type || '',
+                          content_name : content?.content_name || '',
+                        },
+                        url : '',
+                        settings,
+                  }
 
                     return (
                     <Tr key={optionRecord.path_name}>
@@ -271,37 +312,30 @@ export function CollectionDocumentationTabContent(props: { content: IContents | 
                         </div>
                       </Td>
                       <Td>
-                        {optionRecord.option.choices?.map((choice) => {
+                        {optionRecord.option.choices?.map((choice, index) => {
                           let style = {};
                           let title = '';
-                          if (optionRecord.option.default?.toString() === choice.toString()) {
+
+                          if (Array.isArray(optionRecord.option.default) && optionRecord.option.default.includes(choice)) {
                             title = t('Default');
                             style = { color: PFColorE.Blue };
                           }
+                          
+                          if (typeof choice === 'string')
+                          {
+                                                   return (
+                                        <p title={title} style={style} key={choice + index}>
+                                          {choice}
+                                        </p>
+                                    );
+                          }
 
-                          return (
-                            <p title={title} style={style} key={choice}>
-                              {choice}
-                            </p>
-                          );
+                          return <></>;
                         })}
                       </Td>
                       <Td>{descriptions.map( (description, index) => <>
                           {index > 0 && <><br/><br/></>}
-                          {applyDocFormatters(description, {
-                            getPageUrl, 
-                            groups : props.groups,  
-                            docParams : 
-                            { 
-                              repository : props.collection.repository?.name || '', 
-                              namespace : props.collection.collection_version?.namespace || '', 
-                              name : props.collection.collection_version?.name || '',
-                              content_type : content?.content_type || '',
-                              content_name : content?.content_name || '',
-                            },
-                            url : '',
-                            settings,
-                      })}</>)}</Td>
+                          {applyDocFormatters(description, params)}</>)}</Td>
                     </Tr>
                   )})}
               </Tbody>
@@ -316,7 +350,7 @@ export function CollectionDocumentationTabContent(props: { content: IContents | 
           </Title>
           {backtoMenuLink}
           <Stack hasGutter>
-            {content?.doc_strings?.doc.notes?.map((note, index) => <p key={index}>{note}</p>)}
+            {content?.doc_strings?.doc.notes?.map((note, index) => <p key={index}>{applyDocFormatters(note, params)}</p>)}
           </Stack>
         </PageSection>
       )}
@@ -370,7 +404,7 @@ export function CollectionDocumentationTabContent(props: { content: IContents | 
                     </Td>
                     <Td>{parameter.returned}</Td>
                     <Td>
-                      <div>{parameter.description}</div>
+                      <div>{applyDocFormatters(parameter.description, params)}</div>
                       {parameter.sample && (
                         <>
                           <div>{t('Sample')}:</div>
@@ -443,42 +477,48 @@ function SampleLine(props: { text: string; level: number }) {
 function applyDocFormatters(text: string, params : Params): React.ReactNode {
   // TODO: pass current plugin's type and name, and (if role) the current entrypoint as well
 
-  const parsed = parse(text);
+  try
+  {
+    const parsed = parse(text);
 
-  // Special case: result is a single paragraph consisting of a single text part
-  if (
-    parsed.length === 1 &&
-    parsed[0].length === 1 &&
-    parsed[0][0].type === dom.PartType.TEXT
-  ) {
-    return <span>{parsed[0][0].text}</span>;
-  }
-
-  const fragments : React.ReactNode[] = [];
-  for (const paragraph of parsed) {
-    for (const part of paragraph) {
-      fragments.push(formatPart(part, params));
+    // Special case: result is a single paragraph consisting of a single text part
+    if (
+      parsed.length === 1 &&
+      parsed[0].length === 1 &&
+      parsed[0][0].type === dom.PartType.TEXT
+    ) {
+      return <span>{parsed[0][0].text}</span>;
     }
-  }
-  return (
-    <span>
-      {fragments.map((x, i) => (
-        <React.Fragment key={i}>{x}</React.Fragment>
-      ))}
-    </span>
+
+    const fragments : React.ReactNode[] = [];
+    for (const paragraph of parsed) {
+      for (const part of paragraph) {
+        fragments.push(formatPart(part, params));
+      }
+    }
+    return (
+      <span>
+        {fragments.map((x, i) => (
+          <React.Fragment key={i}>{x}</React.Fragment>
+        ))}
+      </span>
   );
+  }catch(error)
+  {
+    return <>{text}</>;
+  }
 }
 
 function formatPart(part: dom.Part, params : Params): React.ReactNode {
 
   if (part.type === dom.PartType.PLUGIN || part.type === dom.PartType.LINK || part.type=== dom.PartType.MODULE)
   {
-    debugger;
+    //debugger;
   }
 
   if (part.type !== dom.PartType.TEXT)
   {
-    debugger;
+    //debugger;
   }
 
   switch (part.type) {
@@ -693,7 +733,6 @@ function renderPluginLink(
 
 function formatDocPath(params : Params)
 {
-  debugger;
   const { repository, namespace, name, content_type, content_name } = params.docParams;
   const path = params.getPageUrl(HubRoute.CollectionDocumentationContent, 
       { 
