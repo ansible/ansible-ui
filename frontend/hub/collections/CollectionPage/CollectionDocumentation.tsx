@@ -106,7 +106,7 @@ export function CollectionDocumentation() {
         }
       >
         <DrawerContentBody className="body hub-docs-content pf-v5-c-content hub-content-alert-fix">
-          {content && <CollectionDocumentationTabContent content={content} groups={groups} />}
+          {content && <CollectionDocumentationTabContent content={content} groups={groups} collection={collection} />}
           {html && (
             <div
               dangerouslySetInnerHTML={{

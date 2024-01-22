@@ -17,7 +17,8 @@ import { ISample } from '../../Collection';
 import { queryStringFromObject } from '../../../../common/utils/queryStringFromObject';
 import { useGetPageUrl } from '../../../../../framework';
 import { HubRoute } from '../../../main/HubRoutes';
-import { string } from 'yaml/dist/schema/common/string';
+import { CollectionVersionSearch } from '../../Collection';
+
 
 type GroupType = {
   name: string;
@@ -25,7 +26,7 @@ type GroupType = {
 }
 
 
-export function CollectionDocumentationTabContent(props: { content: IContents | undefined, groups: GroupType[]}) {
+export function CollectionDocumentationTabContent(props: { content: IContents | undefined, collection : CollectionVersionSearch, groups: GroupType[]}) {
   const { t } = useTranslation();
   const { content } = props;
   const splitString = '- name';
@@ -283,7 +284,21 @@ export function CollectionDocumentationTabContent(props: { content: IContents | 
                           );
                         })}
                       </Td>
-                      <Td>{descriptions.map( (description) => applyDocFormatters(description, getPageUrl))}</Td>
+                      <Td>{descriptions.map( (description, index) => <>
+                          {index > 0 && <><br/><br/></>}
+                          {applyDocFormatters(description, {
+                            getPageUrl, 
+                            groups : props.groups,  
+                            docParams : 
+                            { 
+                              repository : props.collection.repository?.name || '', 
+                              namespace : props.collection.collection_version?.namespace || '', 
+                              name : props.collection.collection_version?.name || '',
+                              content_type : content?.content_type || '',
+                              content_name : content?.content_name || '',
+                            },
+                            url : '',
+                      })}</>)}</Td>
                     </Tr>
                   )})}
               </Tbody>
@@ -422,10 +437,9 @@ function SampleLine(props: { text: string; level: number }) {
   );
 }
 
-function applyDocFormatters(text: string, pathParams : PathParams): React.ReactNode {
+function applyDocFormatters(text: string, params : Params): React.ReactNode {
   // TODO: pass current plugin's type and name, and (if role) the current entrypoint as well
 
-  debugger;
   const parsed = parse(text);
 
   // Special case: result is a single paragraph consisting of a single text part
@@ -440,7 +454,7 @@ function applyDocFormatters(text: string, pathParams : PathParams): React.ReactN
   const fragments : React.ReactNode[] = [];
   for (const paragraph of parsed) {
     for (const part of paragraph) {
-      fragments.push(formatPart(part, pathParams));
+      fragments.push(formatPart(part, params));
     }
   }
   return (
@@ -452,7 +466,18 @@ function applyDocFormatters(text: string, pathParams : PathParams): React.ReactN
   );
 }
 
-function formatPart(part: dom.Part, pathParams : PathParams): React.ReactNode {
+function formatPart(part: dom.Part, params : Params): React.ReactNode {
+
+  if (part.type === dom.PartType.PLUGIN || part.type === dom.PartType.LINK || part.type=== dom.PartType.MODULE)
+  {
+    debugger;
+  }
+
+  if (part.type !== dom.PartType.TEXT)
+  {
+    debugger;
+  }
+
   switch (part.type) {
     case dom.PartType.ERROR:
       return formatPartError(part as dom.ErrorPart);
@@ -465,9 +490,9 @@ function formatPart(part: dom.Part, pathParams : PathParams): React.ReactNode {
     case dom.PartType.ITALIC:
       return formatPartItalic(part as dom.ItalicPart);
     case dom.PartType.LINK:
-      return formatPartLink(part as dom.LinkPart);
+      return formatPartLink(part as dom.LinkPart, params);
     case dom.PartType.MODULE:
-      return formatPartModule(part as dom.ModulePart);
+      return formatPartModule(part as dom.ModulePart, params);
     case dom.PartType.RST_REF:
       return formatPartRstRef(part as dom.RSTRefPart);
     case dom.PartType.URL:
@@ -477,15 +502,14 @@ function formatPart(part: dom.Part, pathParams : PathParams): React.ReactNode {
     case dom.PartType.ENV_VARIABLE:
       return formatPartEnvVariable(part as dom.EnvVariablePart);
     case dom.PartType.OPTION_NAME:
-      return formatPartOptionNameReturnValue(part as dom.OptionNamePart);
+      return formatPartOptionNameReturnValue(part as dom.OptionNamePart, params);
     case dom.PartType.OPTION_VALUE:
       return formatPartOptionValue(part as dom.OptionValuePart);
     case dom.PartType.PLUGIN:
-      return formatPartPlugin(part as dom.PluginPart);
+      return formatPartPlugin(part as dom.PluginPart, params);
     case dom.PartType.RETURN_VALUE:
       return formatPartOptionNameReturnValue(
-        part as dom.ReturnValuePart,
-      );
+        part as dom.ReturnValuePart, params);
   }
 }
 
@@ -499,7 +523,13 @@ function formatPartBold(part: dom.BoldPart): React.ReactNode {
 }
 
 function formatPartCode(part: dom.CodePart): React.ReactNode {
-  return <span className='inline-code'>{part.text}</span>;
+  return <span style={{
+    backgroundColor: '#e6e9e9',
+    fontFamily: 'var(--pf-global--FontFamily--monospace)',
+    display: 'inline-block',
+    borderRadius: '2px',
+    padding: '0 2px',
+  }}>{part.text}</span>;
 }
 
 function formatPartHorizontalLine(
@@ -513,12 +543,18 @@ function formatPartItalic(part: dom.ItalicPart): React.ReactNode {
   return <i>{part.text}</i>;
 }
 
-function formatPartLink(part: dom.LinkPart): React.ReactNode {
-  return renderDocLink(part.text, part.url);
+function formatPartLink(part: dom.LinkPart, params : Params): React.ReactNode {
+  return renderDocLink(part.text, part.url, params);
 }
 
-function formatPartModule(part: dom.ModulePart): React.ReactNode {
-  return renderPluginLink(part.fqcn, 'module', undefined);
+function formatPartModule(part: dom.ModulePart, params : Params): React.ReactNode {
+
+  const newDocParams = {...params.docParams};
+  const newParams = {...params};
+  newDocParams.content_type = 'module';
+  newParams.docParams = newDocParams;
+
+  return renderPluginLink(part.fqcn, newParams);
 }
 
 function formatPartRstRef(part: dom.RSTRefPart): React.ReactNode {
@@ -538,8 +574,14 @@ function formatPartEnvVariable(part: dom.EnvVariablePart): React.ReactNode {
 }
 
 function formatPartOptionNameReturnValue(
-  part: dom.OptionNamePart | dom.ReturnValuePart,
+  part: dom.OptionNamePart | dom.ReturnValuePart, params : Params
 ): React.ReactNode {
+
+  const newDocParams = {...params.docParams};
+  const newParams = {...params};
+  newDocParams.content_type = part.plugin?.type || '';
+  newParams.docParams = newDocParams;
+
   const content =
     part.value === undefined ? (
       <span className='inline-code'>
@@ -555,8 +597,7 @@ function formatPartOptionNameReturnValue(
   }
   return renderPluginLink(
     part.plugin.fqcn,
-    part.plugin.type,
-    content,
+    newParams
   );
 }
 
@@ -564,20 +605,26 @@ function formatPartOptionValue(part: dom.OptionValuePart): React.ReactNode {
   return <span className='inline-code'>{part.value}</span>;
 }
 
-function formatPartPlugin(part: dom.PluginPart): React.ReactNode {
+function formatPartPlugin(part: dom.PluginPart, params : Params): React.ReactNode {
+  
+  const newDocParams = {...params.docParams};
+  const newParams = {...params};
+  newDocParams.content_type = part.plugin.type;
+  newParams.docParams = newDocParams;
+
   return renderPluginLink(
     part.plugin.fqcn,
-    part.plugin.type,
-    undefined,
+    newParams,
   );
 }
 
 function renderDocLink(
-  name,
-  href,
-  collection: CollectionVersionSearch,
-  params,
+  name : string,
+  href : string | undefined,
+  params : Params
 ) {
+  const docParams = params.docParams;
+
   if (!!href && href.startsWith('http')) {
     return <Link to={href}>{name}</Link>;
   } else if (href) {
@@ -585,24 +632,13 @@ function renderDocLink(
     // ../ at the front of their urls. Need to find a
     // way to document this
 
-    const { collection_version, repository } = collection;
-
     let path = window.location.href;
-    path = path.replace('/contents', `/documentation/${item.content_type}/${item.name}`);
+    path = path.replace('/contents', `/documentation/${docParams.content_type}/${docParams.content_name}`);
 
-
-    
     return (
       <Link
-        to={formatPath(
-          Paths.collectionDocsPageByRepo,
-          {
-            namespace: collection_version.namespace,
-            collection: collection_version.name,
-            page: href,
-            repo: repository.name,
-          },
-          params,
+        to={formatDocPath(
+         params
         )}
       >
         {name}
@@ -616,10 +652,10 @@ function renderDocLink(
 function renderPluginLink(
   text : string,
   params : Params, 
-  docParams : DocParams, 
 ) {
 
   let module : IContents | undefined = undefined;
+  const docParams = params.docParams;
 
   params.groups.forEach( (group) => {
     group.contents.forEach( (content) => {
@@ -636,7 +672,6 @@ function renderPluginLink(
       <Link
         to={formatDocPath(
           params, 
-         docParams,
         )}
       >
         {text}
@@ -647,10 +682,10 @@ function renderPluginLink(
   }
 }
 
-function formatDocPath(params : Params, docParams : DocParams)
+function formatDocPath(params : Params)
 {
   debugger;
-  const { repository, namespace, name, content_type, content_name } = docParams;
+  const { repository, namespace, name, content_type, content_name } = params.docParams;
   const path = params.getPageUrl(HubRoute.CollectionDocumentationContent, 
       { 
       params : { repository, namespace, name }, 
@@ -662,6 +697,8 @@ function formatDocPath(params : Params, docParams : DocParams)
 type Params = {
   getPageUrl : ReturnType<typeof useGetPageUrl>,
   groups : GroupType[],
+  docParams : DocParams,
+  url : string;
 };
 
 type DocParams = { repository : string, namespace :string, name : string, content_type : string, content_name : string};
