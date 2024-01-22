@@ -9,7 +9,6 @@ import './commands';
 import { hubAPI, pulpAPI } from './formatApiPathForHub';
 import './rest-commands';
 import { escapeForShellCommand } from './utils';
-import { range } from 'lodash';
 
 const apiPrefix = Cypress.env('HUB_API_PREFIX') as string;
 
@@ -107,7 +106,7 @@ Cypress.Commands.add('uploadHubCollectionFile', (hubFilePath: string, hubFileNam
 Cypress.Commands.add('addAndApproveMultiCollections', (thisRange: number) => {
   const rand = Math.floor(Math.random() * 9999999);
   const namespace = `foo_${rand}`;
-  range(thisRange).forEach((i) => {
+  [thisRange].forEach((i) => {
     const collection = `bar_${rand}`;
     cy.galaxykit(`-i collection upload ${namespace} ${collection + i}`);
   });
