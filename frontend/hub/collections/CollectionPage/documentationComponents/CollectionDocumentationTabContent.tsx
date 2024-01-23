@@ -4,6 +4,9 @@ import { TFunction } from 'i18next';
 import { dom, parse } from 'antsibull-docs';
 import { Component } from 'react';
 
+
+import { ComponentType, ErrorInfo, ReactNode } from 'react';
+
 import React from 'react';
 import { CodeBlock, PageSection, Stack, StackItem, TextInput, Title } from '@patternfly/react-core';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
@@ -158,7 +161,7 @@ export function CollectionDocumentationTabContent(props: {
           )}
           {content?.doc_strings?.doc?.deprecated && (
             <>
-              <DocumentErrorBoundary>
+              
                 <Title headingLevel="h2">{t('DEPRECATED')}</Title>
                 <StackItem>
                   {' '}
@@ -170,7 +173,7 @@ export function CollectionDocumentationTabContent(props: {
                   <span style={{ fontWeight: 'bold' }}>{t('Alternative')}</span> :{' '}
                   {applyDocFormatters(content?.doc_strings?.doc?.deprecated?.alternative, params)}
                 </StackItem>
-              </DocumentErrorBoundary>
+             
             </>
           )}
 
@@ -214,13 +217,17 @@ export function CollectionDocumentationTabContent(props: {
             </Title>
             {backtoMenuLink}
             <Stack hasGutter>
-              <DocumentErrorBoundary>
-                <RenderSynopsis synopsis={content?.doc_strings?.doc?.description} params={params} />
-              </DocumentErrorBoundary>
+              
+                  <ul>
+                  {content?.doc_strings?.doc?.description.map((item, index) => (
+                    <li key={item + index.toString()}>{applyDocFormatters(item, params)}</li>
+                  ))}
+                </ul>
+             
             </Stack>
           </PageSection>
         )}
-      {optionsState && optionsState.length > 0 && (
+      {optionsState && Array.isArray(optionsState) && optionsState.length > 0 && (
         <>
           <PageSection variant="light" style={{ paddingBottom: 0 }}>
             <Title headingLevel="h2" id="Parameters_part">
@@ -468,16 +475,6 @@ export function CollectionDocumentationTabContent(props: {
   );
 }
 
-function RenderSynopsis(props: { synopsis: string[]; params: Params }) {
-  return (
-    <ul>
-      {props.synopsis.map((item, index) => (
-        <li key={item + index.toString()}>{applyDocFormatters(item, props.params)}</li>
-      ))}
-    </ul>
-  );
-}
-
 function Sample(props: { sample: ISample }) {
   const { sample } = props;
 
@@ -523,15 +520,6 @@ function SampleLine(props: { text: string; level: number }) {
       {text}
       <br />
     </span>
-  );
-}
-
-export function DocumentErrorBoundary(props: { children: React.ReactNode }) {
-  const { t } = useTranslation();
-  return (
-    <ErrorBoundary message={t('Error when rendering part of the documentation.')}>
-      {props.children}
-    </ErrorBoundary>
   );
 }
 
