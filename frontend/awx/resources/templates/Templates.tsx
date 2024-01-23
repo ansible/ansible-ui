@@ -12,17 +12,19 @@ import {
   usePageNavigate,
 } from '../../../../framework';
 import { usePersistentFilters } from '../../../common/PersistentFilters';
-import { awxAPI } from '../../common/api/awx-utils';
+import { AwxRoute } from '../../main/AwxRoutes';
 import { useAwxConfig } from '../../common/useAwxConfig';
-import { useAwxView } from '../../common/useAwxView';
 import { getDocsBaseUrl } from '../../common/util/getDocsBaseUrl';
 import { JobTemplate } from '../../interfaces/JobTemplate';
 import { WorkflowJobTemplate } from '../../interfaces/WorkflowJobTemplate';
-import { AwxRoute } from '../../main/AwxRoutes';
+import { useAwxView } from '../../common/useAwxView';
+import { awxAPI } from '../../common/api/awx-utils';
 import { useDeleteTemplates } from './hooks/useDeleteTemplates';
-import { useTemplateActions } from './hooks/useTemplateActions';
 import { useTemplateColumns } from './hooks/useTemplateColumns';
 import { useTemplateFilters } from './hooks/useTemplateFilters';
+import { useTemplateActions } from './hooks/useTemplateActions';
+import { useOptions } from '../../../common/crud/useOptions';
+import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 
 export function Templates() {
   const { t } = useTranslation();
@@ -38,6 +40,8 @@ export function Templates() {
       type: 'job_template,workflow_job_template',
     },
   });
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/templates/`);
+  const canCreateTemplate = Boolean(data && data.actions && data.actions['POST']);
   usePersistentFilters('templates');
   const config = useAwxConfig();
 
@@ -101,10 +105,22 @@ export function Templates() {
         tableColumns={tableColumns}
         rowActions={rowActions}
         errorStateTitle={t('Error loading templates')}
-        emptyStateTitle={t('No templates yet')}
-        emptyStateDescription={t('To get started, create a template.')}
-        emptyStateButtonText={t('Create template')}
-        emptyStateButtonClick={() => pageNavigate(AwxRoute.CreateJobTemplate)}
+        emptyStateTitle={
+          canCreateTemplate
+            ? t('No templates yet')
+            : t('You do not have permission to create a template')
+        }
+        emptyStateDescription={
+          canCreateTemplate
+            ? t('Please create a template by using the button below.')
+            : t(
+                'Please contact your organization administrator if there is an issue with your access.'
+              )
+        }
+        emptyStateButtonText={canCreateTemplate ? t('Create template') : undefined}
+        emptyStateButtonClick={
+          canCreateTemplate ? () => pageNavigate(AwxRoute.CreateJobTemplate) : undefined
+        }
         {...view}
         defaultSubtitle={t('Template')}
       />
