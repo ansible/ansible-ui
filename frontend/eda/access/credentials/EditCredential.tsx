@@ -39,11 +39,6 @@ export function CredentialOptions(t: TFunction<'translation'>) {
       value: CredentialTypeEnum.ContainerRegistry,
     },
     {
-      label: t('Extra Var'),
-      description: t('Extra var'),
-      value: CredentialTypeEnum.ExtraVar,
-    },
-    {
       label: t('Ansible Vault Password'),
       description: t('Ansible vault password'),
       value: CredentialTypeEnum.AnsibleVaultPassword,
@@ -109,25 +104,6 @@ function CredentialInputs() {
           isRequired
           labelHelp={t('Tokens/passwords allow you to authenticate to your destination.')}
           labelHelpTitle={t('Token/Password')}
-        />
-      </PageFormHidden>
-      <PageFormHidden
-        watch="credential_type"
-        hidden={(type: CredentialTypeEnum) => type !== CredentialTypeEnum.ExtraVar}
-      >
-        <PageFormTextInput<EdaCredentialCreate>
-          name="key"
-          label={t('Extra var name')}
-          placeholder={t('Enter extra var name')}
-        />
-        <PageFormTextInput<EdaCredentialCreate>
-          name="secret"
-          label={t('Secret')}
-          type="password"
-          placeholder={t('Enter extra var secret')}
-          isRequired
-          labelHelp={t('Extra var secret.')}
-          labelHelpTitle={t('Extra var secret')}
         />
       </PageFormHidden>
       <PageFormHidden
