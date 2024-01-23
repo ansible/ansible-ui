@@ -14,11 +14,11 @@ import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFor
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { AwxPageForm } from '../../AwxPageForm';
-import { AwxRoute } from '../../AwxRoutes';
-import { awxAPI } from '../../api/awx-utils';
+import { AwxPageForm } from '../../common/AwxPageForm';
+import { awxAPI } from '../../common/api/awx-utils';
 import { Organization } from '../../interfaces/Organization';
 import { User } from '../../interfaces/User';
+import { AwxRoute } from '../../main/AwxRoutes';
 import { PageFormOrganizationSelect } from '../organizations/components/PageFormOrganizationSelect';
 import { getOrganizationByName } from '../organizations/utils/getOrganizationByName';
 

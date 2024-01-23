@@ -15,7 +15,7 @@ export function useRoleColumns(withLinks: boolean) {
           withLinks ? (
             <TextCell
               text={role.name}
-              to={getPageUrl(EdaRoute.RolePage, { params: { id: role.id } })}
+              to={getPageUrl(EdaRoute.RoleDetails, { params: { id: role.id } })}
             />
           ) : (
             <TextCell text={role.name} />

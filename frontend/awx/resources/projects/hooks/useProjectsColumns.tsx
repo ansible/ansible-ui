@@ -1,19 +1,19 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ColumnModalOption, CopyCell, ITableColumn } from '../../../../../framework';
-import { ScmType } from '../../../../common/scm';
 import {
   useCreatedColumn,
   useDescriptionColumn,
   useModifiedColumn,
   useOrganizationNameColumn,
 } from '../../../../common/columns';
-import { useProjectStatusColumn } from './useProjectStatusColumn';
-import { useLastUsedColumn } from './useLastUsedColumn';
-import { useExecutionEnvironmentColumn } from './useDefaultEnvironment';
+import { ScmType } from '../../../../common/scm';
 import { Project } from '../../../interfaces/Project';
+import { AwxRoute } from '../../../main/AwxRoutes';
+import { useExecutionEnvironmentColumn } from './useDefaultEnvironment';
+import { useLastUsedColumn } from './useLastUsedColumn';
 import { useProjectNameColumn } from './useProjectNameColumn';
-import { AwxRoute } from '../../../AwxRoutes';
+import { useProjectStatusColumn } from './useProjectStatusColumn';
 
 export function useProjectsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
@@ -37,13 +37,15 @@ export function useProjectsColumns(options?: { disableSort?: boolean; disableLin
       {
         header: t('Type'),
         cell: (project) => <ScmType scmType={project.scm_type} />,
-        modal: ColumnModalOption.Hidden,
+        modal: ColumnModalOption.hidden,
+        dashboard: ColumnModalOption.hidden,
       },
       {
         header: t('Revision'),
         cell: (project) =>
           project.scm_revision ? <CopyCell text={project.scm_revision} /> : t('Sync for revision'),
-        modal: ColumnModalOption.Hidden,
+        modal: ColumnModalOption.hidden,
+        dashboard: ColumnModalOption.hidden,
       },
       organizationColumn,
       createdColumn,

@@ -3,7 +3,7 @@
     "target": "es5",
     "lib": ["ES2021.String", "dom"],
     "types": ["cypress", "node"],
-    "jsx": "react"
+    "jsx": "react",
   },
-  "include": ["**/*.ts", "support/component.ts"]
+  "include": ["**/*.ts", "support/component.ts"],
 }

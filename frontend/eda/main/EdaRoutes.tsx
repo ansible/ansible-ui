@@ -35,6 +35,12 @@ export enum EdaRoute {
   CredentialPage = 'eda-credential-page',
   CredentialDetails = 'eda-credential-details',
 
+  EventSources = 'eda-event-sources',
+  CreateEventSource = 'eda-create-event-source',
+  EditEventSource = 'eda-edit-event-source',
+  EventSourcePage = 'eda-event-source-page',
+  EventSourceDetails = 'eda-event-source-details',
+
   Access = 'eda-access',
   Users = 'eda-users',
   CreateUser = 'eda-create-user',
@@ -51,6 +57,7 @@ export enum EdaRoute {
   CreateRole = 'eda-create-role',
   EditRole = 'eda-edit-role',
   RolePage = 'eda-role-page',
+  RoleDetails = 'eda-role-details',
 
   CreateControllerToken = 'eda-create-controller-token',
 

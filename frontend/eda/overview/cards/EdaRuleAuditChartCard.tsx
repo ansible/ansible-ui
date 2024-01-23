@@ -11,7 +11,7 @@ import { EdaResult } from '../../interfaces/EdaResult';
 import { EdaRuleAuditItem } from '../../interfaces/EdaRuleAudit';
 import { EdaRoute } from '../../main/EdaRoutes';
 
-const RuleAuditChart = () => {
+export const RuleAuditChart = () => {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
 
@@ -137,5 +137,3 @@ const RuleAuditChart = () => {
     </PageDashboardCard>
   );
 };
-
-export default RuleAuditChart;

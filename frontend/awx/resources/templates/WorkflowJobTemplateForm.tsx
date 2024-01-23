@@ -13,11 +13,10 @@ import { LoadingPage } from '../../../../framework/components/LoadingPage';
 import { postRequest, requestGet, requestPatch } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { AwxPageForm } from '../../AwxPageForm';
-import { AwxRoute } from '../../AwxRoutes';
-import { awxAPI } from '../../api/awx-utils';
 import { AwxError } from '../../common/AwxError';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
+import { AwxPageForm } from '../../common/AwxPageForm';
+import { awxAPI } from '../../common/api/awx-utils';
 import { getAddedAndRemoved } from '../../common/util/getAddedAndRemoved';
 import { Label } from '../../interfaces/Label';
 import { Organization } from '../../interfaces/Organization';
@@ -26,6 +25,7 @@ import {
   WorkflowJobTemplateCreate,
   WorkflowJobTemplateForm,
 } from '../../interfaces/WorkflowJobTemplate';
+import { AwxRoute } from '../../main/AwxRoutes';
 import { parseStringToTagArray, stringifyTags } from './JobTemplateFormHelpers';
 import { WorkflowJobTemplateInputs } from './WorkflowJobTemplateInputs';
 

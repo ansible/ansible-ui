@@ -1,5 +1,5 @@
 /* eslint-disable i18next/no-literal-string */
-import PageWizardFooter from './PageWizardFooter';
+import { PageWizardFooter } from './PageWizardFooter';
 import { PageWizardContext } from './PageWizardProvider';
 
 describe('PageWizardFooter', () => {

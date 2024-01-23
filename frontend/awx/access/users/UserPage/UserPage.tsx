@@ -14,14 +14,14 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../../framework';
-import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
+import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { useGetItem } from '../../../../common/crud/useGet';
-import { AwxRoute } from '../../../AwxRoutes';
 import { AwxError } from '../../../common/AwxError';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { User } from '../../../interfaces/User';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { useDeleteUsers } from '../hooks/useDeleteUsers';
-import { awxAPI } from '../../../api/awx-utils';
 
 export function UserPage() {
   const { t } = useTranslation();

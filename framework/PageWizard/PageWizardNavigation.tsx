@@ -1,7 +1,7 @@
 import { ExclamationCircleIcon } from '@patternfly/react-icons';
 import { usePageWizard } from './PageWizardProvider';
 
-export default function PageWizardNavigation() {
+export function PageWizardNavigation() {
   const { activeStep, steps, isToggleExpanded, setActiveStep, stepError } = usePageWizard();
   const navClassName = isToggleExpanded
     ? 'pf-v5-c-wizard__nav pf-m-expanded'

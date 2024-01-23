@@ -207,14 +207,6 @@ export type PageTableProps<T extends object> = {
 export function PageTable<T extends object>(props: PageTableProps<T>) {
   const { id, toolbarActions, filterState, error, itemCount } = props;
 
-  const { openColumnManagement, managedColumns } = useManageColumns<T>(
-    (id ?? '') + '-columns',
-    props.tableColumns,
-    props.disableTableView,
-    props.disableListView,
-    props.disableCardView
-  );
-
   const showSelect =
     props.showSelect ||
     toolbarActions?.find(
@@ -252,6 +244,14 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
       }
     },
     [props.id]
+  );
+
+  const { openColumnManagement, managedColumns } = useManageColumns<T>(
+    (id ?? '') + '-columns',
+    props.tableColumns,
+    viewType !== PageTableViewTypeE.Table,
+    viewType !== PageTableViewTypeE.List,
+    viewType !== PageTableViewTypeE.Cards
   );
 
   const sortOptions = usePageToolbarSortOptionsFromColumns(props.tableColumns);
@@ -757,6 +757,7 @@ function TableRow<T extends object>(props: {
             ? `row-id-${item.id.toString()}`
             : `row-${rowIndex}`
         }
+        className={isItemSelected ? 'selected' : undefined}
       >
         {expandedRow && (
           <Td
@@ -790,7 +791,7 @@ function TableRow<T extends object>(props: {
                   }
                 : undefined
             }
-            isStickyColumn
+            isStickyColumn={props.scrollLeft}
             stickyMinWidth="0px"
             hasRightBorder={props.scrollLeft}
             data-cy={'checkbox-column-cell'}
@@ -812,7 +813,7 @@ function TableRow<T extends object>(props: {
               variant: isSelectMultiple ? 'checkbox' : 'radio',
               isDisabled: maxSelections && selectedItems ? disableRow(item) : false,
             }}
-            isStickyColumn
+            isStickyColumn={props.scrollLeft}
             stickyMinWidth="0px"
             hasRightBorder={props.scrollLeft}
             data-cy={'checkbox-column-cell'}
@@ -828,11 +829,15 @@ function TableRow<T extends object>(props: {
         />
       </Tr>
       {expandedRow && expanded && expandedContent && (
-        <Tr isExpanded={expanded} style={{ boxShadow: 'unset' }}>
+        <Tr
+          isExpanded={expanded}
+          style={{ boxShadow: 'unset' }}
+          className={isItemSelected ? 'selected' : undefined}
+        >
           <Td />
           {showSelect && (
             <Th
-              isStickyColumn
+              isStickyColumn={props.scrollLeft}
               stickyMinWidth="0px"
               hasRightBorder={props.scrollLeft}
               className={props.scrollLeft ? 'bg-lighten' : undefined}
@@ -848,7 +853,7 @@ function TableRow<T extends object>(props: {
           {rowActions !== undefined && rowActions.length > 0 && (
             <Td
               isActionCell
-              isStickyColumn
+              isStickyColumn={props.scrollRight}
               stickyMinWidth="0px"
               style={{ right: 0, padding: 0, paddingRight: 0 }}
               className={props.scrollRight ? 'pf-m-border-left bg-lighten' : undefined}
@@ -890,7 +895,7 @@ function TableCells<T extends object>(props: {
       {rowActions !== undefined && rowActions.length > 0 && (
         <Td
           isActionCell
-          isStickyColumn
+          isStickyColumn={props.scrollRight}
           stickyMinWidth="0px"
           style={{
             right: 0,

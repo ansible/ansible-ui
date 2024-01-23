@@ -28,13 +28,13 @@ import {
   useNameToolbarFilter,
   useOrganizationToolbarFilter,
 } from '../../common/awx-toolbar-filters';
+import { useAwxView } from '../../common/useAwxView';
 import { ExecutionEnvironment } from '../../interfaces/ExecutionEnvironment';
-import { useAwxView } from '../../useAwxView';
 
-import { AwxRoute } from '../../AwxRoutes';
-import { awxAPI } from '../../api/awx-utils';
+import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxConfig } from '../../common/useAwxConfig';
-import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
+import { getDocsBaseUrl } from '../../common/util/getDocsBaseUrl';
+import { AwxRoute } from '../../main/AwxRoutes';
 import { useDeleteExecutionEnvironments } from './hooks/useDeleteExecutionEnvironments';
 
 export function ExecutionEnvironments() {

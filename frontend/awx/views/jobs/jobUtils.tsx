@@ -1,4 +1,4 @@
-import { awxAPI } from '../../api/awx-utils';
+import { awxAPI } from '../../common/api/awx-utils';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
 
 /** Returns the jobs API endpoint based on the job type */

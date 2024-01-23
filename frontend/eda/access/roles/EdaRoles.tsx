@@ -19,6 +19,7 @@ import { EdaItemsResponse } from '../../common/EdaItemsResponse';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaRole } from '../../interfaces/EdaRole';
 import { EdaRoute } from '../../main/EdaRoutes';
+import { EdaRoleExpandedRow } from './components/EdaRoleExpandedRow';
 
 export function EdaRoles() {
   const { t } = useTranslation();
@@ -37,7 +38,7 @@ export function EdaRoles() {
 
 export function EdaRolesTable() {
   const { t } = useTranslation();
-  const { data, isLoading } = useGet<EdaItemsResponse<EdaRole>>(edaAPI`/roles/`);
+  const { data, isLoading, error } = useGet<EdaItemsResponse<EdaRole>>(edaAPI`/roles/`);
   const roles = useMemo(() => data?.results ?? [], [data?.results]);
   const getPageUrl = useGetPageUrl();
   const columns = useMemo<ITableColumn<EdaRole>[]>(
@@ -90,6 +91,7 @@ export function EdaRolesTable() {
     items: data?.results ?? [],
     tableColumns: columns,
     toolbarFilters,
+    error,
   });
 
   if (isLoading) return <LoadingPage />;
@@ -99,6 +101,7 @@ export function EdaRolesTable() {
       id="eda-roles-table"
       tableColumns={columns}
       toolbarFilters={toolbarFilters}
+      expandedRow={(role) => <EdaRoleExpandedRow role={role} />}
       errorStateTitle={t('Error loading roles')}
       emptyStateTitle={t('There are currently no roles added for your organization.')}
       {...view}

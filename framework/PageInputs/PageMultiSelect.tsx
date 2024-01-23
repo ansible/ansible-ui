@@ -55,6 +55,8 @@ export interface PageMultiSelectProps<ValueT> {
   disableClearSelection?: boolean;
 
   disableClearChips?: boolean;
+
+  maxChipSize?: string;
 }
 
 /**
@@ -96,8 +98,17 @@ export function PageMultiSelect<
   ValueT,
 >(props: PageMultiSelectProps<ValueT>) {
   const { t } = useTranslation();
-  const { id, icon, placeholder, values, onSelect, options, variant, disableClearSelection } =
-    props;
+  const {
+    id,
+    icon,
+    placeholder,
+    values,
+    onSelect,
+    options,
+    variant,
+    disableClearSelection,
+    maxChipSize,
+  } = props;
   const [isOpen, setIsOpen] = useState(false);
   const selectListRef = useRef<HTMLDivElement>(null);
 
@@ -160,10 +171,11 @@ export function PageMultiSelect<
                     <Chip
                       key={option.label}
                       isReadOnly={props.disableClearChips}
+                      textMaxWidth={maxChipSize}
                       style={{ marginTop: -2, marginBottom: -2 }}
                       onClick={() =>
-                        onSelect(
-                          (previousValues) => previousValues?.filter((v) => v !== option.value)
+                        onSelect((previousValues) =>
+                          previousValues?.filter((v) => v !== option.value)
                         )
                       }
                     >

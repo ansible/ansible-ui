@@ -11,7 +11,6 @@ import {
 import { getItemKey, swrOptions, useFetcher } from '../../common/crud/Data';
 import { RequestError } from '../../common/crud/RequestError';
 import { EdaItemsResponse } from './EdaItemsResponse';
-import { SWR_REFRESH_INTERVAL } from './eda-constants';
 
 export type IEdaView<T extends { id: number | string }> = IView &
   ISelected<T> & {
@@ -102,7 +101,6 @@ export function useEdaView<T extends { id: number | string }>(options: {
   const fetcher = useFetcher();
   const response = useSWR<EdaItemsResponse<T>>(url, fetcher, {
     ...swrOptions,
-    refreshInterval: SWR_REFRESH_INTERVAL,
   });
   const { data, mutate } = response;
   const refresh = useCallback(async () => {

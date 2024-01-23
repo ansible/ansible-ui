@@ -1,20 +1,20 @@
-import React, { FunctionComponent } from 'react';
-import { ExpandableRowContent, Td } from '@patternfly/react-table';
+import { ChartLegendEntry } from '@ansible/react-json-chart-builder';
 import {
   DescriptionList,
   DescriptionListDescription,
   DescriptionListGroup,
   DescriptionListTerm,
 } from '@patternfly/react-core';
-import currencyFormatter from '../../utilities/currencyFormatter';
+import { ExpandableRowContent, Td } from '@patternfly/react-table';
+import { FunctionComponent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ChartLegendEntry } from '@ansible/react-json-chart-builder';
+import { currencyFormatter } from '../../utilities/currencyFormatter';
 
 interface Props {
   template: ChartLegendEntry;
 }
 
-const ExpandedRowContents: FunctionComponent<Props> = ({ template }) => {
+export const ExpandedRowContents: FunctionComponent<Props> = ({ template }) => {
   const { t } = useTranslation();
   return (
     <Td colSpan={5}>
@@ -79,5 +79,3 @@ const ExpandedRowContents: FunctionComponent<Props> = ({ template }) => {
     </Td>
   );
 };
-
-export default ExpandedRowContents;

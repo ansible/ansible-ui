@@ -15,6 +15,7 @@ import {
   usePageNavigate,
 } from '../../../framework';
 import { PageFormAsyncSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncSelect';
+import { PageFormAsyncSingleSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncSingleSelect';
 import { PageFormSection } from '../../../framework/PageForm/Utils/PageFormSection';
 import { requestGet } from '../../common/crud/Data';
 import { useGet } from '../../common/crud/useGet';
@@ -30,9 +31,11 @@ import {
   EdaRulebookActivation,
   EdaRulebookActivationCreate,
 } from '../interfaces/EdaRulebookActivation';
-import { RestartPolicyEnum } from '../interfaces/generated/eda-api';
+import { AwxToken, RestartPolicyEnum } from '../interfaces/generated/eda-api';
 import { EdaRoute } from '../main/EdaRoutes';
 import { EdaProjectCell } from '../projects/components/EdaProjectCell';
+import { EdaEventSource } from '../interfaces/EdaEventSource';
+import { PageFormMultiSelect } from '../../../framework/PageForm/Inputs/PageFormMultiSelect';
 
 export function CreateRulebookActivation() {
   const { t } = useTranslation();
@@ -108,6 +111,10 @@ export function RulebookActivationInputs() {
     edaAPI`/decision-environments/?page=1&page_size=200`
   );
 
+  const { data: sources } = useGet<EdaResult<EdaEventSource>>(
+    edaAPI`/sources/?page=1&page_size=200`
+  );
+
   const RESTART_OPTIONS = [
     { label: t('On failure'), value: 'on-failure' },
     { label: t('Always'), value: 'always' },
@@ -129,6 +136,22 @@ export function RulebookActivationInputs() {
       values: response.results?.sort((l, r) => compareStrings(l.name, r.name)) ?? [],
     });
   }, [projectId]);
+
+  const queryAwxTokens = useCallback(async (page: number, signal: AbortSignal) => {
+    await new Promise((resolve) => setTimeout(resolve, 10000));
+    const response = await requestGet<EdaResult<AwxToken>>(
+      edaAPI`/users/me/awx-tokens/?${page.toString()}}`,
+      signal
+    );
+    return Promise.resolve({
+      total: response.count,
+      options:
+        response.results?.map((item) => ({
+          label: item.name,
+          value: item.id,
+        })) ?? [],
+    });
+  }, []);
 
   return (
     <>
@@ -177,6 +200,20 @@ export function RulebookActivationInputs() {
         labelHelp={t('Rulebooks will be shown according to the project selected.')}
         labelHelpTitle={t('Rulebook')}
       />
+      <PageFormMultiSelect<IEdaRulebookActivationInputs>
+        name="sources"
+        label={t('Source(s)')}
+        options={
+          sources?.results
+            ? sources.results.map((item) => ({
+                label: item.name,
+                value: item.id,
+              }))
+            : []
+        }
+        placeholder={t('Select source(s)')}
+        footer={<Link to={getPageUrl(EdaRoute.CreateEventSource)}>Create source</Link>}
+      />
       <PageFormSelect<IEdaRulebookActivationInputs>
         name="decision_environment_id"
         label={t('Decision environment')}
@@ -197,6 +234,19 @@ export function RulebookActivationInputs() {
         }
         labelHelp={t('Decision environments are a container image to run Ansible rulebooks.')}
         labelHelpTitle={t('Decision environment')}
+      />
+      <PageFormAsyncSingleSelect<IEdaRulebookActivationInputs>
+        name="awx_token_id"
+        label={t('Controller token')}
+        placeholder={t('Select controller token')}
+        queryPlaceholder={t('Loading controller tokens...')}
+        queryErrorText={t('Error loading controller tokens')}
+        queryOptions={queryAwxTokens}
+        labelHelpTitle={t('Controller tokens')}
+        labelHelp={[
+          t('Controller tokens are used to authenticate with controller API.'),
+          t('Controller tokens can be added under the current user details.'),
+        ]}
       />
       <PageFormSelect<IEdaRulebookActivationInputs>
         name="restart_policy"
@@ -230,8 +280,10 @@ export function RulebookActivationInputs() {
   );
 }
 
-type IEdaRulebookActivationInputs = EdaRulebookActivationCreate & {
+type IEdaRulebookActivationInputs = Omit<EdaRulebookActivationCreate, 'sources'> & {
   rulebook: EdaRulebook;
+  sources?: string[];
   project_id: string;
   variables: string;
+  awx_token_id: number;
 };

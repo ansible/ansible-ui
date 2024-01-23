@@ -2,6 +2,9 @@ import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
 import { PageNotImplemented } from '../../../framework';
 import { PageNavigationItem } from '../../../framework/PageNavigation/PageNavigationItem';
+import { RoleDetails } from '../access/roles/RolePage/RoleDetails';
+import { CreateRole, EditRole } from '../access/roles/RolePage/RoleForm';
+import { RolePage } from '../access/roles/RolePage/RolePage';
 import { Roles } from '../access/roles/Roles';
 import { Token } from '../access/token/Token';
 import { Approvals } from '../administration/collection-approvals/Approvals';
@@ -48,7 +51,7 @@ import { HubNamespaceCollections } from '../namespaces/HubNamespacePage/HubNames
 import { HubNamespaceDetails } from '../namespaces/HubNamespacePage/HubNamespaceDetails';
 import { HubNamespacePage } from '../namespaces/HubNamespacePage/HubNamespacePage';
 import { Namespaces } from '../namespaces/HubNamespaces';
-import { HubDashboard } from '../overview/Dashboard';
+import { HubOverview } from '../overview/HubOverview';
 import { HubRoute } from './HubRoutes';
 
 export function useHubNavigation() {
@@ -58,7 +61,7 @@ export function useHubNavigation() {
       id: HubRoute.Overview,
       label: t('Overview'),
       path: 'overview',
-      element: <HubDashboard />,
+      element: <HubOverview />,
     },
     {
       id: HubRoute.Namespaces,
@@ -385,21 +388,26 @@ export function useHubNavigation() {
             {
               id: HubRoute.CreateRole,
               path: 'create',
-              element: <PageNotImplemented />,
+              element: <CreateRole />,
             },
             {
               id: HubRoute.EditRole,
               path: ':id/edit',
-              element: <PageNotImplemented />,
+              element: <EditRole />,
             },
             {
               id: HubRoute.RolePage,
               path: ':id/',
+              element: <RolePage />,
               children: [
                 {
                   id: HubRoute.RoleDetails,
                   path: 'details',
-                  element: <PageNotImplemented />,
+                  element: <RoleDetails />,
+                },
+                {
+                  path: '',
+                  element: <Navigate to="details" />,
                 },
               ],
             },

@@ -38,7 +38,7 @@ interface Props {
   bodyContent?: string;
 }
 
-const SettingsPanel: FunctionComponent<Props> = ({
+export const SettingsPanel: FunctionComponent<Props> = ({
   settingsExpanded,
   setSettingsExpanded,
   id,
@@ -84,5 +84,3 @@ const SettingsPanel: FunctionComponent<Props> = ({
     </Card>
   );
 };
-
-export default SettingsPanel;

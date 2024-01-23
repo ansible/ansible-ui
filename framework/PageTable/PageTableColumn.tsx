@@ -7,55 +7,61 @@ import { PageTableViewTypeE } from '../PageToolbar/PageTableViewType';
 /** Column options for controlling how the column displays in a table. */
 export enum ColumnTableOption {
   /** Description uses the column in an expendable row with full width. */
-  Description = 'description',
+  description = 'description',
 
   /** Expanded uses the column in the expendable row. */
-  Expanded = 'expanded',
+  expanded = 'expanded',
 
   /** Hidden hides the column in the table. */
-  Hidden = 'hidden',
+  hidden = 'hidden',
 }
 
 /** Column options for controlling how the column displays in a list. */
 export enum ColumnListOption {
   /** Name indicates the column should show up as the name for the item in the list. */
-  Name = 'name',
+  name = 'name',
 
   /** Subtitle indicates the column should show up as the subtitle under the name in the list. */
-  Subtitle = 'subtitle',
+  subtitle = 'subtitle',
 
   /** Description indicates the column should be used as the description on the list. */
-  Description = 'description',
+  description = 'description',
 
   /** Hidden hides the column in the list. */
-  Hidden = 'hidden',
+  hidden = 'hidden',
 
   /** Primary places the column in the first(left) column in the list. */
-  Primary = 'primary',
+  primary = 'primary',
 
   /** Secondary places the column in the second(right) column in the list. */
-  Secondary = 'secondary',
+  secondary = 'secondary',
 }
 
 /** Column options for controlling how the column displays in a card. */
 export enum ColumnCardOption {
   /** Name indicates the column should show up as the name for the item in the card. */
-  Name = 'name',
+  name = 'name',
 
   /** Subtitle indicates the column should show up as the subtitle under the name in the card. */
-  Subtitle = 'subtitle',
+  subtitle = 'subtitle',
 
   /** Description indicates the column should be used as the description on the card. */
-  Description = 'description',
+  description = 'description',
 
   /** Hidden hides the column in the card. */
-  Hidden = 'hidden',
+  hidden = 'hidden',
 }
 
 /** Column options for controlling how the column displays in a card. */
 export enum ColumnModalOption {
   /** Hidden hides the column in modals. */
-  Hidden = 'hidden',
+  hidden = 'hidden',
+}
+
+/** Column options for controlling how the column displays in a dashboard. */
+export enum ColumnDashboardOption {
+  /** Hidden hides the column in modals. */
+  hidden = 'hidden',
 }
 
 /** Table column common properties to all columns. */
@@ -71,18 +77,6 @@ interface ITableColumnCommon<T extends object> {
 
   /** MaxWidth for the column. */
   maxWidth?: number;
-
-  /**
-   * Indicates if the column is enabled in the table.
-   * @deprecated Use the 'table' options field with 'hidden'
-   */
-  enabled?: boolean;
-
-  /**
-   * Indicates if the column is the id column in the table.
-   * @deprecated Use the 'table' options field with 'id'
-   */
-  isIdColumn?: boolean;
 
   /** Indicates the key for the sorting. This key is usually handled by the view to so the sorting. */
   sort?: string;
@@ -102,18 +96,19 @@ interface ITableColumnCommon<T extends object> {
   icon?: (item: T) => ReactNode;
 
   /** Table column options for controlling how the column displays in a table. */
-  table?: ColumnTableOption;
+  table?: keyof typeof ColumnTableOption;
 
   /** Table column options for controlling how the column displays in a list. */
-  list?: 'name' | 'subtitle' | 'description' | 'hidden' | 'primary' | 'secondary';
-  // TODO update to ColumnListOption - will be a lot of changes - will need to be its own PR
+  list?: keyof typeof ColumnListOption;
 
   /** Table column options for controlling how the column displays in a card. */
-  card?: 'name' | 'subtitle' | 'description' | 'hidden';
-  // TODO update to ColumnCardOption - will be a lot of changes - will need to be its own PR
+  card?: keyof typeof ColumnCardOption;
 
   /** Table column options for controlling how the column displays in a modal. */
-  modal?: ColumnModalOption;
+  modal?: keyof typeof ColumnModalOption;
+
+  /** Table column options for controlling how the column displays in a dashboard. */
+  dashboard?: keyof typeof ColumnDashboardOption;
 }
 
 /** Column that renders using a render function that returns a ReactNode. */
@@ -202,9 +197,9 @@ export function useVisibleTableColumns<T extends object>(columns: ITableColumn<T
   return useMemo(
     () =>
       columns.filter((column) => {
-        if (column.table === ColumnTableOption.Hidden) return false;
-        if (column.table === ColumnTableOption.Description) return false;
-        if (column.table === ColumnTableOption.Expanded) return false;
+        if (column.table === ColumnTableOption.hidden) return false;
+        if (column.table === ColumnTableOption.description) return false;
+        if (column.table === ColumnTableOption.expanded) return false;
         return true;
       }),
     [columns]
@@ -214,7 +209,7 @@ export function useVisibleTableColumns<T extends object>(columns: ITableColumn<T
 /** Hook to return only the columns that should be visible in the list. */
 export function useVisibleListColumns<T extends object>(columns: ITableColumn<T>[]) {
   return useMemo(
-    () => columns.filter((column) => column.list !== ColumnListOption.Hidden),
+    () => columns.filter((column) => column.list !== ColumnListOption.hidden),
     [columns]
   );
 }
@@ -222,7 +217,7 @@ export function useVisibleListColumns<T extends object>(columns: ITableColumn<T>
 /** Hook to return only the columns that should be visible in the cards. */
 export function useVisibleCardColumns<T extends object>(columns: ITableColumn<T>[]) {
   return useMemo(
-    () => columns.filter((column) => column.card !== ColumnCardOption.Hidden),
+    () => columns.filter((column) => column.card !== ColumnCardOption.hidden),
     [columns]
   );
 }
@@ -230,9 +225,20 @@ export function useVisibleCardColumns<T extends object>(columns: ITableColumn<T>
 /** Hook to return only the columns that should be visible in a modal. */
 export function useVisibleModalColumns<T extends object>(columns: ITableColumn<T>[]) {
   return useMemo(
-    () => columns.filter((column) => column.modal !== ColumnModalOption.Hidden),
+    () => columns.filter((column) => column.modal !== ColumnModalOption.hidden),
     [columns]
   );
+}
+
+/** Hook to return only the columns that should be visible in a dashboard. */
+export function useDashboardColumns<T extends object>(columns: ITableColumn<T>[]) {
+  columns = useMemo(
+    () => columns.filter((column) => column.dashboard !== ColumnDashboardOption.hidden),
+    [columns]
+  );
+  columns = useColumnsWithoutSort(columns);
+  columns = useColumnsWithoutExpandedRow(columns);
+  return columns;
 }
 
 /** Hook to return only the columns that should be visible in the table view type. */
@@ -258,8 +264,8 @@ export function useDescriptionColumns<T extends object>(columns: ITableColumn<T>
   return useMemo(
     () =>
       columns.filter((column) => {
-        if (column.table === ColumnTableOption.Hidden) return false;
-        if (column.table === ColumnTableOption.Description) return true;
+        if (column.table === ColumnTableOption.hidden) return false;
+        if (column.table === ColumnTableOption.description) return true;
         return false;
       }),
     [columns]
@@ -271,8 +277,8 @@ export function useExpandedColumns<T extends object>(columns: ITableColumn<T>[])
   return useMemo(
     () =>
       columns.filter((column) => {
-        if (column.table === ColumnTableOption.Hidden) return false;
-        if (column.table === ColumnTableOption.Expanded) return true;
+        if (column.table === ColumnTableOption.hidden) return false;
+        if (column.table === ColumnTableOption.expanded) return true;
         return false;
       }),
     [columns]
@@ -292,7 +298,7 @@ export function useColumnsWithoutExpandedRow<T extends object>(columns: ITableCo
     () =>
       columns.map((column) => ({
         ...column,
-        table: column.table === ColumnTableOption.Expanded ? undefined : column.table,
+        table: column.table === ColumnTableOption.expanded ? undefined : column.table,
       })),
     [columns]
   );

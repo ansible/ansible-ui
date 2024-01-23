@@ -1,20 +1,21 @@
-import React, { FunctionComponent, useState } from 'react';
+import { ChartLegendEntry } from '@ansible/react-json-chart-builder';
 import {
   InputGroup,
-  InputGroupText,
-  TextInput,
-  Switch,
   InputGroupItem,
+  InputGroupText,
+  Switch,
+  TextInput,
 } from '@patternfly/react-core';
-import { Tr, Td } from '@patternfly/react-table';
-import { global_success_color_200 as globalSuccessColor200 } from '@patternfly/react-tokens';
-import { global_disabled_color_200 as globalDisabledColor200 } from '@patternfly/react-tokens';
-
-import currencyFormatter from '../../utilities/currencyFormatter';
-import numberFormatter from '../../utilities/numberFormatter';
-import { ChartLegendEntry } from '@ansible/react-json-chart-builder';
-import ExpandedRowContents from './ExpandedRowContents';
+import { Td, Tr } from '@patternfly/react-table';
+import {
+  global_disabled_color_200 as globalDisabledColor200,
+  global_success_color_200 as globalSuccessColor200,
+} from '@patternfly/react-tokens';
+import { FunctionComponent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { currencyFormatter } from '../../utilities/currencyFormatter';
+import { numberFormatter } from '../../utilities/numberFormatter';
+import { ExpandedRowContents } from './ExpandedRowContents';
 
 interface Props {
   template: ChartLegendEntry;
@@ -22,7 +23,7 @@ interface Props {
   variableRow: { key: string; value: string };
 }
 
-const Row: FunctionComponent<Props> = ({ template, readOnly = true, variableRow }) => {
+export const Row: FunctionComponent<Props> = ({ template, readOnly = true, variableRow }) => {
   const [isExpanded, setIsExpanded] = useState(
     window.localStorage.getItem(template.id.toString()) === 'true' || false
   );
@@ -108,4 +109,3 @@ const Row: FunctionComponent<Props> = ({ template, readOnly = true, variableRow 
     </>
   );
 };
-export default Row;

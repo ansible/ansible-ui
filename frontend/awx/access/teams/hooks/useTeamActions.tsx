@@ -8,9 +8,9 @@ import {
   PageActionType,
   usePageNavigate,
 } from '../../../../../framework';
-import { AwxRoute } from '../../../AwxRoutes';
 import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import { Team } from '../../../interfaces/Team';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { useSelectAndRemoveUsersFromTeam } from '../../users/hooks/useSelectAndRemoveUsersFromTeam';
 import { useSelectUsersAddTeams } from '../../users/hooks/useSelectUsersAddTeams';
 import { useDeleteTeams } from './useDeleteTeams';

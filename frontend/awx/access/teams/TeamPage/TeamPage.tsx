@@ -8,15 +8,15 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../../framework';
-import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
+import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { useGetItem } from '../../../../common/crud/useGet';
-import { AwxRoute } from '../../../AwxRoutes';
 import { AwxError } from '../../../common/AwxError';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { Team } from '../../../interfaces/Team';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { useViewActivityStream } from '../../common/useViewActivityStream';
 import { useTeamActions } from '../hooks/useTeamActions';
-import { awxAPI } from '../../../api/awx-utils';
 
 export function TeamPage() {
   const { t } = useTranslation();

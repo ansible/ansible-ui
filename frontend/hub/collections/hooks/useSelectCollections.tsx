@@ -47,13 +47,13 @@ export function CollectionMultiSelectDialog(props: {
         header: t('Description'),
         type: 'description',
         value: (collection) => collection.collection_version?.description,
-        table: ColumnTableOption.Expanded,
+        table: ColumnTableOption.expanded,
       },
       {
         header: t('Version'),
         type: 'text',
         value: (collection) => collection.collection_version?.version,
-        table: ColumnTableOption.Hidden,
+        table: ColumnTableOption.hidden,
         sort: 'version',
       },
       {

@@ -2,6 +2,7 @@ import { Button, Label } from '@patternfly/react-core';
 import { DropdownPosition } from '@patternfly/react-core/dist/esm/deprecated';
 import { CheckCircleIcon, ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { DateTime } from 'luxon';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useSearchParams } from 'react-router-dom';
 import {
@@ -13,24 +14,25 @@ import {
 } from '../../../../framework';
 import { PageAsyncSingleSelect } from '../../../../framework/PageInputs/PageAsyncSingleSelect';
 import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
+import { singleSelectBrowseAdapter } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSingleSelectFilter';
 import { requestGet } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
 import { HubError } from '../../common/HubError';
 import { hubAPI } from '../../common/api/formatPath';
+import { useHubContext } from '../../common/useHubContext';
 import { HubItemsResponse } from '../../common/useHubView';
 import { HubRoute } from '../../main/HubRoutes';
 import { CollectionVersionSearch } from '../Collection';
 import { useCollectionActions } from '../hooks/useCollectionActions';
-
-import { useCallback } from 'react';
-import { singleSelectBrowseAdapter } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSingleSelectFilter';
 import { useSelectCollectionVersionSingle } from '../hooks/useCollectionVersionSelector';
 
 export function CollectionPage() {
   const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const { name, namespace, repository } = useParams();
+  const context = useHubContext();
 
+  const { display_signatures } = context.featureFlags;
   // load collection by search params
   const version = searchParams.get('version');
 
@@ -73,10 +75,12 @@ export function CollectionPage() {
   const itemActions = useCollectionActions(() => void collectionRequest.refresh(), true);
 
   function setVersionParams(version: string) {
-    setSearchParams((params) => {
-      params.set('version', version);
-      return params;
-    });
+    setTimeout(() => {
+      setSearchParams((params) => {
+        params.set('version', version);
+        return params;
+      });
+    }, 0);
   }
 
   // load collection versions
@@ -102,9 +106,9 @@ export function CollectionPage() {
               ' ' +
               t('updated') +
               ' ' +
-              `${DateTime.fromISO(item.collection_version?.pulp_created || '').toRelative()} (${
-                item.is_signed ? t('signed') : t('unsigned')
-              })`;
+              `${DateTime.fromISO(item.collection_version?.pulp_created || '').toRelative()} ${
+                display_signatures ? (item.is_signed ? t('signed') : t('unsigned')) : ''
+              }`;
             if (item.is_highest) {
               label += ' (' + t('latest') + ')';
             }
@@ -118,7 +122,7 @@ export function CollectionPage() {
 
       return load();
     },
-    [name, namespace, repository, t]
+    [name, namespace, repository, t, display_signatures]
   );
 
   const getPageUrl = useGetPageUrl();
@@ -184,6 +188,7 @@ export function CollectionPage() {
                 ' ' +
                 DateTime.fromISO(collection.collection_version?.pulp_created).toRelative()}
             {collection &&
+              display_signatures &&
               (collection.is_signed ? (
                 <Label icon={<CheckCircleIcon />} variant="outline" color="green">
                   {' ' + t('Signed')}

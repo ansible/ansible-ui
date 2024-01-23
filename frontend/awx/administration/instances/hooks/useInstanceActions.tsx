@@ -1,8 +1,8 @@
 import pDebounce from 'p-debounce';
 import { useEffect, useState } from 'react';
 import { requestGet, requestPatch } from '../../../../common/crud/Data';
-import { awxAPI } from '../../../api/awx-utils';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { Instance } from '../../../interfaces/Instance';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 

@@ -2,13 +2,7 @@ import { Label, Truncate } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  ColumnModalOption,
-  ColumnTableOption,
-  ITableColumn,
-  TextCell,
-  useGetPageUrl,
-} from '../../../../framework';
+import { ColumnTableOption, ITableColumn, TextCell, useGetPageUrl } from '../../../../framework';
 import { StatusCell } from '../../../common/Status';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { Status906Enum } from '../../interfaces/generated/eda-api';
@@ -23,7 +17,8 @@ export function useRulebookActivationColumns() {
         header: t('ID'),
         type: 'text',
         value: (activation) => activation.id.toString(),
-        modal: ColumnModalOption.Hidden,
+        modal: 'hidden',
+        dashboard: 'hidden',
       },
       {
         header: t('Name'),
@@ -45,13 +40,14 @@ export function useRulebookActivationColumns() {
         header: t('Description'),
         type: 'description',
         value: (activation) => activation.description,
-        table: ColumnTableOption.Description,
+        table: ColumnTableOption.description,
         card: 'description',
         list: 'description',
-        modal: ColumnModalOption.Hidden,
+        modal: 'hidden',
+        dashboard: 'hidden',
       },
       {
-        header: t('Activation status'),
+        header: t('Status'),
         cell: (activation) =>
           activation?.status === Status906Enum.Deleting ? (
             <Label color="red" icon={<InfoCircleIcon />}>
@@ -65,45 +61,51 @@ export function useRulebookActivationColumns() {
         header: t('Number of rules'),
         type: 'count',
         value: (activation) => activation?.rules_count ?? 0,
-        modal: ColumnModalOption.Hidden,
+        modal: 'hidden',
+        dashboard: 'hidden',
       },
       {
         header: t('Fire count'),
         type: 'count',
         value: (activation) => activation?.rules_fired_count ?? 0,
-        modal: ColumnModalOption.Hidden,
+        modal: 'hidden',
+        dashboard: 'hidden',
       },
       {
         header: t('Restart count'),
         type: 'count',
         value: (activation) => activation?.restart_count ?? 0,
-        modal: ColumnModalOption.Hidden,
+        modal: 'hidden',
+        dashboard: 'hidden',
       },
       {
         header: t('Status message'),
         cell: (activation) => <Truncate content={activation?.status_message || ''} />,
-        table: ColumnTableOption.Expanded,
+        table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'secondary',
-        modal: ColumnModalOption.Hidden,
+        modal: 'hidden',
+        dashboard: 'hidden',
       },
       {
         header: t('Created'),
         type: 'datetime',
         value: (activation) => activation.created_at,
-        table: ColumnTableOption.Expanded,
+        table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'secondary',
-        modal: ColumnModalOption.Hidden,
+        modal: 'hidden',
+        dashboard: 'hidden',
       },
       {
         header: t('Last modified'),
         type: 'datetime',
         value: (activation) => activation.modified_at,
-        table: ColumnTableOption.Expanded,
+        table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'secondary',
-        modal: ColumnModalOption.Hidden,
+        modal: 'hidden',
+        dashboard: 'hidden',
       },
     ],
     [getPageUrl, t]

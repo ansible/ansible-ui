@@ -1,12 +1,12 @@
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
+import { awxAPI } from '../../common/api/awx-utils';
+import { useAwxView } from '../../common/useAwxView';
 import { Instance } from '../../interfaces/Instance';
-import { useAwxView } from '../../useAwxView';
 import { useInstanceRowActions } from './hooks/useInstanceRowActions';
 import { useInstanceToolbarActions } from './hooks/useInstanceToolbarActions';
 import { useInstancesColumns } from './hooks/useInstancesColumns';
 import { useInstancesFilters } from './hooks/useInstancesFilter';
-import { awxAPI } from '../../api/awx-utils';
 
 export function Instances() {
   const { t } = useTranslation();

@@ -3,18 +3,18 @@ import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePersistentFilters } from '../../../common/PersistentFilters';
+import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxConfig } from '../../common/useAwxConfig';
+import { useAwxView } from '../../common/useAwxView';
 import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
-import getDocsBaseUrl from '../../common/util/getDocsBaseUrl';
+import { getDocsBaseUrl } from '../../common/util/getDocsBaseUrl';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
-import { useAwxView } from '../../useAwxView';
-import { awxAPI } from '../../api/awx-utils';
 import { useJobRowActions } from './hooks/useJobRowActions';
 import { useJobToolbarActions } from './hooks/useJobToolbarActions';
 import { useJobsColumns } from './hooks/useJobsColumns';
 import { useJobsFilters } from './hooks/useJobsFilters';
 
-export default function Jobs() {
+export function Jobs() {
   const { t } = useTranslation();
   const product: string = process.env.PRODUCT ?? t('AWX');
   const toolbarFilters = useJobsFilters();

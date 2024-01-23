@@ -111,7 +111,7 @@ describe('RulebookActivations.cy.ts', () => {
     );
     cy.get('[data-cy="id-column-header"]').should('be.visible');
     cy.get('[data-cy="name-column-header"]').should('be.visible');
-    cy.get('[data-cy="activation-status-column-header"]').should('be.visible');
+    cy.get('[data-cy="status-column-header"]').should('be.visible');
     cy.get('[data-cy="number-of-rules-column-header"]').should('be.visible');
     cy.get('[data-cy="fire-count-column-header"]').should('be.visible');
     cy.get('[data-cy="restart-count-column-header"]').should('be.visible');

@@ -24,15 +24,15 @@ import { LastModifiedPageDetail } from '../../../../common/LastModifiedPageDetai
 import { StatusCell } from '../../../../common/Status';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { ScmType } from '../../../../common/scm';
-import { AwxRoute } from '../../../AwxRoutes';
-import { awxAPI } from '../../../api/awx-utils';
 import { AwxError } from '../../../common/AwxError';
 import { CredentialLabel } from '../../../common/CredentialLabel';
 import { ExecutionEnvironmentDetail } from '../../../common/ExecutionEnvironmentDetail';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxConfig } from '../../../common/useAwxConfig';
 import { useAwxWebSocketSubscription } from '../../../common/useAwxWebSocket';
-import getDocsBaseUrl from '../../../common/util/getDocsBaseUrl';
+import { getDocsBaseUrl } from '../../../common/util/getDocsBaseUrl';
 import { Project } from '../../../interfaces/Project';
+import { AwxRoute } from '../../../main/AwxRoutes';
 
 export function ProjectDetails(props: { projectId?: string }) {
   const { t } = useTranslation();

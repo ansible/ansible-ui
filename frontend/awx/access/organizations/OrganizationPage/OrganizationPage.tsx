@@ -18,11 +18,11 @@ import {
 import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { useGetItem } from '../../../../common/crud/useGet';
-import { AwxRoute } from '../../../AwxRoutes';
 import { AwxError } from '../../../common/AwxError';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { Organization } from '../../../interfaces/Organization';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { useDeleteOrganizations } from '../hooks/useDeleteOrganizations';
-import { awxAPI } from '../../../api/awx-utils';
 
 export function OrganizationPage() {
   const { t } = useTranslation();

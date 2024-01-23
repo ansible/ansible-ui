@@ -4,9 +4,9 @@ import { PageHeader, PageLayout } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxError } from '../../../common/AwxError';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { Team } from '../../../interfaces/Team';
 import { AddRolesForm } from '../../roles/AddRolesForm';
-import { awxAPI } from '../../../api/awx-utils';
 
 export function AddRolesToTeam() {
   const { t } = useTranslation();

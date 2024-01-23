@@ -11,6 +11,7 @@ import {
   PageHeader,
   PageLayout,
   useGetPageUrl,
+  usePageNavigate,
 } from '../../../../framework';
 import { PageFormFileUpload } from '../../../../framework/PageForm/Inputs/PageFormFileUpload';
 import { PageFormGroup } from '../../../../framework/PageForm/Inputs/PageFormGroup';
@@ -82,6 +83,7 @@ export function CreateRemote() {
   const { clearCacheByKey } = useClearCache();
   clearCacheByKey(pulpAPI`/remotes/ansible/collection/`);
   const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const postRequest = usePostRequest<IRemotes>();
   const onSubmit: PageFormSubmitHandler<RemoteFormProps> = async (remote) => {
     const url: string = appendTrailingSlash(remote.url);
@@ -96,11 +98,11 @@ export function CreateRemote() {
       delete remote.proxy_url;
     }
 
-    await postRequest(pulpAPI`/remotes/ansible/collection/`, {
+    const createdRemote = await postRequest(pulpAPI`/remotes/ansible/collection/`, {
       ...remote,
       url,
     });
-    navigate(-1);
+    pageNavigate(HubRoute.RemotePage, { params: { id: createdRemote?.name } });
   };
   const getPageUrl = useGetPageUrl();
 

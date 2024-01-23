@@ -13,18 +13,18 @@ import {
 } from '../../../../../framework';
 import { PageFormCreatableSelect } from '../../../../../framework/PageForm/Inputs/PageFormCreatableSelect';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
-import { AwxRoute } from '../../../AwxRoutes';
+import { PageFormCredentialSelect } from '../../../access/credentials/components/PageFormCredentialSelect';
 import { PageFormExecutionEnvironmentSelect } from '../../../administration/execution-environments/components/PageFormExecutionEnvironmentSelect';
 import { PageFormInstanceGroupSelect } from '../../../administration/instance-groups/components/PageFormInstanceGroupSelect';
-import { awxAPI } from '../../../api/awx-utils';
 import { PageFormLabelSelect } from '../../../common/PageFormLabelSelect';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { InventorySource } from '../../../interfaces/InventorySource';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
 import { Project } from '../../../interfaces/Project';
 import { ScheduleFormFields } from '../../../interfaces/ScheduleFormFields';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
-import { PageFormCredentialSelect } from '../../../resources/credentials/components/PageFormCredentialSelect';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { PageFormInventorySelect } from '../../../resources/inventories/components/PageFormInventorySelect';
 
 export const resourceEndPoints: { [key: string]: string } = {
@@ -52,8 +52,8 @@ export function useGetSchedulCreateUrl(sublistEndPoint?: string) {
   const params = useParams<{ id: string; schedule_id?: string }>();
   if (!sublistEndPoint) return getPageUrl(AwxRoute.CreateSchedule);
   let createUrl: string = getPageUrl(AwxRoute.CreateSchedule);
-  const resource_type = Object.keys(createScheduleContainerRoutes).find(
-    (route) => sublistEndPoint?.split('/').includes(route)
+  const resource_type = Object.keys(createScheduleContainerRoutes).find((route) =>
+    sublistEndPoint?.split('/').includes(route)
   );
   if (resource_type && params?.id) {
     createUrl = createScheduleContainerRoutes[resource_type].replace(':id', params.id);

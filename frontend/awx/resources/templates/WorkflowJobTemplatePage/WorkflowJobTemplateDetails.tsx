@@ -10,14 +10,14 @@ import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { LoadingPage, PageDetail, PageDetails, useGetPageUrl } from '../../../../../framework';
 import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
-import { useGetItem } from '../../../../common/crud/useGet';
 import { LastModifiedPageDetail } from '../../../../common/LastModifiedPageDetail';
-import { awxAPI } from '../../../api/awx-utils';
-import { AwxRoute } from '../../../AwxRoutes';
+import { useGetItem } from '../../../../common/crud/useGet';
 import { AwxError } from '../../../common/AwxError';
 import { CredentialLabel } from '../../../common/CredentialLabel';
 import { UserDateDetail } from '../../../common/UserDateDetail';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
+import { AwxRoute } from '../../../main/AwxRoutes';
 
 export function WorkflowJobTemplateDetails(props: { templateId?: string }) {
   const { t } = useTranslation();

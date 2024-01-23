@@ -1,12 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  ColumnModalOption,
-  ITableColumn,
-  LabelsCell,
-  TextCell,
-  useGetPageUrl,
-} from '../../../../framework';
+import { ITableColumn, LabelsCell, TextCell, useGetPageUrl } from '../../../../framework';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { StatusCell } from '../../../common/Status';
 import { EdaRuleAuditItem } from '../../interfaces/EdaRuleAudit';
@@ -51,7 +45,8 @@ export function useRuleAuditColumns() {
               ]}
             />
           ),
-        modal: ColumnModalOption.Hidden,
+        modal: 'hidden',
+        dashboard: 'hidden',
       },
       {
         header: t('Fired date'),
@@ -60,6 +55,8 @@ export function useRuleAuditColumns() {
             text={ruleAudit?.fired_at ? formatDateString(new Date(ruleAudit.fired_at)) : ''}
           />
         ),
+        modal: 'hidden',
+        dashboard: 'hidden',
       },
     ],
     [getPageUrl, t]

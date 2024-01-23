@@ -27,16 +27,16 @@ import { EmptyStateFilter } from '../../../../framework/components/EmptyStateFil
 import { LoadingState } from '../../../../framework/components/LoadingState';
 import { useSearchParams } from '../../../../framework/components/useSearchParams';
 import { postRequest as requestPost } from '../../../common/crud/Data';
-import { awxAPI } from '../../api/awx-utils';
-import Chart from '../components/Chart';
-import hydrateSchema from '../components/Chart/hydrateSchema';
+import { awxAPI } from '../../common/api/awx-utils';
+import { Chart } from '../components/Chart';
+import { hydrateSchema } from '../components/Chart/hydrateSchema';
 import { ApiOptionsType } from '../components/Toolbar/types';
-import currencyFormatter from '../utilities/currencyFormatter';
-import AutomationFormula from './AutomationFormula';
-import CalculationCost from './CalculationCost';
+import { currencyFormatter } from '../utilities/currencyFormatter';
+import { AutomationFormula } from './AutomationFormula';
+import { CalculationCost } from './CalculationCost';
 import { AnalyticsErrorState } from './ErrorStates';
-import TemplatesTable from './TemplatesTable';
-import TotalSavings from './TotalSavings';
+import { TopTemplates } from './TemplatesTable';
+import { TotalSavings } from './TotalSavings';
 
 export interface ReportDataResponse {
   meta: {
@@ -365,7 +365,7 @@ export function AutomationCalculatorInternal(props: {
       awxAPI`/analytics/roi_templates/?limit=${perPage.toString()}&offset=${(
         (page - 1) *
         perPage
-      ).toString()}&sort_by=${sortOption?.value}${encodeURIComponent(`:${sortOrder}`)}`,
+      ).toString()}&sort_by=${sortOption?.value}:${encodeURIComponent(sortOrder)}`,
       requestBody,
       abortController.signal
     )
@@ -409,7 +409,7 @@ export function AutomationCalculatorInternal(props: {
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     const tooltip = `${sortOption.label} for ${datum.name || ''}: ${
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      formattedValue('successful_hosts_savings', datum.y) || ''
+      formattedValue(sortOption.value, datum.y) || ''
     }`;
     return tooltip;
   };
@@ -497,7 +497,7 @@ export function AutomationCalculatorInternal(props: {
                 <GridItem span={3}>{!isLoading && renderRight()}</GridItem>
               </Grid>
             </CardBody>
-            <TemplatesTable
+            <TopTemplates
               data={data?.meta.legend || []}
               variableRow={{ key: sortOption.value, value: sortOption.label }}
               readOnly={true}

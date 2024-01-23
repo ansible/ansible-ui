@@ -12,11 +12,11 @@ import {
   usePageNavigate,
 } from '../../../../../framework';
 import { useGetItem } from '../../../../common/crud/useGet';
-import { AwxRoute } from '../../../AwxRoutes';
-import { awxAPI } from '../../../api/awx-utils';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { useAwxView } from '../../../common/useAwxView';
 import { Role } from '../../../interfaces/Role';
 import { Team } from '../../../interfaces/Team';
-import { useAwxView } from '../../../useAwxView';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { useRolesColumns } from '../../roles/useRolesColumns';
 import { useRolesFilters } from '../../roles/useRolesFilters';
 

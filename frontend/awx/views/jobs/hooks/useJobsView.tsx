@@ -1,6 +1,6 @@
+import { awxAPI } from '../../../common/api/awx-utils';
+import { useAwxView } from '../../../common/useAwxView';
 import { UnifiedJob } from '../../../interfaces/UnifiedJob';
-import { useAwxView } from '../../../useAwxView';
-import { awxAPI } from '../../../api/awx-utils';
 
 export function useJobsView() {
   const view = useAwxView<UnifiedJob>({

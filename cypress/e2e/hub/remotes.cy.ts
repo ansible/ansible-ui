@@ -51,6 +51,8 @@ describe('Remotes', () => {
     cy.get('[data-cy="name"]').type(remoteName);
     cy.get('[data-cy="url"]').type(Remotes.remoteURL);
     cy.get('[data-cy="Submit"]').click();
+    cy.url().should('include', `remotes/details/${remoteName}`);
+    cy.contains('Remotes').click();
     cy.url().should('include', Remotes.url);
     cy.searchAndDisplayResource(remoteName);
     cy.get('[data-cy="actions-column-cell"]').click();
@@ -76,6 +78,7 @@ describe('Remotes', () => {
     cy.get('[data-cy="signed-only-warning"]').should('not.exist');
     cy.get('[data-cy="requirements-file-warning"]').should('not.exist');
     cy.get('[data-cy="Submit"]').click();
+    cy.contains('Remotes').click();
     cy.searchAndDisplayResource(remoteName);
     cy.get('[data-cy="actions-column-cell"]').click();
     cy.get('[data-cy="delete-remote"]').click({ force: true });
@@ -101,6 +104,7 @@ collections:
     cy.get('[data-cy="signed_only"]').check();
     cy.get('[data-cy="sync_dependencies"]').check();
     cy.get('[data-cy="Submit"]').click();
+    cy.contains('Remotes').click();
     cy.searchAndDisplayResource(remoteName);
     cy.get('[data-cy="actions-column-cell"]').click();
     cy.get('[data-cy="edit-remote"]').click({ force: true });

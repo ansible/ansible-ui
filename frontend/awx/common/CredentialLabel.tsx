@@ -2,9 +2,9 @@ import { Label } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { useGetPageUrl } from '../../../framework';
-import { AwxRoute } from '../AwxRoutes';
 import { Credential } from '../interfaces/Credential';
 import { SummaryFieldCredential } from '../interfaces/summary-fields/summary-fields';
+import { AwxRoute } from '../main/AwxRoutes';
 import { toTitleCase } from './util/strings';
 
 function CredentialLabel(props: { credential: Credential | SummaryFieldCredential }) {

@@ -1,5 +1,5 @@
 import { edaAPI } from '../../common/eda-utils';
-import { EdaDashboard } from '../EdaDashboard';
+import { EdaOverview } from '../EdaOverview';
 
 describe('EdaDecisionEnvironmentsCard.cy.ts', () => {
   beforeEach(() => {
@@ -53,11 +53,10 @@ describe('EdaDecisionEnvironmentsCard.cy.ts', () => {
         results: [],
       }
     );
-    cy.mount(<EdaDashboard />);
+    cy.mount(<EdaOverview />);
   });
   it('Dashboard renders the correct decision environment columns', () => {
     cy.contains(/^Recently updated environments$/).should('be.visible');
     cy.contains('th', 'Name');
-    cy.contains('th', 'Last modified');
   });
 });

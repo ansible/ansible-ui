@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelectDialog } from '../../../../../framework';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { useAwxView } from '../../../common/useAwxView';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
-import { useAwxView } from '../../../useAwxView';
-import { awxAPI } from '../../../api/awx-utils';
 import { useInstanceGroupsFilters } from '../InstanceGroups';
 import { useInstanceGroupsColumns } from './useInstanceGroupColumns';
 

@@ -21,7 +21,7 @@ describe('RuleAuditDetails', () => {
       'have.text',
       'Say Hello long running'
     );
-    cy.get('[style="max-width: 100%;"] > div').should('have.text', 'Successful');
+    cy.get('[style="max-width: 100%;"] > div').should('have.text', 'Success');
     cy.get('a').should('have.text', 'Activation 1');
     cy.get('[data-cy="rule-set"] > .pf-v5-c-description-list__text').should(
       'have.text',

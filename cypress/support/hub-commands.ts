@@ -16,20 +16,19 @@ const apiPrefix = Cypress.env('HUB_API_PREFIX') as string;
 Cypress.Commands.add('galaxykit', (operation: string, ...args: string[]) => {
   const adminUsername = Cypress.env('HUB_USERNAME') as string;
   const adminPassword = Cypress.env('HUB_PASSWORD') as string;
-  const galaxykitCommand =
-    (Cypress.env('HUB_GALAXYKIT_COMMAND') as string) ?? 'galaxykit --ignore-certs';
-  const server = (Cypress.env('HUB_SERVER') as string) + apiPrefix;
+  const galaxykitCommand = (Cypress.env('HUB_GALAXYKIT_COMMAND') as string) ?? 'galaxykit';
+  const server = (Cypress.env('HUB_SERVER') as string) + apiPrefix + '/';
   const options = { failOnNonZeroExit: false };
 
   cy.log(`${galaxykitCommand} ${operation} ${args.join(' ')}`);
 
-  const cmd = `${galaxykitCommand} -s '${server}' -u '${adminUsername}' -p '${adminPassword}' ${operation} ${escapeForShellCommand(
+  const cmd = `${galaxykitCommand} -c -s '${server}' -u '${adminUsername}' -p '${adminPassword}' ${operation} ${escapeForShellCommand(
     args
   )}`;
 
   cy.exec(cmd, options).then(({ code, stderr, stdout }) => {
     cy.log(`RUN ${cmd}`, code, stderr, stdout).then(() => {
-      if (code || stderr) {
+      if (code) {
         cy.log('galaxykit code: ' + code.toString()).then(() => {
           cy.log('galaxykit stderr: ' + stderr).then(() => {
             throw new Error(`Galaxykit failed: ${stderr}`);
@@ -104,48 +103,121 @@ Cypress.Commands.add('uploadHubCollectionFile', (hubFilePath: string, hubFileNam
     });
 });
 
+Cypress.Commands.add('addAndApproveMultiCollections', (thisRange: number) => {
+  const rand = Math.floor(Math.random() * 9999999);
+  const namespace = `foo_${rand}`;
+  [thisRange].forEach((i) => {
+    const collection = `bar_${rand}`;
+    cy.galaxykit(`-i collection upload ${namespace} ${collection + i}`);
+  });
+  cy.visit('/administration/approvals?page=1&perPage=100');
+  cy.verifyPageTitle('Collection Approvals');
+  cy.selectToolbarFilterType('Namespace');
+  cy.intercept(
+    'GET',
+    hubAPI`/v3/plugin/ansible/search/collection-versions/?repository_label=pipeline=staging&namespace=${namespace}&order_by=namespace&offset=0&limit=100`
+  ).as('approvals');
+  cy.searchAndDisplayResource(`${namespace}`);
+  cy.wait('@approvals');
+  cy.get('[data-cy="select-all"]').click();
+  cy.get('[data-ouia-component-id="page-toolbar"]').within(() => {
+    cy.get('[data-cy="actions-dropdown"]')
+      .click()
+      .then(() => {
+        cy.get('[data-cy="approve-selected-collections"]').click();
+      });
+  });
+  cy.get('[data-ouia-component-id="Approve collections"]').within(() => {
+    cy.get('[data-ouia-component-id="confirm"]').click();
+    cy.get('[data-ouia-component-id="submit"]').click();
+    cy.clickButton('Close');
+  });
+});
+
 Cypress.Commands.add('getOrCreateCollection', () => {
   let newCollectionVersion;
-  // cy.requestGet<HubItemsResponse<CollectionVersionSearch>>(
-  //   `/api/galaxy/v3/plugin/ansible/search/collection-versions/?is_deprecated=false&repository_label=!hide_from_search&is_highest=true&keywords=zos_zoau_operator&offset=0&limit=10`
-  // ).then((result) => {
-  //   const collectionA = result.data.length;
   cy.requestGet<HubItemsResponse<CollectionVersionSearch>>(
-    `/api/galaxy/v3/plugin/ansible/search/collection-versions/?is_deprecated=false&repository_label=!hide_from_search&is_highest=true&keywords=zos_cics_operator&offset=0&limit=10`
+    hubAPI`/v3/plugin/ansible/search/collection-versions/?is_deprecated=false&repository_label=!hide_from_search&is_highest=true&keywords=spm_toolbox&offset=0&limit=10`
   ).then((result) => {
-    const collectionB = result.data.length;
+    const collectionA = result.data.length;
     cy.requestGet<HubItemsResponse<CollectionVersionSearch>>(
-      `/api/galaxy/v3/plugin/ansible/search/collection-versions/?is_deprecated=false&repository_label=!hide_from_search&is_highest=true&keywords=spm_toolbox&offset=0&limit=10`
+      hubAPI`/v3/plugin/ansible/search/collection-versions/?is_deprecated=false&repository_label=!hide_from_search&is_highest=true&keywords=ds8000&offset=0&limit=10`
     ).then((result) => {
-      const collectionC = result.data.length;
+      const collectionB = result.data.length;
       cy.requestGet<HubItemsResponse<CollectionVersionSearch>>(
-        `/api/galaxy/v3/plugin/ansible/search/collection-versions/?is_deprecated=false&repository_label=!hide_from_search&is_highest=true&keywords=ds8000&offset=0&limit=10`
+        hubAPI`/v3/plugin/ansible/search/collection-versions/?is_deprecated=false&repository_label=!hide_from_search&is_highest=true&keywords=operator_collection_sdk&offset=0&limit=10`
       ).then((result) => {
-        const collectionD = result.data.length;
+        const collectionC = result.data.length;
         cy.requestGet<HubItemsResponse<CollectionVersionSearch>>(
-          `/api/galaxy/v3/plugin/ansible/search/collection-versions/?is_deprecated=false&repository_label=!hide_from_search&is_highest=true&keywords=operator_collection_sdk&offset=0&limit=10`
+          hubAPI`/v3/plugin/ansible/search/collection-versions/?is_deprecated=false&repository_label=!hide_from_search&is_highest=true&keywords=ibm_zosmf&offset=0&limit=10`
         ).then((result) => {
-          const collectionE = result.data.length;
-          if (collectionB === 0) {
-            newCollectionVersion = 'ibm-zos_cics_operator-1.0.1.tar.gz';
-            return newCollectionVersion;
-          } else if (collectionC === 0) {
-            newCollectionVersion = 'ibm-spm_toolbox-1.0.2.tar.gz';
-            return newCollectionVersion;
-          } else if (collectionD === 0) {
-            newCollectionVersion = 'ibm-ds8000-1.1.0.tar.gz';
-            return newCollectionVersion;
-          } else if (collectionE === 0) {
-            newCollectionVersion = 'ibm-operator_collection_sdk-1.1.0.tar.gz';
-            return newCollectionVersion;
-          } else {
-            return 'All test collections currently exist. Please delete one or more and re-run the test.';
-          }
+          const collectionD = result.data.length;
+          cy.requestGet<HubItemsResponse<CollectionVersionSearch>>(
+            hubAPI`/v3/plugin/ansible/search/collection-versions/?is_deprecated=false&repository_label=!hide_from_search&is_highest=true&keywords=mas_airgap&offset=0&limit=10`
+          ).then((result) => {
+            const collectionE = result.data.length;
+            cy.requestGet<HubItemsResponse<CollectionVersionSearch>>(
+              hubAPI`/v3/plugin/ansible/search/collection-versions/?is_deprecated=false&repository_label=!hide_from_search&is_highest=true&keywords=qradar&offset=0&limit=10`
+            ).then((result) => {
+              const collectionF = result.data.length;
+              if (collectionA === 0) {
+                newCollectionVersion = 'ibm-spm_toolbox-1.0.2.tar.gz';
+                return newCollectionVersion;
+              } else if (collectionB === 0) {
+                newCollectionVersion = 'ibm-ds8000-1.1.0.tar.gz';
+                return newCollectionVersion;
+              } else if (collectionC === 0) {
+                newCollectionVersion = 'ibm-operator_collection_sdk-1.1.0.tar.gz';
+                return newCollectionVersion;
+              } else if (collectionD === 0) {
+                newCollectionVersion = 'ibm-ibm_zosmf-1.4.1.tar.gz';
+                return newCollectionVersion;
+              } else if (collectionE === 0) {
+                newCollectionVersion = 'ibm-mas_airgap-2.6.2.tar.gz';
+                return newCollectionVersion;
+              } else if (collectionF === 0) {
+                newCollectionVersion = 'ibm-qradar-3.0.0.tar.gz';
+                return newCollectionVersion;
+              } else {
+                return 'All test collections currently exist. Please delete one or more and re-run the test.';
+              }
+            });
+          });
         });
       });
     });
   });
-  // });
+});
+
+Cypress.Commands.add(
+  'deleteCommunityCollectionFromSystem',
+  (
+    collectionName: CollectionVersionSearch,
+    options?: {
+      /** Whether to fail on response codes other than 2xx and 3xx */
+      failOnStatusCode?: boolean;
+    }
+  ) => {
+    if (collectionName) {
+      const thisName = collectionName.collection_version?.name;
+      cy.requestDelete(
+        hubAPI`/v3/plugin/ansible/content/community/collections/index/ibm/${thisName ?? ''}/`,
+        options
+      );
+    }
+  }
+);
+
+Cypress.Commands.add('cleanupCollections', (namespace: string, repo: string) => {
+  cy.requestGet<HubItemsResponse<CollectionVersionSearch>>(
+    hubAPI`/v3/plugin/ansible/search/collection-versions/?namespace=${namespace}`
+  ).then((result) => {
+    for (const resource of result.data ?? []) {
+      if (resource.repository?.name === repo) {
+        cy.deleteCommunityCollectionFromSystem(resource);
+      }
+    }
+  });
 });
 
 Cypress.Commands.add('createNamespace', (namespaceName: string) => {
@@ -231,4 +303,26 @@ Cypress.Commands.add('createRemoteRegistry', (remoteRegistryName: string) => {
 
 Cypress.Commands.add('deleteRemoteRegistry', (remoteRegistryId: string) => {
   cy.requestDelete(hubAPI`/_ui/v1/execution-environments/registries/${remoteRegistryId}/`);
+});
+
+Cypress.Commands.add(
+  'deleteCollection',
+  (
+    collectionName: string,
+    namespaceName: string,
+    repository: string,
+    options?: {
+      /** Whether to fail on response codes other than 2xx and 3xx */
+      failOnStatusCode?: boolean;
+    }
+  ) => {
+    cy.requestDelete(
+      hubAPI`/v3/plugin/ansible/content/${repository}/collections/index/${namespaceName}/${collectionName}/`,
+      options
+    );
+  }
+);
+
+Cypress.Commands.add('uploadCollection', (collection: string, namespace: string) => {
+  cy.galaxykit(`-i collection upload ${namespace} ${collection}`);
 });

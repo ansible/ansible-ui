@@ -10,6 +10,7 @@ import {
   PageHeader,
   PageLayout,
   useGetPageUrl,
+  usePageNavigate,
 } from '../../../../framework';
 import { PageFormFileUpload } from '../../../../framework/PageForm/Inputs/PageFormFileUpload';
 import { PageFormGroup } from '../../../../framework/PageForm/Inputs/PageFormGroup';
@@ -56,16 +57,23 @@ export function CreateRemoteRegistry() {
   const { clearCacheByKey } = useClearCache();
   clearCacheByKey(hubAPI`/_ui/v1/execution-environments/registries/`);
   const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const postRequest = usePostRequest<RemoteRegistryProps>();
   const onSubmit: PageFormSubmitHandler<RemoteRegistryProps> = async (remote) => {
     const url: string = appendTrailingSlash(remote.url);
 
-    await postRequest(hubAPI`/_ui/v1/execution-environments/registries/`, {
-      ...remote,
-      url,
+    const createdRemoteRegistry = await postRequest(
+      hubAPI`/_ui/v1/execution-environments/registries/`,
+      {
+        ...remote,
+        url,
+      }
+    );
+    pageNavigate(HubRoute.RemoteRegistryPage, {
+      params: { id: createdRemoteRegistry?.name },
     });
-    navigate(-1);
   };
+
   const getPageUrl = useGetPageUrl();
   return (
     <PageLayout>

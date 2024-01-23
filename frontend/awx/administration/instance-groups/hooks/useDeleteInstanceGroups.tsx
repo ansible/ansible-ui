@@ -3,15 +3,15 @@ import { useTranslation } from 'react-i18next';
 import { compareStrings } from '../../../../../framework';
 import { useNameColumn } from '../../../../common/columns';
 import { getItemKey, requestDelete, requestGet } from '../../../../common/crud/Data';
-import { awxAPI } from '../../../api/awx-utils';
-import { InstanceGroup } from '../../../interfaces/InstanceGroup';
-import { useInstanceGroupsColumns } from './useInstanceGroupColumns';
-import { Organization } from '../../../interfaces/Organization';
-import { JobTemplate } from '../../../interfaces/JobTemplate';
-import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
-import { Inventory } from '../../../interfaces/Inventory';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxBulkConfirmation } from '../../../common/useAwxBulkConfirmation';
+import { InstanceGroup } from '../../../interfaces/InstanceGroup';
+import { Inventory } from '../../../interfaces/Inventory';
+import { JobTemplate } from '../../../interfaces/JobTemplate';
+import { Organization } from '../../../interfaces/Organization';
+import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
+import { useInstanceGroupsColumns } from './useInstanceGroupColumns';
 
 async function checkIfInstanceGroupIsBeingUsed(instanceGroup: InstanceGroup) {
   const relatedOrganizationsData = await requestGet<AwxItemsResponse<Organization>>(

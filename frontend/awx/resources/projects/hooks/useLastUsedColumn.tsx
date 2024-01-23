@@ -7,8 +7,8 @@ import {
   ITableColumn,
   usePageNavigate,
 } from '../../../../../framework';
-import { AwxRoute } from '../../../AwxRoutes';
 import { Project } from '../../../interfaces/Project';
+import { AwxRoute } from '../../../main/AwxRoutes';
 
 export function useLastUsedColumn() {
   const { t } = useTranslation();
@@ -39,10 +39,11 @@ export function useLastUsedColumn() {
           />
         );
       },
-      table: ColumnTableOption.Expanded,
+      table: ColumnTableOption.expanded,
       card: 'hidden',
       list: 'secondary',
-      modal: ColumnModalOption.Hidden,
+      modal: ColumnModalOption.hidden,
+      dashboard: ColumnModalOption.hidden,
     }),
     [pageNavigate, t]
   );
