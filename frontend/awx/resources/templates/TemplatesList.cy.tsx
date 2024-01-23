@@ -87,7 +87,15 @@ describe('TemplatesList', () => {
       cy.clickButton(/^Clear all filters$/);
     });
 
-    it('Create Template button is disabled if the user does not have permission to create templates', () => {});
+    it('Create Template button is disabled if the user does not have permission to create templates', () => {
+      cy.mount(<TemplatesList url={'/api/v2/projects/6/*'} />);
+      cy.intercept({ method: 'GET', url: '/api/v2/me' }, { fixture: 'normalUser.json' });
+      cy.wait('@templatesList')
+        .its('response.body')
+        .then(() => {
+          cy.contains('.pf-v5-c-dropdown__toggle', 'Create template').should('be.disabled');
+        });
+    });
 
     it('Create Template button renders form if user has permission to create', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({
