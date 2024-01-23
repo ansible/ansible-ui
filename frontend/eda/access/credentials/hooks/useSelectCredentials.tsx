@@ -1,33 +1,56 @@
-import { useMemo } from 'react';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelectDialog } from '../../../../../framework';
 import { edaAPI } from '../../../../eda/common/eda-utils';
 import { useCredentialFilters } from './useCredentialFilters';
 import { useCredentialColumns } from './useCredentialColumns';
 import { EdaCredential } from '../../../interfaces/EdaCredential';
 import { useEdaView } from '../../../common/useEventDrivenView';
+import { SelectSingleDialog } from '../../../../../framework/PageDialogs/SelectSingleDialog';
+import { MultiSelectDialog, usePageDialog } from '../../../../../framework';
 
-export function useSelectCredentials(isLookup: boolean) {
+export function useSelectCredentials(credentialType?: number, title?: string) {
+  const [_, setDialog] = usePageDialog();
   const { t } = useTranslation();
+  const openSelectCredentials = useCallback(
+    (onSelect: (credentials: EdaCredential[]) => void) => {
+      setDialog(
+        <SelectEdaCredentials
+          title={t(title ? title : 'Select credential')}
+          onSelect={onSelect}
+          credentialType={credentialType}
+        />
+      );
+    },
+    [credentialType, setDialog, t, title]
+  );
+  return openSelectCredentials;
+}
+
+function SelectEdaCredentials(props: {
+  title: string;
+  onSelect: (credentials: EdaCredential[]) => void;
+  defaultEdaCredential?: EdaCredential;
+  credentialType?: number;
+}) {
   const toolbarFilters = useCredentialFilters();
   const tableColumns = useCredentialColumns();
-  const columns = useMemo(
-    () => (isLookup ? tableColumns.filter((item) => ['Name'].includes(item.header)) : tableColumns),
-    [isLookup, tableColumns]
-  );
   const view = useEdaView<EdaCredential>({
     url: edaAPI`/credentials/`,
     toolbarFilters,
-    tableColumns: columns,
+    tableColumns: tableColumns,
     disableQueryString: true,
+    ...(props.credentialType && {
+      queryParams: {
+        credential_type: props.credentialType.toString(),
+      },
+    }),
   });
-  return useSelectDialog<EdaCredential, true>({
-    toolbarFilters,
-    tableColumns: columns,
-    view,
-    confirm: t('Confirm'),
-    cancel: t('Cancel'),
-    selected: t('Selected'),
-    isMultiple: true,
-  });
+  return (
+    <MultiSelectDialog<EdaCredential>
+      {...props}
+      toolbarFilters={toolbarFilters}
+      tableColumns={tableColumns}
+      view={view}
+    />
+  );
 }

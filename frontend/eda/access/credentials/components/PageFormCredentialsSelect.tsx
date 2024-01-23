@@ -9,7 +9,7 @@ export function PageFormCredentialSelect<
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >(props: { name: TFieldName; labelHelp: string; isRequired?: boolean }) {
   const { t } = useTranslation();
-  const selectCredential = useSelectCredentials(true);
+  const selectCredential = useSelectCredentials();
 
   return (
     <PageFormMultiInput<EdaCredential, TFieldValues, TFieldName>

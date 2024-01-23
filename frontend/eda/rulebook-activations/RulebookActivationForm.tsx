@@ -37,6 +37,7 @@ import { EdaProjectCell } from '../projects/components/EdaProjectCell';
 import { EdaEventSource } from '../interfaces/EdaEventSource';
 import { PageFormMultiSelect } from '../../../framework/PageForm/Inputs/PageFormMultiSelect';
 import { PageFormCredentialSelect } from '../access/credentials/components/PageFormCredentialsSelect';
+import { EdaCredential } from '../interfaces/EdaCredential';
 
 export function CreateRulebookActivation() {
   const { t } = useTranslation();
@@ -59,6 +60,9 @@ export function CreateRulebookActivation() {
     }
     rulebookActivation.extra_var_id = extra_var?.id;
     rulebookActivation.rulebook_id = rulebook?.id;
+    rulebookActivation.credentials = rulebookActivation.credential_refs
+      ? rulebookActivation.credential_refs.map((credential) => `${credential.id || ''}`)
+      : undefined;
     const newRulebookActivation = await postEdaRulebookActivation(
       edaAPI`/activations/`,
       rulebookActivation
@@ -215,8 +219,8 @@ export function RulebookActivationInputs() {
         placeholder={t('Select source(s)')}
         footer={<Link to={getPageUrl(EdaRoute.CreateEventSource)}>Create source</Link>}
       />
-      <PageFormCredentialSelect<{ credentials: string; id: number }>
-        name="credentials"
+      <PageFormCredentialSelect<{ credential_refs: string; id: string }>
+        name="credential_refs"
         labelHelp={t(`Select the credentials for this rulebook activations.`)}
       />
       <PageFormSelect<IEdaRulebookActivationInputs>
@@ -291,5 +295,6 @@ type IEdaRulebookActivationInputs = Omit<EdaRulebookActivationCreate, 'sources'>
   project_id: string;
   variables: string;
   awx_token_id: number;
-  credentials: string[];
+  credentials?: string[];
+  credential_refs?: EdaCredential[];
 };
