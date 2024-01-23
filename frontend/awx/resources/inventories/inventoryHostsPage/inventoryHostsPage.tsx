@@ -82,7 +82,10 @@ export function InventoryHostsPage() {
           page: AwxRoute.InventoryHosts,
           persistentFilterKey: 'inventories',
         }}
-        tabs={[{ label: t('Details'), page: AwxRoute.InventoryHostDetails }]}
+        tabs={[
+          { label: t('Details'), page: AwxRoute.InventoryHostDetails },
+          { label: t('Groups'), page: AwxRoute.InventoryHostGroups },
+        ]}
         params={params}
       />
     </PageLayout>

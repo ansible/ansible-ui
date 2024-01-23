@@ -18,6 +18,7 @@ import { AwxRoute } from '../AwxRoutes';
 import { InventoryHosts } from '../../resources/inventories/InventoryPage/InventoryHosts';
 import { InventoryHostsPage } from '../../resources/inventories/inventoryHostsPage/inventoryHostsPage';
 import { InventoryHostsDetails } from '../../resources/inventories/inventoryHostsPage/inventoryHostsDetails';
+import { InventoryHostsGroups } from '../../resources/inventories/inventoryHostsPage/inventoryHostsGroups';
 
 export function useAwxInventoryRoutes() {
   const { t } = useTranslation();
@@ -150,6 +151,11 @@ export function useAwxInventoryRoutes() {
               id: AwxRoute.InventoryHostDetails,
               path: 'details',
               element: <InventoryHostsDetails />,
+            },
+            {
+              id: AwxRoute.InventoryHostGroups,
+              path: 'groups',
+              element: <InventoryHostsGroups />,
             },
           ],
         },
