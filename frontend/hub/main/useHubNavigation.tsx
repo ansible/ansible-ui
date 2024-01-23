@@ -54,8 +54,11 @@ import { HubNamespacePage } from '../namespaces/HubNamespacePage/HubNamespacePag
 import { Namespaces } from '../namespaces/HubNamespaces';
 import { HubOverview } from '../overview/HubOverview';
 import { HubRoute } from './HubRoutes';
-import { NamespaceUserAccess } from '../namespaces/HubNamespacePage/NamespaceUserAccess';
-import { NamespaceTeamAccess } from '../namespaces/HubNamespacePage/NamespaceTeamAccess';
+import { HubNamespaceUserAccess } from '../namespaces/HubNamespacePage/HubNamespaceUserAccess';
+import { HubNamespaceTeamAccess } from '../namespaces/HubNamespacePage/HubNamespaceTeamAccess';
+import { HubNamespaceAccessRoles } from '../namespaces/HubNamespacePage/HubNamespaceAccessRoles';
+import { HubNamespaceUserPage } from '../namespaces/HubNamespacePage/HubNamespaceUserPage';
+import { HubNamespaceTeamPage } from '../namespaces/HubNamespacePage/HubNamespaceTeamPage';
 
 export function useHubNavigation() {
   const { t } = useTranslation();
@@ -104,12 +107,12 @@ export function useHubNavigation() {
             {
               id: HubRoute.NamespaceUserAccess,
               path: 'user-access',
-              element: <NamespaceUserAccess />,
+              element: <HubNamespaceUserAccess />,
             },
             {
               id: HubRoute.NamespaceTeamAccess,
               path: 'team-access',
-              element: <NamespaceTeamAccess />,
+              element: <HubNamespaceTeamAccess />,
             },
             {
               id: HubRoute.NamespaceUserAccessAddUser,
@@ -118,12 +121,54 @@ export function useHubNavigation() {
             },
             {
               id: HubRoute.NamespaceTeamAccessAddTeam,
-              path: 'user-access-add-team',
+              path: 'team-access-add-team',
+              element: <PageNotImplemented />,
+            },
+            {
+              id: HubRoute.NamespaceUserAccessAddRoles,
+              path: 'user-access-add-role',
+              element: <PageNotImplemented />,
+            },
+            {
+              id: HubRoute.NamespaceTeamAccessAddRoles,
+              path: 'team-access-add-role',
               element: <PageNotImplemented />,
             },
             {
               path: '',
               element: <Navigate to="details" />,
+            },
+          ],
+        },
+        {
+          id: HubRoute.NamespaceUserPage,
+          path: ':id/users/:username',
+          element: <HubNamespaceUserPage />,
+          children: [
+            {
+              id: HubRoute.NamespaceUserAccessRoles,
+              path: 'user-access-roles',
+              element: <HubNamespaceAccessRoles />,
+            },
+            {
+              path: '',
+              element: <Navigate to="user-access-roles" />,
+            },
+          ],
+        },
+        {
+          id: HubRoute.NamespaceTeamPage,
+          path: ':id/teams/:teamname',
+          element: <HubNamespaceTeamPage />,
+          children: [
+            {
+              id: HubRoute.NamespaceTeamAccessRoles,
+              path: 'team-access-roles',
+              element: <HubNamespaceAccessRoles />,
+            },
+            {
+              path: '',
+              element: <Navigate to="team-access-roles" />,
             },
           ],
         },

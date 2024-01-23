@@ -11,31 +11,33 @@ import {
   useGetPageUrl,
   useInMemoryView,
 } from '../../../../framework';
-import { ResourceAccessUser } from './HubResourceAccessInterfaces';
+import { HubResourceAccessUser } from './HubResourceAccessInterfaces';
 import { useTranslation } from 'react-i18next';
 import { CubesIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
-import { HubRoute } from '../../main/HubRoutes';
 
-function userKeyFn(user: ResourceAccessUser) {
+function userKeyFn(user: HubResourceAccessUser) {
   return user.username;
 }
 
 export function HubResourceAccessUsers(props: {
-  users: ResourceAccessUser[];
+  users: HubResourceAccessUser[];
   canEditAccess: boolean;
+  resourceId: string;
+  userPageRoute: string;
+  addUserRoute: string;
 }) {
-  const { users, canEditAccess } = props;
+  const { users, canEditAccess, resourceId, userPageRoute, addUserRoute } = props;
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
 
-  const tableColumns = useMemo<ITableColumn<ResourceAccessUser>[]>(
+  const tableColumns = useMemo<ITableColumn<HubResourceAccessUser>[]>(
     () => [
       {
         header: t('User'),
         cell: (user) => (
           <TextCell
             text={user.username}
-            // to={getPageUrl(HubRoute.NamespacePage, { params: { id: namespace.name } })}
+            to={getPageUrl(userPageRoute, { params: { id: resourceId, username: user.username } })}
           />
         ),
         key: 'username',
@@ -45,10 +47,10 @@ export function HubResourceAccessUsers(props: {
         list: 'name',
       },
     ],
-    [t]
+    [getPageUrl, resourceId, t, userPageRoute]
   );
 
-  const toolbarActions = useMemo<IPageAction<ResourceAccessUser>[]>(
+  const toolbarActions = useMemo<IPageAction<HubResourceAccessUser>[]>(
     () => [
       {
         type: PageActionType.Link,
@@ -61,7 +63,7 @@ export function HubResourceAccessUsers(props: {
           : t(
               'You do not have permission to add a user. Please contact your system administrator if there is an issue with your access.'
             ),
-        href: `${getPageUrl(HubRoute.NamespaceUserAccessAddUser)}`,
+        href: `${getPageUrl(addUserRoute)}`,
       },
       { type: PageActionType.Seperator },
       {
@@ -73,10 +75,10 @@ export function HubResourceAccessUsers(props: {
         isDanger: true,
       },
     ],
-    [canEditAccess, getPageUrl, t]
+    [addUserRoute, canEditAccess, getPageUrl, t]
   );
 
-  const rowActions = useMemo<IPageAction<ResourceAccessUser>[]>(
+  const rowActions = useMemo<IPageAction<HubResourceAccessUser>[]>(
     () => [
       {
         type: PageActionType.Button,
@@ -110,7 +112,7 @@ export function HubResourceAccessUsers(props: {
     return filters;
   }, [t]);
 
-  const view = useInMemoryView<ResourceAccessUser>({
+  const view = useInMemoryView<HubResourceAccessUser>({
     keyFn: userKeyFn,
     items: users,
     tableColumns,

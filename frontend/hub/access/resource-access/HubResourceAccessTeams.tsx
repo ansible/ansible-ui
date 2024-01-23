@@ -11,31 +11,33 @@ import {
   useGetPageUrl,
   useInMemoryView,
 } from '../../../../framework';
-import { ResourceAccessTeam } from './HubResourceAccessInterfaces';
+import { HubResourceAccessTeam } from './HubResourceAccessInterfaces';
 import { useTranslation } from 'react-i18next';
 import { CubesIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
-import { HubRoute } from '../../main/HubRoutes';
 
-function teamKeyFn(team: ResourceAccessTeam) {
+function teamKeyFn(team: HubResourceAccessTeam) {
   return team.id;
 }
 
 export function HubResourceAccessTeams(props: {
-  teams: ResourceAccessTeam[];
+  teams: HubResourceAccessTeam[];
   canEditAccess: boolean;
+  resourceId: string;
+  teamPageRoute: string;
+  addTeamRoute: string;
 }) {
-  const { teams, canEditAccess } = props;
+  const { teams, canEditAccess, resourceId, teamPageRoute, addTeamRoute } = props;
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
 
-  const tableColumns = useMemo<ITableColumn<ResourceAccessTeam>[]>(
+  const tableColumns = useMemo<ITableColumn<HubResourceAccessTeam>[]>(
     () => [
       {
         header: t('Team'),
         cell: (team) => (
           <TextCell
             text={team.name}
-            // to={getPageUrl(HubRoute.NamespacePage, { params: { id: namespace.name } })}
+            to={getPageUrl(teamPageRoute, { params: { id: resourceId, teamname: team.name } })}
           />
         ),
         key: 'name',
@@ -45,10 +47,10 @@ export function HubResourceAccessTeams(props: {
         list: 'name',
       },
     ],
-    [t]
+    [getPageUrl, resourceId, t, teamPageRoute]
   );
 
-  const toolbarActions = useMemo<IPageAction<ResourceAccessTeam>[]>(
+  const toolbarActions = useMemo<IPageAction<HubResourceAccessTeam>[]>(
     () => [
       {
         type: PageActionType.Link,
@@ -61,7 +63,7 @@ export function HubResourceAccessTeams(props: {
           : t(
               'You do not have permission to add a team. Please contact your system administrator if there is an issue with your access.'
             ),
-        href: `${getPageUrl(HubRoute.NamespaceTeamAccessAddTeam)}`,
+        href: `${getPageUrl(addTeamRoute)}`,
       },
       { type: PageActionType.Seperator },
       {
@@ -73,10 +75,10 @@ export function HubResourceAccessTeams(props: {
         isDanger: true,
       },
     ],
-    [canEditAccess, getPageUrl, t]
+    [addTeamRoute, canEditAccess, getPageUrl, t]
   );
 
-  const rowActions = useMemo<IPageAction<ResourceAccessTeam>[]>(
+  const rowActions = useMemo<IPageAction<HubResourceAccessTeam>[]>(
     () => [
       {
         type: PageActionType.Button,
@@ -92,7 +94,7 @@ export function HubResourceAccessTeams(props: {
         isDanger: true,
       },
     ],
-    [t]
+    [canEditAccess, t]
   );
 
   const toolbarFilters = useMemo(() => {
@@ -110,7 +112,7 @@ export function HubResourceAccessTeams(props: {
     return filters;
   }, [t]);
 
-  const view = useInMemoryView<ResourceAccessTeam>({
+  const view = useInMemoryView<HubResourceAccessTeam>({
     keyFn: teamKeyFn,
     items: teams,
     tableColumns,

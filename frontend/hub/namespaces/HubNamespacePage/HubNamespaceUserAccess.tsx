@@ -1,51 +1,34 @@
 import { useParams } from 'react-router-dom';
-import { HubItemsResponse } from '../../common/useHubView';
-import { HubNamespace } from '../HubNamespace';
-import { useGet } from '../../../common/crud/useGet';
-import { hubAPI } from '../../common/api/formatPath';
 import { LoadingPage } from '../../../../framework';
 import { HubError } from '../../common/HubError';
-import { useMemo } from 'react';
 import { useHubContext } from '../../common/useHubContext';
 import { HubResourceAccessUsers } from '../../access/resource-access/HubResourceAccessUsers';
-import { ResourceAccessUser } from '../../access/resource-access/HubResourceAccessInterfaces';
 import { useTranslation } from 'react-i18next';
 import { useUpdatePageBreadcrumbs } from '../../../../framework/hooks/usePageBreadcrumbsContext';
+import { useGetNamespaceAndUsersWithAccess } from '../hooks/useGetNamespaceAndUsersWithAccess';
+import { HubRoute } from '../../main/HubRoutes';
 
-export function NamespaceUserAccess() {
+export function HubNamespaceUserAccess() {
+  const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const {
     data: response,
     error,
     refresh,
-  } = useGet<HubItemsResponse<HubNamespace>>(
-    hubAPI`/_ui/v1/namespaces/?limit=1&name=${params.id ?? ''}&include_related=my_permissions`
-  );
-  const namespace = useMemo<HubNamespace | undefined>(
-    () => (response && response.data?.length ? response.data[0] : undefined),
-    [response]
-  );
+    namespace,
+    usersWithAccess,
+  } = useGetNamespaceAndUsersWithAccess(params.id ?? '');
+
   const { hasPermission, user } = useHubContext();
   const canEditAccess = Boolean(
     hasPermission('galaxy.change_namespace') ||
       namespace?.related_fields?.my_permissions?.includes('galaxy.change_namespace') ||
       user.is_superuser
   );
-  const { t } = useTranslation();
+
   useUpdatePageBreadcrumbs({
     label: t('User Access'),
   });
-
-  const usersWithAccess = useMemo<ResourceAccessUser[]>(
-    () =>
-      namespace
-        ? namespace.users.map(({ name, object_roles }) => ({
-            username: name,
-            object_roles,
-          }))
-        : [],
-    [namespace]
-  );
 
   if (!response || !response.data || (response.data.length === 0 && !error)) {
     return <LoadingPage />;
@@ -55,5 +38,13 @@ export function NamespaceUserAccess() {
     return <HubError error={error} handleRefresh={refresh} />;
   }
 
-  return <HubResourceAccessUsers users={usersWithAccess} canEditAccess={canEditAccess} />;
+  return (
+    <HubResourceAccessUsers
+      users={usersWithAccess}
+      canEditAccess={canEditAccess}
+      resourceId={params.id ?? ''}
+      userPageRoute={HubRoute.NamespaceUserPage}
+      addUserRoute={HubRoute.NamespaceUserAccessAddUser}
+    />
+  );
 }

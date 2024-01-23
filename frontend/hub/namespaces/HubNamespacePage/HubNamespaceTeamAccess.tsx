@@ -10,8 +10,9 @@ import { useHubContext } from '../../common/useHubContext';
 import { HubResourceAccessTeams } from '../../access/resource-access/HubResourceAccessTeams';
 import { useUpdatePageBreadcrumbs } from '../../../../framework/hooks/usePageBreadcrumbsContext';
 import { useTranslation } from 'react-i18next';
+import { HubRoute } from '../../main/HubRoutes';
 
-export function NamespaceTeamAccess() {
+export function HubNamespaceTeamAccess() {
   const params = useParams<{ id: string }>();
   const {
     data: response,
@@ -42,5 +43,13 @@ export function NamespaceTeamAccess() {
     return <HubError error={error} handleRefresh={refresh} />;
   }
 
-  return <HubResourceAccessTeams teams={namespace?.groups ?? []} canEditAccess={canEditAccess} />;
+  return (
+    <HubResourceAccessTeams
+      teams={namespace?.groups ?? []}
+      canEditAccess={canEditAccess}
+      resourceId={params.id ?? ''}
+      teamPageRoute={HubRoute.NamespaceTeamPage}
+      addTeamRoute={HubRoute.NamespaceTeamAccessAddTeam}
+    />
+  );
 }

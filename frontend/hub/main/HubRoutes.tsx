@@ -15,6 +15,12 @@ export enum HubRoute {
   NamespaceTeamAccess = 'hub-namespace-team-access',
   NamespaceUserAccessAddUser = 'hub-namespace-add-user',
   NamespaceTeamAccessAddTeam = 'hub-namespace-add-team',
+  NamespaceUserPage = 'hub-namespace-user',
+  NamespaceTeamPage = 'hub-namespace-team',
+  NamespaceUserAccessRoles = 'hub-namespace-user-roles',
+  NamespaceTeamAccessRoles = 'hub-namespace-team-roles',
+  NamespaceUserAccessAddRoles = 'hub-namespace-user-add-role',
+  NamespaceTeamAccessAddRoles = 'hub-namespace-team-add-role',
 
   CollectionSignatureUpload = 'hub-signature-upload',
   Collections = 'hub-collections',
