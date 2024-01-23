@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { dom, parse } from 'antsibull-docs';
 
 import React from 'react';
-import { CodeBlock, PageSection, Stack, StackItem, Title } from '@patternfly/react-core';
+import { CodeBlock, PageSection, Stack, StackItem, TextInput, Title } from '@patternfly/react-core';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { IContents, IContentsOption } from '../../Collection';
 import { PFColorE } from '../../../../../framework';
@@ -38,6 +38,7 @@ export function CollectionDocumentationTabContent(props: {
   const queryString = queryStringFromObject(searchParams);
   const getPageUrl = useGetPageUrl();
   const settings = useSettings();
+  const [paramsFilter, setParamsFilter] = useState('');
 
   type OptionRecord = {
     option: IContentsOption;
@@ -221,6 +222,12 @@ export function CollectionDocumentationTabContent(props: {
             {backtoMenuLink}
           </PageSection>
           <PageSection variant="light" style={{ paddingLeft: 0, paddingRight: 0, paddingTop: 0 }}>
+            <TextInput
+              onChange={(event, text) => setParamsFilter(text)}
+              value={paramsFilter}
+              isExpanded={false}
+              placeholder={t('Search for parameter name')}
+            />
             <Table variant="compact">
               <Thead>
                 <Tr>
@@ -242,7 +249,10 @@ export function CollectionDocumentationTabContent(props: {
               </Thead>
               <Tbody>
                 {optionsState
-                  .filter((optionState) => optionState.visible)
+                  .filter(
+                    (optionState) =>
+                      optionState.visible && optionState.option.name.startsWith(paramsFilter)
+                  )
                   .map((optionRecord) => {
                     const descriptions = Array.isArray(optionRecord.option.description)
                       ? optionRecord.option.description
@@ -576,7 +586,7 @@ function formatPart(part: dom.Part, params: Params): React.ReactNode {
 }
 
 function formatPartError(part: dom.ErrorPart): React.ReactNode {
-  return <span className="error">ERROR while parsing: {part.message}</span>;
+  return <span className="error">{part.message}</span>;
 }
 
 function formatPartBold(part: dom.BoldPart): React.ReactNode {
@@ -589,7 +599,7 @@ function formatPartCode(part: dom.CodePart, params: Params): React.ReactNode {
 
 function formatPartCodeCommon(text: string, params: Params): React.ReactNode {
   let color = '#e6e9e9';
-  if (params.settings.theme == 'dark') {
+  if (params.settings.theme === 'dark') {
     color = '#6e9e9e';
   }
   return (
@@ -704,11 +714,15 @@ function renderDocLink(name: string, href: string | undefined, params: Params) {
 }
 
 function renderPluginConfiguration(option: IContentsOption) {
+  const iniEntries = 'ini entries:';
+  const env = 'env:';
+  const varT = 'var:';
+
   return (
     <React.Fragment>
       {option.ini ? (
         <div className="plugin-config">
-          ini entries:
+          {iniEntries}
           {option.ini.map((v, i) => (
             <p key={i}>
               [{v.section}]<br />
@@ -721,7 +735,9 @@ function renderPluginConfiguration(option: IContentsOption) {
       {option.env ? (
         <div className="plugin-config">
           {option.env.map((v, i) => (
-            <div key={i}>env: {v.name}</div>
+            <div key={i}>
+              {env} {v.name}
+            </div>
           ))}
         </div>
       ) : null}
@@ -729,7 +745,9 @@ function renderPluginConfiguration(option: IContentsOption) {
       {option.vars ? (
         <div className="plugin-config">
           {option['vars'].map((v, i) => (
-            <div key={i}>var: {v.name}</div>
+            <div key={i}>
+              {varT} {v.name}
+            </div>
           ))}
         </div>
       ) : null}
@@ -744,8 +762,8 @@ function renderPluginLink(text: string, params: Params) {
   params.groups.forEach((group) => {
     group.contents.forEach((content) => {
       if (
-        content.content_name == docParams.content_name &&
-        content.content_type == docParams.content_type
+        content.content_name === docParams.content_name &&
+        content.content_type === docParams.content_type
       ) {
         module = content;
       }
