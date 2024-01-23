@@ -36,7 +36,6 @@ export function useInventoriesGroupsToolbarActions(view: IAwxView<InventoryGroup
     groupOptions && groupOptions.actions && groupOptions.actions['POST']
   );
 
-
   return useMemo<IPageAction<InventoryGroup>[]>(
     () => [
       {

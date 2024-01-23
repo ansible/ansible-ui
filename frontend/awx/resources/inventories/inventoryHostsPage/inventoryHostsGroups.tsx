@@ -26,7 +26,6 @@ export function InventoryHostsGroups() {
   const toolbarActions = useInventoriesGroupsToolbarActions(view);
   const rowActions = useInventoriesGroupsActions();
 
-
   const groupOptions = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/hosts`).data;
   const canCreateGroup = Boolean(
     groupOptions && groupOptions.actions && groupOptions.actions['POST']
