@@ -37,11 +37,8 @@ describe('Namespaces', () => {
     cy.get('[data-cy="company"]').type('test company');
     cy.get('[data-cy="Submit"]').click();
     cy.url().should('include', `/namespaces/${namespaceName}/details`);
-    cy.get('*[aria-controls^="pf-tab-section-hub-namespace-cli"]').should(
-      'contain',
-      'CLI Configuration'
-    );
-    cy.get('*[aria-controls^="pf-tab-section-hub-namespace-cli"]').click();
+    cy.get('[data-cy="namespace-cli-tab"]').should('contain', 'CLI Configuration');
+    cy.get('[data-cy="namespace-cli-tab"]').click();
     cy.get('[class="pf-v5-c-truncate__start"]').should('contain', apiPrefix);
     // Delete namespace
     cy.get('[data-cy="actions-dropdown"]').click();
