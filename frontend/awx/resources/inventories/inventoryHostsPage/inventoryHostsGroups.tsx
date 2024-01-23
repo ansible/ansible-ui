@@ -12,6 +12,8 @@ import { useInventoriesGroupsToolbarActions } from './hooks/useInventoriesGroups
 import { useInventoriesGroupsActions } from './hooks/useInventoriesGroupsActions';
 import { useInventoriesGroupsColumns } from './hooks/useInventoriesGroupsColumns';
 import { InventoryGroup } from '../../../interfaces/InventoryGroup';
+import { useInventoryHostGroupsAddModal } from './inventoryHostsGroupsModal';
+import { useAddInventoryGroups } from './hooks/useAddInventoryGroups';
 
 export function InventoryHostsGroups() {
   const { t } = useTranslation();
@@ -25,6 +27,9 @@ export function InventoryHostsGroups() {
   });
   const toolbarActions = useInventoriesGroupsToolbarActions(view);
   const rowActions = useInventoriesGroupsActions();
+
+  const openInventoryHostsGroupsAddModal = useInventoryHostGroupsAddModal();
+  const addGroups = useAddInventoryGroups(view.unselectItemsAndRefresh);
 
   const groupOptions = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/hosts`).data;
   const canCreateGroup = Boolean(
@@ -56,7 +61,9 @@ export function InventoryHostsGroups() {
         }
         emptyStateIcon={canCreateGroup ? undefined : CubesIcon}
         emptyStateButtonText={canCreateGroup ? t('Create group') : undefined}
-        emptyStateButtonClick={canCreateGroup ? () => undefined : undefined}
+        emptyStateButtonClick={
+          canCreateGroup ? () => openInventoryHostsGroupsAddModal({ onAdd: addGroups }) : undefined
+        }
         {...view}
       />
     </PageLayout>
