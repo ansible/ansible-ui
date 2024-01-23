@@ -24,6 +24,7 @@ export function Collections() {
       is_highest: 'true',
     },
     toolbarFilters,
+    defaultSort: 'name',
   });
 
   const toolbarActions = useCollectionsActions(view.unselectItemsAndRefresh);
