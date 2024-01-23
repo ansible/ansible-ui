@@ -209,21 +209,19 @@ export function CollectionDocumentationTabContent(props: {
           }
         </Stack>
       </PageSection>
-      {content?.doc_strings?.doc?.description &&
-        Array.isArray(content?.doc_strings?.doc?.description) && (
+      {content?.doc_strings?.doc?.description && Array.isArray(content?.doc_strings?.doc?.description) && (
           <PageSection variant="light">
             <Title headingLevel="h2" id="Synopsis_part">
               {t('Synopsis')}
             </Title>
             {backtoMenuLink}
             <Stack hasGutter>
-              
                   <ul>
-                  {content?.doc_strings?.doc?.description.map((item, index) => (
+                  {content?.doc_strings?.doc?.description?.map?.((item, index) => (
                     <li key={item + index.toString()}>{applyDocFormatters(item, params)}</li>
                   ))}
                 </ul>
-             
+                
             </Stack>
           </PageSection>
         )}
@@ -265,9 +263,9 @@ export function CollectionDocumentationTabContent(props: {
                 {optionsState
                   .filter(
                     (optionState) =>
-                      optionState.visible && optionState.option.name.startsWith(paramsFilter)
+                      optionState.visible && optionState.option.name?.startsWith?.(paramsFilter)
                   )
-                  .map((optionRecord) => {
+                  .map?.((optionRecord) => {
                     const descriptions = Array.isArray(optionRecord.option.description)
                       ? optionRecord.option.description
                       : [optionRecord.option.description];
@@ -345,13 +343,13 @@ export function CollectionDocumentationTabContent(props: {
                           </div>
                         </Td>
                         <Td>
-                          {optionRecord.option.choices?.map((choice, index) => {
+                          {optionRecord.option.choices?.map?.((choice, index) => {
                             let style = {};
                             let title = '';
 
                             if (
                               Array.isArray(optionRecord.option.default) &&
-                              optionRecord.option.default.includes(choice)
+                              optionRecord.option.default?.includes?.(choice)
                             ) {
                               title = t('Default');
                               style = { color: PFColorE.Blue };
@@ -372,7 +370,7 @@ export function CollectionDocumentationTabContent(props: {
                           <Td>{renderPluginConfiguration(optionRecord.option)}</Td>
                         )}
                         <Td>
-                          {descriptions.map((description, index) => (
+                          {descriptions?.map?.((description, index) => (
                             <>
                               {index > 0 && (
                                 <>
@@ -392,14 +390,14 @@ export function CollectionDocumentationTabContent(props: {
           </PageSection>
         </>
       )}
-      {content?.doc_strings?.doc?.notes && (
+      {content?.doc_strings?.doc?.notes && Array.isArray(content?.doc_strings?.doc?.notes) &&  (
         <PageSection variant="light">
           <Title headingLevel="h2" id="Notes_part">
             {t('Notes')}
           </Title>
           {backtoMenuLink}
           <Stack hasGutter>
-            {content?.doc_strings?.doc.notes?.map((note, index) => (
+            {content?.doc_strings?.doc.notes?.map?.((note, index) => (
               <p key={index}>{applyDocFormatters(note, params)}</p>
             ))}
           </Stack>
@@ -412,10 +410,9 @@ export function CollectionDocumentationTabContent(props: {
           </Title>
           {backtoMenuLink}
           <Stack hasGutter>
-            {content.doc_strings.examples
-              .split(splitString)
-              .filter((example) => !!example.trim())
-              .map((example, index) => (
+            {content.doc_strings.examples?.split?.(splitString)
+              .filter?.((example) => !!example.trim())
+              .map?.((example, index) => (
                 <CodeBlock key={index} style={{ overflowY: 'auto' }}>
                   <pre>
                     {splitString}
@@ -447,7 +444,7 @@ export function CollectionDocumentationTabContent(props: {
                 </Tr>
               </Thead>
               <Tbody>
-                {content?.doc_strings?.return?.map((parameter) => (
+                {content?.doc_strings?.return?.map?.((parameter) => (
                   <Tr key={parameter.name}>
                     <Td>
                       <div>{parameter.name}</div>
@@ -493,7 +490,7 @@ function SampleNode(props: { sample: ISample; level: number; draw_comma: boolean
     return (
       <>
         <SampleLine text="[" level={level} />
-        {sample.map((item: ISample, index: number) => {
+        {sample.map?.((item: ISample, index: number) => {
           return (
             <SampleNode
               key={index}
