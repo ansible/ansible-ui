@@ -130,9 +130,9 @@ export function CollectionDocumentationTabContent(props: {
     url: '',
     settings,
     docParams: {
-      repository: '',
-      namespace: '',
-      name: '',
+      repository: props.collection.repository?.name || '',
+      namespace: props.collection.collection_version?.namespace || '',
+      name: props.collection.collection_version?.name || '',
       content_name: '',
       content_type: '',
     },
@@ -682,6 +682,8 @@ function formatPartPlugin(part: dom.PluginPart, params: Params): React.ReactNode
 function renderDocLink(name: string, href: string | undefined, params: Params) {
   const docParams = params.docParams;
 
+  // TODO - dont work and links are broken in old app too... dont know what to do with this
+
   if (!!href && href.startsWith('http')) {
     return <Link to={href}>{name}</Link>;
   } else if (href) {
@@ -695,7 +697,7 @@ function renderDocLink(name: string, href: string | undefined, params: Params) {
       `/documentation/${docParams.content_type}/${docParams.content_name}`
     );
 
-    return <Link to={formatDocPath(params)}>{name}</Link>;
+    return <Link to={path}>{name}</Link>;
   } else {
     return null;
   }
