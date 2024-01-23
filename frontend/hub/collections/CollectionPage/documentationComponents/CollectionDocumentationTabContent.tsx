@@ -1,5 +1,8 @@
 import { useTranslation } from 'react-i18next';
+import { withTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { dom, parse } from 'antsibull-docs';
+import { Component } from 'react';
 
 import React from 'react';
 import { CodeBlock, PageSection, Stack, StackItem, TextInput, Title } from '@patternfly/react-core';
@@ -151,17 +154,19 @@ export function CollectionDocumentationTabContent(props: {
           )}
           {content?.doc_strings?.doc?.deprecated && (
             <>
-              <Title headingLevel="h2">{t('DEPRECATED')}</Title>
-              <StackItem>
-                {' '}
-                <span style={{ fontWeight: 'bold' }}>{t('Why')}</span> :{' '}
-                {applyDocFormatters(content?.doc_strings?.doc?.deprecated?.why, params)}
-              </StackItem>
-              <StackItem>
-                {' '}
-                <span style={{ fontWeight: 'bold' }}>{t('Alternative')}</span> :{' '}
-                {applyDocFormatters(content?.doc_strings?.doc?.deprecated?.alternative, params)}
-              </StackItem>
+            <ErrorBoundary>
+                <Title headingLevel="h2">{t('DEPRECATED')}</Title>
+                <StackItem>
+                  {' '}
+                  <span style={{ fontWeight: 'bold' }}>{t('Why')}</span> :{' '}
+                  {applyDocFormatters(content?.doc_strings?.doc?.deprecated?.why, params)}
+                </StackItem>
+                <StackItem>
+                  {' '}
+                  <span style={{ fontWeight: 'bold' }}>{t('Alternative')}</span> :{' '}
+                  {applyDocFormatters(content?.doc_strings?.doc?.deprecated?.alternative, params)}
+                </StackItem>
+              </ErrorBoundary>
             </>
           )}
 
@@ -539,18 +544,6 @@ function applyDocFormatters(text: string, params: Params): React.ReactNode {
 }
 
 function formatPart(part: dom.Part, params: Params): React.ReactNode {
-  if (
-    part.type === dom.PartType.PLUGIN ||
-    part.type === dom.PartType.LINK ||
-    part.type === dom.PartType.MODULE
-  ) {
-    //debugger;
-  }
-
-  if (part.type !== dom.PartType.TEXT) {
-    //debugger;
-  }
-
   switch (part.type) {
     case dom.PartType.ERROR:
       return formatPartError(part as dom.ErrorPart);
@@ -801,3 +794,37 @@ type DocParams = {
   content_type: string;
   content_name: string;
 };
+
+interface IState {
+  hasError: boolean;
+}
+
+interface IProps {
+  children: React.ReactNode;
+  t: TFunction<'translation', undefined>;
+}
+
+// this cant be implemented in functional component, there is no hook for catching errors
+class ErrorBoundaryBase extends Component<IProps, IState> {
+  constructor(props: IProps) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    // Update state so the next render will show the fallback UI.
+    return { hasError: true };
+  }
+
+  render() {
+    const { t } = this.props;
+    if (this.state.hasError) {
+      // You can render any custom fallback UI
+      return <h1>{t('Something went wrong while rendering.')}</h1>;
+    }
+
+    return this.props.children;
+  }
+}
+
+const ErrorBoundary = withTranslation()(ErrorBoundaryBase);
