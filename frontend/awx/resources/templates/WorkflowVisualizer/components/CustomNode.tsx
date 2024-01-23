@@ -39,7 +39,7 @@ export const CustomNode: FC<
   const { element, contextMenuOpen, onContextMenu, onSelect, selected, ...rest } = props;
   const data = element.getData();
   const id = element.getId();
-  const jobType = data && data.resource.summary_fields.unified_job_template.unified_job_type;
+  const jobType = data && data.resource.summary_fields.unified_job_template?.unified_job_type;
 
   if (!data || !jobType) return null;
 
