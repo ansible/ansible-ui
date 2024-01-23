@@ -309,7 +309,7 @@ export function useHubNavigation() {
           children: [
             {
               id: HubRoute.TaskPage,
-              path: ':id/*',
+              path: ':id/',
               element: <TaskDetails />,
             },
             {
