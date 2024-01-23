@@ -305,24 +305,46 @@ Cypress.Commands.add('deleteRemoteRegistry', (remoteRegistryId: string) => {
   cy.requestDelete(hubAPI`/_ui/v1/execution-environments/registries/${remoteRegistryId}/`);
 });
 
+Cypress.Commands.add('deleteCollection', (collection: string, namespace: string) => {
+  cy.galaxykit(`collection delete ${namespace} ${collection}`);
+});
+
+Cypress.Commands.add('uploadCollection', (collection: string, namespace: string) => {
+  cy.galaxykit(`collection upload ${namespace} ${collection}`);
+});
+
 Cypress.Commands.add(
-  'deleteCollection',
-  (
-    collectionName: string,
-    namespaceName: string,
-    repository: string,
-    options?: {
-      /** Whether to fail on response codes other than 2xx and 3xx */
-      failOnStatusCode?: boolean;
-    }
-  ) => {
-    cy.requestDelete(
-      hubAPI`/v3/plugin/ansible/content/${repository}/collections/index/${namespaceName}/${collectionName}/`,
-      options
-    );
+  'approveCollection',
+  (collection: string, namespace: string, version: string) => {
+    cy.galaxykit(`collection move ${namespace} ${collection} ${version} staging published`);
   }
 );
 
-Cypress.Commands.add('uploadCollection', (collection: string, namespace: string) => {
-  cy.galaxykit(`-i collection upload ${namespace} ${collection}`);
+Cypress.Commands.add('collectionCopyVersionToRepositories', (collection: string) => {
+  cy.navigateTo('hub', 'collections');
+  cy.filterTableByText(collection);
+
+  cy.get('[data-cy="data-list-name"]').should('have.text', collection);
+  cy.get('[data-cy="data-list-action"]').within(() => {
+    cy.get('[data-cy="actions-dropdown"]')
+      .first()
+      .click()
+      .then(() => {
+        cy.get('[data-cy="copy-version-to-repositories"]').click();
+      });
+  });
+
+  cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+    cy.clickButton(/^Clear all filters$/);
+    cy.get('header').contains('Select repositories');
+    cy.get('button').contains('Select').should('have.attr', 'aria-disabled', 'true');
+    cy.filterTableByText('community');
+    cy.get('[data-cy="data-list-check"]').click();
+    cy.get('button').contains('Select').click();
+  });
+
+  cy.navigateTo('hub', 'approvals');
+  cy.clickButton(/^Clear all filters$/);
+  cy.filterBySingleSelection(/^Repository$/, 'community');
+  cy.get('[data-cy="repository-column-cell"]').should('contain', 'community');
 });

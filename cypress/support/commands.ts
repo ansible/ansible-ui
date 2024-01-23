@@ -941,13 +941,15 @@ declare global {
       deleteCollection(
         collectionName: string,
         namespaceName: string,
-        repository: string,
-        options?: {
-          /** Whether to fail on response codes other than 2xx and 3xx */
-          failOnStatusCode?: boolean;
-        }
+        repository: string
       ): Cypress.Chainable<void>;
       uploadCollection(collection: string, namespace: string): Cypress.Chainable<void>;
+      approveCollection(
+        collection: string,
+        namespace: string,
+        version: string
+      ): Cypress.Chainable<void>;
+      collectionCopyVersionToRepositories(collection: string): Cypress.Chainable<void>;
       addAndApproveMultiCollections(thisRange: number): Cypress.Chainable<void>;
     }
   }

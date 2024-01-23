@@ -1,5 +1,6 @@
 import { hubAPI } from '../../support/formatApiPathForHub';
 import { Collections } from './constants';
+import { randomString } from '../../../framework/utils/random-string';
 
 describe.skip('Collections- List View', () => {
   //**Important to know:
@@ -83,8 +84,21 @@ describe.skip('Collections- List View', () => {
 });
 
 describe.skip('Collections List- Line Item Kebab Menu', () => {
+  let thisCollectionName: string;
+  let namespace: string;
+  let repository: string;
+
   before(() => {
+    thisCollectionName = 'hub_e2e_' + randomString(5).toLowerCase();
+    namespace = 'ibm';
     cy.hubLogin();
+    cy.getNamespace(namespace);
+    cy.uploadCollection(thisCollectionName, namespace);
+    cy.navigateTo('hub', Collections.url);
+  });
+
+  after(() => {
+    cy.deleteCollection(thisCollectionName, namespace, repository);
   });
 
   it.skip('user can upload a new version to an existing collection', () => {});
@@ -95,7 +109,11 @@ describe.skip('Collections List- Line Item Kebab Menu', () => {
 
   it.skip('user can deprecate a collection', () => {});
 
-  it.skip('user can copy a version to repository', () => {});
+  it('user can copy a version to repository', () => {
+    cy.approveCollection(thisCollectionName, namespace, '1.0.0');
+    cy.collectionCopyVersionToRepositories(thisCollectionName);
+    repository = 'community';
+  });
 });
 
 describe.skip('Collections Details View', () => {
