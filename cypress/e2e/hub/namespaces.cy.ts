@@ -47,6 +47,25 @@ describe('Namespaces', () => {
     cy.clickButton(/^Delete namespaces$/);
   });
 
+  it('should show the correct URL when clicking on the CLI configuration tab', () => {
+    cy.navigateTo('hub', Namespaces.url);
+    const namespaceName = `test_namespace_${randomString(5, undefined, { isLowercase: true })}`;
+    cy.get('[data-cy="create-namespace"]').should('be.visible').click();
+    cy.url().should('include', Namespaces.urlCreate);
+    cy.get('[data-cy="name"]').type(namespaceName);
+    cy.get('[data-cy="company"]').type('test company');
+    cy.get('[data-cy="Submit"]').click();
+    cy.url().should('include', `/namespaces/${namespaceName}/details`);
+    cy.get('[data-cy="namespace-cli-tab"]').should('contain', 'CLI Configuration');
+    cy.get('[data-cy="namespace-cli-tab"]').click();
+    cy.get('[class="pf-v5-c-truncate__start"]').should('contain', apiPrefix);
+    // Delete namespace
+    cy.get('[data-cy="actions-dropdown"]').click();
+    cy.get('[data-cy="delete-namespace"]').click();
+    cy.get('#confirm').click();
+    cy.clickButton(/^Delete namespaces$/);
+  });
+
   it('edit a namespace', () => {
     cy.navigateTo('hub', Namespaces.url);
     const namespaceName = `test_namespace_${randomString(5, undefined, { isLowercase: true })}`;
