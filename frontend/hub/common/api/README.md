@@ -20,3 +20,27 @@ For this reason, when interacting with the HUB backend, leveraging these functio
 ## GET actions
 
 For `GET` actions, it's recommended to utilize the hooks from the framework. These hooks, like `useGet`, are integrated with `swr` features. The `useGet` hook notably provides outputs such as `data`, `error`, and `refresh`, which seamlessly integrate with the existing components in the system.
+
+```
+import { useGet } from '@frontend/common/crud/useGet';
+
+const { data, error, isLoading, refresh } = useGet<MyType>(hubAPI`/url`);
+```
+
+When you need to deal with a more complex set of requests, there's also `useGetFn`, which allows firing multiple requests in parallel or depending on each other.
+
+```
+import { requestGet } from '@frontend/common/crud/Data';
+import { useGetFn } from '@frontend/hub/useGetFn';
+
+const { data, error, isLoading, refresh } = useGetFn<MyType>('unique-identifier-for-caching',
+  (signal: AbortSignal) => Promise.all([
+    requestGet(hubAPI`/url1`, signal),
+    requestGet(hubAPI`/url2`, signal),
+  ]).then(([data1, data2]) => Promise.all([
+    data1,
+    data2,
+    requestGet(hubAPI`/url3/${data1.id}/${data2.name}/`, signal),
+  ])),
+);
+```
