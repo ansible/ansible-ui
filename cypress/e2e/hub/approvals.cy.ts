@@ -1,16 +1,29 @@
 import { Approvals } from './constants';
 import { randomString } from '../../../framework/utils/random-string';
 
-describe.skip('Approvals', () => {
+describe('Approvals', () => {
   let thisCollectionName: string;
   let namespace: string;
   let repository: string;
 
   beforeEach(() => {
+    // maybe the length of string can be larger, just to be sure
     thisCollectionName = 'test' + randomString(4).toLowerCase();
+    /*
+      Is ibm standard namespace in the system, what if its deleted?
+      I rather suggest creating own namespace with random string, 
+      but its up to discussion. The solution with ibm namespace will be faster, 
+      but it can cause potential troubles. For example when two tests will run over cleaned database, 
+      both will query namespaces, both will at the same time recieve that ibm not exist, 
+      both will attempt to create it, both will fail.
+    */
     namespace = 'ibm';
     cy.hubLogin();
+
+    // this will not be necessary if we will create random namespace on the fly
     cy.getNamespace(namespace);
+
+    // this is using galaxykit correctly
     cy.uploadCollection(thisCollectionName, namespace);
 
     cy.navigateTo('hub', Approvals.url);
