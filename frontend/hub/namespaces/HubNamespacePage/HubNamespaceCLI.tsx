@@ -1,15 +1,10 @@
-import { Trans, useTranslation } from 'react-i18next';
+import { Trans } from 'react-i18next';
 import { CopyCell } from '../../../../framework';
 import { ExternalLink } from '../../common/ExternalLink';
 import { getRepoURL } from '../../common/api/hub-api-utils';
-import { useUpdatePageBreadcrumbs } from '../../../../framework/hooks/usePageBreadcrumbsContext';
 
 export function HubNamespaceCLI() {
   const repositoryUrl = getRepoURL('published');
-  const { t } = useTranslation();
-  useUpdatePageBreadcrumbs({
-    label: t('CLI Configuration'),
-  });
 
   return (
     <div style={{ padding: '24px' }}>

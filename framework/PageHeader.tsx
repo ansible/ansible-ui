@@ -14,11 +14,12 @@ import {
   Truncate,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
-import { CSSProperties, Fragment, ReactNode } from 'react';
+import { CSSProperties, Fragment, ReactNode, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './PageFramework.css';
 import { useBreakpoint } from './components/useBreakPoint';
 import { useFrameworkTranslations } from './useFrameworkTranslations';
+import { usePageBreadcrumbs } from './PageTabs/PageBreadcrumbs';
 
 export interface ICatalogBreadcrumb {
   id?: string;
@@ -26,6 +27,7 @@ export interface ICatalogBreadcrumb {
   to?: string;
   target?: string;
   component?: React.ElementType;
+  isLoading?: boolean;
 }
 
 function Breadcrumbs(props: { breadcrumbs: ICatalogBreadcrumb[]; style?: CSSProperties }) {
@@ -107,20 +109,45 @@ export function PageHeader(props: PageHeaderProps) {
   const isXl = useBreakpoint('xl');
   const isMdOrLarger = useBreakpoint('md');
   const [translations] = useFrameworkTranslations();
+  const { pageBreadcrumbs, baselineBreadcrumbs, setBaselineBreadcrumbs, setPageBreadcrumbs } =
+    usePageBreadcrumbs();
+
+  useEffect(() => {
+    if (breadcrumbs?.length) {
+      setBaselineBreadcrumbs(breadcrumbs ?? []);
+      setPageBreadcrumbs([...baselineBreadcrumbs]);
+    }
+  }, [
+    baselineBreadcrumbs,
+    breadcrumbs,
+    breadcrumbs?.length,
+    setBaselineBreadcrumbs,
+    setPageBreadcrumbs,
+  ]);
+
+  // Cleanup - to remove breadcrumbs when the PageHeader is unmounted (page is changed)
+  useEffect(() => {
+    return () => {
+      setBaselineBreadcrumbs([]);
+      setPageBreadcrumbs([]);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <PageSection
       variant={PageSectionVariants.light}
       className="bg-lighten border-bottom"
       style={{
-        paddingTop: breadcrumbs ? (isXl ? 16 : 12) : isXl ? 16 : 12,
+        paddingTop: pageBreadcrumbs ? (isXl ? 16 : 12) : isXl ? 16 : 12,
         paddingBottom: isXl ? 16 : 12,
       }}
     >
       <Stack hasGutter>
         <Flex flexWrap={{ default: 'nowrap' }} alignItems={{ default: 'alignItemsStretch' }}>
           <FlexItem grow={{ default: 'grow' }}>
-            {breadcrumbs && (
-              <Breadcrumbs breadcrumbs={breadcrumbs} style={{ paddingBottom: isLg ? 6 : 4 }} />
+            {pageBreadcrumbs && (
+              <Breadcrumbs breadcrumbs={pageBreadcrumbs} style={{ paddingBottom: isLg ? 6 : 4 }} />
             )}
             {title ? (
               props.titleHelp ? (

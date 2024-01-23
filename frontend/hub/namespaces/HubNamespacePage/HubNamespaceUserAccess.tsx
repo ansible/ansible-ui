@@ -3,13 +3,10 @@ import { LoadingPage } from '../../../../framework';
 import { HubError } from '../../common/HubError';
 import { useHubContext } from '../../common/useHubContext';
 import { HubResourceAccessUsers } from '../../access/resource-access/HubResourceAccessUsers';
-import { useTranslation } from 'react-i18next';
-import { useUpdatePageBreadcrumbs } from '../../../../framework/hooks/usePageBreadcrumbsContext';
 import { useGetNamespaceAndUsersWithAccess } from '../hooks/useGetNamespaceAndUsersWithAccess';
 import { HubRoute } from '../../main/HubRoutes';
 
 export function HubNamespaceUserAccess() {
-  const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const {
     data: response,
@@ -25,10 +22,6 @@ export function HubNamespaceUserAccess() {
       namespace?.related_fields?.my_permissions?.includes('galaxy.change_namespace') ||
       user.is_superuser
   );
-
-  useUpdatePageBreadcrumbs({
-    label: t('User Access'),
-  });
 
   if (!response || !response.data || (response.data.length === 0 && !error)) {
     return <LoadingPage />;

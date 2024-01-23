@@ -6,7 +6,6 @@ import {
   PageLayout,
   useGetPageUrl,
 } from '../../../../framework';
-import { BreadcrumbsContext } from '../../../../framework/hooks/usePageBreadcrumbsContext';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { HubRoute } from '../../main/HubRoutes';
@@ -39,23 +38,21 @@ export function HubNamespaceUserPage() {
   }
   return (
     <PageLayout>
-      <BreadcrumbsContext.Provider value={{ breadcrumbs, setBreadcrumbs }}>
-        <PageHeader title={params.username ?? ''} breadcrumbs={breadcrumbs} />
-        <PageRoutedTabs
-          backTab={{
-            label: t('Back to user access'),
-            page: HubRoute.NamespaceUserAccess,
-            persistentFilterKey: 'namespace-user-access',
-          }}
-          tabs={[
-            {
-              label: t('Roles'),
-              page: HubRoute.NamespaceUserAccessRoles,
-            },
-          ]}
-          params={{ id: namespace?.name, username: params.username }}
-        />
-      </BreadcrumbsContext.Provider>
+      <PageHeader title={params.username ?? ''} breadcrumbs={breadcrumbs} />
+      <PageRoutedTabs
+        backTab={{
+          label: t('Back to user access'),
+          page: HubRoute.NamespaceUserAccess,
+          persistentFilterKey: 'namespace-user-access',
+        }}
+        tabs={[
+          {
+            label: t('Roles'),
+            page: HubRoute.NamespaceUserAccessRoles,
+          },
+        ]}
+        params={{ id: namespace?.name, username: params.username }}
+      />
     </PageLayout>
   );
 }

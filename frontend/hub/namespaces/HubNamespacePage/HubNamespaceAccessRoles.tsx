@@ -1,6 +1,4 @@
 import { useParams } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import { useUpdatePageBreadcrumbs } from '../../../../framework/hooks/usePageBreadcrumbsContext';
 import { HubResourceAccessRoles } from '../../access/resource-access/HubResourceAccessRoles';
 import { useGetNamespaceAndUsersWithAccess } from '../hooks/useGetNamespaceAndUsersWithAccess';
 import { LoadingPage } from '../../../../framework';
@@ -9,7 +7,6 @@ import { useHubContext } from '../../common/useHubContext';
 import { useMemo } from 'react';
 
 export function HubNamespaceAccessRoles() {
-  const { t } = useTranslation();
   const params = useParams<{ id: string; username?: string; teamname?: string }>();
   const {
     data: response,
@@ -34,10 +31,6 @@ export function HubNamespaceAccessRoles() {
       namespace?.related_fields?.my_permissions?.includes('galaxy.change_namespace') ||
       user.is_superuser
   );
-
-  useUpdatePageBreadcrumbs({
-    label: t('Roles'),
-  });
 
   if (!response || !response.data || (response.data.length === 0 && !error)) {
     return <LoadingPage />;

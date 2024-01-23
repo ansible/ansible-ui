@@ -29,17 +29,16 @@ export function RepositoryPage() {
   });
   const getPageUrl = useGetPageUrl();
   const { t } = useTranslation();
+  const breadcrumbs = [
+    { label: t('Repositories'), to: getPageUrl(HubRoute.Repositories) },
+    { label: params.id },
+  ];
 
   const { data, error, refresh } = useGet<PulpItemsResponse<Repository>>(
     params.id ? pulpAPI`/repositories/ansible/ansible/?name=${params.id}` : ''
   );
   if (error) return <HubError error={error} handleRefresh={refresh} />;
   if (!data) return <LoadingPage breadcrumbs tabs />;
-
-  const breadcrumbs = [
-    { label: t('Repositories'), to: getPageUrl(HubRoute.Repositories) },
-    { label: params.id },
-  ];
 
   const repository = data?.results.length > 0 ? data?.results[0] : undefined;
   const repo_id: string = parsePulpIDFromURL(repository?.pulp_href) || '';

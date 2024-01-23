@@ -4,6 +4,8 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { PageLayout, useGetPageUrl, usePageNavigate } from '..';
 import { getPersistentFilters } from '../../frontend/common/PersistentFilters';
 import { useSearchParams } from 'react-router-dom';
+import { usePageBreadcrumbs } from './PageBreadcrumbs';
+import { useEffect } from 'react';
 
 export function PageRoutedTabs(props: {
   backTab?: { label: string; page: string; persistentFilterKey: string };
@@ -19,9 +21,18 @@ export function PageRoutedTabs(props: {
   const navigate = useNavigate();
   const getPageUrl = useGetPageUrl();
   const location = useLocation();
+  const { setPageBreadcrumbs, baselineBreadcrumbs } = usePageBreadcrumbs();
+
   const activeTab = props.tabs.find(
     (tab) => tab && getPageUrl(tab.page, { params: props.params }) === location.pathname
   );
+
+  // Add current active tab to breadcrumbs
+  useEffect(() => {
+    if (activeTab && baselineBreadcrumbs.length) {
+      setPageBreadcrumbs([...baselineBreadcrumbs, { label: activeTab.label }]);
+    }
+  }, [activeTab, baselineBreadcrumbs, setPageBreadcrumbs]);
 
   const [searchParams] = useSearchParams();
 

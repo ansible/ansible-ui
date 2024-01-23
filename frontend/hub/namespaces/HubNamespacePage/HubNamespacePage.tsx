@@ -2,7 +2,6 @@ import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
-  ICatalogBreadcrumb,
   LoadingPage,
   PageActions,
   PageHeader,
@@ -18,8 +17,7 @@ import { HubItemsResponse } from '../../common/useHubView';
 import { HubRoute } from '../../main/HubRoutes';
 import { HubNamespace } from '../HubNamespace';
 import { useHubNamespaceActions } from '../hooks/useHubNamespaceActions';
-import { BreadcrumbsContext } from '../../../../framework/hooks/usePageBreadcrumbsContext';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
 export function HubNamespacePage() {
   const { t } = useTranslation();
@@ -40,14 +38,6 @@ export function HubNamespacePage() {
   const pageActions = useHubNamespaceActions({
     onHubNamespacesDeleted: () => pageNavigate(HubRoute.Namespaces),
   });
-  const [breadcrumbs, setBreadcrumbs] = useState<ICatalogBreadcrumb[]>([]);
-
-  useEffect(() => {
-    setBreadcrumbs([
-      { label: t('Namespaces'), to: getPageUrl(HubRoute.Namespaces) },
-      { label: namespace?.name, to: getPageUrl(HubRoute.NamespaceDetails, { params: params }) },
-    ]);
-  }, [getPageUrl, namespace?.name, params, setBreadcrumbs, t]);
 
   if (!data && !error) {
     return <LoadingPage />;
@@ -63,7 +53,10 @@ export function HubNamespacePage() {
         title={namespace?.name}
         breadcrumbs={[
           { label: t('Namespaces'), to: getPageUrl(HubRoute.Namespaces) },
-          { label: namespace?.name },
+          {
+            label: namespace?.name,
+            to: getPageUrl(HubRoute.NamespaceDetails, { params: params }),
+          },
         ]}
         headerActions={
           <PageActions<HubNamespace>
@@ -74,6 +67,11 @@ export function HubNamespacePage() {
         }
       />
       <PageRoutedTabs
+        backTab={{
+          label: t('Back to Namespaces'),
+          page: HubRoute.Namespaces,
+          persistentFilterKey: 'namespaces',
+        }}
         tabs={[
           {
             label: t('Details'),
