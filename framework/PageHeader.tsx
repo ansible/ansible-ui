@@ -30,7 +30,7 @@ export interface ICatalogBreadcrumb {
   isLoading?: boolean;
 }
 
-function Breadcrumbs(props: { breadcrumbs: ICatalogBreadcrumb[]; style?: CSSProperties }) {
+function Breadcrumbs(props: { breadcrumbs?: ICatalogBreadcrumb[]; style?: CSSProperties }) {
   const navigate = useNavigate();
   if (!props.breadcrumbs) return <Fragment />;
   return (
@@ -139,7 +139,7 @@ export function PageHeader(props: PageHeaderProps) {
       variant={PageSectionVariants.light}
       className="bg-lighten border-bottom"
       style={{
-        paddingTop: pageBreadcrumbs ? (isXl ? 16 : 12) : isXl ? 16 : 12,
+        paddingTop: breadcrumbs ? (isXl ? 16 : 12) : isXl ? 16 : 12,
         paddingBottom: isXl ? 16 : 12,
       }}
     >
@@ -147,7 +147,10 @@ export function PageHeader(props: PageHeaderProps) {
         <Flex flexWrap={{ default: 'nowrap' }} alignItems={{ default: 'alignItemsStretch' }}>
           <FlexItem grow={{ default: 'grow' }}>
             {pageBreadcrumbs && (
-              <Breadcrumbs breadcrumbs={pageBreadcrumbs} style={{ paddingBottom: isLg ? 6 : 4 }} />
+              <Breadcrumbs
+                breadcrumbs={breadcrumbs ? pageBreadcrumbs : undefined}
+                style={{ paddingBottom: isLg ? 6 : 4 }}
+              />
             )}
             {title ? (
               props.titleHelp ? (
