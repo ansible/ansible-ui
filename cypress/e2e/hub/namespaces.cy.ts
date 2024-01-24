@@ -130,5 +130,7 @@ describe('Namespaces', () => {
     cy.url().should('include', namespaceName);
     cy.verifyPageTitle(MyImports.title);
     cy.contains(namespaceName);
+
+    cy.deleteNamespace(namespaceName);
   });
 });
