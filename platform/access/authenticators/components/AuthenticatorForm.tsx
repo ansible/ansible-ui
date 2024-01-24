@@ -15,9 +15,11 @@ import { postRequest } from '../../../../frontend/common/crud/Data';
 import { genericErrorAdapter } from '../../../../framework/PageForm/genericErrorAdapter';
 import { AuthenticatorTypeStep } from './steps/AuthenticatorTypeStep';
 import { AuthenticatorDetailsStep } from './steps/AuthenticatorDetailsStep';
-// import { AuthenticatorMappingStep } from './steps/AuthenticatorMappingStep';
+import { AuthenticatorMappingStep } from './steps/AuthenticatorMappingStep';
+import { AuthenticatorMappingOrderStep } from './steps/AuthenticatorMappingOrderStep';
 import { AuthenticatorReviewStep } from './steps/AuthenticatorReviewStep';
 import { AuthenticatorTypeEnum } from '../../../interfaces/Authenticator';
+import { AuthenticatorMapType } from '../../../interfaces/AuthenticatorMap';
 import type {
   AuthenticatorPlugins,
   AuthenticatorPlugin,
@@ -28,7 +30,17 @@ interface Configuration {
   [key: string]: string | string[] | { [k: string]: string };
 }
 
-export interface AuthenticatorForm {
+export interface AuthenticatorMapValues {
+  map_type: AuthenticatorMapType;
+  name?: string;
+  triggers?: {
+    [key: string]: object;
+  };
+  revoke: boolean;
+  order?: number;
+}
+
+export interface AuthenticatorFormValues {
   name: string;
   enabled: boolean;
   create_objects: boolean;
@@ -37,6 +49,7 @@ export interface AuthenticatorForm {
   configuration: Configuration;
   type: AuthenticatorTypeEnum;
   order: number;
+  mappings: AuthenticatorMapValues[];
 }
 
 type Errors =
@@ -52,7 +65,7 @@ export function CreateAuthenticator() {
 
   const { data: plugins } = useGet<AuthenticatorPlugins>(gatewayAPI`/authenticator_plugins`);
 
-  const handleSubmit = async (values: AuthenticatorForm) => {
+  const handleSubmit = async (values: AuthenticatorFormValues) => {
     const { name, type, configuration } = values;
     const plugin = plugins?.authenticators.find((a) => a.type === type);
     if (!plugins || !plugin) {
@@ -102,17 +115,16 @@ export function CreateAuthenticator() {
       label: t('Authentication details'),
       inputs: <AuthenticatorDetailsStep plugins={plugins} />,
     },
-    // TODO
-    // {
-    //   id: 'mapping',
-    //   label: t('Mapping'),
-    //   inputs: <AuthenticatorMappingStep plugins={plugins} />,
-    // },
-    // {
-    //   id: 'order',
-    //   label: t('Mapping order'),
-    //   inputs: <div />,
-    // },
+    {
+      id: 'mapping',
+      label: t('Mapping'),
+      inputs: <AuthenticatorMappingStep />,
+    },
+    {
+      id: 'order',
+      label: t('Mapping order'),
+      inputs: <AuthenticatorMappingOrderStep />,
+    },
     {
       id: 'review',
       label: t('Review'),
@@ -141,7 +153,7 @@ export function CreateAuthenticator() {
           { label: t('Create Authentication') },
         ]}
       />
-      <PageWizard<AuthenticatorForm>
+      <PageWizard<AuthenticatorFormValues>
         steps={steps}
         defaultValue={initialValues}
         onSubmit={handleSubmit}
