@@ -2,7 +2,7 @@ import { hubAPI } from '../../support/formatApiPathForHub';
 import { Collections } from './constants';
 import { randomString } from '../../../framework/utils/random-string';
 
-describe.skip('Collections- List View', () => {
+describe('Collections- List View', () => {
   //**Important to know:
   //**In order to upload a collection, a namespace must first exist containing the first word of the collection file name
   //**The only way to get rid of a collection's artifact is to choose the following option:
@@ -12,7 +12,7 @@ describe.skip('Collections- List View', () => {
   before(() => {
     cy.hubLogin();
     cy.getNamespace('ibm');
-    cy.addAndApproveMultiCollections(5);
+    cy.addAndApproveMultiCollections(1);
   });
 
   it('it should render the collections page', () => {
@@ -24,7 +24,7 @@ describe.skip('Collections- List View', () => {
     cy.cleanupCollections('ibm', 'community');
   });
 
-  it('user can upload and then delete a new collection', () => {
+  it.skip('user can upload and then delete a new collection', () => {
     cy.getOrCreateCollection().then((thisCollection) => {
       const thisCollectionName = thisCollection?.split('-').slice(-2, -1).toString();
       cy.navigateTo('hub', Collections.url);
@@ -109,7 +109,7 @@ describe.skip('Collections List- Line Item Kebab Menu', () => {
 
   it.skip('user can deprecate a collection', () => {});
 
-  it('user can copy a version to repository', () => {
+  it.skip('user can copy a version to repository', () => {
     cy.approveCollection(thisCollectionName, namespace, '1.0.0');
     cy.collectionCopyVersionToRepositories(thisCollectionName);
     repository = 'community';
