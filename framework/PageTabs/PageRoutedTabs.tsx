@@ -7,7 +7,7 @@ import { useSearchParams } from 'react-router-dom';
 
 export function PageRoutedTabs(props: {
   backTab?: { label: string; page: string; persistentFilterKey: string };
-  tabs: ({ label: string; page: string } | false)[];
+  tabs: ({ label: string; page: string; dataCy?: string } | false)[];
   params?: { [key: string]: string | number | undefined };
   // Use to pass data to tab's component. To access data in that component use useOutletContext()
   componentParams?: { [key: string]: unknown };
@@ -55,6 +55,7 @@ export function PageRoutedTabs(props: {
           eventKey={tab.page}
           title={tab.label}
           href={getPageUrl(tab.page, { params: props.params, query: sharedQueryKeysObj })}
+          data-cy={tab.dataCy}
         />
       ) : null
     ) as unknown as TabsChild;
