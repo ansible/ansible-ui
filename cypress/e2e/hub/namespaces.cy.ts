@@ -29,7 +29,6 @@ describe('Namespaces', () => {
   });
 
   it('should show the correct URL when clicking on the CLI configuration tab', () => {
-  it('should show namespace details tab', () => {
     cy.navigateTo('hub', Namespaces.url);
     const namespaceName = `test_namespace_${randomString(5, undefined, { isLowercase: true })}`;
     cy.get('[data-cy="create-namespace"]').should('be.visible').click();
@@ -48,27 +47,27 @@ describe('Namespaces', () => {
     cy.clickButton(/^Delete namespaces$/);
   });
 
-  it('should show the correct URL when clicking on the CLI configuration tab', () => {
+  it('should show namespace details tab', () => {
     cy.navigateTo('hub', Namespaces.url);
     const namespaceName = `test_namespace_${randomString(5, undefined, { isLowercase: true })}`;
     cy.get('[data-cy="create-namespace"]').should('be.visible').click();
     cy.url().should('include', Namespaces.urlCreate);
     cy.get('[data-cy="name"]').type(namespaceName);
+    cy.get('[data-cy="description"]').type('test description');
     cy.get('[data-cy="company"]').type('test company');
     cy.get('[data-cy="Submit"]').click();
     cy.url().should('include', `/namespaces/${namespaceName}/details`);
-    cy.get('[data-cy="namespace-cli-tab"]').should('contain', 'CLI Configuration');
-    cy.get('[data-cy="namespace-cli-tab"]').click();
-    cy.get('[class="pf-v5-c-truncate__start"]').should('contain', apiPrefix);
+    cy.get('[data-cy="namespace-details-tab"]').should('contain', 'Details');
+    cy.get('[data-cy="namespace-details-tab"]').click();
+    //check name, company, description
+    cy.get('[data-cy="name"]').should('contain', namespaceName);
+    cy.get('[data-cy="description"]').should('contain', 'test description');
+    cy.get('[data-cy="company"]').should('contain', 'test company');
     // Delete namespace
     cy.get('[data-cy="actions-dropdown"]').click();
     cy.get('[data-cy="delete-namespace"]').click();
     cy.get('#confirm').click();
     cy.clickButton(/^Delete namespaces$/);
-    cy.get('*[aria-controls^="pf-tab-section-hub-namespace-details"]').should('contain', 'Details');
-    cy.get('*[aria-controls^="pf-tab-section-hub-namespace-details"]').click();
-    //check name, company, description
-    cy.get('[class="pf-v5-c-truncate__start"]').should('contain', apiPrefix);
   });
 
   it('edit a namespace', () => {
