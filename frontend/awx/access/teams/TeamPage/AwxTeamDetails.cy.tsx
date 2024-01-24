@@ -15,8 +15,8 @@ describe('TeamDetails', () => {
       'contain',
       mockAwxTeam.summary_fields?.created_by?.username
     );
-    cy.get('[data-cy="modified"]').should('contain', formatDateString(mockAwxTeam.modified));
-    cy.get('[data-cy="modified"]').should(
+    cy.get('[data-cy="last-modified"]').should('contain', formatDateString(mockAwxTeam.modified));
+    cy.get('[data-cy="last-modified"]').should(
       'contain',
       mockAwxTeam.summary_fields?.modified_by?.username
     );
