@@ -106,6 +106,7 @@ export function NodeFormInputs(props: {
 
     setSidebarMode(undefined);
     setModified(true);
+    controller.getNodeById(node.id)?.setState({ modified: true });
 
     return Promise.resolve();
   };
