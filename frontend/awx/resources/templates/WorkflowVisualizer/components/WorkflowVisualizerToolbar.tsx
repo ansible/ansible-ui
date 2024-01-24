@@ -36,10 +36,12 @@ import { useRemoveAllNodes } from '../hooks/useRemoveAllNodes';
 import { useViewOptions } from '../ViewOptionsProvider';
 import type { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
 import type { GraphNode } from '../types';
+import { useSaveVisualizer } from '../hooks';
 
-export function ToolbarHeader(props: { handleSave: () => void }) {
+export function ToolbarHeader() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
+  const handleSave = useSaveVisualizer();
   const { isFullScreen } = useViewOptions();
   const { modified, workflowTemplate } = useVisualizationController().getState<{
     modified: boolean;
@@ -95,7 +97,7 @@ export function ToolbarHeader(props: { handleSave: () => void }) {
             key="save-and-exit"
             data-cy="save-and-exit"
             variant="primary"
-            onClick={() => props.handleSave()}
+            onClick={() => void handleSave()}
           >
             {t('Save and exit')}
           </Button>,
@@ -119,14 +121,18 @@ export function ToolbarHeader(props: { handleSave: () => void }) {
   );
 }
 
-function WorkflowVisualizerToolbar(props: { handleSave: () => void }) {
+export const WorkflowVisualizerToolbar = observer(() => {
   const { t } = useTranslation();
   const config = useAwxConfig();
   const [isKebabOpen, setIsKebabOpen] = useState<boolean>(false);
   const { isFullScreen, toggleFullScreen } = useViewOptions();
+  const handleSave = useSaveVisualizer();
 
   const controller = useVisualizationController();
-  const nodes = controller.getGraph().getNodes() as GraphNode[];
+  const nodes = controller
+    .getGraph()
+    .getNodes()
+    .filter((n) => n.isVisible()) as GraphNode[];
   const { workflowTemplate } = controller.getState<{ workflowTemplate: WorkflowJobTemplate }>();
   const isReadOnly = !workflowTemplate?.summary_fields?.user_capabilities?.edit;
   const isLaunchable = workflowTemplate?.summary_fields?.user_capabilities?.start;
@@ -143,7 +149,7 @@ function WorkflowVisualizerToolbar(props: { handleSave: () => void }) {
 
   return (
     <>
-      {isFullScreen && <ToolbarHeader handleSave={props.handleSave} />}
+      {isFullScreen && <ToolbarHeader />}
       {!isReadOnly && (
         <>
           <ToolbarItem>
@@ -151,9 +157,7 @@ function WorkflowVisualizerToolbar(props: { handleSave: () => void }) {
               data-cy="workflow-visualizer-toolbar-save"
               icon={<CheckCircleIcon />}
               label={t('Save')}
-              onClick={() => {
-                props.handleSave();
-              }}
+              onClick={() => void handleSave()}
             >
               {t('Save')}
             </Button>
@@ -243,6 +247,4 @@ function WorkflowVisualizerToolbar(props: { handleSave: () => void }) {
       </ToolbarItem>
     </>
   );
-}
-
-export default observer(WorkflowVisualizerToolbar);
+});
