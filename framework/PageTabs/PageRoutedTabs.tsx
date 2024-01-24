@@ -27,7 +27,7 @@ export function PageRoutedTabs(props: {
     (tab) => tab && getPageUrl(tab.page, { params: props.params }) === location.pathname
   );
 
-  // Add current active tab to breadcrumbs
+  // Add current active tab to page breadcrumbs
   useEffect(() => {
     if (activeTab && baselineBreadcrumbs.length) {
       setPageBreadcrumbs([...baselineBreadcrumbs, { label: activeTab.label }]);

@@ -2,11 +2,12 @@ import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useStat
 import { ICatalogBreadcrumb } from '../PageHeader';
 
 export type PageBreadcrumbsContext = {
-  /** The base set of breadcrumbs for a page. eg. Namespaces -> Namespace XYZ */
+  /** The base set of breadcrumbs for a page. eg. Namespaces -> Namespace XYZ,
+   * initialized by the breadcrumbs prop passed to the PageHeader component. */
   baselineBreadcrumbs: ICatalogBreadcrumb[];
   /** The breadcrumbs that will be displayed by the PageHeader component.
-   * This usually holds the baselineBreadcrumbs appended with the current active tab if it exists.
-   * eg. Namespaces -> Namespace XYZ -> Collections */
+   * This usually holds the baselineBreadcrumbs appended with the current active tab (PageRoutedTabs)
+   * if it exists. eg. Namespaces -> Namespace XYZ -> Collections  */
   pageBreadcrumbs: ICatalogBreadcrumb[];
   /** Setter for baseline breadcrumbs for a page */
   setPageBreadcrumbs: Dispatch<SetStateAction<ICatalogBreadcrumb[]>>;

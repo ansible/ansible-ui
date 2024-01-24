@@ -94,7 +94,7 @@ export function HubResourceAccessUsers(props: {
         isDanger: true,
       },
     ],
-    [t]
+    [canEditAccess, t]
   );
 
   const toolbarFilters = useMemo(() => {
