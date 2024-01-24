@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { ReactElement, createContext, useContext, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
-import { useVisualizationController, observer, isNode } from '@patternfly/react-topology';
+import { useVisualizationController, observer } from '@patternfly/react-topology';
 
 import { GRAPH_ID } from './Topology';
 
@@ -18,6 +18,9 @@ const FullPage = styled.div`
 const ViewWrapper = styled.div`
   width: 100%;
   height: 100%;
+  .pf-topology-container {
+    min-height: 0;
+  }
   .pf-v5-c-toolbar__group {
     flex: 1;
     width: 100%;
@@ -52,7 +55,10 @@ export const ViewOptionsProvider = observer((props: { children: ReactElement }) 
   const state: { selectedIds: string[] | [] } = controller.getState();
 
   const [sidebarMode, setSidebarMode] = useState<'add' | 'edit' | 'view' | undefined>(undefined);
-  const nodes = controller.getElements().filter(isNode);
+  const nodes = controller
+    .getGraph()
+    .getNodes()
+    .find((n) => n.isVisible());
   const isGraphReady = controller.toModel().graph?.visible;
 
   const [isEmpty, setIsEmpty] = useState(false);
@@ -70,7 +76,8 @@ export const ViewOptionsProvider = observer((props: { children: ReactElement }) 
 
   useEffect(() => {
     if (isLoading) return;
-    if (nodes.length === 0) {
+
+    if (nodes === undefined) {
       setIsEmpty(true);
     } else {
       setIsEmpty(false);

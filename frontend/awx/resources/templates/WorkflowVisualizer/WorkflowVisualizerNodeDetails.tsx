@@ -1,28 +1,39 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { ActionList, Button, Title } from '@patternfly/react-core';
+import { ActionList, Button, PageSection } from '@patternfly/react-core';
 import {
   TopologySideBar as PFTopologySideBar,
   action,
   useVisualizationController,
 } from '@patternfly/react-topology';
-import { useGetDetailComponent } from './hooks';
-import { useViewOptions } from './ViewOptionsProvider';
 import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
 import type { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
+import { Scrollable } from '../../../../../framework';
+import { GraphNode } from './types';
+import { useViewOptions } from './ViewOptionsProvider';
+import { useGetDetailComponent, useRemoveNode } from './hooks';
+import { SidebarHeader } from './components';
 
 const TopologySideBar = styled(PFTopologySideBar)`
-  padding-top: 20px;
-  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
 `;
+
 export function WorkflowVisualizerNodeDetails(props: { resource: WorkflowNode }) {
   const { resource: selectedNode } = props;
   const { t } = useTranslation();
+  const removeNode = useRemoveNode();
 
   const getDetails = useGetDetailComponent(selectedNode);
   const controller = useVisualizationController();
-  const { workflowTemplate } = controller.getState<{ workflowTemplate: WorkflowJobTemplate }>();
+  const { workflowTemplate, selectedIds } = controller.getState<{
+    workflowTemplate: WorkflowJobTemplate;
+    selectedIds: string[];
+  }>();
+  const selectedNodeId = selectedIds[0];
   const isReadOnly = !workflowTemplate?.summary_fields?.user_capabilities?.edit;
 
   const { setSidebarMode } = useViewOptions();
@@ -35,32 +46,32 @@ export function WorkflowVisualizerNodeDetails(props: { resource: WorkflowNode })
   }, [controller, setSidebarMode]);
 
   const handleRemove = () => {
-    const element = controller.getNodeById(selectedNode.id.toString());
+    const element: GraphNode | undefined = controller.getNodeById(selectedNodeId);
     if (!element) return;
-    element.getTargetEdges().forEach((edge) => edge.remove());
-    element.getSourceEdges().forEach((edge) => edge.remove());
-    element.setVisible(false);
+    removeNode(element);
     handleClose();
   };
 
+  const handleEdit = () => {
+    setSidebarMode('edit');
+    controller.setState({ ...controller.getState(), selectedIds: [selectedNodeId] });
+  };
+
   return (
-    <TopologySideBar
-      data-cy="workflow-topology-sidebar"
-      header={<Title headingLevel="h1">{t('Node details')}</Title>}
-      onClose={handleClose}
-      resizable
-      show
-    >
-      {getDetails}
+    <TopologySideBar data-cy="workflow-topology-sidebar" resizable show>
+      <SidebarHeader title={t('Node details')} onClose={handleClose} />
+      <Scrollable borderTop>{getDetails}</Scrollable>
       {!isReadOnly && (
-        <ActionList data-cy="workflow-topology-sidebar-actions" style={{ paddingBottom: '20px' }}>
-          <Button data-cy="edit-node" variant="primary" onClick={() => {}}>
-            {t('Edit')}
-          </Button>
-          <Button data-cy="remove-node" variant="danger" onClick={handleRemove}>
-            {t('Remove')}
-          </Button>
-        </ActionList>
+        <PageSection variant="light" isFilled={false} className="bg-lighten border-top">
+          <ActionList data-cy="workflow-topology-sidebar-actions">
+            <Button data-cy="edit-node" variant="primary" onClick={handleEdit}>
+              {t('Edit')}
+            </Button>
+            <Button data-cy="remove-node" variant="danger" onClick={handleRemove}>
+              {t('Remove')}
+            </Button>
+          </ActionList>
+        </PageSection>
       )}
     </TopologySideBar>
   );

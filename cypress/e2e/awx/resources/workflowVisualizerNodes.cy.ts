@@ -122,6 +122,7 @@ describe('Workflow Visualizer Nodes', function () {
         add another test to launch from the details page and Visualizer page, once WF VZ work is done
         cy.get('[data-cy="launch-template"]').click();
         */
+        cy.searchAndDisplayResource(workflowJobTemplate.name);
         cy.get('button[data-cy="launch-template"]').click();
         cy.wait('@launchWJT-WithNodes')
           .its('response.body.id')
@@ -157,7 +158,6 @@ describe('Workflow Visualizer Nodes', function () {
         .should('contain', `${workflowJobTemplate.name}`)
         .should('be.visible');
       cy.contains('button', 'Save').click();
-      cy.get('[data-cy="workflow-visualizer-toolbar-close"]').click();
       cy.intercept('POST', `api/v2/workflow_job_templates/${workflowJobTemplate.id}/launch/`).as(
         'launchWJT-WithNodes'
       );
@@ -312,9 +312,9 @@ describe('Workflow Visualizer Nodes', function () {
       cy.get('[data-cy="wf-vzr-name"]')
         .should('contain', `${workflowJobTemplate.name}`)
         .should('be.visible');
-      cy.contains('button', 'Save').click();
       //remove-node, add-node-and-link, add-link, add-link, edit-node
       cy.removeAllNodesFromVisualizerToolbar();
+      cy.contains('button', 'Save').click();
       cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate);
     });
   });
