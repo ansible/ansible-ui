@@ -2,7 +2,7 @@ import { SignatureKeys } from './constants';
 import { pulpAPI } from '../../support/formatApiPathForHub';
 
 describe('Signature Keys', () => {
-  before(() => {
+  beforeEach(() => {
     cy.hubLogin();
   });
 
