@@ -6,9 +6,13 @@ import { DeletedNode } from './DeletedNode';
 import { EdgeContextMenu } from './EdgeContextMenu';
 import { Legend } from './Legend';
 import { NodeContextMenu } from './NodeContextMenu';
+import { NodeFormInputs } from './NodeFormInputs';
+import { Sidebar } from './Sidebar';
+import { SidebarHeader } from './SidebarHeader';
 import { SystemJobNodeDetails } from './SystemJobNodeDetails';
+import { ToolbarHeader } from './WorkflowVisualizerToolbar';
 import { WorkflowApprovalNodeDetails } from './WorkflowApprovalNodeDetails';
-import WorkflowVisualizerToolbar from './WorkflowVisualizerToolbar';
+import { WorkflowVisualizerToolbar } from './WorkflowVisualizerToolbar';
 
 export {
   AddNodeButton,
@@ -19,7 +23,11 @@ export {
   EdgeContextMenu,
   Legend,
   NodeContextMenu,
+  NodeFormInputs,
+  Sidebar,
+  SidebarHeader,
   SystemJobNodeDetails,
+  ToolbarHeader,
   WorkflowApprovalNodeDetails,
   WorkflowVisualizerToolbar,
 };

@@ -11,7 +11,7 @@ import { PencilAltIcon, MinusCircleIcon, PlusCircleIcon } from '@patternfly/reac
 import { useTranslation } from 'react-i18next';
 import { useViewOptions } from '../ViewOptionsProvider';
 import { GraphNode } from '../types';
-import { useSetVisualizerModified } from '../hooks/useSetVisualizerModified';
+import { useRemoveNode } from '../hooks/useRemoveNode';
 
 interface MenuItem {
   key: string;
@@ -27,8 +27,8 @@ export function useNodeMenuItems(element: GraphNode): MenuItem[] {
     selectedIds: string[] | [];
   }>();
   const { setSidebarMode } = useViewOptions();
-  const setModified = useSetVisualizerModified();
   const [_, setSelectedIds] = useVisualizationState('selectedIds', selectedIds);
+  const removeNode = useRemoveNode();
 
   const id = element.getId();
   return [
@@ -66,10 +66,7 @@ export function useNodeMenuItems(element: GraphNode): MenuItem[] {
       label: t('Remove node'),
       onClick: () => {
         action(() => {
-          element.getTargetEdges().forEach((edge) => edge.remove());
-          element.getSourceEdges().forEach((edge) => edge.remove());
-          element.setVisible(false);
-          setModified(true);
+          removeNode(element);
         })();
       },
     },
