@@ -61,10 +61,19 @@ Cypress.Commands.add('removeNodeInVisualizer', (nodeName: string) => {
   cy.get('li[data-cy="remove-node"] ').click();
 });
 
+/* Custom Cypress command called `removeAllNodesFromVisualizerToolbar`. 
+This command removes all the nodes via the visualizer toolbar. 
+It verifies that the bulk remove modal is visible, clicks the confirm checkbox, 
+clicks the remove all nodes button, asserts all nodes were removed 
+successfully, and closes the modal.
+*/
 Cypress.Commands.add('removeAllNodesFromVisualizerToolbar', () => {
   cy.get('[data-cy="workflow-visualizer-toolbar-kebab"]').click();
   cy.get('[data-cy="workflow-visualizer-toolbar-remove-all"]').click();
   cy.clickModalConfirmCheckbox();
+  cy.clickModalButton('Remove all nodes');
+  cy.assertModalSuccess();
+  cy.clickModalButton('Close');
 });
 
 /* The above code is adding a custom Cypress command called
