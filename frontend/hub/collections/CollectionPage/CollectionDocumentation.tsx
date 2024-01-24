@@ -1,7 +1,7 @@
 import { Checkbox, Drawer, DrawerContent, DrawerContentBody } from '@patternfly/react-core';
 import { useMemo, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { LoadingPage, useBreakpoint } from '../../../../framework';
+import { LoadingPage, Scrollable, useBreakpoint } from '../../../../framework';
 import { useGet } from '../../../common/crud/useGet';
 import { pulpAPI } from '../../common/api/formatPath';
 import { CollectionVersionSearch, IContents } from '../Collection';
@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { Title } from '@patternfly/react-core';
 import { PageSection } from '@patternfly/react-core';
+import { useRef } from 'react';
 
 export function CollectionDocumentation() {
   const { collection } = useOutletContext<{ collection: CollectionVersionSearch }>();
@@ -20,6 +21,7 @@ export function CollectionDocumentation() {
 
   const [searchText, setSearchText] = useState('');
   const params = useParams();
+  const scrollableRef = useRef(null);
 
   const { data, error, refresh } = useGet<CollectionVersionsContent>(
     pulpAPI`/content/ansible/collection_versions/?namespace=${
@@ -109,35 +111,38 @@ export function CollectionDocumentation() {
         }
       >
         <DrawerContentBody className="body hub-docs-content pf-v5-c-content hub-content-alert-fix">
-          {content && (
-            <>
-              <PageSection variant="light" id="Title_part">
-                <Title headingLevel="h1">
-                  {content?.content_type + ' > ' + content?.content_name}
-                </Title>
-                <Checkbox
-                  onChange={(event, checked) => setRenderJson(checked)}
-                  isChecked={renderJson}
-                  id="render-json-checkbox"
-                />{' '}
-                {t('Render documentation as JSON')}
-              </PageSection>
+          <div onFocus={() => console.log('focused')} tabIndex={0}  onClick={ (event) => {event?.currentTarget?.focus();console.log('click'); }}>
+            {content && (
+              <>
+                <PageSection variant="light" id="Title_part">
+                  <Title headingLevel="h1">
+                    {content?.content_type + ' > ' + content?.content_name}
+                  </Title>
+                  <Checkbox
+                    onChange={(event, checked) => setRenderJson(checked)}
+                    isChecked={renderJson}
+                    id="render-json-checkbox"
+                  />{' '}
+                  {t('Render documentation as JSON')}
+                </PageSection>
 
-              <CollectionDocumentationTabContent
-                content={content}
-                groups={groups}
-                collection={collection}
-                renderJSON={renderJson}
+                  <CollectionDocumentationTabContent
+                    content={content}
+                    groups={groups}
+                    collection={collection}
+                    renderJSON={renderJson}
+                  />
+              
+              </>
+            )}
+            {html && (
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: html,
+                }}
               />
-            </>
-          )}
-          {html && (
-            <div
-              dangerouslySetInnerHTML={{
-                __html: html,
-              }}
-            />
-          )}
+            )}
+            </div>
         </DrawerContentBody>
       </DrawerContent>
     </Drawer>
