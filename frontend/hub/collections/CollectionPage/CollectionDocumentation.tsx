@@ -1,4 +1,4 @@
-import { Drawer, DrawerContent, DrawerContentBody } from '@patternfly/react-core';
+import { Checkbox, Drawer, DrawerContent, DrawerContentBody } from '@patternfly/react-core';
 import { useMemo, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { LoadingPage, useBreakpoint } from '../../../../framework';
@@ -10,10 +10,13 @@ import { CollectionDocumentationTabPanel } from './documentationComponents/Colle
 import { HubError } from '../../common/HubError';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
+import { Title } from '@patternfly/react-core';
+import { PageSection } from '@patternfly/react-core';
 
 export function CollectionDocumentation() {
   const { collection } = useOutletContext<{ collection: CollectionVersionSearch }>();
   const { t } = useTranslation();
+  const [renderJson, setRenderJson] = useState(false);
 
   const [searchText, setSearchText] = useState('');
   const params = useParams();
@@ -107,11 +110,26 @@ export function CollectionDocumentation() {
       >
         <DrawerContentBody className="body hub-docs-content pf-v5-c-content hub-content-alert-fix">
           {content && (
-            <CollectionDocumentationTabContent
-              content={content}
-              groups={groups}
-              collection={collection}
-            />
+            <>
+              <PageSection variant="light" id="Title_part">
+                <Title headingLevel="h1">
+                  {content?.content_type + ' > ' + content?.content_name}
+                </Title>
+                <Checkbox
+                  onChange={(event, checked) => setRenderJson(checked)}
+                  isChecked={renderJson}
+                  id="render-json-checkbox"
+                />{' '}
+                {t('Render documentation as JSON')}
+              </PageSection>
+
+              <CollectionDocumentationTabContent
+                content={content}
+                groups={groups}
+                collection={collection}
+                renderJSON={renderJson}
+              />
+            </>
           )}
           {html && (
             <div

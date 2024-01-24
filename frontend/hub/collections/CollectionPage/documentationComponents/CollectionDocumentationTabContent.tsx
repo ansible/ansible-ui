@@ -28,6 +28,7 @@ export function CollectionDocumentationTabContent(props: {
   content: IContents | undefined;
   collection: CollectionVersionSearch;
   groups: GroupType[];
+  renderJSON: boolean;
 }) {
   const { t } = useTranslation();
   const { content } = props;
@@ -38,6 +39,8 @@ export function CollectionDocumentationTabContent(props: {
   const getPageUrl = useGetPageUrl();
   const settings = useSettings();
   const [paramsFilter, setParamsFilter] = useState('');
+  const [error, setError] = useState('');
+  const [json, setJson] = useState('');
 
   type OptionRecord = {
     option: IContentsOption;
@@ -96,8 +99,12 @@ export function CollectionDocumentationTabContent(props: {
       });
     }
 
-    fillOptions(content?.doc_strings?.doc?.options || [], 0, options, '');
-    setOptionsState(options);
+    try {
+      fillOptions(content?.doc_strings?.doc?.options || [], 0, options, '');
+      setOptionsState(options);
+    } catch (ex) {
+      setError('error');
+    }
   }, [contentKey, content?.doc_strings?.doc?.options]);
 
   function setVisibility(path: string, value: boolean) {
@@ -138,326 +145,361 @@ export function CollectionDocumentationTabContent(props: {
     },
   };
 
-  return (
-    <>
-      <PageSection variant="light" id="Menu_part">
-        <Stack hasGutter>
-          <Title headingLevel="h1">{content?.content_type + ' > ' + content?.content_name}</Title>
-          {content?.doc_strings?.doc?.short_description && (
-            <StackItem>
-              {applyDocFormatters(content?.doc_strings?.doc.short_description, params)}
-            </StackItem>
-          )}
-          {content?.doc_strings?.doc?.deprecated && (
-            <>
-              <Title headingLevel="h2">{t('DEPRECATED')}</Title>
-              <StackItem>
-                {' '}
-                <span style={{ fontWeight: 'bold' }}>{t('Why')}</span> :{' '}
-                {applyDocFormatters(content?.doc_strings?.doc?.deprecated?.why, params)}
-              </StackItem>
-              <StackItem>
-                {' '}
-                <span style={{ fontWeight: 'bold' }}>{t('Alternative')}</span> :{' '}
-                {applyDocFormatters(content?.doc_strings?.doc?.deprecated?.alternative, params)}
-              </StackItem>
-            </>
-          )}
+  function stringnifyDoc(content: IContents) {
+    try {
+      return JSON.stringify(content, null, 4);
+    } catch (error) {
+      return t(`Unexpected error when deserializing doc data.`);
+    }
+  }
 
-          <Title headingLevel="h2">{t('Overview')}</Title>
-          {
-            <ul>
-              {content?.doc_strings?.doc?.description && (
-                <li>
-                  <a href={`?${queryString}#Synopsis_part`}>{t('Synopsis')}</a>
-                </li>
-              )}
-              {optionsState && optionsState.length > 0 && (
-                <li>
-                  <a href={`?${queryString}#Parameters_part`}>{t('Parameters')}</a>
-                </li>
-              )}
-              {content?.doc_strings?.doc?.notes && (
-                <li>
-                  <a href={`?${queryString}#Notes_part`}>{t('Notes')}</a>
-                </li>
-              )}
-              {content?.doc_strings?.examples && (
-                <li>
-                  <a href={`?${queryString}#Examples_part`}>{t('Examples')}</a>
-                </li>
-              )}
-              {content?.doc_strings?.return && (
-                <li>
-                  <a href={`?${queryString}#Returns_part`}>{t('Returns')}</a>
-                </li>
-              )}
-            </ul>
-          }
-        </Stack>
-      </PageSection>
-      {content?.doc_strings?.doc?.description &&
-        Array.isArray(content?.doc_strings?.doc?.description) && (
+  if (!json) {
+    setJson(stringnifyDoc(content || ({} as IContents)));
+  }
+
+  const errorMessage = (
+    <>
+      {t(`Error occured when rendering documentation.`)}
+      <br />
+      <br />
+      {t(`Here is the original documentation data in JSON:`)}
+      <br />
+      <br />
+      <pre>{json}</pre>
+    </>
+  );
+
+  if (error) {
+    return <>{errorMessage}</>;
+  }
+
+  if (props.renderJSON) {
+    return <pre>{json}</pre>;
+  }
+
+  try {
+    return (
+      <>
+        <PageSection variant="light" id="Menu_part">
+          <Stack hasGutter>
+            {content?.doc_strings?.doc?.short_description && (
+              <StackItem>
+                {applyDocFormatters(content?.doc_strings?.doc.short_description, params)}
+              </StackItem>
+            )}
+            {content?.doc_strings?.doc?.deprecated && (
+              <>
+                <Title headingLevel="h2">{t('DEPRECATED')}</Title>
+                <StackItem>
+                  {' '}
+                  <span style={{ fontWeight: 'bold' }}>{t('Why')}</span> :{' '}
+                  {applyDocFormatters(content?.doc_strings?.doc?.deprecated?.why, params)}
+                </StackItem>
+                <StackItem>
+                  {' '}
+                  <span style={{ fontWeight: 'bold' }}>{t('Alternative')}</span> :{' '}
+                  {applyDocFormatters(content?.doc_strings?.doc?.deprecated?.alternative, params)}
+                </StackItem>
+              </>
+            )}
+
+            <Title headingLevel="h2">{t('Overview')}</Title>
+            {
+              <ul>
+                {content?.doc_strings?.doc?.description && (
+                  <li>
+                    <a href={`?${queryString}#Synopsis_part`}>{t('Synopsis')}</a>
+                  </li>
+                )}
+                {optionsState && optionsState.length > 0 && (
+                  <li>
+                    <a href={`?${queryString}#Parameters_part`}>{t('Parameters')}</a>
+                  </li>
+                )}
+                {content?.doc_strings?.doc?.notes && (
+                  <li>
+                    <a href={`?${queryString}#Notes_part`}>{t('Notes')}</a>
+                  </li>
+                )}
+                {content?.doc_strings?.examples && (
+                  <li>
+                    <a href={`?${queryString}#Examples_part`}>{t('Examples')}</a>
+                  </li>
+                )}
+                {content?.doc_strings?.return && (
+                  <li>
+                    <a href={`?${queryString}#Returns_part`}>{t('Returns')}</a>
+                  </li>
+                )}
+              </ul>
+            }
+          </Stack>
+        </PageSection>
+        {content?.doc_strings?.doc?.description &&
+          Array.isArray(content?.doc_strings?.doc?.description) && (
+            <PageSection variant="light">
+              <Title headingLevel="h2" id="Synopsis_part">
+                {t('Synopsis')}
+              </Title>
+              {backtoMenuLink}
+              <Stack hasGutter>
+                <ul>
+                  {content?.doc_strings?.doc?.description?.map?.((item, index) => (
+                    <li key={item + index.toString()}>{applyDocFormatters(item, params)}</li>
+                  ))}
+                </ul>
+              </Stack>
+            </PageSection>
+          )}
+        {optionsState && Array.isArray(optionsState) && optionsState.length > 0 && (
+          <>
+            <PageSection variant="light" style={{ paddingBottom: 0 }}>
+              <Title headingLevel="h2" id="Parameters_part">
+                {t('Parameters')}
+              </Title>
+              {backtoMenuLink}
+            </PageSection>
+            <PageSection variant="light" style={{ paddingLeft: 0, paddingRight: 0, paddingTop: 0 }}>
+              <TextInput
+                onChange={(event, text) => setParamsFilter(text)}
+                value={paramsFilter}
+                isExpanded={false}
+                placeholder={t('Search for parameter name')}
+              />
+              <Table variant="compact">
+                <Thead>
+                  <Tr>
+                    <Th>
+                      <Title headingLevel="h3">{t('Parameters')}</Title>
+                    </Th>
+                    <Th>
+                      <Title headingLevel="h3">{t('Choices')}</Title>
+                    </Th>
+                    {content?.content_type !== 'module' && (
+                      <Th>
+                        <Title headingLevel="h3">{t('Coonfiguration')}</Title>
+                      </Th>
+                    )}
+                    <Th>
+                      <Title headingLevel="h3">{t('Comments')}</Title>
+                    </Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {optionsState
+                    .filter(
+                      (optionState) =>
+                        optionState.visible && optionState.option.name?.startsWith?.(paramsFilter)
+                    )
+                    .map?.((optionRecord) => {
+                      const descriptions = Array.isArray(optionRecord.option.description)
+                        ? optionRecord.option.description
+                        : [optionRecord.option.description];
+
+                      // if its string, transform it to array
+                      if (typeof optionRecord.option.default === 'string') {
+                        optionRecord.option.default = [optionRecord.option.default];
+                      }
+                      // special cases where choices are empty, fill are with defaults
+                      if (
+                        !optionRecord.option.choices ||
+                        Array.isArray(optionRecord.option.choices)
+                      ) {
+                        if (Array.isArray(optionRecord.option.default)) {
+                          optionRecord.option.choices = optionRecord.option.default;
+                        }
+                      }
+
+                      const params: Params = {
+                        getPageUrl,
+                        groups: props.groups,
+                        docParams: {
+                          repository: props.collection.repository?.name || '',
+                          namespace: props.collection.collection_version?.namespace || '',
+                          name: props.collection.collection_version?.name || '',
+                          content_type: content?.content_type || '',
+                          content_name: content?.content_name || '',
+                        },
+                        url: '',
+                        settings,
+                      };
+
+                      return (
+                        <Tr key={optionRecord.path_name}>
+                          <Td>
+                            <div style={{ marginLeft: `${optionRecord.level * 30}px` }}>
+                              <div>
+                                {optionRecord.children && (
+                                  <button
+                                    className={css(styles.expandableSectionToggle)}
+                                    type="button"
+                                    aria-expanded={optionRecord.checked}
+                                    aria-controls={optionRecord.path_name + '_aria_controls'}
+                                    id={optionRecord.path_name + '_id'}
+                                    onClick={() =>
+                                      setVisibility(optionRecord.path_name, !optionRecord.checked)
+                                    }
+                                    title={t('Expand / Collapse')}
+                                  >
+                                    {optionRecord.checked ? (
+                                      <AngleDownIcon aria-hidden />
+                                    ) : (
+                                      <AngleRightIcon aria-hidden />
+                                    )}
+                                    <span style={{ fontWeight: 'bold' }}>
+                                      &nbsp;&nbsp;{optionRecord.option.name}
+                                    </span>
+                                  </button>
+                                )}
+                              </div>
+                              {!optionRecord.children && (
+                                <span style={{ fontWeight: 'bold' }}>
+                                  {optionRecord.option.name}
+                                  <br />
+                                </span>
+                              )}
+                              <small style={{ opacity: 0.7 }}>
+                                {optionRecord.option.type}
+                                {optionRecord.option.elements && ' / '}
+                                {optionRecord.option.elements}{' '}
+                                {optionRecord.option.required && (
+                                  <span style={{ color: PFColorE.Red }}> / {t('Required')}</span>
+                                )}{' '}
+                              </small>
+                            </div>
+                          </Td>
+                          <Td>
+                            {optionRecord.option.choices?.map?.((choice, index) => {
+                              let style = {};
+                              let title = '';
+
+                              if (
+                                Array.isArray(optionRecord.option.default) &&
+                                optionRecord.option.default?.includes?.(choice)
+                              ) {
+                                title = t('Default');
+                                style = { color: PFColorE.Blue };
+                              }
+
+                              if (typeof choice === 'string') {
+                                return (
+                                  <p title={title} style={style} key={choice + index}>
+                                    {choice}
+                                  </p>
+                                );
+                              }
+
+                              return <></>;
+                            })}
+                          </Td>
+                          {content?.content_type !== 'module' && (
+                            <Td>{renderPluginConfiguration(optionRecord.option)}</Td>
+                          )}
+                          <Td>
+                            {descriptions?.map?.((description, index) => (
+                              <>
+                                {index > 0 && (
+                                  <>
+                                    <br />
+                                    <br />
+                                  </>
+                                )}
+                                {applyDocFormatters(description, params)}
+                              </>
+                            ))}
+                          </Td>
+                        </Tr>
+                      );
+                    })}
+                </Tbody>
+              </Table>
+            </PageSection>
+          </>
+        )}
+        {content?.doc_strings?.doc?.notes && Array.isArray(content?.doc_strings?.doc?.notes) && (
           <PageSection variant="light">
-            <Title headingLevel="h2" id="Synopsis_part">
-              {t('Synopsis')}
+            <Title headingLevel="h2" id="Notes_part">
+              {t('Notes')}
             </Title>
             {backtoMenuLink}
             <Stack hasGutter>
-              <ul>
-                {content?.doc_strings?.doc?.description?.map?.((item, index) => (
-                  <li key={item + index.toString()}>{applyDocFormatters(item, params)}</li>
-                ))}
-              </ul>
+              {content?.doc_strings?.doc.notes?.map?.((note, index) => (
+                <p key={index}>{applyDocFormatters(note, params)}</p>
+              ))}
             </Stack>
           </PageSection>
         )}
-      {optionsState && Array.isArray(optionsState) && optionsState.length > 0 && (
-        <>
-          <PageSection variant="light" style={{ paddingBottom: 0 }}>
-            <Title headingLevel="h2" id="Parameters_part">
-              {t('Parameters')}
+        {content?.doc_strings?.examples && (
+          <PageSection variant="light">
+            <Title headingLevel="h2" id="Examples_part">
+              {t('Examples')}
             </Title>
             {backtoMenuLink}
-          </PageSection>
-          <PageSection variant="light" style={{ paddingLeft: 0, paddingRight: 0, paddingTop: 0 }}>
-            <TextInput
-              onChange={(event, text) => setParamsFilter(text)}
-              value={paramsFilter}
-              isExpanded={false}
-              placeholder={t('Search for parameter name')}
-            />
-            <Table variant="compact">
-              <Thead>
-                <Tr>
-                  <Th>
-                    <Title headingLevel="h3">{t('Parameters')}</Title>
-                  </Th>
-                  <Th>
-                    <Title headingLevel="h3">{t('Choices')}</Title>
-                  </Th>
-                  {content?.content_type !== 'module' && (
-                    <Th>
-                      <Title headingLevel="h3">{t('Coonfiguration')}</Title>
-                    </Th>
-                  )}
-                  <Th>
-                    <Title headingLevel="h3">{t('Comments')}</Title>
-                  </Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {optionsState
-                  .filter(
-                    (optionState) =>
-                      optionState.visible && optionState.option.name?.startsWith?.(paramsFilter)
-                  )
-                  .map?.((optionRecord) => {
-                    const descriptions = Array.isArray(optionRecord.option.description)
-                      ? optionRecord.option.description
-                      : [optionRecord.option.description];
-
-                    // if its string, transform it to array
-                    if (typeof optionRecord.option.default === 'string') {
-                      optionRecord.option.default = [optionRecord.option.default];
-                    }
-                    // special cases where choices are empty, fill are with defaults
-                    if (
-                      !optionRecord.option.choices ||
-                      Array.isArray(optionRecord.option.choices)
-                    ) {
-                      if (Array.isArray(optionRecord.option.default)) {
-                        optionRecord.option.choices = optionRecord.option.default;
-                      }
-                    }
-
-                    const params: Params = {
-                      getPageUrl,
-                      groups: props.groups,
-                      docParams: {
-                        repository: props.collection.repository?.name || '',
-                        namespace: props.collection.collection_version?.namespace || '',
-                        name: props.collection.collection_version?.name || '',
-                        content_type: content?.content_type || '',
-                        content_name: content?.content_name || '',
-                      },
-                      url: '',
-                      settings,
-                    };
-
-                    return (
-                      <Tr key={optionRecord.path_name}>
-                        <Td>
-                          <div style={{ marginLeft: `${optionRecord.level * 30}px` }}>
-                            <div>
-                              {optionRecord.children && (
-                                <button
-                                  className={css(styles.expandableSectionToggle)}
-                                  type="button"
-                                  aria-expanded={optionRecord.checked}
-                                  aria-controls={optionRecord.path_name + '_aria_controls'}
-                                  id={optionRecord.path_name + '_id'}
-                                  onClick={() =>
-                                    setVisibility(optionRecord.path_name, !optionRecord.checked)
-                                  }
-                                  title={t('Expand / Collapse')}
-                                >
-                                  {optionRecord.checked ? (
-                                    <AngleDownIcon aria-hidden />
-                                  ) : (
-                                    <AngleRightIcon aria-hidden />
-                                  )}
-                                  <span style={{ fontWeight: 'bold' }}>
-                                    &nbsp;&nbsp;{optionRecord.option.name}
-                                  </span>
-                                </button>
-                              )}
-                            </div>
-                            {!optionRecord.children && (
-                              <span style={{ fontWeight: 'bold' }}>
-                                {optionRecord.option.name}
-                                <br />
-                              </span>
-                            )}
-                            <small style={{ opacity: 0.7 }}>
-                              {optionRecord.option.type}
-                              {optionRecord.option.elements && ' / '}
-                              {optionRecord.option.elements}{' '}
-                              {optionRecord.option.required && (
-                                <span style={{ color: PFColorE.Red }}> / {t('Required')}</span>
-                              )}{' '}
-                            </small>
-                          </div>
-                        </Td>
-                        <Td>
-                          {optionRecord.option.choices?.map?.((choice, index) => {
-                            let style = {};
-                            let title = '';
-
-                            if (
-                              Array.isArray(optionRecord.option.default) &&
-                              optionRecord.option.default?.includes?.(choice)
-                            ) {
-                              title = t('Default');
-                              style = { color: PFColorE.Blue };
-                            }
-
-                            if (typeof choice === 'string') {
-                              return (
-                                <p title={title} style={style} key={choice + index}>
-                                  {choice}
-                                </p>
-                              );
-                            }
-
-                            return <></>;
-                          })}
-                        </Td>
-                        {content?.content_type !== 'module' && (
-                          <Td>{renderPluginConfiguration(optionRecord.option)}</Td>
-                        )}
-                        <Td>
-                          {descriptions?.map?.((description, index) => (
-                            <>
-                              {index > 0 && (
-                                <>
-                                  <br />
-                                  <br />
-                                </>
-                              )}
-                              {applyDocFormatters(description, params)}
-                            </>
-                          ))}
-                        </Td>
-                      </Tr>
-                    );
-                  })}
-              </Tbody>
-            </Table>
-          </PageSection>
-        </>
-      )}
-      {content?.doc_strings?.doc?.notes && Array.isArray(content?.doc_strings?.doc?.notes) && (
-        <PageSection variant="light">
-          <Title headingLevel="h2" id="Notes_part">
-            {t('Notes')}
-          </Title>
-          {backtoMenuLink}
-          <Stack hasGutter>
-            {content?.doc_strings?.doc.notes?.map?.((note, index) => (
-              <p key={index}>{applyDocFormatters(note, params)}</p>
-            ))}
-          </Stack>
-        </PageSection>
-      )}
-      {content?.doc_strings?.examples && (
-        <PageSection variant="light">
-          <Title headingLevel="h2" id="Examples_part">
-            {t('Examples')}
-          </Title>
-          {backtoMenuLink}
-          <Stack hasGutter>
-            {content.doc_strings.examples
-              ?.split?.(splitString)
-              .filter?.((example) => !!example.trim())
-              .map?.((example, index) => (
-                <CodeBlock key={index} style={{ overflowY: 'auto' }}>
-                  <pre>
-                    {splitString}
-                    {example
-                      .split('\n')
-                      .filter((example) => !!example.trim())
-                      .join('\n')}
-                  </pre>
-                </CodeBlock>
-              ))}
-          </Stack>
-        </PageSection>
-      )}
-      {content?.doc_strings?.return && (
-        <>
-          <PageSection variant="light" style={{ paddingBottom: 0 }}>
-            <Title headingLevel="h2" id="Returns_part">
-              {t('Returns')}
-            </Title>
-            {backtoMenuLink}
-          </PageSection>
-          <PageSection variant="light" style={{ paddingLeft: 0, paddingRight: 0, paddingTop: 0 }}>
-            <Table variant="compact">
-              <Thead>
-                <Tr>
-                  <Th>{t('Key')}</Th>
-                  <Th>{t('Returned')}</Th>
-                  <Th>{t('Description')}</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {content?.doc_strings?.return?.map?.((parameter) => (
-                  <Tr key={parameter.name}>
-                    <Td>
-                      <div>{parameter.name}</div>
-                      <small style={{ opacity: 0.7 }}>{parameter.type}</small>
-                    </Td>
-                    <Td>{parameter.returned}</Td>
-                    <Td>
-                      <div>{applyDocFormatters(parameter.description, params)}</div>
-                      {parameter.sample && (
-                        <>
-                          <div>{t('Sample')}:</div>
-                          <br />
-                          <Sample sample={parameter.sample} />
-                        </>
-                      )}
-                    </Td>
-                  </Tr>
+            <Stack hasGutter>
+              {content.doc_strings.examples
+                ?.split?.(splitString)
+                .filter?.((example) => !!example.trim())
+                .map?.((example, index) => (
+                  <CodeBlock key={index} style={{ overflowY: 'auto' }}>
+                    <pre>
+                      {splitString}
+                      {example
+                        .split('\n')
+                        .filter((example) => !!example.trim())
+                        .join('\n')}
+                    </pre>
+                  </CodeBlock>
                 ))}
-              </Tbody>
-            </Table>
+            </Stack>
           </PageSection>
-        </>
-      )}
-    </>
-  );
+        )}
+        {content?.doc_strings?.return && (
+          <>
+            <PageSection variant="light" style={{ paddingBottom: 0 }}>
+              <Title headingLevel="h2" id="Returns_part">
+                {t('Returns')}
+              </Title>
+              {backtoMenuLink}
+            </PageSection>
+            <PageSection variant="light" style={{ paddingLeft: 0, paddingRight: 0, paddingTop: 0 }}>
+              <Table variant="compact">
+                <Thead>
+                  <Tr>
+                    <Th>{t('Key')}</Th>
+                    <Th>{t('Returned')}</Th>
+                    <Th>{t('Description')}</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {content?.doc_strings?.return?.map?.((parameter) => (
+                    <Tr key={parameter.name}>
+                      <Td>
+                        <div>{parameter.name}</div>
+                        <small style={{ opacity: 0.7 }}>{parameter.type}</small>
+                      </Td>
+                      <Td>{parameter.returned}</Td>
+                      <Td>
+                        <div>{applyDocFormatters(parameter.description, params)}</div>
+                        {parameter.sample && (
+                          <>
+                            <div>{t('Sample')}:</div>
+                            <br />
+                            <Sample sample={parameter.sample} />
+                          </>
+                        )}
+                      </Td>
+                    </Tr>
+                  ))}
+                </Tbody>
+              </Table>
+            </PageSection>
+          </>
+        )}
+      </>
+    );
+  } catch (ex) {
+    return <>{errorMessage}</>;
+  }
 }
 
 function Sample(props: { sample: ISample }) {
