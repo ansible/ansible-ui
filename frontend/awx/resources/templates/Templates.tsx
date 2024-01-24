@@ -40,8 +40,23 @@ export function Templates() {
       type: 'job_template,workflow_job_template',
     },
   });
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/templates/`);
-  const canCreateTemplate = Boolean(data && data.actions && data.actions['POST']);
+
+  const { data: jobTemplateActions } = useOptions<OptionsResponse<ActionsResponse>>(
+    awxAPI`/job_templates/`
+  );
+
+  const { data: wfJobTemplateActions } = useOptions<OptionsResponse<ActionsResponse>>(
+    awxAPI`/workflow_job_templates/`
+  );
+
+  const canCreateJobTemplate = Boolean(
+    jobTemplateActions && jobTemplateActions.actions && jobTemplateActions.actions['POST']
+  );
+
+  const canCreateWFJobTemplate = Boolean(
+    wfJobTemplateActions && wfJobTemplateActions.actions && wfJobTemplateActions.actions['POST']
+  );
+
   usePersistentFilters('templates');
   const config = useAwxConfig();
 
@@ -54,11 +69,12 @@ export function Templates() {
         variant: ButtonVariant.primary,
         isPinned: true,
         label: t('Create template'),
-        isDisabled: canCreateTemplate
-          ? undefined
-          : t(
-              'You do not have permission to create a template. Please contact your organization administrator if there is an issue with your access.'
-            ),
+        isDisabled:
+          canCreateJobTemplate || canCreateWFJobTemplate
+            ? undefined
+            : t(
+                'You do not have permission to create a template. Please contact your organization administrator if there is an issue with your access.'
+              ),
         selection: PageActionSelection.None,
         icon: PlusCircleIcon,
         actions: [
@@ -66,12 +82,22 @@ export function Templates() {
             type: PageActionType.Button,
             selection: PageActionSelection.None,
             label: t('Create job template'),
+            isDisabled: canCreateJobTemplate
+              ? undefined
+              : t(
+                  'You do not have permission to create a job template. Please contact your organization administrator if there is an issue with your access.'
+                ),
             onClick: () => pageNavigate(AwxRoute.CreateJobTemplate),
           },
           {
             type: PageActionType.Button,
             selection: PageActionSelection.None,
             label: t('Create workflow job template'),
+            isDisabled: canCreateWFJobTemplate
+              ? undefined
+              : t(
+                  'You do not have permission to create a workflow job template. Please contact your organization administrator if there is an issue with your access.'
+                ),
             onClick: () => pageNavigate(AwxRoute.CreateWorkflowJobTemplate),
           },
         ],
@@ -85,7 +111,7 @@ export function Templates() {
         isDanger: true,
       },
     ],
-    [canCreateTemplate, deleteTemplates, pageNavigate, t]
+    [canCreateJobTemplate, canCreateWFJobTemplate, deleteTemplates, pageNavigate, t]
   );
 
   const rowActions = useTemplateActions({ onTemplatesDeleted: view.unselectItemsAndRefresh });
@@ -111,20 +137,24 @@ export function Templates() {
         rowActions={rowActions}
         errorStateTitle={t('Error loading templates')}
         emptyStateTitle={
-          canCreateTemplate
+          canCreateJobTemplate || canCreateWFJobTemplate
             ? t('No templates yet')
             : t('You do not have permission to create a template')
         }
         emptyStateDescription={
-          canCreateTemplate
+          canCreateJobTemplate || canCreateWFJobTemplate
             ? t('Please create a template by using the button below.')
             : t(
                 'Please contact your organization administrator if there is an issue with your access.'
               )
         }
-        emptyStateButtonText={canCreateTemplate ? t('Create template') : undefined}
+        emptyStateButtonText={
+          canCreateJobTemplate || canCreateWFJobTemplate ? t('Create template') : undefined
+        }
         emptyStateButtonClick={
-          canCreateTemplate ? () => pageNavigate(AwxRoute.CreateJobTemplate) : undefined
+          canCreateJobTemplate || canCreateWFJobTemplate
+            ? () => pageNavigate(AwxRoute.CreateJobTemplate)
+            : undefined
         }
         {...view}
         defaultSubtitle={t('Template')}

@@ -38,8 +38,23 @@ export function TemplatesList(props: { url: string; projectId?: string }) {
     toolbarFilters,
     tableColumns,
   });
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/templates/`);
-  const canCreateTemplate = Boolean(data && data.actions && data.actions['POST']);
+
+  const { data: jobTemplateActions } = useOptions<OptionsResponse<ActionsResponse>>(
+    awxAPI`/job_templates/`
+  );
+
+  const { data: wfJobTemplateActions } = useOptions<OptionsResponse<ActionsResponse>>(
+    awxAPI`/workflow_job_templates/`
+  );
+
+  const canCreateJobTemplate = Boolean(
+    jobTemplateActions && jobTemplateActions.actions && jobTemplateActions.actions['POST']
+  );
+
+  const canCreateWFJobTemplate = Boolean(
+    wfJobTemplateActions && wfJobTemplateActions.actions && wfJobTemplateActions.actions['POST']
+  );
+
   usePersistentFilters('templatesList');
   const deleteTemplates = useDeleteTemplates(view.unselectItemsAndRefresh);
 
@@ -50,7 +65,7 @@ export function TemplatesList(props: { url: string; projectId?: string }) {
         variant: ButtonVariant.primary,
         isPinned: true,
         label: t('Create template'),
-        isDisabled: canCreateTemplate
+        isDisabled: canCreateJobTemplate
           ? undefined
           : t(
               'You do not have permission to create a template. Please contact your organization administrator if there is an issue with your access.'
@@ -81,7 +96,7 @@ export function TemplatesList(props: { url: string; projectId?: string }) {
         isDanger: true,
       },
     ],
-    [canCreateTemplate, deleteTemplates, getPageUrl, t]
+    [canCreateJobTemplate, deleteTemplates, getPageUrl, t]
   );
 
   const rowActions = useTemplateActions({ onTemplatesDeleted: view.unselectItemsAndRefresh });
@@ -95,20 +110,20 @@ export function TemplatesList(props: { url: string; projectId?: string }) {
       rowActions={rowActions}
       errorStateTitle={t('Error loading templates')}
       emptyStateTitle={
-        canCreateTemplate
+        canCreateJobTemplate
           ? t('No templates yet')
           : t('You do not have permission to create a template')
       }
       emptyStateDescription={
-        canCreateTemplate
+        canCreateJobTemplate
           ? t('Please create a template by using the button below.')
           : t(
               'Please contact your organization administrator if there is an issue with your access.'
             )
       }
-      emptyStateButtonText={canCreateTemplate ? t('Create template') : undefined}
+      emptyStateButtonText={canCreateJobTemplate ? t('Create template') : undefined}
       emptyStateButtonClick={
-        canCreateTemplate ? () => pageNavigate(AwxRoute.CreateJobTemplate) : undefined
+        canCreateJobTemplate ? () => pageNavigate(AwxRoute.CreateJobTemplate) : undefined
       }
       {...view}
       defaultSubtitle={t('Template')}
