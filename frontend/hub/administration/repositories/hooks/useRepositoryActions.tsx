@@ -7,7 +7,7 @@ import {
   PageActionSelection,
   PageActionType,
   usePageAlertToaster,
-    usePageNavigate
+  usePageNavigate,
 } from '../../../../../framework';
 import { CollectionVersionSearch } from '../../../collections/Collection';
 import { PROTECTED_REPOSITORIES } from '../../../common/constants';
