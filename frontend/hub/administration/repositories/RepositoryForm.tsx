@@ -21,12 +21,13 @@ import { PulpItemsResponse } from '../../common/useHubView';
 import { Repository } from './Repository';
 import { Label } from '@patternfly/react-core';
 import { PageFormAsyncSelect } from '../../../../framework/PageForm/Inputs/PageFormAsyncSelect';
-import { useCallback } from 'react';
+import { useCallback, ReactNode } from 'react';
 import { useSelectRemoteSingle } from './hooks/useRemoteSelector';
 import { useRepositoryBasePath, parsePulpIDFromURL } from '../../common/api/hub-api-utils';
 import { postHubRequest, putHubRequest } from '../../common/api/request';
 import { postRequest } from '../../../common/crud/Data';
 import { PageFormWatch } from '../../../../framework/PageForm/Utils/PageFormWatch';
+import { useFormContext, UseFormSetValue, FieldValues } from 'react-hook-form';
 
 interface RepositoryFormProps {
   remote: IRemotes | string | null;
@@ -159,7 +160,12 @@ export function RepositoryForm() {
     pulp_labels: repo?.pulp_labels || {},
     createDistribution: !isDistributionDisabled,
   };
-
+  function HookWrapper<TFieldValues extends FieldValues>(props: {
+    children: (value: UseFormSetValue<TFieldValues>) => ReactNode;
+  }) {
+    const { setValue } = useFormContext<TFieldValues>();
+    return <>{props.children(setValue)}</>;
+  }
   return (
     <PageLayout>
       <PageHeader
@@ -243,11 +249,24 @@ export function RepositoryForm() {
           <PageFormWatch<string> watch={'pipeline'}>
             {(pipeline: string) => {
               return (
-                <PageFormCheckbox<RepositoryFormProps>
-                  name="hide_from_search"
-                  label={t('Hide from search')}
-                  isDisabled={pipeline === 'staging'}
-                />
+                <HookWrapper>
+                  {(setValue) => {
+                    if (pipeline === 'staging') {
+                      // eslint-disable-next-line i18next/no-literal-string
+                      setValue('hide_from_search', true);
+                    } else {
+                      // eslint-disable-next-line i18next/no-literal-string
+                      setValue('hide_from_search', false);
+                    }
+                    return (
+                      <PageFormCheckbox<RepositoryFormProps>
+                        name="hide_from_search"
+                        label={t('Hide from search')}
+                        isDisabled={pipeline === 'staging'}
+                      />
+                    );
+                  }}
+                </HookWrapper>
               );
             }}
           </PageFormWatch>
