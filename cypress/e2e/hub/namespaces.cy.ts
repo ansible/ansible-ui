@@ -70,6 +70,22 @@ describe('Namespaces', () => {
     cy.clickButton(/^Delete namespaces$/);
   });
 
+  it('should show namespace details tab', () => {
+    cy.navigateTo('hub', Namespaces.url);
+    const namespaceName = `test_namespace_${randomString(5, undefined, { isLowercase: true })}`;
+    cy.get('[data-cy="create-namespace"]').should('be.visible').click();
+    cy.url().should('include', Namespaces.urlCreate);
+    cy.get('[data-cy="name"]').type(namespaceName);
+    cy.get('[data-cy="description"]').type('test description');
+    cy.get('[data-cy="company"]').type('test company');
+    cy.get('[data-cy="Submit"]').click();
+    cy.url().should('include', `/namespaces/${namespaceName}/details`);
+    cy.get('[data-cy="collections-tab"]').should('contain', 'Collections');
+    cy.get('[data-cy="collections-tab"]').click();
+    cy.get('[data-cy="empty-state-title"]').should('contain', 'There are no collections yet');
+    cy.get('[data-cy="upload-a-collection"]').should('contain', 'Upload a collection');
+  });
+
   it('edit a namespace', () => {
     cy.navigateTo('hub', Namespaces.url);
     const namespaceName = `test_namespace_${randomString(5, undefined, { isLowercase: true })}`;
