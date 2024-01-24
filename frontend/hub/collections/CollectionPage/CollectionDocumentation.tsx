@@ -13,6 +13,21 @@ import { useParams } from 'react-router-dom';
 import { Title } from '@patternfly/react-core';
 import { PageSection } from '@patternfly/react-core';
 
+/*
+Documentation content is divided into list of contents. The list include content_name and content_type.
+This is rendered in the left part as menu, where content_type is main menu item and conent_name is in submenu.
+
+Special case is readme, which is in its separate "folder".
+
+While selecting some item, its content is rendered into the right part of page. Some contents (including readme) are provided directly in the html, so they are injected into div. Others came as complex object that includes information about the documentation.
+
+The object is passed into the renderer component that loops over the items inside the object and tries to render them.
+Some content is more complicated, because it has to be rendered recursively, for example parameters, which can contains
+subparameters (and those can contain subparameters), others are simple string like 'short_description', which are direclty rendered.
+
+Then there is parser. Because some strings (usualy in the descriptions) can contain some formating. We are using antsibull-docs, which returns
+parsed string with parsed elements and their informations. We then render them, for example, we can render links, highlight some info and such.
+*/
 export function CollectionDocumentation() {
   const { collection } = useOutletContext<{ collection: CollectionVersionSearch }>();
   const { t } = useTranslation();
@@ -28,6 +43,7 @@ export function CollectionDocumentation() {
     }&offset=0&limit=1`
   );
 
+  // create groups for left tab of contents menu
   const groups = useMemo(() => {
     const groups: Record<string, { name: string; contents: IContents[] }> = {};
     if (data) {
@@ -108,6 +124,7 @@ export function CollectionDocumentation() {
         }
       >
         <DrawerContentBody className="body hub-docs-content pf-v5-c-content hub-content-alert-fix">
+          {/* This enables scrolling using keyboard after click into the content*/}
           <div
             style={{ outline: 'none' }}
             tabIndex={0}
@@ -125,6 +142,7 @@ export function CollectionDocumentation() {
                     {content?.content_type + ' > ' + content?.content_name}
                   </Title>
 
+                  {/* Checkbox allows switch between rendered docs in HTML and between plain JSON that displays raw documentation data*/}
                   <>
                     <Checkbox
                       onChange={(event, checked) => setRenderJson(checked)}
@@ -150,6 +168,7 @@ export function CollectionDocumentation() {
                 />
               </>
             )}
+            {/* If html is available, insert it directly */}
             {html && (
               <div
                 dangerouslySetInnerHTML={{

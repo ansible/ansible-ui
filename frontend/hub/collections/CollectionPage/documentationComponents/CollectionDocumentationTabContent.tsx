@@ -42,16 +42,6 @@ export function CollectionDocumentationTabContent(props: {
   const [error, setError] = useState('');
   const [json, setJson] = useState('');
 
-  type OptionRecord = {
-    option: IContentsOption;
-    level: number;
-    path_name: string;
-    parent_path: string;
-    visible: boolean;
-    children: boolean;
-    checked: boolean;
-  };
-
   const contentKey = content?.content_type + ' > ' + content?.content_name;
 
   useEffect(() => {
@@ -61,6 +51,12 @@ export function CollectionDocumentationTabContent(props: {
   useEffect(() => {
     const options: OptionRecord[] = [];
 
+    /*
+      Build parameters options lists. Transform tree (options and suboptions) into one list
+      that can be rendered into table.
+
+      Every item will have info about its full path from first parent to itself.
+    */
     function fillOptions(
       local_options: IContentsOption[],
       level: number,
@@ -111,6 +107,7 @@ export function CollectionDocumentationTabContent(props: {
     }
   }, [contentKey, content?.doc_strings?.doc?.options]);
 
+  /* Shows/Hides all children of the selected option  */
   function setVisibility(path: string, value: boolean) {
     const newState = JSON.parse(JSON.stringify(optionsState)) as OptionRecord[];
 
@@ -568,4 +565,14 @@ export type DocParams = {
   name: string;
   content_type: string;
   content_name: string;
+};
+
+type OptionRecord = {
+  option: IContentsOption;
+  level: number;
+  path_name: string;
+  parent_path: string;
+  visible: boolean;
+  children: boolean;
+  checked: boolean;
 };
