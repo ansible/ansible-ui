@@ -40,7 +40,7 @@ export function TemplatesList(props: { url: string; projectId?: string }) {
   });
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/templates/`);
   const canCreateTemplate = Boolean(data && data.actions && data.actions['POST']);
-  usePersistentFilters('templates');
+  usePersistentFilters('templatesList');
   const deleteTemplates = useDeleteTemplates(view.unselectItemsAndRefresh);
 
   const toolbarActions = useMemo<IPageAction<JobTemplate | WorkflowJobTemplate>[]>(
@@ -50,6 +50,11 @@ export function TemplatesList(props: { url: string; projectId?: string }) {
         variant: ButtonVariant.primary,
         isPinned: true,
         label: t('Create template'),
+        isDisabled: canCreateTemplate
+          ? undefined
+          : t(
+              'You do not have permission to create a template. Please contact your organization administrator if there is an issue with your access.'
+            ),
         selection: PageActionSelection.None,
         icon: PlusCircleIcon,
         actions: [
@@ -76,7 +81,7 @@ export function TemplatesList(props: { url: string; projectId?: string }) {
         isDanger: true,
       },
     ],
-    [deleteTemplates, getPageUrl, t]
+    [canCreateTemplate, deleteTemplates, getPageUrl, t]
   );
 
   const rowActions = useTemplateActions({ onTemplatesDeleted: view.unselectItemsAndRefresh });

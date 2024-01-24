@@ -54,6 +54,11 @@ export function Templates() {
         variant: ButtonVariant.primary,
         isPinned: true,
         label: t('Create template'),
+        isDisabled: canCreateTemplate
+          ? undefined
+          : t(
+              'You do not have permission to create a template. Please contact your organization administrator if there is an issue with your access.'
+            ),
         selection: PageActionSelection.None,
         icon: PlusCircleIcon,
         actions: [
@@ -80,7 +85,7 @@ export function Templates() {
         isDanger: true,
       },
     ],
-    [deleteTemplates, pageNavigate, t]
+    [canCreateTemplate, deleteTemplates, pageNavigate, t]
   );
 
   const rowActions = useTemplateActions({ onTemplatesDeleted: view.unselectItemsAndRefresh });
