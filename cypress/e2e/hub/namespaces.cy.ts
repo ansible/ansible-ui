@@ -116,4 +116,17 @@ describe('Namespaces', () => {
     cy.clickButton(/^Close$/);
     cy.clickButton(/^Clear all filters$/);
   });
+
+  it('verify user and team access for namespace', () => {
+    const nameSpaceName = `test_namespace_access_${randomString(5, undefined, {
+      isLowercase: true,
+    })}`;
+    cy.createNamespace(nameSpaceName);
+    cy.navigateTo('hub', Namespaces.url);
+    // cy.setTablePageSize('50');
+    cy.clickTableRow(nameSpaceName);
+    cy.verifyPageTitle(nameSpaceName);
+    cy.clickTab(/^Access$/, true);
+    cy.pause();
+  });
 });
