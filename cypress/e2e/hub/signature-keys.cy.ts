@@ -6,12 +6,9 @@ describe('Signature Keys', () => {
     cy.hubLogin();
   });
 
-  it('should render the signature keys page', () => {
+  it('should render the signature keys page and display empty state when no content when no data', () => {
     cy.navigateTo('hub', SignatureKeys.url);
     cy.verifyPageTitle(SignatureKeys.title);
-  });
-  it('should display empty state when no content when no data', () => {
-    cy.navigateTo('hub', SignatureKeys.url);
     cy.get('[data-cy="empty-state-title"]')
       .should('contain', 'No signature keys yet')
       .should('be.visible');
