@@ -1,6 +1,6 @@
+import { randomString } from '../../../framework/utils/random-string';
 import { hubAPI } from '../../support/formatApiPathForHub';
 import { Collections } from './constants';
-import { randomString } from '../../../framework/utils/random-string';
 
 describe('Collections- List View', () => {
   //**Important to know:
@@ -126,7 +126,7 @@ describe('Collections List- Line Item Kebab Menu', () => {
       ).as('deprecated');
       cy.clickButton('Deprecate collections');
       cy.wait('@deprecated').then((deprecated) => {
-        expect(deprecated.response.statusCode).to.eql(202);
+        expect(deprecated.response?.statusCode).to.eql(202);
       });
       cy.clickButton('Close');
     });
