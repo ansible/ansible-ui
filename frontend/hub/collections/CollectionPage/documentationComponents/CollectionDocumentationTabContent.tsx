@@ -1,19 +1,10 @@
 import { useTranslation } from 'react-i18next';
-import { withTranslation } from 'react-i18next';
-import { TFunction } from 'i18next';
-import { dom, parse } from 'antsibull-docs';
-import { Component } from 'react';
-
-
-import { ComponentType, ErrorInfo, ReactNode } from 'react';
-
 import React from 'react';
 import { CodeBlock, PageSection, Stack, StackItem, TextInput, Title } from '@patternfly/react-core';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { IContents, IContentsOption } from '../../Collection';
 import { PFColorE } from '../../../../../framework';
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 
 import { css } from '@patternfly/react-styles';
 import styles from '@patternfly/react-styles/css/components/ExpandableSection/expandable-section';
@@ -22,10 +13,8 @@ import { useSearchParams } from 'react-router-dom';
 import { ISample } from '../../Collection';
 import { queryStringFromObject } from '../../../../common/utils/queryStringFromObject';
 import { useGetPageUrl } from '../../../../../framework';
-import { HubRoute } from '../../../main/HubRoutes';
 import { CollectionVersionSearch } from '../../Collection';
 import { useSettings } from '../../../../../framework';
-import { ErrorBoundary } from '../../../../../framework/components/ErrorBoundary';
 
 import { applyDocFormatters } from './DocumentationParsers';
 import { renderPluginConfiguration } from './DocumentationParsers';
@@ -161,19 +150,17 @@ export function CollectionDocumentationTabContent(props: {
           )}
           {content?.doc_strings?.doc?.deprecated && (
             <>
-              
-                <Title headingLevel="h2">{t('DEPRECATED')}</Title>
-                <StackItem>
-                  {' '}
-                  <span style={{ fontWeight: 'bold' }}>{t('Why')}</span> :{' '}
-                  {applyDocFormatters(content?.doc_strings?.doc?.deprecated?.why, params)}
-                </StackItem>
-                <StackItem>
-                  {' '}
-                  <span style={{ fontWeight: 'bold' }}>{t('Alternative')}</span> :{' '}
-                  {applyDocFormatters(content?.doc_strings?.doc?.deprecated?.alternative, params)}
-                </StackItem>
-             
+              <Title headingLevel="h2">{t('DEPRECATED')}</Title>
+              <StackItem>
+                {' '}
+                <span style={{ fontWeight: 'bold' }}>{t('Why')}</span> :{' '}
+                {applyDocFormatters(content?.doc_strings?.doc?.deprecated?.why, params)}
+              </StackItem>
+              <StackItem>
+                {' '}
+                <span style={{ fontWeight: 'bold' }}>{t('Alternative')}</span> :{' '}
+                {applyDocFormatters(content?.doc_strings?.doc?.deprecated?.alternative, params)}
+              </StackItem>
             </>
           )}
 
@@ -209,19 +196,19 @@ export function CollectionDocumentationTabContent(props: {
           }
         </Stack>
       </PageSection>
-      {content?.doc_strings?.doc?.description && Array.isArray(content?.doc_strings?.doc?.description) && (
+      {content?.doc_strings?.doc?.description &&
+        Array.isArray(content?.doc_strings?.doc?.description) && (
           <PageSection variant="light">
             <Title headingLevel="h2" id="Synopsis_part">
               {t('Synopsis')}
             </Title>
             {backtoMenuLink}
             <Stack hasGutter>
-                  <ul>
-                  {content?.doc_strings?.doc?.description?.map?.((item, index) => (
-                    <li key={item + index.toString()}>{applyDocFormatters(item, params)}</li>
-                  ))}
-                </ul>
-                
+              <ul>
+                {content?.doc_strings?.doc?.description?.map?.((item, index) => (
+                  <li key={item + index.toString()}>{applyDocFormatters(item, params)}</li>
+                ))}
+              </ul>
             </Stack>
           </PageSection>
         )}
@@ -390,7 +377,7 @@ export function CollectionDocumentationTabContent(props: {
           </PageSection>
         </>
       )}
-      {content?.doc_strings?.doc?.notes && Array.isArray(content?.doc_strings?.doc?.notes) &&  (
+      {content?.doc_strings?.doc?.notes && Array.isArray(content?.doc_strings?.doc?.notes) && (
         <PageSection variant="light">
           <Title headingLevel="h2" id="Notes_part">
             {t('Notes')}
@@ -410,7 +397,8 @@ export function CollectionDocumentationTabContent(props: {
           </Title>
           {backtoMenuLink}
           <Stack hasGutter>
-            {content.doc_strings.examples?.split?.(splitString)
+            {content.doc_strings.examples
+              ?.split?.(splitString)
               .filter?.((example) => !!example.trim())
               .map?.((example, index) => (
                 <CodeBlock key={index} style={{ overflowY: 'auto' }}>
