@@ -32,6 +32,7 @@ import { useAwxTeamsRoutes } from './routes/useAwxTeamsRoutes';
 import { useAwxTemplateRoutes } from './routes/useAwxTemplateRoutes';
 import { useAwxUsersRoutes } from './routes/useAwxUsersRoutes';
 import { useAwxWorkflowApprovalRoutes } from './routes/useAwxWorkflowApprovalRoutes';
+import { useAwxGroupRoutes } from './routes/useAwxGroupRoutes';
 
 export function useAwxNavigation() {
   const { t } = useTranslation();
@@ -54,6 +55,7 @@ export function useAwxNavigation() {
   const awxApplicationsRoutes = useAwxApplicationsRoutes();
   const awxExecutionEnvironmentsRoutes = useAwxExecutionEnvironmentRoutes();
   const awxCredentialTypesRoutes = useAwxCredentialTypesRoutes();
+  const awxGroupRoutes = useAwxGroupRoutes();
   const navigationItems: PageNavigationItem[] = [
     {
       id: AwxRoute.Overview,
@@ -77,6 +79,7 @@ export function useAwxNavigation() {
         },
         awxInventoryRoutes,
         awxHostRoutes,
+        awxGroupRoutes,
         awxInstanceGroupsRoutes,
         awxInstancesRoutes,
         awxExecutionEnvironmentsRoutes,

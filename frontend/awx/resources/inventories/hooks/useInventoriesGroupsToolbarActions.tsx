@@ -25,7 +25,7 @@ export function useInventoriesGroupsToolbarActions(view: IAwxView<AwxGroup>) {
   const params = useParams<{ id: string; inventory_type: string }>();
 
   const adhocOptions = useOptions<OptionsResponse<ActionsResponse>>(
-    awxAPI`/inventories/${params.id ?? ''}/ad_hoc_commads`
+    awxAPI`/inventories/${params.id ?? ''}/ad_hoc_commands`
   ).data;
   const canRunAdHocCommand = Boolean(
     adhocOptions && adhocOptions.actions && adhocOptions.actions['POST']
@@ -64,11 +64,13 @@ export function useInventoriesGroupsToolbarActions(view: IAwxView<AwxGroup>) {
         label: t('Run Command'),
         onClick: () => pageNavigate(AwxRoute.Inventories),
         isDisabled: () =>
-          canRunAdHocCommand
-            ? undefined
-            : t(
-                'You do not have permission to run an ad hoc command. Please contact your organization administrator if there is an issue with your access.'
-              ),
+          view.selectedItems.length === 0
+            ? t('Select at least one item from the list')
+            : canRunAdHocCommand
+              ? undefined
+              : t(
+                  'You do not have permission to run an ad hoc command. Please contact your organization administrator if there is an issue with your access.'
+                ),
       },
       { type: PageActionType.Seperator },
       {
@@ -79,7 +81,10 @@ export function useInventoriesGroupsToolbarActions(view: IAwxView<AwxGroup>) {
         label: t('Delete group'),
         onClick: deleteGroups,
         isDanger: true,
-        isDisabled: (groups: AwxGroup[]) => cannotDeleteResources(groups, t),
+        isDisabled:
+          view.selectedItems.length === 0
+            ? t('Select at least one item from the list')
+            : (groups: AwxGroup[]) => cannotDeleteResources(groups, t),
       },
     ],
     [
@@ -90,6 +95,7 @@ export function useInventoriesGroupsToolbarActions(view: IAwxView<AwxGroup>) {
       params.id,
       canCreateGroup,
       canRunAdHocCommand,
+      view.selectedItems.length,
     ]
   );
 }

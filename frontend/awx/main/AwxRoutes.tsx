@@ -122,6 +122,9 @@ export enum AwxRoute {
   Groups = 'awx-groups',
   EditGroup = 'awx-edit-group',
   GroupDetails = 'awx-group-details',
+  GroupRelatedGroups = 'awx-group-related-groups',
+  GroupHosts = 'awx-group-hosts',
+  GroupPage = 'awx-group-page',
 
   // Access
 
