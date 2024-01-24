@@ -41,7 +41,7 @@ export function HubNamespaceUserPage() {
       <PageHeader title={params.username ?? ''} breadcrumbs={breadcrumbs} />
       <PageRoutedTabs
         backTab={{
-          label: t('Back to user access'),
+          label: t('Back to User Access'),
           page: HubRoute.NamespaceUserAccess,
           persistentFilterKey: 'namespace-user-access',
         }}

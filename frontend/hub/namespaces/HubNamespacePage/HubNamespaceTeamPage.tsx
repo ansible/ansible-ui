@@ -30,7 +30,7 @@ export function HubNamespaceTeamPage() {
             to: getPageUrl(HubRoute.NamespaceDetails, { params: params }),
           },
           {
-            label: t('Team access'),
+            label: t('Team Access'),
             to: getPageUrl(HubRoute.NamespaceTeamAccess, { params: params }),
           },
           { label: params.teamname },
@@ -38,7 +38,7 @@ export function HubNamespaceTeamPage() {
       />
       <PageRoutedTabs
         backTab={{
-          label: t('Back to user access'),
+          label: t('Back to User Access'),
           page: HubRoute.NamespaceTeamAccess,
           persistentFilterKey: 'namespace-user-access',
         }}

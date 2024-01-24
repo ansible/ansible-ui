@@ -89,11 +89,11 @@ export function HubNamespacePage() {
             dataCy: 'namespace-cli-tab',
           },
           {
-            label: t('User access'),
+            label: t('User Access'),
             page: HubRoute.NamespaceUserAccess,
           },
           {
-            label: t('Team access'),
+            label: t('Team Access'),
             page: HubRoute.NamespaceTeamAccess,
           },
         ]}
