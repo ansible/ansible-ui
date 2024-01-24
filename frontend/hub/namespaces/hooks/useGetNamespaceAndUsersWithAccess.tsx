@@ -20,7 +20,7 @@ export function useGetNamespaceAndUsersWithAccess(name: string) {
   const usersWithAccess = useMemo<HubResourceAccessUser[]>(
     () =>
       namespace
-        ? namespace.users.map(({ name, object_roles }) => ({
+        ? namespace.users?.map(({ name, object_roles }) => ({
             username: name,
             object_roles,
           }))

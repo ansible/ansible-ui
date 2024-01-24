@@ -33,7 +33,7 @@ export function HubNamespaceUserAccess() {
 
   return (
     <HubResourceAccessUsers
-      users={usersWithAccess}
+      users={usersWithAccess ?? []}
       canEditAccess={canEditAccess}
       resourceId={params.id ?? ''}
       userPageRoute={HubRoute.NamespaceUserPage}
