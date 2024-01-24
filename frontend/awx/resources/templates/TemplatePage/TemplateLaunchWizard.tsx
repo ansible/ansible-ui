@@ -131,19 +131,13 @@ export function TemplateLaunchWizard() {
           }
         };
 
-        setValue(
-          'credentials',
-          credentials?.map((cred) => cred.id)
-        );
+        setValue('credentials', credentials?.map((cred) => cred.id));
         setValue('credential_passwords', credential_passwords);
         setValue('diff_mode', diff_mode);
         setValue('execution_environment', execution_environment?.id);
         setValue('extra_vars', extra_vars);
         setValue('forks', forks);
-        setValue(
-          'instance_groups',
-          instance_groups?.map((ig) => ig.id)
-        );
+        setValue('instance_groups', instance_groups?.map((ig) => ig.id));
         setValue('inventory', inventory?.id);
         setValue('job_slice_count', job_slice_count);
         setValue('job_tags', job_tags?.map((tag) => tag.name).join(','));
