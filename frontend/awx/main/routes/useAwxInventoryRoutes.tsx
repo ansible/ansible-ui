@@ -16,6 +16,7 @@ import { ScheduleRules } from '../../views/schedules/SchedulePage/ScheduleRules'
 import { Schedules } from '../../views/schedules/Schedules';
 import { AwxRoute } from '../AwxRoutes';
 import { InventoryHosts } from '../../resources/inventories/InventoryPage/InventoryHosts';
+import { InventoryGroups } from '../../resources/inventories/InventoryPage/InventoryGroups';
 
 export function useAwxInventoryRoutes() {
   const { t } = useTranslation();
@@ -98,6 +99,11 @@ export function useAwxInventoryRoutes() {
           element: <PageNotImplemented />,
         },
         {
+          id: AwxRoute.InventoryGroupsAdd,
+          path: ':inventory_type/:id/add',
+          element: <PageNotImplemented />,
+        },
+        {
           id: AwxRoute.InventoryPage,
           path: ':inventory_type/:id/',
           element: <InventoryPage />,
@@ -115,7 +121,7 @@ export function useAwxInventoryRoutes() {
             {
               id: AwxRoute.InventoryGroups,
               path: 'groups',
-              element: <PageNotImplemented />,
+              element: <InventoryGroups />,
             },
             {
               id: AwxRoute.InventoryHosts,
