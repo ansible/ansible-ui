@@ -55,6 +55,10 @@ export function CollectionDocumentationTabContent(props: {
   const contentKey = content?.content_type + ' > ' + content?.content_name;
 
   useEffect(() => {
+    setJson('');
+  }, [content?.content_name, content?.content_type]);
+
+  useEffect(() => {
     const options: OptionRecord[] = [];
 
     function fillOptions(
