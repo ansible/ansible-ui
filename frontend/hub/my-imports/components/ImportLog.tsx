@@ -46,11 +46,12 @@ export function ImportLog({ isLoading, collectionImport, collection, error }: IP
           }
           isInline
           isExpandable
+          data-cy="import-error"
         >
           <pre style={{ whiteSpace: 'pre-wrap' }}>{collectionImport?.error?.traceback}</pre>
         </Alert>
       )}
-      <CodeBlock style={{ marginTop: '10px' }}>
+      <CodeBlock style={{ marginTop: '10px' }} data-cy="import-console">
         {collectionImport ? (
           <>
             {collectionImport.messages?.map((message, index) => (

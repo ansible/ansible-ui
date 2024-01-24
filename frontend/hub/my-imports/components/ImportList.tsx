@@ -214,7 +214,11 @@ export function ImportList({
                         onSelectDataListItem={onSelectDataListItem}
                       >
                         {collectionImports.map((collectionImport) => (
-                          <DataListItem id={collectionImport.id} key={collectionImport.id}>
+                          <DataListItem
+                            id={collectionImport.id}
+                            key={collectionImport.id}
+                            data-cy={`row-id-${collectionImport.name}`}
+                          >
                             <DataListItemRow>
                               <DataListItemCells
                                 dataListCells={[

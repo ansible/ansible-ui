@@ -129,7 +129,11 @@ export function MyImports() {
   const importLogError = collectionImportError || collectionError;
 
   const panelContent = (
-    <DrawerPanelContent widths={{ default: 'width_66', xl: 'width_66' }} hasNoBorder>
+    <DrawerPanelContent
+      widths={{ default: 'width_66', xl: 'width_66' }}
+      hasNoBorder
+      data-cy="import-log-content"
+    >
       <DrawerHead style={{ padding: '0px' }}>
         {collectionImport && collection && (
           <>
