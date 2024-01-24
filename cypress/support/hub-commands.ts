@@ -103,35 +103,44 @@ Cypress.Commands.add('uploadHubCollectionFile', (hubFilePath: string, hubFileNam
     });
 });
 
-Cypress.Commands.add('addAndApproveMultiCollections', (thisRange: number) => {
+Cypress.Commands.add('addAndApproveMultiCollections', (numberOfCollections = 1) => {
   const rand = Math.floor(Math.random() * 9999999);
   const namespace = `foo_${rand}`;
-  [thisRange].forEach((i) => {
-    const collection = `bar_${rand}`;
-    cy.galaxykit(`-i collection upload ${namespace} ${collection + i}`);
-  });
-  cy.visit('/administration/approvals?page=1&perPage=100');
-  cy.verifyPageTitle('Collection Approvals');
-  cy.selectToolbarFilterType('Namespace');
-  cy.intercept(
-    'GET',
-    hubAPI`/v3/plugin/ansible/search/collection-versions/?repository_label=pipeline=staging&namespace=${namespace}&order_by=namespace&offset=0&limit=100`
-  ).as('approvals');
-  cy.searchAndDisplayResource(`${namespace}`);
-  cy.wait('@approvals');
-  cy.get('[data-cy="select-all"]').click();
-  cy.get('[data-ouia-component-id="page-toolbar"]').within(() => {
-    cy.get('[data-cy="actions-dropdown"]')
-      .click()
-      .then(() => {
-        cy.get('[data-cy="approve-selected-collections"]').click();
-      });
-  });
-  cy.get('[data-ouia-component-id="Approve collections"]').within(() => {
-    cy.get('[data-ouia-component-id="confirm"]').click();
-    cy.get('[data-ouia-component-id="submit"]').click();
-    cy.clickButton('Close');
-  });
+
+  const uploadCollection = (namespace: string, range: number) => {
+    for (let i = 0; i < range; i++) {
+      const collection = `bar_${rand}${i}`;
+      cy.galaxykit(`-i collection upload ${namespace} ${collection}`);
+    }
+  };
+
+  const approveMultiCollections = (namespace: string) => {
+    cy.visit('/administration/approvals?page=1&perPage=100');
+    cy.verifyPageTitle('Collection Approvals');
+    cy.selectToolbarFilterType('Namespace');
+    cy.intercept(
+      'GET',
+      hubAPI`/v3/plugin/ansible/search/collection-versions/?repository_label=pipeline=staging&namespace=${namespace}&order_by=namespace&offset=0&limit=100`
+    ).as('approvals');
+    cy.searchAndDisplayResource(`${namespace}`);
+    cy.wait('@approvals');
+    cy.get('[data-cy="select-all"]').click();
+    cy.get('[data-ouia-component-id="page-toolbar"]').within(() => {
+      cy.get('[data-cy="actions-dropdown"]')
+        .click()
+        .then(() => {
+          cy.get('[data-cy="approve-selected-collections"]').click();
+        });
+    });
+    cy.get('[data-ouia-component-id="Approve collections"]').within(() => {
+      cy.get('[data-ouia-component-id="confirm"]').click();
+      cy.get('[data-ouia-component-id="submit"]').click();
+      cy.clickButton('Close');
+    });
+  };
+
+  uploadCollection(namespace, numberOfCollections);
+  approveMultiCollections(namespace);
 });
 
 Cypress.Commands.add('getOrCreateCollection', () => {
