@@ -2,7 +2,7 @@ import { SignatureKeys } from './constants';
 import { pulpAPI } from '../../support/formatApiPathForHub';
 
 describe('Signature Keys', () => {
-  before(() => {
+  beforeEach(() => {
     cy.hubLogin();
   });
 
@@ -10,8 +10,51 @@ describe('Signature Keys', () => {
     cy.navigateTo('hub', SignatureKeys.url);
     cy.verifyPageTitle(SignatureKeys.title);
   });
-  it('should show no content when no data', () => {
-    cy.contains('No signature keys yet').should('be.visible');
+  it('should display empty state when no content when no data', () => {
+    cy.navigateTo('hub', SignatureKeys.url);
+    cy.get('[data-cy="empty-state-title"]')
+      .should('contain', 'No signature keys yet')
+      .should('be.visible');
+  });
+  it('should display name and public key mocked data in the list page', () => {
+    // backend on CI not supporting signing yet so it's not possible to create signature key, mocking instead
+    const resourceValues = ['name', 'public-key'];
+    cy.intercept(
+      { method: 'GET', url: pulpAPI`/signing-services/*` },
+      { fixture: 'hubSignatureKeys.json' }
+    ).as('signatureKeys');
+    cy.navigateTo('hub', SignatureKeys.url);
+    cy.wait('@signatureKeys')
+      .its(`response.body.results[0].public_key`)
+      .then((public_key) => {
+        cy.get(`[data-cy="${resourceValues[1]}-column-cell"]`).within(() => {
+          cy.get('.pf-v5-c-truncate__start').should('contain', public_key as string);
+        });
+      });
+    cy.wait('@signatureKeys')
+      .its(`response.body.results[0].name`)
+      .then((name) => {
+        cy.get(`[data-cy="${resourceValues[0]}-column-cell"]`).within(() => {
+          cy.contains(name as string).should('be.visible');
+        });
+      });
+  });
+
+  it('should display finger print mocked data in the list page', () => {
+    // backend on CI not supporting signing yet so it's not possible to create signature key, mocking instead
+    const resourceValue = 'fingerprint';
+    cy.intercept(
+      { method: 'GET', url: pulpAPI`/signing-services/*` },
+      { fixture: 'hubSignatureKeys.json' }
+    ).as('signatureKeys');
+    cy.navigateTo('hub', SignatureKeys.url);
+    cy.wait('@signatureKeys')
+      .its(`response.body.results[0].pubkey_fingerprint`)
+      .then((pubkey_fingerprint) => {
+        cy.get(`[data-cy="${resourceValue}-column-cell"]`).within(() => {
+          cy.get('.pf-v5-c-truncate__start').should('contain', pubkey_fingerprint as string);
+        });
+      });
   });
   it('should contain correct table headers', () => {
     // backend on CI not supporting signing yet so it's not possible to create signature key, mocking instead
