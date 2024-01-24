@@ -11,7 +11,7 @@ export function useRemoveAllNodes() {
   const controller = useVisualizationController();
   const handleRemoveAllNodes = action(() => {
     controller.getElements().forEach((element) => {
-      controller.removeElement(element);
+      element.setVisible(false);
     });
     setModified(true);
   });
