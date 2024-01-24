@@ -18,9 +18,9 @@ import { AwxRoute } from '../../../main/AwxRoutes';
 import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
 import { PageActionSwitch } from '../../../../../framework/PageActions/PageActionSwitch';
 import { cannotEditResource } from '../../../../common/utils/RBAChelpers';
-import { requestPatch } from '../../../../common/crud/Data';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { usePatchRequest } from '../../../../common/crud/usePatchRequest';
 
 export function InventoryHostsDetails() {
   const params = useParams<{ id: string; inventory_type: string; host_id: string }>();
@@ -36,15 +36,21 @@ export function InventoryHostsDetails() {
 export function InventoryHostsDetailsInner(props: { host: AwxHost }) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
+
   const [host, setHost] = useState<AwxHost>(props.host);
+
+  useEffect(() => {
+    setHost(props.host);
+  }, [props.host]);
 
   const recentPlaybookJobs = host.summary_fields.recent_jobs.map((job) => ({
     ...job,
     canceled_on: null,
   }));
 
+  const patchRequest = usePatchRequest<unknown, AwxHost>();
   const handleToggleHost = async (selectedHost: AwxHost, enabled: boolean) => {
-    const response = await requestPatch<AwxHost>(awxAPI`/hosts/${selectedHost.id.toString()}/`, {
+    const response = await patchRequest(awxAPI`/hosts/${selectedHost.id.toString()}/`, {
       enabled,
     });
     setHost(response);
