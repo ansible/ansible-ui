@@ -27,8 +27,8 @@ export function HostMetrics() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Host metrics')}
-        titleHelpTitle={t('Host metrics')}
+        title={t('Host Metrics')}
+        titleHelpTitle={t('Host Metrics')}
         titleHelp={t(
           `All currently managed hosts, with information about when they were first automated, when they were most recently automated, how many times they were automated, and how many times each host has been deleted. Host metrics can be used to accurately count node usage and ensure subscription compliance. For example, if a host is no longer in use or otherwise should not be counted towards the subscription total, it can be soft-deleted.`
         )}
