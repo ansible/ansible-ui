@@ -1,0 +1,52 @@
+{
+  "meta": {
+    "count": 1
+  },
+  "links": {
+    "first": "/api/automation-hub/_ui/v1/namespaces/?include_related=my_permissions&limit=1&name=test2&offset=0",
+    "previous": null,
+    "next": null,
+    "last": "/api/automation-hub/_ui/v1/namespaces/?include_related=my_permissions&limit=1&name=test2&offset=0"
+  },
+  "data": [
+    {
+      "pulp_href": "/api/automation-hub/pulp/api/v3/pulp_ansible/namespaces/2/",
+      "id": 2,
+      "name": "test2",
+      "company": "",
+      "email": "",
+      "avatar_url": "",
+      "description": "",
+      "groups": [
+        {
+          "id": 1,
+          "name": "Test Group",
+          "object_roles": ["galaxy.collection_publisher"]
+        }
+      ],
+      "users": [
+        {
+          "id": 2,
+          "name": "new-user",
+          "object_roles": ["galaxy.collection_namespace_owner", "galaxy.collection_publisher"]
+        },
+        {
+          "id": 3,
+          "name": "obj-role-test-user",
+          "object_roles": ["galaxy.collection_namespace_owner"]
+        }
+      ],
+      "related_fields": {
+        "my_permissions": [
+          "galaxy.add_namespace",
+          "galaxy.change_namespace",
+          "galaxy.delete_namespace",
+          "galaxy.upload_to_namespace",
+          "galaxy.view_namespace"
+        ]
+      },
+      "metadata_sha256": "7e4efa6ba218f9d9a6394bba10d0bb6b452bbe24078bc4b8f62dfe727390dd42",
+      "avatar_sha256": null
+    }
+  ]
+}

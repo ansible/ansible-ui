@@ -1,0 +1,15 @@
+{
+  "count": 1,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "pulp_href": "/api/automation-hub/pulp/api/v3/roles/018d1319-5a39-77cb-b368-00f504c0889e/",
+      "pulp_created": "2024-01-16T16:27:25.114238Z",
+      "name": "galaxy.collection_namespace_owner",
+      "description": null,
+      "permissions": ["galaxy.change_namespace", "galaxy.upload_to_namespace"],
+      "locked": true
+    }
+  ]
+}
