@@ -66,15 +66,23 @@ jobs:
         with:
           payload: |
             {
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": ":check: ${{ github.repository }} AWX E2E Server Updated - <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Success> - <${{ needs.setup.outputs.AWX_SERVER }}|Server>"
+              "attachments":
+                [
+                  {
+                    "color": "green",
+                    "blocks":
+                      [
+                        {
+                          "type": "section",
+                          "text":
+                            {
+                              "type": "mrkdwn",
+                              "text": "*AWX E2E Server Updated*\n${{ github.repository }} - <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Success> - <${{ needs.setup.outputs.AWX_SERVER }}|Server>",
+                            }
+                        }
+                      ]
                   }
-                }
-              ]
+                ]
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
@@ -93,15 +101,21 @@ jobs:
         with:
           payload: |
             {
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": ":alert: *${{ github.repository }} AWX E2E Server Update* - *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Failure>* - <${{ needs.setup.outputs.AWX_SERVER }}|Server> - <!here>"
+              "attachments":
+                [
+                  {
+                    "color": "red",
+                    "blocks": [
+                      {
+                        "type": "section",
+                        "text": {
+                          "type": "mrkdwn",
+                          "text": "*Update AWX E2E Server Failed*\n${{ github.repository }} - *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Failure>* - <${{ needs.setup.outputs.AWX_SERVER }}|Server> - <!here>"
+                        }
+                      }
+                    ]
                   }
-                }
-              ]
+                ]
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
