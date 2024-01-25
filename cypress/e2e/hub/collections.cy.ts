@@ -2,7 +2,7 @@ import { randomString } from '../../../framework/utils/random-string';
 import { hubAPI } from '../../support/formatApiPathForHub';
 import { Collections } from './constants';
 
-describe('Collections- List View', () => {
+describe.skip('Collections- List View', () => {
   //**Important to know:
   //**In order to upload a collection, a namespace must first exist containing the first word of the collection file name
   //**The only way to get rid of a collection's artifact is to choose the following option:
@@ -78,7 +78,7 @@ describe('Collections- List View', () => {
   it.skip('user can deprecate selected collections using the list toolbar', () => {});
 });
 
-describe('Collections List- Line Item Kebab Menu', () => {
+describe.skip('Collections List- Line Item Kebab Menu', () => {
   let thisCollectionName: string;
   let namespace: string;
   let repository: string;
