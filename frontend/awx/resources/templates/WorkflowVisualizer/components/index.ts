@@ -2,7 +2,6 @@ import { AddNodeButton } from './AddNodeButton';
 import { CustomEdge } from './CustomEdge';
 import { CustomLabel } from './CustomLabel';
 import { CustomNode } from './CustomNode';
-import { DeletedNode } from './DeletedNode';
 import { EdgeContextMenu } from './EdgeContextMenu';
 import { Legend } from './Legend';
 import { NodeContextMenu } from './NodeContextMenu';
@@ -19,7 +18,6 @@ export {
   CustomEdge,
   CustomLabel,
   CustomNode,
-  DeletedNode,
   EdgeContextMenu,
   Legend,
   NodeContextMenu,
