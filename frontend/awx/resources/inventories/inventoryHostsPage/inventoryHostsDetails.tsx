@@ -64,7 +64,6 @@ export function InventoryHostsDetailsInner(props: { host: AwxHost }) {
         showCopyToClipboard
         value={host.variables || '---'}
       />
-      <PageActionSwitch action={hostSwitch} selectedItem={host} />
     </PageDetails>
   );
 }
