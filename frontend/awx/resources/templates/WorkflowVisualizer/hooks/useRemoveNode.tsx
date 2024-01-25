@@ -1,17 +1,13 @@
 import { useCallback } from 'react';
 import { EdgeModel } from '@patternfly/react-topology';
 import { useCreateEdge } from './useCreateEdge';
-import { useSetVisualizerModified } from './useSetVisualizerModified';
 import { EdgeStatus, GraphNode } from '../types';
 
 export function useRemoveNode() {
-  const setModified = useSetVisualizerModified();
   const createEdge = useCreateEdge();
 
   return useCallback(
     (element: GraphNode) => {
-      setModified(true);
-
       const newEdges: EdgeModel[] = [];
 
       element.setVisible(false);
@@ -36,6 +32,6 @@ export function useRemoveNode() {
       model.edges.push(...newEdges);
       element.getController().fromModel(model);
     },
-    [createEdge, setModified]
+    [createEdge]
   );
 }
