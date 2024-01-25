@@ -8,12 +8,10 @@ import {
   PageActionType,
   usePageNavigate,
 } from '../../../../../framework';
-import { CollectionVersionSearch } from '../../../collections/Collection';
 import { HubRoute } from '../../../main/HubRoutes';
 import { Repository } from '../Repository';
 import { useDeleteRepositories } from './useDeleteRepositories';
 import { IHubView } from '../../../common/useHubView';
-import { useDeleteCollectionsFromRepository } from '../../../collections/hooks/useDeleteCollectionsFromRepository';
 
 export function useRepositoryToolbarActions(view: IHubView<Repository>) {
   const { t } = useTranslation();
@@ -41,39 +39,6 @@ export function useRepositoryToolbarActions(view: IHubView<Repository>) {
       },
     ],
     [t, pageNavigate, deleteRepositories]
-  );
-  return actions;
-}
-
-export function useRepositoryCollectionVersionToolbarActions() {
-  const { t } = useTranslation();
-  const pageNavigate = usePageNavigate();
-  const deleteCollectionsVersionsFromRepository = useDeleteCollectionsFromRepository(
-    () => {},
-    true,
-    false
-  );
-
-  const actions = useMemo<IPageAction<CollectionVersionSearch>[]>(
-    () => [
-      {
-        isPinned: true,
-        label: t('Add collection'),
-        onClick: () => pageNavigate(HubRoute.CreateRepository),
-        selection: PageActionSelection.None,
-        type: PageActionType.Button,
-        variant: ButtonVariant.primary,
-      },
-      {
-        icon: TrashIcon,
-        label: t('Remove'),
-        onClick: (collections) => deleteCollectionsVersionsFromRepository(collections),
-        selection: PageActionSelection.Multiple,
-        type: PageActionType.Button,
-        isDanger: true,
-      },
-    ],
-    [t, pageNavigate]
   );
   return actions;
 }

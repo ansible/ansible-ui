@@ -11,8 +11,14 @@ import { HubItemsResponse } from '../../common/useHubView';
 import { HubRoute } from '../../main/HubRoutes';
 import { CollectionVersionSearch } from '../Collection';
 import { useCollectionColumns } from './useCollectionColumns';
+import { Repository } from '../../administration/repositories/Repository';
+import { requestGet } from '../../../common/crud/Data';
+import { PulpItemsResponse } from '../../common/useHubView';
 
 export function useDeleteCollectionsFromRepository(
+  // if repository is undefined, it will be taken from collection.repository
+  // but then it will not allow for batch operation over one repo for multiple collections
+  repository?: Repository,
   onComplete?: (collections: CollectionVersionSearch[]) => void,
   version?: boolean,
   detail?: boolean
@@ -70,28 +76,61 @@ export function useDeleteCollectionsFromRepository(
         actionColumns,
         onComplete,
         actionFn: (collection: CollectionVersionSearch) => {
-          return deleteCollectionFromRepository(collection, version, t).then(() => {
-            if (detail) {
-              return navigateAfterDelete(collection, version || false, navigate);
+          const newRepository = repository ? repository : ({} as Repository);
+          if (!repository) {
+            newRepository.name = collection.repository?.name || '';
+            newRepository.latest_version_href = collection.repository?.latest_version_href || '';
+            newRepository.pulp_href = collection.repository?.pulp_href || '';
+          }
+
+          return deleteCollectionFromRepository(newRepository, [collection], version, t).then(
+            () => {
+              if (detail) {
+                return navigateAfterDelete(collection, version || false, navigate);
+              }
             }
-          });
+          );
         },
       });
     },
-    [actionColumns, bulkAction, confirmationColumns, onComplete, t, version, navigate, detail]
+    [
+      actionColumns,
+      bulkAction,
+      confirmationColumns,
+      onComplete,
+      t,
+      version,
+      navigate,
+      detail,
+      repository,
+    ]
   );
 }
 
-async function deleteCollectionFromRepository(
-  collection: CollectionVersionSearch,
+export async function deleteCollectionFromRepository(
+  repository: Repository,
+  // all the collections must have been from the same repository
+  collections: CollectionVersionSearch[],
+  // warning if we want to delete versions, we can push only one collection as collections array
   version?: boolean,
   t?: TFunction<'translation', undefined>
 ) {
   let itemsToDelete: string[] = [];
 
-  if (!collection.repository) {
+  if (collections.filter((item) => !item.repository).length > 0) {
     throw new Error(t?.('Collection is missing in the repositories'));
   }
+
+  if (!version && collections.length !== 1) {
+    throw new Error(t?.('You can delete all versions only for one collection'));
+  }
+
+  // load the repository again, because we need the latest version as much actual as possible
+  // the one received from the page can be very obsolete, because when someones modify repo in meantime user clicks this action, it will fail
+  const actualRepositoryResults = await requestGet<PulpItemsResponse<Repository>>(
+    pulpAPI`/repositories/ansible/ansible/?name=${repository.name}`
+  );
+  const actualRepository = actualRepositoryResults.results[0];
 
   let loadedAll = true;
 
@@ -99,8 +138,8 @@ async function deleteCollectionFromRepository(
     // load all associated collection versions
     // TODO - waiting for API
     const url = hubAPI`/v3/plugin/ansible/search/collection-versions/?limit=100&name=${
-      collection.collection_version?.name || ''
-    }&repository_name=${collection.repository.name}`;
+      collections[0].collection_version?.name || ''
+    }&repository_name=${actualRepository.name || ''}`;
 
     const result = await getHubAllItems<
       HubItemsResponse<CollectionVersionSearch>,
@@ -113,16 +152,22 @@ async function deleteCollectionFromRepository(
     loadedAll = result.loadedAll;
     itemsToDelete = result.results?.map((item) => item.collection_version?.pulp_href || '');
   } else {
-    itemsToDelete.push(collection.collection_version?.pulp_href || '');
+    itemsToDelete = collections.map((item) => item.collection_version?.pulp_href || '');
   }
 
   const res: { task: string } = await postRequest(
+<<<<<<< HEAD
     pulpAPI`/repositories/ansible/ansible/${parsePulpIDFromURL(
       collection.repository.pulp_href
     )}/modify/`,
+=======
+    pulpAPI`/repositories/ansible/ansible/${
+      parsePulpIDFromURL(actualRepository.pulp_href) || ''
+    }/modify/`,
+>>>>>>> 9466a84f (fix error and checks)
     {
       remove_content_units: itemsToDelete,
-      base_version: collection.repository.latest_version_href,
+      base_version: actualRepository.latest_version_href,
     }
   );
   await waitForTask(parsePulpIDFromURL(res.task));
