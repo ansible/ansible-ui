@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         if: ${{ !inputs.SKIP_JOB }}
         with:
           fetch-depth: 1
@@ -34,7 +34,7 @@ jobs:
       - name: Cache dependencies
         if: ${{ !inputs.SKIP_JOB }}
         id: cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             ./node_modules
@@ -56,7 +56,7 @@ jobs:
         run: docker save hub-ui > hub-ui.tar
       - name: Upload Image
         if: ${{ !inputs.SKIP_JOB }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: hub-ui.tar
           path: hub-ui.tar
@@ -73,12 +73,12 @@ jobs:
     steps:
       - name: Checkout
         if: ${{ !inputs.SKIP_JOB }}
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1
       - name: Download container image
         if: ${{ !inputs.SKIP_JOB }}
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: hub-ui.tar
       - name: Load container image
@@ -86,7 +86,7 @@ jobs:
         run: docker load --input hub-ui.tar
       - name: Setup Node
         if: ${{ !inputs.SKIP_JOB }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18
       - name: PreCache
@@ -95,7 +95,7 @@ jobs:
       - name: Cache dependencies
         if: ${{ !inputs.SKIP_JOB }}
         id: cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             ./node_modules
@@ -108,7 +108,7 @@ jobs:
         run: pip3 install galaxykit
       - name: Cypress
         if: ${{ !inputs.SKIP_JOB }}
-        uses: cypress-io/github-action@v5
+        uses: cypress-io/github-action@v6
         with:
           install: false
           start: npm run docker:run:hub
