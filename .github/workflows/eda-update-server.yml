@@ -69,7 +69,7 @@ jobs:
               "attachments":
                 [
                   {
-                    "color": "#00FF00",
+                    "color": "#00DD00",
                     "blocks":
                       [
                         {
