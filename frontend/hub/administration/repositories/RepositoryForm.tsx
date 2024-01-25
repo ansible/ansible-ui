@@ -106,8 +106,8 @@ export function RepositoryForm() {
           .catch(() => t('Distribution not created.'));
       } else {
         promise
-        // @ts-expect-error the correct response from promise is known based on the condition
-            .then((repository: Repository) => {
+          // @ts-expect-error the correct response from promise is known based on the condition
+          .then((repository: Repository) => {
             return getDistribution(repository?.pulp_href || '');
           })
           .catch(() => t('Distribution not created.'));
@@ -215,11 +215,17 @@ export function RepositoryForm() {
             'Content in repositories without a distribution will not be visible to clients for sync, download or search.'
           )}
         >
-          <PageFormCheckbox<RepositoryFormProps>
-            name="createDistribution"
-            label={t(`Create a "${repositoryFormValues.name}" distribution`)}
-            isDisabled={isDistributionDisabled}
-          />
+          <PageFormWatch<string> watch={'name'}>
+            {(name: string) => {
+              return (
+                <PageFormCheckbox<RepositoryFormProps>
+                  name="createDistribution"
+                  label={t(`Create a "${name}" distribution`)}
+                  isDisabled={isDistributionDisabled}
+                />
+              );
+            }}
+          </PageFormWatch>
         </PageFormGroup>
         <PageFormGroup
           label={t('Pipeline')}
