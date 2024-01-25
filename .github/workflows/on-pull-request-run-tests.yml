@@ -22,17 +22,17 @@ jobs:
       afw: ${{ steps.changed-afw.outputs.changed == 'true' }}
       common: ${{ steps.changed-common.outputs.changed == 'true' }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 100
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: 18
       - name: PreCache
         run: npm version 0.0.0 --no-git-tag-version
       - name: Cache dependencies
         id: cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             ./node_modules
@@ -68,17 +68,17 @@ jobs:
     timeout-minutes: 10
     needs: packages
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 1
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: 18
       - name: PreCache
         run: npm version 0.0.0 --no-git-tag-version
       - name: Cache dependencies
         id: cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             ./node_modules
@@ -101,12 +101,12 @@ jobs:
     steps:
       - name: Checkout
         if: needs.packages.outputs.awx == 'true'
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1
       - name: Setup Node
         if: needs.packages.outputs.awx == 'true'
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18
       - name: PreCache
@@ -115,7 +115,7 @@ jobs:
       - name: Cache dependencies
         if: needs.packages.outputs.awx == 'true'
         id: cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             ./node_modules
@@ -126,7 +126,7 @@ jobs:
         run: npm ci
       - name: Cypress
         if: needs.packages.outputs.awx == 'true'
-        uses: cypress-io/github-action@v5
+        uses: cypress-io/github-action@v6
         with:
           component: true
           install: false
@@ -151,12 +151,12 @@ jobs:
     steps:
       - name: Checkout
         if: needs.packages.outputs.eda == 'true'
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1
       - name: Setup Node
         if: needs.packages.outputs.eda == 'true'
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18
       - name: PreCache
@@ -165,7 +165,7 @@ jobs:
       - name: Cache dependencies
         if: needs.packages.outputs.eda == 'true'
         id: cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             ./node_modules
@@ -176,7 +176,7 @@ jobs:
         run: npm ci
       - name: Cypress
         if: needs.packages.outputs.eda == 'true'
-        uses: cypress-io/github-action@v5
+        uses: cypress-io/github-action@v6
         with:
           component: true
           install: false
@@ -201,12 +201,12 @@ jobs:
     steps:
       - name: Checkout
         if: needs.packages.outputs.hub == 'true'
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1
       - name: Setup node
         if: needs.packages.outputs.hub == 'true'
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18
       - name: PreCache
@@ -215,7 +215,7 @@ jobs:
       - name: Cache dependencies
         if: needs.packages.outputs.hub == 'true'
         id: cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             ./node_modules
@@ -226,7 +226,7 @@ jobs:
         run: npm ci
       - name: Cypress
         if: needs.packages.outputs.hub == 'true'
-        uses: cypress-io/github-action@v5
+        uses: cypress-io/github-action@v6
         with:
           component: true
           install: false
@@ -251,12 +251,12 @@ jobs:
     steps:
       - name: Checkout
         if: needs.packages.outputs.afw == 'true'
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1
       - name: Setup Node
         if: needs.packages.outputs.afw == 'true'
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18
       - name: PreCache
@@ -265,7 +265,7 @@ jobs:
       - name: Cache dependencies
         if: needs.packages.outputs.afw == 'true'
         id: cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             ./node_modules
@@ -276,7 +276,7 @@ jobs:
         run: npm ci
       - name: Cypress
         if: needs.packages.outputs.afw == 'true'
-        uses: cypress-io/github-action@v5
+        uses: cypress-io/github-action@v6
         with:
           component: true
           install: false
@@ -301,12 +301,12 @@ jobs:
     steps:
       - name: Checkout
         if: needs.packages.outputs.common == 'true'
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1
       - name: Setup Node
         if: needs.packages.outputs.common == 'true'
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18
       - name: PreCache
@@ -315,7 +315,7 @@ jobs:
       - name: Cache dependencies
         if: needs.packages.outputs.common == 'true'
         id: cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             ./node_modules
@@ -326,7 +326,7 @@ jobs:
         run: npm ci
       - name: Cypress
         if: needs.packages.outputs.common == 'true'
-        uses: cypress-io/github-action@v5
+        uses: cypress-io/github-action@v6
         with:
           component: true
           install: false
