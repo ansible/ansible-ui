@@ -9,6 +9,7 @@ import {
   PageHeader,
   PageLayout,
   PageTable,
+  useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
 import { usePersistentFilters } from '../../../common/PersistentFilters';
@@ -29,6 +30,7 @@ import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsRespon
 export function Templates() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
+  const getPageUrl = useGetPageUrl();
   const toolbarFilters = useTemplateFilters();
   const tableColumns = useTemplateColumns();
 
@@ -57,6 +59,31 @@ export function Templates() {
     wfJobTemplateActions && wfJobTemplateActions.actions && wfJobTemplateActions.actions['POST']
   );
 
+  const createTemplateActions: IPageAction<JobTemplate | WorkflowJobTemplate>[] = [];
+
+  if (canCreateJobTemplate) {
+    createTemplateActions.push({
+      type: PageActionType.Link,
+      selection: PageActionSelection.None,
+      label: t('Create job template'),
+      href: getPageUrl(AwxRoute.CreateJobTemplate),
+    });
+  }
+
+  if (canCreateWFJobTemplate) {
+    createTemplateActions.push({
+      type: PageActionType.Link,
+      selection: PageActionSelection.None,
+      label: t('Create workflow template'),
+      href: getPageUrl(AwxRoute.CreateWorkflowJobTemplate),
+    });
+  }
+
+  const placeholderAction = {
+    type: PageActionType.Button,
+    selection: PageActionSelection.None,
+  } as IPageAction<JobTemplate | WorkflowJobTemplate>;
+
   usePersistentFilters('templates');
   const config = useAwxConfig();
 
@@ -77,30 +104,7 @@ export function Templates() {
               ),
         selection: PageActionSelection.None,
         icon: PlusCircleIcon,
-        actions: [
-          {
-            type: PageActionType.Button,
-            selection: PageActionSelection.None,
-            label: t('Create job template'),
-            isDisabled: canCreateJobTemplate
-              ? undefined
-              : t(
-                  'You do not have permission to create a job template. Please contact your organization administrator if there is an issue with your access.'
-                ),
-            onClick: () => pageNavigate(AwxRoute.CreateJobTemplate),
-          },
-          {
-            type: PageActionType.Button,
-            selection: PageActionSelection.None,
-            label: t('Create workflow job template'),
-            isDisabled: canCreateWFJobTemplate
-              ? undefined
-              : t(
-                  'You do not have permission to create a workflow job template. Please contact your organization administrator if there is an issue with your access.'
-                ),
-            onClick: () => pageNavigate(AwxRoute.CreateWorkflowJobTemplate),
-          },
-        ],
+        actions: createTemplateActions.length > 0 ? createTemplateActions : [placeholderAction],
       },
       {
         type: PageActionType.Button,
@@ -111,7 +115,7 @@ export function Templates() {
         isDanger: true,
       },
     ],
-    [canCreateJobTemplate, canCreateWFJobTemplate, deleteTemplates, pageNavigate, t]
+    [canCreateJobTemplate, canCreateWFJobTemplate, createTemplateActions, deleteTemplates, t]
   );
 
   const rowActions = useTemplateActions({ onTemplatesDeleted: view.unselectItemsAndRefresh });
@@ -152,9 +156,7 @@ export function Templates() {
           canCreateJobTemplate || canCreateWFJobTemplate ? t('Create template') : undefined
         }
         emptyStateButtonClick={
-          canCreateJobTemplate || canCreateWFJobTemplate
-            ? () => pageNavigate(AwxRoute.CreateJobTemplate)
-            : undefined
+          canCreateJobTemplate ? () => pageNavigate(AwxRoute.CreateJobTemplate) : undefined
         }
         {...view}
         defaultSubtitle={t('Template')}

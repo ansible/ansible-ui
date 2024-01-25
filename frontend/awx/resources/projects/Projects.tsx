@@ -32,7 +32,6 @@ export function Projects() {
   const toolbarActions = useProjectToolbarActions(view.unselectItemsAndRefresh);
   const rowActions = useProjectActions(view.unselectItemsAndRefresh, showToastMessage);
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/projects/`);
-  console.log(data);
   const canCreateProject = Boolean(data && data.actions && data.actions['POST']);
   const { refresh } = view;
   usePersistentFilters('projects');

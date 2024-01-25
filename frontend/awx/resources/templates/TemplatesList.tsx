@@ -55,6 +55,38 @@ export function TemplatesList(props: { url: string; projectId?: string }) {
     wfJobTemplateActions && wfJobTemplateActions.actions && wfJobTemplateActions.actions['POST']
   );
 
+  const createTemplateActions = useMemo(() => {
+    const createTemplateActions: IPageAction<JobTemplate | WorkflowJobTemplate>[] = [];
+
+    if (canCreateJobTemplate) {
+      createTemplateActions.push({
+        type: PageActionType.Link,
+        selection: PageActionSelection.None,
+        label: t('Create job template'),
+        href: getPageUrl(AwxRoute.CreateJobTemplate),
+      });
+    }
+
+    if (canCreateWFJobTemplate) {
+      createTemplateActions.push({
+        type: PageActionType.Link,
+        selection: PageActionSelection.None,
+        label: t('Create workflow template'),
+        href: getPageUrl(AwxRoute.CreateWorkflowJobTemplate),
+      });
+    }
+    return createTemplateActions;
+  }, [canCreateJobTemplate, canCreateWFJobTemplate, getPageUrl, t]);
+
+  const placeholderAction = useMemo(
+    () =>
+      ({
+        type: PageActionType.Button,
+        selection: PageActionSelection.None,
+      }) as IPageAction<JobTemplate | WorkflowJobTemplate>,
+    []
+  );
+
   usePersistentFilters('templatesList');
   const deleteTemplates = useDeleteTemplates(view.unselectItemsAndRefresh);
 
@@ -65,27 +97,15 @@ export function TemplatesList(props: { url: string; projectId?: string }) {
         variant: ButtonVariant.primary,
         isPinned: true,
         label: t('Create template'),
-        isDisabled: canCreateJobTemplate
-          ? undefined
-          : t(
-              'You do not have permission to create a template. Please contact your organization administrator if there is an issue with your access.'
-            ),
+        isDisabled:
+          canCreateJobTemplate || canCreateWFJobTemplate
+            ? undefined
+            : t(
+                'You do not have permission to create a template. Please contact your organization administrator if there is an issue with your access.'
+              ),
         selection: PageActionSelection.None,
         icon: PlusCircleIcon,
-        actions: [
-          {
-            type: PageActionType.Link,
-            selection: PageActionSelection.None,
-            label: t('Create job template'),
-            href: getPageUrl(AwxRoute.CreateJobTemplate),
-          },
-          {
-            type: PageActionType.Link,
-            selection: PageActionSelection.None,
-            label: t('Create workflow job template'),
-            href: getPageUrl(AwxRoute.CreateWorkflowJobTemplate),
-          },
-        ],
+        actions: createTemplateActions.length > 0 ? createTemplateActions : [placeholderAction],
       },
       {
         type: PageActionType.Button,
@@ -96,7 +116,14 @@ export function TemplatesList(props: { url: string; projectId?: string }) {
         isDanger: true,
       },
     ],
-    [canCreateJobTemplate, deleteTemplates, getPageUrl, t]
+    [
+      canCreateJobTemplate,
+      canCreateWFJobTemplate,
+      createTemplateActions,
+      deleteTemplates,
+      placeholderAction,
+      t,
+    ]
   );
 
   const rowActions = useTemplateActions({ onTemplatesDeleted: view.unselectItemsAndRefresh });
@@ -110,18 +137,20 @@ export function TemplatesList(props: { url: string; projectId?: string }) {
       rowActions={rowActions}
       errorStateTitle={t('Error loading templates')}
       emptyStateTitle={
-        canCreateJobTemplate
+        canCreateJobTemplate || canCreateWFJobTemplate
           ? t('No templates yet')
           : t('You do not have permission to create a template')
       }
       emptyStateDescription={
-        canCreateJobTemplate
+        canCreateJobTemplate || canCreateWFJobTemplate
           ? t('Please create a template by using the button below.')
           : t(
               'Please contact your organization administrator if there is an issue with your access.'
             )
       }
-      emptyStateButtonText={canCreateJobTemplate ? t('Create template') : undefined}
+      emptyStateButtonText={
+        canCreateJobTemplate || canCreateWFJobTemplate ? t('Create template') : undefined
+      }
       emptyStateButtonClick={
         canCreateJobTemplate ? () => pageNavigate(AwxRoute.CreateJobTemplate) : undefined
       }
