@@ -67,7 +67,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        containers: [1, 2]
+        containers: [1]
     steps:
       - name: Checkout
         if: ${{ !inputs.SKIP_JOB }}

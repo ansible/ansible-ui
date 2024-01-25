@@ -4,11 +4,11 @@ AWX:
 
 EDA:
   - frontend/eda/**/*
-  - cypress/eda/awx/**/*
+  - cypress/e2e/eda/**/*
 
 HUB:
   - frontend/hub/**/*
-  - cypress/hub/awx/**/*
+  - cypress/e2e/hub/**/*
 
 E2E:
   - cypress/e2e/**
