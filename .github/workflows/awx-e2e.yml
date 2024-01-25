@@ -26,7 +26,7 @@ jobs:
     env:
       DOCKER_BUILDKIT: 1
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         if: ${{ !inputs.SKIP_JOB }}
         with:
           fetch-depth: 1
@@ -36,7 +36,7 @@ jobs:
       - name: Cache dependencies
         if: ${{ !inputs.SKIP_JOB }}
         id: cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             ./node_modules
@@ -56,7 +56,7 @@ jobs:
         run: docker save awx-ui > awx-ui.tar
       - name: Upload Image
         if: ${{ !inputs.SKIP_JOB }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: awx-ui.tar
           path: awx-ui.tar
@@ -73,7 +73,7 @@ jobs:
     steps:
       - name: Download container image
         if: ${{ !inputs.SKIP_JOB }}
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: awx-ui.tar
       - name: Load container image
@@ -86,7 +86,7 @@ jobs:
           fetch-depth: 1
       - name: Setup node
         if: ${{ !inputs.SKIP_JOB }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18
       - name: PreCache
@@ -95,7 +95,7 @@ jobs:
       - name: Cache dependencies
         if: ${{ !inputs.SKIP_JOB }}
         id: cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             ./node_modules
@@ -106,7 +106,7 @@ jobs:
         run: npm ci
       - name: Cypress
         if: ${{ !inputs.SKIP_JOB }}
-        uses: cypress-io/github-action@v5
+        uses: cypress-io/github-action@v6
         with:
           install: false
           start: npm run docker:run:awx
