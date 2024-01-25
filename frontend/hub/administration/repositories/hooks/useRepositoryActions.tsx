@@ -105,10 +105,14 @@ export function useRepositoryActions(options: {
   return actions;
 }
 
-export function useCollectionVersionsActions() {
+export function useCollectionVersionsActionsRemove(
+  repository: Repository,
+  callback?: (collections: CollectionVersionSearch[]) => void
+) {
   const { t } = useTranslation();
   const deleteCollectionsVersionsFromRepository = useDeleteCollectionsFromRepository(
-    () => {},
+    repository,
+    callback,
     true,
     false
   );
@@ -118,13 +122,14 @@ export function useCollectionVersionsActions() {
       {
         icon: TrashIcon,
         label: t('Remove'),
-        onClick: (collections) =>  deleteCollectionsVersionsFromRepository([collections]),
+        onClick: (collections) => deleteCollectionsVersionsFromRepository([collections]),
         selection: PageActionSelection.Single,
         type: PageActionType.Button,
         isDanger: true,
+        isPinned: true,
       },
     ],
-    [t]
+    [t, deleteCollectionsVersionsFromRepository]
   );
 }
 

@@ -8,12 +8,10 @@ import {
   PageActionType,
   usePageNavigate,
 } from '../../../../../framework';
-import { CollectionVersionSearch } from '../../../collections/Collection';
 import { HubRoute } from '../../../main/HubRoutes';
 import { Repository } from '../Repository';
 import { useDeleteRepositories } from './useDeleteRepositories';
 import { IHubView } from '../../../common/useHubView';
-import { useDeleteCollectionsFromRepository } from '../../../collections/hooks/useDeleteCollectionsFromRepository';
 
 export function useRepositoryToolbarActions(view: IHubView<Repository>) {
   const { t } = useTranslation();
@@ -45,7 +43,8 @@ export function useRepositoryToolbarActions(view: IHubView<Repository>) {
   return actions;
 }
 
-export function useRepositoryCollectionVersionToolbarActions() {
+
+/*export function useRepositoryCollectionVersionToolbarActions() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const deleteCollectionsVersionsFromRepository = useDeleteCollectionsFromRepository(
@@ -76,4 +75,5 @@ export function useRepositoryCollectionVersionToolbarActions() {
     [t, pageNavigate]
   );
   return actions;
-}
+}*/
+

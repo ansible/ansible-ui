@@ -12,18 +12,18 @@ import { useHubContext } from '../../common/useHubContext';
 import { HubRoute } from '../../main/HubRoutes';
 import { CollectionVersionSearch } from '../Collection';
 import { useDeleteCollections } from './useDeleteCollections';
-import { useDeleteCollectionsFromRepository } from './useDeleteCollectionsFromRepository';
 import { useDeprecateCollections } from './useDeprecateCollections';
 import { useSignCollection } from './useSignCollection';
+import { useDeleteCollectionsFromRepository } from './useDeleteCollectionsFromRepository';
 
 export function useCollectionsActions(callback: (collections: CollectionVersionSearch[]) => void) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const deleteCollections = useDeleteCollections(callback);
-  const deleteCollectionsFromRepository = useDeleteCollectionsFromRepository(callback);
   const deprecateCollections = useDeprecateCollections(callback);
   const context = useHubContext();
   const signCollection = useSignCollection(false, callback);
+  const deleteCollectionsFromRepository = useDeleteCollectionsFromRepository(undefined, callback);
 
   return useMemo<IPageAction<CollectionVersionSearch>[]>(
     () => [
@@ -78,14 +78,6 @@ export function useCollectionsActions(callback: (collections: CollectionVersionS
         },
       },
     ],
-    [
-      t,
-      deleteCollections,
-      context,
-      deleteCollectionsFromRepository,
-      pageNavigate,
-      deprecateCollections,
-      signCollection,
-    ]
+    [t, deleteCollections, context, pageNavigate, deprecateCollections, signCollection, deleteCollectionsFromRepository]
   );
 }

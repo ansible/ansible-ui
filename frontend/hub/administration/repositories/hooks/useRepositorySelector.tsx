@@ -15,6 +15,9 @@ import { pulpAPI } from '../../../common/api/formatPath';
 import { useHubView } from '../../../common/useHubView';
 import { AnsibleAnsibleRepositoryResponse as Repository } from '../../../interfaces/generated/AnsibleAnsibleRepositoryResponse';
 
+import { useRepoQueryOptions } from './useRepoQueryOptions';
+import { singleSelectBrowseAdapter } from '../../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSingleSelectFilter';
+
 function useParameters(): AsyncSelectFilterBuilderProps<Repository> {
   const tableColumns = useRepositoryColumns();
   const toolbarFilters = useRepositoryFilters();
@@ -107,7 +110,7 @@ export function useRepositoryFilters() {
   );
 }
 
-export function useRepositoryCollectionVersionFilters() {
+export function useRepositoryCollectionVersionFiltersRemove() {
   const { t } = useTranslation();
 
   return useMemo<IToolbarFilter[]>(
@@ -128,5 +131,48 @@ export function useRepositoryCollectionVersionFilters() {
       },
     ],
     [t]
+  );
+}
+
+export function useRepositoryCollectionVersionFiltersAdd() {
+  const { t } = useTranslation();
+
+  const repoQueryOptions = useRepoQueryOptions();
+  const selectRepositorySingle = useSelectRepositorySingle();
+
+  const repoSelector = singleSelectBrowseAdapter<Repository>(
+    selectRepositorySingle.openBrowse,
+    (item) => item.name,
+    (name) => {
+      return { name };
+    }
+  );
+
+  return useMemo<IToolbarFilter[]>(
+    () => [
+      {
+        key: 'keywords',
+        label: t('Keywords'),
+        type: ToolbarFilterType.Text,
+        query: 'keywords',
+        comparison: 'equals',
+      },
+      {
+        key: 'namespace',
+        label: t('Namespace'),
+        type: ToolbarFilterType.Text,
+        query: 'namespace',
+        comparison: 'equals',
+      },
+      {
+        key: 'repository',
+        label: t('Repository'),
+        type: ToolbarFilterType.AsyncSingleSelect,
+        query: 'repository_name',
+        queryOptions: repoQueryOptions,
+        openBrowse: repoSelector,
+      },
+    ],
+    [t, repoSelector, repoQueryOptions]
   );
 }
