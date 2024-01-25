@@ -18,6 +18,7 @@ import { getRepoURL } from '../../../common/api/hub-api-utils';
 import { useClipboard } from '../../../../../framework/hooks/useClipboard';
 import { HubRoute } from '../../../main/HubRoutes';
 import { useSyncRepositories } from './useSyncRepositories';
+import { useDeleteCollectionsFromRepository } from '../../../collections/hooks/useDeleteCollectionsFromRepository';
 
 export function useRepositoryActions(options: {
   onRepositoriesDeleted: (repositories: Repository[]) => void;
@@ -110,19 +111,23 @@ export function useRepositoryActions(options: {
 
 export function useCollectionVersionsActions() {
   const { t } = useTranslation();
-  const actions = useMemo<IPageAction<CollectionVersionSearch>[]>(
+  const deleteCollectionsVersionsFromRepository = useDeleteCollectionsFromRepository(
+    () => {},
+    true,
+    false
+  );
+
+  return useMemo<IPageAction<CollectionVersionSearch>[]>(
     () => [
       {
         icon: TrashIcon,
-        label: t('Delete'),
-        onClick: () => {},
-        selection: PageActionSelection.Multiple,
+        label: t('Remove'),
+        onClick: (collections) =>  deleteCollectionsVersionsFromRepository([collections]),
+        selection: PageActionSelection.Single,
         type: PageActionType.Button,
         isDanger: true,
       },
     ],
     [t]
   );
-
-  return actions;
 }
