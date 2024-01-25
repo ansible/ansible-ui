@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { defineConfig } from 'cypress';
-import { baseConfig } from './cypress.base.config';
 import setValue from 'set-value';
+import { baseConfig } from './cypress.base.config';
 
 baseConfig.e2e!.specPattern = 'cypress/e2e/eda/**/*.cy.ts';
 baseConfig.e2e!.baseUrl = 'https://localhost:4103';
