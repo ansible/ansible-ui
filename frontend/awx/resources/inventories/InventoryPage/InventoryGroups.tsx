@@ -3,7 +3,7 @@ import { PageTable, usePageNavigate } from '../../../../../framework';
 import { useGroupsFilters } from '../../groups/hooks/useGroupsFilters';
 import { useParams } from 'react-router-dom';
 import { useAwxView } from '../../../common/useAwxView';
-import { AwxGroup } from '../../../interfaces/AwxGroup';
+import { AwxGroup } from '../../../interfaces/InventoryGroup';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useInventoriesGroupsColumns } from '../hooks/useInventoriesGroupsColumns';
 import { useInventoriesGroupsToolbarActions } from '../hooks/useInventoriesGroupsToolbarActions';

@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { AwxGroup } from '../../../interfaces/AwxGroup';
+import { AwxGroup } from '../../../interfaces/InventoryGroup';
 import { useNameColumn } from '../../../../common/columns';
 import { useMemo } from 'react';
 import { useAwxBulkConfirmation } from '../../../common/useAwxBulkConfirmation';

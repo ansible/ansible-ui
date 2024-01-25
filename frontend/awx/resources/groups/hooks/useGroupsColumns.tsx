@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { ITableColumn, usePageNavigate } from '../../../../../framework';
-import { AwxGroup } from '../../../interfaces/AwxGroup';
+import { AwxGroup } from '../../../interfaces/InventoryGroup';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useDescriptionColumn, useModifiedColumn, useNameColumn } from '../../../../common/columns';
 

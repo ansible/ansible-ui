@@ -14,7 +14,7 @@ import { useParams } from 'react-router-dom';
 import { useOptions } from '../../../../common/crud/useOptions';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { AwxGroup } from '../../../interfaces/AwxGroup';
+import { AwxGroup } from '../../../interfaces/InventoryGroup';
 import { ButtonVariant } from '@patternfly/react-core';
 import { cannotDeleteResources } from '../../../../common/utils/RBAChelpers';
 

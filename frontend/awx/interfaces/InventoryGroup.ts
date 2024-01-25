@@ -5,11 +5,27 @@ export interface AwxGroup extends Omit<Group, 'id' | 'name' | 'summary_fields' |
   name: string;
   created: string;
   modified: string;
+  inventory: number;
   summary_fields: {
     groups: { results: never[]; count: number };
     user_capabilities: {
       edit: boolean;
       delete: boolean;
+      copy: boolean;
+    };
+    inventory: {
+      name: string;
+      description: string;
+      has_active_failures: boolean;
+      has_inventory_sources: boolean;
+      hosts_with_active_failures: number;
+      id: number;
+      inventory_sources_with_failures: number;
+      kind: string;
+      organization_id: number;
+      total_groups: number;
+      total_hosts: number;
+      total_inventory_sources: number;
     };
   };
   related: {

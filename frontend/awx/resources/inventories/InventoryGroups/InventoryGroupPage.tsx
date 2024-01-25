@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { useGetItem } from '../../../../common/crud/useGet';
-import { AwxGroup } from '../../../interfaces/AwxGroup';
+import { AwxGroup } from '../../../interfaces/InventoryGroup';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { LoadingPage, PageHeader, PageLayout, useGetPageUrl } from '../../../../../framework';
 import { AwxError } from '../../../common/AwxError';
@@ -11,20 +11,38 @@ import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs
 export function GroupPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { error, data: group, refresh } = useGetItem<AwxGroup>(awxAPI`/groups`, params.id);
+  const { error, data: inventoryGroup, refresh } = useGetItem<AwxGroup>(awxAPI`/groups`, params.id);
 
   const getPageUrl = useGetPageUrl();
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
-  if (!group) return <LoadingPage breadcrumbs tabs />;
+  if (!inventoryGroup) return <LoadingPage breadcrumbs tabs />;
 
   return (
     <PageLayout>
       <PageHeader
-        title={group?.name}
+        title={inventoryGroup?.name}
         breadcrumbs={[
-          { label: t('Groups'), to: getPageUrl(AwxRoute.Groups) },
-          { label: group?.name },
+          { label: t('Inventories'), to: getPageUrl(AwxRoute.Inventories) },
+          {
+            label: `${inventoryGroup?.summary_fields.inventory.name}`,
+            to: getPageUrl(AwxRoute.InventoryDetails, {
+              params: {
+                id: inventoryGroup?.summary_fields.inventory.id,
+                inventory_type: 'inventory',
+              },
+            }),
+          },
+          {
+            label: t('Groups'),
+            to: getPageUrl(AwxRoute.InventoryGroups, {
+              params: {
+                id: inventoryGroup?.summary_fields.inventory.id,
+                inventory_type: 'inventory',
+              },
+            }),
+          },
+          { label: inventoryGroup?.name },
         ]}
         headerActions={[]}
       />
@@ -39,7 +57,7 @@ export function GroupPage() {
           { label: t('Related Groups'), page: AwxRoute.GroupRelatedGroups },
           { label: t('Hosts'), page: AwxRoute.GroupHosts },
         ]}
-        params={{ id: group.id }}
+        params={{ id: inventoryGroup.id }}
       />
     </PageLayout>
   );
