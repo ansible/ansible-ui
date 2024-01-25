@@ -10,7 +10,7 @@ import type {
   AuthenticatorPlugins,
   PluginConfiguration,
 } from '../../../../interfaces/AuthenticatorPlugin';
-import type { AuthenticatorForm } from '../AuthenticatorForm';
+import type { AuthenticatorFormValues } from '../AuthenticatorForm';
 
 /* TODO: more intelligent categorization of field type to input type
     pending updates to the API */
@@ -37,7 +37,7 @@ export function AuthenticatorDetailsStep(props: { plugins: AuthenticatorPlugins 
   const { wizardData } = usePageWizard();
 
   const authenticator = props.plugins.authenticators.find(
-    (authenticator) => authenticator.type === (wizardData as AuthenticatorForm).type
+    (authenticator) => authenticator.type === (wizardData as AuthenticatorFormValues).type
   );
   const schema = authenticator?.configuration_schema || [];
   const textFields: PluginConfiguration[] = [];

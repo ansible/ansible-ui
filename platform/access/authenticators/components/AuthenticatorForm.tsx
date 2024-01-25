@@ -32,7 +32,7 @@ interface Configuration {
 
 export interface AuthenticatorMapValues {
   map_type: AuthenticatorMapType;
-  name?: string;
+  name: string;
   triggers?: {
     [key: string]: object;
   };

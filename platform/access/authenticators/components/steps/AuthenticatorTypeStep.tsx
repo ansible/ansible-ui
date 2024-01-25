@@ -5,10 +5,10 @@ import type { AuthenticatorPlugins } from '../../../../interfaces/AuthenticatorP
 export function AuthenticatorTypeStep(props: { plugins: AuthenticatorPlugins }) {
   const { t } = useTranslation();
   const authTypeNames = {
-    'ansible_base.authenticator_plugins.local': t('Local'),
-    'ansible_base.authenticator_plugins.ldap': t('LDAP'),
-    'ansible_base.authenticator_plugins.saml': t('SAML'),
-    'ansible_base.authenticator_plugins.keycloak': t('Keycloak'),
+    'ansible_base.authentication.authenticator_plugins.local': t('Local'),
+    'ansible_base.authentication.authenticator_plugins.ldap': t('LDAP'),
+    'ansible_base.authentication.authenticator_plugins.saml': t('SAML'),
+    'ansible_base.authentication.authenticator_plugins.keycloak': t('Keycloak'),
   };
 
   const options = props.plugins.authenticators.map((plugin) => ({
