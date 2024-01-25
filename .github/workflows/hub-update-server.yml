@@ -12,13 +12,35 @@ on:
         required: true
         default: false
         description: 'Update server on success'
+  schedule:
+    - cron: '0 8 * * *'
 
 jobs:
+  setup:
+    name: Setup
+    runs-on: ubuntu-latest
+    outputs:
+      HUB_SERVER: ${{ steps.step1.outputs.HUB_SERVER }}
+      UPDATE_SERVER: ${{ steps.step1.outputs.UPDATE_SERVER }}
+    steps:
+      - id: step1
+        run: |
+          CURRENTDATE=$(date +'%Y%m%d')
+          echo $CURRENTDATE
+          if([ "${{ github.event_name }}" == "workflow_dispatch" ]); then
+            echo "HUB_SERVER=${{ github.event.inputs.HUB_SERVER }}" >> "$GITHUB_OUTPUT"
+            echo "UPDATE_SERVER=${{ github.event.inputs.UPDATE_SERVER }}" >> "$GITHUB_OUTPUT"
+          else 
+            echo "HUB_SERVER=https://hub.ci-ui-${CURRENTDATE}.gcp.testing.ansible.com" >> "$GITHUB_OUTPUT"
+            echo "UPDATE_SERVER=true" >> "$GITHUB_OUTPUT"
+          fi
+
   hub-e2e:
     name: HUB E2E
+    needs: setup
     uses: ./.github/workflows/hub-e2e.yml
     with:
-      HUB_SERVER: ${{ inputs.HUB_SERVER }}
+      HUB_SERVER: ${{ needs.setup.outputs.HUB_SERVER }}
     secrets:
       HUB_PASSWORD: ${{ secrets.HUB_PASSWORD }}
       CYPRESS_AUI_HUB_E2E_PROJECT_ID: ${{ secrets.CYPRESS_AUI_HUB_E2E_PROJECT_ID }}
@@ -26,21 +48,75 @@ jobs:
 
   hub-update-server:
     name: HUB Update Server
-    if: ${{ github.event_name == 'workflow_dispatch' && inputs.UPDATE_SERVER == true }}
-    needs: hub-e2e
+    if: ${{ needs.setup.outputs.UPDATE_SERVER == 'true' }}
+    needs:
+      - hub-e2e
+      - setup
     runs-on: ubuntu-latest
     steps:
-      - run: |
+      - name: Update Server Variable
+        run: |
           curl -f -L -X PATCH -H "Accept: application/vnd.github+json" \
           -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" \
           -H "X-GitHub-Api-Version: 2022-11-28" \
-          "https://api.github.com/repos/ansible/ansible-ui/actions/variables/HUB_SERVER" \
-          -d '{"name":"HUB_SERVER","value":"${{ inputs.HUB_SERVER }}"}'
+          "https://api.github.com/repos/${{ github.repository }}/actions/variables/HUB_SERVER" \
+          -d '{"name":"HUB_SERVER","value":"${{ needs.setup.outputs.HUB_SERVER }}"}'
+      - name: Slack Notification
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "attachments":
+                [
+                  {
+                    "color": "#00FF00",
+                    "blocks":
+                      [
+                        {
+                          "type": "section",
+                          "text":
+                            {
+                              "type": "mrkdwn",
+                              "text": "*HUB E2E Server Updated*\n${{ github.repository }} - <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Success> - <${{ needs.setup.outputs.HUB_SERVER }}|Server>"
+                            }
+                        }
+                      ]
+                  }
+                ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
 
-      # - name: Slack Notification
-      #   uses: slackapi/slack-github-action@v1.24.0
-      #   with:
-      #     channel-id: ${{ secrets.AAP_UI_CHANNEL_ID }}
-      #     slack-message: HUB_SERVER=${{ inputs.HUB_SERVER }}
-      #   env:
-      #     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+  slack-failure-notification:
+    name: Slack Failure Notification
+    if: failure()
+    needs:
+      - hub-update-server
+      - setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Slack Notification
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "attachments":
+                [
+                  {
+                    "color": "#FF0000",
+                    "blocks": [
+                      {
+                        "type": "section",
+                        "text": {
+                          "type": "mrkdwn",
+                          "text": "*Update HUB E2E Server Failed*\n${{ github.repository }} - *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Failure>* - <${{ needs.setup.outputs.HUB_SERVER }}|Server> - <!here>"
+                        }
+                      }
+                    ]
+                  }
+                ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
