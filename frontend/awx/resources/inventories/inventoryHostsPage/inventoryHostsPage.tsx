@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
@@ -13,20 +14,33 @@ import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs
 import { useGet } from '../../../../common/crud/useGet';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { AwxHost } from '../../../interfaces/AwxHost';
-import { Inventory } from '../../../interfaces/Inventory';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { useInventoryActions } from '../hooks/useInventoryActions';
+import { useInventoriesHostsActions } from '../hooks/useInventoriesHostsActions';
 import { useGetInventory } from '../InventoryPage/InventoryPage';
 
 export function InventoryHostsPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string; inventory_type: string; host_id: string }>();
   const inventory = useGetInventory(params.id, params.inventory_type);
-  const host = useGetInventoryHost(params.id, params.host_id);
+  const hostResponse = useGetInventoryHost(params.id, params.host_id);
   const pageNavigate = usePageNavigate();
-  const itemActions = useInventoryActions({
-    onInventoriesDeleted: () => pageNavigate(AwxRoute.Inventories),
-  });
+
+  const [host, setHost] = useState<AwxHost | undefined>(hostResponse);
+
+  useEffect(() => {
+    setHost(hostResponse);
+  }, [hostResponse]);
+
+  const itemActions = useInventoriesHostsActions(
+    (_host: AwxHost[]) => {
+      pageNavigate(AwxRoute.InventoryHosts, {
+        params: { inventory_type: params.inventory_type, id: params.id },
+      });
+    },
+    setHost,
+    false
+  );
+
   const getPageUrl = useGetPageUrl();
 
   return (
@@ -51,14 +65,14 @@ export function InventoryHostsPage() {
             }),
           },
           {
-            label: t(`${host?.name}`),
+            label: t(`${(host as AwxHost)?.name}`),
           },
         ]}
         headerActions={
-          <PageActions<Inventory>
+          <PageActions<AwxHost>
             actions={itemActions}
             position={DropdownPosition.right}
-            selectedItem={inventory}
+            selectedItem={host as AwxHost}
           />
         }
       />
