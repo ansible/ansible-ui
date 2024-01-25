@@ -71,38 +71,47 @@ export function RepositoryForm() {
       payload.remote = remote.pulp_href;
     }
 
+    const getDistribution = (repositoryPulpHref: string) => {
+      const basePathTransform = (name: string) => name.replaceAll(/[^-a-zA-Z0-9_/]/g, '_');
+      let distributionName: string = data?.name || '';
+      return postHubRequest(pulpAPI`/distributions/ansible/ansible/`, {
+        base_path: basePathTransform(distributionName),
+        name: data.name,
+        repository: repositoryPulpHref,
+      }).catch(() => {
+        // if distribution already exists, try a numeric suffix to name & base_path
+        distributionName = data.name || '' + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
+        return postHubRequest(pulpAPI`/distributions/ansible/ansible/`, {
+          base_path: basePathTransform(distributionName),
+          name: data.name,
+          repository: repositoryPulpHref,
+        });
+      });
+    };
+
     const promise = isEdit
       ? putHubRequest(
           pulpAPI`/repositories/ansible/ansible/${
             parsePulpIDFromURL(repo?.pulp_href || '') || ''
           }/`,
           payload
-        ).then(() => repo?.pulp_href || '')
-      : postRequest<{ response: Repository }>(
-          pulpAPI`/repositories/ansible/ansible/`,
-          payload
-        ).then((value) => value?.response?.pulp_href || '');
+        )
+      : postRequest<Repository>(pulpAPI`/repositories/ansible/ansible/`, payload);
     if (data.createDistribution) {
-      const basePathTransform = (name: string) => name.replaceAll(/[^-a-zA-Z0-9_/]/g, '_');
-      let distributionName: string = data?.name || '';
-      promise
-        .then((pulp_href: string) => {
-          postHubRequest(pulpAPI`/distributions/ansible/ansible/`, {
-            base_path: basePathTransform(distributionName),
-            name: data.name,
-            repository: pulp_href,
-          }).catch(() => {
-            // if distribution already exists, try a numeric suffix to name & base_path
-            distributionName =
-              data.name || '' + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
-            return postHubRequest(pulpAPI`/distributions/ansible/ansible/`, {
-              base_path: basePathTransform(distributionName),
-              name: data.name,
-              repository: pulp_href,
-            });
-          });
-        })
-        .catch((error: unknown) => error);
+      if (isEdit) {
+        promise
+          .then(() => {
+            return getDistribution(repo?.pulp_href || '');
+          })
+          .catch(() => t('Distribution not created.'));
+      } else {
+        promise
+        // @ts-expect-error the correct response from promise is known based on the condition
+            .then((repository: Repository) => {
+            return getDistribution(repository?.pulp_href || '');
+          })
+          .catch(() => t('Distribution not created.'));
+      }
     }
     return promise
       .then(() => pageNavigate(HubRoute.RepositoryPage, { params: { id: data.name as string } }))
