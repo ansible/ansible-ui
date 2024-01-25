@@ -59,30 +59,37 @@ export function Templates() {
     wfJobTemplateActions && wfJobTemplateActions.actions && wfJobTemplateActions.actions['POST']
   );
 
-  const createTemplateActions: IPageAction<JobTemplate | WorkflowJobTemplate>[] = [];
+  const createTemplateActions = useMemo(() => {
+    const createTemplateActions: IPageAction<JobTemplate | WorkflowJobTemplate>[] = [];
 
-  if (canCreateJobTemplate) {
-    createTemplateActions.push({
-      type: PageActionType.Link,
-      selection: PageActionSelection.None,
-      label: t('Create job template'),
-      href: getPageUrl(AwxRoute.CreateJobTemplate),
-    });
-  }
+    if (canCreateJobTemplate) {
+      createTemplateActions.push({
+        type: PageActionType.Link,
+        selection: PageActionSelection.None,
+        label: t('Create job template'),
+        href: getPageUrl(AwxRoute.CreateJobTemplate),
+      });
+    }
 
-  if (canCreateWFJobTemplate) {
-    createTemplateActions.push({
-      type: PageActionType.Link,
-      selection: PageActionSelection.None,
-      label: t('Create workflow template'),
-      href: getPageUrl(AwxRoute.CreateWorkflowJobTemplate),
-    });
-  }
+    if (canCreateWFJobTemplate) {
+      createTemplateActions.push({
+        type: PageActionType.Link,
+        selection: PageActionSelection.None,
+        label: t('Create workflow template'),
+        href: getPageUrl(AwxRoute.CreateWorkflowJobTemplate),
+      });
+    }
+    return createTemplateActions;
+  }, [canCreateJobTemplate, canCreateWFJobTemplate, getPageUrl, t]);
 
-  const placeholderAction = {
-    type: PageActionType.Button,
-    selection: PageActionSelection.None,
-  } as IPageAction<JobTemplate | WorkflowJobTemplate>;
+  const placeholderAction = useMemo(
+    () =>
+      ({
+        type: PageActionType.Button,
+        selection: PageActionSelection.None,
+      }) as IPageAction<JobTemplate | WorkflowJobTemplate>,
+    []
+  );
 
   usePersistentFilters('templates');
   const config = useAwxConfig();
@@ -115,7 +122,14 @@ export function Templates() {
         isDanger: true,
       },
     ],
-    [canCreateJobTemplate, canCreateWFJobTemplate, createTemplateActions, deleteTemplates, t]
+    [
+      canCreateJobTemplate,
+      canCreateWFJobTemplate,
+      createTemplateActions,
+      deleteTemplates,
+      placeholderAction,
+      t,
+    ]
   );
 
   const rowActions = useTemplateActions({ onTemplatesDeleted: view.unselectItemsAndRefresh });
