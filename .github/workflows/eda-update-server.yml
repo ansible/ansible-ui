@@ -110,7 +110,7 @@ jobs:
                         "type": "section",
                         "text": {
                           "type": "mrkdwn",
-                          "text": "*Update EDA E2E Server Failed*\n${{ github.repository }} - *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Failure>* - <${{ needs.setup.outputs.EDA_SERVER }}|Server> - <!here>"
+                          "text": "*EDA E2E Server Update Failed*\n${{ github.repository }} - *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Failure>* - <${{ needs.setup.outputs.EDA_SERVER }}|Server> - <!here>"
                         }
                       }
                     ]
