@@ -32,6 +32,7 @@ export function AuthenticatorMappingStep() {
 
   const addMapping = (value: AuthenticatorMapType) => {
     const map: AuthenticatorMapValues = {
+      name: '',
       map_type: value,
       // order: mappings.length + 1,
       revoke: false,
@@ -106,6 +107,7 @@ function MapFields(props: { index: number; map: AuthenticatorMapValues }) {
           id={`mappings-${index}-name`}
           name={`mappings[${index}].name`}
           label={t('Name')}
+          isRequired
         />
         <PageFormSelect
           id={`mappings-${index}-trigger`}

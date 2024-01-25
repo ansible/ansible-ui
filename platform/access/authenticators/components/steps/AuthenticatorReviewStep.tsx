@@ -5,8 +5,7 @@ import { PageDetail, PageDetails } from '../../../../../framework';
 import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
 import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
 import type { AuthenticatorPlugins } from '../../../../interfaces/AuthenticatorPlugin';
-import { Authenticator } from '../../../../interfaces/Authenticator';
-import { AuthenticatorMap } from '../../../../interfaces/AuthenticatorMap';
+import { AuthenticatorFormValues } from '../AuthenticatorForm';
 import { textInputTypes, dataInputTypes } from './AuthenticatorDetailsStep';
 
 type Field = {
@@ -27,8 +26,7 @@ export function AuthenticatorReviewStep(props: { plugins: AuthenticatorPlugins }
   const { t } = useTranslation();
   const { wizardData } = usePageWizard();
 
-  const { name, type, configuration } = wizardData as Authenticator;
-  const maps: AuthenticatorMap[] = [];
+  const { name, type, configuration, mappings } = wizardData as AuthenticatorFormValues;
 
   const schema =
     plugins.authenticators.find((plugin) => plugin.type === type)?.configuration_schema || [];
@@ -72,14 +70,14 @@ export function AuthenticatorReviewStep(props: { plugins: AuthenticatorPlugins }
           ))}
         </PageDetails>
       ) : null}
-      {maps && maps.length ? (
+      {mappings && mappings.length ? (
         <>
           <Section>
             <Divider />
             <SubHeading component={TextVariants.h3}>{t('Mapping')}</SubHeading>
           </Section>
           <PageDetails numberOfColumns="single">
-            {maps.map((map) => (
+            {mappings.map((map) => (
               <PageDetail label={map.name} key={map.name}>
                 {map.ui_summary || t('{{mapType}} map', { mapType: map.map_type })}
               </PageDetail>
