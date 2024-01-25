@@ -43,7 +43,7 @@ export function useInstancesColumns(options?: { disableSort?: boolean; disableLi
   const nameColumn = useNameColumn<Instance>({
     ...options,
     onClick: nameClick,
-    header: t('Hostname'),
+    header: t('Name'),
     sort: 'hostname',
   });
 
@@ -65,7 +65,7 @@ export function useInstancesColumns(options?: { disableSort?: boolean; disableLi
       {
         cell: makeReadable,
         sort: 'node_type',
-        header: t('Instance type'),
+        header: t('Node type'),
         card: 'subtitle',
         list: 'subtitle',
       },
