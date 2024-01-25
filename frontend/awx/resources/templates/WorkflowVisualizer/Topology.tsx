@@ -40,7 +40,6 @@ import {
   AddNodeButton,
   CustomEdge,
   CustomNode,
-  DeletedNode,
   EdgeContextMenu,
   Legend,
   NodeContextMenu,
@@ -112,18 +111,6 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
       switch (type) {
         case 'group':
           return DefaultGroup;
-        case 'deleted-node':
-          return withDndDrop(
-            nodeDropTargetSpec([
-              CONNECTOR_SOURCE_DROP,
-              CONNECTOR_TARGET_DROP,
-              CREATE_CONNECTOR_DROP_TYPE,
-            ])
-          )(
-            withDragNode(nodeDragSourceSpec('node', true, true))(
-              withSelection({ multiSelect: true })(DeletedNode)
-            )
-          );
         default:
           switch (kind) {
             case ModelKind.graph:
@@ -205,13 +192,8 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
     const edges: EdgeModel[] = [];
     const nodes = workflowNodes.map((n) => {
       const nodeId = n.id.toString();
-      let nodeType = 'node';
-      let nodeName = n.summary_fields?.unified_job_template?.name;
-
-      if (!nodeName) {
-        nodeName = t('Deleted');
-        nodeType = 'deleted-node';
-      }
+      const nodeType = 'node';
+      const nodeName = n.summary_fields?.unified_job_template?.name;
 
       n.success_nodes.forEach((id) => {
         edges.push(createEdge(nodeId, id.toString(), EdgeStatus.success));
@@ -226,7 +208,7 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
       const node = {
         id: nodeId,
         type: nodeType,
-        label: nodeName,
+        label: nodeName ?? t('Deleted'),
         width: NODE_DIAMETER,
         height: NODE_DIAMETER,
         shape: NodeShape.circle,
