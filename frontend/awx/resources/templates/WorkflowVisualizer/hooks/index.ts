@@ -1,13 +1,13 @@
 import { useCreateEdge } from './useCreateEdge';
 import { useGetDetailComponent } from './useGetDetailComponent';
-import { useRemoveAllNodes } from './useRemoveAllNodes';
+import { useRemoveGraphElements } from './useRemoveGraphElements';
 import { useRemoveNode } from './useRemoveNode';
 import { useSaveVisualizer } from './useSaveVisualizer';
 
 export {
   useCreateEdge,
   useGetDetailComponent,
-  useRemoveAllNodes,
+  useRemoveGraphElements,
   useRemoveNode,
   useSaveVisualizer,
 };
