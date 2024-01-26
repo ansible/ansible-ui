@@ -17,6 +17,7 @@ import {
   WithSelectionProps,
   observer,
 } from '@patternfly/react-topology';
+import { useViewOptions } from '../ViewOptionsProvider';
 import type { CustomNodeProps } from '../types';
 import type { SVGIconProps } from '@patternfly/react-icons/dist/js/createIcon';
 import type { UnifiedJobType } from '../../../../interfaces/WorkflowNode';
@@ -37,6 +38,8 @@ export const CustomNode: FC<
     WithDragNodeProps &
     WithCreateConnectorProps
 > = observer((props) => {
+  const { setSidebarMode } = useViewOptions();
+
   const { element, contextMenuOpen, onContextMenu, onSelect, selected, ...rest } = props;
   const data = element.getData();
   const id = element.getId();
@@ -52,7 +55,11 @@ export const CustomNode: FC<
       contextMenuOpen={contextMenuOpen}
       labelPosition={LabelPosition.right}
       onContextMenu={onContextMenu}
-      onSelect={onSelect}
+      onSelect={(e) => {
+        if (!jobType) return;
+        setSidebarMode('view');
+        onSelect && onSelect(e);
+      }}
       selected={selected}
       showStatusDecorator
       truncateLength={20}

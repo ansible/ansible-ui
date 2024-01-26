@@ -1,41 +1,17 @@
-import { PageWizard, PageWizardStep } from '../../../../../../framework';
 import { useTranslation } from 'react-i18next';
-import { UnifiedJobType, WorkflowNode } from '../../../../interfaces/WorkflowNode';
-import { NodeTypeStep } from './NodeTypeStep';
-import { awxErrorAdapter } from '../../../../common/adapters/awxErrorAdapter';
 import { NodeShape, isNode, useVisualizationController } from '@patternfly/react-topology';
-import { useViewOptions } from '../ViewOptionsProvider';
-import { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
+import { PageWizard, PageWizardStep } from '../../../../../../framework';
+import { awxErrorAdapter } from '../../../../common/adapters/awxErrorAdapter';
+import { NodeTypeStep } from './NodeTypeStep';
+import { useCloseSidebar } from '../hooks';
+import { GRAPH_ID, NODE_DIAMETER } from '../constants';
+import type { GraphNode, NodeFields } from '../types';
 
-export interface NodeFields {
-  parentNodes?: WorkflowNode[];
-  node_type:
-    | 'job'
-    | 'workflow_job'
-    | 'workflow_approval'
-    | 'project_update'
-    | 'inventory_update'
-    | 'system_job';
-  node_resource: {
-    id: number;
-    name: string;
-    description: string;
-    unified_job_type: UnifiedJobType;
-    timeout_minute: number;
-    timeout_seconds: number;
-  };
-  node_status_type: string;
-  all_parents_must_converge: string;
-  identifier: string;
-}
-
-export function NodeFormInputs(props: {
-  setSelectedNode: (node: WorkflowNode | undefined) => void;
-  node: WorkflowNode | undefined;
-}) {
-  const { setSelectedNode } = props;
-  const { setSidebarMode } = useViewOptions();
+export function NodeFormInputs(props: { node: GraphNode | undefined }) {
   const { t } = useTranslation();
+  const closeSidebar = useCloseSidebar();
+  const { node } = props;
+  const nodeData = node?.getData()?.resource;
 
   const controller = useVisualizationController();
 
@@ -51,8 +27,8 @@ export function NodeFormInputs(props: {
   const initialValues = {
     node_type_step: {
       parentNodes: [],
-      node_type: props.node?.summary_fields?.unified_job_template?.unified_job_type || 'job',
-      node_resource: props.node?.summary_fields?.unified_job_template || undefined,
+      node_type: nodeData?.summary_fields?.unified_job_template?.unified_job_type || 'job',
+      node_resource: nodeData?.summary_fields?.unified_job_template || undefined,
       node_status_type: 'always',
       all_parents_must_converge: 'any',
       idenfifier: '',
@@ -60,21 +36,16 @@ export function NodeFormInputs(props: {
   };
 
   const handleSubmit = async (data: NodeFields) => {
-    const state = controller.getState<{
-      WorkflowJobTemplate: WorkflowJobTemplate;
-      unsavedNodeId: number;
-    }>();
     const model = controller.toModel();
-
-    const nodeId = state?.unsavedNodeId === undefined ? 1 : state.unsavedNodeId;
     const nodes = controller.getElements().filter(isNode);
+    const nodeId = `${nodes.length + 1}-unsavedNode`; // TODO: Switch based on wizard mode
 
     const node = {
-      id: `${nodes.length + 1}-unsavedNode`,
+      id: nodeId,
       type: 'node',
       label: data.identifier || data.node_resource.name,
-      width: 50,
-      height: 50,
+      width: NODE_DIAMETER,
+      height: NODE_DIAMETER,
       shape: NodeShape.circle,
       data: {
         resource: {
@@ -93,18 +64,15 @@ export function NodeFormInputs(props: {
     };
     model?.nodes?.push(node);
     model.graph = {
-      id: 'workflow-visualizer-graph',
+      id: GRAPH_ID,
       layout: 'Dagre',
       type: 'graph',
       visible: true,
     };
 
     controller.fromModel(model, false);
-    controller.setState({ ...state, unsavedNodeId: nodeId + 1 });
-
-    setSidebarMode(undefined);
     controller.getNodeById(node.id)?.setState({ modified: true });
-
+    closeSidebar();
     return Promise.resolve();
   };
 
@@ -113,10 +81,11 @@ export function NodeFormInputs(props: {
       isVertical
       singleColumn
       steps={steps}
-      onCancel={() => setSelectedNode(undefined)}
+      onCancel={closeSidebar}
       onSubmit={handleSubmit}
       defaultValue={initialValues}
       errorAdapter={awxErrorAdapter}
+      title={t('Edit node')} // TODO: Switch based on wizard mode
     />
   );
 }

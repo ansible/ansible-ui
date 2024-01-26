@@ -38,7 +38,7 @@ Cypress.Commands.add(
         cy.get('.pf-topology__node__action-icon').click();
       });
     cy.get('li[data-cy="edit-node"] ').click();
-    cy.get('[data-cy="node-form-dialog"]').should('be.visible');
+    cy.get('[data-cy="workflow-topology-sidebar"]').should('be.visible');
     cy.get('[data-cy="node-type-form-group"]').within(() => {
       cy.get('button').click();
       cy.contains('li', newNodeType).click();
