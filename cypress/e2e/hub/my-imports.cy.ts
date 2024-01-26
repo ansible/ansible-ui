@@ -3,13 +3,13 @@ import { MyImports } from './constants';
 
 describe('My imports', () => {
   const validCollection = {
-    namespace: 'testnamespace',
+    namespace: `testnamespace${randomString(4, undefined, { isLowercase: true })}`,
     name: `testcollection_${randomString(4, undefined, { isLowercase: true })}`,
     version: '1.0.0',
   };
 
   const invalidCollection = {
-    namespace: 'testnamespace',
+    namespace: `testnamespace${randomString(4, undefined, { isLowercase: true })}`,
     name: `testcollection_INVALID${randomString(4)}`,
     version: '1.0.0',
   };
@@ -82,7 +82,7 @@ describe('My imports', () => {
       cy.get('h3').contains(`${namespace}.${name}`);
       cy.contains('Failed');
       cy.contains(version);
-      cy.contains('approved');
+      cy.contains('---');
 
       cy.get('[data-cy="import-error"]').contains(
         `Invalid collection metadata. 'name' has invalid format: ${name}`
@@ -97,7 +97,7 @@ describe('My imports', () => {
 
   it('should be able to filter imported collections', () => {
     cy.visit(MyImports.url);
-    cy.get('.pf-v5-c-menu-toggle__text > span').contains('Select namespace').click();
+    cy.get('.pf-v5-c-menu-toggle__text').contains('Select namespace').click();
     cy.get('.pf-v5-c-menu__search .pf-v5-c-text-input-group__text-input').type(
       validCollection.namespace
     );
@@ -119,6 +119,12 @@ describe('My imports', () => {
       cy.get('h4').contains(`${validCollection.name} v${validCollection.version}`);
       cy.contains('Completed');
     });
+
+    cy.get('.pf-v5-c-menu-toggle__text').contains(`${validCollection.namespace}`).click();
+    cy.get('.pf-v5-c-menu__search .pf-v5-c-text-input-group__text-input').type(
+      invalidCollection.namespace
+    );
+    cy.get(`#${invalidCollection.namespace}`).click();
 
     cy.get('.pf-v5-c-chip-group')
       .contains(validCollection.name)

@@ -12,6 +12,13 @@ export function ImportStatusBar({ collection, collectionImport }: IProps) {
   const { t } = useTranslation();
   const collectionPipeline = collection?.repository?.pulp_labels?.pipeline ?? 'unknown';
 
+  const pipelineStates: Record<string, string> = {
+    rejected: t`rejected`,
+    staging: t`waiting for approval`,
+    approved: t`approved`,
+    unknown: t`could not be determined yet`,
+  }
+
   return (
     <PageDetails disablePadding>
       <PageDetail label={t('Status')}>
@@ -19,20 +26,11 @@ export function ImportStatusBar({ collection, collectionImport }: IProps) {
       </PageDetail>
       <PageDetail label={t('Version')}>{collectionImport?.version}</PageDetail>
       <PageDetail label={t('Approval status')}>
-        {collectionImport ? (
+        {collection ? (
           <>
-            <div>
-              {!collection
-                ? t`waiting for import to finish`
-                : {
-                    rejected: t`rejected`,
-                    staging: t`waiting for approval`,
-                    approved: t`approved`,
-                    unknown: t`could not be determined yet`,
-                  }[collectionPipeline]}
-            </div>
+            {collectionImport?.state === 'running' ? t('waiting for import to finish') : pipelineStates[collectionPipeline]}
           </>
-        ) : null}
+        ) : '---'}
       </PageDetail>
     </PageDetails>
   );

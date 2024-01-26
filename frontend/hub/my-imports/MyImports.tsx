@@ -109,8 +109,7 @@ export function MyImports() {
     isLoading: colletionIsLoading,
     error: collectionError,
   } = useGet<HubItemsResponse<CollectionVersionSearch>>(
-    hubAPI`/v3/plugin/ansible/search/collection-versions/?namespace=${namespaceQP}&
-    name=${collectionImport?.name ?? ''}&version=${collectionImport?.version ?? ''}`
+    hubAPI`/v3/plugin/ansible/search/collection-versions/?namespace=${namespaceQP}&name=${collectionImport?.name ?? ''}&version=${collectionImport?.version ?? ''}`
   );
 
   const collection =
@@ -128,6 +127,8 @@ export function MyImports() {
   const importLogLoading = colletionIsLoading || collectionImportLoading;
   const importLogError = collectionImportError || collectionError;
 
+  // console.log('collection', collection);
+
   const panelContent = (
     <DrawerPanelContent
       widths={{ default: 'width_66', xl: 'width_66' }}
@@ -135,9 +136,9 @@ export function MyImports() {
       data-cy="import-log-content"
     >
       <DrawerHead style={{ padding: '0px' }}>
-        {collectionImport && collection && (
+        {collectionImport && (
           <>
-            {isMultipleCollections ? (
+            {(isMultipleCollections || !collection) ? (
               <Title headingLevel="h3" size="lg" style={{ padding: '0px' }}>
                 {collectionImport?.namespace}.{collectionImport?.name}
               </Title>
