@@ -3,9 +3,9 @@ name: Pull Request
 on:
   workflow_call:
     secrets:
-      CYPRESS_PROJECT_ID:
+      COMPONENT_PROJECT_ID:
         required: true
-      CYPRESS_RECORD_KEY:
+      COMPONENT_RECORD_KEY:
         required: true
 jobs:
   component-tests:
