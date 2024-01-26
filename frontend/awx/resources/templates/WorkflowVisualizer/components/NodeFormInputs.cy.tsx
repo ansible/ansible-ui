@@ -2,8 +2,17 @@ import { NodeFormInputs } from './NodeFormInputs';
 import nodes from '../../../../../../cypress/fixtures/workflow_nodes.json';
 import { WorkflowNode } from '../../../../interfaces/WorkflowNode';
 import { VisualizationProvider } from '@patternfly/react-topology';
+import { GraphNode } from '../types';
 
 describe('NodeFormInputs', () => {
+  const mockGraphNode = (resource: WorkflowNode) => {
+    const node = {
+      getData: () => ({
+        resource,
+      }),
+    };
+    return node;
+  };
   it('Should render the correct fields for a job template node', () => {
     cy.intercept(
       { method: 'GET', url: '/api/v2/job_templates/*' },
@@ -11,7 +20,7 @@ describe('NodeFormInputs', () => {
     );
     cy.mount(
       <VisualizationProvider>
-        <NodeFormInputs setSelectedNode={() => {}} node={nodes.results[0] as WorkflowNode} />
+        <NodeFormInputs node={mockGraphNode(nodes.results[0] as WorkflowNode) as GraphNode} />
       </VisualizationProvider>
     );
     cy.get('[data-cy="node-type-form-group"]').within(() => {
@@ -34,7 +43,7 @@ describe('NodeFormInputs', () => {
     cy.intercept({ method: 'GET', url: '/api/v2/projects/*' }, { fixture: 'projects.json' });
     cy.mount(
       <VisualizationProvider>
-        <NodeFormInputs setSelectedNode={() => {}} node={nodes.results[1] as WorkflowNode} />
+        <NodeFormInputs node={mockGraphNode(nodes.results[1] as WorkflowNode) as GraphNode} />
       </VisualizationProvider>
     );
     cy.get('[data-cy="node-type-form-group"]').within(() => {
@@ -50,7 +59,7 @@ describe('NodeFormInputs', () => {
     cy.intercept({ method: 'GET', url: '/api/v2/system_jobs/*' }, { fixture: 'system_jobs.json' });
     cy.mount(
       <VisualizationProvider>
-        <NodeFormInputs setSelectedNode={() => {}} node={nodes.results[2] as WorkflowNode} />
+        <NodeFormInputs node={mockGraphNode(nodes.results[2] as WorkflowNode) as GraphNode} />
       </VisualizationProvider>
     );
     cy.get('[data-cy="node-type-form-group"]').within(() => {
@@ -66,7 +75,7 @@ describe('NodeFormInputs', () => {
     );
     cy.mount(
       <VisualizationProvider>
-        <NodeFormInputs setSelectedNode={() => {}} node={nodes.results[3] as WorkflowNode} />
+        <NodeFormInputs node={mockGraphNode(nodes.results[3] as WorkflowNode) as GraphNode} />
       </VisualizationProvider>
     );
     cy.get('[data-cy="node-type-form-group"]').within(() => {
@@ -84,7 +93,7 @@ describe('NodeFormInputs', () => {
     );
     cy.mount(
       <VisualizationProvider>
-        <NodeFormInputs setSelectedNode={() => {}} node={nodes.results[4] as WorkflowNode} />
+        <NodeFormInputs node={mockGraphNode(nodes.results[4] as WorkflowNode) as GraphNode} />
       </VisualizationProvider>
     );
     cy.get('[data-cy="node-type-form-group"]').within(() => {
@@ -103,7 +112,7 @@ describe('NodeFormInputs', () => {
     );
     cy.mount(
       <VisualizationProvider>
-        <NodeFormInputs setSelectedNode={() => {}} node={nodes.results[5] as WorkflowNode} />
+        <NodeFormInputs node={mockGraphNode(nodes.results[5] as WorkflowNode) as GraphNode} />
       </VisualizationProvider>
     );
     cy.get('[data-cy="node-type-form-group"]').within(() => {
@@ -122,7 +131,7 @@ describe('NodeFormInputs', () => {
     );
     cy.mount(
       <VisualizationProvider>
-        <NodeFormInputs setSelectedNode={() => {}} node={nodes.results[5] as WorkflowNode} />
+        <NodeFormInputs node={mockGraphNode(nodes.results[5] as WorkflowNode) as GraphNode} />
       </VisualizationProvider>
     );
     cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
