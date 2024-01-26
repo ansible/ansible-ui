@@ -1,4 +1,4 @@
-name: Downstream - On Pull Request - Run Platform E2E
+name: Run Platform E2E
 
 on:
   pull_request:
