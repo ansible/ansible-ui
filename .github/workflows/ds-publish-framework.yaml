@@ -1,4 +1,4 @@
-name: On Push Tag - Publish Framework
+name: Publish Framework
 
 on:
   push:
