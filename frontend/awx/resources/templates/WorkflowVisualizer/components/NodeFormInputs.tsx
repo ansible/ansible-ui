@@ -5,7 +5,6 @@ import { NodeTypeStep } from './NodeTypeStep';
 import { awxErrorAdapter } from '../../../../common/adapters/awxErrorAdapter';
 import { NodeShape, isNode, useVisualizationController } from '@patternfly/react-topology';
 import { useViewOptions } from '../ViewOptionsProvider';
-import { useSetVisualizerModified } from '../hooks/useSetVisualizerModified';
 import { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
 
 export interface NodeFields {
@@ -39,7 +38,6 @@ export function NodeFormInputs(props: {
   const { t } = useTranslation();
 
   const controller = useVisualizationController();
-  const setModified = useSetVisualizerModified();
 
   const steps: PageWizardStep[] = [
     {
@@ -105,7 +103,6 @@ export function NodeFormInputs(props: {
     controller.setState({ ...state, unsavedNodeId: nodeId + 1 });
 
     setSidebarMode(undefined);
-    setModified(true);
     controller.getNodeById(node.id)?.setState({ modified: true });
 
     return Promise.resolve();
