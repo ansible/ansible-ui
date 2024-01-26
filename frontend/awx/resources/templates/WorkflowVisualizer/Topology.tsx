@@ -27,7 +27,6 @@ import {
   withPanZoom,
   withSelection,
   TopologyView,
-  GraphElement,
   ElementModel,
   withCreateConnector,
   isNode,
@@ -50,11 +49,7 @@ import {
 import { GraphNode, EdgeStatus } from './types';
 import { ViewOptionsContext, ViewOptionsProvider } from './ViewOptionsProvider';
 import { useCreateEdge } from './hooks';
-
-export const GRAPH_ID = 'workflow-visualizer-graph';
-const CONNECTOR_SOURCE_DROP = 'connector-src-drop';
-const CONNECTOR_TARGET_DROP = 'connector-target-drop';
-const NODE_DIAMETER = 50;
+import { GRAPH_ID, CONNECTOR_SOURCE_DROP, CONNECTOR_TARGET_DROP, NODE_DIAMETER } from './constants';
 
 const graphModel: Model = {
   nodes: [],
@@ -239,24 +234,7 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
       <ViewOptionsProvider>
         {/* tools provider name */}
         <ViewOptionsContext.Consumer>
-          {({
-            isFullScreen,
-            isEmpty,
-            isLegendOpen,
-            isLoading,
-            toggleLegend,
-            sidebarMode,
-            selectedIds,
-          }) => {
-            let showSideBar = false;
-            if (selectedIds?.length && !isLoading) {
-              const element = visualization.getElementById(selectedIds[0]) as GraphElement;
-              showSideBar = isNode(element);
-            }
-            if (sidebarMode === 'add') {
-              showSideBar = true;
-            }
-
+          {({ isFullScreen, isEmpty, isLegendOpen, toggleLegend, sidebarMode }) => {
             return (
               <TopologyView
                 data-cy="workflow-visualizer"
@@ -284,7 +262,7 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
                     })}
                   />
                 }
-                sideBarOpen={showSideBar}
+                sideBarOpen={sidebarMode !== undefined}
                 sideBarResizable
                 sideBar={<Sidebar />}
                 minSideBarSize={'50%'}
@@ -300,7 +278,15 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
                 ) : (
                   <>
                     {isLegendOpen && <Legend />}
-                    <VisualizationSurface state={{ workflowTemplate: template }} />
+                    <VisualizationSurface
+                      state={{
+                        workflowTemplate: template,
+                        RBAC: {
+                          edit: template.summary_fields.user_capabilities.edit,
+                          start: template.summary_fields.user_capabilities.start,
+                        },
+                      }}
+                    />
                   </>
                 )}
               </TopologyView>
