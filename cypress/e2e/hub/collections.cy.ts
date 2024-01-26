@@ -1,7 +1,8 @@
+import { randomString } from '../../../framework/utils/random-string';
 import { hubAPI } from '../../support/formatApiPathForHub';
 import { Collections } from './constants';
 
-describe.skip('Collections- List View', () => {
+describe('Collections- List View', () => {
   //**Important to know:
   //**In order to upload a collection, a namespace must first exist containing the first word of the collection file name
   //**The only way to get rid of a collection's artifact is to choose the following option:
@@ -11,7 +12,7 @@ describe.skip('Collections- List View', () => {
   before(() => {
     cy.hubLogin();
     cy.getNamespace('ibm');
-    cy.addAndApproveMultiCollections(5);
+    cy.addAndApproveMultiCollections(1);
   });
 
   it('it should render the collections page', () => {
@@ -23,7 +24,7 @@ describe.skip('Collections- List View', () => {
     cy.cleanupCollections('ibm', 'community');
   });
 
-  it('user can upload and then delete a new collection', () => {
+  it.skip('user can upload and then delete a new collection', () => {
     cy.getOrCreateCollection().then((thisCollection) => {
       const thisCollectionName = thisCollection?.split('-').slice(-2, -1).toString();
       cy.navigateTo('hub', Collections.url);
@@ -45,16 +46,11 @@ describe.skip('Collections- List View', () => {
       });
       cy.reload();
       cy.get('[data-cy="hub-collections"]').click();
-      cy.intercept(
-        'GET',
-        hubAPI`/v3/plugin/ansible/search/collection-versions/?is_deprecated=false&repository_label=!hide_from_search&is_highest=true&offset=0&limit=100`
-      ).as('collections');
       cy.verifyPageTitle(Collections.title);
       cy.get('[data-cy="app-description"]').should(
         'contain',
         'Collections are a packaged unit of Ansible content that includes roles, modules, plugins, and other components, making it easier to share and reuse automation functionality.'
       );
-      cy.wait('@collections');
       cy.get('[data-cy="table-view"]').click();
       cy.clickTableRowKebabAction(thisCollectionName, 'delete-entire-collection-from-system');
       cy.get('[data-ouia-component-id="confirm"]').click();
@@ -82,9 +78,24 @@ describe.skip('Collections- List View', () => {
   it.skip('user can deprecate selected collections using the list toolbar', () => {});
 });
 
-describe.skip('Collections List- Line Item Kebab Menu', () => {
-  before(() => {
+describe('Collections List- Line Item Kebab Menu', () => {
+  let thisCollectionName: string;
+  let namespace: string;
+  let repository: string;
+
+  beforeEach(() => {
+    thisCollectionName = 'hub_e2e_' + randomString(5).toLowerCase();
+    namespace = 'ibm';
     cy.hubLogin();
+    cy.getNamespace(namespace);
+    cy.uploadCollection(thisCollectionName, namespace);
+    cy.navigateTo('hub', Collections.url);
+  });
+
+  afterEach(() => {
+    if (Cypress.currentTest.title !== 'user can deprecate a collection') {
+      cy.deleteCollection(thisCollectionName, namespace, repository);
+    }
   });
 
   it.skip('user can upload a new version to an existing collection', () => {});
@@ -93,9 +104,41 @@ describe.skip('Collections List- Line Item Kebab Menu', () => {
 
   it.skip('user can delete entire collection from repository', () => {});
 
-  it.skip('user can deprecate a collection', () => {});
+  it('user can deprecate a collection', () => {
+    cy.approveCollection(thisCollectionName, namespace, '1.0.0');
+    cy.visit(`/collections?page=1&perPage=50&sort=name&keywords=${thisCollectionName}`);
+    cy.get(`a[href*="/collections/published/ibm/${thisCollectionName}"]`).should('be.visible');
+    cy.get('[data-cy="data-list-action"]').within(() => {
+      cy.get('[data-cy="actions-dropdown"]')
+        .click()
+        .then(() => {
+          cy.get('#deprecate-collection').click();
+        });
+    });
+    cy.get('[data-ouia-component-id="Permanently deprecate collections"]').within(() => {
+      cy.get('input').click();
+      cy.intercept(
+        'PATCH',
+        hubAPI`/v3/plugin/ansible/content/published/collections/index/ibm/${thisCollectionName}/`
+      ).as('deprecated');
+      cy.clickButton('Deprecate collections');
+      cy.wait('@deprecated').then((deprecated) => {
+        expect(deprecated.response?.statusCode).to.eql(202);
+      });
+      cy.clickButton('Close');
+    });
+    cy.clickButton('Clear all filters');
+    cy.visit(`/collections?page=1&perPage=50&sort=name&keywords=${thisCollectionName}`);
+    cy.get('[data-cy="table-view"]').click();
+    cy.contains('h2', 'No results found').should('be.visible');
+  });
 
-  it.skip('user can copy a version to repository', () => {});
+  it.skip('user can copy a version to repository', () => {
+    //skipping this test because the Copy to Repository option is disabled for admin user
+    cy.approveCollection(thisCollectionName, namespace, '1.0.0');
+    cy.collectionCopyVersionToRepositories(thisCollectionName);
+    repository = 'community';
+  });
 });
 
 describe.skip('Collections Details View', () => {
