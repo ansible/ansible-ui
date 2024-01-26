@@ -1,6 +1,7 @@
 import '@patternfly/patternfly/components/Wizard/wizard.css';
 import { ErrorAdapter } from '../PageForm/typesErrorAdapter';
 import { PageWizardBody } from './PageWizardBody';
+import { PageWizardHeader } from './PageWizardHeader';
 import { PageWizardNavigation } from './PageWizardNavigation';
 import { PageWizardProvider } from './PageWizardProvider';
 import { PageWizardToggle } from './PageWizardToggle';
@@ -13,6 +14,7 @@ export function PageWizard<T extends object>(props: {
   onSubmit: (wizardData: T) => Promise<void>;
   errorAdapter?: ErrorAdapter;
   disableGrid?: boolean;
+  title?: string;
 }) {
   return (
     <PageWizardProvider<T> steps={props.steps} defaultValue={props.defaultValue}>
@@ -27,6 +29,7 @@ export function PageWizard<T extends object>(props: {
           overflow: 'hidden',
         }}
       >
+        {props.title && <PageWizardHeader title={props.title} onClose={props.onCancel} />}
         <PageWizardToggle />
         <div
           className="pf-v5-c-wizard__outer-wrap"
