@@ -1,4 +1,4 @@
-name: On Push Main - Merge Downstream
+name: Sync Downstream
 
 on:
   push:

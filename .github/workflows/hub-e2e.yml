@@ -1,4 +1,4 @@
-name: hub-e2e
+name: HUB E2E
 
 on:
   workflow_call:

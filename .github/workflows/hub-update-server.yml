@@ -1,4 +1,4 @@
-name: hub-update-server
+name: HUB Update E2E Server
 
 on:
   workflow_dispatch:

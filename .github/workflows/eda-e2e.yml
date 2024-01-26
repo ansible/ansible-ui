@@ -1,4 +1,4 @@
-name: eda-e2e
+name: EDA E2E
 
 on:
   workflow_call:

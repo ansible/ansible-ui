@@ -1,4 +1,4 @@
-name: awx-e2e
+name: AWX E2E
 
 on:
   workflow_call:
