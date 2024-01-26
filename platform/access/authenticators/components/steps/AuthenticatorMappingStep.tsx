@@ -1,4 +1,5 @@
 import { useState, MouseEvent } from 'react';
+import { useFormContext } from 'react-hook-form';
 import { Dropdown, DropdownList, DropdownItem, MenuToggle } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -27,20 +28,18 @@ const Checkbox = styled(PageFormCheckbox)`
 `;
 
 export function AuthenticatorMappingStep() {
-  const { wizardData, setWizardData } = usePageWizard();
-  const { mappings = [] } = wizardData as AuthenticatorFormValues;
+  const { wizardData } = usePageWizard();
+  // const { mappings = [] } = wizardData as AuthenticatorFormValues;
+  const [mappings, setMappings] = useState((wizardData as AuthenticatorFormValues).mappings || []);
 
   const addMapping = (value: AuthenticatorMapType) => {
     const map: AuthenticatorMapValues = {
       name: '',
       map_type: value,
-      // order: mappings.length + 1,
       revoke: false,
+      trigger: 'always',
     };
-    setWizardData({
-      ...wizardData,
-      mappings: [...mappings, map],
-    });
+    setMappings([...mappings, map]);
   };
 
   return (
@@ -89,6 +88,7 @@ function AddMappingDropdown(props: { onSelect: (value: AuthenticatorMapType) => 
 
 function MapFields(props: { index: number; map: AuthenticatorMapValues }) {
   const { index, map } = props;
+  const { register } = useFormContext();
   const { t } = useTranslation();
 
   const label = {
@@ -98,10 +98,13 @@ function MapFields(props: { index: number; map: AuthenticatorMapValues }) {
   }[map.map_type];
 
   return (
-    <div>
+    <div style={{ marginBottom: 25 }}>
       {label}
-      <input type="hidden" name={`mappings[${index}].map_type`} value={map.map_type} />
-      <input type="hidden" name={`mappings[${index}].order`} value={index} />
+      <input
+        type="hidden"
+        {...register(`mappings[${index}].map_type`, { value: map.map_type })}
+        defaultValue={map.map_type}
+      />
       <PageFormGrid>
         <PageFormTextInput
           id={`mappings-${index}-name`}
@@ -148,7 +151,7 @@ function MapFields(props: { index: number; map: AuthenticatorMapValues }) {
           />
           <PageFormTextInput
             id={`mappings-${index}-groups-value`}
-            name={`mappings[${index}].groups-value`}
+            name={`mappings[${index}].groups_value`}
             label={t('Groups')}
           />
         </PageFormHidden>
@@ -172,20 +175,20 @@ function MapFields(props: { index: number; map: AuthenticatorMapValues }) {
           />
           <PageFormSelect
             id={`mappings-${index}-attributes-criteria-conditional`}
-            name={`mappings[${index}].criteria-conditional`}
+            name={`mappings[${index}].criteria_conditional`}
             label=""
             options={[
               { value: 'contains', label: t('contains') },
               { value: 'matches', label: t('matches') },
               { value: 'ends_with', label: t('ends with') },
               { value: 'equals', label: t('equals') },
-              { value: 'is', label: t('in') },
+              { value: 'in', label: t('in') },
             ]}
             placeholderText={t('Select conditional')}
           />
           <PageFormTextInput
             id={`mappings-${index}-attributes-value`}
-            name={`mappings[${index}].criteria-value`}
+            name={`mappings[${index}].criteria_value`}
             label=""
           />
         </PageFormHidden>
