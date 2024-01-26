@@ -14,9 +14,8 @@ import {
 } from '@patternfly/react-icons';
 import { Icon } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useSetVisualizerModified } from '../hooks/useSetVisualizerModified';
 import { EdgeStatus } from '../types';
-
+import { useViewOptions } from '../ViewOptionsProvider';
 interface MenuItem {
   key: string;
   status?: EdgeStatus;
@@ -43,6 +42,7 @@ export function useEdgeMenuItems(
   >
 ): MenuItem[] {
   const { t } = useTranslation();
+  const { removeLink } = useViewOptions();
   return [
     {
       key: 'success',
@@ -120,7 +120,6 @@ export function useEdgeMenuItems(
             element.getSource().setState({ modified: false });
           } else {
             element.getSource().setState({ modified: true });
-
             element.setState({ modified: true });
           }
         })();
@@ -140,10 +139,7 @@ export function useEdgeMenuItems(
       isDanger: true,
       label: t('Remove link'),
       onClick: () => {
-        action(() => {
-          element.setVisible(false);
-          element.getSource().setState({ modified: true });
-        })();
+        removeLink(element);
       },
     },
   ];
@@ -162,7 +158,6 @@ export function EdgeContextMenu(props: {
 }) {
   const { element } = props;
   const data = element.getData();
-  const setModified = useSetVisualizerModified();
 
   const items = useEdgeMenuItems(element);
 
@@ -179,7 +174,6 @@ export function EdgeContextMenu(props: {
         isDanger={item.isDanger}
         onClick={() => {
           item?.onClick && data && item.onClick(data);
-          setModified(true);
         }}
       >
         {item.label}

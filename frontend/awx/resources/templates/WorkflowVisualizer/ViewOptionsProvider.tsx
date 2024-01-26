@@ -1,9 +1,18 @@
 import styled from 'styled-components';
 import { ReactElement, createContext, useContext, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
-import { useVisualizationController, observer } from '@patternfly/react-topology';
+import {
+  useVisualizationController,
+  observer,
+  NodeModel,
+  Node,
+  Edge,
+  EdgeModel,
+} from '@patternfly/react-topology';
 
 import { GRAPH_ID } from './Topology';
+import { useRemoveGraphElements } from './hooks';
+import { GraphEdgeData, GraphNodeData } from './types';
 
 const FullPage = styled.div`
   position: fixed;
@@ -35,7 +44,10 @@ export interface IViewOptions {
   isEmpty: boolean;
   isLoading: boolean;
   sidebarMode: 'add' | 'edit' | 'view' | undefined;
+  selectedIds: string[];
   setSidebarMode: (value: 'add' | 'edit' | 'view' | undefined) => void;
+  removeNodes: (item: Node<NodeModel, GraphNodeData>[]) => void;
+  removeLink: (item: Edge<EdgeModel, GraphEdgeData>) => void;
 }
 
 export const ViewOptionsContext = createContext<IViewOptions>({
@@ -47,20 +59,22 @@ export const ViewOptionsContext = createContext<IViewOptions>({
   isLoading: true,
   sidebarMode: undefined,
   setSidebarMode: () => null,
+  removeNodes: () => null,
+  removeLink: () => null,
+  selectedIds: [],
 });
 
 export const ViewOptionsProvider = observer((props: { children: ReactElement }) => {
   const { children } = props;
   const controller = useVisualizationController();
   const state: { selectedIds: string[] | [] } = controller.getState();
-
   const [sidebarMode, setSidebarMode] = useState<'add' | 'edit' | 'view' | undefined>(undefined);
   const nodes = controller
     .getGraph()
     .getNodes()
     .find((n) => n.isVisible());
   const isGraphReady = controller.toModel().graph?.visible;
-
+  const { removeNodes, removeLink } = useRemoveGraphElements();
   const [isEmpty, setIsEmpty] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [isLegendOpen, setIsLegendOpen] = useState(false);
@@ -113,7 +127,10 @@ export const ViewOptionsProvider = observer((props: { children: ReactElement }) 
     isLoading,
     isEmpty,
     sidebarMode,
+    selectedIds: state.selectedIds,
     setSidebarMode,
+    removeNodes,
+    removeLink,
   };
 
   return (

@@ -12,7 +12,7 @@ import type { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplat
 import { Scrollable } from '../../../../../framework';
 import { GraphNode } from './types';
 import { useViewOptions } from './ViewOptionsProvider';
-import { useGetDetailComponent, useRemoveNode } from './hooks';
+import { useGetDetailComponent } from './hooks';
 import { SidebarHeader } from './components';
 
 const TopologySideBar = styled(PFTopologySideBar)`
@@ -25,7 +25,7 @@ const TopologySideBar = styled(PFTopologySideBar)`
 export function WorkflowVisualizerNodeDetails(props: { resource: WorkflowNode }) {
   const { resource: selectedNode } = props;
   const { t } = useTranslation();
-  const removeNode = useRemoveNode();
+  const { removeNodes } = useViewOptions();
 
   const getDetails = useGetDetailComponent(selectedNode);
   const controller = useVisualizationController();
@@ -48,7 +48,7 @@ export function WorkflowVisualizerNodeDetails(props: { resource: WorkflowNode })
   const handleRemove = () => {
     const element: GraphNode | undefined = controller.getNodeById(selectedNodeId);
     if (!element) return;
-    removeNode(element);
+    removeNodes([element]);
     handleClose();
   };
 
