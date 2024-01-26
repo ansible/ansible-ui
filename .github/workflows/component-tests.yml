@@ -1,0 +1,53 @@
+name: Pull Request
+
+on:
+  workflow_call:
+    secrets:
+      COMPONENT_PROJECT_ID:
+        required: true
+      COMPONENT_RECORD_KEY:
+        required: true
+jobs:
+  component-tests:
+    name: Component Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    strategy:
+      fail-fast: false
+      matrix:
+        containers: [1, 2, 3, 4]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - name: PreCache
+        run: npm version 0.0.0 --no-git-tag-version
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ./node_modules
+            /home/runner/.cache/Cypress
+          key: modules-${{ hashFiles('package-lock.json') }}
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm ci
+      - name: Cypress
+        uses: cypress-io/github-action@v6
+        with:
+          component: true
+          install: false
+          record: true
+          parallel: true
+          # auto-cancel-after-failures: 1
+          config-file: cypress.config.ts
+        env:
+          CYPRESS_PROJECT_ID: ${{ secrets.COMPONENT_PROJECT_ID }}
+          CYPRESS_RECORD_KEY: ${{ secrets.COMPONENT_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
