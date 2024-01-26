@@ -1,0 +1,122 @@
+name: Platform Update E2E Server
+
+on:
+  workflow_dispatch:
+    inputs:
+      PLATFORM_SERVER:
+        type: string
+        required: true
+        description: 'PLATFORM Server'
+      UPDATE_SERVER:
+        type: boolean
+        required: true
+        default: false
+        description: 'Update server on success'
+  schedule:
+    - cron: '0 8 * * *'
+
+jobs:
+  setup:
+    name: Setup
+    runs-on: ubuntu-latest
+    outputs:
+      PLATFORM_SERVER: ${{ steps.step1.outputs.PLATFORM_SERVER }}
+      UPDATE_SERVER: ${{ steps.step1.outputs.UPDATE_SERVER }}
+    steps:
+      - id: step1
+        run: |
+          CURRENTDATE=$(date +'%Y%m%d')
+          echo $CURRENTDATE
+          if([ "${{ github.event_name }}" == "workflow_dispatch" ]); then
+            echo "PLATFORM_SERVER=${{ github.event.inputs.PLATFORM_SERVER }}" >> "$GITHUB_OUTPUT"
+            echo "UPDATE_SERVER=${{ github.event.inputs.UPDATE_SERVER }}" >> "$GITHUB_OUTPUT"
+          else 
+            echo "PLATFORM_SERVER=https://platform.ci-ui-${CURRENTDATE}.gcp.testing.ansible.com" >> "$GITHUB_OUTPUT"
+            echo "UPDATE_SERVER=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  platform-e2e:
+    name: Platform E2E
+    needs: setup
+    uses: ./.github/workflows/ds-platform-e2e.yml
+    with:
+      PLATFORM_SERVER: ${{ needs.setup.outputs.PLATFORM_SERVER }}
+    secrets:
+      PLATFORM_PASSWORD: ${{ secrets.PLATFORM_PASSWORD }}
+      PLATFORM_PROJECT_ID: ${{ secrets.PLATFORM_PROJECT_ID }}
+      PLATFORM_RECORD_KEY: ${{ secrets.PLATFORM_RECORD_KEY }}
+
+  platform-update-server:
+    name: Platform Update Server
+    if: ${{ needs.setup.outputs.UPDATE_SERVER == 'true' }}
+    needs:
+      - platform-e2e
+      - setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update Server Variable
+        run: |
+          curl -f -L -X PATCH -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          "https://api.github.com/repos/${{ github.repository }}/actions/variables/PLATFORM_SERVER" \
+          -d '{"name":"PLATFORM_SERVER","value":"${{ needs.setup.outputs.PLATFORM_SERVER }}"}'
+      - name: Slack Notification
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "attachments":
+                [
+                  {
+                    "color": "#00DD00",
+                    "blocks":
+                      [
+                        {
+                          "type": "section",
+                          "text":
+                            {
+                              "type": "mrkdwn",
+                              "text": "*Platform E2E Server Updated*\n${{ github.repository }} - <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Success> - <${{ needs.setup.outputs.PLATFORM_SERVER }}|Server>"
+                            }
+                        }
+                      ]
+                  }
+                ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+
+  slack-failure-notification:
+    name: Slack Failure Notification
+    if: failure()
+    needs:
+      - platform-update-server
+      - setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Slack Notification
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "attachments":
+                [
+                  {
+                    "color": "#FF0000",
+                    "blocks": [
+                      {
+                        "type": "section",
+                        "text": {
+                          "type": "mrkdwn",
+                          "text": "*Platform E2E Server Update Failed*\n${{ github.repository }} - *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Failure>* - <${{ needs.setup.outputs.PLATFORM_SERVER }}|Server> - <!here>"
+                        }
+                      }
+                    ]
+                  }
+                ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
