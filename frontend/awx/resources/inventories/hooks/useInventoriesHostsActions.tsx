@@ -47,7 +47,7 @@ export function useInventoriesHostsActions(
         labelOff: t('Disabled'),
         showPinnedLabel: false,
         isPinned: true,
-        // isDisabled: (host) => cannotEditResource(host, t),
+        isDisabled: (host) => cannotEditResource(host, t),
         tooltip: t(
           'Indicates if a host is available and should be included in running jobs. For hosts that are part of an external inventory, this may be reset by the inventory sync process.'
         ),
