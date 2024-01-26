@@ -59,7 +59,7 @@ export function InventoryHostsPage() {
             }),
           },
           {
-            label: t(`${(host as AwxHost)?.name}`),
+            label: t(`${host?.name}`),
           },
         ]}
         headerActions={
