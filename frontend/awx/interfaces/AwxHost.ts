@@ -27,13 +27,13 @@ export interface AwxHost
       edit: boolean;
       delete: boolean;
     };
-    recent_jobs: Array<{
+    recent_jobs: {
       id: number;
       type: string;
       name: string;
       status: string;
       finished: string;
-    }>;
+    }[];
     created_by: {
       id: number;
       username: string;
