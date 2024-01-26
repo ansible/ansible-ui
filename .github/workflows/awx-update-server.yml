@@ -1,4 +1,4 @@
-name: awx-update-server
+name: AWX Update E2E Server
 
 on:
   workflow_dispatch:

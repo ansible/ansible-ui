@@ -1,4 +1,4 @@
-name: eda-update-server
+name: EDA Update E2E Server
 
 on:
   workflow_dispatch:
