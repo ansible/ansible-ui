@@ -1,4 +1,4 @@
-name: hub-e2e
+name: HUB E2E
 
 on:
   workflow_call:
@@ -13,9 +13,9 @@ on:
     secrets:
       HUB_PASSWORD:
         required: true
-      CYPRESS_AUI_HUB_E2E_PROJECT_ID:
+      HUB_PROJECT_ID:
         required: true
-      CYPRESS_AUI_HUB_E2E_RECORD_KEY:
+      HUB_RECORD_KEY:
         required: true
 
 jobs:
@@ -121,8 +121,8 @@ jobs:
           HUB_USERNAME: e2e
           HUB_PASSWORD: ${{ secrets.HUB_PASSWORD }}
           HUB_API_PREFIX: '/api/galaxy'
-          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_HUB_E2E_PROJECT_ID }}
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_HUB_E2E_RECORD_KEY }}
+          CYPRESS_PROJECT_ID: ${{ secrets.HUB_PROJECT_ID }}
+          CYPRESS_RECORD_KEY: ${{ secrets.HUB_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_TLS_REJECT_UNAUTHORIZED: 0
 
