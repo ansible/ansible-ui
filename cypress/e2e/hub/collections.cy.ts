@@ -2,7 +2,7 @@ import { randomString } from '../../../framework/utils/random-string';
 import { hubAPI } from '../../support/formatApiPathForHub';
 import { Collections } from './constants';
 
-describe.skip('Collections- List View', () => {
+describe('Collections- List View', () => {
   //**Important to know:
   //**In order to upload a collection, a namespace must first exist containing the first word of the collection file name
   //**The only way to get rid of a collection's artifact is to choose the following option:
@@ -78,7 +78,7 @@ describe.skip('Collections- List View', () => {
   it.skip('user can deprecate selected collections using the list toolbar', () => {});
 });
 
-describe.skip('Collections List- Line Item Kebab Menu', () => {
+describe('Collections List- Line Item Kebab Menu', () => {
   let thisCollectionName: string;
   let namespace: string;
   let repository: string;
@@ -93,7 +93,9 @@ describe.skip('Collections List- Line Item Kebab Menu', () => {
   });
 
   afterEach(() => {
-    cy.deleteCollection(thisCollectionName, namespace, repository);
+    if (Cypress.currentTest.title !== 'user can deprecate a collection') {
+      cy.deleteCollection(thisCollectionName, namespace, repository);
+    }
   });
 
   it.skip('user can upload a new version to an existing collection', () => {});
