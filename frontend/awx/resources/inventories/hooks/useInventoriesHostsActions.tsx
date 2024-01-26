@@ -13,6 +13,7 @@ import { AwxRoute } from '../../../main/AwxRoutes';
 import { AwxHost } from '../../../interfaces/AwxHost';
 import { useDeleteHosts } from '../../hosts/hooks/useDeleteHosts';
 import { usePatchRequest } from '../../../../common/crud/usePatchRequest';
+import { useParams } from 'react-router-dom';
 
 export function useInventoriesHostsActions(
   onDelete: (host: AwxHost[]) => void,
@@ -25,6 +26,8 @@ export function useInventoriesHostsActions(
   const deleteHosts = useDeleteHosts(onDelete);
 
   const patchRequest = usePatchRequest<{ enabled: boolean }, AwxHost>();
+
+  const params = useParams<{ id: string; inventory_type: string; host_id: string }>();
 
   const handleToggleHost: (host: AwxHost, enabled: boolean) => Promise<void> = useCallback(
     async (host, enabled) => {
@@ -63,8 +66,10 @@ export function useInventoriesHostsActions(
         isPinned: true,
         icon: PencilAltIcon,
         label: t('Edit host'),
-        // Need to update routing to go to inventory host edit form when that will be implemented AAP-8309
-        onClick: (host) => pageNavigate(AwxRoute.EditHost, { params: { id: host.id } }),
+        onClick: (host) =>
+          pageNavigate(AwxRoute.InventoryHostsEdit, {
+            params: { id: params.id, inventory_type: params.inventory_type, host_id: host.id },
+          }),
         isDisabled: (host) => cannotEditResource(host, t),
       },
       {
@@ -79,6 +84,6 @@ export function useInventoriesHostsActions(
         isDanger: true,
       },
     ],
-    [t, handleToggleHost, pageNavigate, deleteHosts]
+    [t, handleToggleHost, pageNavigate, params.id, params.inventory_type, deleteHosts]
   );
 }
