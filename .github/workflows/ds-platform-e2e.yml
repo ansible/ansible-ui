@@ -1,0 +1,125 @@
+name: platform-e2e
+
+on:
+  workflow_call:
+    inputs:
+      PLATFORM_SERVER:
+        type: string
+        required: true
+      SKIP_JOB:
+        type: boolean
+        required: false
+        default: false
+    secrets:
+      PLATFORM_PASSWORD:
+        required: true
+      PLATFORM_PROJECT_ID:
+        required: true
+      PLATFORM_RECORD_KEY:
+        required: true
+
+jobs:
+  platform-ui-image:
+    name: PLATFORM UI Image
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      DOCKER_BUILDKIT: 1
+    steps:
+      - uses: actions/checkout@v4
+        if: ${{ !inputs.SKIP_JOB }}
+        with:
+          fetch-depth: 1
+      - name: PreCache
+        if: ${{ !inputs.SKIP_JOB }}
+        run: npm version 0.0.0 --no-git-tag-version
+      - name: Cache dependencies
+        if: ${{ !inputs.SKIP_JOB }}
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ./node_modules
+            /home/runner/.cache/Cypress
+          key: modules-${{ hashFiles('package-lock.json') }}
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true' && !inputs.SKIP_JOB
+        run: npm ci
+      - name: NPM Build
+        if: ${{ !inputs.SKIP_JOB }}
+        run: npm run build:platform
+      - name: Build Image
+        if: ${{ !inputs.SKIP_JOB }}
+        run: npm run docker:build:platform
+      - name: Save Image
+        if: ${{ !inputs.SKIP_JOB }}
+        run: docker save platform-ui > platform-ui.tar
+      - name: Upload Image
+        if: ${{ !inputs.SKIP_JOB }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: platform-ui.tar
+          path: platform-ui.tar
+
+  platform-e2e:
+    name: PLATFORM E2E
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: platform-ui-image
+    strategy:
+      fail-fast: false
+      matrix:
+        containers: [1]
+    steps:
+      - name: Download container image
+        if: ${{ !inputs.SKIP_JOB }}
+        uses: actions/download-artifact@v4
+        with:
+          name: platform-ui.tar
+      - name: Load container image
+        if: ${{ !inputs.SKIP_JOB }}
+        run: docker load --input platform-ui.tar
+      - name: Checkout
+        if: ${{ !inputs.SKIP_JOB }}
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Setup node
+        if: ${{ !inputs.SKIP_JOB }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - name: PreCache
+        if: ${{ !inputs.SKIP_JOB }}
+        run: npm version 0.0.0 --no-git-tag-version
+      - name: Cache dependencies
+        if: ${{ !inputs.SKIP_JOB }}
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ./node_modules
+            /home/runner/.cache/Cypress
+          key: modules-${{ hashFiles('package-lock.json') }}
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true' && !inputs.SKIP_JOB
+        run: npm ci
+      - name: Cypress
+        if: ${{ !inputs.SKIP_JOB }}
+        uses: cypress-io/github-action@v6
+        with:
+          install: false
+          start: cd platform && npm run docker:run
+          wait-on: 'https://localhost:4100'
+          record: true
+          parallel: true
+          # auto-cancel-after-failures: 1
+          config-file: cypress.platform.config.ts
+        env:
+          PLATFORM_SERVER: ${{ inputs.PLATFORM_SERVER }}
+          PLATFORM_USERNAME: e2e
+          PLATFORM_PASSWORD: ${{ secrets.PLATFORM_PASSWORD }}
+          CYPRESS_PROJECT_ID: ${{ secrets.PLATFORM_PROJECT_ID }}
+          CYPRESS_RECORD_KEY: ${{ secrets.PLATFORM_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_TLS_REJECT_UNAUTHORIZED: 0
