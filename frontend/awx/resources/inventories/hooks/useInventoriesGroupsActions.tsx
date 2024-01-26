@@ -23,7 +23,10 @@ export function useInventoriesGroupsActions() {
         isPinned: true,
         icon: PencilAltIcon,
         label: t('Edit group'),
-        onClick: (group) => pageNavigate(AwxRoute.EditGroup, { params: { id: group.id } }),
+        onClick: (group) =>
+          pageNavigate(AwxRoute.InventoryGroupEdit, {
+            params: { inventory_type: 'inventory', id: group.inventory, group_id: group.id },
+          }),
         isDisabled: (group) => cannotEditResource(group, t),
       },
     ],

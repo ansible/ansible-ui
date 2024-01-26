@@ -31,7 +31,9 @@ export function useInventoriesGroupsToolbarActions(view: IAwxView<AwxGroup>) {
     adhocOptions && adhocOptions.actions && adhocOptions.actions['POST']
   );
 
-  const groupOptions = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/groups`).data;
+  const groupOptions = useOptions<OptionsResponse<ActionsResponse>>(
+    awxAPI`/inventories/${params.id ?? ''}/groups`
+  ).data;
   const canCreateGroup = Boolean(
     groupOptions && groupOptions.actions && groupOptions.actions['POST']
   );
@@ -76,9 +78,8 @@ export function useInventoriesGroupsToolbarActions(view: IAwxView<AwxGroup>) {
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
-        isPinned: true,
         icon: TrashIcon,
-        label: t('Delete group'),
+        label: t('Delete selected groups'),
         onClick: deleteGroups,
         isDanger: true,
         isDisabled:

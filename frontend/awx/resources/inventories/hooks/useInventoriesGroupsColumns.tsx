@@ -12,7 +12,10 @@ export function useInventoriesGroupsColumns(options?: {
 }) {
   const pageNavigate = usePageNavigate();
   const nameClick = useCallback(
-    (group: AwxGroup) => pageNavigate(AwxRoute.GroupDetails, { params: { id: group.id } }),
+    (group: AwxGroup) =>
+      pageNavigate(AwxRoute.InventoryGroupDetails, {
+        params: { inventory_type: 'inventory', id: group.inventory, group_id: group.id },
+      }),
     [pageNavigate]
   );
   const nameColumn = useNameColumn({

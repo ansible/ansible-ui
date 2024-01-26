@@ -10,8 +10,12 @@ import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs
 
 export function GroupPage() {
   const { t } = useTranslation();
-  const params = useParams<{ id: string }>();
-  const { error, data: inventoryGroup, refresh } = useGetItem<AwxGroup>(awxAPI`/groups`, params.id);
+  const params = useParams<{ group_id: string }>();
+  const {
+    error,
+    data: inventoryGroup,
+    refresh,
+  } = useGetItem<AwxGroup>(awxAPI`/groups`, params.group_id);
 
   const getPageUrl = useGetPageUrl();
 
@@ -49,13 +53,13 @@ export function GroupPage() {
       <PageRoutedTabs
         backTab={{
           label: t('Back to Groups'),
-          page: AwxRoute.Groups,
+          page: AwxRoute.InventoryGroups,
           persistentFilterKey: 'groups',
         }}
         tabs={[
-          { label: t('Details'), page: AwxRoute.GroupDetails },
-          { label: t('Related Groups'), page: AwxRoute.GroupRelatedGroups },
-          { label: t('Hosts'), page: AwxRoute.GroupHosts },
+          { label: t('Details'), page: AwxRoute.InventoryGroupDetails },
+          { label: t('Related Groups'), page: AwxRoute.InventoryGroupRelatedGroups },
+          { label: t('Hosts'), page: AwxRoute.InventoryGroupHost },
         ]}
         params={{ id: inventoryGroup.id }}
       />

@@ -93,6 +93,11 @@ export enum AwxRoute {
   InventoryAccess = 'awx-inventory-access',
   InventoryGroups = 'awx-inventory-groups',
   InventoryGroupsAdd = 'awx-inventory-groups-add',
+  InventoryGroupPage = 'awx-inventory-group-page',
+  InventoryGroupEdit = 'awx-inventory-group-edit',
+  InventoryGroupDetails = 'awx-inventory-group-details',
+  InventoryGroupRelatedGroups = 'awx-inventory-group-related-groups',
+  InventoryGroupHost = 'awx-inventory-group-host',
   InventoryHosts = 'awx-inventory-hosts',
   InventoryHostsAdd = 'awx-inventory-hosts-add',
   InventorySources = 'awx-inventory-sources',
@@ -118,13 +123,6 @@ export enum AwxRoute {
   HostFacts = 'awx-host-facts',
   HostGroups = 'awx-host-groups',
   HostJobs = 'awx-host-jobs',
-
-  Groups = 'awx-groups',
-  EditGroup = 'awx-edit-group',
-  GroupDetails = 'awx-group-details',
-  GroupRelatedGroups = 'awx-group-related-groups',
-  GroupHosts = 'awx-group-hosts',
-  GroupPage = 'awx-group-page',
 
   // Access
 
