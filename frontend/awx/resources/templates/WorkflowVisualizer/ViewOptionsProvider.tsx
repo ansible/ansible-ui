@@ -1,6 +1,6 @@
+import ReactDOM from 'react-dom';
 import styled from 'styled-components';
 import { ReactElement, createContext, useContext, useEffect, useState } from 'react';
-import ReactDOM from 'react-dom';
 import {
   useVisualizationController,
   observer,
@@ -9,10 +9,9 @@ import {
   Edge,
   EdgeModel,
 } from '@patternfly/react-topology';
-
-import { GRAPH_ID } from './Topology';
 import { useRemoveGraphElements } from './hooks';
-import { GraphEdgeData, GraphNodeData } from './types';
+import { ControllerState, GraphEdgeData, GraphNodeData } from './types';
+import { GRAPH_ID } from './constants';
 
 const FullPage = styled.div`
   position: fixed;
@@ -67,18 +66,19 @@ export const ViewOptionsContext = createContext<IViewOptions>({
 export const ViewOptionsProvider = observer((props: { children: ReactElement }) => {
   const { children } = props;
   const controller = useVisualizationController();
-  const state: { selectedIds: string[] | [] } = controller.getState();
-  const [sidebarMode, setSidebarMode] = useState<'add' | 'edit' | 'view' | undefined>(undefined);
+  const { selectedIds } = controller.getState<ControllerState>();
   const nodes = controller
     .getGraph()
     .getNodes()
     .find((n) => n.isVisible());
   const isGraphReady = controller.toModel().graph?.visible;
+  const isGraphSelected = !!selectedIds?.length && selectedIds[0] === GRAPH_ID;
   const { removeNodes, removeLink } = useRemoveGraphElements();
   const [isEmpty, setIsEmpty] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [isLegendOpen, setIsLegendOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(isGraphReady ? false : true);
+  const [sidebarMode, setSidebarMode] = useState<'add' | 'edit' | 'view' | undefined>(undefined);
 
   useEffect(() => {
     if (isGraphReady) {
@@ -115,10 +115,11 @@ export const ViewOptionsProvider = observer((props: { children: ReactElement }) 
   };
 
   useEffect(() => {
-    if (state.selectedIds?.length && state.selectedIds.some((id) => id === GRAPH_ID)) {
+    if (isGraphSelected) {
       setSidebarMode(undefined);
     }
-  }, [state.selectedIds, setSidebarMode, controller]);
+  }, [isGraphSelected]);
+
   const value = {
     isFullScreen,
     toggleFullScreen,
@@ -127,7 +128,7 @@ export const ViewOptionsProvider = observer((props: { children: ReactElement }) 
     isLoading,
     isEmpty,
     sidebarMode,
-    selectedIds: state.selectedIds,
+    selectedIds,
     setSidebarMode,
     removeNodes,
     removeLink,
