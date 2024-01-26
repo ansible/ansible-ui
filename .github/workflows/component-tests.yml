@@ -11,11 +11,11 @@ jobs:
   component-tests:
     name: Component Tests
     runs-on: ubuntu-latest
-    timeout-minutes: 14
+    timeout-minutes: 10
     strategy:
       fail-fast: false
       matrix:
-        containers: [1, 2, 3, 4]
+        containers: [1, 2, 3]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
