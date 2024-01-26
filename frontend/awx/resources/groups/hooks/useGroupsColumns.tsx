@@ -7,7 +7,7 @@ import { useDescriptionColumn, useModifiedColumn, useNameColumn } from '../../..
 export function useGroupsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const pageNavigate = usePageNavigate();
   const nameClick = useCallback(
-    (group: AwxGroup) => pageNavigate(AwxRoute.GroupDetails, { params: { id: group.id } }),
+    (group: AwxGroup) => pageNavigate(AwxRoute.InventoryGroupDetails, { params: { id: group.id } }),
     [pageNavigate]
   );
   const nameColumn = useNameColumn({
