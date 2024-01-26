@@ -170,6 +170,43 @@ describe('WorkflowVisualizer', () => {
       .contains('Launch workflow')
       .should('be.visible');
   });
+  it('Show confirmation modal when removing a link, then cancel removal, then actually remove ', () => {
+    cy.mount(<WorkflowVisualizer />);
+    cy.get('[data-id="1356-1511"]').within(() => {
+      cy.get('[data-cy="edge-context-menu_kebab"]').click({ force: true });
+    });
+    cy.get('li[data-cy="remove-link"]').click();
+    cy.get('div[aria-label="Remove link"]').should('be.visible');
+    cy.clickButton('Cancel');
+    cy.get('[data-id="1356-1511"]').should('be.visible');
+    cy.get('[data-id="1356-1511"]').within(() => {
+      cy.get('[data-cy="edge-context-menu_kebab"]').click({ force: true });
+    });
+    cy.get('li[data-cy="remove-link"]').click();
+    cy.clickModalConfirmCheckbox();
+    cy.clickModalButton('Remove link');
+    cy.clickModalButton('Close');
+    cy.get('[data-id="1356-1511"]').should('not.exist');
+  });
+
+  it('Show confirmation modal when removing a node, then cancel removal, then actually remove', () => {
+    cy.mount(<WorkflowVisualizer />);
+    cy.get('[data-id="1510"] .pf-topology__node__action-icon').click();
+    cy.get('li[data-cy="remove-node"]').within(() => {
+      cy.get('button').click({ force: true });
+    });
+    cy.get('div[aria-label="Remove node"]').should('be.visible');
+    cy.clickButton('Cancel');
+    cy.get('[data-id="1510"] .pf-topology__node__action-icon').should('be.visible');
+    cy.get('[data-id="1510"] .pf-topology__node__action-icon').click();
+    cy.get('li[data-cy="remove-node"]').within(() => {
+      cy.get('button').click({ force: true });
+    });
+    cy.clickModalConfirmCheckbox();
+    cy.clickModalButton('Remove node');
+    cy.clickModalButton('Close');
+    cy.get('[data-id="1510"] .pf-topology__node__action-icon').should('not.exist');
+  });
 });
 
 describe('Empty state', () => {
