@@ -11,7 +11,7 @@ import {
   usePageNavigate,
 } from '../../../../../framework';
 import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
-import { useGet } from '../../../../common/crud/useGet';
+import { useGetItem } from '../../../../common/crud/useGet';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { AwxHost } from '../../../interfaces/AwxHost';
 import { AwxRoute } from '../../../main/AwxRoutes';
@@ -20,9 +20,17 @@ import { useGetInventory } from '../InventoryPage/InventoryPage';
 
 export function InventoryHostsPage() {
   const { t } = useTranslation();
-  const params = useParams<{ id: string; inventory_type: string; host_id: string }>();
+  const params = useParams<{
+    id: string;
+    inventory_type: string;
+    host_id: string;
+  }>();
+
   const inventory = useGetInventory(params.id, params.inventory_type);
-  const hostResponse = useGetInventoryHost(params.id, params.host_id);
+  const { host: hostResponse, refresh } = useGetInventoryHost(
+    params.id as string,
+    params.host_id as string
+  );
   const pageNavigate = usePageNavigate();
 
   const [host, setHost] = useState<AwxHost | undefined>(hostResponse);
@@ -31,15 +39,11 @@ export function InventoryHostsPage() {
     setHost(hostResponse);
   }, [hostResponse]);
 
-  const itemActions = useInventoriesHostsActions(
-    (_host: AwxHost[]) => {
-      pageNavigate(AwxRoute.InventoryHosts, {
-        params: { inventory_type: params.inventory_type, id: params.id },
-      });
-    },
-    setHost,
-    false
-  );
+  const itemActions = useInventoriesHostsActions((_host) => {
+    pageNavigate(AwxRoute.InventoryHosts, {
+      params: { inventory_type: params.inventory_type, id: params.id },
+    });
+  }, refresh);
 
   const getPageUrl = useGetPageUrl();
 
@@ -55,7 +59,7 @@ export function InventoryHostsPage() {
           {
             label: t(`${inventory?.name}`),
             to: getPageUrl(AwxRoute.InventoryDetails, {
-              params,
+              params: { id: params.id, inventory_type: params.inventory_type },
             }),
           },
           {
@@ -65,7 +69,7 @@ export function InventoryHostsPage() {
             }),
           },
           {
-            label: t(`${(host as AwxHost)?.name}`),
+            label: t(`${host?.name}`),
           },
         ]}
         headerActions={
@@ -89,12 +93,7 @@ export function InventoryHostsPage() {
   );
 }
 
-export function useGetInventoryHost(inventory_id?: string, host_id?: string) {
-  const { data: host } = useGet<{ results: AwxHost[] }>(
-    inventory_id ? awxAPI`/inventories/${inventory_id}/hosts/` : '',
-    {
-      id: host_id ?? '',
-    }
-  );
-  return host?.results[0];
+export function useGetInventoryHost(inventory_id: string, host_id: string) {
+  const { data: host, refresh } = useGetItem<AwxHost>(awxAPI`/hosts`, host_id.toString());
+  return { host, refresh };
 }

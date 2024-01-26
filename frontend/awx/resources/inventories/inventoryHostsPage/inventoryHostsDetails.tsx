@@ -11,7 +11,7 @@ import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageD
 
 export function InventoryHostsDetails() {
   const params = useParams<{ id: string; inventory_type: string; host_id: string }>();
-  const host = useGetInventoryHost(params.id, params.host_id);
+  const { host } = useGetInventoryHost(params.id as string, params.host_id as string);
 
   if (!host) {
     return null;

@@ -16,8 +16,7 @@ import { usePatchRequest } from '../../../../common/crud/usePatchRequest';
 
 export function useInventoriesHostsActions(
   onDelete: (host: AwxHost[]) => void,
-  onToggle: ((host: AwxHost[]) => void) | ((host: AwxHost) => void),
-  listPage: boolean
+  onToggle: (() => Promise<void>) | (() => void)
 ) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
@@ -29,14 +28,10 @@ export function useInventoriesHostsActions(
   const handleToggleHost: (host: AwxHost, enabled: boolean) => Promise<void> = useCallback(
     async (host, enabled) => {
       await patchRequest(awxAPI`/hosts/${host.id.toString()}/`, { enabled });
-
-      if (listPage) {
-        onToggle([host] as AwxHost & AwxHost[]);
-      } else {
-        onToggle({ ...host, enabled: enabled } as AwxHost & AwxHost[]);
-      }
+      await onToggle();
+      return Promise.resolve();
     },
-    [listPage, onToggle, patchRequest]
+    [onToggle, patchRequest]
   );
 
   return useMemo<IPageAction<AwxHost>[]>(
@@ -52,7 +47,7 @@ export function useInventoriesHostsActions(
         labelOff: t('Disabled'),
         showPinnedLabel: false,
         isPinned: true,
-        isDisabled: (host) => cannotEditResource(host, t),
+        // isDisabled: (host) => cannotEditResource(host, t),
         tooltip: t(
           'Indicates if a host is available and should be included in running jobs. For hosts that are part of an external inventory, this may be reset by the inventory sync process.'
         ),
