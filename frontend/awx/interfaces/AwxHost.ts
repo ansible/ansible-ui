@@ -45,4 +45,5 @@ export interface AwxHost
   };
   variables: string;
   enabled: boolean;
+  inventory: number;
 }
