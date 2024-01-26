@@ -7,7 +7,7 @@ env:
   IS_GITHUB_ACTION: true
 
 concurrency:
-  group: ${{ github.ref }}
+  group: platform-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
