@@ -43,8 +43,8 @@ jobs:
       EDA_SERVER: ${{ needs.setup.outputs.EDA_SERVER }}
     secrets:
       EDA_PASSWORD: ${{ secrets.EDA_PASSWORD }}
-      CYPRESS_AUI_EDA_E2E_PROJECT_ID: ${{ secrets.CYPRESS_AUI_EDA_E2E_PROJECT_ID }}
-      CYPRESS_AUI_EDA_E2E_RECORD_KEY: ${{ secrets.CYPRESS_AUI_EDA_E2E_RECORD_KEY }}
+      EDA_PROJECT_ID: ${{ secrets.EDA_PROJECT_ID }}
+      EDA_RECORD_KEY: ${{ secrets.EDA_RECORD_KEY }}
 
   eda-update-server:
     name: EDA Update Server
