@@ -1,34 +1,30 @@
-import { Node, NodeModel, observer, useVisualizationController } from '@patternfly/react-topology';
-import { WorkflowVisualizerNodeDetails } from '../WorkflowVisualizerNodeDetails';
-
-import { NodeForm } from '../NodeForm';
-import { WorkflowNode } from '../../../../interfaces/WorkflowNode';
+import styled from 'styled-components';
+import { TopologySideBar as PFTopologySideBar } from '@patternfly/react-topology';
 import { useViewOptions } from '../ViewOptionsProvider';
+import { WorkflowVisualizerNodeDetails } from '../WorkflowVisualizerNodeDetails';
+import { NodeFormInputs } from './NodeFormInputs';
+import { useSelectedNode } from '../hooks';
 
-const GRAPH_ID = 'workflow-visualizer-graph';
+const TopologySideBar = styled(PFTopologySideBar)`
+  display: flex;
+  flex-direction: column;
+`;
 
-export const Sidebar = observer(() => {
-  const controller = useVisualizationController();
+export function Sidebar() {
+  const selectedNode = useSelectedNode();
+  const { sidebarMode } = useViewOptions();
 
-  const { sidebarMode, setSidebarMode } = useViewOptions();
-  const { selectedIds = [] } = controller.getState<{ selectedIds: string[] }>();
-  const selectedNodeIds = selectedIds.filter((id) => id !== GRAPH_ID);
+  if (!sidebarMode) return null;
 
-  if (sidebarMode === 'add') return <NodeForm node={undefined} />;
+  const nodeSidebar = {
+    add: <NodeFormInputs node={undefined} />,
+    edit: <NodeFormInputs node={selectedNode} />,
+    view: selectedNode && <WorkflowVisualizerNodeDetails node={selectedNode} />,
+  };
 
-  if (!selectedNodeIds?.length || Number.isNaN(parseInt(selectedNodeIds[0], 10))) {
-    setSidebarMode(undefined);
-    return null;
-  }
-
-  const node: Node<NodeModel, { resource: WorkflowNode }> | undefined = controller.getNodeById(
-    selectedNodeIds[0]
+  return (
+    <TopologySideBar data-cy="workflow-topology-sidebar" resizable show>
+      {nodeSidebar[sidebarMode]}
+    </TopologySideBar>
   );
-  const { resource } = node?.getData() as { resource: WorkflowNode };
-
-  if (sidebarMode === 'edit') {
-    return <NodeForm node={resource} />;
-  }
-
-  return <WorkflowVisualizerNodeDetails resource={resource} />;
-});
+}
