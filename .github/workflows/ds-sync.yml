@@ -1,4 +1,4 @@
-name: On Upstream Push Main - Merge Main
+name: Sync
 
 on:
   repository_dispatch:

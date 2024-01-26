@@ -1,4 +1,4 @@
-name: platform-e2e
+name: Platform E2E
 
 on:
   workflow_call:

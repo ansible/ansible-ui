@@ -1,4 +1,4 @@
-name: On Push Tag - Push EDA UI Image
+name: EDA UI Image
 
 on:
   push:
