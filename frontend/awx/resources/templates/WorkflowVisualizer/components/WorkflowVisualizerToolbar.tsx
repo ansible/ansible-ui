@@ -32,7 +32,7 @@ import { postRequest } from '../../../../../common/crud/Data';
 import { AddNodeButton } from './AddNodeButton';
 import { getDocsBaseUrl } from '../../../../common/util/getDocsBaseUrl';
 import { useAwxConfig } from '../../../../common/useAwxConfig';
-import { useRemoveAllNodes } from '../hooks/useRemoveAllNodes';
+import { useRemoveGraphElements } from '../hooks/useRemoveGraphElements';
 import { useViewOptions } from '../ViewOptionsProvider';
 import type { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
 import type { GraphNode } from '../types';
@@ -43,20 +43,24 @@ export function ToolbarHeader() {
   const pageNavigate = usePageNavigate();
   const handleSave = useSaveVisualizer();
   const { isFullScreen } = useViewOptions();
-  const { modified, workflowTemplate } = useVisualizationController().getState<{
-    modified: boolean;
+  const controller = useVisualizationController();
+  const { workflowTemplate } = controller.getState<{
     workflowTemplate: WorkflowJobTemplate;
   }>();
+  const isModified = controller.getElements().some((element) => {
+    return element.getState<{ modified: boolean }>().modified;
+  });
   const [showUnsavedChangesModal, setShowUnsavedChangesModal] = useState<boolean>(false);
+
   const handleCancel = useCallback(() => {
-    if (modified) {
+    if (isModified) {
       setShowUnsavedChangesModal(true);
       return;
     }
     pageNavigate(AwxRoute.WorkflowJobTemplateDetails, {
       params: { id: workflowTemplate?.id },
     });
-  }, [pageNavigate, workflowTemplate?.id, modified]);
+  }, [pageNavigate, workflowTemplate?.id, isModified]);
 
   return (
     <>
@@ -137,7 +141,7 @@ export const WorkflowVisualizerToolbar = observer(() => {
   const isReadOnly = !workflowTemplate?.summary_fields?.user_capabilities?.edit;
   const isLaunchable = workflowTemplate?.summary_fields?.user_capabilities?.start;
 
-  const removeAllNodes = useRemoveAllNodes();
+  const { removeNodes } = useRemoveGraphElements();
 
   const handleLaunchWorkflow = useCallback(async () => {
     if (!workflowTemplate?.id) return;
@@ -206,7 +210,7 @@ export const WorkflowVisualizerToolbar = observer(() => {
                 <Divider />
                 <DropdownItem
                   data-cy="workflow-visualizer-toolbar-remove-all"
-                  onClick={() => removeAllNodes(nodes)}
+                  onClick={() => removeNodes(nodes)}
                   isDanger
                   icon={<MinusCircleIcon />}
                 >

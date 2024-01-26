@@ -15,6 +15,11 @@ export type GraphNodeData = {
   all_parents_must_converge: string;
   identifier: string;
 };
+
+export type GraphEdgeData = {
+  tag: string;
+  tagStatus: EdgeStatus;
+};
 export type GraphNode = Node<NodeModel, GraphNodeData>;
 
 export interface CustomEdgeProps {
