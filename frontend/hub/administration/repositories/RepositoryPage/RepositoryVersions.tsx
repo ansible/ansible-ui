@@ -8,17 +8,17 @@ import { HubRoute } from '../../../main/HubRoutes';
 import { RepositoryVersion } from '../Repository';
 import { useHubBulkConfirmation } from '../../../common/useHubBulkConfirmation';
 import { useCallback } from 'react';
-import { postRequest } from '../../../../common/crud/Data';
 import { parsePulpIDFromURL } from '../../../common/api/hub-api-utils';
 import { PageActionSelection } from '../../../../../framework';
 import { PageActionType } from '../../../../../framework';
 import { IPageAction } from '../../../../../framework';
+import { waitForTask } from '../../../common/api/hub-api-utils';
+import { postRequest } from '../../../../common/crud/Data';
 
 export function RepositoryVersions() {
   const { t } = useTranslation();
   const { repo_id } = useOutletContext<{ repo_id: string }>();
-  const rowActions = useVersionsActions();
- 
+
   const view = useHubView<RepositoryVersion>({
     url: pulpAPI`/repositories/ansible/ansible/${repo_id}/versions/`,
     keyFn: (repo) => repo.number,
@@ -26,8 +26,10 @@ export function RepositoryVersions() {
       offset: '0',
       limit: '10',
     },
-    defaultSort: 'pulp_created',
+    defaultSort: '-number',
   });
+
+  const rowActions = useVersionsActions(view.unselectItemsAndRefresh);
 
   const tableColumns = useRepositoryVersionColumns();
 
@@ -48,11 +50,10 @@ export function RepositoryVersions() {
   );
 }
 
-export function useRepositoryVersionColumns()
-{
+export function useRepositoryVersionColumns() {
   const getPageUrl = useGetPageUrl();
   const params = useParams<{ id: string; version: string }>();
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   return useMemo<ITableColumn<RepositoryVersion>[]>(
     () => [
@@ -79,9 +80,8 @@ export function useRepositoryVersionColumns()
   );
 }
 
-export function useRevertToVersion(
-  onComplete?: (items: RepositoryVersion[]) => void,
-) {
+
+export function useRevertToVersion(onComplete?: (items: RepositoryVersion[]) => void) {
   const { t } = useTranslation();
   const confirmationColumns = useRepositoryVersionColumns();
   const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
@@ -104,7 +104,7 @@ export function useRevertToVersion(
         confirmationColumns,
         actionColumns,
         onComplete,
-        actionFn: (item: RepositoryVersion, signal) => {
+        actionFn: (item: RepositoryVersion) => {
           return revertToVersion(item);
         },
       });
@@ -113,10 +113,8 @@ export function useRevertToVersion(
   );
 }
 
-async function revertToVersion(
-  repositoryVersion: RepositoryVersion,
-) { 
-  await postRequest(
+async function revertToVersion(repositoryVersion: RepositoryVersion) {
+  const res: { task: string } = await postRequest(
     pulpAPI`/repositories/ansible/ansible/${
       parsePulpIDFromURL(repositoryVersion.repository) || ''
     }/modify/`,
@@ -124,24 +122,27 @@ async function revertToVersion(
       base_version: repositoryVersion.pulp_href,
     }
   );
+
+  return await waitForTask(parsePulpIDFromURL(res.task));
 }
 
-function useVersionsActions() {
+function useVersionsActions(callback?: (items: RepositoryVersion[]) => void) {
   const { t } = useTranslation();
-  const revert = useRevertToVersion();
+  const revert = useRevertToVersion(callback);
 
   const actions = useMemo<IPageAction<RepositoryVersion>[]>(
     () => [
       {
         label: t('Revert to this version'),
-        onClick: (item) => { revert([item])},
+        onClick: (item) => {
+          revert([item]);
+        },
         selection: PageActionSelection.Single,
         type: PageActionType.Button,
       },
     ],
-    [t]
+    [t, revert]
   );
 
   return actions;
 }
-
