@@ -18,6 +18,8 @@ import { AwxRoute } from '../AwxRoutes';
 import { InventoryHosts } from '../../resources/inventories/InventoryPage/InventoryHosts';
 import { InventoryGroups } from '../../resources/inventories/InventoryPage/InventoryGroups';
 import { GroupPage } from '../../resources/groups/GroupPage';
+import { InventoryHostsPage } from '../../resources/inventories/inventoryHostsPage/inventoryHostsPage';
+import { InventoryHostsDetails } from '../../resources/inventories/inventoryHostsPage/inventoryHostsDetails';
 
 export function useAwxInventoryRoutes() {
   const { t } = useTranslation();
@@ -173,7 +175,18 @@ export function useAwxInventoryRoutes() {
             },
           ],
         },
-
+        {
+          id: AwxRoute.InventoryHostPage,
+          path: ':inventory_type/:id/hosts/:host_id',
+          element: <InventoryHostsPage />,
+          children: [
+            {
+              id: AwxRoute.InventoryHostDetails,
+              path: 'details',
+              element: <InventoryHostsDetails />,
+            },
+          ],
+        },
         {
           id: AwxRoute.EditInventory,
           path: ':id/edit',
