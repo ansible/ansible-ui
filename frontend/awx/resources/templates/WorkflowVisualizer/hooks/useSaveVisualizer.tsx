@@ -2,11 +2,10 @@ import { useVisualizationController } from '@patternfly/react-topology';
 import { usePageNavigate } from '../../../../../../framework';
 import { useDeleteRequest } from '../../../../../common/crud/useDeleteRequest';
 import { useAbortController } from '../../../../../common/crud/useAbortController';
-import { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
-import { GraphNode, EdgeStatus, GraphNodeData } from '../types';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { AwxRoute } from '../../../../main/AwxRoutes';
 import { usePostRequest } from '../../../../../common/crud/usePostRequest';
+import { ControllerState, GraphNode, EdgeStatus, GraphNodeData } from '../types';
 import { UnifiedJobType, WorkflowNode } from '../../../../interfaces/WorkflowNode';
 
 interface WorkflowApprovalNode {
@@ -26,10 +25,7 @@ export function useSaveVisualizer() {
   const postDisassociateNode = usePostRequest<{ id: number; disassociate: boolean }>();
 
   const graphNodes = controller.getGraph().getNodes() as GraphNode[];
-  const state = controller.getState<{
-    workflowTemplate: WorkflowJobTemplate;
-    unsavedNodeId: number;
-  }>();
+  const state = controller.getState<ControllerState>();
   const deletedNodeIds: string[] = [];
   const deletedEdges = [];
   const associateSuccessNodes: { sourceId: string; targetId: string }[] = [];
