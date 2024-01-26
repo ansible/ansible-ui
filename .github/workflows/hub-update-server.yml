@@ -43,8 +43,8 @@ jobs:
       HUB_SERVER: ${{ needs.setup.outputs.HUB_SERVER }}
     secrets:
       HUB_PASSWORD: ${{ secrets.HUB_PASSWORD }}
-      CYPRESS_AUI_HUB_E2E_PROJECT_ID: ${{ secrets.CYPRESS_AUI_HUB_E2E_PROJECT_ID }}
-      CYPRESS_AUI_HUB_E2E_RECORD_KEY: ${{ secrets.CYPRESS_AUI_HUB_E2E_RECORD_KEY }}
+      HUB_PROJECT_ID: ${{ secrets.HUB_PROJECT_ID }}
+      HUB_RECORD_KEY: ${{ secrets.HUB_RECORD_KEY }}
 
   hub-update-server:
     name: HUB Update Server

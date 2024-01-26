@@ -13,9 +13,9 @@ on:
     secrets:
       EDA_PASSWORD:
         required: true
-      CYPRESS_AUI_EDA_E2E_PROJECT_ID:
+      EDA_PROJECT_ID:
         required: true
-      CYPRESS_AUI_EDA_E2E_RECORD_KEY:
+      EDA_RECORD_KEY:
         required: true
 
 jobs:
@@ -117,7 +117,7 @@ jobs:
           EDA_SERVER: ${{ inputs.EDA_SERVER }}
           EDA_USERNAME: e2e
           EDA_PASSWORD: ${{ secrets.EDA_PASSWORD }}
-          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_EDA_E2E_PROJECT_ID }}
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_EDA_E2E_RECORD_KEY }}
+          CYPRESS_PROJECT_ID: ${{ secrets.EDA_PROJECT_ID }}
+          CYPRESS_RECORD_KEY: ${{ secrets.EDA_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_TLS_REJECT_UNAUTHORIZED: 0

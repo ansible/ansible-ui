@@ -43,8 +43,8 @@ jobs:
       AWX_SERVER: ${{ needs.setup.outputs.AWX_SERVER }}
     secrets:
       AWX_PASSWORD: ${{ secrets.AWX_PASSWORD }}
-      CYPRESS_AUI_AWX_E2E_PROJECT_ID: ${{ secrets.CYPRESS_AUI_AWX_E2E_PROJECT_ID }}
-      CYPRESS_AUI_AWX_E2E_RECORD_KEY: ${{ secrets.CYPRESS_AUI_AWX_E2E_RECORD_KEY }}
+      AWX_PROJECT_ID: ${{ secrets.AWX_PROJECT_ID }}
+      AWX_RECORD_KEY: ${{ secrets.AWX_RECORD_KEY }}
 
   awx-update-server:
     name: AWX Update Server
