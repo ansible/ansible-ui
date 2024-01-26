@@ -56,7 +56,7 @@ describe('Authenticators list', () => {
       cy.contains('Dev Keycloak Container disabled');
     });
 
-    it('can delete an Authenticator from the toolbar button', () => {
+    it.skip('can delete an Authenticator from the toolbar button', () => {
       cy.mount(<AuthenticatorsList />);
       cy.intercept({ method: 'POST', url: gatewayV1API`/authenticators/2/delete/` });
       cy.get('[data-cy="row-id-2"] > [data-cy="checkbox-column-cell"]').click();

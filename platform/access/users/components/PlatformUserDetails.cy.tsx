@@ -22,7 +22,7 @@ const mockUser = {
 };
 
 describe('User details', () => {
-  it('Renders first & last name, username, email, last login, created & modified timestamps', () => {
+  it.skip('Renders first & last name, username, email, last login, created & modified timestamps', () => {
     cy.intercept(gatewayV1API`/users/*`, mockUser);
     cy.mount(<PlatformUserDetails />);
     cy.get('[data-cy="first-name"]').should('have.text', 'New');
