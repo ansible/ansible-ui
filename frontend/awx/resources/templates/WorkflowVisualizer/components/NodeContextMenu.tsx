@@ -5,13 +5,14 @@ import {
   action,
   useVisualizationController,
   useVisualizationState,
+  Node,
+  NodeModel,
 } from '@patternfly/react-topology';
 import { PencilAltIcon, MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 
 import { useTranslation } from 'react-i18next';
 import { useViewOptions } from '../ViewOptionsProvider';
-import { GraphNode } from '../types';
-import { useRemoveNode } from '../hooks/useRemoveNode';
+import { GraphNodeData } from '../types';
 
 interface MenuItem {
   key: string;
@@ -21,15 +22,12 @@ interface MenuItem {
   onClick?: () => void;
 }
 
-export function useNodeMenuItems(element: GraphNode): MenuItem[] {
+export function useNodeMenuItems(element: Node<NodeModel, GraphNodeData>): MenuItem[] {
   const { t } = useTranslation();
-  const { selectedIds } = useVisualizationController().getState<{
-    selectedIds: string[] | [];
-  }>();
+  const { selectedIds } = useVisualizationController().getState<{ selectedIds: string[] }>();
   const { setSidebarMode } = useViewOptions();
   const [_, setSelectedIds] = useVisualizationState('selectedIds', selectedIds);
-  const removeNode = useRemoveNode();
-
+  const { removeNodes } = useViewOptions();
   const id = element.getId();
   return [
     {
@@ -65,16 +63,15 @@ export function useNodeMenuItems(element: GraphNode): MenuItem[] {
       isDanger: true,
       label: t('Remove node'),
       onClick: () => {
-        action(() => {
-          removeNode(element);
-        })();
+        removeNodes([element]);
       },
     },
   ];
 }
 
-export function NodeContextMenu(props: { element: GraphNode }) {
+export function NodeContextMenu(props: { element: Node<NodeModel, GraphNodeData> }) {
   const { element } = props;
+
   const items = useNodeMenuItems(element);
   return items.map((item) => {
     if (item.label === '-') {
@@ -87,7 +84,9 @@ export function NodeContextMenu(props: { element: GraphNode }) {
         key={item.key}
         icon={item.icon}
         isDanger={item.isDanger}
-        onClick={() => item?.onClick && item.onClick()}
+        onClick={() => {
+          item?.onClick && item.onClick();
+        }}
       >
         {item.label}
       </ContextMenuItem>

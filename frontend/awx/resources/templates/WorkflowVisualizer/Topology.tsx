@@ -239,14 +239,18 @@ export const Visualizer = ({ data: { workflowNodes = [], template } }: TopologyP
       <ViewOptionsProvider>
         {/* tools provider name */}
         <ViewOptionsContext.Consumer>
-          {({ isFullScreen, isEmpty, isLegendOpen, isLoading, toggleLegend, sidebarMode }) => {
-            const state: TopologyProps & {
-              selectedIds: string[] | [];
-            } = visualization.getState();
+          {({
+            isFullScreen,
+            isEmpty,
+            isLegendOpen,
+            isLoading,
+            toggleLegend,
+            sidebarMode,
+            selectedIds,
+          }) => {
             let showSideBar = false;
-
-            if (state?.selectedIds?.length && !isLoading) {
-              const element = visualization.getElementById(state.selectedIds[0]) as GraphElement;
+            if (selectedIds?.length && !isLoading) {
+              const element = visualization.getElementById(selectedIds[0]) as GraphElement;
               showSideBar = isNode(element);
             }
             if (sidebarMode === 'add') {
