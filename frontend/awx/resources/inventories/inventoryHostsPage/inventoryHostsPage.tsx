@@ -10,12 +10,11 @@ import {
   usePageNavigate,
 } from '../../../../../framework';
 import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
-import { useGetItem } from '../../../../common/crud/useGet';
-import { awxAPI } from '../../../common/api/awx-utils';
 import { AwxHost } from '../../../interfaces/AwxHost';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useInventoriesHostsActions } from '../hooks/useInventoriesHostsActions';
 import { useGetInventory } from '../InventoryPage/InventoryPage';
+import { useGetHost } from '../../hosts/hooks/useGetHost';
 
 export function InventoryHostsPage() {
   const { t } = useTranslation();
@@ -26,7 +25,7 @@ export function InventoryHostsPage() {
   }>();
 
   const inventory = useGetInventory(params.id, params.inventory_type);
-  const { host, refresh } = useGetInventoryHost(params.host_id as string);
+  const { host, refresh } = useGetHost(params.host_id as string);
   const pageNavigate = usePageNavigate();
 
   const itemActions = useInventoriesHostsActions((_host) => {
@@ -81,9 +80,4 @@ export function InventoryHostsPage() {
       />
     </PageLayout>
   );
-}
-
-export function useGetInventoryHost(host_id: string) {
-  const { data: host, refresh } = useGetItem<AwxHost>(awxAPI`/hosts`, host_id.toString());
-  return { host, refresh };
 }

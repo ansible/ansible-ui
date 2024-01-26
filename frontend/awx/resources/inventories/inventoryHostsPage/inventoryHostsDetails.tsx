@@ -2,16 +2,16 @@
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { DateTimeCell, PageDetail, PageDetails, usePageNavigate } from '../../../../../framework';
-import { useGetInventoryHost } from './inventoryHostsPage';
 import { AwxHost } from '../../../interfaces/AwxHost';
 import { Sparkline } from '../../templates/components/Sparkline';
 import { LastModifiedPageDetail } from '../../../../common/LastModifiedPageDetail';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
+import { useGetHost } from '../../hosts/hooks/useGetHost';
 
 export function InventoryHostsDetails() {
   const params = useParams<{ id: string; inventory_type: string; host_id: string }>();
-  const { host } = useGetInventoryHost(params.host_id as string);
+  const { host } = useGetHost(params.host_id as string);
 
   if (!host) {
     return null;
