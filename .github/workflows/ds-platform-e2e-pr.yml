@@ -1,4 +1,4 @@
-name: Run Platform E2E
+name: Platform E2E PR
 
 on:
   pull_request:
