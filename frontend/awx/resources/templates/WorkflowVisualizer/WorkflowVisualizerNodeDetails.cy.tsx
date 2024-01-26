@@ -126,7 +126,19 @@ describe('WorkflowVisualizer', () => {
     cy.get('[data-cy="workflow-visualizer-toolbar-expand"]').should('be.visible');
     cy.get('[data-cy="workflow-visualizer-toolbar-collapse"]').should('not.exist');
   });
-
+  it('Show confirmation modal when removing a node, then cancel removal, then actually remove', () => {
+    cy.mount(<WorkflowVisualizer />);
+    cy.get('[data-id="1510"]').click();
+    cy.clickButton('Remove');
+    cy.clickButton('Cancel');
+    cy.get('[data-id="1510"] .pf-topology__node__action-icon').should('be.visible');
+    cy.get('[data-id="1510"]').click();
+    cy.clickButton('Remove');
+    cy.clickModalConfirmCheckbox();
+    cy.clickModalButton('Remove node');
+    cy.clickModalButton('Close');
+    cy.get('[data-id="1510"] .pf-topology__node__action-icon').should('not.exist');
+  });
   it('Should show the visualizer screen', () => {
     cy.fixture('workflow_nodes.json').then((workflowNodes: AwxItemsResponse<WorkflowNode>) => {
       workflowNodes.count = 3;
