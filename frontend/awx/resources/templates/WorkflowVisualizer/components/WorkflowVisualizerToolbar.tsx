@@ -25,18 +25,16 @@ import {
   Title,
   ToolbarItem,
 } from '@patternfly/react-core';
-import { useVisualizationController, observer } from '@patternfly/react-topology';
+import { useVisualizationController } from '@patternfly/react-topology';
 import { usePageNavigate } from '../../../../../../framework';
 import { AwxRoute } from '../../../../main/AwxRoutes';
 import { postRequest } from '../../../../../common/crud/Data';
 import { AddNodeButton } from './AddNodeButton';
 import { getDocsBaseUrl } from '../../../../common/util/getDocsBaseUrl';
 import { useAwxConfig } from '../../../../common/useAwxConfig';
-import { useRemoveGraphElements } from '../hooks/useRemoveGraphElements';
 import { useViewOptions } from '../ViewOptionsProvider';
-import type { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
-import type { GraphNode } from '../types';
-import { useSaveVisualizer } from '../hooks';
+import { useRemoveGraphElements, useSaveVisualizer } from '../hooks';
+import type { ControllerState, GraphNode } from '../types';
 
 export function ToolbarHeader() {
   const { t } = useTranslation();
@@ -44,9 +42,7 @@ export function ToolbarHeader() {
   const handleSave = useSaveVisualizer();
   const { isFullScreen } = useViewOptions();
   const controller = useVisualizationController();
-  const { workflowTemplate } = controller.getState<{
-    workflowTemplate: WorkflowJobTemplate;
-  }>();
+  const { workflowTemplate } = controller.getState<ControllerState>();
   const isModified = controller.getElements().some((element) => {
     return element.getState<{ modified: boolean }>().modified;
   });
@@ -125,11 +121,12 @@ export function ToolbarHeader() {
   );
 }
 
-export const WorkflowVisualizerToolbar = observer(() => {
+export function WorkflowVisualizerToolbar() {
   const { t } = useTranslation();
   const config = useAwxConfig();
   const [isKebabOpen, setIsKebabOpen] = useState<boolean>(false);
   const { isFullScreen, toggleFullScreen } = useViewOptions();
+  const { removeNodes } = useRemoveGraphElements();
   const handleSave = useSaveVisualizer();
 
   const controller = useVisualizationController();
@@ -137,11 +134,7 @@ export const WorkflowVisualizerToolbar = observer(() => {
     .getGraph()
     .getNodes()
     .filter((n) => n.isVisible()) as GraphNode[];
-  const { workflowTemplate } = controller.getState<{ workflowTemplate: WorkflowJobTemplate }>();
-  const isReadOnly = !workflowTemplate?.summary_fields?.user_capabilities?.edit;
-  const isLaunchable = workflowTemplate?.summary_fields?.user_capabilities?.start;
-
-  const { removeNodes } = useRemoveGraphElements();
+  const { workflowTemplate, RBAC } = controller.getState<ControllerState>();
 
   const handleLaunchWorkflow = useCallback(async () => {
     if (!workflowTemplate?.id) return;
@@ -154,7 +147,7 @@ export const WorkflowVisualizerToolbar = observer(() => {
   return (
     <>
       {isFullScreen && <ToolbarHeader />}
-      {!isReadOnly && (
+      {RBAC?.edit && (
         <>
           <ToolbarItem>
             <Button
@@ -196,7 +189,7 @@ export const WorkflowVisualizerToolbar = observer(() => {
             >
               {t('Documentation')}
             </DropdownItem>
-            {isLaunchable && (
+            {RBAC?.start && (
               <DropdownItem
                 data-cy="workflow-visualizer-toolbar-launch"
                 onClick={() => void handleLaunchWorkflow()}
@@ -205,7 +198,7 @@ export const WorkflowVisualizerToolbar = observer(() => {
                 {t('Launch workflow')}
               </DropdownItem>
             )}
-            {!isReadOnly && (
+            {RBAC?.edit && (
               <>
                 <Divider />
                 <DropdownItem
@@ -251,4 +244,4 @@ export const WorkflowVisualizerToolbar = observer(() => {
       </ToolbarItem>
     </>
   );
-});
+}
