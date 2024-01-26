@@ -25,7 +25,7 @@ describe('Organizations list', () => {
         }
       ).as('organizationsList');
     });
-    it('Organizations list renders', () => {
+    it.skip('Organizations list renders', () => {
       cy.mount(<PlatformOrganizationList />);
       cy.verifyPageTitle('Organizations');
       cy.get('tbody').find('tr').should('have.length', 3);

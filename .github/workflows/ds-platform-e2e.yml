@@ -20,7 +20,7 @@ on:
 
 jobs:
   platform-ui-image:
-    name: PLATFORM UI Image
+    name: Platform UI Image
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
@@ -64,7 +64,7 @@ jobs:
           path: platform-ui.tar
 
   platform-e2e:
-    name: PLATFORM E2E
+    name: Platform E2E
     runs-on: ubuntu-latest
     timeout-minutes: 15
     needs: platform-ui-image

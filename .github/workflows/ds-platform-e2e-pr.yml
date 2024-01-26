@@ -37,7 +37,7 @@ jobs:
         run: npm ci
    
   platform-e2e:
-    name: PLATFORM E2E
+    name: Platform E2E
     needs: packages
     uses: ./.github/workflows/ds-platform-e2e.yml
     with:
