@@ -1,0 +1,48 @@
+name: Downstream - On Pull Request - Run Platform E2E
+
+on:
+  pull_request:
+
+env:
+  IS_GITHUB_ACTION: true
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  packages:
+    name: Packages
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 100
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - name: PreCache
+        run: npm version 0.0.0 --no-git-tag-version
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ./node_modules
+            /home/runner/.cache/Cypress
+          key: modules-${{ hashFiles('package-lock.json') }}
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm ci
+   
+  platform-e2e:
+    name: PLATFORM E2E
+    needs: packages
+    uses: ./.github/workflows/platform-e2e.yml
+    with:
+      PLATFORM_SERVER: ${{ vars.PLATFORM_SERVER }}
+    secrets:
+      PLATFORM_PASSWORD: ${{ secrets.PLATFORM_PASSWORD }}
+      PLATFORM_PROJECT_ID: ${{ secrets.PLATFORM_PROJECT_ID }}
+      PLATFORM_RECORD_KEY: ${{ secrets.PLATFORM_RECORD_KEY }}
