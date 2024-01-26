@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
-import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
@@ -27,17 +26,8 @@ export function InventoryHostsPage() {
   }>();
 
   const inventory = useGetInventory(params.id, params.inventory_type);
-  const { host: hostResponse, refresh } = useGetInventoryHost(
-    params.id as string,
-    params.host_id as string
-  );
+  const { host, refresh } = useGetInventoryHost(params.host_id as string);
   const pageNavigate = usePageNavigate();
-
-  const [host, setHost] = useState<AwxHost | undefined>(hostResponse);
-
-  useEffect(() => {
-    setHost(hostResponse);
-  }, [hostResponse]);
 
   const itemActions = useInventoriesHostsActions((_host) => {
     pageNavigate(AwxRoute.InventoryHosts, {
@@ -93,7 +83,7 @@ export function InventoryHostsPage() {
   );
 }
 
-export function useGetInventoryHost(inventory_id: string, host_id: string) {
+export function useGetInventoryHost(host_id: string) {
   const { data: host, refresh } = useGetItem<AwxHost>(awxAPI`/hosts`, host_id.toString());
   return { host, refresh };
 }
