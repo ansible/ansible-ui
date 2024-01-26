@@ -146,3 +146,18 @@ export function useInventoryTypeToolbarFilter() {
     [t]
   );
 }
+
+export function useGroupTypeToolbarFilter() {
+  const { t } = useTranslation();
+  return useMemo<IToolbarFilter>(
+    () => ({
+      key: 'group',
+      label: t('Group type'),
+      type: ToolbarFilterType.MultiSelect,
+      query: 'parents__isnull',
+      options: [{ label: t('Show only root groups'), value: 'true' }],
+      placeholder: t('Filter by group type'),
+    }),
+    [t]
+  );
+}

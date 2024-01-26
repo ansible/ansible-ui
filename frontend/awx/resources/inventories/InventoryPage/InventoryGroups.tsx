@@ -3,7 +3,7 @@ import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../../
 import { useGroupsFilters } from '../../groups/hooks/useGroupsFilters';
 import { useParams } from 'react-router-dom';
 import { useAwxView } from '../../../common/useAwxView';
-import { AwxGroup } from '../../../interfaces/InventoryGroup';
+import { InventoryGroup } from '../../../interfaces/InventoryGroup';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useInventoriesGroupsColumns } from '../hooks/useInventoriesGroupsColumns';
 import { useInventoriesGroupsToolbarActions } from '../hooks/useInventoriesGroupsToolbarActions';
@@ -19,7 +19,7 @@ export function InventoryGroups() {
   const toolbarFilters = useGroupsFilters();
   const tableColumns = useInventoriesGroupsColumns();
   const params = useParams<{ id: string; inventory_type: string }>();
-  const view = useAwxView<AwxGroup>({
+  const view = useAwxView<InventoryGroup>({
     url: awxAPI`/inventories/${params.id ?? ''}/groups`,
     toolbarFilters,
     tableColumns,
@@ -39,7 +39,7 @@ export function InventoryGroups() {
         titleHelpTitle={t('Inventory Groups')}
         description={t('The list of groups in the current inventory')}
       />
-      <PageTable<AwxGroup>
+      <PageTable<InventoryGroup>
         id="awx-inventory-group-table"
         toolbarFilters={toolbarFilters}
         toolbarActions={toolbarActions}

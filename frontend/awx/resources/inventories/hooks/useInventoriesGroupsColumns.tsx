@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { ITableColumn, usePageNavigate } from '../../../../../framework';
-import { AwxGroup } from '../../../interfaces/InventoryGroup';
+import { InventoryGroup } from '../../../interfaces/InventoryGroup';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useCreatedColumn, useModifiedColumn, useNameColumn } from '../../../../common/columns';
 import { useTranslation } from 'react-i18next';
@@ -12,7 +12,7 @@ export function useInventoriesGroupsColumns(options?: {
 }) {
   const pageNavigate = usePageNavigate();
   const nameClick = useCallback(
-    (group: AwxGroup) =>
+    (group: InventoryGroup) =>
       pageNavigate(AwxRoute.InventoryGroupDetails, {
         params: { inventory_type: 'inventory', id: group.inventory, group_id: group.id },
       }),
@@ -25,7 +25,7 @@ export function useInventoriesGroupsColumns(options?: {
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);
   const relatedGroupColumn = useRelatedGroupsColumn();
-  const tableColumns = useMemo<ITableColumn<AwxGroup>[]>(
+  const tableColumns = useMemo<ITableColumn<InventoryGroup>[]>(
     () => [nameColumn, relatedGroupColumn, createdColumn, modifiedColumn],
     [nameColumn, relatedGroupColumn, createdColumn, modifiedColumn]
   );
@@ -35,7 +35,7 @@ export function useInventoriesGroupsColumns(options?: {
 function useRelatedGroupsColumn() {
   const { t } = useTranslation();
 
-  const column: ITableColumn<AwxGroup> = useMemo(
+  const column: ITableColumn<InventoryGroup> = useMemo(
     () => ({
       header: t('Related Groups'),
       cell: (group) => {

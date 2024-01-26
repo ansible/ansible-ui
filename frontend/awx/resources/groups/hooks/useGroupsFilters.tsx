@@ -4,15 +4,22 @@ import {
   useNameToolbarFilter,
   useCreatedByToolbarFilter,
   useModifiedByToolbarFilter,
+  useGroupTypeToolbarFilter,
 } from '../../../common/awx-toolbar-filters';
 
 export function useGroupsFilters() {
   const nameToolbarFilter = useNameToolbarFilter();
   const createdByToolbarFilter = useCreatedByToolbarFilter();
   const modifiedByToolbarFilter = useModifiedByToolbarFilter();
+  const groupTypeToolbarFilter = useGroupTypeToolbarFilter();
   const toolbarFilters = useMemo<IToolbarFilter[]>(
-    () => [nameToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter],
-    [nameToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter]
+    () => [
+      nameToolbarFilter,
+      groupTypeToolbarFilter,
+      createdByToolbarFilter,
+      modifiedByToolbarFilter,
+    ],
+    [nameToolbarFilter, groupTypeToolbarFilter, createdByToolbarFilter, modifiedByToolbarFilter]
   );
   return toolbarFilters;
 }
