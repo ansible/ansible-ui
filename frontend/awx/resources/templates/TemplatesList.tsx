@@ -23,14 +23,14 @@ import { useOptions } from '../../../common/crud/useOptions';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { awxAPI } from '../../common/api/awx-utils';
 
-export function TemplatesList(props: { url: string; projectId?: string }) {
+export function TemplatesList(props: { url?: string; projectId?: string }) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const getPageUrl = useGetPageUrl();
   const toolbarFilters = useTemplateFilters();
   const tableColumns = useTemplateColumns();
   const view = useAwxView<JobTemplate | WorkflowJobTemplate>({
-    url: props.url,
+    url: props.url ? props.url : awxAPI`/unified_job_templates/`,
     queryParams: {
       project__id: props.projectId ? props.projectId : '',
       type: 'job_template,workflow_job_template',

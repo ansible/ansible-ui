@@ -90,14 +90,6 @@ describe('TemplatesList', () => {
     it('Create Template button is disabled if the user does not have permission to create templates', () => {
       cy.mount(<TemplatesList url={'/api/v2/projects/6/*'} />);
       cy.contains('.pf-v5-c-dropdown__toggle', 'Create template').should('be.disabled');
-      /*
-      cy.intercept({ method: 'GET', url: '/api/v2/me' }, { fixture: 'normalUser.json' });
-      cy.wait('@templatesList')
-        .its('response.body')
-        .then(() => {
-          cy.contains('.pf-v5-c-dropdown__toggle', 'Create template').should('be.disabled');
-        });
-        */
     });
 
     it('Create Template button renders form if user has permission to create', () => {
@@ -123,12 +115,48 @@ describe('TemplatesList', () => {
 
     it('Delete Template button renders delete modal', () => {
       cy.mount(<TemplatesList url={'/api/v2/projects/6/*'} />);
-      cy.clickTableRowPinnedAction('Demo Job Template', 'actions-dropdown');
+      cy.clickTableRowPinnedAction('Test Job Template', 'actions-dropdown');
       cy.get('[data-cy="delete-template"]').click();
+      cy.clickModalButton('Cancel');
     });
 
-    it('Clicking Sort button changes the order of listed templates', () => {});
+    it('Clicking Sort button changes the order of listed templates', () => {
+      cy.mount(<TemplatesList url={'/api/v2/projects/6/*'} />);
+      //get top row
+      cy.clickTableHeader('Name');
+      //get top row
+      //expect top row to be different
+    });
 
-    it('Pagination button functions as expected', () => {});
+    it('Pagination button functions as expected', () => {
+      cy.mount(<TemplatesList url={'/api/v2/projects/6/*'} />);
+      cy.get('.pf-v5-c-pagination__nav-page-select').should('be.visible');
+    });
+
+    it('Able to create job template', () => {
+      /*
+      cy.stub(useOptions, 'useOptions').callsFake(() => ({
+        data: {
+          actions: {
+            POST: {
+              name: {
+                type: ToolbarFilterType.Text,
+                required: true,
+                label: 'Name',
+                max_length: 512,
+                help_text: 'Name of this template.',
+                filterable: true,
+              },
+            },
+          },
+        },
+      }));
+      */
+      cy.mount(<TemplatesList url={'/api/v2/projects/6/*'} />);
+      cy.contains('.pf-v5-c-dropdown__toggle', 'Create template').click();
+      cy.get(
+        ':nth-child(1) > [data-cy="create-template"] > li > .pf-v5-c-dropdown__menu-item'
+      ).click();
+    });
   });
 });
