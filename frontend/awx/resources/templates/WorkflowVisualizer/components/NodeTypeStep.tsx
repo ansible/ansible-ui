@@ -1,15 +1,15 @@
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useWatch, useFormContext } from 'react-hook-form';
 import { PageFormJobTemplateSelect } from '../../components/PageFormJobTemplateSelect';
 import { PageFormSelect, PageFormTextInput } from '../../../../../../framework';
 import { getDocsBaseUrl } from '../../../../common/util/getDocsBaseUrl';
 import { useAwxConfig } from '../../../../common/useAwxConfig';
-import { NodeFields } from './NodeFormInputs';
 import { PageFormProjectSelect } from '../../../projects/components/PageFormProjectSelect';
 import { PageFormInventorySourceSelect } from '../../../inventories/components/PageFormInventorySourceSelect';
 import { PageFormManagementJobsSelect } from '../../../../administration/management-jobs/components/PageFormManagementJobsSelect';
-import { useWatch, useFormContext } from 'react-hook-form';
-import { useEffect } from 'react';
 import { UnifiedJobType } from '../../../../interfaces/WorkflowNode';
+import { NodeFields } from '../types';
 
 export function NodeTypeStep() {
   const { t } = useTranslation();
