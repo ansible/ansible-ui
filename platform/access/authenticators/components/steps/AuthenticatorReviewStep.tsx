@@ -79,7 +79,7 @@ export function AuthenticatorReviewStep(props: { plugins: AuthenticatorPlugins }
           <PageDetails numberOfColumns="single">
             {mappings.map((map) => (
               <PageDetail label={map.name} key={map.name}>
-                {map.ui_summary || t('{{mapType}} map', { mapType: map.map_type })}
+                {t('{{mapType}} map', { mapType: map.map_type })}
               </PageDetail>
             ))}
           </PageDetails>
