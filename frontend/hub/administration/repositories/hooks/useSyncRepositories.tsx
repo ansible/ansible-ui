@@ -7,7 +7,6 @@ import {
   errorToAlertProps,
   usePageAlertToaster,
 } from '../../../../../framework';
-import { PageFormGroup } from '../../../../../framework/PageForm/Inputs/PageFormGroup';
 import { Repository } from '../Repository';
 import { useCallback } from 'react';
 import { postHubRequest } from '../../../common/api/request';
@@ -59,31 +58,25 @@ export function useSyncRepositories() {
           onCancel={() => onClose()}
           defaultValue={syncFormValues}
         >
-          <PageFormGroup
+          <PageFormSwitch
+            name={'mirror'}
             label={t`Mirror`}
             labelHelp={t(
               'If selected, all content that is not present in the remote repository will be removed from the local repository; otherwise, sync will add missing content.'
             )}
-          >
-            <PageFormSwitch
-              name={'mirror'}
-              label={t`Content not present in remote repository will be removed from the local repository`}
-              labelOff={t`Sync will only add missing content`}
-            />
-          </PageFormGroup>
+            labelOn={t`Content not present in remote repository will be removed from the local repository`}
+            labelOff={t`Sync will only add missing content`}
+          />
           <br />
-          <PageFormGroup
+          <PageFormSwitch
+            name="optimize"
             label={t`Optimize`}
             labelHelp={t(
               'Only perform the sync if no changes are reported by the remote server. To force a sync to happen, deselect this option.'
             )}
-          >
-            <PageFormSwitch
-              name="optimize"
-              label={t`Only perform the sync if no changes are reported by the remote server.`}
-              labelOff={t`Force a sync to happen.`}
-            />
-          </PageFormGroup>
+            labelOn={t`Only perform the sync if no changes are reported by the remote server.`}
+            labelOff={t`Force a sync to happen.`}
+          />
           <br />
         </PageForm>
       </Modal>
