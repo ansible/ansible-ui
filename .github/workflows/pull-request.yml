@@ -93,6 +93,9 @@ jobs:
     name: Component Tests
     needs: packages
     uses: ./.github/workflows/component-tests.yml
+    secrets:
+      COMPONENT_PROJECT_ID: ${{ secrets.COMPONENT_PROJECT_ID }}
+      COMPONENT_RECORD_KEY: ${{ secrets.COMPONENT_RECORD_KEY }}
 
   awx-e2e:
     name: AWX E2E
