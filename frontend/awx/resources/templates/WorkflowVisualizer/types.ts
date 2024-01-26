@@ -8,7 +8,8 @@ import {
   WithSelectionProps,
   Node,
 } from '@patternfly/react-topology';
-import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
+import type { WorkflowNode, UnifiedJobType } from '../../../interfaces/WorkflowNode';
+import type { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 
 export type GraphNodeData = {
   resource: WorkflowNode;
@@ -73,4 +74,36 @@ export enum EdgeStatus {
   danger = NodeStatus.danger,
   success = NodeStatus.success,
   info = NodeStatus.info,
+}
+
+export interface ControllerState {
+  modified: boolean;
+  RBAC: {
+    edit: boolean;
+    start: boolean;
+  };
+  selectedIds: string[];
+  workflowTemplate: WorkflowJobTemplate;
+}
+
+export interface NodeFields {
+  parentNodes?: WorkflowNode[];
+  node_type:
+    | 'job'
+    | 'workflow_job'
+    | 'workflow_approval'
+    | 'project_update'
+    | 'inventory_update'
+    | 'system_job';
+  node_resource: {
+    id: number;
+    name: string;
+    description: string;
+    unified_job_type: UnifiedJobType;
+    timeout_minute: number;
+    timeout_seconds: number;
+  };
+  node_status_type: string;
+  all_parents_must_converge: string;
+  identifier: string;
 }
