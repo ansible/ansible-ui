@@ -3,11 +3,11 @@ import { InventoryHostsDetailsInner as InventoryHostsDetails } from './inventory
 import mockAwxHost from '../../../../../cypress/fixtures/awxHost.json';
 import { DateTime } from 'luxon';
 
-describe('ApplicationDetails', () => {
+describe('InventoryHostDetails', () => {
   it('Component renders and displays Application', () => {
     cy.mount(<InventoryHostsDetails host={mockAwxHost as unknown as AwxHost} />);
   });
-  it('Render application detail fields', () => {
+  it('Render inventory host detail fields', () => {
     cy.mount(<InventoryHostsDetails host={mockAwxHost as unknown as AwxHost} />);
     cy.get('[data-cy="name"]').should('have.text', 'test');
     cy.get('[data-cy="code-block-value"]').should('have.text', '---\ntest: test');
