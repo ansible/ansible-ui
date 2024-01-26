@@ -1,14 +1,14 @@
 import { Approvals } from './constants';
 import { randomString } from '../../../framework/utils/random-string';
 
-describe.skip('Approvals', () => {
+describe('Approvals', () => {
   let thisCollectionName: string;
   let namespace: string;
   let repository: string;
 
   beforeEach(() => {
     thisCollectionName = 'hub_e2e_' + randomString(5).toLowerCase();
-    namespace = 'ibm';
+    namespace = 'hub_e2e_namespace' + randomString(5).toLowerCase();
     cy.hubLogin();
     cy.getNamespace(namespace);
     cy.uploadCollection(thisCollectionName, namespace);
@@ -18,6 +18,7 @@ describe.skip('Approvals', () => {
 
   afterEach(() => {
     cy.deleteCollection(thisCollectionName, namespace, repository);
+    cy.deleteNamespace(namespace);
   });
 
   it('user can upload a new collection and approve it', () => {
@@ -44,7 +45,7 @@ describe.skip('Approvals', () => {
     repository = 'published';
   });
 
-  it('user can upload a new collection and reject it', () => {
+  it.skip('user can upload a new collection and reject it', () => {
     cy.navigateTo('hub', Approvals.url);
     cy.verifyPageTitle(Approvals.title);
     cy.clickButton(/^Clear all filters$/);
