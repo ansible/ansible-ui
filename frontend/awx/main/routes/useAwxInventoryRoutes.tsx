@@ -17,7 +17,7 @@ import { Schedules } from '../../views/schedules/Schedules';
 import { AwxRoute } from '../AwxRoutes';
 import { InventoryHosts } from '../../resources/inventories/InventoryPage/InventoryHosts';
 import { InventoryGroups } from '../../resources/inventories/InventoryPage/InventoryGroups';
-import { GroupPage } from '../../resources/inventories/InventoryGroups/InventoryGroupPage';
+import { GroupPage } from '../../resources/groups/GroupPage';
 
 export function useAwxInventoryRoutes() {
   const { t } = useTranslation();

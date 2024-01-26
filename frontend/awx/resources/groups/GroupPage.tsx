@@ -1,12 +1,12 @@
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { useGetItem } from '../../../../common/crud/useGet';
-import { InventoryGroup } from '../../../interfaces/InventoryGroup';
-import { awxAPI } from '../../../common/api/awx-utils';
-import { LoadingPage, PageHeader, PageLayout, useGetPageUrl } from '../../../../../framework';
-import { AwxError } from '../../../common/AwxError';
-import { AwxRoute } from '../../../main/AwxRoutes';
-import { PageRoutedTabs } from '../../../../../framework/PageTabs/PageRoutedTabs';
+import { useGetItem } from '../../../common/crud/useGet';
+import { InventoryGroup } from '../../interfaces/InventoryGroup';
+import { awxAPI } from '../../common/api/awx-utils';
+import { LoadingPage, PageHeader, PageLayout, useGetPageUrl } from '../../../../framework';
+import { AwxError } from '../../common/AwxError';
+import { AwxRoute } from '../../main/AwxRoutes';
+import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
 
 export function GroupPage() {
   const { t } = useTranslation();
