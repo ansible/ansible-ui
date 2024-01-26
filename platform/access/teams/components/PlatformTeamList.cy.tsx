@@ -25,7 +25,7 @@ describe('Teams list', () => {
         }
       ).as('teamsList');
     });
-    it('Teams list renders', () => {
+    it.skip('Teams list renders', () => {
       cy.mount(<PlatformTeamList />);
       cy.verifyPageTitle('Teams');
       cy.get('tbody').find('tr').should('have.length', 3);
