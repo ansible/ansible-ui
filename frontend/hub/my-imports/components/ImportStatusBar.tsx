@@ -17,7 +17,7 @@ export function ImportStatusBar({ collection, collectionImport }: IProps) {
     staging: t`waiting for approval`,
     approved: t`approved`,
     unknown: t`could not be determined yet`,
-  }
+  };
 
   return (
     <PageDetails disablePadding>
@@ -28,9 +28,13 @@ export function ImportStatusBar({ collection, collectionImport }: IProps) {
       <PageDetail label={t('Approval status')}>
         {collection ? (
           <>
-            {collectionImport?.state === 'running' ? t('waiting for import to finish') : pipelineStates[collectionPipeline]}
+            {collectionImport?.state === 'running'
+              ? t('waiting for import to finish')
+              : pipelineStates[collectionPipeline]}
           </>
-        ) : '---'}
+        ) : (
+          '---'
+        )}
       </PageDetail>
     </PageDetails>
   );
