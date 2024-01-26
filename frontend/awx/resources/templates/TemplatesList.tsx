@@ -23,18 +23,40 @@ import { useOptions } from '../../../common/crud/useOptions';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { awxAPI } from '../../common/api/awx-utils';
 
-export function TemplatesList(props: { url?: string; projectId?: string }) {
+export function TemplatesList(props: {
+  url?: string;
+  projectId?: string | undefined;
+  inventoryId?: string | undefined;
+}) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const getPageUrl = useGetPageUrl();
   const toolbarFilters = useTemplateFilters();
   const tableColumns = useTemplateColumns();
+  const getQueryParams = (projectId?: string | undefined, inventoryId?: string | undefined) => {
+    const type = 'job_template,workflow_job_template';
+    if (projectId) {
+      const templateQueryParams = {
+        project__id: projectId,
+        type: type,
+      };
+      return templateQueryParams;
+    } else if (inventoryId) {
+      const templateQueryParams = {
+        inventory__id: inventoryId,
+        type: type,
+      };
+      return templateQueryParams;
+    } else {
+      const templateQueryParams = {
+        type: type,
+      };
+      return templateQueryParams;
+    }
+  };
   const view = useAwxView<JobTemplate | WorkflowJobTemplate>({
     url: props.url ? props.url : awxAPI`/unified_job_templates/`,
-    queryParams: {
-      project__id: props.projectId ? props.projectId : '',
-      type: 'job_template,workflow_job_template',
-    },
+    queryParams: getQueryParams(props.projectId, props.inventoryId),
     toolbarFilters,
     tableColumns,
   });
