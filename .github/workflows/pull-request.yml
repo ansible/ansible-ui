@@ -1,0 +1,135 @@
+name: Pull Request
+
+on:
+  pull_request:
+
+env:
+  IS_GITHUB_ACTION: true
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  packages:
+    name: Packages
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      awx: ${{ steps.changed-awx.outputs.changed == 'true' }}
+      hub: ${{ steps.changed-hub.outputs.changed == 'true' }}
+      eda: ${{ steps.changed-eda.outputs.changed == 'true' }}
+      afw: ${{ steps.changed-afw.outputs.changed == 'true' }}
+      common: ${{ steps.changed-common.outputs.changed == 'true' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 100
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - name: PreCache
+        run: npm version 0.0.0 --no-git-tag-version
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ./node_modules
+            /home/runner/.cache/Cypress
+          key: modules-${{ hashFiles('package-lock.json') }}
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm ci
+      - uses: marceloprado/has-changed-path@v1.0.1
+        id: changed-awx
+        with:
+          paths: frontend/awx frontend/common cypress/e2e/awx framework cypress/support package.json
+      - uses: marceloprado/has-changed-path@v1.0.1
+        id: changed-hub
+        with:
+          paths: frontend/hub frontend/common cypress/e2e/hub framework cypress/support package.json
+      - uses: marceloprado/has-changed-path@v1.0.1
+        id: changed-eda
+        with:
+          paths: frontend/eda frontend/common cypress/e2e/eda framework cypress/support package.json
+      - uses: marceloprado/has-changed-path@v1.0.1
+        id: changed-afw
+        with:
+          paths: framework
+      - uses: marceloprado/has-changed-path@v1.0.1
+        id: changed-common
+        with:
+          paths: frontend/common framework cypress/support package.json
+
+  checks:
+    name: ESLint - Prettier - TSC
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: packages
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - name: PreCache
+        run: npm version 0.0.0 --no-git-tag-version
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ./node_modules
+            /home/runner/.cache/Cypress
+          key: modules-${{ hashFiles('package-lock.json') }}
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm ci
+      - run: npm run checks
+
+  component-tests:
+    name: Component Tests
+    needs: packages
+    uses: ./.github/workflows/component-tests.yml
+    secrets:
+      COMPONENT_PROJECT_ID: ${{ secrets.COMPONENT_PROJECT_ID }}
+      COMPONENT_RECORD_KEY: ${{ secrets.COMPONENT_RECORD_KEY }}
+
+  awx-e2e:
+    name: AWX E2E
+    needs: packages
+    uses: ./.github/workflows/awx-e2e.yml
+    with:
+      AWX_SERVER: ${{ vars.AWX_SERVER }}
+      SKIP_JOB: ${{ needs.packages.outputs.awx != 'true' }}
+    secrets:
+      AWX_PASSWORD: ${{ secrets.AWX_PASSWORD }}
+      AWX_PROJECT_ID: ${{ secrets.AWX_PROJECT_ID }}
+      AWX_RECORD_KEY: ${{ secrets.AWX_RECORD_KEY }}
+      
+  eda-e2e:
+    name: EDA E2E
+    needs: packages
+    uses: ./.github/workflows/eda-e2e.yml
+    with:
+      EDA_SERVER: ${{ vars.EDA_SERVER }}
+      SKIP_JOB: ${{ needs.packages.outputs.eda != 'true' }}
+    secrets:
+      EDA_PASSWORD: ${{ secrets.EDA_PASSWORD }}
+      EDA_PROJECT_ID: ${{ secrets.EDA_PROJECT_ID }}
+      EDA_RECORD_KEY: ${{ secrets.EDA_RECORD_KEY }}
+      
+  hub-e2e:
+    name: HUB E2E
+    needs: packages
+    uses: ./.github/workflows/hub-e2e.yml
+    with:
+      HUB_SERVER: ${{ vars.HUB_SERVER }}
+      SKIP_JOB: ${{ needs.packages.outputs.hub != 'true' }}
+    secrets:
+      HUB_PASSWORD: ${{ secrets.HUB_PASSWORD }}
+      HUB_PROJECT_ID: ${{ secrets.HUB_PROJECT_ID }}
+      HUB_RECORD_KEY: ${{ secrets.HUB_RECORD_KEY }}
+      

@@ -1,4 +1,4 @@
-name: eda-update-server
+name: EDA Update E2E Server
 
 on:
   workflow_dispatch:
@@ -43,8 +43,8 @@ jobs:
       EDA_SERVER: ${{ needs.setup.outputs.EDA_SERVER }}
     secrets:
       EDA_PASSWORD: ${{ secrets.EDA_PASSWORD }}
-      CYPRESS_AUI_EDA_E2E_PROJECT_ID: ${{ secrets.CYPRESS_AUI_EDA_E2E_PROJECT_ID }}
-      CYPRESS_AUI_EDA_E2E_RECORD_KEY: ${{ secrets.CYPRESS_AUI_EDA_E2E_RECORD_KEY }}
+      EDA_PROJECT_ID: ${{ secrets.EDA_PROJECT_ID }}
+      EDA_RECORD_KEY: ${{ secrets.EDA_RECORD_KEY }}
 
   eda-update-server:
     name: EDA Update Server
@@ -59,22 +59,30 @@ jobs:
           curl -f -L -X PATCH -H "Accept: application/vnd.github+json" \
           -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" \
           -H "X-GitHub-Api-Version: 2022-11-28" \
-          "https://api.github.com/repos/ansible/ansible-ui/actions/variables/EDA_SERVER" \
+          "https://api.github.com/repos/${{ github.repository }}/actions/variables/EDA_SERVER" \
           -d '{"name":"EDA_SERVER","value":"${{ needs.setup.outputs.EDA_SERVER }}"}'
       - name: Slack Notification
         uses: slackapi/slack-github-action@v1.24.0
         with:
           payload: |
             {
-              "blocks":[
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": ":check: EDA E2E Update - <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Success> - <${{ needs.setup.outputs.EDA_SERVER }}|Server>"
+              "attachments":
+                [
+                  {
+                    "color": "#00DD00",
+                    "blocks":
+                      [
+                        {
+                          "type": "section",
+                          "text":
+                            {
+                              "type": "mrkdwn",
+                              "text": "*EDA E2E Server Updated*\n${{ github.repository }} - <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Success> - <${{ needs.setup.outputs.EDA_SERVER }}|Server>"
+                            }
+                        }
+                      ]
                   }
-                }
-              ]
+                ]
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
@@ -93,15 +101,21 @@ jobs:
         with:
           payload: |
             {
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": ":alert: *EDA E2E Update* - *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Failure>* - <${{ needs.setup.outputs.EDA_SERVER }}|Server> - <https://cloud.cypress.io/projects/b2zqnv|Cypress> - <!here>"
+              "attachments":
+                [
+                  {
+                    "color": "#FF0000",
+                    "blocks": [
+                      {
+                        "type": "section",
+                        "text": {
+                          "type": "mrkdwn",
+                          "text": "*EDA E2E Server Update Failed*\n${{ github.repository }} - *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Failure>* - <${{ needs.setup.outputs.EDA_SERVER }}|Server> - <!here>"
+                        }
+                      }
+                    ]
                   }
-                }
-              ]
+                ]
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

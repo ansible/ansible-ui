@@ -73,7 +73,8 @@ export const baseConfig: Cypress.ConfigOptions = {
         },
       },
     },
-    specPattern: ['frontend/**/*.cy.tsx', 'framework/**/*.cy.tsx'],
+    specPattern: ['**/*.cy.{js,jsx,ts,tsx}'],
+    excludeSpecPattern: ['cypress/**/*.cy.{js,jsx,ts,tsx}'],
     supportFile: 'cypress/support/component.tsx',
   },
 };
