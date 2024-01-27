@@ -64,14 +64,17 @@ export function HubNamespacePage() {
           {
             label: t('Details'),
             page: HubRoute.NamespaceDetails,
+            dataCy: 'namespace-details-tab',
           },
           {
             label: t('Collections'),
             page: HubRoute.NamespaceCollections,
+            dataCy: 'collections-tab',
           },
           {
             label: t('CLI Configuration'),
             page: HubRoute.NamespaceCLI,
+            dataCy: 'namespace-cli-tab',
           },
         ]}
         params={{ id: namespace?.name }}

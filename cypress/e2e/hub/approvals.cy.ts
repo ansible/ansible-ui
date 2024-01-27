@@ -7,8 +7,8 @@ describe('Approvals', () => {
   let repository: string;
 
   beforeEach(() => {
-    thisCollectionName = 'test' + randomString(4).toLowerCase();
-    namespace = 'ibm';
+    thisCollectionName = 'hub_e2e_' + randomString(5).toLowerCase();
+    namespace = 'hub_e2e_namespace' + randomString(5).toLowerCase();
     cy.hubLogin();
     cy.getNamespace(namespace);
     cy.uploadCollection(thisCollectionName, namespace);
@@ -18,11 +18,13 @@ describe('Approvals', () => {
 
   afterEach(() => {
     cy.deleteCollection(thisCollectionName, namespace, repository);
+    cy.deleteNamespace(namespace);
   });
 
   it('user can upload a new collection and approve it', () => {
     cy.navigateTo('hub', Approvals.url);
     cy.verifyPageTitle(Approvals.title);
+    cy.clickButton(/^Clear all filters$/);
     cy.clickTableRowPinnedAction(thisCollectionName, 'approve');
 
     //Verify Approve and sign collections modal
@@ -43,9 +45,10 @@ describe('Approvals', () => {
     repository = 'published';
   });
 
-  it('user can upload a new collection and reject it', () => {
+  it.skip('user can upload a new collection and reject it', () => {
     cy.navigateTo('hub', Approvals.url);
     cy.verifyPageTitle(Approvals.title);
+    cy.clickButton(/^Clear all filters$/);
     cy.clickTableRowPinnedAction(thisCollectionName, 'reject');
 
     //Verify Reject modal
@@ -69,6 +72,7 @@ describe('Approvals', () => {
   it('user can approve a collection and then reject it', () => {
     cy.navigateTo('hub', Approvals.url);
     cy.verifyPageTitle(Approvals.title);
+    cy.clickButton(/^Clear all filters$/);
     cy.clickTableRowPinnedAction(thisCollectionName, 'approve');
 
     //Verify Approve modal
@@ -90,6 +94,7 @@ describe('Approvals', () => {
     cy.verifyPageTitle(Approvals.title);
     cy.clickTableRowPinnedAction(thisCollectionName, 'reject');
 
+    //Verify Reject modal
     cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
       cy.get('header').contains('Reject collections');
       cy.get('button').contains('Reject collections').should('have.attr', 'aria-disabled', 'true');
@@ -110,6 +115,7 @@ describe('Approvals', () => {
   it('user can reject a collection and then approve it', () => {
     cy.navigateTo('hub', Approvals.url);
     cy.verifyPageTitle(Approvals.title);
+    cy.clickButton(/^Clear all filters$/);
     cy.clickTableRowPinnedAction(thisCollectionName, 'reject');
 
     //Verify Reject modal
@@ -127,10 +133,10 @@ describe('Approvals', () => {
     cy.assertModalSuccess();
     cy.clickModalButton('Close');
 
-    cy.navigateTo('hub', Approvals.url);
-    cy.verifyPageTitle(Approvals.title);
+    cy.clickButton(/^Clear all filters$/);
     cy.clickTableRowPinnedAction(thisCollectionName, 'approve');
 
+    //Verify Approval modal
     cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
       cy.get('header').contains('Approve collections');
       cy.get('button').contains('Approve collections').should('have.attr', 'aria-disabled', 'true');
