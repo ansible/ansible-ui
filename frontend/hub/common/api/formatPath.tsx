@@ -1,3 +1,11 @@
+import { url2keys } from './query-string';
+
+function checkParam(url: string, good: string, bad: string) {
+  if (url.includes(`?${bad}=`) || url.includes(`&${bad}=`)) {
+    throw new Error(`Invalid param - use "${good}", not "${bad}"`);
+  }
+}
+
 export function apiTag(strings: TemplateStringsArray, ...values: string[]) {
   if (strings[0]?.[0] !== '/') {
     throw new Error('Invalid URL - must start with a slash');
@@ -25,6 +33,35 @@ export function apiTag(strings: TemplateStringsArray, ...values: string[]) {
 
   if (url.indexOf('?') !== url.lastIndexOf('?')) {
     throw new Error('Invalid URL - multiple "?"');
+  }
+
+  if (url.includes('?')) {
+    const { pageKey, sortKey } = url2keys(url);
+
+    if (pageKey === 'page') {
+      checkParam(url, 'page', 'offset');
+      checkParam(url, 'page_size', 'limit');
+    }
+
+    if (pageKey === 'offset') {
+      checkParam(url, 'offset', 'page');
+      checkParam(url, 'limit', 'page_size');
+    }
+
+    if (sortKey === 'sort') {
+      checkParam(url, sortKey, 'ordering');
+      checkParam(url, sortKey, 'order_by');
+    }
+
+    if (sortKey === 'ordering') {
+      checkParam(url, sortKey, 'sort');
+      checkParam(url, sortKey, 'order_by');
+    }
+
+    if (sortKey === 'order_by') {
+      checkParam(url, sortKey, 'sort');
+      checkParam(url, sortKey, 'ordering');
+    }
   }
 
   return url;
