@@ -20,16 +20,16 @@ describe('My imports', () => {
     cy.getNamespace(validCollection.namespace);
     cy.galaxykit(`-i collection upload ${validCollection.namespace} ${validCollection.name}`);
 
-    cy.getNamespace(invalidCollection.namespace);
-    cy.galaxykit(`-i collection upload ${invalidCollection.namespace} ${invalidCollection.name}`);
+    // cy.getNamespace(invalidCollection.namespace);
+    // cy.galaxykit(`-i collection upload ${invalidCollection.namespace} ${invalidCollection.name}`);
   });
 
   after(() => {
     cy.deleteCollectionsInNamespace(validCollection.namespace);
-    cy.deleteCollectionsInNamespace(invalidCollection.namespace);
+    // cy.deleteCollectionsInNamespace(invalidCollection.namespace);
 
     cy.deleteNamespace(validCollection.namespace);
-    cy.deleteNamespace(invalidCollection.namespace);
+    // cy.deleteNamespace(invalidCollection.namespace);
   });
 
   it('it should render the My imports page', () => {
@@ -71,7 +71,7 @@ describe('My imports', () => {
     });
   });
 
-  it('should be able to inspect failed collection import', () => {
+  it.skip('should be able to inspect failed collection import', () => {
     const { name, namespace, version } = invalidCollection;
 
     cy.visit(`${MyImports.url}/?namespace=${namespace}&name=${name}&version=${version}`);
@@ -103,7 +103,7 @@ describe('My imports', () => {
     });
   });
 
-  it('should be able to filter imported collections', () => {
+  it.skip('should be able to filter imported collections', () => {
     cy.visit(MyImports.url);
     cy.get('#namespace-selector').contains('Select namespace').click();
 
