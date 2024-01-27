@@ -20,6 +20,7 @@ import { InventoryGroups } from '../../resources/inventories/InventoryPage/Inven
 import { GroupPage } from '../../resources/groups/GroupPage';
 import { InventoryHostsPage } from '../../resources/inventories/inventoryHostsPage/inventoryHostsPage';
 import { InventoryHostsDetails } from '../../resources/inventories/inventoryHostsPage/inventoryHostsDetails';
+import { GroupPageAdd } from '../../resources/groups/GroupPageAdd';
 
 export function useAwxInventoryRoutes() {
   const { t } = useTranslation();
@@ -129,9 +130,9 @@ export function useAwxInventoryRoutes() {
           ],
         },
         {
-          id: AwxRoute.InventoryGroupsAdd,
-          path: ':inventory_type/:id/add',
-          element: <PageNotImplemented />,
+          id: AwxRoute.InventoryGroupAdd,
+          path: ':inventory_type/:id/group/add',
+          element: <GroupPageAdd />,
         },
         {
           id: AwxRoute.InventoryPage,
