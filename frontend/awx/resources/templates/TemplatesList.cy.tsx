@@ -122,10 +122,12 @@ describe('TemplatesList', () => {
 
     it('Clicking Sort button changes the order of listed templates', () => {
       cy.mount(<TemplatesList url={'/api/v2/projects/6/*'} />);
-      //get top row
-      cy.clickTableHeader('Name');
-      //get top row
-      //expect top row to be different
+      cy.intercept('api/v2/projects/6/*?order_by=-name*').as('nameDescSortRequest');
+      cy.clickTableHeader(/^Name$/);
+      cy.wait('@nameDescSortRequest');
+      cy.intercept('api/v2/projects/6/*?order_by=name*').as('nameAscSortRequest');
+      cy.clickTableHeader(/^Name$/);
+      cy.wait('@nameAscSortRequest');
     });
 
     it('Pagination button functions as expected', () => {
