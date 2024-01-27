@@ -17,6 +17,10 @@ import { Schedules } from '../../views/schedules/Schedules';
 import { AwxRoute } from '../AwxRoutes';
 import { InventoryJobTemplates } from '../../resources/inventories/InventoryPage/InventoryJobTemplates';
 import { InventoryHosts } from '../../resources/inventories/InventoryPage/InventoryHosts';
+import { InventoryGroups } from '../../resources/inventories/InventoryPage/InventoryGroups';
+import { GroupPage } from '../../resources/groups/GroupPage';
+import { InventoryHostsPage } from '../../resources/inventories/inventoryHostsPage/inventoryHostsPage';
+import { InventoryHostsDetails } from '../../resources/inventories/inventoryHostsPage/inventoryHostsDetails';
 
 export function useAwxInventoryRoutes() {
   const { t } = useTranslation();
@@ -99,6 +103,38 @@ export function useAwxInventoryRoutes() {
           element: <PageNotImplemented />,
         },
         {
+          id: AwxRoute.InventoryGroupPage,
+          path: ':inventory_type/:id/groups/:group_id',
+          element: <GroupPage />,
+          children: [
+            {
+              id: AwxRoute.InventoryGroupDetails,
+              path: 'details',
+              element: <PageNotImplemented />,
+            },
+            {
+              id: AwxRoute.InventoryGroupRelatedGroups,
+              path: 'related_groups',
+              element: <PageNotImplemented />,
+            },
+            {
+              id: AwxRoute.InventoryGroupHost,
+              path: 'hosts',
+              element: <PageNotImplemented />,
+            },
+            {
+              id: AwxRoute.InventoryGroupEdit,
+              path: 'edit',
+              element: <PageNotImplemented />,
+            },
+          ],
+        },
+        {
+          id: AwxRoute.InventoryGroupsAdd,
+          path: ':inventory_type/:id/add',
+          element: <PageNotImplemented />,
+        },
+        {
           id: AwxRoute.InventoryPage,
           path: ':inventory_type/:id/',
           element: <InventoryPage />,
@@ -116,7 +152,7 @@ export function useAwxInventoryRoutes() {
             {
               id: AwxRoute.InventoryGroups,
               path: 'groups',
-              element: <PageNotImplemented />,
+              element: <InventoryGroups />,
             },
             {
               id: AwxRoute.InventoryHosts,
@@ -140,7 +176,18 @@ export function useAwxInventoryRoutes() {
             },
           ],
         },
-
+        {
+          id: AwxRoute.InventoryHostPage,
+          path: ':inventory_type/:id/hosts/:host_id',
+          element: <InventoryHostsPage />,
+          children: [
+            {
+              id: AwxRoute.InventoryHostDetails,
+              path: 'details',
+              element: <InventoryHostsDetails />,
+            },
+          ],
+        },
         {
           id: AwxRoute.EditInventory,
           path: ':id/edit',

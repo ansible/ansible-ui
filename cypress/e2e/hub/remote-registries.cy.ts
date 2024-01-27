@@ -1,16 +1,42 @@
 import { randomString } from '../../../framework/utils/random-string';
 import { RemoteRegistry as IRemoteRegistry } from '../../../frontend/hub/administration/remote-registries/RemoteRegistry';
+import { hubAPI } from '../../support/formatApiPathForHub';
 import { RemoteRegistry } from './constants';
 
 describe('Remote Registry', () => {
+  const testSignature: string = randomString(5, undefined, { isLowercase: true });
+  function generateRemoteRegistryName(): string {
+    return `test-${testSignature}-remote-registry-${randomString(5, undefined, {
+      isLowercase: true,
+    })}`;
+  }
+
   before(() => {
     cy.hubLogin();
   });
 
+  after(() => {
+    cy.log('Cleaning up remote registries');
+    cy.intercept('GET', hubAPI`/_ui/v1/execution-environments/registries/?name__icontains=*`).as(
+      'searchRemoteRegistry'
+    );
+    cy.searchAndDisplayResource(testSignature);
+    cy.wait('@searchRemoteRegistry')
+      .its('response.body.data')
+      .then((search: IRemoteRegistry[]) => {
+        if (search.length > 0) {
+          for (const remoteRegistry of search) {
+            if (remoteRegistry.name.includes(testSignature)) {
+              cy.log(`Deleting remote registry ${remoteRegistry.name}`);
+              cy.deleteRemoteRegistry(remoteRegistry.id);
+            }
+          }
+        }
+      });
+  });
+
   it('explore different views and pagination', () => {
-    const remoteRegistryName = `test-remote-registry-${randomString(5, undefined, {
-      isLowercase: true,
-    })}`;
+    const remoteRegistryName = generateRemoteRegistryName();
     cy.createRemoteRegistry(remoteRegistryName);
     cy.navigateTo('hub', RemoteRegistry.url);
     cy.setTablePageSize('50');
@@ -31,9 +57,7 @@ describe('Remote Registry', () => {
   });
 
   it('sync remote registries', () => {
-    const remoteRegistryName = `test-remote-registry-${randomString(5, undefined, {
-      isLowercase: true,
-    })}`;
+    const remoteRegistryName = generateRemoteRegistryName();
     cy.createRemoteRegistry(remoteRegistryName).then((remoteRegistry: IRemoteRegistry) => {
       cy.navigateTo('hub', RemoteRegistry.url);
       cy.searchAndDisplayResource(remoteRegistryName);
@@ -49,9 +73,7 @@ describe('Remote Registry', () => {
   });
 
   it('index execution environments', () => {
-    const remoteRegistryName = `test-remote-registry-${randomString(5, undefined, {
-      isLowercase: true,
-    })}`;
+    const remoteRegistryName = generateRemoteRegistryName();
     cy.navigateTo('hub', RemoteRegistry.url);
     cy.get('[data-cy="create-remote-registry"]').should('be.visible').click();
     cy.get('[data-cy="name"]').type(remoteRegistryName);
@@ -71,9 +93,7 @@ describe('Remote Registry', () => {
   });
 
   it('create, search and delete a remote registry', () => {
-    const remoteRegistryName = `test-remote-registry-${randomString(5, undefined, {
-      isLowercase: true,
-    })}`;
+    const remoteRegistryName = generateRemoteRegistryName();
     cy.navigateTo('hub', RemoteRegistry.url);
     cy.verifyPageTitle(RemoteRegistry.title);
     cy.get('[data-cy="create-remote-registry"]').should('be.visible').click();
@@ -94,9 +114,7 @@ describe('Remote Registry', () => {
   });
 
   it('edit a remote registry', () => {
-    const remoteRegistryName = `test-remote-registry-${randomString(5, undefined, {
-      isLowercase: true,
-    })}`;
+    const remoteRegistryName = generateRemoteRegistryName();
     cy.navigateTo('hub', RemoteRegistry.url);
     cy.get('[data-cy="create-remote-registry"]').should('be.visible').click();
     cy.get('[data-cy="name"]').type(remoteRegistryName);
