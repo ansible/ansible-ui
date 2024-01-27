@@ -132,31 +132,5 @@ describe('TemplatesList', () => {
       cy.mount(<TemplatesList url={'/api/v2/projects/6/*'} />);
       cy.get('.pf-v5-c-pagination__nav-page-select').should('be.visible');
     });
-
-    it('Able to create job template', () => {
-      /*
-      cy.stub(useOptions, 'useOptions').callsFake(() => ({
-        data: {
-          actions: {
-            POST: {
-              name: {
-                type: ToolbarFilterType.Text,
-                required: true,
-                label: 'Name',
-                max_length: 512,
-                help_text: 'Name of this template.',
-                filterable: true,
-              },
-            },
-          },
-        },
-      }));
-      */
-      cy.mount(<TemplatesList url={'/api/v2/projects/6/*'} />);
-      cy.contains('.pf-v5-c-dropdown__toggle', 'Create template').click();
-      cy.get(
-        ':nth-child(1) > [data-cy="create-template"] > li > .pf-v5-c-dropdown__menu-item'
-      ).click();
-    });
   });
 });

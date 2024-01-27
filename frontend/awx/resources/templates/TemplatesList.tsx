@@ -77,38 +77,6 @@ export function TemplatesList(props: {
     wfJobTemplateActions && wfJobTemplateActions.actions && wfJobTemplateActions.actions['POST']
   );
 
-  const createTemplateActions = useMemo(() => {
-    const createTemplateActions: IPageAction<JobTemplate | WorkflowJobTemplate>[] = [];
-
-    if (canCreateJobTemplate) {
-      createTemplateActions.push({
-        type: PageActionType.Link,
-        selection: PageActionSelection.None,
-        label: t('Create job template'),
-        href: getPageUrl(AwxRoute.CreateJobTemplate),
-      });
-    }
-
-    if (canCreateWFJobTemplate) {
-      createTemplateActions.push({
-        type: PageActionType.Link,
-        selection: PageActionSelection.None,
-        label: t('Create workflow template'),
-        href: getPageUrl(AwxRoute.CreateWorkflowJobTemplate),
-      });
-    }
-    return createTemplateActions;
-  }, [canCreateJobTemplate, canCreateWFJobTemplate, getPageUrl, t]);
-
-  const placeholderAction = useMemo(
-    () =>
-      ({
-        type: PageActionType.Button,
-        selection: PageActionSelection.None,
-      }) as IPageAction<JobTemplate | WorkflowJobTemplate>,
-    []
-  );
-
   usePersistentFilters('templatesList');
   const deleteTemplates = useDeleteTemplates(view.unselectItemsAndRefresh);
 
@@ -127,7 +95,26 @@ export function TemplatesList(props: {
               ),
         selection: PageActionSelection.None,
         icon: PlusCircleIcon,
-        actions: createTemplateActions.length > 0 ? createTemplateActions : [placeholderAction],
+        actions: [
+          {
+            type: PageActionType.Link,
+            selection: PageActionSelection.None,
+            label: t('Create job template'),
+            isDisabled: canCreateJobTemplate
+              ? undefined
+              : 'You do not have permission to create a job template. Please contact your organization administrator if there is an issue with your access.',
+            href: getPageUrl(AwxRoute.CreateJobTemplate),
+          },
+          {
+            type: PageActionType.Link,
+            selection: PageActionSelection.None,
+            label: t('Create workflow job template'),
+            isDisabled: canCreateWFJobTemplate
+              ? undefined
+              : 'You do not have permission to create a workflow job template. Please contact your organization administrator if there is an issue with your access.',
+            href: getPageUrl(AwxRoute.CreateWorkflowJobTemplate),
+          },
+        ],
       },
       {
         type: PageActionType.Button,
@@ -138,14 +125,7 @@ export function TemplatesList(props: {
         isDanger: true,
       },
     ],
-    [
-      canCreateJobTemplate,
-      canCreateWFJobTemplate,
-      createTemplateActions,
-      deleteTemplates,
-      placeholderAction,
-      t,
-    ]
+    [canCreateJobTemplate, canCreateWFJobTemplate, deleteTemplates, getPageUrl, t]
   );
 
   const rowActions = useTemplateActions({ onTemplatesDeleted: view.unselectItemsAndRefresh });
