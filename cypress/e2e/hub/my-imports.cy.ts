@@ -17,13 +17,19 @@ describe('My imports', () => {
   before(() => {
     cy.hubLogin();
 
-    cy.createApprovedCollection(validCollection.namespace, validCollection.name);
-    cy.createApprovedCollection(invalidCollection.namespace, invalidCollection.name);
+    cy.getNamespace(validCollection.namespace);
+    cy.galaxykit(`-i collection upload ${validCollection.namespace} ${validCollection.name}`);
+
+    cy.getNamespace(invalidCollection.namespace);
+    cy.galaxykit(`-i collection upload ${invalidCollection.namespace} ${invalidCollection.name}`);
   });
 
   after(() => {
     cy.deleteCollectionsInNamespace(validCollection.namespace);
     cy.deleteCollectionsInNamespace(invalidCollection.namespace);
+
+    cy.deleteNamespace(validCollection.namespace);
+    cy.deleteNamespace(invalidCollection.namespace);
   });
 
   it('it should render the My imports page', () => {
@@ -42,9 +48,9 @@ describe('My imports', () => {
   it('should be able to inspect completed collection import', () => {
     const { name, namespace, version } = validCollection;
 
-    // test correctly set label params
     cy.visit(`${MyImports.url}/?namespace=${namespace}&name=${name}&version=${version}`);
-    cy.get('.pf-v5-c-menu-toggle').contains(namespace);
+
+    // test correctly set label params
     cy.get('.pf-v5-c-chip-group').contains(name);
     cy.get('.pf-v5-c-chip-group').contains(version);
 
@@ -58,7 +64,7 @@ describe('My imports', () => {
       cy.get('h3').contains(`${namespace}.${name}`);
       cy.contains('Completed');
       cy.contains(version);
-      cy.contains('approved');
+      cy.contains('waiting for approval');
 
       cy.get('[data-cy="import-console"]').contains('Collection loading complete');
     });
@@ -68,7 +74,6 @@ describe('My imports', () => {
     const { name, namespace, version } = invalidCollection;
 
     cy.visit(`${MyImports.url}/?namespace=${namespace}&name=${name}&version=${version}`);
-    cy.get('.pf-v5-c-menu-toggle').contains(namespace);
     cy.get('.pf-v5-c-chip-group').contains(name);
     cy.get('.pf-v5-c-chip-group').contains(version);
 
@@ -98,11 +103,14 @@ describe('My imports', () => {
   it('should be able to filter imported collections', () => {
     cy.visit(MyImports.url);
     cy.get('.pf-v5-c-menu-toggle__text').contains('Select namespace').click();
-    cy.get('.pf-v5-c-menu__search .pf-v5-c-text-input-group__text-input').type(
-      validCollection.namespace
-    );
 
-    cy.get(`#${validCollection.namespace}`).click();
+    cy.get('.pf-v5-c-menu__footer').contains('Browse').click();
+
+    // search and select namespace in button
+    cy.get('.pf-v5-c-modal-box__header').click();
+    cy.selectTableRowInDialog(validCollection.namespace);
+    cy.clickModalButton('Confirm');
+
     cy.filterTableByText(validCollection.name);
     cy.filterBySingleSelection('Status', 'Completed');
     cy.filterTableByTypeAndText('Version', validCollection.version);
@@ -121,36 +129,15 @@ describe('My imports', () => {
     });
 
     cy.get('.pf-v5-c-menu-toggle__text').contains(`${validCollection.namespace}`).click();
-    cy.get('.pf-v5-c-menu__search .pf-v5-c-text-input-group__text-input').type(
-      invalidCollection.namespace
-    );
-    cy.get(`#${invalidCollection.namespace}`).click();
+    cy.get('.pf-v5-c-menu__footer').contains('Browse').click();
+    cy.get('.pf-v5-c-modal-box__header').click();
+    cy.selectTableRowInDialog(invalidCollection.namespace);
+    cy.clickModalButton('Confirm');
 
-    cy.get('.pf-v5-c-chip-group')
-      .contains(validCollection.name)
-      .parent()
-      .parent()
-      .within(() => {
-        cy.get('button').click();
-      });
-    cy.get('.pf-v5-c-chip-group').contains(validCollection.name).should('not.exist');
-
-    cy.get('.pf-v5-c-chip-group')
-      .contains(validCollection.version)
-      .parent()
-      .parent()
-      .within(() => {
-        cy.get('button').click();
-      });
-    cy.get('.pf-v5-c-chip-group').contains(validCollection.version).should('not.exist');
-
-    cy.get('.pf-v5-c-chip-group')
-      .contains('Completed')
-      .parent()
-      .parent()
-      .within(() => {
-        cy.get('button').click();
-      });
+    cy.clickButton('Clear all filters');
+    cy.get('.pf-v5-c-toolbar__group').contains(validCollection.name).should('not.exist');
+    cy.get('.pf-v5-c-toolbar__group').contains(validCollection.version).should('not.exist');
+    cy.get('.pf-v5-c-toolbar__group').contains('Completed').should('not.exist');
     cy.get('.pf-v5-c-chip-group').should('not.exist');
 
     cy.filterBySingleSelection('Status', 'Failed');
