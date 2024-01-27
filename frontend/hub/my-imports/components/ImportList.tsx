@@ -141,6 +141,7 @@ export function ImportList({
         </NamespaceSelectorLabel>
         <NamespaceSelector>
           <PageAsyncSingleSelect<string>
+            id="namespace-selector"
             queryOptions={queryOptions}
             onSelect={(namespace: string) => setSelectedNamespace(namespace)}
             placeholder={t('Select namespace')}

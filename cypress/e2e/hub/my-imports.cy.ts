@@ -41,7 +41,7 @@ describe('My imports', () => {
     cy.visit(MyImports.url);
     cy.contains('No namespace selected.');
     cy.contains('No data');
-    cy.get('.pf-v5-c-menu-toggle__text > span').contains('Select namespace');
+    cy.get('#namespace-selector').contains('Select namespace');
     cy.get('.pf-v5-c-chip-group').should('not.exist');
   });
 
@@ -51,6 +51,7 @@ describe('My imports', () => {
     cy.visit(`${MyImports.url}/?namespace=${namespace}&name=${name}&version=${version}`);
 
     // test correctly set label params
+    cy.get('#namespace-selector').contains(namespace);
     cy.get('.pf-v5-c-chip-group').contains(name);
     cy.get('.pf-v5-c-chip-group').contains(version);
 
@@ -74,6 +75,8 @@ describe('My imports', () => {
     const { name, namespace, version } = invalidCollection;
 
     cy.visit(`${MyImports.url}/?namespace=${namespace}&name=${name}&version=${version}`);
+
+    cy.get('#namespace-selector').contains(namespace);
     cy.get('.pf-v5-c-chip-group').contains(name);
     cy.get('.pf-v5-c-chip-group').contains(version);
 
@@ -102,7 +105,7 @@ describe('My imports', () => {
 
   it('should be able to filter imported collections', () => {
     cy.visit(MyImports.url);
-    cy.get('.pf-v5-c-menu-toggle__text').contains('Select namespace').click();
+    cy.get('#namespace-selector').contains('Select namespace').click();
 
     cy.get('.pf-v5-c-menu__footer').contains('Browse').click();
 
@@ -115,7 +118,6 @@ describe('My imports', () => {
     cy.filterBySingleSelection('Status', 'Completed');
     cy.filterTableByTypeAndText('Version', validCollection.version);
 
-    cy.get('.pf-v5-c-menu-toggle').contains(validCollection.namespace);
     cy.get('.pf-v5-c-chip-group').contains(validCollection.name);
     cy.get('.pf-v5-c-chip-group').contains(validCollection.version);
 
@@ -128,7 +130,7 @@ describe('My imports', () => {
       cy.contains('Completed');
     });
 
-    cy.get('.pf-v5-c-menu-toggle__text').contains(`${validCollection.namespace}`).click();
+    cy.get('#namespace-selector').contains(`${validCollection.namespace}`).click();
     cy.get('.pf-v5-c-menu__footer').contains('Browse').click();
     cy.get('.pf-v5-c-modal-box__header').click();
     cy.selectTableRowInDialog(invalidCollection.namespace);
