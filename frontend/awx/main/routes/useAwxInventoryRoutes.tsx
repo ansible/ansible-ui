@@ -20,7 +20,7 @@ import { InventoryGroups } from '../../resources/inventories/InventoryPage/Inven
 import { GroupPage } from '../../resources/groups/GroupPage';
 import { InventoryHostsPage } from '../../resources/inventories/inventoryHostsPage/inventoryHostsPage';
 import { InventoryHostsDetails } from '../../resources/inventories/inventoryHostsPage/inventoryHostsDetails';
-import { GroupPageAdd } from '../../resources/inventories/InventoryGroups/GroupPageAdd';
+import { GroupPageAdd } from '../../resources/inventories/inventoryGroup/GroupPageAdd';
 
 export function useAwxInventoryRoutes() {
   const { t } = useTranslation();
