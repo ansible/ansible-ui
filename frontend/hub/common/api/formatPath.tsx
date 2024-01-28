@@ -1,4 +1,4 @@
-import { url2keys } from './query-string';
+import { hubQueryString, url2keys } from './query-string';
 
 function checkParam(url: string, good: string, bad: string) {
   if (url.includes(`?${bad}=`) || url.includes(`&${bad}=`)) {
@@ -6,7 +6,8 @@ function checkParam(url: string, good: string, bad: string) {
   }
 }
 
-export function apiTag(strings: TemplateStringsArray, ...values: string[]) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function apiTag(strings: TemplateStringsArray, ...values: any[]) {
   if (strings[0]?.[0] !== '/') {
     throw new Error(`Invalid URL - must start with a slash`);
   }
@@ -15,7 +16,13 @@ export function apiTag(strings: TemplateStringsArray, ...values: string[]) {
   strings.forEach((fragment, index) => {
     url += fragment;
     if (index !== strings.length - 1) {
-      url += encodeURIComponent(`${values.shift() ?? ''}`);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const next = values.shift();
+      if (next && typeof next === 'object' && fragment.endsWith('?')) {
+        url += hubQueryString(url, next as Record<string, string | number | boolean>).slice(1);
+      } else {
+        url += encodeURIComponent(`${next ?? ''}`);
+      }
     }
   });
 
@@ -72,10 +79,14 @@ if (base.endsWith('/')) {
   throw new Error(`Invalid HUB_API_PREFIX - must NOT end with a slash`);
 }
 
-export function hubAPI(strings: TemplateStringsArray, ...values: string[]) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function hubAPI(strings: TemplateStringsArray, ...values: any[]) {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   return base + apiTag(strings, ...values);
 }
 
-export function pulpAPI(strings: TemplateStringsArray, ...values: string[]) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function pulpAPI(strings: TemplateStringsArray, ...values: any[]) {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   return base + '/pulp/api/v3' + apiTag(strings, ...values);
 }
