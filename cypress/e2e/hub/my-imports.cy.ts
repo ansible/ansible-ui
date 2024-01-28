@@ -1,5 +1,4 @@
 import { randomString } from '../../../framework/utils/random-string';
-import { hubAPI } from '../../support/formatApiPathForHub';
 import { MyImports } from './constants';
 
 describe('My imports', () => {
@@ -21,24 +20,24 @@ describe('My imports', () => {
     cy.getNamespace(validCollection.namespace);
     cy.galaxykit(`-i collection upload ${validCollection.namespace} ${validCollection.name}`);
 
-    // cy.getNamespace(invalidCollection.namespace);
-    // cy.galaxykit(`-i collection upload ${invalidCollection.namespace} ${invalidCollection.name}`);
+    cy.getNamespace(invalidCollection.namespace);
+    cy.galaxykit(`-i collection upload ${invalidCollection.namespace} ${invalidCollection.name}`);
   });
 
   after(() => {
     cy.deleteCollectionsInNamespace(validCollection.namespace);
-    // cy.deleteCollectionsInNamespace(invalidCollection.namespace);
+    cy.deleteCollectionsInNamespace(invalidCollection.namespace);
 
     cy.deleteNamespace(validCollection.namespace);
-    // cy.deleteNamespace(invalidCollection.namespace);
+    cy.deleteNamespace(invalidCollection.namespace);
   });
 
-  it.skip('it should render the My imports page', () => {
+  it('it should render the My imports page', () => {
     cy.visit(MyImports.url);
     cy.verifyPageTitle(MyImports.title);
   });
 
-  it.skip('should render empty states', () => {
+  it('should render empty states', () => {
     cy.visit(MyImports.url);
     cy.contains('No namespace selected.');
     cy.contains('No data');
@@ -49,26 +48,7 @@ describe('My imports', () => {
   it('should be able to inspect completed collection import', () => {
     const { name, namespace, version } = validCollection;
 
-    cy.intercept(
-      'GET',
-      hubAPI`/_ui/v1/imports/collections/?namespace=${validCollection.namespace}&keywords=${validCollection.name}&state=&version=${validCollection.version}&offset=0&limit=10&sort=-created`
-    ).as('getImportCollections');
-    cy.intercept(
-      'GET',
-      hubAPI`/v3/plugin/ansible/search/collection-versions/?namespace=${validCollection.namespace}&name=&version=*`
-    ).as('getICollectionVersion');
-    cy.intercept('GET', hubAPI`/_ui/v1/my-namespaces/?limit=200`).as('getMyNamespaces');
-    cy.intercept(
-      'GET',
-      hubAPI`/v3/plugin/ansible/search/collection-versions/?page_size=100&repository_label=pipeline%3Dstaging`
-    ).as('getCVStaging');
-
     cy.visit(`${MyImports.url}/?namespace=${namespace}&name=${name}&version=${version}`);
-
-    cy.wait('@getICollectionVersion');
-    cy.wait('@getMyNamespaces');
-    cy.wait('@getCVStaging');
-    cy.wait('@getImportCollections');
 
     // test correctly set label params
     cy.get('#namespace-selector').contains(namespace);
@@ -91,7 +71,7 @@ describe('My imports', () => {
     });
   });
 
-  it.skip('should be able to inspect failed collection import', () => {
+  it('should be able to inspect failed collection import', () => {
     const { name, namespace, version } = invalidCollection;
 
     cy.visit(`${MyImports.url}/?namespace=${namespace}&name=${name}&version=${version}`);
@@ -123,7 +103,7 @@ describe('My imports', () => {
     });
   });
 
-  it.skip('should be able to filter imported collections', () => {
+  it('should be able to filter imported collections', () => {
     cy.visit(MyImports.url);
     cy.get('#namespace-selector').contains('Select namespace').click();
 

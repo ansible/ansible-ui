@@ -105,18 +105,39 @@ export function ImportList({
   }, [collectionImports]);
 
   const queryOptions = useCallback(async () => {
-    const response = await requestGet<HubItemsResponse<HubNamespace>>(
-      hubAPI`/_ui/v1/my-namespaces/?limit=200`
-    );
+    // polling namespaces to display in selector
+    const namespaces = [];
+    const perPage = 100;
+    let page = 0;
+    let count = 0;
+    while (page * perPage <= count) {
+      page++;
+      const response = await requestGet<HubItemsResponse<HubNamespace>>(
+        hubAPI`/_ui/v1/my-namespaces/?limit=${perPage.toString()}&offset=${(
+          perPage *
+          (page - 1)
+        ).toString()}`
+      );
+
+      const resp = response?.data.map((ns: HubNamespace) => ({
+        value: ns.name,
+        label: ns.name,
+      }));
+
+      count = response?.meta.count || 0;
+
+      if (resp) namespaces.push(...resp);
+
+      const isInNamespace = resp.some((ns) => ns.value === namespace);
+
+      if (isInNamespace) break;
+    }
 
     return Promise.resolve({
-      total: response?.meta?.count || 0,
-      options:
-        response?.data.map((ns: HubNamespace) => ({
-          value: ns.name,
-          label: ns.name,
-        })) || [],
+      total: count,
+      options: namespaces,
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onSelectDataListItem = (
