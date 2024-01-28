@@ -1,6 +1,6 @@
 import { Group } from './generated-from-swagger/api';
 
-export interface InventoryGroup extends Omit<Group, 'id' | 'name' | 'summary_fields' | 'related'> {
+export interface AwxGroup extends Omit<Group, 'id' | 'name' | 'summary_fields' | 'related'> {
   id: number;
   name: string;
   created: string;
@@ -26,6 +26,14 @@ export interface InventoryGroup extends Omit<Group, 'id' | 'name' | 'summary_fie
       total_groups: number;
       total_hosts: number;
       total_inventory_sources: number;
+    };
+    created_by: {
+      id: number;
+      username: string;
+    };
+    modified_by: {
+      id: number;
+      username: string;
     };
   };
   related: {

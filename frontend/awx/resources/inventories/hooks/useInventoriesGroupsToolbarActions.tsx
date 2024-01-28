@@ -14,11 +14,11 @@ import { useParams } from 'react-router-dom';
 import { useOptions } from '../../../../common/crud/useOptions';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { InventoryGroup } from '../../../interfaces/InventoryGroup';
+import { AwxGroup } from '../../../interfaces/AwxGroup';
 import { ButtonVariant } from '@patternfly/react-core';
 import { cannotDeleteResources } from '../../../../common/utils/RBAChelpers';
 
-export function useInventoriesGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
+export function useInventoriesGroupsToolbarActions(view: IAwxView<AwxGroup>) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const deleteGroups = useDeleteGroups(view.unselectItemsAndRefresh);
@@ -38,7 +38,7 @@ export function useInventoriesGroupsToolbarActions(view: IAwxView<InventoryGroup
     groupOptions && groupOptions.actions && groupOptions.actions['POST']
   );
 
-  return useMemo<IPageAction<InventoryGroup>[]>(
+  return useMemo<IPageAction<AwxGroup>[]>(
     () => [
       {
         type: PageActionType.Button,
@@ -85,7 +85,7 @@ export function useInventoriesGroupsToolbarActions(view: IAwxView<InventoryGroup
         isDisabled:
           view.selectedItems.length === 0
             ? t('Select at least one item from the list')
-            : (groups: InventoryGroup[]) => cannotDeleteResources(groups, t),
+            : (groups: AwxGroup[]) => cannotDeleteResources(groups, t),
       },
     ],
     [

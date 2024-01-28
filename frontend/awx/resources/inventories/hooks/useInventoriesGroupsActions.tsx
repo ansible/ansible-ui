@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { InventoryGroup } from '../../../interfaces/InventoryGroup';
+import { AwxGroup } from '../../../interfaces/AwxGroup';
 import {
   IPageAction,
   PageActionSelection,
@@ -21,14 +21,14 @@ export function useInventoriesGroupsActions() {
   const pageNavigate = usePageNavigate();
   const params = useParams<{ id: string; inventory_type: string }>();
 
-  const adhocOptions = useOptions<OptionsResponse<ActionsResponse>>(
+  const adHocOptions = useOptions<OptionsResponse<ActionsResponse>>(
     awxAPI`/inventories/${params.id ?? ''}/ad_hoc_commands`
   ).data;
   const canRunAdHocCommand = Boolean(
-    adhocOptions && adhocOptions.actions && adhocOptions.actions['POST']
+    adHocOptions && adHocOptions.actions && adHocOptions.actions['POST']
   );
 
-  return useMemo<IPageAction<InventoryGroup>[]>(
+  return useMemo<IPageAction<AwxGroup>[]>(
     () => [
       {
         type: PageActionType.Button,
@@ -38,7 +38,11 @@ export function useInventoriesGroupsActions() {
         label: t('Edit group'),
         onClick: (group) =>
           pageNavigate(AwxRoute.InventoryGroupEdit, {
-            params: { inventory_type: 'inventory', id: group.inventory, group_id: group.id },
+            params: {
+              inventory_type: params.inventory_type,
+              id: group.inventory,
+              group_id: group.id,
+            },
           }),
         isDisabled: (group) => cannotEditResource(group, t),
       },
@@ -56,6 +60,6 @@ export function useInventoriesGroupsActions() {
               ),
       },
     ],
-    [t, pageNavigate, canRunAdHocCommand]
+    [t, pageNavigate, canRunAdHocCommand, params.inventory_type]
   );
 }

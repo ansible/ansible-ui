@@ -1,5 +1,5 @@
 import { InventoryGroups } from './InventoryGroups';
-import { InventoryGroup } from '../../../interfaces/InventoryGroup';
+import { AwxGroup } from '../../../interfaces/AwxGroup';
 
 describe('InventoryGroups', () => {
   let groupsOptions = 'groups_options.json';
@@ -41,7 +41,7 @@ describe('InventoryGroups', () => {
     cy.fixture('groups.json')
       .its('results')
       .should('be.an', 'array')
-      .then((results: InventoryGroup[]) => {
+      .then((results: AwxGroup[]) => {
         const group = results[0];
         cy.contains(group.name);
       });
@@ -52,7 +52,7 @@ describe('InventoryGroups', () => {
     cy.fixture('groups.json')
       .its('results')
       .should('be.an', 'array')
-      .then((results: InventoryGroup[]) => {
+      .then((results: AwxGroup[]) => {
         const group = results[0];
         cy.selectTableRow(group.name, false);
         cy.clickToolbarKebabAction('delete-selected-groups');

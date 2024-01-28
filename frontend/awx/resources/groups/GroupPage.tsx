@@ -1,23 +1,33 @@
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { useGetItem } from '../../../common/crud/useGet';
-import { InventoryGroup } from '../../interfaces/InventoryGroup';
+import { AwxGroup } from '../../interfaces/AwxGroup';
 import { awxAPI } from '../../common/api/awx-utils';
-import { LoadingPage, PageHeader, PageLayout, useGetPageUrl } from '../../../../framework';
+import {
+  LoadingPage,
+  PageActions,
+  PageHeader,
+  PageLayout,
+  useGetPageUrl,
+} from '../../../../framework';
 import { AwxError } from '../../common/AwxError';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
+import { DropdownPosition } from '@patternfly/react-core/deprecated';
+import { useInventoriesGroupActions } from '../inventories/hooks/useInventoriesGroupActions';
 
 export function GroupPage() {
   const { t } = useTranslation();
-  const params = useParams<{ group_id: string }>();
+  const params = useParams<{ id: string; inventory_type: string; group_id: string }>();
   const {
     error,
     data: inventoryGroup,
     refresh,
-  } = useGetItem<InventoryGroup>(awxAPI`/groups`, params.group_id);
+  } = useGetItem<AwxGroup>(awxAPI`/groups`, params.group_id);
 
   const getPageUrl = useGetPageUrl();
+
+  const actions = useInventoriesGroupActions();
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!inventoryGroup) return <LoadingPage breadcrumbs tabs />;
@@ -48,7 +58,13 @@ export function GroupPage() {
           },
           { label: inventoryGroup?.name },
         ]}
-        headerActions={[]}
+        headerActions={
+          <PageActions<AwxGroup>
+            actions={actions}
+            position={DropdownPosition.right}
+            selectedItem={inventoryGroup}
+          />
+        }
       />
       <PageRoutedTabs
         backTab={{
@@ -61,7 +77,11 @@ export function GroupPage() {
           { label: t('Related Groups'), page: AwxRoute.InventoryGroupRelatedGroups },
           { label: t('Hosts'), page: AwxRoute.InventoryGroupHost },
         ]}
-        params={{ inventory_type: 'inventory', id: inventoryGroup.inventory }}
+        params={{
+          id: inventoryGroup.inventory,
+          inventory_type: 'inventory',
+          group_id: inventoryGroup.id,
+        }}
       />
     </PageLayout>
   );
