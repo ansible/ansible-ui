@@ -29,7 +29,7 @@ function useParameters(
     toolbarFilters,
     useView: useHubView,
     viewParams: {
-      url: hubAPI`/v3/plugin/ansible/search/collection-versions`,
+      url: hubAPI`/v3/plugin/ansible/search/collection-versions/`,
       toolbarFilters,
       tableColumns,
       disableQueryString: true,

@@ -247,7 +247,7 @@ export function EditRemote() {
       delete updatedRemote.requirements_file;
     }
     await hubAPIPut<RemoteFormProps>(
-      pulpAPI`/remotes/ansible/collection/${parsePulpIDFromURL(modifiedRemote.pulp_href) ?? ''}`,
+      pulpAPI`/remotes/ansible/collection/${parsePulpIDFromURL(modifiedRemote.pulp_href) ?? ''}/`,
       updatedRemote
     );
     navigate(-1);

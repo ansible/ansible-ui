@@ -259,7 +259,7 @@ export async function waitForTask(
   try {
     while (retries > 0) {
       await new Promise((resolve) => setTimeout(resolve, currentDelay));
-      const { response } = await getHubRequest<Task>(pulpAPI`/tasks/${taskHref}`, signal);
+      const { response } = await getHubRequest<Task>(pulpAPI`/tasks/${taskHref}/`, signal);
       const task = response as Task;
 
       if (task && successStatus.includes(task.state)) {
