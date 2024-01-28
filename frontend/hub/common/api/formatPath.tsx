@@ -91,19 +91,23 @@ function hubApiTag(strings: TemplateStringsArray, ...values: any[]) {
   return url;
 }
 
-const base = process.env.HUB_API_PREFIX;
-if (base.endsWith('/')) {
-  throw new Error(`Invalid HUB_API_PREFIX - must NOT end with a slash`);
-}
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function hubAPI(strings: TemplateStringsArray, ...values: any[]) {
+  const base = process.env.HUB_API_PREFIX;
+  if (base.endsWith('/')) {
+    throw new Error(`Invalid HUB_API_PREFIX - must NOT end with a slash`);
+  }
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   return base + hubApiTag(strings, ...values);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function pulpAPI(strings: TemplateStringsArray, ...values: any[]) {
+  const base = process.env.HUB_API_PREFIX;
+  if (base.endsWith('/')) {
+    throw new Error(`Invalid HUB_API_PREFIX - must NOT end with a slash`);
+  }
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   return base + '/pulp/api/v3' + hubApiTag(strings, ...values);
 }
