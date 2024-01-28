@@ -23,8 +23,10 @@ function checkParam(url: string, good: string, bad: string) {
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function hubApiTag(strings: TemplateStringsArray, ...values: any[]) {
+type SimpleValue = string | number | boolean | null | undefined;
+type ParamsValue = SimpleValue | Record<string, SimpleValue>;
+
+function hubApiTag(strings: TemplateStringsArray, ...values: ParamsValue[]) {
   if (strings[0]?.[0] !== '/') {
     throw new Error(`Invalid URL - must start with a slash`);
   }
@@ -33,13 +35,12 @@ function hubApiTag(strings: TemplateStringsArray, ...values: any[]) {
   strings.forEach((fragment, index) => {
     url += fragment;
     if (index !== strings.length - 1) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const next = values.shift();
       if (next && typeof next === 'object' && (fragment.endsWith('?') || fragment.endsWith('&'))) {
         // ?${obj} or &${obj} will transform a params object to a query string
         url += hubQueryString(url, next as Record<string, string | number | boolean>).slice(1);
       } else {
-        url += encodeURIComponent(`${next ?? ''}`);
+        url += encodeURIComponent(`${(next as SimpleValue) ?? ''}`);
       }
     }
   });
@@ -92,22 +93,18 @@ function hubApiTag(strings: TemplateStringsArray, ...values: any[]) {
   return url;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function hubAPI(strings: TemplateStringsArray, ...values: any[]) {
+export function hubAPI(strings: TemplateStringsArray, ...values: ParamsValue[]) {
   const base = process.env.HUB_API_PREFIX;
   if (base && base.endsWith('/')) {
     throw new Error(`Invalid HUB_API_PREFIX - must NOT end with a slash`);
   }
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   return base + hubApiTag(strings, ...values);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function pulpAPI(strings: TemplateStringsArray, ...values: any[]) {
+export function pulpAPI(strings: TemplateStringsArray, ...values: ParamsValue[]) {
   const base = process.env.HUB_API_PREFIX;
   if (base && base.endsWith('/')) {
     throw new Error(`Invalid HUB_API_PREFIX - must NOT end with a slash`);
   }
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   return base + '/pulp/api/v3' + hubApiTag(strings, ...values);
 }
