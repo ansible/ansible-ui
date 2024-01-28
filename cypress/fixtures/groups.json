@@ -202,7 +202,7 @@
       "summary_fields": {
         "inventory": {
           "id": 12141,
-          "name":  "test invetory",
+          "name": "test invetory",
           "description": "",
           "has_active_failures": false,
           "total_hosts": 2,
