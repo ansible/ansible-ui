@@ -75,13 +75,18 @@ export function MyImports() {
     isLoading: collectionImportsLoading,
     error: collectionImportsError,
   } = useGet<HubItemsResponse<CollectionImport>>(
+    namespaceQP ? hubAPI`/_ui/v1/imports/collections/` : '',
     namespaceQP
-      ? hubAPI`/_ui/v1/imports/collections/?namespace=${namespaceQP}&keywords=${
-          collectionFilter?.name?.join(',') ?? ''
-        }&state=${collectionFilter?.status?.[0] ?? ''}&version=${
-          collectionFilter?.version?.join(',') ?? ''
-        }&offset=${(perPage * (page - 1)).toString()}&limit=${perPage.toString()}&sort=-created`
-      : ''
+      ? {
+          sort: '-created',
+          namespace: namespaceQP,
+          keywords: collectionFilter?.name?.join(',') ?? '',
+          state: collectionFilter?.status?.[0] ?? '',
+          version: collectionFilter?.version?.join(',') ?? '',
+          offset: (perPage * (page - 1)).toString(),
+          limit: perPage.toString(),
+        }
+      : undefined
   );
 
   const collectionImports =
@@ -109,9 +114,12 @@ export function MyImports() {
     isLoading: colletionIsLoading,
     error: collectionError,
   } = useGet<HubItemsResponse<CollectionVersionSearch>>(
-    hubAPI`/v3/plugin/ansible/search/collection-versions/?namespace=${namespaceQP}&name=${
-      collectionImport?.name ?? ''
-    }&version=${collectionImport?.version ?? ''}`
+    hubAPI`/v3/plugin/ansible/search/collection-versions/`,
+    {
+      namespace: namespaceQP,
+      name: collectionImport?.name ?? '',
+      version: collectionImport?.version ?? '',
+    }
   );
 
   const collection =
