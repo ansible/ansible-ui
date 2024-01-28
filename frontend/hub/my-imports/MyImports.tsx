@@ -106,7 +106,9 @@ export function MyImports() {
     isLoading: collectionImportLoading,
     error: collectionImportError,
   } = useGet<CollectionImport>(
-    collectionImport?.id ? hubAPI`/_ui/v1/imports/collections/${collectionImport?.id ?? ''}/` : ''
+    collectionImport?.id ? hubAPI`/_ui/v1/imports/collections/${collectionImport?.id ?? ''}/` : '',
+    undefined,
+    { refreshInterval: 10000 }
   );
 
   const {
@@ -119,7 +121,8 @@ export function MyImports() {
       namespace: namespaceQP,
       name: collectionImport?.name ?? '',
       version: collectionImport?.version ?? '',
-    }
+    },
+    { refreshInterval: 10000 }
   );
 
   const collection =
