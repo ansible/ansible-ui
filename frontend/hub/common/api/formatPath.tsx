@@ -1,5 +1,22 @@
 import { hubQueryString, url2keys } from './query-string';
 
+// used in awx, eda & cypress
+export function apiTag(strings: TemplateStringsArray, ...values: string[]) {
+  if (strings[0]?.[0] !== '/') {
+    throw new Error(`Invalid URL - must start with a slash`);
+  }
+
+  let url = '';
+  strings.forEach((fragment, index) => {
+    url += fragment;
+    if (index !== strings.length - 1) {
+      url += encodeURIComponent(`${values.shift() ?? ''}`);
+    }
+  });
+
+  return url;
+}
+
 function checkParam(url: string, good: string, bad: string) {
   if (url.includes(`?${bad}=`) || url.includes(`&${bad}=`)) {
     throw new Error(`Invalid param - use "${good}", not "${bad}" (url: ${url})`);
@@ -7,7 +24,7 @@ function checkParam(url: string, good: string, bad: string) {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function apiTag(strings: TemplateStringsArray, ...values: any[]) {
+function hubApiTag(strings: TemplateStringsArray, ...values: any[]) {
   if (strings[0]?.[0] !== '/') {
     throw new Error(`Invalid URL - must start with a slash`);
   }
@@ -82,11 +99,11 @@ if (base.endsWith('/')) {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function hubAPI(strings: TemplateStringsArray, ...values: any[]) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-  return base + apiTag(strings, ...values);
+  return base + hubApiTag(strings, ...values);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function pulpAPI(strings: TemplateStringsArray, ...values: any[]) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-  return base + '/pulp/api/v3' + apiTag(strings, ...values);
+  return base + '/pulp/api/v3' + hubApiTag(strings, ...values);
 }
