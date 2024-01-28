@@ -35,7 +35,8 @@ function hubApiTag(strings: TemplateStringsArray, ...values: any[]) {
     if (index !== strings.length - 1) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const next = values.shift();
-      if (next && typeof next === 'object' && fragment.endsWith('?')) {
+      if (next && typeof next === 'object' && (fragment.endsWith('?') || fragment.endsWith('&'))) {
+        // ?${obj} or &${obj} will transform a params object to a query string
         url += hubQueryString(url, next as Record<string, string | number | boolean>).slice(1);
       } else {
         url += encodeURIComponent(`${next ?? ''}`);
