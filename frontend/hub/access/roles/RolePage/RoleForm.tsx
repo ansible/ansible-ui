@@ -88,7 +88,7 @@ export function EditRole() {
   const onSubmit: PageFormSubmitHandler<RoleInput> = async (values) => {
     const { name, description, permissionCategories } = values;
     const permissions = getSelectedPermissions(permissionCategories);
-    await patchRequest(pulpAPI`/roles/${parsePulpIDFromURL(role?.pulp_href ?? '')}/`, {
+    await patchRequest(pulpAPI`/roles/${parsePulpIDFromURL(role?.pulp_href)}/`, {
       name,
       description,
       permissions,

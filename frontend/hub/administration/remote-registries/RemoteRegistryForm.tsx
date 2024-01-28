@@ -153,7 +153,7 @@ export function EditRemoteRegistry() {
   }
 
   const onSubmit: PageFormSubmitHandler<RemoteRegistryProps> = async (remoteRegistry) => {
-    const remoteRegistryId = parsePulpIDFromURL(remoteRegistry.pulp_href) ?? '';
+    const remoteRegistryId = parsePulpIDFromURL(remoteRegistry.pulp_href) as string;
     await hubAPIPut<RemoteRegistryProps>(
       hubAPI`/_ui/v1/execution-environments/registries/${remoteRegistryId}/`,
       remoteRegistry
