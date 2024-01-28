@@ -91,7 +91,6 @@ function hubApiTag(strings: TemplateStringsArray, ...values: any[]) {
   return url;
 }
 
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function hubAPI(strings: TemplateStringsArray, ...values: any[]) {
   const base = process.env.HUB_API_PREFIX;

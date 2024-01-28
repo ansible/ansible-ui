@@ -29,7 +29,7 @@ export function useDeleteRepositories(onComplete?: (collections: Repository[]) =
       alertPrompts: [t('This will also delete all associated resources under this repositories.')],
       actionFn: async (repository: Repository, signal: AbortSignal) =>
         await hubAPIDelete(
-          pulpAPI`/repositories/ansible/ansible/${parsePulpIDFromURL(repository.pulp_href) || ''}/`,
+          pulpAPI`/repositories/ansible/ansible/${parsePulpIDFromURL(repository.pulp_href)}/`,
           signal
         ),
     });

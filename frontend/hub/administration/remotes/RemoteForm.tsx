@@ -224,7 +224,7 @@ export function EditRemote() {
   const name = params.id;
 
   const { data, error, refresh } = useGet<PulpItemsResponse<RemoteFormProps>>(
-    pulpAPI`/remotes/ansible/collection/?name=${name ?? ''}`
+    pulpAPI`/remotes/ansible/collection/?name=${name}`
   );
 
   const getPageUrl = useGetPageUrl();
@@ -247,7 +247,7 @@ export function EditRemote() {
       delete updatedRemote.requirements_file;
     }
     await hubAPIPut<RemoteFormProps>(
-      pulpAPI`/remotes/ansible/collection/${parsePulpIDFromURL(modifiedRemote.pulp_href) ?? ''}/`,
+      pulpAPI`/remotes/ansible/collection/${parsePulpIDFromURL(modifiedRemote.pulp_href)}/`,
       updatedRemote
     );
     navigate(-1);

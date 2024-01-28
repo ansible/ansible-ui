@@ -50,7 +50,7 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
   const [tagsSet, setTagsSet] = useState<boolean>(false);
 
   const registry = useGet<HubItemsResponse<Registry>>(
-    hubAPI`/_ui/v1/execution-environments/registries/?page_size=${page_size.toString()}`
+    hubAPI`/_ui/v1/execution-environments/registries/?page_size=${page_size}`
   );
 
   const eeUrl =

@@ -20,9 +20,7 @@ export function useCategorizeCollections(
     // Maximum of 12 collections displayed per category ordered by time of creation (newest collections appearing first)
     const searchAPIPromises = managedCategories.map((collectionCategory: CollectionCategory) =>
       requestGet<HubItemsResponse<CollectionVersionSearch>>(
-        hubAPI`/v3/plugin/ansible/search/collection-versions/?limit=${MAX_NUMBER_OF_COLLECTIONS.toString()}&order_by=-pulp_created&${
-          collectionCategory.searchKey
-        }=${collectionCategory.searchValue}`
+        hubAPI`/v3/plugin/ansible/search/collection-versions/?limit=${MAX_NUMBER_OF_COLLECTIONS}&order_by=-pulp_created&${collectionCategory.searchKey}=${collectionCategory.searchValue}`
       )
     );
     const results = await Promise.allSettled(searchAPIPromises);
