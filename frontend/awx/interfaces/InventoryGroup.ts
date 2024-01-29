@@ -39,3 +39,10 @@ export interface InventoryGroup extends Omit<Group, 'id' | 'name' | 'summary_fie
     };
   };
 }
+
+export interface InventoryGroupCreate {
+  name: string;
+  description: string;
+  inventory: number;
+  variables: string;
+}
