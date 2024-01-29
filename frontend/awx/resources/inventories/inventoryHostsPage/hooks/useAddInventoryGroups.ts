@@ -5,13 +5,13 @@ import { useNameColumn } from '../../../../../common/columns';
 import { getItemKey, postRequest } from '../../../../../common/crud/Data';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { useAwxBulkConfirmation } from '../../../../common/useAwxBulkConfirmation';
-import { useInventoriesGroupsColumns } from './useInventoriesGroupsColumns';
+import { useHostsGroupsColumns } from './useHostsGroupsColumns';
 import { InventoryGroup } from '../../../../interfaces/InventoryGroup';
 import { useParams } from 'react-router-dom';
 
 export function useAddInventoryGroups(onComplete: (groups: InventoryGroup[]) => void) {
   const { t } = useTranslation();
-  const confirmationColumns = useInventoriesGroupsColumns({
+  const confirmationColumns = useHostsGroupsColumns({
     disableLinks: true,
     disableSort: true,
   });
