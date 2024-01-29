@@ -63,7 +63,7 @@ export function InventoryGroups() {
         emptyStateButtonClick={
           canCreateGroup
             ? () =>
-                pageNavigate(AwxRoute.InventoryGroupAdd, {
+                pageNavigate(AwxRoute.InventoryGroupCreate, {
                   params: { id: params.id, inventory_type: params.inventory_type },
                 })
             : undefined

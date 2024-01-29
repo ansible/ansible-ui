@@ -1,6 +1,6 @@
-import { GroupPageAdd } from './GroupPageAdd';
+import { CreateGroup } from './InventoryGroupForm';
 
-describe('GroupPageAdd', () => {
+describe('CreateGroup', () => {
   beforeEach(() => {
     cy.intercept(
       {
@@ -15,7 +15,7 @@ describe('GroupPageAdd', () => {
   });
 
   it('renders create new group page', () => {
-    cy.mount(<GroupPageAdd />);
+    cy.mount(<CreateGroup />);
     cy.fixture('inventories.json')
       .its('results')
       .should('be.an', 'array')
@@ -25,8 +25,20 @@ describe('GroupPageAdd', () => {
   });
 
   it('disables save button when name is empty', () => {
-    cy.mount(<GroupPageAdd />);
+    cy.mount(<CreateGroup />);
     cy.fixture('inventories.json')
+      .its('results')
+      .should('be.an', 'array')
+      .then(() => {
+        cy.get('[data-cy="Submit"]').click();
+        cy.contains('Name is required.');
+        cy.get('[data-cy="Submit"]').should('have.class', 'pf-m-danger');
+      });
+  });
+
+  it('disables create group button when user does not have permissions', () => {
+    cy.mount(<CreateGroup />);
+    cy.fixture('inventories_no_permissions.json')
       .its('results')
       .should('be.an', 'array')
       .then(() => {

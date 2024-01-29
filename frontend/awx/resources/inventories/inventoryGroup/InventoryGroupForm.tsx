@@ -6,9 +6,9 @@ import { useGet } from '../../../../common/crud/useGet';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { AwxError } from '../../../common/AwxError';
 import { Inventory } from '../../../interfaces/Inventory';
-import { GroupAdd } from '../../groups/GroupAdd';
+import { GroupCreate } from '../../groups/GroupCreate';
 
-export function GroupPageAdd() {
+export function CreateGroup() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const {
@@ -48,7 +48,7 @@ export function GroupPageAdd() {
           },
         ]}
       />
-      <GroupAdd inventory={inventory} />
+      <GroupCreate inventory={inventory} />
     </PageLayout>
   );
 }

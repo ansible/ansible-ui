@@ -6,7 +6,7 @@ import {
   usePageNavigate,
 } from '../../../../framework';
 import { useNavigate } from 'react-router-dom';
-import { InventoryGroupCreate } from '../../interfaces/InventoryGroupCreate';
+import { InventoryGroupCreate } from '../../interfaces/InventoryGroup';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { AwxPageForm } from '../../common/AwxPageForm';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
@@ -15,7 +15,7 @@ import { awxAPI } from '../../common/api/awx-utils';
 import { InventoryGroup } from '../../interfaces/InventoryGroup';
 import { Inventory } from '../../interfaces/Inventory';
 
-export function GroupAdd(props: { inventory: Inventory }) {
+export function GroupCreate(props: { inventory: Inventory }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
