@@ -38,16 +38,19 @@ export function RepositoryDetails() {
   if (distroError || remoteError)
     return <HubError error={distroError || remoteError} handleRefresh={refresh} />;
   if (!distroData || !remoteData) return <LoadingPage breadcrumbs tabs />;
-  const distribution: { name: string; client_url: string } = distroData?.results[0];
+
+  const distribution: { name: string; client_url: string } | undefined = distroData?.results[0]
+    ? distroData?.results[0]
+    : undefined;
 
   return (
     <PageDetails>
       <PageDetail label={t('Repository name')}>{params.id}</PageDetail>
       <PageDetail label={t('Description')}>{repository.description || t('None')}</PageDetail>
       <PageDetail label={t('Retained version count')}>{repository.retain_repo_versions}</PageDetail>
-      <PageDetail label={t('Distribution')}>{distribution.name}</PageDetail>
+      <PageDetail label={t('Distribution')}>{distribution?.name}</PageDetail>
       <PageDetail label={t('Repository URL')}>
-        <CopyCell text={distribution.client_url} />
+        <CopyCell text={distribution?.client_url} />
       </PageDetail>
       <PageDetail label={t('Labels')}>
         <RepositoryLabels repository={repository} />
