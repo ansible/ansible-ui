@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn } from '../../../../framework';
+import { ITableColumn, TextCell, useGetPageUrl } from '../../../../framework';
 import { Label } from '@patternfly/react-core';
+import { HubRoute } from '../../main/HubRoutes';
 
 import { ExecutionEnvironment } from '../ExecutionEnvironment';
 
@@ -10,12 +11,20 @@ export function useExecutionEnvironmentsColumns(_options?: {
   disableLinks?: boolean;
 }) {
   const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
 
   const tableColumns = useMemo<ITableColumn<ExecutionEnvironment>[]>(
     () => [
       {
         header: t('Container repository name'),
-        type: 'text',
+        cell: (executionEnvironment) => (
+          <TextCell
+            text={executionEnvironment.name}
+            to={getPageUrl(HubRoute.ExecutionEnvironmentDetails, {
+              params: { id: executionEnvironment.name },
+            })}
+          />
+        ),
         value: (executionEnvironment) => executionEnvironment.name,
         card: 'name',
         list: 'name',
@@ -50,7 +59,7 @@ export function useExecutionEnvironmentsColumns(_options?: {
         cell: (ee) => <Label>{ee.pulp?.repository?.remote ? t`Remote` : t`Local`}</Label>,
       },
     ],
-    [t]
+    [getPageUrl, t]
   );
   return tableColumns;
 }
