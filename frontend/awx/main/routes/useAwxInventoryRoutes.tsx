@@ -179,12 +179,17 @@ export function useAwxInventoryRoutes() {
         {
           id: AwxRoute.InventoryHostPage,
           path: ':inventory_type/:id/hosts/:host_id',
-          element: <InventoryHostsPage />,
+          element: <InventoryHostPage />,
           children: [
             {
               id: AwxRoute.InventoryHostDetails,
               path: 'details',
-              element: <InventoryHostsDetails />,
+              element: <InventoryHostDetails />,
+            },
+            {
+              id: AwxRoute.InventoryHostGroups,
+              path: 'groups',
+              element: <InventoryHostGroups />,
             },
           ],
         },

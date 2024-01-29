@@ -16,7 +16,7 @@ import { useInventoriesHostsActions } from '../hooks/useInventoriesHostsActions'
 import { useGetInventory } from '../InventoryPage/InventoryPage';
 import { useGetHost } from '../../hosts/hooks/useGetHost';
 
-export function InventoryHostsPage() {
+export function InventoryHostPage() {
   const { t } = useTranslation();
   const params = useParams<{
     id: string;
@@ -75,7 +75,10 @@ export function InventoryHostsPage() {
           page: AwxRoute.InventoryHosts,
           persistentFilterKey: 'inventories',
         }}
-        tabs={[{ label: t('Details'), page: AwxRoute.InventoryHostDetails }]}
+        tabs={[
+          { label: t('Details'), page: AwxRoute.InventoryHostDetails },
+          { label: t('Groups'), page: AwxRoute.InventoryHostGroups },
+        ]}
         params={params}
       />
     </PageLayout>
