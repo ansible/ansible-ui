@@ -120,7 +120,7 @@ describe('InventoryGroups', () => {
         cy.clearAllFilters();
       });
   });
-  it('disables Create group button when user dose not have permissions', () => {
+  it('disables Create group button when user does not have permissions', () => {
     groupsOptions = 'groups_options_no_post.json';
     cy.mount(<InventoryGroups />);
     cy.fixture('groups.json')
