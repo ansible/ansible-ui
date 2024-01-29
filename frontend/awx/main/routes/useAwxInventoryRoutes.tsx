@@ -16,6 +16,7 @@ import { ScheduleRules } from '../../views/schedules/SchedulePage/ScheduleRules'
 import { Schedules } from '../../views/schedules/Schedules';
 import { AwxRoute } from '../AwxRoutes';
 import { InventoryHosts } from '../../resources/inventories/InventoryPage/InventoryHosts';
+import { InventorySources } from '../../resources/inventories/InventoryPage/InventorySources';
 
 export function useAwxInventoryRoutes() {
   const { t } = useTranslation();
@@ -125,7 +126,7 @@ export function useAwxInventoryRoutes() {
             {
               id: AwxRoute.InventorySources,
               path: 'sources',
-              element: <PageNotImplemented />,
+              element: <InventorySources />,
             },
             {
               id: AwxRoute.InventoryJobs,
@@ -139,7 +140,6 @@ export function useAwxInventoryRoutes() {
             },
           ],
         },
-
         {
           id: AwxRoute.EditInventory,
           path: ':id/edit',
@@ -153,6 +153,16 @@ export function useAwxInventoryRoutes() {
         {
           path: '',
           element: <Inventories />,
+        },
+        {
+          id: AwxRoute.InventorySourceEdit,
+          path: ':inventory_type/:id/sources/:source_id/edit',
+          element: <PageNotImplemented />,
+        },
+        {
+          id: AwxRoute.InventorySourcesAdd,
+          path: ':inventory_type/:id/sources/:source_id/add',
+          element: <PageNotImplemented />,
         },
       ],
     }),
