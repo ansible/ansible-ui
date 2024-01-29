@@ -11,6 +11,55 @@ describe('TemplatesList', () => {
     });
   });
 
+  describe('Empty list', () => {
+    beforeEach(() => {
+      cy.intercept(
+        {
+          method: 'GET',
+          url: '/api/v2/projects/6/*',
+        },
+        {
+          fixture: 'emptyList.json',
+        }
+      ).as('emptyList');
+    });
+    it('Empty state is displayed correctly for user with permission to create templates', () => {
+      cy.stub(useOptions, 'useOptions').callsFake(() => ({
+        data: {
+          actions: {
+            POST: {
+              name: {
+                type: 'string',
+                required: true,
+                label: 'Name',
+                max_length: 512,
+                help_text: 'Name of this template.',
+                filterable: true,
+              },
+            },
+          },
+        },
+      }));
+      cy.mount(<TemplatesList url={'/api/v2/projects/6/*'} />);
+      cy.contains(/^No templates yet$/);
+      cy.contains(/^Please create a template by using the button below.$/);
+      cy.contains('button', /^Create template$/).should('be.visible');
+    });
+    it('Empty state is displayed correctly for user without permission to create template', () => {
+      cy.stub(useOptions, 'useOptions').callsFake(() => ({
+        data: {
+          actions: {},
+        },
+      }));
+      cy.mount(<TemplatesList url={'/api/v2/projects/6/*'} />);
+      cy.contains(/^You do not have permission to create a template$/);
+      cy.contains(
+        /^Please contact your organization administrator if there is an issue with your access.$/
+      );
+      cy.contains('button', /^Create template$/).should('not.exist');
+    });
+  });
+
   describe('Populated list', () => {
     beforeEach(() => {
       cy.intercept(
@@ -29,14 +78,18 @@ describe('TemplatesList', () => {
       cy.get('tbody').find('tr').should('have.length', 2);
     });
 
-    it('Launch action item should call API /launch endpoint', () => {
+    it('Launch action item should navigate used to the job output page.', () => {
       cy.intercept(
         { method: 'GET', url: '/api/v2/job_templates/7/launch/' },
         { fixture: 'jobTemplateLaunch' }
       ).as('launchRequest');
       cy.mount(<TemplatesList url={'/api/v2/projects/6/*'} />);
       cy.clickTableRowPinnedAction('Demo Job Template', 'launch-template');
-      cy.wait('@launchRequest');
+      cy.wait('@launchRequest')
+        .its('response.body.id')
+        .then((jobId: string) => {
+          cy.waitForTemplateStatus(jobId);
+        });
     });
 
     it('Has filters for Name, Description, Created By, and Modified By', () => {
