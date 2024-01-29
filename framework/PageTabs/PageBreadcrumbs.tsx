@@ -9,9 +9,9 @@ export type PageBreadcrumbsContext = {
    * This usually holds the baselineBreadcrumbs appended with the current active tab (PageRoutedTabs)
    * if it exists. eg. Namespaces -> Namespace XYZ -> Collections  */
   pageBreadcrumbs: ICatalogBreadcrumb[];
-  /** Setter for baseline breadcrumbs for a page */
-  setPageBreadcrumbs: Dispatch<SetStateAction<ICatalogBreadcrumb[]>>;
   /** Setter for the page breadcrumbs that will be displayed by the PageHeader component. */
+  setPageBreadcrumbs: Dispatch<SetStateAction<ICatalogBreadcrumb[]>>;
+  /** Setter for baseline breadcrumbs for a page */
   setBaselineBreadcrumbs: Dispatch<SetStateAction<ICatalogBreadcrumb[]>>;
 };
 
