@@ -92,7 +92,7 @@ describe('TemplatesList', () => {
       cy.contains('.pf-v5-c-dropdown__toggle', 'Create template').should('be.disabled');
     });
 
-    it('Create Template button renders form if user has permission to create', () => {
+    it('Should render template create form for users with proper permissions', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({
         data: {
           actions: {
