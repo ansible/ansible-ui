@@ -1,0 +1,43 @@
+{
+  "id": 435,
+  "summary_fields": {
+    "created_by": {
+      "id": 18588,
+      "username": "demoadmin"
+    },
+    "modified_by": {
+      "id": 18588,
+      "username": "demoadmin"
+    },
+    "user_capabilities": {
+      "edit": true,
+      "delete": true
+    },
+    "groups": {
+      "count": 0,
+      "results": []
+    },
+    "recent_jobs": [
+      {
+        "id": 1,
+        "type": "ad_hoc_command",
+        "name": "test command job",
+        "status": "failed",
+        "finished": "2024-01-25T02:23:59.934729Z"
+      },
+      {
+        "id": 2,
+        "type": "job",
+        "name": "test command job",
+        "status": "successful",
+        "finished": "2024-01-25T02:23:59.934729Z"
+      }
+    ]
+  },
+  "created": "2024-01-25T02:17:56.709192Z",
+  "modified": "2024-01-25T02:23:59.934729Z",
+  "name": "test",
+  "description": "",
+  "enabled": true,
+  "variables": "---\ntest: test"
+}

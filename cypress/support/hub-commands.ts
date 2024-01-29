@@ -103,6 +103,46 @@ Cypress.Commands.add('uploadHubCollectionFile', (hubFilePath: string, hubFileNam
     });
 });
 
+Cypress.Commands.add('addAndApproveMultiCollections', (numberOfCollections = 1) => {
+  const rand = Math.floor(Math.random() * 9999999);
+  const namespace = `foo_${rand}`;
+
+  const uploadCollection = (namespace: string, range: number) => {
+    for (let i = 0; i < range; i++) {
+      const collection = `bar_${rand}${i}`;
+      cy.galaxykit(`-i collection upload ${namespace} ${collection}`);
+    }
+  };
+
+  const approveMultiCollections = (namespace: string) => {
+    cy.visit('/administration/approvals?page=1&perPage=100');
+    cy.verifyPageTitle('Collection Approvals');
+    cy.selectToolbarFilterType('Namespace');
+    cy.intercept(
+      'GET',
+      hubAPI`/v3/plugin/ansible/search/collection-versions/?repository_label=pipeline=staging&namespace=${namespace}&order_by=namespace&offset=0&limit=100`
+    ).as('approvals');
+    cy.searchAndDisplayResource(`${namespace}`);
+    cy.wait('@approvals');
+    cy.get('[data-cy="select-all"]').click();
+    cy.get('[data-ouia-component-id="page-toolbar"]').within(() => {
+      cy.get('[data-cy="actions-dropdown"]')
+        .click()
+        .then(() => {
+          cy.get('[data-cy="approve-selected-collections"]').click();
+        });
+    });
+    cy.get('[data-ouia-component-id="Approve collections"]').within(() => {
+      cy.get('[data-ouia-component-id="confirm"]').click();
+      cy.get('[data-ouia-component-id="submit"]').click();
+      cy.clickButton('Close');
+    });
+  };
+
+  uploadCollection(namespace, numberOfCollections);
+  approveMultiCollections(namespace);
+});
+
 Cypress.Commands.add('getOrCreateCollection', () => {
   let newCollectionVersion;
   cy.requestGet<HubItemsResponse<CollectionVersionSearch>>(
@@ -177,12 +217,12 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('cleanupCollections', () => {
+Cypress.Commands.add('cleanupCollections', (namespace: string, repo: string) => {
   cy.requestGet<HubItemsResponse<CollectionVersionSearch>>(
-    hubAPI`/v3/plugin/ansible/search/collection-versions/?namespace=ibm`
+    hubAPI`/v3/plugin/ansible/search/collection-versions/?namespace=${namespace}`
   ).then((result) => {
     for (const resource of result.data ?? []) {
-      if (resource.repository?.name === 'community') {
+      if (resource.repository?.name === repo) {
         cy.deleteCommunityCollectionFromSystem(resource);
       }
     }
@@ -272,4 +312,71 @@ Cypress.Commands.add('createRemoteRegistry', (remoteRegistryName: string) => {
 
 Cypress.Commands.add('deleteRemoteRegistry', (remoteRegistryId: string) => {
   cy.requestDelete(hubAPI`/_ui/v1/execution-environments/registries/${remoteRegistryId}/`);
+});
+
+// Skipping until deeper debug
+// Cypress.Commands.add('deleteCollection', (collection: string, namespace: string, repository: string) => {
+//   cy.galaxykit(`collection delete ${namespace} ${collection}`);
+// });
+
+Cypress.Commands.add(
+  'deleteCollection',
+  (
+    collectionName: string,
+    namespaceName: string,
+    repository: string,
+    options?: {
+      /** Whether to fail on response codes other than 2xx and 3xx */
+      failOnStatusCode?: boolean;
+    }
+  ) => {
+    cy.requestDelete(
+      hubAPI`/v3/plugin/ansible/content/${repository}/collections/index/${namespaceName}/${collectionName}/`,
+      options
+    );
+  }
+);
+
+Cypress.Commands.add('uploadCollection', (collection: string, namespace: string) => {
+  cy.galaxykit(`-i collection upload ${namespace} ${collection}`);
+});
+
+Cypress.Commands.add('uploadCollection', (collection: string, namespace: string) => {
+  cy.galaxykit(`collection upload ${namespace} ${collection}`);
+});
+
+Cypress.Commands.add(
+  'approveCollection',
+  (collection: string, namespace: string, version: string) => {
+    cy.galaxykit(`collection move ${namespace} ${collection} ${version} staging published`);
+  }
+);
+
+Cypress.Commands.add('collectionCopyVersionToRepositories', (collection: string) => {
+  cy.navigateTo('hub', 'collections');
+  cy.filterTableByText(collection);
+
+  cy.get('[data-cy="data-list-name"]').should('have.text', collection);
+  cy.get('[data-cy="data-list-action"]').within(() => {
+    cy.get('[data-cy="actions-dropdown"]')
+      .first()
+      .click()
+      .then(() => {
+        cy.get('[data-cy="copy-version-to-repositories"]').click();
+      });
+  });
+
+  cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+    cy.clickButton(/^Clear all filters$/);
+    cy.get('header').contains('Select repositories');
+    cy.get('button').contains('Select').should('have.attr', 'aria-disabled', 'true');
+    cy.filterTableByText('community');
+    cy.get('[data-cy="data-list-check"]').click();
+    cy.get('button').contains('Select').click();
+  });
+
+  cy.navigateTo('hub', 'approvals');
+  cy.clickButton(/^Clear all filters$/);
+  cy.filterBySingleSelection(/^Repository$/, 'community');
+  cy.get('[data-cy="repository-column-cell"]').should('contain', 'community');
 });

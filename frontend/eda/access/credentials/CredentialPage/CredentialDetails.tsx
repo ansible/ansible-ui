@@ -4,7 +4,6 @@ import { LoadingPage, PageDetail, PageDetails } from '../../../../../framework';
 import { formatDateString } from '../../../../../framework/utils/formatDateString';
 import { LastModifiedPageDetail } from '../../../../common/LastModifiedPageDetail';
 import { useGet } from '../../../../common/crud/useGet';
-import { SWR_REFRESH_INTERVAL } from '../../../common/eda-constants';
 import { edaAPI } from '../../../common/eda-utils';
 import { EdaCredential } from '../../../interfaces/EdaCredential';
 import { CredentialOptions } from '../EditCredential';
@@ -22,11 +21,7 @@ export function CredentialDetails() {
     </>
   );
   const params = useParams<{ id: string }>();
-  const { data: credential } = useGet<EdaCredential>(
-    edaAPI`/credentials/${params.id ?? ''}/`,
-    undefined,
-    { refreshInterval: SWR_REFRESH_INTERVAL }
-  );
+  const { data: credential } = useGet<EdaCredential>(edaAPI`/credentials/${params.id ?? ''}/`);
   const credentialOption = CredentialOptions(t).find(
     (option) => option.value === credential?.credential_type
   );

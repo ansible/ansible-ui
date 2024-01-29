@@ -18,7 +18,6 @@ import {
 import { PageRoutedTabs } from '../../../../framework/PageTabs/PageRoutedTabs';
 import { postRequest } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
-import { SWR_REFRESH_INTERVAL } from '../../common/eda-constants';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { Status906Enum } from '../../interfaces/generated/eda-api';
@@ -36,9 +35,7 @@ export function RulebookActivationPage() {
   const getPageUrl = useGetPageUrl();
   const alertToaster = usePageAlertToaster();
   const { data: rulebookActivation, refresh } = useGet<EdaRulebookActivation>(
-    edaAPI`/activations/${params.id ?? ''}/`,
-    undefined,
-    { refreshInterval: SWR_REFRESH_INTERVAL }
+    edaAPI`/activations/${params.id ?? ''}/`
   );
 
   const disableRulebookActivation = useDisableRulebookActivations((disabled) => {

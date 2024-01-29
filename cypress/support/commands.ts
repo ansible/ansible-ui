@@ -929,13 +929,26 @@ declare global {
       getNamespace(namespaceName: string): Cypress.Chainable<void>;
       deleteNamespace(namespaceName: string): Cypress.Chainable<void>;
       deleteCollectionsInNamespace(namespaceName: string): Cypress.Chainable<void>;
-      cleanupCollections(): Cypress.Chainable<void>;
+      cleanupCollections(namespace: string, repo: string): Cypress.Chainable<void>;
       createHubRole(): Cypress.Chainable<HubRole>;
       deleteHubRole(role: HubRole): Cypress.Chainable<void>;
       createRemote(remoteName: string): Cypress.Chainable<void>;
       deleteRemote(remoteName: string): Cypress.Chainable<void>;
       createRemoteRegistry(remoteRegistryName: string): Cypress.Chainable<RemoteRegistry>;
       deleteRemoteRegistry(remoteRegistryId: string): Cypress.Chainable<void>;
+      deleteCollection(
+        collectionName: string,
+        namespaceName: string,
+        repository: string
+      ): Cypress.Chainable<void>;
+      uploadCollection(collection: string, namespace: string): Cypress.Chainable<void>;
+      approveCollection(
+        collection: string,
+        namespace: string,
+        version: string
+      ): Cypress.Chainable<void>;
+      collectionCopyVersionToRepositories(collection: string): Cypress.Chainable<void>;
+      addAndApproveMultiCollections(thisRange: number): Cypress.Chainable<void>;
     }
   }
 }
