@@ -1,4 +1,7 @@
 import { gatewayV1API } from '../../platform/api/gateway-api-utils';
+import { randomString } from '../../framework/utils/random-string';
+import './rest-commands';
+import { PlatformOrganization } from '../../platform/interfaces/PlatformOrganization';
 
 Cypress.Commands.add('platformLogin', () => {
   //cy.requiredVariablesAreSet(['PLATFORM_SERVER', 'PLATFORM_USERNAME', 'PLATFORM_PASSWORD']);
@@ -33,3 +36,23 @@ Cypress.Commands.add('platformLogin', () => {
   );
   cy.visit(`/`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true });
 });
+
+Cypress.Commands.add('createPlatformOrganization', () => {
+  cy.requestPost<PlatformOrganization>(gatewayV1API`/organizations/`, {
+    name: `Platform E2E Organization ${randomString(5)}`,
+  });
+});
+
+Cypress.Commands.add(
+  'deletePlatformOrganization',
+  (
+    organization: PlatformOrganization,
+    options?: {
+      /** Whether to fail on response codes other than 2xx and 3xx */
+      failOnStatusCode?: boolean;
+    }
+  ) => {
+    if (!organization?.id) return;
+    cy.requestDelete(gatewayV1API`/organizations/${organization?.id.toString()}/`, options);
+  }
+);
