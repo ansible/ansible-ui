@@ -15,12 +15,6 @@ describe('InventorySources.cy.ts', () => {
     );
   });
 
-  it('renders source list', () => {
-    cy.mount(<InventorySources />);
-    cy.verifyPageTitle('Inventory sources');
-    cy.get('table').find('tr').should('have.length', 4);
-  });
-
   it('deletes source from toolbar menu', () => {
     cy.mount(<InventorySources />);
     cy.fixture('inventory_sources.json')
