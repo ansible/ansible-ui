@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from 'react';
+import { useParams } from 'react-router-dom';
 import { ITableColumn, usePageNavigate } from '../../../../../../framework';
 import { useNameColumn } from '../../../../../common/columns';
 import { InventoryGroup } from '../../../../interfaces/InventoryGroup';
@@ -9,14 +10,17 @@ export function useInventoriesGroupsColumns(options?: {
   disableLinks?: boolean;
 }) {
   const pageNavigate = usePageNavigate();
+  const params = useParams<{ id: string; inventory_type: string }>();
   const nameClick = useCallback(
     (group: InventoryGroup) =>
       pageNavigate(AwxRoute.InventoryGroupDetails, {
         params: {
-          id: group.id,
+          id: params.id,
+          group_id: group.id,
+          inventory_type: params.inventory_type,
         },
       }),
-    [pageNavigate]
+    [pageNavigate, params.id, params.inventory_type]
   );
   const nameColumn = useNameColumn({
     ...options,

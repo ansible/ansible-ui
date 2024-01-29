@@ -26,7 +26,7 @@ export function InventoryHostsGroups() {
   const toolbarActions = useInventoriesGroupsToolbarActions(view);
   const rowActions = useInventoriesGroupsActions();
 
-  const groupOptions = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/hosts`).data;
+  const groupOptions = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/groups`).data;
   const canCreateGroup = Boolean(
     groupOptions && groupOptions.actions && groupOptions.actions['POST']
   );
@@ -41,21 +41,21 @@ export function InventoryHostsGroups() {
         toolbarActions={toolbarActions}
         tableColumns={tableColumns}
         rowActions={rowActions}
-        errorStateTitle={t('Error loading inventory hosts')}
+        errorStateTitle={t('Error loading associated groups')}
         emptyStateTitle={
           canCreateGroup
-            ? t('There are currently no groups associated with this inventory.')
-            : t('You do not have permission to create a group')
+            ? t('There are currently no groups associated with this host')
+            : t('You do not have permission to add a group')
         }
         emptyStateDescription={
           canCreateGroup
-            ? t('Please create a group by using the button below.')
+            ? t('Please add a group by using the button below.')
             : t(
                 'Please contact your organization administrator if there is an issue with your access.'
               )
         }
         emptyStateIcon={canCreateGroup ? undefined : CubesIcon}
-        emptyStateButtonText={canCreateGroup ? t('Create group') : undefined}
+        emptyStateButtonText={canCreateGroup ? t('Add group') : undefined}
         emptyStateButtonClick={canCreateGroup ? () => undefined : undefined}
         {...view}
       />
