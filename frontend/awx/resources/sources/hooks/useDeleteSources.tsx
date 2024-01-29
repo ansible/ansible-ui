@@ -14,7 +14,7 @@ export function useDeleteSources(onComplete: (sources: InventorySource[]) => voi
   const deleteActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true });
   const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn]);
   const bulkAction = useAwxBulkConfirmation<InventorySource>();
-  const deleteHosts = (sources: InventorySource[]) => {
+  const deleteSources = (sources: InventorySource[]) => {
     bulkAction({
       title: t('Permanently delete sources', { count: sources.length }),
       confirmText: t('Yes, I confirm that I want to delete these {{count}} sources.', {
@@ -27,9 +27,9 @@ export function useDeleteSources(onComplete: (sources: InventorySource[]) => voi
       confirmationColumns,
       actionColumns,
       onComplete,
-      actionFn: (host: InventorySource, signal) =>
-        requestDelete(awxAPI`/inventory_sources/${host.id.toString()}/`, signal),
+      actionFn: (source: InventorySource, signal) =>
+        requestDelete(awxAPI`/inventory_sources/${source.id.toString()}/`, signal),
     });
   };
-  return deleteHosts;
+  return deleteSources;
 }

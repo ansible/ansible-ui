@@ -20,7 +20,6 @@ export function useInventorySourceColumns(options?: {
   const pageNavigate = usePageNavigate();
   const nameClick = useCallback(
     (inventorySource: InventorySource) => {
-      // return pageNavigate(AwxRoute.InventoryDetails, {
       return pageNavigate(AwxRoute.InventorySourceDetail, {
         params: {
           inventory_type: 'inventory',

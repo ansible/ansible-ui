@@ -1,7 +1,7 @@
 import { CubesIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../../../framework';
+import { PageLayout, PageTable, usePageNavigate } from '../../../../../framework';
 import { useOptions } from '../../../../common/crud/useOptions';
 import { usePersistentFilters } from '../../../../common/PersistentFilters';
 import { awxAPI } from '../../../common/api/awx-utils';
@@ -42,11 +42,6 @@ export function InventorySources() {
 
   return (
     <PageLayout>
-      <PageHeader
-        title={t('Inventory sources')}
-        titleHelpTitle={t('Inventory sources')}
-        description={t('The list of sources in the current inventory')}
-      />
       <PageTable<InventorySource>
         id="awx-inventory-sources-table"
         toolbarFilters={toolbarFilters}

@@ -209,7 +209,7 @@ export function useAwxInventoryRoutes() {
         },
         {
           id: AwxRoute.InventorySourcesAdd,
-          path: ':inventory_type/:id/sources/:source_id/add',
+          path: ':inventory_type/:id/sources/add',
           element: <PageNotImplemented />,
         },
       ],
