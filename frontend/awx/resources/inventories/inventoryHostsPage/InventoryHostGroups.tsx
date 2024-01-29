@@ -12,7 +12,7 @@ import { useHostsGroupsToolbarActions } from './hooks/useHostsGroupsToolbarActio
 import { useHostsGroupsActions } from './hooks/useHostsGroupsActions';
 import { useHostsGroupsColumns } from './hooks/useHostsGroupsColumns';
 import { InventoryGroup } from '../../../interfaces/InventoryGroup';
-import { useInventoryHostGroupsAddModal } from './inventoryHostsGroupsModal';
+import { useInventoryHostGroupsAddModal } from './InventoryHostGroupsModal';
 import { useAddInventoryGroups } from './hooks/useAddInventoryGroups';
 
 export function InventoryHostGroups() {

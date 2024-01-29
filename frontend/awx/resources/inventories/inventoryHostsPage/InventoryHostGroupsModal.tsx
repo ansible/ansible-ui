@@ -12,7 +12,7 @@ export interface InventoryHostGroupsAddModalProps {
   onAdd: (items: InventoryGroup[]) => void;
 }
 
-function InventoryHostGroupsAddModal(props: { onAdd: (items: InventoryGroup[]) => void }) {
+export function InventoryHostGroupsAddModal(props: { onAdd: (items: InventoryGroup[]) => void }) {
   const params = useParams<{ id: string; inventory_type: string; host_id: string }>();
 
   const toolbarFilters = useHostsGroupsFilters();
@@ -31,6 +31,8 @@ function InventoryHostGroupsAddModal(props: { onAdd: (items: InventoryGroup[]) =
       toolbarFilters={toolbarFilters}
       tableColumns={tableColumns}
       onSelect={props.onAdd}
+      errorStateTitle={t('Error loading groups to associate')}
+      emptyStateTitle={t('No groups available to add to host')}
       view={view}
     />
   );

@@ -16,7 +16,7 @@ import { OptionsResponse, ActionsResponse } from '../../../../interfaces/Options
 import { InventoryGroup } from '../../../../interfaces/InventoryGroup';
 import { IAwxView } from '../../../../common/useAwxView';
 import { useDisassociateGroups } from './useDisassociateGroups';
-import { useInventoryHostGroupsAddModal } from '../inventoryHostsGroupsModal';
+import { useInventoryHostGroupsAddModal } from '../InventoryHostGroupsModal';
 import { useAddInventoryGroups } from './useAddInventoryGroups';
 
 export function useHostsGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
