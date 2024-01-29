@@ -44,7 +44,10 @@ export function InventorySourcePage() {
           {
             label: `${inventorySource?.summary_fields.inventory.name}`,
             to: getPageUrl(AwxRoute.InventoryDetails, {
-              params: { id: inventorySource?.summary_fields.inventory.id },
+              params: {
+                id: inventorySource?.summary_fields.inventory.id,
+                inventory_type: 'inventory',
+              },
             }),
           },
           {

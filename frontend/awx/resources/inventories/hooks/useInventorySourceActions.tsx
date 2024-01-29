@@ -48,10 +48,20 @@ export function useInventorySourceActions({
   );
 
   return useMemo<IPageAction<InventorySource>[]>(() => {
-    const cannotDeleteInventorySource = (inventorySource: InventorySource): string =>
-      inventorySource?.summary_fields?.user_capabilities?.delete && !activeUser?.is_system_auditor
-        ? ''
-        : t(`The inventory source cannot be deleted due to insufficient permission`);
+    const cannotDeleteInventorySource = (inventorySource: InventorySource): string => {
+      if (inventorySource?.status === 'running') {
+        return t(`The inventory source cannot be deleted due to the source currently running`);
+      }
+
+      if (
+        !inventorySource?.summary_fields?.user_capabilities?.delete &&
+        !activeUser?.is_system_auditor
+      ) {
+        return t(`The inventory source cannot be deleted due to insufficient permission`);
+      }
+
+      return '';
+    };
     const cannotEditInventorySource = (inventorySource: InventorySource): string =>
       inventorySource?.summary_fields?.user_capabilities?.edit && !activeUser?.is_system_auditor
         ? ''
@@ -90,7 +100,6 @@ export function useInventorySourceActions({
         isPinned: true,
         isHidden: (inventorySource: InventorySource) =>
           !inventorySource?.summary_fields.user_capabilities.start,
-        // isDisabled: 'yes',
         isDisabled: (inventorySource: InventorySource) =>
           cannotLaunchInventorySourceUpdate(inventorySource),
         onClick: (inventorySource) => handleUpdate(inventorySource),
