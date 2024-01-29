@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { AwxGroup } from '../../../interfaces/AwxGroup';
+import { InventoryGroup } from '../../../interfaces/InventoryGroup';
 import {
   IPageAction,
   PageActionSelection,
@@ -28,7 +28,7 @@ export function useInventoriesGroupsActions() {
     adHocOptions && adHocOptions.actions && adHocOptions.actions['POST']
   );
 
-  return useMemo<IPageAction<AwxGroup>[]>(
+  return useMemo<IPageAction<InventoryGroup>[]>(
     () => [
       {
         type: PageActionType.Button,

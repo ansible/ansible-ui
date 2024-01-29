@@ -5,7 +5,7 @@ import {
   PageActionType,
   usePageNavigate,
 } from '../../../../../framework';
-import { AwxGroup } from '../../../interfaces/AwxGroup';
+import { InventoryGroup } from '../../../interfaces/InventoryGroup';
 import { CodeIcon, PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { AwxRoute } from '../../../main/AwxRoutes';
@@ -30,11 +30,11 @@ export function useInventoriesGroupActions() {
     adHocOptions && adHocOptions.actions && adHocOptions.actions['POST']
   );
 
-  const bulkAction = useAwxBulkConfirmation<AwxGroup>();
+  const bulkAction = useAwxBulkConfirmation<InventoryGroup>();
   const confirmationColumns = useGroupsColumns();
   const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
 
-  return useMemo<IPageAction<AwxGroup>[]>(
+  return useMemo<IPageAction<InventoryGroup>[]>(
     () => [
       {
         type: PageActionType.Button,
@@ -89,7 +89,7 @@ export function useInventoriesGroupActions() {
               pageNavigate(AwxRoute.InventoryGroups, {
                 params: { inventory_type: 'inventory', id: group.inventory },
               }),
-            actionFn: (group: AwxGroup, signal) =>
+            actionFn: (group: InventoryGroup, signal) =>
               requestDelete(awxAPI`/groups/${group.id.toString()}/`, signal),
           });
         },

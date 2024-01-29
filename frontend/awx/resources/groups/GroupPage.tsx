@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { useGetItem } from '../../../common/crud/useGet';
-import { AwxGroup } from '../../interfaces/AwxGroup';
+import { InventoryGroup } from '../../interfaces/InventoryGroup';
 import { awxAPI } from '../../common/api/awx-utils';
 import {
   LoadingPage,
@@ -23,7 +23,7 @@ export function GroupPage() {
     error,
     data: inventoryGroup,
     refresh,
-  } = useGetItem<AwxGroup>(awxAPI`/groups`, params.group_id);
+  } = useGetItem<InventoryGroup>(awxAPI`/groups`, params.group_id);
 
   const getPageUrl = useGetPageUrl();
 
@@ -59,7 +59,7 @@ export function GroupPage() {
           { label: inventoryGroup?.name },
         ]}
         headerActions={
-          <PageActions<AwxGroup>
+          <PageActions<InventoryGroup>
             actions={actions}
             position={DropdownPosition.right}
             selectedItem={inventoryGroup}
