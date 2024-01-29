@@ -10,15 +10,24 @@ import {
 } from '../../../../common/columns';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { AwxHost } from '../../../interfaces/AwxHost';
+import { useParams } from 'react-router-dom';
 
 export function useInventoriesHostsColumns(options?: {
   disableSort?: boolean;
   disableLinks?: boolean;
 }) {
   const pageNavigate = usePageNavigate();
+  const params = useParams<{ inventory_type: string; id: string }>();
   const nameClick = useCallback(
-    (host: AwxHost) => pageNavigate(AwxRoute.HostDetails, { params: { id: host.id } }),
-    [pageNavigate]
+    (host: AwxHost) =>
+      pageNavigate(AwxRoute.InventoryHostDetails, {
+        params: {
+          inventory_type: params.inventory_type,
+          id: params.id,
+          host_id: host.id,
+        },
+      }),
+    [pageNavigate, params.id, params.inventory_type]
   );
   const nameColumn = useNameColumn({
     ...options,
