@@ -5,8 +5,8 @@ import { MultiSelectDialog, usePageDialog } from '../../../../../framework';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxView } from '../../../common/useAwxView';
 import { InventoryGroup } from '../../../interfaces/InventoryGroup';
-import { useInventoriesGroupsColumns } from './hooks/useInventoriesGroupsColumns';
-import { useInventoriesGroupsFilters } from './hooks/useInventoriesGroupsFilters';
+import { useHostsGroupsColumns } from './hooks/useHostsGroupsColumns';
+import { useHostsGroupsFilters } from './hooks/useHostsGroupsFilters';
 
 export interface InventoryHostGroupsAddModalProps {
   onAdd: (items: InventoryGroup[]) => void;
@@ -15,8 +15,8 @@ export interface InventoryHostGroupsAddModalProps {
 function InventoryHostGroupsAddModal(props: { onAdd: (items: InventoryGroup[]) => void }) {
   const params = useParams<{ id: string; inventory_type: string; host_id: string }>();
 
-  const toolbarFilters = useInventoriesGroupsFilters();
-  const tableColumns = useInventoriesGroupsColumns();
+  const toolbarFilters = useHostsGroupsFilters();
+  const tableColumns = useHostsGroupsColumns();
 
   const view = useAwxView<InventoryGroup>({
     url: awxAPI`/inventories/${params.id ?? ''}/groups/`,
