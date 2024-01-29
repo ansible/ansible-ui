@@ -1,14 +1,14 @@
 import { AwxHost } from '../../../interfaces/AwxHost';
-import { InventoryHostsDetailsInner as InventoryHostsDetails } from './inventoryHostsDetails';
+import { InventoryHostDetailsInner as InventoryHostDetails } from './InventoryHostDetails';
 import mockAwxHost from '../../../../../cypress/fixtures/awxHost.json';
 import { DateTime } from 'luxon';
 
 describe('InventoryHostDetails', () => {
   it('Component renders and displays Application', () => {
-    cy.mount(<InventoryHostsDetails host={mockAwxHost as unknown as AwxHost} />);
+    cy.mount(<InventoryHostDetails host={mockAwxHost as unknown as AwxHost} />);
   });
   it('Render inventory host detail fields', () => {
-    cy.mount(<InventoryHostsDetails host={mockAwxHost as unknown as AwxHost} />);
+    cy.mount(<InventoryHostDetails host={mockAwxHost as unknown as AwxHost} />);
     cy.get('[data-cy="name"]').should('have.text', 'test');
     cy.get('[data-cy="code-block-value"]').should('have.text', '---\ntest: test');
     cy.get('[data-cy="activity"] > .pf-v5-c-description-list__text').find(

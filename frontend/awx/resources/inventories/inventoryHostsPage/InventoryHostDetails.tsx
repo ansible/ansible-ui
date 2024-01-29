@@ -9,7 +9,7 @@ import { AwxRoute } from '../../../main/AwxRoutes';
 import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
 import { useGetHost } from '../../hosts/hooks/useGetHost';
 
-export function InventoryHostsDetails() {
+export function InventoryHostDetails() {
   const params = useParams<{ id: string; inventory_type: string; host_id: string }>();
   const { host } = useGetHost(params.host_id as string);
 
@@ -17,10 +17,10 @@ export function InventoryHostsDetails() {
     return null;
   }
 
-  return <InventoryHostsDetailsInner host={host} />;
+  return <InventoryHostDetailsInner host={host} />;
 }
 
-export function InventoryHostsDetailsInner(props: { host: AwxHost }) {
+export function InventoryHostDetailsInner(props: { host: AwxHost }) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
 
