@@ -78,10 +78,10 @@ describe('TemplatesList', () => {
       cy.get('tbody').find('tr').should('have.length', 2);
     });
 
-    it('Launch action item should navigate used to the job output page.', () => {
+    it('Launch action item should navigate user to the job output page.', () => {
       cy.intercept(
-        { method: 'GET', url: '/api/v2/job_templates/7/launch/' },
-        { fixture: 'jobTemplateLaunch' }
+        { method: 'POST', url: '/api/v2/job_templates/7/launch/' },
+        { fixture: 'jobTemplateLaunchPOST' }
       ).as('launchRequest');
       cy.mount(<TemplatesList url={'/api/v2/projects/6/*'} />);
       cy.clickTableRowPinnedAction('Demo Job Template', 'launch-template');
