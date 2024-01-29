@@ -18,9 +18,10 @@ import { AwxRoute } from '../AwxRoutes';
 import { InventoryHosts } from '../../resources/inventories/InventoryPage/InventoryHosts';
 import { InventoryGroups } from '../../resources/inventories/InventoryPage/InventoryGroups';
 import { GroupPage } from '../../resources/groups/GroupPage';
-import { InventoryHostsPage } from '../../resources/inventories/inventoryHostsPage/inventoryHostsPage';
-import { InventoryHostsDetails } from '../../resources/inventories/inventoryHostsPage/inventoryHostsDetails';
+import { InventoryHostPage } from '../../resources/inventories/inventoryHostsPage/InventoryHostPage';
+import { InventoryHostDetails } from '../../resources/inventories/inventoryHostsPage/InventoryHostDetails';
 import { CreateGroup } from '../../resources/inventories/inventoryGroup/InventoryGroupForm';
+import { InventoryHostGroups } from '../../resources/inventories/inventoryHostsPage/InventoryHostGroups';
 
 export function useAwxInventoryRoutes() {
   const { t } = useTranslation();
