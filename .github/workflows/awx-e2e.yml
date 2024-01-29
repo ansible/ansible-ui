@@ -1,4 +1,4 @@
-name: awx-e2e
+name: AWX E2E
 
 on:
   workflow_call:
@@ -13,9 +13,9 @@ on:
     secrets:
       AWX_PASSWORD:
         required: true
-      CYPRESS_AUI_AWX_E2E_PROJECT_ID:
+      AWX_PROJECT_ID:
         required: true
-      CYPRESS_AUI_AWX_E2E_RECORD_KEY:
+      AWX_RECORD_KEY:
         required: true
 
 jobs:
@@ -26,7 +26,7 @@ jobs:
     env:
       DOCKER_BUILDKIT: 1
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         if: ${{ !inputs.SKIP_JOB }}
         with:
           fetch-depth: 1
@@ -36,7 +36,7 @@ jobs:
       - name: Cache dependencies
         if: ${{ !inputs.SKIP_JOB }}
         id: cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             ./node_modules
@@ -56,7 +56,7 @@ jobs:
         run: docker save awx-ui > awx-ui.tar
       - name: Upload Image
         if: ${{ !inputs.SKIP_JOB }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: awx-ui.tar
           path: awx-ui.tar
@@ -69,11 +69,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        containers: [1,2,3]
+        containers: [1,2,3,4]
     steps:
       - name: Download container image
         if: ${{ !inputs.SKIP_JOB }}
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: awx-ui.tar
       - name: Load container image
@@ -81,12 +81,12 @@ jobs:
         run: docker load --input awx-ui.tar
       - name: Checkout
         if: ${{ !inputs.SKIP_JOB }}
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1
       - name: Setup node
         if: ${{ !inputs.SKIP_JOB }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18
       - name: PreCache
@@ -95,7 +95,7 @@ jobs:
       - name: Cache dependencies
         if: ${{ !inputs.SKIP_JOB }}
         id: cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             ./node_modules
@@ -106,7 +106,7 @@ jobs:
         run: npm ci
       - name: Cypress
         if: ${{ !inputs.SKIP_JOB }}
-        uses: cypress-io/github-action@v5
+        uses: cypress-io/github-action@v6
         with:
           install: false
           start: npm run docker:run:awx
@@ -119,7 +119,7 @@ jobs:
           AWX_SERVER: ${{ inputs.AWX_SERVER }}
           AWX_USERNAME: e2e
           AWX_PASSWORD: ${{ secrets.AWX_PASSWORD }}
-          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_AWX_E2E_PROJECT_ID }}
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_AWX_E2E_RECORD_KEY }}
+          CYPRESS_PROJECT_ID: ${{ secrets.AWX_PROJECT_ID }}
+          CYPRESS_RECORD_KEY: ${{ secrets.AWX_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_TLS_REJECT_UNAUTHORIZED: 0
