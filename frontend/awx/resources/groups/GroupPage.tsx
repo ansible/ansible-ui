@@ -32,7 +32,7 @@ export function GroupPage() {
             label: `${inventoryGroup?.summary_fields.inventory.name}`,
             to: getPageUrl(AwxRoute.InventoryDetails, {
               params: {
-                id: inventoryGroup?.summary_fields.inventory.id,
+                id: inventoryGroup?.inventory,
                 inventory_type: 'inventory',
               },
             }),
@@ -41,7 +41,7 @@ export function GroupPage() {
             label: t('Groups'),
             to: getPageUrl(AwxRoute.InventoryGroups, {
               params: {
-                id: inventoryGroup?.summary_fields.inventory.id,
+                id: inventoryGroup?.inventory,
                 inventory_type: 'inventory',
               },
             }),
@@ -61,7 +61,7 @@ export function GroupPage() {
           { label: t('Related Groups'), page: AwxRoute.InventoryGroupRelatedGroups },
           { label: t('Hosts'), page: AwxRoute.InventoryGroupHost },
         ]}
-        params={{ id: inventoryGroup.id }}
+        params={{ inventory_type: 'inventory', id: inventoryGroup.inventory }}
       />
     </PageLayout>
   );
