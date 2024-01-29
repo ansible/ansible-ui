@@ -5,10 +5,7 @@ import { useNameColumn } from '../../../../../common/columns';
 import { InventoryGroup } from '../../../../interfaces/InventoryGroup';
 import { AwxRoute } from '../../../../main/AwxRoutes';
 
-export function useInventoriesGroupsColumns(options?: {
-  disableSort?: boolean;
-  disableLinks?: boolean;
-}) {
+export function useHostsGroupsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const pageNavigate = usePageNavigate();
   const params = useParams<{ id: string; inventory_type: string }>();
   const nameClick = useCallback(

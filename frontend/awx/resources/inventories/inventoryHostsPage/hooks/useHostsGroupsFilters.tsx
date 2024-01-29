@@ -6,7 +6,7 @@ import {
   useNameToolbarFilter,
 } from '../../../../common/awx-toolbar-filters';
 
-export function useInventoriesGroupsFilters() {
+export function useHostsGroupsFilters() {
   const createdByToolbarFilter = useCreatedByToolbarFilter();
   const modifiedByToolbarFilter = useModifiedByToolbarFilter();
   const nameToolbarFilter = useNameToolbarFilter();

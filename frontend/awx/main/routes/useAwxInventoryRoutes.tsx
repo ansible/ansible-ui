@@ -18,9 +18,9 @@ import { AwxRoute } from '../AwxRoutes';
 import { InventoryHosts } from '../../resources/inventories/InventoryPage/InventoryHosts';
 import { InventoryGroups } from '../../resources/inventories/InventoryPage/InventoryGroups';
 import { GroupPage } from '../../resources/groups/GroupPage';
-import { InventoryHostsPage } from '../../resources/inventories/inventoryHostsPage/inventoryHostsPage';
-import { InventoryHostsDetails } from '../../resources/inventories/inventoryHostsPage/inventoryHostsDetails';
-import { InventoryHostsGroups } from '../../resources/inventories/inventoryHostsPage/inventoryHostsGroups';
+import { InventoryHostsPage } from '../../resources/inventories/inventoryHostsPage/InventoryHostsPage';
+import { InventoryHostDetails } from '../../resources/inventories/inventoryHostsPage/InventoryHostDetails';
+import { InventoryHostGroups } from '../../resources/inventories/inventoryHostsPage/InventoryHostGroups';
 
 export function useAwxInventoryRoutes() {
   const { t } = useTranslation();
@@ -184,12 +184,12 @@ export function useAwxInventoryRoutes() {
             {
               id: AwxRoute.InventoryHostDetails,
               path: 'details',
-              element: <InventoryHostsDetails />,
+              element: <InventoryHostDetails />,
             },
             {
               id: AwxRoute.InventoryHostGroups,
               path: 'groups',
-              element: <InventoryHostsGroups />,
+              element: <InventoryHostGroups />,
             },
           ],
         },

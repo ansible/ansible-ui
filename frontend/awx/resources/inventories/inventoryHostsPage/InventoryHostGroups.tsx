@@ -7,24 +7,24 @@ import { usePersistentFilters } from '../../../../common/PersistentFilters';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { OptionsResponse, ActionsResponse } from '../../../interfaces/OptionsResponse';
 import { useAwxView } from '../../../common/useAwxView';
-import { useInventoriesGroupsFilters } from './hooks/useInventoriesGroupsFilters';
-import { useInventoriesGroupsToolbarActions } from './hooks/useInventoriesGroupsToolbarActions';
-import { useInventoriesGroupsActions } from './hooks/useInventoriesGroupsActions';
-import { useInventoriesGroupsColumns } from './hooks/useInventoriesGroupsColumns';
+import { useHostsGroupsFilters } from './hooks/useHostsGroupsFilters';
+import { useHostsGroupsToolbarActions } from './hooks/useHostsGroupsToolbarActions';
+import { useHostsGroupsActions } from './hooks/useHostsGroupsActions';
+import { useHostsGroupsColumns } from './hooks/useHostsGroupsColumns';
 import { InventoryGroup } from '../../../interfaces/InventoryGroup';
 
-export function InventoryHostsGroups() {
+export function InventoryHostGroups() {
   const { t } = useTranslation();
-  const toolbarFilters = useInventoriesGroupsFilters();
-  const tableColumns = useInventoriesGroupsColumns();
+  const toolbarFilters = useHostsGroupsFilters();
+  const tableColumns = useHostsGroupsColumns();
   const params = useParams<{ id: string; inventory_type: string; host_id: string }>();
   const view = useAwxView<InventoryGroup>({
     url: awxAPI`/hosts/${params.host_id ?? ''}/all_groups`,
     toolbarFilters,
     tableColumns,
   });
-  const toolbarActions = useInventoriesGroupsToolbarActions(view);
-  const rowActions = useInventoriesGroupsActions();
+  const toolbarActions = useHostsGroupsToolbarActions(view);
+  const rowActions = useHostsGroupsActions();
 
   const groupOptions = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/groups`).data;
   const canCreateGroup = Boolean(

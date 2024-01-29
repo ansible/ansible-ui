@@ -11,7 +11,7 @@ import { cannotEditResource } from '../../../../../common/utils/RBAChelpers';
 import { AwxRoute } from '../../../../main/AwxRoutes';
 import { InventoryGroup } from '../../../../interfaces/InventoryGroup';
 
-export function useInventoriesGroupsActions() {
+export function useHostsGroupsActions() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
 
@@ -23,7 +23,6 @@ export function useInventoriesGroupsActions() {
         isPinned: true,
         icon: PencilAltIcon,
         label: t('Edit group'),
-        // Need to update routing to go to inventory group edit form when that will be implemented AAP-19476
         onClick: (host) => pageNavigate(AwxRoute.EditHost, { params: { id: host.id } }),
         isDisabled: (host) => cannotEditResource(host, t),
       },

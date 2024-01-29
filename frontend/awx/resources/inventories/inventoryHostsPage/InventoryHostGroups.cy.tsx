@@ -1,9 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import * as useOptions from '../../../../common/crud/useOptions';
+import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { InventoryGroup } from '../../../interfaces/InventoryGroup';
-import { InventoryHostsGroups } from './inventoryHostsGroups';
+import { InventoryHostGroups } from './InventoryHostGroups';
 
 describe('Inventory Host Groups List', () => {
   describe('Non-empty list', () => {
@@ -28,7 +26,7 @@ describe('Inventory Host Groups List', () => {
     });
 
     it('Inventory Host Groups list renders', () => {
-      cy.mount(<InventoryHostsGroups />, {
+      cy.mount(<InventoryHostGroups />, {
         path: '/inventories/:inventory_type/:id/hosts/:host_id/*',
         initialEntries: ['/inventories/inventory/1/hosts/1/groups'],
       });
@@ -36,7 +34,7 @@ describe('Inventory Host Groups List', () => {
     });
 
     it('Filter Host Groups by name', () => {
-      cy.mount(<InventoryHostsGroups />, {
+      cy.mount(<InventoryHostGroups />, {
         path: '/inventories/:inventory_type/:id/hosts/:host_id/*',
         initialEntries: ['/inventories/inventory/1/hosts/1/groups'],
       });
@@ -55,7 +53,7 @@ describe('Inventory Host Groups List', () => {
     });
 
     it('Filter Host Groups by created by', () => {
-      cy.mount(<InventoryHostsGroups />, {
+      cy.mount(<InventoryHostGroups />, {
         path: '/inventories/:inventory_type/:id/hosts/:host_id/*',
         initialEntries: ['/inventories/inventory/1/hosts/1/groups'],
       });
@@ -74,7 +72,7 @@ describe('Inventory Host Groups List', () => {
     });
 
     it('Filter Host Groups by modified by', () => {
-      cy.mount(<InventoryHostsGroups />, {
+      cy.mount(<InventoryHostGroups />, {
         path: '/inventories/:inventory_type/:id/hosts/:host_id/*',
         initialEntries: ['/inventories/inventory/1/hosts/1/groups'],
       });
@@ -93,7 +91,7 @@ describe('Inventory Host Groups List', () => {
     });
 
     it('Add group button is enabled if the user has permission to add a group', () => {
-      cy.mount(<InventoryHostsGroups />, {
+      cy.mount(<InventoryHostGroups />, {
         path: '/inventories/:inventory_type/:id/hosts/:host_id/*',
         initialEntries: ['/inventories/inventory/1/hosts/1/groups'],
       });
@@ -101,7 +99,7 @@ describe('Inventory Host Groups List', () => {
     });
 
     it('Edit inventory group row action is enabled if the user has permission to edit inventory group', () => {
-      cy.mount(<InventoryHostsGroups />, {
+      cy.mount(<InventoryHostGroups />, {
         path: '/inventories/:inventory_type/:id/hosts/:host_id/*',
         initialEntries: ['/inventories/inventory/1/hosts/1/groups'],
       });
@@ -118,7 +116,7 @@ describe('Inventory Host Groups List', () => {
           actions: {},
         },
       }));
-      cy.mount(<InventoryHostsGroups />, {
+      cy.mount(<InventoryHostGroups />, {
         path: '/inventories/:inventory_type/:id/hosts/:host_id/*',
         initialEntries: ['/inventories/inventory/1/hosts/1/groups'],
       });
@@ -127,8 +125,8 @@ describe('Inventory Host Groups List', () => {
 
     it('Edit inventory group row action is disabled if the user does not have permission to edit inventory group', () => {
       cy.fixture('groups')
-        .then((inventoryGroups) => {
-          for (let i = 0; i < (inventoryGroups.results as InventoryGroup[]).length; i++) {
+        .then((inventoryGroups: AwxItemsResponse<InventoryGroup>) => {
+          for (let i = 0; i < inventoryGroups.results.length; i++) {
             inventoryGroups.results[i].summary_fields.user_capabilities.edit = false;
           }
           return inventoryGroups;
@@ -143,7 +141,7 @@ describe('Inventory Host Groups List', () => {
           );
         })
         .then(() => {
-          cy.mount(<InventoryHostsGroups />, {
+          cy.mount(<InventoryHostGroups />, {
             path: '/inventories/:inventory_type/:id/hosts/:host_id/*',
             initialEntries: ['/inventories/inventory/1/hosts/1/groups'],
           });
@@ -174,7 +172,7 @@ describe('Inventory Host Groups List', () => {
           statusCode: 500,
         }
       );
-      cy.mount(<InventoryHostsGroups />, {
+      cy.mount(<InventoryHostGroups />, {
         path: '/inventories/:inventory_type/:id/hosts/:host_id/*',
         initialEntries: ['/inventories/inventory/1/hosts/1/groups'],
       });
@@ -211,7 +209,7 @@ describe('Inventory Host Groups List', () => {
           },
         },
       }));
-      cy.mount(<InventoryHostsGroups />, {
+      cy.mount(<InventoryHostGroups />, {
         path: '/inventories/:inventory_type/:id/hosts/:host_id/*',
         initialEntries: ['/inventories/inventory/1/hosts/1/groups'],
       });
@@ -225,7 +223,7 @@ describe('Inventory Host Groups List', () => {
           actions: {},
         },
       }));
-      cy.mount(<InventoryHostsGroups />, {
+      cy.mount(<InventoryHostGroups />, {
         path: '/inventories/:inventory_type/:id/hosts/:host_id/*',
         initialEntries: ['/inventories/inventory/1/hosts/1/groups'],
       });

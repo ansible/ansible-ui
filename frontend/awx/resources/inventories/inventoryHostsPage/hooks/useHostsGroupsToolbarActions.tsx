@@ -17,7 +17,7 @@ import { InventoryGroup } from '../../../../interfaces/InventoryGroup';
 import { IAwxView } from '../../../../common/useAwxView';
 import { useDisassociateGroups } from './useDisassociateGroups';
 
-export function useInventoriesGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
+export function useHostsGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const params = useParams<{ id: string; inventory_type: string; host_id: string }>();
