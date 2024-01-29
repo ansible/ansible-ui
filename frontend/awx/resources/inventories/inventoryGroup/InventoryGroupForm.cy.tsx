@@ -35,16 +35,4 @@ describe('CreateGroup', () => {
         cy.get('[data-cy="Submit"]').should('have.class', 'pf-m-danger');
       });
   });
-
-  it('disables create group button when user does not have permissions', () => {
-    cy.mount(<CreateGroup />);
-    cy.fixture('inventories_no_permissions.json')
-      .its('results')
-      .should('be.an', 'array')
-      .then(() => {
-        cy.get('[data-cy="Submit"]').click();
-        cy.contains('Name is required.');
-        cy.get('[data-cy="Submit"]').should('have.class', 'pf-m-danger');
-      });
-  });
 });
