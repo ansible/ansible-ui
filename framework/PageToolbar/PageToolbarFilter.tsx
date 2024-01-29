@@ -55,6 +55,13 @@ export type PageToolbarFiltersProps = {
   toolbarFilters?: IToolbarFilter[];
   filterState: IFilterState;
   setFilterState: Dispatch<SetStateAction<IFilterState>>;
+
+  /**
+   * Limits the filters so that only one filter can be set to an OR operation.
+   *
+   * Example: AWX can either have an OR on type or status but not both.
+   * So once one has 2 selections, the other becomes a single select.
+   */
   limitFiltersToOneOrOperation?: boolean;
 };
 
@@ -375,6 +382,36 @@ function ToolbarFilterComponent(props: {
       );
 
     case ToolbarFilterType.AsyncMultiSelect:
+      if (isHasOrFilter && props.limitFiltersToOneOrOperation) {
+        return (
+          <PageAsyncSingleSelect<string>
+            key={filter.key}
+            id={props.id ?? filter.key}
+            value={filterValues && filterValues?.length > 0 ? filterValues[0] : ''}
+            onSelect={(item) => setFilterValues(() => [item])}
+            placeholder={filter.placeholder || ''}
+            queryOptions={filter.queryOptions}
+            queryErrorText={filter.queryErrorText}
+            queryPlaceholder={filter.queryPlaceholder}
+            isRequired={filter.isRequired}
+            footer={
+              filter.openBrowse ? (
+                <Button
+                  variant="link"
+                  onClick={() => {
+                    filter.openBrowse?.(
+                      (selection) => setFilterValues(() => [selection.length ? selection[0] : '']),
+                      filterValues && filterValues.length > 0 ? filterValues : undefined
+                    );
+                  }}
+                >
+                  Browse
+                </Button>
+              ) : undefined
+            }
+          />
+        );
+      }
       return (
         <PageAsyncMultiSelect<string>
           key={filter.key}

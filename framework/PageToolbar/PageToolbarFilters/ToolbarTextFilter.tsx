@@ -17,7 +17,7 @@ import { ToolbarFilterCommon } from './ToolbarFilterCommon';
 export interface IToolbarSingleTextFilter extends ToolbarFilterCommon {
   type: ToolbarFilterType.SingleText;
 
-  /** The comparison to use when filtering. */
+  /** The placeholder text for the filter, indicating what kind of filter caprison it uses. */
   comparison: 'contains' | 'startsWith' | 'endsWith' | 'equals';
 }
 
@@ -26,7 +26,7 @@ export interface IToolbarMultiTextFilter extends ToolbarFilterCommon {
   /** Filter for filtering by user text input. */
   type: ToolbarFilterType.MultiText;
 
-  /** The comparison to use when filtering. */
+  /** The placeholder text for the filter, indicating what kind of filter caprison it uses. */
   comparison: 'contains' | 'startsWith' | 'endsWith' | 'equals';
 }
 
@@ -34,6 +34,8 @@ export function ToolbarTextMultiFilter(props: {
   id?: string;
   addFilter: (value: string) => void;
   placeholder?: string;
+
+  /** The placeholder text for the filter, indicating what kind of filter caprison it uses. */
   comparison: 'contains' | 'startsWith' | 'endsWith' | 'equals';
 }) {
   const { t } = useTranslation();
@@ -113,6 +115,8 @@ export function ToolbarTextMultiFilter(props: {
 export function ToolbarSingleTextFilter(props: {
   id?: string;
   placeholder?: string;
+
+  /** The placeholder text for the filter, indicating what kind of filter caprison it uses. */
   comparison: 'contains' | 'startsWith' | 'endsWith' | 'equals';
   setValue: (value: string) => void;
   value: string;
