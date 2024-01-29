@@ -44,10 +44,10 @@ export function hubQueryString(url: string, params: Record<string, string | numb
   Object.entries(params || {}).forEach(([k, v]: [string, any]) => {
     if (['page', 'offset'].includes(k) && pageKey !== k) {
       if (k === 'offset' && pageKey === 'page') {
-        v = ~~(v / limit);
+        v = 1 + ~~(v / limit);
       }
       if (k === 'page' && pageKey === 'offset') {
-        v *= limit;
+        v = (v - 1) * limit;
       }
       k = pageKey;
     }
