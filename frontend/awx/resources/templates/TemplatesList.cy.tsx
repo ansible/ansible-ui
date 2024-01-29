@@ -11,7 +11,7 @@ describe('TemplatesList', () => {
     });
   });
 
-  describe('Non-empty list', () => {
+  describe('Populated list', () => {
     beforeEach(() => {
       cy.intercept(
         {
