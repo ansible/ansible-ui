@@ -130,7 +130,7 @@ export function CollectionDocumentationTabContent(props: {
     setOptionsState(newState);
   }
 
-  const backtoMenuLink = <a href={`?${queryString}#Menu_part`}>{t('Back to overview')}</a>;
+  const backtoMenuLink = <a href={`#Menu_part`}>{t('Back to overview')}</a>;
 
   const params: Params = {
     getPageUrl,
