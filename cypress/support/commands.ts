@@ -52,6 +52,7 @@ import './hub-commands';
 import './rest-commands';
 import './platform-commands';
 import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
+import { PlatformOrganization } from '../../platform/interfaces/PlatformOrganization';
 
 declare global {
   namespace Cypress {
@@ -66,12 +67,14 @@ declare global {
       // --- NAVIGATION COMMANDS ---
       // createGlobalProject(): Chainable<Project>;
       /**Navigates to a page of the UI using using the links on the page sidebar. Intended as an alternative to cy.visit(). */
-      navigateTo(component: 'awx' | 'eda' | 'hub', label: string): Chainable<void>;
+      navigateTo(component: 'platform' | 'awx' | 'eda' | 'hub', label: string): Chainable<void>;
 
       /**Locates a title using its label. No assertion is made. */
       verifyPageTitle(label: string): Chainable<void>;
 
       // ---- UI COMMANDS ---
+
+      setTableView(viewType: string): Chainable<void>;
       createAndDeleteCustomAWXCredentialTypeUI(
         customCredentialTypeName: string,
         inputConfig?: string,
@@ -951,6 +954,16 @@ declare global {
       ): Cypress.Chainable<void>;
       collectionCopyVersionToRepositories(collection: string): Cypress.Chainable<void>;
       addAndApproveMultiCollections(thisRange: number): Cypress.Chainable<void>;
+
+      //Platform Commands
+      createPlatformOrganization(): Cypress.Chainable<PlatformOrganization>;
+      deletePlatformOrganization(
+        organization: PlatformOrganization,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
+      ): Cypress.Chainable<void>;
     }
   }
 }

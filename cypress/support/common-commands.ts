@@ -1,5 +1,9 @@
 import '@cypress/code-coverage/support';
 
+Cypress.Commands.add('setTableView', (viewType: string) => {
+  cy.get(`[data-cy="${viewType}"]`).should('be.visible').click();
+});
+
 Cypress.Commands.add('searchAndDisplayResource', (resourceName: string) => {
   cy.get('[data-cy="text-input"]')
     .find('input')
@@ -32,9 +36,11 @@ Cypress.Commands.add('selectToolbarFilterType', (text: string | RegExp) => {
 });
 
 Cypress.Commands.add('filterTableByText', (text: string) => {
-  cy.get('[data-cy="text-input"]').within(() => {
-    cy.get('input').clear().type(text, { delay: 0 });
-  });
+  cy.get('[data-cy="text-input"]')
+    .should('be.visible')
+    .within(() => {
+      cy.get('input').clear().type(text, { delay: 0 });
+    });
   cy.get('[data-cy="apply-filter"]:not(:disabled):not(:hidden)').click();
 });
 
