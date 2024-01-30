@@ -5,8 +5,10 @@ import { useAbortController } from '../../../../../common/crud/useAbortControlle
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { AwxRoute } from '../../../../main/AwxRoutes';
 import { usePostRequest } from '../../../../../common/crud/usePostRequest';
+import { usePatchRequest } from '../../../../../common/crud/usePatchRequest';
 import { ControllerState, GraphNode, EdgeStatus, GraphNodeData } from '../types';
 import { UnifiedJobType, WorkflowNode } from '../../../../interfaces/WorkflowNode';
+import { stringIsUUID } from '../../../../common/util/strings';
 
 interface WorkflowApprovalNode {
   name: string;
@@ -19,8 +21,9 @@ export function useSaveVisualizer() {
   const abortController = useAbortController();
   const pageNavigate = usePageNavigate();
   const deleteRequest = useDeleteRequest();
-  const postWorkflowNode = usePostRequest<Partial<WorkflowNode>>();
-  const postWorkflowNodeApproval = usePostRequest<WorkflowApprovalNode>();
+  const postWorkflowNode = usePostRequest<Partial<WorkflowNode>, WorkflowNode>();
+  const patchWorkflowNode = usePatchRequest<Partial<WorkflowNode>, WorkflowNode>();
+  const postWorkflowNodeApproval = usePostRequest<WorkflowApprovalNode, WorkflowApprovalNode>();
   const postAssociateNode = usePostRequest<{ id: number }>();
   const postDisassociateNode = usePostRequest<{ id: number; disassociate: boolean }>();
 
@@ -36,6 +39,7 @@ export function useSaveVisualizer() {
   const disassociateAlwaysNodes: { sourceId: string; targetId: string }[] = [];
   const newApprovalNodes: GraphNode[] = [];
   const newNodes: GraphNode[] = [];
+  const editNodes: GraphNode[] = [];
 
   function setCreatedNodeId(node: GraphNode, newId: string) {
     const nodeData = node.getData() as GraphNodeData;
@@ -54,24 +58,36 @@ export function useSaveVisualizer() {
   async function createApprovalNodes(approvalNodes: GraphNode[]) {
     const promises = approvalNodes.map(async (node) => {
       const nodeData = node.getData() as GraphNodeData;
-      const newNode = await postWorkflowNode(
-        awxAPI`/workflow_job_templates/${state.workflowTemplate.id.toString()}/workflow_nodes/`,
-        {
-          all_parents_must_converge: nodeData.all_parents_must_converge === 'all' ? true : false,
-          identifier: nodeData.identifier,
-        }
-      );
-      if (newNode.id) {
+      const isNewNode = node.getId().includes('unsavedNode');
+      let workflowNode;
+
+      if (isNewNode) {
+        workflowNode = await postWorkflowNode(
+          awxAPI`/workflow_job_templates/${state.workflowTemplate.id.toString()}/workflow_nodes/`,
+          {
+            all_parents_must_converge: nodeData.resource.all_parents_must_converge,
+            identifier: nodeData.resource.identifier,
+          }
+        );
+      } else {
+        workflowNode = await patchWorkflowNode(
+          awxAPI`/workflow_job_template_nodes/${node.getId()}/`,
+          {
+            all_parents_must_converge: nodeData.resource.all_parents_must_converge,
+            identifier: nodeData.resource.identifier,
+          }
+        );
+      }
+      if (workflowNode && workflowNode.id) {
         await postWorkflowNodeApproval(
-          awxAPI`/workflow_job_template_nodes/${newNode.id.toString()}/create_approval_template/`,
+          awxAPI`/workflow_job_template_nodes/${workflowNode.id.toString()}/create_approval_template/`,
           {
             name: nodeData.resource.summary_fields.unified_job_template.name,
             description: nodeData.resource.summary_fields.unified_job_template.description || '',
             timeout: nodeData.resource.summary_fields.unified_job_template.timeout || 0,
           }
         );
-
-        setCreatedNodeId(node, newNode.id.toString());
+        setCreatedNodeId(node, workflowNode.id.toString());
       }
     });
     await Promise.all(promises);
@@ -80,17 +96,56 @@ export function useSaveVisualizer() {
   async function createNewNodes(newNodes: GraphNode[]) {
     const promises = newNodes.map(async (node) => {
       const nodeData = node.getData() as GraphNodeData;
+
+      const extra_data =
+        nodeData.resource.summary_fields.unified_job_template.unified_job_type ===
+          UnifiedJobType.system_job && nodeData.resource.extra_data?.days
+          ? { extra_data: { days: nodeData.resource.extra_data.days } }
+          : {};
+
+      const identifier = !stringIsUUID(nodeData.resource?.identifier)
+        ? { identifier: nodeData.resource.identifier }
+        : {};
+
       const newNode = await postWorkflowNode(
         awxAPI`/workflow_job_templates/${state.workflowTemplate.id.toString()}/workflow_nodes/`,
         {
           ...nodeData,
-          all_parents_must_converge: nodeData.all_parents_must_converge === 'all' ? true : false,
+          ...extra_data,
+          ...identifier,
+          all_parents_must_converge: nodeData.resource.all_parents_must_converge,
           unified_job_template: nodeData.resource.summary_fields.unified_job_template.id,
         }
       );
+
       if (newNode.id) {
         setCreatedNodeId(node, newNode.id.toString());
       }
+    });
+    await Promise.all(promises);
+  }
+
+  async function editExistingNodes(editNodes: GraphNode[]) {
+    const promises = editNodes.map(async (node) => {
+      const nodeData = node.getData() as GraphNodeData;
+
+      const extra_data =
+        nodeData.resource.summary_fields.unified_job_template.unified_job_type ===
+          UnifiedJobType.system_job && nodeData.resource.extra_data?.days
+          ? { extra_data: { days: nodeData.resource.extra_data.days } }
+          : {};
+
+      const identifier = !stringIsUUID(nodeData.resource?.identifier)
+        ? { identifier: nodeData.resource.identifier }
+        : {};
+
+      await patchWorkflowNode(awxAPI`/workflow_job_template_nodes/${node.getId()}/`, {
+        ...nodeData,
+        ...extra_data,
+        ...identifier,
+        all_parents_must_converge: nodeData.resource.all_parents_must_converge,
+        unified_job_template: nodeData.resource.summary_fields.unified_job_template.id,
+      });
     });
     await Promise.all(promises);
   }
@@ -111,8 +166,21 @@ export function useSaveVisualizer() {
     }
   }
 
+  function handleEditNode(node: GraphNode) {
+    const nodeData = node.getData() as GraphNodeData;
+    if (
+      nodeData.resource.summary_fields.unified_job_template.unified_job_type ===
+      UnifiedJobType.workflow_approval
+    ) {
+      newApprovalNodes.push(node);
+    } else {
+      editNodes.push(node);
+    }
+  }
+
   function handleEdgeModification(node: GraphNode) {
     const nodeData = node.getData() as GraphNodeData;
+
     const {
       resource: { always_nodes = [], failure_nodes = [], success_nodes = [] },
     } = nodeData;
@@ -189,21 +257,26 @@ export function useSaveVisualizer() {
 
   async function handleSave() {
     graphNodes.forEach((node) => {
-      const isNewNode = node.getId().includes('unsavedNode');
+      const nodeState = node.getState<{ modified: boolean }>();
       const isDeleted = !node.isVisible();
+      const isNewNode = node.getId().includes('unsavedNode');
+      const isEdited = Boolean(nodeState?.modified) && !isDeleted && !isNewNode;
 
-      if (isDeleted) {
+      if (isDeleted && !isNewNode) {
         handleNodeDeletion(node);
       }
-
-      if (isNewNode) {
+      if (isNewNode && !isDeleted) {
         handleNewNode(node);
+      }
+      if (isEdited) {
+        handleEditNode(node);
       }
     });
 
     try {
       await createApprovalNodes(newApprovalNodes);
       await createNewNodes(newNodes);
+      await editExistingNodes(editNodes);
     } catch {
       //TODO: handle error here
     }
@@ -211,7 +284,7 @@ export function useSaveVisualizer() {
     graphNodes.forEach((node) => {
       const nodeState = node.getState<{ modified: boolean }>();
       const isDeleted = !node.isVisible();
-      const isEdited = !isDeleted && Boolean(nodeState?.modified);
+      const isEdited = Boolean(nodeState?.modified) && !isDeleted;
 
       if (isEdited) {
         handleEdgeModification(node);
