@@ -3,13 +3,12 @@ import { hubErrorAdapter } from './hubErrorAdapter';
 
 describe('hubErrorAdapter Unit Tests', () => {
   it('should handle non_field_errors correctly', () => {
-    const error = new RequestError(
-      'Test message',
-      undefined,
-      400,
-      { non_field_errors: ['Error message 1'] },
-      { non_field_errors: ['Error message 1'] }
-    );
+    const error = new RequestError({
+      message: 'Test message',
+      statusCode: 400,
+      body: { non_field_errors: ['Error message 1'] },
+      json: { non_field_errors: ['Error message 1'] },
+    });
 
     const expectedOutput = {
       genericErrors: [{ message: 'Error message 1' }],
@@ -22,7 +21,11 @@ describe('hubErrorAdapter Unit Tests', () => {
   });
 
   it('should handle string data correctly', () => {
-    const error = new RequestError('Error message', undefined, 500, 'Error message', undefined);
+    const error = new RequestError({
+      message: 'Error message',
+      statusCode: 500,
+      body: 'Error message',
+    });
     const expectedOutput = {
       genericErrors: [{ message: 'Error message' }],
       fieldErrors: [],
@@ -43,7 +46,12 @@ describe('hubErrorAdapter Unit Tests', () => {
         },
       ],
     };
-    const error = new RequestError('Test message', undefined, 400, errorData, errorData);
+    const error = new RequestError({
+      message: 'Test message',
+      statusCode: 400,
+      body: errorData,
+      json: errorData,
+    });
 
     const expectedOutput = {
       genericErrors: [],
@@ -56,17 +64,12 @@ describe('hubErrorAdapter Unit Tests', () => {
   });
 
   it('should handle Pulp errors correctly', () => {
-    const error = new RequestError(
-      'Test message',
-      undefined,
-      400,
-      {
-        field1: ['Error message 1'],
-      },
-      {
-        field1: ['Error message 1'],
-      }
-    );
+    const error = new RequestError({
+      message: 'Test message',
+      statusCode: 400,
+      body: { field1: ['Error message 1'] },
+      json: { field1: ['Error message 1'] },
+    });
 
     const expectedOutput = {
       genericErrors: [],
@@ -77,13 +80,12 @@ describe('hubErrorAdapter Unit Tests', () => {
   });
 
   it('should handle CSRF errors correctly', () => {
-    const error = new RequestError(
-      'Test message',
-      undefined,
-      403,
-      { detail: 'CSRF Failed: CSRF cookie not set.' },
-      { detail: 'CSRF Failed: CSRF cookie not set.' }
-    );
+    const error = new RequestError({
+      message: 'Test message',
+      statusCode: 403,
+      body: { detail: 'CSRF Failed: CSRF cookie not set.' },
+      json: { detail: 'CSRF Failed: CSRF cookie not set.' },
+    });
 
     const expectedOutput = {
       genericErrors: [{ message: 'CSRF Failed: CSRF cookie not set.' }],

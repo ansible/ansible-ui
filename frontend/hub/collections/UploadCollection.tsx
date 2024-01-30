@@ -1,5 +1,5 @@
-import { Radio } from '@patternfly/react-core';
-import React, { useEffect, useMemo, useState } from 'react';
+import { Card, Radio } from '@patternfly/react-core';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -9,13 +9,15 @@ import {
   PageLayout,
   PageTable,
   TextCell,
+  ToolbarFilterType,
   useGetPageUrl,
   usePageNavigate,
 } from '../../../framework';
 import { PageFormFileUpload } from '../../../framework/PageForm/Inputs/PageFormFileUpload';
-import { ToolbarFilterType } from '../../../framework/PageToolbar/PageToolbarFilter';
 import { LoadingPage } from '../../../framework/components/LoadingPage';
 import { useSearchParams } from '../../../framework/components/useSearchParams';
+import { requestGet } from '../../common/crud/Data';
+import { RequestError } from '../../common/crud/RequestError';
 import { useGetRequest } from '../../common/crud/useGet';
 import { nameKeyFn } from '../../common/utils/nameKeyFn';
 import { useRepositories } from '../administration/repositories/hooks/useRepositories';
@@ -23,14 +25,12 @@ import { HubError } from '../common/HubError';
 import { HubPageForm } from '../common/HubPageForm';
 import { hubAPI, pulpAPI } from '../common/api/formatPath';
 import { hubPostRequestFile } from '../common/api/request';
-import { PulpItemsResponse, useHubView } from '../common/useHubView';
+import { HubItemsResponse, PulpItemsResponse, useHubView } from '../common/useHubView';
 import { HubRoute } from '../main/HubRoutes';
-import { requestGet } from '../../common/crud/Data';
-import { HubItemsResponse } from '../common/useHubView';
 import { HubNamespace } from '../namespaces/HubNamespace';
 
 interface UploadData {
-  file: unknown;
+  file: File;
 }
 
 export interface Repository {
@@ -80,7 +80,6 @@ export function UploadCollectionByFile() {
     null
   );
   const distroGetRequest = useGetRequest<PulpItemsResponse<Distribution>>();
-  const [error, setError] = useState<string>('');
 
   const view = useHubView<Repository>({
     url: pulpAPI`/repositories/ansible/ansible/`,
@@ -108,6 +107,56 @@ export function UploadCollectionByFile() {
     }
   }, [view.pageItems, selectedRepo, view]);
 
+  const onSumbmit = useCallback(
+    async (data: UploadData) => {
+      const namespaceName = data.file?.name.split('-')[0] ?? '';
+      if (namespaceParams && namespaceName !== namespaceParams) {
+        throw new Error(
+          t(`Namespace "{{namespaceName}}" does not match namespace "{{namespaceParams}}"`, {
+            namespaceName,
+            namespaceParams,
+          })
+        );
+      }
+
+      const namespace = await requestGet<HubItemsResponse<HubNamespace>>(
+        hubAPI`/_ui/v1/namespaces/?limit=1&name=${namespaceName}`
+      ).catch(() => {
+        throw new Error(t('Error in loading namespace {{namespaceName}}', { namespaceName }));
+      });
+
+      if (namespace.data.length === 0) {
+        throw new RequestError({
+          message: t('Cannot find namespace {{namespaceName}}', { namespaceName }),
+          statusCode: 404,
+          json: { file: t('Cannot find namespace {{namespaceName}}', { namespaceName }) },
+        });
+      }
+
+      const list = await distroGetRequest(
+        pulpAPI`/distributions/ansible/ansible/?repository=${selectedRepo?.pulp_href || ''}`
+      ).catch(() => {
+        throw new Error(t('Cannot find distribution for selected repository'));
+      });
+
+      if (list?.results.length === 0) {
+        throw new Error(t('Cannot find distribution for selected repository'));
+      }
+
+      const base_path = list?.results[0]?.base_path;
+
+      await hubPostRequestFile(
+        hubAPI`/v3/plugin/ansible/content/${base_path}/collections/artifacts/`,
+        data.file as Blob
+      ).catch(() => {
+        throw new Error(t('Error occured during collection upload'));
+      });
+
+      pageNavigate(HubRoute.Approvals);
+    },
+    [distroGetRequest, namespaceParams, pageNavigate, selectedRepo?.pulp_href, t]
+  );
+
   if (!repositories.data && !repositories.error) {
     return <LoadingPage />;
   }
@@ -121,112 +170,60 @@ export function UploadCollectionByFile() {
       <>
         <Radio
           isChecked={onlyStaging}
-          name="radio-1"
+          name="radio"
           onChange={(_event, val) => {
             setOnlyStaging(val);
           }}
           label={t`Staging Repos`}
           id="radio-staging"
-        ></Radio>
+        />
         <Radio
           isChecked={!onlyStaging}
-          name="radio-2"
+          name="radio"
           onChange={(_event, val) => {
             setOnlyStaging(!val);
           }}
           label={t`Repositories without pipeline`}
           id="radio-non-pipeline"
-        ></Radio>
+        />
         <div>
           {!onlyStaging && (
             <>{t`Please note that those repositories are not filtered by permission, if operation fail, you don't have it.`}</>
           )}
         </div>
 
-        <PageTable<Repository>
-          id="hub-repositories-table"
-          onSelect={(repo) => {
-            setSelectedRepo({ name: repo.name, pulp_href: repo.pulp_href });
-          }}
-          disableListView={true}
-          disableCardView={true}
-          tableColumns={tableColumns}
-          toolbarFilters={toolbarFilters}
-          errorStateTitle={t('Error loading repositories')}
-          emptyStateTitle={t('No repositories yet')}
-          emptyStateDescription={t('To get started, create an repository.')}
-          defaultTableView="table"
-          {...view}
-        />
+        <Card isFlat isRounded>
+          <PageTable<Repository>
+            id="hub-repositories-table"
+            onSelect={(repo) => {
+              setSelectedRepo({ name: repo.name, pulp_href: repo.pulp_href });
+            }}
+            disableListView={true}
+            disableCardView={true}
+            tableColumns={tableColumns}
+            toolbarFilters={toolbarFilters}
+            errorStateTitle={t('Error loading repositories')}
+            emptyStateTitle={t('No repositories yet')}
+            emptyStateDescription={t('To get started, create an repository.')}
+            defaultTableView="table"
+            {...view}
+          />
+        </Card>
       </>
     );
   }
 
-  function getNamespaceNameFromFile(file?: File) {
-    return file?.name.split('-')[0] ?? '';
-  }
-
-  async function submitData(data: UploadData) {
-    setError('');
-    const namespaceName = getNamespaceNameFromFile(data.file as File);
-    if (namespaceParams && namespaceName !== namespaceParams) {
-      setError(
-        t(`Namespace "{{namespaceName}}" do not match namespace "{{namespaceParams}}"`, {
-          namespaceName,
-          namespaceParams,
-        })
-      );
-      return;
-    }
-
-    let lastError = '';
-
-    try {
-      lastError = t('Error in loading namespace {{namespaceName}}', { namespaceName });
-      const namespace = await requestGet<HubItemsResponse<HubNamespace>>(
-        hubAPI`/_ui/v1/namespaces/?limit=1&name=${namespaceName}`
-      );
-      if (namespace.data.length === 0) {
-        lastError = t('Can not find namespace {{namespaceName}}', { namespaceName });
-        throw new Error('');
-      }
-
-      lastError = t('Can not find distribution for selected repository');
-
-      const list = await distroGetRequest(
-        pulpAPI`/distributions/ansible/ansible/?repository=${selectedRepo?.pulp_href || ''}`
-      );
-      const base_path = list?.results[0]?.base_path;
-
-      lastError = t(`Error occured during collection upload`);
-
-      await hubPostRequestFile(
-        hubAPI`/v3/plugin/ansible/content/${base_path}/collections/artifacts/`,
-        data.file as Blob
-      );
-
-      pageNavigate(HubRoute.Approvals);
-    } catch (error) {
-      setError(lastError);
-    }
-  }
-
   return (
-    <>
-      <HubPageForm<UploadData>
-        submitText={t('Confirm')}
-        cancelText={t('Cancel')}
-        onCancel={onCancel}
-        onSubmit={(data) => {
-          return submitData(data);
-        }}
-        singleColumn={true}
-      >
-        <PageFormFileUpload label={t('Collection file')} name="file" isRequired />
-        {error && <HubError error={{ name: '', message: error }}></HubError>}
-        {renderRepoSelector()}
-      </HubPageForm>
-    </>
+    <HubPageForm<UploadData>
+      submitText={t('Confirm')}
+      cancelText={t('Cancel')}
+      onCancel={onCancel}
+      onSubmit={onSumbmit}
+      singleColumn={true}
+    >
+      <PageFormFileUpload label={t('Collection file')} name="file" isRequired />
+      {renderRepoSelector()}
+    </HubPageForm>
   );
 }
 

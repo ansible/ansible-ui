@@ -18,7 +18,7 @@ export async function createRequestError(response: Response) {
     details = stringify(body);
   }
 
-  return new RequestError(message, details, response.status, body, json);
+  return new RequestError({ message, details, statusCode: response.status, body, json });
 }
 
 async function parseText(response: Response): Promise<string | object | undefined> {
@@ -52,20 +52,20 @@ export class RequestError extends Error {
   public readonly body: string | object | undefined;
   public readonly json: object | undefined;
 
-  constructor(
-    message: string,
-    details: string | undefined,
-    statusCode: number,
-    body: string | object | undefined,
-    json: object | undefined
-  ) {
-    super(message);
+  constructor(options: {
+    message: string;
+    details?: string | undefined;
+    statusCode: number;
+    body?: string | object | undefined;
+    json?: object | undefined;
+  }) {
+    super(options.message);
     Object.setPrototypeOf(this, RequestError.prototype);
     this.name = 'RequestError';
-    this.details = details;
-    this.statusCode = statusCode;
-    this.body = body;
-    this.json = json;
+    this.details = options.details;
+    this.statusCode = options.statusCode;
+    this.body = options.body;
+    this.json = options.json;
   }
 }
 

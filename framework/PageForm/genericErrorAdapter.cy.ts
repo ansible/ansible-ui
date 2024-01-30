@@ -21,13 +21,11 @@ describe('genericErrorAdapter', () => {
   });
 
   it('should return empty errors when RequestError json is not an object or null', () => {
-    const error = new RequestError(
-      'Error Message',
-      undefined,
-      400,
-      { name: 'Plain text body' },
-      undefined
-    );
+    const error = new RequestError({
+      message: 'Error Message',
+      statusCode: 400,
+      json: { name: 'Plain text body' },
+    });
     const result = genericErrorAdapter(error);
     expect(result).to.deep.equal({
       genericErrors: [],
@@ -40,7 +38,12 @@ describe('genericErrorAdapter', () => {
       non_field_errors: ['Generic Error 1', 'Generic Error 2'],
       username: ['Username is already taken'],
     };
-    const error = new RequestError('Error Message', undefined, 400, errorBody, errorBody);
+    const error = new RequestError({
+      message: 'Error Message',
+      statusCode: 400,
+      body: errorBody,
+      json: errorBody,
+    });
     const result = genericErrorAdapter(error);
     expect(result).to.deep.equal({
       genericErrors: [{ message: 'Generic Error 1' }, { message: 'Generic Error 2' }],

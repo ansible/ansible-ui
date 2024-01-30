@@ -1,5 +1,12 @@
 import { ReactNode } from 'react';
-import { useWatch } from 'react-hook-form';
+import {
+  FieldValues,
+  Path,
+  PathValue,
+  UseFormSetError,
+  useFormContext,
+  useWatch,
+} from 'react-hook-form';
 
 /**
  * A component that watches for changes in a specific field using `useWatch` from `react-hook-form`.
@@ -17,7 +24,17 @@ import { useWatch } from 'react-hook-form';
  *   {(file) => <div>{file?.name}</div>}
  * </PageFormWatch>
  */
-export function PageFormWatch<T>(props: { watch: string; children: (value: T) => ReactNode }) {
-  const value = useWatch({ name: props.watch }) as T;
-  return <>{props.children(value)}</>;
+export function PageFormWatch<
+  TFieldValues extends FieldValues = FieldValues,
+  TFieldName extends Path<TFieldValues> = Path<TFieldValues>,
+>(props: {
+  watch: TFieldName;
+  children: (
+    value: PathValue<TFieldValues, TFieldName>,
+    setError: UseFormSetError<TFieldValues>
+  ) => ReactNode;
+}) {
+  const value = useWatch<TFieldValues, TFieldName>({ name: props.watch });
+  const { setError } = useFormContext();
+  return <>{props.children(value, setError)}</>;
 }

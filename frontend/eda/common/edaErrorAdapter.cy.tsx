@@ -3,7 +3,7 @@ import { edaErrorAdapter } from './edaErrorAdapter';
 
 describe('edaErrorAdapter', () => {
   it('should return empty arrays when passed an empty object', () => {
-    const error = new RequestError('Some Error', undefined, 400, {}, {});
+    const error = new RequestError({ message: 'Some Error', statusCode: 400, json: {} });
     const result = edaErrorAdapter(error);
     expect(result.genericErrors.length).equal(0);
     expect(result.fieldErrors.length).equal(0);
@@ -17,16 +17,14 @@ describe('edaErrorAdapter', () => {
   });
 
   it('should return field errors when passed a RequestError instance with JSON data', () => {
-    const error = new RequestError(
-      'Validation failed',
-      undefined,
-      400,
-      {},
-      {
+    const error = new RequestError({
+      message: 'Validation failed',
+      statusCode: 400,
+      json: {
         name: ['Name is required'],
         email: ['Email is invalid'],
-      }
-    );
+      },
+    });
     const result = edaErrorAdapter(error);
     expect(result.genericErrors.length).equal(0);
     expect(result.fieldErrors).to.deep.equal([
@@ -36,13 +34,11 @@ describe('edaErrorAdapter', () => {
   });
 
   it('should return the field errors', () => {
-    const error = new RequestError(
-      'Validation failed',
-      undefined,
-      400,
-      {},
-      { name: ['activation with this name already exists.'] }
-    );
+    const error = new RequestError({
+      message: 'Validation failed',
+      statusCode: 400,
+      json: { name: ['activation with this name already exists.'] },
+    });
     const result = edaErrorAdapter(error);
     expect(result.genericErrors.length).equal(0);
     expect(result.fieldErrors).to.deep.equal([
@@ -51,13 +47,11 @@ describe('edaErrorAdapter', () => {
   });
 
   it('should deal with "errors" errors as generic errors', () => {
-    const error = new RequestError(
-      'Errors',
-      undefined,
-      400,
-      {},
-      { non_field_errors: ['No controller token specified'] }
-    );
+    const error = new RequestError({
+      message: 'Errors',
+      statusCode: 400,
+      json: { non_field_errors: ['No controller token specified'] },
+    });
     const result = edaErrorAdapter(error);
     expect(result.genericErrors.length).equal(1);
     expect(result.fieldErrors.length).equal(0);

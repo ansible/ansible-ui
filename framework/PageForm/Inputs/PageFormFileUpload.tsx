@@ -1,8 +1,9 @@
-import React, { useCallback, useState } from 'react';
 import { FileUpload, FileUploadProps } from '@patternfly/react-core';
+import React, { useCallback, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
-import { PageFormGroup, PageFormGroupProps } from './PageFormGroup';
 import { useTranslation } from 'react-i18next';
+import { capitalizeFirstLetter } from '../../utils/strings';
+import { PageFormGroup, PageFormGroupProps } from './PageFormGroup';
 
 export type PageFormFileUploadProps = {
   name: string;
@@ -76,6 +77,15 @@ export function PageFormFileUpload(props: PageFormFileUploadProps) {
             />
           </PageFormGroup>
         );
+      }}
+      rules={{
+        required:
+          typeof props.label === 'string' && props.isRequired === true
+            ? {
+                value: true,
+                message: `${capitalizeFirstLetter(props.label.toLocaleLowerCase())} is required.`,
+              }
+            : undefined,
       }}
     />
   );

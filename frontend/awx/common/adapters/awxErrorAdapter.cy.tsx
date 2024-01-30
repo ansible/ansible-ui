@@ -17,13 +17,11 @@ describe('awxErrorAdapter', () => {
   });
 
   it('should return field errors when passed a RequestError instance with JSON data', () => {
-    const error = new RequestError(
-      'Validation failed',
-      undefined,
-      400,
-      {},
-      { name: ['Name is required'], email: ['Email is invalid'] }
-    );
+    const error = new RequestError({
+      message: 'Validation failed',
+      statusCode: 400,
+      json: { name: ['Name is required'], email: ['Email is invalid'] },
+    });
     const result = awxErrorAdapter(error);
     expect(result.genericErrors.length).equal(0);
     expect(result.fieldErrors).to.deep.equal([
@@ -33,33 +31,33 @@ describe('awxErrorAdapter', () => {
   });
 
   it('should return field errors with the first value of an array', () => {
-    const error = new RequestError(
-      'Validation failed',
-      undefined,
-      400,
-      {},
-      { name: ['Name is required', 'Name is too short'] }
-    );
+    const error = new RequestError({
+      message: 'Validation failed',
+      statusCode: 400,
+      json: { name: ['Name is required', 'Name is too short'] },
+    });
     const result = awxErrorAdapter(error);
     expect(result.genericErrors.length).equal(0);
     expect(result.fieldErrors).to.deep.equal([{ name: 'name', message: 'Name is required' }]);
   });
 
   it('should return field errors with the first value of an array even if it is not a string', () => {
-    const error = new RequestError(
-      'Validation failed',
-      undefined,
-      400,
-      {},
-      { name: [42, 'Name is too short'] }
-    );
+    const error = new RequestError({
+      message: 'Validation failed',
+      statusCode: 400,
+      json: { name: [42, 'Name is too short'] },
+    });
     const result = awxErrorAdapter(error);
     expect(result.genericErrors.length).equal(0);
     expect(result.fieldErrors).to.deep.equal([{ name: 'name', message: '42' }]);
   });
 
   it('should deal with __all__ errors as generic errors', () => {
-    const error = new RequestError('Validation failed', undefined, 400, {}, { __all__: ['Error'] });
+    const error = new RequestError({
+      message: 'Validation failed',
+      statusCode: 400,
+      json: { __all__: ['Error'] },
+    });
     const result = awxErrorAdapter(error);
     expect(result.genericErrors.length).equal(1);
     expect(result.fieldErrors.length).equal(0);
@@ -67,13 +65,11 @@ describe('awxErrorAdapter', () => {
   });
 
   it('should deal with {error: "error msg"} as generic errors', () => {
-    const error = new RequestError(
-      'Validation failed',
-      undefined,
-      400,
-      {},
-      { error: ['Cannot assign type of galaxy'] }
-    );
+    const error = new RequestError({
+      message: 'Validation failed',
+      statusCode: 400,
+      json: { error: ['Cannot assign type of galaxy'] },
+    });
     const result = awxErrorAdapter(error);
     expect(result.genericErrors.length).equal(1);
     expect(result.fieldErrors.length).equal(0);
