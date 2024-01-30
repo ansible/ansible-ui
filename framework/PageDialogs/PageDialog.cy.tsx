@@ -3,14 +3,13 @@ import { Button, Modal, PageSection } from '@patternfly/react-core';
 import { usePageDialogs } from './PageDialog';
 
 function TestComponent() {
-  const [, setDialogs] = usePageDialogs();
-  const popDialog = () => setDialogs((dialogs) => dialogs.slice(0, -1));
+  const { pushDialog, popDialog } = usePageDialogs();
   const secondDialog = (
     <Modal title="Second Modal" isOpen key="second" onClose={popDialog}>
       <></>
     </Modal>
   );
-  const openSecondDialog = () => setDialogs((dialogs) => [...dialogs, secondDialog]);
+  const openSecondDialog = () => pushDialog(secondDialog);
   const firstDialog = (
     <Modal title="First Modal" isOpen key="first" onClose={popDialog}>
       <Button variant="primary" onClick={openSecondDialog}>
@@ -18,7 +17,7 @@ function TestComponent() {
       </Button>
     </Modal>
   );
-  const openFirstDialog = () => setDialogs((dialogs) => [...dialogs, firstDialog]);
+  const openFirstDialog = () => pushDialog(firstDialog);
   return (
     <PageSection>
       <Button variant="primary" onClick={openFirstDialog}>

@@ -1,38 +1,33 @@
-import {
-  createContext,
-  Dispatch,
-  ReactNode,
-  SetStateAction,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-} from 'react';
+import { createContext, ReactNode, useCallback, useContext, useMemo, useState } from 'react';
 
-const PageDialogContext = createContext<
-  [dialogs: ReactNode[], setDialogs: Dispatch<SetStateAction<ReactNode[]>>]
->([
-  [],
-  () => {
-    throw new Error('PageDialogContext not initialized');
-  },
-]);
+const PageDialogContext = createContext({
+  dialogs: [] as ReactNode[],
+  clearDialogs: () => {},
+  pushDialog: (_dialog: ReactNode) => {},
+  popDialog: () => {},
+});
 
 export function PageDialogProvider(props: { children: ReactNode }) {
-  const state = useState<ReactNode[]>([]);
-  const [dialogs] = state;
+  const [dialogs, setDialogs] = useState<ReactNode[]>([]);
+  const clearDialogs = useCallback(() => setDialogs([]), [setDialogs]);
+  const pushDialog = useCallback(
+    (dialog: ReactNode) => setDialogs((dialogs) => [...dialogs, dialog]),
+    [setDialogs]
+  );
+  const popDialog = useCallback(() => setDialogs((dialogs) => dialogs.slice(0, -1)), [setDialogs]);
+  const value = useMemo(
+    () => ({ dialogs, clearDialogs, pushDialog, popDialog }),
+    [clearDialogs, dialogs, popDialog, pushDialog]
+  );
   return (
-    <PageDialogContext.Provider value={state}>
+    <PageDialogContext.Provider value={value}>
       {dialogs.length > 0 && dialogs[dialogs.length - 1]}
       {props.children}
     </PageDialogContext.Provider>
   );
 }
 
-export function usePageDialogs(): [
-  dialog: ReactNode[],
-  setDialog: Dispatch<SetStateAction<ReactNode[]>>,
-] {
+export function usePageDialogs() {
   return useContext(PageDialogContext);
 }
 
@@ -43,20 +38,19 @@ export function usePageDialog(): [
   dialog: ReactNode | undefined,
   setDialog: (dialog: ReactNode | undefined) => void,
 ] {
-  const [dialogs, setDialogs] = usePageDialogs();
+  const { dialogs, clearDialogs, pushDialog } = usePageDialogs();
   const dialog = useMemo(
     () => (dialogs.length > 0 ? dialogs[dialogs.length - 1] : undefined),
     [dialogs]
   );
   const setDialog = useCallback(
     (dialog: ReactNode | undefined) => {
-      if (dialog === undefined) {
-        setDialogs([]);
-      } else {
-        setDialogs([dialog]);
+      clearDialogs();
+      if (dialog !== undefined) {
+        pushDialog(dialog);
       }
     },
-    [setDialogs]
+    [clearDialogs, pushDialog]
   );
   return useMemo(() => [dialog, setDialog] as const, [dialog, setDialog]);
 }
