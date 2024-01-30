@@ -75,7 +75,7 @@ export function useStopTasks(onComplete?: (tasks: Task[]) => void) {
 }
 
 function stopRunningTask(task: Task) {
-  return requestPatch(pulpAPI`/tasks/${parsePulpIDFromURL(task.pulp_href) || ''}/`, {
+  return requestPatch(pulpAPI`/tasks/${parsePulpIDFromURL(task.pulp_href)}/`, {
     state: 'canceled',
   });
 }

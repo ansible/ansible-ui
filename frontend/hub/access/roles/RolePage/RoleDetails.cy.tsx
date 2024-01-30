@@ -37,7 +37,7 @@ describe('Hub Role Details', () => {
       featureFlags: mockFeatureFlags,
     }));
     cy.intercept(
-      { method: 'GET', url: pulpAPI`/roles/*` },
+      { method: 'GET', url: pulpAPI`/roles/` + '*' },
       {
         count: 1,
         results: [mockRole],

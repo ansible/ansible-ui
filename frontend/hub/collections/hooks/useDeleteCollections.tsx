@@ -80,7 +80,7 @@ async function deleteCollection(
   signal: AbortSignal
 ) {
   const distro: PulpItemsResponse<Distribution> = await requestGet(
-    pulpAPI`/distributions/ansible/ansible/?repository=${collection?.repository?.pulp_href || ''}`
+    pulpAPI`/distributions/ansible/ansible/?repository=${collection?.repository?.pulp_href}`
   );
 
   let versionQuery = '';

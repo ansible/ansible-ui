@@ -26,14 +26,25 @@ export type PageFormSwitchProps<
   pattern?: ValidationRule<RegExp>;
   validate?: Validate<string, TFieldValues> | Record<string, Validate<string, TFieldValues>>;
   autoFocus?: boolean;
+  labelOn?: string;
+  labelOff?: string;
 };
 
 export function PageFormSwitch<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >(props: PageFormSwitchProps<TFieldValues, TFieldName>) {
-  const { name, helperText, validate, additionalControls, label, labelHelp, labelHelpTitle } =
-    props;
+  const {
+    name,
+    helperText,
+    validate,
+    additionalControls,
+    label,
+    labelHelp,
+    labelHelpTitle,
+    labelOn,
+    labelOff,
+  } = props;
   const {
     control,
     formState: { isSubmitting, isValidating },
@@ -62,6 +73,8 @@ export function PageFormSwitch<
               isChecked={value}
               onChange={(e) => onChange(e)}
               isDisabled={isSubmitting}
+              label={labelOn}
+              labelOff={labelOff}
             />
           </PageFormGroup>
         );

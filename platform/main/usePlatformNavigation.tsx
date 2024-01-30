@@ -105,7 +105,7 @@ export function usePlatformNavigation() {
     navigationItems.push({
       id: PlatformRoute.EDA,
       label: t('Automation Decisions'),
-      subtitle: t('Event Driven Automation'),
+      subtitle: t('Event-Driven Ansible'),
       path: 'decisions',
       children: edaNav,
       hidden: !hasEda,

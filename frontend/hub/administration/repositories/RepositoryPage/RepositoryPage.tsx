@@ -42,7 +42,7 @@ export function RepositoryPage() {
   ];
 
   const repository = data?.results.length > 0 ? data?.results[0] : undefined;
-  const repo_id: string = parsePulpIDFromURL(repository ? repository.pulp_href : '') || '';
+  const repo_id: string = parsePulpIDFromURL(repository?.pulp_href) || '';
   return (
     <>
       <PageLayout>

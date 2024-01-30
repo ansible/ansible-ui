@@ -39,7 +39,7 @@ export function RepositoryVersions() {
   );
 
   const view = useHubView<RepositoryVersion>({
-    url: pulpAPI`/repositories/ansible/ansible/${repo_id}/versions`,
+    url: pulpAPI`/repositories/ansible/ansible/${repo_id}/versions/`,
     keyFn: (repo) => repo.number,
     queryParams: {
       offset: '0',

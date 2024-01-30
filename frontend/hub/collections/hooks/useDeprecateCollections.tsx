@@ -44,7 +44,7 @@ export function useDeprecateCollections(
 
 async function deprecateCollection(collection: CollectionVersionSearch) {
   const distro: PulpItemsResponse<Distribution> = await requestGet(
-    pulpAPI`/distributions/ansible/ansible/?repository=${collection.repository?.pulp_href || ''}`
+    pulpAPI`/distributions/ansible/ansible/?repository=${collection.repository?.pulp_href}`
   );
   return requestPatch(
     hubAPI`/v3/plugin/ansible/content/${distro.results[0].base_path}/collections/index/${

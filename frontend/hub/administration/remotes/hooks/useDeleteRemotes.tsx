@@ -28,7 +28,7 @@ export function useDeleteRemotes(onComplete: (remotes: IRemotes[]) => void) {
       alertPrompts: [t('This will also delete all associated resources under this remote.')],
       actionFn: async (remote: IRemotes, signal: AbortSignal) =>
         await hubAPIDelete(
-          pulpAPI`/remotes/ansible/collection/${parsePulpIDFromURL(remote.pulp_href) || ''}/`,
+          pulpAPI`/remotes/ansible/collection/${parsePulpIDFromURL(remote.pulp_href)}/`,
           signal
         ),
     });

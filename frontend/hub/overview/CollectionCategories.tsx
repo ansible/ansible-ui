@@ -100,7 +100,7 @@ function getRepoToCollectionPulpHrefsMap(collections: CollectionVersionSearch[])
   const repoToCollectionPulpHrefsMap: { [key: string]: string[] } = {};
 
   collections.forEach((collection) => {
-    const repoPulpId = parsePulpIDFromURL(collection.repository?.pulp_href || '');
+    const repoPulpId = parsePulpIDFromURL(collection.repository?.pulp_href);
     if (repoPulpId) {
       if (!repoToCollectionPulpHrefsMap[repoPulpId]) {
         repoToCollectionPulpHrefsMap[repoPulpId] = [collection.collection_version?.pulp_href || ''];
