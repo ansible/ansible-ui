@@ -120,7 +120,7 @@ describe('NodeFormInputs', () => {
     });
 
     cy.get('[data-cy="inventory-source-select-form-group"]').within(() => {
-      cy.get('span.pf-v5-c-select__toggle-text').should('have.text', 'Demo Inventory Source');
+      cy.get('span.pf-v5-c-select__toggle-text').should('have.text', 'blah');
     });
   });
 

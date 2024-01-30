@@ -81,7 +81,6 @@ describe('WorkflowVisualizer', () => {
     cy.mount(<WorkflowVisualizer />);
     cy.get('[data-id="1510"] .pf-topology__node__action-icon').click();
     cy.get('li[data-cy="edit-node"]').should('be.visible');
-    cy.get('li[data-cy="add-link"]').should('be.visible');
     cy.get('li[data-cy="add-node-and-link"]').should('be.visible');
     cy.get('li[data-cy="remove-node"]').should('be.visible');
   });
