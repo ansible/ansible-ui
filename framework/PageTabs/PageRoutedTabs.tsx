@@ -21,18 +21,21 @@ export function PageRoutedTabs(props: {
   const navigate = useNavigate();
   const getPageUrl = useGetPageUrl();
   const location = useLocation();
-  const { setPageBreadcrumbs, baselineBreadcrumbs } = usePageBreadcrumbs();
+  const { setTabBreadcrumb } = usePageBreadcrumbs();
 
   const activeTab = props.tabs.find(
     (tab) => tab && getPageUrl(tab.page, { params: props.params }) === location.pathname
   );
 
-  // Add current active tab to page breadcrumbs
+  // Set current active tab to tabBreadcrumb in the PageBreadcrumbContext
   useEffect(() => {
-    if (activeTab && baselineBreadcrumbs.length) {
-      setPageBreadcrumbs([...baselineBreadcrumbs, { label: activeTab.label }]);
+    if (activeTab) {
+      setTabBreadcrumb({ label: activeTab.label });
+      return () => setTabBreadcrumb(undefined);
+    } else {
+      setTabBreadcrumb(undefined);
     }
-  }, [activeTab, baselineBreadcrumbs, setPageBreadcrumbs]);
+  }, [activeTab, setTabBreadcrumb]);
 
   const [searchParams] = useSearchParams();
 

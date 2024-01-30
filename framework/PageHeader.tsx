@@ -14,7 +14,7 @@ import {
   Truncate,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
-import { CSSProperties, Fragment, ReactNode, useEffect } from 'react';
+import { CSSProperties, Fragment, ReactNode, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './PageFramework.css';
 import { useBreakpoint } from './components/useBreakPoint';
@@ -104,33 +104,28 @@ export interface PageHeaderProps {
  * </PageLayout>
  */
 export function PageHeader(props: PageHeaderProps) {
-  const { breadcrumbs, title, description, controls, headerActions, footer } = props;
+  const { title, description, controls, headerActions, footer } = props;
   const isLg = useBreakpoint('lg');
   const isXl = useBreakpoint('xl');
   const isMdOrLarger = useBreakpoint('md');
   const [translations] = useFrameworkTranslations();
-  const { pageBreadcrumbs, baselineBreadcrumbs, setBaselineBreadcrumbs, setPageBreadcrumbs } =
-    usePageBreadcrumbs();
+
+  const { breadcrumbs, setBreadcrumbs, tabBreadcrumb } = usePageBreadcrumbs();
+
+  const pageBreadcrumbs = useMemo(() => {
+    const pageBreadcrumbs = [];
+    if (breadcrumbs) pageBreadcrumbs.push(...breadcrumbs);
+    if (tabBreadcrumb) pageBreadcrumbs.push(tabBreadcrumb);
+    return pageBreadcrumbs;
+  }, [breadcrumbs, tabBreadcrumb]);
 
   useEffect(() => {
-    if (breadcrumbs?.length) {
-      setBaselineBreadcrumbs(breadcrumbs ?? []);
-      setPageBreadcrumbs([...baselineBreadcrumbs]);
-    }
-  }, [
-    baselineBreadcrumbs,
-    breadcrumbs,
-    breadcrumbs?.length,
-    setBaselineBreadcrumbs,
-    setPageBreadcrumbs,
-  ]);
+    if (props.breadcrumbs?.length) setBreadcrumbs(props.breadcrumbs);
+  }, [props.breadcrumbs, setBreadcrumbs]);
 
-  // Cleanup - to remove breadcrumbs when the PageHeader is unmounted (page is changed)
   useEffect(() => {
-    return () => {
-      setBaselineBreadcrumbs([]);
-      setPageBreadcrumbs([]);
-    };
+    // Cleanup - to remove breadcrumbs when the PageHeader is unmounted (page is changed)
+    return () => setBreadcrumbs(undefined);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -139,7 +134,7 @@ export function PageHeader(props: PageHeaderProps) {
       variant={PageSectionVariants.light}
       className="bg-lighten border-bottom"
       style={{
-        paddingTop: breadcrumbs ? (isXl ? 16 : 12) : isXl ? 16 : 12,
+        paddingTop: props.breadcrumbs ? (isXl ? 16 : 12) : isXl ? 16 : 12,
         paddingBottom: isXl ? 16 : 12,
       }}
     >
@@ -148,7 +143,7 @@ export function PageHeader(props: PageHeaderProps) {
           <FlexItem grow={{ default: 'grow' }}>
             {pageBreadcrumbs && (
               <Breadcrumbs
-                breadcrumbs={breadcrumbs ? pageBreadcrumbs : undefined}
+                breadcrumbs={props.breadcrumbs ? pageBreadcrumbs : undefined}
                 style={{ paddingBottom: isLg ? 6 : 4 }}
               />
             )}

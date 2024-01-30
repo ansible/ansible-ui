@@ -2,31 +2,28 @@ import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useStat
 import { ICatalogBreadcrumb } from '../PageHeader';
 
 export type PageBreadcrumbsContext = {
-  /** The base set of breadcrumbs for a page. eg. Namespaces -> Namespace XYZ,
-   * initialized by the breadcrumbs prop passed to the PageHeader component. */
-  baselineBreadcrumbs: ICatalogBreadcrumb[];
-  /** The breadcrumbs that will be displayed by the PageHeader component.
-   * This usually holds the baselineBreadcrumbs appended with the current active tab (PageRoutedTabs)
-   * if it exists. eg. Namespaces -> Namespace XYZ -> Collections  */
-  pageBreadcrumbs: ICatalogBreadcrumb[];
-  /** Setter for the page breadcrumbs that will be displayed by the PageHeader component. */
-  setPageBreadcrumbs: Dispatch<SetStateAction<ICatalogBreadcrumb[]>>;
-  /** Setter for baseline breadcrumbs for a page */
-  setBaselineBreadcrumbs: Dispatch<SetStateAction<ICatalogBreadcrumb[]>>;
+  /** The page breadcrumbs are used to display the current page in the page breadcrumbs */
+  breadcrumbs?: ICatalogBreadcrumb[];
+  setBreadcrumbs: Dispatch<SetStateAction<ICatalogBreadcrumb[] | undefined>>;
+
+  /** The tab breadcrumb is used to display the current active tab in the page breadcrumbs */
+  tabBreadcrumb?: ICatalogBreadcrumb;
+  setTabBreadcrumb: Dispatch<SetStateAction<ICatalogBreadcrumb | undefined>>;
 };
 
 export const PageBreadcrumbsContext = createContext<PageBreadcrumbsContext>({
-  baselineBreadcrumbs: [],
-  setBaselineBreadcrumbs: () => {},
-  pageBreadcrumbs: [],
-  setPageBreadcrumbs: () => {},
+  breadcrumbs: [],
+  setBreadcrumbs: () => {},
+  tabBreadcrumb: {},
+  setTabBreadcrumb: () => {},
 });
+
 export function PageBreadcrumbsProvider(props: { children: ReactNode }) {
-  const [baselineBreadcrumbs, setBaselineBreadcrumbs] = useState<ICatalogBreadcrumb[]>([]);
-  const [pageBreadcrumbs, setPageBreadcrumbs] = useState<ICatalogBreadcrumb[]>([]);
+  const [breadcrumbs, setBreadcrumbs] = useState<ICatalogBreadcrumb[] | undefined>([]);
+  const [tabBreadcrumb, setTabBreadcrumb] = useState<ICatalogBreadcrumb | undefined>({});
   return (
     <PageBreadcrumbsContext.Provider
-      value={{ baselineBreadcrumbs, setBaselineBreadcrumbs, pageBreadcrumbs, setPageBreadcrumbs }}
+      value={{ breadcrumbs, setBreadcrumbs, tabBreadcrumb, setTabBreadcrumb }}
     >
       {props.children}
     </PageBreadcrumbsContext.Provider>
