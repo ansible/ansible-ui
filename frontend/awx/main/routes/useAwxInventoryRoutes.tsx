@@ -203,6 +203,11 @@ export function useAwxInventoryRoutes() {
               path: 'groups',
               element: <InventoryHostGroups />,
             },
+            {
+              id: AwxRoute.InventoryHostJobs,
+              path: 'jobs',
+              element: <PageNotImplemented />,
+            },
           ],
         },
         {
