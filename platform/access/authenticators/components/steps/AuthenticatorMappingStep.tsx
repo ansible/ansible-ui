@@ -12,6 +12,7 @@ import {
   PageFormSelect,
   PageFormTextInput,
 } from '../../../../../framework';
+import { PageFormPlatformOrganizationSelect } from '../../../organizations/components/PageFormPlatformOrganizationSelect';
 import { PageFormHidden } from '../../../../../framework/PageForm/Utils/PageFormHidden';
 
 const Checkbox = styled(PageFormCheckbox)`
@@ -29,7 +30,6 @@ const Checkbox = styled(PageFormCheckbox)`
 
 export function AuthenticatorMappingStep() {
   const { wizardData } = usePageWizard();
-  // const { mappings = [] } = wizardData as AuthenticatorFormValues;
   const [mappings, setMappings] = useState((wizardData as AuthenticatorFormValues).mappings || []);
 
   const addMapping = (value: AuthenticatorMapType) => {
@@ -191,6 +191,15 @@ function MapFields(props: { index: number; map: AuthenticatorMapValues }) {
             name={`mappings[${index}].criteria_value`}
             label=""
           />
+        </PageFormHidden>
+        <PageFormHidden watch={`mappings[${index}].map_type`} hidden={(value) => value !== 'team'}>
+          <div />
+        </PageFormHidden>
+        <PageFormHidden
+          watch={`mappings[${index}].map_type`}
+          hidden={(value: string) => !['team', 'organization'].includes(value)}
+        >
+          <PageFormPlatformOrganizationSelect name={`mappings[${index}].organization`} isRequired />
         </PageFormHidden>
       </PageFormGrid>
     </div>
