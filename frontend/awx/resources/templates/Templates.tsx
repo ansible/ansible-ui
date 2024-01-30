@@ -25,7 +25,7 @@ export function Templates() {
           'A job template is a definition and set of parameters for running an Ansible job.'
         )}
       />
-      <TemplatesList url={awxAPI`/unified_job_templates/`}/>
+      <TemplatesList url={awxAPI`/unified_job_templates/`} />
     </PageLayout>
   );
 }
