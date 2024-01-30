@@ -42,7 +42,7 @@ export function InventorySourceDetails(props: { inventorySourceId?: string }) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const params = useParams<{ source_id: string; id: string }>();
-  const urlId = props?.inventorySourceId ? props.inventorySourceId : params.id;
+  const urlId = props?.inventorySourceId ? props.inventorySourceId : params.source_id;
 
   const getPageUrl = useGetPageUrl();
   const {

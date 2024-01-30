@@ -61,7 +61,7 @@ describe('Hub Roles Form', () => {
 
   it('name field should be read-only in edit mode', () => {
     cy.intercept(
-      { method: 'GET', url: pulpAPI`/roles/*` },
+      { method: 'GET', url: pulpAPI`/roles/` + '*' },
       {
         count: 1,
         results: [mockRole],
@@ -73,7 +73,7 @@ describe('Hub Roles Form', () => {
 
   it('should preload the form with current values', () => {
     cy.intercept(
-      { method: 'GET', url: pulpAPI`/roles/*` },
+      { method: 'GET', url: pulpAPI`/roles/` + '*' },
       {
         count: 1,
         results: [mockRole],

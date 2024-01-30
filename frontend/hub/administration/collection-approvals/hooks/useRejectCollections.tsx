@@ -59,9 +59,9 @@ export function rejectCollection(
     rejectedRepo = repoRes.results[0].pulp_href;
 
     await hubAPIPost(
-      pulpAPI`/repositories/ansible/ansible/${
-        parsePulpIDFromURL(collection.repository?.pulp_href || '') || ''
-      }/move_collection_version/`,
+      pulpAPI`/repositories/ansible/ansible/${parsePulpIDFromURL(
+        collection.repository?.pulp_href
+      )}/move_collection_version/`,
       {
         collection_versions: [`${collection.collection_version?.pulp_href}`],
         destination_repositories: [rejectedRepo],

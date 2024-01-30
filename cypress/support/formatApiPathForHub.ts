@@ -9,7 +9,11 @@
 import { apiTag } from '../../frontend/hub/common/api/formatPath';
 
 function getBaseAPIPath() {
-  return (Cypress.env('HUB_API_PREFIX') as string) || '/api/galaxy';
+  const base = (Cypress.env('HUB_API_PREFIX') as string) || '/api/galaxy';
+  if (base.endsWith('/')) {
+    throw new Error(`Invalid HUB_API_PREFIX - must NOT end with a slash`);
+  }
+  return base;
 }
 
 export function hubAPI(strings: TemplateStringsArray, ...values: string[]) {

@@ -51,9 +51,7 @@ export function RemoteDetails() {
     data: remotesData,
     error: errorRemotes,
     refresh: refreshRemotes,
-  } = useGet<PulpItemsResponse<IRemotes>>(
-    pulpAPI`/remotes/ansible/collection/?name=${params.id || ''}`
-  );
+  } = useGet<PulpItemsResponse<IRemotes>>(pulpAPI`/remotes/ansible/collection/?name=${params.id}`);
   const remote = remotesData?.results?.[0];
   const remoteHref = remote?.pulp_href;
 

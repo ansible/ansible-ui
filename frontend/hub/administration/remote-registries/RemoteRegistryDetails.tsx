@@ -36,7 +36,7 @@ export function RemoteRegistryDetails() {
     error: errorRemoteRegistry,
     refresh: refreshRemoteRegistry,
   } = useGet<HubItemsResponse<RemoteRegistry>>(
-    hubAPI`/_ui/v1/execution-environments/registries/?name=${params.id || ''}`
+    hubAPI`/_ui/v1/execution-environments/registries/?name=${params.id}`
   );
 
   if (errorRemoteRegistry) {

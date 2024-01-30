@@ -124,7 +124,7 @@ export function EditRemoteRegistry() {
   const params = useParams<{ id: string }>();
   const name = params.id;
   const { data, error, refresh } = useGet<HubItemsResponse<RemoteRegistryProps>>(
-    hubAPI`/_ui/v1/execution-environments/registries/?name=${name ?? ''}`
+    hubAPI`/_ui/v1/execution-environments/registries/?name=${name}`
   );
   const getPageUrl = useGetPageUrl();
   if (error) return <HubError error={error} handleRefresh={refresh} />;
@@ -153,7 +153,7 @@ export function EditRemoteRegistry() {
   }
 
   const onSubmit: PageFormSubmitHandler<RemoteRegistryProps> = async (remoteRegistry) => {
-    const remoteRegistryId = parsePulpIDFromURL(remoteRegistry.pulp_href) ?? '';
+    const remoteRegistryId = parsePulpIDFromURL(remoteRegistry.pulp_href) as string;
     await hubAPIPut<RemoteRegistryProps>(
       hubAPI`/_ui/v1/execution-environments/registries/${remoteRegistryId}/`,
       remoteRegistry

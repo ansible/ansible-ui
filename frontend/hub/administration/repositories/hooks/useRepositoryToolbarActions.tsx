@@ -46,18 +46,19 @@ export function useRepositoryToolbarActions(view: IHubView<Repository>) {
 
 export function useRepositoryCollectionVersionToolbarActions() {
   const { t } = useTranslation();
+  const pageNavigate = usePageNavigate();
   const actions = useMemo<IPageAction<CollectionVersionSearch>[]>(
     () => [
       {
         isPinned: true,
         label: t('Add collection'),
-        onClick: () => {},
+        onClick: () => pageNavigate(HubRoute.CreateRepository),
         selection: PageActionSelection.None,
         type: PageActionType.Button,
         variant: ButtonVariant.primary,
       },
     ],
-    [t]
+    [t, pageNavigate]
   );
   return actions;
 }
