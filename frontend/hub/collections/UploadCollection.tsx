@@ -1,5 +1,5 @@
 import { Alert, Radio } from '@patternfly/react-core';
-import { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -67,10 +67,10 @@ export function UploadCollection() {
 
 export function UploadCollectionByFile() {
   const { t } = useTranslation();
-  // TODO - we dont definetly want load all namespaces and repositories
-  // this will be addressed in future PR - load particular repo and namespace when we know the name after file selection
-  // so no need to handle errors in useGet inside those hooks
-  const namespaces = useHubNamespaces();
+
+  const [searchParams] = useSearchParams();
+  const ns = searchParams.get('namespace');
+  const namespaces = useHubNamespaces(ns);
   const repositories = useRepositories();
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
@@ -83,9 +83,8 @@ export function UploadCollectionByFile() {
   );
   const distroGetRequest = useGetRequest<PulpItemsResponse<Distribution>>();
   const [namespaceParams, setNamespaceParams] = useState<string | null>(null);
-  const [searchParams] = useSearchParams();
+  const [watchError, setWatchError] = useState<React.ReactElement>(<></>);
 
-  const ns = searchParams.get('namespace');
   if (ns && namespaceParams !== ns) {
     setNamespaceParams(ns);
   }
@@ -122,6 +121,16 @@ export function UploadCollectionByFile() {
 
   if (repositories.error) {
     return <HubError error={repositories.error} handleRefresh={repositories.refresh} />;
+  }
+
+  if (namespaces.error)
+  {
+    return <HubError error={namespaces.error} handleRefresh={namespaces.refresh} />;
+  }
+
+  if (!namespaces.data && !namespaces.error && namespaceParams)
+  {
+    return <LoadingPage />;
   }
 
   function renderRepoSelector() {
@@ -170,7 +179,18 @@ export function UploadCollectionByFile() {
     );
   }
 
+  function getNamespaceNameFromFile(file? : File)
+  {
+    return file?.name.split('-')[0] ?? '';;
+  }
+
   async function submitData(data: UploadData) {
+    const namespace = getNamespaceNameFromFile(data.file as File);
+    if (namespace != namespaceParams)
+    {
+      return;
+    }
+
     const list = await distroGetRequest(
       pulpAPI`/distributions/ansible/ansible/?repository=${selectedRepo?.pulp_href}`
     );
@@ -184,9 +204,6 @@ export function UploadCollectionByFile() {
 
   return (
     <>
-      {namespaces?.data?.data === undefined || repositories?.data?.data === undefined ? (
-        <LoadingPage />
-      ) : (
         <HubPageForm<UploadData>
           submitText={t('Confirm')}
           cancelText={t('Cancel')}
@@ -197,13 +214,14 @@ export function UploadCollectionByFile() {
           singleColumn={true}
         >
           <PageFormFileUpload label={t('Collection file')} name="file" isRequired />
+          {watchError}
           {renderRepoSelector()}
 
           <PageFormWatch<UploadData, 'file'> watch="file">
             {(file) => {
-              const namespace = file?.name.split('-')[0] ?? '';
+              const namespace = getNamespaceNameFromFile(file);
               if (namespaceParams) {
-                if (namespaceParams !== namespace) {
+                if (namespaceParams !== namespace && file) {
                   return (
                     <Alert
                       variant="danger"
@@ -222,7 +240,6 @@ export function UploadCollectionByFile() {
               return (
                 <>
                   {
-                    /* TODO - we have to load namespace by name, not all of them */
                     namespace && !namespaces.data?.data.find((ns) => ns.name === namespace) && (
                       <Alert
                         variant="danger"
@@ -245,7 +262,6 @@ export function UploadCollectionByFile() {
             }}
           </PageFormWatch>
         </HubPageForm>
-      )}
     </>
   );
 }
