@@ -10,6 +10,7 @@ import {
 import { useHubContext } from '../../../common/useHubContext';
 import { USER_GROUP_MGMT_PERMISSIONS } from '../../../common/constants';
 import { useCallback, useMemo } from 'react';
+import { useHubRoleDescription } from '../hooks/useHubRoleDescription';
 
 export type PermissionCategory = {
   label: string;
@@ -25,6 +26,7 @@ export function RolePermissions(props: { role: Role; showCustom?: boolean; showE
   const model_permissions = useMemo(() => user.model_permissions, [user.model_permissions]);
 
   const groupsToShow = usePermissionCategories(role?.permissions, showCustom, showEmpty);
+  const description = useHubRoleDescription(role);
 
   return (
     <DescriptionList
@@ -41,6 +43,11 @@ export function RolePermissions(props: { role: Role; showCustom?: boolean; showE
       {groupsToShow.length ? null : (
         <DescriptionListGroup data-cy={'permission-categories-no-permissions'}>
           <DescriptionListTerm>{t('No permissions')}</DescriptionListTerm>
+        </DescriptionListGroup>
+      )}
+      {groupsToShow.length && description && (
+        <DescriptionListGroup data-cy={'role-description'}>
+          <DescriptionListTerm>{description}</DescriptionListTerm>
         </DescriptionListGroup>
       )}
       {groupsToShow.map((group) => (

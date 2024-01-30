@@ -9,7 +9,7 @@ export function LoadingPage(props: { breadcrumbs?: boolean; tabs?: boolean }) {
       <PageHeader
         breadcrumbs={
           props.breadcrumbs
-            ? [{ label: (<Skeleton width="150px" />) as unknown as string }]
+            ? [{ label: (<Skeleton width="150px" />) as unknown as string, isLoading: true }]
             : undefined
         }
         title={(<Skeleton width="200px" />) as unknown as string}

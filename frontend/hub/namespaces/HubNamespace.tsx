@@ -13,5 +13,14 @@ export interface HubNamespace {
       object_roles: string[];
     },
   ];
-  related_fields: object;
+  users: [
+    {
+      id: number;
+      name: string;
+      object_roles: string[];
+    },
+  ];
+  related_fields: {
+    my_permissions?: string[];
+  };
 }

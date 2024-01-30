@@ -17,6 +17,7 @@ import { HubItemsResponse } from '../../common/useHubView';
 import { HubRoute } from '../../main/HubRoutes';
 import { HubNamespace } from '../HubNamespace';
 import { useHubNamespaceActions } from '../hooks/useHubNamespaceActions';
+import { useMemo } from 'react';
 
 export function HubNamespacePage() {
   const { t } = useTranslation();
@@ -26,10 +27,13 @@ export function HubNamespacePage() {
     hubAPI`/_ui/v1/namespaces/?limit=1&name=${params.id}`
   );
 
-  let namespace: HubNamespace | undefined = undefined;
-  if (data && data.data && data.data.length > 0) {
-    namespace = data.data[0];
-  }
+  const namespace = useMemo<HubNamespace | undefined>(() => {
+    if (data && data.data && data.data.length > 0) {
+      return data.data[0];
+    }
+    return undefined;
+  }, [data]);
+
   const getPageUrl = useGetPageUrl();
   const pageActions = useHubNamespaceActions({
     onHubNamespacesDeleted: () => pageNavigate(HubRoute.Namespaces),
@@ -49,7 +53,10 @@ export function HubNamespacePage() {
         title={namespace?.name}
         breadcrumbs={[
           { label: t('Namespaces'), to: getPageUrl(HubRoute.Namespaces) },
-          { label: namespace?.name },
+          {
+            label: namespace?.name,
+            to: getPageUrl(HubRoute.NamespaceDetails, { params: params }),
+          },
         ]}
         headerActions={
           <PageActions<HubNamespace>
@@ -60,6 +67,11 @@ export function HubNamespacePage() {
         }
       />
       <PageRoutedTabs
+        backTab={{
+          label: t('Back to Namespaces'),
+          page: HubRoute.Namespaces,
+          persistentFilterKey: 'namespaces',
+        }}
         tabs={[
           {
             label: t('Details'),
@@ -75,6 +87,14 @@ export function HubNamespacePage() {
             label: t('CLI Configuration'),
             page: HubRoute.NamespaceCLI,
             dataCy: 'namespace-cli-tab',
+          },
+          {
+            label: t('User Access'),
+            page: HubRoute.NamespaceUserAccess,
+          },
+          {
+            label: t('Team Access'),
+            page: HubRoute.NamespaceTeamAccess,
           },
         ]}
         params={{ id: namespace?.name }}

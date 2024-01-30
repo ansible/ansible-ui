@@ -116,4 +116,21 @@ describe('Namespaces', () => {
     cy.clickButton(/^Close$/);
     cy.clickButton(/^Clear all filters$/);
   });
+
+  it('verify User and Team Access tabs are available for a namespace', () => {
+    const nameSpaceName = `test_namespace_access_${randomString(5, undefined, {
+      isLowercase: true,
+    })}`;
+    cy.createNamespace(nameSpaceName);
+    cy.navigateTo('hub', Namespaces.url);
+    cy.get('[data-cy="table-view"]').click();
+    cy.clickTableRow(nameSpaceName);
+    cy.verifyPageTitle(nameSpaceName);
+    cy.clickTab(/^User Access$/, true);
+    cy.contains(/^There are currently no users added.$/);
+    cy.clickTab(/^Team Access$/, true);
+    cy.contains(/^There are currently no teams added.$/);
+    // TODO: tests for adding/removing users/roles when those features are implemented
+    cy.deleteNamespace(nameSpaceName);
+  });
 });
