@@ -1,11 +1,10 @@
-import { Alert, Radio } from '@patternfly/react-core';
+import { Radio } from '@patternfly/react-core';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import {
   ITableColumn,
   IToolbarFilter,
-  PageDetails,
   PageHeader,
   PageLayout,
   PageTable,
@@ -13,9 +12,7 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../framework';
-import { PageDetail } from '../../../framework/PageDetails/PageDetail';
 import { PageFormFileUpload } from '../../../framework/PageForm/Inputs/PageFormFileUpload';
-import { PageFormWatch } from '../../../framework/PageForm/Utils/PageFormWatch';
 import { ToolbarFilterType } from '../../../framework/PageToolbar/PageToolbarFilter';
 import { LoadingPage } from '../../../framework/components/LoadingPage';
 import { useSearchParams } from '../../../framework/components/useSearchParams';
@@ -28,7 +25,9 @@ import { hubAPI, pulpAPI } from '../common/api/formatPath';
 import { hubPostRequestFile } from '../common/api/request';
 import { PulpItemsResponse, useHubView } from '../common/useHubView';
 import { HubRoute } from '../main/HubRoutes';
-import { useHubNamespaces } from '../namespaces/hooks/useHubNamespaces';
+import { requestGet } from '../../common/crud/Data';
+import { HubItemsResponse } from '../common/useHubView';
+import { HubNamespace } from '../namespaces/HubNamespace';
 
 interface UploadData {
   file: unknown;
@@ -69,8 +68,7 @@ export function UploadCollectionByFile() {
   const { t } = useTranslation();
 
   const [searchParams] = useSearchParams();
-  const ns = searchParams.get('namespace');
-  const namespaces = useHubNamespaces(ns);
+  const namespaceParams = searchParams.get('namespace');
   const repositories = useRepositories();
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
@@ -82,12 +80,7 @@ export function UploadCollectionByFile() {
     null
   );
   const distroGetRequest = useGetRequest<PulpItemsResponse<Distribution>>();
-  const [namespaceParams, setNamespaceParams] = useState<string | null>(null);
-  const [watchError, setWatchError] = useState<React.ReactElement>(<></>);
-
-  if (ns && namespaceParams !== ns) {
-    setNamespaceParams(ns);
-  }
+  const [error, setError] = useState<string>('');
 
   const view = useHubView<Repository>({
     url: pulpAPI`/repositories/ansible/ansible/`,
@@ -121,16 +114,6 @@ export function UploadCollectionByFile() {
 
   if (repositories.error) {
     return <HubError error={repositories.error} handleRefresh={repositories.refresh} />;
-  }
-
-  if (namespaces.error)
-  {
-    return <HubError error={namespaces.error} handleRefresh={namespaces.refresh} />;
-  }
-
-  if (!namespaces.data && !namespaces.error && namespaceParams)
-  {
-    return <LoadingPage />;
   }
 
   function renderRepoSelector() {
@@ -179,89 +162,69 @@ export function UploadCollectionByFile() {
     );
   }
 
-  function getNamespaceNameFromFile(file? : File)
-  {
-    return file?.name.split('-')[0] ?? '';;
+  function getNamespaceNameFromFile(file?: File) {
+    return file?.name.split('-')[0] ?? '';
   }
 
   async function submitData(data: UploadData) {
-    const namespace = getNamespaceNameFromFile(data.file as File);
-    if (namespace != namespaceParams)
-    {
+    setError('');
+    const namespaceName = getNamespaceNameFromFile(data.file as File);
+    if (namespaceParams && namespaceName !== namespaceParams) {
+      setError(
+        t(`Namespace "{{namespaceName}}" do not match namespace "{{namespaceParams}}"`, {
+          namespaceName,
+          namespaceParams,
+        })
+      );
       return;
     }
 
-    const list = await distroGetRequest(
-      pulpAPI`/distributions/ansible/ansible/?repository=${selectedRepo?.pulp_href || ''}`
-    );
-    const base_path = list?.results[0]?.base_path;
+    let lastError = '';
 
-    return hubPostRequestFile(
-      hubAPI`/v3/plugin/ansible/content/${base_path}/collections/artifacts/`,
-      data.file as Blob
-    ).then(() => pageNavigate(HubRoute.Approvals));
+    try {
+      lastError = t('Can not find namespace {{namespaceName}}', { namespaceName });
+      const namespace = await requestGet<HubItemsResponse<HubNamespace>>(
+        hubAPI`/_ui/v1/namespaces/?limit=1&name=${namespaceName}`
+      );
+      if (namespace.data.length === 0) {
+        throw new Error('');
+      }
+
+      lastError = t('Can not find distribution for selected repository');
+
+      const list = await distroGetRequest(
+        pulpAPI`/distributions/ansible/ansible/?repository=${selectedRepo?.pulp_href || ''}`
+      );
+      const base_path = list?.results[0]?.base_path;
+
+      lastError = t(`Error occured during collection upload`);
+
+      await hubPostRequestFile(
+        hubAPI`/v3/plugin/ansible/content/${base_path}/collections/artifacts/`,
+        data.file as Blob
+      );
+
+      pageNavigate(HubRoute.Approvals);
+    } catch (error) {
+      setError(lastError);
+    }
   }
 
   return (
     <>
-        <HubPageForm<UploadData>
-          submitText={t('Confirm')}
-          cancelText={t('Cancel')}
-          onCancel={onCancel}
-          onSubmit={(data) => {
-            return submitData(data);
-          }}
-          singleColumn={true}
-        >
-          <PageFormFileUpload label={t('Collection file')} name="file" isRequired />
-          {watchError}
-          {renderRepoSelector()}
-
-          <PageFormWatch<File | undefined> watch="file">
-            {(file) => {
-              const namespace = getNamespaceNameFromFile(file);
-              if (namespaceParams) {
-                if (namespaceParams !== namespace && file) {
-                  return (
-                    <Alert
-                      variant="danger"
-                      isInline
-                      title={t(
-                        `Namespace "${namespace}" do not match namespace "${namespaceParams}"`
-                      )}
-                    >
-                      {t(
-                        `The collection cannot be imported. Please select collection that belongs to namespace "${namespaceParams}".`
-                      )}
-                    </Alert>
-                  );
-                }
-              }
-              return (
-                <>
-                  {
-                    namespace && !namespaces.data?.data.find((ns) => ns.name === namespace) && (
-                      <Alert
-                        variant="danger"
-                        isInline
-                        title={t(`Namespace "${namespace}" not found`)}
-                      >
-                        {t(
-                          'The collection cannot be imported. Please create namespace before importing.'
-                        )}
-                      </Alert>
-                    )
-                  }
-                  {namespace && (
-                    <PageDetails>
-                      <PageDetail label={t('Namespace')}>{namespace}</PageDetail>
-                    </PageDetails>
-                  )}
-                </>
-              );
-            }}
-          </PageFormWatch>
-        </HubPageForm>
+      <HubPageForm<UploadData>
+        submitText={t('Confirm')}
+        cancelText={t('Cancel')}
+        onCancel={onCancel}
+        onSubmit={(data) => {
+          return submitData(data);
+        }}
+        singleColumn={true}
+      >
+        <PageFormFileUpload label={t('Collection file')} name="file" isRequired />
+        {error && <HubError error={{ name: '', message: error }}></HubError>}
+        {renderRepoSelector()}
+      </HubPageForm>
     </>
   );
 }
