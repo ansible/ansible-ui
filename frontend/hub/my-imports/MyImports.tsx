@@ -37,8 +37,8 @@ export function MyImports() {
   const nameQP = searchParams.get('name') ?? undefined;
   const statusQP = searchParams.get('status') ?? undefined;
   const versionQP = searchParams.get('version') ?? undefined;
-  const pageQP = Number(searchParams.get('page') ?? 1);
-  const perPageQP = Number(searchParams.get('perPage') ?? 10);
+  const pageQP = Number(searchParams.get('page')) || 1;
+  const perPageQP = Number(searchParams.get('perPage')) || 10;
 
   const [isDrawerExpanded, setIsDrawerExpanded] = useState(false);
   const [selectedImport, setSelectedImport] = useState('');
