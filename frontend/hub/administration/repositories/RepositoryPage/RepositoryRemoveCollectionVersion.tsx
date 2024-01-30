@@ -63,9 +63,7 @@ export function RepositoryRemoveCollectionVersion() {
       rowActions={rowActions}
       errorStateTitle={t('Error loading collection versions')}
       emptyStateTitle={t('No collection versions yet')}
-      emptyStateDescription={t('Collection versions will appear once the collection is modified.')}
-      emptyStateButtonText={t('Add collection')}
-      emptyStateButtonClick={() => {}}
+      emptyStateDescription={t('Collection versions will appear once the repository is modified.')}
       {...view}
       defaultTableView="list"
       defaultSubtitle={t('Collection')}

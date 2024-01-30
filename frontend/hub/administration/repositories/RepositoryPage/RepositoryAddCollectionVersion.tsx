@@ -93,11 +93,6 @@ export function RepositoryAddCollectionVersion() {
         }
         errorStateTitle={t('Error loading collection versions')}
         emptyStateTitle={t('No collection versions yet')}
-        emptyStateDescription={t(
-          'Collection versions will appear once the collection is modified.'
-        )}
-        emptyStateButtonText={t('Add collection')}
-        emptyStateButtonClick={() => {}}
         {...view}
         defaultTableView="list"
         defaultSubtitle={t('Collection')}
