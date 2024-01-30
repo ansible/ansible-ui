@@ -25,6 +25,8 @@ import type {
   AuthenticatorPlugins,
   AuthenticatorPlugin,
 } from '../../../interfaces/AuthenticatorPlugin';
+import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
+import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { gatewayAPI } from '../../../api/gateway-api-utils';
 
 interface Configuration {
@@ -36,6 +38,8 @@ interface MapBase {
   name: string;
   revoke: boolean;
   order?: number;
+  organization?: PlatformOrganization;
+  team?: PlatformTeam;
 }
 interface MapAlways extends MapBase {
   trigger: 'always';
@@ -99,16 +103,21 @@ export function CreateAuthenticator() {
     try {
       const authenticator = await request;
 
-      const mapRequests = mappings.map((map, index) =>
-        postRequest(gatewayAPI`/authenticator_maps/`, {
+      const mapRequests = mappings.map((map, index) => {
+        const data = {
           name: map.name,
           map_type: map.map_type,
           revoke: map.revoke,
           order: index + 1,
           authenticator: (authenticator as Authenticator).id,
           triggers: buildTriggers(map),
-        })
-      );
+          organization: ['organization', 'team'].includes(map.map_type)
+            ? map.organization?.id
+            : null,
+          team: ['team'].includes(map.map_type) ? map.team?.id : null,
+        };
+        return postRequest(gatewayAPI`/authenticator_maps/`, data);
+      });
       await Promise.all(mapRequests);
       pageNavigate(PlatformRoute.AuthenticatorDetails, {
         params: { id: (authenticator as Authenticator).id },
