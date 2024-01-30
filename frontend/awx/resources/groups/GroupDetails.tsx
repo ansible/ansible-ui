@@ -12,33 +12,29 @@ export function GroupDetails() {
   const params = useParams<{ group_id: string }>();
   const { group } = useGetGroup(params.group_id as string);
 
-  if (!group) {
-    return null;
-  }
-
   return (
     <PageDetails>
-      <PageDetail label={t('Name')}>{group.name}</PageDetail>
-      <PageDetail label={t('Description')}>{group.description}</PageDetail>
+      <PageDetail label={t('Name')}>{group?.name}</PageDetail>
+      <PageDetail label={t('Description')}>{group?.description}</PageDetail>
       <PageDetail label={t('Created')}>
         <DateTimeCell
           format="date-time"
-          value={group.created}
-          author={group.summary_fields?.created_by?.username}
+          value={group?.created}
+          author={group?.summary_fields?.created_by?.username}
           onClick={() =>
             pageNavigate(AwxRoute.UserDetails, {
-              params: { id: group.summary_fields?.created_by?.id },
+              params: { id: group?.summary_fields?.created_by?.id },
             })
           }
         />
       </PageDetail>
       <LastModifiedPageDetail
         format="date-time"
-        value={group.created}
-        author={group.summary_fields?.created_by?.username}
+        value={group?.created}
+        author={group?.summary_fields?.created_by?.username}
         onClick={() =>
           pageNavigate(AwxRoute.UserDetails, {
-            params: { id: group.summary_fields?.created_by?.id },
+            params: { id: group?.summary_fields?.created_by?.id },
           })
         }
       />
@@ -46,7 +42,7 @@ export function GroupDetails() {
         label={t('Variables')}
         showCopyToClipboard
         toggleLanguage
-        value={group.variables || '---'}
+        value={group?.variables || '---'}
       />
     </PageDetails>
   );
