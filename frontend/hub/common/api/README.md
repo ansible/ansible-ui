@@ -24,7 +24,7 @@ For `GET` actions, it's recommended to utilize the hooks from the framework. The
 ```
 import { useGet } from '@frontend/common/crud/useGet';
 
-const { data, error, isLoading, refresh } = useGet<MyType>(hubAPI`/url`);
+const { data, error, isLoading, refresh } = useGet<MyType>(hubAPI`/url/`);
 ```
 
 When you need to deal with a more complex set of requests, there's also `useGetFn`, which allows firing multiple requests in parallel or depending on each other.
@@ -35,8 +35,8 @@ import { useGetFn } from '@frontend/hub/useGetFn';
 
 const { data, error, isLoading, refresh } = useGetFn<MyType>('unique-identifier-for-caching',
   (signal: AbortSignal) => Promise.all([
-    requestGet(hubAPI`/url1`, signal),
-    requestGet(hubAPI`/url2`, signal),
+    requestGet(hubAPI`/url1/`, signal),
+    requestGet(hubAPI`/url2/`, signal),
   ]).then(([data1, data2]) => Promise.all([
     data1,
     data2,

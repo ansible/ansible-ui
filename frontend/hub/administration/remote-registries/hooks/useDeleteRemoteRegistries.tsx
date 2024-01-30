@@ -30,9 +30,9 @@ export function useDeleteRemoteRegistries(onComplete: (remoteRegistry: RemoteReg
       ],
       actionFn: async (remoteRegistry: RemoteRegistry, signal: AbortSignal) =>
         await hubAPIDelete(
-          hubAPI`/_ui/v1/execution-environments/registries/${
-            parsePulpIDFromURL(remoteRegistry.pulp_href) || ''
-          }/`,
+          hubAPI`/_ui/v1/execution-environments/registries/${parsePulpIDFromURL(
+            remoteRegistry.pulp_href
+          )}/`,
           signal
         ),
     });
