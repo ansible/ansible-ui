@@ -26,7 +26,7 @@ import { InventoryHostGroups } from '../../resources/inventories/inventoryHostsP
 import {
   CreateHost,
   EditHost,
-} from '../../resources/inventories/inventoryHostsPage/inventoryHostsForm';
+} from '../../resources/inventories/inventoryHostsPage/InventoryHostForm';
 
 export function useAwxInventoryRoutes() {
   const { t } = useTranslation();
@@ -104,12 +104,12 @@ export function useAwxInventoryRoutes() {
           ],
         },
         {
-          id: AwxRoute.InventoryHostsAdd,
+          id: AwxRoute.InventoryHostAdd,
           path: ':inventory_type/:id/add',
           element: <CreateHost />,
         },
         {
-          id: AwxRoute.InventoryHostsEdit,
+          id: AwxRoute.InventoryHostEdit,
           path: ':inventory_type/:id/host/:host_id/edit',
           element: <EditHost />,
         },

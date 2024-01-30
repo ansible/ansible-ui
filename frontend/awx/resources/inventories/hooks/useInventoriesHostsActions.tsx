@@ -62,7 +62,7 @@ export function useInventoriesHostsActions(
         icon: PencilAltIcon,
         label: t('Edit host'),
         onClick: (host) =>
-          pageNavigate(AwxRoute.InventoryHostsEdit, {
+          pageNavigate(AwxRoute.InventoryHostEdit, {
             params: { id: params.id, inventory_type: params.inventory_type, host_id: host.id },
           }),
         isDisabled: (host) => cannotEditResource(host, t),

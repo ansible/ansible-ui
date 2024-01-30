@@ -44,7 +44,7 @@ export function useInventoriesHostsToolbarActions(view: IAwxView<AwxHost>) {
         icon: PlusIcon,
         label: t('Create host'),
         onClick: () =>
-          pageNavigate(String(AwxRoute.InventoryHostsAdd), {
+          pageNavigate(String(AwxRoute.InventoryHostAdd), {
             params: { inventory_type: params.inventory_type, id: params.id },
           }),
         isDisabled: () =>
