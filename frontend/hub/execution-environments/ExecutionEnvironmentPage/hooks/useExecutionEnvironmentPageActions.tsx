@@ -32,19 +32,19 @@ export function useExecutionEnvironmentPageActions() {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         label: t('Use in controller'),
-        onClick: () => alert('WIP'),
+        onClick: () => {},
       },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         label: t('Delete'),
-        onClick: () => alert('WIP'),
+        onClick: () => {},
       },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         label: t('Sign'),
-        onClick: () => alert('WIP'),
+        onClick: () => {},
       },
     ];
     return actions;
