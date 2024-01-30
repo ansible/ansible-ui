@@ -10,7 +10,7 @@ describe('HubNamespaceTeamAccess', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: hubAPI`/_ui/v1/namespaces/*`,
+          url: hubAPI`/_ui/v1/namespaces/?*`,
         },
         mockNamespaceResponse
       ).as('nonEmptyListWithPermissions');
@@ -60,7 +60,7 @@ describe('HubNamespaceTeamAccess', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: hubAPI`/_ui/v1/namespaces/*`,
+          url: hubAPI`/_ui/v1/namespaces/?*`,
         },
         mockEmptyUsersResponse
       ).as('nonEmptyListWithoutPermissions');
@@ -91,7 +91,7 @@ describe('HubNamespaceTeamAccess', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: hubAPI`/_ui/v1/namespaces/*`,
+          url: hubAPI`/_ui/v1/namespaces/?*`,
         },
         mockEmptyUsersResponse
       ).as('emptyList');
@@ -112,7 +112,7 @@ describe('HubNamespaceTeamAccess', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: hubAPI`/_ui/v1/namespaces/*`,
+          url: hubAPI`/_ui/v1/namespaces/?*`,
         },
         mockEmptyUsersResponse
       ).as('emptyList');

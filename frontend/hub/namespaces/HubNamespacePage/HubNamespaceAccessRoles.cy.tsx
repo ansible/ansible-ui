@@ -9,7 +9,7 @@ describe('HubNamespaceAccessRoles', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: hubAPI`/_ui/v1/namespaces/*`,
+        url: hubAPI`/_ui/v1/namespaces/?*`,
       },
       mockNamespaceResponse
     ).as('namespaceDetails');
@@ -29,7 +29,7 @@ describe('HubNamespaceAccessRoles', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: pulpAPI`/roles/*`,
+        url: pulpAPI`/roles/?*`,
       },
       {
         fixture: 'hub_namespace_permissions.json',
@@ -92,7 +92,7 @@ describe('HubNamespaceAccessRoles', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: hubAPI`/_ui/v1/namespaces/*`,
+        url: hubAPI`/_ui/v1/namespaces/?*`,
       },
       mockEmptyUsersResponse
     ).as('nonEmptyListWithoutPermissions');

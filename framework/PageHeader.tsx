@@ -14,7 +14,7 @@ import {
   Truncate,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
-import { CSSProperties, Fragment, ReactNode, useEffect, useMemo } from 'react';
+import { CSSProperties, Fragment, ReactNode, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './PageFramework.css';
 import { useBreakpoint } from './components/useBreakPoint';
@@ -110,31 +110,21 @@ export function PageHeader(props: PageHeaderProps) {
   const isMdOrLarger = useBreakpoint('md');
   const [translations] = useFrameworkTranslations();
 
-  const { breadcrumbs, setBreadcrumbs, tabBreadcrumb } = usePageBreadcrumbs();
+  const { tabBreadcrumb } = usePageBreadcrumbs();
 
   const pageBreadcrumbs = useMemo(() => {
     const pageBreadcrumbs = [];
-    if (breadcrumbs) pageBreadcrumbs.push(...breadcrumbs);
+    if (props.breadcrumbs) pageBreadcrumbs.push(...props.breadcrumbs);
     if (tabBreadcrumb) pageBreadcrumbs.push(tabBreadcrumb);
     return pageBreadcrumbs;
-  }, [breadcrumbs, tabBreadcrumb]);
-
-  useEffect(() => {
-    if (props.breadcrumbs?.length) setBreadcrumbs(props.breadcrumbs);
-  }, [props.breadcrumbs, setBreadcrumbs]);
-
-  useEffect(() => {
-    // Cleanup - to remove breadcrumbs when the PageHeader is unmounted (page is changed)
-    return () => setBreadcrumbs(undefined);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [props.breadcrumbs, tabBreadcrumb]);
 
   return (
     <PageSection
       variant={PageSectionVariants.light}
       className="bg-lighten border-bottom"
       style={{
-        paddingTop: props.breadcrumbs ? (isXl ? 16 : 12) : isXl ? 16 : 12,
+        paddingTop: pageBreadcrumbs?.length ? (isXl ? 16 : 12) : isXl ? 16 : 12,
         paddingBottom: isXl ? 16 : 12,
       }}
     >
@@ -143,7 +133,7 @@ export function PageHeader(props: PageHeaderProps) {
           <FlexItem grow={{ default: 'grow' }}>
             {pageBreadcrumbs && (
               <Breadcrumbs
-                breadcrumbs={props.breadcrumbs ? pageBreadcrumbs : undefined}
+                breadcrumbs={pageBreadcrumbs?.length ? pageBreadcrumbs : undefined}
                 style={{ paddingBottom: isLg ? 6 : 4 }}
               />
             )}
