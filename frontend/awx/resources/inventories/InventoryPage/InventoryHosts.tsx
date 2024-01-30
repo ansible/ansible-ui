@@ -26,7 +26,7 @@ export function InventoryHosts() {
     tableColumns,
   });
   const toolbarActions = useInventoriesHostsToolbarActions(view);
-  const rowActions = useInventoriesHostsActions(view.unselectItemsAndRefresh);
+  const rowActions = useInventoriesHostsActions(view.unselectItemsAndRefresh, view.refresh);
 
   const hostOptions = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/hosts`).data;
   const canCreateHost = Boolean(hostOptions && hostOptions.actions && hostOptions.actions['POST']);

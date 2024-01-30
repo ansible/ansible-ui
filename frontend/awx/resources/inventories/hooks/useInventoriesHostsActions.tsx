@@ -7,25 +7,31 @@ import {
   PageActionType,
   usePageNavigate,
 } from '../../../../../framework';
-import { requestPatch } from '../../../../common/crud/Data';
 import { cannotDeleteResource, cannotEditResource } from '../../../../common/utils/RBAChelpers';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { AwxHost } from '../../../interfaces/AwxHost';
 import { useDeleteHosts } from '../../hosts/hooks/useDeleteHosts';
+import { usePatchRequest } from '../../../../common/crud/usePatchRequest';
 
-export function useInventoriesHostsActions(onComplete: (hosts: AwxHost[]) => void) {
+export function useInventoriesHostsActions(
+  onDelete: (host: AwxHost[]) => void,
+  onToggle: (() => Promise<void>) | (() => void)
+) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
 
-  const deleteHosts = useDeleteHosts(onComplete);
+  const deleteHosts = useDeleteHosts(onDelete);
+
+  const patchRequest = usePatchRequest<{ enabled: boolean }, AwxHost>();
 
   const handleToggleHost: (host: AwxHost, enabled: boolean) => Promise<void> = useCallback(
     async (host, enabled) => {
-      await requestPatch(awxAPI`/hosts/${host.id.toString()}/`, { enabled });
-      onComplete([host]);
+      await patchRequest(awxAPI`/hosts/${host.id.toString()}/`, { enabled });
+      await onToggle();
+      return Promise.resolve();
     },
-    [onComplete]
+    [onToggle, patchRequest]
   );
 
   return useMemo<IPageAction<AwxHost>[]>(
@@ -60,9 +66,11 @@ export function useInventoriesHostsActions(onComplete: (hosts: AwxHost[]) => voi
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: TrashIcon,
-        label: t('Delete inventory'),
+        label: t('Delete host'),
         isDisabled: (host: AwxHost) => cannotDeleteResource(host, t),
-        onClick: (host) => deleteHosts([host]),
+        onClick: (host) => {
+          deleteHosts([host]);
+        },
         isDanger: true,
       },
     ],

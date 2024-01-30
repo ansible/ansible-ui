@@ -23,7 +23,7 @@ export function HubNamespacePage() {
   const params = useParams<{ id: string }>();
   const pageNavigate = usePageNavigate();
   const { data, error, refresh } = useGet<HubItemsResponse<HubNamespace>>(
-    hubAPI`/_ui/v1/namespaces/?limit=1&name=${params.id ?? ''}`
+    hubAPI`/_ui/v1/namespaces/?limit=1&name=${params.id}`
   );
 
   let namespace: HubNamespace | undefined = undefined;

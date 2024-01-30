@@ -48,7 +48,7 @@ export function useInventoriesGroupsToolbarActions(view: IAwxView<InventoryGroup
         icon: PlusIcon,
         label: t('Create group'),
         onClick: () =>
-          pageNavigate(String(AwxRoute.InventoryGroupsAdd), {
+          pageNavigate(String(AwxRoute.InventoryGroupCreate), {
             params: { inventory_type: params.inventory_type, id: params.id },
           }),
         isDisabled: () =>
