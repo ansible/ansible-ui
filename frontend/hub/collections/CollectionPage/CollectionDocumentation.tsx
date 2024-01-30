@@ -148,7 +148,7 @@ export function CollectionDocumentation() {
                     {content?.content_type + ' > ' + content?.content_name}
                   </Title>
 
-                  {/* Checkbox allows switch between rendered docs in HTML and between plain JSON that displays raw documentation data*/}
+                  {/* ToggleGroup allows switch between rendered docs in HTML and between plain JSON that displays raw documentation data*/}
                   <>
                     <ToggleGroup>
                       <ToggleGroupItem

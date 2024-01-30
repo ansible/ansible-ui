@@ -156,7 +156,7 @@ export function CollectionDocumentationTabContent(props: {
 
   const errorMessage = (
     <>
-      {t(`Error occured when rendering documentation.`)}
+      {t(`Error occurred when rendering documentation.`)}
       <br />
       <br />
       {t(`Here is the original documentation data in JSON:`)}
