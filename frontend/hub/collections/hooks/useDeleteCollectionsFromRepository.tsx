@@ -117,9 +117,9 @@ async function deleteCollectionFromRepository(
   }
 
   const res: { task: string } = await postRequest(
-    pulpAPI`/repositories/ansible/ansible/${
-      parsePulpIDFromURL(collection.repository.pulp_href) || ''
-    }/modify/`,
+    pulpAPI`/repositories/ansible/ansible/${parsePulpIDFromURL(
+      collection.repository.pulp_href
+    )}/modify/`,
     {
       remove_content_units: itemsToDelete,
       base_version: collection.repository.latest_version_href,
