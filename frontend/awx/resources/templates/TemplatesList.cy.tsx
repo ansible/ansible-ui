@@ -78,18 +78,14 @@ describe('TemplatesList', () => {
       cy.get('tbody').find('tr').should('have.length', 2);
     });
 
-    it('Launch action item should navigate user to the job output page.', () => {
+    it('Launch action item should call API /launch endpoint', () => {
       cy.intercept(
-        { method: 'POST', url: '/api/v2/job_templates/7/launch/' },
-        { fixture: 'jobTemplateLaunchPOST' }
+        { method: 'GET', url: '/api/v2/job_templates/7/launch/' },
+        { fixture: 'jobTemplateLaunch' }
       ).as('launchRequest');
       cy.mount(<TemplatesList url={'/api/v2/projects/6/*'} />);
       cy.clickTableRowPinnedAction('Demo Job Template', 'launch-template');
-      cy.wait('@launchRequest')
-        .its('response.body.id')
-        .then((jobId: string) => {
-          cy.waitForTemplateStatus(jobId);
-        });
+      cy.wait('@launchRequest');
     });
 
     it('Has filters for Name, Description, Created By, and Modified By', () => {

@@ -34,25 +34,16 @@ export function TemplatesList(props: {
   const toolbarFilters = useTemplateFilters();
   const tableColumns = useTemplateColumns();
   const getQueryParams = (projectId?: string | undefined, inventoryId?: string | undefined) => {
-    const type = 'job_template,workflow_job_template';
+    const templateQueryParams: { [key: string]: string } = {
+      type: 'job_template,workflow_job_template',
+    };
     if (projectId) {
-      const templateQueryParams = {
-        project__id: projectId,
-        type: type,
-      };
-      return templateQueryParams;
-    } else if (inventoryId) {
-      const templateQueryParams = {
-        inventory__id: inventoryId,
-        type: type,
-      };
-      return templateQueryParams;
-    } else {
-      const templateQueryParams = {
-        type: type,
-      };
-      return templateQueryParams;
+      templateQueryParams.project__id = projectId;
     }
+    if (inventoryId) {
+      templateQueryParams.inventory__id = inventoryId;
+    }
+    return templateQueryParams;
   };
   const view = useAwxView<JobTemplate | WorkflowJobTemplate>({
     url: props.url ? props.url : awxAPI`/unified_job_templates/`,
