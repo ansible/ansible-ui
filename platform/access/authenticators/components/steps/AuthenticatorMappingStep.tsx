@@ -13,6 +13,7 @@ import {
   PageFormTextInput,
 } from '../../../../../framework';
 import { PageFormPlatformOrganizationSelect } from '../../../organizations/components/PageFormPlatformOrganizationSelect';
+import { PageFormPlatformTeamSelect } from '../../../teams/components/PageFormPlatformTeamSelect';
 import { PageFormHidden } from '../../../../../framework/PageForm/Utils/PageFormHidden';
 
 const Checkbox = styled(PageFormCheckbox)`
@@ -193,7 +194,7 @@ function MapFields(props: { index: number; map: AuthenticatorMapValues }) {
           />
         </PageFormHidden>
         <PageFormHidden watch={`mappings[${index}].map_type`} hidden={(value) => value !== 'team'}>
-          <div />
+          <PageFormPlatformTeamSelect name={`mappings[${index}].team`} isRequired />
         </PageFormHidden>
         <PageFormHidden
           watch={`mappings[${index}].map_type`}
