@@ -170,11 +170,13 @@ export function CollectionDocumentation() {
             )}
             {/* If html is available, insert it directly */}
             {html && (
-              <div
-                dangerouslySetInnerHTML={{
-                  __html: html,
-                }}
-              />
+              <PageSection variant="light" id="HTML_doc">
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: html,
+                  }}
+                />
+              </PageSection>
             )}
           </div>
         </DrawerContentBody>
