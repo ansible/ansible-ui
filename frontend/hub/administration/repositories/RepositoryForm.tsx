@@ -25,9 +25,9 @@ import { useCallback, ReactNode } from 'react';
 import { useSelectRemoteSingle } from './hooks/useRemoteSelector';
 import { useRepositoryBasePath, parsePulpIDFromURL } from '../../common/api/hub-api-utils';
 import { postHubRequest, putHubRequest } from '../../common/api/request';
-import { postRequest } from '../../../common/crud/Data';
 import { PageFormWatch } from '../../../../framework/PageForm/Utils/PageFormWatch';
 import { useFormContext, UseFormSetValue, FieldValues } from 'react-hook-form';
+import { HubError } from '../../common/HubError';
 
 interface RepositoryFormProps {
   remote: IRemotes | string | null;
@@ -96,7 +96,7 @@ export function RepositoryForm() {
           }/`,
           payload
         )
-      : postRequest<Repository>(pulpAPI`/repositories/ansible/ansible/`, payload);
+      : postHubRequest<Repository>(pulpAPI`/repositories/ansible/ansible/`, payload);
     if (data.createDistribution) {
       if (isEdit) {
         promise
@@ -115,9 +115,9 @@ export function RepositoryForm() {
     }
     return promise
       .then(() => pageNavigate(HubRoute.RepositoryPage, { params: { id: data.name as string } }))
-      .catch(() => t('The changes not saved.'));
+      .catch(() => t('The changes were not saved.'));
   };
-  const { data } = useGet<PulpItemsResponse<Repository>>(
+  const { data, isLoading, error, refresh } = useGet<PulpItemsResponse<Repository>>(
     id ? pulpAPI`/repositories/ansible/ansible/?name=${id}` : ''
   );
   if (data) {
@@ -125,6 +125,7 @@ export function RepositoryForm() {
   } else {
     repo = null;
   }
+  // FIXME this should be replaced by typeahead component once it's implemented
   const page_size = 50;
   const remote = useGet<PulpItemsResponse<IRemotes>>(
     pulpAPI`/remotes/ansible/collection/?offset=0&limit=${page_size.toString()}`
@@ -145,8 +146,11 @@ export function RepositoryForm() {
     repo?.pulp_href || undefined
   );
 
-  if ((isEdit && !repo) || baseLoading) {
-    return <LoadingPage />;
+  if (isLoading || baseLoading) {
+    return <LoadingPage breadcrumbs />;
+  }
+  if (error) {
+    return <HubError error={error} handleRefresh={refresh} />;
   }
 
   const getRemote = (url: string): IRemotes | null => {
