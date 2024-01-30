@@ -61,11 +61,11 @@ export function EditHubNamespace() {
     data: namespace,
     error,
     refresh,
-  } = useGet<HubNamespace>(hubAPI`/_ui/v1/my-namespaces/${name ?? ''}/`);
+  } = useGet<HubNamespace>(hubAPI`/_ui/v1/my-namespaces/${name}/`);
   const putRequest = usePutRequest<HubNamespace, HubNamespace>();
   const onSubmit: PageFormSubmitHandler<HubNamespace> = async (namespace) => {
-    await putRequest(hubAPI`/_ui/v1/my-namespaces/${name ?? ''}/`, namespace);
-    clearCacheByKey(hubAPI`/_ui/v1/my-namespaces/${name ?? ''}/`);
+    await putRequest(hubAPI`/_ui/v1/my-namespaces/${name}/`, namespace);
+    clearCacheByKey(hubAPI`/_ui/v1/my-namespaces/${name}/`);
     navigate(-1);
   };
   const getPageUrl = useGetPageUrl();

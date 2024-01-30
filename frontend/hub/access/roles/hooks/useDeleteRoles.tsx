@@ -87,7 +87,7 @@ export function useDeleteRoles(onComplete: (roles: Role[]) => void) {
       actionColumns,
       onComplete,
       actionFn: (role, signal) =>
-        requestDelete(pulpAPI`/roles/${parsePulpIDFromURL(role.pulp_href) as string}/`, signal),
+        requestDelete(pulpAPI`/roles/${parsePulpIDFromURL(role.pulp_href)}/`, signal),
     });
   };
   return deleteRoles;

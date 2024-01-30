@@ -14,9 +14,7 @@ export function HubNamespaceDetails() {
     data: response,
     error,
     refresh,
-  } = useGet<HubItemsResponse<HubNamespace>>(
-    hubAPI`/_ui/v1/namespaces/?limit=1&name=${params.id ?? ''}`
-  );
+  } = useGet<HubItemsResponse<HubNamespace>>(hubAPI`/_ui/v1/namespaces/?limit=1&name=${params.id}`);
   const tableColumns = useHubNamespacesColumns();
 
   if (!response || !response.data || (response.data.length === 0 && !error)) {

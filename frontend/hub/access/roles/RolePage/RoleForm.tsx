@@ -76,7 +76,7 @@ export function EditRole() {
   const pageNavigate = usePageNavigate();
   const params = useParams<{ id: string }>();
   const { data, error, refresh } = useGet<PulpItemsResponse<Role>>(
-    pulpAPI`/roles/?name=${params.id || ''}`
+    pulpAPI`/roles/?name=${params.id}`
   );
   const role = data?.results?.[0];
   const permissionCategories = usePermissionCategories(role?.permissions, false, true);
@@ -88,7 +88,7 @@ export function EditRole() {
   const onSubmit: PageFormSubmitHandler<RoleInput> = async (values) => {
     const { name, description, permissionCategories } = values;
     const permissions = getSelectedPermissions(permissionCategories);
-    await patchRequest(pulpAPI`/roles/${parsePulpIDFromURL(role?.pulp_href ?? '') as string}/`, {
+    await patchRequest(pulpAPI`/roles/${parsePulpIDFromURL(role?.pulp_href)}/`, {
       name,
       description,
       permissions,

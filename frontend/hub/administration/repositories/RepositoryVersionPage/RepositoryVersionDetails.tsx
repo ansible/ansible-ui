@@ -14,7 +14,7 @@ export function RepositoryVersionDetails() {
   const params = useParams<{ id: string; version: string }>();
   const { data, error, refresh } = useGet<PulpItemsResponse<CollectionVersion>>(
     params.id
-      ? pulpAPI`/repositories/ansible/ansible/${repo_id}/versions/?number=${params.version || ''}`
+      ? pulpAPI`/repositories/ansible/ansible/${repo_id}/versions/?number=${params.version}`
       : ''
   );
   if (error) return <HubError error={error} handleRefresh={refresh} />;

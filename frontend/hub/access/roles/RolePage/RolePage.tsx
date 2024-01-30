@@ -22,7 +22,7 @@ export function RolePage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const { data, error, refresh } = useGet<PulpItemsResponse<Role>>(
-    pulpAPI`/roles/?name=${params.id || ''}`
+    pulpAPI`/roles/?name=${params.id}`
   );
   const role = data?.results?.[0];
   const pageNavigate = usePageNavigate();

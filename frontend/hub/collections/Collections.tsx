@@ -16,7 +16,7 @@ export function Collections() {
   const toolbarFilters = useCollectionFilters();
   const tableColumns = useCollectionColumns();
   const view = useHubView<CollectionVersionSearch>({
-    url: hubAPI`/v3/plugin/ansible/search/collection-versions`,
+    url: hubAPI`/v3/plugin/ansible/search/collection-versions/`,
     keyFn: collectionKeyFn,
     queryParams: {
       is_deprecated: 'false',
