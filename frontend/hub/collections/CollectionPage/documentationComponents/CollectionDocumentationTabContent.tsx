@@ -9,9 +9,7 @@ import { useState, useEffect } from 'react';
 import { css } from '@patternfly/react-styles';
 import styles from '@patternfly/react-styles/css/components/ExpandableSection/expandable-section';
 import { AngleDownIcon, AngleRightIcon } from '@patternfly/react-icons';
-import { useSearchParams } from 'react-router-dom';
 import { ISample } from '../../Collection';
-import { queryStringFromObject } from '../../../../common/utils/queryStringFromObject';
 import { useGetPageUrl } from '../../../../../framework';
 import { CollectionVersionSearch } from '../../Collection';
 import { useSettings } from '../../../../../framework';
@@ -34,8 +32,6 @@ export function CollectionDocumentationTabContent(props: {
   const { content } = props;
   const splitString = '- name';
   const [optionsState, setOptionsState] = useState<OptionRecord[]>([]);
-  const [searchParams] = useSearchParams();
-  const queryString = queryStringFromObject(searchParams);
   const getPageUrl = useGetPageUrl();
   const settings = useSettings();
   const [paramsFilter, setParamsFilter] = useState('');
@@ -209,27 +205,27 @@ export function CollectionDocumentationTabContent(props: {
               <ul>
                 {content?.doc_strings?.doc?.description && (
                   <li>
-                    <a href={`?${queryString}#Synopsis_part`}>{t('Synopsis')}</a>
+                    <a href={`#Synopsis_part`}>{t('Synopsis')}</a>
                   </li>
                 )}
                 {optionsState && optionsState.length > 0 && (
                   <li>
-                    <a href={`?${queryString}#Parameters_part`}>{t('Parameters')}</a>
+                    <a href={`#Parameters_part`}>{t('Parameters')}</a>
                   </li>
                 )}
                 {content?.doc_strings?.doc?.notes && (
                   <li>
-                    <a href={`?${queryString}#Notes_part`}>{t('Notes')}</a>
+                    <a href={`#Notes_part`}>{t('Notes')}</a>
                   </li>
                 )}
                 {content?.doc_strings?.examples && (
                   <li>
-                    <a href={`?${queryString}#Examples_part`}>{t('Examples')}</a>
+                    <a href={`#Examples_part`}>{t('Examples')}</a>
                   </li>
                 )}
                 {content?.doc_strings?.return && (
                   <li>
-                    <a href={`?${queryString}#Returns_part`}>{t('Returns')}</a>
+                    <a href={`#Returns_part`}>{t('Returns')}</a>
                   </li>
                 )}
               </ul>
