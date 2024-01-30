@@ -1,4 +1,10 @@
-import { Checkbox, Drawer, DrawerContent, DrawerContentBody } from '@patternfly/react-core';
+import {
+  ToggleGroup,
+  ToggleGroupItem,
+  Drawer,
+  DrawerContent,
+  DrawerContentBody,
+} from '@patternfly/react-core';
 import { useMemo, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { LoadingPage, useBreakpoint } from '../../../../framework';
@@ -144,12 +150,26 @@ export function CollectionDocumentation() {
 
                   {/* Checkbox allows switch between rendered docs in HTML and between plain JSON that displays raw documentation data*/}
                   <>
-                    <Checkbox
-                      onChange={(event, checked) => setRenderJson(checked)}
-                      isChecked={renderJson}
-                      id="render-json-checkbox"
-                    />{' '}
-                    {t('Render documentation as JSON')}
+                    <ToggleGroup>
+                      <ToggleGroupItem
+                        text={t('html')}
+                        key={0}
+                        buttonId="toggle-group-multiple-1"
+                        isSelected={!renderJson}
+                        onChange={() => {
+                          setRenderJson(false);
+                        }}
+                      />
+                      <ToggleGroupItem
+                        text={t('json')}
+                        key={1}
+                        buttonId="toggle-group-multiple-2"
+                        isSelected={renderJson}
+                        onChange={() => {
+                          setRenderJson(true);
+                        }}
+                      />
+                    </ToggleGroup>
                   </>
                   {renderJson && (
                     <>
