@@ -182,11 +182,12 @@ export function UploadCollectionByFile() {
     let lastError = '';
 
     try {
-      lastError = t('Can not find namespace {{namespaceName}}', { namespaceName });
+      lastError = t('Error in loading namespace {{namespaceName}}', { namespaceName });
       const namespace = await requestGet<HubItemsResponse<HubNamespace>>(
         hubAPI`/_ui/v1/namespaces/?limit=1&name=${namespaceName}`
       );
       if (namespace.data.length === 0) {
+        lastError = t('Can not find namespace {{namespaceName}}', { namespaceName });
         throw new Error('');
       }
 
