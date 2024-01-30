@@ -42,12 +42,6 @@ export function useNodeMenuItems(element: Node<NodeModel, GraphNodeData>): MenuI
       },
     },
     {
-      key: 'add-link',
-      icon: <PlusCircleIcon />,
-      label: t('Add link'),
-      onClick: () => alert(`Selected: Add Link`),
-    },
-    {
       key: 'add-node-and-link',
       icon: <PlusCircleIcon />,
       label: t('Add node and link'),
