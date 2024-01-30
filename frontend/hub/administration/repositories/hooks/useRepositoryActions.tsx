@@ -7,6 +7,7 @@ import {
   PageActionSelection,
   PageActionType,
   usePageAlertToaster,
+  usePageNavigate,
 } from '../../../../../framework';
 import { CollectionVersionSearch } from '../../../collections/Collection';
 import { PROTECTED_REPOSITORIES } from '../../../common/constants';
@@ -15,6 +16,7 @@ import { useDeleteRepositories } from './useDeleteRepositories';
 import { getRepositoryBasePath } from '../../../common/api/hub-api-utils';
 import { getRepoURL } from '../../../common/api/hub-api-utils';
 import { useClipboard } from '../../../../../framework/hooks/useClipboard';
+import { HubRoute } from '../../../main/HubRoutes';
 
 export function useRepositoryActions(options: {
   onRepositoriesDeleted: (repositories: Repository[]) => void;
@@ -24,13 +26,15 @@ export function useRepositoryActions(options: {
   const deleteRepositories = useDeleteRepositories(onRepositoriesDeleted);
   const alertToaster = usePageAlertToaster();
   const { writeToClipboard } = useClipboard();
+  const pageNavigate = usePageNavigate();
   const actions = useMemo<IPageAction<Repository>[]>(
     () => [
       {
         icon: PencilAltIcon,
         isPinned: true,
         label: t('Edit repository'),
-        onClick: () => {},
+        onClick: (repository) =>
+          pageNavigate(HubRoute.EditRepository, { params: { id: repository.name } }),
         selection: PageActionSelection.Single,
         type: PageActionType.Button,
         variant: ButtonVariant.primary,
@@ -94,7 +98,7 @@ export function useRepositoryActions(options: {
         },
       },
     ],
-    [t, deleteRepositories, alertToaster, writeToClipboard]
+    [t, deleteRepositories, alertToaster, writeToClipboard, pageNavigate]
   );
 
   return actions;
