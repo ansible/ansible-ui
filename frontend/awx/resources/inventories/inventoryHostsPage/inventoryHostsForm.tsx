@@ -17,7 +17,7 @@ import { AwxHost } from '../../../interfaces/AwxHost';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { useEffect, useState } from 'react';
-import { useGetInventoryHost } from './inventoryHostsPage';
+import { useGetHost } from '../../hosts/hooks/useGetHost';
 import { useGetInventory } from '../InventoryPage/InventoryPage';
 
 export interface IHostInput {
@@ -90,7 +90,7 @@ export function EditHost() {
   const getPageUrl = useGetPageUrl();
   const params = useParams<{ id: string; inventory_type: string; host_id: string }>();
 
-  const hostResponse = useGetInventoryHost(params.id, params.host_id);
+  const { host: hostResponse } = useGetHost(params.host_id ?? '');
   const inventoryResponse = useGetInventory(params.id, params.inventory_type);
 
   const [host, setHost] = useState<AwxHost | undefined>(hostResponse);
