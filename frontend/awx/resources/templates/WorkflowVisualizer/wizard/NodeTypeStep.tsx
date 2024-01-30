@@ -5,6 +5,9 @@ import { InputGroup, InputGroupItem, InputGroupText, TextInput } from '@patternf
 import { PageFormGroup } from '../../../../../../framework/PageForm/Inputs/PageFormGroup';
 import { PageFormGrid, PageFormSelect, PageFormTextInput } from '../../../../../../framework';
 import { PageFormWatch } from '../../../../../../framework/PageForm/Utils/PageFormWatch';
+import { awxAPI } from '../../../../common/api/awx-utils';
+import { useGet } from '../../../../../common/crud/useGet';
+import { AwxItemsResponse } from '../../../../common/AwxItemsResponse';
 import { getDocsBaseUrl } from '../../../../common/util/getDocsBaseUrl';
 import { useAwxConfig } from '../../../../common/useAwxConfig';
 import { PageFormJobTemplateSelect } from '../../components/PageFormJobTemplateSelect';
@@ -12,7 +15,7 @@ import { PageFormProjectSelect } from '../../../projects/components/PageFormProj
 import { PageFormManagementJobsSelect } from '../../../../administration/management-jobs/components/PageFormManagementJobsSelect';
 import { PageFormInventorySourceSelect } from '../../../inventories/components/PageFormInventorySourceSelect';
 import { UnifiedJobType } from '../../../../interfaces/WorkflowNode';
-import { SystemJob } from '../../../../interfaces/generated-from-swagger/api';
+import { SystemJobTemplate } from '../../../../interfaces/SystemJobTemplate';
 import type { WizardFormValues } from '../types';
 
 export function NodeTypeStep() {
@@ -132,14 +135,19 @@ function NodeResourceInput() {
 
 function SystemJobInputs() {
   const { t } = useTranslation();
+  const { data } = useGet<AwxItemsResponse<SystemJobTemplate>>(awxAPI`/system_job_templates/`);
+
+  const showDaysToKeep = (systemJobTemplate: SystemJobTemplate) => {
+    const jobType =
+      systemJobTemplate?.job_type ||
+      data?.results.find((result) => systemJobTemplate?.id === result?.id)?.job_type;
+    return ['cleanup_jobs', 'cleanup_activitystream'].includes(jobType || '');
+  };
+
   return (
     <PageFormWatch watch="node_resource">
-      {(systemJob: SystemJob) => {
-        const showDaysToKeep = ['cleanup_jobs', 'cleanup_activitystream'].includes(
-          systemJob?.job_type || ''
-        );
-
-        if (!showDaysToKeep) return null;
+      {(systemJobTemplate: SystemJobTemplate) => {
+        if (!showDaysToKeep(systemJobTemplate)) return null;
 
         return (
           <PageFormTextInput<WizardFormValues>
