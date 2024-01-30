@@ -20,6 +20,7 @@ import { EdaCredential, EdaCredentialCreate } from '../../interfaces/EdaCredenti
 import { CredentialTypeEnum } from '../../interfaces/generated/eda-api';
 import { EdaRoute } from '../../main/EdaRoutes';
 import { PageFormHidden } from '../../../../framework/PageForm/Utils/PageFormHidden';
+import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 
 export function CredentialOptions(t: TFunction<'translation'>) {
   return [
@@ -39,8 +40,8 @@ export function CredentialOptions(t: TFunction<'translation'>) {
       value: CredentialTypeEnum.ContainerRegistry,
     },
     {
-      label: t('Ansible Vault Password'),
-      description: t('Ansible vault password'),
+      label: t('Vault'),
+      description: t('Ansible vault secret'),
       value: CredentialTypeEnum.AnsibleVaultPassword,
     },
   ];
@@ -49,82 +50,96 @@ function CredentialInputs() {
   const { t } = useTranslation();
   const credentialTypeHelpBlock = (
     <>
+      <p>
+        {t(
+          'Specify an (optional) Vault ID. This is equivalent to specifying the --vault-id Ansible parameter ' +
+            'for providing multiple Vault passwords. Note: this feature only works in Ansible 2.4+.'
+        )}
+      </p>
+      <br />
+    </>
+  );
+  const vaultTypeHelpBlock = (
+    <>
       <p>{t('The credential type defines what the credential will be used for.')}</p>
       <br />
-      <p>{t('There are five types:')}</p>
+      <p>{t('There are four types:')}</p>
       <p>{t('GitHub Personal Access Token')}</p>
       <p>{t('GitLab Personal Access Token')}</p>
       <p>{t('Container Registry')}</p>
-      <p>{t('Extra Var')}</p>
-      <p>{t('Ansible Vault Password')}</p>
+      <p>{t('Vault')}</p>
     </>
   );
   return (
     <>
-      <PageFormTextInput<EdaCredentialCreate>
-        name="name"
-        label={t('Name')}
-        placeholder={t('Enter name')}
-        isRequired
-        maxLength={150}
-      />
-      <PageFormTextInput<EdaCredentialCreate>
-        name="description"
-        label={t('Description')}
-        placeholder={t('Enter description ')}
-        maxLength={150}
-      />
-      <PageFormSelect<EdaCredentialCreate>
-        name="credential_type"
-        label={t('Credential type')}
-        isRequired
-        placeholderText={t('Select credential type')}
-        options={CredentialOptions(t)}
-        labelHelp={credentialTypeHelpBlock}
-        labelHelpTitle={t('Credential type')}
-      />
-      <PageFormHidden
-        watch="credential_type"
-        hidden={(type: CredentialTypeEnum) =>
-          type !== CredentialTypeEnum.GitHubPersonalAccessToken &&
-          type !== CredentialTypeEnum.GitLabPersonalAccessToken &&
-          type !== CredentialTypeEnum.ContainerRegistry
-        }
-      >
+      <PageFormSection>
         <PageFormTextInput<EdaCredentialCreate>
-          name="username"
-          label={t('Username')}
-          placeholder={t('Enter username')}
-        />
-        <PageFormTextInput<EdaCredentialCreate>
-          name="secret"
-          label={t('Token/Password')}
-          type="password"
-          placeholder={t('Enter credential token or password')}
+          name="name"
+          label={t('Name')}
+          placeholder={t('Enter name')}
           isRequired
-          labelHelp={t('Tokens/passwords allow you to authenticate to your destination.')}
-          labelHelpTitle={t('Token/Password')}
-        />
-      </PageFormHidden>
-      <PageFormHidden
-        watch="credential_type"
-        hidden={(type: CredentialTypeEnum) => type !== CredentialTypeEnum.AnsibleVaultPassword}
-      >
-        <PageFormTextInput<EdaCredentialCreate>
-          name="key"
-          label={t('Vault identifier')}
-          placeholder={t('Vault identifier')}
+          maxLength={150}
         />
         <PageFormTextInput<EdaCredentialCreate>
-          name="secret"
-          label={t('Vault password')}
-          type="password"
-          placeholder={t('Enter vault password')}
+          name="description"
+          label={t('Description')}
+          placeholder={t('Enter description ')}
+          maxLength={150}
+        />
+        <PageFormSelect<EdaCredentialCreate>
+          name="credential_type"
+          label={t('Credential type')}
           isRequired
-          labelHelp={t('Vault password')}
-          labelHelpTitle={t('Vault password')}
+          placeholderText={t('Select credential type')}
+          options={CredentialOptions(t)}
+          labelHelp={credentialTypeHelpBlock}
+          labelHelpTitle={t('Credential type')}
         />
-      </PageFormHidden>
+      </PageFormSection>
+      <PageFormSection singleColumn={false} title={t('Type details')}>
+        <PageFormHidden
+          watch="credential_type"
+          hidden={(type: CredentialTypeEnum) =>
+            type !== CredentialTypeEnum.GitHubPersonalAccessToken &&
+            type !== CredentialTypeEnum.GitLabPersonalAccessToken &&
+            type !== CredentialTypeEnum.ContainerRegistry
+          }
+        >
+          <PageFormTextInput<EdaCredentialCreate>
+            name="username"
+            label={t('Username')}
+            placeholder={t('Enter username')}
+          />
+          <PageFormTextInput<EdaCredentialCreate>
+            name="secret"
+            label={t('Token/Password')}
+            type="password"
+            placeholder={t('Enter credential token or password')}
+            isRequired
+            labelHelp={t('Tokens/passwords allow you to authenticate to your destination.')}
+            labelHelpTitle={t('Token/Password')}
+          />
+        </PageFormHidden>
+        <PageFormHidden
+          watch="credential_type"
+          hidden={(type: CredentialTypeEnum) => type !== CredentialTypeEnum.AnsibleVaultPassword}
+        >
+          <PageFormTextInput<EdaCredentialCreate>
+            name="secret"
+            label={t('Vault password')}
+            type="password"
+            placeholder={t('Enter vault password')}
+            isRequired
+          />
+          <PageFormTextInput<EdaCredentialCreate>
+            name="key"
+            label={t('Vault identifier')}
+            placeholder={t('Vault identifier')}
+            labelHelp={vaultTypeHelpBlock}
+            labelHelpTitle={t('Vault identifiers')}
+          />
+        </PageFormHidden>
+      </PageFormSection>
     </>
   );
 }
