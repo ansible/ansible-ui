@@ -31,7 +31,7 @@ export function useSyncRepositories() {
     setDialog(
       <Modal
         title={t(`Sync repository ${repository.name}`)}
-        aria-label={t(`Syn repository ${repository.name}`)}
+        aria-label={t(`Sync repository ${repository.name}`)}
         isOpen
         onClose={() => {
           onClose();
@@ -49,7 +49,13 @@ export function useSyncRepositories() {
               }/sync/`,
               values
             )
-              .then(() => onClose())
+              .then(() => {
+                alertToaster.addAlert({
+                  variant: 'info',
+                  title: t(`Sync started for repository "${repository.name}".`),
+                });
+                onClose();
+              })
               .catch((error) => {
                 alertToaster.addAlert(errorToAlertProps(error));
                 onClose();
