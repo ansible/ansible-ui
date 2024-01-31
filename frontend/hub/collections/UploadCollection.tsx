@@ -107,7 +107,7 @@ export function UploadCollectionByFile() {
     }
   }, [view.pageItems, selectedRepo, view]);
 
-  const onSumbmit = useCallback(
+  const onSubmit = useCallback(
     async (data: UploadData) => {
       const namespaceName = data.file?.name.split('-')[0] ?? '';
       if (namespaceParams && namespaceName !== namespaceParams) {
@@ -218,7 +218,7 @@ export function UploadCollectionByFile() {
       submitText={t('Confirm')}
       cancelText={t('Cancel')}
       onCancel={onCancel}
-      onSubmit={onSumbmit}
+      onSubmit={onSubmit}
       singleColumn={true}
     >
       <PageFormFileUpload label={t('Collection file')} name="file" isRequired />
