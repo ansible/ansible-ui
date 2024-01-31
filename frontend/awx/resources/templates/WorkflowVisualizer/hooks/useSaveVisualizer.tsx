@@ -5,6 +5,7 @@ import { useAbortController } from '../../../../../common/crud/useAbortControlle
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { AwxRoute } from '../../../../main/AwxRoutes';
 import { usePostRequest } from '../../../../../common/crud/usePostRequest';
+import { usePatchRequest } from '../../../../../common/crud/usePatchRequest';
 import { ControllerState, GraphNode, EdgeStatus, GraphNodeData } from '../types';
 import { UnifiedJobType, WorkflowNode } from '../../../../interfaces/WorkflowNode';
 
@@ -19,15 +20,16 @@ export function useSaveVisualizer() {
   const abortController = useAbortController();
   const pageNavigate = usePageNavigate();
   const deleteRequest = useDeleteRequest();
-  const postWorkflowNode = usePostRequest<Partial<WorkflowNode>>();
-  const postWorkflowNodeApproval = usePostRequest<WorkflowApprovalNode>();
+  const postWorkflowNode = usePostRequest<Partial<WorkflowNode>, WorkflowNode>();
+  const patchWorkflowNode = usePatchRequest<Partial<WorkflowNode>, WorkflowNode>();
+  const postWorkflowNodeApproval = usePostRequest<WorkflowApprovalNode, WorkflowApprovalNode>();
+  const patchWorkflowNodeApproval = usePatchRequest<WorkflowApprovalNode, WorkflowApprovalNode>();
   const postAssociateNode = usePostRequest<{ id: number }>();
   const postDisassociateNode = usePostRequest<{ id: number; disassociate: boolean }>();
 
   const graphNodes = controller.getGraph().getNodes() as GraphNode[];
   const state = controller.getState<ControllerState>();
   const deletedNodeIds: string[] = [];
-  const deletedEdges = [];
   const associateSuccessNodes: { sourceId: string; targetId: string }[] = [];
   const associateFailureNodes: { sourceId: string; targetId: string }[] = [];
   const associateAlwaysNodes: { sourceId: string; targetId: string }[] = [];
@@ -35,7 +37,9 @@ export function useSaveVisualizer() {
   const disassociateFailureNodes: { sourceId: string; targetId: string }[] = [];
   const disassociateAlwaysNodes: { sourceId: string; targetId: string }[] = [];
   const newApprovalNodes: GraphNode[] = [];
+  const editedApprovalNodes: GraphNode[] = [];
   const newNodes: GraphNode[] = [];
+  const editedNodes: GraphNode[] = [];
 
   function setCreatedNodeId(node: GraphNode, newId: string) {
     const nodeData = node.getData() as GraphNodeData;
@@ -54,24 +58,52 @@ export function useSaveVisualizer() {
   async function createApprovalNodes(approvalNodes: GraphNode[]) {
     const promises = approvalNodes.map(async (node) => {
       const nodeData = node.getData() as GraphNodeData;
-      const newNode = await postWorkflowNode(
+      const nodeIdentifier = toKeyedObject('identifier', nodeData.resource.identifier);
+
+      const workflowNode = await postWorkflowNode(
         awxAPI`/workflow_job_templates/${state.workflowTemplate.id.toString()}/workflow_nodes/`,
         {
-          all_parents_must_converge: nodeData.all_parents_must_converge === 'all' ? true : false,
-          identifier: nodeData.identifier,
+          all_parents_must_converge: nodeData.resource.all_parents_must_converge,
+          ...nodeIdentifier,
         }
       );
-      if (newNode.id) {
+      if (workflowNode && workflowNode.id) {
         await postWorkflowNodeApproval(
-          awxAPI`/workflow_job_template_nodes/${newNode.id.toString()}/create_approval_template/`,
+          awxAPI`/workflow_job_template_nodes/${workflowNode.id.toString()}/create_approval_template/`,
           {
             name: nodeData.resource.summary_fields.unified_job_template.name,
             description: nodeData.resource.summary_fields.unified_job_template.description || '',
             timeout: nodeData.resource.summary_fields.unified_job_template.timeout || 0,
           }
         );
+        setCreatedNodeId(node, workflowNode.id.toString());
+      }
+    });
+    await Promise.all(promises);
+  }
 
-        setCreatedNodeId(node, newNode.id.toString());
+  async function updateApprovalNodes(approvalNodes: GraphNode[]) {
+    const promises = approvalNodes.map(async (node) => {
+      const nodeData = node.getData() as GraphNodeData;
+      const nodeIdentifier = toKeyedObject('identifier', nodeData.resource.identifier);
+      const approvalNodeId = nodeData.resource.summary_fields.unified_job_template.id;
+
+      const workflowNode = await patchWorkflowNode(
+        awxAPI`/workflow_job_template_nodes/${node.getId()}/`,
+        {
+          all_parents_must_converge: nodeData.resource.all_parents_must_converge,
+          ...nodeIdentifier,
+        }
+      );
+      if (workflowNode && workflowNode.id) {
+        await patchWorkflowNodeApproval(
+          awxAPI`/workflow_approval_templates/${approvalNodeId.toString()}/`,
+          {
+            name: nodeData.resource.summary_fields.unified_job_template.name,
+            description: nodeData.resource.summary_fields.unified_job_template.description || '',
+            timeout: nodeData.resource.summary_fields.unified_job_template.timeout || 0,
+          }
+        );
       }
     });
     await Promise.all(promises);
@@ -80,17 +112,48 @@ export function useSaveVisualizer() {
   async function createNewNodes(newNodes: GraphNode[]) {
     const promises = newNodes.map(async (node) => {
       const nodeData = node.getData() as GraphNodeData;
+      const nodeIdentifier = toKeyedObject('identifier', nodeData.resource.identifier);
+      const extra_data =
+        nodeData.resource.summary_fields.unified_job_template.unified_job_type ===
+          UnifiedJobType.system_job && nodeData.resource.extra_data?.days
+          ? { extra_data: { days: nodeData.resource.extra_data.days } }
+          : {};
+
       const newNode = await postWorkflowNode(
         awxAPI`/workflow_job_templates/${state.workflowTemplate.id.toString()}/workflow_nodes/`,
         {
           ...nodeData,
-          all_parents_must_converge: nodeData.all_parents_must_converge === 'all' ? true : false,
+          ...extra_data,
+          ...nodeIdentifier,
+          all_parents_must_converge: nodeData.resource.all_parents_must_converge,
           unified_job_template: nodeData.resource.summary_fields.unified_job_template.id,
         }
       );
+
       if (newNode.id) {
         setCreatedNodeId(node, newNode.id.toString());
       }
+    });
+    await Promise.all(promises);
+  }
+
+  async function updateExistingNodes(editedNodes: GraphNode[]) {
+    const promises = editedNodes.map(async (node) => {
+      const nodeData = node.getData() as GraphNodeData;
+      const nodeIdentifier = toKeyedObject('identifier', nodeData.resource.identifier);
+      const extra_data =
+        nodeData.resource.summary_fields.unified_job_template.unified_job_type ===
+          UnifiedJobType.system_job && nodeData.resource.extra_data?.days
+          ? { extra_data: { days: nodeData.resource.extra_data.days } }
+          : {};
+
+      await patchWorkflowNode(awxAPI`/workflow_job_template_nodes/${node.getId()}/`, {
+        ...nodeData,
+        ...extra_data,
+        ...nodeIdentifier,
+        all_parents_must_converge: nodeData.resource.all_parents_must_converge,
+        unified_job_template: nodeData.resource.summary_fields.unified_job_template.id,
+      });
     });
     await Promise.all(promises);
   }
@@ -111,17 +174,30 @@ export function useSaveVisualizer() {
     }
   }
 
+  function handleEditNode(node: GraphNode) {
+    const nodeData = node.getData() as GraphNodeData;
+    if (
+      nodeData.resource.summary_fields.unified_job_template.unified_job_type ===
+      UnifiedJobType.workflow_approval
+    ) {
+      editedApprovalNodes.push(node);
+    } else {
+      editedNodes.push(node);
+    }
+  }
+
   function handleEdgeModification(node: GraphNode) {
     const nodeData = node.getData() as GraphNodeData;
+    const sourceEdges = node.getSourceEdges();
     const {
       resource: { always_nodes = [], failure_nodes = [], success_nodes = [] },
     } = nodeData;
 
     success_nodes.forEach((successNodeId) => {
-      node.getSourceEdges().forEach((edge) => {
+      sourceEdges.forEach((edge) => {
         const { tagStatus } = edge.getData() as { tagStatus: EdgeStatus };
         if (successNodeId.toString() === edge.getTarget().getId()) {
-          if (tagStatus !== EdgeStatus.success) {
+          if (tagStatus !== EdgeStatus.success || !edge.isVisible()) {
             disassociateSuccessNodes.push({
               sourceId: node.getId(),
               targetId: successNodeId.toString(),
@@ -131,10 +207,10 @@ export function useSaveVisualizer() {
       });
     });
     failure_nodes.forEach((failureNodeId) => {
-      node.getSourceEdges().forEach((edge) => {
+      sourceEdges.forEach((edge) => {
         const { tagStatus } = edge.getData() as { tagStatus: EdgeStatus };
         if (failureNodeId.toString() === edge.getTarget().getId()) {
-          if (tagStatus !== EdgeStatus.danger) {
+          if (tagStatus !== EdgeStatus.danger || !edge.isVisible()) {
             disassociateFailureNodes.push({
               sourceId: node.getId(),
               targetId: failureNodeId.toString(),
@@ -144,10 +220,10 @@ export function useSaveVisualizer() {
       });
     });
     always_nodes.forEach((alwaysNodeId) => {
-      node.getSourceEdges().forEach((edge) => {
+      sourceEdges.forEach((edge) => {
         const { tagStatus } = edge.getData() as { tagStatus: EdgeStatus };
         if (alwaysNodeId.toString() === edge.getTarget().getId()) {
-          if (tagStatus !== EdgeStatus.info) {
+          if (tagStatus !== EdgeStatus.info || !edge.isVisible()) {
             disassociateAlwaysNodes.push({
               sourceId: node.getId(),
               targetId: alwaysNodeId.toString(),
@@ -157,53 +233,57 @@ export function useSaveVisualizer() {
       });
     });
 
-    node.getSourceEdges().forEach((edge) => {
-      if (!edge.isVisible()) {
-        deletedEdges.push(edge);
-      } else {
-        const targetId = edge.getTarget().getId();
-        const { tagStatus } = edge.getData() as { tagStatus: EdgeStatus };
+    sourceEdges.forEach((edge) => {
+      if (!edge.isVisible()) return;
 
-        switch (tagStatus) {
-          case EdgeStatus.success:
-            if (!success_nodes?.includes(parseInt(targetId, 10))) {
-              associateSuccessNodes.push({ sourceId: node.getId(), targetId });
-            }
-            break;
-          case EdgeStatus.danger:
-            if (!failure_nodes?.includes(parseInt(targetId, 10))) {
-              associateFailureNodes.push({ sourceId: node.getId(), targetId });
-            }
-            break;
-          case EdgeStatus.info:
-            if (!always_nodes?.includes(parseInt(targetId, 10))) {
-              associateAlwaysNodes.push({ sourceId: node.getId(), targetId });
-            }
-            break;
-          default:
-            break;
-        }
+      const targetId = edge.getTarget().getId();
+      const { tagStatus } = edge.getData() as { tagStatus: EdgeStatus };
+
+      switch (tagStatus) {
+        case EdgeStatus.success:
+          if (!success_nodes?.includes(parseInt(targetId, 10))) {
+            associateSuccessNodes.push({ sourceId: node.getId(), targetId });
+          }
+          break;
+        case EdgeStatus.danger:
+          if (!failure_nodes?.includes(parseInt(targetId, 10))) {
+            associateFailureNodes.push({ sourceId: node.getId(), targetId });
+          }
+          break;
+        case EdgeStatus.info:
+          if (!always_nodes?.includes(parseInt(targetId, 10))) {
+            associateAlwaysNodes.push({ sourceId: node.getId(), targetId });
+          }
+          break;
+        default:
+          break;
       }
     });
   }
 
   async function handleSave() {
     graphNodes.forEach((node) => {
-      const isNewNode = node.getId().includes('unsavedNode');
+      const nodeState = node.getState<{ modified: boolean }>();
       const isDeleted = !node.isVisible();
+      const isNewNode = node.getId().includes('unsavedNode');
+      const isEdited = Boolean(nodeState?.modified) && !isDeleted && !isNewNode;
 
-      if (isDeleted) {
+      if (isDeleted && !isNewNode) {
         handleNodeDeletion(node);
       }
-
-      if (isNewNode) {
+      if (isNewNode && !isDeleted) {
         handleNewNode(node);
+      }
+      if (isEdited) {
+        handleEditNode(node);
       }
     });
 
     try {
       await createApprovalNodes(newApprovalNodes);
       await createNewNodes(newNodes);
+      await updateApprovalNodes(editedApprovalNodes);
+      await updateExistingNodes(editedNodes);
     } catch {
       //TODO: handle error here
     }
@@ -211,7 +291,7 @@ export function useSaveVisualizer() {
     graphNodes.forEach((node) => {
       const nodeState = node.getState<{ modified: boolean }>();
       const isDeleted = !node.isVisible();
-      const isEdited = !isDeleted && Boolean(nodeState?.modified);
+      const isEdited = Boolean(nodeState?.modified) && !isDeleted;
 
       if (isEdited) {
         handleEdgeModification(node);
@@ -303,4 +383,15 @@ export function useSaveVisualizer() {
     }
   }
   return handleSave;
+}
+
+export function toKeyedObject(
+  key: string,
+  value: string | number | undefined | null
+): { [key: string]: string | number } | object {
+  if ((typeof value === 'string' && value !== '') || typeof value === 'number') {
+    return { [key]: value };
+  } else {
+    return {};
+  }
 }
