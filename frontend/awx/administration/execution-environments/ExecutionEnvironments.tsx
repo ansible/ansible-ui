@@ -193,7 +193,11 @@ export function useExecutionEnvironmentsColumns(options?: {
   });
   const idColumn = useIdColumn<ExecutionEnvironment>();
   const descriptionColumn = useDescriptionColumn();
-  const organizationColumn = useOrganizationNameColumn(AwxRoute.OrganizationDetails, options);
+  const organizationColumn = useOrganizationNameColumn(
+    AwxRoute.OrganizationDetails,
+    options,
+    'Globally available'
+  );
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);
   const tableColumns = useMemo<ITableColumn<ExecutionEnvironment>[]>(
