@@ -22,9 +22,7 @@ import {
   useOrganizationNameColumn,
 } from '../../../common/columns';
 import {
-  useCreatedByToolbarFilter,
-  useDescriptionToolbarFilter,
-  useModifiedByToolbarFilter,
+  useImageToolbarFilter,
   useNameToolbarFilter,
   useOrganizationToolbarFilter,
 } from '../../common/awx-toolbar-filters';
@@ -151,25 +149,11 @@ export function ExecutionEnvironments() {
 
 export function useExecutionEnvironmentsFilters() {
   const nameToolbarFilter = useNameToolbarFilter();
-  const descriptionToolbarFilter = useDescriptionToolbarFilter();
   const organizationToolbarFilter = useOrganizationToolbarFilter();
-  const createdByToolbarFilter = useCreatedByToolbarFilter();
-  const modifiedByToolbarFilter = useModifiedByToolbarFilter();
+  const imageToolbarFilter = useImageToolbarFilter();
   const toolbarFilters = useMemo<IToolbarFilter[]>(
-    () => [
-      nameToolbarFilter,
-      descriptionToolbarFilter,
-      organizationToolbarFilter,
-      createdByToolbarFilter,
-      modifiedByToolbarFilter,
-    ],
-    [
-      nameToolbarFilter,
-      descriptionToolbarFilter,
-      organizationToolbarFilter,
-      createdByToolbarFilter,
-      modifiedByToolbarFilter,
-    ]
+    () => [nameToolbarFilter, organizationToolbarFilter, imageToolbarFilter],
+    [nameToolbarFilter, organizationToolbarFilter, imageToolbarFilter]
   );
   return toolbarFilters;
 }
@@ -208,6 +192,7 @@ export function useExecutionEnvironmentsColumns(options?: {
       {
         header: t('Image'),
         cell: (executionEnvironment) => executionEnvironment.image,
+        sort: 'image',
       },
       organizationColumn,
       createdColumn,
