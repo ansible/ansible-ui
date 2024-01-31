@@ -72,6 +72,26 @@ export function useCollectionColumns(_options?: { disableSort?: boolean; disable
             .length,
       },
       {
+        header: t('Roles'),
+        type: 'count',
+        value: (collection) =>
+          collection.collection_version?.contents?.filter((c) => c.content_type === 'role').length,
+      },
+      {
+        header: t('Plugins'),
+        type: 'count',
+        value: (collection) =>
+          collection.collection_version?.contents?.filter(
+            (c) => c.content_type !== 'module' && c.content_type !== 'role'
+          ).length,
+      },
+      {
+        header: t('Dependencies'),
+        type: 'count',
+        value: (collection) =>
+          Object.keys(collection.collection_version?.dependencies || {}).length,
+      },
+      {
         header: t('Updated'),
         type: 'datetime',
         value: (collection) => collection.collection_version?.pulp_created,
