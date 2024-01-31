@@ -26,12 +26,14 @@ export function RepositoryDetails() {
     results: { name: string; client_url: string }[];
   }>(params.id ? pulpAPI`/distributions/ansible/ansible/?name=${params.id}` : '');
 
-  const { data: remoteData, error: remoteError } = useGet<Task>(
-    params.id ? pulpAPI`/remotes/ansible/collection${parsePulpIDFromURL(repository.remote)}/` : ''
-  );
+  const repoURL = repository.remote
+    ? pulpAPI`/remotes/ansible/collection/${parsePulpIDFromURL(repository.remote)}/`
+    : '';
+  const { data: remoteData, error: remoteError } = useGet<Task>(repoURL);
 
-  if ((!distroData && !distroError) || (!remoteData && !remoteError))
+  if ((!distroData && !distroError) || (!remoteData && !remoteError && repository.remote))
     return <LoadingPage breadcrumbs tabs />;
+
   const distribution: { name: string; client_url: string } | undefined = distroData?.results[0];
 
   return (
