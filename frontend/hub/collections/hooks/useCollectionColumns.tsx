@@ -49,10 +49,11 @@ export function useCollectionColumns(_options?: { disableSort?: boolean; disable
       {
         header: t('Provided by'),
         type: 'text',
-        value: (collection) => t(`Provided by {{namespace}}`, {namespace : collection.collection_version?.namespace}),
+        value: (collection) =>
+          t(`Provided by {{namespace}}`, { namespace: collection.collection_version?.namespace }),
         card: 'subtitle',
         list: 'subtitle',
-        table: 'hidden'
+        table: 'hidden',
       },
       {
         header: t('Repository'),
