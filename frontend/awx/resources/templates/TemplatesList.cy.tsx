@@ -147,7 +147,7 @@ describe('TemplatesList', () => {
           actions: {
             POST: {
               name: {
-                type: ToolbarFilterType.Text,
+                type: ToolbarFilterType.SingleText,
                 required: true,
                 label: 'Name',
                 max_length: 512,
