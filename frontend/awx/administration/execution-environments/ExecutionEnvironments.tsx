@@ -36,6 +36,13 @@ import { useAwxConfig } from '../../common/useAwxConfig';
 import { getDocsBaseUrl } from '../../common/util/getDocsBaseUrl';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { useDeleteExecutionEnvironments } from './hooks/useDeleteExecutionEnvironments';
+import {
+  cannotDeleteResource,
+  cannotDeleteResources,
+  cannotEditResource,
+} from '../../../common/utils/RBAChelpers';
+import { useOptions } from '../../../common/crud/useOptions';
+import { OptionsResponse, ActionsResponse } from '../../interfaces/OptionsResponse';
 
 export function ExecutionEnvironments() {
   const { t } = useTranslation();
@@ -50,6 +57,9 @@ export function ExecutionEnvironments() {
   });
   const deleteExecutionEnvironments = useDeleteExecutionEnvironments(view.unselectItemsAndRefresh);
 
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/execution_environments/`);
+  const canCreateExecutionEnvironment = Boolean(data && data.actions && data.actions['POST']);
+
   const toolbarActions = useMemo<IPageAction<ExecutionEnvironment>[]>(
     () => [
       {
@@ -59,6 +69,11 @@ export function ExecutionEnvironments() {
         isPinned: true,
         icon: PlusIcon,
         label: t('Create execution environment'),
+        isDisabled: canCreateExecutionEnvironment
+          ? undefined
+          : t(
+              'You do not have permission to create an execution environment. Please contact your organization administrator if there is an issue with your access.'
+            ),
         onClick: () => pageNavigate(AwxRoute.CreateExecutionEnvironment),
       },
       { type: PageActionType.Seperator },
@@ -67,11 +82,12 @@ export function ExecutionEnvironments() {
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
         label: t('Delete selected execution environments'),
+        isDisabled: (executionEnvironments) => cannotDeleteResources(executionEnvironments, t),
         onClick: deleteExecutionEnvironments,
         isDanger: true,
       },
     ],
-    [pageNavigate, deleteExecutionEnvironments, t]
+    [t, canCreateExecutionEnvironment, deleteExecutionEnvironments, pageNavigate]
   );
 
   const rowActions = useMemo<IPageAction<ExecutionEnvironment>[]>(
@@ -82,6 +98,7 @@ export function ExecutionEnvironments() {
         icon: PencilAltIcon,
         isPinned: true,
         label: t('Edit execution environment'),
+        isDisabled: (executionEnvironment) => cannotEditResource(executionEnvironment, t),
         onClick: (executionEnvironment) =>
           pageNavigate(AwxRoute.EditExecutionEnvironment, {
             params: { id: executionEnvironment.id },
@@ -93,6 +110,7 @@ export function ExecutionEnvironments() {
         selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete execution environment'),
+        isDisabled: (executionEnvironment) => cannotDeleteResource(executionEnvironment, t),
         onClick: (executionEnvironment) => deleteExecutionEnvironments([executionEnvironment]),
         isDanger: true,
       },
