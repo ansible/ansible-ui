@@ -45,7 +45,7 @@ export const hubErrorAdapter: ErrorAdapter = (error): ErrorOutput => {
     if ('errors' in data && Array.isArray(data['errors'])) {
       // Handling Galaxy errors
       for (const e of data.errors as GalaxyError[]) {
-        if (e.source && e.source.parameter) {
+        if (e.source && e.source.parameter && e.source.parameter !== 'base_path') {
           fieldErrors.push({ name: e.source.parameter, message: e.detail || e.title });
         } else {
           genericErrors.push({ message: e.detail || e.title });
