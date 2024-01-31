@@ -14,10 +14,11 @@ import { PageActionType } from '../../../../../framework';
 import { IPageAction } from '../../../../../framework';
 import { waitForTask } from '../../../common/api/hub-api-utils';
 import { postRequest } from '../../../../common/crud/Data';
+import { Repository } from '../Repository';
 
 export function RepositoryVersions() {
   const { t } = useTranslation();
-  const { repo_id } = useOutletContext<{ repo_id: string }>();
+  const { repo_id, repository } = useOutletContext<{ repo_id: string; repository: Repository }>();
 
   const view = useHubView<RepositoryVersion>({
     url: pulpAPI`/repositories/ansible/ansible/${repo_id}/versions/`,
@@ -29,9 +30,12 @@ export function RepositoryVersions() {
     defaultSort: '-number',
   });
 
-  const rowActions = useVersionsActions(view.unselectItemsAndRefresh);
+  const rowActions = useVersionsActions(
+    view.unselectItemsAndRefresh,
+    repository.latest_version_href
+  );
 
-  const tableColumns = useRepositoryVersionColumns();
+  const tableColumns = useRepositoryVersionColumns(repository.latest_version_href);
 
   return (
     <PageTable<RepositoryVersion>
@@ -50,7 +54,7 @@ export function RepositoryVersions() {
   );
 }
 
-export function useRepositoryVersionColumns() {
+export function useRepositoryVersionColumns(latest_href?: string) {
   const getPageUrl = useGetPageUrl();
   const params = useParams<{ id: string; version: string }>();
   const { t } = useTranslation();
@@ -61,7 +65,10 @@ export function useRepositoryVersionColumns() {
         header: t('Version number'),
         cell: (repository) => (
           <TextCell
-            text={repository?.number?.toString()}
+            text={
+              repository?.number?.toString() +
+              (latest_href === repository?.pulp_href ? ' ' + t('(latest)') : '')
+            }
             to={getPageUrl(HubRoute.RepositoryVersionPage, {
               params: { id: params.id, version: repository?.number?.toString() },
             })}
@@ -76,7 +83,7 @@ export function useRepositoryVersionColumns() {
         sort: 'pulp_created',
       },
     ],
-    [t, getPageUrl, params.id]
+    [t, getPageUrl, params.id, latest_href]
   );
 }
 
@@ -125,7 +132,7 @@ async function revertToVersion(repositoryVersion: RepositoryVersion) {
   return await waitForTask(parsePulpIDFromURL(res.task));
 }
 
-function useVersionsActions(callback?: (items: RepositoryVersion[]) => void) {
+function useVersionsActions(callback?: (items: RepositoryVersion[]) => void, latest_href?: string) {
   const { t } = useTranslation();
   const revert = useRevertToVersion(callback);
 
@@ -138,9 +145,11 @@ function useVersionsActions(callback?: (items: RepositoryVersion[]) => void) {
         },
         selection: PageActionSelection.Single,
         type: PageActionType.Button,
+        isDisabled: (item) =>
+          latest_href === item.pulp_href ? t('Already at the highest version') : '',
       },
     ],
-    [t, revert]
+    [t, revert, latest_href]
   );
 
   return actions;
