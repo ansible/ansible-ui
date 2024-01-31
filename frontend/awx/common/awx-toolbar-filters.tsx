@@ -168,7 +168,7 @@ export function useImageToolbarFilter() {
     () => ({
       key: 'image',
       label: t('Image'),
-      type: ToolbarFilterType.Text,
+      type: ToolbarFilterType.SingleText,
       query: 'image__icontains',
       comparison: 'contains',
     }),
