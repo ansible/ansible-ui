@@ -80,7 +80,6 @@ export function useRepositoryVersionColumns() {
   );
 }
 
-
 export function useRevertToVersion(onComplete?: (items: RepositoryVersion[]) => void) {
   const { t } = useTranslation();
   const confirmationColumns = useRepositoryVersionColumns();
