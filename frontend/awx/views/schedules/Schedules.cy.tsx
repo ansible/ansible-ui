@@ -30,7 +30,7 @@ describe('schedules .cy.ts', () => {
               help_text: 'A value representing the schedules iCal recurrence rule.',
               label: 'Rrule',
               required: true,
-              type: ToolbarFilterType.Text,
+              type: ToolbarFilterType.MultiText,
             },
           },
         },
@@ -96,7 +96,7 @@ describe('schedules .cy.ts', () => {
             actions: {
               GET: {
                 name: {
-                  type: ToolbarFilterType.Text,
+                  type: ToolbarFilterType.MultiText,
                   required: true,
                   label: 'Name',
                   max_length: 512,
@@ -147,7 +147,7 @@ describe('schedules .cy.ts', () => {
           actions: {
             POST: {
               name: {
-                type: ToolbarFilterType.Text,
+                type: ToolbarFilterType.MultiText,
                 required: true,
                 label: 'Name',
                 max_length: 512,
@@ -193,7 +193,7 @@ describe('schedules .cy.ts', () => {
           actions: {
             POST: {
               name: {
-                type: ToolbarFilterType.Text,
+                type: ToolbarFilterType.MultiText,
                 required: true,
                 label: 'Name',
                 max_length: 512,
