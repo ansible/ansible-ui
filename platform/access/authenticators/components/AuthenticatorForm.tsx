@@ -112,9 +112,9 @@ export function CreateAuthenticator() {
           authenticator: (authenticator as Authenticator).id,
           triggers: buildTriggers(map),
           organization: ['organization', 'team'].includes(map.map_type)
-            ? map.organization?.id
+            ? map.organization?.name
             : null,
-          team: ['team'].includes(map.map_type) ? map.team?.id : null,
+          team: ['team'].includes(map.map_type) ? map.team?.name : null,
         };
         return postRequest(gatewayAPI`/authenticator_maps/`, data);
       });
