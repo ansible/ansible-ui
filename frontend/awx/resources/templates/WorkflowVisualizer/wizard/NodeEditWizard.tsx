@@ -43,10 +43,6 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
       node_days_to_keep,
     } = formValues;
 
-    const resourceIdentifier = replaceIdentifier(nodeData.resource.identifier, node_alias)
-      ? node_alias
-      : nodeData.resource.identifier;
-
     const nodeUJT = {
       id: node_resource?.id || 0,
       name: getValueBasedOnJobType(node_type, node_resource?.name || '', approval_name),
@@ -59,12 +55,13 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
       timeout: approval_timeout,
     };
 
+    const nodeIdentifier = replaceIdentifier(nodeData.resource.identifier, node_alias);
     const nodeToEdit: GraphNodeData = {
       ...nodeData,
       resource: {
         ...nodeData.resource,
         all_parents_must_converge: node_convergence === 'all',
-        identifier: resourceIdentifier,
+        identifier: nodeIdentifier,
         extra_data: {
           days: node_days_to_keep,
         },

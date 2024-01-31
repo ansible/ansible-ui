@@ -8,7 +8,6 @@ import { usePostRequest } from '../../../../../common/crud/usePostRequest';
 import { usePatchRequest } from '../../../../../common/crud/usePatchRequest';
 import { ControllerState, GraphNode, EdgeStatus, GraphNodeData } from '../types';
 import { UnifiedJobType, WorkflowNode } from '../../../../interfaces/WorkflowNode';
-import { stringIsUUID } from '../../../../common/util/strings';
 
 interface WorkflowApprovalNode {
   name: string;
@@ -59,14 +58,15 @@ export function useSaveVisualizer() {
     const promises = approvalNodes.map(async (node) => {
       const nodeData = node.getData() as GraphNodeData;
       const isNewNode = node.getId().includes('unsavedNode');
-      let workflowNode;
+      const nodeIdentifier = toKeyedObject('identifier', nodeData.resource.identifier);
 
+      let workflowNode;
       if (isNewNode) {
         workflowNode = await postWorkflowNode(
           awxAPI`/workflow_job_templates/${state.workflowTemplate.id.toString()}/workflow_nodes/`,
           {
             all_parents_must_converge: nodeData.resource.all_parents_must_converge,
-            identifier: nodeData.resource.identifier,
+            ...nodeIdentifier,
           }
         );
       } else {
@@ -74,7 +74,7 @@ export function useSaveVisualizer() {
           awxAPI`/workflow_job_template_nodes/${node.getId()}/`,
           {
             all_parents_must_converge: nodeData.resource.all_parents_must_converge,
-            identifier: nodeData.resource.identifier,
+            ...nodeIdentifier,
           }
         );
       }
@@ -96,23 +96,19 @@ export function useSaveVisualizer() {
   async function createNewNodes(newNodes: GraphNode[]) {
     const promises = newNodes.map(async (node) => {
       const nodeData = node.getData() as GraphNodeData;
-
+      const nodeIdentifier = toKeyedObject('identifier', nodeData.resource.identifier);
       const extra_data =
         nodeData.resource.summary_fields.unified_job_template.unified_job_type ===
           UnifiedJobType.system_job && nodeData.resource.extra_data?.days
           ? { extra_data: { days: nodeData.resource.extra_data.days } }
           : {};
 
-      const identifier = !stringIsUUID(nodeData.resource?.identifier)
-        ? { identifier: nodeData.resource.identifier }
-        : {};
-
       const newNode = await postWorkflowNode(
         awxAPI`/workflow_job_templates/${state.workflowTemplate.id.toString()}/workflow_nodes/`,
         {
           ...nodeData,
           ...extra_data,
-          ...identifier,
+          ...nodeIdentifier,
           all_parents_must_converge: nodeData.resource.all_parents_must_converge,
           unified_job_template: nodeData.resource.summary_fields.unified_job_template.id,
         }
@@ -128,21 +124,17 @@ export function useSaveVisualizer() {
   async function editExistingNodes(editNodes: GraphNode[]) {
     const promises = editNodes.map(async (node) => {
       const nodeData = node.getData() as GraphNodeData;
-
+      const nodeIdentifier = toKeyedObject('identifier', nodeData.resource.identifier);
       const extra_data =
         nodeData.resource.summary_fields.unified_job_template.unified_job_type ===
           UnifiedJobType.system_job && nodeData.resource.extra_data?.days
           ? { extra_data: { days: nodeData.resource.extra_data.days } }
           : {};
 
-      const identifier = !stringIsUUID(nodeData.resource?.identifier)
-        ? { identifier: nodeData.resource.identifier }
-        : {};
-
       await patchWorkflowNode(awxAPI`/workflow_job_template_nodes/${node.getId()}/`, {
         ...nodeData,
         ...extra_data,
-        ...identifier,
+        ...nodeIdentifier,
         all_parents_must_converge: nodeData.resource.all_parents_must_converge,
         unified_job_template: nodeData.resource.summary_fields.unified_job_template.id,
       });
@@ -376,4 +368,15 @@ export function useSaveVisualizer() {
     }
   }
   return handleSave;
+}
+
+export function toKeyedObject(
+  key: string,
+  value: string | number | undefined | null
+): { [key: string]: string | number } | object {
+  if ((typeof value === 'string' && value !== '') || typeof value === 'number') {
+    return { [key]: value };
+  } else {
+    return {};
+  }
 }

@@ -29,16 +29,14 @@ export function getInitialValues(node?: GraphNode) {
   };
 }
 
-export function replaceIdentifier(identifier: string, alias: string) {
+export function replaceIdentifier(identifier: string, alias: string): string {
   if (stringIsUUID(identifier) && typeof alias === 'string' && alias !== '') {
-    // if identifier is a uuid and alias is a non-empty string
-    return true;
+    return alias;
   }
   if (!stringIsUUID(identifier) && identifier !== alias) {
-    // if identifier isn't a uuid and alias and identifier are different
-    return true;
+    return alias;
   }
-  return false;
+  return identifier;
 }
 
 export function hasDaysToKeep(systemJob: NodeResource | null) {
