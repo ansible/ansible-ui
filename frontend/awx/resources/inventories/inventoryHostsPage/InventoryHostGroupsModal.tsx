@@ -16,7 +16,7 @@ export function InventoryHostGroupsAddModal(props: { onAdd: (items: InventoryGro
   const params = useParams<{ id: string; inventory_type: string; host_id: string }>();
 
   const toolbarFilters = useHostsGroupsFilters();
-  const tableColumns = useHostsGroupsColumns();
+  const tableColumns = useHostsGroupsColumns({ disableLinks: true });
 
   const view = useAwxView<InventoryGroup>({
     url: awxAPI`/inventories/${params.id ?? ''}/groups/`,
