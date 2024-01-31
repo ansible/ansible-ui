@@ -5,7 +5,6 @@ import { CustomNode } from './CustomNode';
 import { EdgeContextMenu } from './EdgeContextMenu';
 import { Legend } from './Legend';
 import { NodeContextMenu } from './NodeContextMenu';
-import { NodeFormInputs } from './NodeFormInputs';
 import { Sidebar } from './Sidebar';
 import { SidebarHeader } from './SidebarHeader';
 import { SystemJobNodeDetails } from './SystemJobNodeDetails';
@@ -21,7 +20,6 @@ export {
   EdgeContextMenu,
   Legend,
   NodeContextMenu,
-  NodeFormInputs,
   Sidebar,
   SidebarHeader,
   SystemJobNodeDetails,

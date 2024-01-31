@@ -29,7 +29,9 @@ export interface WorkflowNode {
   };
   created: string;
   modified: string;
-  extra_data: object;
+  extra_data: {
+    days?: number;
+  };
   inventory: null;
   scm_branch: null;
   job_type: null;
