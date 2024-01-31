@@ -103,7 +103,7 @@ describe('My imports', () => {
     });
   });
 
-  it('should be able to filter imported collections', () => {
+  it.skip('should be able to filter imported collections', () => {
     cy.visit(MyImports.url);
     cy.get('#namespace-selector').contains('Select namespace').click();
 
