@@ -33,6 +33,7 @@ import {
 import { GroupDetails } from '../../resources/groups/GroupDetails';
 import { InventoryHostJobs } from '../../resources/inventories/inventoryHostsPage/InventoryHostJobs';
 import { InventoryHostFacts } from '../../resources/inventories/inventoryHostsPage/InventoryHostFacts';
+import { GroupRelatedGroups } from '../../resources/groups/GroupRelatedGroups';
 
 export function useAwxInventoryRoutes() {
   const { t } = useTranslation();
@@ -132,7 +133,7 @@ export function useAwxInventoryRoutes() {
             {
               id: AwxRoute.InventoryGroupRelatedGroups,
               path: 'related_groups',
-              element: <PageNotImplemented />,
+              element: <GroupRelatedGroups />,
             },
             {
               id: AwxRoute.InventoryGroupHost,
