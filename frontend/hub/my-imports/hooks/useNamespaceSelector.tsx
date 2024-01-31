@@ -56,7 +56,7 @@ export function useNamespaceFilters() {
       {
         key: 'keywords',
         label: t('Name'),
-        type: ToolbarFilterType.Text,
+        type: ToolbarFilterType.SingleText,
         query: 'name',
         comparison: 'equals',
       },
