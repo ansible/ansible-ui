@@ -15,8 +15,7 @@ export function PageFormJobTemplateSelect<
   name: TFieldName;
   isRequired?: boolean;
   jobTemplatePath?: string;
-  templateId?: number;
-  templateType?: 'job_templates|' | 'workflow_job_templates';
+  templateType?: 'job_templates' | 'workflow_job_templates';
 }) {
   const { t } = useTranslation();
   const { templateType = 'job_templates' } = props;
@@ -38,7 +37,7 @@ export function PageFormJobTemplateSelect<
       id="job-template-select"
       label={
         props.templateType === 'workflow_job_templates'
-          ? t('Wokflow Job Template')
+          ? t('Workflow Job Template')
           : t('Job Template')
       }
       query={query}
