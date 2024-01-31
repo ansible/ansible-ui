@@ -11,18 +11,23 @@ import {
 import type { WorkflowNode, UnifiedJobType } from '../../../interfaces/WorkflowNode';
 import type { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 
+export type GraphNode = Node<NodeModel, GraphNodeData>;
 export type GraphNodeData = {
   resource: WorkflowNode;
-  all_parents_must_converge: string;
-  identifier: string;
 };
+export interface CustomNodeProps extends WithSelectionProps {
+  element: GraphElement<
+    ElementModel,
+    {
+      resource: WorkflowNode;
+    }
+  >;
+}
 
 export type GraphEdgeData = {
   tag: string;
   tagStatus: EdgeStatus;
 };
-export type GraphNode = Node<NodeModel, GraphNodeData>;
-
 export interface CustomEdgeProps {
   element: GraphElement<
     ElementModel,
@@ -32,7 +37,6 @@ export interface CustomEdgeProps {
     }
   >;
 }
-
 export interface CustomEdgeInnerProps extends Omit<CustomEdgeProps, 'element'> {
   element: Edge<
     EdgeModel,
@@ -50,15 +54,6 @@ export interface CustomLabelProps {
   xPoint: number;
   yPoint: number;
   hoverRef: (node: Element) => (() => void) | undefined;
-}
-
-export interface CustomNodeProps extends WithSelectionProps {
-  element: GraphElement<
-    ElementModel,
-    {
-      resource: WorkflowNode;
-    }
-  >;
 }
 
 export enum JobType {
@@ -86,24 +81,22 @@ export interface ControllerState {
   workflowTemplate: WorkflowJobTemplate;
 }
 
-export interface NodeFields {
-  parentNodes?: WorkflowNode[];
-  node_type:
-    | 'job'
-    | 'workflow_job'
-    | 'workflow_approval'
-    | 'project_update'
-    | 'inventory_update'
-    | 'system_job';
-  node_resource: {
-    id: number;
-    name: string;
-    description: string;
-    unified_job_type: UnifiedJobType;
-    timeout_minute: number;
-    timeout_seconds: number;
-  };
-  node_status_type: string;
-  all_parents_must_converge: string;
-  identifier: string;
+export interface NodeResource {
+  id: number;
+  name: string;
+  description: string;
+  unified_job_type: UnifiedJobType;
+  timeout?: number;
+  job_type?: 'cleanup_jobs' | 'cleanup_activitystream' | 'cleanup_sessions' | 'cleanup_tokens';
+}
+
+export interface WizardFormValues {
+  approval_description: string;
+  approval_name: string;
+  approval_timeout: number;
+  node_alias: string;
+  node_convergence: 'any' | 'all';
+  node_days_to_keep: number;
+  node_resource: NodeResource | null;
+  node_type: UnifiedJobType;
 }
