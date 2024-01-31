@@ -11,12 +11,13 @@ import {
 } from '../../../../../framework';
 import { CollectionVersionSearch } from '../../../collections/Collection';
 import { PROTECTED_REPOSITORIES } from '../../../common/constants';
-import { Repository, RepositoryVersion } from '../Repository';
+import { Repository } from '../Repository';
 import { useDeleteRepositories } from './useDeleteRepositories';
 import { getRepositoryBasePath } from '../../../common/api/hub-api-utils';
 import { getRepoURL } from '../../../common/api/hub-api-utils';
 import { useClipboard } from '../../../../../framework/hooks/useClipboard';
 import { HubRoute } from '../../../main/HubRoutes';
+import { useSyncRepositories } from './useSyncRepositories';
 
 export function useRepositoryActions(options: {
   onRepositoriesDeleted: (repositories: Repository[]) => void;
@@ -25,6 +26,7 @@ export function useRepositoryActions(options: {
   const { onRepositoriesDeleted } = options;
   const deleteRepositories = useDeleteRepositories(onRepositoriesDeleted);
   const alertToaster = usePageAlertToaster();
+  const syncRepositories = useSyncRepositories();
   const { writeToClipboard } = useClipboard();
   const pageNavigate = usePageNavigate();
   const actions = useMemo<IPageAction<Repository>[]>(
@@ -44,7 +46,9 @@ export function useRepositoryActions(options: {
       },
       {
         label: t('Sync repository'),
-        onClick: () => {},
+        onClick: (repo) => {
+          syncRepositories(repo);
+        },
         selection: PageActionSelection.Single,
         type: PageActionType.Button,
         isDisabled: (repo) => {
@@ -98,7 +102,7 @@ export function useRepositoryActions(options: {
         },
       },
     ],
-    [t, deleteRepositories, alertToaster, writeToClipboard, pageNavigate]
+    [t, deleteRepositories, alertToaster, writeToClipboard, pageNavigate, syncRepositories]
   );
 
   return actions;
@@ -115,23 +119,6 @@ export function useCollectionVersionsActions() {
         selection: PageActionSelection.Multiple,
         type: PageActionType.Button,
         isDanger: true,
-      },
-    ],
-    [t]
-  );
-
-  return actions;
-}
-
-export function useVersionsActions() {
-  const { t } = useTranslation();
-  const actions = useMemo<IPageAction<RepositoryVersion>[]>(
-    () => [
-      {
-        label: t('Revert to this version'),
-        onClick: () => {},
-        selection: PageActionSelection.Multiple,
-        type: PageActionType.Button,
       },
     ],
     [t]

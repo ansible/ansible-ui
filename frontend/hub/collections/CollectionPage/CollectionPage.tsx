@@ -62,9 +62,8 @@ export function CollectionPage() {
   );
 
   const collectionRequest = useGet<HubItemsResponse<CollectionVersionSearch>>(
-    hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${name || ''}&namespace=${
-      namespace || ''
-    }&repository_name=${repository || ''}` + queryFilter
+    hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${name}&namespace=${namespace}&repository_name=${repository}` +
+      queryFilter
   );
 
   const collection =
@@ -90,12 +89,9 @@ export function CollectionPage() {
 
       async function load() {
         const data = await requestGet<HubItemsResponse<CollectionVersionSearch>>(
-          hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${name || ''}&namespace=${
-            namespace || ''
-          }&repository_name=${repository || ''}&order_by=-version&offset=${(
-            pageSize *
-            (page - 1)
-          ).toString()}&limit=${pageSize.toString()}`
+          hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${name}&namespace=${namespace}&repository_name=${repository}&order_by=-version&offset=${
+            pageSize * (page - 1)
+          }&limit=${pageSize}`
         );
 
         return {
@@ -142,7 +138,9 @@ export function CollectionPage() {
   return (
     <PageLayout>
       <PageHeader
-        title={collection?.collection_version?.name}
+        title={
+          collection?.collection_version?.namespace + '.' + collection?.collection_version?.name
+        }
         breadcrumbs={[
           { label: t('Collections'), to: getPageUrl(HubRoute.Collections) },
           { label: collection?.collection_version?.name },
