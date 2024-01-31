@@ -19,9 +19,12 @@ import { useDeleteTemplates } from './hooks/useDeleteTemplates';
 import { useTemplateActions } from './hooks/useTemplateActions';
 import { useTemplateColumns } from './hooks/useTemplateColumns';
 import { useTemplateFilters } from './hooks/useTemplateFilters';
+import { useOptions } from '../../../common/crud/useOptions';
+import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
+import { awxAPI } from '../../common/api/awx-utils';
 
 export function TemplatesList(props: {
-  url: string;
+  url?: string;
   projectId?: string | undefined;
   inventoryId?: string | undefined;
 }) {
@@ -31,33 +34,41 @@ export function TemplatesList(props: {
   const toolbarFilters = useTemplateFilters();
   const tableColumns = useTemplateColumns();
   const getQueryParams = (projectId?: string | undefined, inventoryId?: string | undefined) => {
-    const type = 'job_template,workflow_job_template';
+    const templateQueryParams: { [key: string]: string } = {
+      type: 'job_template,workflow_job_template',
+    };
     if (projectId) {
-      const templateQueryParams = {
-        project__id: projectId,
-        type: type,
-      };
-      return templateQueryParams;
-    } else if (inventoryId) {
-      const templateQueryParams = {
-        inventory__id: inventoryId,
-        type: type,
-      };
-      return templateQueryParams;
-    } else {
-      const templateQueryParams = {
-        type: type,
-      };
-      return templateQueryParams;
+      templateQueryParams.project__id = projectId;
     }
+    if (inventoryId) {
+      templateQueryParams.inventory__id = inventoryId;
+    }
+    return templateQueryParams;
   };
   const view = useAwxView<JobTemplate | WorkflowJobTemplate>({
-    url: props.url,
+    url: props.url ? props.url : awxAPI`/unified_job_templates/`,
     queryParams: getQueryParams(props.projectId, props.inventoryId),
     toolbarFilters,
     tableColumns,
   });
-  usePersistentFilters('templates');
+
+  const { data: jobTemplateActions } = useOptions<OptionsResponse<ActionsResponse>>(
+    awxAPI`/job_templates/`
+  );
+
+  const { data: wfJobTemplateActions } = useOptions<OptionsResponse<ActionsResponse>>(
+    awxAPI`/workflow_job_templates/`
+  );
+
+  const canCreateJobTemplate = Boolean(
+    jobTemplateActions && jobTemplateActions.actions && jobTemplateActions.actions['POST']
+  );
+
+  const canCreateWFJobTemplate = Boolean(
+    wfJobTemplateActions && wfJobTemplateActions.actions && wfJobTemplateActions.actions['POST']
+  );
+
+  usePersistentFilters('templatesList');
   const deleteTemplates = useDeleteTemplates(view.unselectItemsAndRefresh);
 
   const toolbarActions = useMemo<IPageAction<JobTemplate | WorkflowJobTemplate>[]>(
@@ -67,6 +78,12 @@ export function TemplatesList(props: {
         variant: ButtonVariant.primary,
         isPinned: true,
         label: t('Create template'),
+        isDisabled:
+          canCreateJobTemplate || canCreateWFJobTemplate
+            ? undefined
+            : t(
+                'You do not have permission to create a template. Please contact your organization administrator if there is an issue with your access.'
+              ),
         selection: PageActionSelection.None,
         icon: PlusCircleIcon,
         actions: [
@@ -74,12 +91,18 @@ export function TemplatesList(props: {
             type: PageActionType.Link,
             selection: PageActionSelection.None,
             label: t('Create job template'),
+            isDisabled: canCreateJobTemplate
+              ? undefined
+              : 'You do not have permission to create a job template. Please contact your organization administrator if there is an issue with your access.',
             href: getPageUrl(AwxRoute.CreateJobTemplate),
           },
           {
             type: PageActionType.Link,
             selection: PageActionSelection.None,
             label: t('Create workflow job template'),
+            isDisabled: canCreateWFJobTemplate
+              ? undefined
+              : 'You do not have permission to create a workflow job template. Please contact your organization administrator if there is an issue with your access.',
             href: getPageUrl(AwxRoute.CreateWorkflowJobTemplate),
           },
         ],
@@ -93,7 +116,7 @@ export function TemplatesList(props: {
         isDanger: true,
       },
     ],
-    [deleteTemplates, getPageUrl, t]
+    [canCreateJobTemplate, canCreateWFJobTemplate, deleteTemplates, getPageUrl, t]
   );
 
   const rowActions = useTemplateActions({ onTemplatesDeleted: view.unselectItemsAndRefresh });
@@ -106,10 +129,24 @@ export function TemplatesList(props: {
       tableColumns={tableColumns}
       rowActions={rowActions}
       errorStateTitle={t('Error loading templates')}
-      emptyStateTitle={t('No templates yet')}
-      emptyStateDescription={t('To get started, create a template.')}
-      emptyStateButtonText={t('Create template')}
-      emptyStateButtonClick={() => pageNavigate(AwxRoute.CreateJobTemplate)}
+      emptyStateTitle={
+        canCreateJobTemplate || canCreateWFJobTemplate
+          ? t('No templates yet')
+          : t('You do not have permission to create a template')
+      }
+      emptyStateDescription={
+        canCreateJobTemplate || canCreateWFJobTemplate
+          ? t('Please create a template by using the button below.')
+          : t(
+              'Please contact your organization administrator if there is an issue with your access.'
+            )
+      }
+      emptyStateButtonText={
+        canCreateJobTemplate || canCreateWFJobTemplate ? t('Create template') : undefined
+      }
+      emptyStateButtonClick={
+        canCreateJobTemplate ? () => pageNavigate(AwxRoute.CreateJobTemplate) : undefined
+      }
       {...view}
       defaultSubtitle={t('Template')}
     />
