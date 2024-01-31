@@ -9,7 +9,7 @@ export function useInstancesFilters() {
       {
         key: 'name',
         label: t('Name'),
-        type: ToolbarFilterType.Text,
+        type: ToolbarFilterType.MultiText,
         query: 'hostname__icontains',
         comparison: 'contains',
       },

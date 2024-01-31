@@ -263,7 +263,7 @@ describe('projects.cy.ts', () => {
           actions: {
             POST: {
               name: {
-                type: ToolbarFilterType.Text,
+                type: ToolbarFilterType.MultiText,
                 required: true,
                 label: 'Name',
                 max_length: 512,
@@ -311,7 +311,7 @@ describe('projects.cy.ts', () => {
           actions: {
             POST: {
               name: {
-                type: ToolbarFilterType.Text,
+                type: ToolbarFilterType.MultiText,
                 required: true,
                 label: 'Name',
                 max_length: 512,

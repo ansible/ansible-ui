@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
-import { IToolbarFilter, ToolbarFilterType } from '../../../../../framework';
 import { useTranslation } from 'react-i18next';
+import { IToolbarFilter, ToolbarFilterType } from '../../../../../framework';
 
 export function useTokensFilters() {
   const nameToolbarFilter = useTokenUserToolbarFilter();
@@ -14,7 +14,7 @@ function useTokenUserToolbarFilter() {
     () => ({
       key: 'name',
       label: t('Name'),
-      type: ToolbarFilterType.Text,
+      type: ToolbarFilterType.MultiText,
       query: 'user__username__icontains',
       comparison: 'contains',
     }),

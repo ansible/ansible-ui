@@ -9,7 +9,7 @@ export function useExecutionEnvironmentFilters() {
       {
         key: 'name',
         label: t('Name'),
-        type: ToolbarFilterType.Text,
+        type: ToolbarFilterType.MultiText,
         query: 'name__icontains',
         comparison: 'startsWith',
       },

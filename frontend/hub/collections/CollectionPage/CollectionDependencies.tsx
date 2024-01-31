@@ -164,7 +164,7 @@ export function useCollectionFilters() {
       {
         key: 'name__icontains',
         label: t('Name'),
-        type: ToolbarFilterType.Text,
+        type: ToolbarFilterType.MultiText,
         query: 'keywords',
         comparison: 'contains',
       },

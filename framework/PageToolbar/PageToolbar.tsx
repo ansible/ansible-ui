@@ -85,6 +85,14 @@ export type PageToolbarProps<T extends object> = {
   maxSelections?: number;
 
   toolbarContent?: React.ReactNode;
+
+  /**
+   * Limits the filters so that only one filter can be set to an OR operation.
+   *
+   * Example: AWX can either have an OR on type or status but not both.
+   * So once one has 2 selections, the other becomes a single select.
+   */
+  limitFiltersToOneOrOperation?: boolean;
 };
 
 export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
@@ -204,6 +212,7 @@ export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
               toolbarFilters={toolbarFilters}
               filterState={filterState}
               setFilterState={setFilterState}
+              limitFiltersToOneOrOperation={props.limitFiltersToOneOrOperation}
             />
           )}
 

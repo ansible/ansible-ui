@@ -9,7 +9,7 @@ export function useRolesFilters() {
       {
         key: 'role',
         label: t('Role'),
-        type: ToolbarFilterType.Text,
+        type: ToolbarFilterType.MultiText,
         query: 'role_field__icontains',
         comparison: 'contains',
       },
