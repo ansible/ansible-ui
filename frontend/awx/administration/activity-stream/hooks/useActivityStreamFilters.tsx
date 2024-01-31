@@ -24,7 +24,7 @@ export function useActivityStreamFilter() {
           { label: 'Workflow Approvals', value: 'workflow_approval' },
           {
             label: 'Templates',
-            value: 'job_template,workflow_job_template,workflow_job_template_node',
+            value: 'job_template+workflow_job_template+workflow_job_template_node',
           },
           { label: 'Credentials', value: 'credential' },
           { label: 'Projects', value: 'project' },

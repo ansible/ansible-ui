@@ -78,17 +78,15 @@ export function useAwxView<T extends { id: number }>(options: {
         if (values && values.length > 0) {
           queryString ? (queryString += '&') : (queryString += '?');
 
-          // HACK for Activity Stream needing two values
+          // Support for Activity Stream needing two values
           if (toolbarFilter.query === 'object1__in') {
-            // HACK for Activity Stream needing two values
-            queryString += `or__object1__in=${values[0]}&or__object2__in=${values[0]}`;
-          } else if (toolbarFilter.query === 'search') {
-            // HACK for search field which does not use OR
-            if (values.length > 1) {
-              queryString += values.map((value) => `${toolbarFilter.query}=${value}`).join('&');
-            } else {
-              queryString += `${toolbarFilter.query}=${values[0]}`;
+            if (values.length === 1) {
+              queryString += `or__object1__in=${values[0]
+                .split('+')
+                .join(',')}&or__object2__in=${values[0].split('+').join(',')}`;
             }
+          } else if (toolbarFilter.query === 'search') {
+            queryString += values.map((value) => `${toolbarFilter.query}=${value}`).join('&');
           } else {
             if (values.length > 1) {
               queryString += values.map((value) => `or__${toolbarFilter.query}=${value}`).join('&');
@@ -96,11 +94,6 @@ export function useAwxView<T extends { id: number }>(options: {
               queryString += `${toolbarFilter.query}=${values[0]}`;
             }
           }
-          // if (values.length > 1) {
-          //   queryString += values.map((value) => `or__${toolbarFilter.query}=${value}`).join('&');
-          // } else {
-          //   queryString += `${toolbarFilter.query}=${values.join(',')}`;
-          // }
         }
       }
     }

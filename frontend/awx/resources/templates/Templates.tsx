@@ -27,7 +27,7 @@ export function Templates() {
         )}
         headerActions={
           <ActivityStreamIcon
-            type={'job_template,workflow_job_template,workflow_job_template_node'}
+            type={'job_template+workflow_job_template+workflow_job_template_node'}
           />
         }
       />
