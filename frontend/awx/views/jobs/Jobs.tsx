@@ -103,6 +103,7 @@ export function Jobs() {
         //     </PageSection>
         //   )
         // }
+        limitFiltersToOneOrOperation
       />
     </PageLayout>
   );

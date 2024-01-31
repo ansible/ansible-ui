@@ -25,7 +25,7 @@ export function useWorkflowApprovalsFilters() {
       {
         key: 'id',
         label: t('ID'),
-        type: ToolbarFilterType.Text,
+        type: ToolbarFilterType.MultiText,
         query: 'id',
         comparison: 'equals',
       },

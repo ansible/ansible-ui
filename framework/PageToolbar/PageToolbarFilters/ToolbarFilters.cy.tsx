@@ -12,6 +12,7 @@ import {
 import { IToolbarDateRangeFilter } from './ToolbarDateRangeFilter';
 import { IToolbarMultiSelectFilter } from './ToolbarMultiSelectFilter';
 import { IToolbarSingleSelectFilter } from './ToolbarSingleSelectFilter';
+import { IToolbarMultiTextFilter, IToolbarSingleTextFilter } from './ToolbarTextFilter';
 
 function ToolbarFiltersTest(
   props: Omit<PageToolbarFiltersProps, 'filterState' | 'setFilterState'>
@@ -42,73 +43,77 @@ function ToolbarFiltersTest(
   );
 }
 
-const stateFilter: IToolbarSingleSelectFilter = {
-  type: ToolbarFilterType.SingleSelect,
-  key: 'state',
-  query: 'state',
-  label: 'State',
-  options: [
-    { label: 'Online', value: 'online' },
-    { label: 'Offline', value: 'offline' },
-  ],
-  placeholder: 'Filter by state',
-};
+function createSingleTextFilter(
+  index: number,
+  options?: { isPinned?: boolean; isRequired?: boolean }
+) {
+  const singleTextFilter: IToolbarSingleTextFilter = {
+    type: ToolbarFilterType.SingleText,
+    key: `st${index}`,
+    query: `st${index}`,
+    label: `Single-Text ${index}`,
+    placeholder: `Filter by st${index}`,
+    comparison: 'contains',
+    ...options,
+  };
+  return singleTextFilter;
+}
 
-const serverFilter: IToolbarSingleSelectFilter = {
-  type: ToolbarFilterType.SingleSelect,
-  key: 'server',
-  query: 'server',
-  label: 'Server',
-  options: [
-    { label: 'My Server 1', value: 'server1' },
-    { label: 'My Server 2', value: 'server2' },
-    { label: 'My Server 3', value: 'server3' },
-    { label: 'My Server 4', value: 'server4' },
-  ],
-  placeholder: 'Filter by server',
-  isPinned: true,
-  isRequired: true,
-};
+function createMultiTextFilter(
+  index: number,
+  options?: { isPinned?: boolean; isRequired?: boolean }
+) {
+  const multiTextFilter: IToolbarMultiTextFilter = {
+    type: ToolbarFilterType.MultiText,
+    key: `mt${index}`,
+    query: `mt${index}`,
+    label: `Multi-Text ${index}`,
+    placeholder: `Filter by mt${index}`,
+    comparison: 'contains',
+    ...options,
+  };
+  return multiTextFilter;
+}
 
-const roleFilter: IToolbarSingleSelectFilter = {
-  type: ToolbarFilterType.SingleSelect,
-  key: 'role',
-  query: 'role',
-  label: 'Role',
-  options: [
-    { label: 'Admin', value: 'admin' },
-    { label: 'User', value: 'user' },
-  ],
-  placeholder: 'Filter by role',
-  isPinned: true,
-};
+function createSingleSelectFilter(
+  index: number,
+  options?: { isPinned?: boolean; isRequired?: boolean }
+) {
+  const singleSelectFilter: IToolbarSingleSelectFilter = {
+    type: ToolbarFilterType.SingleSelect,
+    key: `ss${index}`,
+    query: `ss${index}`,
+    label: `Single-Select ${index}`,
+    options: [
+      { value: '1', label: 'Option 1' },
+      { value: '2', label: 'Option 2' },
+      { value: '3', label: 'Option 3' },
+    ],
+    placeholder: `Filter by ss${index}`,
+    ...options,
+  };
+  return singleSelectFilter;
+}
 
-const namespaceFilter: IToolbarMultiSelectFilter = {
-  type: ToolbarFilterType.MultiSelect,
-  key: 'namespace',
-  query: 'namespace',
-  label: 'Namespace',
-  options: [
-    { value: '1', label: 'Namespace 1' },
-    { value: '2', label: 'Namespace 2' },
-    { value: '3', label: 'Namespace 3' },
-  ],
-  placeholder: 'Filter by namespace',
-};
-
-const statusFilter: IToolbarMultiSelectFilter = {
-  type: ToolbarFilterType.MultiSelect,
-  key: 'multiselectpinned',
-  query: 'multiselectpinned',
-  label: 'Status',
-  options: [
-    { value: 'running', label: 'Running' },
-    { value: 'failed', label: 'Failed' },
-    { value: 'pending', label: 'Pending' },
-  ],
-  placeholder: 'Filter by status',
-  isPinned: true,
-};
+function createMultiSelectFilter(
+  index: number,
+  options?: { isPinned?: boolean; isRequired?: boolean }
+) {
+  const multiSelectFilter: IToolbarMultiSelectFilter = {
+    type: ToolbarFilterType.MultiSelect,
+    key: `ms${index}`,
+    query: `ms${index}`,
+    label: `Multi-Select ${index}`,
+    options: [
+      { value: '1', label: 'Option 1' },
+      { value: '2', label: 'Option 2' },
+      { value: '3', label: 'Option 3' },
+    ],
+    placeholder: `Filter by ms${index}`,
+    ...options,
+  };
+  return multiSelectFilter;
+}
 
 const dateRangeFilter: IToolbarDateRangeFilter = {
   type: ToolbarFilterType.DateRange,
@@ -127,21 +132,98 @@ const dateRangeFilter: IToolbarDateRangeFilter = {
   defaultValue: 'last7days',
 };
 
-const toolbarFilters: IToolbarFilter[] = [
-  namespaceFilter,
-  stateFilter,
-  statusFilter,
-  roleFilter,
-  serverFilter,
-  dateRangeFilter,
-];
-
 describe('PageToolbarFilters', () => {
   it('should render pinned items', () => {
+    const singleTextFilter1 = createSingleTextFilter(1);
+    const singleTextFilter2 = createSingleTextFilter(2, { isPinned: true });
+    const multiTextFilter1 = createMultiTextFilter(1);
+    const multiTextFilter2 = createMultiTextFilter(2, { isPinned: true });
+    const singleSelectFilter1: IToolbarSingleSelectFilter = createSingleSelectFilter(1);
+    const singleSelectFilter2: IToolbarSingleSelectFilter = createSingleSelectFilter(2, {
+      isPinned: true,
+    });
+    const multiSelectFilter1: IToolbarMultiSelectFilter = createMultiSelectFilter(1);
+    const multiSelectFilter2: IToolbarMultiSelectFilter = createMultiSelectFilter(2, {
+      isPinned: true,
+    });
+    const toolbarFilters: IToolbarFilter[] = [
+      singleTextFilter1,
+      singleTextFilter2,
+      multiTextFilter1,
+      multiTextFilter2,
+      singleSelectFilter1,
+      singleSelectFilter2,
+      multiSelectFilter1,
+      multiSelectFilter2,
+      dateRangeFilter,
+    ];
+
     cy.mount(<ToolbarFiltersTest toolbarFilters={toolbarFilters} />);
-    cy.contains('Filter by namespace');
-    cy.contains('Filter by status');
-    cy.contains('Filter by role');
-    cy.contains('My Server 1');
+    cy.get('input[placeholder="Filter by st2"]').should('exist');
+    cy.get('input[placeholder="Filter by mt2"]').should('exist');
+    cy.contains('Filter by ss2');
+    cy.contains('Filter by ms2');
+    cy.contains('Last 7 days');
+  });
+
+  it('limitFiltersToOneOrOperation should make multi-text-filter a single-text-filter', () => {
+    const multiTextFilter1 = createMultiTextFilter(1, { isPinned: true });
+    const multiSelectFilter1: IToolbarMultiSelectFilter = createMultiSelectFilter(1, {
+      isPinned: true,
+    });
+    const toolbarFilters: IToolbarFilter[] = [multiTextFilter1, multiSelectFilter1];
+    cy.mount(<ToolbarFiltersTest toolbarFilters={toolbarFilters} limitFiltersToOneOrOperation />);
+
+    // Make sure the multi-text-filter is in multi-select mode
+    cy.get('button[aria-label="apply filter"]').should('exist');
+
+    // Open the multi select filter
+    cy.get('button[data-cy="filter-input"]').click();
+
+    // Make sure the multi-text-filter is in multi-select mode
+    cy.get('button[aria-label="apply filter"]').should('exist');
+
+    // Select the first option
+    cy.get('input[type="checkbox"]').nthNode(0).click();
+
+    // Make sure the multi-text-filter is in multi-select mode
+    cy.get('button[aria-label="apply filter"]').should('exist');
+
+    // Select the second option
+    cy.get('input[type="checkbox"]').nthNode(1).click();
+
+    // Make sure the multi-text-filter is in single-select mode
+    cy.get('button[aria-label="apply filter"]').should('not.exist');
+  });
+
+  it('limitFiltersToOneOrOperation should make multi-select-filter a single-select-filter', () => {
+    const multiTextFilter1 = createMultiTextFilter(1, { isPinned: true });
+    const multiSelectFilter1: IToolbarMultiSelectFilter = createMultiSelectFilter(1, {
+      isPinned: true,
+    });
+    const toolbarFilters: IToolbarFilter[] = [multiTextFilter1, multiSelectFilter1];
+    cy.mount(<ToolbarFiltersTest toolbarFilters={toolbarFilters} limitFiltersToOneOrOperation />);
+
+    // Make sure the multi-select-filter is in multi-select mode
+    cy.get('button[data-cy="filter-input"]').click();
+    cy.get('input[type="checkbox"]').should('exist');
+    cy.get('button[data-cy="filter-input"]').click();
+
+    // Filter by first option
+    cy.get('input[placeholder="Filter by mt1"]').type('abc');
+    cy.get('button[aria-label="apply filter"]').click();
+
+    // Make sure the multi-select-filter is in multi-select mode
+    cy.get('button[data-cy="filter-input"]').click();
+    cy.get('input[type="checkbox"]').should('exist');
+    cy.get('button[data-cy="filter-input"]').click();
+
+    // Filter by second option
+    cy.get('input[placeholder="Filter by mt1"]').type('def');
+    cy.get('button[aria-label="apply filter"]').click();
+
+    // Make sure the multi-select-filter is in single-select mode
+    cy.get('button[data-cy="filter-input"]').click();
+    cy.get('input[type="checkbox"]').should('not.exist');
   });
 });

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
-import { IToolbarFilter, ToolbarFilterType } from '../../../../../framework';
 import { useTranslation } from 'react-i18next';
+import { IToolbarFilter, ToolbarFilterType } from '../../../../../framework';
 
 export function useRoleFilters() {
   const { t } = useTranslation();
@@ -10,7 +10,7 @@ export function useRoleFilters() {
       {
         key: 'name__contains',
         label: t('Name'),
-        type: ToolbarFilterType.Text,
+        type: ToolbarFilterType.MultiText,
         query: 'name__icontains',
         comparison: 'contains',
       },
