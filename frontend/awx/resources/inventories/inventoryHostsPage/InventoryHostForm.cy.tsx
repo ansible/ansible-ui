@@ -52,7 +52,7 @@ describe('Create Edit Inventory Host Form', () => {
 
   describe('Edit Host', () => {
     beforeEach(() => {
-      cy.fixture('awxhost')
+      cy.fixture('awxHost')
         .then((host: AwxHost) => {
           host.name = payload.name;
           host.variables = payload.variables;
