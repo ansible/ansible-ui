@@ -77,6 +77,7 @@ export function InventoryHostPage() {
         }}
         tabs={[
           { label: t('Details'), page: AwxRoute.InventoryHostDetails },
+          { label: t('Facts'), page: AwxRoute.InventoryHostFacts },
           { label: t('Groups'), page: AwxRoute.InventoryHostGroups },
           { label: t('Jobs'), page: AwxRoute.InventoryHostJobs },
         ]}
