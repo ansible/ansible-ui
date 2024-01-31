@@ -48,14 +48,14 @@ function tryParseJSON(value: string): Record<string, unknown> | undefined {
 
 export class RequestError extends Error {
   public readonly details: string | undefined;
-  public readonly statusCode: number;
+  public readonly statusCode: number | undefined;
   public readonly body: string | object | undefined;
   public readonly json: object | undefined;
 
   constructor(options: {
     message: string;
     details?: string | undefined;
-    statusCode: number;
+    statusCode?: number;
     body?: string | object | undefined;
     json?: object | undefined;
   }) {

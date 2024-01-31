@@ -75,14 +75,14 @@ export function UploadCollectionByFile() {
           `Namespace "{{namespaceName}}" does not match namespace "{{namespaceParams}}"`,
           { namespaceName, namespaceParams }
         );
-        throw new RequestError({ message, statusCode: 404, json: { file: message } });
+        throw new RequestError({ message, json: { file: message } });
       }
 
       const namespace = await requestGet<HubItemsResponse<HubNamespace>>(
         hubAPI`/_ui/v1/namespaces/?limit=1&name=${namespaceName}`
       ).catch(() => {
         const message = t('Error loading namespace {{namespaceName}}', { namespaceName });
-        throw new RequestError({ message, statusCode: 404, json: { file: message } });
+        throw new RequestError({ message, json: { file: message } });
       });
 
       if (namespace.data.length === 0) {
@@ -90,19 +90,19 @@ export function UploadCollectionByFile() {
           'Cannot find namespace {{namespaceName}}. Create namespace before uploading.',
           { namespaceName }
         );
-        throw new RequestError({ message, statusCode: 404, json: { file: message } });
+        throw new RequestError({ message, json: { file: message } });
       }
 
       const list = await distroGetRequest(
         pulpAPI`/distributions/ansible/ansible/?repository=${data.repository || ''}`
       ).catch(() => {
         const message = t('Error loading distribution for selected repository');
-        throw new RequestError({ message, statusCode: 404, json: { file: message } });
+        throw new RequestError({ message, json: { file: message } });
       });
 
       if (list?.results.length === 0) {
         const message = t('Cannot find distribution for selected repository');
-        throw new RequestError({ message, statusCode: 404, json: { file: message } });
+        throw new RequestError({ message, json: { file: message } });
       }
 
       const base_path = list?.results[0]?.base_path;
