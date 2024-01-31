@@ -16,6 +16,34 @@ export function useNameToolbarFilter() {
   );
 }
 
+export function useKeywordToolbarFilter() {
+  const { t } = useTranslation();
+  return useMemo<IToolbarFilter>(
+    () => ({
+      key: 'keyword',
+      label: t('Keyword'),
+      type: ToolbarFilterType.Text,
+      query: 'search',
+      comparison: 'contains',
+    }),
+    [t]
+  );
+}
+
+export function useInitiatedByToolbarFilter() {
+  const { t } = useTranslation();
+  return useMemo<IToolbarFilter>(
+    () => ({
+      key: 'initiated-by',
+      label: t('Initiated by (username)'),
+      type: ToolbarFilterType.Text,
+      query: 'actor__username__icontains',
+      comparison: 'contains',
+    }),
+    [t]
+  );
+}
+
 export function useDescriptionToolbarFilter() {
   const { t } = useTranslation();
   return useMemo<IToolbarFilter>(
